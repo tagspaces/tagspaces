@@ -1,0 +1,160 @@
+<!--
+Copyright (c) 2012 The Tagspaces Authors. All rights reserved.
+Use of this source code is governed by a AGPL3 license that can be
+found in the LICENSE file.
+-->  
+<project name="tagspaces" default="main">
+    <property file="build.properties"/>
+    <property file="build.number"/>
+	
+	<property name="version" value="1.1"/>
+    <property name="package" value="tagspaces"/>
+    <property name="appname" value="TagSpaces"/>
+	<property name="defaultSettings.file" value="settings.api.js"/>
+    
+    <tstamp/><!--tstamp><format property="touch.time" pattern="MM/dd/yyyy hh:mm aa" /></tstamp-->
+
+    <target name="prepare-mozilla-extension" depends="clean" description="copy all files for the chrome app to the build directory">
+        <buildnumber file="build.number"/>
+    	<mkdir dir="${buildMozilla.dir}" />
+        <copy file="mozilla.package.tmpl.json" overwrite="true" tofile="package.json" />
+        <replace file="package.json" >
+            <replacefilter token="@VERSION@" value="${version}" />
+            <replacefilter token="@PACKAGE@" value="${package}" />
+            <replacefilter token="@APPNAME@" value="${appname}" />
+            <replacefilter token="@BUILD@" value="${build.number}" />
+        </replace>    
+        <copy file="mozilla.update.tmpl.rdf" overwrite="true" tofile="update.rdf" />
+        <replace file="update.rdf" >
+            <replacefilter token="@VERSION@" value="${version}" />
+            <replacefilter token="@PACKAGE@" value="${package}" />
+            <replacefilter token="@APPNAME@" value="${appname}" />
+            <replacefilter token="@BUILD@" value="${build.number}" />
+        </replace>     	
+        <copy file="package.json" todir="${buildMozilla.dir}" />
+        <copy file="LICENSE" tofile="${buildMozilla.dir}/data/LICENSE.txt" /> 	
+        <copy file="data/index.html" todir="${buildMozilla.dir}/data" />        
+        <copy file="data/aboutbox.html" todir="${buildMozilla.dir}/data" />            
+        <copy file="data/loader.js" todir="${buildMozilla.dir}/data" />        
+        <copy todir="${buildMozilla.dir}/lib" >
+            <fileset dir="lib" includes="**/*"/>  
+        </copy>    	
+        <copy todir="${buildMozilla.dir}/data/libs" >
+	    <fileset dir="data/libs">
+	      <include name="**/*"/>
+	      <exclude name="ckeditor/**"/>
+	    </fileset>        	
+        </copy>
+        <copy todir="${buildMozilla.dir}/data/css" >
+            <fileset dir="data/css" includes="**/*"/>  
+        </copy>
+        <copy todir="${buildMozilla.dir}/data/js" >
+            <fileset dir="data/js" includes="**/*"/>  
+        </copy>
+        <copy todir="${buildMozilla.dir}/data/icons" >
+            <fileset dir="data/icons" includes="**/*"/>  
+        </copy>
+        <replace file="${buildMozilla.dir}/data/js/${defaultSettings.file}" >
+            <replacefilter token="@VERSION@" value="${version}" />
+            <replacefilter token="@APPNAME@" value="${appname}" />
+            <replacefilter token="@BUILD@" value="${build.number}" />
+        </replace>  
+    </target>	
+	
+    <target name="build-mozilla-extension" depends="prepare-mozilla-extension" description="Creates a simple zip(not xpi) of the mozilla extension">
+        <zip destfile="${builds.dir}/${appname} [v${version}.${build.number} ${DSTAMP}${TSTAMP} mozilla].zip">
+            <fileset dir="${buildMozilla.dir}" includes="**/*" />
+        </zip>
+    </target>	
+	
+    <target name="prepare-chrome-extension" depends="clean" description="copy all files for the chrome app to the build directory">
+        <buildnumber file="build.number"/>
+    	<mkdir dir="${buildChrome.dir}" />
+        <copy file="chrome.manifest.tmpl.json" overwrite="true" tofile="data/manifest.json" />
+        <replace file="data/manifest.json" >
+            <replacefilter token="@VERSION@" value="${version}" />
+            <replacefilter token="@APPNAME@" value="${appname}" />
+            <replacefilter token="@BUILD@" value="${build.number}" />       
+        </replace>    
+        <copy file="LICENSE" tofile="${buildChrome.dir}/LICENSE.txt" />    	
+        <copy file="data/manifest.json" todir="${buildChrome.dir}" />
+        <copy file="data/index.html" todir="${buildChrome.dir}" />        
+        <copy file="data/aboutbox.html" todir="${buildChrome.dir}" />        
+        <copy file="data/loader.js" todir="${buildChrome.dir}" />        
+        <copy todir="${buildChrome.dir}/chrome" >
+            <fileset dir="data/chrome" includes="**/*"/>  
+        </copy>
+        <copy todir="${buildChrome.dir}/libs" >
+            <fileset dir="data/libs" includes="**/*"/>  
+        </copy>
+        <copy todir="${buildChrome.dir}/css" >
+            <fileset dir="data/css" includes="**/*"/>  
+        </copy>
+        <copy todir="${buildChrome.dir}/js" >
+            <fileset dir="data/js" includes="**/*"/>  
+        </copy>
+        <copy todir="${buildChrome.dir}/icons" >
+            <fileset dir="data/icons" includes="**/*"/>  
+        </copy>  
+        <replace file="${buildChrome.dir}/js/${defaultSettings.file}" >
+            <replacefilter token="@VERSION@" value="${version}" />
+            <replacefilter token="@APPNAME@" value="${appname}" />
+            <replacefilter token="@BUILD@" value="${build.number}" />
+        </replace>     	
+    </target>
+
+    <target name="build-chrome-extension" depends="prepare-chrome-extension" description="Creates a simple zip(not crx) of the chrome exntension">
+        <zip destfile="${builds.dir}/${appname} [v${version}.${build.number} ${DSTAMP}${TSTAMP} chrome].zip">
+            <fileset dir="${buildChrome.dir}" includes="**/*" />
+        </zip>
+    </target>	
+
+    <target name="prepare-cordova-application" description="copy all files the cordova dev directory">
+    	<delete dir="${cordovaDev.dir}"/>        
+    	<mkdir dir="${cordovaDev.dir}" />
+        <copy file="${cordovaJSLib.file}" todir="${cordovaDev.dir}" />    
+        <copy file="LICENSE" tofile="${cordovaDev.dir}/LICENSE.txt" />  	
+        <copy file="data/manifest.json" todir="${cordovaDev.dir}" />
+        <copy file="data/index.html" todir="${cordovaDev.dir}" />        
+        <copy file="data/aboutbox.html" todir="${cordovaDev.dir}" />        
+        <copy file="data/loader.js" todir="${cordovaDev.dir}" />        
+        <copy todir="${cordovaDev.dir}/libs" >
+            <fileset dir="data/libs" includes="**/*"/>  
+        </copy>
+        <copy todir="${cordovaDev.dir}/css" >
+            <fileset dir="data/css" includes="**/*"/>  
+        </copy>
+        <copy todir="${cordovaDev.dir}/js" >
+            <fileset dir="data/js" includes="**/*"/>  
+        </copy>
+        <copy todir="${cordovaDev.dir}/icons" >
+            <fileset dir="data/icons" includes="**/*"/>  
+        </copy>
+        <replace file="${cordovaDev.dir}/js/${defaultSettings.file}" >
+            <replacefilter token="@VERSION@" value="${version}" />
+            <replacefilter token="@APPNAME@" value="${appname}" />
+            <replacefilter token="@BUILD@" value="${build.number}" />
+        </replace>     	
+    </target>
+
+    <target name="backup-all" description="Creates a complete backup of the git repository">
+        <zip destfile="${backup.dir}/${appname}-Backup [v${version}.${build.number} ${DSTAMP}${TSTAMP}].zip">
+            <fileset dir="." includes="**/*" />
+        </zip>
+    </target>	
+
+    <target name="clean">
+        <delete dir="${buildMozilla.dir}"/>
+        <delete dir="${buildChrome.dir}"/>
+    </target>
+
+    <target name="prepare-mozilla-addonsdk" description="copy 3th party libs to the mozilla addon sdk">
+        <copy todir="${addonsdk.dir}/packages" >
+            <fileset dir="./addonlibs" includes="**/*"/>  
+        </copy>
+    </target>   	
+	
+    <target name="main" depends="prepare-chrome-extension, prepare-mozilla-extension, prepare-cordova-application" description="prepare for all target platforms" />
+
+    <target name="build-all" depends="build-chrome-extension, build-mozilla-extension" description="build for all target platforms" />
+</project>

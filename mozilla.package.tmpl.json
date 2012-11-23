@@ -1,0 +1,13 @@
+{
+    "name": "@PACKAGE@", 
+    "license": "AGPL 3.0", 
+    "author": "Ugg Rock", 
+    "version": "@VERSION@.@BUILD@", 
+    "fullName": "@APPNAME@", 
+    "id": "jid1-FBaMKxTifTSahQ", 
+    "description": "@APPNAME@ is a firefox extension, which allows you to browse your local file system and add tags to your files.",
+    "dependencies": ["menuitems", "addon-kit", "api-utils"],
+    "icon": "data/icons/icon48.png",	
+    "icon64": "data/icons/icon64.png",
+    "homepage": "http://tagspaces.com"
+}

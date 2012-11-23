@@ -1,0 +1,22 @@
+{
+  "name": "TagSpaces",
+  "description": "TagSpaces",
+  "type": "certified?",
+  "launch_path": "/index.html",
+  "developer": {
+    "name": "The TagSpaces Team",
+    "url": "http://tagspaces.com"
+  },
+  "locales": {
+    "en-US": {
+      "name": "TagSpaces",
+      "description": "TagSpaces"
+    }
+  },
+  "default_locale": "en-US",
+  "icons": {
+    "120": "/Icon64.png",
+    "60": "/Icon64.png"
+  },
+  "orientation": "portrait-primary"
+}

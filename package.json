@@ -1,0 +1,13 @@
+{
+    "name": "tagspaces", 
+    "license": "AGPL 3.0", 
+    "author": "Ugg Rock", 
+    "version": "1.1.1071", 
+    "fullName": "TagSpaces", 
+    "id": "jid1-FBaMKxTifTSahQ", 
+    "description": "TagSpaces is a firefox extension, which allows you to browse your local file system and add tags to your files.",
+    "dependencies": ["menuitems", "addon-kit", "api-utils"],
+    "icon": "data/icons/icon48.png",	
+    "icon64": "data/icons/icon64.png",
+    "homepage": "http://tagspaces.com"
+}
