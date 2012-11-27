@@ -9,5 +9,5 @@
     "dependencies": ["menuitems", "addon-kit", "api-utils"],
     "icon": "data/icons/icon48.png",	
     "icon64": "data/icons/icon64.png",
-    "homepage": "http://tagspaces.com"
+    "homepage": "http://tagspaces.org"
 }

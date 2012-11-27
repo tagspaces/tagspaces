@@ -46,6 +46,7 @@ BasicViewsUI.initFileTagViews = function() {
         ]
     } );       
     
+   
     // Disable alerts in datatable
     UIAPI.fileTable.dataTableExt.sErrMode = 'throw';
 
