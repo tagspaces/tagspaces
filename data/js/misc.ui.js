@@ -470,65 +470,41 @@ UIAPI.addTagSuggestionButton = function(container) {
 // TODO handle different file type such as txt or md
 UIAPI.updateTextEditorContent = function(fileContent) {
     console.debug("Updating edtitor with data: "+fileContent); 
-    $('#htmlEditor').val(fileContent);
-
-    var editor = CKEDITOR.instances['htmlEditor'];
-    if (editor) { editor.destroy(true); }
-    CKEDITOR.replace( 'htmlEditor');
-    
-    /*
-, {
-                        extraPlugins : 'autogrow',
-                        autoGrow_maxHeight : 0,
-                        removePlugins : 'resize'        
-    }
-     */
-    
+    aceEditor.setValue(fileContent);    
 }
-
- 
 
 UIAPI.editFile = function(fileName) {
     console.debug("Editing file: "+fileName);
     var fileExt = fileName.substring(fileName.lastIndexOf(".")+1,fileName.length).toLowerCase();
-
-    CKEDITOR.remove('htmlEditor')     
+  
     $( "#viewer" ).empty();
 
-    layoutContainer.open("east");    
-    UIAPI.isFileOpened = true;
-    $( "#viewer" ).show();
- 
     if(TSSETTINGS.Settings["supportedFileTypeEditing"].indexOf(fileExt) < 0) {
-    
         $( "#viewer" ).html("File type not supported for editing.");        
         return;
     }
     
     var filePath = UIAPI.currentPath+UIAPI.getDirSeparator()+fileName;
-    if(fileExt == "txt") {
-//        IOAPI.loadTextFile(filePath);
-//        $( "#viewer" ).html(fileContent);
-        $( "#viewer" ).html('<textarea id="htmlEditor" style="width: 100%; height: 100%">'+' '+'</textarea>');
-
+    if(fileExt == "js") {
+        $( "#viewer" ).html('<div id="generalEditor" style="width: 100%; height: 100%">'+' '+'</div>');
+        aceEditor = undefined
+        require(["ext/editor_text/ace/ace"], function(ace) {
+        	aceEditor = ace.edit("generalEditor");
+			aceEditor.setTheme("ext/editor_text/ace/theme/monokai");
+			aceEditor.getSession().setMode("ext/editor_text/ace/mode/javascript");        	
+		});
         IOAPI.loadTextFile(filePath);
     } else if (fileExt == "html" || fileExt == "htm" ) {
-        $( "#viewer" ).html('<textarea id="htmlEditor" style="width: 100%; height: 100%">'+' '+'</textarea>');
-//        require([
-//                "libs/jquery/jquery-1.8.2.js",
-//            "libs/ckeditor/ckeditor.js",
-//            "libs/ckeditor/adapters/jquery.js",
-//        ]
-        //, function($) {
 
-            
-        //});
-        IOAPI.loadTextFile(filePath);
     } else if (fileExt == "md" ) {
         
     } else {
-        console.debug("File type still not supported for editing.");        
+        $( "#viewer" ).html("File type not supported for editing.");       
     }
+    
+    layoutContainer.open("east");    
+    UIAPI.isFileOpened = true;
+    $( "#viewer" ).show();    
 }     
 
 UIAPI.handleElementActivation = function() {

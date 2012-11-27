@@ -43,10 +43,16 @@ SettingsUI.initDialogs = function() {
         width: 600,
         modal: true,
         buttons: {
+            "Back": function() {
+				$("#aboutIframe").attr("src","aboutbox.html");
+            },
             "Close": function() {
                 $( this ).dialog( "close" );
             }
-        }
+        },
+        open: function() {
+
+        }         
     });  
     
     $( "#dialogSetting" ).dialog({

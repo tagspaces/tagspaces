@@ -48,7 +48,7 @@ jQuery(function($) {
     
     TSSETTINGS.loadSettingsLocalStorage();
     
-    // By no local storage setting and a mozilla browser try to load from mozilla preferences
+    // By empty local storage and a mozilla browser, trying to load from mozilla preferences
     if(TSSETTINGS.Settings == undefined && $.browser.mozilla) {
         setTimeout(IOAPI.loadSettings, 1000); // executes initUI and updateSettingMozillaPreferences by success
         console.debug("Loading setting with from mozilla pref execured with delay...");
@@ -58,7 +58,7 @@ jQuery(function($) {
         TSSETTINGS.Settings = TSSETTINGS.DefaultSettings;
     }
     
-    UIAPI.initUI();    
+    UIAPI.initUI(); 
     
 /*    //TODO Opening the first favorite with delay
     if(TSSETTINGS.Settings != undefined) {
@@ -67,6 +67,7 @@ jQuery(function($) {
         }, 1000);
         console.debug("Execute loading tree with delay with delay");
     }     */    
+    
 });   
 
 // Setting up the communication between the extension and tagspace app

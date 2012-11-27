@@ -1,0 +1,1 @@
+var ace = require("lib/ace");
