@@ -16,6 +16,7 @@ found in the LICENSE file.
 
     <target name="prepare-mozilla-extension" depends="clean" description="copy all files for the chrome app to the build directory">
         <buildnumber file="build.number"/>
+    	<echo>Creating... ${buildMozilla.dir}</echo>
     	<mkdir dir="${buildMozilla.dir}" />
         <copy file="mozilla.package.tmpl.json" overwrite="true" tofile="package.json" />
         <replace file="package.json" >
@@ -34,7 +35,7 @@ found in the LICENSE file.
         <copy file="package.json" todir="${buildMozilla.dir}" />
         <copy file="LICENSE" tofile="${buildMozilla.dir}/data/LICENSE.txt" /> 	
         <copy file="data/index.html" todir="${buildMozilla.dir}/data" />        
-        <copy file="data/aboutbox.html" todir="${buildMozilla.dir}/data" />            
+        <copy file="data/about.html" todir="${buildMozilla.dir}/data" />            
         <copy file="data/loader.js" todir="${buildMozilla.dir}/data" />        
         <copy todir="${buildMozilla.dir}/lib" >
             <fileset dir="lib" includes="**/*"/>  
@@ -79,7 +80,7 @@ found in the LICENSE file.
         <copy file="LICENSE" tofile="${buildChrome.dir}/LICENSE.txt" />    	
         <copy file="data/manifest.json" todir="${buildChrome.dir}" />
         <copy file="data/index.html" todir="${buildChrome.dir}" />        
-        <copy file="data/aboutbox.html" todir="${buildChrome.dir}" />        
+        <copy file="data/about.html" todir="${buildChrome.dir}" />        
         <copy file="data/loader.js" todir="${buildChrome.dir}" />        
         <copy todir="${buildChrome.dir}/chrome" >
             <fileset dir="data/chrome" includes="**/*"/>  
@@ -116,7 +117,7 @@ found in the LICENSE file.
         <copy file="LICENSE" tofile="${cordovaDev.dir}/LICENSE.txt" />  	
         <copy file="data/manifest.json" todir="${cordovaDev.dir}" />
         <copy file="data/index.html" todir="${cordovaDev.dir}" />        
-        <copy file="data/aboutbox.html" todir="${cordovaDev.dir}" />        
+        <copy file="data/about.html" todir="${cordovaDev.dir}" />        
         <copy file="data/loader.js" todir="${cordovaDev.dir}" />        
         <copy todir="${cordovaDev.dir}/libs" >
             <fileset dir="data/libs" includes="**/*"/>  
@@ -138,9 +139,7 @@ found in the LICENSE file.
     </target>
 
     <target name="backup-all" description="Creates a complete backup of the git repository">
-        <zip destfile="${backup.dir}/${appname}-Backup [v${version}.${build.number} ${DSTAMP}${TSTAMP}].zip">
-            <fileset dir="." includes="**/*" />
-        </zip>
+        <zip destfile="${backup.dir}/${appname}-Backup [v${version}.${build.number} ${DSTAMP}${TSTAMP}].zip" defaultexcludes="no" basedir="." />
     </target>	
 
     <target name="clean">
