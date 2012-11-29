@@ -25,5 +25,9 @@
   ],
   "permissions": [
     "tabs", "http://*/*"
-  ]
+  ],
+  "web_accessible_resources": [
+    "about.html"
+  ],
+  "homepage_url": "http://tagspaces.org"
 }

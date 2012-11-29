@@ -1,6 +1,6 @@
 {
   "name": "TagSpaces",
-  "version": "1.1.1110",
+  "version": "1.1.1136",
   "manifest_version": 2,
   "description": "TagSpaces Explorer",
   "icons": {
@@ -25,5 +25,9 @@
   ],
   "permissions": [
     "tabs", "http://*/*"
-  ]
+  ],
+  "web_accessible_resources": [
+    "about.html"
+  ],
+  "homepage_url": "http://tagspaces.org"
 }
