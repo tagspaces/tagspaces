@@ -37,7 +37,6 @@ if(navigator.userAgent.indexOf("Chrom") > 0) {
 }
 
 // Determine the directory separator
-// TODO add this functionality to the ioAPIMozilla
 IOAPI.pathSeparator = IOAPI.plugin.getPlatform() == 'windows' ? "\\" : '/';
 
 // Test if plugin works

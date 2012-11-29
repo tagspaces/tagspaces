@@ -42,12 +42,17 @@ found in the LICENSE file.
             <fileset dir="lib" includes="**/*"/>  
         </copy>    	
         <copy todir="${buildFirefoxExt.dir}/data/libs" >
-	    <fileset dir="data/libs">
-	      <include name="**/*"/>
-	      <exclude name="ckeditor/**"/>
-	    </fileset>        	
+		    <fileset dir="data/libs">
+		      <include name="**/*"/>
+		    </fileset>        	
         </copy>
-        <copy todir="${buildFirefoxExt.dir}/data/css" >
+        <copy todir="${buildFirefoxExt.dir}/data/ext" >
+		    <fileset dir="data/ext">
+		      <include name="viewerBrowser/*"/>
+			  <include name="viewerImage/*"/>	    	
+		    </fileset>        	
+        </copy>
+    	<copy todir="${buildFirefoxExt.dir}/data/css" >
             <fileset dir="data/css" includes="**/*"/>  
         </copy>
         <copy todir="${buildFirefoxExt.dir}/data/js" >
@@ -88,6 +93,12 @@ found in the LICENSE file.
         <copy todir="${buildChrome.dir}/chrome" >
             <fileset dir="data/chrome" includes="**/*"/>  
         </copy>
+        <copy todir="${buildChrome.dir}/data/ext" >
+		    <fileset dir="data/ext">
+		      <include name="viewerBrowser/*"/>
+			  <include name="viewerImage/*"/>	    	
+		    </fileset>        	
+        </copy>    	
         <copy todir="${buildChrome.dir}/libs" >
             <fileset dir="data/libs" includes="**/*"/>  
         </copy>
@@ -125,6 +136,11 @@ found in the LICENSE file.
         <copy todir="${cordovaDev.dir}/libs" >
             <fileset dir="data/libs" includes="**/*"/>  
         </copy>
+        <copy todir="${cordovaDev.dir}/data/ext" >
+		    <fileset dir="data/ext">
+		      <include name="**/*"/>
+		    </fileset>        	
+        </copy>    	
         <copy todir="${cordovaDev.dir}/css" >
             <fileset dir="data/css" includes="**/*"/>  
         </copy>
