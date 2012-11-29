@@ -44,8 +44,6 @@ TSSETTINGS.DefaultSettings = {
 	"appVersion": "@VERSION@beta",
     "appBuild": "@VERSION@.@BUILD@",
 	"settingsVersion": 1,
-	"supportedFileTypeViewing": ['txt','html','htm','md','jpeg','jpg','png','gif','mht','mhtml','pdf','maff'],
-	"supportedFileTypeEditing": ['txt','html','htm','md'],
     "supportedFileTypeThumnailing": ['jpg','jpeg','png','gif'],
 	"newTextFileContent": "Text file created with tagspaces(@VERSION@.@BUILD@)...",
     "newHTMLFileContent": "<html><head><meta http-equiv='content-type' content='text/html; charset=utf-8'><title>Tagspaces File</title></head><body>Tag created with tagspaces(@VERSION@.@BUILD@)...</body></html>",	
@@ -54,9 +52,40 @@ TSSETTINGS.DefaultSettings = {
 	"lastOpenedTSID": 0,
     "lastOpenedDirectory": "",
 	"tagspacesList": [
-        {name:'Sampe windows place', path:'Z:\\' }, 
-        {name:'Sample unix place', path:'/media/' }, 
+        {
+            "name":'Sampe windows place', 
+            "path":'Z:\\' 
+        }, 
+        {
+            "name":'Sample unix place', 
+            "path":'/media/' 
+        }, 
 	],
+    "extensions": [
+        {   
+            "id": "editorText", // ID should be equal to the directory name where the ext. is located 
+            "enabled": true, 
+        },
+        {   
+            "id": "tsTodo", // ID should be equal to the directory name where the ext. is located 
+            "enabled": false, 
+        },
+    ],
+    "supportedFileTypes": [
+        { "type": "jpg", "viewer": "viewerImage", "editor": false  },        
+        { "type": "jpeg", "viewer": "viewerImage", "editor": false  },    
+        { "type": "gif", "viewer": "viewerImage", "editor": false  },        
+        { "type": "png", "viewer": "viewerImage", "editor": false  },        
+        { "type": "pdf", "viewer": "viewerBrowser", "editor": false  },                
+        { "type": "html", "viewer": "viewerBrowser", "editor": false  },                        
+        { "type": "htm", "viewer": "viewerBrowser", "editor": false  },                        
+        { "type": "mht", "viewer": "viewerBrowser", "editor": false  },                        
+        { "type": "mhtml", "viewer": "viewerBrowser", "editor": false  },                                
+        { "type": "maff", "viewer": "viewerBrowser", "editor": false  },                                
+        { "type": "txt", "viewer": "viewerBrowser", "editor": "editorText"  },
+        { "type": "js", "viewer": "viewerBrowser", "editor": "editorText"  },
+        { "type": "md", "viewer": "viewerMD", "editor": "editorText"  },
+    ],
 	"tagGroups": [
 		{
 		    "title":"common",
@@ -104,16 +133,26 @@ TSSETTINGS.getNewMDFileContent = function() {
     return TSSETTINGS.Settings["newMDFileContent"];
 }
 
-TSSETTINGS.getSupportedFileExt4Thumbnaling = function() {
-    return TSSETTINGS.Settings["supportedFileTypeViewing"];
-}
-
-TSSETTINGS.getSupportedFileExt4Viewing = function() {
-    return TSSETTINGS.Settings["supportedFileTypeViewing"];
-}
-
 TSSETTINGS.getSupportedFileExt4Thumbnailing = function() {
     return TSSETTINGS.Settings["supportedFileTypeThumnailing"];
+}
+
+TSSETTINGS.getFileTypeEditor = function(fileTypeExt) {
+    for(var i=0; i < TSSETTINGS.Settings["supportedFileTypes"].length; i++) {
+        if(TSSETTINGS.Settings["supportedFileTypes"][i].type == fileTypeExt) {
+             return TSSETTINGS.Settings["supportedFileTypes"][i].editor;
+        }        
+    }
+    return false;   
+}
+
+TSSETTINGS.getFileTypeViewer = function(fileTypeExt) {
+    for(var i=0; i < TSSETTINGS.Settings["supportedFileTypes"].length; i++) {
+        if(TSSETTINGS.Settings["supportedFileTypes"][i].type == fileTypeExt) {
+             return TSSETTINGS.Settings["supportedFileTypes"][i].viewer;
+        }        
+    }
+    return false;   
 }
 
 TSSETTINGS.findTag = function(tagName, tagGroupKey) {

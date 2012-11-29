@@ -1,11 +1,12 @@
 /* Copyright (c) 2012 The Tagspaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that 
  * can be found in the LICENSE file. */
+define(function(require, exports, module) {
+"use strict";
+
 console.debug("Loading TagsUI...");
 
-var TagsUI = (typeof TagsUI == 'object' && TagsUI != null) ? TagsUI : {};
-
-TagsUI.initContextMenus = function() {
+exports.initContextMenus = function() {
 
 //    $( "#tagSuggestionsMenu" ).menu({
 //        select: function( event, ui ) {
@@ -35,7 +36,6 @@ TagsUI.initContextMenus = function() {
               case "removeTag":
                 $( this ).hide();
                 TSAPI.removeTag(UIAPI.selectedTag);
-                //UIAPI.openFile(UIAPI.selectedFiles[0]);    
                 break;
               case "closeMenu":
                 $( this).hide();                
@@ -101,7 +101,7 @@ TagsUI.initContextMenus = function() {
     });  
 }
 
-TagsUI.initDialogs = function() {
+exports.initDialogs = function() {
 
     var newDirName = $( "#dirname" );
     
@@ -298,14 +298,14 @@ TagsUI.initDialogs = function() {
     });               
 }
 
-TagsUI.updateTagGroups = function() {
+exports.updateTagGroups = function() {
     console.debug("Updating TagGroups tree..."); //+JSON.stringify(TSSETTINGS.Settings["tagGroups"]));
     $("#tagGroups").dynatree("getRoot").removeChildren();
     $("#tagGroups").dynatree("getRoot").addChild(TSSETTINGS.Settings["tagGroups"]);
 }
 
 
-TagsUI.initTagTree = function() {
+exports.initTagTree = function() {
     // Init the tag tree / taggroups module
     $("#tagGroups").dynatree({
       clickFolderMode: 1,
@@ -347,7 +347,7 @@ TagsUI.initTagTree = function() {
     });     
 }
 
-TagsUI.openTagMenu = function(tagButton, tag, fileName) {
+exports.openTagMenu = function(tagButton, tag, fileName) {
     BasicViewsUI.clearSelectedFiles();
     $(tagButton).parent().parent().toggleClass("selectedRow");
 
@@ -367,3 +367,5 @@ TagsUI.openTagMenu = function(tagButton, tag, fileName) {
     });
    return false;*/
 }
+
+});

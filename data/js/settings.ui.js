@@ -44,7 +44,7 @@ SettingsUI.initDialogs = function() {
         modal: true,
         buttons: {
             "Back": function() {
-				$("#aboutIframe").attr("src","aboutbox.html");
+				$("#aboutIframe").attr("src","about.html");
             },
             "Close": function() {
                 $( this ).dialog( "close" );
