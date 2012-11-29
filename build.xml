@@ -14,10 +14,11 @@ found in the LICENSE file.
     
     <tstamp/><!--tstamp><format property="touch.time" pattern="MM/dd/yyyy hh:mm aa" /></tstamp-->
 
-    <target name="prepare-mozilla-extension" depends="clean" description="copy all files for the chrome app to the build directory">
+    <target name="prepare-mozilla-extension" description="copy all files for the chrome app to the build directory">
         <buildnumber file="build.number"/>
-    	<echo>Creating... ${buildMozilla.dir}</echo>
-    	<mkdir dir="${buildMozilla.dir}" />
+        <echo>Mozilla directory: ${buildFirefoxExt.dir}</echo>
+    	<delete dir="${buildFirefoxExt.dir}"/>
+    	<mkdir dir="${buildFirefoxExt.dir}" />
         <copy file="mozilla.package.tmpl.json" overwrite="true" tofile="package.json" />
         <replace file="package.json" >
             <replacefilter token="@VERSION@" value="${version}" />
@@ -32,30 +33,30 @@ found in the LICENSE file.
             <replacefilter token="@APPNAME@" value="${appname}" />
             <replacefilter token="@BUILD@" value="${build.number}" />
         </replace>     	
-        <copy file="package.json" todir="${buildMozilla.dir}" />
-        <copy file="LICENSE" tofile="${buildMozilla.dir}/data/LICENSE.txt" /> 	
-        <copy file="data/index.html" todir="${buildMozilla.dir}/data" />        
-        <copy file="data/about.html" todir="${buildMozilla.dir}/data" />            
-        <copy file="data/loader.js" todir="${buildMozilla.dir}/data" />        
-        <copy todir="${buildMozilla.dir}/lib" >
+        <copy file="package.json" todir="${buildFirefoxExt.dir}" />
+        <copy file="LICENSE" tofile="${buildFirefoxExt.dir}/data/LICENSE.txt" /> 	
+        <copy file="data/index.html" todir="${buildFirefoxExt.dir}/data" />        
+        <copy file="data/about.html" todir="${buildFirefoxExt.dir}/data" />            
+        <copy file="data/loader.js" todir="${buildFirefoxExt.dir}/data" />        
+        <copy todir="${buildFirefoxExt.dir}/lib" >
             <fileset dir="lib" includes="**/*"/>  
         </copy>    	
-        <copy todir="${buildMozilla.dir}/data/libs" >
+        <copy todir="${buildFirefoxExt.dir}/data/libs" >
 	    <fileset dir="data/libs">
 	      <include name="**/*"/>
 	      <exclude name="ckeditor/**"/>
 	    </fileset>        	
         </copy>
-        <copy todir="${buildMozilla.dir}/data/css" >
+        <copy todir="${buildFirefoxExt.dir}/data/css" >
             <fileset dir="data/css" includes="**/*"/>  
         </copy>
-        <copy todir="${buildMozilla.dir}/data/js" >
+        <copy todir="${buildFirefoxExt.dir}/data/js" >
             <fileset dir="data/js" includes="**/*"/>  
         </copy>
-        <copy todir="${buildMozilla.dir}/data/icons" >
+        <copy todir="${buildFirefoxExt.dir}/data/icons" >
             <fileset dir="data/icons" includes="**/*"/>  
         </copy>
-        <replace file="${buildMozilla.dir}/data/js/${defaultSettings.file}" >
+        <replace file="${buildFirefoxExt.dir}/data/js/${defaultSettings.file}" >
             <replacefilter token="@VERSION@" value="${version}" />
             <replacefilter token="@APPNAME@" value="${appname}" />
             <replacefilter token="@BUILD@" value="${build.number}" />
@@ -64,12 +65,14 @@ found in the LICENSE file.
 	
     <target name="build-mozilla-extension" depends="prepare-mozilla-extension" description="Creates a simple zip(not xpi) of the mozilla extension">
         <zip destfile="${builds.dir}/${appname} [v${version}.${build.number} ${DSTAMP}${TSTAMP} mozilla].zip">
-            <fileset dir="${buildMozilla.dir}" includes="**/*" />
+            <fileset dir="${buildFirefoxExt.dir}" includes="**/*" />
         </zip>
     </target>	
 	
-    <target name="prepare-chrome-extension" depends="clean" description="copy all files for the chrome app to the build directory">
+    <target name="prepare-chrome-extension" description="copy all files for the chrome app to the build directory">
         <buildnumber file="build.number"/>
+        <echo>Chrome directory: ${buildChrome.dir}</echo>    	
+        <delete dir="${buildChrome.dir}"/>    	
     	<mkdir dir="${buildChrome.dir}" />
         <copy file="chrome.manifest.tmpl.json" overwrite="true" tofile="data/manifest.json" />
         <replace file="data/manifest.json" >
@@ -142,8 +145,8 @@ found in the LICENSE file.
         <zip destfile="${backup.dir}/${appname}-Backup [v${version}.${build.number} ${DSTAMP}${TSTAMP}].zip" defaultexcludes="no" basedir="." />
     </target>	
 
-    <target name="clean">
-        <delete dir="${buildMozilla.dir}"/>
+    <target name="clean-all">
+        <delete dir="${buildFirefoxExt.dir}"/>
         <delete dir="${buildChrome.dir}"/>
     </target>
 
