@@ -1,6 +1,16 @@
 /* Copyright (c) 2012 The Tagspaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that 
  * can be found in the LICENSE file. */
+/*
+define([
+    'require',
+    'exports',
+    'module',
+    'datatables',
+//    'css!datatablescss'
+],function(require, exports, module) {
+"use strict";
+*/
 console.debug("Loading BasicViewsUI...");
 
 var BasicViewsUI = (typeof BasicViewsUI == 'object' && BasicViewsUI != null) ? BasicViewsUI : {};
@@ -96,14 +106,11 @@ BasicViewsUI.initFileTagViews = function() {
 }
 
 BasicViewsUI.initThumbView = function() {
-// Managing the selection of files in the thumb view
+    // Managing the selection of files in the thumb view
     $( "#selectableFiles" ).selectable({
         stop: function() {
             UIAPI.selectedFiles = [];          
             $( ".ui-selected", this ).each(function() {
-                // var index = $( "#selectableFiles li" ).index( this );
-                // console.debug( "Selected #:" + ( index + 1 ) );
-                // console.debug( "Selected file: "+$( "#selectableFiles li" )[index].innerHTML);
                 UIAPI.selectedFiles.push($(this).attr("title"));
             });
             console.debug("Selected files: "+UIAPI.selectedFiles);
@@ -597,3 +604,6 @@ BasicViewsUI.initDialogs = function() {
         }
     });
 }
+
+//return BasicViewsUI;
+//});

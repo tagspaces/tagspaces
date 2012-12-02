@@ -291,9 +291,6 @@ TSSETTINGS.updateSettingMozillaPreferences = function(settings) {
         console.debug('Default settings loaded(Firefox)!');        
     }
     TSSETTINGS.saveSettings();
-    
-    // Reloads the UI
-    UIAPI.initUI();                       
 }
 
 TSSETTINGS.loadSettingsLocalStorage = function() {

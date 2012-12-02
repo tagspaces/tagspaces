@@ -2,7 +2,6 @@
  * Use of this source code is governed by a AGPL3 license that 
  * can be found in the LICENSE file. */
 // Activating browser specific IOAPI modul
-if( $.browser.webkit) {
 console.debug("Loading IOapiChrome.js..");
     
 IOAPI = (typeof IOAPI == 'object' && IOAPI != null) ? IOAPI : {};
@@ -132,4 +131,3 @@ IOAPI.deleteElement = function(path) {
 	IOAPI.plugin.removeFile(path)
 }
 
-}

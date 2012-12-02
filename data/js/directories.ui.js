@@ -205,7 +205,7 @@ DirectoriesUI.initFavorites = function() {
     
     $( "#favoritesList" ).menu();
     $( "#favoritesList" ).menu("disable");
-    $( "#favoritesList" ).html(""); 
+    $( "#favoritesList" ).empty();
     
     var favoritesList = TSSETTINGS.Settings["tagspacesList"]
     var menuHTML = undefined;

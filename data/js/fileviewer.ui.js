@@ -1,19 +1,21 @@
 /* Copyright (c) 2012 The Tagspaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that 
  * can be found in the LICENSE file. */
-define(function(require, exports, module) {
-"use strict";
+//define(function(require, exports, module) {
+//"use strict";
 
 console.debug("Loading FileViewer...");
 
+var FileViewer = (typeof FileViewer == 'object' && FileViewer != null) ? FileViewer : {};
+
 var tsEditor = undefined;
 
-exports.updateTextEditorContent = function(fileContent) {
+FileViewer.updateTextEditorContent = function(fileContent) {
     console.debug("Updating edtitor"); // with data: "+fileContent); 
     tsEditor.setContent(fileContent);    
 }
 
-exports.openFile = function(fileName) {
+FileViewer.openFile = function(fileName) {
     console.debug("Opening file: "+fileName);
 
     var openedFilePath = UIAPI.currentPath+UIAPI.getDirSeparator()+fileName;
@@ -51,7 +53,7 @@ exports.openFile = function(fileName) {
     }  
 } 
 
-exports.editFile = function(fileName) {
+FileViewer.editFile = function(fileName) {
     console.debug("Editing file: "+filePath);
     var filePath = UIAPI.currentPath+UIAPI.getDirSeparator()+fileName;
     var fileExt = fileName.substring(fileName.lastIndexOf(".")+1,fileName.length).toLowerCase();
@@ -75,14 +77,15 @@ exports.editFile = function(fileName) {
     }   
 } 
 
-this.constructFileViewerUI = function(fileName, filePath) {
+FileViewer.constructFileViewerUI = function(fileName, filePath) {
     // Adding tag buttons to the filetoolbox
     var tags = TSAPI.extractTags(fileName);
 
+    // TODO remove html()
     $( "#fileTitle" ).html(TSAPI.extractTitle(fileName));
     
     // Generate tag buttons
-    $( "#fileTags" ).html("");
+    $( "#fileTags" ).empty();
     for (var i=0; i < tags.length; i++) {
         $( "#fileTags" ).append('<button title="Opens context menu for '+tags[i]+'" tag="'+tags[i]+'" filename="'+fileName+'" class="tagButton">'+tags[i]+'</button>');    
     };
@@ -93,7 +96,7 @@ this.constructFileViewerUI = function(fileName, filePath) {
     }); 
     
     // Clear filetoolbox
-    $( "#filetoolbox" ).html("");
+    $( "#filetoolbox" ).empty();
 
     // TODO Fullscreen disabled due a fullscreen issue
     //this.addFullScreenButton("#filetoolbox");
@@ -110,7 +113,7 @@ this.constructFileViewerUI = function(fileName, filePath) {
 }
 
 
-this.initTagSuggestionMenu = function(fileName, tags) {
+FileViewer.initTagSuggestionMenu = function(fileName, tags) {
     // Adding buttons for creating tags according to the suggested tags
     var suggTags = TSAPI.suggestTags(fileName);
 
@@ -135,7 +138,7 @@ this.initTagSuggestionMenu = function(fileName, tags) {
     });  
 }
 
-this.addEditButton = function(container, fileName) {
+FileViewer.addEditButton = function(container, fileName) {
     // TODO implement disabled check
     var buttonDisabled = false;
     $( ""+container ).append('<button id="editDocument">Edit</button>');
@@ -151,7 +154,7 @@ this.addEditButton = function(container, fileName) {
     });        
 }
 
-this.addOpenInWindowButton = function(container, filePath) {
+FileViewer.addOpenInWindowButton = function(container, filePath) {
     $( ""+container ).append('<button id="openInNewWindow">Open in new tab</button>');
     $( "#openInNewWindow" ).button({
         text: false,        
@@ -165,7 +168,7 @@ this.addOpenInWindowButton = function(container, filePath) {
     });        
 }
 
-this.addCloseButton = function(container) {
+FileViewer.addCloseButton = function(container) {
     $( ""+container ).append('<button id="closeOpenedFile">Close</button>');
     $( "#closeOpenedFile" ).button({
         text: false,        
@@ -182,7 +185,7 @@ this.addCloseButton = function(container) {
 }
 
 
-this.addFullScreenButton = function(container) {
+FileViewer.addFullScreenButton = function(container) {
     $( ""+container ).append('<button id="startFullscreen">Fullscreen</button>');
     $( "#startFullscreen" ).button({
         text: false,        
@@ -208,7 +211,7 @@ this.addFullScreenButton = function(container) {
     });    
 }
 
-this.addTagSuggestionButton = function(container) {
+FileViewer.addTagSuggestionButton = function(container) {
     $( ""+container ).append('<button id="openTagSuggestionMenu">Tag Suggestion</button>');
     $( "#openTagSuggestionMenu" ).button({
         text: false,        
@@ -231,4 +234,4 @@ this.addTagSuggestionButton = function(container) {
     });    
 }
   
-});
+//});

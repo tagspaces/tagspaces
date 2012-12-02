@@ -2,7 +2,6 @@
  * Use of this source code is governed by a AGPL3 license that 
  * can be found in the LICENSE file. */
 // Activating browser specific IOAPI modul
-if( $.browser.mozilla) {
 
 console.debug("Loading IOapiMozilla.js..");
 
@@ -110,5 +109,3 @@ IOAPI.deleteElement = function(path) {
 	}});
     document.documentElement.dispatchEvent(event);	
 } 
-
-}

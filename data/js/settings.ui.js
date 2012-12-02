@@ -1,6 +1,17 @@
 /* Copyright (c) 2012 The Tagspaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that 
  * can be found in the LICENSE file. */
+/*
+define([
+    'require',
+    'exports',
+    'module',
+    'jsoneditor',
+//    'css!jsoneditorcss'
+],function(require, exports, module) {
+// TODO
+//"use strict";
+*/
 console.debug("Loading SettingsUI...");
 
 var SettingsUI = (typeof SettingsUI == 'object' && SettingsUI != null) ? SettingsUI : {};
@@ -101,3 +112,6 @@ SettingsUI.initDialogs = function() {
         }         
     });     
 }
+
+//return SettingsUI;
+//});

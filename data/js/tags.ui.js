@@ -1,12 +1,21 @@
 /* Copyright (c) 2012 The Tagspaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that 
  * can be found in the LICENSE file. */
-define(function(require, exports, module) {
+/*
+define([
+    'require',
+    'exports',
+    'module',
+    'dynatree',
+//    'css!dynatreecss'
+],function(require, exports, module) {
 "use strict";
-
+*/
 console.debug("Loading TagsUI...");
 
-exports.initContextMenus = function() {
+var TagsUI = (typeof TagsUI == 'object' && TagsUI != null) ? TagsUI : {};
+
+TagsUI.initContextMenus = function() {
 
 //    $( "#tagSuggestionsMenu" ).menu({
 //        select: function( event, ui ) {
@@ -101,7 +110,7 @@ exports.initContextMenus = function() {
     });  
 }
 
-exports.initDialogs = function() {
+TagsUI.initDialogs = function() {
 
     var newDirName = $( "#dirname" );
     
@@ -298,14 +307,13 @@ exports.initDialogs = function() {
     });               
 }
 
-exports.updateTagGroups = function() {
+TagsUI.updateTagGroups = function() {
     console.debug("Updating TagGroups tree..."); //+JSON.stringify(TSSETTINGS.Settings["tagGroups"]));
     $("#tagGroups").dynatree("getRoot").removeChildren();
     $("#tagGroups").dynatree("getRoot").addChild(TSSETTINGS.Settings["tagGroups"]);
 }
 
-
-exports.initTagTree = function() {
+TagsUI.initTagTree = function() {
     // Init the tag tree / taggroups module
     $("#tagGroups").dynatree({
       clickFolderMode: 1,
@@ -347,7 +355,7 @@ exports.initTagTree = function() {
     });     
 }
 
-exports.openTagMenu = function(tagButton, tag, fileName) {
+TagsUI.openTagMenu = function(tagButton, tag, fileName) {
     BasicViewsUI.clearSelectedFiles();
     $(tagButton).parent().parent().toggleClass("selectedRow");
 
@@ -368,4 +376,4 @@ exports.openTagMenu = function(tagButton, tag, fileName) {
    return false;*/
 }
 
-});
+//});

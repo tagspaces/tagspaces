@@ -3,66 +3,63 @@
  * can be found in the LICENSE file. */
 console.debug("Loading Loader...");
 
-// Init layout
-require(["js/layout.ui"]);
-
-// Setting up the communication between the extension and tagspace app
-if( $.browser.mozilla) {
-    require(["js/messaging.mozilla"]); 
-}
-
-FileViewer = undefined; 
-TagsUI = undefined;
-//BasicViewsUI = undefined;
-
-jQuery(function($) {
-    require([
-            "js/fileviewer.ui",
-            "js/tags.ui",
-            "js/basicviews.ui.js",
-            "js/misc.ui.js",
-            "js/ioapi.chrome.js",
-            "js/ioapi.mozilla.js",
-            "js/settings.api.js",
-            "js/tagspace.api.js",
-            "js/directories.ui.js",
-            "js/settings.ui.js"
-        ], 
-        function(viewer,tags) { 
-            FileViewer = viewer;
-            
-            TagsUI = tags;
-            TagsUI.initContextMenus();
-            TagsUI.initDialogs();
-            TagsUI.initTagTree();            
-            
-            //BasicViewsUI = basicviews;
-            BasicViewsUI.initContextMenus();
-            BasicViewsUI.initFileTagViews();
-            BasicViewsUI.initDialogs(); 
-            BasicViewsUI.initButtons();
-            BasicViewsUI.initThumbView();
-            
-            DirectoriesUI.initDialogs();
-            DirectoriesUI.initButtons();
-            DirectoriesUI.initDirectoryTree();
-            
-            SettingsUI.initButtons();
-            SettingsUI.initDialogs();
-            SettingsUI.initJSONEditor();
-           
-            TSSETTINGS.loadSettingsLocalStorage();
-            
-            // By empty local storage and a mozilla browser, trying to load from mozilla preferences
-            if(TSSETTINGS.Settings == undefined && $.browser.mozilla) {
-                setTimeout(IOAPI.loadSettings, 1000); // executes initUI and updateSettingMozillaPreferences by success
-                console.debug("Loading setting with from mozilla pref execured with delay...");
-            } 
-        
-            if(TSSETTINGS.Settings == undefined) {
-                TSSETTINGS.Settings = TSSETTINGS.DefaultSettings;
-            }          
-            
-            UIAPI.initUI(); 
-    });    
+require.config({
+    map: {
+      '*': {
+        'css': 'libs/requirecss/css'
+      }
+    },
+    paths: {
+        jquery: 'libs/jquery/jquery-1.8.3.min',
+        jquerylayout: 'libs/jquerylayout/jquery.layout-latest.min',
+        jquerylayoutcss: 'libs/jquerylayout/layout-default-latest',
+        jqueryui: 'libs/jqueryui/jquery-ui-1.9.2.custom.min',
+        jqueryuicss: 'libs/jqueryui/custom-theme/jquery-ui-1.9.1.custom',
+        dynatree: 'libs/dynatree/jquery.dynatree.min',
+        dynatreecss: 'libs/dynatree/skin-vista/ui.dynatree',        
+        datatables: 'libs/datatables/js/jquery.dataTables.min',
+        datatablescss: 'libs/datatables/css/jquery.dataTables',
+        jsoneditor: 'libs/jsoneditor/jsoneditor',
+        jsoneditorcss: 'libs/jsoneditor/jsoneditor',
+        less: 'libs/less/less-1.3.1.min',
+    }, 
+    shim: {
+        'jquerylayout': {
+            deps: [
+                'jquery'
+            ]
+        },
+        'jqueryui': {
+            deps: [
+                'jquery'
+            ]
+        },
+        'dynatree': {
+            deps: [
+                'jquery'
+            ]
+        },
+        'datatables': {
+            deps: [
+                'jquery'
+            ]
+        },
+/*        less: {
+            deps: [
+                'css!jquerylayoutcss',
+                'css!jqueryuicss',
+                'css!dynatreecss',
+                'css!datatablescss',
+                'css!jsoneditorcss'
+                ]
+        },*/
+    }  
 });
+
+// Init Application
+require(['js/main'], 
+    function(Main) { 
+        $(document).ready(Main.initializeLayout());
+        Main.initializeUI();
+    }
+);    

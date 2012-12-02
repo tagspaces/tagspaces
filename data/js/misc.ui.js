@@ -1,6 +1,17 @@
 /* Copyright (c) 2012 The Tagspaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that 
  * can be found in the LICENSE file. */
+/*
+define([
+    'require',
+    'exports',
+    'module',
+    'jsoneditor',
+//    'css!jsoneditorcss'
+],function(require, exports, module) {
+*/
+//"use strict";
+
 console.debug("Loading MiscUI...");
 
 var UIAPI = (typeof UIAPI == 'object' && UIAPI != null) ? UIAPI : {};
@@ -171,9 +182,6 @@ UIAPI.initRiverView = function(viewType) {
     for (var i=0; i < UIAPI.fileList.length; i++) {
         if(i > 10) break;
         tagsHTML = "";
-//          for (var j=0; j < tags.length; j++) {
-//              tagsHTML +='<button id="'+tags[j]+'" title="Open tag menu" class="tagButton">'+tags[j]+'</button>';    
-//          };
         var fileName = UIAPI.fileList[i][0];
         var filePath = UIAPI.currentPath+UIAPI.getDirSeparator()+fileName;
         tagsHTML += '<iframe id="idFrameViewer" style="width: 100%; height: 150px;" src="'+'file:///'+filePath+'" />';
@@ -331,6 +339,7 @@ UIAPI.handleElementActivation = function() {
 UIAPI.initUI = function() {
     try {
         console.debug("Initializing UI...");
+        // TODO remove html()
         $("#appVersion").html("["+TSSETTINGS.Settings["appVersion"]+"]");
 
         DirectoriesUI.initFavorites();
@@ -352,6 +361,9 @@ UIAPI.initUI = function() {
 UIAPI.reloadUI = function() {
     location.reload();
 }
+
+//return UIAPI;
+//});
 
 /**
  * Sorting 

@@ -16,6 +16,9 @@ document.documentElement.addEventListener("addon-message1", function(event) {
             try {
                 console.debug("Loading settings...: "+JSON.stringify(message.content));
                 TSSETTINGS.updateSettingMozillaPreferences(message.content);
+
+                // Reloads the UI
+                UIAPI.initUI();                   
             } catch (ex) {
                 console.debug("Exception while getting setting from firefox failed "+ex)
             }
