@@ -3,7 +3,9 @@
  * can be found in the LICENSE file. */
 //define(function(require, exports, module) {
 //"use strict";
-
+//    console.log(module.id);
+//    console.log(module.uri);
+    
 console.debug("Loading FileViewer...");
 
 var FileViewer = (typeof FileViewer == 'object' && FileViewer != null) ? FileViewer : {};
@@ -33,8 +35,8 @@ FileViewer.openFile = function(fileName) {
     console.debug("File Viewer: "+viewerExt);
 
     // TODO Consider page width by opening, e.g. responsive design
-    layoutContainer.open("east");    
-    // layoutContainer.close("west");
+    UIAPI.layoutContainer.open("east");    
+    // UIAPI.layoutContainer.close("west");
 
     UIAPI.isFileOpened = true;
 
@@ -87,7 +89,9 @@ FileViewer.constructFileViewerUI = function(fileName, filePath) {
     // Generate tag buttons
     $( "#fileTags" ).empty();
     for (var i=0; i < tags.length; i++) {
-        $( "#fileTags" ).append('<button title="Opens context menu for '+tags[i]+'" tag="'+tags[i]+'" filename="'+fileName+'" class="tagButton">'+tags[i]+'</button>');    
+        $( "#fileTags" ).append( // title="Opens context menu for '+tags[i]+'"
+              $("<button>", { class: "tagButton", tag: tags[i], filename: fileName }).text(tags[i])
+              );            
     };
 
     // Activate tagButtons in file view
@@ -179,8 +183,8 @@ FileViewer.addCloseButton = function(container) {
     })
     .click(function() {
         UIAPI.isFileOpened = false;
-        layoutContainer.open("west");    
-        layoutContainer.close("east");
+        UIAPI.layoutContainer.open("west");    
+        UIAPI.layoutContainer.close("east");
     });    
 }
 

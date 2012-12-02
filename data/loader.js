@@ -59,7 +59,6 @@ require.config({
 // Init Application
 require(['js/main'], 
     function(Main) { 
-        $(document).ready(Main.initializeLayout());
-        Main.initializeUI();
+        Main.initializeApp();
     }
 );    
