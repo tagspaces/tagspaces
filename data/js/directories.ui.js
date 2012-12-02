@@ -84,13 +84,6 @@ DirectoriesUI.initButtons = function() {
     
 }
 
-// TODO Templating Dialogs
-//function insertConfirmFavoriteDeleteDialgo() {
-//    var html = '<div id="dialog-confirmtaggroupdelete" title="Delete this taggroup?">';
-//    html += '   <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>Do you really want to delete this taggroup?</p>';
-//    html += '</div>';
-//}
-
 DirectoriesUI.initDialogs = function() {
     var newDirName = $( "#dirname" );
     
@@ -208,11 +201,10 @@ DirectoriesUI.initFavorites = function() {
     $( "#favoritesList" ).empty();
     
     var favoritesList = TSSETTINGS.Settings["tagspacesList"]
-    var menuHTML = undefined;
     for (var i=0; i < favoritesList.length; i++) { 
-          menuHTML = '<li title="'+favoritesList[i].path+'" name="'+favoritesList[i].name+'" ><a href="javascript:void(0);">'+favoritesList[i].name+'</a>';
-          menuHTML += '</li>'
-          $( "#favoritesList" ).append(menuHTML);
+          $( "#favoritesList" ).append(
+                $('<li>',  { title: favoritesList[i].path, name: favoritesList[i].name}).append(
+                    $('<a>', { href: "javascript:void(0);", text: favoritesList[i].name} )));
     };
     $( "#favoritesList" ).append('<li><hr></li>');    
     $( "#favoritesList" ).append('<li name="createFavorite"><a href="javascript:void(0);"><span class="ui-icon ui-icon-document"></span>New favorite</a></li>');

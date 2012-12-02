@@ -34,19 +34,19 @@ BasicViewsUI.initFileTagViews = function() {
        //     { "sTitle": "Selection", "mData": null }
         ],         
         "aoColumnDefs": [
-            {
+            { // Filename column
                 "mRender": function ( data, type, row ) { return BasicViewsUI.buttonizeFileName(data) },
                 "aTargets": [ 0 ]
             }, 
-            {
+            { // Title column
                 "mRender": function ( data, type, row ) { return BasicViewsUI.buttonizeTitle(data,row[0]) },
                 "aTargets": [ 3 ]
             }, 
-            {
+            { // Tags column
                 "mRender": function ( data, type, row ) { return BasicViewsUI.generateTagButtons(data,row[5],row[0]) },
                 "aTargets": [ 4 ]
             }, 
-            {
+            { // Last changed date column
                 "mRender": function ( data, type, row ) { return TSAPI.formatDateTime(data, true) },
                 "aTargets": [ 2 ]
             },
@@ -126,18 +126,30 @@ BasicViewsUI.initThumbView = function() {
 
 BasicViewsUI.generateTagButtons = function(commaSeparatedTags, fileExtension, fileName) {
     console.debug("Creating tags...");
-    var htmlOutput = "";
     var tagString = ""+commaSeparatedTags;
+    var wrapper = $('<span>');
     if(fileExtension.length > 0) {
-        htmlOutput += ('<button title="Opens context menu for '+fileExtension+'" tag="'+fileExtension+'" filename="'+fileName+'" class="extTagButton">'+fileExtension+'</button>');          
+        wrapper.append($('<button>', {
+            title: "Opens context menu for "+fileExtension,
+            tag: fileExtension,
+            filename: fileName,
+            class: "extTagButton",
+            text: fileExtension
+            }));          
     } 
     if(tagString.length > 0) {
         var tags = tagString.split(",");
         for (var i=0; i < tags.length; i++) { 
-            htmlOutput += ('<button title="Opens context menu for '+tags[i]+'" tag="'+tags[i]+'" filename="'+fileName+'" class="tagButton">'+tags[i]+'</button>');    
+            wrapper.append($('<button>', {
+                title: "Opens context menu for "+tags[i],
+                tag: tags[i],
+                filename: fileName,
+                class: "tagButton",
+                text: tags[i]
+                }));   
         }   
     }
-    return htmlOutput;        
+    return wrapper.html();        
 }
 
 BasicViewsUI.clearSelectedFiles = function() {
@@ -151,9 +163,11 @@ BasicViewsUI.clearSelectedFiles = function() {
 }
 
 BasicViewsUI.buttonizeTitle = function(title, fileName) {
-    var htmlOutput = "";
-    htmlOutput += '<button title="'+fileName+'" class="fileTitleButton">'+title+'&nbsp;</button>';    
-    return htmlOutput;            
+    return $('<span>').append($('<button>', { 
+        title: fileName, 
+        class: 'fileTitleButton', 
+        text: title+'&nbsp' 
+        })).html();    
 }
 
 BasicViewsUI.openFileTitleMenu = function(tagButton, fileName) {
@@ -173,9 +187,11 @@ BasicViewsUI.openFileTitleMenu = function(tagButton, fileName) {
 } 
 
 BasicViewsUI.buttonizeFileName = function(fileName) {
-    var htmlOutput = "";
-    htmlOutput += '<button title="'+fileName+'" class="fileButton">'+fileName+'</button>';    
-    return htmlOutput;                
+    return $('<span>').append($('<button>', { 
+        title: fileName, 
+        class: 'fileButton', 
+        text: fileName 
+        })).html();
 } 
 
 BasicViewsUI.openFileMenu = function(tagButton, fileName) {
@@ -203,7 +219,7 @@ BasicViewsUI.initButtons = function() {
         }
     })
     .click(function() {
-        layoutContainer.toggle("west");
+        UIAPI.layoutContainer.toggle("west");
     });  
     
     $( "#toggleRightPanel" ).button({
@@ -213,7 +229,7 @@ BasicViewsUI.initButtons = function() {
         }        
     })
     .click(function() {
-        layoutContainer.toggle("east");
+        UIAPI.layoutContainer.toggle("east");
     });   
 
 // Change View buttons

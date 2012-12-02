@@ -42,7 +42,7 @@ FileViewer.openFile = function(fileName) {
 
     $( "#viewer" ).empty();
     if(!viewerExt) {
-        $( "#viewer" ).html("File type not supported for viewing.");        
+        $( "#viewer" ).text("File type not supported for viewing.");        
         return;
     } else {
         require(["ext/"+viewerExt+"/extension"], function(viewer) {
@@ -66,7 +66,7 @@ FileViewer.editFile = function(fileName) {
 
     $( "#viewer" ).empty();
     if(!editorExt) {
-        $( "#viewer" ).html("File type not supported for editing.");        
+        $( "#viewer" ).text("File type not supported for editing.");        
         return;
     } else {
         $( "#viewer" ).html('<div id="generalEditor" style="width: 100%; height: 100%"></div>');
@@ -83,15 +83,18 @@ FileViewer.constructFileViewerUI = function(fileName, filePath) {
     // Adding tag buttons to the filetoolbox
     var tags = TSAPI.extractTags(fileName);
 
-    // TODO remove html()
-    $( "#fileTitle" ).html(TSAPI.extractTitle(fileName));
+    $( "#fileTitle" ).text(TSAPI.extractTitle(fileName));
     
     // Generate tag buttons
     $( "#fileTags" ).empty();
     for (var i=0; i < tags.length; i++) {
-        $( "#fileTags" ).append( // title="Opens context menu for '+tags[i]+'"
-              $("<button>", { class: "tagButton", tag: tags[i], filename: fileName }).text(tags[i])
-              );            
+        $( "#fileTags" ).append($("<button>", { 
+            class: "tagButton", 
+            tag: tags[i], 
+            filename: fileName, 
+            title: "Opens context menu for "+tags[i],
+            text: tags[i] 
+            }));            
     };
 
     // Activate tagButtons in file view
@@ -110,8 +113,8 @@ FileViewer.constructFileViewerUI = function(fileName, filePath) {
     this.addOpenInWindowButton("#filetoolbox", filePath);
 
     // TODO Tag suggestion disabled due menu init issue
-    //this.initTagSuggestionMenu(fileName, tags);
-    //this.addTagSuggestionButton("#filetoolbox");
+    this.initTagSuggestionMenu(fileName, tags);
+    this.addTagSuggestionButton("#filetoolbox");
 
     this.addCloseButton("#filetoolbox");     
 }
@@ -123,17 +126,22 @@ FileViewer.initTagSuggestionMenu = function(fileName, tags) {
 
  //   $( "#tagSuggestionsMenu" ).menu();
  //   $( "#tagSuggestionsMenu" ).menu("disable");
-    $( "#tagSuggestionsMenu" ).html(""); 
+    var tsMenu = $( "#tagSuggestionsMenu" );
+    tsMenu.empty(); 
     
     for (var i=0; i < suggTags.length; i++) {        
         // Ignoring the tags already assigned to a file
         if(tags.indexOf(suggTags[i]) < 0) {
-            $( "#tagSuggestionsMenu" ).append('<li name="'+suggTags[i]+'" title="Add tag '+suggTags[i]+' to current file">Tag with "'+suggTags[i]+'"</li>');               
+            tsMenu.append($('<li>', { 
+                name: suggTags[i], 
+                title: "Add tag "+suggTags[i]+" to current file", 
+                text: "Tag with "+suggTags[i] 
+                }));               
         }         
     };
     
     // TODO menu does not initialize
-    $( "#tagSuggestionsMenu" ).menu({ // menu("destroy").
+    tsMenu.menu({ // menu("destroy").
         select: function( event, ui ) {
             var tagName = ui.item.attr( "name" );    
             TSAPI.writeTagsToFile(fileName, [tagName]);

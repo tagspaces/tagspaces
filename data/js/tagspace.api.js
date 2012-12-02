@@ -211,16 +211,3 @@ TSAPI.addTag = function(tagName, tagType) {
 	// Refreshing the dir list
 	IOAPI.listDirectory(UIAPI.currentPath);  
 }
-
-// TODO Add smart tag template functionality
-TSAPI.addSmartTag = function(tagID) {
-    // Getting the real tag name from ID of the button
-    var tagname = tagID.substring(TSAPI.tagIDPrefix.length+TSAPI.tagspaceIDLength,tagID.length);
-
-    // Get the tagspace id
-    var tagspaceID = tagID.substring(TSAPI.tagIDPrefix.length,TSAPI.tagIDPrefix.length+TSAPI.tagspaceIDLength);    
-
-    console.debug("Adding smart tag: "+tagname+" tagspaceid: "+tagspaceID);
-
-    $( "#dialog-smarttag" ).dialog( "open" );
-}

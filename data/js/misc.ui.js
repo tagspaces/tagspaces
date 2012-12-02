@@ -176,6 +176,8 @@ UIAPI.initFileTagView = function(viewType) {
 }
 
 UIAPI.initRiverView = function(viewType) {
+    console.debug("River view disabled");
+/*
     $("#riverView").empty();
     layoutContainer.close("east");
     var tagsHTML = undefined;
@@ -187,23 +189,24 @@ UIAPI.initRiverView = function(viewType) {
         tagsHTML += '<iframe id="idFrameViewer" style="width: 100%; height: 150px;" src="'+'file:///'+filePath+'" />';
         $("#riverView").append(tagsHTML);
     }
-    $("#riverView").show();
+    $("#riverView").show();*/
 }
 
 UIAPI.initThumbView = function(viewType) {
     $("#selectableFiles").empty();
-    var tagsHTML = undefined;
     for (var i=0; i < UIAPI.fileList.length; i++) {
-        tagsHTML = "";
         var fileName = UIAPI.fileList[i][0];
         var fileExt = fileName.substring(fileName.lastIndexOf(".")+1,fileName.length).toLowerCase();
         if(TSSETTINGS.getSupportedFileExt4Thumbnailing().indexOf(fileExt) >= 0) {
             var filePath = UIAPI.currentPath+UIAPI.getDirSeparator()+fileName;
-            tagsHTML += '<img title="'+fileName+'" class="thumbImg" src="file:///'+filePath+'" />';
+            $("#selectableFiles").append(
+                 $('<li>', { title: fileName, class: 'ui-widget-content' }).append( 
+                    $('<img>', { title: fileName, class: "thumbImg", src: 'file:///'+filePath })));
         } else {
-            tagsHTML += '<span class="fileExtension">'+fileExt+'</span>';
+            $("#selectableFiles").append(
+                 $('<li>', { title: fileName, class: 'ui-widget-content' }).append(
+                    $('<span>', { class: "fileExtension", text: fileExt})));
         }
-        $("#selectableFiles").append('<li title="'+fileName+'" class="ui-widget-content">'+tagsHTML+'</li>');
     }    
 }
 
@@ -218,7 +221,7 @@ UIAPI.changeView = function(viewType) {
     
     $("#selectableFiles").hide();         
 
-    // Purging the thumbnail view
+    // Purging the thumbnail view, avoiding memory leak
     document.getElementById("selectableFiles").innerHTML = "";
 
     UIAPI.fileTable.hide();     
@@ -304,13 +307,10 @@ UIAPI.changeDirectory = function(newDir) {
             UIAPI.currentPath  = newPath+"/"+newDir+"/";
         }      
     }
-    $('#footer').empty();
-    $('#footer').append("Path: "+UIAPI.currentPath);
     console.debug("New path: "+UIAPI.currentPath);
     IOAPI.listDirectory(UIAPI.currentPath);
     UIAPI.selectedTag = "";
 }
-
 
 UIAPI.handleElementActivation = function() {
     console.debug("Entering element activation handler...");
@@ -338,8 +338,7 @@ UIAPI.handleElementActivation = function() {
 UIAPI.initUI = function() {
     try {
         console.debug("Initializing UI...");
-        // TODO remove html()
-        $("#appVersion").html("["+TSSETTINGS.Settings["appVersion"]+"]");
+        $("#appVersion").text("["+TSSETTINGS.Settings["appVersion"]+"]");
 
         DirectoriesUI.initFavorites();
     

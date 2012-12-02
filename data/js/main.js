@@ -40,10 +40,8 @@ var initApp = function(){
             "js/directories.ui",
         ], 
         function() {
-            /* $(document).ready({
-                layoutContainer = initLayout();
-            });*/
-            UIAPI.initLayout();
+            // TODO check if document.ready is really needed
+            $(document).ready( UIAPI.initLayout() );
 
             TagsUI.initContextMenus();
             TagsUI.initDialogs();
