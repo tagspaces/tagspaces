@@ -242,8 +242,7 @@ DirectoriesUI.initFavorites = function() {
                 break;
             }
         }         
-    });  
-    $( "#favoritesList" ).hide(); 
+    });   
 }
 
 DirectoriesUI.openFavorite = function(path, title) {

@@ -4,7 +4,7 @@
     <!--
     Copyright (c) 2012 The Tagspaces Authors. All rights reserved.
     Use of this source code is governed by a AGPL3 license that 
-    can be found in the LICENSE file.
+    can be found in the LICENSE file. Initializing TagSpaces ...
     -->    
 	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
 	<link rel="shortcut icon" type="image/x-icon" href="icons/icon16.png">
@@ -18,7 +18,8 @@
     <script type="text/javascript" data-main="loader" src="libs/requirejs/require.js"></script>
 </head>
 <body>
-<div id="container">
+<div id="initialization" style="widht: 100%; height: 100%; z-index: 9999"></div>	
+<div id="container" style="display: none;">
     <div class="ui-layout-north">
         <span id="logo">TagSpaces<sup id="appVersion" style="font-size: 0.6em; color: #BFBFBF"></sup></span>
         <span id="loadingAnimation">&nbsp;</span> 
@@ -261,7 +262,6 @@
         <div id="settingsEditor" style="width: 100%; height: 100%;"></div>
         <div id="settingsPlainJSON" style="width: 100%; height: 100%;"></div>
     </div>
-</div>	
     
 <ul class="contextMenu" id="favoritesList"></ul>
 
@@ -311,6 +311,8 @@
     <li><hr></li>
     <li action="closeMenu" title=""><a href="javascript:void(0);"><span class="ui-icon ui-icon-close"></span>Close Menu</a></li>  
 </ul>  
+
+</div>	
 
 </body>
 </html>
