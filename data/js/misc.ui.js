@@ -350,7 +350,11 @@ UIAPI.initUI = function() {
         // Loading the first tagspace in config by default     
         //DirectoriesUI.openFavorite(TSSETTINGS.Settings["tagspacesList"][0].path, TSSETTINGS.Settings["tagspacesList"][0].name);
         
-        UIAPI.hideLoadingAnimation();        
+        UIAPI.hideLoadingAnimation();
+		
+		$( "#container" ).show();
+		$( "#initialization" ).hide();
+    
     } catch (ex) {
         console.error("Initializing UI failed! "+ex);
     }   

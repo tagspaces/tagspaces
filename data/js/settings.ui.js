@@ -9,7 +9,6 @@ define([
     'jsoneditor',
 //    'css!jsoneditorcss'
 ],function(require, exports, module) {
-// TODO
 //"use strict";
 */
 console.debug("Loading SettingsUI...");
@@ -19,7 +18,8 @@ var SettingsUI = (typeof SettingsUI == 'object' && SettingsUI != null) ? Setting
 // Init JSON Editor
 // TODO variable editor is hardcoded due a bug in the JSONEditor lib
 SettingsUI.initJSONEditor = function() {
-    editor = new JSONEditor(document.getElementById("settingsEditor"));   
+    var edEl = document.getElementById("settingsEditor");
+    editor = new JSONEditor(edEl);   
     formatter = new JSONFormatter(document.getElementById("settingsPlainJSON")); 
 }
 

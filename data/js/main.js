@@ -40,9 +40,6 @@ var initApp = function(){
             "js/directories.ui",
         ], 
         function() {
-            // TODO check if document.ready is really needed
-            $(document).ready( UIAPI.initLayout() );
-
             TagsUI.initContextMenus();
             TagsUI.initDialogs();
             TagsUI.initTagTree();            
@@ -59,7 +56,6 @@ var initApp = function(){
             
             SettingsUI.initButtons();
             SettingsUI.initDialogs();
-            SettingsUI.initJSONEditor();
            
             TSSETTINGS.loadSettingsLocalStorage();
             
@@ -76,6 +72,13 @@ var initApp = function(){
             }          
             
             UIAPI.initUI(); 
+            
+            // TODO check if document.ready is really needed
+            $(document).ready(function() {
+            	UIAPI.initLayout();
+            	SettingsUI.initJSONEditor();            	            	
+            } 
+            );            
     });         
 }
 
