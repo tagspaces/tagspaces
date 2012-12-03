@@ -10,13 +10,6 @@ console.debug("Loading FileViewer...");
 
 var FileViewer = (typeof FileViewer == 'object' && FileViewer != null) ? FileViewer : {};
 
-var tsEditor = undefined;
-
-FileViewer.updateTextEditorContent = function(fileContent) {
-    console.debug("Updating edtitor"); // with data: "+fileContent); 
-    tsEditor.setContent(fileContent);    
-}
-
 FileViewer.openFile = function(fileName) {
     console.debug("Opening file: "+fileName);
 
@@ -26,7 +19,7 @@ FileViewer.openFile = function(fileName) {
     $("#selectedFilePath").val(openedFilePath); 
     
     var fileExt = fileName.substring(fileName.lastIndexOf(".")+1,fileName.length).toLowerCase();
-    var filePath = "file:///"+UIAPI.currentPath+UIAPI.getDirSeparator()+fileName;
+    var filePath = UIAPI.currentPath+UIAPI.getDirSeparator()+fileName;
 
     this.constructFileViewerUI(fileName, filePath);         
 
@@ -47,16 +40,21 @@ FileViewer.openFile = function(fileName) {
     } else {
         require(["ext/"+viewerExt+"/extension"], function(viewer) {
             tsEditor = viewer;
-            tsEditor.init("viewer");
-            // tsEditor.setFileType(fileExt);
-            tsEditor.setContent(filePath);
+            tsEditor.init(filePath, "viewer");
+            tsEditor.viewerMode(true);
         });
-//        IOAPI.loadTextFile(filePath);
     }  
 } 
 
+var tsEditor = undefined;
+
+FileViewer.updateEditorContent = function(fileContent) {
+    console.debug("Updating editor"); // with data: "+fileContent); 
+    tsEditor.setContent(fileContent);    
+}
+
 FileViewer.editFile = function(fileName) {
-    console.debug("Editing file: "+filePath);
+    console.debug("Editing file: "+fileName);
     var filePath = UIAPI.currentPath+UIAPI.getDirSeparator()+fileName;
     var fileExt = fileName.substring(fileName.lastIndexOf(".")+1,fileName.length).toLowerCase();
 
@@ -69,15 +67,19 @@ FileViewer.editFile = function(fileName) {
         $( "#viewer" ).text("File type not supported for editing.");        
         return;
     } else {
-        $( "#viewer" ).html('<div id="generalEditor" style="width: 100%; height: 100%"></div>');
         require(["ext/"+editorExt+"/extension"], function(editr) {
             tsEditor = editr;
-            tsEditor.init("generalEditor");
-            tsEditor.setFileType(fileExt);
+            tsEditor.init(filePath, "viewer");
         });
-        IOAPI.loadTextFile(filePath);
     }   
 } 
+
+FileViewer.saveFile = function(fileName) {
+    console.debug("Save current file: "+fileName);
+    var content = tsEditor.getContent();
+    var filePath = UIAPI.currentPath+UIAPI.getDirSeparator()+fileName;
+    IOAPI.saveTextFile(filePath, content);    	
+}
 
 FileViewer.constructFileViewerUI = function(fileName, filePath) {
     // Adding tag buttons to the filetoolbox
@@ -153,6 +155,7 @@ FileViewer.initTagSuggestionMenu = function(fileName, tags) {
 FileViewer.addEditButton = function(container, fileName) {
     // TODO implement disabled check
     var buttonDisabled = false;
+	var options;
     $( ""+container ).append('<button id="editDocument">Edit</button>');
     $( "#editDocument" ).button({
         text: true,        
@@ -162,7 +165,25 @@ FileViewer.addEditButton = function(container, fileName) {
         disabled: buttonDisabled
     })
     .click(function() {
-        exports.editFile(fileName);
+		if ( $( this ).text() === "Edit" ) {
+			options = {
+				label: "Save",
+				icons: {
+					primary: "ui-icon-disk"
+				}
+			};
+        	FileViewer.editFile(fileName);
+		} else {
+			options = {
+				label: "Edit",
+				icons: {
+					primary: "ui-icon-wrench"
+				}
+			};
+			FileViewer.saveFile(fileName);
+			FileViewer.openFile(fileName);
+		}
+		$( this ).button( "option", options );    	
     });        
 }
 
@@ -176,7 +197,7 @@ FileViewer.addOpenInWindowButton = function(container, filePath) {
         disabled: false
     })
     .click(function() {
-        window.open(filePath);
+        window.open("file:///"+filePath);
     });        
 }
 
@@ -190,6 +211,8 @@ FileViewer.addCloseButton = function(container) {
         disabled: false
     })
     .click(function() {
+    	// Cleaning the viewer/editor
+	    document.getElementById("viewer").innerHTML = "";
         UIAPI.isFileOpened = false;
         UIAPI.layoutContainer.open("west");    
         UIAPI.layoutContainer.close("east");

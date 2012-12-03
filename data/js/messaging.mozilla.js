@@ -67,7 +67,7 @@ document.documentElement.addEventListener("addon-message1", function(event) {
         break;
       case "loadTextFile":
         if(message.success){
-            UIAPI.updateTextEditorContent(message.content);         
+            FileViewer.updateEditorContent(message.content);         
         } else {
             UIAPI.updateLogger("File loading failed");      
         }
