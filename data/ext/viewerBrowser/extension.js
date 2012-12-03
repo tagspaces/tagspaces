@@ -10,22 +10,26 @@ exports.config = {
         ],        
 }
 
-exports.init = function(elementID) {
+exports.init = function(filePath, elementID) {
     console.debug("Initalization Browser Viewer...");
-    var viewer = document.getElementById(elementID);
-    viewer.innerHTML = '<iframe id="idFrameViewer"></iframe>';                 
+    filePath = "file:///"+filePath;
+
+    $('#'+elementID).append($('<iframe>', {
+    	id: "iframeViewer",
+		src: filePath
+    }));
 }
 
 exports.viewerMode = function(isViewerMode) {
-
+	console.debug("viewerMode not supported on this extension");  
 }
 
 exports.setContent = function(content) {
-    document.getElementById('idFrameViewer').src = content;
+	console.debug("setContent not supported on this extension"); 	    
 }
 
 exports.getContent = function() {
-
+	console.debug("getContent not supported on this extension"); 
 }
 
 });

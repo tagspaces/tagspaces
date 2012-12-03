@@ -14,22 +14,26 @@ exports.config = {
         ],        
 }
 
-exports.init = function(elementID) {
-    console.debug("Initalization Browser Viewer...");
-    var viewer = document.getElementById(elementID);
-    viewer.innerHTML = '<img id="idImageViewer"></img>';                 
+exports.init = function(filePath, elementID) {
+    console.debug("Initalization Browser Image Viewer...");
+    filePath = "file:///"+filePath;
+
+    $('#'+elementID).append($('<img>', {
+    	id: "imgViewer",
+		src: filePath
+    }));
 }
 
 exports.viewerMode = function(isViewerMode) {
-
+	console.debug("viewerMode not supported on this extension");  
 }
 
 exports.setContent = function(content) {
-    document.getElementById('idImageViewer').src = content;
+	console.debug("setContent not supported on this extension"); 	
 }
 
 exports.getContent = function() {
-
+	console.debug("getContent not supported on this extension"); 	
 }
 
 });
