@@ -13,6 +13,8 @@ var FileViewer = (typeof FileViewer == 'object' && FileViewer != null) ? FileVie
 FileViewer.openFile = function(fileName) {
     console.debug("Opening file: "+fileName);
 
+    FileViewer.isEditMode = false;
+
     var openedFilePath = UIAPI.currentPath+UIAPI.getDirSeparator()+fileName;
     // TODO replace \\ to \ in filenames
     openedFilePath.replace("\\\\","\\");
@@ -48,29 +50,44 @@ FileViewer.openFile = function(fileName) {
 
 var tsEditor = undefined;
 
+// If a file is currently opened for editing, this var should be true
+FileViewer.isEditMode = false;
+
 FileViewer.updateEditorContent = function(fileContent) {
     console.debug("Updating editor"); // with data: "+fileContent); 
     tsEditor.setContent(fileContent);    
 }
 
-FileViewer.editFile = function(fileName) {
-    console.debug("Editing file: "+fileName);
-    var filePath = UIAPI.currentPath+UIAPI.getDirSeparator()+fileName;
+// Should return false if no editor found
+FileViewer.getFileEditor = function(fileName) {
     var fileExt = fileName.substring(fileName.lastIndexOf(".")+1,fileName.length).toLowerCase();
 
     // Getting the editor for the file extension/type
     var editorExt = TSSETTINGS.getFileTypeEditor(fileExt);  
     console.debug("File Editor: "+editorExt);
+    return editorExt;    
+}
 
+FileViewer.editFile = function(fileName) {
+    console.debug("Editing file: "+fileName);
+    var filePath = UIAPI.currentPath+UIAPI.getDirSeparator()+fileName;
+
+    var editorExt = FileViewer.getFileEditor(fileName);
+    
     $( "#viewer" ).empty();
-    if(!editorExt) {
+    if(editorExt === false) {
         $( "#viewer" ).text("File type not supported for editing.");        
         return;
     } else {
-        require(["ext/"+editorExt+"/extension"], function(editr) {
-            tsEditor = editr;
-            tsEditor.init(filePath, "viewer");
-        });
+        try {
+            require(["ext/"+editorExt+"/extension"], function(editr) {
+                tsEditor = editr;
+                tsEditor.init(filePath, "viewer");
+            });
+            FileViewer.isEditMode = true;
+        } catch(ex) {
+            console.error("Loading editing extension failed: "+ex);
+        }
     }   
 } 
 
@@ -115,12 +132,11 @@ FileViewer.constructFileViewerUI = function(fileName, filePath) {
     this.addOpenInWindowButton("#filetoolbox", filePath);
 
     // TODO Tag suggestion disabled due menu init issue
-    this.initTagSuggestionMenu(fileName, tags);
-    this.addTagSuggestionButton("#filetoolbox");
+    //this.initTagSuggestionMenu(fileName, tags);
+    //this.addTagSuggestionButton("#filetoolbox");
 
     this.addCloseButton("#filetoolbox");     
 }
-
 
 FileViewer.initTagSuggestionMenu = function(fileName, tags) {
     // Adding buttons for creating tags according to the suggested tags
@@ -153,8 +169,11 @@ FileViewer.initTagSuggestionMenu = function(fileName, tags) {
 }
 
 FileViewer.addEditButton = function(container, fileName) {
-    // TODO implement disabled check
     var buttonDisabled = false;
+    // If no editor found, disabling the button
+    if(FileViewer.getFileEditor(fileName) === false) {
+        buttonDisabled = true;
+    }
 	var options;
     $( ""+container ).append('<button id="editDocument">Edit</button>');
     $( "#editDocument" ).button({
@@ -167,21 +186,23 @@ FileViewer.addEditButton = function(container, fileName) {
     .click(function() {
 		if ( $( this ).text() === "Edit" ) {
 			options = {
-				label: "Save",
+				label: "Save&Close",
 				icons: {
 					primary: "ui-icon-disk"
 				}
 			};
         	FileViewer.editFile(fileName);
 		} else {
-			options = {
-				label: "Edit",
-				icons: {
-					primary: "ui-icon-wrench"
-				}
-			};
-			FileViewer.saveFile(fileName);
-			FileViewer.openFile(fileName);
+		    if(confirm("Do you really want to overwrite the current file?")) {
+                options = {
+                    label: "Edit",
+                    icons: {
+                        primary: "ui-icon-wrench"
+                    }
+                };
+                FileViewer.saveFile(fileName);
+                FileViewer.openFile(fileName);		        
+		    }
 		}
 		$( this ).button( "option", options );    	
     });        
@@ -211,14 +232,25 @@ FileViewer.addCloseButton = function(container) {
         disabled: false
     })
     .click(function() {
-    	// Cleaning the viewer/editor
-	    document.getElementById("viewer").innerHTML = "";
-        UIAPI.isFileOpened = false;
-        UIAPI.layoutContainer.open("west");    
-        UIAPI.layoutContainer.close("east");
+        if(FileViewer.isEditMode) {
+            if(confirm("If you confirm, all made changes will be lost.")){
+                // Cleaning the viewer/editor
+                document.getElementById("viewer").innerHTML = "";
+                UIAPI.isFileOpened = false;
+                UIAPI.layoutContainer.open("west");    
+                UIAPI.layoutContainer.close("east");
+                FileViewer.isEditMode = false;                
+            }
+        } else {
+            // Cleaning the viewer/editor
+            document.getElementById("viewer").innerHTML = "";
+            UIAPI.isFileOpened = false;
+            UIAPI.layoutContainer.open("west");    
+            UIAPI.layoutContainer.close("east");
+            FileViewer.isEditMode = false;            
+        }
     });    
 }
-
 
 FileViewer.addFullScreenButton = function(container) {
     $( ""+container ).append('<button id="startFullscreen">Fullscreen</button>');
