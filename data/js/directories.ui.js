@@ -194,7 +194,7 @@ DirectoriesUI.initDialogs = function() {
 var nameCurrentFavorite = undefined;
 
 DirectoriesUI.initFavorites = function() {
-    console.debug("Creating favorites...");
+    console.debug("Creating location menu...");
     
     $( "#favoritesList" ).menu();
     $( "#favoritesList" ).menu("disable");
@@ -207,11 +207,11 @@ DirectoriesUI.initFavorites = function() {
                     $('<a>', { href: "javascript:void(0);", text: favoritesList[i].name} )));
     };
     $( "#favoritesList" ).append('<li><hr></li>');    
-    $( "#favoritesList" ).append('<li name="createFavorite"><a href="javascript:void(0);"><span class="ui-icon ui-icon-document"></span>New favorite</a></li>');
-  //  $( "#favoritesList" ).append('<li name="editFavorite"><a href="javascript:void(0);"><span class="ui-icon ui-icon-pencil"></span>Edit</a></li>');
-    $( "#favoritesList" ).append('<li name="deleteFavorite"><a href="javascript:void(0);"><span class="ui-icon ui-icon-trash"></span>Delete current</a></li>');
+    $( "#favoritesList" ).append('<li name="createFavorite"><a href="javascript:void(0);"><span class="ui-icon ui-icon-document"></span>New Location</a></li>');
+  //  $( "#favoritesList" ).append('<li name="editFavorite"><a href="javascript:void(0);"><span class="ui-icon ui-icon-pencil"></span>Edit Location</a></li>');
+    $( "#favoritesList" ).append('<li name="deleteFavorite"><a href="javascript:void(0);"><span class="ui-icon ui-icon-trash"></span>Remove Location</a></li>');
     $( "#favoritesList" ).append('<li><hr style="height: 0px; border: 0px;"></li>');    
-    $( "#favoritesList" ).append('<li name="createDirectory"><a href="javascript:void(0);"><span class="ui-icon ui-icon-document"></span>New subfolder</a></li>');
+    $( "#favoritesList" ).append('<li name="createDirectory"><a href="javascript:void(0);"><span class="ui-icon ui-icon-document"></span>New Folder</a></li>');
     
     $( "#favoritesList" ).menu("destroy").menu({
         select: function( event, ui ) {

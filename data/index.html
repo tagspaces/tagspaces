@@ -9,7 +9,7 @@
 	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
 	<link rel="shortcut icon" type="image/x-icon" href="icons/icon16.png">
 	<title>TagSpaces</title>
-    <link rel="stylesheet" type="text/css" href="libs/jqueryui/custom-theme/jquery-ui-1.9.1.custom.css">
+    <link rel="stylesheet" type="text/css" href="libs/jqueryui/custom-theme/jquery-ui-1.9.2.custom.css">
     <link rel="stylesheet" type="text/css" href="libs/jquerylayout/layout-default-latest.css">    
 	<link rel="stylesheet" type="text/css" href="libs/dynatree/skin-vista/ui.dynatree.css">    
     <link rel="stylesheet" type="text/css" href="libs/jsoneditor/jsoneditor.css">
@@ -37,7 +37,7 @@
     <div class="ui-layout-west" style="padding: 2px;">
         <div id="directoryNavigator" class="west-center" style="padding: 0">
             <div id="directoryNavigatorNorth" style="padding: 0" >
-                    <button id="reloadTagSpace" style="text-align: left; width: 85%;">Select favorite</button>
+                    <button id="reloadTagSpace" style="text-align: left; width: 85%;">Select Location</button>
                     <button id="selectTagSpace">&nbsp;</button>
             </div>
             <div id="dirTree" style="padding: 0; height: 100%;"></div>   
@@ -279,13 +279,13 @@
 <ul class="contextMenu" id="fileTitleMenu">
     <li action="openFile" title=""><a href="javascript:void(0);"><span class="ui-icon ui-icon-plus"></span>Open File</a></li>               
     <!--li action="editFile" title=""><a href="javascript:void(0);"><span class="ui-icon ui-icon-wrench"></span>Edit File</a></li-->                   
-    <li action="addTag" title=""><a href="javascript:void(0);"><span class="ui-icon ui-icon-tag"></span>Add tags</a></li>               
+    <li action="addTag" title=""><a href="javascript:void(0);"><span class="ui-icon ui-icon-tag"></span>Add Tags</a></li>               
     <li><hr></li>
     <li action="closeMenu" title=""><a href="javascript:void(0);"><span class="ui-icon ui-icon-close"></span>Close Menu</a></li>       
 </ul>
 
 <ul class="contextMenu" id="tagMenu">
-    <li action="addTagAsFilter" title=""><a href="javascript:void(0);"><span class="ui-icon ui-icon-search"></span>Set as search criteria</a></li>
+    <li action="addTagAsFilter" title=""><a href="javascript:void(0);"><span class="ui-icon ui-icon-search"></span>Set As Filter</a></li>
     <!--li action="addTagInTagGroup" title=""><a href="javascript:void(0);">Add tag in tag group</a></li-->
     <li action="editTag" title=""><a href="javascript:void(0);"><span class="ui-icon ui-icon-pencil"></span>Edit Tag</a></li>               
     <li action="removeTag" title=""><a href="javascript:void(0);"><span class="ui-icon ui-icon-trash"></span>Remove Tag</a></li>
@@ -294,8 +294,8 @@
 </ul>        
 
 <ul class="contextMenu" id="tagTreeMenu">
-    <li action="addTagToFile" title="Add current tag to the selected files"><a href="javascript:void(0);"><span class="ui-icon ui-icon-tag"></span>Tag selected files</a></li>
-    <li action="addTagAsFilter" title="Set current tag as a filter criteria"><a href="javascript:void(0);"><span class="ui-icon ui-icon-search"></span>Set as Filter</a></li>
+    <li action="addTagToFile" title="Add current tag to the selected files"><a href="javascript:void(0);"><span class="ui-icon ui-icon-tag"></span>Tag Selected Files</a></li>
+    <li action="addTagAsFilter" title="Set current tag as a filter criteria"><a href="javascript:void(0);"><span class="ui-icon ui-icon-search"></span>Set As Filter</a></li>
     <li action="editTag" title="Edit current tag"><a href="javascript:void(0);"><span class="ui-icon ui-icon-wrench"></span>Edit</a></li>               
     <li action="deleteTag" title="Delete the tag from the taggroup"><a href="javascript:void(0);"><span class="ui-icon ui-icon-trash"></span>Delete</a></li>
     <li><hr></li>    

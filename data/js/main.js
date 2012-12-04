@@ -59,13 +59,13 @@ var initApp = function(){
            
             TSSETTINGS.loadSettingsLocalStorage();
             
-            // In firefox, by empty local storage trying to load fteh settings from mozilla preferences
+            // In firefox, by empty local storage trying to load the settings from mozilla preferences
             if(TSSETTINGS.Settings == undefined && $.browser.mozilla) {
                 setTimeout(IOAPI.loadSettings, 1000); // executes initUI and updateSettingMozillaPreferences by success
                 console.debug("Loading setting with from mozilla pref execured with delay...");
             } 
         
-            // If still nothing found, loading the default setting from the application javascript
+            // If still nothing found, loading the default setting from the application's javascript
             // This is usually the case by a new installation
             if(TSSETTINGS.Settings == undefined) {
                 TSSETTINGS.Settings = TSSETTINGS.DefaultSettings;
