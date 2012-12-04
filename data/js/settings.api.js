@@ -46,18 +46,18 @@ TSSETTINGS.DefaultSettings = {
 	"settingsVersion": 1,
     "supportedFileTypeThumnailing": ['jpg','jpeg','png','gif'],
 	"newTextFileContent": "Text file created with tagspaces(@VERSION@.@BUILD@)...",
-    "newHTMLFileContent": "<html><head><meta http-equiv='content-type' content='text/html; charset=utf-8'><title>Tagspaces File</title></head><body>Tag created with tagspaces(@VERSION@.@BUILD@)...</body></html>",	
+    "newHTMLFileContent": "<html><head><meta http-equiv='content-type' content='text/html; charset=utf-8'><title>Tagspaces File</title></head><body>File created with tagspaces(@VERSION@.@BUILD@)...</body></html>",	
 	"newMDFileContent": '#File created with tagspaces(@VERSION@.@BUILD@)...',
 	"showUnixHiddenEntries": false, 
 	"lastOpenedTSID": 0,
     "lastOpenedDirectory": "",
 	"tagspacesList": [
         {
-            "name":'Sampe windows place', 
+            "name":'Windows Location Example', 
             "path":'Z:\\' 
         }, 
         {
-            "name":'Sample unix place', 
+            "name":'Unix Location Example', 
             "path":'/media/' 
         }, 
 	],
@@ -82,9 +82,11 @@ TSSETTINGS.DefaultSettings = {
         { "type": "mht", "viewer": "viewerBrowser", "editor": false  },                        
         { "type": "mhtml", "viewer": "viewerBrowser", "editor": false  },                                
         { "type": "maff", "viewer": "viewerBrowser", "editor": false  },                                
-        { "type": "txt", "viewer": "viewerBrowser", "editor": "editorText"  },
-        { "type": "js", "viewer": "viewerBrowser", "editor": "editorText"  },
-        { "type": "md", "viewer": "viewerMD", "editor": "editorText"  },
+        { "type": "txt", "viewer": "viewerBrowser", "editor": false  },
+        { "type": "js", "viewer": false, "editor": false  },
+        { "type": "css", "viewer": false, "editor": false  },
+        { "type": "mdown", "viewer": false, "editor": false  },                
+        { "type": "md", "viewer": false, "editor": false  }
     ],
 	"tagGroups": [
 		{
