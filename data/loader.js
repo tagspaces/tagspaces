@@ -10,18 +10,18 @@ require.config({
       }
     },
     paths: {
-        jquery: 'libs/jquery/jquery-1.8.3.min',
+        jquery: 'libs/jquery/jquery-1.8.3',
         jquerylayout: 'libs/jquerylayout/jquery.layout-latest.min',
         jquerylayoutcss: 'libs/jquerylayout/layout-default-latest',
-        jqueryui: 'libs/jqueryui/jquery-ui-1.9.2.custom.min',
-        jqueryuicss: 'libs/jqueryui/custom-theme/jquery-ui-1.9.1.custom',
+        jqueryui: 'libs/jqueryui/jquery-ui-1.9.2.custom',
+        jqueryuicss: 'libs/jqueryui/custom-theme/jquery-ui-1.9.2.custom',
         dynatree: 'libs/dynatree/jquery.dynatree.min',
         dynatreecss: 'libs/dynatree/skin-vista/ui.dynatree',        
         datatables: 'libs/datatables/js/jquery.dataTables.min',
         datatablescss: 'libs/datatables/css/jquery.dataTables',
         jsoneditor: 'libs/jsoneditor/jsoneditor',
         jsoneditorcss: 'libs/jsoneditor/jsoneditor',
-        less: 'libs/less/less-1.3.1.min',
+        less: 'libs/less/less-1.3.1',
     }, 
     shim: {
         'jquerylayout': {
