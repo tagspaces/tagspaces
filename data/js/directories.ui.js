@@ -176,6 +176,12 @@ DirectoriesUI.initDialogs = function() {
         height:240,
         modal: true,
         buttons: {
+            "Select directory": function() {                
+				IOAPI.selectDirectory();
+            },
+            "Select directory": function() {                
+				IOAPI.selectDirectory();
+            },
             "Create": function() {                
                 TSSETTINGS.createFavorite($("#favoriteName").val(), $("#favoriteLocation").val());
                 DirectoriesUI.initFavorites();  

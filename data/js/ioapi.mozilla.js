@@ -108,4 +108,32 @@ IOAPI.deleteElement = function(path) {
 		"path": path
 	}});
     document.documentElement.dispatchEvent(event);	
-} 
+}
+
+IOAPI.selectDirectory = function() {
+	console.debug("Selecting directory...");
+    var event = document.createEvent('CustomEvent');
+    event.initCustomEvent("addon-message", true, true, {"detail":{
+		"command": "selectDirectory"
+	}});
+    document.documentElement.dispatchEvent(event);	
+}
+
+IOAPI.selectFile = function() {
+	console.debug("Selecting file...");
+    var event = document.createEvent('CustomEvent');
+    event.initCustomEvent("addon-message", true, true, {"detail":{
+		"command": "selectFile"
+	}});
+    document.documentElement.dispatchEvent(event);	
+}
+    
+IOAPI.openDirectory = function(dirPath) {
+	console.debug("Opening directory: "+dirPath);
+    var event = document.createEvent('CustomEvent');
+    event.initCustomEvent("addon-message", true, true, {"detail":{
+		"command": "openDirectory",
+		"path": dirPath
+	}});
+    document.documentElement.dispatchEvent(event);	
+}

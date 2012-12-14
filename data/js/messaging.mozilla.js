@@ -102,6 +102,14 @@ document.documentElement.addEventListener("addon-message1", function(event) {
             UIAPI.updateLogger("Delete failed");        
         }
         break;          
+      case "selectDirectory":
+        if(message.success){
+        	// TODO make the use of this function more general
+			$("#favoriteLocation").val(message.content);
+        } else {
+            UIAPI.updateLogger("Selecting directory failed.");        
+        }
+        break;          
       default:
         break;
     }   
