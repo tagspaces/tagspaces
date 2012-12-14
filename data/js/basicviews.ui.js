@@ -164,9 +164,9 @@ BasicViewsUI.clearSelectedFiles = function() {
 
 BasicViewsUI.buttonizeTitle = function(title, fileName) {
     return $('<span>').append($('<button>', { 
-        title: fileName, 
-        class: 'fileTitleButton', 
-        text: title+'&nbsp' 
+            title: fileName, 
+            class: 'fileTitleButton', 
+            text: title+' ' 
         })).html();    
 }
 
