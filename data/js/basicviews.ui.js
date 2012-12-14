@@ -359,10 +359,10 @@ BasicViewsUI.initContextMenus = function() {
                 console.debug("Opening file...");
                 FileViewer.openFile(UIAPI.selectedFiles[0]);                
                 break;
-              case "editFile":
+              case "openDirectory":
                 $( this ).hide();
-                console.debug("Editing file...");   
-                UIAPI.editFile(UIAPI.selectedFiles[0]);
+                console.debug("Opening parent directory...");   
+                IOAPI.openDirectory(UIAPI.currentPath);
                 break;
               case "renameFile":        
                 $( this ).hide();
