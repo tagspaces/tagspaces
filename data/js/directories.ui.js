@@ -81,7 +81,18 @@ DirectoriesUI.initButtons = function() {
                 .next()
                     .hide()
                     .menu();    
-    
+
+    $( "#selectLocalDirectory" )
+        .button({
+            text: false,
+            icons: {
+                primary: "ui-icon-folder-open"
+            }
+        })
+        .click(function() {
+            IOAPI.selectDirectory();
+            return false;
+        })    
 }
 
 DirectoriesUI.initDialogs = function() {
@@ -176,12 +187,6 @@ DirectoriesUI.initDialogs = function() {
         height:240,
         modal: true,
         buttons: {
-            "Select directory": function() {                
-				IOAPI.selectDirectory();
-            },
-            "Select directory": function() {                
-				IOAPI.selectDirectory();
-            },
             "Create": function() {                
                 TSSETTINGS.createFavorite($("#favoriteName").val(), $("#favoriteLocation").val());
                 DirectoriesUI.initFavorites();  
