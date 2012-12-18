@@ -27,14 +27,15 @@ found in the LICENSE file.
             <replacefilter token="@BUILD@" value="${build.number}" />
         </replace>    
         <copy file="mozilla.update.tmpl.rdf" overwrite="true" tofile="update.rdf" />
-        <replace file="update.rdf" >
+        <copy file="LICENSE" overwrite="true" tofile="data/LICENSE.txt" />
+    	<replace file="update.rdf" >
             <replacefilter token="@VERSION@" value="${version}" />
             <replacefilter token="@PACKAGE@" value="${package}" />
             <replacefilter token="@APPNAME@" value="${appname}" />
             <replacefilter token="@BUILD@" value="${build.number}" />
         </replace>     	
         <copy file="package.json" todir="${buildFirefoxExt.dir}" />
-        <copy file="LICENSE" tofile="${buildFirefoxExt.dir}/data/LICENSE.txt" /> 	
+        <copy file="data/LICENSE.txt" todir="${buildFirefoxExt.dir}/data" /> 	
         <copy file="data/index.html" todir="${buildFirefoxExt.dir}/data" />        
         <copy file="data/about.html" todir="${buildFirefoxExt.dir}/data" />            
         <copy file="data/loader.js" todir="${buildFirefoxExt.dir}/data" />        
@@ -80,12 +81,13 @@ found in the LICENSE file.
         <delete dir="${buildChrome.dir}"/>    	
     	<mkdir dir="${buildChrome.dir}" />
         <copy file="chrome.manifest.tmpl.json" overwrite="true" tofile="data/manifest.json" />
-        <replace file="data/manifest.json" >
+        <copy file="LICENSE" overwrite="true" tofile="data/LICENSE.txt" />   
+    	<replace file="data/manifest.json" >
             <replacefilter token="@VERSION@" value="${version}" />
             <replacefilter token="@APPNAME@" value="${appname}" />
             <replacefilter token="@BUILD@" value="${build.number}" />       
         </replace>    
-        <copy file="LICENSE" tofile="${buildChrome.dir}/LICENSE.txt" />    	
+        <copy file="data/LICENSE.txt" todir="${buildChrome.dir}" />    	
         <copy file="data/manifest.json" todir="${buildChrome.dir}" />
         <copy file="data/index.html" todir="${buildChrome.dir}" />        
         <copy file="data/about.html" todir="${buildChrome.dir}" />        
