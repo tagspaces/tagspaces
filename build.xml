@@ -34,7 +34,8 @@ found in the LICENSE file.
             <replacefilter token="@APPNAME@" value="${appname}" />
             <replacefilter token="@BUILD@" value="${build.number}" />
         </replace>     	
-        <copy file="package.json" todir="${buildFirefoxExt.dir}" />
+    	<copy file="update.rdf" todir="${tagspaces.org.release.dir}" />
+    	<copy file="package.json" todir="${buildFirefoxExt.dir}" />
         <copy file="data/LICENSE.txt" todir="${buildFirefoxExt.dir}/data" /> 	
         <copy file="data/index.html" todir="${buildFirefoxExt.dir}/data" />        
         <copy file="data/about.html" todir="${buildFirefoxExt.dir}/data" />            
