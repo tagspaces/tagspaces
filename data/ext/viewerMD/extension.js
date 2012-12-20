@@ -16,6 +16,7 @@ var containerElID = undefined;
 exports.init = function(filePath, containerElementID) {
     console.debug("Initalization MD Viewer...");
     containerElID = containerElementID;
+//	require(['css!./bootstrapLite.css']);
 	require(['./showdown/showdown'], function() {
 		md2htmlConverter = new Showdown.converter();
 		IOAPI.loadTextFile(filePath);
