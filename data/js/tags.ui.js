@@ -309,8 +309,9 @@ TagsUI.initDialogs = function() {
 
 TagsUI.updateTagGroups = function() {
     console.debug("Updating TagGroups tree..."); //+JSON.stringify(TSSETTINGS.Settings["tagGroups"]));
-    $("#tagGroups").dynatree("getRoot").removeChildren();
-    $("#tagGroups").dynatree("getRoot").addChild(TSSETTINGS.Settings["tagGroups"]);
+    var tagTree = $("#tagGroups").dynatree("getRoot")
+    tagTree.removeChildren();
+    tagTree.addChild(TSSETTINGS.Settings["tagGroups"]);        
 }
 
 TagsUI.initTagTree = function() {

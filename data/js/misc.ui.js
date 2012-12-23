@@ -335,30 +335,6 @@ UIAPI.handleElementActivation = function() {
     }    
 }
 
-UIAPI.initUI = function() {
-    try {
-        console.debug("Initializing UI...");
-        $("#appVersion").text("["+TSSETTINGS.Settings["appVersion"]+"]");
-
-		$( "#container" ).show();
-		$( "#initialization" ).hide();
-		
-        UIAPI.hideLoadingAnimation();
-        		
-        DirectoriesUI.initFavorites();
-    
-        TagsUI.updateTagGroups();
-      
-        // TODO Workarround for a bug
-        $("#dirTree").css("display", "block");         
-
-        // Loading the first tagspace in config by default     
-        //DirectoriesUI.openFavorite(TSSETTINGS.Settings["tagspacesList"][0].path, TSSETTINGS.Settings["tagspacesList"][0].name);
-    } catch (ex) {
-        console.error("Initializing UI failed! "+ex);
-    }   
-}
-
 UIAPI.reloadUI = function() {
     location.reload();
 }

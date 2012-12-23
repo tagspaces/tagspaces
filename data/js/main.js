@@ -3,11 +3,11 @@
  * can be found in the LICENSE file. */
 define([
     'jquery',
-    'jquerylayout',
     'jqueryui',
     'dynatree',
     'datatables',
     'jsoneditor',
+    'jquerylayout',
     'less'
 ], function($){
 "use strict";
@@ -71,14 +71,25 @@ var initApp = function(){
                 TSSETTINGS.Settings = TSSETTINGS.DefaultSettings;
             }          
             
-            UIAPI.initUI(); 
+            $("#appVersion").text("["+TSSETTINGS.Settings["appVersion"]+"]");
+
+            DirectoriesUI.initFavorites();
             
+            //TODO sometimes by a new start of the browser the add-on hangs here, complaining method addChild is not there...
+            $("#tagGroups").dynatree("getRoot").addChild(TSSETTINGS.Settings["tagGroups"]);        
+            
+            // TODO workarround for a bug
+            $("#dirTree").css("display", "block");         
+
+            $( "#loading" ).hide();  
+            $( "#container" ).show();  
             // TODO check if document.ready is really needed
             $(document).ready(function() {
-            	UIAPI.initLayout();
-            	SettingsUI.initJSONEditor();            	            	
-            } 
-            );            
+                    UIAPI.initLayout();
+                    SettingsUI.initJSONEditor();                                
+                } 
+            );  
+            UIAPI.hideLoadingAnimation();
     });         
 }
 

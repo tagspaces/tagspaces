@@ -18,7 +18,7 @@
     <script type="text/javascript" data-main="loader" src="libs/requirejs/require.js"></script>
 </head>
 <body>
-<div id="initialization" style="widht: 100%; height: 100%; z-index: 9999"></div>	
+<div id="loading">TagSpaces loading...</div>	
 <div id="container" style="display: none;">
     <div class="ui-layout-north">
         <span id="logo">TagSpaces<sup id="appVersion" style="font-size: 0.6em; color: #BFBFBF"></sup></span>
@@ -27,7 +27,6 @@
             <input type="radio" id="fileViewButton" name="viewsRadio" checked="checked" /><label for="fileViewButton">Fileview</label>
             <input type="radio" id="tagViewButton" name="viewsRadio" /><label for="tagViewButton">Tagview</label>
             <input type="radio" id="thumbViewButton" name="viewsRadio" /><label for="thumbViewButton">Thumbview</label>             
-            <!--input type="radio" id="riverViewButton" name="viewsRadio" /><label for="riverViewButton">Riverview</label--> 
         </span>    
         <!--input id="searchbox" type="search" name="query" value="Search" autocomplete="off" -->
         <button id="openAboutBox" title="Aboutbox">&nbsp;</button>      
@@ -264,56 +263,54 @@
         <div id="settingsPlainJSON" style="width: 100%; height: 100%;"></div>
     </div>
     
-<ul class="contextMenu" id="favoritesList"></ul>
-
-<ul class="contextMenu" id="tagSuggestionsMenu" style="width: 250px;"></ul>
-
-<ul class="contextMenu" id="fileMenu">
-    <li action="openFile" title=""><a href="javascript:void(0);"><span class="ui-icon ui-icon-plus"></span>Open File</a></li>               
-    <li action="openDirectory" title=""><a href="javascript:void(0);"><span class="ui-icon ui-icon-folder-open"></span>Open Parent Directory</a></li>               
-    <li action="renameFile" title=""><a href="javascript:void(0);"><span class="ui-icon ui-icon-pencil"></span>Raname File</a></li>
-    <li action="deleteFile" title=""><a href="javascript:void(0);"><span class="ui-icon ui-icon-trash"></span>Delete File</a></li>
-    <li><hr></li>    
-    <li action="closeMenu" title=""><a href="javascript:void(0);"><span class="ui-icon ui-icon-close"></span>Close Menu</a></li>
-</ul>
-
-<ul class="contextMenu" id="fileTitleMenu">
-    <li action="openFile" title=""><a href="javascript:void(0);"><span class="ui-icon ui-icon-plus"></span>Open File</a></li>               
-    <!--li action="editFile" title=""><a href="javascript:void(0);"><span class="ui-icon ui-icon-wrench"></span>Edit File</a></li-->                   
-    <li action="addTag" title=""><a href="javascript:void(0);"><span class="ui-icon ui-icon-tag"></span>Add Tags</a></li>               
-    <li><hr></li>
-    <li action="closeMenu" title=""><a href="javascript:void(0);"><span class="ui-icon ui-icon-close"></span>Close Menu</a></li>       
-</ul>
-
-<ul class="contextMenu" id="tagMenu">
-    <li action="addTagAsFilter" title=""><a href="javascript:void(0);"><span class="ui-icon ui-icon-search"></span>Set As Filter</a></li>
-    <!--li action="addTagInTagGroup" title=""><a href="javascript:void(0);">Add tag in tag group</a></li-->
-    <li action="editTag" title=""><a href="javascript:void(0);"><span class="ui-icon ui-icon-pencil"></span>Edit Tag</a></li>               
-    <li action="removeTag" title=""><a href="javascript:void(0);"><span class="ui-icon ui-icon-trash"></span>Remove Tag</a></li>
-    <li><hr></li>    
-    <li action="closeMenu" title=""><a href="javascript:void(0);"><span class="ui-icon ui-icon-close"></span>Close Menu</a></li>       
-</ul>        
-
-<ul class="contextMenu" id="tagTreeMenu">
-    <li action="addTagToFile" title="Add current tag to the selected files"><a href="javascript:void(0);"><span class="ui-icon ui-icon-tag"></span>Tag Selected Files</a></li>
-    <li action="addTagAsFilter" title="Set current tag as a filter criteria"><a href="javascript:void(0);"><span class="ui-icon ui-icon-search"></span>Set As Filter</a></li>
-    <li action="editTag" title="Edit current tag"><a href="javascript:void(0);"><span class="ui-icon ui-icon-wrench"></span>Edit</a></li>               
-    <li action="deleteTag" title="Delete the tag from the taggroup"><a href="javascript:void(0);"><span class="ui-icon ui-icon-trash"></span>Delete</a></li>
-    <li><hr></li>    
-    <li action="closeMenu" title=""><a href="javascript:void(0);"><span class="ui-icon ui-icon-close"></span>Close Menu</a></li>        
-</ul>  
-
-<ul class="contextMenu" id="tagGroupMenu">
-    <li action="toggleTagGroup" title="Opens or Close the selected tagroup"><a href="javascript:void(0);">Toggle Taggroup</a></li>
-    <li action="createNewTag" title="Creates new tag"><a href="javascript:void(0);"><span class="ui-icon ui-icon-tag"></span>Create Tag</a></li>
-    <li action="duplicateTagGroup" title="Duplicate current tagroup"><a href="javascript:void(0);"><span class="ui-icon ui-icon-copy"></span>Duplicate Taggroup</a></li>                   
-    <li action="editTagGroup" title="Edit current tagroup"><a href="javascript:void(0);"><span class="ui-icon ui-icon-wrench"></span>Edit Taggroup</a></li>                       
-    <li action="deleteTagGroup" title="Delete current tagroup"><a href="javascript:void(0);"><span class="ui-icon ui-icon-trash"></span>Delete Taggroup</a></li>
-    <li><hr></li>
-    <li action="closeMenu" title=""><a href="javascript:void(0);"><span class="ui-icon ui-icon-close"></span>Close Menu</a></li>  
-</ul>  
-
+    <ul class="contextMenu" id="favoritesList"></ul>
+    
+    <ul class="contextMenu" id="tagSuggestionsMenu" style="width: 250px;"></ul>
+    
+    <ul class="contextMenu" id="fileMenu">
+        <li action="openFile" title=""><a href="javascript:void(0);"><span class="ui-icon ui-icon-plus"></span>Open File</a></li>               
+        <li action="openDirectory" title=""><a href="javascript:void(0);"><span class="ui-icon ui-icon-folder-open"></span>Open Parent Directory</a></li>               
+        <li action="renameFile" title=""><a href="javascript:void(0);"><span class="ui-icon ui-icon-pencil"></span>Raname File</a></li>
+        <li action="deleteFile" title=""><a href="javascript:void(0);"><span class="ui-icon ui-icon-trash"></span>Delete File</a></li>
+        <li><hr></li>    
+        <li action="closeMenu" title=""><a href="javascript:void(0);"><span class="ui-icon ui-icon-close"></span>Close Menu</a></li>
+    </ul>
+    
+    <ul class="contextMenu" id="fileTitleMenu">
+        <li action="openFile" title=""><a href="javascript:void(0);"><span class="ui-icon ui-icon-plus"></span>Open File</a></li>               
+        <!--li action="editFile" title=""><a href="javascript:void(0);"><span class="ui-icon ui-icon-wrench"></span>Edit File</a></li-->                   
+        <li action="addTag" title=""><a href="javascript:void(0);"><span class="ui-icon ui-icon-tag"></span>Add Tags</a></li>               
+        <li><hr></li>
+        <li action="closeMenu" title=""><a href="javascript:void(0);"><span class="ui-icon ui-icon-close"></span>Close Menu</a></li>       
+    </ul>
+    
+    <ul class="contextMenu" id="tagMenu">
+        <li action="addTagAsFilter" title=""><a href="javascript:void(0);"><span class="ui-icon ui-icon-search"></span>Set As Filter</a></li>
+        <!--li action="addTagInTagGroup" title=""><a href="javascript:void(0);">Add tag in tag group</a></li-->
+        <li action="editTag" title=""><a href="javascript:void(0);"><span class="ui-icon ui-icon-pencil"></span>Edit Tag</a></li>               
+        <li action="removeTag" title=""><a href="javascript:void(0);"><span class="ui-icon ui-icon-trash"></span>Remove Tag</a></li>
+        <li><hr></li>    
+        <li action="closeMenu" title=""><a href="javascript:void(0);"><span class="ui-icon ui-icon-close"></span>Close Menu</a></li>       
+    </ul>        
+    
+    <ul class="contextMenu" id="tagTreeMenu">
+        <li action="addTagToFile" title="Add current tag to the selected files"><a href="javascript:void(0);"><span class="ui-icon ui-icon-tag"></span>Tag Selected Files</a></li>
+        <li action="addTagAsFilter" title="Set current tag as a filter criteria"><a href="javascript:void(0);"><span class="ui-icon ui-icon-search"></span>Set As Filter</a></li>
+        <li action="editTag" title="Edit current tag"><a href="javascript:void(0);"><span class="ui-icon ui-icon-wrench"></span>Edit</a></li>               
+        <li action="deleteTag" title="Delete the tag from the taggroup"><a href="javascript:void(0);"><span class="ui-icon ui-icon-trash"></span>Delete</a></li>
+        <li><hr></li>    
+        <li action="closeMenu" title=""><a href="javascript:void(0);"><span class="ui-icon ui-icon-close"></span>Close Menu</a></li>        
+    </ul>  
+    
+    <ul class="contextMenu" id="tagGroupMenu">
+        <li action="toggleTagGroup" title="Opens or Close the selected tagroup"><a href="javascript:void(0);">Toggle Taggroup</a></li>
+        <li action="createNewTag" title="Creates new tag"><a href="javascript:void(0);"><span class="ui-icon ui-icon-tag"></span>Create Tag</a></li>
+        <li action="duplicateTagGroup" title="Duplicate current tagroup"><a href="javascript:void(0);"><span class="ui-icon ui-icon-copy"></span>Duplicate Taggroup</a></li>                   
+        <li action="editTagGroup" title="Edit current tagroup"><a href="javascript:void(0);"><span class="ui-icon ui-icon-wrench"></span>Edit Taggroup</a></li>                       
+        <li action="deleteTagGroup" title="Delete current tagroup"><a href="javascript:void(0);"><span class="ui-icon ui-icon-trash"></span>Delete Taggroup</a></li>
+        <li><hr></li>
+        <li action="closeMenu" title=""><a href="javascript:void(0);"><span class="ui-icon ui-icon-close"></span>Close Menu</a></li>  
+    </ul>  
 </div>	
-
 </body>
 </html>
