@@ -1,5 +1,5 @@
 # TagSpaces
-TagSpaces is a open source application for managing of your local files. You can find more information about it on its website [tagspaces.org](http://tagspaces.org/). For are quick TagSpaces introduction please see this [video](http://youtu.be/H60FN9Rrw64).
+TagSpaces is a open source application for managing of your local files. You can find more information about it on its website [tagspaces.org](http://tagspaces.org/). For a quick TagSpaces introduction please see this [video](http://youtu.be/H60FN9Rrw64).
 
 This document has a very preliminary status.
 ## Documentation
