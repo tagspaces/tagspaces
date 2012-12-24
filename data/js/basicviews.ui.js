@@ -269,26 +269,6 @@ BasicViewsUI.initButtons = function() {
         UIAPI.changeView("riverView");
     });  
     
-// Sort buttons - Deprecated
-/*
-    $( "#fileSortRadio" ).buttonset();
-
-    $( "#sortByNameButton" ).click(function() {
-        UIAPI.setFileSortCriteria("name");
-        UIAPI.changeFileView();
-    }); 
-    
-    $( "#sortByDateButton" ).click(function() {
-        UIAPI.setFileSortCriteria("lmdt");
-        UIAPI.changeFileView();
-    }); 
-    
-    $( "#sortBySizeButton" ).click(function() {
-        UIAPI.setFileSortCriteria("size");
-        UIAPI.changeFileView();
-    });          
-*/    
-
 // Initialize file buttons    
     $( "#createFileButton" ).button({
         text: true,
