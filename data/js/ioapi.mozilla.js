@@ -137,3 +137,12 @@ IOAPI.openDirectory = function(dirPath) {
 	}});
     document.documentElement.dispatchEvent(event);	
 }
+
+IOAPI.openExtensionsDirectory = function() {
+    console.debug("Opening extensions directory...");
+    var event = document.createEvent('CustomEvent');
+    event.initCustomEvent("addon-message", true, true, {"detail":{
+        "command": "openExtensionsDirectory"
+    }});
+    document.documentElement.dispatchEvent(event);  
+}
