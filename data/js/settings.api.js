@@ -11,7 +11,6 @@ TSSETTINGS.TagTemplate = {
                             /*          ,
                             "pattern":"yyyymmddhhmmss-yyyymmddhhmmss",
                             "example":"20120114123456-20120823231235",
-                            "action":"showDatePicker",
                             "regex":"",
                             "maxlength":17,
                             "chainedTags":[
@@ -170,6 +169,20 @@ TSSETTINGS.findTag = function(tagName, tagGroupKey) {
         }        
     }
     return false;   
+}
+
+TSSETTINGS.getAllTags = function() {
+    var allTags = [];
+    for(var i=0; i < TSSETTINGS.Settings["tagGroups"].length; i++) {
+        // console.debug("Current taggroup "+TSSETTINGS.Settings["tagGroups"][i].key);
+        for(var j=0; j < TSSETTINGS.Settings["tagGroups"][i]["children"].length; j++) {
+            // console.debug("Current tagname "+TSSETTINGS.Settings["tagGroups"][i]["children"][j].title);
+            if(TSSETTINGS.Settings["tagGroups"][i]["children"][j].type == "plain") {
+                allTags.push(TSSETTINGS.Settings["tagGroups"][i]["children"][j].title);
+            }
+        }
+    }
+    return allTags;   
 }
 
 TSSETTINGS.setLastOpenedDir = function(directory) {
