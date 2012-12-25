@@ -3,7 +3,7 @@ TagSpaces is a open source application for managing of your local files. You can
 
 This document has a very preliminary status.
 ## Documentation
-Comming soon
+Comming soon...
 
 - [the TagSpaces wiki](https://github.com/uggrock/tagspaces/wiki) for end-users and implementors
 - [the issues tracker](https://github.com/uggrock/tagspaces/issues) for developer support requests
