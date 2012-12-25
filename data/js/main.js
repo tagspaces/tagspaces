@@ -71,7 +71,8 @@ var initApp = function(){
                 TSSETTINGS.Settings = TSSETTINGS.DefaultSettings;
             }          
             
-            $("#appVersion").text("["+TSSETTINGS.Settings["appVersion"]+"]");
+            $("#appVersion").text("["+TSSETTINGS.DefaultSettings["appVersion"]+"]");
+            $("#appVersion").attr("title","["+TSSETTINGS.DefaultSettings["appBuild"]+"]");
 
             DirectoriesUI.initFavorites();
             
