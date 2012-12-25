@@ -58,7 +58,8 @@ require.config({
                 'jqueryuimenu',
                 'jqueryuibutton', 
                 'jqueryuidialog',              
-                'jqueryuiselectable',    
+                'jqueryuiselectable',
+                'jqueryuiautocomplete',   
             ]
         },
         'dynatree': {
