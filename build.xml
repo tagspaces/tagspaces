@@ -68,6 +68,12 @@ found in the LICENSE file.
             <replacefilter token="@APPNAME@" value="${appname}" />
             <replacefilter token="@BUILD@" value="${build.number}" />
         </replace>  
+    	
+        <replace file="${buildFirefoxExt.dir}/data/about.html" >
+            <replacefilter token="@VERSION@" value="${version}" />
+            <replacefilter token="@APPNAME@" value="${appname}" />
+            <replacefilter token="@BUILD@" value="${build.number}" />
+        </replace>      	
     </target>	
 	
     <target name="build-mozilla-extension" depends="prepare-mozilla-extension" description="Creates a simple zip(not xpi) of the mozilla extension">
@@ -118,7 +124,12 @@ found in the LICENSE file.
             <replacefilter token="@VERSION@" value="${version}" />
             <replacefilter token="@APPNAME@" value="${appname}" />
             <replacefilter token="@BUILD@" value="${build.number}" />
-        </replace>     	
+        </replace> 
+        <replace file="${buildChrome.dir}/about.html" >
+            <replacefilter token="@VERSION@" value="${version}" />
+            <replacefilter token="@APPNAME@" value="${appname}" />
+            <replacefilter token="@BUILD@" value="${build.number}" />
+        </replace>    	
     </target>
 
     <target name="build-chrome-extension" depends="prepare-chrome-extension" description="Creates a simple zip(not crx) of the chrome exntension">
