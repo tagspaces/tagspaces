@@ -365,16 +365,6 @@ TagsUI.openTagMenu = function(tagButton, tag, fileName) {
     
     UIAPI.selectedTag = tag;
     UIAPI.currentFilename = fileName;
-    var menu = $("#tagMenu").show().position({
-        my: "left top",
-        at: "left bottom",
-        of: tagButton
-    });
-    // TODO Hide menu
-/*    $( document ).one( "click", function() {
-        menu.hide();
-    });
-   return false;*/
 }
 
 //});

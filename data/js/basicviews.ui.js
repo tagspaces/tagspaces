@@ -176,14 +176,6 @@ BasicViewsUI.openFileTitleMenu = function(tagButton, fileName) {
 
     UIAPI.currentFilename = fileName;
     UIAPI.selectedFiles.push(UIAPI.currentFilename);
-    
-    var menu = $("#fileTitleMenu").show().position({
-        my: "left top",
-        at: "left bottom",
-        of: tagButton
-    });    
-    // TODO Hide menu
-    // $( document ).one( "click", function() { menu.hide(); });
 } 
 
 BasicViewsUI.buttonizeFileName = function(fileName) {
@@ -200,14 +192,6 @@ BasicViewsUI.openFileMenu = function(tagButton, fileName) {
 
     UIAPI.currentFilename = fileName;
     UIAPI.selectedFiles.push(UIAPI.currentFilename);
-    
-    var menu = $("#fileMenu").show().position({
-        my: "left top",
-        at: "left bottom",
-        of: tagButton
-    });
-    // TODO Hide menu
-    // $( document ).one( "click", function() { menu.hide(); });
 } 
 
 BasicViewsUI.initButtons = function() {

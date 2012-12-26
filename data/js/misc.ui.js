@@ -157,22 +157,29 @@ UIAPI.initFileTagView = function(viewType) {
         UIAPI.hideAllContextMenus();
     } );     
     
-    UIAPI.fileTable.$('.fileButton').click( function() {
-        BasicViewsUI.openFileMenu(this, $(this).attr("title"));
-    } );      
+    UIAPI.fileTable.$('.fileButton')
+        .click( function() {
+            BasicViewsUI.openFileMenu(this, $(this).attr("title"));
+        } )      
+        .dropdown( 'attach' , '#fileMenu' );
 
-    UIAPI.fileTable.$('.fileTitleButton').click( function() {
-        BasicViewsUI.openFileTitleMenu(this, $(this).attr("title"));
-    } );          
+    UIAPI.fileTable.$('.fileTitleButton')
+        .click( function() {
+            BasicViewsUI.openFileTitleMenu(this, $(this).attr("title"));
+        } )
+        .dropdown( 'attach' , '#fileTitleMenu' );   
     
-    UIAPI.fileTable.$('.extTagButton').click( function() {
-        TagsUI.openTagMenu(this, $(this).attr("tag"), $(this).attr("filename"));
-    } );           
+    UIAPI.fileTable.$('.extTagButton')
+        .click( function() {
+            TagsUI.openTagMenu(this, $(this).attr("tag"), $(this).attr("filename"));
+        } )
+        .dropdown( 'attach' , '#tagMenu' );               
     
-    UIAPI.fileTable.$('.tagButton').click( function() {
-        TagsUI.openTagMenu(this, $(this).attr("tag"), $(this).attr("filename"));
-    } );      
-   
+    UIAPI.fileTable.$('.tagButton')
+        .click( function() {
+            TagsUI.openTagMenu(this, $(this).attr("tag"), $(this).attr("filename"));
+        } )     
+        .dropdown( 'attach' , '#tagMenu' );
 }
 
 UIAPI.initRiverView = function(viewType) {

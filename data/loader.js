@@ -39,10 +39,17 @@ require.config({
         jsoneditorcss: 'libs/jsoneditor/jsoneditor',
         jquerylayout: 'libs/jquerylayout/jquery.layout-1.3.0.rc30.77',
         jquerylayoutcss: 'libs/jquerylayout/layout-default-latest',
+        jquerydropdown: 'libs/jquerydropdown/jquery.dropdown',
+        jquerydropdowncss: 'libs/jquerydropdown/jquery.dropdown',
         less: 'libs/less/less-1.3.1',
     }, 
     shim: {
         'jquerylayout': {
+            deps: [
+                'jquery'
+            ]
+        },
+        'jquerydropdown': {
             deps: [
                 'jquery'
             ]
@@ -52,14 +59,26 @@ require.config({
                 'jquery',
                 'jqueryuiwidget',
                 'jqueryuimouse', 
-                'jqueryuidraggable',
                 'jqueryuiposition',
-                'jqueryuiresizable',
                 'jqueryuimenu',
                 'jqueryuibutton', 
                 'jqueryuidialog',              
                 'jqueryuiselectable',
                 'jqueryuiautocomplete',   
+            ]
+        },
+        'jqueryuidraggable': {
+            deps: [
+                'jqueryui',
+                'jqueryuiwidget',
+                'jqueryuimouse',                 
+            ]
+        },
+        'jqueryuiresizable': {
+            deps: [
+                'jqueryui',
+                'jqueryuiwidget',
+                'jqueryuimouse',                 
             ]
         },
         'dynatree': {
