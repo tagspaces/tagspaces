@@ -8,6 +8,7 @@ define([
     'datatables',
     'jsoneditor',
     'jquerylayout',
+    'jquerydropdown',    
     'less'
 ], function($){
 "use strict";
