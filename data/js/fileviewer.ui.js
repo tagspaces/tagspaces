@@ -117,23 +117,24 @@ FileViewer.constructFileViewerUI = function(fileName, filePath) {
     };
 
     // Activate tagButtons in file view
-    $('.tagButton', $( "#fileTags" )).click( function() {
-        TagsUI.openTagMenu(this, $(this).attr("tag"), $(this).attr("filename"));
-    }); 
+    $('.tagButton', $( "#fileTags" ))
+        .click( function() {
+            TagsUI.openTagMenu(this, $(this).attr("tag"), $(this).attr("filename"));
+        })
+        .dropdown( 'attach' , '#tagMenu' );   
     
     // Clear filetoolbox
     $( "#filetoolbox" ).empty();
 
-    // TODO Fullscreen disabled due a fullscreen issue
-    //this.addFullScreenButton("#filetoolbox");
-
     this.addEditButton("#filetoolbox", fileName);
+
+    this.addFullScreenButton("#filetoolbox");
 
     this.addOpenInWindowButton("#filetoolbox", filePath);
 
     // TODO Tag suggestion disabled due menu init issue
-    //this.initTagSuggestionMenu(fileName, tags);
-    //this.addTagSuggestionButton("#filetoolbox");
+    this.initTagSuggestionMenu(fileName, tags);
+    this.addTagSuggestionButton("#filetoolbox");
 
     this.addCloseButton("#filetoolbox");     
 }
@@ -142,30 +143,41 @@ FileViewer.initTagSuggestionMenu = function(fileName, tags) {
     // Adding buttons for creating tags according to the suggested tags
     var suggTags = TSAPI.suggestTags(fileName);
 
- //   $( "#tagSuggestionsMenu" ).menu();
- //   $( "#tagSuggestionsMenu" ).menu("disable");
     var tsMenu = $( "#tagSuggestionsMenu" );
+    tsMenu.menu();
+//    tsMenu.menu("disable");
     tsMenu.empty(); 
     
     for (var i=0; i < suggTags.length; i++) {        
         // Ignoring the tags already assigned to a file
         if(tags.indexOf(suggTags[i]) < 0) {
-            tsMenu.append($('<li>', { 
-                name: suggTags[i], 
+            tsMenu.append($('<li>', {name: suggTags[i]}).append($('<a>', { 
+                href: "javascript:void(0);",
                 title: "Add tag "+suggTags[i]+" to current file", 
-                text: "Tag with "+suggTags[i] 
-                }));               
+                text: "Tag with '"+suggTags[i]+"'" 
+                })));               
         }         
     };
     
-    // TODO menu does not initialize
-    tsMenu.menu({ // menu("destroy").
+    tsMenu.menu({
         select: function( event, ui ) {
             var tagName = ui.item.attr( "name" );    
             TSAPI.writeTagsToFile(fileName, [tagName]);
             IOAPI.listDirectory(UIAPI.currentPath);  
         }         
     });  
+}
+
+FileViewer.addTagSuggestionButton = function(container) {
+    $( ""+container ).append('<button id="openTagSuggestionMenu">Tag Suggestion</button>');
+    $( "#openTagSuggestionMenu" ).button({
+        text: false,        
+        icons: {
+            primary: "ui-icon-suitcase"
+        },
+        disabled: false
+    })
+    .dropdown( 'attach' , '#tagSuggestionsMenu' );  
 }
 
 FileViewer.addEditButton = function(container, fileName) {
@@ -262,9 +274,7 @@ FileViewer.addFullScreenButton = function(container) {
         disabled: false
     })
     .click(function() {
-        var docElm = $("#container");
-        docElm.mozRequestFullScreen();
-/*        alert(docElm.webkitRequestFullScreen);
+        var docElm = $("#viewer")[0];
         if (docElm.requestFullscreen) {
             docElm.requestFullscreen();
         }
@@ -272,32 +282,8 @@ FileViewer.addFullScreenButton = function(container) {
             docElm.mozRequestFullScreen();
         }
         else if (docElm.webkitRequestFullScreen) {
-        alert(docElm);
             docElm.webkitRequestFullScreen();
-        }*/
-    });    
-}
-
-FileViewer.addTagSuggestionButton = function(container) {
-    $( ""+container ).append('<button id="openTagSuggestionMenu">Tag Suggestion</button>');
-    $( "#openTagSuggestionMenu" ).button({
-        text: false,        
-        icons: {
-            primary: "ui-icon-suitcase"
-        },
-        disabled: false
-    })
-    .click(function() {
-        UIAPI.selectedTag = this.id;
-        var menu = $("#tagSuggestionsMenu").show().position({
-            my: "left top",
-            at: "left bottom",
-            of: $( this )
-        });
-        $( document ).one( "click", function() {
-           menu.hide();
-        });
-        return false;
+        }
     });    
 }
   
