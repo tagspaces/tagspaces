@@ -168,7 +168,13 @@ found in the LICENSE file.
             <replacefilter token="@VERSION@" value="${version}" />
             <replacefilter token="@APPNAME@" value="${appname}" />
             <replacefilter token="@BUILD@" value="${build.number}" />
-        </replace>     	
+        </replace> 
+        
+        <replace file="${cordovaDev.dir}/about.html" >
+            <replacefilter token="@VERSION@" value="${version}" />
+            <replacefilter token="@APPNAME@" value="${appname}" />
+            <replacefilter token="@BUILD@" value="${build.number}" />
+        </replace>             	
     </target>
 
     <target name="backup-all" description="Creates a complete backup of the git repository">
