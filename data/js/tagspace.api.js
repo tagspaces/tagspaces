@@ -89,9 +89,9 @@ TSAPI.suggestTags = function(fileName) {
     } else {
         tagContainer = fileName.slice(0,beginTagContainer).trim();        
     }
-    
-    // TODO also with _ - .
-    tags = tagContainer.split(" ");
+
+    // Splitting filename with space, comma, plus, underscore and score delimiters    
+    tags = tagContainer.split(/[\s,+_-]+/);
     
     var cleanedTags = [];
     for (var i=0; i < tags.length; i++) {
