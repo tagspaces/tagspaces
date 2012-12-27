@@ -300,13 +300,32 @@ span.dynatree-icon {
 }
 
 
-#dirTree, #tagGroups {
+#dirTree {
     overflow: hidden;    
 }
 
-/*#tagGroups ul.dynatree-container a:focus, #tagGroups span.dynatree-focused a:link {
-	background-color: #00AA00;
-}*/
+.tagGroupTitle {
+  padding-left: 15px;
+  background-image: url('arrow-down.png');
+  background-repeat: no-repeat;
+  background-position: left;
+}
+
+.tagGroupSettings {
+  float: right; 
+  width: 20px; 
+  background-image: url('settings.png'); 
+  background-repeat: no-repeat; 
+  background-position: left;
+}
+
+.tagGroupSettings:hover {
+  background-image: url('settingsHover.png'); 
+}
+
+#tagGroups {
+    overflow: auto;    
+}
 
 #tagGroups ul.dynatree-container a, #tagGroups ul.dynatree-container a:hover  {
     padding: 1px;

@@ -211,7 +211,7 @@ TagsUI.initDialogs = function() {
         buttons: {
             "Delete tag from taggroup": function() {                
                 TSSETTINGS.deleteTag(UIAPI.selectedTagData);
-                TagsUI.updateTagGroups();    
+                TagsUI.generateTagGroups();    
                 $( this ).dialog( "close" );
             },
             Cancel: function() {
@@ -228,7 +228,7 @@ TagsUI.initDialogs = function() {
         buttons: {
             "Delete": function() {                
                 TSSETTINGS.deleteTagGroup(UIAPI.selectedTagData);
-                TagsUI.updateTagGroups();    
+                TagsUI.generateTagGroups();    
                 $( this ).dialog( "close" );
             },
             Cancel: function() {
@@ -246,7 +246,7 @@ TagsUI.initDialogs = function() {
             "Save": function() {
                 // TODO complete the functionality for smart tags
                 TSSETTINGS.editTag(UIAPI.selectedTagData, $( "#tagName" ).val() )
-                TagsUI.updateTagGroups();    
+                TagsUI.generateTagGroups();    
                 $( this ).dialog( "close" );
             },
             Cancel: function() {
@@ -263,7 +263,7 @@ TagsUI.initDialogs = function() {
         buttons: {
             "Create tag": function() {
                 TSSETTINGS.createTag(UIAPI.selectedTagData, $( "#newTagName" ).val() )
-                TagsUI.updateTagGroups();                    
+                TagsUI.generateTagGroups();                    
                 $( this ).dialog( "close" );
             },
             Cancel: function() {
@@ -280,7 +280,7 @@ TagsUI.initDialogs = function() {
         buttons: {
             "Duplicate taggroup": function() {
                 TSSETTINGS.duplicateTagGroup(UIAPI.selectedTagData, $( "#newTagGroupName" ).val(), $( "#newTagGroupKey" ).val() )
-                TagsUI.updateTagGroups();                    
+                TagsUI.generateTagGroups();                    
                 $( this ).dialog( "close" );
             },
             Cancel: function() {
@@ -297,7 +297,7 @@ TagsUI.initDialogs = function() {
         buttons: {
             "Save": function() {
                 TSSETTINGS.editTagGroup(UIAPI.selectedTagData, $( "#tagGroupName" ).val() )
-                TagsUI.updateTagGroups();                    
+                TagsUI.generateTagGroups();                    
                 $( this ).dialog( "close" );
             },
             Cancel: function() {
@@ -307,55 +307,67 @@ TagsUI.initDialogs = function() {
     });               
 }
 
-TagsUI.updateTagGroups = function() {
-    console.debug("Updating TagGroups tree..."); //+JSON.stringify(TSSETTINGS.Settings["tagGroups"]));
-    var tagTree = $("#tagGroups").dynatree("getRoot")
-    tagTree.removeChildren();
-    tagTree.addChild(TSSETTINGS.Settings["tagGroups"]);        
+TagsUI.generateTagGroups = function() {
+    console.debug("Generating TagGroups...");
+    $("#tagGroups").empty();
+    $("#tagGroups").addClass("ui-accordion ui-accordion-icons ui-widget ui-helper-reset")
+    for(var i=0; i < TSSETTINGS.Settings["tagGroups"].length; i++) {
+        $("#tagGroups").append($("<h3>", { 
+            class: "ui-accordion-header ui-helper-reset ui-state-default ui-corner-top ui-corner-bottom"    
+        })
+        .hover(function() { $(this).toggleClass("ui-state-hover"); })        
+        .append($("<span>", { 
+            class: "tagGroupTitle",
+            text: TSSETTINGS.Settings["tagGroups"][i].title, 
+        })
+        .click(function() {
+          $(this)
+            .parent().toggleClass("ui-accordion-header-active ui-state-active ui-state-default ui-corner-bottom").end()
+            .parent().next().toggleClass("ui-accordion-content-active").toggle();
+          return false;
+        })        
+        )
+        .append($("<span>", { 
+                class: "tagGroupSettings",
+                tag: TSSETTINGS.Settings["tagGroups"][i].title, 
+                key: TSSETTINGS.Settings["tagGroups"][i].key, 
+                title: "Taggroup options",
+                text: "-", 
+        })                
+        .dropdown( 'attach' , '#tagGroupMenu' )
+        .click( function(event) {
+                //console.debug("Clicked in taggroup setting");    
+                UIAPI.selectedTag = $(this).attr("tag");
+                UIAPI.selectedTagData = TSSETTINGS.getTagGroupData($(this).attr("key"));
+                UIAPI.selectedTagData.parentKey = undefined;  
+        })
+        )
+        );
+          
+        var tagButtons = $("<div>").appendTo( "#tagGroups" );  
+        tagButtons.attr("style","margin: 0px; padding: 5px;");
+        tagButtons.addClass("ui-accordion-content  ui-helper-reset ui-widget-content ui-corner-bottom")
+        tagButtons.hide(); 
+        for(var j=0; j < TSSETTINGS.Settings["tagGroups"][i]["children"].length; j++) {
+            tagButtons.append($("<button>", { 
+                class: "tagButton", 
+                tag: TSSETTINGS.Settings["tagGroups"][i]["children"][j].title, 
+                parentKey: TSSETTINGS.Settings["tagGroups"][i].key,
+                title: "Opens context menu for "+TSSETTINGS.Settings["tagGroups"][i]["children"][j].title,
+                text: TSSETTINGS.Settings["tagGroups"][i]["children"][j].title, 
+            })
+            .click( function() {
+                UIAPI.selectedTag = $(this).attr("tag");
+                UIAPI.selectedTagData = TSSETTINGS.getTagData($(this).attr("tag"), $(this).attr("parentKey"));
+                UIAPI.selectedTagData.parentKey = $(this).attr("parentKey");
+            })
+            .dropdown( 'attach' , '#tagTreeMenu' )               
+            );                      
+        }
+    }
 }
 
-TagsUI.initTagTree = function() {
-    // Init the tag tree / taggroups module
-    $("#tagGroups").dynatree({
-      clickFolderMode: 1,
-      onClick: function(node, event) {
-        if(!node.data.isFolder) {
-           // var jsnode = $.ui.dynatree.getNode(this);
-            UIAPI.selectedTag = node.data.title;
-            UIAPI.selectedTagData = node.data;
-            UIAPI.selectedTagData.parentKey = node.parent.data.key;
-            $("#tagGroupMenu").hide();
-            $("#tagTreeMenu").show().position({
-                my: "left top",
-                at: "left bottom",
-                of: $("a", $(node.li))
-            }); 
-            $( document ).one( "click", function() {
-                $("#tagTreeMenu").hide();
-            });
-            return false;            
-        } else {
-            UIAPI.selectedTag = node.data.title;
-            UIAPI.selectedTagData = node.data;
-            UIAPI.selectedTagData.parentKey = undefined;  
-            $("#tagTreeMenu").hide();
-            $("#tagGroupMenu").show().position({
-                my: "left top",
-                at: "left bottom",
-                of: $("a", $(node.li))
-            }); 
-            $( document ).one( "click", function() {
-                $("#tagGroupMenu").hide();
-            });
-            return false;                            
-        }        
-      },
-      onDblClick: function(node, event) {
-        node.toggleExpand();
-      },      
-    });     
-}
-
+// TODO evtl. move to Fileviewer.js
 TagsUI.openTagMenu = function(tagButton, tag, fileName) {
     BasicViewsUI.clearSelectedFiles();
     $(tagButton).parent().parent().toggleClass("selectedRow");

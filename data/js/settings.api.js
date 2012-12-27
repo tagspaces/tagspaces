@@ -208,6 +208,28 @@ TSSETTINGS.deleteTag = function(tagData) {
     TSSETTINGS.saveSettings();    
 }
 
+TSSETTINGS.getTagData = function(tagTitle, parentKey) {
+    for(var i=0; i < TSSETTINGS.Settings["tagGroups"].length; i++) {
+        if(TSSETTINGS.Settings["tagGroups"][i].key == parentKey) {
+            for(var j=0; j < TSSETTINGS.Settings["tagGroups"][i]["children"].length; j++) {
+                if(TSSETTINGS.Settings["tagGroups"][i]["children"][j].title == tagTitle) {
+                    return TSSETTINGS.Settings["tagGroups"][i]["children"][j];
+                    break;
+                }
+            }
+        }        
+    }  
+}
+
+TSSETTINGS.getTagGroupData = function(tagGroupKey) {
+    for(var i=0; i < TSSETTINGS.Settings["tagGroups"].length; i++) {
+        if(TSSETTINGS.Settings["tagGroups"][i].key == tagGroupKey) {
+            return TSSETTINGS.Settings["tagGroups"][i];
+            break;
+        }        
+    }  
+}
+
 TSSETTINGS.deleteTagGroup = function(tagData) {
     for(var i=0; i < TSSETTINGS.Settings["tagGroups"].length; i++) {
         if(TSSETTINGS.Settings["tagGroups"][i].key == tagData.key) {

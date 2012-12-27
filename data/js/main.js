@@ -43,7 +43,7 @@ var initApp = function(){
         function() {
             TagsUI.initContextMenus();
             TagsUI.initDialogs();
-            TagsUI.initTagTree();            
+            //TagsUI.initTagTree();            
             
             BasicViewsUI.initContextMenus();
             BasicViewsUI.initFileTagViews();
@@ -77,8 +77,7 @@ var initApp = function(){
 
             DirectoriesUI.initFavorites();
             
-            //TODO sometimes by a new start of the browser the add-on hangs here, complaining method addChild is not there...
-            $("#tagGroups").dynatree("getRoot").addChild(TSSETTINGS.Settings["tagGroups"]);        
+            TagsUI.generateTagGroups();
             
             // TODO workarround for a bug
             $("#dirTree").css("display", "block");         
