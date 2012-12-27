@@ -603,15 +603,19 @@ BasicViewsUI.initDialogs = function() {
     $( "#tagTypeRadio" ).buttonset();
 
     $( "#plainTagTypeButton" ).click(function() {
-        UIAPI.selectedTag, $( "#newTag" ).val("")
+        UIAPI.selectedTag, $( "#newTag" ).datepicker( "destroy" ).val("");
     });  
 
     $( "#dateTagTypeButton" ).click(function() {
-        UIAPI.selectedTag, $( "#newTag" ).val("201YMMDD")
+        UIAPI.selectedTag, $( "#newTag" ).datepicker({
+            showWeek: true,
+            firstDay: 1,
+            dateFormat: "yymmdd"
+        });
     });  
     
     $( "#currencyTagTypeButton" ).click(function() {
-        UIAPI.selectedTag, $( "#newTag" ).val("XEUR")
+        UIAPI.selectedTag, $( "#newTag" ).datepicker( "destroy" ).val("XEUR")
     });      
     
     $( "#dialogEditTag" ).dialog({

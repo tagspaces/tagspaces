@@ -64,7 +64,8 @@ require.config({
                 'jqueryuibutton', 
                 'jqueryuidialog',              
                 'jqueryuiselectable',
-                'jqueryuiautocomplete',   
+                'jqueryuiautocomplete',
+                'jqueryuidatepicker',   
             ]
         },
         'jqueryuidraggable': {
