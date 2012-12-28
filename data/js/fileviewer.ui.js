@@ -169,11 +169,11 @@ FileViewer.initTagSuggestionMenu = function(fileName, tags) {
 }
 
 FileViewer.addTagSuggestionButton = function(container) {
-    $( ""+container ).append('<button id="openTagSuggestionMenu">Tag Suggestion</button>');
+    $( ""+container ).append('<button id="openTagSuggestionMenu">Tag</button>');
     $( "#openTagSuggestionMenu" ).button({
         text: false,        
         icons: {
-            primary: "ui-icon-suitcase"
+            primary: "ui-icon-tag"
         },
         disabled: false
     })
@@ -221,7 +221,7 @@ FileViewer.addEditButton = function(container, fileName) {
 }
 
 FileViewer.addOpenInWindowButton = function(container, filePath) {
-    $( ""+container ).append('<button id="openInNewWindow">Open in new tab</button>');
+    $( ""+container ).append('<button id="openInNewWindow">Open in New Tab</button>');
     $( "#openInNewWindow" ).button({
         text: false,        
         icons: {
@@ -235,7 +235,7 @@ FileViewer.addOpenInWindowButton = function(container, filePath) {
 }
 
 FileViewer.addCloseButton = function(container) {
-    $( ""+container ).append('<button id="closeOpenedFile">Close</button>');
+    $( ""+container ).append('<button id="closeOpenedFile">Close Viewer</button>');
     $( "#closeOpenedFile" ).button({
         text: false,        
         icons: {
