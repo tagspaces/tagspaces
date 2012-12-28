@@ -17,11 +17,11 @@ var TagsUI = (typeof TagsUI == 'object' && TagsUI != null) ? TagsUI : {};
 
 TagsUI.initContextMenus = function() {
 
-//    $( "#tagSuggestionsMenu" ).menu({
-//        select: function( event, ui ) {
-//            console.debug("Tag suggestion "+ui.item.attr( "action" )+" for tag: "+UIAPI.selectedTag);            
-//        }        
-//    });        
+    $( "#tagSuggestionsMenu" ).menu({
+        select: function( event, ui ) {
+            console.debug("Tag suggestion "+ui.item.attr( "action" )+" for tag: "+UIAPI.selectedTag);            
+        }        
+    });        
     
     // Context menu for the tags in the file table and the file viewer
     $( "#tagMenu" ).menu({
@@ -312,6 +312,7 @@ TagsUI.generateTagGroups = function() {
     $("#tagGroups").empty();
     $("#tagGroups").addClass("ui-accordion ui-accordion-icons ui-widget ui-helper-reset")
     for(var i=0; i < TSSETTINGS.Settings["tagGroups"].length; i++) {
+        // Code based on http://jsbin.com/eqape/1/edit
         $("#tagGroups").append($("<h3>", { 
             class: "ui-accordion-header ui-helper-reset ui-state-default ui-corner-top ui-corner-bottom"    
         })
@@ -327,12 +328,12 @@ TagsUI.generateTagGroups = function() {
           return false;
         })        
         )
-        .append($("<span>", { 
-                class: "tagGroupSettings",
+        .append($("<span>", {
+                class: "ui-icon ui-icon-gear",
+                style: "float: right!important; position:relative!important; vertical-align: middle; display:inline-block;",              
                 tag: TSSETTINGS.Settings["tagGroups"][i].title, 
                 key: TSSETTINGS.Settings["tagGroups"][i].key, 
                 title: "Taggroup options",
-                text: "-", 
         })                
         .dropdown( 'attach' , '#tagGroupMenu' )
         .click( function(event) {
@@ -365,6 +366,13 @@ TagsUI.generateTagGroups = function() {
             );                      
         }
     }
+    
+    //Opens all taggroups by default
+    $("#tagGroups").find("h3").each(function(index) {
+      //console.log("Entered h3 "+$(this).next().text());
+      $(this).toggleClass("ui-accordion-header-active ui-state-active ui-state-default ui-corner-bottom").end()
+      $(this).next().toggleClass("ui-accordion-content-active").toggle();
+    });
 }
 
 // TODO evtl. move to Fileviewer.js
