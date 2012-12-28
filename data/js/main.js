@@ -4,11 +4,11 @@
 define([
     'jquery',
     'jqueryui',
-    'dynatree',
+//    'dynatree',
     'datatables',
     'jsoneditor',
     'jquerylayout',
-    'jquerydropdown',    
+    'jquerydropdown',
     'less'
 ], function($){
 "use strict";
@@ -53,7 +53,8 @@ var initApp = function(){
             
             DirectoriesUI.initDialogs();
             DirectoriesUI.initButtons();
-            DirectoriesUI.initDirectoryTree();
+            DirectoriesUI.initContextMenus();
+            //DirectoriesUI.initDirectoryTree();
             
             SettingsUI.initButtons();
             SettingsUI.initDialogs();
@@ -78,19 +79,18 @@ var initApp = function(){
             DirectoriesUI.initFavorites();
             
             TagsUI.generateTagGroups();
-            
-            // TODO workarround for a bug
-            $("#dirTree").css("display", "block");         
 
             $( "#loading" ).hide();  
             $( "#container" ).show();  
-            // TODO check if document.ready is really needed
-            $(document).ready(function() {
-                    UIAPI.initLayout();
-                    SettingsUI.initJSONEditor();                                
-                } 
-            );  
+            
             UIAPI.hideLoadingAnimation();
+            // TODO check if document.ready is really needed
+            //$(document).ready(function() {
+                    UIAPI.initLayout();
+                    console.debug("Layout initialized");
+           //                                         
+            //    } 
+            //);  
     });         
 }
 

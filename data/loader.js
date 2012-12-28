@@ -46,7 +46,10 @@ require.config({
     shim: {
         'jquerylayout': {
             deps: [
-                'jquery'
+                'jquery',
+                'jqueryui',
+                'jqueryuidraggable',
+                'jqueryuiresizable',
             ]
         },
         'jquerydropdown': {
@@ -62,7 +65,7 @@ require.config({
                 'jqueryuiposition',
                 'jqueryuimenu',
                 'jqueryuibutton', 
-                'jqueryuidialog',              
+                'jqueryuidialog',
                 'jqueryuiselectable',
                 'jqueryuiautocomplete',
                 'jqueryuidatepicker',   
