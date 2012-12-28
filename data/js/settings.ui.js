@@ -31,6 +31,7 @@ SettingsUI.initButtons = function() {
         }
     })
     .click(function() {
+        SettingsUI.initJSONEditor();        
         $( "#dialogSetting" ).dialog( "open" );
     });
     
