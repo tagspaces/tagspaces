@@ -21,8 +21,6 @@ UIAPI.parentDir = "..";
 
 UIAPI.currentPath = "";
 
-UIAPI.currentTreeElements = "";
-
 UIAPI.currentView = "fileView"; // tagView, riverView
 
 // Current selected files
@@ -127,12 +125,6 @@ UIAPI.updateFileBrowserData = function(dirList) {
     UIAPI.changeView(UIAPI.currentView);    
 }
 
-// Updates the directory subtree
-UIAPI.updateTree = function(dirList) {
-    console.debug("Updating subdirs(UIAPI)..."+JSON.stringify(dirList));
-    UIAPI.currentTreeElements.addChild(dirList);
-    UIAPI.currentTreeElements.sortChildren();
-}
 
 UIAPI.setFileSortCriteria = function(sortBy) {
     console.debug("Setting sort criteris: "+sortBy);
@@ -371,14 +363,14 @@ UIAPI.initLayout = function(){
     ,   west__minSize:              .1
 //        ,   west__maxSize:              .4
     ,   west__size:                 200
-    ,   west__spacing_open:         3     
+    ,   west__spacing_open:         5     
 
     //  east settings
     ,   east__resizable:           true                 
     ,   east__size:                 .45
     ,   east__minSize:              .2
 //        ,   east__maxSize:              .8 // 80% of layout width
-    ,   east__spacing_open:        3   
+    ,   east__spacing_open:        5   
 
     //  center settings
     ,   center__resizable:          true 
@@ -395,12 +387,14 @@ UIAPI.initLayout = function(){
     
     );
     
+    // Directories and Tags
     var westLayout = $('div.ui-layout-west').layout({
             minSize:                50  // ALL panes
         ,   center__paneSelector:   ".west-center"
         ,   south__paneSelector:    ".west-south"
+        ,   south__resizable:       true  
         ,   south__size:            .5
-        ,   south__spacing_open:    3       
+        ,   south__spacing_open:    5       
     });
 
     var centerLayout = $('div.ui-layout-center').layout({
