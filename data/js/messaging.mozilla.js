@@ -87,11 +87,7 @@ document.documentElement.addEventListener("addon-message1", function(event) {
                 dirListing.push(message.content[i]);
             }
             // TODO JSON functions are a workarround for a bug....
-            UIAPI.updateTree(JSON.parse( JSON.stringify(dirListing)));
-            //if(!extConnected) {
-            //    initUI();
-            //}
-            //extConnected = true;
+            DirectoriesUI.updateSubDirs(JSON.parse( JSON.stringify(dirListing)));
         } else {
             UIAPI.updateLogger("Getting subdirs failed");       
         }
