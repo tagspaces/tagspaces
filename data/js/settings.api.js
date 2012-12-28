@@ -57,7 +57,7 @@ TSSETTINGS.DefaultSettings = {
         }, 
         {
             "name":'Unix Location Example', 
-            "path":'/media/' 
+            "path":'/media' 
         }, 
 	],
     "extensions": [
@@ -75,6 +75,7 @@ TSSETTINGS.DefaultSettings = {
         { "type": "jpeg", "viewer": "viewerImage", "editor": false  },    
         { "type": "gif", "viewer": "viewerImage", "editor": false  },        
         { "type": "png", "viewer": "viewerImage", "editor": false  },        
+        { "type": "svg", "viewer": "viewerBrowser", "editor": false  },
         { "type": "pdf", "viewer": "viewerBrowser", "editor": false  },                
         { "type": "html", "viewer": "viewerBrowser", "editor": false  },                        
         { "type": "htm", "viewer": "viewerBrowser", "editor": false  },                        
@@ -330,15 +331,21 @@ TSSETTINGS.updateSettingMozillaPreferences = function(settings) {
     TSSETTINGS.saveSettings();
 }
 
+TSSETTINGS.firstRun = false;
+
 TSSETTINGS.loadSettingsLocalStorage = function() {
     try {
         var tmpSettings = JSON.parse(localStorage.getItem('tsSettings'));
         console.debug("Settings: "+JSON.stringify(tmpSettings));        
     	if(tmpSettings!=null) {
     		TSSETTINGS.Settings = tmpSettings;		
-    	} 
+    	} else {
+    	    // If no settings found in the local storage,
+    	    // the application runs for the first time.
+    	    TSSETTINGS.firstRun = true;
+    	}
     } catch(ex) {
-        console.debug("Loading default settings due exception while loading settings: "+ex);
+        console.debug("Loading settings from local storage failed due exception: "+ex);
     }
 }
 
