@@ -85,12 +85,10 @@ var initApp = function(){
             
             UIAPI.hideLoadingAnimation();
             // TODO check if document.ready is really needed
-            //$(document).ready(function() {
-                    UIAPI.initLayout();
-                    console.debug("Layout initialized");
-           //                                         
-            //    } 
-            //);  
+            $(document).ready(function() {
+                UIAPI.initLayout();
+                console.debug("Layout initialized");
+            });  
     });         
 }
 
