@@ -192,7 +192,7 @@ TagsUI.initDialogs = function() {
         height:140,
         modal: true,
         buttons: {
-            "Remove tag": function() {
+            "Remove": function() {
                 TSAPI.removeTag(UIAPI.selectedTag);  
                 $( this ).dialog( "close" );
                 IOAPI.listDirectory(UIAPI.currentPath);   
@@ -209,7 +209,7 @@ TagsUI.initDialogs = function() {
         height:140,
         modal: true,
         buttons: {
-            "Delete tag from taggroup": function() {                
+            "Delete": function() {                
                 TSSETTINGS.deleteTag(UIAPI.selectedTagData);
                 TagsUI.generateTagGroups();    
                 $( this ).dialog( "close" );
@@ -261,7 +261,7 @@ TagsUI.initDialogs = function() {
         height:240,
         modal: true,
         buttons: {
-            "Create tag": function() {
+            "Create Tag": function() {
                 TSSETTINGS.createTag(UIAPI.selectedTagData, $( "#newTagName" ).val() )
                 TagsUI.generateTagGroups();                    
                 $( this ).dialog( "close" );
@@ -278,7 +278,7 @@ TagsUI.initDialogs = function() {
         height:240,
         modal: true,
         buttons: {
-            "Duplicate taggroup": function() {
+            "Duplicate Taggroup": function() {
                 TSSETTINGS.duplicateTagGroup(UIAPI.selectedTagData, $( "#newTagGroupName" ).val(), $( "#newTagGroupKey" ).val() )
                 TagsUI.generateTagGroups();                    
                 $( this ).dialog( "close" );
