@@ -25,7 +25,7 @@ DirectoriesUI.updateSubDirs = function(dirList) {
     console.debug("Updating subdirs(UIAPI)..."+JSON.stringify(dirList));
 
     // Sort the dirList alphabetically
-    dirList.sort();
+    dirList.sort(function(a,b) { return a.title.localeCompare(b.title); });
     
     for(var i=0; i < DirectoriesUI.directoryHistory.length; i++) {
         if(DirectoriesUI.directoryHistory[i].key == UIAPI.currentPath) {
@@ -37,12 +37,13 @@ DirectoriesUI.updateSubDirs = function(dirList) {
     }
     
     DirectoriesUI.generateDirPath();
+    DirectoriesUI.handleDirCollapsion();     
 }
 
 DirectoriesUI.dir4ContextMenu = null;
 
 DirectoriesUI.generateDirPath = function() {
-    console.debug("Generating TagGroups...");
+    console.debug("Generating Directory Path...");
     $("#dirTree").empty();
     
     // Code based on http://jsbin.com/eqape/1/edit
@@ -67,7 +68,6 @@ DirectoriesUI.generateDirPath = function() {
         // Add directory button to h3
         .append($("<button>", { 
             class: "dirButton",
-//            style: "display:inline-block;",            
             key: DirectoriesUI.directoryHistory[i].key,
             title: DirectoriesUI.directoryHistory[i].key,
             text: DirectoriesUI.directoryHistory[i].title, 
@@ -108,15 +108,20 @@ DirectoriesUI.generateDirPath = function() {
             );                      
         }
     }
-    DirectoriesUI.handleDirCallapsion();    
 }
 
-DirectoriesUI.handleDirCallapsion = function() {
-    $("#notaccordion").find("h3 > button").attr("key")
-
+DirectoriesUI.handleDirCollapsion = function() {
+    $("#dirTree").find("h3").each(function(index) {
+        console.log("Entered h3 "+$(this).next().text());
+        var key = $(this).find("button").attr("key");
+        if(!DirectoriesUI.getDirectoryCollapsed(key)) {
+            $(this).toggleClass("ui-accordion-header-active ui-state-active ui-state-default ui-corner-bottom").end();
+            $(this).next().toggleClass("ui-accordion-content-active").toggle();          
+        }
+    });
 }
 
-DirectoriesUI.isDirectoryCollapsed = function(directoryPath) {
+DirectoriesUI.getDirectoryCollapsed = function(directoryPath) {
     for(var i=0; i < DirectoriesUI.directoryHistory.length; i++) {
         if(DirectoriesUI.directoryHistory[i].key == directoryPath) {
             return DirectoriesUI.directoryHistory[i].collapsed;
@@ -133,24 +138,30 @@ DirectoriesUI.setDirectoryCollapse = function(directoryPath, collapsed) {
 }
 
 DirectoriesUI.navigateToDirectory = function(directoryPath) {
-    UIAPI.currentPath = directoryPath;
+    console.log("Navigating to directory: "+directoryPath);
 
     var directoryFound = false;    
     for(var i=0; i < DirectoriesUI.directoryHistory.length; i++) {
         if(DirectoriesUI.directoryHistory[i].key == directoryPath) {
             DirectoriesUI.directoryHistory[i].collapsed = false;
             directoryFound = true;
+        } else {
+            DirectoriesUI.directoryHistory[i].collapsed = true;            
         }
     }
+    
+    // TODO find index of currentPath and splice the array 
     
     // If directory path not in history then add it to the history
     if(!directoryFound) {
         DirectoriesUI.directoryHistory.push({
             "title": directoryPath.substring(directoryPath.lastIndexOf(UIAPI.getDirSeparator())+1,directoryPath.length),
             "key" : directoryPath,
+            "collapsed" : false,
         });        
     }    
 
+    UIAPI.currentPath = directoryPath;
     IOAPI.getSubdirs(directoryPath);
     IOAPI.listDirectory(directoryPath);    
 } 
@@ -208,12 +219,11 @@ DirectoriesUI.initButtons = function() {
         })    
 }
 
-DirectoriesUI.initContextMenus = function() {
-    
+DirectoriesUI.initContextMenus = function() {    
     // Context menu for the tags in the file table and the file viewer
     $( "#directoryMenu" ).menu({
         select: function( event, ui ) {
-            console.debug("Tag menu action: "+ui.item.attr( "action" )+" for tag: "+UIAPI.selectedTag);
+            console.debug("Tag menu action: "+ui.item.attr( "action" ));
             switch (ui.item.attr( "action" )) {
               case "reloadDirectory":
                 DirectoriesUI.navigateToDirectory(DirectoriesUI.dir4ContextMenu);
