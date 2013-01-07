@@ -199,7 +199,7 @@ BasicViewsUI.initButtons = function() {
     $( "#toggleLeftPanel" ).button({
         text: false,
         icons: {
-            primary: "ui-icon-triangle-2-e-w"
+            primary: "ui-icon-bookmark"
         }
     })
     .click(function() {
