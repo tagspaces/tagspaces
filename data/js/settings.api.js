@@ -60,6 +60,7 @@ TSSETTINGS.DefaultSettings = {
             "path":'/media' 
         }, 
 	],
+    "extensionsPath": "file:///Z://TagSpaces//repository//data//ext",
     "extensions": [
         {   
             "id": "editorText", // ID should be equal to the directory name where the ext. is located 
@@ -122,6 +123,15 @@ TSSETTINGS.Settings = undefined;
 //{"title":"2009","isFolder":true,"isLazy":true,"key":"z:\\Chronique\\2009"},
 //{"title":"2010","isFolder":true,"isLazy":true,"key":"z:\\Chronique\\2010"},
 //];
+
+TSSETTINGS.getExtensionPath = function() {
+    // TODO if setting not existing create it automatically with directory
+    return TSSETTINGS.Settings["extensionsPath"];
+}
+
+TSSETTINGS.setExtensionPath = function(extPath) {
+    return TSSETTINGS.Settings["extensionsPath"] = extPath;
+}
 
 TSSETTINGS.getNewTextFileContent = function() {
     return TSSETTINGS.Settings["newTextFileContent"];
