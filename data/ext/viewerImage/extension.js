@@ -14,6 +14,8 @@ exports.config = {
         ],        
 }
 
+var extensionDirectory = TSSETTINGS.getExtensionPath()+UIAPI.getDirSeparator()+exports.config["id"];
+
 exports.init = function(filePath, elementID) {
     console.debug("Initalization Browser Image Viewer...");
     filePath = "file:///"+filePath;

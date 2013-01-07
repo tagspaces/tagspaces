@@ -40,7 +40,7 @@ FileViewer.openFile = function(fileName) {
         $( "#viewer" ).text("File type not supported for viewing.");        
         return;
     } else {
-        require(["ext/"+viewerExt+"/extension"], function(viewer) {
+        require([TSSETTINGS.getExtensionPath()+UIAPI.getDirSeparator()+viewerExt+UIAPI.getDirSeparator()+"extension.js"], function(viewer) {
             tsEditor = viewer;
             tsEditor.init(filePath, "viewer");
             tsEditor.viewerMode(true);
@@ -80,7 +80,7 @@ FileViewer.editFile = function(fileName) {
         return;
     } else {
         try {
-            require(["ext/"+editorExt+"/extension"], function(editr) {
+            require([TSSETTINGS.getExtensionPath()+UIAPI.getDirSeparator()+editorExt+UIAPI.getDirSeparator()+"extension.js"], function(editr) {
                 tsEditor = editr;
                 tsEditor.init(filePath, "viewer");
             });
@@ -225,7 +225,7 @@ FileViewer.addOpenInWindowButton = function(container, filePath) {
     $( "#openInNewWindow" ).button({
         text: false,        
         icons: {
-            primary: "ui-icon-newwin"
+            primary: "ui-icon-extlink" // newwin
         },
         disabled: false
     })

@@ -11,13 +11,14 @@ exports.config = {
 }
 
 var htmlEditor = undefined;
+var extensionDirectory = TSSETTINGS.getExtensionPath()+UIAPI.getDirSeparator()+exports.config["id"];
 
 exports.init1 = function(filePath, containerElementID) {
     console.debug("Initalization HTML Text Editor...");
 	require([
-		'./wysihtml5/advanced',
-	 	'./wysihtml5/wysihtml5-0.4.0pre.min',
-	 	'css!ext/editorHTML/wysihtml5/stylesheet'
+		extensionDirectory+'/wysihtml5/advanced.js',
+	 	extensionDirectory+'/wysihtml5/wysihtml5-0.4.0pre.min.js',
+	 	'css!'+extensionDirectory+'/wysihtml5/stylesheet.css'
 	 	], function() {
 		generateUI(containerElementID);
 		htmlEditor = new wysihtml5.Editor("htmlEditor", {
@@ -31,8 +32,8 @@ exports.init1 = function(filePath, containerElementID) {
 exports.init2 = function(filePath, containerElementID) {
     console.debug("Initalization HTML Text Editor...");
 	require([
-		'./jwysiwyg/jquery.wysiwyg',
-	 	'css!./jwysiwyg/jquery.wysiwyg'
+		extensionDirectory+'/jwysiwyg/jquery.wysiwyg.js',
+	 	'css!'+extensionDirectory+'/jwysiwyg/jquery.wysiwyg.css'
 	 	], function() {
 		$("#"+containerElementID).append('<textarea id="htmlEditor" style="border-width: 0px; width: 100%; height: 100%"></textarea>');	 		
 		$('#htmlEditor').wysiwyg();
@@ -43,8 +44,8 @@ exports.init2 = function(filePath, containerElementID) {
 exports.init = function(filePath, containerElementID) {
     console.debug("Initalization HTML Text Editor...");
 	require([
-		'./cleditor/jquery.cleditor.min',
-	 	'css!./cleditor/jquery.cleditor'
+		extensionDirectory+'/cleditor/jquery.cleditor.min.js',
+	 	'css!'+extensionDirectory+UIAPI.getDirSeparator()+'cleditor'+UIAPI.getDirSeparator()+'jquery.cleditor.css'
 	 	], function() {
 		$("#"+containerElementID).append('<textarea id="htmlEditor" style="border-width: 0px; width: 100%; height: 100%"></textarea>');	 		
 		$.cleditor.defaultOptions.width = '100%';

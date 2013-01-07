@@ -17,6 +17,7 @@ exports.config = {
 }
 
 var aceEditor = undefined;
+var extensionDirectory = TSSETTINGS.getExtensionPath()+UIAPI.getDirSeparator()+exports.config["id"];
 
 var generateUI = function(containerElementID) {
 	$("#"+containerElementID).append('<div id="aceEditor" style="width: 100%; height: 100%"></div>');	
