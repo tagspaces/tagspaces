@@ -24,14 +24,16 @@
     <div class="ui-layout-north">
         <span id="logo">TagSpaces<sup id="appVersion" style="font-size: 0.6em; color: #BFBFBF"></sup></span>
         <span id="loadingAnimation">&nbsp;</span> 
+        <button id="toggleLeftPanel" title="Toggle Leftpanel">&nbsp;</button>
         <span id="viewsRadio"> 
-            <input type="radio" id="fileViewButton" name="viewsRadio" checked="checked" /><label for="fileViewButton">Fileview</label>
-            <input type="radio" id="tagViewButton" name="viewsRadio" /><label for="tagViewButton">Tagview</label>
-            <input type="radio" id="thumbViewButton" name="viewsRadio" /><label for="thumbViewButton">Thumbview</label>             
-        </span>    
+            <input type="radio" id="fileViewButton" name="viewsRadio" checked="checked" /><label for="fileViewButton">Files View</label>
+            <input type="radio" id="tagViewButton" name="viewsRadio" /><label for="tagViewButton">Tags View</label>
+            <input type="radio" id="thumbViewButton" name="viewsRadio" /><label for="thumbViewButton">Thumbs View</label>
+            <input type="radio" id="moreViewsButton" name="viewsRadio" /><label for="moreViewsButton">...</label>                          
+        </span>
         <!--input id="searchbox" type="search" name="query" value="Search" autocomplete="off" -->
-        <button id="openAboutBox" title="About TagSpaces">&nbsp;</button>      
-        <button id="openSettings" title="Settings">&nbsp;</button>
+        <button id="openAboutBox" title="About TagSpaces">About</button>      
+        <button id="openSettings" title="Advanced Settings">Settings</button>
     </div>
 
     <div class="ui-layout-west" style="padding: 2px;">
@@ -47,11 +49,10 @@
     
     <div class="ui-layout-center" style="padding: 0;">
         <div class="middle-north" style="padding: 2px;">
-            <button id="toggleLeftPanel" title="Toggle Leftpanel">&nbsp;</button>
             <button id="createFileButton" title="Create new file">New</button>
             <span style="float: right; margin: 0px; padding: 0px;">
                 <input id="filterBox" type="filter" value="" autocomplete="off" title="This filter applies to current directory without subdirectories." />
-                <button id="toggleRightPanel" title="Toggle Rightpanel" >&nbsp;</button>
+                <!--button id="toggleRightPanel" title="Toggle Rightpanel" >&nbsp;</button-->
             </span>
         </div> 
         <div class="middle-center" style="padding: 0">
@@ -271,7 +272,7 @@
     <ul id="fileMenu" class="dropdown-menu has-tip">
         <li action="addTag" title=""><a href="javascript:void(0);"><span class="ui-icon ui-icon-tag"></span>Add Tags</a></li>
         <li action="openFile" title=""><a href="javascript:void(0);"><span class="ui-icon ui-icon-plus"></span>Open File</a></li>               
-        <li action="openDirectory" title=""><a href="javascript:void(0);"><span class="ui-icon ui-icon-folder-open"></span>Open Parent Directory</a></li>               
+        <li action="openDirectory" title=""><a href="javascript:void(0);"><span class="ui-icon ui-icon-folder-open"></span>Show containing folder</a></li>               
         <li action="renameFile" title=""><a href="javascript:void(0);"><span class="ui-icon ui-icon-pencil"></span>Raname File</a></li>
         <li action="deleteFile" title=""><a href="javascript:void(0);"><span class="ui-icon ui-icon-trash"></span>Delete File</a></li>
     </ul>
@@ -305,7 +306,7 @@
     <ul id="directoryMenu" class="dropdown-menu has-tip">
         <li action="reloadDirectory" title="Reload directory"><a href="javascript:void(0);"><span class="ui-icon ui-icon-refresh"></span>Reload Directory</a></li>
         <li action="createDirectory" title="Creates a new subdirectory"><a href="javascript:void(0);"><span class="ui-icon ui-icon-document"></span>New Subdirectory</a></li>                   
-        <li action="openDirectory" title="Opens the directoriy in the default file browser"><a href="javascript:void(0);"><span class="ui-icon ui-icon-folder-open"></span>Locate Directory on Storage</a></li>                   
+        <li action="openDirectory" title="Opens the directoriy in the default file browser"><a href="javascript:void(0);"><span class="ui-icon ui-icon-folder-open"></span>Show Containing Folder</a></li>                   
     </ul>      
 </div>	
 </body>
