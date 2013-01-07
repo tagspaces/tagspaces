@@ -55,7 +55,7 @@ DirectoriesUI.generateDirPath = function() {
         .hover(function() { $(this).toggleClass("ui-state-hover"); })        
         // Add plus button to h3
         .append($("<span>", { 
-            class: "ui-icon ui-icon-circle-plus",
+            class: "ui-icon ui-icon-triangle-1-e",
             style: "position:relative!important; display:inline-block;",             
         })
         .click(function() {
