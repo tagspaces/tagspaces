@@ -69,11 +69,11 @@ UIAPI.updateLogger = function(message) {
 }
 
 UIAPI.showLoadingAnimation = function(message) {
-    $("#loadingAnimation").show();
+    $("#loadingAnimation").css('visibility', "visible");
 }
 
 UIAPI.hideLoadingAnimation = function(message) {
-    $("#loadingAnimation").hide();
+    $("#loadingAnimation").css('visibility', "hidden");
 }
 
 UIAPI.fileExists = function(fileName) {
