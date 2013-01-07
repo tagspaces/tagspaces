@@ -25,7 +25,7 @@ SettingsUI.initJSONEditor = function() {
 
 SettingsUI.initButtons = function() {
     $( "#openSettings" ).button({
-        text: false,
+        text: true,
         icons: {
             primary: "ui-icon-wrench"
         }
@@ -36,7 +36,7 @@ SettingsUI.initButtons = function() {
     });
     
     $( "#openAboutBox" ).button({
-        text: false,
+        text: true,
         icons: {
             primary: "ui-icon-lightbulb"
         }
