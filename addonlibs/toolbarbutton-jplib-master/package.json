@@ -1,0 +1,9 @@
+{
+    "name": "toolbarbutton",
+    "description": "Toolbar Buttons for Jetpacks",
+    "keywords": ["toolbar", "toolbarbutton", "button", "ui"],
+    "author": "Erik Vold",
+    "version": "1.1.1",
+    "license": "MIT/X11",
+    "dependencies": ["api-utils", "vold-utils"]
+}
