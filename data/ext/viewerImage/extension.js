@@ -24,6 +24,10 @@ exports.init = function(filePath, elementID) {
     	id: "imgViewer",
 		src: filePath
     }));
+
+	require([extensionDirectory+'/croppr.js'], function() {
+
+	});    
 }
 
 exports.viewerMode = function(isViewerMode) {

@@ -23,12 +23,16 @@ var generateUI = function(containerElementID) {
 	$("#"+containerElementID).append('<div id="aceEditor" style="width: 100%; height: 100%"></div>');	
 }
 
+require.config({
+    baseUrl: 'file:///Z://TagSpaces//repository//data//ext//editorText'
+});
+
 exports.init = function(filePath, containerElementID) {
     console.debug("Initalization ACE Text Editor...");
     var fileExt = filePath.substring(filePath.lastIndexOf(".")+1,filePath.length).toLowerCase();
 	generateUI(containerElementID);
-    var ace = require("./ace/ace");  
-    aceEditor = ace.edit('aceEditor');
+	 
+    aceEditor = require('./ace/ace').edit('aceEditor');
 //    aceEditor.setTheme("./ace/theme/monokai");
     IOAPI.loadTextFile(filePath);
     if (filetype[fileExt] != null) {
@@ -37,6 +41,25 @@ exports.init = function(filePath, containerElementID) {
         	aceEditor.getSession().setMode(new syntaxMode());
         })       
     }
+
+}
+
+exports.init2 = function(filePath, containerElementID) {
+    console.debug("Initalization ACE Text Editor...");
+    var fileExt = filePath.substring(filePath.lastIndexOf(".")+1,filePath.length).toLowerCase();
+	generateUI(containerElementID);
+	
+	require([extensionDirectory+'/ace/ace.js'], function(acemodule) { //"file:///Z:/TagSpaces/repository/data/ext/editorText/ace/ace.js" extensionDirectory+'/ace/ace.js'
+	    aceEditor = acemodule.edit('aceEditor');
+	//    aceEditor.setTheme("./ace/theme/monokai");
+	    IOAPI.loadTextFile(filePath);
+	    if (filetype[fileExt] != null) {
+	        require(["./ace/mode/" + filetype[fileExt]], function(acemode) {
+	        	var syntaxMode = acemode.Mode;
+	        	aceEditor.getSession().setMode(new syntaxMode());
+	        })       
+	    }
+	});
 }
 
 exports.viewerMode = function(isViewerMode) {
