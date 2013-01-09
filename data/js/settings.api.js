@@ -60,7 +60,7 @@ TSSETTINGS.DefaultSettings = {
             "path":'/media' 
         }, 
 	],
-    "extensionsPath": "file:///Z://TagSpaces//repository//data//ext",
+    "extensionsPath": "file:///C:/TagSpaces/extensions",
     "extensions": [
         {   
             "id": "editorText", // ID should be equal to the directory name where the ext. is located 
