@@ -90,7 +90,9 @@ IOAPI.listDirectory = function(dirPath) {
 	if(IOAPI.plugin.isDirectory(dirPath)) {
 		try {
 			var dirList = IOAPI.plugin.listFiles(dirPath);
-    		UIAPI.updateFileBrowserData(dirList);
+			console.debug("Dir content: "+JSON.stringify(dirList)); // [{"name":"The-Ultimate-Complete-Social-Media-Sizing-Cheat-Sheet1.png","type":"file","size":1945180,"lmdt":1357742820000},{"name":"IMG_1803[wine].JPG","type":"file","size":2372609,"lmdt":1353796522000}]
+    		UIAPI.updateFileBrowserData(JSON.parse( JSON.stringify(dirList)));
+    		//UIAPI.updateFileBrowserData(JSON.parse( '[{"name":"The-Ultimate-Complete-Social-Media-Sizing-Cheat-Sheet1.png","type":"file","size":1945180,"lmdt":1357742820000},{"name":"IMG_1803[wine].JPG","type":"file","size":2372609,"lmdt":1353796522000}]' ));
 		} catch(ex) {
 			console.error("Directory listing failed "+ex);
 		}		
@@ -99,9 +101,8 @@ IOAPI.listDirectory = function(dirPath) {
 	}	
 }
 
-//TODO Implement getSubdirs for chrome
 IOAPI.getSubdirs = function(dirPath) {
-	console.debug("Getting subdirs(Not Implemented): "+dirPath);
+	console.debug("Getting subdirs: "+dirPath);
     if(IOAPI.plugin.isDirectory(dirPath)) {
         try {
             var dirList = IOAPI.plugin.listFiles(dirPath);
@@ -115,9 +116,9 @@ IOAPI.getSubdirs = function(dirPath) {
                         "key": dirPath+IOAPI.pathSeparator+dirList[i].name 
                     }); 
                 }            
-            }                
-            // TODO Convert JSON to dyntree format
-            UIAPI.updateTree(anotatedDirList);
+            } 
+            // TODO JSON functions are a workarround for a bug....               
+            DirectoriesUI.updateSubDirs(JSON.parse( JSON.stringify(anotatedDirList)));
         } catch(ex) {
             console.error("Directory listing failed "+ex);
         }       
@@ -131,3 +132,26 @@ IOAPI.deleteElement = function(path) {
 	IOAPI.plugin.removeFile(path)
 }
 
+IOAPI.selectDirectory = function() {
+	// TODO implement selectDirectory
+	console.debug("Select directory functionality not implemented on chrome yet!");
+	alert("Select directory functionality not implemented on chrome yet!")	
+}
+
+IOAPI.selectFile = function() {
+	// TODO implement selectFile
+	console.debug("Select file functionality not implemented on chrome yet!");
+	alert("Select file functionality not implemented on chrome yet!")
+}
+
+IOAPI.openDirectory = function(dirPath) {
+	// TODO implement openDirectory
+	console.debug("Open directory functionality not implemented on chrome yet!");
+	alert("Open directory functionality not implemented on chrome yet!");
+}
+
+IOAPI.openExtensionsDirectory = function() {
+	// TODO implement openExtensionsDirectory
+	console.debug("Open extensions directory functionality not implemented on chrome yet!");
+	alert("Open extensions directory functionality not implemented on chrome yet!"); 
+}

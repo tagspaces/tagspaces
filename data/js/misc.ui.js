@@ -99,6 +99,8 @@ UIAPI.updateFileBrowserData = function(dirList) {
     var tags = undefined;
     var ext = undefined;
     var title = undefined;
+    var fileSize = undefined;
+    var fileLMDT = undefined;
     // Sort the dir list alphabetically before displaying 
     // TODO sorting files not working correctly
     dirList.sort(function(a,b) { return a.name.localeCompare(b.name); });
@@ -116,7 +118,11 @@ UIAPI.updateFileBrowserData = function(dirList) {
                     // title = dirList[i].name;
                      ext = "";
                  }
-                 var entry = [dirList[i].name,dirList[i].size,dirList[i].lmdt,title,tags,ext];   
+                 fileSize = dirList[i].size;
+                 fileLMDT = dirList[i].lmdt;
+                 if(fileSize == undefined) fileSize = "";
+                 if(fileLMDT == undefined) fileLMDT = "";
+                 var entry = [dirList[i].name,fileSize,fileLMDT,title,tags,ext];   
                  UIAPI.fileList.push(entry);
             }
         }

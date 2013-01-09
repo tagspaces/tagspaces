@@ -20,6 +20,7 @@ TSAPI.createSearchIndex = function(currentLocation) {
 }
 
 TSAPI.formatDateTime = function(date, includeTime) {
+    if( (date == undefined) || (date == "") ) return "";
     var d = new Date(date);
     var cDate = d.getDate();
     cDate = cDate + "";
