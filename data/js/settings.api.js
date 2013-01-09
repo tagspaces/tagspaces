@@ -52,11 +52,11 @@ TSSETTINGS.DefaultSettings = {
     "lastOpenedDirectory": "",
 	"tagspacesList": [
         {
-            "name":'Windows Location Example', 
+            "name":'Windows Location', 
             "path":'Z:\\' 
         }, 
         {
-            "name":'Unix Location Example', 
+            "name":'Unix Location', 
             "path":'/media' 
         }, 
 	],
@@ -72,10 +72,10 @@ TSSETTINGS.DefaultSettings = {
         },
     ],
     "supportedFileTypes": [
-        { "type": "jpg", "viewer": "viewerImage", "editor": false  },        
-        { "type": "jpeg", "viewer": "viewerImage", "editor": false  },    
-        { "type": "gif", "viewer": "viewerImage", "editor": false  },        
-        { "type": "png", "viewer": "viewerImage", "editor": false  },        
+        { "type": "jpg", "viewer": "viewerBrowser", "editor": false  },        
+        { "type": "jpeg", "viewer": "viewerBrowser", "editor": false  },    
+        { "type": "gif", "viewer": "viewerBrowser", "editor": false  },        
+        { "type": "png", "viewer": "viewerBrowser", "editor": false  },        
         { "type": "svg", "viewer": "viewerBrowser", "editor": false  },
         { "type": "pdf", "viewer": "viewerBrowser", "editor": false  },                
         { "type": "html", "viewer": "viewerBrowser", "editor": false  },                        
