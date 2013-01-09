@@ -24,8 +24,9 @@
 	{"path": "chrome/npapi-fileio/npapi-file-io-64.so", "public": false}
   ],
   "permissions": [
-    "tabs", "http://*/*"
+    "tabs", "http://*/*", "file://*/*"
   ],
+  "content_security_policy": "script-src 'self' ; object-src 'self'",  
   "web_accessible_resources": [
     "about.html"
   ],
