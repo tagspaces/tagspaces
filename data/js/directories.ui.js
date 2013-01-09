@@ -140,26 +140,61 @@ DirectoriesUI.setDirectoryCollapse = function(directoryPath, collapsed) {
 DirectoriesUI.navigateToDirectory = function(directoryPath) {
     console.log("Navigating to directory: "+directoryPath);
 
-    var directoryFound = false;    
+	// Cleaning the directory path from \\ \ and / 
+	if( (directoryPath.lastIndexOf('/')+1 == directoryPath.length) || (directoryPath.lastIndexOf('\\')+1 == directoryPath.length)) {
+		directoryPath = directoryPath.substring(0,directoryPath.length-1);
+	}
+	if( (directoryPath.lastIndexOf('\\\\')+1 == directoryPath.length)) {
+		directoryPath = directoryPath.substring(0,directoryPath.length-2);
+	}
+
+    var directoryFoundOn = -1;    
     for(var i=0; i < DirectoriesUI.directoryHistory.length; i++) {
         if(DirectoriesUI.directoryHistory[i].key == directoryPath) {
             DirectoriesUI.directoryHistory[i].collapsed = false;
-            directoryFound = true;
+            directoryFoundOn = i;
         } else {
             DirectoriesUI.directoryHistory[i].collapsed = true;            
         }
     }
     
-    // TODO find index of currentPath and splice the array 
+    // Removes the history only if it is a completely new file
+//	if(DirectoriesUI.directoryHistory.length > 0) { 
+//	    var lastDirectoryInHistory = DirectoriesUI.directoryHistory[DirectoriesUI.directoryHistory.length-1];
+//	    if(lastDirectoryInHistory['key'].indexOf(directoryPath) < 0) {
+		    if(directoryFoundOn >= 0) { 
+				var diff = DirectoriesUI.directoryHistory.length - (directoryFoundOn+1);
+				if(diff > 0) {
+					DirectoriesUI.directoryHistory.splice(directoryFoundOn+1, diff);
+				}    
+		    }    	
+//	    }
+//    }
     
     // If directory path not in history then add it to the history
-    if(!directoryFound) {
+    if(directoryFoundOn < 0) {    	
+	    var parentLocation = directoryPath.substring(0, directoryPath.lastIndexOf(UIAPI.getDirSeparator()));
+		var parentFound = -1;
+	    for(var i=0; i < DirectoriesUI.directoryHistory.length; i++) {
+	        if(DirectoriesUI.directoryHistory[i].key == parentLocation) {
+ 				parentFound = i;
+	        } 
+	    }    	
+	    if(parentFound >= 0) { 
+			var diff = DirectoriesUI.directoryHistory.length - (parentFound+1);
+			if(diff > 0) {
+				DirectoriesUI.directoryHistory.splice(parentFound+1, diff);
+			}    
+	    }  
+    	    	
+    	var locationTitle = directoryPath.substring(directoryPath.lastIndexOf(UIAPI.getDirSeparator())+1,directoryPath.length);
         DirectoriesUI.directoryHistory.push({
-            "title": directoryPath.substring(directoryPath.lastIndexOf(UIAPI.getDirSeparator())+1,directoryPath.length),
+            "title": locationTitle,
             "key" : directoryPath,
             "collapsed" : false,
-        });        
+        });	        	
     }    
+
 
     UIAPI.currentPath = directoryPath;
     IOAPI.getSubdirs(directoryPath);
@@ -231,6 +266,9 @@ DirectoriesUI.initContextMenus = function() {
               case "createDirectory":
                 $( "#dialog-dircreate" ).dialog("open");
                 break;                           
+              case "openDirectory":
+				IOAPI.openDirectory(DirectoriesUI.dir4ContextMenu);
+                break; 
             }
         }
     });
