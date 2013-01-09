@@ -39,6 +39,12 @@ FileViewer.openFile = function(fileName) {
     if(!viewerExt) {
         $( "#viewer" ).text("File type not supported for viewing.");        
         return;
+    } else if (viewerExt == "viewerBrowser") {
+	    filePath = "file:///"+filePath;
+	    $('#viewer').append($('<iframe>', {
+	    	id: "iframeViewer",
+			src: filePath
+	    }));    	
     } else {
         require([TSSETTINGS.getExtensionPath()+UIAPI.getDirSeparator()+viewerExt+UIAPI.getDirSeparator()+"extension.js"], function(viewer) {
             tsEditor = viewer;
