@@ -231,20 +231,20 @@ Croppr.initCroppr = function() {
   var cropprToolboxDiv  = document.createElement("DIV"); 
   cropprToolboxDiv.id        = "cropprMenu";
   cropprToolboxDiv.innerHTML = '' +
-'<div id="cropprColors" style="background-image: url(\''+chrome.extension.getURL('imgs/color.png')+'\');" title="Change the background color">&nbsp;</div>'+
-'<div id="cropprRotateLeft" style="background-image: url(\''+chrome.extension.getURL('imgs/rotateleft.png')+'\');" title="Rotate to the left">&nbsp;</div>'+
-'<div id="cropprRotateRight" style="background-image: url(\''+chrome.extension.getURL('imgs/rotateright.png')+'\');" title="Rotate to the right">&nbsp;</div>'+
-'<div id="cropprFlipHorizontally" style="background-image: url(\''+chrome.extension.getURL('imgs/fliph.png')+'\');" title="Flip horizontally">&nbsp;</div>'+
-'<div id="cropprFlipVertically" style="background-image: url(\''+chrome.extension.getURL('imgs/flipv.png')+'\');" title="Flip vertically">&nbsp;</div>'+
-'<div id="cropprZoomIn" style="background-image: url(\''+chrome.extension.getURL('imgs/zoomin.png')+'\');" title="Zoom in">&nbsp;</div>'+
-'<div id="cropprZoomOut" style="background-image: url(\''+chrome.extension.getURL('imgs/zoomout.png')+'\');" title="Zoom out">&nbsp;</div>'+  
-'<div id="cropprReset" style="background-image: url(\''+chrome.extension.getURL('imgs/reset.png')+'\');" title="Reset the image">&nbsp;</div>'+  
-'<div id="cropprTwitter" style="background-image: url(\''+chrome.extension.getURL('imgs/twitter.png')+'\');" title="Send to Twitter">&nbsp;</div>'+
-'<div id="cropprFacebook" style="background-image: url(\''+chrome.extension.getURL('imgs/facebook.png')+'\');" title="Send to Facebook">&nbsp;</div>'+
-'<div id="cropprPrint" style="background-image: url(\''+chrome.extension.getURL('imgs/print.png')+'\');" title="Print">&nbsp;</div>'+
-'<div id="cropprReload" style="background-image: url(\''+chrome.extension.getURL('imgs/reload.png')+'\');" title="Reload the original page">&nbsp;</div>'+
-'<div id="cropprAbout" style="background-image: url(\''+chrome.extension.getURL('imgs/about.png')+'\');" title="About Croppr">&nbsp;</div>'+
-'<div id="cropprClose" style="background-image: url(\''+chrome.extension.getURL('imgs/close.png\');" title="Closes this toolbox">&nbsp;</div>'+
+'<div id="cropprColors" style="background-image: url(./imgs/color.png);" title="Change the background color">&nbsp;</div>'+
+'<div id="cropprRotateLeft" style="background-image: url(./imgs/rotateleft.png);" title="Rotate to the left">&nbsp;</div>'+
+'<div id="cropprRotateRight" style="background-image: url(./imgs/rotateright.png);" title="Rotate to the right">&nbsp;</div>'+
+'<div id="cropprFlipHorizontally" style="background-image: url(./imgs/fliph.png);" title="Flip horizontally">&nbsp;</div>'+
+'<div id="cropprFlipVertically" style="background-image: url(./imgs/flipv.png);" title="Flip vertically">&nbsp;</div>'+
+'<div id="cropprZoomIn" style="background-image: url(./imgs/zoomin.png);" title="Zoom in">&nbsp;</div>'+
+'<div id="cropprZoomOut" style="background-image: url(./imgs/zoomout.png);" title="Zoom out">&nbsp;</div>'+  
+'<div id="cropprReset" style="background-image: url(./imgs/reset.png);" title="Reset the image">&nbsp;</div>'+  
+'<div id="cropprTwitter" style="background-image: url(./imgs/twitter.png);" title="Send to Twitter">&nbsp;</div>'+
+'<div id="cropprFacebook" style="background-image: url(./imgs/facebook.png);" title="Send to Facebook">&nbsp;</div>'+
+'<div id="cropprPrint" style="background-image: url(./imgs/print.png);" title="Print">&nbsp;</div>'+
+'<div id="cropprReload" style="background-image: url(./imgs/reload.png);" title="Reload the original page">&nbsp;</div>'+
+'<div id="cropprAbout" style="background-image: url(./imgs/about.png);" title="About Croppr">&nbsp;</div>'+
+'<div id="cropprClose" style="background-image: url(./imgs/close.png);" title="Closes this toolbox">&nbsp;</div>'+
 	'';
 
   var contentDiv  = document.createElement("DIV"); 
@@ -256,31 +256,31 @@ Croppr.initCroppr = function() {
 	'';
 
   // Clears the document content 
-  document.body.innerHTML = "";
+//  document.body.innerHTML = "";
   
   // Inserts the content on the page 
   document.body.insertBefore(contentDiv, document.body.firstChild); 
 
   // Remove all stylesheets 
-  document.body.removeAttribute('style');  
-  for (var i=0; i < document.styleSheets.length; i++) {
-      if (document.styleSheets[i].href !== null && document.styleSheets[i].href.lastIndexOf("croppr") == -1) {
-	  document.styleSheets[i].disabled = true;
-      }
-  }
+//  document.body.removeAttribute('style');  
+//  for (var i=0; i < document.styleSheets.length; i++) {
+//      if (document.styleSheets[i].href !== null && document.styleSheets[i].href.lastIndexOf("croppr") == -1) {
+//	  document.styleSheets[i].disabled = true;
+//      }
+//  }
 
   // Sets the background color of the page to the default color(black)  
-  $('body').attr('class', '');
-  $('body').addClass(Croppr.cropprColor);
+//  $('body').attr('class', '');
+//  $('body').addClass(Croppr.cropprColor);
 
   // Centers the content on the page      
-  document.documentElement.style.display = 'table';
-  document.documentElement.style.width = '100%';
-  document.documentElement.style.height = '100%';
-  document.documentElement.style.background = '#000';
-  document.body.style.display = 'table-cell';
-  document.body.style.verticalAlign = 'middle';
-  document.body.style.textAlign = 'center';
+//  document.documentElement.style.display = 'table';
+//  document.documentElement.style.width = '100%';
+//  document.documentElement.style.height = '100%';
+//  document.documentElement.style.background = '#000';
+//  document.body.style.display = 'table-cell';
+//  document.body.style.verticalAlign = 'middle';
+//  document.body.style.textAlign = 'center';
 
   // Inserts the croppr's toolbox on the page   
   document.body.insertBefore(cropprToolboxDiv, document.body.firstChild);  

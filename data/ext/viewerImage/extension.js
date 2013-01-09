@@ -25,9 +25,10 @@ exports.init = function(filePath, elementID) {
 		src: filePath
     }));
 
-	require([extensionDirectory+'/croppr.js'], function() {
-
-	});    
+// TODO croppr integration
+//	require([extensionDirectory+'/croppr.js'], function() {
+//
+//	});    
 }
 
 exports.viewerMode = function(isViewerMode) {
