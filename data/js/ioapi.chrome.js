@@ -30,7 +30,7 @@ IOAPI.plugin.setAttribute("type", "application/x-npapi-file-io");
 IOAPI.plugin.style.position = "absolute";
 IOAPI.plugin.style.left = "-9999px";
 
-// Add plugin to document if the browser is chrome
+// Add plugin to document if the browser is chrome or chromium
 if(navigator.userAgent.indexOf("Chrom") > 0) {
     document.documentElement.appendChild(IOAPI.plugin);    
 }

@@ -77,7 +77,7 @@ SettingsUI.initDialogs = function() {
 //            "Ext. Folder": function() {
 //                IOAPI.openExtensionsDirectory()
 //            },
-            "Settings Editor": function() {
+            "Editor": function() {
                 if($("#settingsEditor").is(":hidden") ) {
                     $("#settingsPlainJSON").hide();
                     $("#settingsEditor").show();
@@ -91,7 +91,7 @@ SettingsUI.initDialogs = function() {
                     $("#settingsEditor").hide();
                 }
             },
-            "Load default settings": function() {
+            "Default Settings": function() {
                 if(confirm("Are you sure you want to restore the default application settings?\nAll manually made changes such as tags and taggroups will be lost.")) {
                     TSSETTINGS.Settings = TSSETTINGS.DefaultSettings;
                     TSSETTINGS.saveSettings();
@@ -99,7 +99,7 @@ SettingsUI.initDialogs = function() {
                     console.debug("Default settings loaded.");                    
                 }
             },
-            "Save changes": function() {
+            "Save": function() {
                 TSSETTINGS.Settings = editor.get();
                 TSSETTINGS.saveSettings();
                 UIAPI.reloadUI();

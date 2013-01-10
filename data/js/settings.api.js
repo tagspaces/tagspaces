@@ -91,7 +91,7 @@ TSSETTINGS.DefaultSettings = {
     ],
 	"tagGroups": [
 		{
-		    "title":"common",
+		    "title":"Common Tags",
 		    "isFolder": true,
 		    "key":"OTB",
 		    "expand": true,
