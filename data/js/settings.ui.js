@@ -74,9 +74,9 @@ SettingsUI.initDialogs = function() {
         width: 600,
         modal: true,
         buttons: {
-            "Ext. Folder": function() {
-                IOAPI.openExtensionsDirectory()
-            },
+//            "Ext. Folder": function() {
+//                IOAPI.openExtensionsDirectory()
+//            },
             "Settings Editor": function() {
                 if($("#settingsEditor").is(":hidden") ) {
                     $("#settingsPlainJSON").hide();

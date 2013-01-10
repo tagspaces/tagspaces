@@ -85,8 +85,7 @@ DirectoriesUI.generateDirPath = function() {
         })                
         .dropdown( 'attach' , '#directoryMenu' )
         .click( function(event) {
-                //console.debug("Clicked in directory setting");    
-                DirectoriesUI.dir4ContextMenu = $(this).attr("key");
+            DirectoriesUI.dir4ContextMenu = $(this).attr("key");
         })
         )
         );
@@ -94,18 +93,22 @@ DirectoriesUI.generateDirPath = function() {
         var dirButtons = $("<div>").appendTo( "#dirTree" );  
         dirButtons.attr("style","margin: 0px; padding: 5px;");
         dirButtons.addClass("ui-accordion-content  ui-helper-reset ui-widget-content ui-corner-bottom")
-        dirButtons.hide(); 
-        for(var j=0; j < DirectoriesUI.directoryHistory[i]["children"].length; j++) {
-            dirButtons.append($("<button>", { 
-                class: "dirButton", 
-                key: DirectoriesUI.directoryHistory[i]["children"][j].key,
-                title: DirectoriesUI.directoryHistory[i]["children"][j].key,
-                text: DirectoriesUI.directoryHistory[i]["children"][j].title, 
-            })
-            .click( function() {
-                DirectoriesUI.navigateToDirectory($(this).attr("key"));
-            })
-            );                      
+        dirButtons.hide();
+        if(DirectoriesUI.directoryHistory[i]["children"].length <= 0) {
+	            dirButtons.append("No subfolders found.");        	
+        } else {
+	        for(var j=0; j < DirectoriesUI.directoryHistory[i]["children"].length; j++) {
+	            dirButtons.append($("<button>", { 
+	                class: "dirButton", 
+	                key: DirectoriesUI.directoryHistory[i]["children"][j].key,
+	                title: DirectoriesUI.directoryHistory[i]["children"][j].key,
+	                text: DirectoriesUI.directoryHistory[i]["children"][j].title, 
+	            })
+	            .click( function() {
+	                DirectoriesUI.navigateToDirectory($(this).attr("key"));
+	            })
+	            );                      
+	        }        	
         }
     }
 }
@@ -158,18 +161,13 @@ DirectoriesUI.navigateToDirectory = function(directoryPath) {
         }
     }
     
-    // Removes the history only if it is a completely new file
-//	if(DirectoriesUI.directoryHistory.length > 0) { 
-//	    var lastDirectoryInHistory = DirectoriesUI.directoryHistory[DirectoriesUI.directoryHistory.length-1];
-//	    if(lastDirectoryInHistory['key'].indexOf(directoryPath) < 0) {
-		    if(directoryFoundOn >= 0) { 
-				var diff = DirectoriesUI.directoryHistory.length - (directoryFoundOn+1);
-				if(diff > 0) {
-					DirectoriesUI.directoryHistory.splice(directoryFoundOn+1, diff);
-				}    
-		    }    	
-//	    }
-//    }
+    // Removes the history only if it is a completely new path
+    if(directoryFoundOn >= 0) { 
+		var diff = DirectoriesUI.directoryHistory.length - (directoryFoundOn+1);
+		if(diff > 0) {
+			DirectoriesUI.directoryHistory.splice(directoryFoundOn+1, diff);
+		}    
+    }    	
     
     // If directory path not in history then add it to the history
     if(directoryFoundOn < 0) {    	

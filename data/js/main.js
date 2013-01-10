@@ -4,7 +4,6 @@
 define([
     'jquery',
     'jqueryui',
-//    'dynatree',
     'datatables',
     'jsoneditor',
     'jquerylayout',
@@ -17,13 +16,13 @@ var initApp = function(){
     console.debug("Initializing UI...");
     var editor = undefined; // Needed for JSON Editor
 
-    // Setting up the communication between the extension and tagspace app
-    if( $.browser.mozilla) {
+    // Setting up the IO functionality according to the plattform
+    if( $.browser.mozilla ) {
         require([
            "js/messaging.mozilla",
            "js/ioapi.mozilla"           
            ]); 
-    } else if ($.browser.chrome) {
+    } else if ( $.browser.chrome ) {
         require([
            "js/ioapi.chrome"           
            ]);         
@@ -43,7 +42,6 @@ var initApp = function(){
         function() {
             TagsUI.initContextMenus();
             TagsUI.initDialogs();
-            //TagsUI.initTagTree();            
             
             BasicViewsUI.initContextMenus();
             BasicViewsUI.initFileTagViews();
@@ -54,7 +52,6 @@ var initApp = function(){
             DirectoriesUI.initDialogs();
             DirectoriesUI.initButtons();
             DirectoriesUI.initContextMenus();
-            //DirectoriesUI.initDirectoryTree();
             
             SettingsUI.initButtons();
             SettingsUI.initDialogs();
