@@ -58,13 +58,13 @@ IOAPI.loadTextFile = function(filePath) {
 	console.debug("Loading file: "+filePath);
     if(IOAPI.plugin.fileExists(filePath)) {
         var fileContent = IOAPI.plugin.getTextFile(filePath);
-        UIAPI.updateTextEditorContent(fileContent);
+        FileViewer.updateEditorContent(fileContent);   
     } else {
         console.error("File does not exists...");
     }	
 }
 
-// TODO Renaming very slow
+// TODO Renaming very slow, due the copy implementation
 IOAPI.renameFile = function(filePath, newFilePath) {
 	console.debug("Renaming file: "+filePath+" to "+newFilePath);
 	if(IOAPI.plugin.fileExists(newFilePath)) {
@@ -82,6 +82,9 @@ IOAPI.renameFile = function(filePath, newFilePath) {
 
 IOAPI.saveTextFile = function(filePath,content) {
 	console.debug("Saving file: "+filePath);
+  	if(IOAPI.plugin.fileExists(filePath)) {
+		IOAPI.plugin.removeFile(filePath);      		
+  	}
 	IOAPI.plugin.saveTextFile(filePath,content);
 }
 
@@ -90,9 +93,8 @@ IOAPI.listDirectory = function(dirPath) {
 	if(IOAPI.plugin.isDirectory(dirPath)) {
 		try {
 			var dirList = IOAPI.plugin.listFiles(dirPath);
-			console.debug("Dir content: "+JSON.stringify(dirList)); // [{"name":"The-Ultimate-Complete-Social-Media-Sizing-Cheat-Sheet1.png","type":"file","size":1945180,"lmdt":1357742820000},{"name":"IMG_1803[wine].JPG","type":"file","size":2372609,"lmdt":1353796522000}]
-    		UIAPI.updateFileBrowserData(JSON.parse( JSON.stringify(dirList)));
-    		//UIAPI.updateFileBrowserData(JSON.parse( '[{"name":"The-Ultimate-Complete-Social-Media-Sizing-Cheat-Sheet1.png","type":"file","size":1945180,"lmdt":1357742820000},{"name":"IMG_1803[wine].JPG","type":"file","size":2372609,"lmdt":1353796522000}]' ));
+			console.debug("Dir content: "+JSON.stringify(dirList)); 
+    		UIAPI.updateFileBrowserData(dirList);
 		} catch(ex) {
 			console.error("Directory listing failed "+ex);
 		}		

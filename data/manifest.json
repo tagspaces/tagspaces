@@ -1,6 +1,6 @@
 {
   "name": "TagSpaces",
-  "version": "1.2.1197",
+  "version": "1.2.1198",
   "manifest_version": 2,
   "description": "TagSpaces Explorer",
   "icons": {
@@ -26,7 +26,7 @@
   "permissions": [
     "tabs", "http://*/*", "file://*/*"
   ],
-  "content_security_policy": "script-src 'self' ; object-src 'self'",    
+  "content_security_policy": "script-src 'self' ; object-src 'self'",  
   "web_accessible_resources": [
     "about.html"
   ],
