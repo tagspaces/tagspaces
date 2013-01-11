@@ -13,18 +13,16 @@
 	"scripts": ["chrome/background.js"]
   },
   "options_page": "index.html",
-  "app": {
-    "launch": {
-      "local_path": "index.html"
-    }
-  },  
+  "browser_action": {
+    "default_icon": "icons/icon16.png"
+  }, 
   "plugins": [
 	{"path": "chrome/npapi-fileio/npapi-file-io-32.dll", "public": false},
 	{"path": "chrome/npapi-fileio/npapi-file-io-32.so", "public": false},
 	{"path": "chrome/npapi-fileio/npapi-file-io-64.so", "public": false}
   ],
   "permissions": [
-    "tabs", "http://*/*", "file://*/*"
+    "tabs", "http://*/*", "file://*/*"   
   ],
   "content_security_policy": "script-src 'self' ; object-src 'self'",  
   "web_accessible_resources": [
