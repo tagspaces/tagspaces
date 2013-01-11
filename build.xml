@@ -48,12 +48,12 @@ found in the LICENSE file.
 		      <include name="**/*"/>
 		    </fileset>        	
         </copy>
-        <copy todir="${buildFirefoxExt.dir}/data/ext" >
+        <!--copy todir="${buildFirefoxExt.dir}/data/ext" >
 		    <fileset dir="data/ext">
 		      <include name="viewerBrowser/*"/>
 			  <include name="viewerImage/*"/>	    	
 		    </fileset>        	
-        </copy>
+        </copy-->
     	<copy todir="${buildFirefoxExt.dir}/data/css" >
             <fileset dir="data/css" includes="**/*"/>  
         </copy>
@@ -102,12 +102,11 @@ found in the LICENSE file.
         <copy todir="${buildChrome.dir}/chrome" >
             <fileset dir="data/chrome" includes="**/*"/>  
         </copy>
-        <copy todir="${buildChrome.dir}/data/ext" >
+        <!--copy todir="${buildChrome.dir}/data/ext" >
 		    <fileset dir="data/ext">
-		      <include name="viewerBrowser/*"/>
 			  <include name="viewerImage/*"/>	    	
 		    </fileset>        	
-        </copy>    	
+        </copy-->    	
         <copy todir="${buildChrome.dir}/libs" >
             <fileset dir="data/libs" includes="**/*"/>  
         </copy>
