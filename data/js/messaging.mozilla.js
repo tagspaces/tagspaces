@@ -80,6 +80,14 @@ document.documentElement.addEventListener("addon-message1", function(event) {
             UIAPI.updateLogger("List directory failed");        
         }
         break;      
+      case "indexDirectory":
+        if(message.success){
+            console.debug("Directory Index: "+JSON.stringify(message.content));
+            // UIAPI.updateFileBrowserData(message.content);       
+        } else {
+            UIAPI.updateLogger("Indexing directory failed");        
+        }
+        break;  
       case "getSubdirs":
         if(message.success){
             var dirListing = [];

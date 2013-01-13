@@ -146,3 +146,13 @@ IOAPI.openExtensionsDirectory = function() {
     }});
     document.documentElement.dispatchEvent(event);  
 }
+
+IOAPI.createDirectoryIndex = function(dirPath) {
+    console.debug("Creating directory index for: "+dirPath);
+    var event = document.createEvent('CustomEvent');
+    event.initCustomEvent("addon-message", true, true, {"detail":{
+        "command": "createDirectoryIndex",
+        "path": dirPath
+    }});
+    document.documentElement.dispatchEvent(event);  
+}

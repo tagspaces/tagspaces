@@ -26,7 +26,11 @@ var initApp = function(){
         require([
            "js/ioapi.chrome"           
            ]);         
-    }    
+    } else { // TODO a more sophisticated check is required for cordova
+        require([
+           "js/ioapi.cordova"           
+           ]);         
+    }   
 
     // TODO refactor all libs for integration of backbone.js     
     require([
