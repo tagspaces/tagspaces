@@ -149,6 +149,7 @@ IOAPI.openExtensionsDirectory = function() {
 
 IOAPI.createDirectoryIndex = function(dirPath) {
     console.debug("Creating directory index for: "+dirPath);
+    UIAPI.showLoadingAnimation();   
     var event = document.createEvent('CustomEvent');
     event.initCustomEvent("addon-message", true, true, {"detail":{
         "command": "createDirectoryIndex",
