@@ -43,7 +43,17 @@ SettingsUI.initButtons = function() {
     })
     .click(function() {
         $( "#dialogAbout" ).dialog( "open" );
-    });          
+    });   
+    
+    $( "#toggleLeftPanel" ).button({
+        text: false,
+        icons: {
+            primary: "ui-icon-bookmark"
+        }
+    })
+    .click(function() {
+        UIAPI.layoutContainer.toggle("west");
+    });             
 }
 
 SettingsUI.initDialogs = function() {

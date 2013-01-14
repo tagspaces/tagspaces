@@ -34,24 +34,19 @@ var initApp = function(){
 
     // TODO refactor all libs for integration of backbone.js     
     require([
+            "js/viewmanager",
+            "js/settings.api",
             "js/fileviewer.ui",
             "js/tags.ui",
-            "js/basicviews.ui",
             "js/settings.ui",
             "js/misc.ui",
-            "js/settings.api",
             "js/tagspace.api",
             "js/directories.ui",
         ], 
-        function() {
+        function(viewManager) {
+			
             TagsUI.initContextMenus();
             TagsUI.initDialogs();
-            
-            BasicViewsUI.initContextMenus();
-            BasicViewsUI.initFileTagViews();
-            BasicViewsUI.initDialogs(); 
-            BasicViewsUI.initButtons();
-            BasicViewsUI.initThumbView();
             
             DirectoriesUI.initDialogs();
             DirectoriesUI.initButtons();
@@ -72,7 +67,10 @@ var initApp = function(){
             // This is usually the case by a new installation
             if(TSSETTINGS.Settings == undefined) {
                 TSSETTINGS.Settings = TSSETTINGS.DefaultSettings;
-            }          
+            }    
+            
+            // Init views
+ 			viewManager.initViews();                 
             
             $("#appVersion").text("["+TSSETTINGS.DefaultSettings["appVersion"]+"]");
             $("#appVersion").attr("title","["+TSSETTINGS.DefaultSettings["appBuild"]+"]");

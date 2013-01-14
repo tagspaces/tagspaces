@@ -24,12 +24,7 @@
         <span id="logo">TagSpaces<sup id="appVersion" style="font-size: 0.6em; color: #BFBFBF"></sup></span>
         <span id="loadingAnimation">&nbsp;</span> 
         <button id="toggleLeftPanel" title="Toggle Leftpanel">&nbsp;</button>
-        <span id="viewsRadio"> 
-            <input type="radio" id="fileViewButton" name="viewsRadio" checked="checked" /><label for="fileViewButton">Files View</label>
-            <input type="radio" id="tagViewButton" name="viewsRadio" /><label for="tagViewButton">Tags View</label>
-            <input type="radio" id="thumbViewButton" name="viewsRadio" /><label for="thumbViewButton">Thumbs View</label>
-            <input type="radio" id="moreViewsButton" name="viewsRadio" /><label for="moreViewsButton">...</label>                          
-        </span>
+        <span id="viewsRadio"></span>
         <!--input id="searchbox" type="search" name="query" value="Search" autocomplete="off" -->
         <button id="openAboutBox" title="About TagSpaces">About</button>      
         <button id="openSettings" title="Advanced Settings">Settings</button>
@@ -51,14 +46,9 @@
             <button id="createFileButton" title="Create new file">New</button>
             <span style="float: right; margin: 0px; padding: 0px;">
                 <input id="filterBox" type="filter" value="" autocomplete="off" title="This filter applies to current directory without subdirectories." />
-                <!--button id="toggleRightPanel" title="Toggle Rightpanel" >&nbsp;</button-->
             </span>
         </div> 
-        <div class="middle-center" style="padding: 0">
-            <table id="fileTable" cellpadding="0" cellspacing="0" border="0" style="width: 100%"></table>
-            <ol style="overflow: visible;" id="selectableFiles"></ol>
-            <div id="riverView" style="width: 100%"></div>
-        </div>                
+        <div class="middle-center" style="padding: 0"></div>                
         <div class="middle-south" style="padding: 0;">
         </div>  
     </div>    

@@ -63,12 +63,19 @@ TSSETTINGS.DefaultSettings = {
     "extensionsPath": "file:///C:/TagSpaces/extensions",
     "extensions": [
         {   
-            "id": "editorText", // ID should be equal to the directory name where the ext. is located 
+            "id": "viewBasic", // ID should be equal to the directory name where the ext. is located 
             "enabled": true, 
+            "type": "view", 
         },
         {   
-            "id": "tsTodo", // ID should be equal to the directory name where the ext. is located 
+            "id": "viewSearch", // ID should be equal to the directory name where the ext. is located 
             "enabled": false, 
+            "type": "view", 
+        },
+        {   
+            "id": "viewThumb", // ID should be equal to the directory name where the ext. is located 
+            "enabled": true, 
+            "type": "view", 
         },
     ],
     "supportedFileTypes": [

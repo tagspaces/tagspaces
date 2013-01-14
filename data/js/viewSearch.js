@@ -1,17 +1,15 @@
 /* Copyright (c) 2012 The Tagspaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that 
  * can be found in the LICENSE file. */
-/*
+
 define([
     'require',
     'exports',
     'module',
-    'datatables',
-//    'css!datatablescss'
 ],function(require, exports, module) {
 "use strict";
-*/
-console.debug("Loading BasicViewsUI...");
+
+console.debug("Loading View: Search");
 
 var BasicViewsUI = (typeof BasicViewsUI == 'object' && BasicViewsUI != null) ? BasicViewsUI : {};
 
@@ -261,7 +259,9 @@ BasicViewsUI.initButtons = function() {
         }
     })
     .click(function() {
-        $( "#dialog-filecreate" ).dialog( "open" );
+        IOAPI.createDirectoryIndex(UIAPI.currentPath);
+        // TODO uncomment
+        //$( "#dialog-filecreate" ).dialog( "open" );
     });        
 
     $( "#openFileButton" ).button({
@@ -637,4 +637,4 @@ BasicViewsUI.initDialogs = function() {
 }
 
 //return BasicViewsUI;
-//});
+});
