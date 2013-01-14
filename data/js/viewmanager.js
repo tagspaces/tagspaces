@@ -8,63 +8,128 @@ define([
 ],function(require, exports, module) {
 "use strict";
 
-console.debug("Loading ViewManager...");
-// Placeholder for the view is #middle-center
-// Palcehoder for the buttons is #viewsRadio
-/*
-            <!--table id="fileTable" cellpadding="0" cellspacing="0" border="0" style="width: 100%"></table>
-            <ol style="overflow: visible;" id="selectableFiles"></ol>
-            <div id="riverView" style="width: 100%"></div-->
-            
-            <input type="radio" id="fileViewButton" name="viewsRadio" checked="checked" /><label for="fileViewButton">Files View</label>
-            <input type="radio" id="tagViewButton" name="viewsRadio" /><label for="tagViewButton">Tags View</label>
-            <input type="radio" id="thumbViewButton" name="viewsRadio" /><label for="thumbViewButton">Thumbs View</label>
-            <input type="radio" id="moreViewsButton" name="viewsRadio" /><label for="moreViewsButton">...</label>               
- */
+console.debug("Loading viewmanager.js");
 
 var views = undefined;
 
 exports.initViews = function initViews() {
 	views = [];
+	
+	$("#viewSwitcher").empty();
+	$("#viewToolbars").empty();	
+	$("#viewContainers").empty();
+	$("#viewFooters").empty();
+	
+	var defaultViewLoaded = false;
+	
 	for (var i=0; i < TSSETTINGS.Settings["extensions"].length; i++) {
 		if(TSSETTINGS.Settings["extensions"][i].enabled 
 			&& (TSSETTINGS.Settings["extensions"][i].type == "view") ) {
 	//        require([TSSETTINGS.getExtensionPath()+UIAPI.getDirSeparator()+viewerExt+UIAPI.getDirSeparator()+"extension.js"], function(viewer) {
 	        require(["js/"+TSSETTINGS.Settings["extensions"][i].id], function(viewer) {
 	           views.push(viewer);
+			   
+			   initViewsUI(viewer);
+
 	           viewer.init();
-	        });			
+	           
+			   // Loads the first view by default
+			   if(!defaultViewLoaded) {
+			   		UIAPI.currentView = viewer.ID;
+					viewer.load();
+					$( "#"+viewer.ID+"Button" ).attr("checked","checked");
+					$( "#"+viewer.ID+"Button" ).button("refresh");
+					
+					$( "#"+viewer.ID+"Container" ).show();
+					$( "#"+viewer.ID+"Toolbar" ).show(); 			   	
+			   }
+			   defaultViewLoaded = true;	
+	        });       
 		} 
 	}
-	//initViewsRadio();   
+	
+	$( "#viewSwitcher" ).buttonset();	
 }
 
-//exports.initViewsRadio = 
-function initViewsRadio() {
-	for (var i=0; i < views.length; i++) {
-        $("#viewsRadio").append($("<input>", { 
-            class: "ui-accordion-header ui-helper-reset ui-state-default ui-corner-top ui-corner-bottom"    
-        }))
-        .append($("<label>", { 
-            class: "tagGroupTitle",
-            text: TSSETTINGS.Settings["tagGroups"][i].title, 
-        }))
-	}
+function initViewsUI(viewer) {
+	console.debug("Init UI for "+viewer.ID);
+	
+	//var radioChecked = true;
+	// Only the first button from radio is checked
+	//radioChecked = false;
+
+	// Creating viewer's toolbar
+    $("#viewToolbars").append($("<div>", { 
+        id: viewer.ID+"Toolbar",
+        text: viewer.Title,
+    }).hide());	
+    
+	// Creating viewer's container
+    $("#viewContainers").append($("<div>", { 
+        id: viewer.ID+"Container",
+        text: viewer.Title,
+    }).hide());	        	
+  
+    $("#viewSwitcher").append($("<input>", { 
+        type: "radio",
+        name: "viewSwitcher",
+        viewid: viewer.ID,
+//        checked: radioChecked,
+        id: viewer.ID+"Button",    
+    }));
+
+    $("#viewSwitcher").append($("<label>", { 
+        for: viewer.ID+"Button",
+        text: viewer.Title, 
+    }));
+
+	// Adding event listener & icon to the radio button
+    $( "#"+viewer.ID+"Button" ).button({
+	        text: true,
+	        icons: {
+	            primary: viewer.Icon
+	        }
+	    })        
+	.click(function() { 
+		exports.changeView($(this).attr("viewid")); 	
+	})   
 }
 
+exports.changeView = function changeView(viewType) {
+    console.debug("Change to "+viewType+" view.");
+    UIAPI.showLoadingAnimation();
+       
+    //Setting the current view
+    UIAPI.currentView = viewType;
 
-exports.registerView = function registerView(viewName) {
+	for (var i=0; i < views.length; i++) {   
+ 		$( "#"+views[i].ID+"Container" ).hide();
+ 		$( "#"+views[i].ID+"Toolbar" ).hide(); 		  
+	}	        
 
+	for (var i=0; i < views.length; i++) {   
+ 		if(views[i].ID == viewType) { 			
+ 			// Load the selected view
+ 			views[i].load();
+			$( "#"+views[i].ID+"Container" ).show();
+			$( "#"+views[i].ID+"Toolbar" ).show(); 
+ 		}
+	}	
+	   	
+    // Clear the list with the selected files    
+    UIAPI.selectedFiles = [];  
+    UIAPI.currentFilename = "";
+  
+    UIAPI.handleElementActivation();   
+//    UIAPI.hideLoadingAnimation();     
 }
 
 exports.clearSelectedFiles = function clearSelectedFiles() {
-    // Clear selected files in the model
+    // Clear selected files
     UIAPI.selectedFiles = [];  
-    
-    // Deselect all
-    $(".selectedRow", $(UIAPI.fileTable)).each(function(){
-        $(this).toggleClass('selectedRow');
-    });    
+	for (var i=0; i < views.length; i++) {   
+ 		views[i].clearSelectedFiles();
+	}	
 }
 
 });

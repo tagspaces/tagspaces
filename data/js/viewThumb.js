@@ -9,12 +9,40 @@ define([
 ],function(require, exports, module) {
 "use strict";
 
-console.debug("Loading View: Thumb");
+console.debug("Loading: viewThumb.js");
 
+exports.Title = "Thumbs View"
+exports.ID = "viewThumb";  // ID should be equal to the directory name where the ext. is located   
+exports.Type =  "view";
+exports.Icon = "ui-icon-image";
 
-BasicViewsUI.initThumbView = function() {
-    // Managing the selection of files in the thumb view
-    $( "#selectableFiles" ).selectable({
+var viewContainer = undefined;
+var viewToolbar = undefined;
+
+exports.init = function init() {
+	console.debug("Initializing View "+exports.ID);
+	
+    viewContainer = $("#"+exports.ID+"Container");
+    viewToolbar = $("#"+exports.ID+"Toolbar");
+	
+	viewContainer.empty();
+	viewToolbar.empty();
+	
+    viewToolbar.append($("<button>", { 
+        text: "New",
+		disabled: true,
+        title: "Create new file",
+        id: exports.ID+"CreateFileButton",    
+    }));
+	
+    viewContainer.append($("<ol>", { 
+        style: "overflow: visible;",
+        class: "selectableFiles",
+        id: exports.ID+"SelectableFiles",
+        text: "Empty viewer."    
+    }));	
+	
+    $( "#"+exports.ID+"SelectableFiles" ).selectable({
         stop: function() {
             UIAPI.selectedFiles = [];          
             $( ".ui-selected", this ).each(function() {
@@ -28,48 +56,74 @@ BasicViewsUI.initThumbView = function() {
                 FileViewer.openFile(UIAPI.selectedFiles[0]);                
             }
         }
-    });   
+    }); 
+    
+    initButtons();
+    initContextMenus();
 }
 
+exports.load = function load() {
+	console.debug("Showing View "+exports.ID);
+   
+	// Purging the thumbnail view, avoiding memory leak
+	document.getElementById(exports.ID+"SelectableFiles").innerHTML = "";
 
-exports.initButtons = function initButtons() {
-
+    $("#"+exports.ID+"SelectableFiles").empty();
+        
+    for (var i=0; i < UIAPI.fileList.length; i++) {
+        var fileName = UIAPI.fileList[i][0];
+        var fileExt = fileName.substring(fileName.lastIndexOf(".")+1,fileName.length).toLowerCase();
+        if(TSSETTINGS.getSupportedFileExt4Thumbnailing().indexOf(fileExt) >= 0) {
+            var filePath = UIAPI.currentPath+UIAPI.getDirSeparator()+fileName;
+            $("#"+exports.ID+"SelectableFiles").append(
+                 $('<li>', { title: fileName, class: 'ui-widget-content' }).append( 
+                    $('<img>', { title: fileName, class: "thumbImg", src: 'file:///'+filePath })));
+        } else {
+            $("#"+exports.ID+"SelectableFiles").append(
+                 $('<li>', { title: fileName, class: 'ui-widget-content' }).append(
+                    $('<span>', { class: "fileExtension", text: fileExt})));
+        }
+    }    
+    
+    UIAPI.hideLoadingAnimation();     
 }
 
-BasicViewsUI.initButtons = function() {
-// Layout Buttons    
-    $( "#toggleLeftPanel1" ).button({
-        text: false,
+/*
+	//     <div id="riverView" style="width: 100%"></div>
+function initRiverView(viewType) {
+    console.debug("River view disabled");
+    $("#riverView").empty();
+    layoutContainer.close("east");
+    var tagsHTML = undefined;
+    for (var i=0; i < UIAPI.fileList.length; i++) {
+        if(i > 10) break;
+        tagsHTML = "";
+        var fileName = UIAPI.fileList[i][0];
+        var filePath = UIAPI.currentPath+UIAPI.getDirSeparator()+fileName;
+        tagsHTML += '<iframe id="idFrameViewer" style="width: 100%; height: 150px;" src="'+'file:///'+filePath+'" />';
+        $("#riverView").append(tagsHTML);
+    }
+    $("#riverView").show();
+}
+*/
+
+function initButtons() {
+    $( "#"+exports.ID+"CreateFileButton" ).button({
+        text: true,
         icons: {
-            primary: "ui-icon-bookmark"
+            primary: "ui-icon-document"
         }
     })
     .click(function() {
-        UIAPI.layoutContainer.toggle("west");
+        $( "#dialog-filecreate" ).dialog( "open" );
     });  
 }
 
-BasicViewsUI.initContextMenus = function() {
-    $( "#fileMenu" ).menu({
+function initContextMenus() {
+    $( "#fileMenu1" ).menu({
         select: function( event, ui ) {
             var commandName = ui.item.attr( "action" );
             switch (commandName) {
-              case "addTag":        
-                $( this ).hide();
-                console.debug("Adding tag..."); 
-                $("#tags").val("");
-                $( "#dialogAddTags" ).dialog( "open" );
-                break;  
-              case "openFile":
-                $( this ).hide();
-                console.debug("Opening file...");
-                FileViewer.openFile(UIAPI.selectedFiles[0]);                
-                break;
-              case "openDirectory":
-                $( this ).hide();
-                console.debug("Opening parent directory...");   
-                IOAPI.openDirectory(UIAPI.currentPath);
-                break;
               case "renameFile":        
                 $( this ).hide();
                 console.debug("Renaming file...");
@@ -88,91 +142,7 @@ BasicViewsUI.initContextMenus = function() {
             }
             $( this ).hide();
         }
-    });  
-    
-    
-    
-}
-
-BasicViewsUI.initDialogs = function() {
-    var newDirName = $( "#dirname" );    
-    var newFileName = $( "#newFileName" );    
-    var renamedFileName = $( "#renamedFileName" );    
-    
-    // TODO evtl add smarttag and the others...    
-    var allFields = $( [] ).add( newDirName );
-    
-    var tips = $( ".validateTips" );
-
-    function updateTips( t ) {
-        tips
-            .text( t )
-            .addClass( "ui-state-highlight" );
-        setTimeout(function() {
-            tips.removeClass( "ui-state-highlight", 1500 );
-        }, 500 );
-    }
-
-    function checkLength( o, n, min, max ) {
-        if ( o.val().length > max || o.val().length < min ) {
-            o.addClass( "ui-state-error" );
-            updateTips( "Length of " + n + " must be between " +
-                min + " and " + max + "." );
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    function checkRegexp( o, regexp, n ) {
-        if ( !( regexp.test( o.val() ) ) ) {
-            o.addClass( "ui-state-error" );
-            updateTips( n );
-            return false;
-        } else {
-            return true;
-        }
-    }    
-    
-    $( "#fileTypeRadio" ).buttonset();
-
-    var fileContent = undefined;
- 
-    
-    $( "#tagTypeRadio" ).buttonset();
-
-    $( "#plainTagTypeButton" ).click(function() {
-        UIAPI.selectedTag, $( "#newTag" ).datepicker( "destroy" ).val("");
-    });  
-
-    $( "#dateTagTypeButton" ).click(function() {
-        UIAPI.selectedTag, $( "#newTag" ).datepicker({
-            showWeek: true,
-            firstDay: 1,
-            dateFormat: "yymmdd"
-        });
-    });  
-    
-    $( "#currencyTagTypeButton" ).click(function() {
-        UIAPI.selectedTag, $( "#newTag" ).datepicker( "destroy" ).val("XEUR")
     });      
-    
-    $( "#dialogEditTag" ).dialog({
-        autoOpen: false,
-        resizable: false,
-        height:240,
-        modal: true,
-        buttons: {
-            "Edit tag": function() {
-                TSAPI.renameTag(UIAPI.selectedFiles[0], UIAPI.selectedTag, $( "#newTag" ).val());
-                IOAPI.listDirectory(UIAPI.currentPath);                                   
-                $( this ).dialog( "close" );
-            },
-            Cancel: function() {
-                $( this ).dialog( "close" );
-            }
-        }
-    });
 }
 
 });

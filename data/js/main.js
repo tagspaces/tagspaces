@@ -44,6 +44,7 @@ var initApp = function(){
             "js/directories.ui",
         ], 
         function(viewManager) {
+			UIAPI.ViewManager = viewManager;
 			
             TagsUI.initContextMenus();
             TagsUI.initDialogs();
@@ -70,7 +71,7 @@ var initApp = function(){
             }    
             
             // Init views
- 			viewManager.initViews();                 
+ 			UIAPI.ViewManager.initViews();                 
             
             $("#appVersion").text("["+TSSETTINGS.DefaultSettings["appVersion"]+"]");
             $("#appVersion").attr("title","["+TSSETTINGS.DefaultSettings["appBuild"]+"]");

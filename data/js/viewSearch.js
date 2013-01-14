@@ -9,9 +9,16 @@ define([
 ],function(require, exports, module) {
 "use strict";
 
-console.debug("Loading View: Search");
+console.debug("Loading viewSearch.js");
+
+exports.init = function init() {
+
+}
+
 
 var BasicViewsUI = (typeof BasicViewsUI == 'object' && BasicViewsUI != null) ? BasicViewsUI : {};
+
+
 
 BasicViewsUI.initFileTagViews = function() {
     UIAPI.fileTable = $('#fileTable').dataTable( {
@@ -214,42 +221,7 @@ BasicViewsUI.initButtons = function() {
         UIAPI.layoutContainer.toggle("east");
     });   
 
-// Change View buttons
-    $( "#viewsRadio" ).buttonset();
 
-    $( "#fileViewButton" ).button({
-        text: true,
-        icons: {
-            primary: "ui-icon-note"
-        }
-    })
-    .click(function() {
-        UIAPI.changeView("fileView");
-    }); 
-    
-    $( "#tagViewButton" ).button({
-        text: true,
-        icons: {
-            primary: "ui-icon-tag"
-        }
-    })
-    .click(function() {
-        UIAPI.changeView("tagView");
-    }); 
-    
-    $( "#thumbViewButton" ).button({
-        text: true,
-        icons: {
-            primary: "ui-icon-image"
-        }
-    })
-    .click(function() {
-        UIAPI.changeView("thumbView");
-    });  
-    
-    $( "#riverViewButton" ).click(function() {
-        UIAPI.changeView("riverView");
-    });  
     
 // Initialize file buttons    
     $( "#createFileButton" ).button({
