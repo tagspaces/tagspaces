@@ -73,9 +73,6 @@ TagsUI.initContextMenus = function() {
               case "deleteTag":
                 $( "#dialog-confirmtagdelete" ).dialog( "open" );                
                 break;
-              case "closeMenu":
-                $( this ).hide();                
-                break;
             }
         }
     });
@@ -85,9 +82,6 @@ TagsUI.initContextMenus = function() {
         select: function( event, ui ) {
             console.debug("TagGroup  menu action: "+ui.item.attr( "action" )+" for tag: "+UIAPI.selectedTag);
             switch (ui.item.attr( "action" )) {
-              case "toggleTagGroup":
-                $("#tagGroups").dynatree("getTree").getNodeByKey(UIAPI.selectedTagData.key).toggleExpand();
-                break;                            
               case "createNewTag":
                 $( "#newTagName" ).val("");
                 $( "#dialog-tagcreate" ).dialog( "open" );
@@ -102,9 +96,6 @@ TagsUI.initContextMenus = function() {
                 $( "#tagGroupName" ).val(UIAPI.selectedTagData.title);              
                 $( "#dialog-taggroupEdit" ).dialog( "open" );
                 break;
-              case "closeMenu":
-                $( "#tagGroupMenu" ).hide();                
-                break;                
             }
         }
     });  
@@ -377,7 +368,7 @@ TagsUI.generateTagGroups = function() {
 
 // TODO evtl. move to Fileviewer.js
 TagsUI.openTagMenu = function(tagButton, tag, fileName) {
-    BasicViewsUI.clearSelectedFiles();
+    ViewManager.clearSelectedFiles();
     $(tagButton).parent().parent().toggleClass("selectedRow");
 
     UIAPI.currentFilename = fileName;
