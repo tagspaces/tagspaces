@@ -85,27 +85,13 @@ exports.load = function load() {
         }
     }    
     
+	$( exports.ID+"CreateFileButton" ).button( "enable" );    
     UIAPI.hideLoadingAnimation();     
 }
 
-/*
-	//     <div id="riverView" style="width: 100%"></div>
-function initRiverView(viewType) {
-    console.debug("River view disabled");
-    $("#riverView").empty();
-    layoutContainer.close("east");
-    var tagsHTML = undefined;
-    for (var i=0; i < UIAPI.fileList.length; i++) {
-        if(i > 10) break;
-        tagsHTML = "";
-        var fileName = UIAPI.fileList[i][0];
-        var filePath = UIAPI.currentPath+UIAPI.getDirSeparator()+fileName;
-        tagsHTML += '<iframe id="idFrameViewer" style="width: 100%; height: 150px;" src="'+'file:///'+filePath+'" />';
-        $("#riverView").append(tagsHTML);
-    }
-    $("#riverView").show();
+exports.setFileFilter = function setFileFilter(filter) {
+	console.debug("setFileFilter not implemented in "+exports.ID);
 }
-*/
 
 function initButtons() {
     $( "#"+exports.ID+"CreateFileButton" ).button({

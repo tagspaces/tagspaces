@@ -138,6 +138,7 @@ UIAPI.setFileSortCriteria = function(sortBy) {
     UIAPI.fileSortCriteria = sortBy;
 }
 
+/*
 UIAPI.updateFileSelection = function() {
     console.debug("Updating file selection...");
     UIAPI.selectedFiles = [];          
@@ -148,6 +149,7 @@ UIAPI.updateFileSelection = function() {
     });
     UIAPI.handleElementActivation();     
 }
+*/
 
 UIAPI.changeDirectory = function(newDir) {
     console.debug("Change direcotory to: "+newDir);

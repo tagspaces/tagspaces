@@ -6,8 +6,6 @@ define([
     'require',
     'exports',
     'module',
-    'dynatree',
-//    'css!dynatreecss'
 ],function(require, exports, module) {
 "use strict";
 */
@@ -31,7 +29,7 @@ TagsUI.initContextMenus = function() {
               case "addTagAsFilter":
                 $( this ).hide();
                 $("#filterBox").val(UIAPI.selectedTag);
-                UIAPI.fileTable.fnFilter(UIAPI.selectedTag);
+                UIAPI.ViewManager.setFileFilter(UIAPI.selectedTag);
                 break;                            
               case "addTagInTagGroup":
                 $( this ).hide();
@@ -63,7 +61,7 @@ TagsUI.initContextMenus = function() {
                 break;                            
               case "addTagAsFilter":
                 $("#filterBox").val(UIAPI.selectedTag);
-                UIAPI.fileTable.fnFilter(UIAPI.selectedTag);
+                UIAPI.ViewManager.setFileFilter(UIAPI.selectedTag);
                 break;                            
               case "editTag":
               // TODO Consider smart tags

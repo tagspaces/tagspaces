@@ -132,4 +132,10 @@ exports.clearSelectedFiles = function clearSelectedFiles() {
 	}	
 }
 
+exports.setFileFilter = function setFileFilter(filter) {
+	for (var i=0; i < views.length; i++) {   
+ 		views[i].setFileFilter(filter);
+	}	
+}
+
 });
