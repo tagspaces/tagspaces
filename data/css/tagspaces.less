@@ -37,11 +37,13 @@ html, body {
 #directoryList { list-style-type: none; margin: 0; padding: 0; width: 100%; }
 #directoryList li { margin: 3px; padding: 0.4em; font-size: 1.0em; height: 18px; }
 
-/* Thumns/box design	*/
-#selectableFiles .ui-selecting { background: #FECA40; }
-#selectableFiles .ui-selected { background: #F39814; color: white; }
-#selectableFiles { list-style-type: none; margin: 0; padding: 0; }
-#selectableFiles li { margin: 3px; padding: 1px; float: left; width: 100px; height: 80px; font-size: 1em; text-align: center; } 
+/* Thumbs box design	
+ * TODO Move to viewThumb extension css
+ * */
+.selectableFiles .ui-selecting { background: #FECA40; }
+.selectableFiles .ui-selected { background: #F39814; color: white; }
+.selectableFiles { list-style-type: none; margin: 0; padding: 0; }
+.selectableFiles li { margin: 3px; padding: 1px; float: left; width: 100px; height: 80px; font-size: 1em; text-align: center; } 
 
 #logo {
 	padding: 0px;
@@ -228,6 +230,16 @@ li hr {
 
 #directoryNavigatorNorth {
     overflow: hidden !important;    
+}
+
+#viewToolbars {
+    padding: 2px;    
+}
+#viewContainers {
+    padding: 0;    
+}              
+#viewFooters {
+    padding: 0;    
 }
 
 .middle-north {
