@@ -163,7 +163,6 @@ exports.init = function init() {
       filter: 'tr',
       start: function() {
         console.debug("Start selecting");  
-        //UIAPI.hideAllContextMenus();
         UIAPI.selectedFiles = [];       
         $('#'+exports.ID+"FileTable tbody tr").each(function(){
             $(this).removeClass('selectedRow');
@@ -174,7 +173,7 @@ exports.init = function init() {
             var index = $("#fileTable tr").index(this) - 1;
             $('#fileTable tbody tr:eq('+index+')').toggleClass('selectedRow');
             $('#fileTable tbody tr:eq('+index+')').toggleClass('ui-selected');
-            var rowData = UIAPI.fileTable.fnGetData( this );
+            var rowData = fileTable.fnGetData( this );
             // Add the filename which is located in the first column to the list of selected filenames
             UIAPI.selectedFiles.push(rowData[0]);
           });
@@ -218,12 +217,7 @@ exports.load = function load() {
         console.debug("Opening file...");
         var rowData = fileTable.fnGetData( this );
         
-        // TODO use central API
-        $("#selectedFilePath").val(UIAPI.currentPath+UIAPI.getDirSeparator()+rowData[0]);            
-        
-        // TODO use central API not fileView
-        FileViewer.openFile(rowData[0]);
-        
+        UIAPI.openFile(UIAPI.currentPath+UIAPI.getDirSeparator()+rowData[0]);
     } );     
     
     fileTable.$('.fileButton')
@@ -358,14 +352,6 @@ var initButtons = function() {
         $( "#dialog-filecreate" ).dialog( "open" );
     });        
 
-/*    $( "#openFileButton" ).button({
-        text: true,
-        disabled: true
-    })
-    .click(function() {
-        FileViewer.openFile(UIAPI.selectedFiles[0]);
-    }); */
-        
     $( "#clearFilterButton" ).button({
         text: false,
         disabled: false,
@@ -375,7 +361,7 @@ var initButtons = function() {
     })
     .click(function() {
         $( "#filterBox" ).val( "" );
-        UIAPI.fileTable.fnFilter( "" );        
+        fileTable.fnFilter( "" );        
     });
 }
 
@@ -385,38 +371,29 @@ var initContextMenus = function() {
             var commandName = ui.item.attr( "action" );
             switch (commandName) {
               case "addTag":        
-                $( this ).hide();
                 console.debug("Adding tag..."); 
                 $("#tags").val("");
                 $( "#dialogAddTags" ).dialog( "open" );
                 break;  
               case "openFile":
-                $( this ).hide();
                 console.debug("Opening file...");
-                FileViewer.openFile(UIAPI.selectedFiles[0]);                
+        		UIAPI.openFile(UIAPI.currentPath+UIAPI.getDirSeparator()+UIAPI.selectedFiles[0]);                
                 break;
               case "openDirectory":
-                $( this ).hide();
                 console.debug("Opening parent directory...");   
                 IOAPI.openDirectory(UIAPI.currentPath);
                 break;
               case "renameFile":        
-                $( this ).hide();
                 console.debug("Renaming file...");
                 $( "#dialog-filerename" ).dialog( "open" );
                 break;  
               case "deleteFile":        
-                $( this ).hide();
                 console.debug("Deleting file...");
                 $( "#dialog-confirmdelete" ).dialog( "open" );
                 break;  
-              case "closeMenu":
-                $( this ).hide(); 
-                break;          
               default:
                 break;
             }
-            $( this ).hide();
         }
     });  
     
@@ -425,24 +402,13 @@ var initContextMenus = function() {
             var commandName = ui.item.attr( "action" );
             switch (commandName) {
               case "openFile":
-                $( this ).hide();              
-                console.debug("Opening file...");
-                FileViewer.openFile(UIAPI.selectedFiles[0]);                
-                break;
-              case "editFile":
-                $( this ).hide();
-                console.debug("Editing file...");   
-                UIAPI.editFile(UIAPI.selectedFiles[0]);
+        		UIAPI.openFile(UIAPI.currentPath+UIAPI.getDirSeparator()+UIAPI.selectedFiles[0]);               
                 break;
               case "addTag":        
-                $( this ).hide();
                 console.debug("Adding tag..."); 
                 $("#tags").val("");
                 $( "#dialogAddTags" ).dialog( "open" );
                 break;  
-              case "closeMenu":
-                $( this ).hide(); 
-                break;          
               default:
                 break;
             }

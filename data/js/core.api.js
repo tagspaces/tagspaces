@@ -34,18 +34,10 @@ UIAPI.isFileOpened = false;
 // Current directory list of files
 UIAPI.fileList = [];
 
-UIAPI.fileSortCriteria = "name";
-
 // Last clicked button for removing a tag
 UIAPI.selectedTag = "";
 
 UIAPI.selectedTagData = "";
-
-UIAPI.favIDPrefix = "fav";
-
-UIAPI.fileTable = undefined;
-
-UIAPI.htmlEditor = undefined;
 
 UIAPI.ViewManager = undefined;
 
@@ -88,13 +80,6 @@ UIAPI.fileExists = function(fileName) {
     return false;
 }
 
-// TODO Remove hideAllContextMenus 
-UIAPI.hideAllContextMenus = function() {
-    $('.contextMenu').each(function() {
-        $(this).hide();
-    });    
-}
-
 UIAPI.updateFileBrowserData = function(dirList) {
     console.debug("Updating the file browser data...");
     
@@ -133,24 +118,6 @@ UIAPI.updateFileBrowserData = function(dirList) {
          
     UIAPI.ViewManager.changeView(UIAPI.currentView);    
 }
-
-UIAPI.setFileSortCriteria = function(sortBy) {
-    console.debug("Setting sort criteris: "+sortBy);
-    UIAPI.fileSortCriteria = sortBy;
-}
-
-/*
-UIAPI.updateFileSelection = function() {
-    console.debug("Updating file selection...");
-    UIAPI.selectedFiles = [];          
-    UIAPI.fileTable.$('tr.selectedRow').each(function() {
-        var data = UIAPI.fileTable.fnGetData( this );
-//        console.debug( "Selected #:" + data[0] );
-        UIAPI.selectedFiles.push(data[0]);
-    });
-    UIAPI.handleElementActivation();     
-}
-*/
 
 UIAPI.changeDirectory = function(newDir) {
     console.debug("Change direcotory to: "+newDir);
@@ -191,12 +158,29 @@ UIAPI.reloadUI = function() {
     location.reload();
 }
 
-UIAPI.layoutContainer = undefined;
+UIAPI.openFile = function(filePath) {
+//    console.debug("Opening file..."); 
+    FileViewer.openFile(filePath);	
+}
+
+UIAPI.openFileViewer = function() {
+	UIAPI.isFileOpened = true;
+    layoutContainer.open("east");    
+}
+
+UIAPI.closeFileViewer = function() {
+	UIAPI.isFileOpened = false;
+    layoutContainer.close("east");    
+}
+
+UIAPI.toggleLeftPanel = function() {
+    layoutContainer.toggle("west");
+}
 
 UIAPI.initLayout = function(){
     console.debug("Initializing Layout...");
 
-    UIAPI.layoutContainer = $('#container').layout(
+    layoutContainer = $('#container').layout(
         {
         fxName: "none"
         
@@ -287,11 +271,19 @@ UIAPI.initLayout = function(){
     });
 
     // Closes the viewer area by init
-    UIAPI.layoutContainer.close("east");
+    layoutContainer.close("east");
 }
 
 //return UIAPI;
 //});
+
+/*
+UIAPI.hideAllContextMenus = function() {
+    $('.contextMenu').each(function() {
+        $(this).hide();
+    });    
+}
+*/
 
 /**
  * Sorting 

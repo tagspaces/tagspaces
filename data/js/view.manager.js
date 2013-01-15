@@ -8,9 +8,11 @@ define([
 ],function(require, exports, module) {
 "use strict";
 
-console.debug("Loading viewmanager.js");
+console.debug("Loading view.manager.js");
 
 var views = undefined;
+
+var searchViewer = undefined;
 
 exports.initViews = function initViews() {
 	views = [];
@@ -22,7 +24,7 @@ exports.initViews = function initViews() {
 	
 	var defaultViewLoaded = false;
 
-    require(["js/viewBasic"], function(viewer) {
+    require(["js/view.basic"], function(viewer) {
 		views.push(viewer);
 		initViewsUI(viewer);
 		viewer.init();
@@ -34,7 +36,13 @@ exports.initViews = function initViews() {
 		
 		$( "#"+viewer.ID+"Container" ).show();
 		$( "#"+viewer.ID+"Toolbar" ).show(); 			   	
+    });  
 
+    require(["js/view.search"], function(viewer) {
+       views.push(viewer);
+	   initViewsUI(viewer);
+       viewer.init();
+       searchViewer = viewer;
     });  
 	
 	for (var i=0; i < TSSETTINGS.Settings["extensions"].length; i++) {
@@ -46,18 +54,46 @@ exports.initViews = function initViews() {
 	           viewer.init();
 	        });       
 		} 
-	}
-	
-    require(["js/viewSearch"], function(viewer) {
-       views.push(viewer);
-	   initViewsUI(viewer);
-       viewer.init();
-    });  	
+	}	
 	
 	$( "#viewSwitcher" ).buttonset();	
 }
 
-function initViewsUI(viewer) {
+exports.updateIndexData = function updateIndexData(index) {
+    console.debug("Enhancing directory index...");
+    var enhancedIndex = [];
+    var tags = undefined;
+    var ext = undefined;
+    var title = undefined;
+    var fileSize = undefined;
+    var fileLMDT = undefined;
+    var path = undefined;
+    for (var i=0; i < index.length; i++) {
+        if (index[i].type == "file"){  
+            // Considering Unix HiddenEntries (. in the beginning of the filename)
+            if (TSSETTINGS.Settings["showUnixHiddenEntries"] || 
+               (!TSSETTINGS.Settings["showUnixHiddenEntries"] && (index[i].name.indexOf(".") != 0))) {
+                 tags = TSAPI.extractTags(index[i].name);
+                 title = TSAPI.extractTitle(index[i].name);
+                 if(index[i].name.lastIndexOf(".") > 0) {
+                     ext = index[i].name.substring(index[i].name.lastIndexOf(".")+1,index[i].name.length);                     
+                 } else {
+                     ext = "";
+                 }
+                 fileSize = index[i].size;
+                 fileLMDT = index[i].lmdt;
+                 path = index[i].path;
+                 if(fileSize == undefined) fileSize = "";
+                 if(fileLMDT == undefined) fileLMDT = "";
+                 var entry = [index[i].name,fileSize,fileLMDT,title,tags,ext,path];   
+                 enhancedIndex.push(entry);
+            }
+        }
+    } 	
+	searchViewer.updateIndexData(enhancedIndex);
+}
+
+var initViewsUI = function(viewer) {
 	console.debug("Init UI for "+viewer.ID);
 	
 	//var radioChecked = true;

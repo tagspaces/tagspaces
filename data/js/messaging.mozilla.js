@@ -45,7 +45,7 @@ document.documentElement.addEventListener("addon-message1", function(event) {
             // message.content contains the name of the file after the rename
             UIAPI.selectedFiles[0] = message.content;
             if(UIAPI.isFileOpened) {
-               FileViewer.openFile(UIAPI.selectedFiles[0]);
+               UIAPI.openFile(UIAPI.currentPath+UIAPI.getDirSeparator()+UIAPI.selectedFiles[0]); 	
             }            
         } else {
             UIAPI.updateLogger("Rename failed");        
@@ -83,7 +83,7 @@ document.documentElement.addEventListener("addon-message1", function(event) {
       case "indexDirectory":
         if(message.success){
             console.debug("Directory Index: "+JSON.stringify(message.content));
-            // UIAPI.updateFileBrowserData(message.content);       
+            UIAPI.ViewManager.updateIndexData(message.content);       
         } else {
             UIAPI.updateLogger("Indexing directory failed");        
         }

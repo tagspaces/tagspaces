@@ -160,3 +160,9 @@ IOAPI.openExtensionsDirectory = function() {
 	console.debug("Open extensions directory functionality not implemented on chrome yet!");
 	alert("Open extensions directory functionality not implemented on chrome yet!"); 
 }
+
+IOAPI.createDirectoryIndex = function(dirPath) {
+	// TODO implement createDirectoryIndex
+	console.debug("Directory indexing functionality not implemented on chrome yet!");
+	alert("Directory indexing functionality not implemented on chrome yet!"); 
+}

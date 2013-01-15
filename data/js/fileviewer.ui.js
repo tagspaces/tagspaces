@@ -10,10 +10,12 @@ console.debug("Loading FileViewer...");
 
 var FileViewer = (typeof FileViewer == 'object' && FileViewer != null) ? FileViewer : {};
 
-FileViewer.openFile = function(fileName) {
-    console.debug("Opening file: "+fileName);
+FileViewer.openFile = function(filePath) {
+    console.debug("Opening file: "+filePath);
 
     FileViewer.isEditMode = false;
+
+	var fileName = filePath.substring(filePath.lastIndexOf(UIAPI.getDirSeparator())+1,filePath.length);
 
     var openedFilePath = UIAPI.currentPath+UIAPI.getDirSeparator()+fileName;
     // TODO replace \\ to \ in filenames
@@ -21,7 +23,7 @@ FileViewer.openFile = function(fileName) {
     $("#selectedFilePath").val(openedFilePath); 
     
     var fileExt = fileName.substring(fileName.lastIndexOf(".")+1,fileName.length).toLowerCase();
-    var filePath = UIAPI.currentPath+UIAPI.getDirSeparator()+fileName;
+//    var filePath = UIAPI.currentPath+UIAPI.getDirSeparator()+fileName;
 
     this.constructFileViewerUI(fileName, filePath);         
 
@@ -29,11 +31,7 @@ FileViewer.openFile = function(fileName) {
     var viewerExt = TSSETTINGS.getFileTypeViewer(fileExt);  
     console.debug("File Viewer: "+viewerExt);
 
-    // TODO Consider page width by opening, e.g. responsive design
-    UIAPI.layoutContainer.open("east");    
-    // UIAPI.layoutContainer.close("west");
-
-    UIAPI.isFileOpened = true;
+	UIAPI.openFileViewer();
 
     $( "#viewer" ).empty();
     if(!viewerExt) {
@@ -219,7 +217,7 @@ FileViewer.addEditButton = function(container, fileName) {
                     }
                 };
                 FileViewer.saveFile(fileName);
-                FileViewer.openFile(fileName);		        
+        		UIAPI.openFile(UIAPI.currentPath+UIAPI.getDirSeparator()+fileName);                   
 		    }
 		}
 		$( this ).button( "option", options );    	
@@ -254,17 +252,14 @@ FileViewer.addCloseButton = function(container) {
             if(confirm("If you confirm, all made changes will be lost.")){
                 // Cleaning the viewer/editor
                 document.getElementById("viewer").innerHTML = "";
-                UIAPI.isFileOpened = false;
-                UIAPI.layoutContainer.open("west");    
-                UIAPI.layoutContainer.close("east");
+				UIAPI.closeFileViewer();
                 FileViewer.isEditMode = false;                
             }
         } else {
             // Cleaning the viewer/editor
             document.getElementById("viewer").innerHTML = "";
             UIAPI.isFileOpened = false;
-            UIAPI.layoutContainer.open("west");    
-            UIAPI.layoutContainer.close("east");
+			UIAPI.closeFileViewer();
             FileViewer.isEditMode = false;            
         }
     });    

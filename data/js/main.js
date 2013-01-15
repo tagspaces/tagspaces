@@ -30,16 +30,18 @@ var initApp = function(){
         require([
            "js/ioapi.cordova"           
            ]);         
-    }   
+    }
+    
+    var layoutContainer = undefined;   
 
     // TODO refactor all libs for integration of backbone.js     
     require([
-            "js/viewmanager",
+            "js/view.manager",
             "js/settings.api",
             "js/fileviewer.ui",
+            "js/core.ui",
             "js/tags.ui",
-            "js/settings.ui",
-            "js/misc.ui",
+            "js/core.api",
             "js/tagspace.api",
             "js/directories.ui",
         ], 
@@ -52,9 +54,6 @@ var initApp = function(){
             DirectoriesUI.initDialogs();
             DirectoriesUI.initButtons();
             DirectoriesUI.initContextMenus();
-            
-            SettingsUI.initButtons();
-            SettingsUI.initDialogs();
            
             TSSETTINGS.loadSettingsLocalStorage();
             

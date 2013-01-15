@@ -56,7 +56,7 @@ exports.init = function init() {
             
             // On selecting only one file opens it in the viewer
             if(UIAPI.selectedFiles.length == 1) {
-                FileViewer.openFile(UIAPI.selectedFiles[0]);                
+				UIAPI.openFile(UIAPI.currentPath+UIAPI.getDirSeparator()+UIAPI.selectedFiles[0]);             	
             }
         }
     }); 
