@@ -9,7 +9,7 @@ define([
 ],function(require, exports, module) {
 "use strict";
 
-console.debug("Loading: viewThumb.js");
+console.debug("Loading: viewThumb/extension.js");
 
 exports.Title = "River View"
 exports.ID = "viewRiver";  // ID should be equal to the directory name where the ext. is located   
@@ -18,15 +18,18 @@ exports.Icon = "ui-icon-image";
 
 var viewContainer = undefined;
 var viewToolbar = undefined;
+var viewFooter = undefined;
 
 exports.init = function init() {
 	console.debug("Initializing View "+exports.ID);
 	
     viewContainer = $("#"+exports.ID+"Container");
     viewToolbar = $("#"+exports.ID+"Toolbar");
+	viewFooter = $("#"+exports.ID+"Footer");
 	
 	viewContainer.empty();
 	viewToolbar.empty();
+	viewFooter.empty();	
 	
     viewToolbar.append($("<button>", { 
         text: "New",
@@ -35,7 +38,6 @@ exports.init = function init() {
         id: exports.ID+"CreateFileButton",    
     }));
 
-	//     <div id="riverView" style=""></div>	
     viewContainer.append($("<div>", { 
         style: "width: 100%",
         id: exports.ID+"RV",
@@ -48,7 +50,7 @@ exports.load = function load() {
 	console.debug("Showing View "+exports.ID);
    
 	// Purging the thumbnail view, avoiding memory leak
-//	document.getElementById(exports.ID+"SelectableFiles").innerHTML = "";
+	// document.getElementById(exports.ID+"SelectableFiles").innerHTML = "";
 
     $("#"+exports.ID+"RV").empty();
     var tagsHTML = undefined;
@@ -68,7 +70,11 @@ exports.setFileFilter = function setFileFilter(filter) {
 	console.debug("setFileFilter not implemented in "+exports.ID);
 }
 
-function initButtons() {
+exports.clearSelectedFiles = function() {
+    // TODO Deselect all
+}
+
+var initButtons = function() {
     $( "#"+exports.ID+"CreateFileButton" ).button({
         text: true,
         icons: {

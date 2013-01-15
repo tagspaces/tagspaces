@@ -9,7 +9,7 @@ define([
 ],function(require, exports, module) {
 "use strict";
 
-console.debug("Loading: viewThumb.js");
+console.debug("Loading: viewThumb/extension.js");
 
 exports.Title = "Thumbs View"
 exports.ID = "viewThumb";  // ID should be equal to the directory name where the ext. is located   
@@ -18,15 +18,18 @@ exports.Icon = "ui-icon-image";
 
 var viewContainer = undefined;
 var viewToolbar = undefined;
+var viewFooter = undefined;
 
 exports.init = function init() {
 	console.debug("Initializing View "+exports.ID);
 	
     viewContainer = $("#"+exports.ID+"Container");
     viewToolbar = $("#"+exports.ID+"Toolbar");
+	viewFooter = $("#"+exports.ID+"Footer");
 	
 	viewContainer.empty();
 	viewToolbar.empty();
+	viewFooter.empty();	
 	
     viewToolbar.append($("<button>", { 
         text: "New",
@@ -49,7 +52,7 @@ exports.init = function init() {
                 UIAPI.selectedFiles.push($(this).attr("title"));
             });
             console.debug("Selected files: "+UIAPI.selectedFiles);
-            UIAPI.handleElementActivation();
+         //   UIAPI.handleElementActivation();
             
             // On selecting only one file opens it in the viewer
             if(UIAPI.selectedFiles.length == 1) {
@@ -93,7 +96,12 @@ exports.setFileFilter = function setFileFilter(filter) {
 	console.debug("setFileFilter not implemented in "+exports.ID);
 }
 
-function initButtons() {
+exports.clearSelectedFiles = function() {
+    // TODO Deselect all
+	//$("#"+exports.ID+"SelectableFiles").
+}
+
+var initButtons = function() {
     $( "#"+exports.ID+"CreateFileButton" ).button({
         text: true,
         icons: {
@@ -105,7 +113,7 @@ function initButtons() {
     });  
 }
 
-function initContextMenus() {
+var initContextMenus = function() {
     $( "#fileMenu1" ).menu({
         select: function( event, ui ) {
             var commandName = ui.item.attr( "action" );
