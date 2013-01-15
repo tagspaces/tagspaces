@@ -1,11 +1,10 @@
 define(function(require, exports, module) {
 "use strict";
 
-exports.config = {
-    "id": "editorText", // ID should be equal to the directory name where the ext. is located   
-    "title": "Text Editor",
-    "type": "editor", // viewer, ts for tagspace
-    "supportedFileTypes": [
+exports.id = "editorText"; // ID should be equal to the directory name where the ext. is located   
+exports.title = "Text Editor";
+exports.type = "editor";
+exports.supportedFileTypes = [
         "h", "c", "clj", "coffee", "coldfusion", "cpp",
         "cs", "css", "groovy", "haxe", "htm", "html",
         "java", "js", "jsm", "json", "latex", "less",
@@ -13,8 +12,7 @@ exports.config = {
         "mdwn", "mkd", "ml", "mli", "pl", "php", 
         "powershell", "py", "rb", "scad", "scala",
         "scss", "sh", "sql", "svg", "textile", "txt", "xml"
-     ]        
-}
+     ] ;
 
 var aceEditor = undefined;
 var extensionDirectory = TSSETTINGS.getExtensionPath()+UIAPI.getDirSeparator()+exports.config["id"];
