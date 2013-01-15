@@ -6,13 +6,11 @@ define([
     'require',
     'exports',
     'module',
-    'jsoneditor',
-//    'css!jsoneditorcss'
 ],function(require, exports, module) {
 */
 //"use strict";
 
-console.debug("Loading MiscUI...");
+console.debug("Loading core.api.js ...");
 
 var UIAPI = (typeof UIAPI == 'object' && UIAPI != null) ? UIAPI : {};
 
@@ -276,43 +274,3 @@ UIAPI.initLayout = function(){
 
 //return UIAPI;
 //});
-
-/*
-UIAPI.hideAllContextMenus = function() {
-    $('.contextMenu').each(function() {
-        $(this).hide();
-    });    
-}
-*/
-
-/**
- * Sorting 
-    switch (UIAPI.fileSortCriteria) {
-      case "name":
-        UIAPI.fileList.sort(function(a,b) { return a.name.localeCompare(b.name); });
-        
-        // Descending
-        // UIAPI.fileList.sort(function(a,b) { return b.name.localeCompare(a.name); });    
-        break;
-      case "size":        
-        UIAPI.fileList.sort(function(a,b) { 
-            if (a.size > b.size) return 1;
-            if (a.size < b.size) return -1;
-              return 0;
-            });
-        break;  
-      case "lmdt":
-        UIAPI.fileList.sort(function(a,b) { 
-              var date1 = new Date(a.lmdt);
-              var date2 = new Date(b.lmdt);
-              if (date1 > date2) return 1;
-              if (date1 < date2) return -1;
-              return 0; 
-            });
-        break;          
-      default:
-        UIAPI.fileList.sort(function(a,b) { return a.name.localeCompare(b.name); });      
-        break;
-    }   
-*
-**/
