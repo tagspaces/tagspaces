@@ -68,6 +68,8 @@ var initApp = function(){
             if(TSSETTINGS.Settings == undefined) {
                 TSSETTINGS.Settings = TSSETTINGS.DefaultSettings;
             }    
+          
+          	TSSETTINGS.upgradeSettings();
             
             // Init views
  			UIAPI.ViewManager.initViews();                 
