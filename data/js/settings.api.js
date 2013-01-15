@@ -63,12 +63,7 @@ TSSETTINGS.DefaultSettings = {
     "extensionsPath": "file:///C:/TagSpaces/extensions",
     "extensions": [
         {   
-            "id": "viewBasic", // ID should be equal to the directory name where the ext. is located 
-            "enabled": true, 
-            "type": "view", 
-        },
-        {   
-            "id": "viewSearch", // ID should be equal to the directory name where the ext. is located 
+            "id": "viewRiver", // ID should be equal to the directory name where the ext. is located 
             "enabled": false, 
             "type": "view", 
         },

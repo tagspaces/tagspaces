@@ -366,7 +366,7 @@ TagsUI.generateTagGroups = function() {
 
 // TODO evtl. move to Fileviewer.js
 TagsUI.openTagMenu = function(tagButton, tag, fileName) {
-    ViewManager.clearSelectedFiles();
+    UIAPI.ViewManager.clearSelectedFiles();
     $(tagButton).parent().parent().toggleClass("selectedRow");
 
     UIAPI.currentFilename = fileName;

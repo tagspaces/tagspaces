@@ -88,6 +88,7 @@ UIAPI.fileExists = function(fileName) {
     return false;
 }
 
+// TODO Remove hideAllContextMenus 
 UIAPI.hideAllContextMenus = function() {
     $('.contextMenu').each(function() {
         $(this).hide();
@@ -184,29 +185,6 @@ UIAPI.changeDirectory = function(newDir) {
     console.debug("New path: "+UIAPI.currentPath);
     IOAPI.listDirectory(UIAPI.currentPath);
     UIAPI.selectedTag = "";
-}
-
-UIAPI.handleElementActivation = function() {
-    console.debug("Entering element activation handler...");
-    // Workarround for bug ...
-    UIAPI.hideAllContextMenus();
-
-    if (UIAPI.selectedFiles.length > 1) {
-        $( "#openFileButton" ).button( "disable" );
-        $( "#editFileButton" ).button( "disable" );
-        $( "#deleteFileButton" ).button( "disable" );
-        $( "#renameFileButton" ).button( "disable" );   
-    } else if (UIAPI.selectedFiles.length == 1) {
-        $( "#openFileButton" ).button( "enable" );
-        $( "#editFileButton" ).button( "enable" );        
-        $( "#deleteFileButton" ).button( "enable" );
-        $( "#renameFileButton" ).button( "enable" ); 
-    } else {
-        $( "#openFileButton" ).button( "disable" );
-        $( "#editFileButton" ).button( "disable" );        
-        $( "#deleteFileButton" ).button( "disable" );
-        $( "#renameFileButton" ).button( "disable" );       
-    }    
 }
 
 UIAPI.reloadUI = function() {

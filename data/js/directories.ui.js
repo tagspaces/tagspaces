@@ -62,6 +62,7 @@ DirectoriesUI.generateDirPath = function() {
         })
         .click(function() {
           $(this)
+//            .toggleClass("ui-icon-triangle-1-s")
             .parent().toggleClass("ui-accordion-header-active ui-state-active ui-state-default ui-corner-bottom").end()
             .parent().next().toggleClass("ui-accordion-content-active").toggle();
           return false;

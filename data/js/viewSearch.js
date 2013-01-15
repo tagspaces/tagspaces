@@ -6,22 +6,116 @@ define([
     'require',
     'exports',
     'module',
+    'datatables',
+//    'css!datatablescss'
 ],function(require, exports, module) {
 "use strict";
 
+exports.Title = "Search View"
+exports.ID = "viewSearch";  // ID should be equal to the directory name where the ext. is located   
+exports.Type =  "view";
+exports.Icon = "ui-icon-search";
+
 console.debug("Loading viewSearch.js");
 
+var viewContainer = undefined;
+var viewToolbar = undefined;
+var viewFooter = undefined;
+
+var fileTable = undefined;
+var viewMode = "files" // tags
+
 exports.init = function init() {
+	console.debug("Initializing View "+exports.ID);
+	
+    viewContainer = $("#"+exports.ID+"Container");
+    viewToolbar = $("#"+exports.ID+"Toolbar");
+	viewFooter = $("#"+exports.ID+"Footer");
+	
+	viewContainer.empty();
+	viewToolbar.empty();
+	viewFooter.empty();	
+		
+    viewToolbar.append($("<button>", { 
+        text: "New",
+		disabled: true,
+        title: "Create new file",
+        id: exports.ID+"CreateFileButton",    
+    }));
 
-}
+    viewToolbar.append($("<span>", { 
+        id: exports.ID+"ModeSwitcher",    
+    }));
+    
+    var modeSwitcher = $("#"+exports.ID+"ModeSwitcher");
+    
+    modeSwitcher.append($("<input>", { 
+        type: "radio",
+        name: "modeSwitcher",
+        checked: true,
+        id: exports.ID+"FilesMode",    
+    }));
 
+    modeSwitcher.append($("<label>", { 
+        for: exports.ID+"FilesMode",
+        text: "Files", 
+    }));
+    
+    modeSwitcher.append($("<input>", { 
+        type: "radio",
+        name: "modeSwitcher",
+        id: exports.ID+"TagsMode",    
+    }));
 
-var BasicViewsUI = (typeof BasicViewsUI == 'object' && BasicViewsUI != null) ? BasicViewsUI : {};
+    modeSwitcher.append($("<label>", { 
+        for: exports.ID+"TagsMode",
+        text: "Tags", 
+    }));   
+    
+    modeSwitcher.buttonset();	 
 
+	// Adding event listener & icon to the radio button
+    $( "#"+exports.ID+"TagsMode" ).button({
+	        text: true,
+	        icons: {
+	            primary: "ui-icon-tag"
+	        }
+	    })        
+	.click(function() {
+		viewMode = "tags" 
+		exports.load(); 	
+	})       
+	
+    $( "#"+exports.ID+"FilesMode" ).button({
+	        text: true,
+	        icons: {
+	            primary: "ui-icon-document-b"
+	        }
+	    })        
+	.click(function() {
+		viewMode = "files" 
+		exports.load(); 	
+	})       
+	
+    
+    viewToolbar.append($("<span>", { 
+    	style: "float: right; margin: 0px; padding: 0px;",
+    }).append($("<input>", { 
+		type: "filter",
+		// autocomplete: "off", // Error: cannot call methods on autocomplete prior to initialization; attempted to call method 'off' 
+        title: "This filter applies to current directory without subdirectories.",
+        id: exports.ID+"FilterBox",    
+    })));
 
+    viewContainer.append($("<table>", { 
+		cellpadding: "0",
+		cellspacing: "0",
+		border: "0",
+		style: "width: 100%",
+        id: exports.ID+"FileTable",    
+    })); 
 
-BasicViewsUI.initFileTagViews = function() {
-    UIAPI.fileTable = $('#fileTable').dataTable( {
+    fileTable = $('#'+exports.ID+"FileTable").dataTable( {
         "bJQueryUI": false,
         "bPaginate": false,
         "bLengthChange": false,
@@ -40,15 +134,15 @@ BasicViewsUI.initFileTagViews = function() {
         ],         
         "aoColumnDefs": [
             { // Filename column
-                "mRender": function ( data, type, row ) { return BasicViewsUI.buttonizeFileName(data) },
+                "mRender": function ( data, type, row ) { return buttonizeFileName(data) },
                 "aTargets": [ 0 ]
             }, 
             { // Title column
-                "mRender": function ( data, type, row ) { return BasicViewsUI.buttonizeTitle(data,row[0]) },
+                "mRender": function ( data, type, row ) { return buttonizeTitle(data,row[0]) },
                 "aTargets": [ 3 ]
             }, 
             { // Tags column
-                "mRender": function ( data, type, row ) { return BasicViewsUI.generateTagButtons(data,row[5],row[0]) },
+                "mRender": function ( data, type, row ) { return generateTagButtons(data,row[5],row[0]) },
                 "aTargets": [ 4 ]
             }, 
             { // Last changed date column
@@ -58,21 +152,20 @@ BasicViewsUI.initFileTagViews = function() {
             { "bVisible": false,  "aTargets": [ 5 ] },
 //            { "bSearchable": false,  "aTargets": [ 0 ] },
 //            { "sClass": "center", "aTargets": [ 0 ] }
-        ]
-    } );       
-    
+         ]
+    } );           
    
     // Disable alerts in datatable
-    UIAPI.fileTable.dataTableExt.sErrMode = 'throw';
+    fileTable.dataTableExt.sErrMode = 'throw';
 
     // Makes the body of the fileTable selectable
-    $("tbody", $(UIAPI.fileTable)).selectable({
+    $("tbody", $(fileTable)).selectable({
       filter: 'tr',
       start: function() {
         console.debug("Start selecting");  
-        UIAPI.hideAllContextMenus();
+        //UIAPI.hideAllContextMenus();
         UIAPI.selectedFiles = [];       
-        $("#fileTable tbody tr").each(function(){
+        $('#'+exports.ID+"FileTable tbody tr").each(function(){
             $(this).removeClass('selectedRow');
         });
       },
@@ -85,51 +178,114 @@ BasicViewsUI.initFileTagViews = function() {
             // Add the filename which is located in the first column to the list of selected filenames
             UIAPI.selectedFiles.push(rowData[0]);
           });
-/*        if(UIAPI.selectedFiles.length == 1) {
-            var dirSep = UIAPI.getDirSeparator();
-            if(dirSep == "\\\\") { dirSep = "&#92;" }
-            $("#selectedFilePath").val(UIAPI.currentPath+dirSep+UIAPI.selectedFiles[0]);            
-        } else {
-            $("#selectedFilePath").val("");            
-        } */
         console.debug("Selected files: "+UIAPI.selectedFiles);
         UIAPI.handleElementActivation();        
       }
     })
     
-    // Filter search functionality
-    // TODO Consider Thumb and other views by filtering
-    $("#filterBox").keyup(function() {
-        UIAPI.fileTable.fnFilter(this.value);
+    // Filter functionality
+    $("#"+exports.ID+"FilterBox").keyup(function() {
+        fileTable.fnFilter(this.value);
         console.debug("Filter to value: "+this.value);
     });  
     
-    $('#filterBox').wrap('<span id="resetFilter" />').after($('<span/>').click(function() {
+    $('#'+exports.ID+"FilterBox").wrap('<span id="resetFilter" />').after($('<span/>').click(function() {
         $(this).prev('input').val('').focus();
-        UIAPI.fileTable.fnFilter( "" );  
+        fileTable.fnFilter( "" );  
     }));    
+
+    initContextMenus();
+    initButtons();
 }
 
-BasicViewsUI.initThumbView = function() {
-    // Managing the selection of files in the thumb view
-    $( "#selectableFiles" ).selectable({
-        stop: function() {
-            UIAPI.selectedFiles = [];          
-            $( ".ui-selected", this ).each(function() {
-                UIAPI.selectedFiles.push($(this).attr("title"));
-            });
-            console.debug("Selected files: "+UIAPI.selectedFiles);
-            UIAPI.handleElementActivation();
-            
-            // On selecting only one file opens it in the viewer
-            if(UIAPI.selectedFiles.length == 1) {
-                FileViewer.openFile(UIAPI.selectedFiles[0]);                
-            }
-        }
-    });   
+exports.load = function load() {
+	console.debug("Loading View "+exports.ID);
+
+    $('#'+exports.ID+"FileTable_wrapper").hide();
+    
+    // Purging file table
+    fileTable.fnClearTable();  
+
+    fileTable.fnAddData( UIAPI.fileList );
+
+    fileTable.fnSetColumnVis(0, true);            
+    fileTable.fnSetColumnVis(1, true);            
+    fileTable.fnSetColumnVis(2, true);            
+    fileTable.fnSetColumnVis(3, true);            
+    fileTable.fnSetColumnVis(4, true);  
+
+    fileTable.$('tr').dblclick( function() {
+        console.debug("Opening file...");
+        var rowData = fileTable.fnGetData( this );
+        
+        // TODO use central API
+        $("#selectedFilePath").val(UIAPI.currentPath+UIAPI.getDirSeparator()+rowData[0]);            
+        
+        // TODO use central API not fileView
+        FileViewer.openFile(rowData[0]);
+        
+    } );     
+    
+    fileTable.$('.fileButton')
+        .click( function() {
+            openFileMenu(this, $(this).attr("title"));
+        } )      
+        .dropdown( 'attach' , '#fileMenu' );
+
+    fileTable.$('.fileTitleButton')
+        .click( function() {
+            openFileTitleMenu(this, $(this).attr("title"));
+        } )
+        .dropdown( 'attach' , '#fileTitleMenu' );   
+    
+    fileTable.$('.extTagButton')
+        .click( function() {
+            TagsUI.openTagMenu(this, $(this).attr("tag"), $(this).attr("filename"));
+        } )
+        .dropdown( 'attach' , '#tagMenu' );               
+    
+    fileTable.$('.tagButton')
+        .click( function() {
+            TagsUI.openTagMenu(this, $(this).attr("tag"), $(this).attr("filename"));
+        } )     
+        .dropdown( 'attach' , '#tagMenu' );
+
+    if(viewMode == "files") {
+        console.debug("Change to FileView");
+        fileTable.fnSetColumnVis(0, true);            
+        fileTable.fnSetColumnVis(1, true);            
+        fileTable.fnSetColumnVis(2, true);            
+        fileTable.fnSetColumnVis(3, false);            
+        fileTable.fnSetColumnVis(4, false);            
+    } else if (viewMode == "tags") {
+        console.debug("Change to TagView");            
+        fileTable.fnSetColumnVis(0, false);            
+        fileTable.fnSetColumnVis(1, false);            
+        fileTable.fnSetColumnVis(2, false);            
+        fileTable.fnSetColumnVis(3, true);            
+        fileTable.fnSetColumnVis(4, true);            
+    }
+
+    $('#'+exports.ID+"FileTable_wrapper").show();  
+     
+    $( "#"+exports.ID+"CreateFileButton" ).button( "enable" );
+    
+    UIAPI.hideLoadingAnimation(); 
 }
 
-BasicViewsUI.generateTagButtons = function(commaSeparatedTags, fileExtension, fileName) {
+exports.setFileFilter = function setFileFilter(filter) {
+	$( "#"+exports.ID+"FilterBox").val(filter);
+	fileTable.fnFilter(filter);
+}
+
+exports.clearSelectedFiles = function() {
+    // Deselect all
+    $(".selectedRow", $(fileTable)).each(function(){
+        $(this).toggleClass('selectedRow');
+    });    
+}
+
+var generateTagButtons = function(commaSeparatedTags, fileExtension, fileName) {
     console.debug("Creating tags...");
     var tagString = ""+commaSeparatedTags;
     var wrapper = $('<span>');
@@ -157,17 +313,7 @@ BasicViewsUI.generateTagButtons = function(commaSeparatedTags, fileExtension, fi
     return wrapper.html();        
 }
 
-BasicViewsUI.clearSelectedFiles = function() {
-    // Clear selected files in the model
-    UIAPI.selectedFiles = [];  
-    
-    // Deselect all
-    $(".selectedRow", $(UIAPI.fileTable)).each(function(){
-        $(this).toggleClass('selectedRow');
-    });    
-}
-
-BasicViewsUI.buttonizeTitle = function(title, fileName) {
+var buttonizeTitle = function(title, fileName) {
     return $('<span>').append($('<button>', { 
             title: fileName, 
             class: 'fileTitleButton', 
@@ -175,102 +321,51 @@ BasicViewsUI.buttonizeTitle = function(title, fileName) {
         })).html();    
 }
 
-BasicViewsUI.openFileTitleMenu = function(tagButton, fileName) {
-    BasicViewsUI.clearSelectedFiles();
+var openFileTitleMenu = function(tagButton, fileName) {
+    exports.clearSelectedFiles();
     $(tagButton).parent().parent().toggleClass("selectedRow");
 
     UIAPI.currentFilename = fileName;
     UIAPI.selectedFiles.push(UIAPI.currentFilename);
 } 
 
-BasicViewsUI.buttonizeFileName = function(fileName) {
+var buttonizeFileName = function(fileName) {
     return $('<span>').append($('<button>', { 
-        title: fileName, 
-        class: 'fileButton', 
-        text: fileName 
+        	title: fileName, 
+        	class: 'fileButton', 
+        	text: fileName 
         })).html();
 } 
 
-BasicViewsUI.openFileMenu = function(tagButton, fileName) {
-    BasicViewsUI.clearSelectedFiles();
+var openFileMenu = function(tagButton, fileName) {
+    exports.clearSelectedFiles();
     $(tagButton).parent().parent().toggleClass("selectedRow");
 
     UIAPI.currentFilename = fileName;
     UIAPI.selectedFiles.push(UIAPI.currentFilename);
 } 
 
-BasicViewsUI.initButtons = function() {
-// Layout Buttons    
-    $( "#toggleLeftPanel" ).button({
-        text: false,
-        icons: {
-            primary: "ui-icon-bookmark"
-        }
-    })
-    .click(function() {
-        UIAPI.layoutContainer.toggle("west");
-    });  
-    
-    $( "#toggleRightPanel" ).button({
-        text: false,
-        icons: {
-            primary: "ui-icon-triangle-2-e-w"
-        }        
-    })
-    .click(function() {
-        UIAPI.layoutContainer.toggle("east");
-    });   
-
-
+var initButtons = function() {
     
 // Initialize file buttons    
-    $( "#createFileButton" ).button({
+    $( "#"+exports.ID+"CreateFileButton" ).button({
         text: true,
         icons: {
             primary: "ui-icon-document"
         }
     })
     .click(function() {
-        IOAPI.createDirectoryIndex(UIAPI.currentPath);
-        // TODO uncomment
-        //$( "#dialog-filecreate" ).dialog( "open" );
+        $( "#dialog-filecreate" ).dialog( "open" );
     });        
 
-    $( "#openFileButton" ).button({
+/*    $( "#openFileButton" ).button({
         text: true,
         disabled: true
     })
     .click(function() {
         FileViewer.openFile(UIAPI.selectedFiles[0]);
-    }); 
+    }); */
         
-    $( "#editFileButton" ).button({
-        text: true,
-        disabled: true       
-    })
-    .click(function() {
-        UIAPI.editFile(UIAPI.selectedFiles[0]);
-    }); 
-    
-    $( "#deleteFileButton" ).button({
-        text: true,
-        disabled: true,
-        icons: {
-            primary: "ui-icon-trash"
-        }
-    })
-    .click(function() {
-        $( "#dialog-confirmdelete" ).dialog( "open" );
-    });
-
-    $( "#renameFileButton" ).button({
-        text: true,
-        disabled: true
-    })
-    .click(function() {
-        $( "#dialog-filerename" ).dialog( "open" );
-    }); 
-    
     $( "#clearFilterButton" ).button({
         text: false,
         disabled: false,
@@ -282,10 +377,9 @@ BasicViewsUI.initButtons = function() {
         $( "#filterBox" ).val( "" );
         UIAPI.fileTable.fnFilter( "" );        
     });
-
 }
 
-BasicViewsUI.initContextMenus = function() {
+var initContextMenus = function() {
     $( "#fileMenu" ).menu({
         select: function( event, ui ) {
             var commandName = ui.item.attr( "action" );
@@ -353,260 +447,29 @@ BasicViewsUI.initContextMenus = function() {
                 break;
             }
         }         
-    });            
-    
+    }); 
 }
 
-BasicViewsUI.initDialogs = function() {
-    var newDirName = $( "#dirname" );    
-    var newFileName = $( "#newFileName" );    
-    var renamedFileName = $( "#renamedFileName" );    
-    
-    // TODO evtl add smarttag and the others...    
-    var allFields = $( [] ).add( newDirName );
-    
-    var tips = $( ".validateTips" );
+// currently not used
+var handleElementActivation = function() {
+    console.debug("Entering element activation handler...");
 
-    function updateTips( t ) {
-        tips
-            .text( t )
-            .addClass( "ui-state-highlight" );
-        setTimeout(function() {
-            tips.removeClass( "ui-state-highlight", 1500 );
-        }, 500 );
-    }
-
-    function checkLength( o, n, min, max ) {
-        if ( o.val().length > max || o.val().length < min ) {
-            o.addClass( "ui-state-error" );
-            updateTips( "Length of " + n + " must be between " +
-                min + " and " + max + "." );
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    function checkRegexp( o, regexp, n ) {
-        if ( !( regexp.test( o.val() ) ) ) {
-            o.addClass( "ui-state-error" );
-            updateTips( n );
-            return false;
-        } else {
-            return true;
-        }
+    if (UIAPI.selectedFiles.length > 1) {
+        $( "#openFileButton" ).button( "disable" );
+        $( "#editFileButton" ).button( "disable" );
+        $( "#deleteFileButton" ).button( "disable" );
+        $( "#renameFileButton" ).button( "disable" );   
+    } else if (UIAPI.selectedFiles.length == 1) {
+        $( "#openFileButton" ).button( "enable" );
+        $( "#editFileButton" ).button( "enable" );        
+        $( "#deleteFileButton" ).button( "enable" );
+        $( "#renameFileButton" ).button( "enable" ); 
+    } else {
+        $( "#openFileButton" ).button( "disable" );
+        $( "#editFileButton" ).button( "disable" );        
+        $( "#deleteFileButton" ).button( "disable" );
+        $( "#renameFileButton" ).button( "disable" );       
     }    
-    
-    $( "#fileTypeRadio" ).buttonset();
-
-    var fileContent = undefined;
-
-    $( "#txtFileTypeButton" ).click(function() {
-        // TODO Add to config options
-        fileContent = TSSETTINGS.getNewTextFileContent();
-        //Leave the filename as it is by no extension
-        if(newFileName.val().lastIndexOf(".")>=0) {
-            newFileName.val(newFileName.val().substring(0,newFileName.val().lastIndexOf("."))+".txt");  
-        }
-    });            
-
-    $( "#htmlFileTypeButton" ).click(function() {
-        // TODO Add to config options
-        fileContent = TSSETTINGS.getNewHTMLFileContent();
-        //Leave the filename as it is by no extension
-        if(newFileName.val().lastIndexOf(".")>=0) {
-            newFileName.val(newFileName.val().substring(0,newFileName.val().lastIndexOf("."))+".html");            
-        }
-    }); 
-    
-    $( "#mdFileTypeButton" ).click(function() {
-        // TODO Add to config options
-        fileContent = TSSETTINGS.getNewMDFileContent();
-        //Leave the filename as it is by no extension
-        if(newFileName.val().lastIndexOf(".")>=0) {
-            newFileName.val(newFileName.val().substring(0,newFileName.val().lastIndexOf("."))+".md");            
-        }
-    });     
-
-    $( "#dialog-filecreate" ).dialog({
-        autoOpen: false,
-        height: 250,
-        width: 450,
-        modal: true,
-        buttons: {
-            "Create": function() {
-                var bValid = true;                
-                allFields.removeClass( "ui-state-error" );
-
-                bValid = bValid && checkLength( newFileName, "filename", 4, 200 );
-        //        bValid = bValid && checkRegexp( renamedFileName, /^[a-z]([0-9a-z_.])+$/i, "Filename may consist of a-z, 0-9, underscores, begin with a letter." );
-                if(UIAPI.fileExists(newFileName.val())) {
-                    updateTips("File already exists.");
-                    bValid = false;
-                }
-                if ( bValid ) {
-                    IOAPI.saveTextFile(UIAPI.currentPath+UIAPI.getDirSeparator()+$( "#newFileName" ).val(),fileContent);
-                    $( this ).dialog( "close" );
-                    IOAPI.listDirectory(UIAPI.currentPath);                    
-                }
-            },
-            Cancel: function() {
-                $( this ).dialog( "close" );
-            }
-        },
-        close: function() {
-            allFields.val( "" ).removeClass( "ui-state-error" );
-        },
-        open: function() {
-            fileContent = TSSETTINGS.getNewTextFileContent(); // Default new file in text file
-            $( "#newFileName" ).val(".txt");
-        }                
-    });     
-
-    $( "#dialog-filerename" ).dialog({
-        autoOpen: false,
-        height: 220,
-        width: 450,
-        modal: true,
-        buttons: {
-            "Rename": function() {
-                var bValid = true;                
-                allFields.removeClass( "ui-state-error" );
-
-                bValid = bValid && checkLength( renamedFileName, "filename", 3, 200 );
-        //        bValid = bValid && checkRegexp( renamedFileName, /^[a-z]([0-9a-z_.])+$/i, "Filename may consist of a-z, 0-9, underscores, begin with a letter." );
-                if ( bValid ) {
-                    IOAPI.renameFile(
-                            UIAPI.currentPath+UIAPI.getDirSeparator()+UIAPI.selectedFiles[0],
-                            UIAPI.currentPath+UIAPI.getDirSeparator()+renamedFileName.val()
-                        );
-                    $( this ).dialog( "close" );
-                    IOAPI.listDirectory(UIAPI.currentPath);                    
-                }
-            },
-            Cancel: function() {
-                $( this ).dialog( "close" );
-            }
-        },
-        close: function() {
-            allFields.val( "" ).removeClass( "ui-state-error" );
-        },
-        open: function() {
-            $( "#renamedFileName" ).val(UIAPI.selectedFiles[0]);
-        }                
-    }); 
-    
-    $( "#dialog-confirmdelete" ).dialog({
-        autoOpen: false,
-        resizable: false,
-        height:140,
-        modal: true,
-        buttons: {
-            "Delete all items": function() {
-                IOAPI.deleteElement(UIAPI.currentPath+UIAPI.getDirSeparator()+UIAPI.selectedFiles[0]);
-                $( this ).dialog( "close" );
-                IOAPI.listDirectory(UIAPI.currentPath);   
-            },
-            Cancel: function() {
-                $( this ).dialog( "close" );
-            }
-        }
-    }); 
-    
-    $( "#dialogAddTags" ).dialog({
-        autoOpen: false,
-        resizable: false,
-        height:240,
-        modal: true,
-        buttons: {
-            "Add tags": function() {
-                var tags = $("#tags").val().split(",");
-                TSAPI.writeTagsToFile(UIAPI.selectedFiles[0], tags);
-                IOAPI.listDirectory(UIAPI.currentPath);                                   
-                $( this ).dialog( "close" );
-            },
-            Cancel: function() {
-                $( this ).dialog( "close" );
-            }
-        },
-        open: function() {
-            
-            function split( val ) {
-                return val.split( /,\s*/ );
-            }
-            function extractLast( term ) {
-                return split( term ).pop();
-            }
-                        
-            $( "#tags" )
-                // don't navigate away from the field on tab when selecting an item
-                .bind( "keydown", function( event ) {
-                    if ( event.keyCode === $.ui.keyCode.TAB &&
-                            $( this ).data( "autocomplete" ).menu.active ) {
-                        event.preventDefault();
-                    }
-                })
-                .autocomplete({
-                    minLength: 0,
-                    source: function( request, response ) {
-                        // delegate back to autocomplete, but extract the last term
-                        response( $.ui.autocomplete.filter(
-                            TSSETTINGS.getAllTags(), extractLast( request.term ) ) );
-                    },
-                    focus: function() {
-                        // prevent value inserted on focus
-                        return false;
-                    },
-                    select: function( event, ui ) {
-                        var terms = split( this.value );
-                        // remove the current input
-                        terms.pop();
-                        // add the selected item
-                        terms.push( ui.item.value );
-                        // add placeholder to get the comma-and-space at the end
-                        terms.push( "" );
-                        this.value = terms.join( ", " );
-                        return false;
-                    }
-                });
-        }            
-    });        
-    
-    $( "#tagTypeRadio" ).buttonset();
-
-    $( "#plainTagTypeButton" ).click(function() {
-        UIAPI.selectedTag, $( "#newTag" ).datepicker( "destroy" ).val("");
-    });  
-
-    $( "#dateTagTypeButton" ).click(function() {
-        UIAPI.selectedTag, $( "#newTag" ).datepicker({
-            showWeek: true,
-            firstDay: 1,
-            dateFormat: "yymmdd"
-        });
-    });  
-    
-    $( "#currencyTagTypeButton" ).click(function() {
-        UIAPI.selectedTag, $( "#newTag" ).datepicker( "destroy" ).val("XEUR")
-    });      
-    
-    $( "#dialogEditTag" ).dialog({
-        autoOpen: false,
-        resizable: false,
-        height:240,
-        modal: true,
-        buttons: {
-            "Edit tag": function() {
-                TSAPI.renameTag(UIAPI.selectedFiles[0], UIAPI.selectedTag, $( "#newTag" ).val());
-                IOAPI.listDirectory(UIAPI.currentPath);                                   
-                $( this ).dialog( "close" );
-            },
-            Cancel: function() {
-                $( this ).dialog( "close" );
-            }
-        }
-    });
 }
 
-//return BasicViewsUI;
 });

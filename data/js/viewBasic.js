@@ -14,38 +14,98 @@ define([
 exports.Title = "File View"
 exports.ID = "viewBasic";  // ID should be equal to the directory name where the ext. is located   
 exports.Type =  "view";
-exports.Icon = "ui-icon-note"; // ui-icon-tag
+exports.Icon = "ui-icon-note";
 
 console.debug("Loading viewBasic.js");
 
 var viewContainer = undefined;
 var viewToolbar = undefined;
+var viewFooter = undefined;
 
-exports.fileTable = undefined;
+var fileTable = undefined;
+var viewMode = "files" // tags
 
 exports.init = function init() {
 	console.debug("Initializing View "+exports.ID);
 	
     viewContainer = $("#"+exports.ID+"Container");
     viewToolbar = $("#"+exports.ID+"Toolbar");
+	viewFooter = $("#"+exports.ID+"Footer");
 	
+	viewContainer.empty();
+	viewToolbar.empty();
+	viewFooter.empty();	
+		
     viewToolbar.append($("<button>", { 
         text: "New",
 		disabled: true,
         title: "Create new file",
         id: exports.ID+"CreateFileButton",    
     }));
+
+    viewToolbar.append($("<span>", { 
+        id: exports.ID+"ModeSwitcher",    
+    }));
     
-/*  <span style="float: right; margin: 0px; padding: 0px;">
-        <input id="filterBox" type="filter" value="" autocomplete="off" title="" />
-    </span>	 */	
-    viewToolbar.append($("<input>", { 
+    var modeSwitcher = $("#"+exports.ID+"ModeSwitcher");
+    
+    modeSwitcher.append($("<input>", { 
+        type: "radio",
+        name: "modeSwitcher",
+        checked: true,
+        id: exports.ID+"FilesMode",    
+    }));
+
+    modeSwitcher.append($("<label>", { 
+        for: exports.ID+"FilesMode",
+        text: "Files", 
+    }));
+    
+    modeSwitcher.append($("<input>", { 
+        type: "radio",
+        name: "modeSwitcher",
+        id: exports.ID+"TagsMode",    
+    }));
+
+    modeSwitcher.append($("<label>", { 
+        for: exports.ID+"TagsMode",
+        text: "Tags", 
+    }));   
+    
+    modeSwitcher.buttonset();	 
+
+	// Adding event listener & icon to the radio button
+    $( "#"+exports.ID+"TagsMode" ).button({
+	        text: true,
+	        icons: {
+	            primary: "ui-icon-tag"
+	        }
+	    })        
+	.click(function() {
+		viewMode = "tags" 
+		exports.load(); 	
+	})       
+	
+    $( "#"+exports.ID+"FilesMode" ).button({
+	        text: true,
+	        icons: {
+	            primary: "ui-icon-document-b"
+	        }
+	    })        
+	.click(function() {
+		viewMode = "files" 
+		exports.load(); 	
+	})       
+	
+    
+    viewToolbar.append($("<span>", { 
     	style: "float: right; margin: 0px; padding: 0px;",
+    }).append($("<input>", { 
 		type: "filter",
-		autocomplete: "off",
+		// autocomplete: "off", // Error: cannot call methods on autocomplete prior to initialization; attempted to call method 'off' 
         title: "This filter applies to current directory without subdirectories.",
         id: exports.ID+"FilterBox",    
-    }));
+    })));
 
     viewContainer.append($("<table>", { 
 		cellpadding: "0",
@@ -55,7 +115,7 @@ exports.init = function init() {
         id: exports.ID+"FileTable",    
     })); 
 
-    exports.fileTable = $('#'+exports.ID+"FileTable").dataTable( {
+    fileTable = $('#'+exports.ID+"FileTable").dataTable( {
         "bJQueryUI": false,
         "bPaginate": false,
         "bLengthChange": false,
@@ -92,14 +152,14 @@ exports.init = function init() {
             { "bVisible": false,  "aTargets": [ 5 ] },
 //            { "bSearchable": false,  "aTargets": [ 0 ] },
 //            { "sClass": "center", "aTargets": [ 0 ] }
-        ]
+         ]
     } );           
    
     // Disable alerts in datatable
-    exports.fileTable.dataTableExt.sErrMode = 'throw';
+    fileTable.dataTableExt.sErrMode = 'throw';
 
     // Makes the body of the fileTable selectable
-    $("tbody", $(exports.fileTable)).selectable({
+    $("tbody", $(fileTable)).selectable({
       filter: 'tr',
       start: function() {
         console.debug("Start selecting");  
@@ -125,97 +185,107 @@ exports.init = function init() {
     
     // Filter functionality
     $("#"+exports.ID+"FilterBox").keyup(function() {
-        exports.fileTable.fnFilter(this.value);
+        fileTable.fnFilter(this.value);
         console.debug("Filter to value: "+this.value);
     });  
     
     $('#'+exports.ID+"FilterBox").wrap('<span id="resetFilter" />').after($('<span/>').click(function() {
         $(this).prev('input').val('').focus();
-        exports.fileTable.fnFilter( "" );  
+        fileTable.fnFilter( "" );  
     }));    
 
     initContextMenus();
     initButtons();
 }
 
-exports.load = function init() {
+exports.load = function load() {
 	console.debug("Loading View "+exports.ID);
 
-    exports.fileTable.hide();     
-    $("fileTable_wrapper").hide();
+    $('#'+exports.ID+"FileTable_wrapper").hide();
     
     // Purging file table
-    exports.fileTable.fnClearTable();  
+    fileTable.fnClearTable();  
 
-    exports.fileTable.fnAddData( UIAPI.fileList );
+    fileTable.fnAddData( UIAPI.fileList );
 
-    exports.fileTable.fnSetColumnVis(0, true);            
-    exports.fileTable.fnSetColumnVis(1, true);            
-    exports.fileTable.fnSetColumnVis(2, true);            
-    exports.fileTable.fnSetColumnVis(3, true);            
-    exports.fileTable.fnSetColumnVis(4, true);  
+    fileTable.fnSetColumnVis(0, true);            
+    fileTable.fnSetColumnVis(1, true);            
+    fileTable.fnSetColumnVis(2, true);            
+    fileTable.fnSetColumnVis(3, true);            
+    fileTable.fnSetColumnVis(4, true);  
 
-    exports.fileTable.$('tr').dblclick( function() {
+    fileTable.$('tr').dblclick( function() {
         console.debug("Opening file...");
-        var rowData = exports.fileTable.fnGetData( this );
+        var rowData = fileTable.fnGetData( this );
+        
+        // TODO use central API
         $("#selectedFilePath").val(UIAPI.currentPath+UIAPI.getDirSeparator()+rowData[0]);            
         
         // TODO use central API not fileView
         FileViewer.openFile(rowData[0]);
-        UIAPI.hideAllContextMenus();
+        
     } );     
     
-    exports.fileTable.$('.fileButton')
+    fileTable.$('.fileButton')
         .click( function() {
             openFileMenu(this, $(this).attr("title"));
         } )      
         .dropdown( 'attach' , '#fileMenu' );
 
-    exports.fileTable.$('.fileTitleButton')
+    fileTable.$('.fileTitleButton')
         .click( function() {
             openFileTitleMenu(this, $(this).attr("title"));
         } )
         .dropdown( 'attach' , '#fileTitleMenu' );   
     
-    exports.fileTable.$('.extTagButton')
+    fileTable.$('.extTagButton')
         .click( function() {
             TagsUI.openTagMenu(this, $(this).attr("tag"), $(this).attr("filename"));
         } )
         .dropdown( 'attach' , '#tagMenu' );               
     
-    exports.fileTable.$('.tagButton')
+    fileTable.$('.tagButton')
         .click( function() {
             TagsUI.openTagMenu(this, $(this).attr("tag"), $(this).attr("filename"));
         } )     
         .dropdown( 'attach' , '#tagMenu' );
 
-    if(viewType == "fileView") {
+    if(viewMode == "files") {
         console.debug("Change to FileView");
-        exports.fileTable.fnSetColumnVis(0, true);            
-        exports.fileTable.fnSetColumnVis(1, true);            
-        exports.fileTable.fnSetColumnVis(2, true);            
-        exports.fileTable.fnSetColumnVis(3, false);            
-        exports.fileTable.fnSetColumnVis(4, false);            
-//    } else if (viewType == "tagView") {
-  	  } else {	
+        fileTable.fnSetColumnVis(0, true);            
+        fileTable.fnSetColumnVis(1, true);            
+        fileTable.fnSetColumnVis(2, true);            
+        fileTable.fnSetColumnVis(3, false);            
+        fileTable.fnSetColumnVis(4, false);            
+    } else if (viewMode == "tags") {
         console.debug("Change to TagView");            
-        exports.fileTable.fnSetColumnVis(0, false);            
-        exports.fileTable.fnSetColumnVis(1, false);            
-        exports.fileTable.fnSetColumnVis(2, false);            
-        exports.fileTable.fnSetColumnVis(3, true);            
-        exports.fileTable.fnSetColumnVis(4, true);            
+        fileTable.fnSetColumnVis(0, false);            
+        fileTable.fnSetColumnVis(1, false);            
+        fileTable.fnSetColumnVis(2, false);            
+        fileTable.fnSetColumnVis(3, true);            
+        fileTable.fnSetColumnVis(4, true);            
     }
 
-    $("fileTable_wrapper").show();  
+    $('#'+exports.ID+"FileTable_wrapper").show();  
      
+    $( "#"+exports.ID+"CreateFileButton" ).button( "enable" );
+    
     UIAPI.hideLoadingAnimation(); 
 }
 
 exports.setFileFilter = function setFileFilter(filter) {
-	exports.fileTable.fnFilter(filter);
+	$( "#"+exports.ID+"FilterBox").val(filter);
+	fileTable.fnFilter(filter);
 }
 
-function generateTagButtons(commaSeparatedTags, fileExtension, fileName) {
+exports.clearSelectedFiles = function() {
+    // Deselect all
+    $(".selectedRow", $(fileTable)).each(function(){
+        $(this).toggleClass('selectedRow');
+    });    
+}
+
+var generateTagButtons = function(commaSeparatedTags, fileExtension, fileName) {
     console.debug("Creating tags...");
     var tagString = ""+commaSeparatedTags;
     var wrapper = $('<span>');
@@ -243,14 +313,7 @@ function generateTagButtons(commaSeparatedTags, fileExtension, fileName) {
     return wrapper.html();        
 }
 
-exports.clearSelectedFiles = function() {
-    // Deselect all
-    $(".selectedRow", $(exports.fileTable)).each(function(){
-        $(this).toggleClass('selectedRow');
-    });    
-}
-
-function buttonizeTitle(title, fileName) {
+var buttonizeTitle = function(title, fileName) {
     return $('<span>').append($('<button>', { 
             title: fileName, 
             class: 'fileTitleButton', 
@@ -258,7 +321,7 @@ function buttonizeTitle(title, fileName) {
         })).html();    
 }
 
-function openFileTitleMenu(tagButton, fileName) {
+var openFileTitleMenu = function(tagButton, fileName) {
     exports.clearSelectedFiles();
     $(tagButton).parent().parent().toggleClass("selectedRow");
 
@@ -266,7 +329,7 @@ function openFileTitleMenu(tagButton, fileName) {
     UIAPI.selectedFiles.push(UIAPI.currentFilename);
 } 
 
-function buttonizeFileName(fileName) {
+var buttonizeFileName = function(fileName) {
     return $('<span>').append($('<button>', { 
         	title: fileName, 
         	class: 'fileButton', 
@@ -274,7 +337,7 @@ function buttonizeFileName(fileName) {
         })).html();
 } 
 
-function openFileMenu(tagButton, fileName) {
+var openFileMenu = function(tagButton, fileName) {
     exports.clearSelectedFiles();
     $(tagButton).parent().parent().toggleClass("selectedRow");
 
@@ -282,10 +345,10 @@ function openFileMenu(tagButton, fileName) {
     UIAPI.selectedFiles.push(UIAPI.currentFilename);
 } 
 
-function initButtons() {
+var initButtons = function() {
     
 // Initialize file buttons    
-    $( "#createFileButton" ).button({
+    $( "#"+exports.ID+"CreateFileButton" ).button({
         text: true,
         icons: {
             primary: "ui-icon-document"
@@ -295,13 +358,13 @@ function initButtons() {
         $( "#dialog-filecreate" ).dialog( "open" );
     });        
 
-    $( "#openFileButton" ).button({
+/*    $( "#openFileButton" ).button({
         text: true,
         disabled: true
     })
     .click(function() {
         FileViewer.openFile(UIAPI.selectedFiles[0]);
-    }); 
+    }); */
         
     $( "#clearFilterButton" ).button({
         text: false,
@@ -316,7 +379,7 @@ function initButtons() {
     });
 }
 
-function initContextMenus() {
+var initContextMenus = function() {
     $( "#fileMenu" ).menu({
         select: function( event, ui ) {
             var commandName = ui.item.attr( "action" );
@@ -385,6 +448,28 @@ function initContextMenus() {
             }
         }         
     }); 
+}
+
+// currently not used
+var handleElementActivation = function() {
+    console.debug("Entering element activation handler...");
+
+    if (UIAPI.selectedFiles.length > 1) {
+        $( "#openFileButton" ).button( "disable" );
+        $( "#editFileButton" ).button( "disable" );
+        $( "#deleteFileButton" ).button( "disable" );
+        $( "#renameFileButton" ).button( "disable" );   
+    } else if (UIAPI.selectedFiles.length == 1) {
+        $( "#openFileButton" ).button( "enable" );
+        $( "#editFileButton" ).button( "enable" );        
+        $( "#deleteFileButton" ).button( "enable" );
+        $( "#renameFileButton" ).button( "enable" ); 
+    } else {
+        $( "#openFileButton" ).button( "disable" );
+        $( "#editFileButton" ).button( "disable" );        
+        $( "#deleteFileButton" ).button( "disable" );
+        $( "#renameFileButton" ).button( "disable" );       
+    }    
 }
 
 });

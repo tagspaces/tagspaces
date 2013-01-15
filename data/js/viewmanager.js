@@ -21,32 +21,38 @@ exports.initViews = function initViews() {
 	$("#viewFooters").empty();
 	
 	var defaultViewLoaded = false;
+
+    require(["js/viewBasic"], function(viewer) {
+		views.push(viewer);
+		initViewsUI(viewer);
+		viewer.init();
+   
+   		UIAPI.currentView = viewer.ID;
+		viewer.load();
+		$( "#"+viewer.ID+"Button" ).attr("checked","checked");
+		$( "#"+viewer.ID+"Button" ).button("refresh");
+		
+		$( "#"+viewer.ID+"Container" ).show();
+		$( "#"+viewer.ID+"Toolbar" ).show(); 			   	
+
+    });  
 	
 	for (var i=0; i < TSSETTINGS.Settings["extensions"].length; i++) {
 		if(TSSETTINGS.Settings["extensions"][i].enabled 
 			&& (TSSETTINGS.Settings["extensions"][i].type == "view") ) {
-	//        require([TSSETTINGS.getExtensionPath()+UIAPI.getDirSeparator()+viewerExt+UIAPI.getDirSeparator()+"extension.js"], function(viewer) {
-	        require(["js/"+TSSETTINGS.Settings["extensions"][i].id], function(viewer) {
+	        require([TSSETTINGS.getExtensionPath()+UIAPI.getDirSeparator()+TSSETTINGS.Settings["extensions"][i].id+UIAPI.getDirSeparator()+"extension.js"], function(viewer) {
 	           views.push(viewer);
-			   
 			   initViewsUI(viewer);
-
 	           viewer.init();
-	           
-			   // Loads the first view by default
-			   if(!defaultViewLoaded) {
-			   		UIAPI.currentView = viewer.ID;
-					viewer.load();
-					$( "#"+viewer.ID+"Button" ).attr("checked","checked");
-					$( "#"+viewer.ID+"Button" ).button("refresh");
-					
-					$( "#"+viewer.ID+"Container" ).show();
-					$( "#"+viewer.ID+"Toolbar" ).show(); 			   	
-			   }
-			   defaultViewLoaded = true;	
 	        });       
 		} 
 	}
+	
+    require(["js/viewSearch"], function(viewer) {
+       views.push(viewer);
+	   initViewsUI(viewer);
+       viewer.init();
+    });  	
 	
 	$( "#viewSwitcher" ).buttonset();	
 }
@@ -120,7 +126,6 @@ exports.changeView = function changeView(viewType) {
     UIAPI.selectedFiles = [];  
     UIAPI.currentFilename = "";
   
-    UIAPI.handleElementActivation();   
 //    UIAPI.hideLoadingAnimation();     
 }
 
