@@ -15,8 +15,10 @@ exports.Title = "Search View"
 exports.ID = "viewSearch";  // ID should be equal to the directory name where the ext. is located   
 exports.Type =  "view";
 exports.Icon = "ui-icon-search";
+exports.Version = "1.0";
+exports.ManifestVersion = 1;
 
-console.debug("Loading viewSearch.js");
+console.debug("Loading view.search.js");
 
 var viewContainer = undefined;
 var viewToolbar = undefined;

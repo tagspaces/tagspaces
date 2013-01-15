@@ -16,7 +16,7 @@ exports.ID = "viewBasic";  // ID should be equal to the directory name where the
 exports.Type =  "view";
 exports.Icon = "ui-icon-note";
 
-console.debug("Loading viewBasic.js");
+console.debug("Loading view.basic.js");
 
 var viewContainer = undefined;
 var viewToolbar = undefined;

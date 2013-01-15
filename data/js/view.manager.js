@@ -45,10 +45,10 @@ exports.initViews = function initViews() {
        searchViewer = viewer;
     });  
 	
-	for (var i=0; i < TSSETTINGS.Settings["extensions"].length; i++) {
-		if(TSSETTINGS.Settings["extensions"][i].enabled 
-			&& (TSSETTINGS.Settings["extensions"][i].type == "view") ) {
-	        require([TSSETTINGS.getExtensionPath()+UIAPI.getDirSeparator()+TSSETTINGS.Settings["extensions"][i].id+UIAPI.getDirSeparator()+"extension.js"], function(viewer) {
+	var extensions = TSSETTINGS.getExtensions();
+	for (var i=0; i < extensions.length; i++) {
+		if(extensions[i].enabled && (extensions[i].type == "view") ) {
+	        require([TSSETTINGS.getExtensionPath()+UIAPI.getDirSeparator()+extensions[i].id+UIAPI.getDirSeparator()+"extension.js"], function(viewer) {
 	           views.push(viewer);
 			   initViewsUI(viewer);
 	           viewer.init();
