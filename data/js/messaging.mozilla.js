@@ -7,7 +7,7 @@ define(function(require, exports, module) {
 
 console.debug("Loading messaging.mozilla.js..");
 document.documentElement.addEventListener("addon-message1", function(event) {
-    console.debug("Message received in page script from content script: "+JSON.stringify(event.detail));
+    console.debug("Message received in page script from content script"); //+JSON.stringify(event.detail));
     UIAPI.hideLoadingAnimation();
     var message = event.detail;
     switch (message.command) {
@@ -82,8 +82,16 @@ document.documentElement.addEventListener("addon-message1", function(event) {
         break;      
       case "indexDirectory":
         if(message.success){
-            console.debug("Directory Index: "+JSON.stringify(message.content));
+            //console.debug("Directory Index: "+JSON.stringify(message.content));
             UIAPI.ViewManager.updateIndexData(message.content);       
+        } else {
+            UIAPI.updateLogger("Indexing directory failed");        
+        }
+        break;  
+      case "createDirectoryTree":
+        if(message.success){
+            //console.debug("Directory tree: "+JSON.stringify(message.content));
+            UIAPI.ViewManager.updateTreeData(message.content);       
         } else {
             UIAPI.updateLogger("Indexing directory failed");        
         }

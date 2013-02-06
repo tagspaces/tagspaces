@@ -2,7 +2,7 @@
  * Use of this source code is governed by a AGPL3 license that 
  * can be found in the LICENSE file. */
 
-// TODO use this http://developer.chrome.com/extensions/fileBrowserHandler.html
+// TODO use eventually this http://developer.chrome.com/extensions/fileBrowserHandler.html
 
 // Activating browser specific IOAPI modul
 console.debug("Loading IOapiChrome.js..");
@@ -166,3 +166,46 @@ IOAPI.createDirectoryIndex = function(dirPath) {
 	console.debug("Directory indexing functionality not implemented on chrome yet!");
 	alert("Directory indexing functionality not implemented on chrome yet!"); 
 }
+
+IOAPI.createDirectoryTree = function(dirPath) {
+    console.debug("Creating directory index for: "+dirPath);
+	console.debug("Creating Directory Tree functionality not implemented on chrome yet!");	
+	// TODO implement createDirectoryTree
+	UIAPI.ViewManager.updateTreeData(); 
+}
+
+/* Needed for createDirectoryTree
+function directoryTree(dirPath) {
+    try {   
+        var tree = {};
+        var dirList = filesIO.list(dirPath);
+        var directory = Cc['@mozilla.org/file/local;1'].createInstance(Ci.nsIFile);
+		directory.initWithPath(dirPath);
+		console.log("Directory "+JSON.stringify(directory));
+		tree["name"] = directory.leafName;
+        tree["type"] = "directory";
+        tree["lmdt"] = directory.lastModifiedTime;   
+        tree["path"] = dirPath; 		
+		tree["children"] = [];
+
+        for (var i=0; i < dirList.length; i++) {
+            var path = filesIO.join(dirPath,dirList[i]);
+            var file = Cc['@mozilla.org/file/local;1'].createInstance(Ci.nsIFile);
+            file.initWithPath(path);
+            if (file.isFile()) {
+	            tree["children"].push({
+	                "name": file.leafName,
+	                "type": "file",
+	                "size": file.fileSize,
+	                "lmdt": file.lastModifiedTime,   
+	                "path": path 
+	            });            
+         	} else {
+         		tree["children"].push( directoryTree(path) );	         		
+         	}
+        }       
+        return tree;
+    } catch(ex) {
+        console.error("Creating directory index failed "+ex);
+    }   
+}*/
