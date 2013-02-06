@@ -49,48 +49,18 @@ exports.initViews = function initViews() {
 	for (var i=0; i < extensions.length; i++) {
 		if(extensions[i].enabled && (extensions[i].type == "view") ) {
 	        require([TSSETTINGS.getExtensionPath()+UIAPI.getDirSeparator()+extensions[i].id+UIAPI.getDirSeparator()+"extension.js"], function(viewer) {
-	           views.push(viewer);
-			   initViewsUI(viewer);
-	           viewer.init();
+	            views.push(viewer);
+			    initViewsUI(viewer);
+		 		try { 			
+		 			viewer.init();
+		 		} catch(e) {
+		 			console.debug("Error while executing 'init' on "+views[i].ID+" - "+e);
+		 		}			   
 	        });       
 		} 
 	}	
 	
 	$( "#viewSwitcher" ).buttonset();	
-}
-
-exports.updateIndexData = function updateIndexData(index) {
-    console.debug("Enhancing directory index...");
-    var enhancedIndex = [];
-    var tags = undefined;
-    var ext = undefined;
-    var title = undefined;
-    var fileSize = undefined;
-    var fileLMDT = undefined;
-    var path = undefined;
-    for (var i=0; i < index.length; i++) {
-        if (index[i].type == "file"){  
-            // Considering Unix HiddenEntries (. in the beginning of the filename)
-            if (TSSETTINGS.Settings["showUnixHiddenEntries"] || 
-               (!TSSETTINGS.Settings["showUnixHiddenEntries"] && (index[i].name.indexOf(".") != 0))) {
-                 tags = TSAPI.extractTags(index[i].name);
-                 title = TSAPI.extractTitle(index[i].name);
-                 if(index[i].name.lastIndexOf(".") > 0) {
-                     ext = index[i].name.substring(index[i].name.lastIndexOf(".")+1,index[i].name.length);                     
-                 } else {
-                     ext = "";
-                 }
-                 fileSize = index[i].size;
-                 fileLMDT = index[i].lmdt;
-                 path = index[i].path;
-                 if(fileSize == undefined) fileSize = "";
-                 if(fileLMDT == undefined) fileLMDT = "";
-                 var entry = [index[i].name,fileSize,fileLMDT,title,tags,ext,path];   
-                 enhancedIndex.push(entry);
-            }
-        }
-    } 	
-	searchViewer.updateIndexData(enhancedIndex);
 }
 
 var initViewsUI = function(viewer) {
@@ -110,6 +80,7 @@ var initViewsUI = function(viewer) {
     $("#viewContainers").append($("<div>", { 
         id: viewer.ID+"Container",
         text: viewer.Title,
+        style: "width: 100%; height: 100%",
     }).hide());	        	
   
     $("#viewSwitcher").append($("<input>", { 
@@ -137,6 +108,26 @@ var initViewsUI = function(viewer) {
 	})   
 }
 
+exports.updateIndexData = function updateIndexData(index) {
+	for (var i=0; i < views.length; i++) {   
+ 		try { 			
+ 			views[i].updateIndexData(index);
+ 		} catch(e) {
+ 			console.debug("Error while executing 'updateIndexData' on "+views[i].ID+" "+e);
+ 		}
+	}
+}
+
+exports.updateTreeData = function updateTreeData(treeData) {
+	for (var i=0; i < views.length; i++) {   
+ 		try { 			
+ 			views[i].updateTreeData(treeData);
+ 		} catch(e) {
+ 			console.debug("Error while executing 'updateTreeData' on "+views[i].ID+" "+e);
+ 		}
+	}
+}
+
 exports.changeView = function changeView(viewType) {
     console.debug("Change to "+viewType+" view.");
     UIAPI.showLoadingAnimation();
@@ -152,7 +143,11 @@ exports.changeView = function changeView(viewType) {
 	for (var i=0; i < views.length; i++) {   
  		if(views[i].ID == viewType) { 			
  			// Load the selected view
- 			views[i].load();
+	 		try { 			
+	 			views[i].load();
+	 		} catch(e) {
+	 			console.debug("Error while executing 'load' on "+views[i].ID+" "+e);
+	 		} 			
 			$( "#"+views[i].ID+"Container" ).show();
 			$( "#"+views[i].ID+"Toolbar" ).show(); 
  		}
@@ -169,13 +164,21 @@ exports.clearSelectedFiles = function clearSelectedFiles() {
     // Clear selected files
     UIAPI.selectedFiles = [];  
 	for (var i=0; i < views.length; i++) {   
- 		views[i].clearSelectedFiles();
+ 		try { 			
+ 			views[i].clearSelectedFiles();
+ 		} catch(e) {
+ 			console.debug("Erro while executing 'clearSelectedFiles' on "+views[i].ID)
+ 		} 		
 	}	
 }
 
 exports.setFileFilter = function setFileFilter(filter) {
 	for (var i=0; i < views.length; i++) {   
- 		views[i].setFileFilter(filter);
+ 		try { 			
+ 			views[i].setFileFilter(filter);
+ 		} catch(e) {
+ 			console.debug("Erro while executing 'setFileFilter' on "+views[i].ID)
+ 		} 		 		
 	}	
 }
 

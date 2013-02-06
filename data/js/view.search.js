@@ -17,6 +17,7 @@ exports.Type =  "view";
 exports.Icon = "ui-icon-search";
 exports.Version = "1.0";
 exports.ManifestVersion = 1;
+exports.License = "AGPL";
 
 console.debug("Loading view.search.js");
 
@@ -213,9 +214,44 @@ exports.load = function load() {
 //	IOAPI.createDirectoryIndex(UIAPI.currentPath);
 }
 
+var enhanceIndexData = function(index) {
+	console.debug("Enhancing directory index...");
+    var enhancedIndex = [];
+    var tags = undefined;
+    var ext = undefined;
+    var title = undefined;
+    var fileSize = undefined;
+    var fileLMDT = undefined;
+    var path = undefined;
+    for (var i=0; i < index.length; i++) {
+        if (index[i].type == "file"){  
+            // Considering Unix HiddenEntries (. in the beginning of the filename)
+            if (TSSETTINGS.Settings["showUnixHiddenEntries"] || 
+               (!TSSETTINGS.Settings["showUnixHiddenEntries"] && (index[i].name.indexOf(".") != 0))) {
+                 tags = TSAPI.extractTags(index[i].name);
+                 title = TSAPI.extractTitle(index[i].name);
+                 if(index[i].name.lastIndexOf(".") > 0) {
+                     ext = index[i].name.substring(index[i].name.lastIndexOf(".")+1,index[i].name.length);                     
+                 } else {
+                     ext = "";
+                 }
+                 fileSize = index[i].size;
+                 fileLMDT = index[i].lmdt;
+                 path = index[i].path;
+                 if(fileSize == undefined) fileSize = "";
+                 if(fileLMDT == undefined) fileLMDT = "";
+                 var entry = [index[i].name,fileSize,fileLMDT,title,tags,ext,path];   
+                 enhancedIndex.push(entry);
+            }
+        }
+    }
+    return enhancedIndex; 		
+}
+
 exports.updateIndexData = function updateIndexData(index) {
 	console.debug("Updating index data.");
-    fileTable.fnAddData( index );
+
+    fileTable.fnAddData( enhanceIndexData(index) );
     
 //    fileTable.fnSetColumnVis(0, true);            
 

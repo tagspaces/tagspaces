@@ -5,24 +5,26 @@ console.debug("Loading SettingsAPI.js..");
 
 var TSSETTINGS = (typeof TSSETTINGS == "object" && TSSETTINGS != null) ? TSSETTINGS : {};
 
+
 TSSETTINGS.TagTemplate = {
-                            "title": undefined,
-                            "type": "plain",
-                            /*          ,
-                            "pattern":"yyyymmddhhmmss-yyyymmddhhmmss",
-                            "example":"20120114123456-20120823231235",
-                            "regex":"",
-                            "maxlength":17,
-                            "chainedTags":[
-                                "isbn","autor"
-                            ],
-                            "url": "http://example.com",
-                            "action":"showDatePicker",
-                            "prefixes":[
-                                "EUR", "USD", "BGN"
-                            ]                            
-                            */
-                        }
+	"title" : undefined,
+	"type" : "plain",
+	/*          ,
+	 "pattern":"yyyymmddhhmmss-yyyymmddhhmmss",
+	 "example":"20120114123456-20120823231235",
+	 "regex":"",
+	 "maxlength":17,
+	 "chainedTags":[
+	 "isbn","autor"
+	 ],
+	 "url": "http://example.com",
+	 "action":"showDatePicker",
+	 "prefixes":[
+	 "EUR", "USD", "BGN"
+	 ]
+	 */
+}
+
 
 TSSETTINGS.FavoriteTemplate = {
                             "name": undefined,
