@@ -9,7 +9,7 @@ exports.supportedFileTypes = [ "md", "markdown", "mdown" ];
 var md2htmlConverter = undefined;
 var containerElID = undefined;
 
-var extensionDirectory = TSSETTINGS.getExtensionPath()+UIAPI.getDirSeparator()+exports.config["id"];
+var extensionDirectory = TSSETTINGS.getExtensionPath()+UIAPI.getDirSeparator()+exports.id;
 
 exports.init = function(filePath, containerElementID) {
     console.debug("Initalization MD Viewer...");

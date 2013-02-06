@@ -6,7 +6,7 @@ exports.title = "Image Viewer";
 exports.type = "viewer";
 exports.supportedFileTypes = [ "jpeg", "jpg", "png",  "gif", "bmp" ];
 
-var extensionDirectory = TSSETTINGS.getExtensionPath()+UIAPI.getDirSeparator()+exports.config["id"];
+var extensionDirectory = TSSETTINGS.getExtensionPath()+UIAPI.getDirSeparator()+exports.id;
 
 exports.init = function(filePath, elementID) {
     console.debug("Initalization Browser Image Viewer...");

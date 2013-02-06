@@ -15,15 +15,15 @@ exports.supportedFileTypes = [
      ] ;
 
 var aceEditor = undefined;
-var extensionDirectory = TSSETTINGS.getExtensionPath()+UIAPI.getDirSeparator()+exports.config["id"];
+var extensionDirectory = TSSETTINGS.getExtensionPath()+UIAPI.getDirSeparator()+exports.id];
 
 var generateUI = function(containerElementID) {
 	$("#"+containerElementID).append('<div id="aceEditor" style="width: 100%; height: 100%"></div>');	
 }
 
-require.config({
+/* require.config({
     baseUrl: 'file:///Z://TagSpaces//repository//data//ext//editorText'
-});
+}); */
 
 exports.init = function(filePath, containerElementID) {
     console.debug("Initalization ACE Text Editor...");
