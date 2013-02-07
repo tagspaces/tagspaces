@@ -35,48 +35,7 @@ var svg = undefined;
 
 var treeData = undefined;
 
-exports.init = function init() {
-	console.debug("Initializing View "+exports.ID);
-	
-    viewContainer = $("#"+exports.ID+"Container");
-    viewToolbar = $("#"+exports.ID+"Toolbar");
-	viewFooter = $("#"+exports.ID+"Footer");
-	
-	viewContainer.empty();
-	viewToolbar.empty();
-	viewFooter.empty();	  
-
-    initContextMenus();
-    initButtons();
-    
-	require([
-		extensionDirectory+'/d3/d3.js',
-	 	], function() {
-			
-			viewContainer.append('<link rel="stylesheet" type="text/css" href="'+extensionDirectory+UIAPI.getDirSeparator()+'styles.css">');
-	 		
-			width = viewContainer.width();
-			height = viewContainer.height();
-						
-			svg = d3.select("#"+exports.ID+"Container")
-				.append("svg")
-			    .attr("width", width)
-			    .attr("height", height)			    			
-			    .append("g")
-			    .attr("transform", "translate(40,0)");
-	});    
-}
-
-exports.load = function load() {
-	console.debug("Loading View "+exports.ID);
-
-
-	$( "#"+exports.ID+"ReIndexButton" ).button( "enable" );
-	UIAPI.hideLoadingAnimation();
-
-}
-
-var treeDataTest  = { 
+var treeTestData  = { 
  "name": "flare",
  "children": [
   {
@@ -217,8 +176,101 @@ var treeDataTest  = {
   }
  ]
 };
+
+exports.init = function init() {
+	console.debug("Initializing View "+exports.ID);
+	
+    viewContainer = $("#"+exports.ID+"Container");
+    viewToolbar = $("#"+exports.ID+"Toolbar");
+	viewFooter = $("#"+exports.ID+"Footer");
+	
+	viewContainer.empty();
+	viewToolbar.empty();
+	viewFooter.empty();	  
+
+    initContextMenus();
+    initButtons();
+    
+	require([
+		extensionDirectory+'/d3/d3.js',
+	 	], function() {
+			viewContainer.append('<link rel="stylesheet" type="text/css" href="'+extensionDirectory+UIAPI.getDirSeparator()+'styles.css">');
+	});    
+}
+
+exports.load = function load() {
+	console.debug("Loading View "+exports.ID);
+
+	$( "#"+exports.ID+"ReIndexButton" ).button( "enable" );
+	UIAPI.hideLoadingAnimation();
+}
+
+var reDraw = function() {
+	d3.select("svg").remove();
+
+	width = viewContainer.width();
+	height = viewContainer.height();
+
+	svg = d3.select("#"+exports.ID+"Container")
+		.append("svg")
+	    .attr("width", width)
+	    .attr("height", height)			    			
+    
+    switch (graphMode) {
+      case "treeMap":
+		drawTreeMap();
+        break;
+      case "tree":
+		drawTree();
+        break;        
+      default:
+        break;
+    }
+}
+
+var drawTree2 = function() {
+	var diameter = height;
+	
+	var tree = d3.layout.tree()
+	    .size([360, diameter / 2 - 120])
+	    .separation(function(a, b) { return (a.parent == b.parent ? 1 : 2) / a.depth; });
+	
+	var diagonal = d3.svg.diagonal.radial()
+	    .projection(function(d) { return [d.y, d.x / 180 * Math.PI]; });
+	
+	svg.append("g").attr("transform", "translate(" + diameter / 2 + "," + diameter / 2 + ")");
+	
+	  var nodes = tree.nodes(treeData),
+	      links = tree.links(nodes);
+	
+	  var link = svg.selectAll(".link")
+	      .data(links)
+	    .enter().append("path")
+	      .attr("class", "link")
+	      .attr("d", diagonal);
+	
+	  var node = svg.selectAll(".node")
+	      .data(nodes)
+	    .enter().append("g")
+	      .attr("class", "node")
+	      .attr("transform", function(d) { return "rotate(" + (d.x - 90) + ")translate(" + d.y + ")"; })
+	
+	  node.append("circle")
+	      .attr("r", 4.5);
+	
+	  node.append("text")
+	      .attr("dy", ".31em")
+	      .attr("text-anchor", function(d) { return d.x < 180 ? "start" : "end"; })
+	      .attr("transform", function(d) { return d.x < 180 ? "translate(8)" : "rotate(180)translate(-8)"; })
+	      .text(function(d) { return d.name; });
+	
+	d3.select(self.frameElement).style("height", diameter - 150 + "px");
+	
+}
   
 var drawTree = function() {
+	  svg.append("g").attr("transform", "translate(40,0)");
+
 	  var cluster = d3.layout.cluster()
 			    .size([height, width - 160]);
 			
@@ -232,7 +284,7 @@ var drawTree = function() {
 	
 	  var link = svg.selectAll(".link")
 	      .data(links)
-	    .enter().append("path")
+	      .enter().append("path")
 	      .attr("class", "link")
 	      .attr("d", diagonal);
 	
@@ -254,8 +306,57 @@ var drawTree = function() {
 	  d3.select(self.frameElement).style("height", height + "px");	
 }
 
-var drawTreeMap = function() {
+var drawTreeMap2 = function() {
+	var margin = {top: 40, right: 10, bottom: 10, left: 10},
+	    width = 960 - margin.left - margin.right,
+	    height = 500 - margin.top - margin.bottom;
 	
+	var color = d3.scale.category20c();
+	
+	var treemap = d3.layout.treemap()
+	    .size([width, height])
+	    .sticky(true)
+	    .value(function(d) { return d.size; });
+	
+	var div = d3.select("body").append("div")
+	    .style("position", "relative")
+	    .style("width", (width + margin.left + margin.right) + "px")
+	    .style("height", (height + margin.top + margin.bottom) + "px")
+	    .style("left", margin.left + "px")
+	    .style("top", margin.top + "px");
+
+	  var node = div.datum(treeData).selectAll(".node")
+	      .data(treemap.nodes)
+	    .enter().append("div")
+	      .attr("class", "node")
+	      .call(position)
+	      .style("background", function(d) { return d.children ? color(d.name) : null; })
+	      .text(function(d) { return d.children ? null : d.name; });
+	
+	  d3.selectAll("input").on("change", function change() {
+	    var value = this.value === "count"
+	        ? function() { return 1; }
+	        : function(d) { return d.size; };
+	
+	    node
+	        .data(treemap.value(value).nodes)
+	      .transition()
+	        .duration(1500)
+	        .call(position);
+	  });
+
+	
+	var position = function () {
+	  this.style("left", function(d) { return d.x + "px"; })
+	      .style("top", function(d) { return d.y + "px"; })
+	      .style("width", function(d) { return Math.max(0, d.dx - 1) + "px"; })
+	      .style("height", function(d) { return Math.max(0, d.dy - 1) + "px"; });
+	}
+}
+
+var drawTreeMap = function() {
+	svg.append("g");
+		
 	var partition = d3.layout.partition()
 	    .size([width, height])
 	    .value(function(d) { return d.size; }); // d.size;
@@ -289,7 +390,7 @@ exports.updateTreeData = function updateIndexData(fsTreeData) {
 	
 	treeData = fsTreeData;
 	
-	drawTreeMap();
+	reDraw();
 			
 	$( "#"+exports.ID+"ReIndexButton" ).button( "enable" );		   
 	UIAPI.hideLoadingAnimation(); 
@@ -308,7 +409,6 @@ exports.clearSelectedFiles = function() {
 }
 
 var initButtons = function() {
-
     viewToolbar.append($("<span>", { 
     	style: "float: right; margin: 0px; padding: 0px;",
     }).append($("<input>", { 
@@ -328,8 +428,19 @@ var initButtons = function() {
         $(this).prev('input').val('').focus();
         // TODO filter action here  
     }));  
+
+    $( "#clearFilterButton" ).button({
+        text: false,
+        disabled: false,
+        icons: {
+            primary: "ui-icon-close"
+        }
+    })
+    .click(function() {
+        $( "#filterBox" ).val( "" );
+        fileTable.fnFilter( "" );        
+    });
     
-// Initialize file buttons    
     viewToolbar.append($("<button>", { 
         text: "Scan Directory",
 		disabled: true,
@@ -347,18 +458,11 @@ var initButtons = function() {
 	    $( "#"+exports.ID+"ReIndexButton" ).button( "disable" );
 		IOAPI.createDirectoryTree(UIAPI.currentPath);
     });        
-   
-    $( "#clearFilterButton" ).button({
-        text: false,
-        disabled: false,
-        icons: {
-            primary: "ui-icon-close"
-        }
-    })
-    .click(function() {
-        $( "#filterBox" ).val( "" );
-        fileTable.fnFilter( "" );        
-    });
+    
+/*    viewToolbar.append($("<label>", { 
+        for: exports.ID+"ModeSwitcher",    
+		text: "Mode",
+    }));*/
     
     var modeSwitcher =  viewToolbar.append($("<span>", { 
         id: exports.ID+"ModeSwitcher",    
@@ -386,19 +490,24 @@ var initButtons = function() {
         for: exports.ID+"TreeMode",
         text: "Tree", 
     }));   
-    
-    modeSwitcher.buttonset();
         
     $( "#"+exports.ID+"TreeMapMode" ).button({
 	        text: true,
-	        icons: {
-	            primary: "ui-icon-document-b"
-	        }
 	    })        
 	.click(function() {
-		graphMode = "treeMap" 
-		// Redraw
+		graphMode = "treeMap"
+		reDraw(); 
 	})        
+	
+    $( "#"+exports.ID+"TreeMode" ).button({
+	        text: true,
+	    })        
+	.click(function() {
+		graphMode = "tree"
+		reDraw(); 
+	})        
+	
+    modeSwitcher.buttonset();
 }
 
 var initContextMenus = function() {
