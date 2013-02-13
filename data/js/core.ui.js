@@ -292,7 +292,7 @@ var initDialogs = function() {
         height:240,
         modal: true,
         buttons: {
-            "Edit tag": function() {
+            "Save": function() {
                 TSAPI.renameTag(UIAPI.selectedFiles[0], UIAPI.selectedTag, $( "#newTag" ).val());
                 IOAPI.listDirectory(UIAPI.currentPath);                                   
                 $( this ).dialog( "close" );
