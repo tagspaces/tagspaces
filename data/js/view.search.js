@@ -11,7 +11,7 @@ define([
 ],function(require, exports, module) {
 "use strict";
 
-exports.Title = "Search View"
+exports.Title = "Search"
 exports.ID = "viewSearch";  // ID should be equal to the directory name where the ext. is located   
 exports.Type =  "view";
 exports.Icon = "ui-icon-search";

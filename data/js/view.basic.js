@@ -12,7 +12,7 @@ define([
 ],function(require, exports, module) {
 "use strict";
 
-exports.Title = "File View"
+exports.Title = "List"
 exports.ID = "viewBasic";  // ID should be equal to the directory name where the ext. is located   
 exports.Type =  "view";
 exports.Icon = "ui-icon-note";
@@ -213,7 +213,7 @@ exports.load = function load() {
 
     fileTable.$('tr')
     .droppable({
-    	accept: "tagButton",
+    	accept: ".tagButton",
     	hoverClass: "activeRow",
     	drop: function( event, ui ) {
     		var tagName = ui.draggable.attr("tag");
