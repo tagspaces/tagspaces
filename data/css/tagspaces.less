@@ -155,6 +155,7 @@ li hr {
     color: white;
     margin: 1px;
     border-color: transparent;
+    z-index: 9999;    
     .arrowDownImage;
     .roundedTagCorners;
 }
@@ -318,7 +319,7 @@ span.dynatree-icon {
 
 /*desaturate(@directoryColor, 30%) */
 .dirButtonActive  {
-    background-color: red;
+    background-color: #FFCC99;
 }
 
 #dirTree .dynatree-active {
@@ -391,6 +392,8 @@ table.dataTable tr.even {
 table.dataTable tr.odd {
     background-color: white;
 } 
+
+.activeRow { background: #FFCC99 !important; }
 
 table.dataTable tr.ui-selecting { background: #FECA40 !important; }
 table.dataTable tr.ui-selected { background: #FECA40 !important; }

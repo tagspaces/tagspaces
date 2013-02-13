@@ -385,6 +385,12 @@ TagsUI.generateTagGroups = function() {
                 title: "Opens context menu for "+TSSETTINGS.Settings["tagGroups"][i]["children"][j].title,
                 text: TSSETTINGS.Settings["tagGroups"][i]["children"][j].title, 
             })
+	    	.draggable({
+	    		cancel:false,
+	    		appendTo: "body",
+	    		helper: "clone",
+	    		revert: true,
+	    	})              
             .click( function() {
                 UIAPI.selectedTag = $(this).attr("tag");
                 UIAPI.selectedTagData = TSSETTINGS.getTagData($(this).attr("tag"), $(this).attr("parentKey"));

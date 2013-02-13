@@ -211,7 +211,25 @@ exports.load = function load() {
     fileTable.fnSetColumnVis(3, true);            
     fileTable.fnSetColumnVis(4, true);  
 
-    fileTable.$('tr').dblclick( function() {
+    fileTable.$('tr')
+    .droppable({
+    	hoverClass: "activeRow",
+    	drop: function( event, ui ) {
+    		var tagName = ui.draggable.attr("tag");
+    		var targetFile = fileTable.fnGetData( this )[0];
+			console.log("Tagging file: "+tagName+" to "+targetFile);
+
+		    exports.clearSelectedFiles();
+		    
+		    $(this).toggleClass("ui-selected");
+		    UIAPI.currentFilename = targetFile;
+		    UIAPI.selectedFiles.push(UIAPI.currentFilename); 
+
+			TSAPI.addTag(tagName);
+    		IOAPI.listDirectory(UIAPI.currentPath);  
+    	}	            	
+    })
+    .dblclick( function() {
         console.debug("Opening file...");
         var rowData = fileTable.fnGetData( this );
         
@@ -224,10 +242,10 @@ exports.load = function load() {
     		appendTo: "body",
     		helper: "clone",
     		revert: true,
-	      start: function() {
-            selectFile(this, $(this).attr("title"));
-	      }    		
-    		})   
+	        start: function() {
+                selectFile(this, $(this).attr("title"));
+	        }    		
+    	})   
         .click( function() {
             selectFile(this, $(this).attr("title"));
         } )
