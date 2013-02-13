@@ -5,24 +5,26 @@ console.debug("Loading SettingsAPI.js..");
 
 var TSSETTINGS = (typeof TSSETTINGS == "object" && TSSETTINGS != null) ? TSSETTINGS : {};
 
+
 TSSETTINGS.TagTemplate = {
-                            "title": undefined,
-                            "type": "plain",
-                            /*          ,
-                            "pattern":"yyyymmddhhmmss-yyyymmddhhmmss",
-                            "example":"20120114123456-20120823231235",
-                            "regex":"",
-                            "maxlength":17,
-                            "chainedTags":[
-                                "isbn","autor"
-                            ],
-                            "url": "http://example.com",
-                            "action":"showDatePicker",
-                            "prefixes":[
-                                "EUR", "USD", "BGN"
-                            ]                            
-                            */
-                        }
+	"title" : undefined,
+	"type" : "plain",
+	/*          ,
+	 "pattern":"yyyymmddhhmmss-yyyymmddhhmmss",
+	 "example":"20120114123456-20120823231235",
+	 "regex":"",
+	 "maxlength":17,
+	 "chainedTags":[
+	 "isbn","autor"
+	 ],
+	 "url": "http://example.com",
+	 "action":"showDatePicker",
+	 "prefixes":[
+	 "EUR", "USD", "BGN"
+	 ]
+	 */
+}
+
 
 TSSETTINGS.FavoriteTemplate = {
                             "name": undefined,
@@ -44,9 +46,9 @@ TSSETTINGS.DefaultSettings = {
     "appBuild": "@VERSION@.@BUILD@",
 	"settingsVersion": 1,
     "supportedFileTypeThumnailing": ['jpg','jpeg','png','gif'],
-	"newTextFileContent": "Text file created with tagspaces(@VERSION@.@BUILD@)...",
-    "newHTMLFileContent": "<html><head><meta http-equiv='content-type' content='text/html; charset=utf-8'><title>Tagspaces File</title></head><body>File created with tagspaces(@VERSION@.@BUILD@)...</body></html>",	
-	"newMDFileContent": '#File created with tagspaces(@VERSION@.@BUILD@)...',
+	"newTextFileContent": "Text file created with tagspaces!",
+    "newHTMLFileContent": "<html><head><meta http-equiv='content-type' content='text/html; charset=utf-8'><title>Tagspaces File</title></head><body>File created with tagspaces!</body></html>",	
+	"newMDFileContent": '#File created with tagspaces!',
 	"showUnixHiddenEntries": false, 
 	"lastOpenedTSID": 0,
     "lastOpenedDirectory": "",
@@ -63,12 +65,14 @@ TSSETTINGS.DefaultSettings = {
     "extensionsPath": "file:///C:/TagSpaces/extensions",
     "extensions": [
         {   
-            "id": "editorText", // ID should be equal to the directory name where the ext. is located 
-            "enabled": true, 
+            "id": "viewRiver", // ID should be equal to the directory name where the ext. is located 
+            "enabled": false, 
+            "type": "view", 
         },
         {   
-            "id": "tsTodo", // ID should be equal to the directory name where the ext. is located 
-            "enabled": false, 
+            "id": "viewThumb", // ID should be equal to the directory name where the ext. is located 
+            "enabled": true, 
+            "type": "view", 
         },
     ],
     "supportedFileTypes": [
@@ -124,13 +128,30 @@ TSSETTINGS.Settings = undefined;
 //{"title":"2010","isFolder":true,"isLazy":true,"key":"z:\\Chronique\\2010"},
 //];
 
-TSSETTINGS.getExtensionPath = function() {
-    // TODO if setting not existing create it automatically with directory
-    return TSSETTINGS.Settings["extensionsPath"];
+TSSETTINGS.upgradeSettings = function() {
+	if(TSSETTINGS.Settings["appBuild"].localeCompare(TSSETTINGS.DefaultSettings["appBuild"]) < 0) {
+		console.debug("Upgrading settings");
+		TSSETTINGS.Settings["extensions"] = TSSETTINGS.DefaultSettings["extensions"];
+		TSSETTINGS.Settings["appVersion"] = TSSETTINGS.DefaultSettings["appVersion"];
+		TSSETTINGS.Settings["appBuild"] = TSSETTINGS.DefaultSettings["appBuild"];
+		TSSETTINGS.getExtensions();
+		TSSETTINGS.getExtensionPath();
+    	TSSETTINGS.saveSettings();   		
+	}
 }
 
-TSSETTINGS.setExtensionPath = function(extPath) {
-    return TSSETTINGS.Settings["extensionsPath"] = extPath;
+TSSETTINGS.getExtensions = function() {
+	if(TSSETTINGS.Settings["extensions"] == null) {
+		TSSETTINGS.Settings["extensions"] = TSSETTINGS.DefaultSettings["extensions"];
+	}
+    return TSSETTINGS.Settings["extensions"];
+}
+
+TSSETTINGS.getExtensionPath = function() {
+	if(TSSETTINGS.Settings["extensionsPath"] == null) {
+		TSSETTINGS.Settings["extensionsPath"] = TSSETTINGS.DefaultSettings["extensionsPath"];
+	}
+    return TSSETTINGS.Settings["extensionsPath"];
 }
 
 TSSETTINGS.getNewTextFileContent = function() {
@@ -282,7 +303,6 @@ TSSETTINGS.createTag = function(tagData, newTagName) {
 TSSETTINGS.editTagGroup = function(tagData, tagGroupName) {
     for(var i=0; i < TSSETTINGS.Settings["tagGroups"].length; i++) {
         if(TSSETTINGS.Settings["tagGroups"][i].key == tagData.key) {
-//            console.debug("Deleting taggroup "+TSSETTINGS.Settings["tagGroups"][i].key);
             TSSETTINGS.Settings["tagGroups"][i].title = tagGroupName;
             break;
         }        

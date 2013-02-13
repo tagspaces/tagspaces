@@ -1,0 +1,15 @@
+#viewContainers  .node circle {
+  fill: #fff;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}
+
+#viewContainers  .node {
+  fill: #ddd;
+  stroke: #fff;
+}
+
+#viewContainers  .label {
+  font: 10px sans-serif;
+  text-anchor: middle;
+}

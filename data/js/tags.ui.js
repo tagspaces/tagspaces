@@ -6,8 +6,6 @@ define([
     'require',
     'exports',
     'module',
-    'dynatree',
-//    'css!dynatreecss'
 ],function(require, exports, module) {
 "use strict";
 */
@@ -23,6 +21,19 @@ TagsUI.initContextMenus = function() {
         }        
     });        
     
+    $( "#extensionMenu" ).menu({
+        select: function( event, ui ) {
+            console.debug("Tag menu action: "+ui.item.attr( "action" )+" for tag: "+UIAPI.selectedTag);
+            switch (ui.item.attr( "action" )) {
+              case "addTagAsFilter":
+                $( this ).hide();
+                $("#filterBox").val(UIAPI.selectedTag);
+                UIAPI.ViewManager.setFileFilter(UIAPI.selectedTag);
+                break;                            
+            }
+        }
+    });
+
     // Context menu for the tags in the file table and the file viewer
     $( "#tagMenu" ).menu({
         select: function( event, ui ) {
@@ -31,7 +42,7 @@ TagsUI.initContextMenus = function() {
               case "addTagAsFilter":
                 $( this ).hide();
                 $("#filterBox").val(UIAPI.selectedTag);
-                UIAPI.fileTable.fnFilter(UIAPI.selectedTag);
+                UIAPI.ViewManager.setFileFilter(UIAPI.selectedTag);
                 break;                            
               case "addTagInTagGroup":
                 $( this ).hide();
@@ -46,9 +57,6 @@ TagsUI.initContextMenus = function() {
                 $( this ).hide();
                 TSAPI.removeTag(UIAPI.selectedTag);
                 break;
-              case "closeMenu":
-                $( this).hide();                
-                break;                
             }
         }
     });
@@ -63,18 +71,14 @@ TagsUI.initContextMenus = function() {
                 break;                            
               case "addTagAsFilter":
                 $("#filterBox").val(UIAPI.selectedTag);
-                UIAPI.fileTable.fnFilter(UIAPI.selectedTag);
+                UIAPI.ViewManager.setFileFilter(UIAPI.selectedTag);
                 break;                            
               case "editTag":
-              // TODO Consider smart tags
-                $( "#tagName" ).val(UIAPI.selectedTagData.title);
+                $( "#tagName" ).val(UIAPI.selectedTag);
                 $( "#dialog-tagedit" ).dialog( "open" );
                 break;                            
               case "deleteTag":
                 $( "#dialog-confirmtagdelete" ).dialog( "open" );                
-                break;
-              case "closeMenu":
-                $( this ).hide();                
                 break;
             }
         }
@@ -85,9 +89,6 @@ TagsUI.initContextMenus = function() {
         select: function( event, ui ) {
             console.debug("TagGroup  menu action: "+ui.item.attr( "action" )+" for tag: "+UIAPI.selectedTag);
             switch (ui.item.attr( "action" )) {
-              case "toggleTagGroup":
-                $("#tagGroups").dynatree("getTree").getNodeByKey(UIAPI.selectedTagData.key).toggleExpand();
-                break;                            
               case "createNewTag":
                 $( "#newTagName" ).val("");
                 $( "#dialog-tagcreate" ).dialog( "open" );
@@ -102,12 +103,40 @@ TagsUI.initContextMenus = function() {
                 $( "#tagGroupName" ).val(UIAPI.selectedTagData.title);              
                 $( "#dialog-taggroupEdit" ).dialog( "open" );
                 break;
-              case "closeMenu":
-                $( "#tagGroupMenu" ).hide();                
-                break;                
             }
         }
     });  
+    
+    $( "#fileMenu" ).menu({
+        select: function( event, ui ) {
+            var commandName = ui.item.attr( "action" );
+            switch (commandName) {
+              case "addTag":        
+                console.debug("Adding tag..."); 
+                $("#tags").val("");
+                $( "#dialogAddTags" ).dialog( "open" );
+                break;  
+              case "openFile":
+                console.debug("Opening file...");
+        		UIAPI.openFile(UIAPI.currentPath+UIAPI.getDirSeparator()+UIAPI.selectedFiles[0]);                
+                break;
+              case "openDirectory":
+                console.debug("Opening parent directory...");   
+                IOAPI.openDirectory(UIAPI.currentPath);
+                break;
+              case "renameFile":        
+                console.debug("Renaming file...");
+                $( "#dialog-filerename" ).dialog( "open" );
+                break;  
+              case "deleteFile":        
+                console.debug("Deleting file...");
+                $( "#dialog-confirmdelete" ).dialog( "open" );
+                break;  
+              default:
+                break;
+            }
+        }
+    });      
 }
 
 TagsUI.initDialogs = function() {
@@ -244,7 +273,6 @@ TagsUI.initDialogs = function() {
         modal: true,
         buttons: {
             "Save": function() {
-                // TODO complete the functionality for smart tags
                 TSSETTINGS.editTag(UIAPI.selectedTagData, $( "#tagName" ).val() )
                 TagsUI.generateTagGroups();    
                 $( this ).dialog( "close" );
@@ -357,6 +385,12 @@ TagsUI.generateTagGroups = function() {
                 title: "Opens context menu for "+TSSETTINGS.Settings["tagGroups"][i]["children"][j].title,
                 text: TSSETTINGS.Settings["tagGroups"][i]["children"][j].title, 
             })
+	    	.draggable({
+	    		cancel:false,
+	    		appendTo: "body",
+	    		helper: "clone",
+	    		revert: true,
+	    	})              
             .click( function() {
                 UIAPI.selectedTag = $(this).attr("tag");
                 UIAPI.selectedTagData = TSSETTINGS.getTagData($(this).attr("tag"), $(this).attr("parentKey"));
@@ -375,16 +409,57 @@ TagsUI.generateTagGroups = function() {
     });
 }
 
-// TODO evtl. move to Fileviewer.js
 TagsUI.openTagMenu = function(tagButton, tag, fileName) {
-    BasicViewsUI.clearSelectedFiles();
-    $(tagButton).parent().parent().toggleClass("selectedRow");
-
     UIAPI.currentFilename = fileName;
     UIAPI.selectedFiles.push(UIAPI.currentFilename);
-    
     UIAPI.selectedTag = tag;
-    UIAPI.currentFilename = fileName;
+}
+
+// Helper function user by basic and search views
+TagsUI.generateTagButtons = function(commaSeparatedTags, fileExtension, fileName) {
+    console.debug("Creating tags...");
+    var tagString = ""+commaSeparatedTags;
+    var wrapper = $('<span>');
+    if(fileExtension.length > 0) {
+        wrapper.append($('<button>', {
+            title: "Opens context menu for "+fileExtension,
+            tag: fileExtension,
+            filename: fileName,
+            class: "extTagButton",
+            text: fileExtension
+            }));          
+    } 
+    if(tagString.length > 0) {
+        var tags = tagString.split(",");
+        for (var i=0; i < tags.length; i++) { 
+            wrapper.append($('<button>', {
+                title: "Opens context menu for "+tags[i],
+                tag: tags[i],
+                filename: fileName,
+                class: "tagButton",
+                text: tags[i]
+                }));   
+        }   
+    }
+    return wrapper.html();        
+}
+
+// Helper function user by basic and search views
+TagsUI.buttonizeTitle = function(title, fileName) {
+    return $('<span>').append($('<button>', { 
+            title: fileName, 
+            class: 'fileTitleButton', 
+            text: title+' ' 
+        })).html();    
+}
+
+// Helper function user by basic and search views
+TagsUI.buttonizeFileName = function(fileName) {
+    return $('<span>').append($('<button>', { 
+        	title: fileName, 
+        	class: 'fileButton', 
+        	text: fileName 
+        })).html();
 }
 
 //});

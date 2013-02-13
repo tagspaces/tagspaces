@@ -1,17 +1,13 @@
 define(function(require, exports, module) {
 "use strict";
 
-exports.config = {
-    "id": "editorHTML", // ID should be equal to the directory name where the ext. is located   
-    "title": "HTML Editor",
-    "type": "editor", // viewer, ts for tagspace
-    "supportedFileTypes": [
-        "htm", "html", "*"
-     ]        
-}
+exports.id = "editorHTML"; // ID should be equal to the directory name where the ext. is located   
+exports.title = "HTML Editor";
+exports.type = "editor";
+exports.supportedFileTypes = [ "htm", "html" ];
 
 var htmlEditor = undefined;
-var extensionDirectory = TSSETTINGS.getExtensionPath()+UIAPI.getDirSeparator()+exports.config["id"];
+var extensionDirectory = TSSETTINGS.getExtensionPath()+UIAPI.getDirSeparator()+exports.id;
 
 exports.init1 = function(filePath, containerElementID) {
     console.debug("Initalization HTML Text Editor...");

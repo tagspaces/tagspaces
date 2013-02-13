@@ -149,9 +149,21 @@ IOAPI.openExtensionsDirectory = function() {
 
 IOAPI.createDirectoryIndex = function(dirPath) {
     console.debug("Creating directory index for: "+dirPath);
+    UIAPI.showLoadingAnimation();   
     var event = document.createEvent('CustomEvent');
     event.initCustomEvent("addon-message", true, true, {"detail":{
         "command": "createDirectoryIndex",
+        "path": dirPath
+    }});
+    document.documentElement.dispatchEvent(event);  
+}
+
+IOAPI.createDirectoryTree = function(dirPath) {
+    console.debug("Creating directory tree for: "+dirPath);
+    UIAPI.showLoadingAnimation();   
+    var event = document.createEvent('CustomEvent');
+    event.initCustomEvent("addon-message", true, true, {"detail":{
+        "command": "createDirectoryTree",
         "path": dirPath
     }});
     document.documentElement.dispatchEvent(event);  

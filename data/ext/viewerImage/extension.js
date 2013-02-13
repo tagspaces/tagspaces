@@ -1,20 +1,12 @@
 define(function(require, exports, module) {
 "use strict";
 
-exports.config = {
-    "id": "viewerImage", // ID should be equal to the directory name where the ext. is located   
-    "title": "Image Viewer",
-    "type": "viewer", // editor, viewer, ts for tagspace
-    "supportedFileTypes": [
-        "jpeg",
-        "jpg",
-        "png",
-        "gif",
-        "bmp",
-        ],        
-}
+exports.id = "viewerImage"; // ID should be equal to the directory name where the ext. is located   
+exports.title = "Image Viewer";
+exports.type = "viewer";
+exports.supportedFileTypes = [ "jpeg", "jpg", "png",  "gif", "bmp" ];
 
-var extensionDirectory = TSSETTINGS.getExtensionPath()+UIAPI.getDirSeparator()+exports.config["id"];
+var extensionDirectory = TSSETTINGS.getExtensionPath()+UIAPI.getDirSeparator()+exports.id;
 
 exports.init = function(filePath, elementID) {
     console.debug("Initalization Browser Image Viewer...");

@@ -6,13 +6,11 @@ define([
     'require',
     'exports',
     'module',
-    'jsoneditor',
-//    'css!jsoneditorcss'
 ],function(require, exports, module) {
 */
 //"use strict";
 
-console.debug("Loading MiscUI...");
+console.debug("Loading core.api.js ...");
 
 var UIAPI = (typeof UIAPI == 'object' && UIAPI != null) ? UIAPI : {};
 
@@ -21,7 +19,7 @@ UIAPI.parentDir = "..";
 
 UIAPI.currentPath = "";
 
-UIAPI.currentView = "fileView"; // tagView, riverView
+UIAPI.currentView = undefined;
 
 // Current selected files
 UIAPI.selectedFiles = [];
@@ -34,18 +32,12 @@ UIAPI.isFileOpened = false;
 // Current directory list of files
 UIAPI.fileList = [];
 
-UIAPI.fileSortCriteria = "name";
-
 // Last clicked button for removing a tag
 UIAPI.selectedTag = "";
 
 UIAPI.selectedTagData = "";
 
-UIAPI.favIDPrefix = "fav";
-
-UIAPI.fileTable = undefined;
-
-UIAPI.htmlEditor = undefined;
+UIAPI.ViewManager = undefined;
 
 UIAPI.getDirSeparator = function() {
     return UIAPI.isWindows()?"\\":"/";
@@ -86,12 +78,6 @@ UIAPI.fileExists = function(fileName) {
     return false;
 }
 
-UIAPI.hideAllContextMenus = function() {
-    $('.contextMenu').each(function() {
-        $(this).hide();
-    });    
-}
-
 UIAPI.updateFileBrowserData = function(dirList) {
     console.debug("Updating the file browser data...");
     
@@ -128,158 +114,7 @@ UIAPI.updateFileBrowserData = function(dirList) {
         }
     }     
          
-    UIAPI.changeView(UIAPI.currentView);    
-}
-
-
-UIAPI.setFileSortCriteria = function(sortBy) {
-    console.debug("Setting sort criteris: "+sortBy);
-    UIAPI.fileSortCriteria = sortBy;
-}
-
-UIAPI.initFileTagView = function(viewType) {
-    UIAPI.fileTable.fnClearTable();  
-    UIAPI.fileTable.fnAddData( UIAPI.fileList );
-
-    UIAPI.fileTable.fnSetColumnVis(0, true);            
-    UIAPI.fileTable.fnSetColumnVis(1, true);            
-    UIAPI.fileTable.fnSetColumnVis(2, true);            
-    UIAPI.fileTable.fnSetColumnVis(3, true);            
-    UIAPI.fileTable.fnSetColumnVis(4, true);  
-
-    UIAPI.fileTable.$('tr').dblclick( function() {
-        console.debug("Opening file...");
-        var rowData = UIAPI.fileTable.fnGetData( this );
-        $("#selectedFilePath").val(UIAPI.currentPath+UIAPI.getDirSeparator()+rowData[0]);            
-        FileViewer.openFile(rowData[0]);
-        UIAPI.hideAllContextMenus();
-    } );     
-    
-    UIAPI.fileTable.$('.fileButton')
-        .click( function() {
-            BasicViewsUI.openFileMenu(this, $(this).attr("title"));
-        } )      
-        .dropdown( 'attach' , '#fileMenu' );
-
-    UIAPI.fileTable.$('.fileTitleButton')
-        .click( function() {
-            BasicViewsUI.openFileTitleMenu(this, $(this).attr("title"));
-        } )
-        .dropdown( 'attach' , '#fileTitleMenu' );   
-    
-    UIAPI.fileTable.$('.extTagButton')
-        .click( function() {
-            TagsUI.openTagMenu(this, $(this).attr("tag"), $(this).attr("filename"));
-        } )
-        .dropdown( 'attach' , '#tagMenu' );               
-    
-    UIAPI.fileTable.$('.tagButton')
-        .click( function() {
-            TagsUI.openTagMenu(this, $(this).attr("tag"), $(this).attr("filename"));
-        } )     
-        .dropdown( 'attach' , '#tagMenu' );
-}
-
-UIAPI.initRiverView = function(viewType) {
-    console.debug("River view disabled");
-/*
-    $("#riverView").empty();
-    layoutContainer.close("east");
-    var tagsHTML = undefined;
-    for (var i=0; i < UIAPI.fileList.length; i++) {
-        if(i > 10) break;
-        tagsHTML = "";
-        var fileName = UIAPI.fileList[i][0];
-        var filePath = UIAPI.currentPath+UIAPI.getDirSeparator()+fileName;
-        tagsHTML += '<iframe id="idFrameViewer" style="width: 100%; height: 150px;" src="'+'file:///'+filePath+'" />';
-        $("#riverView").append(tagsHTML);
-    }
-    $("#riverView").show();*/
-}
-
-UIAPI.initThumbView = function(viewType) {
-    $("#selectableFiles").empty();
-    for (var i=0; i < UIAPI.fileList.length; i++) {
-        var fileName = UIAPI.fileList[i][0];
-        var fileExt = fileName.substring(fileName.lastIndexOf(".")+1,fileName.length).toLowerCase();
-        if(TSSETTINGS.getSupportedFileExt4Thumbnailing().indexOf(fileExt) >= 0) {
-            var filePath = UIAPI.currentPath+UIAPI.getDirSeparator()+fileName;
-            $("#selectableFiles").append(
-                 $('<li>', { title: fileName, class: 'ui-widget-content' }).append( 
-                    $('<img>', { title: fileName, class: "thumbImg", src: 'file:///'+filePath })));
-        } else {
-            $("#selectableFiles").append(
-                 $('<li>', { title: fileName, class: 'ui-widget-content' }).append(
-                    $('<span>', { class: "fileExtension", text: fileExt})));
-        }
-    }    
-}
-
-UIAPI.changeView = function(viewType) {
-    console.debug("Change the view of the file browser to "+viewType);
-    UIAPI.showLoadingAnimation();
-       
-    //Setting the current view
-    UIAPI.currentView = viewType;
-
-    $("#riverView").hide();
-    
-    $("#selectableFiles").hide();         
-
-    // Purging the thumbnail view, avoiding memory leak
-    document.getElementById("selectableFiles").innerHTML = "";
-
-    UIAPI.fileTable.hide();     
-    $("fileTable_wrapper").hide();
-    
-    // Purging file table
-    UIAPI.fileTable.fnClearTable();  
-
-    //TODO River View Disabled due performance
-    //UIAPI.initRiverView();
-    
-    // Clear the list with the selected files    
-    UIAPI.selectedFiles = [];  
-    UIAPI.currentFilename = "";
-
-    if(viewType == "thumbView") {	    
-        UIAPI.initThumbView();  
-        $("#selectableFiles").show();           
-//	 } else if(viewType == "riverView") {
-//        $("#riverView").show();
-	 } else { // Fileview or Tagview
-        UIAPI.initFileTagView();  
-        if(viewType == "fileView") {
-            console.debug("Change to FileView");
-            UIAPI.fileTable.fnSetColumnVis(0, true);            
-            UIAPI.fileTable.fnSetColumnVis(1, true);            
-            UIAPI.fileTable.fnSetColumnVis(2, true);            
-            UIAPI.fileTable.fnSetColumnVis(3, false);            
-            UIAPI.fileTable.fnSetColumnVis(4, false);            
-        } else if (viewType == "tagView") {
-            console.debug("Change to TagView");            
-            UIAPI.fileTable.fnSetColumnVis(0, false);            
-            UIAPI.fileTable.fnSetColumnVis(1, false);            
-            UIAPI.fileTable.fnSetColumnVis(2, false);            
-            UIAPI.fileTable.fnSetColumnVis(3, true);            
-            UIAPI.fileTable.fnSetColumnVis(4, true);            
-        }
-        UIAPI.fileTable.show();
-        $("fileTable_wrapper").show();        
-    }        
-    UIAPI.handleElementActivation();   
-    UIAPI.hideLoadingAnimation();     
-}
-
-UIAPI.updateFileSelection = function() {
-    console.debug("Updating file selection...");
-    UIAPI.selectedFiles = [];          
-    UIAPI.fileTable.$('tr.selectedRow').each(function() {
-        var data = UIAPI.fileTable.fnGetData( this );
-//        console.debug( "Selected #:" + data[0] );
-        UIAPI.selectedFiles.push(data[0]);
-    });
-    UIAPI.handleElementActivation();     
+    UIAPI.ViewManager.changeView(UIAPI.currentView);    
 }
 
 UIAPI.changeDirectory = function(newDir) {
@@ -317,39 +152,33 @@ UIAPI.changeDirectory = function(newDir) {
     UIAPI.selectedTag = "";
 }
 
-UIAPI.handleElementActivation = function() {
-    console.debug("Entering element activation handler...");
-    // Workarround for bug ...
-    UIAPI.hideAllContextMenus();
-
-    if (UIAPI.selectedFiles.length > 1) {
-        $( "#openFileButton" ).button( "disable" );
-        $( "#editFileButton" ).button( "disable" );
-        $( "#deleteFileButton" ).button( "disable" );
-        $( "#renameFileButton" ).button( "disable" );   
-    } else if (UIAPI.selectedFiles.length == 1) {
-        $( "#openFileButton" ).button( "enable" );
-        $( "#editFileButton" ).button( "enable" );        
-        $( "#deleteFileButton" ).button( "enable" );
-        $( "#renameFileButton" ).button( "enable" ); 
-    } else {
-        $( "#openFileButton" ).button( "disable" );
-        $( "#editFileButton" ).button( "disable" );        
-        $( "#deleteFileButton" ).button( "disable" );
-        $( "#renameFileButton" ).button( "disable" );       
-    }    
-}
-
 UIAPI.reloadUI = function() {
     location.reload();
 }
 
-UIAPI.layoutContainer = undefined;
+UIAPI.openFile = function(filePath) {
+//    console.debug("Opening file..."); 
+    FileViewer.openFile(filePath);	
+}
+
+UIAPI.openFileViewer = function() {
+	UIAPI.isFileOpened = true;
+    layoutContainer.open("east");    
+}
+
+UIAPI.closeFileViewer = function() {
+	UIAPI.isFileOpened = false;
+    layoutContainer.close("east");    
+}
+
+UIAPI.toggleLeftPanel = function() {
+    layoutContainer.toggle("west");
+}
 
 UIAPI.initLayout = function(){
     console.debug("Initializing Layout...");
 
-    UIAPI.layoutContainer = $('#container').layout(
+    layoutContainer = $('#container').layout(
         {
         fxName: "none"
         
@@ -440,40 +269,8 @@ UIAPI.initLayout = function(){
     });
 
     // Closes the viewer area by init
-    UIAPI.layoutContainer.close("east");
+    layoutContainer.close("east");
 }
 
 //return UIAPI;
 //});
-
-/**
- * Sorting 
-    switch (UIAPI.fileSortCriteria) {
-      case "name":
-        UIAPI.fileList.sort(function(a,b) { return a.name.localeCompare(b.name); });
-        
-        // Descending
-        // UIAPI.fileList.sort(function(a,b) { return b.name.localeCompare(a.name); });    
-        break;
-      case "size":        
-        UIAPI.fileList.sort(function(a,b) { 
-            if (a.size > b.size) return 1;
-            if (a.size < b.size) return -1;
-              return 0;
-            });
-        break;  
-      case "lmdt":
-        UIAPI.fileList.sort(function(a,b) { 
-              var date1 = new Date(a.lmdt);
-              var date2 = new Date(b.lmdt);
-              if (date1 > date2) return 1;
-              if (date1 < date2) return -1;
-              return 0; 
-            });
-        break;          
-      default:
-        UIAPI.fileList.sort(function(a,b) { return a.name.localeCompare(b.name); });      
-        break;
-    }   
-*
-**/

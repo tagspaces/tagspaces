@@ -1,19 +1,15 @@
 define(function(require, exports, module) {
 "use strict";
 
-exports.config = {
-    "id": "viewerMD", // ID should be equal to the directory name where the extension is located   
-    "title": "MD Viewer",
-    "type": "editor", // viewer, ts for tagspace
-    "supportedFileTypes": [
-        "md", "markdown"
-     ]        
-}
+exports.id = "viewerMD"; // ID should be equal to the directory name where the ext. is located   
+exports.title = "MD Viewer";
+exports.type = "editor";
+exports.supportedFileTypes = [ "md", "markdown", "mdown" ];
 
 var md2htmlConverter = undefined;
 var containerElID = undefined;
 
-var extensionDirectory = TSSETTINGS.getExtensionPath()+UIAPI.getDirSeparator()+exports.config["id"];
+var extensionDirectory = TSSETTINGS.getExtensionPath()+UIAPI.getDirSeparator()+exports.id;
 
 exports.init = function(filePath, containerElementID) {
     console.debug("Initalization MD Viewer...");

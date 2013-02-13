@@ -8,6 +8,8 @@ define([
     'jsoneditor',
     'jquerylayout',
     'jquerydropdown',
+    'jqueryuitooltips',
+    'jqueryuidroppable',
     'less'
 ], function($){
 "use strict";
@@ -30,35 +32,30 @@ var initApp = function(){
         require([
            "js/ioapi.cordova"           
            ]);         
-    }   
+    }
+    
+    var layoutContainer = undefined;   
 
     // TODO refactor all libs for integration of backbone.js     
     require([
-            "js/fileviewer.ui",
-            "js/tags.ui",
-            "js/basicviews.ui",
-            "js/settings.ui",
-            "js/misc.ui",
+            "js/view.manager",
             "js/settings.api",
+            "js/fileviewer.ui",
+            "js/core.ui",
+            "js/tags.ui",
+            "js/core.api",
             "js/tagspace.api",
             "js/directories.ui",
         ], 
-        function() {
+        function(viewManager) {
+			UIAPI.ViewManager = viewManager;
+			
             TagsUI.initContextMenus();
             TagsUI.initDialogs();
-            
-            BasicViewsUI.initContextMenus();
-            BasicViewsUI.initFileTagViews();
-            BasicViewsUI.initDialogs(); 
-            BasicViewsUI.initButtons();
-            BasicViewsUI.initThumbView();
             
             DirectoriesUI.initDialogs();
             DirectoriesUI.initButtons();
             DirectoriesUI.initContextMenus();
-            
-            SettingsUI.initButtons();
-            SettingsUI.initDialogs();
            
             TSSETTINGS.loadSettingsLocalStorage();
             
@@ -72,7 +69,12 @@ var initApp = function(){
             // This is usually the case by a new installation
             if(TSSETTINGS.Settings == undefined) {
                 TSSETTINGS.Settings = TSSETTINGS.DefaultSettings;
-            }          
+            }    
+          
+          	TSSETTINGS.upgradeSettings();
+            
+            // Init views
+ 			UIAPI.ViewManager.initViews();                 
             
             $("#appVersion").text("["+TSSETTINGS.DefaultSettings["appVersion"]+"]");
             $("#appVersion").attr("title","["+TSSETTINGS.DefaultSettings["appBuild"]+"]");
@@ -90,6 +92,9 @@ var initApp = function(){
                 UIAPI.initLayout();
                 console.debug("Layout initialized");
             });  
+            
+            // Show start hint
+            $( "#selectTagSpace" ).tooltip( "open" );
     });         
 }
 

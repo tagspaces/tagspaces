@@ -6,6 +6,7 @@
 @fileExtColor: #008080;
 @baseTagColor: #008000;
 @directoryColor: #F6A828;
+@tagFontSize: 1em;
 
 .roundedTagCorners (@radius: 2px) {
   border-radius: @radius;
@@ -37,11 +38,13 @@ html, body {
 #directoryList { list-style-type: none; margin: 0; padding: 0; width: 100%; }
 #directoryList li { margin: 3px; padding: 0.4em; font-size: 1.0em; height: 18px; }
 
-/* Thumns/box design	*/
-#selectableFiles .ui-selecting { background: #FECA40; }
-#selectableFiles .ui-selected { background: #F39814; color: white; }
-#selectableFiles { list-style-type: none; margin: 0; padding: 0; }
-#selectableFiles li { margin: 3px; padding: 1px; float: left; width: 100px; height: 80px; font-size: 1em; text-align: center; } 
+/* Thumbs box design	
+ * TODO Move to viewThumb extension css
+ * */
+.selectableFiles .ui-selecting { background: #FECA40; }
+.selectableFiles .ui-selected { background: #F39814; color: white; }
+.selectableFiles { list-style-type: none; margin: 0; padding: 0; }
+.selectableFiles li { margin: 3px; padding: 1px; float: left; width: 100px; height: 80px; font-size: 1em; text-align: center; } 
 
 #logo {
 	padding: 0px;
@@ -148,10 +151,11 @@ li hr {
     background-color: @baseTagColor;    
     padding-right: 12px;        
     font-weight: bold;
-    font-size: 1em;
+    font-size: @tagFontSize;
     color: white;
     margin: 1px;
     border-color: transparent;
+    z-index: 9999;    
     .arrowDownImage;
     .roundedTagCorners;
 }
@@ -164,11 +168,12 @@ li hr {
     padding: 1px;
     padding-right: 12px;        
     font-weight: normal;
-    font-size: 1em;
+    font-size: @tagFontSize;
     color: #222222;
     text-align: left;
     margin: 1px;
     border: #ddd solid 1px;
+    z-index: 9999;
     .arrowDownImage;    
     .roundedTagCorners;    
 }
@@ -178,7 +183,7 @@ li hr {
     background: transparent url("arrow-down.png") no-repeat right; 
     padding-right: 12px;        
     font-weight: normal;
-    font-size: 1em;
+    font-size: @tagFontSize;
     color: #222222;
     text-align: left;
     margin: 1px;
@@ -191,7 +196,7 @@ li hr {
     background-color: @fileExtColor;          
     padding-right: 12px;   
     font-weight: bold;
-    font-size: 1em;
+    font-size: @tagFontSize;
     color: white;
     margin: 1px;
     border-color: transparent;
@@ -228,6 +233,16 @@ li hr {
 
 #directoryNavigatorNorth {
     overflow: hidden !important;    
+}
+
+#viewToolbars {
+    padding: 2px;    
+}
+#viewContainers {
+    padding: 0;    
+}              
+#viewFooters {
+    padding: 0;    
 }
 
 .middle-north {
@@ -284,7 +299,7 @@ span.dynatree-icon {
 /*	background: #F6A828 url("arrow-down.png") no-repeat right; 
     padding-right: 12px;*/
     font-weight: bold;
-    font-size: 1em;
+    font-size: @tagFontSize;
     color: white;
     margin: 1px;
     border-color: transparent;
@@ -295,11 +310,16 @@ span.dynatree-icon {
     padding: 1px;
     background-color: @directoryColor;
     font-weight: bold;
-    font-size: 1em;
+    font-size: @tagFontSize;
     color: white;
     margin: 1px;
     border-color: transparent;
     .roundedTagCorners;    
+}
+
+/*desaturate(@directoryColor, 30%) */
+.dirButtonActive  {
+    background-color: #FFCC99;
 }
 
 #dirTree .dynatree-active {
@@ -345,7 +365,7 @@ span.dynatree-icon {
     background-color: @baseTagColor;
     padding-right: 12px;    
     font-weight: bold;
-    font-size: 1em;
+    font-size: @tagFontSize;
     color: white;
     margin: 1px;
     border-color: transparent;
@@ -365,21 +385,18 @@ div.jsoneditor-frame {
     border-color: green;   
 }
 
-/* Data Table */
-table.dataTable tr.selectedRow {
-    background-color: #FECA40 !important;
-}
-
-#fileTable .ui-selecting { background: #FECA40; }
-#fileTable .ui-selected { background: #FECA40; }
-
 table.dataTable tr.even {
     background-color: white;
 }
 
 table.dataTable tr.odd {
     background-color: white;
-}
+} 
+
+.activeRow { background: #FFCC99 !important; }
+
+table.dataTable tr.ui-selecting { background: #FECA40 !important; }
+table.dataTable tr.ui-selected { background: #FECA40 !important; }
 
 table.dataTable tr.odd td.sorting_1 { background-color: inherit; }
 table.dataTable tr.odd td.sorting_2 { background-color: inherit; }

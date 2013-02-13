@@ -62,6 +62,7 @@ DirectoriesUI.generateDirPath = function() {
         })
         .click(function() {
           $(this)
+//            .toggleClass("ui-icon-triangle-1-s")
             .parent().toggleClass("ui-accordion-header-active ui-state-active ui-state-default ui-corner-bottom").end()
             .parent().next().toggleClass("ui-accordion-content-active").toggle();
           return false;
@@ -105,6 +106,17 @@ DirectoriesUI.generateDirPath = function() {
 	                key: DirectoriesUI.directoryHistory[i]["children"][j].key,
 	                title: DirectoriesUI.directoryHistory[i]["children"][j].key,
 	                text: DirectoriesUI.directoryHistory[i]["children"][j].title, 
+	            })
+	            .droppable({
+	            	accept: "fileButton",
+			    	hoverClass: "dirButtonActive",
+			    	drop: function( event, ui ) {
+			    		var fileName = ui.draggable.attr("title");
+			    		var targetDir = $(this).attr("key");
+						console.log("Moving file: "+fileName+" to "+targetDir);
+			    		IOAPI.renameFile(UIAPI.currentPath+UIAPI.getDirSeparator()+fileName, targetDir+UIAPI.getDirSeparator()+fileName);
+			    		IOAPI.listDirectory(UIAPI.currentPath);  
+			    	}	            	
 	            })
 	            .click( function() {
 	                DirectoriesUI.navigateToDirectory($(this).attr("key"));
@@ -205,6 +217,7 @@ DirectoriesUI.initButtons = function() {
     $( "#reloadTagSpace" )
         .button()
         .click(function() {
+        	$( "#selectTagSpace" ).tooltip( "disable" );
             $("#favoritesList").width($( "#reloadTagSpace" ).width()+$("#selectTagSpace").width());
             $("#favoritesList").show().position({
                 my: "left top",
@@ -240,6 +253,8 @@ DirectoriesUI.initButtons = function() {
                 .next()
                     .hide()
                     .menu();    
+                    
+    $( "#selectTagSpace" ).tooltip();
 
     $( "#selectLocalDirectory" )
         .button({
@@ -426,41 +441,3 @@ DirectoriesUI.initFavorites = function() {
     });  
     $( "#favoritesList" ).hide(); 
 }
-
-/*
-DirectoriesUI.clearSelectedDirs = function() {
-    // Deselect all
-    $(".selectedDirectory", $("#dirTree")).each(function(){
-        $(this).removeClass('selectedDirectory');
-    });    
-} 
-
-DirectoriesUI.initDirectoryTree = function() {
-    // Init the tree module
-    $("#dirTree").dynatree({
-      autoFocus: true,
-      activeVisible: true,
-      clickFolderMode: 1,      
-      onActivate: function(node) {
-        DirectoriesUI.clearSelectedDirs();  
-        UIAPI.currentPath = node.data.key;
-        $(node.li).addClass("selectedDirectory");
-        $("#selectedFilePath").val("");     
-        TSSETTINGS.setLastOpenedDir(node.data.key);
-        IOAPI.listDirectory(UIAPI.currentPath);
-      },
-      onExpand: function(flag, node) {
-      }, 
-      onLazyRead: function(node){
-        UIAPI.currentTreeElements = node;
-        IOAPI.getSubdirs(node.data.key);
-        return true;
-      },
-      onDblClick: function(node, event) {
-        DirectoriesUI.clearSelectedDirs();            
-        node.toggleExpand();
-        $(node.li).addClass("selectedDirectory");
-      },        
-      // children: [{title: "Test Node"}]      
-    });    
-} */
