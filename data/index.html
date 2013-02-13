@@ -34,7 +34,7 @@
         <div id="directoryNavigator" class="west-center" style="padding: 0">
             <div id="directoryNavigatorNorth" style="padding: 0" >
                     <button id="reloadTagSpace" style="text-align: left; width: 85%;">Select Location</button>
-                    <button id="selectTagSpace">&nbsp;</button>
+                    <button id="selectTagSpace" title="Start using TagSpaces by clicking on the dropdown button and creating a new favorite directory or selecting an existing one.">&nbsp;</button>
             </div>
             <div id="dirTree" style="padding: 0; height: 100%;"></div>   
         </div>
@@ -260,11 +260,10 @@
         <li action="deleteFile" title=""><a href="javascript:void(0);"><span class="ui-icon ui-icon-trash"></span>Delete File</a></li>
     </ul>
     
-    <ul id="fileTitleMenu" class="dropdown-menu has-tip">
-        <li action="addTag" title=""><a href="javascript:void(0);"><span class="ui-icon ui-icon-tag"></span>Add Tags</a></li>               
-        <li action="openFile" title=""><a href="javascript:void(0);"><span class="ui-icon ui-icon-plus"></span>Open File</a></li>               
-    </ul>
-   
+    <ul id="extensionMenu" class="dropdown-menu has-tip anchor-right">
+        <li action="addTagAsFilter" title=""><a href="javascript:void(0);"><span class="ui-icon ui-icon-search"></span>Set As Filter</a></li>
+    </ul> 
+
     <ul id="tagMenu" class="dropdown-menu has-tip anchor-right">
         <li action="addTagAsFilter" title=""><a href="javascript:void(0);"><span class="ui-icon ui-icon-search"></span>Set As Filter</a></li>
         <li action="editTag" title=""><a href="javascript:void(0);"><span class="ui-icon ui-icon-pencil"></span>Edit Tag</a></li>               

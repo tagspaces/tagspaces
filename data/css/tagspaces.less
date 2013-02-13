@@ -6,6 +6,7 @@
 @fileExtColor: #008080;
 @baseTagColor: #008000;
 @directoryColor: #F6A828;
+@tagFontSize: 1em;
 
 .roundedTagCorners (@radius: 2px) {
   border-radius: @radius;
@@ -150,7 +151,7 @@ li hr {
     background-color: @baseTagColor;    
     padding-right: 12px;        
     font-weight: bold;
-    font-size: 1em;
+    font-size: @tagFontSize;
     color: white;
     margin: 1px;
     border-color: transparent;
@@ -166,11 +167,12 @@ li hr {
     padding: 1px;
     padding-right: 12px;        
     font-weight: normal;
-    font-size: 1em;
+    font-size: @tagFontSize;
     color: #222222;
     text-align: left;
     margin: 1px;
     border: #ddd solid 1px;
+    z-index: 9999;
     .arrowDownImage;    
     .roundedTagCorners;    
 }
@@ -180,7 +182,7 @@ li hr {
     background: transparent url("arrow-down.png") no-repeat right; 
     padding-right: 12px;        
     font-weight: normal;
-    font-size: 1em;
+    font-size: @tagFontSize;
     color: #222222;
     text-align: left;
     margin: 1px;
@@ -193,7 +195,7 @@ li hr {
     background-color: @fileExtColor;          
     padding-right: 12px;   
     font-weight: bold;
-    font-size: 1em;
+    font-size: @tagFontSize;
     color: white;
     margin: 1px;
     border-color: transparent;
@@ -296,7 +298,7 @@ span.dynatree-icon {
 /*	background: #F6A828 url("arrow-down.png") no-repeat right; 
     padding-right: 12px;*/
     font-weight: bold;
-    font-size: 1em;
+    font-size: @tagFontSize;
     color: white;
     margin: 1px;
     border-color: transparent;
@@ -307,11 +309,16 @@ span.dynatree-icon {
     padding: 1px;
     background-color: @directoryColor;
     font-weight: bold;
-    font-size: 1em;
+    font-size: @tagFontSize;
     color: white;
     margin: 1px;
     border-color: transparent;
     .roundedTagCorners;    
+}
+
+/*desaturate(@directoryColor, 30%) */
+.dirButtonActive  {
+    background-color: red;
 }
 
 #dirTree .dynatree-active {
@@ -357,7 +364,7 @@ span.dynatree-icon {
     background-color: @baseTagColor;
     padding-right: 12px;    
     font-weight: bold;
-    font-size: 1em;
+    font-size: @tagFontSize;
     color: white;
     margin: 1px;
     border-color: transparent;
@@ -377,21 +384,16 @@ div.jsoneditor-frame {
     border-color: green;   
 }
 
-/* Data Table */
-table.dataTable tr.selectedRow {
-    background-color: #FECA40 !important;
-}
-
-#fileTable .ui-selecting { background: #FECA40; }
-#fileTable .ui-selected { background: #FECA40; }
-
 table.dataTable tr.even {
     background-color: white;
 }
 
 table.dataTable tr.odd {
     background-color: white;
-}
+} 
+
+table.dataTable tr.ui-selecting { background: #FECA40 !important; }
+table.dataTable tr.ui-selected { background: #FECA40 !important; }
 
 table.dataTable tr.odd td.sorting_1 { background-color: inherit; }
 table.dataTable tr.odd td.sorting_2 { background-color: inherit; }

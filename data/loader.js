@@ -31,7 +31,7 @@ require.config({
         jqueryuispinner: 'libs/jqueryui/jquery.ui.spinner',
         jqueryuislider: 'libs/jqueryui/jquery.ui.slider',
         jqueryuitabs: 'libs/jqueryui/jquery.ui.tabs',
-        jqueryuitooltips: 'libs/jqueryui/jquery.ui.tooltips',       
+        jqueryuitooltips: 'libs/jqueryui/jquery.ui.tooltip',       
         jqueryuicss: 'libs/jqueryui/custom-theme/jquery-ui-1.9.2.custom',
         datatables: 'libs/datatables/js/jquery.dataTables.min',
         datatablescss: 'libs/datatables/css/jquery.dataTables',
@@ -68,7 +68,14 @@ require.config({
                 'jqueryuidialog',
                 'jqueryuiselectable',
                 'jqueryuiautocomplete',
-                'jqueryuidatepicker',   
+                'jqueryuidatepicker', 
+            ]
+        },
+        'jqueryuitooltips': {
+            deps: [
+                'jqueryui',
+                'jqueryuiwidget',
+                'jqueryuiposition',                 
             ]
         },
         'jqueryuidraggable': {
@@ -77,7 +84,12 @@ require.config({
                 'jqueryuiwidget',
                 'jqueryuimouse',                 
             ]
-        },
+        },        
+        'jqueryuidroppable': {
+            deps: [
+                'jqueryuidraggable',
+            ]
+        }, 
         'jqueryuiresizable': {
             deps: [
                 'jqueryui',

@@ -8,6 +8,8 @@ define([
     'jsoneditor',
     'jquerylayout',
     'jquerydropdown',
+    'jqueryuitooltips',
+    'jqueryuidroppable',
     'less'
 ], function($){
 "use strict";
@@ -90,6 +92,9 @@ var initApp = function(){
                 UIAPI.initLayout();
                 console.debug("Layout initialized");
             });  
+            
+            // Show start hint
+            $( "#selectTagSpace" ).tooltip( "open" );
     });         
 }
 
