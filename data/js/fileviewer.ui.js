@@ -119,6 +119,19 @@ FileViewer.constructFileViewerUI = function(fileName, filePath) {
             text: tags[i] 
             }));            
     };
+    
+    
+    $( "#tagsContainer" ).droppable({
+    	accept: ".tagButton",
+    	hoverClass: "activeRow",
+    	drop: function( event, ui ) {
+    		var tagName = ui.draggable.attr("tag");
+			console.log("Tagging file: "+tagName+" to "+UIAPI.currentFilename);
+
+			TSAPI.addTag(tagName);
+    		IOAPI.listDirectory(UIAPI.currentPath);  
+    	}	            	
+    })
 
     // Activate tagButtons in file view
     $('.tagButton', $( "#fileTags" ))

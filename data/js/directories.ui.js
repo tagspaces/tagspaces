@@ -75,6 +75,17 @@ DirectoriesUI.generateDirPath = function() {
             title: DirectoriesUI.directoryHistory[i].key,
             text: DirectoriesUI.directoryHistory[i].title, 
         })
+        .droppable({
+        	accept: ".fileButton",
+	    	hoverClass: "dirButtonActive",
+	    	drop: function( event, ui ) {
+	    		var fileName = ui.draggable.attr("title");
+	    		var targetDir = $(this).attr("key");
+				console.log("Moving file: "+fileName+" to "+targetDir);
+	    		IOAPI.renameFile(UIAPI.currentPath+UIAPI.getDirSeparator()+fileName, targetDir+UIAPI.getDirSeparator()+fileName);
+	    		IOAPI.listDirectory(UIAPI.currentPath);  
+	    	}	            	
+        })        
         .click(function() {
             DirectoriesUI.navigateToDirectory($(this).attr("key"));
         })        
@@ -108,7 +119,7 @@ DirectoriesUI.generateDirPath = function() {
 	                text: DirectoriesUI.directoryHistory[i]["children"][j].title, 
 	            })
 	            .droppable({
-	            	accept: "fileButton",
+	            	accept: ".fileButton",
 			    	hoverClass: "dirButtonActive",
 			    	drop: function( event, ui ) {
 			    		var fileName = ui.draggable.attr("title");
