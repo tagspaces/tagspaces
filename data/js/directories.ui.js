@@ -108,6 +108,7 @@ DirectoriesUI.generateDirPath = function() {
 	                text: DirectoriesUI.directoryHistory[i]["children"][j].title, 
 	            })
 	            .droppable({
+	            	accept: "fileButton",
 			    	hoverClass: "dirButtonActive",
 			    	drop: function( event, ui ) {
 			    		var fileName = ui.draggable.attr("title");

@@ -213,6 +213,7 @@ exports.load = function load() {
 
     fileTable.$('tr')
     .droppable({
+    	accept: "tagButton",
     	hoverClass: "activeRow",
     	drop: function( event, ui ) {
     		var tagName = ui.draggable.attr("tag");
