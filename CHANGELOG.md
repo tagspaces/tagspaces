@@ -1,5 +1,5 @@
 #Changelog
-
+ 
 ##TagSpaces 1.3.1235 / 2013.02.16
 - [All] File tagging now possible with drag & drop
 - [All] Search results visualization redesigned
@@ -35,10 +35,10 @@
 - [All] Tag visualization realization exchanged with modified jqueryui accordion
 - [All] Adding datepicker for editing date tags
 - [All] Setting white as a background color for fullscreen mode
-- [All] Tagsuggestion functionality now splits the filename with space, comma, plus, underscore and score delimiters
-- [All] Integration of the jquery.dropdown library for contex menus
+- [All] Tag suggestion functionality now splits the filename with space, comma, plus, underscore and score delimiters
+- [All] Integration of the jquery.dropdown library for context menus
 - [All] Fullscreen button implemented properly
-- [All] Added autocomplete functionality to the add tag dialog.
+- [All] Added auto complete functionality to the add tag dialog.
 - [All] Displaying the build number as a label over the application version
 - [All] Added getAllTags function for extracting all plain tags from the settings
 
