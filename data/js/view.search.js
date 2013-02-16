@@ -63,6 +63,8 @@ exports.init = function init() {
         id: exports.ID+"FileTable",    
     })); 
 
+
+	// Column order in json [title(0),tags(1),fileSize(2),fileLMDT(3),path(4),filename(5),extension(6)];
     fileTable = $('#'+exports.ID+"FileTable").dataTable( {
         "bJQueryUI": false,
         "bPaginate": false,
@@ -72,39 +74,36 @@ exports.init = function init() {
         "bInfo": false,
         "bAutoWidth": false,
         "aoColumns": [
-            { "sTitle": "Filename", "sClass": "right" },
+            { "sTitle": "Title", "sClass": "right" },
+            { "sTitle": "Tags" },            
             { "sTitle": "Size(bytes)" },
             { "sTitle": "Date Modified" },
-            { "sTitle": "Title" },
-            { "sTitle": "Tags" },            
-            { "sTitle": "Ext" },
             { "sTitle": "Path" },
         ],         
         "aoColumnDefs": [
-            { // Filename column
-                "mRender": function ( data, type, row ) { return TagsUI.buttonizeFileName(data) },
+            { // Title column
+                "mRender": function ( data, type, row ) { return TagsUI.buttonizeTitle(data,row[0],row[4]) },
                 "aTargets": [ 0 ]
             }, 
-            { // Title column
-                "mRender": function ( data, type, row ) { return TagsUI.buttonizeTitle(data,row[0]) },
-                "aTargets": [ 3 ]
-            }, 
             { // Tags column
-                "mRender": function ( data, type, row ) { return TagsUI.generateTagButtons(data,row[5],row[0]) },
-                "aTargets": [ 4 ]
+                "mRender": function ( data, type, row ) { return TagsUI.generateTagButtons(data,row[6],row[5],row[4]) },
+                "aTargets": [ 1 ]
             }, 
-            { // Last changed date column
-                "mRender": function ( data, type, row ) { return TSAPI.formatDateTime(data, true) },
+            { // Filesize column
+                "mRender": function ( data, type, row ) { return TSAPI.formatFileSize(data) },
                 "aTargets": [ 2 ]
             },
-            { "bVisible": false,  "aTargets": [ 5 ] },
+            { // Last changed date column
+                "mRender": function ( data, type, row ) { return TSAPI.formatDateTime(data, true) },
+                "aTargets": [ 3 ]
+            },
+//            { "bVisible": false,  "aTargets": [ 5 ] },
 //            { "bSearchable": false,  "aTargets": [ 0 ] },
 //            { "sClass": "center", "aTargets": [ 0 ] }
          ]
     } );           
    
-    fileTable.fnSetColumnVis(0, false);  
-   
+
     // Disable alerts in datatable
     fileTable.dataTableExt.sErrMode = 'throw';
 
@@ -185,7 +184,7 @@ var enhanceIndexData = function(index) {
                  path = index[i].path;
                  if(fileSize == undefined) fileSize = "";
                  if(fileLMDT == undefined) fileLMDT = "";
-                 var entry = [index[i].name,fileSize,fileLMDT,title,tags,ext,path];   
+                 var entry = [title,tags,fileSize,fileLMDT,path,index[i].name,ext];   
                  enhancedIndex.push(entry);
             }
         }
@@ -205,28 +204,31 @@ exports.updateIndexData = function updateIndexData(index) {
         console.debug("Opening file...");
         var rowData = fileTable.fnGetData( this );
         
-        UIAPI.openFile(rowData[6]);
+        UIAPI.openFile(rowData[4]); // 4 is the filePath
     } );     
     
     fileTable.$('.fileTitleButton')
         .click( function() {
             selectFile(this, $(this).attr("title"));
         } )
-        .dropdown( 'attach' , '#fileMenu' );   
+// TODO Context menu disable until the view.basic and view.search use filepath instead of filename
+//        .dropdown( 'attach' , '#fileMenu' );   
     
     fileTable.$('.extTagButton')
         .click( function() {
         	selectFile(this, $(this).attr("fileName"));
             TagsUI.openTagMenu(this, $(this).attr("tag"), $(this).attr("filename"));
         } )
-        .dropdown( 'attach' , '#extensionMenu' );               
+// TODO Context menu disable until the view.basic and view.search use filepath instead of filename
+//        .dropdown( 'attach' , '#extensionMenu' );               
     
     fileTable.$('.tagButton')
         .click( function() {
             selectFile(this, $(this).attr("fileName"));
             TagsUI.openTagMenu(this, $(this).attr("tag"), $(this).attr("filename"));
         } )     
-        .dropdown( 'attach' , '#tagMenu' );
+// TODO Context menu disable until the view.basic and view.search use filepath instead of filename
+//        .dropdown( 'attach' , '#tagMenu' );
 
     $('#'+exports.ID+"FileTable_wrapper").show();  
      
