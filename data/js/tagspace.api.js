@@ -19,6 +19,11 @@ TSAPI.createSearchIndex = function(currentLocation) {
     
 }
 
+TSAPI.formatFileSize = function(fileSize) {
+	// TODO implement format file size
+    return fileSize;
+}
+
 TSAPI.formatDateTime = function(date, includeTime) {
     if( (date == undefined) || (date == "") ) return "";
     var d = new Date(date);

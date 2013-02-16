@@ -416,7 +416,7 @@ TagsUI.openTagMenu = function(tagButton, tag, fileName) {
 }
 
 // Helper function user by basic and search views
-TagsUI.generateTagButtons = function(commaSeparatedTags, fileExtension, fileName) {
+TagsUI.generateTagButtons = function(commaSeparatedTags, fileExtension, fileName, filePath) {
     console.debug("Creating tags...");
     var tagString = ""+commaSeparatedTags;
     var wrapper = $('<span>');
@@ -425,6 +425,7 @@ TagsUI.generateTagButtons = function(commaSeparatedTags, fileExtension, fileName
             title: "Opens context menu for "+fileExtension,
             tag: fileExtension,
             filename: fileName,
+            filepath: filePath,
             class: "extTagButton",
             text: fileExtension
             }));          
@@ -445,18 +446,23 @@ TagsUI.generateTagButtons = function(commaSeparatedTags, fileExtension, fileName
 }
 
 // Helper function user by basic and search views
-TagsUI.buttonizeTitle = function(title, fileName) {
+TagsUI.buttonizeTitle = function(title, fileName, filePath) {
+    if(title.length < 1) {
+    	title = "n/a";
+    }
     return $('<span>').append($('<button>', { 
             title: fileName, 
+            filepath: filePath,
             class: 'fileTitleButton', 
-            text: title+' ' 
+            text: title 
         })).html();    
 }
 
 // Helper function user by basic and search views
-TagsUI.buttonizeFileName = function(fileName) {
+TagsUI.buttonizeFileName = function(fileName, filePath) {
     return $('<span>').append($('<button>', { 
-        	title: fileName, 
+        	title: filePath, 
+        	filepath: filePath,
         	class: 'fileButton', 
         	text: fileName 
         })).html();

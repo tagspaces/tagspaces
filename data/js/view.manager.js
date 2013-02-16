@@ -156,7 +156,10 @@ exports.changeView = function changeView(viewType) {
     // Clear the list with the selected files    
     UIAPI.selectedFiles = [];  
     UIAPI.currentFilename = "";
-  
+
+	// Reset the filter by a view change
+	exports.setFileFilter("");
+	  
 //    UIAPI.hideLoadingAnimation();     
 }
 
