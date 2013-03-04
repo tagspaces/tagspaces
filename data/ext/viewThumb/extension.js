@@ -20,6 +20,8 @@ var viewContainer = undefined;
 var viewToolbar = undefined;
 var viewFooter = undefined;
 
+var supportedFileTypeThumnailing = ['jpg','jpeg','png','gif'];
+
 exports.init = function init() {
 	console.debug("Initializing View "+exports.ID);
 	
@@ -76,7 +78,7 @@ exports.load = function load() {
     for (var i=0; i < UIAPI.fileList.length; i++) {
         var fileName = UIAPI.fileList[i][0];
         var fileExt = fileName.substring(fileName.lastIndexOf(".")+1,fileName.length).toLowerCase();
-        if(TSSETTINGS.getSupportedFileExt4Thumbnailing().indexOf(fileExt) >= 0) {
+        if(supportedFileTypeThumnailing.indexOf(fileExt) >= 0) {
             var filePath = UIAPI.currentPath+UIAPI.getDirSeparator()+fileName;
             $("#"+exports.ID+"SelectableFiles").append(
                  $('<li>', { title: fileName, class: 'ui-widget-content' }).append( 

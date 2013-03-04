@@ -44,7 +44,7 @@ FileViewer.openFile = function(filePath) {
 			src: filePath
 	    }));    	
     } else {
-        require([TSSETTINGS.getExtensionPath()+UIAPI.getDirSeparator()+viewerExt+UIAPI.getDirSeparator()+"extension.js"], function(viewer) {
+        require([TSSETTINGS.getExtensionPath()+"/"+viewerExt+"/"+"extension.js"], function(viewer) {
             tsEditor = viewer;
             tsEditor.init(filePath, "viewer");
             tsEditor.viewerMode(true);
@@ -84,7 +84,7 @@ FileViewer.editFile = function(fileName) {
         return;
     } else {
         try {
-            require([TSSETTINGS.getExtensionPath()+UIAPI.getDirSeparator()+editorExt+UIAPI.getDirSeparator()+"extension.js"], function(editr) {
+            require([TSSETTINGS.getExtensionPath()+"/"+editorExt+"/"+"extension.js"], function(editr) {
                 tsEditor = editr;
                 tsEditor.init(filePath, "viewer");
             });

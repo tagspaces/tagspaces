@@ -45,7 +45,6 @@ TSSETTINGS.DefaultSettings = {
 	"appVersion": "@VERSION@beta",
     "appBuild": "@VERSION@.@BUILD@",
 	"settingsVersion": 1,
-    "supportedFileTypeThumnailing": ['jpg','jpeg','png','gif'],
 	"newTextFileContent": "Text file created with tagspaces!",
     "newHTMLFileContent": "<html><head><meta http-equiv='content-type' content='text/html; charset=utf-8'><title>Tagspaces File</title></head><body>File created with tagspaces!</body></html>",	
 	"newMDFileContent": '#File created with tagspaces!',
@@ -164,10 +163,6 @@ TSSETTINGS.getNewHTMLFileContent = function() {
 
 TSSETTINGS.getNewMDFileContent = function() {
     return TSSETTINGS.Settings["newMDFileContent"];
-}
-
-TSSETTINGS.getSupportedFileExt4Thumbnailing = function() {
-    return TSSETTINGS.Settings["supportedFileTypeThumnailing"];
 }
 
 TSSETTINGS.getFileTypeEditor = function(fileTypeExt) {

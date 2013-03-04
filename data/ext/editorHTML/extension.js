@@ -7,7 +7,7 @@ exports.type = "editor";
 exports.supportedFileTypes = [ "htm", "html" ];
 
 var htmlEditor = undefined;
-var extensionDirectory = TSSETTINGS.getExtensionPath()+UIAPI.getDirSeparator()+exports.id;
+var extensionDirectory = TSSETTINGS.getExtensionPath()+"/"+exports.id;
 
 exports.init1 = function(filePath, containerElementID) {
     console.debug("Initalization HTML Text Editor...");

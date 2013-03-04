@@ -15,7 +15,7 @@ exports.supportedFileTypes = [
      ] ;
 
 var aceEditor = undefined;
-var extensionDirectory = TSSETTINGS.getExtensionPath()+UIAPI.getDirSeparator()+exports.id];
+var extensionDirectory = TSSETTINGS.getExtensionPath()+UIAPI.getDirSeparator()+exports.id;
 
 var generateUI = function(containerElementID) {
 	$("#"+containerElementID).append('<div id="aceEditor" style="width: 100%; height: 100%"></div>');	

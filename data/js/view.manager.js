@@ -24,7 +24,7 @@ exports.initViews = function initViews() {
 	
 	var defaultViewLoaded = false;
 
-    require(["js/view.basic"], function(viewer) {
+    require(["js/view.basic.js"], function(viewer) {
 		views.push(viewer);
 		initViewsUI(viewer);
 		viewer.init();
@@ -38,7 +38,7 @@ exports.initViews = function initViews() {
 		$( "#"+viewer.ID+"Toolbar" ).show(); 			   	
     });  
 
-    require(["js/view.search"], function(viewer) {
+    require(["js/view.search.js"], function(viewer) { 
        views.push(viewer);
 	   initViewsUI(viewer);
        viewer.init();
@@ -48,7 +48,9 @@ exports.initViews = function initViews() {
 	var extensions = TSSETTINGS.getExtensions();
 	for (var i=0; i < extensions.length; i++) {
 		if(extensions[i].enabled && (extensions[i].type == "view") ) {
-	        require([TSSETTINGS.getExtensionPath()+UIAPI.getDirSeparator()+extensions[i].id+UIAPI.getDirSeparator()+"extension.js"], function(viewer) {
+	        var extPath = TSSETTINGS.getExtensionPath()+"/"+extensions[i].id+"/"+"extension.js"; 
+			// TODO remove    extPath = "file:///Z:/TagSpaces/repository/data/ext/extension.js"
+	        require([extPath], function(viewer) {
 	            views.push(viewer);
 			    initViewsUI(viewer);
 		 		try { 			
