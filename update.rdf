@@ -7,13 +7,13 @@
     <r:Seq>
       <r:li>
         <r:Description>
-          <version>1.3.1235</version>
+          <version>1.3.1237</version>
           <targetApplication>
             <r:Description>
               <id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</id>
               <minVersion>16.0</minVersion>
               <maxVersion>*</maxVersion>
-              <updateLink>http://tagspaces.com/releases/1.3/tagspaces.1.3.1235.xpi</updateLink>
+              <updateLink>http://tagspaces.com/releases/1.3/tagspaces.1.3.1237.xpi</updateLink>
               <updateInfoURL>http://tagspaces.com/releases/1.3/updateInfo.xml</updateInfoURL>
             </r:Description>
           </targetApplication>

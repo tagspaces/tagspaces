@@ -1,4 +1,8 @@
 #Changelog
+
+##TagSpaces 1.3.12xx / 2013.03.04
+- [All] Issue [#5](https://github.com/uggrock/tagspaces/issues/5) fixed (Opening of files in file view was broken)
+- [All] Information shown in the browser title improved
  
 ##TagSpaces 1.3.1235 / 2013.02.16
 - [All] File tagging now possible with drag & drop
