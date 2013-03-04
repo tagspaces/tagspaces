@@ -10,7 +10,7 @@ DirectoriesUI.directoryHistory = [];
 DirectoriesUI.openFavorite = function(path, title) {
     console.debug("Opening favorite in : "+path+" title: "+title);
 
-	document.title = TSSETTINGS.DefaultSettings.appName + " - " + title;
+	document.title = title + " | " + TSSETTINGS.DefaultSettings.appName;
 
     $( "#reloadTagSpace" ).button({
         label: title
