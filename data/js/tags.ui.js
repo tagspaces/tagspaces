@@ -461,7 +461,7 @@ TagsUI.buttonizeTitle = function(title, fileName, filePath) {
 // Helper function user by basic and search views
 TagsUI.buttonizeFileName = function(fileName, filePath) {
     return $('<span>').append($('<button>', { 
-        	title: filePath, 
+        	title: fileName, 
         	filepath: filePath,
         	class: 'fileButton', 
         	text: fileName 
