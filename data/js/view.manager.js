@@ -24,7 +24,7 @@ exports.initViews = function initViews() {
 	
 	var defaultViewLoaded = false;
 
-    require(["js/view.basic.js"], function(viewer) {
+    require(["ext/view.basic.js"], function(viewer) {
 		views.push(viewer);
 		initViewsUI(viewer);
 		viewer.init();
@@ -38,7 +38,7 @@ exports.initViews = function initViews() {
 		$( "#"+viewer.ID+"Toolbar" ).show(); 			   	
     });  
 
-    require(["js/view.search.js"], function(viewer) { 
+    require(["ext/view.search.js"], function(viewer) { 
        views.push(viewer);
 	   initViewsUI(viewer);
        viewer.init();
