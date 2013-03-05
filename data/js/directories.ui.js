@@ -127,6 +127,7 @@ DirectoriesUI.generateDirPath = function() {
 						console.log("Moving file: "+fileName+" to "+targetDir);
 			    		IOAPI.renameFile(UIAPI.currentPath+UIAPI.getDirSeparator()+fileName, targetDir+UIAPI.getDirSeparator()+fileName);
 			    		IOAPI.listDirectory(UIAPI.currentPath);  
+			    		UIAPI.closeFileViewer();
 			    	}	            	
 	            })
 	            .click( function() {
