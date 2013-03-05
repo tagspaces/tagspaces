@@ -41,7 +41,7 @@ require.config({
         jquerylayoutcss: 'libs/jquerylayout/layout-default-latest',
         jquerydropdown: 'libs/jquerydropdown/jquery.dropdown',
         jquerydropdowncss: 'libs/jquerydropdown/jquery.dropdown',
-        less: 'libs/less/less-1.3.1',
+        less: 'libs/less/less-1.3.3.min',
     }, 
     shim: {
         'jquerylayout': {
