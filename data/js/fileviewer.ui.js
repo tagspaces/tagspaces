@@ -15,17 +15,12 @@ FileViewer.openFile = function(filePath) {
 
     FileViewer.isEditMode = false;
 
-	var fileName = filePath.substring(filePath.lastIndexOf(UIAPI.getDirSeparator())+1,filePath.length);
-
-    var openedFilePath = UIAPI.currentPath+UIAPI.getDirSeparator()+fileName;
-    // TODO replace \\ to \ in filenames
-    openedFilePath.replace("\\\\","\\");
-    $("#selectedFilePath").val(openedFilePath); 
+    var openedFilePath = filePath;    
+    $("#selectedFilePath").val(openedFilePath.replace("\\\\","\\")); 
     
-    var fileExt = fileName.substring(fileName.lastIndexOf(".")+1,fileName.length).toLowerCase();
-//    var filePath = UIAPI.currentPath+UIAPI.getDirSeparator()+fileName;
+    var fileExt = TSAPI.extractFileExtension(filePath);
 
-    this.constructFileViewerUI(fileName, filePath);         
+    this.constructFileViewerUI(filePath);         
 
     // Getting the viewer for the file extension/type
     var viewerExt = TSSETTINGS.getFileTypeViewer(fileExt);  
@@ -63,8 +58,8 @@ FileViewer.updateEditorContent = function(fileContent) {
 }
 
 // Should return false if no editor found
-FileViewer.getFileEditor = function(fileName) {
-    var fileExt = fileName.substring(fileName.lastIndexOf(".")+1,fileName.length).toLowerCase();
+FileViewer.getFileEditor = function(filePath) {
+    var fileExt = TSAPI.extractFileExtension(filePath);
 
     // Getting the editor for the file extension/type
     var editorExt = TSSETTINGS.getFileTypeEditor(fileExt);  
@@ -72,11 +67,10 @@ FileViewer.getFileEditor = function(fileName) {
     return editorExt;    
 }
 
-FileViewer.editFile = function(fileName) {
-    console.debug("Editing file: "+fileName);
-    var filePath = UIAPI.currentPath+UIAPI.getDirSeparator()+fileName;
+FileViewer.editFile = function(filePath) {
+    console.debug("Editing file: "+filePath);
 
-    var editorExt = FileViewer.getFileEditor(fileName);
+    var editorExt = FileViewer.getFileEditor(filePath);
     
     $( "#viewer" ).empty();
     if(editorExt === false) {
@@ -95,18 +89,17 @@ FileViewer.editFile = function(fileName) {
     }   
 } 
 
-FileViewer.saveFile = function(fileName) {
-    console.debug("Save current file: "+fileName);
+FileViewer.saveFile = function(filePath) {
+    console.debug("Save current file: "+filePath);
     var content = tsEditor.getContent();
-    var filePath = UIAPI.currentPath+UIAPI.getDirSeparator()+fileName;
     IOAPI.saveTextFile(filePath, content);    	
 }
 
-FileViewer.constructFileViewerUI = function(fileName, filePath) {
+FileViewer.constructFileViewerUI = function(filePath) {
     // Adding tag buttons to the filetoolbox
-    var tags = TSAPI.extractTags(fileName);
+    var tags = TSAPI.extractTags(filePath);
 
-    $( "#fileTitle" ).text(TSAPI.extractTitle(fileName));
+    $( "#fileTitle" ).text();
     
     // Generate tag buttons
     $( "#fileTags" ).empty();
@@ -114,7 +107,7 @@ FileViewer.constructFileViewerUI = function(fileName, filePath) {
         $( "#fileTags" ).append($("<button>", { 
             class: "tagButton", 
             tag: tags[i], 
-            filename: fileName, 
+            filepath: filePath, 
             title: "Opens context menu for "+tags[i],
             text: tags[i] 
             }));            
@@ -126,51 +119,50 @@ FileViewer.constructFileViewerUI = function(fileName, filePath) {
     	hoverClass: "activeRow",
     	drop: function( event, ui ) {
     		var tagName = ui.draggable.attr("tag");
-			console.log("Tagging file: "+tagName+" to "+UIAPI.currentFilename);
-
-			TSAPI.addTag(tagName);
-    		IOAPI.listDirectory(UIAPI.currentPath);  
+			console.log("Tagging file: "+tagName+" to "+filePath);
+			TSAPI.addTag([filePath], tagName);
     	}	            	
     })
 
     // Activate tagButtons in file view
     $('.tagButton', $( "#fileTags" ))
         .click( function() {
-            TagsUI.openTagMenu(this, $(this).attr("tag"), $(this).attr("filename"));
+            TagsUI.openTagMenu(this, $(this).attr("tag"), $(this).attr("filepath"));
         })
         .dropdown( 'attach' , '#tagMenu' );   
     
     // Clear filetoolbox
     $( "#filetoolbox" ).empty();
 
-    this.addEditButton("#filetoolbox", fileName);
+    this.addEditButton("#filetoolbox", filePath);
 
     this.addFullScreenButton("#filetoolbox");
 
     this.addOpenInWindowButton("#filetoolbox", filePath);
 
     // TODO Tag suggestion disabled due menu init issue
-    this.initTagSuggestionMenu(fileName, tags);
+    this.initTagSuggestionMenu(filePath, tags);
     this.addTagSuggestionButton("#filetoolbox");
 
     this.addCloseButton("#filetoolbox");     
 }
 
-FileViewer.initTagSuggestionMenu = function(fileName, tags) {
-    // Adding buttons for creating tags according to the suggested tags
-    var suggTags = TSAPI.suggestTags(fileName);
+FileViewer.initTagSuggestionMenu = function(filePath, tags) {
+    var suggTags = TSAPI.suggestTags(filePath);
 
     var tsMenu = $( "#tagSuggestionsMenu" );
     tsMenu.menu();
 //    tsMenu.menu("disable");
     tsMenu.empty(); 
-    
+
+    // Adding context menu entries for creating tags according to the suggested tags
     for (var i=0; i < suggTags.length; i++) {        
         // Ignoring the tags already assigned to a file
         if(tags.indexOf(suggTags[i]) < 0) {
             tsMenu.append($('<li>', {name: suggTags[i]}).append($('<a>', { 
                 href: "javascript:void(0);",
                 title: "Add tag "+suggTags[i]+" to current file", 
+				filepath: filePath,
                 text: "Tag with '"+suggTags[i]+"'" 
                 })));               
         }         
@@ -179,8 +171,7 @@ FileViewer.initTagSuggestionMenu = function(fileName, tags) {
     tsMenu.menu({
         select: function( event, ui ) {
             var tagName = ui.item.attr( "name" );    
-            TSAPI.writeTagsToFile(fileName, [tagName]);
-            IOAPI.listDirectory(UIAPI.currentPath);  
+            TSAPI.writeTagsToFile(filePath, [tagName]);
         }         
     });  
 }
@@ -197,10 +188,10 @@ FileViewer.addTagSuggestionButton = function(container) {
     .dropdown( 'attach' , '#tagSuggestionsMenu' );  
 }
 
-FileViewer.addEditButton = function(container, fileName) {
+FileViewer.addEditButton = function(container, filePath) {
     var buttonDisabled = false;
     // If no editor found, disabling the button
-    if(FileViewer.getFileEditor(fileName) === false) {
+    if(FileViewer.getFileEditor(filePath) === false) {
         buttonDisabled = true;
     }
 	var options;
@@ -220,7 +211,7 @@ FileViewer.addEditButton = function(container, fileName) {
 					primary: "ui-icon-disk"
 				}
 			};
-        	FileViewer.editFile(fileName);
+        	FileViewer.editFile(filePath);
 		} else {
 		    if(confirm("Do you really want to overwrite the current file?")) {
                 options = {
@@ -229,8 +220,8 @@ FileViewer.addEditButton = function(container, fileName) {
                         primary: "ui-icon-wrench"
                     }
                 };
-                FileViewer.saveFile(fileName);
-        		UIAPI.openFile(UIAPI.currentPath+UIAPI.getDirSeparator()+fileName);                   
+                FileViewer.saveFile(filePath);
+        		UIAPI.openFile(filePath);                   
 		    }
 		}
 		$( this ).button( "option", options );    	

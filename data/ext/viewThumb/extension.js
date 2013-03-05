@@ -51,14 +51,14 @@ exports.init = function init() {
         stop: function() {
             UIAPI.selectedFiles = [];          
             $( ".ui-selected", this ).each(function() {
-                UIAPI.selectedFiles.push($(this).attr("title"));
+                UIAPI.selectedFiles.push($(this).attr("filepath"));
             });
             console.debug("Selected files: "+UIAPI.selectedFiles);
          //   UIAPI.handleElementActivation();
             
             // On selecting only one file opens it in the viewer
             if(UIAPI.selectedFiles.length == 1) {
-				UIAPI.openFile(UIAPI.currentPath+UIAPI.getDirSeparator()+UIAPI.selectedFiles[0]);             	
+				UIAPI.openFile(UIAPI.selectedFiles[0]);             	
             }
         }
     }); 
@@ -77,15 +77,15 @@ exports.load = function load() {
         
     for (var i=0; i < UIAPI.fileList.length; i++) {
         var fileName = UIAPI.fileList[i][0];
-        var fileExt = fileName.substring(fileName.lastIndexOf(".")+1,fileName.length).toLowerCase();
+        var fileExt = TSAPI.extractFileExtension(fileName);
+        var filePath = UIAPI.currentPath+TSAPI.getDirSeparator()+fileName;
         if(supportedFileTypeThumnailing.indexOf(fileExt) >= 0) {
-            var filePath = UIAPI.currentPath+UIAPI.getDirSeparator()+fileName;
             $("#"+exports.ID+"SelectableFiles").append(
-                 $('<li>', { title: fileName, class: 'ui-widget-content' }).append( 
+                 $('<li>', { title: fileName, filepath: filePath, class: 'ui-widget-content' }).append( 
                     $('<img>', { title: fileName, class: "thumbImg", src: 'file:///'+filePath })));
         } else {
             $("#"+exports.ID+"SelectableFiles").append(
-                 $('<li>', { title: fileName, class: 'ui-widget-content' }).append(
+                 $('<li>', { title: fileName, filepath: filePath, class: 'ui-widget-content' }).append(
                     $('<span>', { class: "fileExtension", text: fileExt})));
         }
     }    

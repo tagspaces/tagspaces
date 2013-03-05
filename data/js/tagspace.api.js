@@ -8,17 +8,29 @@ var TSAPI = (typeof TSAPI == "object" && TSAPI != null) ? TSAPI : {};
 TSAPI.beginTagContainer = "[";
 TSAPI.endTagContainer = "]";
 TSAPI.tagDelimiter = " ";
-TSAPI.tagIDPrefix = "ts";
-TSAPI.suggestedTagIDPrefix = "sts";
-TSAPI.tagspaceIDLength = 3;
 
-
-// TODO Create Search Index
-TSAPI.createSearchIndex = function(currentLocation) {
-    console.debug("Creating search index for: "+currentLocation);
-    
+TSAPI.getDirSeparator = function() {
+    return TSAPI.isWindows()?"\\":"/";
 }
 
+TSAPI.isWindows = function() {
+    return (navigator.appVersion.indexOf("Win")!=-1) ;    
+}
+
+TSAPI.extractFileName = function(filePath) {
+	return filePath.substring(filePath.lastIndexOf(TSAPI.getDirSeparator())+1,filePath.length);
+}
+
+TSAPI.extractContainingDirectoryPath = function(filePath) {
+	return filePath.substring(0, filePath.lastIndexOf(TSAPI.getDirSeparator()));
+}
+
+TSAPI.extractFileExtension = function(filePath) {
+	var ext = filePath.substring(filePath.lastIndexOf(".")+1,filePath.length).toLowerCase().trim();
+	if(filePath.lastIndexOf(".") < 0) { ext = ""; }
+	return ext; 
+}
+ 
 TSAPI.formatFileSize = function(fileSize) {
 	// TODO implement format file size
     return fileSize;
@@ -50,8 +62,11 @@ TSAPI.formatDateTime = function(date, includeTime) {
     return cYear+"."+cMonth+"."+cDate+time;
 }
 
-TSAPI.extractTags = function(fileName) {
-    console.debug("Extracting tags from: "+fileName);
+TSAPI.extractTags = function(filePath) {
+    console.debug("Extracting tags from: "+filePath);
+    
+    fileName = TSAPI.extractFileName(filePath);
+    
     var tags = [];
     var beginTagContainer = fileName.indexOf(TSAPI.beginTagContainer);
     var endTagContainer = fileName.indexOf(TSAPI.endTagContainer);
@@ -71,8 +86,10 @@ TSAPI.extractTags = function(fileName) {
     return cleanedTags; 
 }
 
-TSAPI.extractTitle = function(fileName) {
-    console.debug("Extracting title from: "+fileName);
+TSAPI.extractTitle = function(filePath) {
+    console.debug("Extracting title from: "+filePath);
+    fileName = TSAPI.extractFileName(filePath);
+    
     var beginTagContainer = fileName.indexOf(TSAPI.beginTagContainer);
     var indexExtensionSepartor = fileName.lastIndexOf(".");
     if( (indexExtensionSepartor <= 0) || (indexExtensionSepartor < beginTagContainer) ) {
@@ -84,9 +101,11 @@ TSAPI.extractTitle = function(fileName) {
     }
 }
 
-// TODO Buggy function
-TSAPI.suggestTags = function(fileName) {
-    console.debug("Suggesting tags for: "+fileName);
+TSAPI.suggestTags = function(filePath) {
+    console.debug("Suggesting tags for: "+filePath);
+    
+    fileName = TSAPI.extractFileName(filePath);
+    
     var tags = [];
     var tagContainer;
     var beginTagContainer = fileName.indexOf(TSAPI.beginTagContainer);
@@ -121,7 +140,7 @@ TSAPI.generateFileName = function(fileName, tags) {
     }
     console.debug("The tags string: "+tagsString);
 
-    var fileExt = fileName.substring(fileName.lastIndexOf(".")+1,fileName.length).trim();
+    var fileExt = TSAPI.extractFileExtension(fileName); 
     console.debug("Filename: "+fileName+" file extenstion: "+fileExt);
         
     // Assembling the new filename with the tags    
@@ -146,10 +165,12 @@ TSAPI.generateFileName = function(fileName, tags) {
     return newFileName;    
 }
 
-TSAPI.writeTagsToFile = function(fileName, tags) {
-    console.debug("Add the tags to: "+fileName);
+TSAPI.writeTagsToFile = function(filePath, tags) {
+    console.debug("Add the tags to: "+filePath);
         
-    var extractedTags = TSAPI.extractTags(fileName);
+    var containingDirectoryPath = TSAPI.extractContainingDirectoryPath(filePath);
+    
+    var extractedTags = TSAPI.extractTags(filePath);
 
     for (var i=0; i < tags.length; i++) {
         // check if tag is already in the tag array
@@ -161,13 +182,15 @@ TSAPI.writeTagsToFile = function(fileName, tags) {
     
     var newFileName = TSAPI.generateFileName(fileName, extractedTags);
    
-    IOAPI.renameFile(UIAPI.currentPath+UIAPI.getDirSeparator()+fileName, UIAPI.currentPath+UIAPI.getDirSeparator()+newFileName);
+    IOAPI.renameFile(filePath, containingDirectoryPath+TSAPI.getDirSeparator()+newFileName);
 }
 
-TSAPI.renameTag = function(fileName, oldTag, newTag) {
-    console.debug("Rename tag for file: "+fileName);
+TSAPI.renameTag = function(filePath, oldTag, newTag) {
+    console.debug("Rename tag for file: "+filePath);
+    
+    var containingDirectoryPath = TSAPI.extractContainingDirectoryPath(filePath);
         
-    var extractedTags = TSAPI.extractTags(fileName);
+    var extractedTags = TSAPI.extractTags(filePath);
 
     for (var i=0; i < extractedTags.length; i++) {
         // check if tag is already in the tag array
@@ -178,42 +201,36 @@ TSAPI.renameTag = function(fileName, oldTag, newTag) {
     
     var newFileName = TSAPI.generateFileName(fileName, extractedTags);
    
-    IOAPI.renameFile(UIAPI.currentPath+UIAPI.getDirSeparator()+fileName, UIAPI.currentPath+UIAPI.getDirSeparator()+newFileName);
+    IOAPI.renameFile(filePath, containingDirectoryPath+TSAPI.getDirSeparator()+newFileName);
+    
 }
 
 // Removing a tag from a filename
-TSAPI.removeTag = function(tag) {
-    console.debug("Removing tag: "+tag);   
-    
-    // Getting the real tag name from ID of the button
-    var tagname = tag; //tag.substring(TSAPI.tagIDPrefix.length,tag.length);
-    
-    var fileName = UIAPI.currentFilename;
+TSAPI.removeTag = function(filePath, tagName) {
+    console.debug("Removing tag: "+tagName+" from "+filePath);   
+
+	var containingDirectoryPath = TSAPI.extractContainingDirectoryPath(filePath);
         
-    var tags = TSAPI.extractTags(fileName);
+    var tags = TSAPI.extractTags(filePath);
 
     var newTags = [];
     for (var i=0; i < tags.length; i++) {
-        if(tags[i] != tagname) {
+        if(tags[i] != tagName) {
             newTags.push(tags[i]);
         }
     };
     
     var newFileName = TSAPI.generateFileName(fileName, newTags);
 
-    IOAPI.renameFile(UIAPI.currentPath+UIAPI.getDirSeparator()+fileName, UIAPI.currentPath+UIAPI.getDirSeparator()+newFileName);     
+    IOAPI.renameFile(filePath, containingDirectoryPath+TSAPI.getDirSeparator()+newFileName);     
 
-    // Refreshing the dir list
-    IOAPI.listDirectory(UIAPI.currentPath);  
 }
 
-TSAPI.addTag = function(tagName, tagType) {
-	console.debug("Adding tag: "+tagName+" to the files, first file: "+UIAPI.selectedFiles[0]);
+TSAPI.addTag = function(filePathArray, tagName) {
+	console.debug("Adding tag: "+tagName+" to the files, first file: "+filePathArray[0]);
 	
-	for (var i=0; i < UIAPI.selectedFiles.length; i++) {
-	   TSAPI.writeTagsToFile(UIAPI.selectedFiles[i], [tagName]);
+	for (var i=0; i < filePathArray.length; i++) {
+	   TSAPI.writeTagsToFile(filePathArray[i], [tagName]);
 	};
 	
-	// Refreshing the dir list
-	IOAPI.listDirectory(UIAPI.currentPath);  
 }

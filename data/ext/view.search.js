@@ -124,7 +124,7 @@ exports.init = function init() {
         $(".ui-selected", this).each(function(){
             var rowData = fileTable.fnGetData( this );
             // Add the filename which is located in the first column to the list of selected filenames
-            UIAPI.selectedFiles.push(rowData[0]);
+            UIAPI.selectedFiles.push(rowData[4]);
           });
         console.debug("Selected files: "+UIAPI.selectedFiles);
       }
@@ -167,24 +167,23 @@ var enhanceIndexData = function(index) {
     var fileSize = undefined;
     var fileLMDT = undefined;
     var path = undefined;
+    var filename = undefined;
     for (var i=0; i < index.length; i++) {
         if (index[i].type == "file"){  
             // Considering Unix HiddenEntries (. in the beginning of the filename)
             if (TSSETTINGS.Settings["showUnixHiddenEntries"] || 
                (!TSSETTINGS.Settings["showUnixHiddenEntries"] && (index[i].name.indexOf(".") != 0))) {
-                 tags = TSAPI.extractTags(index[i].name);
-                 title = TSAPI.extractTitle(index[i].name);
-                 if(index[i].name.lastIndexOf(".") > 0) {
-                     ext = index[i].name.substring(index[i].name.lastIndexOf(".")+1,index[i].name.length);                     
-                 } else {
-                     ext = "";
-                 }
+                 filename = index[i].name;
+                 path = index[i].path;
+                 tags = TSAPI.extractTags(path);
+                 title = TSAPI.extractTitle(path);
+				 ext = TSAPI.extractFileExtension(path)
                  fileSize = index[i].size;
                  fileLMDT = index[i].lmdt;
-                 path = index[i].path;
+                 
                  if(fileSize == undefined) fileSize = "";
                  if(fileLMDT == undefined) fileLMDT = "";
-                 var entry = [title,tags,fileSize,fileLMDT,path,index[i].name,ext];   
+                 var entry = [title,tags,fileSize,fileLMDT,path,filename,ext];   
                  enhancedIndex.push(entry);
             }
         }
@@ -211,24 +210,21 @@ exports.updateIndexData = function updateIndexData(index) {
         .click( function() {
             selectFile(this, $(this).attr("title"));
         } )
-// TODO Context menu disable until the view.basic and view.search use filepath instead of filename
-//        .dropdown( 'attach' , '#fileMenu' );   
+        .dropdown( 'attach' , '#fileMenu' );   
     
     fileTable.$('.extTagButton')
         .click( function() {
         	selectFile(this, $(this).attr("fileName"));
-            TagsUI.openTagMenu(this, $(this).attr("tag"), $(this).attr("filename"));
+            TagsUI.openTagMenu(this, $(this).attr("tag"), $(this).attr("filepath"));
         } )
-// TODO Context menu disable until the view.basic and view.search use filepath instead of filename
-//        .dropdown( 'attach' , '#extensionMenu' );               
+        .dropdown( 'attach' , '#extensionMenu' );               
     
     fileTable.$('.tagButton')
         .click( function() {
             selectFile(this, $(this).attr("fileName"));
-            TagsUI.openTagMenu(this, $(this).attr("tag"), $(this).attr("filename"));
+            TagsUI.openTagMenu(this, $(this).attr("tag"), $(this).attr("filepath"));
         } )     
-// TODO Context menu disable until the view.basic and view.search use filepath instead of filename
-//        .dropdown( 'attach' , '#tagMenu' );
+        .dropdown( 'attach' , '#tagMenu' );
 
     $('#'+exports.ID+"FileTable_wrapper").show();  
      
@@ -249,12 +245,10 @@ exports.clearSelectedFiles = function() {
     });	
 }
 
-var selectFile = function(tagButton, fileName) {
-    exports.clearSelectedFiles();
-    
+var selectFile = function(tagButton, filePath) {
+    exports.clearSelectedFiles();    
     $(tagButton).parent().parent().toggleClass("ui-selected");
-    UIAPI.currentFilename = fileName;
-    UIAPI.selectedFiles.push(UIAPI.currentFilename);    
+    UIAPI.selectedFiles.push(filePath);    
 } 
 
 var initButtons = function() {

@@ -55,7 +55,7 @@ TagsUI.initContextMenus = function() {
                 break;                            
               case "removeTag":
                 $( this ).hide();
-                TSAPI.removeTag(UIAPI.selectedTag);
+                TSAPI.removeTag(UIAPI.selectedFiles[0],UIAPI.selectedTag);
                 break;
             }
         }
@@ -67,7 +67,7 @@ TagsUI.initContextMenus = function() {
             console.debug("Tag menu action: "+ui.item.attr( "action" )+" for tag: "+UIAPI.selectedTag);
             switch (ui.item.attr( "action" )) {
               case "addTagToFile":
-                TSAPI.addTag(UIAPI.selectedTag, UIAPI.selectedTagData.type);  
+                TSAPI.addTag(UIAPI.selectedFiles, UIAPI.selectedTag);  
                 break;                            
               case "addTagAsFilter":
                 $("#filterBox").val(UIAPI.selectedTag);
@@ -118,7 +118,7 @@ TagsUI.initContextMenus = function() {
                 break;  
               case "openFile":
                 console.debug("Opening file...");
-        		UIAPI.openFile(UIAPI.currentPath+UIAPI.getDirSeparator()+UIAPI.selectedFiles[0]);                
+        		UIAPI.openFile(UIAPI.selectedFiles[0]);                
                 break;
               case "openDirectory":
                 console.debug("Opening parent directory...");   
@@ -215,6 +215,7 @@ TagsUI.initDialogs = function() {
         }                
     });     
     
+    /* Currently not used
     $( "#dialog-confirmtagremove" ).dialog({
         autoOpen: false,
         resizable: false,
@@ -230,7 +231,7 @@ TagsUI.initDialogs = function() {
                 $( this ).dialog( "close" );
             }
         }
-    });    
+    });    */
 
     $( "#dialog-confirmtagdelete" ).dialog({
         autoOpen: false,
@@ -409,9 +410,8 @@ TagsUI.generateTagGroups = function() {
     });
 }
 
-TagsUI.openTagMenu = function(tagButton, tag, fileName) {
-    UIAPI.currentFilename = fileName;
-    UIAPI.selectedFiles.push(UIAPI.currentFilename);
+TagsUI.openTagMenu = function(tagButton, tag, filePath) {
+    UIAPI.selectedFiles.push(filePath);
     UIAPI.selectedTag = tag;
 }
 
@@ -420,6 +420,9 @@ TagsUI.generateTagButtons = function(commaSeparatedTags, fileExtension, fileName
     console.debug("Creating tags...");
     var tagString = ""+commaSeparatedTags;
     var wrapper = $('<span>');
+    if(filePath == undefined) {
+    	filePath = UIAPI.currentPath+TSAPI.getDirSeparator()+fileName;
+    }
     if(fileExtension.length > 0) {
         wrapper.append($('<button>', {
             title: "Opens context menu for "+fileExtension,
@@ -437,6 +440,7 @@ TagsUI.generateTagButtons = function(commaSeparatedTags, fileExtension, fileName
                 title: "Opens context menu for "+tags[i],
                 tag: tags[i],
                 filename: fileName,
+            	filepath: filePath,                
                 class: "tagButton",
                 text: tags[i]
                 }));   
@@ -450,6 +454,9 @@ TagsUI.buttonizeTitle = function(title, fileName, filePath) {
     if(title.length < 1) {
     	title = "n/a";
     }
+    if(filePath == undefined) {
+    	filePath = UIAPI.currentPath+TSAPI.getDirSeparator()+fileName;
+    }    
     return $('<span>').append($('<button>', { 
             title: fileName, 
             filepath: filePath,
@@ -460,6 +467,9 @@ TagsUI.buttonizeTitle = function(title, fileName, filePath) {
 
 // Helper function user by basic and search views
 TagsUI.buttonizeFileName = function(fileName, filePath) {
+    if(filePath == undefined) {
+    	filePath = UIAPI.currentPath+TSAPI.getDirSeparator()+fileName;
+    }	
     return $('<span>').append($('<button>', { 
         	title: fileName, 
         	filepath: filePath,

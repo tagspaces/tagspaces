@@ -25,7 +25,7 @@ var viewFooter = undefined;
 
 var viewMode = "files" // tags
 
-var extensionDirectory = TSSETTINGS.getExtensionPath()+UIAPI.getDirSeparator()+exports.ID;
+var extensionDirectory = TSSETTINGS.getExtensionPath()+"/"+exports.ID;
 
 var graphMode = "treeMap" // tree
 
@@ -194,7 +194,7 @@ exports.init = function init() {
 	require([
 		extensionDirectory+'/d3/d3.js',
 	 	], function() {
-			viewContainer.append('<link rel="stylesheet" type="text/css" href="'+extensionDirectory+UIAPI.getDirSeparator()+'styles.css">');
+			viewContainer.append('<link rel="stylesheet" type="text/css" href="'+extensionDirectory+"/"+'styles.css">');
 	});    
 }
 
@@ -516,7 +516,7 @@ var initContextMenus = function() {
             var commandName = ui.item.attr( "action" );
             switch (commandName) {
               case "openFile":
-        		UIAPI.openFile(UIAPI.currentPath+UIAPI.getDirSeparator()+UIAPI.selectedFiles[0]);                
+        		UIAPI.openFile(UIAPI.selectedFiles[0]);                
                 break;
               case "addTag":        
                 console.debug("Adding tag..."); 

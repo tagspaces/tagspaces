@@ -76,6 +76,12 @@ IOAPI.renameFile = function(filePath, newFilePath) {
 		if(IOAPI.plugin.fileExists(filePath)) {
 			IOAPI.plugin.saveBinaryFile(newFilePath,IOAPI.plugin.getBinaryFile(filePath));
 			IOAPI.plugin.removeFile(filePath);
+
+            if(UIAPI.isFileOpened) {
+               UIAPI.openFile(newFilePath); 	
+            }   			
+			UIAPI.refreshFileListContainer();
+			
 			console.debug("File renamed to: "+newFilePath);	
 		} else { 
 			console.error("Original file does not exists: "+filePath);		

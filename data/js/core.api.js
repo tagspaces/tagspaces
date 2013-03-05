@@ -24,8 +24,6 @@ UIAPI.currentView = undefined;
 // Current selected files
 UIAPI.selectedFiles = [];
 
-UIAPI.currentFilename = "";
-
 // True if a file is opened in the viewer
 UIAPI.isFileOpened = false;
 
@@ -38,14 +36,6 @@ UIAPI.selectedTag = "";
 UIAPI.selectedTagData = "";
 
 UIAPI.ViewManager = undefined;
-
-UIAPI.getDirSeparator = function() {
-    return UIAPI.isWindows()?"\\":"/";
-}
-
-UIAPI.isWindows = function() {
-    return (navigator.appVersion.indexOf("Win")!=-1) ;    
-}
 
 UIAPI.setCurrentPath = function(path) {
     console.debug("Setting current path to: "+path);
@@ -78,6 +68,11 @@ UIAPI.fileExists = function(fileName) {
     return false;
 }
 
+UIAPI.refreshFileListContainer = function() {
+	// TODO what happens with search view
+    IOAPI.listDirectory(UIAPI.currentPath);  
+}
+
 UIAPI.updateFileBrowserData = function(dirList) {
     console.debug("Updating the file browser data...");
     
@@ -95,8 +90,9 @@ UIAPI.updateFileBrowserData = function(dirList) {
             // Considering Unix HiddenEntries (. in the beginning)
             if (TSSETTINGS.Settings["showUnixHiddenEntries"] || 
                (!TSSETTINGS.Settings["showUnixHiddenEntries"] && (dirList[i].name.indexOf(".") != 0))) {
-                 tags = TSAPI.extractTags(dirList[i].name);
-                 title = TSAPI.extractTitle(dirList[i].name);
+                 path = UIAPI.currentPath + TSAPI.getDirSeparator() + dirList[i].name;
+                 tags = TSAPI.extractTags(path);
+                 title = TSAPI.extractTitle(path);
                  if(dirList[i].name.lastIndexOf(".") > 0) {
                     // title = dirList[i].name.substring(0, dirList[i].name.lastIndexOf(".")); 
                      ext = dirList[i].name.substring(dirList[i].name.lastIndexOf(".")+1,dirList[i].name.length);                     
@@ -120,14 +116,12 @@ UIAPI.updateFileBrowserData = function(dirList) {
 UIAPI.changeDirectory = function(newDir) {
     console.debug("Change direcotory to: "+newDir);
     var newPath = UIAPI.currentPath;
-    if(UIAPI.isWindows()) { 
+    if(TSAPI.isWindows()) { 
         // Cutting trailig \\ or \\\\ .
         if(UIAPI.currentPath.lastIndexOf("\\")+1 == UIAPI.currentPath.length) {
             newPath = UIAPI.currentPath.substring(0,UIAPI.currentPath.length-1);
-			console.debug("Cutting trailing \ "+newPath);
 		} else if(UIAPI.currentPath.lastIndexOf("\\\\")+2 == UIAPI.currentPath.length) {
             newPath = UIAPI.currentPath.substring(0,UIAPI.currentPath.length-2);
-			console.debug("Cutting trailing \\ "+newPath);
 		}
         if(newDir == UIAPI.parentDir) {
             newPath = newPath.substring(0,newPath.lastIndexOf("\\"));            

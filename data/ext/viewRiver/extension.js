@@ -58,7 +58,7 @@ exports.load = function load() {
         if(i > 10) break;
         tagsHTML = "";
         var fileName = UIAPI.fileList[i][0];
-        var filePath = UIAPI.currentPath+UIAPI.getDirSeparator()+fileName;
+        var filePath = UIAPI.currentPath+"/"+fileName;
         tagsHTML += '<iframe id="idFrameViewer" style="width: 100%; height: 150px;" src="'+'file:///'+filePath+'" />';
         $("#"+exports.ID+"RV").append(tagsHTML);
     }

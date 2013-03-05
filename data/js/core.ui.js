@@ -141,7 +141,7 @@ var initDialogs = function() {
                     bValid = false;
                 }
                 if ( bValid ) {
-                    IOAPI.saveTextFile(UIAPI.currentPath+UIAPI.getDirSeparator()+$( "#newFileName" ).val(),fileContent);
+                    IOAPI.saveTextFile(UIAPI.currentPath+TSAPI.getDirSeparator()+$( "#newFileName" ).val(),fileContent);
                     $( this ).dialog( "close" );
                     IOAPI.listDirectory(UIAPI.currentPath);                    
                 }
@@ -172,12 +172,12 @@ var initDialogs = function() {
                 bValid = bValid && checkLength( renamedFileName, "filename", 3, 200 );
         //        bValid = bValid && checkRegexp( renamedFileName, /^[a-z]([0-9a-z_.])+$/i, "Filename may consist of a-z, 0-9, underscores, begin with a letter." );
                 if ( bValid ) {
+                    var containingDir = TSAPI.extractContainingDirectoryPath(UIAPI.selectedFiles[0]);
                     IOAPI.renameFile(
-                            UIAPI.currentPath+UIAPI.getDirSeparator()+UIAPI.selectedFiles[0],
-                            UIAPI.currentPath+UIAPI.getDirSeparator()+renamedFileName.val()
+                            UIAPI.selectedFiles[0],
+                            containingDir+TSAPI.getDirSeparator()+renamedFileName.val()
                         );
                     $( this ).dialog( "close" );
-                    IOAPI.listDirectory(UIAPI.currentPath);                    
                 }
             },
             Cancel: function() {
@@ -188,7 +188,7 @@ var initDialogs = function() {
             allFields.val( "" ).removeClass( "ui-state-error" );
         },
         open: function() {
-            $( "#renamedFileName" ).val(UIAPI.selectedFiles[0]);
+            $( "#renamedFileName" ).val(TSAPI.extractFileName(UIAPI.selectedFiles[0]));
         }                
     }); 
     
@@ -199,7 +199,7 @@ var initDialogs = function() {
         modal: true,
         buttons: {
             "Delete all items": function() {
-                IOAPI.deleteElement(UIAPI.currentPath+UIAPI.getDirSeparator()+UIAPI.selectedFiles[0]);
+                IOAPI.deleteElement(UIAPI.selectedFiles[0]);
                 $( this ).dialog( "close" );
                 IOAPI.listDirectory(UIAPI.currentPath);   
             },
@@ -218,6 +218,8 @@ var initDialogs = function() {
             "Add tags": function() {
                 var tags = $("#tags").val().split(",");
                 TSAPI.writeTagsToFile(UIAPI.selectedFiles[0], tags);
+                
+                // TODO ? search
                 IOAPI.listDirectory(UIAPI.currentPath);                                   
                 $( this ).dialog( "close" );
             },

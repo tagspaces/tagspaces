@@ -175,7 +175,7 @@ exports.init = function init() {
         $(".ui-selected", this).each(function(){
             var rowData = fileTable.fnGetData( this );
             // Add the filename which is located in the first column to the list of selected filenames
-            UIAPI.selectedFiles.push(rowData[0]);
+            UIAPI.selectedFiles.push(UIAPI.currentPath + TSAPI.getDirSeparator() + rowData[0]);
           });
         console.debug("Selected files: "+UIAPI.selectedFiles);
       }
@@ -219,14 +219,16 @@ exports.load = function load() {
     		var tagName = ui.draggable.attr("tag");
     		var targetFile = fileTable.fnGetData( this )[0];
 			console.log("Tagging file: "+tagName+" to "+targetFile);
+	    
+		    $(this).toggleClass("ui-selected");
+		    
+			var targetFilePath = UIAPI.currentPath + TSAPI.getDirSeparator() + targetFile;
 
 		    exports.clearSelectedFiles();
-		    
-		    $(this).toggleClass("ui-selected");
-		    UIAPI.currentFilename = targetFile;
-		    UIAPI.selectedFiles.push(UIAPI.currentFilename); 
+		    UIAPI.selectedFiles.push(targetFilePath); 
 
-			TSAPI.addTag(tagName);
+			TSAPI.addTag(UIAPI.selectedFiles, tagName);
+			
     		IOAPI.listDirectory(UIAPI.currentPath);  
     	}	            	
     })
@@ -234,7 +236,7 @@ exports.load = function load() {
         console.debug("Opening file...");
         var rowData = fileTable.fnGetData( this );
         
-        UIAPI.openFile(UIAPI.currentPath+UIAPI.getDirSeparator()+rowData[0]);
+        UIAPI.openFile(UIAPI.currentPath+TSAPI.getDirSeparator()+rowData[0]);
     } );     
     
     fileTable.$('.fileButton')
@@ -244,31 +246,31 @@ exports.load = function load() {
     		helper: "clone",
     		revert: true,
 	        start: function() {
-                selectFile(this, $(this).attr("title"));
+                selectFile(this, $(this).attr("filepath"));
 	        }    		
     	})   
         .click( function() {
-            selectFile(this, $(this).attr("title"));
+            selectFile(this, $(this).attr("filepath"));
         } )
         .dropdown( 'attach' , '#fileMenu' );
 
     fileTable.$('.fileTitleButton')
         .click( function() {
-            selectFile(this, $(this).attr("title"));
+            selectFile(this, $(this).attr("filepath"));
         } )
         .dropdown( 'attach' , '#fileMenu' );   
     
     fileTable.$('.extTagButton')
         .click( function() {
-            selectFile(this, $(this).attr("fileName"));
-            TagsUI.openTagMenu(this, $(this).attr("tag"), $(this).attr("filename"));
+            selectFile(this, $(this).attr("filepath"));
+            TagsUI.openTagMenu(this, $(this).attr("tag"), $(this).attr("filepath"));
         } )
         .dropdown( 'attach' , '#extensionMenu' );               
     
     fileTable.$('.tagButton')
         .click( function() {
-            selectFile(this, $(this).attr("fileName"));
-            TagsUI.openTagMenu(this, $(this).attr("tag"), $(this).attr("filename"));
+            selectFile(this, $(this).attr("filepath"));
+            TagsUI.openTagMenu(this, $(this).attr("tag"), $(this).attr("filepath"));
         } )     
         .dropdown( 'attach' , '#tagMenu' );
 
@@ -307,12 +309,10 @@ exports.clearSelectedFiles = function() {
     });	
 }
 
-var selectFile = function(tagButton, fileName) {
-    exports.clearSelectedFiles();
-    
+var selectFile = function(tagButton, filePath) {
+    exports.clearSelectedFiles();    
     $(tagButton).parent().parent().toggleClass("ui-selected");
-    UIAPI.currentFilename = fileName;
-    UIAPI.selectedFiles.push(UIAPI.currentFilename);    
+    UIAPI.selectedFiles.push(filePath);    
 } 
 
 var initButtons = function() {

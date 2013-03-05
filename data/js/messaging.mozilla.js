@@ -45,8 +45,11 @@ document.documentElement.addEventListener("addon-message1", function(event) {
             // message.content contains the name of the file after the rename
             UIAPI.selectedFiles[0] = message.content;
             if(UIAPI.isFileOpened) {
-               UIAPI.openFile(UIAPI.currentPath+UIAPI.getDirSeparator()+UIAPI.selectedFiles[0]); 	
-            }            
+               UIAPI.openFile(UIAPI.selectedFiles[0]); 	
+            }      
+            
+            UIAPI.refreshFileListContainer();
+                  
         } else {
             UIAPI.updateLogger("Rename failed");        
         }

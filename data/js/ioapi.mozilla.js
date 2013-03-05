@@ -32,7 +32,7 @@ IOAPI.loadSettings = function() {
 }
 
 IOAPI.createDirectory = function(dirPath) {
-	console.debug("Renaming: "+dirPath+" created.");
+	console.debug("Directory "+dirPath+" created.");
     UIAPI.showLoadingAnimation();			
     var event = document.createEvent('CustomEvent');
     event.initCustomEvent("addon-message", true, true, {"detail":{
