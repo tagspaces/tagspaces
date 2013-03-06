@@ -11,8 +11,6 @@ require.config({
     },
     paths: {
         jquery: 'libs/jquery/jquery-1.8.3',
-        dynatree: 'libs/dynatree/jquery.dynatree.min',
-        dynatreecss: 'libs/dynatree/skin-vista/ui.dynatree',   
         jqueryui: 'libs/jqueryui/jquery.ui.core',
         jqueryuiwidget: 'libs/jqueryui/jquery.ui.widget',
         jqueryuimouse: 'libs/jqueryui/jquery.ui.mouse', 

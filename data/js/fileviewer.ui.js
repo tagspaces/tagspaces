@@ -28,6 +28,8 @@ FileViewer.openFile = function(filePath) {
 
 	UIAPI.openFileViewer();
 
+    this.initTagSuggestionMenu(filePath);
+
     $( "#viewer" ).empty();
     if(!viewerExt) {
         $( "#viewer" ).text("File type not supported for viewing.");        
@@ -140,40 +142,49 @@ FileViewer.constructFileViewerUI = function(filePath) {
 
     this.addOpenInWindowButton("#filetoolbox", filePath);
 
-    // TODO Tag suggestion disabled due menu init issue
-    this.initTagSuggestionMenu(filePath, tags);
     this.addTagSuggestionButton("#filetoolbox");
 
     this.addCloseButton("#filetoolbox");     
 }
 
-FileViewer.initTagSuggestionMenu = function(filePath, tags) {
+FileViewer.initTagSuggestionMenu = function(filePath) {
+    var tags = TSAPI.extractTags(filePath);
+
     var suggTags = TSAPI.suggestTags(filePath);
 
     var tsMenu = $( "#tagSuggestionsMenu" );
-    tsMenu.menu();
-//    tsMenu.menu("disable");
-    tsMenu.empty(); 
+
+    $( "#tagSuggestionsMenu" ).empty(); 
+
+	var suggestionMenuEmpty = true;
 
     // Adding context menu entries for creating tags according to the suggested tags
     for (var i=0; i < suggTags.length; i++) {        
         // Ignoring the tags already assigned to a file
         if(tags.indexOf(suggTags[i]) < 0) {
-            tsMenu.append($('<li>', {name: suggTags[i]}).append($('<a>', { 
+            $( "#tagSuggestionsMenu" ).append($('<li>', {name: suggTags[i]}).append($('<a>', { 
                 href: "javascript:void(0);",
                 title: "Add tag "+suggTags[i]+" to current file", 
+				tagname: suggTags[i],
 				filepath: filePath,
                 text: "Tag with '"+suggTags[i]+"'" 
-                })));               
+                })
+                .click(function() {
+		            var tagName = $(this).attr( "tagname" );    
+		            var filePath = $(this).attr( "filepath" );    		            
+		            console.debug("Tag suggestion clicked: "+tagName);
+		            TSAPI.writeTagsToFile(filePath, [tagName]);
+		          	return false;
+        		})                
+               ));              
+             suggestionMenuEmpty = false; 
         }         
-    };
-    
-    tsMenu.menu({
-        select: function( event, ui ) {
-            var tagName = ui.item.attr( "name" );    
-            TSAPI.writeTagsToFile(filePath, [tagName]);
-        }         
-    });  
+    };    
+
+	// Showing dropdown menu only if the context menus is not empty
+	if(!suggestionMenuEmpty) {
+    	$( "#openTagSuggestionMenu" ).dropdown( 'attach' , '#tagSuggestionsMenu' );		
+	}
 }
 
 FileViewer.addTagSuggestionButton = function(container) {
@@ -185,7 +196,6 @@ FileViewer.addTagSuggestionButton = function(container) {
         },
         disabled: false
     })
-    .dropdown( 'attach' , '#tagSuggestionsMenu' );  
 }
 
 FileViewer.addEditButton = function(container, filePath) {

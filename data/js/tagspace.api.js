@@ -31,6 +31,21 @@ TSAPI.extractFileExtension = function(filePath) {
 	return ext; 
 }
  
+TSAPI.extractTitle = function(filePath) {
+    console.debug("Extracting title from: "+filePath);
+    fileName = TSAPI.extractFileName(filePath);
+    
+    var beginTagContainer = fileName.indexOf(TSAPI.beginTagContainer);
+    var indexExtensionSepartor = fileName.lastIndexOf(".");
+    if( (indexExtensionSepartor <= 0) || (indexExtensionSepartor < beginTagContainer) ) {
+        return fileName.trim();
+    } else if( beginTagContainer < 0 ) {
+        return fileName.slice(0,indexExtensionSepartor).trim();
+    } else if( beginTagContainer >= 0 ) {
+        return fileName.slice(0,beginTagContainer).trim();
+    }
+} 
+ 
 TSAPI.formatFileSize = function(fileSize) {
 	// TODO implement format file size
     return fileSize;
@@ -86,20 +101,6 @@ TSAPI.extractTags = function(filePath) {
     return cleanedTags; 
 }
 
-TSAPI.extractTitle = function(filePath) {
-    console.debug("Extracting title from: "+filePath);
-    fileName = TSAPI.extractFileName(filePath);
-    
-    var beginTagContainer = fileName.indexOf(TSAPI.beginTagContainer);
-    var indexExtensionSepartor = fileName.lastIndexOf(".");
-    if( (indexExtensionSepartor <= 0) || (indexExtensionSepartor < beginTagContainer) ) {
-        return fileName.trim();
-    } else if( beginTagContainer < 0 ) {
-        return fileName.slice(0,indexExtensionSepartor).trim();
-    } else if( beginTagContainer >= 0 ) {
-        return fileName.slice(0,beginTagContainer).trim();
-    }
-}
 
 TSAPI.suggestTags = function(filePath) {
     console.debug("Suggesting tags for: "+filePath);
