@@ -217,7 +217,7 @@ exports.updateIndexData = function updateIndexData(index) {
 	        }    		
     	})  
         .click( function() {
-            selectFile(this, $(this).attr("title"));
+            selectFile(this, $(this).attr("filepath"));
         } )        
         .dropdown( 'attach' , '#fileMenu' );   
     
