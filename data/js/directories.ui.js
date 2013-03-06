@@ -76,14 +76,14 @@ DirectoriesUI.generateDirPath = function() {
             text: DirectoriesUI.directoryHistory[i].title, 
         })
         .droppable({
-        	accept: ".fileButton",
+        	accept: '.fileTitleButton,.fileButton',
 	    	hoverClass: "dirButtonActive",
 	    	drop: function( event, ui ) {
-	    		var fileName = ui.draggable.attr("title");
+	    		var filePath = ui.draggable.attr("filepath");
+	    		var fileName = TSAPI.extractFileName(filePath);
 	    		var targetDir = $(this).attr("key");
-				console.log("Moving file: "+fileName+" to "+targetDir);
-	    		IOAPI.renameFile(UIAPI.currentPath+TSAPI.getDirSeparator()+fileName, targetDir+TSAPI.getDirSeparator()+fileName);
-	    		IOAPI.listDirectory(UIAPI.currentPath);  
+				console.log("Moving file: "+filePath+" to "+targetDir);
+	    		IOAPI.renameFile(filePath, targetDir+TSAPI.getDirSeparator()+fileName);
 	    	}	            	
         })        
         .click(function() {
@@ -119,15 +119,14 @@ DirectoriesUI.generateDirPath = function() {
 	                text: DirectoriesUI.directoryHistory[i]["children"][j].title, 
 	            })
 	            .droppable({
-	            	accept: ".fileButton",
+	            	accept: ".fileTitleButton,.fileButton",
 			    	hoverClass: "dirButtonActive",
 			    	drop: function( event, ui ) {
-			    		var fileName = ui.draggable.attr("title");
+			    		var filePath = ui.draggable.attr("filepath");
+			    		var fileName = TSAPI.extractFileName(filePath);
 			    		var targetDir = $(this).attr("key");
-						console.log("Moving file: "+fileName+" to "+targetDir);
-			    		IOAPI.renameFile(UIAPI.currentPath+TSAPI.getDirSeparator()+fileName, targetDir+TSAPI.getDirSeparator()+fileName);
-			    		IOAPI.listDirectory(UIAPI.currentPath);  
-			    		UIAPI.closeFileViewer();
+						console.log("Moving file: "+filePath+" to "+targetDir);
+			    		IOAPI.renameFile(filePath, targetDir+TSAPI.getDirSeparator()+fileName);
 			    	}	            	
 	            })
 	            .click( function() {

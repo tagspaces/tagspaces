@@ -207,9 +207,18 @@ exports.updateIndexData = function updateIndexData(index) {
     } );     
     
     fileTable.$('.fileTitleButton')
+    	.draggable({
+    		cancel:false,
+    		appendTo: "body",
+    		helper: "clone",
+    		revert: true,
+	        start: function() {
+                selectFile(this, $(this).attr("filepath"));
+	        }    		
+    	})  
         .click( function() {
             selectFile(this, $(this).attr("title"));
-        } )
+        } )        
         .dropdown( 'attach' , '#fileMenu' );   
     
     fileTable.$('.extTagButton')

@@ -255,6 +255,15 @@ exports.load = function load() {
         .dropdown( 'attach' , '#fileMenu' );
 
     fileTable.$('.fileTitleButton')
+    	.draggable({
+    		cancel:false,
+    		appendTo: "body",
+    		helper: "clone",
+    		revert: true,
+	        start: function() {
+                selectFile(this, $(this).attr("filepath"));
+	        }    		
+    	})  
         .click( function() {
             selectFile(this, $(this).attr("filepath"));
         } )
