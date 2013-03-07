@@ -90,11 +90,11 @@ exports.init = function init() {
                 "aTargets": [ 1 ]
             }, 
             { // Filesize column
-                "mRender": function ( data, type, row ) { return TSAPI.formatFileSize(data) },
+                "mRender": function ( data, type, row ) { return UIAPI.TagUtils.formatFileSize(data) },
                 "aTargets": [ 2 ]
             },
             { // Last changed date column
-                "mRender": function ( data, type, row ) { return TSAPI.formatDateTime(data, true) },
+                "mRender": function ( data, type, row ) { return UIAPI.TagUtils.formatDateTime(data, true) },
                 "aTargets": [ 3 ]
             },
 //            { "bVisible": false,  "aTargets": [ 5 ] },
@@ -175,9 +175,9 @@ var enhanceIndexData = function(index) {
                (!TSSETTINGS.Settings["showUnixHiddenEntries"] && (index[i].name.indexOf(".") != 0))) {
                  filename = index[i].name;
                  path = index[i].path;
-                 tags = TSAPI.extractTags(path);
-                 title = TSAPI.extractTitle(path);
-				 ext = TSAPI.extractFileExtension(path)
+                 tags = UIAPI.TagUtils.extractTags(path);
+                 title = UIAPI.TagUtils.extractTitle(path);
+				 ext = UIAPI.TagUtils.extractFileExtension(path)
                  fileSize = index[i].size;
                  fileLMDT = index[i].lmdt;
                  

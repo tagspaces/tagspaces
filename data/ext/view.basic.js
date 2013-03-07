@@ -146,7 +146,7 @@ exports.init = function init() {
                 "aTargets": [ 4 ]
             }, 
             { // Last changed date column
-                "mRender": function ( data, type, row ) { return TSAPI.formatDateTime(data, true) },
+                "mRender": function ( data, type, row ) { return UIAPI.TagUtils.formatDateTime(data, true) },
                 "aTargets": [ 2 ]
             },
             { "bVisible": false,  "aTargets": [ 5 ] },
@@ -175,7 +175,7 @@ exports.init = function init() {
         $(".ui-selected", this).each(function(){
             var rowData = fileTable.fnGetData( this );
             // Add the filename which is located in the first column to the list of selected filenames
-            UIAPI.selectedFiles.push(UIAPI.currentPath + TSAPI.getDirSeparator() + rowData[0]);
+            UIAPI.selectedFiles.push(UIAPI.currentPath + UIAPI.TagUtils.DIR_SEPARATOR + rowData[0]);
           });
         console.debug("Selected files: "+UIAPI.selectedFiles);
       }
@@ -222,12 +222,12 @@ exports.load = function load() {
 	    
 		    $(this).toggleClass("ui-selected");
 		    
-			var targetFilePath = UIAPI.currentPath + TSAPI.getDirSeparator() + targetFile;
+			var targetFilePath = UIAPI.currentPath + UIAPI.TagUtils.DIR_SEPARATOR + targetFile;
 
 		    exports.clearSelectedFiles();
 		    UIAPI.selectedFiles.push(targetFilePath); 
 
-			TSAPI.addTag(UIAPI.selectedFiles, tagName);
+			UIAPI.TagUtils.addTag(UIAPI.selectedFiles, tagName);
 			
     		IOAPI.listDirectory(UIAPI.currentPath);  
     	}	            	
@@ -236,7 +236,7 @@ exports.load = function load() {
         console.debug("Opening file...");
         var rowData = fileTable.fnGetData( this );
         
-        UIAPI.openFile(UIAPI.currentPath+TSAPI.getDirSeparator()+rowData[0]);
+        UIAPI.openFile(UIAPI.currentPath+UIAPI.TagUtils.DIR_SEPARATOR+rowData[0]);
     } );     
     
     fileTable.$('.fileButton')
@@ -277,6 +277,15 @@ exports.load = function load() {
         .dropdown( 'attach' , '#extensionMenu' );               
     
     fileTable.$('.tagButton')
+    	.draggable({
+    		cancel:false,
+    		appendTo: "body",
+    		helper: "clone",
+    		revert: true,
+	        start: function() {
+                selectFile(this, $(this).attr("filepath"));
+	        }    		
+    	})          
         .click( function() {
             selectFile(this, $(this).attr("filepath"));
             TagsUI.openTagMenu(this, $(this).attr("tag"), $(this).attr("filepath"));

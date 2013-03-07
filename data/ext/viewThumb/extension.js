@@ -77,8 +77,8 @@ exports.load = function load() {
         
     for (var i=0; i < UIAPI.fileList.length; i++) {
         var fileName = UIAPI.fileList[i][0];
-        var fileExt = TSAPI.extractFileExtension(fileName);
-        var filePath = UIAPI.currentPath+TSAPI.getDirSeparator()+fileName;
+        var fileExt = UIAPI.TagUtils.extractFileExtension(fileName);
+        var filePath = UIAPI.currentPath+UIAPI.TagUtils.DIR_SEPARATOR+fileName;
         if(supportedFileTypeThumnailing.indexOf(fileExt) >= 0) {
             $("#"+exports.ID+"SelectableFiles").append(
                  $('<li>', { title: fileName, filepath: filePath, class: 'ui-widget-content' }).append( 

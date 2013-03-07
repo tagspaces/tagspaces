@@ -36,20 +36,20 @@ var initApp = function(){
     
     var layoutContainer = undefined;   
 
-    // TODO refactor all libs for integration of backbone.js     
     require([
+			"js/tagutils",
             "js/view.manager",
             "js/settings.api",
             "js/fileviewer.ui",
             "js/core.ui",
             "js/tags.ui",
             "js/core.api",
-            "js/tagspace.api",
             "js/directories.ui",
         ], 
-        function(viewManager) {
+        function(tagutils, viewManager) {
+            UIAPI.TagUtils = tagutils;
 			UIAPI.ViewManager = viewManager;
-			
+            
             TagsUI.initContextMenus();
             TagsUI.initDialogs();
             
@@ -95,6 +95,7 @@ var initApp = function(){
             
             // Show start hint
             $( "#selectTagSpace" ).tooltip( "open" );
+            
     });         
 }
 

@@ -55,7 +55,7 @@ TagsUI.initContextMenus = function() {
                 break;                            
               case "removeTag":
                 $( this ).hide();
-                TSAPI.removeTag(UIAPI.selectedFiles[0],UIAPI.selectedTag);
+                UIAPI.TagUtils.removeTag(UIAPI.selectedFiles[0],UIAPI.selectedTag);
                 break;
             }
         }
@@ -67,7 +67,7 @@ TagsUI.initContextMenus = function() {
             console.debug("Tag menu action: "+ui.item.attr( "action" )+" for tag: "+UIAPI.selectedTag);
             switch (ui.item.attr( "action" )) {
               case "addTagToFile":
-                TSAPI.addTag(UIAPI.selectedFiles, UIAPI.selectedTag);  
+                UIAPI.TagUtils.addTag(UIAPI.selectedFiles, UIAPI.selectedTag);  
                 break;                            
               case "addTagAsFilter":
                 $("#filterBox").val(UIAPI.selectedTag);
@@ -197,7 +197,7 @@ TagsUI.initDialogs = function() {
                 bValid = bValid && checkLength( smartTag, "tagname", 2, 40 );
                 if ( bValid ) {
                     for (var i=0; i < UIAPI.selectedFiles.length; i++) {
-                       TSAPI.writeTagsToFile(UIAPI.selectedFiles[i], [smartTag.val()]);
+                       UIAPI.TagUtils.writeTagsToFile(UIAPI.selectedFiles[i], [smartTag.val()]);
                     };
                     $( this ).dialog( "close" );
                     IOAPI.listDirectory(UIAPI.currentPath);                    
@@ -223,7 +223,7 @@ TagsUI.initDialogs = function() {
         modal: true,
         buttons: {
             "Remove": function() {
-                TSAPI.removeTag(UIAPI.selectedTag);  
+                UIAPI.TagUtils.removeTag(UIAPI.selectedTag);  
                 $( this ).dialog( "close" );
                 IOAPI.listDirectory(UIAPI.currentPath);   
             },
@@ -421,7 +421,7 @@ TagsUI.generateTagButtons = function(commaSeparatedTags, fileExtension, fileName
     var tagString = ""+commaSeparatedTags;
     var wrapper = $('<span>');
     if(filePath == undefined) {
-    	filePath = UIAPI.currentPath+TSAPI.getDirSeparator()+fileName;
+    	filePath = UIAPI.currentPath+UIAPI.TagUtils.DIR_SEPARATOR+fileName;
     }
     if(fileExtension.length > 0) {
         wrapper.append($('<button>', {
@@ -455,7 +455,7 @@ TagsUI.buttonizeTitle = function(title, fileName, filePath) {
     	title = "n/a";
     }
     if(filePath == undefined) {
-    	filePath = UIAPI.currentPath+TSAPI.getDirSeparator()+fileName;
+    	filePath = UIAPI.currentPath+UIAPI.TagUtils.DIR_SEPARATOR+fileName;
     }    
     return $('<span>').append($('<button>', { 
             title: fileName, 
@@ -468,7 +468,7 @@ TagsUI.buttonizeTitle = function(title, fileName, filePath) {
 // Helper function user by basic and search views
 TagsUI.buttonizeFileName = function(fileName, filePath) {
     if(filePath == undefined) {
-    	filePath = UIAPI.currentPath+TSAPI.getDirSeparator()+fileName;
+    	filePath = UIAPI.currentPath+UIAPI.TagUtils.DIR_SEPARATOR+fileName;
     }	
     return $('<span>').append($('<button>', { 
         	title: fileName, 

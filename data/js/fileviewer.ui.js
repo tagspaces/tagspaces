@@ -18,7 +18,7 @@ FileViewer.openFile = function(filePath) {
     var openedFilePath = filePath;    
     $("#selectedFilePath").val(openedFilePath.replace("\\\\","\\")); 
     
-    var fileExt = TSAPI.extractFileExtension(filePath);
+    var fileExt = UIAPI.TagUtils.extractFileExtension(filePath);
 
     this.constructFileViewerUI(filePath);         
 
@@ -61,7 +61,7 @@ FileViewer.updateEditorContent = function(fileContent) {
 
 // Should return false if no editor found
 FileViewer.getFileEditor = function(filePath) {
-    var fileExt = TSAPI.extractFileExtension(filePath);
+    var fileExt = UIAPI.TagUtils.extractFileExtension(filePath);
 
     // Getting the editor for the file extension/type
     var editorExt = TSSETTINGS.getFileTypeEditor(fileExt);  
@@ -99,7 +99,7 @@ FileViewer.saveFile = function(filePath) {
 
 FileViewer.constructFileViewerUI = function(filePath) {
     // Adding tag buttons to the filetoolbox
-    var tags = TSAPI.extractTags(filePath);
+    var tags = UIAPI.TagUtils.extractTags(filePath);
 
     $( "#fileTitle" ).text();
     
@@ -122,7 +122,7 @@ FileViewer.constructFileViewerUI = function(filePath) {
     	drop: function( event, ui ) {
     		var tagName = ui.draggable.attr("tag");
 			console.log("Tagging file: "+tagName+" to "+filePath);
-			TSAPI.addTag([filePath], tagName);
+			UIAPI.TagUtils.addTag([filePath], tagName);
     	}	            	
     })
 
@@ -148,9 +148,9 @@ FileViewer.constructFileViewerUI = function(filePath) {
 }
 
 FileViewer.initTagSuggestionMenu = function(filePath) {
-    var tags = TSAPI.extractTags(filePath);
+    var tags = UIAPI.TagUtils.extractTags(filePath);
 
-    var suggTags = TSAPI.suggestTags(filePath);
+    var suggTags = UIAPI.TagUtils.suggestTags(filePath);
 
     var tsMenu = $( "#tagSuggestionsMenu" );
 
@@ -173,7 +173,7 @@ FileViewer.initTagSuggestionMenu = function(filePath) {
 		            var tagName = $(this).attr( "tagname" );    
 		            var filePath = $(this).attr( "filepath" );    		            
 		            console.debug("Tag suggestion clicked: "+tagName);
-		            TSAPI.writeTagsToFile(filePath, [tagName]);
+		            UIAPI.TagUtils.writeTagsToFile(filePath, [tagName]);
 		          	return false;
         		})                
                ));              

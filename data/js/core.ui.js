@@ -141,7 +141,7 @@ var initDialogs = function() {
                     bValid = false;
                 }
                 if ( bValid ) {
-                    IOAPI.saveTextFile(UIAPI.currentPath+TSAPI.getDirSeparator()+$( "#newFileName" ).val(),fileContent);
+                    IOAPI.saveTextFile(UIAPI.currentPath+UIAPI.TagUtils.DIR_SEPARATOR+$( "#newFileName" ).val(),fileContent);
                     $( this ).dialog( "close" );
                     IOAPI.listDirectory(UIAPI.currentPath);                    
                 }
@@ -172,10 +172,10 @@ var initDialogs = function() {
                 bValid = bValid && checkLength( renamedFileName, "filename", 3, 200 );
         //        bValid = bValid && checkRegexp( renamedFileName, /^[a-z]([0-9a-z_.])+$/i, "Filename may consist of a-z, 0-9, underscores, begin with a letter." );
                 if ( bValid ) {
-                    var containingDir = TSAPI.extractContainingDirectoryPath(UIAPI.selectedFiles[0]);
+                    var containingDir = UIAPI.TagUtils.extractContainingDirectoryPath(UIAPI.selectedFiles[0]);
                     IOAPI.renameFile(
                             UIAPI.selectedFiles[0],
-                            containingDir+TSAPI.getDirSeparator()+renamedFileName.val()
+                            containingDir+UIAPI.TagUtils.DIR_SEPARATOR+renamedFileName.val()
                         );
                     $( this ).dialog( "close" );
                 }
@@ -188,7 +188,7 @@ var initDialogs = function() {
             allFields.val( "" ).removeClass( "ui-state-error" );
         },
         open: function() {
-            $( "#renamedFileName" ).val(TSAPI.extractFileName(UIAPI.selectedFiles[0]));
+            $( "#renamedFileName" ).val(UIAPI.TagUtils.extractFileName(UIAPI.selectedFiles[0]));
         }                
     }); 
     
@@ -217,7 +217,7 @@ var initDialogs = function() {
         buttons: {
             "Add tags": function() {
                 var tags = $("#tags").val().split(",");
-                TSAPI.writeTagsToFile(UIAPI.selectedFiles[0], tags);
+                UIAPI.TagUtils.writeTagsToFile(UIAPI.selectedFiles[0], tags);
                 
                 // TODO ? search
                 IOAPI.listDirectory(UIAPI.currentPath);                                   
@@ -295,7 +295,7 @@ var initDialogs = function() {
         modal: true,
         buttons: {
             "Save": function() {
-                TSAPI.renameTag(UIAPI.selectedFiles[0], UIAPI.selectedTag, $( "#newTag" ).val());
+                UIAPI.TagUtils.renameTag(UIAPI.selectedFiles[0], UIAPI.selectedTag, $( "#newTag" ).val());
                 IOAPI.listDirectory(UIAPI.currentPath);                                   
                 $( this ).dialog( "close" );
             },

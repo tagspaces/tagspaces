@@ -37,6 +37,8 @@ UIAPI.selectedTagData = "";
 
 UIAPI.ViewManager = undefined;
 
+UIAPI.TagUtils = undefined;
+
 UIAPI.setCurrentPath = function(path) {
     console.debug("Setting current path to: "+path);
     UIAPI.currentPath = path;
@@ -82,6 +84,7 @@ UIAPI.updateFileBrowserData = function(dirList) {
     var title = undefined;
     var fileSize = undefined;
     var fileLMDT = undefined;
+    var path = undefined;
     // Sort the dir list alphabetically before displaying 
     // TODO sorting files not working correctly
     dirList.sort(function(a,b) { return a.name.localeCompare(b.name); });
@@ -90,9 +93,9 @@ UIAPI.updateFileBrowserData = function(dirList) {
             // Considering Unix HiddenEntries (. in the beginning)
             if (TSSETTINGS.Settings["showUnixHiddenEntries"] || 
                (!TSSETTINGS.Settings["showUnixHiddenEntries"] && (dirList[i].name.indexOf(".") != 0))) {
-                 path = UIAPI.currentPath + TSAPI.getDirSeparator() + dirList[i].name;
-                 tags = TSAPI.extractTags(path);
-                 title = TSAPI.extractTitle(path);
+                 path = UIAPI.currentPath + UIAPI.TagUtils.DIR_SEPARATOR + dirList[i].name;
+                 tags = UIAPI.TagUtils.extractTags(path);
+                 title = UIAPI.TagUtils.extractTitle(path);
                  if(dirList[i].name.lastIndexOf(".") > 0) {
                     // title = dirList[i].name.substring(0, dirList[i].name.lastIndexOf(".")); 
                      ext = dirList[i].name.substring(dirList[i].name.lastIndexOf(".")+1,dirList[i].name.length);                     
@@ -116,7 +119,7 @@ UIAPI.updateFileBrowserData = function(dirList) {
 UIAPI.changeDirectory = function(newDir) {
     console.debug("Change direcotory to: "+newDir);
     var newPath = UIAPI.currentPath;
-    if(TSAPI.isWindows()) { 
+    if(UIAPI.TagUtils.isWindows()) { 
         // Cutting trailig \\ or \\\\ .
         if(UIAPI.currentPath.lastIndexOf("\\")+1 == UIAPI.currentPath.length) {
             newPath = UIAPI.currentPath.substring(0,UIAPI.currentPath.length-1);
