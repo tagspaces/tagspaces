@@ -213,6 +213,9 @@ FileViewer.addEditButton = function(container, filePath) {
         },
         disabled: buttonDisabled
     })
+    .focus(function() {
+        this.blur();
+    })
     .click(function() {
 		if ( $( this ).text() === "Edit" ) {
 			options = {
