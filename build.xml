@@ -48,12 +48,15 @@ found in the LICENSE file.
 		      <include name="**/*"/>
 		    </fileset>        	
         </copy>
-        <!--copy todir="${buildFirefoxExt.dir}/data/ext" >
+        <copy todir="${buildFirefoxExt.dir}/data/ext" >
 		    <fileset dir="data/ext">
-		      <include name="viewerBrowser/*"/>
-			  <include name="viewerImage/*"/>	    	
+		      <include name="editorHTML/*"/>
+			  <include name="editorText/*"/>	    	
+		      <include name="viewerMD/*"/>		    	
+			  <include name="viewThumb/*"/>		    	
+			  <include name="*.js"/>		    	
 		    </fileset>        	
-        </copy-->
+        </copy>
     	<copy todir="${buildFirefoxExt.dir}/data/css" >
             <fileset dir="data/css" includes="**/*"/>  
         </copy>
