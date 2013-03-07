@@ -24,7 +24,7 @@ var viewToolbar = undefined;
 var viewFooter = undefined;
 
 var fileTable = undefined;
-var viewMode = "files" // tags
+var viewMode = "tags" // tags | files
 
 exports.init = function init() {
 	console.debug("Initializing View "+exports.ID);
@@ -49,22 +49,11 @@ exports.init = function init() {
     }));
     
     var modeSwitcher = $("#"+exports.ID+"ModeSwitcher");
-    
+
     modeSwitcher.append($("<input>", { 
         type: "radio",
         name: "modeSwitcher",
         checked: "checked",
-        id: exports.ID+"FilesMode",    
-    }));
-
-    modeSwitcher.append($("<label>", { 
-        for: exports.ID+"FilesMode",
-        text: "Files", 
-    }));
-    
-    modeSwitcher.append($("<input>", { 
-        type: "radio",
-        name: "modeSwitcher",
         id: exports.ID+"TagsMode",    
     }));
 
@@ -72,6 +61,17 @@ exports.init = function init() {
         for: exports.ID+"TagsMode",
         text: "Tags", 
     }));   
+    
+    modeSwitcher.append($("<input>", { 
+        type: "radio",
+        name: "modeSwitcher",
+        id: exports.ID+"FilesMode",    
+    }));
+
+    modeSwitcher.append($("<label>", { 
+        for: exports.ID+"FilesMode",
+        text: "Files", 
+    }));
     
     modeSwitcher.buttonset();	 
 
@@ -237,8 +237,6 @@ exports.load = function load() {
 			handleElementActivation();
 
 			UIAPI.TagUtils.addTag(UIAPI.selectedFiles, [tagName]);
-			
-    		IOAPI.listDirectory(UIAPI.currentPath);  
     	}	            	
     })
     .dblclick( function() {
