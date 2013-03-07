@@ -36,7 +36,8 @@ define([
 		if(filePath.lastIndexOf(".") < 0) { ext = ""; }
 		return ext; 
 	}
-	 
+	
+	// TODO consider [qweq wqeqe].txt 
 	function extractTitle(filePath) {
 	    console.debug("Extracting title from: "+filePath);
 	    var fileName = extractFileName(filePath);
@@ -177,6 +178,8 @@ define([
 	
 	function writeTagsToFile(filePath, tags) {
 	    console.debug("Add the tags to: "+filePath);
+	    
+	    var fileName = extractFileName(filePath);
 	        
 	    var containingDirectoryPath = extractContainingDirectoryPath(filePath);
 	    
@@ -197,6 +200,8 @@ define([
 	
 	function renameTag(filePath, oldTag, newTag) {
 	    console.debug("Rename tag for file: "+filePath);
+
+	    var fileName = extractFileName(filePath);
 	    
 	    var containingDirectoryPath = extractContainingDirectoryPath(filePath);
 	        
@@ -218,6 +223,8 @@ define([
 	// Removing a tag from a filename
 	function removeTag(filePath, tagName) {
 	    console.debug("Removing tag: "+tagName+" from "+filePath);   
+	
+	    var fileName = extractFileName(filePath);	
 	
 		var containingDirectoryPath = extractContainingDirectoryPath(filePath);
 	        

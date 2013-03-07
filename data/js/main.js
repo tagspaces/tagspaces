@@ -40,15 +40,16 @@ var initApp = function(){
 			"js/tagutils",
             "js/view.manager",
             "js/settings.api",
-            "js/fileviewer.ui",
+            "js/fileopener",
             "js/core.ui",
             "js/tags.ui",
             "js/core.api",
             "js/directories.ui",
         ], 
-        function(tagutils, viewManager) {
+        function(tagutils, viewManager, setting, fileOpener) {
             UIAPI.TagUtils = tagutils;
 			UIAPI.ViewManager = viewManager;
+			UIAPI.FileOpener = fileOpener;
             
             TagsUI.initContextMenus();
             TagsUI.initDialogs();

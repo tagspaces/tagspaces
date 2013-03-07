@@ -62,7 +62,7 @@ IOAPI.loadTextFile = function(filePath) {
     console.debug("Loading file: "+filePath);
     if(IOAPI.plugin.fileExists(filePath)) {
         var fileContent = IOAPI.plugin.getTextFile(filePath);
-        FileViewer.updateEditorContent(fileContent);   
+        UIAPI.FileOpener.updateEditorContent(fileContent);   
     } else {
         console.error("File does not exists...");
     }   
