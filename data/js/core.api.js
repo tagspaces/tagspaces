@@ -39,6 +39,8 @@ UIAPI.ViewManager = undefined;
 
 UIAPI.TagUtils = undefined;
 
+UIAPI.FileOpener = undefined;
+
 UIAPI.setCurrentPath = function(path) {
     console.debug("Setting current path to: "+path);
     UIAPI.currentPath = path;
@@ -155,7 +157,7 @@ UIAPI.reloadUI = function() {
 
 UIAPI.openFile = function(filePath) {
 //    console.debug("Opening file..."); 
-    FileViewer.openFile(filePath);	
+    UIAPI.FileOpener.openFile(filePath);	
 }
 
 UIAPI.openFileViewer = function() {
