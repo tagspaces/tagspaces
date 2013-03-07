@@ -198,6 +198,14 @@ define([
 	    IOAPI.renameFile(filePath, containingDirectoryPath+DIR_SEPARATOR+newFileName);
 	}
 	
+	function addTag(filePathArray, tagArray) {
+		console.debug("Adding tags to files");
+		
+		for (var i=0; i < filePathArray.length; i++) {
+		   writeTagsToFile(filePathArray[i], tagArray);
+		};	
+	}	
+	
 	function renameTag(filePath, oldTag, newTag) {
 	    console.debug("Rename tag for file: "+filePath);
 
@@ -240,14 +248,6 @@ define([
 	    var newFileName = generateFileName(fileName, newTags);
 	
 	    IOAPI.renameFile(filePath, containingDirectoryPath+DIR_SEPARATOR+newFileName);     
-	}
-	
-	function addTag(filePathArray, tagName) {
-		console.debug("Adding tag: "+tagName+" to the files, first file: "+filePathArray[0]);
-		
-		for (var i=0; i < filePathArray.length; i++) {
-		   writeTagsToFile(filePathArray[i], [tagName]);
-		};	
 	}
 	
     // Public API definition

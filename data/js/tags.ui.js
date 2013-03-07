@@ -67,7 +67,7 @@ TagsUI.initContextMenus = function() {
             console.debug("Tag menu action: "+ui.item.attr( "action" )+" for tag: "+UIAPI.selectedTag);
             switch (ui.item.attr( "action" )) {
               case "addTagToFile":
-                UIAPI.TagUtils.addTag(UIAPI.selectedFiles, UIAPI.selectedTag);  
+                UIAPI.TagUtils.addTag(UIAPI.selectedFiles, [UIAPI.selectedTag]);  
                 break;                            
               case "addTagAsFilter":
                 $("#filterBox").val(UIAPI.selectedTag);
@@ -345,11 +345,21 @@ TagsUI.generateTagGroups = function() {
         $("#tagGroups").append($("<h3>", { 
             class: "ui-accordion-header ui-helper-reset ui-state-default ui-corner-top ui-corner-bottom"    
         })
+	    /* .droppable({
+	    	accept: ".tagButton",
+	    	hoverClass: "activeRow",
+	    	drop: function( event, ui ) {
+	    		var tagName = ui.draggable.attr("tag");
+                TSSETTINGS.createTag(UIAPI.selectedTagData, tagName );
+                TSSETTINGS.deleteTag(UIAPI.selectedTagData);
+                TagsUI.generateTagGroups();    				
+	    	}	            	
+	    }) */
         .hover(function() { $(this).toggleClass("ui-state-hover"); })        
         .append($("<span>", { 
             class: "tagGroupTitle",
             text: TSSETTINGS.Settings["tagGroups"][i].title, 
-        })
+        })  
         .click(function() {
           $(this)
             .parent().toggleClass("ui-accordion-header-active ui-state-active ui-state-default ui-corner-bottom").end()

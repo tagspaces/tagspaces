@@ -217,10 +217,7 @@ var initDialogs = function() {
         buttons: {
             "Add tags": function() {
                 var tags = $("#tags").val().split(",");
-                UIAPI.TagUtils.writeTagsToFile(UIAPI.selectedFiles[0], tags);
-                
-                // TODO ? search
-                IOAPI.listDirectory(UIAPI.currentPath);                                   
+                UIAPI.TagUtils.addTag(UIAPI.selectedFiles, tags);
                 $( this ).dialog( "close" );
             },
             Cancel: function() {

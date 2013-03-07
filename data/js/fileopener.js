@@ -117,7 +117,7 @@ console.debug("Loading FileViewer...");
 	    	drop: function( event, ui ) {
 	    		var tagName = ui.draggable.attr("tag");
 				console.log("Tagging file: "+tagName+" to "+filePath);
-				UIAPI.TagUtils.addTag([filePath], tagName);
+				UIAPI.TagUtils.addTag([filePath], [tagName]);
 	    	}	            	
 	    })
 	
