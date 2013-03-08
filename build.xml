@@ -52,7 +52,8 @@ found in the LICENSE file.
 		    <fileset dir="data/ext">
 		      <include name="perspectiveBasic/*"/>		    	
 			  <include name="perspectiveSearch/*"/>		    			    	
-			  <include name="perspectiveThumb/*"/>	
+			  <include name="perspectiveThumb/*"/>
+			  <include name="perspectiveGraph/*"/>		    	
 		      <include name="editorHTML/*"/>
 			  <include name="editorText/*"/>	    	
 		      <include name="viewerMD/*"/>	    	

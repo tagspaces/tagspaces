@@ -14,7 +14,7 @@ console.debug("Loading: viewThumb/extension.js");
 exports.Title = "River View"
 exports.ID = "perspectiveRiver";  // ID should be equal to the directory name where the ext. is located   
 exports.Type =  "view";
-exports.Icon = "ui-icon-image";
+exports.Icon = "ui-icon-video";
 
 var viewContainer = undefined;
 var viewToolbar = undefined;
