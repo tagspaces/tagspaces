@@ -24,7 +24,7 @@ exports.initViews = function initViews() {
 	
 	var defaultViewLoaded = false;
 
-    require(["ext/view.basic.js"], function(viewer) {
+    require(["ext/perspectiveBasic/extension.js"], function(viewer) {
 		views.push(viewer);
 		initViewsUI(viewer);
 		viewer.init();
@@ -38,7 +38,7 @@ exports.initViews = function initViews() {
 		$( "#"+viewer.ID+"Toolbar" ).show(); 			   	
     });  
 
-    require(["ext/view.search.js"], function(viewer) { 
+    require(["ext/perspectiveSearch/extension.js"], function(viewer) { 
        views.push(viewer);
 	   initViewsUI(viewer);
        viewer.init();
@@ -48,8 +48,10 @@ exports.initViews = function initViews() {
 	var extensions = TSSETTINGS.getExtensions();
 	for (var i=0; i < extensions.length; i++) {
 		if(extensions[i].enabled && (extensions[i].type == "view") ) {
+			
+			// TODO Some extension sucha ace editor are not working using paths like this "file:///C:/blabal/extension.js"
 	        var extPath = TSSETTINGS.getExtensionPath()+"/"+extensions[i].id+"/"+"extension.js"; 
-			// TODO remove    extPath = "file:///Z:/TagSpaces/repository/data/ext/extension.js"
+
 	        require([extPath], function(viewer) {
 	            views.push(viewer);
 			    initViewsUI(viewer);

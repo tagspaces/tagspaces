@@ -10,7 +10,7 @@ define([
 "use strict";
 
 exports.Title = "Graph"
-exports.ID = "viewGraph";  // ID should be equal to the directory name where the ext. is located   
+exports.ID = "perspectiveGraph";  // ID should be equal to the directory name where the ext. is located   
 exports.Type =  "view";
 exports.Icon = "ui-icon-search";
 exports.Version = "1.0";

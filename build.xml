@@ -50,11 +50,12 @@ found in the LICENSE file.
         </copy>
         <copy todir="${buildFirefoxExt.dir}/data/ext" >
 		    <fileset dir="data/ext">
+		      <include name="perspectiveBasic/*"/>		    	
+			  <include name="perspectiveSearch/*"/>		    			    	
+			  <include name="perspectiveThumb/*"/>	
 		      <include name="editorHTML/*"/>
 			  <include name="editorText/*"/>	    	
-		      <include name="viewerMD/*"/>		    	
-			  <include name="viewThumb/*"/>		    	
-			  <include name="*.js"/>		    	
+		      <include name="viewerMD/*"/>	    	
 		    </fileset>        	
         </copy>
     	<copy todir="${buildFirefoxExt.dir}/data/css" >
@@ -105,11 +106,16 @@ found in the LICENSE file.
         <copy todir="${buildChrome.dir}/chrome" >
             <fileset dir="data/chrome" includes="**/*"/>  
         </copy>
-        <!--copy todir="${buildChrome.dir}/data/ext" >
+        <copy todir="${buildFirefoxExt.dir}/data/ext" >
 		    <fileset dir="data/ext">
-			  <include name="viewerImage/*"/>	    	
+		      <include name="perspectiveBasic/*"/>		    	
+			  <include name="perspectiveSearch/*"/>		    			    	
+			  <include name="perspectiveThumb/*"/>	
+		      <include name="editorHTML/*"/>
+			  <include name="editorText/*"/>	    	
+		      <include name="viewerMD/*"/>	    	
 		    </fileset>        	
-        </copy-->    	
+        </copy>	
         <copy todir="${buildChrome.dir}/libs" >
             <fileset dir="data/libs" includes="**/*"/>  
         </copy>

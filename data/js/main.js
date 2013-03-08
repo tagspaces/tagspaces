@@ -38,7 +38,7 @@ var initApp = function(){
 
     require([
 			"js/tagutils",
-            "js/view.manager",
+            "js/perspective.manager",
             "js/settings.api",
             "js/fileopener",
             "js/core.ui",

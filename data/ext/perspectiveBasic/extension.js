@@ -13,7 +13,7 @@ define([
 "use strict";
 
 exports.Title = "List"
-exports.ID = "viewBasic";  // ID should be equal to the directory name where the ext. is located   
+exports.ID = "perspectiveBasic";  // ID should be equal to the directory name where the ext. is located   
 exports.Type =  "view";
 exports.Icon = "ui-icon-note";
 

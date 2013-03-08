@@ -12,7 +12,7 @@ define([
 "use strict";
 
 exports.Title = "Search"
-exports.ID = "viewSearch";  // ID should be equal to the directory name where the ext. is located   
+exports.ID = "perspectiveSearch";  // ID should be equal to the directory name where the ext. is located   
 exports.Type =  "view";
 exports.Icon = "ui-icon-search";
 exports.Version = "1.0";

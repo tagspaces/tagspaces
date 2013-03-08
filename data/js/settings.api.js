@@ -64,12 +64,12 @@ TSSETTINGS.DefaultSettings = {
     "extensionsPath": "file:///C:/TagSpaces/extensions",
     "extensions": [
         {   
-            "id": "viewRiver", // ID should be equal to the directory name where the ext. is located 
+            "id": "perspectiveRiver", // ID should be equal to the directory name where the ext. is located 
             "enabled": false, 
             "type": "view", 
         },
         {   
-            "id": "viewThumb", // ID should be equal to the directory name where the ext. is located 
+            "id": "perspectiveThumb", // ID should be equal to the directory name where the ext. is located 
             "enabled": true, 
             "type": "view", 
         },

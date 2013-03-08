@@ -12,7 +12,7 @@ define([
 console.debug("Loading: viewThumb/extension.js");
 
 exports.Title = "Thumbs"
-exports.ID = "viewThumb";  // ID should be equal to the directory name where the ext. is located   
+exports.ID = "perspectiveThumb";  // ID should be equal to the directory name where the ext. is located   
 exports.Type =  "view";
 exports.Icon = "ui-icon-image";
 
