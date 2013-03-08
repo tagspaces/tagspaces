@@ -12,7 +12,7 @@ define([
 exports.Title = "Graph"
 exports.ID = "perspectiveGraph";  // ID should be equal to the directory name where the ext. is located   
 exports.Type =  "view";
-exports.Icon = "ui-icon-search";
+exports.Icon = "ui-icon-shuffle";
 exports.Version = "1.0";
 exports.ManifestVersion = 1;
 exports.License = "AGPL";
