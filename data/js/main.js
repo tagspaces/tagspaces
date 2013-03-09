@@ -37,19 +37,22 @@ var initApp = function(){
     var layoutContainer = undefined;   
 
     require([
+            "js/settings.api",
+			"js/core.api",
 			"js/tagutils",
             "js/perspective.manager",
-            "js/settings.api",
             "js/fileopener",
-            "js/core.ui",
             "js/tags.ui",
-            "js/core.api",
+            "js/core.ui",
             "js/directories.ui",
         ], 
-        function(tagutils, viewManager, setting, fileOpener) {
+        function(settings, core, tagutils, perspectiveManager, fileOpener) {
+        	//var UIAPI = core;
+        	
             UIAPI.TagUtils = tagutils;
-			UIAPI.ViewManager = viewManager;
+			UIAPI.ViewManager = perspectiveManager;
 			UIAPI.FileOpener = fileOpener;
+            UIAPI.IO = IOAPI;
             
             TagsUI.initContextMenus();
             TagsUI.initDialogs();

@@ -41,6 +41,8 @@ UIAPI.TagUtils = undefined;
 
 UIAPI.FileOpener = undefined;
 
+UIAPI.IO = undefined;
+
 UIAPI.setCurrentPath = function(path) {
     console.debug("Setting current path to: "+path);
     UIAPI.currentPath = path;

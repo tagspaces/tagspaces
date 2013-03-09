@@ -2,7 +2,7 @@
  * Use of this source code is governed by a AGPL3 license that 
  * can be found in the LICENSE file. */
 define(function(require, exports, module) {
-//"use strict";
+"use strict";
     
 console.debug("Loading FileViewer...");
 
@@ -76,7 +76,7 @@ console.debug("Loading FileViewer...");
 	        return;
 	    } else {
 	        try {
-	            require([TSSETTINGS.getExtensionPath()+"/"+editorExt+"/"+"extension.js"], function(editr) {
+	            require([TSSETTINGS.getExtensionPath()+"/"+editorExt+"/extension.js"], function(editr) {
 	                tsEditor = editr;
 	                tsEditor.init(filePath, "viewer");
 	            });
@@ -90,7 +90,7 @@ console.debug("Loading FileViewer...");
 	function saveFile(filePath) {
 	    console.debug("Save current file: "+filePath);
 	    var content = tsEditor.getContent();
-	    IOAPI.saveTextFile(filePath, content);    	
+	    IOAPI.saveTextFile(filePath, content);   	    	
 	}
 	
 	function constructFileViewerUI(filePath) {

@@ -8,8 +8,10 @@ define([
     'module'
 ], function (require, exports, module) {
     "use strict";
-    //    var UIAPI = require("js/core.ui.js"),
-
+    
+    //    var tsCore = require("js/core.api.js"),
+	var tsCore = UIAPI;	
+	
     console.debug("Loading tagutils.js ...");
 
     var BEGIN_TAG_CONTAINER = "[",
@@ -193,7 +195,7 @@ define([
         
         var newFileName = generateFileName(fileName, extractedTags);
        
-        IOAPI.renameFile(filePath, containingDirectoryPath+DIR_SEPARATOR+newFileName);
+        tsCore.IO.renameFile(filePath, containingDirectoryPath+DIR_SEPARATOR+newFileName);
     }
 
     function addTag(filePathArray, tagArray) {
@@ -222,7 +224,7 @@ define([
         
         var newFileName = generateFileName(fileName, extractedTags);
        
-        IOAPI.renameFile(filePath, containingDirectoryPath+DIR_SEPARATOR+newFileName);
+        tsCore.IO.renameFile(filePath, containingDirectoryPath+DIR_SEPARATOR+newFileName);
         
     }
 
@@ -245,7 +247,7 @@ define([
         
         var newFileName = generateFileName(fileName, newTags);
 
-        IOAPI.renameFile(filePath, containingDirectoryPath+DIR_SEPARATOR+newFileName);     
+        tsCore.IO.renameFile(filePath, containingDirectoryPath+DIR_SEPARATOR+newFileName);     
     }
 
     // Public API definition
