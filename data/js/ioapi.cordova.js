@@ -124,7 +124,7 @@ IOAPI.getSubdirs = function(dirPath) {
                 }            
             } 
             // TODO JSON functions are a workarround for a bug....               
-            DirectoriesUI.updateSubDirs(JSON.parse( JSON.stringify(anotatedDirList)));
+            UIAPI.updateSubDirs(JSON.parse( JSON.stringify(anotatedDirList)));
         } catch(ex) {
             console.error("Directory listing failed "+ex);
         }       

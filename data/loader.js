@@ -149,8 +149,6 @@ require([
 function() { 
     console.debug("Loading Application...");
 
-    var layoutContainer = undefined;   
-
 	UIAPI = undefined;
 	TSSETTINGS = undefined;
 

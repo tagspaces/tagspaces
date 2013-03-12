@@ -6,7 +6,7 @@ define([
     'exports',
     'module',
 ],function(require, exports, module) {
-//"use strict";
+"use strict";
 
 console.debug("Loading core.api.js ...");
 
@@ -14,7 +14,11 @@ var UIAPI = (typeof UIAPI == 'object' && UIAPI != null) ? UIAPI : {};
 
 var TSSETTINGS = require("tssetting");
 
+var layoutContainer = undefined;  
+
 UIAPI.updateSubDirs = undefined;
+UIAPI.initFavorites = undefined;
+UIAPI.generateTagGroups = undefined;
 
 UIAPI.initApp = function() {
     console.debug("InitApplication");
@@ -49,8 +53,10 @@ UIAPI.initApp = function() {
 	    tsDirectoriesUI.initButtons();
 	    tsDirectoriesUI.initContextMenus();   
 		
-		// Proxying directoriesUI
+		// Proxying directoriesUI and tagsUI
 		UIAPI.updateSubDirs = tsDirectoriesUI.updateSubDirs;
+		UIAPI.initFavorites = tsDirectoriesUI.initFavorites;
+		UIAPI.generateTagGroups = tsTagsUI.generateTagGroups;
 
 	    TSSETTINGS.loadSettingsLocalStorage();
 	    

@@ -8,7 +8,7 @@ define([
 ],function(require, exports, module) {
 "use strict";
 
-console.debug("Loading SettingsAPI.js..");
+console.debug("Loading settings.api.js..");
 
 var TSSETTINGS = (typeof TSSETTINGS == "object" && TSSETTINGS != null) ? TSSETTINGS : {};
 

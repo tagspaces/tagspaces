@@ -7,7 +7,7 @@ define([
     'module',
     'tscore'
 ],function(require, exports, module) {
-//"use strict";
+"use strict";
 
 console.debug("Loading view.manager.js");
 

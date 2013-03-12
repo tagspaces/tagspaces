@@ -17,8 +17,8 @@ document.documentElement.addEventListener("addon-message1", function(event) {
                 console.debug("Loading settings...: "+JSON.stringify(message.content));
                 TSSETTINGS.updateSettingMozillaPreferences(message.content);
 
-                DirectoriesUI.initFavorites();
-                TagsUI.generateTagGroups();
+                UIAPI.initFavorites();
+                UIAPI.generateTagGroups();
                   
             } catch (ex) {
                 console.debug("Exception while getting setting from firefox failed "+ex)
@@ -62,7 +62,7 @@ document.documentElement.addEventListener("addon-message1", function(event) {
       case "createDirectory":
         if(message.success){
             UIAPI.updateLogger("Create dir success");            
-            DirectoriesUI.openFavorite(TSSETTINGS.Settings["tagspacesList"][0].path, TSSETTINGS.Settings["tagspacesList"][0].name);
+            UIAPI.openFavorite(TSSETTINGS.Settings["tagspacesList"][0].path, TSSETTINGS.Settings["tagspacesList"][0].name);
         } else {
             UIAPI.updateLogger("Create dir failed");        
         }
