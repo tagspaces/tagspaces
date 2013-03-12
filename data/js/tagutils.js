@@ -1,16 +1,15 @@
 /* Copyright (c) 2012 The Tagspaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that 
  * can be found in the LICENSE file. */
-
 define([
     'require',
     'exports',
     'module'
 ], function (require, exports, module) {
     "use strict";
-    
-    //    var tsCore = require("js/core.api.js"),
-	var tsCore = UIAPI;	
+	
+	// TODO Workarround
+    var ioAPI = IOAPI;
 	
     console.debug("Loading tagutils.js ...");
 
@@ -195,7 +194,7 @@ define([
         
         var newFileName = generateFileName(fileName, extractedTags);
        
-        tsCore.IO.renameFile(filePath, containingDirectoryPath+DIR_SEPARATOR+newFileName);
+        ioAPI.renameFile(filePath, containingDirectoryPath+DIR_SEPARATOR+newFileName);
     }
 
     function addTag(filePathArray, tagArray) {
@@ -224,7 +223,7 @@ define([
         
         var newFileName = generateFileName(fileName, extractedTags);
        
-        tsCore.IO.renameFile(filePath, containingDirectoryPath+DIR_SEPARATOR+newFileName);
+        ioAPI.renameFile(filePath, containingDirectoryPath+DIR_SEPARATOR+newFileName);
         
     }
 
@@ -247,23 +246,23 @@ define([
         
         var newFileName = generateFileName(fileName, newTags);
 
-        tsCore.IO.renameFile(filePath, containingDirectoryPath+DIR_SEPARATOR+newFileName);     
+        ioAPI.renameFile(filePath, containingDirectoryPath+DIR_SEPARATOR+newFileName);     
     }
 
     // Public API definition
     exports.DIR_SEPARATOR                       = DIR_SEPARATOR;
-    exports.isWindows                            = isWindows;
+    exports.isWindows                           = isWindows;
     exports.extractFileName                     = extractFileName;
     exports.extractContainingDirectoryPath      = extractContainingDirectoryPath;
     exports.extractFileExtension                = extractFileExtension;
     exports.extractTitle                        = extractTitle;
     exports.formatFileSize                      = formatFileSize;
     exports.formatDateTime                      = formatDateTime;
-    exports.extractTags                            = extractTags;
-    exports.suggestTags                            = suggestTags;
-    exports.writeTagsToFile                        = writeTagsToFile;
-    exports.renameTag                            = renameTag;
-    exports.removeTag                            = removeTag;
-    exports.addTag                                = addTag;
+    exports.extractTags                         = extractTags;
+    exports.suggestTags                         = suggestTags;
+    exports.writeTagsToFile                     = writeTagsToFile;
+    exports.renameTag                           = renameTag;
+    exports.removeTag                           = removeTag;
+    exports.addTag                              = addTag;
 
 });

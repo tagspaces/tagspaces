@@ -1,6 +1,13 @@
 /* Copyright (c) 2012 The Tagspaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that 
  * can be found in the LICENSE file. */
+define([
+    'require',
+    'exports',
+    'module',
+],function(require, exports, module) {
+//"use strict";
+
 console.debug("Loading DirectoriesUI...");
 
 var DirectoriesUI = (typeof DirectoriesUI == 'object' && DirectoriesUI != null) ? DirectoriesUI : {};
@@ -217,7 +224,6 @@ DirectoriesUI.navigateToDirectory = function(directoryPath) {
             "collapsed" : false,
         });	        	
     }    
-
 
     UIAPI.currentPath = directoryPath;
     IOAPI.getSubdirs(directoryPath);
@@ -452,3 +458,7 @@ DirectoriesUI.initFavorites = function() {
     });  
     $( "#favoritesList" ).hide(); 
 }
+
+return DirectoriesUI;
+
+});

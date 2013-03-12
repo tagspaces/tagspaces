@@ -19,6 +19,8 @@ exports.Icon = "ui-icon-note";
 
 console.debug("Loading view.basic.js");
 
+var TagsUI = require("tstagsui");
+
 var viewContainer = undefined;
 var viewToolbar = undefined;
 var viewFooter = undefined;

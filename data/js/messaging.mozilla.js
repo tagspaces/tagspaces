@@ -7,7 +7,7 @@ define(function(require, exports, module) {
 
 console.debug("Loading messaging.mozilla.js..");
 document.documentElement.addEventListener("addon-message1", function(event) {
-    console.debug("Message received in page script from content script"); //+JSON.stringify(event.detail));
+    console.debug("Message received in page script from content script: "); //+JSON.stringify(event.detail));
     UIAPI.hideLoadingAnimation();
     var message = event.detail;
     switch (message.command) {
@@ -46,10 +46,8 @@ document.documentElement.addEventListener("addon-message1", function(event) {
             UIAPI.selectedFiles[0] = message.content;
             if(UIAPI.isFileOpened) {
                UIAPI.openFile(UIAPI.selectedFiles[0]); 	
-            }      
-            
+            }
             UIAPI.refreshFileListContainer();
-                  
         } else {
             UIAPI.updateLogger("Rename failed");        
         }
@@ -106,7 +104,7 @@ document.documentElement.addEventListener("addon-message1", function(event) {
                 dirListing.push(message.content[i]);
             }
             // TODO JSON functions are a workarround for a bug....
-            DirectoriesUI.updateSubDirs(JSON.parse( JSON.stringify(dirListing)));
+            UIAPI.updateSubDirs(JSON.parse( JSON.stringify(dirListing)));
         } else {
             UIAPI.updateLogger("Getting subdirs failed");       
         }

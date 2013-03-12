@@ -21,6 +21,8 @@ exports.License = "AGPL";
 
 console.debug("Loading view.search.js");
 
+var TagsUI = require("tstagsui");
+
 var viewContainer = undefined;
 var viewToolbar = undefined;
 var viewFooter = undefined;

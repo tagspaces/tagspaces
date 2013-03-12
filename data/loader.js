@@ -40,6 +40,16 @@ require.config({
         jquerydropdown: 'libs/jquerydropdown/jquery.dropdown',
         jquerydropdowncss: 'libs/jquerydropdown/jquery.dropdown',
         less: 'libs/less/less-1.3.3.min',
+
+        tscore: 'js/core.api',
+        tssetting: 'js/settings.api',
+        tspersmanager: "js/perspective.manager",
+        tstagutils: "js/tagutils",
+        tsfileopener: "js/fileopener",
+        tstagsui: "js/tags.ui",
+        tsdirectoriesui: "js/directories.ui",
+        tscoreui: "js/core.ui",
+        
     }, 
     shim: {
         'jquerylayout': {
@@ -105,6 +115,13 @@ require.config({
                 'jquery'
             ]
         },
+
+        'tscore': {
+            deps: [
+                'tssetting',
+            ]
+        }, 
+
 /*        less: {
             deps: [
                 'css!jquerylayoutcss',
@@ -118,8 +135,44 @@ require.config({
 });
 
 // Init Application
-require(['js/main'], 
-    function(Main) { 
-        Main.initializeApp();
+require([
+    'jquery', 
+    'jqueryui', 
+    'datatables', 
+    'jsoneditor', 
+    'jquerylayout', 
+    'jquerydropdown', 
+    'jqueryuitooltips', 
+    'jqueryuidroppable', 
+    'less', 
+], 
+function() { 
+    console.debug("Loading Application...");
+
+    var layoutContainer = undefined;   
+
+	UIAPI = undefined;
+	TSSETTINGS = undefined;
+
+    // Setting up the IO functionality according to the plattform
+    if( $.browser.mozilla ) {
+        require([
+           "js/messaging.mozilla",
+           "js/ioapi.mozilla"           
+           ]); 
+    } else if ( $.browser.chrome ) {
+        require([
+           "js/ioapi.chrome"           
+           ]);         
+    } else { // TODO a more sophisticated check is required for cordova
+        require([
+           "js/ioapi.cordova"           
+           ]);         
     }
-);    
+
+    require(["tscore","tssetting"], function(tsCore, tsSettings) {
+		UIAPI = tsCore;
+		TSSETTINGS = tsSettings;
+		tsCore.initApp();
+    });
+});    

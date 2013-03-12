@@ -5,14 +5,17 @@ define([
     'require',
     'exports',
     'module',
+    'tscore'
 ],function(require, exports, module) {
-"use strict";
+//"use strict";
 
 console.debug("Loading view.manager.js");
 
 var views = undefined;
-
 var searchViewer = undefined;
+
+var TSSETTINGS = require("tssetting");
+var UIAPI = require("tscore");
 
 exports.initViews = function initViews() {
 	views = [];

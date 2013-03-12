@@ -1,10 +1,16 @@
 /* Copyright (c) 2012 The Tagspaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that 
  * can be found in the LICENSE file. */
+define([
+    'require',
+    'exports',
+    'module',
+],function(require, exports, module) {
+"use strict";
+
 console.debug("Loading SettingsAPI.js..");
 
 var TSSETTINGS = (typeof TSSETTINGS == "object" && TSSETTINGS != null) ? TSSETTINGS : {};
-
 
 TSSETTINGS.TagTemplate = {
 	"title" : undefined,
@@ -24,7 +30,6 @@ TSSETTINGS.TagTemplate = {
 	 ]
 	 */
 }
-
 
 TSSETTINGS.FavoriteTemplate = {
                             "name": undefined,
@@ -387,3 +392,6 @@ TSSETTINGS.saveSettings = function() {
 	
 	console.debug('Tagspace Settings Saved!');
 }
+
+return TSSETTINGS;
+});
