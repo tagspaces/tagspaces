@@ -1,17 +1,12 @@
 /* Copyright (c) 2012 The Tagspaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that 
  * can be found in the LICENSE file. */
-define([
-    'require',
-    'exports',
-    'module'
-], function (require, exports, module) {
-    "use strict";
-	
-	// TODO Workarround
-    var ioAPI = IOAPI;
-	
+define(function(require, exports, module) {
+"use strict";
+
     console.debug("Loading tagutils.js ...");
+    	
+    var IOAPI = require("tsioapi");
 
     var BEGIN_TAG_CONTAINER = "[",
         END_TAG_CONTAINER = "]",
@@ -194,7 +189,7 @@ define([
         
         var newFileName = generateFileName(fileName, extractedTags);
        
-        ioAPI.renameFile(filePath, containingDirectoryPath+DIR_SEPARATOR+newFileName);
+        IOAPI.renameFile(filePath, containingDirectoryPath+DIR_SEPARATOR+newFileName);
     }
 
     function addTag(filePathArray, tagArray) {
@@ -223,7 +218,7 @@ define([
         
         var newFileName = generateFileName(fileName, extractedTags);
        
-        ioAPI.renameFile(filePath, containingDirectoryPath+DIR_SEPARATOR+newFileName);
+        IOAPI.renameFile(filePath, containingDirectoryPath+DIR_SEPARATOR+newFileName);
         
     }
 
@@ -246,7 +241,7 @@ define([
         
         var newFileName = generateFileName(fileName, newTags);
 
-        ioAPI.renameFile(filePath, containingDirectoryPath+DIR_SEPARATOR+newFileName);     
+        IOAPI.renameFile(filePath, containingDirectoryPath+DIR_SEPARATOR+newFileName);     
     }
 
     // Public API definition

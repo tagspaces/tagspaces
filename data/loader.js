@@ -1,7 +1,32 @@
 /* Copyright (c) 2012 The Tagspaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that 
  * can be found in the LICENSE file. */
-console.debug("Loading Loader...");
+
+//var LOG = debug ? console.log : function () {};
+var PRODUCTION = "@PRODUCTION@";// "true" | "@PRODUCTION@" 
+
+// Disabling all output to console in production mode
+if (PRODUCTION == "true") {
+    console = console || {};
+    console.log = function(){};
+    console.error = function(){};    
+    console.debug = function(){};    
+}
+
+// Temporal hacks
+var isFirefox = 'MozBoxSizing' in document.documentElement.style; 
+var isSafari = Object.prototype.toString.call(window.HTMLElement).indexOf('Constructor') > 0;
+var isChrome = !isSafari && 'WebkitTransform' in document.documentElement.style;
+
+console.debug("Loading Loader 4 Firefox: "+isFirefox+" | Chrome: "+isChrome);
+
+// Setting up the IO functionality according to the plattform
+var IO_JS = undefined;
+if( isFirefox ) {
+	IO_JS = "js/ioapi.mozilla";
+} else if ( isChrome ) {
+    IO_JS = "js/ioapi.chrome";           
+}
 
 require.config({
     map: {
@@ -31,6 +56,7 @@ require.config({
         jqueryuitabs: 'libs/jqueryui/jquery.ui.tabs',
         jqueryuitooltips: 'libs/jqueryui/jquery.ui.tooltip',       
         jqueryuicss: 'libs/jqueryui/custom-theme/jquery-ui-1.9.2.custom',
+
         datatables: 'libs/datatables/js/jquery.dataTables.min',
         datatablescss: 'libs/datatables/css/jquery.dataTables',
         jsoneditor: 'libs/jsoneditor/jsoneditor',
@@ -49,7 +75,8 @@ require.config({
         tstagsui: "js/tags.ui",
         tsdirectoriesui: "js/directories.ui",
         tscoreui: "js/core.ui",
-        
+        tsioapi: IO_JS,        
+        tsiomozrec: "js/ioapi.mozilla.receiver",        
     }, 
     shim: {
         'jquerylayout': {
@@ -115,62 +142,33 @@ require.config({
                 'jquery'
             ]
         },
-
-        'tscore': {
-            deps: [
-                'tssetting',
-            ]
-        }, 
-
-/*        less: {
-            deps: [
-                'css!jquerylayoutcss',
-                'css!jqueryuicss',
-                'css!dynatreecss',
-                'css!datatablescss',
-                'css!jsoneditorcss'
-                ]
-        },*/
-    }  
+    } 
 });
 
-// Init Application
-require([
-    'jquery', 
-    'jqueryui', 
-    'datatables', 
-    'jsoneditor', 
-    'jquerylayout', 
-    'jquerydropdown', 
-    'jqueryuitooltips', 
-    'jqueryuidroppable', 
-    'less', 
-], 
-function() { 
+define(function (require, exports, module) {
+"use strict";
+
     console.debug("Loading Application...");
+        
+    // Load dependent non-module scripts
+    require("jquery");
+    require("jqueryui");
+    require("datatables");
+    require("jsoneditor");
+    require("jquerylayout");
+    require("jquerydropdown");
+    require("jqueryuitooltips");
+    require("jqueryuidroppable");
+    require("less");
+	if( isFirefox ) {
+		require("tsiomozrec");    
+	}
+                                
+    var TSCORE = require("tscore");
 
-	UIAPI = undefined;
-	TSSETTINGS = undefined;
-
-    // Setting up the IO functionality according to the plattform
-    if( $.browser.mozilla ) {
-        require([
-           "js/messaging.mozilla",
-           "js/ioapi.mozilla"           
-           ]); 
-    } else if ( $.browser.chrome ) {
-        require([
-           "js/ioapi.chrome"           
-           ]);         
-    } else { // TODO a more sophisticated check is required for cordova
-        require([
-           "js/ioapi.cordova"           
-           ]);         
-    }
-
-    require(["tscore","tssetting"], function(tsCore, tsSettings) {
-		UIAPI = tsCore;
-		TSSETTINGS = tsSettings;
-		tsCore.initApp();
-    });
+    function onReady() {
+		TSCORE.initApp();
+	}
+	
+	$(window.document).ready(onReady);
 });    

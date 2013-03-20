@@ -1,30 +1,28 @@
 /* Copyright (c) 2012 The Tagspaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that 
  * can be found in the LICENSE file. */
-define([
-    'require',
-    'exports',
-    'module',
-],function(require, exports, module) {
+define(function(require, exports, module) {
 "use strict";
 
-console.debug("Loading TagsUI...");
+	console.debug("Loading tags.ui.js...");
+	
+	var TSCORE = require("tscore");
 
 	function initContextMenus() {
 	    $( "#tagSuggestionsMenu" ).menu({
 	        select: function( event, ui ) {
-	            console.debug("Tag suggestion "+ui.item.attr( "action" )+" for tag: "+UIAPI.selectedTag);            
+	            console.debug("Tag suggestion "+ui.item.attr( "action" )+" for tag: "+TSCORE.selectedTag);            
 	        }        
 	    });        
 	    
 	    $( "#extensionMenu" ).menu({
 	        select: function( event, ui ) {
-	            console.debug("Tag menu action: "+ui.item.attr( "action" )+" for tag: "+UIAPI.selectedTag);
+	            console.debug("Tag menu action: "+ui.item.attr( "action" )+" for tag: "+TSCORE.selectedTag);
 	            switch (ui.item.attr( "action" )) {
 	              case "addTagAsFilter":
 	                $( this ).hide();
-	                $("#filterBox").val(UIAPI.selectedTag);
-	                UIAPI.ViewManager.setFileFilter(UIAPI.selectedTag);
+	                $("#filterBox").val(TSCORE.selectedTag);
+	                TSCORE.ViewManager.setFileFilter(TSCORE.selectedTag);
 	                break;                            
 	            }
 	        }
@@ -33,12 +31,12 @@ console.debug("Loading TagsUI...");
 	    // Context menu for the tags in the file table and the file viewer
 	    $( "#tagMenu" ).menu({
 	        select: function( event, ui ) {
-	            console.debug("Tag menu action: "+ui.item.attr( "action" )+" for tag: "+UIAPI.selectedTag);
+	            console.debug("Tag menu action: "+ui.item.attr( "action" )+" for tag: "+TSCORE.selectedTag);
 	            switch (ui.item.attr( "action" )) {
 	              case "addTagAsFilter":
 	                $( this ).hide();
-	                $("#filterBox").val(UIAPI.selectedTag);
-	                UIAPI.ViewManager.setFileFilter(UIAPI.selectedTag);
+	                $("#filterBox").val(TSCORE.selectedTag);
+	                TSCORE.ViewManager.setFileFilter(TSCORE.selectedTag);
 	                break;                            
 	              case "addTagInTagGroup":
 	                $( this ).hide();
@@ -46,12 +44,12 @@ console.debug("Loading TagsUI...");
 	                break;                            
 	              case "editTag":
 	                $( this ).hide();
-	                $( "#newTag" ).val(UIAPI.selectedTag);
+	                $( "#newTag" ).val(TSCORE.selectedTag);
 	                $( "#dialogEditTag" ).dialog( "open" );
 	                break;                            
 	              case "removeTag":
 	                $( this ).hide();
-	                UIAPI.TagUtils.removeTag(UIAPI.selectedFiles[0],UIAPI.selectedTag);
+	                TSCORE.TagUtils.removeTag(TSCORE.selectedFiles[0],TSCORE.selectedTag);
 	                break;
 	            }
 	        }
@@ -60,17 +58,17 @@ console.debug("Loading TagsUI...");
 	    // Context menu for the tags in the tag tree
 	    $( "#tagTreeMenu" ).menu({
 	        select: function( event, ui ) {
-	            console.debug("Tag menu action: "+ui.item.attr( "action" )+" for tag: "+UIAPI.selectedTag);
+	            console.debug("Tag menu action: "+ui.item.attr( "action" )+" for tag: "+TSCORE.selectedTag);
 	            switch (ui.item.attr( "action" )) {
 	              case "addTagToFile":
-	                UIAPI.TagUtils.addTag(UIAPI.selectedFiles, [UIAPI.selectedTag]);  
+	                TSCORE.TagUtils.addTag(TSCORE.selectedFiles, [TSCORE.selectedTag]);  
 	                break;                            
 	              case "addTagAsFilter":
-	                $("#filterBox").val(UIAPI.selectedTag);
-	                UIAPI.ViewManager.setFileFilter(UIAPI.selectedTag);
+	                $("#filterBox").val(TSCORE.selectedTag);
+	                TSCORE.ViewManager.setFileFilter(TSCORE.selectedTag);
 	                break;                            
 	              case "editTag":
-	                $( "#tagName" ).val(UIAPI.selectedTag);
+	                $( "#tagName" ).val(TSCORE.selectedTag);
 	                $( "#dialog-tagedit" ).dialog( "open" );
 	                break;                            
 	              case "deleteTag":
@@ -83,7 +81,7 @@ console.debug("Loading TagsUI...");
 	    // Context menu for the tags groups
 	    $( "#tagGroupMenu" ).menu({
 	        select: function( event, ui ) {
-	            console.debug("TagGroup  menu action: "+ui.item.attr( "action" )+" for tag: "+UIAPI.selectedTag);
+	            console.debug("TagGroup  menu action: "+ui.item.attr( "action" )+" for tag: "+TSCORE.selectedTag);
 	            switch (ui.item.attr( "action" )) {
 	              case "createNewTag":
 	                $( "#newTagName" ).val("");
@@ -96,7 +94,7 @@ console.debug("Loading TagsUI...");
 	                $( "#dialog-taggroupDupicate" ).dialog( "open" );
 	                break;
 	              case "editTagGroup":
-	                $( "#tagGroupName" ).val(UIAPI.selectedTagData.title);              
+	                $( "#tagGroupName" ).val(TSCORE.selectedTagData.title);              
 	                $( "#dialog-taggroupEdit" ).dialog( "open" );
 	                break;
 	            }
@@ -114,11 +112,11 @@ console.debug("Loading TagsUI...");
 	                break;  
 	              case "openFile":
 	                console.debug("Opening file...");
-	        		UIAPI.openFile(UIAPI.selectedFiles[0]);                
+	        		TSCORE.openFile(TSCORE.selectedFiles[0]);                
 	                break;
 	              case "openDirectory":
 	                console.debug("Opening parent directory...");   
-	                IOAPI.openDirectory(UIAPI.currentPath);
+	                IOAPI.openDirectory(TSCORE.currentPath);
 	                break;
 	              case "renameFile":        
 	                console.debug("Renaming file...");
@@ -191,11 +189,11 @@ console.debug("Loading TagsUI...");
 	
 	                bValid = bValid && checkLength( smartTag, "tagname", 2, 40 );
 	                if ( bValid ) {
-	                    for (var i=0; i < UIAPI.selectedFiles.length; i++) {
-	                       UIAPI.TagUtils.writeTagsToFile(UIAPI.selectedFiles[i], [smartTag.val()]);
+	                    for (var i=0; i < TSCORE.selectedFiles.length; i++) {
+	                       TSCORE.TagUtils.writeTagsToFile(TSCORE.selectedFiles[i], [smartTag.val()]);
 	                    };
 	                    $( this ).dialog( "close" );
-	                    IOAPI.listDirectory(UIAPI.currentPath);                    
+	                    IOAPI.listDirectory(TSCORE.currentPath);                    
 	                }
 	            },
 	            Cancel: function() {
@@ -206,7 +204,7 @@ console.debug("Loading TagsUI...");
 	            allFields.val( "" ).removeClass( "ui-state-error" );
 	        },
 	        open: function() {
-	            $( "#renamedFileName" ).val(UIAPI.selectedFiles[0]);
+	            $( "#renamedFileName" ).val(TSCORE.selectedFiles[0]);
 	        }                
 	    });     
 	    
@@ -218,9 +216,9 @@ console.debug("Loading TagsUI...");
 	        modal: true,
 	        buttons: {
 	            "Remove": function() {
-	                UIAPI.TagUtils.removeTag(UIAPI.selectedTag);  
+	                TSCORE.TagUtils.removeTag(TSCORE.selectedTag);  
 	                $( this ).dialog( "close" );
-	                IOAPI.listDirectory(UIAPI.currentPath);   
+	                IOAPI.listDirectory(TSCORE.currentPath);   
 	            },
 	            Cancel: function() {
 	                $( this ).dialog( "close" );
@@ -235,7 +233,7 @@ console.debug("Loading TagsUI...");
 	        modal: true,
 	        buttons: {
 	            "Delete": function() {                
-	                TSSETTINGS.deleteTag(UIAPI.selectedTagData);
+	                TSCORE.Config.deleteTag(TSCORE.selectedTagData);
 	                TagsUI.generateTagGroups();    
 	                $( this ).dialog( "close" );
 	            },
@@ -252,7 +250,7 @@ console.debug("Loading TagsUI...");
 	        modal: true,
 	        buttons: {
 	            "Delete": function() {                
-	                TSSETTINGS.deleteTagGroup(UIAPI.selectedTagData);
+	                TSCORE.Config.deleteTagGroup(TSCORE.selectedTagData);
 	                TagsUI.generateTagGroups();    
 	                $( this ).dialog( "close" );
 	            },
@@ -269,7 +267,7 @@ console.debug("Loading TagsUI...");
 	        modal: true,
 	        buttons: {
 	            "Save": function() {
-	                TSSETTINGS.editTag(UIAPI.selectedTagData, $( "#tagName" ).val() )
+	                TSCORE.Config.editTag(TSCORE.selectedTagData, $( "#tagName" ).val() )
 	                TagsUI.generateTagGroups();    
 	                $( this ).dialog( "close" );
 	            },
@@ -286,7 +284,7 @@ console.debug("Loading TagsUI...");
 	        modal: true,
 	        buttons: {
 	            "Create Tag": function() {
-	                TSSETTINGS.createTag(UIAPI.selectedTagData, $( "#newTagName" ).val() )
+	                TSCORE.Config.createTag(TSCORE.selectedTagData, $( "#newTagName" ).val() )
 	                TagsUI.generateTagGroups();                    
 	                $( this ).dialog( "close" );
 	            },
@@ -303,7 +301,7 @@ console.debug("Loading TagsUI...");
 	        modal: true,
 	        buttons: {
 	            "Duplicate Taggroup": function() {
-	                TSSETTINGS.duplicateTagGroup(UIAPI.selectedTagData, $( "#newTagGroupName" ).val(), $( "#newTagGroupKey" ).val() )
+	                TSCORE.Config.duplicateTagGroup(TSCORE.selectedTagData, $( "#newTagGroupName" ).val(), $( "#newTagGroupKey" ).val() )
 	                TagsUI.generateTagGroups();                    
 	                $( this ).dialog( "close" );
 	            },
@@ -320,7 +318,7 @@ console.debug("Loading TagsUI...");
 	        modal: true,
 	        buttons: {
 	            "Save": function() {
-	                TSSETTINGS.editTagGroup(UIAPI.selectedTagData, $( "#tagGroupName" ).val() )
+	                TSCORE.Config.editTagGroup(TSCORE.selectedTagData, $( "#tagGroupName" ).val() )
 	                TagsUI.generateTagGroups();                    
 	                $( this ).dialog( "close" );
 	            },
@@ -335,7 +333,7 @@ console.debug("Loading TagsUI...");
 	    console.debug("Generating TagGroups...");
 	    $("#tagGroups").empty();
 	    $("#tagGroups").addClass("ui-accordion ui-accordion-icons ui-widget ui-helper-reset")
-	    for(var i=0; i < TSSETTINGS.Settings["tagGroups"].length; i++) {
+	    for(var i=0; i < TSCORE.Config.Settings["tagGroups"].length; i++) {
 	        // Code based on http://jsbin.com/eqape/1/edit
 	        $("#tagGroups").append($("<h3>", { 
 	            class: "ui-accordion-header ui-helper-reset ui-state-default ui-corner-top ui-corner-bottom"    
@@ -345,15 +343,15 @@ console.debug("Loading TagsUI...");
 		    	hoverClass: "activeRow",
 		    	drop: function( event, ui ) {
 		    		var tagName = ui.draggable.attr("tag");
-	                TSSETTINGS.createTag(UIAPI.selectedTagData, tagName );
-	                TSSETTINGS.deleteTag(UIAPI.selectedTagData);
+	                TSCORE.Config.createTag(TSCORE.selectedTagData, tagName );
+	                TSCORE.Config.deleteTag(TSCORE.selectedTagData);
 	                TagsUI.generateTagGroups();    				
 		    	}	            	
 		    }) */
 	        .hover(function() { $(this).toggleClass("ui-state-hover"); })        
 	        .append($("<span>", { 
 	            class: "tagGroupTitle",
-	            text: TSSETTINGS.Settings["tagGroups"][i].title, 
+	            text: TSCORE.Config.Settings["tagGroups"][i].title, 
 	        })  
 	        .click(function() {
 	          $(this)
@@ -365,16 +363,16 @@ console.debug("Loading TagsUI...");
 	        .append($("<span>", {
 	                class: "ui-icon ui-icon-gear",
 	                style: "float: right!important; position:relative!important; vertical-align: middle; display:inline-block;",              
-	                tag: TSSETTINGS.Settings["tagGroups"][i].title, 
-	                key: TSSETTINGS.Settings["tagGroups"][i].key, 
+	                tag: TSCORE.Config.Settings["tagGroups"][i].title, 
+	                key: TSCORE.Config.Settings["tagGroups"][i].key, 
 	                title: "Taggroup options",
 	        })                
 	        .dropdown( 'attach' , '#tagGroupMenu' )
 	        .click( function(event) {
 	                //console.debug("Clicked in taggroup setting");    
-	                UIAPI.selectedTag = $(this).attr("tag");
-	                UIAPI.selectedTagData = TSSETTINGS.getTagGroupData($(this).attr("key"));
-	                UIAPI.selectedTagData.parentKey = undefined;  
+	                TSCORE.selectedTag = $(this).attr("tag");
+	                TSCORE.selectedTagData = TSCORE.Config.getTagGroupData($(this).attr("key"));
+	                TSCORE.selectedTagData.parentKey = undefined;  
 	        })
 	        )
 	        );
@@ -383,13 +381,13 @@ console.debug("Loading TagsUI...");
 	        tagButtons.attr("style","margin: 0px; padding: 5px;");
 	        tagButtons.addClass("ui-accordion-content  ui-helper-reset ui-widget-content ui-corner-bottom")
 	        tagButtons.hide(); 
-	        for(var j=0; j < TSSETTINGS.Settings["tagGroups"][i]["children"].length; j++) {
+	        for(var j=0; j < TSCORE.Config.Settings["tagGroups"][i]["children"].length; j++) {
 	            tagButtons.append($("<button>", { 
 	                class: "tagButton", 
-	                tag: TSSETTINGS.Settings["tagGroups"][i]["children"][j].title, 
-	                parentKey: TSSETTINGS.Settings["tagGroups"][i].key,
-	                title: "Opens context menu for "+TSSETTINGS.Settings["tagGroups"][i]["children"][j].title,
-	                text: TSSETTINGS.Settings["tagGroups"][i]["children"][j].title, 
+	                tag: TSCORE.Config.Settings["tagGroups"][i]["children"][j].title, 
+	                parentKey: TSCORE.Config.Settings["tagGroups"][i].key,
+	                title: "Opens context menu for "+TSCORE.Config.Settings["tagGroups"][i]["children"][j].title,
+	                text: TSCORE.Config.Settings["tagGroups"][i]["children"][j].title, 
 	            })
 		    	.draggable({
 		    		cancel:false,
@@ -398,9 +396,9 @@ console.debug("Loading TagsUI...");
 		    		revert: true,
 		    	})              
 	            .click( function() {
-	                UIAPI.selectedTag = $(this).attr("tag");
-	                UIAPI.selectedTagData = TSSETTINGS.getTagData($(this).attr("tag"), $(this).attr("parentKey"));
-	                UIAPI.selectedTagData.parentKey = $(this).attr("parentKey");
+	                TSCORE.selectedTag = $(this).attr("tag");
+	                TSCORE.selectedTagData = TSCORE.Config.getTagData($(this).attr("tag"), $(this).attr("parentKey"));
+	                TSCORE.selectedTagData.parentKey = $(this).attr("parentKey");
 	            })
 	            .dropdown( 'attach' , '#tagTreeMenu' )               
 	            );                      
@@ -416,8 +414,8 @@ console.debug("Loading TagsUI...");
 	}
 	
 	function openTagMenu(tagButton, tag, filePath) {
-	    UIAPI.selectedFiles.push(filePath);
-	    UIAPI.selectedTag = tag;
+	    TSCORE.selectedFiles.push(filePath);
+	    TSCORE.selectedTag = tag;
 	}
 	
 	// Helper function user by basic and search views
@@ -426,7 +424,7 @@ console.debug("Loading TagsUI...");
 	    var tagString = ""+commaSeparatedTags;
 	    var wrapper = $('<span>');
 	    if(filePath == undefined) {
-	    	filePath = UIAPI.currentPath+UIAPI.TagUtils.DIR_SEPARATOR+fileName;
+	    	filePath = TSCORE.currentPath+TSCORE.TagUtils.DIR_SEPARATOR+fileName;
 	    }
 	    if(fileExtension.length > 0) {
 	        wrapper.append($('<button>', {
@@ -460,7 +458,7 @@ console.debug("Loading TagsUI...");
 	    	title = "n/a";
 	    }
 	    if(filePath == undefined) {
-	    	filePath = UIAPI.currentPath+UIAPI.TagUtils.DIR_SEPARATOR+fileName;
+	    	filePath = TSCORE.currentPath+TSCORE.TagUtils.DIR_SEPARATOR+fileName;
 	    }    
 	    return $('<span>').append($('<button>', { 
 	            title: fileName, 
@@ -473,7 +471,7 @@ console.debug("Loading TagsUI...");
 	// Helper function user by basic and search views
 	function buttonizeFileName(fileName, filePath) {
 	    if(filePath == undefined) {
-	    	filePath = UIAPI.currentPath+UIAPI.TagUtils.DIR_SEPARATOR+fileName;
+	    	filePath = TSCORE.currentPath+TSCORE.TagUtils.DIR_SEPARATOR+fileName;
 	    }	
 	    return $('<span>').append($('<button>', { 
 	        	title: fileName, 

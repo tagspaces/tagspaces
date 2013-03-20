@@ -1,18 +1,18 @@
 /* Copyright (c) 2012 The Tagspaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that 
  * can be found in the LICENSE file. */
-// Activating browser specific IOAPI modul
-
-console.debug("Loading IOapiMozilla.js..");
 
 // The mozilla implementation of the IOAPI "class"
-IOAPI = (typeof IOAPI == 'object' && IOAPI != null) ? IOAPI : {
-    
-};
+define(function(require, exports, module) {
+"use strict";
 
-IOAPI.saveSettings = function(content) {
+console.debug("Loading ioapi.mozilla.js..");
+
+var TSCORE = require("tscore");
+
+exports.saveSettings = function(content) {
     console.debug("Saving setting...");        
-    UIAPI.showLoadingAnimation();
+    TSCORE.showLoadingAnimation();
     var event = document.createEvent('CustomEvent');
     event.initCustomEvent("addon-message", true, true, {"detail":{
         "command": "saveSettings",
@@ -21,9 +21,9 @@ IOAPI.saveSettings = function(content) {
     document.documentElement.dispatchEvent(event);
 }
 
-IOAPI.loadSettings = function() {
+exports.loadSettings = function() {
     console.debug("Loading setting from firefox preferences...");
-    UIAPI.showLoadingAnimation();            
+    TSCORE.showLoadingAnimation();            
     var event = document.createEvent('CustomEvent');
     event.initCustomEvent("addon-message", true, true, {"detail":{
         "command": "loadSettings"
@@ -31,9 +31,9 @@ IOAPI.loadSettings = function() {
     document.documentElement.dispatchEvent(event);
 }
 
-IOAPI.createDirectory = function(dirPath) {
+exports.createDirectory = function(dirPath) {
 	console.debug("Directory "+dirPath+" created.");
-    UIAPI.showLoadingAnimation();			
+    TSCORE.showLoadingAnimation();			
     var event = document.createEvent('CustomEvent');
     event.initCustomEvent("addon-message", true, true, {"detail":{
 		"command": "createDirectory",
@@ -42,9 +42,9 @@ IOAPI.createDirectory = function(dirPath) {
     document.documentElement.dispatchEvent(event);
 }
 
-IOAPI.loadTextFile = function(filePath) {
+exports.loadTextFile = function(filePath) {
 	console.debug("Loading file: "+filePath);
-    UIAPI.showLoadingAnimation();	
+    TSCORE.showLoadingAnimation();	
     var event = document.createEvent('CustomEvent');
     event.initCustomEvent("addon-message", true, true, {"detail":{
 		"command": "loadTextFile",
@@ -53,9 +53,9 @@ IOAPI.loadTextFile = function(filePath) {
     document.documentElement.dispatchEvent(event);	
 }
 
-IOAPI.renameFile = function(filePath, newFilePath) {
+exports.renameFile = function(filePath, newFilePath) {
 	console.debug("Renaming "+filePath+" to "+newFilePath);
-    UIAPI.showLoadingAnimation();	
+    TSCORE.showLoadingAnimation();	
     var event = document.createEvent('CustomEvent');
     event.initCustomEvent("addon-message", true, true, {"detail":{
 		"command": "rename",
@@ -65,9 +65,9 @@ IOAPI.renameFile = function(filePath, newFilePath) {
     document.documentElement.dispatchEvent(event);
 }
 
-IOAPI.saveTextFile = function(filePath,content) {
+exports.saveTextFile = function(filePath,content) {
 	console.debug("Saving file: "+filePath);
-    UIAPI.showLoadingAnimation();	
+    TSCORE.showLoadingAnimation();	
     var event = document.createEvent('CustomEvent');
     event.initCustomEvent("addon-message", true, true, {"detail":{
 		"command": "saveTextFile",
@@ -77,9 +77,9 @@ IOAPI.saveTextFile = function(filePath,content) {
     document.documentElement.dispatchEvent(event);	
 }
 
-IOAPI.listDirectory = function(dirPath) {
+exports.listDirectory = function(dirPath) {
 	console.debug("Listing directory: "+dirPath);
-    UIAPI.showLoadingAnimation();	
+    TSCORE.showLoadingAnimation();	
     var event = document.createEvent('CustomEvent');
     event.initCustomEvent("addon-message", true, true, {"detail":{
 		"command": "listDirectory",
@@ -88,9 +88,9 @@ IOAPI.listDirectory = function(dirPath) {
     document.documentElement.dispatchEvent(event);		
 }
 
-IOAPI.getSubdirs = function(dirPath) {
+exports.getSubdirs = function(dirPath) {
 	console.debug("Getting subdirs: "+dirPath);
-    UIAPI.showLoadingAnimation();	
+    TSCORE.showLoadingAnimation();	
     var event = document.createEvent('CustomEvent');
     event.initCustomEvent("addon-message", true, true, {"detail":{
 		"command": "getSubdirs",
@@ -99,9 +99,9 @@ IOAPI.getSubdirs = function(dirPath) {
     document.documentElement.dispatchEvent(event);	
 }
 
-IOAPI.deleteElement = function(path) {
+exports.deleteElement = function(path) {
 	console.debug("Deleting: "+path);
-    UIAPI.showLoadingAnimation();	
+    TSCORE.showLoadingAnimation();	
     var event = document.createEvent('CustomEvent');
     event.initCustomEvent("addon-message", true, true, {"detail":{
 		"command": "delete",
@@ -110,7 +110,7 @@ IOAPI.deleteElement = function(path) {
     document.documentElement.dispatchEvent(event);	
 }
 
-IOAPI.selectDirectory = function() {
+exports.selectDirectory = function() {
 	console.debug("Selecting directory...");
     var event = document.createEvent('CustomEvent');
     event.initCustomEvent("addon-message", true, true, {"detail":{
@@ -119,7 +119,7 @@ IOAPI.selectDirectory = function() {
     document.documentElement.dispatchEvent(event);	
 }
 
-IOAPI.selectFile = function() {
+exports.selectFile = function() {
 	console.debug("Selecting file...");
     var event = document.createEvent('CustomEvent');
     event.initCustomEvent("addon-message", true, true, {"detail":{
@@ -128,7 +128,7 @@ IOAPI.selectFile = function() {
     document.documentElement.dispatchEvent(event);	
 }
     
-IOAPI.openDirectory = function(dirPath) {
+exports.openDirectory = function(dirPath) {
 	console.debug("Opening directory: "+dirPath);
     var event = document.createEvent('CustomEvent');
     event.initCustomEvent("addon-message", true, true, {"detail":{
@@ -138,7 +138,7 @@ IOAPI.openDirectory = function(dirPath) {
     document.documentElement.dispatchEvent(event);	
 }
 
-IOAPI.openExtensionsDirectory = function() {
+exports.openExtensionsDirectory = function() {
     console.debug("Opening extensions directory...");
     var event = document.createEvent('CustomEvent');
     event.initCustomEvent("addon-message", true, true, {"detail":{
@@ -147,9 +147,9 @@ IOAPI.openExtensionsDirectory = function() {
     document.documentElement.dispatchEvent(event);  
 }
 
-IOAPI.createDirectoryIndex = function(dirPath) {
+exports.createDirectoryIndex = function(dirPath) {
     console.debug("Creating directory index for: "+dirPath);
-    UIAPI.showLoadingAnimation();   
+    TSCORE.showLoadingAnimation();   
     var event = document.createEvent('CustomEvent');
     event.initCustomEvent("addon-message", true, true, {"detail":{
         "command": "createDirectoryIndex",
@@ -158,9 +158,9 @@ IOAPI.createDirectoryIndex = function(dirPath) {
     document.documentElement.dispatchEvent(event);  
 }
 
-IOAPI.createDirectoryTree = function(dirPath) {
+exports.createDirectoryTree = function(dirPath) {
     console.debug("Creating directory tree for: "+dirPath);
-    UIAPI.showLoadingAnimation();   
+    TSCORE.showLoadingAnimation();   
     var event = document.createEvent('CustomEvent');
     event.initCustomEvent("addon-message", true, true, {"detail":{
         "command": "createDirectoryTree",
@@ -168,3 +168,5 @@ IOAPI.createDirectoryTree = function(dirPath) {
     }});
     document.documentElement.dispatchEvent(event);  
 }
+
+});

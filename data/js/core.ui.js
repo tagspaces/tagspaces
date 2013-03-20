@@ -1,16 +1,13 @@
 /* Copyright (c) 2012 The Tagspaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that 
  * can be found in the LICENSE file. */
-define([
-    'require',
-    'exports',
-    'module',
-    'jsoneditor',
-//    'css!jsoneditorcss'
-],function(require, exports, module) {
+define(function(require, exports, module) {
 "use strict";
 
-console.debug("Loading core.ui.js ...");
+	console.debug("Loading core.ui.js ...");
+
+    require('jsoneditor');
+	var TSCORE = require("tscore");
 
     var editor = undefined; // Needed for JSON Editor
 	var formatter = undefined;
@@ -52,7 +49,7 @@ console.debug("Loading core.ui.js ...");
 	        }
 	    })
 	    .click(function() {
-			UIAPI.toggleLeftPanel();
+			TSCORE.toggleLeftPanel();
 	    });             
 	}
 	
@@ -102,7 +99,7 @@ console.debug("Loading core.ui.js ...");
 	
 	    $( "#txtFileTypeButton" ).click(function() {
 	        // TODO Add to config options
-	        fileContent = TSSETTINGS.getNewTextFileContent();
+	        fileContent = TSCORE.Config.getNewTextFileContent();
 	        //Leave the filename as it is by no extension
 	        if(newFileName.val().lastIndexOf(".")>=0) {
 	            newFileName.val(newFileName.val().substring(0,newFileName.val().lastIndexOf("."))+".txt");  
@@ -111,7 +108,7 @@ console.debug("Loading core.ui.js ...");
 	
 	    $( "#htmlFileTypeButton" ).click(function() {
 	        // TODO Add to config options
-	        fileContent = TSSETTINGS.getNewHTMLFileContent();
+	        fileContent = TSCORE.Config.getNewHTMLFileContent();
 	        //Leave the filename as it is by no extension
 	        if(newFileName.val().lastIndexOf(".")>=0) {
 	            newFileName.val(newFileName.val().substring(0,newFileName.val().lastIndexOf("."))+".html");            
@@ -120,7 +117,7 @@ console.debug("Loading core.ui.js ...");
 	    
 	    $( "#mdFileTypeButton" ).click(function() {
 	        // TODO Add to config options
-	        fileContent = TSSETTINGS.getNewMDFileContent();
+	        fileContent = TSCORE.Config.getNewMDFileContent();
 	        //Leave the filename as it is by no extension
 	        if(newFileName.val().lastIndexOf(".")>=0) {
 	            newFileName.val(newFileName.val().substring(0,newFileName.val().lastIndexOf("."))+".md");            
@@ -139,14 +136,14 @@ console.debug("Loading core.ui.js ...");
 	
 	                bValid = bValid && checkLength( newFileName, "filename", 4, 200 );
 	        //        bValid = bValid && checkRegexp( renamedFileName, /^[a-z]([0-9a-z_.])+$/i, "Filename may consist of a-z, 0-9, underscores, begin with a letter." );
-	                if(UIAPI.fileExists(newFileName.val())) {
+	                if(TSCORE.fileExists(newFileName.val())) {
 	                    updateTips("File already exists.");
 	                    bValid = false;
 	                }
 	                if ( bValid ) {
-	                    IOAPI.saveTextFile(UIAPI.currentPath+UIAPI.TagUtils.DIR_SEPARATOR+$( "#newFileName" ).val(),fileContent);
+	                    TSCORE.IO.saveTextFile(TSCORE.currentPath+TSCORE.TagUtils.DIR_SEPARATOR+$( "#newFileName" ).val(),fileContent);
 	                    $( this ).dialog( "close" );
-	                    IOAPI.listDirectory(UIAPI.currentPath);                    
+	                    TSCORE.IO.listDirectory(TSCORE.currentPath);                    
 	                }
 	            },
 	            Cancel: function() {
@@ -157,7 +154,7 @@ console.debug("Loading core.ui.js ...");
 	            allFields.val( "" ).removeClass( "ui-state-error" );
 	        },
 	        open: function() {
-	            fileContent = TSSETTINGS.getNewTextFileContent(); // Default new file in text file
+	            fileContent = TSCORE.Config.getNewTextFileContent(); // Default new file in text file
 	            $( "#newFileName" ).val(".txt");
 	        }                
 	    });     
@@ -175,10 +172,10 @@ console.debug("Loading core.ui.js ...");
 	                bValid = bValid && checkLength( renamedFileName, "filename", 3, 200 );
 	        //        bValid = bValid && checkRegexp( renamedFileName, /^[a-z]([0-9a-z_.])+$/i, "Filename may consist of a-z, 0-9, underscores, begin with a letter." );
 	                if ( bValid ) {
-	                    var containingDir = UIAPI.TagUtils.extractContainingDirectoryPath(UIAPI.selectedFiles[0]);
-	                    IOAPI.renameFile(
-	                            UIAPI.selectedFiles[0],
-	                            containingDir+UIAPI.TagUtils.DIR_SEPARATOR+renamedFileName.val()
+	                    var containingDir = TSCORE.TagUtils.extractContainingDirectoryPath(TSCORE.selectedFiles[0]);
+	                    TSCORE.IO.renameFile(
+	                            TSCORE.selectedFiles[0],
+	                            containingDir+TSCORE.TagUtils.DIR_SEPARATOR+renamedFileName.val()
 	                        );
 	                    $( this ).dialog( "close" );
 	                }
@@ -191,7 +188,7 @@ console.debug("Loading core.ui.js ...");
 	            allFields.val( "" ).removeClass( "ui-state-error" );
 	        },
 	        open: function() {
-	            $( "#renamedFileName" ).val(UIAPI.TagUtils.extractFileName(UIAPI.selectedFiles[0]));
+	            $( "#renamedFileName" ).val(TSCORE.TagUtils.extractFileName(TSCORE.selectedFiles[0]));
 	        }                
 	    }); 
 	    
@@ -202,9 +199,9 @@ console.debug("Loading core.ui.js ...");
 	        modal: true,
 	        buttons: {
 	            "Delete all items": function() {
-	                IOAPI.deleteElement(UIAPI.selectedFiles[0]);
+	                TSCORE.IO.deleteElement(TSCORE.selectedFiles[0]);
 	                $( this ).dialog( "close" );
-	                IOAPI.listDirectory(UIAPI.currentPath);   
+	                TSCORE.IO.listDirectory(TSCORE.currentPath);   
 	            },
 	            Cancel: function() {
 	                $( this ).dialog( "close" );
@@ -220,7 +217,7 @@ console.debug("Loading core.ui.js ...");
 	        buttons: {
 	            "Add tags": function() {
 	                var tags = $("#tags").val().split(",");
-	                UIAPI.TagUtils.addTag(UIAPI.selectedFiles, tags);
+	                TSCORE.TagUtils.addTag(TSCORE.selectedFiles, tags);
 	                $( this ).dialog( "close" );
 	            },
 	            Cancel: function() {
@@ -249,7 +246,7 @@ console.debug("Loading core.ui.js ...");
 	                    source: function( request, response ) {
 	                        // delegate back to autocomplete, but extract the last term
 	                        response( $.ui.autocomplete.filter(
-	                            TSSETTINGS.getAllTags(), extractLast( request.term ) ) );
+	                            TSCORE.Config.getAllTags(), extractLast( request.term ) ) );
 	                    },
 	                    focus: function() {
 	                        // prevent value inserted on focus
@@ -273,11 +270,11 @@ console.debug("Loading core.ui.js ...");
 	    $( "#tagTypeRadio" ).buttonset();
 	
 	    $( "#plainTagTypeButton" ).click(function() {
-	        UIAPI.selectedTag, $( "#newTag" ).datepicker( "destroy" ).val("");
+	        TSCORE.selectedTag, $( "#newTag" ).datepicker( "destroy" ).val("");
 	    });  
 	
 	    $( "#dateTagTypeButton" ).click(function() {
-	        UIAPI.selectedTag, $( "#newTag" ).datepicker({
+	        TSCORE.selectedTag, $( "#newTag" ).datepicker({
 	            showWeek: true,
 	            firstDay: 1,
 	            dateFormat: "yymmdd"
@@ -285,7 +282,7 @@ console.debug("Loading core.ui.js ...");
 	    });  
 	    
 	    $( "#currencyTagTypeButton" ).click(function() {
-	        UIAPI.selectedTag, $( "#newTag" ).datepicker( "destroy" ).val("XEUR")
+	        TSCORE.selectedTag, $( "#newTag" ).datepicker( "destroy" ).val("XEUR")
 	    });      
 	    
 	    $( "#dialogEditTag" ).dialog({
@@ -295,8 +292,8 @@ console.debug("Loading core.ui.js ...");
 	        modal: true,
 	        buttons: {
 	            "Save": function() {
-	                UIAPI.TagUtils.renameTag(UIAPI.selectedFiles[0], UIAPI.selectedTag, $( "#newTag" ).val());
-	                IOAPI.listDirectory(UIAPI.currentPath);                                   
+	                TSCORE.TagUtils.renameTag(TSCORE.selectedFiles[0], TSCORE.selectedTag, $( "#newTag" ).val());
+	                TSCORE.IO.listDirectory(TSCORE.currentPath);                                   
 	                $( this ).dialog( "close" );
 	            },
 	            Cancel: function() {
@@ -332,7 +329,7 @@ console.debug("Loading core.ui.js ...");
 	        modal: true,
 	        buttons: {
 	//            "Ext. Folder": function() {
-	//                IOAPI.openExtensionsDirectory()
+	//                TSCORE.IO.openExtensionsDirectory()
 	//            },
 	            "Editor": function() {
 	                if($("#settingsEditor").is(":hidden") ) {
@@ -350,16 +347,16 @@ console.debug("Loading core.ui.js ...");
 	            },
 	            "Default Settings": function() {
 	                if(confirm("Are you sure you want to restore the default application settings?\nAll manually made changes such as tags and taggroups will be lost.")) {
-	                    TSSETTINGS.Settings = TSSETTINGS.DefaultSettings;
-	                    TSSETTINGS.saveSettings();
-	                    UIAPI.reloadUI();                    
+	                    TSCORE.Config.Settings = TSCORE.Config.DefaultSettings;
+	                    TSCORE.Config.saveSettings();
+	                    TSCORE.reloadUI();                    
 	                    console.debug("Default settings loaded.");                    
 	                }
 	            },
 	            "Save": function() {
-	                TSSETTINGS.Settings = editor.get();
-	                TSSETTINGS.saveSettings();
-	                UIAPI.reloadUI();
+	                TSCORE.Config.Settings = editor.get();
+	                TSCORE.Config.saveSettings();
+	                TSCORE.reloadUI();
 	                console.debug("Settings saved and UI reloaded.");
 	                $( this ).dialog( "close" );
 	            },
@@ -369,7 +366,7 @@ console.debug("Loading core.ui.js ...");
 	        },
 	        open: function() {
 	            $("#settingsPlainJSON").hide();
-	            editor.set(TSSETTINGS.Settings);
+	            editor.set(TSCORE.Config.Settings);
 	        }         
 	    });     
 	}

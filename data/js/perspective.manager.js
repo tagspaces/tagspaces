@@ -1,21 +1,15 @@
 /* Copyright (c) 2012 The Tagspaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that 
  * can be found in the LICENSE file. */
-define([
-    'require',
-    'exports',
-    'module',
-    'tscore'
-],function(require, exports, module) {
+define(function(require, exports, module) {
 "use strict";
 
-console.debug("Loading view.manager.js");
+console.debug("Loading perspective.manager.js");
 
 var views = undefined;
 var searchViewer = undefined;
 
-var TSSETTINGS = require("tssetting");
-var UIAPI = require("tscore");
+var TSCORE = require("tscore");
 
 exports.initViews = function initViews() {
 	views = [];
@@ -32,7 +26,7 @@ exports.initViews = function initViews() {
 		initViewsUI(viewer);
 		viewer.init();
    
-   		UIAPI.currentView = viewer.ID;
+   		TSCORE.currentView = viewer.ID;
 		viewer.load();
 		$( "#"+viewer.ID+"Button" ).attr("checked","checked");
 		$( "#"+viewer.ID+"Button" ).button("refresh");
@@ -48,12 +42,12 @@ exports.initViews = function initViews() {
        searchViewer = viewer;
     });  
 	
-	var extensions = TSSETTINGS.getExtensions();
+	var extensions = TSCORE.Config.getExtensions();
 	for (var i=0; i < extensions.length; i++) {
 		if(extensions[i].enabled && (extensions[i].type == "view") ) {
 			
 			// TODO Some extension sucha ace editor are not working using paths like this "file:///C:/blabal/extension.js"
-	        var extPath = TSSETTINGS.getExtensionPath()+"/"+extensions[i].id+"/"+"extension.js"; 
+	        var extPath = TSCORE.Config.getExtensionPath()+"/"+extensions[i].id+"/"+"extension.js"; 
 
 	        require([extPath], function(viewer) {
 	            views.push(viewer);
@@ -137,10 +131,10 @@ exports.updateTreeData = function updateTreeData(treeData) {
 
 exports.changeView = function changeView(viewType) {
     console.debug("Change to "+viewType+" view.");
-    UIAPI.showLoadingAnimation();
+    TSCORE.showLoadingAnimation();
        
     //Setting the current view
-    UIAPI.currentView = viewType;
+    TSCORE.currentView = viewType;
 
 	for (var i=0; i < views.length; i++) {   
  		$( "#"+views[i].ID+"Container" ).hide();
@@ -161,22 +155,22 @@ exports.changeView = function changeView(viewType) {
 	}	
 	   	
     // Clear the list with the selected files    
-    UIAPI.selectedFiles = [];  
+    TSCORE.selectedFiles = [];  
 
 	// Reset the filter by a view change
 	exports.setFileFilter("");
 	  
-//    UIAPI.hideLoadingAnimation();     
+//    TSCORE.hideLoadingAnimation();     
 }
 
 exports.clearSelectedFiles = function clearSelectedFiles() {
     // Clear selected files
-    UIAPI.selectedFiles = [];  
+    TSCORE.selectedFiles = [];  
 	for (var i=0; i < views.length; i++) {   
  		try { 			
  			views[i].clearSelectedFiles();
  		} catch(e) {
- 			console.debug("Erro while executing 'clearSelectedFiles' on "+views[i].ID)
+ 			console.debug("Error while executing 'clearSelectedFiles' on "+views[i].ID)
  		} 		
 	}	
 }
@@ -186,7 +180,7 @@ exports.setFileFilter = function setFileFilter(filter) {
  		try { 			
  			views[i].setFileFilter(filter);
  		} catch(e) {
- 			console.debug("Erro while executing 'setFileFilter' on "+views[i].ID)
+ 			console.debug("Error while executing 'setFileFilter' on "+views[i].ID)
  		} 		 		
 	}	
 }

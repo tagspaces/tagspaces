@@ -4,7 +4,9 @@
 define(function(require, exports, module) {
 "use strict";
     
-console.debug("Loading FileViewer...");
+	console.debug("Loading fileOpener...");
+	
+	var TSCORE = require("tscore");
 
 	function openFile(filePath) {
 	    console.debug("Opening file: "+filePath);
@@ -14,15 +16,15 @@ console.debug("Loading FileViewer...");
 	    var openedFilePath = filePath;    
 	    $("#selectedFilePath").val(openedFilePath.replace("\\\\","\\")); 
 	    
-	    var fileExt = UIAPI.TagUtils.extractFileExtension(filePath);
+	    var fileExt = TSCORE.TagUtils.extractFileExtension(filePath);
 	
 	    constructFileViewerUI(filePath);         
 	
 	    // Getting the viewer for the file extension/type
-	    var viewerExt = TSSETTINGS.getFileTypeViewer(fileExt);  
+	    var viewerExt = TSCORE.Config.getFileTypeViewer(fileExt);  
 	    console.debug("File Viewer: "+viewerExt);
 	
-		UIAPI.openFileViewer();
+		TSCORE.openFileViewer();
 	
 	    initTagSuggestionMenu(filePath);
 	
@@ -37,7 +39,7 @@ console.debug("Loading FileViewer...");
 				src: filePath
 		    }));    	
 	    } else {
-	        require([TSSETTINGS.getExtensionPath()+"/"+viewerExt+"/"+"extension.js"], function(viewer) {
+	        require([TSCORE.Config.getExtensionPath()+"/"+viewerExt+"/"+"extension.js"], function(viewer) {
 	            tsEditor = viewer;
 	            tsEditor.init(filePath, "viewer");
 	            tsEditor.viewerMode(true);
@@ -57,10 +59,10 @@ console.debug("Loading FileViewer...");
 	
 	// Should return false if no editor found
 	function getFileEditor(filePath) {
-	    var fileExt = UIAPI.TagUtils.extractFileExtension(filePath);
+	    var fileExt = TSCORE.TagUtils.extractFileExtension(filePath);
 	
 	    // Getting the editor for the file extension/type
-	    var editorExt = TSSETTINGS.getFileTypeEditor(fileExt);  
+	    var editorExt = TSCORE.Config.getFileTypeEditor(fileExt);  
 	    console.debug("File Editor: "+editorExt);
 	    return editorExt;    
 	}
@@ -76,7 +78,7 @@ console.debug("Loading FileViewer...");
 	        return;
 	    } else {
 	        try {
-	            require([TSSETTINGS.getExtensionPath()+"/"+editorExt+"/extension.js"], function(editr) {
+	            require([TSCORE.Config.getExtensionPath()+"/"+editorExt+"/extension.js"], function(editr) {
 	                tsEditor = editr;
 	                tsEditor.init(filePath, "viewer");
 	            });
@@ -90,12 +92,12 @@ console.debug("Loading FileViewer...");
 	function saveFile(filePath) {
 	    console.debug("Save current file: "+filePath);
 	    var content = tsEditor.getContent();
-	    IOAPI.saveTextFile(filePath, content);   	    	
+	    TSCORE.IO.saveTextFile(filePath, content);   	    	
 	}
 	
 	function constructFileViewerUI(filePath) {
 	    // Adding tag buttons to the filetoolbox
-	    var tags = UIAPI.TagUtils.extractTags(filePath);
+	    var tags = TSCORE.TagUtils.extractTags(filePath);
 	
 	    $( "#fileTitle" ).text();
 	    
@@ -117,7 +119,7 @@ console.debug("Loading FileViewer...");
 	    	drop: function( event, ui ) {
 	    		var tagName = ui.draggable.attr("tag");
 				console.log("Tagging file: "+tagName+" to "+filePath);
-				UIAPI.TagUtils.addTag([filePath], [tagName]);
+				TSCORE.TagUtils.addTag([filePath], [tagName]);
 	    	}	            	
 	    })
 	
@@ -143,9 +145,9 @@ console.debug("Loading FileViewer...");
 	}
 	
 	function initTagSuggestionMenu(filePath) {
-	    var tags = UIAPI.TagUtils.extractTags(filePath);
+	    var tags = TSCORE.TagUtils.extractTags(filePath);
 	
-	    var suggTags = UIAPI.TagUtils.suggestTags(filePath);
+	    var suggTags = TSCORE.TagUtils.suggestTags(filePath);
 	
 	    var tsMenu = $( "#tagSuggestionsMenu" );
 	
@@ -168,7 +170,7 @@ console.debug("Loading FileViewer...");
 			            var tagName = $(this).attr( "tagname" );    
 			            var filePath = $(this).attr( "filepath" );    		            
 			            console.debug("Tag suggestion clicked: "+tagName);
-			            UIAPI.TagUtils.writeTagsToFile(filePath, [tagName]);
+			            TSCORE.TagUtils.writeTagsToFile(filePath, [tagName]);
 			          	return false;
 	        		})                
 	               ));              
@@ -229,7 +231,7 @@ console.debug("Loading FileViewer...");
 	                    }
 	                };
 	                saveFile(filePath);
-	        		UIAPI.openFile(filePath);                   
+	        		TSCORE.openFile(filePath);                   
 			    }
 			}
 			$( this ).button( "option", options );    	
@@ -264,14 +266,14 @@ console.debug("Loading FileViewer...");
 	            if(confirm("If you confirm, all made changes will be lost.")){
 	                // Cleaning the viewer/editor
 	                document.getElementById("viewer").innerHTML = "";
-					UIAPI.closeFileViewer();
+					TSCORE.closeFileViewer();
 	                isEditMode = false;                
 	            }
 	        } else {
 	            // Cleaning the viewer/editor
 	            document.getElementById("viewer").innerHTML = "";
-	            UIAPI.isFileOpened = false;
-				UIAPI.closeFileViewer();
+	            TSCORE.isFileOpened = false;
+				TSCORE.closeFileViewer();
 	            isEditMode = false;            
 	        }
 	    });    
