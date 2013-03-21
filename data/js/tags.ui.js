@@ -234,7 +234,7 @@ define(function(require, exports, module) {
 	        buttons: {
 	            "Delete": function() {                
 	                TSCORE.Config.deleteTag(TSCORE.selectedTagData);
-	                TagsUI.generateTagGroups();    
+	                generateTagGroups();    
 	                $( this ).dialog( "close" );
 	            },
 	            Cancel: function() {
@@ -251,7 +251,7 @@ define(function(require, exports, module) {
 	        buttons: {
 	            "Delete": function() {                
 	                TSCORE.Config.deleteTagGroup(TSCORE.selectedTagData);
-	                TagsUI.generateTagGroups();    
+	                generateTagGroups();    
 	                $( this ).dialog( "close" );
 	            },
 	            Cancel: function() {
@@ -268,7 +268,7 @@ define(function(require, exports, module) {
 	        buttons: {
 	            "Save": function() {
 	                TSCORE.Config.editTag(TSCORE.selectedTagData, $( "#tagName" ).val() )
-	                TagsUI.generateTagGroups();    
+	                generateTagGroups();    
 	                $( this ).dialog( "close" );
 	            },
 	            Cancel: function() {
@@ -285,7 +285,7 @@ define(function(require, exports, module) {
 	        buttons: {
 	            "Create Tag": function() {
 	                TSCORE.Config.createTag(TSCORE.selectedTagData, $( "#newTagName" ).val() )
-	                TagsUI.generateTagGroups();                    
+	                generateTagGroups();                    
 	                $( this ).dialog( "close" );
 	            },
 	            Cancel: function() {
@@ -302,7 +302,7 @@ define(function(require, exports, module) {
 	        buttons: {
 	            "Duplicate Taggroup": function() {
 	                TSCORE.Config.duplicateTagGroup(TSCORE.selectedTagData, $( "#newTagGroupName" ).val(), $( "#newTagGroupKey" ).val() )
-	                TagsUI.generateTagGroups();                    
+	                generateTagGroups();                    
 	                $( this ).dialog( "close" );
 	            },
 	            Cancel: function() {
@@ -319,7 +319,7 @@ define(function(require, exports, module) {
 	        buttons: {
 	            "Save": function() {
 	                TSCORE.Config.editTagGroup(TSCORE.selectedTagData, $( "#tagGroupName" ).val() )
-	                TagsUI.generateTagGroups();                    
+	                generateTagGroups();                    
 	                $( this ).dialog( "close" );
 	            },
 	            Cancel: function() {
@@ -345,7 +345,7 @@ define(function(require, exports, module) {
 		    		var tagName = ui.draggable.attr("tag");
 	                TSCORE.Config.createTag(TSCORE.selectedTagData, tagName );
 	                TSCORE.Config.deleteTag(TSCORE.selectedTagData);
-	                TagsUI.generateTagGroups();    				
+	                generateTagGroups();    				
 		    	}	            	
 		    }) */
 	        .hover(function() { $(this).toggleClass("ui-state-hover"); })        

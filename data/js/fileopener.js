@@ -126,7 +126,7 @@ define(function(require, exports, module) {
 	    // Activate tagButtons in file view
 	    $('.tagButton', $( "#fileTags" ))
 	        .click( function() {
-	            TagsUI.openTagMenu(this, $(this).attr("tag"), $(this).attr("filepath"));
+	            TSCORE.openTagMenu(this, $(this).attr("tag"), $(this).attr("filepath"));
 	        })
 	        .dropdown( 'attach' , '#tagMenu' );   
 	    
