@@ -88,14 +88,6 @@ define(function(require, exports, module) {
 	    $( "#selectTagSpace" ).tooltip( "open" );		
 	}
 	
-	function setCurrentPath(path) {
-	    console.debug("Setting current path to: "+path);
-	    currentPath = path;
-		
-		// List preselected dir automatically
-	    tsIOApi.listDirectory(currentPath);
-	}
-	
 	function updateLogger(message) {
 		// TODO reactivate
 	    console.debug("Updating logger...");
@@ -249,7 +241,6 @@ define(function(require, exports, module) {
 	
 	// Public API definition
 	exports.initApp 					= initApp;
-	exports.setCurrentPath 				= setCurrentPath;
 	exports.updateLogger				= updateLogger;
 	exports.showLoadingAnimation 		= showLoadingAnimation;
 	exports.hideLoadingAnimation 		= hideLoadingAnimation;

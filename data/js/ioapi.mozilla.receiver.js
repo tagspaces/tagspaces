@@ -37,11 +37,6 @@ console.debug("Loading messaging.mozilla.js..");
 	            console.debug("Saving setting as native mozilla preference failed!")            
 	        }
 	        break;        
-	      case "updateDefaultPath":
-	        if(message.content.length > 1) {
-	            TSCORE.setCurrentPath(message.content);
-	        }
-	        break;
 	      case "rename":
 	        if(message.success){
 	            TSCORE.updateLogger("Rename success");   
