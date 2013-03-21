@@ -2,13 +2,12 @@
  * Use of this source code is governed by a AGPL3 license that 
  * can be found in the LICENSE file. */
 define(function(require, exports, module) {
-"use strict";
+//"use strict";
 
 	console.debug("Loading core.api.js ...");
 	
-	var TSSETTINGS = require("tssetting");	
-	var IOAPI = require("tsioapi");
-
+	var tsSettings = require("tssetting");	
+	var tsIOApi = require("tsioapi");
     var tsPersManager = require("tspersmanager");
     var tsTagUtils = require("tstagutils");
     var tsFileOpener = require("tsfileopener");
@@ -17,10 +16,6 @@ define(function(require, exports, module) {
     var tsCoreUI = require("tscoreui")
 	
 	var layoutContainer = undefined;  
-	
-	exports.updateSubDirs = undefined;
-	exports.initFavorites = undefined;
-	exports.generateTagGroups = undefined;
 	
 	var currentPath = "";
 	
@@ -41,20 +36,8 @@ define(function(require, exports, module) {
 	var selectedTagData = "";
 
 	function initApp() {
-	    console.debug("Init application");
+	    console.debug("Init application");	
 	
-		exports.ViewManager = tsPersManager;
-		exports.TagUtils = tsTagUtils;
-		exports.FileOpener = tsFileOpener;
-
-		exports.Config = TSSETTINGS;
-		exports.IO = IOAPI;
-		
-		// Proxy for tsTagsUI
-		exports.generateTagButtons = tsTagsUI.generateTagButtons
-		exports.buttonizeTitle = tsTagsUI.buttonizeTitle
-		exports.openTagMenu = tsTagsUI.openTagMenu
-		
 		tsCoreUI.initButtons();
 		tsCoreUI.initDialogs();
 	
@@ -65,32 +48,27 @@ define(function(require, exports, module) {
 	    tsDirectoriesUI.initButtons();
 	    tsDirectoriesUI.initContextMenus();   
 		
-		// Proxying directoriesUI and tagsUI
-		exports.updateSubDirs = tsDirectoriesUI.updateSubDirs;
-		exports.initFavorites = tsDirectoriesUI.initFavorites;
-		exports.generateTagGroups = tsTagsUI.generateTagGroups;
-
-	    TSSETTINGS.loadSettingsLocalStorage();
+	    tsSettings.loadSettingsLocalStorage();
 	    
 	    // In firefox, by empty local storage trying to load the settings from mozilla preferences
-	    if(TSSETTINGS.Settings == undefined && $.browser.mozilla) {
-	        window.setTimeout(IOAPI.loadSettings, 1000); // executes initUI and updateSettingMozillaPreferences by success
+	    if(tsSettings.Settings == undefined && $.browser.mozilla) {
+	        window.setTimeout(tsIOApi.loadSettings, 1000); // executes initUI and updateSettingMozillaPreferences by success
 	        console.debug("Loading setting with from mozilla pref execured with delay...");
 	    } 
 	
 	    // If still nothing found, loading the default setting from the application's javascript
 	    // This is usually the case by a new installation
-	    if(TSSETTINGS.Settings == undefined) {
-	        TSSETTINGS.Settings = TSSETTINGS.DefaultSettings;
+	    if(tsSettings.Settings == undefined) {
+	        tsSettings.Settings = tsSettings.DefaultSettings;
 	    }    
 	  
-	  	TSSETTINGS.upgradeSettings();
+	  	tsSettings.upgradeSettings();
 	    
 	    // Init views
-		exports.ViewManager.initViews();                 
+		tsPersManager.initViews();                 
 	    
-	    $("#appVersion").text("["+TSSETTINGS.DefaultSettings["appVersion"]+"]");
-	    $("#appVersion").attr("title","["+TSSETTINGS.DefaultSettings["appBuild"]+"]");
+	    $("#appVersion").text("["+tsSettings.DefaultSettings["appVersion"]+"]");
+	    $("#appVersion").attr("title","["+tsSettings.DefaultSettings["appBuild"]+"]");
 	
 	    tsDirectoriesUI.initFavorites();
 	    
@@ -101,10 +79,10 @@ define(function(require, exports, module) {
 	    
 	    hideLoadingAnimation();
 	    // TODO check if document.ready is really needed
-	    $(document).ready(function() {
+//	    $(document).ready(function() {
 	        initLayout();
-	        console.debug("Layout initialized");
-	    });  
+//	        console.debug("Layout initialized");
+//	    });  
 	    
 	    // Show start hint
 	    $( "#selectTagSpace" ).tooltip( "open" );		
@@ -115,7 +93,7 @@ define(function(require, exports, module) {
 	    currentPath = path;
 		
 		// List preselected dir automatically
-	    IOAPI.listDirectory(currentPath);
+	    tsIOApi.listDirectory(currentPath);
 	}
 	
 	function updateLogger(message) {
@@ -140,96 +118,15 @@ define(function(require, exports, module) {
 	        }
 	    }
 	    return false;
-	}
-	
-	function refreshFileListContainer() {
-		// TODO what happens with search view
-	    IOAPI.listDirectory(currentPath);  
-	}
-	
-	function updateFileBrowserData(dirList) {
-	    console.debug("Updating the file browser data...");
-	    
-	    fileList = [];
-	    var tags = undefined;
-	    var ext = undefined;
-	    var title = undefined;
-	    var fileSize = undefined;
-	    var fileLMDT = undefined;
-	    var path = undefined;
-	    // Sort the dir list alphabetically before displaying 
-	    // TODO sorting files not working correctly
-	    dirList.sort(function(a,b) { return a.name.localeCompare(b.name); });
-	    for (var i=0; i < dirList.length; i++) {
-	        if (dirList[i].type == "file"){  
-	            // Considering Unix HiddenEntries (. in the beginning)
-	            if (TSSETTINGS.Settings["showUnixHiddenEntries"] || 
-	               (!TSSETTINGS.Settings["showUnixHiddenEntries"] && (dirList[i].name.indexOf(".") != 0))) {
-	                 path = currentPath + exports.TagUtils.DIR_SEPARATOR + dirList[i].name;
-	                 tags = exports.TagUtils.extractTags(path);
-	                 title = exports.TagUtils.extractTitle(path);
-	                 if(dirList[i].name.lastIndexOf(".") > 0) {
-	                     ext = dirList[i].name.substring(dirList[i].name.lastIndexOf(".")+1,dirList[i].name.length);                     
-	                 } else {
-	                     ext = "";
-	                 }
-	                 fileSize = dirList[i].size;
-	                 fileLMDT = dirList[i].lmdt;
-	                 if(fileSize == undefined) fileSize = "";
-	                 if(fileLMDT == undefined) fileLMDT = "";
-	                 var entry = [dirList[i].name,fileSize,fileLMDT,title,tags,ext];   
-	                 fileList.push(entry);
-	            }
-	        }
-	    }     
-	         
-	    exports.ViewManager.changeView(currentView);    
-	}
-	
-	/** Depricated
-	// ONE_DIR_UP
-	var parentDir = "..";
+	}	
 
-	function changeDirectory(newDir) {
-	    console.debug("Change direcotory to: "+newDir);
-	    var newPath = currentPath;
-	    if(exports.TagUtils.isWindows()) { 
-	        // Cutting trailig \\ or \\\\ .
-	        if(currentPath.lastIndexOf("\\")+1 == currentPath.length) {
-	            newPath = currentPath.substring(0,currentPath.length-1);
-			} else if(currentPath.lastIndexOf("\\\\")+2 == currentPath.length) {
-	            newPath = currentPath.substring(0,currentPath.length-2);
-			}
-	        if(newDir == parentDir) {
-	            newPath = newPath.substring(0,newPath.lastIndexOf("\\"));            
-	            currentPath  = newPath;
-	        } else if(newDir.length > 0) {
-	            currentPath  = newPath+"\\"+newDir+"\\";
-	        }        
-	    } else { 
-	        // Cutting trailing /
-	        if(currentPath.lastIndexOf("/")+1 == currentPath.length) {
-	            newPath = currentPath.substring(0,currentPath.length-1);
-	        }
-	        if(newDir == parentDir) {
-	            newPath = newPath.substring(0,newPath.lastIndexOf("/"));            
-	            currentPath  = newPath;
-	        } else if(newDir.length > 0) {
-	            currentPath  = newPath+"/"+newDir+"/";
-	        }      
-	    }
-	    console.debug("New path: "+currentPath);
-	    IOAPI.listDirectory(currentPath);
-	    selectedTag = "";
-	} */
-	
 	function reloadUI() {
 	    location.reload();
 	}
 	
 	function openFile(filePath) {
 	//    console.debug("Opening file..."); 
-	    exports.FileOpener.openFile(filePath);	
+	    tsFileOpener.openFile(filePath);	
 	}
 	
 	function openFileViewer() {
@@ -342,7 +239,14 @@ define(function(require, exports, module) {
 	    // Closes the viewer area by init
 	    layoutContainer.close("east");
 	}
-
+	
+	// Proxying applications parts
+	exports.Config = tsSettings;
+	exports.IO = tsIOApi;	
+	exports.ViewManager = tsPersManager;
+	exports.TagUtils = tsTagUtils;
+	exports.FileOpener = tsFileOpener;
+	
 	// Public API definition
 	exports.initApp 					= initApp;
 	exports.setCurrentPath 				= setCurrentPath;
@@ -350,20 +254,28 @@ define(function(require, exports, module) {
 	exports.showLoadingAnimation 		= showLoadingAnimation;
 	exports.hideLoadingAnimation 		= hideLoadingAnimation;
 	exports.fileExists 					= fileExists;
-	exports.refreshFileListContainer 	= refreshFileListContainer;
-	exports.updateFileBrowserData 		= updateFileBrowserData;
 	exports.reloadUI 					= reloadUI;
 	exports.openFile 					= openFile;								
 	exports.openFileViewer 				= openFileViewer;
 	exports.closeFileViewer 			= closeFileViewer;
 	exports.toggleLeftPanel 			= toggleLeftPanel;
 	
+	// Proxying functions from tsTagsUI
+	exports.generateTagButtons = tsTagsUI.generateTagButtons
+	exports.buttonizeTitle = tsTagsUI.buttonizeTitle
+	exports.buttonizeFileName = tsTagsUI.buttonizeFileName	
+	exports.openTagMenu = tsTagsUI.openTagMenu
+
+	// Proxying functions from directoriesUI 
+	exports.updateSubDirs = tsDirectoriesUI.updateSubDirs;
+	exports.initFavorites = tsDirectoriesUI.initFavorites;
+
+	// Public variables definition
 	exports.currentPath 				= currentPath;
 	exports.currentView 				= currentView;
 	exports.selectedFiles 				= selectedFiles;
 	exports.isFileOpened 				= isFileOpened;
 	exports.fileList 					= fileList;
 	exports.selectedTag 				= selectedTag;
-	exports.selectedTagData 			= selectedTagData;
-		
+	exports.selectedTagData 			= selectedTagData;		
 });

@@ -98,7 +98,7 @@ IOAPI.listDirectory = function(dirPath) {
         try {
             var dirList = IOAPI.plugin.listFiles(dirPath);
             console.debug("Dir content: "+JSON.stringify(dirList)); 
-            UIAPI.updateFileBrowserData(dirList);
+            UIAPI.ViewManager.updateFileBrowserData(dirList);
         } catch(ex) {
             console.error("Directory listing failed "+ex);
         }       

@@ -50,7 +50,7 @@ console.debug("Loading messaging.mozilla.js..");
 	            if(TSCORE.isFileOpened) {
 	               TSCORE.openFile(TSCORE.selectedFiles[0]); 	
 	            }
-	            TSCORE.refreshFileListContainer();
+	            TSCORE.ViewManager.refreshFileListContainer();
 	        } else {
 	            TSCORE.updateLogger("Rename failed");        
 	        }
@@ -79,7 +79,7 @@ console.debug("Loading messaging.mozilla.js..");
 	        break;
 	      case "listDirectory":
 	        if(message.success){
-	            TSCORE.updateFileBrowserData(message.content);       
+	            TSCORE.ViewManager.updateFileBrowserData(message.content);       
 	        } else {
 	            TSCORE.updateLogger("List directory failed");        
 	        }
@@ -114,7 +114,8 @@ console.debug("Loading messaging.mozilla.js..");
 	        break;  
 	      case "delete":
 	        if(message.success){
-	            TSCORE.updateLogger("Delete success");               
+	            TSCORE.updateLogger("Delete success"); 
+	            TSCORE.ViewManager.refreshFileListContainer();	                          
 	        } else {
 	            TSCORE.updateLogger("Delete failed");        
 	        }

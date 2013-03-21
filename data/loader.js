@@ -3,7 +3,8 @@
  * can be found in the LICENSE file. */
 
 //var LOG = debug ? console.log : function () {};
-var PRODUCTION = "@PRODUCTION@";// "true" | "@PRODUCTION@" 
+// the value of this var is replaced to "true" by the build script
+var PRODUCTION = "@PRODUCTION@";
 
 // Disabling all output to console in production mode
 if (PRODUCTION == "true") {
@@ -146,9 +147,7 @@ require.config({
 });
 
 define(function (require, exports, module) {
-"use strict";
-
-    console.debug("Loading Application...");
+//"use strict";
         
     // Load dependent non-module scripts
     require("jquery");
@@ -160,10 +159,11 @@ define(function (require, exports, module) {
     require("jqueryuitooltips");
     require("jqueryuidroppable");
     require("less");
+	
 	if( isFirefox ) {
 		require("tsiomozrec");    
 	}
-                                
+	                                
     var TSCORE = require("tscore");
 
     function onReady() {

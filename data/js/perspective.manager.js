@@ -129,6 +129,49 @@ exports.updateTreeData = function updateTreeData(treeData) {
 	}
 }
 
+exports.updateFileBrowserData = function(dirList) {
+    console.debug("Updating the file browser data...");
+    
+    TSCORE.fileList = [];
+    var tags = undefined;
+    var ext = undefined;
+    var title = undefined;
+    var fileSize = undefined;
+    var fileLMDT = undefined;
+    var path = undefined;
+    // Sort the dir list alphabetically before displaying 
+    // TODO sorting files not working correctly
+    dirList.sort(function(a,b) { return a.name.localeCompare(b.name); });
+    for (var i=0; i < dirList.length; i++) {
+        if (dirList[i].type == "file"){  
+            // Considering Unix HiddenEntries (. in the beginning)
+            if (TSCORE.Config.Settings["showUnixHiddenEntries"] || 
+               (!TSCORE.Config.Settings["showUnixHiddenEntries"] && (dirList[i].name.indexOf(".") != 0))) {
+                 path = TSCORE.currentPath + TSCORE.TagUtils.DIR_SEPARATOR + dirList[i].name;
+                 tags = TSCORE.TagUtils.extractTags(path);
+                 title = TSCORE.TagUtils.extractTitle(path);
+                 if(dirList[i].name.lastIndexOf(".") > 0) {
+                     ext = dirList[i].name.substring(dirList[i].name.lastIndexOf(".")+1,dirList[i].name.length);                     
+                 } else {
+                     ext = "";
+                 }
+                 fileSize = dirList[i].size;
+                 fileLMDT = dirList[i].lmdt;
+                 if(fileSize == undefined) fileSize = "";
+                 if(fileLMDT == undefined) fileLMDT = "";
+                 var entry = [dirList[i].name,fileSize,fileLMDT,title,tags,ext];   
+                 TSCORE.fileList.push(entry);
+            }
+        }
+    }  	         
+    exports.changeView(TSCORE.currentView);    
+}
+
+exports.refreshFileListContainer = function() {
+	// TODO consider search view
+    TSCORE.IO.listDirectory(TSCORE.currentPath);  
+}
+
 exports.changeView = function changeView(viewType) {
     console.debug("Change to "+viewType+" view.");
     TSCORE.showLoadingAnimation();
@@ -147,7 +190,7 @@ exports.changeView = function changeView(viewType) {
 	 		try { 			
 	 			views[i].load();
 	 		} catch(e) {
-	 			console.debug("Error while executing 'load' on "+views[i].ID+" "+e);
+	 			console.error("Error while executing 'load' on "+views[i].ID+" "+e);
 	 		} 			
 			$( "#"+views[i].ID+"Container" ).show();
 			$( "#"+views[i].ID+"Toolbar" ).show(); 

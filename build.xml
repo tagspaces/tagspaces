@@ -40,9 +40,15 @@ found in the LICENSE file.
         <copy file="data/index.html" todir="${buildFirefoxExt.dir}/data" />        
         <copy file="data/about.html" todir="${buildFirefoxExt.dir}/data" />            
         <copy file="data/loader.js" todir="${buildFirefoxExt.dir}/data" />        
-        <copy todir="${buildFirefoxExt.dir}/lib" >
+        <replace file="${buildFirefoxExt.dir}/data/loader.js" >
+            <replacefilter token="@PRODUCTION@" value="true" />
+        </replace> 
+    	<copy todir="${buildFirefoxExt.dir}/lib" >
             <fileset dir="lib" includes="**/*"/>  
-        </copy>    	
+        </copy>
+        <replace file="${buildFirefoxExt.dir}/lib/main.js" >
+            <replacefilter token="@PRODUCTION@" value="true" />
+        </replace>     	
         <copy todir="${buildFirefoxExt.dir}/data/libs" >
 		    <fileset dir="data/libs">
 		      <include name="**/*"/>
@@ -104,7 +110,10 @@ found in the LICENSE file.
         <copy file="data/index.html" todir="${buildChrome.dir}" />        
         <copy file="data/about.html" todir="${buildChrome.dir}" />        
         <copy file="data/loader.js" todir="${buildChrome.dir}" />        
-        <copy todir="${buildChrome.dir}/chrome" >
+        <replace file="${buildChrome.dir}/loader.js" >
+            <replacefilter token="@PRODUCTION@" value="true" />
+        </replace> 
+    	<copy todir="${buildChrome.dir}/chrome" >
             <fileset dir="data/chrome" includes="**/*"/>  
         </copy>
         <copy todir="${buildFirefoxExt.dir}/data/ext" >

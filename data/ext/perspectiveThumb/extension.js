@@ -12,6 +12,8 @@ define(function(require, exports, module) {
 	exports.Type =  "view";
 	exports.Icon = "ui-icon-image";
 	
+	var TSCORE = require("tscore");	
+	
 	var viewContainer = undefined;
 	var viewToolbar = undefined;
 	var viewFooter = undefined;

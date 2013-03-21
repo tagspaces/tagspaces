@@ -36,10 +36,8 @@ define(function(require, exports, module) {
 	plugin.style.position = "absolute";
 	plugin.style.left = "-9999px";
 	
-	// Add plugin to document if the browser is chrome or chromium
-	if(navigator.userAgent.indexOf("Chrom") > 0) {
-	    document.documentElement.appendChild(plugin);    
-	}
+	// Add plugin to document 
+    document.documentElement.appendChild(plugin);    
 	
 	// Determine the directory separator
 	exports.pathSeparator = plugin.getPlatform() == 'windows' ? "\\" : '/';
@@ -83,7 +81,7 @@ define(function(require, exports, module) {
 	            if(TSCORE.isFileOpened) {
 	               TSCORE.openFile(newFilePath); 	
 	            }   			
-				TSCORE.refreshFileListContainer();
+				TSCORE.ViewManager.refreshFileListContainer();
 				
 				console.debug("File renamed to: "+newFilePath);	
 			} else { 
@@ -106,7 +104,7 @@ define(function(require, exports, module) {
 			try {
 				var dirList = plugin.listFiles(dirPath);
 				console.debug("Dir content: "+JSON.stringify(dirList)); 
-	    		TSCORE.updateFileBrowserData(dirList);
+	    		TSCORE.ViewManager.updateFileBrowserData(dirList);
 			} catch(ex) {
 				console.error("Directory listing failed "+ex);
 			}		
@@ -143,6 +141,7 @@ define(function(require, exports, module) {
 	
 	exports.deleteElement = function(path) {
 		console.debug("Deleting: "+path);
+		TSCORE.ViewManager.refreshFileListContainer();		
 		plugin.removeFile(path)
 	}
 	
