@@ -116,7 +116,7 @@ define(function(require, exports, module) {
 	                break;
 	              case "openDirectory":
 	                console.debug("Opening parent directory...");   
-	                IOAPI.openDirectory(TSCORE.currentPath);
+	                TSCORE.IO.openDirectory(TSCORE.currentPath);
 	                break;
 	              case "renameFile":        
 	                console.debug("Renaming file...");

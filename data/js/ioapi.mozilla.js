@@ -114,7 +114,7 @@ exports.selectDirectory = function() {
 	console.debug("Selecting directory...");
     var event = document.createEvent('CustomEvent');
     event.initCustomEvent("addon-message", true, true, {"detail":{
-		"command": "selectDirectory"
+		"command": "selectDirectory",
 	}});
     document.documentElement.dispatchEvent(event);	
 }
@@ -133,7 +133,7 @@ exports.openDirectory = function(dirPath) {
     var event = document.createEvent('CustomEvent');
     event.initCustomEvent("addon-message", true, true, {"detail":{
 		"command": "openDirectory",
-		"path": dirPath
+		"path": dirPath,
 	}});
     document.documentElement.dispatchEvent(event);	
 }

@@ -79,10 +79,10 @@ define(function(require, exports, module) {
 	    
 	    hideLoadingAnimation();
 	    // TODO check if document.ready is really needed
-//	    $(document).ready(function() {
+	    $(document).ready(function() {
 	        initLayout();
-//	        console.debug("Layout initialized");
-//	    });  
+	        console.debug("Layout initialized");
+	    });  
 	    
 	    // Show start hint
 	    $( "#selectTagSpace" ).tooltip( "open" );		
