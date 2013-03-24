@@ -56,13 +56,9 @@ found in the LICENSE file.
         </copy>
         <copy todir="${buildFirefoxExt.dir}/data/ext" >
 		    <fileset dir="data/ext">
-		      <include name="perspectiveBasic/*"/>		    	
-			  <include name="perspectiveSearch/*"/>		    			    	
-			  <include name="perspectiveThumb/*"/>
-			  <include name="perspectiveGraph/*"/>		    	
-		      <include name="editorHTML/*"/>
-			  <include name="editorText/*"/>	    	
-		      <include name="viewerMD/*"/>	    	
+		      <include name="perspectiveBasic/**/*"/>		    	
+			  <include name="perspectiveSearch/**/*"/>		    			    	
+			  <include name="perspectiveThumb/**/*"/>
 		    </fileset>        	
         </copy>
     	<copy todir="${buildFirefoxExt.dir}/data/css" >
@@ -89,6 +85,20 @@ found in the LICENSE file.
 	
     <target name="build-mozilla-extension" depends="prepare-mozilla-extension" description="Creates a simple zip(not xpi) of the mozilla extension">
         <zip destfile="${builds.dir}/${appname} [v${version}.${build.number} ${DSTAMP}${TSTAMP} mozilla].zip">
+            <fileset dir="${buildFirefoxExt.dir}" includes="**/*" />
+        </zip>
+    </target>	
+
+    <target name="build-mozilla-full-extension" depends="prepare-mozilla-extension" description="Creates a simple zip(not xpi) of the mozilla extension">
+        <copy todir="${buildFirefoxExt.dir}/data/ext" >
+		    <fileset dir="data/ext">
+			  <include name="perspectiveGraph/**/*"/>		    	
+		      <include name="editorHTML/**/*"/>
+			  <include name="editorText/**/*"/>	    	
+		      <include name="viewerMD/**/*"/>	    	
+		    </fileset>        	
+        </copy>
+    	<zip destfile="${builds.dir}/${appname} [v${version}.${build.number} ${DSTAMP}${TSTAMP} mozilla].zip">
             <fileset dir="${buildFirefoxExt.dir}" includes="**/*" />
         </zip>
     </target>	
