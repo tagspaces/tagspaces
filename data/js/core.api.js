@@ -82,10 +82,22 @@ define(function(require, exports, module) {
 	    $(document).ready(function() {
 	        initLayout();
 	        console.debug("Layout initialized");
-	    });  
-	    
-	    // Show start hint
-	    $( "#selectTagSpace" ).tooltip( "open" );		
+
+		    // Show start hint
+		   	if(tsSettings.Settings.tagspacesList.length < 1 ) {
+		   		$( "#createNewLocation" ).attr("title", "Start using TagSpaces by creating a new location.")
+                $( "#favoritesList" ).width($( "#reloadTagSpace" ).width()+$("#selectTagSpace").width());
+                $( "#favoritesList" ).show().position({
+                    my: "left top",
+                    at: "left bottom",
+                    of: $( "#reloadTagSpace" )
+                });
+		    	$( "#createNewLocation" ).attr("style","border:1px solid #00AE00; border-radius:5px; border-color:#00AE00; box-shadow:0 0 10px #00AE00;")
+		    	//$( "#createNewLocation" ).tooltip( "open" );
+		   	}
+	 		
+	    }); 	    
+
 	}
 	
 	function updateLogger(message) {

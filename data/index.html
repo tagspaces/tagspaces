@@ -17,8 +17,8 @@
     <link rel="stylesheet/less" type="text/css" href="css/tagspaces.less">
     <script type="text/javascript" data-main="loader" src="libs/requirejs/require.js"></script>
 </head>
-<body>
-<div id="loading">TagSpaces loading...</div>	
+<body style="background-color: lightgray;">
+<div id="loading" style="text-align: center; width: 100%; font-size: 1.4em; position:absolute; top:50%; text-shadow: 0px 1px 1px #fff; ">Loading TagSpaces ...</div>	
 <div id="container" style="display: none;">
     <div class="ui-layout-north">
         <a href="http://tagspaces.org" target="_new"><span id="logo">TagSpaces<sup id="appVersion" style="font-size: 0.6em; color: #BFBFBF"></sup></span></a>
@@ -34,7 +34,7 @@
         <div id="directoryNavigator" class="west-center" style="padding: 0">
             <div id="directoryNavigatorNorth" style="padding: 0" >
                     <button id="reloadTagSpace" style="text-align: left; width: 85%;">Select Location</button>
-                    <button id="selectTagSpace" title="Start using TagSpaces by clicking on the dropdown button and creating a new favorite directory or selecting an existing one.">&nbsp;</button>
+                    <button id="selectTagSpace">&nbsp;</button>
             </div>
             <div id="dirTree" style="padding: 0; height: 100%;"></div>   
         </div>
