@@ -424,7 +424,7 @@ define(function(require, exports, module) {
 	                    $('<a>', { href: "javascript:void(0);", text: favoritesList[i].name} )));
 	    };
 	    $( "#favoritesList" ).append('<li><hr></li>');    
-	    $( "#favoritesList" ).append('<li name="createFavorite"><a href="javascript:void(0);"><span class="ui-icon ui-icon-document"></span>New Location</a></li>');
+	    $( "#favoritesList" ).append('<li name="createFavorite" id="createNewLocation" ><a href="javascript:void(0);"><span class="ui-icon ui-icon-document"></span>New Location</a></li>');
 	  //  $( "#favoritesList" ).append('<li name="editFavorite"><a href="javascript:void(0);"><span class="ui-icon ui-icon-pencil"></span>Edit Location</a></li>');
 	    $( "#favoritesList" ).append('<li name="deleteFavorite"><a href="javascript:void(0);"><span class="ui-icon ui-icon-trash"></span>Remove Location</a></li>');
 	   

@@ -8,7 +8,7 @@ define(function(require, exports, module) {
 	
 	var IOAPI = require("tsioapi");
 	
-	exports.TagTemplate = {
+	var tagTemplate = {
 		"title" : undefined,
 		"type" : "plain",
 		/*          ,
@@ -27,12 +27,13 @@ define(function(require, exports, module) {
 		 */
 	}
 	
-	exports.FavoriteTemplate = {
+	var favoriteTemplate = {
 	                            "name": undefined,
 	                            "path": undefined
 	                        }
 	                        
-	exports.TagGroupTemplate = {
+	// not used
+	var tagGroupTemplate = {
 	            "title": undefined,
 	            "isFolder": true,
 	            "key": undefined,
@@ -53,46 +54,33 @@ define(function(require, exports, module) {
 		"lastOpenedTSID": 0,
 	    "lastOpenedDirectory": "",
 		"tagspacesList": [
-	        {
-	            "name":'Windows Location', 
-	            "path":'Z:\\' 
-	        }, 
-	        {
-	            "name":'Unix Location', 
-	            "path":'/media' 
-	        }, 
 		],
-	    "extensionsPath": "file:///C:/TagSpaces/extensions",
+	    "extensionsPath": "ext",
 	    "extensions": [
 	        {   
-	            "id": "perspectiveRiver", // ID should be equal to the directory name where the ext. is located 
-	            "enabled": false, 
-	            "type": "view", 
-	        },
-	        {   
-	            "id": "perspectiveThumb", // ID should be equal to the directory name where the ext. is located 
+	            "id": "perspectiveThumb", // ID should be equal to the directory name where the extension is located 
 	            "enabled": true, 
 	            "type": "view", 
 	        },
 	    ],
 	    "supportedFileTypes": [
-	        { "type": "jpg", "viewer": "viewerBrowser", "editor": false },        
-	        { "type": "jpeg", "viewer": "viewerBrowser", "editor": false },    
-	        { "type": "gif", "viewer": "viewerBrowser", "editor": false },        
-	        { "type": "png", "viewer": "viewerBrowser", "editor": false },        
-	        { "type": "svg", "viewer": "viewerBrowser", "editor": false },
-	        { "type": "pdf", "viewer": "viewerBrowser", "editor": false },                
-	        { "type": "html", "viewer": "viewerBrowser", "editor": "editorHTML" },                        
-	        { "type": "htm", "viewer": "viewerBrowser", "editor": "editorHTML" },                        
-	        { "type": "mht", "viewer": "viewerBrowser", "editor": false },                        
-	        { "type": "mhtml", "viewer": "viewerBrowser", "editor": false },                                
-	        { "type": "maff", "viewer": "viewerBrowser", "editor": false },                                
-	        { "type": "txt", "viewer": "viewerBrowser", "editor": "editorText" },
-	        { "type": "xml", "viewer": "editorText", "editor": "editorText" },
-	        { "type": "js", "viewer": "editorText", "editor": "editorText" },
-	        { "type": "css", "viewer": "editorText", "editor": "editorText" },
-	        { "type": "mdown", "viewer": "viewerMD", "editor": "editorText" },                
-	        { "type": "md", "viewer": "viewerMD", "editor": "editorText" }
+	        { "type": "jpg",	"viewer": "viewerBrowser", "editor": "false" },        
+	        { "type": "jpeg", 	"viewer": "viewerBrowser", "editor": "false" },    
+	        { "type": "gif", 	"viewer": "viewerBrowser", "editor": "false" },        
+	        { "type": "png", 	"viewer": "viewerBrowser", "editor": "false" },        
+	        { "type": "svg", 	"viewer": "viewerBrowser", "editor": "false" },
+	        { "type": "pdf", 	"viewer": "viewerBrowser", "editor": "false" },                
+	        { "type": "html", 	"viewer": "viewerBrowser", "editor": "false" },                        
+	        { "type": "htm", 	"viewer": "viewerBrowser", "editor": "false" },                        
+	        { "type": "mht", 	"viewer": "viewerBrowser", "editor": "false" },                        
+	        { "type": "mhtml", 	"viewer": "viewerBrowser", "editor": "false" },                                
+	        { "type": "maff", 	"viewer": "viewerBrowser", "editor": "false" },                                
+	        { "type": "txt", 	"viewer": "viewerBrowser", "editor": "false" },
+	        { "type": "xml", 	"viewer": "viewerBrowser", "editor": "false" },
+	        { "type": "js", 	"viewer": "viewerBrowser", "editor": "false" },
+	        { "type": "css", 	"viewer": "viewerBrowser", "editor": "false" },
+	        { "type": "mdown", 	"viewer": "viewerBrowser", "editor": "false" },                
+	        { "type": "md", 	"viewer": "viewerBrowser", "editor": "false" }
 	    ],
 		"tagGroups": [
 			{
@@ -123,46 +111,48 @@ define(function(require, exports, module) {
 	}
 	
 	exports.Setting = undefined;
+
+	var firstRun = false;
 	
-	exports.upgradeSettings = function() {
+	var upgradeSettings = function() {
 		if(exports.Settings["appBuild"].localeCompare(exports.DefaultSettings["appBuild"]) < 0) {
 			console.debug("Upgrading settings");
 			exports.Settings["extensions"] = exports.DefaultSettings["extensions"];
 			exports.Settings["appVersion"] = exports.DefaultSettings["appVersion"];
 			exports.Settings["appBuild"] = exports.DefaultSettings["appBuild"];
-			exports.getExtensions();
-			exports.getExtensionPath();
-	    	exports.saveSettings();   		
+			getExtensions();
+			getExtensionPath();
+	    	saveSettings();   		
 		}
 	}
 	
-	exports.getExtensions = function() {
+	var getExtensions = function() {
 		if(exports.Settings["extensions"] == null) {
 			exports.Settings["extensions"] = exports.DefaultSettings["extensions"];
 		}
 	    return exports.Settings["extensions"];
 	}
 	
-	exports.getExtensionPath = function() {
+	var getExtensionPath = function() {
 		if(exports.Settings["extensionsPath"] == null) {
 			exports.Settings["extensionsPath"] = exports.DefaultSettings["extensionsPath"];
 		}
 	    return exports.Settings["extensionsPath"];
 	}
 	
-	exports.getNewTextFileContent = function() {
+	var getNewTextFileContent = function() {
 	    return exports.Settings["newTextFileContent"];
 	}
 	
-	exports.getNewHTMLFileContent = function() {
+	var getNewHTMLFileContent = function() {
 	    return exports.Settings["newHTMLFileContent"];
 	}
 	
-	exports.getNewMDFileContent = function() {
+	var getNewMDFileContent = function() {
 	    return exports.Settings["newMDFileContent"];
 	}
 	
-	exports.getFileTypeEditor = function(fileTypeExt) {
+	var getFileTypeEditor = function(fileTypeExt) {
 	    for(var i=0; i < exports.Settings["supportedFileTypes"].length; i++) {
 	        if(exports.Settings["supportedFileTypes"][i].type == fileTypeExt) {
 	             return exports.Settings["supportedFileTypes"][i].editor;
@@ -171,7 +161,7 @@ define(function(require, exports, module) {
 	    return false;   
 	}
 	
-	exports.getFileTypeViewer = function(fileTypeExt) {
+	var getFileTypeViewer = function(fileTypeExt) {
 	    for(var i=0; i < exports.Settings["supportedFileTypes"].length; i++) {
 	        if(exports.Settings["supportedFileTypes"][i].type == fileTypeExt) {
 	             return exports.Settings["supportedFileTypes"][i].viewer;
@@ -180,7 +170,8 @@ define(function(require, exports, module) {
 	    return false;   
 	}
 	
-	exports.findTag = function(tagName, tagGroupKey) {
+	// Not used
+	var findTag = function(tagName, tagGroupKey) {
 	    for(var i=0; i < exports.Settings["tagGroups"].length; i++) {
 	        if(exports.Settings["tagGroups"][i].key == tagGroupKey) {
 	            // console.debug("Current taggroup "+exports.Settings["tagGroups"][i].key);
@@ -195,7 +186,7 @@ define(function(require, exports, module) {
 	    return false;   
 	}
 	
-	exports.getAllTags = function() {
+	var getAllTags = function() {
 	    var allTags = [];
 	    for(var i=0; i < exports.Settings["tagGroups"].length; i++) {
 	        // console.debug("Current taggroup "+exports.Settings["tagGroups"][i].key);
@@ -209,16 +200,18 @@ define(function(require, exports, module) {
 	    return allTags;   
 	}
 	
-	exports.setLastOpenedDir = function(directory) {
+	// Not used
+	var setLastOpenedDir = function(directory) {
 	    exports.Settings["lastOpenedDirectory"] = directory;
-	    exports.saveSettings();    
+	    saveSettings();    
 	}
 	
-	exports.getLastOpenedDir = function() {
+	// Not used
+	var getLastOpenedDir = function() {
 	    return exports.Settings["lastOpenedDirectory"]; 
 	}
 	
-	exports.deleteTag = function(tagData) {
+	var deleteTag = function(tagData) {
 	    for(var i=0; i < exports.Settings["tagGroups"].length; i++) {
 	        if(exports.Settings["tagGroups"][i].key == tagData.parentKey) {
 	            for(var j=0; j < exports.Settings["tagGroups"][i]["children"].length; j++) {
@@ -232,7 +225,7 @@ define(function(require, exports, module) {
 	    exports.saveSettings();    
 	}
 	
-	exports.getTagData = function(tagTitle, parentKey) {
+	var getTagData = function(tagTitle, parentKey) {
 	    for(var i=0; i < exports.Settings["tagGroups"].length; i++) {
 	        if(exports.Settings["tagGroups"][i].key == parentKey) {
 	            for(var j=0; j < exports.Settings["tagGroups"][i]["children"].length; j++) {
@@ -245,7 +238,7 @@ define(function(require, exports, module) {
 	    }  
 	}
 	
-	exports.getTagGroupData = function(tagGroupKey) {
+	var getTagGroupData = function(tagGroupKey) {
 	    for(var i=0; i < exports.Settings["tagGroups"].length; i++) {
 	        if(exports.Settings["tagGroups"][i].key == tagGroupKey) {
 	            return exports.Settings["tagGroups"][i];
@@ -254,7 +247,7 @@ define(function(require, exports, module) {
 	    }  
 	}
 	
-	exports.deleteTagGroup = function(tagData) {
+	var deleteTagGroup = function(tagData) {
 	    for(var i=0; i < exports.Settings["tagGroups"].length; i++) {
 	        if(exports.Settings["tagGroups"][i].key == tagData.key) {
 	            console.debug("Deleting taggroup "+exports.Settings["tagGroups"][i].key);
@@ -265,7 +258,7 @@ define(function(require, exports, module) {
 	    exports.saveSettings();    
 	}
 	
-	exports.editTag = function(tagData, newTagName) {
+	var editTag = function(tagData, newTagName) {
 	    for(var i=0; i < exports.Settings["tagGroups"].length; i++) {
 	        if(exports.Settings["tagGroups"][i].key == tagData.parentKey) {
 	            for(var j=0; j < exports.Settings["tagGroups"][i]["children"].length; j++) {
@@ -279,8 +272,8 @@ define(function(require, exports, module) {
 	    exports.saveSettings();       
 	}
 	
-	exports.createTag = function(tagData, newTagName) {
-	    var newTagModel = JSON.parse( JSON.stringify(exports.TagTemplate));
+	var createTag = function(tagData, newTagName) {
+	    var newTagModel = JSON.parse( JSON.stringify(tagTemplate) );
 	    newTagModel.title = newTagName;
 	    for(var i=0; i < exports.Settings["tagGroups"].length; i++) {
 	        if(exports.Settings["tagGroups"][i].key == tagData.key) {
@@ -289,21 +282,20 @@ define(function(require, exports, module) {
 	            break;
 	        }        
 	    }  
-	    exports.saveSettings();       
+	    saveSettings();       
 	}
 	
-	exports.editTagGroup = function(tagData, tagGroupName) {
+	var editTagGroup = function(tagData, tagGroupName) {
 	    for(var i=0; i < exports.Settings["tagGroups"].length; i++) {
 	        if(exports.Settings["tagGroups"][i].key == tagData.key) {
 	            exports.Settings["tagGroups"][i].title = tagGroupName;
 	            break;
 	        }        
 	    }  
-	    exports.saveSettings();       
+	    saveSettings();       
 	}
 	
-	
-	exports.duplicateTagGroup = function(tagData, tagGroupName, tagGroupKey) {
+	var duplicateTagGroup = function(tagData, tagGroupName, tagGroupKey) {
 	    var newTagGroupModel = undefined;
 	    for(var i=0; i < exports.Settings["tagGroups"].length; i++) {
 	        if(exports.Settings["tagGroups"][i].key == tagData.key) {
@@ -315,21 +307,21 @@ define(function(require, exports, module) {
 	    newTagGroupModel.key = tagGroupKey;            
 	    console.debug("Creating taggroup: "+JSON.stringify(newTagGroupModel)+" with key: "+tagGroupKey);
 	    exports.Settings["tagGroups"].push(newTagGroupModel);
-	    exports.saveSettings();       
+	    saveSettings();       
 	}
 	
-	exports.createFavorite = function(name, location) {
-	    var newFavoriteModel = JSON.parse( JSON.stringify(exports.FavoriteTemplate));
+	var createFavorite = function(name, location) {
+	    var newFavoriteModel = JSON.parse( JSON.stringify(favoriteTemplate));
 	    name = name.replace("\\", "\\\\");
 	    name = name.replace("\\\\\\", "\\\\");
 	    name = name.replace("\\\\\\\\", "\\\\");   
 	    newFavoriteModel.name = name;
 	    newFavoriteModel.path = location;
 	    exports.Settings["tagspacesList"].push(newFavoriteModel);
-	    exports.saveSettings();    
+	    saveSettings();    
 	}
 	
-	exports.deleteFavorite = function(name) {
+	var deleteFavorite = function(name) {
 	    for(var i=0; i < exports.Settings["tagspacesList"].length; i++) {
 	            console.debug("Traversing favorite "+exports.Settings["tagspacesList"][i].name+" searching for "+name);
 	        if(exports.Settings["tagspacesList"][i].name == name) {
@@ -338,10 +330,10 @@ define(function(require, exports, module) {
 	            break;
 	        }        
 	    }  
-	    exports.saveSettings();    
+	    saveSettings();    
 	}
 	
-	exports.updateSettingMozillaPreferences = function(settings) {
+	var updateSettingMozillaPreferences = function(settings) {
 	    var tmpSettings = JSON.parse(settings);    
 	    if(tmpSettings != null) {
 	        exports.Settings = tmpSettings;
@@ -350,21 +342,19 @@ define(function(require, exports, module) {
 	        exports.Settings = exports.DefaultSettings;
 	        console.debug('Default settings loaded(Firefox)!');        
 	    }
-	    exports.saveSettings();
+	    saveSettings();
 	}
 	
-	exports.firstRun = false;
-	
-	exports.loadSettingsLocalStorage = function() {
+	var loadSettingsLocalStorage = function() {
 	    try {
-	        var tmpSettings = JSON.parse(localStorage.getItem('exports'));
+	        var tmpSettings = JSON.parse(localStorage.getItem('tagSpacesSettings'));
 	        console.debug("Settings: "+JSON.stringify(tmpSettings));        
 	    	if(tmpSettings!=null) {
 	    		exports.Settings = tmpSettings;		
 	    	} else {
 	    	    // If no settings found in the local storage,
 	    	    // the application runs for the first time.
-	    	    exports.firstRun = true;
+	    	    firstRun = true;
 	    	}
 	    } catch(ex) {
 	        console.debug("Loading settings from local storage failed due exception: "+ex);
@@ -372,17 +362,40 @@ define(function(require, exports, module) {
 	}
 	
 	// Save setting and Reloads the app
-	exports.saveSettings = function() {
+	var saveSettings = function() {
 	    // Storing setting in the local storage for mozilla and chorme
-		localStorage.setItem('exports', JSON.stringify(exports.Settings));
+		localStorage.setItem('tagSpacesSettings', JSON.stringify(exports.Settings));
 	    
 	    // Storing settings in mozilla native preferences
-	    if($.browser.mozilla) {
+	    if(isFirefox) {
 	        IOAPI.saveSettings(JSON.stringify(exports.Settings));
 		}
 		
 		console.debug('Tagspace Settings Saved!');
 	}
-
+	
+    // Public API definition
+    exports.upgradeSettings               			= upgradeSettings;
+    exports.getExtensions              				= getExtensions;
+    exports.getExtensionPath              			= getExtensionPath;    
+    exports.getNewTextFileContent                	= getNewTextFileContent;
+    exports.getNewHTMLFileContent                	= getNewHTMLFileContent;	
+    exports.getNewMDFileContent                		= getNewMDFileContent;	
+    exports.getFileTypeEditor                		= getFileTypeEditor;	
+    exports.getFileTypeViewer                		= getFileTypeViewer;	
+    exports.getAllTags                				= getAllTags;	            
+    exports.deleteTag                				= deleteTag;	
+    exports.getTagData                				= getTagData;	
+    exports.getTagGroupData                			= getTagGroupData;	
+    exports.deleteTagGroup                			= deleteTagGroup;	
+    exports.editTag                					= editTag;	
+    exports.createTag                				= createTag;	
+    exports.editTagGroup                			= editTagGroup;	
+    exports.duplicateTagGroup                		= duplicateTagGroup;	
+    exports.createFavorite                			= createFavorite;	
+    exports.deleteFavorite                			= deleteFavorite;	
+    exports.updateSettingMozillaPreferences         = updateSettingMozillaPreferences;	
+    exports.loadSettingsLocalStorage                = loadSettingsLocalStorage;	
+    exports.saveSettings                			= saveSettings;	
 
 });

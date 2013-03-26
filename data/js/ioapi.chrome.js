@@ -39,11 +39,9 @@ define(function(require, exports, module) {
 	// Add plugin to document 
     document.documentElement.appendChild(plugin);    
 	
-	// Determine the directory separator
-	exports.pathSeparator = plugin.getPlatform() == 'windows' ? "\\" : '/';
 	
 	// Test if plugin works
-	console.debug("Current platform: "+plugin.getPlatform()+" with path separator: "+exports.pathSeparator);  
+	//console.debug("Current platform: "+plugin.getPlatform());  
 	
 	exports.createDirectory = function(dirPath) {
 	    console.debug("Creating directory: "+dirPath);    
@@ -117,6 +115,9 @@ define(function(require, exports, module) {
 		console.debug("Getting subdirs: "+dirPath);
 	    if(plugin.isDirectory(dirPath)) {
 	        try {
+	            // Determine the directory separator
+				var pathSeparator = plugin.getPlatform() == 'windows' ? "\\" : '/';
+	            
 	            var dirList = plugin.listFiles(dirPath);
 	            var anotatedDirList = [];
 	            for (var i=0; i < dirList.length; i++) {
@@ -125,7 +126,7 @@ define(function(require, exports, module) {
 	                        "title": dirList[i].name,
 	                        "isFolder": true,
 	                        "isLazy": true,
-	                        "key": dirPath+exports.pathSeparator+dirList[i].name 
+	                        "key": dirPath+pathSeparator+dirList[i].name 
 	                    }); 
 	                }            
 	            } 
