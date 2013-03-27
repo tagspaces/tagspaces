@@ -59,7 +59,7 @@ define(function(require, exports, module) {
 	    "extensions": [
 	        {   
 	            "id": "perspectiveThumb", // ID should be equal to the directory name where the extension is located 
-	            "enabled": true, 
+	            "enabled": "true", 
 	            "type": "view", 
 	        },
 	    ],
@@ -85,9 +85,9 @@ define(function(require, exports, module) {
 		"tagGroups": [
 			{
 			    "title":"Common Tags",
-			    "isFolder": true,
+			    "isFolder": "true",
 			    "key":"OTB",
-			    "expand": true,
+			    "expand": "true",
 			    "children":[
 			        {
 			            "title":"book",
@@ -104,6 +104,30 @@ define(function(require, exports, module) {
 			        {
 			            "title":"201XMMDD",
 			            "type":"plain",
+			        }
+			    ]
+			},		
+			{
+			    "title":"GTD",
+			    "isFolder": "true",
+			    "key":"GTD",
+			    "expand": "true",
+			    "children":[
+			        {
+			            "title":"done",
+			            "type":"plain"
+			        },        
+			        {
+			            "title":"next",
+			            "type":"plain"
+			        },
+			        {
+			            "title":"maybe",
+			            "type":"plain"
+			        },
+			        {
+			            "title":"waiting",
+			            "type":"plain"
 			        }
 			    ]
 			}			
