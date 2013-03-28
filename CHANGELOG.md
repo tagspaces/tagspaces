@@ -1,6 +1,17 @@
 #Changelog
 
-##TagSpaces 1.3.12xx / 2013.03.04
+##TagSpaces 1.3.1284 / 2013.03.29
+- [All] Added GTD as a default taggroup
+- [All] New welcome hint shown if new favorite directories exist.
+- [All] Add support for dropping of tags over the search entries
+- [All] Allowing adding multiple tags to multipe files
+- [All] Tag button created in files view
+- [All] Removing the focus from the edit button, after clicking on it
+- [All] Bug fixed in search view preventing from renaming and opening files from the context menu
+- [All] Tag suggestion working again.
+- [All] Fixed issue with no possible dropping of tags on a file with no tags
+- [All] Enabling drag&drop of files in tag & search views
+- [All] Closing a opened files after it is moved to a other directory
 - [All] Issue [#5](https://github.com/uggrock/tagspaces/issues/5) fixed (Opening of files in file view was broken)
 - [All] Information shown in the browser title improved
  
