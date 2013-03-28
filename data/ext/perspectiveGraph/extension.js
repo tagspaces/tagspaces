@@ -514,7 +514,7 @@ define(function(require, exports, module) {
 	            var commandName = ui.item.attr( "action" );
 	            switch (commandName) {
 	              case "openFile":
-	        		TSCORE.openFile(TSCORE.selectedFiles[0]);                
+	        		TSCORE.FileOpener.openFile(TSCORE.selectedFiles[0]);                
 	                break;
 	              case "addTag":        
 	                console.debug("Adding tag..."); 

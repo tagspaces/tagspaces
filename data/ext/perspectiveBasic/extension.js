@@ -240,7 +240,7 @@ define(function(require, exports, module) {
 	        console.debug("Opening file...");
 	        var rowData = fileTable.fnGetData( this );
 	        
-	        TSCORE.openFile(TSCORE.currentPath+TSCORE.TagUtils.DIR_SEPARATOR+rowData[0]);
+	        TSCORE.FileOpener.openFile(TSCORE.currentPath+TSCORE.TagUtils.DIR_SEPARATOR+rowData[0]);
 	    } );     
 	    
 	    fileTable.$('.fileButton')

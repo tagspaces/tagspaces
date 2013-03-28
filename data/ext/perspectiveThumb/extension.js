@@ -56,7 +56,7 @@ define(function(require, exports, module) {
 	            
 	            // On selecting only one file opens it in the viewer
 	            if(TSCORE.selectedFiles.length == 1) {
-					TSCORE.openFile(TSCORE.selectedFiles[0]);             	
+					TSCORE.FileOpener.openFile(TSCORE.selectedFiles[0]);             	
 	            }
 	        }
 	    }); 

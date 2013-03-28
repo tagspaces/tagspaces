@@ -112,7 +112,7 @@ define(function(require, exports, module) {
 	                break;  
 	              case "openFile":
 	                console.debug("Opening file...");
-	        		TSCORE.openFile(TSCORE.selectedFiles[0]);                
+	        		TSCORE.FileOpener.openFile(TSCORE.selectedFiles[0]);                
 	                break;
 	              case "openDirectory":
 	                console.debug("Opening parent directory...");   

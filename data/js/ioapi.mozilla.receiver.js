@@ -41,10 +41,11 @@ console.debug("Loading messaging.mozilla.js..");
 	        if(message.success){
 	            TSCORE.updateLogger("Rename success");   
 	            // message.content contains the name of the file after the rename
-	            TSCORE.selectedFiles[0] = message.content;
-	            if(TSCORE.isFileOpened) {
-	               TSCORE.openFile(TSCORE.selectedFiles[0]); 	
+	            if(TSCORE.FileOpener.isFileOpened) {
+	               TSCORE.FileOpener.openFile(message.content); 	
 	            }
+	            // TODO to be replaced with a function which replaced the 
+	            // renamed file in the model of the perspective
 	            TSCORE.ViewManager.refreshFileListContainer();
 	        } else {
 	            TSCORE.updateLogger("Rename failed");        

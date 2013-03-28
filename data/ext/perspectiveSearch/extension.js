@@ -227,7 +227,7 @@ define(function(require, exports, module) {
 	        console.debug("Opening file...");
 	        var rowData = fileTable.fnGetData( this );
 	        
-	        TSCORE.openFile(rowData[4]); // 4 is the filePath
+	        TSCORE.FileOpener.openFile(rowData[4]); // 4 is the filePath
 	    } );     
 	    
 	    fileTable.$('.fileTitleButton')

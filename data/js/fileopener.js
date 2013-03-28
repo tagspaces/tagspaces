@@ -8,13 +8,34 @@ define(function(require, exports, module) {
 	
 	var TSCORE = require("tscore");
 
+	var _openedFilePath = undefined; 
+	
+	var _isFileOpened = false;	
+
+	var _tsEditor = undefined;
+	
+	// If a file is currently opened for editing, this var should be true
+	var _isEditMode = false;	
+	
+	function isFileOpened() {
+		return _isFileOpened;
+	}	
+
+	function setFileOpened(fileOpened) {
+		_isFileOpened = fileOpened;
+	}
+	
+	function getOpenedFilePath() {
+		return _openedFilePath;
+	}
+
 	function openFile(filePath) {
 	    console.debug("Opening file: "+filePath);
 	
-	    isEditMode = false;
+	    _isEditMode = false;
 	
-	    var openedFilePath = filePath;    
-	    $("#selectedFilePath").val(openedFilePath.replace("\\\\","\\")); 
+	    _openedFilePath = filePath;    
+	    $("#selectedFilePath").val(_openedFilePath.replace("\\\\","\\")); 
 	    
 	    var fileExt = TSCORE.TagUtils.extractFileExtension(filePath);
 	
@@ -23,8 +44,6 @@ define(function(require, exports, module) {
 	    // Getting the viewer for the file extension/type
 	    var viewerExt = TSCORE.Config.getFileTypeViewer(fileExt);  
 	    console.debug("File Viewer: "+viewerExt);
-	
-		TSCORE.openFileViewer();
 	
 	    initTagSuggestionMenu(filePath);
 	
@@ -40,21 +59,18 @@ define(function(require, exports, module) {
 		    }));    	
 	    } else {
 	        require([TSCORE.Config.getExtensionPath()+"/"+viewerExt+"/"+"extension.js"], function(viewer) {
-	            tsEditor = viewer;
-	            tsEditor.init(filePath, "viewer");
-	            tsEditor.viewerMode(true);
+	            _tsEditor = viewer;
+	            _tsEditor.init(filePath, "viewer");
+	            _tsEditor.viewerMode(true);
 	        });
-	    }  
+	    } 
+	    TSCORE.FileOpener.setFileOpened(true); 
+		TSCORE.openFileViewer();
 	} 
-	
-	var tsEditor = undefined;
-	
-	// If a file is currently opened for editing, this var should be true
-	var isEditMode = false;
 	
 	function updateEditorContent(fileContent) {
 	    console.debug("Updating editor"); // with data: "+fileContent); 
-	    tsEditor.setContent(fileContent);    
+	    _tsEditor.setContent(fileContent);    
 	}
 	
 	// Should return false if no editor found
@@ -79,10 +95,10 @@ define(function(require, exports, module) {
 	    } else {
 	        try {
 	            require([TSCORE.Config.getExtensionPath()+"/"+editorExt+"/extension.js"], function(editr) {
-	                tsEditor = editr;
-	                tsEditor.init(filePath, "viewer");
+	                _tsEditor = editr;
+	                _tsEditor.init(filePath, "viewer");
 	            });
-	            isEditMode = true;
+	            _isEditMode = true;
 	        } catch(ex) {
 	            console.error("Loading editing extension failed: "+ex);
 	        }
@@ -91,15 +107,17 @@ define(function(require, exports, module) {
 	
 	function saveFile(filePath) {
 	    console.debug("Save current file: "+filePath);
-	    var content = tsEditor.getContent();
+	    var content = _tsEditor.getContent();
 	    TSCORE.IO.saveTextFile(filePath, content);   	    	
 	}
 	
 	function constructFileViewerUI(filePath) {
 	    // Adding tag buttons to the filetoolbox
 	    var tags = TSCORE.TagUtils.extractTags(filePath);
+	    
+	    var title = TSCORE.TagUtils.extractTitle(filePath);
 	
-	    $( "#fileTitle" ).text();
+	    $( "#fileTitle" ).text(title);
 	    
 	    // Generate tag buttons
 	    $( "#fileTags" ).empty();
@@ -185,9 +203,9 @@ define(function(require, exports, module) {
 	}
 	
 	function addTagSuggestionButton(container) {
-	    $( ""+container ).append('<button id="openTagSuggestionMenu">Tag</button>');
+	    $( ""+container ).append('<button id="openTagSuggestionMenu" title="Tag Suggestions">Tag</button>');
 	    $( "#openTagSuggestionMenu" ).button({
-	        text: false,        
+	        text: false,
 	        icons: {
 	            primary: "ui-icon-tag"
 	        },
@@ -198,7 +216,7 @@ define(function(require, exports, module) {
 	function addEditButton(container, filePath) {
 	    var buttonDisabled = false;
 	    // If no editor found, disabling the button
-	    if(getFileEditor(filePath) === false) {
+	    if(getFileEditor(filePath) === "false") {
 	        buttonDisabled = true;
 	    }
 		var options;
@@ -231,7 +249,7 @@ define(function(require, exports, module) {
 	                    }
 	                };
 	                saveFile(filePath);
-	        		TSCORE.openFile(filePath);                   
+	        		openFile(filePath);                   
 			    }
 			}
 			$( this ).button( "option", options );    	
@@ -262,19 +280,20 @@ define(function(require, exports, module) {
 	        disabled: false
 	    })
 	    .click(function() {
-	        if(isEditMode) {
+	        if(_isEditMode) {
 	            if(confirm("If you confirm, all made changes will be lost.")){
 	                // Cleaning the viewer/editor
 	                document.getElementById("viewer").innerHTML = "";
+					TSCORE.FileOpener.setFileOpened(false);
 					TSCORE.closeFileViewer();
-	                isEditMode = false;                
+	                _isEditMode = false;                
 	            }
 	        } else {
 	            // Cleaning the viewer/editor
 	            document.getElementById("viewer").innerHTML = "";
-	            TSCORE.isFileOpened = false;
+	            TSCORE.FileOpener.setFileOpened(false);
 				TSCORE.closeFileViewer();
-	            isEditMode = false;            
+	            _isEditMode = false;            
 	        }
 	    });    
 	}
@@ -302,12 +321,11 @@ define(function(require, exports, module) {
 	    });    
 	}
   
-// Vars  
-    exports.tsEditor                    		= tsEditor;
-    exports.isEditMode                    		= isEditMode;
-
 // Methods  
-    exports.openFile                    		= openFile;  
+    exports.openFile                    		= openFile;
+    exports.isFileOpened						= isFileOpened;
+    exports.setFileOpened						= setFileOpened;
+    exports.getOpenedFilePath             		= getOpenedFilePath;  
     exports.updateEditorContent                 = updateEditorContent;
                                                           
 });

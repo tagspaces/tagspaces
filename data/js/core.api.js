@@ -24,9 +24,6 @@ define(function(require, exports, module) {
 	// Current selected files
 	var selectedFiles = [];
 	
-	// True if a file is opened in the viewer
-	var isFileOpened = false;
-	
 	// Current directory list of files
 	var fileList = [];
 	
@@ -128,18 +125,11 @@ define(function(require, exports, module) {
 	    location.reload();
 	}
 	
-	function openFile(filePath) {
-	//    console.debug("Opening file..."); 
-	    tsFileOpener.openFile(filePath);	
-	}
-	
 	function openFileViewer() {
-		isFileOpened = true;
 	    layoutContainer.open("east");    
 	}
 	
 	function closeFileViewer() {
-		isFileOpened = false;
 	    layoutContainer.close("east");    
 	}
 	
@@ -258,7 +248,6 @@ define(function(require, exports, module) {
 	exports.hideLoadingAnimation 		= hideLoadingAnimation;
 	exports.fileExists 					= fileExists;
 	exports.reloadUI 					= reloadUI;
-	exports.openFile 					= openFile;								
 	exports.openFileViewer 				= openFileViewer;
 	exports.closeFileViewer 			= closeFileViewer;
 	exports.toggleLeftPanel 			= toggleLeftPanel;
@@ -277,7 +266,6 @@ define(function(require, exports, module) {
 	exports.currentPath 				= currentPath;
 	exports.currentView 				= currentView;
 	exports.selectedFiles 				= selectedFiles;
-	exports.isFileOpened 				= isFileOpened;
 	exports.fileList 					= fileList;
 	exports.selectedTag 				= selectedTag;
 	exports.selectedTagData 			= selectedTagData;		
