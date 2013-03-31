@@ -76,7 +76,7 @@ define(function(require, exports, module) {
 				plugin.saveBinaryFile(newFilePath,plugin.getBinaryFile(filePath));
 				plugin.removeFile(filePath);
 	
-	            if(TSCORE.FileOpener.isFileOpened) {
+	            if(TSCORE.FileOpener.isFileOpened()) {
 	               TSCORE.FileOpener.openFile(newFilePath); 	
 	            }   			
 				TSCORE.ViewManager.refreshFileListContainer();

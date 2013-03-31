@@ -50,7 +50,6 @@ define(function(require, exports, module) {
 	    $( "#viewer" ).empty();
 	    if(!viewerExt) {
 	        $( "#viewer" ).text("File type not supported for viewing.");        
-	        return;
 	    } else if (viewerExt == "viewerBrowser") {
 		    filePath = "file:///"+filePath;
 		    $('#viewer').append($('<iframe>', {

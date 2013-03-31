@@ -41,7 +41,7 @@ console.debug("Loading messaging.mozilla.js..");
 	        if(message.success){
 	            TSCORE.updateLogger("Rename success");   
 	            // message.content contains the name of the file after the rename
-	            if(TSCORE.FileOpener.isFileOpened) {
+	            if(TSCORE.FileOpener.isFileOpened()) {
 	               TSCORE.FileOpener.openFile(message.content); 	
 	            }
 	            // TODO to be replaced with a function which replaced the 
