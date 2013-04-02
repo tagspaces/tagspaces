@@ -32,13 +32,10 @@ define(function(require, exports, module) {
 	                            "path": undefined
 	                        }
 	                        
-	// not used
 	var tagGroupTemplate = {
 	            "title": undefined,
-	            "isFolder": true,
 	            "key": undefined,
-	            "expand": true,
-	            "noLink": false,
+	            "expanded": true,
 	            "children": []
 	        }
 	
@@ -333,6 +330,20 @@ define(function(require, exports, module) {
 	    exports.Settings["tagGroups"].push(newTagGroupModel);
 	    saveSettings();       
 	}
+
+	var createTagGroup = function(tagData, tagGroupName) {
+	    var newTagGroupModel =  JSON.parse( JSON.stringify( tagGroupTemplate ) );
+	    newTagGroupModel.title = tagGroupName;
+	    //newTagGroupModel.children = [];
+	    newTagGroupModel.key = ""+getRandomInt(10000,99999);            
+	    console.debug("Creating taggroup: "+JSON.stringify(newTagGroupModel)+" with key: "+newTagGroupModel.key);
+	    exports.Settings["tagGroups"].push(newTagGroupModel);
+	    saveSettings();       
+	}	
+	
+	var moveTagGroup = function(tagData, tagGroupName) {
+
+	}		
 	
 	var createFavorite = function(name, location) {
 	    var newFavoriteModel = JSON.parse( JSON.stringify(favoriteTemplate));
@@ -398,6 +409,10 @@ define(function(require, exports, module) {
 		console.debug('Tagspace Settings Saved!');
 	}
 	
+	var getRandomInt = function(min, max) {
+  		return Math.floor(Math.random() * (max - min + 1)) + min;
+	}
+	
     // Public API definition
     exports.upgradeSettings               			= upgradeSettings;
     exports.getExtensions              				= getExtensions;
@@ -415,6 +430,7 @@ define(function(require, exports, module) {
     exports.editTag                					= editTag;	
     exports.createTag                				= createTag;	
     exports.editTagGroup                			= editTagGroup;	
+    exports.createTagGroup                			= createTagGroup;    
     exports.duplicateTagGroup                		= duplicateTagGroup;	
     exports.createFavorite                			= createFavorite;	
     exports.deleteFavorite                			= deleteFavorite;	

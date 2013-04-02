@@ -166,9 +166,8 @@ define(function (require, exports, module) {
 	                                
     var TSCORE = require("tscore");
 
-	require(['libs/requirejs/domReady!'], function (docu) {
-	    //This function is called once the DOM is ready,
-	    //the value for 'domReady!' is the current document.
+	require(['libs/requirejs/domReady!'], function () {
+	    //This function is called once the DOM is ready
 		TSCORE.initApp();
 	});
 

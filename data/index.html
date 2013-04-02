@@ -224,17 +224,17 @@
         </form>
      </div>   
 
-    <div id="dialog-taggroupDupicate" title="Duplicate Taggroup">
+    <div id="dialog-taggroupCreate" title="Create Taggroup">
         <p class="validateTips">All form fields are required.</p>    
         <form action="javascript:void(0);">
         <fieldset>
           <p>
             <label for="name">Name</label>
             <input type="text" name="name" id="newTagGroupName" />
-          </p><p>
+          </p><!--p>
             <label for="key">Key(unique key of 3 letters)</label>
             <input type="text" name="key" id="newTagGroupKey" />
-          </p>  
+          </p-->  
         </fieldset>
         </form>
      </div> 
@@ -280,7 +280,8 @@
     <ul id="tagGroupMenu" class="dropdown-menu has-tip">
         <!--li action="toggleTagGroup" title="Opens or Close the selected tagroup"><a href="javascript:void(0);">Toggle Taggroup</a></li-->
         <li action="createNewTag" title="Creates new tag"><a href="javascript:void(0);"><span class="ui-icon ui-icon-tag"></span>Create Tag</a></li>
-        <li action="duplicateTagGroup" title="Duplicate current tagroup"><a href="javascript:void(0);"><span class="ui-icon ui-icon-copy"></span>Duplicate Taggroup</a></li>                   
+        <!--li action="duplicateTagGroup" title="Duplicate current tagroup"><a href="javascript:void(0);"><span class="ui-icon ui-icon-copy"></span>Duplicate Taggroup</a></li-->                   
+        <li action="createTagGroup" title="Create new tagroup"><a href="javascript:void(0);"><span class="ui-icon ui-icon-copy"></span>Create Taggroup</a></li>        
         <li action="editTagGroup" title="Edit current tagroup"><a href="javascript:void(0);"><span class="ui-icon ui-icon-wrench"></span>Edit Taggroup</a></li>                       
         <li action="deleteTagGroup" title="Delete current tagroup"><a href="javascript:void(0);"><span class="ui-icon ui-icon-trash"></span>Delete Taggroup</a></li>
     </ul>  

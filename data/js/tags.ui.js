@@ -90,8 +90,8 @@ define(function(require, exports, module) {
 	              case "deleteTagGroup":
 	                $( "#dialog-confirmtaggroupdelete" ).dialog( "open" );                
 	                break;                            
-	              case "duplicateTagGroup":
-	                $( "#dialog-taggroupDupicate" ).dialog( "open" );
+	              case "createTagGroup":
+	                $( "#dialog-taggroupCreate" ).dialog( "open" );
 	                break;
 	              case "editTagGroup":
 	                $( "#tagGroupName" ).val(TSCORE.selectedTagData.title);              
@@ -291,24 +291,30 @@ define(function(require, exports, module) {
 	            Cancel: function() {
 	                $( this ).dialog( "close" );
 	            }
-	        }
+	        },
+	        open: function() {
+	            $( "#newTagName" ).val("");
+	        }    	        
 	    });  
 	    
-	    $( "#dialog-taggroupDupicate" ).dialog({
+	    $( "#dialog-taggroupCreate" ).dialog({
 	        autoOpen: false,
 	        resizable: false,
 	        height:240,
 	        modal: true,
 	        buttons: {
-	            "Duplicate Taggroup": function() {
-	                TSCORE.Config.duplicateTagGroup(TSCORE.selectedTagData, $( "#newTagGroupName" ).val(), $( "#newTagGroupKey" ).val() )
+	            "Create": function() {
+	                TSCORE.Config.createTagGroup(TSCORE.selectedTagData, $( "#newTagGroupName" ).val() )
 	                generateTagGroups();                    
 	                $( this ).dialog( "close" );
 	            },
 	            Cancel: function() {
 	                $( this ).dialog( "close" );
 	            }
-	        }
+	        },
+	        open: function() {
+	            $( "#newTagGroupName" ).val("");
+	        }  	        
 	    });   
 	    
 	    $( "#dialog-taggroupEdit" ).dialog({
