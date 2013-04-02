@@ -428,7 +428,7 @@ define(function(require, exports, module) {
 	                key: TSCORE.Config.Settings["tagGroups"][i].key, 
 	                title: "Taggroup options",
 	        })                
-	        //.dropdown( 'attach' , '#tagGroupMenu' )
+	        .dropdown( 'attach' , '#tagGroupMenu' )
 	        .click( function(event) {
 	                //console.debug("Clicked in taggroup setting");    
 	                TSCORE.selectedTag = $(this).attr("tag");
@@ -444,8 +444,8 @@ define(function(require, exports, module) {
 	        tagButtons.hide(); 
 	        for(var j=0; j < TSCORE.Config.Settings["tagGroups"][i]["children"].length; j++) {
 	            tagButtons.append($("<a>", { 
-	                "data-toggle":   "dropdown",
-	                "href":          "#",
+	               // "data-toggle":   "dropdown",
+	               // "href":          "#",
 	                "class":         "btn btn-small dropdown-toggle btn-success tagButton", 
 	                "tag":           TSCORE.Config.Settings["tagGroups"][i]["children"][j].title, 
 	                "parentKey":     TSCORE.Config.Settings["tagGroups"][i].key,
@@ -466,8 +466,8 @@ define(function(require, exports, module) {
 	            .append($("<span>", { 
                     class:     "caret", 
                 }))
+	            .dropdown( 'attach' , '#tagTreeMenu' )               
                 );
-	            //.dropdown( 'attach' , '#tagTreeMenu' )               
 	        }
 	    }
 	    

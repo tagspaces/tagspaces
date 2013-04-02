@@ -40,11 +40,11 @@ var initViews = function () {
 	        require([extPath], function(perspective) {
 	            perspectives.push(perspective);
 			    initViewsUI(perspective);
-		 		try { 			
+		 		//try { 			
 		 			perspective.init();
-		 		} catch(e) {
-		 			console.debug("Error while executing 'init' on "+perspectives[i].ID+" - "+e);
-		 		}			   
+		 		//} catch(e) {
+		 		//	console.debug("Error while executing 'init' on "+perspectives[i].ID+" - "+e);
+		 		//}			   
 	        });       
 		} 
 	}	

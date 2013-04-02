@@ -45,6 +45,8 @@ require.config({
         jsoneditorcss: 'libs/jsoneditor/jsoneditor',
         jquerylayout: 'libs/jquerylayout/jquery.layout-1.3.0.rc30.77',
         jquerylayoutcss: 'libs/jquerylayout/layout-default-latest',
+        jquerydropdown: 'libs/jquerydropdown/jquery.dropdown',
+        jquerydropdowncss: 'libs/jquerydropdown/jquery.dropdown',        
         less: 'libs/less/less-1.3.3.min',
         jqueryeditinplace: 'libs/jqueryeditinplace/jquery.editinplace',
 
@@ -65,7 +67,7 @@ require.config({
                 'jquery',
                 'jqueryui',
             ]
-        },
+        },        
         'bootstrap': {
             deps: [
                 'jquery',
@@ -79,11 +81,6 @@ require.config({
         'jqueryui': {
             deps: [
                 'jquery',
-            ]
-        },
-        'dynatree': {
-            deps: [
-                'jquery'
             ]
         },
         'datatables': {
@@ -109,6 +106,7 @@ define(function (require, exports, module) {
     require("datatables");
     require("jsoneditor");
     require("jquerylayout");
+    require("jquerydropdown");    
     require("less");
     require("jqueryeditinplace");
 	

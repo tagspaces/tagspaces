@@ -67,33 +67,35 @@ console.debug("Loading UI for perspectiveDefault");
 
 	ExtUI.prototype.buildUI = function() {
 		console.debug("Init UI module");
-
-	    this.viewToolbar.append($("<button>", { 
-	        //text: "New",
+       
+	    this.viewToolbar.append($("<a>", { 
 			class: "btn btn-small",
-			disabled: true,
+			disabled: false,
 	        title: "Create new file",
 	        id: this.extensionID+"CreateFileButton",    
 	    })
         .append( $("<i>", { class: "icon-file", }) )
         .append("New")
-        );
-        	
+        .click(function() {
+            $( "#dialog-filecreate" ).dialog( "open" );
+        })
+        );       
+    
 	    this.viewToolbar.append($("<button>", { 
 	        text: "Subdirs",
             class: "btn btn-small",
-			disabled: true,
+			disabled: false,
 	        title: "Show subfolders content. \nOn subfolder with many files, this step can take some time!",
 	        id: this.extensionID+"IncludeSubDirsButton",    
-	    }));	
-	    
+	    })); 	 
+	  
 	    this.viewToolbar.append($("<button>", { 
 	        text: "Add Tag",
             class: "btn btn-small",	        
-			disabled: true,
+			disabled: false,
 	        title: "Tag Selected Files",
 	        id: this.extensionID+"TagButton",    
-	    }));    
+	    }));   
 	
 	    this.viewToolbar.append($("<input>", { 
 	        type: "checkbox",
@@ -145,7 +147,7 @@ console.debug("Loading UI for perspectiveDefault");
 			// autocomplete: "off", // Error: cannot call methods on autocomplete prior to initialization; attempted to call method 'off' 
 	        title: "This filter applies to current directory without subdirectories.",
 	        id: this.extensionID+"FilterBox",    
-	    })));
+	    }))); 
 	
 	    this.viewContainer.append($("<table>", { 
 			cellpadding: "0",
@@ -293,14 +295,14 @@ console.debug("Loading UI for perspectiveDefault");
 	        .click( function() {
 	            self.selectFile(this, $(this).attr("filepath"));
 	        } )        
-	        //.dropdown( 'attach' , '#fileMenu' );   
+	        .dropdown( 'attach' , '#fileMenu' );   
 	    
 	    this.fileTable.$('.extTagButton')
 	        .click( function() {
 	        	self.selectFile(this, $(this).attr("filepath"));
 	            TSCORE.openTagMenu(this, $(this).attr("tag"), $(this).attr("filepath"));
 	        } )
-	        //.dropdown( 'attach' , '#extensionMenu' );               
+	        .dropdown( 'attach' , '#extensionMenu' );               
 
 	    this.fileTable.$('.thumbImg')
 		    .dblclick( function() {
@@ -331,13 +333,13 @@ console.debug("Loading UI for perspectiveDefault");
 	            self.selectFile(this, $(this).attr("filepath"));
 	            TSCORE.openTagMenu(this, $(this).attr("tag"), $(this).attr("filepath"));
 	        } )     
-	        //.dropdown( 'attach' , '#tagMenu' );
+	        .dropdown( 'attach' , '#tagMenu' );
 	
 	    $('#'+this.extensionID+"FileTable_wrapper").show();  
 
-	    $( "#"+this.extensionID+"CreateFileButton" ).button( "enable" );
+	//    $( "#"+this.extensionID+"CreateFileButton" ).button( "enable" );
 	    	     
-	    $( "#"+this.extensionID+"IncludeSubDirsButton" ).button( "enable" );
+	//    $( "#"+this.extensionID+"IncludeSubDirsButton" ).button( "enable" );
 	    
 	}
 	
@@ -403,10 +405,7 @@ console.debug("Loading UI for perspectiveDefault");
 	    var self = this;
 		// Initialize file buttons    
 
-	    $( "#"+this.extensionID+"CreateFileButton" )
-	    .click(function() {
-	        $( "#dialog-filecreate" ).dialog( "open" );
-	    });   
+
 	    
 	    $( "#"+this.extensionID+"IncludeSubDirsButton" )
 	    .click(function() {
