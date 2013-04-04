@@ -16,6 +16,9 @@ define(function(require, exports, module) {
     var tsCoreUI = require("tscoreui")
 	
 	var layoutContainer = undefined;  
+    var westLayout = undefined;
+    var centerLayout = undefined;
+    var eastLayout = undefined;
 	
 	var currentPath = "";
 	
@@ -125,11 +128,29 @@ define(function(require, exports, module) {
 	    location.reload();
 	}
 	
-	function openFileViewer() {
-	    layoutContainer.open("east");    
+	function openFileViewer(full) {
+	    //if(full) {
+	    //	layoutContainer.sizePane("east",2000);
+	    	layoutContainer.open("east"); 
+	    //} else {
+	    //	layoutContainer.open("east");    	    	
+	    //}
+	}
+
+	var fileDetailsFull = false; 
+	
+	function toggleFileDetails() {
+	    if(fileDetailsFull) {
+		    fileDetailsFull = false;
+		    eastLayout.sizePane("north", 70);	    		    	
+	    } else {
+		    fileDetailsFull = true;
+		    eastLayout.sizePane("north", 140);	    	
+	    }
 	}
 	
 	function closeFileViewer() {
+	    layoutContainer.open("center");
 	    layoutContainer.close("east");    
 	}
 	
@@ -185,7 +206,7 @@ define(function(require, exports, module) {
 	    );
 	    
 	    // Directories and Tags
-	    var westLayout = $('div.ui-layout-west').layout({
+	    westLayout = $('div.ui-layout-west').layout({
 	            minSize:                50  // ALL panes
 	        ,   center__paneSelector:   ".west-center"
 	        ,   south__paneSelector:    ".west-south"
@@ -194,7 +215,7 @@ define(function(require, exports, module) {
 	        ,   south__spacing_open:    5       
 	    });
 	
-	    var centerLayout = $('div.ui-layout-center').layout({
+	    centerLayout = $('div.ui-layout-center').layout({
 	            name:                   "middle"
 	        ,   north__paneSelector:    ".middle-north"            
 	        ,   center__paneSelector:   ".middle-center"      
@@ -209,15 +230,15 @@ define(function(require, exports, module) {
 	    });
 	
 	    // File Viewer / Editor
-	    var eastLayout = $('div.ui-layout-east').layout({
-	            minSize:                30  // ALL panes
+	    eastLayout = $('div.ui-layout-east').layout({
+	            minSize:                0  // ALL panes
 	        ,   north__paneSelector:    ".east-north"
 	        ,   center__paneSelector:   ".east-center"
 	        ,   south__paneSelector:    ".east-south" 
-	        ,   north__size:            80
-	        ,   north__resizable:       false
+	        ,   north__size:            70
+	        ,   north__resizable:       true
 	        ,   north__spacing_open:    0    
-	        ,   south__size:            25
+	        ,   south__size:            0
 	        ,   south__spacing_open:    0        
 	    });
 	
@@ -251,6 +272,7 @@ define(function(require, exports, module) {
 	exports.openFileViewer 				= openFileViewer;
 	exports.closeFileViewer 			= closeFileViewer;
 	exports.toggleLeftPanel 			= toggleLeftPanel;
+	exports.toggleFileDetails 			= toggleFileDetails;
 	
 	// Proxying functions from tsTagsUI
 	exports.generateTagButtons = tsTagsUI.generateTagButtons

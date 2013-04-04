@@ -158,6 +158,8 @@ define(function(require, exports, module) {
 	
 	    addTagSuggestionButton("#filetoolbox");
 	
+		addShowFullDetailsButton("#filetoolbox");
+	
 	    addCloseButton("#filetoolbox");     
 	}
 	
@@ -254,13 +256,27 @@ define(function(require, exports, module) {
 			$( this ).button( "option", options );    	
 	    });        
 	}
+
+	function addShowFullDetailsButton(container) {
+	    $( ""+container ).append('<button id="showFullDetails">Full details</button>');
+	    $( "#showFullDetails" ).button({
+	        text: false,        
+	        icons: {
+	            primary: "ui-icon-arrowthick-2-n-s"
+	        },
+	        disabled: false
+	    })
+	    .click(function() {
+			TSCORE.toggleFileDetails();
+	    });        
+	}
 	
 	function addOpenInWindowButton(container, filePath) {
 	    $( ""+container ).append('<button id="openInNewWindow">Open in New Tab</button>');
 	    $( "#openInNewWindow" ).button({
 	        text: false,        
 	        icons: {
-	            primary: "ui-icon-extlink" // newwin
+	            primary: "ui-icon-extlink"
 	        },
 	        disabled: false
 	    })

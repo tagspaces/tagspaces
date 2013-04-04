@@ -200,6 +200,7 @@ define(function(require, exports, module) {
         }
     }    
     
+    // Replaces a tag with a new one
     function renameTag(filePath, oldTag, newTag) {
         console.debug("Rename tag for file: "+filePath);
 

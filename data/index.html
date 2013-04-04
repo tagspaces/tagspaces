@@ -42,24 +42,26 @@
     </div>    
     
     <div class="ui-layout-center" style="padding: 0;">
-        <div id="viewToolbars" class="middle-north"></div> 
+        <div id="viewToolbars" class="middle-north" style="background-color: #EEEEEE;"></div> 
         <div id="viewContainers" class="middle-center"></div>                
         <div id="viewFooters" class="middle-south"></div>  
     </div>    
 
     <div class="ui-layout-east" style="padding: 0">
-        <div class="east-north" style="padding: 1">
+        <div class="east-north" style="padding: 1; background-color: #EEEEEE;">
             <span id="fileTitle"></span>
             <span id="filetoolbox" style="float: right;"></span>
             <p id="tagsContainer">
                 <span id="fileTags"></span>
-            </p>            
+            </p>  
+            <p>         
+            <input id="selectedFilePath" onClick="this.select();" READONLY style="width: 100%; height:25px; border: 0px; background-color: transparent;" ></input>            
+        	</p>
         </div>        
         <div class="east-center" id="content" style="padding: 0; height: 100%">
             <div id="viewer" allowfullscreen style="width: 100%; height: 100%" ></div>
         </div>
         <div class="east-south" style="padding: 0">
-            <input id="selectedFilePath" READONLY style="width: 100%; height:100%; border: 0px;" ></input>            
         </div>
     </div>    
 
