@@ -278,6 +278,42 @@ define(function(require, exports, module) {
 	    });	
 	}
 	
+	exports.getNextFile = function getNextFile(filePath) {
+		var nextFilePath = undefined;
+		var data = fileTable._('tr', {"filter":"applied"});
+		data.forEach(function(entry, index) {
+    		if(entry[4] == filePath) {
+    			var nextIndex = index+1;
+    			if(nextIndex < data.length) {
+    				nextFilePath = data[nextIndex][4];	    				
+    			} else {
+    				nextFilePath = data[0][4];
+    			}    			
+    		}    		
+    		console.log("Path: "+entry[4]);
+		});
+		console.debug("Next file: "+nextFilePath);
+		return nextFilePath;
+	}
+
+	exports.getPrevFile = function getPrevFile(filePath) {
+		var prevFilePath = undefined;
+		var data = fileTable._('tr', {"filter":"applied"});
+		data.forEach(function(entry, index) {
+    		if(entry[4] == filePath) {
+    			var prevIndex = index-1;
+    			if(prevIndex >= 0) {
+    				prevFilePath = data[prevIndex][4];	    				
+    			} else {
+    				prevFilePath = data[data.length-1][4];
+    			}
+    		}    		
+    		console.log("Path: "+entry[4]);
+		});
+		console.debug("Prev file: "+prevFilePath);
+		return prevFilePath;
+	}	
+		
 	var selectFile = function(tagButton, filePath) {
 	    exports.clearSelectedFiles();    
 	    $(tagButton).parent().parent().toggleClass("ui-selected");

@@ -46,7 +46,7 @@ exports.initViews = function initViews() {
 	for (var i=0; i < extensions.length; i++) {
 		if(extensions[i].enabled && (extensions[i].type == "view") ) {
 			
-			// TODO Some extension sucha ace editor are not working using paths like this "file:///C:/blabal/extension.js"
+			// TODO Some libraries such as ace editor are not working using paths like this "file:///C:/blabal/extension.js"
 	        var extPath = TSCORE.Config.getExtensionPath()+"/"+extensions[i].id+"/"+"extension.js"; 
 
 	        require([extPath], function(viewer) {
@@ -119,6 +119,30 @@ exports.updateIndexData = function updateIndexData(index) {
 	}
 }
 
+exports.getNextFile = function getNextFile(filePath) {
+	for (var i=0; i < views.length; i++) {   
+		if(views[i].ID == TSCORE.currentView) { 	
+	 		try { 			
+	 			return views[i].getNextFile(filePath);
+	 		} catch(e) {
+	 			console.debug("Error while executing 'getNextFile' on "+views[i].ID+" "+e);
+	 		}
+ 		}
+	}
+}
+
+exports.getPrevFile = function getPrevFile(filePath) {
+	for (var i=0; i < views.length; i++) {   
+		if(views[i].ID == TSCORE.currentView) { 	
+	 		try { 			
+	 			return views[i].getPrevFile(filePath);
+	 		} catch(e) {
+	 			console.debug("Error while executing 'getPrevFile' on "+views[i].ID+" "+e);
+	 		}
+ 		}
+	}
+}
+
 exports.updateTreeData = function updateTreeData(treeData) {
 	for (var i=0; i < views.length; i++) {   
  		try { 			
@@ -187,11 +211,11 @@ exports.changeView = function changeView(viewType) {
 	for (var i=0; i < views.length; i++) {   
  		if(views[i].ID == viewType) { 			
  			// Load the selected view
-	 		try { 			
+	 		//try { 			
 	 			views[i].load();
-	 		} catch(e) {
-	 			console.error("Error while executing 'load' on "+views[i].ID+" "+e);
-	 		} 			
+	 		//} catch(e) {
+	 		//	console.error("Error while executing 'load' on "+views[i].ID+" "+e);
+	 		//} 			
 			$( "#"+views[i].ID+"Container" ).show();
 			$( "#"+views[i].ID+"Toolbar" ).show(); 
  		}

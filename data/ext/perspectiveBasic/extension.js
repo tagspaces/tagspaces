@@ -325,6 +325,16 @@ define(function(require, exports, module) {
 		$( "#"+exports.ID+"FilterBox").val(filter);
 		fileTable.fnFilter(filter);
 	}
+
+	exports.getNextFile = function getNextFile(filePath) {
+		var nextFilePath = undefined;
+		var data = fileTable._('tr', {"filter":"applied"});
+		console.debug("Next file: "+nextFilePath);
+	}
+
+	exports.getPrevFile = function getPrevFile(filePath) {
+		var data = fileTable.fnGetData();
+	}
 	
 	exports.clearSelectedFiles = function() {
 	    TSCORE.selectedFiles = [];   
