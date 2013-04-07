@@ -151,6 +151,10 @@ define(function(require, exports, module) {
 	    $( "#filetoolbox" ).empty();
 	
 	    addEditButton("#filetoolbox", filePath);
+	    
+	    addPrevButton("#filetoolbox");
+	    
+	    addNextButton("#filetoolbox");
 	
 	    addFullScreenButton("#filetoolbox");
 	
@@ -214,6 +218,34 @@ define(function(require, exports, module) {
 	    })
 	}
 	
+	function addNextButton(container) {
+	    $( ""+container ).append('<button id="nextFileButton" title="Go to the next file">Tag</button>');
+	    $( "#nextFileButton" ).button({
+	        text: false,        
+	        icons: {
+	            primary: "ui-icon-circle-triangle-e"
+	        },
+	        disabled: false
+	    })
+	    .click(function() {
+			openFile(TSCORE.ViewManager.getNextFile(_openedFilePath));	    	
+	    });
+	}	
+	
+	function addPrevButton(container) {
+	    $( ""+container ).append('<button id="prevFileButton" title="Go to the next file">Tag</button>');
+	    $( "#prevFileButton" ).button({
+	        text: false,        
+	        icons: {
+	            primary: "ui-icon-circle-triangle-w"
+	        },
+	        disabled: false
+	    })
+	    .click(function() {
+			openFile(TSCORE.ViewManager.getPrevFile(_openedFilePath));
+	    });
+	}	
+	
 	function addEditButton(container, filePath) {
 	    var buttonDisabled = false;
 	    // If no editor found, disabling the button
@@ -250,7 +282,8 @@ define(function(require, exports, module) {
 	                    }
 	                };
 	                saveFile(filePath);
-	        		openFile(filePath);                   
+	                // TODO not a nice solution using setTimeOut for this
+	                window.setTimeout(openFile(filePath), 1000);
 			    }
 			}
 			$( this ).button( "option", options );    	
