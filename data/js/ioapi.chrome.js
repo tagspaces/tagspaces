@@ -149,31 +149,31 @@ define(function(require, exports, module) {
 	exports.selectDirectory = function() {
 		// TODO implement selectDirectory
 		console.debug("Select directory functionality not implemented on chrome yet!");
-		alert("Select directory functionality not implemented on chrome yet!")	
+		TSCORE.showAlertDialog("Select directory functionality not implemented on chrome yet!")	
 	}
 	
 	exports.selectFile = function() {
 		// TODO implement selectFile
 		console.debug("Select file functionality not implemented on chrome yet!");
-		alert("Select file functionality not implemented on chrome yet!")
+		TSCORE.showAlertDialog("Select file functionality not implemented on chrome yet!")
 	}
 	
 	exports.openDirectory = function(dirPath) {
 		// TODO implement openDirectory
 		console.debug("Open directory functionality not implemented on chrome yet!");
-		alert("Open directory functionality not implemented on chrome yet!");
+		TSCORE.showAlertDialog("Open directory functionality not implemented on chrome yet!");
 	}
 	
 	exports.openExtensionsDirectory = function() {
 		// TODO implement openExtensionsDirectory
 		console.debug("Open extensions directory functionality not implemented on chrome yet!");
-		alert("Open extensions directory functionality not implemented on chrome yet!"); 
+		TSCORE.showAlertDialog("Open extensions directory functionality not implemented on chrome yet!"); 
 	}
 	
 	exports.createDirectoryIndex = function(dirPath) {
 		// TODO implement createDirectoryIndex
 		console.debug("Directory indexing functionality not implemented on chrome yet!");
-		alert("Directory indexing functionality not implemented on chrome yet!"); 
+		TSCORE.showAlertDialog("Directory indexing functionality not implemented on chrome yet!"); 
 	}
 	
 	exports.createDirectoryTree = function(dirPath) {
