@@ -273,16 +273,22 @@ define(function(require, exports, module) {
 	exports.closeFileViewer 			= closeFileViewer;
 	exports.toggleLeftPanel 			= toggleLeftPanel;
 	exports.toggleFileDetails 			= toggleFileDetails;
+
+
+	// Proxying functions from tsCoreUI
+	exports.showAlertDialog 			= tsCoreUI.showAlertDialog;
+	exports.hideAllDropDownMenus		= tsCoreUI.hideAllDropDownMenus;	
 	
 	// Proxying functions from tsTagsUI
-	exports.generateTagButtons = tsTagsUI.generateTagButtons
-	exports.buttonizeTitle = tsTagsUI.buttonizeTitle
-	exports.buttonizeFileName = tsTagsUI.buttonizeFileName	
-	exports.openTagMenu = tsTagsUI.openTagMenu
+	exports.generateTagButtons 			= tsTagsUI.generateTagButtons;
+	exports.buttonizeTitle 				= tsTagsUI.buttonizeTitle;
+	exports.buttonizeFileName 			= tsTagsUI.buttonizeFileName;	
+	exports.openTagMenu 				= tsTagsUI.openTagMenu;
+	exports.showAddTagsDialog			= tsTagsUI.showAddTagsDialog;
 
 	// Proxying functions from directoriesUI 
-	exports.updateSubDirs = tsDirectoriesUI.updateSubDirs;
-	exports.initFavorites = tsDirectoriesUI.initFavorites;
+	exports.updateSubDirs 				= tsDirectoriesUI.updateSubDirs;
+	exports.initFavorites 				= tsDirectoriesUI.initFavorites;
 
 	// Public variables definition
 	exports.currentPath 				= currentPath;

@@ -486,6 +486,10 @@ define(function(require, exports, module) {
 	        	text: fileName 
 	        })).html();
 	}
+	
+	var showAddTagsDialog = function() {
+	        $( "#dialogAddTags" ).dialog( "open" );
+	}
 
     // Public API definition
     exports.initContextMenus                 = initContextMenus;
@@ -495,5 +499,6 @@ define(function(require, exports, module) {
     exports.generateTagButtons               = generateTagButtons;
     exports.buttonizeTitle               	 = buttonizeTitle;
     exports.buttonizeFileName                = buttonizeFileName;
+	exports.showAddTagsDialog				 = showAddTagsDialog;
 
 });
