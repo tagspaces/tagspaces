@@ -9,16 +9,37 @@ define(function(require, exports, module) {
     require('jsoneditor');
 	var TSCORE = require("tscore");
 
-    var editor = undefined; // Needed for JSON Editor
+    var editor = undefined;
 	var formatter = undefined;
 
 	// Init JSON Editor
-	// TODO variable editor is hardcoded due a bug in the JSONEditor lib
 	var initJSONEditor = function() {
-	    var edEl = document.getElementById("settingsEditor");
-	    editor = new JSONEditor(edEl);   
-	    formatter = new JSONFormatter(document.getElementById("settingsPlainJSON")); 
+	    editor = new JSONEditor(document.getElementById("settingsEditor")); 
+	    formatter = new JSONFormatter(document.getElementById("settingsPlainJSON"));
 	}
+	
+	var showAlertDialog = function(message, title)
+	{
+	    if (!title) {
+	    	title = 'Alert';
+	    }	        
+	
+	    if (!message) {
+	        message = 'No Message to Display.';	    	
+	    }
+	
+	    $("<div></div>").html(message).dialog({
+	        title: title,
+	        resizable: false,
+	        modal: true,
+	        buttons: {
+	            "Ok": function() 
+	            {
+	                $( this ).dialog( "close" );
+	            }
+	        }
+	    });
+	}	
 	
 	var initButtons = function() {
 	    $( "#openSettings" ).button({
@@ -28,8 +49,7 @@ define(function(require, exports, module) {
 	        }
 	    })
 	    .click(function() {
-	        initJSONEditor();        
-	        $( "#dialogSetting" ).dialog( "open" );
+			TSCORE.showAlertDialog("Not implemented yet");
 	    });
 	    
 	    $( "#openAboutBox" ).button({
@@ -309,6 +329,11 @@ define(function(require, exports, module) {
 	        width: 600,
 	        modal: true,
 	        buttons: {
+	            "Advanced Settings": function() {
+	                $( this ).dialog( "close" );
+			        initJSONEditor();        
+			        $( "#dialogSetting" ).dialog( "open" );	                
+	            },
 	            "Back": function() {
 					$("#aboutIframe").attr("src","about.html");
 	            },
@@ -328,9 +353,6 @@ define(function(require, exports, module) {
 	        width: 600,
 	        modal: true,
 	        buttons: {
-	//            "Ext. Folder": function() {
-	//                TSCORE.IO.openExtensionsDirectory()
-	//            },
 	            "Editor": function() {
 	                if($("#settingsEditor").is(":hidden") ) {
 	                    $("#settingsPlainJSON").hide();
@@ -371,8 +393,17 @@ define(function(require, exports, module) {
 	    });     
 	}
 
+
+	var hideAllDropDownMenus = function() {
+		$('BODY')
+			.find('.dropdown-menu').hide().end()
+			.find('[data-dropdown]').removeClass('dropdown-open');
+	}
+
     // Public API definition
-	exports.initButtons = initButtons;
-	exports.initDialogs = initDialogs;
+	exports.initButtons 			= initButtons;
+	exports.initDialogs 			= initDialogs;	
+	exports.showAlertDialog 		= showAlertDialog;
+	exports.hideAllDropDownMenus	= hideAllDropDownMenus;
 
 });
