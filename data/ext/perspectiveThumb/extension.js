@@ -75,8 +75,8 @@ define(function(require, exports, module) {
 	        
 	    for (var i=0; i < TSCORE.fileList.length; i++) {
 	        var fileName = TSCORE.fileList[i][0];
-	        var fileExt = TSCORE.TagUtils.extractFileExtension(fileName);
-	        var filePath = TSCORE.currentPath+TSCORE.TagUtils.DIR_SEPARATOR+fileName;
+	        var fileExt = TSCORE.fileList[i][6];
+	        var filePath = TSCORE.fileList[i][4];
 	        if(supportedFileTypeThumnailing.indexOf(fileExt) >= 0) {
 	            $("#"+exports.ID+"SelectableFiles").append(
 	                 $('<li>', { title: fileName, filepath: filePath, class: 'ui-widget-content' }).append( 
