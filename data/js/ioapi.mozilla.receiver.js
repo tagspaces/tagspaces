@@ -83,7 +83,7 @@ console.debug("Loading messaging.mozilla.js..");
 	      case "indexDirectory":
 	        if(message.success){
 	            //console.debug("Directory Index: "+JSON.stringify(message.content));
-	            TSCORE.ViewManager.updateIndexData(message.content);       
+	            TSCORE.ViewManager.updateFileBrowserData(message.content);       
 	        } else {
 	            TSCORE.updateLogger("Indexing directory failed");        
 	        }

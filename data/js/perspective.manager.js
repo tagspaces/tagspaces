@@ -6,13 +6,12 @@ define(function(require, exports, module) {
 
 console.debug("Loading perspective.manager.js");
 
-var views = undefined;
-var searchViewer = undefined;
+var perspectives = undefined;
 
 var TSCORE = require("tscore");
 
-exports.initViews = function initViews() {
-	views = [];
+var initViews = function () {
+	perspectives = [];
 	
 	$("#viewSwitcher").empty();
 	$("#viewToolbars").empty();	
@@ -21,25 +20,14 @@ exports.initViews = function initViews() {
 	
 	var defaultViewLoaded = false;
 
-    require(["ext/perspectiveBasic/extension.js"], function(viewer) {
-		views.push(viewer);
-		initViewsUI(viewer);
-		viewer.init();
+	// Loading perspectiveDefault as a default perspective
+    require(["ext/perspectiveDefault/extension.js"], function(perspective) {
+		perspectives.push(perspective);
+		initViewsUI(perspective);
+		perspective.init();
    
-   		TSCORE.currentView = viewer.ID;
-		viewer.load();
-		$( "#"+viewer.ID+"Button" ).attr("checked","checked");
-		$( "#"+viewer.ID+"Button" ).button("refresh");
-		
-		$( "#"+viewer.ID+"Container" ).show();
-		$( "#"+viewer.ID+"Toolbar" ).show(); 			   	
-    });  
-
-    require(["ext/perspectiveSearch/extension.js"], function(viewer) { 
-       views.push(viewer);
-	   initViewsUI(viewer);
-       viewer.init();
-       searchViewer = viewer;
+   		TSCORE.currentView = perspective.ID;
+		perspective.load();
     });  
 	
 	var extensions = TSCORE.Config.getExtensions();
@@ -49,13 +37,13 @@ exports.initViews = function initViews() {
 			// TODO Some libraries such as ace editor are not working using paths like this "file:///C:/blabal/extension.js"
 	        var extPath = TSCORE.Config.getExtensionPath()+"/"+extensions[i].id+"/"+"extension.js"; 
 
-	        require([extPath], function(viewer) {
-	            views.push(viewer);
-			    initViewsUI(viewer);
+	        require([extPath], function(perspective) {
+	            perspectives.push(perspective);
+			    initViewsUI(perspective);
 		 		try { 			
-		 			viewer.init();
+		 			perspective.init();
 		 		} catch(e) {
-		 			console.debug("Error while executing 'init' on "+views[i].ID+" - "+e);
+		 			console.debug("Error while executing 'init' on "+perspectives[i].ID+" - "+e);
 		 		}			   
 	        });       
 		} 
@@ -64,96 +52,82 @@ exports.initViews = function initViews() {
 	$( "#viewSwitcher" ).buttonset();	
 }
 
-var initViewsUI = function(viewer) {
-	console.debug("Init UI for "+viewer.ID);
+var initViewsUI = function(perspective) {
+	console.debug("Init UI for "+perspective.ID);
 	
-	//var radioChecked = true;
-	// Only the first button from radio is checked
-	//radioChecked = false;
-
-	// Creating viewer's toolbar
+	// Creating perspective's toolbar
     $("#viewToolbars").append($("<div>", { 
-        id: viewer.ID+"Toolbar",
-        text: viewer.Title,
+        id: perspective.ID+"Toolbar",
+        text: perspective.Title,
     }).hide());	
     
-	// Creating viewer's container
+	// Creating perspective's container
     $("#viewContainers").append($("<div>", { 
-        id: viewer.ID+"Container",
-        text: viewer.Title,
+        id: perspective.ID+"Container",
+        text: perspective.Title,
         style: "width: 100%; height: 100%",
     }).hide());	        	
   
     $("#viewSwitcher").append($("<input>", { 
         type: "radio",
         name: "viewSwitcher",
-        viewid: viewer.ID,
+        viewid: perspective.ID,
 //        checked: radioChecked,
-        id: viewer.ID+"Button",    
+        id: perspective.ID+"Button",    
     }));
 
     $("#viewSwitcher").append($("<label>", { 
-        for: viewer.ID+"Button",
-        text: viewer.Title, 
+        for: perspective.ID+"Button",
+        text: perspective.Title, 
     }));
 
 	// Adding event listener & icon to the radio button
-    $( "#"+viewer.ID+"Button" ).button({
+    $( "#"+perspective.ID+"Button" ).button({
 	        text: true,
 	        icons: {
-	            primary: viewer.Icon
+	            primary: perspective.Icon
 	        }
 	    })        
 	.click(function() { 
-		exports.changeView($(this).attr("viewid")); 	
+		changeView($(this).attr("viewid")); 	
 	})   
 }
 
-exports.updateIndexData = function updateIndexData(index) {
-	for (var i=0; i < views.length; i++) {   
- 		try { 			
- 			views[i].updateIndexData(index);
- 		} catch(e) {
- 			console.debug("Error while executing 'updateIndexData' on "+views[i].ID+" "+e);
- 		}
-	}
-}
-
-exports.getNextFile = function getNextFile(filePath) {
-	for (var i=0; i < views.length; i++) {   
-		if(views[i].ID == TSCORE.currentView) { 	
+var getNextFile = function (filePath) {
+	for (var i=0; i < perspectives.length; i++) {   
+		if(perspectives[i].ID == TSCORE.currentView) { 	
 	 		try { 			
-	 			return views[i].getNextFile(filePath);
+	 			return perspectives[i].getNextFile(filePath);
 	 		} catch(e) {
-	 			console.debug("Error while executing 'getNextFile' on "+views[i].ID+" "+e);
+	 			console.debug("Error while executing 'getNextFile' on "+perspectives[i].ID+" "+e);
 	 		}
  		}
 	}
 }
 
-exports.getPrevFile = function getPrevFile(filePath) {
-	for (var i=0; i < views.length; i++) {   
-		if(views[i].ID == TSCORE.currentView) { 	
+var getPrevFile = function (filePath) {
+	for (var i=0; i < perspectives.length; i++) {   
+		if(perspectives[i].ID == TSCORE.currentView) { 	
 	 		try { 			
-	 			return views[i].getPrevFile(filePath);
+	 			return perspectives[i].getPrevFile(filePath);
 	 		} catch(e) {
-	 			console.debug("Error while executing 'getPrevFile' on "+views[i].ID+" "+e);
+	 			console.debug("Error while executing 'getPrevFile' on "+perspectives[i].ID+" "+e);
 	 		}
  		}
 	}
 }
 
-exports.updateTreeData = function updateTreeData(treeData) {
-	for (var i=0; i < views.length; i++) {   
+var updateTreeData = function (treeData) {
+	for (var i=0; i < perspectives.length; i++) {   
  		try { 			
- 			views[i].updateTreeData(treeData);
+ 			perspectives[i].updateTreeData(treeData);
  		} catch(e) {
- 			console.debug("Error while executing 'updateTreeData' on "+views[i].ID+" "+e);
+ 			console.debug("Error while executing 'updateTreeData' on "+perspectives[i].ID+" "+e);
  		}
 	}
 }
 
-exports.updateFileBrowserData = function(dirList) {
+var updateFileBrowserData = function(dirList) {
     console.debug("Updating the file browser data...");
     
     TSCORE.fileList = [];
@@ -163,61 +137,57 @@ exports.updateFileBrowserData = function(dirList) {
     var fileSize = undefined;
     var fileLMDT = undefined;
     var path = undefined;
-    // Sort the dir list alphabetically before displaying 
-    // TODO sorting files not working correctly
-    dirList.sort(function(a,b) { return a.name.localeCompare(b.name); });
+    var filename = undefined;
     for (var i=0; i < dirList.length; i++) {
         if (dirList[i].type == "file"){  
-            // Considering Unix HiddenEntries (. in the beginning)
+            // Considering Unix HiddenEntries (. in the beginning of the filename)
             if (TSCORE.Config.Settings["showUnixHiddenEntries"] || 
                (!TSCORE.Config.Settings["showUnixHiddenEntries"] && (dirList[i].name.indexOf(".") != 0))) {
-                 path = TSCORE.currentPath + TSCORE.TagUtils.DIR_SEPARATOR + dirList[i].name;
+                 filename = dirList[i].name;
+                 path = dirList[i].path;
                  tags = TSCORE.TagUtils.extractTags(path);
                  title = TSCORE.TagUtils.extractTitle(path);
-                 if(dirList[i].name.lastIndexOf(".") > 0) {
-                     ext = dirList[i].name.substring(dirList[i].name.lastIndexOf(".")+1,dirList[i].name.length);                     
-                 } else {
-                     ext = "";
-                 }
+				 ext = TSCORE.TagUtils.extractFileExtension(path)
                  fileSize = dirList[i].size;
                  fileLMDT = dirList[i].lmdt;
+                 
                  if(fileSize == undefined) fileSize = "";
                  if(fileLMDT == undefined) fileLMDT = "";
-                 var entry = [dirList[i].name,fileSize,fileLMDT,title,tags,ext];   
+                 var entry = [title,tags,fileSize,fileLMDT,path,filename,ext];   
                  TSCORE.fileList.push(entry);
             }
         }
-    }  	         
-    exports.changeView(TSCORE.currentView);    
+    }    
+    changeView(TSCORE.currentView);    
 }
 
-exports.refreshFileListContainer = function() {
+var refreshFileListContainer = function() {
 	// TODO consider search view
     TSCORE.IO.listDirectory(TSCORE.currentPath);  
 }
 
-exports.changeView = function changeView(viewType) {
+var changeView = function (viewType) {
     console.debug("Change to "+viewType+" view.");
     TSCORE.showLoadingAnimation();
        
     //Setting the current view
     TSCORE.currentView = viewType;
 
-	for (var i=0; i < views.length; i++) {   
- 		$( "#"+views[i].ID+"Container" ).hide();
- 		$( "#"+views[i].ID+"Toolbar" ).hide(); 		  
+	for (var i=0; i < perspectives.length; i++) {   
+ 		$( "#"+perspectives[i].ID+"Container" ).hide();
+ 		$( "#"+perspectives[i].ID+"Toolbar" ).hide(); 		  
 	}	        
 
-	for (var i=0; i < views.length; i++) {   
- 		if(views[i].ID == viewType) { 			
+	for (var i=0; i < perspectives.length; i++) {   
+ 		if(perspectives[i].ID == viewType) { 			
  			// Load the selected view
 	 		//try { 			
-	 			views[i].load();
+	 			perspectives[i].load();
 	 		//} catch(e) {
-	 		//	console.error("Error while executing 'load' on "+views[i].ID+" "+e);
+	 		//	console.error("Error while executing 'load' on "+perspectives[i].ID+" "+e);
 	 		//} 			
-			$( "#"+views[i].ID+"Container" ).show();
-			$( "#"+views[i].ID+"Toolbar" ).show(); 
+			$( "#"+perspectives[i].ID+"Container" ).show();
+			$( "#"+perspectives[i].ID+"Toolbar" ).show(); 
  		}
 	}	
 	   	
@@ -225,31 +195,40 @@ exports.changeView = function changeView(viewType) {
     TSCORE.selectedFiles = [];  
 
 	// Reset the filter by a view change
-	exports.setFileFilter("");
+	setFileFilter("");
 	  
 //    TSCORE.hideLoadingAnimation();     
 }
 
-exports.clearSelectedFiles = function clearSelectedFiles() {
+var clearSelectedFiles = function () {
     // Clear selected files
     TSCORE.selectedFiles = [];  
-	for (var i=0; i < views.length; i++) {   
+	for (var i=0; i < perspectives.length; i++) {   
  		try { 			
- 			views[i].clearSelectedFiles();
+ 			perspectives[i].clearSelectedFiles();
  		} catch(e) {
- 			console.debug("Error while executing 'clearSelectedFiles' on "+views[i].ID)
+ 			console.debug("Error while executing 'clearSelectedFiles' on "+perspectives[i].ID)
  		} 		
 	}	
 }
 
-exports.setFileFilter = function setFileFilter(filter) {
-	for (var i=0; i < views.length; i++) {   
+var setFileFilter = function (filter) {
+	for (var i=0; i < perspectives.length; i++) {   
  		try { 			
- 			views[i].setFileFilter(filter);
+ 			perspectives[i].setFileFilter(filter);
  		} catch(e) {
- 			console.debug("Error while executing 'setFileFilter' on "+views[i].ID)
+ 			console.debug("Error while executing 'setFileFilter' on "+perspectives[i].ID)
  		} 		 		
 	}	
 }
+
+exports.initViews 					 = initViews	
+exports.getNextFile					 = getNextFile;
+exports.getPrevFile 				 = getPrevFile;
+exports.updateTreeData				 = updateTreeData;
+exports.updateFileBrowserData		 = updateFileBrowserData;
+exports.refreshFileListContainer	 = refreshFileListContainer;
+exports.clearSelectedFiles			 = clearSelectedFiles;
+exports.setFileFilter				 = setFileFilter;
 
 });
