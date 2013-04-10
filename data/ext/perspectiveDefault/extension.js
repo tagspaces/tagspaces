@@ -12,7 +12,7 @@ define(function(require, exports, module) {
 	var extensionVersion = "1.0";
 	var extensionManifestVersion = 1;
 	var extensionLicense = "AGPL";
-	
+
 	console.debug("Loading "+extensionID);
 
 	var TSCORE = require("tscore");
@@ -38,117 +38,10 @@ define(function(require, exports, module) {
 	
 	var load = function () {
 		console.debug("Loading perspective "+extensionID);
-	
-	    $('#'+extensionID+"FileTable_wrapper").hide();
-		
-		updateIndexData(TSCORE.fileList);
-		
-		$( "#"+extensionID+"ReIndexButton" ).button( "enable" );
+
+		UI.reInitTableWithData(TSCORE.fileList);	    
+
 		TSCORE.hideLoadingAnimation();
-	}
-	
-	var enhanceIndexData = function(index) {
-		console.debug("Enhancing directory index...");
-	    var enhancedIndex = [];
-	    var tags = undefined;
-	    var ext = undefined;
-	    var title = undefined;
-	    var fileSize = undefined;
-	    var fileLMDT = undefined;
-	    var path = undefined;
-	    var filename = undefined;
-	    for (var i=0; i < index.length; i++) {
-	        if (index[i].type == "file"){  
-	            // Considering Unix HiddenEntries (. in the beginning of the filename)
-	            if (TSCORE.Config.Settings["showUnixHiddenEntries"] || 
-	               (!TSCORE.Config.Settings["showUnixHiddenEntries"] && (index[i].name.indexOf(".") != 0))) {
-	                 filename = index[i].name;
-	                 path = index[i].path;
-	                 tags = TSCORE.TagUtils.extractTags(path);
-	                 title = TSCORE.TagUtils.extractTitle(path);
-					 ext = TSCORE.TagUtils.extractFileExtension(path)
-	                 fileSize = index[i].size;
-	                 fileLMDT = index[i].lmdt;
-	                 
-	                 if(fileSize == undefined) fileSize = "";
-	                 if(fileLMDT == undefined) fileLMDT = "";
-	                 var entry = [title,tags,fileSize,fileLMDT,path,filename,ext];   
-	                 enhancedIndex.push(entry);
-	            }
-	        }
-	    }
-	    return enhancedIndex; 		
-	}
-	
-	var updateIndexData = function (index) {
-		console.debug("Updating index data.");
-	
-		// Clearing the old data
-	    UI.fileTable.fnClearTable();  
-	
-	    UI.fileTable.fnAddData( enhanceIndexData(index) );
-	    //UI.fileTable.fnAddData(index);
-	    
-	    
-	    UI.fileTable.$('tr')
-	    .droppable({
-	    	accept: ".tagButton",
-	    	hoverClass: "activeRow",
-	    	drop: function( event, ui ) {
-	    		var tagName = ui.draggable.attr("tag");
-	    		var targetFilePath = UI.fileTable.fnGetData( this )[4];
-				console.log("Tagging file: "+tagName+" to "+targetFilePath);
-		    
-			    $(this).toggleClass("ui-selected");
-	
-			    clearSelectedFiles();
-			    TSCORE.selectedFiles.push(targetFilePath); 
-				UI.handleElementActivation();
-	
-				TSCORE.TagUtils.addTag(TSCORE.selectedFiles, [tagName]);
-	    	}	            	
-	    })
-	    .dblclick( function() {
-	        console.debug("Opening file...");
-	        var rowData = UI.fileTable.fnGetData( this );
-	        
-	        TSCORE.FileOpener.openFile(rowData[4]); // 4 is the filePath
-	    } );     
-	    
-	    UI.fileTable.$('.fileTitleButton')
-	    	.draggable({
-	    		cancel:false,
-	    		appendTo: "body",
-	    		helper: "clone",
-	    		revert: true,
-		        start: function() {
-	                selectFile(this, $(this).attr("filepath"));
-		        }    		
-	    	})  
-	        .click( function() {
-	            selectFile(this, $(this).attr("filepath"));
-	        } )        
-	        .dropdown( 'attach' , '#fileMenu' );   
-	    
-	    UI.fileTable.$('.extTagButton')
-	        .click( function() {
-	        	selectFile(this, $(this).attr("fileName"));
-	            TSCORE.openTagMenu(this, $(this).attr("tag"), $(this).attr("filepath"));
-	        } )
-	        .dropdown( 'attach' , '#extensionMenu' );               
-	    
-	    UI.fileTable.$('.tagButton')
-	        .click( function() {
-	            selectFile(this, $(this).attr("fileName"));
-	            TSCORE.openTagMenu(this, $(this).attr("tag"), $(this).attr("filepath"));
-	        } )     
-	        .dropdown( 'attach' , '#tagMenu' );
-	
-	    $('#'+extensionID+"FileTable_wrapper").show();  
-	     
-	    $( "#"+extensionID+"ReIndexButton" ).button( "enable" );
-	    
-	    TSCORE.hideLoadingAnimation();     
 	}
 	
 	var setFileFilter = function (filter) {
@@ -199,13 +92,6 @@ define(function(require, exports, module) {
 		return prevFilePath;
 	}	
 		
-	var selectFile = function(tagButton, filePath) {
-	    clearSelectedFiles();    
-	    $(tagButton).parent().parent().toggleClass("ui-selected");
-	    TSCORE.selectedFiles.push(filePath);  
-		UI.handleElementActivation();      
-	} 
-
 	// Vars
 	exports.Title 					= extensionTitle;
 	exports.ID 						= extensionID;   
@@ -218,7 +104,6 @@ define(function(require, exports, module) {
 	// Methods
 	exports.init					= init;
 	exports.load					= load;
-	exports.updateIndexData			= updateIndexData;
 	exports.setFileFilter			= setFileFilter;
 	exports.clearSelectedFiles		= clearSelectedFiles;
 	exports.getNextFile				= getNextFile;
