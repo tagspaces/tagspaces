@@ -56,8 +56,7 @@ found in the LICENSE file.
         </copy>
         <copy todir="${buildFirefoxExt.dir}/data/ext" >
 		    <fileset dir="data/ext">
-		      <include name="perspectiveBasic/**/*"/>		    	
-			  <include name="perspectiveSearch/**/*"/>		    			    	
+			  <include name="perspectiveDefault/**/*"/>		    			    	
 			  <include name="perspectiveThumb/**/*"/>
 		    </fileset>        	
         </copy>
