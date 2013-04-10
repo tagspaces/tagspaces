@@ -37,26 +37,10 @@ require.config({
     },
     paths: {
         jquery: 'libs/jquery/jquery-1.8.3',
-        jqueryui: 'libs/jqueryui/jquery.ui.core',
-        jqueryuiwidget: 'libs/jqueryui/jquery.ui.widget',
-        jqueryuimouse: 'libs/jqueryui/jquery.ui.mouse', 
-        jqueryuiposition: 'libs/jqueryui/jquery.ui.position',
-        jqueryuimenu: 'libs/jqueryui/jquery.ui.menu',
-        jqueryuibutton: 'libs/jqueryui/jquery.ui.button', 
-        jqueryuidialog: 'libs/jqueryui/jquery.ui.dialog',              
-        jqueryuiselectable: 'libs/jqueryui/jquery.ui.selectable',        
-        jqueryuisortable: 'libs/jqueryui/jquery.ui.sortable',        
-        jqueryuiresizable: 'libs/jqueryui/jquery.ui.resizable',
-        jqueryuidraggable: 'libs/jqueryui/jquery.ui.draggable',
-        jqueryuidroppable: 'libs/jqueryui/jquery.ui.droppable',        
-        jqueryuiaccordion: 'libs/jqueryui/jquery.ui.accordion',
-        jqueryuiautocomplete: 'libs/jqueryui/jquery.ui.autocomplete',
-        jqueryuidatepicker: 'libs/jqueryui/jquery.ui.datepicker',        
-        jqueryuispinner: 'libs/jqueryui/jquery.ui.spinner',
-        jqueryuislider: 'libs/jqueryui/jquery.ui.slider',
-        jqueryuitabs: 'libs/jqueryui/jquery.ui.tabs',
-        jqueryuitooltips: 'libs/jqueryui/jquery.ui.tooltip',       
-        jqueryuicss: 'libs/jqueryui/custom-theme/jquery-ui-1.9.2.custom',
+        jqueryui: 'libs/jqueryui/jquery-ui-1.10.2',
+
+        //jqueryuicss: 'libs/jqueryui/custom-theme/jquery-ui-1.10.0.custom',
+        //bootstrap: 'libs/bootstrap/bootstrap.min',
 
         datatables: 'libs/datatables/js/jquery.dataTables.min',
         datatablescss: 'libs/datatables/css/jquery.dataTables',
@@ -84,8 +68,6 @@ require.config({
             deps: [
                 'jquery',
                 'jqueryui',
-                'jqueryuidraggable',
-                'jqueryuiresizable',
             ]
         },
         'jquerydropdown': {
@@ -96,41 +78,6 @@ require.config({
         'jqueryui': {
             deps: [
                 'jquery',
-                'jqueryuiwidget',
-                'jqueryuimouse', 
-                'jqueryuiposition',
-                'jqueryuimenu',
-                'jqueryuibutton', 
-                'jqueryuidialog',
-                'jqueryuiselectable',
-                'jqueryuiautocomplete',
-                'jqueryuidatepicker', 
-            ]
-        },
-        'jqueryuitooltips': {
-            deps: [
-                'jqueryui',
-                'jqueryuiwidget',
-                'jqueryuiposition',                 
-            ]
-        },
-        'jqueryuidraggable': {
-            deps: [
-                'jqueryui',
-                'jqueryuiwidget',
-                'jqueryuimouse',                 
-            ]
-        },        
-        'jqueryuidroppable': {
-            deps: [
-                'jqueryuidraggable',
-            ]
-        }, 
-        'jqueryuiresizable': {
-            deps: [
-                'jqueryui',
-                'jqueryuiwidget',
-                'jqueryuimouse',                 
             ]
         },
         'dynatree': {
@@ -151,13 +98,12 @@ define(function (require, exports, module) {
         
     // Load dependent non-module scripts
     require("jquery");
+//    require("bootstrap");
     require("jqueryui");
     require("datatables");
     require("jsoneditor");
     require("jquerylayout");
     require("jquerydropdown");
-    require("jqueryuitooltips");
-    require("jqueryuidroppable");
     require("less");
 	
 	if( isFirefox ) {
