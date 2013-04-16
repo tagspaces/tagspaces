@@ -51,6 +51,7 @@ require.config({
         jquerydropdown: 'libs/jquerydropdown/jquery.dropdown',
         jquerydropdowncss: 'libs/jquerydropdown/jquery.dropdown',
         less: 'libs/less/less-1.3.3.min',
+        jqueryeditinplace: 'libs/jqueryeditinplace/jquery.editinplace',
 
         tscore: 'js/core.api',
         tssetting: 'js/settings.api',
@@ -105,6 +106,7 @@ define(function (require, exports, module) {
     require("jquerylayout");
     require("jquerydropdown");
     require("less");
+    require("jqueryeditinplace");
 	
 	if( isFirefox ) {
 		require("tsiomozrec");    
