@@ -16,6 +16,10 @@ define(function(require, exports, module) {
 	
 	// If a file is currently opened for editing, this var should be true
 	var _isEditMode = false;	
+
+	function isFileEdited() {
+		return _isEditMode;
+	}	
 	
 	function isFileOpened() {
 		return _isFileOpened;
@@ -31,7 +35,13 @@ define(function(require, exports, module) {
 
 	function openFile(filePath) {
 	    console.debug("Opening file: "+filePath);
-	
+		
+		if(TSCORE.FileOpener.isFileEdited()) {
+			if(!confirm("Any unsaved changes will be lost! \nDo you want to continue?")) {
+				return false;
+			}
+		}
+		
 	    _isEditMode = false;
 	
 	    _openedFilePath = filePath;    
@@ -115,8 +125,17 @@ define(function(require, exports, module) {
 	    var tags = TSCORE.TagUtils.extractTags(filePath);
 	    
 	    var title = TSCORE.TagUtils.extractTitle(filePath);
+		
+		$("#fileTitle").unbind('.editInPlace');
+		$("#fileTitle").data('editInPlace',false);
 	
 	    $( "#fileTitle" ).text(title);
+	    
+	    $( "#fileTitle" ).editInPlace({
+			callback: function(unused, newTitle) { TSCORE.TagUtils.changeTitle(filePath,newTitle); },
+    		show_buttons: false,
+    		callback_skip_dom_reset: true
+		});	    
 	    
 	    // Generate tag buttons
 	    $( "#fileTags" ).empty();
@@ -282,8 +301,6 @@ define(function(require, exports, module) {
 	                    }
 	                };
 	                saveFile(filePath);
-	                // TODO not a nice solution using setTimeOut for this
-	                window.setTimeout(openFile(filePath), 1000);
 			    }
 			}
 			$( this ).button( "option", options );    	
@@ -372,6 +389,7 @@ define(function(require, exports, module) {
 // Methods  
     exports.openFile                    		= openFile;
     exports.isFileOpened						= isFileOpened;
+    exports.isFileEdited 						= isFileEdited;
     exports.setFileOpened						= setFileOpened;
     exports.getOpenedFilePath             		= getOpenedFilePath;  
     exports.updateEditorContent                 = updateEditorContent;

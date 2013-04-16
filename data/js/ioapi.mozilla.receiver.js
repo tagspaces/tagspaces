@@ -42,7 +42,7 @@ console.debug("Loading messaging.mozilla.js..");
 	            TSCORE.updateLogger("Rename success");   
 	            // message.content contains the name of the file after the rename
 	            if(TSCORE.FileOpener.isFileOpened()) {
-	               TSCORE.FileOpener.openFile(message.content); 	
+	                TSCORE.FileOpener.openFile(message.content);	            	
 	            }
 	            // TODO to be replaced with a function which replaced the 
 	            // renamed file in the model of the perspective
@@ -53,7 +53,10 @@ console.debug("Loading messaging.mozilla.js..");
 	        break;
 	      case "saveTextFile":
 	        if(message.success){
-	            TSCORE.updateLogger("Save success");             
+	            if(TSCORE.FileOpener.isFileOpened()) {
+	            	// TODO Automatically reopening of the file is not desirable in every case ...
+	                TSCORE.FileOpener.openFile(message.content);	            	
+	            }          
 	        } else {
 	            TSCORE.updateLogger("Save failed");      
 	        }

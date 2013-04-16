@@ -222,6 +222,26 @@ define(function(require, exports, module) {
         IOAPI.renameFile(filePath, containingDirectoryPath+DIR_SEPARATOR+newFileName);
         
     }
+    
+    function changeTitle(filePath, newTitle) {
+        console.debug("Changing title for file: "+filePath);
+     
+        var containingDirectoryPath = extractContainingDirectoryPath(filePath);
+            
+        var extractedTags = extractTags(filePath);
+
+		var fileExt = extractFileExtension(filePath);
+		if(fileExt.length > 0) {
+			fileExt = "."+fileExt;
+		}
+
+		// TODO generalize generateFileName to support fileTitle & fileExtension
+        var newFileName = generateFileName(newTitle, extractedTags);
+       
+        IOAPI.renameFile(filePath, containingDirectoryPath+DIR_SEPARATOR+newFileName+fileExt);
+        
+        return true;        
+    }    
 
     // Removing a tag from a filename
     function removeTag(filePath, tagName) {
@@ -260,5 +280,6 @@ define(function(require, exports, module) {
     exports.renameTag                           = renameTag;
     exports.removeTag                           = removeTag;
     exports.addTag                              = addTag;
+    exports.changeTitle 						= changeTitle;
 
 });
