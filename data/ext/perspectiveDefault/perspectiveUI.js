@@ -16,6 +16,8 @@ console.debug("Loading UI for perspectiveDefault");
 		TC_FILEPATH		= 4,
 		TC_FILENAME		= 5,
 		TC_FILEEXT		= 6;
+		
+	var TMB_SIZES = [ "100px", "200px", "300px", "400px", "500px" ];
 
 	var supportedFileTypeThumnailing = ['jpg','jpeg','png','gif'];
 
@@ -25,60 +27,58 @@ console.debug("Loading UI for perspectiveDefault");
 	    this.viewToolbar = $("#"+this.extensionID+"Toolbar").empty();
 		this.viewFooter = $("#"+this.extensionID+"Footer").empty();
 		
-		this.showThumbs = true;
+		this.showThumbs = false;
 		this.showFileDetails = false;
 		this.showTags = true;
+		this.currentTmbSize = 0;
 	}
 	
 	// Helper function user by basic and search views
 	function buttonizeTitle(title, fileName, filePath, fileExt) {
 	    if(title.length < 1) {
-	    	title = "n/a";
+	    	title = filePath;
 	    }
 	    
-	    var thumbHTML = "";
-	    
+	    var thumbHTML = "";	    
         if(supportedFileTypeThumnailing.indexOf(fileExt) >= 0) {
-            thumbHTML = $('<p>').append($('<li>', { 
+			thumbHTML = $('<p>').append( $('<img>', { 
             	title: fileName, 
-            	filepath: filePath 
-            }).append( $('<img>', { 
-            	title: fileName, 
-            	class: "thumbImg", 
-            	src: 'file:///'+filePath 
-        	}))).html();
+            	class: "thumbImg",
+            	filepath: 'file:///'+filePath, 
+            	src: "" 
+        	})).html();
+        	thumbHTML = thumbHTML + " ";
         } 	    
+        
+	    var titleHTML = $('<p>').append($('<span>', { 
+            	text: fileName, 
+            	class: "fileTitle" 
+            })).html();
 	        
-	    var titleButtonsHTML = $('<span>').append($('<button>', { 
-	            title: fileName, 
+	    var buttonHTML = $('<span>').append($('<button>', { 
+	            title: "Options for "+fileName, 
 	            filepath: filePath,
 	            class: 'fileTitleButton', 
-	            text: title 
+	            text: " | | | " 
 	        })).html();
 	        
-	    return titleButtonsHTML + thumbHTML;        
+	    return buttonHTML +" "+ thumbHTML + titleHTML;        
 	}
-	
-	// Helper function user by basic and search views
-	function buttonizeFileName(fileName, filePath) {
-	    if(filePath == undefined) {
-	    	filePath = TSCORE.currentPath+TSCORE.TagUtils.DIR_SEPARATOR+fileName;
-	    }	
-	    return $('<span>').append($('<button>', { 
-	        	title: fileName, 
-	        	filepath: filePath,
-	        	class: 'fileButton', 
-	        	text: fileName 
-	        })).html();
-	}
-	
+
 	ExtUI.prototype.buildUI = function() {
 		console.debug("Init UI module");
+
+	    this.viewToolbar.append($("<button>", { 
+	        text: "New",
+			disabled: true,
+	        title: "Create new file",
+	        id: this.extensionID+"CreateFileButton",    
+	    }));
 	
 	    this.viewToolbar.append($("<button>", { 
 	        text: "Subdirs",
 			disabled: true,
-	        title: "Include Subdirectories",
+	        title: "Show subfolders content. \nOn subfolder with many files, this step can take some time!",
 	        id: this.extensionID+"IncludeSubDirsButton",    
 	    }));	
 	    
@@ -102,15 +102,8 @@ console.debug("Loading UI for perspectiveDefault");
 	    }));
 	    
 	    this.viewToolbar.append($("<button>", { 
-	        text: "Zoom out",
-			disabled: false,
-	        title: "Decrease Thumbnails Size",
-	        id: this.extensionID+"DecreaseThumbsButton",    
-	    }));
-	    
-	    this.viewToolbar.append($("<button>", { 
-	        text: "Zoom in",
-			disabled: false,
+	        text: "Zoom In",
+			disabled: true,
 	        title: "Increase Thumbnails Size",
 	        id: this.extensionID+"IncreaseThumbsButton",    
 	    }));		    
@@ -185,19 +178,19 @@ console.debug("Loading UI for perspectiveDefault");
 	                "mRender": function ( data, type, row ) { 
 	                	return TSCORE.generateTagButtons(data,row[TC_FILEEXT],row[TC_FILENAME],row[TC_FILEPATH]) 
 	                	},
-	                "aTargets": [ 1 ]
+	                "aTargets": [ TC_TAGS ]
 	            }, 
 	            { // Filesize column
 	                "mRender": function ( data, type, row ) { 
 	                	return TSCORE.TagUtils.formatFileSize(data) 
 	                	},
-	                "aTargets": [ 2 ]
+	                "aTargets": [ TC_FILESIZE ]
 	            },
 	            { // Last changed date column
 	                "mRender": function ( data, type, row ) { 
 	                	return TSCORE.TagUtils.formatDateTime(data, true) 
 	                	},
-	                "aTargets": [ 3 ]
+	                "aTargets": [ TC_FILELMDT ]
 	            },
 	            { "bVisible": false,  "aTargets": [ TC_FILESIZE, TC_FILELMDT, TC_FILEPATH ] },
 	            { "bSearchable": false,  "aTargets": [ TC_FILEPATH ] }
@@ -245,8 +238,16 @@ console.debug("Loading UI for perspectiveDefault");
 	    	hoverClass: "activeRow",
 	    	drop: function( event, ui ) {
 	    		var tagName = ui.draggable.attr("tag");
-	    		
+	    			    		
 	    		var targetFilePath = self.fileTable.fnGetData( this )[TC_FILEPATH];
+
+	    		// preventing self drag of tags
+	    		var targetTags = TSCORE.TagUtils.extractTags(targetFilePath);
+	    		for (var i = 0; i < targetTags.length; i++) {
+        			if (targetTags[i] === tagName) {
+            			return true;
+        			}
+    			}
 	    		
 				console.log("Tagging file: "+tagName+" to "+targetFilePath);
 		    
@@ -275,7 +276,7 @@ console.debug("Loading UI for perspectiveDefault");
 	    		helper: "clone",
 	    		revert: true,
 		        start: function() {
-	                selectFile(this, $(this).attr("filepath"));
+	                self.selectFile(this, $(this).attr("filepath"));
 		        }    		
 	    	})  
 	        .click( function() {
@@ -289,6 +290,11 @@ console.debug("Loading UI for perspectiveDefault");
 	            TSCORE.openTagMenu(this, $(this).attr("tag"), $(this).attr("filepath"));
 	        } )
 	        .dropdown( 'attach' , '#extensionMenu' );               
+
+	    this.fileTable.$('.thumbImg').dblclick( function() {
+	        console.debug("Opening file...");
+	        TSCORE.FileOpener.openFile($(this).attr("filepath")); 
+	    } ); 	    
 	    
 	    this.fileTable.$('.tagButton')
 	    	.draggable({
@@ -307,7 +313,9 @@ console.debug("Loading UI for perspectiveDefault");
 	        .dropdown( 'attach' , '#tagMenu' );
 	
 	    $('#'+this.extensionID+"FileTable_wrapper").show();  
-	     
+
+	    $( "#"+this.extensionID+"CreateFileButton" ).button( "enable" );
+	    	     
 	    $( "#"+this.extensionID+"IncludeSubDirsButton" ).button( "enable" );
 	    
 	}
@@ -322,17 +330,13 @@ console.debug("Loading UI for perspectiveDefault");
 		this.handleElementActivation();      
 	} 		
 	
-	ExtUI.prototype.toggleThumbnails = function() {
-		console.debug("thumbs toggled");
+	ExtUI.prototype.switchThumbnailSize = function() {
+		this.currentTmbSize = this.currentTmbSize + 1;
+		
+		if(this.currentTmbSize >= TMB_SIZES.length) { this.currentTmbSize = 0; }
+		
+		$('.thumbImg').css({"max-width":TMB_SIZES[this.currentTmbSize], "max-height":TMB_SIZES[this.currentTmbSize] });		
 	}
-
-	ExtUI.prototype.increaseThumbnails = function() {
-		console.debug("thumbs zoom");
-	}
-	
-	ExtUI.prototype.decreaseThumbnails = function() {
-		console.debug("thumbs zoom out");
-	}	
 	
 	ExtUI.prototype.toggleFileDetails = function() {
 		if(this.showFileDetails) {
@@ -347,6 +351,21 @@ console.debug("Loading UI for perspectiveDefault");
 		this.showFileDetails = !this.showFileDetails;
 	}
 	
+	ExtUI.prototype.toggleThumbnails = function() {
+		if(this.showThumbs) {
+			$( "#"+this.extensionID+"IncreaseThumbsButton" ).button( "disable" );
+			$.each(this.fileTable.$('.thumbImg'), function() {
+				$(this).attr('src',"");
+			});
+		} else {
+			$( "#"+this.extensionID+"IncreaseThumbsButton" ).button( "enable" );
+			$.each(this.fileTable.$('.thumbImg'), function() {
+				$(this).attr('src',$(this).attr('filepath'));
+			});
+		}
+		this.showThumbs = !this.showThumbs;
+	}	
+	
 	ExtUI.prototype.toggleTags = function() {
 		if(this.showTags) {
 			this.fileTable.fnSetColumnVis( TC_TAGS, false );
@@ -359,8 +378,19 @@ console.debug("Loading UI for perspectiveDefault");
 	ExtUI.prototype.initButtons = function() {
 	    var self = this;
 		// Initialize file buttons    
+
+	    $( "#"+this.extensionID+"CreateFileButton" ).button({
+	        text: true,
+	        icons: {
+	            primary: "ui-icon-document"
+	        }
+	    })
+	    .click(function() {
+	        $( "#dialog-filecreate" ).dialog( "open" );
+	    });   
+	    
 	    $( "#"+this.extensionID+"IncludeSubDirsButton" ).button({
-	        text: false,
+	        text: true,
 	        icons: {
 	            primary: "ui-icon-script"
 	        }
@@ -390,24 +420,15 @@ console.debug("Loading UI for perspectiveDefault");
 			self.toggleThumbnails();
 	    }); 
 
-	    $( "#"+this.extensionID+"DecreaseThumbsButton" ).button({
-	        text: false,
-	        icons: {
-	            primary: "ui-icon-minus"
-	        }
-	    })
-	    .click(function() {
-			self.decreaseThumbnails();
-	    }); 
-	    
+    
 	    $( "#"+this.extensionID+"IncreaseThumbsButton" ).button({
 	        text: false,
 	        icons: {
-	            primary: "ui-icon-plus"
+	            primary: "ui-icon-zoomin"
 	        }
 	    })
 	    .click(function() {
-			self.increaseThumbnails();
+			self.switchThumbnailSize();
 	    }); 	    
 	    
 	    $( "#"+this.extensionID+"ShowFileDetailsButton" ).button({

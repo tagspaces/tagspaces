@@ -5,7 +5,7 @@
 define(function(require, exports, module) {
 "use strict";
 	
-	var extensionTitle = "Default"
+	var extensionTitle = "Standard"
 	var extensionID = "perspectiveDefault";  // ID should be equal to the directory name where the ext. is located   
 	var extensionType =  "view";
 	var extensionIcon = "ui-icon-tag";
@@ -70,6 +70,7 @@ define(function(require, exports, module) {
     		}    		
     		console.log("Path: "+entry[4]);
 		});
+		TSCORE.ViewManager.clearSelectedFiles();		
 		console.debug("Next file: "+nextFilePath);
 		return nextFilePath;
 	}
@@ -88,6 +89,7 @@ define(function(require, exports, module) {
     		}    		
     		console.log("Path: "+entry[4]);
 		});
+		TSCORE.ViewManager.clearSelectedFiles();
 		console.debug("Prev file: "+prevFilePath);
 		return prevFilePath;
 	}	
