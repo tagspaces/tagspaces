@@ -33,16 +33,16 @@ html, body {
 /* Removes the selection border on ui elements on android */
 * { -webkit-tap-highlight-color: rgba(0,0,0,0); }
 
-#directoryList .ui-selecting { background: #FECA40; }
-#directoryList .ui-selected { background: #F39814; color: white; }
+#directoryList .ui-selecting { background: #fff5a3; }
+#directoryList .ui-selected { background: #fff5a3; color: white; }
 #directoryList { list-style-type: none; margin: 0; padding: 0; width: 100%; }
 #directoryList li { margin: 3px; padding: 0.4em; font-size: 1.0em; height: 18px; }
 
 /* Thumbs box design	
  * TODO Move to viewThumb extension css
  * */
-.selectableFiles .ui-selecting { background: #FECA40; }
-.selectableFiles .ui-selected { background: #F39814; color: white; }
+.selectableFiles .ui-selecting { background: #fff5a3; }
+.selectableFiles .ui-selected { background: #fff5a3; color: white; }
 .selectableFiles { list-style-type: none; margin: 0; padding: 0; }
 .selectableFiles li { margin: 3px; padding: 1px; float: left; width: 100px; height: 80px; font-size: 1em; text-align: center; } 
 
@@ -71,7 +71,12 @@ html, body {
 }
 
 .thumbImg {
-    max-width: 90px; max-height: 90px;
+    max-width: 100px; max-height: 100px;
+}
+
+.fileTitle {
+    font-size: 1.2em;
+    color: #333333;    
 }
 
 .fileExtension {
@@ -407,7 +412,7 @@ table.dataTable tr.odd {
 .activeRow { background: #FFCC99 !important; }
 
 table.dataTable tr.ui-selecting { background: #FECA40 !important; }
-table.dataTable tr.ui-selected { background: #FECA40 !important; }
+table.dataTable tr.ui-selected { background: #fff5a3 !important; }
 
 table.dataTable tr.odd td.sorting_1 { background-color: inherit; }
 table.dataTable tr.odd td.sorting_2 { background-color: inherit; }
