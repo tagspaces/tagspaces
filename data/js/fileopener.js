@@ -168,6 +168,10 @@ define(function(require, exports, module) {
 	    
 	    // Clear filetoolbox
 	    $( "#filetoolbox" ).empty();
+	    
+	    $( "#selectedFilePath" ).click(function() {
+			this.select();
+	    });
 	
 	    addEditButton("#filetoolbox", filePath);
 	    
