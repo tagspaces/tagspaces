@@ -1,6 +1,6 @@
 {
   "name": "TagSpaces",
-  "version": "1.3.1296",
+  "version": "1.3.1308",
   "manifest_version": 2,
   "description": "TagSpaces Explorer",
   "icons": {
@@ -17,12 +17,13 @@
     "default_icon": "icons/icon16.png"
   }, 
   "plugins": [
-	{"path": "chrome/npapi-fileio/npapi-file-io-32.dll", "public": false},
-	{"path": "chrome/npapi-fileio/npapi-file-io-32.so", "public": false},
-	{"path": "chrome/npapi-fileio/npapi-file-io-64.so", "public": false}
+	{"path": "chrome/NPAPI-chrome-file-api/NPAPIFileIOforChrome.plugin", "public": false},
+	{"path": "chrome/NPAPI-chrome-file-api/npNPAPIFileIOforChrome.dll", "public": false},
+	{"path": "chrome/NPAPI-chrome-file-api/npNPAPIFileIOforChrome.so", "public": false},
+	{"path": "chrome/NPAPI-chrome-file-api/npNPAPIFileIOforChromex64.so", "public": false}
   ],
   "permissions": [
-    "tabs", "http://*/*", "file://*/*"   
+    "tabs", "<all_urls>"   
   ],
   "content_security_policy": "script-src 'self' ; object-src 'self'",  
   "web_accessible_resources": [
