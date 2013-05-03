@@ -91,6 +91,11 @@ require.config({
                 'jquery'
             ]
         },
+        'jqueryeditinplace': {
+            deps: [
+                'jquery'
+            ]
+        },        
     } 
 });
 
