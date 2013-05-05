@@ -13,35 +13,80 @@ define(function(require, exports, module) {
 	var TSCORE = require("tscore");
 	    
 	/**
+Old:
 	    Interface of npapi-file-io
-	    getPlatform() : string
-	    fileExists(filename : string) : bool
-	    isDirectory(filename : string) : bool
 	    getTextFile(filename : string) : string
 	    getBinaryFile(filename : string) : array<byte>
-	    removeFile(filename : string) : void
-	    listFiles(filename : string) : array<object>
 	    
 	    bool getFile(const char *filename, char *&value, size_t &len, const bool issBinary);
-	    bool createDirectory(const char *filename);
 	    bool saveText(const char *filename, const char *value, size_t len);
 	    saveTextFile
 	    bool saveBinaryFile(const char *filename, const char *bytes, const size_t len);
-	    bool getTempPath(char *&value, size_t &len);
-	    getTmpPath
+
+New:
+    bool createDirectory(std::string path);
+    bool saveBlobToFile(std::string path, FB::JSObjectPtr dataArray);
+    FB::VariantList getDirEntries(std::string path);
+    FB::JSAPIPtr contentsAtPath(std::string path);
+    int getFileSize(std::string path);
+    bool isDirectory(std::string path);
+    bool fileExists(std::string path);
+    bool removeRecursively(std::string path);
+    void launchFolderSelect(FB::JSObjectPtr callback);
+    void launchFileSelect(FB::JSObjectPtr callback); 
+    void watchDirectory(std::string key, std::string path, FB::JSObjectPtr callback);
+    void stopWatching(std::string key);
+    std::string getChromeDataDir(std::string version);
 	*/
 	
 	var plugin = document.createElement("embed");
-	plugin.setAttribute("type", "application/x-npapi-file-io");
+	plugin.setAttribute("type", "application/x-npapifileioforchrome");
+	plugin.setAttribute("id", "npApiPlugin");
 	plugin.style.position = "absolute";
 	plugin.style.left = "-9999px";
 	
 	// Add plugin to document 
     document.documentElement.appendChild(plugin);    
 	
+	window.nativeIO = document.getElementById("npApiPlugin");
 	
-	// Test if plugin works
-	//console.debug("Current platform: "+plugin.getPlatform());  
+	function scanDirectory(dirPath, index) {
+	    try {  
+			var dirList = nativeIO.getDirEntries(dirPath);
+            var index = [];
+            for (var i=0; i < dirList.length; i++) {
+            	var path = dirPath+getDirseparator()+dirList[i];
+            	var isDir = nativeIO.isDirectory(path);
+                var fileSize = nativeIO.getFileSize(path);
+                index.push({
+	                "name": dirList[i],
+	                "type": isDir?"directory":"file",
+	                "size": fileSize,
+	                "lmdt": "0",
+	                "path": path  
+                }); 
+	            if (!file.isFile()) {
+	                scanDirectory(path, index);
+	            }	    	                
+            }
+	        return index;
+	    } catch(ex) {
+	        console.error("Listing directory failed "+ex);
+	    }   
+	}
+	
+	
+	function isWindows() {
+		return (navigator.platform == 'Win32');
+	}
+	
+	function getDirseparator() {
+		if(isWindows()) {
+			return "\\";
+		} else {
+			return "/";
+		}
+	}
 	
 	exports.createDirectory = function(dirPath) {
 	    console.debug("Creating directory: "+dirPath);    
@@ -66,43 +111,38 @@ define(function(require, exports, module) {
 	    }	
 	}
 	
-	// TODO Renaming very slow, due the copy implementation
 	exports.renameFile = function(filePath, newFilePath) {
 		console.debug("Renaming file: "+filePath+" to "+newFilePath);
-		if(plugin.fileExists(newFilePath)) {
-			console.error("Target file already exists: "+newFilePath);
-		} else {
-			if(plugin.fileExists(filePath)) {
-				plugin.saveBinaryFile(newFilePath,plugin.getBinaryFile(filePath));
-				plugin.removeFile(filePath);
-	
-	            if(TSCORE.FileOpener.isFileOpened()) {
-	               TSCORE.FileOpener.openFile(newFilePath); 	
-	            }   			
-				TSCORE.ViewManager.refreshFileListContainer();
-				
-				console.debug("File renamed to: "+newFilePath);	
-			} else { 
-				console.error("Original file does not exists: "+filePath);		
-			}
-		}
+
 	}
 	
 	exports.saveTextFile = function(filePath,content) {
 		console.debug("Saving file: "+filePath);
-	  	if(plugin.fileExists(filePath)) {
+/*	  	if(plugin.fileExists(filePath)) {
 			plugin.removeFile(filePath);      		
 	  	}
-		plugin.saveTextFile(filePath,content);
+		plugin.saveTextFile(filePath,content);*/
 	}
 	
 	exports.listDirectory = function(dirPath) {
 		console.debug("Listing directory: "+dirPath);
 		if(plugin.isDirectory(dirPath)) {
 			try {
-				var dirList = plugin.listFiles(dirPath);
-				console.debug("Dir content: "+JSON.stringify(dirList)); 
-	    		TSCORE.ViewManager.updateFileBrowserData(dirList);
+				var dirList = nativeIO.getDirEntries(dirPath);
+	            var anotatedDirList = [];
+	            for (var i=0; i < dirList.length; i++) {
+	            	var path = dirPath+getDirseparator()+dirList[i];
+	            	var isDir = nativeIO.isDirectory(path);
+                    var fileSize = nativeIO.getFileSize(path);
+                    anotatedDirList.push({
+		                "name": dirList[i],
+		                "type": isDir?"directory":"file",
+		                "size": fileSize,
+		                "lmdt": "0",
+		                "path": path  
+                    }); 
+	            } 
+	    		TSCORE.ViewManager.updateFileBrowserData(anotatedDirList);
 			} catch(ex) {
 				console.error("Directory listing failed "+ex);
 			}		
@@ -113,25 +153,22 @@ define(function(require, exports, module) {
 	
 	exports.getSubdirs = function(dirPath) {
 		console.debug("Getting subdirs: "+dirPath);
-	    if(plugin.isDirectory(dirPath)) {
+	    if(nativeIO.isDirectory(dirPath)) {
 	        try {
-	            // Determine the directory separator
-				var pathSeparator = plugin.getPlatform() == 'windows' ? "\\" : '/';
-	            
-	            var dirList = plugin.listFiles(dirPath);
+				var dirList = nativeIO.getDirEntries(dirPath);
 	            var anotatedDirList = [];
 	            for (var i=0; i < dirList.length; i++) {
-	                if(dirList[i].type == "directory") {
+	            	var path = dirPath+getDirseparator()+dirList[i];
+	            	var isDir = nativeIO.isDirectory(path);
+	                if(isDir) {
 	                    anotatedDirList.push({
-	                        "title": dirList[i].name,
+	                        "title": dirList[i],
 	                        "isFolder": true,
-	                        "isLazy": true,
-	                        "key": dirPath+pathSeparator+dirList[i].name 
+	                        "key": path
 	                    }); 
 	                }            
 	            } 
-	            // TODO JSON functions are a workarround for a bug....               
-	            TSCORE.updateSubDirs(JSON.parse( JSON.stringify(anotatedDirList)));
+	            TSCORE.updateSubDirs(anotatedDirList);
 	        } catch(ex) {
 	            console.error("Directory listing failed "+ex);
 	        }       
@@ -142,14 +179,17 @@ define(function(require, exports, module) {
 	
 	exports.deleteElement = function(path) {
 		console.debug("Deleting: "+path);
-		TSCORE.ViewManager.refreshFileListContainer();		
-		plugin.removeFile(path)
+/*		TSCORE.ViewManager.refreshFileListContainer();		
+		plugin.removeFile(path)*/
 	}
 	
 	exports.selectDirectory = function() {
-		// TODO implement selectDirectory
 		console.debug("Select directory functionality not implemented on chrome yet!");
-		TSCORE.showAlertDialog("Select directory functionality not implemented on chrome yet!")	
+		nativeIO.launchFolderSelect(function(dirPath){
+			if (dirPath && dirPath.length){
+				$("#favoriteLocation").val(dirPath);
+			}
+		});
 	}
 	
 	exports.selectFile = function() {
@@ -161,7 +201,7 @@ define(function(require, exports, module) {
 	exports.openDirectory = function(dirPath) {
 		// TODO implement openDirectory
 		console.debug("Open directory functionality not implemented on chrome yet!");
-		TSCORE.showAlertDialog("Open directory functionality not implemented on chrome yet!");
+		TSCORE.showAlertDialog("Select file functionality not implemented on chrome yet!")
 	}
 	
 	exports.openExtensionsDirectory = function() {

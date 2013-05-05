@@ -42,33 +42,12 @@ define(function(require, exports, module) {
 	}	
 	
 	var initButtons = function() {
-	    $( "#openSettings" ).button({
-	        text: true,
-	        icons: {
-	            primary: "ui-icon-wrench"
-	        }
-	    })
+	    $( "#openSettings" )
 	    .click(function() {
 			TSCORE.showAlertDialog("Not implemented yet");
 	    });
-	    
-	    $( "#openAboutBox" ).button({
-	        text: true,
-	        icons: {
-	            primary: "ui-icon-lightbulb"
-	        }
-	    })
-	    .click(function() {
-	        $( "#dialogAbout" ).dialog( "open" );
-	    });   
-	    
-	    $( "#toggleLeftPanel" ).button({
-	        text: false,
-	        icons: {
-	            primary: "ui-icon-bookmark"
-	        }
-	    })
-	    .click(function() {
+    
+	    $( "#toggleLeftPanel" ).click(function() {
 			TSCORE.toggleLeftPanel();
 	    });             
 	}
@@ -264,30 +243,17 @@ define(function(require, exports, module) {
 	        }
 	    });
 	    
-	    $( "#dialogAbout" ).dialog({
-	        autoOpen: false,
-	        resizable: true,
-	        height: 370,
-	        width: 600,
-	        modal: true,
-	        buttons: {
-	            "Advanced Settings": function() {
-	                $( this ).dialog( "close" );
-			        initJSONEditor();        
-			        $( "#dialogSetting" ).dialog( "open" );	                
-	            },
-	            "Back": function() {
-					$("#aboutIframe").attr("src","about.html");
-	            },
-	            "Close": function() {
-	                $( this ).dialog( "close" );
-	            }
-	        },
-	        open: function() {
-	
-	        }         
-	    });  
 	    
+	    $( "#aboutDialogBack" ).click(function() {
+            $("#aboutIframe").attr("src","about.html");
+        });
+	    
+        $( "#aboutDialogSettings" ).click(function() {
+            $('#dialogAbout').modal('hide');
+            initJSONEditor();        
+            $( "#dialogSetting" ).dialog( "open" );    
+        });
+        	    
 	    $( "#dialogSetting" ).dialog({
 	        autoOpen: false,
 	        resizable: true,

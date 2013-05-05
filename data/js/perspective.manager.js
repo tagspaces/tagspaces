@@ -68,27 +68,17 @@ var initViewsUI = function(perspective) {
         style: "width: 100%; height: 100%",
     }).hide());	        	
   
-    $("#viewSwitcher").append($("<input>", { 
-        type: "radio",
-        name: "viewSwitcher",
-        viewid: perspective.ID,
-//        checked: radioChecked,
-        id: perspective.ID+"Button",    
-    }));
-
-    $("#viewSwitcher").append($("<label>", { 
-        for: perspective.ID+"Button",
-        text: perspective.Title, 
+    // TODO Perspective Icon 
+    $("#viewSwitcher").append($("<button>", { 
+        viewid:  perspective.ID,
+        text:    perspective.Title, 
+        type:    "button", 
+        class:   "btn btn-small",        
+        id:      perspective.ID+"Button",    
     }));
 
 	// Adding event listener & icon to the radio button
-    $( "#"+perspective.ID+"Button" ).button({
-	        text: true,
-	        icons: {
-	            primary: perspective.Icon
-	        }
-	    })        
-	.click(function() { 
+    $( "#"+perspective.ID+"Button" ).click(function() { 
 		changeView($(this).attr("viewid")); 	
 	})   
 }

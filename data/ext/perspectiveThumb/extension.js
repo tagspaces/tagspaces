@@ -31,12 +31,15 @@ define(function(require, exports, module) {
 		viewToolbar.empty();
 		viewFooter.empty();	
 		
-	    viewToolbar.append($("<button>", { 
-	        text: "New",
-			disabled: true,
-	        title: "Create new file",
-	        id: exports.ID+"CreateFileButton",    
-	    }));
+        viewToolbar.append($("<button>", { 
+            class: "btn btn-small",
+            disabled: true,
+            title: "Create new file",
+            id: this.extensionID+"CreateFileButton",    
+        })
+        .append( $("<i>", { class: "icon-file", }) )
+        .append("New")
+        );        		
 		
 	    viewContainer.append($("<ol>", { 
 	        style: "overflow: visible;",
@@ -102,12 +105,7 @@ define(function(require, exports, module) {
 	}
 	
 	var initButtons = function() {
-	    $( "#"+exports.ID+"CreateFileButton" ).button({
-	        text: true,
-	        icons: {
-	            primary: "ui-icon-document"
-	        }
-	    })
+	    $( "#"+exports.ID+"CreateFileButton" )
 	    .click(function() {
 	        $( "#dialog-filecreate" ).dialog( "open" );
 	    });  

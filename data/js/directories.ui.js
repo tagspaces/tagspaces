@@ -19,9 +19,6 @@ define(function(require, exports, module) {
 	
 		document.title = title + " | " + TSCORE.Config.DefaultSettings.appName;
 	
-	    $( "#reloadTagSpace" ).button({
-	        label: title
-	    });     
 	    $( "#reloadTagSpace" ).attr("title",path);
 	    
 	    // Clears the directory history
@@ -102,7 +99,7 @@ define(function(require, exports, module) {
 	            title: "Directorys options",
 	            style: "float: right!important; position:relative!important; vertical-align: middle; display:inline-block;", 
 	        })                
-	        .dropdown( 'attach' , '#directoryMenu' )
+	        //.dropdown( 'attach' , '#directoryMenu' )
 	        .click( function(event) {
 	            dir4ContextMenu = $(this).attr("key");
 	        })
@@ -229,47 +226,6 @@ define(function(require, exports, module) {
 	} 
 	
 	function initButtons() {
-	    $( "#reloadTagSpace" )
-	        .button()
-	        .click(function() {
-	        	$( "#selectTagSpace" ).tooltip( "disable" );
-	            $("#favoritesList").width($( "#reloadTagSpace" ).width()+$("#selectTagSpace").width());
-	            $("#favoritesList").show().position({
-	                my: "left top",
-	                at: "left bottom",
-	                of: $( "#reloadTagSpace" )
-	            });
-	            $( document ).one( "click", function() {
-	                $("#favoritesList").hide();
-	            });
-	            return false;
-	        })
-	        .next()
-	            .button({
-	                text: false,
-	                icons: {
-	                    primary: "ui-icon-triangle-1-s"
-	                }
-	            })
-	            .click(function() {
-	                $("#favoritesList").width($( "#reloadTagSpace" ).width()+$("#selectTagSpace").width());
-	                $("#favoritesList").show().position({
-	                    my: "left top",
-	                    at: "left bottom",
-	                    of: $( "#reloadTagSpace" )
-	                });
-	                $( document ).one( "click", function() {
-	                    $("#favoritesList").hide();
-	                });
-	                return false;
-	            })
-	            .parent()
-	                .buttonset()
-	                .next()
-	                    .hide()
-	                    .menu();    
-	                    
-	    $( "#selectTagSpace" ).tooltip();
 	
 	    $( "#selectLocalDirectory" )
 	        .button({
@@ -413,8 +369,6 @@ define(function(require, exports, module) {
 	function initFavorites() {
 	    console.debug("Creating location menu...");
 	    
-	    $( "#favoritesList" ).menu();
-	    $( "#favoritesList" ).menu("disable");
 	    $( "#favoritesList" ).empty();
 	    
 	    var favoritesList = TSCORE.Config.Settings["tagspacesList"]
@@ -428,10 +382,7 @@ define(function(require, exports, module) {
 	  //  $( "#favoritesList" ).append('<li name="editFavorite"><a href="javascript:void(0);"><span class="ui-icon ui-icon-pencil"></span>Edit Location</a></li>');
 	    $( "#favoritesList" ).append('<li name="deleteFavorite"><a href="javascript:void(0);"><span class="ui-icon ui-icon-trash"></span>Remove Location</a></li>');
 	   
-	    $( "#favoritesList" ).menu("destroy").menu({
-	        select: function( event, ui ) {
-	            var commandName = ui.item.attr( "name" );
-	            switch (commandName) {
+/*
 	              case "createFavorite":
 	                $("#favoriteName").val("");
 	                $("#favoriteLocation").val("");
@@ -449,10 +400,7 @@ define(function(require, exports, module) {
 	                openFavorite(ui.item.attr( "title" ), ui.item.attr( "name" ));   
 	                $( "#favoritesList" ).hide();  
 	                break;
-	            }
-	        }         
-	    });  
-	    $( "#favoritesList" ).hide(); 
+*/
 	}
 
     // Public API definition

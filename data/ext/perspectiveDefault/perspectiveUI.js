@@ -69,14 +69,19 @@ console.debug("Loading UI for perspectiveDefault");
 		console.debug("Init UI module");
 
 	    this.viewToolbar.append($("<button>", { 
-	        text: "New",
+	        //text: "New",
+			class: "btn btn-small",
 			disabled: true,
 	        title: "Create new file",
 	        id: this.extensionID+"CreateFileButton",    
-	    }));
-	
+	    })
+        .append( $("<i>", { class: "icon-file", }) )
+        .append("New")
+        );
+        	
 	    this.viewToolbar.append($("<button>", { 
 	        text: "Subdirs",
+            class: "btn btn-small",
 			disabled: true,
 	        title: "Show subfolders content. \nOn subfolder with many files, this step can take some time!",
 	        id: this.extensionID+"IncludeSubDirsButton",    
@@ -84,6 +89,7 @@ console.debug("Loading UI for perspectiveDefault");
 	    
 	    this.viewToolbar.append($("<button>", { 
 	        text: "Add Tag",
+            class: "btn btn-small",	        
 			disabled: true,
 	        title: "Tag Selected Files",
 	        id: this.extensionID+"TagButton",    
@@ -146,6 +152,7 @@ console.debug("Loading UI for perspectiveDefault");
 			cellspacing: "0",
 			border: "0",
 			style: "width: 100%",
+			class: "table",
 	        id: this.extensionID+"FileTable",    
 	    })); 
 		  
@@ -286,14 +293,14 @@ console.debug("Loading UI for perspectiveDefault");
 	        .click( function() {
 	            self.selectFile(this, $(this).attr("filepath"));
 	        } )        
-	        .dropdown( 'attach' , '#fileMenu' );   
+	        //.dropdown( 'attach' , '#fileMenu' );   
 	    
 	    this.fileTable.$('.extTagButton')
 	        .click( function() {
 	        	self.selectFile(this, $(this).attr("filepath"));
 	            TSCORE.openTagMenu(this, $(this).attr("tag"), $(this).attr("filepath"));
 	        } )
-	        .dropdown( 'attach' , '#extensionMenu' );               
+	        //.dropdown( 'attach' , '#extensionMenu' );               
 
 	    this.fileTable.$('.thumbImg')
 		    .dblclick( function() {
@@ -324,7 +331,7 @@ console.debug("Loading UI for perspectiveDefault");
 	            self.selectFile(this, $(this).attr("filepath"));
 	            TSCORE.openTagMenu(this, $(this).attr("tag"), $(this).attr("filepath"));
 	        } )     
-	        .dropdown( 'attach' , '#tagMenu' );
+	        //.dropdown( 'attach' , '#tagMenu' );
 	
 	    $('#'+this.extensionID+"FileTable_wrapper").show();  
 
@@ -396,33 +403,18 @@ console.debug("Loading UI for perspectiveDefault");
 	    var self = this;
 		// Initialize file buttons    
 
-	    $( "#"+this.extensionID+"CreateFileButton" ).button({
-	        text: true,
-	        icons: {
-	            primary: "ui-icon-document"
-	        }
-	    })
+	    $( "#"+this.extensionID+"CreateFileButton" )
 	    .click(function() {
 	        $( "#dialog-filecreate" ).dialog( "open" );
 	    });   
 	    
-	    $( "#"+this.extensionID+"IncludeSubDirsButton" ).button({
-	        text: true,
-	        icons: {
-	            primary: "ui-icon-script"
-	        }
-	    })
+	    $( "#"+this.extensionID+"IncludeSubDirsButton" )
 	    .click(function() {
 		    $( "#"+self.extensionID+"IncludeSubDirsButton" ).button( "disable" );
 			TSCORE.IO.createDirectoryIndex(TSCORE.currentPath);
 	    });  
 	    
-	    $( "#"+this.extensionID+"TagButton" ).button({
-	        text: true,
-	        icons: {
-	            primary: "ui-icon-tag"
-	        }
-	    })
+	    $( "#"+this.extensionID+"TagButton" )
 	    .click(function() {
 			TSCORE.showAddTagsDialog();
 	    });  

@@ -38,18 +38,13 @@ require.config({
     paths: {
         jquery: 'libs/jquery/jquery-1.8.3',
         jqueryui: 'libs/jqueryui/jquery-ui-1.10.2',
-
-        //jqueryuicss: 'libs/jqueryui/custom-theme/jquery-ui-1.10.0.custom',
-        //bootstrap: 'libs/bootstrap/bootstrap.min',
-
+        bootstrap: 'libs/bootstrap/js/bootstrap',
         datatables: 'libs/datatables/js/jquery.dataTables.min',
         datatablescss: 'libs/datatables/css/jquery.dataTables',
         jsoneditor: 'libs/jsoneditor/jsoneditor',
         jsoneditorcss: 'libs/jsoneditor/jsoneditor',
         jquerylayout: 'libs/jquerylayout/jquery.layout-1.3.0.rc30.77',
         jquerylayoutcss: 'libs/jquerylayout/layout-default-latest',
-        jquerydropdown: 'libs/jquerydropdown/jquery.dropdown',
-        jquerydropdowncss: 'libs/jquerydropdown/jquery.dropdown',
         less: 'libs/less/less-1.3.3.min',
         jqueryeditinplace: 'libs/jqueryeditinplace/jquery.editinplace',
 
@@ -69,6 +64,11 @@ require.config({
             deps: [
                 'jquery',
                 'jqueryui',
+            ]
+        },
+        'bootstrap': {
+            deps: [
+                'jquery',
             ]
         },
         'jquerydropdown': {
@@ -104,12 +104,11 @@ define(function (require, exports, module) {
         
     // Load dependent non-module scripts
     require("jquery");
-//    require("bootstrap");
+    require("bootstrap");
     require("jqueryui");
     require("datatables");
     require("jsoneditor");
     require("jquerylayout");
-    require("jquerydropdown");
     require("less");
     require("jqueryeditinplace");
 	

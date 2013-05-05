@@ -164,7 +164,7 @@ define(function(require, exports, module) {
 	        .click( function() {
 	            TSCORE.openTagMenu(this, $(this).attr("tag"), $(this).attr("filepath"));
 	        })
-	        .dropdown( 'attach' , '#tagMenu' );   
+	        //.dropdown( 'attach' , '#tagMenu' );   
 	    
 	    // Clear filetoolbox
 	    $( "#filetoolbox" ).empty();

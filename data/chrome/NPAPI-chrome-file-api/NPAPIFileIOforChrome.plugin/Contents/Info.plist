@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>BuildMachineOSBuild</key>
+	<string>11E53</string>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundleExecutable</key>
+	<string>NPAPIFileIOforChrome</string>
+	<key>CFBundleGetInfoString</key>
+	<string>NPAPIFileIOforChrome 1.0.0.0, Copyright 2012 Benryan Software Inc.</string>
+	<key>CFBundleIdentifier</key>
+	<string>com.NPAPIFileIOforChromeLib.NPAPI File IO for Chrome</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundlePackageType</key>
+	<string>BRPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>NPAPIFileIOforChrome 1.0.0.0</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>1.0.0.0</string>
+	<key>CFPlugInDynamicRegisterFunction</key>
+	<string></string>
+	<key>CFPlugInDynamicRegistration</key>
+	<string>NO</string>
+	<key>CFPlugInFactories</key>
+	<dict>
+		<key>00000000-0000-0000-0000-000000000000</key>
+		<string>MyFactoryFunction</string>
+	</dict>
+	<key>CFPlugInTypes</key>
+	<dict>
+		<key>00000000-0000-0000-0000-000000000000</key>
+		<array>
+			<string>00000000-0000-0000-0000-000000000000</string>
+		</array>
+	</dict>
+	<key>CFPlugInUnloadFunction</key>
+	<string></string>
+	<key>DTCompiler</key>
+	<string></string>
+	<key>DTPlatformBuild</key>
+	<string>4D199</string>
+	<key>DTPlatformVersion</key>
+	<string>GM</string>
+	<key>DTSDKBuild</key>
+	<string>11C63</string>
+	<key>DTSDKName</key>
+	<string>macosx10.7</string>
+	<key>DTXcode</key>
+	<string>0420</string>
+	<key>DTXcodeBuild</key>
+	<string>4D199</string>
+	<key>WebPluginDescription</key>
+	<string>Adds file operations to a javascript api for Chrome</string>
+	<key>WebPluginMIMETypes</key>
+	<dict>
+		<key>application/x-npapifileioforchrome</key>
+		<dict>
+			<key>WebPluginExtensions</key>
+			<array>
+				<string></string>
+			</array>
+			<key>WebPluginTypeDescription</key>
+			<string>Adds file operations to a javascript api for Chrome</string>
+		</dict>
+	</dict>
+	<key>WebPluginName</key>
+	<string>NPAPI File IO for Chrome</string>
+</dict>
+</plist>

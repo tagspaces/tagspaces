@@ -256,7 +256,7 @@ define(function(require, exports, module) {
 	        .click( function() {
 	            selectFile(this, $(this).attr("filepath"));
 	        } )
-	        .dropdown( 'attach' , '#fileMenu' );
+	       // .dropdown( 'attach' , '#fileMenu' );
 	
 	    fileTable.$('.fileTitleButton')
 	    	.draggable({
@@ -271,14 +271,14 @@ define(function(require, exports, module) {
 	        .click( function() {
 	            selectFile(this, $(this).attr("filepath"));
 	        } )
-	        .dropdown( 'attach' , '#fileMenu' );   
+	       // .dropdown( 'attach' , '#fileMenu' );   
 	    
 	    fileTable.$('.extTagButton')
 	        .click( function() {
 	            selectFile(this, $(this).attr("filepath"));
 	            TSCORE.openTagMenu(this, $(this).attr("tag"), $(this).attr("filepath"));
 	        } )
-	        .dropdown( 'attach' , '#extensionMenu' );               
+	       // .dropdown( 'attach' , '#extensionMenu' );               
 	    
 	    fileTable.$('.tagButton')
 	    	.draggable({
@@ -294,7 +294,7 @@ define(function(require, exports, module) {
 	            selectFile(this, $(this).attr("filepath"));
 	            TSCORE.openTagMenu(this, $(this).attr("tag"), $(this).attr("filepath"));
 	        } )     
-	        .dropdown( 'attach' , '#tagMenu' );
+	       // .dropdown( 'attach' , '#tagMenu' );
 	
 	    if(viewMode == "files") {
 	        console.debug("Change to FileView");

@@ -428,7 +428,7 @@ define(function(require, exports, module) {
 	                key: TSCORE.Config.Settings["tagGroups"][i].key, 
 	                title: "Taggroup options",
 	        })                
-	        .dropdown( 'attach' , '#tagGroupMenu' )
+	        //.dropdown( 'attach' , '#tagGroupMenu' )
 	        .click( function(event) {
 	                //console.debug("Clicked in taggroup setting");    
 	                TSCORE.selectedTag = $(this).attr("tag");
@@ -443,26 +443,31 @@ define(function(require, exports, module) {
 	        tagButtons.addClass("ui-accordion-content  ui-helper-reset ui-widget-content ui-corner-bottom")
 	        tagButtons.hide(); 
 	        for(var j=0; j < TSCORE.Config.Settings["tagGroups"][i]["children"].length; j++) {
-	            tagButtons.append($("<button>", { 
-	                class: "tagButton", 
-	                tag: TSCORE.Config.Settings["tagGroups"][i]["children"][j].title, 
-	                parentKey: TSCORE.Config.Settings["tagGroups"][i].key,
-	                title: "Opens context menu for "+TSCORE.Config.Settings["tagGroups"][i]["children"][j].title,
-	                text: TSCORE.Config.Settings["tagGroups"][i]["children"][j].title, 
+	            tagButtons.append($("<a>", { 
+	                "data-toggle":   "dropdown",
+	                "href":          "#",
+	                "class":         "btn btn-small dropdown-toggle btn-success tagButton", 
+	                "tag":           TSCORE.Config.Settings["tagGroups"][i]["children"][j].title, 
+	                "parentKey":     TSCORE.Config.Settings["tagGroups"][i].key,
+	                "title":         "Opens context menu for "+TSCORE.Config.Settings["tagGroups"][i]["children"][j].title,
+	                "text":          TSCORE.Config.Settings["tagGroups"][i]["children"][j].title, 
 	            })
 		    	.draggable({
-		    		cancel:false,
-		    		appendTo: "body",
-		    		helper: "clone",
-		    		revert: true,
+		    		cancel:     false,
+		    		appendTo:   "body",
+		    		helper:     "clone",
+		    		revert:     true,
 		    	})              
 	            .click( function() {
 	                TSCORE.selectedTag = $(this).attr("tag");
 	                TSCORE.selectedTagData = TSCORE.Config.getTagData($(this).attr("tag"), $(this).attr("parentKey"));
 	                TSCORE.selectedTagData.parentKey = $(this).attr("parentKey");
 	            })
-	            .dropdown( 'attach' , '#tagTreeMenu' )               
-	            );                      
+	            .append($("<span>", { 
+                    class:     "caret", 
+                }))
+                );
+	            //.dropdown( 'attach' , '#tagTreeMenu' )               
 	        }
 	    }
 	    

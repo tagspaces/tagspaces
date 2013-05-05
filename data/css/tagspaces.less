@@ -56,6 +56,14 @@ html, body {
   margin: 6px;
 }
 
+#currentLocation {
+  padding: 0px;
+  font-size: 1.3em;
+  color: lightgray;
+  display: inline-block;
+  margin: 6px;
+}
+
 #loadingAnimation {
     display: inline-block;
     width: 24px;
@@ -107,23 +115,28 @@ html, body {
 	display: inline-block;
 }
 
-#toggleSearch {
-    position: fixed;
-    right: 3em;
-    top: 0.3em;     
+
+#dialogAbout {
+    width: 600px;
 }
 
 #toggleLeftPanel {
     margin: 3px 3px 3px 3px;
 }
 
+#viewSwitcher {
+    margin: 3px 3px 3px 3px;
+}
+
+#openOptions{
+    margin: 3px 3px 3px 3px;
+}
+
 #openSettings {
-    float: right;
     margin: 3px 3px 3px 3px;
 }
 
 #openAboutBox {
-    float: right;
     margin: 3px 3px 3px 0px;    
 }
 
@@ -154,23 +167,22 @@ li hr {
     border-color: transparent;
 }
 
+// @baseTagColor;
+
 .tagButton {
-    padding: 1px;
-    background-color: @baseTagColor;    
-    padding-left: 1px;       
-    padding-right: 12px;        
-    font-weight: bold;
-    font-size: @tagFontSize;
-    color: white;
+    padding: 1px 2px 1px 2px;
+//    background-color: #008000;    
+//    color: white;
     margin: 1px;
-    border-color: transparent;
+//    border-color: transparent;
+//    font-weight: bold;
+//    font-size: @tagFontSize;
     z-index: 9999;    
-    .arrowDownImage;
-    .roundedTagCorners;
+//    .arrowDownImage;
 }
 
 .tagButton:active {
-    background-color: #B81900;   
+//    background-color: #B81900;   
 } 
 
 .fileButton {

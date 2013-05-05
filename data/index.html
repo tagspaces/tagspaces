@@ -1,20 +1,19 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <!--
-    Copyright (c) 2012 The Tagspaces Authors. All rights reserved.
+    Copyright (c) 2012-2013 The Tagspaces Authors. All rights reserved.
     Use of this source code is governed by a AGPL3 license that 
     can be found in the LICENSE file. Initializing TagSpaces ...
     -->    
 	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
 	<link rel="shortcut icon" type="image/x-icon" href="icons/icon16.png">
 	<title>TagSpaces</title>
-    <!--link rel="stylesheet" type="text/css" href="libs/jqueryui/custom-theme/jquery-ui-1.10.2.custom.css"-->
-    <link rel="stylesheet" type="text/css" href="libs/jqueryui/custom-theme-bootstrap/jquery-ui-1.10.0.custom.css">
+    <link rel="stylesheet" type="text/css" href="libs/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="libs/jqueryui/custom-theme/jquery-ui-1.10.2.custom.css">
     <link rel="stylesheet" type="text/css" href="libs/jquerylayout/layout-default-latest.css">    
     <link rel="stylesheet" type="text/css" href="libs/jsoneditor/jsoneditor.css">
     <link rel="stylesheet" type="text/css" href="libs/datatables/css/jquery.dataTables.css">
-    <link rel="stylesheet" type="text/css" href="libs/jquerydropdown/jquery.dropdown.css">
     <link rel="stylesheet/less" type="text/css" href="css/tagspaces.less">
     <script type="text/javascript" data-main="loader" src="libs/requirejs/require.js"></script>
 </head>
@@ -23,21 +22,31 @@
 <div id="container" style="display: none;">
     <div class="ui-layout-north">
         <a href="http://tagspaces.org" target="_new"><span id="logo">TagSpaces<sup id="appVersion" style="font-size: 0.6em; color: #BFBFBF"></sup></span></a>
+        <div class="btn-group">
+            <button id="reloadTagSpace" class="btn btn-small" >Select Location</button>
+            <button id="selectTagSpace" class="btn btn-small dropdown-toggle" data-toggle="dropdown">
+                <span class="caret"></span>
+            </button>
+            <ul style="z-index: 10000" class="dropdown-menu" id="favoritesList"></ul> 
+        </div> 
         <span id="loadingAnimation">&nbsp;</span> 
-        <button id="toggleLeftPanel" title="Toggle Leftpanel">&nbsp;</button>
-        <span id="viewSwitcher"></span>
-        <!--input id="searchbox" type="search" name="query" value="Search" autocomplete="off" -->
-        <button id="openAboutBox" title="About Dialog">About</button>      
-        <button id="openSettings" title="Options Dialog">Options</button>
+		<a id="openAboutBox" href="#dialogAbout" role="button" class="btn btn-small pull-right " data-toggle="modal"><i class="icon-comment"></i> About</a>
+        <a id="openOptions" href="#dialogOptions" role="button" class="btn btn-small pull-right" title="Options Dialog" data-toggle="modal"><i class="icon-wrench"></i> Options</a>        
+        <div id="viewSwitcher" class="btn-group pull-right" data-toggle="buttons-radio"></div>
+        <!--button id="toggleLeftPanel" class="btn btn-small pull-right" title="Toggle Leftpanel"><i class="icon-list"></i>&nbsp;</button-->
     </div>
 
     <div class="ui-layout-west" style="padding: 2px;">
         <div id="directoryNavigator" class="west-center" style="padding: 0">
             <div id="directoryNavigatorNorth" style="padding: 0" >
-                    <button id="reloadTagSpace" style="text-align: left; width: 85%;">Select Location</button>
-                    <button id="selectTagSpace">&nbsp;</button>
+                <button id="editLocation" title="Choose Location" class="btn btn-small"><i class="icon-hand-up"></i></button>                                
+                <button id="editLocation" title="Refresh Location" class="btn btn-small"><i class="icon-refresh"></i></button>                
+                <button id="editLocation" title="Edit Location" class="btn btn-small"><i class="icon-edit"></i></button>                  
+                <button id="editLocation" title="Remove Location" class="btn btn-small"><i class="icon-remove"></i></button>                  
             </div>
-            <div id="dirTree" style="padding: 0; height: 100%;"></div>   
+            <div id="dirTree" style="padding: 0; height: 100%;">
+             
+            </div>   
         </div>
         <div id="tagGroups" class="west-south" style="padding: 0; height: 100%"></div>
     </div>    
@@ -242,16 +251,61 @@
         </form>
      </div> 
     
-    <div id="dialogAbout" style="" title="About Tagspaces">
-        <iframe id="aboutIframe" style="width: 100%; height: 100%; border: 0px;" src="about.html"></iframe>
-    </div>    
+	<div id="dialogAbout" class="modal hide" tabindex="-1" role="dialog" data-backdrop="static" aria-labelledby="myModalLabel" aria-hidden="true">
+	  <div class="modal-header">
+	    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+	    <h4>About TagSpaces</h4>
+	  </div>
+	  <div class="modal-body">
+	    <iframe id="aboutIframe" style="width: 100%; height: 350px; border: 0px;" src="about.html"></iframe>
+	  </div>
+	  <div class="modal-footer">
+        <button class="btn" id="aboutDialogSettings">Advanced Settings</button>	      
+        <button class="btn" id="aboutDialogBack">Back</button>
+	    <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Close</button>
+	  </div>
+	</div>    
+    
+    <div id="dialogOptions" class="modal hide" tabindex="-1" role="dialog" data-backdrop="static" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h4>About TagSpaces</h4>
+      </div>
+      <div class="modal-body">
+        <form class="form-horizontal">
+        <div class="control-group">
+        <label class="control-label" for="inputEmail">Email</label>
+        <div class="controls">
+        <input type="text" id="inputEmail" placeholder="Email">
+        </div>
+        </div>
+        <div class="control-group">
+        <label class="control-label" for="inputPassword">Password</label>
+        <div class="controls">
+        <input type="password" id="inputPassword" placeholder="Password">
+        </div>
+        </div>
+        <div class="control-group">
+        <div class="controls">
+        <label class="checkbox">
+        <input type="checkbox"> Remember me
+        </label>
+        <button type="submit" class="btn">Sign in</button>
+        </div>
+        </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn" id="aboutDialogSettings">Advanced Settings</button>       
+        <button class="btn" id="aboutDialogBack">Back</button>
+        <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Close</button>
+      </div>
+    </div>        
     
     <div id="dialogSetting" title="Settings">
         <div id="settingsEditor" style="width: 100%; height: 100%;"></div>
         <div id="settingsPlainJSON" style="width: 100%; height: 100%;"></div>
     </div>
-    
-    <ul class="contextMenu" id="favoritesList"></ul>
     
     <ul id="tagSuggestionsMenu" class="dropdown-menu has-tip anchor-right"></ul>
     
@@ -293,7 +347,7 @@
         <li action="reloadDirectory" title="Reload directory"><a href="javascript:void(0);"><span class="ui-icon ui-icon-refresh"></span>Reload Directory</a></li>
         <li action="createDirectory" title="Creates a new subdirectory"><a href="javascript:void(0);"><span class="ui-icon ui-icon-document"></span>New Subdirectory</a></li>                   
         <li action="openDirectory" title="Opens the directoriy in the default file browser"><a href="javascript:void(0);"><span class="ui-icon ui-icon-folder-open"></span>Show Folder</a></li>                   
-    </ul>      
+    </ul>          
 </div>	
 </body>
 </html>
