@@ -45,7 +45,7 @@ console.debug("Loading UI for perspectiveDefault");
             	title: fileName, 
             	class: "thumbImg",
             	filepath: 'file:///'+filePath, 
-            	style: "width: 0px; height: 0px" 
+            	style: "width: 0px; height: 0px; border: 0px" 
         	})).html();
         	thumbHTML = thumbHTML + " ";
         } 	    
@@ -58,92 +58,124 @@ console.debug("Loading UI for perspectiveDefault");
 	    var buttonHTML = $('<span>').append($('<button>', { 
 	            title: "Options for "+fileName, 
 	            filepath: filePath,
-	            class: 'fileTitleButton', 
-	            text: " | | | " 
-	        })).html();
+	            class: 'btn btn-small fileTitleButton', 
+	        })
+	        .append( $("<i>", { class: "icon-file", }) )
+	        .append($("<span>", { class: "caret"}))
+	        ).html();
 	        
 	    return buttonHTML +" "+ thumbHTML + titleHTML;        
 	}
 
 	ExtUI.prototype.buildUI = function() {
 		console.debug("Init UI module");
-       
+		       
+		var self = this;
+		
+		// 		<div class="btn-toolbar pull-right" style="margin: 0px;">		       
+	    
 	    this.viewToolbar.append($("<a>", { 
 			class: "btn btn-small",
 			disabled: false,
 	        title: "Create new file",
 	        id: this.extensionID+"CreateFileButton",    
 	    })
-        .append( $("<i>", { class: "icon-file", }) )
-        .append("New")
         .click(function() {
             $( "#dialog-filecreate" ).dialog( "open" );
         })
+        .append( "<i class='icon-plus'>" )
+        .append("New")
         );       
     
 	    this.viewToolbar.append($("<button>", { 
-	        text: "Subdirs",
             class: "btn btn-small",
 			disabled: false,
 	        title: "Show subfolders content. \nOn subfolder with many files, this step can take some time!",
 	        id: this.extensionID+"IncludeSubDirsButton",    
-	    })); 	 
+	    })
+	    .click(function() {
+		    $( "#"+self.extensionID+"IncludeSubDirsButton" ).button( "disable" );
+			TSCORE.IO.createDirectoryIndex(TSCORE.currentPath);
+	    })
+	    .append( $("<i>", { class: "icon-retweet", }) )
+	    .append("Subdirs")
+	    );  	 
 	  
 	    this.viewToolbar.append($("<button>", { 
-	        text: "Add Tag",
             class: "btn btn-small",	        
 			disabled: false,
 	        title: "Tag Selected Files",
 	        id: this.extensionID+"TagButton",    
-	    }));   
-	
-	    this.viewToolbar.append($("<input>", { 
-	        type: "checkbox",
-			disabled: false,
-	        id: this.extensionID+"ShowTmbButton",    
-	    }));
-	    
-	    this.viewToolbar.append($("<label>", { 
-			for: this.extensionID+"ShowTmbButton",
-	        text: "Toggle Thumbnails",
-	        title: "Toggle file thumbnails",
-	    }));
-	    
+	    })
+	    .click(function() {
+			TSCORE.showAddTagsDialog();
+	    })
+	    .append( $("<i>", { class: "icon-tag", }) )
+	    .append("Add Tag")
+	    );    
+
 	    this.viewToolbar.append($("<button>", { 
-	        text: "Zoom In",
-			disabled: true,
+            class: "btn btn-small",	
+            "data-toggle": "button",        
+			disabled: false,
+	        title: "Toggle file thumbnails",
+	        id: this.extensionID+"ShowTmbButton",    
+	    })
+	    .click(function() {
+			self.toggleThumbnails();
+	    })
+	    .append( $("<i>", { class: "icon-picture", }) )
+	    //.append("Toggle Thumbnails")
+	    )
+ 
+	    this.viewToolbar.append($("<button>", { 
+            class: "btn btn-small",	
+			disabled: false,
 	        title: "Increase Thumbnails Size",
 	        id: this.extensionID+"IncreaseThumbsButton",    
-	    }));		    
-	    
-	    this.viewToolbar.append($("<input>", { 
-	        type: "checkbox",
+	    })
+	    .click(function() {
+			self.switchThumbnailSize();
+	    })	    
+	    .append( $("<i>", { class: "icon-zoom-in", }) )
+	    //.append("Zoom In")
+	    )	    	    
+		
+	    this.viewToolbar.append($("<div >", { 
+            class: "btn-group",	
+            "data-toggle": "buttons-checkbox",        
 			disabled: false,
-	        id: this.extensionID+"ShowFileDetailsButton",    
-	    }));
-	    
-	    this.viewToolbar.append($("<label>", { 
-			for: this.extensionID+"ShowFileDetailsButton",
-	        text: "Toggle File Details",
-	        title: "Toggle file details",
-	    }));	    
-	       
-	    this.viewToolbar.append($("<input>", { 
-	        type: "checkbox",
-			disabled: false,
-	        id: this.extensionID+"ShowTagsButton",    
-	    }));
-	    
-	    this.viewToolbar.append($("<label>", { 
-			for: this.extensionID+"ShowTagsButton",
-	        text: "Tags",
-	        title: "Toggle Tags",
-	    }));	
-	    	    
+	    })	    
+		    .append($("<button>", { 
+		            class: "btn btn-small",	
+			        title: "Toggle File Details",
+			        id: this.extensionID+"ShowFileDetailsButton",    
+			    })
+			    .click(function() {
+					self.toggleFileDetails();
+			    })
+			    .append( $("<i>", { class: "icon-list-alt", }) )
+			    //.append("File Details")
+		    )
+		     	    
+			.append($("<button>", { 
+		            class: "btn btn-small",	
+			        title: "Toggle Tags",
+			        id: this.extensionID+"ShowTagsButton",    
+			    })
+				.click(function() {
+					self.toggleTags();
+			    })		    
+			    .append( $("<i>", { class: "icon-tags", }) )
+			    //.append("Tags")
+		    )	     
+	   ) // end button group
+
+		// Filter	    	    
 	    this.viewToolbar.append($("<span>", { 
-	    	style: "float: right; margin: 0px; padding: 0px;",
+	    	style: "float: right; margin: -1px; padding: 0px;",
 	    }).append($("<input>", { 
-			type: "filter",
+			type: "text",
 			// autocomplete: "off", // Error: cannot call methods on autocomplete prior to initialization; attempted to call method 'off' 
 	        title: "This filter applies to current directory without subdirectories.",
 	        id: this.extensionID+"FilterBox",    
@@ -237,7 +269,7 @@ console.debug("Loading UI for perspectiveDefault");
 		
 		// handle thumbnail activation
 		this.showThumbs  = false;
-		$( "#"+this.extensionID+"ShowTmbButton" ).prop('checked', false).button("refresh");
+		//$( "#"+this.extensionID+"ShowTmbButton" ).prop('checked', false).button("refresh");
 					
 		// Clearing the old data
 	    this.fileTable.fnClearTable();  
@@ -379,7 +411,7 @@ console.debug("Loading UI for perspectiveDefault");
 			this.currentTmbSize = 0;
 			$( "#"+this.extensionID+"IncreaseThumbsButton" ).button( "disable" );
 			$.each(this.fileTable.$('.thumbImg'), function() {
-            	$(this).attr('style', "width: 0px; height: 0px");
+            	$(this).attr('style', "width: 0px; height: 0px; border: 0px");
 				$(this).attr('src',"");
 			});
 		} else {
@@ -403,62 +435,6 @@ console.debug("Loading UI for perspectiveDefault");
 		
 	ExtUI.prototype.initButtons = function() {
 	    var self = this;
-		// Initialize file buttons    
-
-
-	    
-	    $( "#"+this.extensionID+"IncludeSubDirsButton" )
-	    .click(function() {
-		    $( "#"+self.extensionID+"IncludeSubDirsButton" ).button( "disable" );
-			TSCORE.IO.createDirectoryIndex(TSCORE.currentPath);
-	    });  
-	    
-	    $( "#"+this.extensionID+"TagButton" )
-	    .click(function() {
-			TSCORE.showAddTagsDialog();
-	    });  
-	
-	    $( "#"+this.extensionID+"ShowTmbButton" ).button({
-	        text: false,
-	        icons: {
-	            primary: "ui-icon-image"
-	        }
-	    })
-	    .click(function() {
-			self.toggleThumbnails();
-	    }); 
-
-    
-	    $( "#"+this.extensionID+"IncreaseThumbsButton" ).button({
-	        text: false,
-	        icons: {
-	            primary: "ui-icon-zoomin"
-	        }
-	    })
-	    .click(function() {
-			self.switchThumbnailSize();
-	    }); 	    
-	    
-	    $( "#"+this.extensionID+"ShowFileDetailsButton" ).button({
-	        text: false,
-	        icons: {
-	            primary: "ui-icon-contact"
-	        }
-	    })
-	    .click(function() {
-			self.toggleFileDetails();
-	    });
-	    
-	    $( "#"+this.extensionID+"ShowTagsButton" ).button({
-	        text: false,
-	        icons: {
-	            primary: "ui-icon-tag"
-	        }
-	    })
-	    .click(function() {
-			self.toggleTags();
-	    }); 	    
-	   
 	    $( "#clearFilterButton" ).button({
 	        text: false,
 	        disabled: false,

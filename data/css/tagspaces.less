@@ -120,26 +120,6 @@ html, body {
     width: 600px;
 }
 
-#toggleLeftPanel {
-    margin: 3px 3px 3px 3px;
-}
-
-#viewSwitcher {
-    margin: 3px 3px 3px 3px;
-}
-
-#openOptions{
-    margin: 3px 3px 3px 3px;
-}
-
-#openSettings {
-    margin: 3px 3px 3px 3px;
-}
-
-#openAboutBox {
-    margin: 3px 3px 3px 0px;    
-}
-
 #fileTitle {
     font-weight: bold;
     font-size: 1.5em;
@@ -170,19 +150,22 @@ li hr {
 // @baseTagColor;
 
 .tagButton {
-    padding: 1px 2px 1px 2px;
-//    background-color: #008000;    
-//    color: white;
+    padding: 0px 2px 0px 2px;
+//    background: #008000 !important;    
+    color: white !important;
     margin: 1px;
-//    border-color: transparent;
-//    font-weight: bold;
+    border-color: transparent;
+//    font-weight: normal !important;
 //    font-size: @tagFontSize;
     z-index: 9999;    
-//    .arrowDownImage;
+}
+
+.tagButton:hover {
+    color: white;
 }
 
 .tagButton:active {
-//    background-color: #B81900;   
+    color: white;
 } 
 
 .fileButton {
@@ -202,32 +185,31 @@ li hr {
 }
 
 .fileTitleButton {
-    padding: 1px;
-    background-color: #E5E5E5; 
-    padding-left: 1px;
-    padding-right: 12px;        
-    font-weight: normal;
-    font-size: @tagFontSize;
-    color: #222222;
-    text-align: left;
+    padding: 0px 2px 0px 2px;
     margin: 1px;
+//    font-weight: normal !important;
+//    font-size: @tagFontSize;
+    z-index: 9999;  
+    background: @fileExtColor;          
+    margin: 1px;
+    background-color: #E5E5E5; 
+//    font-weight: normal;
+//    font-size: @tagFontSize;
+    color: #222222 !important;
+    text-align: left;
     border: #ddd solid 1px;
-    .arrowDownImage;   
-    .roundedTagCorners;    
 }
 
 .extTagButton {
-    padding: 1px;
-    background-color: @fileExtColor;          
-    padding-left: 1px;
-    padding-right: 12px;   
-    font-weight: bold;
-    font-size: @tagFontSize;
-    color: white;
+    padding: 0px 2px 0px 2px;
+    color: white !important;
     margin: 1px;
     border-color: transparent;
-    .arrowDownImage;
-    .roundedTagCorners;
+//    font-weight: normal !important;
+//    font-size: @tagFontSize;
+    z-index: 9999;  
+//    background: @fileExtColor;          
+    margin: 1px;
 }
 
 #container {
@@ -246,7 +228,7 @@ li hr {
 }
 	
 .ui-layout-north {
-    padding: 0px;
+    padding: 3px;
 	background-color: #333333;
 	color: #1C94C4;
 	font-weight: bold;

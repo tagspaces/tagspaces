@@ -243,10 +243,10 @@ define(function(require, exports, module) {
 	    });
 	
 	    var dirNavigationLayout = $('#directoryNavigator').layout({
-	            minSize:                30  // ALL panes
+	            minSize:                32  // ALL panes
 	        ,   north__paneSelector:    "#directoryNavigatorNorth"
 	        ,   center__paneSelector:   "#dirTree"
-	        ,   north__size:            30
+	        ,   north__size:            32
 	        ,   north__resizable:       false
 	        ,   north__spacing_open:    0
 	    });

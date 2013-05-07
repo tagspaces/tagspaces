@@ -141,12 +141,14 @@ define(function(require, exports, module) {
 	    $( "#fileTags" ).empty();
 	    for (var i=0; i < tags.length; i++) {
 	        $( "#fileTags" ).append($("<button>", { 
-	            class: "tagButton", 
+	            "class":  "btn btn-small btn-success tagButton", 
 	            tag: tags[i], 
 	            filepath: filePath, 
 	            title: "Opens context menu for "+tags[i],
 	            text: tags[i] 
-	            }));            
+	            })
+	            .append($("<span>", { class: "caret"}))
+	            );            
 	    };    
 	    
 	    $( "#tagsContainer" ).droppable({

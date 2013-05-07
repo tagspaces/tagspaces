@@ -444,9 +444,7 @@ define(function(require, exports, module) {
 	        tagButtons.hide(); 
 	        for(var j=0; j < TSCORE.Config.Settings["tagGroups"][i]["children"].length; j++) {
 	            tagButtons.append($("<a>", { 
-	               // "data-toggle":   "dropdown",
-	               // "href":          "#",
-	                "class":         "btn btn-small dropdown-toggle btn-success tagButton", 
+	                "class":         "btn btn-small btn-success tagButton", 
 	                "tag":           TSCORE.Config.Settings["tagGroups"][i]["children"][j].title, 
 	                "parentKey":     TSCORE.Config.Settings["tagGroups"][i].key,
 	                "title":         "Opens context menu for "+TSCORE.Config.Settings["tagGroups"][i]["children"][j].title,
@@ -498,9 +496,11 @@ define(function(require, exports, module) {
 	            tag: fileExtension,
 	            filename: fileName,
 	            filepath: filePath,
-	            class: "extTagButton",
+	            "class":  "btn btn-small btn-info extTagButton",	            
 	            text: fileExtension
-	            }));          
+	            })
+	            .append($("<span>", { class: "caret"}))
+	            );          
 	    } 
 	    if(tagString.length > 0) {
 	        var tags = tagString.split(",");
@@ -510,9 +510,11 @@ define(function(require, exports, module) {
 	                tag: tags[i],
 	                filename: fileName,
 	            	filepath: filePath,                
-	                class: "tagButton",
+	                "class":  "btn btn-small btn-success tagButton", 
 	                text: tags[i]
-	                }));   
+	                })
+	                .append($("<span>", { class: "caret"}))
+                );   
 	        }   
 	    }
 	    return wrapper.html();        

@@ -101,8 +101,8 @@ define(function (require, exports, module) {
         
     // Load dependent non-module scripts
     require("jquery");
-    require("bootstrap");
     require("jqueryui");
+    require("bootstrap");
     require("datatables");
     require("jsoneditor");
     require("jquerylayout");
