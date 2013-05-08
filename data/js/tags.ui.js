@@ -130,49 +130,6 @@ define(function(require, exports, module) {
 	}
 	
 	function initDialogs() {
-	    var newDirName = $( "#dirname" );
-	    
-	    var newFileName = $( "#newFileName" );
-	    
-	    var renamedFileName = $( "#renamedFileName" );
-	    
-	    var smartTag = $( "#smartTagName" );
-	    
-	    // TODO evtl add smarttag and the others...    
-	    var allFields = $( [] ).add( newDirName );
-	    
-	    var tips = $( ".validateTips" );
-	
-	    function updateTips( t ) {
-	        tips
-	            .text( t )
-	            .addClass( "ui-state-highlight" );
-	        setTimeout(function() {
-	            tips.removeClass( "ui-state-highlight", 1500 );
-	        }, 500 );
-	    }
-	
-	    function checkLength( o, n, min, max ) {
-	        if ( o.val().length > max || o.val().length < min ) {
-	            o.addClass( "ui-state-error" );
-	            updateTips( "Length of " + n + " must be between " +
-	                min + " and " + max + "." );
-	            return false;
-	        } else {
-	            return true;
-	        }
-	    }
-	
-	    function checkRegexp( o, regexp, n ) {
-	        if ( !( regexp.test( o.val() ) ) ) {
-	            o.addClass( "ui-state-error" );
-	            updateTips( n );
-	            return false;
-	        } else {
-	            return true;
-	        }
-	    }
-	
 	    $( "#dialog-smarttag" ).dialog({
 	        autoOpen: false,
 	        height: 220,
@@ -183,10 +140,10 @@ define(function(require, exports, module) {
 	                var bValid = true;                
 	                allFields.removeClass( "ui-state-error" );
 	
-	                bValid = bValid && checkLength( smartTag, "tagname", 2, 40 );
+	                //bValid = bValid && checkLength( smartTag, "tagname", 2, 40 );
 	                if ( bValid ) {
 	                    for (var i=0; i < TSCORE.selectedFiles.length; i++) {
-	                       TSCORE.TagUtils.writeTagsToFile(TSCORE.selectedFiles[i], [smartTag.val()]);
+	                       TSCORE.TagUtils.writeTagsToFile(TSCORE.selectedFiles[i], [$( "#smartTagName" ).val()]);
 	                    };
 	                    $( this ).dialog( "close" );
 	                    IOAPI.listDirectory(TSCORE.currentPath);                    
@@ -389,45 +346,36 @@ define(function(require, exports, module) {
 	    });        
 	    	                  
 	}
-	
 	function generateTagGroups() {
 	    console.debug("Generating TagGroups...");
 	    $("#tagGroups").empty();
-	    $("#tagGroups").addClass("ui-accordion ui-accordion-icons ui-widget ui-helper-reset")
+	    $("#tagGroups").addClass("accordion");
 	    for(var i=0; i < TSCORE.Config.Settings["tagGroups"].length; i++) {
 	        // Code based on http://jsbin.com/eqape/1/edit
-	        $("#tagGroups").append($("<h3>", { 
-	            class: "ui-accordion-header ui-helper-reset ui-state-default ui-corner-top ui-corner-bottom"    
+	        $("#tagGroups").append($("<div>", { 
+	            "class": "accordion-group"    
 	        })
-		    /* .droppable({
-		    	accept: ".tagButton",
-		    	hoverClass: "activeRow",
-		    	drop: function( event, ui ) {
-		    		var tagName = ui.draggable.attr("tag");
-	                TSCORE.Config.createTag(TSCORE.selectedTagData, tagName );
-	                TSCORE.Config.deleteTag(TSCORE.selectedTagData);
-	                generateTagGroups();    				
-		    	}	            	
-		    }) */
-	        .hover(function() { $(this).toggleClass("ui-state-hover"); })        
-	        .append($("<span>", { 
-	            class: "tagGroupTitle",
-	            text: TSCORE.Config.Settings["tagGroups"][i].title, 
+	        .append($("<div>", { 
+	            "class": "accordion-heading",
+	        })
+	        .append($("<a>", {
+				"class": "tagGroupTitle",
+				"data-toggle": "collapse",
+				"data-target": "#tagButtons"+i,
+				"href": "#",
+	            "text": TSCORE.Config.Settings["tagGroups"][i].title, 
 	        })  
-	        .click(function() {
-	          $(this)
-	            .parent().toggleClass("ui-accordion-header-active ui-state-active ui-state-default ui-corner-bottom").end()
-	            .parent().next().toggleClass("ui-accordion-content-active").toggle();
-	          return false;
-	        })        
 	        )
-	        .append($("<span>", {
-	                class: "ui-icon ui-icon-gear",
-	                style: "float: right!important; position:relative!important; vertical-align: middle; display:inline-block;",              
-	                tag: TSCORE.Config.Settings["tagGroups"][i].title, 
-	                key: TSCORE.Config.Settings["tagGroups"][i].key, 
-	                title: "Taggroup options",
-	        })                
+	        
+	        .append($("<a>", {
+	                "class": "dropdown-toggle pull-right",
+	                "role": "button",
+	                "tag": TSCORE.Config.Settings["tagGroups"][i].title, 
+	                "key": TSCORE.Config.Settings["tagGroups"][i].key, 
+	                "title": "Taggroup options",
+	                "href": "#"
+ 	        })
+ 	        .append("<b class='caret'></b>")                
 	        .dropdown( 'attach' , '#tagGroupMenu' )
 	        .click( function(event) {
 	                //console.debug("Clicked in taggroup setting");    
@@ -435,13 +383,25 @@ define(function(require, exports, module) {
 	                TSCORE.selectedTagData = TSCORE.Config.getTagGroupData($(this).attr("key"));
 	                TSCORE.selectedTagData.parentKey = undefined;  
 	        })
-	        )
-	        );
-	          
-	        var tagButtons = $("<div>").appendTo( "#tagGroups" );  
-	        tagButtons.attr("style","margin: 0px; padding: 5px;");
-	        tagButtons.addClass("ui-accordion-content  ui-helper-reset ui-widget-content ui-corner-bottom")
-	        tagButtons.hide(); 
+	        ) // end gear
+	        
+	        ) // end heading
+	        
+	        .append($("<div>", { 
+	            "class": "accordion-body collapse in",
+	            "id": "tagButtons"+i,
+	        })	        
+	        .append($("<div>", { 
+	            "class": "accordion-inner",
+	            "id": "tagButtonsContent"+i,
+	            "style": "padding: 3px",
+	        })
+	        ) // end accordion-inner	
+	        ) // end accordion button        
+
+  	        ); // end group
+
+	        var tagButtons = $("<div>").appendTo( "#tagButtonsContent"+i );  
 	        for(var j=0; j < TSCORE.Config.Settings["tagGroups"][i]["children"].length; j++) {
 	            tagButtons.append($("<a>", { 
 	                "class":         "btn btn-small btn-success tagButton", 
@@ -451,32 +411,23 @@ define(function(require, exports, module) {
 	                "text":          TSCORE.Config.Settings["tagGroups"][i]["children"][j].title, 
 	            })
 		    	.draggable({
-		    		cancel:     false,
-		    		appendTo:   "body",
-		    		helper:     "clone",
-		    		revert:     true,
+		    		"cancel":     false,
+		    		"appendTo":   "body",
+		    		"helper":     "clone",
+		    		"revert":     true,
 		    	})              
 	            .click( function() {
 	                TSCORE.selectedTag = $(this).attr("tag");
 	                TSCORE.selectedTagData = TSCORE.Config.getTagData($(this).attr("tag"), $(this).attr("parentKey"));
 	                TSCORE.selectedTagData.parentKey = $(this).attr("parentKey");
 	            })
-	            .append($("<span>", { 
-                    class:     "caret", 
-                }))
+	            .append( "<span class='caret'>" )
 	            .dropdown( 'attach' , '#tagTreeMenu' )               
                 );
-	        }
+	       } 
 	    }
-	    
-	    //Opens all taggroups by default
-	    $("#tagGroups").find("h3").each(function(index) {
-	      //console.log("Entered h3 "+$(this).next().text());
-	      $(this).toggleClass("ui-accordion-header-active ui-state-active ui-state-default ui-corner-bottom").end()
-	      $(this).next().toggleClass("ui-accordion-content-active").toggle();
-	    });
 	}
-	
+		
 	function openTagMenu(tagButton, tag, filePath) {
 	    TSCORE.selectedFiles.push(filePath);
 	    TSCORE.selectedTag = tag;

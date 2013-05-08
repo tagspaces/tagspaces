@@ -2,7 +2,7 @@
  * Use of this source code is governed by a AGPL3 license that 
  * can be found in the LICENSE file. */
 define(function(require, exports, module) {
-//"use strict";
+"use strict";
 
 	console.debug("Loading core.api.js ...");
 	
@@ -38,8 +38,7 @@ define(function(require, exports, module) {
 	function initApp() {
 	    console.debug("Init application");	
 	
-		tsCoreUI.initButtons();
-		tsCoreUI.initDialogs();
+		tsCoreUI.initUI();
 	
 	    tsTagsUI.initContextMenus();
 	    tsTagsUI.initDialogs();
@@ -277,7 +276,9 @@ define(function(require, exports, module) {
 
 	// Proxying functions from tsCoreUI
 	exports.showAlertDialog 			= tsCoreUI.showAlertDialog;
-	exports.hideAllDropDownMenus		= tsCoreUI.hideAllDropDownMenus;	
+	exports.showConfirmDialog			= tsCoreUI.showConfirmDialog;
+	exports.hideAllDropDownMenus		= tsCoreUI.hideAllDropDownMenus;
+	exports.openFileCreateDialog        = tsCoreUI.openFileCreateDialog;	
 	
 	// Proxying functions from tsTagsUI
 	exports.generateTagButtons 			= tsTagsUI.generateTagButtons;

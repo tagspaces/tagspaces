@@ -21,7 +21,7 @@ var isChrome = !isSafari && 'WebkitTransform' in document.documentElement.style;
 
 console.debug("Loading Loader 4 Firefox: "+isFirefox+" | Chrome: "+isChrome);
 
-// Setting up the IO functionality according to the plattform
+// Setting up the IO functionality according to the platform
 var IO_JS = undefined;
 if( isFirefox ) {
 	IO_JS = "js/ioapi.mozilla";

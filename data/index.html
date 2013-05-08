@@ -4,7 +4,7 @@
     <!--
     Copyright (c) 2012-2013 The Tagspaces Authors. All rights reserved.
     Use of this source code is governed by a AGPL3 license that 
-    can be found in the LICENSE file. Initializing TagSpaces ...
+    can be found in the LICENSE file.
     -->    
 	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
 	<link rel="shortcut icon" type="image/x-icon" href="icons/icon16.png">
@@ -14,9 +14,7 @@
     <link rel="stylesheet" type="text/css" href="libs/jquerylayout/layout-default-latest.css">    
     <link rel="stylesheet" type="text/css" href="libs/jsoneditor/jsoneditor.css">
     <link rel="stylesheet" type="text/css" href="libs/jquerydropdown/jquery.dropdown.css">    
-    <link rel="stylesheet" type="text/css" href="libs/bootstrap/css/bootstrap-cosmo.css">
-    <!--link rel="stylesheet" type="text/css" href="libs/bootstrap/css/bootswatch.less">
-    <link rel="stylesheet" type="text/css" href="libs/bootstrap/css/cosmo.less"-->
+    <link rel="stylesheet" type="text/css" href="libs/bootstrap/css/bootstrap.css">
     <link rel="stylesheet/less" type="text/css" href="css/tagspaces.less">
 </head>
 <body style="background-color: lightgray;">
@@ -27,8 +25,9 @@
         <span id="loadingAnimation">&nbsp;</span> 
 		<div class="btn-toolbar pull-right" style="margin: 0px;">
 			<div id="viewSwitcher" class="btn-group" data-toggle="buttons-radio"></div>
+	        <a id="testAlertButton" role="button" class="btn btn-small" title="Options Dialog" ><i class="icon-adjust"></i> Test Alerts</a>
 	        <a id="openOptions" href="#dialogOptions" role="button" class="btn btn-small" title="Options Dialog" data-toggle="modal"><i class="icon-wrench"></i> Options</a>        
-			<a id="openAboutBox" href="#dialogAbout" role="button" class="btn btn-small" data-toggle="modal"><i class="icon-comment"></i> About</a>
+			<a id="openAboutBox" data-placement="bottom" href="#dialogAbout" role="button" class="btn btn-small" data-toggle="modal"><i class="icon-comment"></i> About</a>
 	        <!--button id="toggleLeftPanel" class="btn btn-small" title="Toggle Leftpanel"><i class="icon-list"></i>&nbsp;</button-->
 	    </div>
     </div>
@@ -57,7 +56,7 @@
     <div class="ui-layout-east" style="padding: 0">
         <div class="east-north" style="padding: 1; background-color: #EEEEEE;">
             <span id="fileTitle"></span>
-            <span id="filetoolbox" style="float: right;"></span>
+            <span id="filetoolbox" class="btn-group pull-right"></span>
             <p id="tagsContainer">
                 <span id="fileTags"></span>
             </p>  
@@ -72,24 +71,122 @@
         </div>
     </div>    
 
-    <div id="dialog-filecreate" title="Create new file">
-        <p class="validateTips">All form fields are required.</p>    
-        <form action="javascript:void(0);">
-        <fieldset>
-            <p>
-            <label for="fileTypeRadio">Filetype</label>
-            <span id="fileTypeRadio">
-                <input type="radio" id="txtFileTypeButton" name="fileTypeRadio" checked="checked" /><label for="txtFileTypeButton">TXT</label>
-                <input type="radio" id="mdFileTypeButton" name="fileTypeRadio" /><label title="Markdown" for="mdFileTypeButton">MD</label>
-                <input type="radio" id="htmlFileTypeButton" name="fileTypeRadio" /><label for="htmlFileTypeButton">HTML</label>
-            </span>
-            </p><p>
-            <label for="name">Name of the file</label>
-            <input type="text" name="newFileName" id="newFileName" />
-            </p>
-        </fieldset>
-        </form>
+    <div id="dialog-filecreate" class="modal hide" tabindex="-1" role="dialog" data-backdrop="static" aria-labelledby="myModalLabel" aria-hidden="true" >
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h4>Create new file</h4>
+        </div>
+        <div class="modal-body">
+            <form class="form-horizontal">
+	            <div class="control-group">
+	                <label class="control-label" for="fileTypeChooser">Filetype</label>
+                    <div class="controls">
+                        <div class="btn-group" data-toggle="buttons-radio" name="fileTypeChooser">
+                            <button id="txtFileTypeButton" data-toggle="tooltip" title="Create a plain text file" name="fileTypeRadio" class="btn">TXT</button>
+                            <button id="mdFileTypeButton" data-toggle="tooltip" title="Create a MarkDown file" name="fileTypeRadio" class="btn">MD</button>
+                            <button id="htmlFileTypeButton" data-toggle="tooltip" title="Create a HTML file" name="fileTypeRadio" class="btn">HTML</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="newFileName">Filename</label>
+                    <div class="controls">
+                        <input type="text" id="newFileName" id="newFileName" placeholder="Filename">
+                    </div>
+                </div>            
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+            <button id="fileCreateConfirmButton" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Ok</button>
+        </div>
     </div>  
+    
+	<div id="dialogAbout" class="modal hide" tabindex="-1" role="dialog" data-backdrop="static" aria-labelledby="myModalLabel" aria-hidden="true">
+	  <div class="modal-header">
+	    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+	    <h4>About TagSpaces</h4>
+	  </div>
+	  <div class="modal-body">
+	    <iframe id="aboutIframe" style="width: 100%; height: 350px; border: 0px;" src="about.html"></iframe>
+	  </div>
+	  <div class="modal-footer">
+        <button class="btn" id="aboutDialogSettings">Advanced Settings</button>	      
+        <button class="btn" id="aboutDialogBack">Back</button>
+	    <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Close</button>
+	  </div>
+	</div>    
+	
+    <div id="dialogCreateFolderConnection" class="modal hide" tabindex="-1" role="dialog" data-backdrop="static" aria-labelledby="myModalLabel" aria-hidden="true" >
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h4>Connect Folder</h4>
+        </div>
+        <div class="modal-body">
+            <form class="form-horizontal">
+	            <div class="control-group">
+	                <label class="control-label" for="connectionName">Connection Name</label>
+                    <div class="controls">
+                		<input type="text" name="connectionName" id="connectionName" />
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="folderLocation">Folder Location</label>
+                    <div class="controls">
+						<input type="text" name="folderLocation" id="folderLocation" placeholder="c:\users\ugg\documents" />
+                		<button id="selectLocalDirectory" class="btn" title="Select local folder"><i class="icon-folder-open"></i></button>
+                    </div>
+                </div>            
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+            <button id="createFolderConnectionButton" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Ok</button>
+        </div>
+    </div>      
+
+    <div id="dialogOptions" class="modal hide" tabindex="-1" role="dialog" data-backdrop="static" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h4>About TagSpaces</h4>
+      </div>
+      <div class="modal-body">
+		<form class="form-horizontal">
+			<div class="control-group">
+				<label class="control-label" for="inputEmail">Email</label>
+				<div class="controls">
+					<input type="text" id="inputEmail" placeholder="Email">
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label" for="inputPassword">Password</label>
+				<div class="controls">
+					<input type="password" id="inputPassword" placeholder="Password">
+				</div>
+			</div>
+			<div class="control-group">
+				<div class="controls">
+					<label class="checkbox">
+						<input type="checkbox">
+						Remember me </label>
+					<button type="submit" class="btn">
+						Sign in
+					</button>
+				</div>
+			</div>
+		</form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn" id="aboutDialogSettings">Advanced Settings</button>       
+        <button class="btn" id="aboutDialogBack">Back</button>
+        <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Close</button>
+      </div>
+    </div>        
+    
+    <div id="dialogSetting" title="Settings">
+        <div id="settingsEditor" style="width: 100%; height: 100%;"></div>
+        <div id="settingsPlainJSON" style="width: 100%; height: 100%;"></div>
+    </div>    
     
     <div id="dialog-dircreate" title="Create new directory">
         <p class="validateTips">All form fields are required.</p>    
@@ -166,43 +263,6 @@
         <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>Do you really want to delete this taggroup?</p>
     </div>
 
-    <div id="dialog-confirmfavoritedelete" title="Delete this favorite?">
-        <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>Do you really want to delete this favorite?</p>
-    </div>
-
-    <div id="dialogFavoriteCreate" title="Connect new location">
-        <p class="validateTips">All form fields are required.</p>    
-        <form action="javascript:void(0);">
-        <fieldset>
-            <p>
-                <label for="name">Name</label>
-                <input type="text" name="name" id="favoriteName" />
-            </p>
-            <p>
-                <label for="location">Location</label>
-                <input type="text" name="location" id="favoriteLocation" />
-                <button id="selectLocalDirectory" title="Select local folder">&nbsp;</button>
-            </p>
-        </fieldset>
-        </form>
-    </div>
-
-    <div id="dialogFavoriteEdit" title="Edit Favorite">
-        <p class="validateTips">All form fields are required.</p>    
-        <form action="javascript:void(0);">
-        <fieldset>
-            <p>
-                <label for="name">Name</label>
-                <input type="text" name="name" id="newFavoriteName" />
-            </p>
-            <p>
-                <label for="location">Location</label>
-                <input type="text" name="location" id="newFavoriteLocation" />
-            </p>
-        </fieldset>
-        </form>
-    </div>
-
     <div id="dialog-tagedit" title="Edit Tag">
         <p class="validateTips">All form fields are required.</p>    
         <form action="javascript:void(0);">
@@ -247,62 +307,6 @@
         </fieldset>
         </form>
      </div> 
-    
-	<div id="dialogAbout" class="modal hide" tabindex="-1" role="dialog" data-backdrop="static" aria-labelledby="myModalLabel" aria-hidden="true">
-	  <div class="modal-header">
-	    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-	    <h4>About TagSpaces</h4>
-	  </div>
-	  <div class="modal-body">
-	    <iframe id="aboutIframe" style="width: 100%; height: 350px; border: 0px;" src="about.html"></iframe>
-	  </div>
-	  <div class="modal-footer">
-        <button class="btn" id="aboutDialogSettings">Advanced Settings</button>	      
-        <button class="btn" id="aboutDialogBack">Back</button>
-	    <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Close</button>
-	  </div>
-	</div>    
-    
-    <div id="dialogOptions" class="modal hide" tabindex="-1" role="dialog" data-backdrop="static" aria-labelledby="myModalLabel" aria-hidden="true">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h4>About TagSpaces</h4>
-      </div>
-      <div class="modal-body">
-        <form class="form-horizontal">
-        <div class="control-group">
-        <label class="control-label" for="inputEmail">Email</label>
-        <div class="controls">
-        <input type="text" id="inputEmail" placeholder="Email">
-        </div>
-        </div>
-        <div class="control-group">
-        <label class="control-label" for="inputPassword">Password</label>
-        <div class="controls">
-        <input type="password" id="inputPassword" placeholder="Password">
-        </div>
-        </div>
-        <div class="control-group">
-        <div class="controls">
-        <label class="checkbox">
-        <input type="checkbox"> Remember me
-        </label>
-        <button type="submit" class="btn">Sign in</button>
-        </div>
-        </div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button class="btn" id="aboutDialogSettings">Advanced Settings</button>       
-        <button class="btn" id="aboutDialogBack">Back</button>
-        <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Close</button>
-      </div>
-    </div>        
-    
-    <div id="dialogSetting" title="Settings">
-        <div id="settingsEditor" style="width: 100%; height: 100%;"></div>
-        <div id="settingsPlainJSON" style="width: 100%; height: 100%;"></div>
-    </div>
     
     <ul class="contextMenu" id="favoritesList"></ul>
     

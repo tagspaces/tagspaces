@@ -122,7 +122,7 @@ console.debug("Loading messaging.mozilla.js..");
 	      case "selectDirectory":
 	        if(message.success){
 	        	// TODO make the use of this function more general
-				$("#favoriteLocation").val(message.content);
+				$("#folderLocation").val(message.content);
 	        } else {
 	            TSCORE.updateLogger("Selecting directory failed.");        
 	        }

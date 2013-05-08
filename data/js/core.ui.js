@@ -11,6 +11,8 @@ define(function(require, exports, module) {
 
     var editor = undefined;
 	var formatter = undefined;
+	
+	var fileContent = undefined;	
 
 	// Init JSON Editor
 	var initJSONEditor = function() {
@@ -18,90 +20,85 @@ define(function(require, exports, module) {
 	    formatter = new JSONFormatter(document.getElementById("settingsPlainJSON"));
 	}
 	
-	var showAlertDialog = function(message, title)
-	{
-	    if (!title) {
-	    	title = 'Alert';
-	    }	        
+	var showAlertDialog = function(message, title) {
+	    if (!title) { title = 'Alert'; }	
+	    if (!message) { message = 'No Message to Display.'; }
 	
-	    if (!message) {
-	        message = 'No Message to Display.';	    	
-	    }
+	    var alertModal = 
+	      $('<div class="modal hide">' +    
+	          '<div class="modal-header">' +
+	            '<a class="close" data-dismiss="modal" >&times;</a>' +
+	            '<h4>' + title +'</h4>' +
+	          '</div>' +
+	          '<div class="modal-body">' +
+	            '<h6>' + message + '</h6>' +
+	          '</div>' +
+	          '<div class="modal-footer">' +
+	            '<a href="#" id="okButton" class="btn btn-primary">Ok</a>' +
+	          '</div>' +
+	        '</div>');
 	
-	    $("<div></div>").html(message).dialog({
-	        title: title,
-	        resizable: false,
-	        modal: true,
-	        buttons: {
-	            "Ok": function() 
-	            {
-	                $( this ).dialog( "close" );
-	            }
-	        }
+	    alertModal.find('#okButton').click(function(event) {
+	      alertModal.modal('hide');
 	    });
+	
+	    alertModal.modal('show');
 	}	
 	
-	var initButtons = function() {
-	    $( "#openSettings" )
-	    .click(function() {
-			TSCORE.showAlertDialog("Not implemented yet");
+	var showConfirmDialog = function(title, message, callback) {
+	    if (!title) { title = 'Confirm'; }	
+	    if (!message) { message = 'No Message to Display.'; }
+	    
+	    var confirmModal = 
+	      $('<div class="modal hide">' +    
+	          '<div class="modal-header">' +
+	            '<a class="close" data-dismiss="modal" >&times;</a>' +
+	            '<h4>' + title +'</h4>' +
+	          '</div>' +
+	          '<div class="modal-body">' +
+	            '<h6>' + message + '</h6>' +
+	          '</div>' +
+	          '<div class="modal-footer">' +
+	            '<a href="#" class="btn" data-dismiss="modal">Cancel</a>' +
+	            '<a href="#" id="okButton" class="btn btn-primary">Ok</a>' +
+	          '</div>' +
+	        '</div>');
+	
+	    confirmModal.find('#okButton').click(function(event) {
+	      callback();
+	      confirmModal.modal('hide');
 	    });
+	
+	    confirmModal.modal('show');     
+	};	
+	
+
+    var openFileCreateDialog = function() {
+        fileContent = TSCORE.Config.getNewTextFileContent(); // Default new file in text file
+        $("#newFileName").val(".txt");
+        $('#dialog-filecreate').modal({show: true});
+        $('#txtFileTypeButton').button('toggle');
+    }
+    
+	var initUI = function() {
+	    
+	    $( "#openAboutBox" ).tooltip();
     
 	    $( "#toggleLeftPanel" ).click(function() {
 			TSCORE.toggleLeftPanel();
-	    });             
-	}
-	
-	var initDialogs = function() {
-	    var newDirName = $( "#dirname" );    
-	    var newFileName = $( "#newFileName" );    
-	    var renamedFileName = $( "#renamedFileName" );    
-	    
-	    // TODO evtl add smarttag and the others...    
-	    var allFields = $( [] ).add( newDirName );
-	    
-	    var tips = $( ".validateTips" );
-	
-	    function updateTips( t ) {
-	        tips
-	            .text( t )
-	            .addClass( "ui-state-highlight" );
-	        	window.setTimeout(function() {
-	            	tips.removeClass( "ui-state-highlight", 1500 );
-	        	}, 500 );
-	    }
-	
-	    function checkLength( o, n, min, max ) {
-	        if ( o.val().length > max || o.val().length < min ) {
-	            o.addClass( "ui-state-error" );
-	            updateTips( "Length of " + n + " must be between " +
-	                min + " and " + max + "." );
-	            return false;
-	        } else {
-	            return true;
-	        }
-	    }
-	
-	    function checkRegexp( o, regexp, n ) {
-	        if ( !( regexp.test( o.val() ) ) ) {
-	            o.addClass( "ui-state-error" );
-	            updateTips( n );
-	            return false;
-	        } else {
-	            return true;
-	        }
-	    }    
-	    
-	    $( "#fileTypeRadio" ).buttonset();
-	
-	    var fileContent = undefined;
+	    });   
+		
+		$( "#testAlertButton" ).click(function() {
+			TSCORE.showAlertDialog("test1","test2");	
+			TSCORE.showConfirmDialog("test1","test2", function() {alert("test")});
+		})
 	
 	    $( "#txtFileTypeButton" ).click(function() {
 	        // TODO Add to config options
 	        fileContent = TSCORE.Config.getNewTextFileContent();
 	        //Leave the filename as it is by no extension
-	        if(newFileName.val().lastIndexOf(".")>=0) {
-	            newFileName.val(newFileName.val().substring(0,newFileName.val().lastIndexOf("."))+".txt");  
+	        if($( "#newFileName" ).val().lastIndexOf(".")>=0) {
+	            $( "#newFileName" ).val($( "#newFileName" ).val().substring(0,$( "#newFileName" ).val().lastIndexOf("."))+".txt");  
 	        }
 	    });            
 	
@@ -109,8 +106,8 @@ define(function(require, exports, module) {
 	        // TODO Add to config options
 	        fileContent = TSCORE.Config.getNewHTMLFileContent();
 	        //Leave the filename as it is by no extension
-	        if(newFileName.val().lastIndexOf(".")>=0) {
-	            newFileName.val(newFileName.val().substring(0,newFileName.val().lastIndexOf("."))+".html");            
+	        if($( "#newFileName" ).val().lastIndexOf(".")>=0) {
+	            $( "#newFileName" ).val($( "#newFileName" ).val().substring(0,$( "#newFileName" ).val().lastIndexOf("."))+".html");            
 	        }
 	    }); 
 	    
@@ -118,46 +115,26 @@ define(function(require, exports, module) {
 	        // TODO Add to config options
 	        fileContent = TSCORE.Config.getNewMDFileContent();
 	        //Leave the filename as it is by no extension
-	        if(newFileName.val().lastIndexOf(".")>=0) {
-	            newFileName.val(newFileName.val().substring(0,newFileName.val().lastIndexOf("."))+".md");            
+	        if($( "#newFileName" ).val().lastIndexOf(".")>=0) {
+	            $( "#newFileName" ).val($( "#newFileName" ).val().substring(0,$( "#newFileName" ).val().lastIndexOf("."))+".md");            
 	        }
 	    });     
 	
-	    $( "#dialog-filecreate" ).dialog({
-	        autoOpen: false,
-	        height: 250,
-	        width: 450,
-	        modal: true,
-	        buttons: {
-	            "Create": function() {
-	                var bValid = true;                
-	                allFields.removeClass( "ui-state-error" );
-	
-	                bValid = bValid && checkLength( newFileName, "filename", 4, 200 );
-	        //        bValid = bValid && checkRegexp( renamedFileName, /^[a-z]([0-9a-z_.])+$/i, "Filename may consist of a-z, 0-9, underscores, begin with a letter." );
-	                if(TSCORE.fileExists(newFileName.val())) {
-	                    updateTips("File already exists.");
-	                    bValid = false;
-	                }
-	                if ( bValid ) {
-	                    TSCORE.IO.saveTextFile(TSCORE.currentPath+TSCORE.TagUtils.DIR_SEPARATOR+$( "#newFileName" ).val(),fileContent);
-	                    $( this ).dialog( "close" );
-	                    TSCORE.IO.listDirectory(TSCORE.currentPath);                    
-	                }
-	            },
-	            Cancel: function() {
-	                $( this ).dialog( "close" );
-	            }
-	        },
-	        close: function() {
-	            allFields.val( "" ).removeClass( "ui-state-error" );
-	        },
-	        open: function() {
-	            fileContent = TSCORE.Config.getNewTextFileContent(); // Default new file in text file
-	            $( "#newFileName" ).val(".txt");
-	        }                
-	    });     
-	
+	    $( '#fileCreateConfirmButton' ).click(function() {
+            var bValid = true;                
+//                bValid = bValid && checkLength( newFileName, "filename", 4, 200 );
+
+            if(TSCORE.fileExists($( "#newFileName" ).val())) {
+                updateTips("File already exists.");
+                bValid = false;
+            }
+            if ( bValid ) {
+                TSCORE.IO.saveTextFile(TSCORE.currentPath+TSCORE.TagUtils.DIR_SEPARATOR+$( "#newFileName" ).val(),fileContent);
+                $('#dialog-filecreate').modal('hide')
+                TSCORE.IO.listDirectory(TSCORE.currentPath);                    
+            }
+        });
+
 	    $( "#dialog-filerename" ).dialog({
 	        autoOpen: false,
 	        height: 220,
@@ -165,16 +142,14 @@ define(function(require, exports, module) {
 	        modal: true,
 	        buttons: {
 	            "Rename": function() {
-	                var bValid = true;                
-	                allFields.removeClass( "ui-state-error" );
-	
-	                bValid = bValid && checkLength( renamedFileName, "filename", 3, 200 );
+	                var bValid = true;           
+	        //        bValid = bValid && checkLength( $( "#renamedFileName" ).val(), "filename", 3, 200 );
 	        //        bValid = bValid && checkRegexp( renamedFileName, /^[a-z]([0-9a-z_.])+$/i, "Filename may consist of a-z, 0-9, underscores, begin with a letter." );
 	                if ( bValid ) {
 	                    var containingDir = TSCORE.TagUtils.extractContainingDirectoryPath(TSCORE.selectedFiles[0]);
 	                    TSCORE.IO.renameFile(
 	                            TSCORE.selectedFiles[0],
-	                            containingDir+TSCORE.TagUtils.DIR_SEPARATOR+renamedFileName.val()
+	                            containingDir+TSCORE.TagUtils.DIR_SEPARATOR+$( "#renamedFileName" ).val()
 	                        );
 	                    $( this ).dialog( "close" );
 	                }
@@ -184,7 +159,7 @@ define(function(require, exports, module) {
 	            }
 	        },
 	        close: function() {
-	            allFields.val( "" ).removeClass( "ui-state-error" );
+
 	        },
 	        open: function() {
 	            $( "#renamedFileName" ).val(TSCORE.TagUtils.extractFileName(TSCORE.selectedFiles[0]));
@@ -241,8 +216,7 @@ define(function(require, exports, module) {
 	                $( this ).dialog( "close" );
 	            }
 	        }
-	    });
-	    
+	    });	    
 	    
 	    $( "#aboutDialogBack" ).click(function() {
             $("#aboutIframe").attr("src","about.html");
@@ -301,7 +275,6 @@ define(function(require, exports, module) {
 	    });     
 	}
 
-
 	var hideAllDropDownMenus = function() {
 		$('BODY')
 			.find('.dropdown-menu').hide().end()
@@ -309,9 +282,10 @@ define(function(require, exports, module) {
 	}
 
     // Public API definition
-	exports.initButtons 			= initButtons;
-	exports.initDialogs 			= initDialogs;	
+	exports.initUI 					= initUI;
 	exports.showAlertDialog 		= showAlertDialog;
+	exports.showConfirmDialog 		= showConfirmDialog;
+	exports.openFileCreateDialog    = openFileCreateDialog;
 	exports.hideAllDropDownMenus	= hideAllDropDownMenus;
 
 });

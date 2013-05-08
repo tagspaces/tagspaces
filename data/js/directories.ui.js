@@ -19,9 +19,7 @@ define(function(require, exports, module) {
     
         document.title = title + " | " + TSCORE.Config.DefaultSettings.appName;
     
-        $( "#reloadTagSpace" ).button({
-            label: title
-        });     
+        $( "#reloadTagSpace" ).text(title);
         $( "#reloadTagSpace" ).attr("title",path);
         
         // Clears the directory history
@@ -271,17 +269,10 @@ define(function(require, exports, module) {
                         
         $( "#selectTagSpace" ).tooltip();
     
-        $( "#selectLocalDirectory" )
-            .button({
-                text: false,
-                icons: {
-                    primary: "ui-icon-folder-open"
-                }
-            })
-            .click(function() {
-                TSCORE.IO.selectDirectory();
-                return false;
-            })    
+        $( "#selectLocalDirectory" ).click(function() {
+            TSCORE.IO.selectDirectory();
+            return false;
+        })    
     }
     
     function initContextMenus() {    
@@ -306,41 +297,6 @@ define(function(require, exports, module) {
     
     function initDialogs() {
         var newDirName = $( "#dirname" );
-        
-        // TODO evtl add smarttag and the others...    
-        var allFields = $( [] ).add( newDirName );
-        
-        var tips = $( ".validateTips" );
-    
-        function updateTips( t ) {
-            tips
-                .text( t )
-                .addClass( "ui-state-highlight" );
-            setTimeout(function() {
-                tips.removeClass( "ui-state-highlight", 1500 );
-            }, 500 );
-        }
-    
-        function checkLength( o, n, min, max ) {
-            if ( o.val().length > max || o.val().length < min ) {
-                o.addClass( "ui-state-error" );
-                updateTips( "Length of " + n + " must be between " +
-                    min + " and " + max + "." );
-                return false;
-            } else {
-                return true;
-            }
-        }
-    
-        function checkRegexp( o, regexp, n ) {
-            if ( !( regexp.test( o.val() ) ) ) {
-                o.addClass( "ui-state-error" );
-                updateTips( n );
-                return false;
-            } else {
-                return true;
-            }
-        }
     
         $( "#dialog-dircreate" ).dialog({
             autoOpen: false,
@@ -350,11 +306,10 @@ define(function(require, exports, module) {
             buttons: {
                 "Create": function() {
                     var bValid = true;
-                    allFields.removeClass( "ui-state-error" );
+
+                    //bValid = bValid && checkLength( newDirName, "directory name", 3, 100 );
     
-                    bValid = bValid && checkLength( newDirName, "directory name", 3, 100 );
-    
-                    bValid = bValid && checkRegexp( newDirName, /^[a-z]([0-9a-z_])+$/i, "Directory name may consist of a-z, 0-9, underscores, begin with a letter." );
+                    //bValid = bValid && checkRegexp( newDirName, /^[a-z]([0-9a-z_])+$/i, "Directory name may consist of a-z, 0-9, underscores, begin with a letter." );
                     // From jquery.validate.js (by joern), contributed by Scott Gonzalez: http://projects.scottsplayground.com/email_address_validation/
                     // bValid = bValid && checkRegexp( email, /^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i, "eg. ui@jquery.com" );
                     // bValid = bValid && checkRegexp( password, /^([0-9a-zA-Z])+$/, "Password field only allow : a-z 0-9" );
@@ -373,42 +328,35 @@ define(function(require, exports, module) {
             }
         });  
         
-        $( "#dialog-confirmfavoritedelete" ).dialog({
-            autoOpen: false,
-            resizable: false,
-            height:140,
-            modal: true,
-            buttons: {
-                "Delete": function() {                
-                    TSCORE.Config.deleteFavorite(nameCurrentFavorite);
-                    initFavorites();  
-                    openFavorite(TSCORE.Config.Settings["tagspacesList"][0].path, TSCORE.Config.Settings["tagspacesList"][0].name);                                 
-                    $( this ).dialog( "close" );
-                },
-                Cancel: function() {
-                    $( this ).dialog( "close" );
-                }
-            }
-        }); 
-    
-        $( "#dialogFavoriteCreate" ).dialog({
-            autoOpen: false,
-            resizable: false,
-            height:240,
-            modal: true,
-            buttons: {
-                "Create": function() {                
-                    TSCORE.Config.createFavorite($("#favoriteName").val(), $("#favoriteLocation").val());
-                    initFavorites();  
-                    openFavorite(TSCORE.Config.Settings["tagspacesList"][0].path, TSCORE.Config.Settings["tagspacesList"][0].name);                                 
-                    $( this ).dialog( "close" );
-                },
-                Cancel: function() {
-                    $( this ).dialog( "close" );
-                }
-            }
+        $( "#createFolderConnectionButton" ).click( function() {                
+            TSCORE.Config.createFavorite($("#connectionName").val(), $("#folderLocation").val());
+            initFavorites();  
+            openFavorite(TSCORE.Config.Settings["tagspacesList"][0].path, TSCORE.Config.Settings["tagspacesList"][0].name);                                 
         });  
     }
+    
+    function openCreateFolderConnectionDialog() {
+        $("#connectionName").val("");
+        $("#folderLocation").val("");
+        $('#dialogCreateFolderConnection').modal({show: true});
+    }  
+    
+    function deleteFolderConnection() {
+        console.debug("Deleting folder connection..");
+        TSCORE.Config.deleteFavorite(nameCurrentFavorite);
+        initFavorites();  
+        if(TSCORE.Config.Settings["tagspacesList"][0] != undefined) {
+        	openFavorite(TSCORE.Config.Settings["tagspacesList"][0].path, TSCORE.Config.Settings["tagspacesList"][0].name);        	
+        }                               				
+    }  
+
+    function openDeleteFolderConnectionDialog() {
+		TSCORE.showConfirmDialog(
+			"Delete connection to folder",
+			"Do you want to delete this connection to a folder?",
+			deleteFolderConnection
+		)
+    }             
     
     function initFavorites() {
         console.debug("Creating location menu...");
@@ -433,16 +381,13 @@ define(function(require, exports, module) {
                 var commandName = ui.item.attr( "name" );
                 switch (commandName) {
                   case "createFavorite":
-                    $("#favoriteName").val("");
-                    $("#favoriteLocation").val("");
-                    $("#dialogFavoriteCreate").dialog("open");                
+              		openCreateFolderConnectionDialog();
                     break;
                   case "editFavorite":
                     console.debug("Editing fav... under dev...");   
-                    $("#dialogFavoriteEdit").dialog("open");
                     break;
                   case "deleteFavorite":        
-                    $( "#dialog-confirmfavoritedelete" ).dialog("open");               
+               		openDeleteFolderConnectionDialog();
                     break;  
                   default:
                     nameCurrentFavorite = ui.item.attr( "name" );

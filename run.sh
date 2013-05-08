@@ -1,2 +1,2 @@
 #!/bin/bash
-cfx run -p ../profileFW
+cfx run -p ../mozprofile

@@ -185,11 +185,12 @@ New:
 	
 	exports.selectDirectory = function() {
 		console.debug("Select directory functionality not implemented on chrome yet!");
-		nativeIO.launchFolderSelect(function(dirPath){
+	//	TSCORE.showAlertDialog("Not implemented yet");
+/*		nativeIO.launchFolderSelect(function(dirPath){
 			if (dirPath && dirPath.length){
 				$("#favoriteLocation").val(dirPath);
 			}
-		});
+	}); */
 	}
 	
 	exports.selectFile = function() {

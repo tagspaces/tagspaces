@@ -174,22 +174,17 @@ define(function(require, exports, module) {
 	    $( "#selectedFilePath" ).click(function() {
 			this.select();
 	    });
-	
-	    addEditButton("#filetoolbox", filePath);
 	    
 	    addPrevButton("#filetoolbox");
-	    
 	    addNextButton("#filetoolbox");
-	
-	    addFullScreenButton("#filetoolbox");
-	
-	    addOpenInWindowButton("#filetoolbox", filePath);
-	
 	    addTagSuggestionButton("#filetoolbox");
-	
-		addShowFullDetailsButton("#filetoolbox");
-	
 	    addCloseButton("#filetoolbox");     
+
+		// Add to dropdown
+	    //addFullScreenButton("#filetoolbox");
+	    //addOpenInWindowButton("#filetoolbox", filePath);
+	    //addEditButton("#filetoolbox", filePath);
+		//addShowFullDetailsButton("#filetoolbox");
 	}
 	
 	function initTagSuggestionMenu(filePath) {
@@ -233,42 +228,42 @@ define(function(require, exports, module) {
 	}
 	
 	function addTagSuggestionButton(container) {
-	    $( ""+container ).append('<button id="openTagSuggestionMenu" title="Tag Suggestions">Tag</button>');
-	    $( "#openTagSuggestionMenu" ).button({
-	        text: false,
-	        icons: {
-	            primary: "ui-icon-tag"
-	        },
-	        disabled: false
-	    })
+	    $( ""+container ).append('<button id="openTagSuggestionMenu" class="btn btn-small" title="Tag Suggestions"><i class="icon-tags"></i></button>');
 	}
 	
 	function addNextButton(container) {
-	    $( ""+container ).append('<button id="nextFileButton" title="Go to the next file">Tag</button>');
-	    $( "#nextFileButton" ).button({
-	        text: false,        
-	        icons: {
-	            primary: "ui-icon-circle-triangle-e"
-	        },
-	        disabled: false
-	    })
-	    .click(function() {
-			openFile(TSCORE.ViewManager.getNextFile(_openedFilePath));	    	
+	    $( ""+container ).append('<button id="nextFileButton" class="btn btn-small" title="Go to the next file"><i class="icon-circle-arrow-right"></i></button>');
+	    $( "#nextFileButton" ).click(function() {
+			TSCORE.FileOpener.openFile(TSCORE.ViewManager.getNextFile(_openedFilePath));	    	
 	    });
 	}	
 	
 	function addPrevButton(container) {
-	    $( ""+container ).append('<button id="prevFileButton" title="Go to the next file">Tag</button>');
-	    $( "#prevFileButton" ).button({
-	        text: false,        
-	        icons: {
-	            primary: "ui-icon-circle-triangle-w"
-	        },
-	        disabled: false
-	    })
-	    .click(function() {
-			openFile(TSCORE.ViewManager.getPrevFile(_openedFilePath));
+	    $( ""+container ).append('<button id="prevFileButton" class="btn btn-small" title="Go to the previous file"><i class="icon-circle-arrow-left"></i></button>');
+	    $( "#prevFileButton" ).click(function() {
+			TSCORE.FileOpener.openFile(TSCORE.ViewManager.getPrevFile(_openedFilePath));
 	    });
+	}	
+	
+	function addCloseButton(container) {
+	    $( ""+container ).append('<button id="closeOpenedFile" class="btn btn-small" title="Close file"><i class="icon-remove-sign"></i></button>');	    
+	    $( "#closeOpenedFile" ).click(function() {
+	        if(_isEditMode) {
+	            if(confirm("If you confirm, all made changes will be lost.")){
+	                // Cleaning the viewer/editor
+	                document.getElementById("viewer").innerHTML = "";
+					TSCORE.FileOpener.setFileOpened(false);
+					TSCORE.closeFileViewer();
+	                _isEditMode = false;                
+	            }
+	        } else {
+	            // Cleaning the viewer/editor
+	            document.getElementById("viewer").innerHTML = "";
+	            TSCORE.FileOpener.setFileOpened(false);
+				TSCORE.closeFileViewer();
+	            _isEditMode = false;            
+	        }
+	    });    
 	}	
 	
 	function addEditButton(container, filePath) {
@@ -339,34 +334,6 @@ define(function(require, exports, module) {
 	    .click(function() {
 	        window.open("file:///"+filePath);
 	    });        
-	}
-	
-	function addCloseButton(container) {
-	    $( ""+container ).append('<button id="closeOpenedFile">Close Viewer</button>');
-	    $( "#closeOpenedFile" ).button({
-	        text: false,        
-	        icons: {
-	            primary: "ui-icon-circle-close"
-	        },
-	        disabled: false
-	    })
-	    .click(function() {
-	        if(_isEditMode) {
-	            if(confirm("If you confirm, all made changes will be lost.")){
-	                // Cleaning the viewer/editor
-	                document.getElementById("viewer").innerHTML = "";
-					TSCORE.FileOpener.setFileOpened(false);
-					TSCORE.closeFileViewer();
-	                _isEditMode = false;                
-	            }
-	        } else {
-	            // Cleaning the viewer/editor
-	            document.getElementById("viewer").innerHTML = "";
-	            TSCORE.FileOpener.setFileOpened(false);
-				TSCORE.closeFileViewer();
-	            _isEditMode = false;            
-	        }
-	    });    
 	}
 	
 	function addFullScreenButton(container) {

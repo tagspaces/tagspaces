@@ -72,22 +72,28 @@ console.debug("Loading UI for perspectiveDefault");
 		       
 		var self = this;
 		
-		// 		<div class="btn-toolbar pull-right" style="margin: 0px;">		       
+		//  var tagButtons = $("<div>").appendTo( "#tagGroups" );  
+		
+		this.viewToolbar.append($("<div>", { 
+			class: "btn-group",
+			style: "margin: 0px",
+			id: this.extensionID+"Toolbar", 			
+	    })
 	    
-	    this.viewToolbar.append($("<a>", { 
+	    .append($("<a>", { 
 			class: "btn btn-small",
 			disabled: false,
 	        title: "Create new file",
 	        id: this.extensionID+"CreateFileButton",    
 	    })
         .click(function() {
-            $( "#dialog-filecreate" ).dialog( "open" );
+            TSCORE.openFileCreateDialog();
         })
         .append( "<i class='icon-plus'>" )
-        .append("New")
-        );       
+        .append(" New")
+        )
     
-	    this.viewToolbar.append($("<button>", { 
+	    .append($("<button>", { 
             class: "btn btn-small",
 			disabled: false,
 	        title: "Show subfolders content. \nOn subfolder with many files, this step can take some time!",
@@ -98,10 +104,10 @@ console.debug("Loading UI for perspectiveDefault");
 			TSCORE.IO.createDirectoryIndex(TSCORE.currentPath);
 	    })
 	    .append( $("<i>", { class: "icon-retweet", }) )
-	    .append("Subdirs")
-	    );  	 
-	  
-	    this.viewToolbar.append($("<button>", { 
+	    .append(" Subdirs")
+	    )
+	    
+	    .append($("<button>", { 
             class: "btn btn-small",	        
 			disabled: false,
 	        title: "Tag Selected Files",
@@ -111,10 +117,10 @@ console.debug("Loading UI for perspectiveDefault");
 			TSCORE.showAddTagsDialog();
 	    })
 	    .append( $("<i>", { class: "icon-tag", }) )
-	    .append("Add Tag")
-	    );    
+	    .append(" Add Tag")
+	    )    
 
-	    this.viewToolbar.append($("<button>", { 
+	    .append($("<button>", { 
             class: "btn btn-small",	
             "data-toggle": "button",        
 			disabled: false,
@@ -128,7 +134,7 @@ console.debug("Loading UI for perspectiveDefault");
 	    //.append("Toggle Thumbnails")
 	    )
  
-	    this.viewToolbar.append($("<button>", { 
+	    .append($("<button>", { 
             class: "btn btn-small",	
 			disabled: false,
 	        title: "Increase Thumbnails Size",
@@ -141,6 +147,8 @@ console.debug("Loading UI for perspectiveDefault");
 	    //.append("Zoom In")
 	    )	    	    
 		
+	    ); // end toolbar
+	    		
 	    this.viewToolbar.append($("<div >", { 
             class: "btn-group",	
             "data-toggle": "buttons-checkbox",        
@@ -179,7 +187,8 @@ console.debug("Loading UI for perspectiveDefault");
 			// autocomplete: "off", // Error: cannot call methods on autocomplete prior to initialization; attempted to call method 'off' 
 	        title: "This filter applies to current directory without subdirectories.",
 	        id: this.extensionID+"FilterBox",    
-	    }))); 
+	    }))) 	    
+
 	
 	    this.viewContainer.append($("<table>", { 
 			cellpadding: "0",
