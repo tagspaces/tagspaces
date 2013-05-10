@@ -10,7 +10,7 @@ define(function(require, exports, module) {
 	exports.Title = "River View"
 	exports.ID = "perspectiveRiver";  // ID should be equal to the directory name where the ext. is located   
 	exports.Type =  "view";
-	exports.Icon = "ui-icon-video";
+	exports.Icon = "icon-film";
 
 	var TSCORE = require("tscore");
 	
@@ -73,12 +73,7 @@ define(function(require, exports, module) {
 	}
 	
 	var initButtons = function() {
-	    $( "#"+exports.ID+"CreateFileButton" ).button({
-	        text: true,
-	        icons: {
-	            primary: "ui-icon-document"
-	        }
-	    })
+	    $( "#"+exports.ID+"CreateFileButton" )
 	    .click(function() {
 	        $( "#dialog-filecreate" ).dialog( "open" );
 	    });  

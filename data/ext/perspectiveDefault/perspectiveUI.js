@@ -152,7 +152,6 @@ console.debug("Loading UI for perspectiveDefault");
 	    this.viewToolbar.append($("<div >", { 
             class: "btn-group",	
             "data-toggle": "buttons-checkbox",        
-			disabled: false,
 	    })	    
 		    .append($("<button>", { 
 		            class: "btn btn-small",	
@@ -177,7 +176,7 @@ console.debug("Loading UI for perspectiveDefault");
 			    .append( $("<i>", { class: "icon-tags", }) )
 			    //.append("Tags")
 		    )	     
-	   ) // end button group
+	    ) // end button group
 
 		// Filter	    	    
 	    this.viewToolbar.append($("<span>", { 
@@ -189,6 +188,22 @@ console.debug("Loading UI for perspectiveDefault");
 	        id: this.extensionID+"FilterBox",    
 	    }))) 	    
 
+        // Filter functionality
+        $("#"+this.extensionID+"FilterBox").keyup(function() {
+            self.fileTable.fnFilter(this.value);
+            console.debug("Filter to value: "+this.value);
+        });  
+        
+        $('#'+this.extensionID+"FilterBox").wrap('<span id="resetFilter" />').after($('<span/>').click(function() {
+            $(this).prev('input').val('').focus();
+            self.fileTable.fnFilter( "" );  
+        }));   
+
+        $( "#clearFilterButton" )
+        .click(function() {
+            $( "#filterBox" ).val( "" );
+            self.fileTable.fnFilter( "" );        
+        });
 	
 	    this.viewContainer.append($("<table>", { 
 			cellpadding: "0",
@@ -198,7 +213,7 @@ console.debug("Loading UI for perspectiveDefault");
 			class: "table",
 	        id: this.extensionID+"FileTable",    
 	    })); 
-		  
+	    
 	}
 	
 	ExtUI.prototype.initTable = function() {
@@ -440,36 +455,6 @@ console.debug("Loading UI for perspectiveDefault");
 			this.fileTable.fnSetColumnVis( TC_TAGS, true );
 		}
 		this.showTags = !this.showTags;
-	}
-		
-	ExtUI.prototype.initButtons = function() {
-	    var self = this;
-	    $( "#clearFilterButton" ).button({
-	        text: false,
-	        disabled: false,
-	        icons: {
-	            primary: "ui-icon-close"
-	        }
-	    })
-	    .click(function() {
-	        $( "#filterBox" ).val( "" );
-	        self.fileTable.fnFilter( "" );        
-	    });
-	}
-	
-	ExtUI.prototype.initFileFilter = function() {
-	    var self = this;
-	    
-	    // Filter functionality
-	    $("#"+this.extensionID+"FilterBox").keyup(function() {
-	        self.fileTable.fnFilter(this.value);
-	        console.debug("Filter to value: "+this.value);
-	    });  
-	    
-	    $('#'+this.extensionID+"FilterBox").wrap('<span id="resetFilter" />').after($('<span/>').click(function() {
-	        $(this).prev('input').val('').focus();
-	        self.fileTable.fnFilter( "" );  
-	    }));   		
 	}
 	
 	ExtUI.prototype.handleElementActivation = function() {

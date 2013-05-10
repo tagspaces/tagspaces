@@ -34,21 +34,17 @@ define(function(require, exports, module) {
 	            console.debug("Tag menu action: "+ui.item.attr( "action" )+" for tag: "+TSCORE.selectedTag);
 	            switch (ui.item.attr( "action" )) {
 	              case "addTagAsFilter":
-	                $( this ).hide();
 	                $("#filterBox").val(TSCORE.selectedTag);
 	                TSCORE.ViewManager.setFileFilter(TSCORE.selectedTag);
 	                break;                            
 	              case "addTagInTagGroup":
-	                $( this ).hide();
 	                // TODO Finish add tag in group
 	                break;                            
 	              case "editTag":
-	                $( this ).hide();
 	                $( "#newTag" ).val(TSCORE.selectedTag);
 	                $( "#dialogEditTag" ).dialog( "open" );
 	                break;                            
 	              case "removeTag":
-	                $( this ).hide();
 	                TSCORE.TagUtils.removeTag(TSCORE.selectedFiles[0],TSCORE.selectedTag);
 	                break;
 	            }
@@ -72,7 +68,14 @@ define(function(require, exports, module) {
 	                $( "#dialog-tagedit" ).dialog( "open" );
 	                break;                            
 	              case "deleteTag":
-	                $( "#dialog-confirmtagdelete" ).dialog( "open" );                
+                    TSCORE.showConfirmDialog(
+                        "Delete Tag",
+                        "Do you want to delete this tag from the taggroup?",
+                        function() {
+                            TSCORE.Config.deleteTag(TSCORE.selectedTagData);
+                            generateTagGroups();                              
+                        }
+                    );
 	                break;
 	            }
 	        }
@@ -88,10 +91,25 @@ define(function(require, exports, module) {
 	                $( "#dialog-tagcreate" ).dialog( "open" );
 	                break;                            
 	              case "deleteTagGroup":
-	                $( "#dialog-confirmtaggroupdelete" ).dialog( "open" );                
+                    TSCORE.showConfirmDialog(
+                        "Delete TagGroup",
+                        "Do you want to delete this taggroup?",
+                        function() {
+                            TSCORE.Config.deleteTagGroup(TSCORE.selectedTagData);
+                            generateTagGroups();                              
+                        }
+                    );
 	                break;                            
-	              case "createTagGroup":
-	                $( "#dialog-taggroupCreate" ).dialog( "open" );
+                  case "createTagGroup":
+                    $( "#dialog-taggroupCreate" ).dialog( "open" );
+                    break;
+                  case "moveUpTagGroup":
+                    TSCORE.Config.moveTagGroup(TSCORE.selectedTagData, "up");
+                    generateTagGroups(); 
+                    break;
+	              case "moveDownTagGroup":
+                    TSCORE.Config.moveTagGroup(TSCORE.selectedTagData, "down");
+                    generateTagGroups(); 
 	                break;
 	              case "editTagGroup":
 	                $( "#tagGroupName" ).val(TSCORE.selectedTagData.title);              
@@ -99,120 +117,10 @@ define(function(require, exports, module) {
 	                break;
 	            }
 	        }
-	    });  
-	    
-	    $( "#fileMenu" ).menu({
-	        select: function( event, ui ) {
-	            var commandName = ui.item.attr( "action" );
-	            switch (commandName) {
-	              case "addTag":        
-					TSCORE.showAddTagsDialog();
-	                break;  
-	              case "openFile":
-	        		TSCORE.FileOpener.openFile(TSCORE.selectedFiles[0]);                
-	                break;
-	              case "openDirectory":
-	                TSCORE.IO.openDirectory(TSCORE.currentPath);
-	                break;
-	              case "renameFile":        
-	                console.debug("Renaming file...");
-	                $( "#dialog-filerename" ).dialog( "open" );
-	                break;  
-	              case "deleteFile":        
-	                console.debug("Deleting file...");
-	                $( "#dialog-confirmdelete" ).dialog( "open" );
-	                break;  
-	              default:
-	                break;
-	            }
-	        }
 	    });      
 	}
 	
 	function initDialogs() {
-	    $( "#dialog-smarttag" ).dialog({
-	        autoOpen: false,
-	        height: 220,
-	        width: 450,
-	        modal: true,
-	        buttons: {
-	            "Add smart tag": function() {
-	                var bValid = true;                
-	                allFields.removeClass( "ui-state-error" );
-	
-	                //bValid = bValid && checkLength( smartTag, "tagname", 2, 40 );
-	                if ( bValid ) {
-	                    for (var i=0; i < TSCORE.selectedFiles.length; i++) {
-	                       TSCORE.TagUtils.writeTagsToFile(TSCORE.selectedFiles[i], [$( "#smartTagName" ).val()]);
-	                    };
-	                    $( this ).dialog( "close" );
-	                    IOAPI.listDirectory(TSCORE.currentPath);                    
-	                }
-	            },
-	            Cancel: function() {
-	                $( this ).dialog( "close" );
-	            }
-	        },
-	        close: function() {
-	            allFields.val( "" ).removeClass( "ui-state-error" );
-	        },
-	        open: function() {
-	            $( "#renamedFileName" ).val(TSCORE.selectedFiles[0]);
-	        }                
-	    });     
-	    
-	    /* Currently not used
-	    $( "#dialog-confirmtagremove" ).dialog({
-	        autoOpen: false,
-	        resizable: false,
-	        height:140,
-	        modal: true,
-	        buttons: {
-	            "Remove": function() {
-	                TSCORE.TagUtils.removeTag(TSCORE.selectedTag);  
-	                $( this ).dialog( "close" );
-	                IOAPI.listDirectory(TSCORE.currentPath);   
-	            },
-	            Cancel: function() {
-	                $( this ).dialog( "close" );
-	            }
-	        }
-	    });    */
-	
-	    $( "#dialog-confirmtagdelete" ).dialog({
-	        autoOpen: false,
-	        resizable: false,
-	        height:140,
-	        modal: true,
-	        buttons: {
-	            "Delete": function() {                
-	                TSCORE.Config.deleteTag(TSCORE.selectedTagData);
-	                generateTagGroups();    
-	                $( this ).dialog( "close" );
-	            },
-	            Cancel: function() {
-	                $( this ).dialog( "close" );
-	            }
-	        }
-	    });    
-	
-	    $( "#dialog-confirmtaggroupdelete" ).dialog({
-	        autoOpen: false,
-	        resizable: false,
-	        height:140,
-	        modal: true,
-	        buttons: {
-	            "Delete": function() {                
-	                TSCORE.Config.deleteTagGroup(TSCORE.selectedTagData);
-	                generateTagGroups();    
-	                $( this ).dialog( "close" );
-	            },
-	            Cancel: function() {
-	                $( this ).dialog( "close" );
-	            }
-	        }
-	    }); 
-	
 	    $( "#dialog-tagedit" ).dialog({
 	        autoOpen: false,
 	        resizable: false,
@@ -343,20 +251,20 @@ define(function(require, exports, module) {
 	                    }
 	                });
 	        }            
-	    });        
-	    	                  
+	    });    	                  
 	}
+	
 	function generateTagGroups() {
 	    console.debug("Generating TagGroups...");
 	    $("#tagGroups").empty();
 	    $("#tagGroups").addClass("accordion");
 	    for(var i=0; i < TSCORE.Config.Settings["tagGroups"].length; i++) {
-	        // Code based on http://jsbin.com/eqape/1/edit
 	        $("#tagGroups").append($("<div>", { 
 	            "class": "accordion-group"    
 	        })
 	        .append($("<div>", { 
 	            "class": "accordion-heading",
+                "key": TSCORE.Config.Settings["tagGroups"][i].key,	            
 	        })
 	        .append($("<a>", {
 				"class": "tagGroupTitle",
@@ -364,19 +272,33 @@ define(function(require, exports, module) {
 				"data-target": "#tagButtons"+i,
 				"href": "#",
 	            "text": TSCORE.Config.Settings["tagGroups"][i].title, 
+                "key": TSCORE.Config.Settings["tagGroups"][i].key, 	            
 	        })  
 	        )
+	        .droppable({
+                accept: '.tagButton',
+                hoverClass: "dirButtonActive",
+                drop: function( event, ui ) {
+                    var tagGroupData = TSCORE.Config.getTagData(ui.draggable.attr("tag"), ui.draggable.attr("parentKey"));
+                    tagGroupData.parentKey = ui.draggable.attr("parentKey");
+                    var targetTagGroupKey = $(this).attr("key");
+                    console.log("Moving tag: "+tagGroupData.title+" to "+targetTagGroupKey);
+                    TSCORE.Config.moveTag(tagGroupData, targetTagGroupKey);
+                    generateTagGroups();
+                }                   
+            })  
 	        
 	        .append($("<a>", {
 	                "class": "dropdown-toggle pull-right",
+	                "style": "padding-right: 4px;",
 	                "role": "button",
 	                "tag": TSCORE.Config.Settings["tagGroups"][i].title, 
 	                "key": TSCORE.Config.Settings["tagGroups"][i].key, 
 	                "title": "Taggroup options",
 	                "href": "#"
- 	        })
- 	        .append("<b class='caret'></b>")                
+ 	        })              
 	        .dropdown( 'attach' , '#tagGroupMenu' )
+	        .append("<b class='icon-cog'></b>")
 	        .click( function(event) {
 	                //console.debug("Clicked in taggroup setting");    
 	                TSCORE.selectedTag = $(this).attr("tag");
@@ -409,18 +331,18 @@ define(function(require, exports, module) {
 	                "parentKey":     TSCORE.Config.Settings["tagGroups"][i].key,
 	                "title":         "Opens context menu for "+TSCORE.Config.Settings["tagGroups"][i]["children"][j].title,
 	                "text":          TSCORE.Config.Settings["tagGroups"][i]["children"][j].title, 
-	            })
-		    	.draggable({
-		    		"cancel":     false,
-		    		"appendTo":   "body",
-		    		"helper":     "clone",
-		    		"revert":     true,
-		    	})              
+	            })            
 	            .click( function() {
 	                TSCORE.selectedTag = $(this).attr("tag");
 	                TSCORE.selectedTagData = TSCORE.Config.getTagData($(this).attr("tag"), $(this).attr("parentKey"));
 	                TSCORE.selectedTagData.parentKey = $(this).attr("parentKey");
 	            })
+                .draggable({
+                    "cancel":     false,
+                    "appendTo":   "body",
+                    "helper":     "clone",
+                    "revert":     true,
+                }) 
 	            .append( "<span class='caret'>" )
 	            .dropdown( 'attach' , '#tagTreeMenu' )               
                 );

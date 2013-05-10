@@ -31,7 +31,7 @@ define(function(require, exports, module) {
 	            '<h4>' + title +'</h4>' +
 	          '</div>' +
 	          '<div class="modal-body">' +
-	            '<h6>' + message + '</h6>' +
+	            '' + message + '' +
 	          '</div>' +
 	          '<div class="modal-footer">' +
 	            '<a href="#" id="okButton" class="btn btn-primary">Ok</a>' +
@@ -56,7 +56,7 @@ define(function(require, exports, module) {
 	            '<h4>' + title +'</h4>' +
 	          '</div>' +
 	          '<div class="modal-body">' +
-	            '<h6>' + message + '</h6>' +
+	            '' + message + '' +
 	          '</div>' +
 	          '<div class="modal-footer">' +
 	            '<a href="#" class="btn" data-dismiss="modal">Cancel</a>' +
@@ -165,23 +165,6 @@ define(function(require, exports, module) {
 	            $( "#renamedFileName" ).val(TSCORE.TagUtils.extractFileName(TSCORE.selectedFiles[0]));
 	        }                
 	    }); 
-	    
-	    $( "#dialog-confirmdelete" ).dialog({
-	        autoOpen: false,
-	        resizable: false,
-	        height:140,
-	        modal: true,
-	        buttons: {
-	            "Delete all items": function() {
-	                TSCORE.IO.deleteElement(TSCORE.selectedFiles[0]);
-	                $( this ).dialog( "close" );
-	                TSCORE.IO.listDirectory(TSCORE.currentPath);   
-	            },
-	            Cancel: function() {
-	                $( this ).dialog( "close" );
-	            }
-	        }
-	    }); 
 
 	    $( "#tagTypeRadio" ).buttonset();
 	
@@ -272,7 +255,41 @@ define(function(require, exports, module) {
 	            $("#settingsPlainJSON").hide();
 	            editor.set(TSCORE.Config.Settings);
 	        }         
-	    });     
+	    }); 
+	    
+        $( "#fileMenu" ).menu({
+            select: function( event, ui ) {
+                var commandName = ui.item.attr( "action" );
+                switch (commandName) {
+                  case "addTag":        
+                    TSCORE.showAddTagsDialog();
+                    break;  
+                  case "openFile":
+                    TSCORE.FileOpener.openFile(TSCORE.selectedFiles[0]);                
+                    break;
+                  case "openDirectory":
+                    TSCORE.IO.openDirectory(TSCORE.currentPath);
+                    break;
+                  case "renameFile":        
+                    console.debug("Renaming file...");
+                    $( "#dialog-filerename" ).dialog( "open" );
+                    break;  
+                  case "deleteFile":        
+                    console.debug("Deleting file...");
+                    TSCORE.showConfirmDialog(
+                        "Delete File(s)",
+                        "These items will be permanently deleted and cannot be recovered. Are you sure?",
+                        function() {
+                            TSCORE.IO.deleteElement(TSCORE.selectedFiles[0]);
+                            TSCORE.IO.listDirectory(TSCORE.currentPath);   
+                        }
+                    );
+                    break;  
+                  default:
+                    break;
+                }
+            }
+        });  	        
 	}
 
 	var hideAllDropDownMenus = function() {

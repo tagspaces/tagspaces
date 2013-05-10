@@ -75,6 +75,7 @@ define(function(require, exports, module) {
 	
 	    $( "#loading" ).hide();  
 	    $( "#container" ).show();  
+	    $( "#helpers" ).show();
 	    
 	    hideLoadingAnimation();
 	    // TODO check if document.ready is really needed

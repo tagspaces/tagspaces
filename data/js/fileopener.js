@@ -180,11 +180,11 @@ define(function(require, exports, module) {
 	    addTagSuggestionButton("#filetoolbox");
 	    addCloseButton("#filetoolbox");     
 
-		// Add to dropdown
-	    //addFullScreenButton("#filetoolbox");
-	    //addOpenInWindowButton("#filetoolbox", filePath);
-	    //addEditButton("#filetoolbox", filePath);
-		//addShowFullDetailsButton("#filetoolbox");
+		//TODO Add to dropdown
+	    addFullScreenButton("#filetoolbox");
+	    addOpenInWindowButton("#filetoolbox", filePath);
+	    addEditButton("#filetoolbox", filePath);
+		addShowFullDetailsButton("#filetoolbox");
 	}
 	
 	function initTagSuggestionMenu(filePath) {
@@ -273,19 +273,15 @@ define(function(require, exports, module) {
 	        buttonDisabled = true;
 	    }
 		var options;
-	    $( ""+container ).append('<button id="editDocument">Edit</button>');
-	    $( "#editDocument" ).button({
-	        text: true,        
-	        icons: {
-	            primary: "ui-icon-wrench"
-	        },
-	        disabled: buttonDisabled
-	    })
-	    .focus(function() {
+		// Todo make use of buttonDisabled
+        $( ""+container ).append('<button id="editDocument" class="btn btn-small" title="Edit file"><i class="icon-pencil"></i> Edit</button>');
+	    $( "#editDocument" ).focus(function() {
 	        this.blur();
 	    })
 	    .click(function() {
-			if ( $( this ).text() === "Edit" ) {
+	        // TODO reenable edit
+			TSCORE.showAlertDialog("Edit button currently disabled.");
+			/*if ( $( this ).text() === "Edit" ) {
 				options = {
 					label: "Save&Close",
 					icons: {
@@ -304,48 +300,28 @@ define(function(require, exports, module) {
 	                saveFile(filePath);
 			    }
 			}
-			$( this ).button( "option", options );    	
+			$( this ).button( "option", options );
+			*/    	
 	    });        
 	}
 
 	function addShowFullDetailsButton(container) {
-	    $( ""+container ).append('<button id="showFullDetails">Full details</button>');
-	    $( "#showFullDetails" ).button({
-	        text: false,        
-	        icons: {
-	            primary: "ui-icon-arrowthick-2-n-s"
-	        },
-	        disabled: false
-	    })
-	    .click(function() {
+        $( ""+container ).append('<button id="showFullDetails" class="btn btn-small" title="Show full file details"><i class="icon-list-alt"></i> Full details</button>');
+	    $( "#showFullDetails" ).click(function() {
 			TSCORE.toggleFileDetails();
 	    });        
 	}
 	
 	function addOpenInWindowButton(container, filePath) {
-	    $( ""+container ).append('<button id="openInNewWindow">Open in New Tab</button>');
-	    $( "#openInNewWindow" ).button({
-	        text: false,        
-	        icons: {
-	            primary: "ui-icon-extlink"
-	        },
-	        disabled: false
-	    })
-	    .click(function() {
+        $( ""+container ).append('<button id="openInNewWindow" class="btn btn-small" title="Open file in a new tab"><i class="icon-share"></i> Open in New Tab</button>');
+	    $( "#openInNewWindow" ).click(function() {
 	        window.open("file:///"+filePath);
 	    });        
 	}
 	
 	function addFullScreenButton(container) {
-	    $( ""+container ).append('<button id="startFullscreen">Fullscreen</button>');
-	    $( "#startFullscreen" ).button({
-	        text: false,        
-	        icons: {
-	            primary: "ui-icon-arrow-4-diag"
-	        },
-	        disabled: false
-	    })
-	    .click(function() {
+        $( ""+container ).append('<button id="startFullscreen" class="btn btn-small" title="Open file in full screen"><i class="icon-fullscreen"></i> Fullscreen</button>');
+	    $( "#startFullscreen" ).click(function() {
 	        var docElm = $("#viewer")[0];
 	        if (docElm.requestFullscreen) {
 	            docElm.requestFullscreen();

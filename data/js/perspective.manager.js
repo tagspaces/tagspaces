@@ -68,14 +68,16 @@ var initViewsUI = function(perspective) {
         style: "width: 100%; height: 100%",
     }).hide());	        	
   
-    // TODO Perspective Icon 
     $("#viewSwitcher").append($("<button>", { 
-        viewid:  perspective.ID,
-        text:    perspective.Title, 
-        type:    "button", 
-        class:   "btn btn-small",        
+        "viewid":  perspective.ID,
+        "type":    "button", 
+        "class":   "btn btn-small",        
         id:      perspective.ID+"Button",    
-    }));
+    }).append($("<i>", {
+        "class":  perspective.Icon
+    }))
+    .append(" "+perspective.Title)
+    );
 
 	// Adding event listener & icon to the radio button
     $( "#"+perspective.ID+"Button" ).click(function() { 

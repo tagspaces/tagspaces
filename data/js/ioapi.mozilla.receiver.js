@@ -93,7 +93,7 @@ console.debug("Loading messaging.mozilla.js..");
 	        break;  
 	      case "createDirectoryTree":
 	        if(message.success){
-	            //console.debug("Directory tree: "+JSON.stringify(message.content));
+	            console.debug("Directory tree: "+JSON.stringify(message.content));
 	            TSCORE.ViewManager.updateTreeData(message.content);       
 	        } else {
 	            TSCORE.updateLogger("Indexing directory failed");        

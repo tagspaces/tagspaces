@@ -60,12 +60,11 @@ define(function(require, exports, module) {
             .hover(function() { $(this).toggleClass("ui-state-hover"); })        
             // Add plus button to h3
             .append($("<span>", { 
-                class: "ui-icon ui-icon-triangle-1-e",
+                class: "icon-chevron-right", // icon-chevron-down 
                 style: "position:relative!important; display:inline-block;",             
             })
             .click(function() {
               $(this)
-    //            .toggleClass("ui-icon-triangle-1-s")
                 .parent().toggleClass("ui-accordion-header-active ui-state-active ui-state-default ui-corner-bottom").end()
                 .parent().next().toggleClass("ui-accordion-content-active").toggle();
               return false;
@@ -95,7 +94,7 @@ define(function(require, exports, module) {
             )        
             // Add settings button to h3        
             .append($("<span>", { 
-                class: "ui-icon ui-icon-gear",
+                class: "icon-cog",
                 key: directoryHistory[i].key, 
                 title: "Directorys options",
                 style: "float: right!important; position:relative!important; vertical-align: middle; display:inline-block;", 
@@ -369,12 +368,16 @@ define(function(require, exports, module) {
         for (var i=0; i < favoritesList.length; i++) { 
               $( "#favoritesList" ).append(
                     $('<li>',  { title: favoritesList[i].path, name: favoritesList[i].name}).append(
-                        $('<a>', { href: "javascript:void(0);", text: favoritesList[i].name} )));
+                        $('<a>', { href: "#"} ).append(
+                            "<i class='icon-briefcase'></i>"    
+                        ).append(
+                            " "+favoritesList[i].name
+                        )));
         };
         $( "#favoritesList" ).append('<li><hr></li>');    
-        $( "#favoritesList" ).append('<li name="createFavorite" id="createNewLocation" ><a href="javascript:void(0);"><span class="ui-icon ui-icon-document"></span>New Location</a></li>');
-      //  $( "#favoritesList" ).append('<li name="editFavorite"><a href="javascript:void(0);"><span class="ui-icon ui-icon-pencil"></span>Edit Location</a></li>');
-        $( "#favoritesList" ).append('<li name="deleteFavorite"><a href="javascript:void(0);"><span class="ui-icon ui-icon-trash"></span>Remove Location</a></li>');
+        $( "#favoritesList" ).append('<li name="createFavorite" id="createNewLocation" ><a href="#"><i class="icon-magnet"></i> New Location</a></li>');
+      //  $( "#favoritesList" ).append('<li name="editFavorite"><a href="javascript:void(0);"><i class="icon-pencil"></i> Edit Location</a></li>');
+        $( "#favoritesList" ).append('<li name="deleteFavorite"><a href="javascript:void(0);"><i class="icon-trash"></i> Remove Location</a></li>');
        
         $( "#favoritesList" ).menu("destroy").menu({
             select: function( event, ui ) {

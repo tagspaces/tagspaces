@@ -25,9 +25,9 @@
         <span id="loadingAnimation">&nbsp;</span> 
 		<div class="btn-toolbar pull-right" style="margin: 0px;">
 			<div id="viewSwitcher" class="btn-group" data-toggle="buttons-radio"></div>
-	        <a id="testAlertButton" role="button" class="btn btn-small" title="Options Dialog" ><i class="icon-adjust"></i> Test Alerts</a>
-	        <a id="openOptions" href="#dialogOptions" role="button" class="btn btn-small" title="Options Dialog" data-toggle="modal"><i class="icon-wrench"></i> Options</a>        
-			<a id="openAboutBox" data-placement="bottom" href="#dialogAbout" role="button" class="btn btn-small" data-toggle="modal"><i class="icon-comment"></i> About</a>
+	        <!--a id="testAlertButton" role="button" class="btn btn-small" title="Options Dialog" ><i class="icon-adjust"></i> Test Alerts</a-->
+	        <button id="openOptions" href="#dialogOptions" role="button" class="btn btn-small" title="Options Dialog" data-toggle="modal"><i class="icon-wrench"></i> Options</button>        
+			<button id="openAboutBox" data-placement="bottom" href="#dialogAbout" role="button" class="btn btn-small" data-toggle="modal"><i class="icon-comment"></i> About</button>
 	        <!--button id="toggleLeftPanel" class="btn btn-small" title="Toggle Leftpanel"><i class="icon-list"></i>&nbsp;</button-->
 	    </div>
     </div>
@@ -70,7 +70,8 @@
         <div class="east-south" style="padding: 0">
         </div>
     </div>    
-
+</div>    
+<div id="helpers" style="display: none;">
     <div id="dialog-filecreate" class="modal hide" tabindex="-1" role="dialog" data-backdrop="static" aria-labelledby="myModalLabel" aria-hidden="true" >
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
@@ -82,9 +83,9 @@
 	                <label class="control-label" for="fileTypeChooser">Filetype</label>
                     <div class="controls">
                         <div class="btn-group" data-toggle="buttons-radio" name="fileTypeChooser">
-                            <button id="txtFileTypeButton" data-toggle="tooltip" title="Create a plain text file" name="fileTypeRadio" class="btn">TXT</button>
-                            <button id="mdFileTypeButton" data-toggle="tooltip" title="Create a MarkDown file" name="fileTypeRadio" class="btn">MD</button>
-                            <button id="htmlFileTypeButton" data-toggle="tooltip" title="Create a HTML file" name="fileTypeRadio" class="btn">HTML</button>
+                            <button id="txtFileTypeButton" role="button" title="Create a plain text file" class="btn">TXT</button>
+                            <button id="mdFileTypeButton" role="button"  title="Create a MarkDown file"  class="btn">MD</button>
+                            <button id="htmlFileTypeButton" role="button" title="Create a HTML file"  class="btn">HTML</button>
                         </div>
                     </div>
                 </div>
@@ -127,13 +128,13 @@
 	            <div class="control-group">
 	                <label class="control-label" for="connectionName">Connection Name</label>
                     <div class="controls">
-                		<input type="text" name="connectionName" id="connectionName" />
+                		<input type="text" name="connectionName" id="connectionName" placeholder="Example: My Documents" />
                     </div>
                 </div>
                 <div class="control-group">
                     <label class="control-label" for="folderLocation">Folder Location</label>
                     <div class="controls">
-						<input type="text" name="folderLocation" id="folderLocation" placeholder="c:\users\ugg\documents" />
+						<input type="text" name="folderLocation" id="folderLocation" placeholder="Example: c:\users\ugg\documents" />
                 		<button id="selectLocalDirectory" class="btn" title="Select local folder"><i class="icon-folder-open"></i></button>
                     </div>
                 </div>            
@@ -177,9 +178,8 @@
 		</form>
       </div>
       <div class="modal-footer">
-        <button class="btn" id="aboutDialogSettings">Advanced Settings</button>       
-        <button class="btn" id="aboutDialogBack">Back</button>
         <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Close</button>
+        <button class="btn" id="aboutDialogBack">Apply</button>
       </div>
     </div>        
     
@@ -206,17 +206,7 @@
             <input type="text" name="renamedFileName" id="renamedFileName" style="display: inline; width: 100%;" />
         </fieldset>
         </form>
-     </div>
-     
-    <div id="dialog-smarttag" title="Add smart tag">
-        <p class="validateTips">All form fields are required.</p>    
-        <form action="javascript:void(0);">
-        <fieldset>
-            <label for="name">Smart tag name</label>
-            <input type="text" name="smartTagName" id="smartTagName" />
-        </fieldset>
-        </form>
-     </div>     
+     </div>  
 
     <div id="dialogAddTags" title="Add Tags">
         <p class="validateTips">All form fields are required.</p>    
@@ -246,22 +236,6 @@
         </p>
         </form>
      </div>     
-
-    <div id="dialog-confirmdelete" title="Delete selected files?">
-        <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>These items will be permanently deleted and cannot be recovered. Are you sure?</p>
-    </div>
-
-    <div id="dialog-confirmtagremove" title="Remove tag?">
-        <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>Do you really want to remove this tag?</p>
-    </div>
-
-    <div id="dialog-confirmtagdelete" title="Delete tag?">
-        <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>Do you really want to delete this tag from the taggroup?</p>
-    </div>
-
-    <div id="dialog-confirmtaggroupdelete" title="Delete taggroup?">
-        <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>Do you really want to delete this taggroup?</p>
-    </div>
 
     <div id="dialog-tagedit" title="Edit Tag">
         <p class="validateTips">All form fields are required.</p>    
@@ -300,10 +274,7 @@
           <p>
             <label for="name">Name</label>
             <input type="text" name="name" id="newTagGroupName" />
-          </p><!--p>
-            <label for="key">Key(unique key of 3 letters)</label>
-            <input type="text" name="key" id="newTagGroupKey" />
-          </p-->  
+          </p>
         </fieldset>
         </form>
      </div> 
@@ -313,43 +284,44 @@
     <ul id="tagSuggestionsMenu" class="dropdown-menu has-tip anchor-right"></ul>
     
     <ul id="fileMenu" class="dropdown-menu has-tip">
-        <li action="addTag" title=""><a href="javascript:void(0);"><span class="ui-icon ui-icon-tag"></span>Add Tags</a></li>
-        <li action="openFile" title=""><a href="javascript:void(0);"><span class="ui-icon ui-icon-plus"></span>Open File</a></li>               
-        <li action="openDirectory" title=""><a href="javascript:void(0);"><span class="ui-icon ui-icon-folder-open"></span>Show containing folder</a></li>               
-        <li action="renameFile" title=""><a href="javascript:void(0);"><span class="ui-icon ui-icon-pencil"></span>Raname File</a></li>
-        <li action="deleteFile" title=""><a href="javascript:void(0);"><span class="ui-icon ui-icon-trash"></span>Delete File</a></li>
+        <li action="addTag" title=""><a href="#"><i class="icon-tag"></i> Add Tags</a></li>
+        <li action="openFile" title=""><a href="#"><i class="icon-share-alt"></i> Open File</a></li>               
+        <li action="openDirectory" title=""><a href="#"><i class="icon-folder-open"></i> Show containing folder</a></li>               
+        <li action="renameFile" title=""><a href="#"><i class="icon-pencil"></i> Raname File</a></li>
+        <li action="deleteFile" title=""><a href="#"><i class="icon-trash"></i> Delete File</a></li>
     </ul>
     
     <ul id="extensionMenu" class="dropdown-menu has-tip anchor-right">
-        <li action="addTagAsFilter" title=""><a href="javascript:void(0);"><span class="ui-icon ui-icon-search"></span>Set As Filter</a></li>
+        <li action="addTagAsFilter" title=""><a href="#"><i class="icon-filter"></i> Set As Filter</a></li>
     </ul> 
 
     <ul id="tagMenu" class="dropdown-menu has-tip anchor-right">
-        <li action="addTagAsFilter" title=""><a href="javascript:void(0);"><span class="ui-icon ui-icon-search"></span>Set As Filter</a></li>
-        <li action="editTag" title=""><a href="javascript:void(0);"><span class="ui-icon ui-icon-pencil"></span>Edit Tag</a></li>               
-        <li action="removeTag" title=""><a href="javascript:void(0);"><span class="ui-icon ui-icon-trash"></span>Remove Tag</a></li>
+        <li action="addTagAsFilter" title=""><a href="#"><i class="icon-filter"></i> Set As Filter</a></li>
+        <li action="editTag" title=""><a href="#"><i class="icon-pencil"></i> Edit Tag</a></li>               
+        <li action="removeTag" title=""><a href="#"><i class="icon-trash"></i> Remove Tag</a></li>
     </ul>        
     
     <ul id="tagTreeMenu" class="dropdown-menu has-tip">
-        <li action="addTagToFile" title="Add current tag to the selected files"><a href="javascript:void(0);"><span class="ui-icon ui-icon-tag"></span>Tag Selected Files</a></li>
-        <li action="addTagAsFilter" title="Set current tag as a filter criteria"><a href="javascript:void(0);"><span class="ui-icon ui-icon-search"></span>Set As Filter</a></li>
-        <li action="editTag" title="Edit current tag"><a href="javascript:void(0);"><span class="ui-icon ui-icon-wrench"></span>Edit</a></li>               
-        <li action="deleteTag" title="Delete the tag from the taggroup"><a href="javascript:void(0);"><span class="ui-icon ui-icon-trash"></span>Delete</a></li>
+        <li action="addTagToFile" title="Add current tag to the selected files"><a href="#"><i class="icon-tag"></i> Tag Selected Files</a></li>
+        <li action="addTagAsFilter" title="Set current tag as a filter criteria"><a href="#"><i class="icon-filter"></i> Set As Filter</a></li>
+        <li action="editTag" title="Edit current tag"><a href="#"><i class="icon-pencil"></i> Edit</a></li>               
+        <li action="deleteTag" title="Delete the tag from the taggroup"><a href="#"><i class="icon-trash"></i> Delete</a></li>
     </ul>  
     
     <ul id="tagGroupMenu" class="dropdown-menu has-tip">
-        <!--li action="toggleTagGroup" title="Opens or Close the selected tagroup"><a href="javascript:void(0);">Toggle Taggroup</a></li-->
-        <li action="createNewTag" title="Creates new tag"><a href="javascript:void(0);"><span class="ui-icon ui-icon-tag"></span>Create Tag</a></li>
-        <!--li action="duplicateTagGroup" title="Duplicate current tagroup"><a href="javascript:void(0);"><span class="ui-icon ui-icon-copy"></span>Duplicate Taggroup</a></li-->                   
-        <li action="createTagGroup" title="Create new tagroup"><a href="javascript:void(0);"><span class="ui-icon ui-icon-copy"></span>Create Taggroup</a></li>        
-        <li action="editTagGroup" title="Edit current tagroup"><a href="javascript:void(0);"><span class="ui-icon ui-icon-wrench"></span>Edit Taggroup</a></li>                       
-        <li action="deleteTagGroup" title="Delete current tagroup"><a href="javascript:void(0);"><span class="ui-icon ui-icon-trash"></span>Delete Taggroup</a></li>
+        <li action="createNewTag" title="Creates new tag"><a href="#"><i class="icon-tag"></i> Create Tag</a></li>
+        <!--li action="duplicateTagGroup" title="Duplicate current tagroup"><a href="#"><i class="icon-plus-sign"></i> Duplicate Taggroup</a></li-->                   
+        <li action="createTagGroup" title="Create new tagGroup"><a href="#"><i class="icon-tags"></i> Create Taggroup</a></li>        
+        <li action="moveUpTagGroup" title="Move current TagGroup one position up"><a href="#"><i class="icon-arrow-up"></i> Move TagGroup Up</a></li>                       
+        <li action="moveDownTagGroup" title="Move current TagGroup one position down"><a href="#"><i class="icon-arrow-down"></i> Move TagGroup Down</a></li>                       
+        <li action="editTagGroup" title="Edit Current tagGroup"><a href="#"><i class="icon-pencil"></i> Edit Taggroup</a></li>                       
+        <li action="deleteTagGroup" title="Delete Current TagGroup"><a href="#"><i class="icon-trash"></i> Delete Taggroup</a></li>
     </ul>  
     
     <ul id="directoryMenu" class="dropdown-menu has-tip">
-        <li action="reloadDirectory" title="Reload directory"><a href="javascript:void(0);"><span class="ui-icon ui-icon-refresh"></span>Reload Directory</a></li>
-        <li action="createDirectory" title="Creates a new subdirectory"><a href="javascript:void(0);"><span class="ui-icon ui-icon-document"></span>New Subdirectory</a></li>                   
-        <li action="openDirectory" title="Opens the directoriy in the default file browser"><a href="javascript:void(0);"><span class="ui-icon ui-icon-folder-open"></span>Show Folder</a></li>                   
+        <li action="reloadDirectory" title="Reload directory"><a href="#"><i class="icon-refresh"></i> Reload Directory</a></li>
+        <li action="createDirectory" title="Creates a new subdirectory"><a href="#"><i class="icon-folder-close"></i> New Subdirectory</a></li>                   
+        <li action="openDirectory" title="Opens the directoriy in the default file browser"><a href="#"><i class="icon-folder-open"></i> Show Folder</a></li>                   
     </ul>          
 </div>	
 </body>

@@ -10,7 +10,7 @@ define(function(require, exports, module) {
 	exports.Title = "Thumbs"
 	exports.ID = "perspectiveThumb";  // ID should be equal to the directory name where the ext. is located   
 	exports.Type =  "view";
-	exports.Icon = "ui-icon-image";
+	exports.Icon = "icon-picture";
 	
 	var TSCORE = require("tscore");	
 	
@@ -65,7 +65,6 @@ define(function(require, exports, module) {
 	    }); 
 	    
 	    initButtons();
-	    initContextMenus();
 	}
 	
 	exports.load = function load() {
@@ -109,32 +108,6 @@ define(function(require, exports, module) {
 	    .click(function() {
 	        $( "#dialog-filecreate" ).dialog( "open" );
 	    });  
-	}
-	
-	var initContextMenus = function() {
-	    $( "#fileMenu1" ).menu({
-	        select: function( event, ui ) {
-	            var commandName = ui.item.attr( "action" );
-	            switch (commandName) {
-	              case "renameFile":        
-	                $( this ).hide();
-	                console.debug("Renaming file...");
-	                $( "#dialog-filerename" ).dialog( "open" );
-	                break;  
-	              case "deleteFile":        
-	                $( this ).hide();
-	                console.debug("Deleting file...");
-	                $( "#dialog-confirmdelete" ).dialog( "open" );
-	                break;  
-	              case "closeMenu":
-	                $( this ).hide(); 
-	                break;          
-	              default:
-	                break;
-	            }
-	            $( this ).hide();
-	        }
-	    });      
 	}
 
 });

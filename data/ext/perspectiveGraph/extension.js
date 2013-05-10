@@ -7,13 +7,13 @@ define(function(require, exports, module) {
 	
 	console.debug("Loading perspectiveGraph");
 
-	exports.Title = "Graph"
-	exports.ID = "perspectiveGraph";  // ID should be equal to the directory name where the ext. is located   
-	exports.Type =  "view";
-	exports.Icon = "ui-icon-shuffle";
-	exports.Version = "1.0";
-	exports.ManifestVersion = 1;
-	exports.License = "AGPL";
+	var extensionTitle = "Graph"
+	var extensionID = "perspectiveGraph";  // ID should be equal to the directory name where the ext. is located   
+	var extensionType =  "view";
+	var extensionIcon = "icon-leaf";
+	var extensionVersion = "1.0";
+	var extensionManifestVersion = 1;
+	var extensionLicense = "AGPL";
 
 	var TSCORE = require("tscore");
 	
@@ -23,7 +23,7 @@ define(function(require, exports, module) {
 	
 	var viewMode = "files" // tags
 	
-	var extensionDirectory = TSCORE.Config.getExtensionPath()+"/"+exports.ID;
+	var extensionDirectory = TSCORE.Config.getExtensionPath()+"/"+extensionID;
 	
 	var graphMode = "treeMap" // tree
 	
@@ -176,18 +176,17 @@ define(function(require, exports, module) {
 	};
 	
 	exports.init = function init() {
-		console.debug("Initializing View "+exports.ID);
+		console.debug("Initializing View "+extensionID);
 		
-	    viewContainer = $("#"+exports.ID+"Container");
-	    viewToolbar = $("#"+exports.ID+"Toolbar");
-		viewFooter = $("#"+exports.ID+"Footer");
+	    viewContainer = $("#"+extensionID+"Container");
+	    viewToolbar = $("#"+extensionID+"Toolbar");
+		viewFooter = $("#"+extensionID+"Footer");
 		
 		viewContainer.empty();
 		viewToolbar.empty();
 		viewFooter.empty();	  
 	
-	    initContextMenus();
-	    initButtons();
+	    initUI();
 	    
 		require([
 			extensionDirectory+'/d3/d3.js',
@@ -197,9 +196,9 @@ define(function(require, exports, module) {
 	}
 	
 	exports.load = function load() {
-		console.debug("Loading View "+exports.ID);
+		console.debug("Loading View "+extensionID);
 	
-		$( "#"+exports.ID+"ReIndexButton" ).button( "enable" );
+		$( "#"+extensionID+"ReIndexButton" ).button( "enable" );
 		TSCORE.hideLoadingAnimation();
 	}
 	
@@ -209,7 +208,7 @@ define(function(require, exports, module) {
 		width = viewContainer.width();
 		height = viewContainer.height();
 	
-		svg = d3.select("#"+exports.ID+"Container")
+		svg = d3.select("#"+extensionID+"Container")
 			.append("svg")
 		    .attr("width", width)
 		    .attr("height", height)			    			
@@ -390,13 +389,13 @@ define(function(require, exports, module) {
 		
 		reDraw();
 				
-		$( "#"+exports.ID+"ReIndexButton" ).button( "enable" );		   
+		$( "#"+extensionID+"ReIndexButton" ).removeClass( "disabled" );   
 		TSCORE.hideLoadingAnimation(); 
 	}
 	  
 	exports.setFileFilter = function setFileFilter(filter) {
-		$( "#"+exports.ID+"FilterBox").val(filter);
-		fileTable.fnFilter(filter);
+		//$( "#"+extensionID+"FilterBox").val(filter);
+		//fileTable.fnFilter(filter);
 	}
 	
 	exports.clearSelectedFiles = function() {
@@ -406,126 +405,73 @@ define(function(require, exports, module) {
 	    });    
 	}
 	
-	var initButtons = function() {
-	    viewToolbar.append($("<span>", { 
-	    	style: "float: right; margin: 0px; padding: 0px;",
-	    }).append($("<input>", { 
-			type: "filter",
-			// autocomplete: "off", // Error: cannot call methods on autocomplete prior to initialization; attempted to call method 'off' 
-	        title: "This filter applies to current directory without subdirectories.",
-	        id: exports.ID+"FilterBox",    
-	    })));
-	   
-	    // Filter functionality
-	    $("#"+exports.ID+"FilterBox").keyup(function() {
-			// TODO filter action here
-	        console.debug("Filter to value: "+this.value);
-	    });  
-	    
-	    $('#'+exports.ID+"FilterBox").wrap('<span id="resetFilter" />').after($('<span/>').click(function() {
-	        $(this).prev('input').val('').focus();
-	        // TODO filter action here  
-	    }));  
-	
-	    $( "#clearFilterButton" ).button({
-	        text: false,
-	        disabled: false,
-	        icons: {
-	            primary: "ui-icon-close"
-	        }
-	    })
-	    .click(function() {
-	        $( "#filterBox" ).val( "" );
-	        fileTable.fnFilter( "" );        
-	    });
-	    
-	    viewToolbar.append($("<button>", { 
-	        text: "Scan Directory",
-			disabled: true,
-	        title: "Generate File System Tree",
-	        id: exports.ID+"ReIndexButton",    
-	    }));
-	
-	    $( "#"+exports.ID+"ReIndexButton" ).button({
-	        text: true,
-	        icons: {
-	            primary: "ui-icon-refresh"
-	        }
-	    })
-	    .click(function() {
-		    $( "#"+exports.ID+"ReIndexButton" ).button( "disable" );
-			TSCORE.IO.createDirectoryTree(TSCORE.currentPath);
-	    });        
-	    
-	/*    viewToolbar.append($("<label>", { 
-	        for: exports.ID+"ModeSwitcher",    
-			text: "Mode",
-	    }));*/
-	    
-	    var modeSwitcher =  viewToolbar.append($("<span>", { 
-	        id: exports.ID+"ModeSwitcher",    
-	    }));
-	    
-	    modeSwitcher.append($("<input>", { 
-	        type: "radio",
-	        name: "modeSwitcher",
-	        checked: true,
-	        id: exports.ID+"TreeMapMode",    
-	    }));
-	
-	    modeSwitcher.append($("<label>", { 
-	        for: exports.ID+"TreeMapMode",
-	        text: "TreeMap", 
-	    }));
-	    
-	    modeSwitcher.append($("<input>", { 
-	        type: "radio",
-	        name: "modeSwitcher",
-	        id: exports.ID+"TreeMode",    
-	    }));
-	
-	    modeSwitcher.append($("<label>", { 
-	        for: exports.ID+"TreeMode",
-	        text: "Tree", 
-	    }));   
-	        
-	    $( "#"+exports.ID+"TreeMapMode" ).button({
-		        text: true,
-		    })        
-		.click(function() {
-			graphMode = "treeMap"
-			reDraw(); 
-		})        
-		
-	    $( "#"+exports.ID+"TreeMode" ).button({
-		        text: true,
-		    })        
-		.click(function() {
-			graphMode = "tree"
-			reDraw(); 
-		})        
-		
-	    modeSwitcher.buttonset();
-	}
-	
-	var initContextMenus = function() {
-	    $( "#fileTitleMenu" ).menu({
-	        select: function( event, ui ) {
-	            var commandName = ui.item.attr( "action" );
-	            switch (commandName) {
-	              case "openFile":
-	        		TSCORE.FileOpener.openFile(TSCORE.selectedFiles[0]);                
-	                break;
-	              case "addTag":        
-	                console.debug("Adding tag..."); 
-	                $("#tags").val("");
-	                $( "#dialogAddTags" ).dialog( "open" );
-	                break;  
-	              default:
-	                break;
-	            }
-	        }         
-	    }); 
-	}
+	var initUI = function() {
 
+        viewToolbar.append($("<div >", { 
+            class: "btn-group", 
+        })      
+            .append($("<button>", { 
+                    class: "btn btn-small", 
+                    title: "Generate index tree of the current directory",
+                    id: extensionID+"ReIndexButton",    
+                })
+                .click(function() {
+                    $( "#"+extensionID+"ReIndexButton" ).addClass( "disabled" );
+                    TSCORE.IO.createDirectoryTree(TSCORE.currentPath);
+                })
+                .append( $("<i>", { class: "icon-retweet", }) )
+                .append(" Scan")
+            )
+     
+        ) // end button group
+       
+        viewToolbar.append($("<div >", { 
+            class: "btn-group", 
+            "data-toggle": "buttons-checkbox",        
+        })      
+            .append($("<button>", { 
+                    class: "btn btn-small", 
+                    title: "Activate Treemap Mode",
+                    id: extensionID+"TreeMapMode",    
+                })
+                .click(function() {
+                    graphMode = "treeMap"
+                    reDraw(); 
+                })
+                .append( $("<i>", { class: "icon-th-large", }) )
+                .append(" TreeMap")
+            )
+                    
+            .append($("<button>", { 
+                    class: "btn btn-small", 
+                    title: "Activate Tree Mode",
+                    id: extensionID+"TreeMode",    
+                })
+                .click(function() {
+                    graphMode = "tree"
+                    reDraw(); 
+                })          
+                .append( $("<i>", { class: "icon-indent-left", }) )
+                .append(" Tree")
+            )        
+       ) // end button group       
+
+	}
+	
+    // Vars
+    exports.Title                   = extensionTitle;
+    exports.ID                      = extensionID;   
+    exports.Type                    = extensionType;
+    exports.Icon                    = extensionIcon;
+    exports.Version                 = extensionVersion;
+    exports.ManifestVersion         = extensionManifestVersion;
+    exports.License                 = extensionLicense;
+    
+    // Methods
+//    exports.init                    = init;
+//    exports.load                    = load;
+//    exports.setFileFilter           = setFileFilter;
+//    exports.clearSelectedFiles      = clearSelectedFiles;
+//    exports.getNextFile             = getNextFile;
+//    exports.getPrevFile             = getPrevFile;	
 });

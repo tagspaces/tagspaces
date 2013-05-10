@@ -51,6 +51,10 @@ define(function(require, exports, module) {
 		"lastOpenedTSID": 0,
 	    "lastOpenedDirectory": "",
 		"tagspacesList": [
+            {
+                "name": "Sandbox",
+                "path": "/media/z/TagSpaces/sandbox/"
+            },		
 		],
 	    "extensionsPath": "ext",
 	    "extensions": [
@@ -59,6 +63,11 @@ define(function(require, exports, module) {
 	            "enabled": "true", 
 	            "type": "view", 
 	        },
+            {   
+                "id": "perspectiveGraph", // ID should be equal to the directory name where the extension is located 
+                "enabled": "true", 
+                "type": "view", 
+            },	        
 	    ],
 	    "supportedFileTypes": [
 	        { "type": "jpg",	"viewer": "viewerBrowser", "editor": "false" },        
@@ -131,7 +140,7 @@ define(function(require, exports, module) {
 		]
 	}
 	
-	exports.Setting = undefined;
+	exports.Settings = undefined;
 
 	var firstRun = false;
 	
@@ -232,23 +241,9 @@ define(function(require, exports, module) {
 	    return exports.Settings["lastOpenedDirectory"]; 
 	}
 	
-	var deleteTag = function(tagData) {
+	var getTagData = function(tagTitle, tagGroupKey) {
 	    for(var i=0; i < exports.Settings["tagGroups"].length; i++) {
-	        if(exports.Settings["tagGroups"][i].key == tagData.parentKey) {
-	            for(var j=0; j < exports.Settings["tagGroups"][i]["children"].length; j++) {
-	                if(exports.Settings["tagGroups"][i]["children"][j].title == tagData.title) {
-	                    exports.Settings["tagGroups"][i]["children"].splice(j, 1);
-	                    break;
-	                }
-	            }
-	        }        
-	    }  
-	    exports.saveSettings();    
-	}
-	
-	var getTagData = function(tagTitle, parentKey) {
-	    for(var i=0; i < exports.Settings["tagGroups"].length; i++) {
-	        if(exports.Settings["tagGroups"][i].key == parentKey) {
+	        if(exports.Settings["tagGroups"][i].key == tagGroupKey) {
 	            for(var j=0; j < exports.Settings["tagGroups"][i]["children"].length; j++) {
 	                if(exports.Settings["tagGroups"][i]["children"][j].title == tagTitle) {
 	                    return exports.Settings["tagGroups"][i]["children"][j];
@@ -276,7 +271,7 @@ define(function(require, exports, module) {
 	            break;
 	        }        
 	    }  
-	    exports.saveSettings();    
+	    saveSettings();    
 	}
 	
 	var editTag = function(tagData, newTagName) {
@@ -290,20 +285,48 @@ define(function(require, exports, module) {
 	            }
 	        }        
 	    }  
-	    exports.saveSettings();       
+	    saveSettings();       
 	}
+
+    var deleteTag = function(tagData) {
+        for(var i=0; i < exports.Settings["tagGroups"].length; i++) {
+            if(exports.Settings["tagGroups"][i].key == tagData.parentKey) {
+                for(var j=0; j < exports.Settings["tagGroups"][i]["children"].length; j++) {
+                    if(exports.Settings["tagGroups"][i]["children"][j].title == tagData.title) {
+                        exports.Settings["tagGroups"][i]["children"].splice(j, 1);
+                        break;
+                    }
+                }
+            }        
+        }  
+        exports.saveSettings();    
+    }
+
+    var moveTag = function(tagData, targetTagGroupKey) {
+        var targetTagGroupData = getTagGroupData(targetTagGroupKey);
+        if(createTag(targetTagGroupData, tagData.title)) {
+            deleteTag(tagData);   
+            saveSettings();                   
+        } 
+    }
 	
 	var createTag = function(tagData, newTagName) {
 	    var newTagModel = JSON.parse( JSON.stringify(tagTemplate) );
 	    newTagModel.title = newTagName;
-	    for(var i=0; i < exports.Settings["tagGroups"].length; i++) {
-	        if(exports.Settings["tagGroups"][i].key == tagData.key) {
+        exports.Settings["tagGroups"].forEach(function (value, index) {	        
+	        if(value.key == tagData.key) {
 	            console.debug("Creating tag: "+JSON.stringify(newTagModel)+" with parent: "+tagData.key);
-	            exports.Settings["tagGroups"][i]["children"].push(newTagModel);
-	            break;
+                value["children"].forEach(function (value, index) {
+                    if(value.title == newTagName) {
+                        console.debug("Tag with the same name already exist in this group");
+                        return false;
+                    }
+                });
+	            value["children"].push(newTagModel);
 	        }        
-	    }  
-	    saveSettings();       
+	    })  
+	    saveSettings();
+	    return true;       
 	}
 	
 	var editTagGroup = function(tagData, tagGroupName) {
@@ -341,8 +364,27 @@ define(function(require, exports, module) {
 	    saveSettings();       
 	}	
 	
-	var moveTagGroup = function(tagData, tagGroupName) {
-
+	var moveTagGroup = function(tagData, direction) {
+        var targetPosition = undefined;
+        var currentPosition = undefined;
+        exports.Settings["tagGroups"].forEach(function (value, index) {
+            if(value.key == tagData.key) {
+                currentPosition = index;
+            }
+        });
+        
+        if (direction == "up") targetPosition = currentPosition -1;
+        if (direction == "down") targetPosition = currentPosition +1;
+        
+        // Check if target position is within the taggroups array range
+        if (targetPosition < 0 || targetPosition >= exports.Settings["tagGroups"].length || targetPosition == currentPosition) {
+           return false;
+        }
+        
+        var tmpTagGroup = exports.Settings["tagGroups"][currentPosition];
+        exports.Settings["tagGroups"][currentPosition] = exports.Settings["tagGroups"][targetPosition];
+        exports.Settings["tagGroups"][targetPosition] = tmpTagGroup;
+        saveSettings();
 	}		
 	
 	var createFavorite = function(name, location) {
@@ -383,7 +425,7 @@ define(function(require, exports, module) {
 	var loadSettingsLocalStorage = function() {
 	    try {
 	        var tmpSettings = JSON.parse(localStorage.getItem('tagSpacesSettings'));
-	        console.debug("Settings: "+JSON.stringify(tmpSettings));        
+	        //console.debug("Settings: "+JSON.stringify(tmpSettings));        
 	    	if(tmpSettings!=null) {
 	    		exports.Settings = tmpSettings;		
 	    	} else {
@@ -391,6 +433,7 @@ define(function(require, exports, module) {
 	    	    // the application runs for the first time.
 	    	    firstRun = true;
 	    	}
+            console.debug("Loaded settings from local storage: "+JSON.stringify(exports.Settings));	    	
 	    } catch(ex) {
 	        console.debug("Loading settings from local storage failed due exception: "+ex);
 	    }
@@ -398,7 +441,8 @@ define(function(require, exports, module) {
 	
 	// Save setting and Reloads the app
 	var saveSettings = function() {
-	    // Storing setting in the local storage for mozilla and chorme
+//	    console.debug("Settings:");
+	    // Storing setting in the local storage of mozilla and chorme
 		localStorage.setItem('tagSpacesSettings', JSON.stringify(exports.Settings));
 	    
 	    // Storing settings in mozilla native preferences
@@ -428,8 +472,10 @@ define(function(require, exports, module) {
     exports.getTagGroupData                			= getTagGroupData;	
     exports.deleteTagGroup                			= deleteTagGroup;	
     exports.editTag                					= editTag;	
-    exports.createTag                				= createTag;	
+    exports.createTag                				= createTag;
+    exports.moveTag                                 = moveTag	
     exports.editTagGroup                			= editTagGroup;	
+    exports.moveTagGroup                            = moveTagGroup;
     exports.createTagGroup                			= createTagGroup;    
     exports.duplicateTagGroup                		= duplicateTagGroup;	
     exports.createFavorite                			= createFavorite;	
