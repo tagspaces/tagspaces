@@ -73,12 +73,22 @@ define(function(require, exports, module) {
 	};	
 	
 
-    var openFileCreateDialog = function() {
+    var showFileCreateDialog = function() {
         fileContent = TSCORE.Config.getNewTextFileContent(); // Default new file in text file
-        $("#newFileName").val(".txt");
-        $('#dialog-filecreate').modal({show: true});
-        $('#txtFileTypeButton').button('toggle');
+        $( "#newFileName" ).val(".txt");
+        $( '#dialog-filecreate' ).modal({show: true});
+        $( '#txtFileTypeButton' ).button('toggle');
     }
+    
+    var showFileRenameDialog = function() {
+        $( "#renamedFileName" ).val(TSCORE.TagUtils.extractFileName(TSCORE.selectedFiles[0]));
+        $( '#dialogFileRename' ).modal({show: true});
+    }    
+    
+    var showTagEditDialog = function() {
+        $( "#newTagName" ).val(TSCORE.selectedTag);
+        $( '#dialogEditTag' ).modal({show: true});
+    }    
     
 	var initUI = function() {
 	    
@@ -130,50 +140,31 @@ define(function(require, exports, module) {
             }
             if ( bValid ) {
                 TSCORE.IO.saveTextFile(TSCORE.currentPath+TSCORE.TagUtils.DIR_SEPARATOR+$( "#newFileName" ).val(),fileContent);
-                $('#dialog-filecreate').modal('hide')
                 TSCORE.IO.listDirectory(TSCORE.currentPath);                    
             }
         });
 
-	    $( "#dialog-filerename" ).dialog({
-	        autoOpen: false,
-	        height: 220,
-	        width: 450,
-	        modal: true,
-	        buttons: {
-	            "Rename": function() {
-	                var bValid = true;           
-	        //        bValid = bValid && checkLength( $( "#renamedFileName" ).val(), "filename", 3, 200 );
-	        //        bValid = bValid && checkRegexp( renamedFileName, /^[a-z]([0-9a-z_.])+$/i, "Filename may consist of a-z, 0-9, underscores, begin with a letter." );
-	                if ( bValid ) {
-	                    var containingDir = TSCORE.TagUtils.extractContainingDirectoryPath(TSCORE.selectedFiles[0]);
-	                    TSCORE.IO.renameFile(
-	                            TSCORE.selectedFiles[0],
-	                            containingDir+TSCORE.TagUtils.DIR_SEPARATOR+$( "#renamedFileName" ).val()
-	                        );
-	                    $( this ).dialog( "close" );
-	                }
-	            },
-	            Cancel: function() {
-	                $( this ).dialog( "close" );
-	            }
-	        },
-	        close: function() {
+        $( '#renameFileButton' ).click(function() {
+            var bValid = true;           
+    //        bValid = bValid && checkLength( $( "#renamedFileName" ).val(), "filename", 3, 200 );
+    //        bValid = bValid && checkRegexp( renamedFileName, /^[a-z]([0-9a-z_.])+$/i, "Filename may consist of a-z, 0-9, underscores, begin with a letter." );
+            if ( bValid ) {
+                var containingDir = TSCORE.TagUtils.extractContainingDirectoryPath(TSCORE.selectedFiles[0]);
+                TSCORE.IO.renameFile(
+                        TSCORE.selectedFiles[0],
+                        containingDir+TSCORE.TagUtils.DIR_SEPARATOR+$( "#renamedFileName" ).val()
+                    );
+            }
+        });
 
-	        },
-	        open: function() {
-	            $( "#renamedFileName" ).val(TSCORE.TagUtils.extractFileName(TSCORE.selectedFiles[0]));
-	        }                
-	    }); 
+        // Edit Tag Dialog
 
-	    $( "#tagTypeRadio" ).buttonset();
-	
 	    $( "#plainTagTypeButton" ).click(function() {
-	        TSCORE.selectedTag, $( "#newTag" ).datepicker( "destroy" ).val("");
+	        TSCORE.selectedTag, $( "#newTagName" ).datepicker( "destroy" ).val("");
 	    });  
 	
 	    $( "#dateTagTypeButton" ).click(function() {
-	        TSCORE.selectedTag, $( "#newTag" ).datepicker({
+	        TSCORE.selectedTag, $( "#newTagName" ).datepicker({
 	            showWeek: true,
 	            firstDay: 1,
 	            dateFormat: "yymmdd"
@@ -181,115 +172,97 @@ define(function(require, exports, module) {
 	    });  
 	    
 	    $( "#currencyTagTypeButton" ).click(function() {
-	        TSCORE.selectedTag, $( "#newTag" ).datepicker( "destroy" ).val("XEUR")
+	        TSCORE.selectedTag, $( "#newTagName" ).datepicker( "destroy" ).val("XEUR")
 	    });      
 	    
-	    $( "#dialogEditTag" ).dialog({
-	        autoOpen: false,
-	        resizable: false,
-	        height:240,
-	        modal: true,
-	        buttons: {
-	            "Save": function() {
-	                TSCORE.TagUtils.renameTag(TSCORE.selectedFiles[0], TSCORE.selectedTag, $( "#newTag" ).val());
-	                TSCORE.IO.listDirectory(TSCORE.currentPath);                                   
-	                $( this ).dialog( "close" );
-	            },
-	            Cancel: function() {
-	                $( this ).dialog( "close" );
-	            }
-	        }
-	    });	    
+        $( "#editTagButton" ).click(function() {
+            TSCORE.TagUtils.renameTag(TSCORE.selectedFiles[0], TSCORE.selectedTag, $( "#newTagName" ).val());
+            TSCORE.IO.listDirectory(TSCORE.currentPath);                                   
+        });  
+	    
+	    // End Edit Tag Dialog
 	    
 	    $( "#aboutDialogBack" ).click(function() {
             $("#aboutIframe").attr("src","about.html");
         });
-	    
+	    	    
+	    // Advanced Settings
         $( "#aboutDialogSettings" ).click(function() {
-            $('#dialogAbout').modal('hide');
-            initJSONEditor();        
-            $( "#dialogSetting" ).dialog( "open" );    
+            $('#dialogOptions').modal('hide');
+            initJSONEditor();         
+            $("#settingsPlainJSON").hide();
+            editor.set(TSCORE.Config.Settings);
+            $('#dialogAdvancedSetting').modal('show');
         });
-        	    
-	    $( "#dialogSetting" ).dialog({
-	        autoOpen: false,
-	        resizable: true,
-	        height: 370,
-	        width: 600,
-	        modal: true,
-	        buttons: {
-	            "Editor": function() {
-	                if($("#settingsEditor").is(":hidden") ) {
-	                    $("#settingsPlainJSON").hide();
-	                    $("#settingsEditor").show();
-	                    editor.set(formatter.get());                    
-	                }
-	            },
-	            "Import/Export": function() {
-	                if($("#settingsPlainJSON").is(":hidden") ) {
-	                    formatter.set(editor.get());
-	                    $("#settingsPlainJSON").show();
-	                    $("#settingsEditor").hide();
-	                }
-	            },
-	            "Default Settings": function() {
-	                if(confirm("Are you sure you want to restore the default application settings?\nAll manually made changes such as tags and taggroups will be lost.")) {
-	                    TSCORE.Config.Settings = TSCORE.Config.DefaultSettings;
-	                    TSCORE.Config.saveSettings();
-	                    TSCORE.reloadUI();                    
-	                    console.debug("Default settings loaded.");                    
-	                }
-	            },
-	            "Save": function() {
-	                TSCORE.Config.Settings = editor.get();
-	                TSCORE.Config.saveSettings();
-	                TSCORE.reloadUI();
-	                console.debug("Settings saved and UI reloaded.");
-	                $( this ).dialog( "close" );
-	            },
-	            "Cancel": function() {
-	                $( this ).dialog( "close" );
-	            }
-	        },
-	        open: function() {
-	            $("#settingsPlainJSON").hide();
-	            editor.set(TSCORE.Config.Settings);
-	        }         
-	    }); 
-	    
-        $( "#fileMenu" ).menu({
-            select: function( event, ui ) {
-                var commandName = ui.item.attr( "action" );
-                switch (commandName) {
-                  case "addTag":        
-                    TSCORE.showAddTagsDialog();
-                    break;  
-                  case "openFile":
-                    TSCORE.FileOpener.openFile(TSCORE.selectedFiles[0]);                
-                    break;
-                  case "openDirectory":
-                    TSCORE.IO.openDirectory(TSCORE.currentPath);
-                    break;
-                  case "renameFile":        
-                    console.debug("Renaming file...");
-                    $( "#dialog-filerename" ).dialog( "open" );
-                    break;  
-                  case "deleteFile":        
-                    console.debug("Deleting file...");
-                    TSCORE.showConfirmDialog(
-                        "Delete File(s)",
-                        "These items will be permanently deleted and cannot be recovered. Are you sure?",
-                        function() {
-                            TSCORE.IO.deleteElement(TSCORE.selectedFiles[0]);
-                            TSCORE.IO.listDirectory(TSCORE.currentPath);   
-                        }
-                    );
-                    break;  
-                  default:
-                    break;
-                }
+        	
+        $( "#editorButton" ).click(function() {
+            if($("#settingsEditor").is(":hidden") ) {
+                $("#settingsPlainJSON").hide();
+                $("#settingsEditor").show();
+                editor.set(formatter.get());                    
             }
-        });  	        
+        });
+        	
+        $( "#importExportButton" ).click(function() {
+            if($("#settingsPlainJSON").is(":hidden") ) {
+                formatter.set(editor.get());
+                $("#settingsPlainJSON").show();
+                $("#settingsEditor").hide();
+            }
+        });
+        
+        $( "#deffaultSettingsButton" ).click(function() {
+            TSCORE.showConfirmDialog(
+                "Warning",
+                "Are you sure you want to restore the default application settings?\n"+
+                +"All manually made changes such as tags and taggroups will be lost.",
+                function() {
+                    TSCORE.Config.Settings = TSCORE.Config.DefaultSettings;
+                    TSCORE.Config.saveSettings();
+                    TSCORE.reloadUI();                    
+                    console.debug("Default settings loaded.");                    
+                }                
+            );
+        });
+        
+        $( "#saveSettingsButton" ).click(function() {
+            TSCORE.Config.Settings = editor.get();
+            TSCORE.Config.saveSettings();
+            TSCORE.reloadUI();
+            console.debug("Settings saved and UI reloaded.");
+        });
+        // End Advanced Settings
+	    
+	    // File Menu
+        $( "#fileMenuAddTag" ).click( function() {
+            TSCORE.showAddTagsDialog();
+        }); 
+        
+        $( "#fileMenuOpenFile" ).click( function() {
+            TSCORE.FileOpener.openFile(TSCORE.selectedFiles[0]);                
+        }); 
+        
+        $( "#fileMenuOpenDirectory" ).click( function() {
+            TSCORE.IO.openDirectory(TSCORE.currentPath);
+        }); 
+        
+        $( "#fileMenuRenameFile" ).click( function() {
+            TSCORE.showFileRenameDialog();
+        }); 
+        
+        $( "#fileMenuDeleteFile" ).click( function() {
+            console.debug("Deleting file...");
+            TSCORE.showConfirmDialog(
+                "Delete File(s)",
+                "These items will be permanently deleted and cannot be recovered. Are you sure?",
+                function() {
+                    TSCORE.IO.deleteElement(TSCORE.selectedFiles[0]);
+                    TSCORE.IO.listDirectory(TSCORE.currentPath);   
+                }
+            );
+        });
+        // End File Menu  
+  	        
 	}
 
 	var hideAllDropDownMenus = function() {
@@ -302,7 +275,9 @@ define(function(require, exports, module) {
 	exports.initUI 					= initUI;
 	exports.showAlertDialog 		= showAlertDialog;
 	exports.showConfirmDialog 		= showConfirmDialog;
-	exports.openFileCreateDialog    = openFileCreateDialog;
+	exports.showFileRenameDialog    = showFileRenameDialog;
+	exports.showFileCreateDialog    = showFileCreateDialog;
+    exports.showTagEditDialog       = showTagEditDialog;
 	exports.hideAllDropDownMenus	= hideAllDropDownMenus;
 
 });

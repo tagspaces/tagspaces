@@ -83,9 +83,9 @@
 	                <label class="control-label" for="fileTypeChooser">Filetype</label>
                     <div class="controls">
                         <div class="btn-group" data-toggle="buttons-radio" name="fileTypeChooser">
-                            <button id="txtFileTypeButton" role="button" title="Create a plain text file" class="btn">TXT</button>
-                            <button id="mdFileTypeButton" role="button"  title="Create a MarkDown file"  class="btn">MD</button>
-                            <button id="htmlFileTypeButton" role="button" title="Create a HTML file"  class="btn">HTML</button>
+                            <button id="txtFileTypeButton" title="Create a plain text file" class="btn">TXT</button>
+                            <button id="mdFileTypeButton" title="Create a MarkDown file"  class="btn">MD</button>
+                            <button id="htmlFileTypeButton" title="Create a HTML file"  class="btn">HTML</button>
                         </div>
                     </div>
                 </div>
@@ -112,7 +112,6 @@
 	    <iframe id="aboutIframe" style="width: 100%; height: 350px; border: 0px;" src="about.html"></iframe>
 	  </div>
 	  <div class="modal-footer">
-        <button class="btn" id="aboutDialogSettings">Advanced Settings</button>	      
         <button class="btn" id="aboutDialogBack">Back</button>
 	    <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Close</button>
 	  </div>
@@ -178,35 +177,103 @@
 		</form>
       </div>
       <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" id="aboutDialogSettings">Advanced Settings</button>       
         <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Close</button>
-        <button class="btn" id="aboutDialogBack">Apply</button>
+        <button class="btn" id="aboutDialogBack">Save & Reload</button>
       </div>
     </div>        
+   
+    <div id="dialogAdvancedSetting" class="modal hide" tabindex="-1" role="dialog" data-backdrop="static" aria-labelledby="myModalLabel" aria-hidden="true" >
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h4>Advanced Settings</h4>
+        </div>
+        <div class="modal-body">
+            <div id="settingsEditor" style="width: 100%; height: 400px"></div>
+            <div id="settingsPlainJSON" style="width: 100%; height: 400px;"></div>
+        </div>
+        <div class="modal-footer">
+            <button id="editorButton" class="btn" aria-hidden="true">Editor</button>
+            <button id="importExportButton" class="btn" aria-hidden="true">Import/Export</button>
+            <button id="deffaultSettingsButton" class="btn" aria-hidden="true">Default Settings</button>                        
+            <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+            <button id="saveSettingsButton" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Ok</button>
+        </div>
+    </div>         
+
+    <div id="dialogDirectoryCreate" class="modal hide" tabindex="-1" role="dialog" data-backdrop="static" aria-labelledby="myModalLabel" aria-hidden="true" >
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h4>Create New Directory</h4>
+        </div>
+        <div class="modal-body">
+            <form class="form-horizontal">
+                <div class="control-group">
+                    <label class="control-label" for="newDirectoryName">New Directory Name</label>
+                    <div class="controls">
+                        <input type="text" name="newDirectoryName" id="newDirectoryName" />
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+            <button id="createNewDirectoryButton" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Ok</button>
+        </div>
+    </div>       
+
+    <div id="dialogFileRename" class="modal hide" tabindex="-1" role="dialog" data-backdrop="static" aria-labelledby="myModalLabel" aria-hidden="true" >
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h4>Rename File</h4>
+        </div>
+        <div class="modal-body">
+            <form class="form-horizontal">
+                <div class="control-group">
+                    <label class="control-label" for="renamedFileName">New Filename</label>
+                    <div class="controls">
+                        <input type="text" name="renamedFileName" id="renamedFileName" />
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+            <button id="renameFileButton" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Ok</button>
+        </div>
+    </div> 
     
-    <div id="dialogSetting" title="Settings">
-        <div id="settingsEditor" style="width: 100%; height: 100%;"></div>
-        <div id="settingsPlainJSON" style="width: 100%; height: 100%;"></div>
-    </div>    
-    
-    <div id="dialog-dircreate" title="Create new directory">
-        <p class="validateTips">All form fields are required.</p>    
-        <form action="javascript:void(0);">
-        <fieldset>
-            <label for="name">Name of the new directoriy</label>
-            <input type="text" name="dirname" id="dirname" />
-        </fieldset>
-        </form>
-    </div>
-    
-    <div id="dialog-filerename" title="Rename file">
-        <p class="validateTips">All form fields are required.</p>    
-        <form action="javascript:void(0);">
-        <fieldset>
-            <label for="name">Filename</label>
-            <input type="text" name="renamedFileName" id="renamedFileName" style="display: inline; width: 100%;" />
-        </fieldset>
-        </form>
-     </div>  
+    <div id="dialogEditTag" class="modal hide" tabindex="-1" role="dialog" data-backdrop="static" aria-labelledby="myModalLabel" aria-hidden="true" >
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h4>Edit Tag</h4>
+        </div>
+        <div class="modal-body">
+            <form class="form-horizontal">
+                <div class="control-group">
+                    <label class="control-label" for="tagTypeChooser">Tagtype</label>
+                    <div class="controls">
+                        <div class="btn-group" data-toggle="buttons-radio" name="tagTypeChooser">
+                            <button id="plainTagTypeButton" title="Create a plain text file" class="btn">Plain</button>
+                            <button id="dateTagTypeButton"  title="Create a MarkDown file"  class="btn">Date</button>
+                            <button id="currencyTagTypeButton" title="Create a HTML file"  class="btn">Currency</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="newTagName">Tag Name</label>
+                    <div class="controls">
+                        <input type="text" id="newTagName" id="newTagName">
+                    </div>
+                </div>            
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+            <button id="editTagButton" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Ok</button>
+        </div>
+    </div>  
+
 
     <div id="dialogAddTags" title="Add Tags">
         <p class="validateTips">All form fields are required.</p>    
@@ -217,25 +284,6 @@
         </fieldset>
         </form>
      </div>
-     
-    <div id="dialogEditTag" title="Edit Tags">
-        <p class="validateTips">All form fields are required.</p>    
-        <form action="javascript:void(0);">
-        <p>
-        <label for="tagTypeRadio">Tagtype</label>
-        <span id="tagTypeRadio">
-            <input type="radio" id="plainTagTypeButton" name="tagTypeRadio" checked="checked" /><label for="plainTagTypeButton">Plain</label>
-            <input type="radio" id="dateTagTypeButton" name="tagTypeRadio" /><label for="dateTagTypeButton">Date</label>
-            <input type="radio" id="currencyTagTypeButton" name="tagTypeRadio" /><label for="currencyTagTypeButton">Currency</label>
-        </span>
-        </p><p>            
-            <fieldset>
-                <label for="tags">Tag</label>
-                <input type="text" name="tags" id="newTag" />
-            </fieldset>
-        </p>
-        </form>
-     </div>     
 
     <div id="dialog-tagedit" title="Edit Tag">
         <p class="validateTips">All form fields are required.</p>    
@@ -279,49 +327,49 @@
         </form>
      </div> 
     
-    <ul class="contextMenu" id="favoritesList"></ul>
+    
+    <ul id="favoritesList" class="dropdown-menu"></ul>
     
     <ul id="tagSuggestionsMenu" class="dropdown-menu has-tip anchor-right"></ul>
     
     <ul id="fileMenu" class="dropdown-menu has-tip">
-        <li action="addTag" title=""><a href="#"><i class="icon-tag"></i> Add Tags</a></li>
-        <li action="openFile" title=""><a href="#"><i class="icon-share-alt"></i> Open File</a></li>               
-        <li action="openDirectory" title=""><a href="#"><i class="icon-folder-open"></i> Show containing folder</a></li>               
-        <li action="renameFile" title=""><a href="#"><i class="icon-pencil"></i> Raname File</a></li>
-        <li action="deleteFile" title=""><a href="#"><i class="icon-trash"></i> Delete File</a></li>
+        <li><a id="fileMenuAddTag" title="Tag current file" href="#"><i class="icon-tag"></i> Add Tags</a></li>
+        <li><a id="fileMenuOpenFile" title="" href="#"><i class="icon-share-alt"></i> Open File</a></li>               
+        <li><a id="fileMenuOpenDirectory" title="" href="#"><i class="icon-folder-open"></i> Show containing folder</a></li>               
+        <li><a id="fileMenuRenameFile" title="" href="#"><i class="icon-pencil"></i> Raname File</a></li>
+        <li><a id="fileMenuDeleteFile" title="" href="#"><i class="icon-trash"></i> Delete File</a></li>
     </ul>
     
     <ul id="extensionMenu" class="dropdown-menu has-tip anchor-right">
-        <li action="addTagAsFilter" title=""><a href="#"><i class="icon-filter"></i> Set As Filter</a></li>
+        <li><a id="extMenuAddTagAsFilter" title="Set the extension of this file as a filter" href="#"><i class="icon-filter"></i> Set As Filter</a></li>
     </ul> 
 
     <ul id="tagMenu" class="dropdown-menu has-tip anchor-right">
-        <li action="addTagAsFilter" title=""><a href="#"><i class="icon-filter"></i> Set As Filter</a></li>
-        <li action="editTag" title=""><a href="#"><i class="icon-pencil"></i> Edit Tag</a></li>               
-        <li action="removeTag" title=""><a href="#"><i class="icon-trash"></i> Remove Tag</a></li>
+        <li><a id="tagMenuAddTagAsFilter" title="Set the extension of this file as a filter" href="#"><i class="icon-filter"></i> Set As Filter</a></li>
+        <li><a id="tagMenuEditTag" title="" href="#"><i class="icon-pencil"></i> Edit Tag</a></li>               
+        <li><a id="tagMenuRemoveTag" title="" href="#"><i class="icon-trash"></i> Remove Tag</a></li>
     </ul>        
     
     <ul id="tagTreeMenu" class="dropdown-menu has-tip">
-        <li action="addTagToFile" title="Add current tag to the selected files"><a href="#"><i class="icon-tag"></i> Tag Selected Files</a></li>
-        <li action="addTagAsFilter" title="Set current tag as a filter criteria"><a href="#"><i class="icon-filter"></i> Set As Filter</a></li>
-        <li action="editTag" title="Edit current tag"><a href="#"><i class="icon-pencil"></i> Edit</a></li>               
-        <li action="deleteTag" title="Delete the tag from the taggroup"><a href="#"><i class="icon-trash"></i> Delete</a></li>
+        <li><a id="tagTreeMenuAddTagToFile" title="Add current tag to the selected files" href="#"><i class="icon-tag"></i> Tag Selected Files</a></li>
+        <li><a id="tagTreeMenuAddTagAsFilter" title="Set current tag as a filter criteria" href="#"><i class="icon-filter"></i> Set As Filter</a></li>
+        <li><a id="tagTreeMenuEditTag" title="Edit current tag" href="#"><i class="icon-pencil"></i> Edit</a></li>               
+        <li><a id="tagTreeMenuDeleteTag" title="Delete the tag from the taggroup" href="#"><i class="icon-trash"></i> Delete</a></li>
     </ul>  
     
     <ul id="tagGroupMenu" class="dropdown-menu has-tip">
-        <li action="createNewTag" title="Creates new tag"><a href="#"><i class="icon-tag"></i> Create Tag</a></li>
-        <!--li action="duplicateTagGroup" title="Duplicate current tagroup"><a href="#"><i class="icon-plus-sign"></i> Duplicate Taggroup</a></li-->                   
-        <li action="createTagGroup" title="Create new tagGroup"><a href="#"><i class="icon-tags"></i> Create Taggroup</a></li>        
-        <li action="moveUpTagGroup" title="Move current TagGroup one position up"><a href="#"><i class="icon-arrow-up"></i> Move TagGroup Up</a></li>                       
-        <li action="moveDownTagGroup" title="Move current TagGroup one position down"><a href="#"><i class="icon-arrow-down"></i> Move TagGroup Down</a></li>                       
-        <li action="editTagGroup" title="Edit Current tagGroup"><a href="#"><i class="icon-pencil"></i> Edit Taggroup</a></li>                       
-        <li action="deleteTagGroup" title="Delete Current TagGroup"><a href="#"><i class="icon-trash"></i> Delete Taggroup</a></li>
+        <li><a id="tagGroupMenuCreateNewTag" title="Creates new tag" href="#"><i class="icon-tag"></i> Create Tag</a></li>
+        <li><a id="tagGroupMenuCreateTagGroup" title="Create new tagGroup" href="#"><i class="icon-tags"></i> Create Taggroup</a></li>        
+        <li><a id="tagGroupMenuMoveUp" title="Move current TagGroup one position up" href="#"><i class="icon-arrow-up"></i> Move TagGroup Up</a></li>                       
+        <li><a id="tagGroupMenuMoveDown" title="Move current TagGroup one position down" href="#"><i class="icon-arrow-down"></i> Move TagGroup Down</a></li>                       
+        <li><a id="tagGroupMenuEditTagGroup" title="Edit Current tagGroup" href="#"><i class="icon-pencil"></i> Edit Taggroup</a></li>                       
+        <li><a id="tagGroupMenuDeleteTagGroup" title="Delete Current TagGroup" href="#"><i class="icon-trash"></i> Delete Taggroup</a></li>
     </ul>  
     
     <ul id="directoryMenu" class="dropdown-menu has-tip">
-        <li action="reloadDirectory" title="Reload directory"><a href="#"><i class="icon-refresh"></i> Reload Directory</a></li>
-        <li action="createDirectory" title="Creates a new subdirectory"><a href="#"><i class="icon-folder-close"></i> New Subdirectory</a></li>                   
-        <li action="openDirectory" title="Opens the directoriy in the default file browser"><a href="#"><i class="icon-folder-open"></i> Show Folder</a></li>                   
+        <li><a id="directoryMenuReloadDirectory" title="Reload directory" href="#"><i class="icon-refresh"></i> Reload Directory</a></li>
+        <li><a id="directoryMenuCreateDirectory" title="Creates a new subdirectory" href="#"><i class="icon-folder-close"></i> New Subdirectory</a></li>                   
+        <li><a id="directoryMenuOpenDirectory" title="Opens the directoriy in the default file browser" href="#"><i class="icon-folder-open"></i> Show Folder</a></li>                   
     </ul>          
 </div>	
 </body>

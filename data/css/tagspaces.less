@@ -125,12 +125,12 @@ html, body {
     font-size: 1.5em;
     color: #333333;    
 }
-
+/*
 .contextMenu {
     display: none;
     width: 150px; 
     z-index: 1000;
-}
+}*/
 
 li hr {
     height: 0px; 
@@ -406,27 +406,17 @@ table.dataTable tbody td {
     text-align: top;
 }
 
-#filterBox {
-    margin: 1px;
+input a.resetFilter {
+    text-indent: -1000em;
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    background: url('filter-reset.png') no-repeat center;
+    position: relative;
+    left: -20px;
+    top: 3px;
 }
 
-#resetFilter {
-    position: relative;
-}
-#resetFilter span {
-    position: absolute;
-    display: block;
-    top: -3px;
-    right: 4px;
-    width: 17px;
-    height: 17px;
-    background: url('filter-reset.png') no-repeat center;
-    cursor: pointer;
-    border: 0px solid black;
-}
-#resetFilter input {
-    height: 20px;
-}
 
 /* Hiding the OOTB filter box */
 .dataTables_filter {

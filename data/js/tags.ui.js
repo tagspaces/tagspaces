@@ -15,109 +15,84 @@ define(function(require, exports, module) {
 	        }        
 	    });        
 	    
-	    $( "#extensionMenu" ).menu({
-	        select: function( event, ui ) {
-	            console.debug("Tag menu action: "+ui.item.attr( "action" )+" for tag: "+TSCORE.selectedTag);
-	            switch (ui.item.attr( "action" )) {
-	              case "addTagAsFilter":
-	                $( this ).hide();
-	                $("#filterBox").val(TSCORE.selectedTag);
-	                TSCORE.ViewManager.setFileFilter(TSCORE.selectedTag);
-	                break;                            
-	            }
-	        }
-	    });
-	
-	    // Context menu for the tags in the file table and the file viewer
-	    $( "#tagMenu" ).menu({
-	        select: function( event, ui ) {
-	            console.debug("Tag menu action: "+ui.item.attr( "action" )+" for tag: "+TSCORE.selectedTag);
-	            switch (ui.item.attr( "action" )) {
-	              case "addTagAsFilter":
-	                $("#filterBox").val(TSCORE.selectedTag);
-	                TSCORE.ViewManager.setFileFilter(TSCORE.selectedTag);
-	                break;                            
-	              case "addTagInTagGroup":
-	                // TODO Finish add tag in group
-	                break;                            
-	              case "editTag":
-	                $( "#newTag" ).val(TSCORE.selectedTag);
-	                $( "#dialogEditTag" ).dialog( "open" );
-	                break;                            
-	              case "removeTag":
-	                TSCORE.TagUtils.removeTag(TSCORE.selectedFiles[0],TSCORE.selectedTag);
-	                break;
-	            }
-	        }
-	    });
+        $( "#extMenuAddTagAsFilter" ).click( function() {
+            TSCORE.ViewManager.setFileFilter(TSCORE.selectedTag);
+        });
+
+        // Context menu for the tags in the file table and the file viewer
+        $( "#tagMenuAddTagAsFilter" ).click( function() {
+            TSCORE.ViewManager.setFileFilter(TSCORE.selectedTag);
+        });
+        
+        $( "#tagMenuEditTag" ).click( function() {
+            TSCORE.showTagEditDialog();
+        });
+        
+        $( "#tagMenuRemoveTag" ).click( function() {
+            TSCORE.TagUtils.removeTag(TSCORE.selectedFiles[0],TSCORE.selectedTag);
+        });                
+
 	
 	    // Context menu for the tags in the tag tree
-	    $( "#tagTreeMenu" ).menu({
-	        select: function( event, ui ) {
-	            console.debug("Tag menu action: "+ui.item.attr( "action" )+" for tag: "+TSCORE.selectedTag);
-	            switch (ui.item.attr( "action" )) {
-	              case "addTagToFile":
-	                TSCORE.TagUtils.addTag(TSCORE.selectedFiles, [TSCORE.selectedTag]);  
-	                break;                            
-	              case "addTagAsFilter":
-	                $("#filterBox").val(TSCORE.selectedTag);
-	                TSCORE.ViewManager.setFileFilter(TSCORE.selectedTag);
-	                break;                            
-	              case "editTag":
-	                $( "#tagName" ).val(TSCORE.selectedTag);
-	                $( "#dialog-tagedit" ).dialog( "open" );
-	                break;                            
-	              case "deleteTag":
-                    TSCORE.showConfirmDialog(
-                        "Delete Tag",
-                        "Do you want to delete this tag from the taggroup?",
-                        function() {
-                            TSCORE.Config.deleteTag(TSCORE.selectedTagData);
-                            generateTagGroups();                              
-                        }
-                    );
-	                break;
-	            }
-	        }
-	    });
+        $( "#tagTreeMenuAddTagToFile" ).click( function() {
+            TSCORE.TagUtils.addTag(TSCORE.selectedFiles, [TSCORE.selectedTag]);  
+        });                
+
+        $( "#tagTreeMenuAddTagAsFilter" ).click( function() {
+            TSCORE.ViewManager.setFileFilter(TSCORE.selectedTag);
+        });                
+
+        $( "#tagTreeMenuEditTag" ).click( function() {
+            $( "#tagName" ).val(TSCORE.selectedTag);
+            $( "#dialog-tagedit" ).dialog( "open" );
+        });                
+
+        $( "#tagTreeMenuDeleteTag" ).click( function() {
+            TSCORE.showConfirmDialog(
+                "Delete Tag",
+                "Do you want to delete this tag from the taggroup?",
+                function() {
+                    TSCORE.Config.deleteTag(TSCORE.selectedTagData);
+                    generateTagGroups();                              
+                }
+            );
+        });                
 	    
 	    // Context menu for the tags groups
-	    $( "#tagGroupMenu" ).menu({
-	        select: function( event, ui ) {
-	            console.debug("TagGroup  menu action: "+ui.item.attr( "action" )+" for tag: "+TSCORE.selectedTag);
-	            switch (ui.item.attr( "action" )) {
-	              case "createNewTag":
-	                $( "#newTagName" ).val("");
-	                $( "#dialog-tagcreate" ).dialog( "open" );
-	                break;                            
-	              case "deleteTagGroup":
-                    TSCORE.showConfirmDialog(
-                        "Delete TagGroup",
-                        "Do you want to delete this taggroup?",
-                        function() {
-                            TSCORE.Config.deleteTagGroup(TSCORE.selectedTagData);
-                            generateTagGroups();                              
-                        }
-                    );
-	                break;                            
-                  case "createTagGroup":
-                    $( "#dialog-taggroupCreate" ).dialog( "open" );
-                    break;
-                  case "moveUpTagGroup":
-                    TSCORE.Config.moveTagGroup(TSCORE.selectedTagData, "up");
-                    generateTagGroups(); 
-                    break;
-	              case "moveDownTagGroup":
-                    TSCORE.Config.moveTagGroup(TSCORE.selectedTagData, "down");
-                    generateTagGroups(); 
-	                break;
-	              case "editTagGroup":
-	                $( "#tagGroupName" ).val(TSCORE.selectedTagData.title);              
-	                $( "#dialog-taggroupEdit" ).dialog( "open" );
-	                break;
-	            }
-	        }
-	    });      
+        $( "#tagGroupMenuCreateNewTag" ).click( function() {
+            $( "#newTagName" ).val("");
+            $( "#dialog-tagcreate" ).dialog( "open" );
+        });                
+
+        $( "#tagGroupMenuCreateTagGroup" ).click( function() {
+            $( "#dialog-taggroupCreate" ).dialog( "open" );
+        });                
+
+        $( "#tagGroupMenuMoveUp" ).click( function() {
+            TSCORE.Config.moveTagGroup(TSCORE.selectedTagData, "up");
+            generateTagGroups(); 
+        });                
+
+        $( "#tagGroupMenuMoveDown" ).click( function() {
+            TSCORE.Config.moveTagGroup(TSCORE.selectedTagData, "down");
+            generateTagGroups(); 
+        });                
+
+        $( "#tagGroupMenuEditTagGroup" ).click( function() {
+            $( "#tagGroupName" ).val(TSCORE.selectedTagData.title);              
+            $( "#dialog-taggroupEdit" ).dialog( "open" );
+        });                
+
+        $( "#tagGroupMenuDeleteTagGroup" ).click( function() {
+            TSCORE.showConfirmDialog(
+                "Delete TagGroup",
+                "Do you want to delete this taggroup?",
+                function() {
+                    TSCORE.Config.deleteTagGroup(TSCORE.selectedTagData);
+                    generateTagGroups();                              
+                }
+            );
+        });                
 	}
 	
 	function initDialogs() {

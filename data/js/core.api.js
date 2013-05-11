@@ -274,12 +274,13 @@ define(function(require, exports, module) {
 	exports.toggleLeftPanel 			= toggleLeftPanel;
 	exports.toggleFileDetails 			= toggleFileDetails;
 
-
 	// Proxying functions from tsCoreUI
 	exports.showAlertDialog 			= tsCoreUI.showAlertDialog;
 	exports.showConfirmDialog			= tsCoreUI.showConfirmDialog;
+	exports.showTagEditDialog           = tsCoreUI.showTagEditDialog;
 	exports.hideAllDropDownMenus		= tsCoreUI.hideAllDropDownMenus;
-	exports.openFileCreateDialog        = tsCoreUI.openFileCreateDialog;	
+	exports.showFileCreateDialog        = tsCoreUI.showFileCreateDialog;	
+	exports.showFileRenameDialog        = tsCoreUI.showFileRenameDialog;
 	
 	// Proxying functions from tsTagsUI
 	exports.generateTagButtons 			= tsTagsUI.generateTagButtons;
@@ -289,6 +290,7 @@ define(function(require, exports, module) {
 	// Proxying functions from directoriesUI 
 	exports.updateSubDirs 				= tsDirectoriesUI.updateSubDirs;
 	exports.initFavorites 				= tsDirectoriesUI.initFavorites;
+	exports.showCreateDirectoryDialog   = tsDirectoriesUI.showCreateDirectoryDialog;
 
 	// Public variables definition
 	exports.currentPath 				= currentPath;

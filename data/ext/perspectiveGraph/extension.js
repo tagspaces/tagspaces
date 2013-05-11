@@ -198,7 +198,7 @@ define(function(require, exports, module) {
 	exports.load = function load() {
 		console.debug("Loading View "+extensionID);
 	
-		$( "#"+extensionID+"ReIndexButton" ).button( "enable" );
+		$( "#"+extensionID+"ReIndexButton" ).removeClass("disabled");
 		TSCORE.hideLoadingAnimation();
 	}
 	

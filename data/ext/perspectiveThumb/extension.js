@@ -32,13 +32,16 @@ define(function(require, exports, module) {
 		viewFooter.empty();	
 		
         viewToolbar.append($("<button>", { 
-            class: "btn btn-small",
+            class: "btn btn-small disabled",
             disabled: true,
             title: "Create new file",
             id: this.extensionID+"CreateFileButton",    
         })
         .append( $("<i>", { class: "icon-file", }) )
         .append("New")
+        .click(function() {
+            $( "#dialog-filecreate" ).dialog( "open" );
+        })          
         );        		
 		
 	    viewContainer.append($("<ol>", { 
@@ -63,8 +66,6 @@ define(function(require, exports, module) {
 	            }
 	        }
 	    }); 
-	    
-	    initButtons();
 	}
 	
 	exports.load = function load() {
@@ -90,7 +91,7 @@ define(function(require, exports, module) {
 	        }
 	    }    
 	    
-		$( exports.ID+"CreateFileButton" ).button( "enable" );    
+		$( exports.ID+"CreateFileButton" ).removeClass("disabled");  
 	    TSCORE.hideLoadingAnimation();     
 	}
 	
@@ -102,12 +103,4 @@ define(function(require, exports, module) {
 	    // TODO Deselect all
 		//$("#"+exports.ID+"SelectableFiles").
 	}
-	
-	var initButtons = function() {
-	    $( "#"+exports.ID+"CreateFileButton" )
-	    .click(function() {
-	        $( "#dialog-filecreate" ).dialog( "open" );
-	    });  
-	}
-
 });
