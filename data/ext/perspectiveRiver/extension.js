@@ -75,8 +75,7 @@ define(function(require, exports, module) {
 	var initButtons = function() {
 	    $( "#"+exports.ID+"CreateFileButton" )
 	    .click(function() {
-	        $( "#dialog-filecreate" ).dialog( "open" );
+	        TSCORE.showFileCreateDialog();
 	    });  
 	}
-
 });

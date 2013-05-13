@@ -40,7 +40,7 @@ define(function(require, exports, module) {
         .append( $("<i>", { class: "icon-file", }) )
         .append("New")
         .click(function() {
-            $( "#dialog-filecreate" ).dialog( "open" );
+            TSCORE.showFileCreateDialog();
         })          
         );        		
 		

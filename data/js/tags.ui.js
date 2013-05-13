@@ -43,8 +43,7 @@ define(function(require, exports, module) {
         });                
 
         $( "#tagTreeMenuEditTag" ).click( function() {
-            $( "#tagName" ).val(TSCORE.selectedTag);
-            $( "#dialog-tagedit" ).dialog( "open" );
+            TSCORE.showTagEditInTreeDialog();
         });                
 
         $( "#tagTreeMenuDeleteTag" ).click( function() {
@@ -60,12 +59,11 @@ define(function(require, exports, module) {
 	    
 	    // Context menu for the tags groups
         $( "#tagGroupMenuCreateNewTag" ).click( function() {
-            $( "#newTagName" ).val("");
-            $( "#dialog-tagcreate" ).dialog( "open" );
+            TSCORE.showDialogTagCreate();
         });                
 
         $( "#tagGroupMenuCreateTagGroup" ).click( function() {
-            $( "#dialog-taggroupCreate" ).dialog( "open" );
+            TSCORE.showDialogTagGroupCreate();
         });                
 
         $( "#tagGroupMenuMoveUp" ).click( function() {
@@ -79,8 +77,7 @@ define(function(require, exports, module) {
         });                
 
         $( "#tagGroupMenuEditTagGroup" ).click( function() {
-            $( "#tagGroupName" ).val(TSCORE.selectedTagData.title);              
-            $( "#dialog-taggroupEdit" ).dialog( "open" );
+            TSCORE.showDialogEditTagGroup();
         });                
 
         $( "#tagGroupMenuDeleteTagGroup" ).click( function() {
@@ -96,137 +93,30 @@ define(function(require, exports, module) {
 	}
 	
 	function initDialogs() {
-	    $( "#dialog-tagedit" ).dialog({
-	        autoOpen: false,
-	        resizable: false,
-	        height:240,
-	        modal: true,
-	        buttons: {
-	            "Save": function() {
-	                TSCORE.Config.editTag(TSCORE.selectedTagData, $( "#tagName" ).val() )
-	                generateTagGroups();    
-	                $( this ).dialog( "close" );
-	            },
-	            Cancel: function() {
-	                $( this ).dialog( "close" );
-	            }
-	        }
-	    });   
-	
-	    $( "#dialog-tagcreate" ).dialog({
-	        autoOpen: false,
-	        resizable: false,
-	        height:240,
-	        modal: true,
-	        buttons: {
-	            "Create Tag": function() {
-	                TSCORE.Config.createTag(TSCORE.selectedTagData, $( "#newTagName" ).val() )
-	                generateTagGroups();                    
-	                $( this ).dialog( "close" );
-	            },
-	            Cancel: function() {
-	                $( this ).dialog( "close" );
-	            }
-	        },
-	        open: function() {
-	            $( "#newTagName" ).val("");
-	        }    	        
-	    });  
-	    
-	    $( "#dialog-taggroupCreate" ).dialog({
-	        autoOpen: false,
-	        resizable: false,
-	        height:240,
-	        modal: true,
-	        buttons: {
-	            "Create": function() {
-	                TSCORE.Config.createTagGroup(TSCORE.selectedTagData, $( "#newTagGroupName" ).val() )
-	                generateTagGroups();                    
-	                $( this ).dialog( "close" );
-	            },
-	            Cancel: function() {
-	                $( this ).dialog( "close" );
-	            }
-	        },
-	        open: function() {
-	            $( "#newTagGroupName" ).val("");
-	        }  	        
-	    });   
-	    
-	    $( "#dialog-taggroupEdit" ).dialog({
-	        autoOpen: false,
-	        resizable: false,
-	        height:240,
-	        modal: true,
-	        buttons: {
-	            "Save": function() {
-	                TSCORE.Config.editTagGroup(TSCORE.selectedTagData, $( "#tagGroupName" ).val() )
-	                generateTagGroups();                    
-	                $( this ).dialog( "close" );
-	            },
-	            Cancel: function() {
-	                $( this ).dialog( "close" );
-	            }
-	        }
-	    }); 
-	    
-	    $( "#dialogAddTags" ).dialog({
-	        autoOpen: false,
-	        resizable: false,
-	        height:240,
-	        modal: true,
-	        buttons: {
-	            "Add tags": function() {
-	                var tags = $("#tags").val().split(",");
-	                TSCORE.TagUtils.addTag(TSCORE.selectedFiles, tags);
-	                $( this ).dialog( "close" );
-	            },
-	            Cancel: function() {
-	                $( this ).dialog( "close" );
-	            }
-	        },
-	        open: function() {
-	            
-	            function split( val ) {
-	                return val.split( /,\s*/ );
-	            }
-	            function extractLast( term ) {
-	                return split( term ).pop();
-	            }
-	                        
-	            $( "#tags" )
-	                // don't navigate away from the field on tab when selecting an item
-	                .bind( "keydown", function( event ) {
-	                    if ( event.keyCode === $.ui.keyCode.TAB &&
-	                            $( this ).data( "autocomplete" ).menu.active ) {
-	                        event.preventDefault();
-	                    }
-	                })
-	                .autocomplete({
-	                    minLength: 0,
-	                    source: function( request, response ) {
-	                        // delegate back to autocomplete, but extract the last term
-	                        response( $.ui.autocomplete.filter(
-	                            TSCORE.Config.getAllTags(), extractLast( request.term ) ) );
-	                    },
-	                    focus: function() {
-	                        // prevent value inserted on focus
-	                        return false;
-	                    },
-	                    select: function( event, ui ) {
-	                        var terms = split( this.value );
-	                        // remove the current input
-	                        terms.pop();
-	                        // add the selected item
-	                        terms.push( ui.item.value );
-	                        // add placeholder to get the comma-and-space at the end
-	                        terms.push( "" );
-	                        this.value = terms.join( ", " );
-	                        return false;
-	                    }
-	                });
-	        }            
-	    });    	                  
+        $( "#editTagInTreeButton" ).click( function() {
+            TSCORE.Config.editTag(TSCORE.selectedTagData, $( "#tagInTreeName" ).val() )
+            generateTagGroups();    
+        });   
+
+        $( "#addTagsButton" ).click( function() {
+            var tags = $("#tags").val().split(",");
+            TSCORE.TagUtils.addTag(TSCORE.selectedFiles, tags);
+        });             
+
+        $( "#createTagButton" ).click( function() {
+            TSCORE.Config.createTag(TSCORE.selectedTagData, $( "#newTagTitle" ).val() )
+            generateTagGroups();                    
+        });             
+	                
+        $( "#createTagGroupButton" ).click( function() {
+            TSCORE.Config.createTagGroup(TSCORE.selectedTagData, $( "#newTagGroupName" ).val() )
+            generateTagGroups();                    
+        });             
+
+        $( "#editTagGroupButton" ).click( function() {
+            TSCORE.Config.editTagGroup(TSCORE.selectedTagData, $( "#tagGroupName" ).val() )
+            generateTagGroups();                    
+        });           
 	}
 	
 	function generateTagGroups() {
@@ -367,13 +257,71 @@ define(function(require, exports, module) {
 	    }
 	    return wrapper.html();        
 	}
-	
 
-	var showAddTagsDialog = function() {
+    function showDialogTagCreate() {
+        $( "#newTagTitle" ).val("");         
+        $( '#dialogTagCreate' ).modal({show: true});        
+    }   
+
+    function showDialogEditTagGroup() {
+        $( "#tagGroupName" ).val(TSCORE.selectedTagData.title);              
+        $( '#dialogEditTagGroup' ).modal({show: true});        
+    }
+    
+    function showDialogTagGroupCreate() {
+        $( "#newTagGroupName" ).val("");         
+        $( '#dialogTagGroupCreate' ).modal({show: true});        
+    }
+
+    function showTagEditInTreeDialog() {
+        $( "#tagInTreeName" ).val(TSCORE.selectedTagData.title);         
+        $( '#dialogEditInTreeTag' ).modal({show: true});        
+    }	
+
+	function showAddTagsDialog() {
 	    console.debug("Adding tags..."); 
+        function split( val ) {
+            return val.split( /,\s*/ );
+        }
+        function extractLast( term ) {
+            return split( term ).pop();
+        }
+                    
+        $( "#tags" )
+        // don't navigate away from the field on tab when selecting an item
+        .bind( "keydown", function( event ) {
+            if ( event.keyCode === $.ui.keyCode.TAB &&
+                    $( this ).data( "autocomplete" ).menu.active ) {
+                event.preventDefault();
+            }
+        })
+        .autocomplete({
+            minLength: 0,
+            source: function( request, response ) {
+                // delegate back to autocomplete, but extract the last term
+                response( $.ui.autocomplete.filter(
+                    TSCORE.Config.getAllTags(), extractLast( request.term ) ) );
+            },
+            focus: function() {
+                // prevent value inserted on focus
+                return false;
+            },
+            select: function( event, ui ) {
+                var terms = split( this.value );
+                // remove the current input
+                terms.pop();
+                // add the selected item
+                terms.push( ui.item.value );
+                // add placeholder to get the comma-and-space at the end
+                terms.push( "" );
+                this.value = terms.join( ", " );
+                return false;
+            }
+        });
+
         $("#tags").val("");
-        $( "#dialogAddTags" ).dialog( "open" );
-	}
+        $( '#dialogAddTags' ).modal({show: true});
+	}    
 
     // Public API definition
     exports.initContextMenus                 = initContextMenus;
@@ -382,5 +330,9 @@ define(function(require, exports, module) {
     exports.openTagMenu    				     = openTagMenu;
     exports.generateTagButtons               = generateTagButtons;
 	exports.showAddTagsDialog				 = showAddTagsDialog;
+	exports.showTagEditInTreeDialog          = showTagEditInTreeDialog;	
+    exports.showDialogTagCreate              = showDialogTagCreate;
+    exports.showDialogEditTagGroup           = showDialogEditTagGroup;
+    exports.showDialogTagGroupCreate	     = showDialogTagGroupCreate;
 
 });

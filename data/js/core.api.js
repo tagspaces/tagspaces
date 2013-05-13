@@ -286,6 +286,10 @@ define(function(require, exports, module) {
 	exports.generateTagButtons 			= tsTagsUI.generateTagButtons;
 	exports.openTagMenu 				= tsTagsUI.openTagMenu;
 	exports.showAddTagsDialog			= tsTagsUI.showAddTagsDialog;
+	exports.showTagEditInTreeDialog     = tsTagsUI.showTagEditInTreeDialog;
+    exports.showDialogTagCreate         = tsTagsUI.showDialogTagCreate;
+    exports.showDialogEditTagGroup      = tsTagsUI.showDialogEditTagGroup;
+    exports.showDialogTagGroupCreate    = tsTagsUI.showDialogTagGroupCreate;	
 
 	// Proxying functions from directoriesUI 
 	exports.updateSubDirs 				= tsDirectoriesUI.updateSubDirs;

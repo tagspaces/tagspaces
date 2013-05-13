@@ -76,7 +76,7 @@ define(function(require, exports, module) {
     var showFileCreateDialog = function() {
         fileContent = TSCORE.Config.getNewTextFileContent(); // Default new file in text file
         $( "#newFileName" ).val(".txt");
-        $( '#dialog-filecreate' ).modal({show: true});
+        $( '#dialogFileCreate' ).modal({show: true});
         $( '#txtFileTypeButton' ).button('toggle');
     }
     
