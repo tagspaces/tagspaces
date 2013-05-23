@@ -48,12 +48,23 @@ html, body {
 
 #logo {
 	padding: 0px;
-	font-size: 1.3em;
-	color: #00AE00;
+	font-size: 1.4em;
+//	color: #00AE00;
+	color: white;
+	font-weight: bold;
 	padding-left: 20px;
-	background: url("logo.png") no-repeat;
+	background: url("logow.png") no-repeat;
 	display: inline-block;
   margin: 6px;
+}
+
+#logo:hover {
+  color: #00AE00;
+}
+
+#appVersion {
+  font-size: 0.6em; 
+  color: white;  
 }
 
 #currentLocation {
@@ -225,10 +236,8 @@ li hr {
 }
 	
 .ui-layout-north {
-    padding: 3px;
+  padding: 0px;
 	background-color: #333333;
-	color: #1C94C4;
-	font-weight: bold;
 	overflow: hidden !important;
 }	
 
@@ -266,6 +275,7 @@ li hr {
 
 .east-north {
 	background-color: #FFFFFF;
+  overflow: hidden !important;	
 }	
 
 /* Full screen workaround for webkit browser*/
