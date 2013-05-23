@@ -195,7 +195,7 @@ define(function(require, exports, module) {
 	                "tag":           TSCORE.Config.Settings["tagGroups"][i]["children"][j].title, 
 	                "parentKey":     TSCORE.Config.Settings["tagGroups"][i].key,
 	                "title":         "Opens context menu for "+TSCORE.Config.Settings["tagGroups"][i]["children"][j].title,
-	                "text":          TSCORE.Config.Settings["tagGroups"][i]["children"][j].title, 
+	                "text":          TSCORE.Config.Settings["tagGroups"][i]["children"][j].title+" ", 
 	            })            
 	            .click( function() {
 	                TSCORE.selectedTag = $(this).attr("tag");
@@ -235,7 +235,7 @@ define(function(require, exports, module) {
 	            filename: fileName,
 	            filepath: filePath,
 	            "class":  "btn btn-small btn-info extTagButton",	            
-	            text: fileExtension
+	            text: fileExtension+" "
 	            })
 	            .append($("<span>", { class: "caret"}))
 	            );          
@@ -249,7 +249,7 @@ define(function(require, exports, module) {
 	                filename: fileName,
 	            	filepath: filePath,                
 	                "class":  "btn btn-small btn-success tagButton", 
-	                text: tags[i]
+	                text: tags[i]+" "
 	                })
 	                .append($("<span>", { class: "caret"}))
                 );   

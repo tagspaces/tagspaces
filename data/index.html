@@ -20,15 +20,12 @@
 <body style="background-color: lightgray;">
 <div id="loading" style="text-align: center; width: 100%; font-size: 1.4em; position:absolute; top:50%; text-shadow: 0px 1px 1px #fff; ">Loading <a href="javascript:window.location.reload();">TagSpaces</a> ... </div>	
 <div id="container" style="display: none;">
-    <div class="ui-layout-north">
-        <a href="http://tagspaces.org" target="_new"><span id="logo">TagSpaces<sup id="appVersion" style="font-size: 0.6em; color: #BFBFBF"></sup></span></a>
+    <div class="ui-layout-north" style="padding: 3px">
+        <a href="http://tagspaces.org" target="_new"><span id="logo">TagSpaces<sup id="appVersion"></sup></span></a>
         <span id="loadingAnimation">&nbsp;</span> 
 		<div class="btn-toolbar pull-right" style="margin: 0px;">
 			<div id="viewSwitcher" class="btn-group" data-toggle="buttons-radio"></div>
-	        <!--a id="testAlertButton" role="button" class="btn btn-small" title="Options Dialog" ><i class="icon-adjust"></i> Test Alerts</a-->
-	        <button id="openOptions" href="#dialogOptions" role="button" class="btn btn-small" title="Options Dialog" data-toggle="modal"><i class="icon-wrench"></i> Options</button>        
-			<button id="openAboutBox" data-placement="bottom" href="#dialogAbout" role="button" class="btn btn-small" data-toggle="modal"><i class="icon-comment"></i> About</button>
-	        <!--button id="toggleLeftPanel" class="btn btn-small" title="Toggle Leftpanel"><i class="icon-list"></i>&nbsp;</button-->
+	        <button id="openOptions" role="button" class="btn btn-small" title="Open Settings Menu" data-dropdown="#settingsMenu"><i class="icon-cog"></i> <b class="caret"></b></button>        
 	    </div>
     </div>
 
@@ -61,7 +58,7 @@
                 <span id="fileTags"></span>
             </p>  
             <p>         
-            <input id="selectedFilePath" READONLY style="width: 100%; height:25px; border: 0px; background-color: transparent;" ></input>            
+            Path: <input id="selectedFilePath" READONLY style="width: 100%; height:25px; border: 0px; background-color: transparent;" ></input>            
         	</p>
         </div>        
         <div class="east-center" id="content" style="padding: 0; height: 100%">
@@ -421,7 +418,23 @@
         <li><a id="directoryMenuReloadDirectory" title="Reload directory" href="#"><i class="icon-refresh"></i> Reload Directory</a></li>
         <li><a id="directoryMenuCreateDirectory" title="Creates a new subdirectory" href="#"><i class="icon-folder-close"></i> New Subdirectory</a></li>                   
         <li><a id="directoryMenuOpenDirectory" title="Opens the directoriy in the default file browser" href="#"><i class="icon-folder-open"></i> Show Folder</a></li>                   
-    </ul>          
+    </ul>     
+    
+    <ul id="settingsMenu" class="dropdown-menu has-tip anchor-right">
+        <li><a id="openOptions" href="#dialogOptions" title="Options Dialog" data-toggle="modal"><i class="icon-wrench"></i> Options</a></li>
+        <li><a target="_new" href="https://github.com/uggrock/tagspaces/issues/" title="Report a issue or enhancement"><i class="icon-flag"></i> Report Issue</a></li>        
+        <li><a href="mailto:info@tagspaces.org" title="Drop a line to the developers"><i class="icon-envelope"></i> Contact developers</a></li>
+        <li class="divider"></li>
+        <li><a id="openAboutBox" data-placement="bottom" href="#dialogAbout" data-toggle="modal"><i class="icon-comment"></i> About</a></li>
+    </ul>
+
+    <ul id="fileActionsMenu" class="dropdown-menu has-tip anchor-right">
+        <li><a id="editDocument" href="#" title="Edit file"><i class="icon-pencil"></i> Edit File</a></li>
+        <li><a id="showFullDetails" href="#" title="Show additional file details"><i class="icon-list-alt"></i> Show File Details</a></li>
+        <li><a id="openInNewWindow" href="#" title="Open file in a new tab"><i class="icon-share"></i> Open nn New Tab</a></li>
+        <li><a id="startFullscreen" href="#" title="Open file in full screen"><i class="icon-fullscreen"></i> Open in Fullscreen</a></li>                        
+    </ul>
+
 </div>	
 </body>
 </html>
