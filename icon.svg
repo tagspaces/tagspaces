@@ -13,8 +13,8 @@
    height="1052.3622047"
    id="svg3041"
    version="1.1"
-   inkscape:version="0.48.3.1 r9886"
-   sodipodi:docname="New document 2">
+   inkscape:version="0.48.2 r9819"
+   sodipodi:docname="icon.svg">
   <defs
      id="defs3043" />
   <sodipodi:namedview
@@ -25,17 +25,17 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.4"
-     inkscape:cx="451.15713"
-     inkscape:cy="797.93367"
+     inkscape:cx="339.72856"
+     inkscape:cy="826.5051"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      showguides="true"
      inkscape:guide-bbox="true"
-     inkscape:window-width="1615"
-     inkscape:window-height="1026"
-     inkscape:window-x="65"
-     inkscape:window-y="24"
+     inkscape:window-width="1858"
+     inkscape:window-height="1058"
+     inkscape:window-x="54"
+     inkscape:window-y="-8"
      inkscape:window-maximized="1">
     <sodipodi:guide
        orientation="0,1"
@@ -218,5 +218,34 @@
        inkscape:export-filename="Z:\Dev\tagspaces\data\icon48.png"
        inkscape:export-xdpi="48.488251"
        inkscape:export-ydpi="48.488251" />
+    <rect
+       style="fill:#404040;fill-opacity:1;stroke:none"
+       id="rect3052"
+       width="197.85715"
+       height="172.14285"
+       x="125.71429"
+       y="177.36218" />
+    <path
+       style="fill:none;stroke:#fbfcff;stroke-width:12.19999981000000000;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 189.27334,210.89023 31.31473,0 0,30.55711 -41.6688,43.81537 -30.93591,-29.29442 z"
+       id="path3923-17"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cccccc"
+       inkscape:export-filename="Z:\TagSpaces\repository\data\icons\icon16w.png"
+       inkscape:export-xdpi="16.504297"
+       inkscape:export-ydpi="16.504297" />
+    <path
+       transform="matrix(1.6060915,0,0,1.7071068,-357.3955,-363.22918)"
+       sodipodi:type="arc"
+       style="fill:#f2f4ff;fill-opacity:1;stroke:none"
+       id="path4875-4-4"
+       sodipodi:cx="346.96429"
+       sodipodi:cy="347.71933"
+       sodipodi:rx="3.75"
+       sodipodi:ry="3.5714285"
+       d="m 350.71429,347.71933 a 3.75,3.5714285 0 1 1 -7.5,0 3.75,3.5714285 0 1 1 7.5,0 z"
+       inkscape:export-xdpi="16.504297"
+       inkscape:export-ydpi="16.504297"
+       inkscape:export-filename="Z:\TagSpaces\repository\data\icons\icon16w.png" />
   </g>
 </svg>
