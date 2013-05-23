@@ -145,7 +145,7 @@ define(function(require, exports, module) {
 	            tag: tags[i], 
 	            filepath: filePath, 
 	            title: "Opens context menu for "+tags[i],
-	            text: tags[i] 
+	            text: tags[i]+" " 
 	            })
 	            .append($("<span>", { class: "caret"}))
 	            );            
@@ -178,13 +178,10 @@ define(function(require, exports, module) {
 	    addPrevButton("#filetoolbox");
 	    addNextButton("#filetoolbox");
 	    addTagSuggestionButton("#filetoolbox");
+        addFileActionsButton("#filetoolbox");	    
 	    addCloseButton("#filetoolbox");     
-
-		//TODO Add to dropdown
-	    addFullScreenButton("#filetoolbox");
-	    addOpenInWindowButton("#filetoolbox", filePath);
-	    addEditButton("#filetoolbox", filePath);
-		addShowFullDetailsButton("#filetoolbox");
+	
+		initAdditionalFileActions("#filetoolbox", filePath);
 	}
 	
 	function initTagSuggestionMenu(filePath) {
@@ -228,8 +225,12 @@ define(function(require, exports, module) {
 	}
 	
 	function addTagSuggestionButton(container) {
-	    $( ""+container ).append('<button id="openTagSuggestionMenu" class="btn btn-small" title="Tag Suggestions"><i class="icon-tags"></i></button>');
+	    $( ""+container ).append('<button id="openTagSuggestionMenu" class="btn btn-small" title="Tag Suggestions"><i class="icon-tags"></i> <b class="caret"></b></button>');
 	}
+	
+    function addFileActionsButton(container) {
+        $( ""+container ).append('<button id="openFileActionsMenu" data-dropdown="#fileActionsMenu" class="btn btn-small" title="Opens a menu with additional file actions"><i class="icon-th-list"></i> <b class="caret"></b></button>');
+    }
 	
 	function addNextButton(container) {
 	    $( ""+container ).append('<button id="nextFileButton" class="btn btn-small" title="Go to the next file"><i class="icon-circle-arrow-right"></i></button>');
@@ -266,7 +267,7 @@ define(function(require, exports, module) {
 	    });    
 	}	
 	
-	function addEditButton(container, filePath) {
+	function initAdditionalFileActions(container, filePath) {
 	    var buttonDisabled = false;
 	    // If no editor found, disabling the button
 	    if(getFileEditor(filePath) === "false") {
@@ -274,7 +275,6 @@ define(function(require, exports, module) {
 	    }
 		var options;
 		// Todo make use of buttonDisabled
-        $( ""+container ).append('<button id="editDocument" class="btn btn-small" title="Edit file"><i class="icon-pencil"></i> Edit</button>');
 	    $( "#editDocument" ).focus(function() {
 	        this.blur();
 	    })
@@ -303,24 +303,15 @@ define(function(require, exports, module) {
 			$( this ).button( "option", options );
 			*/    	
 	    });        
-	}
 
-	function addShowFullDetailsButton(container) {
-        $( ""+container ).append('<button id="showFullDetails" class="btn btn-small" title="Show full file details"><i class="icon-list-alt"></i> Full details</button>');
 	    $( "#showFullDetails" ).click(function() {
 			TSCORE.toggleFileDetails();
 	    });        
-	}
-	
-	function addOpenInWindowButton(container, filePath) {
-        $( ""+container ).append('<button id="openInNewWindow" class="btn btn-small" title="Open file in a new tab"><i class="icon-share"></i> Open in New Tab</button>');
+
 	    $( "#openInNewWindow" ).click(function() {
 	        window.open("file:///"+filePath);
 	    });        
-	}
-	
-	function addFullScreenButton(container) {
-        $( ""+container ).append('<button id="startFullscreen" class="btn btn-small" title="Open file in full screen"><i class="icon-fullscreen"></i> Fullscreen</button>');
+
 	    $( "#startFullscreen" ).click(function() {
 	        var docElm = $("#viewer")[0];
 	        if (docElm.requestFullscreen) {
