@@ -186,17 +186,17 @@ define(function(require, exports, module) {
 		viewToolbar.empty();
 		viewFooter.empty();	  
 	
-	    initUI();
-	    
-		require([
-			extensionDirectory+'/d3/d3.js',
-		 	], function() {
-				viewContainer.append('<link rel="stylesheet" type="text/css" href="'+extensionDirectory+"/"+'styles.css">');
-		});    
+	    initUI();  
 	}
 	
 	exports.load = function load() {
 		console.debug("Loading View "+extensionID);
+
+        require([
+            extensionDirectory+'/d3/d3.js',
+            ], function() {
+                viewContainer.append('<link rel="stylesheet" type="text/css" href="'+extensionDirectory+"/"+'styles.css">');
+        }); 
 	
 		$( "#"+extensionID+"ReIndexButton" ).removeClass("disabled");
 		TSCORE.hideLoadingAnimation();

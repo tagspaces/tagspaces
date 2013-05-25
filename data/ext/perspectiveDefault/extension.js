@@ -8,7 +8,7 @@ define(function(require, exports, module) {
 	var extensionTitle = "Standard"
 	var extensionID = "perspectiveDefault";  // ID should be equal to the directory name where the ext. is located   
 	var extensionType =  "view";
-	var extensionIcon = "icon-tags";
+	var extensionIcon = "icon-list";
 	var extensionVersion = "1.0";
 	var extensionManifestVersion = 1;
 	var extensionLicense = "AGPL";

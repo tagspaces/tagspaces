@@ -21,6 +21,7 @@
 <div id="loading" style="text-align: center; width: 100%; font-size: 1.4em; position:absolute; top:50%; text-shadow: 0px 1px 1px #fff; ">Loading <a href="javascript:window.location.reload();">TagSpaces</a> ... </div>	
 <div id="container" style="display: none;">
     <div class="ui-layout-north" style="padding: 3px">
+        <button id="toggleLeftPanel" class="btn btn-small" title="Toggle Leftpanel"><i class="icon-tagspaces"></i></button>
         <a href="http://tagspaces.org" target="_new"><span id="logo">TagSpaces<sup id="appVersion"></sup></span></a>
         <span id="loadingAnimation">&nbsp;</span> 
 		<div class="btn-toolbar pull-right" style="margin: 0px;">
@@ -37,34 +38,34 @@
                     <button id="selectTagSpace" style="width: 15%;" class="btn btn-small dropdown-toggle"><span class="caret"></span></button> 
                 </div>                
             </div>
-            <div id="dirTree" style="padding: 0; height: 100%;">
+            <div id="dirTree" style="padding: 0px; height: 100%;">
              
             </div>   
         </div>
-        <div id="tagGroups" class="west-south" style="padding: 0; height: 100%"></div>
+        <div id="tagGroups" class="west-south" style="padding: 0px; height: 100%"></div>
     </div>    
     
-    <div class="ui-layout-center" style="padding: 0;">
+    <div class="ui-layout-center" style="padding: 0px;">
         <div id="viewToolbars" class="middle-north" style="background-color: #EEEEEE;"></div> 
         <div id="viewContainers" class="middle-center"></div>                
         <div id="viewFooters" class="middle-south"></div>  
     </div>    
 
     <div class="ui-layout-east" style="padding: 0">
-        <div class="east-north" style="padding: 1; background-color: #EEEEEE;">
-            <span id="fileTitle"></span>
+        <div class="east-north" style="padding: 2px; background-color: #EEEEEE;">
+            <span id="fileTitle" style="padding: 3px"></span>
             <span id="filetoolbox" class="btn-group pull-right"></span>
-            <p id="tagsContainer">
+            <p id="tagsContainer" style="margin-top: 5px">
                 <span id="fileTags"></span>
             </p>  
             <p>         
             Path: <input id="selectedFilePath" READONLY style="width: 100%; height:25px; border: 0px; background-color: transparent;" ></input>            
         	</p>
         </div>        
-        <div class="east-center" id="content" style="padding: 0; height: 100%">
+        <div class="east-center" id="content" style="padding: 0; height: 100%; overflow: hidden !important;">
             <div id="viewer" allowfullscreen style="width: 100%; height: 100%" ></div>
         </div>
-        <div class="east-south" style="padding: 0">
+        <div class="east-south" style="padding: 0px">
         </div>
     </div>    
 </div>    
@@ -431,7 +432,7 @@
     <ul id="fileActionsMenu" class="dropdown-menu has-tip anchor-right">
         <li><a id="editDocument" href="#" title="Edit file"><i class="icon-pencil"></i> Edit File</a></li>
         <li><a id="showFullDetails" href="#" title="Show additional file details"><i class="icon-list-alt"></i> Show File Details</a></li>
-        <li><a id="openInNewWindow" href="#" title="Open file in a new tab"><i class="icon-share"></i> Open nn New Tab</a></li>
+        <li><a id="openInNewWindow" href="#" title="Open file in a new tab"><i class="icon-share"></i> Open in New Tab</a></li>
         <li><a id="startFullscreen" href="#" title="Open file in full screen"><i class="icon-fullscreen"></i> Open in Fullscreen</a></li>                        
     </ul>
 

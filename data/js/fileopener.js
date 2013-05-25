@@ -175,6 +175,7 @@ define(function(require, exports, module) {
 			this.select();
 	    });
 	    
+	    addToggleFullWidthButton("#filetoolbox");
 	    addPrevButton("#filetoolbox");
 	    addNextButton("#filetoolbox");
 	    addTagSuggestionButton("#filetoolbox");
@@ -231,6 +232,13 @@ define(function(require, exports, module) {
     function addFileActionsButton(container) {
         $( ""+container ).append('<button id="openFileActionsMenu" data-dropdown="#fileActionsMenu" class="btn btn-small" title="Opens a menu with additional file actions"><i class="icon-th-list"></i> <b class="caret"></b></button>');
     }
+
+    function addToggleFullWidthButton(container) {
+        $( ""+container ).append('<button id="toggleFullWidthButton" class="btn btn-small" title="Toggle Full Width"><i class="icon-resize-horizontal"></i></button>');
+        $( "#toggleFullWidthButton" ).click(function() {
+             TSCORE.toggleFullWidth();           
+        });
+    }   
 	
 	function addNextButton(container) {
 	    $( ""+container ).append('<button id="nextFileButton" class="btn btn-small" title="Go to the next file"><i class="icon-circle-arrow-right"></i></button>');
@@ -250,13 +258,13 @@ define(function(require, exports, module) {
 	    $( ""+container ).append('<button id="closeOpenedFile" class="btn btn-small" title="Close file"><i class="icon-remove-sign"></i></button>');	    
 	    $( "#closeOpenedFile" ).click(function() {
 	        if(_isEditMode) {
-	            if(confirm("If you confirm, all made changes will be lost.")){
-	                // Cleaning the viewer/editor
-	                document.getElementById("viewer").innerHTML = "";
-					TSCORE.FileOpener.setFileOpened(false);
-					TSCORE.closeFileViewer();
-	                _isEditMode = false;                
-	            }
+                TSCORE.showConfirmDialog("Confirm","If you confirm, all made changes will be lost.", function() {
+                    // Cleaning the viewer/editor
+                    document.getElementById("viewer").innerHTML = "";
+                    TSCORE.FileOpener.setFileOpened(false);
+                    TSCORE.closeFileViewer();
+                    _isEditMode = false;                               
+                });	            
 	        } else {
 	            // Cleaning the viewer/editor
 	            document.getElementById("viewer").innerHTML = "";
@@ -279,29 +287,16 @@ define(function(require, exports, module) {
 	        this.blur();
 	    })
 	    .click(function() {
-	        // TODO reenable edit
-			TSCORE.showAlertDialog("Edit button currently disabled.");
-			/*if ( $( this ).text() === "Edit" ) {
-				options = {
-					label: "Save&Close",
-					icons: {
-						primary: "ui-icon-disk"
-					}
-				};
+			if ( !_isEditMode ) { 
+				$( this ).html("<i class='icon-hdd'></i> Save & Close");
 	        	editFile(filePath);
 			} else {
-			    if(confirm("Do you really want to overwrite the current file?")) {
-	                options = {
-	                    label: "Edit",
-	                    icons: {
-	                        primary: "ui-icon-wrench"
-	                    }
-	                };
-	                saveFile(filePath);
-			    }
+			    TSCORE.showConfirmDialog("Confirm","Do you really want to overwrite the current file?", function() {
+                    $( "#editDocument" ).html("<i class='icon-pencil'></i> Edit File");
+                    _isEditMode = false;
+                    saveFile(filePath);			        
+			    });
 			}
-			$( this ).button( "option", options );
-			*/    	
 	    });        
 
 	    $( "#showFullDetails" ).click(function() {

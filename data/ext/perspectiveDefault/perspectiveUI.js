@@ -49,6 +49,12 @@ console.debug("Loading UI for perspectiveDefault");
         	})).html();
         	thumbHTML = thumbHTML + " ";
         } 	    
+
+        var checkboxHTML = $('<legend>', {
+                class: "checkbox",            
+            }).append($('<input>', { 
+                type: "checkbox", 
+            })).html();
         
 	    var titleHTML = $('<p>').append($('<span>', { 
             	text: fileName, 
@@ -64,7 +70,7 @@ console.debug("Loading UI for perspectiveDefault");
 	        .append($("<span>", { class: "caret"}))
 	        ).html();
 	        
-	    return buttonHTML +" "+ thumbHTML + titleHTML;        
+	    return checkboxHTML+" "+buttonHTML +" "+ thumbHTML + titleHTML;        
 	}
 
 	ExtUI.prototype.buildUI = function() {
@@ -177,7 +183,7 @@ console.debug("Loading UI for perspectiveDefault");
 	    this.viewToolbar.append($("<input>", { 
 	    	type: "search",
 	    	name: "fileFilter",
-	    	class: "pull-right",
+	    	class: "pull-right input-medium",
 	    	id:   this.extensionID+"FilterBox",
 	    	placeholder: "File Filter",
 	    })) 	    
@@ -217,7 +223,7 @@ console.debug("Loading UI for perspectiveDefault");
 	        "bInfo": false,
 	        "bAutoWidth": false,
 	        "aoColumns": [
-	            { "sTitle": "Title", "sClass": "right" },
+	            { "sTitle": "<label class='checkbox'><input id='"+this.extensionID+"ToogleSelectAll' type='checkbox'>Title</label>", "sClass": "right" },
 	            { "sTitle": "Tags" },            
 	            { "sTitle": "Size(bytes)" },
 	            { "sTitle": "Date Modified" },

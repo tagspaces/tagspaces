@@ -128,14 +128,24 @@ define(function(require, exports, module) {
 	    location.reload();
 	}
 	
-	function openFileViewer(full) {
-	    //if(full) {
-	    //	layoutContainer.sizePane("east",2000);
-	    	layoutContainer.open("east"); 
-	    //} else {
-	    //	layoutContainer.open("east");    	    	
-	    //}
+	function openFileViewer() {
+    	layoutContainer.open("east"); 
 	}
+
+    var isFullWidth = false; 
+
+    function toggleFullWidth(full) {
+        var fullWidth = window.innerWidth;
+        var halfWidth = Math.round(fullWidth/2);
+        if(!isFullWidth) {
+            layoutContainer.sizePane("east", fullWidth);
+            layoutContainer.open("east"); 
+        } else {
+            layoutContainer.sizePane("east", halfWidth);
+            layoutContainer.open("east");               
+        }
+        isFullWidth = !isFullWidth;
+    }
 
 	var fileDetailsFull = false; 
 	
@@ -273,6 +283,7 @@ define(function(require, exports, module) {
 	exports.closeFileViewer 			= closeFileViewer;
 	exports.toggleLeftPanel 			= toggleLeftPanel;
 	exports.toggleFileDetails 			= toggleFileDetails;
+	exports.toggleFullWidth             = toggleFullWidth;
 
 	// Proxying functions from tsCoreUI
 	exports.showAlertDialog 			= tsCoreUI.showAlertDialog;
