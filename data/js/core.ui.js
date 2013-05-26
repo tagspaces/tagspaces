@@ -6,7 +6,6 @@ define(function(require, exports, module) {
 
 	console.debug("Loading core.ui.js ...");
 
-    require('jsoneditor');
 	var TSCORE = require("tscore");
 
     var editor = undefined;
@@ -14,12 +13,6 @@ define(function(require, exports, module) {
 	
 	var fileContent = undefined;	
 
-	// Init JSON Editor
-	var initJSONEditor = function() {
-	    editor = new JSONEditor(document.getElementById("settingsEditor")); 
-	    formatter = new JSONFormatter(document.getElementById("settingsPlainJSON"));
-	}
-	
 	var showAlertDialog = function(message, title) {
 	    if (!title) { title = 'Alert'; }	
 	    if (!message) { message = 'No Message to Display.'; }
@@ -189,10 +182,13 @@ define(function(require, exports, module) {
 	    // Advanced Settings
         $( "#aboutDialogSettings" ).click(function() {
             $('#dialogOptions').modal('hide');
-            initJSONEditor();         
-            $("#settingsPlainJSON").hide();
-            editor.set(TSCORE.Config.Settings);
-            $('#dialogAdvancedSetting').modal('show');
+            require(['jsoneditor'], function () {
+                editor = new JSONEditor(document.getElementById("settingsEditor")); 
+                formatter = new JSONFormatter(document.getElementById("settingsPlainJSON"));
+                $("#settingsPlainJSON").hide();
+                editor.set(TSCORE.Config.Settings);
+                $('#dialogAdvancedSetting').modal('show');
+            });
         });
         	
         $( "#editorButton" ).click(function() {
