@@ -141,7 +141,7 @@ define(function(require, exports, module) {
 	    $( "#fileTags" ).empty();
 	    for (var i=0; i < tags.length; i++) {
 	        $( "#fileTags" ).append($("<button>", { 
-	            "class":  "btn btn-small btn-success tagButton", 
+	            "class":  "btn btn-success tagButton", 
 	            tag: tags[i], 
 	            filepath: filePath, 
 	            title: "Opens context menu for "+tags[i],
@@ -226,36 +226,36 @@ define(function(require, exports, module) {
 	}
 	
 	function addTagSuggestionButton(container) {
-	    $( ""+container ).append('<button id="openTagSuggestionMenu" class="btn btn-small" title="Tag Suggestions"><i class="icon-tags"></i> <b class="caret"></b></button>');
+	    $( ""+container ).append('<button id="openTagSuggestionMenu" class="btn" title="Tag Suggestions"><i class="icon-tags"></i> <b class="caret"></b></button>');
 	}
 	
     function addFileActionsButton(container) {
-        $( ""+container ).append('<button id="openFileActionsMenu" data-dropdown="#fileActionsMenu" class="btn btn-small" title="Opens a menu with additional file actions"><i class="icon-th-list"></i> <b class="caret"></b></button>');
+        $( ""+container ).append('<button id="openFileActionsMenu" data-dropdown="#fileActionsMenu" class="btn" title="Opens a menu with additional file actions"><i class="icon-th-list"></i> <b class="caret"></b></button>');
     }
 
     function addToggleFullWidthButton(container) {
-        $( ""+container ).append('<button id="toggleFullWidthButton" class="btn btn-small" title="Toggle Full Width"><i class="icon-resize-horizontal"></i></button>');
+        $( ""+container ).append('<button id="toggleFullWidthButton" class="btn" title="Toggle Full Width"><i class="icon-resize-horizontal"></i></button>');
         $( "#toggleFullWidthButton" ).click(function() {
              TSCORE.toggleFullWidth();           
         });
     }   
 	
 	function addNextButton(container) {
-	    $( ""+container ).append('<button id="nextFileButton" class="btn btn-small" title="Go to the next file"><i class="icon-circle-arrow-right"></i></button>');
+	    $( ""+container ).append('<button id="nextFileButton" class="btn" title="Go to the next file"><i class="icon-circle-arrow-right"></i></button>');
 	    $( "#nextFileButton" ).click(function() {
 			TSCORE.FileOpener.openFile(TSCORE.ViewManager.getNextFile(_openedFilePath));	    	
 	    });
 	}	
 	
 	function addPrevButton(container) {
-	    $( ""+container ).append('<button id="prevFileButton" class="btn btn-small" title="Go to the previous file"><i class="icon-circle-arrow-left"></i></button>');
+	    $( ""+container ).append('<button id="prevFileButton" class="btn" title="Go to the previous file"><i class="icon-circle-arrow-left"></i></button>');
 	    $( "#prevFileButton" ).click(function() {
 			TSCORE.FileOpener.openFile(TSCORE.ViewManager.getPrevFile(_openedFilePath));
 	    });
 	}	
 	
 	function addCloseButton(container) {
-	    $( ""+container ).append('<button id="closeOpenedFile" class="btn btn-small" title="Close file"><i class="icon-remove-sign"></i></button>');	    
+	    $( ""+container ).append('<button id="closeOpenedFile" class="btn" title="Close file"><i class="icon-remove-sign"></i></button>');	    
 	    $( "#closeOpenedFile" ).click(function() {
 	        if(_isEditMode) {
                 TSCORE.showConfirmDialog("Confirm","If you confirm, all made changes will be lost.", function() {
