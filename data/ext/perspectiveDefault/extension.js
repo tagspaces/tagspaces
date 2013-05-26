@@ -22,26 +22,23 @@ define(function(require, exports, module) {
 
 	function init() {
 		console.debug("Initializing perspective "+extensionID);
-
-		// TODO use css require extension for loading 'css!datatablescss' 
-		require([
-			extensionDirectory+'/perspectiveUI',
-			'datatables'
-		 	], function(extUI) {
-				UI = new extUI.ExtUI(extensionID);							
-				UI.buildUI();
-				UI.initTable();
-		});
 	}
 	
 	var load = function () {
 		console.debug("Loading perspective "+extensionID);
 
-		if(UI != undefined) {
-		    UI.reInitTableWithData(TSCORE.fileList);    
-		}			    
-
-		TSCORE.hideLoadingAnimation();
+        // TODO use css require extension for loading 'css!datatablescss' 
+        require([
+            extensionDirectory+'/perspectiveUI',
+            'datatables'
+            ], function(extUI) {
+                UI = new extUI.ExtUI(extensionID);                          
+                UI.buildUI();
+                UI.initTable();
+                UI.reInitTableWithData(TSCORE.fileList);    
+                TSCORE.hideLoadingAnimation();                        
+            }
+        );
 	}
 	
 	var setFileFilter = function (filter) {
