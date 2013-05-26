@@ -50,7 +50,7 @@ define(function(require, exports, module) {
 	    tsSettings.loadSettingsLocalStorage();
 	    
 	    // In firefox, by empty local storage trying to load the settings from mozilla preferences
-	    if(tsSettings.Settings == undefined && $.browser.mozilla) {
+	    if(tsSettings.Settings == undefined && isFirefox) {
 	        window.setTimeout(tsIOApi.loadSettings, 1000); // executes initUI and updateSettingMozillaPreferences by success
 	        console.debug("Loading setting with from mozilla pref execured with delay...");
 	    } 
