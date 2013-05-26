@@ -141,7 +141,7 @@ define(function(require, exports, module) {
 	    $( "#fileTags" ).empty();
 	    for (var i=0; i < tags.length; i++) {
 	        $( "#fileTags" ).append($("<button>", { 
-	            "class":  "btn btn-success tagButton", 
+	            "class":  "btn btn-success btn-small tagButton", 
 	            tag: tags[i], 
 	            filepath: filePath, 
 	            title: "Opens context menu for "+tags[i],
