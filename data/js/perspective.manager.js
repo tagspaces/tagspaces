@@ -48,8 +48,6 @@ var initViews = function () {
 	        });       
 		} 
 	}	
-	
-	$( "#viewSwitcher" ).buttonset();	
 }
 
 var initViewsUI = function(perspective) {
