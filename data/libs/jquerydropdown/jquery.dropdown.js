@@ -75,9 +75,9 @@ if(jQuery) (function($) {
 		$('BODY').on('click.dropdown', '[data-dropdown]', showMenu);
 		$('HTML').on('click.dropdown', hideDropdowns);
 		// Hide on resize (IE7/8 trigger this when any element is resized...)
-		if( !$.browser.msie || ($.browser.msie && $.browser.version >= 9) ) {
-			$(window).on('resize.dropdown', hideDropdowns);
-		}
+		//if( !$.browser.msie || ($.browser.msie && $.browser.version >= 9) ) {
+		//	$(window).on('resize.dropdown', hideDropdowns);
+		//}
 	});
 	
 })(jQuery);
