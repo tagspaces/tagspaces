@@ -32,7 +32,7 @@ define(function(require, exports, module) {
 		viewFooter.empty();	
 		
         viewToolbar.append($("<button>", { 
-            class: "btn btn-small disabled",
+            class: "btn disabled",
             disabled: true,
             title: "Create new file",
             id: this.extensionID+"CreateFileButton",    

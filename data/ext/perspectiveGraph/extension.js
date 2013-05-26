@@ -411,7 +411,7 @@ define(function(require, exports, module) {
             class: "btn-group", 
         })      
             .append($("<button>", { 
-                    class: "btn btn-small", 
+                    class: "btn", 
                     title: "Generate index tree of the current directory",
                     id: extensionID+"ReIndexButton",    
                 })
@@ -430,7 +430,7 @@ define(function(require, exports, module) {
             "data-toggle": "buttons-checkbox",        
         })      
             .append($("<button>", { 
-                    class: "btn btn-small", 
+                    class: "btn", 
                     title: "Activate Treemap Mode",
                     id: extensionID+"TreeMapMode",    
                 })
@@ -443,7 +443,7 @@ define(function(require, exports, module) {
             )
                     
             .append($("<button>", { 
-                    class: "btn btn-small", 
+                    class: "btn", 
                     title: "Activate Tree Mode",
                     id: extensionID+"TreeMode",    
                 })
