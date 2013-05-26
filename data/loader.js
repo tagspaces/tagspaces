@@ -36,14 +36,25 @@ require.config({
       }
     },
     paths: {
-        jquery: 'libs/jquery/jquery-1.8.3',
-        jqueryui: 'libs/jqueryui/jquery-ui-1.10.2',
+        jquery: 'libs/jquery/jquery-2.0.1',
+        jqueryui: 'libs/jqueryui/jquery.ui.core',
+        jqueryuiwidget: 'libs/jqueryui/jquery.ui.widget',
+        jqueryuimouse: 'libs/jqueryui/jquery.ui.mouse', 
+        jqueryuiposition: 'libs/jqueryui/jquery.ui.position',
+        jqueryuiselectable: 'libs/jqueryui/jquery.ui.selectable',        
+        jqueryuisortable: 'libs/jqueryui/jquery.ui.sortable',        
+        jqueryuiresizable: 'libs/jqueryui/jquery.ui.resizable',
+        jqueryuidraggable: 'libs/jqueryui/jquery.ui.draggable',
+        jqueryuidroppable: 'libs/jqueryui/jquery.ui.droppable',        
+        jqueryuiautocomplete: 'libs/jqueryui/jquery.ui.autocomplete',
+        jqueryuidatepicker: 'libs/jqueryui/jquery.ui.datepicker',   
+        
         bootstrap: 'libs/bootstrap/js/bootstrap',
         datatables: 'libs/datatables/js/jquery.dataTables.min',
         datatablescss: 'libs/datatables/css/jquery.dataTables',
         jsoneditor: 'libs/jsoneditor/jsoneditor',
         jsoneditorcss: 'libs/jsoneditor/jsoneditor',
-        jquerylayout: 'libs/jquerylayout/jquery.layout-1.3.0.rc30.77',
+        jquerylayout: 'libs/jquerylayout/jquery.layout-latest',
         jquerylayoutcss: 'libs/jquerylayout/layout-default-latest',
         jquerydropdown: 'libs/jquerydropdown/jquery.dropdown',
         jquerydropdowncss: 'libs/jquerydropdown/jquery.dropdown',        
@@ -81,8 +92,33 @@ require.config({
         'jqueryui': {
             deps: [
                 'jquery',
+                'jqueryuiwidget',
+                'jqueryuimouse', 
+                'jqueryuiposition',
+                'jqueryuiselectable',
+                'jqueryuiautocomplete',
+                'jqueryuidatepicker', 
             ]
         },
+        'jqueryuidraggable': {
+            deps: [
+                'jqueryui',
+                'jqueryuiwidget',
+                'jqueryuimouse',                 
+            ]
+        },        
+        'jqueryuidroppable': {
+            deps: [
+                'jqueryuidraggable',
+            ]
+        }, 
+        'jqueryuiresizable': {
+            deps: [
+                'jqueryui',
+                'jqueryuiwidget',
+                'jqueryuimouse',                 
+            ]
+        },        
         'datatables': {
             deps: [
                 'jquery'
@@ -102,9 +138,10 @@ define(function (require, exports, module) {
     // Load dependent non-module scripts
     require("jquery");
     require("jqueryui");
+    require("jqueryuidraggable");
+    require("jqueryuidroppable");
+    require("jqueryuiresizable");
     require("bootstrap");
-    require("datatables");
-    require("jsoneditor");
     require("jquerylayout");
     require("jquerydropdown");    
     require("less");
