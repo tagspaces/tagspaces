@@ -226,45 +226,15 @@ define(function(require, exports, module) {
     } 
     
     function initButtons() {
-        $( "#reloadTagSpace" )
-            .button()
-            .click(function() {
-                $( "#selectTagSpace" ).tooltip( "disable" );
-                $("#favoritesList").width($( "#reloadTagSpace" ).width()+$("#selectTagSpace").width());
+        $( "#selectTagSpace" ).click(function() {
+                //$("#favoritesList").width($( "#reloadTagSpace" ).width()+$("#selectTagSpace").width());
                 $("#favoritesList").show().position({
                     my: "left top",
                     at: "left bottom",
                     of: $( "#reloadTagSpace" )
                 });
-                $( document ).one( "click", function() {
-                    $("#favoritesList").hide();
-                });
                 return false;
-            })
-            .next()
-                .button({
-                    text: false,
-                    icons: {
-                        primary: "ui-icon-triangle-1-s"
-                    }
-                })
-                .click(function() {
-                    $("#favoritesList").width($( "#reloadTagSpace" ).width()+$("#selectTagSpace").width());
-                    $("#favoritesList").show().position({
-                        my: "left top",
-                        at: "left bottom",
-                        of: $( "#reloadTagSpace" )
-                    });
-                    $( document ).one( "click", function() {
-                        $("#favoritesList").hide();
-                    });
-                    return false;
-                })
-                .parent()
-                    .buttonset()
-                    .next()
-                        .hide()
-                        .menu();    
+        })   
                         
         $( "#selectTagSpace" ).tooltip();
     
@@ -344,47 +314,35 @@ define(function(require, exports, module) {
     function initFavorites() {
         console.debug("Creating location menu...");
         
-        $( "#favoritesList" ).menu();
-        $( "#favoritesList" ).menu("disable");
         $( "#favoritesList" ).empty();
-        
         var favoritesList = TSCORE.Config.Settings["tagspacesList"]
         for (var i=0; i < favoritesList.length; i++) { 
               $( "#favoritesList" ).append(
-                    $('<li>',  { title: favoritesList[i].path, name: favoritesList[i].name}).append(
-                        $('<a>', { href: "#"} ).append(
-                            "<i class='icon-briefcase'></i>"    
-                        ).append(
-                            " "+favoritesList[i].name
-                        )));
+                    $('<li>', {}).append(
+                        $('<a>', { 
+                            href: "#",
+                            title: favoritesList[i].path, 
+                            name: favoritesList[i].name
+                            } )
+                        .click(function() {
+                            nameCurrentFavorite = $(this).attr( "name" );
+                            openFavorite($(this).attr( "title" ), $(this).attr( "name" ));                           
+                        })
+                        .append("<i class='icon-briefcase'></i>")
+                        .append(" "+favoritesList[i].name)                         
+                        ));
         };
-        $( "#favoritesList" ).append('<li><hr></li>');    
-        $( "#favoritesList" ).append('<li name="createFavorite" id="createNewLocation" ><a href="#"><i class="icon-magnet"></i> New Location</a></li>');
-      //  $( "#favoritesList" ).append('<li name="editFavorite"><a href="javascript:void(0);"><i class="icon-pencil"></i> Edit Location</a></li>');
-        $( "#favoritesList" ).append('<li name="deleteFavorite"><a href="javascript:void(0);"><i class="icon-trash"></i> Remove Location</a></li>');
+        $( "#favoritesList" ).append('<li class="divider"></li>');    
+        $( "#favoritesList" ).append('<li id="createNewLocation"><a href="#"><i class="icon-magnet"></i> New Location</a></li>');
+        $( "#favoritesList" ).append('<li id="deleteFavorite"><a href="#"><i class="icon-trash"></i> Remove Location</a></li>');
        
-        $( "#favoritesList" ).menu("destroy").menu({
-            select: function( event, ui ) {
-                var commandName = ui.item.attr( "name" );
-                switch (commandName) {
-                  case "createFavorite":
-              		showCreateFolderConnectionDialog();
-                    break;
-                  case "editFavorite":
-                    console.debug("Editing fav... under dev...");   
-                    break;
-                  case "deleteFavorite":        
-               		showDeleteFolderConnectionDialog();
-                    break;  
-                  default:
-                    nameCurrentFavorite = ui.item.attr( "name" );
-                    openFavorite(ui.item.attr( "title" ), ui.item.attr( "name" ));   
-                    $( "#favoritesList" ).hide();  
-                    break;
-                }
-            }         
-        });  
-        $( "#favoritesList" ).hide(); 
+        $( "#createNewLocation" ).click(function() {
+            showCreateFolderConnectionDialog();         
+        });
+        
+        $( "#deleteFavorite" ).click(function() {
+            showDeleteFolderConnectionDialog();
+        }); 
     }
 
     // Public API definition
