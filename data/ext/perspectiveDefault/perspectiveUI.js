@@ -53,7 +53,8 @@ console.debug("Loading UI for perspectiveDefault");
         var checkboxHTML = $('<legend>', {
                 class: "checkbox",            
             }).append($('<input>', { 
-                type: "checkbox", 
+                type: "checkbox",
+                class: "fileSelection", 
             })).html();
         
 	    var titleHTML = $('<p>').append($('<span>', { 
@@ -85,9 +86,20 @@ console.debug("Loading UI for perspectiveDefault");
 			style: "margin: 0px",
 			id: this.extensionID+"Toolbar", 			
 	    })
+
+        .append($("<a>", { 
+            class: "btn ",
+            title: "Toggle Select All Files",
+            id: this.extensionID+"ToogleSelectAll",    
+        })
+        .click(function() {
+            
+        })
+        .append( "<input type='checkbox' style='margin-top: -3px;'>" )
+        )
 	    
 	    .append($("<a>", { 
-			class: "btn btn-small disabled",
+			class: "btn  disabled",
 	        title: "Create new file",
 	        id: this.extensionID+"CreateFileButton",    
 	    })
@@ -99,7 +111,7 @@ console.debug("Loading UI for perspectiveDefault");
         )
     
 	    .append($("<button>", { 
-            class: "btn btn-small disabled",
+            class: "btn  disabled",
 	        title: "Show subfolders content. \nOn subfolder with many files, this step can take some time!",
 	        id: this.extensionID+"IncludeSubDirsButton",    
 	    })
@@ -112,7 +124,7 @@ console.debug("Loading UI for perspectiveDefault");
 	    )
 	    
 	    .append($("<button>", { 
-            class: "btn btn-small disabled",	        
+            class: "btn  disabled",	        
 	        title: "Tag Selected Files",
 	        id: this.extensionID+"TagButton",    
 	    })
@@ -124,7 +136,7 @@ console.debug("Loading UI for perspectiveDefault");
 	    )    
 
 	    .append($("<button>", { 
-            class: "btn btn-small",	
+            class: "btn ",	
             "data-toggle": "button",        
 	        title: "Toggle file thumbnails",
 	        id: this.extensionID+"ShowTmbButton",    
@@ -137,7 +149,7 @@ console.debug("Loading UI for perspectiveDefault");
 	    )
  
 	    .append($("<button>", { 
-            class: "btn btn-small",	
+            class: "btn ",	
 	        title: "Increase Thumbnails Size",
 	        id: this.extensionID+"IncreaseThumbsButton",    
 	    })
@@ -155,7 +167,7 @@ console.debug("Loading UI for perspectiveDefault");
             "data-toggle": "buttons-checkbox",        
 	    })	    
 		    .append($("<button>", { 
-		            class: "btn btn-small",	
+		            class: "btn ",	
 			        title: "Toggle File Details",
 			        id: this.extensionID+"ShowFileDetailsButton",    
 			    })
@@ -167,7 +179,7 @@ console.debug("Loading UI for perspectiveDefault");
 		    )
 		     	    
 			.append($("<button>", { 
-		            class: "btn btn-small",	
+		            class: "btn ",	
 			        title: "Toggle Tags",
 			        id: this.extensionID+"ShowTagsButton",    
 			    })
@@ -179,28 +191,35 @@ console.debug("Loading UI for perspectiveDefault");
 		    )	     
 	    ) // end button group
 
-		// Filter	    	    
-	    this.viewToolbar.append($("<input>", { 
-	    	type: "search",
-	    	name: "fileFilter",
-	    	class: "pull-right input-medium",
-	    	id:   this.extensionID+"FilterBox",
-	    	placeholder: "File Filter",
-	    })) 	    
-
-        // Filter functionality
-        $("#"+this.extensionID+"FilterBox").keyup(function() {
-            self.fileTable.fnFilter(this.value);
-            console.debug("Filter to value: "+this.value);
-        });  
+        this.viewToolbar.append($("<div >", { 
+            class: "input-append pull-right", 
+        })      
+            // Filter               
+            .append($("<input>", { 
+                type: "text",
+                //name: "fileFilter",
+                class: "input-small",
+                id:   this.extensionID+"FilterBox",
+                placeholder: "Filter",
+            }).keyup(function() {
+                self.fileTable.fnFilter(this.value);
+                console.debug("Filter to value: "+this.value);
+            }))
+                    
+            .append($("<button>", { 
+                    class: "btn", 
+                    title: "Clear Filter",
+                    id:   this.extensionID+"ClearFilterButton",
+                })
+                .append( $("<i>", { class: "icon-remove", }) )
+            )        
+        ); // End Filter
         
-        $('#'+this.extensionID+"ClearFilterBox").click(function(evt) {
+        $('#'+this.extensionID+"ClearFilterButton").click(function(evt) {
             evt.preventDefault();
-            $("#"+this.extensionID+"FilterBox").val('').focus();
-            self.fileTable.fnFilter( "" );  
-        });   
-        
-        // End Filter
+            $("#"+self.extensionID+"FilterBox").val('').focus();
+            self.fileTable.fnFilter( "" );
+        });            
 	
 	    this.viewContainer.append($("<table>", { 
 			cellpadding: "0",
@@ -223,7 +242,7 @@ console.debug("Loading UI for perspectiveDefault");
 	        "bInfo": false,
 	        "bAutoWidth": false,
 	        "aoColumns": [
-	            { "sTitle": "<label class='checkbox'><input id='"+this.extensionID+"ToogleSelectAll' type='checkbox'>Title</label>", "sClass": "right" },
+	            { "sTitle": "Title", "sClass": "right" },
 	            { "sTitle": "Tags" },            
 	            { "sTitle": "Size(bytes)" },
 	            { "sTitle": "Date Modified" },
@@ -266,7 +285,7 @@ console.debug("Loading UI for perspectiveDefault");
 	    var self = this;
 		
 	    // Makes the body of the fileTable selectable
-	    $("tbody", $(this.fileTable)).selectable({
+	    /* $("tbody", $(this.fileTable)).selectable({
 	      filter: 'tr',
 	      start: function() {
 	        console.debug("Start selecting");  
@@ -282,7 +301,7 @@ console.debug("Loading UI for perspectiveDefault");
 	          });
 	        console.debug("Selected files: "+TSCORE.selectedFiles);
 	      }
-	    })
+	    }) */
 	}			
 	
 	ExtUI.prototype.reInitTableWithData = function(fileList) {
@@ -348,6 +367,12 @@ console.debug("Loading UI for perspectiveDefault");
 	            self.selectFile(this, $(this).attr("filepath"));
 	        } )        
 	        .dropdown( 'attach' , '#fileMenu' );   
+	    
+	    this.fileTable.$('.fileSelection')
+            .click( function() {
+                //$(this).attr("checked","checked");
+                //self.selectFile(this, $(this).attr("filepath"));
+            } )        
 	    
 	    this.fileTable.$('.extTagButton')
 	        .click( function() {

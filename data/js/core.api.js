@@ -180,7 +180,7 @@ define(function(require, exports, module) {
 	    ,   north__spacing_open:        0       // no resizer-bar when open (zero height)       
 	 //       ,   north__togglerLength_closed: '100%' // toggle-button is full-width of resizer-bar
 	 //       ,   north__spacing_closed:      20      // big resizer-bar when open (zero height)
-	    ,   north__size:                33      
+	    ,   north__size:                35      
 	 
 	    ,   south__resizable:           false   // OVERRIDE the pane-default of 'resizable=true'
 	    ,   south__spacing_open:        0       // no resizer-bar when open (zero height)
@@ -232,7 +232,7 @@ define(function(require, exports, module) {
 	        ,   south__paneSelector:    ".middle-south"   
 	        ,   minSize:                0  // ALL panes
 	        ,   center__minSize:        300
-	        ,   north__size:            32
+	        ,   north__size:            35
 	        ,   north__resizable:       false        
 	        ,   north__spacing_open:    0    
 	        ,   south__spacing_open:    0              
@@ -253,7 +253,7 @@ define(function(require, exports, module) {
 	    });
 	
 	    var dirNavigationLayout = $('#directoryNavigator').layout({
-	            minSize:                32  // ALL panes
+	            minSize:                35  // ALL panes
 	        ,   north__paneSelector:    "#directoryNavigatorNorth"
 	        ,   center__paneSelector:   "#dirTree"
 	        ,   north__size:            32

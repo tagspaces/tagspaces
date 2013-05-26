@@ -21,12 +21,12 @@
 <div id="loading" style="text-align: center; width: 100%; font-size: 1.4em; position:absolute; top:50%; text-shadow: 0px 1px 1px #fff; ">Loading <a href="javascript:window.location.reload();">TagSpaces</a> ... </div>	
 <div id="container" style="display: none;">
     <div class="ui-layout-north" style="padding: 3px">
-        <button id="toggleLeftPanel" class="btn btn-small" title="Toggle Leftpanel"><i class="icon-tagspaces"></i></button>
+        <button id="toggleLeftPanel" class="btn" title="Toggle Leftpanel"><i class="icon-tagspaces"></i></button>
         <a href="http://tagspaces.org" target="_new"><span id="logo">TagSpaces<sup id="appVersion"></sup></span></a>
         <span id="loadingAnimation">&nbsp;</span> 
 		<div class="btn-toolbar pull-right" style="margin: 0px;">
 			<div id="viewSwitcher" class="btn-group" data-toggle="buttons-radio"></div>
-	        <button id="openOptions" role="button" class="btn btn-small" title="Open Settings Menu" data-dropdown="#settingsMenu"><i class="icon-cog"></i> <b class="caret"></b></button>        
+	        <button id="openOptions" role="button" class="btn" title="Open Settings Menu" data-dropdown="#settingsMenu"><i class="icon-cog"></i> <b class="caret"></b></button>        
 	    </div>
     </div>
 
@@ -34,8 +34,8 @@
         <div id="directoryNavigator" class="west-center" style="padding: 0">
             <div id="directoryNavigatorNorth" style="padding: 0;" >
                 <div class="btn-group" style=" width: 100%;">
-                    <button id="reloadTagSpace" style="text-align: left; width: 85%;" class="btn btn-small" >Select Location</button>
-                    <button id="selectTagSpace" style="width: 15%;" class="btn btn-small dropdown-toggle"><span class="caret"></span></button> 
+                    <button id="reloadTagSpace" style="width: 85%; text-align: left;" class="btn"  data-dropdown="#favoritesList" >Select Location</button>
+                    <button id="selectTagSpace" style="width: 15%;" class="btn" title="Test Tooltip"><span class="caret"></span></button> 
                 </div>                
             </div>
             <div id="dirTree" style="padding: 0px; height: 100%;">

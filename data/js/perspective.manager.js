@@ -71,7 +71,7 @@ var initViewsUI = function(perspective) {
     $("#viewSwitcher").append($("<button>", { 
         "viewid":  perspective.ID,
         "type":    "button", 
-        "class":   "btn btn-small",        
+        "class":   "btn",        
         id:      perspective.ID+"Button",    
     }).append($("<i>", {
         "class":  perspective.Icon

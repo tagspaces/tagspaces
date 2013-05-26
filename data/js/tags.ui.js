@@ -9,12 +9,6 @@ define(function(require, exports, module) {
 	var TSCORE = require("tscore");
 
 	function initContextMenus() {
-	    $( "#tagSuggestionsMenu" ).menu({
-	        select: function( event, ui ) {
-	            console.debug("Tag suggestion "+ui.item.attr( "action" )+" for tag: "+TSCORE.selectedTag);            
-	        }        
-	    });        
-	    
         $( "#extMenuAddTagAsFilter" ).click( function() {
             TSCORE.ViewManager.setFileFilter(TSCORE.selectedTag);
         });
