@@ -36,99 +36,60 @@ require.config({
       }
     },
     paths: {
-        jquery: 'libs/jquery/jquery-2.0.1',
-        jqueryui: 'libs/jqueryui/jquery.ui.core',
-        jqueryuiwidget: 'libs/jqueryui/jquery.ui.widget',
-        jqueryuimouse: 'libs/jqueryui/jquery.ui.mouse', 
-        jqueryuiposition: 'libs/jqueryui/jquery.ui.position',
-        jqueryuiselectable: 'libs/jqueryui/jquery.ui.selectable',        
-        jqueryuisortable: 'libs/jqueryui/jquery.ui.sortable',        
-        jqueryuiresizable: 'libs/jqueryui/jquery.ui.resizable',
-        jqueryuidraggable: 'libs/jqueryui/jquery.ui.draggable',
-        jqueryuidroppable: 'libs/jqueryui/jquery.ui.droppable',        
-        jqueryuiautocomplete: 'libs/jqueryui/jquery.ui.autocomplete',
-        jqueryuidatepicker: 'libs/jqueryui/jquery.ui.datepicker',   
+        jquery:                 'libs/jquery/jquery-2.0.1',
+        jqueryui:               'libs/jqueryui/jquery.ui.core',
+        jqueryuiwidget:         'libs/jqueryui/jquery.ui.widget',
+        jqueryuimouse:          'libs/jqueryui/jquery.ui.mouse', 
+        jqueryuiposition:       'libs/jqueryui/jquery.ui.position',
+        jqueryuiselectable:     'libs/jqueryui/jquery.ui.selectable',        
+        jqueryuisortable:       'libs/jqueryui/jquery.ui.sortable',        
+        jqueryuiresizable:      'libs/jqueryui/jquery.ui.resizable',
+        jqueryuidraggable:      'libs/jqueryui/jquery.ui.draggable',
+        jqueryuidroppable:      'libs/jqueryui/jquery.ui.droppable',        
+        jqueryuiautocomplete:   'libs/jqueryui/jquery.ui.autocomplete',
+        jqueryuidatepicker:     'libs/jqueryui/jquery.ui.datepicker',   
         
-        bootstrap: 'libs/bootstrap/js/bootstrap',
-        datatables: 'libs/datatables/js/jquery.dataTables.min',
-        datatablescss: 'libs/datatables/css/jquery.dataTables',
-        jsoneditor: 'libs/jsoneditor/jsoneditor',
-        jsoneditorcss: 'libs/jsoneditor/jsoneditor',
-        jquerylayout: 'libs/jquerylayout/jquery.layout-latest',
-        jquerylayoutcss: 'libs/jquerylayout/layout-default-latest',
-        jquerydropdown: 'libs/jquerydropdown/jquery.dropdown',
-        jquerydropdowncss: 'libs/jquerydropdown/jquery.dropdown',        
-        less: 'libs/less/less-1.3.3.min',
-        jqueryeditinplace: 'libs/jqueryeditinplace/jquery.editinplace',
+        bootstrap:              'libs/bootstrap/js/bootstrap',
+        datatables:             'libs/datatables/js/jquery.dataTables.min',
+        datatablescss:          'libs/datatables/css/jquery.dataTables',
+        jsoneditor:             'libs/jsoneditor/jsoneditor',
+        jsoneditorcss:          'libs/jsoneditor/jsoneditor',
+        jquerylayout:           'libs/jquerylayout/jquery.layout-latest',
+        jquerylayoutcss:        'libs/jquerylayout/layout-default-latest',
+        jquerydropdown:         'libs/jquerydropdown/jquery.dropdown',
+        jquerydropdowncss:      'libs/jquerydropdown/jquery.dropdown',        
+        less:                   'libs/less/less-1.3.3.min',
+        jqueryeditinplace:      'libs/jqueryeditinplace/jquery.editinplace',
 
-        tscore: 'js/core.api',
-        tssetting: 'js/settings.api',
-        tspersmanager: "js/perspective.manager",
-        tstagutils: "js/tagutils",
-        tsfileopener: "js/fileopener",
-        tstagsui: "js/tags.ui",
-        tsdirectoriesui: "js/directories.ui",
-        tscoreui: "js/core.ui",
-        tsioapi: IO_JS,        
-        tsiomozrec: "js/ioapi.mozilla.receiver",        
+        tscore:                 'js/core.api',
+        tssetting:              'js/settings.api',
+        tspersmanager:          'js/perspective.manager',
+        tstagutils:             'js/tagutils',
+        tsfileopener:           'js/fileopener',
+        tstagsui:               'js/tags.ui',
+        tsdirectoriesui:        'js/directories.ui',
+        tscoreui:               'js/core.ui',
+        tsioapi:                IO_JS,        
+        tsiomozrec:             'js/ioapi.mozilla.receiver',        
     }, 
     shim: {
-        'jquerylayout': {
-            deps: [
-                'jquery',
-                'jqueryui',
-            ]
-        },        
-        'bootstrap': {
-            deps: [
-                'jquery',
-            ]
-        },
-        'jquerydropdown': {
-            deps: [
-                'jquery'
-            ]
-        },
-        'jqueryui': {
-            deps: [
-                'jquery',
-                'jqueryuiwidget',
-                'jqueryuimouse', 
-                'jqueryuiposition',
-                'jqueryuiselectable',
-                'jqueryuiautocomplete',
-                'jqueryuidatepicker', 
-            ]
-        },
-        'jqueryuidraggable': {
-            deps: [
-                'jqueryui',
-                'jqueryuiwidget',
-                'jqueryuimouse',                 
-            ]
-        },        
-        'jqueryuidroppable': {
-            deps: [
-                'jqueryuidraggable',
-            ]
-        }, 
-        'jqueryuiresizable': {
-            deps: [
-                'jqueryui',
-                'jqueryuiwidget',
-                'jqueryuimouse',                 
-            ]
-        },        
-        'datatables': {
-            deps: [
-                'jquery'
-            ]
-        },
-        'jqueryeditinplace': {
-            deps: [
-                'jquery'
-            ]
-        },        
+        'jqueryui':             { deps: ['jquery'] },
+        'jqueryuiwidget':       { deps: ['jqueryui'] }, 
+        'jqueryuimouse':        { deps: ['jqueryui'] },
+        'jqueryuiposition':     { deps: ['jqueryui'] },
+        'jqueryuiselectable':   { deps: ['jqueryui','jqueryuiwidget',] },
+        'jqueryuisortable':     { deps: ['jqueryui'] },
+        'jqueryuiautocomplete': { deps: ['jqueryui','jqueryuiwidget',] },
+        'jqueryuidatepicker':   { deps: ['jqueryui'] },
+        'jqueryuidroppable':    { deps: ['jqueryuidraggable' ] }, 
+        'jqueryuidraggable':    { deps: ['jqueryui','jqueryuiwidget','jqueryuimouse' ] },        
+        'jqueryuiresizable':    { deps: ['jqueryui','jqueryuiwidget','jqueryuimouse' ] },  
+        
+        'jquerylayout':         { deps: ['jquery', 'jqueryui' ] },        
+        'bootstrap':            { deps: ['jquery'] },              
+        'jquerydropdown':       { deps: ['jquery'] },
+        'datatables':           { deps: ['jquery'] },
+        'jqueryeditinplace':    { deps: ['jquery'] },        
     } 
 });
 
@@ -141,6 +102,9 @@ define(function (require, exports, module) {
     require("jqueryuidraggable");
     require("jqueryuidroppable");
     require("jqueryuiresizable");
+    require("jqueryuiposition");
+    require("jqueryuiselectable");
+    require("jqueryuiautocomplete");
     require("bootstrap");
     require("jquerylayout");
     require("jquerydropdown");    
