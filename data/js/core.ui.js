@@ -1,4 +1,4 @@
-/* Copyright (c) 2012 The Tagspaces Authors. All rights reserved.
+/* Copyright (c) 2012-2013 The TagSpaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that 
  * can be found in the LICENSE file. */
 define(function(require, exports, module) {
@@ -174,11 +174,18 @@ define(function(require, exports, module) {
         });  
 	    
 	    // End Edit Tag Dialog
-	    
+    
 	    $( "#aboutDialogBack" ).click(function() {
             $("#aboutIframe").attr("src","about.html");
         });
-	    	    
+
+        // Open Options Dialog
+        $( "#openOptions" ).click(function() {
+            require(['tsoptions'], function () {
+                $('#dialogOptions').modal('show');
+            });
+        });
+
 	    // Advanced Settings
         $( "#aboutDialogSettings" ).click(function() {
             $('#dialogOptions').modal('hide');

@@ -45,28 +45,19 @@ define(function(require, exports, module) {
 	    "appBuild": "@VERSION@.@BUILD@",
 		"settingsVersion": 1,
 		"newTextFileContent": "Text file created with tagspaces!",
-	    "newHTMLFileContent": "<html><head><meta http-equiv='content-type' content='text/html; charset=utf-8'><title>Tagspaces File</title></head><body>File created with tagspaces!</body></html>",	
-		"newMDFileContent": '#File created with tagspaces!',
+	    "newHTMLFileContent": "<html><head><title>Tagspaces File</title></head><body>HTML file created with tagspaces!</body></html>",	
+		"newMDFileContent": '#Markdown file created with tagspaces!',
 		"showUnixHiddenEntries": false, 
 		"lastOpenedTSID": 0,
 	    "lastOpenedDirectory": "",
-		"tagspacesList": [
-            {
-                "name": "Sandbox",
-                "path": "/media/z/TagSpaces/sandbox/"
-            },		
-		],
+		"tagspacesList": [],
 	    "extensionsPath": "ext",
 	    "extensions": [
 	        {   
 	            "id": "perspectiveThumb", // ID should be equal to the directory name where the extension is located 
-	            "enabled": "true", 
-	            "type": "view", 
 	        },
             {   
                 "id": "perspectiveGraph", // ID should be equal to the directory name where the extension is located 
-                "enabled": "true", 
-                "type": "view", 
             },	        
 	    ],
 	    "supportedFileTypes": [
@@ -150,13 +141,13 @@ define(function(require, exports, module) {
 			exports.Settings["extensions"] = exports.DefaultSettings["extensions"];
 			exports.Settings["appVersion"] = exports.DefaultSettings["appVersion"];
 			exports.Settings["appBuild"] = exports.DefaultSettings["appBuild"];
-			getExtensions();
+			getPerspectiveExtensions();
 			getExtensionPath();
 	    	saveSettings();   		
 		}
 	}
 	
-	var getExtensions = function() {
+	var getPerspectiveExtensions = function() {
 		if(exports.Settings["extensions"] == null) {
 			exports.Settings["extensions"] = exports.DefaultSettings["extensions"];
 		}
@@ -459,7 +450,7 @@ define(function(require, exports, module) {
 	
     // Public API definition
     exports.upgradeSettings               			= upgradeSettings;
-    exports.getExtensions              				= getExtensions;
+    exports.getPerspectiveExtensions              	= getPerspectiveExtensions;
     exports.getExtensionPath              			= getExtensionPath;    
     exports.getNewTextFileContent                	= getNewTextFileContent;
     exports.getNewHTMLFileContent                	= getNewHTMLFileContent;	
