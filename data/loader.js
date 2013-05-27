@@ -1,4 +1,4 @@
-/* Copyright (c) 2012 The Tagspaces Authors. All rights reserved.
+/* Copyright (c) 2012-2013 The TagSpaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that 
  * can be found in the LICENSE file. */
 
@@ -73,20 +73,19 @@ require.config({
         tsiomozrec:             'js/ioapi.mozilla.receiver',        
     }, 
     shim: {
+        'bootstrap':            { deps: ['jquery'] }, 
         'jqueryui':             { deps: ['jquery'] },
         'jqueryuiwidget':       { deps: ['jqueryui'] }, 
-        'jqueryuimouse':        { deps: ['jqueryui'] },
+        'jqueryuimouse':        { deps: ['jqueryui','jqueryuiwidget'] },
         'jqueryuiposition':     { deps: ['jqueryui'] },
-        'jqueryuiselectable':   { deps: ['jqueryui','jqueryuiwidget',] },
-        'jqueryuisortable':     { deps: ['jqueryui'] },
-        'jqueryuiautocomplete': { deps: ['jqueryui','jqueryuiwidget',] },
+        'jqueryuiselectable':   { deps: ['jqueryui','jqueryuiwidget','jqueryuimouse'] },
+        'jqueryuisortable':     { deps: ['jqueryui','jqueryuiwidget','jqueryuimouse'] },
         'jqueryuidatepicker':   { deps: ['jqueryui'] },
-        'jqueryuidroppable':    { deps: ['jqueryuidraggable' ] }, 
-        'jqueryuidraggable':    { deps: ['jqueryui','jqueryuiwidget','jqueryuimouse' ] },        
-        'jqueryuiresizable':    { deps: ['jqueryui','jqueryuiwidget','jqueryuimouse' ] },  
+        'jqueryuidroppable':    { deps: ['jqueryui','jqueryuiwidget','jqueryuimouse','jqueryuidraggable'] }, 
+        'jqueryuidraggable':    { deps: ['jqueryui','jqueryuiwidget','jqueryuimouse'] },        
+        'jqueryuiresizable':    { deps: ['jqueryui','jqueryuiwidget','jqueryuimouse'] },  
         
-        'jquerylayout':         { deps: ['jquery', 'jqueryui' ] },        
-        'bootstrap':            { deps: ['jquery'] },              
+        'jquerylayout':         { deps: ['jquery', 'jqueryuidraggable' ] },        
         'jquerydropdown':       { deps: ['jquery'] },
         'datatables':           { deps: ['jquery'] },
         'jqueryeditinplace':    { deps: ['jquery'] },        
@@ -104,7 +103,6 @@ define(function (require, exports, module) {
     require("jqueryuiresizable");
     require("jqueryuiposition");
     require("jqueryuiselectable");
-    require("jqueryuiautocomplete");
     require("bootstrap");
     require("jquerylayout");
     require("jquerydropdown");    
