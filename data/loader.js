@@ -63,6 +63,7 @@ require.config({
 
         tscore:                 'js/core.api',
         tssetting:              'js/settings.api',
+        tsoptions:              'js/options.ui',
         tspersmanager:          'js/perspective.manager',
         tstagutils:             'js/tagutils',
         tsfileopener:           'js/fileopener',
@@ -83,41 +84,44 @@ require.config({
         'jqueryuidatepicker':   { deps: ['jqueryui'] },
         'jqueryuidroppable':    { deps: ['jqueryui','jqueryuiwidget','jqueryuimouse','jqueryuidraggable'] }, 
         'jqueryuidraggable':    { deps: ['jqueryui','jqueryuiwidget','jqueryuimouse'] },        
-        'jqueryuiresizable':    { deps: ['jqueryui','jqueryuiwidget','jqueryuimouse'] },  
-        
+        'jqueryuiresizable':    { deps: ['jqueryui','jqueryuiwidget','jqueryuimouse'] },          
         'jquerylayout':         { deps: ['jquery', 'jqueryuidraggable' ] },        
         'jquerydropdown':       { deps: ['jquery'] },
         'datatables':           { deps: ['jquery'] },
-        'jqueryeditinplace':    { deps: ['jquery'] },        
+        'jqueryeditinplace':    { deps: ['jquery'] },
+        'tscore':               { deps: [
+                'jquery',
+                'jqueryui',
+                'jqueryuidraggable',
+                'jqueryuidroppable',
+                'jqueryuiresizable',
+                'jqueryuiposition',
+                'jqueryuiselectable',
+                'bootstrap',
+                'jquerylayout',
+                'jquerydropdown',  
+            ] },        
     } 
 });
 
 define(function (require, exports, module) {
-//"use strict";
-        
-    // Load dependent non-module scripts
-    require("jquery");
-    require("jqueryui");
-    require("jqueryuidraggable");
-    require("jqueryuidroppable");
-    require("jqueryuiresizable");
-    require("jqueryuiposition");
-    require("jqueryuiselectable");
-    require("bootstrap");
-    require("jquerylayout");
-    require("jquerydropdown");    
-    require("less");
-    require("jqueryeditinplace");
-	
+"use strict";
+
+    require("less");	
 	if( isFirefox ) {
 		require("tsiomozrec");    
-	}
-	                                
-    var TSCORE = require("tscore");
+	}	                                
 
+    var TSCORE = undefined;
+    require(['tscore'], function (core) {
+        TSCORE = core;
+        TSCORE.initApp();
+    }); 
+
+/*    var TSCORE = require("tscore");
 	require(['libs/requirejs/domReady!'], function () {
 	    //This function is called once the DOM is ready
 		TSCORE.initApp();
-	});
+	}); */
 
 });    
