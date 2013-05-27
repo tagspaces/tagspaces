@@ -65,7 +65,7 @@ console.debug("Loading UI for perspectiveDefault");
 	    var buttonHTML = $('<span>').append($('<button>', { 
 	            title: "Options for "+fileName, 
 	            filepath: filePath,
-	            class: 'btn btn-small fileTitleButton', 
+	            class: 'btn fileTitleButton', 
 	        })
 	        .append( $("<i>", { class: "icon-file", }) )
 	        .append($("<span>", { class: "caret"}))
@@ -390,7 +390,7 @@ console.debug("Loading UI for perspectiveDefault");
 	    this.fileTable.$('.fileTitle')
 			.editInPlace({
 				callback: function(unused, newTitle) { 
-					TSCORE.TagUtils.changeTitle($(this).parent().children(0).attr("filepath"),newTitle);
+					TSCORE.TagUtils.changeTitle($(this).parent().find(".fileTitleButton").attr("filepath"),newTitle);
 					},
 	    		show_buttons: false,
 	    		callback_skip_dom_reset: true
