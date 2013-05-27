@@ -28,26 +28,28 @@ var initViews = function () {
    
    		TSCORE.currentView = perspective.ID;
 		perspective.load();
-    });  
-	
-	var extensions = TSCORE.Config.getExtensions();
-	for (var i=0; i < extensions.length; i++) {
-		if(extensions[i].enabled && (extensions[i].type == "view") ) {
-			
-			// TODO Some libraries such as ace editor are not working using paths like this "file:///C:/blabal/extension.js"
-	        var extPath = TSCORE.Config.getExtensionPath()+"/"+extensions[i].id+"/"+"extension.js"; 
+        
+        // Make shure default perspective is loaded first
+        var extensions = TSCORE.Config.getPerspectiveExtensions();
+        for (var i=0; i < extensions.length; i++) {
+            //if(extensions[i].enabled && (extensions[i].type == "view") ) {
+                
+                // TODO Some libraries such as ace editor are not working using paths like this "file:///C:/blabal/extension.js"
+                var extPath = TSCORE.Config.getExtensionPath()+"/"+extensions[i].id+"/"+"extension.js"; 
+    
+                require([extPath], function(perspective) {
+                    perspectives.push(perspective);
+                    initViewsUI(perspective);
+                    //try {             
+                        perspective.init();
+                    //} catch(e) {
+                    //  console.debug("Error while executing 'init' on "+perspectives[i].ID+" - "+e);
+                    //}            
+                });       
+            //} 
+        }   
 
-	        require([extPath], function(perspective) {
-	            perspectives.push(perspective);
-			    initViewsUI(perspective);
-		 		//try { 			
-		 			perspective.init();
-		 		//} catch(e) {
-		 		//	console.debug("Error while executing 'init' on "+perspectives[i].ID+" - "+e);
-		 		//}			   
-	        });       
-		} 
-	}	
+    });  
 }
 
 var initViewsUI = function(perspective) {
