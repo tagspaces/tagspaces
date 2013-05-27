@@ -206,8 +206,8 @@ define(function(require, exports, module) {
 	                title: "Add tag "+suggTags[i]+" to current file", 
 					tagname: suggTags[i],
 					filepath: filePath,
-	                text: "Tag with '"+suggTags[i]+"'" 
 	                })
+	                .html("<i class='icon-tag'></i> Tag with '"+suggTags[i]+"'") 
 	                .click(function() {
 			            var tagName = $(this).attr( "tagname" );    
 			            var filePath = $(this).attr( "filepath" );    		            
@@ -235,7 +235,7 @@ define(function(require, exports, module) {
     }
 
     function addToggleFullWidthButton(container) {
-        $( ""+container ).append('<button id="toggleFullWidthButton" class="btn" title="Toggle Full Width"><i class="icon-resize-horizontal"></i></button>');
+        $( ""+container ).append('<button id="toggleFullWidthButton" class="btn" title="Toggle Full Width"><i class="icon-sort icon-rotate-90"></i></button>');
         $( "#toggleFullWidthButton" ).click(function() {
              TSCORE.toggleFullWidth();           
         });
