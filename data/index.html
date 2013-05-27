@@ -11,6 +11,7 @@
 	<title>TagSpaces</title>
     <script type="text/javascript" data-main="loader" src="libs/requirejs/require.js"></script>
     <link rel="stylesheet" type="text/css" href="libs/jqueryui/custom-theme/jquery-ui-1.10.2.custom.css">
+    <link rel="stylesheet" type="text/css" href="libs/font-awesome/css/font-awesome.css">
     <link rel="stylesheet" type="text/css" href="libs/jquerylayout/layout-default-latest.css">    
     <link rel="stylesheet" type="text/css" href="libs/jsoneditor/jsoneditor.css">
     <link rel="stylesheet" type="text/css" href="libs/jquerydropdown/jquery.dropdown.css">    
@@ -18,7 +19,7 @@
     <link rel="stylesheet/less" type="text/css" href="css/tagspaces.less">
 </head>
 <body style="background-color: lightgray;">
-<div id="loading" style="text-align: center; width: 100%; font-size: 1.4em; position:absolute; top:50%; text-shadow: 0px 1px 1px #fff; ">Loading <a href="javascript:window.location.reload();">TagSpaces</a> ... </div>	
+<div id="loading" style="text-align: center; width: 100%; font-size: 1.4em; position:absolute; top:50%; text-shadow: 0px 1px 1px #fff; ">Loading <a href="index.html">TagSpaces</a> ... </div>	
 <div id="container" style="display: none;">
     <div class="ui-layout-north" style="padding: 3px">
         <button id="toggleLeftPanel" class="btn" title="Toggle Navigator & Tag Panel"><i class="icon-tagspaces"></i></button>
@@ -26,7 +27,7 @@
         <span id="loadingAnimation">&nbsp;</span> 
 		<div class="btn-toolbar pull-right" style="margin: 0px;">
 			<div id="viewSwitcher" class="btn-group" data-toggle="buttons-radio"></div>
-	        <button id="openOptions" role="button" class="btn" title="Open Settings Menu" data-dropdown="#settingsMenu"><i class="icon-cog"></i> <b class="caret"></b></button>        
+	        <button role="button" class="btn" title="Additional Actions" data-dropdown="#settingsMenu"><i class="icon-reorder"></i> <b class="caret"></b></button>        
 	    </div>
     </div>
 
@@ -55,12 +56,15 @@
         <div class="east-north" style="padding: 2px; background-color: #EEEEEE;">
             <span id="fileTitle" style="padding: 3px"></span>
             <span id="filetoolbox" class="btn-group pull-right"></span>
-            <p id="tagsContainer" style="margin-top: 5px">
-                <span id="fileTags"></span>
-            </p>  
-            <p>         
-            Path: <input id="selectedFilePath" READONLY style="width: 100%; height:25px; border: 0px; background-color: transparent;" ></input>            
-        	</p>
+            <p id="tagsContainer" style="margin-top: 10px"><span id="fileTags"></span></p>
+            <form class="form-horizontal">
+                <div class="control-group">
+                    <label class="control-label" for="">Filepath</label>
+                    <div class="controls">
+                        <input id="selectedFilePath" READONLY style="width: 100%; height:25px; border: 0px; background-color: transparent;" >
+                    </div>
+                </div>
+            </form>              
         </div>        
         <div class="east-center" id="content" style="padding: 0; height: 100%; overflow: hidden !important;">
             <div id="viewer" allowfullscreen style="width: 100%; height: 100%" ></div>
@@ -148,32 +152,7 @@
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
         <h4>About TagSpaces</h4>
       </div>
-      <div class="modal-body">
-		<form class="form-horizontal">
-			<div class="control-group">
-				<label class="control-label" for="inputEmail">Email</label>
-				<div class="controls">
-					<input type="text" id="inputEmail" placeholder="Email">
-				</div>
-			</div>
-			<div class="control-group">
-				<label class="control-label" for="inputPassword">Password</label>
-				<div class="controls">
-					<input type="password" id="inputPassword" placeholder="Password">
-				</div>
-			</div>
-			<div class="control-group">
-				<div class="controls">
-					<label class="checkbox">
-						<input type="checkbox">
-						Remember me </label>
-					<button type="submit" class="btn">
-						Sign in
-					</button>
-				</div>
-			</div>
-		</form>
-      </div>
+      <div class="modal-body"><form class="form-horizontal"></form></div>
       <div class="modal-footer">
         <button class="btn" data-dismiss="modal" id="aboutDialogSettings">Advanced Settings</button>       
         <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Close</button>
@@ -422,8 +401,9 @@
     </ul>     
     
     <ul id="settingsMenu" class="dropdown-menu has-tip anchor-right">
-        <li><a id="openOptions" href="#dialogOptions" title="Options Dialog" data-toggle="modal"><i class="icon-wrench"></i> Options</a></li>
-        <li><a target="_new" href="https://github.com/uggrock/tagspaces/issues/" title="Report a issue or enhancement"><i class="icon-flag"></i> Report Issue</a></li>        
+        <li><a id="openOptions" href="#dialogOptions" title="Options Dialog"><i class="icon-wrench"></i> Options</a></li>
+        <li><a target="_new" href="https://github.com/uggrock/tagspaces/issues/" title="Report a issue or enhancement"><i class="icon-flag"></i> Report Issue</a></li>
+        <li><a target="_new" href="https://twitter.com/tagspaces" title="Follow on twitter"><i class="icon-twitter"></i> Follow @tagspaces</a></li>
         <li><a href="mailto:info@tagspaces.org" title="Drop a line to the developers"><i class="icon-envelope"></i> Contact developers</a></li>
         <li class="divider"></li>
         <li><a id="openAboutBox" data-placement="bottom" href="#dialogAbout" data-toggle="modal"><i class="icon-comment"></i> About</a></li>
