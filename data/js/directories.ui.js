@@ -1,4 +1,4 @@
-/* Copyright (c) 2012 The Tagspaces Authors. All rights reserved.
+/* Copyright (c) 2012-2013 The TagSpaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that 
  * can be found in the LICENSE file. */
 define(function(require, exports, module) {
@@ -50,76 +50,102 @@ define(function(require, exports, module) {
     function generateDirPath() {
         console.debug("Generating Directory Path...");
         $("#dirTree").empty();
-        
-        // Code based on http://jsbin.com/eqape/1/edit
-        $("#dirTree").addClass("ui-accordion ui-accordion-icons ui-widget ui-helper-reset")
+        $("#dirTree").addClass("accordion")
         for(var i=0; i < directoryHistory.length; i++) {
-            $("#dirTree").append($("<h3>", { 
-                class: "ui-accordion-header ui-helper-reset ui-state-default ui-corner-top ui-corner-bottom"    
+            $("#dirTree").append($("<div>", { 
+                "class": "accordion-group",   
+                "style":        "width: 99%;", 
             })
-            .hover(function() { $(this).toggleClass("ui-state-hover"); })        
-            // Add plus button to h3
-            .append($("<span>", { 
-                class: "icon-chevron-right", // icon-chevron-down 
-                style: "position:relative!important; display:inline-block;",             
-            })
-            .click(function() {
-              $(this)
-                .parent().toggleClass("ui-accordion-header-active ui-state-active ui-state-default ui-corner-bottom").end()
-                .parent().next().toggleClass("ui-accordion-content-active").toggle();
-              return false;
-            })        
+            
+            .append($("<div>", { 
+                    "class":    "accordion-heading btn-group",
+                    "key":      directoryHistory[i].key, 
+                    "style":    "width:100%; background: url('css/arrow-down.png') no-repeat center bottom; padding-bottom: 5px;",
+                }
             )
-            // Add directory button to h3
-            .append($("<button>", { 
-                class: "dirButton",
-                key: directoryHistory[i].key,
-                title: directoryHistory[i].key,
-                text: directoryHistory[i].title, 
-            })
-            .droppable({
-                accept: '.fileTitleButton,.fileButton',
-                hoverClass: "dirButtonActive",
-                drop: function( event, ui ) {
-                    var filePath = ui.draggable.attr("filepath");
-                    var fileName = TSCORE.TagUtils.extractFileName(filePath);
-                    var targetDir = $(this).attr("key");
-                    console.log("Moving file: "+filePath+" to "+targetDir);
-                    TSCORE.IO.renameFile(filePath, targetDir+TSCORE.TagUtils.DIR_SEPARATOR+fileName);
-                }                   
-            })        
-            .click(function() {
-                navigateToDirectory($(this).attr("key"));
-            })        
-            )        
-            // Add settings button to h3        
-            .append($("<span>", { 
-                class: "icon-cog",
-                key: directoryHistory[i].key, 
-                title: "Directorys options",
-                style: "float: right!important; position:relative!important; vertical-align: middle; display:inline-block;", 
-            })                
+
+            .append($("<button>", { // Dir toggle button
+                        "class":        "btn btn-info btn-small",
+                        "data-toggle":  "collapse",
+                        "data-target":  "#dirButtons"+i,                        
+                        "key":          directoryHistory[i].key,
+                        "title":        "Toggle Directory",
+                        "style":        "width:15%",
+                    }  
+                )
+                .html("<i class='icon-folder-open icon-white'></i>")   
+            )// End dir toggle button  
+            
+            .append($("<button>", { // Dir main button
+                        "class":        "btn btn-info btn-small",
+                        "key":          directoryHistory[i].key,
+                        "title":        "Change Direoctory to: "+directoryHistory[i].key,
+                        "text":         directoryHistory[i].title,
+                        "style":        "width:65%",
+                    }  
+                )
+                .click(function() {
+                        navigateToDirectory($(this).attr("key"));
+                    }
+                )                                
+                .droppable({
+                        accept: '.fileTitleButton,.fileButton',
+                        hoverClass: "btn-danger",
+                        drop: function( event, ui ) {
+                            var filePath = ui.draggable.attr("filepath");
+                            var fileName = TSCORE.TagUtils.extractFileName(filePath);
+                            var targetDir = $(this).attr("key");
+                            console.log("Moving file: "+filePath+" to "+targetDir);
+                            TSCORE.IO.renameFile(filePath, targetDir+TSCORE.TagUtils.DIR_SEPARATOR+fileName);
+                        }                  
+                    }
+                )
+            )// End dir main button  
+            
+            .append($("<button>", {
+                    "class":        "btn btn-info btn-small",
+                    "role":         "button",
+                    "key":          directoryHistory[i].key, 
+                    "title":        "Directory Options", 
+                    "style":        "width:20%",                   
+            })              
             .dropdown( 'attach' , '#directoryMenu' )
+            .append("<b class='icon-reorder icon-white'></b> <b class='caret'>")
             .click( function(event) {
                 dir4ContextMenu = $(this).attr("key");
+            })) // end gear    
+                    
+            ) // end heading
+            
+            .append($("<div>", { 
+                "class": "accordion-body collapse in",
+                "id": "dirButtons"+i,
+            })          
+            .append($("<div>", { 
+                "class": "accordion-inner",
+                "id": "dirButtonsContent"+i,
+                "style": "padding: 3px; background-color: #c6e9ff", // fff6b2
             })
-            )
-            );
-              
-            var dirButtons = $("<div>").appendTo( "#dirTree" );  
-            dirButtons.attr("style","margin: 0px; padding: 5px;");
-            dirButtons.addClass("ui-accordion-content  ui-helper-reset ui-widget-content ui-corner-bottom")
-            dirButtons.hide();
+            ) // end accordion-inner    
+            ) // end accordion button        
+
+            ); // end group
+
+            var dirButtons = $("<div>").appendTo( "#dirButtonsContent"+i );  
             if(directoryHistory[i]["children"].length <= 0) {
-                    dirButtons.append("No subfolders found.");          
+                    dirButtons.append("<div class='alert alert-info'><strong>Info</strong> No subfolders found.</div>");          
             } else {
                 for(var j=0; j < directoryHistory[i]["children"].length; j++) {
-                    dirButtons.append($("<button>", { 
-                        class: "dirButton", 
-                        key: directoryHistory[i]["children"][j].key,
-                        title: directoryHistory[i]["children"][j].key,
-                        text: directoryHistory[i]["children"][j].title, 
+                    dirButtons.append($("<span>", { 
+                        "class":    "btn btn-info btn-small", 
+                        "key":      directoryHistory[i]["children"][j].key,
+                        "title":    directoryHistory[i]["children"][j].key,
+                        "style":    "margin: 1px"
                     })
+                    .html("<i class='icon-folder-close icon-white'></i> "+directoryHistory[i]["children"][j].title)            
+                    .click( function() {
+                        navigateToDirectory($(this).attr("key"));
+                    }) 
                     .droppable({
                         accept: ".fileTitleButton,.fileButton",
                         hoverClass: "dirButtonActive",
@@ -130,23 +156,27 @@ define(function(require, exports, module) {
                             console.log("Moving file: "+filePath+" to "+targetDir);
                             TSCORE.IO.renameFile(filePath, targetDir+TSCORE.TagUtils.DIR_SEPARATOR+fileName);
                         }                   
-                    })
-                    .click( function() {
-                        navigateToDirectory($(this).attr("key"));
-                    })
-                    );                      
-                }           
-            }
+                    })                   
+                    );
+               }
+           }
         }
     }
     
     function handleDirCollapsion() {
-        $("#dirTree").find("h3").each(function(index) {
-            console.log("Entered h3 "+$(this).next().text());
-            var key = $(this).find("button").attr("key");
-            if(!getDirectoryCollapsed(key)) {
-                $(this).toggleClass("ui-accordion-header-active ui-state-active ui-state-default ui-corner-bottom").end();
-                $(this).next().toggleClass("ui-accordion-content-active").toggle();          
+        $("#dirTree").find(".accordion-heading").each(function(index) {
+            var key = $(this).attr("key");
+            console.log("Entered Header for: "+key);
+            if(getDirectoryCollapsed(key)) {
+                $(this).find("i").removeClass("icon-folder-open");
+                $(this).find("i").addClass("icon-folder-close");          
+                $(this).next().removeClass("in");
+                $(this).next().addClass("out");
+            } else {
+                $(this).find("i").removeClass("icon-folder-close");
+                $(this).find("i").addClass("icon-folder-open");          
+                $(this).next().removeClass("out");
+                $(this).next().addClass("in");
             }
         });
     }

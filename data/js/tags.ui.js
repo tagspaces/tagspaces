@@ -117,6 +117,18 @@ define(function(require, exports, module) {
 	    console.debug("Generating TagGroups...");
 	    $("#tagGroups").empty();
 	    $("#tagGroups").addClass("accordion");
+	    if(TSCORE.Config.Settings["tagGroups"].length < 1) {
+            $("#tagGroups").append($("<button>", { 
+                "class": "btn",
+                text: "Create New Taggroup"
+            })
+            .click( function(event) {
+                TSCORE.showDialogTagGroupCreate();
+            })            
+            );	        
+	        return true;
+	    }
+	    
 	    for(var i=0; i < TSCORE.Config.Settings["tagGroups"].length; i++) {
 	        $("#tagGroups").append($("<div>", { 
 	            "class": "accordion-group"    
@@ -228,7 +240,7 @@ define(function(require, exports, module) {
 	            tag: fileExtension,
 	            filename: fileName,
 	            filepath: filePath,
-	            "class":  "btn btn-small btn-info extTagButton",	            
+	            "class":  "btn btn-small btn-warning extTagButton",	            
 	            text: fileExtension+" "
 	            })
 	            .append($("<span>", { class: "caret"}))

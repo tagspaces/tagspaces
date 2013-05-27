@@ -103,7 +103,7 @@ html, body {
 
 .fileTitle {
     font-size: 1.2em;
-    color: #333333;    
+    color: #333333;
 }
 
 .fileExtension {
@@ -298,53 +298,22 @@ li hr {
     background-color: white;
 }
 
-/* Dynatree css*/
-
-ul.dynatree-container {
-	font-family: tahoma, arial, helvetica;
-	font-size: 10pt;
-	border: 0px dotted gray;
-	background-color: transparent;
-}
-
-ul.dynatree-container li {
-		
-}
-
-span.dynatree-icon {
-	background-image: none;
-	margin-left: 0px;
-	width: 0px;
-	height: 0px;
-}
-
-#dirTree ul.dynatree-container a:focus, #dirTree span.dynatree-focused a:link {
-	background-color: #F6A828;
-	border: 1px solid gray;
-}
-
-#dirTree ul.dynatree-container a, #dirTree ul.dynatree-container a:hover  {
-    padding: 1px;
-    background-color: @directoryColor;
-/*	background: #F6A828 url("arrow-down.png") no-repeat right; 
-    padding-right: 12px;*/
-    font-weight: bold;
-    font-size: @tagFontSize;
-    color: white;
-    margin: 1px;
-    border-color: transparent;
-    .roundedTagCorners;    
-}
+/* Directory Navigation css*/
 
 .dirButton  {
     padding: 1px;
-    background-color: @directoryColor;
+    background-color: @directoryColor !important;
     font-weight: bold;
     font-size: @tagFontSize;
     color: white;
     margin: 1px;
     border-color: transparent;
     .roundedTagCorners;    
+}
+
+.dirButton:hover, .dirButton:active, .dirButton:focus {
+  text-decoration: none;
+  color: white;
 }
 
 /*desaturate(@directoryColor, 30%) */
@@ -352,19 +321,15 @@ span.dynatree-icon {
     background-color: #FFCC99;
 }
 
-#dirTree .dynatree-active {
-/*    background-color: #E1A4A4;
-    width: 100%;    */
-}
-
 #dirTree .selectedDirectory {
     background-color: #EBD5AA;
 }
 
-
 #dirTree {
     overflow: auto;    
 }
+
+/* Tag Groups css */
 
 .tagGroupTitle {
   padding-left: 5px;
@@ -382,7 +347,6 @@ span.dynatree-icon {
 #tagGroups {
     overflow: auto;    
 }
-
 
 /* JSON Editor */
 div.jsoneditor-menu {	
