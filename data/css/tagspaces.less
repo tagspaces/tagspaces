@@ -200,19 +200,9 @@ li hr {
 }
 
 .fileTitleButton {
-    padding: 0px 2px 0px 2px;
-    margin: 1px;
-//    font-weight: normal !important;
-//    font-size: @tagFontSize;
+    margin: 0px;
     z-index: 9999;  
-    background: @fileExtColor;          
-    margin: 1px;
-    background-color: #E5E5E5; 
-//    font-weight: normal;
-//    font-size: @tagFontSize;
-    color: #222222 !important;
     text-align: left;
-    border: #ddd solid 1px;
 }
 
 .extTagButton {
@@ -220,10 +210,7 @@ li hr {
     color: white !important;
     margin: 1px;
     border-color: transparent;
-//    font-weight: normal !important;
-//    font-size: @tagFontSize;
     z-index: 9999;  
-//    background: @fileExtColor;          
     margin: 1px;
 }
 
@@ -249,7 +236,7 @@ li hr {
 }	
 
 #directoryNavigatorNorth, #dirTree, #tagGroups, .middle-north, .east-north {
-	background-color: #F0F0F0;
+	background-color:  white; //#F0F0F0;
 }	
 
 #directoryNavigatorNorth {
@@ -262,17 +249,11 @@ li hr {
 }
 
 #viewToolbars {
-    background-color: #F0F0F0;  
+    background-color: white; //#F0F0F0;  
     padding: 2px;    
 }
-#viewContainers {
-    padding: 0;
-    background-color: #F0F0F0;
-//    background-image: url("background2.png");
-//    background-repeat: repeat; 
-}              
-#viewFooters {
-    background-color: #F0F0F0;
+#viewContainers, #viewFooters {
+    background-color: white; //#F0F0F0;
     padding: 0;    
 }
 
@@ -328,7 +309,8 @@ li hr {
 }
 
 #dirTree {
-    overflow: auto;    
+    overflow-x: hidden;    
+    overflow-y: auto;        
 }
 
 /* Tag Groups css */

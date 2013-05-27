@@ -53,35 +53,35 @@ define(function(require, exports, module) {
         $("#dirTree").addClass("accordion")
         for(var i=0; i < directoryHistory.length; i++) {
             $("#dirTree").append($("<div>", { 
-                "class": "accordion-group",   
-                "style":        "width: 99%;", 
+                "class":        "accordion-group",   
+                "style":        "width: 100%; border: 0px;", 
             })
             
             .append($("<div>", { 
                     "class":    "accordion-heading btn-group",
                     "key":      directoryHistory[i].key, 
-                    "style":    "width:100%; background: url('css/arrow-down.png') no-repeat center bottom; padding-bottom: 5px;",
+                    "style":    "width:99%; margin: 2px; background: url('css/arrow-down.png') no-repeat center bottom; padding-bottom: 5px;",
                 }
             )
 
             .append($("<button>", { // Dir toggle button
-                        "class":        "btn btn-info btn-small",
+                        "class":        "btn ",
                         "data-toggle":  "collapse",
                         "data-target":  "#dirButtons"+i,                        
                         "key":          directoryHistory[i].key,
                         "title":        "Toggle Directory",
-                        "style":        "width:15%",
+                        "style":        "width: 15%;",
                     }  
                 )
-                .html("<i class='icon-folder-open icon-white'></i>")   
+                .html("<i class='icon-folder-open-alt'></i>")   
             )// End dir toggle button  
             
             .append($("<button>", { // Dir main button
-                        "class":        "btn btn-info btn-small",
+                        "class":        "btn ",
                         "key":          directoryHistory[i].key,
                         "title":        "Change Direoctory to: "+directoryHistory[i].key,
                         "text":         directoryHistory[i].title,
-                        "style":        "width:65%",
+                        "style":        "width:65%;",
                     }  
                 )
                 .click(function() {
@@ -89,8 +89,8 @@ define(function(require, exports, module) {
                     }
                 )                                
                 .droppable({
-                        accept: '.fileTitleButton,.fileButton',
-                        hoverClass: "btn-danger",
+                        accept: '.fileTitleButton',
+                        hoverClass: "btn-warning",
                         drop: function( event, ui ) {
                             var filePath = ui.draggable.attr("filepath");
                             var fileName = TSCORE.TagUtils.extractFileName(filePath);
@@ -103,7 +103,7 @@ define(function(require, exports, module) {
             )// End dir main button  
             
             .append($("<button>", {
-                    "class":        "btn btn-info btn-small",
+                    "class":        "btn ",
                     "role":         "button",
                     "key":          directoryHistory[i].key, 
                     "title":        "Directory Options", 
@@ -120,11 +120,12 @@ define(function(require, exports, module) {
             .append($("<div>", { 
                 "class": "accordion-body collapse in",
                 "id": "dirButtons"+i,
+                "style": "margin: 0px 3px 3px 3px;"
             })          
             .append($("<div>", { 
                 "class": "accordion-inner",
                 "id": "dirButtonsContent"+i,
-                "style": "padding: 3px; background-color: #c6e9ff", // fff6b2
+                "style": "padding: 2px; background-color: #F0F0F0", // c6e9ff
             })
             ) // end accordion-inner    
             ) // end accordion button        
@@ -133,22 +134,18 @@ define(function(require, exports, module) {
 
             var dirButtons = $("<div>").appendTo( "#dirButtonsContent"+i );  
             if(directoryHistory[i]["children"].length <= 0) {
-                    dirButtons.append("<div class='alert alert-info'><strong>Info</strong> No subfolders found.</div>");          
+                    dirButtons.append("<div class='alert alert-info'><strong>Info:</strong> No subfolders found.</div>");          
             } else {
                 for(var j=0; j < directoryHistory[i]["children"].length; j++) {
-                    dirButtons.append($("<span>", { 
-                        "class":    "btn btn-info btn-small", 
+                    dirButtons.append($("<button>", { 
+                        "class":    "btn ", 
                         "key":      directoryHistory[i]["children"][j].key,
                         "title":    directoryHistory[i]["children"][j].key,
                         "style":    "margin: 1px"
                     })
-                    .html("<i class='icon-folder-close icon-white'></i> "+directoryHistory[i]["children"][j].title)            
-                    .click( function() {
-                        navigateToDirectory($(this).attr("key"));
-                    }) 
                     .droppable({
-                        accept: ".fileTitleButton,.fileButton",
-                        hoverClass: "dirButtonActive",
+                        accept: ".fileTitleButton",
+                        hoverClass: "btn-warning",
                         drop: function( event, ui ) {
                             var filePath = ui.draggable.attr("filepath");
                             var fileName = TSCORE.TagUtils.extractFileName(filePath);
@@ -156,6 +153,10 @@ define(function(require, exports, module) {
                             console.log("Moving file: "+filePath+" to "+targetDir);
                             TSCORE.IO.renameFile(filePath, targetDir+TSCORE.TagUtils.DIR_SEPARATOR+fileName);
                         }                   
+                    })
+                    .html("<i class='icon-folder-close-alt'></i> "+directoryHistory[i]["children"][j].title)            
+                    .click( function() {
+                        navigateToDirectory($(this).attr("key"));
                     })                   
                     );
                }
@@ -168,13 +169,13 @@ define(function(require, exports, module) {
             var key = $(this).attr("key");
             console.log("Entered Header for: "+key);
             if(getDirectoryCollapsed(key)) {
-                $(this).find("i").removeClass("icon-folder-open");
-                $(this).find("i").addClass("icon-folder-close");          
+                $(this).find("i").removeClass("icon-folder-open-alt");
+                $(this).find("i").addClass("icon-folder-close-alt");          
                 $(this).next().removeClass("in");
                 $(this).next().addClass("out");
             } else {
-                $(this).find("i").removeClass("icon-folder-close");
-                $(this).find("i").addClass("icon-folder-open");          
+                $(this).find("i").removeClass("icon-folder-close-alt");
+                $(this).find("i").addClass("icon-folder-open-alt");          
                 $(this).next().removeClass("out");
                 $(this).next().addClass("in");
             }

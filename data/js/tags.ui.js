@@ -240,7 +240,7 @@ define(function(require, exports, module) {
 	            tag: fileExtension,
 	            filename: fileName,
 	            filepath: filePath,
-	            "class":  "btn btn-small btn-warning extTagButton",	            
+	            "class":  "btn btn-small btn-info extTagButton",	            
 	            text: fileExtension+" "
 	            })
 	            .append($("<span>", { class: "caret"}))
