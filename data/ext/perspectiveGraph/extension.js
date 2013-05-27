@@ -9,8 +9,8 @@ define(function(require, exports, module) {
 
 	var extensionTitle = "Graph"
 	var extensionID = "perspectiveGraph";  // ID should be equal to the directory name where the ext. is located   
-	var extensionType =  "view";
-	var extensionIcon = "icon-leaf";
+	var extensionType =  "perspective";
+	var extensionIcon = "icon-sitemap";
 	var extensionVersion = "1.0";
 	var extensionManifestVersion = 1;
 	var extensionLicense = "AGPL";

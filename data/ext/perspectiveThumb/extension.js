@@ -9,7 +9,7 @@ define(function(require, exports, module) {
 
 	exports.Title = "Thumbs"
 	exports.ID = "perspectiveThumb";  // ID should be equal to the directory name where the ext. is located   
-	exports.Type =  "view";
+	exports.Type =  "perspective";
 	exports.Icon = "icon-picture";
 	
 	var TSCORE = require("tscore");	

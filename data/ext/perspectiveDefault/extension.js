@@ -7,7 +7,7 @@ define(function(require, exports, module) {
 	
 	var extensionTitle = "Standard"
 	var extensionID = "perspectiveDefault";  // ID should be equal to the directory name where the ext. is located   
-	var extensionType =  "view";
+	var extensionType =  "perspective";
 	var extensionIcon = "icon-list";
 	var extensionVersion = "1.0";
 	var extensionManifestVersion = 1;
@@ -16,6 +16,7 @@ define(function(require, exports, module) {
 	console.debug("Loading "+extensionID);
 
 	var TSCORE = require("tscore");
+    require("jqueryeditinplace");
 
 	var extensionDirectory = TSCORE.Config.getExtensionPath()+"/"+extensionID;
 	var UI = undefined;	
