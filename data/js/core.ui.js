@@ -232,7 +232,6 @@ define(function(require, exports, module) {
             TSCORE.Config.Settings = editor.get();
             TSCORE.Config.saveSettings();
             TSCORE.reloadUI();
-            console.debug("Settings saved and UI reloaded.");
         });
         // End Advanced Settings
 	    

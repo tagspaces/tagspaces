@@ -38,7 +38,7 @@ define(function(require, exports, module) {
             if(directoryHistory[i].key == TSCORE.currentPath) {
                 directoryHistory[i]["children"] = new Array();
                 for(var j=0; j < dirList.length; j++) {    
-                    directoryHistory[i]["children"].push(dirList[j]);
+                     directoryHistory[i]["children"].push(dirList[j]);
                 }
             }
         }
@@ -136,29 +136,32 @@ define(function(require, exports, module) {
             if(directoryHistory[i]["children"].length <= 0) {
                     dirButtons.append("<div class='alert alert-info'><strong>Info:</strong> No subfolders found.</div>");          
             } else {
-                for(var j=0; j < directoryHistory[i]["children"].length; j++) {
-                    dirButtons.append($("<button>", { 
-                        "class":    "btn ", 
-                        "key":      directoryHistory[i]["children"][j].key,
-                        "title":    directoryHistory[i]["children"][j].key,
-                        "style":    "margin: 1px"
-                    })
-                    .droppable({
-                        accept: ".fileTitleButton",
-                        hoverClass: "btn-warning",
-                        drop: function( event, ui ) {
-                            var filePath = ui.draggable.attr("filepath");
-                            var fileName = TSCORE.TagUtils.extractFileName(filePath);
-                            var targetDir = $(this).attr("key");
-                            console.log("Moving file: "+filePath+" to "+targetDir);
-                            TSCORE.IO.renameFile(filePath, targetDir+TSCORE.TagUtils.DIR_SEPARATOR+fileName);
-                        }                   
-                    })
-                    .html("<i class='icon-folder-close-alt'></i> "+directoryHistory[i]["children"][j].title)            
-                    .click( function() {
-                        navigateToDirectory($(this).attr("key"));
-                    })                   
-                    );
+                for(var j=0; j < directoryHistory[i]["children"].length; j++) {                    
+                    if (TSCORE.Config.getShowUnixHiddenEntries() || 
+                            (!TSCORE.Config.getShowUnixHiddenEntries() && (directoryHistory[i]["children"][j].title.indexOf(".") != 0))) {
+                        dirButtons.append($("<button>", { 
+                            "class":    "btn ", 
+                            "key":      directoryHistory[i]["children"][j].key,
+                            "title":    directoryHistory[i]["children"][j].key,
+                            "style":    "margin: 1px"
+                        })
+                        .droppable({
+                            accept: ".fileTitleButton",
+                            hoverClass: "btn-warning",
+                            drop: function( event, ui ) {
+                                var filePath = ui.draggable.attr("filepath");
+                                var fileName = TSCORE.TagUtils.extractFileName(filePath);
+                                var targetDir = $(this).attr("key");
+                                console.log("Moving file: "+filePath+" to "+targetDir);
+                                TSCORE.IO.renameFile(filePath, targetDir+TSCORE.TagUtils.DIR_SEPARATOR+fileName);
+                            }                   
+                        })
+                        .html("<i class='icon-folder-close-alt'></i> "+directoryHistory[i]["children"][j].title)            
+                        .click( function() {
+                            navigateToDirectory($(this).attr("key"));
+                        })                   
+                        );
+                    }
                }
            }
         }

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <!--
-    Copyright (c) 2012-2013 The Tagspaces Authors. All rights reserved.
+    Copyright (c) 2012-2013 The TagSpaces Authors. All rights reserved.
     Use of this source code is governed by a AGPL3 license that 
     can be found in the LICENSE file.
     -->    
@@ -10,7 +10,6 @@
 	<link rel="shortcut icon" type="image/x-icon" href="icons/icon16.png">
 	<title>TagSpaces</title>
     <script type="text/javascript" data-main="loader" src="libs/requirejs/require.js"></script>
-    <link rel="stylesheet" type="text/css" href="libs/jqueryui/custom-theme/jquery-ui-1.10.2.custom.css">
     <link rel="stylesheet" type="text/css" href="libs/font-awesome/css/font-awesome.css">
     <link rel="stylesheet" type="text/css" href="libs/jquerylayout/layout-default-latest.css">    
     <link rel="stylesheet" type="text/css" href="libs/jsoneditor/jsoneditor.css">
@@ -52,7 +51,7 @@
 
     <div class="ui-layout-east" style="padding: 0px">
         <div class="east-north" style="padding: 2px;" >
-            <span id="fileTitle" style="padding: 3px"></span>
+            <span id="fileTitle" style="padding: 7px"></span>
             <span id="filetoolbox" class="btn-group pull-right"></span>
             <p id="tagsContainer" style="margin-top: 10px"><span id="fileTags"></span></p>
             <form class="form-horizontal">
@@ -153,8 +152,8 @@
       <div class="modal-body"><form class="form-horizontal"></form></div>
       <div class="modal-footer">
         <button class="btn" data-dismiss="modal" id="aboutDialogSettings">Advanced Settings</button>       
+        <button class="btn" id="saveSettingsCloseButton">Save</button>
         <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Close</button>
-        <button class="btn" id="aboutDialogBack">Save & Reload</button>
       </div>
     </div>        
    
@@ -172,7 +171,7 @@
             <button id="importExportButton" class="btn" aria-hidden="true">Import/Export</button>
             <button id="deffaultSettingsButton" class="btn" aria-hidden="true">Default Settings</button>                        
             <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
-            <button id="saveSettingsButton" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Ok</button>
+            <button id="saveSettingsButton" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Save</button>
         </div>
     </div>         
 
