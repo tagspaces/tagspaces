@@ -43,12 +43,12 @@ define(function(require, exports, module) {
 		"appName": "@APPNAME@",
 		"appVersion": "@VERSION@beta",
 	    "appBuild": "@VERSION@.@BUILD@",
-		"settingsVersion": 1,
+		"settingsVersion": 2,
 		"newTextFileContent": "Text file created with tagspaces!",
 	    "newHTMLFileContent": "<html><head><title>Tagspaces File</title></head><body>HTML file created with tagspaces!</body></html>",	
 		"newMDFileContent": '#Markdown file created with tagspaces!',
 		"showUnixHiddenEntries": false, 
-		"lastOpenedTSID": 0,
+		"checkForUpdates": false,
 	    "lastOpenedDirectory": "",
 		"tagspacesList": [],
 	    "extensionsPath": "ext",
@@ -143,6 +143,8 @@ define(function(require, exports, module) {
 			exports.Settings["appBuild"] = exports.DefaultSettings["appBuild"];
 			getPerspectiveExtensions();
 			getExtensionPath();
+			getShowUnixHiddenEntries();
+			getCheckForUpdates();
 	    	saveSettings();   		
 		}
 	}
@@ -160,7 +162,33 @@ define(function(require, exports, module) {
 		}
 	    return exports.Settings["extensionsPath"];
 	}
+
+    var setExtensionPath = function(value) {
+        exports.Settings["extensionsPath"] = value;
+    }
 	
+    var getShowUnixHiddenEntries = function() {
+        if(exports.Settings["showUnixHiddenEntries"] == null) {
+            exports.Settings["showUnixHiddenEntries"] = exports.DefaultSettings["showUnixHiddenEntries"];
+        }
+        return exports.Settings["showUnixHiddenEntries"];
+    }
+
+    var setShowUnixHiddenEntries = function(value) {
+        exports.Settings["showUnixHiddenEntries"] = value;
+    } 
+    
+    var getCheckForUpdates = function() {
+        if(exports.Settings["checkForUpdates"] == null) {
+            exports.Settings["checkForUpdates"] = exports.DefaultSettings["checkForUpdates"];
+        }
+        return exports.Settings["checkForUpdates"];
+    }
+
+    var setCheckForUpdates = function(value) {
+        exports.Settings["checkForUpdates"] = value;
+    }    
+    	
 	var getNewTextFileContent = function() {
 	    return exports.Settings["newTextFileContent"];
 	}
@@ -452,15 +480,23 @@ define(function(require, exports, module) {
     exports.upgradeSettings               			= upgradeSettings;
     exports.getPerspectiveExtensions              	= getPerspectiveExtensions;
     exports.getExtensionPath              			= getExtensionPath;    
+    exports.setExtensionPath                        = setExtensionPath;    
+    exports.getShowUnixHiddenEntries                = getShowUnixHiddenEntries;
+    exports.setShowUnixHiddenEntries                = setShowUnixHiddenEntries;    
+    exports.getCheckForUpdates                      = getCheckForUpdates;
+    exports.setCheckForUpdates                      = setCheckForUpdates;    
+
     exports.getNewTextFileContent                	= getNewTextFileContent;
     exports.getNewHTMLFileContent                	= getNewHTMLFileContent;	
     exports.getNewMDFileContent                		= getNewMDFileContent;	
     exports.getFileTypeEditor                		= getFileTypeEditor;	
     exports.getFileTypeViewer                		= getFileTypeViewer;	
     exports.getAllTags                				= getAllTags;	            
+
+    exports.getTagData                              = getTagData;   
+    exports.getTagGroupData                         = getTagGroupData;  
+
     exports.deleteTag                				= deleteTag;	
-    exports.getTagData                				= getTagData;	
-    exports.getTagGroupData                			= getTagGroupData;	
     exports.deleteTagGroup                			= deleteTagGroup;	
     exports.editTag                					= editTag;	
     exports.createTag                				= createTag;
