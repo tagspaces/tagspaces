@@ -126,6 +126,7 @@ define(function(require, exports, module) {
 	    var tags = TSCORE.TagUtils.extractTags(filePath);
 	    
 	    var title = TSCORE.TagUtils.extractTitle(filePath);
+		var fileExtension = TSCORE.TagUtils.extractFileExtension(filePath);
 		
 		$("#fileTitle").unbind('.editInPlace');
 		$("#fileTitle").data('editInPlace',false);
@@ -137,9 +138,22 @@ define(function(require, exports, module) {
     		show_buttons: false,
     		callback_skip_dom_reset: true
 		});	    
-	    
-	    // Generate tag buttons
+
+	    // Generate tag & ext buttons
 	    $( "#fileTags" ).empty();
+        $( "#fileTags" ).append($('<button>', {
+                    title: "Opens context menu for "+fileExtension,
+                    tag: fileExtension,
+                    "class":  "btn btn-small btn-info extTagButton",                
+                    text: fileExtension+" "
+                })
+                .click( function() {
+                    TSCORE.selectedTag = fileExtension;
+                })                
+                .dropdown( 'attach' , '#extensionMenu' ) 
+                .append($("<span>", { class: "caret"}))
+             ); 	    
+	    
 	    for (var i=0; i < tags.length; i++) {
 	        $( "#fileTags" ).append($("<button>", { 
 	            "class":  "btn btn-success btn-small tagButton", 
