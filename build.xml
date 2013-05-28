@@ -92,8 +92,8 @@ found in the LICENSE file.
         <copy todir="${buildFirefoxExt.dir}/data/ext" >
 		    <fileset dir="data/ext">
 			  <include name="perspectiveGraph/**/*"/>		    	
-		      <include name="editorHTML/**/*"/>
-			  <include name="editorText/**/*"/>	    	
+		      <include name="editorHTML/**"/>
+		      <!--include name="editorText/**/*"/-->	    	
 		      <include name="viewerMD/**/*"/>	    	
 		    </fileset>        	
         </copy>
