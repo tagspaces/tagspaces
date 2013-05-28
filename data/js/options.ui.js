@@ -6,61 +6,77 @@ define(function(require, exports, module) {
 
     console.debug("Loading options.ui.js ...");
     
-    var optionsUI = $("#dialogOptions").find(".form-horizontal");
+    var TSCORE = require("tscore");
 
-    optionsUI.append($("<div class='control-group'>", {})
-        .append($("<label class='control-label' for='inputEmail'>Email</label>"))
-        .append($("<div class='controls'>", {})
-            .append($("<input type='text' id='inputEmail' placeholder='Email'>", {
-                
-            })
-        )
-        )
-    )
+    function generateUI() {
+        var optionsUI = $("#dialogOptions").find(".form-horizontal");
+   /*     
+        optionsUI.append($("<h5>Perspectives  <button class='btn' id='addFileTypeButton' title='Add new extension'><i class='icon-plus'></button></h5>"));
+        
+        optionsUI.append(
+            $("<div class='control control-row'>", {})
+//                .append($("<select class='span3'><option>bla</option></select>"))
+//                .append($("<button class='btn' title='Remove this extension'><i class='icon-arrow-up'></button>"))
+                .append($("<button class='btn' title='Remove this extension'><i class='icon-arrow-down'></button>"))
+                .append($("<button class='btn' title='Remove this extension'><i class='icon-remove'></button>"))                                                
+        );
+
+        optionsUI.append($("<h5>File Types  <button class='btn' id='addFileTypeButton' title='Add new extension'><i class='icon-plus'></button></h5>"));
+        
+        optionsUI.append(
+            $("<div class='control control-row'>", {})
+                .append($("<input type='text' class='span1' id='' placeholder='jpg'>"))
+                .append($("<select class='span2'><option>viewer</option></select>"))
+                .append($("<select class='span2'><option>editor</option></select>"))                
+                .append($("<button class='btn' title='Remove this extension'><i class='icon-remove'></button>"))                    
+        );
+*/
+        optionsUI.append($("<h5>Miscellaneous</h5>"));
+                      
+        optionsUI.append($("<div class='control-group'>", {})
+            .append($("<label class='control-label' for='extensionsPathInput'>Extensions folder</label>"))
+            .append($("<div class='controls'>", {})
+                .append($("<input type='text' class='input-xlarge' id='extensionsPathInput' placeholder='Path to your tagspaces extensions' title='e.g.: c:\\tagspaces\\extensions'>", {})
+                )
+            )
+        );        
+
+        optionsUI.append($("<div class='control-group'>", {})
+            .append($("<div class='controls'>", {})
+                .append($("<label class='checkbox'>Show hidden files/directories in *nix sytemes</label>")
+                    .append($("<input type='checkbox' id='showHiddenFilesCheckbox' />"))
+                )
+            )
+        );
+
+        optionsUI.append($("<div class='control-group'>", {})
+            .append($("<div class='controls'>", {})
+                .append($("<label class='checkbox'>Check for new version on startup</label>")
+                    .append($("<input type='checkbox' id='checkforUpdatesCheckbox' />"))
+                )
+            )
+        );
+    }   
     
-    optionsUI.append($("<div class='control-group'>", {})
-        .append($("<label class='control-label' for='inputEmail'>Email</label>"))
-        .append($("<div class='controls'>", {})
-            .append($("<input type='text' id='inputEmail' placeholder='Email2'>", {
-                
-            })
-        )
-        )
-    )
+    function initUI() {
+        $("#extensionsPathInput").val(TSCORE.Config.getExtensionPath()); 
+        $("#showHiddenFilesCheckbox").attr("checked",TSCORE.Config.getShowUnixHiddenEntries());
+        $("#checkforUpdatesCheckbox").attr("checked",TSCORE.Config.getCheckForUpdates());
+        
+        $('#saveSettingsCloseButton').click(function() {
+            updateSettings();
+            TSCORE.reloadUI();            
+        })
+    }    
     
-    optionsUI.append($("<div class='control-group'>", {})
-        .append($("<label class='control-label' for='inputEmail'>Email</label>"))
-        .append($("<div class='controls'>", {})
-            .append($("<input type='text' id='inputEmail' placeholder='Email3'>", {
-                
-            })
-        )
-        )
-    )        
-/*
-           <div class="control-group">
-                <label class="control-label" for="inputEmail">Email</label>
-                <div class="controls">
-                    <input type="text" id="inputEmail" placeholder="Email">
-                </div>
-            </div>
-            <div class="control-group">
-                <label class="control-label" for="inputPassword">Password</label>
-                <div class="controls">
-                    <input type="password" id="inputPassword" placeholder="Password">
-                </div>
-            </div>
-            <div class="control-group">
-                <div class="controls">
-                    <label class="checkbox">
-                        <input type="checkbox">
-                        Remember me </label>
-                    <button type="submit" class="btn">
-                        Sign in
-                    </button>
-                </div>
-            </div>
-        </form> 
- */
+    function updateSettings() {
+        TSCORE.Config.setExtensionPath($("#extensionsPathInput").val());
+        TSCORE.Config.setShowUnixHiddenEntries($('#showHiddenFilesCheckbox').is(":checked"));
+        TSCORE.Config.setCheckForUpdates($('#checkforUpdatesCheckbox').is(":checked"));
+        
+        TSCORE.Config.saveSettings();
+    }
     
+    generateUI()
+    initUI();
 });
