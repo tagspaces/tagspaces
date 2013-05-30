@@ -27,6 +27,9 @@ if( isFirefox ) {
 	IO_JS = "js/ioapi.mozilla";
 } else if ( isChrome ) {
     IO_JS = "js/ioapi.chrome";           
+} else if ( isSafari ) {
+    // TODO safari io handler needed
+    IO_JS = "js/ioapi.chrome";    
 }
 
 require.config({
@@ -86,7 +89,7 @@ require.config({
         'jqueryuidraggable':    { deps: ['jqueryui','jqueryuiwidget','jqueryuimouse'] },        
         'jqueryuiresizable':    { deps: ['jqueryui','jqueryuiwidget','jqueryuimouse'] },          
         'jquerylayout':         { deps: ['jquery', 'jqueryuidraggable' ] },        
-        'jquerydropdown':       { deps: ['jquery'] },
+        'jquerydropdown':       { deps: ['jquery','bootstrap'] },
         'datatables':           { deps: ['jquery'] },
         'jqueryeditinplace':    { deps: ['jquery'] },
         'tscore':               { deps: [
@@ -97,6 +100,7 @@ require.config({
                 'jqueryuiresizable',
                 'jqueryuiposition',
                 'jqueryuiselectable',
+                'jqueryuisortable',
                 'bootstrap',
                 'jquerylayout',
                 'jquerydropdown',  
