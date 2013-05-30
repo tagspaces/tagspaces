@@ -52,7 +52,10 @@ define(function(require, exports, module) {
 	    "lastOpenedDirectory": "",
 		"tagspacesList": [],
 	    "extensionsPath": "ext",
-	    "extensions": [
+        "ootbPerspectives": [ 'perspectiveThumb', 'perspectiveGraph' ],
+        "ootbViewers": [ "viewerBrowser", "viewerMD" ],
+        "ootbEditors": [ "editorHTML" ],        
+	    "perspectives": [
 	        {   
 	            "id": "perspectiveThumb", // ID should be equal to the directory name where the extension is located 
 	        },
@@ -138,7 +141,6 @@ define(function(require, exports, module) {
 	var upgradeSettings = function() {
 		if(exports.Settings["appBuild"].localeCompare(exports.DefaultSettings["appBuild"]) < 0) {
 			console.debug("Upgrading settings");
-			exports.Settings["extensions"] = exports.DefaultSettings["extensions"];
 			exports.Settings["appVersion"] = exports.DefaultSettings["appVersion"];
 			exports.Settings["appBuild"] = exports.DefaultSettings["appBuild"];
 			getPerspectiveExtensions();
@@ -148,13 +150,38 @@ define(function(require, exports, module) {
 	    	saveSettings();   		
 		}
 	}
+
+    var getPerspectiveExtensions = function() {
+        if(exports.Settings["ootbPerspectives"] == null) {
+            exports.Settings["ootbPerspectives"] = exports.DefaultSettings["ootbPerspectives"];
+        }
+        return exports.Settings["ootbPerspectives"];
+    }
+
+    var getViewerExtensions = function() {
+        if(exports.Settings["ootbViewers"] == null) {
+            exports.Settings["ootbViewers"] = exports.DefaultSettings["ootbViewers"];
+        }
+        return exports.Settings["ootbViewers"];
+    }
+    
+    var getEditorExtensions = function() {
+        if(exports.Settings["ootbEditors"] == null) {
+            exports.Settings["ootbEditors"] = exports.DefaultSettings["ootbEditors"];
+        }
+        return exports.Settings["ootbEditors"];
+    }    
 	
-	var getPerspectiveExtensions = function() {
-		if(exports.Settings["extensions"] == null) {
-			exports.Settings["extensions"] = exports.DefaultSettings["extensions"];
+	var getPerspectives = function() {
+		if(exports.Settings["perspectives"] == null) {
+			exports.Settings["perspectives"] = exports.DefaultSettings["perspectives"];
 		}
-	    return exports.Settings["extensions"];
+	    return exports.Settings["perspectives"];
 	}
+
+    var setPerspectives = function(value) {
+        exports.Settings["perspectives"] = value;
+    }
 	
 	var getExtensionPath = function() {
 		if(exports.Settings["extensionsPath"] == null) {
@@ -188,6 +215,17 @@ define(function(require, exports, module) {
     var setCheckForUpdates = function(value) {
         exports.Settings["checkForUpdates"] = value;
     }    
+
+    var getSupportedFileTypes = function() {
+        if(exports.Settings["supportedFileTypes"] == null) {
+            exports.Settings["supportedFileTypes"] = exports.DefaultSettings["supportedFileTypes"];
+        }
+        return exports.Settings["supportedFileTypes"];
+    }
+
+    var setSupportedFileTypes = function(value) {
+        exports.Settings["supportedFileTypes"] = value;
+    }   
     	
 	var getNewTextFileContent = function() {
 	    return exports.Settings["newTextFileContent"];
@@ -281,7 +319,7 @@ define(function(require, exports, module) {
 	        }        
 	    }  
 	}
-	
+
 	var deleteTagGroup = function(tagData) {
 	    for(var i=0; i < exports.Settings["tagGroups"].length; i++) {
 	        if(exports.Settings["tagGroups"][i].key == tagData.key) {
@@ -478,13 +516,20 @@ define(function(require, exports, module) {
 	
     // Public API definition
     exports.upgradeSettings               			= upgradeSettings;
-    exports.getPerspectiveExtensions              	= getPerspectiveExtensions;
+    exports.getPerspectives              	        = getPerspectives;
+    exports.setPerspectives                         = setPerspectives;
     exports.getExtensionPath              			= getExtensionPath;    
     exports.setExtensionPath                        = setExtensionPath;    
     exports.getShowUnixHiddenEntries                = getShowUnixHiddenEntries;
     exports.setShowUnixHiddenEntries                = setShowUnixHiddenEntries;    
     exports.getCheckForUpdates                      = getCheckForUpdates;
     exports.setCheckForUpdates                      = setCheckForUpdates;    
+    exports.getSupportedFileTypes                   = getSupportedFileTypes;
+    exports.setSupportedFileTypes                   = setSupportedFileTypes;
+
+    exports.getPerspectiveExtensions                = getPerspectiveExtensions;
+    exports.getViewerExtensions                     = getViewerExtensions;
+    exports.getEditorExtensions                     = getEditorExtensions;
 
     exports.getNewTextFileContent                	= getNewTextFileContent;
     exports.getNewHTMLFileContent                	= getNewHTMLFileContent;	
