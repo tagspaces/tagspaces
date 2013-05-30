@@ -303,8 +303,12 @@ define(function(require, exports, module) {
         function extractLast( term ) {
             return split( term ).pop();
         }
-                    
-        $( "#tags" )
+        
+        // TODO reactive comma separated autocomplete
+        $( "#tags" ).typeahead( {
+            "source":  TSCORE.Config.getAllTags()
+        })            
+/*        $( "#tags" )
         // don't navigate away from the field on tab when selecting an item
         .bind( "keydown", function( event ) {
             if ( event.keyCode === $.ui.keyCode.TAB &&
@@ -334,7 +338,7 @@ define(function(require, exports, module) {
                 this.value = terms.join( ", " );
                 return false;
             }
-        });
+        }); */
 
         $("#tags").val("");
         $( '#dialogAddTags' ).modal({show: true});
