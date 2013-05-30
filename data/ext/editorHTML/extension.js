@@ -47,9 +47,9 @@ define(function(require, exports, module) {
 	exports.init = function(filePath, containerElementID) {
 	    console.debug("Initalization HTML Text Editor...");
 		require([
-			extensionDirectory+'/cleditor/jquery.cleditor.min.js',
+			extensionDirectory+'/cleditor/jquery.cleditor.js',
 		 	], function() {
-				$("#"+containerElementID).append('<textarea id="htmlEditor" style="border-width: 0px; width: 100%; height: 100%"></textarea>');	 		
+				$("#"+containerElementID).append('<textarea id="htmlEditor" style="border-width: 0px; width: 100%; height: 100%; overflow: auto;"></textarea>');	 		
 				$("#"+containerElementID).append('<link rel="stylesheet" type="text/css" href="'+extensionDirectory+"/"+'cleditor'+"/"+'jquery.cleditor.css">');		
 				$.cleditor.defaultOptions.width = '100%';
 				$.cleditor.defaultOptions.height = '100%';
