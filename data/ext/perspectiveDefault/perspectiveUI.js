@@ -67,8 +67,8 @@ console.debug("Loading UI for perspectiveDefault");
 	            filepath: filePath,
 	            class: 'btn fileTitleButton', 
 	        })
-	        .append( $("<i>", { class: "icon-file", }) )
-	        .append($("<span>", { class: "caret"}))
+	        .append("<i class='icon-file' />")
+            .append("<span class='caret'/>")
 	        ).html();
 	        
 	    return checkboxHTML+" "+buttonHTML +" "+ thumbHTML + titleHTML;        

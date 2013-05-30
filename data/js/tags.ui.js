@@ -131,19 +131,31 @@ define(function(require, exports, module) {
 	    
 	    for(var i=0; i < TSCORE.Config.Settings["tagGroups"].length; i++) {
 	        $("#tagGroups").append($("<div>", { 
-	            "class": "accordion-group"    
+	            "class": "accordion-group",    
+                "style": "width: 99%; border: 0px;",	            
 	        })
 	        .append($("<div>", { 
-	            "class": "accordion-heading",
-                "key": TSCORE.Config.Settings["tagGroups"][i].key,	            
+	            "class":        "accordion-heading  btn-group",
+	            "style":        "width:99%; margin: 2px;",
+                "key":          TSCORE.Config.Settings["tagGroups"][i].key,	            
 	        })
-	        .append($("<a>", {
-				"class": "tagGroupTitle",
-				"data-toggle": "collapse",
-				"data-target": "#tagButtons"+i,
-				"href": "#",
-	            "text": TSCORE.Config.Settings["tagGroups"][i].title, 
-                "key": TSCORE.Config.Settings["tagGroups"][i].key, 	            
+	        
+            .append($("<button>", { // Taggroup toggle button
+                        "class":        "btn btn-link",
+                        "data-toggle": "collapse",
+                        "data-target": "#tagButtons"+i,
+                        "title":        "Toggle TagGroup",
+                        "style":        "width: 15%;",
+                    }  
+                )
+                .html("<i class='icon-tags'></i>")   
+            )// End taggroup toggle button  
+                        	        
+	        .append($("<button>", {
+				"class":        "btn btn-link btn-small",
+	            "text":         TSCORE.Config.Settings["tagGroups"][i].title, 
+                "key":          TSCORE.Config.Settings["tagGroups"][i].key, 	      
+                "style":        "text-align: left; width:65%;",      
 	        })  
 	        )
 	        .droppable({
@@ -159,17 +171,15 @@ define(function(require, exports, module) {
                 }                   
             })  
 	        
-	        .append($("<a>", {
-	                "class": "dropdown-toggle pull-right",
-	                "style": "padding-right: 4px;",
-	                "role": "button",
+	        .append($("<button>", {
+	                "class": "btn btn-link",
+	                "style": "width:20%",
 	                "tag": TSCORE.Config.Settings["tagGroups"][i].title, 
 	                "key": TSCORE.Config.Settings["tagGroups"][i].key, 
 	                "title": "Taggroup options",
-	                "href": "#"
  	        })              
 	        .dropdown( 'attach' , '#tagGroupMenu' )
-	        .append("<b class='icon-cog'></b>")
+	        .append("<b class='icon-reorder'></b>")
 	        .click( function(event) {
 	                //console.debug("Clicked in taggroup setting");    
 	                TSCORE.selectedTag = $(this).attr("tag");
@@ -183,11 +193,12 @@ define(function(require, exports, module) {
 	        .append($("<div>", { 
 	            "class": "accordion-body collapse in",
 	            "id": "tagButtons"+i,
+	            "style":        "border: 0px;",
 	        })	        
 	        .append($("<div>", { 
 	            "class": "accordion-inner",
 	            "id": "tagButtonsContent"+i,
-	            "style": "padding: 3px",
+	            "style": "border: 0px; padding: 3px",
 	        })
 	        ) // end accordion-inner	
 	        ) // end accordion button        
@@ -214,7 +225,7 @@ define(function(require, exports, module) {
                     "helper":     "clone",
                     "revert":     true,
                 }) 
-	            .append( "<span class='caret'>" )
+                .append("<span class='caret'/>")
 	            .dropdown( 'attach' , '#tagTreeMenu' )               
                 );
 	       } 
@@ -243,7 +254,7 @@ define(function(require, exports, module) {
 	            "class":  "btn btn-small btn-info extTagButton",	            
 	            text: fileExtension+" "
 	            })
-	            .append($("<span>", { class: "caret"}))
+	            .append("<span class='caret'/>")
 	            );          
 	    } 
 	    if(tagString.length > 0) {
@@ -257,7 +268,7 @@ define(function(require, exports, module) {
 	                "class":  "btn btn-small btn-success tagButton", 
 	                text: tags[i]+" "
 	                })
-	                .append($("<span>", { class: "caret"}))
+	                .append("<span class='caret'/>")
                 );   
 	        }   
 	    }

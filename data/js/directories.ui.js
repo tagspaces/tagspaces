@@ -60,12 +60,12 @@ define(function(require, exports, module) {
             .append($("<div>", { 
                     "class":    "accordion-heading btn-group",
                     "key":      directoryHistory[i].key, 
-                    "style":    "width:99%; margin: 2px; background: url('css/arrow-down.png') no-repeat center bottom; padding-bottom: 5px;",
+                    "style":    "width:99%; margin: 2px; ", // background: url('css/arrow-down.png') no-repeat center bottom; padding-bottom: 5px;
                 }
             )
 
             .append($("<button>", { // Dir toggle button
-                        "class":        "btn ",
+                        "class":        "btn btn-link",
                         "data-toggle":  "collapse",
                         "data-target":  "#dirButtons"+i,                        
                         "key":          directoryHistory[i].key,
@@ -77,11 +77,11 @@ define(function(require, exports, module) {
             )// End dir toggle button  
             
             .append($("<button>", { // Dir main button
-                        "class":        "btn ",
+                        "class":        "btn btn-link btn-small",
                         "key":          directoryHistory[i].key,
                         "title":        "Change Direoctory to: "+directoryHistory[i].key,
                         "text":         directoryHistory[i].title,
-                        "style":        "width:65%;",
+                        "style":        "text-align: left; width:65%;",
                     }  
                 )
                 .click(function() {
@@ -103,14 +103,13 @@ define(function(require, exports, module) {
             )// End dir main button  
             
             .append($("<button>", {
-                    "class":        "btn ",
-                    "role":         "button",
+                    "class":        "btn btn-link",
                     "key":          directoryHistory[i].key, 
                     "title":        "Directory Options", 
                     "style":        "width:20%",                   
             })              
             .dropdown( 'attach' , '#directoryMenu' )
-            .append("<b class='icon-reorder icon-white'></b> <b class='caret'>")
+            .append("<b class='icon-reorder'>")
             .click( function(event) {
                 dir4ContextMenu = $(this).attr("key");
             })) // end gear    
@@ -120,12 +119,12 @@ define(function(require, exports, module) {
             .append($("<div>", { 
                 "class": "accordion-body collapse in",
                 "id": "dirButtons"+i,
-                "style": "margin: 0px 3px 3px 3px;"
+                "style": "margin: 0px 3px 3px 3px; border: 0px;"
             })          
             .append($("<div>", { 
                 "class": "accordion-inner",
                 "id": "dirButtonsContent"+i,
-                "style": "padding: 2px; background-color: #F0F0F0", // c6e9ff
+                "style": "padding: 2px; border: 0px;",
             })
             ) // end accordion-inner    
             ) // end accordion button        
@@ -140,7 +139,7 @@ define(function(require, exports, module) {
                     if (TSCORE.Config.getShowUnixHiddenEntries() || 
                             (!TSCORE.Config.getShowUnixHiddenEntries() && (directoryHistory[i]["children"][j].title.indexOf(".") != 0))) {
                         dirButtons.append($("<button>", { 
-                            "class":    "btn ", 
+                            "class":    "btn btn-warning btn-small", 
                             "key":      directoryHistory[i]["children"][j].key,
                             "title":    directoryHistory[i]["children"][j].key,
                             "style":    "margin: 1px"

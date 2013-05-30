@@ -23,10 +23,10 @@
     <div class="ui-layout-north" style="padding: 3px">
         <a href="http://tagspaces.org" target="_new"><span id="logo">TagSpaces<sup id="appVersion"></sup></span></a>
         <span id="loadingAnimation">&nbsp;</span> 
-		<div class="btn-toolbar pull-right" style="margin: 0px;">
-            <button id="toggleLeftPanel" class="btn" title="Toggle Navigator & Tag Panel"><i class="icon-sort icon-rotate-90"></i></button>
+		<div id="mainMenu" class="pull-right" style="margin: 0px;">
+            <button id="toggleLeftPanel" class="btn btn-link" title="Toggle Navigator & Tag Panel"><i class="icon-sort icon-rotate-90"></i></button>
 			<div id="viewSwitcher" class="btn-group" data-toggle="buttons-radio"></div>
-	        <button role="button" class="btn" title="Additional Actions" data-dropdown="#settingsMenu"><i class="icon-reorder"></i> <b class="caret"></b></button>        
+	        <button role="button" class="btn btn-link" title="Additional Actions" data-dropdown="#settingsMenu"><i class="icon-reorder"></i></b></button>        
 	    </div>
     </div>
 
@@ -35,7 +35,7 @@
             <div id="directoryNavigatorNorth" style="padding: 2px;" >
                 <div class="btn-group" style="width: 100%;">
                     <button id="reloadTagSpace" style="width: 85%; text-align: left;" class="btn"  data-dropdown="#favoritesList" >Select Location</button>
-                    <button id="selectTagSpace" style="width: 15%;" class="btn" title="Test Tooltip"><span class="caret"></span></button> 
+                    <button id="selectTagSpace" style="width: 15%;" class="btn"><span class="caret"></span></button> 
                 </div>                
             </div>
             <div id="dirTree" style="padding: 0px; height: 100%;"></div>   
@@ -108,7 +108,7 @@
 	    <h4>About TagSpaces</h4>
 	  </div>
 	  <div class="modal-body">
-	    <iframe id="aboutIframe" style="width: 100%; height: 300px; border: 0px;" src="about.html"></iframe>
+	    <iframe id="aboutIframe" style="width: 100%; height: 280px; border: 0px;" src="about.html"></iframe>
 	  </div>
 	  <div class="modal-footer">
         <button class="btn" id="aboutDialogBack">Back</button>
@@ -147,13 +147,13 @@
     <div id="dialogOptions" class="modal hide" tabindex="-1" role="dialog" data-backdrop="static" aria-labelledby="myModalLabel" aria-hidden="true">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h4>About TagSpaces</h4>
+        <h4>Options</h4>
       </div>
       <div class="modal-body"><form class="form-horizontal"></form></div>
       <div class="modal-footer">
         <button class="btn" data-dismiss="modal" id="aboutDialogSettings">Advanced Settings</button>       
-        <button class="btn" id="saveSettingsCloseButton">Save</button>
-        <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Close</button>
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+        <button class="btn btn-primary" id="saveSettingsCloseButton">Save</button>
       </div>
     </div>        
    
@@ -401,9 +401,9 @@
         <li><a id="openOptions" href="#dialogOptions" title="Options Dialog"><i class="icon-wrench"></i> Options</a></li>
         <li><a target="_new" href="https://github.com/uggrock/tagspaces/issues/" title="Report a issue or enhancement"><i class="icon-flag"></i> Report Issue</a></li>
         <li><a target="_new" href="https://twitter.com/tagspaces" title="Follow on twitter"><i class="icon-twitter"></i> Follow @tagspaces</a></li>
-        <li><a href="mailto:info@tagspaces.org" title="Drop a line to the developers"><i class="icon-envelope"></i> Contact developers</a></li>
+        <li><a href="mailto:info@tagspaces.org" title="Drop a line to the developers"><i class="icon-envelope-alt"></i> Contact developers</a></li>
         <li class="divider"></li>
-        <li><a id="openAboutBox" data-placement="bottom" href="#dialogAbout" data-toggle="modal"><i class="icon-comment"></i> About</a></li>
+        <li><a id="openAboutBox" data-placement="bottom" href="#dialogAbout" data-toggle="modal"><i class="icon-comment"></i> About TagSpaces</a></li>
     </ul>
 
     <ul id="fileActionsMenu" class="dropdown-menu has-tip anchor-right">

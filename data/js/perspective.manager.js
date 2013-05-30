@@ -29,8 +29,11 @@ var initViews = function () {
    		TSCORE.currentView = perspective.ID;
 		perspective.load();
         
+        // Set the default perspective to be visually active
+        $("#viewSwitcher").find("button").addClass("active");
+        
         // Make shure default perspective is loaded first
-        var extensions = TSCORE.Config.getPerspectiveExtensions();
+        var extensions = TSCORE.Config.getPerspectives();
         for (var i=0; i < extensions.length; i++) {
             //if(extensions[i].enabled && (extensions[i].type == "view") ) {
                 
@@ -70,8 +73,7 @@ var initViewsUI = function(perspective) {
   
     $("#viewSwitcher").append($("<button>", { 
         "viewid":  perspective.ID,
-        "type":    "button", 
-        "class":   "btn",        
+        "class":   "btn btn-link",        
         id:      perspective.ID+"Button",    
     }).append($("<i>", {
         "class":  perspective.Icon
