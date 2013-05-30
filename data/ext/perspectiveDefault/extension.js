@@ -51,6 +51,7 @@ define(function(require, exports, module) {
 	    TSCORE.selectedFiles = [];   
 	    $('#'+extensionID+'FileTable tbody tr').each(function(){
 	        $(this).removeClass('ui-selected');
+	        $(this).find(".fileSelection").removeAttr("checked");
 	    });	
 	}
 	

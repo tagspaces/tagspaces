@@ -93,7 +93,17 @@ console.debug("Loading UI for perspectiveDefault");
             id: this.extensionID+"ToogleSelectAll",    
         })
         .click(function() {
-            
+            if($(this).find("input").prop("checked")) {
+                TSCORE.selectedFiles = [];   
+                $('#'+self.extensionID+'FileTable tbody tr').each(function(){
+                    $(this).addClass('ui-selected');
+                    $(this).find(".fileSelection").prop("checked",true);
+                    TSCORE.selectedFiles.push($(this).find(".fileTitleButton").attr("filepath"));  
+                    self.handleElementActivation();                          
+                }); 
+            } else {
+                TSCORE.ViewManager.clearSelectedFiles();                
+            }            
         })
         .append( "<input type='checkbox' style='margin-top: -3px;'>" )
         )
@@ -202,6 +212,7 @@ console.debug("Loading UI for perspectiveDefault");
                 id:   this.extensionID+"FilterBox",
                 placeholder: "Filter",
             }).keyup(function() {
+                TSCORE.ViewManager.clearSelectedFiles();
                 self.fileTable.fnFilter(this.value);
                 console.debug("Filter to value: "+this.value);
             }))
@@ -370,8 +381,15 @@ console.debug("Loading UI for perspectiveDefault");
 	    
 	    this.fileTable.$('.fileSelection')
             .click( function() {
-                //$(this).attr("checked","checked");
-                //self.selectFile(this, $(this).attr("filepath"));
+                var fpath = $(this).parent().find(".fileTitleButton").attr("filepath");
+                if($(this).prop("checked")) {                    
+                    $(this).parent().parent().addClass("ui-selected");
+                    TSCORE.selectedFiles.push(fpath);  
+                } else {
+                    $(this).parent().parent().removeClass("ui-selected");
+                    TSCORE.selectedFiles.splice(TSCORE.selectedFiles.indexOf(fpath), 1);
+                }
+                self.handleElementActivation(); 
             } )        
 	    
 	    this.fileTable.$('.extTagButton')
@@ -419,11 +437,13 @@ console.debug("Loading UI for perspectiveDefault");
 	    
 	}
 	
-	ExtUI.prototype.selectFile = function(tagButton, filePath) {
+	ExtUI.prototype.selectFile = function(uiElement, filePath) {
 	    TSCORE.ViewManager.clearSelectedFiles();   
 
-	    $(tagButton).parent().parent().toggleClass("ui-selected");
+	    $(uiElement).parent().parent().toggleClass("ui-selected");
 
+        $(uiElement).parent().parent().find(".fileSelection").prop("checked",true);   
+	    
 	    TSCORE.selectedFiles.push(filePath);  
 		
 		this.handleElementActivation();      
