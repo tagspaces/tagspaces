@@ -71,37 +71,6 @@
     </div>    
 </div>    
 <div id="helpers" style="display: none;">
-    <div id="dialogFileCreate" class="modal hide" tabindex="-1" role="dialog" data-backdrop="static" aria-labelledby="myModalLabel" aria-hidden="true" >
-        <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-            <h4>Create new file</h4>
-        </div>
-        <div class="modal-body">
-            <form class="form-horizontal">
-	            <div class="control-group">
-	                <label class="control-label" for="fileTypeChooser">Filetype</label>
-                    <div class="controls">
-                        <div class="btn-group" data-toggle="buttons-radio" name="fileTypeChooser">
-                            <button id="txtFileTypeButton" title="Create a plain text file" class="btn">TXT</button>
-                            <button id="mdFileTypeButton" title="Create a MarkDown file"  class="btn">MD</button>
-                            <button id="htmlFileTypeButton" title="Create a HTML file"  class="btn">HTML</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="control-group">
-                    <label class="control-label" for="newFileName">Filename</label>
-                    <div class="controls">
-                        <input type="text" id="newFileName" id="newFileName" placeholder="Filename">
-                    </div>
-                </div>            
-            </form>
-        </div>
-        <div class="modal-footer">
-            <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
-            <button id="fileCreateConfirmButton" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Ok</button>
-        </div>
-    </div>  
-    
 	<div id="dialogAbout" class="modal hide" tabindex="-1" role="dialog" data-backdrop="static" aria-labelledby="myModalLabel" aria-hidden="true">
 	  <div class="modal-header">
 	    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
@@ -115,34 +84,6 @@
 	    <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Close</button>
 	  </div>
 	</div>    
-	
-    <div id="dialogCreateFolderConnection" class="modal hide" tabindex="-1" role="dialog" data-backdrop="static" aria-labelledby="myModalLabel" aria-hidden="true" >
-        <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-            <h4>Connect Folder</h4>
-        </div>
-        <div class="modal-body">
-            <form class="form-horizontal">
-	            <div class="control-group">
-	                <label class="control-label" for="connectionName">Connection Name</label>
-                    <div class="controls">
-                		<input type="text" name="connectionName" id="connectionName" placeholder="Example: My Documents" />
-                    </div>
-                </div>
-                <div class="control-group">
-                    <label class="control-label" for="folderLocation">Folder Location</label>
-                    <div class="controls">
-						<input type="text" name="folderLocation" id="folderLocation" placeholder="Example: c:\users\ugg\documents" />
-                		<button id="selectLocalDirectory" class="btn" title="Select local folder"><i class="icon-folder-open"></i></button>
-                    </div>
-                </div>            
-            </form>
-        </div>
-        <div class="modal-footer">
-            <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
-            <button id="createFolderConnectionButton" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Ok</button>
-        </div>
-    </div>      
 
     <div id="dialogOptions" class="modal hide" tabindex="-1" role="dialog" data-backdrop="static" aria-labelledby="myModalLabel" aria-hidden="true">
       <div class="modal-header">
@@ -173,8 +114,67 @@
             <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
             <button id="saveSettingsButton" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Save</button>
         </div>
-    </div>         
+    </div>    
+    
+    <div id="dialogCreateFolderConnection" class="modal hide" tabindex="-1" role="dialog" data-backdrop="static" aria-labelledby="myModalLabel" aria-hidden="true" >
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h4>Connect Folder</h4>
+        </div>
+        <div class="modal-body">
+            <form class="form-horizontal">
+                <div class="control-group">
+                    <label class="control-label" for="connectionName">Connection Name</label>
+                    <div class="controls">
+                        <input type="text" name="connectionName" id="connectionName" placeholder="Example: My Documents" />
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="folderLocation">Folder Location</label>
+                    <div class="controls">
+                        <input type="text" name="folderLocation" id="folderLocation" placeholder="Example: c:\users\ugg\documents" />
+                        <button id="selectLocalDirectory" class="btn" title="Select local folder"><i class="icon-folder-open"></i></button>
+                    </div>
+                </div>            
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+            <button id="createFolderConnectionButton" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Ok</button>
+        </div>
+    </div>    
 
+    <div id="dialogFileCreate" class="modal hide" tabindex="-1" role="dialog" data-backdrop="static" aria-labelledby="myModalLabel" aria-hidden="true" >
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h4>Create new file</h4>
+        </div>
+        <div class="modal-body">
+            <form class="form-horizontal">
+                <div class="control-group">
+                    <label class="control-label" for="fileTypeChooser">Filetype</label>
+                    <div class="controls">
+                        <div class="btn-group" data-toggle="buttons-radio" name="fileTypeChooser">
+                            <button id="txtFileTypeButton" title="Create a plain text file" class="btn">TXT</button>
+                            <button id="mdFileTypeButton" title="Create a MarkDown file"  class="btn">MD</button>
+                            <button id="htmlFileTypeButton" title="Create a HTML file"  class="btn">HTML</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="newFileName">Filename</label>
+                    <div class="controls">
+                        <input type="text" id="newFileName" id="newFileName" placeholder="Filename">
+                    </div>
+                </div>            
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+            <button id="fileCreateConfirmButton" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Ok</button>
+        </div>
+    </div> 
+    
     <div id="dialogDirectoryCreate" class="modal hide" tabindex="-1" role="dialog" data-backdrop="static" aria-labelledby="myModalLabel" aria-hidden="true" >
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
