@@ -166,6 +166,10 @@ var changeView = function (viewType) {
        
     //Setting the current view
     TSCORE.currentView = viewType;
+    
+    if(TSCORE.currentPath == undefined) {
+        TSCORE.showAlertDialog("Please select first location from the dropdown on the left!");
+    }
 
 	for (var i=0; i < perspectives.length; i++) {   
  		$( "#"+perspectives[i].ID+"Container" ).hide();
@@ -186,7 +190,7 @@ var changeView = function (viewType) {
 	}	
 	   	
     // Clear the list with the selected files    
-    TSCORE.selectedFiles = [];  
+    TSCORE.PerspectiveManager.clearSelectedFiles(); 
 
 	// Reset the filter by a view change
 	setFileFilter("");

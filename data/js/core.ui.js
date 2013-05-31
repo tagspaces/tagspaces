@@ -23,14 +23,14 @@ define(function(require, exports, module) {
 	            '<a class="close" data-dismiss="modal" >&times;</a>' +
 	            '<h4></h4>' +
 	          '</div>' +
-	          '<div class="modal-body"></div>' +
+              '<div class="modal-body"><p class="lead"></p></div>' +
 	          '<div class="modal-footer">' +
 	            '<a href="#" id="okButton" class="btn btn-primary">Ok</a>' +
 	          '</div>' +
 	        '</div>');
 	
         alertModal.find('h4').text(title);        
-        alertModal.find('.modal-body').text(message);
+        alertModal.find('.lead').text(message);
 	    alertModal.find('#okButton').click(function(event) {
 	      alertModal.modal('hide');
 	    });
@@ -48,7 +48,7 @@ define(function(require, exports, module) {
 	            '<a class="close" data-dismiss="modal" >&times;</a>' +
 	            '<h4></h4>' +
 	          '</div>' +
-	          '<div class="modal-body"></div>' +
+	          '<div class="modal-body"><p class="lead"></p></div>' +
 	          '<div class="modal-footer">' +
 	            '<a href="#" class="btn" data-dismiss="modal">Cancel</a>' +
 	            '<a href="#" id="okButton" class="btn btn-primary">Ok</a>' +
@@ -56,7 +56,7 @@ define(function(require, exports, module) {
 	        '</div>');
 
         confirmModal.find('h4').text(title);    	
-	    confirmModal.find('.modal-body').text(message);
+	    confirmModal.find('.lead').text(message);
 	    confirmModal.find('#okButton').click(function(event) {
 	      callback();
 	      confirmModal.modal('hide');

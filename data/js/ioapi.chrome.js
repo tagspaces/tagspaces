@@ -142,7 +142,7 @@ New:
 		                "path": path  
                     }); 
 	            } 
-	    		TSCORE.ViewManager.updateFileBrowserData(anotatedDirList);
+	    		TSCORE.PerspectiveManager.updateFileBrowserData(anotatedDirList);
 			} catch(ex) {
 				console.error("Directory listing failed "+ex);
 			}		
@@ -179,7 +179,7 @@ New:
 	
 	exports.deleteElement = function(path) {
 		console.debug("Deleting: "+path);
-/*		TSCORE.ViewManager.refreshFileListContainer();		
+/*		TSCORE.PerspectiveManager.refreshFileListContainer();		
 		plugin.removeFile(path)*/
 	}
 	
@@ -221,7 +221,7 @@ New:
 	    console.debug("Creating directory index for: "+dirPath);
 		console.debug("Creating Directory Tree functionality not implemented on chrome yet!");	
 		// TODO implement createDirectoryTree
-		TSCORE.ViewManager.updateTreeData(); 
+		TSCORE.PerspectiveManager.updateTreeData(); 
 	}
 
 });

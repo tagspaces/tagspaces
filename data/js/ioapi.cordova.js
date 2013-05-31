@@ -1,4 +1,4 @@
-/* Copyright (c) 2012 The Tagspaces Authors. All rights reserved.
+/* Copyright (c) 2012-2013 The TagSpaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that 
  * can be found in the LICENSE file. */
 console.debug("Loading ioapi.cordova.js..");
@@ -98,7 +98,7 @@ IOAPI.listDirectory = function(dirPath) {
         try {
             var dirList = IOAPI.plugin.listFiles(dirPath);
             console.debug("Dir content: "+JSON.stringify(dirList)); 
-            UIAPI.ViewManager.updateFileBrowserData(dirList);
+            UIAPI.PerspectiveManager.updateFileBrowserData(dirList);
         } catch(ex) {
             console.error("Directory listing failed "+ex);
         }       

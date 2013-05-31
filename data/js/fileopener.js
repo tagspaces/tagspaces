@@ -285,11 +285,11 @@ define(function(require, exports, module) {
 	    });        
 
         $( "#nextFileButton" ).click(function() {
-            TSCORE.FileOpener.openFile(TSCORE.ViewManager.getNextFile(_openedFilePath));            
+            TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getNextFile(_openedFilePath));            
         });
 
         $( "#prevFileButton" ).click(function() {
-            TSCORE.FileOpener.openFile(TSCORE.ViewManager.getPrevFile(_openedFilePath));
+            TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getPrevFile(_openedFilePath));
         });
 
         $( "#toggleFullWidthButton" ).click(function() {

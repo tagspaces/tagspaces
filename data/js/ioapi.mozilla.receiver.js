@@ -1,4 +1,4 @@
-/* Copyright (c) 2012 The Tagspaces Authors. All rights reserved.
+/* Copyright (c) 2012-2013 The TagSpaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that 
  * can be found in the LICENSE file. */
 // Activating browser specific IOAPI modul
@@ -46,7 +46,7 @@ console.debug("Loading messaging.mozilla.js..");
 	            }
 	            // TODO to be replaced with a function which replaced the 
 	            // renamed file in the model of the perspective
-	            TSCORE.ViewManager.refreshFileListContainer();
+	            TSCORE.PerspectiveManager.refreshFileListContainer();
 	        } else {
 	            TSCORE.updateLogger("Rename failed");        
 	        }
@@ -78,7 +78,7 @@ console.debug("Loading messaging.mozilla.js..");
 	        break;
 	      case "listDirectory":
 	        if(message.success){
-	            TSCORE.ViewManager.updateFileBrowserData(message.content);       
+	            TSCORE.PerspectiveManager.updateFileBrowserData(message.content);       
 	        } else {
 	            TSCORE.updateLogger("List directory failed");        
 	        }
@@ -86,7 +86,7 @@ console.debug("Loading messaging.mozilla.js..");
 	      case "indexDirectory":
 	        if(message.success){
 	            //console.debug("Directory Index: "+JSON.stringify(message.content));
-	            TSCORE.ViewManager.updateFileBrowserData(message.content);       
+	            TSCORE.PerspectiveManager.updateFileBrowserData(message.content);       
 	        } else {
 	            TSCORE.updateLogger("Indexing directory failed");        
 	        }
@@ -94,7 +94,7 @@ console.debug("Loading messaging.mozilla.js..");
 	      case "createDirectoryTree":
 	        if(message.success){
 	            console.debug("Directory tree: "+JSON.stringify(message.content));
-	            TSCORE.ViewManager.updateTreeData(message.content);       
+	            TSCORE.PerspectiveManager.updateTreeData(message.content);       
 	        } else {
 	            TSCORE.updateLogger("Indexing directory failed");        
 	        }
@@ -114,7 +114,7 @@ console.debug("Loading messaging.mozilla.js..");
 	      case "delete":
 	        if(message.success){
 	            TSCORE.updateLogger("Delete success"); 
-	            TSCORE.ViewManager.refreshFileListContainer();	                          
+	            TSCORE.PerspectiveManager.refreshFileListContainer();	                          
 	        } else {
 	            TSCORE.updateLogger("Delete failed");        
 	        }

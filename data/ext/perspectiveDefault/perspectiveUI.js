@@ -1,4 +1,4 @@
-/* Copyright (c) 2012-2013 The Tagspaces Authors. All rights reserved.
+/* Copyright (c) 2012-2013 The TagSpaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that 
  * can be found in the LICENSE file. */
 
@@ -102,7 +102,7 @@ console.debug("Loading UI for perspectiveDefault");
                     self.handleElementActivation();                          
                 }); 
             } else {
-                TSCORE.ViewManager.clearSelectedFiles();                
+                TSCORE.PerspectiveManager.clearSelectedFiles();                
             }            
         })
         .append( "<input type='checkbox' style='margin-top: -3px;'>" )
@@ -117,7 +117,7 @@ console.debug("Loading UI for perspectiveDefault");
             TSCORE.showFileCreateDialog();
         })
         .append( "<i class='icon-plus'>" )
-        .append(" New")
+//        .append(" New")
         )
     
 	    .append($("<button>", { 
@@ -130,7 +130,7 @@ console.debug("Loading UI for perspectiveDefault");
 			TSCORE.IO.createDirectoryIndex(TSCORE.currentPath);
 	    })
 	    .append( $("<i>", { class: "icon-retweet", }) )
-	    .append(" Subdirs")
+//	    .append(" Subdirs")
 	    )
 	    
 	    .append($("<button>", { 
@@ -142,7 +142,7 @@ console.debug("Loading UI for perspectiveDefault");
 			TSCORE.showAddTagsDialog();
 	    })
 	    .append( $("<i>", { class: "icon-tag", }) )
-	    .append(" Add Tag")
+//	    .append(" Add Tag")
 	    )    
 
 	    .append($("<button>", { 
@@ -212,7 +212,7 @@ console.debug("Loading UI for perspectiveDefault");
                 id:   this.extensionID+"FilterBox",
                 placeholder: "Filter",
             }).keyup(function() {
-                TSCORE.ViewManager.clearSelectedFiles();
+                TSCORE.PerspectiveManager.clearSelectedFiles();
                 self.fileTable.fnFilter(this.value);
                 console.debug("Filter to value: "+this.value);
             }))
@@ -301,7 +301,7 @@ console.debug("Loading UI for perspectiveDefault");
 	      start: function() {
 	        console.debug("Start selecting");  
 	        TSCORE.hideAllDropDownMenus();				            
-			TSCORE.ViewManager.clearSelectedFiles();
+			TSCORE.PerspectiveManager.clearSelectedFiles();
 	      },
 	      stop: function(){
 	        $(".ui-selected", this).each(function(){
@@ -348,7 +348,7 @@ console.debug("Loading UI for perspectiveDefault");
 			    
 				    $(this).toggleClass("ui-selected");
 		
-				    TSCORE.ViewManager.clearSelectedFiles();
+				    TSCORE.PerspectiveManager.clearSelectedFiles();
 				    
 				    TSCORE.selectedFiles.push(targetFilePath); 
 					
@@ -438,7 +438,7 @@ console.debug("Loading UI for perspectiveDefault");
 	}
 	
 	ExtUI.prototype.selectFile = function(uiElement, filePath) {
-	    TSCORE.ViewManager.clearSelectedFiles();   
+	    TSCORE.PerspectiveManager.clearSelectedFiles();   
 
 	    $(uiElement).parent().parent().toggleClass("ui-selected");
 

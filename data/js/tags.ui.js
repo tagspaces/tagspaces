@@ -10,12 +10,12 @@ define(function(require, exports, module) {
 
 	function initContextMenus() {
         $( "#extMenuAddTagAsFilter" ).click( function() {
-            TSCORE.ViewManager.setFileFilter(TSCORE.selectedTag);
+            TSCORE.PerspectiveManager.setFileFilter(TSCORE.selectedTag);
         });
 
         // Context menu for the tags in the file table and the file viewer
         $( "#tagMenuAddTagAsFilter" ).click( function() {
-            TSCORE.ViewManager.setFileFilter(TSCORE.selectedTag);
+            TSCORE.PerspectiveManager.setFileFilter(TSCORE.selectedTag);
         });
         
         $( "#tagMenuEditTag" ).click( function() {
@@ -33,7 +33,7 @@ define(function(require, exports, module) {
         });                
 
         $( "#tagTreeMenuAddTagAsFilter" ).click( function() {
-            TSCORE.ViewManager.setFileFilter(TSCORE.selectedTag);
+            TSCORE.PerspectiveManager.setFileFilter(TSCORE.selectedTag);
         });                
 
         $( "#tagTreeMenuEditTag" ).click( function() {
