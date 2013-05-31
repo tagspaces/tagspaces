@@ -498,7 +498,6 @@ define(function(require, exports, module) {
 	
 	// Save setting and Reloads the app
 	var saveSettings = function() {
-//	    console.debug("Settings:");
 	    // Storing setting in the local storage of mozilla and chorme
 		localStorage.setItem('tagSpacesSettings', JSON.stringify(exports.Settings));
 	    

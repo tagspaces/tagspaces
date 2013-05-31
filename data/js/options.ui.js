@@ -25,13 +25,13 @@ define(function(require, exports, module) {
         
         optionsUI.append($("<h5>Miscellaneous</h5>"));
                       
-        optionsUI.append($("<div class='control-group'>", {})
+/*        optionsUI.append($("<div class='control-group'>", {})
             .append($("<label class='control-label' for='extensionsPathInput'>Extensions folder</label>"))
             .append($("<div class='controls'>", {})
-                .append($("<input type='text' class='input-xlarge' id='extensionsPathInput' placeholder='Path to your tagspaces extensions' title='e.g.: c:\\tagspaces\\extensions'>", {})
+                .append($("<input type='text' class='input-xlarge' id='extensionsPathInput' placeholder='file:///c:\\tagspaces-extensions' title='Path to your tagspaces extensions'>", {})
                 )
             )
-        );        
+        ); */       
 
         optionsUI.append($("<div class='control-group'>", {})
             .append($("<div class='controls'>", {})
@@ -48,6 +48,8 @@ define(function(require, exports, module) {
                 )
             )
         );
+        
+        optionsUI.append($("<p>Some of the changes will be not visible until restarting TagSpaces.</p>"));        
  
     }   
 
@@ -117,8 +119,9 @@ define(function(require, exports, module) {
         });
         
         $('#saveSettingsCloseButton').click(function() {
-            updateSettings();
-            TSCORE.reloadUI();            
+            updateSettings(); 
+            $('#dialogOptions').modal("hide");
+            //TSCORE.reloadUI();            
         }) 
         
         $('#addFileTypeButton').click(function() {
@@ -155,7 +158,7 @@ define(function(require, exports, module) {
     }
     
     function updateSettings() {
-        TSCORE.Config.setExtensionPath($("#extensionsPathInput").val());
+//        TSCORE.Config.setExtensionPath($("#extensionsPathInput").val());
         TSCORE.Config.setShowUnixHiddenEntries($('#showHiddenFilesCheckbox').is(":checked"));
         TSCORE.Config.setCheckForUpdates($('#checkforUpdatesCheckbox').is(":checked"));
 
