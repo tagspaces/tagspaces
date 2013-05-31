@@ -30,7 +30,7 @@ define(function(require, exports, module) {
 
         // TODO use css require extension for loading 'css!datatablescss' 
         require([
-            extensionDirectory+'/perspectiveUI',
+            extensionDirectory+'/perspectiveUI.js',
             'datatables'
             ], function(extUI) {
                 UI = new extUI.ExtUI(extensionID);                          
