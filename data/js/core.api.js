@@ -66,8 +66,8 @@ define(function(require, exports, module) {
 	    // Init views
 		tsPersManager.initViews();                 
 	    
-	    $("#appVersion").text("["+tsSettings.DefaultSettings["appVersion"]+"]");
-	    $("#appVersion").attr("title","["+tsSettings.DefaultSettings["appBuild"]+"]");
+	    $("#appVersion").text("["+tsSettings.DefaultSettings["appVersion"]+"beta]");
+	    $("#appVersion").attr("title","["+tsSettings.DefaultSettings["appVersion"]+"."+tsSettings.DefaultSettings["appBuild"]+"]");
 	
 	    tsDirectoriesUI.initFavorites();
 	    
