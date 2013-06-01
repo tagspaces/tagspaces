@@ -82,11 +82,11 @@ define(function(require, exports, module) {
 	        var filePath = TSCORE.fileList[i][4];
 	        if(supportedFileTypeThumnailing.indexOf(fileExt) >= 0) {
 	            $("#"+exports.ID+"SelectableFiles").append(
-	                 $('<li>', { title: fileName, filepath: filePath, class: 'ui-widget-content' }).append( 
+	                 $('<li>', { title: fileName, filepath: filePath, style: 'border: 1px dashed gray;' }).append( 
 	                    $('<img>', { title: fileName, class: "thumbImg", src: 'file:///'+filePath })));
 	        } else {
 	            $("#"+exports.ID+"SelectableFiles").append(
-	                 $('<li>', { title: fileName, filepath: filePath, class: 'ui-widget-content' }).append(
+	                 $('<li>', { title: fileName, filepath: filePath, style: 'border: 1px dashed gray;' }).append(
 	                    $('<span>', { class: "fileExtension", text: fileExt})));
 	        }
 	    }    
