@@ -8,6 +8,13 @@
 @directoryColor: #F6A828;
 @tagFontSize: 1em;
 
+@media print {
+    #viewer {
+        background-color: white;
+        border: 2px dotted #c0c0c0;      
+    }
+}
+
 .roundedTagCorners (@radius: 2px) {
   border-radius: @radius;
   -webkit-border-radius: @radius;
@@ -81,6 +88,7 @@ html, body {
   display: inline-block;
   margin: 6px;
 }
+
 
 #loadingAnimation {
     display: inline-block;
