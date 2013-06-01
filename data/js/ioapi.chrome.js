@@ -226,8 +226,9 @@ New:
 	
     exports.checkNewVersion = function() {
         console.debug("Checking for new version...");
+        var cVer = TSCORE.Config.DefaultSettings["appVersion"]+"."+TSCORE.Config.DefaultSettings["appBuild"];
         $.ajax({
-            url: 'http://tagspaces.org/releases/version.json?cVer='+TSCORE.Config.DefaultSettings["appBuild"],
+            url: 'http://tagspaces.org/releases/version.json?cVer='+cVer,
             type: 'GET',
         })
         .done(function(data) { 

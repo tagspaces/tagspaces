@@ -1,5 +1,37 @@
 #Changelog
 
+##TagSpaces 1.4.135? / 2013.06.01
+- [All] Added "check for new version" functionality
+- [All] De/Select (all) functionality
+- [All] Added functionality for configuration of filetypes and perspectives
+- [All] Added options for: Extension folder, Show hidden files, Check for new version
+- [All] Extension button added to the fileviewer
+- [All] Considering hidden directories in directories navigator
+- [All] Directories look&feel enhanced
+- [All] Standard perspective loaded at first by default
+- [All] Welcoming font-awesome in the project
+- [All] Added follow on twitter button
+- [All] About and Setting buttons shifted to app options dropdown menu
+- [All] Added menu item for reporting issue
+- [All] Added menu item for contacting the developers per email
+- [All] Additional file actions shifted to a separate dropdown
+- [All] move taggroups up and down
+- [All] move tags with drag & drop between taggroups
+- [All] Bootstrap migration
+- [All] Added edit in place for the title in opened file
+- [All] perspective search removed from the repository
+- [All] Added thumbnail zooming
+- [All] Max dimension of thumbs changed to 100px
+- [All] Adding support of thumbnails
+- [All] Adding buttons for switching tags and filedetails columns
+- [All] Fixed a bug for reopening a file after applying some changes on it
+- [All] A new default perspective added with the aim of replacing basic, search and thumb  perspectives
+- [All] Added support for getting the next and previous file in a perspective
+- [All] Added toggle file info area button
+- [All] Now is possible to create directories starting with digits
+- [All] Duplicating tagsgroup functionality replaced by a create taggroups
+- [Firefox] bugfix for listing directories with wrond enconding
+
 ##TagSpaces 1.3.1284 / 2013.03.29
 - [All] Added GTD as a default taggroup
 - [All] New welcome hint shown if new favorite directories exist.
