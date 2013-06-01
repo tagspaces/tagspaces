@@ -189,7 +189,7 @@ console.debug("Loading UI for perspectiveDefault");
 		    )
 		     	    
 			.append($("<button>", { 
-		            class: "btn ",	
+		            class: "btn active",	
 			        title: "Toggle Tags",
 			        id: this.extensionID+"ShowTagsButton",    
 			    })
