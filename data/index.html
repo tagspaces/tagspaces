@@ -18,15 +18,20 @@
     <link rel="stylesheet/less" type="text/css" href="css/tagspaces.less">
 </head>
 <body style="background-color: lightgray;">
-<div id="loading" style="text-align: center; width: 100%; font-size: 1.4em; position:absolute; top:50%; text-shadow: 0px 1px 1px #fff; ">Loading <a href="index.html">TagSpaces</a> ... </div>	
+<div id="loading" style="text-align: center; width: 100%; font-size: 1.4em; position:absolute; top:50%; text-shadow: 0px 1px 1px #fff; ">
+    Loading <a href="index.html">TagSpaces</a> ... 
+</div>	
 <div id="container" style="display: none;">
     <div class="ui-layout-north" style="padding: 3px">
         <a href="http://tagspaces.org" target="_new"><span id="logo">TagSpaces<sup id="appVersion"></sup></span></a>
-        <span id="loadingAnimation">&nbsp;</span> 
+        <span id="loadingAnimation"></span> 
+        <button id="newVersionAvailable" class="btn btn-link" style="color: white; display: none" title="New TagSpaces version available" data-dropdown="#newVersionMenu">
+            <i class="icon-leaf icon-large"></i>
+        </button>
 		<div id="mainMenu" class="pull-right" style="margin: 0px;">
             <button id="toggleLeftPanel" class="btn btn-link" title="Toggle Navigator & Tag Panel"><i class="icon-sort icon-rotate-90"></i></button>
 			<div id="viewSwitcher" class="btn-group" data-toggle="buttons-radio"></div>
-	        <button role="button" class="btn btn-link" title="Additional Actions" data-dropdown="#settingsMenu"><i class="icon-reorder"></i></b></button>        
+	        <button role="button" class="btn btn-link" title="Additional Actions" data-dropdown="#settingsMenu"><i class="icon-reorder"></i></button>        
 	    </div>
     </div>
 
@@ -407,6 +412,14 @@
     </ul>
 
     <ul id="fileActionsMenu" class="dropdown-menu has-tip anchor-right"></ul>
+
+    <ul id="newVersionMenu" class="dropdown-menu has-tip">
+        <p style="padding: 15px" id="newVersionMessageContent">
+            New TagSpaces version available on 
+            <a href="https://addons.mozilla.org/firefox/addon/tagspaces/" target="_blank">addons.mozilla.org/firefox/addon/tagspaces</a> or 
+            <a href="http://tagspaces.org/download/" target="_blank">tagspaces.org/download</a>
+        </p>
+    </ul>
 
 </div>	
 </body>

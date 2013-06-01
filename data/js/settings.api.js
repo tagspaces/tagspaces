@@ -48,7 +48,7 @@ define(function(require, exports, module) {
 	    "newHTMLFileContent": "<html><head><title>Tagspaces File</title></head><body>HTML file created with tagspaces!</body></html>",	
 		"newMDFileContent": '#Markdown file created with tagspaces!',
 		"showUnixHiddenEntries": false, 
-		"checkForUpdates": false,
+		"checkForUpdates": true,
 	    "lastOpenedDirectory": "",
 		"tagspacesList": [],
 	    "extensionsPath": "ext",

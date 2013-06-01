@@ -169,4 +169,14 @@ exports.createDirectoryTree = function(dirPath) {
     document.documentElement.dispatchEvent(event);  
 }
 
+exports.checkNewVersion = function() {
+    console.debug("Checking for new version...");
+    TSCORE.showLoadingAnimation();   
+    var event = document.createEvent('CustomEvent');
+    event.initCustomEvent("addon-message", true, true, {"detail":{
+        "command": "checkNewVersion",
+    }});
+    document.documentElement.dispatchEvent(event);  
+}
+
 });

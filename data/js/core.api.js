@@ -19,7 +19,7 @@ define(function(require, exports, module) {
     var westLayout = undefined;
     var centerLayout = undefined;
     var eastLayout = undefined;
-	
+
 	var currentPath = undefined;
 	
 	var currentView = undefined;
@@ -93,12 +93,27 @@ define(function(require, exports, module) {
                     of: $( "#reloadTagSpace" )
                 });
 		    	$( "#createNewLocation" ).attr("style","border:1px solid #00AE00; border-radius:5px; border-color:#00AE00; box-shadow:0 0 10px #00AE00;")
-		    	//$( "#createNewLocation" ).tooltip( "open" );
+		    	$( "#createNewLocation" ).tooltip( { placement: "bottom" } );
+		    	$( "#createNewLocation" ).tooltip( "show" );
 		   	}
 	 		
-	    }); 	    
-
+	    }); 
+	    
+//        $( "#toggleLeftPanel" ).tooltip( { placement: "bottom" } );
+        checkForNewVersion()
 	}
+	
+    function checkForNewVersion() {
+        if(tsSettings.getCheckForUpdates()) {            
+            tsIOApi.checkNewVersion();
+        }
+    }	
+
+    function updateNewVersionData(data) {
+        console.log("Version JSON"+data)
+        // TODO Analyse JSON
+        //$("#newVersionAvailable").css('display', "inline");                        
+    }
 	
 	function updateLogger(message) {
 		// TODO reactivate
@@ -284,6 +299,7 @@ define(function(require, exports, module) {
 	exports.toggleLeftPanel 			= toggleLeftPanel;
 	exports.toggleFileDetails 			= toggleFileDetails;
 	exports.toggleFullWidth             = toggleFullWidth;
+	exports.updateNewVersionData        = updateNewVersionData;
 
 	// Proxying functions from tsCoreUI
 	exports.showAlertDialog 			= tsCoreUI.showAlertDialog;
@@ -314,4 +330,5 @@ define(function(require, exports, module) {
 	exports.fileList 					= fileList;
 	exports.selectedTag 				= selectedTag;
 	exports.selectedTagData 			= selectedTagData;		
+	
 });

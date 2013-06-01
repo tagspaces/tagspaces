@@ -126,7 +126,15 @@ console.debug("Loading messaging.mozilla.js..");
 	        } else {
 	            TSCORE.updateLogger("Selecting directory failed.");        
 	        }
-	        break;          
+	        break;  
+          case "checkNewVersion":
+            if(message.success){
+                TSCORE.updateLogger("Getting New Version Information Successfull");            
+                TSCORE.updateNewVersionData(message.content);
+            } else {
+                TSCORE.updateLogger("Create dir failed");        
+            }
+            break;	                
 	      default:
 	        break;
 	    }   

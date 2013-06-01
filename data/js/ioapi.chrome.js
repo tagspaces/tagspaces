@@ -223,6 +223,25 @@ New:
 		// TODO implement createDirectoryTree
 		TSCORE.PerspectiveManager.updateTreeData(); 
 	}
+	
+    exports.checkNewVersion = function() {
+        console.debug("Checking for new version...");
+        $.ajax({
+            url: 'http://tagspaces.org/releases/version.json?cVer='+TSCORE.Config.DefaultSettings["appBuild"],
+            type: 'GET',
+        })
+        .done(function(data) { 
+            TSCORE.updateNewVersionData(data);    
+        })
+        .fail(function(data) { 
+               alert(data); 
+        })
+//        .always(function(data) { 
+//                console.log("ajax complete: "+data); 
+//            });
+        ;            
+
+    }	
 
 });
 
