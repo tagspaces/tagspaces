@@ -59,6 +59,10 @@ found in the LICENSE file.
 		    <fileset dir="data/ext">
 			  <include name="perspectiveDefault/**/*"/>		    			    	
 			  <include name="perspectiveThumb/**/*"/>
+			  <include name="perspectiveGraph/**/*"/>	
+              <include name="editorHTML/*"/>
+              <include name="editorText/*"/>            
+              <include name="viewerMD/*"/>          
 		    </fileset>        	
         </copy>
     	<copy todir="${buildFirefoxExt.dir}/data/css" >
@@ -92,10 +96,7 @@ found in the LICENSE file.
     <target name="build-mozilla-full-extension" depends="prepare-mozilla-extension" description="Creates a simple zip(not xpi) of the mozilla extension">
         <copy todir="${buildFirefoxExt.dir}/data/ext" >
 		    <fileset dir="data/ext">
-			  <include name="perspectiveGraph/**/*"/>		    	
-		      <include name="editorHTML/**"/>
-		      <!--include name="editorText/**/*"/-->	    	
-		      <include name="viewerMD/**/*"/>	    	
+		      <include name="editorText/**/*"/>	    	
 		    </fileset>        	
         </copy>
     	<zip destfile="${builds.dir}/${appname} [v${version}.${build.number} ${DSTAMP}${TSTAMP} mozilla].zip">
@@ -126,11 +127,11 @@ found in the LICENSE file.
     	<copy todir="${buildChrome.dir}/chrome" >
             <fileset dir="data/chrome" includes="**/*"/>  
         </copy>
-        <copy todir="${buildFirefoxExt.dir}/data/ext" >
+        <copy todir="${buildChrome.dir}/ext" >
 		    <fileset dir="data/ext">
-		      <include name="perspectiveBasic/*"/>		    	
-			  <include name="perspectiveSearch/*"/>		    			    	
-			  <include name="perspectiveThumb/*"/>	
+              <include name="perspectiveDefault/**/*"/>                             
+              <include name="perspectiveThumb/**/*"/>
+              <include name="perspectiveGraph/**/*"/>   		    	
 		      <include name="editorHTML/*"/>
 			  <include name="editorText/*"/>	    	
 		      <include name="viewerMD/*"/>	    	

@@ -5,7 +5,7 @@
 define(function(require, exports, module) {
 "use strict";
 
-console.debug("Loading messaging.mozilla.js..");
+console.debug("Loading mozilla's messaging ..");
 
 	var TSCORE = require("tscore");	
 

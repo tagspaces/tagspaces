@@ -41,8 +41,8 @@ define(function(require, exports, module) {
 	
 	exports.DefaultSettings = {
 		"appName": "@APPNAME@",
-		"appVersion": "@VERSION@beta",
-	    "appBuild": "@VERSION@.@BUILD@",
+		"appVersion": "@VERSION@",
+	    "appBuild": "@BUILD@",
 		"settingsVersion": 2,
 		"newTextFileContent": "Text file created with tagspaces!",
 	    "newHTMLFileContent": "<html><head><title>Tagspaces File</title></head><body>HTML file created with tagspaces!</body></html>",	
@@ -59,9 +59,6 @@ define(function(require, exports, module) {
 	        {   
 	            "id": "perspectiveThumb", // ID should be equal to the directory name where the extension is located 
 	        },
-            {   
-                "id": "perspectiveGraph", // ID should be equal to the directory name where the extension is located 
-            },	        
 	    ],
 	    "supportedFileTypes": [
 	        { "type": "jpg",	"viewer": "viewerBrowser", "editor": "false" },        

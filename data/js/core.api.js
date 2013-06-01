@@ -110,9 +110,29 @@ define(function(require, exports, module) {
     }	
 
     function updateNewVersionData(data) {
-        console.log("Version JSON"+data)
-        // TODO Analyse JSON
-        //$("#newVersionAvailable").css('display', "inline");                        
+        console.log("Version Information: "+data)
+        var versioningData = JSON.parse(data);
+        
+        // Analysing Version Information
+        var availableBuild = parseInt(versioningData['appBuild']); 
+        var availableVersion = parseFloat(versioningData['appVersion']);
+                 
+        var currentBuild = parseInt(tsSettings.DefaultSettings["appBuild"]);
+        var currentVersion = parseFloat(tsSettings.DefaultSettings["appVersion"]);        
+
+        if(availableVersion > currentVersion) {
+            $("#newVersionMenu").html('<p style="padding: 15px" id="newVersionMessageContent">'+
+            'New TagSpaces major version available on '+
+            '<a href="https://addons.mozilla.org/firefox/addon/tagspaces/" target="_blank">addons.mozilla.org</a> or '+ 
+            '<a href="http://tagspaces.org/download/" target="_blank">tagspaces.org</a></p>');                                    
+            $("#newVersionAvailable").css('display', "inline");                                    
+        } else if ((availableVersion == currentVersion) && (availableBuild > currentBuild)) {
+            $("#newVersionMenu").html('<p style="padding: 15px" id="newVersionMessageContent">'+
+            'New TagSpaces build available on '+
+            '<a href="https://addons.mozilla.org/firefox/addon/tagspaces/" target="_blank">addons.mozilla.org</a> or '+ 
+            '<a href="http://tagspaces.org/download/" target="_blank">tagspaces.org</a></p>');                                    
+            $("#newVersionAvailable").css('display', "inline");                                      
+        }
     }
 	
 	function updateLogger(message) {
