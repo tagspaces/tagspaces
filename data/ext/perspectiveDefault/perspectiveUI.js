@@ -355,24 +355,31 @@ console.debug("Loading UI for perspectiveDefault");
 					TSCORE.TagUtils.addTag(TSCORE.selectedFiles, [tagName]);
 	
 					self.handleElementActivation();
+					
+					$(ui.helper).remove();  
 		    	}	            	
 		    })
+            // Disable due incompatibility with the select checkbox
+            //.click( function() {
+            //    var titleBut = $(this).find(".fileTitleButton");
+            //    self.selectFile(titleBut, $(titleBut).attr("filepath"));
+            //} )  
 		    .dblclick( function() {
 		        console.debug("Opening file...");
 		        var rowData = self.fileTable.fnGetData( this );
-		        
 		        TSCORE.FileOpener.openFile(rowData[TC_FILEPATH]); 
+		        
+                var titleBut = $(this).find(".fileTitleButton");
+                self.selectFile(titleBut, $(titleBut).attr("filepath"));
 		    } );     
 	    
 	    this.fileTable.$('.fileTitleButton')
 	    	.draggable({
-	    		cancel:false,
-	    		appendTo: "body",
-	    		helper: "clone",
-	    		revert: true,
-		        start: function() {
-	                self.selectFile(this, $(this).attr("filepath"));
-		        }    		
+	    		"cancel":    false,
+	    		"appendTo":  "body",
+	    		"helper":    "clone",
+	    		"revert":    true,
+		        "start":     function() { self.selectFile(this, $(this).attr("filepath")); }    		
 	    	})  
 	        .click( function() {
 	            self.selectFile(this, $(this).attr("filepath"));
@@ -416,13 +423,11 @@ console.debug("Loading UI for perspectiveDefault");
 	    
 	    this.fileTable.$('.tagButton')
 	    	.draggable({
-	    		cancel:false,
-	    		appendTo: "body",
-	    		helper: "clone",
-	    		revert: true,
-		        start: function() {
-	                self.selectFile(this, $(this).attr("filepath"));
-		        }    		
+	    		"cancel":   false,
+	    		"appendTo": "body",
+	    		"helper":   "clone",
+	    		"revert":   true,
+		        "start":    function() { self.selectFile(this, $(this).attr("filepath")); }    		
 	    	})   	        
 	        .click( function() {
 	            self.selectFile(this, $(this).attr("filepath"));

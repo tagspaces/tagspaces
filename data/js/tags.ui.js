@@ -168,6 +168,7 @@ define(function(require, exports, module) {
                     console.log("Moving tag: "+tagGroupData.title+" to "+targetTagGroupKey);
                     TSCORE.Config.moveTag(tagGroupData, targetTagGroupKey);
                     generateTagGroups();
+                    $(ui.helper).remove();
                 }                   
             })  
 	        
@@ -220,10 +221,9 @@ define(function(require, exports, module) {
 	                TSCORE.selectedTagData.parentKey = $(this).attr("parentKey");
 	            })
                 .draggable({
-                    "cancel":     false,
                     "appendTo":   "body",
                     "helper":     "clone",
-                    "revert":     true,
+                    "revert":     'invalid',
                 }) 
                 .append("<span class='caret'/>")
 	            .dropdown( 'attach' , '#tagTreeMenu' )               

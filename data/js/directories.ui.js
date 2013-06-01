@@ -90,13 +90,14 @@ define(function(require, exports, module) {
                 )                                
                 .droppable({
                         accept: '.fileTitleButton',
-                        hoverClass: "btn-warning",
+                        hoverClass: "btn-info",
                         drop: function( event, ui ) {
                             var filePath = ui.draggable.attr("filepath");
                             var fileName = TSCORE.TagUtils.extractFileName(filePath);
                             var targetDir = $(this).attr("key");
                             console.log("Moving file: "+filePath+" to "+targetDir);
                             TSCORE.IO.renameFile(filePath, targetDir+TSCORE.TagUtils.DIR_SEPARATOR+fileName);
+                            $(ui.helper).remove(); 
                         }                  
                     }
                 )
@@ -146,13 +147,14 @@ define(function(require, exports, module) {
                         })
                         .droppable({
                             accept: ".fileTitleButton",
-                            hoverClass: "btn-warning",
+                            hoverClass: "btn-info",
                             drop: function( event, ui ) {
                                 var filePath = ui.draggable.attr("filepath");
                                 var fileName = TSCORE.TagUtils.extractFileName(filePath);
                                 var targetDir = $(this).attr("key");
                                 console.log("Moving file: "+filePath+" to "+targetDir);
                                 TSCORE.IO.renameFile(filePath, targetDir+TSCORE.TagUtils.DIR_SEPARATOR+fileName);
+                                $(ui.helper).remove();                                
                             }                   
                         })
                         .html("<i class='icon-folder-close-alt'></i> "+directoryHistory[i]["children"][j].title)            
@@ -361,12 +363,12 @@ define(function(require, exports, module) {
                             nameCurrentFavorite = $(this).attr( "name" );
                             openFavorite($(this).attr( "title" ), $(this).attr( "name" ));                           
                         })
-                        .append("<i class='icon-briefcase'></i>")
+                        .append("<i class='icon-bookmark'></i>")
                         .append(" "+favoritesList[i].name)                         
                         ));
         };
         $( "#favoritesList" ).append('<li class="divider"></li>');    
-        $( "#favoritesList" ).append('<li id="createNewLocation"><a href="#"><i class="icon-magnet"></i> New Location</a></li>');
+        $( "#favoritesList" ).append('<li id="createNewLocation"><a href="#"><i class="icon-bookmark-empty"></i> New Location</a></li>');
         $( "#favoritesList" ).append('<li id="deleteFavorite"><a href="#"><i class="icon-trash"></i> Remove Location</a></li>');
        
         $( "#createNewLocation" ).click(function() {
