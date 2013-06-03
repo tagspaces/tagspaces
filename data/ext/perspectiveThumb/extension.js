@@ -5,7 +5,7 @@
 define(function(require, exports, module) {
 "use strict";
 	
-	console.debug("Loading perspectiveThumb");
+	console.log("Loading perspectiveThumb");
 
 	exports.Title = "Thumbs"
 	exports.ID = "perspectiveThumb";  // ID should be equal to the directory name where the ext. is located   
@@ -21,7 +21,7 @@ define(function(require, exports, module) {
 	var supportedFileTypeThumnailing = ['jpg','jpeg','png','gif'];
 	
 	exports.init = function init() {
-		console.debug("Initializing View "+exports.ID);
+		console.log("Initializing View "+exports.ID);
 		
 	    viewContainer = $("#"+exports.ID+"Container");
 	    viewToolbar = $("#"+exports.ID+"Toolbar");
@@ -57,7 +57,7 @@ define(function(require, exports, module) {
 	            $( ".ui-selected", this ).each(function() {
 	                TSCORE.selectedFiles.push($(this).attr("filepath"));
 	            });
-	            console.debug("Selected files: "+TSCORE.selectedFiles);
+	            console.log("Selected files: "+TSCORE.selectedFiles);
 	         //   TSCORE.handleElementActivation();
 	            
 	            // On selecting only one file opens it in the viewer
@@ -69,7 +69,7 @@ define(function(require, exports, module) {
 	}
 	
 	exports.load = function load() {
-		console.debug("Showing View "+exports.ID);
+		console.log("Showing View "+exports.ID);
 	   
 		// Purging the thumbnail view, avoiding memory leak
 		document.getElementById(exports.ID+"SelectableFiles").innerHTML = "";
@@ -96,7 +96,7 @@ define(function(require, exports, module) {
 	}
 	
 	exports.setFileFilter = function setFileFilter(filter) {
-		console.debug("setFileFilter not implemented in "+exports.ID);
+		console.log("setFileFilter not implemented in "+exports.ID);
 	}
 	
 	exports.clearSelectedFiles = function() {

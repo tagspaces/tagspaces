@@ -4,7 +4,7 @@
 define(function(require, exports, module) {
 "use strict";
 
-	console.debug("Loading tags.ui.js...");
+	console.log("Loading tags.ui.js...");
 	
 	var TSCORE = require("tscore");
 
@@ -114,7 +114,7 @@ define(function(require, exports, module) {
 	}
 	
 	function generateTagGroups() {
-	    console.debug("Generating TagGroups...");
+	    console.log("Generating TagGroups...");
 	    $("#tagGroups").empty();
 	    $("#tagGroups").addClass("accordion");
 	    if(TSCORE.Config.Settings["tagGroups"].length < 1) {
@@ -182,7 +182,7 @@ define(function(require, exports, module) {
 	        .dropdown( 'attach' , '#tagGroupMenu' )
 	        .append("<b class='icon-reorder'></b>")
 	        .click( function(event) {
-	                //console.debug("Clicked in taggroup setting");    
+	                //console.log("Clicked in taggroup setting");    
 	                TSCORE.selectedTag = $(this).attr("tag");
 	                TSCORE.selectedTagData = TSCORE.Config.getTagGroupData($(this).attr("key"));
 	                TSCORE.selectedTagData.parentKey = undefined;  
@@ -239,7 +239,7 @@ define(function(require, exports, module) {
 	
 	// Helper function user by basic and search views
 	function generateTagButtons(commaSeparatedTags, fileExtension, fileName, filePath) {
-	    console.debug("Creating tags...");
+	    console.log("Creating tags...");
 	    var tagString = ""+commaSeparatedTags;
 	    var wrapper = $('<span>');
 	    if(filePath == undefined) {
@@ -296,7 +296,7 @@ define(function(require, exports, module) {
     }	
 
 	function showAddTagsDialog() {
-	    console.debug("Adding tags..."); 
+	    console.log("Adding tags..."); 
         function split( val ) {
             return val.split( /,\s*/ );
         }

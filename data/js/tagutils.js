@@ -4,7 +4,7 @@
 define(function(require, exports, module) {
 "use strict";
 
-    console.debug("Loading tagutils.js ...");
+    console.log("Loading tagutils.js ...");
     	
     var IOAPI = require("tsioapi");
 
@@ -33,7 +33,7 @@ define(function(require, exports, module) {
 
     // TODO consider [qweq wqeqe].txt 
     function extractTitle(filePath) {
-        console.debug("Extracting title from: "+filePath);
+        console.log("Extracting title from: "+filePath);
         var fileName = extractFileName(filePath);
 
         var beginTagContainer = fileName.indexOf(BEGIN_TAG_CONTAINER);
@@ -79,7 +79,7 @@ define(function(require, exports, module) {
     }
 
     function extractTags(filePath) {
-        console.debug("Extracting tags from: "+filePath);
+        console.log("Extracting tags from: "+filePath);
         
         var fileName = extractFileName(filePath);
         
@@ -87,7 +87,7 @@ define(function(require, exports, module) {
         var beginTagContainer = fileName.indexOf(BEGIN_TAG_CONTAINER);
         var endTagContainer = fileName.indexOf(END_TAG_CONTAINER);
         if( ( beginTagContainer < 0 ) || ( endTagContainer < 0 ) || ( beginTagContainer >= endTagContainer ) ) {
-            console.debug("Filename does not contains tags. Aborting extraction.");
+            console.log("Filename does not contains tags. Aborting extraction.");
             return tags;
         }    
         var tagContainer = fileName.slice(beginTagContainer+1,endTagContainer).trim();
@@ -100,13 +100,13 @@ define(function(require, exports, module) {
             }
         }
 
-        console.debug("Extracting finished ");
+        console.log("Extracting finished ");
         
         return cleanedTags; 
     }
 
     function suggestTags(filePath) {
-        console.debug("Suggesting tags for: "+filePath);
+        console.log("Suggesting tags for: "+filePath);
         
         var fileName = extractFileName(filePath);
         
@@ -143,10 +143,10 @@ define(function(require, exports, module) {
             tagsString = tagsString.trim();  
             tagsString += END_TAG_CONTAINER;        
         }
-        console.debug("The tags string: "+tagsString);
+        console.log("The tags string: "+tagsString);
 
         var fileExt = extractFileExtension(fileName); 
-        console.debug("Filename: "+fileName+" file extenstion: "+fileExt);
+        console.log("Filename: "+fileName+" file extenstion: "+fileExt);
             
         // Assembling the new filename with the tags    
         var newFileName = "";
@@ -171,7 +171,7 @@ define(function(require, exports, module) {
     }
 
     function writeTagsToFile(filePath, tags) {
-        console.debug("Add the tags to: "+filePath);
+        console.log("Add the tags to: "+filePath);
         
         var fileName = extractFileName(filePath);
             
@@ -193,7 +193,7 @@ define(function(require, exports, module) {
     }
 
     function addTag(filePathArray, tagArray) {
-        console.debug("Adding tags to files");
+        console.log("Adding tags to files");
         
         for (var i=0; i < filePathArray.length; i++) {
            writeTagsToFile(filePathArray[i], tagArray);
@@ -202,7 +202,7 @@ define(function(require, exports, module) {
     
     // Replaces a tag with a new one
     function renameTag(filePath, oldTag, newTag) {
-        console.debug("Rename tag for file: "+filePath);
+        console.log("Rename tag for file: "+filePath);
 
         var fileName = extractFileName(filePath);
         
@@ -224,7 +224,7 @@ define(function(require, exports, module) {
     }
     
     function changeTitle(filePath, newTitle) {
-        console.debug("Changing title for file: "+filePath);
+        console.log("Changing title for file: "+filePath);
      
         var containingDirectoryPath = extractContainingDirectoryPath(filePath);
             
@@ -245,7 +245,7 @@ define(function(require, exports, module) {
 
     // Removing a tag from a filename
     function removeTag(filePath, tagName) {
-        console.debug("Removing tag: "+tagName+" from "+filePath);   
+        console.log("Removing tag: "+tagName+" from "+filePath);   
     
         var fileName = extractFileName(filePath);    
     

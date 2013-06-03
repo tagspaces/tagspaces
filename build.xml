@@ -60,9 +60,9 @@ found in the LICENSE file.
 			  <include name="perspectiveDefault/**/*"/>		    			    	
 			  <include name="perspectiveThumb/**/*"/>
 			  <include name="perspectiveGraph/**/*"/>	
-              <include name="editorHTML/*"/>
-              <include name="editorText/*"/>            
-              <include name="viewerMD/*"/>          
+              <include name="editorHTML/**/*"/>
+              <include name="editorText/**/*"/>            
+              <include name="viewerMD/**/*"/>          
 		    </fileset>        	
         </copy>
     	<copy todir="${buildFirefoxExt.dir}/data/css" >
@@ -132,9 +132,9 @@ found in the LICENSE file.
               <include name="perspectiveDefault/**/*"/>                             
               <include name="perspectiveThumb/**/*"/>
               <include name="perspectiveGraph/**/*"/>   		    	
-		      <include name="editorHTML/*"/>
-			  <include name="editorText/*"/>	    	
-		      <include name="viewerMD/*"/>	    	
+		      <include name="editorHTML/**/*"/>
+			  <include name="editorText/**/*"/>	    	
+		      <include name="viewerMD/**/*"/>	    	
 		    </fileset>        	
         </copy>	
         <copy todir="${buildChrome.dir}/libs" >

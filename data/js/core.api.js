@@ -4,7 +4,7 @@
 define(function(require, exports, module) {
 "use strict";
 
-	console.debug("Loading core.api.js ...");
+	console.log("Loading core.api.js ...");
 	
 	var tsSettings = require("tssetting");	
 	var tsIOApi = require("tsioapi");
@@ -36,7 +36,7 @@ define(function(require, exports, module) {
 	var selectedTagData = "";
 
 	function initApp() {
-	    console.debug("Init application");	
+	    console.log("Init application");	
 	
 		tsCoreUI.initUI();
 	
@@ -52,7 +52,7 @@ define(function(require, exports, module) {
 	    // In firefox, by empty local storage trying to load the settings from mozilla preferences
 	    if(tsSettings.Settings == undefined && isFirefox) {
 	        window.setTimeout(tsIOApi.loadSettings, 1000); // executes initUI and updateSettingMozillaPreferences by success
-	        console.debug("Loading setting with from mozilla pref execured with delay...");
+	        console.log("Loading setting with from mozilla pref execured with delay...");
 	    } 
 	
 	    // If still nothing found, loading the default setting from the application's javascript
@@ -81,7 +81,7 @@ define(function(require, exports, module) {
 	    // TODO check if document.ready is really needed
 	    $(document).ready(function() {
 	        initLayout();
-	        console.debug("Layout initialized");
+	        console.log("Layout initialized");
 
 		    // Show start hint
 		   	if(tsSettings.Settings.tagspacesList.length < 1 ) {
@@ -137,7 +137,7 @@ define(function(require, exports, module) {
 	
 	function updateLogger(message) {
 		// TODO reactivate
-	    console.debug("Updating logger...");
+	    console.log("Updating logger...");
 	//    $("#footer").attr("value",message);
 	}
 	
@@ -150,7 +150,7 @@ define(function(require, exports, module) {
 	}
 	
 	function fileExists(fileName) {
-	    console.debug("Check if filename: "+fileName+" already exists.");
+	    console.log("Check if filename: "+fileName+" already exists.");
 	    for (var i=0; i < fileList.length; i++) {
 	        if(fileList[i].name == fileName) {
 	            return true;
@@ -204,7 +204,7 @@ define(function(require, exports, module) {
 	}
 	
 	function initLayout (){
-	    console.debug("Initializing Layout...");
+	    console.log("Initializing Layout...");
 	
 	    layoutContainer = $('#container').layout(
 	        {

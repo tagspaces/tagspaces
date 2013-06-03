@@ -5,7 +5,7 @@
 define(function(require, exports, module) {
 "use strict";
 	
-	console.debug("Loading perspectiveRiver");
+	console.log("Loading perspectiveRiver");
 	
 	exports.Title = "River View"
 	exports.ID = "perspectiveRiver";  // ID should be equal to the directory name where the ext. is located   
@@ -19,7 +19,7 @@ define(function(require, exports, module) {
 	var viewFooter = undefined;
 	
 	exports.init = function init() {
-		console.debug("Initializing View "+exports.ID);
+		console.log("Initializing View "+exports.ID);
 		
 	    viewContainer = $("#"+exports.ID+"Container");
 	    viewToolbar = $("#"+exports.ID+"Toolbar");
@@ -45,7 +45,7 @@ define(function(require, exports, module) {
 	}
 	
 	exports.load = function load() {
-		console.debug("Showing View "+exports.ID);
+		console.log("Showing View "+exports.ID);
 	   
 		// Purging the thumbnail view, avoiding memory leak
 		// document.getElementById(exports.ID+"SelectableFiles").innerHTML = "";
@@ -65,7 +65,7 @@ define(function(require, exports, module) {
 	}
 	
 	exports.setFileFilter = function setFileFilter(filter) {
-		console.debug("setFileFilter not implemented in "+exports.ID);
+		console.log("setFileFilter not implemented in "+exports.ID);
 	}
 	
 	exports.clearSelectedFiles = function() {

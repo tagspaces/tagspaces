@@ -5,7 +5,7 @@
 define(function(require, exports, module) {
 "use strict";
 
-	console.debug("Loading editorHTML");
+	console.log("Loading editorHTML");
 	exports.id = "editorHTML"; // ID should be equal to the directory name where the ext. is located   
 	exports.title = "HTML Editor";
 	exports.type = "editor";
@@ -17,7 +17,7 @@ define(function(require, exports, module) {
 	var extensionDirectory = TSCORE.Config.getExtensionPath()+"/"+exports.id;
 	
 	exports.init1 = function(filePath, containerElementID) {
-	    console.debug("Initalization HTML Text Editor...");
+	    console.log("Initalization HTML Text Editor...");
 		require([
 			extensionDirectory+'/wysihtml5/advanced.js',
 		 	extensionDirectory+'/wysihtml5/wysihtml5-0.4.0pre.min.js',
@@ -33,7 +33,7 @@ define(function(require, exports, module) {
 	}
 	
 	exports.init2 = function(filePath, containerElementID) {
-	    console.debug("Initalization HTML Text Editor...");
+	    console.log("Initalization HTML Text Editor...");
 		require([
 			extensionDirectory+'/jwysiwyg/jquery.wysiwyg.js',
 		 	'css!'+extensionDirectory+'/jwysiwyg/jquery.wysiwyg.css'
@@ -45,7 +45,7 @@ define(function(require, exports, module) {
 	}
 	
 	exports.init = function(filePath, containerElementID) {
-	    console.debug("Initalization HTML Text Editor...");
+	    console.log("Initalization HTML Text Editor...");
 		require([
 			extensionDirectory+'/cleditor/jquery.cleditor.js',
 		 	], function() {
@@ -58,7 +58,7 @@ define(function(require, exports, module) {
 	}
 	
 	exports.setFileType = function(fileType) {
-	    console.debug("setFileType not supported on this extension");      
+	    console.log("setFileType not supported on this extension");      
 	}
 	
 	exports.viewerMode = function(isViewerMode) {

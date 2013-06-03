@@ -6,12 +6,12 @@
 define(function(require, exports, module) {
 "use strict";
 
-console.debug("Loading ioapi.mozilla.js..");
+console.log("Loading ioapi.mozilla.js..");
 
 var TSCORE = require("tscore");
 
 exports.saveSettings = function(content) {
-    console.debug("Saving setting...");        
+    console.log("Saving setting...");        
     TSCORE.showLoadingAnimation();
     var event = document.createEvent('CustomEvent');
     event.initCustomEvent("addon-message", true, true, {"detail":{
@@ -22,7 +22,7 @@ exports.saveSettings = function(content) {
 }
 
 exports.loadSettings = function() {
-    console.debug("Loading setting from firefox preferences...");
+    console.log("Loading setting from firefox preferences...");
     TSCORE.showLoadingAnimation();            
     var event = document.createEvent('CustomEvent');
     event.initCustomEvent("addon-message", true, true, {"detail":{
@@ -32,7 +32,7 @@ exports.loadSettings = function() {
 }
 
 exports.createDirectory = function(dirPath) {
-	console.debug("Directory "+dirPath+" created.");
+	console.log("Directory "+dirPath+" created.");
     TSCORE.showLoadingAnimation();			
     var event = document.createEvent('CustomEvent');
     event.initCustomEvent("addon-message", true, true, {"detail":{
@@ -43,7 +43,7 @@ exports.createDirectory = function(dirPath) {
 }
 
 exports.loadTextFile = function(filePath) {
-	console.debug("Loading file: "+filePath);
+	console.log("Loading file: "+filePath);
     TSCORE.showLoadingAnimation();	
     var event = document.createEvent('CustomEvent');
     event.initCustomEvent("addon-message", true, true, {"detail":{
@@ -54,7 +54,7 @@ exports.loadTextFile = function(filePath) {
 }
 
 exports.renameFile = function(filePath, newFilePath) {
-	console.debug("Renaming "+filePath+" to "+newFilePath);
+	console.log("Renaming "+filePath+" to "+newFilePath);
     TSCORE.showLoadingAnimation();	
     var event = document.createEvent('CustomEvent');
     event.initCustomEvent("addon-message", true, true, {"detail":{
@@ -66,7 +66,7 @@ exports.renameFile = function(filePath, newFilePath) {
 }
 
 exports.saveTextFile = function(filePath,content) {
-	console.debug("Saving file: "+filePath);
+	console.log("Saving file: "+filePath);
     TSCORE.showLoadingAnimation();	
     var event = document.createEvent('CustomEvent');
     event.initCustomEvent("addon-message", true, true, {"detail":{
@@ -78,7 +78,7 @@ exports.saveTextFile = function(filePath,content) {
 }
 
 exports.listDirectory = function(dirPath) {
-	console.debug("Listing directory: "+dirPath);
+	console.log("Listing directory: "+dirPath);
     TSCORE.showLoadingAnimation();	
     var event = document.createEvent('CustomEvent');
     event.initCustomEvent("addon-message", true, true, {"detail":{
@@ -89,7 +89,7 @@ exports.listDirectory = function(dirPath) {
 }
 
 exports.getSubdirs = function(dirPath) {
-	console.debug("Getting subdirs: "+dirPath);
+	console.log("Getting subdirs: "+dirPath);
     TSCORE.showLoadingAnimation();	
     var event = document.createEvent('CustomEvent');
     event.initCustomEvent("addon-message", true, true, {"detail":{
@@ -100,7 +100,7 @@ exports.getSubdirs = function(dirPath) {
 }
 
 exports.deleteElement = function(path) {
-	console.debug("Deleting: "+path);
+	console.log("Deleting: "+path);
     TSCORE.showLoadingAnimation();	
     var event = document.createEvent('CustomEvent');
     event.initCustomEvent("addon-message", true, true, {"detail":{
@@ -111,7 +111,7 @@ exports.deleteElement = function(path) {
 }
 
 exports.selectDirectory = function() {
-	console.debug("Selecting directory...");
+	console.log("Selecting directory...");
     var event = document.createEvent('CustomEvent');
     event.initCustomEvent("addon-message", true, true, {"detail":{
 		"command": "selectDirectory",
@@ -120,7 +120,7 @@ exports.selectDirectory = function() {
 }
 
 exports.selectFile = function() {
-	console.debug("Selecting file...");
+	console.log("Selecting file...");
     var event = document.createEvent('CustomEvent');
     event.initCustomEvent("addon-message", true, true, {"detail":{
 		"command": "selectFile"
@@ -129,7 +129,7 @@ exports.selectFile = function() {
 }
     
 exports.openDirectory = function(dirPath) {
-	console.debug("Opening directory: "+dirPath);
+	console.log("Opening directory: "+dirPath);
     var event = document.createEvent('CustomEvent');
     event.initCustomEvent("addon-message", true, true, {"detail":{
 		"command": "openDirectory",
@@ -139,7 +139,7 @@ exports.openDirectory = function(dirPath) {
 }
 
 exports.openExtensionsDirectory = function() {
-    console.debug("Opening extensions directory...");
+    console.log("Opening extensions directory...");
     var event = document.createEvent('CustomEvent');
     event.initCustomEvent("addon-message", true, true, {"detail":{
         "command": "openExtensionsDirectory"
@@ -148,7 +148,7 @@ exports.openExtensionsDirectory = function() {
 }
 
 exports.createDirectoryIndex = function(dirPath) {
-    console.debug("Creating directory index for: "+dirPath);
+    console.log("Creating directory index for: "+dirPath);
     TSCORE.showLoadingAnimation();   
     var event = document.createEvent('CustomEvent');
     event.initCustomEvent("addon-message", true, true, {"detail":{
@@ -159,7 +159,7 @@ exports.createDirectoryIndex = function(dirPath) {
 }
 
 exports.createDirectoryTree = function(dirPath) {
-    console.debug("Creating directory tree for: "+dirPath);
+    console.log("Creating directory tree for: "+dirPath);
     TSCORE.showLoadingAnimation();   
     var event = document.createEvent('CustomEvent');
     event.initCustomEvent("addon-message", true, true, {"detail":{
@@ -170,7 +170,7 @@ exports.createDirectoryTree = function(dirPath) {
 }
 
 exports.checkNewVersion = function() {
-    console.debug("Checking for new version...");
+    console.log("Checking for new version...");
     TSCORE.showLoadingAnimation();   
     var event = document.createEvent('CustomEvent');
     event.initCustomEvent("addon-message", true, true, {"detail":{

@@ -1,6 +1,6 @@
 #Changelog
 
-##TagSpaces 1.4.135? / 2013.06.01
+##TagSpaces 1.4.1355 / 2013.06.01
 - [All] Added "check for new version" functionality
 - [All] De/Select (all) functionality
 - [All] Added functionality for configuration of filetypes and perspectives

@@ -4,7 +4,7 @@
 define(function(require, exports, module) {
 "use strict";
     
-	console.debug("Loading fileOpener...");
+	console.log("Loading fileOpener...");
 	
 	var TSCORE = require("tscore");
 
@@ -34,7 +34,7 @@ define(function(require, exports, module) {
 	}
 
 	function openFile(filePath) {
-	    console.debug("Opening file: "+filePath);
+	    console.log("Opening file: "+filePath);
 		
 		if(TSCORE.FileOpener.isFileEdited()) {
 			if(!confirm("Any unsaved changes will be lost! \nDo you want to continue?")) {
@@ -53,7 +53,7 @@ define(function(require, exports, module) {
 	
 	    // Getting the viewer for the file extension/type
 	    var viewerExt = TSCORE.Config.getFileTypeViewer(fileExt);  
-	    console.debug("File Viewer: "+viewerExt);
+	    console.log("File Viewer: "+viewerExt);
 	
 	    initTagSuggestionMenu(filePath);
 	
@@ -79,7 +79,7 @@ define(function(require, exports, module) {
 	} 
 	
 	function updateEditorContent(fileContent) {
-	    console.debug("Updating editor"); // with data: "+fileContent); 
+	    console.log("Updating editor"); // with data: "+fileContent); 
 	    _tsEditor.setContent(fileContent);    
 	}
 	
@@ -89,12 +89,12 @@ define(function(require, exports, module) {
 	
 	    // Getting the editor for the file extension/type
 	    var editorExt = TSCORE.Config.getFileTypeEditor(fileExt);  
-	    console.debug("File Editor: "+editorExt);
+	    console.log("File Editor: "+editorExt);
 	    return editorExt;    
 	}
 	
 	function editFile(filePath) {
-	    console.debug("Editing file: "+filePath);
+	    console.log("Editing file: "+filePath);
 
         $( "#viewer" ).empty();
 	
@@ -116,7 +116,7 @@ define(function(require, exports, module) {
 	} 
 	
 	function saveFile(filePath) {
-	    console.debug("Save current file: "+filePath);
+	    console.log("Save current file: "+filePath);
 	    var content = _tsEditor.getContent();
 	    TSCORE.IO.saveTextFile(filePath, content);   	    	
 	}
@@ -234,7 +234,7 @@ define(function(require, exports, module) {
 	                .click(function() {
 			            var tagName = $(this).attr( "tagname" );    
 			            var filePath = $(this).attr( "filepath" );    		            
-			            console.debug("Tag suggestion clicked: "+tagName);
+			            console.log("Tag suggestion clicked: "+tagName);
 			            TSCORE.TagUtils.writeTagsToFile(filePath, [tagName]);
 			          	return false;
 	        		})                

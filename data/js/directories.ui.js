@@ -4,7 +4,7 @@
 define(function(require, exports, module) {
 "use strict";
 
-    console.debug("Loading DirectoriesUI...");
+    console.log("Loading DirectoriesUI...");
 
     var TSCORE = require("tscore");
     
@@ -15,7 +15,7 @@ define(function(require, exports, module) {
     var nameCurrentFavorite = undefined;
     
     function openFavorite(path, title) {
-        console.debug("Opening favorite in : "+path+" title: "+title);
+        console.log("Opening favorite in : "+path+" title: "+title);
     
         document.title = title + " | " + TSCORE.Config.DefaultSettings.appName;
     
@@ -29,7 +29,7 @@ define(function(require, exports, module) {
     
     // Updates the directory subtree
     function updateSubDirs(dirList) {
-        console.debug("Updating subdirs(TSCORE)..."+JSON.stringify(dirList));
+        console.log("Updating subdirs(TSCORE)..."+JSON.stringify(dirList));
     
         // Sort the dirList alphabetically
         dirList.sort(function(a,b) { return a.title.localeCompare(b.title); });
@@ -48,7 +48,7 @@ define(function(require, exports, module) {
     }
     
     function generateDirPath() {
-        console.debug("Generating Directory Path...");
+        console.log("Generating Directory Path...");
         $("#dirTree").empty();
         $("#dirTree").addClass("accordion")
         for(var i=0; i < directoryHistory.length; i++) {
@@ -330,7 +330,7 @@ define(function(require, exports, module) {
     }  
     
     function deleteFolderConnection() {
-        console.debug("Deleting folder connection..");
+        console.log("Deleting folder connection..");
         TSCORE.Config.deleteFavorite(nameCurrentFavorite);
         initFavorites();  
         if(TSCORE.Config.Settings["tagspacesList"][0] != undefined) {
@@ -347,7 +347,7 @@ define(function(require, exports, module) {
     }             
     
     function initFavorites() {
-        console.debug("Creating location menu...");
+        console.log("Creating location menu...");
         
         $( "#favoritesList" ).empty();
         var favoritesList = TSCORE.Config.Settings["tagspacesList"]

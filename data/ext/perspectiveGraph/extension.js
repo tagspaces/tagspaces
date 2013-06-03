@@ -5,7 +5,7 @@
 define(function(require, exports, module) {
 "use strict";
 	
-	console.debug("Loading perspectiveGraph");
+	console.log("Loading perspectiveGraph");
 
 	var extensionTitle = "Graph"
 	var extensionID = "perspectiveGraph";  // ID should be equal to the directory name where the ext. is located   
@@ -34,7 +34,7 @@ define(function(require, exports, module) {
 	var treeData = undefined;
 	
 	exports.init = function init() {
-		console.debug("Initializing View "+extensionID);
+		console.log("Initializing View "+extensionID);
 		
 	    viewContainer = $("#"+extensionID+"Container");
 	    viewToolbar = $("#"+extensionID+"Toolbar");
@@ -48,7 +48,7 @@ define(function(require, exports, module) {
 	}
 	
 	exports.load = function load() {
-		console.debug("Loading View "+extensionID);
+		console.log("Loading View "+extensionID);
 
         require([
             extensionDirectory+'/d3/d3.js',
@@ -241,7 +241,7 @@ define(function(require, exports, module) {
 	}
 	
 	exports.updateTreeData = function updateIndexData(fsTreeData) {
-		console.debug("Updating tree data, Rendering graph...");
+		console.log("Updating tree data, Rendering graph...");
 		
 		treeData = fsTreeData;
 		

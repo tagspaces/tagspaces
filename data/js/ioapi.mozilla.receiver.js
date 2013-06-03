@@ -5,36 +5,36 @@
 define(function(require, exports, module) {
 "use strict";
 
-console.debug("Loading mozilla's messaging ..");
+console.log("Loading mozilla's messaging ..");
 
 	var TSCORE = require("tscore");	
 
 	document.documentElement.addEventListener("addon-message1", function(event) {
-	    console.debug("Message received in page script from content script: "); //+JSON.stringify(event.detail));
+	    console.log("Message received in page script from content script: "); //+JSON.stringify(event.detail));
 	    TSCORE.hideLoadingAnimation();
 	    var message = event.detail;
 	    switch (message.command) {
 	      case "loadSettings":
 	        if(message.success) {
 	            try {
-	                console.debug("Loading settings...: "+JSON.stringify(message.content));
+	                console.log("Loading settings...: "+JSON.stringify(message.content));
 	                TSCORE.Config.updateSettingMozillaPreferences(message.content);
 	
 	                TSCORE.initFavorites();
 	                TSCORE.generateTagGroups();
 	                  
 	            } catch (ex) {
-	                console.debug("Exception while getting setting from firefox failed "+ex)
+	                console.log("Exception while getting setting from firefox failed "+ex)
 	            }
 	        } else {
-	            console.debug("Getting setting from firefox failed") 
+	            console.log("Getting setting from firefox failed") 
 	        }
 	        break;
 	      case "saveSettings":
 	        if(message.success) {
-	            console.debug("Saving setting as native mozilla preference successfull!")
+	            console.log("Saving setting as native mozilla preference successfull!")
 	        } else {
-	            console.debug("Saving setting as native mozilla preference failed!")            
+	            console.log("Saving setting as native mozilla preference failed!")            
 	        }
 	        break;        
 	      case "rename":
@@ -85,7 +85,7 @@ console.debug("Loading mozilla's messaging ..");
 	        break;      
 	      case "indexDirectory":
 	        if(message.success){
-	            //console.debug("Directory Index: "+JSON.stringify(message.content));
+	            //console.log("Directory Index: "+JSON.stringify(message.content));
 	            TSCORE.PerspectiveManager.updateFileBrowserData(message.content);       
 	        } else {
 	            TSCORE.updateLogger("Indexing directory failed");        
@@ -93,7 +93,7 @@ console.debug("Loading mozilla's messaging ..");
 	        break;  
 	      case "createDirectoryTree":
 	        if(message.success){
-	            console.debug("Directory tree: "+JSON.stringify(message.content));
+	            console.log("Directory tree: "+JSON.stringify(message.content));
 	            TSCORE.PerspectiveManager.updateTreeData(message.content);       
 	        } else {
 	            TSCORE.updateLogger("Indexing directory failed");        

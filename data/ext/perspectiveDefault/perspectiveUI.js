@@ -5,7 +5,7 @@
 define(function(require, exports, module) {
 "use strict";
 	
-console.debug("Loading UI for perspectiveDefault");
+console.log("Loading UI for perspectiveDefault");
 
 	var TSCORE = require("tscore");
 
@@ -75,7 +75,7 @@ console.debug("Loading UI for perspectiveDefault");
 	}
 
 	ExtUI.prototype.buildUI = function() {
-		console.debug("Init UI module");
+		console.log("Init UI module");
 		       
 		var self = this;
 		
@@ -214,7 +214,7 @@ console.debug("Loading UI for perspectiveDefault");
             }).keyup(function() {
                 TSCORE.PerspectiveManager.clearSelectedFiles();
                 self.fileTable.fnFilter(this.value);
-                console.debug("Filter to value: "+this.value);
+                console.log("Filter to value: "+this.value);
             }))
                     
             .append($("<button>", { 
@@ -299,7 +299,7 @@ console.debug("Loading UI for perspectiveDefault");
 	    /* $("tbody", $(this.fileTable)).selectable({
 	      filter: 'tr',
 	      start: function() {
-	        console.debug("Start selecting");  
+	        console.log("Start selecting");  
 	        TSCORE.hideAllDropDownMenus();				            
 			TSCORE.PerspectiveManager.clearSelectedFiles();
 	      },
@@ -310,7 +310,7 @@ console.debug("Loading UI for perspectiveDefault");
 	            TSCORE.selectedFiles.push(rowData[TC_FILEPATH]);
 	    		self.handleElementActivation();               
 	          });
-	        console.debug("Selected files: "+TSCORE.selectedFiles);
+	        console.log("Selected files: "+TSCORE.selectedFiles);
 	      }
 	    }) */
 	}			
@@ -365,7 +365,7 @@ console.debug("Loading UI for perspectiveDefault");
             //    self.selectFile(titleBut, $(titleBut).attr("filepath"));
             //} )  
 		    .dblclick( function() {
-		        console.debug("Opening file...");
+		        console.log("Opening file...");
 		        var rowData = self.fileTable.fnGetData( this );
 		        TSCORE.FileOpener.openFile(rowData[TC_FILEPATH]); 
 		        
@@ -408,7 +408,7 @@ console.debug("Loading UI for perspectiveDefault");
 
 	    this.fileTable.$('.thumbImg')
 		    .dblclick( function() {
-		        console.debug("Opening file...");
+		        console.log("Opening file...");
 		        TSCORE.FileOpener.openFile($(this).attr("filepath")); 
 		    } ); 	    
 
@@ -503,7 +503,7 @@ console.debug("Loading UI for perspectiveDefault");
 	}
 	
 	ExtUI.prototype.handleElementActivation = function() {
-	    console.debug("Entering element activation handler...");
+	    console.log("Entering element activation handler...");
 	    
 	    var tagButton = $( "#"+this.extensionID+"TagButton" );
 	    

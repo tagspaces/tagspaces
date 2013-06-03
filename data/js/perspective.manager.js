@@ -4,7 +4,7 @@
 define(function(require, exports, module) {
 "use strict";
 
-console.debug("Loading perspective.manager.js");
+console.log("Loading perspective.manager.js");
 
 var perspectives = undefined;
 
@@ -46,7 +46,7 @@ var initViews = function () {
                     //try {             
                         perspective.init();
                     //} catch(e) {
-                    //  console.debug("Error while executing 'init' on "+perspectives[i].ID+" - "+e);
+                    //  console.log("Error while executing 'init' on "+perspectives[i].ID+" - "+e);
                     //}            
                 });       
             //} 
@@ -56,7 +56,7 @@ var initViews = function () {
 }
 
 var initViewsUI = function(perspective) {
-	console.debug("Init UI for "+perspective.ID);
+	console.log("Init UI for "+perspective.ID);
 	
 	// Creating perspective's toolbar
     $("#viewToolbars").append($("<div>", { 
@@ -93,7 +93,7 @@ var getNextFile = function (filePath) {
 	 		try { 			
 	 			return perspectives[i].getNextFile(filePath);
 	 		} catch(e) {
-	 			console.debug("Error while executing 'getNextFile' on "+perspectives[i].ID+" "+e);
+	 			console.log("Error while executing 'getNextFile' on "+perspectives[i].ID+" "+e);
 	 		}
  		}
 	}
@@ -105,7 +105,7 @@ var getPrevFile = function (filePath) {
 	 		try { 			
 	 			return perspectives[i].getPrevFile(filePath);
 	 		} catch(e) {
-	 			console.debug("Error while executing 'getPrevFile' on "+perspectives[i].ID+" "+e);
+	 			console.log("Error while executing 'getPrevFile' on "+perspectives[i].ID+" "+e);
 	 		}
  		}
 	}
@@ -116,13 +116,13 @@ var updateTreeData = function (treeData) {
  		try { 			
  			perspectives[i].updateTreeData(treeData);
  		} catch(e) {
- 			console.debug("Error while executing 'updateTreeData' on "+perspectives[i].ID+" "+e);
+ 			console.log("Error while executing 'updateTreeData' on "+perspectives[i].ID+" "+e);
  		}
 	}
 }
 
 var updateFileBrowserData = function(dirList) {
-    console.debug("Updating the file browser data...");
+    console.log("Updating the file browser data...");
     
     TSCORE.fileList = [];
     var tags = undefined;
@@ -161,7 +161,7 @@ var refreshFileListContainer = function() {
 }
 
 var changeView = function (viewType) {
-    console.debug("Change to "+viewType+" view.");
+    console.log("Change to "+viewType+" view.");
     TSCORE.showLoadingAnimation();
        
     //Setting the current view
@@ -205,7 +205,7 @@ var clearSelectedFiles = function () {
  		try { 			
  			perspectives[i].clearSelectedFiles();
  		} catch(e) {
- 			console.debug("Error while executing 'clearSelectedFiles' on "+perspectives[i].ID)
+ 			console.log("Error while executing 'clearSelectedFiles' on "+perspectives[i].ID)
  		} 		
 	}	
 }
@@ -215,7 +215,7 @@ var setFileFilter = function (filter) {
  		try { 			
  			perspectives[i].setFileFilter(filter);
  		} catch(e) {
- 			console.debug("Error while executing 'setFileFilter' on "+perspectives[i].ID)
+ 			console.log("Error while executing 'setFileFilter' on "+perspectives[i].ID)
  		} 		 		
 	}	
 }

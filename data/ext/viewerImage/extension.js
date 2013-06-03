@@ -5,7 +5,7 @@
 define(function(require, exports, module) {
 "use strict";
 
-	console.debug("Loading viewerImage");
+	console.log("Loading viewerImage");
 
 	exports.id = "viewerImage"; // ID should be equal to the directory name where the ext. is located   
 	exports.title = "Image Viewer";
@@ -17,7 +17,7 @@ define(function(require, exports, module) {
 	var extensionDirectory = TSCORE.Config.getExtensionPath()+"/"+exports.id;
 	
 	exports.init = function(filePath, elementID) {
-	    console.debug("Initalization Browser Image Viewer...");
+	    console.log("Initalization Browser Image Viewer...");
 	    filePath = "file:///"+filePath;
 	
 	    $('#'+elementID).append($('<img>', {
@@ -32,15 +32,15 @@ define(function(require, exports, module) {
 	}
 	
 	exports.viewerMode = function(isViewerMode) {
-		console.debug("viewerMode not supported on this extension");  
+		console.log("viewerMode not supported on this extension");  
 	}
 	
 	exports.setContent = function(content) {
-		console.debug("setContent not supported on this extension"); 	
+		console.log("setContent not supported on this extension"); 	
 	}
 	
 	exports.getContent = function() {
-		console.debug("getContent not supported on this extension"); 	
+		console.log("getContent not supported on this extension"); 	
 	}
 
 });

@@ -5,7 +5,7 @@
 define(function(require, exports, module) {
 "use strict";
 
-	console.debug("Loading viewerMD");
+	console.log("Loading viewerMD");
 
 	exports.id = "viewerMD"; // ID should be equal to the directory name where the ext. is located   
 	exports.title = "MD Viewer";
@@ -20,7 +20,7 @@ define(function(require, exports, module) {
 	var extensionDirectory = TSCORE.Config.getExtensionPath()+"/"+exports.id;
 	
 	exports.init = function(filePath, containerElementID) {
-	    console.debug("Initalization MD Viewer...");
+	    console.log("Initalization MD Viewer...");
 	    containerElID = containerElementID;
 	    // TODO create a css namespace for the specific styles
 	//	require(['css!'+extensionDirectory+'/bootstrapLite.css']);
@@ -31,7 +31,7 @@ define(function(require, exports, module) {
 	}
 	
 	exports.setFileType = function(fileType) {
-	    console.debug("setFileType not supported on this extension");      
+	    console.log("setFileType not supported on this extension");      
 	}
 	
 	exports.viewerMode = function(isViewerMode) {

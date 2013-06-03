@@ -1,7 +1,7 @@
 /* Copyright (c) 2012-2013 The TagSpaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that 
  * can be found in the LICENSE file. */
-console.debug("Loading ioapi.cordova.js..");
+console.log("Loading ioapi.cordova.js..");
 
 var IOAPI = (typeof IOAPI == 'object' && IOAPI != null) ? IOAPI : {};
 
@@ -43,15 +43,15 @@ function gotFileWriter(writer) {
 
 
 // Test if plugin works
-console.debug("Current platform: "+IOAPI.plugin.getPlatform()+" with path separator: "+IOAPI.pathSeparator);  
+console.log("Current platform: "+IOAPI.plugin.getPlatform()+" with path separator: "+IOAPI.pathSeparator);  
 
 IOAPI.createDirectory = function(dirPath) {
-    console.debug("Creating directory: "+dirPath);    
+    console.log("Creating directory: "+dirPath);    
     if(IOAPI.plugin.isDirectory(dirPath)) {
         console.error("Directory already exists...");
     } else {
         if(IOAPI.plugin.createDirectory(dirPath)) {
-            console.debug("Directory: "+dirPath+" created.");       
+            console.log("Directory: "+dirPath+" created.");       
         } else {
             console.error("Directory creation failed");     
         }
@@ -59,7 +59,7 @@ IOAPI.createDirectory = function(dirPath) {
 }
 
 IOAPI.loadTextFile = function(filePath) {
-    console.debug("Loading file: "+filePath);
+    console.log("Loading file: "+filePath);
     if(IOAPI.plugin.fileExists(filePath)) {
         var fileContent = IOAPI.plugin.getTextFile(filePath);
         UIAPI.FileOpener.updateEditorContent(fileContent);   
@@ -70,14 +70,14 @@ IOAPI.loadTextFile = function(filePath) {
 
 // TODO Renaming very slow, due the copy implementation
 IOAPI.renameFile = function(filePath, newFilePath) {
-    console.debug("Renaming file: "+filePath+" to "+newFilePath);
+    console.log("Renaming file: "+filePath+" to "+newFilePath);
     if(IOAPI.plugin.fileExists(newFilePath)) {
         console.error("Target file already exists: "+newFilePath);
     } else {
         if(IOAPI.plugin.fileExists(filePath)) {
             IOAPI.plugin.saveBinaryFile(newFilePath,IOAPI.plugin.getBinaryFile(filePath));
             IOAPI.plugin.removeFile(filePath);
-            console.debug("File renamed to: "+newFilePath); 
+            console.log("File renamed to: "+newFilePath); 
         } else { 
             console.error("Original file does not exists: "+filePath);      
         }
@@ -85,7 +85,7 @@ IOAPI.renameFile = function(filePath, newFilePath) {
 }
 
 IOAPI.saveTextFile = function(filePath,content) {
-    console.debug("Saving file: "+filePath);
+    console.log("Saving file: "+filePath);
     if(IOAPI.plugin.fileExists(filePath)) {
         IOAPI.plugin.removeFile(filePath);              
     }
@@ -93,11 +93,11 @@ IOAPI.saveTextFile = function(filePath,content) {
 }
 
 IOAPI.listDirectory = function(dirPath) {
-    console.debug("Listing directory: "+dirPath);
+    console.log("Listing directory: "+dirPath);
     if(IOAPI.plugin.isDirectory(dirPath)) {
         try {
             var dirList = IOAPI.plugin.listFiles(dirPath);
-            console.debug("Dir content: "+JSON.stringify(dirList)); 
+            console.log("Dir content: "+JSON.stringify(dirList)); 
             UIAPI.PerspectiveManager.updateFileBrowserData(dirList);
         } catch(ex) {
             console.error("Directory listing failed "+ex);
@@ -108,7 +108,7 @@ IOAPI.listDirectory = function(dirPath) {
 }
 
 IOAPI.getSubdirs = function(dirPath) {
-    console.debug("Getting subdirs: "+dirPath);
+    console.log("Getting subdirs: "+dirPath);
     if(IOAPI.plugin.isDirectory(dirPath)) {
         try {
             var dirList = IOAPI.plugin.listFiles(dirPath);
@@ -134,30 +134,30 @@ IOAPI.getSubdirs = function(dirPath) {
 }
 
 IOAPI.deleteElement = function(path) {
-    console.debug("Deleting: "+path);
+    console.log("Deleting: "+path);
 //    IOAPI.plugin.removeFile(path)
 }
 
 IOAPI.selectDirectory = function() {
     // TODO implement selectDirectory
-    console.debug("Select directory functionality not implemented on cordova yet!");
+    console.log("Select directory functionality not implemented on cordova yet!");
     alert("Select directory functionality not implemented on cordova yet!")  
 }
 
 IOAPI.selectFile = function() {
     // TODO implement selectFile
-    console.debug("Select file functionality not implemented on cordova yet!");
+    console.log("Select file functionality not implemented on cordova yet!");
     alert("Select file functionality not implemented on cordova yet!")
 }
 
 IOAPI.openDirectory = function(dirPath) {
     // TODO implement openDirectory
-    console.debug("Open directory functionality not implemented on cordova yet!");
+    console.log("Open directory functionality not implemented on cordova yet!");
     alert("Open directory functionality not implemented on cordova yet!");
 }
 
 IOAPI.openExtensionsDirectory = function() {
     // TODO implement openExtensionsDirectory
-    console.debug("Open extensions directory functionality not implemented on cordova yet!");
+    console.log("Open extensions directory functionality not implemented on cordova yet!");
     alert("Open extensions directory functionality not implemented on cordova yet!"); 
 }

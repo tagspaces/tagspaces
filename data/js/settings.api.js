@@ -4,7 +4,7 @@
 define(function(require, exports, module) {
 "use strict";
 
-	console.debug("Loading settings.api.js..");
+	console.log("Loading settings.api.js..");
 	
 	var IOAPI = require("tsioapi");
 	
@@ -137,7 +137,7 @@ define(function(require, exports, module) {
 	
 	var upgradeSettings = function() {
 		if(exports.Settings["appBuild"].localeCompare(exports.DefaultSettings["appBuild"]) < 0) {
-			console.debug("Upgrading settings");
+			console.log("Upgrading settings");
 			exports.Settings["appVersion"] = exports.DefaultSettings["appVersion"];
 			exports.Settings["appBuild"] = exports.DefaultSettings["appBuild"];
 			getPerspectiveExtensions();
@@ -258,9 +258,9 @@ define(function(require, exports, module) {
 	var findTag = function(tagName, tagGroupKey) {
 	    for(var i=0; i < exports.Settings["tagGroups"].length; i++) {
 	        if(exports.Settings["tagGroups"][i].key == tagGroupKey) {
-	            // console.debug("Current taggroup "+exports.Settings["tagGroups"][i].key);
+	            // console.log("Current taggroup "+exports.Settings["tagGroups"][i].key);
 	            for(var j=0; j < exports.Settings["tagGroups"][i]["children"].length; j++) {
-	                // console.debug("Current tagname "+exports.Settings["tagGroups"][i]["children"][j].title);
+	                // console.log("Current tagname "+exports.Settings["tagGroups"][i]["children"][j].title);
 	                if(exports.Settings["tagGroups"][i]["children"][j].title == tagName) {
 	                    return exports.Settings["tagGroups"][i]["children"][j];
 	                }
@@ -273,9 +273,9 @@ define(function(require, exports, module) {
 	var getAllTags = function() {
 	    var allTags = [];
 	    for(var i=0; i < exports.Settings["tagGroups"].length; i++) {
-	        // console.debug("Current taggroup "+exports.Settings["tagGroups"][i].key);
+	        // console.log("Current taggroup "+exports.Settings["tagGroups"][i].key);
 	        for(var j=0; j < exports.Settings["tagGroups"][i]["children"].length; j++) {
-	            // console.debug("Current tagname "+exports.Settings["tagGroups"][i]["children"][j].title);
+	            // console.log("Current tagname "+exports.Settings["tagGroups"][i]["children"][j].title);
 	            if(exports.Settings["tagGroups"][i]["children"][j].type == "plain") {
 	                allTags.push(exports.Settings["tagGroups"][i]["children"][j].title);
 	            }
@@ -320,7 +320,7 @@ define(function(require, exports, module) {
 	var deleteTagGroup = function(tagData) {
 	    for(var i=0; i < exports.Settings["tagGroups"].length; i++) {
 	        if(exports.Settings["tagGroups"][i].key == tagData.key) {
-	            console.debug("Deleting taggroup "+exports.Settings["tagGroups"][i].key);
+	            console.log("Deleting taggroup "+exports.Settings["tagGroups"][i].key);
 	            exports.Settings["tagGroups"].splice(i, 1);
 	            break;
 	        }        
@@ -369,10 +369,10 @@ define(function(require, exports, module) {
 	    newTagModel.title = newTagName;
         exports.Settings["tagGroups"].forEach(function (value, index) {	        
 	        if(value.key == tagData.key) {
-	            console.debug("Creating tag: "+JSON.stringify(newTagModel)+" with parent: "+tagData.key);
+	            console.log("Creating tag: "+JSON.stringify(newTagModel)+" with parent: "+tagData.key);
                 value["children"].forEach(function (value, index) {
                     if(value.title == newTagName) {
-                        console.debug("Tag with the same name already exist in this group");
+                        console.log("Tag with the same name already exist in this group");
                         return false;
                     }
                 });
@@ -403,7 +403,7 @@ define(function(require, exports, module) {
 	    } 
 	    newTagGroupModel.title = tagGroupName;
 	    newTagGroupModel.key = tagGroupKey;            
-	    console.debug("Creating taggroup: "+JSON.stringify(newTagGroupModel)+" with key: "+tagGroupKey);
+	    console.log("Creating taggroup: "+JSON.stringify(newTagGroupModel)+" with key: "+tagGroupKey);
 	    exports.Settings["tagGroups"].push(newTagGroupModel);
 	    saveSettings();       
 	}
@@ -413,7 +413,7 @@ define(function(require, exports, module) {
 	    newTagGroupModel.title = tagGroupName;
 	    //newTagGroupModel.children = [];
 	    newTagGroupModel.key = ""+getRandomInt(10000,99999);            
-	    console.debug("Creating taggroup: "+JSON.stringify(newTagGroupModel)+" with key: "+newTagGroupModel.key);
+	    console.log("Creating taggroup: "+JSON.stringify(newTagGroupModel)+" with key: "+newTagGroupModel.key);
 	    exports.Settings["tagGroups"].push(newTagGroupModel);
 	    saveSettings();       
 	}	
@@ -454,9 +454,9 @@ define(function(require, exports, module) {
 	
 	var deleteFavorite = function(name) {
 	    for(var i=0; i < exports.Settings["tagspacesList"].length; i++) {
-	            console.debug("Traversing favorite "+exports.Settings["tagspacesList"][i].name+" searching for "+name);
+	            console.log("Traversing favorite "+exports.Settings["tagspacesList"][i].name+" searching for "+name);
 	        if(exports.Settings["tagspacesList"][i].name == name) {
-	            console.debug("Deleting favorite "+exports.Settings["tagspacesList"][i].name);
+	            console.log("Deleting favorite "+exports.Settings["tagspacesList"][i].name);
 	            exports.Settings["tagspacesList"].splice(i, 1);
 	            break;
 	        }        
@@ -468,10 +468,10 @@ define(function(require, exports, module) {
 	    var tmpSettings = JSON.parse(settings);    
 	    if(tmpSettings != null) {
 	        exports.Settings = tmpSettings;
-	        console.debug("Settings loaded from firefox preferences: "+tmpSettings);
+	        console.log("Settings loaded from firefox preferences: "+tmpSettings);
 	    } else {
 	        exports.Settings = exports.DefaultSettings;
-	        console.debug('Default settings loaded(Firefox)!');        
+	        console.log('Default settings loaded(Firefox)!');        
 	    }
 	    saveSettings();
 	}
@@ -479,7 +479,7 @@ define(function(require, exports, module) {
 	var loadSettingsLocalStorage = function() {
 	    try {
 	        var tmpSettings = JSON.parse(localStorage.getItem('tagSpacesSettings'));
-	        //console.debug("Settings: "+JSON.stringify(tmpSettings));        
+	        //console.log("Settings: "+JSON.stringify(tmpSettings));        
 	    	if(tmpSettings!=null) {
 	    		exports.Settings = tmpSettings;		
 	    	} else {
@@ -487,9 +487,9 @@ define(function(require, exports, module) {
 	    	    // the application runs for the first time.
 	    	    firstRun = true;
 	    	}
-            console.debug("Loaded settings from local storage: "+JSON.stringify(exports.Settings));	    	
+            console.log("Loaded settings from local storage: "+JSON.stringify(exports.Settings));	    	
 	    } catch(ex) {
-	        console.debug("Loading settings from local storage failed due exception: "+ex);
+	        console.log("Loading settings from local storage failed due exception: "+ex);
 	    }
 	}
 	
@@ -503,7 +503,7 @@ define(function(require, exports, module) {
 	        IOAPI.saveSettings(JSON.stringify(exports.Settings));
 		}
 		
-		console.debug('Tagspace Settings Saved!');
+		console.log('Tagspace Settings Saved!');
 	}
 	
 	var getRandomInt = function(min, max) {

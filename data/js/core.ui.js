@@ -4,7 +4,7 @@
 define(function(require, exports, module) {
 "use strict";
 
-	console.debug("Loading core.ui.js ...");
+	console.log("Loading core.ui.js ...");
 
 	var TSCORE = require("tscore");
 
@@ -223,7 +223,7 @@ define(function(require, exports, module) {
                     TSCORE.Config.Settings = TSCORE.Config.DefaultSettings;
                     TSCORE.Config.saveSettings();
                     TSCORE.reloadUI();                    
-                    console.debug("Default settings loaded.");                    
+                    console.log("Default settings loaded.");                    
                 }                
             );
         });
@@ -253,7 +253,7 @@ define(function(require, exports, module) {
         }); 
         
         $( "#fileMenuDeleteFile" ).click( function() {
-            console.debug("Deleting file...");
+            console.log("Deleting file...");
             TSCORE.showConfirmDialog(
                 "Delete File(s)",
                 "These items will be permanently deleted and cannot be recovered. Are you sure?",

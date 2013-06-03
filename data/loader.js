@@ -11,7 +11,7 @@ if (PRODUCTION == "true") {
     console = console || {};
     console.log = function(){};
     console.error = function(){};    
-    console.debug = function(){};    
+    console.log = function(){};    
 }
 
 // Temporal hacks
@@ -19,7 +19,7 @@ var isFirefox = 'MozBoxSizing' in document.documentElement.style;
 var isSafari = Object.prototype.toString.call(window.HTMLElement).indexOf('Constructor') > 0;
 var isChrome = !isSafari && 'WebkitTransform' in document.documentElement.style;
 
-console.debug("Loading Loader 4 Firefox: "+isFirefox+" | Chrome: "+isChrome);
+console.log("Loading Loader 4 Firefox: "+isFirefox+" | Chrome: "+isChrome);
 
 // Setting up the IO functionality according to the platform
 var IO_JS = undefined;
@@ -27,8 +27,8 @@ if( isFirefox ) {
 	IO_JS = "js/ioapi.mozilla";
 } else if ( isChrome ) {
     IO_JS = "js/ioapi.chrome";           
-} else if ( isSafari ) {
-    // TODO safari io handler needed
+} else {
+    // TODO safari and ie io handler needed
     IO_JS = "js/ioapi.chrome";    
 }
 

@@ -4,7 +4,7 @@
 define(function(require, exports, module) {
 "use strict";
 
-    console.debug("Loading options.ui.js ...");
+    console.log("Loading options.ui.js ...");
     
     var TSCORE = require("tscore");
 

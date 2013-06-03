@@ -5,7 +5,7 @@
 define(function(require, exports, module) {
 "use strict";
 
-	console.debug("Loading editorText");
+	console.log("Loading editorText");
 
 	exports.id = "editorText"; // ID should be equal to the directory name where the ext. is located   
 	exports.title = "Text Editor";
@@ -34,7 +34,7 @@ define(function(require, exports, module) {
 	}); */
 	
 	exports.init = function(filePath, containerElementID) {
-	    console.debug("Initalization ACE Text Editor...");
+	    console.log("Initalization ACE Text Editor...");
 	    var fileExt = filePath.substring(filePath.lastIndexOf(".")+1,filePath.length).toLowerCase();
 		generateUI(containerElementID);
 		 
@@ -51,7 +51,7 @@ define(function(require, exports, module) {
 	}
 	
 	exports.init2 = function(filePath, containerElementID) {
-	    console.debug("Initalization ACE Text Editor...");
+	    console.log("Initalization ACE Text Editor...");
 	    var fileExt = filePath.substring(filePath.lastIndexOf(".")+1,filePath.length).toLowerCase();
 		generateUI(containerElementID);
 		

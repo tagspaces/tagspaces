@@ -13,7 +13,7 @@ define(function(require, exports, module) {
 	var extensionManifestVersion = 1;
 	var extensionLicense = "AGPL";
 
-	console.debug("Loading "+extensionID);
+	console.log("Loading "+extensionID);
 
 	var TSCORE = require("tscore");
     require("jqueryeditinplace");
@@ -22,11 +22,11 @@ define(function(require, exports, module) {
 	var UI = undefined;	
 
 	function init() {
-		console.debug("Initializing perspective "+extensionID);
+		console.log("Initializing perspective "+extensionID);
 	}
 	
 	var load = function () {
-		console.debug("Loading perspective "+extensionID);
+		console.log("Loading perspective "+extensionID);
 
         // TODO use css require extension for loading 'css!datatablescss' 
         require([
@@ -70,7 +70,7 @@ define(function(require, exports, module) {
     		console.log("Path: "+entry[4]);
 		});
 		TSCORE.PerspectiveManager.clearSelectedFiles();		
-		console.debug("Next file: "+nextFilePath);
+		console.log("Next file: "+nextFilePath);
 		return nextFilePath;
 	}
 
@@ -89,7 +89,7 @@ define(function(require, exports, module) {
     		console.log("Path: "+entry[4]);
 		});
 		TSCORE.PerspectiveManager.clearSelectedFiles();
-		console.debug("Prev file: "+prevFilePath);
+		console.log("Prev file: "+prevFilePath);
 		return prevFilePath;
 	}	
 		
