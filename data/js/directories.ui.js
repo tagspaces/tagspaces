@@ -89,15 +89,16 @@ define(function(require, exports, module) {
                     }
                 )                                
                 .droppable({
+                        greedy: "true",                    
                         accept: '.fileTitleButton',
                         hoverClass: "btn-info",
                         drop: function( event, ui ) {
-                            var filePath = ui.draggable.attr("filepath");
-                            var fileName = TSCORE.TagUtils.extractFileName(filePath);
-                            var targetDir = $(this).attr("key");
-                            console.log("Moving file: "+filePath+" to "+targetDir);
-                            TSCORE.IO.renameFile(filePath, targetDir+TSCORE.TagUtils.DIR_SEPARATOR+fileName);
-                            $(ui.helper).remove(); 
+                                var filePath = ui.draggable.attr("filepath");
+                                var fileName = TSCORE.TagUtils.extractFileName(filePath);
+                                var targetDir = $(this).attr("key");
+                                console.log("Moving file: "+filePath+" to "+targetDir);
+                                TSCORE.IO.renameFile(filePath, targetDir+TSCORE.TagUtils.DIR_SEPARATOR+fileName);
+                                $(ui.helper).remove();                                 
                         }                  
                     }
                 )
@@ -146,17 +147,20 @@ define(function(require, exports, module) {
                             "style":    "margin: 1px"
                         })
                         .droppable({
+                            greedy: "true",
                             accept: ".fileTitleButton",
                             hoverClass: "btn-info",
                             drop: function( event, ui ) {
-                                var filePath = ui.draggable.attr("filepath");
-                                var fileName = TSCORE.TagUtils.extractFileName(filePath);
-                                var targetDir = $(this).attr("key");
-                                console.log("Moving file: "+filePath+" to "+targetDir);
-                                TSCORE.IO.renameFile(filePath, targetDir+TSCORE.TagUtils.DIR_SEPARATOR+fileName);
-                                $(ui.helper).remove();                                
+                                if( $(this).parent().parent().parent().hasClass("in") ) {
+                                    var filePath = ui.draggable.attr("filepath");
+                                    var fileName = TSCORE.TagUtils.extractFileName(filePath);
+                                    var targetDir = $(this).attr("key");
+                                    console.log("Moving file: "+filePath+" to "+targetDir);
+                                    TSCORE.IO.renameFile(filePath, targetDir+TSCORE.TagUtils.DIR_SEPARATOR+fileName);
+                                    $(ui.helper).remove();  
+                                }                              
                             }                   
-                        })
+                    }) 
                         .html("<i class='icon-folder-close-alt'></i> "+directoryHistory[i]["children"][j].title)            
                         .click( function() {
                             navigateToDirectory($(this).attr("key"));
