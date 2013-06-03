@@ -76,8 +76,8 @@ define(function(require, exports, module) {
 	        { "type": "xml", 	"viewer": "viewerBrowser", "editor": "false" },
 	        { "type": "js", 	"viewer": "viewerBrowser", "editor": "false" },
 	        { "type": "css", 	"viewer": "viewerBrowser", "editor": "false" },
-	        { "type": "mdown", 	"viewer": "viewerBrowser", "editor": "false" },                
-	        { "type": "md", 	"viewer": "viewerBrowser", "editor": "false" }
+	        { "type": "mdown", 	"viewer": "viewerMD",      "editor": "false" },                
+	        { "type": "md", 	"viewer": "viewerMD",      "editor": "false" }
 	    ],
 		"tagGroups": [
 			{
