@@ -1,7 +1,7 @@
 #Changelog
 
 ##TagSpaces 1.4.1363 / 2013.06.04
-- [All] (De)Selecting files functionality
+- [All] De/Selecting files functionality
 - [All] Added functionality for configuration of filetypes and perspectives
 - [All] Added options dialog with ability to change options like showing hidden files or checkign for new version
 - [All] Extension tag button added to the file opener toolbar
