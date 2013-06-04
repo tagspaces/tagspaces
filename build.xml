@@ -61,7 +61,6 @@ found in the LICENSE file.
 			  <include name="perspectiveThumb/**/*"/>
 			  <include name="perspectiveGraph/**/*"/>	
               <include name="editorHTML/**/*"/>
-              <include name="editorText/**/*"/>            
               <include name="viewerMD/**/*"/>          
 		    </fileset>        	
         </copy>

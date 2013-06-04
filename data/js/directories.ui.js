@@ -151,6 +151,7 @@ define(function(require, exports, module) {
                             accept: ".fileTitleButton",
                             hoverClass: "btn-info",
                             drop: function( event, ui ) {
+                                // Fixing issue with dropping on stacked/overlapped directories
                                 if( $(this).parent().parent().parent().hasClass("in") ) {
                                     var filePath = ui.draggable.attr("filepath");
                                     var fileName = TSCORE.TagUtils.extractFileName(filePath);
