@@ -1,35 +1,36 @@
 #Changelog
 
-##TagSpaces 1.4.1355 / 2013.06.01
-- [All] Added "check for new version" functionality
-- [All] De/Select (all) functionality
+##TagSpaces 1.4.1363 / 2013.06.04
+- [All] (De)Selecting files functionality
 - [All] Added functionality for configuration of filetypes and perspectives
-- [All] Added options for: Extension folder, Show hidden files, Check for new version
-- [All] Extension button added to the fileviewer
-- [All] Considering hidden directories in directories navigator
+- [All] Added options dialog with ability to change options like showing hidden files or checkign for new version
+- [All] Extension tag button added to the file opener toolbar
+- [All] Considering hidden directories in the directories navigator
 - [All] Directories look&feel enhanced
 - [All] Standard perspective loaded at first by default
 - [All] Welcoming font-awesome in the project
 - [All] Added follow on twitter button
-- [All] About and Setting buttons shifted to app options dropdown menu
-- [All] Added menu item for reporting issue
+- [All] About and Setting buttons shifted to the options dropdown menu
+- [All] Added menu item for reporting issue in github
 - [All] Added menu item for contacting the developers per email
-- [All] Additional file actions shifted to a separate dropdown
-- [All] move taggroups up and down
-- [All] move tags with drag & drop between taggroups
-- [All] Bootstrap migration
-- [All] Added edit in place for the title in opened file
-- [All] perspective search removed from the repository
-- [All] Added thumbnail zooming
+- [All] Additional file actions shifted to a separate dropdown in file opener
+- [All] Taggroup position can be changed up and down
+- [All] Tags can now be moved with drag & drop between taggroups
+- [All] UI migrated to Bootstrap
+- [All] Added edit in place for the title of a opened file
+- [All] Standard perspective added, replacing basic and search perspectives
+- [All] Added thumbnail zooming functionality in the standard perspective
 - [All] Max dimension of thumbs changed to 100px
-- [All] Adding support of thumbnails
-- [All] Adding buttons for switching tags and filedetails columns
+- [All] Adding support of thumbnails in the standard perspective 
+- [All] Adding buttons in the standard perspective for toogling the tags and filedetails columns 
 - [All] Fixed a bug for reopening a file after applying some changes on it
-- [All] A new default perspective added with the aim of replacing basic, search and thumb  perspectives
-- [All] Added support for getting the next and previous file in a perspective
-- [All] Added toggle file info area button
+- [All] Added buttons in the file opener for getting the next and previous file in a perspective
+- [All] Added file details area in the file opener
+- [All] Added a button for toggling the file details
 - [All] Now is possible to create directories starting with digits
-- [All] Duplicating tagsgroup functionality replaced by a create taggroups
+- [All] Added a functionality for creating of taggroups
+- [All] Duplicating tagsgroup functionality disabled
+- [All] Added a functionality for checking if new version is available
 - [Firefox] bugfix for listing directories with wrond enconding
 
 ##TagSpaces 1.3.1284 / 2013.03.29
