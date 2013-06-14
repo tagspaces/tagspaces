@@ -201,10 +201,10 @@ define(function(require, exports, module) {
         $("#filetoolbox").append('<button id="closeOpenedFile" class="btn" title="Close file"><i class="icon-remove-sign"></i></button>');      
 
         $("#fileActionsMenu").empty();
-        //$("#fileActionsMenu").append('<li><a id="editDocument" href="#" title="Edit file"><i class="icon-pencil"></i> Edit File</a></li>');
-        $("#fileActionsMenu").append('<li><a id="showFullDetails" href="#" title="Show additional file details"><i class="icon-list-alt"></i> Show File Details</a></li>');
-        $("#fileActionsMenu").append('<li><a id="openInNewWindow" href="#" title="Open file in a new tab"><i class="icon-share"></i> Open in New Tab</a></li>');
-        $("#fileActionsMenu").append('<li><a id="startFullscreen" href="#" title="Open file in full screen"><i class="icon-fullscreen"></i> Open In Fullscreen</a></li>');                        
+        //$("#fileActionsMenu").append('<li><a id="editDocument" title="Edit file"><i class="icon-pencil"></i> Edit File</a></li>');
+        $("#fileActionsMenu").append('<li><a id="showFullDetails" title="Show additional file details"><i class="icon-list-alt"></i> Show File Details</a></li>');
+        $("#fileActionsMenu").append('<li><a id="openInNewWindow" title="Open file in a new tab"><i class="icon-share"></i> Open in New Tab</a></li>');
+        $("#fileActionsMenu").append('<li><a id="startFullscreen" title="Open file in full screen"><i class="icon-fullscreen"></i> Open In Fullscreen</a></li>');                        
 
 		initFileActions("#filetoolbox", filePath);
 	}

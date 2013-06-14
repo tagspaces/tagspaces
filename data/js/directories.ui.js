@@ -360,7 +360,6 @@ define(function(require, exports, module) {
               $( "#favoritesList" ).append(
                     $('<li>', {}).append(
                         $('<a>', { 
-                            href: "#",
                             title: favoritesList[i].path, 
                             name: favoritesList[i].name
                             } )
@@ -373,8 +372,8 @@ define(function(require, exports, module) {
                         ));
         };
         $( "#favoritesList" ).append('<li class="divider"></li>');    
-        $( "#favoritesList" ).append('<li id="createNewLocation"><a href="#"><i class="icon-bookmark-empty"></i> New Location</a></li>');
-        $( "#favoritesList" ).append('<li id="deleteFavorite"><a href="#"><i class="icon-trash"></i> Remove Location</a></li>');
+        $( "#favoritesList" ).append('<li id="createNewLocation"><a><i class="icon-bookmark-empty"></i> New Location</a></li>');
+        $( "#favoritesList" ).append('<li id="deleteFavorite"><a><i class="icon-trash"></i> Remove Location</a></li>');
        
         $( "#createNewLocation" ).click(function() {
             showCreateFolderConnectionDialog();         

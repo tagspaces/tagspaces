@@ -25,7 +25,7 @@ define(function(require, exports, module) {
 	          '</div>' +
               '<div class="modal-body"><p class="lead"></p></div>' +
 	          '<div class="modal-footer">' +
-	            '<a href="#" id="okButton" class="btn btn-primary">Ok</a>' +
+	            '<button id="okButton" class="btn btn-primary">Ok</button>' +
 	          '</div>' +
 	        '</div>');
 	
@@ -50,8 +50,8 @@ define(function(require, exports, module) {
 	          '</div>' +
 	          '<div class="modal-body"><p class="lead"></p></div>' +
 	          '<div class="modal-footer">' +
-	            '<a href="#" class="btn" data-dismiss="modal">Cancel</a>' +
-	            '<a href="#" id="okButton" class="btn btn-primary">Ok</a>' +
+	            '<button class="btn" data-dismiss="modal">Cancel</button>' +
+	            '<button id="okButton" class="btn btn-primary">Ok</button>' +
 	          '</div>' +
 	        '</div>');
 
