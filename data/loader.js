@@ -74,7 +74,7 @@ require.config({
         tsdirectoriesui:        'js/directories.ui',
         tscoreui:               'js/core.ui',
         tsioapi:                IO_JS,        
-        tsiomozrec:             'js/ioapi.mozilla.receiver',        
+        tsiomozrec:             'js/ioapi.mozilla.receiver'       
     }, 
     shim: {
         'bootstrap':            { deps: ['jquery'] }, 
@@ -111,7 +111,7 @@ require.config({
 define(function (require, exports, module) {
 "use strict";
 
-    require("less");	
+    //require("less");	
 	if( isFirefox ) {
 		require("tsiomozrec");    
 	}	                                
