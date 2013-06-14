@@ -179,6 +179,11 @@ define(function(require, exports, module) {
             $("#aboutIframe").attr("src","about.html");
         });
 
+        // Open About Dialog
+        $( "#openAboutBox" ).click(function() {
+           $('#dialogAbout').modal('show');
+        });
+
         // Open Options Dialog
         $( "#openOptions" ).click(function() {
             require(['tsoptions'], function () {

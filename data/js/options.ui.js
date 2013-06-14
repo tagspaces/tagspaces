@@ -69,10 +69,10 @@ define(function(require, exports, module) {
     function addPerspective(parent, perspectiveId) {
         var perspectiveControl = $("<div class='control control-row'>")
                 .append($("<div class='input-prepend input-append btn-group' style='padding: 3px 5px'>")
-                    .append($("<a class='btn' href='#' ><span class='icon-ellipsis-vertical'></span></a>"))
+                    .append($("<a class='btn' ><span class='icon-ellipsis-vertical'></span></a>"))
                     .append($("<select class='span3'></select>"))
                     //.append($("<input autocomplete='off' class='span3' type='text' placeholder='perspective ID'>").val(perspectiveId))
-                    //.append($("<a class='btn' href='#'>").append("<span class='caret'></span>"))
+                    //.append($("<a class='btn'>").append("<span class='caret'></span>"))
                     .append($("<button class='btn' title='Remove this extension'><i class='icon-remove'></button>")
                         .click(function() {
                             $(this).parent().parent().remove();

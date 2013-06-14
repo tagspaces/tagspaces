@@ -225,7 +225,6 @@ define(function(require, exports, module) {
 	        // Ignoring the tags already assigned to a file
 	        if(tags.indexOf(suggTags[i]) < 0) {
 	            $( "#tagSuggestionsMenu" ).append($('<li>', {name: suggTags[i]}).append($('<a>', { 
-	                href: "javascript:void(0);",
 	                title: "Add tag "+suggTags[i]+" to current file", 
 					tagname: suggTags[i],
 					filepath: filePath,
