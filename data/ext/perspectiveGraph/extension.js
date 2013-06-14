@@ -51,7 +51,7 @@ define(function(require, exports, module) {
 		console.log("Loading View "+extensionID);
 
         require([
-            extensionDirectory+'/d3/d3.js',
+            extensionDirectory+'/d3/d3.v3.js',
             ], function() {
                 viewContainer.append('<link rel="stylesheet" type="text/css" href="'+extensionDirectory+"/"+'styles.css">');
         }); 
