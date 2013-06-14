@@ -96,8 +96,10 @@ define(function(require, exports, module) {
 			TSCORE.showConfirmDialog("test1","test2", function() {alert("test")});
 		})
 	
-	    $( "#txtFileTypeButton" ).click(function() {
-	        // TODO Add to config options
+	    $( "#txtFileTypeButton" ).click(function(e) {
+            // Fixes reloading of the application by click
+            e.preventDefault();
+            	        
 	        fileContent = TSCORE.Config.getNewTextFileContent();
 	        //Leave the filename as it is by no extension
 	        if($( "#newFileName" ).val().lastIndexOf(".")>=0) {
@@ -105,8 +107,10 @@ define(function(require, exports, module) {
 	        }
 	    });            
 	
-	    $( "#htmlFileTypeButton" ).click(function() {
-	        // TODO Add to config options
+	    $( "#htmlFileTypeButton" ).click(function(e) {
+            // Fixes reloading of the application by click
+            e.preventDefault();
+            	        
 	        fileContent = TSCORE.Config.getNewHTMLFileContent();
 	        //Leave the filename as it is by no extension
 	        if($( "#newFileName" ).val().lastIndexOf(".")>=0) {
@@ -114,8 +118,10 @@ define(function(require, exports, module) {
 	        }
 	    }); 
 	    
-	    $( "#mdFileTypeButton" ).click(function() {
-	        // TODO Add to config options
+	    $( "#mdFileTypeButton" ).click(function(e) {
+            // Fixes reloading of the application by click
+            e.preventDefault();
+            	        
 	        fileContent = TSCORE.Config.getNewMDFileContent();
 	        //Leave the filename as it is by no extension
 	        if($( "#newFileName" ).val().lastIndexOf(".")>=0) {
@@ -152,11 +158,17 @@ define(function(require, exports, module) {
 
         // Edit Tag Dialog
 
-	    $( "#plainTagTypeButton" ).click(function() {
+	    $( "#plainTagTypeButton" ).click(function(e) {
+            // Fixes reloading of the application by click
+            e.preventDefault();
+	        
 	        TSCORE.selectedTag, $( "#newTagName" ).datepicker( "destroy" ).val("");
 	    });  
 	
-	    $( "#dateTagTypeButton" ).click(function() {
+	    $( "#dateTagTypeButton" ).click(function(e) {
+            // Fixes reloading of the application by click
+            e.preventDefault();
+            
 	        TSCORE.selectedTag, $( "#newTagName" ).datepicker({
 	            showWeek: true,
 	            firstDay: 1,
@@ -164,7 +176,10 @@ define(function(require, exports, module) {
 	        });
 	    });  
 	    
-	    $( "#currencyTagTypeButton" ).click(function() {
+	    $( "#currencyTagTypeButton" ).click(function(e) {
+            // Fixes reloading of the application by click
+            e.preventDefault();
+            
 	        TSCORE.selectedTag, $( "#newTagName" ).datepicker( "destroy" ).val("XEUR")
 	    });      
 	    

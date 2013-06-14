@@ -124,11 +124,17 @@ define(function(require, exports, module) {
             //TSCORE.reloadUI();            
         }) 
         
-        $('#addFileTypeButton').click(function() {
+        $('#addFileTypeButton').click(function(e) {
+            // Fixes reloading of the application by click
+            e.preventDefault();
+            
             addFileType($('#fileTypesList'), "", "", "")
         }) 
 
-        $('#addPerspectiveButton').click(function() {
+        $('#addPerspectiveButton').click(function(e) {
+            // Fixes reloading of the application by click
+            e.preventDefault();
+            
             addPerspective($('#perspectiveList'), "")
         })        
     }    
