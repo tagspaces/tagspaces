@@ -3,10 +3,11 @@
  * is governed by a AGPL3 license that can be  
  * found in the LICENSE file. */
 
+/*
 @fileExtColor: #008080; // #008080 | #9be8e8
 @baseTagColor: #008000; // #008000 | #a1eda1
 @directoryColor: #F6A828;
-@tagFontSize: 1em;
+@tagFontSize: 1em; */
 
 @media print {
     #viewer {
@@ -23,18 +24,18 @@
     }
 }
 
-
+/*
 .roundedTagCorners (@radius: 2px) {
   border-radius: @radius;
   -webkit-border-radius: @radius;
   -moz-border-radius: @radius;
 }
 
-.arrowDownImage () {
+.arrowDownImage {
     background-image: url("arrow-down.png");
     background-repeat: no-repeat; 
     background-position: right;
-}
+} */
         
 html, body {
 	width: 100%;
@@ -65,7 +66,8 @@ html, body {
 #logo {
 	padding: 0px;
 	font-size: 1.4em;
-  color: #dedede; // 00AE00
+	margin: 3px;
+  color: white;
 	font-weight: bold;
 	padding-left: 32px;
   padding-top: 4px;	
@@ -73,12 +75,6 @@ html, body {
 	background-position: 0px 0px;
 	height: 31px;
 	display: inline-block;
-}
-
-.icon-tagspaces {
-  background: url("logo.png") no-repeat;
-  width: 16px;
-  height: 16px;
 }
 
 #logo:hover {
@@ -130,7 +126,7 @@ html, body {
     float: right;
     color: white;
     font-weight: bold;
-    background-color: @fileExtColor;
+    /*background-color: @fileExtColor; */
 }
 
 #viewsRadio {
@@ -182,10 +178,10 @@ li hr {
     border-color: transparent;
 }
 
-// @baseTagColor;
+/* @baseTagColor; */
 .tagButton {
     padding: 0px 2px 0px 2px;
-//    background: #008000 !important;    
+    /* background: #008000 !important; */    
     color: white !important;
     margin: 1px;
     border-color: transparent;
@@ -206,14 +202,14 @@ li hr {
     padding-left: 1px;
     padding-right: 12px;        
     font-weight: normal;
-    font-size: @tagFontSize;
+    /* font-size: @tagFontSize; */
     color: #222222;
     text-align: left;
     margin: 1px;
     border: #ddd solid 1px;
     z-index: 9999;
-    .arrowDownImage;    
-    .roundedTagCorners;    
+    /*.arrowDownImage; */    
+    /*.roundedTagCorners; */    
 }
 
 .fileTitleButton {
@@ -248,12 +244,13 @@ li hr {
 	
 .ui-layout-north {
   padding: 0px;
+  height: 40px;
 	background-color: #333333;
 	overflow: hidden !important;
 }	
 
 #directoryNavigatorNorth, #dirTree, #tagGroups, .middle-north, .east-north {
-	background-color:  white; //#F0F0F0;
+	background-color:  white; 
 }	
 
 #directoryNavigatorNorth {
@@ -266,11 +263,11 @@ li hr {
 }
 
 #viewToolbars {
-    background-color: white; //#F0F0F0;  
+    background-color: white;   
     padding: 2px;    
 }
 #viewContainers, #viewFooters {
-    background-color: white; //#F0F0F0;
+    background-color: white; 
     padding: 0;    
 }
 
@@ -302,13 +299,13 @@ li hr {
 
 .dirButton  {
     padding: 1px;
-    background-color: @directoryColor !important;
+    /*  background-color: @directoryColor !important; */
     font-weight: bold;
-    font-size: @tagFontSize;
+    /* font-size: @tagFontSize; */
     color: white;
     margin: 1px;
     border-color: transparent;
-    .roundedTagCorners;    
+    /* .roundedTagCorners; */    
 }
 
 .dirButton:hover, .dirButton:active, .dirButton:focus {
@@ -441,10 +438,12 @@ input a.resetFilter {
   text-shadow: none;
 }
 
+/* Main Menu */
 #mainMenu .btn-link, #mainMenu .btn-link:hover, #mainMenu .btn-link:focus, #mainMenu .btn-link:active {
   text-decoration: none;
-  color: #dedede;
+  color: white;
   text-shadow: none;
+  height: 35px;
 }
 
 #mainMenu .btn-link:hover, #mainMenu .btn-link:focus, #mainMenu .btn-link:active {
