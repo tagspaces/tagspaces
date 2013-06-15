@@ -53,11 +53,14 @@ define(function(require, exports, module) {
         require([
             extensionDirectory+'/d3/d3.v3.js',
             ], function() {
-                viewContainer.append('<link rel="stylesheet" type="text/css" href="'+extensionDirectory+"/"+'styles.css">');
-        }); 
-	
-		$( "#"+extensionID+"ReIndexButton" ).removeClass("disabled");
-		TSCORE.hideLoadingAnimation();
+                viewContainer.append($('<link>', {
+                       "rel":  "stylesheet",
+                       "type": "text/css",
+                       "href": extensionDirectory+"/styles.css"
+                }));                
+                $( "#"+extensionID+"ReIndexButton" ).removeClass("disabled");
+                TSCORE.hideLoadingAnimation();
+        });
 	}
 	
 	var reDraw = function() {

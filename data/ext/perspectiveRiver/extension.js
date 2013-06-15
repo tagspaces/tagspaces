@@ -57,8 +57,9 @@ define(function(require, exports, module) {
 	        tagsHTML = "";
 	        var fileName = TSCORE.fileList[i][0];
 	        var filePath = TSCORE.currentPath+"/"+fileName;
-	        tagsHTML += '<iframe id="idFrameViewer" style="width: 100%; height: 150px;" src="'+'file:///'+filePath+'" />';
-	        $("#"+exports.ID+"RV").append(tagsHTML);
+	        // TODO sanitize html
+	        //tagsHTML += '<iframe id="idFrameViewer" style="width: 100%; height: 150px;" src="'+'file:///'+filePath+'" />';
+	        //$("#"+exports.ID+"RV").append(tagsHTML);
 	    }
 	
 	    TSCORE.hideLoadingAnimation();     

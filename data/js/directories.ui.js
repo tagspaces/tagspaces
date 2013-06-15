@@ -144,7 +144,8 @@ define(function(require, exports, module) {
                             "class":    "btn btn-warning btn-small", 
                             "key":      directoryHistory[i]["children"][j].key,
                             "title":    directoryHistory[i]["children"][j].key,
-                            "style":    "margin: 1px"
+                            "style":    "margin: 1px",
+                            "text":     " "+directoryHistory[i]["children"][j].title
                         })
                         .droppable({
                             greedy: "true",
@@ -161,8 +162,8 @@ define(function(require, exports, module) {
                                     $(ui.helper).remove();  
                                 }                              
                             }                   
-                    }) 
-                        .html("<i class='icon-folder-close-alt'></i> "+directoryHistory[i]["children"][j].title)            
+                        }) 
+                        .prepend("<i class='icon-folder-close-alt'></i>")            
                         .click( function() {
                             navigateToDirectory($(this).attr("key"));
                         })                   
@@ -361,14 +362,14 @@ define(function(require, exports, module) {
                     $('<li>', {}).append(
                         $('<a>', { 
                             title: favoritesList[i].path, 
-                            name: favoritesList[i].name
+                            name: favoritesList[i].name,
+                            text: " "+favoritesList[i].name
                             } )
                         .click(function() {
                             nameCurrentFavorite = $(this).attr( "name" );
                             openFavorite($(this).attr( "title" ), $(this).attr( "name" ));                           
                         })
-                        .append("<i class='icon-bookmark'></i>")
-                        .append(" "+favoritesList[i].name)                         
+                        .prepend("<i class='icon-bookmark'></i>")
                         ));
         };
         $( "#favoritesList" ).append('<li class="divider"></li>');    

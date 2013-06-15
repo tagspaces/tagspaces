@@ -192,14 +192,14 @@ define(function(require, exports, module) {
 	        ) // end heading
 	        
 	        .append($("<div>", { 
-	            "class": "accordion-body collapse in",
-	            "id": "tagButtons"+i,
-	            "style":        "border: 0px;",
+	            "class":   "accordion-body collapse in",
+	            "id":      "tagButtons"+i,
+	            "style":   "border: 0px;",
 	        })	        
 	        .append($("<div>", { 
-	            "class": "accordion-inner",
-	            "id": "tagButtonsContent"+i,
-	            "style": "border: 0px; padding: 3px",
+	            "class":   "accordion-inner",
+	            "id":      "tagButtonsContent"+i,
+	            "style":   "border: 0px; padding: 3px",
 	        })
 	        ) // end accordion-inner	
 	        ) // end accordion button        

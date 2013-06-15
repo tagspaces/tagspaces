@@ -68,7 +68,7 @@ define(function(require, exports, module) {
 				src: filePath
 		    }));    	
 	    } else {
-	        require([TSCORE.Config.getExtensionPath()+"/"+viewerExt+"/"+"extension.js"], function(viewer) {
+	        require([TSCORE.Config.getExtensionPath()+"/"+viewerExt+"/extension.js"], function(viewer) {
 	            _tsEditor = viewer;
 	            _tsEditor.init(filePath, "viewer");
 	            _tsEditor.viewerMode(true);
@@ -228,8 +228,9 @@ define(function(require, exports, module) {
 	                title: "Add tag "+suggTags[i]+" to current file", 
 					tagname: suggTags[i],
 					filepath: filePath,
+					text: "Tag with '"+suggTags[i]+"'",
 	                })
-	                .html("<i class='icon-tag'></i> Tag with '"+suggTags[i]+"'") 
+	                .prepend("<i class='icon-tag'></i>") 
 	                .click(function() {
 			            var tagName = $(this).attr( "tagname" );    
 			            var filePath = $(this).attr( "filepath" );    		            

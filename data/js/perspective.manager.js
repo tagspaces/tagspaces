@@ -38,7 +38,7 @@ var initViews = function () {
             //if(extensions[i].enabled && (extensions[i].type == "view") ) {
                 
                 // TODO Some libraries such as ace editor are not working using paths like this "file:///C:/blabal/extension.js"
-                var extPath = TSCORE.Config.getExtensionPath()+"/"+extensions[i].id+"/"+"extension.js"; 
+                var extPath = TSCORE.Config.getExtensionPath()+"/"+extensions[i].id+"/extension.js"; 
     
                 require([extPath], function(perspective) {
                     perspectives.push(perspective);
@@ -72,14 +72,13 @@ var initViewsUI = function(perspective) {
     }).hide());	        	
   
     $("#viewSwitcher").append($("<button>", { 
-        "viewid":  perspective.ID,
-        "class":   "btn btn-link",        
-        id:      perspective.ID+"Button",    
-    }).append($("<i>", {
+        "viewid": perspective.ID,
+        "class":  "btn btn-link",        
+        "id":       perspective.ID+"Button",
+        "text":     " "+perspective.Title    
+    }).prepend($("<i>", {
         "class":  perspective.Icon
-    }))
-    .append(" "+perspective.Title)
-    );
+    })))
 
 	// Adding event listener & icon to the radio button
     $( "#"+perspective.ID+"Button" ).click(function() { 
