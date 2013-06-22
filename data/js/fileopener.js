@@ -167,12 +167,14 @@ define(function(require, exports, module) {
 	    };    
 	    
 	    $( "#tagsContainer" ).droppable({
+	        greedy: "true", 
 	    	accept: ".tagButton",
 	    	hoverClass: "activeRow",
 	    	drop: function( event, ui ) {
 	    		var tagName = ui.draggable.attr("tag");
 				console.log("Tagging file: "+tagName+" to "+filePath);
 				TSCORE.TagUtils.addTag([filePath], [tagName]);
+				$(ui.helper).remove(); 
 	    	}	            	
 	    })
 	
