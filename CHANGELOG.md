@@ -1,9 +1,9 @@
 #Changelog
 
 ##TagSpaces 1.4.1384 / 2013.06.16
-- [All] Startup/reloading issues in firefox resolved
 - [All] A bug fixed causing reloading of the addon in a bootstrap modal
 - [All] TagSpaces is not started anymore in firefox as pinned tab, due the possibility to have multiple instances of the addon simultaniously
+- [Firefox] Startup/reloading issues in firefox resolved
 
 ##TagSpaces 1.4.1363 / 2013.06.04
 - [All] De/Selecting files functionality
