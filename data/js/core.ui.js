@@ -189,6 +189,10 @@ define(function(require, exports, module) {
         });  
 	    
 	    // End Edit Tag Dialog
+
+        $( "#startNewInstanceBack" ).click(function() {
+            window.open(window.location.href,'_blank');
+        });
     
 	    $( "#aboutDialogBack" ).click(function() {
             $("#aboutIframe").attr("src","about.html");
