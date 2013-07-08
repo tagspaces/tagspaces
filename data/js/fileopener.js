@@ -66,7 +66,15 @@ define(function(require, exports, module) {
 		    $('#viewer').append($('<iframe>', {
 		    	id: "iframeViewer",
 				src: filePath
-		    }));    	
+		    })); 
+		// The extension viewerPDF is needed on client which does not 
+		// integrated a pdf viewer such as node-webkit       	
+        } else if (viewerExt == "viewerPDF") {
+            var extPath = TSCORE.Config.getExtensionPath()+"/"+viewerExt+"/index.html";
+            $('#viewer').append($('<iframe>', {
+                id: "iframeViewer",
+                src: extPath+"?cp="+filePath
+            }));        
 	    } else {
 	        require([TSCORE.Config.getExtensionPath()+"/"+viewerExt+"/extension.js"], function(viewer) {
 	            _tsEditor = viewer;
@@ -207,6 +215,7 @@ define(function(require, exports, module) {
         $("#fileActionsMenu").append('<li><a id="showFullDetails" title="Show additional file details"><i class="icon-list-alt"></i> Show File Details</a></li>');
         $("#fileActionsMenu").append('<li><a id="openInNewWindow" title="Open file in a new tab"><i class="icon-share"></i> Open in New Tab</a></li>');
         $("#fileActionsMenu").append('<li><a id="startFullscreen" title="Open file in full screen"><i class="icon-fullscreen"></i> Open In Fullscreen</a></li>');                        
+        $("#fileActionsMenu").append('<li><a id="printButton" title="Print the content of the viewer"><i class="icon-print"></i> Print</a></li>');                        
 
 		initFileActions("#filetoolbox", filePath);
 	}
@@ -304,7 +313,11 @@ define(function(require, exports, module) {
 
 	    $( "#openInNewWindow" ).click(function() {
 	        window.open("file:///"+filePath);
-	    });        
+	    });     
+	    
+        $( "#printButton" ).click(function() {
+            $('iframe').get(0).contentWindow.print();
+        });	       
 
         $( "#closeOpenedFile" ).click(function() {
             if(_isEditMode) {
