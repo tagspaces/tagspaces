@@ -1,9 +1,6 @@
 /* Copyright (c) 2012-2013 The TagSpaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that 
  * can be found in the LICENSE file. */
-var fs = require('fs');
-var pathUtils = require('path');
-
 define(function(require, exports, module) {
 "use strict";
 	
