@@ -249,7 +249,7 @@ li hr {
 	overflow: hidden !important;
 }	
 
-#directoryNavigatorNorth, #dirTree, #tagGroups, .middle-north, .east-north {
+#directoryNavigatorNorth, #locationContent, #tagGroupsContent, .middle-north, .east-north {
 	background-color:  white; 
 }	
 
@@ -318,11 +318,11 @@ li hr {
     background-color: #FFCC99;
 }
 
-#dirTree .selectedDirectory {
+#location .selectedDirectory {
     background-color: #EBD5AA;
 }
 
-#dirTree {
+#locationContent {
     overflow-x: hidden;    
     overflow-y: auto;        
 }
@@ -341,10 +341,10 @@ li hr {
   text-decoration: none;
   color: gray;
 }
-
+/*
 #tagGroups {
     overflow: auto;    
-}
+} */
 
 /* JSON Editor */
 div.jsoneditor-menu {	

@@ -67,14 +67,6 @@ define(function(require, exports, module) {
 		    	id: "iframeViewer",
 				src: filePath
 		    })); 
-		// The extension viewerPDF is needed on client which does not 
-		// integrated a pdf viewer such as node-webkit       	
-        } else if (viewerExt == "viewerPDF") {
-            var extPath = TSCORE.Config.getExtensionPath()+"/"+viewerExt+"/index.html";
-            $('#viewer').append($('<iframe>', {
-                id: "iframeViewer",
-                src: extPath+"?cp="+filePath
-            }));        
 	    } else {
 	        require([TSCORE.Config.getExtensionPath()+"/"+viewerExt+"/extension.js"], function(viewer) {
 	            _tsEditor = viewer;
