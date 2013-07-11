@@ -7,28 +7,32 @@ define(function(require, exports, module) {
 
 	console.log("Loading viewerImage");
 
-	exports.id = "viewerImage"; // ID should be equal to the directory name where the ext. is located   
-	exports.title = "Image Viewer";
-	exports.type = "viewer";
-	exports.supportedFileTypes = [ "jpeg", "jpg", "png",  "gif", "bmp" ];
+    var extensionTitle = "Image Viewer"
+    var extensionID = "viewerImage";  // ID should be equal to the directory name where the ext. is located   
+    var extensionType =  "perspective";
+    var extensionIcon = "icon-list";
+    var extensionVersion = "1.0";
+    var extensionManifestVersion = 1;
+    var extensionLicense = "AGPL";
+    var extensionSupportedFileTypes = [ "jpeg", "jpg", "png",  "gif", "bmp" ];
 	
 	var TSCORE = require("tscore");
 	
-	var extensionDirectory = TSCORE.Config.getExtensionPath()+"/"+exports.id;
-	
+	var extensionDirectory = TSCORE.Config.getExtensionPath()+"/"+extensionID;
+	var UI = undefined; 
+	   
 	exports.init = function(filePath, elementID) {
 	    console.log("Initalization Browser Image Viewer...");
-	    filePath = "file:///"+filePath;
-	
-	    $('#'+elementID).append($('<img>', {
-	    	id: "imgViewer",
-			src: filePath
-	    }));
-	
-	// TODO croppr integration
-	//	require([extensionDirectory+'/croppr.js'], function() {
-	//
-	//	});    
+
+		require([
+              extensionDirectory+'/viewerUI.js',
+              extensionDirectory+'/pixastic/pixastic.custom.js',
+		      //extensionDirectory+'/camanjs/caman.full.js',
+		    ], function(extUI) {
+                UI = new extUI.ExtUI(extensionID, elementID, filePath);                          
+                UI.buildUI();
+                TSCORE.hideLoadingAnimation();              
+		});    
 	}
 	
 	exports.viewerMode = function(isViewerMode) {
@@ -42,5 +46,15 @@ define(function(require, exports, module) {
 	exports.getContent = function() {
 		console.log("getContent not supported on this extension"); 	
 	}
+	
+    // Vars
+    exports.Title                   = extensionTitle;
+    exports.ID                      = extensionID;   
+    exports.Type                    = extensionType;
+    exports.Icon                    = extensionIcon;
+    exports.Version                 = extensionVersion;
+    exports.ManifestVersion         = extensionManifestVersion;
+    exports.License                 = extensionLicense;	
+    exports.SupportedFileTypes      = extensionSupportedFileTypes;
 
 });
