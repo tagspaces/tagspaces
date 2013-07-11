@@ -70,8 +70,7 @@ define(function(require, exports, module) {
 	    } else {
 	        require([TSCORE.Config.getExtensionPath()+"/"+viewerExt+"/extension.js"], function(viewer) {
 	            _tsEditor = viewer;
-	            _tsEditor.init(filePath, "viewer");
-	            _tsEditor.viewerMode(true);
+	            _tsEditor.init(filePath, "viewer", true);
 	        });
 	    } 
 	    TSCORE.FileOpener.setFileOpened(true); 
@@ -106,7 +105,7 @@ define(function(require, exports, module) {
 	        try {
 	            require([TSCORE.Config.getExtensionPath()+"/"+editorExt+"/extension.js"], function(editr) {
 	                _tsEditor = editr;
-	                _tsEditor.init(filePath, "viewer");
+	                _tsEditor.init(filePath, "viewer", false);
 	            });
 	            _isEditMode = true;
 	        } catch(ex) {

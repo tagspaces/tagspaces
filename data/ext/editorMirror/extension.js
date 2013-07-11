@@ -35,29 +35,34 @@ define(function(require, exports, module) {
 		//TODO if (mode != null)
 		require([
 		    extensionDirectory+'/codemirror/codemirror.js',
-		    'css!'+extensionDirectory+'/codemirror/codemirror.css',
-		    "./codemirror/mode/" + mode + "/" + mode + ".js"
+            'css!'+extensionDirectory+'/codemirror/codemirror.css',
+		    'css!'+extensionDirectory+'/extension.css',
 		], function() { 
-            cmEditor = CodeMirror(document.getElementById("code"), {
-                fixedGutter: false,
-                mode: mode,
-                lineNumbers: true,
-                lineWrapping: true,
-                tabSize: 2,
-                collapseRange: true,
-                matchBrackets: true,
-                //theme: "lesser-dark",
-                /* extraKeys: {
-                  "Cmd-S": function(instance) { handleSaveButton() },
-                  "Ctrl-S": function(instance) { handleSaveButton() },
-                  "F5": function(instance) { handleSaveButton() },
-                  "Ctrl-Space": "autocomplete",
-                } */
+            require([
+                extensionDirectory+"./codemirror/mode/" + mode + "/" + mode + ".js",
+            ], function() { 
+                cmEditor = CodeMirror(document.getElementById("code"), {
+                    fixedGutter: false,
+                    mode: mode,
+                    lineNumbers: true,
+                    lineWrapping: true,
+                    tabSize: 2,
+                    collapseRange: true,
+                    matchBrackets: true,
+                    readOnly: isViewerMode,
+                    //theme: "lesser-dark",
+                    /* extraKeys: {
+                      "Cmd-S": function(instance) { handleSaveButton() },
+                      "Ctrl-S": function(instance) { handleSaveButton() },
+                      "F5": function(instance) { handleSaveButton() },
+                      "Ctrl-Space": "autocomplete",
+                    } */
+                });
+    
+    	        //cmEditor.readOnly = isViewerMode;
+    	        cmEditor.setSize("100%","100%");  
+                TSCORE.IO.loadTextFile(filePath);
             });
-
-	        cmEditor.readOnly = isViewerMode;
-	        cmEditor.setSize("100%","100%");  
-            TSCORE.IO.loadTextFile(filePath);
 		});
 	}
 	

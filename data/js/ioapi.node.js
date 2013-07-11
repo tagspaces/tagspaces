@@ -70,7 +70,7 @@ define(function(require, exports, module) {
             tree["lmdt"] = dstats.mtime;   
             tree["path"] = dirPath;         
             tree["children"] = [];            
-            var dirList = fs.readdirSync(dirPath) 
+            var dirList = fs.readdirSync(dirPath);
             for (var i=0; i < dirList.length; i++) {
                 var path = dirPath+getDirseparator()+dirList[i];
                 var stats = fs.statSync(path);
@@ -103,7 +103,7 @@ define(function(require, exports, module) {
     exports.createDirectoryTree = function(dirPath) {
         console.log("Creating directory index for: "+dirPath);
         var directoyTree = generateDirectoryTree(dirPath);
-        console.log(JSON.stringify(directoyTree));
+        //console.log(JSON.stringify(directoyTree));
         TSCORE.PerspectiveManager.updateTreeData(directoyTree); 
     }    
 	
@@ -216,39 +216,11 @@ define(function(require, exports, module) {
         });		
 	}
 	
-	exports.selectDirectory = function() {
-		console.log("Select directory functionality not implemented on chrome yet!");
-	//	TSCORE.showAlertDialog("Not implemented yet");
-/*		nativeIO.launchFolderSelect(function(dirPath){
-			if (dirPath && dirPath.length){
-				$("#favoriteLocation").val(dirPath);
-			}
-	}); */
-	}
-	
-	exports.selectFile = function() {
-		// TODO implement selectFile
-		console.log("Select file functionality not implemented on chrome yet!");
-		TSCORE.showAlertDialog("Select file functionality not implemented on chrome yet!")
-	}
-	
-	exports.openDirectory = function(dirPath) {
-		// TODO implement openDirectory
-		console.log("Open directory functionality not implemented on chrome yet!");
-		TSCORE.showAlertDialog("Select file functionality not implemented on chrome yet!")
-	}
-	
-	exports.openExtensionsDirectory = function() {
-		// TODO implement openExtensionsDirectory
-		console.log("Open extensions directory functionality not implemented on chrome yet!");
-		TSCORE.showAlertDialog("Open extensions directory functionality not implemented on chrome yet!"); 
-	}
-	
     exports.checkNewVersion = function() {
         console.log("Checking for new version...");
         var cVer = TSCORE.Config.DefaultSettings["appVersion"]+"."+TSCORE.Config.DefaultSettings["appBuild"];
         $.ajax({
-            url: 'http://tagspaces.org/releases/version.json?cVer='+cVer,
+            url: 'http://tagspaces.org/releases/version.json?nVer='+cVer,
             type: 'GET',
         })
         .done(function(data) { 
@@ -259,5 +231,38 @@ define(function(require, exports, module) {
         })
         ;      
     }	
+
+    exports.selectDirectory = function() {
+        if(document.getElementById('folderDialog') == null) {
+            $("#folderLocation").after('<input style="display:none;" id="folderDialog" type="file" nwdirectory />');
+        }
+        var chooser = $('#folderDialog');        
+        chooser.change(function(evt) {
+            $("#folderLocation").val($(this).val());
+        });
+        chooser.trigger('click');  
+    }
+    
+    exports.openDirectory = function(dirPath) {
+        gui.Shell.openItem(dirPath);
+    }
+
+    exports.selectFile = function() {
+        if(document.getElementById('fileDialog') == null) {
+            $("#folderLocation").after('<input style="display:none;" id="fileDialog" type="file" />');
+        }
+        var chooser = $('#fileDialog');        
+        chooser.change(function(evt) {
+            console.log("File selected: "+$(this).val());
+        });
+        chooser.trigger('click');  
+    }
+    
+    exports.openExtensionsDirectory = function() {
+        // TODO implement openExtensionsDirectory on node
+        //gui.Shell.openItem(extPath);
+        console.log("Open extensions directory functionality not implemented on chrome yet!");
+        TSCORE.showAlertDialog("Open extensions directory functionality not implemented on chrome yet!"); 
+    }
 
 });

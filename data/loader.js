@@ -1,7 +1,6 @@
 /* Copyright (c) 2012-2013 The TagSpaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that 
  * can be found in the LICENSE file. */
-
 //var LOG = debug ? console.log : function () {};
 // the value of this var is replaced to "true" by the build script
 var PRODUCTION = "@PRODUCTION@";
@@ -18,7 +17,32 @@ if (PRODUCTION == "true") {
 var isFirefox = 'MozBoxSizing' in document.documentElement.style; 
 var isSafari = Object.prototype.toString.call(window.HTMLElement).indexOf('Constructor') > 0;
 var isChrome = !isSafari && 'WebkitTransform' in document.documentElement.style;
+var isNode = undefined;
 
+  // BROWSER SNIFFING
+/*
+  // Crude, but necessary to handle a number of hard-to-feature-detect
+  // bugs and behavior differences.
+  var gecko = /gecko\/\d/i.test(navigator.userAgent);
+  var ie = /MSIE \d/.test(navigator.userAgent);
+  var ie_lt8 = ie && (document.documentMode == null || document.documentMode < 8);
+  var ie_lt9 = ie && (document.documentMode == null || document.documentMode < 9);
+  var webkit = /WebKit\//.test(navigator.userAgent);
+  var qtwebkit = webkit && /Qt\/\d+\.\d+/.test(navigator.userAgent);
+  var chrome = /Chrome\//.test(navigator.userAgent);
+  var opera = /Opera\//.test(navigator.userAgent);
+  var safari = /Apple Computer/.test(navigator.vendor);
+  var khtml = /KHTML\//.test(navigator.userAgent);
+  var mac_geLion = /Mac OS X 1\d\D([7-9]|\d\d)\D/.test(navigator.userAgent);
+  var mac_geMountainLion = /Mac OS X 1\d\D([8-9]|\d\d)\D/.test(navigator.userAgent);
+  var phantom = /PhantomJS/.test(navigator.userAgent);
+
+  var ios = /AppleWebKit/.test(navigator.userAgent) && /Mobile\/\w+/.test(navigator.userAgent);
+  // This is woefully incomplete. Suggestions for alternative methods welcome.
+  var mobile = ios || /Android|webOS|BlackBerry|Opera Mini|Opera Mobi|IEMobile/i.test(navigator.userAgent);
+  var mac = ios || /Mac/.test(navigator.platform);
+  var windows = /windows/i.test(navigator.platform);
+*/
 console.log("Loading Loader 4 Firefox: "+isFirefox+" | Chrome: "+isChrome);
 
 // Setting up the IO functionality according to the platform
@@ -32,7 +56,19 @@ if( isFirefox ) {
     IO_JS = "js/ioapi.chrome";    
 }
 
-require.config({
+// Check for running in node-webkit
+try {
+    var fs = require('fs');
+    var pathUtils = require('path');   
+    var gui = require('nw.gui');
+//    var openEntry = require('open'); 
+    IO_JS = "js/ioapi.node";
+    isNode = true;
+} catch(e) {
+    console.log("node.js not found!");
+}
+
+requirejs.config({
     map: {
       '*': {
         'css': 'libs/requirecss/css'
@@ -61,6 +97,7 @@ require.config({
         jquerylayoutcss:        'libs/jquerylayout/layout-default-latest',
         jquerydropdown:         'libs/jquerydropdown/jquery.dropdown',
         jquerydropdowncss:      'libs/jquerydropdown/jquery.dropdown',        
+        jquerynanoscroller:     'libs/jquerynanoscroller/jquery.nanoscroller',  
         less:                   'libs/less/less-1.3.3.min',
         jqueryeditinplace:      'libs/jqueryeditinplace/jquery.editinplace',
 
@@ -92,6 +129,7 @@ require.config({
         'jquerydropdown':       { deps: ['jquery','bootstrap'] },
         'datatables':           { deps: ['jquery'] },
         'jqueryeditinplace':    { deps: ['jquery'] },
+        'jquerynanoscroller':   { deps: ['jquery'] },        
         'tscore':               { deps: [
                 'jquery',
                 'jqueryui',
@@ -101,6 +139,7 @@ require.config({
                 'jqueryuiposition',
                 'jqueryuiselectable',
                 'jqueryuisortable',
+                'jquerynanoscroller',
                 'bootstrap',
                 'jquerylayout',
                 'jquerydropdown',  
@@ -113,19 +152,13 @@ define(function (require, exports, module) {
 
     //require("less");	
 	if( isFirefox ) {
-		require("tsiomozrec");    
+		requirejs(["tsiomozrec"]);    
 	}	                                
 
     var TSCORE = undefined;
-    require(['tscore'], function (core) {
+    requirejs(['tscore'], function (core) {
         TSCORE = core;
         TSCORE.initApp();
     }); 
-
-/*    var TSCORE = require("tscore");
-	require(['libs/requirejs/domReady!'], function () {
-	    //This function is called once the DOM is ready
-		TSCORE.initApp();
-	}); */
 
 });    

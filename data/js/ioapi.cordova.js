@@ -1,163 +1,134 @@
 /* Copyright (c) 2012-2013 The TagSpaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that 
  * can be found in the LICENSE file. */
-console.log("Loading ioapi.cordova.js..");
+define(function (require, exports, module) {
+    "use strict";
 
-var IOAPI = (typeof IOAPI == 'object' && IOAPI != null) ? IOAPI : {};
+    // Activating browser specific exports modul
+    console.log("Loading ioapi.cordova.js..");
 
-// Determine the directory separator
+    var TSCORE = require("tscore");
 
-//IOAPI.pathSeparator = IOAPI.plugin.getPlatform() == 'windows' ? "\\" : '/';
+    var fsRoot = undefined;
 
-// Wait for Cordova to load
-    
-//document.addEventListener("deviceready", onDeviceReady, false);
+    // handling document ready and phonegap deviceready
+    window.addEventListener('load', function () {
+        console.log(">>>>>>>>>>>>>>>>>>>>>>> Add Ev Li");
+        document.addEventListener('deviceready', onDeviceReady, false);
+    }, false);
 
-//function onDeviceReady() {
-    window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, gotFS, fail);
-//}
+    // Phonegap is loaded and can be used
+    function onDeviceReady() {
+        console.log(">>>>>>>>>>>>>>>>>>>>>>> Dev Ready");
+        getFileSystem();
+    }
 
-function gotFS(fileSystem) {
-    fileSystem.root.getFile("readme.txt", {create: true, exclusive: false}, gotFileEntry, fail);
-}
-
-function gotFileEntry(fileEntry) {
-    fileEntry.createWriter(gotFileWriter, fail);
-}
-
-function gotFileWriter(writer) {
-    writer.onwriteend = function(evt) {
-        console.log("contents of file now 'some sample text'");
-        writer.truncate(11);  
-        writer.onwriteend = function(evt) {
-            console.log("contents of file now 'some sample'");
-            writer.seek(4);
-            writer.write(" different text");
-            writer.onwriteend = function(evt){
-                console.log("contents of file now 'some different text'");
+    /* get the root file system */
+//    function getFileSystem() {
+        console.log(">>>>>>>>>>>>>>>>>>>>>>> FS");
+        window.requestFileSystem(LocalFileSystem.PERSISTENT, 0,
+            function (fileSystem) { // success get file system
+                fsRoot = fileSystem.root;
+                console.log("Filesystem: " + fsRoot);
+            }, function (evt) { // error get file system
+                console.log("File System Error: " + evt.target.error.code);
             }
-        };
-    };
-    writer.write("some sample text");
-}
+        );
+ //   }
 
+    exports.createDirectory = function (dirPath) {
+        console.log("Creating directory: " + dirPath);
+    }
 
-// Test if plugin works
-console.log("Current platform: "+IOAPI.plugin.getPlatform()+" with path separator: "+IOAPI.pathSeparator);  
+    exports.loadTextFile = function (filePath) {
+        console.log("Loading file: " + filePath);
+    }
 
-IOAPI.createDirectory = function(dirPath) {
-    console.log("Creating directory: "+dirPath);    
-    if(IOAPI.plugin.isDirectory(dirPath)) {
-        console.error("Directory already exists...");
-    } else {
-        if(IOAPI.plugin.createDirectory(dirPath)) {
-            console.log("Directory: "+dirPath+" created.");       
+    exports.renameFile = function (filePath, newFilePath) {
+        console.log("Renaming file: " + filePath + " to " + newFilePath);
+    }
+
+    exports.saveTextFile = function (filePath, content) {
+        console.log("Saving file: " + filePath);
+    }
+
+    exports.listDirectory = function (dirPath) {
+        console.log("Listing directory: " + dirPath);
+        //dirPath = "C:\\Users\\na\\Documents";
+        var curDirectory = new DirectoryEntry("Documents1",dirPath);
+
+        if(curDirectory.isDirectory) {
+            var dirReader = curDirectory.createReader();
+            dirReader.readEntries(
+                function (entries) {
+                    var i;
+                    var anotatedDirList = [];
+                    for (i = 0; i < entries.length; i++) {
+                        console.log(entries[i].name);
+                        anotatedDirList.push({
+                            "name": entries[i].name,
+                            "type": entries[i].isDirectory ? "directory" : "file",
+                            "size": "0",
+                            "lmdt": "0",
+                            "path": entries[i].fullPath
+                        });
+                    }
+                    // {"isFile":true,"isDirectory":false,"name":"bla.png","fullPath":"C:\\Users\\na\\Documents\\bla.png","filesystem":null}
+                    //console.log("Dir content: " + JSON.stringify(entries));
+                    TSCORE.PerspectiveManager.updateFileBrowserData(anotatedDirList);
+                },
+                function (ex) {
+                    console.log("Listing directory " + dirPath + " failed: " + ex);
+                }
+            );
         } else {
-            console.error("Directory creation failed");     
-        }
+            console.error("Directory does not exists.");    
+        }   
     }
-}
 
-IOAPI.loadTextFile = function(filePath) {
-    console.log("Loading file: "+filePath);
-    if(IOAPI.plugin.fileExists(filePath)) {
-        var fileContent = IOAPI.plugin.getTextFile(filePath);
-        UIAPI.FileOpener.updateEditorContent(fileContent);   
-    } else {
-        console.error("File does not exists...");
-    }   
-}
-
-// TODO Renaming very slow, due the copy implementation
-IOAPI.renameFile = function(filePath, newFilePath) {
-    console.log("Renaming file: "+filePath+" to "+newFilePath);
-    if(IOAPI.plugin.fileExists(newFilePath)) {
-        console.error("Target file already exists: "+newFilePath);
-    } else {
-        if(IOAPI.plugin.fileExists(filePath)) {
-            IOAPI.plugin.saveBinaryFile(newFilePath,IOAPI.plugin.getBinaryFile(filePath));
-            IOAPI.plugin.removeFile(filePath);
-            console.log("File renamed to: "+newFilePath); 
-        } else { 
-            console.error("Original file does not exists: "+filePath);      
-        }
+    exports.getSubdirs = function (dirPath) {
+        console.log("Getting subdirs: " + dirPath);
     }
-}
 
-IOAPI.saveTextFile = function(filePath,content) {
-    console.log("Saving file: "+filePath);
-    if(IOAPI.plugin.fileExists(filePath)) {
-        IOAPI.plugin.removeFile(filePath);              
+    exports.deleteElement = function (path) {
+        console.log("Deleting: " + path);
+        //    IOAPI.plugin.removeFile(path)
     }
-    IOAPI.plugin.saveTextFile(filePath,content);
-}
 
-IOAPI.listDirectory = function(dirPath) {
-    console.log("Listing directory: "+dirPath);
-    if(IOAPI.plugin.isDirectory(dirPath)) {
-        try {
-            var dirList = IOAPI.plugin.listFiles(dirPath);
-            console.log("Dir content: "+JSON.stringify(dirList)); 
-            UIAPI.PerspectiveManager.updateFileBrowserData(dirList);
-        } catch(ex) {
-            console.error("Directory listing failed "+ex);
-        }       
-    } else {
-        console.error("Directory does not exists.");    
-    }   
-}
-
-IOAPI.getSubdirs = function(dirPath) {
-    console.log("Getting subdirs: "+dirPath);
-    if(IOAPI.plugin.isDirectory(dirPath)) {
-        try {
-            var dirList = IOAPI.plugin.listFiles(dirPath);
-            var anotatedDirList = [];
-            for (var i=0; i < dirList.length; i++) {
-                if(dirList[i].type == "directory") {
-                    anotatedDirList.push({
-                        "title": dirList[i].name,
-                        "isFolder": true,
-                        "isLazy": true,
-                        "key": dirPath+IOAPI.pathSeparator+dirList[i].name 
-                    }); 
-                }            
-            } 
-            // TODO JSON functions are a workarround for a bug....               
-            UIAPI.updateSubDirs(JSON.parse( JSON.stringify(anotatedDirList)));
-        } catch(ex) {
-            console.error("Directory listing failed "+ex);
-        }       
-    } else {
-        console.error("Directory does not exists.");    
+    exports.selectDirectory = function () {
+        // TODO implement selectDirectory
+        console.log("Select directory functionality not implemented on cordova yet!");
     }
-}
 
-IOAPI.deleteElement = function(path) {
-    console.log("Deleting: "+path);
-//    IOAPI.plugin.removeFile(path)
-}
+    exports.selectFile = function () {
+        // TODO implement selectFile
+        console.log("Select file functionality not implemented on cordova yet!");
+    }
 
-IOAPI.selectDirectory = function() {
-    // TODO implement selectDirectory
-    console.log("Select directory functionality not implemented on cordova yet!");
-    alert("Select directory functionality not implemented on cordova yet!")  
-}
+    exports.openDirectory = function (dirPath) {
+        // TODO implement openDirectory
+        console.log("Open directory functionality not implemented on cordova yet!");
+    }
 
-IOAPI.selectFile = function() {
-    // TODO implement selectFile
-    console.log("Select file functionality not implemented on cordova yet!");
-    alert("Select file functionality not implemented on cordova yet!")
-}
+    exports.openExtensionsDirectory = function () {
+        // TODO implement openExtensionsDirectory
+        console.log("Open extensions directory functionality not implemented on cordova yet!");
+    }
 
-IOAPI.openDirectory = function(dirPath) {
-    // TODO implement openDirectory
-    console.log("Open directory functionality not implemented on cordova yet!");
-    alert("Open directory functionality not implemented on cordova yet!");
-}
+    exports.checkNewVersion = function () {
+        console.log("Checking for new version...");
+        var cVer = TSCORE.Config.DefaultSettings["appVersion"] + "." + TSCORE.Config.DefaultSettings["appBuild"];
+        $.ajax({
+            url: 'http://tagspaces.org/releases/version.json?pVer=' + cVer,
+            type: 'GET',
+        })
+        .done(function (data) {
+            TSCORE.updateNewVersionData(data);
+        })
+        .fail(function (data) {
+            console.log("AJAX failed " + data);
+        })
+        ;
 
-IOAPI.openExtensionsDirectory = function() {
-    // TODO implement openExtensionsDirectory
-    console.log("Open extensions directory functionality not implemented on cordova yet!");
-    alert("Open extensions directory functionality not implemented on cordova yet!"); 
-}
+    }
+});

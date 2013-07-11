@@ -1,15 +1,12 @@
-/* Copyright (c) 2012 The Tagspaces Authors. All rights reserved.
+/* Copyright (c) 2012-2013 The TagSpaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that 
  * can be found in the LICENSE file. */
-
-// TODO use eventually this http://developer.chrome.com/extensions/fileBrowserHandler.html
-
 define(function(require, exports, module) {
 "use strict";
 	
 	// Activating browser specific exports modul
 	console.log("Loading ioapi.chrome.js..");
-	
+
 	var TSCORE = require("tscore");
 	    
 	/**
@@ -37,6 +34,15 @@ New:
     void watchDirectory(std::string key, std::string path, FB::JSObjectPtr callback);
     void stopWatching(std::string key);
     std::string getChromeDataDir(std::string version);
+    
+Missing:
+    renameFile
+    createDirectory 
+    openDirectory
+    selectDirectory 
+    
+    fileSize buggy
+    lastModified datetime
 	*/
 	
 	var plugin = document.createElement("embed");
@@ -53,11 +59,10 @@ New:
 	function scanDirectory(dirPath, index) {
 	    try {  
 			var dirList = nativeIO.getDirEntries(dirPath);
-            var index = [];
             for (var i=0; i < dirList.length; i++) {
             	var path = dirPath+getDirseparator()+dirList[i];
             	var isDir = nativeIO.isDirectory(path);
-                var fileSize = nativeIO.getFileSize(path);
+                var fileSize = 0; //nativeIO.getFileSize(path);
                 index.push({
 	                "name": dirList[i],
 	                "type": isDir?"directory":"file",
@@ -65,7 +70,7 @@ New:
 	                "lmdt": "0",
 	                "path": path  
                 }); 
-	            if (!file.isFile()) {
+	            if (isDir) {
 	                scanDirectory(path, index);
 	            }	    	                
             }
@@ -75,6 +80,35 @@ New:
 	    }   
 	}
 	
+    function generateDirectoryTree(dirPath) {
+        try {
+            var tree = {}; 
+            tree["name"] = dirPath.substring(dirPath.lastIndexOf(getDirseparator()) + 1, dirPath.length);
+            tree["type"] = "directory";
+            tree["lmdt"] = 0;   
+            tree["path"] = dirPath;         
+            tree["children"] = [];            
+            var dirList = nativeIO.getDirEntries(dirPath); 
+            for (var i=0; i < dirList.length; i++) {
+                var path = dirPath+getDirseparator()+dirList[i];
+                var isDir = nativeIO.isDirectory(path);
+                if (!isDir) {
+                    tree["children"].push({
+                        "name": dirList[i],
+                        "type": "file",
+                        "size": 0,
+                        "lmdt": 0,   
+                        "path": path 
+                    });            
+                } else {
+                    tree["children"].push( generateDirectoryTree(path) );                   
+                }  
+            }
+            return tree;
+        } catch(ex) {
+            console.error("Scanning directory "+dirPath+" failed "+ex);
+        }         
+    }	
 	
 	function isWindows() {
 		return (navigator.platform == 'Win32');
@@ -88,52 +122,55 @@ New:
 		}
 	}
 	
-	exports.createDirectory = function(dirPath) {
-	    console.log("Creating directory: "+dirPath);    
-		if(plugin.isDirectory(dirPath)) {
-			console.error("Directory already exists...");
-		} else {
-			if(plugin.createDirectory(dirPath)) {
-				console.log("Directory: "+dirPath+" created.");		
-			} else {
-				console.error("Directory creation failed");		
-			}
-		}
-	}
+    exports.checkNewVersion = function() {
+        console.log("Checking for new version...");
+        var cVer = TSCORE.Config.DefaultSettings["appVersion"]+"."+TSCORE.Config.DefaultSettings["appBuild"];
+        $.ajax({
+            url: 'http://tagspaces.org/releases/version.json?cVer='+cVer,
+            type: 'GET',
+        })
+        .done(function(data) { 
+            TSCORE.updateNewVersionData(data);    
+        })
+        .fail(function(data) { 
+            console.log("AJAX failed "+data); 
+        })
+        ;            
+    }	
 	
 	exports.loadTextFile = function(filePath) {
 		console.log("Loading file: "+filePath);
-	    if(plugin.fileExists(filePath)) {
-	        var fileContent = plugin.getTextFile(filePath);
-	        TSCORE.FileOpener.updateEditorContent(fileContent);   
+	    if(nativeIO.fileExists(filePath)) {
+            var blob;
+            var size = nativeIO.getFileSize(filePath);
+            if (size){
+                var byteArray = nativeIO.contentsAtPath(filePath);
+                blob = new Int8Array(byteArray);
+            } else {
+                blob = new Int8Array(0);
+            }
+            var b = new Blob([blob]);
+            b.size = size;
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                TSCORE.FileOpener.updateEditorContent(e.target.result);   
+            }
+            reader.readAsText(b);
 	    } else {
 	        console.error("File does not exists...");
 	    }	
 	}
 	
-	exports.renameFile = function(filePath, newFilePath) {
-		console.log("Renaming file: "+filePath+" to "+newFilePath);
-
-	}
-	
-	exports.saveTextFile = function(filePath,content) {
-		console.log("Saving file: "+filePath);
-/*	  	if(plugin.fileExists(filePath)) {
-			plugin.removeFile(filePath);      		
-	  	}
-		plugin.saveTextFile(filePath,content);*/
-	}
-	
 	exports.listDirectory = function(dirPath) {
 		console.log("Listing directory: "+dirPath);
-		if(plugin.isDirectory(dirPath)) {
+		if(nativeIO.isDirectory(dirPath)) {
 			try {
 				var dirList = nativeIO.getDirEntries(dirPath);
 	            var anotatedDirList = [];
 	            for (var i=0; i < dirList.length; i++) {
 	            	var path = dirPath+getDirseparator()+dirList[i];
 	            	var isDir = nativeIO.isDirectory(path);
-                    var fileSize = nativeIO.getFileSize(path);
+                    var fileSize = 0; //nativeIO.getFileSize(path);
                     anotatedDirList.push({
 		                "name": dirList[i],
 		                "type": isDir?"directory":"file",
@@ -176,32 +213,72 @@ New:
 	        console.error("Directory does not exists.");    
 	    }
 	}
+
+    exports.deleteElement = function(path) {
+        console.log("Deleting: "+path);
+        try {
+            nativeIO.removeRecursively(path)            
+        } catch(ex) {
+            console.error("Deleting file failed "+ex);
+        }
+    }
+
+    exports.createDirectoryIndex = function(dirPath) {
+        console.log("Creating index for directory: "+dirPath);
+        var directoryIndex = [];
+        directoryIndex = scanDirectory(dirPath, directoryIndex);
+        //console.log(JSON.stringify(directoryIndex));
+        TSCORE.PerspectiveManager.updateFileBrowserData(directoryIndex);
+    }
+    
+    exports.createDirectoryTree = function(dirPath) {
+        console.log("Creating directory index for: "+dirPath);
+        var directoyTree = generateDirectoryTree(dirPath);
+        //console.log(JSON.stringify(directoyTree));
+        TSCORE.PerspectiveManager.updateTreeData(directoyTree); 
+    }
+
+    exports.saveTextFile = function(filePath,content) {
+        // TODO implement saveTextFile use saveBlobToFile
+        console.log("Saving file: "+filePath);
+        console.log("Saving file functionality not implemented on chrome yet!");
+        TSCORE.showAlertDialog("Saving file functionality not implemented on chrome yet!")
+    }   
 	
-	exports.deleteElement = function(path) {
-		console.log("Deleting: "+path);
-/*		TSCORE.PerspectiveManager.refreshFileListContainer();		
-		plugin.removeFile(path)*/
-	}
-	
+    exports.renameFile = function(filePath, newFilePath) {
+        // TODO implement renameFile
+        console.log("Renaming file: "+filePath+" to "+newFilePath);
+        console.log("Renaming file functionality not implemented on chrome yet!");
+        TSCORE.showAlertDialog("Renaming file functionality not implemented on chrome yet!")
+    }
+
 	exports.selectDirectory = function() {
+        // TODO implement selectDirectory		
 		console.log("Select directory functionality not implemented on chrome yet!");
 	//	TSCORE.showAlertDialog("Not implemented yet");
-/*		nativeIO.launchFolderSelect(function(dirPath){
+        /* nativeIO.launchFolderSelect(function(dirPath){
 			if (dirPath && dirPath.length){
 				$("#favoriteLocation").val(dirPath);
 			}
-	}); */
+	       }); */
 	}
+
+    exports.openDirectory = function(dirPath) {
+        // TODO implement openDirectory
+        console.log("Open directory functionality not implemented on chrome yet!");
+        TSCORE.showAlertDialog("Select file functionality not implemented on chrome yet!")
+    }
+
+    exports.createDirectory = function(dirPath) {
+        // TODO implement create directory
+        console.log("Creating directory: "+dirPath);    
+        console.log("Creating directory functionality not implemented on chrome yet!");
+        TSCORE.showAlertDialog("Creating directory functionality not implemented on chrome yet!")
+    }   
 	
 	exports.selectFile = function() {
 		// TODO implement selectFile
 		console.log("Select file functionality not implemented on chrome yet!");
-		TSCORE.showAlertDialog("Select file functionality not implemented on chrome yet!")
-	}
-	
-	exports.openDirectory = function(dirPath) {
-		// TODO implement openDirectory
-		console.log("Open directory functionality not implemented on chrome yet!");
 		TSCORE.showAlertDialog("Select file functionality not implemented on chrome yet!")
 	}
 	
@@ -210,74 +287,4 @@ New:
 		console.log("Open extensions directory functionality not implemented on chrome yet!");
 		TSCORE.showAlertDialog("Open extensions directory functionality not implemented on chrome yet!"); 
 	}
-	
-	exports.createDirectoryIndex = function(dirPath) {
-		// TODO implement createDirectoryIndex
-		console.log("Directory indexing functionality not implemented on chrome yet!");
-		TSCORE.showAlertDialog("Directory indexing functionality not implemented on chrome yet!"); 
-	}
-	
-	exports.createDirectoryTree = function(dirPath) {
-	    console.log("Creating directory index for: "+dirPath);
-		console.log("Creating Directory Tree functionality not implemented on chrome yet!");	
-		// TODO implement createDirectoryTree
-		TSCORE.PerspectiveManager.updateTreeData(); 
-	}
-	
-    exports.checkNewVersion = function() {
-        console.log("Checking for new version...");
-        var cVer = TSCORE.Config.DefaultSettings["appVersion"]+"."+TSCORE.Config.DefaultSettings["appBuild"];
-        $.ajax({
-            url: 'http://tagspaces.org/releases/version.json?cVer='+cVer,
-            type: 'GET',
-        })
-        .done(function(data) { 
-            TSCORE.updateNewVersionData(data);    
-        })
-        .fail(function(data) { 
-            console.log("AJAX failed "+data); 
-        })
-//        .always(function(data) { 
-//                console.log("ajax complete: "+data); 
-//            });
-        ;            
-
-    }	
-
 });
-
-/* Needed for createDirectoryTree
-function directoryTree(dirPath) {
-    try {   
-        var tree = {};
-        var dirList = filesIO.list(dirPath);
-        var directory = Cc['@mozilla.org/file/local;1'].createInstance(Ci.nsIFile);
-		directory.initWithPath(dirPath);
-		console.log("Directory "+JSON.stringify(directory));
-		tree["name"] = directory.leafName;
-        tree["type"] = "directory";
-        tree["lmdt"] = directory.lastModifiedTime;   
-        tree["path"] = dirPath; 		
-		tree["children"] = [];
-
-        for (var i=0; i < dirList.length; i++) {
-            var path = filesIO.join(dirPath,dirList[i]);
-            var file = Cc['@mozilla.org/file/local;1'].createInstance(Ci.nsIFile);
-            file.initWithPath(path);
-            if (file.isFile()) {
-	            tree["children"].push({
-	                "name": file.leafName,
-	                "type": "file",
-	                "size": file.fileSize,
-	                "lmdt": file.lastModifiedTime,   
-	                "path": path 
-	            });            
-         	} else {
-         		tree["children"].push( directoryTree(path) );	         		
-         	}
-        }       
-        return tree;
-    } catch(ex) {
-        console.error("Creating directory index failed "+ex);
-    }   
-}*/
