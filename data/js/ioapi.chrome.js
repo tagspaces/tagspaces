@@ -10,17 +10,8 @@ define(function(require, exports, module) {
 	var TSCORE = require("tscore");
 	    
 /**
-Old:
-    Interface of npapi-file-io
-    getTextFile(filename : string) : string
-    getBinaryFile(filename : string) : array<byte>
-    
-    bool getFile(const char *filename, char *&value, size_t &len, const bool issBinary);
-    bool saveText(const char *filename, const char *value, size_t len);
-    saveTextFile
-    bool saveBinaryFile(const char *filename, const char *bytes, const size_t len);
+API of npapifileioforchrome:
 
-New:
     bool createDirectory(std::string path);
     bool saveBlobToFile(std::string path, FB::JSObjectPtr dataArray);
     FB::VariantList getDirEntries(std::string path);
@@ -35,13 +26,11 @@ New:
     void stopWatching(std::string key);
     std::string getChromeDataDir(std::string version);
     
-Missing:
-    renameFile
-    openDirectory
-    selectDirectory 
-    
-    fileSize buggy
-    lastModified datetime
+Still Missing:
+    renameFile real one
+    openDirectory    
+    fileSize buggy in a loop
+    lastModified datetime completely missing
 */
 	
 	var plugin = document.createElement("embed");
@@ -216,7 +205,7 @@ Missing:
     exports.deleteElement = function(path) {
         console.log("Deleting: "+path);
         try {
-            nativeIO.removeRecursively(path)            
+            nativeIO.removeRecursively(path);            
         } catch(ex) {
             console.error("Deleting file failed "+ex);
         }
@@ -238,22 +227,23 @@ Missing:
     }
 
     exports.saveTextFile = function(filePath,content) {
-        // TODO implement saveTextFile use saveBlobToFile
         console.log("Saving file: "+filePath);
-//        console.log("Saving file functionality not implemented on chrome yet!");
-//        TSCORE.showAlertDialog("Saving file functionality not implemented on chrome yet!")
-
-/*           var reader = new FileReader();
-           reader.onloadend = function(e){
-                var data = Array.prototype.slice.call(new Uint8Array(reader.result), 0);
-                //assumes one append call before writing
-                nativeIO.saveBlobToFile(filePath, data);
-           }
-           reader.readAsArrayBuffer(blob);*/
+        var byteArray = [];
+        for (var i = 0; i < content.length; ++i)
+        {
+            byteArray.push(content.charCodeAt(i));
+        }
+        var blobInt8 = new Int8Array(byteArray);
+        var blob = new Blob([blobInt8]);           
+        var reader = new FileReader();
+        reader.onloadend = function(e){
+            var data = Array.prototype.slice.call(new Uint8Array(reader.result), 0);
+            nativeIO.saveBlobToFile(filePath, data);
+        }
+        reader.readAsArrayBuffer(blob);
     }   
 
     exports.createDirectory = function(dirPath) {
-        // TODO implement create directory
         console.log("Creating directory: "+dirPath);    
         try {
             nativeIO.createDirectory(dirPath);
@@ -263,34 +253,60 @@ Missing:
     }  
 	
     exports.renameFile = function(filePath, newFilePath) {
-        // TODO implement renameFile
+        // TODO use a more efficient rename functionality
+        // currently the file is copied to the new location and than
+        // deleted from the old location
         console.log("Renaming file: "+filePath+" to "+newFilePath);
-        console.log("Renaming file functionality not implemented on chrome yet!");
-        TSCORE.showAlertDialog("Renaming file functionality not implemented on chrome yet!")
+        if(nativeIO.fileExists(filePath)) {
+            var blob;
+            var size = nativeIO.getFileSize(filePath);
+            if (size){
+                var byteArray = nativeIO.contentsAtPath(filePath);
+                blob = new Int8Array(byteArray);
+            } else {
+                blob = new Int8Array(0);
+            }
+            var b = new Blob([blob]);
+            b.size = size;
+            var reader = new FileReader();
+            reader.onloadend = function(e){
+                var data = Array.prototype.slice.call(new Uint8Array(reader.result), 0);
+                nativeIO.saveBlobToFile(newFilePath, data);
+                if(nativeIO.fileExists(newFilePath)) {
+                    nativeIO.removeRecursively(filePath);                    
+                }
+                TSCORE.PerspectiveManager.refreshFileListContainer();                
+            }
+            reader.readAsArrayBuffer(b);
+        } else {
+            console.error("File does not exists...");
+        }   
+
     }
 
 	exports.selectDirectory = function() {
-        // TODO implement selectDirectory		
-		console.log("Select directory functionality not implemented on chrome yet!");
-	//	TSCORE.showAlertDialog("Not implemented yet");
-        /* nativeIO.launchFolderSelect(function(dirPath){
+		console.log("Select directory!");
+        nativeIO.launchFolderSelect(function(dirPath){
 			if (dirPath && dirPath.length){
-				$("#favoriteLocation").val(dirPath);
+				$("#folderLocation").val(dirPath);
 			}
-	       }); */
+	    });
 	}
 
+    exports.selectFile = function() {
+        console.log("Select file!");
+        nativeIO.launchFileSelect(function(filePath){
+            if (filePath && filePath.length){
+                //$("#folderLocation").val(dirPath);
+            }
+        });
+    }
+    
     exports.openDirectory = function(dirPath) {
         // TODO implement openDirectory
         console.log("Open directory functionality not implemented on chrome yet!");
         TSCORE.showAlertDialog("Select file functionality not implemented on chrome yet!")
     }
-
-	exports.selectFile = function() {
-		// TODO implement selectFile
-		console.log("Select file functionality not implemented on chrome yet!");
-		TSCORE.showAlertDialog("Select file functionality not implemented on chrome yet!")
-	}
 	
 	exports.openExtensionsDirectory = function() {
 		// TODO implement openExtensionsDirectory
