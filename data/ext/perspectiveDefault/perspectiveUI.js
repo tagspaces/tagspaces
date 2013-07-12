@@ -79,8 +79,6 @@ console.log("Loading UI for perspectiveDefault");
 		       
 		var self = this;
 		
-		//  var tagButtons = $("<div>").appendTo( "#tagGroups" );  
-		
 		this.viewToolbar.append($("<div>", { 
 			class: "btn-group",
 			style: "margin: 0px",
@@ -237,7 +235,7 @@ console.log("Loading UI for perspectiveDefault");
 			cellspacing: "0",
 			border: "0",
 			style: "width: 100%",
-			class: "table",
+			class: "table content",
 	        id: this.extensionID+"FileTable",    
 	    })); 
 	    
@@ -313,6 +311,10 @@ console.log("Loading UI for perspectiveDefault");
 	        console.log("Selected files: "+TSCORE.selectedFiles);
 	      }
 	    }) */
+	   
+	    // Activating nano scroller
+	    //$('#'+this.extensionID+"FileTable_wrapper").addClass("nano");
+	    //$('#'+this.extensionID+"FileTable_wrapper").nanoScroller();
 	}			
 	
 	ExtUI.prototype.reInitTableWithData = function(fileList) {

@@ -73,9 +73,12 @@ define(function(require, exports, module) {
 	    
 	    tsTagsUI.generateTagGroups();
 	
+
 	    $( "#loading" ).hide();  
 	    $( "#container" ).show();  
 	    $( "#helpers" ).show();
+	    
+
 	    
 	    hideLoadingAnimation();
 	    // TODO check if document.ready is really needed
@@ -290,7 +293,7 @@ define(function(require, exports, module) {
 	    var dirNavigationLayout = $('#directoryNavigator').layout({
 	            minSize:                35  // ALL panes
 	        ,   north__paneSelector:    "#directoryNavigatorNorth"
-	        ,   center__paneSelector:   "#dirTree"
+	        ,   center__paneSelector:   "#location"
 	        ,   north__size:            32
 	        ,   north__resizable:       false
 	        ,   north__spacing_open:    0

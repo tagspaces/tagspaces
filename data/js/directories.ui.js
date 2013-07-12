@@ -49,10 +49,10 @@ define(function(require, exports, module) {
     
     function generateDirPath() {
         console.log("Generating Directory Path...");
-        $("#dirTree").empty();
-        $("#dirTree").addClass("accordion")
+        $("#locationContent").empty();
+        $("#locationContent").addClass("accordion")
         for(var i=0; i < directoryHistory.length; i++) {
-            $("#dirTree").append($("<div>", { 
+            $("#locationContent").append($("<div>", { 
                 "class":        "accordion-group",   
                 "style":        "width: 100%; border: 0px;", 
             })
@@ -111,7 +111,7 @@ define(function(require, exports, module) {
                     "style":        "width:20%",                   
             })              
             .dropdown( 'attach' , '#directoryMenu' )
-            .append("<b class='icon-reorder'>")
+            .append("<b class='icon-ellipsis-vertical'>")
             .click( function(event) {
                 dir4ContextMenu = $(this).attr("key");
             })) // end gear    
@@ -163,7 +163,7 @@ define(function(require, exports, module) {
                                 }                              
                             }                   
                         }) 
-                        .prepend("<i class='icon-folder-close-alt'></i>")            
+                        .prepend("<i class='icon-folder-close'></i>")            
                         .click( function() {
                             navigateToDirectory($(this).attr("key"));
                         })                   
@@ -172,10 +172,13 @@ define(function(require, exports, module) {
                }
            }
         }
+        // Activating nano scroller
+        //$("#location").nanoScroller();
+
     }
     
     function handleDirCollapsion() {
-        $("#dirTree").find(".accordion-heading").each(function(index) {
+        $("#locationContent").find(".accordion-heading").each(function(index) {
             var key = $(this).attr("key");
             console.log("Entered Header for: "+key);
             if(getDirectoryCollapsed(key)) {
@@ -279,9 +282,9 @@ define(function(require, exports, module) {
                         
         $( "#selectTagSpace" ).tooltip();
     
-        $( "#selectLocalDirectory" ).click(function() {
+        $( "#selectLocalDirectory" ).click(function(e) {
+            e.preventDefault();
             TSCORE.IO.selectDirectory();
-            return false;
         })    
     }
     

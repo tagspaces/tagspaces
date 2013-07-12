@@ -115,10 +115,10 @@ define(function(require, exports, module) {
 	
 	function generateTagGroups() {
 	    console.log("Generating TagGroups...");
-	    $("#tagGroups").empty();
-	    $("#tagGroups").addClass("accordion");
+	    $("#tagGroupsContent").empty();
+	    $("#tagGroupsContent").addClass("accordion");
 	    if(TSCORE.Config.Settings["tagGroups"].length < 1) {
-            $("#tagGroups").append($("<button>", { 
+            $("#tagGroupsContent").append($("<button>", { 
                 "class": "btn",
                 text: "Create New Taggroup"
             })
@@ -130,7 +130,7 @@ define(function(require, exports, module) {
 	    }
 	    
 	    for(var i=0; i < TSCORE.Config.Settings["tagGroups"].length; i++) {
-	        $("#tagGroups").append($("<div>", { 
+	        $("#tagGroupsContent").append($("<div>", { 
 	            "class": "accordion-group",    
                 "style": "width: 99%; border: 0px;",	            
 	        })
@@ -180,7 +180,7 @@ define(function(require, exports, module) {
 	                "title": "Taggroup options",
  	        })              
 	        .dropdown( 'attach' , '#tagGroupMenu' )
-	        .append("<b class='icon-reorder'></b>")
+	        .append("<b class='icon-ellipsis-vertical'></b>")
 	        .click( function(event) {
 	                //console.log("Clicked in taggroup setting");    
 	                TSCORE.selectedTag = $(this).attr("tag");
@@ -230,6 +230,8 @@ define(function(require, exports, module) {
                 );
 	       } 
 	    }
+        // Activating nano scroller
+        //$("#tagGroups").nanoScroller();	    
 	}
 		
 	function openTagMenu(tagButton, tag, filePath) {

@@ -1,0 +1,13 @@
+{
+  "name": "TagSpaces",
+  "description": "File explorer.",
+  "version": "1.4",
+  "main": "../data/index.html",
+  "window": {
+    "icon": "icon128.png",
+    "toolbar": true,
+    "width": 1024,
+    "height": 800
+  },
+  "nodejs": true
+}

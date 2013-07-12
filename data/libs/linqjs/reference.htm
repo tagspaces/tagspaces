@@ -1,0 +1,3205 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>linq.js Reference</title>
+    <script type="text/javascript" src="linq.js"></script>
+    <script type="text/javascript">
+        var textStack = [];
+        document.write = function() {
+            Enumerable.from(arguments).forEach("textStack.push($)");
+        };
+        document.writeln = function () {
+            Enumerable.from(arguments).forEach("textStack.push($)");
+        };
+
+        function evaluate(code) {
+            textStack.length = 0;
+            var value;
+            try {
+                eval(code + '.take(1001).writeLine()');
+                value = textStack.join("");
+            } catch (e) {
+                textStack.length = 0;
+                try {
+                    value = eval("(" + code + ")");
+                    document.write(value);
+                    value = textStack.join("");
+                }
+                catch (e2) {
+                    value = "error";
+                }
+            }
+            return value;
+        }
+
+        function expand() {
+            var code = (this.innerText || this.textContent);
+            var value = evaluate(code);
+            var p = document.createElement("p");
+            p.innerHTML = value;
+            this.appendChild(p);
+            this.onclick = collapse;
+        }
+
+        function collapse() {
+            this.removeChild(this.lastChild);
+            this.onclick = expand;
+        }
+
+        function execute() {
+            var value = evaluate(this.value);
+            document.getElementById("codeResult").innerHTML = value;
+        }
+
+        window.onload = function() {
+            Enumerable.from(document.getElementsByTagName("pre"))
+                .forEach("$.onclick = expand");
+
+            var input = document.getElementById("codeInput");
+            input.onkeyup = execute;
+            execute.apply(input);
+        };
+    </script>
+    <style type="text/css">
+        pre
+        {
+            cursor: pointer;
+        }
+        table
+        {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        td
+        {
+            border: solid black;
+            border-width: 1px 0 1px 0;
+        }
+        h2
+        {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <h1>
+        linq.js Reference</h1>
+    <p>
+        Notice:currently under working for v3.0. lack of some methods(choose, merge, defer, etc...)<br />
+        <a href="http://linqjs.codeplex.com/">http://linqjs.codeplex.com/</a>
+    </p>
+    <h2>
+        LINQ Pad</h2>
+    <table>
+        <tr>
+            <td style="width: 50%; vertical-align: top">
+                <textarea cols="10" rows="10" id="codeInput" style="width: 100%">Enumerable.range(0, 20)&#13;.where("x => x % 3 == 0")&#13;.select("$ * 2")</textarea>
+            </td>
+            <td style="vertical-align: top">
+                <p id="codeResult" style="padding-left: 20px">
+                </p>
+            </td>
+        </tr>
+    </table>
+    <h2 class="clear:both">
+        Generating Methods</h2>
+    <table>
+        <thead>
+            <tr>
+                <td>
+                    method name
+                </td>
+                <td>
+                    return type
+                </td>
+                <td>
+                    arguments
+                </td>
+                <td>
+                    example (click code)
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td rowspan="2">
+                    choice
+                </td>
+                <td rowspan="2">
+                    Enumerable
+                </td>
+                <td>
+                    params T[] elements
+                </td>
+                <td>
+                    <pre>Enumerable.choice("a","b","c","d").take(10)</pre>
+                    <pre>Enumerable.choice(["a","b","c","d"]).take(10)</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Enumerable elements
+                </td>
+                <td>
+                    <pre>Enumerable.choice(Enumerable.range(1,3)).take(10)</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    cycle
+                </td>
+                <td>
+                    Enumerable
+                </td>
+                <td>
+                    params T obj
+                </td>
+                <td>
+                    <pre>Enumerable.cycle(1,"foo",true).take(10)</pre>
+                    <pre>Enumerable.cycle([1,"foo",true]).take(10)</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    empty
+                </td>
+                <td>
+                    Enumerable
+                </td>
+                <td>
+                    ()
+                </td>
+                <td>
+                    <pre>Enumerable.empty()</pre>
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="6">
+                    from
+                </td>
+                <td rowspan="6">
+                    Enumerable
+                </td>
+                <td>
+                    Array obj
+                </td>
+                <td>
+                    <pre>var arr = [1,124,"aaa",function(){},false];
+Enumerable.from(arr)</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Object obj
+                </td>
+                <td>
+                    <pre>var obj = {a:3,b:"3",z:function(){},d:true};
+Enumerable.from(obj).select("$.key + ':' + $.value")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    NodeList obj
+                </td>
+                <td>
+                    <pre>var node = document.getElementsByTagName("h2");
+Enumerable.from(node).select("$.innerHTML")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Number obj
+                </td>
+                <td>
+                    <pre>Enumerable.from(5)</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    String obj
+                </td>
+                <td>
+                    <pre>Enumerable.from("foobar")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    IEnumerable(WSH) obj
+                </td>
+                <td>
+                    <pre>
+// using with Windows Script Host
+// var fso = WScript.CreateObject("Scripting.FileSystemObject");
+// var files = fso.GetFolder("C:\\").Files;
+// Enumerable.from(files).select("$.Name").forEach("WScript.Echo($)");</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    make
+                </td>
+                <td>
+                    Enumerable
+                </td>
+                <td>
+                    T element
+                </td>
+                <td>
+                    <pre>Enumerable.make("foobar")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="3">
+                    matches
+                </td>
+                <td rowspan="3">
+                    Enumerable
+                </td>
+                <td>
+                    string input, RegExp pattern
+                </td>
+                <td>
+                    <pre>Enumerable.matches("xbcyBCzbc", /(.)bc/i)
+.select("'index='+$.index+' all='+$[0]+' capture='+$[1]")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    string input, string pattern
+                </td>
+                <td>
+                    <pre>Enumerable.matches("xbcyBCzbc", "(.)bc")
+.select("'index='+$.index+' all='+$[0]+' capture='+$[1]")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    string input, string pattern, string flags
+                </td>
+                <td>
+                    <pre>Enumerable.matches("xbcyBCzbc", "(.)bc", "i")
+.select("'index='+$.index+' all='+$[0]+' capture='+$[1]")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="2">
+                    range
+                </td>
+                <td rowspan="2">
+                    Enumerable
+                </td>
+                <td>
+                    int start, int count
+                </td>
+                <td>
+                    <pre>Enumerable.range(10,5)</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    int start, int count, int step
+                </td>
+                <td>
+                    <pre>Enumerable.range(10,5,3)</pre>
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="2">
+                    rangeDown
+                </td>
+                <td rowspan="2">
+                    Enumerable
+                </td>
+                <td>
+                    int start, int count
+                </td>
+                <td>
+                    <pre>Enumerable.rangeDown(10,5)</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    int start, int count, int step
+                </td>
+                <td>
+                    <pre>Enumerable.rangeDown(10,5,3)</pre>
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="2">
+                    rangeTo
+                </td>
+                <td rowspan="2">
+                    Enumerable
+                </td>
+                <td>
+                    int start, int to
+                </td>
+                <td>
+                    <pre>Enumerable.rangeTo(10,18)</pre>
+                    <pre>Enumerable.rangeTo(3,-5)</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    int start, int to, int step
+                </td>
+                <td>
+                    <pre>Enumerable.rangeTo(1,9,3)</pre>
+                    <pre>Enumerable.rangeTo(1,-9,3)</pre>
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="2">
+                    repeat
+                </td>
+                <td rowspan="2">
+                    Enumerable
+                </td>
+                <td>
+                    T obj
+                </td>
+                <td>
+                    <pre>Enumerable.repeat(3).take(5)</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    T obj, int count
+                </td>
+                <td>
+                    <pre>Enumerable.repeat("foo",10)</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    repeatWithFinalize
+                </td>
+                <td>
+                    Enumerable
+                </td>
+                <td>
+                    T initializer(), void finalizer(T)
+                </td>
+                <td>
+                    <pre>// example for WScript(Text EnumerateLines and Finally Close)
+// var fso = WScript.CreateObject("Scripting.FileSystemObject");
+// Enumerable.repeatWithFinalize(
+//         function () { return fso.OpenTextFile("C:\\file.txt") },
+//         function (ts) { ts.Close() })
+//     .takeWhile(function (ts) { return !ts.AtEndOfStream })
+//     .select(function (ts) { return ts.ReadLine() });
+</pre>
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="2">
+                    generate
+                </td>
+                <td rowspan="2">
+                    Enumerable
+                </td>
+                <td>
+                    T func()
+                </td>
+                <td>
+                    <pre>Enumerable.generate("Math.random()").take(5)</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    T func(), int count
+                </td>
+                <td>
+                    <pre>Enumerable.generate("Math.random()", 5)</pre>
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="3">
+                    toInfinity
+                </td>
+                <td rowspan="3">
+                    Enumerable
+                </td>
+                <td>
+                    ()
+                </td>
+                <td>
+                    <pre>Enumerable.toInfinity().take(5)</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    int start
+                </td>
+                <td>
+                    <pre>Enumerable.toInfinity(1000).take(5)</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    int start, int step
+                </td>
+                <td>
+                    <pre>Enumerable.toInfinity(1000,5).take(5)</pre>
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="3">
+                    toNegativeInfinity
+                </td>
+                <td rowspan="3">
+                    Enumerable
+                </td>
+                <td>
+                    ()
+                </td>
+                <td>
+                    <pre>Enumerable.toNegativeInfinity().take(5)</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    int start
+                </td>
+                <td>
+                    <pre>Enumerable.toNegativeInfinity(1000).take(5)</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    int start, int step
+                </td>
+                <td>
+                    <pre>Enumerable.toNegativeInfinity(1000,5).take(5)</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    unfold
+                </td>
+                <td>
+                    Enumerable
+                </td>
+                <td>
+                    T seed, T func(T)
+                </td>
+                <td>
+                    <pre>Enumerable.unfold(5, "$+3").take(10)</pre>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <h2>
+        Projection and Filtering Methods</h2>
+    <table>
+        <thead>
+            <tr>
+                <td>
+                    method name
+                </td>
+                <td>
+                    return type
+                </td>
+                <td>
+                    arguments
+                </td>
+                <td>
+                    example (click code)
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td rowspan="3">
+                    traverseBreadthFirst
+                </td>
+                <td rowspan="3">
+                    Enumerable
+                </td>
+                <td>
+                    T[] func(T)
+                </td>
+                <td>
+                    <pre>Enumerable.make(1).traverseBreadthFirst("$+$").take(5)</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    T[] func(T), T resultSelector(T)
+                </td>
+                <td>
+                    <pre>Enumerable.make(1).traverseBreadthFirst("$+$","$*$").take(5)</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    T[] func(T), T resultSelector(T, int)
+                </td>
+                <td>
+                    <pre>Enumerable.make(document.body)
+.traverseBreadthFirst("$.childNodes", "v,n=>{value:v,nestLevel:n}")
+.where("$.nestLevel<3 && $.value.nodeType == 1")
+.select("$.nestLevel + ':' + $.value.tagName")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="3">
+                    traverseDepthFirst
+                </td>
+                <td rowspan="3">
+                    Enumerable
+                </td>
+                <td>
+                    T[] func(T)
+                </td>
+                <td>
+                    <pre>Enumerable.make(1).traverseDepthFirst("$+$").take(5)</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    T[] func(T), T resultSelector(T)
+                </td>
+                <td>
+                    <pre>Enumerable.make(1).traverseDepthFirst("$+$","$*$").take(5)</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    T[] func(T), T resultSelector(T, int)
+                </td>
+                <td>
+                    <pre>Enumerable.make(document.body)
+.traverseDepthFirst("$.childNodes", "v,n=>{value:v,nestLevel:n}")
+.where("$.nestLevel<3 && $.value.nodeType == 1")
+.select("$.nestLevel + ':' + $.value.tagName")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    flatten
+                </td>
+                <td>
+                    Enumerable
+                </td>
+                <td>
+                    ()
+                </td>
+                <td>
+                    <pre>var array = [1,[234,2,[62,3]],[234,5],3];
+Enumerable.from(array).flatten()</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    pairwise
+                </td>
+                <td>
+                    Enumerable
+                </td>
+                <td>
+                    T selector(T, T)
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,10)
+.pairwise("prev,next=>prev + ':' + next")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="3">
+                    scan
+                </td>
+                <td rowspan="3">
+                    Enumerable
+                </td>
+                <td>
+                    T func(T, T)
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,10).scan("a,b=>a+b")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    T seed, T func(T, T)
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,10).scan(100,"a,b=>a+b")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    T seed, T func(T, T), T resultSelector(T)
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,10).scan(100,"a,b=>a+b","$*10")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="2">
+                    select
+                </td>
+                <td rowspan="2">
+                    Enumerable
+                </td>
+                <td>
+                    T selector(T)
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,10).select("$*10")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    T selector(T, int)
+                </td>
+                <td>
+                    <pre>Enumerable.rangeDown(10,10).select("value,index=>index + ':' + value")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="4">
+                    selectMany
+                </td>
+                <td rowspan="4">
+                    Enumerable
+                </td>
+                <td>
+                    T[] collectionSelector(T)
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,3).selectMany("Enumerable.repeat($,3)")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    T[] collectionSelector(T, int)
+                </td>
+                <td>
+                    <pre>Enumerable.range(5,5)
+.selectMany("value,index=>Enumerable.repeat('str'+value,index+1)")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    T[] collectionSelector(T), resultSelector(T, T)
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,3)
+.selectMany("Enumerable.repeat($,3)","first,middle=>first + ':' + middle*10")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    T[] collectionSelector(T, int), resultSelector(T, T)
+                </td>
+                <td>
+                    <pre>Enumerable.range(5,5)
+.selectMany("v,i=>Enumerable.repeat('str'+v,i+1)","f,m=>f + ':' + m")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="2">
+                    where
+                </td>
+                <td rowspan="2">
+                    Enumerable
+                </td>
+                <td>
+                    bool predicate(T)
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,10).where("$%2==0")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    bool predicate(T, int)
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,10).where("value,index=>value*index>10")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    ofType
+                </td>
+                <td>
+                    Enumerable
+                </td>
+                <td>
+                    Class type
+                </td>
+                <td>
+                    <pre>Enumerable.from([1,"a",2,"b","c",3]).ofType(Number)</pre>
+                    <pre>Enumerable.from([1,"a",2,"b","c",3]).ofType(String)</pre>
+                    <pre>function ClassA(v){this.v = v}
+Enumerable.from([new ClassA("a"),1,2,new ClassA("b")])
+    .ofType(ClassA).select("$.v")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="2">
+                    zip
+                </td>
+                <td rowspan="2">
+                    Enumerable
+                </td>
+                <td>
+                    T[] second,T selector(T, T)
+                </td>
+                <td>
+                    <pre>Enumerable.rangeDown(10,10)
+.zip(Enumerable.range(1,10),"outer,inner=>outer + ':' + inner")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    T[] second,T selector(T, T, int)
+                </td>
+                <td>
+                    <pre>Enumerable.rangeDown(10,10)
+.zip(Enumerable.range(1,10),"outer,inner,index=>index + ':' + outer*inner")</pre>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <h2>
+        Join Methods</h2>
+    <table>
+        <thead>
+            <tr>
+                <td>
+                    method name
+                </td>
+                <td>
+                    return type
+                </td>
+                <td>
+                    arguments
+                </td>
+                <td>
+                    example (click code)
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td rowspan="2">
+                    join
+                </td>
+                <td rowspan="2">
+                    Enumerable
+                </td>
+                <td>
+                    T[] inner, T outerKeySelector(T), T innerKeySelector(T), T resultSelector(T, T)
+                </td>
+                <td>
+                    <pre>var array1 = [13,413,5,135,61,631,13,61,3];
+var array2 = [13,134,53,6,3,7,13,7,7,135,61,3,13];
+Enumerable.from(array1)
+.join(array2,"","","outer,inner=>outer + ':' + inner")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    T[] inner, T outerKeySelector(T), T innerKeySelector(T), T resultSelector(T, T),
+                    T compareSelector(T)
+                </td>
+                <td>
+                    <pre>var array1 = [10,405,50,135];
+var array2 = [1,4,7,8];
+Enumerable.from(array1)
+.join(array2,"","","outer,inner=>outer + ':' + inner","$%2==0")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="2">
+                    groupJoin
+                </td>
+                <td rowspan="2">
+                    Enumerable
+                </td>
+                <td>
+                    T[] inner, T outerKeySelector(T), T innerKeySelector(T), T resultSelector(T, Enumerable)
+                </td>
+                <td>
+                    <pre>var array1 = [13,413,5,135,61,631,13,61,3];
+var array2 = [13,134,53,6,3,7,13,7,7,135,61,3,13];
+Enumerable.from(array1)
+.groupJoin(array2,"","","outer,lookup=>outer + ':' + lookup.toJoinedString('-')")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    T[] inner, T outerKeySelector(T), T innerKeySelector(T), T resultSelector(T, Enumerable),
+                    T compareSelector(T)
+                </td>
+                <td>
+                    <pre>var array1 = [10,405,50,135];
+var array2 = [1,4,7,8];
+Enumerable.from(array1)
+.groupJoin(array2,"","","outer,lookup=>outer + ':' + lookup.toJoinedString('-')","$%2==0")</pre>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <h2>
+        Set Methods</h2>
+    <table>
+        <thead>
+            <tr>
+                <td>
+                    method name
+                </td>
+                <td>
+                    return type
+                </td>
+                <td>
+                    arguments
+                </td>
+                <td>
+                    example (click code)
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    all
+                </td>
+                <td>
+                    Boolean
+                </td>
+                <td>
+                    bool predicate(T)
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,10).all("$<5")</pre>
+                    <pre>Enumerable.range(1,10).all("$<15")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="2">
+                    any
+                </td>
+                <td rowspan="2">
+                    Boolean
+                </td>
+                <td>
+                    ()
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,0).any()</pre>
+                    <pre>Enumerable.range(1,10).any()</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    bool predicate(T)
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,10).any("$==5")</pre>
+                    <pre>Enumerable.range(1,10).any("$==15")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    concat
+                </td>
+                <td>
+                    Enumerable
+                </td>
+                <td>
+                    T[] second
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,5).concat(Enumerable.repeat("foo",5))</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    insert
+                </td>
+                <td>
+                    Enumerable
+                </td>
+                <td>
+                    int index, T[] second
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,5).insert(3,Enumerable.repeat("foo",5))</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    alternate
+                </td>
+                <td>
+                    Enumerable
+                </td>
+                <td>
+                    T value
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,5).alternate(-1)</pre>
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="2">
+                    contains
+                </td>
+                <td rowspan="2">
+                    Boolean
+                </td>
+                <td>
+                    T value
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,5).contains(3)</pre>
+                    <pre>Enumerable.range(1,5).contains(10)</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    T value, T compareSelector(T)
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,5).Select("{test:$}").contains(3)</pre>
+                    <pre>Enumerable.range(1,5).Select("{test:$}").contains(3,"$.test")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    defaultIfEmpty
+                </td>
+                <td>
+                    Enumerable
+                </td>
+                <td>
+                    T defaultValue
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,5).defaultIfEmpty("default")</pre>
+                    <pre>Enumerable.range(1,0).defaultIfEmpty("default")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="2">
+                    distinct
+                </td>
+                <td rowspan="2">
+                    Enumerable
+                </td>
+                <td>
+                    ()
+                </td>
+                <td>
+                    <pre>var array = [1,412,5,3,5,412,7];
+Enumerable.from(array).distinct()</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    T compareSelector(T)
+                </td>
+                <td>
+                    <pre>var seq = Enumerable.range(1,10).Select("{test:$%3}");
+seq.distinct("$.test").select("$.test")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="2">
+                    except
+                </td>
+                <td rowspan="2">
+                    Enumerable
+                </td>
+                <td>
+                    T[] second
+                </td>
+                <td>
+                    <pre>var array1 = [1,412,5,3,5,412,7];
+var array2 = [20,12,5,5,7,310];
+Enumerable.from(array1).except(array2)</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    T[] second, T compareSelector(T)
+                </td>
+                <td>
+                    <pre>var seq1 = Enumerable.range(1,10).select("{test:$%5}");
+var seq2 = Enumerable.range(1,10).select("{test:$%2}");
+seq1.except(seq2,"$.test").select("$.test")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="2">
+                    intersect
+                </td>
+                <td rowspan="2">
+                    Enumerable
+                </td>
+                <td>
+                    T[] second
+                </td>
+                <td>
+                    <pre>var array1 = [1,412,5,3,5,412,7];
+var array2 = [20,12,5,5,7,310];
+Enumerable.from(array1).intersect(array2)</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    T[] second, T compareSelector(T)
+                </td>
+                <td>
+                    <pre>var seq1 = Enumerable.range(1,10).select("{test:$%5}");
+var seq2 = Enumerable.range(1,10).select("{test:$%2}");
+seq1.intersect(seq2,"$.test").select("$.test")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="2">
+                    sequenceEqual
+                </td>
+                <td rowspan="2">
+                    Boolean
+                </td>
+                <td>
+                    T[] second
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,5).sequenceEqual(Enumerable.range(1,5))</pre>
+                    <pre>Enumerable.range(1,5).sequenceEqual(Enumerable.range(1,6))</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    T[] second, T compareSelector(T)
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,10).select("{test:$%5}")
+.sequenceEqual(Enumerable.range(1,10).select("{test:$%5}"),"$.test")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="2">
+                    union
+                </td>
+                <td rowspan="2">
+                    Enumerable
+                </td>
+                <td>
+                    T[] second
+                </td>
+                <td>
+                    <pre>var array1 = [1,412,5,3,5,412,7];
+var array2 = [20,12,5,5,7,310];
+Enumerable.from(array1).union(array2)</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    T[] second, T compareSelector(T)
+                </td>
+                <td>
+                    <pre>var seq1 = Enumerable.range(1,5).select("{test:$}");
+var seq2 = Enumerable.range(3,7).select("{test:$}");
+seq1.union(seq2,"$.test").select("$.test")</pre>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <h2>
+        Ordering Methods</h2>
+    <table>
+        <thead>
+            <tr>
+                <td>
+                    method name
+                </td>
+                <td>
+                    return type
+                </td>
+                <td>
+                    arguments
+                </td>
+                <td>
+                    example (click code)
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td rowspan="2">
+                    orderBy
+                </td>
+                <td rowspan="2">
+                    OrderedEnumerable
+                </td>
+                <td>
+                    ()
+                </td>
+                <td>
+                    <pre>
+var array = [1,51,61,75,8,35,43];
+Enumerable.from(array).orderBy()</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    T keySelector(T)
+                </td>
+                <td>
+                    <pre>
+var array = [{a:"a"},{a:"z"},{a:"k"},{a:"l"},{a:"m"},{a:"c"}];
+Enumerable.from(array).orderBy("$.a").select("$.a")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="2">
+                    orderByDescending
+                </td>
+                <td rowspan="2">
+                    OrderedEnumerable
+                </td>
+                <td>
+                    ()
+                </td>
+                <td>
+                    <pre>
+var array = [1,51,61,75,8,35,43];
+Enumerable.from(array).orderByDescending()</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    T keySelector(T)
+                </td>
+                <td>
+                    <pre>
+var array = [{a:"a"},{a:"z"},{a:"k"},{a:"l"},{a:"m"},{a:"c"}];
+Enumerable.from(array).orderByDescending("$.a").select("$.a")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    thenBy
+                </td>
+                <td>
+                    OrderedEnumerable
+                </td>
+                <td>
+                    T keySelector(T)
+                </td>
+                <td>
+                    <pre>
+var list = [
+           { a: 2, b: 4, c: 1 },
+           { a: 2, b: 3, c: 7 },
+           { a: 2, b: 3, c: 3 },
+           { a: 4, b: 7, c: 5 },
+           { a: 7, b: 3, c: 2 },
+           { a: 4, b: 1, c: 5 }];
+Enumerable.from(list).orderBy("$.a").thenBy("$.c").thenBy("$.b")
+.select("$.a + ':' + $.b + ':' + $.c")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    thenByDescending
+                </td>
+                <td>
+                    OrderedEnumerable
+                </td>
+                <td>
+                    T keySelector(T)
+                </td>
+                <td>
+                    <pre>
+var list = [
+           { a: 2, b: 4, c: 1 },
+           { a: 2, b: 3, c: 7 },
+           { a: 2, b: 3, c: 3 },
+           { a: 4, b: 7, c: 5 },
+           { a: 7, b: 3, c: 2 },
+           { a: 4, b: 1, c: 5 }];
+Enumerable.from(list).orderBy("$.a").thenByDescending("$.c").thenByDescending("$.b")
+.select("$.a + ':' + $.b + ':' + $.c")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    reverse
+                </td>
+                <td>
+                    Enumerable
+                </td>
+                <td>
+                    ()
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,10).reverse()</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    shuffle
+                </td>
+                <td>
+                    Enumerable
+                </td>
+                <td>
+                    ()
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,10).shuffle()</pre>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <h2>
+        Grouping Methods</h2>
+    <table>
+        <thead>
+            <tr>
+                <td>
+                    method name
+                </td>
+                <td>
+                    return type
+                </td>
+                <td>
+                    arguments
+                </td>
+                <td>
+                    example (click code)
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td rowspan="4">
+                    groupBy
+                </td>
+                <td rowspan="2">
+                    Enumerable&lt;Grouping>
+                </td>
+                <td>
+                    T keySelector(T)
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,5).groupBy("$%2==0")
+.select("$.key() + ':' + $.toJoinedString('-')")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    T keySelector(T), T elementSelector(T)
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,5).groupBy("$%2==0","$*10")
+.select("$.key() + ':' + $.toJoinedString('-')")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="2">
+                    Enumerable
+                </td>
+                <td>
+                    T keySelector(T), T elementSelector(T), T resultSelector(T, Enumerable)
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,5)
+.groupBy("$%2==0","","key,e=>key+':'+e.toJoinedString('-')")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    TK keySelector(T), TE elementSelector(T), TR resultSelector(T, Enumerable),TC compareSelector(TK)
+                </td>
+                <td>
+                    <pre>Enumerable.from([{d:new Date(2000,1,1),i:0},{d:new Date(2000,1,1),i:1}])
+.groupBy("$.d","","key,e=>key+':'+e.Select('$.i').toArray()","$.toString()")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="4">
+                    partitionBy
+                </td>
+                <td rowspan="2">
+                    Enumerable&lt;Grouping>
+                </td>
+                <td>
+                    T keySelector(T)
+                </td>
+                <td>
+                    <pre>Enumerable.from([1,2,2,3,3,2,1,1]).partitionBy("i=>i")
+.select("$.key() + ':' + $.toJoinedString('-')")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    T keySelector(T), T elementSelector(T)
+                </td>
+                <td>
+                    <pre>Enumerable.from([1,2,2,3,3,2,1,1]).partitionBy("i=>i","i=>i*100")
+.select("$.key() + ':' + $.toJoinedString('-')")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="2">
+                    Enumerable
+                </td>
+                <td>
+                    T keySelector(T), T elementSelector(T), T resultSelector(T, Enumerable)
+                </td>
+                <td>
+                    <pre>Enumerable.from([1,2,2,3,3,2,1,1])
+.partitionBy("i=>i","i=>i","key,e=>key+':'+e.toJoinedString('-')")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    TK keySelector(T), TE elementSelector(T), TR resultSelector(T, Enumerable), TC compareSelector(TK)
+                </td>
+                <td>
+                    <pre>Enumerable.from([{d:new Date(2000,1,1),i:0},{d:new Date(2000,1,1),i:1}])
+.partitionBy("$.d","","key,e=>key+':'+e.Select('$.i').toArray()","$.toString()")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    buffer
+                </td>
+                <td>
+                    Enumerable&lt;Array>
+                </td>
+                <td>
+                    int count
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,10).buffer(4)</pre>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <h2>
+        Aggregate Methods</h2>
+    <table>
+        <thead>
+            <tr>
+                <td>
+                    method name
+                </td>
+                <td>
+                    return type
+                </td>
+                <td>
+                    arguments
+                </td>
+                <td>
+                    example (click code)
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td rowspan="3">
+                    aggregate
+                </td>
+                <td rowspan="3">
+                    T
+                </td>
+                <td>
+                    T func(T, T)
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,5).aggregate("a,b=>a*b")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    T seed, T func(T, T)
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,10).aggregate(100,"a,b=>a+b")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    T seed, T func(T, T), T resultSelector(T)
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,10).aggregate(100,"a,b=>a+b","$*10")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="2">
+                    average
+                </td>
+                <td rowspan="2">
+                    Number
+                </td>
+                <td>
+                    ()
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,10).average()</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Number selector(T)
+                </td>
+                <td>
+                    <pre>Enumerable.from([{a:"foo",b:5},{a:"bar",b:20},{a:"foobar",b:10}])
+.average("$.b")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="2">
+                    count
+                </td>
+                <td rowspan="2">
+                    Number
+                </td>
+                <td>
+                    ()
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,10).count()</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    bool predicate(T)
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,10).count("$>7")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="2">
+                    max
+                </td>
+                <td rowspan="2">
+                    Number
+                </td>
+                <td>
+                    ()
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,10).max()</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Number selector(T)
+                </td>
+                <td>
+                    <pre>Enumerable.from([{a:"foo",b:5},{a:"bar",b:20},{a:"foobar",b:10}])
+.max("$.b")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="2">
+                    min
+                </td>
+                <td rowspan="2">
+                    Number
+                </td>
+                <td>
+                    ()
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,10).min()</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Number selector(T)
+                </td>
+                <td>
+                    <pre>Enumerable.from([{a:"foo",b:5},{a:"bar",b:20},{a:"foobar",b:10}])
+.min("$.b")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    maxBy
+                </td>
+                <td>
+                    T
+                </td>
+                <td>
+                    Number selector(T)
+                </td>
+                <td>
+                    <pre>Enumerable.from([{a:"foo",b:5},{a:"bar",b:20},{a:"foobar",b:10}])
+.maxBy("$.b").a</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    minBy
+                </td>
+                <td>
+                    T
+                </td>
+                <td>
+                    Number selector(T)
+                </td>
+                <td>
+                    <pre>Enumerable.from([{a:"foo",b:5},{a:"bar",b:20},{a:"foobar",b:10}])
+.minBy("$.b").a</pre>
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="2">
+                    sum
+                </td>
+                <td rowspan="2">
+                    Number
+                </td>
+                <td>
+                    ()
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,10).sum()</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Number selector(T)
+                </td>
+                <td>
+                    <pre>Enumerable.from([{a:"foo",b:5},{a:"bar",b:20},{a:"foobar",b:10}])
+.sum("$.b")</pre>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <h2>
+        Paging Methods</h2>
+    <table>
+        <thead>
+            <tr>
+                <td>
+                    method name
+                </td>
+                <td>
+                    return type
+                </td>
+                <td>
+                    arguments
+                </td>
+                <td>
+                    example (click code)
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    elementAt
+                </td>
+                <td>
+                    T
+                </td>
+                <td>
+                    int index
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,10).elementAt(3)</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    elementAtOrDefault
+                </td>
+                <td>
+                    T
+                </td>
+                <td>
+                    int index, T defaultValue
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,10).elementAtOrDefault(15,-1)</pre>
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="2">
+                    first
+                </td>
+                <td rowspan="2">
+                    T
+                </td>
+                <td>
+                    ()
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,10).first()</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    bool predicate(T)
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,10).first("$>4")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="2">
+                    firstOrDefault
+                </td>
+                <td rowspan="2">
+                    T
+                </td>
+                <td>
+                    T defaultValue
+                </td>
+                <td>
+                    <pre>Enumerable.empty().firstOrDefault(-1)</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    T defaultValue, bool predicate(T)
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,10).firstOrDefault(-1,"$>15")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="2">
+                    last
+                </td>
+                <td rowspan="2">
+                    T
+                </td>
+                <td>
+                    ()
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,10).last()</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    bool predicate(T)
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,10).last("$<4")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="2">
+                    lastOrDefault
+                </td>
+                <td rowspan="2">
+                    T
+                </td>
+                <td>
+                    T defaultValue
+                </td>
+                <td>
+                    <pre>Enumerable.empty().lastOrDefault(-1)</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    T defaultValue, bool predicate(T)
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,10).lastOrDefault(-1,"$>15")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="2">
+                    single
+                </td>
+                <td rowspan="2">
+                    T
+                </td>
+                <td>
+                    ()
+                </td>
+                <td>
+                    <pre>Enumerable.from("a").single()</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    bool predicate(T)
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,10).single("$==4")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="2">
+                    singleOrDefault
+                </td>
+                <td rowspan="2">
+                    T
+                </td>
+                <td>
+                    T defaultValue
+                </td>
+                <td>
+                    <pre>Enumerable.empty().singleOrDefault(-1)</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    T defaultValue, bool predicate(T)
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,10).singleOrDefault(-1,"$==15")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    skip
+                </td>
+                <td>
+                    Enumerable
+                </td>
+                <td>
+                    int count
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,10).skip(5)</pre>
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="2">
+                    skipWhile
+                </td>
+                <td rowspan="2">
+                    Enumerable
+                </td>
+                <td>
+                    bool predicate(T)
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,10).skipWhile("$<=5")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    bool predicate(T, int index)
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,10).skipWhile("value,index=>value+index<=5")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    take
+                </td>
+                <td>
+                    Enumerable
+                </td>
+                <td>
+                    int count
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,10).take(5)</pre>
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="2">
+                    takeWhile
+                </td>
+                <td rowspan="2">
+                    Enumerable
+                </td>
+                <td>
+                    bool predicate(T)
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,10).takeWhile("$<=5")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    bool predicate(T, int index)
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,10).takeWhile("value,index=>value+index<=5")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="2">
+                    takeExceptLast
+                </td>
+                <td rowspan="2">
+                    Enumerable
+                </td>
+                <td>
+                    ()
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,10).takeExceptLast()</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Number count
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,10).takeExceptLast(3)</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    takeFromLast
+                </td>
+                <td>
+                    Enumerable
+                </td>
+                <td>
+                    Number count
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,10).takeFromLast(3)</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    indexOf
+                </td>
+                <td>
+                    int
+                </td>
+                <td>
+                    T item
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,10).indexOf(3)</pre>
+                    <pre>Enumerable.range(1,10).indexOf(15)</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    lastIndexOf
+                </td>
+                <td>
+                    int
+                </td>
+                <td>
+                    T item
+                </td>
+                <td>
+                    <pre>Enumerable.from([1,2,3,2,5]).lastIndexOf(2)</pre>
+                    <pre>Enumerable.from([1,2,3,2,5]).lastIndexOf(20)</pre>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <h2>
+        Convert Methods</h2>
+    <table>
+        <thead>
+            <tr>
+                <td>
+                    method name
+                </td>
+                <td>
+                    return type
+                </td>
+                <td>
+                    arguments
+                </td>
+                <td>
+                    example (click code)
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    toArray
+                </td>
+                <td>
+                    Array
+                </td>
+                <td>
+                    ()
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,10).toArray()</pre>
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="3">
+                    toLookup
+                </td>
+                <td rowspan="3">
+                    Lookup
+                </td>
+                <td>
+                    TKey keySelector(T)
+                </td>
+                <td>
+                    <pre>var lookup = Enumerable.from(["temp.xls", "temp.pdf", "temp.jpg", "temp2.pdf"])
+.toLookup("$.match(/\\.(.+$)/)[1]");
+lookup.toEnumerable().select("$.key() + ' : ' + $.toArray()")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    TKey keySelector(T), TElement elementSelector(T)
+                </td>
+                <td>
+                    <pre>var lookup = Enumerable.from(["temp.xls", "temp.pdf", "temp.jpg", "temp2.pdf"])
+.toLookup("$.match(/\\.(.+$)/)[1]","$.match(/(.+)\\.[^.]+$/)[1]");
+lookup.toEnumerable().select("$.key() + ' : ' + $.toArray()")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    TKey keySelector(T), TElement elementSelector(T), TCompare compareSelector(TKey)
+                </td>
+                <td>
+                    <pre>var lookup = Enumerable.from(["temp.xls", "temp.pdf", "temp.jpg", "temp2.pdf"])
+.toLookup("","","$.match(/\\.(.+$)/)[1]");
+lookup.toEnumerable().select("$.key() + ' : ' + $.toArray()")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    toObject
+                </td>
+                <td>
+                    Object
+                </td>
+                <td>
+                    String keySelector(T), T elementSelector(T)
+                </td>
+                <td>
+                    <pre>var obj = Enumerable.range(1,10).select("value,index=>{id:'id_' + index,value:value}")
+.toObject("$.id","$.value");
+Enumerable.from(obj).select("$.key + ':' + $.value")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="2">
+                    toDictionary
+                </td>
+                <td rowspan="2">
+                    Dictionary
+                </td>
+                <td>
+                    TKey keySelector(T), TElement elementSelector(T)
+                </td>
+                <td>
+                    <pre>var dict = Enumerable.range(1,10).select("value,index=>{id:'id_' + index,value:value}")
+.toDictionary("$.id","$.value");
+dict.toEnumerable().select("$.key + ':' + $.value")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    TKey keySelector(T), TElement elementSelector(T), TCompare compareSelector(TKey)
+                </td>
+                <td>
+                    <pre>var dict = Enumerable.range(1,10).select("value,index=>{id:'id_' + index,value:value}")
+.toDictionary("$","$.value","$;id");
+dict.toEnumerable().select("$.key.id + ':' + $.value")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="3">
+                    toJSONString
+                </td>
+                <td rowspan="3">
+                    String
+                </td>
+                <td>
+                    ()
+                </td>
+                <td>
+                    <pre>// toJSONString only work Native JSON support browser or include json2.js
+Enumerable.from([{Foo:1, Bar:'z'},{Foo:5, Bar:null}]).toJSONString()</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    TResult replacer(TKey, TValue)
+                </td>
+                <td>
+                    <pre>Enumerable.from(["a","b","c"])
+.toJSONString(function(k,v){return (typeof v === 'object') ? v : v.toString().toUpperCase()})</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    TResult replacer(TKey, TValue), Number space
+                </td>
+                <td>
+                    <pre>Enumerable.range(1, 5).toJSONString(null, 4)</pre>
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="3">
+                    toJoinedString
+                </td>
+                <td rowspan="3">
+                    String
+                </td>
+                <td>
+                    ()
+                </td>
+                <td>
+                    <pre>Enumerable.range(0,10).toJoinedString()</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    String separator
+                </td>
+                <td>
+                    <pre>Enumerable.range(0,10).toJoinedString("-")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    String separator, T selector(T)
+                </td>
+                <td>
+                    <pre>Enumerable.from([{k:"foo"},{k:"bar"}]).toJoinedString("-","$.k")</pre>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <h2>
+        Action Methods</h2>
+    <table>
+        <thead>
+            <tr>
+                <td>
+                    method name
+                </td>
+                <td>
+                    return type
+                </td>
+                <td>
+                    arguments
+                </td>
+                <td>
+                    example (click code)
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td rowspan="2">
+                    doAction
+                </td>
+                <td rowspan="2">
+                    Enumerable
+                </td>
+                <td>
+                    void action(T)
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,10).doAction(function(i){
+    document.write('do:'+ i +'|');})
+ .where("$%2==0")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    void action(T, index)
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,10).doAction(function(value,index){
+    document.write("do:" + index + '-' + value + "&lt;br/>");})
+.orderBy("").take(2)</pre>
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="4">
+                    forEach
+                </td>
+                <td rowspan="4">
+                    void
+                </td>
+                <td>
+                    void action(T)
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,10).forEach(function(i){
+    document.write(i);})</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    void action(T, index)
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,10).forEach(function(value,index){
+    document.write(index + ':' + value + "&lt;br/>");})</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    bool func(T)
+                </td>
+                <td>
+                    <pre>Enumerable.range(1, 10).forEach(function(i)
+{
+    if (i % 2 == 0) return; // continue
+    if (i > 6) return false; // break
+    document.write(i + "&lt;br/>");
+})</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    bool func(T, index)
+                </td>
+                <td>
+                    <pre>Enumerable.repeat("aaa", 10).forEach(function(s,index)
+{
+    if (index % 2 == 0) return; // continue
+    if (index > 6) return false; // break
+    document.write(index + s + "&lt;br/>");
+})</pre>
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="3">
+                    write
+                </td>
+                <td rowspan="3">
+                    void
+                </td>
+                <td>
+                    ()
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,10).write()</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    String separator
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,10).write("-")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    String separator, T selector(T)
+                </td>
+                <td>
+                    <pre>Enumerable.from([{a:"foo",b:1},{a:"bar",b:3}])
+.write("-","$.a + ':' + $.b")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="2">
+                    writeLine
+                </td>
+                <td rowspan="2">
+                    void
+                </td>
+                <td>
+                    ()
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,10).writeLine()</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    T selector(T)
+                </td>
+                <td>
+                    <pre>Enumerable.from([{a:"foo",b:1},{a:"bar",b:3}])
+.writeLine("$.a + ':' + $.b")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    force
+                </td>
+                <td>
+                    void
+                </td>
+                <td>
+                    ()
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,10).trace().force()</pre>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <h2>
+        Functional Methods</h2>
+    <table>
+        <thead>
+            <tr>
+                <td>
+                    method name
+                </td>
+                <td>
+                    return type
+                </td>
+                <td>
+                    arguments
+                </td>
+                <td>
+                    example (click code)
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    letBind
+                </td>
+                <td>
+                    Enumerable
+                </td>
+                <td>
+                    Enumerable&lt;TR> func(Enumerable&lt;T>)
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,10).letBind(function(x){return x.zip(x.skip(1),"x,y=>x + ':' + y")})</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    share
+                </td>
+                <td>
+                    Enumerable
+                </td>
+                <td>
+                    ()
+                </td>
+                <td>
+                    <pre>var share = Enumerable.range(1,10).share();
+share.take(4).writeLine();
+document.write("--- &lt;br>");
+share.skip(2)</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    memoize
+                </td>
+                <td>
+                    Enumerable
+                </td>
+                <td>
+                    ()
+                </td>
+                <td>
+                    <pre>var mem = Enumerable.range(1,10)
+.doAction("document.write('--->' + $ + '&lt;br>')").memoize();
+mem.where("$%2==0").writeLine();
+document.write("--- &lt;br>");
+mem.where("$%2==0")</pre>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <h2>
+        Error Handling Methods</h2>
+    <table>
+        <thead>
+            <tr>
+                <td>
+                    method name
+                </td>
+                <td>
+                    return type
+                </td>
+                <td>
+                    arguments
+                </td>
+                <td>
+                    example (click code)
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    catchError
+                </td>
+                <td>
+                    Enumerable
+                </td>
+                <td>
+                    void handler(Error)
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,10).select(function(i){
+    if(i == 5) throw new Error("enumerable_error"); else return i;})
+.catchError("document.write($.message)")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    finallyAction
+                </td>
+                <td>
+                    Enumerable
+                </td>
+                <td>
+                    void finallyAction()
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,5).finallyAction(function(){document.write("finally")})</pre>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <h2>
+        For Debug Methods</h2>
+    <table>
+        <thead>
+            <tr>
+                <td>
+                    method name
+                </td>
+                <td>
+                    return type
+                </td>
+                <td>
+                    arguments
+                </td>
+                <td>
+                    example (click code)
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td rowspan="3">
+                    trace
+                </td>
+                <td rowspan="3">
+                    Enumerable
+                </td>
+                <td>
+                    ()
+                </td>
+                <td>
+                    <pre>// trace is output to console.log
+Enumerable.range(1,10).trace().force()</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    String message
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,10).trace("Gen").where("$%3==0").trace("Filtered").force()</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    String message, T selector(T)
+                </td>
+                <td>
+                    <pre>Enumerable.from([{a:"foo",b:1},{a:"bar",b:3}])
+.trace("Gen","$.a").force()</pre>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <h2>
+        DisposableEnumerable(inherit Eunmerable)</h2>
+    <table>
+        <thead>
+            <tr>
+                <td>
+                    method name
+                </td>
+                <td>
+                    return type
+                </td>
+                <td>
+                    arguments
+                </td>
+                <td>
+                    example (click code)
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    dispose
+                </td>
+                <td>
+                    void
+                </td>
+                <td>
+                    ()
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,10).share().dispose()</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    All Enumerable Methods
+                </td>
+                <td>
+                    -
+                </td>
+                <td>
+                    -
+                </td>
+                <td>
+                    <pre>-</pre>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <h2>
+        Grouping(inherit Eunmerable)</h2>
+    <table>
+        <thead>
+            <tr>
+                <td>
+                    method name
+                </td>
+                <td>
+                    return type
+                </td>
+                <td>
+                    arguments
+                </td>
+                <td>
+                    example (click code)
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    key
+                </td>
+                <td>
+                    TKey
+                </td>
+                <td>
+                    ()
+                </td>
+                <td>
+                    <pre>Enumerable.from([{id:"foo",x:10},{id:"bar",x:20},{id:"foo",x:100}])
+.groupBy("$.id").toArray()[0] // grouping
+.key()</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    All Enumerable Methods
+                </td>
+                <td>
+                    -
+                </td>
+                <td>
+                    -
+                </td>
+                <td>
+                    <pre>-</pre>
+                </td>
+            </tr>
+        </thead>
+    </table>
+    <h2>
+        Utils</h2>
+    <table>
+        <thead>
+            <tr>
+                <td>
+                    method name
+                </td>
+                <td>
+                    return type
+                </td>
+                <td>
+                    arguments
+                </td>
+                <td>
+                    example (click code)
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td rowspan="3">
+                    createLambda
+                </td>
+                <td rowspan="3">
+                    Function
+                </td>
+                <td>
+                    null/undefined
+                </td>
+                <td>
+                    <pre>Enumerable.Utils.createLambda()</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Function expression
+                </td>
+                <td>
+                    <pre>Enumerable.Utils.createLambda(function(x){ return x % 2 == 0})</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    string expression
+                </td>
+                <td>
+                    <pre>Enumerable.Utils.createLambda("")</pre>
+                    <pre>Enumerable.Utils.createLambda("x, y => x + y")</pre>
+                    <pre>Enumerable.Utils.createLambda("$ * $$ * $$$")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    createEnumerable
+                </td>
+                <td>
+                    Enumerable
+                </td>
+                <td>
+                    Func&lt;IEnumerator> getEnumerator
+                </td>
+                <td>
+                    <pre>Enumerable.Utils.createEnumerable(function(){ return Enumerable.Utils.createEnumerator(); })</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    createEnumerator
+                </td>
+                <td>
+                    Enumerable
+                </td>
+                <td>
+                    Action initialize, Action tryGetNext, Action dispose
+                </td>
+                <td>
+                    <pre>var enumerator;
+Enumerable.Utils.createEnumerator(
+    function(){ enumerator = Enumerable.range(1,10).getEnumerator(); },
+    // tryGetNext's "this" is yielder, it have yieldReturn and yieldBreak
+    function(){ return (enumerator.moveNext()) 
+                    ? this.yieldReturn(enumerator.current())
+                    : this.yieldBreak();},
+    function(){ enumerator.dispose(); })</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    extendTo
+                </td>
+                <td>
+                    void
+                </td>
+                <td>
+                    Constructor type
+                </td>
+                <td>
+                    <pre>Enumerable.Utils.extendTo(Array)</pre>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <h2>
+        IEnumerator</h2>
+    <table>
+        <thead>
+            <tr>
+                <td>
+                    method name
+                </td>
+                <td>
+                    return type
+                </td>
+                <td>
+                    arguments
+                </td>
+                <td>
+                    example (click code)
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    getEnumerator
+                </td>
+                <td>
+                    IEnumerator
+                </td>
+                <td>
+                    ()
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,10).getEnumerator()</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    moveNext
+                </td>
+                <td>
+                    Boolean
+                </td>
+                <td>
+                    ()
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,10).getEnumerator().moveNext()</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    current
+                </td>
+                <td>
+                    T
+                </td>
+                <td>
+                    ()
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,10).getEnumerator().current()</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    dispose
+                </td>
+                <td>
+                    void
+                </td>
+                <td>
+                    ()
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,10).getEnumerator().dispose()</pre>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <h2>
+        Dictionary</h2>
+    <table>
+        <thead>
+            <tr>
+                <td>
+                    method name
+                </td>
+                <td>
+                    return type
+                </td>
+                <td>
+                    arguments
+                </td>
+                <td>
+                    example (click code)
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    add
+                </td>
+                <td>
+                    void
+                </td>
+                <td>
+                    TKey key, TValue value
+                </td>
+                <td>
+                    <pre>Enumerable.empty().toDictionary().add(1, 'aaa')</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    get
+                </td>
+                <td>
+                    TValue
+                </td>
+                <td>
+                    TKey key
+                </td>
+                <td>
+                    <pre>Enumerable.empty().toDictionary().get(1)</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    set
+                </td>
+                <td>
+                    Boolean
+                </td>
+                <td>
+                    TKey key, TValue value
+                </td>
+                <td>
+                    <pre>Enumerable.empty().toDictionary().set(1, 'zzz')</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    contains
+                </td>
+                <td>
+                    Boolean
+                </td>
+                <td>
+                    TKey key
+                </td>
+                <td>
+                    <pre>Enumerable.empty().toDictionary().contains(1)</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    clear
+                </td>
+                <td>
+                    void
+                </td>
+                <td>
+                    ()
+                </td>
+                <td>
+                    <pre>Enumerable.empty().toDictionary().clear()</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    remove
+                </td>
+                <td>
+                    void
+                </td>
+                <td>
+                    TKey key
+                </td>
+                <td>
+                    <pre>Enumerable.empty().toDictionary().remove(1)</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    count
+                </td>
+                <td>
+                    Number
+                </td>
+                <td>
+                    ()
+                </td>
+                <td>
+                    <pre>Enumerable.empty().toDictionary().count()</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    toEnumerable
+                </td>
+                <td>
+                    Enumerable
+                </td>
+                <td>
+                    ()
+                </td>
+                <td>
+                    <pre>var dict = Enumerable.empty().toDictionary();
+dict.add("foo", 10); dict.add("bar", 200);
+dict.toEnumerable().select("$.key + ':' + $.value")</pre>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <h2>
+        Lookup</h2>
+    <table>
+        <thead>
+            <tr>
+                <td>
+                    method name
+                </td>
+                <td>
+                    return type
+                </td>
+                <td>
+                    arguments
+                </td>
+                <td>
+                    example (click code)
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    get
+                </td>
+                <td>
+                    Enumerable&lt;TElement>
+                </td>
+                <td>
+                    TKey key
+                </td>
+                <td>
+                    <pre>Enumerable.from([{x:1,s:'a'},{x:1,s:'z'}])
+.toLookup("$.x").get(1).select("$.x + ':' + $.s")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    contains
+                </td>
+                <td>
+                    Boolean
+                </td>
+                <td>
+                    TKey key
+                </td>
+                <td>
+                    <pre>Enumerable.from([{x:1,s:'a'},{x:1,s:'z'}])
+.toLookup("$.x").contains(1)</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    count
+                </td>
+                <td>
+                    Number
+                </td>
+                <td>
+                    ()
+                </td>
+                <td>
+                    <pre>Enumerable.range(1,5).toLookup().count()</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    toEnumerable
+                </td>
+                <td>
+                    Enumerable&lt;Grouping>
+                </td>
+                <td>
+                    ()
+                </td>
+                <td>
+                    <pre>Enumerable.from([{a:1,s:'foo'},{a:1,s:'bar'},{a:2,s:'zzzzz'}])
+.toLookup("$.a").toEnumerable()
+.select("$.key() + ':' + $.select('$.s').toJoinedString('-')")</pre>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <h2>
+        jQuery Extension(linq.jquery.js)</h2>
+    <table>
+        <thead>
+            <tr>
+                <td>
+                    method name
+                </td>
+                <td>
+                    return type
+                </td>
+                <td>
+                    arguments
+                </td>
+                <td>
+                    example (click code)
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    tojQuery
+                </td>
+                <td>
+                    jQuery
+                </td>
+                <td>
+                    ()
+                </td>
+                <td>
+                    <pre>// Enumerable.repeat("foo",10).tojQuery()</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    tojQueryAsArray
+                </td>
+                <td>
+                    jQuery
+                </td>
+                <td>
+                    ()
+                </td>
+                <td>
+                    <pre>// Enumerable.repeat("foo",10).tojQueryAsArray()</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    toEnumerable
+                </td>
+                <td>
+                    Enumerable&lt;jQuery>
+                </td>
+                <td>
+                    ()
+                </td>
+                <td>
+                    <pre>// $("div").toEnumerable()</pre>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <h2>
+        RxJS Extension(linq.rx.js)</h2>
+    <table>
+        <thead>
+            <tr>
+                <td>
+                    method name
+                </td>
+                <td>
+                    return type
+                </td>
+                <td>
+                    arguments
+                </td>
+                <td>
+                    example (click code)
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    toObservable
+                </td>
+                <td>
+                    Rx.Observable
+                </td>
+                <td>
+                    ()
+                </td>
+                <td>
+                    <pre>// Enumerable.range(1,10).toObservable()</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    toEnumerable
+                </td>
+                <td>
+                    Enumerable
+                </td>
+                <td>
+                    ()
+                </td>
+                <td>
+                    <pre>// Rx.Observable.range(1,10).toEnumerable()</pre>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <h2>
+        QUnit Extension(linq.qunit.js)</h2>
+    <table>
+        <thead>
+            <tr>
+                <td>
+                    method name
+                </td>
+                <td>
+                    return type
+                </td>
+                <td>
+                    arguments
+                </td>
+                <td>
+                    example (click code)
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td rowspan="3">
+                    is
+                </td>
+                <td rowspan="3">
+                    void
+                </td>
+                <td>
+                    Object expected, [string message]
+                </td>
+                <td>
+                    <pre>// Math.pow(10, 2).is(100, "all objects are extended")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    params Object[] expected
+                </td>
+                <td>
+                    <pre>// Enumerable.range(1,3).is(1,2,3) // collection deepEqual</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Func&lt;T,bool> checker, [string message]
+                </td>
+                <td>
+                    <pre>// ({ a: "foo", b: "bar" }).is(function (x) { return x.a == "foo" && x.b == "bar" }, "checker must be function(can not use string lambda)")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="3">
+                    isNot
+                </td>
+                <td rowspan="3">
+                    void
+                </td>
+                <td>
+                    Object expected, [string message]
+                </td>
+                <td>
+                    <pre>// Math.pow(10, 2).isNot(-5, "all objects are extended")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    params Object[] expected
+                </td>
+                <td>
+                    <pre>// Enumerable.range(1,3).isNot(1,2,3,4) // collection deepEqual</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Func&lt;T,bool> checker, [string message]
+                </td>
+                <td>
+                    <pre>// ({ a: "foo", b: "bar" }).isNot(function (x) { return x.a == "hee" && x.b == "bee" }, "checker must be function(can not use string lambda)")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    isExpr
+                </td>
+                <td>
+                    void
+                </td>
+                <td>
+                    string expression, [string message]
+                </td>
+                <td>
+                    <pre>// ({ a: "foo", b: "bar" }).isExpr("$.a == 'foo' && $.b == 'bar'", "checker string is converted to lambda")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    isNotExpr
+                </td>
+                <td>
+                    void
+                </td>
+                <td>
+                    string expression, [string message]
+                </td>
+                <td>
+                    <pre>// ({ a: "foo", b: "bar" }).isNotExpr("$.a == 'bar' && $.b == 'foo'", "checker string is converted to lambda")</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    isTrue
+                </td>
+                <td>
+                    void
+                </td>
+                <td>
+                    [string message]
+                </td>
+                <td>
+                    <pre>// (Enumerable.empty().firstOrDefault() === null).isTrue()</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    isFalse
+                </td>
+                <td>
+                    void
+                </td>
+                <td>
+                    [string message]
+                </td>
+                <td>
+                    <pre>// Enumerable.range(1, 10).all("$<5").isFalse()</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    expectError
+                </td>
+                <td>
+                    Error
+                </td>
+                <td>
+                    Action testCode, [string message]
+                </td>
+                <td>
+                    <pre>// Enumerable.Assert.expectError(function () { throw new Error("ERROOOOOR"); })</pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    doesNotThrow
+                </td>
+                <td>
+                    void
+                </td>
+                <td>
+                    Action testCode, [string message]
+                </td>
+                <td>
+                    <pre>// Enumerable.Assert.doesNotThrow(function () { })</pre>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>

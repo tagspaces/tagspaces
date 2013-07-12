@@ -15,6 +15,7 @@
     <link rel="stylesheet" type="text/css" href="libs/jsoneditor/jsoneditor.css">
     <link rel="stylesheet" type="text/css" href="libs/jquerydropdown/jquery.dropdown.css">    
     <link rel="stylesheet" type="text/css" href="libs/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="libs/jquerynanoscroller/nanoscroller.css">
     <link rel="stylesheet" type="text/css" href="css/tagspaces.css">
 </head>
 <body style="background-color: lightgray;">
@@ -31,7 +32,7 @@
 		<div id="mainMenu" class="pull-right">
             <button id="toggleLeftPanel" class="btn btn-link" title="Toggle Navigator & Tag Panel"><i class="icon-sort icon-rotate-90"></i></button>
 			<div id="viewSwitcher" class="btn-group" data-toggle="buttons-radio"></div>
-	        <button role="button" class="btn btn-link" title="Additional Actions" data-dropdown="#settingsMenu"><i class="icon-reorder"></i></button>        
+	        <button role="button" class="btn btn-link" title="Additional Actions" data-dropdown="#settingsMenu"><i class="icon-ellipsis-vertical"></i></button>        
 	    </div>
     </div>
 
@@ -43,9 +44,13 @@
                     <button id="selectTagSpace" style="width: 15%;" class="btn"><span class="caret"></span></button> 
                 </div>                
             </div>
-            <div id="dirTree" style="padding: 0px; height: 100%;"></div>   
+            <div id="location" class="nano">
+                <div id="locationContent" class="content"></div>
+            </div>   
         </div>
-        <div id="tagGroups" class="west-south" style="padding: 0px; height: 100%"></div>
+        <div id="tagGroups" class="west-south nano">
+            <div id="tagGroupsContent" class="content"></div>            
+        </div>
     </div>    
     
     <div class="ui-layout-center" style="padding: 0px;">
@@ -403,7 +408,10 @@
     </ul>     
     
     <ul id="settingsMenu" class="dropdown-menu has-tip anchor-right">
+        <li><a id="startNewInstanceBack" title="Options Dialog"><i class="icon-external-link-sign"></i> New Instance</a></li>
+        <li class="divider"></li>
         <li><a id="openOptions" title="Options Dialog"><i class="icon-wrench"></i> Options</a></li>
+        <li><a target="_new" href="https://tagspaces.uservoice.com/forums/213931-general" title="Suggest or vote for a feature"><i class="icon-bullhorn"></i> Vote on feature</a></li>        
         <li><a target="_new" href="https://github.com/uggrock/tagspaces/issues/" title="Report a issue or enhancement"><i class="icon-flag"></i> Report Issue</a></li>
         <li><a target="_new" href="https://twitter.com/tagspaces" title="Follow on twitter"><i class="icon-twitter"></i> Follow @tagspaces</a></li>
         <li><a href="mailto:info@tagspaces.org" title="Drop a line to the developers"><i class="icon-envelope-alt"></i> Contact developers</a></li>
