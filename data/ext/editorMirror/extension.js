@@ -32,7 +32,9 @@ define(function(require, exports, module) {
 
         $("#"+containerElementID).append('<div id="code" name="code" style="width: 100%; height: 100%">');  
         var mode = filetype[fileExt];		
-		//TODO if (mode != null)
+		if (mode == null) {
+		    mode = "properties";
+		}
 		require([
 		    extensionDirectory+'/codemirror/codemirror.js',
             'css!'+extensionDirectory+'/codemirror/codemirror.css',
