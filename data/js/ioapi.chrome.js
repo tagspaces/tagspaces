@@ -9,16 +9,16 @@ define(function(require, exports, module) {
 
 	var TSCORE = require("tscore");
 	    
-	/**
+/**
 Old:
-	    Interface of npapi-file-io
-	    getTextFile(filename : string) : string
-	    getBinaryFile(filename : string) : array<byte>
-	    
-	    bool getFile(const char *filename, char *&value, size_t &len, const bool issBinary);
-	    bool saveText(const char *filename, const char *value, size_t len);
-	    saveTextFile
-	    bool saveBinaryFile(const char *filename, const char *bytes, const size_t len);
+    Interface of npapi-file-io
+    getTextFile(filename : string) : string
+    getBinaryFile(filename : string) : array<byte>
+    
+    bool getFile(const char *filename, char *&value, size_t &len, const bool issBinary);
+    bool saveText(const char *filename, const char *value, size_t len);
+    saveTextFile
+    bool saveBinaryFile(const char *filename, const char *bytes, const size_t len);
 
 New:
     bool createDirectory(std::string path);
@@ -37,13 +37,12 @@ New:
     
 Missing:
     renameFile
-    createDirectory 
     openDirectory
     selectDirectory 
     
     fileSize buggy
     lastModified datetime
-	*/
+*/
 	
 	var plugin = document.createElement("embed");
 	plugin.setAttribute("type", "application/x-npapifileioforchrome");
@@ -241,9 +240,27 @@ Missing:
     exports.saveTextFile = function(filePath,content) {
         // TODO implement saveTextFile use saveBlobToFile
         console.log("Saving file: "+filePath);
-        console.log("Saving file functionality not implemented on chrome yet!");
-        TSCORE.showAlertDialog("Saving file functionality not implemented on chrome yet!")
+//        console.log("Saving file functionality not implemented on chrome yet!");
+//        TSCORE.showAlertDialog("Saving file functionality not implemented on chrome yet!")
+
+/*           var reader = new FileReader();
+           reader.onloadend = function(e){
+                var data = Array.prototype.slice.call(new Uint8Array(reader.result), 0);
+                //assumes one append call before writing
+                nativeIO.saveBlobToFile(filePath, data);
+           }
+           reader.readAsArrayBuffer(blob);*/
     }   
+
+    exports.createDirectory = function(dirPath) {
+        // TODO implement create directory
+        console.log("Creating directory: "+dirPath);    
+        try {
+            nativeIO.createDirectory(dirPath);
+        } catch(ex) {
+            console.error("Deleting file failed "+ex);
+        }
+    }  
 	
     exports.renameFile = function(filePath, newFilePath) {
         // TODO implement renameFile
@@ -269,13 +286,6 @@ Missing:
         TSCORE.showAlertDialog("Select file functionality not implemented on chrome yet!")
     }
 
-    exports.createDirectory = function(dirPath) {
-        // TODO implement create directory
-        console.log("Creating directory: "+dirPath);    
-        console.log("Creating directory functionality not implemented on chrome yet!");
-        TSCORE.showAlertDialog("Creating directory functionality not implemented on chrome yet!")
-    }   
-	
 	exports.selectFile = function() {
 		// TODO implement selectFile
 		console.log("Select file functionality not implemented on chrome yet!");
