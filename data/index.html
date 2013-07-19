@@ -132,7 +132,7 @@
             <h4>Connect Folder</h4>
         </div>
         <div class="modal-body">
-            <form class="form-horizontal">
+            <form class="form-horizontal" onsubmit="return false;">
                 <div class="control-group">
                     <label class="control-label" for="connectionName">Connection Name</label>
                     <div class="controls">
@@ -159,25 +159,23 @@
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
             <h4>Create new file</h4>
         </div>
-        <div class="modal-body">
-            <form class="form-horizontal">
-                <div class="control-group">
-                    <label class="control-label" for="fileTypeChooser">Filetype</label>
-                    <div class="controls">
-                        <div class="btn-group" data-toggle="buttons-radio" name="fileTypeChooser">
-                            <button id="txtFileTypeButton" title="Create a plain text file" class="btn">TXT</button>
-                            <button id="mdFileTypeButton" title="Create a MarkDown file"  class="btn">MD</button>
-                            <button id="htmlFileTypeButton" title="Create a HTML file"  class="btn">HTML</button>
-                        </div>
+        <div class="modal-body form-horizontal">
+            <div class="control-group">
+                <label class="control-label" for="fileTypeChooser">Filetype</label>
+                <div class="controls">
+                    <div class="btn-group" data-toggle="buttons-radio" name="fileTypeChooser">
+                        <button id="txtFileTypeButton" title="Create a plain text file" class="btn">TXT</button>
+                        <button id="mdFileTypeButton" title="Create a MarkDown file"  class="btn">MD</button>
+                        <button id="htmlFileTypeButton" title="Create a HTML file"  class="btn">HTML</button>
                     </div>
                 </div>
-                <div class="control-group">
-                    <label class="control-label" for="newFileName">Filename</label>
-                    <div class="controls">
-                        <input type="text" id="newFileName" id="newFileName" placeholder="Filename">
-                    </div>
-                </div>            
-            </form>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="newFileName">Filename</label>
+                <div class="controls">
+                    <input type="text" id="newFileName" id="newFileName" placeholder="Filename">
+                </div>
+            </div>            
         </div>
         <div class="modal-footer">
             <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
@@ -190,15 +188,13 @@
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
             <h4>Create New Directory</h4>
         </div>
-        <div class="modal-body">
-            <form class="form-horizontal">
-                <div class="control-group">
-                    <label class="control-label" for="newDirectoryName">New Directory Name</label>
-                    <div class="controls">
-                        <input type="text" name="newDirectoryName" id="newDirectoryName" />
-                    </div>
+        <div class="modal-body form-horizontal">
+            <div class="control-group">
+                <label class="control-label" for="newDirectoryName">New Directory Name</label>
+                <div class="controls">
+                    <input type="text" name="newDirectoryName" id="newDirectoryName" />
                 </div>
-            </form>
+            </div>
         </div>
         <div class="modal-footer">
             <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
@@ -211,15 +207,13 @@
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
             <h4>Rename File</h4>
         </div>
-        <div class="modal-body">
-            <form class="form-horizontal">
-                <div class="control-group">
-                    <label class="control-label" for="renamedFileName">New Filename</label>
-                    <div class="controls">
-                        <input type="text" name="renamedFileName" id="renamedFileName" />
-                    </div>
+        <div class="modal-body form-horizontal">
+            <div class="control-group">
+                <label class="control-label" for="renamedFileName">New Filename</label>
+                <div class="controls">
+                    <input type="text" name="renamedFileName" id="renamedFileName" />
                 </div>
-            </form>
+            </div>
         </div>
         <div class="modal-footer">
             <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
@@ -232,25 +226,23 @@
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
             <h4>Edit Tag</h4>
         </div>
-        <div class="modal-body">
-            <form class="form-horizontal">
-                <div class="control-group">
-                    <label class="control-label" for="tagTypeChooser">Tagtype</label>
-                    <div class="controls">
-                        <div class="btn-group" data-toggle="buttons-radio" name="tagTypeChooser">
-                            <button id="plainTagTypeButton" title="Create a plain text file" class="btn">Plain</button>
-                            <button id="dateTagTypeButton"  title="Create a MarkDown file" class="btn">Date</button>
-                            <button id="currencyTagTypeButton" title="Create a HTML file" class="btn">Currency</button>
-                        </div>
+        <div class="modal-body form-horizontal">
+            <div class="control-group">
+                <label class="control-label" for="tagTypeChooser">Tagtype</label>
+                <div class="controls">
+                    <div class="btn-group" data-toggle="buttons-radio" name="tagTypeChooser">
+                        <button id="plainTagTypeButton" title="Create a plain text file" class="btn">Plain</button>
+                        <button id="dateTagTypeButton"  title="Create a MarkDown file" class="btn">Date</button>
+                        <button id="currencyTagTypeButton" title="Create a HTML file" class="btn">Currency</button>
                     </div>
                 </div>
-                <div class="control-group">
-                    <label class="control-label" for="newTagName">Tag Name</label>
-                    <div class="controls">
-                        <input type="text" id="newTagName" id="newTagName">
-                    </div>
-                </div>            
-            </form>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="newTagName">Tag Name</label>
+                <div class="controls">
+                    <input type="text" id="newTagName" id="newTagName">
+                </div>
+            </div>            
         </div>
         <div class="modal-footer">
             <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
@@ -263,15 +255,13 @@
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
             <h4>Add Tags</h4>
         </div>
-        <div class="modal-body" style="height: 200px">
-            <form class="form-horizontal">
-                <div class="control-group">
-                    <label class="control-label" for="tags">Comma separated list of the tags</label>
-                    <div class="controls">
-                        <input type="text" name="tags" id="tags" autocomplete="off"/>
-                    </div>
+        <div class="modal-body form-horizontal" style="height: 200px">
+            <div class="control-group">
+                <label class="control-label" for="tags">Comma separated list of the tags</label>
+                <div class="controls">
+                    <input type="text" name="tags" id="tags" autocomplete="off"/>
                 </div>
-            </form>
+            </div>
         </div>
         <div class="modal-footer">
             <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
@@ -284,15 +274,13 @@
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
             <h4>Edit Tag</h4>
         </div>
-        <div class="modal-body">
-            <form class="form-horizontal">
-                <div class="control-group">
-                    <label class="control-label" for="tagInTreeName">Tag Name</label>
-                    <div class="controls">
-                        <input type="text" name="tagInTreeName" id="tagInTreeName" />
-                    </div>
+        <div class="modal-body form-horizontal">
+            <div class="control-group">
+                <label class="control-label" for="tagInTreeName">Tag Name</label>
+                <div class="controls">
+                    <input type="text" name="tagInTreeName" id="tagInTreeName" />
                 </div>
-            </form>
+            </div>
         </div>
         <div class="modal-footer">
             <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
@@ -305,15 +293,13 @@
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
             <h4>Create Tag</h4>
         </div>
-        <div class="modal-body">
-            <form class="form-horizontal">
-                <div class="control-group">
-                    <label class="control-label" for="newTagTitle">Tag Name</label>
-                    <div class="controls">
-                        <input type="text" name="newTagTitle" id="newTagTitle" />
-                    </div>
+        <div class="modal-body form-horizontal">
+            <div class="control-group">
+                <label class="control-label" for="newTagTitle">Tag Name</label>
+                <div class="controls">
+                    <input type="text" name="newTagTitle" id="newTagTitle" />
                 </div>
-            </form>
+            </div>
         </div>
         <div class="modal-footer">
             <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
@@ -326,15 +312,13 @@
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
             <h4>Edit TagGroup</h4>
         </div>
-        <div class="modal-body">
-            <form class="form-horizontal">
-                <div class="control-group">
-                    <label class="control-label" for="tagGroupName">TagGroup Name</label>
-                    <div class="controls">
-                        <input type="text" name="tagGroupName" id="tagGroupName" />
-                    </div>
+        <div class="modal-body form-horizontal">
+            <div class="control-group">
+                <label class="control-label" for="tagGroupName">TagGroup Name</label>
+                <div class="controls">
+                    <input type="text" name="tagGroupName" id="tagGroupName" />
                 </div>
-            </form>
+            </div>
         </div>
         <div class="modal-footer">
             <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
@@ -347,15 +331,13 @@
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
             <h4>Create TagGroup</h4>
         </div>
-        <div class="modal-body">
-            <form class="form-horizontal">
-                <div class="control-group">
-                    <label class="control-label" for="newTagGroupName">TagGroup Name</label>
-                    <div class="controls">
-                        <input type="text" name="newTagGroupName" id="newTagGroupName" />
-                    </div>
+        <div class="modal-body form-horizontal">
+            <div class="control-group">
+                <label class="control-label" for="newTagGroupName">TagGroup Name</label>
+                <div class="controls">
+                    <input type="text" name="newTagGroupName" id="newTagGroupName" />
                 </div>
-            </form>
+            </div>
         </div>
         <div class="modal-footer">
             <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
