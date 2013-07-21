@@ -8,7 +8,8 @@ define(function(require, exports, module) {
 	console.log("Loading ioapi.chrome.js..");
 
 	var TSCORE = require("tscore");
-	    
+	
+	var TSPOSTIO = require("tspostioapi");    
 /**
 API of npapifileioforchrome:
 
@@ -118,7 +119,7 @@ Still Missing:
             type: 'GET',
         })
         .done(function(data) { 
-            TSCORE.updateNewVersionData(data);    
+            TSPOSTIO.checkNewVersion(data);    
         })
         .fail(function(data) { 
             console.log("AJAX failed "+data); 
@@ -141,7 +142,7 @@ Still Missing:
             b.size = size;
             var reader = new FileReader();
             reader.onload = function (e) {
-                TSCORE.FileOpener.updateEditorContent(e.target.result);   
+                TSPOSTIO.loadTextFile(e.target.result);   
             }
             reader.readAsText(b);
 	    } else {
@@ -167,7 +168,7 @@ Still Missing:
 		                "path": path  
                     }); 
 	            } 
-	    		TSCORE.PerspectiveManager.updateFileBrowserData(anotatedDirList);
+	            TSPOSTIO.listDirectory(anotatedDirList);
 			} catch(ex) {
 				console.error("Directory listing failed "+ex);
 			}		
@@ -193,7 +194,7 @@ Still Missing:
 	                    }); 
 	                }            
 	            } 
-	            TSCORE.updateSubDirs(anotatedDirList);
+                TSPOSTIO.getSubdirs(anotatedDirList);
 	        } catch(ex) {
 	            console.error("Directory listing failed "+ex);
 	        }       
@@ -205,7 +206,8 @@ Still Missing:
     exports.deleteElement = function(path) {
         console.log("Deleting: "+path);
         try {
-            nativeIO.removeRecursively(path);            
+            nativeIO.removeRecursively(path); 
+            TSPOSTIO.deleteElement();           
         } catch(ex) {
             console.error("Deleting file failed "+ex);
         }
@@ -216,14 +218,14 @@ Still Missing:
         var directoryIndex = [];
         directoryIndex = scanDirectory(dirPath, directoryIndex);
         //console.log(JSON.stringify(directoryIndex));
-        TSCORE.PerspectiveManager.updateFileBrowserData(directoryIndex);
+        TSPOSTIO.createDirectoryIndex(directoryIndex);
     }
     
     exports.createDirectoryTree = function(dirPath) {
         console.log("Creating directory index for: "+dirPath);
         var directoyTree = generateDirectoryTree(dirPath);
         //console.log(JSON.stringify(directoyTree));
-        TSCORE.PerspectiveManager.updateTreeData(directoyTree); 
+        TSPOSTIO.createDirectoryTree(directoyTree);
     }
 
     exports.saveTextFile = function(filePath,content) {
@@ -239,11 +241,7 @@ Still Missing:
         reader.onloadend = function(e){
             var data = Array.prototype.slice.call(new Uint8Array(reader.result), 0);
             nativeIO.saveBlobToFile(filePath, data);
-            TSCORE.PerspectiveManager.refreshFileListContainer();
-            if(TSCORE.FileOpener.isFileOpened()) {
-                // TODO Automatically reopening of the file is not desirable in every case ...
-                TSCORE.FileOpener.openFile(message.content);                    
-            }              
+            TSPOSTIO.saveTextFile();
         }
         reader.readAsArrayBuffer(blob);
     }   
@@ -252,6 +250,7 @@ Still Missing:
         console.log("Creating directory: "+dirPath);    
         try {
             nativeIO.createDirectory(dirPath);
+            TSPOSTIO.createDirectory();
         } catch(ex) {
             console.error("Deleting file failed "+ex);
         }
@@ -280,7 +279,7 @@ Still Missing:
                 if(nativeIO.fileExists(newFilePath)) {
                     nativeIO.removeRecursively(filePath);                    
                 }
-                TSCORE.PerspectiveManager.refreshFileListContainer();                
+                TSPOSTIO.renameFile();                
             }
             reader.readAsArrayBuffer(b);
         } else {
@@ -293,7 +292,7 @@ Still Missing:
 		console.log("Select directory!");
         nativeIO.launchFolderSelect(function(dirPath){
 			if (dirPath && dirPath.length){
-				$("#folderLocation").val(dirPath);
+				TSPOSTIO.selectDirectory(dirPath);
 			}
 	    });
 	}
