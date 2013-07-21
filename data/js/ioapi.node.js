@@ -151,58 +151,70 @@ define(function(require, exports, module) {
                 console.log("Save to file "+filePath+" failed "+error);
                 return;
             }
-            TSCORE.PerspectiveManager.refreshFileListContainer();            
+            TSCORE.PerspectiveManager.refreshFileListContainer();
+            if(TSCORE.FileOpener.isFileOpened()) {
+                // TODO Automatically reopening of the file is not desirable in every case ...
+                TSCORE.FileOpener.openFile(message.content);                    
+            }                     
         }); 
 	}
 	
 	exports.listDirectory = function(dirPath) {
       console.log("Listing directory: "+dirPath);
-      fs.readdir(dirPath, function(error, dirList) {
-        if (error) {
-          console.log("Listing directory: "+dirPath+" failed "+error);
-          return;
-        }
-    
-        var anotatedDirList = [];
-        for (var i=0; i < dirList.length; i++) {
-            var path = dirPath+getDirseparator()+dirList[i];
-            var path = dirPath+getDirseparator()+dirList[i];
-            var stats = fs.statSync(path);
-            //console.log('stats: ' + JSON.stringify(stats));
-            anotatedDirList.push({
-                "name": dirList[i],
-                "type": stats.isDirectory()?"directory":"file",
-                "size": stats.size,
-                "lmdt": stats.mtime,
-                "path": path  
-            });                 
-        } 
-        TSCORE.PerspectiveManager.updateFileBrowserData(anotatedDirList);
-      }); 
+      try {
+          fs.readdir(dirPath, function(error, dirList) {
+            if (error) {
+              console.log("Listing directory: "+dirPath+" failed "+error);
+              return;
+            }
+        
+            var anotatedDirList = [];
+            for (var i=0; i < dirList.length; i++) {
+                var path = dirPath+getDirseparator()+dirList[i];
+                var path = dirPath+getDirseparator()+dirList[i];
+                var stats = fs.statSync(path);
+                //console.log('stats: ' + JSON.stringify(stats));
+                anotatedDirList.push({
+                    "name": dirList[i],
+                    "type": stats.isDirectory()?"directory":"file",
+                    "size": stats.size,
+                    "lmdt": stats.mtime,
+                    "path": path  
+                });                 
+            } 
+            TSCORE.PerspectiveManager.updateFileBrowserData(anotatedDirList);
+          });
+       } catch(ex) {
+           console.error("Listing directory "+dirPath+" failed "+ex);
+       }                    
 	}
 	
 	exports.getSubdirs = function(dirPath) {
 	    console.log("Getting subdirs: "+dirPath);
-        fs.readdir(dirPath, function(error, dirList) {
-          if (error) {
-            console.log("Directory listing failed "+error);
-            return;
-          }
-    
-          var anotatedDirList = [];
-          for (var i=0; i < dirList.length; i++) {
-              var path = dirPath+getDirseparator()+dirList[i];
-              var stats = fs.statSync(path);
-              if(stats.isDirectory()) {
-                  anotatedDirList.push({
-                      "title": dirList[i],
-                      //"isFolder": true,
-                      "key": path  
-                  });                      
-              }               
-          } 
-          TSCORE.updateSubDirs(anotatedDirList);
-        }); 		
+	    try {
+            fs.readdir(dirPath, function(error, dirList) {
+              if (error) {
+                console.log("Directory listing failed "+error);
+                return;
+              }
+        
+              var anotatedDirList = [];
+              for (var i=0; i < dirList.length; i++) {
+                  var path = dirPath+getDirseparator()+dirList[i];
+                  var stats = fs.statSync(path);
+                  if(stats.isDirectory()) {
+                      anotatedDirList.push({
+                          "title": dirList[i],
+                          //"isFolder": true,
+                          "key": path  
+                      });                      
+                  }               
+              } 
+              TSCORE.updateSubDirs(anotatedDirList);
+            }); 		
+       } catch(ex) {
+           console.error("Listing directory "+dirPath+" failed "+ex);
+       }                            
 	}
 	
 	exports.deleteElement = function(path) {

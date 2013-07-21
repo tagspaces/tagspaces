@@ -239,6 +239,11 @@ Still Missing:
         reader.onloadend = function(e){
             var data = Array.prototype.slice.call(new Uint8Array(reader.result), 0);
             nativeIO.saveBlobToFile(filePath, data);
+            TSCORE.PerspectiveManager.refreshFileListContainer();
+            if(TSCORE.FileOpener.isFileOpened()) {
+                // TODO Automatically reopening of the file is not desirable in every case ...
+                TSCORE.FileOpener.openFile(message.content);                    
+            }              
         }
         reader.readAsArrayBuffer(blob);
     }   

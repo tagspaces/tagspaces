@@ -151,9 +151,6 @@ define(function (require, exports, module) {
 "use strict";
 
     //require("less");	
-	if( isFirefox ) {
-		requirejs(["tsiomozrec"]);    
-	}	                                
 
     var TSCORE = undefined;
     requirejs(['tscore'], function (core) {
