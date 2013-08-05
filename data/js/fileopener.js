@@ -203,6 +203,7 @@ define(function(require, exports, module) {
 
         $("#fileActionsMenu").empty();
         //$("#fileActionsMenu").append('<li><a id="editDocument" title="Edit file"><i class="icon-pencil"></i> Edit File</a></li>');
+        $("#fileActionsMenu").append('<li><a id="reloadFile" title="Reloads the current file"><i class="icon-refresh"></i> Reload File</a></li>');        
         $("#fileActionsMenu").append('<li><a id="showFullDetails" title="Show additional file details"><i class="icon-list-alt"></i> Show File Details</a></li>');
         $("#fileActionsMenu").append('<li><a id="openInNewWindow" title="Open file in a new tab"><i class="icon-share"></i> Open in New Tab</a></li>');
         $("#fileActionsMenu").append('<li><a id="startFullscreen" title="Open file in full screen"><i class="icon-fullscreen"></i> Open In Fullscreen</a></li>');                        
@@ -296,6 +297,10 @@ define(function(require, exports, module) {
 
         $( "#toggleFullWidthButton" ).click(function() {
             TSCORE.toggleFullWidth();           
+        });
+
+        $( "#reloadFile" ).click(function() {
+            TSCORE.FileOpener.openFile(_openedFilePath);                     
         });
 
 	    $( "#showFullDetails" ).click(function() {
