@@ -72,13 +72,10 @@ define(function(require, exports, module) {
 	    tsDirectoriesUI.initFavorites();
 	    
 	    tsTagsUI.generateTagGroups();
-	
 
 	    $( "#loading" ).hide();  
 	    $( "#container" ).show();  
 	    $( "#helpers" ).show();
-	    
-
 	    
 	    hideLoadingAnimation();
 	    // TODO check if document.ready is really needed

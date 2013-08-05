@@ -110,8 +110,8 @@ requirejs.config({
         tstagsui:               'js/tags.ui',
         tsdirectoriesui:        'js/directories.ui',
         tscoreui:               'js/core.ui',
+        tspostioapi:            'js/postioapi',
         tsioapi:                IO_JS,        
-        tsiomozrec:             'js/ioapi.mozilla.receiver'       
     }, 
     shim: {
         'bootstrap':            { deps: ['jquery'] }, 

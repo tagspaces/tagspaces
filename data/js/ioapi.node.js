@@ -6,8 +6,10 @@ define(function(require, exports, module) {
 	
 	// Activating browser specific exports modul
 	console.log("Loading ioapi.node.js..");
-
-	var TSCORE = require("tscore");
+    
+    var TSCORE = require("tscore");
+	
+	var TSPOSTIO = require("tspostioapi");
 	
 /* stats for file:
   dev: 2114,
@@ -97,14 +99,14 @@ define(function(require, exports, module) {
         var directoryIndex = [];
         directoryIndex = scanDirectory(dirPath, directoryIndex);
         //console.log(JSON.stringify(directoryIndex));
-        TSCORE.PerspectiveManager.updateFileBrowserData(directoryIndex);
+        TSPOSTIO.createDirectoryIndex(directoryIndex);
     }	
     
     exports.createDirectoryTree = function(dirPath) {
         console.log("Creating directory index for: "+dirPath);
         var directoyTree = generateDirectoryTree(dirPath);
         //console.log(JSON.stringify(directoyTree));
-        TSCORE.PerspectiveManager.updateTreeData(directoyTree); 
+        TSPOSTIO.createDirectoryTree(directoyTree);
     }    
 	
 	exports.createDirectory = function(dirPath) {
@@ -114,7 +116,7 @@ define(function(require, exports, module) {
                 console.log("Creating directory "+dirPath+" failed "+error);
                 return;
             }
-            //TODO refresh the directory area
+            TSPOSTIO.createDirectory();
         });         
 	}
 
@@ -125,7 +127,7 @@ define(function(require, exports, module) {
                 console.log("Renaming file failed "+error);
                 return;
             }
-            TSCORE.PerspectiveManager.refreshFileListContainer();
+            TSPOSTIO.renameFile();
         });         
     }
     	
@@ -136,7 +138,7 @@ define(function(require, exports, module) {
                 console.log("Loading file "+filePath+" failed "+error);
                 return;
             }
-            TSCORE.FileOpener.updateEditorContent(content);             
+            TSPOSTIO.loadTextFile(content);            
         }); 
 	}
 	
@@ -151,11 +153,7 @@ define(function(require, exports, module) {
                 console.log("Save to file "+filePath+" failed "+error);
                 return;
             }
-            TSCORE.PerspectiveManager.refreshFileListContainer();
-            if(TSCORE.FileOpener.isFileOpened()) {
-                // TODO Automatically reopening of the file is not desirable in every case ...
-                TSCORE.FileOpener.openFile(message.content);                    
-            }                     
+            TSPOSTIO.saveTextFile();
         }); 
 	}
 	
@@ -182,7 +180,7 @@ define(function(require, exports, module) {
                     "path": path  
                 });                 
             } 
-            TSCORE.PerspectiveManager.updateFileBrowserData(anotatedDirList);
+            TSPOSTIO.listDirectory(anotatedDirList);
           });
        } catch(ex) {
            console.error("Listing directory "+dirPath+" failed "+ex);
@@ -210,7 +208,7 @@ define(function(require, exports, module) {
                       });                      
                   }               
               } 
-              TSCORE.updateSubDirs(anotatedDirList);
+              TSPOSTIO.getSubdirs(anotatedDirList);
             }); 		
        } catch(ex) {
            console.error("Listing directory "+dirPath+" failed "+ex);
@@ -224,7 +222,7 @@ define(function(require, exports, module) {
                 console.log("Deleting file "+path+" failed "+error);
                 return;
             }
-            TSCORE.PerspectiveManager.refreshFileListContainer();
+            TSPOSTIO.deleteElement();
         });		
 	}
 	
@@ -236,7 +234,7 @@ define(function(require, exports, module) {
             type: 'GET',
         })
         .done(function(data) { 
-            TSCORE.updateNewVersionData(data);    
+            TSPOSTIO.checkNewVersion(data);    
         })
         .fail(function(data) { 
             console.log("AJAX failed "+data); 
@@ -250,7 +248,7 @@ define(function(require, exports, module) {
         }
         var chooser = $('#folderDialog');        
         chooser.change(function(evt) {
-            $("#folderLocation").val($(this).val());
+            TSPOSTIO.selectDirectory($(this).val());
         });
         chooser.trigger('click');  
     }
