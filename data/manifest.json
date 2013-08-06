@@ -9,13 +9,12 @@
     "64" : "icons/icon64.png",
     "128": "icons/icon128.png"    
   },
-  "background": {
-	"scripts": ["chrome/background.js"]
-  },
+  "app": {
+     "launch": {
+        "local_path": "index.html"
+     }
+  },  
   "options_page": "index.html",
-  "browser_action": {
-    "default_icon": "icons/icon16.png"
-  }, 
   "plugins": [
 	{"path": "chrome/NPAPI-chrome-file-api/NPAPIFileIOforChrome.plugin", "public": false},
 	{"path": "chrome/NPAPI-chrome-file-api/npNPAPIFileIOforChrome.dll", "public": false},
