@@ -62,17 +62,22 @@ define(function(require, exports, module) {
 	        $( "#viewer" ).html("<div class='alert alert-info'><strong>Info</strong> File type not supported for viewing."+
 	                            "<button type='button' class='close' data-dismiss='alert'>×</button></div>");        
 	    } else if (viewerExt == "viewerBrowser") {
-		    filePath = "file:///"+filePath;
+		    var filePathURI = "file:///"+filePath;
 		    $('#viewer').append($('<iframe>', {
 		    	id: "iframeViewer",
-				src: filePath
+				src: filePathURI
 		    })); 
 	    } else {
 	        require([TSCORE.Config.getExtensionPath()+"/"+viewerExt+"/extension.js"], function(viewer) {
 	            _tsEditor = viewer;
 	            _tsEditor.init(filePath, "viewer", true);
 	        });
-	    } 
+	    }
+	    
+        // Clearing file selection on file load and adding the current file path to the selection
+        TSCORE.PerspectiveManager.clearSelectedFiles();
+        TSCORE.selectedFiles.push(filePath); 	     
+	    
 	    TSCORE.FileOpener.setFileOpened(true); 
 		TSCORE.openFileViewer();
 	} 
@@ -221,7 +226,20 @@ define(function(require, exports, module) {
 	
 	    $( "#tagSuggestionsMenu" ).empty(); 
 	
-		var suggestionMenuEmpty = true;
+//		var suggestionMenuEmpty = true;
+
+        $( "#tagSuggestionsMenu" ).append($('<li>', {name: suggTags[i]}).append($('<a>', { 
+            title: "Add a tag to the current file", 
+            filepath: filePath,
+            text: " Add Tag",
+            })
+            .prepend("<i class='icon-tags'></i>") 
+            .click(function() {
+                //var filePath = $(this).attr( "filepath" );                      
+                TSCORE.showAddTagsDialog();
+            })                
+        )); 
+        $( "#tagSuggestionsMenu" ).append($('<li>', {class: "divider"}));
 	
 	    // Adding context menu entries for creating tags according to the suggested tags
 	    for (var i=0; i < suggTags.length; i++) {        
@@ -231,7 +249,7 @@ define(function(require, exports, module) {
 	                title: "Add tag "+suggTags[i]+" to current file", 
 					tagname: suggTags[i],
 					filepath: filePath,
-					text: "Tag with '"+suggTags[i]+"'",
+					text: " Tag with '"+suggTags[i]+"'",
 	                })
 	                .prepend("<i class='icon-tag'></i>") 
 	                .click(function() {
@@ -242,14 +260,14 @@ define(function(require, exports, module) {
 			          	return false;
 	        		})                
 	               ));              
-	             suggestionMenuEmpty = false; 
+//	             suggestionMenuEmpty = false; 
 	        }         
 	    };    
 	
 		// Showing dropdown menu only if the context menus is not empty
-		if(!suggestionMenuEmpty) {
+//		if(!suggestionMenuEmpty) {
 	    	$( "#openTagSuggestionMenu" ).dropdown( 'attach' , '#tagSuggestionsMenu' );		
-		}
+//		}
 	}
 
 	function initFileActions(container, filePath) {
