@@ -209,6 +209,7 @@ define(function(require, exports, module) {
 	    layoutContainer = $('#container').layout(
 	        {
 	        fxName: "none"
+	    ,   enableCursorHotkey:         false
 	        
 	    //  some resizing/toggling settings
 	    ,   north__resizable:            false   // OVERRIDE the pane-default of 'slidable=true'
@@ -253,6 +254,7 @@ define(function(require, exports, module) {
 	    // Directories and Tags
 	    westLayout = $('div.ui-layout-west').layout({
 	            minSize:                50  // ALL panes
+            ,   enableCursorHotkey:    false
 	        ,   center__paneSelector:   ".west-center"
 	        ,   south__paneSelector:    ".west-south"
 	        ,   south__resizable:       true  
@@ -262,6 +264,7 @@ define(function(require, exports, module) {
 	
 	    centerLayout = $('div.ui-layout-center').layout({
 	            name:                   "middle"
+            ,   enableCursorHotkey:     false	            
 	        ,   north__paneSelector:    ".middle-north"            
 	        ,   center__paneSelector:   ".middle-center"      
 	        ,   south__paneSelector:    ".middle-south"   
@@ -277,6 +280,7 @@ define(function(require, exports, module) {
 	    // File Viewer / Editor
 	    eastLayout = $('div.ui-layout-east').layout({
 	            minSize:                0  // ALL panes
+            ,   enableCursorHotkey:     false	            
 	        ,   north__paneSelector:    ".east-north"
 	        ,   center__paneSelector:   ".east-center"
 	        ,   south__paneSelector:    ".east-south" 
@@ -289,6 +293,7 @@ define(function(require, exports, module) {
 	
 	    var dirNavigationLayout = $('#directoryNavigator').layout({
 	            minSize:                35  // ALL panes
+            ,   enableCursorHotkey:     false	            
 	        ,   north__paneSelector:    "#directoryNavigatorNorth"
 	        ,   center__paneSelector:   "#location"
 	        ,   north__size:            32
