@@ -79,96 +79,101 @@ console.log("Loading UI for perspectiveDefault");
 		       
 		var self = this;
 		
+        this.viewToolbar.append($("<div >", { 
+            class: "btn-group", 
+        })  		
+		
+            .append($("<button>", { 
+                class: "btn ",
+                title: "Toggle Select All Files",
+                id: this.extensionID+"ToogleSelectAll",    
+            })
+            .click(function() {
+                if($(this).find("input").prop("checked")) {
+                    TSCORE.selectedFiles = [];   
+                    $('#'+self.extensionID+'FileTable tbody tr').each(function(){
+                        $(this).addClass('ui-selected');
+                        $(this).find(".fileSelection").prop("checked",true);
+                        TSCORE.selectedFiles.push($(this).find(".fileTitleButton").attr("filepath"));  
+                        self.handleElementActivation();                          
+                    }); 
+                } else {
+                    TSCORE.PerspectiveManager.clearSelectedFiles();                
+                }            
+            })
+            .append( "<input type='checkbox' style='margin-top: -3px;'>" )
+            )
+            
+        )
+        
 		this.viewToolbar.append($("<div>", { 
 			class: "btn-group",
-			style: "margin: 0px",
 			id: this.extensionID+"Toolbar", 			
 	    })
 
-        .append($("<button>", { 
-            class: "btn ",
-            title: "Toggle Select All Files",
-            id: this.extensionID+"ToogleSelectAll",    
-        })
-        .click(function() {
-            if($(this).find("input").prop("checked")) {
-                TSCORE.selectedFiles = [];   
-                $('#'+self.extensionID+'FileTable tbody tr').each(function(){
-                    $(this).addClass('ui-selected');
-                    $(this).find(".fileSelection").prop("checked",true);
-                    TSCORE.selectedFiles.push($(this).find(".fileTitleButton").attr("filepath"));  
-                    self.handleElementActivation();                          
-                }); 
-            } else {
-                TSCORE.PerspectiveManager.clearSelectedFiles();                
-            }            
-        })
-        .append( "<input type='checkbox' style='margin-top: -3px;'>" )
-        )
-	    
-	    .append($("<button>", { 
-			class: "btn  disabled",
-	        title: "Create new file",
-	        id: this.extensionID+"CreateFileButton",    
-	    })
-        .click(function() {
-            TSCORE.showFileCreateDialog();
-        })
-        .append( "<i class='icon-plus'>" )
-//        .append(" New")
-        )
+    	    .append($("<button>", { 
+    			class: "btn  disabled",
+    	        title: "Create new file",
+    	        id: this.extensionID+"CreateFileButton",    
+    	    })
+            .click(function() {
+                TSCORE.showFileCreateDialog();
+            })
+            .append( "<i class='icon-plus'>" )
+    //        .append(" New")
+            )
+        
+    	    .append($("<button>", { 
+                class: "btn  disabled",
+    	        title: "Show subfolders content. \nOn subfolder with many files, this step can take some time!",
+    	        id: this.extensionID+"IncludeSubDirsButton",    
+    	    })
+    	    .click(function() {
+    		    $( "#"+self.extensionID+"IncludeSubDirsButton" ).addClass( "disabled" );
+    			TSCORE.IO.createDirectoryIndex(TSCORE.currentPath);
+    	    })
+    	    .append( $("<i>", { class: "icon-retweet", }) )
+    //	    .append(" Subdirs")
+    	    )
+    	    
+    	    .append($("<button>", { 
+                class: "btn  disabled",	        
+    	        title: "Tag Selected Files",
+    	        id: this.extensionID+"TagButton",    
+    	    })
+    	    .click(function() {
+    			TSCORE.showAddTagsDialog();
+    	    })
+    	    .append( $("<i>", { class: "icon-tag", }) )
+    //	    .append(" Add Tag")
+    	    )    
     
-	    .append($("<button>", { 
-            class: "btn  disabled",
-	        title: "Show subfolders content. \nOn subfolder with many files, this step can take some time!",
-	        id: this.extensionID+"IncludeSubDirsButton",    
-	    })
-	    .click(function() {
-		    $( "#"+self.extensionID+"IncludeSubDirsButton" ).addClass( "disabled" );
-			TSCORE.IO.createDirectoryIndex(TSCORE.currentPath);
-	    })
-	    .append( $("<i>", { class: "icon-retweet", }) )
-//	    .append(" Subdirs")
-	    )
-	    
-	    .append($("<button>", { 
-            class: "btn  disabled",	        
-	        title: "Tag Selected Files",
-	        id: this.extensionID+"TagButton",    
-	    })
-	    .click(function() {
-			TSCORE.showAddTagsDialog();
-	    })
-	    .append( $("<i>", { class: "icon-tag", }) )
-//	    .append(" Add Tag")
-	    )    
-
-	    .append($("<button>", { 
-            class: "btn ",	
-            "data-toggle": "button",        
-	        title: "Toggle file thumbnails",
-	        id: this.extensionID+"ShowTmbButton",    
-	    })
-	    .click(function() {
-			self.toggleThumbnails();
-	    })
-	    .append( $("<i>", { class: "icon-picture", }) )
-	    //.append("Toggle Thumbnails")
-	    )
- 
-	    .append($("<button>", { 
-            class: "btn ",	
-	        title: "Increase Thumbnails Size",
-	        id: this.extensionID+"IncreaseThumbsButton",    
-	    })
-	    .click(function() {
-			self.switchThumbnailSize();
-	    })	    
-	    .append( $("<i>", { class: "icon-zoom-in", }) )
-	    //.append("Zoom In")
-	    )	    	    
-		
-	    ); // end toolbar
+    	    .append($("<button>", { 
+                class: "btn ",	
+                "data-toggle": "button",        
+    	        title: "Toggle file thumbnails",
+    	        id: this.extensionID+"ShowTmbButton",    
+    	    })
+    	    .click(function() {
+    			self.toggleThumbnails();
+    	    })
+    	    .append( $("<i>", { class: "icon-picture", }) )
+    	    //.append("Toggle Thumbnails")
+    	    )
+     
+    	    .append($("<button>", { 
+                class: "btn ",	
+    	        title: "Increase Thumbnails Size",
+    	        id: this.extensionID+"IncreaseThumbsButton",    
+    	    })
+    	    .click(function() {
+    			self.switchThumbnailSize();
+    	    })	    
+    	    .append( $("<i>", { class: "icon-zoom-in", }) )
+    	    //.append("Zoom In")
+    	    )	    	    
+    		
+    	); // end toolbar
 	    		
 	    this.viewToolbar.append($("<div >", { 
             class: "btn-group",	
