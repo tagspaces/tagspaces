@@ -201,7 +201,7 @@ define(function(require, exports, module) {
         $("#filetoolbox").append('<button id="nextFileButton" class="btn" title="Go to the next file"><i class="icon-circle-arrow-right"></i></button>');
         $("#filetoolbox").append('<button id="editDocument" class="btn" title="Edit File"><i class="icon-pencil"></i></button>');
         //$("#filetoolbox").append('<button id="openInNewWindow" class="btn" title="Go to the previous file"><i class="icon-circle-arrow-left"></i></button>');
-        $("#filetoolbox").append('<button id="openTagSuggestionMenu" class="btn" title="Tag Suggestions"><i class="icon-tags"></i> <b class="caret"></b></button>');
+        $("#filetoolbox").append('<button id="openTagSuggestionMenu" class="btn" title="Tag File"><i class="icon-tag"></i> <b class="caret"></b></button>');
         //$("#filetoolbox").append('<button id="startFullscreen" class="btn" title="Open file in full screen"><i class="icon-fullscreen"></i></b></button>');
         $("#filetoolbox").append('<button id="openFileActionsMenu" data-dropdown="#fileActionsMenu" class="btn" title="Opens a menu with additional file actions"><i class="icon-th-list"></i> <b class="caret"></b></button>');
         $("#filetoolbox").append('<button id="closeOpenedFile" class="btn" title="Close file"><i class="icon-remove-sign"></i></button>');      
@@ -240,6 +240,7 @@ define(function(require, exports, module) {
             })                
         )); 
         $( "#tagSuggestionsMenu" ).append($('<li>', {class: "divider"}));
+        $( "#tagSuggestionsMenu" ).append($('<li>').append($('<a>', {text: " Tag Suggestion" })))      
 	
 	    // Adding context menu entries for creating tags according to the suggested tags
 	    for (var i=0; i < suggTags.length; i++) {        
@@ -249,9 +250,13 @@ define(function(require, exports, module) {
 	                title: "Add tag "+suggTags[i]+" to current file", 
 					tagname: suggTags[i],
 					filepath: filePath,
-					text: " Tag with '"+suggTags[i]+"'",
+					//text: " Tag with '"+suggTags[i]+"'",
 	                })
-	                .prepend("<i class='icon-tag'></i>") 
+                    .append($('<button>', {
+                        title: "Tag with "+suggTags[i],
+                        "class":  "btn btn-small btn-success tagButton", 
+                        text: suggTags[i]
+                    }))	                
 	                .click(function() {
 			            var tagName = $(this).attr( "tagname" );    
 			            var filePath = $(this).attr( "filepath" );    		            

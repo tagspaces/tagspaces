@@ -25,6 +25,11 @@ define(function(require, exports, module) {
         return filePath.substring(0, filePath.lastIndexOf(DIR_SEPARATOR));
     }
 
+    function extractContainingDirectoryName(filePath) {
+        var tmpStr = filePath.substring(0, filePath.lastIndexOf(DIR_SEPARATOR));
+        return tmpStr.substring(tmpStr.lastIndexOf(DIR_SEPARATOR)+1,tmpStr.length);
+    }
+
     function extractFileExtension(filePath) {
         var ext = filePath.substring(filePath.lastIndexOf(".") + 1, filePath.length).toLowerCase().trim();
         if (filePath.lastIndexOf(".") < 0) { ext = ""; }
@@ -90,10 +95,11 @@ define(function(require, exports, module) {
             console.log("Filename does not contains tags. Aborting extraction.");
             return tags;
         }    
+        var cleanedTags = [];
+
         var tagContainer = fileName.slice(beginTagContainer+1,endTagContainer).trim();
         tags = tagContainer.split(TAG_DELIMITER);
 
-        var cleanedTags = [];
         for (var i=0; i < tags.length; i++) {
             if(tags[i].trim().length > 1) {
                 cleanedTags.push(tags[i]);
@@ -101,7 +107,6 @@ define(function(require, exports, module) {
         }
 
         console.log("Extracting finished ");
-        
         return cleanedTags; 
     }
 
@@ -123,6 +128,18 @@ define(function(require, exports, module) {
         tags = tagContainer.split(/[\s,+_-]+/);
         
         var cleanedTags = [];
+        
+        // Extracting tags from the name of the containing directory
+        var tagsFromDirName = [];
+        tagsFromDirName = extractContainingDirectoryName(filePath).trim().split(/[\s,+_-]+/);
+
+        for (var i=0; i < tagsFromDirName.length; i++) {
+            if(tagsFromDirName[i].trim().length > 1) {
+                cleanedTags.push(tagsFromDirName[i]);
+            }
+        }
+        
+        // Cleaning the tags from filename        
         for (var i=0; i < tags.length; i++) {
             if(tags[i].trim().length > 1) {
                 cleanedTags.push(tags[i]);
@@ -270,6 +287,7 @@ define(function(require, exports, module) {
     exports.isWindows                           = isWindows;
     exports.extractFileName                     = extractFileName;
     exports.extractContainingDirectoryPath      = extractContainingDirectoryPath;
+    exports.extractContainingDirectoryName      = extractContainingDirectoryName;
     exports.extractFileExtension                = extractFileExtension;
     exports.extractTitle                        = extractTitle;
     exports.formatFileSize                      = formatFileSize;
