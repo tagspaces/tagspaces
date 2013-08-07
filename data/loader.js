@@ -61,11 +61,10 @@ try {
     var fs = require('fs');
     var pathUtils = require('path');   
     var gui = require('nw.gui');
-//    var openEntry = require('open'); 
     IO_JS = "js/ioapi.node";
     isNode = true;
 } catch(e) {
-    console.log("node.js not found!");
+    console.log("node-webkit not found!");
 }
 
 requirejs.config({

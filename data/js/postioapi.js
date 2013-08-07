@@ -22,11 +22,11 @@ define(function(require, exports, module) {
         // TSCORE.openFavorite(TSCORE.Config.Settings["tagspacesList"][0].path, TSCORE.Config.Settings["tagspacesList"][0].name);
     }
 
-    exports.renameFile = function() {
-        // message.content contains the name of the file after the rename
-        //if(TSCORE.FileOpener.isFileOpened()) {
-        //    TSCORE.FileOpener.openFile(message.content);                    
-        //}
+    exports.renameFile = function(oldFilePath, newFilePath) {
+        // TODO handle case in which a file opened for editing and a tag has been added
+        if(TSCORE.FileOpener.isFileOpened() && (oldFilePath == TSCORE.FileOpener.getOpenedFilePath()) ) {
+            TSCORE.FileOpener.openFile(newFilePath);                    
+        }
         // TODO to be replaced with a function which replaced the 
         // renamed file in the model of the perspective        
         TSCORE.PerspectiveManager.refreshFileListContainer();

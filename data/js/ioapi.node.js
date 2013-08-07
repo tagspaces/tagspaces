@@ -127,7 +127,7 @@ define(function(require, exports, module) {
                 console.log("Renaming file failed "+error);
                 return;
             }
-            TSPOSTIO.renameFile();
+            TSPOSTIO.renameFile(filePath, newFilePath);
         });         
     }
     	

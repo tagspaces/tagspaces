@@ -42,7 +42,7 @@ document.documentElement.addEventListener("tsMessage", function(event) {
         break;        
       case "rename":
         if(message.success){
-            TSPOSTIO.renameFile();
+            TSPOSTIO.renameFile(message.content[0],message.content[1]);
         } else {
             TSCORE.updateLogger("Rename failed");        
         }

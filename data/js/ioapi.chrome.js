@@ -279,7 +279,7 @@ Still Missing:
                 if(nativeIO.fileExists(newFilePath)) {
                     nativeIO.removeRecursively(filePath);                    
                 }
-                TSPOSTIO.renameFile();                
+                TSPOSTIO.renameFile(filePath,newFilePath);                
             }
             reader.readAsArrayBuffer(b);
         } else {
