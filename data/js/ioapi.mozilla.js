@@ -49,7 +49,7 @@ document.documentElement.addEventListener("tsMessage", function(event) {
         break;
       case "saveTextFile":
         if(message.success){
-            TSPOSTIO.saveTextFile();
+            TSPOSTIO.saveTextFile(message.content);
         } else {
             TSCORE.updateLogger("Save failed");      
         }

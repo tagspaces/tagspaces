@@ -27,7 +27,7 @@ define(function(require, exports, module) {
         if(TSCORE.FileOpener.isFileOpened() && (oldFilePath == TSCORE.FileOpener.getOpenedFilePath()) ) {
             TSCORE.FileOpener.openFile(newFilePath);                    
         }
-        // TODO to be replaced with a function which replaced the 
+        // TODO to be replaced with a function which replaces the 
         // renamed file in the model of the perspective        
         TSCORE.PerspectiveManager.refreshFileListContainer();
     }
@@ -36,11 +36,10 @@ define(function(require, exports, module) {
         TSCORE.FileOpener.updateEditorContent(content);             
     }
     
-    exports.saveTextFile = function() {
+    exports.saveTextFile = function(filePath) {
         TSCORE.PerspectiveManager.refreshFileListContainer();
-        if(TSCORE.FileOpener.isFileOpened()) {
-            // TODO Automatically reopening of the file is not desirable in every case ...
-            //TSCORE.FileOpener.openFile(message.content);                    
+        if(!TSCORE.FileOpener.isFileOpened()) {
+            TSCORE.FileOpener.openFile(filePath);                    
         }                     
     }
     

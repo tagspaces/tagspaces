@@ -153,7 +153,7 @@ define(function(require, exports, module) {
                 console.log("Save to file "+filePath+" failed "+error);
                 return;
             }
-            TSPOSTIO.saveTextFile();
+            TSPOSTIO.saveTextFile(filePath);
         }); 
 	}
 	

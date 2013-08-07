@@ -241,7 +241,7 @@ Still Missing:
         reader.onloadend = function(e){
             var data = Array.prototype.slice.call(new Uint8Array(reader.result), 0);
             nativeIO.saveBlobToFile(filePath, data);
-            TSPOSTIO.saveTextFile();
+            TSPOSTIO.saveTextFile(filePath);
         }
         reader.readAsArrayBuffer(blob);
     }   
