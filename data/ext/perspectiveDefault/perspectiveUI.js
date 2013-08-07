@@ -85,7 +85,7 @@ console.log("Loading UI for perspectiveDefault");
 			id: this.extensionID+"Toolbar", 			
 	    })
 
-        .append($("<a>", { 
+        .append($("<button>", { 
             class: "btn ",
             title: "Toggle Select All Files",
             id: this.extensionID+"ToogleSelectAll",    
@@ -106,7 +106,7 @@ console.log("Loading UI for perspectiveDefault");
         .append( "<input type='checkbox' style='margin-top: -3px;'>" )
         )
 	    
-	    .append($("<a>", { 
+	    .append($("<button>", { 
 			class: "btn  disabled",
 	        title: "Create new file",
 	        id: this.extensionID+"CreateFileButton",    
