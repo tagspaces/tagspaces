@@ -238,16 +238,13 @@ define(function(require, exports, module) {
             }
         });
         
-        $( "#deffaultSettingsButton" ).click(function() {
+        $( "#defaultSettingsButton" ).click(function() {
             TSCORE.showConfirmDialog(
                 "Warning",
                 "Are you sure you want to restore the default application settings?\n"+
                 +"All manually made changes such as tags and taggroups will be lost.",
                 function() {
-                    TSCORE.Config.Settings = TSCORE.Config.DefaultSettings;
-                    TSCORE.Config.saveSettings();
-                    TSCORE.reloadUI();                    
-                    console.log("Default settings loaded.");                    
+                    TSCORE.Config.loadDefaultSettings();                
                 }                
             );
         });

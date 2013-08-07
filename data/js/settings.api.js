@@ -7,6 +7,7 @@ define(function(require, exports, module) {
 	console.log("Loading settings.api.js..");
 	
 	var IOAPI = require("tsioapi");
+	var TSCORE = require("tscore");
 	
 	var tagTemplate = {
 		"title" : undefined,
@@ -476,6 +477,13 @@ define(function(require, exports, module) {
 	    saveSettings();
 	}
 	
+    var loadDefaultSettings = function() {
+        exports.Settings = exports.DefaultSettings;
+        saveSettings();
+        TSCORE.reloadUI();                    
+        console.log("Default settings loaded.");    
+    }	
+	
 	var loadSettingsLocalStorage = function() {
 	    try {
 	        var tmpSettings = JSON.parse(localStorage.getItem('tagSpacesSettings'));
@@ -550,6 +558,7 @@ define(function(require, exports, module) {
     exports.deleteFavorite                			= deleteFavorite;	
     exports.updateSettingMozillaPreferences         = updateSettingMozillaPreferences;	
     exports.loadSettingsLocalStorage                = loadSettingsLocalStorage;	
+    exports.loadDefaultSettings                     = loadDefaultSettings;
     exports.saveSettings                			= saveSettings;	
 
 });
