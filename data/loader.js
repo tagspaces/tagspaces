@@ -96,7 +96,6 @@ requirejs.config({
         jquerylayoutcss:        'libs/jquerylayout/layout-default-latest',
         jquerydropdown:         'libs/jquerydropdown/jquery.dropdown',
         jquerydropdowncss:      'libs/jquerydropdown/jquery.dropdown',        
-        jquerynanoscroller:     'libs/jquerynanoscroller/jquery.nanoscroller',  
         less:                   'libs/less/less-1.3.3.min',
         jqueryeditinplace:      'libs/jqueryeditinplace/jquery.editinplace',
 
@@ -138,7 +137,6 @@ requirejs.config({
                 'jqueryuiposition',
                 'jqueryuiselectable',
                 'jqueryuisortable',
-                'jquerynanoscroller',
                 'bootstrap',
                 'jquerylayout',
                 'jquerydropdown',  

@@ -9,13 +9,14 @@ console.log("Loading UI for perspectiveDefault");
 
 	var TSCORE = require("tscore");
 
-	var TC_TITLE 		= 0,
-		TC_TAGS 		= 1,
-		TC_FILESIZE		= 2,
-		TC_FILELMDT		= 3,
-		TC_FILEPATH		= 4,
-		TC_FILENAME		= 5,
-		TC_FILEEXT		= 6;
+	var TC_TITLE        = 0,
+        TC_FILEEXT      = 1,
+		TC_TAGS         = 2,
+		TC_FILESIZE	    = 3,
+		TC_FILELMDT     = 4,
+		TC_FILEPATH	    = 5,
+		TC_FILENAME	    = 6;
+
 		
 	var TMB_SIZES = [ "100px", "200px", "300px", "400px", "500px" ];
 
@@ -257,38 +258,52 @@ console.log("Loading UI for perspectiveDefault");
 	        "bAutoWidth": false,
 	        "aoColumns": [
 	            { "sTitle": "Title", "sClass": "right" },
+                { "sTitle": "Ext." },
 	            { "sTitle": "Tags" },            
 	            { "sTitle": "Size(bytes)" },
 	            { "sTitle": "Date Modified" },
 	            { "sTitle": "Path" },
+                { "sTitle": "File Name" }                
 	        ],         
 	        "aoColumnDefs": [
 	            { // Title column
 	                "mRender": function ( data, type, row ) { 
-	                	return buttonizeTitle(data,row[TC_TITLE],row[TC_FILEPATH],row[TC_FILEEXT]) 
+	                	return buttonizeTitle(data,row[TC_TITLE],row[TC_FILEPATH],row[TC_FILEEXT]); 
 	                	},
 	                "aTargets": [ TC_TITLE ]
 	            }, 
+                { // File extension column
+                    "mRender": function ( data, type, row ) { 
+                        return TSCORE.generateExtButton(data,row[TC_FILENAME],row[TC_FILEPATH]); 
+                        },
+                    "aTargets": [ TC_FILEEXT ]
+                }, 
 	            { // Tags column
 	                "mRender": function ( data, type, row ) { 
-	                	return TSCORE.generateTagButtons(data,row[TC_FILEEXT],row[TC_FILENAME],row[TC_FILEPATH]) 
+	                	return TSCORE.generateTagButtons(data,row[TC_FILENAME],row[TC_FILEPATH]); 
 	                	},
 	                "aTargets": [ TC_TAGS ]
 	            }, 
 	            { // Filesize column
 	                "mRender": function ( data, type, row ) { 
-	                	return TSCORE.TagUtils.formatFileSize(data) 
+	                	return TSCORE.TagUtils.formatFileSize(data); 
 	                	},
 	                "aTargets": [ TC_FILESIZE ]
 	            },
 	            { // Last changed date column
 	                "mRender": function ( data, type, row ) { 
-	                	return TSCORE.TagUtils.formatDateTime(data, true) 
+	                	return TSCORE.TagUtils.formatDateTime(data, true); 
 	                	},
 	                "aTargets": [ TC_FILELMDT ]
 	            },
-	            { "bVisible": false,  "aTargets": [ TC_FILESIZE, TC_FILELMDT, TC_FILEPATH ] },
-	            { "bSearchable": false,  "aTargets": [ TC_FILEPATH ] }
+                { // Filename column
+                    "mRender": function ( data, type, row ) { 
+                        return data; 
+                        },
+                    "aTargets": [ TC_FILENAME ]
+                },     
+	            { "bVisible": false,  "aTargets": [ TC_FILESIZE, TC_FILELMDT, TC_FILEPATH, TC_FILENAME ] },
+	            { "bSearchable": false,  "aTargets": [ TC_TITLE, TC_FILEEXT, TC_TAGS, TC_FILESIZE, TC_FILELMDT, TC_FILEPATH ] }
 	//            { "sClass": "center", "aTargets": [ 0 ] }
 	         ]
 	    } );

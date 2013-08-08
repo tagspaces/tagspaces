@@ -146,7 +146,7 @@ var updateFileBrowserData = function(dirList) {
                  
                  if(fileSize == undefined) fileSize = "";
                  if(fileLMDT == undefined) fileLMDT = "";
-                 var entry = [title,tags,fileSize,fileLMDT,path,filename,ext];   
+                 var entry = [title,ext,tags,fileSize,fileLMDT,path,filename,];   
                  TSCORE.fileList.push(entry);
             }
         }
