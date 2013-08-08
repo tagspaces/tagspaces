@@ -156,12 +156,6 @@ html, body {
     font-size: 1.5em;
     color: #333333;    
 }
-/*
-.contextMenu {
-    display: none;
-    width: 150px; 
-    z-index: 1000;
-}*/
 
 li hr {
     height: 0px; 
@@ -327,24 +321,50 @@ li hr {
     overflow-y: auto;        
 }
 
-/* Tag Groups css */
+.tagGroupIcon {
+    text-align: left; 
+    width: 12%; 
+    padding-left: 1px;
+    color: #333 !important;
+}
 
 .tagGroupTitle {
-  padding-left: 5px;
-  text-decoration: none;
-  color: gray;
-  font-size: 12px;
-  font-family: Geneva, Arial, Helvetica, sans-serif;   
+    text-align: left;
+    padding-left: 2px; 
+    font-size: 13px !important;
+    width:68%;
+    color: #333 !important; 
 }
 
-.tagGroupTitle:hover, .tagGroupTitle:active, .tagGroupTitle:focus {
-  text-decoration: none;
-  color: gray;
+.tagGroupActions {
+    width:20%; 
+    padding-right: 7px;
+    color: #333 !important;
+    text-align: right;         
 }
-/*
-#tagGroups {
-    overflow: auto;    
-} */
+
+.directoryIcon {
+    text-align: left; 
+    width: 12%; 
+    padding-left: 1px;
+    color: #333 !important;    
+}
+
+.directoryTitle {
+    text-align: left;
+    padding-left: 2px; 
+    font-size: 13px !important;
+    width:68%;  
+    color: #333 !important;    
+}
+
+.directoryActions {
+    text-align: right;     
+    width:20%; 
+    padding-right: 7px;
+    color: #333 !important;    
+}
+
 
 /* JSON Editor */
 div.jsoneditor-menu {	

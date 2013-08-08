@@ -132,30 +132,28 @@ define(function(require, exports, module) {
 	    for(var i=0; i < TSCORE.Config.Settings["tagGroups"].length; i++) {
 	        $("#tagGroupsContent").append($("<div>", { 
 	            "class": "accordion-group",    
-                "style": "width: 99%; border: 0px;",	            
+                "style": "width: 99%; border: 0px #aaa solid;",	            
 	        })
 	        .append($("<div>", { 
 	            "class":        "accordion-heading  btn-group",
-	            "style":        "width:99%; margin: 2px;",
+	            "style":        "width:100%; margin: 0px;",
                 "key":          TSCORE.Config.Settings["tagGroups"][i].key,	            
 	        })
 	        
             .append($("<button>", { // Taggroup toggle button
-                        "class":        "btn btn-link",
-                        "data-toggle": "collapse",
-                        "data-target": "#tagButtons"+i,
+                        "class":        "btn btn-link tagGroupIcon",
+                        "data-toggle":  "collapse",
+                        "data-target":  "#tagButtons"+i,
                         "title":        "Toggle TagGroup",
-                        "style":        "width: 15%;",
                     }  
                 )
                 .html("<i class='icon-tags'></i>")   
             )// End taggroup toggle button  
                         	        
 	        .append($("<button>", {
-				"class":        "btn btn-link btn-small",
+				"class":        "btn btn-link btn-small tagGroupTitle",
 	            "text":         TSCORE.Config.Settings["tagGroups"][i].title, 
                 "key":          TSCORE.Config.Settings["tagGroups"][i].key, 	      
-                "style":        "text-align: left; width:65%;",      
 	        })  
 	        )
 	        .droppable({
@@ -173,8 +171,7 @@ define(function(require, exports, module) {
             })  
 	        
 	        .append($("<button>", {
-	                "class": "btn btn-link",
-	                "style": "width:20%",
+	                "class": "btn btn-link tagGroupActions",
 	                "tag": TSCORE.Config.Settings["tagGroups"][i].title, 
 	                "key": TSCORE.Config.Settings["tagGroups"][i].key, 
 	                "title": "Taggroup options",
@@ -194,12 +191,12 @@ define(function(require, exports, module) {
 	        .append($("<div>", { 
 	            "class":   "accordion-body collapse in",
 	            "id":      "tagButtons"+i,
-	            "style":   "border: 0px;",
+	            "style":   "margin: 0px 0px 0px 3px; border: 0px;",
 	        })	        
 	        .append($("<div>", { 
 	            "class":   "accordion-inner",
 	            "id":      "tagButtonsContent"+i,
-	            "style":   "border: 0px; padding: 3px",
+	            "style":   "padding: 2px; border: 0px;",
 	        })
 	        ) // end accordion-inner	
 	        ) // end accordion button        
@@ -239,26 +236,14 @@ define(function(require, exports, module) {
 	    TSCORE.selectedTag = tag;
 	}
 	
-	// Helper function user by basic and search views
-	function generateTagButtons(commaSeparatedTags, fileExtension, fileName, filePath) {
-	    console.log("Creating tags...");
+	// Helper function generating tag buttons
+	function generateTagButtons(commaSeparatedTags, fileName, filePath) {
+	    //console.log("Creating tags...");
 	    var tagString = ""+commaSeparatedTags;
 	    var wrapper = $('<span>');
 	    if(filePath == undefined) {
 	    	filePath = TSCORE.currentPath+TSCORE.TagUtils.DIR_SEPARATOR+fileName;
 	    }
-	    if(fileExtension.length > 0) {
-	        wrapper.append($('<button>', {
-	            title: "Opens context menu for "+fileExtension,
-	            tag: fileExtension,
-	            filename: fileName,
-	            filepath: filePath,
-	            "class":  "btn btn-small btn-info extTagButton",	            
-	            text: fileExtension+" "
-	            })
-	            .append("<span class='caret'/>")
-	            );          
-	    } 
 	    if(tagString.length > 0) {
 	        var tags = tagString.split(",");
 	        for (var i=0; i < tags.length; i++) { 
@@ -276,6 +261,28 @@ define(function(require, exports, module) {
 	    }
 	    return wrapper.html();        
 	}
+	
+    // Helper function generating file extension button
+    function generateExtButton(fileExtension, fileName, filePath) {
+        //console.log("Creating ext button...");
+        var wrapper = $('<span>');
+        if(filePath == undefined) {
+            filePath = TSCORE.currentPath+TSCORE.TagUtils.DIR_SEPARATOR+fileName;
+        }
+        if(fileExtension.length > 0) {
+            wrapper.append($('<button>', {
+                title: "Opens context menu for "+fileExtension,
+                tag: fileExtension,
+                filename: fileName,
+                filepath: filePath,
+                "class":  "btn btn-small btn-info extTagButton",                
+                text: fileExtension+" "
+                })
+                .append("<span class='caret'/>")
+                );          
+        } 
+        return wrapper.html();        
+    }	
 
     function showDialogTagCreate() {
         $( "#newTagTitle" ).val("");         
@@ -352,6 +359,7 @@ define(function(require, exports, module) {
     exports.generateTagGroups                = generateTagGroups;
     exports.openTagMenu    				     = openTagMenu;
     exports.generateTagButtons               = generateTagButtons;
+    exports.generateExtButton                = generateExtButton;
 	exports.showAddTagsDialog				 = showAddTagsDialog;
 	exports.showTagEditInTreeDialog          = showTagEditInTreeDialog;	
     exports.showDialogTagCreate              = showDialogTagCreate;

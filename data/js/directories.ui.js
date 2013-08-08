@@ -56,34 +56,32 @@ define(function(require, exports, module) {
         for(var i=0; i < directoryHistory.length; i++) {
             $("#locationContent").append($("<div>", { 
                 "class":        "accordion-group",   
-                "style":        "width: 100%; border: 0px;", 
+                "style":        "width: 99%; border: 0px #aaa solid;", 
             })
             
             .append($("<div>", { 
                     "class":    "accordion-heading btn-group",
                     "key":      directoryHistory[i].key, 
-                    "style":    "width:99%; margin: 2px; ", // background: url('css/arrow-down.png') no-repeat center bottom; padding-bottom: 5px;
+                    "style":    "width:100%; margin: 0px; ",
                 }
             )
 
             .append($("<button>", { // Dir toggle button
-                        "class":        "btn btn-link",
+                        "class":        "btn btn-link directoryIcon",
                         "data-toggle":  "collapse",
                         "data-target":  "#dirButtons"+i,                        
                         "key":          directoryHistory[i].key,
                         "title":        "Toggle Directory",
-                        "style":        "width: 15%;",
                     }  
                 )
-                .html("<i class='icon-folder-open-alt'></i>")   
+                .html("<i class='icon-folder-open'></i>")   
             )// End dir toggle button  
             
             .append($("<button>", { // Dir main button
-                        "class":        "btn btn-link btn-small",
+                        "class":        "btn btn-link btn-small directoryTitle",
                         "key":          directoryHistory[i].key,
                         "title":        "Change Direoctory to: "+directoryHistory[i].key,
                         "text":         directoryHistory[i].title,
-                        "style":        "text-align: left; width:65%;",
                     }  
                 )
                 .click(function() {
@@ -107,10 +105,9 @@ define(function(require, exports, module) {
             )// End dir main button  
             
             .append($("<button>", {
-                    "class":        "btn btn-link",
+                    "class":        "btn btn-link directoryActions",
                     "key":          directoryHistory[i].key, 
                     "title":        "Directory Options", 
-                    "style":        "width:20%",                   
             })              
             .dropdown( 'attach' , '#directoryMenu' )
             .append("<b class='icon-ellipsis-vertical'>")
@@ -121,14 +118,14 @@ define(function(require, exports, module) {
             ) // end heading
             
             .append($("<div>", { 
-                "class": "accordion-body collapse in",
-                "id": "dirButtons"+i,
-                "style": "margin: 0px 3px 3px 3px; border: 0px;"
+                "class":    "accordion-body collapse in",
+                "id":       "dirButtons"+i,
+                "style":    "margin: 0px 0px 0px 3px; border: 0px;"
             })          
             .append($("<div>", { 
-                "class": "accordion-inner",
-                "id": "dirButtonsContent"+i,
-                "style": "padding: 2px; border: 0px;",
+                "class":    "accordion-inner",
+                "id":       "dirButtonsContent"+i,
+                "style":    "padding: 2px; border: 0px;",
             })
             ) // end accordion-inner    
             ) // end accordion button        
@@ -146,7 +143,7 @@ define(function(require, exports, module) {
                             "class":    "btn btn-warning btn-small", 
                             "key":      directoryHistory[i]["children"][j].key,
                             "title":    directoryHistory[i]["children"][j].key,
-                            "style":    "margin: 1px",
+                            "style":    "margin: 1px;",
                             "text":     " "+directoryHistory[i]["children"][j].title
                         })
                         .droppable({
@@ -174,9 +171,6 @@ define(function(require, exports, module) {
                }
            }
         }
-        // Activating nano scroller
-        //$("#location").nanoScroller();
-
     }
     
     function handleDirCollapsion() {
@@ -184,13 +178,13 @@ define(function(require, exports, module) {
             var key = $(this).attr("key");
             console.log("Entered Header for: "+key);
             if(getDirectoryCollapsed(key)) {
-                $(this).find("i").removeClass("icon-folder-open-alt");
-                $(this).find("i").addClass("icon-folder-close-alt");          
+                $(this).find("i").removeClass("icon-folder-open");
+                $(this).find("i").addClass("icon-folder-close");          
                 $(this).next().removeClass("in");
                 $(this).next().addClass("out");
             } else {
-                $(this).find("i").removeClass("icon-folder-close-alt");
-                $(this).find("i").addClass("icon-folder-open-alt");          
+                $(this).find("i").removeClass("icon-folder-close");
+                $(this).find("i").addClass("icon-folder-open");          
                 $(this).next().removeClass("out");
                 $(this).next().addClass("in");
             }
