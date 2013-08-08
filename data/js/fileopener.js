@@ -196,23 +196,29 @@ define(function(require, exports, module) {
 			this.select();
 	    });
 
-        $("#filetoolbox").append('<button id="toggleFullWidthButton" class="btn" title="Toggle Full Width"><i class="icon-sort icon-rotate-90"></i></button>');
-        $("#filetoolbox").append('<button id="prevFileButton" class="btn" title="Go to the previous file"><i class="icon-circle-arrow-left"></i></button>');
-        $("#filetoolbox").append('<button id="nextFileButton" class="btn" title="Go to the next file"><i class="icon-circle-arrow-right"></i></button>');
-        $("#filetoolbox").append('<button id="editDocument" class="btn" title="Edit File"><i class="icon-pencil"></i></button>');
-        //$("#filetoolbox").append('<button id="openInNewWindow" class="btn" title="Go to the previous file"><i class="icon-circle-arrow-left"></i></button>');
-        $("#filetoolbox").append('<button id="openTagSuggestionMenu" class="btn" title="Tag File"><i class="icon-tag"></i> <b class="caret"></b></button>');
-        //$("#filetoolbox").append('<button id="startFullscreen" class="btn" title="Open file in full screen"><i class="icon-fullscreen"></i></b></button>');
-        $("#filetoolbox").append('<button id="openFileActionsMenu" data-dropdown="#fileActionsMenu" class="btn" title="Opens a menu with additional file actions"><i class="icon-th-list"></i> <b class="caret"></b></button>');
-        $("#filetoolbox").append('<button id="closeOpenedFile" class="btn" title="Close file"><i class="icon-remove-sign"></i></button>');      
+        $("#filetoolbox").append('<div id="layoutToolbar" class="btn-group"></div>');
+        $("#filetoolbox").append('<div id="actionToolbar" class="btn-group"></div>');
+        $("#filetoolbox").append('<div id="navigationToolbar" class="btn-group"></div>');        
+        
+        $("#layoutToolbar").append('<button id="toggleFullWidthButton" class="btn" title="Toggle Full Width"><i class="icon-sort icon-rotate-90"></i></button>');
+        
+        $("#actionToolbar").append('<button id="editDocument" class="btn" title="Edit File"><i class="icon-pencil"></i></button>');
+        //$("#actionToolbar").append('<button id="openInNewWindow" class="btn" title="Go to the previous file"><i class="icon-circle-arrow-left"></i></button>');
+        $("#actionToolbar").append('<button id="openTagSuggestionMenu" class="btn" title="Tag File"><i class="icon-tag"></i> <b class="caret"></b></button>');
+        //$("#actionToolbar").append('<button id="startFullscreen" class="btn" title="Open file in full screen"><i class="icon-fullscreen"></i></b></button>');
+        $("#actionToolbar").append('<button id="openFileActionsMenu" data-dropdown="#fileActionsMenu" class="btn" title="Additional File Actions"><i class="icon-th-list"></i> <b class="caret"></b></button>');
+
+        $("#navigationToolbar").append('<button id="prevFileButton" class="btn" title="Go to Previous File"><i class="icon-circle-arrow-left"></i></button>');
+        $("#navigationToolbar").append('<button id="nextFileButton" class="btn" title="Go to Next File"><i class="icon-circle-arrow-right"></i></button>');
+        $("#navigationToolbar").append('<button id="closeOpenedFile" class="btn" title="Close file"><i class="icon-remove-sign"></i></button>');      
 
         $("#fileActionsMenu").empty();
         //$("#fileActionsMenu").append('<li><a id="editDocument" title="Edit file"><i class="icon-pencil"></i> Edit File</a></li>');
-        $("#fileActionsMenu").append('<li><a id="reloadFile" title="Reloads the current file"><i class="icon-refresh"></i> Reload File</a></li>');        
-        $("#fileActionsMenu").append('<li><a id="showFullDetails" title="Show additional file details"><i class="icon-list-alt"></i> Show File Details</a></li>');
-        $("#fileActionsMenu").append('<li><a id="openInNewWindow" title="Open file in a new tab"><i class="icon-share"></i> Open in New Tab</a></li>');
-        $("#fileActionsMenu").append('<li><a id="startFullscreen" title="Open file in full screen"><i class="icon-fullscreen"></i> Open In Fullscreen</a></li>');                        
-        $("#fileActionsMenu").append('<li><a id="printButton" title="Print the content of the viewer"><i class="icon-print"></i> Print</a></li>');                        
+        $("#fileActionsMenu").append('<li><a id="reloadFile" title="Reloads Current File"><i class="icon-refresh"></i> Reload File</a></li>');        
+        $("#fileActionsMenu").append('<li><a id="showFullDetails" title="Show Additional File Details"><i class="icon-list-alt"></i> Show File Details</a></li>');
+        $("#fileActionsMenu").append('<li><a id="openInNewWindow" title="Open File in a New Tab"><i class="icon-share"></i> Open in New Tab</a></li>');
+        $("#fileActionsMenu").append('<li><a id="startFullscreen" title="Open File in Fullscreen"><i class="icon-fullscreen"></i> Open in Fullscreen</a></li>');                        
+        //$("#fileActionsMenu").append('<li><a id="printButton" title="Print Content from File Viewer"><i class="icon-print"></i> Print</a></li>');                        
 
 		initFileActions("#filetoolbox", filePath);
 	}
@@ -297,7 +303,7 @@ define(function(require, exports, module) {
 			if ( !_isEditMode ) { 
 				$( this )
 				    .attr("title","Save & Close")
-				    .html("<i class='icon-hdd'></i>");
+				    .html("<i class='icon-save'></i>");
 	        	editFile(filePath);
 			} else {
 			    TSCORE.showConfirmDialog("Confirm","Do you really want to overwrite the current file?", function() {
