@@ -38,9 +38,9 @@ define(function(require, exports, module) {
     
     exports.saveTextFile = function(filePath) {
         TSCORE.PerspectiveManager.refreshFileListContainer();
-        if(!TSCORE.FileOpener.isFileOpened()) {
+        //if(!TSCORE.FileOpener.isFileOpened()) {
             TSCORE.FileOpener.openFile(filePath);                    
-        }                     
+        //}                     
     }
     
     exports.listDirectory = function(anotatedDirList) {
@@ -60,7 +60,9 @@ define(function(require, exports, module) {
     }   
 
     exports.selectDirectory = function(dirPath) {
-        // TODO make the use of this function more general        
+        // TODO make the use of this function more general
+        var dirName = TSCORE.TagUtils.extractContainingDirectoryName(dirPath+TSCORE.TagUtils.DIR_SEPARATOR);
+        $("#connectionName").val(dirName);                
         $("#folderLocation").val(dirPath);
     }
     
