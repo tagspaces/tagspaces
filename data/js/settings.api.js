@@ -28,10 +28,10 @@ define(function(require, exports, module) {
 		 */
 	}
 	
-	var favoriteTemplate = {
-	                            "name": undefined,
-	                            "path": undefined
-	                        }
+	var connectionTemplate = {
+                "name": undefined,
+                "path": undefined
+            }
 	                        
 	var tagGroupTemplate = {
 	            "title": undefined,
@@ -442,22 +442,48 @@ define(function(require, exports, module) {
         saveSettings();
 	}		
 	
-	var createFavorite = function(name, location) {
-	    var newFavoriteModel = JSON.parse( JSON.stringify(favoriteTemplate));
+	var createConnection = function(name, location) {
+	    var newConnectionModel = JSON.parse( JSON.stringify(connectionTemplate));
 	    name = name.replace("\\", "\\\\");
 	    name = name.replace("\\\\\\", "\\\\");
 	    name = name.replace("\\\\\\\\", "\\\\");   
-	    newFavoriteModel.name = name;
-	    newFavoriteModel.path = location;
-	    exports.Settings["tagspacesList"].push(newFavoriteModel);
-	    saveSettings();    
+	    newConnectionModel.name = name;
+	    newConnectionModel.path = location;
+	    var createLocation = true;
+        exports.Settings["tagspacesList"].forEach(function (value, index) {
+            // TODO make this check from the ui dialog         
+            if(value.path == newConnectionModel.path) {
+                TSCORE.showAlertDialog("Selected path is already used by a location!","Duplicated Location Path");
+                createLocation = false;
+            }        
+            if(value.name == newConnectionModel.name) {
+                TSCORE.showAlertDialog("Selected location name is already used by a location!","Duplicated Location Name");
+                createLocation = false;
+            }             
+        })  	    
+        if(createLocation) {
+            exports.Settings["tagspacesList"].push(newConnectionModel);
+            saveSettings();                
+        }
 	}
+
+    var getConnectionName = function(connectionPath) {
+        var connectionName = undefined;
+        exports.Settings["tagspacesList"].forEach(function (value, index) {
+            if(value.path == connectionPath) {
+                connectionName = value.name;
+            }        
+        })          
+        if(connectionName != undefined) {
+            return connectionName;                
+        }
+    }	
 	
-	var deleteFavorite = function(name) {
+	var deleteConnection = function(name) {
 	    for(var i=0; i < exports.Settings["tagspacesList"].length; i++) {
-	            console.log("Traversing favorite "+exports.Settings["tagspacesList"][i].name+" searching for "+name);
+	            console.log("Traversing connections "+exports.Settings["tagspacesList"][i].name+" searching for "+name);
 	        if(exports.Settings["tagspacesList"][i].name == name) {
-	            console.log("Deleting favorite "+exports.Settings["tagspacesList"][i].name);
+	            console.log("Deleting connections "+exports.Settings["tagspacesList"][i].name);
 	            exports.Settings["tagspacesList"].splice(i, 1);
 	            break;
 	        }        
@@ -554,8 +580,9 @@ define(function(require, exports, module) {
     exports.moveTagGroup                            = moveTagGroup;
     exports.createTagGroup                			= createTagGroup;    
     exports.duplicateTagGroup                		= duplicateTagGroup;	
-    exports.createFavorite                			= createFavorite;	
-    exports.deleteFavorite                			= deleteFavorite;	
+    exports.createConnection                	    = createConnection;	
+    exports.deleteConnection                		= deleteConnection;
+    exports.getConnectionName                       = getConnectionName;	
     exports.updateSettingMozillaPreferences         = updateSettingMozillaPreferences;	
     exports.loadSettingsLocalStorage                = loadSettingsLocalStorage;	
     exports.loadDefaultSettings                     = loadDefaultSettings;

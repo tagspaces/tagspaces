@@ -23,7 +23,7 @@ document.documentElement.addEventListener("tsMessage", function(event) {
                 console.log("Loading settings...: "+JSON.stringify(message.content));
                 TSCORE.Config.updateSettingMozillaPreferences(message.content);
 
-                TSCORE.initFavorites();
+                TSCORE.initConnections();
                 TSCORE.generateTagGroups();
                   
             } catch (ex) {

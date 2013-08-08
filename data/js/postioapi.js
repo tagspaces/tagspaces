@@ -19,7 +19,6 @@ define(function(require, exports, module) {
     
     exports.createDirectory = function() {
         //TODO refresh the directory area
-        // TSCORE.openFavorite(TSCORE.Config.Settings["tagspacesList"][0].path, TSCORE.Config.Settings["tagspacesList"][0].name);
     }
 
     exports.renameFile = function(oldFilePath, newFilePath) {

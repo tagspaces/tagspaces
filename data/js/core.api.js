@@ -69,7 +69,7 @@ define(function(require, exports, module) {
 	    $("#appVersion").text("["+tsSettings.DefaultSettings["appVersion"]+"beta]");
 	    $("#appVersion").attr("title","["+tsSettings.DefaultSettings["appVersion"]+"."+tsSettings.DefaultSettings["appBuild"]+"]");
 	
-	    tsDirectoriesUI.initFavorites();
+	    tsDirectoriesUI.initConnections();
 	    
 	    tsTagsUI.generateTagGroups();
 
@@ -86,8 +86,8 @@ define(function(require, exports, module) {
 		    // Show start hint
 		   	if(tsSettings.Settings.tagspacesList.length < 1 ) {
 		   		$( "#createNewLocation" ).attr("title", "Start using TagSpaces by creating a new location.")
-                $( "#favoritesList" ).width($( "#reloadTagSpace" ).width()+$("#selectTagSpace").width());
-                $( "#favoritesList" ).show().position({
+                $( "#connectionsList" ).width($( "#reloadTagSpace" ).width()+$("#selectTagSpace").width());
+                $( "#connectionsList" ).show().position({
                     my: "left top",
                     at: "left bottom",
                     of: $( "#reloadTagSpace" )
@@ -345,7 +345,7 @@ define(function(require, exports, module) {
 
 	// Proxying functions from directoriesUI 
 	exports.updateSubDirs 				= tsDirectoriesUI.updateSubDirs;
-	exports.initFavorites 				= tsDirectoriesUI.initFavorites;
+	exports.initConnections 			= tsDirectoriesUI.initConnections;
 	exports.showCreateDirectoryDialog   = tsDirectoriesUI.showCreateDirectoryDialog;
 
 	// Public variables definition

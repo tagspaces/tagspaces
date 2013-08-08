@@ -12,14 +12,16 @@ define(function(require, exports, module) {
     
     var dir4ContextMenu = null;
     
-    var nameCurrentFavorite = undefined;
+    var nameCurrentConnection = undefined;
     
-    function openFavorite(path, title) {
-        console.log("Opening favorite in : "+path+" title: "+title);
+    function openConnection(path) {
+        console.log("Opening connection in : "+path);
     
-        document.title = title + " | " + TSCORE.Config.DefaultSettings.appName;
+        nameCurrentConnection = TSCORE.Config.getConnectionName(path);
+        
+        document.title = nameCurrentConnection + " | " + TSCORE.Config.DefaultSettings.appName;
     
-        $( "#reloadTagSpace" ).text(title);
+        $( "#reloadTagSpace" ).text(nameCurrentConnection);
         $( "#reloadTagSpace" ).attr("title",path);
         
         // Clears the directory history
@@ -271,8 +273,8 @@ define(function(require, exports, module) {
     
     function initButtons() {
         $( "#selectTagSpace" ).click(function() {
-                //$("#favoritesList").width($( "#reloadTagSpace" ).width()+$("#selectTagSpace").width());
-                $("#favoritesList").show().position({
+                //$("#connectionsList").width($( "#reloadTagSpace" ).width()+$("#selectTagSpace").width());
+                $("#connectionsList").show().position({
                     my: "left top",
                     at: "left bottom",
                     of: $( "#reloadTagSpace" )
@@ -325,10 +327,11 @@ define(function(require, exports, module) {
             }
         });  
         
-        $( "#createFolderConnectionButton" ).click( function() {                
-            TSCORE.Config.createFavorite($("#connectionName").val(), $("#folderLocation").val());
-            initFavorites();  
-            openFavorite(TSCORE.Config.Settings["tagspacesList"][0].path, TSCORE.Config.Settings["tagspacesList"][0].name);                                 
+        $( "#createFolderConnectionButton" ).click( function() {        
+            var locationPath = $("#folderLocation").val();        
+            TSCORE.Config.createConnection($("#connectionName").val(), locationPath);
+            initConnections();  
+            openConnection(locationPath);                                 
         });  
     }
     
@@ -340,10 +343,13 @@ define(function(require, exports, module) {
     
     function deleteFolderConnection() {
         console.log("Deleting folder connection..");
-        TSCORE.Config.deleteFavorite(nameCurrentFavorite);
-        initFavorites();  
+        TSCORE.Config.deleteConnection(nameCurrentConnection);
+        
+        initConnections();
+        
+        //Opens the first location in the settings after deleting a location  
         if(TSCORE.Config.Settings["tagspacesList"][0] != undefined) {
-        	openFavorite(TSCORE.Config.Settings["tagspacesList"][0].path, TSCORE.Config.Settings["tagspacesList"][0].name);        	
+        	openConnection(TSCORE.Config.Settings["tagspacesList"][0].path);        	
         }                               				
     }  
 
@@ -355,46 +361,46 @@ define(function(require, exports, module) {
 		)
     }             
     
-    function initFavorites() {
+    function initConnections() {
         console.log("Creating location menu...");
         
-        $( "#favoritesList" ).empty();
-        var favoritesList = TSCORE.Config.Settings["tagspacesList"]
-        for (var i=0; i < favoritesList.length; i++) { 
-              $( "#favoritesList" ).append(
+        $( "#connectionsList" ).empty();
+        var connectionsList = TSCORE.Config.Settings["tagspacesList"]
+        for (var i=0; i < connectionsList.length; i++) { 
+              $( "#connectionsList" ).append(
                     $('<li>', {}).append(
                         $('<a>', { 
-                            title: favoritesList[i].path, 
-                            name: favoritesList[i].name,
-                            text: " "+favoritesList[i].name
+                            title:  "Connection pointing to "+connectionsList[i].path,
+                            path:   connectionsList[i].path,
+                            name:   connectionsList[i].name,
+                            text:   " "+connectionsList[i].name
                             } )
                         .click(function() {
-                            nameCurrentFavorite = $(this).attr( "name" );
-                            openFavorite($(this).attr( "title" ), $(this).attr( "name" ));                           
+                            openConnection($(this).attr( "path" ));                           
                         })
                         .prepend("<i class='icon-bookmark'></i>")
                         ));
         };
-        $( "#favoritesList" ).append('<li class="divider"></li>');    
-        $( "#favoritesList" ).append('<li id="createNewLocation"><a><i class="icon-bookmark-empty"></i> New Location</a></li>');
-        $( "#favoritesList" ).append('<li id="deleteFavorite"><a><i class="icon-trash"></i> Remove Location</a></li>');
+        $( "#connectionsList" ).append('<li class="divider"></li>');    
+        $( "#connectionsList" ).append('<li id="createNewLocation"><a><i class="icon-bookmark-empty"></i> New Location</a></li>');
+        $( "#connectionsList" ).append('<li id="deleteConnection"><a><i class="icon-trash"></i> Remove Location</a></li>');
        
         $( "#createNewLocation" ).click(function() {
             showCreateFolderConnectionDialog();         
         });
         
-        $( "#deleteFavorite" ).click(function() {
+        $( "#deleteConnection" ).click(function() {
             showDeleteFolderConnectionDialog();
         }); 
     }
 
     // Public API definition
-    exports.openFavorite               = openFavorite;
+    exports.openConnection             = openConnection;
     exports.updateSubDirs              = updateSubDirs;
     exports.initDialogs                = initDialogs;
     exports.initButtons                = initButtons;
     exports.initContextMenus           = initContextMenus;
-    exports.initFavorites              = initFavorites;
+    exports.initConnections            = initConnections;
     exports.showCreateDirectoryDialog  = showCreateDirectoryDialog;
     
 });
