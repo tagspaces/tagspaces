@@ -241,7 +241,8 @@ define(function(require, exports, module) {
             })
             .prepend("<i class='icon-tags'></i>") 
             .click(function() {
-                //var filePath = $(this).attr( "filepath" );                      
+                TSCORE.PerspectiveManager.clearSelectedFiles();
+                TSCORE.selectedFiles.push(filePath);                     
                 TSCORE.showAddTagsDialog();
             })                
         )); 
