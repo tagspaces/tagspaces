@@ -77,9 +77,9 @@ define(function(require, exports, module) {
 	    $("#"+exports.ID+"SelectableFiles").empty();
 	        
 	    for (var i=0; i < TSCORE.fileList.length; i++) {
-	        var fileName = TSCORE.fileList[i][0];
-	        var fileExt = TSCORE.fileList[i][1];
-	        var filePath = TSCORE.fileList[i][5];
+	        var fileName = TSCORE.fileList[i][TSCORE.fileListTITLE];
+	        var fileExt = TSCORE.fileList[i][TSCORE.fileListFILEEXT];
+	        var filePath = TSCORE.fileList[i][TSCORE.fileListFILEPATH];
 	        if(supportedFileTypeThumnailing.indexOf(fileExt) >= 0) {
 	            $("#"+exports.ID+"SelectableFiles").append(
 	                 $('<li>', { title: fileName, filepath: filePath, style: 'border: 1px dashed gray;' }).append( 

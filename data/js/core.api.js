@@ -355,6 +355,14 @@ define(function(require, exports, module) {
 	exports.selectedFiles 				= selectedFiles;
 	exports.fileList 					= fileList;
 	exports.selectedTag 				= selectedTag;
-	exports.selectedTagData 			= selectedTagData;		
+	exports.selectedTagData 			= selectedTagData;	
+	
+    exports.fileListTITLE                = 0;
+    exports.fileListFILEEXT              = 1;
+    exports.fileListTAGS                 = 2;
+    exports.fileListFILESIZE             = 3;
+    exports.fileListFILELMDT             = 4;
+    exports.fileListFILEPATH             = 5;
+    exports.fileListFILENAME             = 6;		
 	
 });

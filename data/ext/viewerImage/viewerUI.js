@@ -28,7 +28,7 @@ console.log("Loading UI for Image Viewer");
 		this.containerElem.addClass("row-fluid");
 
         this.containerElem.append($("<div>", { 
-            class: "span11",
+         //   class: "span11",
         })
         .append($('<img>', {
             id: "imgViewer",
@@ -36,7 +36,7 @@ console.log("Loading UI for Image Viewer");
             src: this.filePath
         })
         ));
-		
+/*		
 		this.containerElem.append($("<div>", { 
 			class: "btn-group btn-group-vertical span1",
 			//style: "margin: 0px",
@@ -108,7 +108,7 @@ console.log("Loading UI for Image Viewer");
         )                
 		
 	    ); // end toolbar    		
-
+*/
     
 	    
 	}	

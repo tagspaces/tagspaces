@@ -59,15 +59,15 @@ define(function(require, exports, module) {
 		var nextFilePath = undefined;
 		var data = UI.fileTable._('tr', {"filter":"applied"});
 		data.forEach(function(entry, index) {
-    		if(entry[4] == filePath) {
+    		if(entry[TSCORE.fileListFILEPATH] == filePath) {
     			var nextIndex = index+1;
     			if(nextIndex < data.length) {
-    				nextFilePath = data[nextIndex][4];	    				
+    				nextFilePath = data[nextIndex][TSCORE.fileListFILEPATH];	    				
     			} else {
-    				nextFilePath = data[0][4];
+    				nextFilePath = data[0][TSCORE.fileListFILEPATH];
     			}    			
     		}    		
-    		console.log("Path: "+entry[4]);
+    		console.log("Path: "+entry[TSCORE.fileListFILEPATH]);
 		});
 		TSCORE.PerspectiveManager.clearSelectedFiles();		
 		console.log("Next file: "+nextFilePath);
@@ -78,15 +78,15 @@ define(function(require, exports, module) {
 		var prevFilePath = undefined;
 		var data = UI.fileTable._('tr', {"filter":"applied"});
 		data.forEach(function(entry, index) {
-    		if(entry[4] == filePath) {
+    		if(entry[TSCORE.fileListFILEPATH] == filePath) {
     			var prevIndex = index-1;
     			if(prevIndex >= 0) {
-    				prevFilePath = data[prevIndex][4];	    				
+    				prevFilePath = data[prevIndex][TSCORE.fileListFILEPATH];	    				
     			} else {
-    				prevFilePath = data[data.length-1][4];
+    				prevFilePath = data[data.length-1][TSCORE.fileListFILEPATH];
     			}
     		}    		
-    		console.log("Path: "+entry[4]);
+    		console.log("Path: "+entry[TSCORE.fileListFILEPATH]);
 		});
 		TSCORE.PerspectiveManager.clearSelectedFiles();
 		console.log("Prev file: "+prevFilePath);
