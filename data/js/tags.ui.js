@@ -95,7 +95,12 @@ define(function(require, exports, module) {
 	
 	function initDialogs() {
         $( "#editTagInTreeButton" ).click( function() {
-            TSCORE.Config.editTag(TSCORE.selectedTagData, $( "#tagInTreeName" ).val() )
+            TSCORE.Config.editTag(
+                TSCORE.selectedTagData, 
+                $( "#tagInTreeName" ).val(), 
+                $( "#tagColor" ).val(),
+                $( "#tagTextColor" ).val()
+                )
             generateTagGroups();    
         });   
 
@@ -217,7 +222,8 @@ define(function(require, exports, module) {
 	                "tag":           TSCORE.Config.Settings["tagGroups"][i]["children"][j].title, 
 	                "parentKey":     TSCORE.Config.Settings["tagGroups"][i].key,
 	                "title":         "Opens context menu for "+TSCORE.Config.Settings["tagGroups"][i]["children"][j].title,
-	                "text":          TSCORE.Config.Settings["tagGroups"][i]["children"][j].title+" ", 
+	                "text":          TSCORE.Config.Settings["tagGroups"][i]["children"][j].title+" ",
+	                "style":         generateTagStyle(TSCORE.Config.Settings["tagGroups"][i]["children"][j]), 
 	            })            
 	            .click( function() {
 	                TSCORE.selectedTag = $(this).attr("tag");
@@ -260,13 +266,27 @@ define(function(require, exports, module) {
 	                filename: fileName,
 	            	filepath: filePath,                
 	                "class":  "btn btn-small btn-success tagButton", 
-	                text: tags[i]+" "
+	                text: tags[i]+" ",
+	                style: generateTagStyle(TSCORE.Config.findTag(tags[i]))
 	                })
 	                .append("<span class='caret'/>")
                 );   
 	        }   
 	    }
 	    return wrapper.html();        
+	}
+	
+	// Get the color for a tag
+	function generateTagStyle(tagObject) {
+        var tagStyle = "";
+        if(tagObject.color != undefined) {
+           var textColor = tagObject.textcolor;
+           if(textColor == undefined) {
+              textColor = "white"; 
+           }
+           tagStyle = "color: "+textColor+" !important; background-color: "+tagObject.color+" !important;"
+        }
+        return tagStyle;	    
 	}
 	
     // Helper function generating file extension button
@@ -307,7 +327,27 @@ define(function(require, exports, module) {
     }
 
     function showTagEditInTreeDialog() {
-        $( "#tagInTreeName" ).val(TSCORE.selectedTagData.title);         
+        $( "#tagInTreeName" ).val(TSCORE.selectedTagData.title);
+        if(TSCORE.selectedTagData.color == undefined) {
+            $( "#tagColor" ).val($( "#tagColor" ).attr("placeholder"));                        
+        } else {
+            $( "#tagColor" ).val(TSCORE.selectedTagData.color);            
+        }
+        if(TSCORE.selectedTagData.textcolor == undefined) {
+            $( "#tagTextColor" ).val($( "#tagTextColor" ).attr("placeholder"));                        
+        } else {
+            $( "#tagTextColor" ).val(TSCORE.selectedTagData.textcolor);            
+        }
+        /*$( "#tagColor" ).pickAColor({
+                showSpectrum            : true,
+                showSavedColors         : true,
+                saveColorsPerElement    : true,
+                fadeMenuToggle          : true,
+                showAdvanced            : true,
+                showHexInput            : true,
+                showBasicColors         : true
+            });         
+        $( "#tagTextColor" ).pickAColor();*/         
         $( '#dialogEditInTreeTag' ).modal({show: true});        
     }	
 

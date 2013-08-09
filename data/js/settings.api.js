@@ -90,6 +90,8 @@ define(function(require, exports, module) {
 			        {
 			            "title":"book",
 			            "type":"plain",
+                        "color":"#F00",
+                        "textcolor":"#0F0",                        
 			        },        
 			        {
 			            "title":"paper",
@@ -255,18 +257,17 @@ define(function(require, exports, module) {
 	    return false;   
 	}
 	
-	// Not used
-	var findTag = function(tagName, tagGroupKey) {
+	// Returns the tag information from the setting for a given tag 
+	var findTag = function(tagName) {
 	    for(var i=0; i < exports.Settings["tagGroups"].length; i++) {
-	        if(exports.Settings["tagGroups"][i].key == tagGroupKey) {
-	            // console.log("Current taggroup "+exports.Settings["tagGroups"][i].key);
+//	        if(exports.Settings["tagGroups"][i].key == tagGroupKey) {
 	            for(var j=0; j < exports.Settings["tagGroups"][i]["children"].length; j++) {
 	                // console.log("Current tagname "+exports.Settings["tagGroups"][i]["children"][j].title);
 	                if(exports.Settings["tagGroups"][i]["children"][j].title == tagName) {
 	                    return exports.Settings["tagGroups"][i]["children"][j];
 	                }
 	            }
-	        }        
+//	        }        
 	    }
 	    return false;   
 	}
@@ -329,12 +330,14 @@ define(function(require, exports, module) {
 	    saveSettings();    
 	}
 	
-	var editTag = function(tagData, newTagName) {
+	var editTag = function(tagData, newTagName, newColor, newTextColor) {
 	    for(var i=0; i < exports.Settings["tagGroups"].length; i++) {
 	        if(exports.Settings["tagGroups"][i].key == tagData.parentKey) {
 	            for(var j=0; j < exports.Settings["tagGroups"][i]["children"].length; j++) {
 	                if(exports.Settings["tagGroups"][i]["children"][j].title == tagData.title) {
 	                    exports.Settings["tagGroups"][i]["children"][j].title = newTagName;
+                        exports.Settings["tagGroups"][i]["children"][j].color = newColor;
+                        exports.Settings["tagGroups"][i]["children"][j].textcolor = newTextColor;                        
 	                    break;
 	                }
 	            }
@@ -575,6 +578,7 @@ define(function(require, exports, module) {
     exports.deleteTagGroup                			= deleteTagGroup;	
     exports.editTag                					= editTag;	
     exports.createTag                				= createTag;
+    exports.findTag                                 = findTag;
     exports.moveTag                                 = moveTag	
     exports.editTagGroup                			= editTagGroup;	
     exports.moveTagGroup                            = moveTagGroup;
