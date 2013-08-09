@@ -261,9 +261,18 @@ Still Missing:
         // currently the file is copied to the new location and than
         // deleted from the old location
         console.log("Renaming file: "+filePath+" to "+newFilePath);
+        if(filePath == newFilePath) {
+            console.error("Initial and target filenames are the same...");
+            return;            
+        }
         if(nativeIO.fileExists(filePath)) {
             var blob;
             var size = nativeIO.getFileSize(filePath);
+            // TODO remove the 5MB restriction
+            if(size > 5*1024*1024) {
+                TSCORE.showAlertDialog("Currently TagSpaces does not support renaming/tagging of files bigger than 5MB!");
+                return;                
+            }
             if (size){
                 var byteArray = nativeIO.contentsAtPath(filePath);
                 blob = new Int8Array(byteArray);
@@ -309,7 +318,7 @@ Still Missing:
     exports.openDirectory = function(dirPath) {
         // TODO implement openDirectory
         console.log("Open directory functionality not implemented on chrome yet!");
-        TSCORE.showAlertDialog("Select file functionality not implemented on chrome yet!")
+        TSCORE.showAlertDialog("Select file functionality not implemented on chrome yet!");
     }
 	
 	exports.openExtensionsDirectory = function() {
