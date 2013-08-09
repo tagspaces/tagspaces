@@ -67,10 +67,10 @@ html, body {
 	padding: 0px;
 	font-size: 1.4em;
 	margin: 3px;
-  color: white;
+    color: white;
 	font-weight: bold;
 	padding-left: 32px;
-  padding-top: 4px;	
+    padding-top: 4px;	
 	background: url("logo28.png") no-repeat left center ;
 	background-position: 0px 0px;
 	height: 31px;
@@ -211,6 +211,7 @@ li hr {
     margin: 0px;
     z-index: 9999;  
     text-align: left;
+    cursor: move;
 }
 
 .extTagButton {
