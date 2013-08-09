@@ -5,29 +5,25 @@
 define(function(require, exports, module) {
 "use strict";
 
-	console.log("Loading viewerMD");
+	console.log("Loading viewerText");
 
-	exports.id = "viewerMD"; // ID should be equal to the directory name where the ext. is located   
-	exports.title = "MD Viewer";
-	exports.type = "editor";
-	exports.supportedFileTypes = [ "md", "markdown", "mdown" ];
+	exports.id = "viewerText"; // ID should be equal to the directory name where the ext. is located   
+	exports.title = "Text Viewer";
+	exports.type = "viewer";
+	exports.supportedFileTypes = [ "*" ];
 	
 	var TSCORE = require("tscore");	
 	
-	var md2htmlConverter = undefined;
 	var containerElID = undefined;
 	
 	var extensionDirectory = TSCORE.Config.getExtensionPath()+"/"+exports.id;
 	
 	exports.init = function(filePath, containerElementID) {
-	    console.log("Initalization MD Viewer...");
+	    console.log("Initalization Text Viewer...");
 	    containerElID = containerElementID;
-	    // TODO create a css namespace for the specific styles
-	//	require(['css!'+extensionDirectory+'/bootstrapLite.css']);
-		require([extensionDirectory+'/showdown/showdown.js'], function() {
-			md2htmlConverter = new Showdown.converter();
-			TSCORE.IO.loadTextFile(filePath);
-		});
+
+    	TSCORE.IO.loadTextFile(filePath);
+
 	}
 	
 	exports.setFileType = function(fileType) {
@@ -39,8 +35,13 @@ define(function(require, exports, module) {
 	}
 	
 	exports.setContent = function(content) {
-	   var html = md2htmlConverter.makeHtml(content);
-	   $('#'+containerElID).append(html);   
+        $('#'+containerElID).empty();
+        $('#'+containerElID).append($('<pre>', {
+            style: "height: 100%; margin: 3px",
+            })
+            .append(content)
+            ); 
+
 	}
 	
 	exports.getContent = function() {
