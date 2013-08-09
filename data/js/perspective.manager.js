@@ -192,7 +192,7 @@ var changeView = function (viewType) {
     TSCORE.PerspectiveManager.clearSelectedFiles(); 
 
 	// Reset the filter by a view change
-	setFileFilter("");
+	//setFileFilter("");
 	  
 //    TSCORE.hideLoadingAnimation();     
 }
