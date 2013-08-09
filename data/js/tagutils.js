@@ -21,6 +21,16 @@ define(function(require, exports, module) {
         return filePath.substring(filePath.lastIndexOf(DIR_SEPARATOR) + 1, filePath.length);
     }
 
+    function extractFileNameWithoutExt(filePath) {
+        var fileName = extractFileName(filePath);
+        var indexOfDot = fileName.lastIndexOf(".");
+        if(indexOfDot > 0) {
+            return fileName.substring(0, indexOfDot);            
+        } else {
+            return fileName;
+        }
+    }
+
     function extractContainingDirectoryPath(filePath) {
         return filePath.substring(0, filePath.lastIndexOf(DIR_SEPARATOR));
     }
@@ -36,25 +46,47 @@ define(function(require, exports, module) {
         return ext;
     }
 
-    // TODO consider [qweq wqeqe].txt 
     function extractTitle(filePath) {
         console.log("Extracting title from: "+filePath);
-        var fileName = extractFileName(filePath);
+        var fileName = extractFileNameWithoutExt(filePath);
 
         var beginTagContainer = fileName.indexOf(BEGIN_TAG_CONTAINER);
-        var indexExtensionSepartor = fileName.lastIndexOf(".");
-        if( (indexExtensionSepartor <= 0) || (indexExtensionSepartor < beginTagContainer) ) {
-            return fileName.trim();
-        } else if( beginTagContainer < 0 ) {
-            return fileName.slice(0,indexExtensionSepartor).trim();
-        } else if( beginTagContainer >= 0 ) {
-            return fileName.slice(0,beginTagContainer).trim();
+        var endTagContainer = fileName.lastIndexOf(END_TAG_CONTAINER);
+        
+        /* cases like "", "t", "[" 
+        if( fileName.length <= 1) {
+        // cases like "asd ] asd ["
+        else if (beginTagContainer > endTagContainer) {
+        // case: [ not found in the filename
+        else if ( beginTagContainer < 0 ) 
+        else if ( endTagContainer < 0 ) */
+
+        if( (beginTagContainer >= 0 ) && (beginTagContainer < endTagContainer) ){
+            // case: "asd[tag1, tag2]"         
+            if(endTagContainer == fileName.trim().length) {
+                return fileName.slice(0,beginTagContainer);                
+            // case: "title1 [tag1 tag2] title2"         
+            } else {
+                return fileName.slice(0,beginTagContainer)+fileName.slice(endTagContainer+1,fileName.length);
+            }
+        } 
+        else 
+        {
+            return fileName;                            
         }
     } 
 
-    function formatFileSize(fileSize) {
-        // TODO implement format file size
-        return fileSize;
+    function formatFileSize(sizeInBytes, siSystem) {
+        var threshold = siSystem ? 1000 : 1024;
+        if(sizeInBytes < threshold) return sizeInBytes + ' B';
+        var units = siSystem ? ['kB','MB','GB','TB','PB','EB'] : ['KiB','MiB','GiB','TiB','PiB','EiB'];
+        var cUnit = -1;
+        do {
+            sizeInBytes /= threshold;
+            ++cUnit;
+        } 
+        while(sizeInBytes >= threshold);
+        return sizeInBytes.toFixed(1)+' '+units[cUnit];
     }
 
     function formatDateTime(date, includeTime) {
@@ -86,11 +118,11 @@ define(function(require, exports, module) {
     function extractTags(filePath) {
         console.log("Extracting tags from: "+filePath);
         
-        var fileName = extractFileName(filePath);
+        var fileName = extractFileNameWithoutExt(filePath);
         
         var tags = [];
         var beginTagContainer = fileName.indexOf(BEGIN_TAG_CONTAINER);
-        var endTagContainer = fileName.indexOf(END_TAG_CONTAINER);
+        var endTagContainer = fileName.lastIndexOf(END_TAG_CONTAINER);
         if( ( beginTagContainer < 0 ) || ( endTagContainer < 0 ) || ( beginTagContainer >= endTagContainer ) ) {
             console.log("Filename does not contains tags. Aborting extraction.");
             return tags;
@@ -286,6 +318,7 @@ define(function(require, exports, module) {
     exports.DIR_SEPARATOR                       = DIR_SEPARATOR;
     exports.isWindows                           = isWindows;
     exports.extractFileName                     = extractFileName;
+    exports.extractFileNameWithoutExt           = extractFileNameWithoutExt
     exports.extractContainingDirectoryPath      = extractContainingDirectoryPath;
     exports.extractContainingDirectoryName      = extractContainingDirectoryName;
     exports.extractFileExtension                = extractFileExtension;

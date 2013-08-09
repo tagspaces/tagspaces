@@ -251,7 +251,7 @@ console.log("Loading UI for perspectiveDefault");
 	            { "sTitle": "Title", "sClass": "right" },
                 { "sTitle": "Extension" },
 	            { "sTitle": "Tags" },            
-	            { "sTitle": "Size(bytes)" },
+	            { "sTitle": "Size" },
 	            { "sTitle": "Date Modified" },
 	            { "sTitle": "Path" },
                 { "sTitle": "File Name" }                
@@ -277,7 +277,7 @@ console.log("Loading UI for perspectiveDefault");
 	            }, 
 	            { // Filesize column
 	                "mRender": function ( data, type, row ) { 
-	                	return TSCORE.TagUtils.formatFileSize(data); 
+	                	return TSCORE.TagUtils.formatFileSize(data, true); 
 	                	},
 	                "aTargets": [ TSCORE.fileListFILESIZE ]
 	            },
