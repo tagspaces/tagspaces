@@ -26,6 +26,13 @@ define(function(require, exports, module) {
             TSCORE.TagUtils.removeTag(TSCORE.selectedFiles[0],TSCORE.selectedTag);
         });                
 
+        $( "#tagMenuMoveTagRight" ).click( function() {
+            TSCORE.TagUtils.moveTagLocation(TSCORE.selectedFiles[0],TSCORE.selectedTag, "next");
+        });                
+
+        $( "#tagMenuMoveTagLeft" ).click( function() {
+            TSCORE.TagUtils.moveTagLocation(TSCORE.selectedFiles[0],TSCORE.selectedTag, "prev");
+        });                
 	
 	    // Context menu for the tags in the tag tree
         $( "#tagTreeMenuAddTagToFile" ).click( function() {

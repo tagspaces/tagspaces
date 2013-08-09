@@ -215,6 +215,9 @@ define(function(require, exports, module) {
         } else {
             // File does not have an extension
             newFileName = fileName.substring(0,beginTagContainer)+tagsString+fileName.substring(endTagContainer+1,fileName.length);  
+        }
+        if(newFileName.length < 1) {
+            throw "Generated filename is invalid";
         } 
         return newFileName;    
     }
@@ -247,6 +250,40 @@ define(function(require, exports, module) {
         for (var i=0; i < filePathArray.length; i++) {
            writeTagsToFile(filePathArray[i], tagArray);
         }
+    }    
+    
+    // Moves the location of tag in the file name
+    // possible directions should be next, prev, last, first
+    function moveTagLocation(filePath, tagName, direction) {
+        console.log("Moves the location of tag in the file name: "+filePath);
+
+        var fileName = extractFileName(filePath);
+        
+        var containingDirectoryPath = extractContainingDirectoryPath(filePath);
+            
+        var extractedTags = extractTags(filePath);
+
+        for (var i=0; i < extractedTags.length; i++) {
+            // check if tag is already in the tag array
+            if(extractedTags[i] == tagName) {
+                if((direction == "prev") && (i > 0)) {
+                    var tmpTag = extractedTags[i-1];
+                    extractedTags[i-1] = extractedTags[i]
+                    extractedTags[i] = tmpTag;
+                    break;
+                } else if ((direction == "next") && i < (extractedTags.length-1) ){
+                    var tmpTag = extractedTags[i];
+                    extractedTags[i] = extractedTags[i+1]
+                    extractedTags[i+1] = tmpTag;
+                    break;
+                }
+            } 
+        }    
+        
+        var newFileName = generateFileName(fileName, extractedTags);
+       
+        IOAPI.renameFile(filePath, containingDirectoryPath+DIR_SEPARATOR+newFileName);
+        
     }    
     
     // Replaces a tag with a new one
@@ -328,6 +365,7 @@ define(function(require, exports, module) {
     exports.extractTags                         = extractTags;
     exports.suggestTags                         = suggestTags;
     exports.writeTagsToFile                     = writeTagsToFile;
+    exports.moveTagLocation                     = moveTagLocation;
     exports.renameTag                           = renameTag;
     exports.removeTag                           = removeTag;
     exports.addTag                              = addTag;
