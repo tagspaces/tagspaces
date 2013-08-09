@@ -19,7 +19,7 @@ console.log("Loading UI for perspectiveDefault");
 	    this.viewToolbar = $("#"+this.extensionID+"Toolbar").empty();
 		this.viewFooter = $("#"+this.extensionID+"Footer").empty();
 		
-		this.showThumbs = false;
+		this.thumbEnabled = false;
 		this.showFileDetails = false;
 		this.showTags = true;
 		this.currentTmbSize = 0;
@@ -33,13 +33,13 @@ console.log("Loading UI for perspectiveDefault");
 	    
 	    var thumbHTML = "";	    
         if(supportedFileTypeThumnailing.indexOf(fileExt) >= 0) {
-			thumbHTML = $('<p>').append( $('<img>', { 
+			thumbHTML = $('<span>').append( $('<img>', { 
             	title: fileName, 
             	class: "thumbImg",
             	filepath: 'file:///'+filePath, 
             	style: "width: 0px; height: 0px; border: 0px" 
         	})).html();
-        	thumbHTML = thumbHTML + " ";
+        	thumbHTML = "<br>" + thumbHTML;
         } 	    
 
         var checkboxHTML = $('<legend>', {
@@ -63,7 +63,7 @@ console.log("Loading UI for perspectiveDefault");
             .append("<span class='caret'/>")
 	        ).html();
 	        
-	    return checkboxHTML+" "+buttonHTML +" "+ thumbHTML + titleHTML;        
+	    return checkboxHTML+" "+buttonHTML +" " + titleHTML + thumbHTML;        
 	}
 
 	ExtUI.prototype.buildUI = function() {
@@ -81,19 +81,23 @@ console.log("Loading UI for perspectiveDefault");
                 id: this.extensionID+"ToogleSelectAll",    
             })
             .click(function() {
-                if($(this).find("input").prop("checked")) {
+                if($(this).find("i").attr("class") == "icon-check-empty") {
                     TSCORE.selectedFiles = [];   
                     $('#'+self.extensionID+'FileTable tbody tr').each(function(){
                         $(this).addClass('ui-selected');
                         $(this).find(".fileSelection").prop("checked",true);
                         TSCORE.selectedFiles.push($(this).find(".fileTitleButton").attr("filepath"));  
                         self.handleElementActivation();                          
-                    }); 
+                    });
+                    $(this).find("i").removeClass("icon-check-empty"); 
+                    $(this).find("i").addClass("icon-check"); 
                 } else {
-                    TSCORE.PerspectiveManager.clearSelectedFiles();                
+                    TSCORE.PerspectiveManager.clearSelectedFiles();
+                    $(this).find("i").removeClass("icon-check");                                     
+                    $(this).find("i").addClass("icon-check-empty");
                 }            
             })
-            .append( "<input type='checkbox' style='margin-top: -3px;'>" )
+            .append( "<i class='icon-check-empty'>" )
             )
             
         )
@@ -104,40 +108,40 @@ console.log("Loading UI for perspectiveDefault");
 	    })
 
     	    .append($("<button>", { 
-    			class: "btn  disabled",
+    			class: "btn ",
     	        title: "Create new file",
     	        id: this.extensionID+"CreateFileButton",    
     	    })
+    	    .prop('disabled', true)
             .click(function() {
                 TSCORE.showFileCreateDialog();
             })
             .append( "<i class='icon-plus'>" )
-    //        .append(" New")
             )
         
     	    .append($("<button>", { 
-                class: "btn  disabled",
+                class: "btn",
     	        title: "Show subfolders content. \nOn subfolder with many files, this step can take some time!",
     	        id: this.extensionID+"IncludeSubDirsButton",    
     	    })
+            .prop('disabled', true)    	    
     	    .click(function() {
     		    $( "#"+self.extensionID+"IncludeSubDirsButton" ).addClass( "disabled" );
     			TSCORE.IO.createDirectoryIndex(TSCORE.currentPath);
     	    })
     	    .append( $("<i>", { class: "icon-retweet", }) )
-    //	    .append(" Subdirs")
     	    )
     	    
     	    .append($("<button>", { 
-                class: "btn  disabled",	        
+                class: "btn",	        
     	        title: "Tag Selected Files",
     	        id: this.extensionID+"TagButton",    
     	    })
+            .prop('disabled', true)
     	    .click(function() {
     			TSCORE.showAddTagsDialog();
     	    })
     	    .append( $("<i>", { class: "icon-tag", }) )
-    //	    .append(" Add Tag")
     	    )    
     
     	    .append($("<button>", { 
@@ -150,7 +154,6 @@ console.log("Loading UI for perspectiveDefault");
     			self.toggleThumbnails();
     	    })
     	    .append( $("<i>", { class: "icon-picture", }) )
-    	    //.append("Toggle Thumbnails")
     	    )
      
     	    .append($("<button>", { 
@@ -162,7 +165,7 @@ console.log("Loading UI for perspectiveDefault");
     			self.switchThumbnailSize();
     	    })	    
     	    .append( $("<i>", { class: "icon-zoom-in", }) )
-    	    //.append("Zoom In")
+            .prop('disabled', true)
     	    )	    	    
     		
     	); // end toolbar
@@ -180,7 +183,6 @@ console.log("Loading UI for perspectiveDefault");
 					self.toggleFileDetails();
 			    })
 			    .append( $("<i>", { class: "icon-list-alt", }) )
-			    //.append("File Details")
 		    )
 		     	    
 			.append($("<button>", { 
@@ -192,7 +194,6 @@ console.log("Loading UI for perspectiveDefault");
 					self.toggleTags();
 			    })		    
 			    .append( $("<i>", { class: "icon-tags", }) )
-			    //.append("Tags")
 		    )	     
 	    ) // end button group
 
@@ -336,16 +337,10 @@ console.log("Loading UI for perspectiveDefault");
 	      }
 	    }) */
 	   
-	    // Activating nano scroller
-	    //$('#'+this.extensionID+"FileTable_wrapper").addClass("nano");
-	    //$('#'+this.extensionID+"FileTable_wrapper").nanoScroller();
 	}			
 	
 	ExtUI.prototype.reInitTableWithData = function(fileList) {
 		$('#'+this.extensionID+"FileTable_wrapper").hide();
-		
-		// handle thumbnail activation
-		this.showThumbs  = false;
 					
 		// Clearing the old data
 	    this.fileTable.fnClearTable();  
@@ -463,8 +458,10 @@ console.log("Loading UI for perspectiveDefault");
 	
 	    $('#'+this.extensionID+"FileTable_wrapper").show();  
 
-	    $( "#"+this.extensionID+"CreateFileButton" ).removeClass( "disabled" );
-	    $( "#"+this.extensionID+"IncludeSubDirsButton" ).removeClass( "disabled" );
+	    $( "#"+this.extensionID+"CreateFileButton" ).prop('disabled', false);
+	    $( "#"+this.extensionID+"IncludeSubDirsButton" ).prop('disabled', false);
+	    
+        this.refreshThumbnails();	    
 	    
 	}
 	
@@ -500,23 +497,36 @@ console.log("Loading UI for perspectiveDefault");
 		}
 		this.showFileDetails = !this.showFileDetails;
 	}
+
+    ExtUI.prototype.enableThumbnails = function() {
+        $( "#"+this.extensionID+"IncreaseThumbsButton" ).prop('disabled', false);
+        $.each(this.fileTable.$('.thumbImg'), function() {
+            $(this).attr('style', "");
+            $(this).attr('src',$(this).attr('filepath'));
+        });
+        $('.thumbImg').css({"max-width":TMB_SIZES[this.currentTmbSize], "max-height":TMB_SIZES[this.currentTmbSize] });     
+    }   
+    
+    ExtUI.prototype.disableThumbnails = function() {
+        //this.currentTmbSize = 0;
+        $( "#"+this.extensionID+"IncreaseThumbsButton" ).prop('disabled', true);
+        $.each(this.fileTable.$('.thumbImg'), function() {
+            $(this).attr('style', "width: 0px; height: 0px; border: 0px");
+            $(this).attr('src',"");
+        });
+    }     
+    
+    ExtUI.prototype.refreshThumbnails = function() {
+        if(this.thumbEnabled) {
+            this.enableThumbnails();
+        } else {
+            this.disableThumbnails();
+        }
+    }        
 	
 	ExtUI.prototype.toggleThumbnails = function() {
-		if(this.showThumbs) {
-			this.currentTmbSize = 0;
-			$( "#"+this.extensionID+"IncreaseThumbsButton" ).addClass( "disabled" );
-			$.each(this.fileTable.$('.thumbImg'), function() {
-            	$(this).attr('style', "width: 0px; height: 0px; border: 0px");
-				$(this).attr('src',"");
-			});
-		} else {
-			$( "#"+this.extensionID+"IncreaseThumbsButton" ).removeClass( "disabled" );
-			$.each(this.fileTable.$('.thumbImg'), function() {
-            	$(this).attr('style', "");
-				$(this).attr('src',$(this).attr('filepath'));
-			});
-		}
-		this.showThumbs = !this.showThumbs;
+		this.thumbEnabled = !this.thumbEnabled;
+        this.refreshThumbnails();
 	}	
 	
 	ExtUI.prototype.toggleTags = function() {
@@ -534,11 +544,11 @@ console.log("Loading UI for perspectiveDefault");
 	    var tagButton = $( "#"+this.extensionID+"TagButton" );
 	    
 	    if (TSCORE.selectedFiles.length > 1) {
-	        tagButton.removeClass( "disabled" );
+	        tagButton.prop('disabled', false);
 	    } else if (TSCORE.selectedFiles.length == 1) {
-	       	tagButton.removeClass( "disabled" );
+	       	tagButton.prop('disabled', false);
 	    } else {
-	        tagButton.addClass( "disabled" );
+	        tagButton.prop('disabled', true);
 	    }    
 	}
 

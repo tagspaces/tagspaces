@@ -23,11 +23,6 @@ define(function(require, exports, module) {
 
 	function init() {
 		console.log("Initializing perspective "+extensionID);
-	}
-	
-	var load = function () {
-		console.log("Loading perspective "+extensionID);
-
         // TODO use css require extension for loading 'css!datatablescss' 
         require([
             extensionDirectory+'/perspectiveUI.js',
@@ -36,10 +31,16 @@ define(function(require, exports, module) {
                 UI = new extUI.ExtUI(extensionID);                          
                 UI.buildUI();
                 UI.initTable();
-                UI.reInitTableWithData(TSCORE.fileList);    
-                TSCORE.hideLoadingAnimation();                        
             }
         );
+	}
+	
+	var load = function () {
+		console.log("Loading perspective "+extensionID);
+		if(UI != undefined) {
+            UI.reInitTableWithData(TSCORE.fileList);    
+            TSCORE.hideLoadingAnimation();                        		    
+		}
 	}
 	
 	var setFileFilter = function (filter) {
