@@ -204,9 +204,10 @@ console.log("Loading UI for perspectiveDefault");
             .append($("<input>", { 
                 type: "text",
                 //name: "fileFilter",
-                class: "input-small",
+                class: "input-medium",
                 id:   this.extensionID+"FilterBox",
-                placeholder: "Filter",
+                placeholder: "Filename Filter",
+                style: "width: 100px;"
             }).keyup(function() {
                 TSCORE.PerspectiveManager.clearSelectedFiles();
                 self.fileTable.fnFilter(this.value);

@@ -212,6 +212,11 @@ li hr {
     z-index: 9999;  
     text-align: left;
     cursor: move;
+    border-color: #eee;
+}
+
+.fileTitleButton:hover {
+    border-color: #ddd;
 }
 
 .extTagButton {
