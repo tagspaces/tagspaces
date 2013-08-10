@@ -7,7 +7,7 @@ found in the LICENSE file.
     <property file="build.properties"/>
     <property file="build.number"/>
 	
-	<property name="version" value="1.4"/>
+	<property name="version" value="1.5"/>
     <property name="package" value="tagspaces"/>
     <property name="appname" value="TagSpaces"/>
 	<property name="defaultSettings.file" value="settings.api.js"/>
