@@ -133,7 +133,7 @@ define(function(require, exports, module) {
     	
 	exports.loadTextFile = function(filePath) {
 		console.log("Loading file: "+filePath);
-        fs.readFile(filePath, function(error, content) {
+        fs.readFile(filePath, 'utf8', function(error, content) {
             if (error) {
                 console.log("Loading file "+filePath+" failed "+error);
                 return;
