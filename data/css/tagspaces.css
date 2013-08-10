@@ -1,4 +1,4 @@
-/* Copyright (c) 2012 The Tagspaces Authors. 
+/* Copyright (c) 2012 The TagSpaces Authors. 
  * All rights reserved. Use of this source code 
  * is governed by a AGPL3 license that can be  
  * found in the LICENSE file. */
@@ -190,6 +190,12 @@ li hr {
 .tagButton:active {
     color: white;
 } 
+
+.simplecolorpicker {
+    width: 40px;
+    border: 1px solid #999 !important;    
+}
+
 
 .fileButton {
     padding: 1px;

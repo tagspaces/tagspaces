@@ -36,8 +36,8 @@ define(function(require, exports, module) {
 	
 	exports.setContent = function(content) {
         $('#'+containerElID).empty();
-        $('#'+containerElID).append($('<pre>', {
-            style: "height: 100%; margin: 3px",
+        $('#'+containerElID).append($('<textarea>', {
+            style: "overflow: auto; height: 100%; margin: 3px; background-color: white; border-width: 0px;",
             })
             .append(content)
             ); 

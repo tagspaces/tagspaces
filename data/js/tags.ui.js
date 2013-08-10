@@ -328,26 +328,18 @@ define(function(require, exports, module) {
 
     function showTagEditInTreeDialog() {
         $( "#tagInTreeName" ).val(TSCORE.selectedTagData.title);
-        if(TSCORE.selectedTagData.color == undefined) {
-            $( "#tagColor" ).val($( "#tagColor" ).attr("placeholder"));                        
+        $( "#tagColor" ).simplecolorpicker({picker: true});    
+        if(TSCORE.selectedTagData.color == undefined || TSCORE.selectedTagData.color.length < 1) {
+            $( "#tagColor" ).simplecolorpicker('selectColor', '#51b749');  
         } else {
-            $( "#tagColor" ).val(TSCORE.selectedTagData.color);            
+            $( "#tagColor" ).simplecolorpicker('selectColor', TSCORE.selectedTagData.color);   
         }
-        if(TSCORE.selectedTagData.textcolor == undefined) {
-            $( "#tagTextColor" ).val($( "#tagTextColor" ).attr("placeholder"));                        
+        $( "#tagTextColor" ).simplecolorpicker({picker: true});        
+        if(TSCORE.selectedTagData.textcolor == undefined || TSCORE.selectedTagData.textcolor.length < 1) {
+            $( "#tagTextColor" ).simplecolorpicker('selectColor', '#ffffff');            
         } else {
-            $( "#tagTextColor" ).val(TSCORE.selectedTagData.textcolor);            
+            $( "#tagTextColor" ).simplecolorpicker('selectColor', TSCORE.selectedTagData.textcolor);            
         }
-        /*$( "#tagColor" ).pickAColor({
-                showSpectrum            : true,
-                showSavedColors         : true,
-                saveColorsPerElement    : true,
-                fadeMenuToggle          : true,
-                showAdvanced            : true,
-                showHexInput            : true,
-                showBasicColors         : true
-            });         
-        $( "#tagTextColor" ).pickAColor();*/         
         $( '#dialogEditInTreeTag' ).modal({show: true});        
     }	
 

@@ -7,6 +7,7 @@
     can be found in the LICENSE file.
     -->    
 	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="shortcut icon" type="image/x-icon" href="icons/icon16.png">
 	<title>TagSpaces</title>
     <script type="text/javascript" data-main="loader" src="libs/requirejs/require.js"></script>
@@ -15,7 +16,7 @@
     <link rel="stylesheet" type="text/css" href="libs/jsoneditor/jsoneditor.css">
     <link rel="stylesheet" type="text/css" href="libs/jquerydropdown/jquery.dropdown.css">    
     <link rel="stylesheet" type="text/css" href="libs/bootstrap/css/bootstrap.css">
-    <link rel="stylesheet" type="text/css" href="libs/pickacolor/css/pick-a-color-1.1.7.min.css">
+    <link rel="stylesheet" type="text/css" href="libs/jquery-simplecolorpicker/jquery.simplecolorpicker.css">
     <link rel="stylesheet" type="text/css" href="css/tagspaces.css">
 </head>
 <body style="background-color: lightgray;">
@@ -284,13 +285,43 @@
             <div class="control-group">
                 <label class="control-label" for="tagColor">Color</label>
                 <div class="controls">
-                    <input type="text" name="tagColor" id="tagColor" value="green" placeholder="green" class="pick-a-color" />
+                    <select id="tagColor" >
+                      <option value="#ac725e">#ac725e</option>
+                      <option value="#d06b64">#d06b64</option>
+                      <option value="#f83a22">#f83a22</option>
+                      <option value="#fa573c">#fa573c</option>
+                      <option value="#ff7537">#ff7537</option>
+                      <option value="#ffad46">#ffad46</option>
+                      <option value="#42d692">#42d692</option>
+                      <option value="#16a765">#16a765</option>
+                      <option value="#7bd148">#7bd148</option>
+                      <option value="#7bd148">#7bd148</option>
+                      <option value="#7bd148">#7bd148</option>
+                      <option value="#fad165">#fad165</option>
+                      <option value="#92e1c0">#92e1c0</option>
+                      <option value="#9fe1e7">#9fe1e7</option>
+                      <option value="#9fc6e7">#9fc6e7</option>
+                      <option value="#4986e7">#4986e7</option>
+                      <option value="#9a9cff">#9a9cff</option>
+                      <option value="#b99aff">#b99aff</option>
+                      <option value="#c2c2c2">#c2c2c2</option>
+                      <option value="#cabdbf">#cabdbf</option>
+                      <option value="#cca6ac">#cca6ac</option>
+                      <option value="#f691b2">#f691b2</option>
+                      <option value="#cd74e6">#cd74e6</option>
+                      <option value="#a47ae2">#a47ae2</option>
+                    </select>
                 </div>
             </div>
             <div class="control-group">
                 <label class="control-label" for="tagTextColor">Text Color</label>
                 <div class="controls">
-                    <input type="text" name="tagTextColor" id="tagTextColor" value="white" placeholder="white" class="pick-a-color"/>
+                    <select id="tagTextColor">
+                      <option value="#ffffff">#ffffff</option>
+                      <option value="#cccccc">#cccccc</option>
+                      <option value="#333333">#333333</option>                      
+                      <option value="#000000">#000000</option>
+                    </select>                    
                 </div>
             </div>            
         </div>
@@ -407,7 +438,7 @@
         <li><a id="startNewInstanceBack" title="Options Dialog"><i class="icon-external-link-sign"></i> New Instance</a></li>
         <li class="divider"></li>
         <li><a id="openOptions" title="Options Dialog"><i class="icon-wrench"></i> Options</a></li>
-        <li><a target="_new" href="https://tagspaces.uservoice.com/forums/213931-general" title="Suggest or vote for a feature"><i class="icon-bullhorn"></i> Vote on feature</a></li>        
+        <li><a target="_new" href="https://tagspaces.uservoice.com/forums/213931-general" title="Suggest or vote for a feature"><i class="icon-bullhorn"></i> Suggest Features</a></li>        
         <li><a target="_new" href="https://github.com/uggrock/tagspaces/issues/" title="Report a issue or enhancement"><i class="icon-flag"></i> Report Issue</a></li>
         <li><a target="_new" href="https://twitter.com/tagspaces" title="Follow on twitter"><i class="icon-twitter"></i> Follow @tagspaces</a></li>
         <li><a href="mailto:info@tagspaces.org" title="Drop a line to the developers"><i class="icon-envelope-alt"></i> Contact Developers</a></li>
