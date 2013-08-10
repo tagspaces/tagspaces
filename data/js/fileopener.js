@@ -247,7 +247,7 @@ define(function(require, exports, module) {
             })                
         )); 
         $( "#tagSuggestionsMenu" ).append($('<li>', {class: "divider"}));
-        $( "#tagSuggestionsMenu" ).append($('<li>').append($('<a>', {text: " Tag Suggestion" })))      
+        $( "#tagSuggestionsMenu" ).append($('<li>').append($('<a>', {text: " Tag Suggestions:" })))      
 	
 	    // Adding context menu entries for creating tags according to the suggested tags
 	    for (var i=0; i < suggTags.length; i++) {        

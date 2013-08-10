@@ -91,7 +91,7 @@ define(function(require, exports, module) {
                 .droppable({
                         greedy: "true",                    
                         accept: '.fileTitleButton',
-                        hoverClass: "btn-info",
+                        hoverClass: "dropOnFolder",
                         drop: function( event, ui ) {
                                 var filePath = ui.draggable.attr("filepath");
                                 var fileName = TSCORE.TagUtils.extractFileName(filePath);
@@ -134,13 +134,13 @@ define(function(require, exports, module) {
 
             var dirButtons = $("<div>").appendTo( "#dirButtonsContent"+i );  
             if(directoryHistory[i]["children"].length <= 0) {
-                    dirButtons.append("<div class='alert alert-info'><strong>Info:</strong> No subfolders found.</div>");          
+                    dirButtons.append("<div class='alert'><strong> No subfolders found</strong></div>");          
             } else {
                 for(var j=0; j < directoryHistory[i]["children"].length; j++) {                    
                     if (TSCORE.Config.getShowUnixHiddenEntries() || 
                             (!TSCORE.Config.getShowUnixHiddenEntries() && (directoryHistory[i]["children"][j].title.indexOf(".") != 0))) {
                         dirButtons.append($("<button>", { 
-                            "class":    "btn btn-warning btn-small", 
+                            "class":    "btn btn-small dirButton", 
                             "key":      directoryHistory[i]["children"][j].key,
                             "title":    directoryHistory[i]["children"][j].key,
                             "style":    "margin: 1px;",
@@ -149,7 +149,7 @@ define(function(require, exports, module) {
                         .droppable({
                             greedy: "true",
                             accept: ".fileTitleButton",
-                            hoverClass: "btn-info",
+                            hoverClass: "dropOnFolder",
                             drop: function( event, ui ) {
                                 // Fixing issue with dropping on stacked/overlapped directories
                                 if( $(this).parent().parent().parent().hasClass("in") ) {
@@ -162,7 +162,7 @@ define(function(require, exports, module) {
                                 }                              
                             }                   
                         }) 
-                        .prepend("<i class='icon-folder-close'></i>")            
+                        .prepend("<i class='icon-folder-close-alt'></i>")            
                         .click( function() {
                             navigateToDirectory($(this).attr("key"));
                         })                   

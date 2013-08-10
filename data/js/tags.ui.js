@@ -218,7 +218,7 @@ define(function(require, exports, module) {
 	        var tagButtons = $("<div>").appendTo( "#tagButtonsContent"+i );  
 	        for(var j=0; j < TSCORE.Config.Settings["tagGroups"][i]["children"].length; j++) {
 	            tagButtons.append($("<a>", { 
-	                "class":         "btn btn-small btn-success tagButton", 
+	                "class":         "btn btn-small tagButton", 
 	                "tag":           TSCORE.Config.Settings["tagGroups"][i]["children"][j].title, 
 	                "parentKey":     TSCORE.Config.Settings["tagGroups"][i].key,
 	                "title":         "Opens context menu for "+TSCORE.Config.Settings["tagGroups"][i]["children"][j].title,
@@ -265,7 +265,7 @@ define(function(require, exports, module) {
 	                tag: tags[i],
 	                filename: fileName,
 	            	filepath: filePath,                
-	                "class":  "btn btn-small btn-success tagButton", 
+	                "class":  "btn btn-small tagButton", 
 	                text: tags[i]+" ",
 	                style: generateTagStyle(TSCORE.Config.findTag(tags[i]))
 	                })
@@ -302,7 +302,7 @@ define(function(require, exports, module) {
                 tag: fileExtension,
                 filename: fileName,
                 filepath: filePath,
-                "class":  "btn btn-small btn-info extTagButton",                
+                "class":  "btn btn-small extTagButton",                
                 text: fileExtension+" "
                 })
                 .append("<span class='caret'/>")

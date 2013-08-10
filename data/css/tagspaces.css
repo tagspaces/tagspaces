@@ -163,39 +163,38 @@ li hr {
     border: 0px;
 }
 
-.suggestedTagButton {
-    background-color: #99B3FF;
-    font-weight: bold;
-    font-size: 1em;
-    color: white;
-    padding: 1px;
-    margin: 1px;
-    border-color: transparent;
-}
-
-/* @baseTagColor; */
-.tagButton {
-    padding: 0px 2px 0px 2px;
-    /* background: #008000 !important; */    
-    color: white !important;
-    margin: 1px;
-    border-color: transparent;
-    z-index: 9999;    
-}
-
-.tagButton:hover {
-    color: white;
-}
-
-.tagButton:active {
-    color: white;
-} 
-
 .simplecolorpicker {
     width: 40px;
     border: 1px solid #999 !important;    
 }
 
+.tagButton .caret, .extTagButton .caret {
+    border-top-color: white !important;
+}
+
+.tagButton {
+    padding: 2px 4px 2px 4px;
+    background: #008000 !important;    
+    color: white !important;
+    margin: 1px;
+    border: 0px;
+    z-index: 9999;    
+    border-radius: 5px !important;
+    text-decoration: none  !important; 
+    text-shadow: 0px 0px !important;   
+}
+
+.extTagButton {
+    padding: 2px 4px 2px 4px;
+    background: #bbb !important;        
+    color: white !important;
+    margin: 1px;
+    border: 0px;
+    z-index: 9999;
+    border-radius: 5px !important;
+    text-decoration: none;
+    text-shadow: 0px 0px !important;      
+}
 
 .fileButton {
     padding: 1px;
@@ -218,20 +217,12 @@ li hr {
     z-index: 9999;  
     text-align: left;
     cursor: move;
-    border-color: #eee;
+/*    border-color: #eee;*/
+    background-image: none;
 }
 
 .fileTitleButton:hover {
     border-color: #ddd;
-}
-
-.extTagButton {
-    padding: 0px 2px 0px 2px;
-    color: white !important;
-    margin: 1px;
-    border-color: transparent;
-    z-index: 9999;  
-    margin: 1px;
 }
 
 #container {
@@ -250,8 +241,8 @@ li hr {
 }
 	
 .ui-layout-north {
-  padding: 0px;
-  height: 40px;
+    padding: 0px;
+    height: 40px;
 	background-color: #333333;
 	overflow: hidden !important;
 }	
@@ -289,7 +280,7 @@ li hr {
 
 .east-north {
 	background-color: #FFFFFF;
-  overflow: hidden !important;	
+    overflow: hidden !important;	
 }	
 
 /* Full screen workaround for webkit browser*/
@@ -302,22 +293,22 @@ li hr {
     background-color: white;
 }
 
-/* Directory Navigation css*/
+/* Directory Navigation #F6A828*/
 
 .dirButton  {
-    padding: 1px;
-    /*  background-color: @directoryColor !important; */
-    font-weight: bold;
-    /* font-size: @tagFontSize; */
-    color: white;
-    margin: 1px;
-    border-color: transparent;
-    /* .roundedTagCorners; */    
+    font-size: 13px;
+    background-color: #f5f5f5;
+    color: #444444;
+    background-image: none;    
+/*    border-color: transparent; */
 }
 
 .dirButton:hover, .dirButton:active, .dirButton:focus {
-  text-decoration: none;
-  color: white;
+    background-color: #dddddd;
+}
+
+.dropOnFolder {
+  background-color: #F6A828 !important;    
 }
 
 /*desaturate(@directoryColor, 30%) */
@@ -399,7 +390,7 @@ table.dataTable tr.odd {
 .activeRow { background: #FFCC99 !important; }
 
 table.dataTable tr.ui-selecting { background: #fff5a3 !important; }
-table.dataTable tr.ui-selected { background: #fff5a3 !important; }
+table.dataTable tr.ui-selected { background: #F7FFC9 !important; }
 
 table.dataTable tr.odd td.sorting_1 { background-color: inherit; }
 table.dataTable tr.odd td.sorting_2 { background-color: inherit; }
@@ -444,17 +435,24 @@ input a.resetFilter {
 
 /* Bootstrap Styles */
 
+.btn, .btn:hover, .btn:focus, .btn:active {
+  background-image: none;
+  border-radius: 2px;
+}
+/*
+.btn-group {
+  border-radius: 2px;
+}
+
+.btn:last-child {
+  border-radius: 0 2px 2px 0;
+} */
+
 .btn-link, .btn-link:hover, .btn-link:focus, .btn-link:active {
   text-decoration: none;
   color: gray;
   text-shadow: none;
-}
-
-/* Folders */
-.btn-warning, .btn-warning:hover, .btn-warning:focus, .btn-warning:active {
-  background-color: #F6A828;
-  background-image: none;
-  text-shadow: none;
+  border-radius: 0px;  
 }
 
 /* Extension #33b5be from logo */

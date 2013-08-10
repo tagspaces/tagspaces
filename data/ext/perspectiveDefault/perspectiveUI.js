@@ -59,7 +59,7 @@ console.log("Loading UI for perspectiveDefault");
 	            filepath: filePath,
 	            class: 'btn fileTitleButton', 
 	        })
-	        .append("<i class='icon-file' />")
+	        .append("<i class='icon-file-alt' />")
             .append("<span class='caret'/>")
 	        ).html();
 	        
