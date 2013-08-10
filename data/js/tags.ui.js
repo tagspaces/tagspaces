@@ -330,7 +330,7 @@ define(function(require, exports, module) {
         $( "#tagInTreeName" ).val(TSCORE.selectedTagData.title);
         $( "#tagColor" ).simplecolorpicker({picker: true});    
         if(TSCORE.selectedTagData.color == undefined || TSCORE.selectedTagData.color.length < 1) {
-            $( "#tagColor" ).simplecolorpicker('selectColor', '#51b749');  
+            $( "#tagColor" ).simplecolorpicker('selectColor', '#008000');  
         } else {
             $( "#tagColor" ).simplecolorpicker('selectColor', TSCORE.selectedTagData.color);   
         }
