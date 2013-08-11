@@ -54,7 +54,7 @@ define(function(require, exports, module) {
 		"tagspacesList": [],
 	    "extensionsPath": "ext",
         "ootbPerspectives": [ 'perspectiveThumb', 'perspectiveGraph' ],
-        "ootbViewers": [ "viewerBrowser", "viewerMD", "viewerImage", "viewerPDF" ],
+        "ootbViewers": [ "viewerBrowser", "viewerMD", "viewerImage", "viewerPDF", "editorText" ],
         "ootbEditors": [ "editorHTML", "editorText" ],        
 	    "perspectives": [
 	        {   
@@ -73,7 +73,7 @@ define(function(require, exports, module) {
 	        { "type": "mht", 	"viewer": "viewerBrowser",   "editor": "false" },                        
 	        { "type": "mhtml", 	"viewer": "viewerBrowser",   "editor": "false" },                                
 	        { "type": "maff", 	"viewer": "viewerBrowser",   "editor": "false" },                                
-	        { "type": "txt", 	"viewer": "editorText",      "editor": "editorText" },
+	        { "type": "txt", 	"viewer": "viewerBrowser",   "editor": "editorText" },
 	        { "type": "xml", 	"viewer": "editorText",      "editor": "editorText" },
 	        { "type": "js", 	"viewer": "editorText",      "editor": "editorText" },
             { "type": "json",   "viewer": "editorText",      "editor": "editorText" },
@@ -163,7 +163,9 @@ define(function(require, exports, module) {
 	var firstRun = false;
 	
 	var upgradeSettings = function() {
-		if(exports.Settings["appBuild"].localeCompare(exports.DefaultSettings["appBuild"]) < 0) {
+        var oldBuildNumber = parseInt(exports.Settings["appBuild"]);
+		var newBuildNumber = parseInt(exports.DefaultSettings["appBuild"]);
+		if(oldBuildNumber < newBuildNumber) {
 			console.log("Upgrading settings");
 			exports.Settings["appVersion"] = exports.DefaultSettings["appVersion"];
 			exports.Settings["appBuild"] = exports.DefaultSettings["appBuild"];
@@ -171,9 +173,88 @@ define(function(require, exports, module) {
 			getExtensionPath();
 			getShowUnixHiddenEntries();
 			getCheckForUpdates();
+                
+            // Upgrade only if build number smaller than 1385
+            if(oldBuildNumber < 1385) {
+                addVal2SettingsArray(exports.Settings["ootbViewers"],"viewerImage");
+                addVal2SettingsArray(exports.Settings["ootbViewers"],"viewerPDF");                      
+                addVal2SettingsArray(exports.Settings["ootbViewers"],"editorText"); 
+    
+                addVal2SettingsArray(exports.Settings["ootbEditors"],"editorHTML");
+                addVal2SettingsArray(exports.Settings["ootbEditors"],"editorText");                                   
+    
+                addTagGroup(
+                    { "expanded": true, "title": "Priorities", "key": "PRI", "children": [
+                        { "type": "plain", "title": "high", "parentKey": "49138", "color": "#ff7537", "textcolor": "#ffffff"},
+                        { "type": "plain", "title": "medium", "parentKey": "49138", "color": "#ffad46", "textcolor": "#ffffff" },
+                        { "type": "plain", "title": "low", "parentKey": "49138", "color": "#7bd148", "textcolor": "#ffffff"}
+                    ],}
+                );
+                
+                addFileType({ "type": "xml",    "viewer": "editorText",      "editor": "editorText" }); 
+                addFileType({ "type": "js",     "viewer": "editorText",      "editor": "editorText" }); 
+                addFileType({ "type": "json",   "viewer": "editorText",      "editor": "editorText" }); 
+                addFileType({ "type": "url",    "viewer": "editorText",      "editor": "editorText" }); 
+                
+                updateFileType({ "type": "jpg",    "viewer": "viewerImage",     "editor": "editorText" }); 
+                updateFileType({ "type": "jpg",    "viewer": "viewerImage",     "editor": "false" });        
+                updateFileType({ "type": "jpeg",   "viewer": "viewerImage",     "editor": "false" });   
+                updateFileType({ "type": "gif",    "viewer": "viewerImage",     "editor": "false" });       
+                updateFileType({ "type": "png",    "viewer": "viewerImage",     "editor": "false" });       
+                updateFileType({ "type": "svg",    "viewer": "viewerBrowser",   "editor": "editorText" });
+                updateFileType({ "type": "html",   "viewer": "viewerBrowser",   "editor": "editorHTML" });                        
+                updateFileType({ "type": "htm",    "viewer": "viewerBrowser",   "editor": "editorHTML" });                       
+                updateFileType({ "type": "txt",    "viewer": "viewerBrowser",   "editor": "editorText" });           
+                updateFileType({ "type": "xml",    "viewer": "editorText",      "editor": "editorText" }); 
+                updateFileType({ "type": "js",     "viewer": "editorText",      "editor": "editorText" }); 
+                updateFileType({ "type": "json",   "viewer": "editorText",      "editor": "editorText" }); 
+                updateFileType({ "type": "url",    "viewer": "editorText",      "editor": "editorText" }); 
+                updateFileType({ "type": "css",    "viewer": "editorText",      "editor": "editorText" });                 
+            }                                                   
 	    	saveSettings();   		
 		}
 	}
+
+    var addTagGroup = function(newTagGroup) {
+        var tagGroupExist = false;
+        exports.Settings["tagGroups"].forEach(function (value, index) {         
+            if(value.key == newTagGroup.key) {
+                tagGroupExist = true;
+            }        
+        })  
+        if(!tagGroupExist) {
+            exports.Settings["tagGroups"].push(newTagGroup);            
+        }
+    }
+
+    var addFileType = function(newFileType) {
+        var fileTypeExist = false;
+        exports.Settings["supportedFileTypes"].forEach(function (value, index) {         
+            if(value.type == newFileType.type) {
+                fileTypeExist = true;
+            }        
+        })  
+        if(!fileTypeExist) {
+            exports.Settings["supportedFileTypes"].push(newFileType);            
+        }
+    }
+    
+    var updateFileType = function(newFileType) {
+        exports.Settings["supportedFileTypes"].forEach(function (value, index) {         
+            if(value.type == newFileType.type) {
+                value.viewer = newFileType.viewer;
+                value.editor = newFileType.editor;                
+            }        
+        })  
+    }    
+
+    var addVal2SettingsArray = function(arrayLocation, value) {
+        if(arrayLocation instanceof Array) {
+            if($.inArray(value, arrayLocation) < 0) {
+                arrayLocation.push(value);                
+            }
+        }        
+    }
 
     var getPerspectiveExtensions = function() {
         if(exports.Settings["ootbPerspectives"] == null) {

@@ -2,7 +2,7 @@
   "name": "TagSpaces Launcher",
   "version": "1.1",
   "manifest_version": 2,
-  "description": "A launcher for the TagSpaces application",
+  "description": "A launcher for the TagSpaces extension",
   "icons": {
     "16" : "icon16.png",
     "48" : "icon48.png",
