@@ -5,10 +5,10 @@
 define(function(require, exports, module) {
 "use strict";
 
-	console.log("Loading editorText");
+	console.log("Loading editorMirror");
 
-	exports.id = "editorText"; // ID should be equal to the directory name where the ext. is located   
-	exports.title = "Text Editor";
+	exports.id = "editorMirror"; // ID should be equal to the directory name where the ext. is located   
+	exports.title = "Text Editor based on codemirror";
 	exports.type = "editor";
 	exports.supportedFileTypes = [
 	        "h", "c", "clj", "coffee", "coldfusion", "cpp",
@@ -22,86 +22,82 @@ define(function(require, exports, module) {
 	     
 	var TSCORE = require("tscore");	     
 	
-	var aceEditor = undefined;
+	var cmEditor = undefined;
 	var extensionDirectory = TSCORE.Config.getExtensionPath()+"/"+exports.id;
 	
-	var generateUI = function(containerElementID) {
-		$("#"+containerElementID).append('<div id="aceEditor" style="width: 100%; height: 100%"></div>');	
-	}
 	
-	/* require.config({
-	    baseUrl: 'file:///Z://TagSpaces//repository//data//ext//editorText'
-	}); */
-	
-	exports.init = function(filePath, containerElementID) {
-	    console.log("Initalization ACE Text Editor...");
+	exports.init = function(filePath, containerElementID, isViewerMode) {
+	    console.log("Initalization Codemirror Editor...");
 	    var fileExt = filePath.substring(filePath.lastIndexOf(".")+1,filePath.length).toLowerCase();
-		generateUI(containerElementID);
-		 
-	    aceEditor = require('./ace/ace').edit('aceEditor');
-	//    aceEditor.setTheme("./ace/theme/monokai");
-	    TSCORE.IO.loadTextFile(filePath);
-	    if (filetype[fileExt] != null) {
-	        require(["./ace/mode/" + filetype[fileExt]], function(acemode) {
-	        	var syntaxMode = acemode.Mode;
-	        	aceEditor.getSession().setMode(new syntaxMode());
-	        })       
-	    }
-	
-	}
-	
-	exports.init2 = function(filePath, containerElementID) {
-	    console.log("Initalization ACE Text Editor...");
-	    var fileExt = filePath.substring(filePath.lastIndexOf(".")+1,filePath.length).toLowerCase();
-		generateUI(containerElementID);
-		
-		require([extensionDirectory+'/ace/ace.js'], function(acemodule) { //"file:///Z:/TagSpaces/repository/data/ext/editorText/ace/ace.js" extensionDirectory+'/ace/ace.js'
-		    aceEditor = acemodule.edit('aceEditor');
-		//    aceEditor.setTheme("./ace/theme/monokai");
-		    TSCORE.IO.loadTextFile(filePath);
-		    if (filetype[fileExt] != null) {
-		        require(["./ace/mode/" + filetype[fileExt]], function(acemode) {
-		        	var syntaxMode = acemode.Mode;
-		        	aceEditor.getSession().setMode(new syntaxMode());
-		        })       
-		    }
+
+        $("#"+containerElementID).append('<div id="code" name="code" style="width: 100%; height: 100%">');  
+        var mode = filetype[fileExt];		
+		if (mode == null) {
+		    mode = "properties";
+		}
+		require([
+		    extensionDirectory+'/codemirror/codemirror.js',
+            'css!'+extensionDirectory+'/codemirror/codemirror.css',
+		    'css!'+extensionDirectory+'/extension.css',
+		], function() { 
+            require([
+                extensionDirectory+"./codemirror/mode/" + mode + "/" + mode + ".js",
+            ], function() { 
+                cmEditor = CodeMirror(document.getElementById("code"), {
+                    fixedGutter: false,
+                    mode: mode,
+                    lineNumbers: true,
+                    lineWrapping: true,
+                    tabSize: 2,
+                    collapseRange: true,
+                    matchBrackets: true,
+                    readOnly: isViewerMode,
+                    //theme: "lesser-dark",
+                    /* extraKeys: {
+                      "Cmd-S": function(instance) { handleSaveButton() },
+                      "Ctrl-S": function(instance) { handleSaveButton() },
+                      "F5": function(instance) { handleSaveButton() },
+                      "Ctrl-Space": "autocomplete",
+                    } */
+                });
+    
+    	        //cmEditor.readOnly = isViewerMode;
+    	        cmEditor.setSize("100%","100%");  
+                TSCORE.IO.loadTextFile(filePath);
+            });
 		});
 	}
 	
 	exports.viewerMode = function(isViewerMode) {
-	    aceEditor.setReadOnly(isViewerMode);      
+	    cmEditor.readOnly = isViewerMode;      
 	}
 	
 	exports.setContent = function(content) {
-	    aceEditor.setValue(content);
-	    aceEditor.clearSelection();
+//        console.log("Content: "+content);
+	    cmEditor.setValue(content);
 	}
 	
 	exports.getContent = function() {
-	    return aceEditor.getValue();
+	    return cmEditor.getValue();
 	}
 	
 	var filetype = new Array();
-	filetype["h"] = "c_cpp";
-	filetype["c"] = "c_cpp";
+	filetype["h"] = "clike";
+	filetype["c"] = "clike";
 	filetype["clj"] = "clojure";
-	filetype["coffee"] = "coffee";
-	filetype["coldfusion"] = "cfc";
-	filetype["cpp"] = "c_cpp";
-	filetype["cs"] = "csharp";
+	filetype["coffee"] = "coffeescript";
+	filetype["cpp"] = "clike";
+	filetype["cs"] = "clike";
 	filetype["css"] = "css";
 	filetype["groovy"] = "groovy";
-	filetype["haxe"] = "hx";
-	filetype["htm"] = "html";
-	filetype["html"] = "html";
-	filetype["java"] = "java";
+	filetype["haxe"] = "haxe";
+	filetype["htm"] = "htmlmixed";
+	filetype["html"] = "htmlmixed";
+	filetype["java"] = "clike";
 	filetype["js"] = "javascript";
 	filetype["jsm"] = "javascript";
-	filetype["json"] = "json";
-	filetype["latex"] = "latex";
+	filetype["json"] = "javascript";
 	filetype["less"] = "less";
-	filetype["ly"] = "latex";
-	filetype["ily"] = "latex";
 	filetype["lua"] = "lua";
 	filetype["markdown"] = "markdown";
 	filetype["md"] = "markdown";
@@ -112,17 +108,11 @@ define(function(require, exports, module) {
 	filetype["mli"] = "ocaml";
 	filetype["pl"] = "perl";
 	filetype["php"] = "php";
-	filetype["powershell"] = "ps1";
 	filetype["py"] = "python";
 	filetype["rb"] = "ruby";
-	filetype["scad"] = "scad";
-	filetype["scala"] = "scala";
-	filetype["scss"] = "scss";
-	filetype["sh"] = "sh";
+	filetype["sh"] = "shell";
 	filetype["sql"] = "sql";
-	filetype["svg"] = "svg";
-	filetype["textile"] = "textile";
-	filetype["txt"] = "textile";
+	filetype["svg"] = "xml";
 	filetype["xml"] = "xml";
 
 });
