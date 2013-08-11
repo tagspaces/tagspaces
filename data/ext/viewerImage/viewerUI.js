@@ -11,8 +11,6 @@ console.log("Loading UI for Image Viewer");
 
 	var TMB_SIZES = [ "100px", "200px", "300px", "400px", "500px" ];
 
-    //require("./actions/brightness");
-
 	function ExtUI(extID, extContainerID, filePath) {
 		this.extensionID = extID;
 	    this.containerElem = $('#'+extContainerID);
