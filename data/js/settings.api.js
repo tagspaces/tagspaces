@@ -54,31 +54,33 @@ define(function(require, exports, module) {
 		"tagspacesList": [],
 	    "extensionsPath": "ext",
         "ootbPerspectives": [ 'perspectiveThumb', 'perspectiveGraph' ],
-        "ootbViewers": [ "viewerBrowser", "viewerMD" ],
-        "ootbEditors": [ "editorHTML" ],        
+        "ootbViewers": [ "viewerBrowser", "viewerMD", "viewerImage", "viewerPDF" ],
+        "ootbEditors": [ "editorHTML", "editorText" ],        
 	    "perspectives": [
 	        {   
 	            "id": "perspectiveThumb", // ID should be equal to the directory name where the extension is located 
 	        },
 	    ],
 	    "supportedFileTypes": [
-	        { "type": "jpg",	"viewer": "viewerBrowser", "editor": "false" },        
-	        { "type": "jpeg", 	"viewer": "viewerBrowser", "editor": "false" },    
-	        { "type": "gif", 	"viewer": "viewerBrowser", "editor": "false" },        
-	        { "type": "png", 	"viewer": "viewerBrowser", "editor": "false" },        
-	        { "type": "svg", 	"viewer": "viewerBrowser", "editor": "false" },
-	        { "type": "pdf", 	"viewer": "viewerBrowser", "editor": "false" },                
-	        { "type": "html", 	"viewer": "viewerBrowser", "editor": "false" },                        
-	        { "type": "htm", 	"viewer": "viewerBrowser", "editor": "false" },                        
-	        { "type": "mht", 	"viewer": "viewerBrowser", "editor": "false" },                        
-	        { "type": "mhtml", 	"viewer": "viewerBrowser", "editor": "false" },                                
-	        { "type": "maff", 	"viewer": "viewerBrowser", "editor": "false" },                                
-	        { "type": "txt", 	"viewer": "viewerBrowser", "editor": "false" },
-	        { "type": "xml", 	"viewer": "viewerBrowser", "editor": "false" },
-	        { "type": "js", 	"viewer": "viewerBrowser", "editor": "false" },
-	        { "type": "css", 	"viewer": "viewerBrowser", "editor": "false" },
-	        { "type": "mdown", 	"viewer": "viewerMD",      "editor": "false" },                
-	        { "type": "md", 	"viewer": "viewerMD",      "editor": "false" }
+	        { "type": "jpg",	"viewer": "viewerImage",     "editor": "false" },        
+	        { "type": "jpeg", 	"viewer": "viewerImage",     "editor": "false" },    
+	        { "type": "gif", 	"viewer": "viewerImage",     "editor": "false" },        
+	        { "type": "png", 	"viewer": "viewerImage",     "editor": "false" },        
+	        { "type": "svg", 	"viewer": "viewerBrowser",   "editor": "editorText" },
+	        { "type": "pdf", 	"viewer": "viewerBrowser",   "editor": "false" },                
+	        { "type": "html", 	"viewer": "viewerBrowser",   "editor": "editorHTML" },                        
+	        { "type": "htm", 	"viewer": "viewerBrowser",   "editor": "editorHTML" },                        
+	        { "type": "mht", 	"viewer": "viewerBrowser",   "editor": "false" },                        
+	        { "type": "mhtml", 	"viewer": "viewerBrowser",   "editor": "false" },                                
+	        { "type": "maff", 	"viewer": "viewerBrowser",   "editor": "false" },                                
+	        { "type": "txt", 	"viewer": "editorText",      "editor": "editorText" },
+	        { "type": "xml", 	"viewer": "editorText",      "editor": "editorText" },
+	        { "type": "js", 	"viewer": "editorText",      "editor": "editorText" },
+            { "type": "json",   "viewer": "editorText",      "editor": "editorText" },
+            { "type": "url",    "viewer": "editorText",      "editor": "editorText" },
+	        { "type": "css", 	"viewer": "editorText",      "editor": "editorText" },
+	        { "type": "mdown", 	"viewer": "viewerMD",        "editor": "editorText" },                
+	        { "type": "md", 	"viewer": "viewerMD",        "editor": "editorText" }
 	    ],
 		"tagGroups": [
 			{
@@ -90,15 +92,9 @@ define(function(require, exports, module) {
 			        {
 			            "title":"book",
 			            "type":"plain",
-                        "color":"#F00",
-                        "textcolor":"#0F0",                        
 			        },        
 			        {
 			            "title":"paper",
-			            "type":"plain",
-			        },
-			        {
-			            "title":"XEUR",
 			            "type":"plain",
 			        },
 			        {
@@ -130,7 +126,35 @@ define(function(require, exports, module) {
 			            "type":"plain"
 			        }
 			    ]
-			}			
+			},
+            {
+                "expanded": true,
+                "children": [
+                    {
+                        "type": "plain",
+                        "title": "high",
+                        "parentKey": "49138",
+                        "color": "#ff7537",
+                        "textcolor": "#ffffff"
+                    },
+                    {
+                        "type": "plain",
+                        "title": "medium",
+                        "parentKey": "49138",
+                        "color": "#ffad46",
+                        "textcolor": "#ffffff"
+                    },
+                    {
+                        "type": "plain",
+                        "title": "low",
+                        "parentKey": "49138",
+                        "color": "#7bd148",
+                        "textcolor": "#ffffff"
+                    }
+                ],
+                "title": "Priorities",
+                "key": "PRI"
+            }						
 		]
 	}
 	
@@ -362,15 +386,17 @@ define(function(require, exports, module) {
 
     var moveTag = function(tagData, targetTagGroupKey) {
         var targetTagGroupData = getTagGroupData(targetTagGroupKey);
-        if(createTag(targetTagGroupData, tagData.title)) {
+        if(createTag(targetTagGroupData, tagData.title, tagData.color, tagData.textcolor)) {
             deleteTag(tagData);   
             saveSettings();                   
         } 
     }
 	
-	var createTag = function(tagData, newTagName) {
+	var createTag = function(tagData, newTagName, newTagColor, newTagTextColor) {
 	    var newTagModel = JSON.parse( JSON.stringify(tagTemplate) );
 	    newTagModel.title = newTagName;
+	    newTagModel.color = newTagColor;
+	    newTagModel.textcolor = newTagTextColor;
         exports.Settings["tagGroups"].forEach(function (value, index) {	        
 	        if(value.key == tagData.key) {
 	            console.log("Creating tag: "+JSON.stringify(newTagModel)+" with parent: "+tagData.key);

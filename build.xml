@@ -53,6 +53,7 @@ found in the LICENSE file.
         <copy todir="${buildFirefoxExt.dir}/data/libs" >
 		    <fileset dir="data/libs">
 		    	<exclude name="less/*" />
+		        <exclude name="linqjs/*" />		    	
 		    </fileset>        	
         </copy>
         <copy todir="${buildFirefoxExt.dir}/data/ext" >
@@ -61,6 +62,8 @@ found in the LICENSE file.
 			  <include name="perspectiveThumb/**/*"/>
 			  <include name="perspectiveGraph/**/*"/>	
               <include name="editorHTML/**/*"/>
+              <include name="editorText/**/*"/>  
+              <include name="viewerImage/**/*"/>    		    	
               <include name="viewerMD/**/*"/>          
 		    </fileset>        	
         </copy>
@@ -68,7 +71,11 @@ found in the LICENSE file.
             <fileset dir="data/css" includes="**/*"/>  
         </copy>
         <copy todir="${buildFirefoxExt.dir}/data/js" >
-            <fileset dir="data/js" includes="**/*"/>  
+            <fileset dir="data/js" includes="**/*">
+                <exclude name="ioapi.cordova.js" />            
+                <exclude name="ioapi.chrome.js" />            
+                <exclude name="ioapi.node.js" />                            
+            </fileset> 
         </copy>
         <copy todir="${buildFirefoxExt.dir}/data/icons" >
             <fileset dir="data/icons" includes="**/*"/>  
@@ -132,18 +139,27 @@ found in the LICENSE file.
               <include name="perspectiveThumb/**/*"/>
               <include name="perspectiveGraph/**/*"/>   		    	
 		      <include name="editorHTML/**/*"/>
-			  <include name="editorMirror/**/*"/>	    	
+			  <include name="editorText/**/*"/>	    	
+	          <include name="viewerPDF/**/*"/>           		    	
+	          <include name="viewerImage/**/*"/>                          
 		      <include name="viewerMD/**/*"/>	    	
 		    </fileset>        	
         </copy>	
         <copy todir="${buildChrome.dir}/libs" >
-            <fileset dir="data/libs" includes="**/*"/>  
+            <fileset dir="data/libs">
+              <exclude name="less/*" />
+              <exclude name="linqjs/*" />
+            </fileset>
         </copy>
         <copy todir="${buildChrome.dir}/css" >
             <fileset dir="data/css" includes="**/*"/>  
         </copy>
         <copy todir="${buildChrome.dir}/js" >
-            <fileset dir="data/js" includes="**/*"/>  
+            <fileset dir="data/js" includes="**/*">
+                <exclude name="ioapi.cordova.js" />            
+                <exclude name="ioapi.mozilla.js" />            
+                <exclude name="ioapi.node.js" />                        	
+            </fileset>
         </copy>
         <copy todir="${buildChrome.dir}/icons" >
             <fileset dir="data/icons" includes="**/*"/>  
