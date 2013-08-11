@@ -5,9 +5,9 @@
 define(function(require, exports, module) {
 "use strict";
 
-	console.log("Loading editorText");
+	console.log("Loading editorAce");
 
-	exports.id = "editorText"; // ID should be equal to the directory name where the ext. is located   
+	exports.id = "editorAce"; // ID should be equal to the directory name where the ext. is located   
 	exports.title = "Text Editor";
 	exports.type = "editor";
 	exports.supportedFileTypes = [

@@ -5,9 +5,9 @@
 define(function(require, exports, module) {
 "use strict";
 
-	console.log("Loading editorMirror");
+	console.log("Loading editorText extension");
 
-	exports.id = "editorMirror"; // ID should be equal to the directory name where the ext. is located   
+	exports.id = "editorText"; // ID should be equal to the directory name where the ext. is located   
 	exports.title = "Text Editor based on codemirror";
 	exports.type = "editor";
 	exports.supportedFileTypes = [
@@ -27,7 +27,7 @@ define(function(require, exports, module) {
 	
 	
 	exports.init = function(filePath, containerElementID, isViewerMode) {
-	    console.log("Initalization Codemirror Editor...");
+	    console.log("Initalization Text Editor...");
 	    var fileExt = filePath.substring(filePath.lastIndexOf(".")+1,filePath.length).toLowerCase();
 
         $("#"+containerElementID).append('<div id="code" name="code" style="width: 100%; height: 100%">');  
