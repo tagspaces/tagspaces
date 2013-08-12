@@ -2,7 +2,7 @@
   "name": "@APPNAME@",
   "version": "@VERSION@.@BUILD@",
   "manifest_version": 2,
-  "description": "A extensible platfrom, providing web based user interface for your local files.",
+  "description": "An open and extensible platform, providing web based user interface for your local files.",
   "icons": {
     "16" : "icons/icon16.png",
     "48" : "icons/icon48.png",
@@ -14,7 +14,7 @@
   },
   "browser_action": {
     "default_icon":  "icons/icon19.png",
-    "default_title": "Launch TagSpaces"
+    "default_title": "Launch @APPNAME@"
   },     
   "options_page": "index.html",
   "plugins": [
