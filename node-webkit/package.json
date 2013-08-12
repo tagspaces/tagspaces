@@ -1,13 +1,14 @@
 {
   "name": "TagSpaces",
-  "description": "File explorer.",
+  "description": "An open and extensible platform, providing web based user interface for your local files.",
   "version": "1.4",
   "main": "../data/index.html",
   "window": {
     "icon": "icon128.png",
-    "toolbar": true,
+    "toolbar": false,
     "width": 1024,
     "height": 800
   },
-  "nodejs": true
+  "nodejs": true,
+  "chromium-args" : "--data-path='./data/'"
 }

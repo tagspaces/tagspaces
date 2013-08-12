@@ -1,3 +1,12 @@
 build.properties
 .settings
 CHANGELOG.TXT
+node-webkit/data
+node-webkit/ffmpegsumo.dll
+node-webkit/icudt.dll
+node-webkit/libEGL.dll
+node-webkit/libffmpegsumo.so
+node-webkit/libGLESv2.dll
+node-webkit/nw
+node-webkit/nw.exe
+node-webkit/nw.pak
