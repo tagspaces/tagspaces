@@ -1,4 +1,28 @@
 #Changelog
+##TagSpaces 1.5.1448 / 2013.08.11
+- [All] Numerous UI Improvements
+- [All] Added a new viewer for image files
+- [All] Added a basic functionality for changing the colors of tags
+- [All] The text in the search filter is now remembered accross the current session
+- [All] The thumb image status, the size/path columns and the sort status are now remembered for the current session
+- [All] It is now possible to change the position of the tag in the filename.
+- [All] Improvements in the parsing and displaying of file titles
+- [All] Improvements in displaying file sizes
+- [All] Added additional column for the file extension in default perspective
+- [All] A new created location is now automatically opened after its creation
+- [All] A location name is extracted from the directory path as a suggestion
+- [All] Enhancing tag suggestion with UI improvements and suggestions from the containing directory name
+- [All] A new created file is now automatically opened after its creation
+- [All] Adding the functionality to reload a opened file, which has been renamed/tagged
+- [All] Adding add a tag button to the current file in the file viewer menu
+- [All] Added reload current file functionality to the file viewer menu
+- [All] Fixed reloading tagspaces on cklicking enter in dialogs
+- [All] Added directory create functionality
+- [All] A new text editor extension created based on codemirror
+- [All] A new PDF viewer extension created for the node-webkit platform based on pdf.js
+- [Chrome] Restricting renaming files larger than 5MB in chrome due a missing functionality in the API
+- [Firefox] Added icon to firefox main menu
+- [Firefox OSX] The firefox extension is currently not supporting OSX due a issue in the mozilla's XPCOM api preventing renaming of files. See [#11](https://github.com/uggrock/tagspaces/issues/11) for more details.   
 
 ##TagSpaces 1.4.1384 / 2013.06.16
 - [All] A bug fixed causing reloading of the addon in a bootstrap modal
