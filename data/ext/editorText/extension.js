@@ -41,7 +41,7 @@ define(function(require, exports, module) {
 		    'css!'+extensionDirectory+'/extension.css',
 		], function() { 
             require([
-                extensionDirectory+"./codemirror/mode/" + mode + "/" + mode + ".js",
+                extensionDirectory+"/codemirror/mode/" + mode + "/" + mode + ".js",
             ], function() { 
                 cmEditor = CodeMirror(document.getElementById("code"), {
                     fixedGutter: false,
