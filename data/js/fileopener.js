@@ -204,7 +204,7 @@ define(function(require, exports, module) {
         
         $("#actionToolbar").append('<button id="editDocument" class="btn" title="Edit File"><i class="icon-pencil"></i></button>');
         //$("#actionToolbar").append('<button id="openInNewWindow" class="btn" title="Go to the previous file"><i class="icon-circle-arrow-left"></i></button>');
-        $("#actionToolbar").append('<button id="openTagSuggestionMenu" class="btn" title="Tag File"><i class="icon-tag"></i> <b class="caret"></b></button>');
+        $("#actionToolbar").append('<button id="openTagSuggestionMenu" class="btn" title="Tag File"><i class="icon-tags"></i> <b class="caret"></b></button>');
         //$("#actionToolbar").append('<button id="startFullscreen" class="btn" title="Open file in full screen"><i class="icon-fullscreen"></i></b></button>');
         $("#actionToolbar").append('<button id="openFileActionsMenu" data-dropdown="#fileActionsMenu" class="btn" title="Additional File Actions"><i class="icon-th-list"></i> <b class="caret"></b></button>');
 
@@ -239,7 +239,7 @@ define(function(require, exports, module) {
             filepath: filePath,
             text: " Add Tag",
             })
-            .prepend("<i class='icon-tags'></i>") 
+            .prepend("<i class='icon-tag'></i>") 
             .click(function() {
                 TSCORE.PerspectiveManager.clearSelectedFiles();
                 TSCORE.selectedFiles.push(filePath);                     
