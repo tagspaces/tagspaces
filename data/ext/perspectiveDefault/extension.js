@@ -44,8 +44,7 @@ define(function(require, exports, module) {
 	}
 	
 	var setFileFilter = function (filter) {
-		$( "#"+extensionID+"FilterBox").val(filter);
-		UI.fileTable.fnFilter(filter);
+        UI.setFilter(filter);
 	}
 	
 	var clearSelectedFiles = function() {

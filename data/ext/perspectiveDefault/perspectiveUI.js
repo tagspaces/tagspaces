@@ -126,7 +126,7 @@ console.log("Loading UI for perspectiveDefault");
     	    })
             .prop('disabled', true)    	    
     	    .click(function() {
-    		    $( "#"+self.extensionID+"IncludeSubDirsButton" ).addClass( "disabled" );
+    		    $( "#"+self.extensionID+"IncludeSubDirsButton" ).prop('disabled', true);
     			TSCORE.IO.createDirectoryIndex(TSCORE.currentPath);
     	    })
     	    .append( $("<i>", { class: "icon-retweet", }) )
@@ -209,9 +209,7 @@ console.log("Loading UI for perspectiveDefault");
                 placeholder: "Filename Filter",
                 style: "width: 100px;"
             }).keyup(function() {
-                TSCORE.PerspectiveManager.clearSelectedFiles();
-                self.fileTable.fnFilter(this.value);
-                console.log("Filter to value: "+this.value);
+                self.setFilter(this.value); 
             }))
                     
             .append($("<button>", { 
@@ -220,14 +218,13 @@ console.log("Loading UI for perspectiveDefault");
                     id:   this.extensionID+"ClearFilterButton",
                 })
                 .append( $("<i>", { class: "icon-remove", }) )
+                .click(function(evt) {
+                    evt.preventDefault();
+                    self.setFilter("");            
+                })
             )        
         ); // End Filter
         
-        $('#'+this.extensionID+"ClearFilterButton").click(function(evt) {
-            evt.preventDefault();
-            $("#"+self.extensionID+"FilterBox").val('').focus();
-            self.fileTable.fnFilter( "" );
-        });            
 	
 	    this.viewContainer.append($("<table>", { 
 			cellpadding: "0",
@@ -267,13 +264,13 @@ console.log("Loading UI for perspectiveDefault");
 	            }, 
                 { // File extension column
                     "mRender": function ( data, type, row ) { 
-                        return TSCORE.generateExtButton(data,row[TSCORE.fileListFILENAME],row[TSCORE.fileListFILEPATH]); 
+                        return TSCORE.generateExtButton(data,row[TSCORE.fileListFILEPATH]); 
                         },
                     "aTargets": [ TSCORE.fileListFILEEXT ]
                 }, 
 	            { // Tags column
 	                "mRender": function ( data, type, row ) { 
-	                	return TSCORE.generateTagButtons(data,row[TSCORE.fileListFILENAME],row[TSCORE.fileListFILEPATH]); 
+	                	return TSCORE.generateTagButtons(data,row[TSCORE.fileListFILEPATH]); 
 	                	},
 	                "aTargets": [ TSCORE.fileListTAGS ]
 	            }, 
@@ -465,6 +462,22 @@ console.log("Loading UI for perspectiveDefault");
         this.refreshThumbnails();	    
 	    
 	}
+
+    ExtUI.prototype.setFilter = function(filterValue) {
+        TSCORE.PerspectiveManager.clearSelectedFiles();   
+
+        $( "#"+this.extensionID+"FilterBox").val(filterValue).focus();
+        this.fileTable.fnFilter(filterValue);
+        
+        if(filterValue.length > 0) {
+            $( "#"+this.extensionID+"ClearFilterButton").addClass("filterOn");
+        } else {
+            $( "#"+this.extensionID+"ClearFilterButton").removeClass("filterOn");
+        }
+        
+        this.handleElementActivation();   
+        console.log("Filter to value: "+filterValue);           
+    }   
 	
 	ExtUI.prototype.selectFile = function(uiElement, filePath) {
 	    TSCORE.PerspectiveManager.clearSelectedFiles();   

@@ -1,8 +1,8 @@
 {
   "name": "TagSpaces",
-  "version": "1.5.1448",
+  "version": "1.5.1454",
   "manifest_version": 2,
-  "description": "A extensible platfrom, providing web based user interface for your local files.",
+  "description": "An open and extensible platform, providing web based user interface for your local files.",
   "icons": {
     "16" : "icons/icon16.png",
     "48" : "icons/icon48.png",
@@ -24,11 +24,8 @@
 	{"path": "chrome/NPAPI-chrome-file-api/npNPAPIFileIOforChromex64.so", "public": false}
   ],
   "permissions": [
-    "tabs", "<all_urls>"   
+    "<all_urls>"   
   ],
   "content_security_policy": "script-src 'self' ; object-src 'self'",  
-  "web_accessible_resources": [
-    "about.html"
-  ],
   "homepage_url": "http://tagspaces.org"
 }

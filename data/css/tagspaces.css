@@ -494,3 +494,8 @@ input a.resetFilter {
 .icon-leaf:hover {
   color: green;
 }
+
+.filterOn {
+  color: #E45C00;
+}
+
