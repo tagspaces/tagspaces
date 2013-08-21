@@ -24,11 +24,8 @@
 	{"path": "chrome/NPAPI-chrome-file-api/npNPAPIFileIOforChromex64.so", "public": false}
   ],
   "permissions": [
-    "tabs", "<all_urls>"   
+    "<all_urls>"   
   ],
   "content_security_policy": "script-src 'self' ; object-src 'self'",  
-  "web_accessible_resources": [
-    "about.html"
-  ],
   "homepage_url": "http://tagspaces.org"
 }
