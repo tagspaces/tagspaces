@@ -127,7 +127,6 @@ define(function(require, exports, module) {
 	
 	function constructFileViewerUI(filePath) {
 	    // Adding tag buttons to the filetoolbox
-	    var tags = TSCORE.TagUtils.extractTags(filePath);
 	    
 	    var title = TSCORE.TagUtils.extractTitle(filePath);
 		var fileExtension = TSCORE.TagUtils.extractFileExtension(filePath);
@@ -145,31 +144,22 @@ define(function(require, exports, module) {
 
 	    // Generate tag & ext buttons
 	    $( "#fileTags" ).empty();
-        $( "#fileTags" ).append($('<button>', {
-                    title: "Opens context menu for "+fileExtension,
-                    tag: fileExtension,
-                    "class":  "btn btn-small btn-info extTagButton",                
-                    text: fileExtension+" "
-                })
-                .click( function() {
-                    TSCORE.selectedTag = fileExtension;
-                })                
-                .dropdown( 'attach' , '#extensionMenu' ) 
-                .append($("<span>", { class: "caret"}))
-             ); 	    
-	    
-	    for (var i=0; i < tags.length; i++) {
-	        $( "#fileTags" ).append($("<button>", { 
-	            "class":  "btn btn-success btn-small tagButton", 
-	            tag: tags[i], 
-	            filepath: filePath, 
-	            title: "Opens context menu for "+tags[i],
-	            text: tags[i]+" " 
-	            })
-	            .append($("<span>", { class: "caret"}))
-	            );            
-	    };    
-	    
+
+        // Appending ext button
+        $( "#fileTags" ).append(TSCORE.generateExtButton(fileExtension,filePath));
+        
+        // Appending tag buttons	    
+        var tags = TSCORE.TagUtils.extractTags(filePath);
+	    var tagString = "";
+	    tags.forEach(function (value, index) {         
+            if(index == 0) {
+                tagString = value;                 
+            } else {
+                tagString = tagString + "," +value;                                 
+            }
+        }) 
+	    $( "#fileTags" ).append(TSCORE.generateTagButtons(tagString,filePath));
+    
 	    $( "#tagsContainer" ).droppable({
 	        greedy: "true", 
 	    	accept: ".tagButton",
@@ -188,6 +178,12 @@ define(function(require, exports, module) {
 	            TSCORE.openTagMenu(this, $(this).attr("tag"), $(this).attr("filepath"));
 	        })
 	        .dropdown( 'attach' , '#tagMenu' );   
+
+        $('.extTagButton', $( "#fileTags" ))
+            .click( function() {
+                TSCORE.selectedTag = fileExtension;
+            })
+            .dropdown( 'attach' , '#extensionMenu' );
 	    
 	    // Clear filetoolbox
 	    $( "#filetoolbox" ).empty();

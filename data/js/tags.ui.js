@@ -250,20 +250,16 @@ define(function(require, exports, module) {
 	}
 	
 	// Helper function generating tag buttons
-	function generateTagButtons(commaSeparatedTags, fileName, filePath) {
+	function generateTagButtons(commaSeparatedTags, filePath) {
 	    //console.log("Creating tags...");
 	    var tagString = ""+commaSeparatedTags;
 	    var wrapper = $('<span>');
-	    if(filePath == undefined) {
-	    	filePath = TSCORE.currentPath+TSCORE.TagUtils.DIR_SEPARATOR+fileName;
-	    }
 	    if(tagString.length > 0) {
 	        var tags = tagString.split(",");
 	        for (var i=0; i < tags.length; i++) { 
 	            wrapper.append($('<button>', {
 	                title: "Opens context menu for "+tags[i],
 	                tag: tags[i],
-	                filename: fileName,
 	            	filepath: filePath,                
 	                "class":  "btn btn-small tagButton", 
 	                text: tags[i]+" ",
@@ -290,17 +286,13 @@ define(function(require, exports, module) {
 	}
 	
     // Helper function generating file extension button
-    function generateExtButton(fileExtension, fileName, filePath) {
+    function generateExtButton(fileExtension, filePath) {
         //console.log("Creating ext button...");
         var wrapper = $('<span>');
-        if(filePath == undefined) {
-            filePath = TSCORE.currentPath+TSCORE.TagUtils.DIR_SEPARATOR+fileName;
-        }
         if(fileExtension.length > 0) {
             wrapper.append($('<button>', {
                 title: "Opens context menu for "+fileExtension,
                 tag: fileExtension,
-                filename: fileName,
                 filepath: filePath,
                 "class":  "btn btn-small extTagButton",                
                 text: fileExtension+" "
