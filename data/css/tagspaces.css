@@ -127,7 +127,7 @@ html, body {
     float: right;
     color: white;
     font-weight: bold;
-    /*background-color: @fileExtColor; */
+    background-color: gray;
 }
 
 #viewsRadio {

@@ -255,15 +255,11 @@ define(function(require, exports, module) {
 	}
 	  
 	exports.setFileFilter = function setFileFilter(filter) {
-		//$( "#"+extensionID+"FilterBox").val(filter);
-		//fileTable.fnFilter(filter);
+
 	}
 	
 	exports.clearSelectedFiles = function() {
-	    // Deselect all
-	    $(".selectedRow", $(fileTable)).each(function(){
-	        $(this).toggleClass('selectedRow');
-	    });    
+
 	}
 	
 	var initUI = function() {

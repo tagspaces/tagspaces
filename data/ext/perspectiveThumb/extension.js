@@ -7,100 +7,79 @@ define(function(require, exports, module) {
 	
 	console.log("Loading perspectiveThumb");
 
-	exports.Title = "Thumbs"
-	exports.ID = "perspectiveThumb";  // ID should be equal to the directory name where the ext. is located   
-	exports.Type =  "perspective";
-	exports.Icon = "icon-picture";
+    var extensionTitle = "Calendar"
+    var extensionID = "perspectiveThumb";  // ID should be equal to the directory name where the ext. is located   
+    var extensionType =  "perspective";
+    var extensionIcon = "icon-picture";
+    var extensionVersion = "1.0";
+    var extensionManifestVersion = 1;
+    var extensionLicense = "AGPL";
 	
-	var TSCORE = require("tscore");	
+	var TSCORE = require("tscore");
+
+    var extensionDirectory = TSCORE.Config.getExtensionPath()+"/"+extensionID;
+    var UI = undefined; 
 	
-	var viewContainer = undefined;
-	var viewToolbar = undefined;
-	var viewFooter = undefined;
-	
-	var supportedFileTypeThumnailing = ['jpg','jpeg','png','gif'];
-	
-	exports.init = function init() {
-		console.log("Initializing View "+exports.ID);
-		
-	    viewContainer = $("#"+exports.ID+"Container");
-	    viewToolbar = $("#"+exports.ID+"Toolbar");
-		viewFooter = $("#"+exports.ID+"Footer");
-		
-		viewContainer.empty();
-		viewToolbar.empty();
-		viewFooter.empty();	
-		
-        viewToolbar.append($("<button>", { 
-            class: "btn disabled",
-            disabled: true,
-            title: "Create new file",
-            id: this.extensionID+"CreateFileButton",    
-        })
-        .append( $("<i>", { class: "icon-file", }) )
-        .append("New")
-        .click(function() {
-            TSCORE.showFileCreateDialog();
-        })          
-        );        		
-		
-	    viewContainer.append($("<ol>", { 
-	        style: "overflow: visible;",
-	        class: "selectableFiles",
-	        id: exports.ID+"SelectableFiles",
-	        text: "Empty viewer."    
-	    }));	
-		
-	    $( "#"+exports.ID+"SelectableFiles" ).selectable({
-	        stop: function() {
-	            TSCORE.selectedFiles = [];          
-	            $( ".ui-selected", this ).each(function() {
-	                TSCORE.selectedFiles.push($(this).attr("filepath"));
-	            });
-	            console.log("Selected files: "+TSCORE.selectedFiles);
-	         //   TSCORE.handleElementActivation();
-	            
-	            // On selecting only one file opens it in the viewer
-	            if(TSCORE.selectedFiles.length == 1) {
-					TSCORE.FileOpener.openFile(TSCORE.selectedFiles[0]);             	
-	            }
-	        }
-	    }); 
+	var init = function () {
+        console.log("Initializing perspective "+extensionID);
+        require([
+            extensionDirectory+'/perspectiveUI.js',
+            'datatables'
+            ], function(extUI) {
+                UI = new extUI.ExtUI(extensionID);                          
+                UI.buildUI();
+                UI.initMainContainer();
+            }
+        );
 	}
 	
-	exports.load = function load() {
-		console.log("Showing View "+exports.ID);
-	   
-		// Purging the thumbnail view, avoiding memory leak
-		document.getElementById(exports.ID+"SelectableFiles").innerHTML = "";
-	
-	    $("#"+exports.ID+"SelectableFiles").empty();
-	        
-	    for (var i=0; i < TSCORE.fileList.length; i++) {
-	        var fileName = TSCORE.fileList[i][TSCORE.fileListTITLE];
-	        var fileExt = TSCORE.fileList[i][TSCORE.fileListFILEEXT];
-	        var filePath = TSCORE.fileList[i][TSCORE.fileListFILEPATH];
-	        if(supportedFileTypeThumnailing.indexOf(fileExt) >= 0) {
-	            $("#"+exports.ID+"SelectableFiles").append(
-	                 $('<li>', { title: fileName, filepath: filePath, style: 'border: 1px dashed gray;' }).append( 
-	                    $('<img>', { title: fileName, class: "thumbImg", src: 'file:///'+filePath })));
-	        } else {
-	            $("#"+exports.ID+"SelectableFiles").append(
-	                 $('<li>', { title: fileName, filepath: filePath, style: 'border: 1px dashed gray;' }).append(
-	                    $('<span>', { class: "fileExtension", text: fileExt})));
-	        }
-	    }    
-	    
-		$( exports.ID+"CreateFileButton" ).removeClass("disabled");  
+	var load = function () {
+        console.log("Loading perspective "+extensionID);
+        if(UI != undefined) {
+            UI.reInit(TSCORE.fileList);    
+            TSCORE.hideLoadingAnimation();                                  
+        }
 	    TSCORE.hideLoadingAnimation();     
 	}
 	
-	exports.setFileFilter = function setFileFilter(filter) {
+    var getNextFile = function (filePath) {
+        var nextFilePath = undefined;
+    
+        console.log("Next file: "+nextFilePath);
+        return nextFilePath;
+    }
+
+    var getPrevFile = function (filePath) {
+        var prevFilePath = undefined;
+
+        console.log("Prev file: "+prevFilePath);
+        return prevFilePath;
+    }	
+	
+	var setFileFilter = function (filter) {
 		console.log("setFileFilter not implemented in "+exports.ID);
 	}
 	
-	exports.clearSelectedFiles = function() {
-	    // TODO Deselect all
-		//$("#"+exports.ID+"SelectableFiles").
+	var clearSelectedFiles = function() {
+        TSCORE.selectedFiles = [];   
+        $("#"+extensionID+"Container").find(".ui-selected").removeClass("ui-selected");
 	}
+
+    // Vars
+    exports.Title                   = extensionTitle;
+    exports.ID                      = extensionID;   
+    exports.Type                    = extensionType;
+    exports.Icon                    = extensionIcon;
+    exports.Version                 = extensionVersion;
+    exports.ManifestVersion         = extensionManifestVersion;
+    exports.License                 = extensionLicense;
+    
+    // Methods
+    exports.init                    = init;
+    exports.load                    = load;
+    exports.setFileFilter           = setFileFilter;
+    exports.clearSelectedFiles      = clearSelectedFiles;
+    exports.getNextFile             = getNextFile;
+    exports.getPrevFile             = getPrevFile;	
+	
 });

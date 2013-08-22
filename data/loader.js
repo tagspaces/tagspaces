@@ -99,6 +99,7 @@ requirejs.config({
         jquerydropdowncss:      'libs/jquerydropdown/jquery.dropdown',        
         less:                   'libs/less/less-1.3.3.min',
         jqueryeditinplace:      'libs/jqueryeditinplace/jquery.editinplace',
+        underscore:             'libs/underscore/underscore',
 
         tscore:                 'js/core.api',
         tssetting:              'js/settings.api',
@@ -113,6 +114,7 @@ requirejs.config({
         tsioapi:                IO_JS,        
     }, 
     shim: {
+        'underscore':               { exports: '_' }, 
         'bootstrap':                { deps: ['jquery'] }, 
         'jquerysimplecolorpicker':  { deps: ['jquery','bootstrap'] },
         'jqueryui':                 { deps: ['jquery'] },
@@ -143,7 +145,8 @@ requirejs.config({
                 'jquerysimplecolorpicker',
                 'jquerylayout',
                 'jquerydropdown',  
-            ] },        
+            ] }, 
+                  
     } 
 });
 
@@ -152,8 +155,11 @@ define(function (require, exports, module) {
 
     //require("less");	
 
+//    require(['underscore'], function (_) { });
+    
+
     var TSCORE = undefined;
-    requirejs(['tscore'], function (core) {
+    requirejs(['tscore','underscore'], function (core,_) {
         TSCORE = core;
         TSCORE.initApp();
     }); 
