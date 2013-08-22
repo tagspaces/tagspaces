@@ -126,7 +126,7 @@ console.log("Loading UI for perspectiveDefault");
     	    })
             .prop('disabled', true)    	    
     	    .click(function() {
-    		    $( "#"+self.extensionID+"IncludeSubDirsButton" ).prop('disabled', true);
+    		    $( this ).prop('disabled', true);
     			TSCORE.IO.createDirectoryIndex(TSCORE.currentPath);
     	    })
     	    .append( $("<i>", { class: "icon-retweet", }) )
@@ -337,12 +337,12 @@ console.log("Loading UI for perspectiveDefault");
 	   
 	}			
 	
-	ExtUI.prototype.reInitTableWithData = function(fileList) {
+	ExtUI.prototype.reInitTableWithData = function() {
 		$('#'+this.extensionID+"FileTable_wrapper").hide();
 					
 		// Clearing the old data
 	    this.fileTable.fnClearTable();  
-	    this.fileTable.fnAddData( fileList );
+	    this.fileTable.fnAddData( TSCORE.fileList );
 
 		var self = this;
 

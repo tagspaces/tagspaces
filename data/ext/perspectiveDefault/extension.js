@@ -38,7 +38,7 @@ define(function(require, exports, module) {
 	var load = function () {
 		console.log("Loading perspective "+extensionID);
 		if(UI != undefined) {
-            UI.reInitTableWithData(TSCORE.fileList);    
+            UI.reInitTableWithData();    
             TSCORE.hideLoadingAnimation();                        		    
 		}
 	}
