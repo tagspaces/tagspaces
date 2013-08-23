@@ -1,4 +1,4 @@
-/* Copyright (c) 2012 The Tagspaces Authors. All rights reserved.
+/* Copyright (c) 2012-2013 The TagSpaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that 
  * can be found in the LICENSE file. */
 define(function(require, exports, module) {
@@ -56,9 +56,12 @@ define(function(require, exports, module) {
 	    console.log("File Viewer: "+viewerExt);
 	
 	    initTagSuggestionMenu(filePath);
-	
+     
 	    $( "#viewer" ).empty();
-	    if(!viewerExt) {
+	    
+	    TSCORE.IO.checkAccessFileURLAllowed();
+        
+        if(!viewerExt) {
 	        $( "#viewer" ).html("<div class='alert alert-info'><strong>Info</strong> File type not supported for viewing."+
 	                            "<button type='button' class='close' data-dismiss='alert'>×</button></div>");        
 	    } else if (viewerExt == "viewerBrowser") {

@@ -93,6 +93,26 @@ define(function(require, exports, module) {
             console.error("Scanning directory "+dirPath+" failed "+ex);
         }         
     }
+
+    exports.getFileSize = function(filePath) {
+        console.log("Get filesize of: "+filePath);
+        var stats = fs.statSync(filePath);
+        return stats.size;
+        //TSPOSTIO.createDirectoryIndex(directoryIndex);
+    }   
+
+    exports.getLMDT = function(filePath) {
+        console.log("Get last modified date time of: "+filePath);
+        var stats = fs.statSync(filePath);
+        return stats.mtime;
+        //TSPOSTIO.createDirectoryIndex(directoryIndex);
+    }
+
+    exports.directoryExist = function(dirPath) {
+        console.log("Checks if a directory exist: "+dirPath);
+
+        //TSPOSTIO.createDirectoryIndex(directoryIndex);
+    }
 	
     exports.createDirectoryIndex = function(dirPath) {
         console.log("Creating index for directory: "+dirPath);
@@ -225,6 +245,10 @@ define(function(require, exports, module) {
             TSPOSTIO.deleteElement();
         });		
 	}
+	
+    exports.checkAccessFileURLAllowed = function() {
+        console.log("checkAccessFileURLAllowed function not relevant for node..");
+    }	
 	
     exports.checkNewVersion = function() {
         console.log("Checking for new version...");

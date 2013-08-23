@@ -315,6 +315,20 @@ Still Missing:
         });
     }
     
+    exports.checkAccessFileURLAllowed = function() {
+        chrome.extension.isAllowedFileSchemeAccess(function(isAllowedAccess) {
+            if(!isAllowedAccess) {
+               TSCORE.showAlertDialog(
+                    "Please make shure that you select the 'Allow access to file URLs'"+
+                    " checkbox as shown in the following screenshot "+
+                    " from the extension ('chrome://extensions/') settings of chrome/chromium"+
+                    "<img src='chrome/ChromeAllowAccessFileURLs.png' />",
+                     "TagSpaces can not read files from your local disk!"
+               );               
+            }
+        });          
+    }
+    
     exports.openDirectory = function(dirPath) {
         // TODO implement openDirectory
         console.log("Open directory functionality not implemented on chrome yet!");

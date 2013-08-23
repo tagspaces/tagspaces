@@ -30,7 +30,7 @@ define(function(require, exports, module) {
 	        '</div>');
 	
         alertModal.find('h4').text(title);        
-        alertModal.find('.lead').text(message);
+        alertModal.find('.lead').append(message);
 	    alertModal.find('#okButton').click(function(event) {
 	      alertModal.modal('hide');
 	    });
