@@ -19,7 +19,7 @@ define(function(require, exports, module) {
 
     var extensionDirectory = TSCORE.Config.getExtensionPath()+"/"+extensionID;
     var UI = undefined; 
-	
+
 	var init = function () {
         console.log("Initializing perspective "+extensionID);
         require([
@@ -28,7 +28,6 @@ define(function(require, exports, module) {
             ], function(extUI) {
                 UI = new extUI.ExtUI(extensionID);                          
                 UI.buildUI();
-                UI.initMainContainer();
             }
         );
 	}

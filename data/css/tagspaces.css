@@ -24,19 +24,6 @@
     }
 }
 
-/*
-.roundedTagCorners (@radius: 2px) {
-  border-radius: @radius;
-  -webkit-border-radius: @radius;
-  -moz-border-radius: @radius;
-}
-
-.arrowDownImage {
-    background-image: url("arrow-down.png");
-    background-repeat: no-repeat; 
-    background-position: right;
-} */
-        
 html, body {
 	width: 100%;
 	height: 100%;
@@ -499,3 +486,9 @@ input a.resetFilter {
   color: #E45C00;
 }
 
+.groupTitle {
+    color: gray;
+    font-weight: bold;
+/*    font-size: 1em;
+    font-family: Geneva, Arial, Helvetica, sans-serif;   */  
+}

@@ -11,6 +11,8 @@ console.log("Loading UI for perspectiveDefault");
         
     var TMB_SIZES = [ "100px", "200px", "300px", "400px", "500px" ];
 
+    var MONTH = [ "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" ];
+
     var supportedFileTypeThumnailing = ['jpg','jpeg','png','gif'];
 
     function ExtUI(extID) {
@@ -19,6 +21,7 @@ console.log("Loading UI for perspectiveDefault");
         this.viewToolbar = $("#"+this.extensionID+"Toolbar").empty();
         this.viewFooter = $("#"+this.extensionID+"Footer").empty();
 
+        this.currentGrouping = "" // tagchain, day, month, year
     }
     
     ExtUI.prototype.buildUI = function() {
@@ -59,7 +62,6 @@ console.log("Loading UI for perspectiveDefault");
         
         this.viewToolbar.append($("<div>", { 
             class: "btn-group",
-            id: this.extensionID+"Toolbar",             
         })
 
             .append($("<button>", { 
@@ -102,6 +104,58 @@ console.log("Loading UI for perspectiveDefault");
         ); // end toolbar
                
 
+        this.viewToolbar.append($("<div>", { 
+            "class"         : "btn-group",
+            "data-toggle"   : "buttons-radio"             
+        })
+
+            .append($("<button>", { 
+                class:  "btn ",
+                type:   "button",
+                title:  "Disable Grouping ",
+                text:   "Ungroup"
+            })
+            .button('toggle')
+            .click(function() {
+                self.switchGrouping("ungroup");
+            })
+            )
+        
+            .append($("<button>", { 
+                class:  "btn ",
+                type:   "button",
+                title:  "Group by Day ",
+                text:   "Day"
+            })
+            .click(function() {
+                self.switchGrouping("day");
+            })
+            )
+            
+            .append($("<button>", { 
+                class:  "btn ",
+                type:   "button",
+                title:  "Group by Month ",
+                text:   "Month"
+            })
+            .click(function() {
+                self.switchGrouping("month");
+            })
+            )
+
+            .append($("<button>", { 
+                class:  "btn ",
+                type:   "button",
+                title:  "Group by Year ",
+                text:   "Year"
+            })
+            .click(function() {
+                self.switchGrouping("year");
+            })
+            )                        
+            
+        ); // end toolbar
+
         this.viewToolbar.append($("<div >", { 
             class: "input-append pull-right", 
         })      
@@ -131,22 +185,51 @@ console.log("Loading UI for perspectiveDefault");
         ); // End Filter
         
     }
-    
-    ExtUI.prototype.initMainContainer = function() {
-       
-    }           
 
+    ExtUI.prototype.switchGrouping = function(grouping) {
+        this.currentGrouping = grouping;
+        this.reInit();
+    }
+    
     // Helper function for organizing the files in data buckets
-    function groupDataByDate() {
+    ExtUI.prototype.calculateGrouping = function() {
         var dataGroupedByDate = TSCORE.fileList;
 
-        // Group by date
-        dataGroupedByDate = _.groupBy( dataGroupedByDate, function(value){ 
-                var tmpDate = new Date(value[TSCORE.fileListFILELMDT])    
-                tmpDate.setHours(0,0,0,0);
-                tmpDate.setDate(1);
-                return tmpDate.getTime();
-            });       
+        switch (this.currentGrouping){
+            case "day": {
+                dataGroupedByDate = _.groupBy( dataGroupedByDate, function(value){ 
+                        var tmpDate = new Date(value[TSCORE.fileListFILELMDT])    
+                        tmpDate.setHours(0,0,0,0);
+                        return tmpDate.getTime();
+                    });                       
+                break;                
+            }
+            case "month": {
+                dataGroupedByDate = _.groupBy( dataGroupedByDate, function(value){ 
+                        var tmpDate = new Date(value[TSCORE.fileListFILELMDT])    
+                        tmpDate.setHours(0,0,0,0);
+                        tmpDate.setDate(1);
+                        return tmpDate.getTime();
+                    });                       
+                break;                
+            }
+            case "year": {
+                dataGroupedByDate = _.groupBy( dataGroupedByDate, function(value){ 
+                        var tmpDate = new Date(value[TSCORE.fileListFILELMDT])    
+                        tmpDate.setHours(0,0,0,0);
+                        tmpDate.setDate(1);
+                        tmpDate.setMonth(1);
+                        return tmpDate.getTime();
+                    });       
+                break;                
+            }            
+            default : {
+                dataGroupedByDate = _.groupBy( dataGroupedByDate, function(value){ 
+                        return true;
+                    });       
+                break;                            
+            }
+        }
 
         // Sort by date
         dataGroupedByDate = _.sortBy(dataGroupedByDate, function(value) { 
@@ -155,6 +238,38 @@ console.log("Loading UI for perspectiveDefault");
             });
         
         return dataGroupedByDate;
+    }
+
+    ExtUI.prototype.calculateGroupTitle = function(rawSource) {    
+        var groupingTitle = undefined;
+        switch (this.currentGrouping){
+            case "day": {
+                var tmpDate = new Date(rawSource);
+                tmpDate.setHours(0,0,0,0);
+                groupingTitle = TSCORE.TagUtils.formatDateTime(tmpDate, false);                
+                break;                
+            }
+            case "month": {
+                var tmpDate = new Date(rawSource);
+                tmpDate.setHours(0,0,0,0);
+                tmpDate.setDate(1);
+                groupingTitle = MONTH[tmpDate.getMonth()] +", "+tmpDate.getFullYear();                                
+                break;                
+            }
+            case "year": {
+                var tmpDate = new Date(rawSource);
+                tmpDate.setHours(0,0,0,0);
+                tmpDate.setDate(1);
+                tmpDate.setMonth(1);
+                groupingTitle = tmpDate.getFullYear();                                
+                break;                
+            }            
+            default : {
+                groupingTitle = "No grouping";                            
+            }
+        }
+
+        return groupingTitle;
     }
     
     ExtUI.prototype.reInit = function() {
@@ -168,12 +283,10 @@ console.log("Loading UI for perspectiveDefault");
 //            console.log("Grouping by date: "+value[0][TSCORE.fileName]+" length: "+value.length);        
 
         var i=0;
-        _.each(groupDataByDate(), function (value) { 
+        _.each(self.calculateGrouping(), function (value) { 
             i++;
             
-            var tmpDate = new Date(value[0][TSCORE.fileListFILELMDT]);
-            tmpDate.setHours(0,0,0,0);
-            var groupingTitle = TSCORE.TagUtils.formatDateTime(tmpDate, false);
+            var groupingTitle = self.calculateGroupTitle(value[0][TSCORE.fileListFILELMDT]);
             
             self.viewContainer.append($("<div>", { 
                 "class": "accordion-group",    
@@ -195,7 +308,9 @@ console.log("Loading UI for perspectiveDefault");
             )// End date toggle button  
                                     
             .append($("<button>", {
-                "class":        "btn btn-link btn-small",
+                "class":        "btn btn-link groupTitle",
+                "data-toggle":  "collapse",
+                "data-target":  "#"+self.extensionID+"sortingButtons"+i,                
                 "text":         groupingTitle, 
                 })  
             )
