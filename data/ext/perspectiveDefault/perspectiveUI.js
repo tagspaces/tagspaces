@@ -31,12 +31,20 @@ console.log("Loading UI for perspectiveDefault");
 	    	title = filePath;
 	    }
 	    
+        //TODO minimize platform specific calls	    
+        var tmbPath = undefined;
+        if(isCordova) {
+            tmbPath = filePath;            
+        } else {
+            tmbPath = "file:///"+filePath;  
+        }	    
+	    
 	    var thumbHTML = "";	    
         if(supportedFileTypeThumnailing.indexOf(fileExt) >= 0) {
 			thumbHTML = $('<span>').append( $('<img>', { 
             	title: fileName, 
             	class: "thumbImg",
-            	filepath: 'file:///'+filePath, 
+            	filepath: tmbPath, 
             	style: "width: 0px; height: 0px; border: 0px" 
         	})).html();
         	thumbHTML = "<br>" + thumbHTML;

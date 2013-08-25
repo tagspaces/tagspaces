@@ -65,7 +65,15 @@ define(function(require, exports, module) {
 	        $( "#viewer" ).html("<div class='alert alert-info'><strong>Info</strong> File type not supported for viewing."+
 	                            "<button type='button' class='close' data-dismiss='alert'>×</button></div>");        
 	    } else if (viewerExt == "viewerBrowser") {
-		    var filePathURI = "file:///"+filePath;
+	        var filePathURI = undefined;
+	        
+	        //TODO minimize platform specific calls
+	        if(isCordova) {
+                filePathURI = filePath;            
+	        } else {
+                filePathURI = "file:///"+filePath;  
+	        }
+
 		    $('#viewer').append($('<iframe>', {
 		    	id: "iframeViewer",
 				src: filePathURI

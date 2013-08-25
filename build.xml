@@ -183,9 +183,9 @@ found in the LICENSE file.
     </target>	
 
     <target name="prepare-cordova-application" description="copy all files the cordova dev directory">
-    	<delete dir="${cordovaDev.dir}"/>        
+    	<!--delete dir="${cordovaDev.dir}"/>        
     	<mkdir dir="${cordovaDev.dir}" />
-        <copy file="${cordovaJSLib.file}" todir="${cordovaDev.dir}" />    
+        <copy file="${cordovaJSLib.file}" todir="${cordovaDev.dir}" /-->    
         <copy file="LICENSE" tofile="${cordovaDev.dir}/LICENSE.txt" />  	
         <copy file="data/manifest.json" todir="${cordovaDev.dir}" />
         <copy file="data/index.html" todir="${cordovaDev.dir}" />        
@@ -194,7 +194,7 @@ found in the LICENSE file.
         <copy todir="${cordovaDev.dir}/libs" >
             <fileset dir="data/libs" includes="**/*"/>  
         </copy>
-        <copy todir="${cordovaDev.dir}/data/ext" >
+        <copy todir="${cordovaDev.dir}/ext" >
 		    <fileset dir="data/ext">
 		      <include name="**/*"/>
 		    </fileset>        	

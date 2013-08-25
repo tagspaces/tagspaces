@@ -14,36 +14,24 @@ if (PRODUCTION == "true") {
 }
 
 // Temporal hacks
-var isFirefox = 'MozBoxSizing' in document.documentElement.style; 
+var isFirefox = 'MozBoxSizing' in document.documentElement.style; // URL contains resource://
 var isSafari = Object.prototype.toString.call(window.HTMLElement).indexOf('Constructor') > 0;
-var isChrome = !isSafari && 'WebkitTransform' in document.documentElement.style;
+// TODO refactor isChrome to isChromeExt
+var isChrome =  document.URL.indexOf( 'chrome-extension://' ) >= 0; //!isSafari && 'WebkitTransform' in document.documentElement.style;
 var isNode = undefined;
+var isCordova = document.URL.indexOf( 'file:///' ) >= 0; // Not perfect... evtl. adding of "android_asset" needed
+var isWeb = undefined;
 
-  // BROWSER SNIFFING
-/*
-  // Crude, but necessary to handle a number of hard-to-feature-detect
-  // bugs and behavior differences.
-  var gecko = /gecko\/\d/i.test(navigator.userAgent);
-  var ie = /MSIE \d/.test(navigator.userAgent);
-  var ie_lt8 = ie && (document.documentMode == null || document.documentMode < 8);
-  var ie_lt9 = ie && (document.documentMode == null || document.documentMode < 9);
-  var webkit = /WebKit\//.test(navigator.userAgent);
-  var qtwebkit = webkit && /Qt\/\d+\.\d+/.test(navigator.userAgent);
-  var chrome = /Chrome\//.test(navigator.userAgent);
-  var opera = /Opera\//.test(navigator.userAgent);
-  var safari = /Apple Computer/.test(navigator.vendor);
-  var khtml = /KHTML\//.test(navigator.userAgent);
-  var mac_geLion = /Mac OS X 1\d\D([7-9]|\d\d)\D/.test(navigator.userAgent);
-  var mac_geMountainLion = /Mac OS X 1\d\D([8-9]|\d\d)\D/.test(navigator.userAgent);
-  var phantom = /PhantomJS/.test(navigator.userAgent);
-
-  var ios = /AppleWebKit/.test(navigator.userAgent) && /Mobile\/\w+/.test(navigator.userAgent);
-  // This is woefully incomplete. Suggestions for alternative methods welcome.
-  var mobile = ios || /Android|webOS|BlackBerry|Opera Mini|Opera Mobi|IEMobile/i.test(navigator.userAgent);
-  var mac = ios || /Mac/.test(navigator.platform);
-  var windows = /windows/i.test(navigator.platform);
-*/
-console.log("Loading Loader 4 Firefox: "+isFirefox+" | Chrome: "+isChrome);
+// Check for running in node-webkit
+try {
+    var fs = require('fs');
+    var pathUtils = require('path');   
+    var gui = require('nw.gui');
+    isNode = true;
+} catch(e) {
+    isNode = false;
+    console.log("node-webkit not found!");
+}
 
 // Setting up the IO functionality according to the platform
 var IO_JS = undefined;
@@ -51,21 +39,15 @@ if( isFirefox ) {
 	IO_JS = "js/ioapi.mozilla";
 } else if ( isChrome ) {
     IO_JS = "js/ioapi.chrome";           
+} else if (isNode){
+    IO_JS = "js/ioapi.node";
+} else if (isCordova){
+    IO_JS = "js/ioapi.cordova";
 } else {
-    // TODO safari and ie io handler needed
-    IO_JS = "js/ioapi.chrome";    
+    IO_JS = "js/ioapi.chrome";        
 }
 
-// Check for running in node-webkit
-try {
-    var fs = require('fs');
-    var pathUtils = require('path');   
-    var gui = require('nw.gui');
-    IO_JS = "js/ioapi.node";
-    isNode = true;
-} catch(e) {
-    console.log("node-webkit not found!");
-}
+console.log("Loading Loader - Firefox: "+isFirefox+" | ChromeExt: "+isChrome+" | Node: "+isNode+" | Cordova: "+isCordova);
 
 requirejs.config({
     map: {

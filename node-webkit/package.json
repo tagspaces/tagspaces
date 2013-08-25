@@ -5,7 +5,7 @@
   "main": "../data/index.html",
   "window": {
     "icon": "icon128.png",
-    "toolbar": false,
+    "toolbar": true,
     "width": 1024,
     "height": 800
   },
