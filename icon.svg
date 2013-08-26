@@ -23,9 +23,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.45789796"
-     inkscape:cx="652.45348"
-     inkscape:cy="-101.24384"
+     inkscape:zoom="2.590262"
+     inkscape:cx="229.24716"
+     inkscape:cy="973.16078"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -40,6 +40,22 @@
        orientation="0,1"
        position="236.42857,875"
        id="guide3115" />
+    <sodipodi:guide
+       orientation="1,0"
+       position="347.06914,1034.2583"
+       id="guide3854" />
+    <sodipodi:guide
+       orientation="1,0"
+       position="257.88897,994.88005"
+       id="guide3856" />
+    <sodipodi:guide
+       orientation="0,1"
+       position="216.96647,1014.9552"
+       id="guide3858" />
+    <sodipodi:guide
+       orientation="0,1"
+       position="236.6556,910.71868"
+       id="guide3860" />
   </sodipodi:namedview>
   <defs
      id="defs3043">
@@ -245,7 +261,7 @@
        inkscape:export-xdpi="64.650002"
        inkscape:export-ydpi="64.650002" />
     <path
-       transform="matrix(1.5935856,0,0,1.6535653,-235.53304,-499.56631)"
+       transform="matrix(1.5935856,0,0,1.6535653,-233.53304,-505.56631)"
        sodipodi:type="arc"
        style="fill:#616577;fill-opacity:1;stroke:none"
        id="path4875-4-7-5"
@@ -254,45 +270,45 @@
        sodipodi:rx="3.75"
        sodipodi:ry="3.5714285"
        d="m 350.71429,347.71933 a 3.75,3.5714285 0 1 1 -7.5,0 3.75,3.5714285 0 1 1 7.5,0 z"
-       inkscape:export-xdpi="33.290001"
-       inkscape:export-ydpi="33.290001"
-       inkscape:export-filename="/media/z/TagSpaces/website2/assets/ico/icon32.png" />
+       inkscape:export-xdpi="172.67"
+       inkscape:export-ydpi="172.67"
+       inkscape:export-filename="/media/z/TagSpaces/AndroidApp/www/img/logo.png" />
     <path
        style="fill:none;stroke:#a466aa;stroke-width:10.29371548;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 305.15503,117.99311 -9.42604,-8.71773"
+       d="m 307.15503,111.99311 -9.42604,-8.71773"
        id="path3108-5"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cc"
-       inkscape:export-filename="/media/z/TagSpaces/website2/assets/ico/icon32.png"
-       inkscape:export-xdpi="33.290001"
-       inkscape:export-ydpi="33.290001" />
+       inkscape:export-filename="/media/z/TagSpaces/AndroidApp/www/img/logo.png"
+       inkscape:export-xdpi="172.67"
+       inkscape:export-ydpi="172.67" />
     <path
        style="fill:#f7901e;fill-opacity:1;stroke:#33b5be;stroke-width:10.29371548;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="M 322.02266,97.772832 303.1706,80.821701"
+       d="M 324.02266,91.77283 305.1706,74.821701"
        id="path3108-9-1"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cc"
-       inkscape:export-filename="/media/z/TagSpaces/website2/assets/ico/icon32.png"
-       inkscape:export-xdpi="33.290001"
-       inkscape:export-ydpi="33.290001" />
+       inkscape:export-filename="/media/z/TagSpaces/AndroidApp/www/img/logo.png"
+       inkscape:export-xdpi="172.67"
+       inkscape:export-ydpi="172.67" />
     <path
        style="fill:#616577;fill-opacity:1;stroke:#f7901e;stroke-width:10.29371548;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="M 313.8369,108.18567 299.44979,95.351241"
+       d="M 315.8369,102.18567 301.44979,89.35124"
        id="path3108-0-7"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cc"
-       inkscape:export-filename="/media/z/TagSpaces/website2/assets/ico/icon32.png"
-       inkscape:export-xdpi="33.290001"
-       inkscape:export-ydpi="33.290001" />
+       inkscape:export-filename="/media/z/TagSpaces/AndroidApp/www/img/logo.png"
+       inkscape:export-xdpi="172.67"
+       inkscape:export-ydpi="172.67" />
     <path
        style="fill:none;stroke:#616577;stroke-width:11.96031666;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 306.87913,56.54648 31.07089,0 0,29.598718 -41.34434,42.441152 -30.69503,-28.37564 z"
+       d="m 308.87913,50.54648 31.07089,0 0,29.598718 -41.34434,42.441152 -30.69503,-28.37564 z"
        id="path3923-1-1"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cccccc"
-       inkscape:export-filename="/media/z/TagSpaces/website2/assets/ico/icon32.png"
-       inkscape:export-xdpi="33.290001"
-       inkscape:export-ydpi="33.290001" />
+       inkscape:export-filename="/media/z/TagSpaces/AndroidApp/www/img/logo.png"
+       inkscape:export-xdpi="172.67"
+       inkscape:export-ydpi="172.67" />
     <rect
        style="fill:#404040;fill-opacity:1;stroke:none"
        id="rect3052"
@@ -669,7 +685,7 @@
            height="76.436241"
            x="305.74496"
            y="670.18097" /></flowRegion><flowPara
-         id="flowPara4540"></flowPara></flowRoot>    <path
+         id="flowPara4540" /></flowRoot>    <path
        transform="matrix(5.5295399,0,0,5.7376617,-1737.4612,-631.25664)"
        sodipodi:type="arc"
        style="fill:#616577;fill-opacity:1;stroke:none"
@@ -748,5 +764,15 @@
          y="1661.5914"
          style="font-size:48px;font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;text-align:start;line-height:121.00000381%;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;font-family:Ubuntu;-inkscape-font-specification:Ubuntu Medium"
          id="tspan3954-3">ReImagine Your Files.</tspan></text>
+    <rect
+       style="fill:none;stroke:none"
+       id="rect3084"
+       width="88.609673"
+       height="104.24667"
+       x="258.01141"
+       y="37.254082"
+       inkscape:export-filename="/media/z/TagSpaces/AndroidApp/www/img/logo.png"
+       inkscape:export-xdpi="172.67"
+       inkscape:export-ydpi="172.67" />
   </g>
 </svg>

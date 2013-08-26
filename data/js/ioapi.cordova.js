@@ -33,6 +33,7 @@ define(function (require, exports, module) {
     }
 
     function scanDirectory(dirPath, index) {
+        // TODO recursivly calling callback not working        
         dirPath = dirPath+"/"; // TODO make it platform independent
         dirPath = normalizePath(dirPath);        
         fsRoot.getDirectory(dirPath, {create: false, exclusive: false}, 
@@ -67,6 +68,7 @@ define(function (require, exports, module) {
     }
     
     function generateDirectoryTree(dirPath) {
+        // TODO recursivly calling callback not working
         dirPath = dirPath+"/"; // TODO make it platform independent
         dirPath = normalizePath(dirPath);
         var tree = {}; 
@@ -267,7 +269,7 @@ define(function (require, exports, module) {
                         reader.onloadend = function(evt) {
                             TSPOSTIO.loadTextFile(evt.target.result); 
                         };
-                        reader.readAsDataURL(file);                              
+                        reader.readAsText(file);                              
                     },
                     function() {
                         console.log("error getting file: "+filePath);
