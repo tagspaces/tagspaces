@@ -40,6 +40,7 @@ define(function(require, exports, module) {
         return tmpStr.substring(tmpStr.lastIndexOf(DIR_SEPARATOR)+1,tmpStr.length);
     }
 
+    // TODO consider [20120125 89.4kg 19.5% 60.5% 39.8% 2.6kg]
     function extractFileExtension(filePath) {
         var ext = filePath.substring(filePath.lastIndexOf(".") + 1, filePath.length).toLowerCase().trim();
         if (filePath.lastIndexOf(".") < 0) { ext = ""; }

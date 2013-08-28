@@ -337,6 +337,7 @@ define(function(require, exports, module) {
 	// Proxying functions from tsTagsUI
 	exports.generateTagButtons 			= tsTagsUI.generateTagButtons;
 	exports.generateExtButton           = tsTagsUI.generateExtButton;
+	exports.generateTagStyle            = tsTagsUI.generateTagStyle
 	exports.openTagMenu 				= tsTagsUI.openTagMenu;
 	exports.showAddTagsDialog			= tsTagsUI.showAddTagsDialog;
 	exports.showTagEditInTreeDialog     = tsTagsUI.showTagEditInTreeDialog;

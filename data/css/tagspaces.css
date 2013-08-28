@@ -37,19 +37,6 @@ html, body {
 /* Removes the selection border on ui elements on android */
 * { -webkit-tap-highlight-color: rgba(0,0,0,0); }
 
-#directoryList .ui-selecting { background: #fff5a3; }
-#directoryList .ui-selected { background: #fff5a3; color: white; }
-#directoryList { list-style-type: none; margin: 0; padding: 0; width: 100%; }
-#directoryList li { margin: 3px; padding: 0.4em; font-size: 1.0em; height: 18px; }
-
-/* Thumbs box design	
- * TODO Move to viewThumb extension css
- * */
-.selectableFiles .ui-selecting { background: #fff5a3; }
-.selectableFiles .ui-selected { background: #fff5a3; color: white; }
-.selectableFiles { list-style-type: none; margin: 0; padding: 0; }
-.selectableFiles li { margin: 3px; padding: 1px; float: left; width: 100px; height: 100px; font-size: 1em; text-align: center; } 
-
 #logo {
 	padding: 0px;
 	font-size: 1.4em;
@@ -96,17 +83,66 @@ html, body {
     border-width: 0px;
 }
 
-.thumbImg {
+#directoryList .ui-selecting { background: #fff5a3; color: black; }
+#directoryList .ui-selected { background: #fff5a3; color: black; }
+#directoryList { list-style-type: none; margin: 0; padding: 0; width: 100%; }
+#directoryList li { margin: 3px; padding: 0.4em; font-size: 1.0em; height: 18px; }
+
+/* Thumbs box design    
+ * TODO Move to viewThumb extension css
+ * */
+.selectableFiles .ui-selecting { background: #fff5a3; color: black; }
+.selectableFiles .ui-selected { background: #fff5a3; color: black; }
+.selectableFiles { list-style-type: none; margin: 0; padding: 0; }
+
+.fileTile {
+    margin: 3px; 
+    padding: 1px;
+    padding-left: 3px; 
+    float: left; 
+    border: 1px solid #D4D4D4;
+    text-align: left;
+    width: 200px; 
+    height: 100px;  
+    overflow: hidden;
+    position:relative;
+}
+
+.fileTile:hover {
+    opacity: 1;
+}
+
+.thumbImgTile {
     max-width: 100px; 
     max-height: 100px;
-    vertical-align: text-top;
-    border: 1px lightgray solid;
+    position:absolute;
+    bottom:0;
+    right:0;   
+    border: 0px lightgray solid;
+    z-index: -1;
 }
 
 .fileTitle {
     font-size: 1.3em;
     color: #333333;
-    white-space: nowrap;
+  /*  white-space: nowrap;*/
+    z-index: 9999;
+}
+
+.fileExtTile {
+    position:absolute;
+    bottom:0;
+    right:0;
+    -webkit-border-radius: 0px !important;
+    border-radius: 0px !important;
+    background: #999 ; 
+    text-align: center;
+    width: 25px;       
+    color: white ;    
+}
+
+.fileTagsTile {
+    opacity: 0.5;
 }
 
 .fileExtension {
@@ -115,6 +151,13 @@ html, body {
     color: white;
     font-weight: bold;
     background-color: gray;
+}
+
+.thumbImg {
+    max-width: 100px; 
+    max-height: 100px;
+    vertical-align: text-top;
+    border: 1px lightgray solid;
 }
 
 #viewsRadio {
@@ -487,8 +530,8 @@ input a.resetFilter {
 }
 
 .groupTitle {
-    color: gray;
+    color: #999;
     font-weight: bold;
-/*    font-size: 1em;
-    font-family: Geneva, Arial, Helvetica, sans-serif;   */  
+    font-size: 1em;
+    display: inline-block;    
 }

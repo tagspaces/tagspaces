@@ -42,17 +42,11 @@ define(function(require, exports, module) {
 	}
 	
     var getNextFile = function (filePath) {
-        var nextFilePath = undefined;
-    
-        console.log("Next file: "+nextFilePath);
-        return nextFilePath;
+        return UI.getNextFile(filePath);
     }
 
     var getPrevFile = function (filePath) {
-        var prevFilePath = undefined;
-
-        console.log("Prev file: "+prevFilePath);
-        return prevFilePath;
+        return UI.getPrevFile(filePath);
     }	
 	
 	var setFileFilter = function (filter) {

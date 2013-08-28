@@ -207,6 +207,7 @@ console.log("Loading UI for perspectiveDefault");
 
         this.viewToolbar.append($("<div >", { 
             class: "input-append pull-right", 
+            style: "position:absolute; top:2px; right:2px; z-index: 9999"             
         })      
             // Filter               
             .append($("<input>", { 

@@ -389,6 +389,7 @@ define(function(require, exports, module) {
     exports.initDialogs                      = initDialogs;
     exports.generateTagGroups                = generateTagGroups;
     exports.openTagMenu    				     = openTagMenu;
+    exports.generateTagStyle                 = generateTagStyle;
     exports.generateTagButtons               = generateTagButtons;
     exports.generateExtButton                = generateExtButton;
 	exports.showAddTagsDialog				 = showAddTagsDialog;
