@@ -32,7 +32,8 @@ console.log("Loading UI for perspectiveDefault");
     }
     
     // Helper function user by basic and search views
-    function createFileTile(title, filePath, fileExt, fileTags) {
+    ExtUI.prototype.createFileTile = function(title, filePath, fileExt, fileTags) {
+        var self = this;
         
         //TODO minimize platform specific calls     
         var tmbPath = undefined;
@@ -72,9 +73,25 @@ console.log("Loading UI for perspectiveDefault");
             for (var i=0; i < tagCounter; i++) { 
                 tagsHTML.append($('<button>', {
                     "class":  "btn btn-small tagButton fileTagsTile", 
-                    text: tags[i],                    
-                    style: TSCORE.generateTagStyle(TSCORE.Config.findTag(tags[i]))
+                    text:     tags[i],
+                    tag:      tags[i],   
+                    filepath: filePath,                
+                    style:    TSCORE.generateTagStyle(TSCORE.Config.findTag(tags[i]))
                     })
+                    .click( function() {
+                        self.selectFile($(this).attr("filepath"));
+                        TSCORE.openTagMenu(this, $(this).attr("tag"), $(this).attr("filepath"));
+                    } )
+                    .dropdown( 'attach' , '#tagMenu' )
+                    /* .draggable({
+                        "cancel":   false,
+                        "appendTo": "body",
+                        "helper":   "clone",
+                        "revert":   true,
+                        "start":    function(e) {
+                            self.selectFile($(this).attr("filepath")); 
+                        }         
+                    }) */                   
                 );   
             }   
         }
@@ -86,12 +103,35 @@ console.log("Loading UI for perspectiveDefault");
                 text: fileExt
                 })
         } 
+        
+        var fileSelectorHTML = $('<button>', {
+                "class":     "btn btn-link fileTileSelector",
+                "filepath":  filePath               
+             })
+             .append( "<i class='icon-check-empty'>" )
+             .click( function(e) {
+                  e.preventDefault();
+                  var fpath = $(this).attr("filepath");
+                  var stateTag = $(this).find("i");
+                  if(stateTag.hasClass("icon-check-empty")) {                    
+                      stateTag.removeClass("icon-check-empty").addClass("icon-check");
+                      $(this).parent().parent().addClass("ui-selected");
+                      TSCORE.selectedFiles.push(fpath);  
+                  } else {
+                      stateTag.addClass("icon-check-empty").removeClass("icon-check");                      
+                      $(this).parent().parent().removeClass("ui-selected");
+                      TSCORE.selectedFiles.splice(TSCORE.selectedFiles.indexOf(fpath), 1);
+                  }                  
+                  self.handleElementActivation();
+                  return false; 
+              })              
             
         var tileHTML = $('<p>', {})        
         .append(titleHTML)
         .append(thumbHTML)
         .append(tagsHTML)
         .append(extHTML)
+        .append(fileSelectorHTML)
                         
         return tileHTML;        
     }    
@@ -112,22 +152,21 @@ console.log("Loading UI for perspectiveDefault");
                 title: "Toggle Select All Files",
                 id: this.extensionID+"ToogleSelectAll",    
             })
-            .click(function() {
-                if($(this).find("i").attr("class") == "icon-check-empty") {
+            .click(function(e) {
+                var checkIcon = $(this).find("i");
+                if(checkIcon.hasClass("icon-check-empty")) {
                     TSCORE.selectedFiles = [];   
-                    $('#'+self.extensionID+'FileTable tbody tr').each(function(){
-                        //$(this).addClass('ui-selected');
-                        //$(this).find(".fileSelection").prop("checked",true);
-                        TSCORE.selectedFiles.push($(this).find(".fileTitleButton").attr("filepath"));  
-                        //self.handleElementActivation();                          
+                    $(self.viewContainer).find('.fileTileSelector').each(function(){
+                        $(this).parent().parent().addClass("ui-selected");
+                        $(this).find("i").addClass("icon-check").removeClass("icon-check-empty");
+                        TSCORE.selectedFiles.push($(this).attr("filepath"));  
                     });
-                    $(this).find("i").removeClass("icon-check-empty"); 
-                    $(this).find("i").addClass("icon-check"); 
                 } else {
                     TSCORE.PerspectiveManager.clearSelectedFiles();
-                    $(this).find("i").removeClass("icon-check");                                     
-                    $(this).find("i").addClass("icon-check-empty");
-                }            
+                }    
+                self.handleElementActivation();
+                checkIcon.toggleClass("icon-check");                                     
+                checkIcon.toggleClass("icon-check-empty");                        
             })
             .append( "<i class='icon-check-empty'>" )
             )
@@ -550,6 +589,19 @@ console.log("Loading UI for perspectiveDefault");
         var self = this;
 
         this.searchResults = self.filterData(TSCORE.fileList);
+        
+        this.viewFooter.empty();
+        if(this.searchResults.length == 0) {
+            this.viewFooter.append($("<div>", { 
+                "class": "searchSummary",    
+                "text": "No results found."             
+            }));            
+        } else {
+            this.viewFooter.append($("<div>", { 
+                "class": "searchSummary",    
+                "text":  this.searchResults.length+" files found"             
+            }));
+        }   
 
         var i=0;
         _.each(self.calculateGrouping(this.searchResults), function (value) { 
@@ -559,7 +611,7 @@ console.log("Loading UI for perspectiveDefault");
             
             self.viewContainer.append($("<div>", { 
                 "class": "accordion-group",    
-                "style": "width: 100%; border: 0px #aaa solid;",             
+                "style": "width: 100%; border: 0px #aaa solid; -webkit-user-select: none; user-select: none; -moz-user-select: -moz-none;",             
             })
             .append($("<div>", { 
                 "class":        "accordion-heading  btn-group",
@@ -618,7 +670,7 @@ console.log("Loading UI for perspectiveDefault");
                      filepath: value[j][TSCORE.fileListFILEPATH], 
                      class: 'fileTile' 
                  })
-                 .append(createFileTile(
+                 .append(self.createFileTile(
                      value[j][TSCORE.fileListTITLE],
                      value[j][TSCORE.fileListFILEPATH],
                      value[j][TSCORE.fileListFILEEXT],
@@ -627,13 +679,49 @@ console.log("Loading UI for perspectiveDefault");
                  .dblclick(function() {
                         var filePath = $(this).attr("filepath");
                         TSCORE.FileOpener.openFile(filePath);
-                        self.selectFile($(this), filePath); 
+                        self.selectFile(filePath); 
                  })
                  .click(function() {
                         var filePath = $(this).attr("filepath");
-                        self.selectFile($(this), filePath); 
+                        self.selectFile(filePath); 
                  })
-                 );
+                .draggable({
+                    "cancel":    false,
+                    "appendTo":  "body",
+                    "helper":    "clone",
+                    "opacity":   "0.5",
+                    "revert":    true,
+                    "start":     function(e, ui) {
+                        self.selectFile($(this).attr("filepath")); 
+                    }            
+                })                  
+                .droppable({
+                    accept: ".tagButton",
+                    hoverClass: "activeRow",
+                    drop: function( event, ui ) {
+                        var tagName = ui.draggable.attr("tag");
+                                        
+                        var targetFilePath = $(this).attr("filepath");
+        
+                        // preventing self drag of tags
+                        var targetTags = TSCORE.TagUtils.extractTags(targetFilePath);
+                        for (var i = 0; i < targetTags.length; i++) {
+                            if (targetTags[i] === tagName) {
+                                return true;
+                            }
+                        }
+                        
+                        console.log("Tagging file: "+tagName+" to "+targetFilePath);
+                        $(this).toggleClass("ui-selected");
+                        TSCORE.PerspectiveManager.clearSelectedFiles();
+                        TSCORE.selectedFiles.push(targetFilePath); 
+                        TSCORE.TagUtils.addTag(TSCORE.selectedFiles, [tagName]);
+                        self.handleElementActivation();
+                        
+                        $(ui.helper).remove();  
+                    }                   
+                })                 
+                );
             } 
 
             $( "#"+self.extensionID+"sortingButtonsContent"+i ).selectable({
@@ -650,30 +738,27 @@ console.log("Loading UI for perspectiveDefault");
                 }
             });            
         });  
-        
-        if(i==0) {
-            self.viewContainer.append($("<div>", { 
-                "class": "accordion-group",    
-                "style": "padding-top: 5px; padding-left: 5px; font-size: 1.4em; border-width: 0px",
-                "text": "No results found."             
-            }));            
-        }
                  
         this.refreshThumbnails();
     }
     
-    ExtUI.prototype.selectFile = function(uiElement, filePath) {
+    ExtUI.prototype.selectFile = function(filePath) {
         TSCORE.PerspectiveManager.clearSelectedFiles();   
-
-        $(uiElement).toggleClass("ui-selected");
-        
+        $(this.viewContainer).find('.fileTileSelector').each(function(){
+            if($(this).attr("filepath") == filePath) {
+                $(this).parent().parent().toggleClass("ui-selected");
+                $(this).find("i").toggleClass("icon-check").toggleClass("icon-check-empty");
+                TSCORE.selectedFiles.push($(this).attr("filepath"));                  
+            }
+        });
+      
         TSCORE.selectedFiles.push(filePath);  
-        
         this.handleElementActivation();      
     }     
 
     ExtUI.prototype.setFilter = function(filterValue) {
-        console.log("Filter to value: "+filterValue);           
+        console.log("Filter to value: "+filterValue);   
+        $("#"+this.extensionID+"FilterBox").val(filterValue);        
         this.nextFilter = filterValue;
     }   
     

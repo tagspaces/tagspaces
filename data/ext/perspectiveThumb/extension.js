@@ -7,10 +7,10 @@ define(function(require, exports, module) {
 	
 	console.log("Loading perspectiveThumb");
 
-    var extensionTitle = "Calendar"
+    var extensionTitle = "Grid"
     var extensionID = "perspectiveThumb";  // ID should be equal to the directory name where the ext. is located   
     var extensionType =  "perspective";
-    var extensionIcon = "icon-picture";
+    var extensionIcon = "icon-th";
     var extensionVersion = "1.0";
     var extensionManifestVersion = 1;
     var extensionLicense = "AGPL";
@@ -50,12 +50,17 @@ define(function(require, exports, module) {
     }	
 	
 	var setFileFilter = function (filter) {
+	    UI.setFilter(filter);
 		console.log("setFileFilter not implemented in "+exports.ID);
 	}
 	
 	var clearSelectedFiles = function() {
         TSCORE.selectedFiles = [];   
-        $("#"+extensionID+"Container").find(".ui-selected").removeClass("ui-selected");
+        $("#"+extensionID+"Container").find(".ui-selected")
+            .removeClass("ui-selected");
+        $("#"+extensionID+"Container").find(".fileTileSelector").find("i")
+            .removeClass("icon-check")
+            .addClass("icon-check-empty");
 	}
 
     // Vars

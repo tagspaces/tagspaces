@@ -5,10 +5,10 @@
 define(function(require, exports, module) {
 "use strict";
 	
-	var extensionTitle = "Standard"
+	var extensionTitle = "List"
 	var extensionID = "perspectiveDefault";  // ID should be equal to the directory name where the ext. is located   
 	var extensionType =  "perspective";
-	var extensionIcon = "icon-list";
+	var extensionIcon = "icon-list-ul";
 	var extensionVersion = "1.0";
 	var extensionManifestVersion = 1;
 	var extensionLicense = "AGPL";

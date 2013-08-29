@@ -106,6 +106,7 @@ html, body {
     height: 100px;  
     overflow: hidden;
     position:relative;
+    background-color: white;
 }
 
 .fileTile:hover {
@@ -127,6 +128,12 @@ html, body {
     color: #333333;
   /*  white-space: nowrap;*/
     z-index: 9999;
+}
+
+.fileTileSelector {
+    position:absolute;
+    bottom:0;
+    left:0;
 }
 
 .fileExtTile {
@@ -297,6 +304,17 @@ li hr {
 #viewContainers, #viewFooters {
     background-color: white; 
     padding: 0;    
+}
+
+#viewFooters {
+
+}
+
+.searchSummary {
+    padding-top: 2px; 
+    padding-left: 2px; 
+    font-size: 1.0em; 
+    border-width: 0px    
 }
 
 .middle-north {
@@ -534,4 +552,10 @@ input a.resetFilter {
     font-weight: bold;
     font-size: 1em;
     display: inline-block;    
+}
+
+/* Tablet optimization */
+.dropdown-menu LI > A {
+    line-height: 35px !important;
+    height: 35px !important;
 }

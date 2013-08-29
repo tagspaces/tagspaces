@@ -90,7 +90,7 @@ define(function(require, exports, module) {
                 )                                
                 .droppable({
                         greedy: "true",                    
-                        accept: '.fileTitleButton',
+                        accept: '.fileTitleButton,.fileTile',
                         hoverClass: "dropOnFolder",
                         drop: function( event, ui ) {
                                 var filePath = ui.draggable.attr("filepath");
@@ -148,7 +148,7 @@ define(function(require, exports, module) {
                         })
                         .droppable({
                             greedy: "true",
-                            accept: ".fileTitleButton",
+                            accept: ".fileTitleButton,.fileTile",
                             hoverClass: "dropOnFolder",
                             drop: function( event, ui ) {
                                 // Fixing issue with dropping on stacked/overlapped directories

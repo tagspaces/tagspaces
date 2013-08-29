@@ -50,9 +50,9 @@ var initViews = function () {
                     //}            
                 });       
             //} 
-        }   
+        } 
 
-    });  
+    }); // end require  
 }
 
 var initViewsUI = function(perspective) {
@@ -72,7 +72,7 @@ var initViewsUI = function(perspective) {
     }).hide());	        	
 
     // Creating perspective's footer
-    $("#viewContainers").append($("<div>", { 
+    $("#viewFooters").append($("<div>", { 
         id: perspective.ID+"Footer",
         text: perspective.Title,
         style: "width: 100%; height: 100%",

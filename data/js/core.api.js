@@ -274,7 +274,7 @@ define(function(require, exports, module) {
 	        ,   north__resizable:       false        
 	        ,   north__spacing_open:    0    
 	        ,   south__spacing_open:    0              
-	        ,   south__size:            1
+	        ,   south__size:            20
 	    });
 	
 	    // File Viewer / Editor

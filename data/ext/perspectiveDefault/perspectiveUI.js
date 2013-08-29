@@ -373,15 +373,10 @@ console.log("Loading UI for perspectiveDefault");
 	    			}
 		    		
 					console.log("Tagging file: "+tagName+" to "+targetFilePath);
-			    
 				    $(this).toggleClass("ui-selected");
-		
 				    TSCORE.PerspectiveManager.clearSelectedFiles();
-				    
 				    TSCORE.selectedFiles.push(targetFilePath); 
-					
 					TSCORE.TagUtils.addTag(TSCORE.selectedFiles, [tagName]);
-	
 					self.handleElementActivation();
 					
 					$(ui.helper).remove();  
