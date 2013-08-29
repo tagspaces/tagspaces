@@ -70,6 +70,13 @@ var initViewsUI = function(perspective) {
         text: perspective.Title,
         style: "width: 100%; height: 100%",
     }).hide());	        	
+
+    // Creating perspective's footer
+    $("#viewContainers").append($("<div>", { 
+        id: perspective.ID+"Footer",
+        text: perspective.Title,
+        style: "width: 100%; height: 100%",
+    }).hide()); 
   
     $("#viewSwitcher").append($("<button>", { 
         "viewid": perspective.ID,
@@ -172,7 +179,8 @@ var changeView = function (viewType) {
 
 	for (var i=0; i < perspectives.length; i++) {   
  		$( "#"+perspectives[i].ID+"Container" ).hide();
- 		$( "#"+perspectives[i].ID+"Toolbar" ).hide(); 		  
+ 		$( "#"+perspectives[i].ID+"Toolbar" ).hide();
+ 		$( "#"+perspectives[i].ID+"Footer" ).hide(); 
 	}	        
 
 	for (var i=0; i < perspectives.length; i++) {   
@@ -184,7 +192,8 @@ var changeView = function (viewType) {
 	 		//	console.error("Error while executing 'load' on "+perspectives[i].ID+" "+e);
 	 		//} 			
 			$( "#"+perspectives[i].ID+"Container" ).show();
-			$( "#"+perspectives[i].ID+"Toolbar" ).show(); 
+			$( "#"+perspectives[i].ID+"Toolbar" ).show();
+            $( "#"+perspectives[i].ID+"Footer" ).show(); 			 
  		}
 	}	
 	   	
@@ -211,8 +220,10 @@ var clearSelectedFiles = function () {
 
 var setFileFilter = function (filter) {
 	for (var i=0; i < perspectives.length; i++) {   
- 		try { 			
- 			perspectives[i].setFileFilter(filter);
+ 		try {
+ 		    if(perspectives[i].ID == TSCORE.currentView){
+                perspectives[i].setFileFilter(filter); 		        
+ 		    } 	
  		} catch(e) {
  			console.log("Error while executing 'setFileFilter' on "+perspectives[i].ID)
  		} 		 		
