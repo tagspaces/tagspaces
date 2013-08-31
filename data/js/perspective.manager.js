@@ -19,78 +19,79 @@ var initViews = function () {
 	$("#viewFooters").empty();
 	
 	var defaultViewLoaded = false;
+	
+    var extensions = TSCORE.Config.getPerspectives();
+    for (var i=0; i < extensions.length; i++) {
+           
+        // TODO Some libraries such as ace editor are not working using paths like this "file:///C:/blabal/extension.js"
+        var extPath = TSCORE.Config.getExtensionPath()+"/"+extensions[i].id+"/extension.js"; 
 
-	// Loading perspectiveDefault as a default perspective
-    require(["ext/perspectiveDefault/extension.js"], function(perspective) {
-		perspectives.push(perspective);
-		initViewsUI(perspective);
-		perspective.init();
-   
-   		TSCORE.currentView = perspective.ID;
-		perspective.load();
-        
-        // Set the default perspective to be visually active
-        $("#viewSwitcher").find("button").addClass("active");
-        
-        // Make shure default perspective is loaded first
-        var extensions = TSCORE.Config.getPerspectives();
-        for (var i=0; i < extensions.length; i++) {
-            //if(extensions[i].enabled && (extensions[i].type == "view") ) {
+        require([extPath], function(perspective) {
+            perspectives.push(perspective);
+            try {
+                // Creating perspective's toolbar
+                $("#viewToolbars").append($("<div>", { 
+                    id: perspective.ID+"Toolbar",
+                    text: perspective.Title,
+                }).hide()); 
                 
-                // TODO Some libraries such as ace editor are not working using paths like this "file:///C:/blabal/extension.js"
-                var extPath = TSCORE.Config.getExtensionPath()+"/"+extensions[i].id+"/extension.js"; 
-    
-                require([extPath], function(perspective) {
-                    perspectives.push(perspective);
-                    initViewsUI(perspective);
-                    //try {             
-                        perspective.init();
-                    //} catch(e) {
-                    //  console.log("Error while executing 'init' on "+perspectives[i].ID+" - "+e);
-                    //}            
-                });       
-            //} 
-        } 
-
-    }); // end require  
+                // Creating perspective's container
+                $("#viewContainers").append($("<div>", { 
+                    id: perspective.ID+"Container",
+                    text: perspective.Title,
+                    style: "width: 100%; height: 100%",
+                }).hide());             
+            
+                // Creating perspective's footer
+                $("#viewFooters").append($("<div>", { 
+                    id: perspective.ID+"Footer",
+                    text: perspective.Title,
+                    style: "width: 100%; height: 100%",
+                }).hide());                             
+                perspective.init();
+            } catch(e) {
+                console.log("Error while executing 'init' on "+perspectives[i].ID+" - "+e);
+            } finally {
+                if( perspectives.length == extensions.length) {
+                    initViewSwitcher();
+                }
+            }            
+        });       
+    }
 }
 
-var initViewsUI = function(perspective) {
-	console.log("Init UI for "+perspective.ID);
-	
-	// Creating perspective's toolbar
-    $("#viewToolbars").append($("<div>", { 
-        id: perspective.ID+"Toolbar",
-        text: perspective.Title,
-    }).hide());	
+var initViewSwitcher = function() {
+    var extensions = TSCORE.Config.getPerspectives();
+    for (var i=0; i < extensions.length; i++) {
+        var curPers = undefined;        
+        // Finding the right perspective 
+        perspectives.forEach(function(value) {
+            if(value.ID == extensions[i].id) {
+                curPers = value;
+            }
+        })   
+      
+        $("#viewSwitcher").append($("<button>", { 
+            "viewid": curPers.ID,
+            "class":  "btn btn-link",        
+            "id":       curPers.ID+"Button",
+            "text":     " "+curPers.Title    
+        }).prepend($("<i>", {
+            "class":  curPers.Icon
+        })))
     
-	// Creating perspective's container
-    $("#viewContainers").append($("<div>", { 
-        id: perspective.ID+"Container",
-        text: perspective.Title,
-        style: "width: 100%; height: 100%",
-    }).hide());	        	
+        // Adding event listener & icon to the radio button
+        $( "#"+curPers.ID+"Button" ).click(function() { 
+            changeView($(this).attr("viewid"));     
+        })   
+    }     
 
-    // Creating perspective's footer
-    $("#viewFooters").append($("<div>", { 
-        id: perspective.ID+"Footer",
-        text: perspective.Title,
-        style: "width: 100%; height: 100%",
-    }).hide()); 
-  
-    $("#viewSwitcher").append($("<button>", { 
-        "viewid": perspective.ID,
-        "class":  "btn btn-link",        
-        "id":       perspective.ID+"Button",
-        "text":     " "+perspective.Title    
-    }).prepend($("<i>", {
-        "class":  perspective.Icon
-    })))
-
-	// Adding event listener & icon to the radio button
-    $( "#"+perspective.ID+"Button" ).click(function() { 
-		changeView($(this).attr("viewid")); 	
-	})   
+    if(perspectives.length > 0) {
+        TSCORE.currentView = perspectives[0].ID;       
+        // Set the first perspective to be visually active
+        $("#viewSwitcher").find("button").first().addClass("active");
+        changeView($("#viewSwitcher").find("button").first().attr("viewid"));
+    }
 }
 
 var getNextFile = function (filePath) {
@@ -173,9 +174,9 @@ var changeView = function (viewType) {
     //Setting the current view
     TSCORE.currentView = viewType;
     
-    if(TSCORE.currentPath == undefined) {
+/*    if(TSCORE.currentPath == undefined) {
         TSCORE.showAlertDialog("Please select first location from the dropdown on the left!");
-    }
+    }*/
 
 	for (var i=0; i < perspectives.length; i++) {   
  		$( "#"+perspectives[i].ID+"Container" ).hide();
@@ -199,11 +200,8 @@ var changeView = function (viewType) {
 	   	
     // Clear the list with the selected files    
     TSCORE.PerspectiveManager.clearSelectedFiles(); 
-
-	// Reset the filter by a view change
-	//setFileFilter("");
 	  
-//    TSCORE.hideLoadingAnimation();     
+    TSCORE.hideLoadingAnimation();     
 }
 
 var clearSelectedFiles = function () {
