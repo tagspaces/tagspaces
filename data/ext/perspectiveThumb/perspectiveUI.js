@@ -28,7 +28,8 @@ console.log("Loading UI for perspectiveDefault");
         this.currentTmbSize = 0;
         this.currentFilter = "";
         this.nextFilter = "";        
-        this.searchResults = undefined;        
+        this.searchResults = undefined;    
+        this.startTime = undefined;    
     }
     
     // Helper function user by basic and search views
@@ -73,7 +74,7 @@ console.log("Loading UI for perspectiveDefault");
             for (var i=0; i < tagCounter; i++) { 
                 tagsHTML.append($('<button>', {
                     "class":  "btn btn-small tagButton fileTagsTile", 
-                    text:     tags[i],
+                    text:     tags[i]+" ",
                     tag:      tags[i],   
                     filepath: filePath,                
                     style:    TSCORE.generateTagStyle(TSCORE.Config.findTag(tags[i]))
@@ -82,6 +83,7 @@ console.log("Loading UI for perspectiveDefault");
                         self.selectFile($(this).attr("filepath"));
                         TSCORE.openTagMenu(this, $(this).attr("tag"), $(this).attr("filepath"));
                     } )
+                    .append("<span class='caret'/>")                    
                     .dropdown( 'attach' , '#tagMenu' )
                     /* .draggable({
                         "cancel":   false,
@@ -416,6 +418,11 @@ console.log("Loading UI for perspectiveDefault");
                         tmpDate.setHours(0,0,0,0);
                         return tmpDate.getTime();
                     });                       
+                // Sort groups by date
+                data = _.sortBy(data, function(value) { 
+                        var tmpDate = new Date(value[0][TSCORE.fileListFILELMDT]);    
+                        return -tmpDate.getTime();            
+                    });
                 break;                
             }
             case "month": {
@@ -424,7 +431,12 @@ console.log("Loading UI for perspectiveDefault");
                         tmpDate.setHours(0,0,0,0);
                         tmpDate.setDate(1);
                         return tmpDate.getTime();
-                    });                       
+                    });
+                // Sort groups by date
+                data = _.sortBy(data, function(value) { 
+                        var tmpDate = new Date(value[0][TSCORE.fileListFILELMDT]);    
+                        return -tmpDate.getTime();            
+                    });                                           
                 break;                
             }
             case "year": {
@@ -434,7 +446,12 @@ console.log("Loading UI for perspectiveDefault");
                         tmpDate.setDate(1);
                         tmpDate.setMonth(1);
                         return tmpDate.getTime();
-                    });       
+                    });
+                // Sort groups by date
+                data = _.sortBy(data, function(value) { 
+                        var tmpDate = new Date(value[0][TSCORE.fileListFILELMDT]);    
+                        return -tmpDate.getTime();            
+                    });                           
                 break;                
             }            
             default : {
@@ -445,11 +462,7 @@ console.log("Loading UI for perspectiveDefault");
             }
         }
 
-        // Sort groups by date
-        data = _.sortBy(data, function(value) { 
-                var tmpDate = new Date(value[0][TSCORE.fileListFILELMDT]);    
-                return -tmpDate.getTime();            
-            });
+
         
         return data;
     }
@@ -581,6 +594,8 @@ console.log("Loading UI for perspectiveDefault");
     }
     
     ExtUI.prototype.reInit = function() {
+        this.startTime = new Date().getTime();
+        
         this.viewContainer.empty();
         this.viewContainer.addClass("accordion");
    
@@ -589,19 +604,21 @@ console.log("Loading UI for perspectiveDefault");
         var self = this;
 
         this.searchResults = self.filterData(TSCORE.fileList);
-        
+
         this.viewFooter.empty();
+        var endTime = new Date().getTime();          
         if(this.searchResults.length == 0) {
             this.viewFooter.append($("<div>", { 
                 "class": "searchSummary",    
-                "text": "No results found."             
+                "text": "No files found."             
             }));            
         } else {
             this.viewFooter.append($("<div>", { 
                 "class": "searchSummary",    
-                "text":  this.searchResults.length+" files found"             
+                "text":  this.searchResults.length+" files found in "+(endTime-this.startTime)/1000+" sec."             
             }));
-        }   
+        } 
+
 
         var i=0;
         _.each(self.calculateGrouping(this.searchResults), function (value) { 
@@ -610,8 +627,8 @@ console.log("Loading UI for perspectiveDefault");
             var groupingTitle = self.calculateGroupTitle(value[0][TSCORE.fileListFILELMDT]);
             
             self.viewContainer.append($("<div>", { 
-                "class": "accordion-group",    
-                "style": "width: 100%; border: 0px #aaa solid; -webkit-user-select: none; user-select: none; -moz-user-select: -moz-none;",             
+                "class": "accordion-group disableTextSelection",    
+                "style": "width: 100%; border: 0px #aaa solid;",             
             })
             .append($("<div>", { 
                 "class":        "accordion-heading  btn-group",
@@ -699,7 +716,7 @@ console.log("Loading UI for perspectiveDefault");
                     accept: ".tagButton",
                     hoverClass: "activeRow",
                     drop: function( event, ui ) {
-                        var tagName = ui.draggable.attr("tag");
+                        var tagName = TSCORE.selectedTag; //ui.draggable.attr("tag");
                                         
                         var targetFilePath = $(this).attr("filepath");
         
