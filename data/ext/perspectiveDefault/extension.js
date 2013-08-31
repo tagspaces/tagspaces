@@ -91,7 +91,7 @@ define(function(require, exports, module) {
 		TSCORE.PerspectiveManager.clearSelectedFiles();
 		console.log("Prev file: "+prevFilePath);
 		return prevFilePath;
-	}	
+	}
 		
 	// Vars
 	exports.Title 					= extensionTitle;

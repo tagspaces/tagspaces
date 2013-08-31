@@ -13,6 +13,8 @@ console.log("Loading UI for perspectiveDefault");
 
 	var supportedFileTypeThumnailing = ['jpg','jpeg','png','gif'];
 
+    var extensionDirectory = undefined;
+
 	function ExtUI(extID) {
 		this.extensionID = extID;
 	    this.viewContainer = $("#"+this.extensionID+"Container").empty();
@@ -23,6 +25,8 @@ console.log("Loading UI for perspectiveDefault");
 		this.showFileDetails = false;
 		this.showTags = true;
 		this.currentTmbSize = 0;
+		
+		extensionDirectory = TSCORE.Config.getExtensionPath()+"/"+this.extensionID;
 	}
 	
 	// Helper function user by basic and search views
@@ -73,7 +77,32 @@ console.log("Loading UI for perspectiveDefault");
 	        
 	    return checkboxHTML+" "+buttonHTML +" " + titleHTML + thumbHTML;        
 	}
+	
+    function table2csv(oTable, tableElm) {
+            var csv = '';
+            var headers = [];
+            var rows = [];
+            var numberOfTagColumns = 20; // max. estimated to 40 ca. 5 symbols per tag _[er], max. path length 25x chars   
 
+            headers.push("path");
+            headers.push("title");
+            headers.push("size");
+            for(var i = 0; i < numberOfTagColumns; i++) {
+                headers.push("tag"+i);
+            }
+            csv += headers.join(',') + "\n";
+     
+            var total = oTable.fnSettings().fnRecordsTotal()
+            for(var i = 0; i < total; i++) {
+                var row = oTable.fnGetData(i);
+                row = row[TSCORE.fileListFILEPATH]+","+row[TSCORE.fileListTITLE]+","+row[TSCORE.fileListFILESIZE]+","+row[TSCORE.fileListTAGS];
+                rows.push(row);
+            }
+
+            csv += rows.join("\n");
+            return csv;
+    }
+     
 	ExtUI.prototype.buildUI = function() {
 		console.log("Init UI module");
 		       
@@ -151,7 +180,11 @@ console.log("Loading UI for perspectiveDefault");
     	    })
     	    .append( $("<i>", { class: "icon-tag", }) )
     	    )    
-    
+        ); // end toolbar
+                
+        this.viewToolbar.append($("<div >", { 
+            class: "btn-group", 
+        })  
     	    .append($("<button>", { 
                 class: "btn ",	
                 "data-toggle": "button",        
@@ -206,8 +239,50 @@ console.log("Loading UI for perspectiveDefault");
 	    ) // end button group
 
         this.viewToolbar.append($("<div >", { 
+            class: "btn-group", 
+        })       
+            .append($("<button>", { 
+                class: "btn",           
+                title: "Exports current table data as CSV",
+                id: this.extensionID+"ExportButton",    
+            })
+            .click(function() {
+                var dialogContent = $('<textarea>', {
+                    style: "width: 500px; height: 350px;",
+                    text: table2csv(self.fileTable, 'table.display')
+                });                
+                TSCORE.showAlertDialog(dialogContent,"Export to CSV Dialog");
+            })
+            .append( $("<i>", { class: "icon-download-alt", }) )
+            )          
+            
+            .append($("<button>", { 
+                class: "btn",           
+                title: "Show Quantified Yourself Graphic",
+                id: this.extensionID+"AnalyzeButton",    
+            })
+            .click(function() {
+                require([
+                    extensionDirectory+'/quantifiedSelfGraph.js',
+                    extensionDirectory+'/d3/d3.v3.js'
+                    ], function(ui) {
+                        ui.init(self.viewFooter, table2csv(self.fileTable, 'table.display'));
+                        viewFooter.append($('<link>', {
+                               "rel":  "stylesheet",
+                               "type": "text/css",
+                               "href": extensionDirectory+"/styles.css"
+                        }));                
+                });            
+                TSCORE.togglePerspectiveFooter();    
+            })
+            .append( $("<i>", { class: "icon-bar-chart", }) )
+            )          
+                        
+        ); // end toolbar
+
+        this.viewToolbar.append($("<div >", { 
             class: "input-append pull-right", 
-            style: "position:absolute; top:2px; right:2px; z-index: 9999"             
+            style: "position:absolute; top:2px; right:2px; z-index: 9999"  
         })      
             // Filter               
             .append($("<input>", { 
@@ -240,7 +315,7 @@ console.log("Loading UI for perspectiveDefault");
 			cellspacing: "0",
 			border: "0",
 			style: "width: 100%",
-			class: "table content",
+			class: "table content disableTextSelection",
 	        id: this.extensionID+"FileTable",    
 	    })); 
 	    
@@ -360,7 +435,7 @@ console.log("Loading UI for perspectiveDefault");
 		    	accept: ".tagButton",
 		    	hoverClass: "activeRow",
 		    	drop: function( event, ui ) {
-		    		var tagName = ui.draggable.attr("tag");
+		    		var tagName = TSCORE.selectedTag; //ui.draggable.attr("tag");
 		    			    		
 		    		var targetFilePath = self.fileTable.fnGetData( this )[TSCORE.fileListFILEPATH];
 	
