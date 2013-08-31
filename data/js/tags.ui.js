@@ -36,7 +36,7 @@ define(function(require, exports, module) {
 	
 	    // Context menu for the tags in the tag tree
         $( "#tagTreeMenuAddTagToFile" ).click( function() {
-            TSCORE.TagUtils.addTag(TSCORE.selectedFiles, [TSCORE.selectedTag]);  
+            TSCORE.TagUtils.addTag(TSCORE.selectedFiles, [TSCORE.selectedTag]);              
         });                
 
         $( "#tagTreeMenuAddTagAsFilter" ).click( function() {
@@ -143,7 +143,7 @@ define(function(require, exports, module) {
 	    
 	    for(var i=0; i < TSCORE.Config.Settings["tagGroups"].length; i++) {
 	        $("#tagGroupsContent").append($("<div>", { 
-	            "class": "accordion-group",    
+	            "class": "accordion-group disableTextSelection",    
                 "style": "width: 99%; border: 0px #aaa solid;",	            
 	        })
 	        .append($("<div>", { 
@@ -217,33 +217,107 @@ define(function(require, exports, module) {
 
 	        var tagButtons = $("<div>").appendTo( "#tagButtonsContent"+i );  
 	        for(var j=0; j < TSCORE.Config.Settings["tagGroups"][i]["children"].length; j++) {
+	            var tagTitle = undefined;
+	            if(TSCORE.Config.Settings["tagGroups"][i]["children"][j].description != undefined) {
+	                tagTitle = TSCORE.Config.Settings["tagGroups"][i]["children"][j].description;
+	            } else {
+                    tagTitle = "Opens context menu for "+TSCORE.Config.Settings["tagGroups"][i]["children"][j].title;	                
+	            }
+	            var tagIcon = "";
+                if(TSCORE.Config.Settings["tagGroups"][i]["children"][j].type == "smart"){
+                    tagIcon = "<span class='icon-beaker'/> "
+                }
 	            tagButtons.append($("<a>", { 
 	                "class":         "btn btn-small tagButton", 
 	                "tag":           TSCORE.Config.Settings["tagGroups"][i]["children"][j].title, 
 	                "parentKey":     TSCORE.Config.Settings["tagGroups"][i].key,
-	                "title":         "Opens context menu for "+TSCORE.Config.Settings["tagGroups"][i]["children"][j].title,
+	                "title":         tagTitle,
 	                "text":          TSCORE.Config.Settings["tagGroups"][i]["children"][j].title+" ",
 	                "style":         generateTagStyle(TSCORE.Config.Settings["tagGroups"][i]["children"][j]), 
 	            })            
 	            .click( function() {
-	                TSCORE.selectedTag = $(this).attr("tag");
 	                TSCORE.selectedTagData = TSCORE.Config.getTagData($(this).attr("tag"), $(this).attr("parentKey"));
+                    TSCORE.selectedTag = generateTagValue(TSCORE.selectedTagData);
 	                TSCORE.selectedTagData.parentKey = $(this).attr("parentKey");
 	            })
                 .draggable({
                     "appendTo":   "body",
                     "helper":     "clone",
                     "revert":     'invalid',
+                    "start":     function(e, ui) {
+                        TSCORE.selectedTagData = TSCORE.Config.getTagData($(this).attr("tag"), $(this).attr("parentKey"));
+                        TSCORE.selectedTag = generateTagValue(TSCORE.selectedTagData);
+                        TSCORE.selectedTagData.parentKey = $(this).attr("parentKey");                         
+                    }                     
                 }) 
+                .prepend(tagIcon)
                 .append("<span class='caret'/>")
 	            .dropdown( 'attach' , '#tagTreeMenu' )               
                 );
 	       } 
 	    }
-        // Activating nano scroller
-        //$("#tagGroups").nanoScroller();	    
 	}
 		
+    function generateTagValue(tagData) {
+        var tagValue = tagData.title;
+        if (tagData.type == "smart") {
+            switch (tagData.functionality){
+                case "here": {
+                    /* window.onload = function() {
+                        if (navigator.geolocation) {
+                            navigator.geolocation.getCurrentPosition(function(position) {
+                                var lat = position.coords.latitude;
+                                var lng = position.coords.longitude;
+                                alert("Current position: " + lat + " " + lng);
+                            }, function(error) {
+                                alert('Error occurred. Error code: ' + error.code);         
+                            },{timeout:50000});
+                        }else{
+                            alert('no geolocation support');
+                        }
+                    };*/
+                    break;                
+                }
+                case "today": {
+                    tagValue = TSCORE.TagUtils.formatDateTime4Tag(new Date(), false);   
+                    break;                
+                }
+                case "tomorrow": {
+                    var d = new Date();
+                    d.setDate(d.getDate() + 1);
+                    tagValue = TSCORE.TagUtils.formatDateTime4Tag(d, false);   
+                    break;                
+                }
+                case "yesterday": {
+                    var d = new Date();
+                    d.setDate(d.getDate() - 1);
+                    tagValue = TSCORE.TagUtils.formatDateTime4Tag(d, false);   
+                    break;                
+                }
+                case "currentMonth": {
+                    var cMonth = ""+((new Date()).getMonth()+1);
+                    if(cMonth.length == 1) {
+                        cMonth = "0"+cMonth;
+                    }
+                    tagValue = ""+(new Date()).getFullYear()+cMonth;   
+                    break;                
+                }                                
+                case "currentYear": {
+                    tagValue = ""+(new Date()).getFullYear();   
+                    break;                
+                }   
+                case "now": {
+                    tagValue = TSCORE.TagUtils.formatDateTime4Tag(new Date(), true);   
+                    break;                
+                }
+                default : {
+                    break;                            
+                }
+            }            
+        }
+        return tagValue;                   
+    }   
+    		
 	function openTagMenu(tagButton, tag, filePath) {
 	    TSCORE.selectedFiles.push(filePath);
 	    TSCORE.selectedTag = tag;
@@ -284,6 +358,7 @@ define(function(require, exports, module) {
         }
         return tagStyle;	    
 	}
+	
 	
     // Helper function generating file extension button
     function generateExtButton(fileExtension, filePath) {

@@ -115,6 +115,32 @@ define(function(require, exports, module) {
         }
         return cYear+"."+cMonth+"."+cDate+time;
     }
+    
+    function formatDateTime4Tag(date, includeTime) {
+        if ((date === undefined) || (date === "")) return "";
+        var d = new Date(date);
+        var cDate = d.getDate();
+        cDate = cDate + "";
+        if (cDate.length == 1) { cDate = "0" + cDate; }
+        var cMonth = d.getMonth(); cMonth++;
+        cMonth = cMonth + "";
+        if (cMonth.length == 1) { cMonth = "0" + cMonth; }    
+        var cYear = d.getFullYear();
+        var cHour = d.getHours();
+        cHour = cHour + "";
+        if (cHour.length == 1) { cHour = "0" + cHour; }
+        var cMinute = d.getMinutes();
+        cMinute = cMinute + "";
+        if (cMinute.length == 1) { cMinute = "0" + cMinute; }
+        var cSecond = d.getSeconds();
+        cSecond = cSecond + "";
+        if (cSecond.length == 1) { cSecond = "0" + cSecond; }    
+        var time = "";
+        if (includeTime) {
+            time = "-"+cHour+""+cMinute+""+cSecond; 
+        }
+        return cYear+""+cMonth+""+cDate+time;
+    }    
 
     function extractTags(filePath) {
         console.log("Extracting tags from: "+filePath);
@@ -134,7 +160,8 @@ define(function(require, exports, module) {
         tags = tagContainer.split(TAG_DELIMITER);
 
         for (var i=0; i < tags.length; i++) {
-            if(tags[i].trim().length > 1) {
+            // Min tag length set to 1 character
+            if(tags[i].trim().length > 0) {
                 cleanedTags.push(tags[i]);
             }
         }
@@ -158,7 +185,7 @@ define(function(require, exports, module) {
         }
 
         // Splitting filename with space, comma, plus, underscore and score delimiters    
-        tags = tagContainer.split(/[\s,+_-]+/);
+        tags = tagContainer.split(/[\s,.+_-]+/);
         
         var cleanedTags = [];
         
@@ -363,6 +390,7 @@ define(function(require, exports, module) {
     exports.extractTitle                        = extractTitle;
     exports.formatFileSize                      = formatFileSize;
     exports.formatDateTime                      = formatDateTime;
+    exports.formatDateTime4Tag                  = formatDateTime4Tag; 
     exports.extractTags                         = extractTags;
     exports.suggestTags                         = suggestTags;
     exports.writeTagsToFile                     = writeTagsToFile;

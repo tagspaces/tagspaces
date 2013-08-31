@@ -53,13 +53,12 @@ define(function(require, exports, module) {
 	    "lastOpenedDirectory": "",
 		"tagspacesList": [],
 	    "extensionsPath": "ext",
-        "ootbPerspectives": [ 'perspectiveThumb', 'perspectiveGraph' ],
+        "ootbPerspectives": [ 'perspectiveDefault', 'perspectiveThumb', 'perspectiveGraph' ],
         "ootbViewers": [ "viewerBrowser", "viewerMD", "viewerImage", "viewerPDF", "editorText" ],
         "ootbEditors": [ "editorHTML", "editorText" ],        
 	    "perspectives": [
-	        {   
-	            "id": "perspectiveThumb", // ID should be equal to the directory name where the extension is located 
-	        },
+	        { "id": "perspectiveDefault" }, // ID should be equal to the directory name where the extension is located 
+            { "id": "perspectiveThumb" }// ID should be equal to the directory name where the extension is located	        
 	    ],
 	    "supportedFileTypes": [
 	        { "type": "jpg",	"viewer": "viewerImage",     "editor": "false" },        
@@ -128,26 +127,86 @@ define(function(require, exports, module) {
 			    ]
 			},
             {
+                "title": "Smart Tags",
+                "key": "SMR",
+                "expanded": true,
+                "children": [
+                    {
+                        "type":          "smart",
+                        "title":         "now",
+                        "functionality": "now",
+                        "desciption":    "Adds the current date and time as tag",
+                        "color":         "#4986e7",
+                        "textcolor":     "#ffffff"
+                    },
+                    {
+                        "type":          "smart",
+                        "title":         "today",
+                        "functionality": "today",
+                        "desciption":    "Adds the current date as tag",
+                        "color":         "#4986e7",
+                        "textcolor":     "#ffffff"
+                    },
+                    {
+                        "type":          "smart",
+                        "title":         "tomorrow",
+                        "functionality": "tomorrow",
+                        "desciption":    "Adds tomorrow's date as tag",
+                        "color":         "#4986e7",
+                        "textcolor":     "#ffffff"
+                    },
+                    {
+                        "type":          "smart",
+                        "title":         "yesterday",
+                        "functionality": "yesterday",
+                        "desciption":    "Adds the date of yesterday as tag",
+                        "color":         "#4986e7",
+                        "textcolor":     "#ffffff"
+                    },
+                    {
+                        "type":          "smart",
+                        "title":         "month",
+                        "functionality": "currentMonth",
+                        "desciption":    "Adds the current year and month as tag",
+                        "color":         "#4986e7",
+                        "textcolor":     "#ffffff"
+                    },                    
+                    {
+                        "type":          "smart",
+                        "title":         "year",
+                        "functionality": "currentYear",
+                        "desciption":    "Adds the current year as tag",
+                        "color":         "#4986e7",
+                        "textcolor":     "#ffffff"
+                    },                    
+                    {
+                        "type":          "smart",
+                        "title":         "here",
+                        "functionality": "here",
+                        "desciption":    "Adds the current location as tag",
+                        "color":         "#ff7537",
+                        "textcolor":     "#ffffff"
+                    },                                                            
+                ]
+            },   
+            {
                 "expanded": true,
                 "children": [
                     {
                         "type": "plain",
                         "title": "high",
-                        "parentKey": "49138",
                         "color": "#ff7537",
                         "textcolor": "#ffffff"
                     },
                     {
                         "type": "plain",
                         "title": "medium",
-                        "parentKey": "49138",
                         "color": "#ffad46",
                         "textcolor": "#ffffff"
                     },
                     {
                         "type": "plain",
                         "title": "low",
-                        "parentKey": "49138",
                         "color": "#7bd148",
                         "textcolor": "#ffffff"
                     }
