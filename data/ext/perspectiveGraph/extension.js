@@ -36,13 +36,9 @@ define(function(require, exports, module) {
 	exports.init = function init() {
 		console.log("Initializing View "+extensionID);
 		
-	    viewContainer = $("#"+extensionID+"Container");
-	    viewToolbar = $("#"+extensionID+"Toolbar");
-		viewFooter = $("#"+extensionID+"Footer");
-		
-		viewContainer.empty();
-		viewToolbar.empty();
-		viewFooter.empty();	  
+	    viewContainer = $("#"+extensionID+"Container").empty();
+	    viewToolbar = $("#"+extensionID+"Toolbar").empty();
+		viewFooter = $("#"+extensionID+"Footer").empty();
 	
 	    initUI();  
 	}
