@@ -55,7 +55,7 @@ define(function(require, exports, module) {
         $("#locationContent").addClass("accordion")
         for(var i=0; i < directoryHistory.length; i++) {
             $("#locationContent").append($("<div>", { 
-                "class":        "accordion-group",   
+                "class":        "accordion-group disableTextSelection",   
                 "style":        "width: 99%; border: 0px #aaa solid;", 
             })
             

@@ -123,14 +123,12 @@ define(function(require, exports, module) {
         if(availableVersion > currentVersion) {
             $("#newVersionMenu").html('<p style="padding: 15px" id="newVersionMessageContent">'+
             'New TagSpaces major version available on '+
-            '<a href="https://addons.mozilla.org/firefox/addon/tagspaces/" target="_blank">addons.mozilla.org</a> or '+ 
-            '<a href="http://tagspaces.org/download/" target="_blank">tagspaces.org</a></p>');                                    
+            '<a href="http://tagspaces.org/downloads/" target="_blank">tagspaces.org</a></p>');                                    
             $("#newVersionAvailable").css('display', "inline");                                    
         } else if ((availableVersion == currentVersion) && (availableBuild > currentBuild)) {
             $("#newVersionMenu").html('<p style="padding: 15px" id="newVersionMessageContent">'+
             'New TagSpaces build available on '+
-            '<a href="https://addons.mozilla.org/firefox/addon/tagspaces/" target="_blank">addons.mozilla.org</a> or '+ 
-            '<a href="http://tagspaces.org/download/" target="_blank">tagspaces.org</a></p>');                                    
+            '<a href="http://tagspaces.org/downloads/" target="_blank">tagspaces.org</a></p>');                                    
             $("#newVersionAvailable").css('display', "inline");                                      
         }
     }
@@ -169,7 +167,7 @@ define(function(require, exports, module) {
 
     var isFullWidth = false; 
 
-    function toggleFullWidth(full) {
+    function toggleFullWidth() {
         var fullWidth = window.innerWidth;
         var halfWidth = Math.round(fullWidth/2);
         if(!isFullWidth) {
@@ -180,6 +178,21 @@ define(function(require, exports, module) {
             layoutContainer.open("east");               
         }
         isFullWidth = !isFullWidth;
+    }
+
+    var isPerspectiveFooterOpen = false; 
+
+    function togglePerspectiveFooter() {
+        var fullHeight = window.innerHeight;
+        var halfHeight = Math.round(fullHeight/2);
+        if(isPerspectiveFooterOpen) {
+            centerLayout.sizePane("south", .03);
+            centerLayout.open("south"); 
+        } else {
+            centerLayout.sizePane("south", halfHeight);
+            centerLayout.open("south");               
+        }
+        isPerspectiveFooterOpen = !isPerspectiveFooterOpen;
     }
 
 	var fileDetailsFull = false; 
@@ -227,14 +240,14 @@ define(function(require, exports, module) {
 	    ,   west__minSize:              .1
 	//        ,   west__maxSize:              .4
 	    ,   west__size:                 200
-	    ,   west__spacing_open:         5     
+	    ,   west__spacing_open:         1     
 	
 	    //  east settings
 	    ,   east__resizable:           true                 
 	    ,   east__size:                 .45
 	    ,   east__minSize:              .2
 	//        ,   east__maxSize:              .8 // 80% of layout width
-	    ,   east__spacing_open:        5   
+	    ,   east__spacing_open:        1   
 	
 	    //  center settings
 	    ,   center__resizable:          true 
@@ -246,7 +259,7 @@ define(function(require, exports, module) {
 	    //  enable state management
 	    ,   stateManagement__enabled:   false // automatic cookie load & save enabled by default
 	
-	    ,   showDebugMessages:          true // log and/or display messages from debugging & testing code
+	    ,   showDebugMessages:          false // log and/or display messages from debugging & testing code
 	    } 
 	    
 	    );
@@ -259,7 +272,7 @@ define(function(require, exports, module) {
 	        ,   south__paneSelector:    ".west-south"
 	        ,   south__resizable:       true  
 	        ,   south__size:            .5
-	        ,   south__spacing_open:    5       
+	        ,   south__spacing_open:    1       
 	    });
 	
 	    centerLayout = $('div.ui-layout-center').layout({
@@ -273,7 +286,7 @@ define(function(require, exports, module) {
 	        ,   north__size:            35
 	        ,   north__resizable:       false        
 	        ,   north__spacing_open:    0    
-	        ,   south__spacing_open:    0              
+	        ,   south__spacing_open:    1              
 	        ,   south__size:            20
 	    });
 	
@@ -324,6 +337,7 @@ define(function(require, exports, module) {
 	exports.toggleLeftPanel 			= toggleLeftPanel;
 	exports.toggleFileDetails 			= toggleFileDetails;
 	exports.toggleFullWidth             = toggleFullWidth;
+	exports.togglePerspectiveFooter     = togglePerspectiveFooter;
 	exports.updateNewVersionData        = updateNewVersionData;
 
 	// Proxying functions from tsCoreUI
