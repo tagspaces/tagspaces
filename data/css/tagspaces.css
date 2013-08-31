@@ -109,7 +109,7 @@ html, body {
     background-color: white;
 }
 
-.fileTile:hover {
+.fileTile button:hover {
     opacity: 1;
 }
 
@@ -558,4 +558,30 @@ input a.resetFilter {
 .dropdown-menu LI > A {
     line-height: 35px !important;
     height: 35px !important;
+}
+
+.disableTextSelection {
+    -webkit-user-select: none; 
+    user-select: none; 
+    -moz-user-select: -moz-none;    
+}
+
+/* Custom scrollbars for chrome */
+::-webkit-scrollbar-track
+{
+/*    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    background-color: #F5F5F5;*/
+   background-color: white;
+}
+
+::-webkit-scrollbar
+{
+    width: 6px;
+    background-color: #F5F5F5;
+}
+
+::-webkit-scrollbar-thumb
+{
+    background-color: #bbb;
+    border-radius: 6px;
 }
