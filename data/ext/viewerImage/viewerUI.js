@@ -20,6 +20,10 @@ console.log("Loading UI for Image Viewer");
 	
 	ExtUI.prototype.buildUI = function() {
 		console.log("Init UI module");
+		
+        this.viewContainer = $("#"+this.extensionID+"Container").empty();
+        this.viewToolbar = $("#"+this.extensionID+"Toolbar").empty();
+        this.viewFooter = $("#"+this.extensionID+"Footer").empty();		
 		       
 		var self = this;
 		
