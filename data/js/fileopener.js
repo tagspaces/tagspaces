@@ -176,9 +176,8 @@ define(function(require, exports, module) {
 	    	accept: ".tagButton",
 	    	hoverClass: "activeRow",
 	    	drop: function( event, ui ) {
-	    		var tagName = ui.draggable.attr("tag");
-				console.log("Tagging file: "+tagName+" to "+filePath);
-				TSCORE.TagUtils.addTag([filePath], [tagName]);
+				console.log("Tagging file: "+TSCORE.selectedTag+" to "+filePath);
+				TSCORE.TagUtils.addTag([filePath], [TSCORE.selectedTag]);
 				$(ui.helper).remove(); 
 	    	}	            	
 	    })
