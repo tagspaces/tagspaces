@@ -261,7 +261,7 @@ Still Missing:
         // currently the file is copied to the new location and than
         // deleted from the old location
         console.log("Renaming file: "+filePath+" to "+newFilePath);
-        if(filePath == newFilePath) {
+        if(filePath.toLowerCase() == newFilePath.toLowerCase()) {
             console.error("Initial and target filenames are the same...");
             return;            
         }
