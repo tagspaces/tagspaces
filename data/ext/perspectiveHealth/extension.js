@@ -7,10 +7,10 @@ define(function(require, exports, module) {
 	
 	console.log("Loading perspectiveGraph");
 
-	var extensionTitle = "InfoViz"
-	var extensionID = "perspectiveGraph";  // ID should be equal to the directory name where the ext. is located   
+	var extensionTitle = "Quantified Self"
+	var extensionID = "perspectiveHealth";  // ID should be equal to the directory name where the ext. is located   
 	var extensionType =  "perspective";
-	var extensionIcon = "icon-bar-chart";
+	var extensionIcon = "icon-medkit";
 	var extensionVersion = "1.0";
 	var extensionManifestVersion = 1;
 	var extensionLicense = "AGPL";
