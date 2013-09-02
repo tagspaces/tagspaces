@@ -162,6 +162,30 @@ var updateFileBrowserData = function(dirList) {
     changeView(TSCORE.currentView);    
 }
 
+var csvExport = function() {
+        var csv = '';
+        var headers = [];
+        var rows = [];
+        var numberOfTagColumns = 20; // max. estimated to 40 ca. 5 symbols per tag _[er], max. path length 25x chars   
+
+        headers.push("path");
+        headers.push("title");
+        headers.push("size");
+        for(var i = 0; i < numberOfTagColumns; i++) {
+            headers.push("tag"+i);
+        }
+        csv += headers.join(',') + "\n";     
+        
+        for(var i = 0; i < TSCORE.fileList.length; i++) {
+            var row = TSCORE.fileList[i];
+            row = row[TSCORE.fileListFILEPATH]+","+row[TSCORE.fileListTITLE]+","+row[TSCORE.fileListFILESIZE]+","+row[TSCORE.fileListTAGS];
+            rows.push(row);
+        }
+
+        csv += rows.join("\n");
+        return csv;
+}
+
 var refreshFileListContainer = function() {
 	// TODO consider search view
     TSCORE.IO.listDirectory(TSCORE.currentPath);  
@@ -236,6 +260,7 @@ exports.updateFileBrowserData		 = updateFileBrowserData;
 exports.refreshFileListContainer	 = refreshFileListContainer;
 exports.clearSelectedFiles			 = clearSelectedFiles;
 exports.setFileFilter				 = setFileFilter;
+exports.csvExport                    = csvExport;
 
 
 });
