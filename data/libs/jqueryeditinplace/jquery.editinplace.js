@@ -53,7 +53,7 @@ $.fn.editInPlace.defaults = {
 	cancel_button:		'<button class="inplace_cancel">Cancel</button>', // string: image button tag to use as “Cancel” button
 	params:				"", // string: example: first_name=dave&last_name=hauenstein extra paramters sent via the post request to the server
 	field_type:			"text", // string: "text", "textarea", or "select";  The type of form field that will appear on instantiation
-	default_text:		"(Click here to add text)", // string: text to show up if the element that has this functionality is empty
+	default_text:		"(Click here to add title)", // string: text to show up if the element that has this functionality is empty
 	use_html:			false, // boolean, set to true if the editor should use jQuery.fn.html() to extract the value to show from the dom node
 	textarea_rows:		10, // integer: set rows attribute of textarea, if field_type is set to textarea. Use CSS if possible though
 	textarea_cols:		25, // integer: set cols attribute of textarea, if field_type is set to textarea. Use CSS if possible though
