@@ -27,6 +27,9 @@ API of npapifileioforchrome:
     void stopWatching(std::string key);
     std::string getChromeDataDir(std::string version);
     
+    bool NPAPIFileIOforChromeAPI::renameFile(std::string oldPath, std::string newPath);
+    std::time_t NPAPIFileIOforChromeAPI::lastDateModified(std::string strPath);
+    
 Still Missing:
     renameFile real one
     openDirectory    
@@ -51,12 +54,17 @@ Still Missing:
             for (var i=0; i < dirList.length; i++) {
             	var path = dirPath+getDirseparator()+dirList[i];
             	var isDir = nativeIO.isDirectory(path);
-                var fileSize = 0; //nativeIO.getFileSize(path);
+                var fileSize = 0;
+                var lastDateModified = 0;
+                if(!isDir) {
+                    fileSize = nativeIO.getFileSize(path);
+                    //lastDateModified = new Date(nativeIO.lastDateModified(path)*1000);
+                }
                 index.push({
 	                "name": dirList[i],
 	                "type": isDir?"directory":"file",
 	                "size": fileSize,
-	                "lmdt": "0",
+	                "lmdt": lastDateModified,
 	                "path": path  
                 }); 
 	            if (isDir) {
@@ -81,12 +89,16 @@ Still Missing:
             for (var i=0; i < dirList.length; i++) {
                 var path = dirPath+getDirseparator()+dirList[i];
                 var isDir = nativeIO.isDirectory(path);
+                var fileSize = 0;
+                var lastDateModified = 0;
                 if (!isDir) {
+                    fileSize = nativeIO.getFileSize(path);
+                    //lastDateModified = new Date(nativeIO.lastDateModified(path)*1000);
                     tree["children"].push({
                         "name": dirList[i],
                         "type": "file",
-                        "size": 0,
-                        "lmdt": 0,   
+                        "size": fileSize,
+                        "lmdt": lastDateModified,   
                         "path": path 
                     });            
                 } else {
@@ -159,12 +171,17 @@ Still Missing:
 	            for (var i=0; i < dirList.length; i++) {
 	            	var path = dirPath+getDirseparator()+dirList[i];
 	            	var isDir = nativeIO.isDirectory(path);
-                    var fileSize = 0; //nativeIO.getFileSize(path);
+                    var fileSize = 0;
+                    var lastDateModified = 0;
+                    if(!isDir) {
+                        fileSize = nativeIO.getFileSize(path);
+                        //lastDateModified = new Date(nativeIO.lastDateModified(path)*1000);
+                    }
                     anotatedDirList.push({
 		                "name": dirList[i],
 		                "type": isDir?"directory":"file",
 		                "size": fileSize,
-		                "lmdt": "0",
+		                "lmdt": lastDateModified,
 		                "path": path  
                     }); 
 	            } 
@@ -260,6 +277,13 @@ Still Missing:
         // TODO use a more efficient rename functionality
         // currently the file is copied to the new location and than
         // deleted from the old location
+        /*
+        if(nativeIO.renameFile(filePath, newFilePath)) {
+            TSPOSTIO.renameFile(filePath, newFilePath);
+        } else {
+            console.error("File renaming moving failed!");            
+        } */
+
         console.log("Renaming file: "+filePath+" to "+newFilePath);
         if(filePath.toLowerCase() == newFilePath.toLowerCase()) {
             console.error("Initial and target filenames are the same...");
@@ -293,7 +317,7 @@ Still Missing:
             reader.readAsArrayBuffer(b);
         } else {
             console.error("File does not exists...");
-        }   
+        }  
 
     }
 
