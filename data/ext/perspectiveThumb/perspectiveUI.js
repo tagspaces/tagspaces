@@ -322,7 +322,7 @@ console.log("Loading UI for perspectiveDefault");
                 if (e.keyCode == 13) {
                     self.reInit();
                 }  else {
-                    self.setFilter(this.value);                     
+                    self.nextFilter = this.value;
                 } 
                 if (this.value.length == 0) {
                     self.reInit();
@@ -364,6 +364,12 @@ console.log("Loading UI for perspectiveDefault");
             )        
         ); // End Filter        
     }
+    
+    ExtUI.prototype.setFilter = function(filterValue) {
+        console.log("Filter to value: "+filterValue);   
+        $("#"+this.extensionID+"FilterBox").val(filterValue);        
+        this.nextFilter = filterValue;
+    }   
 
     ExtUI.prototype.switchThumbnailSize = function() {
         this.currentTmbSize = this.currentTmbSize + 1;
@@ -461,8 +467,6 @@ console.log("Loading UI for perspectiveDefault");
                 break;                            
             }
         }
-
-
         
         return data;
     }
@@ -558,8 +562,7 @@ console.log("Loading UI for perspectiveDefault");
 
         this.currentFilter = this.nextFilter;        
         return data;
-    }
-    
+    }    
 
     ExtUI.prototype.calculateGroupTitle = function(rawSource) {    
         var groupingTitle = undefined;
@@ -773,12 +776,6 @@ console.log("Loading UI for perspectiveDefault");
         this.handleElementActivation();      
     }     
 
-    ExtUI.prototype.setFilter = function(filterValue) {
-        console.log("Filter to value: "+filterValue);   
-        $("#"+this.extensionID+"FilterBox").val(filterValue);        
-        this.nextFilter = filterValue;
-    }   
-    
     ExtUI.prototype.handleElementActivation = function() {
         console.log("Entering element activation handler...");
         
