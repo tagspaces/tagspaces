@@ -133,10 +133,10 @@ define(function(require, exports, module) {
             var bValid = true;                
 //                bValid = bValid && checkLength( newFileName, "filename", 4, 200 );
 
-            if(TSCORE.fileExists($( "#newFileName" ).val())) {
+/*            if(TSCORE.fileExists($( "#newFileName" ).val())) {
                 updateTips("File already exists.");
                 bValid = false;
-            }
+            } */
             if ( bValid ) {
                 TSCORE.IO.saveTextFile(TSCORE.currentPath+TSCORE.TagUtils.DIR_SEPARATOR+$( "#newFileName" ).val(),fileContent);
                 TSCORE.IO.listDirectory(TSCORE.currentPath);                    

@@ -147,7 +147,7 @@ define(function(require, exports, module) {
 	    $("#loadingAnimation").css('visibility', "hidden");
 	}
 	
-	function fileExists(fileName) {
+/*	function fileExists(fileName) {
 	    console.log("Check if filename: "+fileName+" already exists.");
 	    for (var i=0; i < fileList.length; i++) {
 	        if(fileList[i].name == fileName) {
@@ -155,7 +155,10 @@ define(function(require, exports, module) {
 	        }
 	    }
 	    return false;
-	}	
+	}	*/
+
+
+/* UI and Layout functionalities */
 
 	function reloadUI() {
 	    location.reload();
@@ -330,7 +333,7 @@ define(function(require, exports, module) {
 	exports.updateLogger				= updateLogger;
 	exports.showLoadingAnimation 		= showLoadingAnimation;
 	exports.hideLoadingAnimation 		= hideLoadingAnimation;
-	exports.fileExists 					= fileExists;
+//	exports.fileExists 					= fileExists;
 	exports.reloadUI 					= reloadUI;
 	exports.openFileViewer 				= openFileViewer;
 	exports.closeFileViewer 			= closeFileViewer;
