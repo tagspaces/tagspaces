@@ -77,31 +77,6 @@ console.log("Loading UI for perspectiveDefault");
 	        
 	    return checkboxHTML+" "+buttonHTML +" " + titleHTML + thumbHTML;        
 	}
-	
-    function table2csv(oTable, tableElm) {
-            var csv = '';
-            var headers = [];
-            var rows = [];
-            var numberOfTagColumns = 20; // max. estimated to 40 ca. 5 symbols per tag _[er], max. path length 25x chars   
-
-            headers.push("path");
-            headers.push("title");
-            headers.push("size");
-            for(var i = 0; i < numberOfTagColumns; i++) {
-                headers.push("tag"+i);
-            }
-            csv += headers.join(',') + "\n";
-     
-            var total = oTable.fnSettings().fnRecordsTotal()
-            for(var i = 0; i < total; i++) {
-                var row = oTable.fnGetData(i);
-                row = row[TSCORE.fileListFILEPATH]+","+row[TSCORE.fileListTITLE]+","+row[TSCORE.fileListFILESIZE]+","+row[TSCORE.fileListTAGS];
-                rows.push(row);
-            }
-
-            csv += rows.join("\n");
-            return csv;
-    }
      
 	ExtUI.prototype.buildUI = function() {
 		console.log("Init UI module");
@@ -249,33 +224,11 @@ console.log("Loading UI for perspectiveDefault");
             .click(function() {
                 var dialogContent = $('<textarea>', {
                     style: "width: 500px; height: 350px;",
-                    text: table2csv(self.fileTable, 'table.display')
+                    text: TSCORE.PerspectiveManager.csvExport()
                 });                
                 TSCORE.showAlertDialog(dialogContent,"Export to CSV Dialog");
             })
             .append( $("<i>", { class: "icon-download-alt", }) )
-            )          
-            
-            .append($("<button>", { 
-                class: "btn",           
-                title: "Show Quantified Yourself Graphic",
-                id: this.extensionID+"AnalyzeButton",    
-            })
-            .click(function() {
-                require([
-                    extensionDirectory+'/quantifiedSelfGraph.js',
-                    extensionDirectory+'/d3/d3.v3.js'
-                    ], function(ui) {
-                        ui.init(self.viewFooter, table2csv(self.fileTable, 'table.display'));
-                        viewFooter.append($('<link>', {
-                               "rel":  "stylesheet",
-                               "type": "text/css",
-                               "href": extensionDirectory+"/styles.css"
-                        }));                
-                });            
-                TSCORE.togglePerspectiveFooter();    
-            })
-            .append( $("<i>", { class: "icon-bar-chart", }) )
             )          
                         
         ); // end toolbar
@@ -525,9 +478,13 @@ console.log("Loading UI for perspectiveDefault");
 	    		"appendTo": "body",
 	    		"helper":   "clone",
 	    		"revert":   true,
-		        "start":    function() { self.selectFile(this, $(this).attr("filepath")); }    		
+		        "start":    function() { 
+                    TSCORE.selectedTag = $(this).attr("tag");
+		            self.selectFile(this, $(this).attr("filepath")); 
+		            }    		
 	    	})   	        
 	        .click( function() {
+                TSCORE.selectedTag = $(this).attr("tag");	            
 	            self.selectFile(this, $(this).attr("filepath"));
 	            TSCORE.openTagMenu(this, $(this).attr("tag"), $(this).attr("filepath"));
 	        } )     
