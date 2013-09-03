@@ -40,7 +40,7 @@ define(function(require, exports, module) {
 	exports.load = function load() {
 		console.log("Loading View "+extensionID);
         
-        switch (graphMode) {
+/*        switch (graphMode) {
           case "quantYours":
             require([
                 extensionDirectory+'/d3/d3.v3.js',
@@ -68,7 +68,7 @@ define(function(require, exports, module) {
             break;        
           default:
             break;
-        }        
+        }    */    
 	}
 	
 	var reDraw = function() {

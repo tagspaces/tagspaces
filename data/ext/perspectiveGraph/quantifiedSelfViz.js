@@ -28,10 +28,7 @@ define(function(require, exports, module) {
 
     function draw(svg) {
         console.log("Drawing Quantified Self");
-        
-//       svg.append("g")
-//           .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
+/*
           var data = d3.csv.parse(TSCORE.PerspectiveManager.csvExport());
         
           // Convert strings to numbers.
@@ -131,7 +128,7 @@ define(function(require, exports, module) {
               case 39: year = Math.min(year1, year + 10); break;
             }
             update();
-          });       
+          });      */
 
     }
 		

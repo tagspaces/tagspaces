@@ -5,7 +5,7 @@
 define(function(require, exports, module) {
 "use strict";
 	
-	console.log("Loading perspectiveGraph");
+	console.log("Loading perspectiveHealth");
 
 	var extensionTitle = "Quantified Self"
 	var extensionID = "perspectiveHealth";  // ID should be equal to the directory name where the ext. is located   
@@ -23,9 +23,7 @@ define(function(require, exports, module) {
 	
 	var extensionDirectory = TSCORE.Config.getExtensionPath()+"/"+extensionID;
 	
-	var graphMode = "treeMap" // tree
-	
-	var treeData = undefined;
+	var vizMode = "quantYours" // tree
 	
 	exports.init = function init() {
 		console.log("Initializing View "+extensionID);
@@ -39,85 +37,32 @@ define(function(require, exports, module) {
 	
 	exports.load = function load() {
 		console.log("Loading View "+extensionID);
-        
-        switch (graphMode) {
-          case "quantYours":
-            require([
-                extensionDirectory+'/d3/d3.v3.js',
-                'css!'+extensionDirectory+'/styles.css',
-                ], function() {
-                    reDraw();
-                    TSCORE.hideLoadingAnimation();
-            });
-            break;
-          case "treeMap":
-            require([
-                extensionDirectory+'/d3/d3.v3.js',
-                'css!'+extensionDirectory+'/styles.css',
-                ], function() {
-                    TSCORE.IO.createDirectoryTree(TSCORE.currentPath);
-            });
-            break;
-          case "tree":
-            require([
-                extensionDirectory+'/d3/d3.v3.js',
-                'css!'+extensionDirectory+'/styles.css',
-                ], function() {
-                    TSCORE.IO.createDirectoryTree(TSCORE.currentPath);
-            });
-            break;        
-          default:
-            break;
-        }        
+        reDraw();        
 	}
 	
 	var reDraw = function() {
-		d3.select("svg").remove();
-	
-        var svg = d3.select("#"+extensionID+"Container")
-            .append("svg")
-            .attr("width", viewContainer.width())
-            .attr("height", viewContainer.height()) 		    			
-	    
-	    switch (graphMode) {
+	    switch (vizMode) {
           case "quantYours":
             require([
                 extensionDirectory+'/quantifiedSelfViz.js',
-                //'css!'+extensionDirectory+'/styles.css',
+                'css!'+extensionDirectory+'/styles.css',
                 ], function(viz) {
+                    d3.select("svg").remove();                
+                    var svg = d3.select("#"+extensionID+"Container")
+                        .append("svg")
+                        .attr("width", viewContainer.width())
+                        .attr("height", viewContainer.height())
                     viz.draw(svg);
                     TSCORE.hideLoadingAnimation();
             });            
             break;
-	      case "treeMap":
-            require([
-                extensionDirectory+'/treeViz.js',
-                //'css!'+extensionDirectory+'/styles.css',
-                ], function(viz) {
-                    viz.drawTreeMap(svg, treeData);
-                    TSCORE.hideLoadingAnimation();
-            });            
-	        break;
-	      case "tree":
-            require([
-                extensionDirectory+'/treeViz.js',
-                //'css!'+extensionDirectory+'/styles.css',
-                ], function(viz) {
-                    viz.drawTree(svg, treeData);
-                    TSCORE.hideLoadingAnimation();
-            });  	      
-	        break;        
 	      default:
 	        break;
 	    }
 	}
 	
 	exports.updateTreeData = function updateIndexData(fsTreeData) {
-		console.log("Updating tree data, Rendering graph...");
-		
-		treeData = fsTreeData;
-		
-		reDraw();
+		console.log("Updating tree data, not supported here...");
    
 		TSCORE.hideLoadingAnimation(); 
 	}
@@ -135,35 +80,7 @@ define(function(require, exports, module) {
         viewToolbar.append($("<div >", { 
             class: "btn-group", 
             "data-toggle": "buttons-radio",        
-        })      
-            .append($("<button>", { 
-                    class: "btn", 
-                    title: "Activate Treemap Mode",
-                    id: extensionID+"TreeMapMode",
-                    text: " TreeMap"    
-                })
-                .button('toggle')                
-                .click(function() {
-                    graphMode = "treeMap";
-                    TSCORE.showLoadingAnimation();                     
-                    TSCORE.IO.createDirectoryTree(TSCORE.currentPath);
-                })
-                .prepend( "<i class='icon-th-large' />")
-            )
-                    
-            .append($("<button>", { 
-                    class: "btn", 
-                    title: "Activate Tree Mode",
-                    id: extensionID+"TreeMode",    
-                    text: " Tree"
-                })
-                .click(function() {
-                    graphMode = "tree";
-                    TSCORE.showLoadingAnimation();                     
-                    TSCORE.IO.createDirectoryTree(TSCORE.currentPath);
-                })          
-                .prepend( "<i class='icon-sitemap' />")                
-            )        
+        })  
             
             .append($("<button>", {
                     class: "btn",           
@@ -171,8 +88,9 @@ define(function(require, exports, module) {
                     id: extensionID+"QAMode",    
                     text: " Quantified Self"
                 })
+                .button('toggle')   
                 .click(function() {
-                    graphMode = "quantYours";
+                    vizMode = "quantYours";
                     TSCORE.showLoadingAnimation();                                     
                     TSCORE.IO.createDirectoryIndex(TSCORE.currentPath);
                 })

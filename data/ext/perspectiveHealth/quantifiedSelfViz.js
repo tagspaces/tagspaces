@@ -7,134 +7,112 @@ define(function(require, exports, module) {
 	console.log("Loading Quantified Self");
 
 	var TSCORE = require("tscore");
-    
-    var margin = {top: 20, right: 40, bottom: 30, left: 20},
-        width = 960 - margin.left - margin.right,
-        height = 500 - margin.top - margin.bottom,
-        barWidth = Math.floor(width / 19) - 1;
-    
-    var x = d3.scale.linear()
-        .range([barWidth / 2, width - barWidth / 2]);
-    
-    var y = d3.scale.linear()
-        .range([height, 0]);
-    
-    var yAxis = d3.svg.axis()
-        .scale(y)
-        .orient("right")
-        .tickSize(-width)
-        .tickFormat(function(d) { return Math.round(d / 1e6) + "M"; });
-    
+
+    require("d3");
 
     function draw(svg) {
         console.log("Drawing Quantified Self");
-        
-//       svg.append("g")
-//           .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+          
+        var margin = {top: 20, right: 20, bottom: 30, left: 40},
+            width = svg.attr("width") - margin.left - margin.right,
+            height = svg.attr("height") - margin.top - margin.bottom;
+            
+        svg.append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-          var data = d3.csv.parse(TSCORE.PerspectiveManager.csvExport());
+        var x = d3.scale.ordinal()
+            .rangeRoundBands([0, width], .1);
         
-          // Convert strings to numbers.
+        var y = d3.scale.linear()
+            .rangeRound([height, 0]);
+        
+        var color = d3.scale.ordinal()
+            .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
+        
+        var xAxis = d3.svg.axis()
+            .scale(x)
+            .orient("bottom");
+        
+        var yAxis = d3.svg.axis()
+            .scale(y)
+            .orient("left")
+            .tickFormat(d3.format(".2s"));
+        
+    //          var data = d3.csv.parse(TSCORE.PerspectiveManager.csvExport());            
+          var data = d3.csv.parse(tmpData);    
+              color.domain(d3.keys(data[0]).filter(function(key) { return key !== "State"; }));
+            
           data.forEach(function(d) {
-            d.people = +d.tag3;
-            d.year = +d.tag0;
-            d.age = +d.tag1;
+            var y0 = 0;
+            d.ages = color.domain().map(function(name) { return {name: name, y0: y0, y1: y0 += +d[name]}; });
+            d.total = d.ages[d.ages.length - 1].y1;
           });
         
-          // Compute the extent of the data set in age and years.
-          var age1 = d3.max(data, function(d) { return d.age; }),
-              year0 = d3.min(data, function(d) { return d.year; }),
-              year1 = d3.max(data, function(d) { return d.year; }),
-              year = year1;
+          data.sort(function(a, b) { return b.total - a.total; });
         
-          // Update the scale domains.
-          x.domain([year1 - age1, year1]);
-          y.domain([0, d3.max(data, function(d) { return d.people; })]);
+          x.domain(data.map(function(d) { return d.State; }));
+          y.domain([0, d3.max(data, function(d) { return d.total; })]);
         
-          // Produce a map from year and birthyear to [male, female].
-          data = d3.nest()
-              .key(function(d) { return d.year; })
-              .key(function(d) { return d.year - d.age; })
-              .rollup(function(v) { return v.map(function(d) { return d.people; }); })
-              .map(data);
+          svg.append("g")
+              .attr("class", "x axis")
+              .attr("transform", "translate(0," + height + ")")
+              .call(xAxis);
         
-          // Add an axis to show the population values.
           svg.append("g")
               .attr("class", "y axis")
-              .attr("transform", "translate(" + width + ",0)")
               .call(yAxis)
-            .selectAll("g")
-            .filter(function(value) { return !value; })
-              .classed("zero", true);
-        
-        // A sliding container to hold the bars by birthyear.
-        var birthyears = svg.append("g")
-            .attr("class", "birthyears");
-        
-        // A label for the current year.
-        var title = svg.append("text")
-            .attr("class", "title")
-            .attr("dy", ".71em")
-            .text(2000);
-    
-          function update() {
-            if (!(year in data)) return;
-            title.text(year);
-        
-            birthyears.transition()
-                .duration(750)
-                .attr("transform", "translate(" + (x(year1) - x(year)) + ",0)");
-        
-            birthyear.selectAll("rect")
-                .data(function(birthyear) { return data[year][birthyear] || [0, 0]; })
-              .transition()
-                .duration(750)
-                .attr("y", y)
-                .attr("height", function(value) { return height - y(value); });
-          }
-        
-          // Add labeled rects for each birthyear (so that no enter or exit is required).
-          var birthyear = birthyears.selectAll(".birthyear")
-              .data(d3.range(year0 - age1, year1 + 1, 5))
-              .enter().append("g")
-              .attr("class", "birthyear")
-              .attr("transform", function(birthyear) { return "translate(" + x(birthyear) + ",0)"; });
-        
-          birthyear.selectAll("rect")
-              .data(function(birthyear) { return data[year][birthyear] || [0, 0]; })
-            .enter().append("rect")
-              .attr("x", -barWidth / 2)
-              .attr("width", barWidth)
-              .attr("y", y)
-              .attr("height", function(value) { return height - y(value); });
-        
-          // Add labels to show birthyear.
-          birthyear.append("text")
-              .attr("y", height - 4)
-              .text(function(birthyear) { return birthyear; });
-        
-          // Add labels to show age (separate; not animated).
-          svg.selectAll(".age")
-              .data(d3.range(0, age1 + 1, 5))
-            .enter().append("text")
-              .attr("class", "age")
-              .attr("x", function(age) { return x(year - age); })
-              .attr("y", height + 4)
+            .append("text")
+              .attr("transform", "rotate(-90)")
+              .attr("y", 6)
               .attr("dy", ".71em")
-              .text(function(age) { return age; });
+              .style("text-anchor", "end")
+              .text("Population");
         
-          // Allow the arrow keys to change the displayed year.
-          window.focus();
-          d3.select(window).on("keydown", function() {
-            switch (d3.event.keyCode) {
-              case 37: year = Math.max(year0, year - 10); break;
-              case 39: year = Math.min(year1, year + 10); break;
-            }
-            update();
-          });       
+          var state = svg.selectAll(".state")
+              .data(data)
+            .enter().append("g")
+              .attr("class", "g")
+              .attr("transform", function(d) { return "translate(" + x(d.State) + ",0)"; });
+        
+          state.selectAll("rect")
+              .data(function(d) { return d.ages; })
+            .enter().append("rect")
+              .attr("width", x.rangeBand())
+              .attr("y", function(d) { return y(d.y1); })
+              .attr("height", function(d) { return y(d.y0) - y(d.y1); })
+              .style("fill", function(d) { return color(d.name); });
+        
+          var legend = svg.selectAll(".legend")
+              .data(color.domain().slice().reverse())
+            .enter().append("g")
+              .attr("class", "legend")
+              .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+        
+          legend.append("rect")
+              .attr("x", width - 18)
+              .attr("width", 18)
+              .attr("height", 18)
+              .style("fill", color);
+        
+          legend.append("text")
+              .attr("x", width - 24)
+              .attr("y", 9)
+              .attr("dy", ".35em")
+              .style("text-anchor", "end")
+              .text(function(d) { return d; });
 
     }
-		
+    
+    var tmpData =   "State,Under 5 Years,5 to 13 Years,14 to 17 Years,18 to 24 Years,25 to 44 Years,45 to 64 Years,65 Years and Over\n"+
+                    "AL,310504,552339,259034,450818,1231572,1215966,641667\n"+
+                    "AK,52083,85640,42153,74257,198724,183159,50277\n"+
+                    "AZ,515910,828669,362642,601943,1804762,1523681,862573\n"+
+                    "AR,202070,343207,157204,264160,754420,727124,407205\n"+
+                    "CA,2704659,4499890,2159981,3853788,10604510,8819342,4114496\n"+
+                    "CO,358280,587154,261701,466194,1464939,1290094,511094";
+
+
+
 	// Methods
 	exports.draw					= draw;
 	
