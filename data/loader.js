@@ -82,6 +82,7 @@ requirejs.config({
         less:                   'libs/less/less-1.3.3.min',
         jqueryeditinplace:      'libs/jqueryeditinplace/jquery.editinplace',
         underscore:             'libs/underscore/underscore',
+        d3:                     'libs/d3/d3.v3',
 
         tscore:                 'js/core.api',
         tssetting:              'js/settings.api',
@@ -127,8 +128,7 @@ requirejs.config({
                 'jquerysimplecolorpicker',
                 'jquerylayout',
                 'jquerydropdown',  
-            ] }, 
-                  
+            ] },                   
     } 
 });
 
