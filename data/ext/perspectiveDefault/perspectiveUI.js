@@ -214,26 +214,6 @@ console.log("Loading UI for perspectiveDefault");
 	    ) // end button group
 
         this.viewToolbar.append($("<div >", { 
-            class: "btn-group", 
-        })       
-            .append($("<button>", { 
-                class: "btn",           
-                title: "Exports current table data as CSV",
-                id: this.extensionID+"ExportButton",    
-            })
-            .click(function() {
-                var dialogContent = $('<textarea>', {
-                    style: "width: 500px; height: 350px;",
-                    text: TSCORE.PerspectiveManager.csvExport()
-                });                
-                TSCORE.showAlertDialog(dialogContent,"Export to CSV Dialog");
-            })
-            .append( $("<i>", { class: "icon-download-alt", }) )
-            )          
-                        
-        ); // end toolbar
-
-        this.viewToolbar.append($("<div >", { 
             class: "input-append pull-right", 
             style: "position:absolute; top:2px; right:2px; z-index: 9999"  
         })      
