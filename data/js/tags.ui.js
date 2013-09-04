@@ -101,7 +101,8 @@ define(function(require, exports, module) {
                 $( "#tagColor" ).val(),
                 $( "#tagTextColor" ).val()
                 )
-            generateTagGroups();    
+            generateTagGroups();
+            TSCORE.PerspectiveManager.refreshFileListContainer();    
         });   
 
         $( "#addTagsButton" ).click( function() {
