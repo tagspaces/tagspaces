@@ -242,7 +242,7 @@ define(function(require, exports, module) {
             TSCORE.showConfirmDialog(
                 "Warning",
                 "Are you sure you want to restore the default application settings?\n"+
-                +"All manually made changes such as tags and taggroups will be lost.",
+                "All manually made changes such as tags and taggroups will be lost.",
                 function() {
                     TSCORE.Config.loadDefaultSettings();                
                 }                

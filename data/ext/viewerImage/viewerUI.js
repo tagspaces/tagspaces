@@ -14,8 +14,13 @@ console.log("Loading UI for Image Viewer");
 	function ExtUI(extID, extContainerID, filePath) {
 		this.extensionID = extID;
 	    this.containerElem = $('#'+extContainerID);
-	
-	    this.filePath = "file:///"+filePath;
+
+        //TODO minimize platform specific calls
+        if(isCordova) {
+            this.filePath = filePath;            
+        } else {
+            this.filePath = "file:///"+filePath;  
+        }	    
 	}
 	
 	ExtUI.prototype.buildUI = function() {
