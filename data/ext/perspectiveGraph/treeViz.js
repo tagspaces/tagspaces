@@ -8,7 +8,8 @@ define(function(require, exports, module) {
 
     var TSCORE = require("tscore");
 
-    
+    require("d3");
+        
     var drawTree2 = function(svg, treeData) {
         var diameter = height;
         

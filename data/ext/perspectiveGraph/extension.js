@@ -39,74 +39,67 @@ define(function(require, exports, module) {
 	
 	exports.load = function load() {
 		console.log("Loading View "+extensionID);
-        
-/*        switch (graphMode) {
-          case "quantYours":
-            require([
-                extensionDirectory+'/d3/d3.v3.js',
-                'css!'+extensionDirectory+'/styles.css',
-                ], function() {
-                    reDraw();
-                    TSCORE.hideLoadingAnimation();
-            });
-            break;
-          case "treeMap":
-            require([
-                extensionDirectory+'/d3/d3.v3.js',
-                'css!'+extensionDirectory+'/styles.css',
-                ], function() {
-                    TSCORE.IO.createDirectoryTree(TSCORE.currentPath);
-            });
-            break;
-          case "tree":
-            require([
-                extensionDirectory+'/d3/d3.v3.js',
-                'css!'+extensionDirectory+'/styles.css',
-                ], function() {
-                    TSCORE.IO.createDirectoryTree(TSCORE.currentPath);
-            });
-            break;        
-          default:
-            break;
-        }    */    
+        TSCORE.IO.createDirectoryTree(TSCORE.currentPath);		
 	}
 	
 	var reDraw = function() {
-		d3.select("svg").remove();
-	
-        var svg = d3.select("#"+extensionID+"Container")
-            .append("svg")
-            .attr("width", viewContainer.width())
-            .attr("height", viewContainer.height()) 		    			
-	    
 	    switch (graphMode) {
-          case "quantYours":
-            require([
-                extensionDirectory+'/quantifiedSelfViz.js',
-                //'css!'+extensionDirectory+'/styles.css',
-                ], function(viz) {
-                    viz.draw(svg);
-                    TSCORE.hideLoadingAnimation();
-            });            
-            break;
 	      case "treeMap":
             require([
                 extensionDirectory+'/treeViz.js',
-                //'css!'+extensionDirectory+'/styles.css',
+                'css!'+extensionDirectory+'/styles.css',
                 ], function(viz) {
+                    d3.select("svg").remove();
+                    var svg = d3.select("#"+extensionID+"Container")
+                        .append("svg")
+                        .attr("width", viewContainer.width())
+                        .attr("height", viewContainer.height())                         
                     viz.drawTreeMap(svg, treeData);
                     TSCORE.hideLoadingAnimation();
             });            
 	        break;
+          case "treeMap2":
+            require([
+                extensionDirectory+'/treeMap.js',
+                'css!'+extensionDirectory+'/styles.css',
+                ], function(viz) {
+                    d3.select("svg").remove();
+                    var svg = d3.select("#"+extensionID+"Container")
+                        .append("svg")
+                        .attr("width", viewContainer.width())
+                        .attr("height", viewContainer.height())                         
+                    viz.drawZoomableTreeMap(svg, treeData);
+                    TSCORE.hideLoadingAnimation();
+            });            
+            break;	        
 	      case "tree":
             require([
                 extensionDirectory+'/treeViz.js',
-                //'css!'+extensionDirectory+'/styles.css',
+                'css!'+extensionDirectory+'/styles.css',
                 ], function(viz) {
+                    d3.select("svg").remove();
+                    var svg = d3.select("#"+extensionID+"Container")
+                        .append("svg")
+                        .attr("width", viewContainer.width())
+                        .attr("height", viewContainer.height())                                             
                     viz.drawTree(svg, treeData);
                     TSCORE.hideLoadingAnimation();
             });  	      
 	        break;        
+          case "bilevelPartition":
+            require([
+                extensionDirectory+'/bilevelPartition.js',
+                'css!'+extensionDirectory+'/styles.css',
+                ], function(viz) {
+                    d3.select("svg").remove();
+                    var svg = d3.select("#"+extensionID+"Container")
+                        .append("svg")
+                        .attr("width", viewContainer.width())
+                        .attr("height", viewContainer.height())                                             
+                    viz.drawPartition(svg, treeData);
+                    TSCORE.hideLoadingAnimation();
+            });           
+            break;  
 	      default:
 	        break;
 	    }
@@ -139,7 +132,6 @@ define(function(require, exports, module) {
             .append($("<button>", { 
                     class: "btn", 
                     title: "Activate Treemap Mode",
-                    id: extensionID+"TreeMapMode",
                     text: " TreeMap"    
                 })
                 .button('toggle')                
@@ -150,11 +142,23 @@ define(function(require, exports, module) {
                 })
                 .prepend( "<i class='icon-th-large' />")
             )
+
+            .append($("<button>", { 
+                    class: "btn", 
+                    title: "Activate Tree Map Navi",
+                    text: " TreeMap Navi"
+                })
+                .click(function() {
+                    graphMode = "treeMap2";
+                    TSCORE.showLoadingAnimation();                     
+                    TSCORE.IO.createDirectoryTree(TSCORE.currentPath);
+                })          
+                .prepend( "<i class='icon-sitemap' />")                
+            ) 
                     
             .append($("<button>", { 
                     class: "btn", 
                     title: "Activate Tree Mode",
-                    id: extensionID+"TreeMode",    
                     text: " Tree"
                 })
                 .click(function() {
@@ -163,21 +167,21 @@ define(function(require, exports, module) {
                     TSCORE.IO.createDirectoryTree(TSCORE.currentPath);
                 })          
                 .prepend( "<i class='icon-sitemap' />")                
-            )        
+            )   
             
-            .append($("<button>", {
-                    class: "btn",           
-                    title: "Show Quantified Yourself Graphic",
-                    id: extensionID+"QAMode",    
-                    text: " Quantified Self"
+            .append($("<button>", { 
+                    class: "btn", 
+                    title: "Activate Bilevel Partition",
+                    text: " Bilevel Partition"
                 })
                 .click(function() {
-                    graphMode = "quantYours";
-                    TSCORE.showLoadingAnimation();                                     
-                    TSCORE.IO.createDirectoryIndex(TSCORE.currentPath);
-                })
-                .prepend( "<i class='icon-tasks' />")                
-            )                
+                    graphMode = "bilevelPartition";
+                    TSCORE.showLoadingAnimation();                     
+                    TSCORE.IO.createDirectoryTree(TSCORE.currentPath);
+                })          
+                .prepend( "<i class='icon-sitemap' />")                
+            )                   
+          
        ) // end button group       
 
 	}
