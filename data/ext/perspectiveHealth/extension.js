@@ -44,7 +44,7 @@ define(function(require, exports, module) {
 	    switch (vizMode) {
           case "quantYours":
             require([
-                extensionDirectory+'/quantifiedSelfViz.js',
+                extensionDirectory+'/myweight.js',
                 'css!'+extensionDirectory+'/styles.css',
                 ], function(viz) {
                     d3.select("svg").remove();                
@@ -76,11 +76,31 @@ define(function(require, exports, module) {
 	}
 	
 	var initUI = function() {
-       
+
         viewToolbar.append($("<div >", { 
             class: "btn-group", 
             "data-toggle": "buttons-radio",        
         })  
+
+            .append($("<button>", { 
+                class: "btn ",
+                title: "Create new file",
+                id: extensionID+"CreateFileButton",    
+            })
+            .click(function() {
+                TSCORE.showFileCreateDialog();
+            })
+            .append( "<i class='icon-plus'>" )
+            )
+       
+        ); // end button group  
+
+
+        viewToolbar.append($("<div >", { 
+            class: "btn-group", 
+            "data-toggle": "buttons-radio",        
+        })  
+            
             
             .append($("<button>", {
                     class: "btn",           
@@ -95,8 +115,28 @@ define(function(require, exports, module) {
                     TSCORE.IO.createDirectoryIndex(TSCORE.currentPath);
                 })
                 .prepend( "<i class='icon-tasks' />")                
-            )                
-       ) // end button group       
+            )       
+        ); // end button group  
+            
+        viewToolbar.append($("<div >", { 
+            class: "btn-group", 
+        })       
+            .append($("<button>", { 
+                class: "btn",           
+                title: "Exports current table data as CSV",
+                id: extensionID+"ExportButton",    
+            })
+            .click(function() {
+                var dialogContent = $('<textarea>', {
+                    style: "width: 500px; height: 350px;",
+                    text: TSCORE.exportFileListCSV(TSCORE.fileList)
+                });                
+                TSCORE.showAlertDialog(dialogContent,"Export to CSV Dialog");
+            })
+            .append( $("<i>", { class: "icon-download-alt", }) )
+            )          
+                        
+        ); // end toolbar
 
 	}
 	
