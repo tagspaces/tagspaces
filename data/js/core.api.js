@@ -158,16 +158,45 @@ define(function(require, exports, module) {
 	    $("#loadingAnimation").css('visibility', "hidden");
 	}
 	
-/*	function fileExists(fileName) {
-	    console.log("Check if filename: "+fileName+" already exists.");
-	    for (var i=0; i < fileList.length; i++) {
-	        if(fileList[i].name == fileName) {
-	            return true;
-	        }
-	    }
-	    return false;
-	}	*/
+    function exportFileListCSV(fileList) {
+            var csv = '';
+            var headers = [];
+            var rows = [];
+            var numberOfTagColumns = 40; // max. estimated to 40 ca. 5 symbols per tag _[er], max. path length 25x chars   
+    
+            headers.push("path");
+            headers.push("title");
+            headers.push("size");
+            for(var i = 0; i < numberOfTagColumns; i++) {
+                headers.push("tag"+i);
+            }
+            csv += headers.join(',') + "\n";     
+            
+            for(var i = 0; i < fileList.length; i++) {
+                var row = fileList[i][exports.fileListFILEPATH]+","+fileList[i][exports.fileListTITLE]+","+fileList[i][exports.fileListFILESIZE]+","+fileList[i][exports.fileListTAGS];
+                rows.push(row);
+            }
+    
+            csv += rows.join("\n");
+            return csv;
+    }    	
 
+    function exportFileListArray(fileList) {
+            var rows = [];
+            for(var i = 0; i < fileList.length; i++) {
+                var row = [];
+                row["path"] = fileList[i][exports.fileListFILEPATH];
+                row["title"] = fileList[i][exports.fileListTITLE];
+                row["size"] = fileList[i][exports.fileListFILESIZE];
+                
+                var tags = fileList[i][exports.fileListTAGS];
+                for(var j = 0; j < tags.length; j++) {
+                    row["tag"+(j)] = tags[j];
+                }                
+                rows.push(row);
+            }
+            return rows;        
+    }
 
 /* UI and Layout functionalities */
 
@@ -353,6 +382,8 @@ define(function(require, exports, module) {
 	exports.toggleFullWidth             = toggleFullWidth;
 	exports.togglePerspectiveFooter     = togglePerspectiveFooter;
 	exports.updateNewVersionData        = updateNewVersionData;
+	exports.exportFileListCSV           = exportFileListCSV;
+	exports.exportFileListArray         = exportFileListArray;
 
 	// Proxying functions from tsCoreUI
 	exports.showAlertDialog 			= tsCoreUI.showAlertDialog;
