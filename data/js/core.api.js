@@ -49,6 +49,8 @@ define(function(require, exports, module) {
 		
 	    tsSettings.loadSettingsLocalStorage();
 	    
+        checkLocalStorageEnabled();	    
+	    
 	    // In firefox, by empty local storage trying to load the settings from mozilla preferences
 	    if(tsSettings.Settings == undefined && isFirefox) {
 	        window.setTimeout(tsIOApi.loadSettings, 1000); // executes initUI and updateSettingMozillaPreferences by success
@@ -99,8 +101,7 @@ define(function(require, exports, module) {
 	 		
 	    }); 
 	    
-//        $( "#toggleLeftPanel" ).tooltip( { placement: "bottom" } );
-        checkForNewVersion()
+        checkForNewVersion();
 	}
 	
     function checkForNewVersion() {
@@ -108,6 +109,16 @@ define(function(require, exports, module) {
             tsIOApi.checkNewVersion();
         }
     }	
+    
+    function checkLocalStorageEnabled() {
+        var val = 'tagspaces';
+        try {
+            localStorage.setItem(val, val);
+            localStorage.removeItem(val);
+        } catch(e) {
+            tsCoreUI.showAlertDialog("Please enable the localStorage support in your browser, in order to use TagSpaces!","Error");
+        }
+    }    
 
     function updateNewVersionData(data) {
         console.log("Version Information: "+data)
