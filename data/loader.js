@@ -19,7 +19,7 @@ var isSafari = Object.prototype.toString.call(window.HTMLElement).indexOf('Const
 // TODO refactor isChrome to isChromeExt
 var isChrome =  document.URL.indexOf( 'chrome-extension://' ) >= 0; //!isSafari && 'WebkitTransform' in document.documentElement.style;
 var isNode = undefined;
-var isCordova = document.URL.indexOf( 'file:///' ) >= 0; // Not perfect... evtl. adding of "android_asset" needed
+var isCordova = document.URL.indexOf( 'file:///android_asset' ) >= 0; // Not perfect... evtl. adding of "android_asset" needed
 var isWeb = undefined;
 
 // Check for running in node-webkit
@@ -94,7 +94,7 @@ requirejs.config({
         tsdirectoriesui:        'js/directories.ui',
         tscoreui:               'js/core.ui',
         tspostioapi:            'js/postioapi',
-        tsioapi:                IO_JS,        
+        tsioapi:                IO_JS,
     }, 
     shim: {
         'underscore':               { exports: '_' }, 
@@ -137,8 +137,9 @@ define(function (require, exports, module) {
 
     //require("less");	
 
-//    require(['underscore'], function (_) { });
-    
+    if (isCordova) {
+        require(["cordova.js"]);
+    }
 
     var TSCORE = undefined;
     requirejs(['tscore','underscore'], function (core,_) {
