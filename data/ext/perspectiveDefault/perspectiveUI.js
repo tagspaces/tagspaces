@@ -139,6 +139,7 @@ console.log("Loading UI for perspectiveDefault");
             .prop('disabled', true)    	    
     	    .click(function() {
     		    $( this ).prop('disabled', true);
+    		    TSCORE.startTime = new Date().getTime();      
     			TSCORE.IO.createDirectoryIndex(TSCORE.currentPath);
     	    })
     	    .append( $("<i>", { class: "icon-retweet", }) )
