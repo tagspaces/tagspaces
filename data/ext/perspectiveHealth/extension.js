@@ -111,7 +111,8 @@ define(function(require, exports, module) {
                 .button('toggle')   
                 .click(function() {
                     vizMode = "quantYours";
-                    TSCORE.showLoadingAnimation();                                     
+                    TSCORE.showLoadingAnimation();    
+                    TSCORE.startTime = new Date().getTime();                                       
                     TSCORE.IO.createDirectoryIndex(TSCORE.currentPath);
                 })
                 .prepend( "<i class='icon-tasks' />")                
