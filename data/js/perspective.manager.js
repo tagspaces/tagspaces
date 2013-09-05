@@ -154,7 +154,7 @@ var updateFileBrowserData = function(dirList) {
                  
                  if(fileSize == undefined) fileSize = "";
                  if(fileLMDT == undefined) fileLMDT = "";
-                 var entry = [title,ext,tags,fileSize,fileLMDT,path,filename,];   
+                 var entry = [title,ext,tags,fileSize,fileLMDT,path,filename];   
                  TSCORE.fileList.push(entry);
             }
         }
@@ -164,6 +164,7 @@ var updateFileBrowserData = function(dirList) {
 
 var refreshFileListContainer = function() {
 	// TODO consider search view
+	TSCORE.startTime = new Date().getTime(); 
     TSCORE.IO.listDirectory(TSCORE.currentPath);  
 }
 
