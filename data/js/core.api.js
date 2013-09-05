@@ -34,6 +34,8 @@ define(function(require, exports, module) {
 	var selectedTag = "";
 	
 	var selectedTagData = "";
+	
+	var startTime = undefined;
 
 	function initApp() {
 	    console.log("Init application");	
@@ -416,6 +418,7 @@ define(function(require, exports, module) {
 	exports.fileList 					= fileList;
 	exports.selectedTag 				= selectedTag;
 	exports.selectedTagData 			= selectedTagData;	
+	exports.startTime                   = startTime;
 	
     exports.fileListTITLE                = 0;
     exports.fileListFILEEXT              = 1;

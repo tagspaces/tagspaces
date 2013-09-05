@@ -139,6 +139,7 @@ define(function(require, exports, module) {
             } */
             if ( bValid ) {
                 TSCORE.IO.saveTextFile(TSCORE.currentPath+TSCORE.TagUtils.DIR_SEPARATOR+$( "#newFileName" ).val(),fileContent);
+                TSCORE.startTime = new Date().getTime(); 
                 TSCORE.IO.listDirectory(TSCORE.currentPath);                    
             }
         });
@@ -185,6 +186,7 @@ define(function(require, exports, module) {
 	    
         $( "#editTagButton" ).click(function() {
             TSCORE.TagUtils.renameTag(TSCORE.selectedFiles[0], TSCORE.selectedTag, $( "#newTagName" ).val());
+            TSCORE.startTime = new Date().getTime();             
             TSCORE.IO.listDirectory(TSCORE.currentPath);                                   
         });  
 	    
@@ -280,6 +282,7 @@ define(function(require, exports, module) {
                 "These items will be permanently deleted and cannot be recovered. Are you sure?",
                 function() {
                     TSCORE.IO.deleteElement(TSCORE.selectedFiles[0]);
+                    TSCORE.startTime = new Date().getTime();                     
                     TSCORE.IO.listDirectory(TSCORE.currentPath);   
                 }
             );

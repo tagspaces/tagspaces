@@ -261,6 +261,7 @@ define(function(require, exports, module) {
         }    
     
         TSCORE.currentPath = directoryPath;
+        TSCORE.startTime = new Date().getTime();        
         TSCORE.IO.getSubdirs(directoryPath);
         TSCORE.IO.listDirectory(directoryPath);    
     } 
