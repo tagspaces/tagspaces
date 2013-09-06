@@ -120,19 +120,38 @@ html, body {
     bottom:0;
     right:0;   
     border: 0px lightgray solid;
+    z-index: 1;
 }
 
 .fileTitle {
     font-size: 1.3em;
+    line-height: 120%;
     color: #333333;
-  /*  white-space: nowrap;*/
-    z-index: 9999;
+}
+
+.titleInFileTile {
+    font-size: 1.3em;
+    line-height: 120%;
+    color: #333333;
+    z-index: 99;
+    position: absolute;
+    left: 5px;
+    top: 5px;
+}
+
+
+.tagsInFileTile {
+    position: absolute;
+    z-index: 100;    
+    left: 5px;
+    top: 35px;    
 }
 
 .fileTileSelector {
     position:absolute;
     bottom:0;
     left:0;
+    z-index: 101;      
 }
 
 .fileExtTile {
@@ -144,7 +163,8 @@ html, body {
     background: #999 ; 
     text-align: center;
     width: 25px;       
-    color: white ;    
+    color: white ;  
+    z-index: 99;        
 }
 
 .fileTagsTile {
