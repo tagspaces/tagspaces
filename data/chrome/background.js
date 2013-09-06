@@ -4,6 +4,12 @@
 chrome.browserAction.onClicked.addListener(function() {
 	chrome.tabs.create({ url: 'index.html'});
 });
-//chrome.app.runtime.onLaunched.addListener(function() {
-//  chrome.app.window.create('index.html');
-//});
+//chrome.tabs.create({url: "index.html"});
+chrome.runtime.onInstalled.addListener(function(details){
+    if(details.reason == "install"){
+        chrome.tabs.create({url: "index.html"});
+    }else if(details.reason == "update"){
+        var thisVersion = chrome.runtime.getManifest().version;
+        console.log("Updated from " + details.previousVersion + " to " + thisVersion +" !");
+    }
+});
