@@ -4,7 +4,7 @@
 
 define(function(require, exports, module) {
 "use strict";
-    console.log("Loading Quantified Self");
+    console.log("Loading Tree Map");
 
     var TSCORE = require("tscore");
 

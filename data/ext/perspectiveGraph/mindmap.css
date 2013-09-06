@@ -1,0 +1,21 @@
+/* Styles for the mindmap application of TagSpaces */
+#tagspacesMindmap {
+    
+}
+
+#tagspacesMindmap .node circle {
+  cursor: pointer;
+  fill: #fff;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}
+
+#tagspacesMindmap .node text {
+  font-size: 11px;
+}
+
+#tagspacesMindmap path.link {
+  fill: none;
+  stroke: #ccc;
+  stroke-width: 1.5px;
+}

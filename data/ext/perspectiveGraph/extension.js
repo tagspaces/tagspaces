@@ -7,10 +7,10 @@ define(function(require, exports, module) {
 	
 	console.log("Loading perspectiveGraph");
 
-	var extensionTitle = "InfoViz"
+	var extensionTitle = "DirectoryViz"
 	var extensionID = "perspectiveGraph";  // ID should be equal to the directory name where the ext. is located   
 	var extensionType =  "perspective";
-	var extensionIcon = "icon-bar-chart";
+	var extensionIcon = "icon-sitemap";
 	var extensionVersion = "1.0";
 	var extensionManifestVersion = 1;
 	var extensionLicense = "AGPL";
@@ -23,7 +23,7 @@ define(function(require, exports, module) {
 	
 	var extensionDirectory = TSCORE.Config.getExtensionPath()+"/"+extensionID;
 	
-	var graphMode = "treeMap" // tree
+	var graphMode = "mindmap" 
 	
 	var treeData = undefined;
 	
@@ -86,6 +86,21 @@ define(function(require, exports, module) {
                     TSCORE.hideLoadingAnimation();
             });  	      
 	        break;        
+          case "mindmap":
+            require([
+                extensionDirectory+'/mindmap.js',
+                'css!'+extensionDirectory+'/mindmap.css',
+                ], function(viz) {
+                    d3.select("svg").remove();
+                    var svg = d3.select("#"+extensionID+"Container")
+                        .append("svg")
+                        .attr("id", "tagspacesMindmap")
+                        .attr("width", viewContainer.width())
+                        .attr("height", viewContainer.height())                                             
+                    viz.drawMindMap(svg, treeData);
+                    TSCORE.hideLoadingAnimation();
+            });           
+            break; 
           case "bilevelPartition":
             require([
                 extensionDirectory+'/bilevelPartition.js',
@@ -131,10 +146,23 @@ define(function(require, exports, module) {
         })      
             .append($("<button>", { 
                     class: "btn", 
+                    title: "Activate Mindmap Visualization",
+                    text: " Mindmap"
+                })
+                .button('toggle')       
+                .click(function() {
+                    graphMode = "mindmap";
+                    TSCORE.showLoadingAnimation();                     
+                    TSCORE.IO.createDirectoryTree(TSCORE.currentPath);
+                })          
+                .prepend( "<i class='icon-sitemap' />")                
+            )  
+
+            .append($("<button>", { 
+                    class: "btn", 
                     title: "Activate Treemap Mode",
                     text: " TreeMap"    
                 })
-                .button('toggle')                
                 .click(function() {
                     graphMode = "treeMap";
                     TSCORE.showLoadingAnimation();                     
@@ -153,7 +181,7 @@ define(function(require, exports, module) {
                     TSCORE.showLoadingAnimation();                     
                     TSCORE.IO.createDirectoryTree(TSCORE.currentPath);
                 })          
-                .prepend( "<i class='icon-sitemap' />")                
+                .prepend( "<i class='icon-th-large' />")                
             ) 
                     
             .append($("<button>", { 
@@ -179,7 +207,7 @@ define(function(require, exports, module) {
                     TSCORE.showLoadingAnimation();                     
                     TSCORE.IO.createDirectoryTree(TSCORE.currentPath);
                 })          
-                .prepend( "<i class='icon-sitemap' />")                
+                .prepend( "<i class='icon-adjust' />")                
             )                   
           
        ) // end button group       
