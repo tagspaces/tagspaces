@@ -9,7 +9,7 @@ console.log("Loading UI for perspectiveDefault");
 
     var TSCORE = require("tscore");
         
-    var TMB_SIZES = [ "100px", "200px", "300px" ];
+    var TMB_SIZES = [ "200px", "300px", "100px" ];
 
     var MONTH = [ "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" ];
 
@@ -66,11 +66,13 @@ console.log("Loading UI for perspectiveDefault");
         
         var titleHTML = $('<p>', { 
                 text: title, 
-                class: "fileTitle",
+                class: "titleInFileTile",
             });
             
         //var tagsHTML = TSCORE.generateTagButtons(fileTags);   
-        var tagsHTML = $('<span>');
+        var tagsHTML = $('<span>', {
+            class: "tagsInFileTile"
+        });
         if(fileTags.length > 0) {
             var tagString = ""+fileTags ;
             var tags = tagString.split(",");
@@ -140,8 +142,8 @@ console.log("Loading UI for perspectiveDefault");
               })              
             
         var tileHTML = $('<p>', {})        
-        .append(titleHTML)
         .append(thumbHTML)
+        .append(titleHTML)        
         .append(tagsHTML)
         .append(extHTML)
         .append(fileSelectorHTML)
@@ -159,8 +161,6 @@ console.log("Loading UI for perspectiveDefault");
         ));
         
         var suggMenu = $("#"+self.extensionID+"GroupingMenu");
-        
-//        suggMenu.empty(); 
     
         suggMenu.append($('<li>').append($('<a>', { 
             title: "Ungroup all elementes", 
@@ -168,8 +168,11 @@ console.log("Loading UI for perspectiveDefault");
             })
             .prepend("<i class='icon-remove-circle'></i>") 
             .click(function() {
+                $("#"+self.extensionID+"GroupingButton")
+                    .text(" Group ")
+                    .prepend( "<i class='icon-group' />" )
+                    .append( "<span class='caret'></span>" )                                
                 self.switchGrouping("");
-                return false;
             })                
         )); 
         suggMenu.append($('<li>', {class: "divider"}));
@@ -177,19 +180,22 @@ console.log("Loading UI for perspectiveDefault");
         // Adding context menu entries according to the taggroups
         for (var i=0; i < self.supportedGroupings.length; i++) {        
             suggMenu.append($('<li>').append($('<a>', { 
-                title: "Group by "+self.supportedGroupings[i].title, 
-                text: " "+self.supportedGroupings[i].title,
-                key: self.supportedGroupings[i].key,
+                    title: "Group by "+self.supportedGroupings[i].title, 
+                    text: " "+self.supportedGroupings[i].title,
+                    key: self.supportedGroupings[i].key,
+                    group: self.supportedGroupings[i].title,
                 })
                 .prepend( "<i class='icon-group' />" )            
                 .click(function() {
+                    $("#"+self.extensionID+"GroupingButton")
+                        .text(" Grouped by "+$(this).attr("group")+" ")
+                        .prepend( "<i class='icon-group' />" )
+                        .append( "<span class='caret'></span>" )                                
                     self.switchGrouping($(this).attr("key"));
-                    return false;
                 })                
             ));              
         };    
-    
-      //  $( "#"+self.extensionID+"GroupingButton" ).dropdown( 'attach' , '#'+self.extensionID+"GroupingMenu" );     
+
     }
     
     ExtUI.prototype.buildUI = function() {
@@ -305,8 +311,8 @@ console.log("Loading UI for perspectiveDefault");
             .append($("<button>", { 
                 class:            "btn ",
                 type:             "button",
-                title:            "Grouping",
-                text:             " Grouping ",
+                title:            "Group",
+                text:             " Group ",
                 id:               this.extensionID+"GroupingButton",
                 "data-dropdown":  "#"+this.extensionID+"GroupingMenu"                    
             })
