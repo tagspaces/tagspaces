@@ -7,6 +7,8 @@ define(function(require, exports, module) {
 	console.log("Loading fileOpener...");
 	
 	var TSCORE = require("tscore");
+	
+    require("jqueryeditinplace");	
 
 	var _openedFilePath = undefined; 
 	
