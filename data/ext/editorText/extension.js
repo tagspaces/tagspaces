@@ -91,8 +91,8 @@ define(function(require, exports, module) {
 	filetype["css"] = "css";
 	filetype["groovy"] = "groovy";
 	filetype["haxe"] = "haxe";
-	filetype["htm"] = "htmlmixed";
-	filetype["html"] = "htmlmixed";
+	filetype["htm"] = "xml";
+	filetype["html"] = "xml";
 	filetype["java"] = "clike";
 	filetype["js"] = "javascript";
 	filetype["jsm"] = "javascript";
