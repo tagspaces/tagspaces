@@ -92,7 +92,7 @@ define(function(require, exports, module) {
           });
           
           // Sorting by date    
-          data.sort(function(a, b) { return b.Date - a.Date; });
+          data.sort(function(a, b) { return a.Date - b.Date; });
         
           x.domain(data.map(function(d) { return d.Date; }));
           y.domain([0, d3.max(data, function(d) { return d.total; })]);
