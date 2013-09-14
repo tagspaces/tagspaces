@@ -137,13 +137,15 @@ define(function(require, exports, module) {
         
         // Toggle children.
         function toggle(d) {
+          if(d.children == undefined || d.children == null || d.children.length < 1) {
+              TSCORE.FileOpener.openFile(d.path);                
+          }  
           if (d.children) {
-            d._children = d.children;
-            d.children = null;
+              d._children = d.children;
+              d.children = null;
           } else {
-            TSCORE.FileOpener.openFile(d.path);  
-            d.children = d._children;
-            d._children = null;
+              d.children = d._children;
+              d._children = null;
           }
         }
     
