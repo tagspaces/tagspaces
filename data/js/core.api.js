@@ -285,14 +285,14 @@ define(function(require, exports, module) {
 	    ,   west__minSize:              .1
 	//        ,   west__maxSize:              .4
 	    ,   west__size:                 200
-	    ,   west__spacing_open:         1     
+	    ,   west__spacing_open:         5     
 	
 	    //  east settings
 	    ,   east__resizable:           true                 
-	    ,   east__size:                 .45
+	    ,   east__size:                 .50
 	    ,   east__minSize:              .2
 	//        ,   east__maxSize:              .8 // 80% of layout width
-	    ,   east__spacing_open:        1   
+	    ,   east__spacing_open:        5   
 	
 	    //  center settings
 	    ,   center__resizable:          true 
