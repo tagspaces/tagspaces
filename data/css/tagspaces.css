@@ -303,6 +303,16 @@ li hr {
 	overflow: hidden !important;
 }	
 
+.ui-layout-resizer {
+    background-color: white;
+    border-right: 1px solid #ddd;    
+}
+
+.ui-layout-toggler {
+    background-color: white;  
+    border-width: 0px;  
+}
+
 #directoryNavigatorNorth, #locationContent, #tagGroupsContent, .middle-north, .east-north {
 	background-color:  white; 
 }	
@@ -595,7 +605,7 @@ input a.resetFilter {
 
 ::-webkit-scrollbar
 {
-    width: 6px;
+    width: 8px;
     background-color: #F5F5F5;
 }
 
@@ -604,3 +614,4 @@ input a.resetFilter {
     background-color: #bbb;
     border-radius: 6px;
 }
+
