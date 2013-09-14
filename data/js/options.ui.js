@@ -17,13 +17,13 @@ define(function(require, exports, module) {
 
         optionsUI.append("<button class='btn' id='addPerspectiveButton' title='Add new perspective'><i class='icon-plus'></button>");
 
-        optionsUI.append($("<h5>File Types</h5>"));
+        optionsUI.append("<h5>File Types</h5>");
         
         optionsUI.append("<div id='fileTypesList'>");
 
         optionsUI.append("<button class='btn' id='addFileTypeButton' title='Add new file extension'><i class='icon-plus'></button>");
         
-        optionsUI.append($("<h5>Miscellaneous</h5>"));
+        optionsUI.append("<h5>Miscellaneous</h5>");
                       
 /*        optionsUI.append($("<div class='control-group'>", {})
             .append($("<label class='control-label' for='extensionsPathInput'>Extensions folder</label>"))
@@ -142,9 +142,12 @@ define(function(require, exports, module) {
     function collectPerspectivesData() {
         var data = new Array();
         $('#perspectiveList').children().each( function(index, element) {
-                data.push({
-                    "id":$(element).find("select").val(),
-                });
+                if($(element).find("select").val() != "false") {
+	                data.push({
+	                    "id":$(element).find("select").val(),
+	                });                	
+                }
+
             }            
         ) 
         return data;
