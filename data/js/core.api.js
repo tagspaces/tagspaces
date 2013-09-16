@@ -76,31 +76,30 @@ define(function(require, exports, module) {
 	    tsDirectoriesUI.initConnections();
 	    
 	    tsTagsUI.generateTagGroups();
-
-	    $( "#loading" ).hide();  
-	    $( "#container" ).show();  
-	    $( "#helpers" ).show();
 	    
 	    hideLoadingAnimation();
-	    // TODO check if document.ready is really needed
+
 	    $(document).ready(function() {
+		    $( "#container" ).show();  
+		    $( "#helpers" ).show();
 	        initLayout();
+		    $( "#loading" ).hide();  
+	    
 	        console.log("Layout initialized");
 
 		    // Show start hint
 		   	if(tsSettings.Settings.tagspacesList.length < 1 ) {
-		   		$( "#createNewLocation" ).attr("title", "Start using TagSpaces by creating a new location.")
+		   		$( "#createNewLocation" ).attr("title", "Start using TagSpaces by creating a new location.");
                 $( "#connectionsList" ).width($( "#reloadTagSpace" ).width()+$("#selectTagSpace").width());
                 $( "#connectionsList" ).show().position({
                     my: "left top",
                     at: "left bottom",
                     of: $( "#reloadTagSpace" )
                 });
-		    	$( "#createNewLocation" ).attr("style","border:1px solid #00AE00; border-radius:5px; border-color:#00AE00; box-shadow:0 0 10px #00AE00;")
+		    	$( "#createNewLocation" ).attr("style","border:1px solid #00AE00; border-radius:5px; border-color:#00AE00; box-shadow:0 0 10px #00AE00;");
 		    	$( "#createNewLocation" ).tooltip( { placement: "bottom" } );
 		    	$( "#createNewLocation" ).tooltip( "show" );
 		   	}
-	 		
 	    }); 
 	    
         checkForNewVersion();
@@ -123,7 +122,7 @@ define(function(require, exports, module) {
     }    
 
     function updateNewVersionData(data) {
-        console.log("Version Information: "+data)
+        console.log("Version Information: "+data);
         var versioningData = JSON.parse(data);
         
         // Analysing Version Information
@@ -398,7 +397,7 @@ define(function(require, exports, module) {
 	// Proxying functions from tsTagsUI
 	exports.generateTagButtons 			= tsTagsUI.generateTagButtons;
 	exports.generateExtButton           = tsTagsUI.generateExtButton;
-	exports.generateTagStyle            = tsTagsUI.generateTagStyle
+	exports.generateTagStyle            = tsTagsUI.generateTagStyle;
 	exports.openTagMenu 				= tsTagsUI.openTagMenu;
 	exports.showAddTagsDialog			= tsTagsUI.showAddTagsDialog;
 	exports.showTagEditInTreeDialog     = tsTagsUI.showTagEditInTreeDialog;
