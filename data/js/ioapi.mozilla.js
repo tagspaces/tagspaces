@@ -27,17 +27,17 @@ define(function(require, exports, module) {
                     TSCORE.generateTagGroups();
                       
                 } catch (ex) {
-                    console.log("Exception while getting setting from firefox failed "+ex)
+                    console.log("Exception while getting setting from firefox failed "+ex);
                 }
             } else {
-                console.log("Getting setting from firefox failed") 
+                console.log("Getting setting from firefox failed");
             }
             break;
           case "saveSettings":
             if(message.success) {
-                console.log("Saving setting as native mozilla preference successfull!")
+                console.log("Saving setting as native mozilla preference successfull!");
             } else {
-                console.log("Saving setting as native mozilla preference failed!")            
+                console.log("Saving setting as native mozilla preference failed!");            
             }
             break;        
           case "rename":
@@ -137,7 +137,7 @@ define(function(require, exports, module) {
             "content": content
         }});
         document.documentElement.dispatchEvent(event);
-    }
+    };
     
     exports.loadSettings = function() {
         console.log("Loading setting from firefox preferences...");
@@ -147,7 +147,7 @@ define(function(require, exports, module) {
             "command": "loadSettings"
         }});
         document.documentElement.dispatchEvent(event);
-    }
+    };
     
     exports.createDirectory = function(dirPath) {
     	console.log("Directory "+dirPath+" created.");
@@ -158,7 +158,7 @@ define(function(require, exports, module) {
     		"path": dirPath
     	}});
         document.documentElement.dispatchEvent(event);
-    }
+    };
     
     exports.loadTextFile = function(filePath) {
     	console.log("Loading file: "+filePath);
@@ -169,11 +169,11 @@ define(function(require, exports, module) {
     		"path": filePath
     	}});
         document.documentElement.dispatchEvent(event);	
-    }
+    };
     
     exports.renameFile = function(filePath, newFilePath) {
     	console.log("Renaming "+filePath+" to "+newFilePath);
-        TSCORE.showLoadingAnimation();	
+        TSCORE.showLoadingAnimation();
         var event = document.createEvent('CustomEvent');
         event.initCustomEvent("addon-message", true, true, {"detail":{
     		"command": "rename",
@@ -181,7 +181,7 @@ define(function(require, exports, module) {
     		"newPath": newFilePath	
     	}});
         document.documentElement.dispatchEvent(event);
-    }
+    };
     
     exports.saveTextFile = function(filePath,content) {
     	console.log("Saving file: "+filePath);
@@ -193,7 +193,7 @@ define(function(require, exports, module) {
     		"content": content	
     	}});
         document.documentElement.dispatchEvent(event);	
-    }
+    };
     
     exports.listDirectory = function(dirPath) {
     	console.log("Listing directory: "+dirPath);
@@ -204,7 +204,7 @@ define(function(require, exports, module) {
     		"path": dirPath
     	}});
         document.documentElement.dispatchEvent(event);		
-    }
+    };
     
     exports.getSubdirs = function(dirPath) {
     	console.log("Getting subdirs: "+dirPath);
@@ -215,7 +215,7 @@ define(function(require, exports, module) {
     		"path": dirPath
     	}});	
         document.documentElement.dispatchEvent(event);	
-    }
+    };
     
     exports.deleteElement = function(path) {
     	console.log("Deleting: "+path);
@@ -226,11 +226,11 @@ define(function(require, exports, module) {
     		"path": path
     	}});
         document.documentElement.dispatchEvent(event);	
-    }
+    };
     
     exports.checkAccessFileURLAllowed = function() {
         console.log("checkAccessFileURLAllowed function not relevant for node..");
-    }
+    };
     
     exports.selectDirectory = function() {
     	console.log("Selecting directory...");
@@ -239,7 +239,7 @@ define(function(require, exports, module) {
     		"command": "selectDirectory",
     	}});
         document.documentElement.dispatchEvent(event);	
-    }
+    };
     
     exports.selectFile = function() {
     	console.log("Selecting file...");
@@ -248,7 +248,7 @@ define(function(require, exports, module) {
     		"command": "selectFile"
     	}});
         document.documentElement.dispatchEvent(event);	
-    }
+    };
         
     exports.openDirectory = function(dirPath) {
     	console.log("Opening directory: "+dirPath);
@@ -258,7 +258,7 @@ define(function(require, exports, module) {
     		"path": dirPath,
     	}});
         document.documentElement.dispatchEvent(event);	
-    }
+    };
     
     exports.openExtensionsDirectory = function() {
         console.log("Opening extensions directory...");
@@ -267,7 +267,7 @@ define(function(require, exports, module) {
             "command": "openExtensionsDirectory"
         }});
         document.documentElement.dispatchEvent(event);  
-    }
+    };
     
     exports.createDirectoryIndex = function(dirPath) {
         console.log("Creating directory index for: "+dirPath);
@@ -278,7 +278,7 @@ define(function(require, exports, module) {
             "path": dirPath
         }});
         document.documentElement.dispatchEvent(event);  
-    }
+    };
     
     exports.createDirectoryTree = function(dirPath) {
         console.log("Creating directory tree for: "+dirPath);
@@ -289,7 +289,7 @@ define(function(require, exports, module) {
             "path": dirPath
         }});
         document.documentElement.dispatchEvent(event);  
-    }
+    };
     
     exports.checkNewVersion = function() {
         console.log("Checking for new version...");
@@ -299,6 +299,6 @@ define(function(require, exports, module) {
             "command": "checkNewVersion",
         }});
         document.documentElement.dispatchEvent(event);  
-    }
+    };
 
 });

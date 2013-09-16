@@ -32,11 +32,32 @@
 
 define(['require', 'module'], function(require, module) {
   
+  // regular expression for removing double slashes
+  // eg http://www.example.com//my///url/here -> http://www.example.com/my/url/here
+  var slashes = /([^:])\/+/g
+  var removeDoubleSlashes = function(uri) {
+    return uri.replace(slashes, '$1/');
+  }
+
+  // given a relative URI, and two absolute base URIs, convert it from one base to another
+  var protocolRegEx = /[^\:\/]*:\/\/([^\/])*/
   function convertURIBase(uri, fromBase, toBase) {
-    // absolute urls are left in tact
-    if (uri.match(/^\/|([^\:\/]*:)/))
+    if(uri.indexOf("data:") === 0)
       return uri;
-    return relativeURI(absoluteURI(uri, fromBase), toBase);
+    uri = removeDoubleSlashes(uri);
+    // absolute urls are left in tact
+    if (uri.match(/^\//) || uri.match(protocolRegEx))
+      return uri;
+    // if toBase specifies a protocol path, ensure this is the same protocol as fromBase, if not
+    // use absolute path at fromBase
+    var toBaseProtocol = toBase.match(protocolRegEx);
+    var fromBaseProtocol = fromBase.match(protocolRegEx);
+    if (fromBaseProtocol && (!toBaseProtocol || toBaseProtocol[1] != fromBaseProtocol[1] || toBaseProtocol[2] != fromBaseProtocol[2]))
+      return absoluteURI(uri, fromBase);
+    
+    else {
+      return relativeURI(absoluteURI(uri, fromBase), toBase);
+    }
   };
   
   // given a relative URI, calculate the absolute URI
@@ -88,26 +109,24 @@ define(['require', 'module'], function(require, module) {
     return out.substr(0, out.length - 1);
   };
   
-  var normalizeCSS = function(source, fromBase, toBase) {
-    
-    var urlRegEx = /(url\(\s*"(.*)"\s*\))|(url\(\s*'(.*)'\s*\))|(url\(\s*(.*)\s*\))/g;
+  var normalizeCSS = function(source, fromBase, toBase, cssBase) {
+
+    fromBase = removeDoubleSlashes(fromBase);
+    toBase = removeDoubleSlashes(toBase);
+
+    var urlRegEx = /@import\s*("([^"]*)"|'([^']*)')|url\s*\(\s*(\s*"([^"]*)"|'([^']*)'|[^\)]*\s*)\s*\)/ig;
     var result, url, source;
 
     while (result = urlRegEx.exec(source)) {
-      url = result[2] || result[4] || result[6];
-      var newUrl = convertURIBase(url, fromBase, toBase);
-      var quoteLen = result[2] || result[4] ? 1 : 0;
+      url = result[3] || result[2] || result[5] || result[6] || result[4];
+      var newUrl;
+      if (cssBase && url.substr(0, 1) == '/')
+        newUrl = cssBase + url;
+      else
+        newUrl = convertURIBase(url, fromBase, toBase);
+      var quoteLen = result[5] || result[6] ? 1 : 0;
       source = source.substr(0, urlRegEx.lastIndex - url.length - quoteLen - 1) + newUrl + source.substr(urlRegEx.lastIndex - quoteLen - 1);
       urlRegEx.lastIndex = urlRegEx.lastIndex + (newUrl.length - url.length);
-    }
-    
-    var importRegEx = /(@import\s*'(.*)')|(@import\s*"(.*)")/g;
-    
-    while (result = importRegEx.exec(source)) {
-      url = result[2] || result[4];
-      var newUrl = convertURIBase(url, fromBase, toBase);
-      source = source.substr(0, importRegEx.lastIndex - url.length - 1) + newUrl + source.substr(importRegEx.lastIndex - 1);
-      importRegEx.lastIndex = importRegEx.lastIndex + (newUrl.length - url.length);
     }
     
     return source;
