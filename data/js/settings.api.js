@@ -280,11 +280,11 @@ define(function(require, exports, module) {
             if(value.key == newTagGroup.key) {
                 tagGroupExist = true;
             }        
-        })  
+        });  
         if(!tagGroupExist) {
             exports.Settings["tagGroups"].push(newTagGroup);            
         }
-    }
+    };
 
     var addFileType = function(newFileType) {
         var fileTypeExist = false;
@@ -292,11 +292,11 @@ define(function(require, exports, module) {
             if(value.type == newFileType.type) {
                 fileTypeExist = true;
             }        
-        })  
+        });  
         if(!fileTypeExist) {
             exports.Settings["supportedFileTypes"].push(newFileType);            
         }
-    }
+    };
     
     var updateFileType = function(newFileType) {
         exports.Settings["supportedFileTypes"].forEach(function (value, index) {         
@@ -304,8 +304,8 @@ define(function(require, exports, module) {
                 value.viewer = newFileType.viewer;
                 value.editor = newFileType.editor;                
             }        
-        })  
-    }    
+        });  
+    };    
 
     var addVal2SettingsArray = function(arrayLocation, value) {
         if(arrayLocation instanceof Array) {
@@ -313,95 +313,95 @@ define(function(require, exports, module) {
                 arrayLocation.push(value);                
             }
         }        
-    }
+    };
 
     var getPerspectiveExtensions = function() {
         if(exports.Settings["ootbPerspectives"] == null) {
             exports.Settings["ootbPerspectives"] = exports.DefaultSettings["ootbPerspectives"];
         }
         return exports.Settings["ootbPerspectives"];
-    }
+    };
 
     var getViewerExtensions = function() {
         if(exports.Settings["ootbViewers"] == null) {
             exports.Settings["ootbViewers"] = exports.DefaultSettings["ootbViewers"];
         }
         return exports.Settings["ootbViewers"];
-    }
+    };
     
     var getEditorExtensions = function() {
         if(exports.Settings["ootbEditors"] == null) {
             exports.Settings["ootbEditors"] = exports.DefaultSettings["ootbEditors"];
         }
         return exports.Settings["ootbEditors"];
-    }    
+    };   
 	
 	var getPerspectives = function() {
 		if(exports.Settings["perspectives"] == null) {
 			exports.Settings["perspectives"] = exports.DefaultSettings["perspectives"];
 		}
 	    return exports.Settings["perspectives"];
-	}
+	};
 
     var setPerspectives = function(value) {
         exports.Settings["perspectives"] = value;
-    }
+    };
 	
 	var getExtensionPath = function() {
 		if(exports.Settings["extensionsPath"] == null) {
 			exports.Settings["extensionsPath"] = exports.DefaultSettings["extensionsPath"];
 		}
 	    return exports.Settings["extensionsPath"];
-	}
+	};
 
     var setExtensionPath = function(value) {
         exports.Settings["extensionsPath"] = value;
-    }
+    };
 	
     var getShowUnixHiddenEntries = function() {
         if(exports.Settings["showUnixHiddenEntries"] == null) {
             exports.Settings["showUnixHiddenEntries"] = exports.DefaultSettings["showUnixHiddenEntries"];
         }
         return exports.Settings["showUnixHiddenEntries"];
-    }
+    };
 
     var setShowUnixHiddenEntries = function(value) {
         exports.Settings["showUnixHiddenEntries"] = value;
-    } 
+    };
     
     var getCheckForUpdates = function() {
         if(exports.Settings["checkForUpdates"] == null) {
             exports.Settings["checkForUpdates"] = exports.DefaultSettings["checkForUpdates"];
         }
         return exports.Settings["checkForUpdates"];
-    }
+    };
 
     var setCheckForUpdates = function(value) {
         exports.Settings["checkForUpdates"] = value;
-    }    
+    };    
 
     var getSupportedFileTypes = function() {
         if(exports.Settings["supportedFileTypes"] == null) {
             exports.Settings["supportedFileTypes"] = exports.DefaultSettings["supportedFileTypes"];
         }
         return exports.Settings["supportedFileTypes"];
-    }
+    };
 
     var setSupportedFileTypes = function(value) {
         exports.Settings["supportedFileTypes"] = value;
-    }   
+    };   
     	
 	var getNewTextFileContent = function() {
 	    return exports.Settings["newTextFileContent"];
-	}
+	};
 	
 	var getNewHTMLFileContent = function() {
 	    return exports.Settings["newHTMLFileContent"];
-	}
+	};
 	
 	var getNewMDFileContent = function() {
 	    return exports.Settings["newMDFileContent"];
-	}
+	};
 	
 	var getFileTypeEditor = function(fileTypeExt) {
 	    for(var i=0; i < exports.Settings["supportedFileTypes"].length; i++) {
@@ -410,7 +410,7 @@ define(function(require, exports, module) {
 	        }        
 	    }
 	    return "false";   
-	}
+	};
 	
 	var getFileTypeViewer = function(fileTypeExt) {
 	    for(var i=0; i < exports.Settings["supportedFileTypes"].length; i++) {
@@ -419,7 +419,7 @@ define(function(require, exports, module) {
 	        }        
 	    }
 	    return false;   
-	}
+	};
 	
 	// Returns the tag information from the setting for a given tag 
 	var findTag = function(tagName) {
@@ -434,7 +434,7 @@ define(function(require, exports, module) {
 //	        }        
 	    }
 	    return false;   
-	}
+	};
 	
 	var getAllTags = function() {
 	    var allTags = [];
@@ -448,18 +448,18 @@ define(function(require, exports, module) {
 	        }
 	    }
 	    return allTags;   
-	}
+	};
 	
 	// Not used
 	var setLastOpenedDir = function(directory) {
 	    exports.Settings["lastOpenedDirectory"] = directory;
 	    saveSettings();    
-	}
+	};
 	
 	// Not used
 	var getLastOpenedDir = function() {
 	    return exports.Settings["lastOpenedDirectory"]; 
-	}
+	};
 	
 	var getTagData = function(tagTitle, tagGroupKey) {
 	    for(var i=0; i < exports.Settings["tagGroups"].length; i++) {
@@ -472,7 +472,7 @@ define(function(require, exports, module) {
 	            }
 	        }        
 	    }  
-	}
+	};
 	
 	var getTagGroupData = function(tagGroupKey) {
 	    for(var i=0; i < exports.Settings["tagGroups"].length; i++) {
@@ -481,7 +481,7 @@ define(function(require, exports, module) {
 	            break;
 	        }        
 	    }  
-	}
+	};
 
 	var deleteTagGroup = function(tagData) {
 	    for(var i=0; i < exports.Settings["tagGroups"].length; i++) {
@@ -492,7 +492,7 @@ define(function(require, exports, module) {
 	        }        
 	    }  
 	    saveSettings();    
-	}
+	};
 	
 	var editTag = function(tagData, newTagName, newColor, newTextColor) {
 	    for(var i=0; i < exports.Settings["tagGroups"].length; i++) {
@@ -508,7 +508,7 @@ define(function(require, exports, module) {
 	        }        
 	    }  
 	    saveSettings();       
-	}
+	};
 
     var deleteTag = function(tagData) {
         for(var i=0; i < exports.Settings["tagGroups"].length; i++) {
@@ -522,7 +522,7 @@ define(function(require, exports, module) {
             }        
         }  
         exports.saveSettings();    
-    }
+    };
 
     var moveTag = function(tagData, targetTagGroupKey) {
         var targetTagGroupData = getTagGroupData(targetTagGroupKey);
@@ -530,7 +530,7 @@ define(function(require, exports, module) {
             deleteTag(tagData);   
             saveSettings();                   
         } 
-    }
+    };
 	
 	var createTag = function(tagData, newTagName, newTagColor, newTagTextColor) {
 	    var newTagModel = JSON.parse( JSON.stringify(tagTemplate) );
@@ -548,10 +548,10 @@ define(function(require, exports, module) {
                 });
 	            value["children"].push(newTagModel);
 	        }        
-	    })  
+	    });  
 	    saveSettings();
 	    return true;       
-	}
+	};
 	
 	var editTagGroup = function(tagData, tagGroupName) {
 	    for(var i=0; i < exports.Settings["tagGroups"].length; i++) {
@@ -561,7 +561,7 @@ define(function(require, exports, module) {
 	        }        
 	    }  
 	    saveSettings();       
-	}
+	};
 	
 	var duplicateTagGroup = function(tagData, tagGroupName, tagGroupKey) {
 	    var newTagGroupModel = undefined;
@@ -576,7 +576,7 @@ define(function(require, exports, module) {
 	    console.log("Creating taggroup: "+JSON.stringify(newTagGroupModel)+" with key: "+tagGroupKey);
 	    exports.Settings["tagGroups"].push(newTagGroupModel);
 	    saveSettings();       
-	}
+	};
 
 	var createTagGroup = function(tagData, tagGroupName) {
 	    var newTagGroupModel =  JSON.parse( JSON.stringify( tagGroupTemplate ) );
@@ -586,7 +586,7 @@ define(function(require, exports, module) {
 	    console.log("Creating taggroup: "+JSON.stringify(newTagGroupModel)+" with key: "+newTagGroupModel.key);
 	    exports.Settings["tagGroups"].push(newTagGroupModel);
 	    saveSettings();       
-	}	
+	};	
 	
 	var moveTagGroup = function(tagData, direction) {
         var targetPosition = undefined;
@@ -609,7 +609,7 @@ define(function(require, exports, module) {
         exports.Settings["tagGroups"][currentPosition] = exports.Settings["tagGroups"][targetPosition];
         exports.Settings["tagGroups"][targetPosition] = tmpTagGroup;
         saveSettings();
-	}		
+	};		
 	
 	var createConnection = function(name, location) {
 	    var newConnectionModel = JSON.parse( JSON.stringify(connectionTemplate));
@@ -629,12 +629,12 @@ define(function(require, exports, module) {
                 TSCORE.showAlertDialog("Selected location name is already used by a location!","Duplicated Location Name");
                 createLocation = false;
             }             
-        })  	    
+        });  	    
         if(createLocation) {
             exports.Settings["tagspacesList"].push(newConnectionModel);
             saveSettings();                
         }
-	}
+	};
 
     var getConnectionName = function(connectionPath) {
         var connectionName = undefined;
@@ -642,11 +642,11 @@ define(function(require, exports, module) {
             if(value.path == connectionPath) {
                 connectionName = value.name;
             }        
-        })          
+        });          
         if(connectionName != undefined) {
             return connectionName;                
         }
-    }	
+    };	
 	
 	var deleteConnection = function(name) {
 	    for(var i=0; i < exports.Settings["tagspacesList"].length; i++) {
@@ -658,7 +658,7 @@ define(function(require, exports, module) {
 	        }        
 	    }  
 	    saveSettings();    
-	}
+	};
 	
 	var updateSettingMozillaPreferences = function(settings) {
 	    var tmpSettings = JSON.parse(settings);    
@@ -670,14 +670,14 @@ define(function(require, exports, module) {
 	        console.log('Default settings loaded(Firefox)!');        
 	    }
 	    saveSettings();
-	}
+	};
 	
     var loadDefaultSettings = function() {
         exports.Settings = exports.DefaultSettings;
         saveSettings();
         TSCORE.reloadUI();                    
         console.log("Default settings loaded.");    
-    }	
+    };	
 	
 	var loadSettingsLocalStorage = function() {
 	    try {
@@ -694,7 +694,7 @@ define(function(require, exports, module) {
 	    } catch(ex) {
 	        console.log("Loading settings from local storage failed due exception: "+ex);
 	    }
-	}
+	};
 	
 	// Save setting 
 	var saveSettings = function() {
@@ -707,11 +707,11 @@ define(function(require, exports, module) {
 		}
 		
 		console.log('Tagspace Settings Saved!');
-	}
+	};
 	
 	var getRandomInt = function(min, max) {
   		return Math.floor(Math.random() * (max - min + 1)) + min;
-	}
+	};
 	
     // Public API definition
     exports.upgradeSettings               			= upgradeSettings;
@@ -745,7 +745,7 @@ define(function(require, exports, module) {
     exports.editTag                					= editTag;	
     exports.createTag                				= createTag;
     exports.findTag                                 = findTag;
-    exports.moveTag                                 = moveTag	
+    exports.moveTag                                 = moveTag;	
     exports.editTagGroup                			= editTagGroup;	
     exports.moveTagGroup                            = moveTagGroup;
     exports.createTagGroup                			= createTagGroup;    
