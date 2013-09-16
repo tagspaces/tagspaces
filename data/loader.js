@@ -13,14 +13,14 @@ if (PRODUCTION == "true") {
     console.log = function(){};    
 }
 
-// Temporal hacks
-var isFirefox = 'MozBoxSizing' in document.documentElement.style; // URL contains resource://
+var isFirefox = document.URL.indexOf( 'resource://' ) >= 0; 
 var isSafari = Object.prototype.toString.call(window.HTMLElement).indexOf('Constructor') > 0;
-// TODO refactor isChrome to isChromeExt
-var isChrome =  document.URL.indexOf( 'chrome-extension://' ) >= 0; //!isSafari && 'WebkitTransform' in document.documentElement.style;
+var isChrome =  document.URL.indexOf( 'chrome-extension://' ) >= 0; 
 var isNode = undefined;
-var isCordova = document.URL.indexOf( 'file:///android_asset' ) >= 0; // Not perfect... evtl. adding of "android_asset" needed
+var isCordova = document.URL.indexOf( 'file:///android_asset' ) >= 0; 
 var isWeb = undefined;
+var isOSX = navigator.appVersion.indexOf("Mac")!=-1;
+var isWin = navigator.appVersion.indexOf("Win")!=-1;
 
 // Check for running in node-webkit
 try {
@@ -127,7 +127,7 @@ requirejs.config({
                 'bootstrap',
                 'jquerysimplecolorpicker',
                 'jquerylayout',
-                'jquerydropdown',  
+                'jquerydropdown',
             ] },                   
     } 
 });
