@@ -1,13 +1,13 @@
 {
-  "name": "TagSpaces",
+  "name": "@APPNAME@",
   "description": "An open and extensible platform, providing web based user interface for your local files.",
-  "version": "1.4",
-  "main": "../data/index.html",
+  "version": "@VERSION@.@BUILD@",
+  "main": "index.html",
   "window": {
-    "icon": "../data/icons/icon128.png",
-    "toolbar": true,
+    "icon": "icons/icon128.png",
+    "toolbar": false,
     "width": 1024,
-    "height": 800
+    "height": 768
   },
   "nodejs": true,
   "chromium-args" : "--data-path='./data/'"
