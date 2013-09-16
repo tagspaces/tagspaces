@@ -305,7 +305,8 @@ li hr {
 
 .ui-layout-resizer {
     background-color: white;
-    border-right: 1px solid #ddd;    
+    border-top: 1px solid #ddd;
+    border-left: 1px solid #ddd;    
 }
 
 .ui-layout-toggler {
@@ -618,4 +619,3 @@ input a.resetFilter {
     background-color: #bbb;
     border-radius: 6px;
 }
-
