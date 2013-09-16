@@ -10,3 +10,7 @@ node-webkit/libGLESv2.dll
 node-webkit/nw
 node-webkit/nw.exe
 node-webkit/nw.pak
+node-webkit/debug.log
+node-webkit/ffmpegsumo_.dll
+node-webkit/libEGL_.dll
+node-webkit/libGLESv2_.dll
