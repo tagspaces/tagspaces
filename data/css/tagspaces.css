@@ -583,6 +583,10 @@ input a.resetFilter {
     display: inline-block;    
 }
 
+.modal-body {
+	font-size: 14px;
+}
+
 /* Tablet optimization */
 .dropdown-menu LI > A {
     line-height: 35px !important;

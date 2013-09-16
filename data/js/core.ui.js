@@ -23,20 +23,20 @@ define(function(require, exports, module) {
 	            '<a class="close" data-dismiss="modal" >&times;</a>' +
 	            '<h4></h4>' +
 	          '</div>' +
-              '<div class="modal-body"><p class="lead"></p></div>' +
+              '<div class="modal-body"></div>' +
 	          '<div class="modal-footer">' +
 	            '<button id="okButton" class="btn btn-primary">Ok</button>' +
 	          '</div>' +
 	        '</div>');
 	
         alertModal.find('h4').text(title);        
-        alertModal.find('.lead').append(message);
+        alertModal.find('.modal-body').append(message);
 	    alertModal.find('#okButton').click(function(event) {
 	      alertModal.modal('hide');
 	    });
 	
 	    alertModal.modal('show');
-	}	
+	};	
 	
 	var showConfirmDialog = function(title, message, callback) {
 	    if (!title) { title = 'Confirm'; }	
@@ -48,7 +48,7 @@ define(function(require, exports, module) {
 	            '<a class="close" data-dismiss="modal" >&times;</a>' +
 	            '<h4></h4>' +
 	          '</div>' +
-	          '<div class="modal-body"><p class="lead"></p></div>' +
+	          '<div class="modal-body"></div>' +
 	          '<div class="modal-footer">' +
 	            '<button class="btn" data-dismiss="modal">Cancel</button>' +
 	            '<button id="okButton" class="btn btn-primary">Ok</button>' +
@@ -56,7 +56,7 @@ define(function(require, exports, module) {
 	        '</div>');
 
         confirmModal.find('h4').text(title);    	
-	    confirmModal.find('.lead').text(message);
+	    confirmModal.find('.modal-body').text(message);
 	    confirmModal.find('#okButton').click(function(event) {
 	      callback();
 	      confirmModal.modal('hide');
@@ -71,17 +71,17 @@ define(function(require, exports, module) {
         $( "#newFileName" ).val(".txt");
         $( '#dialogFileCreate' ).modal({show: true});
         $( '#txtFileTypeButton' ).button('toggle');
-    }
+    };
     
     var showFileRenameDialog = function() {
         $( "#renamedFileName" ).val(TSCORE.TagUtils.extractFileName(TSCORE.selectedFiles[0]));
         $( '#dialogFileRename' ).modal({show: true});
-    }    
+    };    
     
     var showTagEditDialog = function() {
         $( "#newTagName" ).val(TSCORE.selectedTag);
         $( '#dialogEditTag' ).modal({show: true});
-    }    
+    };    
     
 	var initUI = function() {
 	    
@@ -91,11 +91,6 @@ define(function(require, exports, module) {
 			TSCORE.toggleLeftPanel();
 	    });   
 		
-		$( "#testAlertButton" ).click(function() {
-			TSCORE.showAlertDialog("test1","test2");	
-			TSCORE.showConfirmDialog("test1","test2", function() {alert("test")});
-		})
-	
 	    $( "#txtFileTypeButton" ).click(function(e) {
             // Fixes reloading of the application by click
             e.preventDefault();
@@ -181,7 +176,7 @@ define(function(require, exports, module) {
             // Fixes reloading of the application by click
             e.preventDefault();
             
-	        TSCORE.selectedTag, $( "#newTagName" ).datepicker( "destroy" ).val("XEUR")
+	        TSCORE.selectedTag, $( "#newTagName" ).datepicker( "destroy" ).val("XEUR");
 	    });      
 	    
         $( "#editTagButton" ).click(function() {
@@ -289,13 +284,13 @@ define(function(require, exports, module) {
         });
         // End File Menu  
   	        
-	}
+	};
 
 	var hideAllDropDownMenus = function() {
 		$('BODY')
 			.find('.dropdown-menu').hide().end()
 			.find('[data-dropdown]').removeClass('dropdown-open');
-	}
+	};
 
     // Public API definition
 	exports.initUI 					= initUI;
