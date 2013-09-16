@@ -26,19 +26,19 @@ define(function(require, exports, module) {
 		 "EUR", "USD", "BGN"
 		 ]
 		 */
-	}
+	};
 	
 	var connectionTemplate = {
                 "name": undefined,
                 "path": undefined
-            }
+           };
 	                        
 	var tagGroupTemplate = {
 	            "title": undefined,
 	            "key": undefined,
 	            "expanded": true,
 	            "children": []
-	        }
+	       };
 	
 	exports.DefaultSettings = {
 		"appName": "@APPNAME@",
@@ -66,7 +66,7 @@ define(function(require, exports, module) {
 	        { "type": "gif", 	"viewer": "viewerImage",     "editor": "false" },        
 	        { "type": "png", 	"viewer": "viewerImage",     "editor": "false" },        
 	        { "type": "svg", 	"viewer": "viewerBrowser",   "editor": "editorText" },
-	        { "type": "pdf", 	"viewer": "viewerBrowser",   "editor": "false" },                
+	        { "type": "pdf", 	"viewer": "viewerBrowser",	 "editor": "false" },                
 	        { "type": "html", 	"viewer": "viewerBrowser",   "editor": "editorHTML" },                        
 	        { "type": "htm", 	"viewer": "viewerBrowser",   "editor": "editorHTML" },                        
 	        { "type": "mht", 	"viewer": "viewerBrowser",   "editor": "false" },                        
@@ -179,14 +179,14 @@ define(function(require, exports, module) {
                         "color":         "#4986e7",
                         "textcolor":     "#ffffff"
                     },                    
-                    {
+               /*     {
                         "type":          "smart",
                         "title":         "here",
                         "functionality": "here",
                         "desciption":    "Adds the current location as tag",
                         "color":         "#ff7537",
                         "textcolor":     "#ffffff"
-                    },                                                            
+                    },*/                                                            
                 ]
             },   
             {
@@ -215,7 +215,7 @@ define(function(require, exports, module) {
                 "key": "PRI"
             }						
 		]
-	}
+	};
 	
 	exports.Settings = undefined;
 
@@ -272,7 +272,7 @@ define(function(require, exports, module) {
             }                                                   
 	    	saveSettings();   		
 		}
-	}
+	};
 
     var addTagGroup = function(newTagGroup) {
         var tagGroupExist = false;
