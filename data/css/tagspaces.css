@@ -52,12 +52,18 @@ html, body {
 }
 
 #logo:hover {
-  color: #00AE00;
+  color: white;
+  text-decoration: none;  
 }
 
-#appVersion {
-  font-size: 0.6em; 
+.appVersion {
+  font-size: 1.2em; 
   color: white;  
+}
+
+.appVersion:hover {
+  color: white;
+  text-decoration: underline;
 }
 
 #currentLocation {

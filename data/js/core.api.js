@@ -70,7 +70,7 @@ define(function(require, exports, module) {
 	    // Init views
 		tsPersManager.initViews();                 
 	    
-	    $("#appVersion").text("["+tsSettings.DefaultSettings["appVersion"]+"beta]");
+	    $("#appVersion").text(tsSettings.DefaultSettings["appVersion"]+"beta");
 	    $("#appVersion").attr("title","["+tsSettings.DefaultSettings["appVersion"]+"."+tsSettings.DefaultSettings["appBuild"]+"]");
 	
 	    tsDirectoriesUI.initConnections();
@@ -132,10 +132,17 @@ define(function(require, exports, module) {
         var currentBuild = parseInt(tsSettings.DefaultSettings["appBuild"]);
         var currentVersion = parseFloat(tsSettings.DefaultSettings["appVersion"]);        
 
+		/* Testing the new version notifications		 
+		availableVersion = 1;
+		currentVersion = 1;
+		availableBuild = 2;
+		currentBuild = 1;
+		*/
+
         if(availableVersion > currentVersion) {
             $("#newVersionMenu").html('<p style="padding: 15px" id="newVersionMessageContent">'+
-            'New TagSpaces major version available on '+
-            '<a href="http://tagspaces.org/downloads/" target="_blank">tagspaces.org</a></p>');                                    
+            'New major TagSpaces release available! Please go to '+
+            '<a href="http://tagspaces.org/downloads/" target="_blank">tagspaces.org</a> and update.</p>');                                    
             $("#newVersionAvailable").css('display', "inline");                                    
         } else if ((availableVersion == currentVersion) && (availableBuild > currentBuild)) {
             $("#newVersionMenu").html('<p style="padding: 15px" id="newVersionMessageContent">'+
