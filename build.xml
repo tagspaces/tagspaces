@@ -58,8 +58,8 @@ found in the LICENSE file.
         </copy>
         <copy todir="${buildFirefoxExt.dir}/data/ext" >
 		    <fileset dir="data/ext">
-			  <include name="perspectiveDefault/**/*"/>		    			    	
-			  <include name="perspectiveThumb/**/*"/>
+			  <include name="perspectiveList/**/*"/>		    			    	
+			  <include name="perspectiveGrid/**/*"/>
 			  <include name="perspectiveGraph/**/*"/>	
               <include name="editorHTML/**/*"/>
               <include name="editorText/**/*"/>  
@@ -135,8 +135,8 @@ found in the LICENSE file.
         </copy>
         <copy todir="${buildChrome.dir}/ext" >
 		    <fileset dir="data/ext">
-              <include name="perspectiveDefault/**/*"/>                             
-              <include name="perspectiveThumb/**/*"/>
+              <include name="perspectiveList/**/*"/>                             
+              <include name="perspectiveGrid/**/*"/>
               <include name="perspectiveGraph/**/*"/>   		    	
 		      <include name="editorHTML/**/*"/>
 			  <include name="editorText/**/*"/>	    	
@@ -207,8 +207,8 @@ found in the LICENSE file.
     	<copy file="node-webkit/nw.exe" tofile="${buildWin32.dir}/tagspaces.exe" />    
         <copy todir="${buildWin32.dir}/ext" >
 		    <fileset dir="data/ext">
-              <include name="perspectiveDefault/**/*"/>                             
-              <include name="perspectiveThumb/**/*"/>
+              <include name="perspectiveList/**/*"/>                             
+              <include name="perspectiveGrid/**/*"/>
               <include name="perspectiveGraph/**/*"/>   		    	
 		      <include name="editorHTML/**/*"/>
 			  <include name="editorText/**/*"/>	    	
