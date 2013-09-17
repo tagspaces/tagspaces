@@ -5,8 +5,8 @@
 define(function(require, exports, module) {
 "use strict";
 	
-	var extensionTitle = "List"
-	var extensionID = "perspectiveDefault";  // ID should be equal to the directory name where the ext. is located   
+	var extensionTitle = "List";
+	var extensionID = "perspectiveList";  // ID should be equal to the directory name where the ext. is located   
 	var extensionType =  "perspective";
 	var extensionIcon = "icon-list-ul";
 	var extensionVersion = "1.0";
@@ -33,7 +33,7 @@ define(function(require, exports, module) {
                 UI.initTable();
             }
         );
-	}
+	};
 	
 	var load = function () {
 		console.log("Loading perspective "+extensionID);
@@ -41,11 +41,11 @@ define(function(require, exports, module) {
             UI.reInitTableWithData();    
             TSCORE.hideLoadingAnimation();                        		    
 		}
-	}
+	};
 	
 	var setFileFilter = function (filter) {
         UI.setFilter(filter);
-	}
+	};
 	
 	var clearSelectedFiles = function() {
 	    TSCORE.selectedFiles = [];   
@@ -53,7 +53,7 @@ define(function(require, exports, module) {
 	        $(this).removeClass('ui-selected');
 	        $(this).find(".fileSelection").removeAttr("checked");
 	    });	
-	}
+	};
 	
 	var getNextFile = function (filePath) {
 		var nextFilePath = undefined;
@@ -72,7 +72,7 @@ define(function(require, exports, module) {
 		TSCORE.PerspectiveManager.clearSelectedFiles();		
 		console.log("Next file: "+nextFilePath);
 		return nextFilePath;
-	}
+	};
 
 	var getPrevFile = function (filePath) {
 		var prevFilePath = undefined;
@@ -91,7 +91,7 @@ define(function(require, exports, module) {
 		TSCORE.PerspectiveManager.clearSelectedFiles();
 		console.log("Prev file: "+prevFilePath);
 		return prevFilePath;
-	}
+	};
 		
 	// Vars
 	exports.Title 					= extensionTitle;

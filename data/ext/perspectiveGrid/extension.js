@@ -4,16 +4,16 @@
 
 define(function(require, exports, module) {
 "use strict";
-	
-	console.log("Loading perspectiveThumb");
 
-    var extensionTitle = "Grid"
-    var extensionID = "perspectiveThumb";  // ID should be equal to the directory name where the ext. is located   
+    var extensionTitle = "Grid";
+    var extensionID = "perspectiveGrid";  // ID should be equal to the directory name where the ext. is located   
     var extensionType =  "perspective";
     var extensionIcon = "icon-th";
     var extensionVersion = "1.0";
     var extensionManifestVersion = 1;
     var extensionLicense = "AGPL";
+    
+    console.log("Loading "+extensionID);
 	
 	var TSCORE = require("tscore");
 
@@ -30,7 +30,7 @@ define(function(require, exports, module) {
                 UI.buildUI();
             }
         );
-	}
+	};
 	
 	var load = function () {
         console.log("Loading perspective "+extensionID);
@@ -39,20 +39,20 @@ define(function(require, exports, module) {
             TSCORE.hideLoadingAnimation();                                  
         }
 	    TSCORE.hideLoadingAnimation();     
-	}
+	};
 	
     var getNextFile = function (filePath) {
         return UI.getNextFile(filePath);
-    }
+    };
 
     var getPrevFile = function (filePath) {
         return UI.getPrevFile(filePath);
-    }	
+    };	
 	
 	var setFileFilter = function (filter) {
 	    UI.setFilter(filter);
 		console.log("setFileFilter not implemented in "+exports.ID);
-	}
+	};
 	
 	var clearSelectedFiles = function() {
         TSCORE.selectedFiles = [];   
@@ -61,7 +61,7 @@ define(function(require, exports, module) {
         $("#"+extensionID+"Container").find(".fileTileSelector").find("i")
             .removeClass("icon-check")
             .addClass("icon-check-empty");
-	}
+	};
 
     // Vars
     exports.Title                   = extensionTitle;

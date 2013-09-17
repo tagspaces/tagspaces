@@ -45,20 +45,20 @@ define(function(require, exports, module) {
 		"appVersion": "@VERSION@",
 	    "appBuild": "@BUILD@",
 		"settingsVersion": 2,
-		"newTextFileContent": "Text file created with TagSpaces!",
-	    "newHTMLFileContent": "<html><head><title>Tagspaces File</title></head><body>HTML file created with tagspaces!</body></html>",	
+		"newTextFileContent": "File created with TagSpaces!",
+	    "newHTMLFileContent": "<html><head><title>Created with TagSpaces!</title></head><body>Feel free to change this text...</body></html>",	
 		"newMDFileContent": '#Markdown file created with TagSpaces!',
 		"showUnixHiddenEntries": false, 
 		"checkForUpdates": true,
 	    "lastOpenedDirectory": "",
 		"tagspacesList": [],
 	    "extensionsPath": "ext",
-        "ootbPerspectives": [ 'perspectiveDefault', 'perspectiveThumb', 'perspectiveGraph' ],
+        "ootbPerspectives": [ 'perspectiveList', 'perspectiveGrid', 'perspectiveGraph' ],
         "ootbViewers": [ "viewerBrowser", "viewerMD", "viewerImage", "viewerPDF", "editorText" ],
         "ootbEditors": [ "editorHTML", "editorText" ],        
 	    "perspectives": [
-	        { "id": "perspectiveDefault" }, // ID should be equal to the directory name where the extension is located 
-            { "id": "perspectiveThumb" }// ID should be equal to the directory name where the extension is located	        
+	        { "id": "perspectiveList" }, // ID should be equal to the directory name where the extension is located 
+            { "id": "perspectiveGrid" }// ID should be equal to the directory name where the extension is located	        
 	    ],
 	    "supportedFileTypes": [
 	        { "type": "jpg",	"viewer": "viewerImage",     "editor": "false" },        
@@ -223,7 +223,10 @@ define(function(require, exports, module) {
 	
 	var upgradeSettings = function() {
         var oldBuildNumber = parseInt(exports.Settings["appBuild"]);
-		var newBuildNumber = parseInt(exports.DefaultSettings["appBuild"]);
+		var newBuildNumber = parseInt(exports.DefaultSettings["appBuild"]); // by @BUILD@ as build number, parse returns NaN
+		// Workarround for settings update, please comment for production
+		//oldBuildNumber = 1;
+		//newBuildNumber = 2;		
 		if(oldBuildNumber < newBuildNumber) {
 			console.log("Upgrading settings");
 			exports.Settings["appVersion"] = exports.DefaultSettings["appVersion"];
@@ -233,14 +236,14 @@ define(function(require, exports, module) {
 			getShowUnixHiddenEntries();
 			getCheckForUpdates();
                 
-            // Upgrade only if build number smaller than 1385
-            if(oldBuildNumber < 1385) {
-                addVal2SettingsArray(exports.Settings["ootbViewers"],"viewerImage");
-                addVal2SettingsArray(exports.Settings["ootbViewers"],"viewerPDF");                      
-                addVal2SettingsArray(exports.Settings["ootbViewers"],"editorText"); 
+            // Upgrade only if build number smaller than 1386
+            if(oldBuildNumber <= 1385) {
+                addToSettingsArray(exports.Settings["ootbViewers"],"viewerImage");
+                addToSettingsArray(exports.Settings["ootbViewers"],"viewerPDF");                      
+                addToSettingsArray(exports.Settings["ootbViewers"],"editorText"); 
     
-                addVal2SettingsArray(exports.Settings["ootbEditors"],"editorHTML");
-                addVal2SettingsArray(exports.Settings["ootbEditors"],"editorText");                                   
+                addToSettingsArray(exports.Settings["ootbEditors"],"editorHTML");
+                addToSettingsArray(exports.Settings["ootbEditors"],"editorText");                                   
     
                 addTagGroup(
                     { "expanded": true, "title": "Priorities", "key": "PRI", "children": [
@@ -269,7 +272,76 @@ define(function(require, exports, module) {
                 updateFileType({ "type": "json",   "viewer": "editorText",      "editor": "editorText" }); 
                 updateFileType({ "type": "url",    "viewer": "editorText",      "editor": "editorText" }); 
                 updateFileType({ "type": "css",    "viewer": "editorText",      "editor": "editorText" });                 
-            }                                                   
+            }
+            // Upgrade only if build number smaller than 1455                                                   
+            if(oldBuildNumber <= 1454) {
+                removeFromSettingsArray(exports.Settings["ootbPerspectives"],"perspectiveDefault");
+                removeFromSettingsArray(exports.Settings["ootbPerspectives"],"perspectiveThumb");
+            	
+                addToSettingsArray(exports.Settings["ootbPerspectives"],"perspectiveList");
+                addToSettingsArray(exports.Settings["ootbPerspectives"],"perspectiveGrid");                      
+                addToSettingsArray(exports.Settings["ootbPerspectives"],"perspectiveGraph"); 
+
+	            removeFromSettingsArrayById(exports.Settings["perspectives"], "perspectiveThumb"); 
+	            removeFromSettingsArrayById(exports.Settings["perspectives"], "perspectiveDefault");             
+
+                addToSettingsArray(exports.Settings["perspectives"], { "id": "perspectiveList" }); 
+                addToSettingsArray(exports.Settings["perspectives"], { "id": "perspectiveGrid" }); 
+
+                addTagGroup(
+                    { "expanded": true, "title": "Smart Tags", "key": "SMR", "children": [
+	                    {
+	                        "type":          "smart",
+	                        "title":         "now",
+	                        "functionality": "now",
+	                        "desciption":    "Adds the current date and time as tag",
+	                        "color":         "#4986e7",
+	                        "textcolor":     "#ffffff"
+	                    },
+	                    {
+	                        "type":          "smart",
+	                        "title":         "today",
+	                        "functionality": "today",
+	                        "desciption":    "Adds the current date as tag",
+	                        "color":         "#4986e7",
+	                        "textcolor":     "#ffffff"
+	                    },
+	                    {
+	                        "type":          "smart",
+	                        "title":         "tomorrow",
+	                        "functionality": "tomorrow",
+	                        "desciption":    "Adds tomorrow's date as tag",
+	                        "color":         "#4986e7",
+	                        "textcolor":     "#ffffff"
+	                    },
+	                    {
+	                        "type":          "smart",
+	                        "title":         "yesterday",
+	                        "functionality": "yesterday",
+	                        "desciption":    "Adds the date of yesterday as tag",
+	                        "color":         "#4986e7",
+	                        "textcolor":     "#ffffff"
+	                    },
+	                    {
+	                        "type":          "smart",
+	                        "title":         "month",
+	                        "functionality": "currentMonth",
+	                        "desciption":    "Adds the current year and month as tag",
+	                        "color":         "#4986e7",
+	                        "textcolor":     "#ffffff"
+	                    },                    
+	                    {
+	                        "type":          "smart",
+	                        "title":         "year",
+	                        "functionality": "currentYear",
+	                        "desciption":    "Adds the current year as tag",
+	                        "color":         "#4986e7",
+	                        "textcolor":     "#ffffff"
+	                    }
+                    ],}
+                );
+            }
+
 	    	saveSettings();   		
 		}
 	};
@@ -307,13 +379,30 @@ define(function(require, exports, module) {
         });  
     };    
 
-    var addVal2SettingsArray = function(arrayLocation, value) {
+    var addToSettingsArray = function(arrayLocation, value) {
         if(arrayLocation instanceof Array) {
             if($.inArray(value, arrayLocation) < 0) {
                 arrayLocation.push(value);                
             }
         }        
     };
+
+    var removeFromSettingsArray = function(arrayLocation, value) {
+        if(arrayLocation instanceof Array) {
+        	arrayLocation.splice( $.inArray(value, arrayLocation), 1 );
+        }        
+    };
+
+    var removeFromSettingsArrayById = function(arrayLocation, id) {
+        if(arrayLocation instanceof Array) {
+	        arrayLocation.forEach(function (value, index) {         
+	            if(value.id == id) {
+		        	arrayLocation.splice( index, 1 );
+	            }        
+	        });  
+        }        
+    };
+
 
     var getPerspectiveExtensions = function() {
         if(exports.Settings["ootbPerspectives"] == null) {
