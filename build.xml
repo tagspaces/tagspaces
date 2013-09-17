@@ -10,6 +10,7 @@ found in the LICENSE file.
 	<property name="version" value="1.6"/>
     <property name="package" value="tagspaces"/>
     <property name="appname" value="TagSpaces"/>
+	<property name="appdescription" value="TagSpaces is an open, extensible, webbased platform for personal data management. With TagSpaces you can manage and organize the files on your local drive."/>
 	<property name="defaultSettings.file" value="settings.api.js"/>
     
     <tstamp/><!--tstamp><format property="touch.time" pattern="MM/dd/yyyy hh:mm aa" /></tstamp-->
@@ -24,6 +25,7 @@ found in the LICENSE file.
             <replacefilter token="@VERSION@" value="${version}" />
             <replacefilter token="@PACKAGE@" value="${package}" />
             <replacefilter token="@APPNAME@" value="${appname}" />
+            <replacefilter token="@APPDESCRIPTION@" value="${appdescription}" />
             <replacefilter token="@BUILD@" value="${build.number}" />
         </replace>    
         <copy file="mozilla.update.tmpl.rdf" overwrite="true" tofile="update.rdf" />
@@ -120,6 +122,7 @@ found in the LICENSE file.
     	<replace file="data/manifest.json" >
             <replacefilter token="@VERSION@" value="${version}" />
             <replacefilter token="@APPNAME@" value="${appname}" />
+            <replacefilter token="@APPDESCRIPTION@" value="${appdescription}" />    		
             <replacefilter token="@BUILD@" value="${build.number}" />       
         </replace>    
         <copy file="data/LICENSE.txt" todir="${buildChrome.dir}" />    	
@@ -192,6 +195,7 @@ found in the LICENSE file.
     	<replace file="${buildWin32.dir}/package.json" >
             <replacefilter token="@VERSION@" value="${version}" />
             <replacefilter token="@APPNAME@" value="${appname}" />
+            <replacefilter token="@APPDESCRIPTION@" value="${appdescription}" />
             <replacefilter token="@BUILD@" value="${build.number}" />       
         </replace>    
         <copy file="data/LICENSE.txt" todir="${buildWin32.dir}" />    	

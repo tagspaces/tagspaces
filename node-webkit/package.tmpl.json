@@ -1,6 +1,6 @@
 {
   "name": "@APPNAME@",
-  "description": "An open and extensible platform, providing web based user interface for your local files.",
+  "description": "@APPDESCRIPTION@",
   "version": "@VERSION@.@BUILD@",
   "main": "index.html",
   "window": {

@@ -2,7 +2,7 @@
   "name": "@APPNAME@",
   "version": "@VERSION@.@BUILD@",
   "manifest_version": 2,
-  "description": "An open and extensible platform, providing web based user interface for your local files.",
+  "description": "@APPDESCRIPTION@",
   "icons": {
     "16" : "icons/icon16.png",
     "48" : "icons/icon48.png",
