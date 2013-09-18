@@ -10,7 +10,8 @@ found in the LICENSE file.
 	<property name="version" value="1.6"/>
     <property name="package" value="tagspaces"/>
     <property name="appname" value="TagSpaces"/>
-	<property name="appdescription" value="TagSpaces is an open, extensible, webbased platform for personal data management. With TagSpaces you can manage and organize the files on your local drive."/>
+	<!-- Chromestore accepts descriptions no longer than 132 characters-->
+	<property name="appdescription" value="An open and extensible platform for personal data management, with which you can manage and organize the files on your local drive."/>
 	<property name="defaultSettings.file" value="settings.api.js"/>
     
     <tstamp/><!--tstamp><format property="touch.time" pattern="MM/dd/yyyy hh:mm aa" /></tstamp-->
