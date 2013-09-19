@@ -109,15 +109,15 @@ console.log("Loading UI for perspectiveDefault");
                     }) */                   
                 );   
             }   
-        }
+        };
           
         var extHTML = "";
         if(fileExt.length > 0) {
             extHTML = $('<span>', {
                 "class":  "fileExtTile",                
                 text: fileExt
-                })
-        } 
+               });
+        };
         
         var fileSelectorHTML = $('<button>', {
                 "class":     "btn btn-link fileTileSelector",
@@ -139,17 +139,17 @@ console.log("Loading UI for perspectiveDefault");
                   }                  
                   self.handleElementActivation();
                   return false; 
-              })              
+              });              
             
         var tileHTML = $('<p>', {})        
         .append(thumbHTML)
         .append(titleHTML)        
         .append(tagsHTML)
         .append(extHTML)
-        .append(fileSelectorHTML)
+        .append(fileSelectorHTML);
                         
         return tileHTML;        
-    }    
+    };    
     
     ExtUI.prototype.initFileGroupingMenu = function () {
         var self = this;
@@ -171,7 +171,7 @@ console.log("Loading UI for perspectiveDefault");
                 $("#"+self.extensionID+"GroupingButton")
                     .text(" Group ")
                     .prepend( "<i class='icon-group' />" )
-                    .append( "<span class='caret'></span>" )                                
+                    .append( "<span class='caret'></span>" );                                
                 self.switchGrouping("");
             })                
         )); 
@@ -190,13 +190,13 @@ console.log("Loading UI for perspectiveDefault");
                     $("#"+self.extensionID+"GroupingButton")
                         .text(" Grouped by "+$(this).attr("group")+" ")
                         .prepend( "<i class='icon-group' />" )
-                        .append( "<span class='caret'></span>" )                                
+                        .append( "<span class='caret'></span>" );                                
                     self.switchGrouping($(this).attr("key"));
                 })                
             ));              
         };    
 
-    }
+    };
     
     ExtUI.prototype.buildUI = function() {
         console.log("Init UI module");
@@ -233,7 +233,7 @@ console.log("Loading UI for perspectiveDefault");
             .append( "<i class='icon-check-empty'>" )
             )
             
-        )
+        );
         
         this.viewToolbar.append($("<div>", { 
             class: "btn-group",
@@ -392,7 +392,7 @@ console.log("Loading UI for perspectiveDefault");
                     evt.preventDefault();
                     $( "#"+self.extensionID+"ClearFilterButton").removeClass("filterOn");
                     $("#"+self.extensionID+"FilterBox").val("");
-                    $("#"+self.extensionID+"FilterBox").val("").addClass("input-medium")
+                    $("#"+self.extensionID+"FilterBox").val("").addClass("input-medium");
                     $("#"+self.extensionID+"FilterBox").val("").removeClass("input-large");
                     self.setFilter(""); 
                     TSCORE.startTime = new Date().getTime();                     
@@ -400,7 +400,7 @@ console.log("Loading UI for perspectiveDefault");
                 })
             )        
         ); // End Filter        
-    }
+    };
     
     ExtUI.prototype.setFilter = function(filterValue) {
         console.log("Filter to value: "+filterValue);   
@@ -413,7 +413,7 @@ console.log("Loading UI for perspectiveDefault");
         }
                     
         this.nextFilter = filterValue;
-    }   
+    };   
 
     ExtUI.prototype.switchThumbnailSize = function() {
         this.currentTmbSize = this.currentTmbSize + 1;
@@ -421,7 +421,7 @@ console.log("Loading UI for perspectiveDefault");
         if(this.currentTmbSize >= TMB_SIZES.length) { this.currentTmbSize = 0; }
         
         $('.thumbImgTile').css({"max-width":TMB_SIZES[this.currentTmbSize], "max-height":TMB_SIZES[this.currentTmbSize] });     
-    }
+    };
     
     ExtUI.prototype.enableThumbnails = function() {
         $( "#"+this.extensionID+"IncreaseThumbsButton" ).prop('disabled', false);
@@ -430,7 +430,7 @@ console.log("Loading UI for perspectiveDefault");
             $(this).attr('src',$(this).attr('filepath'));
         });
         $('.thumbImgTile').css({"max-width":TMB_SIZES[this.currentTmbSize], "max-height":TMB_SIZES[this.currentTmbSize] });     
-    }   
+    };   
     
     ExtUI.prototype.disableThumbnails = function() {
         //this.currentTmbSize = 0;
@@ -439,7 +439,7 @@ console.log("Loading UI for perspectiveDefault");
             $(this).attr('style', "width: 0px; height: 0px; border: 0px");
             $(this).attr('src',"");
         });
-    }     
+    };     
     
     ExtUI.prototype.refreshThumbnails = function() {
         if(this.thumbEnabled) {
@@ -447,18 +447,18 @@ console.log("Loading UI for perspectiveDefault");
         } else {
             this.disableThumbnails();
         }
-    }        
+    };       
     
     ExtUI.prototype.toggleThumbnails = function() {
         this.thumbEnabled = !this.thumbEnabled;
         this.refreshThumbnails();
-    }       
+    };       
 
     ExtUI.prototype.switchGrouping = function(grouping) {
         this.currentGrouping = grouping;
         TSCORE.startTime = new Date().getTime(); 
         this.reInit();
-    }
+    };
 
     ExtUI.prototype.calculateGroupTitle = function(rawSource) {    
         var groupingTitle = "No Grouping";
@@ -490,11 +490,11 @@ console.log("Loading UI for perspectiveDefault");
                     if(grouping.key == self.currentGrouping) {
                         groupingTitle = grouping.title;                        
                     }
-                })                            
+                });                            
             }
         }
         return groupingTitle;
-    }
+    };
         
     // Helper function for organizing the files in data buckets
     ExtUI.prototype.calculateGrouping = function(data) {
@@ -502,7 +502,7 @@ console.log("Loading UI for perspectiveDefault");
         switch (this.currentGrouping){
             case "day": {
                 data = _.groupBy( data, function(value){ 
-                        var tmpDate = new Date(value[TSCORE.fileListFILELMDT])    
+                        var tmpDate = new Date(value[TSCORE.fileListFILELMDT]);    
                         tmpDate.setHours(0,0,0,0);
                         return tmpDate.getTime();
                     });                       
@@ -510,7 +510,7 @@ console.log("Loading UI for perspectiveDefault");
             }
             case "month": {
                 data = _.groupBy( data, function(value){ 
-                        var tmpDate = new Date(value[TSCORE.fileListFILELMDT])    
+                        var tmpDate = new Date(value[TSCORE.fileListFILELMDT]);    
                         tmpDate.setHours(0,0,0,0);
                         tmpDate.setDate(1);
                         return tmpDate.getTime();
@@ -519,7 +519,7 @@ console.log("Loading UI for perspectiveDefault");
             }
             case "year": {
                 data = _.groupBy( data, function(value){ 
-                        var tmpDate = new Date(value[TSCORE.fileListFILELMDT])    
+                        var tmpDate = new Date(value[TSCORE.fileListFILELMDT]);    
                         tmpDate.setHours(0,0,0,0);
                         tmpDate.setDate(1);
                         tmpDate.setMonth(1);
@@ -543,7 +543,7 @@ console.log("Loading UI for perspectiveDefault");
                             });
                         grouped = true;
                     }
-                })                            
+                });                            
                 if(!grouped) {
                     data = _.groupBy( data, function(value){ 
                               return true;
@@ -560,7 +560,7 @@ console.log("Loading UI for perspectiveDefault");
             }); 
         
         return data;
-    }
+    };
     
     
     
@@ -597,7 +597,7 @@ console.log("Loading UI for perspectiveDefault");
                     includedTerms.push([value,false]);
                 }                       
             }
-        })  
+        });  
         
         data = _.filter(data, function(value) {
                 // Searching in the whole filename
@@ -651,7 +651,7 @@ console.log("Loading UI for perspectiveDefault");
 
         this.currentFilter = this.nextFilter;        
         return data;
-    }    
+    };    
 
     ExtUI.prototype.reInit = function() {
         
@@ -821,7 +821,7 @@ console.log("Loading UI for perspectiveDefault");
         });  
                  
         this.refreshThumbnails();
-    }
+    };
     
     ExtUI.prototype.selectFile = function(filePath) {
         TSCORE.PerspectiveManager.clearSelectedFiles();   
@@ -835,7 +835,7 @@ console.log("Loading UI for perspectiveDefault");
       
         TSCORE.selectedFiles.push(filePath);  
         this.handleElementActivation();      
-    }     
+    };     
 
     ExtUI.prototype.handleElementActivation = function() {
         console.log("Entering element activation handler...");
@@ -849,7 +849,7 @@ console.log("Loading UI for perspectiveDefault");
         } else {
             tagButton.prop('disabled', true);
         }    
-    }
+    };
     
     ExtUI.prototype.getNextFile = function(filePath) {
         var nextFilePath = undefined;
@@ -868,7 +868,7 @@ console.log("Loading UI for perspectiveDefault");
         TSCORE.PerspectiveManager.clearSelectedFiles();     
         console.log("Next file: "+nextFilePath);
         return nextFilePath;         
-    }
+    };
     
     ExtUI.prototype.getPrevFile = function(filePath) {    
         var prevFilePath = undefined;
@@ -887,7 +887,7 @@ console.log("Loading UI for perspectiveDefault");
         TSCORE.PerspectiveManager.clearSelectedFiles();
         console.log("Prev file: "+prevFilePath);
         return prevFilePath;
-    }    
+    };    
     
     exports.ExtUI                   = ExtUI;
 });

@@ -1,4 +1,40 @@
 #Changelog
+
+##TagSpaces 1.6.1528 / 2013.09.18
+- [All] Redesigning the new version notification dialog
+- [All] Hiding loading splashscreen after the layout initialization
+- [All] Font size of alert dialogs changed
+- [All] Corrected issue with jqueryeditinplace library
+- [All] Correcting the sort order of the dates
+- [All] Addded new mindmap visualization in the perspectiveGraph
+- [All] Editing of HTML files is now possible
+- [All] Added grouping by tag groups
+- [All] The file list is refreshed after tag color change
+- [All] Added some new vizualiazions to the perspectiveGraph
+- [All] Implemented check for a disabled localStorage
+- [All] Adding d3.js and underscore.js as a core libraries
+- [All] CSV export function moved to the perspective manager
+- [All] Better check for the similarity of the filepath implemented
+- [All] Smart tags added
+- [All] Changing perspective order now possible in the options
+- [All] Added a class for disabling the text selection
+- [All] Added custom scrollbars for webkit browsers
+- [All] Default perspective renamed to list
+- [All] Calendar perspective renamed to grid
+- [All] Footer shows found files count
+- [All] Set filter is now perspective specific
+- [All] Implementing search funcitonality in the perspective thumb
+- [All] Added grouping by day, month and year in the thumbPerspective
+- [All] Added warning for chrome users if TagSpaces has no access to local file URLs
+- [All] Tags are now colored in the fileopener
+- [All] Filter in default perspective has now a red icon if it is not empty
+- [All] New library fixing a bug preventing opening a directory selection dialog in linux on chrome
+- [Firefox] Improving the firefox's toolbar button integration
+- [Firefox] Issue in Firefox on OSX with renaming/taging of files now workarrounded
+- [Chrome] TagSpaces opens automatically on first install in chrome
+- [Chrome] New version of the npapi for chrome under windows integrated, supporting real file renaming and last modiefied date for files
+- [Win32] Added win32 builder in the build.xml
+
 ##TagSpaces 1.5.1448 / 2013.08.11
 - [All] Numerous UI Improvements
 - [All] Added a new viewer for image files
