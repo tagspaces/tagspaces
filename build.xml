@@ -6,19 +6,25 @@ found in the LICENSE file.
 <project name="tagspaces" default="main">
     <property file="build.properties"/>
     <property file="build.number"/>
-	
-	<property name="version" value="1.6"/>
-    <property name="package" value="tagspaces"/>
-    <property name="appname" value="TagSpaces"/>
-	<!-- Chromestore accepts descriptions no longer than 132 characters-->
-	<property name="appdescription" value="An open and extensible platform for personal data management, with which you can manage and organize the files on your local drive."/>
-	<property name="defaultSettings.file" value="settings.api.js"/>
+    <buildnumber file="build.number"/>	
+
+	<property name="defaultSettings.file" value="settings.default.js"/>
     
     <tstamp/><!--tstamp><format property="touch.time" pattern="MM/dd/yyyy hh:mm aa" /></tstamp-->
 
+    <target name="_prepare-devenv" description="Prepares the development environment">
+    	<copy file="default.settings.tmpl.js" tofile="data/js/${defaultSettings.file}" />
+    	<replace file="data/js/${defaultSettings.file}" >
+            <replacefilter token="@VERSION@" value="V${version}" />
+            <replacefilter token="@APPNAME@" value="${appname}" />
+            <replacefilter token="@BUILD@" value="${build.number}" />
+            <replacefilter token="@DEFAULTLOCATIONS@" value="${default.locations}" />        	
+        </replace>      
+    </target>
+	
     <target name="prepare-mozilla-extension" description="copy all files for the chrome app to the build directory">
-        <buildnumber file="build.number"/>
-        <echo>Mozilla directory: ${buildFirefoxExt.dir}</echo>
+
+        <echo>Preparing Mozilla Addon [${build.number}] in: ${buildFirefoxExt.dir}</echo>     	
     	<delete dir="${buildFirefoxExt.dir}"/>
     	<mkdir dir="${buildFirefoxExt.dir}" />
         <copy file="mozilla.package.tmpl.json" overwrite="true" tofile="package.json" />
@@ -77,17 +83,22 @@ found in the LICENSE file.
             <fileset dir="data/js" includes="**/*">
                 <exclude name="ioapi.cordova.js" />            
                 <exclude name="ioapi.chrome.js" />            
-                <exclude name="ioapi.node.js" />                            
+                <exclude name="ioapi.node.js" />
+            	<exclude name="${defaultSettings.file}" />
             </fileset> 
         </copy>
         <copy todir="${buildFirefoxExt.dir}/data/icons" >
             <fileset dir="data/icons" includes="**/*"/>  
         </copy>
-        <replace file="${buildFirefoxExt.dir}/data/js/${defaultSettings.file}" >
+    	
+    	<copy file="default.settings.tmpl.js" tofile="${buildFirefoxExt.dir}/data/js/${defaultSettings.file}" />
+    	<replace file="${buildFirefoxExt.dir}/data/js/${defaultSettings.file}" >
             <replacefilter token="@VERSION@" value="${version}" />
             <replacefilter token="@APPNAME@" value="${appname}" />
             <replacefilter token="@BUILD@" value="${build.number}" />
-        </replace>  
+            <replacefilter token="@DEFAULTLOCATIONS@" value="" />
+        	<replacefilter token="@PDFVIEWER@" value="viewerBrowser" />    		
+        </replace>       	
     	
         <replace file="${buildFirefoxExt.dir}/data/about.html" >
             <replacefilter token="@VERSION@" value="${version}" />
@@ -96,26 +107,8 @@ found in the LICENSE file.
         </replace>      	
     </target>	
 	
-    <target name="build-mozilla-extension" depends="prepare-mozilla-extension" description="Creates a simple zip(not xpi) of the mozilla extension">
-        <zip destfile="${builds.dir}/${appname} [v${version}.${build.number} ${DSTAMP}${TSTAMP} mozilla].zip">
-            <fileset dir="${buildFirefoxExt.dir}" includes="**/*" />
-        </zip>
-    </target>	
-
-    <target name="build-mozilla-full-extension" depends="prepare-mozilla-extension" description="Creates a simple zip(not xpi) of the mozilla extension">
-        <copy todir="${buildFirefoxExt.dir}/data/ext" >
-		    <fileset dir="data/ext">
-		      <include name="editorText/**/*"/>	    	
-		    </fileset>        	
-        </copy>
-    	<zip destfile="${builds.dir}/${appname} [v${version}.${build.number} ${DSTAMP}${TSTAMP} mozilla].zip">
-            <fileset dir="${buildFirefoxExt.dir}" includes="**/*" />
-        </zip>
-    </target>	
-	
     <target name="prepare-chrome-extension" description="copy all files for the chrome app to the build directory">
-        <buildnumber file="build.number"/>
-        <echo>Chrome directory: ${buildChrome.dir}</echo>    	
+        <echo>Preparing Chrome Extension [${build.number}] in: ${buildChrome.dir}</echo>     	
         <delete dir="${buildChrome.dir}"/>    	
     	<mkdir dir="${buildChrome.dir}" />
         <copy file="chrome.manifest.tmpl.json" overwrite="true" tofile="data/manifest.json" />
@@ -152,7 +145,6 @@ found in the LICENSE file.
         <copy todir="${buildChrome.dir}/libs" >
             <fileset dir="data/libs">
               <exclude name="less/*" />
-              <exclude name="linqjs/*" />
             </fileset>
         </copy>
         <copy todir="${buildChrome.dir}/css" >
@@ -162,33 +154,30 @@ found in the LICENSE file.
             <fileset dir="data/js" includes="**/*">
                 <exclude name="ioapi.cordova.js" />            
                 <exclude name="ioapi.mozilla.js" />            
-                <exclude name="ioapi.node.js" />                        	
+                <exclude name="ioapi.node.js" />   
+                <exclude name="${defaultSettings.file}" />            	
             </fileset>
         </copy>
         <copy todir="${buildChrome.dir}/icons" >
             <fileset dir="data/icons" includes="**/*"/>  
         </copy>  
-        <replace file="${buildChrome.dir}/js/${defaultSettings.file}" >
+    	<copy file="default.settings.tmpl.js" tofile="${buildChrome.dir}/js/${defaultSettings.file}" />
+    	<replace file="${buildChrome.dir}/js/${defaultSettings.file}" >
             <replacefilter token="@VERSION@" value="${version}" />
             <replacefilter token="@APPNAME@" value="${appname}" />
             <replacefilter token="@BUILD@" value="${build.number}" />
-        </replace> 
+            <replacefilter token="@DEFAULTLOCATIONS@" value="" />
+        	<replacefilter token="@PDFVIEWER@" value="viewerBrowser" />    		
+        </replace>       	
         <replace file="${buildChrome.dir}/about.html" >
             <replacefilter token="@VERSION@" value="${version}" />
             <replacefilter token="@APPNAME@" value="${appname}" />
             <replacefilter token="@BUILD@" value="${build.number}" />
         </replace>    	
     </target>
-
-    <target name="build-chrome-extension" depends="prepare-chrome-extension" description="Creates a simple zip(not crx) of the chrome exntension">
-        <zip destfile="${builds.dir}/${appname} [v${version}.${build.number} ${DSTAMP}${TSTAMP} chrome].zip">
-            <fileset dir="${buildChrome.dir}" includes="**/*" />
-        </zip>
-    </target>	
 	
     <target name="prepare-win32-package" description="copy all files for the chrome app to the build directory">
-        <buildnumber file="build.number"/>
-        <echo>Chrome directory: ${buildChrome.dir}</echo>    	
+        <echo>Preparing Windows32bit[${build.number}] in: ${buildWin32.dir}</echo>    	    	
         <delete dir="${buildWin32.dir}"/>    	
     	<mkdir dir="${buildWin32.dir}" />
         <copy file="node-webkit/package.tmpl.json" overwrite="true" tofile="${buildWin32.dir}/package.json" />
@@ -225,7 +214,6 @@ found in the LICENSE file.
         <copy todir="${buildWin32.dir}/libs" >
             <fileset dir="data/libs">
               <exclude name="less/*" />
-              <exclude name="linqjs/*" />
             </fileset>
         </copy>
         <copy todir="${buildWin32.dir}/css" >
@@ -235,17 +223,21 @@ found in the LICENSE file.
             <fileset dir="data/js" includes="**/*">
                 <exclude name="ioapi.cordova.js" />            
                 <exclude name="ioapi.mozilla.js" />            
-                <exclude name="ioapi.chrome.js" />                        	
+                <exclude name="ioapi.chrome.js" />  
+            	<exclude name="${defaultSettings.file}" />            	
             </fileset>
         </copy>
         <copy todir="${buildWin32.dir}/icons" >
             <fileset dir="data/icons" includes="**/*"/>  
-        </copy>  
-        <replace file="${buildWin32.dir}/js/${defaultSettings.file}" >
+        </copy>
+        <copy file="default.settings.tmpl.js" tofile="${buildWin32.dir}/js/${defaultSettings.file}" />    	
+    	<replace file="${buildWin32.dir}/js/${defaultSettings.file}" >
             <replacefilter token="@VERSION@" value="${version}" />
             <replacefilter token="@APPNAME@" value="${appname}" />
             <replacefilter token="@BUILD@" value="${build.number}" />
-        </replace> 
+            <replacefilter token="@DEFAULTLOCATIONS@" value="" />        	
+        	<replacefilter token="@PDFVIEWER@" value="viewerPDF" />
+    	</replace>       	
         <replace file="${buildWin32.dir}/about.html" >
             <replacefilter token="@VERSION@" value="${version}" />
             <replacefilter token="@APPNAME@" value="${appname}" />
@@ -253,17 +245,87 @@ found in the LICENSE file.
         </replace>    	
     </target>
 
-    <target name="build-win32-package" depends="prepare-win32-package" description="Builds win32bit package based on node-webkit">
-        <zip basedir="${builds.dir}" destfile="${builds.dir}/${appname} [v${version}.${build.number} ${DSTAMP}${TSTAMP} win32].zip" includes="tagspaces-win32/**/*" />
-    </target>		
+    <target name="prepare-linux64-package" description="copy all files for the chrome app to the build directory">
+        <echo>Preparing Linux64bit[${build.number}] in: ${buildChrome.dir}</echo>    	
+        <delete dir="${buildLinux64.dir}"/>    	
+    	<mkdir dir="${buildLinux64.dir}" />
+        <copy file="node-webkit/package.tmpl.json" overwrite="true" tofile="${buildLinux64.dir}/package.json" />
+        <copy file="LICENSE" overwrite="true" tofile="data/LICENSE.txt" />   
+    	<replace file="${buildLinux64.dir}/package.json" >
+            <replacefilter token="@VERSION@" value="${version}" />
+            <replacefilter token="@APPNAME@" value="${appname}" />
+            <replacefilter token="@APPDESCRIPTION@" value="${appdescription}" />
+            <replacefilter token="@BUILD@" value="${build.number}" />       
+        </replace>    
+        <copy file="data/LICENSE.txt" todir="${buildLinux64.dir}" />    	
+        <copy file="data/index.html" todir="${buildLinux64.dir}" />        
+        <copy file="data/about.html" todir="${buildLinux64.dir}" />        
+        <copy file="data/loader.js" todir="${buildLinux64.dir}" />        
+        <replace file="${buildLinux64.dir}/loader.js" >
+            <replacefilter token="@PRODUCTION@" value="true" />
+        </replace> 
+    	<copy file="node-webkit/credits.html" todir="${buildLinux64.dir}" />    
+    	<copy file="node-webkit/nw.pak" todir="${buildLinux64.dir}" />    
+    	<copy file="node-webkit/nw" tofile="${buildLinux64.dir}/tagspaces" />    
+        <copy todir="${buildLinux64.dir}/ext" >
+		    <fileset dir="data/ext">
+              <include name="perspectiveList/**/*"/>                             
+              <include name="perspectiveGrid/**/*"/>
+              <include name="perspectiveGraph/**/*"/>   		    	
+		      <include name="editorHTML/**/*"/>
+			  <include name="editorText/**/*"/>	    	
+	          <include name="viewerPDF/**/*"/>           		    	
+	          <include name="viewerImage/**/*"/>                          
+		      <include name="viewerMD/**/*"/>	    	
+		    </fileset>        	
+        </copy>	
+        <copy todir="${buildLinux64.dir}/libs" >
+            <fileset dir="data/libs">
+              <exclude name="less/*" />
+            </fileset>
+        </copy>
+        <copy todir="${buildLinux64.dir}/css" >
+            <fileset dir="data/css" includes="**/*"/>  
+        </copy>
+        <copy todir="${buildLinux64.dir}/js" >
+            <fileset dir="data/js" includes="**/*">
+                <exclude name="ioapi.cordova.js" />            
+                <exclude name="ioapi.mozilla.js" />            
+                <exclude name="ioapi.chrome.js" />
+                <exclude name="${defaultSettings.file}" />            	
+            </fileset>
+        </copy>
+        <copy todir="${buildLinux64.dir}/icons" >
+            <fileset dir="data/icons" includes="**/*"/>  
+        </copy>  
+        <copy file="default.settings.tmpl.js" tofile="${buildLinux64.dir}/js/${defaultSettings.file}" />    	
+    	<replace file="${buildLinux64.dir}/js/${defaultSettings.file}" >
+            <replacefilter token="@VERSION@" value="${version}" />
+            <replacefilter token="@APPNAME@" value="${appname}" />
+            <replacefilter token="@BUILD@" value="${build.number}" />
+            <replacefilter token="@DEFAULTLOCATIONS@" value="" /> 
+        	<replacefilter token="@PDFVIEWER@" value="viewerPDF" />    		
+        </replace>       	
+        <replace file="${buildLinux64.dir}/about.html" >
+            <replacefilter token="@VERSION@" value="${version}" />
+            <replacefilter token="@APPNAME@" value="${appname}" />
+            <replacefilter token="@BUILD@" value="${build.number}" />
+        </replace>    	
+    </target>	
 
-    <target name="prepare-cordova-application" description="copy all files the cordova dev directory">
-    	<!--delete dir="${cordovaDev.dir}"/>        
+    <target name="prepare-cordova-app" description="copy all files the cordova dev directory">
+        <echo>Preparing Cordova App[${build.number}] in: ${cordovaDev.dir}</echo>    	
+    	<delete dir="${cordovaDev.dir}"/>        
     	<mkdir dir="${cordovaDev.dir}" />
-        <copy file="${cordovaJSLib.file}" todir="${cordovaDev.dir}" /-->    
         <copy file="LICENSE" tofile="${cordovaDev.dir}/LICENSE.txt" />  	
-        <copy file="data/manifest.json" todir="${cordovaDev.dir}" />
-        <copy file="data/index.html" todir="${cordovaDev.dir}" />        
+        <copy file="config.xml" tofile="${cordovaDev.dir}/config.xml" />  	
+        <replace file="${cordovaDev.dir}/config.xml" >
+            <replacefilter token="@VERSION@" value="${version}" />
+            <replacefilter token="@APPNAME@" value="${appname}" />
+            <replacefilter token="@BUILD@" value="${build.number}" />
+            <replacefilter token="@DEFAULTLOCATIONS@" value="${appdescription}" />        	
+        </replace>             	
+    	<copy file="data/index.html" todir="${cordovaDev.dir}" />        
         <copy file="data/about.html" todir="${cordovaDev.dir}" />        
         <copy file="data/loader.js" todir="${cordovaDev.dir}" />        
         <copy todir="${cordovaDev.dir}/libs" >
@@ -278,17 +340,24 @@ found in the LICENSE file.
             <fileset dir="data/css" includes="**/*"/>  
         </copy>
         <copy todir="${cordovaDev.dir}/js" >
-            <fileset dir="data/js" includes="**/*"/>  
+            <fileset dir="data/js" includes="**/*">
+                <exclude name="ioapi.node.js" />            
+                <exclude name="ioapi.mozilla.js" />            
+                <exclude name="ioapi.chrome.js" />
+                <exclude name="${defaultSettings.file}" />            	
+            </fileset>        	
         </copy>
         <copy todir="${cordovaDev.dir}/icons" >
             <fileset dir="data/icons" includes="**/*"/>  
         </copy>
+        <copy file="default.settings.tmpl.js" tofile="${cordovaDev.dir}/js/${defaultSettings.file}" />    	
         <replace file="${cordovaDev.dir}/js/${defaultSettings.file}" >
             <replacefilter token="@VERSION@" value="${version}" />
             <replacefilter token="@APPNAME@" value="${appname}" />
             <replacefilter token="@BUILD@" value="${build.number}" />
-        </replace> 
-        
+        	<replacefilter token="@DEFAULTLOCATIONS@" value="${default.locations.android}" />
+        	<replacefilter token="@PDFVIEWER@" value="viewerPDF" />
+        </replace>        
         <replace file="${cordovaDev.dir}/about.html" >
             <replacefilter token="@VERSION@" value="${version}" />
             <replacefilter token="@APPNAME@" value="${appname}" />
@@ -303,15 +372,33 @@ found in the LICENSE file.
     <target name="clean-all">
         <delete dir="${buildFirefoxExt.dir}"/>
         <delete dir="${buildChrome.dir}"/>
+    	<delete dir="${buildWin32.dir}"/>
+        <delete dir="${buildLinux32.dir}"/>    	    	    	
+        <delete dir="${buildLinux64.dir}"/>
+        <delete dir="${buildOSX.dir}"/>    	    	    	
     </target>
-
-    <target name="prepare-mozilla-addonsdk" description="copy 3th party libs to the mozilla addon sdk">
-        <copy todir="${addonsdk.dir}/packages" >
-            <fileset dir="./addonlibs" includes="**/*"/>  
-        </copy>
-    </target>   	
 	
-    <target name="main" depends="prepare-chrome-extension, prepare-mozilla-extension, prepare-cordova-application" description="prepare for all target platforms" />
+    <target name="main" depends="_prepare-devenv, prepare-cordova-app, prepare-chrome-extension, prepare-mozilla-extension, prepare-win32-package, prepare-linux64-package" description="prepare for all target platforms" />
 
-    <target name="build-all" depends="build-chrome-extension, build-mozilla-extension" description="build for all target platforms" />
+    <target name="build-all" depends="build-chrome-extension, build-mozilla-extension, build-win32-package, build-linux64-package" description="build for all target platforms" />
+	
+    <target name="build-win32-package" depends="prepare-win32-package" description="Builds win32bit package based on node-webkit">
+        <zip basedir="${builds.dir}" destfile="${builds.dir}/${appname} [v${version}.${build.number} ${DSTAMP}${TSTAMP} win32].zip" includes="tagspaces-win32/**/*" />
+    </target>	
+	
+    <target name="build-linux64-package" depends="prepare-linux64-package" description="Builds linux 64 bit package based on node-webkit">
+        <zip basedir="${builds.dir}" destfile="${builds.dir}/${appname} [v${version}.${build.number} ${DSTAMP}${TSTAMP} linux64].zip" includes="tagspaces-linux64/**/*" />
+    </target>		
+	
+    <target name="build-chrome-extension" depends="prepare-chrome-extension" description="Creates a simple zip(not crx) of the chrome exntension">
+        <zip destfile="${builds.dir}/${appname} [v${version}.${build.number} ${DSTAMP}${TSTAMP} chrome].zip">
+            <fileset dir="${buildChrome.dir}" includes="**/*" />
+        </zip>
+    </target>	
+	
+    <target name="build-mozilla-extension" depends="prepare-mozilla-extension" description="Creates a simple zip(not xpi) of the mozilla extension">
+        <zip destfile="${builds.dir}/${appname} [v${version}.${build.number} ${DSTAMP}${TSTAMP} mozilla].zip">
+            <fileset dir="${buildFirefoxExt.dir}" includes="**/*" />
+        </zip>
+    </target>		
 </project>

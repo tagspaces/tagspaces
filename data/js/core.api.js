@@ -13,7 +13,7 @@ define(function(require, exports, module) {
     var tsFileOpener = require("tsfileopener");
     var tsTagsUI = require("tstagsui");
     var tsDirectoriesUI = require("tsdirectoriesui");
-    var tsCoreUI = require("tscoreui")
+    var tsCoreUI = require("tscoreui");
 	
 	var layoutContainer = undefined;  
     var westLayout = undefined;

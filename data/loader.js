@@ -52,7 +52,7 @@ console.log("Loading Loader - Firefox: "+isFirefox+" | ChromeExt: "+isChrome+" |
 requirejs.config({
     map: {
       '*': {
-        'css': 'libs/requirecss/css'
+        'css':  'libs/requirecss/css',
       }
     },
     paths: {
@@ -83,9 +83,10 @@ requirejs.config({
         jqueryeditinplace:      'libs/jqueryeditinplace/jquery.editinplace',
         underscore:             'libs/underscore/underscore',
         d3:                     'libs/d3/d3.v3',
-
+		
         tscore:                 'js/core.api',
         tssetting:              'js/settings.api',
+        tssettingsdefault:      'js/settings.default',
         tsoptions:              'js/options.ui',
         tspersmanager:          'js/perspective.manager',
         tstagutils:             'js/tagutils',
@@ -128,6 +129,7 @@ requirejs.config({
                 'jquerysimplecolorpicker',
                 'jquerylayout',
                 'jquerydropdown',
+                'tssettingsdefault',
             ] },                   
     } 
 });
