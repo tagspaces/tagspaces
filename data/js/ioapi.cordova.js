@@ -32,17 +32,16 @@ define(function (require, exports, module) {
         );
     }
 
+    // TODO recursivly calling callback not working        
     function scanDirectory(dirPath, index) {
-        // TODO recursivly calling callback not working        
-        dirPath = dirPath+"/"; // TODO make it platform independent
-        dirPath = normalizePath(dirPath);        
-        fsRoot.getDirectory(dirPath, {create: false, exclusive: false}, 
+        fsRoot.getDirectory(normalizePath(dirPath+"/"), {create: false, exclusive: false}, 
             function (dirEntry) {
                 var directoryReader = dirEntry.createReader();
                 // Get a list of all the entries in the directory
                 directoryReader.readEntries(
                     function (entries) { 
                         var i;
+                        var recursed = false;
                         for (i = 0; i < entries.length; i++) {
                             index.push({
                                 "name": entries[i].name,
@@ -52,10 +51,11 @@ define(function (require, exports, module) {
                                 "path": entries[i].fullPath  
                             }); 
                             if (entries[i].isDirectory) {
+                                recursed = true;
                                 scanDirectory(entries[i].fullPath, index);
-                            }
+                            } 
                         }
-                        return index;
+                        if (!recursed) return index; 
                     }, function (error) { // error get file system
                         console.log("Dir List Error: " + error.code);
                     }            
@@ -142,7 +142,7 @@ define(function (require, exports, module) {
             console.log("AJAX failed "+data); 
         })
         ;            
-    }   
+    };   
     
     exports.listDirectory = function (dirPath) {
         // directory path format DCIM/Camera/ !
@@ -181,7 +181,7 @@ define(function (require, exports, module) {
                 console.log("Getting dir: "+dirPath+" failed with error code: " + error.code);
            }                
         ); 
-    }
+    };
     
     exports.getSubdirs = function(dirPath) {
         dirPath = dirPath+"/"; // TODO make it platform independent
@@ -219,7 +219,7 @@ define(function (require, exports, module) {
                 console.log("Getting dir: "+dirPath+" failed with error code: " + error.code);
            }                
         );         
-    }
+    };
 
     exports.deleteElement = function(path) {
         console.log("Deleting: "+path);
@@ -241,22 +241,24 @@ define(function (require, exports, module) {
                 console.log("error getting file");
             }        
         );
-    }
+    };
 
     exports.createDirectoryIndex = function(dirPath) {
         console.log("Creating index for directory: "+dirPath);
-        var directoryIndex = [];
+        TSCORE.showAlertDialog("Creating directory index is not supported on Android yet.");                 
+/*        var directoryIndex = [];
         directoryIndex = scanDirectory(dirPath, directoryIndex);
-        //console.log(JSON.stringify(directoryIndex));
-        TSPOSTIO.createDirectoryIndex(directoryIndex);
-    }
+        console.log(JSON.stringify(directoryIndex));
+        TSPOSTIO.createDirectoryIndex(directoryIndex); */
+    };
     
     exports.createDirectoryTree = function(dirPath) {
         console.log("Creating directory index for: "+dirPath);
-        var directoyTree = generateDirectoryTree(dirPath);
+        TSCORE.showAlertDialog("Creating directory tree is not supported on Android yet.");                 
+/*        var directoyTree = generateDirectoryTree(dirPath);
         //console.log(JSON.stringify(directoyTree));
-        TSPOSTIO.createDirectoryTree(directoyTree);
-    }
+        TSPOSTIO.createDirectoryTree(directoyTree);*/
+    };
 
     exports.loadTextFile = function(filePath) {
         filePath = normalizePath(filePath);
@@ -280,7 +282,7 @@ define(function (require, exports, module) {
                 console.log("Error getting file entry: "+filePath);
             }        
         ); 
-    }
+    };
     
     exports.saveTextFile = function(filePath,content) {
         filePath = normalizePath(filePath);
@@ -303,7 +305,7 @@ define(function (require, exports, module) {
                 console.log("Error getting file entry: "+filePath);
             }        
         ); 
-    }   
+    };   
 
     exports.createDirectory = function(dirPath) {
         dirPath = normalizePath(dirPath);
@@ -316,13 +318,13 @@ define(function (require, exports, module) {
                 console.log("Creating directory failed: "+dirPath+" failed with error code: " + error.code);
            }  
         );
-    }  
+    }; 
     
     exports.renameFile = function(filePath, newFilePath) {
         filePath = normalizePath(filePath);
         var newFileName = newFilePath.substring(newFilePath.lastIndexOf('/')+1);
         var newFileParentPath = normalizePath(newFilePath.substring(0, newFilePath.lastIndexOf('/')));
-        
+        // TODO check if the newFilePath exist or cause issues by renaming
         fsRoot.getDirectory(newFileParentPath, {create: false, exclusive: false}, 
             function (parentDirEntry) {
                 fsRoot.getFile(filePath, {create: false, exclusive: false}, 
@@ -348,26 +350,26 @@ define(function (require, exports, module) {
                 console.log("Getting dir: "+newFileParentPath+" failed with error code: " + error.code);
            }                
         );
-    }
+    };
 
     exports.selectDirectory = function() {
         console.log("Operation selectDirectory not supported on Android yet!");
         TSCORE.showAlertDialog("Selecting directory not supported on Android yet, please type the desired directory path manually in textbox!");         
-    }
+    };
 
     exports.selectFile = function() {
         console.log("Operation selectFile not supported on Android!");
-    }
+    };
     
     exports.checkAccessFileURLAllowed = function() {
         console.log("checkAccessFileURLAllowed function not relevant for android..");        
-    }
+    };
     
     exports.openDirectory = function(dirPath) {
         TSCORE.showAlertDialog("Select file functionality not supported on Android!");
-    }
+    };
     
     exports.openExtensionsDirectory = function() {
         TSCORE.showAlertDialog("Open extensions directory functionality not supported on Android!"); 
-    }
+    };
 });
