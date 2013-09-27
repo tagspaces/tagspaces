@@ -447,10 +447,6 @@ define(function(require, exports, module) {
     };
 	
 	var createTag = function(tagData, newTagName, newTagColor, newTagTextColor) {
-	    var newTagModel = JSON.parse( JSON.stringify(tagTemplate) );
-	    newTagModel.title = newTagName;
-	    newTagModel.color = newTagColor;
-	    newTagModel.textcolor = newTagTextColor;
         exports.Settings["tagGroups"].forEach(function (value, index) {	        
 	        if(value.key == tagData.key) {
 	            console.log("Creating tag: "+JSON.stringify(newTagModel)+" with parent: "+tagData.key);
@@ -461,11 +457,15 @@ define(function(require, exports, module) {
 					}
                 });	            
                 // Create tag if it is not existing in the current group
-                // And is at least 3 characters long
-                if(!tagExistsInGroup && (newTagName.length > 2)) {
+                // And is at least 2 characters long
+                if(!tagExistsInGroup && (newTagName.length >= 2)) {
+				    var newTagModel = JSON.parse( JSON.stringify(tagTemplate) );
+				    newTagModel.title = newTagName;
+				    newTagModel.color = newTagColor;
+				    newTagModel.textcolor = newTagTextColor;
                     value["children"].push(newTagModel);
                 } else {
-                    console.log("Tag with the same name already exist in this group or tag length < 3");                    	
+                    console.log("Tag with the same name already exist in this group or tag length >= 2");                    	
                 }
 	        }        
 	    });  
