@@ -112,12 +112,12 @@ console.log("Loading UI for perspectiveDefault");
             .append( "<i class='icon-check-empty'>" )
             )
             
-        )
+      );
         
 		this.viewToolbar.append($("<div>", { 
 			class: "btn-group",
 			id: this.extensionID+"Toolbar", 			
-	    })
+	   })
 
     	    .append($("<button>", { 
     			class: "btn ",
@@ -212,7 +212,7 @@ console.log("Loading UI for perspectiveDefault");
 			    })		    
 			    .append( $("<i>", { class: "icon-tags", }) )
 		    )	     
-	    ) // end button group
+	    ); // end button group
 
         this.viewToolbar.append($("<div >", { 
             class: "input-append pull-right", 
@@ -253,7 +253,7 @@ console.log("Loading UI for perspectiveDefault");
 	        id: this.extensionID+"FileTable",    
 	    })); 
 	    
-	}
+	};
 	
 	ExtUI.prototype.initTable = function() {
 	    this.fileTable = $('#'+this.extensionID+"FileTable").dataTable( {
@@ -268,7 +268,7 @@ console.log("Loading UI for perspectiveDefault");
 	            { "sTitle": "Title", "sClass": "right" },
                 { "sTitle": "Extension" },
 	            { "sTitle": "Tags" },            
-	            { "sTitle": "Size" },
+	            { "sTitle": "Size(B)" },
 	            { "sTitle": "Date Modified" },
 	            { "sTitle": "Path" },
                 { "sTitle": "File Name" }                
@@ -293,10 +293,11 @@ console.log("Loading UI for perspectiveDefault");
 	                "aTargets": [ TSCORE.fileListTAGS ]
 	            }, 
 	            { // Filesize column
-	                "mRender": function ( data, type, row ) { 
+	                "sType": 'numeric',
+	                "aTargets": [ TSCORE.fileListFILESIZE ],
+	             /*   "mRender": function ( data, type, row ) { 
 	                	return TSCORE.TagUtils.formatFileSize(data, true); 
-	                	},
-	                "aTargets": [ TSCORE.fileListFILESIZE ]
+	                	},*/
 	            },
 	            { // Last changed date column
 	                "mRender": function ( data, type, row ) { 
@@ -353,7 +354,7 @@ console.log("Loading UI for perspectiveDefault");
 	      }
 	    }) */
 	   
-	}			
+	};			
 	
 	ExtUI.prototype.reInitTableWithData = function() {
 		$('#'+this.extensionID+"FileTable_wrapper").hide();
@@ -429,7 +430,7 @@ console.log("Loading UI for perspectiveDefault");
                     TSCORE.selectedFiles.splice(TSCORE.selectedFiles.indexOf(fpath), 1);
                 }
                 self.handleElementActivation(); 
-            } )        
+            } );        
 	    
 	    this.fileTable.$('.extTagButton')
 	        .click( function() {
@@ -478,7 +479,7 @@ console.log("Loading UI for perspectiveDefault");
 	    
         this.refreshThumbnails();	    
 	    
-	}
+	};
 
     ExtUI.prototype.setFilter = function(filterValue) {
         TSCORE.PerspectiveManager.clearSelectedFiles();   
@@ -494,7 +495,7 @@ console.log("Loading UI for perspectiveDefault");
         
         this.handleElementActivation();   
         console.log("Filter to value: "+filterValue);           
-    }   
+    };   
 	
 	ExtUI.prototype.selectFile = function(uiElement, filePath) {
 	    TSCORE.PerspectiveManager.clearSelectedFiles();   
@@ -506,7 +507,7 @@ console.log("Loading UI for perspectiveDefault");
 	    TSCORE.selectedFiles.push(filePath);  
 		
 		this.handleElementActivation();      
-	} 		
+	}; 		
 	
 	ExtUI.prototype.switchThumbnailSize = function() {
 		this.currentTmbSize = this.currentTmbSize + 1;
@@ -514,7 +515,7 @@ console.log("Loading UI for perspectiveDefault");
 		if(this.currentTmbSize >= TMB_SIZES.length) { this.currentTmbSize = 0; }
 		
 		$('.thumbImg').css({"max-width":TMB_SIZES[this.currentTmbSize], "max-height":TMB_SIZES[this.currentTmbSize] });		
-	}
+	};
 	
 	ExtUI.prototype.toggleFileDetails = function() {
 		if(this.showFileDetails) {
@@ -527,7 +528,7 @@ console.log("Loading UI for perspectiveDefault");
 			this.fileTable.fnSetColumnVis( TSCORE.fileListFILEPATH, true );			
 		}
 		this.showFileDetails = !this.showFileDetails;
-	}
+	};
 
     ExtUI.prototype.enableThumbnails = function() {
         $( "#"+this.extensionID+"IncreaseThumbsButton" ).prop('disabled', false);
@@ -536,7 +537,7 @@ console.log("Loading UI for perspectiveDefault");
             $(this).attr('src',$(this).attr('filepath'));
         });
         $('.thumbImg').css({"max-width":TMB_SIZES[this.currentTmbSize], "max-height":TMB_SIZES[this.currentTmbSize] });     
-    }   
+    };   
     
     ExtUI.prototype.disableThumbnails = function() {
         //this.currentTmbSize = 0;
@@ -545,7 +546,7 @@ console.log("Loading UI for perspectiveDefault");
             $(this).attr('style', "width: 0px; height: 0px; border: 0px");
             $(this).attr('src',"");
         });
-    }     
+    };     
     
     ExtUI.prototype.refreshThumbnails = function() {
         if(this.thumbEnabled) {
@@ -553,12 +554,12 @@ console.log("Loading UI for perspectiveDefault");
         } else {
             this.disableThumbnails();
         }
-    }        
+    };        
 	
 	ExtUI.prototype.toggleThumbnails = function() {
 		this.thumbEnabled = !this.thumbEnabled;
         this.refreshThumbnails();
-	}	
+	};	
 	
 	ExtUI.prototype.toggleTags = function() {
 		if(this.showTags) {
@@ -567,7 +568,7 @@ console.log("Loading UI for perspectiveDefault");
 			this.fileTable.fnSetColumnVis( TSCORE.fileListTAGS, true );
 		}
 		this.showTags = !this.showTags;
-	}
+	};
 	
 	ExtUI.prototype.handleElementActivation = function() {
 	    console.log("Entering element activation handler...");
@@ -581,7 +582,7 @@ console.log("Loading UI for perspectiveDefault");
 	    } else {
 	        tagButton.prop('disabled', true);
 	    }    
-	}
+	};
 
 	exports.ExtUI	 				= ExtUI;
 });
