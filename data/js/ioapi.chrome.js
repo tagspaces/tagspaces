@@ -278,14 +278,18 @@ IO-API
     exports.renameFile = function(filePath, newFilePath) {
         console.log("Renaming file: "+filePath+" to "+newFilePath);
         if(filePath.toLowerCase() == newFilePath.toLowerCase()) {
-            console.error("Initial and target filenames are the same...");
-            return;            
+            console.log("Initial and target filenames are the same...");
+            return false;            
         }
+	    if(nativeIO.fileExists(newFilePath)) {
+	        console.log("File renaming failed! Target filename already exists.");
+	        return false; 	    	
+	    }        
         if(isWin) {
 	        if(nativeIO.renameFile(filePath, newFilePath)) {
 	            TSPOSTIO.renameFile(filePath, newFilePath);
 	        } else {
-	            console.error("File renaming moving failed!");            
+	            console.error("File renaming failed!");            
 	        }
         } else {
 	        if(nativeIO.fileExists(filePath)) {
