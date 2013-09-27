@@ -24,7 +24,11 @@ define(function(require, exports, module) {
         
         $( "#tagMenuRemoveTag" ).click( function() {
             TSCORE.TagUtils.removeTag(TSCORE.selectedFiles[0],TSCORE.selectedTag);
-        });                
+        });     
+        
+        $( "#tagMenuMoveTagFirst" ).click( function() {
+            TSCORE.TagUtils.moveTagLocation(TSCORE.selectedFiles[0],TSCORE.selectedTag, "first");
+        });                    
 
         $( "#tagMenuMoveTagRight" ).click( function() {
             TSCORE.TagUtils.moveTagLocation(TSCORE.selectedFiles[0],TSCORE.selectedTag, "next");

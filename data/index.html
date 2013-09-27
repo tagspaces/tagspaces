@@ -334,11 +334,11 @@
     <div id="dialogTagCreate" class="modal hide" tabindex="-1" role="dialog" data-backdrop="static" aria-labelledby="myModalLabel" aria-hidden="true" >
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-            <h4>Create Tag</h4>
+            <h4>Add tags to tag group</h4>
         </div>
         <div class="modal-body form-horizontal">
             <div class="control-group">
-                <label class="control-label" for="newTagTitle">Tag Name</label>
+                <label class="control-label" for="newTagTitle">Comma separted list<br> of tags</label>
                 <div class="controls">
                     <input type="text" name="newTagTitle" id="newTagTitle" />
                 </div>
@@ -407,8 +407,9 @@
     <ul id="tagMenu" class="dropdown-menu has-tip anchor-right">
         <li><a id="tagMenuAddTagAsFilter" title="Search for the selected tag"><i class="icon-filter"></i> Search for This Tag</a></li>
         <li><a id="tagMenuEditTag" title=""><i class="icon-pencil"></i> Edit Tag</a></li>               
-        <li><a id="tagMenuMoveTagRight" title=""><i class="icon-arrow-right"></i> Move Tag to Right</a></li>               
-        <li><a id="tagMenuMoveTagLeft" title=""><i class="icon-arrow-left"></i> Move Tag to Left</a></li>               
+        <li><a id="tagMenuMoveTagFirst" title=""><i class="icon-fast-backward"></i> Move Tag to First Position</a></li>  
+        <li><a id="tagMenuMoveTagLeft" title=""><i class="icon-backward"></i> Move Tag to Left</a></li>               
+        <li><a id="tagMenuMoveTagRight" title=""><i class="icon-forward"></i> Move Tag to Right</a></li>
         <li><a id="tagMenuRemoveTag" title=""><i class="icon-trash"></i> Remove Tag</a></li>
     </ul>        
     
@@ -420,12 +421,12 @@
     </ul>  
     
     <ul id="tagGroupMenu" class="dropdown-menu has-tip">
-        <li><a id="tagGroupMenuCreateNewTag" title="Creates new tag"><i class="icon-tag"></i> Create Tag</a></li>
-        <li><a id="tagGroupMenuCreateTagGroup" title="Create new tagGroup"><i class="icon-tags"></i> Create Taggroup</a></li>        
-        <li><a id="tagGroupMenuMoveUp" title="Move current TagGroup one position up"><i class="icon-arrow-up"></i> Move TagGroup Up</a></li>                       
-        <li><a id="tagGroupMenuMoveDown" title="Move current TagGroup one position down"><i class="icon-arrow-down"></i> Move TagGroup Down</a></li>                       
-        <li><a id="tagGroupMenuEditTagGroup" title="Edit Current tagGroup"><i class="icon-pencil"></i> Edit Taggroup</a></li>                       
-        <li><a id="tagGroupMenuDeleteTagGroup" title="Delete Current TagGroup"><i class="icon-trash"></i> Delete Taggroup</a></li>
+        <li><a id="tagGroupMenuCreateNewTag" title="Add tags to tag group"><i class="icon-tag"></i> Add Tags</a></li>
+        <li><a id="tagGroupMenuCreateTagGroup" title="Create new a tag group"><i class="icon-tags"></i> Create Tag Group</a></li>        
+        <li><a id="tagGroupMenuMoveUp" title="Move current TagGroup one position up"><i class="icon-arrow-up"></i> Move Tag Group Up</a></li>                       
+        <li><a id="tagGroupMenuMoveDown" title="Move current TagGroup one position down"><i class="icon-arrow-down"></i> Move Tag Group Down</a></li>                       
+        <li><a id="tagGroupMenuEditTagGroup" title="Edit Current tagGroup"><i class="icon-pencil"></i> Edit Tag Group</a></li>                       
+        <li><a id="tagGroupMenuDeleteTagGroup" title="Delete Current TagGroup"><i class="icon-trash"></i> Delete Tag Group</a></li>
     </ul>  
     
     <ul id="directoryMenu" class="dropdown-menu has-tip">

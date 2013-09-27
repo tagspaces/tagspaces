@@ -296,13 +296,18 @@ define(function(require, exports, module) {
             if(extractedTags[i] == tagName) {
                 if((direction == "prev") && (i > 0)) {
                     var tmpTag = extractedTags[i-1];
-                    extractedTags[i-1] = extractedTags[i]
+                    extractedTags[i-1] = extractedTags[i];
                     extractedTags[i] = tmpTag;
                     break;
                 } else if ((direction == "next") && i < (extractedTags.length-1) ){
                     var tmpTag = extractedTags[i];
-                    extractedTags[i] = extractedTags[i+1]
+                    extractedTags[i] = extractedTags[i+1];
                     extractedTags[i+1] = tmpTag;
+                    break;
+                } else if ((direction == "first") && i > 0 ){
+                    var tmpTag = extractedTags[i];
+                    extractedTags[i] = extractedTags[0];
+                    extractedTags[0] = tmpTag;
                     break;
                 }
             } 
@@ -383,7 +388,7 @@ define(function(require, exports, module) {
     exports.DIR_SEPARATOR                       = DIR_SEPARATOR;
     exports.isWindows                           = isWindows;
     exports.extractFileName                     = extractFileName;
-    exports.extractFileNameWithoutExt           = extractFileNameWithoutExt
+    exports.extractFileNameWithoutExt           = extractFileNameWithoutExt;
     exports.extractContainingDirectoryPath      = extractContainingDirectoryPath;
     exports.extractContainingDirectoryName      = extractContainingDirectoryName;
     exports.extractFileExtension                = extractFileExtension;
