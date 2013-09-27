@@ -454,13 +454,19 @@ define(function(require, exports, module) {
         exports.Settings["tagGroups"].forEach(function (value, index) {	        
 	        if(value.key == tagData.key) {
 	            console.log("Creating tag: "+JSON.stringify(newTagModel)+" with parent: "+tagData.key);
-                value["children"].forEach(function (value, index) {
-                    if(value.title == newTagName) {
-                        console.log("Tag with the same name already exist in this group");
-                        return false;
-                    }
-                });
-	            value["children"].push(newTagModel);
+                var tagExistsInGroup = false;
+                value["children"].forEach(function (child) {
+					if(child.title == newTagName) {
+						tagExistsInGroup = true;
+					}
+                });	            
+                // Create tag if it is not existing in the current group
+                // And is at least 3 characters long
+                if(!tagExistsInGroup && (newTagName.length > 2)) {
+                    value["children"].push(newTagModel);
+                } else {
+                    console.log("Tag with the same name already exist in this group or tag length < 3");                    	
+                }
 	        }        
 	    });  
 	    saveSettings();
