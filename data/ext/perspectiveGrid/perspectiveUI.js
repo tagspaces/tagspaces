@@ -258,7 +258,7 @@ console.log("Loading UI for perspectiveDefault");
         //    .prop('disabled', true)         
             .click(function() {
              //   $(this).prop('disabled', true);
-                TSCORE.startTime = new Date().getTime();      
+                //TSCORE.startTime = new Date().getTime();      
                 TSCORE.IO.createDirectoryIndex(TSCORE.currentPath);
             })
             .append( $("<i>", { class: "icon-retweet", }) )
@@ -347,13 +347,13 @@ console.log("Loading UI for perspectiveDefault");
                 // On enter fire the search
                 if (e.keyCode == 13) {
                     $( "#"+self.extensionID+"ClearFilterButton").addClass("filterOn");
-                    TSCORE.startTime = new Date().getTime(); 
+                    //TSCORE.startTime = new Date().getTime(); 
                     self.reInit();
                 }  else {
                     self.nextFilter = this.value;
                 } 
                 if (this.value.length == 0) {
-                    TSCORE.startTime = new Date().getTime(); 
+                    //TSCORE.startTime = new Date().getTime(); 
                     $( "#"+self.extensionID+"ClearFilterButton").removeClass("filterOn");
                     self.reInit();
                 }                 
@@ -363,7 +363,7 @@ console.log("Loading UI for perspectiveDefault");
                 $(this).removeClass("input-large");                
                 if (this.value.length == 0) {
                     $( "#"+self.extensionID+"ClearFilterButton").removeClass("filterOn");
-                    TSCORE.startTime = new Date().getTime(); 
+                    //TSCORE.startTime = new Date().getTime(); 
                     self.reInit();
                 } 
             })            
@@ -377,7 +377,7 @@ console.log("Loading UI for perspectiveDefault");
                 .click(function(evt) {
                     evt.preventDefault();
                     $( "#"+self.extensionID+"ClearFilterButton").addClass("filterOn");
-                    TSCORE.startTime = new Date().getTime(); 
+                    //TSCORE.startTime = new Date().getTime(); 
                     self.reInit();
                 })
             )        
@@ -395,7 +395,7 @@ console.log("Loading UI for perspectiveDefault");
                     $("#"+self.extensionID+"FilterBox").val("").addClass("input-medium");
                     $("#"+self.extensionID+"FilterBox").val("").removeClass("input-large");
                     self.setFilter(""); 
-                    TSCORE.startTime = new Date().getTime();                     
+                    //TSCORE.startTime = new Date().getTime();                     
                     self.reInit();
                 })
             )        
@@ -456,7 +456,7 @@ console.log("Loading UI for perspectiveDefault");
 
     ExtUI.prototype.switchGrouping = function(grouping) {
         this.currentGrouping = grouping;
-        TSCORE.startTime = new Date().getTime(); 
+        //TSCORE.startTime = new Date().getTime(); 
         this.reInit();
     };
 
@@ -674,7 +674,7 @@ console.log("Loading UI for perspectiveDefault");
             var endTime = new Date().getTime();
             this.viewFooter.append($("<div>", { 
                 "class": "searchSummary",    
-                "text":  this.searchResults.length+" files found in "+(endTime-TSCORE.startTime)/1000+" sec."             
+                "text":  this.searchResults.length+" files found" //" in "+(endTime-TSCORE.startTime)/1000+" sec."             
             }));
         } 
 
