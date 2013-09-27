@@ -100,7 +100,7 @@ define(function(require, exports, module) {
                 $( "#tagInTreeName" ).val(), 
                 $( "#tagColor" ).val(),
                 $( "#tagTextColor" ).val()
-                )
+               );
             generateTagGroups();
             TSCORE.PerspectiveManager.refreshFileListContainer();    
         });   
@@ -111,17 +111,20 @@ define(function(require, exports, module) {
         });             
 
         $( "#createTagButton" ).click( function() {
-            TSCORE.Config.createTag(TSCORE.selectedTagData, $( "#newTagTitle" ).val() )
+        	var tags = $( "#newTagTitle" ).val().split(",");
+            tags.forEach(function (value) {
+            	TSCORE.Config.createTag(TSCORE.selectedTagData, value );            	
+            });
             generateTagGroups();                    
         });             
 	                
         $( "#createTagGroupButton" ).click( function() {
-            TSCORE.Config.createTagGroup(TSCORE.selectedTagData, $( "#newTagGroupName" ).val() )
+            TSCORE.Config.createTagGroup(TSCORE.selectedTagData, $( "#newTagGroupName" ).val() );
             generateTagGroups();                    
         });             
 
         $( "#editTagGroupButton" ).click( function() {
-            TSCORE.Config.editTagGroup(TSCORE.selectedTagData, $( "#tagGroupName" ).val() )
+            TSCORE.Config.editTagGroup(TSCORE.selectedTagData, $( "#tagGroupName" ).val() );
             generateTagGroups();                    
         });           
 	}
@@ -226,7 +229,7 @@ define(function(require, exports, module) {
 	            }
 	            var tagIcon = "";
                 if(TSCORE.Config.Settings["tagGroups"][i]["children"][j].type == "smart"){
-                    tagIcon = "<span class='icon-beaker'/> "
+                    tagIcon = "<span class='icon-beaker'/> ";
                 }
 	            tagButtons.append($("<a>", { 
 	                "class":         "btn btn-small tagButton", 
@@ -355,7 +358,7 @@ define(function(require, exports, module) {
            if(textColor == undefined) {
               textColor = "white"; 
            }
-           tagStyle = "color: "+textColor+" !important; background-color: "+tagObject.color+" !important;"
+           tagStyle = "color: "+textColor+" !important; background-color: "+tagObject.color+" !important;";
         }
         return tagStyle;	    
 	}
@@ -423,7 +426,7 @@ define(function(require, exports, module) {
         // TODO reactive comma separated autocomplete
         $( "#tags" ).typeahead( {
             "source":  TSCORE.Config.getAllTags()
-        })            
+        });            
 /*        $( "#tags" )
         // don't navigate away from the field on tab when selecting an item
         .bind( "keydown", function( event ) {
