@@ -52,7 +52,7 @@ define(function(require, exports, module) {
     function generateDirPath() {
         console.log("Generating Directory Path...");
         $("#locationContent").empty();
-        $("#locationContent").addClass("accordion")
+        $("#locationContent").addClass("accordion");
         for(var i=0; i < directoryHistory.length; i++) {
             $("#locationContent").append($("<div>", { 
                 "class":        "accordion-group disableTextSelection",   
@@ -275,14 +275,14 @@ define(function(require, exports, module) {
                     of: $( "#reloadTagSpace" )
                 });
                 return false;
-        })   
+        });   
                         
         $( "#selectTagSpace" ).tooltip();
     
         $( "#selectLocalDirectory" ).click(function(e) {
             e.preventDefault();
             TSCORE.IO.selectDirectory();
-        })    
+        });    
     }
     
     
@@ -353,14 +353,14 @@ define(function(require, exports, module) {
 			"Delete connection to folder",
 			"Do you want to delete this connection to a folder?",
 			deleteFolderConnection
-		)
+		);
     }             
     
     function initConnections() {
         console.log("Creating location menu...");
         
         $( "#connectionsList" ).empty();
-        var connectionsList = TSCORE.Config.Settings["tagspacesList"]
+        var connectionsList = TSCORE.Config.Settings["tagspacesList"];
         for (var i=0; i < connectionsList.length; i++) { 
               $( "#connectionsList" ).append(
                     $('<li>', {}).append(

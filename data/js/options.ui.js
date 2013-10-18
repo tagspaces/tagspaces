@@ -55,15 +55,15 @@ define(function(require, exports, module) {
 
     function generateSelectOptions(parent, data, selectedId) {
         parent.empty();
-        parent.append($("<option>").text("").val("false"))
+        parent.append($("<option>").text("").val("false"));
         data.forEach( function(value) {
                 if (selectedId == value) { 
-                    parent.append($("<option>").attr("selected","selected").text(value).val(value))                
+                    parent.append($("<option>").attr("selected","selected").text(value).val(value));                
                 } else {
-                    parent.append($("<option>").text(value).val(value))                    
+                    parent.append($("<option>").text(value).val(value));                    
                 }    
             }            
-        )
+        );
     }
 
     function addPerspective(parent, perspectiveId) {
@@ -78,7 +78,7 @@ define(function(require, exports, module) {
                             $(this).parent().parent().remove();
                         })                
                     )
-                )
+                );
                 //.append($("<button class='btn' title='Remove this extension'><i class='icon-arrow-up'></button>"))
                 //.append($("<button class='btn' title='Remove this extension'><i class='icon-arrow-down'></button>"))  
 
@@ -97,7 +97,7 @@ define(function(require, exports, module) {
                             $(this).parent().parent().remove();
                         })
                     )
-                )
+                );
         generateSelectOptions(fileTypeControl.find(".ftviewer"), TSCORE.Config.getViewerExtensions(), viewerId);
         generateSelectOptions(fileTypeControl.find(".fteditor"), TSCORE.Config.getEditorExtensions(), editorId);
         parent.append(fileTypeControl);
@@ -122,21 +122,21 @@ define(function(require, exports, module) {
             updateSettings(); 
             $('#dialogOptions').modal("hide");
             //TSCORE.reloadUI();            
-        }) 
+        }); 
         
         $('#addFileTypeButton').click(function(e) {
             // Fixes reloading of the application by click
             e.preventDefault();
             
-            addFileType($('#fileTypesList'), "", "", "")
-        }) 
+            addFileType($('#fileTypesList'), "", "", "");
+        }); 
 
         $('#addPerspectiveButton').click(function(e) {
             // Fixes reloading of the application by click
             e.preventDefault();
             
-            addPerspective($('#perspectiveList'), "")
-        })        
+            addPerspective($('#perspectiveList'), "");
+        });        
     }    
 
     function collectPerspectivesData() {
@@ -147,9 +147,8 @@ define(function(require, exports, module) {
 	                    "id":$(element).find("select").val(),
 	                });                	
                 }
-
             }            
-        ) 
+        ); 
         return data;
     }
 
@@ -162,7 +161,7 @@ define(function(require, exports, module) {
                     "editor":   $(element).find(".fteditor").val(),
                     });
             }            
-        ) 
+        ); 
         return data;
     }
     
@@ -177,6 +176,6 @@ define(function(require, exports, module) {
         TSCORE.Config.saveSettings();
     }
     
-    generateUI()
+    generateUI();
     initUI();
 });

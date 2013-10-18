@@ -170,7 +170,7 @@ define(function(require, exports, module) {
             } else {
                 tagString = tagString + "," +value;                                 
             }
-        }) 
+        }); 
 	    $( "#fileTags" ).append(TSCORE.generateTagButtons(tagString,filePath));
     
 	    $( "#tagsContainer" ).droppable({
@@ -182,7 +182,7 @@ define(function(require, exports, module) {
 				TSCORE.TagUtils.addTag([filePath], [TSCORE.selectedTag]);
 				$(ui.helper).remove(); 
 	    	}	            	
-	    })
+	    });
 	
 	    // Activate tagButtons in file view
 	    $('.tagButton', $( "#fileTags" ))
@@ -255,7 +255,7 @@ define(function(require, exports, module) {
             })                
         )); 
         $( "#tagSuggestionsMenu" ).append($('<li>', {class: "divider"}));
-        $( "#tagSuggestionsMenu" ).append($('<li>').append($('<a>', {text: " Tag Suggestions:" })))      
+        $( "#tagSuggestionsMenu" ).append($('<li>').append($('<a>', {text: " Tag Suggestions:" })));      
 	
 	    // Adding context menu entries for creating tags according to the suggested tags
 	    for (var i=0; i < suggTags.length; i++) {        
