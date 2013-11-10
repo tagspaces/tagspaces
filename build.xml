@@ -15,10 +15,11 @@ found in the LICENSE file.
     <target name="_prepare-devenv" description="Prepares the development environment">
     	<copy file="default.settings.tmpl.js" tofile="data/js/${defaultSettings.file}" />
     	<replace file="data/js/${defaultSettings.file}" >
-            <replacefilter token="@VERSION@" value="V${version}" />
+            <replacefilter token="@VERSION@" value="${version}" />
             <replacefilter token="@APPNAME@" value="${appname}" />
             <replacefilter token="@BUILD@" value="${build.number}" />
-            <replacefilter token="@DEFAULTLOCATIONS@" value="${default.locations}" />        	
+            <replacefilter token="@DEFAULTLOCATIONS@" value="" />
+        	<replacefilter token="@PDFVIEWER@" value="viewerBrowser" />     		
         </replace>      
     </target>
 	
