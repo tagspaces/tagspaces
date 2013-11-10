@@ -386,6 +386,9 @@ define(function(require, exports, module) {
 
     // Public API definition
     exports.DIR_SEPARATOR                       = DIR_SEPARATOR;
+    exports.beginTagContainer                   = BEGIN_TAG_CONTAINER;
+    exports.endTagContainer	                    = END_TAG_CONTAINER;
+    exports.tagDelimiter 						= TAG_DELIMITER;
     exports.isWindows                           = isWindows;
     exports.extractFileName                     = extractFileName;
     exports.extractFileNameWithoutExt           = extractFileNameWithoutExt;

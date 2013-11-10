@@ -162,21 +162,41 @@
         </div>
         <div class="modal-body form-horizontal">
             <div class="control-group">
-                <label class="control-label" for="fileTypeChooser">Filetype</label>
+                <label class="control-label" for="fileTypeChooser">Type</label>
                 <div class="controls">
                     <div class="btn-group" data-toggle="buttons-radio" name="fileTypeChooser">
-                        <button id="txtFileTypeButton" title="Create a plain text file" class="btn">TXT</button>
-                        <button id="mdFileTypeButton" title="Create a MarkDown file"  class="btn">MD</button>
-                        <button id="htmlFileTypeButton" title="Create a HTML file"  class="btn">HTML</button>
+                        <button id="txtFileTypeButton" title="Create a TXT File" class="btn">Plain Text</button>
+                        <button id="htmlFileTypeButton" title="Create a HTML File" class="btn">Rich Text</button>
+                        <button id="mdFileTypeButton" title="Create a MarkDown File" class="btn">MarkDown</button>
                     </div>
                 </div>
             </div>
             <div class="control-group">
-                <label class="control-label" for="newFileName">Filename</label>
+                <label class="control-label" for="newFileName">Title</label>
                 <div class="controls">
-                    <input type="text" id="newFileName" id="newFileName" placeholder="Filename">
+                    <input type="text" id="newFileName" class="input-xlarge" placeholder="Title of the file">
                 </div>
-            </div>            
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="newFileNameTags">Tags</label>
+                <div class="controls">
+                    <input type="text" id="newFileNameTags" name="newFileNameTags" autocomplete="off" class="input-xlarge" placeholder="Comma separated list of tags">
+                </div>
+            </div>
+            <div class="control-group">
+			    <div class="controls">
+			      <label class="checkbox">
+			        <input type="checkbox" id="tagWithCurrentDate"> Tag with current date (e.g. 20131210 for 10th of December, 2013)
+			      </label>
+			    </div>          	
+            </div>                        
+            <!--div class="control-group">
+			    <div class="controls">
+			      <label class="checkbox">
+			        <input type="checkbox"> Creates the file in YYYYMM (e.g. 201312) subdirectory.
+			      </label>
+			    </div>          	
+            </div-->            
         </div>
         <div class="modal-footer">
             <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>

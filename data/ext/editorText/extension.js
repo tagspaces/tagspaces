@@ -66,20 +66,20 @@ define(function(require, exports, module) {
                 TSCORE.IO.loadTextFile(filePath);
             });
 		});
-	}
+	};
 	
 	exports.viewerMode = function(isViewerMode) {
 	    cmEditor.readOnly = isViewerMode;      
-	}
+	};
 	
 	exports.setContent = function(content) {
 //        console.log("Content: "+content);
 	    cmEditor.setValue(content);
-	}
+	};
 	
 	exports.getContent = function() {
 	    return cmEditor.getValue();
-	}
+	};
 	
 	var filetype = new Array();
 	filetype["h"] = "clike";

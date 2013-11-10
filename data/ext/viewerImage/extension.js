@@ -33,19 +33,19 @@ define(function(require, exports, module) {
                 UI.buildUI();
                 TSCORE.hideLoadingAnimation();              
 		});    
-	}
+	};
 	
 	exports.viewerMode = function(isViewerMode) {
 		console.log("viewerMode not supported on this extension");  
-	}
+	};
 	
 	exports.setContent = function(content) {
 		console.log("setContent not supported on this extension"); 	
-	}
+	};
 	
 	exports.getContent = function() {
 		console.log("getContent not supported on this extension"); 	
-	}
+	};
 	
     // Vars
     exports.Title                   = extensionTitle;

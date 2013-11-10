@@ -11,7 +11,9 @@ define(function(require, exports, module) {
     var editor = undefined;
 	var formatter = undefined;
 	
-	var fileContent = undefined;	
+	var fileContent = undefined;
+	var fileType = undefined;
+		
 
 	var showAlertDialog = function(message, title) {
 	    if (!title) { title = 'Alert'; }	
@@ -68,10 +70,24 @@ define(function(require, exports, module) {
 
     var showFileCreateDialog = function() {
         fileContent = TSCORE.Config.getNewTextFileContent(); // Default new file in text file
-        $( "#newFileName" ).val(".txt");
+        fileType = "txt";
+        
+        $( "#newFileNameTags" ).typeahead( {
+            "source":  TSCORE.Config.getAllTags()
+        });     
+        $("#newFileNameTags").val("");     
+		$("#newFileName").val("");     
+		$("#tagWithCurrentDate").prop('checked', false);     
+
         $( '#dialogFileCreate' ).modal({show: true});
         $( '#txtFileTypeButton' ).button('toggle');
+        		
+		$('#dialogFileCreate').on('shown', function () {
+		    $('#newFileName').focus();
+		});
     };
+
+
     
     var showFileRenameDialog = function() {
         $( "#renamedFileName" ).val(TSCORE.TagUtils.extractFileName(TSCORE.selectedFiles[0]));
@@ -96,10 +112,8 @@ define(function(require, exports, module) {
             e.preventDefault();
             	        
 	        fileContent = TSCORE.Config.getNewTextFileContent();
-	        //Leave the filename as it is by no extension
-	        if($( "#newFileName" ).val().lastIndexOf(".")>=0) {
-	            $( "#newFileName" ).val($( "#newFileName" ).val().substring(0,$( "#newFileName" ).val().lastIndexOf("."))+".txt");  
-	        }
+	        fileType = "txt";
+
 	    });            
 	
 	    $( "#htmlFileTypeButton" ).click(function(e) {
@@ -107,10 +121,7 @@ define(function(require, exports, module) {
             e.preventDefault();
             	        
 	        fileContent = TSCORE.Config.getNewHTMLFileContent();
-	        //Leave the filename as it is by no extension
-	        if($( "#newFileName" ).val().lastIndexOf(".")>=0) {
-	            $( "#newFileName" ).val($( "#newFileName" ).val().substring(0,$( "#newFileName" ).val().lastIndexOf("."))+".html");            
-	        }
+			fileType = "html";
 	    }); 
 	    
 	    $( "#mdFileTypeButton" ).click(function(e) {
@@ -118,25 +129,39 @@ define(function(require, exports, module) {
             e.preventDefault();
             	        
 	        fileContent = TSCORE.Config.getNewMDFileContent();
-	        //Leave the filename as it is by no extension
-	        if($( "#newFileName" ).val().lastIndexOf(".")>=0) {
-	            $( "#newFileName" ).val($( "#newFileName" ).val().substring(0,$( "#newFileName" ).val().lastIndexOf("."))+".md");            
-	        }
+			fileType = "md";
 	    });     
+	    
 	
 	    $( '#fileCreateConfirmButton' ).click(function() {
-            var bValid = true;                
-//                bValid = bValid && checkLength( newFileName, "filename", 4, 200 );
+	    	var fileTags = "";
+	    	var rawTags = $( "#newFileNameTags" ).val().split(",");
 
-/*            if(TSCORE.fileExists($( "#newFileName" ).val())) {
-                updateTips("File already exists.");
-                bValid = false;
-            } */
-            if ( bValid ) {
-                TSCORE.IO.saveTextFile(TSCORE.currentPath+TSCORE.TagUtils.DIR_SEPARATOR+$( "#newFileName" ).val(),fileContent);
-                TSCORE.startTime = new Date().getTime(); 
-                TSCORE.IO.listDirectory(TSCORE.currentPath);                    
-            }
+		    rawTags.forEach(function (value, index) {         
+	            if(index == 0) {
+	                fileTags = value;                 
+	            } else {
+	                fileTags = fileTags + TSCORE.TagUtils.tagDelimiter + value;                                 
+	            }
+	        }); 
+
+			if($("#tagWithCurrentDate").prop("checked")) {
+	            if(fileTags.length < 1) {
+	                fileTags = TSCORE.TagUtils.formatDateTime4Tag(new Date());                 
+	            } else {
+	                fileTags = fileTags + TSCORE.TagUtils.tagDelimiter + TSCORE.TagUtils.formatDateTime4Tag(new Date());                                 
+	            }				
+			}
+			
+			if(fileTags.length > 0) {
+				fileTags = TSCORE.TagUtils.beginTagContainer + fileTags + TSCORE.TagUtils.endTagContainer;
+			}
+
+			var fileName = TSCORE.currentPath+TSCORE.TagUtils.DIR_SEPARATOR+$( "#newFileName" ).val()+fileTags+"."+fileType;
+
+            TSCORE.IO.saveTextFile(fileName,fileContent);
+            TSCORE.IO.listDirectory(TSCORE.currentPath);                    
+
         });
 
         $( '#renameFileButton' ).click(function() {

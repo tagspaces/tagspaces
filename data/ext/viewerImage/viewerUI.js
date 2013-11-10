@@ -118,7 +118,7 @@ console.log("Loading UI for Image Viewer");
 */
     
 	    
-	}	
+	};	
 
 	exports.ExtUI	 				= ExtUI;
 });
