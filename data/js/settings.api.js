@@ -167,6 +167,48 @@ define(function(require, exports, module) {
                 );
             }
 
+            if(oldBuildNumber <= 1600) {  
+                addFileType({ "type": "h",     "viewer": "editorText",    "editor": "editorText" });             	              
+                addFileType({ "type": "c",     "viewer": "editorText",    "editor": "editorText" });             	              
+                addFileType({ "type": "clj",   "viewer": "editorText",    "editor": "editorText" });             	              
+                addFileType({ "type": "coffee","viewer": "editorText",    "editor": "editorText" });             	              
+                addFileType({ "type": "cpp",   "viewer": "editorText",    "editor": "editorText" });             	                              
+                addFileType({ "type": "cs",    "viewer": "editorText",    "editor": "editorText" });             	              
+                addFileType({ "type": "groovy","viewer": "editorText",    "editor": "editorText" });             	              
+                addFileType({ "type": "haxe",  "viewer": "editorText",    "editor": "editorText" });             	              
+                addFileType({ "type": "java",  "viewer": "editorText",    "editor": "editorText" });             	                                              
+                addFileType({ "type": "jsm",   "viewer": "editorText",    "editor": "editorText" });
+                addFileType({ "type": "less",  "viewer": "editorText",    "editor": "editorText" });             	              
+                addFileType({ "type": "lua",   "viewer": "editorText",    "editor": "editorText" });             	              
+                addFileType({ "type": "ml",    "viewer": "editorText",    "editor": "editorText" });             	              
+                addFileType({ "type": "mli",   "viewer": "editorText",    "editor": "editorText" });             	                              
+                addFileType({ "type": "pl",    "viewer": "editorText",    "editor": "editorText" });             	                                                                                                                                                              
+                addFileType({ "type": "php",   "viewer": "editorText",    "editor": "editorText" });             	              
+                addFileType({ "type": "py",    "viewer": "editorText",    "editor": "editorText" });             	              
+                addFileType({ "type": "rb",    "viewer": "editorText",    "editor": "editorText" });             	              
+                addFileType({ "type": "sh",    "viewer": "editorText",    "editor": "editorText" });             	              
+                addFileType({ "type": "sql",   "viewer": "editorText",    "editor": "editorText" });             	              
+                addFileType({ "type": "mkd",   "viewer": "viewerMD",    "editor": "editorText" });             	              
+                addFileType({ "type": "mdwn",  "viewer": "viewerMD",    "editor": "editorText" });             	              
+                addFileType({ "type": "markdown", "viewer": "viewerMD",    "editor": "editorText" });             	                              
+                addFileType({ "type": "avi",    "viewer": "viewerBrowser", "editor": "false" }); 
+                addFileType({ "type": "ogg",    "viewer": "viewerBrowser", "editor": "false" }); 
+                addFileType({ "type": "ogv",    "viewer": "viewerBrowser", "editor": "false" }); 
+                addFileType({ "type": "oga", 	"viewer": "viewerBrowser", "editor": "false" }); 
+                addFileType({ "type": "ogx",    "viewer": "viewerBrowser", "editor": "false" }); 
+                addFileType({ "type": "spx",    "viewer": "viewerBrowser", "editor": "false" }); 
+                addFileType({ "type": "opus",   "viewer": "viewerBrowser", "editor": "false" }); 
+                addFileType({ "type": "mp3", 	"viewer": "viewerBrowser", "editor": "false" }); 
+                addFileType({ "type": "mp4",    "viewer": "viewerBrowser", "editor": "false" }); 
+                addFileType({ "type": "m4p",    "viewer": "viewerBrowser", "editor": "false" }); 
+                addFileType({ "type": "wav",    "viewer": "viewerBrowser", "editor": "false" }); 
+                addFileType({ "type": "wave", 	"viewer": "viewerBrowser", "editor": "false" }); 
+                addFileType({ "type": "webm",   "viewer": "viewerBrowser", "editor": "false" });                 
+                addFileType({ "type": "m4v",    "viewer": "viewerBrowser", "editor": "false" }); 
+                addFileType({ "type": "m4a", 	"viewer": "viewerBrowser", "editor": "false" }); 
+                addFileType({ "type": "mov",    "viewer": "viewerBrowser", "editor": "false" });                 
+			}
+			
 	    	saveSettings();   		
 		}
 	};
