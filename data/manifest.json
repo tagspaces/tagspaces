@@ -1,8 +1,8 @@
 {
   "name": "TagSpaces",
-  "version": "1.6.1605",
+  "version": "1.6.1606",
   "manifest_version": 2,
-  "description": "File manager for your local files, with support of tagging and editing.",
+  "description": "An offline file browser/manager for your local files, with support of tagging and editing.",
   "icons": {
     "16" : "icons/icon16.png",
     "48" : "icons/icon48.png",
