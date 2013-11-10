@@ -35,7 +35,7 @@ define(function(require, exports, module) {
 
         optionsUI.append($("<div class='control-group'>", {})
             .append($("<div class='controls'>", {})
-                .append($("<label class='checkbox'>Show hidden files/directories in *nix sytemes</label>")
+                .append($("<label class='checkbox' title='Show hidden files/directories in *nix sytemes'>Show files/directories with a dot(.) in front of the name</label>")
                     .append($("<input type='checkbox' id='showHiddenFilesCheckbox' />"))
                 )
             )
