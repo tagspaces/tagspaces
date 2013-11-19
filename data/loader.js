@@ -99,6 +99,7 @@ requirejs.config({
         tscoreui:               'js/core.ui',
         tspostioapi:            'js/postioapi',
         tsioapi:                IO_JS,
+        tsioapidropbox:         'js/ioapi.dropbox',
     }, 
     shim: {
         'underscore':               { exports: '_' }, 

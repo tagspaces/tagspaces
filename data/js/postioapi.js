@@ -44,9 +44,6 @@ define(function(require, exports, module) {
     
     exports.listDirectory = function(anotatedDirList) {
         TSCORE.PerspectiveManager.updateFileBrowserData(anotatedDirList);
-    };
-    
-    exports.getSubdirs = function(anotatedDirList) {
         TSCORE.updateSubDirs(anotatedDirList);
     };
     

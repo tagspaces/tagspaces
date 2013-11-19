@@ -34,79 +34,12 @@ define(function (require, exports, module) {
 
     // TODO recursivly calling callback not working        
     function scanDirectory(dirPath, index) {
-        fsRoot.getDirectory(normalizePath(dirPath+"/"), {create: false, exclusive: false}, 
-            function (dirEntry) {
-                var directoryReader = dirEntry.createReader();
-                // Get a list of all the entries in the directory
-                directoryReader.readEntries(
-                    function (entries) { 
-                        var i;
-                        var recursed = false;
-                        for (i = 0; i < entries.length; i++) {
-                            index.push({
-                                "name": entries[i].name,
-                                "type": entries[i].isFile?"file":"directory",
-                                "size": "0",
-                                "lmdt": "0",
-                                "path": entries[i].fullPath  
-                            }); 
-                            if (entries[i].isDirectory) {
-                                recursed = true;
-                                scanDirectory(entries[i].fullPath, index);
-                            } 
-                        }
-                        if (!recursed) return index; 
-                    }, function (error) { // error get file system
-                        console.log("Dir List Error: " + error.code);
-                    }            
-               );
-           },
-           function (error) {
-                console.log("Getting dir: "+dirPath+" failed with error code: " + error.code);
-           }                
-        ); 
+
     }
     
-    function generateDirectoryTree(dirPath) {
-        // TODO recursivly calling callback not working
-        dirPath = dirPath+"/"; // TODO make it platform independent
-        dirPath = normalizePath(dirPath);
-        var tree = {}; 
-        fsRoot.getDirectory(dirPath, {create: false, exclusive: false}, 
-            function (dirEntry) {
-                var directoryReader = dirEntry.createReader();
-                // Get a list of all the entries in the directory
-                directoryReader.readEntries(
-                    function (entries) { 
-                        tree["name"] = dirEntry.name;
-                        tree["type"] = "directory";
-                        tree["lmdt"] = 0;   
-                        tree["path"] = dirEntry.fullPath;         
-                        tree["children"] = [];            
-                        for (var i=0; i < entries.length; i++) {
-                            if (entries[i].isFile) {
-                                tree["children"].push({
-                                    "name": entries[i].name,
-                                    "type": "file",
-                                    "size": "0",
-                                    "lmdt": "0",   
-                                    "path": entries[i].fullPath 
-                                });            
-                            } else {
-                                tree["children"].push( generateDirectoryTree(entries[i].fullPath) );                   
-                            }  
-                        }
-                        return tree;
-                    }, 
-                    function (error) { // error get file system
-                        console.log("Dir Tree Creation Error: " + error.code);
-                    }            
-               );
-           },
-           function (error) {
-                console.log("Getting dir: "+dirPath+" failed with error code: " + error.code);
-           }                
-        );
+    // TODO recursivly calling callback not working
+    function generateDirectoryTree(dirPath) {        
+
     }   
     
     function isWindows() {
@@ -144,7 +77,7 @@ define(function (require, exports, module) {
         ;            
     };   
     
-    exports.listDirectory = function (dirPath) {
+    var listDirectory = function (dirPath) {
         // directory path format DCIM/Camera/ !
         dirPath = dirPath+"/"; // TODO make it platform independent
         dirPath = normalizePath(dirPath);
@@ -163,12 +96,13 @@ define(function (require, exports, module) {
                         for (i = 0; i < entries.length; i++) {
                             console.log("File: "+entries[i].name);
                             anotatedDirList.push({
-                                "name": entries[i].name,
-                                "type": entries[i].isFile?"file":"directory",
-                                "size": "0",
-                                "lmdt": "0",
-                                "path": entries[i].fullPath
-                            });                                 
+                                "name":   entries[i].name,
+                                "isFile": entries[i].isFile,
+                                "size":   "0",
+                                "lmdt":   "0",
+                                "path":   entries[i].fullPath
+                            });                            
+                            // TODO get file size and last modified date in cordova     
                         }
                         //console.log("Dir content: " + JSON.stringify(entries));
                         TSPOSTIO.listDirectory(anotatedDirList);  
@@ -182,46 +116,8 @@ define(function (require, exports, module) {
            }                
         ); 
     };
-    
-    exports.getSubdirs = function(dirPath) {
-        dirPath = dirPath+"/"; // TODO make it platform independent
-        dirPath = normalizePath(dirPath);
-                
-        console.log("Getting subdirs: "+dirPath);
-        
-        fsRoot.getDirectory(dirPath, {create: false, exclusive: false}, 
-            function (dirEntry) {
-                var directoryReader = dirEntry.createReader();        
-                // Get a list of all the entries in the directory
-                directoryReader.readEntries(
-                    function (entries) { 
-                        var i;
-                        var anotatedDirList = [];
-                        for (i = 0; i < entries.length; i++) {
-                            console.log(entries[i].name);
-                            if(entries[i].isDirectory) {
-                                anotatedDirList.push({
-                                    "title": entries[i].name,
-                                    "isFolder": true,
-                                    "key": entries[i].fullPath
-                                }); 
-                            }                              
-                        }
-                        console.log("Subdir content: " + JSON.stringify(entries));
-                        TSPOSTIO.getSubdirs(anotatedDirList);                      
-                        
-                    }, function (error) { // error get file system
-                        console.log("Dir List Error: " + error.code);
-                    }            
-               );
-           },
-           function (error) {
-                console.log("Getting dir: "+dirPath+" failed with error code: " + error.code);
-           }                
-        );         
-    };
 
-    exports.deleteElement = function(path) {
+    var deleteElement = function(path) {
         console.log("Deleting: "+path);
         
         path = normalizePath(path);
@@ -243,7 +139,7 @@ define(function (require, exports, module) {
         );
     };
 
-    exports.createDirectoryIndex = function(dirPath) {
+    var createDirectoryIndex = function(dirPath) {
         console.log("Creating index for directory: "+dirPath);
         TSCORE.showAlertDialog("Creating directory index is not supported on Android yet.");                 
 /*        var directoryIndex = [];
@@ -252,7 +148,7 @@ define(function (require, exports, module) {
         TSPOSTIO.createDirectoryIndex(directoryIndex); */
     };
     
-    exports.createDirectoryTree = function(dirPath) {
+    var createDirectoryTree = function(dirPath) {
         console.log("Creating directory index for: "+dirPath);
         TSCORE.showAlertDialog("Creating directory tree is not supported on Android yet.");                 
 /*        var directoyTree = generateDirectoryTree(dirPath);
@@ -260,7 +156,7 @@ define(function (require, exports, module) {
         TSPOSTIO.createDirectoryTree(directoyTree);*/
     };
 
-    exports.loadTextFile = function(filePath) {
+    var loadTextFile = function(filePath) {
         filePath = normalizePath(filePath);
         console.log("Loading file: "+filePath);
         fsRoot.getFile(filePath, {create: false, exclusive: false}, 
@@ -284,7 +180,7 @@ define(function (require, exports, module) {
         ); 
     };
     
-    exports.saveTextFile = function(filePath,content) {
+    var saveTextFile = function(filePath,content) {
         filePath = normalizePath(filePath);
         console.log("Saving file: "+filePath);
         fsRoot.getFile(filePath, {create: true, exclusive: false}, 
@@ -307,7 +203,7 @@ define(function (require, exports, module) {
         ); 
     };   
 
-    exports.createDirectory = function(dirPath) {
+    var createDirectory = function(dirPath) {
         dirPath = normalizePath(dirPath);
         console.log("Creating directory: "+dirPath);    
         fsRoot.getDirectory(dirPath, {create: true, exclusive: false}, 
@@ -320,7 +216,7 @@ define(function (require, exports, module) {
         );
     }; 
     
-    exports.renameFile = function(filePath, newFilePath) {
+    var renameFile = function(filePath, newFilePath) {
         filePath = normalizePath(filePath);
         var newFileName = newFilePath.substring(newFilePath.lastIndexOf('/')+1);
         var newFileParentPath = normalizePath(newFilePath.substring(0, newFilePath.lastIndexOf('/')));
@@ -352,24 +248,39 @@ define(function (require, exports, module) {
         );
     };
 
-    exports.selectDirectory = function() {
+    var selectDirectory = function() {
         console.log("Operation selectDirectory not supported on Android yet!");
         TSCORE.showAlertDialog("Selecting directory not supported on Android yet, please enter the desired directory path manually in the textbox!");         
     };
 
-    exports.selectFile = function() {
+    var selectFile = function() {
         console.log("Operation selectFile not supported on Android!");
     };
     
-    exports.checkAccessFileURLAllowed = function() {
+    var checkAccessFileURLAllowed = function() {
         console.log("checkAccessFileURLAllowed function not relevant for Android..");        
     };
     
-    exports.openDirectory = function(dirPath) {
+    var openDirectory = function(dirPath) {
         TSCORE.showAlertDialog("Select file functionality not supported on Android!");
     };
     
-    exports.openExtensionsDirectory = function() {
+    var openExtensionsDirectory = function() {
         TSCORE.showAlertDialog("Open extensions directory functionality not supported on Android!"); 
     };
+    
+	exports.createDirectory 			= createDirectory; 
+	exports.renameFile 					= renameFile;
+	exports.loadTextFile 				= loadTextFile;
+	exports.saveTextFile 				= saveTextFile;
+	exports.listDirectory 				= listDirectory;
+	exports.deleteElement 				= deleteElement;
+    exports.createDirectoryIndex 		= createDirectoryIndex;
+    exports.createDirectoryTree 		= createDirectoryTree;
+	exports.selectDirectory 			= selectDirectory;
+	exports.openDirectory				= openDirectory;
+	exports.selectFile 					= selectFile;
+	exports.openExtensionsDirectory 	= openExtensionsDirectory;
+	exports.checkAccessFileURLAllowed 	= checkAccessFileURLAllowed;
+	exports.checkNewVersion 			= checkNewVersion;	    
 });

@@ -90,18 +90,6 @@ define(function(require, exports, module) {
                 TSCORE.updateLogger("Indexing directory failed");        
             }
             break;  
-          case "getSubdirs":
-            if(message.success){
-                var dirListing = [];
-                for (var i=0; i < message.content.length; i++) {
-                    dirListing.push(message.content[i]);
-                }
-                // TODO JSON functions are a workarround for a bug....
-                TSPOSTIO.getSubdirs(JSON.parse( JSON.stringify(dirListing)));
-            } else {
-                TSCORE.updateLogger("Getting subdirs failed");       
-            }
-            break;  
           case "delete":
             if(message.success){
                 TSPOSTIO.deleteElement();         
@@ -128,7 +116,7 @@ define(function(require, exports, module) {
         }   
     }, false);
     
-    exports.saveSettings = function(content) {
+    var saveSettings = function(content) {
         console.log("Saving setting...");        
         TSCORE.showLoadingAnimation();
         var event = document.createEvent('CustomEvent');
@@ -139,7 +127,7 @@ define(function(require, exports, module) {
         document.documentElement.dispatchEvent(event);
     };
     
-    exports.loadSettings = function() {
+    var loadSettings = function() {
         console.log("Loading setting from firefox preferences...");
         TSCORE.showLoadingAnimation();            
         var event = document.createEvent('CustomEvent');
@@ -149,7 +137,7 @@ define(function(require, exports, module) {
         document.documentElement.dispatchEvent(event);
     };
     
-    exports.createDirectory = function(dirPath) {
+    var createDirectory = function(dirPath) {
     	console.log("Directory "+dirPath+" created.");
         TSCORE.showLoadingAnimation();			
         var event = document.createEvent('CustomEvent');
@@ -160,7 +148,7 @@ define(function(require, exports, module) {
         document.documentElement.dispatchEvent(event);
     };
     
-    exports.loadTextFile = function(filePath) {
+    var loadTextFile = function(filePath) {
     	console.log("Loading file: "+filePath);
         TSCORE.showLoadingAnimation();	
         var event = document.createEvent('CustomEvent');
@@ -171,7 +159,7 @@ define(function(require, exports, module) {
         document.documentElement.dispatchEvent(event);	
     };
     
-    exports.renameFile = function(filePath, newFilePath) {
+    var renameFile = function(filePath, newFilePath) {
     	console.log("Renaming "+filePath+" to "+newFilePath);
         TSCORE.showLoadingAnimation();
         var event = document.createEvent('CustomEvent');
@@ -183,7 +171,7 @@ define(function(require, exports, module) {
         document.documentElement.dispatchEvent(event);
     };
     
-    exports.saveTextFile = function(filePath,content) {
+    var saveTextFile = function(filePath,content) {
     	console.log("Saving file: "+filePath);
         TSCORE.showLoadingAnimation();	
         var event = document.createEvent('CustomEvent');
@@ -195,7 +183,7 @@ define(function(require, exports, module) {
         document.documentElement.dispatchEvent(event);	
     };
     
-    exports.listDirectory = function(dirPath) {
+    var listDirectory = function(dirPath) {
     	console.log("Listing directory: "+dirPath);
         TSCORE.showLoadingAnimation();	
         var event = document.createEvent('CustomEvent');
@@ -206,18 +194,7 @@ define(function(require, exports, module) {
         document.documentElement.dispatchEvent(event);		
     };
     
-    exports.getSubdirs = function(dirPath) {
-    	console.log("Getting subdirs: "+dirPath);
-        TSCORE.showLoadingAnimation();	
-        var event = document.createEvent('CustomEvent');
-        event.initCustomEvent("addon-message", true, true, {"detail":{
-    		"command": "getSubdirs",
-    		"path": dirPath
-    	}});	
-        document.documentElement.dispatchEvent(event);	
-    };
-    
-    exports.deleteElement = function(path) {
+    var deleteElement = function(path) {
     	console.log("Deleting: "+path);
         TSCORE.showLoadingAnimation();	
         var event = document.createEvent('CustomEvent');
@@ -228,11 +205,11 @@ define(function(require, exports, module) {
         document.documentElement.dispatchEvent(event);	
     };
     
-    exports.checkAccessFileURLAllowed = function() {
+    var checkAccessFileURLAllowed = function() {
         console.log("checkAccessFileURLAllowed function not relevant for node..");
     };
     
-    exports.selectDirectory = function() {
+    var selectDirectory = function() {
     	console.log("Selecting directory...");
         var event = document.createEvent('CustomEvent');
         event.initCustomEvent("addon-message", true, true, {"detail":{
@@ -241,7 +218,7 @@ define(function(require, exports, module) {
         document.documentElement.dispatchEvent(event);	
     };
     
-    exports.selectFile = function() {
+    var selectFile = function() {
     	console.log("Selecting file...");
         var event = document.createEvent('CustomEvent');
         event.initCustomEvent("addon-message", true, true, {"detail":{
@@ -250,7 +227,7 @@ define(function(require, exports, module) {
         document.documentElement.dispatchEvent(event);	
     };
         
-    exports.openDirectory = function(dirPath) {
+    var openDirectory = function(dirPath) {
     	console.log("Opening directory: "+dirPath);
         var event = document.createEvent('CustomEvent');
         event.initCustomEvent("addon-message", true, true, {"detail":{
@@ -260,7 +237,7 @@ define(function(require, exports, module) {
         document.documentElement.dispatchEvent(event);	
     };
     
-    exports.openExtensionsDirectory = function() {
+    var openExtensionsDirectory = function() {
         console.log("Opening extensions directory...");
         var event = document.createEvent('CustomEvent');
         event.initCustomEvent("addon-message", true, true, {"detail":{
@@ -269,7 +246,7 @@ define(function(require, exports, module) {
         document.documentElement.dispatchEvent(event);  
     };
     
-    exports.createDirectoryIndex = function(dirPath) {
+    var createDirectoryIndex = function(dirPath) {
         console.log("Creating directory index for: "+dirPath);
         TSCORE.showLoadingAnimation();   
         var event = document.createEvent('CustomEvent');
@@ -280,7 +257,7 @@ define(function(require, exports, module) {
         document.documentElement.dispatchEvent(event);  
     };
     
-    exports.createDirectoryTree = function(dirPath) {
+    var createDirectoryTree = function(dirPath) {
         console.log("Creating directory tree for: "+dirPath);
         TSCORE.showLoadingAnimation();   
         var event = document.createEvent('CustomEvent');
@@ -291,7 +268,7 @@ define(function(require, exports, module) {
         document.documentElement.dispatchEvent(event);  
     };
     
-    exports.checkNewVersion = function() {
+    var checkNewVersion = function() {
         console.log("Checking for new version...");
         TSCORE.showLoadingAnimation();   
         var event = document.createEvent('CustomEvent');
@@ -300,5 +277,23 @@ define(function(require, exports, module) {
         }});
         document.documentElement.dispatchEvent(event);  
     };
+    
+    exports.saveSettings 				= saveSettings;
+    exports.loadSettings 				= loadSettings;
+    
+	exports.createDirectory 			= createDirectory; 
+	exports.renameFile 					= renameFile;
+	exports.loadTextFile 				= loadTextFile;
+	exports.saveTextFile 				= saveTextFile;
+	exports.listDirectory 				= listDirectory;
+	exports.deleteElement 				= deleteElement;
+    exports.createDirectoryIndex 		= createDirectoryIndex;
+    exports.createDirectoryTree 		= createDirectoryTree;
+	exports.selectDirectory 			= selectDirectory;
+	exports.openDirectory				= openDirectory;
+	exports.selectFile 					= selectFile;
+	exports.openExtensionsDirectory 	= openExtensionsDirectory;
+	exports.checkAccessFileURLAllowed 	= checkAccessFileURLAllowed;
+	exports.checkNewVersion 			= checkNewVersion;	    
 
 });

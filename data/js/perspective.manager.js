@@ -58,7 +58,7 @@ var initViews = function () {
             }            
         });       
     }
-}
+};
 
 var initViewSwitcher = function() {
     var extensions = TSCORE.Config.getPerspectives();
@@ -69,7 +69,7 @@ var initViewSwitcher = function() {
             if(value.ID == extensions[i].id) {
                 curPers = value;
             }
-        })   
+        }); 
       
         $("#viewSwitcher").append($("<button>", { 
             "viewid": curPers.ID,
@@ -78,13 +78,13 @@ var initViewSwitcher = function() {
             "text":     " "+curPers.Title    
         }).prepend($("<i>", {
             "class":  curPers.Icon
-        })))
+        })));
     
         // Adding event listener & icon to the radio button
         $( "#"+curPers.ID+"Button" ).click(function() { 
             changeView($(this).attr("viewid"));     
-        })   
-    }     
+        });   
+    };     
 
     if(perspectives.length > 0) {
         TSCORE.currentView = perspectives[0].ID;       
@@ -92,7 +92,7 @@ var initViewSwitcher = function() {
         $("#viewSwitcher").find("button").first().addClass("active");
         changeView($("#viewSwitcher").find("button").first().attr("viewid"));
     }
-}
+};
 
 var getNextFile = function (filePath) {
 	for (var i=0; i < perspectives.length; i++) {   
@@ -104,7 +104,7 @@ var getNextFile = function (filePath) {
 	 		}
  		}
 	}
-}
+};
 
 var getPrevFile = function (filePath) {
 	for (var i=0; i < perspectives.length; i++) {   
@@ -116,7 +116,7 @@ var getPrevFile = function (filePath) {
 	 		}
  		}
 	}
-}
+};
 
 var updateTreeData = function (treeData) {
 	for (var i=0; i < perspectives.length; i++) {   
@@ -126,7 +126,7 @@ var updateTreeData = function (treeData) {
  			console.log("Error while executing 'updateTreeData' on "+perspectives[i].ID+" "+e);
  		}
 	}
-}
+};
 
 var updateFileBrowserData = function(dirList) {
     console.log("Updating the file browser data...");
@@ -140,7 +140,7 @@ var updateFileBrowserData = function(dirList) {
     var path = undefined;
     var filename = undefined;
     for (var i=0; i < dirList.length; i++) {
-        if (dirList[i].type == "file"){  
+        if (dirList[i].isFile){  
             // Considering Unix HiddenEntries (. in the beginning of the filename)
             if (TSCORE.Config.getShowUnixHiddenEntries() || 
                (!TSCORE.Config.getShowUnixHiddenEntries() && (dirList[i].name.indexOf(".") != 0))) {
@@ -148,7 +148,7 @@ var updateFileBrowserData = function(dirList) {
                  path = dirList[i].path;
                  tags = TSCORE.TagUtils.extractTags(path);
                  title = TSCORE.TagUtils.extractTitle(path);
-				 ext = TSCORE.TagUtils.extractFileExtension(path)
+				 ext = TSCORE.TagUtils.extractFileExtension(path);
                  fileSize = dirList[i].size;
                  fileLMDT = dirList[i].lmdt;
                  
@@ -160,13 +160,13 @@ var updateFileBrowserData = function(dirList) {
         }
     }    
     changeView(TSCORE.currentView);    
-}
+};
 
 var refreshFileListContainer = function() {
 	// TODO consider search view
 	TSCORE.startTime = new Date().getTime(); 
     TSCORE.IO.listDirectory(TSCORE.currentPath);  
-}
+};
 
 var changeView = function (viewType) {
     console.log("Change to "+viewType+" view.");
@@ -203,7 +203,7 @@ var changeView = function (viewType) {
     TSCORE.PerspectiveManager.clearSelectedFiles(); 
 	  
     TSCORE.hideLoadingAnimation();     
-}
+};
 
 var clearSelectedFiles = function () {
     // Clear selected files
@@ -212,10 +212,10 @@ var clearSelectedFiles = function () {
  		try { 			
  			perspectives[i].clearSelectedFiles();
  		} catch(e) {
- 			console.log("Error while executing 'clearSelectedFiles' on "+perspectives[i].ID)
+ 			console.log("Error while executing 'clearSelectedFiles' on "+perspectives[i].ID);
  		} 		
 	}	
-}
+};
 
 var setFileFilter = function (filter) {
 	for (var i=0; i < perspectives.length; i++) {   
@@ -224,12 +224,12 @@ var setFileFilter = function (filter) {
                 perspectives[i].setFileFilter(filter); 		        
  		    } 	
  		} catch(e) {
- 			console.log("Error while executing 'setFileFilter' on "+perspectives[i].ID)
+ 			console.log("Error while executing 'setFileFilter' on "+perspectives[i].ID);
  		} 		 		
 	}	
-}
+};
 
-exports.initViews 					 = initViews	
+exports.initViews 					 = initViews;	
 exports.getNextFile					 = getNextFile;
 exports.getPrevFile 				 = getPrevFile;
 exports.updateTreeData				 = updateTreeData;

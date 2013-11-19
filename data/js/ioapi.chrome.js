@@ -59,11 +59,11 @@ IO-API
                     }
                 }
                 index.push({
-	                "name": dirList[i],
-	                "type": isDir?"directory":"file",
-	                "size": fileSize,
-	                "lmdt": lastDateModified,
-	                "path": path  
+	                "name":   dirList[i],
+	                "isFile": !isDir,
+	                "size":   fileSize,
+	                "lmdt":   lastDateModified,
+	                "path":   path  
                 }); 
 	            if (isDir) {
 	                scanDirectory(path, index);
@@ -79,7 +79,7 @@ IO-API
         try {
             var tree = {}; 
             tree["name"] = dirPath.substring(dirPath.lastIndexOf(getDirseparator()) + 1, dirPath.length);
-            tree["type"] = "directory";
+            tree["type"] = false;
             tree["lmdt"] = 0;   
             tree["path"] = dirPath;         
             tree["children"] = [];            
@@ -95,11 +95,11 @@ IO-API
                     	lastDateModified = new Date(nativeIO.getFileLastDateModified(path)*1000);                    	
                     }
                     tree["children"].push({
-                        "name": dirList[i],
-                        "type": "file",
-                        "size": fileSize,
-                        "lmdt": lastDateModified,   
-                        "path": path 
+                        "name":   dirList[i],
+                        "isFile": true,
+                        "size":   fileSize,
+                        "lmdt":   lastDateModified,   
+                        "path":   path 
                     });            
                 } else {
                     tree["children"].push( generateDirectoryTree(path) );                   
@@ -123,7 +123,7 @@ IO-API
 		}
 	}
 	
-    exports.checkNewVersion = function() {
+    var checkNewVersion = function() {
         console.log("Checking for new version...");
         var cVer = TSCORE.Config.DefaultSettings["appVersion"]+"."+TSCORE.Config.DefaultSettings["appBuild"];
         $.ajax({
@@ -139,7 +139,7 @@ IO-API
         ;            
     };	
 	
-	exports.loadTextFile = function(filePath) {
+	var loadTextFile = function(filePath) {
 		console.log("Loading file: "+filePath);
 	    if(nativeIO.fileExists(filePath)) {
             var blob;
@@ -162,7 +162,7 @@ IO-API
 	    }	
 	};
 	
-	exports.listDirectory = function(dirPath) {
+	var listDirectory = function(dirPath) {
 		console.log("Listing directory: "+dirPath);
 		if(nativeIO.isDirectory(dirPath)) {
 			try {
@@ -181,7 +181,7 @@ IO-API
                     }
                     anotatedDirList.push({
 		                "name": dirList[i],
-		                "type": isDir?"directory":"file",
+		                "isFile": !isDir,
 		                "size": fileSize,
 		                "lmdt": lastDateModified,
 		                "path": path  
@@ -195,34 +195,8 @@ IO-API
 			console.error("Directory does not exists.");	
 		}	
 	};
-	
-	exports.getSubdirs = function(dirPath) {
-		console.log("Getting subdirs: "+dirPath);
-	    if(nativeIO.isDirectory(dirPath)) {
-	        try {
-				var dirList = nativeIO.getDirEntries(dirPath);
-	            var anotatedDirList = [];
-	            for (var i=0; i < dirList.length; i++) {
-	            	var path = dirPath+getDirseparator()+dirList[i];
-	            	var isDir = nativeIO.isDirectory(path);
-	                if(isDir) {
-	                    anotatedDirList.push({
-	                        "title": dirList[i],
-	                        "isFolder": true,
-	                        "key": path
-	                    }); 
-	                }            
-	            } 
-                TSPOSTIO.getSubdirs(anotatedDirList);
-	        } catch(ex) {
-	            console.error("Directory listing failed "+ex);
-	        }       
-	    } else {
-	        console.error("Directory does not exists.");    
-	    }
-	};
 
-    exports.deleteElement = function(path) {
+    var deleteElement = function(path) {
         console.log("Deleting: "+path);
         try {
             nativeIO.removeRecursively(path); 
@@ -232,7 +206,7 @@ IO-API
         }
     };
 
-    exports.createDirectoryIndex = function(dirPath) {
+    var createDirectoryIndex = function(dirPath) {
         console.log("Creating index for directory: "+dirPath);
         var directoryIndex = [];
         directoryIndex = scanDirectory(dirPath, directoryIndex);
@@ -240,14 +214,14 @@ IO-API
         TSPOSTIO.createDirectoryIndex(directoryIndex);
     };
     
-    exports.createDirectoryTree = function(dirPath) {
+    var createDirectoryTree = function(dirPath) {
         console.log("Creating directory index for: "+dirPath);
         var directoyTree = generateDirectoryTree(dirPath);
         //console.log(JSON.stringify(directoyTree));
         TSPOSTIO.createDirectoryTree(directoyTree);
     };
 
-    exports.saveTextFile = function(filePath,content) {
+    var saveTextFile = function(filePath,content) {
         console.log("Saving file: "+filePath);
         var byteArray = [];
         for (var i = 0; i < content.length; ++i)
@@ -265,7 +239,7 @@ IO-API
         reader.readAsArrayBuffer(blob);
     };   
 
-    exports.createDirectory = function(dirPath) {
+    var createDirectory = function(dirPath) {
         console.log("Creating directory: "+dirPath);    
         try {
             nativeIO.createDirectory(dirPath);
@@ -275,7 +249,7 @@ IO-API
         }
     };  
 	
-    exports.renameFile = function(filePath, newFilePath) {
+    var renameFile = function(filePath, newFilePath) {
         console.log("Renaming file: "+filePath+" to "+newFilePath);
         if(filePath.toLowerCase() == newFilePath.toLowerCase()) {
             console.log("Initial and target filenames are the same...");
@@ -324,7 +298,7 @@ IO-API
         }
     };
 
-	exports.selectDirectory = function() {
+	var selectDirectory = function() {
 		console.log("Select directory!");
         nativeIO.launchFolderSelect(function(dirPath){
 			if (dirPath && dirPath.length){
@@ -333,7 +307,7 @@ IO-API
 	    });
 	};
 
-    exports.selectFile = function() {
+    var selectFile = function() {
         console.log("Select file!");
         nativeIO.launchFileSelect(function(filePath){
             if (filePath && filePath.length){
@@ -342,7 +316,7 @@ IO-API
         });
     };
     
-    exports.checkAccessFileURLAllowed = function() {
+    var checkAccessFileURLAllowed = function() {
         chrome.extension.isAllowedFileSchemeAccess(function(isAllowedAccess) {
             if(!isAllowedAccess) {
                TSCORE.showAlertDialog(
@@ -356,15 +330,30 @@ IO-API
         });          
     };
     
-    exports.openDirectory = function(dirPath) {
+    var openDirectory = function(dirPath) {
         // TODO implement openDirectory
         console.log("Open directory functionality not implemented in chrome yet!");
         TSCORE.showAlertDialog("Select file functionality not implemented on chrome yet!");
     };
 	
-	exports.openExtensionsDirectory = function() {
+	var openExtensionsDirectory = function() {
 		// TODO implement openExtensionsDirectory
 		console.log("Open extensions directory functionality not implemented in chrome yet!");
 		TSCORE.showAlertDialog("Open extensions directory functionality not implemented on chrome yet!"); 
 	};
+	
+	exports.createDirectory 			= createDirectory; 
+	exports.renameFile 					= renameFile;
+	exports.loadTextFile 				= loadTextFile;
+	exports.saveTextFile 				= saveTextFile;
+	exports.listDirectory 				= listDirectory;
+	exports.deleteElement 				= deleteElement;
+    exports.createDirectoryIndex 		= createDirectoryIndex;
+    exports.createDirectoryTree 		= createDirectoryTree;
+	exports.selectDirectory 			= selectDirectory;
+	exports.openDirectory				= openDirectory;
+	exports.selectFile 					= selectFile;
+	exports.openExtensionsDirectory 	= openExtensionsDirectory;
+	exports.checkAccessFileURLAllowed 	= checkAccessFileURLAllowed;
+	exports.checkNewVersion 			= checkNewVersion;	
 });

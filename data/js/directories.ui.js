@@ -31,17 +31,18 @@ define(function(require, exports, module) {
     
     // Updates the directory subtree
     function updateSubDirs(dirList) {
-        console.log("Updating subdirs(TSCORE)..."+JSON.stringify(dirList));
-    
-        // Sort the dirList alphabetically
-        dirList.sort(function(a,b) { return a.title.localeCompare(b.title); });
+        //console.log("Updating subdirs(TSCORE)..."+JSON.stringify(dirList));
         
         for(var i=0; i < directoryHistory.length; i++) {
-            if(directoryHistory[i].key == TSCORE.currentPath) {
+            if(directoryHistory[i].path == TSCORE.currentPath) {
                 directoryHistory[i]["children"] = new Array();
-                for(var j=0; j < dirList.length; j++) {    
-                     directoryHistory[i]["children"].push(dirList[j]);
+                for(var j=0; j < dirList.length; j++) {
+                	 if(!dirList[j].isFile) {
+                     	directoryHistory[i]["children"].push(dirList[j]);                	 	
+                	 }  
                 }
+		        // Sort the dirList alphabetically
+		        directoryHistory[i]["children"].sort(function(a,b) { return a.name.localeCompare(b.name); });
             }
         }
         
@@ -61,7 +62,7 @@ define(function(require, exports, module) {
             
             .append($("<div>", { 
                     "class":    "accordion-heading btn-group",
-                    "key":      directoryHistory[i].key, 
+                    "key":      directoryHistory[i].path, 
                     "style":    "width:100%; margin: 0px; ",
                 }
             )
@@ -70,7 +71,7 @@ define(function(require, exports, module) {
                         "class":        "btn btn-link directoryIcon",
                         "data-toggle":  "collapse",
                         "data-target":  "#dirButtons"+i,                        
-                        "key":          directoryHistory[i].key,
+                        "key":          directoryHistory[i].path,
                         "title":        "Toggle Directory",
                     }  
                 )
@@ -79,9 +80,9 @@ define(function(require, exports, module) {
             
             .append($("<button>", { // Dir main button
                         "class":        "btn btn-link btn-small directoryTitle",
-                        "key":          directoryHistory[i].key,
-                        "title":        "Change Direoctory to: "+directoryHistory[i].key,
-                        "text":         directoryHistory[i].title,
+                        "key":          directoryHistory[i].path,
+                        "title":        "Change Direoctory to: "+directoryHistory[i].path,
+                        "text":         directoryHistory[i].name,
                     }  
                 )
                 .click(function() {
@@ -106,7 +107,7 @@ define(function(require, exports, module) {
             
             .append($("<button>", {
                     "class":        "btn btn-link directoryActions",
-                    "key":          directoryHistory[i].key, 
+                    "key":          directoryHistory[i].path, 
                     "title":        "Directory Options", 
             })              
             .dropdown( 'attach' , '#directoryMenu' )
@@ -138,13 +139,13 @@ define(function(require, exports, module) {
             } else {
                 for(var j=0; j < directoryHistory[i]["children"].length; j++) {                    
                     if (TSCORE.Config.getShowUnixHiddenEntries() || 
-                            (!TSCORE.Config.getShowUnixHiddenEntries() && (directoryHistory[i]["children"][j].title.indexOf(".") != 0))) {
+                            (!TSCORE.Config.getShowUnixHiddenEntries() && (directoryHistory[i]["children"][j].name.indexOf(".") != 0))) {
                         dirButtons.append($("<button>", { 
                             "class":    "btn btn-small dirButton", 
-                            "key":      directoryHistory[i]["children"][j].key,
-                            "title":    directoryHistory[i]["children"][j].key,
+                            "key":      directoryHistory[i]["children"][j].path,
+                            "title":    directoryHistory[i]["children"][j].path,
                             "style":    "margin: 1px;",
-                            "text":     " "+directoryHistory[i]["children"][j].title
+                            "text":     " "+directoryHistory[i]["children"][j].name
                         })
                         .droppable({
                             greedy: "true",
@@ -193,7 +194,7 @@ define(function(require, exports, module) {
     
     function getDirectoryCollapsed(directoryPath) {
         for(var i=0; i < directoryHistory.length; i++) {
-            if(directoryHistory[i].key == directoryPath) {
+            if(directoryHistory[i].path == directoryPath) {
                 return directoryHistory[i].collapsed;
             }
         }
@@ -201,7 +202,7 @@ define(function(require, exports, module) {
     
     function setDirectoryCollapse(directoryPath, collapsed) {
         for(var i=0; i < directoryHistory.length; i++) {
-            if(directoryHistory[i].key == directoryPath) {
+            if(directoryHistory[i].path == directoryPath) {
                 directoryHistory[i].collapsed = collapsed;
             }
         }
@@ -220,7 +221,7 @@ define(function(require, exports, module) {
     
         var directoryFoundOn = -1;    
         for(var i=0; i < directoryHistory.length; i++) {
-            if(directoryHistory[i].key == directoryPath) {
+            if(directoryHistory[i].path == directoryPath) {
                 directoryHistory[i].collapsed = false;
                 directoryFoundOn = i;
             } else {
@@ -241,7 +242,7 @@ define(function(require, exports, module) {
             var parentLocation = directoryPath.substring(0, directoryPath.lastIndexOf(TSCORE.TagUtils.DIR_SEPARATOR));
             var parentFound = -1;
             for(var i=0; i < directoryHistory.length; i++) {
-                if(directoryHistory[i].key == parentLocation) {
+                if(directoryHistory[i].path == parentLocation) {
                     parentFound = i;
                 } 
             }       
@@ -254,15 +255,14 @@ define(function(require, exports, module) {
                     
             var locationTitle = directoryPath.substring(directoryPath.lastIndexOf(TSCORE.TagUtils.DIR_SEPARATOR)+1,directoryPath.length);
             directoryHistory.push({
-                "title": locationTitle,
-                "key" : directoryPath,
+                "name": locationTitle,
+                "path" : directoryPath,
                 "collapsed" : false,
             });             
         }    
     
         TSCORE.currentPath = directoryPath;
         TSCORE.startTime = new Date().getTime();        
-        TSCORE.IO.getSubdirs(directoryPath);
         TSCORE.IO.listDirectory(directoryPath);    
     } 
     

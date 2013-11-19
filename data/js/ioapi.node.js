@@ -36,7 +36,7 @@ define(function(require, exports, module) {
                 //console.log('stats: ' + JSON.stringify(stats));
                 index.push({
                     "name": dirList[i],
-                    "type": stats.isDirectory()?"directory":"file",
+                    "isFile": !stats.isDirectory(),
                     "size": stats.size,
                     "lmdt": stats.mtime,
                     "path": path  
@@ -68,7 +68,7 @@ define(function(require, exports, module) {
             var tree = {}; 
             var dstats = fs.statSync(dirPath);           
             tree["name"] = pathUtils.basename(dirPath);
-            tree["type"] = "directory";
+            tree["isFile"] = false;
             tree["lmdt"] = dstats.mtime;   
             tree["path"] = dirPath;         
             tree["children"] = [];            
@@ -79,7 +79,7 @@ define(function(require, exports, module) {
                 if (stats.isFile()) {
                     tree["children"].push({
                         "name": pathUtils.basename(path),
-                        "type": "file",
+                        "isFile": true,
                         "size": stats.size,
                         "lmdt": stats.mtime,   
                         "path": path 
@@ -94,27 +94,27 @@ define(function(require, exports, module) {
         }         
     }
 
-    exports.getFileSize = function(filePath) {
+    var getFileSize = function(filePath) {
         console.log("Get filesize of: "+filePath);
         var stats = fs.statSync(filePath);
         return stats.size;
         //TSPOSTIO.createDirectoryIndex(directoryIndex);
     };   
 
-    exports.getLMDT = function(filePath) {
+    var getLMDT = function(filePath) {
         console.log("Get last modified date time of: "+filePath);
         var stats = fs.statSync(filePath);
         return stats.mtime;
         //TSPOSTIO.createDirectoryIndex(directoryIndex);
     };
 
-    exports.directoryExist = function(dirPath) {
+    var directoryExist = function(dirPath) {
         console.log("Checks if a directory exist: "+dirPath);
 
         //TSPOSTIO.createDirectoryIndex(directoryIndex);
     };
 	
-    exports.createDirectoryIndex = function(dirPath) {
+    var createDirectoryIndex = function(dirPath) {
         console.log("Creating index for directory: "+dirPath);
         var directoryIndex = [];
         directoryIndex = scanDirectory(dirPath, directoryIndex);
@@ -122,14 +122,14 @@ define(function(require, exports, module) {
         TSPOSTIO.createDirectoryIndex(directoryIndex);
     };	
     
-    exports.createDirectoryTree = function(dirPath) {
+    var createDirectoryTree = function(dirPath) {
         console.log("Creating directory index for: "+dirPath);
         var directoyTree = generateDirectoryTree(dirPath);
         //console.log(JSON.stringify(directoyTree));
         TSPOSTIO.createDirectoryTree(directoyTree);
     };    
 	
-	exports.createDirectory = function(dirPath) {
+	var createDirectory = function(dirPath) {
 	    console.log("Creating directory: "+dirPath);   
         fs.mkdir(dirPath, function(error) {
             if (error) {
@@ -140,7 +140,7 @@ define(function(require, exports, module) {
         });         
 	};
 
-    exports.renameFile = function(filePath, newFilePath) {
+    var renameFile = function(filePath, newFilePath) {
         console.log("Renaming file: "+filePath+" to "+newFilePath);
         if(filePath.toLowerCase() == newFilePath.toLowerCase()) {
             console.log("Initial and target filenames are the same...");
@@ -159,7 +159,7 @@ define(function(require, exports, module) {
         });         
     };
     	
-	exports.loadTextFile = function(filePath) {
+	var loadTextFile = function(filePath) {
 		console.log("Loading file: "+filePath);
         fs.readFile(filePath, 'utf8', function(error, content) {
             if (error) {
@@ -170,7 +170,7 @@ define(function(require, exports, module) {
         }); 
 	};
 	
-	exports.saveTextFile = function(filePath,content) {
+	var saveTextFile = function(filePath,content) {
 		console.log("Saving file: "+filePath);
 		// TODO check if fileExist by saving needed
 /*	  	if(plugin.fileExists(filePath)) {
@@ -185,7 +185,7 @@ define(function(require, exports, module) {
         }); 
 	};
 	
-	exports.listDirectory = function(dirPath) {
+	var listDirectory = function(dirPath) {
       console.log("Listing directory: "+dirPath);
       try {
           fs.readdir(dirPath, function(error, dirList) {
@@ -197,12 +197,11 @@ define(function(require, exports, module) {
             var anotatedDirList = [];
             for (var i=0; i < dirList.length; i++) {
                 var path = dirPath+getDirseparator()+dirList[i];
-                var path = dirPath+getDirseparator()+dirList[i];
                 var stats = fs.statSync(path);
                 //console.log('stats: ' + JSON.stringify(stats));
                 anotatedDirList.push({
                     "name": dirList[i],
-                    "type": stats.isDirectory()?"directory":"file",
+                    "isFile": !stats.isDirectory(),
                     "size": stats.size,
                     "lmdt": stats.mtime,
                     "path": path  
@@ -215,35 +214,7 @@ define(function(require, exports, module) {
        }                    
 	};
 	
-	exports.getSubdirs = function(dirPath) {
-	    console.log("Getting subdirs: "+dirPath);
-	    try {
-            fs.readdir(dirPath, function(error, dirList) {
-              if (error) {
-                console.log("Directory listing failed "+error);
-                return;
-              }
-        
-              var anotatedDirList = [];
-              for (var i=0; i < dirList.length; i++) {
-                  var path = dirPath+getDirseparator()+dirList[i];
-                  var stats = fs.statSync(path);
-                  if(stats.isDirectory()) {
-                      anotatedDirList.push({
-                          "title": dirList[i],
-                          //"isFolder": true,
-                          "key": path  
-                      });                      
-                  }               
-              } 
-              TSPOSTIO.getSubdirs(anotatedDirList);
-            }); 		
-       } catch(ex) {
-           console.error("Listing directory "+dirPath+" failed "+ex);
-       }                            
-	};
-	
-	exports.deleteElement = function(path) {
+	var deleteElement = function(path) {
 		console.log("Deleting: "+path);
         fs.unlink(path, function(error) {
             if (error) {
@@ -254,11 +225,11 @@ define(function(require, exports, module) {
         });		
 	};
 	
-    exports.checkAccessFileURLAllowed = function() {
+    var checkAccessFileURLAllowed = function() {
         console.log("checkAccessFileURLAllowed function not relevant for node..");
     };	
 	
-    exports.checkNewVersion = function() {
+    var checkNewVersion = function() {
         console.log("Checking for new version...");
         var cVer = TSCORE.Config.DefaultSettings["appVersion"]+"."+TSCORE.Config.DefaultSettings["appBuild"];
         $.ajax({
@@ -274,7 +245,7 @@ define(function(require, exports, module) {
         ;      
     };	
 
-    exports.selectDirectory = function() {
+    var selectDirectory = function() {
         if(document.getElementById('folderDialog') == null) {
             $("#folderLocation").after('<input style="display:none;" id="folderDialog" type="file" nwdirectory />');
         }
@@ -285,11 +256,11 @@ define(function(require, exports, module) {
         chooser.trigger('click');  
     };
     
-    exports.openDirectory = function(dirPath) {
+    var openDirectory = function(dirPath) {
         gui.Shell.openItem(dirPath);
     };
 
-    exports.selectFile = function() {
+    var selectFile = function() {
         if(document.getElementById('fileDialog') == null) {
             $("#folderLocation").after('<input style="display:none;" id="fileDialog" type="file" />');
         }
@@ -300,11 +271,26 @@ define(function(require, exports, module) {
         chooser.trigger('click');  
     };
     
-    exports.openExtensionsDirectory = function() {
+    var openExtensionsDirectory = function() {
         // TODO implement openExtensionsDirectory on node
         //gui.Shell.openItem(extPath);
         console.log("Open extensions directory functionality not implemented on chrome yet!");
         TSCORE.showAlertDialog("Open extensions directory functionality not implemented on chrome yet!"); 
     };
+    
+	exports.createDirectory 			= createDirectory; 
+	exports.renameFile 					= renameFile;
+	exports.loadTextFile 				= loadTextFile;
+	exports.saveTextFile 				= saveTextFile;
+	exports.listDirectory 				= listDirectory;
+	exports.deleteElement 				= deleteElement;
+    exports.createDirectoryIndex 		= createDirectoryIndex;
+    exports.createDirectoryTree 		= createDirectoryTree;
+	exports.selectDirectory 			= selectDirectory;
+	exports.openDirectory				= openDirectory;
+	exports.selectFile 					= selectFile;
+	exports.openExtensionsDirectory 	= openExtensionsDirectory;
+	exports.checkAccessFileURLAllowed 	= checkAccessFileURLAllowed;
+	exports.checkNewVersion 			= checkNewVersion;
 
 });

@@ -8,6 +8,7 @@ define(function(require, exports, module) {
 	
 	var tsSettings = require("tssetting");	
 	var tsIOApi = require("tsioapi");
+    var tsIOApiDropbox = require("tsioapidropbox");
     var tsPersManager = require("tspersmanager");
     var tsTagUtils = require("tstagutils");
     var tsFileOpener = require("tsfileopener");
@@ -368,6 +369,15 @@ define(function(require, exports, module) {
 	    // Closes the viewer area by init
 	    layoutContainer.close("east");
 	}
+	
+	function switchIOAPI(type) {
+		if(type=="dropbox") {
+			tsIOApiDropbox.init();
+			exports.IO = tsIOApiDropbox		
+		} else {
+			exports.IO = tsIOApi;
+		}
+	}	
 	
 	// Proxying applications parts
 	exports.Config = tsSettings;

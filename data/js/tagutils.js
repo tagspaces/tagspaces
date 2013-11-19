@@ -6,7 +6,7 @@ define(function(require, exports, module) {
 
     console.log("Loading tagutils.js ...");
     	
-    var IOAPI = require("tsioapi");
+    var TSCORE = require("tscore");
 
     var BEGIN_TAG_CONTAINER = "[",
         END_TAG_CONTAINER = "]",
@@ -269,7 +269,7 @@ define(function(require, exports, module) {
         
         var newFileName = generateFileName(fileName, extractedTags);
        
-        IOAPI.renameFile(filePath, containingDirectoryPath+DIR_SEPARATOR+newFileName);
+        TSCORE.IO.renameFile(filePath, containingDirectoryPath+DIR_SEPARATOR+newFileName);
     }
 
     function addTag(filePathArray, tagArray) {
@@ -315,7 +315,7 @@ define(function(require, exports, module) {
         
         var newFileName = generateFileName(fileName, extractedTags);
        
-        IOAPI.renameFile(filePath, containingDirectoryPath+DIR_SEPARATOR+newFileName);
+        TSCORE.IO.renameFile(filePath, containingDirectoryPath+DIR_SEPARATOR+newFileName);
         
     }    
     
@@ -338,7 +338,7 @@ define(function(require, exports, module) {
         
         var newFileName = generateFileName(fileName, extractedTags);
        
-        IOAPI.renameFile(filePath, containingDirectoryPath+DIR_SEPARATOR+newFileName);
+        TSCORE.IO.renameFile(filePath, containingDirectoryPath+DIR_SEPARATOR+newFileName);
         
     }
     
@@ -357,7 +357,7 @@ define(function(require, exports, module) {
 		// TODO generalize generateFileName to support fileTitle & fileExtension
         var newFileName = generateFileName(newTitle, extractedTags);
        
-        IOAPI.renameFile(filePath, containingDirectoryPath+DIR_SEPARATOR+newFileName+fileExt);
+        TSCORE.IO.renameFile(filePath, containingDirectoryPath+DIR_SEPARATOR+newFileName+fileExt);
         
         return true;        
     }    
@@ -381,7 +381,7 @@ define(function(require, exports, module) {
         
         var newFileName = generateFileName(fileName, newTags);
 
-        IOAPI.renameFile(filePath, containingDirectoryPath+DIR_SEPARATOR+newFileName);     
+        TSCORE.IO.renameFile(filePath, containingDirectoryPath+DIR_SEPARATOR+newFileName);     
     }
 
     // Public API definition

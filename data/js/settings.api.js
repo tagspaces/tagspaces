@@ -6,7 +6,6 @@ define(function(require, exports, module) {
 
 	console.log("Loading settings.api.js..");
 	
-	var IOAPI = require("tsioapi");
 	var TSCORE = require("tscore");
 	
 	exports.DefaultSettings = require("tssettingsdefault").defaultSettings;
@@ -665,7 +664,7 @@ define(function(require, exports, module) {
 	    
 	    // Storing settings in firefox native preferences
 	    if(isFirefox) {
-	        IOAPI.saveSettings(JSON.stringify(exports.Settings));
+	        TSCORE.IO.saveSettings(JSON.stringify(exports.Settings));
 		}
 		
 		console.log('Tagspace Settings Saved!');
