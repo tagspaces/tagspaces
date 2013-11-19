@@ -47,6 +47,8 @@ if( isFirefox ) {
     IO_JS = "js/ioapi.chrome";        
 }
 
+//IO_JS = "js/ioapi.dropbox";        
+
 console.log("Loading Loader - Firefox: "+isFirefox+" | ChromeExt: "+isChrome+" | Node: "+isNode+" | Cordova: "+isCordova);
 
 requirejs.config({
@@ -83,6 +85,7 @@ requirejs.config({
         jqueryeditinplace:      'libs/jqueryeditinplace/jquery.editinplace',
         underscore:             'libs/underscore/underscore',
         d3:                     'libs/d3/d3.v3',
+        dropbox:                'libs/dropbox/dropbox.0.10.2',
 		
         tscore:                 'js/core.api',
         tssetting:              'js/settings.api',

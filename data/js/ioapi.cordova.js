@@ -354,7 +354,7 @@ define(function (require, exports, module) {
 
     exports.selectDirectory = function() {
         console.log("Operation selectDirectory not supported on Android yet!");
-        TSCORE.showAlertDialog("Selecting directory not supported on Android yet, please type the desired directory path manually in textbox!");         
+        TSCORE.showAlertDialog("Selecting directory not supported on Android yet, please enter the desired directory path manually in the textbox!");         
     };
 
     exports.selectFile = function() {
@@ -362,7 +362,7 @@ define(function (require, exports, module) {
     };
     
     exports.checkAccessFileURLAllowed = function() {
-        console.log("checkAccessFileURLAllowed function not relevant for android..");        
+        console.log("checkAccessFileURLAllowed function not relevant for Android..");        
     };
     
     exports.openDirectory = function(dirPath) {
