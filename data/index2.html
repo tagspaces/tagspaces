@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>TagSpaces New Design</title>
+<script type="text/javascript" data-main="loader2" src="libs/requirejs/require.js"></script>
+<link rel="stylesheet" type="text/css" href="libs/bootstrap/css/bootstrap3.css">
+<link rel="stylesheet" type="text/css" href="devlibs/select2/select2.css">
+<link rel="stylesheet" type="text/css" href="devlibs/select2/select2-bootstrap.css">
+<link rel="stylesheet" type="text/css" href="css/tagspaces.css">
+<link rel="stylesheet" type="text/css" href="devlibs/font-awesome-4.0.3/css/font-awesome.css">
+<link rel="stylesheet" type="text/css" href="devlibs/bootstrap3xeditable/css/bootstrap-editable.css">
+<style type="text/css">
+
+.col1 .navbar, .col1 > .row2, .col1 > .row3 {
+	background-color: #2E2D2D !important;
+}
+
+.ui-layout-resizer	{ 
+    background-color: white;
+    border-top: 1px solid #ddd;
+    border-left: 1px solid #ddd;	
+}
+
+.ts-container {
+	overflow-y: auto; 
+	padding: 0px; 
+	padding-bottom: 50px; 
+	margin-top: -20px;
+	height: 100%; 
+	width: auto; 
+	z-index: 0; 
+	display: block; 
+	visibility: visible;
+} 
+
+.navbar {
+	border-radius: 0 !important;
+	border: 0px;
+	border-bottom: 1px;
+}
+
+.row2 {
+	height: 96%;
+}
+
+.btn-toolbar {
+	min-height: 40px;
+}
+
+/* Custom scrollbars for chrome */
+::-webkit-scrollbar-track
+{
+/*    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    background-color: #F5F5F5;*/
+   background-color: white;
+}
+
+::-webkit-scrollbar
+{
+    width: 8px;
+    background-color: #F5F5F5;
+}
+
+::-webkit-scrollbar-thumb
+{
+    background-color: #bbb;
+    border-radius: 6px;
+}
+</style>
+
+</head>
+<body>
+
+<div class="col1">
+	<div class="row2">
+		<nav class="navbar navbar-default" role="navigation">
+		  <div class="btn-toolbar" style="width: 100%">			
+	        <a id="logo" href="http://tagspaces.org" target="_new">TagSpaces</a>
+			<a href="http://tagspaces.org" target="_new" class="appVersion"><sup  id="appVersion"></sup></a>
+	        <a id="newVersionAvailable" style="color: white; display: none; color: #7bd148" class="appVersion" title="New TagSpaces version available" data-dropdown="#newVersionMenu">
+	            <sup>New Release Available!<!--i class="icon-leaf icon-large" style="color: #7bd148"></i--></sup></a>
+	        <span id="loadingAnimation"></span>
+	      </div>
+		  <div class="btn-toolbar" style="width: 100%">
+		    <button type="button" class="btn dropdown-toggle" data-toggle="dropdown">
+		      Dropdown <span class="caret"></span>
+		    </button>
+		    <ul class="dropdown-menu">
+		      <li><a href="#">Dropdown linkDropdown linkDropdown link</a></li>
+		      <li><a href="#">Dropdown link</a></li>
+		    </ul>
+		  </div>
+		</nav>  	
+		<div class="container ts-container">
+			<div style="width: 100%; height: 100%">
+				col1subrow2<br>col1subrow2<br>col1subrow2<br>col1subrow2<br>col1subrow2<br>col1subrow2<br>col1subrow2<br>col1subrow2<br>col1subrow2<br>col1subrow2<br>col1subrow2<br>col1subrow2<br>col1subrow2<br>col1subrow2<br>col1subrow2<br>
+				col1subrow2<br>col1subrow2<br>col1subrow2<br>col1subrow2<br>col1subrow2<br>col1subrow2<br>col1subrow2<br>col1subrow2<br>col1subrow2<br>col1subrow2<br>col1subrow2<br>col1subrow2<br>col1subrow2<br>col1subrow2<br>col1subrow2<br>
+				col1subrow2<br>col1subrow2<br>col1subrow2<br>col1subrow2<br>col1subrow2<br>col1subrow2<br>col1subrow2<br>col1subrow2<br>col1subrow2<br>col1subrow2<br>col1subrow2<br>col1subrow2<br>col1subrow2<br>col1subrow2<br>col1subrow2<br>				
+			</div>
+		</div>
+	</div>
+	<div class="row3">
+		<nav class="navbar" role="navigation">
+			<ul class="nav nav-pills">
+			  <li class="active"><a href="#">Home</a></li>
+			  <li><a href="#">Profile</a></li>
+			  <li><a href="#">Messages</a></li>
+			</ul>    	
+		</nav>
+	</div>    	
+</div>
+
+<div class="col2">
+	<div class="row2">
+		<nav class="navbar navbar-default" role="navigation">
+			<div class="btn-toolbar" style="width: 100%">
+				<button class="btn btn-link" id="toggleLeft">| | |</button>
+				<button class="btn btn-link" id="switchLang">Language</button>				
+				<div class="btn-group pull-right" >
+				  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+				    Dropdown
+				    <span class="caret"></span>
+				  </button>
+				  <ul class="dropdown-menu">
+				    <li><a href="#">Dropdown linkDropdown linkDropdown link</a></li>
+				    <li><a href="#">Dropdown link</a></li>
+				    <li><a href="#">Dropdown linkDropdown linkDropdown link</a></li>
+				    <li><a href="#">Dropdown linkDropdown linkDropdown link</a></li>		      
+				  </ul>
+				</div>
+			</div>
+			<div class="btn-toolbar">
+			  <button type="button" class="btn btn-danger">Action</button>
+			  <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown">
+			    <span class="caret"></span>
+			    <span class="sr-only">Toggle Dropdown</span>
+			  </button>
+			  <ul class="dropdown-menu" role="menu">
+			    <li><a href="#">Action</a></li>
+			    <li><a href="#">Another action</a></li>
+			    <li><a href="#">Something else here</a></li>
+			    <li class="divider"></li>
+			    <li><a href="#">Separated link</a></li>
+			  </ul>
+			  <button class="btn" data-toggle="modal" data-target="#myModal">Launch demo modal</button>
+			  <input type="text" id="tagSelect" style="width: 150px"></input>		  
+			</div>			
+		</nav>  	
+		<div class="container ts-container">
+			<div style="width: 100%; height: 100%">
+				col1subrow2<br>col1subrow2<br>col1subrow2<br>col1subrow2<br>col1subrow2<br>col1subrow2<br>col1subrow2<br>col1subrow2<br>col1subrow2<br>col1subrow2<br>col1subrow2<br>col1subrow2<br>col1subrow2<br>col1subrow2<br>col1subrow2<br>
+				col1subrow2<br>col1subrow2<br>col1subrow2<br>col1subrow2<br>col1subrow2<br>col1subrow2<br>col1subrow2<br>col1subrow2<br>col1subrow2<br>col1subrow2<br>col1subrow2<br>col1subrow2<br>col1subrow2<br>col1subrow2<br>col1subrow2<br>
+				col1subrow2<br>col1subrow2<br>col1subrow2<br>col1subrow2<br>col1subrow2<br>col1subrow2<br>col1subrow2<br>col1subrow2<br>col1subrow2<br>col1subrow2<br>col1subrow2<br>col1subrow2<br>col1subrow2<br>col1subrow2<br>col1subrow2<br>				
+			</div>
+		</div>  
+	</div>
+	<!--div class="row3"></div-->		
+</div>
+
+<div class="col3">
+	<div class="row2">
+		<nav class="navbar navbar-default" role="navigation">
+			<div class="btn-toolbar" style="width: 100%">
+				<button class="btn btn-primary" id="toggleFullScreen">Fulls</button>				
+				<div class="btn-group pull-right" >
+				  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+				    Dropdown
+				    <span class="caret"></span>
+				  </button>
+				  <ul class="dropdown-menu">
+				    <li><a href="#">Dropdown linkDropdown linkDropdown link</a></li>
+				    <li><a href="#">Dropdown link</a></li>
+				    <li><a href="#">Dropdown linkDropdown linkDropdown link</a></li>
+				    <li><a href="#">Dropdown linkDropdown linkDropdown link</a></li>		      
+				  </ul>
+				</div>
+			</div>
+			<div class="btn-toolbar">
+			  <button type="button" class="btn btn-danger">Action</button>
+			  <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown">
+			    <span class="caret"></span>
+			    <span class="sr-only">Toggle Dropdown</span>
+			  </button>
+			  <ul class="dropdown-menu" role="menu">
+			    <li><a href="#">Action</a></li>
+			    <li><a href="#">Another action</a></li>
+			    <li><a href="#">Something else here</a></li>
+			    <li class="divider"></li>
+			    <li><a href="#">Separated link</a></li>
+			  </ul>
+			  <button class="btn" data-toggle="modal" data-target="#myModal">
+				 Launch demo modal
+			  </button>
+			  <a href="#" id="docTitle">Title</a>			  
+			</div>			
+		</nav> 	
+    	<div class="container ts-container">
+			<iframe src="about.html" style="border: 0px; width: 100%; height: 100%"></iframe>
+  		</div>
+	</div>
+	<!--div class="row3"></div-->  		   	
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+      </div>
+      <div class="modal-body">
+        ...
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+</body>
+</html>
