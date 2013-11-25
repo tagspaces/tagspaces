@@ -3,21 +3,6 @@
  * is governed by a AGPL3 license that can be  
  * found in the LICENSE file. */
 
-@media print {
-    #viewer {
-        background-color: white;
-        border: 2px dotted #c0c0c0;    
-        top: 0;
-        left: 0;
-        margin: 5px;
-        padding: 10px;
-        font-size: 14px;
-        line-height: 18px;        
-        height: 100%;
-        width: 100%;
-    }
-}
-
 html, body {
 	width: 100%;
 	height: 100%;
@@ -618,4 +603,17 @@ input a.resetFilter {
 {
     background-color: #bbb;
     border-radius: 6px;
+}
+
+/* ---------------------------------------*/
+.editInPlace {
+	height: 30px;
+	margin-top: 4px;
+	padding: 0 0 4px 6px;
+	font-size: 18px;
+	font-family: open_sanslight,sans-serif;
+	font-weight: 300;
+	width: 50%;
+	border: 0px;
+	background-color: transparent;
 }

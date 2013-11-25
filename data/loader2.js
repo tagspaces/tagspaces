@@ -86,7 +86,7 @@ requirejs.config({
         underscore:             'libs/underscore/underscore',
         d3:                     'libs/d3/d3.v3',
         dropbox:                'libs/dropbox/dropbox.0.10.2',
-        i18next:                'devlibs/i18next/i18next-1.7.1',
+        i18next:                'devlibs/i18next/i18next.amd.withJQuery-1.7.1',
         jqueryhotkeys:			'devlibs/jqueryhotkeys/jquery.hotkeys',
 		select2:				'devlibs/select2/select2',
 		xeditable:				'devlibs/bootstrap3xeditable/js/bootstrap-editable',
@@ -124,7 +124,7 @@ requirejs.config({
         'datatables':               { deps: ['jquery'] },
         'jqueryeditinplace':        { deps: ['jquery'] },
         'jquerynanoscroller':       { deps: ['jquery'] },        
-        'select2':            { deps: ['jquery'] },
+        'select2':          	    { deps: ['jquery'] },
         'jqueryhotkeys':            { deps: ['jquery'] },
         'xeditable':         	    { deps: ['jquery'] },
         'tscore':                   { deps: [

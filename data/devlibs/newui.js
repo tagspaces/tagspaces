@@ -105,23 +105,22 @@ var outerLayout, col1Layout, col2Layout, col3Layout;
 	//	,   south__showOverflowOnHover:	true		
 		,   enableCursorHotkey:         false
 		}); */
-	
-		$.i18n.init({
-		    lng: 'de',
-		    ns: { namespaces: ['ns.common'], defaultNs: 'ns.common'}
-		}, function() {
-		    $('body').i18n();
-		});
-	
+
 		$('#switchLang').click(function(e) {
-			i18n.setLng('en', function(t) { 
-				$('body').i18n();
+			$.i18n.setLng('en', function(t) { 
+				$('[data-i18n]').i18n();
 			});
 	    });
+
+		$('#loading').hide();
 	
 		$('#toggleLeft').click(function(e) {
 			outerLayout.toggle("west");
 	    });
+	    
+		$('#closeRight').click(function(e) {
+			closeRightPanel();
+	    });	    
 	    
 		$('#toggleFullScreen').click(function(e) {
 			toggleFullWidth();
@@ -131,14 +130,24 @@ var outerLayout, col1Layout, col2Layout, col3Layout;
 	        minimumInputLength: 1,
 	        multiple: true,
 		    data:[{id:0,text:'enhancement'},{id:1,text:'bug'},{id:2,text:'duplicate'},{id:3,text:'invalid'},{id:4,text:'wontfix'}]
-		});    
+		});  
+		
+		$("#documentTitle").change(function(e) {
+			console.log("Title: "+$(this).val());
+	    });  
 	    
-	    $(document).bind('keydown', 'left', toggleFullWidth);
+	    // KEY Shortcurs
+	    //$(document).bind('keydown', 'left', toggleFullWidth);
+	    $(document).bind('keyup', 'esc', closeRightPanel);
 	    
-	    $.fn.editable.defaults.mode = 'inline';
-	    $('#docTitle').editable();
+	    //$.fn.editable.defaults.mode = 'inline';
+	    //$('#docTitle').editable();
 	    
 	    var isFullWidth = false; 
+	
+		function closeRightPanel() {
+			outerLayout.hide("east");
+		}
 	
 	    function toggleFullWidth() {
 	        var fullWidth = window.innerWidth;
@@ -152,7 +161,16 @@ var outerLayout, col1Layout, col2Layout, col3Layout;
 	            outerLayout.open("east");               
 	        }
 	        isFullWidth = !isFullWidth;
-	    }       
-	});
+	    }  
+
+		// Init Internationalization	
+		$.i18n.init({
+		    ns: { namespaces: ['ns.common'], defaultNs: 'ns.common'},
+		    lng: "de",
+		    debug: false 
+		}, function() {
+            $('[data-i18n]').i18n();
+	    });
+	});	
 
 });
