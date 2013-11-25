@@ -14,3 +14,4 @@ node-webkit/debug.log
 node-webkit/ffmpegsumo_.dll
 node-webkit/libEGL_.dll
 node-webkit/libGLESv2_.dll
+data/_site
