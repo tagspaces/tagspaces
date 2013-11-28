@@ -20,7 +20,7 @@ define(function(require, exports, module) {
 	    if (!message) { message = 'No Message to Display.'; }
 	
 	    var alertModal = 
-	      $('<div class="modal hide">' +    
+	      $('<div class="modal fade"><div class="modal-dialog"><div class="modal-content">' +    
 	          '<div class="modal-header">' +
 	            '<a class="close" data-dismiss="modal" >&times;</a>' +
 	            '<h4></h4>' +
@@ -29,7 +29,7 @@ define(function(require, exports, module) {
 	          '<div class="modal-footer">' +
 	            '<button id="okButton" class="btn btn-primary">Ok</button>' +
 	          '</div>' +
-	        '</div>');
+	        '</div></div></div>');
 	
         alertModal.find('h4').text(title);        
         alertModal.find('.modal-body').append(message);
@@ -45,7 +45,7 @@ define(function(require, exports, module) {
 	    if (!message) { message = 'No Message to Display.'; }
 	    
 	    var confirmModal = 
-	      $('<div class="modal hide">' +    
+	      $('<div class="modal fade"><div class="modal-dialog"><div class="modal-content">' +    
 	          '<div class="modal-header">' +
 	            '<a class="close" data-dismiss="modal" >&times;</a>' +
 	            '<h4></h4>' +
@@ -55,7 +55,7 @@ define(function(require, exports, module) {
 	            '<button class="btn" data-dismiss="modal">Cancel</button>' +
 	            '<button id="okButton" class="btn btn-primary">Ok</button>' +
 	          '</div>' +
-	        '</div>');
+	        '</div></div></div>');
 
         confirmModal.find('h4').text(title);    	
 	    confirmModal.find('.modal-body').text(message);
@@ -308,13 +308,46 @@ define(function(require, exports, module) {
             );
         });
         // End File Menu  
-  	        
+
+		$('#switchLang').click(function(e) {
+			$.i18n.setLng('de', function(t) { 
+				$('[data-i18n]').i18n();
+			});
+	    });
+	    
+		$('#showLocations').click(function(e) {
+			$('#tagGroupsContent').hide();
+			$('#locationContent').show();	
+			console.log("Show Directories");					
+	    });	
+	    
+		$('#showTagGroups').click(function(e) {
+			$('#locationContent').hide();
+			$('#tagGroupsContent').show();	
+			console.log("Show Tags");		
+	    });
+	    
+	    // Hide the taggroups by default
+	    $('#tagGroupsContent').hide();
+	    
+	    
+	    // Hide drop downs by click and drag
+	    $(document).click(function () {
+			TSCORE.hideAllDropDownMenus();
+	    });	          	        
+
+	/*    $(document).drag(function () {
+			TSCORE.hideAllDropDownMenus();
+	    });*/	    
+
 	};
 
 	var hideAllDropDownMenus = function() {
-		$('BODY')
-			.find('.dropdown-menu').hide().end()
-			.find('[data-dropdown]').removeClass('dropdown-open');
+        $('#tagGroupMenu').hide();
+        $('#tagTreeMenu').hide();
+        $('#directoryMenu').hide();
+        $('#tagMenu').hide();
+        $('#fileMenu').hide();                
 	};
 
     // Public API definition

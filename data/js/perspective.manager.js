@@ -32,12 +32,14 @@ var initViews = function () {
                 // Creating perspective's toolbar
                 $("#viewToolbars").append($("<div>", { 
                     id: perspective.ID+"Toolbar",
+                    class: "btn-toolbar",
                     text: perspective.Title,
                 }).hide()); 
                 
                 // Creating perspective's container
                 $("#viewContainers").append($("<div>", { 
                     id: perspective.ID+"Container",
+                    class: "btn-toolbar",
                     text: perspective.Title,
                     style: "width: 100%; height: 100%",
                 }).hide());             
@@ -45,6 +47,7 @@ var initViews = function () {
                 // Creating perspective's footer
                 $("#viewFooters").append($("<div>", { 
                     id: perspective.ID+"Footer",
+                    class: "btn-toolbar",
                     text: perspective.Title,
                     style: "width: 100%; height: 100%",
                 }).hide());                             
@@ -71,26 +74,25 @@ var initViewSwitcher = function() {
             }
         }); 
       
-        $("#viewSwitcher").append($("<button>", { 
-            "viewid": curPers.ID,
-            "class":  "btn btn-link",        
+        $("#viewSwitcher").append($("<li>", {})
+        .append($("<a>", { 
+            "viewid":   curPers.ID,
             "id":       curPers.ID+"Button",
             "text":     " "+curPers.Title    
-        }).prepend($("<i>", {
+        })        
+        .prepend($("<i>", {
             "class":  curPers.Icon
-        })));
+        }))));
     
         // Adding event listener & icon to the radio button
         $( "#"+curPers.ID+"Button" ).click(function() { 
-            changeView($(this).attr("viewid"));     
+            changeView($(this).attr("viewid"));
         });   
     };     
 
     if(perspectives.length > 0) {
         TSCORE.currentView = perspectives[0].ID;       
-        // Set the first perspective to be visually active
-        $("#viewSwitcher").find("button").first().addClass("active");
-        changeView($("#viewSwitcher").find("button").first().attr("viewid"));
+        changeView(TSCORE.currentView);
     }
 };
 
@@ -174,6 +176,7 @@ var changeView = function (viewType) {
        
     //Setting the current view
     TSCORE.currentView = viewType;
+ 
     
 /*    if(TSCORE.currentPath == undefined) {
         TSCORE.showAlertDialog("Please select first location from the dropdown on the left!");
@@ -187,12 +190,12 @@ var changeView = function (viewType) {
 
 	for (var i=0; i < perspectives.length; i++) {   
  		if(perspectives[i].ID == viewType) { 			
- 			// Load the selected view
-	 		//try { 			
-	 			perspectives[i].load();
-	 		//} catch(e) {
-	 		//	console.error("Error while executing 'load' on "+perspectives[i].ID+" "+e);
-	 		//} 			
+            $('#currentPerspectitveIcon').removeClass();
+            $('#currentPerspectitveIcon').addClass(perspectives[i].Icon);
+            $('#currentPerspectitveName').text(" "+perspectives[i].Title);   
+
+ 			perspectives[i].load();
+
 			$( "#"+perspectives[i].ID+"Container" ).show();
 			$( "#"+perspectives[i].ID+"Toolbar" ).show();
             $( "#"+perspectives[i].ID+"Footer" ).show(); 			 

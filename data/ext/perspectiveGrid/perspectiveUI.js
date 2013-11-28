@@ -86,7 +86,7 @@ console.log("Loading UI for perspectiveDefault");
             }
             for (var i=0; i < tagCounter; i++) { 
                 tagsHTML.append($('<button>', {
-                    "class":  "btn btn-small tagButton fileTagsTile", 
+                    "class":  "btn btn-sm tagButton fileTagsTile", 
                     text:     tags[i]+" ",
                     tag:      tags[i],   
                     filepath: filePath,                

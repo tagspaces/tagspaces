@@ -7,8 +7,6 @@ define(function(require, exports, module) {
 	console.log("Loading fileOpener...");
 	
 	var TSCORE = require("tscore");
-	
-    require("jqueryeditinplace");	
 
 	var _openedFilePath = undefined; 
 	
@@ -144,22 +142,16 @@ define(function(require, exports, module) {
 	    var title = TSCORE.TagUtils.extractTitle(filePath);
 		var fileExtension = TSCORE.TagUtils.extractFileExtension(filePath);
 		
-		$("#fileTitle").unbind('.editInPlace');
-		$("#fileTitle").data('editInPlace',false);
-	
-	    $( "#fileTitle" ).text(title);
+		$( "#fileExt" ).text(fileExtension);
 	    
-	    $( "#fileTitle" ).editInPlace({
-			callback: function(unused, newTitle) { TSCORE.TagUtils.changeTitle(filePath,newTitle); },
-    		show_buttons: false,
-    		callback_skip_dom_reset: true
-		});	    
+	    $( "#fileTitle" ).val(title);
+	    
+		$("#fileTitle").change(function(e) {
+			TSCORE.TagUtils.changeTitle(filePath,$(this).val());
+	    });  
 
 	    // Generate tag & ext buttons
 	    $( "#fileTags" ).empty();
-
-        // Appending ext button
-        $( "#fileTags" ).append(TSCORE.generateExtButton(fileExtension,filePath));
         
         // Appending tag buttons	    
         var tags = TSCORE.TagUtils.extractTags(filePath);
@@ -183,32 +175,24 @@ define(function(require, exports, module) {
 				$(ui.helper).remove(); 
 	    	}	            	
 	    });
-	
-	    // Activate tagButtons in file view
-	    $('.tagButton', $( "#fileTags" ))
-	        .click( function() {
-	            TSCORE.openTagMenu(this, $(this).attr("tag"), $(this).attr("filepath"));
-	        })
-	        .dropdown( 'attach' , '#tagMenu' );   
-
-        $('.extTagButton', $( "#fileTags" ))
-            .click( function() {
-                TSCORE.selectedTag = fileExtension;
-            })
-            .dropdown( 'attach' , '#extensionMenu' );
-	    
-	    // Clear filetoolbox
-	    $( "#filetoolbox" ).empty();
+	       
+		// Init Context Menus
+	    $('#fileTags').on("contextmenu click", ".tagButton", function (e) {
+			TSCORE.hideAllDropDownMenus();
+			
+	        TSCORE.openTagMenu(this, $(this).attr("tag"), $(this).attr("filepath"));
+	        
+	        $("#tagMenu").css({
+	            display: "block",
+	            left: e.pageX,
+	            top: e.pageY
+	        });
+	        return false;
+	    });		
 	    
 	    $( "#selectedFilePath" ).click(function() {
 			this.select();
 	    });
-
-        $("#filetoolbox").append('<div id="layoutToolbar" class="btn-group"></div>');
-        $("#filetoolbox").append('<div id="actionToolbar" class="btn-group"></div>');
-        $("#filetoolbox").append('<div id="navigationToolbar" class="btn-group"></div>');        
-        
-        $("#layoutToolbar").append('<button id="toggleFullWidthButton" class="btn" title="Toggle Full Width"><i class="icon-sort icon-rotate-90"></i></button>');
         
         $("#actionToolbar").append('<button id="editDocument" class="btn" title="Edit File"><i class="icon-pencil"></i></button>');
         //$("#actionToolbar").append('<button id="openInNewWindow" class="btn" title="Go to the previous file"><i class="icon-circle-arrow-left"></i></button>');
@@ -247,15 +231,15 @@ define(function(require, exports, module) {
             filepath: filePath,
             text: " Add Tag",
             })
-            .prepend("<i class='icon-tag'></i>") 
+            .prepend("<i class='fa fa-tag'></i>") 
             .click(function() {
                 TSCORE.PerspectiveManager.clearSelectedFiles();
                 TSCORE.selectedFiles.push(filePath);                     
                 TSCORE.showAddTagsDialog();
             })                
         )); 
-        $( "#tagSuggestionsMenu" ).append($('<li>', {class: "divider"}));
-        $( "#tagSuggestionsMenu" ).append($('<li>').append($('<a>', {text: " Tag Suggestions:" })));      
+        $( "#tagSuggestionsMenu" ).append($('<li class="divider"></li>'));
+        $( "#tagSuggestionsMenu" ).append($('<li class="dropdown-header"><span id="">Tag Suggestions</span><button type="button" class="close">×</button></li>'));      
 	
 	    // Adding context menu entries for creating tags according to the suggested tags
 	    for (var i=0; i < suggTags.length; i++) {        
@@ -269,7 +253,7 @@ define(function(require, exports, module) {
 	                })
                     .append($('<button>', {
                         title: "Tag with "+suggTags[i],
-                        "class":  "btn btn-small btn-success tagButton", 
+                        "class":  "btn btn-sm btn-success tagButton", 
                         text: suggTags[i]
                     }))	                
 	                .click(function() {
@@ -283,11 +267,7 @@ define(function(require, exports, module) {
 //	             suggestionMenuEmpty = false; 
 	        }         
 	    };    
-	
-		// Showing dropdown menu only if the context menus is not empty
-//		if(!suggestionMenuEmpty) {
-	    	$( "#openTagSuggestionMenu" ).dropdown( 'attach' , '#tagSuggestionsMenu' );		
-//		}
+
 	}
 
 	function initFileActions(container, filePath) {

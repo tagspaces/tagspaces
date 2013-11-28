@@ -8,7 +8,7 @@ define(function(require, exports, module) {
     var extensionTitle = "Grid";
     var extensionID = "perspectiveGrid";  // ID should be equal to the directory name where the ext. is located   
     var extensionType =  "perspective";
-    var extensionIcon = "icon-th";
+    var extensionIcon = "fa fa-th";
     var extensionVersion = "1.0";
     var extensionManifestVersion = 1;
     var extensionLicense = "AGPL";

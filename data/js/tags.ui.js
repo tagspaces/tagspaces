@@ -9,6 +9,36 @@ define(function(require, exports, module) {
 	var TSCORE = require("tscore");
 
 	function initContextMenus() {
+	
+	    $("body").on("contextmenu click", ".tagGroupActions", function (e) {
+            TSCORE.hideAllDropDownMenus();
+            TSCORE.selectedTag = $(this).attr("tag");
+            TSCORE.selectedTagData = TSCORE.Config.getTagGroupData($(this).attr("key"));
+            TSCORE.selectedTagData.parentKey = undefined;  
+
+	        $("#tagGroupMenu").css({
+	            display: "block",
+	            left: e.pageX,
+	            top: e.pageY
+	        });
+	        return false;
+	    });
+
+	    $("body").on("contextmenu click", "#tagGroupsContent .tagButton", function (e) {
+			TSCORE.hideAllDropDownMenus();
+            TSCORE.selectedTagData = TSCORE.Config.getTagData($(this).attr("tag"), $(this).attr("parentKey"));
+            TSCORE.selectedTag = generateTagValue(TSCORE.selectedTagData);
+            TSCORE.selectedTagData.parentKey = $(this).attr("parentKey");
+
+	        $("#tagTreeMenu").css({
+	            display: "block",
+	            left: e.pageX,
+	            top: e.pageY
+	        });
+	        return false;
+	    });
+	
+	
         $( "#extMenuAddTagAsFilter" ).click( function() {
             TSCORE.PerspectiveManager.setFileFilter(TSCORE.selectedTag);
         });
@@ -167,11 +197,11 @@ define(function(require, exports, module) {
                         "title":        "Toggle TagGroup",
                     }  
                 )
-                .html("<i class='icon-tags'></i>")   
+                .html("<i class='fa fa-tags'></i>")   
             )// End taggroup toggle button  
                         	        
 	        .append($("<button>", {
-				"class":        "btn btn-link btn-small tagGroupTitle",
+				"class":        "btn btn-link btn-sm tagGroupTitle",
 	            "text":         TSCORE.Config.Settings["tagGroups"][i].title, 
                 "key":          TSCORE.Config.Settings["tagGroups"][i].key, 	      
 	        })  
@@ -196,14 +226,7 @@ define(function(require, exports, module) {
 	                "key": TSCORE.Config.Settings["tagGroups"][i].key, 
 	                "title": "Taggroup options",
  	        })              
-	        .dropdown( 'attach' , '#tagGroupMenu' )
-	        .append("<b class='icon-ellipsis-vertical'></b>")
-	        .click( function(event) {
-	                //console.log("Clicked in taggroup setting");    
-	                TSCORE.selectedTag = $(this).attr("tag");
-	                TSCORE.selectedTagData = TSCORE.Config.getTagGroupData($(this).attr("key"));
-	                TSCORE.selectedTagData.parentKey = undefined;  
-	        })
+	        .append("<b class='fa fa-ellipsis-v'></b>")
 	        ) // end gear
 	        
 	        ) // end heading
@@ -233,21 +256,16 @@ define(function(require, exports, module) {
 	            }
 	            var tagIcon = "";
                 if(TSCORE.Config.Settings["tagGroups"][i]["children"][j].type == "smart"){
-                    tagIcon = "<span class='icon-beaker'/> ";
+                    tagIcon = "<span class='fa fa-flask'/> ";
                 }
 	            tagButtons.append($("<a>", { 
-	                "class":         "btn btn-small tagButton", 
+	                "class":         "btn btn-sm tagButton", 
 	                "tag":           TSCORE.Config.Settings["tagGroups"][i]["children"][j].title, 
 	                "parentKey":     TSCORE.Config.Settings["tagGroups"][i].key,
 	                "title":         tagTitle,
 	                "text":          TSCORE.Config.Settings["tagGroups"][i]["children"][j].title+" ",
 	                "style":         generateTagStyle(TSCORE.Config.Settings["tagGroups"][i]["children"][j]), 
 	            })            
-	            .click( function() {
-	                TSCORE.selectedTagData = TSCORE.Config.getTagData($(this).attr("tag"), $(this).attr("parentKey"));
-                    TSCORE.selectedTag = generateTagValue(TSCORE.selectedTagData);
-	                TSCORE.selectedTagData.parentKey = $(this).attr("parentKey");
-	            })
                 .draggable({
                     "appendTo":   "body",
                     "helper":     "clone",
@@ -260,7 +278,6 @@ define(function(require, exports, module) {
                 }) 
                 .prepend(tagIcon)
                 .append("<span class='caret'/>")
-	            .dropdown( 'attach' , '#tagTreeMenu' )               
                 );
 	       } 
 	    }
@@ -343,7 +360,7 @@ define(function(require, exports, module) {
 	                title: "Opens context menu for "+tags[i],
 	                tag: tags[i],
 	            	filepath: filePath,                
-	                "class":  "btn btn-small tagButton", 
+	                "class":  "btn btn-sm tagButton", 
 	                text: tags[i]+" ",
 	                style: generateTagStyle(TSCORE.Config.findTag(tags[i]))
 	                })
@@ -377,7 +394,7 @@ define(function(require, exports, module) {
                 title: "Opens context menu for "+fileExtension,
                 tag: fileExtension,
                 filepath: filePath,
-                "class":  "btn btn-small extTagButton",                
+                "class":  "btn btn-sm extTagButton",                
                 text: fileExtension+" "
                 })
                 .append("<span class='caret'/>")
@@ -431,37 +448,6 @@ define(function(require, exports, module) {
         $( "#tags" ).typeahead( {
             "source":  TSCORE.Config.getAllTags()
         });            
-/*        $( "#tags" )
-        // don't navigate away from the field on tab when selecting an item
-        .bind( "keydown", function( event ) {
-            if ( event.keyCode === $.ui.keyCode.TAB &&
-                    $( this ).data( "autocomplete" ).menu.active ) {
-                event.preventDefault();
-            }
-        })
-        .autocomplete({
-            minLength: 0,
-            source: function( request, response ) {
-                // delegate back to autocomplete, but extract the last term
-                response( $.ui.autocomplete.filter(
-                    TSCORE.Config.getAllTags(), extractLast( request.term ) ) );
-            },
-            focus: function() {
-                // prevent value inserted on focus
-                return false;
-            },
-            select: function( event, ui ) {
-                var terms = split( this.value );
-                // remove the current input
-                terms.pop();
-                // add the selected item
-                terms.push( ui.item.value );
-                // add placeholder to get the comma-and-space at the end
-                terms.push( "" );
-                this.value = terms.join( ", " );
-                return false;
-            }
-        }); */
 
         $("#tags").val("");
         $( '#dialogAddTags' ).modal({show: true});

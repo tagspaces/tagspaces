@@ -71,21 +71,17 @@ requirejs.config({
         jqueryuiautocomplete:   'libs/jqueryui/jquery.ui.autocomplete',
         jqueryuidatepicker:     'libs/jqueryui/jquery.ui.datepicker',   
         
-        bootstrap:              'libs/bootstrap/js/bootstrap',
+        bootstrap:              'libs/bootstrap/js/bootstrap3',
         jquerysimplecolorpicker:'libs/jquery-simplecolorpicker/jquery.simplecolorpicker',
         datatables:             'libs/datatables/js/jquery.dataTables.min',
-        datatablescss:          'libs/datatables/css/jquery.dataTables',
-        jsoneditor:             'libs/jsoneditor/jsoneditor',
-        jsoneditorcss:          'libs/jsoneditor/jsoneditor',
+        jsoneditor:             'libs/jsoneditor/jsoneditor', // 4 remove
         jquerylayout:           'libs/jquerylayout/jquery.layout-latest',
-        jquerylayoutcss:        'libs/jquerylayout/layout-default-latest',
-        jquerydropdown:         'libs/jquerydropdown/jquery.dropdown',
-        jquerydropdowncss:      'libs/jquerydropdown/jquery.dropdown',        
-        less:                   'libs/less/less-1.3.3.min',
-        jqueryeditinplace:      'libs/jqueryeditinplace/jquery.editinplace',
         underscore:             'libs/underscore/underscore',
         d3:                     'libs/d3/d3.v3',
         dropbox:                'libs/dropbox/dropbox.0.10.2',
+        i18next:                'devlibs/i18next/i18next.amd.withJQuery-1.7.1',
+        jqueryhotkeys:			'devlibs/jqueryhotkeys/jquery.hotkeys',
+		select2:				'devlibs/select2/select2',
 		
         tscore:                 'js/core.api',
         tssetting:              'js/settings.api',
@@ -118,8 +114,9 @@ requirejs.config({
         'jquerylayout':             { deps: ['jquery', 'jqueryuidraggable' ] },        
         'jquerydropdown':           { deps: ['jquery','bootstrap'] },
         'datatables':               { deps: ['jquery'] },
-        'jqueryeditinplace':        { deps: ['jquery'] },
         'jquerynanoscroller':       { deps: ['jquery'] },        
+        'select2':          	    { deps: ['jquery'] },
+        'jqueryhotkeys':            { deps: ['jquery'] },
         'tscore':                   { deps: [
                 'jquery',
                 'jqueryui',
@@ -132,16 +129,16 @@ requirejs.config({
                 'bootstrap',
                 'jquerysimplecolorpicker',
                 'jquerylayout',
-                'jquerydropdown',
-                'tssettingsdefault',
+                'i18next',
+                'jqueryhotkeys',
+                'select2',  
+                'tssettingsdefault', 
             ] },                   
     } 
 });
 
 define(function (require, exports, module) {
 "use strict";
-
-    //require("less");	
 
     if (isCordova) {
         require(["cordova.js"]);

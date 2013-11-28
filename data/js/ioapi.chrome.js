@@ -165,7 +165,7 @@ IO-API
 	var listDirectory = function(dirPath) {
 		console.log("Listing directory: "+dirPath);
 		if(nativeIO.isDirectory(dirPath)) {
-			try {
+			//try {
 				var dirList = nativeIO.getDirEntries(dirPath);
 	            var anotatedDirList = [];
 	            for (var i=0; i < dirList.length; i++) {
@@ -188,9 +188,9 @@ IO-API
                     }); 
 	            } 
 	            TSPOSTIO.listDirectory(anotatedDirList);
-			} catch(ex) {
-				console.error("Directory listing failed "+ex);
-			}		
+			//} catch(ex) {
+			//	console.error("Directory listing failed "+ex);
+			//}		
 		} else {
 			console.error("Directory does not exists.");	
 		}	

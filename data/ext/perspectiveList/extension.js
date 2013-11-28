@@ -8,7 +8,7 @@ define(function(require, exports, module) {
 	var extensionTitle = "List";
 	var extensionID = "perspectiveList";  // ID should be equal to the directory name where the ext. is located   
 	var extensionType =  "perspective";
-	var extensionIcon = "icon-list-ul";
+	var extensionIcon = "fa fa-list-ul";
 	var extensionVersion = "1.0";
 	var extensionManifestVersion = 1;
 	var extensionLicense = "AGPL";
@@ -16,7 +16,6 @@ define(function(require, exports, module) {
 	console.log("Loading "+extensionID);
 
 	var TSCORE = require("tscore");
-    require("jqueryeditinplace");
 
 	var extensionDirectory = TSCORE.Config.getExtensionPath()+"/"+extensionID;
 	var UI = undefined;	

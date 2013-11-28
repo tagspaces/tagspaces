@@ -14,13 +14,23 @@ html, body {
 }
 
 /* Removes the selection border on ui elements on android */
-* { -webkit-tap-highlight-color: rgba(0,0,0,0); }
+* { 
+	-webkit-tap-highlight-color: rgba(0,0,0,0); 
+/* -webkit-touch-callout: none;
+-webkit-user-select: none;
+-khtml-user-select: none;
+-moz-user-select: none;
+user-select: none; 
+* */
+}
+
+/* { outline:none; } */
 
 #logo {
 	padding: 0px;
-	font-size: 1.4em;
+	font-size: 1.5em;
 	margin: 3px;
-    color: white;
+    color: #616577;
 	font-weight: bold;
 	padding-left: 32px;
     padding-top: 4px;	
@@ -30,19 +40,9 @@ html, body {
 	display: inline-block;
 }
 
-#logo:hover {
-  color: white;
-  text-decoration: none;  
-}
-
 .appVersion {
-  font-size: 1.2em; 
-  color: white;  
-}
-
-.appVersion:hover {
-  color: white;
-  text-decoration: underline;
+  font-size: 1.3em; 
+  color: #616577;  
 }
 
 #currentLocation {
@@ -52,7 +52,6 @@ html, body {
   display: inline-block;
   margin: 6px;
 }
-
 
 #loadingAnimation {
     display: inline-block;
@@ -194,9 +193,15 @@ html, body {
 }
 
 #fileTitle {
-    font-weight: bold;
-    font-size: 1.5em;
-    color: #333333;    
+	height: 30px;
+	margin-top: 4px;
+	padding: 0 0 4px 6px;
+	font-size: 16px;
+	font-family: open_sanslight,sans-serif;
+	font-weight: 300;
+	width: 50%;
+	border: 0px;
+	background-color: transparent;
 }
 
 li hr {
@@ -300,23 +305,32 @@ li hr {
 }
 
 #directoryNavigatorNorth, #locationContent, #tagGroupsContent, .middle-north, .east-north {
-	background-color:  white; 
+	background-color:  transparent; 
 }	
 
 #directoryNavigatorNorth {
     overflow: hidden !important;    
 }
 
+#toggleLeftPanel {
+	border: 0px; 
+	display: block; 
+	padding-left: 6px; 
+	padding-right: 6px; 
+	padding-top: 8px; 
+	margin: 2px;
+}
+
 #tagsContainer {
-  width: 100%;
-  min-height: 25px;
+	width: 100%;
+	min-height: 40px;
+	margin: 0px;
 }
 
 #viewToolbars {
-    background-color: white;   
-    padding: 2px;    
+
 }
-#viewContainers, #viewFooters {
+#viewContainers {
     background-color: white; 
     padding: 0;    
 }
@@ -502,14 +516,6 @@ input a.resetFilter {
   background-image: none;
   border-radius: 2px;
 }
-/*
-.btn-group {
-  border-radius: 2px;
-}
-
-.btn:last-child {
-  border-radius: 0 2px 2px 0;
-} */
 
 .btn-link, .btn-link:hover, .btn-link:focus, .btn-link:active {
   text-decoration: none;
@@ -530,28 +536,6 @@ input a.resetFilter {
   background-color: green;
   background-image: none;
   text-shadow: none;
-}
-
-/* Main Menu */
-#mainMenu .btn-link, #mainMenu .btn-link:hover, #mainMenu .btn-link:focus, #mainMenu .btn-link:active {
-  text-decoration: none;
-  color: white;
-  text-shadow: none;
-  height: 35px;
-}
-
-#mainMenu .btn-link:hover, #mainMenu .btn-link:focus, #mainMenu .btn-link:active {
-   background-color: #999;  
-}
-
-#mainMenu .active {
-   background-color: #666;
-} 
-
-#mainMenu .btn-group > .btn:last-child, #mainMenu .btn-group > .btn:first-child  {
-  -webkit-border-radius: 0px;
-  -moz-border-radius: 0px;
-  border-radius: 0px;
 }
 
 .icon-leaf:hover {
@@ -588,8 +572,6 @@ input a.resetFilter {
 /* Custom scrollbars for chrome */
 ::-webkit-scrollbar-track
 {
-/*    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-    background-color: #F5F5F5;*/
    background-color: white;
 }
 
@@ -605,15 +587,73 @@ input a.resetFilter {
     border-radius: 6px;
 }
 
-/* ---------------------------------------*/
-.editInPlace {
-	height: 30px;
-	margin-top: 4px;
-	padding: 0 0 4px 6px;
-	font-size: 18px;
-	font-family: open_sanslight,sans-serif;
-	font-weight: 300;
-	width: 50%;
+/* NEW DESIGN ---------------------------------------*/
+
+.col1 > .row2, .col1 > .row3 {
+	background-color: #f8f8f8 !important;
+}
+
+.col1 .navbar {
+	background-color: #f8f8f8 !important;
+	padding-left: 5px;
+	border-bottom: 1px #ddd solid;
+}
+
+.col1 .row3 {
+	padding-left: 5px;
+	padding-top: 5px;
+	border-top: 1px #ddd solid;
+}
+
+.col2 .navbar {
+	padding-left: 5px;
+	border-bottom: 1px #ddd solid;
+}
+
+.col3 .ts-container {
+	overflow: hidden !important;
+}
+
+.col3 .navbar {
+	padding-left: 5px;
+	border-bottom: 1px #ddd solid;	
+}
+
+.ui-layout-resizer	{ 
+    background-color: white;
+    border-top: 1px solid #ddd;
+    border-left: 1px solid #ddd;	
+}
+
+.ts-container {
+	position: absolute;
+	top: 81px;
+	bottom: 0px; 
+	left: 0px; 
+	right: 0px; 
+	overflow: auto;
+} 
+
+.navbar {
+	border-radius: 0 !important;
 	border: 0px;
-	background-color: transparent;
+	border-bottom: 1px;
+}
+
+.btn-toolbar {
+	min-height: 40px;
+}
+
+#fileExt {
+	background-color: #515151; 
+	text-transform:uppercase; 
+	font-size: 12px;
+	padding: 4px;
+	color: white;
+}
+
+.dropdown {
+    position: absolute;
+    display:none;
+    z-index: 88888;	
 }

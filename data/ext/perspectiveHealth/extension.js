@@ -10,7 +10,7 @@ define(function(require, exports, module) {
 	var extensionTitle = "Quantified Self"
 	var extensionID = "perspectiveHealth";  // ID should be equal to the directory name where the ext. is located   
 	var extensionType =  "perspective";
-	var extensionIcon = "icon-bar-chart";
+	var extensionIcon = "fa fa-bar-chart-o";
 	var extensionVersion = "1.0";
 	var extensionManifestVersion = 1;
 	var extensionLicense = "AGPL";

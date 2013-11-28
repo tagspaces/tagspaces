@@ -21,8 +21,8 @@ define(function(require, exports, module) {
         
         document.title = nameCurrentConnection + " | " + TSCORE.Config.DefaultSettings.appName;
     
-        $( "#reloadTagSpace" ).text(nameCurrentConnection);
-        $( "#reloadTagSpace" ).attr("title",path);
+        $( "#locationName" ).text(nameCurrentConnection);
+        $( "#locationName" ).attr("title",path);
         
         // Clears the directory history
         directoryHistory = new Array();
@@ -75,11 +75,11 @@ define(function(require, exports, module) {
                         "title":        "Toggle Directory",
                     }  
                 )
-                .html("<i class='icon-folder-open'></i>")   
+                .html("<i class='fa fa-folder-open'></i>")   
             )// End dir toggle button  
             
             .append($("<button>", { // Dir main button
-                        "class":        "btn btn-link btn-small directoryTitle",
+                        "class":        "btn btn-link btn-sm directoryTitle",
                         "key":          directoryHistory[i].path,
                         "title":        "Change Direoctory to: "+directoryHistory[i].path,
                         "text":         directoryHistory[i].name,
@@ -109,12 +109,13 @@ define(function(require, exports, module) {
                     "class":        "btn btn-link directoryActions",
                     "key":          directoryHistory[i].path, 
                     "title":        "Directory Options", 
-            })              
-            .dropdown( 'attach' , '#directoryMenu' )
-            .append("<b class='icon-ellipsis-vertical'>")
-            .click( function(event) {
+            })                       
+            //.dropdown( 'attach' , '#directoryMenu' )
+            .append("<b class='fa fa-ellipsis-v'>")
+            /*.click( function(event) {
                 dir4ContextMenu = $(this).attr("key");
-            })) // end gear    
+            })*/
+            ) // end gear    
                     
             ) // end heading
             
@@ -141,7 +142,7 @@ define(function(require, exports, module) {
                     if (TSCORE.Config.getShowUnixHiddenEntries() || 
                             (!TSCORE.Config.getShowUnixHiddenEntries() && (directoryHistory[i]["children"][j].name.indexOf(".") != 0))) {
                         dirButtons.append($("<button>", { 
-                            "class":    "btn btn-small dirButton", 
+                            "class":    "btn btn-sm dirButton", 
                             "key":      directoryHistory[i]["children"][j].path,
                             "title":    directoryHistory[i]["children"][j].path,
                             "style":    "margin: 1px;",
@@ -163,7 +164,7 @@ define(function(require, exports, module) {
                                 }                              
                             }                   
                         }) 
-                        .prepend("<i class='icon-folder-close-alt'></i>")            
+                        .prepend("<i class='fa fa-folder-o'></i>")            
                         .click( function() {
                             navigateToDirectory($(this).attr("key"));
                         })                   
@@ -179,13 +180,13 @@ define(function(require, exports, module) {
             var key = $(this).attr("key");
             console.log("Entered Header for: "+key);
             if(getDirectoryCollapsed(key)) {
-                $(this).find("i").removeClass("icon-folder-open");
-                $(this).find("i").addClass("icon-folder-close");          
+                $(this).find("i").removeClass("fa-folder-open");
+                $(this).find("i").addClass("fa-folder");          
                 $(this).next().removeClass("in");
                 $(this).next().addClass("out");
             } else {
-                $(this).find("i").removeClass("icon-folder-close");
-                $(this).find("i").addClass("icon-folder-open");          
+                $(this).find("i").removeClass("fa-folder");
+                $(this).find("i").addClass("fa-folder-open");          
                 $(this).next().removeClass("out");
                 $(this).next().addClass("in");
             }
@@ -267,16 +268,7 @@ define(function(require, exports, module) {
     } 
     
     function initButtons() {
-        $( "#selectTagSpace" ).click(function() {
-                //$("#connectionsList").width($( "#reloadTagSpace" ).width()+$("#selectTagSpace").width());
-                $("#connectionsList").show().position({
-                    my: "left top",
-                    at: "left bottom",
-                    of: $( "#reloadTagSpace" )
-                });
-                return false;
-        });   
-                        
+                               
         $( "#selectTagSpace" ).tooltip();
     
         $( "#selectLocalDirectory" ).click(function(e) {
@@ -286,7 +278,19 @@ define(function(require, exports, module) {
     }
     
     
-    function initContextMenus() {    
+    function initContextMenus() {  
+	
+	    $("body").on("contextmenu click", ".directoryActions", function (e) {
+			TSCORE.hideAllDropDownMenus();
+	        dir4ContextMenu = $(this).attr("key");
+	        $("#directoryMenu").css({
+	            display: "block",
+	            left: e.pageX,
+	            top: e.pageY
+	        });
+	        return false;
+	    });
+    	  
         // Context menu for the tags in the file table and the file viewer
         $( "#directoryMenuReloadDirectory" ).click( function() {
             navigateToDirectory(dir4ContextMenu);
@@ -360,26 +364,42 @@ define(function(require, exports, module) {
         console.log("Creating location menu...");
         
         $( "#connectionsList" ).empty();
+        $( "#connectionsList" ).append('<li class="dropdown-header"><span id="">Your Locations</span><button type="button" class="close">×</button></li>');
+        $( "#connectionsList" ).append('<li class="divider"></li>');
         var connectionsList = TSCORE.Config.Settings["tagspacesList"];
         for (var i=0; i < connectionsList.length; i++) { 
+// 			      <li><a href="#"><i class="fa fa-dropbox"></i>&nbsp;<span data-i18n="app.test1;">My Dropbox Folder</span>&nbsp;
+//		      			<button type="button" class="btn btn-link"><i class="fa fa-edit"></i></button></a></li>
               $( "#connectionsList" ).append(
                     $('<li>', {}).append(
                         $('<a>', { 
-                            title:  "Connection pointing to "+connectionsList[i].path,
+                            title:  "Location pointing to "+connectionsList[i].path,
                             path:   connectionsList[i].path,
                             name:   connectionsList[i].name,
                             text:   " "+connectionsList[i].name
                             } )
-                        .click(function() {
-                            openConnection($(this).attr( "path" ));                           
-                        })
-                        .prepend("<i class='icon-bookmark'></i>")
+	                        .click(function() {
+	                            openConnection($(this).attr( "path" ));                           
+	                        })
+                        	.prepend("<i class='fa fa-bookmark'></i>&nbsp;")
+	                        .append(
+		                        $('<button>', { 
+		                            type:  "button",
+		                           // path:   connectionsList[i].path,
+		                            class:  "btn btn-link",
+		                           } )
+		                          // .append("<i class='fa fa-edit'></i>")
+			                      // .click(function(e) {
+			                      //      e.preventDefault();
+			                      //      alert("Delete location");                           
+			                      // })	                           
+	                        )                         	
                         ));
         };
-        $( "#connectionsList" ).append('<li class="divider"></li>');    
-        $( "#connectionsList" ).append('<li id="createNewLocation"><a><i class="icon-bookmark-empty"></i> New Location</a></li>');
-        $( "#connectionsList" ).append('<li id="deleteConnection"><a><i class="icon-trash"></i> Remove Location</a></li>');
-       
+        $( "#connectionsList" ).append('<li class="divider"></li>');
+        $( "#connectionsList" ).append('<li id="deleteConnection"><a><i class="fa fa-trash-o"></i> Remove Current Location</a></li>');
+      //  $( "#connectionsList" ).hide();
+        
         $( "#createNewLocation" ).click(function() {
             showCreateFolderConnectionDialog();         
         });

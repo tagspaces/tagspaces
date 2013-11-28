@@ -81,9 +81,11 @@ define(function(require, exports, module) {
 	    hideLoadingAnimation();
 
 	    $(document).ready(function() {
-		    $( "#container" ).show();  
-		    $( "#helpers" ).show();
+		    //$( "#container" ).show();  
+		    //$( "#helpers" ).show();
 	        initLayout();
+	        initI18N();
+	        initKeyBindings();
 		    $( "#loading" ).hide();  
 	    
 	        console.log("Layout initialized");
@@ -105,6 +107,21 @@ define(function(require, exports, module) {
 	    
         checkForNewVersion();
 	}
+
+    function initI18N() {
+		$.i18n.init({
+		    ns: { namespaces: ['ns.common'], defaultNs: 'ns.common'},
+		    lng: "en",
+		    debug: false 
+		}, function() {
+            $('[data-i18n]').i18n();
+	    });
+    }	
+	
+    function initKeyBindings() {
+    	// TODO handle documents opened for editing
+	    $(document).bind('keyup', 'esc', closeFileViewer);
+    }		
 	
     function checkForNewVersion() {
         if(tsSettings.getCheckForUpdates()) {            
@@ -220,9 +237,11 @@ define(function(require, exports, module) {
     var isFullWidth = false; 
 
     function toggleFullWidth() {
+    	// TODO hide tags
         var fullWidth = window.innerWidth;
         var halfWidth = Math.round(fullWidth/2);
         if(!isFullWidth) {
+        	layoutContainer.close("west");
             layoutContainer.sizePane("east", fullWidth);
             layoutContainer.open("east"); 
         } else {
@@ -235,7 +254,7 @@ define(function(require, exports, module) {
     var isPerspectiveFooterOpen = false; 
 
     function togglePerspectiveFooter() {
-        var fullHeight = window.innerHeight;
+/*        var fullHeight = window.innerHeight;
         var halfHeight = Math.round(fullHeight/2);
         if(isPerspectiveFooterOpen) {
             centerLayout.sizePane("south", .03);
@@ -244,23 +263,22 @@ define(function(require, exports, module) {
             centerLayout.sizePane("south", halfHeight);
             centerLayout.open("south");               
         }
-        isPerspectiveFooterOpen = !isPerspectiveFooterOpen;
+        isPerspectiveFooterOpen = !isPerspectiveFooterOpen; */
     }
 
 	var fileDetailsFull = false; 
 	
 	function toggleFileDetails() {
-	    if(fileDetailsFull) {
+/*	    if(fileDetailsFull) {
 		    fileDetailsFull = false;
 		    eastLayout.sizePane("north", 70);	    		    	
 	    } else {
 		    fileDetailsFull = true;
 		    eastLayout.sizePane("north", 140);	    	
-	    }
+	    }*/
 	}
 	
 	function closeFileViewer() {
-	    layoutContainer.open("center");
 	    layoutContainer.close("east");    
 	}
 	
@@ -271,103 +289,107 @@ define(function(require, exports, module) {
 	function initLayout (){
 	    console.log("Initializing Layout...");
 	
-	    layoutContainer = $('#container').layout(
-	        {
-	        fxName: "none"
-	    ,   enableCursorHotkey:         false
-	        
-	    //  some resizing/toggling settings
-	    ,   north__resizable:            false   // OVERRIDE the pane-default of 'slidable=true'
-	    ,   north__spacing_open:        0       // no resizer-bar when open (zero height)       
-	 //       ,   north__togglerLength_closed: '100%' // toggle-button is full-width of resizer-bar
-	 //       ,   north__spacing_closed:      20      // big resizer-bar when open (zero height)
-	    ,   north__size:                35      
-	 
-	    ,   south__resizable:           false   // OVERRIDE the pane-default of 'resizable=true'
-	    ,   south__spacing_open:        0       // no resizer-bar when open (zero height)
-	 //       ,   south__spacing_closed:      20      // big resizer-bar when open (zero height)
+		var row1Height = 40; // px
+		var row3Height = 45; // px	
 	
-	    //  west settings
-	    ,   west__resizable:           true 
-	    ,   west__minSize:              .1
-	//        ,   west__maxSize:              .4
-	    ,   west__size:                 200
-	    ,   west__spacing_open:         5     
+		layoutContainer = $('body').layout({ 
+			name:			'outerLayout' // for debugging & auto-adding buttons (see below)
+	    ,   fxName:         "slide" // none, slide
+   	    ,   fxSpeed:        "normal"
+		,	autoResize:		true	// try to maintain pane-percentages
+		,	autoReopen:		true	// auto-open panes that were previously auto-closed due to 'no room'
+		,	autoBindCustomButtons:	true
+		,	west__paneSelector: 	'.col1' 
+		,	center__paneSelector: 	'.col2' 
+		,	east__paneSelector: 	'.col3' 
+		,	west__size: 		250		// percentage size expresses as a decimal
+		,	east__size: 		0.4
+		,   west__spacing_open:         1 	
+		,   east__spacing_open:         1
+		,	center_minWidth:				200
+		,	center_minHeight:				200
+	    ,   spacing_closed:		0	
+		,	minSize:		100
+		,	west__minWidth:		250 
+		,	noRoomToOpenAction:	"hide" // 'close' or 'hide' when no room to open a pane at minSize
+	//	,   west__showOverflowOnHover:	true
+	//	,   center__showOverflowOnHover:	true
+	//	,   east__showOverflowOnHover:	true	
+		,   enableCursorHotkey:         false
+		});
+		
+		layoutContainer.close("east");
 	
-	    //  east settings
-	    ,   east__resizable:           true                 
-	    ,   east__size:                 .50
-	    ,   east__minSize:              .2
-	//        ,   east__maxSize:              .8 // 80% of layout width
-	    ,   east__spacing_open:        5   
+		var col1Layout = layoutContainer.panes.west.layout({ 
+			name:			'col1Layout' // for debugging & auto-adding buttons (see below)
+	//	,	north__paneSelector: 	'.row1'
+		,	center__paneSelector: 	'.row2'
+		,	south__paneSelector: 	'.row3'
+	//	,	north__size: 		row1Height	// percentage size expresses as a string
+		,	south__size: 		row3Height
+		,   north__spacing_open:        0 	
+		,   south__spacing_open:        0 	
+		,	autoResize:		false	// try to maintain pane-percentages
+		,	closable:		false
+		,	togglerLength_open:	0	// hide toggler-buttons
+		,	spacing_closed:		0	// hide resizer/slider bar when closed
+		,	autoReopen:		true	// auto-open panes that were previously auto-closed due to 'no room'
+		,	autoBindCustomButtons:	true
+		,	minSize:		25
+		,	center__minHeight:	25
+	//	,   north__showOverflowOnHover:	true
+	//	,   center__showOverflowOnHover:	true
+	//	,   south__showOverflowOnHover:	true		
+		,   enableCursorHotkey:         false
+		}); 
 	
-	    //  center settings
-	    ,   center__resizable:          true 
-	    ,   center__minSize:           0.5
+	/*
+		var col2Layout = layoutContainer.panes.center.layout({ 
+			name:			'col2Layout' // for debugging & auto-adding buttons (see below)
+	//	,	north__paneSelector: 	'.row1'
+		,	center__paneSelector: 	'.row2'
+		,	south__paneSelector: 	'.row3'
+	//	,	north__size: 		row1Height	// percentage size expresses as a string
+		,	south__size: 		row3Height
+		,   north__spacing_open:        0 	
+		,   south__spacing_open:        0 	
+		,	autoResize:		true	// try to maintain pane-percentages
+		,	closable:		false
+		,	togglerLength_open:	0	// hide toggler-buttons
+		,	spacing_closed:		0	// hide resizer/slider bar when closed
+		,	autoReopen:		true	// auto-open panes that were previously auto-closed due to 'no room'
+		,	autoBindCustomButtons:	true
+		,	minSize:		25
+		,	center__minHeight:	25
+		,   north__showOverflowOnHover:	true
+	//	,   center__showOverflowOnHover:	true
+	//	,   south__showOverflowOnHover:	true		
+		,   enableCursorHotkey:         false
+		}); */
 	
-	    //  enable showOverflow on west-pane so CSS popups will overlap north pane
-	    ,   west__showOverflowOnHover:  true
-	
-	    //  enable state management
-	    ,   stateManagement__enabled:   false // automatic cookie load & save enabled by default
-	
-	    ,   showDebugMessages:          false // log and/or display messages from debugging & testing code
-	    } 
-	    
-	    );
-	    
-	    // Directories and Tags
-	    westLayout = $('div.ui-layout-west').layout({
-	            minSize:                50  // ALL panes
-            ,   enableCursorHotkey:    false
-	        ,   center__paneSelector:   ".west-center"
-	        ,   south__paneSelector:    ".west-south"
-	        ,   south__resizable:       true  
-	        ,   south__size:            .5
-	        ,   south__spacing_open:    1       
-	    });
-	
-	    centerLayout = $('div.ui-layout-center').layout({
-	            name:                   "middle"
-            ,   enableCursorHotkey:     false	            
-	        ,   north__paneSelector:    ".middle-north"            
-	        ,   center__paneSelector:   ".middle-center"      
-	        ,   south__paneSelector:    ".middle-south"   
-	        ,   minSize:                0  // ALL panes
-	        ,   center__minSize:        300
-	        ,   north__size:            35
-	        ,   north__resizable:       false        
-	        ,   north__spacing_open:    0    
-	        ,   south__spacing_open:    1              
-	        ,   south__size:            20
-	    });
-	
-	    // File Viewer / Editor
-	    eastLayout = $('div.ui-layout-east').layout({
-	            minSize:                0  // ALL panes
-            ,   enableCursorHotkey:     false	            
-	        ,   north__paneSelector:    ".east-north"
-	        ,   center__paneSelector:   ".east-center"
-	        ,   south__paneSelector:    ".east-south" 
-	        ,   north__size:            70
-	        ,   north__resizable:       true
-	        ,   north__spacing_open:    0    
-	        ,   south__size:            0
-	        ,   south__spacing_open:    0        
-	    });
-	
-	    var dirNavigationLayout = $('#directoryNavigator').layout({
-	            minSize:                35  // ALL panes
-            ,   enableCursorHotkey:     false	            
-	        ,   north__paneSelector:    "#directoryNavigatorNorth"
-	        ,   center__paneSelector:   "#location"
-	        ,   north__size:            32
-	        ,   north__resizable:       false
-	        ,   north__spacing_open:    0
-	    });
-	
-	    // Closes the viewer area by init
-	    layoutContainer.close("east");
+	/*
+		var col3Layout = layoutContainer.panes.east.layout({ 
+			name:			'col2Layout' // for debugging & auto-adding buttons (see below)
+	//	,	north__paneSelector: 	'.row1'
+		,	center__paneSelector: 	'.row2'
+		,	south__paneSelector: 	'.row3'
+	//	,	north__size: 		row1Height	// percentage size expresses as a string
+		,	south__size: 		row3Height
+		,   north__spacing_open:        0 	
+		,   south__spacing_open:        0 	
+		,	autoResize:		true	// try to maintain pane-percentages
+		,	closable:		false
+		,	togglerLength_open:	0	// hide toggler-buttons
+		,	spacing_closed:		0	// hide resizer/slider bar when closed
+		,	autoReopen:		true	// auto-open panes that were previously auto-closed due to 'no room'
+		,	autoBindCustomButtons:	true
+		,	minSize:		25
+		,	center__minHeight:	25
+		,   north__showOverflowOnHover:	true
+	//	,   center__showOverflowOnHover:	true
+	//	,   south__showOverflowOnHover:	true		
+		,   enableCursorHotkey:         false
+		}); */
 	}
 	
 	function switchIOAPI(type) {

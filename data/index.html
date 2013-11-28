@@ -1,477 +1,589 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <!--
-    Copyright (c) 2012-2013 The TagSpaces Authors. All rights reserved.
-    Use of this source code is governed by a AGPL3 license that 
-    can be found in the LICENSE file.
-    -->    
-	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
-	<meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />  	
-	<link rel="shortcut icon" type="image/x-icon" href="icons/icon16.png">
-	<title>TagSpaces</title>
-    <script type="text/javascript" data-main="loader" src="libs/requirejs/require.js"></script>
-    <link rel="stylesheet" type="text/css" href="libs/font-awesome/css/font-awesome.css">
-    <link rel="stylesheet" type="text/css" href="libs/jquerylayout/layout-default-latest.css">    
-    <link rel="stylesheet" type="text/css" href="libs/jsoneditor/jsoneditor.css">
-    <link rel="stylesheet" type="text/css" href="libs/jquerydropdown/jquery.dropdown.css">    
-    <link rel="stylesheet" type="text/css" href="libs/bootstrap/css/bootstrap.css">
-    <link rel="stylesheet" type="text/css" href="libs/jquery-simplecolorpicker/jquery.simplecolorpicker.css">
-    <link rel="stylesheet" type="text/css" href="css/tagspaces.css">
+<!--
+Copyright (c) 2012-2013 The TagSpaces Authors. All rights reserved.
+Use of this source code is governed by a AGPL3 license that 
+can be found in the LICENSE file.
+-->  	
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>TagSpaces</title>
+<style type="text/css">
+#loadingText {
+	top:50%; 
+	width: 100%; 
+	text-align: center;
+	position:absolute; 
+	text-shadow: 0px 1px 1px #fff;	
+}
+
+#loading {
+	background-color: gray; 
+	text-align: center;
+	width: 100%; 
+	height: 100%;
+	font-size: 1.4em; 
+	position:absolute; 
+	z-index: 999999;
+	background-image: url('data:image/png;base64,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');
+}
+</style>
+<script type="text/javascript" data-main="loader" src="libs/requirejs/require.js"></script>
+<link rel="stylesheet" type="text/css" href="libs/bootstrap/css/bootstrap3.css">
+<link rel="stylesheet" type="text/css" href="devlibs/select2/select2.css">
+<link rel="stylesheet" type="text/css" href="devlibs/select2/select2-bootstrap.css">
+<link rel="stylesheet" type="text/css" href="devlibs/font-awesome-4.0.3/css/font-awesome.css">
+<link rel="stylesheet" type="text/css" href="devlibs/bootstrap3xeditable/css/bootstrap-editable.css">
+<link rel="stylesheet" type="text/css" href="css/tagspaces.css">
+
 </head>
-<body style="background-color: lightgray;">
-<div id="loading" style="text-align: center; width: 100%; font-size: 1.4em; position:absolute; top:50%; text-shadow: 0px 1px 1px #fff; ">
-    Loading <a href="index.html">TagSpaces</a> ... 
-</div>	
-<div id="container" style="display: none;">
-    <div class="ui-layout-north">
-        <a id="logo" href="http://tagspaces.org" target="_new">TagSpaces</a>
-		<a href="http://tagspaces.org" target="_new" class="appVersion"><sup  id="appVersion"></sup></a>
-        <a id="newVersionAvailable" style="color: white; display: none; color: #7bd148" class="appVersion" title="New TagSpaces version available" data-dropdown="#newVersionMenu">
-            <sup>New Release Available!<!--i class="icon-leaf icon-large" style="color: #7bd148"></i--></sup></a>
-        <span id="loadingAnimation"></span>
-		<div id="mainMenu" class="pull-right">
-            <button id="toggleLeftPanel" class="btn btn-link" title="Toggle Navigator & Tag Panel"><i class="icon-sort icon-rotate-90"></i></button>
-			<div id="viewSwitcher" class="btn-group" data-toggle="buttons-radio"></div>
-	        <button role="button" class="btn btn-link" title="Additional Actions" data-dropdown="#settingsMenu"><i class="icon-gear"></i></button>        
-	    </div>
-    </div>
+<body>
+<div id="loading"><div id="loadingText"><img src="data:image/png;base64,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"></img> Loading TagSpaces ...</div></div>	
+<div class="col1">
+	<div class="row2">
+		<nav class="navbar navbar-default" role="navigation">
+		  <div class="btn-toolbar" style="width: 100%">			
+	        <span id="logo" href="#" target="_new">TagSpaces</span>
+			<span class="appVersion"><sup  id="appVersion"></sup></span>
+	        <a id="newVersionAvailable" style="color: white; display: none; color: #7bd148" class="appVersion" title="New TagSpaces version available" data-dropdown="#newVersionMenu">
+	            <sup><i class="fa fa-leaf" style="color: #7bd148"></i></sup></a>
+	        <!--div id="newVersionMenu" class="dropdown-menu"></div-->
+	        <span id="loadingAnimation"></span>
+	
+	      </div>
+		  <div class="btn-toolbar" style="width: 100%">
+			<div class="btn-group" style="width: 99%">
+			    <button type="button" class="btn btn-default" style="width: 15%" id="createNewLocation"><i class="fa fa-plus"></i></button>
+			    <button type="button" class="btn btn-default" style="width: 70%" id="locationName" data-toggle="dropdown">Choose Location</button>
+			    <button type="button" class="btn btn-default dropdown-toggle" id="selectLocation" style="width: 15%" data-toggle="dropdown">
+			      <span class="caret"></span>
+			    </button>
+			    <ul class="dropdown-menu" id="connectionsList">
+			      <li><a href="#"><i class="fa fa-dropbox"></i>&nbsp;<span data-i18n="app.test1;">My Dropbox Folder</span>&nbsp;
+		      			<button type="button" class="btn btn-link"><i class="fa fa-edit"></i></button></a></li>
+				</ul>
+			</div>
+		  </div>
+		</nav>  	
+		<div class="ts-container">
+           <div id="locationContent"><button class="btn btn-link pull-right" id="switchLang" data-i18n="[title]app.switchLanguageTooltip;">&nbsp;<i class="fa fa-asterisk"></i>&nbsp;</button></div>
+           <div id="tagGroupsContent"></div>            
+		</div>
+	</div>
+	<div class="row3">
+	  <div class="btn-group" data-toggle="buttons">
+		  <label class="btn btn-default active" id="showLocations" data-i18n="[title]app.switchToLocationsTooltip;">
+		    <input type="radio" name="options">&nbsp;<i class="fa fa-folder"></i>&nbsp;
+		  </label>
+		  <label class="btn btn-default" id="showTagGroups" data-i18n="[title]app.switchToTagsTooltip;">
+		    <input type="radio" name="options" >&nbsp;<i class="fa fa-tags"></i>&nbsp;
+		  </label>
+	  </div>
+	  <div class="btn-group">
+		  <button class="btn btn-default" data-i18n="[title]app.?;" id="startNewInstanceBack">
+		    &nbsp;<i class="fa fa-external-link-square"></i>&nbsp;</button>
+		  <button class="btn btn-default" data-i18n="[title]app.?;" data-toggle="modal" data-target="#dialogOptions">
+		    &nbsp;<i class="fa fa-wrench"></i>&nbsp;</button>
+		  <button class="btn btn-default" data-i18n="[title]app.?;" data-toggle="modal" data-target="#dialogAboutTS">
+		    &nbsp;<i class="fa fa-comment"></i>&nbsp;</button>
+	  </div>
+	</div>    	
+</div>
 
-    <div class="ui-layout-west" style="padding: 0px;">
-        <div id="directoryNavigator" class="west-center" style="padding: 0px">
-            <div id="directoryNavigatorNorth" style="padding: 2px;" >
-                <div class="btn-group" style="width: 100%;">
-                    <button id="reloadTagSpace" style="width: 85%; text-align: left;" class="btn"  data-dropdown="#connectionsList" >Select Location</button>
-                    <button id="selectTagSpace" style="width: 15%;" class="btn"><span class="caret"></span></button> 
-                </div>                
-            </div>
-            <div id="location" style="padding: 1px 1px 1px 3px">
-                <div id="locationContent" class="content"></div>
-            </div>   
-        </div>
-        <div id="tagGroups" class="west-south" style="padding: 1px 1px 1px 3px">
-            <div id="tagGroupsContent" class="content"></div>            
-        </div>
-    </div>    
-    
-    <div class="ui-layout-center" style="padding: 0px;">
-        <div id="viewToolbars" class="middle-north"></div> 
-        <div id="viewContainers" class="middle-center"></div>                
-        <div id="viewFooters" class="middle-south" ></div>  
-    </div>    
+<div class="col2">
+	<div class="row2">
+		<nav class="navbar navbar-default" role="navigation">
+			<div class="btn-toolbar" style="width: 100%">
+				<button type="button" class="navbar-toggle pull-left" id="toggleLeftPanel" data-i18n="[title]app.toggleLeftPanelTooltip;">
+		            <span class="icon-bar"></span>
+		            <span class="icon-bar"></span>
+		            <span class="icon-bar"></span>
+				</button>
+			    <!--input type="text" id="tagSelect" style="width: 150px"></input-->		  
+				<div class="btn-group pull-right" >
+				  <button type="button" class="btn btn-link dropdown-toggle" data-toggle="dropdown"><i id="currentPerspectitveIcon" class="fa fa-film"></i>&nbsp;
+				    <span id="currentPerspectitveName">Choose Perspective</span>&nbsp;<span class="caret"></span>
+				  </button>
+				  <ul class="dropdown-menu" id="viewSwitcher"></ul>
+				</div>
+			</div>
+			<div id="viewToolbars"></div>			
+		</nav>  	
+		<div class="ts-container" id="viewContainers"></div>  
+	</div>
+	<!--div class="row3"></div-->		
+</div>
 
-    <div class="ui-layout-east" style="padding: 0px">
-        <div class="east-north" style="padding: 2px;" >
-            <span id="fileTitle" style="padding: 7px"></span>
-            <span id="filetoolbox" class="btn-group pull-right"></span>
-            <p id="tagsContainer" style="margin-top: 10px"><span id="fileTags"></span></p>
-            <form class="form-horizontal">
-                <div class="control-group">
-                    <label class="control-label" for="">Filepath</label>
-                    <div class="controls">
-                        <input id="selectedFilePath" READONLY style="width: 100%; height:25px; border: 0px; background-color: transparent;" >
-                    </div>
-                </div>
-            </form>              
-        </div>        
-        <div class="east-center" id="content" style="padding: 0; height: 100%; overflow: hidden !important;">
-            <div id="viewer" allowfullscreen style="width: 100%; height: 100%" ></div>
-        </div>
-        <div class="east-south" style="padding: 0px">
-        </div>
-    </div>    
-</div>    
-<div id="helpers" style="display: none;">
-	<div id="dialogAbout" class="modal hide" tabindex="-1" role="dialog" data-backdrop="static" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="col3">
+	<div class="row2">
+		<nav class="navbar navbar-default" role="navigation">
+			<div class="btn-toolbar" style="width: 100%">
+				<div class="btn-group">
+				  <button type="button" style="padding-left: 0px;" class="btn btn-link dropdown-toggle" data-toggle="dropdown">
+				    <span id="fileExt"></span>&nbsp;<span class="caret"></span>
+				  </button>
+				  <ul class="dropdown-menu">
+				      <li><a href="#"><i class="fa fa-edit"></i>&nbsp;<span data-i18n="app.?;">Edit</span>&nbsp;</a></li>		      
+				      <li><a href="#"><i class="fa fa-edit"></i>&nbsp;<span data-i18n="app.?;">Edit</span>&nbsp;</a></li>
+				      <li><a href="#"><i class="fa fa-edit"></i>&nbsp;<span data-i18n="app.?;">Edit</span>&nbsp;</a></li>
+				      <li><a href="#"><i class="fa fa-edit"></i>&nbsp;<span data-i18n="app.?;">Edit</span>&nbsp;</a></li>
+				      <li><a href="#"><i class="fa fa-edit"></i>&nbsp;<span data-i18n="app.?;">Edit</span>&nbsp;</a></li>				      
+				  </ul>
+				</div>
+				<input id="fileTitle" type="text" value="">
+				<div style="position: fixed; right: 0px; top: 0px" class="btn-group">
+					<button class="btn btn-link" id="prevFileButton" id="">&nbsp;<i class="fa fa-chevron-left"></i>&nbsp;</button>				
+					<button class="btn btn-link" id="nextFileButton" id="">&nbsp;<i class="fa fa-chevron-right"></i>&nbsp;</button>				
+					<button class="btn btn-link" id="toggleFullWidthButton">&nbsp;<i class="fa fa-arrows-alt"></i>&nbsp;</button>				
+					<button class="btn btn-link" id="closeOpenedFile">&nbsp;<i class="fa fa-times"></i>&nbsp;</button>					
+				</div>
+			</div>
+			<div id="tagsContainer" class="btn-group ui-droppable">
+				<button type="button" title="Add tags" class="btn btn-small extTagButton dropdown-toggle" data-toggle="dropdown">&nbsp;&nbsp;+&nbsp;&nbsp;</button>
+				<ul class="dropdown-menu" id="tagSuggestionsMenu"></ul>
+				<span id="fileTags"></span>
+			</div>			
+		</nav> 	
+		<div class="ts-container">
+            <div id="viewer" allowfullscreen style="width: 100%; height: 100%" ></div>			
+  		</div>
+	</div>
+	<!--div class="row3"></div-->  		   	
+</div>
+
+<!-- Modals -->
+<div class="modal fade" id="dialogAboutTS" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+	    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	    <h4 class="modal-title" id="myModalLabel1">About TagSpaces</h4>      	
+      </div>
+      <div class="modal-body">
+	    <iframe id="aboutIframe" style="width: 100%; height: 280px; border: 0px;" src="about.html"></iframe>
+      </div>
+      <div class="modal-footer">
+		<a class="btn" target="_new" href="https://tagspaces.uservoice.com/forums/213931-general" title="Suggest or vote for a feature"><i class="fa fa-bullhorn"></i> Suggest Features</a>        
+		<a class="btn" target="_new" href="https://github.com/uggrock/tagspaces/issues/" title="Report a issue or enhancement"><i class="fa fa-flag"></i> Report Issue</a>
+		<a class="btn" target="_new" href="https://twitter.com/tagspaces" title="Follow @tagspaces on twitter"><i class="fa fa-twitter"></i><!-- Follow @tagspaces--></a>
+		<a class="btn" href="mailto:info@tagspaces.org" title="Drop a line to the developers"><i class="fa fa-envelope-o"></i><!-- Contact Developers--></a>
+      	
+	    <button class="btn" id="aboutDialogBack">Back</button>
+	    <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Close</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div class="modal fade" id="dialogOptions" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
 	  <div class="modal-header">
 	    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-	    <h4>About TagSpaces</h4>
+	    <h4>Options</h4>
 	  </div>
-	  <div class="modal-body">
-	    <iframe id="aboutIframe" style="width: 100%; height: 280px; border: 0px;" src="about.html"></iframe>
-	  </div>
+	  <div class="modal-body"><form class="form-horizontal"></form></div>
 	  <div class="modal-footer">
-        <button class="btn" id="aboutDialogBack">Back</button>
-	    <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Close</button>
+	    <button class="btn" data-dismiss="modal" id="aboutDialogSettings">Advanced Settings</button>       
+	    <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+	    <button class="btn btn-primary" id="saveSettingsCloseButton">Save</button>
 	  </div>
-	</div>    
-
-    <div id="dialogOptions" class="modal hide" tabindex="-1" role="dialog" data-backdrop="static" aria-labelledby="myModalLabel" aria-hidden="true">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h4>Options</h4>
-      </div>
-      <div class="modal-body"><form class="form-horizontal"></form></div>
-      <div class="modal-footer">
-        <button class="btn" data-dismiss="modal" id="aboutDialogSettings">Advanced Settings</button>       
-        <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
-        <button class="btn btn-primary" id="saveSettingsCloseButton">Save</button>
-      </div>
-    </div>        
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
    
-    <div id="dialogAdvancedSetting" class="modal hide" tabindex="-1" role="dialog" data-backdrop="static" aria-labelledby="myModalLabel" aria-hidden="true" >
-        <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-            <h4>Advanced Settings</h4>
-        </div>
-        <div class="modal-body">
-            <div id="settingsEditor" style="width: 100%; height: 400px"></div>
-            <div id="settingsPlainJSON" style="width: 100%; height: 400px;"></div>
-        </div>
-        <div class="modal-footer">
-            <button id="editorButton" class="btn" aria-hidden="true">Editor</button>
-            <button id="importExportButton" class="btn" aria-hidden="true">Import/Export</button>
-            <button id="defaultSettingsButton" class="btn" aria-hidden="true">Default Settings</button>                        
-            <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
-            <button id="saveSettingsButton" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Save</button>
-        </div>
-    </div>    
-    
-    <div id="dialogCreateFolderConnection" class="modal hide" tabindex="-1" role="dialog" data-backdrop="static" aria-labelledby="myModalLabel" aria-hidden="true" >
-        <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-            <h4>Connect Folder</h4>
-        </div>
-        <div class="modal-body">
-            <form class="form-horizontal" onsubmit="return false;">
-                <div class="control-group">
-                    <label class="control-label" for="folderLocation">Folder Location</label>
-                    <div class="controls">
-                        <input type="text" name="folderLocation" id="folderLocation" placeholder="Example: c:\users\ugg\documents" />
-                        <button id="selectLocalDirectory" class="btn" title="Select local folder"><i class="icon-folder-open"></i></button>
-                    </div>
-                </div>  
-                <div class="control-group">
-                    <label class="control-label" for="connectionName">Connection Name</label>
-                    <div class="controls">
-                        <input type="text" name="connectionName" id="connectionName" placeholder="Example: My Documents" />
-                    </div>
-                </div>          
-            </form>
-        </div>
-        <div class="modal-footer">
-            <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
-            <button id="createFolderConnectionButton" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Ok</button>
-        </div>
-    </div>    
+<div class="modal fade" id="dialogAdvancedSetting" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+	    <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+	        <h4>Advanced Settings</h4>
+	    </div>
+	    <div class="modal-body">
+	        <div id="settingsEditor" style="width: 100%; height: 400px"></div>
+	        <div id="settingsPlainJSON" style="width: 100%; height: 400px;"></div>
+	    </div>
+	    <div class="modal-footer">
+	        <button id="editorButton" class="btn" aria-hidden="true">Editor</button>
+	        <button id="importExportButton" class="btn" aria-hidden="true">Import/Export</button>
+	        <button id="defaultSettingsButton" class="btn" aria-hidden="true">Default Settings</button>                        
+	        <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+	        <button id="saveSettingsButton" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Save</button>
+	    </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 
-    <div id="dialogFileCreate" class="modal hide" tabindex="-1" role="dialog" data-backdrop="static" aria-labelledby="myModalLabel" aria-hidden="true" >
-        <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-            <h4>Create New File</h4>
-        </div>
-        <div class="modal-body form-horizontal">
-            <div class="control-group">
-                <label class="control-label" for="fileTypeChooser">Type</label>
-                <div class="controls">
-                    <div class="btn-group" data-toggle="buttons-radio" name="fileTypeChooser">
-                        <button id="txtFileTypeButton" title="Create a TXT File" class="btn">Plain Text</button>
-                        <button id="htmlFileTypeButton" title="Create a HTML File" class="btn">Rich Text</button>
-                        <button id="mdFileTypeButton" title="Create a MarkDown File" class="btn">MarkDown</button>
-                    </div>
-                </div>
-            </div>
-            <div class="control-group">
-                <label class="control-label" for="newFileName">Title</label>
-                <div class="controls">
-                    <input type="text" id="newFileName" class="input-xlarge" placeholder="Title of the file">
-                </div>
-            </div>
-            <div class="control-group">
-                <label class="control-label" for="newFileNameTags">Tags</label>
-                <div class="controls">
-                    <input type="text" id="newFileNameTags" name="newFileNameTags" autocomplete="off" class="input-xlarge" placeholder="Comma separated list of tags">
-                </div>
-            </div>
-            <div class="control-group">
+<div id="dialogCreateFolderConnection" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+	    <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+	        <h4>Connect Folder</h4>
+	    </div>
+	    <div class="modal-body">
+	        <form class="form-horizontal" onsubmit="return false;">
+	            <div class="form-group">
+	                <label class="control-label" for="folderLocation">Folder Location</label>
+	                <div class="controls">
+	                    <input type="text" name="folderLocation" id="folderLocation" placeholder="Example: c:\users\ugg\documents" />
+	                    <button id="selectLocalDirectory" class="btn" title="Select local folder"><i class="fa fa-folder-open"></i></button>
+	                </div>
+	            </div>  
+	            <div class="form-group">
+	                <label class="control-label" for="connectionName">Connection Name</label>
+	                <div class="controls">
+	                    <input type="text" name="connectionName" id="connectionName" placeholder="Example: My Documents" />
+	                </div>
+	            </div>          
+	        </form>
+	    </div>
+	    <div class="modal-footer">
+	        <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+	        <button id="createFolderConnectionButton" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Ok</button>
+	    </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->  
+
+<div id="dialogFileCreate" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+	    <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+	        <h4>Create New File</h4>
+	    </div>
+	    <div class="modal-body form-horizontal">
+	        <div class="form-group">
+	            <label class="control-label" for="fileTypeChooser">Type</label>
+	            <div class="controls">
+	                <div class="btn-group" data-toggle="buttons-radio" name="fileTypeChooser">
+	                    <button id="txtFileTypeButton" title="Create a TXT File" class="btn">Plain Text</button>
+	                    <button id="htmlFileTypeButton" title="Create a HTML File" class="btn">Rich Text</button>
+	                    <button id="mdFileTypeButton" title="Create a MarkDown File" class="btn">MarkDown</button>
+	                </div>
+	            </div>
+	        </div>
+	        <div class="form-group">
+	            <label class="control-label" for="newFileName">Title</label>
+	            <div class="controls">
+	                <input type="text" id="newFileName" class="input-xlarge" placeholder="Title of the file">
+	            </div>
+	        </div>
+	        <div class="form-group">
+	            <label class="control-label" for="newFileNameTags">Tags</label>
+	            <div class="controls">
+	                <input type="text" id="newFileNameTags" name="newFileNameTags" autocomplete="off" class="input-xlarge" placeholder="Comma separated list of tags">
+	            </div>
+	        </div>
+	        <div class="form-group">
 			    <div class="controls">
 			      <label class="checkbox">
 			        <input type="checkbox" id="tagWithCurrentDate"> Tag with current date (e.g. 20131210 for 10th of December, 2013)
 			      </label>
 			    </div>          	
-            </div>                        
-            <!--div class="control-group">
+	        </div>                        
+	        <!--div class="form-group">
 			    <div class="controls">
 			      <label class="checkbox">
 			        <input type="checkbox"> Creates the file in YYYYMM (e.g. 201312) subdirectory.
 			      </label>
 			    </div>          	
-            </div-->            
-        </div>
-        <div class="modal-footer">
-            <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
-            <button id="fileCreateConfirmButton" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Ok</button>
-        </div>
-    </div> 
-    
-    <div id="dialogDirectoryCreate" class="modal hide" tabindex="-1" role="dialog" data-backdrop="static" aria-labelledby="myModalLabel" aria-hidden="true" >
-        <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-            <h4>Create New Directory</h4>
-        </div>
-        <div class="modal-body form-horizontal">
-            <div class="control-group">
-                <label class="control-label" for="newDirectoryName">New Directory Name</label>
-                <div class="controls">
-                    <input type="text" name="newDirectoryName" id="newDirectoryName" />
-                </div>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
-            <button id="createNewDirectoryButton" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Ok</button>
-        </div>
-    </div>       
+	        </div-->            
+	    </div>
+	    <div class="modal-footer">
+	        <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+	        <button id="fileCreateConfirmButton" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Ok</button>
+	    </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 
-    <div id="dialogFileRename" class="modal hide" tabindex="-1" role="dialog" data-backdrop="static" aria-labelledby="myModalLabel" aria-hidden="true" >
-        <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-            <h4>Rename File</h4>
-        </div>
-        <div class="modal-body form-horizontal">
-            <div class="control-group">
-                <label class="control-label" for="renamedFileName">New Filename</label>
-                <div class="controls">
-                    <input type="text" name="renamedFileName" id="renamedFileName" />
-                </div>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
-            <button id="renameFileButton" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Ok</button>
-        </div>
-    </div> 
-    
-    <div id="dialogEditTag" class="modal hide" tabindex="-1" role="dialog" data-backdrop="static" aria-labelledby="myModalLabel" aria-hidden="true" >
-        <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-            <h4>Edit Tag</h4>
-        </div>
-        <div class="modal-body form-horizontal">
-            <div class="control-group">
-                <label class="control-label" for="tagTypeChooser">Tagtype</label>
-                <div class="controls">
-                    <div class="btn-group" data-toggle="buttons-radio" name="tagTypeChooser">
-                        <button id="plainTagTypeButton" title="Create a plain text file" class="btn">Plain</button>
-                        <button id="dateTagTypeButton"  title="Create a MarkDown file" class="btn">Date</button>
-                        <button id="currencyTagTypeButton" title="Create a HTML file" class="btn">Currency</button>
-                    </div>
-                </div>
-            </div>
-            <div class="control-group">
-                <label class="control-label" for="newTagName">Tag Name</label>
-                <div class="controls">
-                    <input type="text" id="newTagName" id="newTagName">
-                </div>
-            </div>            
-        </div>
-        <div class="modal-footer">
-            <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
-            <button id="editTagButton" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Ok</button>
-        </div>
-    </div>  
+<div id="dialogDirectoryCreate" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+	    <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+	        <h4>Create New Directory</h4>
+	    </div>
+	    <div class="modal-body form-horizontal">
+	        <div class="form-group">
+	            <label class="control-label" for="newDirectoryName">New Directory Name</label>
+	            <div class="controls">
+	                <input type="text" name="newDirectoryName" id="newDirectoryName" />
+	            </div>
+	        </div>
+	    </div>
+	    <div class="modal-footer">
+	        <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+	        <button id="createNewDirectoryButton" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Ok</button>
+	    </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->      
 
-    <div id="dialogAddTags" class="modal hide" tabindex="-1" role="dialog" data-backdrop="static" aria-labelledby="myModalLabel" aria-hidden="true" >
-        <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-            <h4>Add Tags</h4>
-        </div>
-        <div class="modal-body form-horizontal" style="height: 200px">
-            <div class="control-group">
-                <label class="control-label" for="tags">Comma separated list of the tags</label>
-                <div class="controls">
-                    <input type="text" name="tags" id="tags" autocomplete="off"/>
-                </div>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
-            <button id="addTagsButton" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Ok</button>
-        </div>
-    </div> 
+<div id="dialogFileRename" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+	    <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+	        <h4>Rename File</h4>
+	    </div>
+	    <div class="modal-body form-horizontal">
+	        <div class="form-group">
+	            <label class="control-label" for="renamedFileName">New Filename</label>
+	            <div class="controls">
+	                <input type="text" name="renamedFileName" id="renamedFileName" />
+	            </div>
+	        </div>
+	    </div>
+	    <div class="modal-footer">
+	        <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+	        <button id="renameFileButton" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Ok</button>
+	    </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 
-    <div id="dialogEditInTreeTag" class="modal hide" tabindex="-1" role="dialog" data-backdrop="static" aria-labelledby="myModalLabel" aria-hidden="true" >
-        <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-            <h4>Edit Tag</h4>
-        </div>
-        <div class="modal-body form-horizontal">
-            <div class="control-group">
-                <label class="control-label" for="tagInTreeName">Name</label>
-                <div class="controls">
-                    <input type="text" name="tagInTreeName" id="tagInTreeName" />
-                </div>
-            </div>
-            <div class="control-group">
-                <label class="control-label" for="tagColor">Color</label>
-                <div class="controls">
-                    <select id="tagColor" >
-                      <option value="#ac725e">#ac725e</option>
-                      <option value="#d06b64">#d06b64</option>
-                      <option value="#f83a22">#f83a22</option>
-                      <option value="#fa573c">#fa573c</option>
-                      <option value="#ff7537">#ff7537</option>
-                      <option value="#ffad46">#ffad46</option>
-                      <option value="#42d692">#42d692</option>
-                      <option value="#008000">#008000</option>
-                      <option value="#7bd148">#7bd148</option>
-                      <option value="#7bd148">#7bd148</option>
-                      <option value="#7bd148">#7bd148</option>
-                      <option value="#fad165">#fad165</option>
-                      <option value="#92e1c0">#92e1c0</option>
-                      <option value="#9fe1e7">#9fe1e7</option>
-                      <option value="#9fc6e7">#9fc6e7</option>
-                      <option value="#4986e7">#4986e7</option>
-                      <option value="#9a9cff">#9a9cff</option>
-                      <option value="#b99aff">#b99aff</option>
-                      <option value="#c2c2c2">#c2c2c2</option>
-                      <option value="#cabdbf">#cabdbf</option>
-                      <option value="#cca6ac">#cca6ac</option>
-                      <option value="#f691b2">#f691b2</option>
-                      <option value="#cd74e6">#cd74e6</option>
-                      <option value="#a47ae2">#a47ae2</option>
-                    </select>
-                </div>
-            </div>
-            <div class="control-group">
-                <label class="control-label" for="tagTextColor">Text Color</label>
-                <div class="controls">
-                    <select id="tagTextColor">
-                      <option value="#ffffff">#ffffff</option>
-                      <option value="#cccccc">#cccccc</option>
-                      <option value="#333333">#333333</option>                      
-                      <option value="#000000">#000000</option>
-                    </select>                    
-                </div>
-            </div>            
-        </div>
-        <div class="modal-footer">
-            <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
-            <button id="editTagInTreeButton" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Ok</button>
-        </div>
-    </div> 
-    
-    <div id="dialogTagCreate" class="modal hide" tabindex="-1" role="dialog" data-backdrop="static" aria-labelledby="myModalLabel" aria-hidden="true" >
-        <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-            <h4>Add tags to tag group</h4>
-        </div>
-        <div class="modal-body form-horizontal">
-            <div class="control-group">
-                <label class="control-label" for="newTagTitle">Comma separted list<br> of tags</label>
-                <div class="controls">
-                    <input type="text" name="newTagTitle" id="newTagTitle" />
-                </div>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
-            <button id="createTagButton" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Ok</button>
-        </div>
-    </div> 
+<div id="dialogEditTag" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+	    <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+	        <h4>Edit Tag</h4>
+	    </div>
+	    <div class="modal-body form-horizontal">
+	        <div class="form-group">
+	            <label class="control-label" for="tagTypeChooser">Tagtype</label>
+	            <div class="controls">
+	                <div class="btn-group" data-toggle="buttons-radio" name="tagTypeChooser">
+	                    <button id="plainTagTypeButton" title="Create a plain text file" class="btn">Plain</button>
+	                    <button id="dateTagTypeButton"  title="Create a MarkDown file" class="btn">Date</button>
+	                    <button id="currencyTagTypeButton" title="Create a HTML file" class="btn">Currency</button>
+	                </div>
+	            </div>
+	        </div>
+	        <div class="form-group">
+	            <label class="control-label" for="newTagName">Tag Name</label>
+	            <div class="controls">
+	                <input type="text" id="newTagName" id="newTagName">
+	            </div>
+	        </div>            
+	    </div>
+	    <div class="modal-footer">
+	        <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+	        <button id="editTagButton" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Ok</button>
+	    </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->  
 
-    <div id="dialogEditTagGroup" class="modal hide" tabindex="-1" role="dialog" data-backdrop="static" aria-labelledby="myModalLabel" aria-hidden="true" >
-        <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-            <h4>Edit TagGroup</h4>
-        </div>
-        <div class="modal-body form-horizontal">
-            <div class="control-group">
-                <label class="control-label" for="tagGroupName">TagGroup Name</label>
-                <div class="controls">
-                    <input type="text" name="tagGroupName" id="tagGroupName" />
-                </div>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
-            <button id="editTagGroupButton" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Ok</button>
-        </div>
-    </div> 
-     
-    <div id="dialogTagGroupCreate" class="modal hide" tabindex="-1" role="dialog" data-backdrop="static" aria-labelledby="myModalLabel" aria-hidden="true" >
-        <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-            <h4>Create TagGroup</h4>
-        </div>
-        <div class="modal-body form-horizontal">
-            <div class="control-group">
-                <label class="control-label" for="newTagGroupName">TagGroup Name</label>
-                <div class="controls">
-                    <input type="text" name="newTagGroupName" id="newTagGroupName" />
-                </div>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
-            <button id="createTagGroupButton" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Ok</button>
-        </div>
-    </div> 
-    
-    <ul id="connectionsList" class="dropdown-menu"></ul>
-    
-    <ul id="tagSuggestionsMenu" class="dropdown-menu has-tip anchor-right"></ul>
-    
-    <ul id="fileMenu" class="dropdown-menu has-tip">
-        <li><a id="fileMenuAddTag" title="Tag current file"><i class="icon-tag"></i> Add Tags</a></li>
-        <li><a id="fileMenuOpenFile" title=""><i class="icon-share-alt"></i> Open File</a></li>               
-        <li><a id="fileMenuOpenDirectory" title=""><i class="icon-folder-open"></i> Show Containing Folder</a></li>               
-        <li><a id="fileMenuRenameFile" title=""><i class="icon-pencil"></i> Raname File</a></li>
-        <li><a id="fileMenuDeleteFile" title=""><i class="icon-trash"></i> Delete File</a></li>
+<div id="dialogAddTags" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+	    <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+	        <h4>Add Tags</h4>
+	    </div>
+	    <div class="modal-body form-horizontal" style="height: 200px">
+	        <div class="form-group">
+	            <label class="control-label" for="tags">Comma separated list of the tags</label>
+	            <div class="controls">
+	                <input type="text" name="tags" id="tags" autocomplete="off"/>
+	            </div>
+	        </div>
+	    </div>
+	    <div class="modal-footer">
+	        <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+	        <button id="addTagsButton" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Ok</button>
+	    </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div id="dialogEditInTreeTag" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+	    <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+	        <h4>Edit Tag</h4>
+	    </div>
+	    <div class="modal-body form-horizontal">
+	        <div class="form-group">
+	            <label class="control-label" for="tagInTreeName">Name</label>
+	            <div class="controls">
+	                <input type="text" name="tagInTreeName" id="tagInTreeName" />
+	            </div>
+	        </div>
+	        <div class="form-group">
+	            <label class="control-label" for="tagColor">Color</label>
+	            <div class="controls">
+	                <select id="tagColor" >
+	                  <option value="#ac725e">#ac725e</option>
+	                  <option value="#d06b64">#d06b64</option>
+	                  <option value="#f83a22">#f83a22</option>
+	                  <option value="#fa573c">#fa573c</option>
+	                  <option value="#ff7537">#ff7537</option>
+	                  <option value="#ffad46">#ffad46</option>
+	                  <option value="#42d692">#42d692</option>
+	                  <option value="#008000">#008000</option>
+	                  <option value="#7bd148">#7bd148</option>
+	                  <option value="#7bd148">#7bd148</option>
+	                  <option value="#7bd148">#7bd148</option>
+	                  <option value="#fad165">#fad165</option>
+	                  <option value="#92e1c0">#92e1c0</option>
+	                  <option value="#9fe1e7">#9fe1e7</option>
+	                  <option value="#9fc6e7">#9fc6e7</option>
+	                  <option value="#4986e7">#4986e7</option>
+	                  <option value="#9a9cff">#9a9cff</option>
+	                  <option value="#b99aff">#b99aff</option>
+	                  <option value="#c2c2c2">#c2c2c2</option>
+	                  <option value="#cabdbf">#cabdbf</option>
+	                  <option value="#cca6ac">#cca6ac</option>
+	                  <option value="#f691b2">#f691b2</option>
+	                  <option value="#cd74e6">#cd74e6</option>
+	                  <option value="#a47ae2">#a47ae2</option>
+	                </select>
+	            </div>
+	        </div>
+	        <div class="form-group">
+	            <label class="control-label" for="tagTextColor">Text Color</label>
+	            <div class="controls">
+	                <select id="tagTextColor">
+	                  <option value="#ffffff">#ffffff</option>
+	                  <option value="#cccccc">#cccccc</option>
+	                  <option value="#333333">#333333</option>                      
+	                  <option value="#000000">#000000</option>
+	                </select>                    
+	            </div>
+	        </div>            
+	    </div>
+	    <div class="modal-footer">
+	        <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+	        <button id="editTagInTreeButton" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Ok</button>
+	    </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div id="dialogTagCreate" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+	    <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+	        <h4>Add tags to tag group</h4>
+	    </div>
+	    <div class="modal-body form-horizontal">
+	        <div class="form-group">
+	            <label class="control-label" for="newTagTitle">Comma separted list<br> of tags</label>
+	            <div class="controls">
+	                <input type="text" name="newTagTitle" id="newTagTitle" />
+	            </div>
+	        </div>
+	    </div>
+	    <div class="modal-footer">
+	        <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+	        <button id="createTagButton" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Ok</button>
+	    </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div id="dialogEditTagGroup" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+	    <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+	        <h4>Edit TagGroup</h4>
+	    </div>
+	    <div class="modal-body form-horizontal">
+	        <div class="form-group">
+	            <label class="control-label" for="tagGroupName">TagGroup Name</label>
+	            <div class="controls">
+	                <input type="text" name="tagGroupName" id="tagGroupName" />
+	            </div>
+	        </div>
+	    </div>
+	    <div class="modal-footer">
+	        <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+	        <button id="editTagGroupButton" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Ok</button>
+	    </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal --> 
+ 
+<div id="dialogTagGroupCreate" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+	    <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+	        <h4>Create TagGroup</h4>
+	    </div>
+	    <div class="modal-body form-horizontal">
+	        <div class="form-group">
+	            <label class="control-label" for="newTagGroupName">TagGroup Name</label>
+	            <div class="controls">
+	                <input type="text" name="newTagGroupName" id="newTagGroupName" />
+	            </div>
+	        </div>
+	    </div>
+	    <div class="modal-footer">
+	        <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+	        <button id="createTagGroupButton" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Ok</button>
+	    </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div id="fileMenu" class="dropdown clearfix">
+	<ul class="dropdown-menu" role="menu" style="display:block;position:static;">	
+	    <li><a id="fileMenuOpenFile" title=""><i class="fa fa-share"></i> Open File</a></li>               
+	    <li><a id="fileMenuAddTag" title="Tag current file"><i class="fa fa-tag"></i> Add Tags</a></li>
+	    <li><a id="fileMenuRenameFile" title=""><i class="fa fa-pencil"></i> Raname File</a></li>
+	    <li><a id="fileMenuDeleteFile" title=""><i class="fa fa-trash-o"></i> Delete File</a></li>
+	    <li><a id="fileMenuOpenDirectory" title=""><i class="fa fa-folder-open"></i> Show Containing Folder</a></li>               
+	</ul>
+</div>
+
+<div id="tagMenu" class="dropdown clearfix">
+	<ul class="dropdown-menu" role="menu" style="display:block;position:static;">	
+	    <li><a id="tagMenuAddTagAsFilter" title="Search for the selected tag"><i class="fa fa-filter"></i> Search for This Tag</a></li>
+	    <li><a id="tagMenuEditTag" title=""><i class="fa fa-pencil"></i> Edit Tag</a></li>               
+	    <li><a id="tagMenuMoveTagFirst" title=""><i class="fa fa-fast-backward"></i> Move Tag to First Position</a></li>  
+	    <li><a id="tagMenuMoveTagLeft" title=""><i class="fa fa-backward"></i> Move Tag to Left</a></li>               
+	    <li><a id="tagMenuMoveTagRight" title=""><i class="fa fa-forward"></i> Move Tag to Right</a></li>
+	    <li><a id="tagMenuRemoveTag" title=""><i class="fa fa-trash-o"></i> Remove Tag</a></li>
+	</ul>
+</div>        
+
+<div id="tagTreeMenu" class="dropdown clearfix">
+	<ul class="dropdown-menu" role="menu" style="display:block;position:static;">	
+	    <li><a id="tagTreeMenuAddTagToFile" title="Add current tag to the selected files"><i class="fa fa-tag"></i> Tag Selected Files</a></li>
+	    <li><a id="tagTreeMenuAddTagAsFilter" title="Set current tag as a filter criteria"><i class="fa fa-filter"></i> Set as Filter</a></li>
+	    <li><a id="tagTreeMenuEditTag" title="Edit current tag"><i class="fa fa-pencil"></i> Edit</a></li>               
+	    <li><a id="tagTreeMenuDeleteTag" title="Delete the tag from the taggroup"><i class="fa fa-trash-o"></i> Delete</a></li>
+	</ul>
+</div>  
+
+<div id="tagGroupMenu" class="dropdown clearfix">
+	<ul class="dropdown-menu" role="menu" style="display:block;position:static;">
+	    <li><a id="tagGroupMenuCreateNewTag" title="Add tags to tag group"><i class="fa fa-tag"></i> Add Tags</a></li>
+	    <li><a id="tagGroupMenuCreateTagGroup" title="Create new a tag group"><i class="fa fa-tags"></i> Create Tag Group</a></li>        
+	    <li><a id="tagGroupMenuMoveUp" title="Move current TagGroup one position up"><i class="fa fa-arrow-up"></i> Move Tag Group Up</a></li>                       
+	    <li><a id="tagGroupMenuMoveDown" title="Move current TagGroup one position down"><i class="fa fa-arrow-down"></i> Move Tag Group Down</a></li>                       
+	    <li><a id="tagGroupMenuEditTagGroup" title="Edit Current tagGroup"><i class="fa fa-pencil"></i> Edit Tag Group</a></li>                       
+	    <li><a id="tagGroupMenuDeleteTagGroup" title="Delete Current TagGroup"><i class="fa fa-trash-o"></i> Delete Tag Group</a></li>
     </ul>
-    
-    <ul id="extensionMenu" class="dropdown-menu has-tip anchor-right">
-        <li><a id="extMenuAddTagAsFilter" title="Set the extension of this file as a filter"><i class="icon-filter"></i> Set as Filter</a></li>
-    </ul> 
+</div>  
 
-    <ul id="tagMenu" class="dropdown-menu has-tip anchor-right">
-        <li><a id="tagMenuAddTagAsFilter" title="Search for the selected tag"><i class="icon-filter"></i> Search for This Tag</a></li>
-        <li><a id="tagMenuEditTag" title=""><i class="icon-pencil"></i> Edit Tag</a></li>               
-        <li><a id="tagMenuMoveTagFirst" title=""><i class="icon-fast-backward"></i> Move Tag to First Position</a></li>  
-        <li><a id="tagMenuMoveTagLeft" title=""><i class="icon-backward"></i> Move Tag to Left</a></li>               
-        <li><a id="tagMenuMoveTagRight" title=""><i class="icon-forward"></i> Move Tag to Right</a></li>
-        <li><a id="tagMenuRemoveTag" title=""><i class="icon-trash"></i> Remove Tag</a></li>
-    </ul>        
-    
-    <ul id="tagTreeMenu" class="dropdown-menu has-tip">
-        <li><a id="tagTreeMenuAddTagToFile" title="Add current tag to the selected files"><i class="icon-tag"></i> Tag Selected Files</a></li>
-        <li><a id="tagTreeMenuAddTagAsFilter" title="Set current tag as a filter criteria"><i class="icon-filter"></i> Set as Filter</a></li>
-        <li><a id="tagTreeMenuEditTag" title="Edit current tag"><i class="icon-pencil"></i> Edit</a></li>               
-        <li><a id="tagTreeMenuDeleteTag" title="Delete the tag from the taggroup"><i class="icon-trash"></i> Delete</a></li>
-    </ul>  
-    
-    <ul id="tagGroupMenu" class="dropdown-menu has-tip">
-        <li><a id="tagGroupMenuCreateNewTag" title="Add tags to tag group"><i class="icon-tag"></i> Add Tags</a></li>
-        <li><a id="tagGroupMenuCreateTagGroup" title="Create new a tag group"><i class="icon-tags"></i> Create Tag Group</a></li>        
-        <li><a id="tagGroupMenuMoveUp" title="Move current TagGroup one position up"><i class="icon-arrow-up"></i> Move Tag Group Up</a></li>                       
-        <li><a id="tagGroupMenuMoveDown" title="Move current TagGroup one position down"><i class="icon-arrow-down"></i> Move Tag Group Down</a></li>                       
-        <li><a id="tagGroupMenuEditTagGroup" title="Edit Current tagGroup"><i class="icon-pencil"></i> Edit Tag Group</a></li>                       
-        <li><a id="tagGroupMenuDeleteTagGroup" title="Delete Current TagGroup"><i class="icon-trash"></i> Delete Tag Group</a></li>
-    </ul>  
-    
-    <ul id="directoryMenu" class="dropdown-menu has-tip">
-        <li><a id="directoryMenuReloadDirectory" title="Reload directory"><i class="icon-refresh"></i> Reload Directory</a></li>
-        <li><a id="directoryMenuCreateDirectory" title="Creates a new subdirectory"><i class="icon-folder-close"></i> New Subdirectory</a></li>                   
-        <li><a id="directoryMenuOpenDirectory" title="Opens the directory in the default file manager"><i class="icon-folder-open"></i> Show in File Manager</a></li>                   
-    </ul>     
-    
-    <ul id="settingsMenu" class="dropdown-menu has-tip anchor-right">
-        <li><a id="startNewInstanceBack" title="Options Dialog"><i class="icon-external-link-sign"></i> New Instance</a></li>
-        <li><a id="openOptions" title="Options Dialog"><i class="icon-wrench"></i> Options</a></li>
-        <li class="divider"></li>
-        <li><a target="_new" href="https://tagspaces.uservoice.com/forums/213931-general" title="Suggest or vote for a feature"><i class="icon-bullhorn"></i> Suggest Features</a></li>        
-        <li><a target="_new" href="https://github.com/uggrock/tagspaces/issues/" title="Report a issue or enhancement"><i class="icon-flag"></i> Report Issue</a></li>
-        <li><a target="_new" href="https://twitter.com/tagspaces" title="Follow on twitter"><i class="icon-twitter"></i> Follow @tagspaces</a></li>
-        <li><a href="mailto:info@tagspaces.org" title="Drop a line to the developers"><i class="icon-envelope-alt"></i> Contact Developers</a></li>
-        <li class="divider"></li>
-        <li><a target="_new" href="http://tagspaces.org/file-syncing/" title="Tutorial for file syncing"><i class="icon-exchange"></i> File Syncing</a></li>
-        <li><a id="openAboutBox" data-placement="bottom" data-toggle="modal"><i class="icon-comment"></i> About</a></li>
-    </ul>
+<div id="directoryMenu" class="dropdown clearfix">
+	<ul class="dropdown-menu" role="menu" style="display:block;position:static;">
+	    <li><a id="directoryMenuReloadDirectory" title="Reload directory"><i class="fa fa-refresh"></i> Reload Directory</a></li>
+	    <li><a id="directoryMenuCreateDirectory" title="Creates a new subdirectory"><i class="fa fa-folder"></i> New Subdirectory</a></li>                   
+	    <li><a id="directoryMenuOpenDirectory" title="Opens the directory in the default file manager"><i class="fa fa-folder-open"></i> Show in File Manager</a></li>                   
+	</ul>
+</div>
 
-    <ul id="fileActionsMenu" class="dropdown-menu has-tip anchor-right"></ul>
-
-    <div id="newVersionMenu" class="dropdown-menu has-tip"></div>
-
-</div>	
 </body>
 </html>
