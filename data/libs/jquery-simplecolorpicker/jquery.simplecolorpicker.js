@@ -29,60 +29,79 @@
       self.type = type;
 
       self.$select = $(select);
-      var selectValue = self.$select.val();
-      self.options = $.extend({}, $.fn.simplecolorpicker.defaults, options);
-
       self.$select.hide();
 
-      // Trick: fix span alignment
-      // When a span does not contain any text, its alignment is not correct
-      var fakeText = '&nbsp;&nbsp;&nbsp;&nbsp;';
+      self.options = $.extend({}, $.fn.simplecolorpicker.defaults, options);
 
       self.$colorList = null;
 
-      if (self.options.picker) {
-        var selectText = self.$select.find('option:selected').text();
+      if (self.options.picker === true) {
+        var selectText = self.$select.find('> option:selected').text();
         self.$icon = $('<span class="simplecolorpicker icon"'
                      + ' title="' + selectText + '"'
-                     + ' style="background-color: ' + selectValue + ';"'
+                     + ' style="background-color: ' + self.$select.val() + ';"'
                      + ' role="button" tabindex="0">'
-                     + fakeText
                      + '</span>').insertAfter(self.$select);
         self.$icon.on('click.' + self.type, $.proxy(self.showPicker, self));
 
-        self.$picker = $('<span class="simplecolorpicker picker"></span>').appendTo(document.body);
+        self.$picker = $('<span class="simplecolorpicker picker ' + self.options.theme + '"></span>').appendTo(document.body);
         self.$colorList = self.$picker;
 
         // Hide picker when clicking outside
         $(document).on('mousedown.' + self.type, $.proxy(self.hidePicker, self));
         self.$picker.on('mousedown.' + self.type, $.proxy(self.mousedown, self));
       } else {
-        self.$inline = $('<span class="simplecolorpicker inline"></span>').insertAfter(self.$select);
+        self.$inline = $('<span class="simplecolorpicker inline ' + self.options.theme + '"></span>').insertAfter(self.$select);
         self.$colorList = self.$inline;
       }
 
       // Build the list of colors
-      // <span class="selected" title="Green" style="background-color: #7bd148;" role="button"></span>
-      var colors = '';
-      $('option', self.$select).each(function() {
-        var option = $(this);
-        var color = option.val();
-        var title = option.text();
-        var selected = '';
-        if (option.prop('selected') === true || selectValue === color) {
-          selected = 'class="selected"';
-        }
-        colors += '<span ' + selected
-                + ' title="' + title + '"'
-                + ' style="background-color: ' + color + ';"'
-                + ' data-color="' + color + '"'
-                + ' role="button" tabindex="0">'
-                + fakeText
-                + '</span>';
-      });
+      // <span class="color selected" title="Green" style="background-color: #7bd148;" role="button"></span>
+      self.$select.find('> option').each(function() {
+        var $option = $(this);
+        var color = $option.val();
 
-      self.$colorList.html(colors);
-      self.$colorList.on('click.' + self.type, $.proxy(self.click, self));
+        var isSelected = $option.is(':selected');
+        var isDisabled = $option.is(':disabled');
+
+        var selected = '';
+        if (isSelected === true) {
+          selected = ' data-selected';
+        }
+
+        var disabled = '';
+        if (isDisabled === true) {
+          disabled = ' data-disabled';
+        }
+
+        var title = '';
+        if (isDisabled === false) {
+          title = ' title="' + $option.text() + '"';
+        }
+
+        var role = '';
+        if (isDisabled === false) {
+          role = ' role="button" tabindex="0"';
+        }
+
+        var $colorSpan = $('<span class="color"'
+                         + title
+                         + ' style="background-color: ' + color + ';"'
+                         + ' data-color="' + color + '"'
+                         + selected
+                         + disabled
+                         + role + '>'
+                         + '</span>');
+
+        self.$colorList.append($colorSpan);
+        $colorSpan.on('click.' + self.type, $.proxy(self.colorSpanClicked, self));
+
+        var $next = $option.next();
+        if ($next.is('optgroup') === true) {
+          // Vertical break, like hr
+          self.$colorList.append('<span class="vr"></span>');
+        }
+      });
     },
 
     /**
@@ -93,30 +112,30 @@
     selectColor: function(color) {
       var self = this;
 
-      var colorSpan = self.$colorList.find('span').filter(function() {
+      var $colorSpan = self.$colorList.find('> span.color').filter(function() {
         return $(this).data('color').toLowerCase() === color.toLowerCase();
       });
 
-      if (colorSpan.length > 0) {
-        self.selectColorSpan(colorSpan);
+      if ($colorSpan.length > 0) {
+        self.selectColorSpan($colorSpan);
       } else {
         console.error("The given color '" + color + "' could not be found");
       }
     },
 
     showPicker: function() {
-      var bootstrapArrowWidth = 16; // Empirical value
       var pos = this.$icon.offset();
       this.$picker.css({
-        left: pos.left + this.$icon.width() / 2 - bootstrapArrowWidth, // Middle of the icon
+        // Remove some pixels to align the picker icon with the icons inside the dropdown
+        left: pos.left - 6,
         top: pos.top + this.$icon.outerHeight()
       });
 
-      this.$picker.show(this.options.delay);
+      this.$picker.show(this.options.pickerDelay);
     },
 
     hidePicker: function() {
-      this.$picker.hide(this.options.delay);
+      this.$picker.hide(this.options.pickerDelay);
     },
 
     /**
@@ -125,15 +144,15 @@
      * The given span becomes the selected one.
      * It also changes the HTML select value, this will emit the 'change' event.
      */
-    selectColorSpan: function(colorSpan) {
-      var color = colorSpan.data('color');
-      var title = colorSpan.prop('title');
+    selectColorSpan: function($colorSpan) {
+      var color = $colorSpan.data('color');
+      var title = $colorSpan.prop('title');
 
       // Mark this span as the selected one
-      colorSpan.siblings().removeClass('selected');
-      colorSpan.addClass('selected');
+      $colorSpan.siblings().removeAttr('data-selected');
+      $colorSpan.attr('data-selected', '');
 
-      if (this.options.picker) {
+      if (this.options.picker === true) {
         this.$icon.css('background-color', color);
         this.$icon.prop('title', title);
         this.hidePicker();
@@ -144,16 +163,13 @@
     },
 
     /**
-     * The user clicked on a span inside $colorList.
+     * The user clicked on a color inside $colorList.
      */
-    click: function(e) {
-      var target = $(e.target);
-      if (target.length === 1) {
-        if (target[0].nodeName.toLowerCase() === 'span') {
-          // When you click on a color, make it the new selected one
-          this.selectColorSpan(target);
-          this.$select.trigger('change');
-        }
+    colorSpanClicked: function(e) {
+      // When a color is clicked, make it the new selected one (unless disabled)
+      if ($(e.target).is('[data-disabled]') === false) {
+        this.selectColorSpan($(e.target));
+        this.$select.trigger('change');
       }
     },
 
@@ -166,7 +182,7 @@
     },
 
     destroy: function() {
-      if (this.options.picker) {
+      if (this.options.picker === true) {
         this.$icon.off('.' + this.type);
         this.$icon.remove();
         $(document).off('.' + this.type);
@@ -206,11 +222,14 @@
    * Default options.
    */
   $.fn.simplecolorpicker.defaults = {
-    // Animation delay
-    delay: 0,
+    // No theme by default
+    theme: '',
 
     // Show the picker or make it inline
-    picker: false
+    picker: false,
+
+    // Animation delay in milliseconds
+    pickerDelay: 0
   };
 
 })(jQuery);
