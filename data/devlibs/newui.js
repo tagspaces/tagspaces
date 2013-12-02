@@ -4,13 +4,13 @@
 define(function(require, exports, module) {
 "use strict";
 
-var outerLayout, col1Layout, col2Layout, col3Layout;
+var layoutContainer, col1Layout, col2Layout, col3Layout;
 
 	$(document).ready(function(){
 		var row1Height = 40; // px
 		var row3Height = 45; // px
 	
-		outerLayout = $('body').layout({ 
+		layoutContainer = $('body').layout({ 
 			name:			'outerLayout' // for debugging & auto-adding buttons (see below)
 		,   fxName: 		"none"
 		,	autoResize:		true	// try to maintain pane-percentages
@@ -115,7 +115,7 @@ var outerLayout, col1Layout, col2Layout, col3Layout;
 		$('#loading').hide();
 	
 		$('#toggleLeft').click(function(e) {
-			outerLayout.toggle("west");
+			layoutContainer.toggle("west");
 	    });
 	    
 		$('#closeRight').click(function(e) {
@@ -146,19 +146,19 @@ var outerLayout, col1Layout, col2Layout, col3Layout;
 	    var isFullWidth = false; 
 	
 		function closeRightPanel() {
-			outerLayout.hide("east");
+			layoutContainer.hide("east");
 		}
 	
 	    function toggleFullWidth() {
 	        var fullWidth = window.innerWidth;
 	        var halfWidth = Math.round(fullWidth/2);
 	        if(!isFullWidth) {
-	        	outerLayout.close("west");
-	            outerLayout.sizePane("east", fullWidth);
-	            outerLayout.open("east"); 
+	        	layoutContainer.close("west");
+	            layoutContainer.sizePane("east", fullWidth);
+	            layoutContainer.open("east"); 
 	        } else {
-	            outerLayout.sizePane("east", halfWidth);
-	            outerLayout.open("east");               
+	            layoutContainer.sizePane("east", halfWidth);
+	            layoutContainer.open("east");               
 	        }
 	        isFullWidth = !isFullWidth;
 	    }  
