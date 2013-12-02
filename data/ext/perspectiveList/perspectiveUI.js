@@ -52,30 +52,36 @@ console.log("Loading UI for perspectiveDefault");
             	style: "width: 0px; height: 0px; border: 0px" 
         	})).html();
         	thumbHTML = "<br>" + thumbHTML;
-        } 	    
+        } 	         
 
-        var checkboxHTML = $('<legend>', {
-                class: "checkbox",            
-            }).append($('<input>', { 
+        var checkboxHTML = $('<input>', { 
                 type: "checkbox",
                 class: "fileSelection", 
-            })).html();
+            });
         
-	    var titleHTML = $('<p>').append($('<span>', { 
+	    var titleHTML = $('<span>', { 
             	text: fileName, 
             	class: "fileTitle" 
-            })).html();
+            });
 	        
-	    var buttonHTML = $('<span>').append($('<button>', { 
-	            title: "Options for "+fileName, 
-	            filepath: filePath,
-	            class: 'btn btn-default fileTitleButton', 
+	    var buttonHTML = $('<button>', {
+            title: "Options for "+fileName, 
+            filepath: filePath,
+            class: 'btn btn-link fileTitleButton', 	    	
+	    }).append($('<span>', { 
+			id: "fileExt"			
 	        })
-	        .append(fileExt)
-            .append(" <span class='caret'/>")
-	        ).html();
+	      .append($("<span>", { text: fileExt }))  
+          .append("&nbsp;<span class='caret white-caret'></span>")
+	    );
+	    
+        var fileHTML = $('<p>', {})        
+        .append(checkboxHTML)	    
+        .append(buttonHTML)	    
+        .append(titleHTML)	    
+        .append(thumbHTML);	                    
 	        
-	    return checkboxHTML+" "+buttonHTML +" " + titleHTML + thumbHTML;        
+	    return fileHTML.html();        
 	}
      
 	ExtUI.prototype.buildUI = function() {
@@ -83,18 +89,14 @@ console.log("Loading UI for perspectiveDefault");
 
 		var self = this;
 		
-		// Init Context Menus
+		// Init File Context Menus
 	    this.viewContainer.on("contextmenu click", ".fileTitleButton", function (e) {
 			TSCORE.hideAllDropDownMenus();
 	        e.preventDefault();
 	        			
-			self.selectFile(this, $(this).attr("filepath"));
-	        
-	        $("#fileMenu").css({
-	            display: "block",
-	            left: e.pageX,
-	            top: e.pageY
-	        });
+			self.selectFile(this, $(this).attr("filepath"));	        
+
+			TSCORE.showContextMenu("#fileMenu", $(this));
 
 	        return false;
 	    });		
@@ -106,11 +108,8 @@ console.log("Loading UI for perspectiveDefault");
             self.selectFile(this, $(this).attr("filepath"));
             TSCORE.openTagMenu(this, $(this).attr("tag"), $(this).attr("filepath"));
 	        
-	        $("#tagMenu").css({
-	            display: "block",
-	            left: e.pageX,
-	            top: e.pageY
-	        });
+			TSCORE.showContextMenu("#tagMenu", $(this));
+			
 	        return false;
 	    });
 		
@@ -408,14 +407,14 @@ console.log("Loading UI for perspectiveDefault");
 					$(ui.helper).remove();  
 		    	}	            	
 		    })
-		    .click( function() {
+		    .dblclick( function() {
 		        console.log("Opening file...");
 		        var rowData = self.fileTable.fnGetData( this );
 		        TSCORE.FileOpener.openFile(rowData[TSCORE.fileListFILEPATH]); 
 		        
                 var titleBut = $(this).find(".fileTitleButton");
                 self.selectFile(titleBut, $(titleBut).attr("filepath"));
-		    } );     
+		    } );   
 	    
 	    this.fileTable.$('.fileTitleButton')
 	    	.draggable({
@@ -424,7 +423,11 @@ console.log("Loading UI for perspectiveDefault");
 	    		"helper":    "clone",
 	    		"revert":    true,
 		        "start":     function() { self.selectFile(this, $(this).attr("filepath")); }    		
-	    	});  
+	    	})  
+		    .dblclick( function() {
+		        console.log("Opening file...");
+		        TSCORE.FileOpener.openFile($(this).attr("filepath")); 
+		    }); 	    	
 	    
 	    this.fileTable.$('.fileSelection')
             .click( function() {

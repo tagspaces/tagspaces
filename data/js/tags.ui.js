@@ -16,11 +16,8 @@ define(function(require, exports, module) {
             TSCORE.selectedTagData = TSCORE.Config.getTagGroupData($(this).attr("key"));
             TSCORE.selectedTagData.parentKey = undefined;  
 
-	        $("#tagGroupMenu").css({
-	            display: "block",
-	            left: e.pageX,
-	            top: e.pageY
-	        });
+			TSCORE.showContextMenu("#tagGroupMenu", $(this));
+
 	        return false;
 	    });
 
@@ -30,11 +27,8 @@ define(function(require, exports, module) {
             TSCORE.selectedTag = generateTagValue(TSCORE.selectedTagData);
             TSCORE.selectedTagData.parentKey = $(this).attr("parentKey");
 
-	        $("#tagTreeMenu").css({
-	            display: "block",
-	            left: e.pageX,
-	            top: e.pageY
-	        });
+			TSCORE.showContextMenu("#tagTreeMenu", $(this));
+
 	        return false;
 	    });
 	
@@ -420,13 +414,16 @@ define(function(require, exports, module) {
 
     function showTagEditInTreeDialog() {
         $( "#tagInTreeName" ).val(TSCORE.selectedTagData.title);
-        $( "#tagColor" ).simplecolorpicker({picker: true});    
+        $( "#tagColor" ).simplecolorpicker({picker: true, theme: 'glyphicons'});    
+        
         if(TSCORE.selectedTagData.color == undefined || TSCORE.selectedTagData.color.length < 1) {
             $( "#tagColor" ).simplecolorpicker('selectColor', '#008000');  
         } else {
             $( "#tagColor" ).simplecolorpicker('selectColor', TSCORE.selectedTagData.color);   
         }
-        $( "#tagTextColor" ).simplecolorpicker({picker: true});        
+        
+        $( "#tagTextColor" ).simplecolorpicker({picker: true, theme: 'glyphicons'});
+        
         if(TSCORE.selectedTagData.textcolor == undefined || TSCORE.selectedTagData.textcolor.length < 1) {
             $( "#tagTextColor" ).simplecolorpicker('selectColor', '#ffffff');            
         } else {
@@ -444,12 +441,13 @@ define(function(require, exports, module) {
             return split( term ).pop();
         }
         
-        // TODO reactive comma separated autocomplete
-        $( "#tags" ).typeahead( {
-            "source":  TSCORE.Config.getAllTags()
-        });            
+        $('#tags').select2('data', null);
+		$("#tags").select2({
+	        //minimumInputLength: 1,
+	        multiple: true,
+			tags: TSCORE.Config.getAllTags(),
+		});                   
 
-        $("#tags").val("");
         $( '#dialogAddTags' ).modal({show: true});
 	}    
 

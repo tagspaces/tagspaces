@@ -7,7 +7,7 @@ define(function(require, exports, module) {
 	
 	console.log("Loading perspectiveGraph");
 
-	var extensionTitle = "DirectoryViz"
+	var extensionTitle = "DirectoryViz";
 	var extensionID = "perspectiveGraph";  // ID should be equal to the directory name where the ext. is located   
 	var extensionType =  "perspective";
 	var extensionIcon = "fa fa-sitemap";
@@ -23,7 +23,7 @@ define(function(require, exports, module) {
 	
 	var extensionDirectory = TSCORE.Config.getExtensionPath()+"/"+extensionID;
 	
-	var graphMode = "mindmap" 
+	var graphMode = "mindmap"; 
 	
 	var treeData = undefined;
 	
@@ -35,12 +35,12 @@ define(function(require, exports, module) {
 		viewFooter = $("#"+extensionID+"Footer").empty();
 	
 	    initUI();  
-	}
+	};
 	
 	exports.load = function load() {
 		console.log("Loading View "+extensionID);
         TSCORE.IO.createDirectoryTree(TSCORE.currentPath);		
-	}
+	};
 	
 	var reDraw = function() {
 	    switch (graphMode) {
@@ -53,7 +53,7 @@ define(function(require, exports, module) {
                     var svg = d3.select("#"+extensionID+"Container")
                         .append("svg")
                         .attr("width", viewContainer.width())
-                        .attr("height", viewContainer.height())                         
+                        .attr("height", viewContainer.height());                         
                     viz.drawTreeMap(svg, treeData);
                     TSCORE.hideLoadingAnimation();
             });            
@@ -67,7 +67,7 @@ define(function(require, exports, module) {
                     var svg = d3.select("#"+extensionID+"Container")
                         .append("svg")
                         .attr("width", viewContainer.width())
-                        .attr("height", viewContainer.height())                         
+                        .attr("height", viewContainer.height());                         
                     viz.drawZoomableTreeMap(svg, treeData);
                     TSCORE.hideLoadingAnimation();
             });            
@@ -81,7 +81,7 @@ define(function(require, exports, module) {
                     var svg = d3.select("#"+extensionID+"Container")
                         .append("svg")
                         .attr("width", viewContainer.width())
-                        .attr("height", viewContainer.height())                                             
+                        .attr("height", viewContainer.height());                                             
                     viz.drawTree(svg, treeData);
                     TSCORE.hideLoadingAnimation();
             });  	      
@@ -96,7 +96,7 @@ define(function(require, exports, module) {
                         .append("svg")
                         .attr("id", "tagspacesMindmap")
                         .attr("width", viewContainer.width())
-                        .attr("height", viewContainer.height())                                             
+                        .attr("height", viewContainer.height());                                             
                     viz.drawMindMap(svg, treeData);
                     TSCORE.hideLoadingAnimation();
             });           
@@ -110,7 +110,7 @@ define(function(require, exports, module) {
                     var svg = d3.select("#"+extensionID+"Container")
                         .append("svg")
                         .attr("width", viewContainer.width())
-                        .attr("height", viewContainer.height())                                             
+                        .attr("height", viewContainer.height());                                             
                     viz.drawPartition(svg, treeData);
                     TSCORE.hideLoadingAnimation();
             });           
@@ -118,7 +118,7 @@ define(function(require, exports, module) {
 	      default:
 	        break;
 	    }
-	}
+	};
 	
 	exports.updateTreeData = function updateIndexData(fsTreeData) {
 		console.log("Updating tree data, Rendering graph...");
@@ -128,38 +128,38 @@ define(function(require, exports, module) {
 		reDraw();
    
 		TSCORE.hideLoadingAnimation(); 
-	}
+	};
 	  
 	exports.setFileFilter = function setFileFilter(filter) {
 
-	}
+	};
 	
 	exports.clearSelectedFiles = function() {
 
-	}
+	};
 	
 	var initUI = function() {
        
         viewToolbar.append($("<div >", { 
             class: "btn-group", 
-            "data-toggle": "buttons-radio",        
+            "data-toggle": "buttons",        
         })      
             .append($("<button>", { 
-                    class: "btn", 
+                    class: "btn btn-default active", 
                     title: "Activate Mindmap Visualization",
                     text: " Mindmap"
-                })
-                .button('toggle')       
+                })    
                 .click(function() {
                     graphMode = "mindmap";
                     TSCORE.showLoadingAnimation();                     
                     TSCORE.IO.createDirectoryTree(TSCORE.currentPath);
                 })          
-                .prepend( "<i class='icon-sitemap' />")                
+                .append( "<input type='radio' name='options'>")
+                .prepend( "<i class='fa fa-sitemap' />")                
             )  
 
             .append($("<button>", { 
-                    class: "btn", 
+                    class: "btn btn-default", 
                     title: "Activate Treemap Mode",
                     text: " TreeMap"    
                 })
@@ -168,11 +168,12 @@ define(function(require, exports, module) {
                     TSCORE.showLoadingAnimation();                     
                     TSCORE.IO.createDirectoryTree(TSCORE.currentPath);
                 })
-                .prepend( "<i class='icon-th-large' />")
+                .append( "<input type='radio' name='options'>")                
+                .prepend( "<i class='fa fa-th-large' />")
             )
 
             .append($("<button>", { 
-                    class: "btn", 
+                    class: "btn btn-default", 
                     title: "Activate Tree Map Navi",
                     text: " TreeMap Navi"
                 })
@@ -181,11 +182,12 @@ define(function(require, exports, module) {
                     TSCORE.showLoadingAnimation();                     
                     TSCORE.IO.createDirectoryTree(TSCORE.currentPath);
                 })          
-                .prepend( "<i class='icon-th-large' />")                
+                .append( "<input type='radio' name='options'>")                
+                .prepend( "<i class='fa fa-th-large' />")                
             ) 
                     
             .append($("<button>", { 
-                    class: "btn", 
+                    class: "btn btn-default", 
                     title: "Activate Tree Mode",
                     text: " Tree"
                 })
@@ -194,11 +196,12 @@ define(function(require, exports, module) {
                     TSCORE.showLoadingAnimation();                     
                     TSCORE.IO.createDirectoryTree(TSCORE.currentPath);
                 })          
-                .prepend( "<i class='icon-sitemap' />")                
+                .append( "<input type='radio' name='options'>")                
+                .prepend( "<i class='fa fa-sitemap' />")                
             )   
             
             .append($("<button>", { 
-                    class: "btn", 
+                    class: "btn btn-default", 
                     title: "Activate Bilevel Partition",
                     text: " Bilevel Partition"
                 })
@@ -207,12 +210,13 @@ define(function(require, exports, module) {
                     TSCORE.showLoadingAnimation();                     
                     TSCORE.IO.createDirectoryTree(TSCORE.currentPath);
                 })          
-                .prepend( "<i class='icon-adjust' />")                
+                .append( "<input type='radio' name='options'>")                
+                .prepend( "<i class='fa fa-adjust' />")                
             )                   
           
-       ) // end button group       
+       ); // end button group       
 
-	}
+	};
 	
     // Vars
     exports.Title                   = extensionTitle;

@@ -62,8 +62,7 @@ define(function(require, exports, module) {
 	    TSCORE.IO.checkAccessFileURLAllowed();
         
         if(!viewerExt) {
-	        $( "#viewer" ).html("<div class='alert alert-info'><strong>Info</strong> File type not supported for viewing."+
-	                            "<button type='button' class='close' data-dismiss='alert'>×</button></div>");        
+	        $( "#viewer" ).html("<div class='alert alert-info'><strong>Info</strong> File type not supported for viewing.</div>");        
 	    } else if (viewerExt == "viewerBrowser") {
 	        var filePathURI = undefined;
 	        
@@ -142,7 +141,7 @@ define(function(require, exports, module) {
 	    var title = TSCORE.TagUtils.extractTitle(filePath);
 		var fileExtension = TSCORE.TagUtils.extractFileExtension(filePath);
 		
-		$( "#fileExt" ).text(fileExtension);
+		$( "#fileExtText" ).text(fileExtension);
 	    
 	    $( "#fileTitle" ).val(title);
 	    
@@ -176,7 +175,7 @@ define(function(require, exports, module) {
 	    	}	            	
 	    });
 	       
-		// Init Context Menus
+		// Init Tag Context Menus
 	    $('#fileTags').on("contextmenu click", ".tagButton", function (e) {
 			TSCORE.hideAllDropDownMenus();
 			
@@ -190,27 +189,9 @@ define(function(require, exports, module) {
 	        return false;
 	    });		
 	    
-	    $( "#selectedFilePath" ).click(function() {
+/*	    $( "#selectedFilePath" ).click(function() {
 			this.select();
-	    });
-        
-        $("#actionToolbar").append('<button id="editDocument" class="btn" title="Edit File"><i class="icon-pencil"></i></button>');
-        //$("#actionToolbar").append('<button id="openInNewWindow" class="btn" title="Go to the previous file"><i class="icon-circle-arrow-left"></i></button>');
-        $("#actionToolbar").append('<button id="openTagSuggestionMenu" class="btn" title="Tag File"><i class="icon-tags"></i> <b class="caret"></b></button>');
-        //$("#actionToolbar").append('<button id="startFullscreen" class="btn" title="Open file in full screen"><i class="icon-fullscreen"></i></b></button>');
-        $("#actionToolbar").append('<button id="openFileActionsMenu" data-dropdown="#fileActionsMenu" class="btn" title="Additional File Actions"><i class="icon-th-list"></i> <b class="caret"></b></button>');
-
-        $("#navigationToolbar").append('<button id="prevFileButton" class="btn" title="Go to Previous File"><i class="icon-circle-arrow-left"></i></button>');
-        $("#navigationToolbar").append('<button id="nextFileButton" class="btn" title="Go to Next File"><i class="icon-circle-arrow-right"></i></button>');
-        $("#navigationToolbar").append('<button id="closeOpenedFile" class="btn" title="Close file"><i class="icon-remove-sign"></i></button>');      
-
-        $("#fileActionsMenu").empty();
-        //$("#fileActionsMenu").append('<li><a id="editDocument" title="Edit file"><i class="icon-pencil"></i> Edit File</a></li>');
-        $("#fileActionsMenu").append('<li><a id="reloadFile" title="Reloads Current File"><i class="icon-refresh"></i> Reload File</a></li>');        
-        $("#fileActionsMenu").append('<li><a id="showFullDetails" title="Show Additional File Details"><i class="icon-list-alt"></i> Show File Details</a></li>');
-        $("#fileActionsMenu").append('<li><a id="openInNewWindow" title="Open File in a New Tab"><i class="icon-share"></i> Open in New Tab</a></li>');
-        $("#fileActionsMenu").append('<li><a id="startFullscreen" title="Open File in Fullscreen"><i class="icon-fullscreen"></i> Open in Fullscreen</a></li>');                        
-        //$("#fileActionsMenu").append('<li><a id="printButton" title="Print Content from File Viewer"><i class="icon-print"></i> Print</a></li>');                        
+	    });*/
 
 		initFileActions("#filetoolbox", filePath);
 	}
@@ -224,8 +205,8 @@ define(function(require, exports, module) {
 	
 	    $( "#tagSuggestionsMenu" ).empty(); 
 	
-//		var suggestionMenuEmpty = true;
 
+        $( "#tagSuggestionsMenu" ).append($('<li class="dropdown-header">Tagging Actions<button type="button" class="close">×</button></li>'));      
         $( "#tagSuggestionsMenu" ).append($('<li>', {name: suggTags[i]}).append($('<a>', { 
             title: "Add a tag to the current file", 
             filepath: filePath,
@@ -238,8 +219,8 @@ define(function(require, exports, module) {
                 TSCORE.showAddTagsDialog();
             })                
         )); 
-        $( "#tagSuggestionsMenu" ).append($('<li class="divider"></li>'));
-        $( "#tagSuggestionsMenu" ).append($('<li class="dropdown-header"><span id="">Tag Suggestions</span><button type="button" class="close">×</button></li>'));      
+        //$( "#tagSuggestionsMenu" ).append($('<li class="divider"></li>'));
+        $( "#tagSuggestionsMenu" ).append($('<li class="dropdown-header"><span id="">Suggested Tags:</span></li>'));      
 	
 	    // Adding context menu entries for creating tags according to the suggested tags
 	    for (var i=0; i < suggTags.length; i++) {        
@@ -278,7 +259,7 @@ define(function(require, exports, module) {
 	    }
 		var options;
 		
-
+		$( "#editDocument" ).off('click');
 	    $( "#editDocument" ).focus(function() {
 	        this.blur();
 	    })
@@ -291,49 +272,80 @@ define(function(require, exports, module) {
 
 			if ( !_isEditMode ) { 
 				$( this )
-				    .attr("title","Save & Close")
-				    .html("<i class='icon-save'></i>");
+				  //  .attr("title","Save & Close")
+				    .html("<i class='fa fa-edit'></i>&nbsp;<span data-i18n='app.?;'>Save</span>");
 	        	editFile(filePath);
 			} else {
 			    TSCORE.showConfirmDialog("Confirm","Do you really want to overwrite the current file?", function() {
                     $( "#editDocument" )
-                        .attr("title", "Edit File")                        
-                        .html("<i class='icon-pencil'></i>");
+                  //      .attr("title", "Edit File")                        
+                    .html("<i class='fa fa-edit'></i>&nbsp;<span data-i18n='app.?;'>Edit</span>");
                     _isEditMode = false;
                     saveFile(filePath);			        
 			    });
 			}
 	    });        
 
+		$( "#nextFileButton" ).off('click');
         $( "#nextFileButton" ).click(function() {
             TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getNextFile(_openedFilePath));            
         });
 
+		$( "#prevFileButton" ).off('click');
         $( "#prevFileButton" ).click(function() {
             TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getPrevFile(_openedFilePath));
         });
 
-        $( "#toggleFullWidthButton" ).click(function() {
-            TSCORE.toggleFullWidth();           
-        });
-
+		$( "#reloadFile" ).off('click');
         $( "#reloadFile" ).click(function() {
             TSCORE.FileOpener.openFile(_openedFilePath);                     
         });
 
+		$( "#showFullDetails" ).off('click');
 	    $( "#showFullDetails" ).click(function() {
 			TSCORE.toggleFileDetails();
 	    });        
 
-	    $( "#openInNewWindow" ).click(function() {
+		$( "#openFileInNewWindow" ).off('click');
+	    $( "#openFileInNewWindow" ).click(function() {
 	        window.open("file:///"+filePath);
 	    });     
 	    
-        $( "#printButton" ).click(function() {
+		$( "#printFile" ).off('click');
+        $( "#printFile" ).click(function() {
             $('iframe').get(0).contentWindow.print();
-        });	       
+        });	  
+        
+		$( "#openDirectory" ).off('click');
+        $( "#openDirectory" ).click( function() {
+            TSCORE.IO.openDirectory(TSCORE.currentPath);
+        }); 
+        
+		$( "#renameFile" ).off('click');
+        $( "#renameFile" ).click( function() {
+            TSCORE.showFileRenameDialog();
+        });         
+        
+		$( "#toggleFullWidthButton" ).off('click');
+        $( "#toggleFullWidthButton" ).click(function() {
+            TSCORE.toggleFullWidth();           
+        }); 
+        
+		$( "#deleteFile" ).off('click');
+        $( "#deleteFile" ).click( function() {
+            console.log("Deleting file...");
+            TSCORE.showConfirmDialog(
+                "Delete File",
+                "This item will be permanently deleted and cannot be recovered. Are you sure?",
+                function() {
+                    TSCORE.IO.deleteElement(TSCORE.currentPath);
+                }
+            );
+        });             
 
+		$( "#closeOpenedFile" ).off('click');        
         $( "#closeOpenedFile" ).click(function() {
+        	// TODO Extract as function for the API
             if(_isEditMode) {
                 TSCORE.showConfirmDialog("Confirm","If you confirm, all made changes will be lost.", function() {
                     // Cleaning the viewer/editor
@@ -351,7 +363,8 @@ define(function(require, exports, module) {
             }
         });
 
-	    $( "#startFullscreen" ).click(function() {
+		$( "#fullscreenFile" ).off('click');	    
+	    $( "#fullscreenFile" ).click(function() {
 	        var docElm = $("#viewer")[0];
 	        if (docElm.requestFullscreen) {
 	            docElm.requestFullscreen();
@@ -364,6 +377,7 @@ define(function(require, exports, module) {
 	        }
 	    });    
 	}
+	
   
 // Methods  
     exports.openFile                    		= openFile;

@@ -120,7 +120,7 @@ define(function(require, exports, module) {
 	
     function initKeyBindings() {
     	// TODO handle documents opened for editing
-	    $(document).bind('keyup', 'esc', closeFileViewer);
+	  //  $(document).bind('keyup', 'esc', closeFileViewer);
     }		
 	
     function checkForNewVersion() {
@@ -303,7 +303,7 @@ define(function(require, exports, module) {
 		,	center__paneSelector: 	'.col2' 
 		,	east__paneSelector: 	'.col3' 
 		,	west__size: 		250		// percentage size expresses as a decimal
-		,	east__size: 		0.4
+		,	east__size: 		0.5
 		,   west__spacing_open:         1 	
 		,   east__spacing_open:         1
 		,	center_minWidth:				200
@@ -432,6 +432,9 @@ define(function(require, exports, module) {
 	exports.hideAllDropDownMenus		= tsCoreUI.hideAllDropDownMenus;
 	exports.showFileCreateDialog        = tsCoreUI.showFileCreateDialog;	
 	exports.showFileRenameDialog        = tsCoreUI.showFileRenameDialog;
+	exports.showLocationsPanel        	= tsCoreUI.showLocationsPanel;
+	exports.showTagsPanel        		= tsCoreUI.showTagsPanel;	
+	exports.showContextMenu        		= tsCoreUI.showContextMenu;
 	
 	// Proxying functions from tsTagsUI
 	exports.generateTagButtons 			= tsTagsUI.generateTagButtons;

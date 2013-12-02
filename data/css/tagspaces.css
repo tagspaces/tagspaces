@@ -26,6 +26,12 @@ user-select: none;
 
 /* { outline:none; } */
 
+@media screen and (-webkit-device-pixel-ratio: 2) {
+	#logo {
+		background: url("../icons/icon48.png") no-repeat left center;
+	}
+}
+
 #logo {
 	padding: 0px;
 	font-size: 1.5em;
@@ -34,7 +40,7 @@ user-select: none;
 	font-weight: bold;
 	padding-left: 32px;
     padding-top: 4px;	
-	background: url("logo28.png") no-repeat left center ;
+	background: url("../icons/icon28.png") no-repeat left center;
 	background-position: 0px 0px;
 	height: 31px;
 	display: inline-block;
@@ -148,7 +154,8 @@ user-select: none;
     text-align: center;
     width: 25px;       
     color: white ;  
-    z-index: 99;        
+    z-index: 99;  
+	text-transform:uppercase;           
 }
 
 .fileTagsTile {
@@ -219,7 +226,7 @@ li hr {
 }
 
 .tagButton {
-    padding: 2px 4px 2px 4px;
+    padding: 2px 4px 2px 4px !important;
     background: #008000 !important;    
     color: white !important;
     margin: 1px;
@@ -236,7 +243,6 @@ li hr {
     color: white !important;
     margin: 1px;
     border: 0px;
-    z-index: 9999;
     border-radius: 5px !important;
     text-decoration: none;
     text-shadow: 0px 0px !important;      
@@ -258,18 +264,7 @@ li hr {
     /*.roundedTagCorners; */    
 }
 
-.fileTitleButton {
-    margin: 0px;
-    z-index: 9999;  
-    text-align: left;
-    cursor: move;
-/*    border-color: #eee;*/
-    background-image: none;
-}
 
-.fileTitleButton:hover {
-    border-color: #ddd;
-}
 
 #container {
     height:     100%;
@@ -374,14 +369,14 @@ li hr {
 
 .dirButton  {
     font-size: 13px;
-    background-color: #f5f5f5;
+    background-color: #E5E5E5;
     color: #444444;
     background-image: none;    
 /*    border-color: transparent; */
 }
 
 .dirButton:hover, .dirButton:active, .dirButton:focus {
-    background-color: #dddddd;
+    background-color: #ddd;
 }
 
 .dropOnFolder {
@@ -652,8 +647,26 @@ input a.resetFilter {
 	color: white;
 }
 
+.fileTitleButton {
+/*    margin: 0px;
+    z-index: 9999;  
+    text-align: left;
+    cursor: move;
+    border-color: #eee;
+    background-image: none; */
+}
+
+.fileTitleButton:hover {
+/*    border-color: #ddd; */
+}
+
 .dropdown {
     position: absolute;
     display:none;
     z-index: 88888;	
+}
+
+.white-caret {
+	border-top-color: white; 
+	border-bottom-color: white;	
 }

@@ -211,6 +211,9 @@ define(function(require, exports, module) {
     
     function navigateToDirectory(directoryPath) {
         console.log("Navigating to directory: "+directoryPath);
+        
+		// Open the directory locations panel
+		TSCORE.showLocationsPanel();
     
         // Cleaning the directory path from \\ \ and / 
         if( (directoryPath.lastIndexOf('/')+1 == directoryPath.length) || (directoryPath.lastIndexOf('\\')+1 == directoryPath.length)) {
@@ -283,11 +286,9 @@ define(function(require, exports, module) {
 	    $("body").on("contextmenu click", ".directoryActions", function (e) {
 			TSCORE.hideAllDropDownMenus();
 	        dir4ContextMenu = $(this).attr("key");
-	        $("#directoryMenu").css({
-	            display: "block",
-	            left: e.pageX,
-	            top: e.pageY
-	        });
+	        
+			TSCORE.showContextMenu("#directoryMenu", $(this));	        
+
 	        return false;
 	    });
     	  
