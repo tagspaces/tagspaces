@@ -8,51 +8,6 @@ define(function(require, exports, module) {
     
     var TSCORE = require("tscore");
 
-    function generateUI() {
-        var optionsUI = $("#dialogOptions").find(".form-horizontal");
-     
-        optionsUI.append("<h5>Perspectives</h5>");
-
-        optionsUI.append("<div id='perspectiveList' class='sortable' />");
-
-        optionsUI.append("<button class='btn' id='addPerspectiveButton' title='Add new perspective'><i class='icon-plus'></button>");
-
-        optionsUI.append("<h5>File Types</h5>");
-        
-        optionsUI.append("<div id='fileTypesList'>");
-
-        optionsUI.append("<button class='btn' id='addFileTypeButton' title='Add new file extension'><i class='icon-plus'></button>");
-        
-        optionsUI.append("<h5>Miscellaneous</h5>");
-                      
-/*        optionsUI.append($("<div class='control-group'>", {})
-            .append($("<label class='control-label' for='extensionsPathInput'>Extensions folder</label>"))
-            .append($("<div class='controls'>", {})
-                .append($("<input type='text' class='input-xlarge' id='extensionsPathInput' placeholder='file:///c:\\tagspaces-extensions' title='Path to your tagspaces extensions'>", {})
-                )
-            )
-        ); */       
-
-        optionsUI.append($("<div class='control-group'>", {})
-            .append($("<div class='controls'>", {})
-                .append($("<label class='checkbox' title='Show hidden files/directories in *nix sytemes'>Show files/directories with a dot(.) in front of the name</label>")
-                    .append($("<input type='checkbox' id='showHiddenFilesCheckbox' />"))
-                )
-            )
-        );
-
-        optionsUI.append($("<div class='control-group'>", {})
-            .append($("<div class='controls'>", {})
-                .append($("<label class='checkbox'>Check for new version on startup</label>")
-                    .append($("<input type='checkbox' id='checkforUpdatesCheckbox' />"))
-                )
-            )
-        );
-        
-        optionsUI.append($("<p>Some of the changes will be not visible until restarting TagSpaces.</p>"));        
- 
-    }   
-
     function generateSelectOptions(parent, data, selectedId) {
         parent.empty();
         parent.append($("<option>").text("").val("false"));
@@ -67,17 +22,15 @@ define(function(require, exports, module) {
     }
 
     function addPerspective(parent, perspectiveId) {
-        var perspectiveControl = $("<div class='control control-row'>")
-                .append($("<div class='input-prepend input-append btn-group' style='padding: 3px 5px'>")
-                    .append($("<a class='btn' ><span class='icon-ellipsis-vertical'></span></a>"))
-                    .append($("<select class='span3'></select>"))
-                    //.append($("<input autocomplete='off' class='span3' type='text' placeholder='perspective ID'>").val(perspectiveId))
-                    //.append($("<a class='btn'>").append("<span class='caret'></span>"))
-                    .append($("<button class='btn' title='Remove this extension'><i class='icon-remove'></button>")
+        var perspectiveControl = $("<div class='form-inline'>")
+                .append($("<div class='input-group' style='width: 90%'>")
+                    //.append($("<button class='btn btn-default' style='width: 10%' title='Remove Perspective'><i class='fa fa-ellipsis-v'></i></button>"))
+                    .append($("<select class='form-control' style='width: 70%'></select>"))
+                    .append($("<button class='btn btn-default'  style='width: 40px' title='Remove Perspective'><i class='fa fa-times'></button>")
                         .click(function() {
                             $(this).parent().parent().remove();
                         })                
-                    )
+                  )
                 );
                 //.append($("<button class='btn' title='Remove this extension'><i class='icon-arrow-up'></button>"))
                 //.append($("<button class='btn' title='Remove this extension'><i class='icon-arrow-down'></button>"))  
@@ -87,12 +40,12 @@ define(function(require, exports, module) {
     }    
    
     function addFileType(parent, fileext, viewerId, editorId) {
-        var fileTypeControl = $("<div class='control control-row'>")
-                .append($("<div class='input-prepend input-append btn-group' style='padding: 3px 5px'>")
-                    .append($("<input type='text' class='span1' placeholder='e.g: jpg'>").val(fileext))
-                    .append($("<select class='ftviewer span2'></select>"))
-                    .append($("<select class='fteditor span2'></select>"))                
-                    .append($("<button class='btn' title='Remove this file type'><i class='icon-remove'></button>")
+        var fileTypeControl = $("<div class='form-inline'>")
+                .append($("<div class='input-group' >")
+                    .append($("<input style='width: 80px' type='text' class='form-control' placeholder='e.g: jpg'>").val(fileext))
+                    .append($("<select class='ftviewer form-control' style='width: 170px' placeholder='Select Viewer'></select>"))
+                    .append($("<select class='fteditor form-control' style='width: 170px' placeholder='Select Editor'></select>"))                
+                    .append($("<button style='width: 40px' class='btn btn-default' title='Remove this file type'><i class='fa fa-times'></button>")
                         .click(function() {
                             $(this).parent().parent().remove();
                         })
@@ -176,6 +129,5 @@ define(function(require, exports, module) {
         TSCORE.Config.saveSettings();
     }
     
-    generateUI();
     initUI();
 });
