@@ -5,7 +5,7 @@
 define(function(require, exports, module) {
 "use strict";
 
-    var extensionTitle = "Grid";
+    var extensionTitle = "Perspective Grid";
     var extensionID = "perspectiveGrid";  // ID should be equal to the directory name where the ext. is located   
     var extensionType =  "perspective";
     var extensionIcon = "fa fa-th";
