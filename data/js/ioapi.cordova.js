@@ -61,7 +61,7 @@ define(function (require, exports, module) {
         return path;
     }
     
-    exports.checkNewVersion = function() {
+    var checkNewVersion = function() {
         console.log("Checking for new version...");
         var cVer = TSCORE.Config.DefaultSettings["appVersion"]+"."+TSCORE.Config.DefaultSettings["appBuild"];
         $.ajax({
