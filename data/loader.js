@@ -71,7 +71,7 @@ requirejs.config({
         jqueryuiautocomplete:   'libs/jqueryui/jquery.ui.autocomplete',
         jqueryuidatepicker:     'libs/jqueryui/jquery.ui.datepicker',   
         
-        bootstrap:              'libs/bootstrap/js/bootstrap3',
+        bootstrap:              'libs/bootstrap/js/bootstrap',
         jquerysimplecolorpicker:'libs/jquery-simplecolorpicker/jquery.simplecolorpicker',
         datatables:             'libs/datatables/js/jquery.dataTables.min',
         jsoneditor:             'libs/jsoneditor/jsoneditor', // 4 remove
@@ -79,9 +79,9 @@ requirejs.config({
         underscore:             'libs/underscore/underscore',
         d3:                     'libs/d3/d3.v3',
         dropbox:                'libs/dropbox/dropbox.0.10.2',
-        i18next:                'devlibs/i18next/i18next.amd.withJQuery-1.7.1',
-        jqueryhotkeys:			'devlibs/jqueryhotkeys/jquery.hotkeys',
-		select2:				'devlibs/select2/select2',
+        i18next:                'libs/i18next/i18next.amd.withJQuery-1.7.1',
+        jqueryhotkeys:			'libs/jqueryhotkeys/jquery.hotkeys',
+		select2:				'libs/select2/select2',
 		
         tscore:                 'js/core.api',
         tssetting:              'js/settings.api',
