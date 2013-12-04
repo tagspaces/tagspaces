@@ -65,6 +65,9 @@ var initViews = function () {
 
 var initViewSwitcher = function() {
     var extensions = TSCORE.Config.getPerspectives();
+	$("#viewSwitcher").empty();
+	$("#viewSwitcher").append("<li class='dropdown-header'><span id=''>Switch Perspective</span><button type='button' class='close'>×</button></li>");
+	$("#viewSwitcher").append("<li class='divider'></li>");	
     for (var i=0; i < extensions.length; i++) {
         var curPers = undefined;        
         // Finding the right perspective 
@@ -72,7 +75,7 @@ var initViewSwitcher = function() {
             if(value.ID == extensions[i].id) {
                 curPers = value;
             }
-        }); 
+        }); 				
       
         $("#viewSwitcher").append($("<li>", {})
         .append($("<a>", { 
@@ -156,7 +159,7 @@ var updateFileBrowserData = function(dirList) {
                  
                  if(fileSize == undefined) fileSize = "";
                  if(fileLMDT == undefined) fileLMDT = "";
-                 var entry = [title,ext,tags,fileSize,fileLMDT,path,filename];   
+                 var entry = [ext,title,tags,fileSize,fileLMDT,path,filename];   
                  TSCORE.fileList.push(entry);
             }
         }
