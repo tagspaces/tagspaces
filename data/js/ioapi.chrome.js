@@ -199,7 +199,9 @@ IO-API
     var deleteElement = function(path) {
         console.log("Deleting: "+path);
         try {
-            nativeIO.removeRecursively(path); 
+        	if(!nativeIO.isDirectory(path)) {
+            	nativeIO.removeRecursively(path);         		
+        	}
             TSPOSTIO.deleteElement();           
         } catch(ex) {
             console.error("Deleting file failed "+ex);
