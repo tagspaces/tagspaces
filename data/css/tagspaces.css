@@ -26,9 +26,11 @@ user-select: none;
 
 /* { outline:none; } */
 
-@media screen and (-webkit-device-pixel-ratio: 2) {
+/* { -webkit-min-device-pixel-ratio: 2.0 } */
+
+@media screen and (-webkit-min-device-pixel-ratio: 2.0) {
 	#logo {
-		background: url("../icons/icon48.png") no-repeat left center;
+		background: url("../icons/icon64.png") no-repeat left center;
 	}
 }
 
@@ -558,11 +560,17 @@ input a.resetFilter {
     height: 35px !important;
 }
 
+* {
+    -webkit-user-select: none; 
+    user-select: none; 
+    -moz-user-select: -moz-none;    
+} 
+/*
 .disableTextSelection {
     -webkit-user-select: none; 
     user-select: none; 
     -moz-user-select: -moz-none;    
-}
+} */
 
 /* Custom scrollbars for chrome */
 ::-webkit-scrollbar-track
