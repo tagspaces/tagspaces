@@ -50,15 +50,14 @@ can be found in the LICENSE file.
 	        <a id="newVersionAvailable" style="color: white; display: none; color: #7bd148" class="appVersion" title="New TagSpaces version available" data-toggle="dropdown">
 	            <sup><i class="fa fa-leaf" style="color: #7bd148"></i></sup></a>
 	        	<div id="newVersionMenu" class="dropdown-menu"></div>
-	        <span id="loadingAnimation"></span>
-	
+	        <span id="loadingAnimation"></span>	
 	      </div>
 		  <div class="btn-toolbar" style="width: 100%">
 			<div class="btn-group" style="width: 99%">
 			    <button type="button" class="btn btn-default" style="width: 16%; text-align: center; min-width: 40px;" id="createNewLocation">
 			    	<i class="glyphicon glyphicon-plus-sign"></i>
 			    </button>
-			    <button type="button" class="btn btn-default" style="width: 70%" id="locationName" data-toggle="dropdown">Choose Location</button>
+			    <button type="button" class="btn btn-default" style="width: 69%" id="locationName" data-toggle="dropdown">Choose Location</button>
 			    <button type="button" class="btn btn-default dropdown-toggle" id="selectLocation" style="width: 14%" data-toggle="dropdown">
 			      <span class="caret"></span>
 			    </button>
@@ -127,6 +126,8 @@ can be found in the LICENSE file.
 				    <span id="fileExt"><span id="fileExtText"></span>&nbsp;<span class="caret white-caret"></span></span>
 				  </button>
 				  <ul class="dropdown-menu">
+					  <li class="dropdown-header"><span id="">File Operations</span><button type="button" class="close">×</button></li>
+				      <li class="divider"></li>				  	
 				      <li><a id="editDocument" href="#"><i class="fa fa-edit"></i>&nbsp;<span data-i18n="app.?;">Edit</span></a></li>		      
 				      <li><a id="openFileInNewWindow" href="#"><i class="fa fa-external-link-square"></i>&nbsp;<span data-i18n="app.?;">Open in New Window</span></a></li>
 				      <!--li><a id="printFile" href="#"><i class="fa fa-edit"></i>&nbsp;<span data-i18n="app.?;">Print</span></a></li-->
@@ -145,7 +146,7 @@ can be found in the LICENSE file.
 					<button class="btn btn-link" id="closeOpenedFile">&nbsp;<i class="glyphicon glyphicon-remove"></i>&nbsp;</button>					
 				</div>
 			</div>
-			<div id="tagsContainer" class="btn-group ui-droppable">
+			<div id="tagsContainer" class="ui-droppable">
 				<button type="button" title="Add tags" style="height: 22px; width: 35px" class="btn btn-small extTagButton dropdown-toggle" data-toggle="dropdown">
 					&nbsp;&nbsp;+<!--i class="fa fa-plus-square"--></i>&nbsp;&nbsp;
 				</button>
@@ -161,7 +162,7 @@ can be found in the LICENSE file.
 </div>
 
 <!-- Modals -->
-<div class="modal fade" id="dialogAboutTS" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal" id="dialogAboutTS" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -184,7 +185,7 @@ can be found in the LICENSE file.
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
-<div id="dialogOptions" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+<div id="dialogOptions" class="modal" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
 	  <div class="modal-header">
@@ -251,7 +252,7 @@ can be found in the LICENSE file.
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
-<div id="dialogCreateFolderConnection" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+<div id="dialogCreateFolderConnection" class="modal" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
 	    <div class="modal-header">
@@ -283,7 +284,7 @@ can be found in the LICENSE file.
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->  
 
-<div id="dialogFileCreate" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+<div id="dialogFileCreate" class="modal" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
 	    <div class="modal-header">
@@ -335,7 +336,7 @@ can be found in the LICENSE file.
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
-<div id="dialogDirectoryCreate" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+<div id="dialogDirectoryCreate" class="modal" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
 	    <div class="modal-header">
@@ -358,7 +359,7 @@ can be found in the LICENSE file.
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->      
 
-<div id="dialogFileRename" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+<div id="dialogFileRename" class="modal" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
 	    <div class="modal-header">
@@ -381,7 +382,7 @@ can be found in the LICENSE file.
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
-<div id="dialogEditTag" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+<div id="dialogEditTag" class="modal" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
 	    <div class="modal-header">
@@ -414,7 +415,7 @@ can be found in the LICENSE file.
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->  
 
-<div id="dialogAddTags" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+<div id="dialogAddTags" class="modal" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
 	    <div class="modal-header">
@@ -437,7 +438,7 @@ can be found in the LICENSE file.
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
-<div id="dialogEditInTreeTag" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+<div id="dialogEditInTreeTag" class="modal" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
 	    <div class="modal-header">
@@ -502,7 +503,7 @@ can be found in the LICENSE file.
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
-<div id="dialogTagCreate" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+<div id="dialogTagCreate" class="modal" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
 	    <div class="modal-header">
@@ -525,7 +526,7 @@ can be found in the LICENSE file.
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
-<div id="dialogEditTagGroup" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+<div id="dialogEditTagGroup" class="modal" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
 	    <div class="modal-header">
@@ -548,7 +549,7 @@ can be found in the LICENSE file.
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal --> 
  
-<div id="dialogTagGroupCreate" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+<div id="dialogTagGroupCreate" class="modal" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
 	    <div class="modal-header">
