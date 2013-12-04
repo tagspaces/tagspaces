@@ -59,10 +59,10 @@ console.log("Loading UI for perspectiveDefault");
                 class: "fileSelection", 
             });
         
-	    var titleHTML = $('<span>', { 
+	    /*var titleHTML = $('<span>', { 
             	text: fileName, 
             	class: "fileTitle" 
-            });
+            });*/
 	        
 	    var buttonHTML = $('<button>', {
             title: "Options for "+fileName, 
@@ -78,7 +78,7 @@ console.log("Loading UI for perspectiveDefault");
         var fileHTML = $('<p>', {})        
         .append(checkboxHTML)	    
         .append(buttonHTML)	    
-        .append(titleHTML)	    
+       // .append(titleHTML)	    
         .append(thumbHTML);	                    
 	        
 	    return fileHTML.html();        
@@ -297,24 +297,24 @@ console.log("Loading UI for perspectiveDefault");
 	        "bInfo": false,
 	        "bAutoWidth": false,
 	        "aoColumns": [
-	            { "sTitle": "Title", "sClass": "right" },
-                { "sTitle": "Extension" },
-	            { "sTitle": "Tags" },            
+	            { "sTitle": "Extension", "sWidth": "120px", "sClass": "fileTitle"  },
+                { "sTitle": "Title", "sClass": "fileTitle" },
+	            { "sTitle": "Tags", "sClass": "fileTitle"  },            
 	            { "sTitle": "Size(B)" },
 	            { "sTitle": "Date Modified" },
 	            { "sTitle": "Path" },
                 { "sTitle": "File Name" }                
 	        ],         
 	        "aoColumnDefs": [
-	            { // Title column
+/*	            { // Title column
 	                "mRender": function ( data, type, row ) { 
 	                	return buttonizeTitle(data,row[TSCORE.fileListTITLE],row[TSCORE.fileListFILEPATH],row[TSCORE.fileListFILEEXT]); 
 	                	},
 	                "aTargets": [ TSCORE.fileListTITLE ]
-	            }, 
+	            },*/ 
                 { // File extension column
                     "mRender": function ( data, type, row ) { 
-                        return TSCORE.generateExtButton(data,row[TSCORE.fileListFILEPATH]); 
+	                	return buttonizeTitle(data,row[TSCORE.fileListTITLE],row[TSCORE.fileListFILEPATH],row[TSCORE.fileListFILEEXT]); 
                         },
                     "aTargets": [ TSCORE.fileListFILEEXT ]
                 }, 
@@ -347,7 +347,6 @@ console.log("Loading UI for perspectiveDefault");
 	                       TSCORE.fileListFILESIZE, 
 	                       TSCORE.fileListFILELMDT, 
 	                       TSCORE.fileListFILEPATH,
-	                       TSCORE.fileListFILEEXT,	                        
 	                       TSCORE.fileListFILENAME 
 	                       ] 
 	            },

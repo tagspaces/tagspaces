@@ -461,8 +461,8 @@ define(function(require, exports, module) {
 	exports.selectedTagData 			= selectedTagData;	
 	exports.startTime                   = startTime;
 	
-    exports.fileListTITLE                = 0;
-    exports.fileListFILEEXT              = 1;
+    exports.fileListFILEEXT              = 0;
+    exports.fileListTITLE                = 1;
     exports.fileListTAGS                 = 2;
     exports.fileListFILESIZE             = 3;
     exports.fileListFILELMDT             = 4;
