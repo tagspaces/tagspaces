@@ -33,14 +33,77 @@ define(function (require, exports, module) {
     }
 
     // TODO recursivly calling callback not working        
-    function scanDirectory(dirPath, index) {
-
+    var anotatedDirListing = undefined;
+    var pendingRecursions = 0;
+    function scanDirectory(entries) {
+	    var i;
+	    pendingRecursions++;
+	    var recursionStarted = false;
+	    for (i = 0; i < entries.length; i++) {
+	       if (entries[i].isFile) {
+               console.log("File: "+entries[i].name);
+               anotatedDirListing.push({
+                   "name":   entries[i].name,
+                   "isFile": entries[i].isFile,
+                   "size":   "", // TODO
+                   "lmdt":   "", // 
+                   "path":   entries[i].fullPath
+               });                
+	       } else {
+	           var directoryReader = entries[i].createReader();
+	           directoryReader.readEntries(
+	           	   scanDirectory,
+		           function (error) {
+		                console.log("Error reading dir entries: " + error.code);
+		           } );
+	           recursionStarted = true;
+	       }
+	    }
+	    if(!recursionStarted) {
+	    	pendingRecursions--;	    	
+	    }
+        if(pendingRecursions == 0) {
+       		TSPOSTIO.createDirectoryIndex(anotatedDirListing);
+        }
     }
     
     // TODO recursivly calling callback not working
     function generateDirectoryTree(dirPath) {        
 
-    }   
+    }  
+    
+    var createDirectoryIndex = function(dirPath) {
+        //TSCORE.showAlertDialog("Creating directory index is not supported on Android yet.");  
+        dirPath = dirPath+"/"; // TODO make it platform independent
+        dirPath = normalizePath(dirPath);
+        console.log("Creating index for directory: "+dirPath);
+        anotatedDirListing = [];
+        pendingRecursions = 0;
+        fsRoot.getDirectory(dirPath, {create: false, exclusive: false}, 
+            function (dirEntry) {
+                var directoryReader = dirEntry.createReader();
+        
+                // Get a list of all the entries in the directory
+                directoryReader.readEntries(
+ 					scanDirectory, 
+ 					function (error) { // error get file system
+                        console.log("Dir List Error: " + error.code);
+                    }            
+               );
+           },
+           function (error) {
+                console.log("Getting dir: "+dirPath+" failed with error code: " + error.code);
+           }                
+        );       
+    };
+    
+    var createDirectoryTree = function(dirPath) {
+        console.log("Creating directory index for: "+dirPath);
+        TSCORE.showAlertDialog("Creating directory tree is not supported on Android yet.");                 
+/*        var directoyTree = generateDirectoryTree(dirPath);
+        //console.log(JSON.stringify(directoyTree));
+        TSPOSTIO.createDirectoryTree(directoyTree);*/
+    };     
     
     function isWindows() {
         return (navigator.platform == 'Win32');
@@ -87,25 +150,53 @@ define(function (require, exports, module) {
         fsRoot.getDirectory(dirPath, {create: false, exclusive: false}, 
             function (dirEntry) {
                 var directoryReader = dirEntry.createReader();
-        
+		        var anotatedDirList = [];
+				var pendingCallbacks = 0;        
                 // Get a list of all the entries in the directory
                 directoryReader.readEntries(
                     function (entries) { 
                         var i;
-                        var anotatedDirList = [];
                         for (i = 0; i < entries.length; i++) {
-                            console.log("File: "+entries[i].name);
-                            anotatedDirList.push({
-                                "name":   entries[i].name,
-                                "isFile": entries[i].isFile,
-                                "size":   "0",
-                                "lmdt":   "0",
-                                "path":   entries[i].fullPath
-                            });                            
-                            // TODO get file size and last modified date in cordova     
+                            if(entries[i].isFile) {
+								pendingCallbacks++;	
+	                            entries[i].file(
+	                            	function(entry) {
+			                            anotatedDirList.push({
+			                                "name":   entry.name,
+			                                "isFile": true,
+			                                "size":   entry.size,
+			                                "lmdt":   entry.lastModifiedDate,
+			                                "path":   entry.fullPath
+			                            });
+			                            pendingCallbacks--;                            								                            		
+                            			console.log("File: "+entry.name+" Size: "+entry.size+ " i:"+i+" Callb: "+pendingCallbacks);
+			                            if(pendingCallbacks == 0 && i == entries.length) {
+			                            	TSPOSTIO.listDirectory(anotatedDirList);
+			                            }                          
+				                    }, function (error) { // error get file system
+				                        console.log("Getting file meta error: " + error.code);
+				                    }                                        	
+	                            );                            	
+                            } else {
+	                            anotatedDirList.push({
+	                                "name":   entries[i].name,
+	                                "isFile": false,
+	                                "size":   "",
+	                                "lmdt":   "",
+	                                "path":   entries[i].fullPath
+	                            });
+                            	console.log("Dir: "+entries[i].name+ " I:"+i+" Callb: "+pendingCallbacks);                            	
+	                            if((pendingCallbacks == 0) && ((i+1) == entries.length)) {
+	                            	TSPOSTIO.listDirectory(anotatedDirList);
+	                            }                            				                            	
+                            } 
+                                                   
                         }
+                        if(pendingCallbacks == 0) {
+                        	TSPOSTIO.listDirectory(anotatedDirList);
+                        }   
                         //console.log("Dir content: " + JSON.stringify(entries));
-                        TSPOSTIO.listDirectory(anotatedDirList);  
+  
                     }, function (error) { // error get file system
                         console.log("Dir List Error: " + error.code);
                     }            
@@ -137,23 +228,6 @@ define(function (require, exports, module) {
                 console.log("error getting file");
             }        
         );
-    };
-
-    var createDirectoryIndex = function(dirPath) {
-        console.log("Creating index for directory: "+dirPath);
-        TSCORE.showAlertDialog("Creating directory index is not supported on Android yet.");                 
-/*        var directoryIndex = [];
-        directoryIndex = scanDirectory(dirPath, directoryIndex);
-        console.log(JSON.stringify(directoryIndex));
-        TSPOSTIO.createDirectoryIndex(directoryIndex); */
-    };
-    
-    var createDirectoryTree = function(dirPath) {
-        console.log("Creating directory index for: "+dirPath);
-        TSCORE.showAlertDialog("Creating directory tree is not supported on Android yet.");                 
-/*        var directoyTree = generateDirectoryTree(dirPath);
-        //console.log(JSON.stringify(directoyTree));
-        TSPOSTIO.createDirectoryTree(directoyTree);*/
     };
 
     var loadTextFile = function(filePath) {
