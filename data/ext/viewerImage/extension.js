@@ -19,18 +19,24 @@ define(function(require, exports, module) {
 	var TSCORE = require("tscore");
 	
 	var extensionDirectory = TSCORE.Config.getExtensionPath()+"/"+extensionID;
-	var UI = undefined; 
+	var UI = undefined;   
+	   
 	   
 	exports.init = function(filePath, elementID) {
 	    console.log("Initalization Browser Image Viewer...");
 
 		require([
               extensionDirectory+'/viewerUI.js',
-              extensionDirectory+'/pixastic/pixastic.custom.js',
-		      //extensionDirectory+'/camanjs/caman.full.js',
-		    ], function(extUI) {
+              "text!"+extensionDirectory+'/mainUI.html',
+              extensionDirectory+'/jquery.panzoom/jquery.panzoom.js',              
+              extensionDirectory+'/jquery.mousewheel/jquery.mousewheel.js',      
+              extensionDirectory+'/handlebars.js/handlebars-v1.1.2.js', 
+//              extensionDirectory+'/pixastic/pixastic.custom.js',
+		    ], function(extUI, uiTPL) {
+                var uiTemplate = Handlebars.compile( uiTPL );
                 UI = new extUI.ExtUI(extensionID, elementID, filePath);                          
-                UI.buildUI();
+                UI.buildUI(uiTemplate);
+                
                 TSCORE.hideLoadingAnimation();              
 		});    
 	};
