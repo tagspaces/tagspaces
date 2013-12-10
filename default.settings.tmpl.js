@@ -33,6 +33,7 @@ exports.defaultSettings = {
         { "type": "pdf", 	"viewer": "@PDFVIEWER@",	 "editor": "false" },                
         { "type": "html", 	"viewer": "viewerBrowser",   "editor": "editorHTML" },                        
         { "type": "htm", 	"viewer": "viewerBrowser",   "editor": "editorHTML" },                        
+        { "type": "xhtml", 	"viewer": "viewerBrowser",   "editor": "editorHTML" },                        
         { "type": "mht", 	"viewer": "viewerBrowser",   "editor": "false" },                        
         { "type": "mhtml", 	"viewer": "viewerBrowser",   "editor": "false" },                                
         { "type": "txt", 	"viewer": "viewerBrowser",   "editor": "editorText" },

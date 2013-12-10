@@ -1,8 +1,7 @@
 {
     "app": {
       "name": "TagSpaces EN",
-      "test1": "Dropbox EN",      
-      "switchToLocationsTooltip": "Switch to location",
+      "switchToLocationsTooltip": "Switch to Location",
       "toggleLeftPanelTooltip": "Toggle Left Panel",
       "switchLanguageTooltip": "Switch language"      
     }

@@ -1,6 +1,6 @@
 {
   "name": "TagSpaces",
-  "version": "1.6.1606",
+  "version": "1.6.1663",
   "manifest_version": 2,
   "description": "An offline file browser/manager for your local files, with support of tagging and editing.",
   "icons": {
@@ -25,8 +25,8 @@
   ],
   "permissions": [
     "<all_urls>",
-    "storage"   
+    "storage"       
   ],
-  "content_security_policy": "script-src 'self' ; object-src 'self'",  
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",  
   "homepage_url": "http://tagspaces.org"
 }
