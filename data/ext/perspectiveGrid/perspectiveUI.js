@@ -97,7 +97,6 @@ console.log("Loading UI for perspectiveDefault");
                         TSCORE.openTagMenu(this, $(this).attr("tag"), $(this).attr("filepath"));
                     } )
                     .append("<span class='caret'/>")                    
-                    //.dropdown( 'attach' , '#tagMenu' )
                     /* .draggable({
                         "cancel":   false,
                         "appendTo": "body",
@@ -781,6 +780,11 @@ console.log("Loading UI for perspectiveDefault");
                         TSCORE.FileOpener.openFile(filePath);
                         self.selectFile(filePath); 
                  })
+				 .hammer().on("doubletap", function(event) {
+                    var filePath = $(this).attr("filepath");
+                    TSCORE.FileOpener.openFile(filePath);
+                    self.selectFile(filePath); 
+				 })                 
                  .click(function() {
                         var filePath = $(this).attr("filepath");
                         self.selectFile(filePath); 
