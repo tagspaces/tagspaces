@@ -55,6 +55,7 @@ requirejs.config({
     map: {
       '*': {
         'css':  'libs/requirecss/css',
+        'text':  'libs/requiretext/text',
       }
     },
     paths: {
@@ -82,6 +83,7 @@ requirejs.config({
         i18next:                'libs/i18next/i18next.amd.withJQuery-1.7.1',
         jqueryhotkeys:			'libs/jqueryhotkeys/jquery.hotkeys',
 		select2:				'libs/select2/select2',
+		hammerjs:				'libs/hammerjs/jquery.hammer',
 		
         tscore:                 'js/core.api',
         tssetting:              'js/settings.api',
@@ -116,6 +118,7 @@ requirejs.config({
         'datatables':               { deps: ['jquery'] },
         'jquerynanoscroller':       { deps: ['jquery'] },        
         'select2':          	    { deps: ['jquery'] },
+        'hammerjs':          	    { deps: ['jquery'] },
         'jqueryhotkeys':            { deps: ['jquery'] },
         'tscore':                   { deps: [
                 'jquery',
@@ -126,6 +129,7 @@ requirejs.config({
                 'jqueryuiposition',
                 'jqueryuiselectable',
                 'jqueryuisortable',
+                'hammerjs',
                 'bootstrap',
                 'jquerysimplecolorpicker',
                 'jquerylayout',
