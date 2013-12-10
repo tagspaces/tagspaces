@@ -235,7 +235,7 @@ define(function(require, exports, module) {
         });
 
 	    // Advanced Settings
-        $( "#aboutDialogSettings" ).click(function() {
+        $( "#advancedSettings" ).click(function() {
             $('#dialogOptions').modal('hide');
             require(['jsoneditor'], function () {
                 editor = new JSONEditor(document.getElementById("settingsEditor")); 
@@ -346,7 +346,11 @@ define(function(require, exports, module) {
         var topPos = sourceObject.offset().top+sourceObject.height()+5;	  
         if (sourceObject.offset().top+sourceObject.height()+$(menuId).height() > window.innerHeight) {
 	        topPos = window.innerHeight-$("#tagMenu").height();
-	        leftPos = leftPos+15;	        	
+	        leftPos = sourceObject.offset().left+15;	        	
+        } 
+
+        if (sourceObject.offset().left+sourceObject.width()+$(menuId).width() > window.innerWidth) {
+	        leftPos = window.innerWidth-$("#tagMenu").width();	        	
         } 
         
         $(menuId).css({
