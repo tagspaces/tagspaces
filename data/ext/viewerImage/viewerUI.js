@@ -23,7 +23,7 @@ console.log("Loading UI for Image Viewer");
         }	    
 	}
 	
-	ExtUI.prototype.buildUI = function() {
+	ExtUI.prototype.buildUI = function(uiTemplate) {
 		console.log("Init UI module");
 		
         this.viewContainer = $("#"+this.extensionID+"Container").empty();
@@ -32,24 +32,39 @@ console.log("Loading UI for Image Viewer");
 		       
 		var self = this;
 		
-		this.containerElem.addClass("row-fluid");
+        var context = {
+        	id: this.extensionID,
+        	imgPath: this.filePath,
+        };
+		//console.log(uiTemplate(context));
+     	this.containerElem.html(uiTemplate(context));
 
-        this.containerElem.append($("<div>", { 
-         //   class: "span11",
-        })
-        .append($('<img>', {
-            id: "imgViewer",
-            style: "max-width: 100%; max-height: 100%; display: block; margin-left: auto; margin-right: auto ", 
-            src: this.filePath
-        })
-        ));
-/*		
-		this.containerElem.append($("<div>", { 
-			class: "btn-group btn-group-vertical span1",
-			//style: "margin: 0px",
-			id: this.extensionID+"Toolbar", 			
-	    })
+    	$("#"+this.extensionID+"imgViewer")
+    	.panzoom({
+            $zoomIn: $("#"+this.extensionID+"ZoomIn"),
+            $zoomOut: $("#"+this.extensionID+"ZoomOut"),
+            contain: 'invert'
+//            $zoomRange: $section.find(".zoom-range"),
+//            $reset: $section.find(".reset")
+        });
+/*		.hammer().on("swipeleft", function(event) {
+			TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getPrevFile(this.filePath));
+		})
+		.hammer().on("swiperight", function(event) {
+			TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getNextFile(this.filePath));
+		}); */        
 
+        $("#"+this.extensionID+"imgViewer").parent().on('mousewheel.focal', function( e ) {
+        	e.preventDefault();
+        	var delta = e.delta || e.originalEvent.wheelDelta;
+        	var zoomOut = delta ? delta < 0 : e.originalEvent.deltaY > 0;
+        	$("#"+self.extensionID+"imgViewer").panzoom('zoom', zoomOut, {
+          		increment: 0.1,
+          		focal: e
+        	});
+      	});	    
+
+/*
         .append($("<button>", { 
             class: "btn ",
             title: "Toggle Select All Files",
@@ -112,12 +127,7 @@ console.log("Loading UI for Image Viewer");
             });          
         })
         .append( "<i class='icon-sun'>" )
-        )                
-		
-	    ); // end toolbar    		
-*/
-    
-	    
+        )                */
 	};	
 
 	exports.ExtUI	 				= ExtUI;

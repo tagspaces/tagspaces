@@ -78,16 +78,16 @@ can be found in the LICENSE file.
 		  <label class="btn btn-default active" id="showLocations" data-i18n="[title]app.switchToLocationsTooltip;">
 		    <input type="radio" name="options">&nbsp;<i class="fa fa-folder"></i>&nbsp;
 		  </label>
-		  <label class="btn btn-default" id="showTagGroups" data-i18n="[title]app.switchToTagsTooltip;">
+		  <label class="btn btn-default" id="showTagGroups" title="Switch to Tags Overview" data-i18n="[title]app.switchToTagsTooltip;">
 		    <input type="radio" name="options" >&nbsp;<i class="fa fa-tags"></i>&nbsp;
 		  </label>
 	  </div>
-	  <div class="btn-group">
-		  <button class="btn btn-default" data-i18n="[title]app.?;" id="startNewInstanceBack">
+	  <div class="btn-group pull-right" style="margin-right: 5px;">
+		  <button class="btn btn-default" data-i18n="[title]app.?;" title="Open new TagSpaces Instance" id="startNewInstanceBack">
 		    &nbsp;<i class="fa fa-external-link-square"></i>&nbsp;</button>
-		  <button class="btn btn-default" data-i18n="[title]app.?;" id="openOptions">
-		    &nbsp;<i class="fa fa-wrench"></i>&nbsp;</button>
-		  <button class="btn btn-default" data-i18n="[title]app.?;" data-toggle="modal" data-target="#dialogAboutTS">
+		  <button class="btn btn-default" data-i18n="[title]app.?;" title="Settings" id="openOptions">
+		    &nbsp;<i class="fa fa-gear"></i>&nbsp;</button>
+		  <button class="btn btn-default" data-i18n="[title]app.?;" title="About TagSpaces" data-toggle="modal" data-target="#dialogAboutTS">
 		    &nbsp;<i class="fa fa-comment"></i>&nbsp;</button>
 	  </div>
 	</div>    	
@@ -222,7 +222,7 @@ can be found in the LICENSE file.
 	  </div>
 	  <div class="modal-footer">
 	  	<h6>Some of the changes will not take effect until restarting the application.</h6>
-	    <button class="btn" data-dismiss="modal" id="aboutDialogSettings">Advanced Settings</button>       
+	    <button class="btn" data-dismiss="modal" id="advancedSettings">Advanced Settings</button>       
 	    <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
 	    <button class="btn btn-primary" id="saveSettingsCloseButton">Save</button>
 	  </div>
