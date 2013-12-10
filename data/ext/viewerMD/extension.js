@@ -28,23 +28,23 @@ define(function(require, exports, module) {
 			md2htmlConverter = new Showdown.converter();
 			TSCORE.IO.loadTextFile(filePath);
 		});
-	}
+	};
 	
 	exports.setFileType = function(fileType) {
 	    console.log("setFileType not supported on this extension");      
-	}
+	};
 	
 	exports.viewerMode = function(isViewerMode) {
 	    // set readonly      
-	}
+	};
 	
 	exports.setContent = function(content) {
 	   var html = md2htmlConverter.makeHtml(content);
 	   $('#'+containerElID).append(html);   
-	}
+	};
 	
 	exports.getContent = function() {
 		$('#'+containerElID).html(); 
-	}
+	};
 
 });
