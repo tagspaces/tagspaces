@@ -86,6 +86,7 @@ define(function(require, exports, module) {
 	        initLayout();
 	        initI18N();
 	        initKeyBindings();
+	        platformTuning();
 		    $( "#loading" ).hide();  
 	    
 	        console.log("Layout initialized");
@@ -107,6 +108,18 @@ define(function(require, exports, module) {
 	    
         checkForNewVersion();
 	}
+
+	function platformTuning() {
+		if(isCordova) {
+			$("#startNewInstanceBack").hide();
+			$("#directoryMenuOpenDirectory").parent().hide();
+			$("#fileMenuOpenDirectory").parent().hide();
+			$("#fullscreenFile").parent().hide();
+			$("#openDirectory").parent().hide();
+			$("#advancedSettings").hide();
+			$("#openFileInNewWindow").hide();
+		}
+	};
 
     function initI18N() {
 		$.i18n.init({
@@ -230,9 +243,40 @@ define(function(require, exports, module) {
 	    location.reload();
 	}
 	
+	window.addEventListener("orientationchange", function() {
+		console.log("Current orientation: "+window.orientation);
+	}, false);	
+	
 	function openFileViewer() {
-    	layoutContainer.open("east"); 
+		tsCoreUI.hideAllDropDownMenus();
+        var fullWidth = window.innerWidth;
+        var halfWidth = Math.round(fullWidth/2);
+    	// In portret mode
+    	if(window.innerWidth < window.innerHeight) {
+        	layoutContainer.close("west");
+            layoutContainer.sizePane("east", fullWidth);
+            layoutContainer.open("east");
+            $('#toggleFullWidthButton').hide();            		
+    	} else {
+        	layoutContainer.sizePane("east", halfWidth);
+    		layoutContainer.open("east");     		
+    	}
 	}
+	
+	function closeFileViewer() {
+        $('#toggleFullWidthButton').show();
+		var fullWidth = window.innerWidth;
+        var halfWidth = Math.round(fullWidth/2);
+    	// In portret mode
+    	if(window.innerWidth < window.innerHeight) {
+        	layoutContainer.close("east");
+			if(isLeftPanelOpen) {
+        		layoutContainer.open("west");				
+			}
+    	} else {
+	    	layoutContainer.close("east");    
+    	}
+	}	
 
     var isFullWidth = false; 
 
@@ -240,13 +284,16 @@ define(function(require, exports, module) {
     	// TODO hide tags
         var fullWidth = window.innerWidth;
         var halfWidth = Math.round(fullWidth/2);
-        if(!isFullWidth) {
-        	layoutContainer.close("west");
-            layoutContainer.sizePane("east", fullWidth);
-            layoutContainer.open("east"); 
-        } else {
+        if(isFullWidth) {
             layoutContainer.sizePane("east", halfWidth);
             layoutContainer.open("east");               
+			if(isLeftPanelOpen) {
+        		layoutContainer.open("west");				
+			}
+        } else {
+        	layoutContainer.close("west");
+            layoutContainer.sizePane("east", fullWidth);
+            layoutContainer.open("east");
         }
         isFullWidth = !isFullWidth;
     }
@@ -278,12 +325,11 @@ define(function(require, exports, module) {
 	    }*/
 	}
 	
-	function closeFileViewer() {
-	    layoutContainer.close("east");    
-	}
+	var isLeftPanelOpen = true;
 	
 	function toggleLeftPanel() {
 	    layoutContainer.toggle("west");
+	    isLeftPanelOpen = !isLeftPanelOpen;	   
 	}
 	
 	function initLayout (){

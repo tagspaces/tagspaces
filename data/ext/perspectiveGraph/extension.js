@@ -7,7 +7,7 @@ define(function(require, exports, module) {
 	
 	console.log("Loading perspectiveGraph");
 
-	var extensionTitle = "DirectoryViz";
+	var extensionTitle = "FolderViz Perspective";
 	var extensionID = "perspectiveGraph";  // ID should be equal to the directory name where the ext. is located   
 	var extensionType =  "perspective";
 	var extensionIcon = "fa fa-sitemap";

@@ -66,7 +66,7 @@ var initViews = function () {
 var initViewSwitcher = function() {
     var extensions = TSCORE.Config.getPerspectives();
 	$("#viewSwitcher").empty();
-	$("#viewSwitcher").append("<li class='dropdown-header'><span id=''>Switch Perspective</span><button type='button' class='close'>×</button></li>");
+	$("#viewSwitcher").append("<li class='dropdown-header'><span id=''>Perspective Switch</span><button type='button' class='close'>×</button></li>");
 	$("#viewSwitcher").append("<li class='divider'></li>");	
     for (var i=0; i < extensions.length; i++) {
         var curPers = undefined;        

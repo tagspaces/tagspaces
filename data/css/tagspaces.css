@@ -24,15 +24,8 @@ user-select: none;
 * */
 }
 
-/* { outline:none; } */
+* { outline:none; }
 
-/* { -webkit-min-device-pixel-ratio: 2.0 } */
-
-@media screen and (-webkit-min-device-pixel-ratio: 2.0) {
-	#logo {
-		background: url("../icons/icon64.png") no-repeat left center;
-	}
-}
 
 #logo {
 	padding: 0px;
@@ -46,6 +39,14 @@ user-select: none;
 	background-position: 0px 0px;
 	height: 31px;
 	display: inline-block;
+}
+
+@media 
+(-webkit-min-device-pixel-ratio: 2), 
+(min-resolution: 192dpi) { 
+	#logo {
+		background: url("../icons/icon64.png") no-repeat left center 28px 28px;
+	}
 }
 
 .appVersion {
@@ -556,8 +557,8 @@ input a.resetFilter {
 
 /* Tablet optimization */
 .dropdown-menu LI > A {
-    line-height: 35px !important;
-    height: 35px !important;
+    line-height: 45px !important;
+    height: 45px !important;
 }
 
 * {
@@ -656,16 +657,11 @@ input a.resetFilter {
 }
 
 .fileTitleButton {
-/*    margin: 0px;
-    z-index: 9999;  
-    text-align: left;
-    cursor: move;
-    border-color: #eee;
-    background-image: none; */
+
 }
 
 .fileTitleButton:hover {
-/*    border-color: #ddd; */
+
 }
 
 .dropdown {

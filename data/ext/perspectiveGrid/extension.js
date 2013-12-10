@@ -5,7 +5,7 @@
 define(function(require, exports, module) {
 "use strict";
 
-    var extensionTitle = "Perspective Grid";
+    var extensionTitle = "Grid Perspective";
     var extensionID = "perspectiveGrid";  // ID should be equal to the directory name where the ext. is located   
     var extensionType =  "perspective";
     var extensionIcon = "fa fa-th";
@@ -28,9 +28,16 @@ define(function(require, exports, module) {
             ], function(extUI) {
                 UI = new extUI.ExtUI(extensionID);                          
                 UI.buildUI();
+				platformTuning();                
             }
         );
 	};
+	
+	var platformTuning = function() {
+		if(isCordova) {
+			$("#"+extensionID+"IncludeSubDirsButton").hide();
+		}
+	};	
 	
 	var load = function () {
         console.log("Loading perspective "+extensionID);
