@@ -5,7 +5,7 @@
 define(function(require, exports, module) {
 "use strict";
 	
-	var extensionTitle = "Perspective List";
+	var extensionTitle = "List Perspective";
 	var extensionID = "perspectiveList";  // ID should be equal to the directory name where the ext. is located   
 	var extensionType =  "perspective";
 	var extensionIcon = "fa fa-list-ul";
@@ -30,8 +30,17 @@ define(function(require, exports, module) {
                 UI = new extUI.ExtUI(extensionID);                          
                 UI.buildUI();
                 UI.initTable();
+                platformTuning();
             }
         );
+	};
+	
+	var platformTuning = function() {
+		if(isCordova) {
+			$("#"+extensionID+"IncludeSubDirsButton").hide();
+			//$("#"+extensionID+"ShowFileDetailsButton").hide();
+			//$("#"+extensionID+"ShowTagsButton").hide();							
+		}
 	};
 	
 	var load = function () {

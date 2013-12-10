@@ -406,6 +406,14 @@ console.log("Loading UI for perspectiveDefault");
 					$(ui.helper).remove();  
 		    	}	            	
 		    })
+			.hammer().on("doubletap", function(event) {
+		        console.log("Doubletap & Opening file...");
+		        var rowData = self.fileTable.fnGetData( this );
+		        TSCORE.FileOpener.openFile(rowData[TSCORE.fileListFILEPATH]); 
+		        
+                var titleBut = $(this).find(".fileTitleButton");
+                self.selectFile(titleBut, $(titleBut).attr("filepath"));
+			 })     		    
 		    .dblclick( function() {
 		        console.log("Opening file...");
 		        var rowData = self.fileTable.fnGetData( this );

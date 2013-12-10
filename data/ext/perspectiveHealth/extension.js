@@ -7,7 +7,7 @@ define(function(require, exports, module) {
 	
 	console.log("Loading perspectiveHealth");
 
-	var extensionTitle = "Quantified Self"
+	var extensionTitle = "Health Perspective"
 	var extensionID = "perspectiveHealth";  // ID should be equal to the directory name where the ext. is located   
 	var extensionType =  "perspective";
 	var extensionIcon = "fa fa-bar-chart-o";
