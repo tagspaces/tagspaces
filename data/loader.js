@@ -84,6 +84,7 @@ requirejs.config({
         jqueryhotkeys:			'libs/jqueryhotkeys/jquery.hotkeys',
 		select2:				'libs/select2/select2',
 		hammerjs:				'libs/hammerjs/jquery.hammer',
+		handlebarsjs:			'libs/handlebars.js/handlebars-v1.1.2',
 		
         tscore:                 'js/core.api',
         tssetting:              'js/settings.api',
@@ -135,7 +136,8 @@ requirejs.config({
                 'jquerylayout',
                 'i18next',
                 'jqueryhotkeys',
-                'select2',  
+                'select2',
+                'handlebarsjs',  
                 'tssettingsdefault', 
             ] },                   
     } 

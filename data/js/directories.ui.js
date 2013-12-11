@@ -112,9 +112,6 @@ define(function(require, exports, module) {
             })                       
             //.dropdown( 'attach' , '#directoryMenu' )
             .append("<b class='fa fa-ellipsis-v'>")
-            /*.click( function(event) {
-                dir4ContextMenu = $(this).attr("key");
-            })*/
             ) // end gear    
                     
             ) // end heading
@@ -270,25 +267,13 @@ define(function(require, exports, module) {
         TSCORE.IO.listDirectory(directoryPath);    
     } 
     
-    function initButtons() {
-                               
-        $( "#selectTagSpace" ).tooltip();
-    
-        $( "#selectLocalDirectory" ).click(function(e) {
-            e.preventDefault();
-            TSCORE.IO.selectDirectory();
-        });    
-    }
-    
-    
-    function initContextMenus() {  
-	
+    function initUI() {  
+		// Context Menus
+		
 	    $("body").on("contextmenu click", ".directoryActions", function (e) {
 			TSCORE.hideAllDropDownMenus();
-	        dir4ContextMenu = $(this).attr("key");
-	        
+	        dir4ContextMenu = $(this).attr("key");	        
 			TSCORE.showContextMenu("#directoryMenu", $(this));	        
-
 	        return false;
 	    });
     	  
@@ -304,42 +289,69 @@ define(function(require, exports, module) {
         $( "#directoryMenuOpenDirectory" ).click( function() {
             TSCORE.IO.openDirectory(dir4ContextMenu);
         });                    
-    }
-    
-    function showCreateDirectoryDialog() {
-        $("#newDirectoryName").val("");
-        $('#dialogDirectoryCreate').modal({show: true});        
-    }
-    
-    function initDialogs() {
-        $( "#createNewDirectoryButton" ).click( function() {
-            var bValid = true;
-
-            //bValid = bValid && checkLength( newDirName, "directory name", 3, 100 );
-
-            //bValid = bValid && checkRegexp( newDirName, /^[a-z]([0-9a-z_])+$/i, "Directory name may consist of a-z, 0-9, underscores, begin with a letter." );
-            // From jquery.validate.js (by joern), contributed by Scott Gonzalez: http://projects.scottsplayground.com/email_address_validation/
-            // bValid = bValid && checkRegexp( email, /^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i, "eg. ui@jquery.com" );
-            // bValid = bValid && checkRegexp( password, /^([0-9a-zA-Z])+$/, "Password field only allow : a-z 0-9" );
-            if ( bValid ) {
-                TSCORE.IO.createDirectory(dir4ContextMenu+TSCORE.TagUtils.DIR_SEPARATOR+$( "#newDirectoryName" ).val());
-                navigateToDirectory(dir4ContextMenu);
-            }
-        });  
-        
-        $( "#createFolderConnectionButton" ).click( function() {        
-            var locationPath = $("#folderLocation").val();        
-            TSCORE.Config.createConnection($("#connectionName").val(), locationPath);
-            initConnections();  
-            openConnection(locationPath);                                 
-        });  
+	        
     }
     
     function showCreateFolderConnectionDialog() {
-        $("#connectionName").val("");
-        $("#folderLocation").val("");
-        $('#dialogCreateFolderConnection').modal({show: true});
+		require([
+	          "text!templates/LocationCreateDialog.html",
+		    ], function(uiTPL) {
+		     	if($("#dialogCreateFolderConnection").length < 1) {
+		            var uiTemplate = Handlebars.compile( uiTPL );
+			     	$("body").append(uiTemplate());	
+			     		            
+			        $("#selectLocalDirectory").on("click",function(e) {
+			            e.preventDefault();
+			            TSCORE.IO.selectDirectory();
+			        }); 	
+			        
+			        $( "#createFolderConnectionButton" ).on("click", function() {        
+			            var locationPath = $("#folderLocation").val();        
+			            TSCORE.Config.createConnection($("#connectionName").val(), locationPath);
+				   		
+				   		// Disabling the UI behavior by empty location list
+				   		$( "#createNewLocation" ).attr("title", "Connect New Location");
+				    	$( "#createNewLocation" ).removeClass("createFirstLocation");
+				    	$( "#createNewLocation" ).tooltip( "destroy" );             
+					    $( "#locationName" ).prop('disabled', false);
+					    $( "#selectLocation" ).prop('disabled', false);	
+					    	            
+			            initConnections();  
+			            openConnection(locationPath);                                 
+			        });  			        	     		
+		     	}
+		        $("#connectionName").val("");
+		        $("#folderLocation").val("");
+		        $("#dialogCreateFolderConnection").modal({show: true});
+		});    	
     }  
+    
+    function showCreateDirectoryDialog() {
+		require([
+	          "text!templates/DirectoryCreateDialog.html",
+		    ], function(uiTPL) {
+		     	if($("#dialogDirectoryCreate").length < 1) {		    	
+		            var uiTemplate = Handlebars.compile( uiTPL );
+			     	$('body').append(uiTemplate());		
+			     	
+			        $( "#createNewDirectoryButton" ).on("click", function() {			
+			            var bValid = true;
+			            //bValid = bValid && checkLength( newDirName, "directory name", 3, 100 );
+			
+			            //bValid = bValid && checkRegexp( newDirName, /^[a-z]([0-9a-z_])+$/i, "Directory name may consist of a-z, 0-9, underscores, begin with a letter." );
+			            // From jquery.validate.js (by joern), contributed by Scott Gonzalez: http://projects.scottsplayground.com/email_address_validation/
+			            // bValid = bValid && checkRegexp( email, /^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i, "eg. ui@jquery.com" );
+			            // bValid = bValid && checkRegexp( password, /^([0-9a-zA-Z])+$/, "Password field only allow : a-z 0-9" );
+			            if ( bValid ) {
+			                TSCORE.IO.createDirectory(dir4ContextMenu+TSCORE.TagUtils.DIR_SEPARATOR+$( "#newDirectoryName" ).val());
+			                navigateToDirectory(dir4ContextMenu);
+			            }
+			        });   			     	            
+		     	}
+		        $("#newDirectoryName").val("");
+		        $('#dialogDirectoryCreate').modal({show: true});        
+		});
+    }    
     
     function deleteFolderConnection() {
         console.log("Deleting folder connection..");
@@ -413,9 +425,7 @@ define(function(require, exports, module) {
     // Public API definition
     exports.openConnection             = openConnection;
     exports.updateSubDirs              = updateSubDirs;
-    exports.initDialogs                = initDialogs;
-    exports.initButtons                = initButtons;
-    exports.initContextMenus           = initContextMenus;
+    exports.initUI 		               = initUI;
     exports.initConnections            = initConnections;
     exports.showCreateDirectoryDialog  = showCreateDirectoryDialog;
     
