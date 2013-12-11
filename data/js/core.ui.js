@@ -18,18 +18,7 @@ define(function(require, exports, module) {
 	    if (!title) { title = 'Alert'; }	
 	    if (!message) { message = 'No Message to Display.'; }
 	
-	    var alertModal = 
-	      $('<div class="modal fade"><div class="modal-dialog"><div class="modal-content">' +    
-	          '<div class="modal-header">' +
-	            '<a class="close" data-dismiss="modal" >&times;</a>' +
-	            '<h4></h4>' +
-	          '</div>' +
-              '<div class="modal-body"></div>' +
-	          '<div class="modal-footer">' +
-	            '<button id="okButton" class="btn btn-primary">Ok</button>' +
-	          '</div>' +
-	        '</div></div></div>');
-	
+	    var alertModal = $('#alertDialog');	
         alertModal.find('h4').text(title);        
         alertModal.find('.modal-body').append(message);
 	    alertModal.find('#okButton').click(function(event) {
@@ -43,19 +32,7 @@ define(function(require, exports, module) {
 	    if (!title) { title = 'Confirm'; }	
 	    if (!message) { message = 'No Message to Display.'; }
 	    
-	    var confirmModal = 
-	      $('<div class="modal fade"><div class="modal-dialog"><div class="modal-content">' +    
-	          '<div class="modal-header">' +
-	            '<a class="close" data-dismiss="modal" >&times;</a>' +
-	            '<h4></h4>' +
-	          '</div>' +
-	          '<div class="modal-body"></div>' +
-	          '<div class="modal-footer">' +
-	            '<button class="btn" data-dismiss="modal">Cancel</button>' +
-	            '<button id="okButton" class="btn btn-primary">Ok</button>' +
-	          '</div>' +
-	        '</div></div></div>');
-
+	    var confirmModal = $('#confirmDialog');
         confirmModal.find('h4').text(title);    	
 	    confirmModal.find('.modal-body').text(message);
 	    confirmModal.find('#okButton').click(function(event) {
@@ -88,8 +65,6 @@ define(function(require, exports, module) {
 		    $('#newFileName').focus();
 		});
     };
-
-
     
     var showFileRenameDialog = function() {
         $( "#renamedFileName" ).val(TSCORE.TagUtils.extractFileName(TSCORE.selectedFiles[0]));
@@ -102,9 +77,7 @@ define(function(require, exports, module) {
     };    
     
 	var initUI = function() {
-	    
-	    $( "#openAboutBox" ).tooltip();
-    
+   
 	    $( "#toggleLeftPanel" ).click(function() {
 			TSCORE.toggleLeftPanel();
 	    });   
@@ -334,10 +307,6 @@ define(function(require, exports, module) {
 	    $(document).click(function () {
 			TSCORE.hideAllDropDownMenus();
 	    });	          	        
-
-	/*    $(document).drag(function () {
-			TSCORE.hideAllDropDownMenus();
-	    });*/	    
 
 	};
 
