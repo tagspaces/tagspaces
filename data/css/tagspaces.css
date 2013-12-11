@@ -219,11 +219,6 @@ li hr {
     border: 0px;
 }
 
-.simplecolorpicker {
-    width: 40px;
-    border: 1px solid #999 !important;    
-}
-
 .tagButton .caret, .extTagButton .caret {
     border-top-color: white !important;
 }
@@ -673,4 +668,21 @@ input a.resetFilter {
 .white-caret {
 	border-top-color: white; 
 	border-bottom-color: white;	
+}
+
+.createFirstLocation {
+	border:1px solid #00AE00; 
+	border-radius:5px;
+	border-color:#00AE00; 
+	box-shadow:0 0 10px #00AE00;	
+}
+
+.simplecolorpicker.fontawesome span.color[data-selected]:after {
+  font-family: 'FontAwesome';
+  -webkit-font-smoothing: antialiased;
+
+  content: '\f00c'; /* Ok/check mark */
+
+  margin-right: 1px;
+  margin-left: 1px;
 }
