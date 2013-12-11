@@ -43,12 +43,9 @@ define(function(require, exports, module) {
 	
 		tsCoreUI.initUI();
 	
-	    tsTagsUI.initContextMenus();
-	    tsTagsUI.initDialogs();
+	    tsTagsUI.initUI();
 	    
-	    tsDirectoriesUI.initDialogs();
-	    tsDirectoriesUI.initButtons();
-	    tsDirectoriesUI.initContextMenus();   
+	    tsDirectoriesUI.initUI();
 		
 	    tsSettings.loadSettingsLocalStorage();
 	    
@@ -94,15 +91,11 @@ define(function(require, exports, module) {
 		    // Show start hint
 		   	if(tsSettings.Settings.tagspacesList.length < 1 ) {
 		   		$( "#createNewLocation" ).attr("title", "Start using TagSpaces by creating a new location.");
-                $( "#connectionsList" ).width($( "#reloadTagSpace" ).width()+$("#selectTagSpace").width());
-                $( "#connectionsList" ).show().position({
-                    my: "left top",
-                    at: "left bottom",
-                    of: $( "#reloadTagSpace" )
-                });
-		    	$( "#createNewLocation" ).attr("style","border:1px solid #00AE00; border-radius:5px; border-color:#00AE00; box-shadow:0 0 10px #00AE00;");
+		    	$( "#createNewLocation" ).addClass("createFirstLocation");
 		    	$( "#createNewLocation" ).tooltip( { placement: "bottom" } );
 		    	$( "#createNewLocation" ).tooltip( "show" );
+		    	$( "#locationName" ).prop('disabled', true);
+		    	$( "#selectLocation" ).prop('disabled', true);		    	
 		   	}
 	    }); 
 	    
