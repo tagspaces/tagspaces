@@ -8,7 +8,7 @@ define(function(require, exports, module) {
 	
 	var TSCORE = require("tscore");
 
-	function initContextMenus() {
+	function initUI() {
 	
 	    $("body").on("contextmenu click", ".tagGroupActions", function (e) {
             TSCORE.hideAllDropDownMenus();
@@ -119,9 +119,8 @@ define(function(require, exports, module) {
                 }
             );
         });                
-	}
-	
-	function initDialogs() {
+
+		// Dialogs
         $( "#editTagInTreeButton" ).click( function() {
             TSCORE.Config.editTag(
                 TSCORE.selectedTagData, 
@@ -414,7 +413,7 @@ define(function(require, exports, module) {
 
     function showTagEditInTreeDialog() {
         $( "#tagInTreeName" ).val(TSCORE.selectedTagData.title);
-        $( "#tagColor" ).simplecolorpicker({picker: true, theme: 'glyphicons'});    
+        $( "#tagColor" ).simplecolorpicker({picker: false, theme: 'fontawesome'});
         
         if(TSCORE.selectedTagData.color == undefined || TSCORE.selectedTagData.color.length < 1) {
             $( "#tagColor" ).simplecolorpicker('selectColor', '#008000');  
@@ -422,7 +421,7 @@ define(function(require, exports, module) {
             $( "#tagColor" ).simplecolorpicker('selectColor', TSCORE.selectedTagData.color);   
         }
         
-        $( "#tagTextColor" ).simplecolorpicker({picker: true, theme: 'glyphicons'});
+        $( "#tagTextColor" ).simplecolorpicker({picker: false, theme: 'fontawesome'});
         
         if(TSCORE.selectedTagData.textcolor == undefined || TSCORE.selectedTagData.textcolor.length < 1) {
             $( "#tagTextColor" ).simplecolorpicker('selectColor', '#ffffff');            
@@ -452,8 +451,7 @@ define(function(require, exports, module) {
 	}    
 
     // Public API definition
-    exports.initContextMenus                 = initContextMenus;
-    exports.initDialogs                      = initDialogs;
+    exports.initUI			                 = initUI;
     exports.generateTagGroups                = generateTagGroups;
     exports.openTagMenu    				     = openTagMenu;
     exports.generateTagStyle                 = generateTagStyle;
