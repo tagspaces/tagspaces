@@ -1,0 +1,38 @@
+<div id="dialogCreateFolderConnection" class="modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4>Edit a Location</h4>
+            </div>
+            <div class="modal-body form">
+                <div class="form-group">
+                    <label class="control-label" for="folderLocation">Folder Location</label>
+                    <div class="input-group">
+                        <input class="form-control" type="text" name="folderLocation" id="folderLocation" placeholder="Example: c:\users\johnsmith\documents" />
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" id="selectLocalDirectory" title="Select local folder">
+                                &nbsp;&nbsp;<i class="fa fa-folder-open"></i>&nbsp;&nbsp;
+                            </button> </span>
+                    </div><!-- /input-group -->
+                </div>
+                <div class="form-group">
+                    <label class="control-label" for="connectionName">Connection Name</label>
+                    <input class="form-control" type="text" name="connectionName" id="connectionName" placeholder="Example: My Documents" />
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="deleteLocationButton" class="btn pull-left" aria-hidden="true">
+                    Delete
+                </button>
+                <button class="btn" data-dismiss="modal" aria-hidden="true">
+                    Cancel
+                </button>
+                <button id="createFolderConnectionButton" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">
+                    Ok
+                </button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+ 
