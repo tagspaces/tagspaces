@@ -27,7 +27,7 @@ define(function(require, exports, module) {
 	
 	var generateUI = function(containerElementID) {
 		$("#"+containerElementID).append('<div id="aceEditor" style="width: 100%; height: 100%"></div>');	
-	}
+	};
 	
 	/* require.config({
 	    baseUrl: 'file:///Z://TagSpaces//repository//data//ext//editorText'
@@ -45,10 +45,10 @@ define(function(require, exports, module) {
 	        require(["./ace/mode/" + filetype[fileExt]], function(acemode) {
 	        	var syntaxMode = acemode.Mode;
 	        	aceEditor.getSession().setMode(new syntaxMode());
-	        })       
+	        });       
 	    }
 	
-	}
+	};
 	
 	exports.init2 = function(filePath, containerElementID) {
 	    console.log("Initalization ACE Text Editor...");
@@ -63,23 +63,23 @@ define(function(require, exports, module) {
 		        require(["./ace/mode/" + filetype[fileExt]], function(acemode) {
 		        	var syntaxMode = acemode.Mode;
 		        	aceEditor.getSession().setMode(new syntaxMode());
-		        })       
+		        });       
 		    }
 		});
-	}
+	};
 	
 	exports.viewerMode = function(isViewerMode) {
 	    aceEditor.setReadOnly(isViewerMode);      
-	}
+	};
 	
 	exports.setContent = function(content) {
 	    aceEditor.setValue(content);
 	    aceEditor.clearSelection();
-	}
+	};
 	
 	exports.getContent = function() {
 	    return aceEditor.getValue();
-	}
+	};
 	
 	var filetype = new Array();
 	filetype["h"] = "c_cpp";
