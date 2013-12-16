@@ -577,6 +577,7 @@ input a.resetFilter {
 ::-webkit-scrollbar
 {
     width: 8px;
+    height: 8px;
     background-color: #F5F5F5;
 }
 
@@ -588,12 +589,11 @@ input a.resetFilter {
 
 /* NEW DESIGN ---------------------------------------*/
 
-.col1 > .row2, .col1 > .row3 {
-	background-color: #f8f8f8 !important;
+.col1 .navbar, .col1 > .row2, .col1 > .row3, .col2 .navbar, .col3 .navbar {
+	background-color: #F2F2F2 !important;
 }
 
 .col1 .navbar {
-	background-color: #f8f8f8 !important;
 	padding-left: 5px;
 	border-bottom: 1px #ddd solid;
 }
