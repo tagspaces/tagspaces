@@ -24,15 +24,15 @@ define(function(require, exports, module) {
 
     	TSCORE.IO.loadTextFile(filePath);
 
-	}
+	};
 	
 	exports.setFileType = function(fileType) {
 	    console.log("setFileType not supported on this extension");      
-	}
+	};
 	
 	exports.viewerMode = function(isViewerMode) {
 	    // set readonly      
-	}
+	};
 	
 	exports.setContent = function(content) {
         $('#'+containerElID).empty();
@@ -41,11 +41,10 @@ define(function(require, exports, module) {
             })
             .append(content)
             ); 
-
-	}
+    };
 	
 	exports.getContent = function() {
 		$('#'+containerElID).html(); 
-	}
+	};
 
 });
