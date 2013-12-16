@@ -40,6 +40,7 @@ define(function(require, exports, module) {
 	
 	exports.setContent = function(content) {
 	   var html = md2htmlConverter.makeHtml(content);
+       $('#'+containerElID).css("overflow","auto");
 	   $('#'+containerElID).append(html);   
 	};
 	
