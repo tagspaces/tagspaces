@@ -1,0 +1,15 @@
+.note-editor {
+    border-width: 0px; 
+    width: 100%; 
+    height: 100%; 
+}
+
+.note-codable {
+    height: 90% !important;
+    overflow: auto;
+}
+
+.note-editable {
+    height: 90% !important;
+    overflow: auto;    
+}
