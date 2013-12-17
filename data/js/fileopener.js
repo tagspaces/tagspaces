@@ -37,9 +37,12 @@ define(function(require, exports, module) {
 	    console.log("Opening file: "+filePath);
 		
 		if(TSCORE.FileOpener.isFileEdited()) {
-			if(!confirm("Any unsaved changes will be lost! \nDo you want to continue?")) {
-				return false;
-			}
+            if(confirm("Any unsaved changes will be lost! Do you want to continue?")) {
+                 $("#editDocument").html("&nbsp;&nbsp;<i class='fa fa-pencil-square'></i>&nbsp;&nbsp;");
+                _isEditMode = false;               
+            } else {
+                return false;   
+            }
 		}
 		
 	    _isEditMode = false;
@@ -53,8 +56,16 @@ define(function(require, exports, module) {
 	
 	    // Getting the viewer for the file extension/type
 	    var viewerExt = TSCORE.Config.getFileTypeViewer(fileExt);  
-	    console.log("File Viewer: "+viewerExt);
-	
+        var editorExt = TSCORE.Config.getFileTypeEditor(fileExt);  
+	    console.log("File Viewer: "+viewerExt+" File Editor: "+editorExt);
+
+        // Handling the edit button
+        if(!editorExt) {
+            $( "#editDocument" ).hide();        
+        } else {
+            $( "#editDocument" ).show();                
+        }
+
 	    initTagSuggestionMenu(filePath);
      
 	    $( "#viewer" ).empty();
@@ -113,20 +124,15 @@ define(function(require, exports, module) {
         $( "#viewer" ).empty();
 	
 	    var editorExt = getFileEditor(filePath);
-/*	    if(editorExt === false || editorExt == "false" || editorExt == "") {
-            $( "#viewer" ).html("<div class='alert alert-info'><strong>Info</strong> File type not supported for editing.."); 
-	        return;
-	    } else {*/
-	        try {
-	            require([TSCORE.Config.getExtensionPath()+"/"+editorExt+"/extension.js"], function(editr) {
-	                _tsEditor = editr;
-	                _tsEditor.init(filePath, "viewer", false);
-	            });
-	            _isEditMode = true;
-	        } catch(ex) {
-	            console.error("Loading editing extension failed: "+ex);
-	        }
-	   // }   
+        try {
+            require([TSCORE.Config.getExtensionPath()+"/"+editorExt+"/extension.js"], function(editr) {
+                _tsEditor = editr;
+                _tsEditor.init(filePath, "viewer", false);
+            });
+            _isEditMode = true;
+        } catch(ex) {
+            console.error("Loading editing extension failed: "+ex);
+        }
 	} 
 	
 	function saveFile(filePath) {
@@ -136,18 +142,26 @@ define(function(require, exports, module) {
 	}
 	
 	function constructFileViewerUI(filePath) {
-	    // Adding tag buttons to the filetoolbox
 	    
 	    var title = TSCORE.TagUtils.extractTitle(filePath);
 		var fileExtension = TSCORE.TagUtils.extractFileExtension(filePath);
 		
 		$( "#fileExtText" ).text(fileExtension);
 	    
-	    $( "#fileTitle" ).val(title);
-	    
-		$("#fileTitle").change(function(e) {
-			TSCORE.TagUtils.changeTitle(filePath,$(this).val());
-	    });  
+	    $("#fileTitle").text(title);
+        $("#fileTitle").attr("title",title);
+        
+        $("#fileTitle").editable('destroy');    
+                
+        $("#fileTitle").editable({
+            type: 'text',
+            placement: 'bottom',
+            title: 'New File Title',
+            mode: 'inline',
+            success: function(response, newValue) {
+                TSCORE.TagUtils.changeTitle(filePath,newValue);
+            },            
+        });
 
 	    // Generate tag & ext buttons
 	    $( "#fileTags" ).empty();
@@ -186,12 +200,10 @@ define(function(require, exports, module) {
 	            left: e.pageX,
 	            top: e.pageY
 	        });
+            // TODO use the showContextMenu method
+            //TSCORE.showContextMenu("#tagMenu", $(this));	       
 	        return false;
 	    });		
-	    
-/*	    $( "#selectedFilePath" ).click(function() {
-			this.select();
-	    });*/
 
 		initFileActions("#filetoolbox", filePath);
 	}
@@ -271,15 +283,11 @@ define(function(require, exports, module) {
             }
 
 			if ( !_isEditMode ) { 
-				$( this )
-				  //  .attr("title","Save & Close")
-				    .html("<i class='fa fa-edit'></i>&nbsp;<span data-i18n='app.?;'>Save</span>");
+				$(this).html("&nbsp;&nbsp;<i class='fa fa-save'></i>&nbsp;&nbsp;");
 	        	editFile(filePath);
 			} else {
 			    TSCORE.showConfirmDialog("Confirm","Do you really want to overwrite the current file?", function() {
-                    $( "#editDocument" )
-                  //      .attr("title", "Edit File")                        
-                    .html("<i class='fa fa-edit'></i>&nbsp;<span data-i18n='app.?;'>Edit</span>");
+                    $("#editDocument").html("&nbsp;&nbsp;<i class='fa fa-pencil-square'></i>&nbsp;&nbsp;");
                     _isEditMode = false;
                     saveFile(filePath);			        
 			    });
