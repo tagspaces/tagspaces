@@ -364,7 +364,7 @@ define(function(require, exports, module) {
 	             return exports.Settings["supportedFileTypes"][i].editor;
 	        }        
 	    }
-	    return "false";   
+	    return false;   
 	};
 	
 	var getFileTypeViewer = function(fileTypeExt) {
