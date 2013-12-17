@@ -24,6 +24,38 @@ user-select: none;
 * */
 }
 
+/* {
+    -webkit-user-select: none; 
+    user-select: none; 
+    -moz-user-select: -moz-none;    
+} */
+
+/*
+.disableTextSelection {
+    -webkit-user-select: none; 
+    user-select: none; 
+    -moz-user-select: -moz-none;    
+} */
+
+/* Custom scrollbars for chrome */
+::-webkit-scrollbar-track
+{
+   background-color: transparent;
+}
+
+::-webkit-scrollbar
+{
+    width: 8px;
+    height: 8px;
+    background-color: #F5F5F5;
+}
+
+::-webkit-scrollbar-thumb
+{
+    background-color: #bbb;
+   /* border-radius: 6px;*/
+}
+
 * { outline:none; }
 
 
@@ -116,12 +148,33 @@ user-select: none;
     z-index: 1;
 }
 
-.fileTitle {
-    font-size: 1.3em;
-    line-height: 120%;
+#fileTitle {
+    height: 30px;
+    line-height: 1.9;
+    padding-left: 4px;
+    font-size: 16px;
+    font-family: open_sanslight,sans-serif;
+    font-weight: 300;
+    border: 0px;
+    background-color: transparent;
     color: #333333;
 }
 
+#fileTitle:hover {
+    text-decoration: none;
+}
+
+/* bootstrap3xeditable class */
+.editable-inline {
+    margin-top: 5px;
+}
+
+table .fileTitle {
+    font-size: 14px;
+    color: #333333;
+}
+
+/*
 .titleInFileTile {
     font-size: 1.3em;
     line-height: 120%;
@@ -130,7 +183,7 @@ user-select: none;
     position: absolute;
     left: 5px;
     top: 5px;
-}
+}*/
 
 
 .tagsInFileTile {
@@ -202,17 +255,6 @@ user-select: none;
     width: 600px;
 }
 
-#fileTitle {
-	height: 30px;
-	margin-top: 4px;
-	padding: 0 0 4px 6px;
-	font-size: 16px;
-	font-family: open_sanslight,sans-serif;
-	font-weight: 300;
-	width: 50%;
-	border: 0px;
-	background-color: transparent;
-}
 
 li hr {
     height: 0px; 
@@ -556,37 +598,6 @@ input a.resetFilter {
     height: 45px !important;
 }
 
-* {
-    -webkit-user-select: none; 
-    user-select: none; 
-    -moz-user-select: -moz-none;    
-} 
-/*
-.disableTextSelection {
-    -webkit-user-select: none; 
-    user-select: none; 
-    -moz-user-select: -moz-none;    
-} */
-
-/* Custom scrollbars for chrome */
-::-webkit-scrollbar-track
-{
-   background-color: white;
-}
-
-::-webkit-scrollbar
-{
-    width: 8px;
-    height: 8px;
-    background-color: #F5F5F5;
-}
-
-::-webkit-scrollbar-thumb
-{
-    background-color: #bbb;
-    border-radius: 6px;
-}
-
 /* NEW DESIGN ---------------------------------------*/
 
 .col1 .navbar, .col1 > .row2, .col1 > .row3, .col2 .navbar, .col3 .navbar {
@@ -608,6 +619,7 @@ input a.resetFilter {
 	padding-left: 5px;
 	border-bottom: 1px #ddd solid;
 }
+
 
 .col3 .ts-container {
 	overflow: hidden !important;
@@ -631,6 +643,7 @@ input a.resetFilter {
 	left: 0px; 
 	right: 0px; 
 	overflow: auto;
+    z-index: 10;	
 } 
 
 .navbar {
@@ -649,14 +662,6 @@ input a.resetFilter {
 	font-size: 12px;
 	padding: 4px;
 	color: white;
-}
-
-.fileTitleButton {
-
-}
-
-.fileTitleButton:hover {
-
 }
 
 .dropdown {
