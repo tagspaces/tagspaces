@@ -413,15 +413,15 @@ console.log("Loading UI for perspectiveDefault");
 		        
                 var titleBut = $(this).find(".fileTitleButton");
                 self.selectFile(titleBut, $(titleBut).attr("filepath"));
-			 })     		    
-		    .dblclick( function() {
+			 });     		    
+		    /*.dblclick( function() {
 		        console.log("Opening file...");
 		        var rowData = self.fileTable.fnGetData( this );
 		        TSCORE.FileOpener.openFile(rowData[TSCORE.fileListFILEPATH]); 
 		        
                 var titleBut = $(this).find(".fileTitleButton");
                 self.selectFile(titleBut, $(titleBut).attr("filepath"));
-		    } );   
+		    } );   */
 	    
 	    this.fileTable.$('.fileTitleButton')
 	    	.draggable({
@@ -430,11 +430,11 @@ console.log("Loading UI for perspectiveDefault");
 	    		"helper":    "clone",
 	    		"revert":    true,
 		        "start":     function() { self.selectFile(this, $(this).attr("filepath")); }    		
-	    	})  
-		    .dblclick( function() {
+	    	});  
+		    /*.dblclick( function() {
 		        console.log("Opening file...");
 		        TSCORE.FileOpener.openFile($(this).attr("filepath")); 
-		    }); 	    	
+		    });*/ 	    	
 	    
 	    this.fileTable.$('.fileSelection')
             .click( function() {
@@ -448,12 +448,12 @@ console.log("Loading UI for perspectiveDefault");
                 }
                 self.handleElementActivation(); 
             } );        
-
+/*
 	    this.fileTable.$('.thumbImg')
 		    .dblclick( function() {
 		        console.log("Opening file...");
 		        TSCORE.FileOpener.openFile($(this).attr("filepath")); 
-		    } ); 	    
+		    } ); */	    
 /*
 	    this.fileTable.$('.fileTitle')
 			.editInPlace({
