@@ -41,10 +41,8 @@ define(function(require, exports, module) {
 	function initApp() {
 	    console.log("Init application");	
 	
-		tsCoreUI.initUI();
-	
-	    tsTagsUI.initUI();
-	    
+		tsCoreUI.initUI();	
+	    tsTagsUI.initUI();	    
 	    tsDirectoriesUI.initUI();
 		
 	    tsSettings.loadSettingsLocalStorage();
@@ -83,7 +81,6 @@ define(function(require, exports, module) {
 	        initLayout();
 	        initI18N();
 	        initKeyBindings();
-	        platformTuning();
 		    $( "#loading" ).hide();  
 	    
 	        console.log("Layout initialized");
@@ -101,18 +98,6 @@ define(function(require, exports, module) {
 	    
         checkForNewVersion();
 	}
-
-	function platformTuning() {
-		if(isCordova) {
-			$("#startNewInstanceBack").hide();
-			$("#directoryMenuOpenDirectory").parent().hide();
-			$("#fileMenuOpenDirectory").parent().hide();
-			$("#fullscreenFile").parent().hide();
-			$("#openDirectory").parent().hide();
-			$("#advancedSettings").hide();
-			$("#openFileInNewWindow").hide();
-		}
-	};
 
     function initI18N() {
 		$.i18n.init({

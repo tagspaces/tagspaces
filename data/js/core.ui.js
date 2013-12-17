@@ -8,9 +8,8 @@ define(function(require, exports, module) {
 
 	var TSCORE = require("tscore");
 
-    var editor = undefined;
-	var formatter = undefined;
-	
+    var jsonEditor = undefined;
+
 	var fileContent = undefined;
 	var fileType = undefined;		
 
@@ -28,7 +27,7 @@ define(function(require, exports, module) {
 	    alertModal.modal('show');
 	};	
 	
-	var showConfirmDialog = function(title, message, callback) {
+	var showConfirmDialog = function(title, message, okCallback, cancelCallback) {
 	    if (!title) { title = 'Confirm'; }	
 	    if (!message) { message = 'No Message to Display.'; }
 	    
@@ -36,9 +35,15 @@ define(function(require, exports, module) {
         confirmModal.find('h4').text(title);    	
 	    confirmModal.find('.modal-body').text(message);
 	    confirmModal.find('#okButton').click(function(event) {
-	      callback();
+	      okCallback();
 	      confirmModal.modal('hide');
 	    });
+        confirmModal.find('#cancelButton').click(function(event) {
+          if(cancelCallback != undefined) {
+            cancelCallback();              
+          }
+          confirmModal.modal('hide');
+        });
 	
 	    confirmModal.modal('show');     
 	};	
@@ -77,7 +82,8 @@ define(function(require, exports, module) {
     };    
     
 	var initUI = function() {
-   
+        platformTuning();        
+ 
 	    $( "#toggleLeftPanel" ).click(function() {
 			TSCORE.toggleLeftPanel();
 	    });   
@@ -210,29 +216,30 @@ define(function(require, exports, module) {
 	    // Advanced Settings
         $( "#advancedSettings" ).click(function() {
             $('#dialogOptions').modal('hide');
-            require(['jsoneditor'], function () {
-                editor = new JSONEditor(document.getElementById("settingsEditor")); 
-                formatter = new JSONFormatter(document.getElementById("settingsPlainJSON"));
-                $("#settingsPlainJSON").hide();
-                editor.set(TSCORE.Config.Settings);
-                $('#dialogAdvancedSetting').modal('show');
+            require([
+                'ext/editorText/codemirror/codemirror.js',
+                'css!ext/editorText/codemirror/codemirror.css',
+                'css!ext/editorText/extension.css',
+            ], function() { 
+                require([
+                    'ext/editorText/codemirror/mode/javascript/javascript.js',
+                ], function() { 
+                    jsonEditor = CodeMirror(document.getElementById("settingsJSON"), {
+                        fixedGutter: false,
+                        mode: "javascript",
+                        lineNumbers: true,
+                        lineWrapping: true,
+                        tabSize: 2,
+                        collapseRange: true,
+                        matchBrackets: true,
+                        readOnly: false,
+                    });        
+                    //jsonEditor.setSize("100%","100%");  
+                    jsonEditor.setValue(JSON.stringify(TSCORE.Config.Settings));
+                    //jsonEditor.autoFormatRange();
+                    $('#dialogAdvancedSetting').modal('show');
+                });
             });
-        });
-        	
-        $( "#editorButton" ).click(function() {
-            if($("#settingsEditor").is(":hidden") ) {
-                $("#settingsPlainJSON").hide();
-                $("#settingsEditor").show();
-                editor.set(formatter.get());                    
-            }
-        });
-        	
-        $( "#importExportButton" ).click(function() {
-            if($("#settingsPlainJSON").is(":hidden") ) {
-                formatter.set(editor.get());
-                $("#settingsPlainJSON").show();
-                $("#settingsEditor").hide();
-            }
         });
         
         $( "#defaultSettingsButton" ).click(function() {
@@ -247,7 +254,7 @@ define(function(require, exports, module) {
         });
         
         $( "#saveSettingsButton" ).click(function() {
-            TSCORE.Config.Settings = editor.get();
+            TSCORE.Config.Settings = jsonEditor.getValue();
             TSCORE.Config.saveSettings();
             TSCORE.reloadUI();
         });
@@ -309,17 +316,37 @@ define(function(require, exports, module) {
 	    });	          	        
 
 	};
+	
+    function platformTuning() {
+        if(isCordova) {
+            $("#startNewInstanceBack").hide();
+            $("#directoryMenuOpenDirectory").parent().hide();
+            $("#fileMenuOpenDirectory").parent().hide();
+            $("#fullscreenFile").parent().hide();
+            $("#openDirectory").parent().hide();
+            $("#advancedSettings").hide();
+            $("#openFileInNewWindow").hide();
+          
+        }
+        if(isChrome) {
+            $("#directoryMenuOpenDirectory").parent().hide();
+            $("#fileMenuOpenDirectory").parent().hide();
+            $("#openDirectory").parent().hide();
+            //$("#advancedSettings").hide();
+            $("#openFileInNewWindow").hide();
+        }
+    };	
 
 	var showContextMenu = function(menuId, sourceObject) {
         var leftPos = sourceObject.offset().left; 
         var topPos = sourceObject.offset().top+sourceObject.height()+5;	  
         if (sourceObject.offset().top+sourceObject.height()+$(menuId).height() > window.innerHeight) {
-	        topPos = window.innerHeight-$("#tagMenu").height();
+	        topPos = window.innerHeight-$(menuId).height();
 	        leftPos = sourceObject.offset().left+15;	        	
         } 
 
         if (sourceObject.offset().left+sourceObject.width()+$(menuId).width() > window.innerWidth) {
-	        leftPos = window.innerWidth-$("#tagMenu").width();	        	
+	        leftPos = window.innerWidth-$(menuId).width();	        	
         } 
         
         $(menuId).css({
