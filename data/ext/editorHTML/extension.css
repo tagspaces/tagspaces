@@ -12,4 +12,5 @@
 .note-editable {
     height: 90% !important;
     overflow: auto;    
+    font-size: 140%;
 }

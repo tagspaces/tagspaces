@@ -67,7 +67,9 @@ define(function(require, exports, module) {
 	};
 	
 	exports.getContent = function() {
-		return $('#htmlEditor').code();
+		var content = $('#htmlEditor').code();
+		//console.log("HTML content: "+content);
+		return content;
 	};	
 
 });
