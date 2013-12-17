@@ -80,6 +80,12 @@ found in the LICENSE file.
     	<copy todir="${buildFirefoxExt.dir}/data/css" >
             <fileset dir="data/css" includes="**/*"/>  
         </copy>
+        <copy todir="${buildFirefoxExt.dir}/locales" >
+            <fileset dir="data/locales" includes="**/*"/>  
+        </copy>
+        <copy todir="${buildFirefoxExt.dir}/templates" >
+            <fileset dir="data/templates" includes="**/*"/>  
+        </copy>       	
         <copy todir="${buildFirefoxExt.dir}/data/js" >
             <fileset dir="data/js" includes="**/*">
                 <exclude name="ioapi.cordova.js" />            
@@ -151,6 +157,12 @@ found in the LICENSE file.
         <copy todir="${buildChrome.dir}/css" >
             <fileset dir="data/css" includes="**/*"/>  
         </copy>
+        <copy todir="${buildChrome.dir}/locales" >
+            <fileset dir="data/locales" includes="**/*"/>  
+        </copy>
+        <copy todir="${buildChrome.dir}/templates" >
+            <fileset dir="data/templates" includes="**/*"/>  
+        </copy>       	
         <copy todir="${buildChrome.dir}/js" >
             <fileset dir="data/js" includes="**/*">
                 <exclude name="ioapi.cordova.js" />            
@@ -220,6 +232,12 @@ found in the LICENSE file.
         <copy todir="${buildWin32.dir}/css" >
             <fileset dir="data/css" includes="**/*"/>  
         </copy>
+        <copy todir="${buildWin32.dir}/locales" >
+            <fileset dir="data/locales" includes="**/*"/>  
+        </copy>
+        <copy todir="${buildWin32.dir}/templates" >
+            <fileset dir="data/templates" includes="**/*"/>  
+        </copy>       	
         <copy todir="${buildWin32.dir}/js" >
             <fileset dir="data/js" includes="**/*">
                 <exclude name="ioapi.cordova.js" />            
@@ -288,6 +306,12 @@ found in the LICENSE file.
         <copy todir="${buildLinux64.dir}/css" >
             <fileset dir="data/css" includes="**/*"/>  
         </copy>
+        <copy todir="${buildLinux64.dir}/locales" >
+            <fileset dir="data/locales" includes="**/*"/>  
+        </copy>
+        <copy todir="${buildLinux64.dir}/templates" >
+            <fileset dir="data/templates" includes="**/*"/>  
+        </copy>       	
         <copy todir="${buildLinux64.dir}/js" >
             <fileset dir="data/js" includes="**/*">
                 <exclude name="ioapi.cordova.js" />            
@@ -340,7 +364,13 @@ found in the LICENSE file.
         <copy todir="${cordovaDev.dir}/css" >
             <fileset dir="data/css" includes="**/*"/>  
         </copy>
-        <copy todir="${cordovaDev.dir}/js" >
+        <copy todir="${cordovaDev.dir}/locales" >
+            <fileset dir="data/locales" includes="**/*"/>  
+        </copy>
+        <copy todir="${cordovaDev.dir}/templates" >
+            <fileset dir="data/templates" includes="**/*"/>  
+        </copy>        	
+    	<copy todir="${cordovaDev.dir}/js" >
             <fileset dir="data/js" includes="**/*">
                 <exclude name="ioapi.node.js" />            
                 <exclude name="ioapi.mozilla.js" />            
