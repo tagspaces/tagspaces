@@ -81,7 +81,7 @@ can be found in the LICENSE file.
 		    <input type="radio" name="options" >&nbsp;<i class="fa fa-tags"></i>&nbsp;
 		  </label>
 	  </div>
-	  <div class="btn-group pull-right" style="margin-right: 5px;">
+	  <div class="btn-group" style="margin-right: 5px;">
 		  <button class="btn btn-default" data-i18n="[title]app.?;" title="Open new TagSpaces Instance" id="startNewInstanceBack">
 		    &nbsp;<i class="fa fa-external-link-square"></i>&nbsp;</button>
 		  <button class="btn btn-default" data-i18n="[title]app.?;" title="Settings" id="openOptions">
@@ -287,7 +287,7 @@ can be found in the LICENSE file.
 	        </div>
 	        <div class="form-group">
 	            <label class="control-label" for="newFileNameTags">Tags</label>
-                <input type="text" id="newFileNameTags" name="newFileNameTags" autocomplete="off" class="form-control" placeholder="Comma separated list of tags">
+                <input type="text" id="newFileNameTags" name="newFileNameTags" autocomplete="off" class="form-control" placeholder="List of tags">
 	        </div>
 	        <div class="form-group">
 		      <label class="checkbox">
@@ -350,12 +350,12 @@ can be found in the LICENSE file.
     <div class="modal-content">
 	    <div class="modal-header">
 	        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-	        <h4>Add Tags</h4>
+	        <h4>Add Tags to File</h4>
 	    </div>
 	    <div class="modal-body form">
 	        <div class="form-group">
-	            <label class="control-label" for="tags">Comma separated list of the tags</label>
-                <input class="form-control" type="text" name="tags" id="tags" autocomplete="off"/>
+	            <label class="control-label" for="tags">Tags</label>
+                <input class="form-control" type="text" name="tags" id="tags" autocomplete="off" placeholder="List of tags"/>
 	        </div>
 	    </div>
 	    <div class="modal-footer">
@@ -432,8 +432,8 @@ can be found in the LICENSE file.
 	    </div>
 	    <div class="modal-body form">
 	        <div class="form-group">
-	            <label class="control-label" for="newTagTitle">Comma separted list of tags</label>
-                <input class="form-control" type="text" name="newTagTitle" id="newTagTitle" />
+	            <label class="control-label" for="newTagTitle">Tags</label>
+                <input class="form-control" type="text" name="newTagTitle" id="newTagTitle" placeholder="Comma separated list of tags" />
 	        </div>
 	    </div>
 	    <div class="modal-footer">
