@@ -7,7 +7,7 @@ define(function(require, exports, module) {
 	
 	console.log("Loading perspectiveRiver");
 	
-	exports.Title = "River View"
+	exports.Title = "River"
 	exports.ID = "perspectiveRiver";  // ID should be equal to the directory name where the ext. is located   
 	exports.Type =  "perspective";
 	exports.Icon = "icon-film";
@@ -42,7 +42,7 @@ define(function(require, exports, module) {
 	    }));	
 		
 	    initButtons();
-	}
+	};
 	
 	exports.load = function load() {
 		console.log("Showing View "+exports.ID);
@@ -63,20 +63,20 @@ define(function(require, exports, module) {
 	    }
 	
 	    TSCORE.hideLoadingAnimation();     
-	}
+	};
 	
 	exports.setFileFilter = function setFileFilter(filter) {
 		console.log("setFileFilter not implemented in "+exports.ID);
-	}
+	};
 	
 	exports.clearSelectedFiles = function() {
 	    // TODO Deselect all
-	}
+	};
 	
 	var initButtons = function() {
 	    $( "#"+exports.ID+"CreateFileButton" )
 	    .click(function() {
 	        TSCORE.showFileCreateDialog();
 	    });  
-	}
+	};
 });

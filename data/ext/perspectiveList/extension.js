@@ -5,7 +5,7 @@
 define(function(require, exports, module) {
 "use strict";
 	
-	var extensionTitle = "List Perspective";
+	var extensionTitle = "List";
 	var extensionID = "perspectiveList";  // ID should be equal to the directory name where the ext. is located   
 	var extensionType =  "perspective";
 	var extensionIcon = "fa fa-list-ul";
