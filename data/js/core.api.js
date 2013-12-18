@@ -44,6 +44,7 @@ define(function(require, exports, module) {
 		tsCoreUI.initUI();	
 	    tsTagsUI.initUI();	    
 	    tsDirectoriesUI.initUI();
+	    tsFileOpener.initUI();
 		
 	    tsSettings.loadSettingsLocalStorage();
 	    
