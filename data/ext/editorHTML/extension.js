@@ -21,12 +21,12 @@ define(function(require, exports, module) {
 	    console.log("Initalization HTML Text Editor...");
 		require([
 			extensionDirectory+'/summernote/summernote.min.js',
-            'css!'+extensionDirectory+'/extension.css',
             TSCORE.Config.getExtensionPath()+'/editorText/codemirror/codemirror.js',
+            //"css!"+extensionDirectory+'/summernote/summernote-bs3.css', 
+            "css!"+extensionDirectory+'/summernote/summernote.css',     
             'css!'+TSCORE.Config.getExtensionPath()+'/editorText/codemirror/codemirror.css',            
             'css!'+TSCORE.Config.getExtensionPath()+'/editorText/codemirror/theme/monokai.css',    
-            //"css!"+extensionDirectory+'/summernote/summernote-bs3.css', 
-            "css!"+extensionDirectory+'/summernote/summernote.css',		
+            'css!'+extensionDirectory+'/extension.css',
 		 	], function() {
                 require([
                     TSCORE.Config.getExtensionPath()+'/editorText/codemirror/mode/xml/xml.js',    
