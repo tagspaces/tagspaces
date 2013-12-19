@@ -1,19 +1,19 @@
 {
   "name": "TagSpaces",
-  "version": "1.6.1663",
+  "version": "1.6.1683",
   "manifest_version": 2,
   "description": "An offline file browser/manager for your local files, with support of tagging and editing.",
   "icons": {
-    "16" : "icons/icon16.png",
-    "48" : "icons/icon48.png",
-    "64" : "icons/icon64.png",
-    "128": "icons/icon128.png"    
+    "16" : "assets/icon16.png",
+    "48" : "assets/icon48.png",
+    "64" : "assets/icon64.png",
+    "128": "assets/icon128.png"    
   },
   "background": {
 	"scripts": ["chrome/background.js"]
   },
   "browser_action": {
-    "default_icon":  "icons/icon19.png",
+    "default_icon":  "assets/icon19.png",
     "default_title": "Launch TagSpaces"
   },     
   "options_page": "index.html",

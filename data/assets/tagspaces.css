@@ -30,12 +30,11 @@ user-select: none;
     -moz-user-select: -moz-none;    
 } */
 
-/*
 .disableTextSelection {
     -webkit-user-select: none; 
     user-select: none; 
     -moz-user-select: -moz-none;    
-} */
+} 
 
 /* Custom scrollbars for chrome */
 ::-webkit-scrollbar-track
@@ -209,7 +208,8 @@ table .fileTitle {
     border-radius: 0px !important;
     background: #999 ; 
     text-align: center;
-    width: 25px;       
+    padding: 1px;
+    /* max-width: 30px; */       
     color: white ;  
     z-index: 99;  
 	text-transform:uppercase;           

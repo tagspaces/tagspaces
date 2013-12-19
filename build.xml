@@ -77,9 +77,6 @@ found in the LICENSE file.
               <include name="viewerMD/**/*"/>          
 		    </fileset>        	
         </copy>
-    	<copy todir="${buildFirefoxExt.dir}/data/css" >
-            <fileset dir="data/css" includes="**/*"/>  
-        </copy>
         <copy todir="${buildFirefoxExt.dir}/locales" >
             <fileset dir="data/locales" includes="**/*"/>  
         </copy>
@@ -94,8 +91,8 @@ found in the LICENSE file.
             	<exclude name="${defaultSettings.file}" />
             </fileset> 
         </copy>
-        <copy todir="${buildFirefoxExt.dir}/data/icons" >
-            <fileset dir="data/icons" includes="**/*"/>  
+        <copy todir="${buildFirefoxExt.dir}/data/assets" >
+            <fileset dir="data/assets" includes="**/*"/>  
         </copy>
     	
     	<copy file="default.settings.tmpl.js" tofile="${buildFirefoxExt.dir}/data/js/${defaultSettings.file}" />
@@ -154,9 +151,6 @@ found in the LICENSE file.
               <exclude name="less/*" />
             </fileset>
         </copy>
-        <copy todir="${buildChrome.dir}/css" >
-            <fileset dir="data/css" includes="**/*"/>  
-        </copy>
         <copy todir="${buildChrome.dir}/locales" >
             <fileset dir="data/locales" includes="**/*"/>  
         </copy>
@@ -171,8 +165,8 @@ found in the LICENSE file.
                 <exclude name="${defaultSettings.file}" />            	
             </fileset>
         </copy>
-        <copy todir="${buildChrome.dir}/icons" >
-            <fileset dir="data/icons" includes="**/*"/>  
+        <copy todir="${buildChrome.dir}/assets" >
+            <fileset dir="data/assets" includes="**/*"/>  
         </copy>  
     	<copy file="default.settings.tmpl.js" tofile="${buildChrome.dir}/js/${defaultSettings.file}" />
     	<replace file="${buildChrome.dir}/js/${defaultSettings.file}" >
@@ -229,9 +223,6 @@ found in the LICENSE file.
               <exclude name="less/*" />
             </fileset>
         </copy>
-        <copy todir="${buildWin32.dir}/css" >
-            <fileset dir="data/css" includes="**/*"/>  
-        </copy>
         <copy todir="${buildWin32.dir}/locales" >
             <fileset dir="data/locales" includes="**/*"/>  
         </copy>
@@ -246,8 +237,8 @@ found in the LICENSE file.
             	<exclude name="${defaultSettings.file}" />            	
             </fileset>
         </copy>
-        <copy todir="${buildWin32.dir}/icons" >
-            <fileset dir="data/icons" includes="**/*"/>  
+        <copy todir="${buildWin32.dir}/assets" >
+            <fileset dir="data/assets" includes="**/*"/>  
         </copy>
         <copy file="default.settings.tmpl.js" tofile="${buildWin32.dir}/js/${defaultSettings.file}" />    	
     	<replace file="${buildWin32.dir}/js/${defaultSettings.file}" >
@@ -303,9 +294,6 @@ found in the LICENSE file.
               <exclude name="less/*" />
             </fileset>
         </copy>
-        <copy todir="${buildLinux64.dir}/css" >
-            <fileset dir="data/css" includes="**/*"/>  
-        </copy>
         <copy todir="${buildLinux64.dir}/locales" >
             <fileset dir="data/locales" includes="**/*"/>  
         </copy>
@@ -320,8 +308,8 @@ found in the LICENSE file.
                 <exclude name="${defaultSettings.file}" />            	
             </fileset>
         </copy>
-        <copy todir="${buildLinux64.dir}/icons" >
-            <fileset dir="data/icons" includes="**/*"/>  
+        <copy todir="${buildLinux64.dir}/assets" >
+            <fileset dir="data/assets" includes="**/*"/>  
         </copy>  
         <copy file="default.settings.tmpl.js" tofile="${buildLinux64.dir}/js/${defaultSettings.file}" />    	
     	<replace file="${buildLinux64.dir}/js/${defaultSettings.file}" >
@@ -361,9 +349,6 @@ found in the LICENSE file.
 		      <include name="**/*"/>
 		    </fileset>        	
         </copy>    	
-        <copy todir="${cordovaDev.dir}/css" >
-            <fileset dir="data/css" includes="**/*"/>  
-        </copy>
         <copy todir="${cordovaDev.dir}/locales" >
             <fileset dir="data/locales" includes="**/*"/>  
         </copy>
@@ -378,8 +363,8 @@ found in the LICENSE file.
                 <exclude name="${defaultSettings.file}" />            	
             </fileset>        	
         </copy>
-        <copy todir="${cordovaDev.dir}/icons" >
-            <fileset dir="data/icons" includes="**/*"/>  
+        <copy todir="${cordovaDev.dir}/assets" >
+            <fileset dir="data/assets" includes="**/*"/>  
         </copy>
         <copy file="default.settings.tmpl.js" tofile="${cordovaDev.dir}/js/${defaultSettings.file}" />    	
         <replace file="${cordovaDev.dir}/js/${defaultSettings.file}" >
