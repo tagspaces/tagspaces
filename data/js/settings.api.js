@@ -269,7 +269,6 @@ define(function(require, exports, module) {
         }        
     };
 
-
     var getPerspectiveExtensions = function() {
         if(exports.Settings["ootbPerspectives"] == null) {
             exports.Settings["ootbPerspectives"] = exports.DefaultSettings["ootbPerspectives"];
@@ -581,7 +580,6 @@ define(function(require, exports, module) {
 	    newConnectionModel.path = location;
 	    var createLocation = true;
         exports.Settings["tagspacesList"].forEach(function (value, index) {
-            // TODO make this check from the ui dialog         
             if(value.path == newConnectionModel.path) {
                 TSCORE.showAlertDialog("Selected path is already used by a location!","Duplicated Location Path");
                 createLocation = false;
@@ -596,6 +594,33 @@ define(function(require, exports, module) {
             saveSettings();                
         }
 	};
+
+    var editConnection = function(oldName, newName, newLocation) {
+//        name = name.replace("\\", "\\\\");
+//        name = name.replace("\\\\\\", "\\\\");
+//        name = name.replace("\\\\\\\\", "\\\\");   
+        console.log("Old Name: "+oldName+" New Name: "+newName+" New Loc: "+newLocation);
+        var editLocation = true;
+        exports.Settings["tagspacesList"].forEach(function (value, index) {
+            /* if(value.path == newLocation) {
+                TSCORE.showAlertDialog("Selected path is already used by a location!","Duplicated Location Path");
+                editLocation = false;
+            }  */
+            if(value.name == newName && value.name != oldName) {
+                TSCORE.showAlertDialog("Selected location name is already used by a location!","Duplicated Location Name");
+                editLocation = false;
+            }             
+        });         
+        if(editLocation) {
+            exports.Settings["tagspacesList"].forEach(function (value, index) {
+                if(value.name == oldName) {
+                    value.name = newName;
+                    value.path = newLocation;
+                }        
+            });          
+            saveSettings();                
+        }
+    };
 
     var getConnectionName = function(connectionPath) {
         var connectionName = undefined;
@@ -712,6 +737,7 @@ define(function(require, exports, module) {
     exports.createTagGroup                			= createTagGroup;    
     exports.duplicateTagGroup                		= duplicateTagGroup;	
     exports.createConnection                	    = createConnection;	
+    exports.editConnection                          = editConnection; 
     exports.deleteConnection                		= deleteConnection;
     exports.getConnectionName                       = getConnectionName;	
     exports.updateSettingMozillaPreferences         = updateSettingMozillaPreferences;	

@@ -12,17 +12,20 @@ define(function(require, exports, module) {
     
     var dir4ContextMenu = null;
     
-    var nameCurrentConnection = undefined;
+    var currentLocationName = undefined;
     
     function openConnection(path) {
         console.log("Opening connection in : "+path);
     
-        nameCurrentConnection = TSCORE.Config.getConnectionName(path);
+        currentLocationName = TSCORE.Config.getConnectionName(path);
         
-        document.title = nameCurrentConnection + " | " + TSCORE.Config.DefaultSettings.appName;
+        document.title = currentLocationName + " | " + TSCORE.Config.DefaultSettings.appName;
     
-        $( "#locationName" ).text(nameCurrentConnection);
-        $( "#locationName" ).attr("title",path);
+        $( "#locationName" ).text(currentLocationName);
+        $( "#locationName" ).attr("title",path);            
+
+        // Open the directory locations panel
+        TSCORE.showLocationsPanel();
         
         // Clears the directory history
         directoryHistory = new Array();
@@ -167,7 +170,7 @@ define(function(require, exports, module) {
                         })                   
                         );
                     }
-               }
+               }        
            }
         }
     }
@@ -208,9 +211,6 @@ define(function(require, exports, module) {
     
     function navigateToDirectory(directoryPath) {
         console.log("Navigating to directory: "+directoryPath);
-        
-		// Open the directory locations panel
-		TSCORE.showLocationsPanel();
     
         // Cleaning the directory path from \\ \ and / 
         if( (directoryPath.lastIndexOf('/')+1 == directoryPath.length) || (directoryPath.lastIndexOf('\\')+1 == directoryPath.length)) {
@@ -263,7 +263,6 @@ define(function(require, exports, module) {
         }    
     
         TSCORE.currentPath = directoryPath;
-        TSCORE.startTime = new Date().getTime();        
         TSCORE.IO.listDirectory(directoryPath);    
     } 
     
@@ -291,11 +290,52 @@ define(function(require, exports, module) {
         });                    
 	        
     }
+
+    function editLocation() {
+        TSCORE.Config.editConnection(
+             $("#connectionName2").attr("oldName"), 
+             $("#connectionName2").val(), 
+             $("#folderLocation2").val()
+        );
+        initConnections();  
+        openConnection($("#folderLocation2").val());                                         
+    }
+
+    function showLocationEditDialog(name,path) {
+        require([
+              "text!templates/LocationEditDialog.html",
+            ], function(uiTPL) {
+                // Check if dialog already created
+                if($("#dialogLocationEdit").length < 1) {
+                    var uiTemplate = Handlebars.compile( uiTPL );
+                    $("body").append(uiTemplate()); 
+                                    
+                    $("#selectLocalDirectory2").on("click",function(e) {
+                        e.preventDefault();
+                        TSCORE.IO.selectDirectory();
+                    });     
+                    
+                    $( "#saveLocationButton" ).on("click", function() {        
+                        editLocation();
+                    });  
+                    
+                    $( "#deleteLocationButton" ).on("click", function() { 
+                        $("#dialogLocationEdit").modal("hide");
+                        showDeleteFolderConnectionDialog();
+                    });                                                       
+                }
+                $("#connectionName2").val(name);
+                $("#connectionName2").attr("oldName",name);
+                $("#folderLocation2").val(path);
+                $("#dialogLocationEdit").modal({show: true});
+        });     
+    } 
     
-    function showCreateFolderConnectionDialog() {
+    function showLocationCreateDialog() {
 		require([
 	          "text!templates/LocationCreateDialog.html",
 		    ], function(uiTPL) {
+                // Check if dialog already created
 		     	if($("#dialogCreateFolderConnection").length < 1) {
 		            var uiTemplate = Handlebars.compile( uiTPL );
 			     	$("body").append(uiTemplate());	
@@ -353,37 +393,53 @@ define(function(require, exports, module) {
 		});
     }    
     
-    function deleteFolderConnection() {
+    function deleteLocation(name) {
         console.log("Deleting folder connection..");
-        TSCORE.Config.deleteConnection(nameCurrentConnection);
+        TSCORE.Config.deleteConnection(name);
         
         initConnections();
         
         //Opens the first location in the settings after deleting a location  
-        if(TSCORE.Config.Settings["tagspacesList"][0] != undefined) {
+        if(TSCORE.Config.Settings["tagspacesList"].length > 0) {
         	openConnection(TSCORE.Config.Settings["tagspacesList"][0].path);        	
-        }                               				
+        } else {
+            closeCurrentLocation();      
+        }                              				
     }  
 
-    function showDeleteFolderConnectionDialog() {
+    function closeCurrentLocation() {
+        console.log("Closing location..");
+        currentLocationName = undefined;
+        $("#locationName").text("Choose Location");
+        $("#locationName").attr("title","");         
+        $("#locationContent").empty();                   
+
+    }  
+
+
+    function showDeleteFolderConnectionDialog(name) {
 		TSCORE.showConfirmDialog(
 			"Delete connection to folder",
 			"Do you want to delete this connection to a folder?",
-			deleteFolderConnection
+			function() {
+			     deleteLocation($("#connectionName2").attr("oldName"));
+			 }
 		);
     }             
     
     function initConnections() {
         console.log("Creating location menu...");
         
-        $( "#connectionsList" ).empty();
-        $( "#connectionsList" ).append('<li class="dropdown-header"><span id="">Your Locations</span><button type="button" class="close">×</button></li>');
-        $( "#connectionsList" ).append('<li class="divider"></li>');
+        var $connectionList = $( "#connectionsList" ); 
+        $connectionList.empty();
+        $connectionList.attr("style","overflow-y: auto; max-height: 500px; width: 238px;");
+        $connectionList.append('<li class="dropdown-header"><span id="">Your Locations</span><button type="button" class="close">×</button></li>');
+        $connectionList.append('<li class="divider"></li>');
         var connectionsList = TSCORE.Config.Settings["tagspacesList"];
         for (var i=0; i < connectionsList.length; i++) { 
 // 			      <li><a href="#"><i class="fa fa-dropbox"></i>&nbsp;<span data-i18n="app.test1;">My Dropbox Folder</span>&nbsp;
 //		      			<button type="button" class="btn btn-link"><i class="fa fa-edit"></i></button></a></li>
-              $( "#connectionsList" ).append(
+              $connectionList.append(
                     $('<li>', {}).append(
                         $('<a>', { 
                             title:  "Location pointing to "+connectionsList[i].path,
@@ -397,24 +453,26 @@ define(function(require, exports, module) {
                         	.prepend("<i class='fa fa-bookmark'></i>&nbsp;")
 	                        .append(
 		                        $('<button>', { 
-		                            type:  "button",
-		                           // path:   connectionsList[i].path,
-		                            class:  "btn btn-link",
+		                            type:     "button",
+		                            title:    "Edit Location",
+		                            location: connectionsList[i].name,
+		                            path:     connectionsList[i].path,
+		                            class:    "btn btn-default pull-right",
 		                           } )
-		                          // .append("<i class='fa fa-edit'></i>")
-			                      // .click(function(e) {
-			                      //      e.preventDefault();
-			                      //      alert("Delete location");                           
-			                      // })	                           
+		                           .append("<i class='fa fa-pencil'></i>")
+			                       .click(function(e) {
+                                        console.log("Edit location");
+                                        showLocationEditDialog($(this).attr("location"),$(this).attr("path"));
+			                            return false;
+			                       })	                           
 	                        )                         	
                         ));
         };
-        $( "#connectionsList" ).append('<li class="divider"></li>');
-        $( "#connectionsList" ).append('<li id="deleteConnection"><a><i class="fa fa-trash-o"></i> Remove Current Location</a></li>');
-      //  $( "#connectionsList" ).hide();
+        //$connectionList.append('<li class="divider"></li>');
+        //$connectionList.append('<li id="deleteConnection"><a><i class="fa fa-trash-o"></i> Remove Current Location</a></li>');
         
         $( "#createNewLocation" ).click(function() {
-            showCreateFolderConnectionDialog();         
+            showLocationCreateDialog();         
         });
         
         $( "#deleteConnection" ).click(function() {
@@ -424,6 +482,7 @@ define(function(require, exports, module) {
 
     // Public API definition
     exports.openConnection             = openConnection;
+    exports.closeCurrentLocation       = closeCurrentLocation;
     exports.updateSubDirs              = updateSubDirs;
     exports.initUI 		               = initUI;
     exports.initConnections            = initConnections;
