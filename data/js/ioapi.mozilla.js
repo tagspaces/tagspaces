@@ -64,7 +64,7 @@ define(function(require, exports, module) {
           case "loadTextFile":
             if(message.success){
                 TSPOSTIO.loadTextFile(message.content);
-            } else {
+            } else {                
                 TSCORE.updateLogger("File loading failed");      
             }
             break;
@@ -72,7 +72,7 @@ define(function(require, exports, module) {
             if(message.success){
                 TSPOSTIO.listDirectory(message.content);       
             } else {
-                TSCORE.updateLogger("List directory failed");        
+                TSPOSTIO.errorOpeningPath();
             }
             break;      
           case "indexDirectory":

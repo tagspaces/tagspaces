@@ -190,6 +190,7 @@ define(function(require, exports, module) {
       try {
           fs.readdir(dirPath, function(error, dirList) {
             if (error) {
+              TSPOSTIO.errorOpeningPath();
               console.log("Listing directory: "+dirPath+" failed "+error);
               return;
             }
@@ -210,6 +211,7 @@ define(function(require, exports, module) {
             TSPOSTIO.listDirectory(anotatedDirList);
           });
        } catch(ex) {
+           TSPOSTIO.errorOpeningPath();
            console.error("Listing directory "+dirPath+" failed "+ex);
        }                    
 	};

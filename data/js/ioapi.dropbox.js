@@ -100,6 +100,7 @@ define(function (require, exports, module) {
                 //console.log("Dir content: " + JSON.stringify(entries));
                 TSPOSTIO.listDirectory(anotatedDirList);                     
             } else {
+                TSPOSTIO.errorOpeningPath();
                 console.log("Dir List Error: " + err);            	
             }
         });

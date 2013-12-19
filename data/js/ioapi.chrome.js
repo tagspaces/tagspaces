@@ -165,34 +165,31 @@ IO-API
 	var listDirectory = function(dirPath) {
 		console.log("Listing directory: "+dirPath);
 		if(nativeIO.isDirectory(dirPath)) {
-			//try {
-				var dirList = nativeIO.getDirEntries(dirPath);
-	            var anotatedDirList = [];
-	            for (var i=0; i < dirList.length; i++) {
-	            	var path = dirPath+getDirseparator()+dirList[i];
-	            	var isDir = nativeIO.isDirectory(path);
-                    var fileSize = 0;
-                    var lastDateModified = 0;
-                    if(!isDir) {
-                        fileSize = nativeIO.getFileSize(path);
-	                    if(isWin) {
-	                    	lastDateModified = new Date(nativeIO.getFileLastDateModified(path)*1000);                    	
-	                    }
+			var dirList = nativeIO.getDirEntries(dirPath);
+            var anotatedDirList = [];
+            for (var i=0; i < dirList.length; i++) {
+            	var path = dirPath+getDirseparator()+dirList[i];
+            	var isDir = nativeIO.isDirectory(path);
+                var fileSize = 0;
+                var lastDateModified = 0;
+                if(!isDir) {
+                    fileSize = nativeIO.getFileSize(path);
+                    if(isWin) {
+                    	lastDateModified = new Date(nativeIO.getFileLastDateModified(path)*1000);                    	
                     }
-                    anotatedDirList.push({
-		                "name": dirList[i],
-		                "isFile": !isDir,
-		                "size": fileSize,
-		                "lmdt": lastDateModified,
-		                "path": path  
-                    }); 
-	            } 
-	            TSPOSTIO.listDirectory(anotatedDirList);
-			//} catch(ex) {
-			//	console.error("Directory listing failed "+ex);
-			//}		
+                }
+                anotatedDirList.push({
+	                "name": dirList[i],
+	                "isFile": !isDir,
+	                "size": fileSize,
+	                "lmdt": lastDateModified,
+	                "path": path  
+                }); 
+            } 
+            TSPOSTIO.listDirectory(anotatedDirList);
 		} else {
-			console.error("Directory does not exists.");	
+		    TSPOSTIO.errorOpeningPath();
+			console.log("Directory does not exists.");	
 		}	
 	};
 

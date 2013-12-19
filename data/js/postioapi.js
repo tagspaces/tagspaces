@@ -22,8 +22,11 @@ define(function(require, exports, module) {
     };
 
     exports.renameFile = function(oldFilePath, newFilePath) {
+        var lastOpenedFile = TSCORE.FileOpener.getOpenedFilePath();        
+
+        console.log("Last opened Filename: "+lastOpenedFile);
         // TODO handle case in which a file opened for editing and a tag has been added
-        if(TSCORE.FileOpener.isFileOpened() && (oldFilePath == TSCORE.FileOpener.getOpenedFilePath()) ) {
+        if(TSCORE.FileOpener.isFileOpened() && (oldFilePath == lastOpenedFile) ) {
             TSCORE.FileOpener.openFile(newFilePath);                    
         }
         // TODO to be replaced with a function which replaces the 
@@ -46,6 +49,12 @@ define(function(require, exports, module) {
         TSCORE.PerspectiveManager.updateFileBrowserData(anotatedDirList);
         TSCORE.updateSubDirs(anotatedDirList);
     };
+
+    exports.errorOpeningPath = function() {
+        TSCORE.showAlertDialog("Error occured while opening a path! Currently opened location will be closed."); 
+        TSCORE.closeCurrentLocation();
+        TSCORE.PerspectiveManager.updateFileBrowserData([]);        
+    };
     
     exports.deleteElement = function() {
         TSCORE.PerspectiveManager.refreshFileListContainer();
@@ -60,6 +69,8 @@ define(function(require, exports, module) {
         var dirName = TSCORE.TagUtils.extractContainingDirectoryName(dirPath+TSCORE.TagUtils.DIR_SEPARATOR);
         $("#connectionName").val(dirName);                
         $("#folderLocation").val(dirPath);
+        //$("#connectionName2").val(dirName);                
+        $("#folderLocation2").val(dirPath);        
     };
     
     exports.openDirectory = function(dirPath) {
