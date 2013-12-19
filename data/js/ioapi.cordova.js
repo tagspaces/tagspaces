@@ -198,11 +198,13 @@ define(function (require, exports, module) {
                         //console.log("Dir content: " + JSON.stringify(entries));
   
                     }, function (error) { // error get file system
+                        TSPOSTIO.errorOpeningPath();
                         console.log("Dir List Error: " + error.code);
                     }            
                );
            },
            function (error) {
+                TSPOSTIO.errorOpeningPath();
                 console.log("Getting dir: "+dirPath+" failed with error code: " + error.code);
            }                
         ); 
@@ -303,8 +305,8 @@ define(function (require, exports, module) {
                             parentDirEntry,
                             newFileName,
                             function() {
-                                console.log("file renamed to: "+newFilePath);
-                                TSPOSTIO.renameFile(filePath, newFilePath);                                
+                                console.log("File renamed to: "+newFilePath+" Old name: "+entry.fullPath);
+                                TSPOSTIO.renameFile(entry.fullPath, newFilePath);                                
                             },
                             function() {
                                 console.log("error renaming: "+filePath);
