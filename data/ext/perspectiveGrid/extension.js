@@ -24,10 +24,11 @@ define(function(require, exports, module) {
         console.log("Initializing perspective "+extensionID);
         require([
             extensionDirectory+'/perspectiveUI.js',
-            'datatables'
-            ], function(extUI) {
+            "text!"+extensionDirectory+'/toolbar.html',            
+            ], function(extUI, toolbarTPL) {
+                var toolbarTemplate = Handlebars.compile( toolbarTPL );                
                 UI = new extUI.ExtUI(extensionID);                          
-                UI.buildUI();
+                UI.buildUI(toolbarTemplate);
 				platformTuning();                
             }
         );
@@ -62,12 +63,7 @@ define(function(require, exports, module) {
 	};
 	
 	var clearSelectedFiles = function() {
-        TSCORE.selectedFiles = [];   
-        $("#"+extensionID+"Container").find(".ui-selected")
-            .removeClass("ui-selected");
-        $("#"+extensionID+"Container").find(".fileTileSelector").find("i")
-            .removeClass("icon-check")
-            .addClass("icon-check-empty");
+        UI.clearSelectedFiles();
 	};
 
     // Vars

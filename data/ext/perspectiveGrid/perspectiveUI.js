@@ -122,17 +122,17 @@ console.log("Loading UI for perspectiveDefault");
                 "class":     "btn btn-link fileTileSelector",
                 "filepath":  filePath               
              })
-             .append( "<i class='icon-check-empty'>" )
+             .append( "<i class='fa fa-square-o'>" )
              .click( function(e) {
                   e.preventDefault();
                   var fpath = $(this).attr("filepath");
                   var stateTag = $(this).find("i");
-                  if(stateTag.hasClass("icon-check-empty")) {                    
-                      stateTag.removeClass("icon-check-empty").addClass("icon-check");
+                  if(stateTag.hasClass("fa-square-o")) {                    
+                      stateTag.removeClass("fa-square-o").addClass("fa fa-check-square-o");
                       $(this).parent().parent().addClass("ui-selected");
                       TSCORE.selectedFiles.push(fpath);  
                   } else {
-                      stateTag.addClass("icon-check-empty").removeClass("icon-check");                      
+                      stateTag.removeClass("fa-check-square-o").addClass("fa-square-o");                      
                       $(this).parent().parent().removeClass("ui-selected");
                       TSCORE.selectedFiles.splice(TSCORE.selectedFiles.indexOf(fpath), 1);
                   }                  
@@ -191,22 +191,18 @@ console.log("Loading UI for perspectiveDefault");
 
     };
     
-    ExtUI.prototype.buildUI = function() {
+    ExtUI.prototype.buildUI = function(toolbarTemplate) {
         console.log("Init UI module");
                
         var self = this;
         
-        this.viewToolbar.css("position","relative");
+        var context = {
+            id: this.extensionID,
+        };
+        //console.log(uiTemplate(context));
+        this.viewToolbar.html(toolbarTemplate(context));
         
-        this.viewToolbar.append($("<div >", { 
-            class: "btn-group", 
-        })          
-        
-            .append($("<button>", { 
-                class: "btn btn-default",
-                title: "Toggle Select All Files",
-                id: this.extensionID+"ToogleSelectAll",    
-            })
+        $("#"+this.extensionID+"ToogleSelectAll")
             .click(function(e) {
                 var checkIcon = $(this).find("i");
                 if(checkIcon.hasClass("fa-square-o")) {
@@ -221,124 +217,36 @@ console.log("Loading UI for perspectiveDefault");
                 }    
                 self.handleElementActivation();
                 checkIcon.toggleClass("fa-check-square-o");                                     
-                checkIcon.toggleClass("fa fa-square-o");                        
-            })
-            .append( "<i class='fa fa-square-o'>" )
-            )
+                checkIcon.toggleClass("fa-square-o");                        
+            });
             
-        );
-        
-        this.viewToolbar.append($("<div>", { 
-            class: "btn-group",
-        })
-
-            .append($("<button>", { 
-                class: "btn btn-default",
-                title: "Create new file",
-                id: this.extensionID+"CreateFileButton",    
-            })
+        $("#"+this.extensionID+"CreateFileButton")
             .click(function() {
                 TSCORE.showFileCreateDialog();
-            })
-            .append( "<i class='fa fa-plus'>" )
-            )
-        
-            .append($("<button>", { 
-                class: "btn btn-default",
-                title: "Show subfolders content. \nOn subfolder with many files, this step can take some time!",
-                id: this.extensionID+"IncludeSubDirsButton",    
-            })
-        //    .prop('disabled', true)         
+            });
+                    
+        $("#"+this.extensionID+"IncludeSubDirsButton")         
             .click(function() {
-             //   $(this).prop('disabled', true);
-                //TSCORE.startTime = new Date().getTime();      
                 TSCORE.IO.createDirectoryIndex(TSCORE.currentPath);
-            })
-            .append( $("<i>", { class: "glyphicon glyphicon-retweet" }) )
-            )
-            
-            .append($("<button>", { 
-                class: "btn btn-default",           
-                title: "Tag Selected Files",
-                id: this.extensionID+"TagButton",    
-            })
-        //    .prop('disabled', true)
+            });
+        
+        $("#"+this.extensionID+"TagButton")
             .click(function() {
                 TSCORE.showAddTagsDialog();
-            })
-            .append( $("<i>", { class: "fa fa-tag", }) )
-            )    
-            
-            .append($("<button>", { 
-                class: "btn btn-default",  
-                "data-toggle": "button",        
-                title: "Toggle file thumbnails",
-                id: this.extensionID+"ShowTmbButton",    
-            })
+            });
+        
+        $("#"+this.extensionID+"ShowTmbButton")    
             .click(function() {
                 self.toggleThumbnails();
-            })
-            .append( $("<i>", { class: "fa fa-picture-o", }) )
-            )
-     
-            .append($("<button>", { 
-                class: "btn btn-default",  
-                title: "Increase Thumbnails Size",
-                id: this.extensionID+"IncreaseThumbsButton",    
-            })
+            });
+
+         $("#"+this.extensionID+"IncreaseThumbsButton")
             .click(function() {
                 self.switchThumbnailSize();
             })      
-            .append( $("<i>", { class: "fa fa-search-plus", }) )
-            .prop('disabled', true)
-            )               
-            
-        ); // end toolbar
+            .prop('disabled', true);
 
-
-        this.viewToolbar.append($("<div>", { 
-            "class"         : "btn-group",
-        })
-
-            .append($("<button>", { 
-                class:            "btn btn-default",
-                type:             "button",
-                title:            "Group",
-                text:             " Group ",
-                id:               this.extensionID+"GroupingButton",
-                "data-toggle":    "dropdown"                    
-            })
-            .prepend( "<i class='fa fa-group' />" )
-            .append( "<span class='caret'></span>" )
-            )  
-               
-	        .append($('<ul>', {
-	                id: self.extensionID+"GroupingMenu",
-	                class: "dropdown-menu "            
-	            }            
-	        ))               
-                        
-        ); // end toolbar
-
-        this.initFileGroupingMenu();
-
-        this.viewToolbar.append($("<div >", { 
-            class: "input-group pull-right",
-            style: "width: 180px; padding-right: 4px;"  
-        })      
-            // Filter               
-            .append($("<input>", { 
-                type: "text",
-                class: "form-control",
-                id:   this.extensionID+"FilterBox",
-                placeholder: "Search",
-                title: "Search hints:\n"+
-                       "All terms should be true in order the file to appear in the search results \n"+
-                       "term: the term should be part of the file title or file extension \n"+
-                       "!term: the term should not be part of the file title or file extension \n"+
-                       "+tagname: file should be tagged with this tag \n"+
-                       "-tagname: file should not be tagged with this tag",
-            })
+        $("#"+this.extensionID+"FilterBox")
             /*.focus(function(e) {
                 $(this).removeClass("input-medium");
                 $(this).addClass("input-large");
@@ -366,44 +274,25 @@ console.log("Loading UI for perspectiveDefault");
                     //TSCORE.startTime = new Date().getTime(); 
                     self.reInit();
                 } 
-            })            
-            )
+            });
             
-            .append($("<span>", { 
-                    class: "input-group-btn", 
-                })                    
-	            .append($("<button>", { 
-	                    class: "btn btn-default", 
-	                    title: "Search",
-	                })
-	                .append( $("<i>", { class: "fa fa-search", }) )
-	                .click(function(evt) {
-	                    evt.preventDefault();
-	                    $( "#"+self.extensionID+"ClearFilterButton").addClass("filterOn");
-	                    //TSCORE.startTime = new Date().getTime(); 
-	                    self.reInit();
-	                })
-	            )        
+        $("#"+this.extensionID+"SearchButton").click(function(evt) {
+                evt.preventDefault();
+                $( "#"+self.extensionID+"ClearFilterButton").addClass("filterOn");
+                //TSCORE.startTime = new Date().getTime(); 
+                self.reInit();
+            }); 
 	            
-	            .append($("<button>", { 
-	                    class: "btn btn-default", 
-	                    title: "Clear Filter",
-	                    id: self.extensionID+"ClearFilterButton"
-	                })
-	                .append( $("<i>", { class: "fa fa-times", }) )
-	                .click(function(evt) {
-	                    evt.preventDefault();
-	                    $( "#"+self.extensionID+"ClearFilterButton").removeClass("filterOn");
-	                    $("#"+self.extensionID+"FilterBox").val("");
-	                    //$("#"+self.extensionID+"FilterBox").val("").addClass("input-medium");
-	                    //$("#"+self.extensionID+"FilterBox").val("").removeClass("input-large");
-	                    self.setFilter(""); 
-	                    //TSCORE.startTime = new Date().getTime();                     
-	                    self.reInit();
-	                })
-	            )
-	        )        
-        ); // End Filter  
+        $("#"+this.extensionID+"ClearFilterButton")
+            .click(function(evt) {
+                evt.preventDefault();
+                $("#"+self.extensionID+"ClearFilterButton").removeClass("filterOn");
+                $("#"+self.extensionID+"FilterBox").val("");
+                //$("#"+self.extensionID+"FilterBox").val("").addClass("input-medium");
+                //$("#"+self.extensionID+"FilterBox").val("").removeClass("input-large");
+                self.setFilter(""); 
+                self.reInit();
+            });
         
 		// Init Tag Context Menus
 	    this.viewContainer.on("contextmenu click", ".tagButton", function (e) {
@@ -417,7 +306,9 @@ console.log("Loading UI for perspectiveDefault");
 	            top: e.pageY
 	        });
 	        return false;
-	    });		              
+	    });	
+	    
+        this.initFileGroupingMenu();	    	              
     };
     
     ExtUI.prototype.setFilter = function(filterValue) {
@@ -442,7 +333,7 @@ console.log("Loading UI for perspectiveDefault");
     };
     
     ExtUI.prototype.enableThumbnails = function() {
-        $( "#"+this.extensionID+"IncreaseThumbsButton" ).prop('disabled', false);
+        $("#"+this.extensionID+"IncreaseThumbsButton" ).prop('disabled', false);
         $("#"+this.extensionID+"Container .thumbImgTile").each(function() {
             $(this).attr('style', "");
             $(this).attr('src',$(this).attr('filepath'));
@@ -452,7 +343,7 @@ console.log("Loading UI for perspectiveDefault");
     
     ExtUI.prototype.disableThumbnails = function() {
         //this.currentTmbSize = 0;
-        $( "#"+this.extensionID+"IncreaseThumbsButton" ).prop('disabled', true);
+        $("#"+this.extensionID+"IncreaseThumbsButton" ).prop('disabled', true);
         $("#"+this.extensionID+"Container .thumbImgTile").each(function() {
             $(this).attr('style', "width: 0px; height: 0px; border: 0px");
             $(this).attr('src',"");
@@ -684,10 +575,7 @@ console.log("Loading UI for perspectiveDefault");
 
         this.viewFooter.empty();
         if(this.searchResults.length == 0) {
-            this.viewFooter.append($("<div>", { 
-                "class": "searchSummary",    
-                "text": "No files found."             
-            }));            
+            this.viewFooter.html("<div class='searchSummary'>No files found.</div>");            
         } else {
             var endTime = new Date().getTime();
             this.viewFooter.append($("<div>", { 
@@ -845,13 +733,22 @@ console.log("Loading UI for perspectiveDefault");
                  
         this.refreshThumbnails();
     };
+
+    ExtUI.prototype.clearSelectedFiles = function() {
+        TSCORE.selectedFiles = [];   
+        $("#"+this.extensionID+"Container").find(".ui-selected")
+            .removeClass("ui-selected");
+        $("#"+this.extensionID+"Container").find(".fileTileSelector").find("i")
+            .removeClass("fa-check-square-o")
+            .addClass("fa-square-o");   
+    };
     
     ExtUI.prototype.selectFile = function(filePath) {
         TSCORE.PerspectiveManager.clearSelectedFiles();   
         $(this.viewContainer).find('.fileTileSelector').each(function(){
             if($(this).attr("filepath") == filePath) {
                 $(this).parent().parent().toggleClass("ui-selected");
-                $(this).find("i").toggleClass("icon-check").toggleClass("icon-check-empty");
+                $(this).find("i").toggleClass("fa-check-square-o").toggleClass("fa-square-o");
                 TSCORE.selectedFiles.push($(this).attr("filepath"));                  
             }
         });
