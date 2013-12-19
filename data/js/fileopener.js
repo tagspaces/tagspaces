@@ -21,21 +21,30 @@ define(function(require, exports, module) {
         var options;
         
         $( "#editDocument" )
-            /*.focus(function() {
-                this.blur();
-            })*/
             .click(function() {
-                if ( _isEditMode ) { 
-                    TSCORE.showConfirmDialog("Confirm","Do you really want to overwrite the current file?", function() {
-                        $("#editDocument").html("&nbsp;&nbsp;<i class='fa fa-pencil-square'></i>&nbsp;&nbsp;");
-                        _isEditMode = false;
+                $("#editDocument").hide();
+                $("#saveDocument").show();
+                editFile(_openedFilePath);
+            });   
+            
+        $( "#saveDocument" )
+            .click(function() {
+                TSCORE.showConfirmDialog(
+                    "Confirm",
+                    "Do you really want to overwrite the current file?", 
+                    function() {
+                        $("#saveDocument").hide();
+                        $("#editDocument").show();      
                         saveFile(_openedFilePath);                 
-                    });
-                } else {
-                    $(this).html("&nbsp;&nbsp;<i class='fa fa-save'></i>&nbsp;&nbsp;");
-                    editFile(_openedFilePath);
-                }
-            });        
+                        _isEditMode = false;              
+                    }
+                );
+            });                   
+
+        $( "#closeOpenedFile" )
+            .click(function() {
+                closeFile();
+            });
 
         $( "#nextFileButton" )
             .click(function() {
@@ -62,64 +71,51 @@ define(function(require, exports, module) {
                 window.open("file:///"+_openedFilePath);
             });     
         
-        $( "#printFile" ).click(function() {
-            $('iframe').get(0).contentWindow.print();
-        });   
+        $( "#printFile" )
+            .click(function() {
+                $('iframe').get(0).contentWindow.print();
+            });   
         
-        $( "#openDirectory" ).click( function() {
-            TSCORE.IO.openDirectory(TSCORE.currentPath);
-        }); 
+        $( "#openDirectory" )
+            .click( function() {
+                TSCORE.IO.openDirectory(TSCORE.currentPath);
+            }); 
         
-        $( "#renameFile" ).click( function() {
-            TSCORE.showFileRenameDialog();
-        });         
+        $( "#renameFile" )
+            .click( function() {
+                TSCORE.showFileRenameDialog();
+            });         
         
-        $( "#toggleFullWidthButton" ).click(function() {
-            TSCORE.toggleFullWidth();           
-        }); 
+        $( "#toggleFullWidthButton" )
+            .click(function() {
+                TSCORE.toggleFullWidth();           
+            }); 
         
-        $( "#deleteFile" ).click( function() {
-            console.log("Deleting file...");
-            TSCORE.showConfirmDialog(
-                "Delete File",
-                "This item will be permanently deleted and cannot be recovered. Are you sure?",
-                function() {
-                    TSCORE.IO.deleteElement(_openedFilePath);
+        $( "#deleteFile" )
+            .click( function() {
+                console.log("Deleting file...");
+                TSCORE.showConfirmDialog(
+                    "Delete File",
+                    "This item will be permanently deleted and cannot be recovered. Are you sure?",
+                    function() {
+                        TSCORE.IO.deleteElement(_openedFilePath);
+                    }
+                );
+            });             
+
+        $( "#fullscreenFile" )
+            .click(function() {
+                var docElm = $("#viewer")[0];
+                if (docElm.requestFullscreen) {
+                    docElm.requestFullscreen();
                 }
-            );
-        });             
-
-        $( "#closeOpenedFile" ).click(function() {
-            // TODO Extract as function for the API
-            if(_isEditMode) {
-                TSCORE.showConfirmDialog("Confirm","If you confirm, all made changes will be lost.", function() {
-                    // Cleaning the viewer/editor
-                    document.getElementById("viewer").innerHTML = "";
-                    TSCORE.FileOpener.setFileOpened(false);
-                    TSCORE.closeFileViewer();
-                    _isEditMode = false;                               
-                });             
-            } else {
-                // Cleaning the viewer/editor
-                document.getElementById("viewer").innerHTML = "";
-                TSCORE.FileOpener.setFileOpened(false);
-                TSCORE.closeFileViewer();
-                _isEditMode = false;            
-            }
-        });
-
-        $( "#fullscreenFile" ).click(function() {
-            var docElm = $("#viewer")[0];
-            if (docElm.requestFullscreen) {
-                docElm.requestFullscreen();
-            }
-            else if (docElm.mozRequestFullScreen) {
-                docElm.mozRequestFullScreen();
-            }
-            else if (docElm.webkitRequestFullScreen) {
-                docElm.webkitRequestFullScreen();
-            }
-        });           
+                else if (docElm.mozRequestFullScreen) {
+                    docElm.mozRequestFullScreen();
+                }
+                else if (docElm.webkitRequestFullScreen) {
+                    docElm.webkitRequestFullScreen();
+                }
+            });           
     }
 
 	function isFileEdited() {
@@ -138,18 +134,41 @@ define(function(require, exports, module) {
 		return _openedFilePath;
 	}
 
+    function closeFile() {
+        if(_isEditMode) {
+            TSCORE.showConfirmDialog("Confirm","If you confirm, all made changes will be lost.", function() {
+                // Cleaning the viewer/editor
+                document.getElementById("viewer").innerHTML = "";
+                TSCORE.FileOpener.setFileOpened(false);
+                TSCORE.closeFileViewer();
+                _isEditMode = false;                               
+            });             
+        } else {
+            // Cleaning the viewer/editor
+            document.getElementById("viewer").innerHTML = "";
+            TSCORE.FileOpener.setFileOpened(false);
+            TSCORE.closeFileViewer();
+            _isEditMode = false;            
+        }
+    }
+
 	function openFile(filePath) {
 	    console.log("Opening file: "+filePath);
 		
+		if(filePath == undefined) {
+		    return false;
+		}
+		
 		if(TSCORE.FileOpener.isFileEdited()) {
+		    // TODO use closeFile method
             if(confirm("Any unsaved changes will be lost! Do you want to continue?")) {
-                 $("#editDocument").html("&nbsp;&nbsp;<i class='fa fa-pencil-square'></i>&nbsp;&nbsp;");
+                 $("#saveDocument").hide();
                 _isEditMode = false;               
             } else {
                 return false;   
             }
 		}
-		
+                 		
 	    _isEditMode = false;
 	
 	    _openedFilePath = filePath;    
@@ -164,8 +183,8 @@ define(function(require, exports, module) {
         var editorExt = TSCORE.Config.getFileTypeEditor(fileExt);  
 	    console.log("File Viewer: "+viewerExt+" File Editor: "+editorExt);
 
-        // Handling the edit button
-        if(!editorExt) {
+        // Handling the edit button depending on existense of an editor
+        if(editorExt == false || editorExt == "false" || editorExt == "") {
             $( "#editDocument" ).hide();        
         } else {
             $( "#editDocument" ).show();                
@@ -247,7 +266,8 @@ define(function(require, exports, module) {
 	}
 	
 	function updateUI() {
-		
+        $("#saveDocument").hide();
+        		
 		// Initialize File Extension
         var fileExtension = TSCORE.TagUtils.extractFileExtension(_openedFilePath);
 		$( "#fileExtText" ).text(fileExtension);
@@ -366,6 +386,5 @@ define(function(require, exports, module) {
     exports.isFileEdited 						= isFileEdited;
     exports.setFileOpened						= setFileOpened;
     exports.getOpenedFilePath             		= getOpenedFilePath;  
-    exports.updateEditorContent                 = updateEditorContent;
-                                                          
+    exports.updateEditorContent                 = updateEditorContent;                                                          
 });
