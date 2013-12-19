@@ -476,6 +476,7 @@ define(function(require, exports, module) {
 	exports.updateSubDirs 				= tsDirectoriesUI.updateSubDirs;
 	exports.initConnections 			= tsDirectoriesUI.initConnections;
 	exports.showCreateDirectoryDialog   = tsDirectoriesUI.showCreateDirectoryDialog;
+    exports.closeCurrentLocation        = tsDirectoriesUI.closeCurrentLocation;
 
 	// Public variables definition
 	exports.currentPath 				= currentPath;
