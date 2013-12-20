@@ -23,7 +23,7 @@ define(function(require, exports, module) {
 	
 	var extensionDirectory = TSCORE.Config.getExtensionPath()+"/"+extensionID;
 	
-	var vizMode = "quantYours" // tree
+	var vizMode = "quantYours"; // tree
 	
 	exports.init = function init() {
 		console.log("Initializing View "+extensionID);
@@ -33,12 +33,12 @@ define(function(require, exports, module) {
 		viewFooter = $("#"+extensionID+"Footer").empty();
 	
 	    initUI();  
-	}
+	};
 	
 	exports.load = function load() {
 		console.log("Loading View "+extensionID);
         reDraw();        
-	}
+	};
 	
 	var reDraw = function() {
 	    switch (vizMode) {
@@ -51,7 +51,8 @@ define(function(require, exports, module) {
                     var svg = d3.select("#"+extensionID+"Container")
                         .append("svg")
                         .attr("width", viewContainer.width())
-                        .attr("height", viewContainer.height())
+                        .attr("height", viewContainer.height()
+                    );
                     viz.draw(svg);
                     TSCORE.hideLoadingAnimation();
             });            
@@ -59,21 +60,17 @@ define(function(require, exports, module) {
 	      default:
 	        break;
 	    }
-	}
+	};
 	
 	exports.updateTreeData = function updateIndexData(fsTreeData) {
 		console.log("Updating tree data, not supported here...");
    
 		TSCORE.hideLoadingAnimation(); 
-	}
-	  
-	exports.setFileFilter = function setFileFilter(filter) {
-
-	}
-	
+	};
+	  	
 	exports.clearSelectedFiles = function() {
 
-	}
+	};
 	
 	var initUI = function() {
 
@@ -139,7 +136,7 @@ define(function(require, exports, module) {
                         
         ); // end toolbar
 
-	}
+    };
 	
     // Vars
     exports.Title                   = extensionTitle;

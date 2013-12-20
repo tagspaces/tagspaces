@@ -4,13 +4,13 @@
 define(function(require, exports, module) {
 "use strict";
 
-console.log("Loading perspective.manager.js");
+console.log("Loading perspective.manager.js ...");
 
 var perspectives = undefined;
 
 var TSCORE = require("tscore");
 
-var initViews = function () {
+var initPerspectives = function () {
 	perspectives = [];
 	
 	$("#viewSwitcher").empty();
@@ -56,14 +56,14 @@ var initViews = function () {
                 console.log("Error while executing 'init' on "+perspectives[i].ID+" - "+e);
             } finally {
                 if( perspectives.length == extensions.length) {
-                    initViewSwitcher();
+                    initPerspectiveSwitcher();
                 }
             }            
         });       
     }
 };
 
-var initViewSwitcher = function() {
+var initPerspectiveSwitcher = function() {
     var extensions = TSCORE.Config.getPerspectives();
 	$("#viewSwitcher").empty();
 	$("#viewSwitcher").append("<li class='dropdown-header'><span id=''>Perspective Switch</span><button type='button' class='close'>×</button></li>");
@@ -96,6 +96,18 @@ var initViewSwitcher = function() {
     if(perspectives.length > 0) {
         TSCORE.currentView = perspectives[0].ID;       
         changeView(TSCORE.currentView);
+    }
+};
+
+var redrawCurrentPerspective = function () {
+    for (var i=0; i < perspectives.length; i++) {   
+        if(perspectives[i].ID == TSCORE.currentView) {  
+            try {           
+                return perspectives[i].load();
+            } catch(e) {
+                console.log("Error while executing 'redrawCurrentPerspective' on "+perspectives[i].ID+" "+e);
+            }
+        }
     }
 };
 
@@ -169,7 +181,6 @@ var updateFileBrowserData = function(dirList) {
 
 var refreshFileListContainer = function() {
 	// TODO consider search view
-	TSCORE.startTime = new Date().getTime(); 
     TSCORE.IO.listDirectory(TSCORE.currentPath);  
 };
 
@@ -179,7 +190,6 @@ var changeView = function (viewType) {
        
     //Setting the current view
     TSCORE.currentView = viewType;
- 
     
 /*    if(TSCORE.currentPath == undefined) {
         TSCORE.showAlertDialog("Please select first location from the dropdown on the left!");
@@ -223,7 +233,7 @@ var clearSelectedFiles = function () {
 	}	
 };
 
-var setFileFilter = function (filter) {
+/*var setFileFilter = function (filter) {
 	for (var i=0; i < perspectives.length; i++) {   
  		try {
  		    if(perspectives[i].ID == TSCORE.currentView){
@@ -233,15 +243,15 @@ var setFileFilter = function (filter) {
  			console.log("Error while executing 'setFileFilter' on "+perspectives[i].ID);
  		} 		 		
 	}	
-};
+};*/
 
-exports.initViews 					 = initViews;	
+exports.initPerspectives 			 = initPerspectives;	
+exports.redrawCurrentPerspective     = redrawCurrentPerspective;
 exports.getNextFile					 = getNextFile;
 exports.getPrevFile 				 = getPrevFile;
 exports.updateTreeData				 = updateTreeData;
 exports.updateFileBrowserData		 = updateFileBrowserData;
 exports.refreshFileListContainer	 = refreshFileListContainer;
 exports.clearSelectedFiles			 = clearSelectedFiles;
-exports.setFileFilter				 = setFileFilter;
 
 });

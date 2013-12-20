@@ -4,7 +4,7 @@
 define(function(require, exports, module) {
 "use strict";
     
-	console.log("Loading fileOpener...");
+	console.log("Loading fileopener...");
 	
 	var TSCORE = require("tscore");
 

@@ -15,6 +15,7 @@ define(function(require, exports, module) {
     var tsTagsUI = require("tstagsui");
     var tsDirectoriesUI = require("tsdirectoriesui");
     var tsCoreUI = require("tscoreui");
+    var tsSearch = require("tssearch");
 	
 	var layoutContainer = undefined;  
     var westLayout = undefined;
@@ -65,7 +66,7 @@ define(function(require, exports, module) {
 	  	tsSettings.upgradeSettings();
 	    
 	    // Init views
-		tsPersManager.initViews();                 
+		tsPersManager.initPerspectives();                 
 	    
 	    $("#appVersion").text(tsSettings.DefaultSettings["appVersion"]+"beta");
 	    $("#appVersion").attr("title","["+tsSettings.DefaultSettings["appVersion"]+"."+tsSettings.DefaultSettings["appBuild"]+"]");
@@ -432,6 +433,7 @@ define(function(require, exports, module) {
 	exports.PerspectiveManager = tsPersManager;
 	exports.TagUtils = tsTagUtils;
 	exports.FileOpener = tsFileOpener;
+    exports.Search = tsSearch;	
 	
 	// Public API definition
 	exports.initApp 					= initApp;

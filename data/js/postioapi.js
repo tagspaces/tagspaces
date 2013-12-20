@@ -5,7 +5,7 @@ define(function(require, exports, module) {
 "use strict";
     
     // Activating browser specific exports modul
-    console.log("Loading  post ioapi ...");
+    console.log("Loading postioapi.js ...");
 
     var TSCORE = require("tscore");
     

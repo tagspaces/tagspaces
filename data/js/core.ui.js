@@ -309,7 +309,58 @@ define(function(require, exports, module) {
 	    // Hide the taggroups by default
 	    $('#tagGroupsContent').hide();
 	    
-	    
+        // Search UI
+        
+        $("#searchBox")
+            /*.focus(function(e) {
+                $(this).removeClass("input-medium");
+                $(this).addClass("input-large");
+            })*/
+            .keyup(function(e) {
+                // On enter fire the search
+                if (e.keyCode == 13) {
+                    $( "#clearFilterButton").addClass("filterOn");
+                    TSCORE.PerspectiveManager.redrawCurrentPerspective();
+                }  else {
+                    TSCORE.Search.nextQuery = this.value;
+                } 
+                if (this.value.length == 0) {
+                    $( "#clearFilterButton").removeClass("filterOn");
+                    TSCORE.PerspectiveManager.redrawCurrentPerspective();
+                }                 
+            })
+            .blur(function() {
+                //$(this).addClass("input-medium");
+                //$(this).removeClass("input-large");                
+                if (this.value.length == 0) {
+                    $( "#clearFilterButton").removeClass("filterOn");
+                    TSCORE.PerspectiveManager.redrawCurrentPerspective();
+                } 
+            });
+            
+        $("#searchButton").click(function(evt) {
+                evt.preventDefault();
+                $( "#clearFilterButton").addClass("filterOn");
+                TSCORE.PerspectiveManager.redrawCurrentPerspective();
+            }); 
+                
+        $("#clearFilterButton")
+            .click(function(evt) {
+                evt.preventDefault();
+                $("#clearFilterButton").removeClass("filterOn");
+                $("#searchBox").val("");
+                //$("#"+self.extensionID+"FilterBox").val("").addClass("input-medium");
+                //$("#"+self.extensionID+"FilterBox").val("").removeClass("input-large");
+                //self.setFilter(""); 
+                $("#silterBox").val("");    
+                $("#clearFilterButton").removeClass("filterOn");                            
+                TSCORE.Search.nextQuery = "";
+                               
+                TSCORE.PerspectiveManager.redrawCurrentPerspective();
+            });        
+        
+        // Search UI END
+        	    
 	    // Hide drop downs by click and drag
 	    $(document).click(function () {
 			TSCORE.hideAllDropDownMenus();

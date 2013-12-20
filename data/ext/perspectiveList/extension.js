@@ -22,15 +22,15 @@ define(function(require, exports, module) {
 
 	function init() {
 		console.log("Initializing perspective "+extensionID);
-        // TODO use css require extension for loading 'css!datatablescss' 
         require([
             extensionDirectory+'/perspectiveUI.js',
-            'datatables'
-            ], function(extUI) {
+            "text!"+extensionDirectory+'/toolbar.html',     
+            extensionDirectory+'/datatables/jquery.dataTables.min.js',       
+            ], function(extUI, toolbarTPL) {
+                var toolbarTemplate = Handlebars.compile( toolbarTPL );                
                 UI = new extUI.ExtUI(extensionID);                          
-                UI.buildUI();
-                UI.initTable();
-                platformTuning();
+                UI.buildUI(toolbarTemplate);
+                platformTuning();                
             }
         );
 	};
@@ -46,15 +46,12 @@ define(function(require, exports, module) {
 	var load = function () {
 		console.log("Loading perspective "+extensionID);
 		if(UI != undefined) {
-            UI.reInitTableWithData();    
-            TSCORE.hideLoadingAnimation();                        		    
-		}
+            UI.reInit();    
+        } else {
+            TSCORE.hideLoadingAnimation();                 
+        }	
 	};
-	
-	var setFileFilter = function (filter) {
-        UI.setFilter(filter);
-	};
-	
+
 	var clearSelectedFiles = function() {
 	    TSCORE.selectedFiles = [];   
 	    $('#'+extensionID+'FileTable tbody tr').each(function(){
@@ -64,41 +61,11 @@ define(function(require, exports, module) {
 	};
 	
 	var getNextFile = function (filePath) {
-		var nextFilePath = undefined;
-		var data = UI.fileTable._('tr', {"filter":"applied"});
-		data.forEach(function(entry, index) {
-    		if(entry[TSCORE.fileListFILEPATH] == filePath) {
-    			var nextIndex = index+1;
-    			if(nextIndex < data.length) {
-    				nextFilePath = data[nextIndex][TSCORE.fileListFILEPATH];	    				
-    			} else {
-    				nextFilePath = data[0][TSCORE.fileListFILEPATH];
-    			}    			
-    		}    		
-    		console.log("Path: "+entry[TSCORE.fileListFILEPATH]);
-		});
-		TSCORE.PerspectiveManager.clearSelectedFiles();		
-		console.log("Next file: "+nextFilePath);
-		return nextFilePath;
+        return UI.getNextFile(filePath);
 	};
 
 	var getPrevFile = function (filePath) {
-		var prevFilePath = undefined;
-		var data = UI.fileTable._('tr', {"filter":"applied"});
-		data.forEach(function(entry, index) {
-    		if(entry[TSCORE.fileListFILEPATH] == filePath) {
-    			var prevIndex = index-1;
-    			if(prevIndex >= 0) {
-    				prevFilePath = data[prevIndex][TSCORE.fileListFILEPATH];	    				
-    			} else {
-    				prevFilePath = data[data.length-1][TSCORE.fileListFILEPATH];
-    			}
-    		}    		
-    		console.log("Path: "+entry[TSCORE.fileListFILEPATH]);
-		});
-		TSCORE.PerspectiveManager.clearSelectedFiles();
-		console.log("Prev file: "+prevFilePath);
-		return prevFilePath;
+        return UI.getPrevFile(filePath);
 	};
 		
 	// Vars
@@ -113,9 +80,7 @@ define(function(require, exports, module) {
 	// Methods
 	exports.init					= init;
 	exports.load					= load;
-	exports.setFileFilter			= setFileFilter;
 	exports.clearSelectedFiles		= clearSelectedFiles;
 	exports.getNextFile				= getNextFile;
-	exports.getPrevFile				= getPrevFile;
-	
+	exports.getPrevFile				= getPrevFile;	
 });

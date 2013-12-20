@@ -43,11 +43,15 @@ define(function(require, exports, module) {
 	var load = function () {
         console.log("Loading perspective "+extensionID);
         if(UI != undefined) {
-            UI.reInit(TSCORE.fileList);    
-            TSCORE.hideLoadingAnimation();                                  
+            UI.reInit();    
+        } else {
+            TSCORE.hideLoadingAnimation();                 
         }
-	    TSCORE.hideLoadingAnimation();     
 	};
+   
+    var clearSelectedFiles = function() {
+        UI.clearSelectedFiles();
+    };
 	
     var getNextFile = function (filePath) {
         return UI.getNextFile(filePath);
@@ -56,15 +60,6 @@ define(function(require, exports, module) {
     var getPrevFile = function (filePath) {
         return UI.getPrevFile(filePath);
     };	
-	
-	var setFileFilter = function (filter) {
-	    UI.setFilter(filter);
-		console.log("setFileFilter not implemented in "+exports.ID);
-	};
-	
-	var clearSelectedFiles = function() {
-        UI.clearSelectedFiles();
-	};
 
     // Vars
     exports.Title                   = extensionTitle;
@@ -78,9 +73,7 @@ define(function(require, exports, module) {
     // Methods
     exports.init                    = init;
     exports.load                    = load;
-    exports.setFileFilter           = setFileFilter;
     exports.clearSelectedFiles      = clearSelectedFiles;
     exports.getNextFile             = getNextFile;
     exports.getPrevFile             = getPrevFile;	
-	
 });

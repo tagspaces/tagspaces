@@ -26,8 +26,6 @@ console.log("Loading UI for perspectiveDefault");
         this.currentGrouping = ""; // tagchain, day, month, year
         this.thumbEnabled = false;
         this.currentTmbSize = 0;
-        this.currentFilter = "";
-        this.nextFilter = "";        
         this.searchResults = undefined;    
         this.supportedGroupings = [];
         
@@ -199,7 +197,6 @@ console.log("Loading UI for perspectiveDefault");
         var context = {
             id: this.extensionID,
         };
-        //console.log(uiTemplate(context));
         this.viewToolbar.html(toolbarTemplate(context));
         
         $("#"+this.extensionID+"ToogleSelectAll")
@@ -240,78 +237,25 @@ console.log("Loading UI for perspectiveDefault");
                 self.toggleThumbnails();
             });
 
-         $("#"+this.extensionID+"IncreaseThumbsButton")
+        $("#"+this.extensionID+"IncreaseThumbsButton")
             .click(function() {
                 self.switchThumbnailSize();
             })      
             .prop('disabled', true);
-
-        $("#"+this.extensionID+"FilterBox")
-            /*.focus(function(e) {
-                $(this).removeClass("input-medium");
-                $(this).addClass("input-large");
-            })*/
-            .keyup(function(e) {
-                // On enter fire the search
-                if (e.keyCode == 13) {
-                    $( "#"+self.extensionID+"ClearFilterButton").addClass("filterOn");
-                    //TSCORE.startTime = new Date().getTime(); 
-                    self.reInit();
-                }  else {
-                    self.nextFilter = this.value;
-                } 
-                if (this.value.length == 0) {
-                    //TSCORE.startTime = new Date().getTime(); 
-                    $( "#"+self.extensionID+"ClearFilterButton").removeClass("filterOn");
-                    self.reInit();
-                }                 
-            })
-            .blur(function() {
-                //$(this).addClass("input-medium");
-                //$(this).removeClass("input-large");                
-                if (this.value.length == 0) {
-                    $( "#"+self.extensionID+"ClearFilterButton").removeClass("filterOn");
-                    //TSCORE.startTime = new Date().getTime(); 
-                    self.reInit();
-                } 
-            });
-            
-        $("#"+this.extensionID+"SearchButton").click(function(evt) {
-                evt.preventDefault();
-                $( "#"+self.extensionID+"ClearFilterButton").addClass("filterOn");
-                //TSCORE.startTime = new Date().getTime(); 
-                self.reInit();
-            }); 
-	            
-        $("#"+this.extensionID+"ClearFilterButton")
-            .click(function(evt) {
-                evt.preventDefault();
-                $("#"+self.extensionID+"ClearFilterButton").removeClass("filterOn");
-                $("#"+self.extensionID+"FilterBox").val("");
-                //$("#"+self.extensionID+"FilterBox").val("").addClass("input-medium");
-                //$("#"+self.extensionID+"FilterBox").val("").removeClass("input-large");
-                self.setFilter(""); 
-                self.reInit();
-            });
         
 		// Init Tag Context Menus
 	    this.viewContainer.on("contextmenu click", ".tagButton", function (e) {
 			TSCORE.hideAllDropDownMenus();
-			
+            self.selectFile($(this).attr("filepath"));			
 	        TSCORE.openTagMenu(this, $(this).attr("tag"), $(this).attr("filepath"));
-	        
-	        $("#tagMenu").css({
-	            display: "block",
-	            left: e.pageX,
-	            top: e.pageY
-	        });
+            TSCORE.showContextMenu("#tagMenu", $(this));
 	        return false;
 	    });	
 	    
         this.initFileGroupingMenu();	    	              
     };
     
-    ExtUI.prototype.setFilter = function(filterValue) {
+    /* ExtUI.prototype.setFilter = function(filterValue) {
         console.log("Filter to value: "+filterValue);   
         $("#"+this.extensionID+"FilterBox").val(filterValue);    
         
@@ -322,7 +266,7 @@ console.log("Loading UI for perspectiveDefault");
         }
                     
         this.nextFilter = filterValue;
-    };   
+    }; */  
 
     ExtUI.prototype.switchThumbnailSize = function() {
         this.currentTmbSize = this.currentTmbSize + 1;
@@ -470,110 +414,20 @@ console.log("Loading UI for perspectiveDefault");
         
         return data;
     };
-    
-    
-    
-    /** Filtering the data
-     * 
-     * @param {Object} data The data to be filtered
-     */
-    ExtUI.prototype.filterData = function(data) {
-        
-        // By empty filter just return the data
-        if(this.nextFilter.length <= 0) {
-            return data;
-        }
-        
-        var query = this.nextFilter.toLowerCase();
-        query = query.replace(/^\s+|\s+$/g, "");
-        var queryTerms = query.split(" ");
-        
-        // Analysing filter
-        var includedTerms = [];
-        var excludedTerms = [];
-        var includedTags = [];
-        var excludedTags = [];
-        
-        queryTerms.forEach(function (value, index) {
-            if(value.length > 1) {
-                if(value.indexOf("!") == 0) {
-                    excludedTerms.push([value.substring(1,value.length),false]);
-                } else if(value.indexOf("+") == 0) {    
-                    includedTags.push([value.substring(1,value.length),true]);
-                } else if(value.indexOf("-") == 0) {
-                    excludedTags.push([value.substring(1,value.length),true]);
-                } else {
-                    includedTerms.push([value,false]);
-                }                       
-            }
-        });  
-        
-        data = _.filter(data, function(value) {
-                // Searching in the whole filename
-                var searchIn = value[TSCORE.fileListFILENAME].toLowerCase();
-                var tags = value[TSCORE.fileListTAGS];
-                var result = true;
-                if(tags.length < 1 && includedTags.length > 0) {
-                    return false;
-                }
-                for (var i=0; i < includedTerms.length; i++) {
-                    if(searchIn.indexOf(includedTerms[i][0]) >= 0) {
-                        includedTerms[i][1] = true;
-                    } else {
-                        return false;
-                    }
-                };
-                for (var i=0; i < excludedTerms.length; i++) {
-                    if(searchIn.indexOf(excludedTerms[i][0]) < 0) {
-                        excludedTerms[i][1] = true;
-                    } else {
-                        return false;
-                    }
-                };
-                   
-                for (var i=0; i < includedTags.length; i++) {
-                    includedTags[i][1] = false;
-                    for (var j=0; j < tags.length; j++) {
-                        if(tags[j].toLowerCase() == includedTags[i][0]) {
-                            includedTags[i][1] = true;
-                        }
-                    }
-                };
-                for (var i=0; i < includedTags.length; i++) {
-                    result = result & includedTags[i][1];
-                }
-               
-                for (var i=0; i < excludedTags.length; i++) {
-                    excludedTags[i][1] = true;
-                    for (var j=0; j < tags.length; j++) {
-                        if(tags[j].toLowerCase() == excludedTags[i][0]) {
-                            excludedTags[i][1] = false;
-                        }
-                    }   
-                };                
-                for (var i=0; i < excludedTags.length; i++) {
-                    result = result & excludedTags[i][1];
-                }
-                
-                return result;        
-            });
-
-        this.currentFilter = this.nextFilter;        
-        return data;
-    };    
 
     ExtUI.prototype.reInit = function() {
-        
+        // Clear old data
         this.viewContainer.empty();
+        this.viewFooter.empty();
+
         this.viewContainer.addClass("accordion");
-   
         $( this.extensionID+"IncludeSubDirsButton" ).prop('disabled', false); 
         
         var self = this;
 
-        this.searchResults = self.filterData(TSCORE.fileList);
+        // Load new filtered data
+        this.searchResults = TSCORE.Search.searchData(TSCORE.fileList, TSCORE.Search.nextQuery);
 
-        this.viewFooter.empty();
         if(this.searchResults.length == 0) {
             this.viewFooter.html("<div class='searchSummary'>No files found.</div>");            
         } else {
@@ -583,7 +437,6 @@ console.log("Loading UI for perspectiveDefault");
                 "text":  this.searchResults.length+" files found" //" in "+(endTime-TSCORE.startTime)/1000+" sec."             
             }));
         } 
-
 
         var i=0;
         _.each(self.calculateGrouping(this.searchResults), function (value) { 
@@ -607,9 +460,9 @@ console.log("Loading UI for perspectiveDefault");
                         "title":        "Toggle Group",
                     }  
                 )
-                .html("<i class='icon-minus-sign-alt' /i>&nbsp;")
+                .html("<i class='fa fa-minus-square' /i>&nbsp;")
                 .click(function() {
-                    $(this).find('i').toggleClass("icon-minus-sign-alt").toggleClass("icon-plus-sign-alt");
+                    $(this).find('i').toggleClass("fa-minus-square").toggleClass("fa-plus-square");
                 })   
             )// End date toggle button  
                                     
@@ -732,6 +585,7 @@ console.log("Loading UI for perspectiveDefault");
         });  
                  
         this.refreshThumbnails();
+        TSCORE.hideLoadingAnimation();          
     };
 
     ExtUI.prototype.clearSelectedFiles = function() {
@@ -810,4 +664,5 @@ console.log("Loading UI for perspectiveDefault");
     };    
     
     exports.ExtUI                   = ExtUI;
+
 });
