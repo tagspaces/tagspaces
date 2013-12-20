@@ -66,7 +66,7 @@ user-select: none;
 	font-weight: bold;
 	padding-left: 32px;
     padding-top: 4px;	
-	background: url("../icons/icon28.png") no-repeat left center;
+	background: url("icon28.png") no-repeat left center;
 	background-position: 0px 0px;
 	height: 31px;
 	display: inline-block;
@@ -76,7 +76,7 @@ user-select: none;
 (-webkit-min-device-pixel-ratio: 2), 
 (min-resolution: 192dpi) { 
 	#logo {
-		background: url("../icons/icon64.png") no-repeat left center 28px 28px;
+		background: url("icon64.png") no-repeat left center 28px 28px;
 	}
 }
 
