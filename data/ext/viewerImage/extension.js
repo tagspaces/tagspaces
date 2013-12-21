@@ -30,7 +30,7 @@ define(function(require, exports, module) {
               "text!"+extensionDirectory+'/mainUI.html',
               extensionDirectory+'/jquery.panzoom/jquery.panzoom.js',              
               extensionDirectory+'/jquery.mousewheel/jquery.mousewheel.js',      
-//              extensionDirectory+'/pixastic/pixastic.custom.js',
+              extensionDirectory+'/pixastic/pixastic.custom.js',
 		    ], function(extUI, uiTPL) {
                 var uiTemplate = Handlebars.compile( uiTPL );
                 UI = new extUI.ExtUI(extensionID, elementID, filePath);                          
