@@ -30,16 +30,16 @@ define(function(require, exports, module) {
 			TSCORE.showContextMenu("#tagTreeMenu", $(this));
 
 	        return false;
-	    });
-	
+	    });	
 	
         $( "#extMenuAddTagAsFilter" ).click( function() {
-            TSCORE.PerspectiveManager.setFileFilter(TSCORE.selectedTag);
+            // TODO search for extension
+            //TSCORE.Search.searchForString(TSCORE.selectedTag);            
         });
 
         // Context menu for the tags in the file table and the file viewer
         $( "#tagMenuAddTagAsFilter" ).click( function() {
-            TSCORE.PerspectiveManager.setFileFilter(TSCORE.selectedTag);
+            TSCORE.Search.searchForTag(TSCORE.selectedTag);
         });
         
         $( "#tagMenuEditTag" ).click( function() {
@@ -68,7 +68,7 @@ define(function(require, exports, module) {
         });                
 
         $( "#tagTreeMenuAddTagAsFilter" ).click( function() {
-            TSCORE.PerspectiveManager.setFileFilter(TSCORE.selectedTag);
+            TSCORE.Search.searchForTag(TSCORE.selectedTag);
         });                
 
         $( "#tagTreeMenuEditTag" ).click( function() {

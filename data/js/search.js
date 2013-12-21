@@ -10,8 +10,26 @@ define(function(require, exports, module) {
     var currentQuery = "";
     var nextQuery = "";    
 
+    var search4Tag = function(tagQuery) {
+        TSCORE.Search.nextQuery = "+"+tagQuery;
+        $("#searchBox").val("+"+tagQuery);
+        TSCORE.PerspectiveManager.redrawCurrentPerspective();
+    };
+
+    var search4String = function(query) {
+        TSCORE.Search.nextQuery = "+"+query;
+        $("#searchBox").val("+"+query);
+        TSCORE.PerspectiveManager.redrawCurrentPerspective();        
+    };
+    
     var searchData = function(data, query) {
         query = query.toLowerCase().replace(/^\s+|\s+$/g, "");        
+
+        if(query.indexOf("?") == 0) {
+            TSCORE.Search.nextQuery = query.substring(1,query.length);
+            TSCORE.IO.createDirectoryIndex(TSCORE.currentPath);
+            return false;
+        }
 
         // By empty filter just return the data
         if(query.length <= 0) {
@@ -99,6 +117,8 @@ define(function(require, exports, module) {
     exports.nextQuery                    = nextQuery;
     
     // Public API definition    
-    exports.searchData                   = searchData;       
+    exports.searchData                   = searchData;   
+    exports.searchForTag                 = search4Tag;       
+    exports.searchForString              = search4String;    
     
 });
