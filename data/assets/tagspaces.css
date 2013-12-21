@@ -9,7 +9,7 @@ html, body {
 	padding: 0;
 	margin: 0;
 	overflow: hidden;
-	font-size: 0.8em;
+	font-size: 9px; /* 0.8em */
 	font-family: Geneva, Arial, Helvetica, sans-serif; 
 }
 
