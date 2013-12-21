@@ -12,7 +12,7 @@ found in the LICENSE file.
     
     <tstamp/><!--tstamp><format property="touch.time" pattern="MM/dd/yyyy hh:mm aa" /></tstamp-->
 
-    <target name="_prepare-devenv" description="Prepares the development environment">
+    <target name="prepare-devenv" description="Prepares the development environment">
     	<copy file="default.settings.tmpl.js" tofile="data/js/${defaultSettings.file}" />
     	<replace file="data/js/${defaultSettings.file}" >
             <replacefilter token="@VERSION@" value="${version}" />
@@ -394,25 +394,25 @@ found in the LICENSE file.
         <delete dir="${buildOSX.dir}"/>    	    	    	
     </target>
 	
-    <target name="main" depends="_prepare-devenv, prepare-cordova-app, prepare-chrome-extension, prepare-mozilla-extension, prepare-win32-package, prepare-linux64-package" description="prepare for all target platforms" />
+    <target name="main" depends="prepare-devenv, prepare-cordova-app, prepare-chrome-extension, prepare-mozilla-extension, prepare-win32-package, prepare-linux64-package" description="prepare for all target platforms" />
 
     <target name="build-all" depends="build-chrome-extension, build-mozilla-extension, build-win32-package, build-linux64-package" description="build for all target platforms" />
 	
-    <target name="build-win32-package" depends="prepare-win32-package" description="Builds win32bit package based on node-webkit">
+    <target name="build-win32-package" depends="prepare-devenv, prepare-win32-package" description="Builds win32bit package based on node-webkit">
         <zip basedir="${builds.dir}" destfile="${builds.dir}/${appname} [v${version}.${build.number} ${DSTAMP}${TSTAMP} win32].zip" includes="tagspaces-win32/**/*" />
     </target>	
 	
-    <target name="build-linux64-package" depends="prepare-linux64-package" description="Builds linux 64 bit package based on node-webkit">
+    <target name="build-linux64-package" depends="prepare-devenv, prepare-linux64-package" description="Builds linux 64 bit package based on node-webkit">
         <zip basedir="${builds.dir}" destfile="${builds.dir}/${appname} [v${version}.${build.number} ${DSTAMP}${TSTAMP} linux64].zip" includes="tagspaces-linux64/**/*" />
     </target>		
 	
-    <target name="build-chrome-extension" depends="prepare-chrome-extension" description="Creates a simple zip(not crx) of the chrome exntension">
+    <target name="build-chrome-extension" depends="prepare-devenv, prepare-chrome-extension" description="Creates a simple zip(not crx) of the chrome exntension">
         <zip destfile="${builds.dir}/${appname} [v${version}.${build.number} ${DSTAMP}${TSTAMP} chrome].zip">
             <fileset dir="${buildChrome.dir}" includes="**/*" />
         </zip>
     </target>	
 	
-    <target name="build-mozilla-extension" depends="prepare-mozilla-extension" description="Creates a simple zip(not xpi) of the mozilla extension">
+    <target name="build-mozilla-extension" depends="prepare-devenv, prepare-mozilla-extension" description="Creates a simple zip(not xpi) of the mozilla extension">
         <zip destfile="${builds.dir}/${appname} [v${version}.${build.number} ${DSTAMP}${TSTAMP} mozilla].zip">
             <fileset dir="${buildFirefoxExt.dir}" includes="**/*" />
         </zip>
