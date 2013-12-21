@@ -7,7 +7,7 @@ define(function(require, exports, module) {
 exports.defaultSettings = {
 	"appName": "TagSpaces",
 	"appVersion": "1.6",
-    "appBuild": "1603",
+    "appBuild": "1685",
 	"settingsVersion": 2,
 	"newTextFileContent": "File created with TagSpaces!",
     "newHTMLFileContent": "<html><head><title>Created with TagSpaces!</title></head><body>Feel free to change this text...</body></html>",	
@@ -33,6 +33,7 @@ exports.defaultSettings = {
         { "type": "pdf", 	"viewer": "viewerBrowser",	 "editor": "false" },                
         { "type": "html", 	"viewer": "viewerBrowser",   "editor": "editorHTML" },                        
         { "type": "htm", 	"viewer": "viewerBrowser",   "editor": "editorHTML" },                        
+        { "type": "xhtml", 	"viewer": "viewerBrowser",   "editor": "editorHTML" },                        
         { "type": "mht", 	"viewer": "viewerBrowser",   "editor": "false" },                        
         { "type": "mhtml", 	"viewer": "viewerBrowser",   "editor": "false" },                                
         { "type": "txt", 	"viewer": "viewerBrowser",   "editor": "editorText" },
