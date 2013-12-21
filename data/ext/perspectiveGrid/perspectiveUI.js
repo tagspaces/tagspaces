@@ -66,8 +66,7 @@ console.log("Loading UI for perspectiveDefault");
                 text: title, 
                 class: "titleInFileTile",
             });
-            
-        //var tagsHTML = TSCORE.generateTagButtons(fileTags);   
+
         var tagsHTML = $('<span>', {
             class: "tagsInFileTile"
         });
@@ -185,8 +184,7 @@ console.log("Loading UI for perspectiveDefault");
                     self.switchGrouping($(this).attr("key"));
                 })                
             ));              
-        };    
-
+        };  
     };
     
     ExtUI.prototype.buildUI = function(toolbarTemplate) {
@@ -254,19 +252,6 @@ console.log("Loading UI for perspectiveDefault");
 	    
         this.initFileGroupingMenu();	    	              
     };
-    
-    /* ExtUI.prototype.setFilter = function(filterValue) {
-        console.log("Filter to value: "+filterValue);   
-        $("#"+this.extensionID+"FilterBox").val(filterValue);    
-        
-        if(filterValue.length > 0) {
-            $( "#"+this.extensionID+"ClearFilterButton").addClass("filterOn");
-        } else {
-            $( "#"+this.extensionID+"ClearFilterButton").removeClass("filterOn");
-        }
-                    
-        this.nextFilter = filterValue;
-    }; */  
 
     ExtUI.prototype.switchThumbnailSize = function() {
         this.currentTmbSize = this.currentTmbSize + 1;
