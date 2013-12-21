@@ -40,12 +40,7 @@ define(function(require, exports, module) {
 	var startTime = undefined;
 
 	function initApp() {
-	    console.log("Init application");	
-	
-		tsCoreUI.initUI();	
-	    tsTagsUI.initUI();	    
-	    tsDirectoriesUI.initUI();
-	    tsFileOpener.initUI();
+	    console.log("Init application");
 		
 	    tsSettings.loadSettingsLocalStorage();
 	    
@@ -64,38 +59,25 @@ define(function(require, exports, module) {
 	    }    
 	  
 	  	tsSettings.upgradeSettings();
-	    
-	    // Init views
+        
+        // Init UI components
+        tsCoreUI.initUI();  
+        tsTagsUI.initUI();      
+        tsTagsUI.generateTagGroups();
+        tsDirectoriesUI.initUI();
+        tsDirectoriesUI.initConnections();
+        tsFileOpener.initUI();
 		tsPersManager.initPerspectives();                 
-	    
-	    $("#appVersion").text(tsSettings.DefaultSettings["appVersion"]+"beta");
-	    $("#appVersion").attr("title","["+tsSettings.DefaultSettings["appVersion"]+"."+tsSettings.DefaultSettings["appBuild"]+"]");
-	
-	    tsDirectoriesUI.initConnections();
-	    
-	    tsTagsUI.generateTagGroups();
 	    
 	    hideLoadingAnimation();
 
 	    $(document).ready(function() {
-		    //$( "#container" ).show();  
-		    //$( "#helpers" ).show();
 	        initLayout();
 	        initI18N();
 	        initKeyBindings();
 		    $( "#loading" ).hide();  
 	    
 	        console.log("Layout initialized");
-
-		    // Show start hint
-		   	if(tsSettings.Settings.tagspacesList.length < 1 ) {
-		   		$( "#createNewLocation" ).attr("title", "Start using TagSpaces by creating a new location.");
-		    	$( "#createNewLocation" ).addClass("createFirstLocation");
-		    	$( "#createNewLocation" ).tooltip( { placement: "bottom" } );
-		    	$( "#createNewLocation" ).tooltip( "show" );
-		    	$( "#locationName" ).prop('disabled', true);
-		    	$( "#selectLocation" ).prop('disabled', true);		    	
-		   	}
 	    }); 
 	    
         checkForNewVersion();
@@ -421,7 +403,7 @@ define(function(require, exports, module) {
 	function switchIOAPI(type) {
 		if(type=="dropbox") {
 			tsIOApiDropbox.init();
-			exports.IO = tsIOApiDropbox		
+			exports.IO = tsIOApiDropbox;		
 		} else {
 			exports.IO = tsIOApi;
 		}

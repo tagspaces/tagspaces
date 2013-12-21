@@ -19,9 +19,9 @@ define(function(require, exports, module) {
 	
 	    var alertModal = $('#alertDialog');	
         alertModal.find('h4').text(title);        
-        alertModal.find('.modal-body').append(message);
+        alertModal.find('.modal-body').text(message);
 	    alertModal.find('#okButton').click(function(event) {
-	      alertModal.modal('hide');
+	       alertModal.modal('hide');
 	    });
 	
 	    alertModal.modal('show');
@@ -82,6 +82,19 @@ define(function(require, exports, module) {
     };    
     
 	var initUI = function() {
+        $("#appVersion").text(TSCORE.Config.DefaultSettings["appVersion"]+"beta");
+        $("#appVersion").attr("title","["+TSCORE.Config.DefaultSettings["appVersion"]+"."+TSCORE.Config.DefaultSettings["appBuild"]+"]");
+
+        // Show start hint
+        if(TSCORE.Config.Settings.tagspacesList.length < 1 ) {
+            $( "#createNewLocation" ).attr("title", "Start using TagSpaces by creating a new location.");
+            $( "#createNewLocation" ).addClass("createFirstLocation");
+            $( "#createNewLocation" ).tooltip( { placement: "bottom" } );
+            $( "#createNewLocation" ).tooltip( "show" );
+            $( "#locationName" ).prop('disabled', true);
+            $( "#selectLocation" ).prop('disabled', true);              
+        }
+ 
         platformTuning();        
  
 	    $( "#toggleLeftPanel" ).click(function() {
@@ -310,17 +323,24 @@ define(function(require, exports, module) {
 	    $('#tagGroupsContent').hide();
 	    
         // Search UI
+
+        $("#closeSearchOptionButton")
+            .click(function(e) {
+                $("#searchOptions").hide();
+            });
         
         $("#searchBox")
-            /*.focus(function(e) {
-                $(this).removeClass("input-medium");
-                $(this).addClass("input-large");
-            })*/
+            .focus(function(e) {
+                //$(this).removeClass("input-medium");
+                //$(this).addClass("input-large");
+                $("#searchOptions").show();
+            })
             .keyup(function(e) {
                 // On enter fire the search
                 if (e.keyCode == 13) {
                     $( "#clearFilterButton").addClass("filterOn");
                     TSCORE.PerspectiveManager.redrawCurrentPerspective();
+                    $("#searchOptions").hide();
                 }  else {
                     TSCORE.Search.nextQuery = this.value;
                 } 
@@ -341,12 +361,14 @@ define(function(require, exports, module) {
         $("#searchButton").click(function(evt) {
                 evt.preventDefault();
                 $( "#clearFilterButton").addClass("filterOn");
+                $("#searchOptions").hide();
                 TSCORE.PerspectiveManager.redrawCurrentPerspective();
             }); 
                 
         $("#clearFilterButton")
             .click(function(evt) {
                 evt.preventDefault();
+                $("#searchOptions").hide();
                 $("#clearFilterButton").removeClass("filterOn");
                 $("#searchBox").val("");
                 //$("#"+self.extensionID+"FilterBox").val("").addClass("input-medium");
