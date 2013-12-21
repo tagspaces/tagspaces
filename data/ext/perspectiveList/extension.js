@@ -52,13 +52,9 @@ define(function(require, exports, module) {
         }	
 	};
 
-	var clearSelectedFiles = function() {
-	    TSCORE.selectedFiles = [];   
-	    $('#'+extensionID+'FileTable tbody tr').each(function(){
-	        $(this).removeClass('ui-selected');
-	        $(this).find(".fileSelection").removeAttr("checked");
-	    });	
-	};
+    var clearSelectedFiles = function() {
+        UI.clearSelectedFiles();
+    };
 	
 	var getNextFile = function (filePath) {
         return UI.getNextFile(filePath);
