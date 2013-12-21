@@ -150,7 +150,6 @@ define(function(require, exports, module) {
     // Methods
 //    exports.init                    = init;
 //    exports.load                    = load;
-//    exports.setFileFilter           = setFileFilter;
 //    exports.clearSelectedFiles      = clearSelectedFiles;
 //    exports.getNextFile             = getNextFile;
 //    exports.getPrevFile             = getPrevFile;	

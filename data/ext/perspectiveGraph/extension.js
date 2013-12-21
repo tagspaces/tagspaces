@@ -7,7 +7,7 @@ define(function(require, exports, module) {
 	
 	console.log("Loading perspectiveGraph");
 
-	var extensionTitle = "FolderViz Perspective";
+	var extensionTitle = "FolderViz";
 	var extensionID = "perspectiveGraph";  // ID should be equal to the directory name where the ext. is located   
 	var extensionType =  "perspective";
 	var extensionIcon = "fa fa-sitemap";
@@ -129,10 +129,6 @@ define(function(require, exports, module) {
    
 		TSCORE.hideLoadingAnimation(); 
 	};
-	  
-	exports.setFileFilter = function setFileFilter(filter) {
-
-	};
 	
 	exports.clearSelectedFiles = function() {
 
@@ -230,7 +226,6 @@ define(function(require, exports, module) {
     // Methods
 //    exports.init                    = init;
 //    exports.load                    = load;
-//    exports.setFileFilter           = setFileFilter;
 //    exports.clearSelectedFiles      = clearSelectedFiles;
 //    exports.getNextFile             = getNextFile;
 //    exports.getPrevFile             = getPrevFile;	

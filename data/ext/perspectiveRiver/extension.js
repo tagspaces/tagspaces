@@ -65,10 +65,6 @@ define(function(require, exports, module) {
 	    TSCORE.hideLoadingAnimation();     
 	};
 	
-	exports.setFileFilter = function setFileFilter(filter) {
-		console.log("setFileFilter not implemented in "+exports.ID);
-	};
-	
 	exports.clearSelectedFiles = function() {
 	    // TODO Deselect all
 	};
