@@ -358,7 +358,12 @@ define(function(require, exports, module) {
 					    	            
 			            initConnections();  
 			            openConnection(locationPath);                                 
-			        });  			        	     		
+			        }); 
+            			        
+                    if(isCordova) {
+                        //$("#selectLocalDirectory").hide();		
+                        $("#folderLocation").attr("placeholder","Example: DCIM/Camera");	         			        	     		
+                    }
 		     	}
 		        $("#connectionName").val("");
 		        $("#folderLocation").val("");
