@@ -159,6 +159,15 @@ define(function(require, exports, module) {
 	    $("#loadingAnimation").css('visibility', "hidden");
 	}
 	
+    function removeFileFromModell(model, filePath) {
+        console.log("Removing file from model");            
+        for(var i = 0; i < model.length; i++) {
+            if(model[i][exports.fileListFILEPATH] == filePath) {
+                model.splice( i, 1 );                
+            }
+        }
+    }    	
+	
     function exportFileListCSV(fileList) {
             var csv = '';
             var headers = [];
@@ -433,6 +442,7 @@ define(function(require, exports, module) {
 	exports.updateNewVersionData        = updateNewVersionData;
 	exports.exportFileListCSV           = exportFileListCSV;
 	exports.exportFileListArray         = exportFileListArray;
+	exports.removeFileFromModell        = removeFileFromModell;
 
 	// Proxying functions from tsCoreUI
 	exports.showAlertDialog 			= tsCoreUI.showAlertDialog;

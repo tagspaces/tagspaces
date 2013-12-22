@@ -111,6 +111,17 @@ var redrawCurrentPerspective = function () {
     }
 };
 
+var removeFileFromPerspectives = function (filePath) {
+    console.log("Removing file from perspectives");    
+    for (var i=0; i < perspectives.length; i++) {   
+        try {           
+            return perspectives[i].removeFileFromUI(filePath);
+        } catch(e) {
+            console.log("Error while executing 'removeFileFromPerspectives' on "+perspectives[i].ID+" "+e);
+        }
+    }
+};
+
 var getNextFile = function (filePath) {
 	for (var i=0; i < perspectives.length; i++) {   
 		if(perspectives[i].ID == TSCORE.currentView) { 	
@@ -233,18 +244,6 @@ var clearSelectedFiles = function () {
 	}	
 };
 
-/*var setFileFilter = function (filter) {
-	for (var i=0; i < perspectives.length; i++) {   
- 		try {
- 		    if(perspectives[i].ID == TSCORE.currentView){
-                perspectives[i].setFileFilter(filter); 		        
- 		    } 	
- 		} catch(e) {
- 			console.log("Error while executing 'setFileFilter' on "+perspectives[i].ID);
- 		} 		 		
-	}	
-};*/
-
 exports.initPerspectives 			 = initPerspectives;	
 exports.redrawCurrentPerspective     = redrawCurrentPerspective;
 exports.getNextFile					 = getNextFile;
@@ -253,5 +252,6 @@ exports.updateTreeData				 = updateTreeData;
 exports.updateFileBrowserData		 = updateFileBrowserData;
 exports.refreshFileListContainer	 = refreshFileListContainer;
 exports.clearSelectedFiles			 = clearSelectedFiles;
+exports.removeFileFromPerspectives   = removeFileFromPerspectives;
 
 });
