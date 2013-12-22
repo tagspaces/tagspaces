@@ -175,7 +175,7 @@ can be found in the LICENSE file.
 				</div>
                 <a id="fileTitle"></a>				
 				<div style="position: fixed; right: 0px; top: 0px; background-color: #E5E5E5;" class="btn-group">
-                    <button class="btn btn-link" title="Edit Document" data-i18n="[title]app.?;" id="editDocument">&nbsp;<i class="fa fa-pencil-square"></i>&nbsp;</button>             
+                    <button class="btn btn-link" title="Edit Document" data-i18n="[title]app.?;" id="editDocument">&nbsp;<i class="fa fa-pencil"></i>&nbsp;</button>             
                     <button class="btn btn-link" title="Save Document" data-i18n="[title]app.?;" id="saveDocument">&nbsp;<i class="fa fa-save"></i>&nbsp;</button>             
 					<button class="btn btn-link" title="Toggle Document in Full Width" data-i18n="[title]app.?;" id="toggleFullWidthButton">&nbsp;<i class="fa fa-desktop"></i>&nbsp;</button>				
 					<button class="btn btn-link" title="Go to the previous file" data-i18n="[title]app.?;" id="prevFileButton" id="">&nbsp;<i class="glyphicon glyphicon-chevron-left"></i>&nbsp;</button>				
@@ -259,7 +259,8 @@ can be found in the LICENSE file.
 	  </div>
 	  <div class="modal-footer">
 	  	<h6>Some of the changes will not take effect until restarting the application.</h6>
-	    <button class="btn btn-default pull-left" data-dismiss="modal" id="advancedSettings">Advanced Settings</button>       
+	    <!--button class="btn btn-default pull-left" data-dismiss="modal" id="advancedSettings">Advanced Settings</button-->       
+        <button class="btn btn-default pull-left" id="defaultSettingsButton" title="Restore Default Settings" aria-hidden="true">Default Settings</button>                        
 	    <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Cancel</button>
 	    <button class="btn btn-primary" id="saveSettingsCloseButton">Save</button>
 	  </div>
@@ -278,7 +279,6 @@ can be found in the LICENSE file.
 	        <div id="settingsJSON" style="max-height: 400px"></div>
 	    </div>
 	    <div class="modal-footer">
-	        <button id="defaultSettingsButton" class="btn btn-default pull-left" aria-hidden="true">Default Settings</button>                        
 	        <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Cancel</button>
 	        <button id="saveSettingsButton" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Save</button>
 	    </div>
