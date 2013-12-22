@@ -250,7 +250,10 @@ console.log("Loading UI for perspectiveDefault");
 	        return false;
 	    });	
 	    
-        this.initFileGroupingMenu();	    	              
+        this.initFileGroupingMenu();
+        
+        // Disable all buttons    
+        this.viewToolbar.find(".btn").prop('disabled', true);
     };
 
     ExtUI.prototype.switchThumbnailSize = function() {
@@ -568,6 +571,12 @@ console.log("Loading UI for perspectiveDefault");
                 }
             });            
         });  
+
+        // Enable all buttons    
+        this.viewToolbar.find(".btn").prop('disabled', false);
+        // Disable certain buttons again    
+        $("#"+this.extensionID+"IncreaseThumbsButton" ).prop('disabled', true);
+        $("#"+this.extensionID+"TagButton" ).prop('disabled', true);
                  
         this.refreshThumbnails();
         TSCORE.hideLoadingAnimation();          

@@ -16,7 +16,8 @@ html, body {
 /* Removes the selection border on ui elements on android */
 * { 
 	-webkit-tap-highlight-color: rgba(0,0,0,0); 
-/* -webkit-touch-callout: none;
+    -webkit-touch-callout: none;
+/*
 -webkit-user-select: none;
 -khtml-user-select: none;
 -moz-user-select: none;
@@ -168,23 +169,20 @@ user-select: none;
     margin-top: 5px;
 }
 
-
 table .fileTitle {
     font-size: 14px;
     color: #333333;
 }
 
-/*
 .titleInFileTile {
-    font-size: 1.3em;
+    font-size: 13px;
     line-height: 120%;
     color: #333333;
     z-index: 99;
     position: absolute;
     left: 5px;
     top: 5px;
-}*/
-
+}
 
 .tagsInFileTile {
     position: absolute;
@@ -251,11 +249,9 @@ table .fileTitle {
 	display: inline-block;
 }
 
-
 #dialogAbout {
     width: 600px;
 }
-
 
 li hr {
     height: 0px; 
@@ -304,8 +300,6 @@ li hr {
     /*.arrowDownImage; */    
     /*.roundedTagCorners; */    
 }
-
-
 
 #container {
     height:     100%;

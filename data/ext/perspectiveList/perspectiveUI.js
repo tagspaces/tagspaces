@@ -51,30 +51,29 @@ console.log("Loading UI for perspectiveList");
                         TSCORE.selectedFiles.push($(this).find(".fileTitleButton").attr("filepath"));  
                         self.handleElementActivation();                          
                     });
-                    $(this).find("i").removeClass("fa fa-square-o"); 
-                    $(this).find("i").addClass("fa fa-check-square-o"); 
+                    $(this).find("i")
+                        .removeClass("fa-square-o") 
+                        .addClass("fa-check-square-o"); 
                 } else {
                     TSCORE.PerspectiveManager.clearSelectedFiles();
-                    $(this).find("i").removeClass("fa fa-check-square-o");                                     
-                    $(this).find("i").addClass("fa fa-square-o");
+                    $(this).find("i")
+                        .removeClass("fa fa-check-square-o")                                     
+                        .addClass("fa fa-square-o");
                 }            
             });
         
  	    $("#"+this.extensionID+"CreateFileButton")    
-    	    .prop('disabled', true)
             .click(function() {
                 TSCORE.showFileCreateDialog();
             });        
 
         $("#"+this.extensionID+"IncludeSubDirsButton")    
-            .prop('disabled', true)    	    
     	    .click(function() {
     		    $( this ).prop('disabled', true);
     			TSCORE.IO.createDirectoryIndex(TSCORE.currentPath);
     	    });     	    
 
     	$("#"+this.extensionID+"TagButton")    
-            .prop('disabled', true)
     	    .click(function() {
     			TSCORE.showAddTagsDialog();
     	    });
@@ -99,6 +98,10 @@ console.log("Loading UI for perspectiveList");
 			.click(function() {
 				self.toggleTags();
 		    });		    
+
+        // Disabling all buttons by no data
+        this.viewToolbar.find(".btn").prop('disabled', true);
+
         // Init Toolbar END
 
         // Init Container
@@ -296,9 +299,11 @@ console.log("Loading UI for perspectiveList");
 		            }    		
 	    	});   	        
 	
-	    //$("#"+this.extensionID+"FileTable_wrapper").show();  
-	    $("#"+this.extensionID+"CreateFileButton" ).prop('disabled', false);
-	    $("#"+this.extensionID+"IncludeSubDirsButton" ).prop('disabled', false);
+	    // Enable all buttons    
+        this.viewToolbar.find(".btn").prop('disabled', false);
+        // Disable certain buttons again	
+	    $("#"+this.extensionID+"IncreaseThumbsButton" ).prop('disabled', true);
+	    $("#"+this.extensionID+"TagButton" ).prop('disabled', true);
 	    
         this.refreshThumbnails();
         TSCORE.hideLoadingAnimation();          
