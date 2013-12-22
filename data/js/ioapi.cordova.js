@@ -220,6 +220,7 @@ define(function (require, exports, module) {
                 entry.remove(
                     function() {
                         console.log("file deleted: "+path);
+                        TSPOSTIO.deleteElement(path);                           
                     },
                     function() {
                         console.log("error deleting: "+path);

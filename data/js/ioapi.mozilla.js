@@ -92,7 +92,7 @@ define(function(require, exports, module) {
             break;  
           case "delete":
             if(message.success){
-                TSPOSTIO.deleteElement();         
+                TSPOSTIO.deleteElement(message.content);         
             } else {
                 TSCORE.updateLogger("Delete failed");        
             }

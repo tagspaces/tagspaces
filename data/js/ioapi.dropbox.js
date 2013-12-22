@@ -113,7 +113,7 @@ define(function (require, exports, module) {
             	console.log("Error deleting path: "+err);            	
             } else {
             	console.log("Element deleted: "+stat.path);
-				TSPOSTIO.deleteElement();  
+				TSPOSTIO.deleteElement(path);  
             }
         }); 
     };

@@ -223,7 +223,7 @@ define(function(require, exports, module) {
                 console.log("Deleting file "+path+" failed "+error);
                 return;
             }
-            TSPOSTIO.deleteElement();
+            TSPOSTIO.deleteElement(path);
         });		
 	};
 	

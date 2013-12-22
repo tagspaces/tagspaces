@@ -199,7 +199,7 @@ IO-API
         	if(!nativeIO.isDirectory(path)) {
             	nativeIO.removeRecursively(path);         		
         	}
-            TSPOSTIO.deleteElement();           
+            TSPOSTIO.deleteElement(path);           
         } catch(ex) {
             console.error("Deleting file failed "+ex);
         }
