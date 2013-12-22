@@ -56,8 +56,11 @@ define(function(require, exports, module) {
         TSCORE.PerspectiveManager.updateFileBrowserData([]);        
     };
     
-    exports.deleteElement = function() {
-        TSCORE.PerspectiveManager.refreshFileListContainer();
+    exports.deleteElement = function(filePath) {
+        console.log("Delete POST IO");    
+        TSCORE.removeFileFromModell(TSCORE.fileList, filePath);
+        TSCORE.PerspectiveManager.removeFileFromPerspectives(filePath);
+        //TSCORE.PerspectiveManager.refreshFileListContainer();
     };
     
     exports.checkNewVersion = function(data) {

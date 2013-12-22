@@ -52,6 +52,11 @@ define(function(require, exports, module) {
     var clearSelectedFiles = function() {
         UI.clearSelectedFiles();
     };
+    
+    var removeFileFromUI = function(filePath) {
+        console.log("Removing from UI");
+        $("#"+extensionID+"Container li[filepath='"+filePath+"']").remove();
+    };    
 	
     var getNextFile = function (filePath) {
         return UI.getNextFile(filePath);
@@ -76,4 +81,6 @@ define(function(require, exports, module) {
     exports.clearSelectedFiles      = clearSelectedFiles;
     exports.getNextFile             = getNextFile;
     exports.getPrevFile             = getPrevFile;	
+    exports.removeFileFromUI        = removeFileFromUI;
+
 });
