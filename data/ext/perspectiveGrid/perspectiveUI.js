@@ -41,7 +41,6 @@ console.log("Loading UI for perspectiveDefault");
         }
     }
     
-    // Helper function user by basic and search views
     ExtUI.prototype.createFileTile = function(title, filePath, fileExt, fileTags) {
         var self = this;
         
@@ -618,6 +617,21 @@ console.log("Loading UI for perspectiveDefault");
             tagButton.prop('disabled', true);
         }    
     };
+
+    ExtUI.prototype.removeFileUI = function(filePath) {
+        console.log("Removing file from UI");
+        $("#"+this.extensionID+"Container li[filepath='"+filePath+"']").remove();
+    };
+    
+    ExtUI.prototype.updateFileUI = function(oldFilePath, newFilePath) {
+        console.log("Updating file from UI");
+        var title = TSCORE.TagUtils.extractTitle(newFilePath),
+            fileExt = TSCORE.TagUtils.extractFileExtension(newFilePath),
+            fileTags = TSCORE.TagUtils.extractTags(newFilePath);
+            
+        $("#"+this.extensionID+"Container li[filepath='"+oldFilePath+"']")
+            .replaceWith(this.createFileTile(title, newFilePath, fileExt, fileTags));
+    };    
     
     ExtUI.prototype.getNextFile = function(filePath) {
         var nextFilePath = undefined;
@@ -631,7 +645,7 @@ console.log("Loading UI for perspectiveDefault");
                     nextFilePath = self.searchResults[0][TSCORE.fileListFILEPATH];
                 }               
             }           
-            console.log("Path: "+entry[TSCORE.fileListFILEPATH]);
+            //console.log("Path: "+entry[TSCORE.fileListFILEPATH]);
         });
         TSCORE.PerspectiveManager.clearSelectedFiles();     
         console.log("Next file: "+nextFilePath);
@@ -650,7 +664,7 @@ console.log("Loading UI for perspectiveDefault");
                     prevFilePath = self.searchResults[self.searchResults.length-1][TSCORE.fileListFILEPATH];
                 }
             }           
-            console.log("Path: "+entry[TSCORE.fileListFILEPATH]);
+            //console.log("Path: "+entry[TSCORE.fileListFILEPATH]);
         });
         TSCORE.PerspectiveManager.clearSelectedFiles();
         console.log("Prev file: "+prevFilePath);
