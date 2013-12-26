@@ -686,3 +686,7 @@ input a.resetFilter {
   margin-right: 1px;
   margin-left: 1px;
 }
+
+.select2-results {
+    font-size: 14px;
+}
