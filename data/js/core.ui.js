@@ -297,7 +297,6 @@ define(function(require, exports, module) {
                 "These items will be permanently deleted and cannot be recovered. Are you sure?",
                 function() {
                     TSCORE.IO.deleteElement(TSCORE.selectedFiles[0]);
-                    TSCORE.IO.listDirectory(TSCORE.currentPath);   
                 }
             );
         });
