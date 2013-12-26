@@ -174,9 +174,7 @@ define(function(require, exports, module) {
 	    _openedFilePath = filePath;    
 	    $("#selectedFilePath").val(_openedFilePath.replace("\\\\","\\")); 
 	    
-	    var fileExt = TSCORE.TagUtils.extractFileExtension(filePath);
-	
-	    updateUI();         
+	    var fileExt = TSCORE.TagUtils.extractFileExtension(filePath);       
 	
 	    // Getting the viewer for the file extension/type
 	    var viewerExt = TSCORE.Config.getFileTypeViewer(fileExt);  
@@ -189,8 +187,6 @@ define(function(require, exports, module) {
         } else {
             $( "#editDocument" ).show();                
         }
-
-	    initTagSuggestionMenu(filePath);
      
 	    $( "#viewer" ).empty();
 	    
@@ -218,6 +214,10 @@ define(function(require, exports, module) {
 	            _tsEditor.init(filePath, "viewer", true);
 	        });
 	    }
+
+        updateUI();  
+        initTagSuggestionMenu(filePath);
+
 	    
         // Clearing file selection on file load and adding the current file path to the selection
         TSCORE.PerspectiveManager.clearSelectedFiles();
