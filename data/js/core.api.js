@@ -220,6 +220,9 @@ define(function(require, exports, module) {
 	
 	function openFileViewer() {
 		tsCoreUI.hideAllDropDownMenus();
+		if(isFullWidth) {
+		    return;
+		}
         var fullWidth = window.innerWidth;
         var halfWidth = Math.round(fullWidth/2);
     	// In portret mode
@@ -247,6 +250,7 @@ define(function(require, exports, module) {
     	} else {
 	    	layoutContainer.close("east");    
     	}
+    	isFullWidth = false; 
 	}	
 
     var isFullWidth = false; 
