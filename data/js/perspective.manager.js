@@ -103,7 +103,8 @@ var redrawCurrentPerspective = function () {
     for (var i=0; i < perspectives.length; i++) {   
         if(perspectives[i].ID == TSCORE.currentView) {  
             try {           
-                return perspectives[i].load();
+                perspectives[i].load();
+                break;
             } catch(e) {
                 console.log("Error while executing 'redrawCurrentPerspective' on "+perspectives[i].ID+" "+e);
             }
@@ -111,13 +112,24 @@ var redrawCurrentPerspective = function () {
     }
 };
 
-var removeFileFromPerspectives = function (filePath) {
+var removeFileUI = function (filePath) {
     console.log("Removing file from perspectives");    
     for (var i=0; i < perspectives.length; i++) {   
         try {           
-            return perspectives[i].removeFileFromUI(filePath);
+            perspectives[i].removeFileUI(filePath);
         } catch(e) {
-            console.log("Error while executing 'removeFileFromPerspectives' on "+perspectives[i].ID+" "+e);
+            console.log("Error while executing 'removeFileUI' on "+perspectives[i].ID+" "+e);
+        }
+    }
+};
+
+var updateFileUI = function (oldFilePath,newFilePath) {
+    console.log("Updating file in perspectives");    
+    for (var i=0; i < perspectives.length; i++) {   
+        try {           
+            perspectives[i].updateFileUI(oldFilePath, newFilePath);
+        } catch(e) {
+            console.log("Error while executing 'updateFileUI' on "+perspectives[i].ID+" "+e);
         }
     }
 };
@@ -252,6 +264,7 @@ exports.updateTreeData				 = updateTreeData;
 exports.updateFileBrowserData		 = updateFileBrowserData;
 exports.refreshFileListContainer	 = refreshFileListContainer;
 exports.clearSelectedFiles			 = clearSelectedFiles;
-exports.removeFileFromPerspectives   = removeFileFromPerspectives;
+exports.removeFileUI                 = removeFileUI;
+exports.updateFileUI                 = updateFileUI;
 
 });
