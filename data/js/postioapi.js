@@ -25,6 +25,7 @@ define(function(require, exports, module) {
         var lastOpenedFile = TSCORE.FileOpener.getOpenedFilePath();        
 
         console.log("Last opened Filename: "+lastOpenedFile);
+        
         // TODO handle case in which a file opened for editing and a tag has been added
         if(TSCORE.FileOpener.isFileOpened() && (oldFilePath == lastOpenedFile) ) {
             TSCORE.FileOpener.openFile(newFilePath);                    
@@ -32,6 +33,9 @@ define(function(require, exports, module) {
         // TODO to be replaced with a function which replaces the 
         // renamed file in the model of the perspective        
         TSCORE.PerspectiveManager.refreshFileListContainer();
+
+        //TSCORE.removeFileFromModell(TSCORE.fileList, filePath);
+        //TSCORE.PerspectiveManager.updateFileUI(oldFilePath, newFilePath);
     };
         
     exports.loadTextFile = function(content) {
@@ -57,10 +61,9 @@ define(function(require, exports, module) {
     };
     
     exports.deleteElement = function(filePath) {
-        console.log("Delete POST IO");    
         TSCORE.removeFileFromModell(TSCORE.fileList, filePath);
-        TSCORE.PerspectiveManager.removeFileFromPerspectives(filePath);
-        //TSCORE.PerspectiveManager.refreshFileListContainer();
+        TSCORE.PerspectiveManager.removeFileUI(filePath);
+        TSCORE.closeFileViewer();
     };
     
     exports.checkNewVersion = function(data) {
