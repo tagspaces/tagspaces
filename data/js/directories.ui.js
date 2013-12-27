@@ -440,41 +440,45 @@ define(function(require, exports, module) {
         $connectionList.attr("style","overflow-y: auto; max-height: 500px; width: 238px;");
         $connectionList.append('<li class="dropdown-header"><span id="">Your Locations</span><button type="button" class="close">×</button></li>');
         $connectionList.append('<li class="divider"></li>');
+//        $connectionList.append('<li><button class="btn btn-default" style="width: 180px; text-align: left; border: 0px;"><i class="fa fa-dropbox"></i>&nbsp;<span data-i18n="app.test1;">My Dropbox Folder</span></button>&nbsp;'+
+//                                '<button type="button" class="btn btn-default pull-right" style="margin-right: 5px"><i class="fa fa-pencil"></i></button></li>');
         var connectionsList = TSCORE.Config.Settings["tagspacesList"];
         for (var i=0; i < connectionsList.length; i++) { 
-// 			      <li><a href="#"><i class="fa fa-dropbox"></i>&nbsp;<span data-i18n="app.test1;">My Dropbox Folder</span>&nbsp;
-//		      			<button type="button" class="btn btn-link"><i class="fa fa-edit"></i></button></a></li>
-              $connectionList.append(
-                    $('<li>', {}).append(
-                        $('<a>', { 
-                            title:  "Location pointing to "+connectionsList[i].path,
-                            path:   connectionsList[i].path,
-                            name:   connectionsList[i].name,
-                            text:   " "+connectionsList[i].name
-                            } )
-	                        .click(function() {
-	                            openConnection($(this).attr( "path" ));                           
-	                        })
-                        	.prepend("<i class='fa fa-bookmark'></i>&nbsp;")
-	                        .append(
-		                        $('<button>', { 
-		                            type:     "button",
-		                            title:    "Edit Location",
-		                            location: connectionsList[i].name,
-		                            path:     connectionsList[i].path,
-		                            class:    "btn btn-default pull-right",
-		                           } )
-		                           .append("<i class='fa fa-pencil'></i>")
-			                       .click(function(e) {
-                                        console.log("Edit location");
-                                        showLocationEditDialog($(this).attr("location"),$(this).attr("path"));
-			                            return false;
-			                       })	                           
-	                        )                         	
-                        ));
+            $connectionList.append(
+                $('<li>', {
+                    style: "line-height: 45px"
+                }).append(
+                    $('<button>', { 
+                        title:  "Location pointing to "+connectionsList[i].path,
+                        path:   connectionsList[i].path,
+                        name:   connectionsList[i].name,
+                        text:   " "+connectionsList[i].name,
+                        style:  "width: 180px; text-align: left; border: 0px;",
+                        class:  "btn btn-default"
+                        } )
+                        .click(function() {
+                            openConnection($(this).attr( "path" ));                           
+                        })
+                    	.prepend("<i class='fa fa-bookmark'></i>&nbsp;")                         	
+                    )
+                    .append(
+                        $('<button>', { 
+                            type:     "button",
+                            title:    "Edit Location",
+                            location: connectionsList[i].name,
+                            path:     connectionsList[i].path,
+                            class:    "btn btn-default pull-right",
+                            style:    "margin-right: 5px"
+                           } )
+                           .append("<i class='fa fa-pencil'></i>")
+                           .click(function(e) {
+                                console.log("Edit location");
+                                showLocationEditDialog($(this).attr("location"),$(this).attr("path"));
+                                return false;
+                           })                              
+                    )
+                );
         };
-        //$connectionList.append('<li class="divider"></li>');
-        //$connectionList.append('<li id="deleteConnection"><a><i class="fa fa-trash-o"></i> Remove Current Location</a></li>');
         
         $( "#createNewLocation" ).click(function() {
             showLocationCreateDialog();         
