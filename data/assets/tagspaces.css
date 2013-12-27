@@ -690,3 +690,8 @@ input a.resetFilter {
 .select2-results {
     font-size: 14px;
 }
+
+.fileTitleButton {
+    margin: 1px;
+    padding: 1px;
+}
