@@ -71,9 +71,21 @@ define(function(require, exports, module) {
 		});
     };
     
-    var showFileRenameDialog = function() {
-        $( "#renamedFileName" ).val(TSCORE.TagUtils.extractFileName(TSCORE.selectedFiles[0]));
+    var showFileRenameDialog = function(filePath) {
+        $( "#renamedFileName" ).attr("filepath",filePath);
+        $( "#renamedFileName" ).val(TSCORE.TagUtils.extractFileName(filePath));
         $( '#dialogFileRename' ).modal({show: true});
+    };    
+    
+    var showFileDeleteDialog = function(filePath) {
+        console.log("Deleting file...");
+        TSCORE.showConfirmDialog(
+            "Delete File(s)",
+            "The file: "+filePath+" will be permanently deleted and cannot be recovered. Are you sure?",
+            function() {
+                TSCORE.IO.deleteElement(TSCORE.selectedFiles[0]);
+            }
+        );
     };    
     
     var showTagEditDialog = function() {
@@ -165,7 +177,7 @@ define(function(require, exports, module) {
             if ( bValid ) {
                 var containingDir = TSCORE.TagUtils.extractContainingDirectoryPath(TSCORE.selectedFiles[0]);
                 TSCORE.IO.renameFile(
-                        TSCORE.selectedFiles[0],
+                        $( "#renamedFileName" ).attr("filepath"),
                         containingDir+TSCORE.TagUtils.DIR_SEPARATOR+$( "#renamedFileName" ).val()
                     );
             }
@@ -287,18 +299,11 @@ define(function(require, exports, module) {
         }); 
         
         $( "#fileMenuRenameFile" ).click( function() {
-            TSCORE.showFileRenameDialog();
+            TSCORE.showFileRenameDialog(TSCORE.selectedFiles[0]);
         }); 
         
         $( "#fileMenuDeleteFile" ).click( function() {
-            console.log("Deleting file...");
-            TSCORE.showConfirmDialog(
-                "Delete File(s)",
-                "These items will be permanently deleted and cannot be recovered. Are you sure?",
-                function() {
-                    TSCORE.IO.deleteElement(TSCORE.selectedFiles[0]);
-                }
-            );
+            TSCORE.showFileDeleteDialog(TSCORE.selectedFiles[0]);
         });
         // End File Menu  
                 
@@ -381,6 +386,22 @@ define(function(require, exports, module) {
             });        
         
         // Search UI END
+
+        // Handle external links
+        $("#openUservoice")
+            .click(function(evt) {
+                window.open("https://tagspaces.uservoice.com/forums/213931-general","_system");
+            });
+
+        $("#openGitHubIssues")
+            .click(function(evt) {
+                window.open("https://github.com/uggrock/tagspaces/issues/","_system");
+            });
+            
+        $("#openTwitter")
+            .click(function(evt) {
+                window.open("https://twitter.com/intent/tweet?original_referer=http%3A%2F%2Ftagspaces.org%2F&text=Organize%20your%20files%20with%20@tagspaces","_system");
+            });           
         	    
 	    // Hide drop downs by click and drag
 	    $(document).click(function () {
@@ -457,6 +478,7 @@ define(function(require, exports, module) {
 	exports.showConfirmDialog 		= showConfirmDialog;
 	exports.showFileRenameDialog    = showFileRenameDialog;
 	exports.showFileCreateDialog    = showFileCreateDialog;
+	exports.showFileDeleteDialog    = showFileDeleteDialog;
     exports.showTagEditDialog       = showTagEditDialog;
     exports.showLocationsPanel      = showLocationsPanel;
     exports.showTagsPanel       	= showTagsPanel;    

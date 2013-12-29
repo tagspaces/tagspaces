@@ -83,7 +83,7 @@ define(function(require, exports, module) {
         
         $( "#renameFile" )
             .click( function() {
-                TSCORE.showFileRenameDialog();
+                TSCORE.showFileRenameDialog(_openedFilePath);
             });         
         
         $( "#toggleFullWidthButton" )
@@ -93,14 +93,7 @@ define(function(require, exports, module) {
         
         $( "#deleteFile" )
             .click( function() {
-                console.log("Deleting file...");
-                TSCORE.showConfirmDialog(
-                    "Delete File",
-                    "This item will be permanently deleted and cannot be recovered. Are you sure?",
-                    function() {
-                        TSCORE.IO.deleteElement(_openedFilePath);
-                    }
-                );
+                TSCORE.showFileDeleteDialog(_openedFilePath);
             });             
 
         $( "#fullscreenFile" )
