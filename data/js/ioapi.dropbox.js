@@ -75,6 +75,8 @@ define(function (require, exports, module) {
     };   
     
     var listDirectory = function (dirPath) {
+        TSCORE.showLoadingAnimation();         
+                
         dirPath = dirPath+"/"; // TODO make it platform independent
         
         console.log("Listing directory: " + dirPath);
@@ -108,6 +110,8 @@ define(function (require, exports, module) {
 
     var deleteElement = function(path) {
         console.log("Deleting: "+path);
+        TSCORE.showLoadingAnimation();         
+                
         fsRoot.unlink(path, function (err, stat) {
             if(err) {
             	console.log("Error deleting path: "+err);            	
@@ -120,6 +124,8 @@ define(function (require, exports, module) {
 
     var createDirectoryIndex = function(dirPath) {
         console.log("Creating index for directory: "+dirPath);
+        TSCORE.showLoadingAnimation();         
+        
         TSCORE.showAlertDialog("Creating directory index is not supported on Android yet.");                 
 /*        var directoryIndex = [];
         directoryIndex = scanDirectory(dirPath, directoryIndex);
@@ -129,6 +135,8 @@ define(function (require, exports, module) {
     
     var createDirectoryTree = function(dirPath) {
         console.log("Creating directory index for: "+dirPath);
+        TSCORE.showLoadingAnimation();         
+        
         TSCORE.showAlertDialog("Creating directory tree is not supported on Android yet.");                 
 /*        var directoyTree = generateDirectoryTree(dirPath);
         //console.log(JSON.stringify(directoyTree));
@@ -137,6 +145,8 @@ define(function (require, exports, module) {
 
     var loadTextFile = function(filePath) {
         console.log("Loading file: "+filePath);
+        TSCORE.showLoadingAnimation();                 
+        
         fsRoot.readFile(filePath, function (err, data, stat) {
             if(err) {
             	console.log("Error loading file: "+err);            	
@@ -148,6 +158,8 @@ define(function (require, exports, module) {
     
     var saveTextFile = function(filePath,content) {
         console.log("Saving file: "+filePath);
+        TSCORE.showLoadingAnimation();         
+                
         fsRoot.writeFile(filePath, content, function (err, stat) {
             if(err) {
             	console.log("Error creating/saving file: "+err);            	
@@ -159,6 +171,8 @@ define(function (require, exports, module) {
 
     var createDirectory = function(dirPath) {
         console.log("Creating directory: "+dirPath);  
+        TSCORE.showLoadingAnimation();         
+                
         fsRoot.mkdir(dirPath, function (err, stat) {
             if(err) {
             	console.log("Error creating directory: "+err);            	
@@ -171,6 +185,8 @@ define(function (require, exports, module) {
     
     var renameFile = function(filePath, newFilePath) {
     	console.log("Renaming file from: "+filePath+" to: "+newFilePath);  
+        TSCORE.showLoadingAnimation();         
+        		
 		fsRoot.move(filePath, newFilePath, function (err, stat) {
             if(err) {
             	console.log("Error renaming: "+err);            	

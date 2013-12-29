@@ -141,6 +141,7 @@ IO-API
 	
 	var loadTextFile = function(filePath) {
 		console.log("Loading file: "+filePath);
+        TSCORE.showLoadingAnimation();		
 	    if(nativeIO.fileExists(filePath)) {
             var blob;
             var size = nativeIO.getFileSize(filePath);
@@ -164,6 +165,7 @@ IO-API
 	
 	var listDirectory = function(dirPath) {
 		console.log("Listing directory: "+dirPath);
+        TSCORE.showLoadingAnimation();		
 		if(nativeIO.isDirectory(dirPath)) {
 			var dirList = nativeIO.getDirEntries(dirPath);
             var anotatedDirList = [];
@@ -195,6 +197,7 @@ IO-API
 
     var deleteElement = function(path) {
         console.log("Deleting: "+path);
+        TSCORE.showLoadingAnimation();     
         try {
         	if(!nativeIO.isDirectory(path)) {
             	nativeIO.removeRecursively(path);         		
@@ -207,6 +210,7 @@ IO-API
 
     var createDirectoryIndex = function(dirPath) {
         console.log("Creating index for directory: "+dirPath);
+        TSCORE.showLoadingAnimation();     
         var directoryIndex = [];
         directoryIndex = scanDirectory(dirPath, directoryIndex);
         //console.log(JSON.stringify(directoryIndex));
@@ -214,6 +218,7 @@ IO-API
     };
     
     var createDirectoryTree = function(dirPath) {
+        TSCORE.showLoadingAnimation();        
         console.log("Creating directory index for: "+dirPath);
         var directoyTree = generateDirectoryTree(dirPath);
         //console.log(JSON.stringify(directoyTree));
@@ -221,6 +226,7 @@ IO-API
     };
 
     var saveTextFile = function(filePath,content) {
+        TSCORE.showLoadingAnimation();        
         console.log("Saving file: "+filePath);
         var byteArray = [];
         for (var i = 0; i < content.length; ++i)
@@ -239,7 +245,8 @@ IO-API
     };   
 
     var createDirectory = function(dirPath) {
-        console.log("Creating directory: "+dirPath);    
+        console.log("Creating directory: "+dirPath);
+        TSCORE.showLoadingAnimation();            
         try {
             nativeIO.createDirectory(dirPath);
             TSPOSTIO.createDirectory();
@@ -250,6 +257,7 @@ IO-API
 	
     var renameFile = function(filePath, newFilePath) {
         console.log("Renaming file: "+filePath+" to "+newFilePath);
+        TSCORE.showLoadingAnimation();        
         if(filePath.toLowerCase() == newFilePath.toLowerCase()) {
             console.log("Initial and target filenames are the same...");
             return false;            

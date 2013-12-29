@@ -141,6 +141,7 @@ define(function (require, exports, module) {
     };   
     
     var listDirectory = function (dirPath) {
+        TSCORE.showLoadingAnimation();          
         // directory path format DCIM/Camera/ !
         dirPath = dirPath+"/"; // TODO make it platform independent
         dirPath = normalizePath(dirPath);
@@ -212,6 +213,7 @@ define(function (require, exports, module) {
 
     var deleteElement = function(path) {
         console.log("Deleting: "+path);
+        TSCORE.showLoadingAnimation();  
         
         path = normalizePath(path);
  
@@ -234,8 +236,10 @@ define(function (require, exports, module) {
     };
 
     var loadTextFile = function(filePath) {
-        filePath = normalizePath(filePath);
         console.log("Loading file: "+filePath);
+        TSCORE.showLoadingAnimation();  
+
+        filePath = normalizePath(filePath);
         fsRoot.getFile(filePath, {create: false, exclusive: false}, 
             function(entry) {
                 entry.file(
@@ -258,8 +262,10 @@ define(function (require, exports, module) {
     };
     
     var saveTextFile = function(filePath,content) {
-        filePath = normalizePath(filePath);
         console.log("Saving file: "+filePath);
+        TSCORE.showLoadingAnimation();  
+
+        filePath = normalizePath(filePath);
         fsRoot.getFile(filePath, {create: true, exclusive: false}, 
             function(entry) {
                 entry.createWriter(
@@ -281,8 +287,11 @@ define(function (require, exports, module) {
     };   
 
     var createDirectory = function(dirPath) {
-        dirPath = normalizePath(dirPath);
         console.log("Creating directory: "+dirPath);    
+        TSCORE.showLoadingAnimation();  
+
+        dirPath = normalizePath(dirPath);
+
         fsRoot.getDirectory(dirPath, {create: true, exclusive: false}, 
            function (dirEntry) {
                 TSPOSTIO.createDirectory();
@@ -294,6 +303,8 @@ define(function (require, exports, module) {
     }; 
     
     var renameFile = function(filePath, newFilePath) {
+        TSCORE.showLoadingAnimation();  
+        
         filePath = normalizePath(filePath);
         var newFileName = newFilePath.substring(newFilePath.lastIndexOf('/')+1);
         var newFileParentPath = normalizePath(newFilePath.substring(0, newFilePath.lastIndexOf('/')));

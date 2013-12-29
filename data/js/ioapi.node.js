@@ -116,6 +116,8 @@ define(function(require, exports, module) {
 	
     var createDirectoryIndex = function(dirPath) {
         console.log("Creating index for directory: "+dirPath);
+        TSCORE.showLoadingAnimation();  
+        
         var directoryIndex = [];
         directoryIndex = scanDirectory(dirPath, directoryIndex);
         //console.log(JSON.stringify(directoryIndex));
@@ -124,6 +126,8 @@ define(function(require, exports, module) {
     
     var createDirectoryTree = function(dirPath) {
         console.log("Creating directory index for: "+dirPath);
+        TSCORE.showLoadingAnimation();  
+                
         var directoyTree = generateDirectoryTree(dirPath);
         //console.log(JSON.stringify(directoyTree));
         TSPOSTIO.createDirectoryTree(directoyTree);
@@ -131,6 +135,8 @@ define(function(require, exports, module) {
 	
 	var createDirectory = function(dirPath) {
 	    console.log("Creating directory: "+dirPath);   
+        TSCORE.showLoadingAnimation();  
+                
         fs.mkdir(dirPath, function(error) {
             if (error) {
                 console.log("Creating directory "+dirPath+" failed "+error);
@@ -142,6 +148,8 @@ define(function(require, exports, module) {
 
     var renameFile = function(filePath, newFilePath) {
         console.log("Renaming file: "+filePath+" to "+newFilePath);
+        TSCORE.showLoadingAnimation();  
+                
         if(filePath.toLowerCase() == newFilePath.toLowerCase()) {
             console.log("Initial and target filenames are the same...");
             return false;            
@@ -161,6 +169,8 @@ define(function(require, exports, module) {
     	
 	var loadTextFile = function(filePath) {
 		console.log("Loading file: "+filePath);
+        TSCORE.showLoadingAnimation();  
+                
         fs.readFile(filePath, 'utf8', function(error, content) {
             if (error) {
                 console.log("Loading file "+filePath+" failed "+error);
@@ -172,6 +182,8 @@ define(function(require, exports, module) {
 	
 	var saveTextFile = function(filePath,content) {
 		console.log("Saving file: "+filePath);
+        TSCORE.showLoadingAnimation();  
+        		
 		// TODO check if fileExist by saving needed
 /*	  	if(plugin.fileExists(filePath)) {
 			plugin.removeFile(filePath);      		
@@ -187,6 +199,8 @@ define(function(require, exports, module) {
 	
 	var listDirectory = function(dirPath) {
       console.log("Listing directory: "+dirPath);
+      TSCORE.showLoadingAnimation();  
+              
       try {
           fs.readdir(dirPath, function(error, dirList) {
             if (error) {
@@ -218,6 +232,8 @@ define(function(require, exports, module) {
 	
 	var deleteElement = function(path) {
 		console.log("Deleting: "+path);
+        TSCORE.showLoadingAnimation();  
+        		
         fs.unlink(path, function(error) {
             if (error) {
                 console.log("Deleting file "+path+" failed "+error);

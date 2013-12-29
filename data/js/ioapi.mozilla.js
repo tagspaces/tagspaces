@@ -14,7 +14,6 @@ define(function(require, exports, module) {
     
     document.documentElement.addEventListener("tsMessage", function(event) {
         console.log("Message received in page script from content script: "); //+JSON.stringify(event.detail));
-        TSCORE.hideLoadingAnimation();
         var message = event.detail;
         switch (message.command) {
           case "loadSettings":
