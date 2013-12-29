@@ -156,7 +156,7 @@ console.log("Loading UI for perspectiveList");
 	            },*/ 
                 { // File extension column
                     "mRender": function ( data, type, row ) { 
-	                	return buttonizeTitle(data,row[TSCORE.fileListTITLE],row[TSCORE.fileListFILEPATH],row[TSCORE.fileListFILEEXT]); 
+	                	return buttonizeTitle(row[TSCORE.fileListTITLE],row[TSCORE.fileListFILEPATH],row[TSCORE.fileListFILEEXT]); 
                         },
                     "aTargets": [ TSCORE.fileListFILEEXT ]
                 }, 
@@ -225,8 +225,7 @@ console.log("Loading UI for perspectiveList");
 		    	hoverClass: "activeRow",
 		    	drop: function( event, ui ) {
 		    		var tagName = TSCORE.selectedTag;
-		    			    		
-		    		var targetFilePath = self.fileTable.fnGetData( this )[TSCORE.fileListFILEPATH];
+                    var targetFilePath = $(this).find(".fileTitleButton").attr("filepath");                
 	
 		    		// preventing self drag of tags
 		    		var targetTags = TSCORE.TagUtils.extractTags(targetFilePath);
@@ -248,10 +247,8 @@ console.log("Loading UI for perspectiveList");
 		    })
 			.hammer().on("doubletap", function(event) {
 		        console.log("Doubletap & Opening file...");
-		        var rowData = self.fileTable.fnGetData( this );
-		        TSCORE.FileOpener.openFile(rowData[TSCORE.fileListFILEPATH]); 
-		        
-                var titleBut = $(this).find(".fileTitleButton");
+                var titleBut = $(this).find(".fileTitleButton");                
+		        TSCORE.FileOpener.openFile($(titleBut).attr("filepath"));
                 self.selectFile(titleBut, $(titleBut).attr("filepath"));
 			 })     		    
 		    .click( function() {
@@ -310,7 +307,7 @@ console.log("Loading UI for perspectiveList");
 	};
 	
     // Helper function user by basic and search views
-    function buttonizeTitle(title, fileName, filePath, fileExt) {
+    function buttonizeTitle(title, filePath, fileExt) {
         if(title.length < 1) {
             title = filePath;
         }
@@ -326,7 +323,7 @@ console.log("Loading UI for perspectiveList");
         var thumbHTML = "";     
         if(supportedFileTypeThumnailing.indexOf(fileExt) >= 0) {
             thumbHTML = $('<span>').append( $('<img>', { 
-                title: fileName, 
+                title: filePath, 
                 class: "thumbImg",
                 filepath: tmbPath, 
                 style: "width: 0px; height: 0px; border: 0px" 
@@ -337,7 +334,7 @@ console.log("Loading UI for perspectiveList");
         var checkboxHTML = "<button class='btn btn-link fileSelection'><i class='fa fa-square-o'></button>";
             
         var buttonHTML = $('<button>', {
-            title: "Options for "+fileName, 
+            title: "Options for "+filePath, 
             filepath: filePath,
             class: 'btn btn-link fileTitleButton',          
         }).append($('<span>', { 
@@ -449,6 +446,24 @@ console.log("Loading UI for perspectiveList");
 	        tagButton.prop('disabled', true);
 	    }    
 	};
+	
+    ExtUI.prototype.removeFileUI = function(filePath) {
+        console.log("Removing file from UI");
+        $("#"+this.extensionID+"Container button[filepath='"+filePath+"']").parent().parent().remove();
+    };	
+
+    ExtUI.prototype.updateFileUI = function(oldFilePath, newFilePath) {
+        console.log("Updating file in UI");
+        
+        var title = TSCORE.TagUtils.extractTitle(newFilePath),
+            fileExt = TSCORE.TagUtils.extractFileExtension(newFilePath),
+            fileTags = TSCORE.TagUtils.extractTags(newFilePath);
+            
+        var $fileRow = $("#"+this.extensionID+"Container button[filepath='"+oldFilePath+"']").parent().parent();
+        $($fileRow.find("td")[0]).empty().append(buttonizeTitle(title,newFilePath,fileExt));
+        $($fileRow.find("td")[1]).text(title);
+        $($fileRow.find("td")[2]).empty().append(TSCORE.generateTagButtons(fileTags,newFilePath));
+    }; 
 
     ExtUI.prototype.getNextFile = function(filePath) {
         var nextFilePath = undefined;

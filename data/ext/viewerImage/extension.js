@@ -7,7 +7,7 @@ define(function(require, exports, module) {
 
 	console.log("Loading viewerImage");
 
-    var extensionTitle = "Image Viewer"
+    var extensionTitle = "Image Viewer";
     var extensionID = "viewerImage";  // ID should be equal to the directory name where the ext. is located   
     var extensionType =  "perspective";
     var extensionIcon = "icon-list";

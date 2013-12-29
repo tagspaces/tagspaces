@@ -57,12 +57,11 @@ define(function(require, exports, module) {
     };
     
     var removeFileUI = function(filePath) {
-        console.log("Removing file: "+filePath+" from UI");
-        $("#"+extensionID+"Container button[filepath='"+filePath+"']").parent().parent().remove();
+        UI.removeFileUI(filePath);
     };    
     
     var updateFileUI = function(oldFilePath, newFilePath) {
-        //UI.updateFileUI(filePath);
+        UI.updateFileUI(oldFilePath, newFilePath);
     };     
 	
 	var getNextFile = function (filePath) {

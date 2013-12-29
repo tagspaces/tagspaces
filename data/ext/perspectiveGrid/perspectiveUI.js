@@ -493,7 +493,7 @@ console.log("Loading UI for perspectiveDefault");
             for(var j=0; j < value.length; j++) {
                groupedContent.append(
                  $('<li>', { 
-                     title: value[j][TSCORE.fileListFILENAME]+"\n Modified on: "+ TSCORE.TagUtils.formatDateTime(value[j][TSCORE.fileListFILELMDT], false),    
+                     title: value[j][TSCORE.fileListFILEPATH],    
                      filepath: value[j][TSCORE.fileListFILEPATH], 
                      class: 'fileTile' 
                  })
@@ -624,13 +624,15 @@ console.log("Loading UI for perspectiveDefault");
     };
     
     ExtUI.prototype.updateFileUI = function(oldFilePath, newFilePath) {
-        console.log("Updating file from UI");
+        console.log("Updating file in UI");
         var title = TSCORE.TagUtils.extractTitle(newFilePath),
             fileExt = TSCORE.TagUtils.extractFileExtension(newFilePath),
             fileTags = TSCORE.TagUtils.extractTags(newFilePath);
             
-        $("#"+this.extensionID+"Container li[filepath='"+oldFilePath+"']")
-            .replaceWith(this.createFileTile(title, newFilePath, fileExt, fileTags));
+        var $fileTile = $("#"+this.extensionID+"Container li[filepath='"+oldFilePath+"']");
+        $fileTile.attr("filepath", newFilePath);
+        $fileTile.attr("title", newFilePath);
+        $fileTile.find("p").replaceWith(this.createFileTile(title, newFilePath, fileExt, fileTags));
     };    
     
     ExtUI.prototype.getNextFile = function(filePath) {
