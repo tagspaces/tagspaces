@@ -595,7 +595,7 @@ input a.resetFilter {
 
 /* NEW DESIGN ---------------------------------------*/
 
-.col1 .navbar, .col1 > .row2, .col1 > .row3, .col2 .navbar, .col3 .navbar {
+.col1 .navbar, .col1 > .row2, .col1 > .row3, .col2 .navbar, .col2 .row3, .col3 .navbar {
 	background-color: #F2F2F2 !important;
 }
 
@@ -615,6 +615,9 @@ input a.resetFilter {
 	border-bottom: 1px #ddd solid;
 }
 
+.col2 .row3 {
+    border-top: 1px #ddd solid;  
+}
 
 .col3 .ts-container {
 	overflow: hidden !important;
