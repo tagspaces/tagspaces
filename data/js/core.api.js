@@ -159,7 +159,7 @@ define(function(require, exports, module) {
 	    $("#loadingAnimation").css('visibility', "hidden");
 	}
 	
-    function removeFileFromModell(model, filePath) {
+    function removeFileModel(model, filePath) {
         console.log("Removing file from model");            
         for(var i = 0; i < model.length; i++) {
             if(model[i][exports.fileListFILEPATH] == filePath) {
@@ -167,6 +167,26 @@ define(function(require, exports, module) {
             }
         }
     }    	
+
+    function updateFileModel(model, oldPath, newPath) {
+        console.log("Removing file from model");            
+        var title = tsTagUtils.extractTitle(newPath),
+            fileExt = tsTagUtils.extractFileExtension(newPath),
+            fileTags = tsTagUtils.extractTags(newPath);
+                    
+        for(var i = 0; i < model.length; i++) {
+            if(model[i][exports.fileListFILEPATH] == oldPath) {
+                model[i][exports.fileListFILEPATH] = newPath;
+                model[i][exports.fileListTITLE] = title;
+                model[i][exports.fileListTAGS] = fileTags;
+                model[i][exports.fileListFILEEXT] = fileExt;
+                // TODO complete the list
+                //model[i][exports.fileListFILELMDT] = newPath;
+                //model[i][exports.fileListFILENAME] = newPath;
+                //model[i][exports.fileListFILESIZE] = newPath;                               
+            }
+        }
+    }  
 	
     function exportFileListCSV(fileList) {
             var csv = '';
@@ -364,7 +384,7 @@ define(function(require, exports, module) {
 		,   enableCursorHotkey:         false
 		}); 
 	
-	/*
+	
 		var col2Layout = layoutContainer.panes.center.layout({ 
 			name:			'col2Layout' // for debugging & auto-adding buttons (see below)
 	//	,	north__paneSelector: 	'.row1'
@@ -386,7 +406,7 @@ define(function(require, exports, module) {
 	//	,   center__showOverflowOnHover:	true
 	//	,   south__showOverflowOnHover:	true		
 		,   enableCursorHotkey:         false
-		}); */
+		}); 
 	
 	/*
 		var col3Layout = layoutContainer.panes.east.layout({ 
@@ -446,7 +466,8 @@ define(function(require, exports, module) {
 	exports.updateNewVersionData        = updateNewVersionData;
 	exports.exportFileListCSV           = exportFileListCSV;
 	exports.exportFileListArray         = exportFileListArray;
-	exports.removeFileFromModell        = removeFileFromModell;
+	exports.removeFileModel             = removeFileModel;
+	exports.updateFileModel             = updateFileModel;
 
 	// Proxying functions from tsCoreUI
 	exports.showAlertDialog 			= tsCoreUI.showAlertDialog;
@@ -455,6 +476,7 @@ define(function(require, exports, module) {
 	exports.hideAllDropDownMenus		= tsCoreUI.hideAllDropDownMenus;
 	exports.showFileCreateDialog        = tsCoreUI.showFileCreateDialog;	
 	exports.showFileRenameDialog        = tsCoreUI.showFileRenameDialog;
+    exports.showFileDeleteDialog        = tsCoreUI.showFileDeleteDialog;
 	exports.showLocationsPanel        	= tsCoreUI.showLocationsPanel;
 	exports.showTagsPanel        		= tsCoreUI.showTagsPanel;	
 	exports.showContextMenu        		= tsCoreUI.showContextMenu;
