@@ -11,14 +11,17 @@ define(function(require, exports, module) {
     
     exports.createDirectoryIndex = function(directoryIndex) {
         TSCORE.PerspectiveManager.updateFileBrowserData(directoryIndex);
+        TSCORE.hideLoadingAnimation();        
     };   
     
     exports.createDirectoryTree = function(directoyTree) {
-        TSCORE.PerspectiveManager.updateTreeData(directoyTree); 
+        TSCORE.PerspectiveManager.updateTreeData(directoyTree);
+        TSCORE.hideLoadingAnimation();         
     };    
     
     exports.createDirectory = function() {
         //TODO refresh the directory area
+        TSCORE.hideLoadingAnimation();        
     };
 
     exports.renameFile = function(oldFilePath, newFilePath) {
@@ -26,32 +29,44 @@ define(function(require, exports, module) {
 
         console.log("Last opened Filename: "+lastOpenedFile);
         
-        // TODO handle case in which a file opened for editing and a tag has been added
+        // TODO handle case in which a file opened for editing and a tag has been added / file renamed
         if(TSCORE.FileOpener.isFileOpened() && (oldFilePath == lastOpenedFile) ) {
             TSCORE.FileOpener.openFile(newFilePath);                    
         }
-        // TODO to be replaced with a function which replaces the 
-        // renamed file in the model of the perspective        
-        TSCORE.PerspectiveManager.refreshFileListContainer();
 
-        //TSCORE.removeFileFromModell(TSCORE.fileList, filePath);
-        //TSCORE.PerspectiveManager.updateFileUI(oldFilePath, newFilePath);
+        var oldFileContainingPath = TSCORE.TagUtils.extractContainingDirectoryPath(oldFilePath),
+            newFileConaintingPath = TSCORE.TagUtils.extractContainingDirectoryPath(newFilePath);
+        if(oldFileContainingPath != newFileConaintingPath) {
+            // File was moved
+            //TSCORE.removeFileModel(TSCORE.fileList, filePath);
+            // TODO consider case - file was moved in subdir shown in the recursive search results
+            TSCORE.PerspectiveManager.removeFileUI(oldFilePath);            
+            TSCORE.updateFileModel(TSCORE.fileList, oldFilePath, newFilePath);
+        } else {
+            // File was just renamed
+            TSCORE.updateFileModel(TSCORE.fileList, oldFilePath, newFilePath);
+            TSCORE.PerspectiveManager.updateFileUI(oldFilePath, newFilePath);            
+        } 
+        TSCORE.hideLoadingAnimation();        
     };
         
     exports.loadTextFile = function(content) {
-        TSCORE.FileOpener.updateEditorContent(content);             
+        TSCORE.FileOpener.updateEditorContent(content);
+        TSCORE.hideLoadingAnimation();
     };
     
     exports.saveTextFile = function(filePath) {
         TSCORE.PerspectiveManager.refreshFileListContainer();
         //if(!TSCORE.FileOpener.isFileOpened()) {
             TSCORE.FileOpener.openFile(filePath);                    
-        //}                     
+        //}
+        TSCORE.hideLoadingAnimation();                             
     };
     
     exports.listDirectory = function(anotatedDirList) {
         TSCORE.PerspectiveManager.updateFileBrowserData(anotatedDirList);
         TSCORE.updateSubDirs(anotatedDirList);
+        TSCORE.hideLoadingAnimation();        
     };
 
     exports.errorOpeningPath = function() {
@@ -61,9 +76,10 @@ define(function(require, exports, module) {
     };
     
     exports.deleteElement = function(filePath) {
-        TSCORE.removeFileFromModell(TSCORE.fileList, filePath);
+        TSCORE.removeFileModel(TSCORE.fileList, filePath);
         TSCORE.PerspectiveManager.removeFileUI(filePath);
         TSCORE.closeFileViewer();
+        TSCORE.hideLoadingAnimation();        
     };
     
     exports.checkNewVersion = function(data) {
