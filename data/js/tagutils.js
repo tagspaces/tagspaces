@@ -11,6 +11,7 @@ define(function(require, exports, module) {
     var BEGIN_TAG_CONTAINER = "[",
         END_TAG_CONTAINER = "]",
         TAG_DELIMITER = " ",
+        PREFIX_TAG_CONTAINER = " - ",
         DIR_SEPARATOR = isWindows() ? "\\" : "/";
 
     function isWindows() {
@@ -149,7 +150,7 @@ define(function(require, exports, module) {
         
         var tags = [];
         var beginTagContainer = fileName.indexOf(BEGIN_TAG_CONTAINER);
-        var endTagContainer = fileName.lastIndexOf(END_TAG_CONTAINER);
+        var endTagContainer = fileName.indexOf(END_TAG_CONTAINER);
         if( ( beginTagContainer < 0 ) || ( endTagContainer < 0 ) || ( beginTagContainer >= endTagContainer ) ) {
             console.log("Filename does not contains tags. Aborting extraction.");
             return tags;
@@ -238,7 +239,7 @@ define(function(require, exports, module) {
                 newFileName = fileName +tagsString;  
             } else {
                 // File has an extension
-                newFileName = fileName.substring(0,lastDotPosition)+tagsString+"."+fileExt;  
+                newFileName = fileName.substring(0,lastDotPosition)+PREFIX_TAG_CONTAINER+tagsString+"."+fileExt;  
             }   
         } else {
             // File does not have an extension
