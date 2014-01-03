@@ -316,7 +316,7 @@ define(function (require, exports, module) {
 
         fsRoot.getDirectory(dirPath, {create: true, exclusive: false}, 
            function (dirEntry) {
-                TSPOSTIO.createDirectory();
+                TSPOSTIO.createDirectory(dirPath);
            },
            function (error) {
                 console.log("Creating directory failed: "+dirPath+" failed with error code: " + error.code);
@@ -387,6 +387,34 @@ define(function (require, exports, module) {
         TSCORE.showAlertDialog("Open extensions directory functionality not supported on Android!"); 
     };
     
+    var getFileProperties = function(filePath) {
+        filePath = normalizePath(filePath);
+        var fileProperties = {};
+        fsRoot.getFile(filePath, {create: false, exclusive: false}, 
+            function(entry) {
+                if(entry.isFile) {
+                    entry.file( 
+                        function(file) {
+                            fileProperties.path = entry.fullPath;
+                            fileProperties.size = file.size;
+                            fileProperties.lmdt = file.lastModifiedDate;
+                            fileProperties.mimetype = file.type;
+                            TSPOSTIO.getFileProperties(fileProperties);
+                        },
+                        function() {
+                            console.warn("Error retrieving file properties of "+filePath);                               
+                        }
+                    );
+                } else {
+                    console.warn("Error getting file properties. "+filePath+" is directory");   
+                }
+            },
+            function() {
+                console.log("error getting file");
+            }        
+        );  
+    };
+    
 	exports.createDirectory 			= createDirectory; 
 	exports.renameFile 					= renameFile;
 	exports.loadTextFile 				= loadTextFile;
@@ -402,4 +430,6 @@ define(function (require, exports, module) {
 	exports.openExtensionsDirectory 	= openExtensionsDirectory;
 	exports.checkAccessFileURLAllowed 	= checkAccessFileURLAllowed;
 	exports.checkNewVersion 			= checkNewVersion;	    
+	exports.getFileProperties           = getFileProperties;
+	
 });

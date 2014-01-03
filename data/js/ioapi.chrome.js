@@ -249,7 +249,7 @@ IO-API
         TSCORE.showLoadingAnimation();            
         try {
             nativeIO.createDirectory(dirPath);
-            TSPOSTIO.createDirectory();
+            TSPOSTIO.createDirectory(dirPath);
         } catch(ex) {
             console.error("Deleting file failed "+ex);
         }
@@ -348,6 +348,21 @@ IO-API
 		console.log("Open extensions directory functionality not implemented in chrome yet!");
 		TSCORE.showAlertDialog("Open extensions directory functionality not implemented on chrome yet!"); 
 	};
+
+    var getFileProperties = function(filePath) {
+        var fileProperties = {};
+        if(!nativeIO.isDirectory(filePath)) {
+            fileProperties.path = filePath;
+            fileProperties.size = nativeIO.getFileSize(filePath);
+            fileProperties.lmdt = 0;
+            if(isWin) {
+                fileProperties.lmdt = new Date(nativeIO.getFileLastDateModified(filePath)*1000);                       
+            }                        
+            TSPOSTIO.getFileProperties(fileProperties);
+        } else {
+            console.warn("Error getting file properties. "+filePath+" is directory");   
+        }
+    };
 	
 	exports.createDirectory 			= createDirectory; 
 	exports.renameFile 					= renameFile;
@@ -363,4 +378,6 @@ IO-API
 	exports.openExtensionsDirectory 	= openExtensionsDirectory;
 	exports.checkAccessFileURLAllowed 	= checkAccessFileURLAllowed;
 	exports.checkNewVersion 			= checkNewVersion;	
+    exports.getFileProperties           = getFileProperties; 
+		
 });

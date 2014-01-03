@@ -178,7 +178,7 @@ define(function (require, exports, module) {
             	console.log("Error creating directory: "+err);            	
             } else {
             	console.log("Directory created: "+stat.path);
-				TSPOSTIO.createDirectory();  
+				TSPOSTIO.createDirectory(dirPath);  
             }
         });  
     }; 
@@ -218,6 +218,10 @@ define(function (require, exports, module) {
         TSCORE.showAlertDialog("Open extensions directory functionality not supported in the Dropbox mode!"); 
     };
     
+    var getFileProperties = function(filePath) {
+        console.log("getFileProperties not implemented for dropbox");
+    };        
+    
     exports.init						= init;
     
 	exports.createDirectory 			= createDirectory; 
@@ -233,5 +237,7 @@ define(function (require, exports, module) {
 	exports.selectFile 					= selectFile;
 	exports.openExtensionsDirectory 	= openExtensionsDirectory;
 	exports.checkAccessFileURLAllowed 	= checkAccessFileURLAllowed;
-	exports.checkNewVersion 			= checkNewVersion;	    
+	exports.checkNewVersion 			= checkNewVersion;	
+    exports.getFileProperties           = getFileProperties;  	
+	    
 });

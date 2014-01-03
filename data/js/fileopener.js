@@ -193,19 +193,19 @@ define(function(require, exports, module) {
 	    $( "#viewer" ).empty();
 	    
 	    TSCORE.IO.checkAccessFileURLAllowed();
+	    
+	    TSCORE.IO.getFileProperties(filePath.replace("\\\\","\\"));
         
         if(!viewerExt) {
 	        $( "#viewer" ).html("<div class='alert alert-info'><strong>Info</strong> File type not supported for viewing.</div>");        
 	    } else if (viewerExt == "viewerBrowser") {
-	        var filePathURI = undefined;
-	        
-	        //TODO minimize platform specific calls
-	        if(isCordova) {
+            var filePathURI = undefined;
+            if(isCordova) {
                 filePathURI = filePath;            
-	        } else {
+            } else {
                 filePathURI = "file:///"+filePath;  
-	        }
-
+            }
+            
 		    $('#viewer').append($('<iframe>', {
 		    	id: "iframeViewer",
 				src: filePathURI

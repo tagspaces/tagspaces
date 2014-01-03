@@ -11,22 +11,6 @@ define(function(require, exports, module) {
 	
 	var TSPOSTIO = require("tspostioapi");
 	
-/* stats for file:
-  dev: 2114,
-  ino: 48064969,
-  mode: 33188,
-  nlink: 1,
-  uid: 85,
-  gid: 100,
-  rdev: 0,
-  size: 527,
-  blksize: 4096,
-  blocks: 8,
-  atime: Mon, 10 Oct 2011 23:24:11 GMT,
-  mtime: Mon, 10 Oct 2011 23:24:11 GMT,
-  ctime: Mon, 10 Oct 2011 23:24:11 GMT 
-*/
-	
 	function scanDirectory(dirPath, index) {
 	    try {
             var dirList = fs.readdirSync(dirPath);
@@ -93,26 +77,26 @@ define(function(require, exports, module) {
             console.error("Scanning directory "+dirPath+" failed "+ex);
         }         
     }
-
+/*
     var getFileSize = function(filePath) {
         console.log("Get filesize of: "+filePath);
         var stats = fs.statSync(filePath);
         return stats.size;
-        //TSPOSTIO.createDirectoryIndex(directoryIndex);
+        //TSPOSTIO.
     };   
 
     var getLMDT = function(filePath) {
         console.log("Get last modified date time of: "+filePath);
         var stats = fs.statSync(filePath);
         return stats.mtime;
-        //TSPOSTIO.createDirectoryIndex(directoryIndex);
+        //TSPOSTIO.
     };
 
     var directoryExist = function(dirPath) {
         console.log("Checks if a directory exist: "+dirPath);
 
-        //TSPOSTIO.createDirectoryIndex(directoryIndex);
-    };
+        //TSPOSTIO.
+    }; */
 	
     var createDirectoryIndex = function(dirPath) {
         console.log("Creating index for directory: "+dirPath);
@@ -142,7 +126,7 @@ define(function(require, exports, module) {
                 console.log("Creating directory "+dirPath+" failed "+error);
                 return;
             }
-            TSPOSTIO.createDirectory();
+            TSPOSTIO.createDirectory(dirPath);
         });         
 	};
 
@@ -300,6 +284,34 @@ define(function(require, exports, module) {
         console.log("Open extensions directory functionality not implemented on chrome yet!");
         TSCORE.showAlertDialog("Open extensions directory functionality not implemented on chrome yet!"); 
     };
+
+/* stats for file:
+  dev: 2114,
+  ino: 48064969,
+  mode: 33188,
+  nlink: 1,
+  uid: 85,
+  gid: 100,
+  rdev: 0,
+  size: 527,
+  blksize: 4096,
+  blocks: 8,
+  atime: Mon, 10 Oct 2011 23:24:11 GMT,
+  mtime: Mon, 10 Oct 2011 23:24:11 GMT,
+  ctime: Mon, 10 Oct 2011 23:24:11 GMT 
+*/    
+    var getFileProperties = function(filePath) {
+        var fileProperties = {};
+        var stats = fs.statSync(filePath);
+        if (stats.isFile()) {
+            fileProperties.path = filePath;
+            fileProperties.size = stats.size;
+            fileProperties.lmdt = stats.mtime;
+            TSPOSTIO.getFileProperties(fileProperties);
+        } else {
+            console.warn("Error getting file properties. "+filePath+" is directory");   
+        }        
+    };    
     
 	exports.createDirectory 			= createDirectory; 
 	exports.renameFile 					= renameFile;
@@ -316,5 +328,6 @@ define(function(require, exports, module) {
 	exports.openExtensionsDirectory 	= openExtensionsDirectory;
 	exports.checkAccessFileURLAllowed 	= checkAccessFileURLAllowed;
 	exports.checkNewVersion 			= checkNewVersion;
+    exports.getFileProperties           = getFileProperties;  	
 
 });

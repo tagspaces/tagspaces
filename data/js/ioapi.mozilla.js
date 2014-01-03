@@ -22,7 +22,7 @@ define(function(require, exports, module) {
                     console.log("Loading settings...: "+JSON.stringify(message.content));
                     TSCORE.Config.updateSettingMozillaPreferences(message.content);
     
-                    TSCORE.initConnections();
+                    TSCORE.initLocations();
                     TSCORE.generateTagGroups();
                       
                 } catch (ex) {
@@ -55,7 +55,7 @@ define(function(require, exports, module) {
             break;
           case "createDirectory":
             if(message.success){
-                TSPOSTIO.createDirectory();
+                TSPOSTIO.createDirectory(message.content);
             } else {
                 TSCORE.updateLogger("Create dir failed");        
             }
@@ -107,7 +107,13 @@ define(function(require, exports, module) {
             if(message.success){
                 TSPOSTIO.checkNewVersion(message.content);
             } else {
-                TSCORE.updateLogger("Create dir failed");        
+                TSCORE.updateLogger("Checking for new version failed.");        
+            }
+          case "getFileProperties":
+            if(message.success){
+                TSPOSTIO.getFileProperties(message.content);
+            } else {
+                TSCORE.updateLogger("Getting file properties failed.");        
             }
             break;                  
           default:
@@ -277,6 +283,17 @@ define(function(require, exports, module) {
         document.documentElement.dispatchEvent(event);  
     };
     
+    var getFileProperties = function(filePath) {
+        console.log("Getting file properties...");
+        TSCORE.showLoadingAnimation();   
+        var event = document.createEvent('CustomEvent');
+        event.initCustomEvent("addon-message", true, true, {"detail":{
+            "command": "getFileProperties",
+            "path": filePath            
+        }});
+        document.documentElement.dispatchEvent(event);  
+    };    
+    
     exports.saveSettings 				= saveSettings;
     exports.loadSettings 				= loadSettings;
     
@@ -293,6 +310,7 @@ define(function(require, exports, module) {
 	exports.selectFile 					= selectFile;
 	exports.openExtensionsDirectory 	= openExtensionsDirectory;
 	exports.checkAccessFileURLAllowed 	= checkAccessFileURLAllowed;
-	exports.checkNewVersion 			= checkNewVersion;	    
+	exports.checkNewVersion 			= checkNewVersion;	
+	exports.getFileProperties           = getFileProperties;    
 
 });

@@ -20,8 +20,9 @@ define(function(require, exports, module) {
         //TSCORE.hideLoadingAnimation();         
     };    
     
-    exports.createDirectory = function() {
-        //TODO refresh the directory area
+    exports.createDirectory = function(dirPath) {
+        //TODO evtl navigate to parent dir
+        TSCORE.navigateToDirectory(dirPath);
         TSCORE.hideLoadingAnimation();        
     };
 
@@ -107,4 +108,9 @@ define(function(require, exports, module) {
     exports.openExtensionsDirectory = function() {
     
     };
+    
+    exports.getFileProperties = function(fileProperties) {
+        console.log("File properties: "+JSON.stringify(fileProperties));
+    };
+    
 });
