@@ -20,9 +20,12 @@ define(function(require, exports, module) {
 	    var alertModal = $('#alertDialog');	
         alertModal.find('h4').text(title);        
         alertModal.find('.modal-body').text(message);
-	    alertModal.find('#okButton').click(function(event) {
-	       alertModal.modal('hide');
-	    });
+	    alertModal.find('#okButton')
+	       .off('click')
+	       .click(function(event) {
+	           alertModal.modal('hide');
+	       }
+	    );
 	
 	    alertModal.modal('show');
 	};	
@@ -34,16 +37,22 @@ define(function(require, exports, module) {
 	    var confirmModal = $('#confirmDialog');
         confirmModal.find('h4').text(title);    	
 	    confirmModal.find('.modal-body').text(message);
-	    confirmModal.find('#okButton').click(function(event) {
-	      okCallback();
-	      confirmModal.modal('hide');
-	    });
-        confirmModal.find('#cancelButton').click(function(event) {
-          if(cancelCallback != undefined) {
-            cancelCallback();              
-          }
-          confirmModal.modal('hide');
-        });
+	    confirmModal.find('#okButton')
+	       .off('click')
+	       .click(function(event) {
+	           okCallback();
+	           confirmModal.modal('hide');
+	       }
+	    );
+        confirmModal.find('#cancelButton')
+           .off('click')
+           .click(function(event) {
+               if(cancelCallback != undefined) {
+                   cancelCallback();              
+               }
+               confirmModal.modal('hide');
+            }
+        );
 	
 	    confirmModal.modal('show');     
 	};	
@@ -381,8 +390,11 @@ define(function(require, exports, module) {
                 $("#silterBox").val("");    
                 $("#clearFilterButton").removeClass("filterOn");                            
                 TSCORE.Search.nextQuery = "";
-                               
-                TSCORE.PerspectiveManager.redrawCurrentPerspective();
+                
+                // Restoring initial dir listing without subdirectories  
+                TSCORE.IO.listDirectory(TSCORE.currentPath);           
+                // Keeps the subdir files    
+                //TSCORE.PerspectiveManager.redrawCurrentPerspective();
             });        
         
         // Search UI END
@@ -416,7 +428,7 @@ define(function(require, exports, module) {
             $("#directoryMenuOpenDirectory").parent().hide();
             $("#fileMenuOpenDirectory").parent().hide();
             $("#fullscreenFile").parent().hide();
-            $("#openDirectory").parent().hide();
+            //$("#openDirectory").parent().hide();
             $("#advancedSettings").hide();
             $("#openFileInNewWindow").hide();
           
@@ -427,6 +439,10 @@ define(function(require, exports, module) {
             $("#openDirectory").parent().hide();
             //$("#advancedSettings").hide();
             $("#openFileInNewWindow").hide();
+            $("#openNatively").hide();            
+        }
+        if(isFirefox) {
+            $("#openNatively").hide();                   
         }
     };	
 
