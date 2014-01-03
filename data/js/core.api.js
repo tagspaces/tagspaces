@@ -65,7 +65,7 @@ define(function(require, exports, module) {
         tsTagsUI.initUI();      
         tsTagsUI.generateTagGroups();
         tsDirectoriesUI.initUI();
-        tsDirectoriesUI.initConnections();
+        tsDirectoriesUI.initLocations();
         tsFileOpener.initUI();
 		tsPersManager.initPerspectives();                 
 	    
@@ -494,9 +494,10 @@ define(function(require, exports, module) {
 
 	// Proxying functions from directoriesUI 
 	exports.updateSubDirs 				= tsDirectoriesUI.updateSubDirs;
-	exports.initConnections 			= tsDirectoriesUI.initConnections;
+	exports.initLocations 			    = tsDirectoriesUI.initLocations;
 	exports.showCreateDirectoryDialog   = tsDirectoriesUI.showCreateDirectoryDialog;
     exports.closeCurrentLocation        = tsDirectoriesUI.closeCurrentLocation;
+    exports.navigateToDirectory         = tsDirectoriesUI.navigateToDirectory; 
 
 	// Public variables definition
 	exports.currentPath 				= currentPath;

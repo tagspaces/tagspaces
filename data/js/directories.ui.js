@@ -312,7 +312,7 @@ define(function(require, exports, module) {
         $( "#locationName" ).prop('disabled', false);
         $( "#selectLocation" ).prop('disabled', false); 
                         
-        initConnections();  
+        initLocations();  
         openLocation(locationPath);                                 
     }
 
@@ -323,7 +323,7 @@ define(function(require, exports, module) {
              $("#folderLocation2").val(),
              $("#locationPerspective2").val()
         );
-        initConnections();  
+        initLocations();  
         openLocation($("#folderLocation2").val());                                         
     }
 
@@ -421,7 +421,7 @@ define(function(require, exports, module) {
 			            // bValid = bValid && checkRegexp( password, /^([0-9a-zA-Z])+$/, "Password field only allow : a-z 0-9" );
 			            if ( bValid ) {
 			                TSCORE.IO.createDirectory(dir4ContextMenu+TSCORE.TagUtils.DIR_SEPARATOR+$( "#newDirectoryName" ).val());
-			                navigateToDirectory(dir4ContextMenu);
+			                //navigateToDirectory(dir4ContextMenu);
 			            }
 			        });   			     	            
 		     	}
@@ -434,7 +434,7 @@ define(function(require, exports, module) {
         console.log("Deleting folder connection..");
         TSCORE.Config.deleteLocation(name);
         
-        initConnections();
+        initLocations();
         
         //Opens the first location in the settings after deleting a location  
         if(TSCORE.Config.Settings["tagspacesList"].length > 0) {
@@ -461,7 +461,7 @@ define(function(require, exports, module) {
 		);
     }             
     
-    function initConnections() {
+    function initLocations() {
         console.log("Creating location menu...");
         
         var $connectionList = $( "#connectionsList" ); 
@@ -516,11 +516,12 @@ define(function(require, exports, module) {
     }
 
     // Public API definition
-    exports.openLocation             = openLocation;
+    exports.openLocation               = openLocation;
     exports.closeCurrentLocation       = closeCurrentLocation;
     exports.updateSubDirs              = updateSubDirs;
     exports.initUI 		               = initUI;
-    exports.initConnections            = initConnections;
+    exports.initLocations              = initLocations;
     exports.showCreateDirectoryDialog  = showCreateDirectoryDialog;
+    exports.navigateToDirectory        = navigateToDirectory;
     
 });
