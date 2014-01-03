@@ -37,7 +37,7 @@ define(function(require, exports, module) {
 	
 	var platformTuning = function() {
 		if(isCordova) {
-			$("#"+extensionID+"IncludeSubDirsButton").hide();
+			//$("#"+extensionID+"IncludeSubDirsButton").hide();
 			//$("#"+extensionID+"ShowFileDetailsButton").hide();
 			//$("#"+extensionID+"ShowTagsButton").hide();							
 		}

@@ -214,6 +214,8 @@ console.log("Loading UI for perspectiveList");
 
 	    // Load new filtered data
 	    this.searchResults = TSCORE.Search.searchData(TSCORE.fileList, TSCORE.Search.nextQuery);
+
+        $("#statusBar").text(this.searchResults.length+" files found here");
 	    
 	    this.fileTable.fnAddData( this.searchResults );
 
@@ -303,7 +305,7 @@ console.log("Loading UI for perspectiveList");
 	    $("#"+this.extensionID+"TagButton" ).prop('disabled', true);
 	    
         this.refreshThumbnails();
-        TSCORE.hideLoadingAnimation();          
+        //TSCORE.hideLoadingAnimation();          
 	};
 	
     // Helper function user by basic and search views
@@ -448,7 +450,7 @@ console.log("Loading UI for perspectiveList");
 	};
 	
     ExtUI.prototype.removeFileUI = function(filePath) {
-        console.log("Removing file from UI");
+        console.log("Removing "+filePath+" from UI");
         $("#"+this.extensionID+"Container button[filepath='"+filePath+"']").parent().parent().remove();
     };	
 
