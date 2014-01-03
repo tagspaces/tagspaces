@@ -105,9 +105,9 @@ can be found in the LICENSE file.
 		            <span class="icon-bar"></span>
 				</button>
 				<div class="form-inline pull-right" disabled="disabled">
-                    <div class="input-group" style="width: 320px; margin-top: 2px;">
+                    <div class="input-group" style="width: 310px; margin-top: 2px;">
                         <input type="text" class="form-control"  style="" id="searchBox" placeholder="Search" title="">
-                        <div class="dropdown-menu" style="width: 310px; padding: 10px; font-size: 13px;" id="searchOptions">
+                        <div class="dropdown-menu" style="width: 300px; padding: 10px; font-size: 13px;" id="searchOptions">
                             <li class="dropdown-header"><span data-i18n="[title]app.searchOptions;">Search Options</span><button type="button" class="close" id="closeSearchOptionButton">×</button></li>                        
                             <li class="divider"></li>
                             <!--div class="form-group">
@@ -149,7 +149,17 @@ can be found in the LICENSE file.
 		</nav>  	
 		<div class="ts-container" id="viewContainers"></div>  
 	</div>
-	<div class="row3"><span id="loadingAnimation"></span></div>		
+	<div class="row3">
+	    <div class="btn-toolbar">
+            <div class="btn-group dropup" id="alternativeNavigator" style="margin: 5px;">
+              <button class="btn btn-default" title="" id=""><i class="fa fa-home"></i>&nbsp;<span class="caret"></span></button>            
+              <!--button class="btn btn-default" title="" id="">2013&nbsp;<span class="caret"></span></button>
+              <button class="btn btn-default" title="" id="">201312&nbsp;<span class="caret"></span></button-->
+            </div>  
+            <div id="statusBar"></div>    
+            <div class="btn btn-link" id="loadingAnimation"></div>
+        </div>
+    </div>		
 </div>
 
 <div class="col3">
@@ -169,7 +179,10 @@ can be found in the LICENSE file.
 				      <li><a id="reloadFile"><i class="fa fa-refresh"></i>&nbsp;<span data-i18n="app.?;">Reload</span></a></li>				      
 					  <li><a id="renameFile"><i class="fa fa-pencil"></i>&nbsp;<span data-i18n="app.?;">Raname File</span></a></li>
 					  <li><a id="deleteFile"><i class="fa fa-trash-o"></i>&nbsp;<span data-i18n="app.?;">Delete File</span></a></li>
-					  <li><a id="openDirectory"><i class="fa fa-folder-open"></i>&nbsp;<span data-i18n="app.?;">Show Containing Folder</span></a></li>
+                      <li><a id="openNatively"><i class="fa fa-external-link-square"></i>&nbsp;<span data-i18n="app.?;">Open Natively</span></a></li>					  
+					  <li><a id="openDirectory"><i class="fa fa-folder-open"></i>&nbsp;<span data-i18n="app.?;">Open Containing Folder</span></a></li>
+                      <li class="divider"></li> 
+                      <li><a id="openProperties"><i class="fa fa-briefcase"></i>&nbsp;<span data-i18n="app.?;">Properties</span></a></li>                     
 				  </ul>
 				</div>
                 <a id="fileTitle"></a>				
@@ -184,7 +197,7 @@ can be found in the LICENSE file.
 			</div>
 			<div id="tagsContainer" class="ui-droppable">
 				<button type="button" title="Add tags" style="height: 22px; width: 35px" class="btn btn-small extTagButton dropdown-toggle" data-toggle="dropdown">
-					&nbsp;&nbsp;+<!--i class="fa fa-plus-square"--></i>&nbsp;&nbsp;
+					&nbsp;&nbsp;+<!--i class="fa fa-plus-square"></i-->&nbsp;&nbsp;
 				</button>
 				<ul class="dropdown-menu" id="tagSuggestionsMenu"></ul>
 				<span id="fileTags"></span>
@@ -209,13 +222,14 @@ can be found in the LICENSE file.
 	    <iframe id="aboutIframe" style="width: 100%; height: 280px; border: 0px;" src="about.html"></iframe>
       </div>
       <div class="modal-footer">
-		<button class="btn btn-link" id="openUservoice" title="Suggest or vote for a feature"><i class="fa fa-bullhorn"></i> Suggest Features</button>        
-		<button class="btn btn-link" id="openGitHubIssues" title="Report a issue or enhancement"><i class="fa fa-flag"></i> Report Issue</button>
-		<button class="btn btn-link" id="openTwitter" title="Tweet about @tagspaces"><i class="fa fa-twitter"></i> Tweet</button>
-		<a class="btn btn-link" href="mailto:info@tagspaces.org" title="Send email to the developers"><i class="fa fa-envelope-o"></i><!-- Contact Developers--></a>
-      	
+        <div class="btn-group">          
+    		<button class="btn btn-link" id="openUservoice" title="Suggest or vote for a feature"><i class="fa fa-bullhorn"></i> New Features</button>        
+    		<button class="btn btn-link" id="openGitHubIssues" title="Report a issue or enhancement"><i class="fa fa-flag"></i> Report Issue</button>
+    		<button class="btn btn-link" id="openTwitter" title="Tweet about @tagspaces"><i class="fa fa-twitter"></i> Tweet</button>
+    		<a class="btn btn-link" href="mailto:info@tagspaces.org" title="Send email to the developers"><i class="fa fa-envelope-o"></i> Contact Us</a>
+      	</div>
 	    <button class="btn" id="aboutDialogBack"><i class="fa fa-arrow-circle-left"></i></button>
-	    <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Close</button>
+	    <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Ok</button>
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
@@ -294,20 +308,6 @@ can be found in the LICENSE file.
 	    </div>
 	    <div class="modal-body form">
 	        <div class="form-group">
-	            <label class="control-label" for="fileTypeChooser">Type</label><br>
-                <div class="btn-group" data-toggle="buttons" name="fileTypeChooser">
-				  <label class="btn btn-default active" id="txtFileTypeButton" title="Create a TXT File">
-				    <input type="radio" name="options"> Plain Text
-				  </label>
-				  <label class="btn btn-default" id="htmlFileTypeButton" title="Create a HTML File">
-				    <input type="radio" name="options"> Rich Text
-				  </label>
-				  <label class="btn btn-default" id="mdFileTypeButton" title="Create a MarkDown File">
-				    <input type="radio" name="options"> MarkDown
-				  </label>
-                </div>
-	        </div>
-	        <div class="form-group">
 	            <label class="control-label" for="newFileName">Title</label>
                 <input type="text" id="newFileName" class="form-control" placeholder="Title of the file">
 	        </div>
@@ -315,6 +315,20 @@ can be found in the LICENSE file.
 	            <label class="control-label" for="newFileNameTags">Tags</label>
                 <input type="text" id="newFileNameTags" name="newFileNameTags" autocomplete="off" class="form-control" placeholder="List of tags">
 	        </div>
+            <div class="form-group">
+                <label class="control-label" for="fileTypeChooser">Type</label><br>
+                <div class="btn-group" data-toggle="buttons" name="fileTypeChooser">
+                  <label class="btn btn-default active" id="txtFileTypeButton" title="Create a TXT File">
+                    <input type="radio" name="options"> Plain Text (.txt)
+                  </label>
+                  <label class="btn btn-default" id="htmlFileTypeButton" title="Create a HTML File">
+                    <input type="radio" name="options"> Rich Text (.html)
+                  </label>
+                  <label class="btn btn-default" id="mdFileTypeButton" title="Create a MarkDown File">
+                    <input type="radio" name="options"> MarkDown (.md)
+                  </label>
+                </div>
+            </div>
 	        <div class="form-group">
 		      <label class="checkbox">
 		        <input type="checkbox" id="tagWithCurrentDate"> Tag with current date (e.g. 20131210 for the 10th of December, 2013)

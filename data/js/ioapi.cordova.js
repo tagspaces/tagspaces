@@ -32,15 +32,11 @@ define(function (require, exports, module) {
         );
     }
 
-    // TODO recursivly calling callback not working        
-    var anotatedDirListing = undefined;
-    var pendingRecursions = 0;
+    // TODO recursively calling callback not really working        
     function scanDirectory(entries) {
-	    var i;
-	    pendingRecursions++;
-	    var recursionStarted = false;
-	    for (i = 0; i < entries.length; i++) {
-	       if (entries[i].isFile) {
+        var i;
+        for (i = 0; i < entries.length; i++) {
+           if (entries[i].isFile) {
                console.log("File: "+entries[i].name);
                anotatedDirListing.push({
                    "name":   entries[i].name,
@@ -49,31 +45,26 @@ define(function (require, exports, module) {
                    "lmdt":   "", // 
                    "path":   entries[i].fullPath
                });                
-	       } else {
-	           var directoryReader = entries[i].createReader();
-	           directoryReader.readEntries(
-	           	   scanDirectory,
-		           function (error) {
-		                console.log("Error reading dir entries: " + error.code);
-		           } );
-	           recursionStarted = true;
-	       }
-	    }
-	    if(!recursionStarted) {
-	    	pendingRecursions--;	    	
-	    }
-        if(pendingRecursions == 0) {
-       		TSPOSTIO.createDirectoryIndex(anotatedDirListing);
+           } else {
+               var directoryReader = entries[i].createReader();
+               pendingRecursions++;
+               directoryReader.readEntries(
+                   scanDirectory,
+                   function (error) {
+                        console.log("Error reading dir entries: " + error.code);
+                   } );
+           }
         }
+        pendingRecursions--;            
+        console.log("Pending recursions: " + pendingRecursions);   
+        if(pendingRecursions <= 0) {
+       		TSPOSTIO.createDirectoryIndex(anotatedDirListing);
+        }     
     }
     
-    // TODO recursivly calling callback not working
-    function generateDirectoryTree(dirPath) {        
-
-    }  
-    
+    var anotatedDirListing = undefined;
+    var pendingRecursions = 0;
     var createDirectoryIndex = function(dirPath) {
-        //TSCORE.showAlertDialog("Creating directory index is not supported on Android yet.");  
         dirPath = dirPath+"/"; // TODO make it platform independent
         dirPath = normalizePath(dirPath);
         console.log("Creating index for directory: "+dirPath);
@@ -84,6 +75,7 @@ define(function (require, exports, module) {
                 var directoryReader = dirEntry.createReader();
         
                 // Get a list of all the entries in the directory
+                pendingRecursions++;
                 directoryReader.readEntries(
  					scanDirectory, 
  					function (error) { // error get file system
@@ -96,13 +88,43 @@ define(function (require, exports, module) {
            }                
         );       
     };
-    
+
+    function generateDirectoryTree(entries) {
+        var tree = {};        
+        var i;
+        for (i = 0; i < entries.length; i++) {
+           if (entries[i].isFile) {
+               console.log("File: "+entries[i].name);
+               tree["children"].push({
+                   "name":   entries[i].name,
+                   "isFile": entries[i].isFile,
+                   "size":   "", // TODO
+                   "lmdt":   "", // 
+                   "path":   entries[i].fullPath
+               });                
+           } else {
+               var directoryReader = entries[i].createReader();
+               pendingCallbacks++;
+               directoryReader.readEntries(
+                   generateDirectoryTree,
+                   function (error) {
+                        console.log("Error reading dir entries: " + error.code);
+                   } );
+           }
+        }
+        pendingCallbacks--;            
+        console.log("Pending recursions: " + pendingCallbacks);   
+        if(pendingCallbacks <= 0) {
+            TSPOSTIO.createDirectoryTree(anotatedTree);
+        }     
+    }  
+
+    var anotatedTree = undefined;
+    var pendingCallbacks = 0;    
     var createDirectoryTree = function(dirPath) {
         console.log("Creating directory index for: "+dirPath);
-        TSCORE.showAlertDialog("Creating directory tree is not supported on Android yet.");                 
-/*        var directoyTree = generateDirectoryTree(dirPath);
-        //console.log(JSON.stringify(directoyTree));
-        TSPOSTIO.createDirectoryTree(directoyTree);*/
+        //TSCORE.showAlertDialog("Creating directory tree is not supported on Android yet.");                 
+
     };     
     
     function isWindows() {
@@ -211,21 +233,21 @@ define(function (require, exports, module) {
         ); 
     };
 
-    var deleteElement = function(path) {
-        console.log("Deleting: "+path);
+    var deleteElement = function(filePath) {
+        console.log("Deleting: "+filePath);
         TSCORE.showLoadingAnimation();  
         
-        path = normalizePath(path);
+        var path = normalizePath(filePath);
  
         fsRoot.getFile(path, {create: false, exclusive: false}, 
             function(entry) {
                 entry.remove(
                     function() {
                         console.log("file deleted: "+path);
-                        TSPOSTIO.deleteElement(path);                           
+                        TSPOSTIO.deleteElement(filePath);                           
                     },
                     function() {
-                        console.log("error deleting: "+path);
+                        console.log("error deleting: "+filePath);
                     }                                  
                 );
             },
@@ -351,6 +373,14 @@ define(function (require, exports, module) {
     
     var openDirectory = function(dirPath) {
         TSCORE.showAlertDialog("Select file functionality not supported on Android!");
+        //dirPath = normalizePath(dirPath);
+        //window.open(dirPath,"_blank", "location=no");        
+    };
+
+    var openFile = function(filePath) {
+        console.log("Opening natively: "+filePath);
+        window.plugins.fileOpener.open(filePath);
+        //window.open(filePath,"_blank", "location=no");
     };
     
     var openExtensionsDirectory = function() {
@@ -367,6 +397,7 @@ define(function (require, exports, module) {
     exports.createDirectoryTree 		= createDirectoryTree;
 	exports.selectDirectory 			= selectDirectory;
 	exports.openDirectory				= openDirectory;
+	exports.openFile                    = openFile;
 	exports.selectFile 					= selectFile;
 	exports.openExtensionsDirectory 	= openExtensionsDirectory;
 	exports.checkAccessFileURLAllowed 	= checkAccessFileURLAllowed;

@@ -275,7 +275,12 @@ define(function(require, exports, module) {
     };
     
     var openDirectory = function(dirPath) {
-        gui.Shell.openItem(dirPath);
+        gui.Shell.showItemInFolder(dirPath);
+    };
+
+    var openFile = function(filePath) {
+        // TODO prevent opening executables in windows
+        gui.Shell.openItem(filePath);
     };
 
     var selectFile = function() {
@@ -306,6 +311,7 @@ define(function(require, exports, module) {
     exports.createDirectoryTree 		= createDirectoryTree;
 	exports.selectDirectory 			= selectDirectory;
 	exports.openDirectory				= openDirectory;
+    exports.openFile                    = openFile;
 	exports.selectFile 					= selectFile;
 	exports.openExtensionsDirectory 	= openExtensionsDirectory;
 	exports.checkAccessFileURLAllowed 	= checkAccessFileURLAllowed;
