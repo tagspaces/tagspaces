@@ -89,13 +89,13 @@ var initPerspectiveSwitcher = function() {
     
         // Adding event listener & icon to the radio button
         $( "#"+curPers.ID+"Button" ).click(function() { 
-            changeView($(this).attr("viewid"));
+            changePerspective($(this).attr("viewid"));
         });   
     };     
 
     if(perspectives.length > 0) {
         TSCORE.currentView = perspectives[0].ID;       
-        changeView(TSCORE.currentView);
+        changePerspective(TSCORE.currentView);
     }
 };
 
@@ -199,7 +199,7 @@ var updateFileBrowserData = function(dirList) {
             }
         }
     }    
-    changeView(TSCORE.currentView);    
+    changePerspective(TSCORE.currentView);    
 };
 
 var refreshFileListContainer = function() {
@@ -207,7 +207,7 @@ var refreshFileListContainer = function() {
     TSCORE.IO.listDirectory(TSCORE.currentPath);  
 };
 
-var changeView = function (viewType) {
+var changePerspective = function (viewType) {
     console.log("Change to "+viewType+" view.");
     TSCORE.showLoadingAnimation();
        
@@ -266,5 +266,6 @@ exports.refreshFileListContainer	 = refreshFileListContainer;
 exports.clearSelectedFiles			 = clearSelectedFiles;
 exports.removeFileUI                 = removeFileUI;
 exports.updateFileUI                 = updateFileUI;
+exports.changePerspective            = changePerspective;
 
 });
