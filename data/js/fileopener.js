@@ -76,11 +76,6 @@ define(function(require, exports, module) {
                 $('iframe').get(0).contentWindow.print();
             });   
         
-        $( "#openDirectory" )
-            .click( function() {
-                TSCORE.IO.openDirectory(TSCORE.currentPath);
-            }); 
-        
         $( "#renameFile" )
             .click( function() {
                 TSCORE.showFileRenameDialog(_openedFilePath);
@@ -95,6 +90,16 @@ define(function(require, exports, module) {
             .click( function() {
                 TSCORE.showFileDeleteDialog(_openedFilePath);
             });             
+
+        $( "#openNatively" )
+            .click( function() {
+                TSCORE.IO.openFile(_openedFilePath);
+            }); 
+
+        $( "#openDirectory" )
+            .click( function() {
+                TSCORE.IO.openDirectory(TSCORE.currentPath);
+            }); 
 
         $( "#fullscreenFile" )
             .click(function() {
@@ -129,13 +134,17 @@ define(function(require, exports, module) {
 
     function closeFile() {
         if(_isEditMode) {
-            TSCORE.showConfirmDialog("Confirm","If you confirm, all made changes will be lost.", function() {
-                // Cleaning the viewer/editor
-                document.getElementById("viewer").innerHTML = "";
-                TSCORE.FileOpener.setFileOpened(false);
-                TSCORE.closeFileViewer();
-                _isEditMode = false;                               
-            });             
+            TSCORE.showConfirmDialog(
+                "Confirm",
+                "If you confirm, all made changes will be lost.", 
+                function() {
+                    // Cleaning the viewer/editor
+                    document.getElementById("viewer").innerHTML = "";
+                    TSCORE.FileOpener.setFileOpened(false);
+                    TSCORE.closeFileViewer();
+                    _isEditMode = false;                               
+                }
+            );             
         } else {
             // Cleaning the viewer/editor
             document.getElementById("viewer").innerHTML = "";

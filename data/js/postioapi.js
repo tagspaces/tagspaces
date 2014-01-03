@@ -10,13 +10,14 @@ define(function(require, exports, module) {
     var TSCORE = require("tscore");
     
     exports.createDirectoryIndex = function(directoryIndex) {
+        console.log("Directory index created");
         TSCORE.PerspectiveManager.updateFileBrowserData(directoryIndex);
-        TSCORE.hideLoadingAnimation();        
+        //TSCORE.hideLoadingAnimation();        
     };   
     
     exports.createDirectoryTree = function(directoyTree) {
         TSCORE.PerspectiveManager.updateTreeData(directoyTree);
-        TSCORE.hideLoadingAnimation();         
+        //TSCORE.hideLoadingAnimation();         
     };    
     
     exports.createDirectory = function() {
@@ -66,7 +67,7 @@ define(function(require, exports, module) {
     exports.listDirectory = function(anotatedDirList) {
         TSCORE.PerspectiveManager.updateFileBrowserData(anotatedDirList);
         TSCORE.updateSubDirs(anotatedDirList);
-        TSCORE.hideLoadingAnimation();        
+        //TSCORE.hideLoadingAnimation();        
     };
 
     exports.errorOpeningPath = function() {

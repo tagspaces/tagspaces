@@ -112,7 +112,7 @@ define(function(require, exports, module) {
         $( "#tagGroupMenuDeleteTagGroup" ).click( function() {
             TSCORE.showConfirmDialog(
                 "Delete TagGroup",
-                "Do you want to delete this taggroup?",
+                "Do you want to delete taggroup '"+TSCORE.selectedTagData.title+"' ?",
                 function() {
                     TSCORE.Config.deleteTagGroup(TSCORE.selectedTagData);
                     generateTagGroups();                              
