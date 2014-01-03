@@ -403,6 +403,7 @@ console.log("Loading UI for perspectiveDefault");
     };
 
     ExtUI.prototype.reInit = function() {
+
         // Clear old data
         this.viewContainer.empty();
         this.viewFooter.empty();
@@ -414,6 +415,9 @@ console.log("Loading UI for perspectiveDefault");
 
         // Load new filtered data
         this.searchResults = TSCORE.Search.searchData(TSCORE.fileList, TSCORE.Search.nextQuery);
+
+        // Updating status bar
+        $("#statusBar").text(this.searchResults.length+" files found here");
 
         if(this.searchResults.length == 0) {
             this.viewFooter.html("<div class='searchSummary'>No files found.</div>");            
@@ -619,7 +623,7 @@ console.log("Loading UI for perspectiveDefault");
     };
 
     ExtUI.prototype.removeFileUI = function(filePath) {
-        console.log("Removing file from UI");
+        console.log("Removing "+filePath+" from UI");
         $("#"+this.extensionID+"Container li[filepath='"+filePath+"']").remove();
     };
     
