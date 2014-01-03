@@ -111,6 +111,7 @@ define(function(require, exports, module) {
     
     exports.getFileProperties = function(fileProperties) {
         console.log("File properties: "+JSON.stringify(fileProperties));
+        TSCORE.FileOpener.setFileProperties(fileProperties);
     };
     
 });

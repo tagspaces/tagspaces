@@ -10,6 +10,8 @@ define(function(require, exports, module) {
 
 	var _openedFilePath = undefined; 
 	
+	var _openedFileProperties = undefined;
+	
 	var _isFileOpened = false;	
 
 	var _tsEditor = undefined;
@@ -113,7 +115,12 @@ define(function(require, exports, module) {
                 else if (docElm.webkitRequestFullScreen) {
                     docElm.webkitRequestFullScreen();
                 }
-            });           
+            }); 
+                      
+        $( "#openProperties" )
+            .click( function() {
+                showFilePropertiesDialog();
+            }); 
     }
 
 	function isFileEdited() {
@@ -219,7 +226,6 @@ define(function(require, exports, module) {
 
         updateUI();  
         initTagSuggestionMenu(filePath);
-
 	    
         // Clearing file selection on file load and adding the current file path to the selection
         TSCORE.PerspectiveManager.clearSelectedFiles();
@@ -228,6 +234,10 @@ define(function(require, exports, module) {
 	    TSCORE.FileOpener.setFileOpened(true); 
 		TSCORE.openFileViewer();
 	} 
+	
+    function setFileProperties(fileProperties) {
+        _openedFileProperties = fileProperties;            
+    }	
 	
 	function updateEditorContent(fileContent) {
 	    console.log("Updating editor"); // with data: "+fileContent); 
@@ -380,6 +390,24 @@ define(function(require, exports, module) {
 	        }         
 	    };
 	}
+	
+    function showFilePropertiesDialog() {
+        require([
+              "text!templates/FilePropertiesDialog.html",
+            ], function(uiTPL) {
+                if($("#dialogFileProperties").length < 1) {                
+                    var uiTemplate = Handlebars.compile( uiTPL );
+                    $('body').append(uiTemplate());    
+                    $('#filePathProperty').attr("readonly", true);
+                    $('#fileSizeProperty').attr("readonly", true);
+                    $('#fileLMDTProperty').attr("readonly", true);                                         
+                }
+                $("#filePathProperty").val(_openedFileProperties.path);
+                $("#fileSizeProperty").val(_openedFileProperties.size);
+                $("#fileLMDTProperty").val(new Date(_openedFileProperties.lmdt));                                
+                $('#dialogFileProperties').modal({show: true});        
+        });
+    } 	
   
     // Public API definition 
     exports.initUI                              = initUI;
@@ -388,5 +416,7 @@ define(function(require, exports, module) {
     exports.isFileEdited 						= isFileEdited;
     exports.setFileOpened						= setFileOpened;
     exports.getOpenedFilePath             		= getOpenedFilePath;  
-    exports.updateEditorContent                 = updateEditorContent;                                                          
+    exports.updateEditorContent                 = updateEditorContent;
+    exports.setFileProperties                   = setFileProperties;
+       
 });
