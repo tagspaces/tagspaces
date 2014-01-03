@@ -96,10 +96,15 @@ user-select: none;
 
 #loadingAnimation {
     display: inline-block;
-    width: 24px;
-    height: 28px;
-    background: url("loading.gif") no-repeat center;   
-    vertical-align: middle; 
+    width: 30px;
+    height: 30px;
+    /* background: url("loading2.gif") no-repeat center;   
+    vertical-align: middle; */
+}
+
+#statusBar {
+    margin-top: 12px;
+    font-size: 14px;
 }
 
 #iframeViewer {
@@ -127,7 +132,7 @@ user-select: none;
     float: left; 
     border: 1px solid #D4D4D4;
     text-align: left;
-    width: 200px; 
+    width: 180px; 
     height: 100px;  
     overflow: hidden;
     position:relative;
@@ -457,7 +462,7 @@ li hr {
 .directoryIcon {
     text-align: left; 
     width: 12%; 
-    padding-left: 1px;
+    padding-left: 5px;
     color: #333 !important;    
 }
 
@@ -698,3 +703,4 @@ input a.resetFilter {
     margin: 1px;
     padding: 1px;
 }
+
