@@ -9,7 +9,7 @@ exports.defaultSettings = {
 	"appVersion": "1.6",
     "appBuild": "1685",
 	"settingsVersion": 2,
-	"newTextFileContent": "File created with TagSpaces!",
+	"newTextFileContent": "Text file created with TagSpaces!",
     "newHTMLFileContent": "<html><head><title>TagSpaces Note</title></head><body>Your notes here...</body></html>",	
 	"newMDFileContent": '#Markdown file created with TagSpaces!',
 	"showUnixHiddenEntries": false, 

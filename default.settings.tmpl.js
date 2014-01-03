@@ -9,7 +9,7 @@ exports.defaultSettings = {
 	"appVersion": "@VERSION@",
     "appBuild": "@BUILD@",
 	"settingsVersion": 2,
-	"newTextFileContent": "File created with TagSpaces!",
+	"newTextFileContent": "Text file created with TagSpaces!",
     "newHTMLFileContent": "<html><head><title>Created with TagSpaces!</title></head><body>Feel free to change this text...</body></html>",	
 	"newMDFileContent": '#Markdown file created with TagSpaces!',
 	"showUnixHiddenEntries": false, 
@@ -97,10 +97,6 @@ exports.defaultSettings = {
 		        },        
 		        {
 		            "title":"paper",
-		            "type":"plain",
-		        },
-		        {
-		            "title":"201XMMDD",
 		            "type":"plain",
 		        }
 		    ]

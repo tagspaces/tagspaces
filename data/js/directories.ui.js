@@ -12,16 +12,16 @@ define(function(require, exports, module) {
     
     var dir4ContextMenu = null;
     
-    var currentLocationName = undefined;
+//    var currentLocationName = undefined;
     
-    function openConnection(path) {
+    function openLocation(path) {
         console.log("Opening connection in : "+path);
     
-        currentLocationName = TSCORE.Config.getConnectionName(path);
+        var currentLocation = TSCORE.Config.getLocation(path);
         
-        document.title = currentLocationName + " | " + TSCORE.Config.DefaultSettings.appName;
+        document.title = currentLocation.name + " | " + TSCORE.Config.DefaultSettings.appName;
     
-        $( "#locationName" ).text(currentLocationName);
+        $( "#locationName" ).text(currentLocation.name);
         $( "#locationName" ).attr("title",path);            
 
         // Open the directory locations panel
@@ -30,6 +30,12 @@ define(function(require, exports, module) {
         // Clears the directory history
         directoryHistory = new Array();
         navigateToDirectory(path);
+
+        // Handle open default perspective for a location
+        var defaultPerspective = currentLocation.perspective;
+        if(defaultPerspective != undefined) {
+            TSCORE.PerspectiveManager.changePerspective(defaultPerspective);
+        }
     }  
     
     // Updates the directory subtree
@@ -291,14 +297,34 @@ define(function(require, exports, module) {
 	        
     }
 
+    function createLocation() {
+        var locationPath = $("#folderLocation").val();        
+        TSCORE.Config.createLocation(
+            $("#connectionName").val(), 
+            locationPath, 
+            $("#locationPerspective").val()
+            );
+        
+        // Enable the UI behavior by not empty location list
+        $( "#createNewLocation" ).attr("title", "Connect New Location");
+        $( "#createNewLocation" ).removeClass("createFirstLocation");
+        $( "#createNewLocation" ).tooltip( "destroy" );             
+        $( "#locationName" ).prop('disabled', false);
+        $( "#selectLocation" ).prop('disabled', false); 
+                        
+        initConnections();  
+        openLocation(locationPath);                                 
+    }
+
     function editLocation() {
-        TSCORE.Config.editConnection(
+        TSCORE.Config.editLocation(
              $("#connectionName2").attr("oldName"), 
              $("#connectionName2").val(), 
-             $("#folderLocation2").val()
+             $("#folderLocation2").val(),
+             $("#locationPerspective2").val()
         );
         initConnections();  
-        openConnection($("#folderLocation2").val());                                         
+        openLocation($("#folderLocation2").val());                                         
     }
 
     function showLocationEditDialog(name,path) {
@@ -313,7 +339,8 @@ define(function(require, exports, module) {
                     $("#selectLocalDirectory2").on("click",function(e) {
                         e.preventDefault();
                         TSCORE.IO.selectDirectory();
-                    });     
+                    }); 
+                    
                     
                     $( "#saveLocationButton" ).on("click", function() {        
                         editLocation();
@@ -324,6 +351,18 @@ define(function(require, exports, module) {
                         showDeleteFolderConnectionDialog();
                     });                                                       
                 }
+
+                var selectedPerspectiveId = TSCORE.Config.getLocation(path).perspective;
+                $("#locationPerspective2").empty();
+                TSCORE.Config.getActivatedPerspectiveExtensions().forEach( function(value) {
+                        if (selectedPerspectiveId == value.id) { 
+                            $("#locationPerspective2").append($("<option>").attr("selected","selected").text(value.id).val(value.id));                
+                        } else {
+                            $("#locationPerspective2").append($("<option>").text(value.id).val(value.id));                    
+                        }    
+                    }            
+                );    
+
                 $("#connectionName2").val(name);
                 $("#connectionName2").attr("oldName",name);
                 $("#folderLocation2").val(path);
@@ -345,19 +384,12 @@ define(function(require, exports, module) {
 			            TSCORE.IO.selectDirectory();
 			        }); 	
 			        
-			        $( "#createFolderConnectionButton" ).on("click", function() {        
-			            var locationPath = $("#folderLocation").val();        
-			            TSCORE.Config.createConnection($("#connectionName").val(), locationPath);
-				   		
-				   		// Disabling the UI behavior by empty location list
-				   		$( "#createNewLocation" ).attr("title", "Connect New Location");
-				    	$( "#createNewLocation" ).removeClass("createFirstLocation");
-				    	$( "#createNewLocation" ).tooltip( "destroy" );             
-					    $( "#locationName" ).prop('disabled', false);
-					    $( "#selectLocation" ).prop('disabled', false);	
-					    	            
-			            initConnections();  
-			            openConnection(locationPath);                                 
+                    TSCORE.Config.getActivatedPerspectiveExtensions().forEach( function(value) {
+                        $("#locationPerspective").append($("<option>").text(value.id).val(value.id));                    
+                    });			        
+			        
+			        $( "#createFolderConnectionButton" ).on("click", function() { 
+			            createLocation();
 			        }); 
             			        
                     if(isCordova) {
@@ -400,13 +432,13 @@ define(function(require, exports, module) {
     
     function deleteLocation(name) {
         console.log("Deleting folder connection..");
-        TSCORE.Config.deleteConnection(name);
+        TSCORE.Config.deleteLocation(name);
         
         initConnections();
         
         //Opens the first location in the settings after deleting a location  
         if(TSCORE.Config.Settings["tagspacesList"].length > 0) {
-        	openConnection(TSCORE.Config.Settings["tagspacesList"][0].path);        	
+        	openLocation(TSCORE.Config.Settings["tagspacesList"][0].path);        	
         } else {
             closeCurrentLocation();      
         }                              				
@@ -414,18 +446,15 @@ define(function(require, exports, module) {
 
     function closeCurrentLocation() {
         console.log("Closing location..");
-        currentLocationName = undefined;
         $("#locationName").text("Choose Location");
         $("#locationName").attr("title","");         
-        $("#locationContent").empty();                   
-
+        $("#locationContent").empty(); 
     }  
-
 
     function showDeleteFolderConnectionDialog(name) {
 		TSCORE.showConfirmDialog(
 			"Delete connection to folder",
-			"Do you want to delete this connection to a folder?",
+			"Do you want to delete the connection "+$("#connectionName2").attr("oldName")+"?",
 			function() {
 			     deleteLocation($("#connectionName2").attr("oldName"));
 			 }
@@ -457,7 +486,7 @@ define(function(require, exports, module) {
                         class:  "btn btn-default"
                         } )
                         .click(function() {
-                            openConnection($(this).attr( "path" ));                           
+                            openLocation($(this).attr( "path" ));                           
                         })
                     	.prepend("<i class='fa fa-bookmark'></i>&nbsp;")                         	
                     )
@@ -483,14 +512,11 @@ define(function(require, exports, module) {
         $( "#createNewLocation" ).click(function() {
             showLocationCreateDialog();         
         });
-        
-        $( "#deleteConnection" ).click(function() {
-            showDeleteFolderConnectionDialog();
-        }); 
+
     }
 
     // Public API definition
-    exports.openConnection             = openConnection;
+    exports.openLocation             = openLocation;
     exports.closeCurrentLocation       = closeCurrentLocation;
     exports.updateSubDirs              = updateSubDirs;
     exports.initUI 		               = initUI;

@@ -31,9 +31,10 @@ define(function(require, exports, module) {
 		 */
 	};
 	
-	var connectionTemplate = {
+	var locationTemplate = {
                 "name": undefined,
-                "path": undefined
+                "path": undefined,
+                "perspective": undefined
            };
 	                        
 	var tagGroupTemplate = {
@@ -274,6 +275,13 @@ define(function(require, exports, module) {
             exports.Settings["ootbPerspectives"] = exports.DefaultSettings["ootbPerspectives"];
         }
         return exports.Settings["ootbPerspectives"];
+    };
+
+    var getActivatedPerspectiveExtensions = function() {
+        if(exports.Settings["perspectives"] == null) {
+            exports.Settings["perspectives"] = exports.DefaultSettings["perspectives"];
+        }
+        return exports.Settings["perspectives"];
     };
 
     var getViewerExtensions = function() {
@@ -571,36 +579,37 @@ define(function(require, exports, module) {
         saveSettings();
 	};		
 	
-	var createConnection = function(name, location) {
-	    var newConnectionModel = JSON.parse( JSON.stringify(connectionTemplate));
+	var createLocation = function(name, location, perspectiveId) {
+	    var newLocationModel = JSON.parse( JSON.stringify(locationTemplate));
 	    name = name.replace("\\", "\\\\");
 	    name = name.replace("\\\\\\", "\\\\");
 	    name = name.replace("\\\\\\\\", "\\\\");   
-	    newConnectionModel.name = name;
-	    newConnectionModel.path = location;
-	    var createLocation = true;
+	    newLocationModel.name = name;
+	    newLocationModel.path = location;
+	    newLocationModel.perspective = perspectiveId;
+	    var createLoc = true;
         exports.Settings["tagspacesList"].forEach(function (value, index) {
-            if(value.path == newConnectionModel.path) {
+            if(value.path == newLocationModel.path) {
                 TSCORE.showAlertDialog("Selected path is already used by a location!","Duplicated Location Path");
-                createLocation = false;
+                createLoc = false;
             }        
-            if(value.name == newConnectionModel.name) {
+            if(value.name == newLocationModel.name) {
                 TSCORE.showAlertDialog("Selected location name is already used by a location!","Duplicated Location Name");
-                createLocation = false;
+                createLoc = false;
             }             
         });  	    
-        if(createLocation) {
-            exports.Settings["tagspacesList"].push(newConnectionModel);
+        if(createLoc) {
+            exports.Settings["tagspacesList"].push(newLocationModel);
             saveSettings();                
         }
 	};
 
-    var editConnection = function(oldName, newName, newLocation) {
+    var editLocation = function(oldName, newName, newLocation, perspectiveId) {
 //        name = name.replace("\\", "\\\\");
 //        name = name.replace("\\\\\\", "\\\\");
 //        name = name.replace("\\\\\\\\", "\\\\");   
         console.log("Old Name: "+oldName+" New Name: "+newName+" New Loc: "+newLocation);
-        var editLocation = true;
+        var editLoc = true;
         exports.Settings["tagspacesList"].forEach(function (value, index) {
             /* if(value.path == newLocation) {
                 TSCORE.showAlertDialog("Selected path is already used by a location!","Duplicated Location Path");
@@ -608,33 +617,32 @@ define(function(require, exports, module) {
             }  */
             if(value.name == newName && value.name != oldName) {
                 TSCORE.showAlertDialog("Selected location name is already used by a location!","Duplicated Location Name");
-                editLocation = false;
+                editLoc = false;
             }             
         });         
-        if(editLocation) {
+        if(editLoc) {
             exports.Settings["tagspacesList"].forEach(function (value, index) {
                 if(value.name == oldName) {
                     value.name = newName;
                     value.path = newLocation;
+                    value.perspective = perspectiveId;
                 }        
             });          
             saveSettings();                
         }
     };
 
-    var getConnectionName = function(connectionPath) {
-        var connectionName = undefined;
+    var getLocation = function(path) {
+        var location;
         exports.Settings["tagspacesList"].forEach(function (value, index) {
-            if(value.path == connectionPath) {
-                connectionName = value.name;
+            if(value.path == path) {
+                location = value;
             }        
         });          
-        if(connectionName != undefined) {
-            return connectionName;                
-        }
+        return location;
     };	
 	
-	var deleteConnection = function(name) {
+	var deleteLocation = function(name) {
 	    for(var i=0; i < exports.Settings["tagspacesList"].length; i++) {
 	            console.log("Traversing connections "+exports.Settings["tagspacesList"][i].name+" searching for "+name);
 	        if(exports.Settings["tagspacesList"][i].name == name) {
@@ -713,6 +721,7 @@ define(function(require, exports, module) {
     exports.setSupportedFileTypes                   = setSupportedFileTypes;
 
     exports.getPerspectiveExtensions                = getPerspectiveExtensions;
+    exports.getActivatedPerspectiveExtensions       = getActivatedPerspectiveExtensions;
     exports.getViewerExtensions                     = getViewerExtensions;
     exports.getEditorExtensions                     = getEditorExtensions;
 
@@ -736,10 +745,10 @@ define(function(require, exports, module) {
     exports.moveTagGroup                            = moveTagGroup;
     exports.createTagGroup                			= createTagGroup;    
     exports.duplicateTagGroup                		= duplicateTagGroup;	
-    exports.createConnection                	    = createConnection;	
-    exports.editConnection                          = editConnection; 
-    exports.deleteConnection                		= deleteConnection;
-    exports.getConnectionName                       = getConnectionName;	
+    exports.createLocation                	        = createLocation;	
+    exports.editLocation                            = editLocation; 
+    exports.deleteLocation                		    = deleteLocation;
+    exports.getLocation                             = getLocation;	
     exports.updateSettingMozillaPreferences         = updateSettingMozillaPreferences;	
     exports.loadSettingsLocalStorage                = loadSettingsLocalStorage;	
     exports.loadDefaultSettings                     = loadDefaultSettings;
