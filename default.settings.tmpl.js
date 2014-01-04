@@ -18,7 +18,7 @@ exports.defaultSettings = {
 	"tagspacesList": [@DEFAULTLOCATIONS@],
     "extensionsPath": "ext",
     "ootbPerspectives": [ 'perspectiveList', 'perspectiveGrid', 'perspectiveGraph' ],
-    "ootbViewers": [ "viewerBrowser", "viewerMD", "viewerImage", "viewerPDF", "editorText" ],
+    "ootbViewers": [ "viewerBrowser", "viewerMD", "viewerImage", "viewerPDF", "editorText", "viewerText" ],
     "ootbEditors": [ "editorHTML", "editorText" ],        
     "perspectives": [
         { "id": "perspectiveList" }, // ID should be equal to the directory name where the extension is located 

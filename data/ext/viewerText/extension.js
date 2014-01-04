@@ -7,10 +7,14 @@ define(function(require, exports, module) {
 
 	console.log("Loading viewerText");
 
-	exports.id = "viewerText"; // ID should be equal to the directory name where the ext. is located   
-	exports.title = "Text Viewer";
-	exports.type = "viewer";
-	exports.supportedFileTypes = [ "*" ];
+    var extensionTitle = "Text Viewer";
+    var extensionID = "viewerText";  // ID should be equal to the directory name where the ext. is located   
+    var extensionType =  "viewer";
+    var extensionIcon = "icon-list";
+    var extensionVersion = "1.0";
+    var extensionManifestVersion = 1;
+    var extensionLicense = "AGPL";
+    var extensionSupportedFileTypes = [ "*" ];
 	
 	var TSCORE = require("tscore");	
 	
@@ -37,14 +41,25 @@ define(function(require, exports, module) {
 	exports.setContent = function(content) {
         $('#'+containerElID).empty();
         $('#'+containerElID).append($('<textarea>', {
-            style: "overflow: auto; height: 100%; margin: 3px; background-color: white; border-width: 0px;",
+            readonly: "true",
+            style: "overflow: auto; height: 100%; width: 100%; font-size: 13px; margin: 3px; background-color: white; border-width: 0px;",
             })
             .append(content)
             ); 
     };
 	
 	exports.getContent = function() {
-		$('#'+containerElID).html(); 
+        console.log("Not implemented");
 	};
+	
+    // Extension Vars
+    exports.Title                   = extensionTitle;
+    exports.ID                      = extensionID;   
+    exports.Type                    = extensionType;
+    exports.Icon                    = extensionIcon;
+    exports.Version                 = extensionVersion;
+    exports.ManifestVersion         = extensionManifestVersion;
+    exports.License                 = extensionLicense; 
+    exports.SupportedFileTypes      = extensionSupportedFileTypes;	
 
 });

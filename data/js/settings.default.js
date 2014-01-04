@@ -6,11 +6,11 @@ define(function(require, exports, module) {
 
 exports.defaultSettings = {
 	"appName": "TagSpaces",
-	"appVersion": "1.6",
-    "appBuild": "1685",
+	"appVersion": "1.7",
+    "appBuild": "1764",
 	"settingsVersion": 2,
 	"newTextFileContent": "Text file created with TagSpaces!",
-    "newHTMLFileContent": "<html><head><title>TagSpaces Note</title></head><body>Your notes here...</body></html>",	
+    "newHTMLFileContent": "<html><head><title>Created with TagSpaces!</title></head><body>Feel free to change this text...</body></html>",	
 	"newMDFileContent": '#Markdown file created with TagSpaces!',
 	"showUnixHiddenEntries": false, 
 	"checkForUpdates": true,
@@ -18,7 +18,7 @@ exports.defaultSettings = {
 	"tagspacesList": [],
     "extensionsPath": "ext",
     "ootbPerspectives": [ 'perspectiveList', 'perspectiveGrid', 'perspectiveGraph' ],
-    "ootbViewers": [ "viewerBrowser", "viewerMD", "viewerImage", "viewerPDF", "editorText" ],
+    "ootbViewers": [ "viewerBrowser", "viewerMD", "viewerImage", "viewerPDF", "editorText", "viewerText" ],
     "ootbEditors": [ "editorHTML", "editorText" ],        
     "perspectives": [
         { "id": "perspectiveList" }, // ID should be equal to the directory name where the extension is located 
@@ -97,10 +97,6 @@ exports.defaultSettings = {
 		        },        
 		        {
 		            "title":"paper",
-		            "type":"plain",
-		        },
-		        {
-		            "title":"note",
 		            "type":"plain",
 		        }
 		    ]

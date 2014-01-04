@@ -9,7 +9,7 @@ define(function(require, exports, module) {
 
     var extensionTitle = "Image Viewer";
     var extensionID = "viewerImage";  // ID should be equal to the directory name where the ext. is located   
-    var extensionType =  "perspective";
+    var extensionType =  "viewer";
     var extensionIcon = "icon-list";
     var extensionVersion = "1.0";
     var extensionManifestVersion = 1;
@@ -52,7 +52,7 @@ define(function(require, exports, module) {
 		console.log("getContent not supported on this extension"); 	
 	};
 	
-    // Vars
+    // Extension Vars
     exports.Title                   = extensionTitle;
     exports.ID                      = extensionID;   
     exports.Type                    = extensionType;

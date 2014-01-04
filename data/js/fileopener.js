@@ -204,7 +204,11 @@ define(function(require, exports, module) {
 	    TSCORE.IO.getFileProperties(filePath.replace("\\\\","\\"));
         
         if(!viewerExt) {
-	        $( "#viewer" ).html("<div class='alert alert-info'><strong>Info</strong> File type not supported for viewing.</div>");        
+            require([TSCORE.Config.getExtensionPath()+"/viewerText/extension.js"], function(viewer) {
+                _tsEditor = viewer;
+                _tsEditor.init(filePath, "viewer", true);
+            });
+	        //$( "#viewer" ).html("<div class='alert alert-info'><strong>Info</strong> File type not supported for viewing.</div>");        
 	    } else if (viewerExt == "viewerBrowser") {
             var filePathURI = undefined;
             if(isCordova) {
