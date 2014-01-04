@@ -350,10 +350,11 @@ IO-API
 	};
 
     var getFileProperties = function(filePath) {
+        var fileSize = nativeIO.getFileSize(filePath);
         var fileProperties = {};
         if(!nativeIO.isDirectory(filePath)) {
             fileProperties.path = filePath;
-            fileProperties.size = nativeIO.getFileSize(filePath);
+            fileProperties.size = fileSize;
             fileProperties.lmdt = 0;
             if(isWin) {
                 fileProperties.lmdt = new Date(nativeIO.getFileLastDateModified(filePath)*1000);                       
