@@ -71,26 +71,36 @@ can be found in the LICENSE file.
 		  </div>
 		</nav>  	
 		<div class="ts-container">
-           <div id="locationContent"></div>
-           <div id="tagGroupsContent"></div>            
+           <div id="tagGroupsContent"></div>
+           <div id="locationContent"></div>            
 		</div>
 	</div>
 	<div class="row3">
 	  <div class="btn-group" data-toggle="buttons">
-		  <label class="btn btn-default active" id="showLocations" data-i18n="[title]app.switchToLocationsTooltip;">
-		    <input type="radio" name="options">&nbsp;<i class="fa fa-folder"></i>&nbsp;
-		  </label>
-		  <label class="btn btn-default" id="showTagGroups" title="Switch to Tags Overview" data-i18n="[title]app.switchToTagsTooltip;">
+		  <label class="btn btn-default active" id="showTagGroups" title="Show Tag Library" data-i18n="[title]app.switchToTagsTooltip;">
 		    <input type="radio" name="options" >&nbsp;<i class="fa fa-tags"></i>&nbsp;
 		  </label>
+          <label class="btn btn-default" id="showLocations" data-i18n="[title]app.switchToLocationsTooltip;" title="Show Folder Navigator">
+            <input type="radio" name="options">&nbsp;<i class="fa fa-folder"></i>&nbsp;
+          </label>
 	  </div>
-	  <div class="btn-group" style="margin-right: 5px;">
-		  <button class="btn btn-default" data-i18n="[title]app.?;" title="Open new TagSpaces Instance" id="startNewInstanceBack">
-		    &nbsp;<i class="fa fa-external-link-square"></i>&nbsp;</button>
-		  <button class="btn btn-default" data-i18n="[title]app.?;" title="Settings" id="openOptions">
-		    &nbsp;<i class="fa fa-gear"></i>&nbsp;</button>
-		  <button class="btn btn-default" data-i18n="[title]app.?;" title="About TagSpaces" data-toggle="modal" data-target="#dialogAboutTS">
-		    &nbsp;<i class="fa fa-comment"></i>&nbsp;</button>
+	  <div class="btn-group dropup" style="margin-right: 5px;">
+		  <!--button class="btn btn-default" data-i18n="[title]app.?;" title="About TagSpaces" data-toggle="modal" data-target="#dialogAboutTS">
+		    &nbsp;<i class="fa fa-comment"></i>&nbsp;</button -->
+          <button class="btn btn-default" data-i18n="[title]app.?;" title="Get in touch" id="contactUs"  data-toggle="dropdown">
+            &nbsp;<i class="fa fa-comment"></i>&nbsp;</button>
+          <button class="btn btn-default" data-i18n="[title]app.?;" title="Open new TagSpaces Instance" id="startNewInstanceBack">
+            &nbsp;<i class="fa fa-external-link-square"></i>&nbsp;</button>
+          <button class="btn btn-default" data-i18n="[title]app.?;" title="Settings" id="openOptions">
+            &nbsp;<i class="fa fa-gear"></i>&nbsp;</button>
+          <ul class="dropdown-menu">
+                <li><a title="About TagSpaces" data-toggle="modal" data-target="#dialogAboutTS"><i class="fa fa-comment-o"></i> About</a></li>    
+                <li class="divider"></li>       
+                <li><a id="openUservoice" title="Suggest or vote for a feature"><i class="fa fa-bullhorn"></i> New Features</a></li>
+                <li><a id="openGitHubIssues" title="Report an issue"><i class="fa fa-flag"></i> Report Issue</a></li>
+                <li><a id="openTwitter" title="Tweet about @tagspaces"><i class="fa fa-twitter"></i> Tweeter</a></li>
+                <li><a href="mailto:info@tagspaces.org" title="Send email to us"><i class="fa fa-envelope-o"></i> Contact Us</a></li>
+          </ul>     
 	  </div>
 	</div>    	
 </div>
@@ -110,11 +120,11 @@ can be found in the LICENSE file.
                         <div class="dropdown-menu" style="width: 300px; padding: 10px; font-size: 13px;" id="searchOptions">
                             <li class="dropdown-header"><span data-i18n="[title]app.searchOptions;">Search Options</span><button type="button" class="close" id="closeSearchOptionButton">×</button></li>                        
                             <li class="divider"></li>
-                            <!--div class="form-group">
+                            <div class="form-group">
                               <label class="checkbox">
-                                <input type="checkbox" id="includeSubfoldersOption"> Includes files in the subdirectories
+                                <input type="checkbox" id="includeSubfoldersOption"> Include files from the subfolders (by adding <i class="fa fa-question"></i> in front of the query)
                               </label>
-                            </div><br><br-->                                                                                 
+                            </div><br><br>                                                                                 
                             <i class="fa fa-angle-double-right"></i> Including <i class="fa fa-exclamation"></i> in front of a term (e.g. !term) will exclude all files with this term in their filenames.<br>
                             <i class="fa fa-angle-double-right"></i> Including <i class="fa fa-plus"></i>  in front of a term (e.g. +tag) will include all files tagged with this tag.<br>
                             <i class="fa fa-angle-double-right"></i> Including <i class="fa fa-minus"></i>  in front of a term (e.g. -tag) will exclude all files tagged with this tag.<br>                        
@@ -151,11 +161,7 @@ can be found in the LICENSE file.
 	</div>
 	<div class="row3">
 	    <div class="btn-toolbar">
-            <div class="btn-group dropup" id="alternativeNavigator" style="margin: 5px;">
-              <button class="btn btn-default" title="" id=""><i class="fa fa-home"></i>&nbsp;<span class="caret"></span></button>            
-              <!--button class="btn btn-default" title="" id="">2013&nbsp;<span class="caret"></span></button>
-              <button class="btn btn-default" title="" id="">201312&nbsp;<span class="caret"></span></button-->
-            </div>  
+            <div class="btn-group" id="alternativeNavigator" style="margin: 5px;"></div>  
             <div id="statusBar"></div>    
             <div class="btn btn-link" id="loadingAnimation"></div>
         </div>
@@ -189,7 +195,7 @@ can be found in the LICENSE file.
 				<div style="position: fixed; right: 0px; top: 0px; background-color: #E5E5E5;" class="btn-group">
                     <button class="btn btn-link" title="Edit Document" data-i18n="[title]app.?;" id="editDocument">&nbsp;<i class="fa fa-pencil"></i>&nbsp;</button>             
                     <button class="btn btn-link" title="Save Document" data-i18n="[title]app.?;" id="saveDocument">&nbsp;<i class="fa fa-save"></i>&nbsp;</button>             
-					<button class="btn btn-link" title="Toggle Document in Full Width" data-i18n="[title]app.?;" id="toggleFullWidthButton">&nbsp;<i class="fa fa-desktop"></i>&nbsp;</button>				
+					<button class="btn btn-link" title="Toggle Document in Full Width" data-i18n="[title]app.?;" id="toggleFullWidthButton">&nbsp;<i class="glyphicon glyphicon-sound-stereo"></i>&nbsp;</button>				
 					<button class="btn btn-link" title="Go to the previous file" data-i18n="[title]app.?;" id="prevFileButton" id="">&nbsp;<i class="glyphicon glyphicon-chevron-left"></i>&nbsp;</button>				
 					<button class="btn btn-link" title="Go to the next file" data-i18n="[title]app.?;" id="nextFileButton" id="">&nbsp;<i class="glyphicon glyphicon-chevron-right"></i>&nbsp;</button>				
 					<button class="btn btn-link" title="Close file" data-i18n="[title]app.?;" id="closeOpenedFile">&nbsp;<i class="glyphicon glyphicon-remove"></i>&nbsp;</button>					
@@ -222,12 +228,7 @@ can be found in the LICENSE file.
 	    <iframe id="aboutIframe" style="width: 100%; height: 280px; border: 0px;" src="about.html"></iframe>
       </div>
       <div class="modal-footer">
-        <div class="btn-group">          
-    		<button class="btn btn-link" id="openUservoice" title="Suggest or vote for a feature"><i class="fa fa-bullhorn"></i> New Features</button>        
-    		<button class="btn btn-link" id="openGitHubIssues" title="Report a issue or enhancement"><i class="fa fa-flag"></i> Report Issue</button>
-    		<button class="btn btn-link" id="openTwitter" title="Tweet about @tagspaces"><i class="fa fa-twitter"></i> Tweet</button>
-    		<a class="btn btn-link" href="mailto:info@tagspaces.org" title="Send email to the developers"><i class="fa fa-envelope-o"></i> Contact Us</a>
-      	</div>
+        <!--div class="btn-group"></div-->
 	    <button class="btn" id="aboutDialogBack"><i class="fa fa-arrow-circle-left"></i></button>
 	    <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Ok</button>
       </div>
