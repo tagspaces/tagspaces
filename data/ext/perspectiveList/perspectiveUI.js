@@ -215,7 +215,7 @@ console.log("Loading UI for perspectiveList");
 	    // Load new filtered data
 	    this.searchResults = TSCORE.Search.searchData(TSCORE.fileList, TSCORE.Search.nextQuery);
 
-        $("#statusBar").text(this.searchResults.length+" files found here");
+        $("#statusBar").text(this.searchResults.length+" files found");
 	    
 	    this.fileTable.fnAddData( this.searchResults );
 

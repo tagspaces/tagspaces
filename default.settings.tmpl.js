@@ -102,7 +102,7 @@ exports.defaultSettings = {
 		    ]
 		},		
 		{
-		    "title":"GTD",
+		    "title":"Getting Things Done",
 		    "isFolder": "true",
 		    "key":"GTD",
 		    "expand": "true",
@@ -189,6 +189,8 @@ exports.defaultSettings = {
             ]
         },   
         {
+            "title": "Priorities",
+            "key": "PRI",            
             "expanded": true,
             "children": [
                 {
@@ -209,10 +211,14 @@ exports.defaultSettings = {
                     "color": "#7bd148",
                     "textcolor": "#ffffff"
                 }
-            ],
-            "title": "Priorities",
-            "key": "PRI"
-        }						
+            ]
+        },   
+        {
+            "title": "Tags in Perspective",
+            "key": "CTG",            
+            "expanded": true,
+            "children": []
+        }
 	]
 };
 

@@ -21,6 +21,31 @@ define(function(require, exports, module) {
         $("#searchBox").val("+"+query);
         TSCORE.PerspectiveManager.redrawCurrentPerspective();        
     };
+
+    var calculateTags = function(data) {
+        var allTags = [];
+
+        data.forEach(function(fileEntry) {
+            fileEntry[TSCORE.fileListTAGS].forEach(function(tag) {
+                allTags.push(tag.toLowerCase());
+            });
+        });
+
+        var countData = _.countBy(allTags, function(obj){
+            return obj;
+        }); 
+
+        TSCORE.calculatedTags.length = 0;;
+        _.each(countData, function(count, tag) {
+            TSCORE.calculatedTags.push({
+                "title":     tag,
+                "type" :     "plain",
+                "count":     count,
+            });  
+        }); 
+        
+        TSCORE.generateTagGroups();        
+    };
     
     var searchData = function(data, query) {
         query = query.toLowerCase().replace(/^\s+|\s+$/g, "");        
@@ -120,5 +145,6 @@ define(function(require, exports, module) {
     exports.searchData                   = searchData;   
     exports.searchForTag                 = search4Tag;       
     exports.searchForString              = search4String;    
+    exports.calculateTags                = calculateTags;
     
 });
