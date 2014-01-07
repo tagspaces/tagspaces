@@ -208,6 +208,10 @@ define(function(require, exports, module) {
                 addFileType({ "type": "m4a", 	"viewer": "viewerBrowser", "editor": "false" }); 
                 addFileType({ "type": "mov",    "viewer": "viewerBrowser", "editor": "false" });                 
 			}
+
+            if(oldBuildNumber <= 1700) { 
+                addTagGroup({ "title": "Tags in Perspective", "key": "CTG", "expanded": true,"children": []});            
+            }
 			
 	    	saveSettings();   		
 		}
