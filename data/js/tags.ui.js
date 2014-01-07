@@ -10,27 +10,7 @@ define(function(require, exports, module) {
 
 	function initUI() {
 	
-	    $("body").on("contextmenu click", ".tagGroupActions", function (e) {
-            TSCORE.hideAllDropDownMenus();
-            TSCORE.selectedTag = $(this).attr("tag");
-            TSCORE.selectedTagData = TSCORE.Config.getTagGroupData($(this).attr("key"));
-            TSCORE.selectedTagData.parentKey = undefined;  
 
-			TSCORE.showContextMenu("#tagGroupMenu", $(this));
-
-	        return false;
-	    });
-
-	    $("body").on("contextmenu click", "#tagGroupsContent .tagButton", function (e) {
-			TSCORE.hideAllDropDownMenus();
-            TSCORE.selectedTagData = TSCORE.Config.getTagData($(this).attr("tag"), $(this).attr("parentKey"));
-            TSCORE.selectedTag = generateTagValue(TSCORE.selectedTagData);
-            TSCORE.selectedTagData.parentKey = $(this).attr("parentKey");
-
-			TSCORE.showContextMenu("#tagTreeMenu", $(this));
-
-	        return false;
-	    });	
 	
         $( "#extMenuAddTagAsFilter" ).click( function() {
             // TODO search for extension
@@ -172,6 +152,15 @@ define(function(require, exports, module) {
 	        return true;
 	    }
 	    
+	    // Adding the the calculated tag group to the general list
+        //console.log("Calculated tags: "+JSON.stringify(exports.calculatedTags));
+        for(var i=0; i < TSCORE.Config.Settings["tagGroups"].length; i++) {
+            if(TSCORE.Config.Settings["tagGroups"][i].key == "CTG") {
+                TSCORE.Config.Settings["tagGroups"][i].children = exports.calculatedTags;
+                break;
+            }        
+        }
+	    
 	    for(var i=0; i < TSCORE.Config.Settings["tagGroups"].length; i++) {
 	        $("#tagGroupsContent").append($("<div>", { 
 	            "class": "accordion-group disableTextSelection",    
@@ -251,12 +240,16 @@ define(function(require, exports, module) {
                 if(TSCORE.Config.Settings["tagGroups"][i]["children"][j].type == "smart"){
                     tagIcon = "<span class='fa fa-flask'/> ";
                 }
+                var tagCount = "";
+                if(TSCORE.Config.Settings["tagGroups"][i]["children"][j].count != undefined) {
+                    tagCount = " ("+TSCORE.Config.Settings["tagGroups"][i]["children"][j].count+")"; 
+                }                
 	            tagButtons.append($("<a>", { 
 	                "class":         "btn btn-sm tagButton", 
 	                "tag":           TSCORE.Config.Settings["tagGroups"][i]["children"][j].title, 
 	                "parentKey":     TSCORE.Config.Settings["tagGroups"][i].key,
 	                "title":         tagTitle,
-	                "text":          TSCORE.Config.Settings["tagGroups"][i]["children"][j].title+" ",
+	                "text":          TSCORE.Config.Settings["tagGroups"][i]["children"][j].title+tagCount+" ",
 	                "style":         generateTagStyle(TSCORE.Config.Settings["tagGroups"][i]["children"][j]), 
 	            })            
                 .draggable({
@@ -274,6 +267,29 @@ define(function(require, exports, module) {
                 );
 	       } 
 	    }
+        
+        $("#tagGroupsContent").on("contextmenu click", ".tagGroupActions", function (e) {
+            TSCORE.hideAllDropDownMenus();
+            TSCORE.selectedTag = $(this).attr("tag");
+            TSCORE.selectedTagData = TSCORE.Config.getTagGroupData($(this).attr("key"));
+            TSCORE.selectedTagData.parentKey = undefined;  
+
+            TSCORE.showContextMenu("#tagGroupMenu", $(this));
+
+            return false;
+        });
+
+        $("#tagGroupsContent").on("contextmenu click", ".tagButton", function (e) {
+            TSCORE.hideAllDropDownMenus();
+            TSCORE.selectedTagData = TSCORE.Config.getTagData($(this).attr("tag"), $(this).attr("parentKey"));
+            TSCORE.selectedTag = generateTagValue(TSCORE.selectedTagData);
+            TSCORE.selectedTagData.parentKey = $(this).attr("parentKey");
+
+            TSCORE.showContextMenu("#tagTreeMenu", $(this));
+
+            return false;
+        });               
+
 	}
 		
     function generateTagValue(tagData) {
@@ -375,8 +391,7 @@ define(function(require, exports, module) {
            tagStyle = "color: "+textColor+" !important; background-color: "+tagObject.color+" !important;";
         }
         return tagStyle;	    
-	}
-	
+	}	
 	
     // Helper function generating file extension button
     function generateExtButton(fileExtension, filePath) {
@@ -449,6 +464,9 @@ define(function(require, exports, module) {
 
         $( '#dialogAddTags' ).modal({show: true});
 	}    
+
+    // Public Vars
+    exports.calculatedTags                   = [];
 
     // Public API definition
     exports.initUI			                 = initUI;
