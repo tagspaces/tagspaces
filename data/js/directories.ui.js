@@ -25,7 +25,7 @@ define(function(require, exports, module) {
         $( "#locationName" ).attr("title",path);            
 
         // Open the directory locations panel
-        TSCORE.showLocationsPanel();
+        //TSCORE.showLocationsPanel();
         
         // Clears the directory history
         directoryHistory = new Array();
@@ -56,7 +56,88 @@ define(function(require, exports, module) {
         }
         
         generateDirPath();
+        generateAlternativeDirPath();
         handleDirCollapsion();     
+    }
+
+    function generateAlternativeDirPath() {
+        console.log("Generating Alternative Directory Path...");
+        var subfolders, 
+            homeIcon,
+            i;
+            
+        $("#alternativeNavigator").empty();
+        for(i=0; i < directoryHistory.length; i++) {
+            homeIcon = "";
+            if(i==0) {
+                homeIcon = "<i class='fa fa-home'></i>&nbsp;";
+            }
+            
+            subfolders = $("<ul>", {
+                   "style":      "overflow-y: auto; max-height: 500px; width: 250px; padding: 5px;",                
+                   "class":      "dropdown-menu"
+            })
+            .append('<li class="dropdown-header"><span>Subfolders of:</span><button type="button" class="close">×</button></li>')
+            .append($("<li>")
+                .append($("<button>", { 
+                    "class":    "btn btn-sm dirButton", 
+                    "key":      directoryHistory[i].path,
+                    "title":    directoryHistory[i].path,
+                    "style":    "margin: 1px;",
+                    "text":     " "+directoryHistory[i].name
+                })
+                .prepend("<i class='fa fa-folder-o'></i>")            
+                .click( function() {
+                    navigateToDirectory($(this).attr("key"));
+                })                   
+                )
+            )            
+            .append('<li class="divider"></li>');
+                          
+            if(directoryHistory[i]["children"].length <= 0) {
+                    subfolders.append("<div class='alert'><span> No subfolders found</span></div>");          
+            } else {
+                for(var j=0; j < directoryHistory[i]["children"].length; j++) {                    
+                    if (TSCORE.Config.getShowUnixHiddenEntries() || 
+                            (!TSCORE.Config.getShowUnixHiddenEntries() 
+                              && (directoryHistory[i]["children"][j].name.indexOf(".") != 0)
+                             )
+                        ) {
+                        subfolders.append($("<button>", { 
+                            "class":    "btn btn-sm dirButton", 
+                            "key":      directoryHistory[i]["children"][j].path,
+                            "title":    directoryHistory[i]["children"][j].path,
+                            "style":    "margin: 1px;",
+                            "text":     " "+directoryHistory[i]["children"][j].name
+                        })
+                        .prepend("<i class='fa fa-folder-o'></i>")            
+                        .click( function() {
+                            navigateToDirectory($(this).attr("key"));
+                        })                   
+                        );
+                    }
+               }        
+           }            
+            
+            $("#alternativeNavigator")
+               .append($("<div>", { 
+                        "class":      "btn-group dropup",
+                    })
+                    .append($("<button>", { 
+                        "class":       "btn btn-default dropdown-toggle",
+                        "text":        directoryHistory[i].name,
+                        "key":         directoryHistory[i].path,  
+                        "data-toggle": "dropdown"                        
+                    })
+                        .prepend(homeIcon)
+                        .append("&nbsp;<span class='caret'></span>")
+                        /*.click(function() {
+                        //    navigateToDirectory($(this).attr("key"));
+                        })*/                  
+                    )
+                    .append(subfolders)                                  
+                ); 
+        } // FOR End
     }
     
     function generateDirPath() {

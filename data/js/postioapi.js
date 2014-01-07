@@ -68,7 +68,6 @@ define(function(require, exports, module) {
     exports.listDirectory = function(anotatedDirList) {
         TSCORE.PerspectiveManager.updateFileBrowserData(anotatedDirList);
         TSCORE.updateSubDirs(anotatedDirList);
-        //TSCORE.hideLoadingAnimation();        
     };
 
     exports.errorOpeningPath = function() {
