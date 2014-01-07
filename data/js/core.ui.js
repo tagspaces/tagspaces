@@ -333,13 +333,23 @@ define(function(require, exports, module) {
 	    });
 	    
 	    // Hide the taggroups by default
-	    $('#tagGroupsContent').hide();
+	    $('#locationContent').hide(); // #tagGroupsContent
 	    
         // Search UI
 
         $("#closeSearchOptionButton")
             .click(function(e) {
                 $("#searchOptions").hide();
+            });
+
+        $("#includeSubfoldersOption")
+            .click(function(e) {
+                var searchQuery = $("#searchBox").val();
+                if(searchQuery.indexOf("?")==0) {
+                    $("#searchBox").val(searchQuery.substring(1,searchQuery.length));
+                } else {
+                    $("#searchBox").val("?"+searchQuery);                    
+                }
             });
         
         $("#searchBox")
@@ -470,7 +480,7 @@ define(function(require, exports, module) {
         $('#tagTreeMenu').hide();
         $('#directoryMenu').hide();
         $('#tagMenu').hide();
-        $('#fileMenu').hide();                
+        $('#fileMenu').hide();  
 	};
 	
     var showLocationsPanel = function() {
