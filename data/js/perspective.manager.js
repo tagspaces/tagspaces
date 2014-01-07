@@ -80,6 +80,7 @@ var initPerspectiveSwitcher = function() {
         $("#viewSwitcher").append($("<li>", {})
         .append($("<a>", { 
             "viewid":   curPers.ID,
+            "title":    curPers.ID,
             "id":       curPers.ID+"Button",
             "text":     " "+curPers.Title    
         })        
@@ -229,6 +230,7 @@ var changePerspective = function (viewType) {
             $('#currentPerspectitveIcon').removeClass();
             $('#currentPerspectitveIcon').addClass(perspectives[i].Icon);
             $('#currentPerspectitveName').text(" "+perspectives[i].Title);   
+            $('#currentPerspectitveName').attr("title",perspectives[i].ID);   
 
  			perspectives[i].load();
 
