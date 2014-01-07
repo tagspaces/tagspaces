@@ -72,7 +72,8 @@ found in the LICENSE file.
 			  <include name="perspectiveGrid/**/*"/>
 			  <include name="perspectiveGraph/**/*"/>	
               <include name="editorHTML/**/*"/>
-              <include name="editorText/**/*"/>  
+              <include name="editorText/**/*"/> 
+	          <include name="viewerText/**/*"/>		    	
               <include name="viewerImage/**/*"/>    		    	
               <include name="viewerMD/**/*"/>          
 		    </fileset>        	
@@ -141,7 +142,8 @@ found in the LICENSE file.
               <include name="perspectiveGraph/**/*"/>   		    	
 		      <include name="editorHTML/**/*"/>
 			  <include name="editorText/**/*"/>	    	
-	          <include name="viewerPDF/**/*"/>           		    	
+	          <include name="viewerText/**/*"/>	          
+		      <include name="viewerPDF/**/*"/>           		    	
 	          <include name="viewerImage/**/*"/>                          
 		      <include name="viewerMD/**/*"/>	    	
 		    </fileset>        	
@@ -212,7 +214,8 @@ found in the LICENSE file.
               <include name="perspectiveGrid/**/*"/>
               <include name="perspectiveGraph/**/*"/>   		    	
 		      <include name="editorHTML/**/*"/>
-			  <include name="editorText/**/*"/>	    	
+			  <include name="editorText/**/*"/>
+	          <include name="viewerText/**/*"/>		    	
 	          <include name="viewerPDF/**/*"/>           		    	
 	          <include name="viewerImage/**/*"/>                          
 		      <include name="viewerMD/**/*"/>	    	
@@ -283,7 +286,8 @@ found in the LICENSE file.
               <include name="perspectiveGrid/**/*"/>
               <include name="perspectiveGraph/**/*"/>   		    	
 		      <include name="editorHTML/**/*"/>
-			  <include name="editorText/**/*"/>	    	
+			  <include name="editorText/**/*"/>
+    	      <include name="viewerText/**/*"/>
 	          <include name="viewerPDF/**/*"/>           		    	
 	          <include name="viewerImage/**/*"/>                          
 		      <include name="viewerMD/**/*"/>	    	
@@ -345,9 +349,16 @@ found in the LICENSE file.
             <fileset dir="data/libs" includes="**/*"/>  
         </copy>
         <copy todir="${cordovaDev.dir}/ext" >
-		    <fileset dir="data/ext">
-		      <include name="**/*"/>
-		    </fileset>        	
+            <fileset dir="data/ext">
+              <include name="perspectiveList/**/*"/>                             
+              <include name="perspectiveGrid/**/*"/>
+              <include name="editorHTML/**/*"/>
+              <include name="editorText/**/*"/>
+              <include name="viewerText/**/*"/>
+              <include name="viewerPDF/**/*"/>                          
+              <include name="viewerImage/**/*"/>                          
+              <include name="viewerMD/**/*"/>           
+            </fileset>                  	
         </copy>    	
         <copy todir="${cordovaDev.dir}/locales" >
             <fileset dir="data/locales" includes="**/*"/>  

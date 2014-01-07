@@ -20,14 +20,13 @@ define(function(require, exports, module) {
 	
 	var containerElID = undefined;
 	
-	var extensionDirectory = TSCORE.Config.getExtensionPath()+"/"+exports.id;
+	var extensionDirectory = TSCORE.Config.getExtensionPath()+"/"+extensionID;
 	
 	exports.init = function(filePath, containerElementID) {
 	    console.log("Initalization Text Viewer...");
 	    containerElID = containerElementID;
 
     	TSCORE.IO.loadTextFile(filePath);
-
 	};
 	
 	exports.setFileType = function(fileType) {

@@ -34,10 +34,14 @@ console.log("Loading UI for perspectiveDefault");
         this.supportedGroupings.push({"title":"Year","key":"year"});
         
         for(var i=0; i < TSCORE.Config.Settings["tagGroups"].length; i++) {
-            this.supportedGroupings.push({
-                "title": TSCORE.Config.Settings["tagGroups"][i].title,
-                "key": TSCORE.Config.Settings["tagGroups"][i].key
-            });
+            // Exclude smart tags and calculated tags 
+            if( TSCORE.Config.Settings["tagGroups"][i].key != "SMR" &&
+                TSCORE.Config.Settings["tagGroups"][i].key != "CTG" ) {
+                this.supportedGroupings.push({
+                    "title": TSCORE.Config.Settings["tagGroups"][i].title,
+                    "key": TSCORE.Config.Settings["tagGroups"][i].key
+                });                
+            }
         }
     }
     
@@ -326,11 +330,20 @@ console.log("Loading UI for perspectiveDefault");
                 break;                
             }            
             default : {
-                this.supportedGroupings.forEach(function(grouping) {
-                    if(grouping.key == self.currentGrouping) {
-                        groupingTitle = grouping.title;                        
+                for (var i=0; i < TSCORE.Config.Settings["tagGroups"].length; i++) {
+                    if(TSCORE.Config.Settings["tagGroups"][i].key == self.currentGrouping) {
+                        var tagsInGroup = _.pluck(TSCORE.Config.Settings["tagGroups"][i].children, "title");
+                        var matchedTags = _.intersection(
+                            rawSource[TSCORE.fileListTAGS],
+                            tagsInGroup    
+                            );
+                        groupingTitle = "not grouped";
+                        if(matchedTags.length > 0) {
+                            groupingTitle = TSCORE.Config.Settings["tagGroups"][i].title+" - "+matchedTags[0];
+                        }
+                        break;                        
                     }
-                });                            
+                }                            
             }
         }
         return groupingTitle;
@@ -416,17 +429,18 @@ console.log("Loading UI for perspectiveDefault");
         // Load new filtered data
         this.searchResults = TSCORE.Search.searchData(TSCORE.fileList, TSCORE.Search.nextQuery);
 
-        // Updating status bar
-        $("#statusBar").text(this.searchResults.length+" files found here");
+        // Find all tags in the current search results
+        TSCORE.Search.calculateTags(this.searchResults);
 
         if(this.searchResults.length == 0) {
-            this.viewFooter.html("<div class='searchSummary'>No files found.</div>");            
+            $("#statusBar").text("No files found");            
         } else {
-            var endTime = new Date().getTime();
-            this.viewFooter.append($("<div>", { 
-                "class": "searchSummary",    
-                "text":  this.searchResults.length+" files found" //" in "+(endTime-TSCORE.startTime)/1000+" sec."             
-            }));
+            //var endTime = new Date().getTime();
+            $("#statusBar").text(this.searchResults.length+" files found");
+            //this.viewFooter.append($("<div>", { 
+            //    "class": "searchSummary",    
+            //    "text":  this.searchResults.length+" files found" //" in "+(endTime-TSCORE.startTime)/1000+" sec."             
+            //}));
         } 
 
         var i=0;
@@ -440,12 +454,12 @@ console.log("Loading UI for perspectiveDefault");
                 "style": "width: 100%; border: 0px #aaa solid;",             
             })
             .append($("<div>", { 
-                "class":        "accordion-heading  btn-group",
-                "style":        "width:100%; margin: 0px; border-bottom: solid 1px #eee",
+                "class":  "accordion-heading  btn-group",
+                "style":  "width:100%; margin: 0px; border-bottom: solid 1px #eee; background-color: #ddd;",
             })
             
             .append($("<button>", { // Grouped content toggle button
-                        "class":        "btn btn-link",
+                        "class":        "btn btn-link groupTitle",
                         "data-toggle":  "collapse",
                         "data-target":  "#"+self.extensionID+"sortingButtons"+i,
                         "title":        "Toggle Group",
@@ -461,7 +475,7 @@ console.log("Loading UI for perspectiveDefault");
                 "class":        "btn btn-link groupTitle",
                // "data-toggle":  "collapse",
                // "data-target":  "#"+self.extensionID+"sortingButtons"+i,                
-                "style":        "margin-left: 0px; padding-left: 0px",
+                "style":        "margin-left: 0px; padding-left: 0px;",
                 "text":         groupingTitle, 
                 })  
             )

@@ -582,9 +582,9 @@ input a.resetFilter {
 }
 
 .groupTitle {
-    color: #999;
+    color: #444444;
     font-weight: bold;
-    font-size: 1em;
+    font-size: 12px;
     display: inline-block;    
 }
 
