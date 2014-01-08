@@ -140,6 +140,8 @@ define(function(require, exports, module) {
 	    console.log("Generating TagGroups...");
 	    $("#tagGroupsContent").empty();
 	    $("#tagGroupsContent").addClass("accordion");
+
+        // Show TagGroup create button if no taggroup exist
 	    if(TSCORE.Config.Settings["tagGroups"].length < 1) {
             $("#tagGroupsContent").append($("<button>", { 
                 "class": "btn",
@@ -152,15 +154,28 @@ define(function(require, exports, module) {
 	        return true;
 	    }
 	    
-	    // Adding the the calculated tag group to the general list
-        //console.log("Calculated tags: "+JSON.stringify(exports.calculatedTags));
-        for(var i=0; i < TSCORE.Config.Settings["tagGroups"].length; i++) {
-            if(TSCORE.Config.Settings["tagGroups"][i].key == "CTG") {
-                TSCORE.Config.Settings["tagGroups"][i].children = exports.calculatedTags;
-                break;
-            }        
+	    if(TSCORE.Config.getCalculateTags()) {
+    	    // Adding tags to the calculated tag group 
+            //console.log("Calculated tags: "+JSON.stringify(exports.calculatedTags));
+            for(var i=0; i < TSCORE.Config.Settings["tagGroups"].length; i++) {
+                var tagGroupExist = false;
+                if(TSCORE.Config.Settings["tagGroups"][i].key == "CTG") {
+                    TSCORE.Config.Settings["tagGroups"][i].children = exports.calculatedTags;
+                    tagGroupExist = true;
+                    break;
+                }        
+            }
+            // Adding the calculated tag group if it not exists
+            if(!tagGroupExist) {
+                TSCORE.Config.Settings["tagGroups"].push({ 
+                        "title": "Tags in Perspective", 
+                        "key": "CTG", 
+                        "expanded": true,
+                        "children": exports.calculatedTags
+                    });
+            } 
         }
-	    
+    	    
 	    for(var i=0; i < TSCORE.Config.Settings["tagGroups"].length; i++) {
 	        $("#tagGroupsContent").append($("<div>", { 
 	            "class": "accordion-group disableTextSelection",    
