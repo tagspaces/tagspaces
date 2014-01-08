@@ -128,11 +128,11 @@ console.log("Loading UI for perspectiveDefault");
                   var fpath = $(this).attr("filepath");
                   var stateTag = $(this).find("i");
                   if(stateTag.hasClass("fa-square-o")) {                    
-                      stateTag.removeClass("fa-square-o").addClass("fa fa-check-square-o");
+                      stateTag.removeClass("fa-square-o").addClass("fa fa-check-square");
                       $(this).parent().parent().addClass("ui-selected");
                       TSCORE.selectedFiles.push(fpath);  
                   } else {
-                      stateTag.removeClass("fa-check-square-o").addClass("fa-square-o");                      
+                      stateTag.removeClass("fa-check-square").addClass("fa-square-o");                      
                       $(this).parent().parent().removeClass("ui-selected");
                       TSCORE.selectedFiles.splice(TSCORE.selectedFiles.indexOf(fpath), 1);
                   }                  
@@ -207,14 +207,14 @@ console.log("Loading UI for perspectiveDefault");
                     TSCORE.selectedFiles = [];   
                     $(self.viewContainer).find('.fileTileSelector').each(function(){
                         $(this).parent().parent().addClass("ui-selected");
-                        $(this).find("i").addClass("fa-check-square-o").removeClass("fa-square-o");
+                        $(this).find("i").addClass("fa-check-square").removeClass("fa-square-o");
                         TSCORE.selectedFiles.push($(this).attr("filepath"));  
                     });
                 } else {
                     TSCORE.PerspectiveManager.clearSelectedFiles();
                 }    
                 self.handleElementActivation();
-                checkIcon.toggleClass("fa-check-square-o");                                     
+                checkIcon.toggleClass("fa-check-square");                                     
                 checkIcon.toggleClass("fa-square-o");                        
             });
             
@@ -429,9 +429,6 @@ console.log("Loading UI for perspectiveDefault");
         // Load new filtered data
         this.searchResults = TSCORE.Search.searchData(TSCORE.fileList, TSCORE.Search.nextQuery);
 
-        // Find all tags in the current search results
-        TSCORE.Search.calculateTags(this.searchResults);
-
         if(this.searchResults.length == 0) {
             $("#statusBar").text("No files found");            
         } else {
@@ -604,7 +601,7 @@ console.log("Loading UI for perspectiveDefault");
         $("#"+this.extensionID+"Container").find(".ui-selected")
             .removeClass("ui-selected");
         $("#"+this.extensionID+"Container").find(".fileTileSelector").find("i")
-            .removeClass("fa-check-square-o")
+            .removeClass("fa-check-square")
             .addClass("fa-square-o");   
     };
     
@@ -613,7 +610,7 @@ console.log("Loading UI for perspectiveDefault");
         $(this.viewContainer).find('.fileTileSelector').each(function(){
             if($(this).attr("filepath") == filePath) {
                 $(this).parent().parent().toggleClass("ui-selected");
-                $(this).find("i").toggleClass("fa-check-square-o").toggleClass("fa-square-o");
+                $(this).find("i").toggleClass("fa-check-square").toggleClass("fa-square-o");
                 TSCORE.selectedFiles.push($(this).attr("filepath"));                  
             }
         });
