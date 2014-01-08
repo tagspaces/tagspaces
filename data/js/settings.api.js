@@ -210,12 +210,17 @@ define(function(require, exports, module) {
 			}
 
             if(oldBuildNumber <= 1700) { 
-                addTagGroup({ "title": "Tags in Perspective", "key": "CTG", "expanded": true,"children": []});            
+                //addTagGroup({ "title": "Tags in Perspective", "key": "CTG", "expanded": true,"children": []});
+                setPrefixTagContainer("");       
+                setTagDelimiter(" ");
+                setCalculateTags(false);     
             }
 			
 	    	saveSettings();   		
 		}
 	};
+	
+    //////////////////// Settings upgrade methods ///////////////////	
 
     var addTagGroup = function(newTagGroup) {
         var tagGroupExist = false;
@@ -273,6 +278,8 @@ define(function(require, exports, module) {
 	        });  
         }        
     };
+    
+    //////////////////// getter and setter methods ///////////////////    
 
     var getPerspectiveExtensions = function() {
         if(exports.Settings["ootbPerspectives"] == null) {
@@ -346,6 +353,39 @@ define(function(require, exports, module) {
         exports.Settings["checkForUpdates"] = value;
     };    
 
+    var getPrefixTagContainer = function() {
+        if(exports.Settings["prefixTagContainer"] == null) {
+            exports.Settings["prefixTagContainer"] = exports.DefaultSettings["prefixTagContainer"];
+        }
+        return exports.Settings["prefixTagContainer"];
+    };
+
+    var setPrefixTagContainer = function(value) {
+        exports.Settings["prefixTagContainer"] = value;
+    };  
+
+    var getTagDelimiter = function() {
+        if(exports.Settings["tagDelimiter"] == null) {
+            exports.Settings["tagDelimiter"] = exports.DefaultSettings["tagDelimiter"];
+        }
+        return exports.Settings["tagDelimiter"];
+    };
+
+    var setTagDelimiter = function(value) {
+        exports.Settings["tagDelimiter"] = value;
+    };    
+
+    var getCalculateTags = function() {
+        if(exports.Settings["calculateTags"] == null) {
+            exports.Settings["calculateTags"] = exports.DefaultSettings["calculateTags"];
+        }
+        return exports.Settings["calculateTags"];
+    };
+
+    var setCalculateTags = function(value) {
+        exports.Settings["calculateTags"] = value;
+    };    
+
     var getSupportedFileTypes = function() {
         if(exports.Settings["supportedFileTypes"] == null) {
             exports.Settings["supportedFileTypes"] = exports.DefaultSettings["supportedFileTypes"];
@@ -368,6 +408,8 @@ define(function(require, exports, module) {
 	var getNewMDFileContent = function() {
 	    return exports.Settings["newMDFileContent"];
 	};
+	
+	//////////////////// API methods ///////////////////
 	
 	var getFileTypeEditor = function(fileTypeExt) {
 	    for(var i=0; i < exports.Settings["supportedFileTypes"].length; i++) {
@@ -723,6 +765,12 @@ define(function(require, exports, module) {
     exports.setCheckForUpdates                      = setCheckForUpdates;    
     exports.getSupportedFileTypes                   = getSupportedFileTypes;
     exports.setSupportedFileTypes                   = setSupportedFileTypes;
+    exports.setPrefixTagContainer                   = setPrefixTagContainer;
+    exports.getPrefixTagContainer                   = getPrefixTagContainer;
+    exports.getTagDelimiter                         = getTagDelimiter;
+    exports.setTagDelimiter                         = setTagDelimiter;
+    exports.getCalculateTags                        = getCalculateTags;
+    exports.setCalculateTags                        = setCalculateTags;
 
     exports.getPerspectiveExtensions                = getPerspectiveExtensions;
     exports.getActivatedPerspectiveExtensions       = getActivatedPerspectiveExtensions;

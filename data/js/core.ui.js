@@ -102,6 +102,21 @@ define(function(require, exports, module) {
         $( '#dialogEditTag' ).modal({show: true});
     };    
     
+    var showOptionsDialog = function() {
+        require([
+              "text!templates/OptionsDialog.html",
+              "tsoptions",
+            ], function(uiTPL, options) {
+                if($("#dialogOptions").length < 1) {                
+                    var uiTemplate = Handlebars.compile( uiTPL );
+                    $('body').append(uiTemplate());    
+                    options.initUI();
+                }
+                options.reInitUI();                    
+                $('#dialogOptions').modal('show');
+        });
+    };       
+    
 	var initUI = function() {
         $("#appVersion").text(TSCORE.Config.DefaultSettings["appVersion"]+"beta");
         $("#appVersion").attr("title","["+TSCORE.Config.DefaultSettings["appVersion"]+"."+TSCORE.Config.DefaultSettings["appBuild"]+"]");
@@ -242,57 +257,8 @@ define(function(require, exports, module) {
 
         // Open Options Dialog
         $( "#openOptions" ).click(function() {
-            require(['tsoptions'], function () {
-                $('#dialogOptions').modal('show');
-            });
+            showOptionsDialog();
         });
-
-	    // Advanced Settings
-        $( "#advancedSettings" ).click(function() {
-            $('#dialogOptions').modal('hide');
-            require([
-                'ext/editorText/codemirror/codemirror.js',
-                'css!ext/editorText/codemirror/codemirror.css',
-                'css!ext/editorText/extension.css',
-            ], function() { 
-                require([
-                    'ext/editorText/codemirror/mode/javascript/javascript.js',
-                ], function() { 
-                    jsonEditor = CodeMirror(document.getElementById("settingsJSON"), {
-                        fixedGutter: false,
-                        mode: "javascript",
-                        lineNumbers: true,
-                        lineWrapping: true,
-                        tabSize: 2,
-                        collapseRange: true,
-                        matchBrackets: true,
-                        readOnly: false,
-                    });        
-                    //jsonEditor.setSize("100%","100%");  
-                    jsonEditor.setValue(JSON.stringify(TSCORE.Config.Settings));
-                    //jsonEditor.autoFormatRange();
-                    $('#dialogAdvancedSetting').modal('show');
-                });
-            });
-        });
-        
-        $( "#defaultSettingsButton" ).click(function() {
-            TSCORE.showConfirmDialog(
-                "Warning",
-                "Are you sure you want to restore the default application settings?\n"+
-                "All manually made changes such as tags and taggroups will be lost.",
-                function() {
-                    TSCORE.Config.loadDefaultSettings();                
-                }                
-            );
-        });
-        
-        $( "#saveSettingsButton" ).click(function() {
-            TSCORE.Config.Settings = jsonEditor.getValue();
-            TSCORE.Config.saveSettings();
-            TSCORE.reloadUI();
-        });
-        // End Advanced Settings
 	    
 	    // File Menu
         $( "#fileMenuAddTag" ).click( function() {

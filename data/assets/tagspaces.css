@@ -704,3 +704,8 @@ input a.resetFilter {
     padding: 1px;
 }
 
+.optionsTitle {
+    text-transform: uppercase; 
+    font-weight: bold; 
+    color: gray;
+}

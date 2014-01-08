@@ -241,7 +241,7 @@ var changePerspective = function (viewType) {
 	}	
 	   	
     // Clear the list with the selected files    
-    TSCORE.PerspectiveManager.clearSelectedFiles(); 
+    exports.clearSelectedFiles(); 
 	  
     TSCORE.hideLoadingAnimation();     
 };
@@ -253,7 +253,7 @@ var clearSelectedFiles = function () {
  		try { 			
  			perspectives[i].clearSelectedFiles();
  		} catch(e) {
- 			console.log("Error while executing 'clearSelectedFiles' on "+perspectives[i].ID);
+ 			console.log("Error while executing 'clearSelectedFiles' on "+perspectives[i].ID+" - "+e);
  		} 		
 	}	
 };

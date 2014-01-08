@@ -10,8 +10,6 @@ define(function(require, exports, module) {
 
     var BEGIN_TAG_CONTAINER = "[",
         END_TAG_CONTAINER = "]",
-        TAG_DELIMITER = " ",
-        PREFIX_TAG_CONTAINER = " - ",
         DIR_SEPARATOR = isWindows() ? "\\" : "/";
 
     function isWindows() {
@@ -158,7 +156,7 @@ define(function(require, exports, module) {
         var cleanedTags = [];
 
         var tagContainer = fileName.slice(beginTagContainer+1,endTagContainer).trim();
-        tags = tagContainer.split(TAG_DELIMITER);
+        tags = tagContainer.split(TSCORE.Config.getTagDelimiter());
 
         for (var i=0; i < tags.length; i++) {
             // Min tag length set to 1 character
@@ -239,7 +237,7 @@ define(function(require, exports, module) {
                 newFileName = fileName +tagsString;  
             } else {
                 // File has an extension
-                newFileName = fileName.substring(0,lastDotPosition)+PREFIX_TAG_CONTAINER+tagsString+"."+fileExt;  
+                newFileName = fileName.substring(0,lastDotPosition)+TSCORE.Config.getPrefixTagContainer()+tagsString+"."+fileExt;  
             }   
         } else {
             // File does not have an extension
@@ -389,8 +387,7 @@ define(function(require, exports, module) {
     exports.DIR_SEPARATOR                       = DIR_SEPARATOR;
     exports.beginTagContainer                   = BEGIN_TAG_CONTAINER;
     exports.endTagContainer	                    = END_TAG_CONTAINER;
-    exports.tagDelimiter 						= TAG_DELIMITER;
-    exports.isWindows                           = isWindows;
+
     exports.extractFileName                     = extractFileName;
     exports.extractFileNameWithoutExt           = extractFileNameWithoutExt;
     exports.extractContainingDirectoryPath      = extractContainingDirectoryPath;

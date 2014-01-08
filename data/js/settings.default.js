@@ -7,7 +7,7 @@ define(function(require, exports, module) {
 exports.defaultSettings = {
 	"appName": "TagSpaces",
 	"appVersion": "1.7",
-    "appBuild": "1767",
+    "appBuild": "1774",
 	"settingsVersion": 2,
 	"newTextFileContent": "Text file created with TagSpaces!",
     "newHTMLFileContent": "<html><head><title>Created with TagSpaces!</title></head><body>Feel free to change this text...</body></html>",	
@@ -17,6 +17,9 @@ exports.defaultSettings = {
     "lastOpenedDirectory": "",
 	"tagspacesList": [],
     "extensionsPath": "ext",
+    "prefixTagContainer": "",
+    "tagDelimiter": " ",
+    "calculateTags": false,
     "ootbPerspectives": [ 'perspectiveList', 'perspectiveGrid', 'perspectiveGraph' ],
     "ootbViewers": [ "viewerBrowser", "viewerMD", "viewerImage", "viewerPDF", "editorText", "viewerText" ],
     "ootbEditors": [ "editorHTML", "editorText" ],        

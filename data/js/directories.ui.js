@@ -428,7 +428,6 @@ define(function(require, exports, module) {
                     });  
                     
                     $( "#deleteLocationButton" ).on("click", function() { 
-                        $("#dialogLocationEdit").modal("hide");
                         showDeleteFolderConnectionDialog();
                     });                                                       
                 }

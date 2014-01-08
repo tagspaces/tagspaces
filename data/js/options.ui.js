@@ -57,26 +57,6 @@ define(function(require, exports, module) {
     }    
     
     function initUI() {
-        $("#extensionsPathInput").val(TSCORE.Config.getExtensionPath()); 
-        $("#showHiddenFilesCheckbox").attr("checked",TSCORE.Config.getShowUnixHiddenEntries());
-        $("#checkforUpdatesCheckbox").attr("checked",TSCORE.Config.getCheckForUpdates());
-        
-        TSCORE.Config.getPerspectives().forEach(function (value, index) {
-            addPerspective($('#perspectiveList'), value.id);
-        });
-
-        $( "#perspectiveList" ).sortable();
-
-        TSCORE.Config.getSupportedFileTypes().forEach(function (value, index) {
-            addFileType($('#fileTypesList'), value.type, value.viewer, value.editor);
-        });
-        
-        $('#saveSettingsCloseButton').click(function() {
-            updateSettings(); 
-            $('#dialogOptions').modal("hide");
-            //TSCORE.reloadUI();            
-        }); 
-        
         $('#addFileTypeButton').click(function(e) {
             // Fixes reloading of the application by click
             e.preventDefault();
@@ -89,8 +69,58 @@ define(function(require, exports, module) {
             e.preventDefault();
             
             addPerspective($('#perspectiveList'), "");
-        });        
+        });   
+
+        $('#saveSettingsCloseButton').click(function() {
+            updateSettings(); 
+            $('#dialogOptions').modal("hide");
+            //TSCORE.reloadUI();            
+        }); 
+        
+        $( "#defaultSettingsButton" ).click(function() {
+            TSCORE.showConfirmDialog(
+                "Warning",
+                "By restoring the defalt setting, all locations, tags and taggroups will be lost."+
+                " Are you sure you want to continue?",
+                function() {
+                    TSCORE.Config.loadDefaultSettings();                
+                }                
+            );
+        });
+        
     }    
+    
+    function reInitUI() {
+        $("#extensionsPathInput").val(TSCORE.Config.getExtensionPath()); 
+        $("#showHiddenFilesCheckbox").attr("checked",TSCORE.Config.getShowUnixHiddenEntries());
+        $("#checkforUpdatesCheckbox").attr("checked",TSCORE.Config.getCheckForUpdates());
+        $("#calculateTagsCheckbox").attr("checked",TSCORE.Config.getCalculateTags());
+
+        
+        $('#perspectiveList').empty();
+        TSCORE.Config.getPerspectives().forEach(function (value, index) {
+            addPerspective($('#perspectiveList'), value.id);
+        });
+
+        $('#fileTypesList').empty();
+        TSCORE.Config.getSupportedFileTypes().forEach(function (value, index) {
+            addFileType($('#fileTypesList'), value.type, value.viewer, value.editor);
+        });        
+       
+        $('#dialogOptions a:first').tab('show');   
+    }        
+
+    function updateSettings() {
+//        TSCORE.Config.setExtensionPath($("#extensionsPathInput").val());
+        TSCORE.Config.setShowUnixHiddenEntries($('#showHiddenFilesCheckbox').is(":checked"));
+        TSCORE.Config.setCheckForUpdates($('#checkforUpdatesCheckbox').is(":checked"));
+        TSCORE.Config.setCalculateTags($('#calculateTagsCheckbox').is(":checked"));
+
+        TSCORE.Config.setPerspectives(collectPerspectivesData());
+        TSCORE.Config.setSupportedFileTypes(collectSupportedFileTypesData());
+        
+        TSCORE.Config.saveSettings();
+    }
 
     function collectPerspectivesData() {
         var data = new Array();
@@ -118,16 +148,9 @@ define(function(require, exports, module) {
         return data;
     }
     
-    function updateSettings() {
-//        TSCORE.Config.setExtensionPath($("#extensionsPathInput").val());
-        TSCORE.Config.setShowUnixHiddenEntries($('#showHiddenFilesCheckbox').is(":checked"));
-        TSCORE.Config.setCheckForUpdates($('#checkforUpdatesCheckbox').is(":checked"));
-
-        TSCORE.Config.setPerspectives(collectPerspectivesData());
-        TSCORE.Config.setSupportedFileTypes(collectSupportedFileTypesData());
-        
-        TSCORE.Config.saveSettings();
-    }
     
-    initUI();
+    // Public Methods
+    exports.initUI         = initUI;
+    exports.reInitUI       = reInitUI;
+
 });
