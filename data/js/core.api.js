@@ -250,6 +250,25 @@ define(function(require, exports, module) {
 	window.addEventListener("orientationchange", function() {
 		console.log("Current orientation: "+window.orientation);
 	}, false);	
+
+    $( window ).on('resize', onWindowResize);
+	
+    function onWindowResize() {
+        console.log("Window was resized to  W:"+window.innerWidth+" H:"+window.innerHeight);
+        // TODO consider if file opened
+        /*if(
+               (window.innerWidth < window.innerHeight) // portret orientation 
+               || (window.innerWidth < 1122) // window width smaller than than a minumum
+           ) {
+            layoutContainer.close("west");
+            layoutContainer.sizePane("east", fullWidth);
+            //layoutContainer.open("east");
+            $('#toggleFullWidthButton').hide();                 
+        } else {
+            layoutContainer.sizePane("east", halfWidth);
+            //layoutContainer.open("east");           
+        }*/                               
+    }	
 	
 	function openFileViewer() {
 		tsCoreUI.hideAllDropDownMenus();
@@ -258,8 +277,10 @@ define(function(require, exports, module) {
 		}
         var fullWidth = window.innerWidth;
         var halfWidth = Math.round(fullWidth/2);
-    	// In portret mode
-    	if(window.innerWidth < window.innerHeight) {
+    	if(
+    	       (window.innerWidth < window.innerHeight) // portret orientation 
+    	       || (window.innerWidth < 1122) // window width smaller than than a minumum
+    	   ) {
         	layoutContainer.close("west");
             layoutContainer.sizePane("east", fullWidth);
             layoutContainer.open("east");
