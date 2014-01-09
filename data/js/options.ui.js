@@ -95,7 +95,8 @@ define(function(require, exports, module) {
         $("#showHiddenFilesCheckbox").attr("checked",TSCORE.Config.getShowUnixHiddenEntries());
         $("#checkforUpdatesCheckbox").attr("checked",TSCORE.Config.getCheckForUpdates());
         $("#calculateTagsCheckbox").attr("checked",TSCORE.Config.getCalculateTags());
-
+        $("#tagsDelimiterInput").val(TSCORE.Config.getTagDelimiter());
+        $("#prefixTagContainerInput").val(TSCORE.Config.getPrefixTagContainer());        
         
         $('#perspectiveList').empty();
         TSCORE.Config.getPerspectives().forEach(function (value, index) {
@@ -108,13 +109,16 @@ define(function(require, exports, module) {
         });        
        
         $('#dialogOptions a:first').tab('show');   
+        $('#dialogOptions').modal('show');        
     }        
 
     function updateSettings() {
-//        TSCORE.Config.setExtensionPath($("#extensionsPathInput").val());
+        TSCORE.Config.setExtensionPath($("#extensionsPathInput").val());
         TSCORE.Config.setShowUnixHiddenEntries($('#showHiddenFilesCheckbox').is(":checked"));
         TSCORE.Config.setCheckForUpdates($('#checkforUpdatesCheckbox').is(":checked"));
         TSCORE.Config.setCalculateTags($('#calculateTagsCheckbox').is(":checked"));
+        TSCORE.Config.setTagDelimiter($("#tagsDelimiterInput").val());
+        TSCORE.Config.setPrefixTagContainer($("#prefixTagContainerInput").val());        
 
         TSCORE.Config.setPerspectives(collectPerspectivesData());
         TSCORE.Config.setSupportedFileTypes(collectSupportedFileTypesData());
