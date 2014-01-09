@@ -6,8 +6,7 @@ define(function (require, exports, module) {
 
     console.log("Loading ioapi.cordova.js..");
 
-    var TSCORE = require("tscore");
-    
+    var TSCORE = require("tscore");    
     var TSPOSTIO = require("tspostioapi");   
 
     var fsRoot = undefined;
@@ -126,19 +125,7 @@ define(function (require, exports, module) {
         //TSCORE.showAlertDialog("Creating directory tree is not supported on Android yet.");                 
 
     };     
-    
-    function isWindows() {
-        return (navigator.platform == 'Win32');
-    }
-    
-    function getDirseparator() {
-        if(isWindows()) {
-            return "\\";
-        } else {
-            return "/";
-        }
-    }
-    
+   
     function normalizePath(path) {
         if(path.indexOf(fsRoot.fullPath) >= 0) {
             path = path.substring(fsRoot.fullPath.length+1, path.length);                    
@@ -161,6 +148,45 @@ define(function (require, exports, module) {
         })
         ;            
     };   
+    
+    var listSubDirectories = function (dirPath) {
+        // directory path format DCIM/Camera/ !
+        dirPath = dirPath+"/"; // TODO make it platform independent
+        dirPath = normalizePath(dirPath);
+        console.log("Listing sub directories of: " + dirPath);
+        TSCORE.showLoadingAnimation();   
+
+        fsRoot.getDirectory(dirPath, {create: false, exclusive: false}, 
+            function (dirEntry) {
+                var directoryReader = dirEntry.createReader();
+        
+                // Get a list of all the entries in the directory
+                directoryReader.readEntries(
+                    function (entries) { 
+                        var i;
+                        var anotatedDirList = [];
+                        for (i = 0; i < entries.length; i++) {
+                            if(entries[i].isDirectory){
+                                anotatedDirList.push({
+                                    "name":   entries[i].name,
+                                    "path":   entries[i].fullPath
+                                });                            
+                            }
+                        }
+                        //console.log("Dir content: " + JSON.stringify(entries));
+                        TSPOSTIO.listSubDirectories(anotatedDirList);  
+                    }, function (error) { // error get file system
+                        //TSPOSTIO.errorOpeningPath();            
+                        console.log("Listing sub directories failed: " + error.code);
+                    }            
+               );
+           },
+           function (error) {
+                //TSPOSTIO.errorOpeningPath();              
+                console.log("Getting sub directories of : "+dirPath+" failed: " + error.code);
+           }                
+        ); 
+    };    
     
     var listDirectory = function (dirPath) {
         TSCORE.showLoadingAnimation();          
@@ -420,6 +446,7 @@ define(function (require, exports, module) {
 	exports.loadTextFile 				= loadTextFile;
 	exports.saveTextFile 				= saveTextFile;
 	exports.listDirectory 				= listDirectory;
+    exports.listSubDirectories          = listSubDirectories;
 	exports.deleteElement 				= deleteElement;
     exports.createDirectoryIndex 		= createDirectoryIndex;
     exports.createDirectoryTree 		= createDirectoryTree;

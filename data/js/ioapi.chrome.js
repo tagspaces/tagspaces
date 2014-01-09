@@ -48,7 +48,7 @@ IO-API
 	    try {  
 			var dirList = nativeIO.getDirEntries(dirPath);
             for (var i=0; i < dirList.length; i++) {
-            	var path = dirPath+getDirseparator()+dirList[i];
+            	var path = dirPath+TSCORE.dirSeparator+dirList[i];
             	var isDir = nativeIO.isDirectory(path);
                 var fileSize = 0;
                 var lastDateModified = 0;
@@ -78,14 +78,14 @@ IO-API
     function generateDirectoryTree(dirPath) {
         try {
             var tree = {}; 
-            tree["name"] = dirPath.substring(dirPath.lastIndexOf(getDirseparator()) + 1, dirPath.length);
+            tree["name"] = dirPath.substring(dirPath.lastIndexOf(TSCORE.dirSeparator) + 1, dirPath.length);
             tree["type"] = false;
             tree["lmdt"] = 0;   
             tree["path"] = dirPath;         
             tree["children"] = [];            
             var dirList = nativeIO.getDirEntries(dirPath); 
             for (var i=0; i < dirList.length; i++) {
-                var path = dirPath+getDirseparator()+dirList[i];
+                var path = dirPath+TSCORE.dirSeparator+dirList[i];
                 var isDir = nativeIO.isDirectory(path);
                 var fileSize = 0;
                 var lastDateModified = 0;
@@ -113,14 +113,6 @@ IO-API
 	
 	function isWindows() {
 		return (navigator.platform == 'Win32');
-	}
-	
-	function getDirseparator() {
-		if(isWindows()) {
-			return "\\";
-		} else {
-			return "/";
-		}
 	}
 	
     var checkNewVersion = function() {
@@ -170,7 +162,7 @@ IO-API
 			var dirList = nativeIO.getDirEntries(dirPath);
             var anotatedDirList = [];
             for (var i=0; i < dirList.length; i++) {
-            	var path = dirPath+getDirseparator()+dirList[i];
+            	var path = dirPath+TSCORE.dirSeparator+dirList[i];
             	var isDir = nativeIO.isDirectory(path);
                 var fileSize = 0;
                 var lastDateModified = 0;
@@ -194,6 +186,29 @@ IO-API
 			console.log("Directory does not exists.");	
 		}	
 	};
+	
+    var listSubDirectories = function(dirPath) {
+        console.log("Listing sub directories: "+dirPath);
+        TSCORE.showLoadingAnimation();      
+        if(nativeIO.isDirectory(dirPath)) {
+            var dirList = nativeIO.getDirEntries(dirPath);
+            var anotatedDirList = [];
+            for (var i=0; i < dirList.length; i++) {
+                var path = dirPath+TSCORE.dirSeparator+dirList[i];
+                var isDir = nativeIO.isDirectory(path);
+                if(isDir) {
+                    anotatedDirList.push({
+                        "name": dirList[i],
+                        "path": path  
+                    });
+                }
+            } 
+            TSPOSTIO.listSubDirectories(anotatedDirList);
+        } else {
+            //TSPOSTIO.errorOpeningPath();
+            console.log("Directory does not exists.");  
+        }   
+    };	
 
     var deleteElement = function(path) {
         console.log("Deleting: "+path);
@@ -370,6 +385,7 @@ IO-API
 	exports.loadTextFile 				= loadTextFile;
 	exports.saveTextFile 				= saveTextFile;
 	exports.listDirectory 				= listDirectory;
+    exports.listSubDirectories          = listSubDirectories;	
 	exports.deleteElement 				= deleteElement;
     exports.createDirectoryIndex 		= createDirectoryIndex;
     exports.createDirectoryTree 		= createDirectoryTree;
