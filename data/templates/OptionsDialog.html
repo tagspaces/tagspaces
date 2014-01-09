@@ -10,14 +10,14 @@
           <li><a href="#general" data-toggle="tab" class="optionsTitle">General</a></li>
           <li><a href="#perspectives" data-toggle="tab" class="optionsTitle">Perspectives</a></li>
           <li><a href="#filetypes" data-toggle="tab" class="optionsTitle">File Types</a></li>
-          <li><a href="#experimental" data-toggle="tab" class="optionsTitle">Experimental</a></li>
+          <li><a href="#experimental" data-toggle="tab" class="optionsTitle">Experimental*</a></li>
         </ul>          
         <div class="tab-content">
             <div class="tab-pane active" id="general" style="overflow-y: auto;">
                 <div class='form-group'>
                     <label class="checkbox">
                         <input type='checkbox' id='showHiddenFilesCheckbox' > 
-                        Show files/directories with a dot(.) in front of the name (unix/linux/osx hidden files)
+                        Show files/directories with a dot(.) in front of the name (e.g. Unix, Linux, OS X hidden files)
                     </label>
                 </div>
                 <div class='form-group'>
@@ -29,7 +29,7 @@
             </div>
     
             <div class="tab-pane" id="perspectives">
-                <h6>The changes made in this tab will take effect after restarting of the application.</h6>
+                <p class="help-block">The changes made in this tab will take effect after restarting the application.</p>                
                 <div id='perspectiveList'></div>    
                 <button class='btn btn-default' style="margin-top: 10px" id='addPerspectiveButton'>
                     <i class='fa fa-plus' data-i18n="app.addNewPerspective"> Add new perspective</i>
@@ -44,9 +44,9 @@
             </div> 
             
             <div class="tab-pane" id="experimental">
-                <h6>Be carefull changing setting in this setting.</h6>
+                <p class="help-block">*) Be carefull changing the following settings.</p>                
                 <div class='form-group'>
-                    <label for='extensionsPathInput' data-i18n="app.extensionsFolder">Extensions folder</label>
+                    <label for='extensionsPathInput' data-i18n="app.extensionsFolder">Extensions folder (default value is "ext")</label>
                     <input type='text' class='form-control' id='extensionsPathInput' 
                     data-i18n="[placeholder]app" placeholder='file:///c:\\tagspaces-extensions' 
                     data-i18n="[title]app" title='Path to your tagspaces extensions'>
@@ -57,9 +57,22 @@
                 <div class='form-group'>
                     <label class="checkbox">
                         <input type='checkbox' id='calculateTagsCheckbox' > 
-                        Calculate tags from the current search results (reduces the performance while browsing directories)
+                        Calculate tags from the current search results 
                     </label>
+                    <p class="help-block">Reduces the performance while browsing directories</p>
                 </div>
+                <div class='form-group'>
+                    <label for='tagsDelimiterInput' data-i18n="app.extensionsFolder">Tag delimiter (e.g. Filename[TAG1_TAG2], _ is the delimiter)</label>
+                    <input type='text' class='form-control' id='tagsDelimiterInput' 
+                    data-i18n="[placeholder]app" placeholder='' 
+                    data-i18n="[title]app" title=''>
+                </div>
+                <div class='form-group'>
+                    <label for='prefixTagContainerInput' data-i18n="app.extensionsFolder">Prefix for the tag container (e.g. in "Filename-[TAG1].txt" - is the prefix), </label>
+                    <input type='text' class='form-control' id='prefixTagContainerInput' 
+                    data-i18n="[placeholder]app" placeholder='' 
+                    data-i18n="[title]app" title=''>
+                </div>                                
             </div>            
 
         </div>
