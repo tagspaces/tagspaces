@@ -214,8 +214,6 @@ console.log("Loading UI for perspectiveList");
 
 	    // Load new filtered data
 	    this.searchResults = TSCORE.Search.searchData(TSCORE.fileList, TSCORE.Search.nextQuery);
-
-        $("#statusBar").text(this.searchResults.length+" files found");
 	    
 	    this.fileTable.fnAddData( this.searchResults );
 
@@ -303,6 +301,11 @@ console.log("Loading UI for perspectiveList");
         // Disable certain buttons again	
 	    $("#"+this.extensionID+"IncreaseThumbsButton" ).prop('disabled', true);
 	    $("#"+this.extensionID+"TagButton" ).prop('disabled', true);
+	    
+        //Update statusbar
+        if(this.searchResults.length != undefined) {
+            $("#statusBar").text(this.searchResults.length+" files found");	    
+	    }
 	    
         this.refreshThumbnails();
         //TSCORE.hideLoadingAnimation();          

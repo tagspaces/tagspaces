@@ -429,17 +429,6 @@ console.log("Loading UI for perspectiveDefault");
         // Load new filtered data
         this.searchResults = TSCORE.Search.searchData(TSCORE.fileList, TSCORE.Search.nextQuery);
 
-        if(this.searchResults.length == 0) {
-            $("#statusBar").text("No files found");            
-        } else {
-            //var endTime = new Date().getTime();
-            $("#statusBar").text(this.searchResults.length+" files found");
-            //this.viewFooter.append($("<div>", { 
-            //    "class": "searchSummary",    
-            //    "text":  this.searchResults.length+" files found" //" in "+(endTime-TSCORE.startTime)/1000+" sec."             
-            //}));
-        } 
-
         var i=0;
         _.each(self.calculateGrouping(this.searchResults), function (value) { 
             i++;
@@ -593,6 +582,20 @@ console.log("Loading UI for perspectiveDefault");
         $("#"+this.extensionID+"TagButton" ).prop('disabled', true);
                  
         this.refreshThumbnails();
+
+        if(this.searchResults.length != undefined) {
+            if(this.searchResults.length == 0) {
+                $("#statusBar").text("No files found");            
+            } else {
+                //var endTime = new Date().getTime();
+                $("#statusBar").text(this.searchResults.length+" files found");
+                //this.viewFooter.append($("<div>", { 
+                //    "class": "searchSummary",    
+                //    "text":  this.searchResults.length+" files found" //" in "+(endTime-TSCORE.startTime)/1000+" sec."             
+                //}));
+            } 
+        }
+        
         TSCORE.hideLoadingAnimation();          
     };
 
