@@ -85,22 +85,12 @@ can be found in the LICENSE file.
           </label>
 	  </div>
 	  <div class="btn-group dropup" style="margin-right: 5px;">
-		  <!--button class="btn btn-default" data-i18n="[title]app.?;" title="About TagSpaces" data-toggle="modal" data-target="#dialogAboutTS">
-		    &nbsp;<i class="fa fa-comment"></i>&nbsp;</button -->
-          <button class="btn btn-default" data-i18n="[title]app.?;" title="Get in touch" id="contactUs"  data-toggle="dropdown">
+          <button class="btn btn-default" data-i18n="[title]app.?;" title="Get in touch" id="contactUs" rel="popover">
             &nbsp;<i class="fa fa-comment"></i>&nbsp;</button>
           <button class="btn btn-default" data-i18n="[title]app.?;" title="Open new TagSpaces Instance" id="startNewInstanceBack">
             &nbsp;<i class="fa fa-external-link-square"></i>&nbsp;</button>
           <button class="btn btn-default" data-i18n="[title]app.?;" title="Settings" id="openOptions">
             &nbsp;<i class="fa fa-gear"></i>&nbsp;</button>
-          <ul class="dropdown-menu">
-                <li><a title="About TagSpaces" data-toggle="modal" data-target="#dialogAboutTS"><i class="fa fa-comment-o"></i> About</a></li>    
-                <li class="divider"></li>       
-                <li><a id="openUservoice" title="Suggest or vote for a feature"><i class="fa fa-bullhorn"></i> New Features</a></li>
-                <li><a id="openGitHubIssues" title="Report an issue"><i class="fa fa-flag"></i> Report Issue</a></li>
-                <li><a id="openTwitter" title="Tweet about @tagspaces"><i class="fa fa-twitter"></i> Tweeter</a></li>
-                <li><a href="mailto:info@tagspaces.org" title="Send email to us"><i class="fa fa-envelope-o"></i> Contact Us</a></li>
-          </ul>     
 	  </div>
 	</div>    	
 </div>
@@ -147,13 +137,6 @@ can be found in the LICENSE file.
                         </div>
                     </div>				
 				</div>
-                <!--input type="text" class="form-control" id="searchBox" style="padding: 4px; height: 30px; margin-top: 2px; position:absolute; width: 200px; top:2px; right:188px;" placeholder="Search">
-				<div class="btn-group" style="position:absolute; max-width: 180px; top:0px; right:0px; background-color: #E5E5E5;">
-				  <button type="button" class="btn btn-link dropdown-toggle" data-toggle="dropdown"><i id="currentPerspectitveIcon" class="fa fa-film"></i>&nbsp;
-				    <span id="currentPerspectitveName">Choose Perspective</span>&nbsp;<span class="caret"></span>
-				  </button>
-				  <ul class="dropdown-menu" id="viewSwitcher"></ul>
-				</div-->
 			</div>
 			<div id="viewToolbars"></div>			
 		</nav>  	
@@ -573,6 +556,16 @@ can be found in the LICENSE file.
 	    <li><a id="directoryMenuCreateDirectory" title="Creates a new subdirectory"><i class="fa fa-folder"></i> New Subdirectory</a></li>                   
 	    <li><a id="directoryMenuOpenDirectory" title="Opens the directory in the default file manager"><i class="fa fa-folder-open"></i> Show in File Manager</a></li>                   
 	</ul>
+</div>
+
+<div id="contactUsContent">
+    <a class="btn btn-default btn-block" title="About TagSpaces" data-toggle="modal" data-target="#dialogAboutTS"><i class="fa fa-comment-o"></i> About TagSpaces</a>    
+    <a class="btn btn-default btn-block" href="https://tagspaces.uservoice.com/forums/213931-general" target="_system" id="openUservoice" title="Suggest or vote for a feature">&nbsp;<i class="fa fa-bullhorn"></i> Suggest New Features&nbsp;</a>
+    <a class="btn btn-default btn-block" href="https://github.com/uggrock/tagspaces/issues/" target="_system" id="openGitHubIssues" title="Report an issue"><i class="fa fa-flag"></i> Report Issue</a>
+    <a class="btn btn-default btn-block" href="https://twitter.com/intent/tweet?original_referer=http%3A%2F%2Ftagspaces.org%2F&text=Organize%20your%20files%20with%20@tagspaces" target="_system" id="openTwitter" title="Tweet about @tagspaces"><i class="fa fa-twitter"></i> Tweet About Us</a>
+    <a class="btn btn-default btn-block" href="https://twitter.com/intent/user?screen_name=tagspaces" target="_system" id="openTwitter2" title="Follow @tagspaces"><i class="fa fa-twitter-square"></i> Follow  @tagspaces</a>    
+    <a class="btn btn-default btn-block" href="https://plus.google.com/+TagspacesOrg/" target="_system" id="openGooglePlus" title="Join us in Google+"><i class="fa fa-google-plus"></i> Join us in Google+</a>    
+    <a class="btn btn-default btn-block" href="mailto:info@tagspaces.org" title="Send email to us"><i class="fa fa-envelope-o"></i> Contact Us</a>
 </div>
 
 </body>
