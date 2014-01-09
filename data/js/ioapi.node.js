@@ -7,15 +7,14 @@ define(function(require, exports, module) {
 	// Activating browser specific exports modul
 	console.log("Loading ioapi.node.js..");
     
-    var TSCORE = require("tscore");
-	
+    var TSCORE = require("tscore");	
 	var TSPOSTIO = require("tspostioapi");
 	
 	function scanDirectory(dirPath, index) {
 	    try {
             var dirList = fs.readdirSync(dirPath);
             for (var i=0; i < dirList.length; i++) {
-                var path = dirPath+getDirseparator()+dirList[i];
+                var path = dirPath+TSCORE.dirSeparator+dirList[i];
                 var stats = fs.statSync(path);
                 //console.log('stats: ' + JSON.stringify(stats));
                 index.push({
@@ -34,18 +33,6 @@ define(function(require, exports, module) {
             console.error("Scanning directory "+dirPath+" failed "+ex);
         }           
 	}
-	
-	function isWindows() {
-		return (navigator.platform == 'Win32');
-	}
-	
-	function getDirseparator() {
-		if(isWindows()) {
-			return "\\";
-		} else {
-			return "/";
-		}
-	}
 
     function generateDirectoryTree(dirPath) {
         try {
@@ -58,7 +45,7 @@ define(function(require, exports, module) {
             tree["children"] = [];            
             var dirList = fs.readdirSync(dirPath);
             for (var i=0; i < dirList.length; i++) {
-                var path = dirPath+getDirseparator()+dirList[i];
+                var path = dirPath+TSCORE.dirSeparator+dirList[i];
                 var stats = fs.statSync(path);
                 if (stats.isFile()) {
                     tree["children"].push({
@@ -77,24 +64,9 @@ define(function(require, exports, module) {
             console.error("Scanning directory "+dirPath+" failed "+ex);
         }         
     }
-/*
-    var getFileSize = function(filePath) {
-        console.log("Get filesize of: "+filePath);
-        var stats = fs.statSync(filePath);
-        return stats.size;
-        //TSPOSTIO.
-    };   
 
-    var getLMDT = function(filePath) {
-        console.log("Get last modified date time of: "+filePath);
-        var stats = fs.statSync(filePath);
-        return stats.mtime;
-        //TSPOSTIO.
-    };
-
-    var directoryExist = function(dirPath) {
+    /* var directoryExist = function(dirPath) {
         console.log("Checks if a directory exist: "+dirPath);
-
         //TSPOSTIO.
     }; */
 	
@@ -195,7 +167,7 @@ define(function(require, exports, module) {
         
             var anotatedDirList = [];
             for (var i=0; i < dirList.length; i++) {
-                var path = dirPath+getDirseparator()+dirList[i];
+                var path = dirPath+TSCORE.dirSeparator+dirList[i];
                 var stats = fs.statSync(path);
                 //console.log('stats: ' + JSON.stringify(stats));
                 anotatedDirList.push({

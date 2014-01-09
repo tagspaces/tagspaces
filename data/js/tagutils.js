@@ -8,16 +8,16 @@ define(function(require, exports, module) {
     	
     var TSCORE = require("tscore");
 
-    var BEGIN_TAG_CONTAINER = "[",
-        END_TAG_CONTAINER = "]",
-        DIR_SEPARATOR = isWindows() ? "\\" : "/";
+    var BEGIN_TAG_CONTAINER = "[";
+    var END_TAG_CONTAINER = "]";
+
 
     function isWindows() {
         return (navigator.appVersion.indexOf("Win") !== -1);
     }
 
     function extractFileName(filePath) {
-        return filePath.substring(filePath.lastIndexOf(DIR_SEPARATOR) + 1, filePath.length);
+        return filePath.substring(filePath.lastIndexOf(TSCORE.dirSeparator) + 1, filePath.length);
     }
 
     function extractFileNameWithoutExt(filePath) {
@@ -31,12 +31,12 @@ define(function(require, exports, module) {
     }
 
     function extractContainingDirectoryPath(filePath) {
-        return filePath.substring(0, filePath.lastIndexOf(DIR_SEPARATOR));
+        return filePath.substring(0, filePath.lastIndexOf(TSCORE.dirSeparator));
     }
 
     function extractContainingDirectoryName(filePath) {
-        var tmpStr = filePath.substring(0, filePath.lastIndexOf(DIR_SEPARATOR));
-        return tmpStr.substring(tmpStr.lastIndexOf(DIR_SEPARATOR)+1,tmpStr.length);
+        var tmpStr = filePath.substring(0, filePath.lastIndexOf(TSCORE.dirSeparator));
+        return tmpStr.substring(tmpStr.lastIndexOf(TSCORE.dirSeparator)+1,tmpStr.length);
     }
 
     // TODO consider [20120125 89.4kg 19.5% 60.5% 39.8% 2.6kg]
@@ -214,7 +214,7 @@ define(function(require, exports, module) {
         if(tags.length > 0){
             tagsString = BEGIN_TAG_CONTAINER;
             for (var i=0; i < tags.length; i++) {
-              tagsString += tags[i]+" ";
+              tagsString += tags[i]+TSCORE.Config.getTagDelimiter();
             }
             tagsString = tagsString.trim();  
             tagsString += END_TAG_CONTAINER;        
@@ -268,7 +268,7 @@ define(function(require, exports, module) {
         
         var newFileName = generateFileName(fileName, extractedTags);
        
-        TSCORE.IO.renameFile(filePath, containingDirectoryPath+DIR_SEPARATOR+newFileName);
+        TSCORE.IO.renameFile(filePath, containingDirectoryPath+TSCORE.dirSeparator+newFileName);
     }
 
     function addTag(filePathArray, tagArray) {
@@ -314,7 +314,7 @@ define(function(require, exports, module) {
         
         var newFileName = generateFileName(fileName, extractedTags);
        
-        TSCORE.IO.renameFile(filePath, containingDirectoryPath+DIR_SEPARATOR+newFileName);
+        TSCORE.IO.renameFile(filePath, containingDirectoryPath+TSCORE.dirSeparator+newFileName);
         
     }    
     
@@ -337,7 +337,7 @@ define(function(require, exports, module) {
         
         var newFileName = generateFileName(fileName, extractedTags);
        
-        TSCORE.IO.renameFile(filePath, containingDirectoryPath+DIR_SEPARATOR+newFileName);
+        TSCORE.IO.renameFile(filePath, containingDirectoryPath+TSCORE.dirSeparator+newFileName);
         
     }
     
@@ -356,7 +356,7 @@ define(function(require, exports, module) {
 		// TODO generalize generateFileName to support fileTitle & fileExtension
         var newFileName = generateFileName(newTitle, extractedTags);
        
-        TSCORE.IO.renameFile(filePath, containingDirectoryPath+DIR_SEPARATOR+newFileName+fileExt);
+        TSCORE.IO.renameFile(filePath, containingDirectoryPath+TSCORE.dirSeparator+newFileName+fileExt);
         
         return true;        
     }    
@@ -380,11 +380,10 @@ define(function(require, exports, module) {
         
         var newFileName = generateFileName(fileName, newTags);
 
-        TSCORE.IO.renameFile(filePath, containingDirectoryPath+DIR_SEPARATOR+newFileName);     
+        TSCORE.IO.renameFile(filePath, containingDirectoryPath+TSCORE.dirSeparator+newFileName);     
     }
 
     // Public API definition
-    exports.DIR_SEPARATOR                       = DIR_SEPARATOR;
     exports.beginTagContainer                   = BEGIN_TAG_CONTAINER;
     exports.endTagContainer	                    = END_TAG_CONTAINER;
 
