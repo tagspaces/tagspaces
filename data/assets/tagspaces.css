@@ -545,12 +545,22 @@ input a.resetFilter {
     color: #363636;   
 }
 
-/* Bootstrap Styles */
+/* Bootstrap Styles  white !important */
 
 .btn, .btn:hover, .btn:focus, .btn:active {
   background-image: none;
   border-radius: 2px;
+  outline: 0;  
 }
+
+.btn:focus {
+  background-color: white;
+}
+
+.btn-primary {
+  min-width: 70px;
+}
+
 
 .btn-link, .btn-link:hover, .btn-link:focus, .btn-link:active {
   text-decoration: none;
