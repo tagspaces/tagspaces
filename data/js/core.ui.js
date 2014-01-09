@@ -90,7 +90,7 @@ define(function(require, exports, module) {
         console.log("Deleting file...");
         TSCORE.showConfirmDialog(
             "Delete File(s)",
-            "The file: "+filePath+" will be permanently deleted and cannot be recovered. Are you sure?",
+            "The file \""+filePath+"\" will be permanently deleted and cannot be recovered. Are you sure?",
             function() {
                 TSCORE.IO.deleteElement(TSCORE.selectedFiles[0]);
             }
@@ -106,14 +106,13 @@ define(function(require, exports, module) {
         require([
               "text!templates/OptionsDialog.html",
               "tsoptions",
-            ], function(uiTPL, options) {
+            ], function(uiTPL, controller) {
                 if($("#dialogOptions").length < 1) {                
                     var uiTemplate = Handlebars.compile( uiTPL );
                     $('body').append(uiTemplate());    
-                    options.initUI();
+                    controller.initUI();
                 }
-                options.reInitUI();                    
-                $('#dialogOptions').modal('show');
+                controller.reInitUI();                    
         });
     };       
     
@@ -171,7 +170,7 @@ define(function(require, exports, module) {
 	            if(index == 0) {
 	                fileTags = value;                 
 	            } else {
-	                fileTags = fileTags + TSCORE.TagUtils.tagDelimiter + value;                                 
+	                fileTags = fileTags + TSCORE.Config.getTagDelimiter() + value;                                 
 	            }
 	        }); 
 
@@ -179,7 +178,7 @@ define(function(require, exports, module) {
 	            if(fileTags.length < 1) {
 	                fileTags = TSCORE.TagUtils.formatDateTime4Tag(new Date());                 
 	            } else {
-	                fileTags = fileTags + TSCORE.TagUtils.tagDelimiter + TSCORE.TagUtils.formatDateTime4Tag(new Date());                                 
+	                fileTags = fileTags + TSCORE.Config.getTagDelimiter() + TSCORE.TagUtils.formatDateTime4Tag(new Date());                                 
 	            }				
 			}
 			
@@ -187,7 +186,7 @@ define(function(require, exports, module) {
 				fileTags = TSCORE.TagUtils.beginTagContainer + fileTags + TSCORE.TagUtils.endTagContainer;
 			}
 
-			var fileName = TSCORE.currentPath+TSCORE.TagUtils.DIR_SEPARATOR+$( "#newFileName" ).val()+fileTags+"."+fileType;
+			var fileName = TSCORE.currentPath+TSCORE.dirSeparator+$( "#newFileName" ).val()+fileTags+"."+fileType;
 
             TSCORE.IO.saveTextFile(fileName,fileContent);
             TSCORE.IO.listDirectory(TSCORE.currentPath);                    
@@ -202,7 +201,7 @@ define(function(require, exports, module) {
                 var containingDir = TSCORE.TagUtils.extractContainingDirectoryPath(TSCORE.selectedFiles[0]);
                 TSCORE.IO.renameFile(
                         $( "#renamedFileName" ).attr("filepath"),
-                        containingDir+TSCORE.TagUtils.DIR_SEPARATOR+$( "#renamedFileName" ).val()
+                        containingDir+TSCORE.dirSeparator+$( "#renamedFileName" ).val()
                     );
             }
         });
@@ -375,9 +374,8 @@ define(function(require, exports, module) {
         
         // Search UI END
 
-        // Handle external links
-        $("#openUservoice")
-            .click(function(evt) {
+        // Handle external links _system is important in cordova
+   /*     $("#openUservoice").on('click', function () {
                 window.open("https://tagspaces.uservoice.com/forums/213931-general","_system");
             });
 
@@ -389,7 +387,13 @@ define(function(require, exports, module) {
         $("#openTwitter")
             .click(function(evt) {
                 window.open("https://twitter.com/intent/tweet?original_referer=http%3A%2F%2Ftagspaces.org%2F&text=Organize%20your%20files%20with%20@tagspaces","_system");
-            });           
+            });*/           
+        	    
+        $('#contactUs').popover({
+                placement: 'top', 
+                content: document.getElementById("contactUsContent").innerHTML, 
+                html: true
+        });        	    
         	    
 	    // Hide drop downs by click and drag
 	    $(document).click(function () {
@@ -420,6 +424,9 @@ define(function(require, exports, module) {
         if(isFirefox) {
             $("#openNatively").hide();                   
         }
+        if(isNode) {
+            $("#fullscreenFile").hide();                   
+        }
     };	
 
 	var showContextMenu = function(menuId, sourceObject) {
@@ -447,6 +454,7 @@ define(function(require, exports, module) {
         $('#directoryMenu').hide();
         $('#tagMenu').hide();
         $('#fileMenu').hide();  
+        //$('.popover').hide();        
 	};
 	
     var showLocationsPanel = function() {
