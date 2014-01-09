@@ -4,11 +4,10 @@
   "version": "@VERSION@.@BUILD@",
   "main": "index.html",
   "window": {
-    "icon": "icons/icon128.png",
+    "icon": "assets/icon128.png",
     "toolbar": false,
-    "width": 1024,
+    "width": 1280,
     "height": 768
   },
-  "nodejs": true,
-  "chromium-args" : "--data-path='./data/'"
+  "nodejs": true
 }
