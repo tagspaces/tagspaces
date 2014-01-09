@@ -70,6 +70,11 @@ define(function(require, exports, module) {
         TSCORE.updateSubDirs(anotatedDirList);
     };
 
+    exports.listSubDirectories = function(dirList) {
+        console.log("Listing Subdirs: "+JSON.stringify(dirList));
+        TSCORE.subfoldersDirBrowser = dirList;
+    };
+
     exports.errorOpeningPath = function() {
         TSCORE.showAlertDialog("Error occured while opening a path! Currently opened location will be closed."); 
         TSCORE.closeCurrentLocation();
@@ -89,7 +94,7 @@ define(function(require, exports, module) {
 
     exports.selectDirectory = function(dirPath) {
         // TODO make the use of this function more general
-        var dirName = TSCORE.TagUtils.extractContainingDirectoryName(dirPath+TSCORE.TagUtils.DIR_SEPARATOR);
+        var dirName = TSCORE.TagUtils.extractContainingDirectoryName(dirPath+TSCORE.dirSeparator);
         $("#connectionName").val(dirName);                
         $("#folderLocation").val(dirPath);
         //$("#connectionName2").val(dirName);                

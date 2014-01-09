@@ -8,7 +8,7 @@ define(function(require, exports, module) {
 	
 	var tsSettings = require("tssetting");	
 	var tsIOApi = require("tsioapi");
-    var tsIOApiDropbox = require("tsioapidropbox");
+  //  var tsIOApiDropbox = require("tsioapidropbox");
     var tsPersManager = require("tspersmanager");
     var tsTagUtils = require("tstagutils");
     var tsFileOpener = require("tsfileopener");
@@ -38,6 +38,8 @@ define(function(require, exports, module) {
 	var selectedTagData = "";
 	
 	var startTime = undefined;
+	
+	var subfoldersDirBrowser = undefined;
 
 	function initApp() {
 	    console.log("Init application");
@@ -543,13 +545,16 @@ define(function(require, exports, module) {
 	exports.selectedTag 				= selectedTag;
 	exports.selectedTagData 			= selectedTagData;	
 	exports.startTime                   = startTime;
+	exports.subfoldersDirBrowser        = subfoldersDirBrowser;
 	
-    exports.fileListFILEEXT              = 0;
-    exports.fileListTITLE                = 1;
-    exports.fileListTAGS                 = 2;
-    exports.fileListFILESIZE             = 3;
-    exports.fileListFILELMDT             = 4;
-    exports.fileListFILEPATH             = 5;
-    exports.fileListFILENAME             = 6;		
+    exports.fileListFILEEXT             = 0;
+    exports.fileListTITLE               = 1;
+    exports.fileListTAGS                = 2;
+    exports.fileListFILESIZE            = 3;
+    exports.fileListFILELMDT            = 4;
+    exports.fileListFILEPATH            = 5;
+    exports.fileListFILENAME            = 6;		
+    
+    exports.dirSeparator                = isWin?"\\":"/";    
 	
 });
