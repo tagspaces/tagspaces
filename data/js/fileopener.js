@@ -395,6 +395,7 @@ define(function(require, exports, module) {
 	    };
 	}
 	
+	// TODO Make file properties dialog accessible from core
     function showFilePropertiesDialog() {
         require([
               "text!templates/FilePropertiesDialog.html",
@@ -402,9 +403,6 @@ define(function(require, exports, module) {
                 if($("#dialogFileProperties").length < 1) {                
                     var uiTemplate = Handlebars.compile( uiTPL );
                     $('body').append(uiTemplate());    
-                    $('#filePathProperty').attr("readonly", true);
-                    $('#fileSizeProperty').attr("readonly", true);
-                    $('#fileLMDTProperty').attr("readonly", true);                                         
                 }
                 $("#filePathProperty").val(_openedFileProperties.path);
                 $("#fileSizeProperty").val(_openedFileProperties.size);
