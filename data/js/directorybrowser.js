@@ -7,29 +7,9 @@ define(function(require, exports, module) {
     console.log("Loading directorybrowser.js ...");
     
     var TSCORE = require("tscore");    
-
-    function addPerspective(parent, perspectiveId) {
-        var perspectiveControl = $("<div class='form-inline'>")
-                .append($("<div class='input-group' style='width: 90%'>")
-                    //.append($("<button class='btn btn-default' style='width: 10%' title='Remove Perspective'><i class='fa fa-ellipsis-v'></i></button>"))
-                    .append($("<select class='form-control' style='width: 70%'></select>"))
-                    .append($("<button class='btn btn-default'  style='width: 40px' title='Remove Perspective'><i class='fa fa-times'></button>")
-                        .click(function() {
-                            $(this).parent().parent().remove();
-                        })                
-                  )
-                );
-                //.append($("<button class='btn' title='Remove this extension'><i class='icon-arrow-up'></button>"))
-                //.append($("<button class='btn' title='Remove this extension'><i class='icon-arrow-down'></button>"))  
-
-        generateSelectOptions(perspectiveControl.find("select"), TSCORE.Config.getPerspectiveExtensions(), perspectiveId);
-        parent.append(perspectiveControl);
-    }    
-   
-
+    var TSPOSTIO = require("tspostioapi");  
     
     function initUI() {
-
         $('#addPerspectiveButton').click(function(e) {
             // Fixes reloading of the application by click
             e.preventDefault();
@@ -37,27 +17,47 @@ define(function(require, exports, module) {
             addPerspective($('#perspectiveList'), "");
         });   
 
-        $( "#startDir" ).click(function() {
-            TSCORE.IO.listSubDirectories("/media/z/TagSpaces");
+        $( "#gotoParentDirButton" ).click(function() {
+            var parent = TSCORE.TagUtils.extractParentDirectoryPath($("#directoryPath").val());
+            TSCORE.IO.listSubDirectories(parent);
         });
 
         $( "#selectDirectoryButton" ).click(function() {
-
+            TSPOSTIO.selectDirectory($("#directoryPath").val());
         });
-        
     }    
     
     function reInitUI(dirPath) {
-        // $("#extensionsPathInput").val(TSCORE.Config.getExtensionPath()); 
-        
-        $('#directoryPath').empty();
+        $('#directoryPath').val(dirPath);
 
-        $('#subdirectoriesArea').empty();
+        var subfolders = $('#subdirectoriesArea').empty();
+        if(TSCORE.subfoldersDirBrowser == undefined || TSCORE.subfoldersDirBrowser.length <= 0) {
+                subfolders.append("<div class='alert alert-warning'>No subfolders found</div>");          
+        } else {
+            for(var j=0; j < TSCORE.subfoldersDirBrowser.length; j++) {                    
+                if (TSCORE.Config.getShowUnixHiddenEntries() || 
+                        (!TSCORE.Config.getShowUnixHiddenEntries() 
+                          && (TSCORE.subfoldersDirBrowser[j].name.indexOf(".") != 0)
+                         )
+                    ) {
+                    subfolders.append($("<button>", { 
+                        "class":    "btn btn-sm dirButton", 
+                        "path":      TSCORE.subfoldersDirBrowser[j].path,
+                        //"title":    TSCORE.subfoldersDirBrowser[j].path,
+                        "style":    "margin: 1px;",
+                        "text":     " "+TSCORE.subfoldersDirBrowser[j].name
+                    })
+                    .prepend("<i class='fa fa-folder-o'></i>")            
+                    .click( function() {
+                        TSCORE.IO.listSubDirectories($(this).attr("path"));
+                    })                   
+                    );
+                }
+           }        
+       }           
 
         $('#directoryBrowserDialog').modal('show');         
-    }        
-
-   
+    }           
     
     // Public Methods
     exports.initUI         = initUI;

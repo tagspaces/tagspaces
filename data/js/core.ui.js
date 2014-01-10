@@ -99,8 +99,31 @@ define(function(require, exports, module) {
     
     var showTagEditDialog = function() {
         $( "#newTagName" ).val(TSCORE.selectedTag);
+
+        /* $( "#newTagName" ).select2('data', null);        
+        $( "#newTagName" ).select2({
+            //minimumInputLength: 1,
+            multiple: false,
+            tags: TSCORE.Config.getAllTags(),
+        }); */  
+        
         $( '#dialogEditTag' ).modal({show: true});
-    };    
+    };  
+    
+    var showDirectoryBrowserDialog = function(path) {
+        require([
+              "text!templates/DirectoryBrowserDialog.html",
+              "tsdirectorybrowser"
+            ], function(uiTPL, controller) {
+                TSCORE.directoryBrowser = controller;
+                if($("#directoryBrowserDialog").length < 1) {                
+                    var uiTemplate = Handlebars.compile( uiTPL );
+                    $('body').append(uiTemplate());   
+                    TSCORE.directoryBrowser.initUI();                        
+                }
+                TSCORE.IO.listSubDirectories(path);                     
+        });         
+    };  
     
     var showOptionsDialog = function() {
         require([
@@ -278,7 +301,11 @@ define(function(require, exports, module) {
         
         $( "#fileMenuDeleteFile" ).click( function() {
             TSCORE.showFileDeleteDialog(TSCORE.selectedFiles[0]);
-        });
+        }); 
+        
+        $( "#fileOpenProperties" ).click( function() {
+            //TSCORE.showFilePropertiesDialog(TSCORE.selectedFiles[0]);
+        });         
         // End File Menu  
                 
 		$('#switchLang').click(function(e) {
@@ -408,16 +435,14 @@ define(function(require, exports, module) {
             $("#directoryMenuOpenDirectory").parent().hide();
             $("#fileMenuOpenDirectory").parent().hide();
             $("#fullscreenFile").parent().hide();
-            //$("#openDirectory").parent().hide();
+            $("#openDirectory").parent().hide();
             $("#advancedSettings").hide();
             $("#openFileInNewWindow").hide();
-          
         }
         if(isChrome) {
             $("#directoryMenuOpenDirectory").parent().hide();
             $("#fileMenuOpenDirectory").parent().hide();
             $("#openDirectory").parent().hide();
-            //$("#advancedSettings").hide();
             $("#openFileInNewWindow").hide();
             $("#openNatively").hide();            
         }
@@ -472,16 +497,17 @@ define(function(require, exports, module) {
     }; 	
 
     // Public API definition
-    exports.showContextMenu			= showContextMenu;
-	exports.initUI 					= initUI;
-	exports.showAlertDialog 		= showAlertDialog;
-	exports.showConfirmDialog 		= showConfirmDialog;
-	exports.showFileRenameDialog    = showFileRenameDialog;
-	exports.showFileCreateDialog    = showFileCreateDialog;
-	exports.showFileDeleteDialog    = showFileDeleteDialog;
-    exports.showTagEditDialog       = showTagEditDialog;
-    exports.showLocationsPanel      = showLocationsPanel;
-    exports.showTagsPanel       	= showTagsPanel;    
-	exports.hideAllDropDownMenus	= hideAllDropDownMenus;
+    exports.showContextMenu			    = showContextMenu;
+	exports.initUI 					    = initUI;
+	exports.showAlertDialog 		    = showAlertDialog;
+	exports.showConfirmDialog 		    = showConfirmDialog;
+	exports.showFileRenameDialog        = showFileRenameDialog;
+	exports.showFileCreateDialog        = showFileCreateDialog;
+	exports.showFileDeleteDialog        = showFileDeleteDialog;
+    exports.showTagEditDialog           = showTagEditDialog;
+    exports.showLocationsPanel          = showLocationsPanel;
+    exports.showDirectoryBrowserDialog  = showDirectoryBrowserDialog; 
+    exports.showTagsPanel       	    = showTagsPanel;    
+	exports.hideAllDropDownMenus	    = hideAllDropDownMenus;
 
 });

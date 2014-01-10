@@ -5,15 +5,23 @@
             <button class="close" data-dismiss="modal" aria-hidden="true">×</button>
             <h4 id="directoryBrowserDialogTitle">Select Directory</h4>
         </div>
-        <div class="modal-body">
-            <div class="row" id="directoryPath">
-                
-            </div>    
-            <div class="row" id="subdirectoriesArea">
-            </div>    
+        <div class="modal-body" >
+            <div class="form-group">
+                <label class="control-label" for="directoryPath">Current Path</label>
+                <input class="form-control uneditable-input" readonly="true" type="text" name="directoryPath" id="directoryPath" />
+            </div>
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                  <button class="btn btn-default" title="Go to parent directory" id="gotoParentDirButton">
+                     <i class="fa fa-mail-reply"></i> 
+                  </button>
+              </div>
+              <div class="panel-body" id="subdirectoriesArea" style="overflow-y: auto; max-height: 350px">
+                Panel content
+              </div>
+            </div>            
         </div>
         <div class="modal-footer">
-            <button id="startDir" class="btn">Start Dir</button>            
             <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
             <button id="selectDirectoryButton" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Ok</button>
         </div>

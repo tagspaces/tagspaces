@@ -29,9 +29,20 @@ define(function(require, exports, module) {
             return fileName;
         }
     }
+    
+    function stringEndsWith(str, suffix) {
+        return str.indexOf(suffix, str.length - suffix.length) !== -1;
+    }    
 
     function extractContainingDirectoryPath(filePath) {
         return filePath.substring(0, filePath.lastIndexOf(TSCORE.dirSeparator));
+    }
+
+    function extractParentDirectoryPath(dirPath) {
+        if(stringEndsWith(dirPath, TSCORE.dirSeparator)) {
+            dirPath = dirPath.substring(0, dirPath.lastIndexOf(TSCORE.dirSeparator));
+        }
+        return dirPath.substring(0, dirPath.lastIndexOf(TSCORE.dirSeparator));
     }
 
     function extractContainingDirectoryName(filePath) {
@@ -391,6 +402,7 @@ define(function(require, exports, module) {
     exports.extractFileNameWithoutExt           = extractFileNameWithoutExt;
     exports.extractContainingDirectoryPath      = extractContainingDirectoryPath;
     exports.extractContainingDirectoryName      = extractContainingDirectoryName;
+    exports.extractParentDirectoryPath          = extractParentDirectoryPath;
     exports.extractFileExtension                = extractFileExtension;
     exports.extractTitle                        = extractTitle;
     exports.formatFileSize                      = formatFileSize;
@@ -404,5 +416,6 @@ define(function(require, exports, module) {
     exports.removeTag                           = removeTag;
     exports.addTag                              = addTag;
     exports.changeTitle 						= changeTitle;
+    exports.stringEndsWith                      = stringEndsWith;
 
 });

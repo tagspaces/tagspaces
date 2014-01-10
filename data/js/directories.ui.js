@@ -77,25 +77,42 @@ define(function(require, exports, module) {
                    "style":      "overflow-y: auto; max-height: 500px; width: 250px; padding: 5px;",                
                    "class":      "dropdown-menu"
             })
-            .append('<li class="dropdown-header"><span>Subfolders of:</span><button type="button" class="close">×</button></li>')
-            .append($("<li>")
-                .append($("<button>", { 
-                    "class":    "btn btn-sm dirButton", 
-                    "key":      directoryHistory[i].path,
-                    "title":    directoryHistory[i].path,
-                    "style":    "margin: 1px;",
-                    "text":     " "+directoryHistory[i].name
-                })
-                .prepend("<i class='fa fa-folder-o'></i>")            
-                .click( function() {
-                    navigateToDirectory($(this).attr("key"));
-                })                   
-                )
+            .append($("<li>", { "text": 'Actions for '+directoryHistory[i].name, "class": 'dropdown-header' })
+                .append($('<button type="button" class="close">×</button>'))
             )            
-            .append('<li class="divider"></li>');
+            .append($("<li>", {} ) 
+                .append($("<div>", { "class": "btn-group"} ) 
+                    .append($("<button>", { 
+                            "class":    "btn btn-default", 
+                            "path":      directoryHistory[i].path,
+                            "title":    "Open or Reopen "+directoryHistory[i].name,
+                            "style":    "margin: 1px; font-size: 13px",
+                            "text":     " (Re)Open"
+                        })
+                        .prepend("<i class='fa fa-refresh'></i>")            
+                        .click( function() {
+                            navigateToDirectory($(this).attr("path"));
+                        })                   
+                    )
+                    .append($("<button>", { 
+                            "class":    "btn btn-default", 
+                            "path":      directoryHistory[i].path,
+                            "title":    "Create Subdirectory",
+                            "style":    "margin: 1px; font-size: 13px",
+                            "text":     " New Directory"
+                        })
+                        .prepend("<i class='fa fa-folder'></i>")            
+                        .click( function() {
+                            showCreateDirectoryDialog($(this).attr("path"));
+                        })                   
+                    )
+                )
+            )
+            .append($("<li>", { "text": 'Subfolders of : '+directoryHistory[i].name, "class": 'dropdown-header' }));                        
+            //.append('<li class="divider"></li>');
                           
             if(directoryHistory[i]["children"].length <= 0) {
-                    subfolders.append("<div class='alert'><span> No subfolders found</span></div>");          
+                    subfolders.append("<div class='alert alert-warning'>No subfolders found</div>");          
             } else {
                 for(var j=0; j < directoryHistory[i]["children"].length; j++) {                    
                     if (TSCORE.Config.getShowUnixHiddenEntries() || 
@@ -409,21 +426,8 @@ define(function(require, exports, module) {
     }
     
     function selectLocalDirectory() {
-        if(isChrome) { // isCordova
-            require([
-                  "text!templates/DirectoryBrowserDialog.html",
-                  "tsdirectorybrowser"
-                ], function(uiTPL, controller) {
-                    if($("#directoryBrowserDialog").length < 1) {                
-                        var uiTemplate = Handlebars.compile( uiTPL );
-                        $('body').append(uiTemplate());   
-                        controller.initUI();                        
-                    }
-                    controller.reInitUI();                    
-            });
-        } else {
-            TSCORE.IO.selectDirectory();                    
-        }
+       TSCORE.IO.selectDirectory();
+       //TSCORE.showDirectoryBrowserDialog("/media");               
     }
 
     function showLocationEditDialog(name,path) {
@@ -501,7 +505,7 @@ define(function(require, exports, module) {
 		});    	
     }  
     
-    function showCreateDirectoryDialog() {
+    function showCreateDirectoryDialog(dirPath) {
 		require([
 	          "text!templates/DirectoryCreateDialog.html",
 		    ], function(uiTPL) {
@@ -510,19 +514,20 @@ define(function(require, exports, module) {
 			     	$('body').append(uiTemplate());		
 			     	
 			        $( "#createNewDirectoryButton" ).on("click", function() {			
+                        // TODO validate folder name
 			            var bValid = true;
 			            //bValid = bValid && checkLength( newDirName, "directory name", 3, 100 );
-			
 			            //bValid = bValid && checkRegexp( newDirName, /^[a-z]([0-9a-z_])+$/i, "Directory name may consist of a-z, 0-9, underscores, begin with a letter." );
-			            // From jquery.validate.js (by joern), contributed by Scott Gonzalez: http://projects.scottsplayground.com/email_address_validation/
-			            // bValid = bValid && checkRegexp( email, /^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i, "eg. ui@jquery.com" );
-			            // bValid = bValid && checkRegexp( password, /^([0-9a-zA-Z])+$/, "Password field only allow : a-z 0-9" );
 			            if ( bValid ) {
-			                TSCORE.IO.createDirectory(dir4ContextMenu+TSCORE.dirSeparator+$( "#newDirectoryName" ).val());
-			                //navigateToDirectory(dir4ContextMenu);
+			                TSCORE.IO.createDirectory($( "#createNewDirectoryButton" ).attr("path")+TSCORE.dirSeparator+$( "#newDirectoryName" ).val());
 			            }
 			        });   			     	            
 		     	}
+                // TODO remove use dir4ContextMenu
+                if(dirPath == undefined) {
+                    dirPath = dir4ContextMenu;
+                }
+                $( "#createNewDirectoryButton" ).attr("path", dirPath);
 		        $("#newDirectoryName").val("");
 		        $('#dialogDirectoryCreate').modal({show: true});        
 		});
@@ -555,6 +560,7 @@ define(function(require, exports, module) {
 			"Do you want to delete the connection "+$("#connectionName2").attr("oldName")+"?",
 			function() {
 			     deleteLocation($("#connectionName2").attr("oldName"));
+			     $("#dialogLocationEdit").modal('hide');
 			 }
 		);
     }             
@@ -610,7 +616,6 @@ define(function(require, exports, module) {
         $( "#createNewLocation" ).click(function() {
             showLocationCreateDialog();         
         });
-
     }
 
     // Public API definition

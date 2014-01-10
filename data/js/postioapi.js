@@ -70,9 +70,12 @@ define(function(require, exports, module) {
         TSCORE.updateSubDirs(anotatedDirList);
     };
 
-    exports.listSubDirectories = function(dirList) {
+    exports.listSubDirectories = function(dirList, dirPath) {
         console.log("Listing Subdirs: "+JSON.stringify(dirList));
         TSCORE.subfoldersDirBrowser = dirList;
+        if(TSCORE.directoryBrowser != undefined) {
+            TSCORE.directoryBrowser.reInitUI(dirPath);            
+        }
     };
 
     exports.errorOpeningPath = function() {
@@ -94,10 +97,12 @@ define(function(require, exports, module) {
 
     exports.selectDirectory = function(dirPath) {
         // TODO make the use of this function more general
-        var dirName = TSCORE.TagUtils.extractContainingDirectoryName(dirPath+TSCORE.dirSeparator);
+        if(!TSCORE.TagUtils.stringEndsWith(dirPath, TSCORE.dirSeparator)) {
+            dirPath = dirPath + TSCORE.dirSeparator;
+        }
+        var dirName = TSCORE.TagUtils.extractContainingDirectoryName(dirPath);
         $("#connectionName").val(dirName);                
         $("#folderLocation").val(dirPath);
-        //$("#connectionName2").val(dirName);                
         $("#folderLocation2").val(dirPath);        
     };
     

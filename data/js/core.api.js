@@ -40,6 +40,8 @@ define(function(require, exports, module) {
 	var startTime = undefined;
 	
 	var subfoldersDirBrowser = undefined;
+	
+	var directoryBrowser = undefined;
 
 	function initApp() {
 	    console.log("Init application");
@@ -253,7 +255,7 @@ define(function(require, exports, module) {
 		console.log("Current orientation: "+window.orientation);
 	}, false);	
 
-    $( window ).on('resize', onWindowResize);
+    //$( window ).on('resize', onWindowResize);
 	
     function onWindowResize() {
         console.log("Window was resized to  W:"+window.innerWidth+" H:"+window.innerHeight);
@@ -516,6 +518,7 @@ define(function(require, exports, module) {
 	exports.showLocationsPanel        	= tsCoreUI.showLocationsPanel;
 	exports.showTagsPanel        		= tsCoreUI.showTagsPanel;	
 	exports.showContextMenu        		= tsCoreUI.showContextMenu;
+	exports.showDirectoryBrowserDialog  = tsCoreUI.showDirectoryBrowserDialog;
 	
 	// Proxying functions from tsTagsUI
 	exports.generateTagButtons 			= tsTagsUI.generateTagButtons;
@@ -546,6 +549,7 @@ define(function(require, exports, module) {
 	exports.selectedTagData 			= selectedTagData;	
 	exports.startTime                   = startTime;
 	exports.subfoldersDirBrowser        = subfoldersDirBrowser;
+	exports.directoryBrowser            = directoryBrowser;
 	
     exports.fileListFILEEXT             = 0;
     exports.fileListTITLE               = 1;

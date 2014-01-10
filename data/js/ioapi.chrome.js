@@ -203,7 +203,7 @@ IO-API
                     });
                 }
             } 
-            TSPOSTIO.listSubDirectories(anotatedDirList);
+            TSPOSTIO.listSubDirectories(anotatedDirList, dirPath);
         } else {
             //TSPOSTIO.errorOpeningPath();
             console.log("Directory does not exists.");  

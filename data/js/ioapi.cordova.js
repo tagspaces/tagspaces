@@ -150,10 +150,11 @@ define(function (require, exports, module) {
     };   
     
     var listSubDirectories = function (dirPath) {
+        console.log("Listing sub directories of: " + dirPath);
         // directory path format DCIM/Camera/ !
         dirPath = dirPath+"/"; // TODO make it platform independent
         dirPath = normalizePath(dirPath);
-        console.log("Listing sub directories of: " + dirPath);
+        console.log("Listing sub directories of : " + dirPath + " normalized.");
         TSCORE.showLoadingAnimation();   
 
         fsRoot.getDirectory(dirPath, {create: false, exclusive: false}, 
@@ -174,7 +175,7 @@ define(function (require, exports, module) {
                             }
                         }
                         //console.log("Dir content: " + JSON.stringify(entries));
-                        TSPOSTIO.listSubDirectories(anotatedDirList);  
+                        TSPOSTIO.listSubDirectories(anotatedDirList, dirPath);  
                     }, function (error) { // error get file system
                         //TSPOSTIO.errorOpeningPath();            
                         console.log("Listing sub directories failed: " + error.code);
@@ -385,8 +386,9 @@ define(function (require, exports, module) {
     };
 
     var selectDirectory = function() {
-        console.log("Operation selectDirectory not supported on Android yet!");
-        TSCORE.showAlertDialog("Selecting directory not supported on Android yet, please enter the desired directory path manually in the textbox!");         
+        console.log("Open select directory dialog.");        
+        //file:///storage/emulated/0/DCIM/Camera/
+        TSCORE.showDirectoryBrowserDialog(fsRoot.fullPath);       
     };
 
     var selectFile = function() {
