@@ -77,14 +77,14 @@ can be found in the LICENSE file.
 	</div>
 	<div class="row3">
 	  <div class="btn-group" data-toggle="buttons">
-		  <label class="btn btn-default active" id="showTagGroups" title="Show Tag Library" data-i18n="[title]app.switchToTagsTooltip;">
-		    <input type="radio" name="options" >&nbsp;<i class="fa fa-tags"></i>&nbsp;
-		  </label>
+          <label class="btn btn-default active" id="showTagGroups" title="Show Tag Library" data-i18n="[title]app.switchToTagsTooltip;">
+            <input type="radio" name="options" >&nbsp;<i class="fa fa-tags"></i>&nbsp;
+          </label>
           <label class="btn btn-default" id="showLocations" data-i18n="[title]app.switchToLocationsTooltip;" title="Show Folder Navigator">
             <input type="radio" name="options">&nbsp;<i class="fa fa-folder"></i>&nbsp;
           </label>
 	  </div>
-	  <div class="btn-group dropup" style="margin-right: 5px;">
+	  <div class="btn-group dropup" id="sideBarButtunGroup" style="margin-right: 5px;">
           <button class="btn btn-default" data-i18n="[title]app.?;" title="Get in touch" id="contactUs" rel="popover">
             &nbsp;<i class="fa fa-comments"></i>&nbsp;</button>
           <button class="btn btn-default" data-i18n="[title]app.?;" title="Open new TagSpaces Instance" id="startNewInstanceBack">
@@ -562,11 +562,11 @@ can be found in the LICENSE file.
 
 <div id="contactUsContent">
     <a class="btn btn-default btn-block" title="About TagSpaces" data-toggle="modal" data-target="#dialogAboutTS"><i class="fa fa-comment-o"></i> About TagSpaces</a>    
-    <a class="btn btn-default btn-block" href="https://tagspaces.uservoice.com/forums/213931-general" target="_system" id="openUservoice" title="Suggest or vote for a feature">&nbsp;<i class="fa fa-bullhorn"></i> Suggest New Features&nbsp;</a>
-    <a class="btn btn-default btn-block" href="https://github.com/uggrock/tagspaces/issues/" target="_system" id="openGitHubIssues" title="Report an issue"><i class="fa fa-flag"></i> Report Issue</a>
-    <a class="btn btn-default btn-block" href="https://twitter.com/intent/tweet?original_referer=http%3A%2F%2Ftagspaces.org%2F&text=Organize%20your%20files%20with%20@tagspaces" target="_system" id="openTwitter" title="Tweet about @tagspaces"><i class="fa fa-twitter"></i> Tweet About Us</a>
-    <a class="btn btn-default btn-block" href="https://twitter.com/intent/user?screen_name=tagspaces" target="_system" id="openTwitter2" title="Follow @tagspaces"><i class="fa fa-twitter-square"></i> Follow  @tagspaces</a>    
-    <a class="btn btn-default btn-block" href="https://plus.google.com/+TagspacesOrg/" target="_system" id="openGooglePlus" title="Join us in Google+"><i class="fa fa-google-plus"></i> Join us in Google+</a>    
+    <a class="btn btn-default btn-block" url="https://tagspaces.uservoice.com/forums/213931-general" id="openUservoice" title="Suggest or vote for a feature">&nbsp;<i class="fa fa-bullhorn"></i> Suggest New Features&nbsp;</a>
+    <a class="btn btn-default btn-block" url="https://github.com/uggrock/tagspaces/issues/" target="_system" id="openGitHubIssues" title="Report an issue"><i class="fa fa-flag"></i> Report Issue</a>
+    <a class="btn btn-default btn-block" url="https://twitter.com/intent/tweet?original_referer=http%3A%2F%2Ftagspaces.org%2F&text=Organize%20your%20files%20with%20@tagspaces" target="_system" id="openTwitter" title="Tweet about @tagspaces"><i class="fa fa-twitter"></i> Tweet About Us</a>
+    <a class="btn btn-default btn-block" url="https://twitter.com/intent/user?screen_name=tagspaces" target="_system" id="openTwitter2" title="Follow @tagspaces"><i class="fa fa-twitter-square"></i> Follow  @tagspaces</a>    
+    <a class="btn btn-default btn-block" url="https://plus.google.com/+TagspacesOrg/" target="_system" id="openGooglePlus" title="Join us in Google+"><i class="fa fa-google-plus"></i> Join us in Google+</a>    
     <a class="btn btn-default btn-block" href="mailto:info@tagspaces.org" title="Send email to us"><i class="fa fa-envelope-o"></i> Contact Us</a>
 </div>
 

@@ -324,7 +324,7 @@ define(function(require, exports, module) {
 			console.log("Show Tags");		
 	    });
 	    
-	    // Hide the taggroups by default
+	    // Hide the tagGroupsContent or locationContent by default
 	    $('#locationContent').hide(); // #tagGroupsContent
 	    
         // Search UI
@@ -400,28 +400,34 @@ define(function(require, exports, module) {
             });        
         
         // Search UI END
-
-        // Handle external links _system is important in cordova
-   /*     $("#openUservoice").on('click', function () {
-                window.open("https://tagspaces.uservoice.com/forums/213931-general","_system");
-            });
-
-        $("#openGitHubIssues")
-            .click(function(evt) {
-                window.open("https://github.com/uggrock/tagspaces/issues/","_system");
-            });
-            
-        $("#openTwitter")
-            .click(function(evt) {
-                window.open("https://twitter.com/intent/tweet?original_referer=http%3A%2F%2Ftagspaces.org%2F&text=Organize%20your%20files%20with%20@tagspaces","_system");
-            });*/           
-        	    
+ 	    
         $('#contactUs').popover({
                 placement: 'top', 
-                content: document.getElementById("contactUsContent").innerHTML, 
+                content: $("#contactUsContent").html(), 
                 html: true
         });        	    
-        	    
+
+        // Handle external links _system is important in cordova
+        $("#sideBarButtunGroup").on('click',"#openUservoice", function () {
+                window.open($(this).attr("url"),"_system");
+            });
+
+        $("#sideBarButtunGroup").on('click',"#openGitHubIssues", function () {
+                window.open($(this).attr("url"),"_system");
+            });
+            
+        $("#sideBarButtunGroup").on('click',"#openTwitter", function () {
+                window.open($(this).attr("url"),"_system");
+            });    
+
+        $("#sideBarButtunGroup").on('click',"#openTwitter2", function () {
+                window.open($(this).attr("url"),"_system");
+            });    
+
+        $("#sideBarButtunGroup").on('click',"#openGooglePlus", function () {
+                window.open($(this).attr("url"),"_system");
+            });    
+                    	    
 	    // Hide drop downs by click and drag
 	    $(document).click(function () {
 			TSCORE.hideAllDropDownMenus();
@@ -443,7 +449,7 @@ define(function(require, exports, module) {
             $("#directoryMenuOpenDirectory").parent().hide();
             $("#fileMenuOpenDirectory").parent().hide();
             $("#openDirectory").parent().hide();
-            $("#openFileInNewWindow").hide();
+            //$("#openFileInNewWindow").hide();
             $("#openNatively").hide();            
         }
         if(isFirefox) {
