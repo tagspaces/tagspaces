@@ -363,8 +363,9 @@ li hr {
 }
 
 #viewToolbars {
-
+    min-height: 40px;
 }
+
 #viewContainers {
     background-color: white; 
     padding: 0;    

@@ -457,20 +457,40 @@ console.log("Loading UI for perspectiveList");
 	
     ExtUI.prototype.removeFileUI = function(filePath) {
         console.log("Removing "+filePath+" from UI");
+        
+        if(isWin) {
+            filePath = filePath.replace("\\","\\\\");
+        }  
+
         $("#"+this.extensionID+"Container button[filepath='"+filePath+"']").parent().parent().remove();
     };	
 
     ExtUI.prototype.updateFileUI = function(oldFilePath, newFilePath) {
-        console.log("Updating file in UI");
+        console.log("Updating UI for oldfile "+oldFilePath+" newfile "+newFilePath);
         
         var title = TSCORE.TagUtils.extractTitle(newFilePath),
             fileExt = TSCORE.TagUtils.extractFileExtension(newFilePath),
             fileTags = TSCORE.TagUtils.extractTags(newFilePath);
+        
+        if(isWin) {
+            oldFilePath = oldFilePath.replace("\\","\\\\");
+        }        
             
         var $fileRow = $("#"+this.extensionID+"Container button[filepath='"+oldFilePath+"']").parent().parent();
         $($fileRow.find("td")[0]).empty().append(buttonizeTitle(title,newFilePath,fileExt));
         $($fileRow.find("td")[1]).text(title);
         $($fileRow.find("td")[2]).empty().append(TSCORE.generateTagButtons(fileTags,newFilePath));
+        
+        var self = this;
+        $($fileRow.find('.fileTitleButton')[0])
+            .draggable({
+                "cancel":    false,
+                "appendTo":  "body",
+                "helper":    "clone",
+                "revert":    true,
+                "start":     function() { self.selectFile(this, $(this).attr("filepath")); }            
+            });  
+                
     }; 
 
     ExtUI.prototype.getNextFile = function(filePath) {

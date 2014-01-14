@@ -638,6 +638,11 @@ console.log("Loading UI for perspectiveDefault");
 
     ExtUI.prototype.removeFileUI = function(filePath) {
         console.log("Removing "+filePath+" from UI");
+        
+        if(isWin) {
+            filePath = filePath.replace("\\","\\\\");
+        }  
+                
         $("#"+this.extensionID+"Container li[filepath='"+filePath+"']").remove();
     };
     
@@ -646,6 +651,10 @@ console.log("Loading UI for perspectiveDefault");
         var title = TSCORE.TagUtils.extractTitle(newFilePath),
             fileExt = TSCORE.TagUtils.extractFileExtension(newFilePath),
             fileTags = TSCORE.TagUtils.extractTags(newFilePath);
+
+        if(isWin) {
+            oldFilePath = oldFilePath.replace("\\","\\\\");
+        }     
             
         var $fileTile = $("#"+this.extensionID+"Container li[filepath='"+oldFilePath+"']");
         $fileTile.attr("filepath", newFilePath);
