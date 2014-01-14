@@ -40,10 +40,9 @@ define(function(require, exports, module) {
             newFileConaintingPath = TSCORE.TagUtils.extractContainingDirectoryPath(newFilePath);
         if(oldFileContainingPath != newFileConaintingPath) {
             // File was moved
-            //TSCORE.removeFileModel(TSCORE.fileList, filePath);
             // TODO consider case - file was moved in subdir shown in the recursive search results
-            TSCORE.PerspectiveManager.removeFileUI(oldFilePath);            
-            TSCORE.updateFileModel(TSCORE.fileList, oldFilePath, newFilePath);
+            TSCORE.removeFileModel(TSCORE.fileList, oldFilePath);
+            TSCORE.PerspectiveManager.removeFileUI(oldFilePath);    
         } else {
             // File was just renamed
             TSCORE.updateFileModel(TSCORE.fileList, oldFilePath, newFilePath);
@@ -81,7 +80,7 @@ define(function(require, exports, module) {
     exports.errorOpeningPath = function() {
         TSCORE.showAlertDialog("Error occured while opening a path! Currently opened location will be closed."); 
         TSCORE.closeCurrentLocation();
-        TSCORE.PerspectiveManager.updateFileBrowserData([]);        
+        //TSCORE.PerspectiveManager.updateFileBrowserData([]);        
     };
     
     exports.deleteElement = function(filePath) {

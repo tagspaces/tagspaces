@@ -345,6 +345,7 @@ define(function(require, exports, module) {
             });
         
         $("#searchBox")
+            .prop('disabled', true)
             .focus(function(e) {
                 //$(this).removeClass("input-medium");
                 //$(this).addClass("input-large");
@@ -373,7 +374,9 @@ define(function(require, exports, module) {
                 } 
             });
             
-        $("#searchButton").click(function(evt) {
+        $("#searchButton")
+            .prop('disabled', true)
+            .click(function(evt) {
                 evt.preventDefault();
                 $( "#clearFilterButton").addClass("filterOn");
                 $("#searchOptions").hide();
@@ -381,6 +384,7 @@ define(function(require, exports, module) {
             }); 
                 
         $("#clearFilterButton")
+            .prop('disabled', true)
             .click(function(evt) {
                 evt.preventDefault();
                 $("#searchOptions").hide();
@@ -400,7 +404,9 @@ define(function(require, exports, module) {
             });        
         
         // Search UI END
- 	    
+        
+        $('#perspectiveSwitcherButton').prop('disabled', true);
+         	    
         $('#contactUs').popover({
                 placement: 'top', 
                 content: $("#contactUsContent").html(), 
@@ -434,6 +440,34 @@ define(function(require, exports, module) {
 	    });	          	        
 
 	};
+
+    function disableTopToolbar() {
+        $("#perspectiveSwitcherButton")
+            .prop('disabled', true);
+            
+        $("#searchBox")
+            .prop('disabled', true);
+            
+        $("#searchButton")
+            .prop('disabled', true);
+                
+        $("#clearFilterButton")
+            .prop('disabled', true);       
+    }
+	
+	function enableTopToolbar() {
+        $("#perspectiveSwitcherButton")
+            .prop('disabled', false);
+            
+        $("#searchBox")
+            .prop('disabled', false);
+            
+        $("#searchButton")
+            .prop('disabled', false);
+                
+        $("#clearFilterButton")
+            .prop('disabled', false);	    
+	}
 	
     function platformTuning() {
         if(isCordova) {
@@ -505,6 +539,8 @@ define(function(require, exports, module) {
     // Public API definition
     exports.showContextMenu			    = showContextMenu;
 	exports.initUI 					    = initUI;
+    exports.enableTopToolbar            = enableTopToolbar;
+    exports.disableTopToolbar           = disableTopToolbar;
 	exports.showAlertDialog 		    = showAlertDialog;
 	exports.showConfirmDialog 		    = showConfirmDialog;
 	exports.showFileRenameDialog        = showFileRenameDialog;

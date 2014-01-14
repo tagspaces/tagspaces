@@ -508,6 +508,8 @@ define(function(require, exports, module) {
 	exports.updateFileModel             = updateFileModel;
 
 	// Proxying functions from tsCoreUI
+	exports.enableTopToolbar            = tsCoreUI.enableTopToolbar;
+    exports.disableTopToolbar           = tsCoreUI.disableTopToolbar;	
 	exports.showAlertDialog 			= tsCoreUI.showAlertDialog;
 	exports.showConfirmDialog			= tsCoreUI.showConfirmDialog;
 	exports.showTagEditDialog           = tsCoreUI.showTagEditDialog;

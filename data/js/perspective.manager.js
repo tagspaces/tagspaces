@@ -93,11 +93,6 @@ var initPerspectiveSwitcher = function() {
             changePerspective($(this).attr("viewid"));
         });   
     };     
-
-    if(perspectives.length > 0) {
-        TSCORE.currentView = perspectives[0].ID;       
-        changePerspective(TSCORE.currentView);
-    }
 };
 
 var redrawCurrentPerspective = function () {
@@ -200,7 +195,7 @@ var updateFileBrowserData = function(dirList) {
             }
         }
     }    
-    changePerspective(TSCORE.currentView);    
+    changePerspective(TSCORE.currentView); 
 };
 
 var refreshFileListContainer = function() {
@@ -208,22 +203,32 @@ var refreshFileListContainer = function() {
     TSCORE.IO.listDirectory(TSCORE.currentPath);  
 };
 
+var hideAllPerspectives = function() {
+    for (var i=0; i < perspectives.length; i++) {   
+        $( "#"+perspectives[i].ID+"Container" ).hide();
+        $( "#"+perspectives[i].ID+"Toolbar" ).hide();
+        $( "#"+perspectives[i].ID+"Footer" ).hide(); 
+    }    
+};
+
 var changePerspective = function (viewType) {
     console.log("Change to "+viewType+" view.");
     TSCORE.showLoadingAnimation();
        
-    //Setting the current view
-    TSCORE.currentView = viewType;
+    // Loading first perspective by default
+    if(viewType == undefined) {
+        TSCORE.currentView = perspectives[0].ID;       
+    } else {
+        //Setting the current view
+        TSCORE.currentView = viewType;          
+    }      
+       
+    if(TSCORE.currentView == undefined) {
+        TSCORE.showAlertDialog("No Perspectives found","");
+        return false;
+    }
     
-/*    if(TSCORE.currentPath == undefined) {
-        TSCORE.showAlertDialog("Please select first location from the dropdown on the left!");
-    }*/
-
-	for (var i=0; i < perspectives.length; i++) {   
- 		$( "#"+perspectives[i].ID+"Container" ).hide();
- 		$( "#"+perspectives[i].ID+"Toolbar" ).hide();
- 		$( "#"+perspectives[i].ID+"Footer" ).hide(); 
-	}	        
+	hideAllPerspectives();        
 
 	for (var i=0; i < perspectives.length; i++) {   
  		if(perspectives[i].ID == viewType) { 			
@@ -241,7 +246,10 @@ var changePerspective = function (viewType) {
 	}	
 	   	
     // Clear the list with the selected files    
-    exports.clearSelectedFiles(); 
+    clearSelectedFiles(); 
+    
+    // Enabled the search functionality
+    TSCORE.enableTopToolbar();
 	  
     TSCORE.hideLoadingAnimation();     
 };
@@ -258,7 +266,8 @@ var clearSelectedFiles = function () {
 	}	
 };
 
-exports.initPerspectives 			 = initPerspectives;	
+exports.initPerspectives 			 = initPerspectives;
+exports.hideAllPerspectives          = hideAllPerspectives;	
 exports.redrawCurrentPerspective     = redrawCurrentPerspective;
 exports.getNextFile					 = getNextFile;
 exports.getPrevFile 				 = getPrevFile;

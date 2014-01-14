@@ -33,9 +33,7 @@ define(function(require, exports, module) {
 
         // Handle open default perspective for a location
         var defaultPerspective = currentLocation.perspective;
-        if(defaultPerspective != undefined) {
-            TSCORE.PerspectiveManager.changePerspective(defaultPerspective);
-        }
+        TSCORE.PerspectiveManager.changePerspective(defaultPerspective);
     }  
     
     // Updates the directory subtree
@@ -552,6 +550,14 @@ define(function(require, exports, module) {
         $("#locationName").text("Choose Location");
         $("#locationName").attr("title","");         
         $("#locationContent").empty(); 
+        
+        // Clear the footer
+        $("#statusBar").empty();
+        $("#alternativeNavigator").empty();
+        
+        
+        TSCORE.disableTopToolbar();
+        TSCORE.PerspectiveManager.hideAllPerspectives();
     }  
 
     function showDeleteFolderConnectionDialog(name) {
