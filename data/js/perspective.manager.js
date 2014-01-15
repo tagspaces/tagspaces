@@ -11,12 +11,15 @@ var perspectives = undefined;
 var TSCORE = require("tscore");
 
 var initPerspectives = function () {
+    
 	perspectives = [];
 	
 	$("#viewSwitcher").empty();
 	$("#viewToolbars").empty();	
 	$("#viewContainers").empty();
 	$("#viewFooters").empty();
+	
+	initWelcomeScreen();
 	
 	var defaultViewLoaded = false;
 	
@@ -61,6 +64,20 @@ var initPerspectives = function () {
             }            
         });       
     }
+};
+
+var initWelcomeScreen = function() {
+        require([
+              "text!templates/WelcomeScreen.html",
+            ], function(uiTPL) {
+                // Check if dialog already created
+                if($("#dialogLocationEdit").length < 1) {
+                    var uiTemplate = Handlebars.compile( uiTPL );
+                    $("#viewContainers").append(uiTemplate()); 
+                                    
+                                                   
+                }
+        });       
 };
 
 var initPerspectiveSwitcher = function() {
@@ -204,6 +221,7 @@ var refreshFileListContainer = function() {
 };
 
 var hideAllPerspectives = function() {
+    $( "#welcomeScreen" ).hide();
     for (var i=0; i < perspectives.length; i++) {   
         $( "#"+perspectives[i].ID+"Container" ).hide();
         $( "#"+perspectives[i].ID+"Toolbar" ).hide();

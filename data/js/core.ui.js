@@ -548,8 +548,8 @@ define(function(require, exports, module) {
 	exports.showFileDeleteDialog        = showFileDeleteDialog;
     exports.showTagEditDialog           = showTagEditDialog;
     exports.showLocationsPanel          = showLocationsPanel;
-    exports.showDirectoryBrowserDialog  = showDirectoryBrowserDialog; 
     exports.showTagsPanel       	    = showTagsPanel;    
+    exports.showDirectoryBrowserDialog  = showDirectoryBrowserDialog; 
 	exports.hideAllDropDownMenus	    = hideAllDropDownMenus;
 
 });
