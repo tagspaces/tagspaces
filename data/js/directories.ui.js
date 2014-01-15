@@ -23,10 +23,7 @@ define(function(require, exports, module) {
     
         $( "#locationName" ).text(currentLocation.name);
         $( "#locationName" ).attr("title",path);            
-
-        // Open the directory locations panel
-        //TSCORE.showLocationsPanel();
-        
+       
         // Clears the directory history
         directoryHistory = new Array();
         navigateToDirectory(path);
@@ -39,6 +36,8 @@ define(function(require, exports, module) {
     // Updates the directory subtree
     function updateSubDirs(dirList) {
         //console.log("Updating subdirs(TSCORE)..."+JSON.stringify(dirList));
+
+        var hasSubFolders = false;
         
         for(var i=0; i < directoryHistory.length; i++) {
             if(directoryHistory[i].path == TSCORE.currentPath) {
@@ -46,12 +45,18 @@ define(function(require, exports, module) {
                 for(var j=0; j < dirList.length; j++) {
                 	 if(!dirList[j].isFile) {
                      	directoryHistory[i]["children"].push(dirList[j]);                	 	
+                        hasSubFolders = true;
                 	 }  
                 }
 		        // Sort the dirList alphabetically
 		        directoryHistory[i]["children"].sort(function(a,b) { return a.name.localeCompare(b.name); });
             }
         }
+
+        // If the folder contains subfolders, automatically opening the directory browser
+        if(hasSubFolders) {
+            TSCORE.showLocationsPanel();
+        }               
         
         generateDirPath();
         generateAlternativeDirPath();
@@ -342,7 +347,8 @@ define(function(require, exports, module) {
         
         // If directory path not in history then add it to the history
         if(directoryFoundOn < 0) {      
-            var parentLocation = directoryPath.substring(0, directoryPath.lastIndexOf(TSCORE.dirSeparator));
+            // var parentLocation = directoryPath.substring(0, directoryPath.lastIndexOf(TSCORE.dirSeparator));
+            var parentLocation = TSCORE.TagUtils.extractParentDirectoryPath(directoryPath);
             var parentFound = -1;
             for(var i=0; i < directoryHistory.length; i++) {
                 if(directoryHistory[i].path == parentLocation) {
@@ -363,7 +369,7 @@ define(function(require, exports, module) {
                 "collapsed" : false,
             });             
         }    
-    
+        console.log("Dir History: "+JSON.stringify(directoryHistory));
         TSCORE.currentPath = directoryPath;
         TSCORE.IO.listDirectory(directoryPath);    
     } 
@@ -440,8 +446,7 @@ define(function(require, exports, module) {
                     $("#selectLocalDirectory2").on("click",function(e) {
                         e.preventDefault();
                         selectLocalDirectory();
-                    }); 
-                    
+                    });                     
                     
                     $( "#saveLocationButton" ).on("click", function() {        
                         editLocation();

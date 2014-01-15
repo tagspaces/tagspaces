@@ -206,6 +206,7 @@ define(function (require, exports, module) {
                 directoryReader.readEntries(
                     function (entries) { 
                         var i;
+                        var normalizedPath;
                         for (i = 0; i < entries.length; i++) {
                             if(entries[i].isFile) {
 								pendingCallbacks++;	
@@ -228,12 +229,13 @@ define(function (require, exports, module) {
 				                    }                                        	
 	                            );                            	
                             } else {
+                                normalizedPath = normalizePath(entries[i].fullPath);                                
 	                            anotatedDirList.push({
 	                                "name":   entries[i].name,
 	                                "isFile": false,
 	                                "size":   "",
 	                                "lmdt":   "",
-	                                "path":   entries[i].fullPath
+	                                "path":   normalizedPath
 	                            });
                             	console.log("Dir: "+entries[i].name+ " I:"+i+" Callb: "+pendingCallbacks);                            	
 	                            if((pendingCallbacks == 0) && ((i+1) == entries.length)) {
