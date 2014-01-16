@@ -5,9 +5,9 @@ define(function(require, exports, module) {
 "use strict";
 
 exports.defaultSettings = {
-	"appName": "@APPNAME@",
-	"appVersion": "@VERSION@",
-    "appBuild": "@BUILD@",
+	"appName": "@@APPNAME",
+	"appVersion": "@@VERSION",
+    "appBuild": "@@BUILD",
 	"settingsVersion": 2,
 	"newTextFileContent": "Text file created with TagSpaces!",
     "newHTMLFileContent": "<html><head><title>Created with TagSpaces!</title></head><body>Feel free to change this text...</body></html>",	
@@ -15,7 +15,7 @@ exports.defaultSettings = {
 	"showUnixHiddenEntries": false, 
 	"checkForUpdates": true,
     "lastOpenedDirectory": "",
-	"tagspacesList": [@DEFAULTLOCATIONS@],
+	"tagspacesList": [@@DEFAULTLOCATIONS],
     "extensionsPath": "ext",
     "prefixTagContainer": "",
     "tagDelimiter": " ",
@@ -33,7 +33,7 @@ exports.defaultSettings = {
         { "type": "gif", 	"viewer": "viewerImage",     "editor": "false" },        
         { "type": "png", 	"viewer": "viewerImage",     "editor": "false" },        
         { "type": "svg", 	"viewer": "viewerBrowser",   "editor": "editorText" },
-        { "type": "pdf", 	"viewer": "@PDFVIEWER@",	 "editor": "false" },                
+        { "type": "pdf", 	"viewer": "@@PDFVIEWER",	     "editor": "false" },                
         { "type": "html", 	"viewer": "viewerBrowser",   "editor": "editorHTML" },                        
         { "type": "htm", 	"viewer": "viewerBrowser",   "editor": "editorHTML" },                        
         { "type": "xhtml", 	"viewer": "viewerBrowser",   "editor": "editorHTML" },                        

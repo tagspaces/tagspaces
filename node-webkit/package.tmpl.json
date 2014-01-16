@@ -1,7 +1,7 @@
 {
-  "name": "@APPNAME@",
-  "description": "@APPDESCRIPTION@",
-  "version": "@VERSION@.@BUILD@",
+  "name": "@@APPNAME",
+  "description": "@@APPDESCRIPTION",
+  "version": "@@VERSION.@@BUILD",
   "main": "index.html",
   "window": {
     "icon": "assets/icon128.png",

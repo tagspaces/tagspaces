@@ -7,14 +7,14 @@
     <r:Seq>
       <r:li>
         <r:Description>
-          <version>@VERSION@.@BUILD@</version>
+          <version>@@VERSION.@@BUILD</version>
           <targetApplication>
             <r:Description>
               <id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</id>
-              <minVersion>16.0</minVersion>
+              <minVersion>20.0</minVersion>
               <maxVersion>*</maxVersion>
-              <updateLink>http://tagspaces.com/releases/@VERSION@/tagspaces.@VERSION@.@BUILD@.xpi</updateLink>
-              <updateInfoURL>http://tagspaces.com/releases/@VERSION@/updateInfo.xml</updateInfoURL>
+              <updateLink>http://tagspaces.com/releases/@@VERSION/tagspaces.@@VERSION.@@BUILD.xpi</updateLink>
+              <updateInfoURL>http://tagspaces.com/releases/@@VERSION/updateInfo.xml</updateInfoURL>
             </r:Description>
           </targetApplication>
         </r:Description>

@@ -15,11 +15,11 @@ found in the LICENSE file.
     <target name="prepare-devenv" description="Prepares the development environment">
     	<copy file="default.settings.tmpl.js" tofile="data/js/${defaultSettings.file}" />
     	<replace file="data/js/${defaultSettings.file}" >
-            <replacefilter token="@VERSION@" value="${version}" />
-            <replacefilter token="@APPNAME@" value="${appname}" />
-            <replacefilter token="@BUILD@" value="${build.number}" />
-            <replacefilter token="@DEFAULTLOCATIONS@" value="" />
-        	<replacefilter token="@PDFVIEWER@" value="viewerBrowser" />     		
+            <replacefilter token="@@VERSION" value="${version}" />
+            <replacefilter token="@@APPNAME" value="${appname}" />
+            <replacefilter token="@@BUILD" value="${build.number}" />
+            <replacefilter token="@@DEFAULTLOCATIONS" value="" />
+        	<replacefilter token="@@PDFVIEWER" value="viewerBrowser" />     		
         </replace>      
     </target>
 	
@@ -30,19 +30,19 @@ found in the LICENSE file.
     	<mkdir dir="${buildFirefoxExt.dir}" />
         <copy file="mozilla.package.tmpl.json" overwrite="true" tofile="package.json" />
         <replace file="package.json" >
-            <replacefilter token="@VERSION@" value="${version}" />
-            <replacefilter token="@PACKAGE@" value="${package}" />
-            <replacefilter token="@APPNAME@" value="${appname}" />
-            <replacefilter token="@APPDESCRIPTION@" value="${appdescription}" />
-            <replacefilter token="@BUILD@" value="${build.number}" />
+            <replacefilter token="@@VERSION" value="${version}" />
+            <replacefilter token="@@PACKAGE" value="${package}" />
+            <replacefilter token="@@APPNAME" value="${appname}" />
+            <replacefilter token="@@APPDESCRIPTION" value="${appdescription}" />
+            <replacefilter token="@@BUILD" value="${build.number}" />
         </replace>    
         <copy file="mozilla.update.tmpl.rdf" overwrite="true" tofile="update.rdf" />
         <copy file="LICENSE" overwrite="true" tofile="data/LICENSE.txt" />
     	<replace file="update.rdf" >
-            <replacefilter token="@VERSION@" value="${version}" />
-            <replacefilter token="@PACKAGE@" value="${package}" />
-            <replacefilter token="@APPNAME@" value="${appname}" />
-            <replacefilter token="@BUILD@" value="${build.number}" />
+            <replacefilter token="@@VERSION" value="${version}" />
+            <replacefilter token="@@PACKAGE" value="${package}" />
+            <replacefilter token="@@APPNAME" value="${appname}" />
+            <replacefilter token="@@BUILD" value="${build.number}" />
         </replace>     	
     	<copy file="update.rdf" todir="${tagspaces.org.release.dir}" />
     	<copy file="package.json" todir="${buildFirefoxExt.dir}" />
@@ -51,14 +51,14 @@ found in the LICENSE file.
         <copy file="data/about.html" todir="${buildFirefoxExt.dir}/data" />            
         <copy file="data/loader.js" todir="${buildFirefoxExt.dir}/data" />        
         <replace file="${buildFirefoxExt.dir}/data/loader.js" >
-            <replacefilter token="@PRODUCTION@" value="true" />
+            <replacefilter token="@@PRODUCTION" value="true" />
         </replace> 
     	<copy todir="${buildFirefoxExt.dir}/lib" >
             <fileset dir="lib" />
         </copy>
         <replace file="${buildFirefoxExt.dir}/lib/main.js" >
-            <replacefilter token="@PRODUCTION@" value="true" />
-            <replacefilter token="@VERSION@" value="${version}.${build.number}" />
+            <replacefilter token="@@PRODUCTION" value="true" />
+            <replacefilter token="@@VERSION" value="${version}.${build.number}" />
         </replace>     	
         <copy todir="${buildFirefoxExt.dir}/data/libs" >
 		    <fileset dir="data/libs">
@@ -106,9 +106,9 @@ found in the LICENSE file.
         </replace>       	
     	
         <replace file="${buildFirefoxExt.dir}/data/about.html" >
-            <replacefilter token="@VERSION@" value="${version}" />
-            <replacefilter token="@APPNAME@" value="${appname}" />
-            <replacefilter token="@BUILD@" value="${build.number}" />
+            <replacefilter token="@@VERSION" value="${version}" />
+            <replacefilter token="@@APPNAME" value="${appname}" />
+            <replacefilter token="@@BUILD" value="${build.number}" />
         </replace>      	
     </target>	
 	
@@ -119,10 +119,10 @@ found in the LICENSE file.
         <copy file="chrome.manifest.tmpl.json" overwrite="true" tofile="data/manifest.json" />
         <copy file="LICENSE" overwrite="true" tofile="data/LICENSE.txt" />   
     	<replace file="data/manifest.json" >
-            <replacefilter token="@VERSION@" value="${version}" />
-            <replacefilter token="@APPNAME@" value="${appname}" />
-            <replacefilter token="@APPDESCRIPTION@" value="${appdescription}" />    		
-            <replacefilter token="@BUILD@" value="${build.number}" />       
+            <replacefilter token="@@VERSION" value="${version}" />
+            <replacefilter token="@@APPNAME" value="${appname}" />
+            <replacefilter token="@@APPDESCRIPTION" value="${appdescription}" />    		
+            <replacefilter token="@@BUILD" value="${build.number}" />       
         </replace>    
         <copy file="data/LICENSE.txt" todir="${buildChrome.dir}" />    	
         <copy file="data/manifest.json" todir="${buildChrome.dir}" />
@@ -130,7 +130,7 @@ found in the LICENSE file.
         <copy file="data/about.html" todir="${buildChrome.dir}" />        
         <copy file="data/loader.js" todir="${buildChrome.dir}" />        
         <replace file="${buildChrome.dir}/loader.js" >
-            <replacefilter token="@PRODUCTION@" value="true" />
+            <replacefilter token="@@PRODUCTION" value="true" />
         </replace> 
     	<copy todir="${buildChrome.dir}/chrome" >
             <fileset dir="data/chrome" includes="**/*"/>  
@@ -172,16 +172,16 @@ found in the LICENSE file.
         </copy>  
     	<copy file="default.settings.tmpl.js" tofile="${buildChrome.dir}/js/${defaultSettings.file}" />
     	<replace file="${buildChrome.dir}/js/${defaultSettings.file}" >
-            <replacefilter token="@VERSION@" value="${version}" />
-            <replacefilter token="@APPNAME@" value="${appname}" />
-            <replacefilter token="@BUILD@" value="${build.number}" />
-            <replacefilter token="@DEFAULTLOCATIONS@" value="" />
-        	<replacefilter token="@PDFVIEWER@" value="viewerBrowser" />    		
+            <replacefilter token="@@VERSION" value="${version}" />
+            <replacefilter token="@@APPNAME" value="${appname}" />
+            <replacefilter token="@@BUILD" value="${build.number}" />
+            <replacefilter token="@@DEFAULTLOCATIONS" value="" />
+        	<replacefilter token="@@PDFVIEWER" value="viewerBrowser" />    		
         </replace>       	
         <replace file="${buildChrome.dir}/about.html" >
-            <replacefilter token="@VERSION@" value="${version}" />
-            <replacefilter token="@APPNAME@" value="${appname}" />
-            <replacefilter token="@BUILD@" value="${build.number}" />
+            <replacefilter token="@@VERSION" value="${version}" />
+            <replacefilter token="@@APPNAME" value="${appname}" />
+            <replacefilter token="@@BUILD" value="${build.number}" />
         </replace>    	
     </target>
 	
@@ -192,17 +192,17 @@ found in the LICENSE file.
         <copy file="node-webkit/package.tmpl.json" overwrite="true" tofile="${buildWin32.dir}/package.json" />
         <copy file="LICENSE" overwrite="true" tofile="data/LICENSE.txt" />   
     	<replace file="${buildWin32.dir}/package.json" >
-            <replacefilter token="@VERSION@" value="${version}" />
-            <replacefilter token="@APPNAME@" value="${appname}" />
-            <replacefilter token="@APPDESCRIPTION@" value="${appdescription}" />
-            <replacefilter token="@BUILD@" value="${build.number}" />       
+            <replacefilter token="@@VERSION" value="${version}" />
+            <replacefilter token="@@APPNAME" value="${appname}" />
+            <replacefilter token="@@APPDESCRIPTION" value="${appdescription}" />
+            <replacefilter token="@@BUILD" value="${build.number}" />       
         </replace>    
         <copy file="data/LICENSE.txt" todir="${buildWin32.dir}" />    	
         <copy file="data/index.html" todir="${buildWin32.dir}" />        
         <copy file="data/about.html" todir="${buildWin32.dir}" />        
         <copy file="data/loader.js" todir="${buildWin32.dir}" />        
         <replace file="${buildWin32.dir}/loader.js" >
-            <replacefilter token="@PRODUCTION@" value="true" />
+            <replacefilter token="@@PRODUCTION" value="true" />
         </replace> 
     	<copy file="node-webkit/credits.html" todir="${buildWin32.dir}" />    
     	<copy file="node-webkit/nw.pak" todir="${buildWin32.dir}" />    
@@ -245,16 +245,16 @@ found in the LICENSE file.
         </copy>
         <copy file="default.settings.tmpl.js" tofile="${buildWin32.dir}/js/${defaultSettings.file}" />    	
     	<replace file="${buildWin32.dir}/js/${defaultSettings.file}" >
-            <replacefilter token="@VERSION@" value="${version}" />
-            <replacefilter token="@APPNAME@" value="${appname}" />
-            <replacefilter token="@BUILD@" value="${build.number}" />
-            <replacefilter token="@DEFAULTLOCATIONS@" value="" />        	
-        	<replacefilter token="@PDFVIEWER@" value="viewerPDF" />
+            <replacefilter token="@@VERSION" value="${version}" />
+            <replacefilter token="@@APPNAME" value="${appname}" />
+            <replacefilter token="@@BUILD" value="${build.number}" />
+            <replacefilter token="@@DEFAULTLOCATIONS" value="" />        	
+        	<replacefilter token="@@PDFVIEWER" value="viewerPDF" />
     	</replace>       	
         <replace file="${buildWin32.dir}/about.html" >
-            <replacefilter token="@VERSION@" value="${version}" />
-            <replacefilter token="@APPNAME@" value="${appname}" />
-            <replacefilter token="@BUILD@" value="${build.number}" />
+            <replacefilter token="@@VERSION" value="${version}" />
+            <replacefilter token="@@APPNAME" value="${appname}" />
+            <replacefilter token="@@BUILD" value="${build.number}" />
         </replace>    	
     </target>
 
@@ -265,17 +265,17 @@ found in the LICENSE file.
         <copy file="node-webkit/package.tmpl.json" overwrite="true" tofile="${buildLinux64.dir}/package.json" />
         <copy file="LICENSE" overwrite="true" tofile="data/LICENSE.txt" />   
     	<replace file="${buildLinux64.dir}/package.json" >
-            <replacefilter token="@VERSION@" value="${version}" />
-            <replacefilter token="@APPNAME@" value="${appname}" />
-            <replacefilter token="@APPDESCRIPTION@" value="${appdescription}" />
-            <replacefilter token="@BUILD@" value="${build.number}" />       
+            <replacefilter token="@@VERSION" value="${version}" />
+            <replacefilter token="@@APPNAME" value="${appname}" />
+            <replacefilter token="@@APPDESCRIPTION" value="${appdescription}" />
+            <replacefilter token="@@BUILD" value="${build.number}" />       
         </replace>    
         <copy file="data/LICENSE.txt" todir="${buildLinux64.dir}" />    	
         <copy file="data/index.html" todir="${buildLinux64.dir}" />        
         <copy file="data/about.html" todir="${buildLinux64.dir}" />        
         <copy file="data/loader.js" todir="${buildLinux64.dir}" />        
         <replace file="${buildLinux64.dir}/loader.js" >
-            <replacefilter token="@PRODUCTION@" value="true" />
+            <replacefilter token="@@PRODUCTION" value="true" />
         </replace> 
     	<copy file="node-webkit/credits.html" todir="${buildLinux64.dir}" />    
     	<copy file="node-webkit/nw.pak" todir="${buildLinux64.dir}" />    
@@ -317,16 +317,16 @@ found in the LICENSE file.
         </copy>  
         <copy file="default.settings.tmpl.js" tofile="${buildLinux64.dir}/js/${defaultSettings.file}" />    	
     	<replace file="${buildLinux64.dir}/js/${defaultSettings.file}" >
-            <replacefilter token="@VERSION@" value="${version}" />
-            <replacefilter token="@APPNAME@" value="${appname}" />
-            <replacefilter token="@BUILD@" value="${build.number}" />
-            <replacefilter token="@DEFAULTLOCATIONS@" value="" /> 
-        	<replacefilter token="@PDFVIEWER@" value="viewerPDF" />    		
+            <replacefilter token="@@VERSION" value="${version}" />
+            <replacefilter token="@@APPNAME" value="${appname}" />
+            <replacefilter token="@@BUILD" value="${build.number}" />
+            <replacefilter token="@@DEFAULTLOCATIONS" value="" /> 
+        	<replacefilter token="@@PDFVIEWER" value="viewerPDF" />    		
         </replace>       	
         <replace file="${buildLinux64.dir}/about.html" >
-            <replacefilter token="@VERSION@" value="${version}" />
-            <replacefilter token="@APPNAME@" value="${appname}" />
-            <replacefilter token="@BUILD@" value="${build.number}" />
+            <replacefilter token="@@VERSION" value="${version}" />
+            <replacefilter token="@@APPNAME" value="${appname}" />
+            <replacefilter token="@@BUILD" value="${build.number}" />
         </replace>    	
     </target>	
 
@@ -337,10 +337,10 @@ found in the LICENSE file.
         <copy file="LICENSE" tofile="${cordovaDev.dir}/LICENSE.txt" />  	
         <copy file="config.xml" tofile="${cordovaDev.dir}/config.xml" />  	
         <replace file="${cordovaDev.dir}/config.xml" >
-            <replacefilter token="@VERSION@" value="${version}" />
-            <replacefilter token="@APPNAME@" value="${appname}" />
-            <replacefilter token="@BUILD@" value="${build.number}" />
-            <replacefilter token="@DEFAULTLOCATIONS@" value="${appdescription}" />        	
+            <replacefilter token="@@VERSION" value="${version}" />
+            <replacefilter token="@@APPNAME" value="${appname}" />
+            <replacefilter token="@@BUILD" value="${build.number}" />
+            <replacefilter token="@@DEFAULTLOCATIONS" value="${appdescription}" />        	
         </replace>             	
     	<copy file="data/index.html" todir="${cordovaDev.dir}" />        
         <copy file="data/about.html" todir="${cordovaDev.dir}" />        
@@ -379,16 +379,16 @@ found in the LICENSE file.
         </copy>
         <copy file="default.settings.tmpl.js" tofile="${cordovaDev.dir}/js/${defaultSettings.file}" />    	
         <replace file="${cordovaDev.dir}/js/${defaultSettings.file}" >
-            <replacefilter token="@VERSION@" value="${version}" />
-            <replacefilter token="@APPNAME@" value="${appname}" />
-            <replacefilter token="@BUILD@" value="${build.number}" />
-        	<replacefilter token="@DEFAULTLOCATIONS@" value="${default.locations.android}" />
-        	<replacefilter token="@PDFVIEWER@" value="viewerPDF" />
+            <replacefilter token="@@VERSION" value="${version}" />
+            <replacefilter token="@@APPNAME" value="${appname}" />
+            <replacefilter token="@@BUILD" value="${build.number}" />
+        	<replacefilter token="@@DEFAULTLOCATIONS" value="${default.locations.android}" />
+        	<replacefilter token="@@PDFVIEWER" value="viewerPDF" />
         </replace>        
         <replace file="${cordovaDev.dir}/about.html" >
-            <replacefilter token="@VERSION@" value="${version}" />
-            <replacefilter token="@APPNAME@" value="${appname}" />
-            <replacefilter token="@BUILD@" value="${build.number}" />
+            <replacefilter token="@@VERSION" value="${version}" />
+            <replacefilter token="@@APPNAME" value="${appname}" />
+            <replacefilter token="@@BUILD" value="${build.number}" />
         </replace>             	
     </target>
 
