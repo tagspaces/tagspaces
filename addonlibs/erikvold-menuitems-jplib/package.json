@@ -1,9 +1,0 @@
-{
-    "name": "menuitems",
-    "description": "Menuitems for Jetpacks",
-    "keywords": ["menu", "menuitems", "button", "ui"],
-    "author": "Erik Vold (http://erikvold.com/) <erikvvold@gmail.com>",
-    "version": "1.0",
-    "license": "MIT/X11",
-    "dependencies": ["api-utils", "vold-utils"]
-}
