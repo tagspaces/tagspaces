@@ -151,13 +151,13 @@ define(function(require, exports, module) {
 
         if(availableVersion > currentVersion) {
             $("#newVersionMenu").html('<p style="padding: 15px" id="newVersionMessageContent">'+
-            'New major TagSpaces release available! Please go to '+
-            '<a href="http://tagspaces.org/downloads/" target="_blank">tagspaces.org</a> and update.</p>');                                    
+            'New TagSpaces major release available! Please go to '+
+            '<a href="http://tagspaces.org/whatsnew/" target="_blank">tagspaces.org/whatsnew/</a> and update.</p>');                                    
             $("#newVersionAvailable").css('display', "inline");                                    
         } else if ((availableVersion == currentVersion) && (availableBuild > currentBuild)) {
             $("#newVersionMenu").html('<p style="padding: 15px" id="newVersionMessageContent">'+
-            'New TagSpaces build available on '+
-            '<a href="http://tagspaces.org/downloads/" target="_blank">tagspaces.org</a></p>');                                    
+            'New TagSpaces minor release available on '+
+            '<a href="http://tagspaces.org/whatsnew/" target="_blank">tagspaces.org/whatsnew/</a></p>');                                    
             $("#newVersionAvailable").css('display', "inline");                                      
         }
     }
