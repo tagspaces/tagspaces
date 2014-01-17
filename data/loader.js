@@ -36,15 +36,15 @@ try {
 // Setting up the IO functionality according to the platform
 var IO_JS = undefined;
 if( isFirefox ) {
-	IO_JS = "js/ioapi.mozilla";
+	IO_JS = "mozilla/mozilla.api";
 } else if ( isChrome ) {
-    IO_JS = "js/ioapi.chrome";           
+    IO_JS = "chrome/chrome.api";           
 } else if (isNode){
-    IO_JS = "js/ioapi.node";
+    IO_JS = "node-webkit/node-webkit.api";
 } else if (isCordova){
-    IO_JS = "js/ioapi.cordova";
+    IO_JS = "cordova/cordova.api";
 } else {
-    IO_JS = "js/ioapi.chrome";        
+    IO_JS = "chrome/chrome.api";        
 }
 
 //IO_JS = "js/ioapi.dropbox";        

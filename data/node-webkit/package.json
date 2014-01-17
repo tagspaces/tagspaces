@@ -2,9 +2,9 @@
   "name": "TagSpaces",
   "description": "Dev",
   "version": "1.x",
-  "main": "../data/index.html",
+  "main": "../index.html",
   "window": {
-    "icon": "../data/assets/icon128.png",
+    "icon": "../assets/icon128.png",
     "toolbar": false,
     "width": 1280,
     "height": 768
