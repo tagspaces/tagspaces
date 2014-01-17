@@ -16,3 +16,8 @@ node-webkit/libEGL_.dll
 node-webkit/libGLESv2_.dll
 data/_site
 node-webkit/data
+data/node-webkit/data
+data/node-webkit/libffmpegsumo_chrome.so
+data/node-webkit/libffmpegsumo.so
+data/node-webkit/nw
+data/node-webkit/nw.pak
