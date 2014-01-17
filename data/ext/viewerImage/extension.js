@@ -28,7 +28,7 @@ define(function(require, exports, module) {
 		require([
               extensionDirectory+'/viewerUI.js',
               "text!"+extensionDirectory+'/mainUI.html',
-              extensionDirectory+'/jquery.panzoom/jquery.panzoom.js',              
+              extensionDirectory+'/jquery.panzoom/jquery.panzoom.min.js',              
               extensionDirectory+'/jquery.mousewheel/jquery.mousewheel.js',      
               extensionDirectory+'/pixastic/pixastic.custom.js',
 		    ], function(extUI, uiTPL) {

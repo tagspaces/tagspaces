@@ -88,24 +88,19 @@ found in the LICENSE file.
 			<fileset dir="data/templates" includes="**/*" />
 		</copy>
 		<copy todir="${buildFirefoxExt.dir}/data/js">
-			<fileset dir="data/js" includes="**/*">
-				<exclude name="ioapi.cordova.js" />
-				<exclude name="ioapi.chrome.js" />
-				<exclude name="ioapi.node.js" />
-				<exclude name="${defaultSettings.file}" />
-			</fileset>
+			<fileset dir="data/js" includes="**/*"></fileset>
 		</copy>
 		<copy todir="${buildFirefoxExt.dir}/data/assets">
 			<fileset dir="data/assets" includes="**/*" />
 		</copy>
-		<copy file="default.settings.tmpl.js" tofile="${buildFirefoxExt.dir}/data/js/${defaultSettings.file}" />
+		<!--copy file="default.settings.tmpl.js" tofile="${buildFirefoxExt.dir}/data/js/${defaultSettings.file}" />
 		<replace file="${buildFirefoxExt.dir}/data/js/${defaultSettings.file}">
 			<replacefilter token="@VERSION@" value="${version}" />
 			<replacefilter token="@APPNAME@" value="${appname}" />
 			<replacefilter token="@BUILD@" value="${build.number}" />
 			<replacefilter token="@DEFAULTLOCATIONS@" value="" />
 			<replacefilter token="@PDFVIEWER@" value="viewerBrowser" />
-		</replace>
+		</replace-->
 		<replace file="${buildFirefoxExt.dir}/data/about.html">
 			<replacefilter token="@@VERSION" value="${version}" />
 			<replacefilter token="@@APPNAME" value="${appname}" />
@@ -154,24 +149,19 @@ found in the LICENSE file.
 			<fileset dir="data/templates" includes="**/*" />
 		</copy>
 		<copy todir="${buildChrome.dir}/js">
-			<fileset dir="data/js" includes="**/*">
-				<exclude name="ioapi.cordova.js" />
-				<exclude name="ioapi.mozilla.js" />
-				<exclude name="ioapi.node.js" />
-				<exclude name="${defaultSettings.file}" />
-			</fileset>
+			<fileset dir="data/js" includes="**/*"></fileset>
 		</copy>
 		<copy todir="${buildChrome.dir}/assets">
 			<fileset dir="data/assets" includes="**/*" />
 		</copy>
-		<copy file="default.settings.tmpl.js" tofile="${buildChrome.dir}/js/${defaultSettings.file}" />
+		<!--copy file="default.settings.tmpl.js" tofile="${buildChrome.dir}/js/${defaultSettings.file}" />
 		<replace file="${buildChrome.dir}/js/${defaultSettings.file}">
 			<replacefilter token="@@VERSION" value="${version}" />
 			<replacefilter token="@@APPNAME" value="${appname}" />
 			<replacefilter token="@@BUILD" value="${build.number}" />
 			<replacefilter token="@@DEFAULTLOCATIONS" value="" />
 			<replacefilter token="@@PDFVIEWER" value="viewerBrowser" />
-		</replace>
+		</replace-->
 		<replace file="${buildChrome.dir}/about.html">
 			<replacefilter token="@@VERSION" value="${version}" />
 			<replacefilter token="@@APPNAME" value="${appname}" />
@@ -184,7 +174,7 @@ found in the LICENSE file.
 		<delete dir="${cordovaDev.dir}" />
 		<mkdir dir="${cordovaDev.dir}" />
 		<copy file="LICENSE" tofile="${cordovaDev.dir}/LICENSE.txt" />
-		<copy file="config.xml" tofile="${cordovaDev.dir}/config.xml" />
+		<copy file="data/cordova/config.xml" tofile="${cordovaDev.dir}/config.xml" />
 		<replace file="${cordovaDev.dir}/config.xml">
 			<replacefilter token="@@VERSION" value="${version}" />
 			<replacefilter token="@@APPNAME" value="${appname}" />
@@ -197,6 +187,9 @@ found in the LICENSE file.
 		<copy todir="${cordovaDev.dir}/libs">
 			<fileset dir="data/libs" includes="**/*" />
 		</copy>
+        <copy todir="${cordovaDev.dir}/cordova">
+            <fileset dir="data/cordova" includes="**/*.js" />
+        </copy>     		
 		<copy todir="${cordovaDev.dir}/ext">
 			<fileset dir="data/ext">
 				<include name="perspectiveList/**/*" />
@@ -216,12 +209,7 @@ found in the LICENSE file.
 			<fileset dir="data/templates" includes="**/*" />
 		</copy>
 		<copy todir="${cordovaDev.dir}/js">
-			<fileset dir="data/js" includes="**/*">
-				<exclude name="ioapi.node.js" />
-				<exclude name="ioapi.mozilla.js" />
-				<exclude name="ioapi.chrome.js" />
-				<exclude name="${defaultSettings.file}" />
-			</fileset>
+			<fileset dir="data/js" includes="**/*"></fileset>
 		</copy>
 		<copy todir="${cordovaDev.dir}/assets">
 			<fileset dir="data/assets" includes="**/*" />

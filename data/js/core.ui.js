@@ -8,8 +8,6 @@ define(function(require, exports, module) {
 
 	var TSCORE = require("tscore");
 
-    var jsonEditor = undefined;
-
 	var fileContent = undefined;
 	var fileType = undefined;		
 

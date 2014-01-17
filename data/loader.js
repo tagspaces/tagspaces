@@ -72,7 +72,7 @@ requirejs.config({
         jqueryuiautocomplete:   'libs/jqueryui/jquery.ui.autocomplete',
         jqueryuidatepicker:     'libs/jqueryui/jquery.ui.datepicker',   
         
-        bootstrap:              'libs/bootstrap/js/bootstrap',
+        bootstrap:              'libs/bootstrap/js/bootstrap.min',
         bootstrap3xeditable:    'libs/bootstrap3xeditable/js/bootstrap-editable',
         jquerysimplecolorpicker:'libs/jquery-simplecolorpicker/jquery.simplecolorpicker',
         jquerylayout:           'libs/jquerylayout/jquery.layout-latest',
@@ -81,8 +81,8 @@ requirejs.config({
         dropbox:                'libs/dropbox/dropbox.0.10.2',
         i18next:                'libs/i18next/i18next.amd.withJQuery-1.7.1',
         jqueryhotkeys:			'libs/jqueryhotkeys/jquery.hotkeys',
-		select2:				'libs/select2/select2',
-		hammerjs:				'libs/hammerjs/jquery.hammer',
+		select2:				'libs/select2/select2.min',
+		hammerjs:				'libs/hammerjs/jquery.hammer.min',
 		handlebarsjs:			'libs/handlebars.js/handlebars-v1.1.2',
 		
         tscore:                 'js/core.api',

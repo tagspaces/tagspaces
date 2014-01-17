@@ -14,22 +14,24 @@ define(function(require, exports, module) {
 	var TSCORE = require("tscore");	
 	
 	var htmlEditor = undefined;
-	var extensionDirectory = TSCORE.Config.getExtensionPath()+"/"+exports.id;
 	
+	var extensionsPath = TSCORE.Config.getExtensionPath();
+	
+	var extensionDirectory = extensionsPath+"/"+exports.id;
 	
 	exports.init = function(filePath, containerElementID) {
 	    console.log("Initalization HTML Text Editor...");
 		require([
+            extensionsPath+'/editorText/codemirror/codemirror.js',
 			extensionDirectory+'/summernote/summernote.min.js',
-            TSCORE.Config.getExtensionPath()+'/editorText/codemirror/codemirror.js',
             //"css!"+extensionDirectory+'/summernote/summernote-bs3.css', 
             "css!"+extensionDirectory+'/summernote/summernote.css',     
-            'css!'+TSCORE.Config.getExtensionPath()+'/editorText/codemirror/codemirror.css',            
-            'css!'+TSCORE.Config.getExtensionPath()+'/editorText/codemirror/theme/monokai.css',    
+            'css!'+extensionsPath+'/editorText/codemirror/codemirror.css',            
+            'css!'+extensionsPath+'/editorText/codemirror/theme/monokai.css',    
             'css!'+extensionDirectory+'/extension.css',
 		 	], function() {
                 require([
-                    TSCORE.Config.getExtensionPath()+'/editorText/codemirror/mode/xml/xml.js',    
+                    extensionsPath+'/editorText/codemirror/mode/xml/xml.js',    
                 ]);		 	    
 				$("#"+containerElementID).append('<div id="htmlEditor"></div>');	 		
 				TSCORE.IO.loadTextFile(filePath);

@@ -483,15 +483,6 @@ li hr {
 }
 
 
-/* JSON Editor */
-div.jsoneditor-menu {	
-    background-color: #C4E1A4;  
-}
-
-div.jsoneditor-frame {
-    border-color: green;   
-}
-
 table.dataTable tr.even {
     background-color: white;
 }
