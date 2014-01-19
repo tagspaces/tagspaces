@@ -345,7 +345,7 @@ IO-API
                     "Please make sure that you check the 'Allow access to file URLs'"+
                     " checkbox as shown in the following screenshot "+
                     " from the extension ('chrome://extensions/') settings of chrome/chromium"+
-                    "<img src='chrome/ChromeAllowAccessFileURLs.png' />",
+                    "<img style='width: 100%;' src='chrome/ChromeAllowAccessFileURLs.png' />",
                      "TagSpaces can not read files from your local disk!"
                );               
             }
