@@ -60,7 +60,7 @@ define(function(require, exports, module) {
             console.log("Upgrading settings");
             exports.Settings["appVersion"] = exports.DefaultSettings["appVersion"];
             exports.Settings["appBuild"] = exports.DefaultSettings["appBuild"];
-            exports.Settings["appBuildId"] = exports.DefaultSettings["appBuildId"];         
+            exports.Settings["appBuildID"] = exports.DefaultSettings["appBuildID"];         
             getPerspectiveExtensions();
             getExtensionPath();
             getShowUnixHiddenEntries();
@@ -463,17 +463,6 @@ define(function(require, exports, module) {
         return allTags;   
     };
     
-    // Not used
-    var setLastOpenedDir = function(directory) {
-        exports.Settings["lastOpenedDirectory"] = directory;
-        saveSettings();    
-    };
-    
-    // Not used
-    var getLastOpenedDir = function() {
-        return exports.Settings["lastOpenedDirectory"]; 
-    };
-    
     var getTagData = function(tagTitle, tagGroupKey) {
         for(var i=0; i < exports.Settings["tagGroups"].length; i++) {
             if(exports.Settings["tagGroups"][i].key == tagGroupKey) {
@@ -743,6 +732,11 @@ define(function(require, exports, module) {
     
     // Save setting 
     var saveSettings = function() {
+        // TODO Make a file based json backup
+        
+        // Making a backup of the last settings
+        localStorage.setItem('tagSpacesSettingsBackup1', localStorage.getItem('tagSpacesSettings'));
+
         // Storing setting in the local storage of mozilla and chorme
         localStorage.setItem('tagSpacesSettings', JSON.stringify(exports.Settings));
         
