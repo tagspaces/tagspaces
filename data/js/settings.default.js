@@ -1,4 +1,4 @@
-/* Copyright (c) 2012-2013 The TagSpaces Authors. All rights reserved.
+/* Copyright (c) 2012-2014 The TagSpaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that 
  * can be found in the LICENSE file. */
 define(function(require, exports, module) {
@@ -7,7 +7,8 @@ define(function(require, exports, module) {
 exports.defaultSettings = {
 	"appName": "TagSpaces",
 	"appVersion": "1.7",
-    "appBuild": "1850",
+    "appBuild": "1",
+    "appBuildID": "201401201231",
 	"settingsVersion": 2,
 	"newTextFileContent": "Text file created with TagSpaces!",
     "newHTMLFileContent": "<html><head><title>Created with TagSpaces!</title></head><body>Feel free to change this text...</body></html>",	

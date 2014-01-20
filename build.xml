@@ -9,15 +9,15 @@ found in the LICENSE file.
 	<buildnumber file="build.number" />
 	<property name="defaultSettings.file" value="settings.default.js" />
 
-	<tstamp />
-	<!--tstamp><format property="touch.time" pattern="MM/dd/yyyy hh:mm aa" /></tstamp-->
+	<tstamp><format property="touch.time" pattern="yyyyMMddhhmm" /></tstamp>
 
 	<target name="prepare-devenv" description="Prepares the development environment">
 		<copy file="default.settings.tmpl.js" tofile="data/js/${defaultSettings.file}" />
 		<replace file="data/js/${defaultSettings.file}">
 			<replacefilter token="@@VERSION" value="${version}" />
 			<replacefilter token="@@APPNAME" value="${appname}" />
-			<replacefilter token="@@BUILD" value="${build.number}" />
+			<replacefilter token="@@BUILD" value="${subversion}" />
+	        <replacefilter token="@@BID" value="${touch.time}" />
 			<replacefilter token="@@DEFAULTLOCATIONS" value="" />
 			<replacefilter token="@@PDFVIEWER" value="viewerBrowser" />
 		</replace>
@@ -27,19 +27,20 @@ found in the LICENSE file.
             <replacefilter token="@@PACKAGE" value="${package}" />
             <replacefilter token="@@APPNAME" value="${appname}" />
             <replacefilter token="@@APPDESCRIPTION" value="${appdescription}" />
-            <replacefilter token="@@BUILD" value="${build.number}" />
+            <replacefilter token="@@BUILD" value="${subversion}" />
+            <replacefilter token="@@BID" value="${touch.time}" />        	
         </replace>
         <copy file="data/chrome/chrome.manifest.tmpl.json" overwrite="true" tofile="data/manifest.json" />
         <replace file="data/manifest.json">
             <replacefilter token="@@VERSION" value="${version}" />
             <replacefilter token="@@APPNAME" value="${appname}" />
             <replacefilter token="@@APPDESCRIPTION" value="${appdescription}" />
-            <replacefilter token="@@BUILD" value="${build.number}" />
+            <replacefilter token="@@BUILD" value="${subversion}" />
         </replace>		
 	</target>
 
 	<target name="prepare-mozilla-extension" depends="prepare-devenv" description="copy all files for the chrome app to the build directory">
-		<echo>Preparing Mozilla Addon [${build.number}] in: ${buildFirefoxExt.dir}</echo>
+		<echo>Preparing Mozilla Addon [${touch.time}] in: ${buildFirefoxExt.dir}</echo>
 		<delete dir="${buildFirefoxExt.dir}" />
 		<mkdir dir="${buildFirefoxExt.dir}" />
 	    <copy file="LICENSE" overwrite="true" tofile="data/LICENSE.txt" />
@@ -48,7 +49,7 @@ found in the LICENSE file.
 			<replacefilter token="@@VERSION" value="${version}" />
 			<replacefilter token="@@PACKAGE" value="${package}" />
 			<replacefilter token="@@APPNAME" value="${appname}" />
-			<replacefilter token="@@BUILD" value="${build.number}" />
+			<replacefilter token="@@BUILD" value="${touch.time}" />
 		</replace>
 		<copy file="data/mozilla/update.rdf" todir="${tagspaces.org.release.dir}" />
 		<copy file="package.json" todir="${buildFirefoxExt.dir}" />
@@ -64,7 +65,7 @@ found in the LICENSE file.
         </copy>     
 		<replace file="${buildFirefoxExt.dir}/data/mozilla/main.js">
 			<replacefilter token="@@PRODUCTION" value="true" />
-			<replacefilter token="@@VERSION" value="${version}.${build.number}" />
+			<replacefilter token="@@VERSION" value="${version}.${touch.time}" />
 		</replace>
 		<copy todir="${buildFirefoxExt.dir}/data/libs">
 			<fileset dir="data/libs"></fileset>
@@ -93,23 +94,15 @@ found in the LICENSE file.
 		<copy todir="${buildFirefoxExt.dir}/data/assets">
 			<fileset dir="data/assets" includes="**/*" />
 		</copy>
-		<!--copy file="default.settings.tmpl.js" tofile="${buildFirefoxExt.dir}/data/js/${defaultSettings.file}" />
-		<replace file="${buildFirefoxExt.dir}/data/js/${defaultSettings.file}">
-			<replacefilter token="@VERSION@" value="${version}" />
-			<replacefilter token="@APPNAME@" value="${appname}" />
-			<replacefilter token="@BUILD@" value="${build.number}" />
-			<replacefilter token="@DEFAULTLOCATIONS@" value="" />
-			<replacefilter token="@PDFVIEWER@" value="viewerBrowser" />
-		</replace-->
 		<replace file="${buildFirefoxExt.dir}/data/about.html">
 			<replacefilter token="@@VERSION" value="${version}" />
 			<replacefilter token="@@APPNAME" value="${appname}" />
-			<replacefilter token="@@BUILD" value="${build.number}" />
+			<replacefilter token="@@BUILD" value="${touch.time}" />
 		</replace>
 	</target>
 
 	<target name="prepare-chrome-extension"  depends="prepare-devenv" description="copy all files for the chrome app to the build directory">
-		<echo>Preparing Chrome Extension [${build.number}] in: ${buildChrome.dir}</echo>
+		<echo>Preparing Chrome Extension [${touch.time}] in: ${buildChrome.dir}</echo>
 		<delete dir="${buildChrome.dir}" />
 		<mkdir dir="${buildChrome.dir}" />
 	    <copy file="LICENSE" overwrite="true" tofile="data/LICENSE.txt" />
@@ -154,23 +147,15 @@ found in the LICENSE file.
 		<copy todir="${buildChrome.dir}/assets">
 			<fileset dir="data/assets" includes="**/*" />
 		</copy>
-		<!--copy file="default.settings.tmpl.js" tofile="${buildChrome.dir}/js/${defaultSettings.file}" />
-		<replace file="${buildChrome.dir}/js/${defaultSettings.file}">
-			<replacefilter token="@@VERSION" value="${version}" />
-			<replacefilter token="@@APPNAME" value="${appname}" />
-			<replacefilter token="@@BUILD" value="${build.number}" />
-			<replacefilter token="@@DEFAULTLOCATIONS" value="" />
-			<replacefilter token="@@PDFVIEWER" value="viewerBrowser" />
-		</replace-->
 		<replace file="${buildChrome.dir}/about.html">
 			<replacefilter token="@@VERSION" value="${version}" />
 			<replacefilter token="@@APPNAME" value="${appname}" />
-			<replacefilter token="@@BUILD" value="${build.number}" />
+			<replacefilter token="@@BUILD" value="${touch.time}" />
 		</replace>
 	</target>
 
 	<target name="prepare-cordova-app" description="copy all files the cordova dev directory">
-		<echo>Preparing Cordova App[${build.number}] in: ${cordovaDev.dir}</echo>
+		<echo>Preparing Cordova App[${touch.time}] in: ${cordovaDev.dir}</echo>
 		<delete dir="${cordovaDev.dir}" />
 		<mkdir dir="${cordovaDev.dir}" />
 		<copy file="LICENSE" tofile="${cordovaDev.dir}/LICENSE.txt" />
@@ -178,7 +163,7 @@ found in the LICENSE file.
 		<replace file="${cordovaDev.dir}/config.xml">
 			<replacefilter token="@@VERSION" value="${version}" />
 			<replacefilter token="@@APPNAME" value="${appname}" />
-			<replacefilter token="@@BUILD" value="${build.number}" />
+			<replacefilter token="@@BUILD" value="${touch.time}" />
 			<replacefilter token="@@DEFAULTLOCATIONS" value="${appdescription}" />
 		</replace>
 		<copy file="data/index.html" todir="${cordovaDev.dir}" />
@@ -218,19 +203,19 @@ found in the LICENSE file.
 		<replace file="${cordovaDev.dir}/js/${defaultSettings.file}">
 			<replacefilter token="@@VERSION" value="${version}" />
 			<replacefilter token="@@APPNAME" value="${appname}" />
-			<replacefilter token="@@BUILD" value="${build.number}" />
+			<replacefilter token="@@BUILD" value="${touch.time}" />
 			<replacefilter token="@@DEFAULTLOCATIONS" value="${default.locations.android}" />
 			<replacefilter token="@@PDFVIEWER" value="viewerPDF" />
 		</replace>
 		<replace file="${cordovaDev.dir}/about.html">
 			<replacefilter token="@@VERSION" value="${version}" />
 			<replacefilter token="@@APPNAME" value="${appname}" />
-			<replacefilter token="@@BUILD" value="${build.number}" />
+			<replacefilter token="@@BUILD" value="${touch.time}" />
 		</replace>
 	</target>
 
 	<target name="backup-all" description="Creates a complete backup of the git repository">
-		<zip destfile="${backup.dir}/${appname}-Backup [v${version}.${build.number} ${DSTAMP}${TSTAMP}].zip" defaultexcludes="no" basedir="." />
+		<zip destfile="${backup.dir}/${appname}-Backup [v${version}.${touch.time} ${DSTAMP}${TSTAMP}].zip" defaultexcludes="no" basedir="." />
 	</target>
 
 	<target name="clean-all">
@@ -243,13 +228,13 @@ found in the LICENSE file.
 	<target name="build-all" depends="build-chrome-extension, build-mozilla-extension" description="build for all target platforms" />
 
 	<target name="build-chrome-extension" depends="prepare-chrome-extension" description="Creates a simple zip(not crx) of the chrome exntension">
-		<zip destfile="${builds.dir}/${appname} [v${version}.${build.number} ${DSTAMP}${TSTAMP} chrome].zip">
+		<zip destfile="${builds.dir}/${appname} [v${version}.${touch.time} ${DSTAMP}${TSTAMP} chrome].zip">
 			<fileset dir="${buildChrome.dir}" includes="**/*" />
 		</zip>
 	</target>
 
 	<target name="build-mozilla-extension" depends="prepare-mozilla-extension" description="Creates a simple zip(not xpi) of the mozilla extension">
-		<zip destfile="${builds.dir}/${appname} [v${version}.${build.number} ${DSTAMP}${TSTAMP} mozilla].zip">
+		<zip destfile="${builds.dir}/${appname} [v${version}.${touch.time} ${DSTAMP}${TSTAMP} mozilla].zip">
 			<fileset dir="${buildFirefoxExt.dir}" includes="**/*" />
 		</zip>
 	</target>

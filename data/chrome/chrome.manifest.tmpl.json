@@ -16,7 +16,6 @@
     "default_icon":  "assets/icon19.png",
     "default_title": "Launch @@APPNAME"
   },     
-  "options_page": "index.html",
   "plugins": [
 	{"path": "chrome/NPAPI-chrome-file-api/NPAPIFileIOforChrome.plugin", "public": false},
 	{"path": "chrome/NPAPI-chrome-file-api/npNPAPIFileIOforChrome.dll", "public": false},
