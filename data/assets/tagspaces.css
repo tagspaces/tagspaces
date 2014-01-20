@@ -67,19 +67,21 @@ user-select: none;
 	font-weight: bold;
 	padding-left: 32px;
     padding-top: 4px;	
-	background: url("icon28.png") no-repeat left center;
+	background: url("icon.svg") no-repeat left center;
+    background-size: 28px 28px;
 	background-position: 0px 0px;
 	height: 31px;
 	display: inline-block;
 }
-
+/*
 @media 
 (-webkit-min-device-pixel-ratio: 2), 
 (min-resolution: 192dpi) { 
 	#logo {
-		background: url("icon64.png") no-repeat left center 28px 28px;
+		background: url("icon64.png") no-repeat left center;
+        background-size: 28px 28px;
 	}
-}
+} */
 
 .appVersion {
   font-size: 1.3em; 
