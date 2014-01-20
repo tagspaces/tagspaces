@@ -1,11 +1,11 @@
 {
-    "name": "tagspaces", 
+    "name": "TagSpaces", 
     "license": "AGPL 3.0", 
     "author": "Ugg Rock", 
     "version": "1.7.1", 
     "mainversion": "1.7", 
     "subversion": "1", 
-    "buildid": "201401201242",
+    "buildid": "201401201325",
     "fullName": "TagSpaces", 
     "id": "jid1-FBaMKxTifTSahQ",
     "lib": "data/mozilla",      
