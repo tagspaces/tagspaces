@@ -51,6 +51,8 @@ define(function(require, exports, module) {
         // For compartibility reasons
         if(exports.Settings["appBuildID"] == undefined) {
             oldBuildNumber = parseInt(exports.Settings["appBuild"]);
+            exports.Settings["appBuildID"] = exports.DefaultSettings["appBuildID"]; 
+            saveSettings();          
         }
         var newBuildNumber = parseInt(exports.DefaultSettings["appBuildID"]); 
         // Workarround for settings update, please comment for production
@@ -215,14 +217,13 @@ define(function(require, exports, module) {
             }
 
             if(oldBuildNumber <= 1700) { 
-                //addTagGroup({ "title": "Tags in Perspective", "key": "CTG", "expanded": true,"children": []});
                 setPrefixTagContainer("");       
                 setTagDelimiter(" ");
                 setCalculateTags(false);     
             }
-            
             saveSettings();         
         }
+
     };
     
     //////////////////// Settings upgrade methods ///////////////////   
