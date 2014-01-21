@@ -46,10 +46,10 @@ found in the LICENSE file.
 	    <copy file="LICENSE" overwrite="true" tofile="data/LICENSE.txt" />
 		<copy file="data/mozilla/mozilla.update.tmpl.rdf" overwrite="true" tofile="data/mozilla/update.rdf" />
 		<replace file="data/mozilla/update.rdf">
-			<replacefilter token="@@VERSION" value="${version}" />
-			<replacefilter token="@@PACKAGE" value="${package}" />
-			<replacefilter token="@@APPNAME" value="${appname}" />
-			<replacefilter token="@@BUILD" value="${touch.time}" />
+            <replacefilter token="@@VERSION" value="${version}" />
+            <replacefilter token="@@APPNAME" value="${appname}" />
+            <replacefilter token="@@BUILD" value="${subversion}" />
+            <replacefilter token="@@BID" value="${touch.time}" />
 		</replace>
 		<copy file="data/mozilla/update.rdf" todir="${tagspaces.org.release.dir}" />
 		<copy file="package.json" todir="${buildFirefoxExt.dir}" />
@@ -95,13 +95,14 @@ found in the LICENSE file.
 			<fileset dir="data/assets" includes="**/*" />
 		</copy>
 		<replace file="${buildFirefoxExt.dir}/data/about.html">
-			<replacefilter token="@@VERSION" value="${version}" />
-			<replacefilter token="@@APPNAME" value="${appname}" />
-			<replacefilter token="@@BUILD" value="${touch.time}" />
+            <replacefilter token="@@VERSION" value="${version}" />
+            <replacefilter token="@@APPNAME" value="${appname}" />
+            <replacefilter token="@@BUILD" value="${subversion}" />
+            <replacefilter token="@@BID" value="${touch.time}" />
 		</replace>
 	</target>
 
-	<target name="prepare-chrome-extension"  depends="prepare-devenv" description="copy all files for the chrome app to the build directory">
+	<target name="prepare-chrome-extension" depends="prepare-devenv" description="copy all files for the chrome app to the build directory">
 		<echo>Preparing Chrome Extension [${touch.time}] in: ${buildChrome.dir}</echo>
 		<delete dir="${buildChrome.dir}" />
 		<mkdir dir="${buildChrome.dir}" />
@@ -148,9 +149,10 @@ found in the LICENSE file.
 			<fileset dir="data/assets" includes="**/*" />
 		</copy>
 		<replace file="${buildChrome.dir}/about.html">
-			<replacefilter token="@@VERSION" value="${version}" />
-			<replacefilter token="@@APPNAME" value="${appname}" />
-			<replacefilter token="@@BUILD" value="${touch.time}" />
+            <replacefilter token="@@VERSION" value="${version}" />
+            <replacefilter token="@@APPNAME" value="${appname}" />
+            <replacefilter token="@@BUILD" value="${subversion}" />
+            <replacefilter token="@@BID" value="${touch.time}" />
 		</replace>
 	</target>
 
@@ -161,9 +163,10 @@ found in the LICENSE file.
 		<copy file="LICENSE" tofile="${cordovaDev.dir}/LICENSE.txt" />
 		<copy file="data/cordova/config.xml" tofile="${cordovaDev.dir}/config.xml" />
 		<replace file="${cordovaDev.dir}/config.xml">
-			<replacefilter token="@@VERSION" value="${version}" />
-			<replacefilter token="@@APPNAME" value="${appname}" />
-			<replacefilter token="@@BUILD" value="${touch.time}" />
+            <replacefilter token="@@VERSION" value="${version}" />
+            <replacefilter token="@@APPNAME" value="${appname}" />
+            <replacefilter token="@@BUILD" value="${subversion}" />
+            <replacefilter token="@@BID" value="${touch.time}" />
 			<replacefilter token="@@DEFAULTLOCATIONS" value="${appdescription}" />
 		</replace>
 		<copy file="data/index.html" todir="${cordovaDev.dir}" />
@@ -201,16 +204,18 @@ found in the LICENSE file.
 		</copy>
 		<copy file="default.settings.tmpl.js" tofile="${cordovaDev.dir}/js/${defaultSettings.file}" />
 		<replace file="${cordovaDev.dir}/js/${defaultSettings.file}">
-			<replacefilter token="@@VERSION" value="${version}" />
-			<replacefilter token="@@APPNAME" value="${appname}" />
-			<replacefilter token="@@BUILD" value="${touch.time}" />
+            <replacefilter token="@@VERSION" value="${version}" />
+            <replacefilter token="@@APPNAME" value="${appname}" />
+            <replacefilter token="@@BUILD" value="${subversion}" />
+            <replacefilter token="@@BID" value="${touch.time}" />
 			<replacefilter token="@@DEFAULTLOCATIONS" value="${default.locations.android}" />
 			<replacefilter token="@@PDFVIEWER" value="viewerPDF" />
 		</replace>
 		<replace file="${cordovaDev.dir}/about.html">
-			<replacefilter token="@@VERSION" value="${version}" />
-			<replacefilter token="@@APPNAME" value="${appname}" />
-			<replacefilter token="@@BUILD" value="${touch.time}" />
+            <replacefilter token="@@VERSION" value="${version}" />
+            <replacefilter token="@@APPNAME" value="${appname}" />
+            <replacefilter token="@@BUILD" value="${subversion}" />
+            <replacefilter token="@@BID" value="${touch.time}" />
 		</replace>
 	</target>
 
