@@ -663,7 +663,7 @@ console.log("Loading UI for perspectiveDefault");
             oldFilePath = oldFilePath.replace("\\","");
             $("#"+this.extensionID+"Container button[filepath]").each(function( index ) {
                 if( $( this ).attr("filepath").replace("\\","") == oldFilePath ) {
-                    var $fileTile = $( this );
+                    $fileTile = $( this );
                 }
             });            
         } else {

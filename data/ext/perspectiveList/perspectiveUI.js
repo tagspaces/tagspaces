@@ -483,7 +483,7 @@ console.log("Loading UI for perspectiveList");
             oldFilePath = oldFilePath.replace("\\","");
             $("#"+this.extensionID+"Container button[filepath]").each(function( index ) {
                 if( $( this ).attr("filepath").replace("\\","") == oldFilePath ) {
-                    var $fileRow = $( this ).parent().parent();
+                    $fileRow = $( this ).parent().parent();
                 }
             });            
         } else {
