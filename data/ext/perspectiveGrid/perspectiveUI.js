@@ -638,12 +638,17 @@ console.log("Loading UI for perspectiveDefault");
 
     ExtUI.prototype.removeFileUI = function(filePath) {
         console.log("Removing "+filePath+" from UI");
-        
+
         if(isWin) {
-            filePath = filePath.replace("\\","\\\\");
+            filePath = filePath.replace("\\","");
+            $("#"+this.extensionID+"Container button[filepath]").each(function( index ) {
+                if( $( this ).attr("filepath").replace("\\","") == filePath ) {
+                    $( this ).remove();
+                }
+            });            
+        } else {
+            $("#"+this.extensionID+"Container li[filepath='"+filePath+"']").remove();
         }  
-                
-        $("#"+this.extensionID+"Container li[filepath='"+filePath+"']").remove();
     };
     
     ExtUI.prototype.updateFileUI = function(oldFilePath, newFilePath) {
@@ -652,11 +657,19 @@ console.log("Loading UI for perspectiveDefault");
             fileExt = TSCORE.TagUtils.extractFileExtension(newFilePath),
             fileTags = TSCORE.TagUtils.extractTags(newFilePath);
 
+        var $fileTile = undefined;
+       
         if(isWin) {
-            oldFilePath = oldFilePath.replace("\\","\\\\");
-        }     
-            
-        var $fileTile = $("#"+this.extensionID+"Container li[filepath='"+oldFilePath+"']");
+            oldFilePath = oldFilePath.replace("\\","");
+            $("#"+this.extensionID+"Container button[filepath]").each(function( index ) {
+                if( $( this ).attr("filepath").replace("\\","") == oldFilePath ) {
+                    var $fileTile = $( this );
+                }
+            });            
+        } else {
+            $fileTile = $("#"+this.extensionID+"Container li[filepath='"+oldFilePath+"']");
+        }   
+
         $fileTile.attr("filepath", newFilePath);
         $fileTile.attr("title", newFilePath);
         $fileTile.find("p").replaceWith(this.createFileTile(title, newFilePath, fileExt, fileTags));

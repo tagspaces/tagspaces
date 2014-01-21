@@ -459,10 +459,15 @@ console.log("Loading UI for perspectiveList");
         console.log("Removing "+filePath+" from UI");
         
         if(isWin) {
-            filePath = filePath.replace("\\","\\\\");
+            filePath = filePath.replace("\\","");
+            $("#"+this.extensionID+"Container button[filepath]").each(function( index ) {
+                if( $( this ).attr("filepath").replace("\\","") == filePath ) {
+                    $( this ).parent().parent().remove();
+                }
+            });            
+        } else {
+            $("#"+this.extensionID+"Container button[filepath='"+filePath+"']").parent().parent().remove();            
         }  
-
-        $("#"+this.extensionID+"Container button[filepath='"+filePath+"']").parent().parent().remove();
     };	
 
     ExtUI.prototype.updateFileUI = function(oldFilePath, newFilePath) {
@@ -472,11 +477,19 @@ console.log("Loading UI for perspectiveList");
             fileExt = TSCORE.TagUtils.extractFileExtension(newFilePath),
             fileTags = TSCORE.TagUtils.extractTags(newFilePath);
         
+        var $fileRow = undefined;
+       
         if(isWin) {
-            oldFilePath = oldFilePath.replace("\\","\\\\");
-        }        
-            
-        var $fileRow = $("#"+this.extensionID+"Container button[filepath='"+oldFilePath+"']").parent().parent();
+            oldFilePath = oldFilePath.replace("\\","");
+            $("#"+this.extensionID+"Container button[filepath]").each(function( index ) {
+                if( $( this ).attr("filepath").replace("\\","") == oldFilePath ) {
+                    var $fileRow = $( this ).parent().parent();
+                }
+            });            
+        } else {
+            $fileRow = $("#"+this.extensionID+"Container button[filepath='"+oldFilePath+"']").parent().parent();
+        }                           
+
         $($fileRow.find("td")[0]).empty().append(buttonizeTitle(title,newFilePath,fileExt));
         $($fileRow.find("td")[1]).text(title);
         $($fileRow.find("td")[2]).empty().append(TSCORE.generateTagButtons(fileTags,newFilePath));
