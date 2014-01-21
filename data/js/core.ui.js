@@ -140,8 +140,8 @@ define(function(require, exports, module) {
     };       
     
 	var initUI = function() {
-        $("#appVersion").text(TSCORE.Config.DefaultSettings["appVersion"]+"beta");
-        $("#appVersion").attr("title","["+TSCORE.Config.DefaultSettings["appVersion"]+"."+TSCORE.Config.DefaultSettings["appBuild"]+"]");
+        $("#appVersion").text(TSCORE.Config.DefaultSettings["appVersion"]+"."+TSCORE.Config.DefaultSettings["appBuild"]+"beta");
+        $("#appVersion").attr("title","BuildID: "+TSCORE.Config.DefaultSettings["appVersion"]+"."+TSCORE.Config.DefaultSettings["appBuild"]+"."+TSCORE.Config.DefaultSettings["appBuildID"]);
 
         // Show start hint
         if(TSCORE.Config.Settings.tagspacesList.length < 1 ) {
