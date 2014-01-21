@@ -492,6 +492,9 @@ define(function(require, exports, module) {
         if(isNode) {
             $("#fullscreenFile").hide();                   
         }
+        if(isOSX) {
+            $("body").addClass("osx");                   
+        }
     };	
 
 	var showContextMenu = function(menuId, sourceObject) {

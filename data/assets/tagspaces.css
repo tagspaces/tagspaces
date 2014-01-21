@@ -20,6 +20,10 @@ html, body {
 	font-family: Ubuntu, Geneva, Arial, Helvetica, sans-serif; 
 }
 
+body.osx {
+    font-family: "Lucida Grande", "Lucida Sans Unicode", Helvetica, Arial, Verdana, sans-serif;
+}
+
 /* Removes the selection border on ui elements on android */
 * { 
 	-webkit-tap-highlight-color: rgba(0,0,0,0); 
