@@ -2,6 +2,13 @@
  * All rights reserved. Use of this source code 
  * is governed by a AGPL3 license that can be  
  * found in the LICENSE file. */
+@font-face {
+  font-family: 'Ubuntu';
+  font-style: normal;
+  font-weight: 400;
+  src: url(Ubuntu-R.woff) format('woff');
+  /*  src: local('Ubuntu'), url(Ubuntu-M.woff) format('woff');*/
+}
 
 html, body {
 	width: 100%;
@@ -9,8 +16,8 @@ html, body {
 	padding: 0;
 	margin: 0;
 	overflow: hidden;
-	font-size: 9px; /* 0.8em */
-	font-family: Geneva, Arial, Helvetica, sans-serif; 
+	font-size: 9px;
+	font-family: Ubuntu, Geneva, Arial, Helvetica, sans-serif; 
 }
 
 /* Removes the selection border on ui elements on android */
@@ -160,7 +167,7 @@ user-select: none;
     line-height: 1.9;
     padding-left: 4px;
     font-size: 16px;
-    font-family: open_sanslight,sans-serif;
+/*    font-family: open_sanslight,sans-serif; */
     font-weight: 300;
     border: 0px;
     background-color: transparent;
