@@ -641,7 +641,7 @@ console.log("Loading UI for perspectiveDefault");
 
         if(isWin) {
             filePath = filePath.replace("\\","");
-            $("#"+this.extensionID+"Container button[filepath]").each(function( index ) {
+            $("#"+this.extensionID+"Container li[filepath]").each(function( index ) {
                 if( $( this ).attr("filepath").replace("\\","") == filePath ) {
                     $( this ).remove();
                 }
@@ -661,7 +661,7 @@ console.log("Loading UI for perspectiveDefault");
        
         if(isWin) {
             oldFilePath = oldFilePath.replace("\\","");
-            $("#"+this.extensionID+"Container button[filepath]").each(function( index ) {
+            $("#"+this.extensionID+"Container li[filepath]").each(function( index ) {
                 if( $( this ).attr("filepath").replace("\\","") == oldFilePath ) {
                     $fileTile = $( this );
                 }
