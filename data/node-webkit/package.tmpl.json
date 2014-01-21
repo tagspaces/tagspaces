@@ -6,6 +6,7 @@
   "window": {
     "icon": "assets/icon128.png",
     "toolbar": false,
+    "position": "center",
     "width": 1280,
     "height": 768
   },
