@@ -11,7 +11,7 @@ found in the LICENSE file.
 
 	<tstamp><format property="touch.time" pattern="yyyyMMddHHmm" /></tstamp>
 
-	<target name="prepare-devenv" description="Prepares the development environment">
+	<target name="build-increase" description="Prepares the development environment">
 		<copy file="default.settings.tmpl.js" tofile="data/js/${defaultSettings.file}" />
 		<replace file="data/js/${defaultSettings.file}">
 			<replacefilter token="@@VERSION" value="${version}" />
@@ -39,7 +39,7 @@ found in the LICENSE file.
         </replace>		
 	</target>
 
-	<target name="prepare-mozilla-extension" depends="prepare-devenv" description="copy all files for the chrome app to the build directory">
+	<target name="prepare-mozilla-extension" depends="build-increase" description="copy all files for the chrome app to the build directory">
 		<echo>Preparing Mozilla Addon [${touch.time}] in: ${buildFirefoxExt.dir}</echo>
 		<delete dir="${buildFirefoxExt.dir}" />
 		<mkdir dir="${buildFirefoxExt.dir}" />
@@ -102,7 +102,7 @@ found in the LICENSE file.
 		</replace>
 	</target>
 
-	<target name="prepare-chrome-extension" depends="prepare-devenv" description="copy all files for the chrome app to the build directory">
+	<target name="prepare-chrome-extension" depends="build-increase" description="copy all files for the chrome app to the build directory">
 		<echo>Preparing Chrome Extension [${touch.time}] in: ${buildChrome.dir}</echo>
 		<delete dir="${buildChrome.dir}" />
 		<mkdir dir="${buildChrome.dir}" />
@@ -228,7 +228,7 @@ found in the LICENSE file.
 		<delete dir="${buildChrome.dir}" />
 	</target>
 
-	<target name="main" depends="prepare-devenv" description="prepare for all target platforms" />
+	<target name="main" depends="build-increase" description="prepare for all target platforms" />
 
 	<target name="build-all" depends="build-chrome-extension, build-mozilla-extension" description="build for all target platforms" />
 
