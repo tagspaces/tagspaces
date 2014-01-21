@@ -22,7 +22,9 @@ html, body {
 }
 
 body.osx {
-    font-family: "Lucida Grande", "Lucida Sans Unicode", Helvetica, Arial, Verdana, sans-serif;
+    /*font-family: "Lucida Grande", "Lucida Sans Unicode", Helvetica, Arial, Verdana, sans-serif; 
+     * 
+     *//
 }
 
 /* Removes the selection border on ui elements on android */
@@ -289,7 +291,6 @@ li hr {
     z-index: 9999;    
     border-radius: 5px !important;
     text-decoration: none  !important; 
-    text-shadow: 0px 0px !important;   
 }
 
 .extTagButton {
@@ -300,7 +301,6 @@ li hr {
     border: 0px;
     border-radius: 5px !important;
     text-decoration: none;
-    text-shadow: 0px 0px !important;      
 }
 
 .fileButton {
