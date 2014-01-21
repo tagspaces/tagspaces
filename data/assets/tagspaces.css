@@ -5,8 +5,9 @@
 @font-face {
   font-family: 'Ubuntu';
   font-style: normal;
-  font-weight: 400;
+  font-weight: normal;
   src: url(Ubuntu-R.woff) format('woff');
+  src: url(Ubuntu-R.ttf) format('truetype');
   /*  src: local('Ubuntu'), url(Ubuntu-M.woff) format('woff');*/
 }
 
@@ -225,7 +226,6 @@ table .fileTitle {
     background: #999 ; 
     text-align: center;
     padding: 1px;
-    /* max-width: 30px; */       
     color: white ;  
     z-index: 99;  
 	text-transform:uppercase;           
@@ -309,14 +309,11 @@ li hr {
     padding-left: 1px;
     padding-right: 12px;        
     font-weight: normal;
-    /* font-size: @tagFontSize; */
     color: #222222;
     text-align: left;
     margin: 1px;
     border: #ddd solid 1px;
     z-index: 9999;
-    /*.arrowDownImage; */    
-    /*.roundedTagCorners; */    
 }
 
 #container {
