@@ -409,7 +409,6 @@ define(function(require, exports, module) {
         
         // Enable the UI behavior by not empty location list
         $( "#createNewLocation" ).attr("title", "Connect New Location");
-        $( "#createNewLocation" ).removeClass("createFirstLocation");
         $( "#createNewLocation" ).tooltip( "destroy" );             
         $( "#locationName" ).prop('disabled', false);
         $( "#selectLocation" ).prop('disabled', false); 

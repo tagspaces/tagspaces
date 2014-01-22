@@ -142,16 +142,6 @@ define(function(require, exports, module) {
 	var initUI = function() {
         $("#appVersion").text(TSCORE.Config.DefaultSettings["appVersion"]+"."+TSCORE.Config.DefaultSettings["appBuild"]+"beta");
         $("#appVersion").attr("title","BuildID: "+TSCORE.Config.DefaultSettings["appVersion"]+"."+TSCORE.Config.DefaultSettings["appBuild"]+"."+TSCORE.Config.DefaultSettings["appBuildID"]);
-
-        // Show start hint
-        if(TSCORE.Config.Settings.tagspacesList.length < 1 ) {
-            $( "#createNewLocation" ).attr("title", "Start using TagSpaces by creating a new location.");
-            $( "#createNewLocation" ).addClass("createFirstLocation");
-            $( "#createNewLocation" ).tooltip( { placement: "bottom" } );
-            $( "#createNewLocation" ).tooltip( "show" );
-            $( "#locationName" ).prop('disabled', true);
-            $( "#selectLocation" ).prop('disabled', true);              
-        }
  
         platformTuning();        
  

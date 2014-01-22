@@ -81,6 +81,13 @@ define(function(require, exports, module) {
 	        initKeyBindings();
 		    $( "#loading" ).hide();  
 	    
+            // Show start hint by no locations
+            if(tsSettings.Settings.tagspacesList.length < 1 ) {
+                $( "#createNewLocation" ).tooltip( "show" );
+                $( "#locationName" ).prop('disabled', true);
+                $( "#selectLocation" ).prop('disabled', true);              
+            }	    
+	    
 	        console.log("Layout initialized");
 	    }); 
 	    

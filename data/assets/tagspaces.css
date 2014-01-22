@@ -696,13 +696,6 @@ input a.resetFilter {
 	border-bottom-color: white;	
 }
 
-.createFirstLocation {
-	border:1px solid #00AE00; 
-	border-radius:5px;
-	border-color:#00AE00; 
-	box-shadow:0 0 10px #00AE00;	
-}
-
 .simplecolorpicker.fontawesome span.color[data-selected]:after {
   font-family: 'FontAwesome';
   -webkit-font-smoothing: antialiased;
