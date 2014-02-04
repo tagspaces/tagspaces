@@ -184,7 +184,13 @@ define(function(require, exports, module) {
 	    $("#selectedFilePath").val(_openedFilePath.replace("\\\\","\\")); 
 	    
 	    var fileExt = TSCORE.TagUtils.extractFileExtension(filePath);       
-	
+	    
+	    // TODO Improve preventing opening of directories 
+	    if(fileExt.length < 1) {
+	        console.log("Path has no extension, quiting fileopener.");
+	        return false;
+	    } 
+	    
 	    // Getting the viewer for the file extension/type
 	    var viewerExt = TSCORE.Config.getFileTypeViewer(fileExt);  
         var editorExt = TSCORE.Config.getFileTypeEditor(fileExt);  
@@ -368,6 +374,7 @@ define(function(require, exports, module) {
         )); 
         tsMenu.append($('<li class="dropdown-header"><span id="">Suggested Tags:</span></li>'));      
 	
+	    //console.log("Last modified: "+_openedFileProperties.lmdt);   
 	    // Adding context menu entries for creating tags according to the suggested tags
 	    for (var i=0; i < suggTags.length; i++) {        
 	        // Ignoring the tags already assigned to a file
