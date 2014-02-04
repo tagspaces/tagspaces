@@ -145,10 +145,10 @@ console.log("Loading UI for perspectiveList");
 	            { "sTitle": "File Ext.", "sWidth": "125px", "sClass": "fileTitle"  },
                 { "sTitle": "Title", "sClass": "fileTitle" },
 	            { "sTitle": "Tags", "sClass": "fileTitle"  },            
-	            { "sTitle": "Size(B)" },
-	            { "sTitle": "Date Modified" },
-	            { "sTitle": "Path" },
-                { "sTitle": "File Name" }                
+	            { "sTitle": "Size(B)", "sClass": "fileTitle" },
+	            { "sTitle": "Date Modified", "sClass": "fileTitle" },
+	            { "sTitle": "Path", "sClass": "fileTitle" },
+                { "sTitle": "File Name", "sClass": "fileTitle" }                
 	        ],         
 	        "aoColumnDefs": [
 /*	            { // Title column
