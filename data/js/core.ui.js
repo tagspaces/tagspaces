@@ -137,10 +137,23 @@ define(function(require, exports, module) {
                 }
                 controller.reInitUI();                    
         });
-    };       
+    };   
+    
+    var showWelcomeDialog = function() {
+        require([
+              "text!templates/WelcomeDialog.html",
+            ], function(uiTPL) {
+                if($("#dialogWelcome").length < 1) {                
+                    var uiTemplate = Handlebars.compile( uiTPL );
+                    $('body').append(uiTemplate());    
+                    $('#welcomeCarosel').carousel();
+                }
+                $("#dialogWelcome").modal("show");
+        });
+    };         
     
 	var initUI = function() {
-        $("#appVersion").text(TSCORE.Config.DefaultSettings["appVersion"]+"."+TSCORE.Config.DefaultSettings["appBuild"]+"beta");
+        $("#appVersion").text(TSCORE.Config.DefaultSettings["appVersion"]+"."+TSCORE.Config.DefaultSettings["appBuild"]);
         $("#appVersion").attr("title","BuildID: "+TSCORE.Config.DefaultSettings["appVersion"]+"."+TSCORE.Config.DefaultSettings["appBuild"]+"."+TSCORE.Config.DefaultSettings["appBuildID"]);
  
         platformTuning();        
@@ -402,6 +415,12 @@ define(function(require, exports, module) {
                 content: $("#contactUsContent").html(), 
                 html: true
         });        	    
+
+
+
+        $("#sideBarButtunGroup").on('click',"#openHints", function () {
+                showWelcomeDialog();
+            });
 
         // Handle external links _system is important in cordova
         $("#sideBarButtunGroup").on('click',"#openUservoice", function () {

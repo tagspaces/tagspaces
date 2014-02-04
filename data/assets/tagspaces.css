@@ -114,8 +114,6 @@ user-select: none;
     display: inline-block;
     width: 30px;
     height: 30px;
-    /* background: url("loading2.gif") no-repeat center;   
-    vertical-align: middle; */
 }
 
 #statusBar {
