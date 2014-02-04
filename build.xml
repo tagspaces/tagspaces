@@ -19,6 +19,7 @@ found in the LICENSE file.
 			<replacefilter token="@@BUILD" value="${subversion}" />
 	        <replacefilter token="@@BID" value="${touch.time}" />
 			<replacefilter token="@@DEFAULTLOCATIONS" value="" />
+			<replacefilter token="@@DEFAULTPERSPECTIVES" value="'perspectiveList', 'perspectiveGrid', 'perspectiveGraph'" />
 			<replacefilter token="@@PDFVIEWER" value="viewerBrowser" />
 		</replace>
         <copy file="data/mozilla/mozilla.package.tmpl.json" overwrite="true" tofile="package.json" />
