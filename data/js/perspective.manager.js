@@ -67,17 +67,16 @@ var initPerspectives = function () {
 };
 
 var initWelcomeScreen = function() {
-        require([
+        /* require([
               "text!templates/WelcomeScreen.html",
             ], function(uiTPL) {
                 // Check if dialog already created
                 if($("#dialogLocationEdit").length < 1) {
                     var uiTemplate = Handlebars.compile( uiTPL );
                     $("#viewContainers").append(uiTemplate()); 
-                                    
-                                                   
                 }
-        });       
+        }); */   
+        $("#viewContainers").append('<div id="welcomeScreen" style="width: 100%; height: 100%;"><img src="assets/welcome-logo.svg" style="overflow: auto; margin: auto; position: absolute; top: 0; left: 0; bottom: 0; right: 0;"></div>');    
 };
 
 var initPerspectiveSwitcher = function() {
