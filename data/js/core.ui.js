@@ -414,10 +414,8 @@ define(function(require, exports, module) {
                 placement: 'top', 
                 content: $("#contactUsContent").html(), 
                 html: true
-        });        	    
-
-
-
+        });      
+        
         $("#sideBarButtunGroup").on('click',"#openHints", function () {
                 showWelcomeDialog();
             });
@@ -558,10 +556,12 @@ define(function(require, exports, module) {
 	exports.showFileRenameDialog        = showFileRenameDialog;
 	exports.showFileCreateDialog        = showFileCreateDialog;
 	exports.showFileDeleteDialog        = showFileDeleteDialog;
+    exports.showWelcomeDialog           = showWelcomeDialog;
     exports.showTagEditDialog           = showTagEditDialog;
     exports.showLocationsPanel          = showLocationsPanel;
     exports.showTagsPanel       	    = showTagsPanel;    
     exports.showDirectoryBrowserDialog  = showDirectoryBrowserDialog; 
 	exports.hideAllDropDownMenus	    = hideAllDropDownMenus;
+
 
 });
