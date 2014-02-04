@@ -85,7 +85,8 @@ define(function(require, exports, module) {
             if(tsSettings.Settings.tagspacesList.length < 1 ) {
                 $( "#createNewLocation" ).tooltip( "show" );
                 $( "#locationName" ).prop('disabled', true);
-                $( "#selectLocation" ).prop('disabled', true);              
+                $( "#selectLocation" ).prop('disabled', true);     
+                tsCoreUI.showWelcomeDialog();         
             }	    
 	    
 	        console.log("Layout initialized");
