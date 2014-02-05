@@ -25,7 +25,7 @@ To get updates you can:
     ./data/templates.....contains HTML templates needed for the UI
 
 ## Downloads 
-[v1.7.2 release](https://github.com/uggrock/tagspaces/releases/tag/v1.7.2) - beta 2 of the upcomming 1.7 release
+[v1.7.3 release](https://github.com/uggrock/tagspaces/releases/tag/v1.7.3) - 1.7 final release
 
 [Changelog](CHANGELOG.md)
 
