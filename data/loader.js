@@ -73,7 +73,7 @@ requirejs.config({
         jqueryuidatepicker:     'libs/jqueryui/jquery.ui.datepicker',   
         
         bootstrap:              'libs/bootstrap/js/bootstrap.min',
-        bootstrap3xeditable:    'libs/bootstrap3xeditable/js/bootstrap-editable',
+        bootstrap3xeditable:    'libs/bootstrap3xeditable/js/bootstrap-editable.min',
         jquerysimplecolorpicker:'libs/jquery-simplecolorpicker/jquery.simplecolorpicker',
         jquerylayout:           'libs/jquerylayout/jquery.layout-latest',
         underscore:             'libs/underscore/underscore',
