@@ -1,6 +1,6 @@
 #Changelog
 
-##TagSpaces 1.7.3 / 2014.02.XX
+##TagSpaces 1.7.3 / 2014.02.05
 - Creating native client for Windows
 - Creating native client for Linux 64
 - Creating native client for Mac OS
