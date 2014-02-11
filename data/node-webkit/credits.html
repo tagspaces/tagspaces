@@ -49,6 +49,9 @@ body {
 .licence h3 {
   margin-top:0px;
 }
+.licence pre {
+  white-space: pre-wrap;
+}
 </style>
 </head>
 <body>
@@ -967,6 +970,574 @@ H THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
 <div class="product">
+<span class="title">fancy_urllib</span>
+<a class="show" href="#">show license</a>
+<span class="homepage"><a href="http://googleappengine.googlecode.com/svn/trunk/python/lib/fancy_urllib">homepage</a></span>
+<div class="licence">
+<pre>Name: fancy_urllib
+URL: http://googleappengine.googlecode.com/svn/trunk/python/lib/fancy_urllib
+License: Apache
+License File: README.chromium
+Security Critical: no
+
+The fancy_urllib library was obtained from
+http://googleappengine.googlecode.com/svn/trunk/python/lib/fancy_urllib/fancy_urllib/__init__.py
+under the following license (http://googleappengine.googlecode.com/svn/trunk/python/LICENSE):
+
+GOOGLE APP ENGINE SDK
+=====================
+Copyright 2008 Google Inc.
+All rights reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+</pre>
+</div>
+</div>
+
+
+<div class="product">
+<span class="title">newlib-extras</span>
+<a class="show" href="#">show license</a>
+<span class="homepage"><a href="ftp://sourceware.org/pub/newlib/newlib-2.0.0.tar.gz">homepage</a></span>
+<div class="licence">
+<pre>                        README for newlib-2.0.0 release
+           (mostly cribbed from the README in the gdb-4.13 release)
+
+This is `newlib', a simple ANSI C library, math library, and collection
+of board support packages.
+
+The newlib and libgloss subdirectories are a collection of software from
+several sources, each wi6h their own copyright and license.  See the file
+COPYING.NEWLIB for details.  The rest of the release tree is under either
+the GNU GPL or LGPL licenses.
+
+THIS SOFTWARE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+
+
+Unpacking and Installation -- quick overview
+==========================
+
+When you unpack the newlib-2.0.0.tar.gz file, you'll find a directory
+called `newlib-2.0.0', which contains:
+
+COPYING          config/          install-sh*      mpw-configure
+COPYING.LIB      config-ml.in     libgloss/        mpw-install
+COPYING.NEWLIB   config.guess*    mkinstalldirs*   newlib/
+CYGNUS           config.sub*      move-if-change*  symlink-tree*
+ChangeLog        configure*       mpw-README       texinfo/
+Makefile.in      configure.in     mpw-build.in
+README           etc/             mpw-config.in
+
+To build NEWLIB, you must follow the instructions in the section entitled
+"Compiling NEWLIB".
+
+This will configure and build all the libraries and crt0 (if one exists).
+If `configure' can't determine your host system type, specify one as its
+argument, e.g., sun4 or sun4sol2.  NEWLIB is most often used in cross
+environments.
+
+NOTE THAT YOU MUST HAVE ALREADY BUILT AND INSTALLED GCC and BINUTILS.
+
+
+More Documentation
+==================
+
+   Newlib documentation is available on the net via:
+   http://sourceware.org/newlib/docs.html
+
+   All the documentation for NEWLIB comes as part of the machine-readable
+distribution.  The documentation is written in Texinfo format, which is
+a documentation system that uses a single source file to produce both
+on-line information and a printed manual.  You can use one of the Info
+formatting commands to create the on-line version of the documentation
+and TeX (or `texi2roff') to typeset the printed version.
+
+   If you want to format these Info files yourself, you need one of the
+Info formatting programs, such as `texinfo-format-buffer' or `makeinfo'.
+
+   If you want to typeset and print copies of this manual, you need TeX,
+a program to print its DVI output files, and `texinfo.tex', the Texinfo
+definitions file.
+
+   TeX is a typesetting program; it does not print files directly, but
+produces output files called DVI files.  To print a typeset document,
+you need a program to print DVI files.  If your system has TeX
+installed, chances are it has such a program.  The precise command to
+use depends on your system; `lpr -d' is common; another (for PostScript
+devices) is `dvips'.  The DVI print command may require a file name
+without any extension or a `.dvi' extension.
+
+   TeX also requires a macro definitions file called `texinfo.tex'. 
+This file tells TeX how to typeset a document written in Texinfo
+format.  On its own, TeX cannot read, much less typeset a Texinfo file.
+`texinfo.tex' is distributed with NEWLIB and is located in the
+`newlib-VERSION-NUMBER/texinfo' directory.
+
+
+
+Compiling NEWLIB
+================
+
+   To compile NEWLIB, you must build it in a directory separate from
+the source directory.  If you want to run NEWLIB versions for several host 
+or target machines, you need a different `newlib' compiled for each combination
+of host and target.  `configure' is designed to make this easy by allowing 
+you to generate each configuration in a separate subdirectory.
+If your `make' program handles the `VPATH' feature correctly (like GNU `make')
+running `make' in each of these directories builds the `newlib' libraries
+specified there.
+
+   To build `newlib' in a specific directory, run `configure' with the
+`--srcdir' option to specify where to find the source. (You also need
+to specify a path to find `configure' itself from your working
+directory.  If the path to `configure' would be the same as the
+argument to `--srcdir', you can leave out the `--srcdir' option; it
+will be assumed.)
+
+   For example, with version 2.0.0, you can build NEWLIB in a separate
+directory for a Sun 4 cross m68k-aout environment like this:
+
+     cd newlib-2.0.0
+     mkdir ../newlib-m68k-aout
+     cd ../newlib-m68k-aout
+     ../newlib-2.0.0/configure --host=sun4 --target=m68k-aout
+     make
+
+   When `configure' builds a configuration using a remote source
+directory, it creates a tree for the binaries with the same structure
+(and using the same names) as the tree under the source directory.  In
+the example, you'd find the Sun 4 library `libiberty.a' in the
+directory `newlib-m68k-aout/libiberty', and NEWLIB itself in
+`newlib-m68k-aout/newlib'.
+
+   When you run `make' to build a program or library, you must run it
+in a configured directory--whatever directory you were in when you
+called `configure' (or one of its subdirectories).
+
+   The `Makefile' that `configure' generates in each source directory
+also runs recursively.  If you type `make' in a source directory such
+as `newlib-2.0.0' (or in a separate configured directory configured with
+`--srcdir=PATH/newlib-2.0.0'), you will build all the required libraries.
+
+   When you have multiple hosts or targets configured in separate
+directories, you can run `make' on them in parallel (for example, if
+they are NFS-mounted on each of the hosts); they will not interfere
+with each other.
+
+
+Specifying names for hosts and targets
+======================================
+
+   The specifications used for hosts and targets in the `configure'
+script are based on a three-part naming scheme, but some short
+predefined aliases are also supported.  The full naming scheme encodes
+three pieces of information in the following pattern:
+
+     ARCHITECTURE-VENDOR-OS
+
+   For example, you can use the alias `sun4' as a HOST argument or in a
+`--target=TARGET' option.  The equivalent full name is
+`sparc-sun-sunos4'.
+
+   The `configure' script accompanying NEWLIB does not provide any query
+facility to list all supported host and target names or aliases. 
+`configure' calls the Bourne shell script `config.sub' to map
+abbreviations to full names; you can read the script, if you wish, or
+you can use it to test your guesses on abbreviations--for example:
+
+     % sh config.sub sun4
+     sparc-sun-sunos4.1.1
+     % sh config.sub sun3
+     m68k-sun-sunos4.1.1
+     % sh config.sub decstation
+     mips-dec-ultrix4.2
+     % sh config.sub hp300bsd
+     m68k-hp-bsd
+     % sh config.sub i386v
+     i386-pc-sysv
+     % sh config.sub i786v
+     Invalid configuration `i786v': machine `i786v' not recognized
+
+The Build, Host and Target Concepts in newlib
+=============================================
+
+The build, host and target concepts are defined for gcc as follows:
+
+build: the platform on which gcc is built.
+host: the platform on which gcc is run.
+target: the platform for which gcc generates code.
+
+Since newlib is a library, the target concept does not apply to it, and the
+build, host, and target options given to the top-level configure script must
+be changed for newlib's use.
+
+The options are shifted according to these correspondences:
+
+gcc's build platform has no equivalent in newlib.
+gcc's host platform is newlib's build platform.
+gcc's target platform is newlib's host platform.
+and as mentioned before, newlib has no concept of target.
+
+`configure' options
+===================
+
+   Here is a summary of the `configure' options and arguments that are
+most often useful for building NEWLIB.  `configure' also has several other
+options not listed here.
+
+     configure [--help]
+               [--prefix=DIR]
+               [--srcdir=PATH]
+               [--target=TARGET] HOST
+
+You may introduce options with a single `-' rather than `--' if you
+prefer; but you may abbreviate option names if you use `--'.
+
+`--help'
+     Display a quick summary of how to invoke `configure'.
+
+`--prefix=DIR'
+     Configure the source to install programs and files in directory
+     `DIR'.
+
+`--exec-prefix=DIR'
+     Configure the source to install host-dependent files in directory
+     `DIR'.
+
+`--srcdir=PATH'
+     *Warning: using this option requires GNU `make', or another `make'
+     that compatibly implements the `VPATH' feature.
+     Use this option to make configurations in directories separate
+     from the NEWLIB source directories.  Among other things, you can use
+     this to build (or maintain) several configurations simultaneously,
+     in separate directories.  `configure' writes configuration
+     specific files in the current directory, but arranges for them to
+     use the source in the directory PATH.  `configure' will create
+     directories under the working directory in parallel to the source
+     directories below PATH.
+
+`--norecursion'
+     Configure only the directory level where `configure' is executed;
+     do not propagate configuration to subdirectories.
+
+`--target=TARGET'
+     Configure NEWLIB for running on the specified TARGET.
+
+     There is no convenient way to generate a list of all available
+     targets.
+
+`HOST ...'
+     Configure NEWLIB to be built using a cross compiler running on
+     the specified HOST.
+
+     There is no convenient way to generate a list of all available
+     hosts.
+
+To fit diverse usage models, NEWLIB supports a group of configuration
+options so that library features can be turned on/off according to
+target system's requirements.
+
+One feature can be enabled by specifying `--enable-FEATURE=yes' or
+`--enable-FEATURE'.  Or it can be disable by `--enable-FEATURE=no' or
+`--disable-FEATURE'.
+
+`--enable-newlib-io-pos-args'
+     Enable printf-family positional arg support.
+     Disabled by default, but some hosts enable it in configure.host.
+
+`--enable-newlib-io-c99-formats'
+     Enable C99 support in IO functions like printf/scanf.
+     Disabled by default, but some hosts enable it in configure.host.
+
+`--enable-newlib-register-fini'
+     Enable finalization function registration using atexit.
+     Disabled by default.
+
+`--enable-newlib-io-long-long'
+     Enable long long type support in IO functions like printf/scanf.
+     Disabled by default, but many hosts enable it in configure.host.
+
+`--enable-newlib-io-long-double'
+     Enable long double type support in IO functions printf/scanf.
+     Disabled by default, but some hosts enable it in configure.host.
+
+`--enable-newlib-mb'
+     Enable multibyte support.
+     Disabled by default.
+
+`--enable-newlib-iconv-encodings'
+     Enable specific comma-separated list of bidirectional iconv
+     encodings to be built-in.
+     Disabled by default.
+
+`--enable-newlib-iconv-from-encodings'
+     Enable specific comma-separated list of \"from\" iconv encodings
+     to be built-in.
+     Disabled by default.
+
+`--enable-newlib-iconv-to-encodings'
+     Enable specific comma-separated list of \"to\" iconv encodings
+     to be built-in.
+     Disabled by default.
+
+`--enable-newlib-iconv-external-ccs'
+     Enable capabilities to load external CCS files for iconv.
+     Disabled by default.
+
+`--disable-newlib-atexit-dynamic-alloc'
+     Disable dynamic allocation of atexit entries.
+     Most hosts and targets have it enabled in configure.host.
+
+`--enable-newlib-reent-small'
+     Enable small reentrant struct support.
+     Disabled by default.
+
+`--disable-newlib-fvwrite-in-streamio'
+     NEWLIB implements the vector buffer mechanism to support stream IO
+     buffering required by C standard.  This feature is possibly
+     unnecessary for embedded systems which won't change file buffering
+     with functions like `setbuf' or `setvbuf'.  The buffering mechanism
+     still acts as default for STDIN/STDOUT/STDERR even if this option
+     is specified.
+     Enabled by default.
+
+`--disable-newlib-fseek-optimization'
+     Disable fseek optimization.  It can decrease code size of application
+     calling `fseek`.
+     Enabled by default.
+
+`--disable-newlib-wide-orient'
+     C99 states that each stream has an orientation, wide or byte.  This
+     feature is possibly unnecessary for embedded systems which only do
+     byte input/output operations on stream.  It can decrease code size
+     by disable the feature.
+     Enabled by default.
+
+`--enable-newlib-nano-malloc'
+     NEWLIB has two implementations of malloc family's functions, one in
+     `mallocr.c' and the other one in `nano-mallocr.c'.  This options
+     enables the nano-malloc implementation, which is for small systems
+     with very limited memory.  Note that this implementation does not
+     support `--enable-malloc-debugging' any more.
+     Disabled by default.
+
+`--disable-newlib-unbuf-stream-opt'
+     NEWLIB does optimization when `fprintf to write only unbuffered unix
+     file'.  It creates a temorary buffer to do the optimization that
+     increases stack consumption by about `BUFSIZ' bytes.  This option
+     disables the optimization and saves size of text and stack.
+     Enabled by default.
+
+`--enable-multilib'
+     Build many library versions.
+     Enabled by default.
+
+`--enable-target-optspace'
+     Optimize for space.
+     Disabled by default.
+
+`--enable-malloc-debugging'
+     Indicate malloc debugging requested.
+     Disabled by default.
+
+`--enable-newlib-multithread'
+     Enable support for multiple threads.
+     Enabled by default.
+
+`--enable-newlib-iconv'
+     Enable iconv library support.
+     Disabled by default.
+
+`--enable-newlib-elix-level'
+     Supply desired elix library level (1-4).  Please refer to HOWTO for
+     more information about this option.
+     Set to level 0 by default.
+
+`--disable-newlib-io-float'
+     Disable printf/scanf family float support.
+     Enabled by default.
+
+`--disable-newlib-supplied-syscalls'
+     Disable newlib from supplying syscalls.
+     Enabled by default.
+
+`--enable-lite-exit'
+     Enable lite exit, a size-reduced implementation of exit that doesn't
+     invoke clean-up functions such as _fini or global destructors.
+     Disabled by default.
+
+Running the Testsuite
+=====================
+
+To run newlib's testsuite, you'll need a site.exp in your home
+directory which points dejagnu to the proper baseboards directory and
+the proper exp file for your target.
+
+Before running make check-target-newlib, set the DEJAGNU environment
+variable to point to ~/site.exp.
+
+Here is a sample site.exp:
+
+# Make sure we look in the right place for the board description files.
+if ![info exists boards_dir] {
+    set boards_dir {}
+}
+lappend boards_dir "your dejagnu/baseboards here"
+
+verbose "Global Config File: target_triplet is $target_triplet" 2
+
+global target_list
+case "$target_triplet" in {
+
+    { "mips-*elf*" } {
+	set target_list "mips-sim"
+    }
+
+    default {
+	set target_list { "unix" }
+    }
+}
+
+mips-sim refers to an exp file in the baseboards directory.  You'll
+need to add the other targets you're testing to the case statement.
+
+Now type make check-target-newlib in the top-level build directory to
+run the testsuite.
+
+Shared newlib
+=============
+
+newlib uses libtool when it is being compiled natively (with
+--target=i[34567]86-pc-linux-gnu) on an i[34567]86-pc-linux-gnu
+host. This allows newlib to be compiled as a shared library.
+
+To configure newlib, do the following from your build directory:
+
+$(source_dir)/src/configure --with-newlib --prefix=$(install_dir)
+
+configure will recognize that host == target ==
+i[34567]86-pc-linux-gnu, so it will tell newlib to compile itself using
+libtool. By default, libtool will build shared and static versions of
+newlib.
+
+To compile a program against shared newlib, do the following (where
+target_install_dir = $(install_dir)/i[34567]86-pc-linux-gnu):
+
+gcc -nostdlib $(target_install_dir)/lib/crt0.o progname.c -I $(target_install_dir)/include -L $(target_install_dir)/lib -lc -lm -lgcc
+
+To run the program, make sure that $(target_install_dir)/lib is listed
+in the LD_LIBRARY_PATH environment variable.
+
+To create a static binary linked against newlib, do the following:
+
+gcc -nostdlib -static $(target_install_dir)/lib/crt0.o progname.c -I $(target_install_dir)/include -L $(target_install_dir)/lib -lc -lm
+
+libtool can be instructed to produce only static libraries. To build
+newlib as a static library only, do the following from your build
+directory:
+
+$(source_dir)/src/configure --with-newlib --prefix=$(install_dir) --disable-shared
+
+Regenerating Configuration Files
+================================
+
+At times you will need to make changes to configure.in and Makefile.am files.
+This will mean that configure and Makefile.in files will need to be
+regenerated.
+
+At the top level of newlib is the file: acinclude.m4.  This file contains
+the definition of the NEWLIB_CONFIGURE macro which is used by all configure.in
+files in newlib.  You will notice that each directory in newlib containing
+a configure.in file also contains an aclocal.m4 file.  This file is
+generated by issuing: aclocal -I${relative_path_to_toplevel_newlib_dir}
+-I${relative_path_to_toplevel_src_dir}
+The first relative directory is to access acinclude.m4.  The second relative
+directory is to access libtool information in the top-level src directory.
+
+For example, to regenerate aclocal.m4 in newlib/libc/machine/arm:
+
+  aclocal -I ../../.. -I ../../../..
+
+Note that if the top level acinclude.m4 is altered, every aclocal.m4 file 
+in newlib should be regenerated.
+
+If the aclocal.m4 file is regenerated due to a change in acinclude.m4 or
+if a configure.in file is modified, the corresponding configure file in the 
+directory must be regenerated using autoconf.  No parameters are necessary.
+In the previous example, we would issue:
+
+  autoconf
+
+from the newlib/libc/machine/arm directory.
+
+If you have regenerated a configure file or if you have modified a Makefile.am
+file, you will need to regenerate the appropriate Makefile.in file(s).
+For newlib, automake is a bit trickier.  First of all, all Makefile.in
+files in newlib (and libgloss) are generated using the --cygnus option
+of automake.  
+
+Makefile.in files are generated from the nearest directory up the chain
+which contains a configure.in file.  In most cases, this is the same
+directory containing configure.in, but there are exceptions.
+For example, the newlib/libc directory has a number of
+subdirectories that do not contain their own configure.in files (e.g. stdio).
+For these directories, you must issue the automake command from newlib/libc
+which is the nearest parent directory that contains a configure.in.
+When you issue the automake command, you specify the subdirectory for
+the Makefile.in you are regenerating.  For example:
+
+   automake --cygnus stdio/Makefile stdlib/Makefile
+
+Note how multiple Makefile.in files can be created in the same step.  You
+would not specify machine/Makefile or sys/Makefile in the previous example
+because both of these subdirectories contain their own configure.in files.
+One would change to each of these subdirectories and in turn issue:
+
+   automake --cygnus Makefile
+
+Let's say you create a new machine directory XXXX off of newlib/libc/machine.
+After creating a new configure.in and Makefile.am file, you would issue:
+
+   aclocal -I ../../..
+   autoconf
+   automake --cygnus Makefile
+
+from newlib/libc/machine/XXXX
+
+It is strongly advised that you use an adequate version of autotools.
+For this latest release, the following were used: autoconf 2.68, aclocal 1.11.6, and 
+automake 1.11.6.
+
+Reporting Bugs
+==============
+
+The correct address for reporting bugs found in NEWLIB is
+"newlib@sourceware.org".  Please email all bug reports to that
+address.  Please include the NEWLIB version number (e.g., newlib-2.0.0),
+and how you configured it (e.g., "sun4 host and m68k-aout target").
+Since NEWLIB supports many different configurations, it is important
+that you be precise about this.
+
+Archives of the newlib mailing list are on-line, see
+	http://sourceware.org/ml/newlib/
+</pre>
+</div>
+</div>
+
+
+<div class="product">
 <span class="title">pthreads-win32</span>
 <a class="show" href="#">show license</a>
 <span class="homepage"><a href="http://sources.redhat.com/pthreads-win32/">homepage</a></span>
@@ -1532,43 +2103,6 @@ Public License instead of this License.
 ** TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 ** MATERIALS OR THE USE OR OTHER DEALINGS IN THE MATERIALS.
 */
-</pre>
-</div>
-</div>
-
-
-<div class="product">
-<span class="title">seccompsandbox</span>
-<a class="show" href="#">show license</a>
-<span class="homepage"><a href="http://code.google.com/p/seccompsandbox">homepage</a></span>
-<div class="licence">
-<pre>// Copyright (c) 2010 The Chromium Authors. All rights reserved.
-//
-// Redistribution and use in source and binary forms, with or without
-// modification, are permitted provided that the following conditions are
-// met:
-//
-//    * Redistributions of source code must retain the above copyright
-// notice, this list of conditions and the following disclaimer.
-//    * Redistributions in binary form must reproduce the above
-// copyright notice, this list of conditions and the following disclaimer
-// in the documentation and/or other materials provided with the
-// distribution.
-//    * Neither the name of Google Inc. nor the names of its
-// contributors may be used to endorse or promote products derived from
-// this software without specific prior written permission.
-//
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-// A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-// OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-// SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-// LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-// DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-// THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 </pre>
 </div>
 </div>
@@ -2764,6 +3298,218 @@ DAMAGES.
 
 
 <div class="product">
+<span class="title">Accessibility Audit library, from Accessibility Developer Tools</span>
+<a class="show" href="#">show license</a>
+<span class="homepage"><a href="https://github.com/GoogleChrome/accessibility-developer-tools/">homepage</a></span>
+<div class="licence">
+<pre>
+                                 Apache License
+                           Version 2.0, January 2004
+                        http://www.apache.org/licenses/
+
+   TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
+
+   1. Definitions.
+
+      "License" shall mean the terms and conditions for use, reproduction,
+      and distribution as defined by Sections 1 through 9 of this document.
+
+      "Licensor" shall mean the copyright owner or entity authorized by
+      the copyright owner that is granting the License.
+
+      "Legal Entity" shall mean the union of the acting entity and all
+      other entities that control, are controlled by, or are under common
+      control with that entity. For the purposes of this definition,
+      "control" means (i) the power, direct or indirect, to cause the
+      direction or management of such entity, whether by contract or
+      otherwise, or (ii) ownership of fifty percent (50%) or more of the
+      outstanding shares, or (iii) beneficial ownership of such entity.
+
+      "You" (or "Your") shall mean an individual or Legal Entity
+      exercising permissions granted by this License.
+
+      "Source" form shall mean the preferred form for making modifications,
+      including but not limited to software source code, documentation
+      source, and configuration files.
+
+      "Object" form shall mean any form resulting from mechanical
+      transformation or translation of a Source form, including but
+      not limited to compiled object code, generated documentation,
+      and conversions to other media types.
+
+      "Work" shall mean the work of authorship, whether in Source or
+      Object form, made available under the License, as indicated by a
+      copyright notice that is included in or attached to the work
+      (an example is provided in the Appendix below).
+
+      "Derivative Works" shall mean any work, whether in Source or Object
+      form, that is based on (or derived from) the Work and for which the
+      editorial revisions, annotations, elaborations, or other modifications
+      represent, as a whole, an original work of authorship. For the purposes
+      of this License, Derivative Works shall not include works that remain
+      separable from, or merely link (or bind by name) to the interfaces of,
+      the Work and Derivative Works thereof.
+
+      "Contribution" shall mean any work of authorship, including
+      the original version of the Work and any modifications or additions
+      to that Work or Derivative Works thereof, that is intentionally
+      submitted to Licensor for inclusion in the Work by the copyright owner
+      or by an individual or Legal Entity authorized to submit on behalf of
+      the copyright owner. For the purposes of this definition, "submitted"
+      means any form of electronic, verbal, or written communication sent
+      to the Licensor or its representatives, including but not limited to
+      communication on electronic mailing lists, source code control systems,
+      and issue tracking systems that are managed by, or on behalf of, the
+      Licensor for the purpose of discussing and improving the Work, but
+      excluding communication that is conspicuously marked or otherwise
+      designated in writing by the copyright owner as "Not a Contribution."
+
+      "Contributor" shall mean Licensor and any individual or Legal Entity
+      on behalf of whom a Contribution has been received by Licensor and
+      subsequently incorporated within the Work.
+
+   2. Grant of Copyright License. Subject to the terms and conditions of
+      this License, each Contributor hereby grants to You a perpetual,
+      worldwide, non-exclusive, no-charge, royalty-free, irrevocable
+      copyright license to reproduce, prepare Derivative Works of,
+      publicly display, publicly perform, sublicense, and distribute the
+      Work and such Derivative Works in Source or Object form.
+
+   3. Grant of Patent License. Subject to the terms and conditions of
+      this License, each Contributor hereby grants to You a perpetual,
+      worldwide, non-exclusive, no-charge, royalty-free, irrevocable
+      (except as stated in this section) patent license to make, have made,
+      use, offer to sell, sell, import, and otherwise transfer the Work,
+      where such license applies only to those patent claims licensable
+      by such Contributor that are necessarily infringed by their
+      Contribution(s) alone or by combination of their Contribution(s)
+      with the Work to which such Contribution(s) was submitted. If You
+      institute patent litigation against any entity (including a
+      cross-claim or counterclaim in a lawsuit) alleging that the Work
+      or a Contribution incorporated within the Work constitutes direct
+      or contributory patent infringement, then any patent licenses
+      granted to You under this License for that Work shall terminate
+      as of the date such litigation is filed.
+
+   4. Redistribution. You may reproduce and distribute copies of the
+      Work or Derivative Works thereof in any medium, with or without
+      modifications, and in Source or Object form, provided that You
+      meet the following conditions:
+
+      (a) You must give any other recipients of the Work or
+          Derivative Works a copy of this License; and
+
+      (b) You must cause any modified files to carry prominent notices
+          stating that You changed the files; and
+
+      (c) You must retain, in the Source form of any Derivative Works
+          that You distribute, all copyright, patent, trademark, and
+          attribution notices from the Source form of the Work,
+          excluding those notices that do not pertain to any part of
+          the Derivative Works; and
+
+      (d) If the Work includes a "NOTICE" text file as part of its
+          distribution, then any Derivative Works that You distribute must
+          include a readable copy of the attribution notices contained
+          within such NOTICE file, excluding those notices that do not
+          pertain to any part of the Derivative Works, in at least one
+          of the following places: within a NOTICE text file distributed
+          as part of the Derivative Works; within the Source form or
+          documentation, if provided along with the Derivative Works; or,
+          within a display generated by the Derivative Works, if and
+          wherever such third-party notices normally appear. The contents
+          of the NOTICE file are for informational purposes only and
+          do not modify the License. You may add Your own attribution
+          notices within Derivative Works that You distribute, alongside
+          or as an addendum to the NOTICE text from the Work, provided
+          that such additional attribution notices cannot be construed
+          as modifying the License.
+
+      You may add Your own copyright statement to Your modifications and
+      may provide additional or different license terms and conditions
+      for use, reproduction, or distribution of Your modifications, or
+      for any such Derivative Works as a whole, provided Your use,
+      reproduction, and distribution of the Work otherwise complies with
+      the conditions stated in this License.
+
+   5. Submission of Contributions. Unless You explicitly state otherwise,
+      any Contribution intentionally submitted for inclusion in the Work
+      by You to the Licensor shall be under the terms and conditions of
+      this License, without any additional terms or conditions.
+      Notwithstanding the above, nothing herein shall supersede or modify
+      the terms of any separate license agreement you may have executed
+      with Licensor regarding such Contributions.
+
+   6. Trademarks. This License does not grant permission to use the trade
+      names, trademarks, service marks, or product names of the Licensor,
+      except as required for reasonable and customary use in describing the
+      origin of the Work and reproducing the content of the NOTICE file.
+
+   7. Disclaimer of Warranty. Unless required by applicable law or
+      agreed to in writing, Licensor provides the Work (and each
+      Contributor provides its Contributions) on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+      implied, including, without limitation, any warranties or conditions
+      of TITLE, NON-INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A
+      PARTICULAR PURPOSE. You are solely responsible for determining the
+      appropriateness of using or redistributing the Work and assume any
+      risks associated with Your exercise of permissions under this License.
+
+   8. Limitation of Liability. In no event and under no legal theory,
+      whether in tort (including negligence), contract, or otherwise,
+      unless required by applicable law (such as deliberate and grossly
+      negligent acts) or agreed to in writing, shall any Contributor be
+      liable to You for damages, including any direct, indirect, special,
+      incidental, or consequential damages of any character arising as a
+      result of this License or out of the use or inability to use the
+      Work (including but not limited to damages for loss of goodwill,
+      work stoppage, computer failure or malfunction, or any and all
+      other commercial damages or losses), even if such Contributor
+      has been advised of the possibility of such damages.
+
+   9. Accepting Warranty or Additional Liability. While redistributing
+      the Work or Derivative Works thereof, You may choose to offer,
+      and charge a fee for, acceptance of support, warranty, indemnity,
+      or other liability obligations and/or rights consistent with this
+      License. However, in accepting such obligations, You may act only
+      on Your own behalf and on Your sole responsibility, not on behalf
+      of any other Contributor, and only if You agree to indemnify,
+      defend, and hold each Contributor harmless for any liability
+      incurred by, or claims asserted against, such Contributor by reason
+      of your accepting any such warranty or additional liability.
+
+   END OF TERMS AND CONDITIONS
+
+   APPENDIX: How to apply the Apache License to your work.
+
+      To apply the Apache License to your work, attach the following
+      boilerplate notice, with the fields enclosed by brackets "[]"
+      replaced with your own identifying information. (Don't include
+      the brackets!)  The text should be enclosed in the appropriate
+      comment syntax for the file format. We also recommend that a
+      file or class name and description of purpose be included on the
+      same "printed page" as the copyright notice for easier
+      identification within third-party archives.
+
+   Copyright [yyyy] [name of copyright owner]
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+</pre>
+</div>
+</div>
+
+
+<div class="product">
 <span class="title">MSDN sample code</span>
 <a class="show" href="#">show license</a>
 <span class="homepage"><a href="http://msdn.microsoft.com/en-us/library/dssbex6h.aspx">homepage</a></span>
@@ -3924,7 +4670,7 @@ TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION, AND MODIFICATION
 <div class="product">
 <span class="title">chromite</span>
 <a class="show" href="#">show license</a>
-<span class="homepage"><a href="https://git.chromium.org/chromiumos/chromite.git">homepage</a></span>
+<span class="homepage"><a href="https://chromium.googlesource.com/chromiumos/chromite">homepage</a></span>
 <div class="licence">
 <pre>// Copyright (c) 2006-2009 The Chromium OS Authors. All rights reserved.
 //
@@ -3990,6 +4736,218 @@ TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION, AND MODIFICATION
 // THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+</pre>
+</div>
+</div>
+
+
+<div class="product">
+<span class="title">Compact Language Detection 2</span>
+<a class="show" href="#">show license</a>
+<span class="homepage"><a href="https://code.google.com/p/cld2/">homepage</a></span>
+<div class="licence">
+<pre>
+                                 Apache License
+                           Version 2.0, January 2004
+                        http://www.apache.org/licenses/
+
+   TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
+
+   1. Definitions.
+
+      "License" shall mean the terms and conditions for use, reproduction,
+      and distribution as defined by Sections 1 through 9 of this document.
+
+      "Licensor" shall mean the copyright owner or entity authorized by
+      the copyright owner that is granting the License.
+
+      "Legal Entity" shall mean the union of the acting entity and all
+      other entities that control, are controlled by, or are under common
+      control with that entity. For the purposes of this definition,
+      "control" means (i) the power, direct or indirect, to cause the
+      direction or management of such entity, whether by contract or
+      otherwise, or (ii) ownership of fifty percent (50%) or more of the
+      outstanding shares, or (iii) beneficial ownership of such entity.
+
+      "You" (or "Your") shall mean an individual or Legal Entity
+      exercising permissions granted by this License.
+
+      "Source" form shall mean the preferred form for making modifications,
+      including but not limited to software source code, documentation
+      source, and configuration files.
+
+      "Object" form shall mean any form resulting from mechanical
+      transformation or translation of a Source form, including but
+      not limited to compiled object code, generated documentation,
+      and conversions to other media types.
+
+      "Work" shall mean the work of authorship, whether in Source or
+      Object form, made available under the License, as indicated by a
+      copyright notice that is included in or attached to the work
+      (an example is provided in the Appendix below).
+
+      "Derivative Works" shall mean any work, whether in Source or Object
+      form, that is based on (or derived from) the Work and for which the
+      editorial revisions, annotations, elaborations, or other modifications
+      represent, as a whole, an original work of authorship. For the purposes
+      of this License, Derivative Works shall not include works that remain
+      separable from, or merely link (or bind by name) to the interfaces of,
+      the Work and Derivative Works thereof.
+
+      "Contribution" shall mean any work of authorship, including
+      the original version of the Work and any modifications or additions
+      to that Work or Derivative Works thereof, that is intentionally
+      submitted to Licensor for inclusion in the Work by the copyright owner
+      or by an individual or Legal Entity authorized to submit on behalf of
+      the copyright owner. For the purposes of this definition, "submitted"
+      means any form of electronic, verbal, or written communication sent
+      to the Licensor or its representatives, including but not limited to
+      communication on electronic mailing lists, source code control systems,
+      and issue tracking systems that are managed by, or on behalf of, the
+      Licensor for the purpose of discussing and improving the Work, but
+      excluding communication that is conspicuously marked or otherwise
+      designated in writing by the copyright owner as "Not a Contribution."
+
+      "Contributor" shall mean Licensor and any individual or Legal Entity
+      on behalf of whom a Contribution has been received by Licensor and
+      subsequently incorporated within the Work.
+
+   2. Grant of Copyright License. Subject to the terms and conditions of
+      this License, each Contributor hereby grants to You a perpetual,
+      worldwide, non-exclusive, no-charge, royalty-free, irrevocable
+      copyright license to reproduce, prepare Derivative Works of,
+      publicly display, publicly perform, sublicense, and distribute the
+      Work and such Derivative Works in Source or Object form.
+
+   3. Grant of Patent License. Subject to the terms and conditions of
+      this License, each Contributor hereby grants to You a perpetual,
+      worldwide, non-exclusive, no-charge, royalty-free, irrevocable
+      (except as stated in this section) patent license to make, have made,
+      use, offer to sell, sell, import, and otherwise transfer the Work,
+      where such license applies only to those patent claims licensable
+      by such Contributor that are necessarily infringed by their
+      Contribution(s) alone or by combination of their Contribution(s)
+      with the Work to which such Contribution(s) was submitted. If You
+      institute patent litigation against any entity (including a
+      cross-claim or counterclaim in a lawsuit) alleging that the Work
+      or a Contribution incorporated within the Work constitutes direct
+      or contributory patent infringement, then any patent licenses
+      granted to You under this License for that Work shall terminate
+      as of the date such litigation is filed.
+
+   4. Redistribution. You may reproduce and distribute copies of the
+      Work or Derivative Works thereof in any medium, with or without
+      modifications, and in Source or Object form, provided that You
+      meet the following conditions:
+
+      (a) You must give any other recipients of the Work or
+          Derivative Works a copy of this License; and
+
+      (b) You must cause any modified files to carry prominent notices
+          stating that You changed the files; and
+
+      (c) You must retain, in the Source form of any Derivative Works
+          that You distribute, all copyright, patent, trademark, and
+          attribution notices from the Source form of the Work,
+          excluding those notices that do not pertain to any part of
+          the Derivative Works; and
+
+      (d) If the Work includes a "NOTICE" text file as part of its
+          distribution, then any Derivative Works that You distribute must
+          include a readable copy of the attribution notices contained
+          within such NOTICE file, excluding those notices that do not
+          pertain to any part of the Derivative Works, in at least one
+          of the following places: within a NOTICE text file distributed
+          as part of the Derivative Works; within the Source form or
+          documentation, if provided along with the Derivative Works; or,
+          within a display generated by the Derivative Works, if and
+          wherever such third-party notices normally appear. The contents
+          of the NOTICE file are for informational purposes only and
+          do not modify the License. You may add Your own attribution
+          notices within Derivative Works that You distribute, alongside
+          or as an addendum to the NOTICE text from the Work, provided
+          that such additional attribution notices cannot be construed
+          as modifying the License.
+
+      You may add Your own copyright statement to Your modifications and
+      may provide additional or different license terms and conditions
+      for use, reproduction, or distribution of Your modifications, or
+      for any such Derivative Works as a whole, provided Your use,
+      reproduction, and distribution of the Work otherwise complies with
+      the conditions stated in this License.
+
+   5. Submission of Contributions. Unless You explicitly state otherwise,
+      any Contribution intentionally submitted for inclusion in the Work
+      by You to the Licensor shall be under the terms and conditions of
+      this License, without any additional terms or conditions.
+      Notwithstanding the above, nothing herein shall supersede or modify
+      the terms of any separate license agreement you may have executed
+      with Licensor regarding such Contributions.
+
+   6. Trademarks. This License does not grant permission to use the trade
+      names, trademarks, service marks, or product names of the Licensor,
+      except as required for reasonable and customary use in describing the
+      origin of the Work and reproducing the content of the NOTICE file.
+
+   7. Disclaimer of Warranty. Unless required by applicable law or
+      agreed to in writing, Licensor provides the Work (and each
+      Contributor provides its Contributions) on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+      implied, including, without limitation, any warranties or conditions
+      of TITLE, NON-INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A
+      PARTICULAR PURPOSE. You are solely responsible for determining the
+      appropriateness of using or redistributing the Work and assume any
+      risks associated with Your exercise of permissions under this License.
+
+   8. Limitation of Liability. In no event and under no legal theory,
+      whether in tort (including negligence), contract, or otherwise,
+      unless required by applicable law (such as deliberate and grossly
+      negligent acts) or agreed to in writing, shall any Contributor be
+      liable to You for damages, including any direct, indirect, special,
+      incidental, or consequential damages of any character arising as a
+      result of this License or out of the use or inability to use the
+      Work (including but not limited to damages for loss of goodwill,
+      work stoppage, computer failure or malfunction, or any and all
+      other commercial damages or losses), even if such Contributor
+      has been advised of the possibility of such damages.
+
+   9. Accepting Warranty or Additional Liability. While redistributing
+      the Work or Derivative Works thereof, You may choose to offer,
+      and charge a fee for, acceptance of support, warranty, indemnity,
+      or other liability obligations and/or rights consistent with this
+      License. However, in accepting such obligations, You may act only
+      on Your own behalf and on Your sole responsibility, not on behalf
+      of any other Contributor, and only if You agree to indemnify,
+      defend, and hold each Contributor harmless for any liability
+      incurred by, or claims asserted against, such Contributor by reason
+      of your accepting any such warranty or additional liability.
+
+   END OF TERMS AND CONDITIONS
+
+   APPENDIX: How to apply the Apache License to your work.
+
+      To apply the Apache License to your work, attach the following
+      boilerplate notice, with the fields enclosed by brackets "[]"
+      replaced with your own identifying information. (Don't include
+      the brackets!)  The text should be enclosed in the appropriate
+      comment syntax for the file format. We also recommend that a
+      file or class name and description of purpose be included on the
+      same "printed page" as the copyright notice for easier
+      identification within third-party archives.
+
+   Copyright [yyyy] [name of copyright owner]
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
 </pre>
 </div>
 </div>
@@ -5758,12 +6716,18 @@ Specifically, the GPL parts of FFmpeg are
     - vf_geq.c
     - vf_histeq.c
     - vf_hqdn3d.c
-    - vf_hue.c
     - vf_kerndeint.c
+    - vf_mcdeint.c
     - vf_mp.c
     - vf_noise.c
+    - vf_owdenoise.c
+    - vf_perspective.c
+    - vf_phase.c
     - vf_pp.c
+    - vf_pullup.c
+    - vf_sab.c
     - vf_smartblur.c
+    - vf_spp.c
     - vf_stereo3d.c
     - vf_super2xsai.c
     - vf_tinterlace.c
@@ -5795,6 +6759,7 @@ compatible libraries
 --------------------
 
 The following libraries are under GPL:
+    - frei0r
     - libcdio
     - libutvideo
     - libvidstab
@@ -5868,7 +6833,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <a class="show" href="#">show license</a>
 <span class="homepage"><a href="code.google.com/p/flot and http://drupal.org/project/flot">homepage</a></span>
 <div class="licence">
-<pre>Copyright (c) 2007-2009 IOLA and Ole Laursen
+<pre>Copyright (c) 2007-2013 IOLA and Ole Laursen
 
 Permission is hereby granted, free of charge, to any person
 obtaining a copy of this software and associated documentation
@@ -5890,54 +6855,6 @@ HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
-</pre>
-</div>
-</div>
-
-
-<div class="product">
-<span class="title">gpsd</span>
-<a class="show" href="#">show license</a>
-<span class="homepage"><a href="http://download-mirror.savannah.gnu.org/releases/gpsd/">homepage</a></span>
-<div class="licence">
-<pre>			COPYRIGHTS
-
-Compilation copyright is held by the GPSD project.  All rights reserved.
-
-GPSD project copyrights are assigned to the project lead, currently
-Eric S. Raymond. Other portions of the GPSD code are Copyright (c)
-1997, 1998, 1999, 2000, 2001, 2002 by Remco Treffkorn, and others
-Copyright (c) 2005 by Eric S. Raymond.  For other copyrights, see
-individual files.
-
-			BSD LICENSE
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions
-are met:&lt;P&gt;
-
-Redistributions of source code must retain the above copyright
-notice, this list of conditions and the following disclaimer.&lt;P&gt;
-
-Redistributions in binary form must reproduce the above copyright
-notice, this list of conditions and the following disclaimer in the
-documentation and/or other materials provided with the distribution.&lt;P&gt;
-
-Neither name of the GPSD project nor the names of its contributors
-may be used to endorse or promote products derived from this software
-without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR
-CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
-EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
-LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 </pre>
 </div>
 </div>
@@ -7319,34 +8236,6 @@ DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-</pre>
-</div>
-</div>
-
-
-<div class="product">
-<span class="title">LCOV - the LTP GCOV extension</span>
-<a class="show" href="#">show license</a>
-<span class="homepage"><a href="http://ltp.sourceforge.net/coverage/lcov.php">homepage</a></span>
-<div class="licence">
-<pre>License copied from bin/lcov:
-
-#
-#   Copyright (c) International Business Machines  Corp., 2002,2007
-#
-#   This program is free software;  you can redistribute it and/or modify
-#   it under the terms of the GNU General Public License as published by
-#   the Free Software Foundation; either version 2 of the License, or (at
-#   your option) any later version.
-#
-#   This program is distributed in the hope that it will be useful, but
-#   WITHOUT ANY WARRANTY;  without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-#   General Public License for more details.                 
-#
-#   You should have received a copy of the GNU General Public License
-#   along with this program;  if not, write to the Free Software
-#   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 </pre>
 </div>
 </div>
@@ -10620,37 +11509,6 @@ POSSIBILITY OF SUCH DAMAGE.
 
 
 <div class="product">
-<span class="title">Mongoose webserver</span>
-<a class="show" href="#">show license</a>
-<span class="homepage"><a href="http://code.google.com/p/mongoose/">homepage</a></span>
-<div class="licence">
-<pre>Copyright (c) 2004-2009 Sergey Lyubka
-Portions Copyright (c) 2009 Gilbert Wellisch
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-
-</pre>
-</div>
-</div>
-
-
-<div class="product">
 <span class="title">Mozc Japanese Input Method Editor</span>
 <a class="show" href="#">show license</a>
 <span class="homepage"><a href="http://code.google.com/p/mozc">homepage</a></span>
@@ -11423,34 +12281,6 @@ maintained libraries. The externally maintained libraries used by Node are:
     WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
     ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
     OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-  """
-
-- src/ngx-queue.h. ngx-queue.h is taken from the nginx source tree. nginx's
-  license follows:
-  """
-    Copyright (C) 2002-2012 Igor Sysoev
-    Copyright (C) 2011,2012 Nginx, Inc.
-
-    Redistribution and use in source and binary forms, with or without
-    modification, are permitted provided that the following conditions
-    are met:
-    1. Redistributions of source code must retain the above copyright
-       notice, this list of conditions and the following disclaimer.
-    2. Redistributions in binary form must reproduce the above copyright
-       notice, this list of conditions and the following disclaimer in the
-       documentation and/or other materials provided with the distribution.
-
-    THIS SOFTWARE IS PROVIDED BY AUTHOR AND CONTRIBUTORS ``AS IS'' AND
-    ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-    IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-    ARE DISCLAIMED.  IN NO EVENT SHALL AUTHOR OR CONTRIBUTORS BE LIABLE
-    FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-    DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
-    OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
-    HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-    LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
-    OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
-    SUCH DAMAGE.
   """
 
 - wrk is located at tools/wrk. wrk's license follows:
@@ -14684,6 +15514,218 @@ GNU_LGPL-2.0 - GNU Library General Public License
   Mark Adler
 
 */
+</pre>
+</div>
+</div>
+
+
+<div class="product">
+<span class="title">jqTree</span>
+<a class="show" href="#">show license</a>
+<span class="homepage"><a href="http://mbraak.github.io/jqTree/">homepage</a></span>
+<div class="licence">
+<pre>
+                                 Apache License
+                           Version 2.0, January 2004
+                        http://www.apache.org/licenses/
+
+   TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
+
+   1. Definitions.
+
+      "License" shall mean the terms and conditions for use, reproduction,
+      and distribution as defined by Sections 1 through 9 of this document.
+
+      "Licensor" shall mean the copyright owner or entity authorized by
+      the copyright owner that is granting the License.
+
+      "Legal Entity" shall mean the union of the acting entity and all
+      other entities that control, are controlled by, or are under common
+      control with that entity. For the purposes of this definition,
+      "control" means (i) the power, direct or indirect, to cause the
+      direction or management of such entity, whether by contract or
+      otherwise, or (ii) ownership of fifty percent (50%) or more of the
+      outstanding shares, or (iii) beneficial ownership of such entity.
+
+      "You" (or "Your") shall mean an individual or Legal Entity
+      exercising permissions granted by this License.
+
+      "Source" form shall mean the preferred form for making modifications,
+      including but not limited to software source code, documentation
+      source, and configuration files.
+
+      "Object" form shall mean any form resulting from mechanical
+      transformation or translation of a Source form, including but
+      not limited to compiled object code, generated documentation,
+      and conversions to other media types.
+
+      "Work" shall mean the work of authorship, whether in Source or
+      Object form, made available under the License, as indicated by a
+      copyright notice that is included in or attached to the work
+      (an example is provided in the Appendix below).
+
+      "Derivative Works" shall mean any work, whether in Source or Object
+      form, that is based on (or derived from) the Work and for which the
+      editorial revisions, annotations, elaborations, or other modifications
+      represent, as a whole, an original work of authorship. For the purposes
+      of this License, Derivative Works shall not include works that remain
+      separable from, or merely link (or bind by name) to the interfaces of,
+      the Work and Derivative Works thereof.
+
+      "Contribution" shall mean any work of authorship, including
+      the original version of the Work and any modifications or additions
+      to that Work or Derivative Works thereof, that is intentionally
+      submitted to Licensor for inclusion in the Work by the copyright owner
+      or by an individual or Legal Entity authorized to submit on behalf of
+      the copyright owner. For the purposes of this definition, "submitted"
+      means any form of electronic, verbal, or written communication sent
+      to the Licensor or its representatives, including but not limited to
+      communication on electronic mailing lists, source code control systems,
+      and issue tracking systems that are managed by, or on behalf of, the
+      Licensor for the purpose of discussing and improving the Work, but
+      excluding communication that is conspicuously marked or otherwise
+      designated in writing by the copyright owner as "Not a Contribution."
+
+      "Contributor" shall mean Licensor and any individual or Legal Entity
+      on behalf of whom a Contribution has been received by Licensor and
+      subsequently incorporated within the Work.
+
+   2. Grant of Copyright License. Subject to the terms and conditions of
+      this License, each Contributor hereby grants to You a perpetual,
+      worldwide, non-exclusive, no-charge, royalty-free, irrevocable
+      copyright license to reproduce, prepare Derivative Works of,
+      publicly display, publicly perform, sublicense, and distribute the
+      Work and such Derivative Works in Source or Object form.
+
+   3. Grant of Patent License. Subject to the terms and conditions of
+      this License, each Contributor hereby grants to You a perpetual,
+      worldwide, non-exclusive, no-charge, royalty-free, irrevocable
+      (except as stated in this section) patent license to make, have made,
+      use, offer to sell, sell, import, and otherwise transfer the Work,
+      where such license applies only to those patent claims licensable
+      by such Contributor that are necessarily infringed by their
+      Contribution(s) alone or by combination of their Contribution(s)
+      with the Work to which such Contribution(s) was submitted. If You
+      institute patent litigation against any entity (including a
+      cross-claim or counterclaim in a lawsuit) alleging that the Work
+      or a Contribution incorporated within the Work constitutes direct
+      or contributory patent infringement, then any patent licenses
+      granted to You under this License for that Work shall terminate
+      as of the date such litigation is filed.
+
+   4. Redistribution. You may reproduce and distribute copies of the
+      Work or Derivative Works thereof in any medium, with or without
+      modifications, and in Source or Object form, provided that You
+      meet the following conditions:
+
+      (a) You must give any other recipients of the Work or
+          Derivative Works a copy of this License; and
+
+      (b) You must cause any modified files to carry prominent notices
+          stating that You changed the files; and
+
+      (c) You must retain, in the Source form of any Derivative Works
+          that You distribute, all copyright, patent, trademark, and
+          attribution notices from the Source form of the Work,
+          excluding those notices that do not pertain to any part of
+          the Derivative Works; and
+
+      (d) If the Work includes a "NOTICE" text file as part of its
+          distribution, then any Derivative Works that You distribute must
+          include a readable copy of the attribution notices contained
+          within such NOTICE file, excluding those notices that do not
+          pertain to any part of the Derivative Works, in at least one
+          of the following places: within a NOTICE text file distributed
+          as part of the Derivative Works; within the Source form or
+          documentation, if provided along with the Derivative Works; or,
+          within a display generated by the Derivative Works, if and
+          wherever such third-party notices normally appear. The contents
+          of the NOTICE file are for informational purposes only and
+          do not modify the License. You may add Your own attribution
+          notices within Derivative Works that You distribute, alongside
+          or as an addendum to the NOTICE text from the Work, provided
+          that such additional attribution notices cannot be construed
+          as modifying the License.
+
+      You may add Your own copyright statement to Your modifications and
+      may provide additional or different license terms and conditions
+      for use, reproduction, or distribution of Your modifications, or
+      for any such Derivative Works as a whole, provided Your use,
+      reproduction, and distribution of the Work otherwise complies with
+      the conditions stated in this License.
+
+   5. Submission of Contributions. Unless You explicitly state otherwise,
+      any Contribution intentionally submitted for inclusion in the Work
+      by You to the Licensor shall be under the terms and conditions of
+      this License, without any additional terms or conditions.
+      Notwithstanding the above, nothing herein shall supersede or modify
+      the terms of any separate license agreement you may have executed
+      with Licensor regarding such Contributions.
+
+   6. Trademarks. This License does not grant permission to use the trade
+      names, trademarks, service marks, or product names of the Licensor,
+      except as required for reasonable and customary use in describing the
+      origin of the Work and reproducing the content of the NOTICE file.
+
+   7. Disclaimer of Warranty. Unless required by applicable law or
+      agreed to in writing, Licensor provides the Work (and each
+      Contributor provides its Contributions) on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+      implied, including, without limitation, any warranties or conditions
+      of TITLE, NON-INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A
+      PARTICULAR PURPOSE. You are solely responsible for determining the
+      appropriateness of using or redistributing the Work and assume any
+      risks associated with Your exercise of permissions under this License.
+
+   8. Limitation of Liability. In no event and under no legal theory,
+      whether in tort (including negligence), contract, or otherwise,
+      unless required by applicable law (such as deliberate and grossly
+      negligent acts) or agreed to in writing, shall any Contributor be
+      liable to You for damages, including any direct, indirect, special,
+      incidental, or consequential damages of any character arising as a
+      result of this License or out of the use or inability to use the
+      Work (including but not limited to damages for loss of goodwill,
+      work stoppage, computer failure or malfunction, or any and all
+      other commercial damages or losses), even if such Contributor
+      has been advised of the possibility of such damages.
+
+   9. Accepting Warranty or Additional Liability. While redistributing
+      the Work or Derivative Works thereof, You may choose to offer,
+      and charge a fee for, acceptance of support, warranty, indemnity,
+      or other liability obligations and/or rights consistent with this
+      License. However, in accepting such obligations, You may act only
+      on Your own behalf and on Your sole responsibility, not on behalf
+      of any other Contributor, and only if You agree to indemnify,
+      defend, and hold each Contributor harmless for any liability
+      incurred by, or claims asserted against, such Contributor by reason
+      of your accepting any such warranty or additional liability.
+
+   END OF TERMS AND CONDITIONS
+
+   APPENDIX: How to apply the Apache License to your work.
+
+      To apply the Apache License to your work, attach the following
+      boilerplate notice, with the fields enclosed by brackets "[]"
+      replaced with your own identifying information. (Don't include
+      the brackets!)  The text should be enclosed in the appropriate
+      comment syntax for the file format. We also recommend that a
+      file or class name and description of purpose be included on the
+      same "printed page" as the copyright notice for easier
+      identification within third-party archives.
+
+   Copyright 2011 Marco Braak
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
 </pre>
 </div>
 </div>
