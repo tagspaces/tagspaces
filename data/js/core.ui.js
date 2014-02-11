@@ -261,8 +261,6 @@ define(function(require, exports, module) {
 	    
         $( "#editTagButton" ).click(function() {
             TSCORE.TagUtils.renameTag(TSCORE.selectedFiles[0], TSCORE.selectedTag, $( "#newTagName" ).val());
-            TSCORE.startTime = new Date().getTime();             
-            TSCORE.IO.listDirectory(TSCORE.currentPath);                                   
         });  
 	    
 	    // End Edit Tag Dialog
