@@ -38,7 +38,7 @@ To get updates you can:
 
 ## Screenshots
 
-![linux](http://tagspaces.org/content/FileTagging.png)
+![Lead TagSpaces Screenshot](http://www.tagspaces.org/content/v1.7/tagspaces-lead-screenshot.png)
 
 ## Documents
 
