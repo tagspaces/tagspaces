@@ -516,6 +516,7 @@ define(function(require, exports, module) {
 	exports.updateFileModel             = updateFileModel;
 
 	// Proxying functions from tsCoreUI
+    exports.clearSearchFilter           = tsCoreUI.clearSearchFilter;
 	exports.enableTopToolbar            = tsCoreUI.enableTopToolbar;
     exports.disableTopToolbar           = tsCoreUI.disableTopToolbar;	
 	exports.showAlertDialog 			= tsCoreUI.showAlertDialog;

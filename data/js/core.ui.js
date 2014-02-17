@@ -393,20 +393,16 @@ define(function(require, exports, module) {
             .prop('disabled', true)
             .click(function(evt) {
                 evt.preventDefault();
-                $("#searchOptions").hide();
-                $("#clearFilterButton").removeClass("filterOn");
-                $("#searchBox").val("");
+                clearSearchFilter();
+                
+                // Old clear
                 //$("#"+self.extensionID+"FilterBox").val("").addClass("input-medium");
                 //$("#"+self.extensionID+"FilterBox").val("").removeClass("input-large");
                 //self.setFilter(""); 
-                $("#silterBox").val("");    
-                $("#clearFilterButton").removeClass("filterOn");                            
-                TSCORE.Search.nextQuery = "";
+                //$("#silterBox").val("");    
                 
                 // Restoring initial dir listing without subdirectories  
                 TSCORE.IO.listDirectory(TSCORE.currentPath);           
-                // Keeps the subdir files    
-                //TSCORE.PerspectiveManager.redrawCurrentPerspective();
             });        
         
         // Search UI END
@@ -450,6 +446,13 @@ define(function(require, exports, module) {
 	    });	          	        
 
 	};
+
+    function clearSearchFilter() {
+        $("#searchOptions").hide();
+        $("#searchBox").val("");
+        $("#clearFilterButton").removeClass("filterOn");        
+        TSCORE.Search.nextQuery = "";       
+    }
 
     function disableTopToolbar() {
         $("#perspectiveSwitcherButton")
@@ -552,6 +555,7 @@ define(function(require, exports, module) {
     // Public API definition
     exports.showContextMenu			    = showContextMenu;
 	exports.initUI 					    = initUI;
+	exports.clearSearchFilter           = clearSearchFilter;
     exports.enableTopToolbar            = enableTopToolbar;
     exports.disableTopToolbar           = disableTopToolbar;
 	exports.showAlertDialog 		    = showAlertDialog;

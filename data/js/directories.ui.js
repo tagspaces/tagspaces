@@ -24,6 +24,9 @@ define(function(require, exports, module) {
         $( "#locationName" ).text(currentLocation.name);
         $( "#locationName" ).attr("title",path);            
        
+        // Clear search query
+        TSCORE.clearSearchFilter();                         
+       
         // Clears the directory history
         directoryHistory = new Array();
         navigateToDirectory(path);
