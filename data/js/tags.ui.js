@@ -10,8 +10,6 @@ define(function(require, exports, module) {
 
 	function initUI() {
 	
-
-	
         $( "#extMenuAddTagAsFilter" ).click( function() {
             // TODO search for extension
             //TSCORE.Search.searchForString(TSCORE.selectedTag);            
