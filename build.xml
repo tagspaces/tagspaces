@@ -7,13 +7,12 @@ found in the LICENSE file.
 	<property file="build.properties" />
 	<property file="build.number" />
 	<buildnumber file="build.number" />
-	<property name="defaultSettings.file" value="settings.default.js" />
 
 	<tstamp><format property="touch.time" pattern="yyyyMMddHHmm" /></tstamp>
 
 	<target name="build-increase" description="Prepares the development environment">
-		<copy file="default.settings.tmpl.js" tofile="data/js/${defaultSettings.file}" />
-		<replace file="data/js/${defaultSettings.file}">
+		<copy file="default.settings.tmpl.js" tofile="data/js/settings.default.js" />
+		<replace file="data/js/settings.default.js">
 			<replacefilter token="@@VERSION" value="${version}" />
 			<replacefilter token="@@APPNAME" value="${appname}" />
 			<replacefilter token="@@BUILD" value="${subversion}" />
@@ -203,8 +202,8 @@ found in the LICENSE file.
 		<copy todir="${cordovaDev.dir}/assets">
 			<fileset dir="data/assets" includes="**/*" />
 		</copy>
-		<copy file="default.settings.tmpl.js" tofile="${cordovaDev.dir}/js/${defaultSettings.file}" />
-		<replace file="${cordovaDev.dir}/js/${defaultSettings.file}">
+		<copy file="default.settings.tmpl.js" tofile="${cordovaDev.dir}/js/settings.default.js" />
+		<replace file="${cordovaDev.dir}/js/settings.default.js">
             <replacefilter token="@@VERSION" value="${version}" />
             <replacefilter token="@@APPNAME" value="${appname}" />
             <replacefilter token="@@BUILD" value="${subversion}" />
