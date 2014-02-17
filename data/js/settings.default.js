@@ -8,7 +8,7 @@ exports.defaultSettings = {
 	"appName": "TagSpaces",
 	"appVersion": "1.7",
     "appBuild": "4",
-    "appBuildID": "201402171813",
+    "appBuildID": "201402172130",
 	"settingsVersion": 2,
 	"newTextFileContent": "Text file created with TagSpaces!",
     "newHTMLFileContent": "<html><head><title>Created with TagSpaces!</title></head><body>Feel free to change this text...</body></html>",	
