@@ -292,6 +292,12 @@ define(function(require, exports, module) {
         document.documentElement.dispatchEvent(event);  
     };    
     
+    var openFile = function(filePath) {
+        // TODO implement openFile
+        console.log("Open file functionality not implemented in firefox yet!");
+        TSCORE.showAlertDialog("Open files natively is not implemented on chrome yet!");
+    };    
+    
     exports.saveSettings 				= saveSettings;
     exports.loadSettings 				= loadSettings;
     
@@ -305,6 +311,7 @@ define(function(require, exports, module) {
     exports.createDirectoryTree 		= createDirectoryTree;
 	exports.selectDirectory 			= selectDirectory;
 	exports.openDirectory				= openDirectory;
+    exports.openFile                    = openFile;
 	exports.selectFile 					= selectFile;
 	exports.openExtensionsDirectory 	= openExtensionsDirectory;
 	exports.checkAccessFileURLAllowed 	= checkAccessFileURLAllowed;

@@ -291,6 +291,11 @@ define(function(require, exports, module) {
         $( "#fileMenuOpenFile" ).click( function() {
             TSCORE.FileOpener.openFile(TSCORE.selectedFiles[0]);                
         }); 
+
+        $( "#fileMenuOpenNatively" )
+            .click( function() {
+                TSCORE.IO.openFile(TSCORE.selectedFiles[0]);
+            }); 
         
         $( "#fileMenuOpenDirectory" ).click( function() {
             TSCORE.IO.openDirectory(TSCORE.currentPath);

@@ -355,7 +355,13 @@ IO-API
     var openDirectory = function(dirPath) {
         // TODO implement openDirectory
         console.log("Open directory functionality not implemented in chrome yet!");
-        TSCORE.showAlertDialog("Select file functionality not implemented on chrome yet!");
+        TSCORE.showAlertDialog("Open directoriy functionality not implemented on chrome yet!");
+    };
+
+    var openFile = function(filePath) {
+        // TODO implement openFile
+        console.log("Open file functionality not implemented in chrome yet!");
+        TSCORE.showAlertDialog("Open files natively is not implemented on chrome yet!");
     };
 	
 	var openExtensionsDirectory = function() {
@@ -391,6 +397,7 @@ IO-API
     exports.createDirectoryTree 		= createDirectoryTree;
 	exports.selectDirectory 			= selectDirectory;
 	exports.openDirectory				= openDirectory;
+    exports.openFile                    = openFile;	
 	exports.selectFile 					= selectFile;
 	exports.openExtensionsDirectory 	= openExtensionsDirectory;
 	exports.checkAccessFileURLAllowed 	= checkAccessFileURLAllowed;
