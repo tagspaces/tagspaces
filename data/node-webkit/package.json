@@ -5,6 +5,7 @@
   "main": "../index.html",
   "window": {
     "icon": "../assets/icon128.png",
+    "frame": true,
     "toolbar": false,
     "width": 1280,
     "height": 768
