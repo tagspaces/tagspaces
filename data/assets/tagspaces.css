@@ -171,6 +171,7 @@ user-select: none;
     height: 30px;
     line-height: 1.9;
     padding-left: 4px;
+    padding-right: 4px;
     font-size: 16px;
 /*    font-family: open_sanslight,sans-serif; */
     font-weight: 300;
@@ -181,6 +182,7 @@ user-select: none;
 
 #fileTitle:hover {
     text-decoration: none;
+    background-color: rgb(210, 210, 210);
 }
 
 /* bootstrap3xeditable class */
