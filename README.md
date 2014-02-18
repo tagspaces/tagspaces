@@ -25,7 +25,7 @@ To get updates you can:
     ./data/templates.....contains HTML templates needed for the UI
 
 ## Downloads 
-[v1.7.3 release](https://github.com/uggrock/tagspaces/releases/tag/v1.7.3) - 1.7 final release
+[v1.7.4 release](https://github.com/uggrock/tagspaces/releases/tag/v1.7.4) - released on 2014.02.17
 
 [Changelog](CHANGELOG.md)
 
@@ -40,7 +40,7 @@ To get updates you can:
 
 ![Lead TagSpaces Screenshot](http://www.tagspaces.org/content/v1.7/tagspaces-lead-screenshot.png)
 
-## Documents
+## Documentation
 
 The native windows, linux and mac versions of `TagSpaces` are built with [node-webkit](https://github.com/rogerwang/node-webkit). node-webkit is an app runtime based on Chromium and node.js. You can write native apps in HTML and Javascript with node-webkit. 
 
