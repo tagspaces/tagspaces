@@ -1,5 +1,14 @@
 #Changelog
 
+##TagSpaces 1.7.4 / 2014.02.17
+- adding hints for the format of the tags in the dialogs
+- clearing current filter on location change
+- adding hover for the file title editor
+- facebook button added
+- disabling reloading of directory by tag rename
+- open files natively added to main file context menu
+- migration to node-webkit 0.9.1
+
 ##TagSpaces 1.7.3 / 2014.02.05
 - Creating native client for Windows
 - Creating native client for Linux 64
