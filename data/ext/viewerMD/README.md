@@ -13,11 +13,11 @@ To get updates you can:
 
 ## Features
 
-* **some feature:** dummy feature
+* **view markdown files:** 
 
 ## Screenshots
 
-![Lead TagSpaces Screenshot](http://www.tagspaces.org/content/v1.7/tagspaces-notetaking.png)
+![Lead TagSpaces Screenshot](http://www.tagspaces.org/content/v1.7/.png)
 
 ## Documentation
 
