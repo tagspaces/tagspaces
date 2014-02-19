@@ -17,7 +17,7 @@ To get updates you can:
 
 ## Screenshots
 
-![Lead TagSpaces Screenshot](http://www.tagspaces.org/content/v1.7/tagspaces-notetaking.png)
+![Lead TagSpaces Screenshot](http://www.tagspaces.org/content/v1.7/tagspaces-codeediting.png)
 
 ## Documentation
 
