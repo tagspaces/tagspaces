@@ -23,9 +23,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.47104233"
-     inkscape:cx="689.50313"
-     inkscape:cy="436.86913"
+     inkscape:zoom="0.94208466"
+     inkscape:cx="526.33843"
+     inkscape:cy="620.73961"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -339,7 +339,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -468,45 +468,45 @@
        sodipodi:rx="3.75"
        sodipodi:ry="3.5714285"
        d="m 350.71429,347.71933 a 3.75,3.5714285 0 1 1 -7.5,0 3.75,3.5714285 0 1 1 7.5,0 z"
-       inkscape:export-xdpi="416.17999"
-       inkscape:export-ydpi="416.17999"
-       inkscape:export-filename="/media/z/TagSpaces/marketing/TagSpaces Logo[400x399px].png" />
+       inkscape:export-xdpi="66.589996"
+       inkscape:export-ydpi="66.589996"
+       inkscape:export-filename="/media/z/TagSpaces/repository/data/assets/icon64.png" />
     <path
        style="fill:none;stroke:#a466aa;stroke-width:10.29371548;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        d="m 307.15503,111.99311 -9.42604,-8.71773"
        id="path3108-5"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cc"
-       inkscape:export-filename="/media/z/TagSpaces/marketing/TagSpaces Logo[400x399px].png"
-       inkscape:export-xdpi="416.17999"
-       inkscape:export-ydpi="416.17999" />
+       inkscape:export-filename="/media/z/TagSpaces/repository/data/assets/icon64.png"
+       inkscape:export-xdpi="66.589996"
+       inkscape:export-ydpi="66.589996" />
     <path
        style="fill:#f7901e;fill-opacity:1;stroke:#33b5be;stroke-width:10.29371548;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        d="M 324.02266,91.77283 305.1706,74.821701"
        id="path3108-9-1"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cc"
-       inkscape:export-filename="/media/z/TagSpaces/marketing/TagSpaces Logo[400x399px].png"
-       inkscape:export-xdpi="416.17999"
-       inkscape:export-ydpi="416.17999" />
+       inkscape:export-filename="/media/z/TagSpaces/repository/data/assets/icon64.png"
+       inkscape:export-xdpi="66.589996"
+       inkscape:export-ydpi="66.589996" />
     <path
        style="fill:#616577;fill-opacity:1;stroke:#f7901e;stroke-width:10.29371548;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        d="M 315.8369,102.18567 301.44979,89.35124"
        id="path3108-0-7"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cc"
-       inkscape:export-filename="/media/z/TagSpaces/marketing/TagSpaces Logo[400x399px].png"
-       inkscape:export-xdpi="416.17999"
-       inkscape:export-ydpi="416.17999" />
+       inkscape:export-filename="/media/z/TagSpaces/repository/data/assets/icon64.png"
+       inkscape:export-xdpi="66.589996"
+       inkscape:export-ydpi="66.589996" />
     <path
        style="fill:none;stroke:#616577;stroke-width:11.96031666;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        d="m 308.87913,50.54648 31.07089,0 0,29.598718 -41.34434,42.441152 -30.69503,-28.37564 z"
        id="path3923-1-1"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cccccc"
-       inkscape:export-filename="/media/z/TagSpaces/marketing/TagSpaces Logo[400x399px].png"
-       inkscape:export-xdpi="416.17999"
-       inkscape:export-ydpi="416.17999" />
+       inkscape:export-filename="/media/z/TagSpaces/repository/data/assets/icon64.png"
+       inkscape:export-xdpi="66.589996"
+       inkscape:export-ydpi="66.589996" />
     <rect
        style="fill:#404040;fill-opacity:1;stroke:none"
        id="rect3052"
