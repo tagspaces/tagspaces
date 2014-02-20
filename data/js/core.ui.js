@@ -92,7 +92,7 @@ define(function(require, exports, module) {
             "Delete File(s)",
             "The file \""+filePath+"\" will be permanently deleted and cannot be recovered. Are you sure?",
             function() {
-                TSCORE.IO.deleteElement(TSCORE.selectedFiles[0]);
+                TSCORE.IO.deleteElement(filePath); 
             }
         );
     };    
