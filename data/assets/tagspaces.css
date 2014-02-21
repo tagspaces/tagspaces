@@ -87,15 +87,6 @@ user-select: none;
 	height: 31px;
 	display: inline-block;
 }
-/*
-@media 
-(-webkit-min-device-pixel-ratio: 2), 
-(min-resolution: 192dpi) { 
-	#logo {
-		background: url("icon64.png") no-repeat left center;
-        background-size: 28px 28px;
-	}
-} */
 
 .appVersion {
   font-size: 1.3em; 
@@ -710,6 +701,26 @@ input a.resetFilter {
     font-size: 14px;
 }
 
+.select2-search-choice-close {
+    background-position: right -11px;
+}
+
+.select2-container-multi .select2-choices .select2-search-choice {
+    margin: 3px;
+    padding: 4px 4px 4px 15px !important;
+    background: #008000 !important;
+    color: white !important;
+    border: 0px;
+    z-index: 9999;
+    border-radius: 5px !important;
+    text-decoration: none !important;
+    filter: none;
+    background-image: none;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+}
+
 .fileTitleButton {
     margin: 1px;
     padding: 1px;
@@ -720,3 +731,19 @@ input a.resetFilter {
     font-weight: bold; 
     color: gray;
 }
+
+#welcomeScreen {
+    width: 100%; 
+    height: 100%;
+    background: url(welcome-logo.png) no-repeat center;
+}
+
+
+@media 
+(-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) { 
+    #welcomeScreen {
+        width: 100%; 
+        height: 100%;
+        background: url(welcome-logo2x.png) no-repeat center;
+    }
+} 

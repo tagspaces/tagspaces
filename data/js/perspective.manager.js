@@ -76,7 +76,7 @@ var initWelcomeScreen = function() {
                     $("#viewContainers").append(uiTemplate()); 
                 }
         }); */   
-        $("#viewContainers").append('<div id="welcomeScreen" style="width: 100%; height: 100%;"><img src="assets/welcome-logo.png" style="overflow: auto; margin: auto; position: absolute; top: 0; left: 0; bottom: 0; right: 0;"></div>');    
+        $("#viewContainers").append('<div id="welcomeScreen"></div>');    
 };
 
 var initPerspectiveSwitcher = function() {
