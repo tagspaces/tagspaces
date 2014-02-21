@@ -136,15 +136,20 @@ define(function(require, exports, module) {
         }); 
 	};
 	
-	var saveTextFile = function(filePath,content) {
+	var saveTextFile = function(filePath,content,overWrite) {
 		console.log("Saving file: "+filePath);
         TSCORE.showLoadingAnimation();  
         		
-		// TODO check if fileExist by saving needed
-/*	  	if(plugin.fileExists(filePath)) {
-			plugin.removeFile(filePath);      		
-        } */
-        fs.writeFile(filePath, content, function(error) {
+		/** TODO check if fileExist by saving needed
+        if(overWrite) {
+            // Current implementation
+        } else {
+            if (!pathUtils.existsSync(filePath)) { 
+               // Current implementation
+            }                     
+        }
+        */
+        fs.writeFile(filePath, "\ufeff"+content, 'utf8', function(error) {
             if (error) {
                 console.log("Save to file "+filePath+" failed "+error);
                 return;
@@ -231,7 +236,8 @@ define(function(require, exports, module) {
     };
     
     var openDirectory = function(dirPath) {
-        gui.Shell.showItemInFolder(dirPath);
+        // showItemInFolder
+        gui.Shell.openItem(dirPath);
     };
 
     var openFile = function(filePath) {
