@@ -149,7 +149,8 @@ console.log("Loading UI for perspectiveList");
 	            { "sTitle": "Date Modified", "sClass": "fileTitle" },
 	            { "sTitle": "Path", "sClass": "fileTitle" },
                 { "sTitle": "File Name", "sClass": "fileTitle" }                
-	        ],         
+	        ],
+	        "aaSorting": [[ 1, "asc" ]],    // softing by filename     
 	        "aoColumnDefs": [
 /*	            { // Title column
 	                "mRender": function ( data, type, row ) { 
