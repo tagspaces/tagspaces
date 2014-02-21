@@ -227,6 +227,7 @@ console.log("Loading UI for perspectiveList");
 		    	accept: ".tagButton",
 		    	hoverClass: "activeRow",
 		    	drop: function( event, ui ) {
+		    	    
 		    		var tagName = TSCORE.selectedTag;
                     var targetFilePath = $(this).find(".fileTitleButton").attr("filepath");                
 	
@@ -245,7 +246,7 @@ console.log("Loading UI for perspectiveList");
 					TSCORE.TagUtils.addTag(TSCORE.selectedFiles, [tagName]);
 					self.handleElementActivation();
 					
-					$(ui.helper).remove();  
+					//$(ui.helper).remove();  
 		    	}	            	
 		    })
 			.hammer().on("doubletap", function(event) {

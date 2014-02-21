@@ -554,7 +554,7 @@ console.log("Loading UI for perspectiveDefault");
                         TSCORE.TagUtils.addTag(TSCORE.selectedFiles, [tagName]);
                         self.handleElementActivation();
                         
-                        $(ui.helper).remove();  
+                        //$(ui.helper).remove();  
                     }                   
                 })                 
                 );

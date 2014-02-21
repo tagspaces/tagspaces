@@ -205,6 +205,7 @@ define(function(require, exports, module) {
                 accept: '.tagButton',
                 hoverClass: "dirButtonActive",
                 drop: function( event, ui ) {
+                    ui.draggable.detach();
                     var tagGroupData = TSCORE.Config.getTagData(ui.draggable.attr("tag"), ui.draggable.attr("parentKey"));
                     tagGroupData.parentKey = ui.draggable.attr("parentKey");
                     var targetTagGroupKey = $(this).attr("key");
@@ -269,7 +270,7 @@ define(function(require, exports, module) {
                     "appendTo":   "body",
                     "helper":     "clone",
                     "revert":     'invalid',
-                    "start":     function(e, ui) {
+                    "drop":     function(e, ui) {
                         TSCORE.selectedTagData = TSCORE.Config.getTagData($(this).attr("tag"), $(this).attr("parentKey"));
                         TSCORE.selectedTag = generateTagValue(TSCORE.selectedTagData);
                         TSCORE.selectedTagData.parentKey = $(this).attr("parentKey");                         

@@ -332,7 +332,8 @@ define(function(require, exports, module) {
 	    	drop: function( event, ui ) {
 				console.log("Tagging file: "+TSCORE.selectedTag+" to "+_openedFilePath);
 				TSCORE.TagUtils.addTag([_openedFilePath], [TSCORE.selectedTag]);
-				$(ui.helper).remove(); 
+				
+				//$(ui.helper).remove(); 
 	    	}	            	
 	    });
 	       
