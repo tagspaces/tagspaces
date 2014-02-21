@@ -470,9 +470,10 @@ define(function(require, exports, module) {
         
         $('#tags').select2('data', null);
 		$("#tags").select2({
-	        //minimumInputLength: 1,
 	        multiple: true,
 			tags: TSCORE.Config.getAllTags(),
+			tokenSeparators: [",", " "],
+			minimumInputLength: 2,
 		});                   
 
         $( '#dialogAddTags' ).modal({show: true});

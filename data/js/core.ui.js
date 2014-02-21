@@ -64,9 +64,10 @@ define(function(require, exports, module) {
         
         $('#newFileNameTags').select2('data', null);        
 		$("#newFileNameTags").select2({
-	        //minimumInputLength: 1,
 	        multiple: true,
 			tags: TSCORE.Config.getAllTags(),
+			tokenSeparators: [",", " "],
+			minimumInputLength: 2
 		});  
    
 		$("#newFileName").val("");     
@@ -102,10 +103,11 @@ define(function(require, exports, module) {
 
         /* $( "#newTagName" ).select2('data', null);        
         $( "#newTagName" ).select2({
-            //minimumInputLength: 1,
             multiple: false,
             tags: TSCORE.Config.getAllTags(),
-        }); */  
+            tokenSeparators: [",", " "],
+            minimumInputLength: 2            
+        });  */
         
         $( '#dialogEditTag' ).modal({show: true});
     };  
