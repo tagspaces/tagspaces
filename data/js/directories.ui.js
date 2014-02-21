@@ -207,6 +207,7 @@ define(function(require, exports, module) {
                         accept: '.fileTitleButton,.fileTile',
                         hoverClass: "dropOnFolder",
                         drop: function( event, ui ) {
+                                ui.draggable.detach();
                                 var filePath = ui.draggable.attr("filepath");
                                 var fileName = TSCORE.TagUtils.extractFileName(filePath);
                                 var targetDir = $(this).attr("key");
@@ -263,6 +264,7 @@ define(function(require, exports, module) {
                             accept: ".fileTitleButton,.fileTile",
                             hoverClass: "dropOnFolder",
                             drop: function( event, ui ) {
+                                ui.draggable.detach();
                                 // Fixing issue with dropping on stacked/overlapped directories
                                 if( $(this).parent().parent().parent().hasClass("in") ) {
                                     var filePath = ui.draggable.attr("filepath");
