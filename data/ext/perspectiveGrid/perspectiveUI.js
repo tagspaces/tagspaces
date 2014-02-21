@@ -584,16 +584,11 @@ console.log("Loading UI for perspectiveDefault");
         this.refreshThumbnails();
 
         if(this.searchResults.length != undefined) {
-            if(this.searchResults.length == 0) {
-                $("#statusBar").text("No files found");            
+             if(TSCORE.Search.nextQuery.length > 0) {
+                $("#statusBar").text(this.searchResults.length+" files found for '"+TSCORE.Search.nextQuery+"'");                     
             } else {
-                //var endTime = new Date().getTime();
-                $("#statusBar").text(this.searchResults.length+" files found");
-                //this.viewFooter.append($("<div>", { 
-                //    "class": "searchSummary",    
-                //    "text":  this.searchResults.length+" files found" //" in "+(endTime-TSCORE.startTime)/1000+" sec."             
-                //}));
-            } 
+                $("#statusBar").text(this.searchResults.length+" files found");                         
+            }                
         }
         
         TSCORE.hideLoadingAnimation();          

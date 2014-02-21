@@ -139,7 +139,7 @@ console.log("Loading UI for perspectiveList");
 	        "bInfo": false,
 	        "bAutoWidth": false,
             "oLanguage": {
-              "sEmptyTable": "No files found"
+              "sEmptyTable": " " // No files found
             },	        
 	        "aoColumns": [
 	            { "sTitle": "File Ext.", "sWidth": "125px", "sClass": "fileTitle"  },
@@ -308,7 +308,11 @@ console.log("Loading UI for perspectiveList");
 	    
         //Update statusbar
         if(this.searchResults.length != undefined) {
-            $("#statusBar").text(this.searchResults.length+" files found");	    
+            if(TSCORE.Search.nextQuery.length > 0) {
+                $("#statusBar").text(this.searchResults.length+" files found for '"+TSCORE.Search.nextQuery+"'");                     
+            } else {
+                $("#statusBar").text(this.searchResults.length+" files found");                         
+            }
 	    }
 	    
         this.refreshThumbnails();
