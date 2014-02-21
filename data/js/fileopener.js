@@ -100,7 +100,7 @@ define(function(require, exports, module) {
 
         $( "#openDirectory" )
             .click( function() {
-                TSCORE.IO.openDirectory(TSCORE.currentPath);
+                TSCORE.IO.openDirectory(TSCORE.TagUtils.extractParentDirectoryPath(_openedFilePath));
             }); 
 
         $( "#fullscreenFile" )
