@@ -25,6 +25,8 @@ define(function(require, exports, module) {
         var indexOfDot = fileName.lastIndexOf(".");
         if(indexOfDot > 0) {
             return fileName.substring(0, indexOfDot);            
+        } else if(indexOfDot == 0) { // case filename: .txt
+            return "";            
         } else {
             return fileName;
         }
