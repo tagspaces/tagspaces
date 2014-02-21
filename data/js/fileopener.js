@@ -296,10 +296,12 @@ define(function(require, exports, module) {
 	    
 	    // Initialize File Title Editor
         var title = TSCORE.TagUtils.extractTitle(_openedFilePath);
-	    $("#fileTitle").text(title);
-        //$("#fileTitle").attr("title",title);
         
         $("#fileTitle").editable('destroy');
+
+        $("#fileTitle").text(title);
+//        $("#fileTitle").attr("title",title);
+
         $("#fileTitle").editable({
             type: 'textarea',
             placement: 'bottom',
