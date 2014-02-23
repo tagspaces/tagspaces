@@ -745,5 +745,6 @@ input a.resetFilter {
         width: 100%; 
         height: 100%;
         background: url(welcome-logo2x.png) no-repeat center;
+        background-size: 300px 200px;
     }
 } 
