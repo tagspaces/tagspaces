@@ -10,6 +10,8 @@ define(function(require, exports, module) {
     var TSCORE = require("tscore");	
 	var TSPOSTIO = require("tspostioapi");
 	
+	process.on("uncaughtException", function(err) { console.log("error: " + err); });
+	
 	function scanDirectory(dirPath, index) {
 	    try {
             var dirList = fs.readdirSync(dirPath);
@@ -149,12 +151,24 @@ define(function(require, exports, module) {
             }                     
         }
         */
-        fs.writeFile(filePath, "\ufeff"+content, 'utf8', function(error) {
+       
+        // Handling the UTF8 support for text files
+        var UTF8_BOM = "\ufeff";
+        
+        if(content.indexOf(UTF8_BOM) == 0) {
+            // already has a UTF8 bom
+        } else {
+            content = UTF8_BOM+content;
+        }
+
+        var isNewFile = !pathUtils.existsSync(filePath);
+       
+        fs.writeFile(filePath, content, 'utf8', function(error) {
             if (error) {
                 console.log("Save to file "+filePath+" failed "+error);
                 return;
             }
-            TSPOSTIO.saveTextFile(filePath);
+            TSPOSTIO.saveTextFile(filePath, isNewFile);
         }); 
 	};
 	
