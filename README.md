@@ -11,6 +11,8 @@ To get updates you can:
 - Subscribe to GitHub updates by clicking the "watch" button up the top right of this page.
 - Subscribe to RSS feed updates for the [master branch](https://github.com/uggrock/tagspaces/commits/master.atom)
 
+[![Built with Grunt](https://cdn.gruntjs.com/builtwith.png)](http://gruntjs.com/)
+
 ## Repository Directory Structure
 
     ./data...............see the next lines
