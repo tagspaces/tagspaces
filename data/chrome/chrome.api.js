@@ -343,10 +343,8 @@ IO-API
             if(!isAllowedAccess) {
                TSCORE.showAlertDialog(
                     "Please make sure that you check the 'Allow access to file URLs'"+
-                    " checkbox as shown in the following screenshot "+
-                    " from the extension ('chrome://extensions/') settings of chrome/chromium"+
-                    "<img style='width: 100%;' src='chrome/ChromeAllowAccessFileURLs.png' />",
-                     "TagSpaces can not read files from your local disk!"
+                    " checkbox in the extension settings of chrome/chromium ('chrome://extensions/'). ",
+                    "TagSpaces can not read files from your local storage!"
                );               
             }
         });          

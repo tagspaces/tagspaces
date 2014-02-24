@@ -18,7 +18,7 @@ define(function(require, exports, module) {
 	    var alertModal = $('#alertDialog');	
         alertModal.find('h4').text(title);        
         alertModal.find('.modal-body').empty();
-        alertModal.find('.modal-body').append(message);
+        alertModal.find('.modal-body').text(message);
 	    alertModal.find('#okButton')
 	       .off('click')
 	       .click(function(event) {
@@ -36,7 +36,7 @@ define(function(require, exports, module) {
 	    var confirmModal = $('#confirmDialog');
         confirmModal.find('h4').text(title);    	
         confirmModal.find('.modal-body').empty();
-	    confirmModal.find('.modal-body').append(message);
+	    confirmModal.find('.modal-body').text(message);
 	    confirmModal.find('#okButton')
 	       .off('click')
 	       .click(function(event) {
