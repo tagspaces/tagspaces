@@ -24,6 +24,8 @@ define(function(require, exports, module) {
         $('#'+elementID).append($('<iframe>', {
             id: "iframeViewer",
             src: extPath+"?cp="+filePath
+            "nwdisable": "",
+            "nwfaketop": "",
         }));  
 /*
 		require([extensionDirectory+'/webodf/webodf.js'], function() {
@@ -31,7 +33,7 @@ define(function(require, exports, module) {
             odfcanvas = new odf.OdfCanvas(odfelement);
             odfcanvas.load(filePath);	       
 		});*/    
-	}
+	};
 	
 	exports.viewerMode = function(isViewerMode) {
 		console.log("viewerMode not supported on this extension");  
