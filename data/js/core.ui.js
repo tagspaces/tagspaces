@@ -505,7 +505,8 @@ define(function(require, exports, module) {
             $("#openNatively").hide();                   
         }
         if(isNode) {
-            $("#fullscreenFile").hide();                   
+            $("#fullscreenFile").hide(); 
+            $("#openFileInNewWindow").hide();              
         }
         if(isOSX) {
             $("body").addClass("osx");                   
