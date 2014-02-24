@@ -225,7 +225,9 @@ define(function(require, exports, module) {
             
 		    $('#viewer').append($('<iframe>', {
 		    	id: "iframeViewer",
-				src: filePathURI
+				src: filePathURI,
+				"nwdisable": "",
+				"nwfaketop": "",
 		    })); 
 	    } else {
 	        require([TSCORE.Config.getExtensionPath()+"/"+viewerExt+"/extension.js"], function(viewer) {
