@@ -2,7 +2,7 @@
  * Use of this source code is governed by a AGPL3 license that 
  * can be found in the LICENSE file. */
 
-const {Cc,Ci,Cr,Cu} = require("chrome");
+const {components, Cc, Ci, Cr, Cu} = require("chrome");
 var filesIO = require("sdk/io/file"); // file
 var runtime = require("sdk/system/runtime"); // runtime 
 const { getTabs, getTabId, getOwnerWindow } = require("sdk/tabs/utils"); // tabs/utils
@@ -334,13 +334,28 @@ exports.saveTextFile = function saveTextFile(filePath, content, worker) {
     try { 
         var file = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsIFile);
         file.initWithPath(filePath); 
-        if(!file.exists())
+        if(!file.exists()) {
             file.create(0,0664);
+        }                    
+      
+/*      Cu.import("resource://gre/modules/NetUtil.jsm"); 
+        Cu.import("resource://gre/modules/FileUtils.jsm"); 
+        var ostream = FileUtils.openSafeFileOutputStream(file); 
+        var converter = Cc["@mozilla.org/intl/scriptableunicodeconverter"]. 
+        createInstance(Ci.nsIScriptableUnicodeConverter); 
+        converter.charset = "UTF-8"; 
+        var istream = converter.convertToInputStream(content); 
+        NetUtil.asyncCopy(istream, ostream, function(status) { 
+        //    if (!Components.isSuccessCode(status))  
+                return; 
+        }); */
+            
         var out = Cc["@mozilla.org/network/file-output-stream;1"].createInstance(Ci.nsIFileOutputStream);
         out.init(file,0x20|0x02,00004,null);
         out.write(content,content.length);
         out.flush();
-        out.close();            
+        out.close();
+                  
         worker.postMessage({
                 "command": "saveTextFile",
                 "content": filePath,
