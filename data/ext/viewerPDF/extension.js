@@ -21,14 +21,16 @@ define(function(require, exports, module) {
 	    var extPath = extensionDirectory+"/index.html";
         $('#'+elementID).append($('<iframe>', {
             id: "iframeViewer",
-            src: extPath+"?cp="+filePath
+            src: extPath+"?cp="+filePath,
+            "nwdisable": "",
+            "nwfaketop": "",
         }));        
 	
 	// TODO ext lib integration
 	//	require([extensionDirectory+'/croppr.js'], function() {
 	//
 	//	});    
-	}
+	};
 	
 	exports.viewerMode = function(isViewerMode) {
 		console.log("viewerMode not supported on this extension");  
