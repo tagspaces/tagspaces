@@ -38,6 +38,7 @@ define(function(require, exports, module) {
 	};
 	
 	exports.setContent = function(content) {
+	    // removing the script tags from the content 
         var cleanedContent = content.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,""); 	    
         $('#'+containerElID).empty();
         $('#'+containerElID).append($('<textarea>', {
