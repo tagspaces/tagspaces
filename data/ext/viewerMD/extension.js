@@ -39,9 +39,11 @@ define(function(require, exports, module) {
 	
 	exports.setContent = function(content) {
 	   var cleanedContent = content.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,""); 
-	   var html = md2htmlConverter.makeHtml(cleanedContent);
-       $('#'+containerElID).addClass("viewerMDContainer");
-	   $('#'+containerElID).append(html);   
+       $('#'+containerElID).append($("<div>", {
+                class: "viewerMDContainer", 
+            })
+            .append(md2htmlConverter.makeHtml(cleanedContent))
+            );
 	};
 	
 	exports.getContent = function() {
