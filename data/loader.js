@@ -28,6 +28,8 @@ try {
     var pathUtils = require('path');   
     var gui = require('nw.gui');
     isNode = true;
+    // Starting tagspace maximized
+    gui.Window.get().maximize();    
 } catch(e) {
     isNode = false;
     console.log("node-webkit not found!");
@@ -43,8 +45,10 @@ if( isFirefox ) {
     IO_JS = "node-webkit/node-webkit.api";
 } else if (isCordova){
     IO_JS = "cordova/cordova.api";
+} else if (isWeb){
+    IO_JS = "web/web.api";
 } else {
-    IO_JS = "chrome/chrome.api";        
+    IO_JS = "web/web.api";        
 }
 
 //IO_JS = "js/ioapi.dropbox";        
@@ -84,6 +88,7 @@ requirejs.config({
 		select2:				'libs/select2/select2.min',
 		hammerjs:				'libs/hammerjs/jquery.hammer.min',
 		handlebarsjs:			'libs/handlebars.js/handlebars-v1.1.2',
+        webdavlib:              'web/webdavlib',
 		
         tscore:                 'js/core.api',
         tssetting:              'js/settings.api',
