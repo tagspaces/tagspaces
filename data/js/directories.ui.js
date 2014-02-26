@@ -572,7 +572,7 @@ define(function(require, exports, module) {
     function showDeleteFolderConnectionDialog(name) {
 		TSCORE.showConfirmDialog(
 			"Delete connection to folder",
-			"Do you want to delete the connection "+$("#connectionName2").attr("oldName")+"?",
+			"Do you want to delete the connection '"+$("#connectionName2").attr("oldName")+"'?",
 			function() {
 			     deleteLocation($("#connectionName2").attr("oldName"));
 			     $("#dialogLocationEdit").modal('hide');
