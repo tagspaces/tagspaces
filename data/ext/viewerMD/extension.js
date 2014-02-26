@@ -22,7 +22,6 @@ define(function(require, exports, module) {
 	exports.init = function(filePath, containerElementID) {
 	    console.log("Initalization MD Viewer...");
 	    containerElID = containerElementID;
-	    // TODO create a css namespace for the specific styles
 		require(['css!'+extensionDirectory+'/viewerMD.css']);
 		require([extensionDirectory+'/showdown/showdown.js'], function() {
 			md2htmlConverter = new Showdown.converter();

@@ -2,7 +2,7 @@
 
 .viewerMDContainer {
     overflow: auto; 
-    font:13.34px ubuntu, arial,freesans,clean,sans-serif;
+    font:13.34px 'Ubuntu',arial,clean,sans-serif;
     color:black;
     line-height:1.4em;
     background-color: white;
