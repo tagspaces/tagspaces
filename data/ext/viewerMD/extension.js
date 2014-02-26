@@ -23,7 +23,7 @@ define(function(require, exports, module) {
 	    console.log("Initalization MD Viewer...");
 	    containerElID = containerElementID;
 	    // TODO create a css namespace for the specific styles
-	//	require(['css!'+extensionDirectory+'/bootstrapLite.css']);
+		require(['css!'+extensionDirectory+'/viewerMD.css']);
 		require([extensionDirectory+'/showdown/showdown.js'], function() {
 			md2htmlConverter = new Showdown.converter();
 			TSCORE.IO.loadTextFile(filePath);
@@ -39,8 +39,9 @@ define(function(require, exports, module) {
 	};
 	
 	exports.setContent = function(content) {
-	   var html = md2htmlConverter.makeHtml(content);
-       $('#'+containerElID).css("overflow","auto");
+	   var cleanedContent = content.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,""); 
+	   var html = md2htmlConverter.makeHtml(cleanedContent);
+       $('#'+containerElID).addClass("viewerMDContainer");
 	   $('#'+containerElID).append(html);   
 	};
 	
