@@ -19,21 +19,16 @@ define(function(require, exports, module) {
 	
 	var extensionDirectory = extensionsPath+"/"+exports.id;
 	
+	var content = undefined;
+	
 	exports.init = function(filePath, containerElementID) {
 	    console.log("Initalization HTML Text Editor...");
 		require([
-            extensionsPath+'/editorText/codemirror/codemirror.js',
-			extensionDirectory+'/summernote/summernote.min.js',
-            //"css!"+extensionDirectory+'/summernote/summernote-bs3.css', 
-            "css!"+extensionDirectory+'/summernote/summernote.css',     
-            'css!'+extensionsPath+'/editorText/codemirror/codemirror.css',            
-            'css!'+extensionsPath+'/editorText/codemirror/theme/monokai.css',    
+			extensionDirectory+'/summernote/summernote.js',
+            'css!'+extensionDirectory+'/summernote/summernote.css',     
             'css!'+extensionDirectory+'/extension.css',
 		 	], function() {
-                require([
-                    extensionsPath+'/editorText/codemirror/mode/xml/xml.js',    
-                ]);		 	    
-				$("#"+containerElementID).append('<div id="htmlEditor"></div>');	 		
+				$("#"+containerElementID).append('<div id="htmlEditor"></div>');	 	
 				TSCORE.IO.loadTextFile(filePath);
 		});
 	};
@@ -46,13 +41,29 @@ define(function(require, exports, module) {
 	    // set readonly      
 	};
 	
-	exports.setContent = function(content) {
-		$('#htmlEditor').html(content);
+	exports.setContent = function(cont) {
+		content = cont;
+		
+        var reg = /\<body[^>]*\>([^]*)\<\/body/m;
+        
+        var bodyContent = undefined;
+        
+        // TODO try this 
+        try {
+            bodyContent = content.match( reg )[1];                  
+        } catch(e) {
+            console.log("Error parsing HTML document. "+e);
+            $('#htmlEditor').append("<p style='font-size: 15px'><br/>  Error parsing HTML document. Probably a body tag was not found in the document.</p>");
+            return false;
+        }
+
+		//console.log("body content: "+bodyContent);
+
+        var cleanedBodyContent = bodyContent.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,"");         
+
+		$('#htmlEditor').append(cleanedBodyContent);
 		$('#htmlEditor').summernote({
           focus: true, 		
-          codemirror: { 
-            theme: 'monokai'
-          },              
           toolbar: [
             ['style', ['style']], 
             ['style', ['bold', 'italic', 'underline', 'clear']],
@@ -60,18 +71,22 @@ define(function(require, exports, module) {
             ['color', ['color']],
             ['para', ['ul', 'ol', 'paragraph']],
             ['height', ['height']],
-            //['insert', ['picture', 'link']], // no insert buttons
+            ['insert', ['picture', 'link']], 
             ['table', ['table']], 
             ['view', ['codeview']], 
             //['help', ['help']] //no help button
           ]		    
 		});
+       // $("#"+containerElementID).find('.note-image-dialog').css("position","static");   
+
 	};
 	
 	exports.getContent = function() {
-		var content = $('#htmlEditor').code();
-		//console.log("HTML content: "+content);
-		return content;
+		var code = "<body>"+$('#htmlEditor').code()+"</body>";
+        
+        var htmlContent = content.replace(/\<body[^>]*\>([^]*)\<\/body>/m,code);
+        console.log("Final html "+htmlContent);
+		return htmlContent;
 	};	
 
 });
