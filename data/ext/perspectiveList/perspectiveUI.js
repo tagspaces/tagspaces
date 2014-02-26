@@ -142,7 +142,7 @@ console.log("Loading UI for perspectiveList");
               "sEmptyTable": " " // No files found
             },	        
 	        "aoColumns": [
-	            { "sTitle": "File Ext.", "sWidth": "125px", "sClass": "fileTitle"  },
+	            { "sTitle": "File Ext.", "sWidth": "130px", "sClass": "fileTitle"  },
                 { "sTitle": "Title", "sClass": "fileTitle" },
 	            { "sTitle": "Tags", "sClass": "fileTitle"  },            
 	            { "sTitle": "Size(B)", "sClass": "fileTitle" },
