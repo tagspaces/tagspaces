@@ -37,7 +37,7 @@ console.log("Loading UI for Image Viewer");
         	imgPath: this.filePath,
         };
 		//console.log(uiTemplate(context));
-     	this.containerElem.html(uiTemplate(context));
+     	this.containerElem.append(uiTemplate(context));
 
     	$("#"+this.extensionID+"imgViewer")
         	.panzoom({
