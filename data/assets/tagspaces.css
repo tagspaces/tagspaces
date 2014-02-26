@@ -164,11 +164,12 @@ user-select: none;
     padding-left: 4px;
     padding-right: 4px;
     font-size: 16px;
-/*    font-family: open_sanslight,sans-serif; */
     font-weight: 300;
     border: 0px;
     background-color: transparent;
     color: #333333;
+    white-space: nowrap;
+    max-width: 150px;
 }
 
 #fileTitle:hover {
