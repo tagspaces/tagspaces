@@ -56,8 +56,11 @@ define(function(require, exports, module) {
         TSCORE.hideLoadingAnimation();
     };
     
-    exports.saveTextFile = function(filePath) {
-        TSCORE.PerspectiveManager.refreshFileListContainer();
+    exports.saveTextFile = function(filePath, isNewFile) {
+        // If the file is new, then refresh the filelist 
+        if(isNewFile) {
+            TSCORE.PerspectiveManager.refreshFileListContainer();            
+        }
         //if(!TSCORE.FileOpener.isFileOpened()) {
             TSCORE.FileOpener.openFile(filePath);                    
         //}
