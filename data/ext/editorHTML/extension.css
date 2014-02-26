@@ -5,12 +5,12 @@
 }
 
 .note-codable {
-    height: 90% !important;
+    height: 95% !important;
     overflow: auto;
 }
 
 .note-editable {
-    height: 90% !important;
+    height: 95% !important;
     overflow: auto;    
     font-size: 140%;
 }
