@@ -39,7 +39,7 @@ console.log("Loading UI for perspectiveList");
         };
         // Init Toolbar
         
-        this.viewToolbar.html(toolbarTemplate(context));
+        this.viewToolbar.append(toolbarTemplate(context));
 
         $("#"+this.extensionID+"ToogleSelectAll")    
             .click(function() {

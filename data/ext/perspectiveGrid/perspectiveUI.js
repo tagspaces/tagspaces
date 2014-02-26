@@ -198,7 +198,7 @@ console.log("Loading UI for perspectiveDefault");
         var context = {
             id: this.extensionID,
         };
-        this.viewToolbar.html(toolbarTemplate(context));
+        this.viewToolbar.append(toolbarTemplate(context));
         
         $("#"+this.extensionID+"ToogleSelectAll")
             .click(function(e) {
