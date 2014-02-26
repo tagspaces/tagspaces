@@ -38,12 +38,13 @@ define(function(require, exports, module) {
 	};
 	
 	exports.setContent = function(content) {
+        var cleanedContent = content.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,""); 	    
         $('#'+containerElID).empty();
         $('#'+containerElID).append($('<textarea>', {
             readonly: "true",
             style: "overflow: auto; height: 100%; width: 100%; font-size: 13px; margin: 3px; background-color: white; border-width: 0px;",
             })
-            .append(content)
+            .append(cleanedContent)
             ); 
     };
 	
