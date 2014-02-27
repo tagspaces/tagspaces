@@ -316,6 +316,15 @@ define(function (require, exports, module) {
         console.log("Saving file: "+filePath);
         TSCORE.showLoadingAnimation();  
 
+        // Handling the UTF8 support for text files
+        var UTF8_BOM = "\ufeff";
+
+        if(content.indexOf(UTF8_BOM) == 0) {
+            // already has a UTF8 bom
+        } else {
+            content = UTF8_BOM+content;
+        }    
+
         filePath = normalizePath(filePath);
         fsRoot.getFile(filePath, {create: true, exclusive: false}, 
             function(entry) {
