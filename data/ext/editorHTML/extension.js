@@ -19,10 +19,12 @@ define(function(require, exports, module) {
 	
 	var extensionDirectory = extensionsPath+"/"+exports.id;
 	
-	var content = undefined;
+	var currentContent = undefined;
+	var currentFilePath = undefined;
 	
 	exports.init = function(filePath, containerElementID) {
 	    console.log("Initalization HTML Text Editor...");
+	    currentFilePath = filePath;
 		require([
 			extensionDirectory+'/summernote/summernote.js',
             'css!'+extensionDirectory+'/summernote/summernote.css',     
@@ -41,8 +43,8 @@ define(function(require, exports, module) {
 	    // set readonly      
 	};
 	
-	exports.setContent = function(cont) {
-		content = cont;
+	exports.setContent = function(content) {
+		currentContent = content;
 		
         var reg = /\<body[^>]*\>([^]*)\<\/body/m;
         
@@ -53,11 +55,9 @@ define(function(require, exports, module) {
             bodyContent = content.match( reg )[1];                  
         } catch(e) {
             console.log("Error parsing HTML document. "+e);
-            $('#htmlEditor').append("<p style='font-size: 15px'><br/>  Error parsing HTML document. Probably a body tag was not found in the document.</p>");
-            return false;
+            TSCORE.FileOpener.closeFile(true);  
+            TSCORE.showAlertDialog("Probably a body tag was not found in the document. Document will be closed.","Error parsing HTML document");
         }
-
-		//console.log("body content: "+bodyContent);
 
         var cleanedBodyContent = bodyContent.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,"");         
 
@@ -77,14 +77,12 @@ define(function(require, exports, module) {
             //['help', ['help']] //no help button
           ]		    
 		});
-       // $("#"+containerElementID).find('.note-image-dialog').css("position","static");   
-
 	};
 	
 	exports.getContent = function() {
 		var code = "<body>"+$('#htmlEditor').code()+"</body>";
         
-        var htmlContent = content.replace(/\<body[^>]*\>([^]*)\<\/body>/m,code);
+        var htmlContent = currentContent.replace(/\<body[^>]*\>([^]*)\<\/body>/m,code);
         console.log("Final html "+htmlContent);
 		return htmlContent;
 	};	
