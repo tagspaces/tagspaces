@@ -139,19 +139,27 @@ define(function(require, exports, module) {
 		return _openedFilePath;
 	}
 
-    function closeFile() {
+    function closeFile(forceClose) {
         if(_isEditMode) {
-            TSCORE.showConfirmDialog(
-                "Confirm",
-                "If you confirm, all made changes will be lost.", 
-                function() {
-                    // Cleaning the viewer/editor
-                    document.getElementById("viewer").innerHTML = "";
-                    TSCORE.FileOpener.setFileOpened(false);
-                    TSCORE.closeFileViewer();
-                    _isEditMode = false;                               
-                }
-            );             
+            if(forceClose) {
+                document.getElementById("viewer").innerHTML = "";
+                TSCORE.FileOpener.setFileOpened(false);
+                TSCORE.closeFileViewer();
+                _isEditMode = false;                                               
+            } else {
+                TSCORE.showConfirmDialog(
+                    "Confirm",
+                    "If you confirm, all made changes will be lost.", 
+                    function() {
+                        // Cleaning the viewer/editor
+                        document.getElementById("viewer").innerHTML = "";
+                        TSCORE.FileOpener.setFileOpened(false);
+                        TSCORE.closeFileViewer();
+                        _isEditMode = false;                               
+                    }
+                );                             
+            }
+
         } else {
             // Cleaning the viewer/editor
             document.getElementById("viewer").innerHTML = "";
@@ -432,6 +440,7 @@ define(function(require, exports, module) {
     // Public API definition 
     exports.initUI                              = initUI;
     exports.openFile                    		= openFile;
+    exports.closeFile                            = closeFile;
     exports.isFileOpened						= isFileOpened;
     exports.isFileEdited 						= isFileEdited;
     exports.setFileOpened						= setFileOpened;
