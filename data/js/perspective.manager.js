@@ -196,8 +196,8 @@ var updateFileBrowserData = function(dirList) {
             // Considering Unix HiddenEntries (. in the beginning of the filename)
             if (TSCORE.Config.getShowUnixHiddenEntries() || 
                (!TSCORE.Config.getShowUnixHiddenEntries() && (dirList[i].name.indexOf(".") != 0))) {
-                 filename = dirList[i].name.replace(/(<([^>]+)>)/ig,""); // sanitizing filename
-                 path = dirList[i].path.replace(/(<([^>]+)>)/ig,""); // sanitizing filepath
+                 filename = $("<html>").text(dirList[i].name).html();
+                 path = $("<html>").text(dirList[i].path).html();
                  tags = TSCORE.TagUtils.extractTags(path);
                  title = TSCORE.TagUtils.extractTitle(path);
 				 ext = TSCORE.TagUtils.extractFileExtension(path);
