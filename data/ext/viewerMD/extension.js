@@ -38,6 +38,13 @@ define(function(require, exports, module) {
 	};
 	
 	exports.setContent = function(content) {
+        var UTF8_BOM = "\ufeff";
+
+       // removing the UTF8 bom because it brakes thing like #header1 in the beginning of the document
+       if(content.indexOf(UTF8_BOM) == 0) {
+           content = content.substring(1,content.length); 
+       }
+          	    
 	   var cleanedContent = content.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,""); 
        $('#'+containerElID).append($("<div>", {
                 class: "viewerMDContainer", 
