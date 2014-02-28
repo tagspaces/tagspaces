@@ -739,6 +739,9 @@ input a.resetFilter {
     background: url(welcome-logo.png) no-repeat center;
 }
 
+#showTagGroups, #showLocations {
+    width: 52px;   
+}
 
 @media 
 (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) { 
