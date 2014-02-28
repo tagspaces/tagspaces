@@ -4,8 +4,6 @@
 
 const prefs = require('sdk/preferences/service'); // preferences-service
   
- // var prefs = require('options');
-   
 const PREF_PREFIX = 'extensions.tagspaces.';
 
 function save(field, value) {
@@ -18,7 +16,6 @@ function get(field) {
     var value = prefs.get(PREF_PREFIX + field);
     return value;
 }	
-
 
 exports.loadSettings = function loadSettings(worker) {
     console.log("Loading setting...");
@@ -38,7 +35,7 @@ exports.loadSettings = function loadSettings(worker) {
             });
         console.error("Loading settings failed "+ex);
     }   
-}
+};
 
 exports.saveSettings = function saveSettings(content, worker) {
     console.log("Saving setting...");
@@ -56,4 +53,4 @@ exports.saveSettings = function saveSettings(content, worker) {
             });
         console.error("Saving settings failed "+ex);
     }   
-}
+};
