@@ -64,7 +64,7 @@ var initPerspectives = function () {
                     // Opening last saved location by the start of the application
                     var lastLocation = TSCORE.Config.getLastOpenedLocation();
                     if(lastLocation != undefined && lastLocation.length > 1) {
-                       TSCORE.openLocation(lastLocation);
+                       // TSCORE.openLocation(lastLocation);
                     }                       
                 }
             }            
@@ -124,7 +124,7 @@ var redrawCurrentPerspective = function () {
                 perspectives[i].load();
                 break;
             } catch(e) {
-                console.log("Error while executing 'redrawCurrentPerspective' on "+perspectives[i].ID+" "+e);
+                console.error("Error while executing 'redrawCurrentPerspective' on "+perspectives[i].ID+" "+e);
             }
         }
     }
@@ -136,7 +136,7 @@ var removeFileUI = function (filePath) {
         try {           
             perspectives[i].removeFileUI(filePath);
         } catch(e) {
-            console.log("Error while executing 'removeFileUI' on "+perspectives[i].ID+" "+e);
+            console.error("Error while executing 'removeFileUI' on "+perspectives[i].ID+" "+e);
         }
     }
 };
@@ -147,7 +147,7 @@ var updateFileUI = function (oldFilePath,newFilePath) {
         try {           
             perspectives[i].updateFileUI(oldFilePath, newFilePath);
         } catch(e) {
-            console.log("Error while executing 'updateFileUI' on "+perspectives[i].ID+" "+e);
+            console.error("Error while executing 'updateFileUI' on "+perspectives[i].ID+" "+e);
         }
     }
 };
@@ -158,7 +158,7 @@ var getNextFile = function (filePath) {
 	 		try { 			
 	 			return perspectives[i].getNextFile(filePath);
 	 		} catch(e) {
-	 			console.log("Error while executing 'getNextFile' on "+perspectives[i].ID+" "+e);
+	 			console.error("Error while executing 'getNextFile' on "+perspectives[i].ID+" "+e);
 	 		}
  		}
 	}
@@ -170,7 +170,7 @@ var getPrevFile = function (filePath) {
 	 		try { 			
 	 			return perspectives[i].getPrevFile(filePath);
 	 		} catch(e) {
-	 			console.log("Error while executing 'getPrevFile' on "+perspectives[i].ID+" "+e);
+	 			console.error("Error while executing 'getPrevFile' on "+perspectives[i].ID+" "+e);
 	 		}
  		}
 	}
@@ -181,7 +181,7 @@ var updateTreeData = function (treeData) {
  		try { 			
  			perspectives[i].updateTreeData(treeData);
  		} catch(e) {
- 			console.log("Error while executing 'updateTreeData' on "+perspectives[i].ID+" "+e);
+ 			console.error("Error while executing 'updateTreeData' on "+perspectives[i].ID+" "+e);
  		}
 	}
 };
@@ -284,7 +284,7 @@ var clearSelectedFiles = function () {
  		try { 			
  			perspectives[i].clearSelectedFiles();
  		} catch(e) {
- 			console.log("Error while executing 'clearSelectedFiles' on "+perspectives[i].ID+" - "+e);
+ 			console.error("Error while executing 'clearSelectedFiles' on "+perspectives[i].ID+" - "+e);
  		} 		
 	}	
 };
