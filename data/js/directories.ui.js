@@ -34,6 +34,10 @@ define(function(require, exports, module) {
         // Handle open default perspective for a location
         var defaultPerspective = currentLocation.perspective;
         TSCORE.PerspectiveManager.changePerspective(defaultPerspective);
+        
+        // Saving the last opened location path in the settings
+        TSCORE.Config.setLastOpenedLocation(path);
+        TSCORE.Config.saveSettings();  
     }  
     
     // Updates the directory subtree
@@ -631,6 +635,7 @@ define(function(require, exports, module) {
         $( "#createNewLocation" ).click(function() {
             showLocationCreateDialog();         
         });
+
     }
 
     // Public API definition
