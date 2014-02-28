@@ -56,12 +56,15 @@
 .viewerMDContainer a{color:#4183c4;text-decoration:none;}
 .viewerMDContainer a:hover{text-decoration:underline;}
 .viewerMDContainer a code,a:link code,a:visited code{color:#4183c4;}
-.viewerMDContainer h2, .viewerMDContainer h3{margin:1em 0;}
+.viewerMDContainer h2,.viewerMDContainer h3{margin:1em 0;}
 .viewerMDContainer h1,.viewerMDContainer h2,.viewerMDContainer h3,.viewerMDContainer h4,.viewerMDContainer h5,.viewerMDContainer h6{border:0;}
 .viewerMDContainer h1{font-size:170%;border-top:4px solid #aaa;padding-top:.5em;margin-top:1.5em;}
 .viewerMDContainer h1:first-child{margin-top:0;padding-top:.25em;border-top:none;}
 .viewerMDContainer h2{font-size:150%;margin-top:1.5em;border-top:4px solid #e0e0e0;padding-top:.5em;}
-.viewerMDContainer h3{margin-top:1em;}
+.viewerMDContainer h3{font-size:130%;margin-top:1em;}
+.viewerMDContainer h4{font-size:120%;margin-top:1em;}
+.viewerMDContainer h5{font-size:115%;margin-top:1em;}
+.viewerMDContainer h6{font-size:110%;margin-top:1em;}
 .viewerMDContainer hr{border:1px solid #ddd;}
 .viewerMDContainer ul{margin:1em 0 1em 2em;}
 .viewerMDContainer ol{margin:1em 0 1em 2em;}
