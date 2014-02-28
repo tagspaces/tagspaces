@@ -264,6 +264,7 @@ define(function(require, exports, module) {
 	}, false);	
 
     //$( window ).on('resize', onWindowResize);
+
 	
     function onWindowResize() {
         console.log("Window was resized to  W:"+window.innerWidth+" H:"+window.innerHeight);
@@ -545,6 +546,7 @@ define(function(require, exports, module) {
     exports.generateTagGroups           = tsTagsUI.generateTagGroups;  
 
 	// Proxying functions from directoriesUI 
+    exports.openLocation                = tsDirectoriesUI.openLocation;
 	exports.updateSubDirs 				= tsDirectoriesUI.updateSubDirs;
 	exports.initLocations 			    = tsDirectoriesUI.initLocations;
 	exports.showCreateDirectoryDialog   = tsDirectoriesUI.showCreateDirectoryDialog;
