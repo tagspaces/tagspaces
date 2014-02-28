@@ -506,7 +506,24 @@ define(function(require, exports, module) {
         }
         if(isNode) {
             $("#fullscreenFile").hide(); 
-            $("#openFileInNewWindow").hide();              
+            $("#openFileInNewWindow").hide();         
+            
+            // handling window maximization
+            var nwwin = gui.Window.get();        
+            nwwin.on('maximize', function() {
+              //console.log('NW Window maximized');
+              TSCORE.Config.setIsWindowMaximized(true);
+              TSCORE.Config.saveSettings();                    
+            });        
+            nwwin.on('unmaximize', function() {
+              //console.log('NW Window unmaximize');
+              TSCORE.Config.setIsWindowMaximized(false);
+              TSCORE.Config.saveSettings();      
+            }); 
+
+            if(TSCORE.Config.getIsWindowMaximized()){
+                nwwin.maximize();
+            }               
         }
         if(isOSX) {
             $("body").addClass("osx");                   

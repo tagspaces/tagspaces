@@ -28,8 +28,6 @@ try {
     var pathUtils = require('path');   
     var gui = require('nw.gui');
     isNode = true;
-    // Starting tagspace maximized
-    gui.Window.get().maximize();    
 } catch(e) {
     isNode = false;
     console.log("node-webkit not found!");

@@ -337,6 +337,28 @@ define(function(require, exports, module) {
         exports.Settings["extensionsPath"] = value;
     };
     
+    var getIsWindowMaximized = function() {
+        if(exports.Settings["isWindowMaximized"] == null) {
+            exports.Settings["isWindowMaximized"] = exports.DefaultSettings["isWindowMaximized"];
+        }
+        return exports.Settings["isWindowMaximized"];
+    };
+
+    var setIsWindowMaximized = function(value) {
+        exports.Settings["isWindowMaximized"] = value;
+    };    
+    
+    var getLastOpenedLocation = function() {
+        if(exports.Settings["lastOpenedLocation"] == null) {
+            exports.Settings["lastOpenedLocation"] = exports.DefaultSettings["lastOpenedLocation"];
+        }
+        return exports.Settings["lastOpenedLocation"];
+    };
+
+    var setLastOpenedLocation = function(value) {
+        exports.Settings["lastOpenedLocation"] = value;
+    };        
+    
     var getShowUnixHiddenEntries = function() {
         if(exports.Settings["showUnixHiddenEntries"] == null) {
             exports.Settings["showUnixHiddenEntries"] = exports.DefaultSettings["showUnixHiddenEntries"];
@@ -771,6 +793,10 @@ define(function(require, exports, module) {
     exports.setTagDelimiter                         = setTagDelimiter;
     exports.getCalculateTags                        = getCalculateTags;
     exports.setCalculateTags                        = setCalculateTags;
+    exports.getIsWindowMaximized                    = getIsWindowMaximized;
+    exports.setIsWindowMaximized                    = setIsWindowMaximized;
+    exports.getLastOpenedLocation                   = getLastOpenedLocation;
+    exports.setLastOpenedLocation                   = setLastOpenedLocation; 
 
     exports.getPerspectiveExtensions                = getPerspectiveExtensions;
     exports.getActivatedPerspectiveExtensions       = getActivatedPerspectiveExtensions;
