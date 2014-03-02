@@ -1,6 +1,58 @@
-#Changelog
+﻿#Changelog
+
+##Version 1.7.6 / 2014.02.28
+
+- remeber and open the last state of the application window e.g. maximize or not [#29](https://github.com/uggrock/tagspaces/issues/29)
+- adding openLocation to the TSCORE API
+- making the directory to taglibrary switch buttons brighter
+- adding functionality to force closing of opened files for editing
+- fixing handling of html files without body
+- fixing saving utf8 content in cordova
+- refresh file list if the saved file is new
+- including webdavlib from sara.nl
+- adding webdav api
+- improved error handling  in node-webkit
+- improved saving ot UTF8 files
+- update to summernote version 0.5.0 with some custom changes
+- changed the default height of the html editor
+- changed the max width of the column in perspective list
+- polishing viewerMD
+- fixing margin issue in the alternative directory navigation
+- quoting the filename in the delete file dialog
+- setting the default editor for xhtml files to editorText as proposed in [#31](https://github.com/uggrock/tagspaces/issues/31)
+- making viererBrowser secure in node-webkit
+- making viewerPDF secure
+- fixing security issue with the alert and the confirm dialogs
+- increasing the size of the new version available icon
+- disabling node functionality in the odf viewer
+- updating to bootstrap 3.1.1
+- hiding open in new window menu entry in node-webkit for security reasons
+- addign general catcher node-webkit errors
+- correcting drag & drop
+- correcting welcome logo
+- fixing issue with empty titles
+- adding sorting by filename
+- handling the case .txt by extacting of the filename without extension
+- issue with drag and drop by folders solved
+- displaying the number of files found improved
+- correcting the opening of the containing folder in the file viewer
+- correcting opening of the containing folder functionality in node-webkit
+- setting the min lenght of the tags to 2 chars
+- setting space and comma as tags separators for the select2 lib
+- adding hint in the file create dialog for the format of the tags
+- making the tags from select2 lib to look like tagspaces tags
+- partly fixing #25 by removing script tags from the content, by sanitizing the file paths, by removing script tags from the md content
+- fixing [#23](https://github.com/uggrock/tagspaces/issues/23) css in markdown
+- fixing [#26](https://github.com/uggrock/tagspaces/issues/26)
+- fixing [#27](https://github.com/uggrock/tagspaces/issues/27) - utf8 support in md files and not rendering of #header in the beginning of the file, font sizes in headers h1,h2 ...
+- fixing [#30](https://github.com/uggrock/tagspaces/issues/30)
+- fixing [#31](https://github.com/uggrock/tagspaces/issues/31)
+- fixing [#32](https://github.com/uggrock/tagspaces/issues/32)
+- fixing [#33](https://github.com/uggrock/tagspaces/issues/33)
+
 
 ##TagSpaces 1.7.4 / 2014.02.17
+
 - adding hints for the format of the tags in the dialogs
 - clearing current filter on location change
 - adding hover for the file title editor
@@ -10,6 +62,7 @@
 - migration to node-webkit 0.9.1
 
 ##TagSpaces 1.7.3 / 2014.02.05
+
 - Creating native client for Windows
 - Creating native client for Linux 64
 - Creating native client for Mac OS
@@ -87,6 +140,7 @@
 - [android] Recursive folder scanning now implemented in cordova
 
 ##TagSpaces 1.6.1528 / 2013.09.18
+
 - Redesigning the new version notification dialog
 - Hiding loading splashscreen after the layout initialization
 - Font size of alert dialogs changed
@@ -122,6 +176,7 @@
 - [Win32] Added win32 builder in the build.xml
 
 ##TagSpaces 1.5.1448 / 2013.08.11
+
 - Numerous UI Improvements
 - Added a new viewer for image files
 - Added a basic functionality for changing the colors of tags
@@ -147,11 +202,13 @@
 - [Firefox OSX] The firefox extension is currently not supporting OSX due a issue in the mozilla's XPCOM api preventing renaming of files. See [#11](https://github.com/uggrock/tagspaces/issues/11) for more details.   
 
 ##TagSpaces 1.4.1384 / 2013.06.16
+
 - A bug fixed causing reloading of the addon in a bootstrap modal
 - TagSpaces is not started anymore in firefox as pinned tab, due the possibility to have multiple instances of the addon simultaniously
 - [Firefox] Startup/reloading issues in firefox resolved
 
 ##TagSpaces 1.4.1363 / 2013.06.04
+
 - De/Selecting files functionality
 - Added functionality for configuration of filetypes and perspectives
 - Added options dialog with ability to change options like showing hidden files or checkign for new version
@@ -185,6 +242,7 @@
 - [Firefox] bugfix for listing directories with wrond enconding
 
 ##TagSpaces 1.3.1284 / 2013.03.29
+
 - Added GTD as a default taggroup
 - New welcome hint shown if new favorite directories exist.
 - Add support for dropping of tags over the search entries
@@ -200,6 +258,7 @@
 - Information shown in the browser title improved
  
 ##TagSpaces 1.3.1235 / 2013.02.16
+
 - File tagging now possible with drag & drop
 - Search results visualization redesigned
 - Resets the search filter by view change
@@ -213,6 +272,7 @@
 - [Firefox] Adding creatingDirectoryTree to the mozilla io API
 
 ##TagSpaces 1.2.1200 / 2013.01.11
+
 - Dynatree library removed from the project
 - About.html updated
 - Property for persisting of the extensionPath added to the default settings
@@ -242,6 +302,7 @@
 - [Chrome] Fixed bug preventing saving of text files in chrome
 
 ##TagSpaces 1.1.1181 / 2012.12.23
+
 - Optimizations in the loading mechanism
 - jquery layout version exchanged
 - [Fireofox] Exporting undate.rdf to the release folder of tagspaces.org repository
