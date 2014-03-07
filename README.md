@@ -27,9 +27,9 @@ To get updates you can:
     ./data/templates.....contains HTML templates needed for the UI
 
 ## Downloads 
-[v1.7.4 release](https://github.com/uggrock/tagspaces/releases/tag/v1.7.4) - released on 2014.02.17
+You can find the latest release of TagSpace in the [Releases Section](https://github.com/uggrock/tagspaces/releases/)
 
-[Changelog](CHANGELOG.md)
+The full changelog is available here: [Changelog](CHANGELOG.md)
 
 ## Features
 
