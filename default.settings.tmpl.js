@@ -24,8 +24,8 @@ exports.defaultSettings = {
     "isWindowMaximized": false,
     "lastOpenedLocation": "",
     "ootbPerspectives": [@@DEFAULTPERSPECTIVES],
-    "ootbViewers": [ "viewerBrowser", "viewerMD", "viewerImage", "viewerPDF", "editorText", "viewerText" ],
-    "ootbEditors": [ "editorHTML", "editorText" ],        
+    "ootbViewers": [ "viewerBrowser", "viewerMD", "viewerImage", "viewerPDF", "editorText", "viewerText", "editorODF"  ],
+    "ootbEditors": [ "editorHTML", "editorText", "editorODF" ],        
     "perspectives": [
         { "id": "perspectiveList" }, // ID should be equal to the directory name where the extension is located 
         { "id": "perspectiveGrid" }// ID should be equal to the directory name where the extension is located	        
@@ -41,7 +41,11 @@ exports.defaultSettings = {
         { "type": "htm", 	"viewer": "viewerBrowser",   "editor": "editorHTML" },                        
         { "type": "xhtml", 	"viewer": "viewerBrowser",   "editor": "editorText" },                        
         { "type": "mht", 	"viewer": "viewerBrowser",   "editor": "false" },                        
-        { "type": "mhtml", 	"viewer": "viewerBrowser",   "editor": "false" },                                
+        { "type": "mhtml", 	"viewer": "viewerBrowser",   "editor": "false" },
+        { "type": "odt",    "viewer": "editorODF",       "editor": "false" },                                             
+        { "type": "ods",    "viewer": "editorODF",       "editor": "false" },          
+        { "type": "odp",    "viewer": "editorODF",       "editor": "false" },          
+        { "type": "odg",    "viewer": "editorODF",       "editor": "false" },                          
         { "type": "txt", 	"viewer": "viewerBrowser",   "editor": "editorText" },
         { "type": "xml", 	"viewer": "editorText",      "editor": "editorText" },
         { "type": "js", 	"viewer": "editorText",      "editor": "editorText" },

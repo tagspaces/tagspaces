@@ -221,6 +221,14 @@ define(function(require, exports, module) {
                 setTagDelimiter(" ");
                 setCalculateTags(false);     
             }
+
+            if(oldBuildNumber <= 201403070000) { 
+                addFileType({ "type": "odt",    "viewer": "editorODF", "editor": "false" });                 
+                addFileType({ "type": "ods",    "viewer": "editorODF", "editor": "false" }); 
+                addFileType({ "type": "odp",    "viewer": "editorODF", "editor": "false" }); 
+                addFileType({ "type": "odg",    "viewer": "editorODF", "editor": "false" });                 
+            }            
+            
             saveSettings();         
         }
 
