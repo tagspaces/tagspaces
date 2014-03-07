@@ -14,6 +14,7 @@ if (PRODUCTION == "true") {
 }
 
 var isFirefox = document.URL.indexOf( 'resource://' ) == 0; 
+var isFirefoxOS = document.URL.indexOf( 'app://' ) == 0; 
 //var isSafari = Object.prototype.toString.call(window.HTMLElement).indexOf('Constructor') > 0;
 var isChrome =  document.URL.indexOf( 'chrome-extension://' ) == 0; 
 var isNode = undefined;
@@ -37,6 +38,8 @@ try {
 var IO_JS = undefined;
 if( isFirefox ) {
 	IO_JS = "mozilla/mozilla.api";
+} else if ( isFirefoxOS ) {
+    IO_JS = "mozilla/firefoxos.api";           
 } else if ( isChrome ) {
     IO_JS = "chrome/chrome.api";           
 } else if (isNode){

@@ -20,7 +20,7 @@
         "48": "/assets/icon48.png",
         "128": "/assets/icon128.png"
   },
-  "orientation": "portrait-primary"
+  "orientation": "portrait-primary",
   "type": "privileged",
   "permissions": {
     "device-storage:videos":  { "access": "readwrite" },
