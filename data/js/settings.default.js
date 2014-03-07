@@ -7,8 +7,8 @@ define(function(require, exports, module) {
 exports.defaultSettings = {
 	"appName": "TagSpaces",
 	"appVersion": "1.7",
-    "appBuild": "6",
-    "appBuildID": "201402281346",
+    "appBuild": "7",
+    "appBuildID": "201403071503",
 	"settingsVersion": 2,
 	"newTextFileContent": "Text file created with TagSpaces!",
     "newHTMLFileContent": "<html><head><title>Created with TagSpaces!</title></head><body>Feel free to change this text...</body></html>",	
