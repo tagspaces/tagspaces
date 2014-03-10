@@ -7,6 +7,8 @@
     "icon": "assets/icon128.png",
     "toolbar": false,
     "position": "center",
+    "min_width": 320,
+    "min_height": 300,    
     "width": 1280,
     "height": 768
   },
