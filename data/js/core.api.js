@@ -289,15 +289,20 @@ define(function(require, exports, module) {
                 shouldOpenCol1 = false; //Closing col1
                 layoutContainer.sizePane("east", fullWidth); // make col3 100%
             } else {
-                // by opened col1 panel make it 75%
                 if(!layoutContainer.state.west.isClosed) {
-                    layoutContainer.sizePane("west", Math.round(3*(window.innerWidth/4)));
+                    if(isPortret) {
+                        // by opened col1 panel make it 75%
+                        layoutContainer.sizePane("west", Math.round(3*(window.innerWidth/4)));     
+                    } else {
+                        layoutContainer.sizePane("west", col1DefaultWidth); 
+                    }                    
                 }
             }
         } else if(twoColumn) {
             //$("#closeLeftPanel").show();
             if(isPortret) {
                 if(shouldOpenCol3) {
+                    layoutContainer.close("west"); // workarround
                     shouldOpenCol1 = false; //Closing col1
                     layoutContainer.sizePane("east", fullWidth); // make col3 100%
                 } else {
