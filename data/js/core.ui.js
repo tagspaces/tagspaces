@@ -163,6 +163,10 @@ define(function(require, exports, module) {
 	    $( "#toggleLeftPanel" ).click(function() {
 			TSCORE.toggleLeftPanel();
 	    });   
+
+        $( "#closeLeftPanel" ).click(function() {
+            TSCORE.toggleLeftPanel();
+        }); 
 		
 	    $( "#txtFileTypeButton" ).click(function(e) {
             // Fixes reloading of the application by click
