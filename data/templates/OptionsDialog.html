@@ -25,7 +25,11 @@
                         <input type='checkbox' id='checkforUpdatesCheckbox' /> 
                         Check for new version on startup
                     </label>
-                </div>        
+                </div>   
+                <div class='form-group'>
+                    <label for='defaultSettingsButton' data-i18n="app.extensionsFolder">Restores Initial Settings</label><br>
+                    <button class="btn btn-danger" id="defaultSettingsButton" title="Restore Default Settings" aria-hidden="true">Reset Settings</button>                        
+                </div>                     
             </div>
     
             <div class="tab-pane" id="perspectives" style="height: 370px; padding-top: 10px; overflow-y: auto;">
@@ -78,7 +82,6 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-danger pull-left" id="defaultSettingsButton" title="Restore Default Settings" aria-hidden="true">Default Settings</button>                        
         <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Cancel</button>
         <button class="btn btn-primary" id="saveSettingsCloseButton">Save</button>
       </div>
