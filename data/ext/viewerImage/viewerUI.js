@@ -39,6 +39,11 @@ console.log("Loading UI for Image Viewer");
 		//console.log(uiTemplate(context));
      	this.containerElem.append(uiTemplate(context));
 
+        if(isCordova) {
+            $("#"+this.extensionID+"ZoomOut").hide();
+            $("#"+this.extensionID+"ZoomIn").hide();
+        }
+
     	$("#"+this.extensionID+"imgViewer")
         	.panzoom({
                 $zoomIn: $("#"+this.extensionID+"ZoomIn"),
