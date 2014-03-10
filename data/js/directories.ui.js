@@ -84,7 +84,7 @@ define(function(require, exports, module) {
             }
             
             subfolders = $("<ul>", {
-                   "style":      "overflow-y: auto; max-height: 500px; width: 250px; padding: 5px;",                
+                   "style":      "overflow-y: auto; max-height: 430px; width: 250px; padding: 5px;",                
                    "class":      "dropdown-menu"
             })
             .append($("<li>", { "text": 'Actions for '+directoryHistory[i].name, "class": 'dropdown-header' })
