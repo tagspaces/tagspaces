@@ -352,11 +352,23 @@ li hr {
 #toggleLeftPanel {
 	border: 0px; 
 	display: block; 
-	padding-left: 6px; 
-	padding-right: 6px; 
-	padding-top: 8px; 
-	margin: 2px;
+	padding-left: 5px; 
+	padding-right: 5px; 
+	padding-top: 10px; 
+	margin: 0px;
 }
+
+#toggleLeftPanel .icon-bar {
+    height: 3px;
+}
+#toggleLeftPanel:focus {
+    background-color: transparent !important;
+}
+
+#toggleLeftPanel:hover {
+    background-color: transparent !important;
+}
+
 
 #tagsContainer {
 	width: 100%;
@@ -734,8 +746,8 @@ input a.resetFilter {
 }
 
 #welcomeScreen {
-    width: 100%; 
-    height: 100%;
+    max-width: 100%; 
+    max-height: 100%;
     background: url(welcome-logo.png) no-repeat center;
 }
 
