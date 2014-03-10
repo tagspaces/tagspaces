@@ -16,14 +16,8 @@ define(function(require, exports, module) {
     var tsDirectoriesUI = require("tsdirectoriesui");
     var tsCoreUI = require("tscoreui");
     var tsSearch = require("tssearch");
-	
-	var layoutContainer = undefined;  
-    var westLayout = undefined;
-    var centerLayout = undefined;
-    var eastLayout = undefined;
-
+    
 	var currentPath = undefined;
-	
 	var currentView = undefined;
 	
 	// Current selected files
@@ -93,7 +87,16 @@ define(function(require, exports, module) {
 	    }); 
 	    
         checkForNewVersion();
-	}
+	}	
+    
+    function switchIOAPI(type) {
+        if(type=="dropbox") {
+            tsIOApiDropbox.init();
+            exports.IO = tsIOApiDropbox;        
+        } else {
+            exports.IO = tsIOApi;
+        }
+    }   	
 
     function initI18N() {
 		$.i18n.init({
@@ -173,7 +176,6 @@ define(function(require, exports, module) {
 	function updateLogger(message) {
 		// TODO reactivate
 	    console.log("Updating logger...");
-	//    $("#footer").attr("value",message);
 	}
 	
 	function showLoadingAnimation(message) {
@@ -253,152 +255,156 @@ define(function(require, exports, module) {
             return rows;        
     }
 
-/* UI and Layout functionalities */
+    // UI and Layout functionalities
 
-	function reloadUI() {
-	    location.reload();
-	}
-	
-	window.addEventListener("orientationchange", function() {
-		console.log("Current orientation: "+window.orientation);
-	}, false);	
+    // Layout vars
+    var layoutContainer = undefined; 
+    var col1Layout = undefined;
+    var col2Layout = undefined; 
 
-    //$( window ).on('resize', onWindowResize);
+    var row1Height = 40; // px
+    var row3Height = 45; // px  
+    
+    var isFullWidth = false; 
+    var shouldOpenCol1 = true;
+    var shouldOpenCol3 = false;    
+    var col1DefaultWidth = 250;
+    
+    // End Layout Vars
+   
+    function reLayout() {
+        //console.log("Window w: "+window.innerWidth+" h: "+window.innerHeight+" orient: "+window.orientation+" dpi: "+window.devicePixelRatio);
+        var fullWidth = window.innerWidth;
+        var halfWidth =  Math.round(window.innerWidth/2);
+        var isPortret = fullWidth < window.innerHeight; 
+        var oneColumn = fullWidth < 660;
+        var twoColumn = (fullWidth >= 660 && fullWidth < 1024);
 
-	
-    function onWindowResize() {
-        console.log("Window was resized to  W:"+window.innerWidth+" H:"+window.innerHeight);
-        // TODO consider if file opened
-        /*if(
-               (window.innerWidth < window.innerHeight) // portret orientation 
-               || (window.innerWidth < 1122) // window width smaller than than a minumum
-           ) {
-            layoutContainer.close("west");
-            layoutContainer.sizePane("east", fullWidth);
-            //layoutContainer.open("east");
-            $('#toggleFullWidthButton').hide();                 
-        } else {
-            layoutContainer.sizePane("east", halfWidth);
-            //layoutContainer.open("east");           
-        }*/                               
+        $("#toggleFullWidthButton").hide();
+
+        if(oneColumn) {
+            $("#closeLeftPanel").show();
+            if(shouldOpenCol3) {
+                layoutContainer.close("west"); // workarround
+                shouldOpenCol1 = false; //Closing col1
+                layoutContainer.sizePane("east", fullWidth); // make col3 100%
+            } else {
+                // by opened col1 panel make it 75%
+                if(!layoutContainer.state.west.isClosed) {
+                    layoutContainer.sizePane("west", Math.round(3*(window.innerWidth/4)));
+                }
+            }
+        } else if(twoColumn) {
+            //$("#closeLeftPanel").show();
+            if(isPortret) {
+                if(shouldOpenCol3) {
+                    shouldOpenCol1 = false; //Closing col1
+                    layoutContainer.sizePane("east", fullWidth); // make col3 100%
+                } else {
+                    // by opened col1 panel make it 250
+                    if(!layoutContainer.state.west.isClosed) {
+                        layoutContainer.sizePane("west", col1DefaultWidth);
+                    }
+                }
+            } else {            
+                if(shouldOpenCol3) {
+                    shouldOpenCol1 = false; //Closing col1
+                    layoutContainer.sizePane("east", halfWidth); // make col3 100%
+                } else {
+                    // by opened col1 panel make it 250
+                    if(!layoutContainer.state.west.isClosed) {
+                        layoutContainer.sizePane("west", col1DefaultWidth);
+                    }
+                }
+            }
+        } else { // Regular case
+            $("#closeLeftPanel").hide();
+            if(isPortret) {
+                if(shouldOpenCol3) {
+                    layoutContainer.close("west"); // workarround
+                    shouldOpenCol1 = false; //Closing col1
+                    layoutContainer.sizePane("east", fullWidth); // make col3 100%
+                } else {
+                    // by opened col1 panel make it 50%
+                    if(!layoutContainer.state.west.isClosed) {
+                        layoutContainer.sizePane("west", col1DefaultWidth);
+                    }
+                }
+            } else {
+                $("#toggleFullWidthButton").show();
+                if(isFullWidth) {
+                    // TODO hide tags
+                    $("#viewerContainer").css("top","34px");
+                    layoutContainer.close("west"); // workarround
+                    shouldOpenCol1 = false;        
+                    layoutContainer.sizePane("east", fullWidth);
+                } else {
+                    $("#viewerContainer").css("top","81px");
+                    layoutContainer.sizePane("west", col1DefaultWidth);
+                    layoutContainer.sizePane("east", halfWidth);                                                            
+                }
+            }
+        } 
+        
+        // Handle opening col1        
+        shouldOpenCol1?layoutContainer.open("west"):layoutContainer.close("west");
+
+        // Handle opening col3
+        shouldOpenCol3?layoutContainer.open("east"):layoutContainer.close("east");
     }	
-	
+
 	function openFileViewer() {
 		tsCoreUI.hideAllDropDownMenus();
-		if(isFullWidth) {
-		    return;
-		}
-        var fullWidth = window.innerWidth;
-        var halfWidth = Math.round(fullWidth/2);
-    	if(
-    	       (window.innerWidth < window.innerHeight) // portret orientation 
-    	       || (window.innerWidth < 1122) // window width smaller than than a minumum
-    	   ) {
-        	layoutContainer.close("west");
-            layoutContainer.sizePane("east", fullWidth);
-            layoutContainer.open("east");
-            $('#toggleFullWidthButton').hide();            		
-    	} else {
-        	layoutContainer.sizePane("east", halfWidth);
-    		layoutContainer.open("east");     		
-    	}
+		shouldOpenCol3 = true;
+        reLayout(); 
 	}
 	
 	function closeFileViewer() {
-        $('#toggleFullWidthButton').show();
-		var fullWidth = window.innerWidth;
-        var halfWidth = Math.round(fullWidth/2);
-    	// In portret mode
-    	if(window.innerWidth < window.innerHeight) {
-        	layoutContainer.close("east");
-			if(isLeftPanelOpen) {
-        		layoutContainer.open("west");				
-			}
-    	} else {
-	    	layoutContainer.close("east");    
-    	}
-    	isFullWidth = false; 
+        shouldOpenCol3 = false;
+    	isFullWidth = false;
+        reLayout();    	 
 	}	
 
-    var isFullWidth = false; 
-
     function toggleFullWidth() {
-    	// TODO hide tags
-        var fullWidth = window.innerWidth;
-        var halfWidth = Math.round(fullWidth/2);
-        if(isFullWidth) {
-            layoutContainer.sizePane("east", halfWidth);
-            layoutContainer.open("east");               
-			if(isLeftPanelOpen) {
-        		layoutContainer.open("west");				
-			}
-        } else {
-        	layoutContainer.close("west");
-            layoutContainer.sizePane("east", fullWidth);
-            layoutContainer.open("east");
-        }
         isFullWidth = !isFullWidth;
+        reLayout();        
     }
 
-    var isPerspectiveFooterOpen = false; 
-
-    function togglePerspectiveFooter() {
-/*        var fullHeight = window.innerHeight;
-        var halfHeight = Math.round(fullHeight/2);
-        if(isPerspectiveFooterOpen) {
-            centerLayout.sizePane("south", .03);
-            centerLayout.open("south"); 
-        } else {
-            centerLayout.sizePane("south", halfHeight);
-            centerLayout.open("south");               
-        }
-        isPerspectiveFooterOpen = !isPerspectiveFooterOpen; */
-    }
-
-	var fileDetailsFull = false; 
-	
-	function toggleFileDetails() {
-/*	    if(fileDetailsFull) {
-		    fileDetailsFull = false;
-		    eastLayout.sizePane("north", 70);	    		    	
-	    } else {
-		    fileDetailsFull = true;
-		    eastLayout.sizePane("north", 140);	    	
-	    }*/
-	}
-	
-	var isLeftPanelOpen = true;
-	
 	function toggleLeftPanel() {
 	    layoutContainer.toggle("west");
-	    isLeftPanelOpen = !isLeftPanelOpen;	   
+	    shouldOpenCol1 = !shouldOpenCol1;	   
 	}
+
+    function reloadUI() {
+        location.reload();
+    }
+    
+    window.addEventListener("orientationchange", reLayout);  
+
+    $( window ).on('resize', reLayout);
 	
 	function initLayout (){
-	    console.log("Initializing Layout...");
-	
-		var row1Height = 40; // px
-		var row3Height = 45; // px	
-	
+        console.log("Initializing Layout...");
+
 		layoutContainer = $('body').layout({ 
 			name:			'outerLayout' // for debugging & auto-adding buttons (see below)
-	    ,   fxName:         "slide" // none, slide
-   	    ,   fxSpeed:        "normal"
+	    ,   fxName:         "none" // none, slide
+   	    //,   fxSpeed:        "normal"
 		,	autoResize:		true	// try to maintain pane-percentages
 		,	autoReopen:		true	// auto-open panes that were previously auto-closed due to 'no room'
+        ,   minSize:        1
 		,	autoBindCustomButtons:	true
 		,	west__paneSelector: 	'.col1' 
 		,	center__paneSelector: 	'.col2' 
 		,	east__paneSelector: 	'.col3' 
-		,	west__size: 		250		// percentage size expresses as a decimal
+		,	west__size: 		col1DefaultWidth	
+		,   west__minWidth:     col1DefaultWidth
 		,	east__size: 		0.5
 		,   west__spacing_open:         1 	
 		,   east__spacing_open:         1
-		,	center_minWidth:				200
-		,	center_minHeight:				200
+		,	center_minWidth:			1
+		,	center_minHeight:			200
 	    ,   spacing_closed:		0	
-		,	minSize:		100
-		,	west__minWidth:		250 
 		,	noRoomToOpenAction:	"hide" // 'close' or 'hide' when no room to open a pane at minSize
 	//	,   west__showOverflowOnHover:	true
 	//	,   center__showOverflowOnHover:	true
@@ -406,9 +412,10 @@ define(function(require, exports, module) {
 		,   enableCursorHotkey:         false
 		});
 		
+		// Initially close the right panel
 		layoutContainer.close("east");
 	
-		var col1Layout = layoutContainer.panes.west.layout({ 
+		col1Layout = layoutContainer.panes.west.layout({ 
 			name:			'col1Layout' // for debugging & auto-adding buttons (see below)
 	//	,	north__paneSelector: 	'.row1'
 		,	center__paneSelector: 	'.row2'
@@ -421,18 +428,17 @@ define(function(require, exports, module) {
 		,	closable:		false
 		,	togglerLength_open:	0	// hide toggler-buttons
 		,	spacing_closed:		0	// hide resizer/slider bar when closed
-		,	autoReopen:		true	// auto-open panes that were previously auto-closed due to 'no room'
+		//,	autoReopen:		true	// auto-open panes that were previously auto-closed due to 'no room'
 		,	autoBindCustomButtons:	true
-		,	minSize:		25
+		,	minSize:		1
 		,	center__minHeight:	25
 	//	,   north__showOverflowOnHover:	true
 	//	,   center__showOverflowOnHover:	true
 	//	,   south__showOverflowOnHover:	true		
 		,   enableCursorHotkey:         false
-		}); 
+		}); 	
 	
-	
-		var col2Layout = layoutContainer.panes.center.layout({ 
+	    col2Layout = layoutContainer.panes.center.layout({ 
 			name:			'col2Layout' // for debugging & auto-adding buttons (see below)
 	//	,	north__paneSelector: 	'.row1'
 		,	center__paneSelector: 	'.row2'
@@ -447,7 +453,7 @@ define(function(require, exports, module) {
 		,	spacing_closed:		0	// hide resizer/slider bar when closed
 		,	autoReopen:		true	// auto-open panes that were previously auto-closed due to 'no room'
 		,	autoBindCustomButtons:	true
-		,	minSize:		25
+		,	minSize:		1
 		,	center__minHeight:	25
 		,   north__showOverflowOnHover:	true
 	//	,   center__showOverflowOnHover:	true
@@ -478,16 +484,10 @@ define(function(require, exports, module) {
 	//	,   south__showOverflowOnHover:	true		
 		,   enableCursorHotkey:         false
 		}); */
+		
+		reLayout();
 	}
-	
-	function switchIOAPI(type) {
-		if(type=="dropbox") {
-			tsIOApiDropbox.init();
-			exports.IO = tsIOApiDropbox;		
-		} else {
-			exports.IO = tsIOApi;
-		}
-	}	
+
 	
 	// Proxying applications parts
 	exports.Config = tsSettings;
@@ -507,9 +507,7 @@ define(function(require, exports, module) {
 	exports.openFileViewer 				= openFileViewer;
 	exports.closeFileViewer 			= closeFileViewer;
 	exports.toggleLeftPanel 			= toggleLeftPanel;
-	exports.toggleFileDetails 			= toggleFileDetails;
 	exports.toggleFullWidth             = toggleFullWidth;
-	exports.togglePerspectiveFooter     = togglePerspectiveFooter;
 	exports.updateNewVersionData        = updateNewVersionData;
 	exports.exportFileListCSV           = exportFileListCSV;
 	exports.exportFileListArray         = exportFileListArray;
