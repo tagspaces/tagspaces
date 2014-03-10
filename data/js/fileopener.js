@@ -63,11 +63,6 @@ define(function(require, exports, module) {
                 TSCORE.FileOpener.openFile(_openedFilePath);                     
             });
 
-        $( "#showFullDetails" )
-            .click(function() {
-                TSCORE.toggleFileDetails();
-            });        
-
         $( "#openFileInNewWindow" )
             .click(function() {
                 window.open("file:///"+_openedFilePath);
@@ -77,6 +72,18 @@ define(function(require, exports, module) {
             .click(function() {
                 $('iframe').get(0).contentWindow.print();
             });   
+
+        $( "#tagFile" )
+            .click( function() {
+                TSCORE.PerspectiveManager.clearSelectedFiles();
+                TSCORE.selectedFiles.push(_openedFilePath);                     
+                TSCORE.showAddTagsDialog();
+            });  
+
+        $( "#suggestTagsFile" )
+            .click( function() {
+                $("tagSuggestionsMenu").dropdown('toggle');
+            });       
         
         $( "#renameFile" )
             .click( function() {
