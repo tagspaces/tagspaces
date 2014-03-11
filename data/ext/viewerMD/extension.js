@@ -16,12 +16,14 @@ define(function(require, exports, module) {
 	
 	var md2htmlConverter = undefined;
 	var containerElID = undefined;
+	var currentFilePath = undefined;
 	
 	var extensionDirectory = TSCORE.Config.getExtensionPath()+"/"+exports.id;
 	
 	exports.init = function(filePath, containerElementID) {
 	    console.log("Initalization MD Viewer...");
 	    containerElID = containerElementID;
+		currentFilePath = filePath;
 		require(['css!'+extensionDirectory+'/viewerMD.css']);
 		require([extensionDirectory+'/showdown/showdown.js'], function() {
 			md2htmlConverter = new Showdown.converter();
@@ -51,6 +53,17 @@ define(function(require, exports, module) {
             })
             .append(md2htmlConverter.makeHtml(cleanedContent))
             );
+       
+       var fileDirectory = TSCORE.TagUtils.extractContainingDirectoryPath(currentFilePath);
+            
+       $('#'+containerElID+" img[src]").each(function(){
+           var currentSrc = $( this ).attr("src");
+           if(currentSrc.indexOf("http://") == 0 || currentSrc.indexOf("https://") == 0) {
+               // do nothing if src begins with http(s)://
+           } else {
+               $( this ).attr("src","file://"+fileDirectory+TSCORE.dirSeparator+currentSrc);
+           }
+       }); 
 	};
 	
 	exports.getContent = function() {
