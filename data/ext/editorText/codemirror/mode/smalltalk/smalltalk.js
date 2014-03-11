@@ -36,8 +36,15 @@ CodeMirror.defineMode('smalltalk', function(config) {
       token = nextString(stream, new Context(nextString, context));
 
     } else if (aChar === '#') {
-      stream.eatWhile(/[^ .\[\]()]/);
-      token.name = 'string-2';
+      if (stream.peek() === '\'') {
+        stream.next();
+        token = nextSymbol(stream, new Context(nextSymbol, context));
+      } else {
+        if (stream.eatWhile(/[^ .{}\[\]()]/))
+          token.name = 'string-2';
+        else
+          token.name = 'meta';
+      }
 
     } else if (aChar === '$') {
       if (stream.next() === '<') {
@@ -87,6 +94,11 @@ CodeMirror.defineMode('smalltalk', function(config) {
   var nextString = function(stream, context) {
     stream.eatWhile(/[^']/);
     return new Token('string', stream.eat('\'') ? context.parent : context, false);
+  };
+
+  var nextSymbol = function(stream, context) {
+    stream.eatWhile(/[^']/);
+    return new Token('string-2', stream.eat('\'') ? context.parent : context, false);
   };
 
   var nextTemporaries = function(stream, context) {

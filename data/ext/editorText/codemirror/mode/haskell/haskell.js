@@ -1,4 +1,4 @@
-CodeMirror.defineMode("haskell", function() {
+CodeMirror.defineMode("haskell", function(_config, modeConfig) {
 
   function switchState(source, setState, f) {
     setState(f);
@@ -8,7 +8,7 @@ CodeMirror.defineMode("haskell", function() {
   // These should all be Unicode extended, as per the Haskell 2010 report
   var smallRE = /[a-z_]/;
   var largeRE = /[A-Z]/;
-  var digitRE = /[0-9]/;
+  var digitRE = /\d/;
   var hexitRE = /[0-9A-Fa-f]/;
   var octitRE = /[0-7]/;
   var idRE = /[a-z_A-Z0-9']/;
@@ -76,9 +76,8 @@ CodeMirror.defineMode("haskell", function() {
       }
       source.eatWhile(digitRE);
       var t = "number";
-      if (source.eat('.')) {
+      if (source.match(/^\.\d+/)) {
         t = "number";
-        source.eatWhile(digitRE); // should require at least 1
       }
       if (source.eat(/[eE]/)) {
         t = "number";
@@ -87,6 +86,9 @@ CodeMirror.defineMode("haskell", function() {
       }
       return t;
     }
+
+    if (ch == "." && source.eat("."))
+      return "keyword";
 
     if (symbolRE.test(ch)) {
       if (ch == '-' && source.eat(/-/)) {
@@ -221,6 +223,10 @@ CodeMirror.defineMode("haskell", function() {
       "unwords", "unzip", "unzip3", "userError", "words", "writeFile", "zip",
       "zip3", "zipWith", "zipWith3");
 
+    var override = modeConfig.overrideKeywords;
+    if (override) for (var word in override) if (override.hasOwnProperty(word))
+      wkw[word] = override[word];
+
     return wkw;
   })();
 
@@ -233,7 +239,7 @@ CodeMirror.defineMode("haskell", function() {
     token: function(stream, state) {
       var t = state.f(stream, function(s) { state.f = s; });
       var w = stream.current();
-      return (w in wellKnownWords) ? wellKnownWords[w] : t;
+      return wellKnownWords.hasOwnProperty(w) ? wellKnownWords[w] : t;
     },
 
     blockCommentStart: "{-",

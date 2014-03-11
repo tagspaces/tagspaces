@@ -11,6 +11,7 @@ CodeMirror.defineMode("python", function(conf, parserConf) {
     var doubleDelimiters = parserConf.doubleDelimiters || new RegExp("^((\\+=)|(\\-=)|(\\*=)|(%=)|(/=)|(&=)|(\\|=)|(\\^=))");
     var tripleDelimiters = parserConf.tripleDelimiters || new RegExp("^((//=)|(>>=)|(<<=)|(\\*\\*=))");
     var identifiers = parserConf.identifiers|| new RegExp("^[_A-Za-z][_A-Za-z0-9]*");
+    var hangingIndent = parserConf.hangingIndent || parserConf.indentUnit;
 
     var wordOperators = wordRegexp(['and', 'or', 'not', 'is', 'in']);
     var commonkeywords = ['as', 'assert', 'break', 'class', 'continue',
@@ -36,6 +37,12 @@ CodeMirror.defineMode("python", function(conf, parserConf) {
     var py3 = {'builtins': ['ascii', 'bytes', 'exec', 'print'],
                'keywords': ['nonlocal', 'False', 'True', 'None']};
 
+    if(parserConf.extra_keywords != undefined){
+        commonkeywords = commonkeywords.concat(parserConf.extra_keywords);
+    }
+    if(parserConf.extra_builtins != undefined){
+        commonBuiltins = commonBuiltins.concat(parserConf.extra_builtins);
+    }
     if (!!parserConf.version && parseInt(parserConf.version, 10) === 3) {
         commonkeywords = commonkeywords.concat(py3.keywords);
         commonBuiltins = commonBuiltins.concat(py3.builtins);
@@ -144,7 +151,14 @@ CodeMirror.defineMode("python", function(conf, parserConf) {
             return 'builtin';
         }
 
+        if (stream.match(/^(self|cls)\b/)) {
+            return "variable-2";
+        }
+
         if (stream.match(identifiers)) {
+            if (state.lastToken == 'def' || state.lastToken == 'class') {
+                return 'def';
+            }
             return 'variable';
         }
 
@@ -202,6 +216,11 @@ CodeMirror.defineMode("python", function(conf, parserConf) {
                     break;
                 }
             }
+        } else if (stream.match(/\s*($|#)/, false)) {
+            // An open paren/bracket/brace with only space or comments after it
+            // on the line will indent the next line a fixed amount, to make it
+            // easier to put arguments, list items, etc. on their own lines.
+            indentUnit = stream.indentation() + hangingIndent;
         } else {
             indentUnit = stream.column() + stream.current().length;
         }
@@ -252,7 +271,7 @@ CodeMirror.defineMode("python", function(conf, parserConf) {
         // Handle '.' connected identifiers
         if (current === '.') {
             style = stream.match(identifiers, false) ? null : ERRORCLASS;
-            if (style === null && state.lastToken === 'meta') {
+            if (style === null && state.lastStyle === 'meta') {
                 // Apply 'meta' style to '.' connected identifiers when
                 // appropriate.
                 style = 'meta';
@@ -266,7 +285,7 @@ CodeMirror.defineMode("python", function(conf, parserConf) {
         }
 
         if ((style === 'variable' || style === 'builtin')
-            && state.lastToken === 'meta') {
+            && state.lastStyle === 'meta') {
             style = 'meta';
         }
 
@@ -307,6 +326,7 @@ CodeMirror.defineMode("python", function(conf, parserConf) {
             return {
               tokenize: tokenBase,
               scopes: [{offset:basecolumn || 0, type:'py'}],
+              lastStyle: null,
               lastToken: null,
               lambda: false,
               dedent: 0
@@ -316,12 +336,16 @@ CodeMirror.defineMode("python", function(conf, parserConf) {
         token: function(stream, state) {
             var style = tokenLexer(stream, state);
 
-            state.lastToken = style;
+            state.lastStyle = style;
 
-            if (stream.eol() && stream.lambda) {
-                state.lambda = false;
+            var current = stream.current();
+            if (current && style) {
+                state.lastToken = current;
             }
 
+            if (stream.eol() && state.lambda) {
+                state.lambda = false;
+            }
             return style;
         },
 
@@ -333,9 +357,22 @@ CodeMirror.defineMode("python", function(conf, parserConf) {
             return state.scopes[0].offset;
         },
 
-        lineComment: "#"
+        lineComment: "#",
+        fold: "indent"
     };
     return external;
 });
 
 CodeMirror.defineMIME("text/x-python", "python");
+
+(function() {
+  "use strict";
+  var words = function(str){return str.split(' ');};
+
+  CodeMirror.defineMIME("text/x-cython", {
+    name: "python",
+    extra_keywords: words("by cdef cimport cpdef ctypedef enum except"+
+                          "extern gil include nogil property public"+
+                          "readonly struct union DEF IF ELIF ELSE")
+  });
+})();
