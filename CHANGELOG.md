@@ -1,5 +1,13 @@
 ﻿#Changelog
 
+##Version 1.7.7 / 2014.03.10
+- improving and refactoring the layouting algorithm for a better responsible behaviour, especially on mobile phones
+- adding handler for the new add tag menu item
+- moving toolbar in the image viewer to bottom right
+- removing hover and focus background toggle left panel button
+- adding support for viewing of ODF files (e.g. ODT, ODS, ODG, ODP)
+- adding new version of pdf.js with support of printing, rotating, dragging, document properties and goto first/last page
+
 ##Version 1.7.6 / 2014.02.28
 
 - remeber and open the last state of the application window e.g. maximize or not [#29](https://github.com/uggrock/tagspaces/issues/29)
