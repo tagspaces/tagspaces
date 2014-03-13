@@ -158,6 +158,15 @@ IO-API
 	var listDirectory = function(dirPath) {
 		console.log("Listing directory: "+dirPath);
         TSCORE.showLoadingAnimation();		
+        
+        /* chrome.fileSystem.chooseEntry({ type: "openDirectory" }, function(d) {
+            if (!d) return;
+            var reader = d.createReader();
+            reader.readEntries(function(list) {
+            	console.log("Chrome FS: "+list);
+            });
+          }); */        
+        
 		if(nativeIO.isDirectory(dirPath)) {
 			var dirList = nativeIO.getDirEntries(dirPath);
             var anotatedDirList = [];
