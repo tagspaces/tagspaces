@@ -421,6 +421,11 @@ define(function (require, exports, module) {
         window.plugins.fileOpener.open(filePath);
         //window.open(filePath,"_blank", "location=no");
     };
+
+    var sendFile = function(filePath) {
+        console.log("Sending file: "+filePath);
+        window.plugins.fileOpener.send(filePath);
+    };    
     
     var openExtensionsDirectory = function() {
         TSCORE.showAlertDialog("Open extensions directory functionality not supported on Android!"); 
@@ -466,6 +471,7 @@ define(function (require, exports, module) {
 	exports.selectDirectory 			= selectDirectory;
 	exports.openDirectory				= openDirectory;
 	exports.openFile                    = openFile;
+	exports.sendFile                    = sendFile;
 	exports.selectFile 					= selectFile;
 	exports.openExtensionsDirectory 	= openExtensionsDirectory;
 	exports.checkAccessFileURLAllowed 	= checkAccessFileURLAllowed;

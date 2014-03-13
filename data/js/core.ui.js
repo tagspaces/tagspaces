@@ -302,6 +302,11 @@ define(function(require, exports, module) {
             .click( function() {
                 TSCORE.IO.openFile(TSCORE.selectedFiles[0]);
             }); 
+
+        $( "#fileMenuSendTo" )
+	        .click( function() {
+	            TSCORE.IO.sendFile(TSCORE.selectedFiles[0]);
+	        });         
         
         $( "#fileMenuOpenDirectory" ).click( function() {
             TSCORE.IO.openDirectory(TSCORE.currentPath);
@@ -488,7 +493,7 @@ define(function(require, exports, module) {
             .prop('disabled', false);	    
 	}
 	
-    function platformTuning() {
+    function platformTuning() { 
         if(isCordova) {
             $("#startNewInstanceBack").hide();
             $("#directoryMenuOpenDirectory").parent().hide();
@@ -497,18 +502,15 @@ define(function(require, exports, module) {
             $("#openDirectory").parent().hide();
             $("#advancedSettings").hide();
             $("#openFileInNewWindow").hide();
-        }
-        if(isChrome) {
+        } else if(isChrome) {
             $("#directoryMenuOpenDirectory").parent().hide();
             $("#fileMenuOpenDirectory").parent().hide();
             $("#openDirectory").parent().hide();
             //$("#openFileInNewWindow").hide();
             $("#openNatively").hide();            
-        }
-        if(isFirefox) {
+        } else if(isFirefox) {
             $("#openNatively").hide();                   
-        }
-        if(isNode) {
+        } else if(isNode) {
             $("#fullscreenFile").hide(); 
             $("#openFileInNewWindow").hide();         
             
@@ -528,6 +530,11 @@ define(function(require, exports, module) {
             if(TSCORE.Config.getIsWindowMaximized()){
                 nwwin.maximize();
             }               
+        }
+        
+        // Disable send to feature on all platforms except android cordova
+        if(!isCordova) {
+        	$("#fileMenuSendTo").hide();
         }
         if(isOSX) {
             $("body").addClass("osx");                   
