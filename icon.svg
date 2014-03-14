@@ -25,7 +25,7 @@
      inkscape:pageshadow="2"
      inkscape:zoom="0.94208466"
      inkscape:cx="526.33843"
-     inkscape:cy="787.16048"
+     inkscape:cy="522.03798"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -35,12 +35,7 @@
      inkscape:window-height="876"
      inkscape:window-x="65"
      inkscape:window-y="24"
-     inkscape:window-maximized="1">
-    <sodipodi:guide
-       orientation="0,1"
-       position="58.381165,851.30353"
-       id="guide3374" />
-  </sodipodi:namedview>
+     inkscape:window-maximized="1" />
   <defs
      id="defs3043">
     <linearGradient
@@ -344,7 +339,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -354,7 +349,7 @@
      id="layer1">
     <path
        style="fill:none;stroke:#616577;stroke-width:11.96032715;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 191.22118,56.271882 31.07103,0 0,29.598641 -41.34452,42.441037 -30.69516,-28.375557 z"
+       d="m 133.22118,56.271882 31.07103,0 0,29.598641 -41.34452,42.441037 -30.69516,-28.375557 z"
        id="path3923"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cccccc"
@@ -362,7 +357,7 @@
        inkscape:export-xdpi="33.290001"
        inkscape:export-ydpi="33.290001" />
     <path
-       transform="matrix(1.5935923,0,0,1.6535609,-351.19328,-499.83944)"
+       transform="matrix(1.5935923,0,0,1.6535609,-409.19328,-499.83944)"
        sodipodi:type="arc"
        style="fill:#616577;fill-opacity:1;stroke:none"
        id="path4875-4"
@@ -375,7 +370,7 @@
        inkscape:export-ydpi="33.290001"
        inkscape:export-filename="/media/z/TagSpaces/repository/data/icons/icon32.png" />
     <path
-       transform="matrix(1.6060915,0,0,1.7071068,-75.034503,-521.24704)"
+       transform="matrix(1.6060915,0,0,1.7071068,-133.0345,-521.24704)"
        sodipodi:type="arc"
        style="fill:#616577;fill-opacity:1;stroke:none"
        id="path4875-4-7"
@@ -389,25 +384,25 @@
        inkscape:export-filename="Z:\Dev\tagspaces\data\img\icon.png" />
     <path
        style="fill:none;stroke:#a466aa;stroke-width:12.89999962;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 467.89671,116.30861 -26,-24.249996"
+       d="m 409.89671,116.30861 -26,-24.249996"
        id="path3108"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cc" />
     <path
        style="fill:#f7901e;fill-opacity:1;stroke:#33b5be;stroke-width:12.89999962;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 486.89671,95.433614 -26,-24.25"
+       d="m 428.89671,95.433614 -26,-24.25"
        id="path3108-9"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cc" />
     <path
        style="fill:#616577;fill-opacity:1;stroke:#f7901e;stroke-width:12.89999962;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 477.64671,106.18361 -26,-24.249996"
+       d="m 419.64671,106.18361 -26,-24.249996"
        id="path3108-0"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cc" />
     <path
        style="fill:none;stroke:#616577;stroke-width:12.19999981;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 471.63434,52.872374 31.31473,0 0,30.55711 -41.6688,43.815366 -30.93592,-29.294416 z"
+       d="m 413.63434,52.872374 31.31473,0 0,30.55711 -41.6688,43.815366 -30.93592,-29.294416 z"
        id="path3923-1"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cccccc"
@@ -415,7 +410,7 @@
        inkscape:export-xdpi="16.504297"
        inkscape:export-ydpi="16.504297" />
     <path
-       transform="matrix(1.6060915,0,0,1.7071068,24.215498,-520.99704)"
+       transform="matrix(1.6060915,0,0,1.7071068,-33.784502,-520.99704)"
        sodipodi:type="arc"
        style="fill:#616577;fill-opacity:1;stroke:none"
        id="path4875-4-7-4"
@@ -429,7 +424,7 @@
        inkscape:export-filename="Z:\Dev\tagspaces\data\img\icon64.png" />
     <path
        style="fill:none;stroke:#a466aa;stroke-width:14.19999981;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 567.14671,116.55861 -11.75,-11"
+       d="m 509.14671,116.55861 -11.75,-11"
        id="path3108-8"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cc"
@@ -438,7 +433,7 @@
        inkscape:export-ydpi="64.650002" />
     <path
        style="fill:#616577;fill-opacity:1;stroke:#f7901e;stroke-width:14.19999981;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 576.89671,106.43361 -19.25,-18.249996"
+       d="m 518.89671,106.43361 -19.25,-18.249996"
        id="path3108-0-2"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cc"
@@ -447,7 +442,7 @@
        inkscape:export-ydpi="64.650002" />
     <path
        style="fill:#f7901e;fill-opacity:1;stroke:#33b5be;stroke-width:14.19999981;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 586.14671,95.683614 -26,-24"
+       d="m 528.14671,95.683614 -26,-24"
        id="path3108-9-8"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cc"
@@ -456,7 +451,7 @@
        inkscape:export-ydpi="64.650002" />
     <path
        style="fill:none;stroke:#616577;stroke-width:12.19999981;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 570.88434,53.122374 31.31473,0 0,30.55711 -41.6688,43.815366 -30.93592,-29.294416 z"
+       d="m 512.88434,53.122374 31.31473,0 0,30.55711 -41.6688,43.815366 -30.93592,-29.294416 z"
        id="path3923-1-4"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cccccc"
@@ -464,7 +459,7 @@
        inkscape:export-xdpi="64.650002"
        inkscape:export-ydpi="64.650002" />
     <path
-       transform="matrix(1.5935856,0,0,1.6535653,-233.53304,-505.56631)"
+       transform="matrix(1.5935856,0,0,1.6535653,-291.53304,-505.56631)"
        sodipodi:type="arc"
        style="fill:#616577;fill-opacity:1;stroke:none"
        id="path4875-4-7-5"
@@ -478,7 +473,7 @@
        inkscape:export-filename="/media/z/TagSpaces/repository/data/assets/icon64.png" />
     <path
        style="fill:none;stroke:#a466aa;stroke-width:10.29371548;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 307.15503,111.99311 -9.42604,-8.71773"
+       d="m 249.15503,111.99311 -9.42604,-8.71773"
        id="path3108-5"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cc"
@@ -487,7 +482,7 @@
        inkscape:export-ydpi="66.589996" />
     <path
        style="fill:#f7901e;fill-opacity:1;stroke:#33b5be;stroke-width:10.29371548;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="M 324.02266,91.77283 305.1706,74.821701"
+       d="M 266.02266,91.77283 247.1706,74.821701"
        id="path3108-9-1"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cc"
@@ -496,7 +491,7 @@
        inkscape:export-ydpi="66.589996" />
     <path
        style="fill:#616577;fill-opacity:1;stroke:#f7901e;stroke-width:10.29371548;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="M 315.8369,102.18567 301.44979,89.35124"
+       d="M 257.8369,102.18567 243.44979,89.35124"
        id="path3108-0-7"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cc"
@@ -505,7 +500,7 @@
        inkscape:export-ydpi="66.589996" />
     <path
        style="fill:none;stroke:#616577;stroke-width:11.96031666;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 308.87913,50.54648 31.07089,0 0,29.598718 -41.34434,42.441152 -30.69503,-28.37564 z"
+       d="m 250.87913,50.54648 31.07089,0 0,29.598718 -41.34434,42.441152 -30.69503,-28.37564 z"
        id="path3923-1-1"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cccccc"
@@ -627,7 +622,7 @@
        id="rect3084"
        width="88.609673"
        height="104.24667"
-       x="258.01141"
+       x="200.01141"
        y="37.254082"
        inkscape:export-filename="/media/z/TagSpaces/AndroidApp/www/img/logo.png"
        inkscape:export-xdpi="172.67"
@@ -751,9 +746,9 @@
            x="1495.6193"
            y="2418.4814" /></flowRegion><flowPara
          id="flowPara4517" /></flowRoot>    <path
-       transform="matrix(1.5935856,0,0,1.6535653,138.16858,-504.07028)"
+       transform="matrix(1.5935856,0,0,1.6535653,80.16858,-504.07028)"
        sodipodi:type="arc"
-       style="fill:#746e6c;fill-opacity:1;stroke:none;stroke-opacity:1"
+       style="fill:#746e6c;fill-opacity:1;stroke:none"
        id="path4875-4-7-5-32"
        sodipodi:cx="346.96429"
        sodipodi:cy="347.71933"
@@ -765,7 +760,7 @@
        inkscape:export-filename="/media/z/TagSpaces/marketing/TagSpaces Logo [1000x999px].png" />
     <path
        style="fill:none;stroke:#a466aa;stroke-width:10.29371548;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 678.85664,113.48914 -9.42604,-8.71773"
+       d="m 620.85664,113.48914 -9.42604,-8.71773"
        id="path3108-5-8"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cc"
@@ -774,7 +769,7 @@
        inkscape:export-ydpi="1040.46" />
     <path
        style="fill:#f7901e;fill-opacity:1;stroke:#33b5be;stroke-width:10.29371548;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="M 695.72427,93.268858 676.87221,76.317728"
+       d="M 637.72427,93.268858 618.87221,76.317728"
        id="path3108-9-1-7"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cc"
@@ -783,7 +778,7 @@
        inkscape:export-ydpi="1040.46" />
     <path
        style="fill:#616577;fill-opacity:1;stroke:#f7901e;stroke-width:10.29371548;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="M 687.53851,103.6817 673.1514,90.847268"
+       d="M 629.53851,103.6817 615.1514,90.847268"
        id="path3108-0-7-5"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cc"
@@ -791,8 +786,8 @@
        inkscape:export-xdpi="1040.46"
        inkscape:export-ydpi="1040.46" />
     <path
-       style="fill:none;stroke:#746e6c;stroke-width:11.96031666000000016;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 680.58074,52.042508 31.07089,0 0,29.59872 -41.34434,42.441152 -30.69503,-28.375642 z"
+       style="fill:none;stroke:#746e6c;stroke-width:11.96031666;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 622.58074,52.042508 31.07089,0 0,29.59872 -41.34434,42.441152 -30.69503,-28.375642 z"
        id="path3923-1-1-5"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cccccc"
@@ -804,7 +799,7 @@
        id="rect3084-0"
        width="88.609673"
        height="104.24667"
-       x="629.71301"
+       x="571.71301"
        y="38.750111"
        inkscape:export-filename="/media/z/TagSpaces/AndroidApp/www/img/logo.png"
        inkscape:export-xdpi="172.67"
@@ -876,9 +871,9 @@
        height="123.7828"
        x="519.55139"
        y="176.56479"
-       inkscape:export-filename="/media/z/TagSpaces/marketing/biglogo512x512.png"
-       inkscape:export-xdpi="372.26001"
-       inkscape:export-ydpi="372.26001"
+       inkscape:export-filename="/media/z/TagSpaces/repository/data/assets/icon128-firefoxos.png"
+       inkscape:export-xdpi="93.066261"
+       inkscape:export-ydpi="93.066261"
        ry="61.891399" />
     <path
        transform="matrix(1.5935856,0,0,1.6535653,40.370847,-349.35362)"
@@ -890,44 +885,104 @@
        sodipodi:rx="3.75"
        sodipodi:ry="3.5714285"
        d="m 350.71429,347.71933 a 3.75,3.5714285 0 1 1 -7.5,0 3.75,3.5714285 0 1 1 7.5,0 z"
-       inkscape:export-xdpi="372.26001"
-       inkscape:export-ydpi="372.26001"
-       inkscape:export-filename="/media/z/TagSpaces/marketing/biglogo512x512.png" />
+       inkscape:export-xdpi="93.066261"
+       inkscape:export-ydpi="93.066261"
+       inkscape:export-filename="/media/z/TagSpaces/repository/data/assets/icon128-firefoxos.png" />
     <path
        style="fill:none;stroke:#a466aa;stroke-width:10.29371548;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        d="m 581.05892,268.20579 -9.42604,-8.71773"
        id="path3108-5-3-8-0"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cc"
-       inkscape:export-filename="/media/z/TagSpaces/marketing/biglogo512x512.png"
-       inkscape:export-xdpi="372.26001"
-       inkscape:export-ydpi="372.26001" />
+       inkscape:export-filename="/media/z/TagSpaces/repository/data/assets/icon128-firefoxos.png"
+       inkscape:export-xdpi="93.066261"
+       inkscape:export-ydpi="93.066261" />
     <path
        style="fill:#f7901e;fill-opacity:1;stroke:#33b5be;stroke-width:10.29371548;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        d="M 597.92655,247.98551 579.07449,231.03438"
        id="path3108-9-1-4-9-9"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cc"
-       inkscape:export-filename="/media/z/TagSpaces/marketing/biglogo512x512.png"
-       inkscape:export-xdpi="372.26001"
-       inkscape:export-ydpi="372.26001" />
+       inkscape:export-filename="/media/z/TagSpaces/repository/data/assets/icon128-firefoxos.png"
+       inkscape:export-xdpi="93.066261"
+       inkscape:export-ydpi="93.066261" />
     <path
        style="fill:#616577;fill-opacity:1;stroke:#f7901e;stroke-width:10.29371548;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        d="M 589.74079,258.39835 575.35368,245.56392"
        id="path3108-0-7-3-8-6"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cc"
-       inkscape:export-filename="/media/z/TagSpaces/marketing/biglogo512x512.png"
-       inkscape:export-xdpi="372.26001"
-       inkscape:export-ydpi="372.26001" />
+       inkscape:export-filename="/media/z/TagSpaces/repository/data/assets/icon128-firefoxos.png"
+       inkscape:export-xdpi="93.066261"
+       inkscape:export-ydpi="93.066261" />
     <path
        style="fill:none;stroke:#616577;stroke-width:11.96031666;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        d="m 582.78302,206.75916 31.07089,0 0,29.59872 -41.34434,42.44115 -30.69503,-28.37564 z"
        id="path3923-1-1-3-2-6"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cccccc"
-       inkscape:export-filename="/media/z/TagSpaces/marketing/biglogo512x512.png"
-       inkscape:export-xdpi="372.26001"
-       inkscape:export-ydpi="372.26001" />
+       inkscape:export-filename="/media/z/TagSpaces/repository/data/assets/icon128-firefoxos.png"
+       inkscape:export-xdpi="93.066261"
+       inkscape:export-ydpi="93.066261" />
+    <rect
+       style="fill:#ffffff;fill-opacity:1;stroke:none"
+       id="rect3052-8-8-4"
+       width="123.7828"
+       height="123.7828"
+       x="525.76453"
+       y="355.42145"
+       inkscape:export-filename="/home/na/tagspacesApp/platforms/android/res/drawable-xhdpi/icon.png"
+       inkscape:export-xdpi="69.800003"
+       inkscape:export-ydpi="69.800003"
+       ry="15.922138" />
+    <path
+       transform="matrix(1.8352354,0,0,1.9043104,-31.486166,-264.65626)"
+       sodipodi:type="arc"
+       style="fill:#616577;fill-opacity:1;stroke:none"
+       id="path4875-4-7-5-3-1-8"
+       sodipodi:cx="346.96429"
+       sodipodi:cy="347.71933"
+       sodipodi:rx="3.75"
+       sodipodi:ry="3.5714285"
+       d="m 350.71429,347.71933 a 3.75,3.5714285 0 1 1 -7.5,0 3.75,3.5714285 0 1 1 7.5,0 z"
+       inkscape:export-xdpi="69.800003"
+       inkscape:export-ydpi="69.800003"
+       inkscape:export-filename="/home/na/tagspacesApp/platforms/android/res/drawable-xhdpi/icon.png" />
+    <path
+       style="fill:none;stroke:#a466aa;stroke-width:11.85464478;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 591.19135,446.54929 -10.8554,-10.03968"
+       id="path3108-5-3-8-05"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="/home/na/tagspacesApp/platforms/android/res/drawable-xhdpi/icon.png"
+       inkscape:export-xdpi="69.800003"
+       inkscape:export-ydpi="69.800003" />
+    <path
+       style="fill:#f7901e;fill-opacity:1;stroke:#33b5be;stroke-width:11.85464478;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="M 610.61677,423.26282 588.906,403.74124"
+       id="path3108-9-1-4-9-7"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="/home/na/tagspacesApp/platforms/android/res/drawable-xhdpi/icon.png"
+       inkscape:export-xdpi="69.800003"
+       inkscape:export-ydpi="69.800003" />
+    <path
+       style="fill:#616577;fill-opacity:1;stroke:#f7901e;stroke-width:11.85464478;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="M 601.18973,435.25465 584.62097,420.47402"
+       id="path3108-0-7-3-8-68"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="/home/na/tagspacesApp/platforms/android/res/drawable-xhdpi/icon.png"
+       inkscape:export-xdpi="69.800003"
+       inkscape:export-ydpi="69.800003" />
+    <path
+       style="fill:none;stroke:#616577;stroke-width:13.77396774;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 593.17689,375.78495 35.78245,0 0,34.08704 -47.61376,48.87688 -35.34959,-32.67849 z"
+       id="path3923-1-1-3-2-4"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cccccc"
+       inkscape:export-filename="/home/na/tagspacesApp/platforms/android/res/drawable-xhdpi/icon.png"
+       inkscape:export-xdpi="69.800003"
+       inkscape:export-ydpi="69.800003" />
   </g>
 </svg>
