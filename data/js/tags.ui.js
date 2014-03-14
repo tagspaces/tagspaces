@@ -427,17 +427,17 @@ define(function(require, exports, module) {
 
     function showDialogTagCreate() {
         $( "#newTagTitle" ).val("");         
-        $( '#dialogTagCreate' ).modal({show: true});        
+        $( '#dialogTagCreate' ).modal({backdrop: 'static',show: true});        
     }   
 
     function showDialogEditTagGroup() {
         $( "#tagGroupName" ).val(TSCORE.selectedTagData.title);              
-        $( '#dialogEditTagGroup' ).modal({show: true});        
+        $( '#dialogEditTagGroup' ).modal({backdrop: 'static',show: true});        
     }
     
     function showDialogTagGroupCreate() {
         $( "#newTagGroupName" ).val("");         
-        $( '#dialogTagGroupCreate' ).modal({show: true});        
+        $( '#dialogTagGroupCreate' ).modal({backdrop: 'static',show: true});        
     }
 
     function showTagEditInTreeDialog() {
@@ -457,7 +457,7 @@ define(function(require, exports, module) {
         } else {
             $( "#tagTextColor" ).simplecolorpicker('selectColor', TSCORE.selectedTagData.textcolor);            
         }
-        $( '#dialogEditInTreeTag' ).modal({show: true});        
+        $( '#dialogEditInTreeTag' ).modal({backdrop: 'static',show: true});        
     }	
 
 	function showAddTagsDialog() {

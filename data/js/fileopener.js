@@ -440,7 +440,7 @@ define(function(require, exports, module) {
                 $("#filePathProperty").val(_openedFileProperties.path);
                 $("#fileSizeProperty").val(_openedFileProperties.size);
                 $("#fileLMDTProperty").val(new Date(_openedFileProperties.lmdt));                                
-                $('#dialogFileProperties').modal({show: true});        
+                $('#dialogFileProperties').modal({backdrop: 'static',show: true});        
         });
     } 	
   

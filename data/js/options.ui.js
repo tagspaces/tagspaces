@@ -109,7 +109,7 @@ define(function(require, exports, module) {
         });        
        
         $('#dialogOptions a:first').tab('show');   
-        $('#dialogOptions').modal('show');        
+        $('#dialogOptions').modal({backdrop: 'static',show: true});        
     }        
 
     function updateSettings() {

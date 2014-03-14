@@ -479,7 +479,7 @@ define(function(require, exports, module) {
                 $("#connectionName2").val(name);
                 $("#connectionName2").attr("oldName",name);
                 $("#folderLocation2").val(path);
-                $("#dialogLocationEdit").modal({show: true});
+                $("#dialogLocationEdit").modal({backdrop: 'static',show: true});
         });     
     } 
     
@@ -512,7 +512,7 @@ define(function(require, exports, module) {
 		     	}
 		        $("#connectionName").val("");
 		        $("#folderLocation").val("");
-		        $("#dialogCreateFolderConnection").modal({show: true});
+		        $("#dialogCreateFolderConnection").modal({backdrop: 'static',show: true});
 		});    	
     }  
     
@@ -540,7 +540,7 @@ define(function(require, exports, module) {
                 }
                 $( "#createNewDirectoryButton" ).attr("path", dirPath);
 		        $("#newDirectoryName").val("");
-		        $('#dialogDirectoryCreate').modal({show: true});        
+		        $('#dialogDirectoryCreate').modal({backdrop: 'static',show: true});        
 		});
     }    
     

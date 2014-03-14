@@ -56,7 +56,7 @@ define(function(require, exports, module) {
            }        
        }           
 
-        $('#directoryBrowserDialog').modal('show');         
+        $('#directoryBrowserDialog').modal({backdrop: 'static',show: true});         
     }           
     
     // Public Methods

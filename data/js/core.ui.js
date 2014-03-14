@@ -26,7 +26,7 @@ define(function(require, exports, module) {
 	       }
 	    );
 	
-	    alertModal.modal('show');
+	    alertModal.modal({backdrop: 'static',show: true});
 	};	
 	
 	var showConfirmDialog = function(title, message, okCallback, cancelCallback) {
@@ -54,7 +54,7 @@ define(function(require, exports, module) {
             }
         );
 	
-	    confirmModal.modal('show');     
+	    confirmModal.modal({backdrop: 'static',show: true});     
 	};	
 	
 
@@ -73,7 +73,7 @@ define(function(require, exports, module) {
 		$("#newFileName").val("");     
 		$("#tagWithCurrentDate").prop('checked', false);     
 
-        $( '#dialogFileCreate' ).modal({show: true});
+        $( '#dialogFileCreate' ).modal({backdrop: 'static',show: true});
         $( '#txtFileTypeButton' ).button('toggle');
         		
 		$('#dialogFileCreate').on('shown', function () {
@@ -84,7 +84,7 @@ define(function(require, exports, module) {
     var showFileRenameDialog = function(filePath) {
         $( "#renamedFileName" ).attr("filepath",filePath);
         $( "#renamedFileName" ).val(TSCORE.TagUtils.extractFileName(filePath));
-        $( '#dialogFileRename' ).modal({show: true});
+        $( '#dialogFileRename' ).modal({backdrop: 'static',show: true});
     };    
     
     var showFileDeleteDialog = function(filePath) {
@@ -109,7 +109,7 @@ define(function(require, exports, module) {
             minimumInputLength: 2            
         });  */
         
-        $( '#dialogEditTag' ).modal({show: true});
+        $( '#dialogEditTag' ).modal({backdrop: 'static',show: true});
     };  
     
     var showDirectoryBrowserDialog = function(path) {
@@ -150,7 +150,7 @@ define(function(require, exports, module) {
                     $('body').append(uiTemplate());    
                     $('#welcomeCarosel').carousel();
                 }
-                $("#dialogWelcome").modal("show");
+                $("#dialogWelcome").modal({backdrop: 'static',show: true});
         });
     };         
     
@@ -281,7 +281,7 @@ define(function(require, exports, module) {
 
         // Open About Dialog
         $( "#openAboutBox" ).click(function() {
-           $('#dialogAbout').modal('show');
+           $('#dialogAbout').modal({backdrop: 'static',show: true});
         });
 
         // Open Options Dialog
