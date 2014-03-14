@@ -184,6 +184,7 @@ found in the LICENSE file.
 				<include name="perspectiveGrid/**/*" />
 				<include name="editorHTML/**/*" />
 				<include name="editorText/**/*" />
+				<include name="editorODF/**/*" />
 				<include name="viewerText/**/*" />
 				<include name="viewerPDF/**/*" />
 				<include name="viewerImage/**/*" />
