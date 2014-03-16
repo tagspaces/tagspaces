@@ -18,11 +18,11 @@ define(function(require, exports, module) {
         var parsedData = [];
         rawData.forEach(function(d) {
             parsedData.push({
-                "Date":   d.tag0,
+                "Date":         d.tag0,
                 "Weight in kg": +extractTagInfo(d.tag1).data,
                 "Fat in %":     +extractTagInfo(d.tag2).data,
-                "Wather in %":     +extractTagInfo(d.tag3).data,
-                "Muscles in %":     +extractTagInfo(d.tag4).data,
+                "Watter in %":  +extractTagInfo(d.tag3).data,
+                "Muscles in %": +extractTagInfo(d.tag4).data,
                 "Bones in kg":  +extractTagInfo(d.tag5).data,
             });            
         })
@@ -38,7 +38,7 @@ define(function(require, exports, module) {
                 "date":   d.tag0,
                 "weight": +extractTagInfo(d.tag1).data,
                 "fat":     +extractTagInfo(d.tag2).data,
-                "wather":     +extractTagInfo(d.tag3).data,
+                "watter":     +extractTagInfo(d.tag3).data,
                 "muscles":     +extractTagInfo(d.tag4).data,
                 "bones":  +extractTagInfo(d.tag5).data,
             });            
@@ -69,7 +69,7 @@ define(function(require, exports, module) {
         return { "prefix": prefix, "data": data, "postfix": postfix };
     }
 
-    function draw(svg) {
+    function draw2(svg) {
         console.log("Drawing My Weight");
           
         var margin = {top: 20, right: 20, bottom: 30, left: 40},
@@ -178,7 +178,7 @@ define(function(require, exports, module) {
 
     }
 
-    function draw2(svg) {
+    function draw(svg) {
         console.log("Drawing My Weight");
           
         var margin = {top: 20, right: 20, bottom: 30, left: 40},

@@ -16,6 +16,8 @@ define(function(require, exports, module) {
 	var extensionLicense = "AGPL";
 
 	var TSCORE = require("tscore");
+
+	require("d3");
 	
 	var viewContainer = undefined;
 	var viewToolbar = undefined;
@@ -44,8 +46,10 @@ define(function(require, exports, module) {
 	    switch (vizMode) {
           case "quantYours":
             require([
-                extensionDirectory+'/myweight.js',
+                extensionDirectory+'/myweight2.js',
+                extensionDirectory+'/nvd3/nv.d3.min.js',
                 'css!'+extensionDirectory+'/styles.css',
+                'css!'+extensionDirectory+'/nvd3/nv.d3.min.css',
                 ], function(viz) {
                     d3.select("svg").remove();                
                     var svg = d3.select("#"+extensionID+"Container")
@@ -80,14 +84,14 @@ define(function(require, exports, module) {
         })  
 
             .append($("<button>", { 
-                class: "btn ",
+                class: "btn btn-default",
                 title: "Create new file",
                 id: extensionID+"CreateFileButton",    
             })
             .click(function() {
                 TSCORE.showFileCreateDialog();
             })
-            .append( "<i class='icon-plus'>" )
+            .append( "<i class='fa fa-plus'>" )
             )
        
         ); // end button group  
@@ -100,7 +104,7 @@ define(function(require, exports, module) {
             
             
             .append($("<button>", {
-                    class: "btn",           
+                    class: "btn btn-default",           
                     title: "Show Quantified Yourself Graphic",
                     id: extensionID+"QAMode",    
                     text: " Quantified Self"
@@ -109,10 +113,9 @@ define(function(require, exports, module) {
                 .click(function() {
                     vizMode = "quantYours";
                     TSCORE.showLoadingAnimation();    
-                    TSCORE.startTime = new Date().getTime();                                       
                     TSCORE.IO.createDirectoryIndex(TSCORE.currentPath);
                 })
-                .prepend( "<i class='icon-tasks' />")                
+                .prepend( "<i class='fa fa-tasks' />")                
             )       
         ); // end button group  
             
@@ -120,7 +123,7 @@ define(function(require, exports, module) {
             class: "btn-group", 
         })       
             .append($("<button>", { 
-                class: "btn",           
+                class: "btn btn-default",           
                 title: "Exports current table data as CSV",
                 id: extensionID+"ExportButton",    
             })
@@ -129,9 +132,10 @@ define(function(require, exports, module) {
                     style: "width: 500px; height: 350px;",
                     text: TSCORE.exportFileListCSV(TSCORE.fileList)
                 });                
-                TSCORE.showAlertDialog(dialogContent,"Export to CSV Dialog");
+                //TSCORE.showAlertDialog(dialogContent,"Export to CSV Dialog");
+                console.log("Export data: "+TSCORE.exportFileListCSV(TSCORE.fileList));
             })
-            .append( $("<i>", { class: "icon-download-alt", }) )
+            .append( $("<i class='fa fa-download' />") )
             )          
                         
         ); // end toolbar
