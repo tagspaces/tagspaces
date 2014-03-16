@@ -35,6 +35,7 @@ exports.defaultSettings = {
         { "type": "jpeg", 	"viewer": "viewerImage",     "editor": "false" },    
         { "type": "gif", 	"viewer": "viewerImage",     "editor": "false" },        
         { "type": "png", 	"viewer": "viewerImage",     "editor": "false" },        
+        { "type": "webp", 	"viewer": "viewerImage",     "editor": "false" },       
         { "type": "svg", 	"viewer": "viewerBrowser",   "editor": "editorText" },
         { "type": "pdf", 	"viewer": "@@PDFVIEWER",	 "editor": "false" },                
         { "type": "html", 	"viewer": "viewerBrowser",   "editor": "editorHTML" },                        
