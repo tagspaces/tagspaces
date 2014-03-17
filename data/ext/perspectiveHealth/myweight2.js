@@ -21,7 +21,7 @@ define(function(require, exports, module) {
 	          ];
         
         rawData.forEach(function(d) {
-        	var date = new Date(TSCORE.TagUtils.convertStringToDate(d.tag0)).getTime();
+        	var date = TSCORE.TagUtils.convertStringToDate(d.tag0);
         	
         	// "Weight in kg"
         	parsedData[0]["values"].push([date, extractTagInfo(d.tag1).data]);
@@ -39,7 +39,7 @@ define(function(require, exports, module) {
         	parsedData[4]["values"].push([date, extractTagInfo(d.tag5).data]);       	
         });        
         //return exampleData;
-        console.log(JSON.stringify(parsedData));
+        //console.log(JSON.stringify(parsedData));
         return parsedData;  
     }
     
