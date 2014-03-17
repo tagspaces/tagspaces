@@ -3,7 +3,7 @@
     <name>@@APPNAME</name>
     <description>@@DEFAULTLOCATIONS</description>
     <author email="info@tagspaces.org" href="http://tagspaces.org">
-        TagSpaces Team
+        @@APPNAME Team
     </author>
     <content src="index.html" />
     <feature name="App">
