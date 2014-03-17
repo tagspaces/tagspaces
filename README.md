@@ -62,5 +62,9 @@ For Mac OS X, copy `node-webkit.app` to `data/node-webkit` directory.
 - Subscribe to RSS feed updates for the [tagspaces blog](http://tagspaces.org/blog/feed.xml)
 - Subscribe to RSS feed updates for the [master branch](https://github.com/uggrock/tagspace/commits/master.atom)
 
+## Support and Bugs
+If you are having trouble, have found a bug, or want to contribute don't be shy.
+[Open a ticket](https://github.com/uggrock/tagspaces/issues) on GitHub.
+
 - - -
 This files is created and edited in `TagSpaces`, using the `viewerMD` and `editorText` extensions.
