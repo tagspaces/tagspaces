@@ -53,12 +53,12 @@ define(function(require, exports, module) {
                     matchBrackets: true,
                     readOnly: isViewerMode,
                     //theme: "lesser-dark",
-                    /* extraKeys: {
-                      "Cmd-S": function(instance) { handleSaveButton() },
-                      "Ctrl-S": function(instance) { handleSaveButton() },
-                      "F5": function(instance) { handleSaveButton() },
+                     extraKeys: {
+                      "Cmd-S": function(instance) { TSCORE.FileOpener.saveFile() },
+                      "Ctrl-S": function(instance) { TSCORE.FileOpener.saveFile() },
+                      "Esc": function(instance) { TSCORE.FileOpener.closeFile() },	 
                       "Ctrl-Space": "autocomplete",
-                    } */
+                    }
                 });
     
     	        //cmEditor.readOnly = isViewerMode;
