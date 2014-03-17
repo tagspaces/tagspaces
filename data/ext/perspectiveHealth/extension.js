@@ -7,7 +7,7 @@ define(function(require, exports, module) {
 	
 	console.log("Loading perspectiveHealth");
 
-	var extensionTitle = "Health"
+	var extensionTitle = "My Weight"
 	var extensionID = "perspectiveHealth";  // ID should be equal to the directory name where the ext. is located   
 	var extensionType =  "perspective";
 	var extensionIcon = "fa fa-bar-chart-o";
@@ -99,17 +99,17 @@ define(function(require, exports, module) {
 
         viewToolbar.append($("<div >", { 
             class: "btn-group", 
-            "data-toggle": "buttons-radio",        
+            //"data-toggle": "buttons-radio",        
         })  
             
             
             .append($("<button>", {
                     class: "btn btn-default",           
-                    title: "Show Quantified Yourself Graphic",
+                    title: "Index the directory structure",
                     id: extensionID+"QAMode",    
-                    text: " Quantified Self"
+                    text: " Index Subdirectories"
                 })
-                .button('toggle')   
+                //.button('toggle')   
                 .click(function() {
                     vizMode = "quantYours";
                     TSCORE.showLoadingAnimation();    
