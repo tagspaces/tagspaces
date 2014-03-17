@@ -109,18 +109,15 @@ define(function(require, exports, module) {
     }	
 	
     function initKeyBindings() {
-    	// TODO handle documents opened for editing
-	  //  $(document).bind('keyup', 'esc', closeFileViewer);
 	  if(isNode) {
           var win = gui.Window.get();
-	      // if (PRODUCTION == "true") {
-	      $(document).bind('keyup', 'F12', function() {
+          Mousetrap.bind('f12', function() {
 	          win.showDevTools();
 	      });
-          $(document).bind('keyup', 'F5', function() {
+          Mousetrap.bind('f5', function() {
               win.reloadIgnoringCache();
           });	      
-          $(document).bind('keyup', 'F11', function() {
+          Mousetrap.bind('f11', function() {
               win.toggleFullscreen();
           });                   
 	  }
