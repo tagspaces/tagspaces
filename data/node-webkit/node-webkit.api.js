@@ -10,7 +10,9 @@ define(function(require, exports, module) {
     var TSCORE = require("tscore");	
 	var TSPOSTIO = require("tspostioapi");
 	
-	process.on("uncaughtException", function(err) { /*console.log("error: " + err);*/  });
+	process.on("uncaughtException", function(err) { 
+		//alert("error: " + err);  
+	});
 	
 	function scanDirectory(dirPath, index) {
 	    try {
