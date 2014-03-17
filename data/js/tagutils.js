@@ -152,7 +152,16 @@ define(function(require, exports, module) {
             time = "-"+cHour+""+cMinute+""+cSecond; 
         }
         return cYear+""+cMonth+""+cDate+time;
-    }    
+    } 
+    
+    function convertStringToDate(dateString) {
+        if ((dateString === undefined) || (dateString === "")) return false;   
+        if (dateString.length == 8) {
+        	return new Date(dateString.substring(0,4)+"-"+dateString.substring(4,6)+"-"+dateString.substring(6,8));
+        } else {
+        	return false;
+        }
+    }
 
     function extractTags(filePath) {
         console.log("Extracting tags from: "+filePath);
@@ -410,6 +419,7 @@ define(function(require, exports, module) {
     exports.formatFileSize                      = formatFileSize;
     exports.formatDateTime                      = formatDateTime;
     exports.formatDateTime4Tag                  = formatDateTime4Tag; 
+    exports.convertStringToDate					= convertStringToDate;
     exports.extractTags                         = extractTags;
     exports.suggestTags                         = suggestTags;
     exports.writeTagsToFile                     = writeTagsToFile;
