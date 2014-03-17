@@ -35,25 +35,21 @@ define(function(require, exports, module) {
         );
 	};
 	
-	var platformTuning = function() {
-		if(isCordova) {
-			//$("#"+extensionID+"IncludeSubDirsButton").hide();
-			//$("#"+extensionID+"ShowFileDetailsButton").hide();
-			//$("#"+extensionID+"ShowTagsButton").hide();							
-		}
-	};
+	var platformTuning = function() {};
 	
 	var load = function () {
 		console.log("Loading perspective "+extensionID);
-		if(UI != undefined) {
+		if(UI == undefined) {
+			window.setTimeout(function() { UI.reInit() }, 1000)
+		} else {
             UI.reInit();    
-        } else {
-            TSCORE.hideLoadingAnimation();                 
         }	
 	};
 
     var clearSelectedFiles = function() {
-        UI.clearSelectedFiles();
+    	if(UI != undefined) {
+            UI.clearSelectedFiles();    		
+    	}
     };
     
     var removeFileUI = function(filePath) {

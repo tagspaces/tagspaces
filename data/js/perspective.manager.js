@@ -42,7 +42,6 @@ var initPerspectives = function () {
                 // Creating perspective's container
                 $("#viewContainers").append($("<div>", { 
                     id: perspective.ID+"Container",
-                    class: "btn-toolbar",
                     text: perspective.Title,
                     style: "width: 100%; height: 100%",
                 }).hide());             
@@ -50,9 +49,7 @@ var initPerspectives = function () {
                 // Creating perspective's footer
                 $("#viewFooters").append($("<div>", { 
                     id: perspective.ID+"Footer",
-                    class: "btn-toolbar",
                     text: perspective.Title,
-                    style: "width: 100%; height: 100%",
                 }).hide());                             
                 perspective.init();
             } catch(e) {
@@ -64,7 +61,7 @@ var initPerspectives = function () {
                     // Opening last saved location by the start of the application
                     var lastLocation = TSCORE.Config.getLastOpenedLocation();
                     if(lastLocation != undefined && lastLocation.length > 1) {
-                       // TSCORE.openLocation(lastLocation);
+                       TSCORE.openLocation(lastLocation);
                     }                       
                 }
             }            
@@ -271,7 +268,7 @@ var changePerspective = function (viewType) {
     // Clear the list with the selected files    
     clearSelectedFiles(); 
     
-    // Enabled the search functionality
+    // Enabled the main toolbar e.g. search functionality
     TSCORE.enableTopToolbar();
 	  
     TSCORE.hideLoadingAnimation();     
