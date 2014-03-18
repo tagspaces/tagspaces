@@ -31,16 +31,7 @@ define(function(require, exports, module) {
             
         $( "#saveDocument" )
             .click(function() {
-                TSCORE.showConfirmDialog(
-                    "Confirm",
-                    "Do you really want to overwrite the current file?", 
-                    function() {
-                        $("#saveDocument").hide();
-                        $("#editDocument").show();      
-                        saveFile(_openedFilePath);                 
-                        _isEditMode = false;              
-                    }
-                );
+            	saveFile();
             });                   
 
         $( "#closeOpenedFile" )
@@ -128,6 +119,7 @@ define(function(require, exports, module) {
             .click( function() {
                 showFilePropertiesDialog();
             }); 
+           
     }
 
 	function isFileEdited() {
@@ -155,7 +147,7 @@ define(function(require, exports, module) {
                 _isEditMode = false;                                               
             } else {
                 TSCORE.showConfirmDialog(
-                    "Confirm",
+                    "Confirm Close",
                     "If you confirm, all made changes will be lost.", 
                     function() {
                         // Cleaning the viewer/editor
@@ -174,6 +166,12 @@ define(function(require, exports, module) {
             TSCORE.closeFileViewer();
             _isEditMode = false;            
         }
+        
+        // Unbinding keyboard shortcuts
+        Mousetrap.unbind('mod+r');
+        Mousetrap.unbind('mod+s');
+        Mousetrap.unbind('esc');
+        Mousetrap.unbind('alt+enter');
     }
 
 	function openFile(filePath) {
@@ -260,6 +258,32 @@ define(function(require, exports, module) {
 	    
 	    TSCORE.FileOpener.setFileOpened(true); 
 		TSCORE.openFileViewer();
+
+	    Mousetrap.unbind('mod+r');
+		Mousetrap.bind('mod+r', function() {
+	    	reloadFile();
+	    	return false;
+	    });
+
+	    Mousetrap.unbind('mod+s');
+		Mousetrap.bind('mod+s', function() {
+	    	saveFile();
+	    	return false;
+	    });
+		
+		
+	    Mousetrap.unbind('esc');
+		Mousetrap.bind('esc', function() {
+	    	closeFile();
+	    	return false;
+	    });		
+		
+	    Mousetrap.unbind('alt+enter');
+		Mousetrap.bind('alt+enter', function() {
+			showFilePropertiesDialog();
+			return false;
+	    });				
+	    
 	} 
 	
     function setFileProperties(fileProperties) {
@@ -297,11 +321,25 @@ define(function(require, exports, module) {
             console.error("Loading editing extension failed: "+ex);
         }
 	} 
+
+	function reloadFile() {
+	    console.log("Reloading current file.");
+    	TSCORE.FileOpener.openFile(_openedFilePath); 
+	}	
 	
-	function saveFile(filePath) {
-	    console.log("Save current file: "+filePath);
-	    var content = _tsEditor.getContent();
-	    TSCORE.IO.saveTextFile(filePath, content);   	    	
+	function saveFile() {
+	    console.log("Save current file: "+_openedFilePath);
+        TSCORE.showConfirmDialog(
+                "Confirm File Save",
+                "Do you really want to overwrite the current file?", 
+                function() {
+                    $("#saveDocument").hide();
+                    $("#editDocument").show();      
+            	    var content = _tsEditor.getContent();
+            	    TSCORE.IO.saveTextFile(_openedFilePath, content);   	    	
+                    _isEditMode = false;              
+                }
+            );	    
 	}
 	
 	function updateUI() {
@@ -447,7 +485,8 @@ define(function(require, exports, module) {
     // Public API definition 
     exports.initUI                              = initUI;
     exports.openFile                    		= openFile;
-    exports.closeFile                            = closeFile;
+    exports.closeFile                           = closeFile;
+    exports.saveFile                            = saveFile;
     exports.isFileOpened						= isFileOpened;
     exports.isFileEdited 						= isFileEdited;
     exports.setFileOpened						= setFileOpened;
