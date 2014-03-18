@@ -90,6 +90,7 @@ requirejs.config({
 		hammerjs:				'libs/hammerjs/jquery.hammer.min',
 		handlebarsjs:			'libs/handlebars.js/handlebars-v1.1.2',
         webdavlib:              'web/webdavlib',
+        fastclick:              'cordova/fastclick.min',
 		
         tscore:                 'js/core.api',
         tssetting:              'js/settings.api',
@@ -155,6 +156,8 @@ define(function (require, exports, module) {
 
     if (isCordova) {
         require(["cordova.js"]);
+        var attachFastClick = require('fastclick');
+        attachFastClick(document.body);        
     }
 
     var TSCORE = undefined;
