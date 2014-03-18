@@ -3,19 +3,19 @@
  * can be found in the LICENSE file. */
 define(function(require, exports, module) {
 "use strict";
-	
-	// Activating browser specific exports modul
-	console.log("Loading ioapi.node.js..");
     
-    var TSCORE = require("tscore");	
-	var TSPOSTIO = require("tspostioapi");
-	
-	process.on("uncaughtException", function(err) { 
-		//alert("error: " + err);  
-	});
-	
-	function scanDirectory(dirPath, index) {
-	    try {
+    // Activating browser specific exports modul
+    console.log("Loading ioapi.node.js..");
+    
+    var TSCORE = require("tscore");    
+    var TSPOSTIO = require("tspostioapi");
+    
+    process.on("uncaughtException", function(err) { 
+        //alert("error: " + err);  
+    });
+    
+    function scanDirectory(dirPath, index) {
+        try {
             var dirList = fs.readdirSync(dirPath);
             for (var i=0; i < dirList.length; i++) {
                 var path = dirPath+TSCORE.dirSeparator+dirList[i];
@@ -35,8 +35,8 @@ define(function(require, exports, module) {
             return index;
         } catch(ex) {
             console.error("Scanning directory "+dirPath+" failed "+ex);
-        }           
-	}
+        }
+    }
 
     function generateDirectoryTree(dirPath) {
         try {
@@ -58,9 +58,9 @@ define(function(require, exports, module) {
                         "size": stats.size,
                         "lmdt": stats.mtime,   
                         "path": path 
-                    });            
+                    });
                 } else {
-                    tree["children"].push( generateDirectoryTree(path) );                   
+                    tree["children"].push( generateDirectoryTree(path) );
                 }  
             }
             return tree;
@@ -73,7 +73,7 @@ define(function(require, exports, module) {
         console.log("Checks if a directory exist: "+dirPath);
         //TSPOSTIO.
     }; */
-	
+    
     var createDirectoryIndex = function(dirPath) {
         console.log("Creating index for directory: "+dirPath);
         TSCORE.showLoadingAnimation();  
@@ -82,19 +82,19 @@ define(function(require, exports, module) {
         directoryIndex = scanDirectory(dirPath, directoryIndex);
         //console.log(JSON.stringify(directoryIndex));
         TSPOSTIO.createDirectoryIndex(directoryIndex);
-    };	
+    };
     
     var createDirectoryTree = function(dirPath) {
         console.log("Creating directory index for: "+dirPath);
-        TSCORE.showLoadingAnimation();  
-                
+        TSCORE.showLoadingAnimation();
+
         var directoyTree = generateDirectoryTree(dirPath);
         //console.log(JSON.stringify(directoyTree));
         TSPOSTIO.createDirectoryTree(directoyTree);
-    };    
-	
-	var createDirectory = function(dirPath) {
-	    console.log("Creating directory: "+dirPath);   
+    };
+    
+    var createDirectory = function(dirPath) {
+        console.log("Creating directory: "+dirPath);   
         TSCORE.showLoadingAnimation();  
                 
         fs.mkdir(dirPath, function(error) {
@@ -103,8 +103,8 @@ define(function(require, exports, module) {
                 return;
             }
             TSPOSTIO.createDirectory(dirPath);
-        });         
-	};
+        });
+    };
 
     var renameFile = function(filePath, newFilePath) {
         console.log("Renaming file: "+filePath+" to "+newFilePath);
@@ -116,7 +116,7 @@ define(function(require, exports, module) {
         }        
         if(fs.existsSync(newFilePath)) {
             console.log("File renaming failed! Target filename already exists.");
-            return false;        	
+            return false;            
         }
         fs.rename(filePath, newFilePath, function(error) {
             if (error) {
@@ -124,11 +124,11 @@ define(function(require, exports, module) {
                 return;
             }
             TSPOSTIO.renameFile(filePath, newFilePath);
-        });         
+        });
     };
-    	
-	var loadTextFile = function(filePath) {
-		console.log("Loading file: "+filePath);
+        
+    var loadTextFile = function(filePath) {
+        console.log("Loading file: "+filePath);
         TSCORE.showLoadingAnimation();  
                 
         fs.readFile(filePath, 'utf8', function(error, content) {
@@ -136,15 +136,15 @@ define(function(require, exports, module) {
                 console.log("Loading file "+filePath+" failed "+error);
                 return;
             }
-            TSPOSTIO.loadTextFile(content);            
+            TSPOSTIO.loadTextFile(content);
         }); 
-	};
-	
-	var saveTextFile = function(filePath,content,overWrite) {
-		console.log("Saving file: "+filePath);
+    };
+    
+    var saveTextFile = function(filePath,content,overWrite) {
+        console.log("Saving file: "+filePath);
         TSCORE.showLoadingAnimation();  
-        		
-		/** TODO check if fileExist by saving needed
+                
+        /** TODO check if fileExist by saving needed
         if(overWrite) {
             // Current implementation
         } else {
@@ -172,9 +172,9 @@ define(function(require, exports, module) {
             }
             TSPOSTIO.saveTextFile(filePath, isNewFile);
         }); 
-	};
-	
-	var listDirectory = function(dirPath) {
+    };
+    
+    var listDirectory = function(dirPath) {
       console.log("Listing directory: "+dirPath);
       TSCORE.showLoadingAnimation();  
               
@@ -205,25 +205,25 @@ define(function(require, exports, module) {
            TSPOSTIO.errorOpeningPath();
            console.error("Listing directory "+dirPath+" failed "+ex);
        }                    
-	};
-	
-	var deleteElement = function(path) {
-		console.log("Deleting: "+path);
+    };
+    
+    var deleteElement = function(path) {
+        console.log("Deleting: "+path);
         TSCORE.showLoadingAnimation();  
-        		
+                
         fs.unlink(path, function(error) {
             if (error) {
                 console.log("Deleting file "+path+" failed "+error);
                 return;
             }
             TSPOSTIO.deleteElement(path);
-        });		
-	};
-	
+        });        
+    };
+    
     var checkAccessFileURLAllowed = function() {
         console.log("checkAccessFileURLAllowed function not relevant for node..");
-    };	
-	
+    };    
+    
     var checkNewVersion = function() {
         console.log("Checking for new version...");
         var cVer = TSCORE.Config.DefaultSettings["appVersion"]+"."+TSCORE.Config.DefaultSettings["appBuild"];
@@ -238,7 +238,7 @@ define(function(require, exports, module) {
             console.log("AJAX failed "+data); 
         })
         ;      
-    };	
+    };    
 
     var selectDirectory = function() {
         if(document.getElementById('folderDialog') == null) {
@@ -307,21 +307,21 @@ define(function(require, exports, module) {
         }        
     };    
     
-	exports.createDirectory 			= createDirectory; 
-	exports.renameFile 					= renameFile;
-	exports.loadTextFile 				= loadTextFile;
-	exports.saveTextFile 				= saveTextFile;
-	exports.listDirectory 				= listDirectory;
-	exports.deleteElement 				= deleteElement;
-    exports.createDirectoryIndex 		= createDirectoryIndex;
-    exports.createDirectoryTree 		= createDirectoryTree;
-	exports.selectDirectory 			= selectDirectory;
-	exports.openDirectory				= openDirectory;
-    exports.openFile                    = openFile;
-	exports.selectFile 					= selectFile;
-	exports.openExtensionsDirectory 	= openExtensionsDirectory;
-	exports.checkAccessFileURLAllowed 	= checkAccessFileURLAllowed;
-	exports.checkNewVersion 			= checkNewVersion;
-    exports.getFileProperties           = getFileProperties;  	
+    exports.createDirectory              = createDirectory;
+    exports.renameFile                   = renameFile;
+    exports.loadTextFile                 = loadTextFile;
+    exports.saveTextFile                 = saveTextFile;
+    exports.listDirectory                = listDirectory;
+    exports.deleteElement                = deleteElement;
+    exports.createDirectoryIndex         = createDirectoryIndex;
+    exports.createDirectoryTree          = createDirectoryTree;
+    exports.selectDirectory              = selectDirectory;
+    exports.openDirectory                = openDirectory;
+    exports.openFile                     = openFile;
+    exports.selectFile                   = selectFile;
+    exports.openExtensionsDirectory      = openExtensionsDirectory;
+    exports.checkAccessFileURLAllowed    = checkAccessFileURLAllowed;
+    exports.checkNewVersion              = checkNewVersion;
+    exports.getFileProperties            = getFileProperties;
 
 });
