@@ -432,9 +432,8 @@ define(function(require, exports, module) {
         )); 
         tsMenu.append($('<li class="dropdown-header"><span id="">Suggested Tags:</span></li>'));      
 	
-	    //console.log("Last modified: "+_openedFileProperties.lmdt);  
 	    // Add tag suggestion based on the last modified date 
-	    if(!isChrome) {
+	    if(_openedFileProperties != undefined) {
             suggTags.push(TSCORE.TagUtils.formatDateTime4Tag(_openedFileProperties.lmdt));
             suggTags.push(TSCORE.TagUtils.formatDateTime4Tag(_openedFileProperties.lmdt, true));	        
 	    }
