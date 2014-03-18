@@ -9,8 +9,8 @@ var PRODUCTION = "@@PRODUCTION";
 if (PRODUCTION == "true") {
     console = console || {};
     console.log = function(){};
-    console.error = function(){};    
-    console.log = function(){};    
+    console.error = function(){};
+    console.log = function(){};
 }
 
 var isFirefox = document.URL.indexOf( 'resource://' ) == 0; 
@@ -37,7 +37,7 @@ try {
 // Setting up the IO functionality according to the platform
 var IO_JS = undefined;
 if( isFirefox ) {
-	IO_JS = "mozilla/mozilla.api";
+    IO_JS = "mozilla/mozilla.api";
 } else if ( isFirefoxOS ) {
     IO_JS = "mozilla/firefoxos.api";           
 } else if ( isChrome ) {
@@ -69,13 +69,13 @@ requirejs.config({
         jqueryuiwidget:         'libs/jqueryui/jquery.ui.widget',
         jqueryuimouse:          'libs/jqueryui/jquery.ui.mouse', 
         jqueryuiposition:       'libs/jqueryui/jquery.ui.position',
-        jqueryuiselectable:     'libs/jqueryui/jquery.ui.selectable',        
-        jqueryuisortable:       'libs/jqueryui/jquery.ui.sortable',        
+        jqueryuiselectable:     'libs/jqueryui/jquery.ui.selectable',
+        jqueryuisortable:       'libs/jqueryui/jquery.ui.sortable',
         jqueryuiresizable:      'libs/jqueryui/jquery.ui.resizable',
         jqueryuidraggable:      'libs/jqueryui/jquery.ui.draggable',
-        jqueryuidroppable:      'libs/jqueryui/jquery.ui.droppable',        
+        jqueryuidroppable:      'libs/jqueryui/jquery.ui.droppable',
         jqueryuiautocomplete:   'libs/jqueryui/jquery.ui.autocomplete',
-        jqueryuidatepicker:     'libs/jqueryui/jquery.ui.datepicker',   
+        jqueryuidatepicker:     'libs/jqueryui/jquery.ui.datepicker',
         
         bootstrap:              'libs/bootstrap/js/bootstrap.min',
         bootstrap3xeditable:    'libs/bootstrap3xeditable/js/bootstrap-editable.min',
@@ -85,13 +85,13 @@ requirejs.config({
         d3:                     'libs/d3/d3.v3',
         dropbox:                'libs/dropbox/dropbox.0.10.2',
         i18next:                'libs/i18next/i18next.amd.withJQuery-1.7.1',
-        mousetrap:				'libs/mousetrap/mousetrap.min',        
-		select2:				'libs/select2/select2.min',
-		hammerjs:				'libs/hammerjs/jquery.hammer.min',
-		handlebarsjs:			'libs/handlebars.js/handlebars-v1.1.2',
+        mousetrap:              'libs/mousetrap/mousetrap.min',
+        select2:                'libs/select2/select2.min',
+        hammerjs:               'libs/hammerjs/jquery.hammer.min',
+        handlebarsjs:           'libs/handlebars.js/handlebars-v1.1.2',
         webdavlib:              'web/webdavlib',
         fastclick:              'cordova/fastclick.min',
-		
+
         tscore:                 'js/core.api',
         tssetting:              'js/settings.api',
         tssettingsdefault:      'js/settings.default',
@@ -126,8 +126,8 @@ requirejs.config({
         'jquerydropdown':           { deps: ['jquery','bootstrap'] },
         'bootstrap3xeditable':      { deps: ['jquery','jqueryui','bootstrap'] },
         'jquerynanoscroller':       { deps: ['jquery'] },        
-        'select2':          	    { deps: ['jquery'] },
-        'hammerjs':          	    { deps: ['jquery'] },
+        'select2':                  { deps: ['jquery'] },
+        'hammerjs':                 { deps: ['jquery'] },
         'tscore':                   { deps: [
                 'jquery',
                 'jqueryui',
@@ -156,8 +156,8 @@ define(function (require, exports, module) {
 
     if (isCordova) {
         require(["cordova.js"]);
-        var attachFastClick = require('fastclick');
-        attachFastClick(document.body);        
+        var attachFastClick = require(['cordova/fastclick.js']);
+        attachFastClick(document.body);
     }
 
     var TSCORE = undefined;
@@ -166,4 +166,4 @@ define(function (require, exports, module) {
         TSCORE.initApp();
     }); 
 
-});    
+});
