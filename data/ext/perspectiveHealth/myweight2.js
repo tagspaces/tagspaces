@@ -56,7 +56,7 @@ define(function(require, exports, module) {
             postfix = tagSplitArr[tagSplitArr.length-1];   
         }          
         
-        var dataRE = /[+-]?\d+\.\d+/g;
+        var dataRE = /[+-]?\d+\.?\d?/g;
         var data = 0;        
         var dataArr = (""+input).match(dataRE);
         if(dataArr != null && dataArr.length > 0) {

@@ -66,30 +66,82 @@ define(function(require, exports, module) {
 	    }
 	};
 	
+    function showAddWeightDataDialog() {
+        require([
+              "text!"+extensionDirectory+"/AddWeightDataDialog.html",
+            ], function(uiTPL) {
+                // Check if dialog already created
+                if($("#dialogAddWeight").length < 1) {
+                    var uiTemplate = Handlebars.compile( uiTPL );
+                    $("body").append(uiTemplate()); 
+                    
+                    $( "#createWeightDataEntry" ).on("click", function() {        
+                    	createWeightDataEntry();
+                    });  
+                                                     
+                }
+                $("#dateData").val(TSCORE.TagUtils.formatDateTime4Tag(new Date(), false));
+                $("#weightData").val("0.0");
+                $("#fatData").val("0.0");
+                $("#watterData").val("0.0");
+                $("#musclesData").val("0.0");
+                $("#bonesData").val("0.0");
+                $("#dialogAddWeight").modal({backdrop: 'static',show: true});
+        });     
+    } 	
+    
+    function createWeightDataEntry() { 
+    	var filePath = TSCORE.currentPath+TSCORE.dirSeparator+TSCORE.TagUtils.beginTagContainer
+    				  +TSCORE.Config.getTagDelimiter()+$("#dateData").val()
+    				  +TSCORE.Config.getTagDelimiter()+"WEI"+$("#weightData").val()+"kg"
+    				  +TSCORE.Config.getTagDelimiter()+"FAT"+$("#fatData").val()+"%"
+    				  +TSCORE.Config.getTagDelimiter()+"WAT"+$("#watterData").val()+"%"
+    				  +TSCORE.Config.getTagDelimiter()+"MUS"+$("#musclesData").val()+"%"
+    				  +TSCORE.Config.getTagDelimiter()+"BON"+$("#bonesData").val()+"kg"
+    				  +TSCORE.TagUtils.endTagContainer+".tsd";
+        TSCORE.IO.saveTextFile(filePath,"Weight Data Created by TagSpaces");    
+    } 	    
+	
 	exports.updateTreeData = function updateIndexData(fsTreeData) {
 		console.log("Updating tree data, not supported here...");
    
 		TSCORE.hideLoadingAnimation(); 
 	};
 	  	
-	exports.clearSelectedFiles = function() {
-
+	var clearSelectedFiles = function() {
+		console.log("clearSelectedFiles not implemented in "+extensionID);
 	};
+	
+    var removeFileUI = function(filePath) {
+        console.log("removeFileUI not implemented in "+extensionID);
+    };    
+    
+    var updateFileUI = function(oldFilePath, newFilePath) {
+    	console.log("updateFileUI not implemented in "+extensionID);
+    };     	
+    
+	var getNextFile = function (filePath) {
+		console.log("getNextFile not implemented in "+extensionID);
+	};
+
+	var getPrevFile = function (filePath) {
+		console.log("getPrevFile not implemented in "+extensionID);
+	};    
 	
 	var initUI = function() {
 
         viewToolbar.append($("<div >", { 
             class: "btn-group", 
-            "data-toggle": "buttons-radio",        
         })  
 
             .append($("<button>", { 
                 class: "btn btn-default",
-                title: "Create new file",
+                title: "Add new weight data",
                 id: extensionID+"CreateFileButton",    
             })
             .click(function() {
-                TSCORE.showFileCreateDialog();
+            	showAddWeightDataDialog();
+                //TSCORE.showFileCreateDialog();
             })
             .append( "<i class='fa fa-plus'>" )
             )
@@ -154,7 +206,9 @@ define(function(require, exports, module) {
     // Methods
 //    exports.init                    = init;
 //    exports.load                    = load;
-//    exports.clearSelectedFiles      = clearSelectedFiles;
-//    exports.getNextFile             = getNextFile;
-//    exports.getPrevFile             = getPrevFile;	
+	exports.clearSelectedFiles		= clearSelectedFiles;
+	exports.getNextFile				= getNextFile;
+	exports.getPrevFile				= getPrevFile;	
+    exports.removeFileUI            = removeFileUI;
+    exports.updateFileUI            = updateFileUI;	
 });
