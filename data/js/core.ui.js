@@ -158,6 +158,10 @@ define(function(require, exports, module) {
         $("#appVersion").text(TSCORE.Config.DefaultSettings["appVersion"]+"."+TSCORE.Config.DefaultSettings["appBuild"]);
         $("#appVersion").attr("title","BuildID: "+TSCORE.Config.DefaultSettings["appVersion"]+"."+TSCORE.Config.DefaultSettings["appBuild"]+"."+TSCORE.Config.DefaultSettings["appBuildID"]);
  
+        // prevent default behavior from changing page on dropped file
+        window.ondragover = function(e) { e.preventDefault(); return false };
+        window.ondrop = function(e) { e.preventDefault(); return false };        
+        
         platformTuning();        
  
 	    $( "#toggleLeftPanel" ).click(function() {
@@ -221,8 +225,6 @@ define(function(require, exports, module) {
 			var fileName = TSCORE.currentPath+TSCORE.dirSeparator+$( "#newFileName" ).val()+fileTags+"."+fileType;
 
             TSCORE.IO.saveTextFile(fileName,fileContent);
-            TSCORE.IO.listDirectory(TSCORE.currentPath);                    
-
         });
 
         $( '#renameFileButton' ).click(function() {
