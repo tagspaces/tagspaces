@@ -75,13 +75,19 @@ define(function(require, exports, module) {
 	        initKeyBindings();
 		    $( "#loading" ).hide();  
 	    
-            // Show start hint by no locations
-            if(tsSettings.Settings.tagspacesList.length < 1 ) {
+		    // Show start hint by no last location
+		    var lastLocation = tsSettings.getLastOpenedLocation();
+		    if(lastLocation == undefined || lastLocation.length < 1 ) {
+                tsCoreUI.showWelcomeDialog();         
+            }	
+		    
+		    // Show start hint by no locations
+            /*if(tsSettings.Settings.tagspacesList.length < 1 ) {
                 $( "#createNewLocation" ).tooltip( "show" );
                 $( "#locationName" ).prop('disabled', true);
                 $( "#selectLocation" ).prop('disabled', true);     
                 tsCoreUI.showWelcomeDialog();         
-            }	    
+            }*/	    
 	    
 	        console.log("Layout initialized");
 	    }); 
