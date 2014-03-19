@@ -208,6 +208,27 @@ console.log("Loading UI for perspectiveList");
 	         ]
 	    } );
 	
+	    /*
+        var dropTarget =  this.viewToolbar;
+        //dropTarget.on("dragover", function () { dropTarget.css("border","2px red solid"); return false; });
+        //dropTarget.on("dragend", function () { dropTarget.css("border","0px solid"); return false; });
+        dropTarget.on("drop", function (e) {
+          e.preventDefault();
+          var droppedFilePath = e.originalEvent.dataTransfer.files[0].path;
+          if( droppedFilePath != undefined){
+        	  var targetFilePath = TSCORE.currentPath+TSCORE.dirSeparator+TSCORE.TagUtils.extractFileName(droppedFilePath);
+        	  TSCORE.showConfirmDialog(
+      				"Confirm File Move",
+      				"Do you want to move '"+droppedFilePath+"' to '"+targetFilePath+"'?",
+      				function() { TSCORE.IO.renameFile(droppedFilePath,targetFilePath); }
+      			);
+          }
+          //for (var i = 0; i < e.originalEvent.dataTransfer.files.length; ++i) {
+          //  console.log(e.originalEvent.dataTransfer.files[i].path);
+          //}
+          return false;
+        }); */   
+	    
 	    // Disable alerts in datatable
 	    this.fileTable.dataTableExt.sErrMode = 'throw';	   
 	};			
