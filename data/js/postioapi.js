@@ -28,12 +28,12 @@ define(function(require, exports, module) {
 
     exports.renameFile = function(oldFilePath, newFilePath) {
         var lastOpenedFile = TSCORE.FileOpener.getOpenedFilePath();        
-
-        console.log("Last opened Filename: "+lastOpenedFile);
-        
-        // TODO handle case in which a file opened for editing and a tag has been added / file renamed
-        if(TSCORE.FileOpener.isFileOpened() && (oldFilePath == lastOpenedFile) ) {
-            TSCORE.FileOpener.openFile(newFilePath);                    
+        if(lastOpenedFile != undefined) {
+            console.log("Last opened Filename: "+lastOpenedFile);
+            // TODO handle case in which a file opened for editing and a tag has been added / file renamed
+            if(TSCORE.FileOpener.isFileOpened() && (oldFilePath == lastOpenedFile) ) {
+                TSCORE.FileOpener.openFile(newFilePath);                    
+            }
         }
 
         var oldFileContainingPath = TSCORE.TagUtils.extractContainingDirectoryPath(oldFilePath),
