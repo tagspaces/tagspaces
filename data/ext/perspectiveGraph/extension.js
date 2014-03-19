@@ -130,9 +130,25 @@ define(function(require, exports, module) {
 		TSCORE.hideLoadingAnimation(); 
 	};
 	
-	exports.clearSelectedFiles = function() {
-
+	var clearSelectedFiles = function() {
+		console.log("clearSelectedFiles not implemented in "+extensionID);
 	};
+	
+    var removeFileUI = function(filePath) {
+        console.log("removeFileUI not implemented in "+extensionID);
+    };    
+    
+    var updateFileUI = function(oldFilePath, newFilePath) {
+    	console.log("updateFileUI not implemented in "+extensionID);
+    };     	
+    
+	var getNextFile = function (filePath) {
+		console.log("getNextFile not implemented in "+extensionID);
+	};
+
+	var getPrevFile = function (filePath) {
+		console.log("getPrevFile not implemented in "+extensionID);
+	};   
 	
 	var initUI = function() {
        
@@ -226,7 +242,9 @@ define(function(require, exports, module) {
     // Methods
 //    exports.init                    = init;
 //    exports.load                    = load;
-//    exports.clearSelectedFiles      = clearSelectedFiles;
-//    exports.getNextFile             = getNextFile;
-//    exports.getPrevFile             = getPrevFile;	
+	exports.clearSelectedFiles		= clearSelectedFiles;
+	exports.getNextFile				= getNextFile;
+	exports.getPrevFile				= getPrevFile;	
+    exports.removeFileUI            = removeFileUI;
+    exports.updateFileUI            = updateFileUI;	
 });

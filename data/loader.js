@@ -39,9 +39,9 @@ var IO_JS = undefined;
 if( isFirefox ) {
     IO_JS = "mozilla/mozilla.api";
 } else if ( isFirefoxOS ) {
-    IO_JS = "mozilla/firefoxos.api";           
+    IO_JS = "mozilla/firefoxos.api";
 } else if ( isChrome ) {
-    IO_JS = "chrome/chrome.api";           
+    IO_JS = "chrome/chrome.api";
 } else if (isNode){
     IO_JS = "node-webkit/node-webkit.api";
 } else if (isCordova){
@@ -49,10 +49,10 @@ if( isFirefox ) {
 } else if (isWeb){
     IO_JS = "web/web.api";
 } else {
-    IO_JS = "web/web.api";        
+    IO_JS = "web/web.api";
 }
 
-//IO_JS = "js/ioapi.dropbox";        
+//IO_JS = "js/ioapi.dropbox";
 
 console.log("Loading Loader - Firefox: "+isFirefox+" | ChromeExt: "+isChrome+" | Node: "+isNode+" | Cordova: "+isCordova);
 
@@ -120,9 +120,9 @@ requirejs.config({
         'jqueryuisortable':         { deps: ['jqueryui','jqueryuiwidget','jqueryuimouse'] },
         'jqueryuidatepicker':       { deps: ['jqueryui'] },
         'jqueryuidroppable':        { deps: ['jqueryui','jqueryuiwidget','jqueryuimouse','jqueryuidraggable'] }, 
-        'jqueryuidraggable':        { deps: ['jqueryui','jqueryuiwidget','jqueryuimouse'] },        
-        'jqueryuiresizable':        { deps: ['jqueryui','jqueryuiwidget','jqueryuimouse'] },          
-        'jquerylayout':             { deps: ['jquery','jqueryuidraggable' ] },        
+        'jqueryuidraggable':        { deps: ['jqueryui','jqueryuiwidget','jqueryuimouse'] },
+        'jqueryuiresizable':        { deps: ['jqueryui','jqueryuiwidget','jqueryuimouse'] },
+        'jquerylayout':             { deps: ['jquery','jqueryuidraggable' ] },
         'jquerydropdown':           { deps: ['jquery','bootstrap'] },
         'bootstrap3xeditable':      { deps: ['jquery','jqueryui','bootstrap'] },
         'jquerynanoscroller':       { deps: ['jquery'] },        
@@ -147,7 +147,7 @@ requirejs.config({
                 'select2',
                 'handlebarsjs',  
                 'tssettingsdefault', 
-            ] },                   
+            ] },
     } 
 });
 

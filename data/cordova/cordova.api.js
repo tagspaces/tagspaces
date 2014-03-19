@@ -57,7 +57,7 @@ define(function (require, exports, module) {
         pendingRecursions--;            
         console.log("Pending recursions: " + pendingRecursions);   
         if(pendingRecursions <= 0) {
-       		TSPOSTIO.createDirectoryIndex(anotatedDirListing);
+               TSPOSTIO.createDirectoryIndex(anotatedDirListing);
         }     
     }
     
@@ -76,8 +76,8 @@ define(function (require, exports, module) {
                 // Get a list of all the entries in the directory
                 pendingRecursions++;
                 directoryReader.readEntries(
- 					scanDirectory, 
- 					function (error) { // error get file system
+                     scanDirectory, 
+                     function (error) { // error get file system
                         console.log("Dir List Error: " + error.code);
                     }            
                );
@@ -200,8 +200,8 @@ define(function (require, exports, module) {
         fsRoot.getDirectory(dirPath, {create: false, exclusive: false}, 
             function (dirEntry) {
                 var directoryReader = dirEntry.createReader();
-		        var anotatedDirList = [];
-				var pendingCallbacks = 0;        
+                var anotatedDirList = [];
+                var pendingCallbacks = 0;        
                 // Get a list of all the entries in the directory
                 directoryReader.readEntries(
                     function (entries) { 
@@ -209,43 +209,43 @@ define(function (require, exports, module) {
                         var normalizedPath;
                         for (i = 0; i < entries.length; i++) {
                             if(entries[i].isFile) {
-								pendingCallbacks++;	
-	                            entries[i].file(
-	                            	function(entry) {
-			                            anotatedDirList.push({
-			                                "name":   entry.name,
-			                                "isFile": true,
-			                                "size":   entry.size,
-			                                "lmdt":   entry.lastModifiedDate,
-			                                "path":   entry.fullPath
-			                            });
-			                            pendingCallbacks--;                            								                            		
-                            			console.log("File: "+entry.name+" Size: "+entry.size+ " i:"+i+" Callb: "+pendingCallbacks);
-			                            if(pendingCallbacks == 0 && i == entries.length) {
-			                            	TSPOSTIO.listDirectory(anotatedDirList);
-			                            }                          
-				                    }, function (error) { // error get file system
-				                        console.log("Getting file meta error: " + error.code);
-				                    }                                        	
-	                            );                            	
+                                pendingCallbacks++;    
+                                entries[i].file(
+                                    function(entry) {
+                                        anotatedDirList.push({
+                                            "name":   entry.name,
+                                            "isFile": true,
+                                            "size":   entry.size,
+                                            "lmdt":   entry.lastModifiedDate,
+                                            "path":   entry.fullPath
+                                        });
+                                        pendingCallbacks--;                                                                                                
+                                        console.log("File: "+entry.name+" Size: "+entry.size+ " i:"+i+" Callb: "+pendingCallbacks);
+                                        if(pendingCallbacks == 0 && i == entries.length) {
+                                            TSPOSTIO.listDirectory(anotatedDirList);
+                                        }                          
+                                    }, function (error) { // error get file system
+                                        console.log("Getting file meta error: " + error.code);
+                                    }                                            
+                                );                                
                             } else {
                                 normalizedPath = normalizePath(entries[i].fullPath);                                
-	                            anotatedDirList.push({
-	                                "name":   entries[i].name,
-	                                "isFile": false,
-	                                "size":   "",
-	                                "lmdt":   "",
-	                                "path":   normalizedPath
-	                            });
-                            	console.log("Dir: "+entries[i].name+ " I:"+i+" Callb: "+pendingCallbacks);                            	
-	                            if((pendingCallbacks == 0) && ((i+1) == entries.length)) {
-	                            	TSPOSTIO.listDirectory(anotatedDirList);
-	                            }                            				                            	
+                                anotatedDirList.push({
+                                    "name":   entries[i].name,
+                                    "isFile": false,
+                                    "size":   "",
+                                    "lmdt":   "",
+                                    "path":   normalizedPath
+                                });
+                                console.log("Dir: "+entries[i].name+ " I:"+i+" Callb: "+pendingCallbacks);                                
+                                if((pendingCallbacks == 0) && ((i+1) == entries.length)) {
+                                    TSPOSTIO.listDirectory(anotatedDirList);
+                                }                                                                            
                             } 
                                                    
                         }
                         if(pendingCallbacks == 0) {
-                        	TSPOSTIO.listDirectory(anotatedDirList);
+                            TSPOSTIO.listDirectory(anotatedDirList);
                         }   
                         //console.log("Dir content: " + JSON.stringify(entries));
   
@@ -299,11 +299,11 @@ define(function (require, exports, module) {
                         reader.onloadend = function(evt) {
                             TSPOSTIO.loadTextFile(evt.target.result); 
                         };
-                        reader.readAsText(file);                              
+                        reader.readAsText(file);
                     },
                     function() {
                         console.log("error getting file: "+filePath);
-                    }                                  
+                    }
                 );
             },
             function() {
@@ -459,23 +459,23 @@ define(function (require, exports, module) {
         );  
     };
     
-	exports.createDirectory 			= createDirectory; 
-	exports.renameFile 					= renameFile;
-	exports.loadTextFile 				= loadTextFile;
-	exports.saveTextFile 				= saveTextFile;
-	exports.listDirectory 				= listDirectory;
+    exports.createDirectory             = createDirectory; 
+    exports.renameFile                     = renameFile;
+    exports.loadTextFile                 = loadTextFile;
+    exports.saveTextFile                 = saveTextFile;
+    exports.listDirectory                 = listDirectory;
     exports.listSubDirectories          = listSubDirectories;
-	exports.deleteElement 				= deleteElement;
-    exports.createDirectoryIndex 		= createDirectoryIndex;
-    exports.createDirectoryTree 		= createDirectoryTree;
-	exports.selectDirectory 			= selectDirectory;
-	exports.openDirectory				= openDirectory;
-	exports.openFile                    = openFile;
-	exports.sendFile                    = sendFile;
-	exports.selectFile 					= selectFile;
-	exports.openExtensionsDirectory 	= openExtensionsDirectory;
-	exports.checkAccessFileURLAllowed 	= checkAccessFileURLAllowed;
-	exports.checkNewVersion 			= checkNewVersion;	    
-	exports.getFileProperties           = getFileProperties;
-	
+    exports.deleteElement                 = deleteElement;
+    exports.createDirectoryIndex         = createDirectoryIndex;
+    exports.createDirectoryTree         = createDirectoryTree;
+    exports.selectDirectory             = selectDirectory;
+    exports.openDirectory                = openDirectory;
+    exports.openFile                    = openFile;
+    exports.sendFile                    = sendFile;
+    exports.selectFile                     = selectFile;
+    exports.openExtensionsDirectory     = openExtensionsDirectory;
+    exports.checkAccessFileURLAllowed     = checkAccessFileURLAllowed;
+    exports.checkNewVersion             = checkNewVersion;        
+    exports.getFileProperties           = getFileProperties;
+    
 });
