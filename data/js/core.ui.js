@@ -225,6 +225,9 @@ define(function(require, exports, module) {
 			var fileName = TSCORE.currentPath+TSCORE.dirSeparator+$( "#newFileName" ).val()+fileTags+"."+fileType;
 
             TSCORE.IO.saveTextFile(fileName,fileContent);
+            
+            // TODO move this functionality to postio
+            TSCORE.IO.listDirectory(TSCORE.currentPath);
         });
 
         $( '#renameFileButton' ).click(function() {
