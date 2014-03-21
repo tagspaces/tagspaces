@@ -1,5 +1,25 @@
 ﻿#Changelog
 
+##Version 1.7.8 / 2014.03.21
+- enabling opening of the last opened location by the start of the application [#29](https://github.com/uggrock/tagspaces/issues/29)
+- adding the following key bindings
+    - ctrl+r / command+r - reload the current document
+    - ctrl+s / command+s - saves the current document if opened for editing
+    - esc - close the current document  
+    - alt-enter - show the document properties
+- making all dialogs not disappear by clicking outsite of the dialog
+- fixing issue with not displaying local images in markdown files
+- adding webp as supported image format (not in firefox)
+- starting hints are shown only if you don't have last opened location
+- preventing drag & drop of files in the application
+- [api] adding new function for conversion of e.g. 20140313 in js dates
+- jqueryhotkeys exchanged with mousetrap library
+- updating to a newer codemirror version
+- [android] new rounded icons for android added
+- [android] added "send to" functionality for all file types
+- [android] eliminating the 300ms wait time by adding the fastclick library
+- [android] fixing the failing opening of the first document after the start of the app
+
 ##Version 1.7.7 / 2014.03.10
 - improving and refactoring the layouting algorithm for a better responsible behaviour, especially on mobile phones
 - adding handler for the new add tag menu item
@@ -10,7 +30,7 @@
 
 ##Version 1.7.6 / 2014.02.28
 
-- remeber and open the last state of the application window e.g. maximize or not [#29](https://github.com/uggrock/tagspaces/issues/29)
+- remember and open the last state of the application window e.g. maximize or not [#29](https://github.com/uggrock/tagspaces/issues/29)
 - adding openLocation to the TSCORE API
 - making the directory to taglibrary switch buttons brighter
 - adding functionality to force closing of opened files for editing
