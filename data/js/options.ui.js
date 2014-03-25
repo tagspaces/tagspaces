@@ -103,7 +103,14 @@ define(function(require, exports, module) {
             addPerspective($('#perspectiveList'), value.id);
         });
 
-        $('#fileTypesList').empty();
+        $('#fileTypesList')
+	        .empty()
+	        .append($("<div class='input-group' >")
+	                .append($("<span style='width: 80px; border: 0px' class='form-control' >File Ext.</span>"))
+	                .append($("<span style=' border: 0px; width: 170px' class='ftviewer form-control'>File Viewer</span>"))
+	                .append($("<span style=' border: 0px; width: 170px' class='fteditor form-control'>File Editor</span>"))                
+	                );
+
         TSCORE.Config.getSupportedFileTypes().forEach(function (value, index) {
             addFileType($('#fileTypesList'), value.type, value.viewer, value.editor);
         });        
