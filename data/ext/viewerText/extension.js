@@ -7,7 +7,7 @@ define(function(require, exports, module) {
 
 	console.log("Loading viewerText");
 
-    var extensionTitle = "Text Viewer";
+    var extensionTitle = "Universal Viewer";
     var extensionID = "viewerText";  // ID should be equal to the directory name where the ext. is located   
     var extensionType =  "viewer";
     var extensionIcon = "icon-list";
