@@ -17,9 +17,10 @@ define(function(require, exports, module) {
     function scanDirectory(dirPath, index) {
         try {
             var dirList = fs.readdirSync(dirPath);
+            var path, stats = undefined;
             for (var i=0; i < dirList.length; i++) {
-                var path = dirPath+TSCORE.dirSeparator+dirList[i];
-                var stats = fs.statSync(path);
+                path = dirPath+TSCORE.dirSeparator+dirList[i];
+                stats = fs.statSync(path);
                 //console.log('stats: ' + JSON.stringify(stats));
                 index.push({
                     "name": dirList[i],
