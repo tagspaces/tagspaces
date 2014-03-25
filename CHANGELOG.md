@@ -3,10 +3,10 @@
 ##Version 1.7.8 / 2014.03.21
 - enabling opening of the last opened location by the start of the application [#29](https://github.com/uggrock/tagspaces/issues/29)
 - adding the following key bindings
-    - ctrl+r / command+r - reload the current document
+    - ctrl+r / command+r - reloads the current document
     - ctrl+s / command+s - saves the current document if opened for editing
-    - esc - close the current document  
-    - alt-enter - show the document properties
+    - esc - closes the current document  
+    - alt-enter - shows the document properties
 - making all dialogs not disappear by clicking outsite of the dialog
 - fixing issue with not displaying local images in markdown files
 - adding webp as supported image format (not in firefox)
@@ -25,7 +25,7 @@
 - adding handler for the new add tag menu item
 - moving toolbar in the image viewer to bottom right
 - removing hover and focus background toggle left panel button
-- adding support for viewing of ODF files (e.g. ODT, ODS, ODG, ODP)
+- adding support for viewing of ODF files (e.g. ODT, ODS, ODG, ODP) not available in firefox and chrome
 - adding new version of pdf.js with support of printing, rotating, dragging, document properties and goto first/last page
 
 ##Version 1.7.6 / 2014.02.28
