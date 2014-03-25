@@ -754,8 +754,17 @@ input a.resetFilter {
     height: 100%;
 }
 
-#showTagGroups, #showLocations {
-    width: 52px;   
+#showTagGroups, #showLocations, #contactUs {
+   width: 50px;*/   
+}
+
+#contactUsContent .fa {
+    width: 40px;
+}
+
+#contactUsContent .btn-link {
+    height: 45px;
+    color: #404040;
 }
 
 @media 
