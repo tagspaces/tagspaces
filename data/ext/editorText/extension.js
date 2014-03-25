@@ -74,6 +74,10 @@ define(function(require, exports, module) {
 	
 	exports.setContent = function(content) {
 //        console.log("Content: "+content);
+        var UTF8_BOM = "\ufeff";
+        if(content.indexOf(UTF8_BOM) == 0) {
+            content = content.substring(1, content.length);
+        }		
 	    cmEditor.setValue(content);
 	};
 	
