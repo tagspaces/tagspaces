@@ -137,7 +137,9 @@ user-select: none;
     float: left; 
     border: 1px solid #D4D4D4;
     text-align: left;
-    width: 180px; 
+    /*width: 25%;
+    height: 25%;*/
+    width: 200px; 
     height: 100px;  
     overflow: hidden;
     position:relative;
@@ -681,7 +683,7 @@ input a.resetFilter {
 	min-height: 40px;
 }
 
-#fileExt {
+.fileExt {
 	background-color: #515151; 
 	text-transform:uppercase; 
 	font-size: 12px;
