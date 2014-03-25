@@ -345,9 +345,15 @@ define(function(require, exports, module) {
 			showTagsPanel();
 			console.log("Show Tags");		
 	    });
+		
+        $('#contactUs').click(function (e) {
+    		showContactUsPanel();
+			console.log("Show Contact Us");    		
+    	});   		
 	    
 	    // Hide the tagGroupsContent or locationContent by default
 	    $('#locationContent').hide(); // #tagGroupsContent
+	    $('#contactUsContent').hide();
 	    
         // Search UI
 
@@ -424,35 +430,29 @@ define(function(require, exports, module) {
         // Search UI END
         
         $('#perspectiveSwitcherButton').prop('disabled', true);
-         	    
-        $('#contactUs').popover({
-                placement: 'top', 
-                content: $("#contactUsContent").html(), 
-                html: true
-        });      
         
-        $("#sideBarButtunGroup").on('click',"#openHints", function () {
+        $("#contactUsContent").on('click',"#openHints", function () {
                 showWelcomeDialog();
             });
 
         // Handle external links _system is important in cordova
-        $("#sideBarButtunGroup").on('click',"#openUservoice", function () {
+        $("#contactUsContent").on('click',"#openUservoice", function () {
                 window.open($(this).attr("url"),"_system");
             });
 
-        $("#sideBarButtunGroup").on('click',"#openGitHubIssues", function () {
+        $("#contactUsContent").on('click',"#openGitHubIssues", function () {
                 window.open($(this).attr("url"),"_system");
             });
             
-        $("#sideBarButtunGroup").on('click',"#openTwitter", function () {
+        $("#contactUsContent").on('click',"#openTwitter", function () {
                 window.open($(this).attr("url"),"_system");
             });    
 
-        $("#sideBarButtunGroup").on('click',"#openTwitter2", function () {
+        $("#contactUsContent").on('click',"#openTwitter2", function () {
                 window.open($(this).attr("url"),"_system");
             });    
 
-        $("#sideBarButtunGroup").on('click',"#openGooglePlus", function () {
+        $("#contactUsContent").on('click',"#openGooglePlus", function () {
                 window.open($(this).attr("url"),"_system");
             });    
                     	    
@@ -571,22 +571,34 @@ define(function(require, exports, module) {
         $('#directoryMenu').hide();
         $('#tagMenu').hide();
         $('#fileMenu').hide();  
-        //$('.popover').hide();        
 	};
 	
     var showLocationsPanel = function() {
+    	$('#contactUsContent').hide();
 		$('#tagGroupsContent').hide();
 		$('#locationContent').show();
-		$('#showLocations').addClass("active");
-		$('#showTagGroups').removeClass("active");				
+		$('#showTagGroups').removeClass("active");
+		$('#contactUs').removeClass("active");
+		$('#showLocations').addClass("active");				
     }; 	
 
     var showTagsPanel = function() {
-		$('#locationContent').hide();
-		$('#tagGroupsContent').show();	
+    	$('#contactUsContent').hide();
+    	$('#locationContent').hide();
+		$('#tagGroupsContent').show();
 		$('#showLocations').removeClass("active");
+		$('#contactUs').removeClass("active");		
 		$('#showTagGroups').addClass("active");				
     }; 	
+    
+    var showContactUsPanel = function() {
+    	$('#locationContent').hide();
+		$('#tagGroupsContent').hide();	
+    	$('#contactUsContent').show();
+		$('#showLocations').removeClass("active");
+		$('#showTagGroups').removeClass("active");	    	
+		$('#contactUs').addClass("active");				
+    };     
 
     // Public API definition
     exports.showContextMenu			    = showContextMenu;
