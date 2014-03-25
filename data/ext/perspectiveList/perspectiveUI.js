@@ -152,12 +152,6 @@ console.log("Loading UI for perspectiveList");
 	        ],
 	        "aaSorting": [[ 1, "asc" ]],    // softing by filename     
 	        "aoColumnDefs": [
-/*	            { // Title column
-	                "mRender": function ( data, type, row ) { 
-	                	return buttonizeTitle(data,row[TSCORE.fileListTITLE],row[TSCORE.fileListFILEPATH],row[TSCORE.fileListFILEEXT]); 
-	                	},
-	                "aTargets": [ TSCORE.fileListTITLE ]
-	            },*/ 
                 { // File extension column
                     "mRender": function ( data, type, row ) { 
 	                	return buttonizeTitle(row[TSCORE.fileListTITLE],row[TSCORE.fileListFILEPATH],row[TSCORE.fileListFILEEXT]); 
@@ -340,7 +334,16 @@ console.log("Loading UI for perspectiveList");
         this.refreshThumbnails();
         //TSCORE.hideLoadingAnimation();          
 	};
-	
+
+    var buttonCompTmpl = Handlebars.compile('<button class="btn btn-link fileSelection"><i class="fa fa-square-o"></i></button>\
+    	<button title="Options for {{filepath}}" filepath="{{filepath}}" class="btn btn-link fileTitleButton">\
+    	<span class="fileExt"><span>{{fileext}}</span>&nbsp;<span class="caret white-caret"></span></span></button>');        
+
+    var buttonCompTmbTmpl = Handlebars.compile('<button class="btn btn-link fileSelection"><i class="fa fa-square-o"></i></button>\
+        	<button title="Options for {{filepath}}" filepath="{{filepath}}" class="btn btn-link fileTitleButton">\
+        	<span class="fileExt"><span>{{fileext}}</span>&nbsp;<span class="caret white-caret"></span></span></button>\
+        	<br><img title="{{filepath}}" class="thumbImg" filepath="{{tmbpath}}" style="width: 0px; height: 0px; border: 0px" src="">');            
+    
     // Helper function user by basic and search views
     function buttonizeTitle(title, filePath, fileExt) {
         if(title.length < 1) {
@@ -354,7 +357,32 @@ console.log("Loading UI for perspectiveList");
         } else {
             tmbPath = "file:///"+filePath;  
         }       
+
+        var context = {filepath: filePath, tmbpath: tmbPath, fileext: fileExt }
         
+        if(supportedFileTypeThumnailing.indexOf(fileExt) >= 0) {
+        	return buttonCompTmbTmpl(context);
+        } else {
+        	return buttonCompTmpl(context);
+        }            
+    }	    
+    
+    // Helper function user by basic and search views
+    function buttonizeTitle2(title, filePath, fileExt) {
+        
+    	// TODO refactor title not used
+    	if(title.length < 1) {
+            title = filePath;
+        }
+        
+        //TODO minimize platform specific calls     
+        var tmbPath = undefined;
+        if(isCordova) {
+            tmbPath = filePath;            
+        } else {
+            tmbPath = "file:///"+filePath;  
+        }               
+
         var thumbHTML = "";     
         if(supportedFileTypeThumnailing.indexOf(fileExt) >= 0) {
             thumbHTML = $('<span>').append( $('<img>', { 
@@ -373,7 +401,7 @@ console.log("Loading UI for perspectiveList");
             filepath: filePath,
             class: 'btn btn-link fileTitleButton',          
         }).append($('<span>', { 
-            id: "fileExt"           
+            class: "fileExt"           
             })
           .append($("<span>", { text: fileExt }))  
           .append("&nbsp;<span class='caret white-caret'></span>")
