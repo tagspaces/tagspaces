@@ -226,9 +226,8 @@ define(function(require, exports, module) {
             require([TSCORE.Config.getExtensionPath()+"/viewerText/extension.js"], function(viewer) {
                 _tsEditor = viewer;
                 _tsEditor.init(filePath, "viewer", true);
-            });
-	        //$( "#viewer" ).html("<div class='alert alert-info'><strong>Info</strong> File type not supported for viewing.</div>");        
-	    } else if (viewerExt == "viewerBrowser") {
+            });        
+	    /* } else if (viewerExt == "viewerBrowser") {
             var filePathURI = undefined;
             if(isCordova) {
                 filePathURI = filePath;            
@@ -241,7 +240,8 @@ define(function(require, exports, module) {
 				src: filePathURI,
 				"nwdisable": "",
 				"nwfaketop": "",
-		    })); 
+		    })
+		    ); */
 	    } else {
 	        require([TSCORE.Config.getExtensionPath()+"/"+viewerExt+"/extension.js"], function(viewer) {
 	            _tsEditor = viewer;
@@ -259,6 +259,7 @@ define(function(require, exports, module) {
 	    TSCORE.FileOpener.setFileOpened(true); 
 		TSCORE.openFileViewer();
 
+		// Handling the keybindings
 	    Mousetrap.unbind('mod+r');
 		Mousetrap.bind('mod+r', function() {
 	    	reloadFile();
@@ -269,8 +270,7 @@ define(function(require, exports, module) {
 		Mousetrap.bind('mod+s', function() {
 	    	saveFile();
 	    	return false;
-	    });
-		
+	    });		
 		
 	    Mousetrap.unbind('esc');
 		Mousetrap.bind('esc', function() {
@@ -292,7 +292,7 @@ define(function(require, exports, module) {
 	
 	function updateEditorContent(fileContent) {
 	    console.log("Updating editor"); // with data: "+fileContent); 
-	    _tsEditor.setContent(fileContent);    
+    	_tsEditor.setContent(fileContent);
 	}
 	
 	// Should return false if no editor found
