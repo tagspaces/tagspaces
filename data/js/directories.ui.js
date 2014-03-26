@@ -151,16 +151,13 @@ define(function(require, exports, module) {
                         "class":      "btn-group dropup",
                     })
                     .append($("<button>", { 
-                        "class":       "btn btn-default dropdown-toggle",
+                        "class":       "btn btn-link dropdown-toggle",
                         "text":        directoryHistory[i].name,
                         "key":         directoryHistory[i].path,  
                         "data-toggle": "dropdown"                        
                     })
                         .prepend(homeIcon)
-                        .append("&nbsp;<span class='caret'></span>")
-                        /*.click(function() {
-                        //    navigateToDirectory($(this).attr("key"));
-                        })*/                  
+                        .append("&nbsp;&nbsp;<i class='fa fa-caret-right'></i>&nbsp;")
                     )
                     .append(subfolders)                                  
                 ); 
