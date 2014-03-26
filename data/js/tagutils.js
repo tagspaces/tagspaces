@@ -292,14 +292,44 @@ define(function(require, exports, module) {
        
         TSCORE.IO.renameFile(filePath, containingDirectoryPath+TSCORE.dirSeparator+newFileName);
     }
-
-    function addTag(filePathArray, tagArray) {
-        console.log("Adding tags to files");
+    
+    function removeTagsFromFile(filePath, tags) {
+        console.log("Remove the tags from: "+filePath);
         
+        var fileName = extractFileName(filePath);
+            
+        var containingDirectoryPath = extractContainingDirectoryPath(filePath);
+        
+        var extractedTags = extractTags(filePath);
+
+        for (var i=0; i < tags.length; i++) {
+            // check if tag is already in the tag array
+        	var tagLoc = extractedTags.indexOf(tags[i].trim())
+        	if(tagLoc >= 0) {
+                // Remove the new tag
+                extractedTags.splice(tagLoc,1);          
+            } 
+        }
+        
+        var newFileName = generateFileName(fileName, extractedTags);
+       
+        TSCORE.IO.renameFile(filePath, containingDirectoryPath+TSCORE.dirSeparator+newFileName);
+    }
+    
+    
+    function addTag(filePathArray, tagArray) {
+        console.log("Adding tags to files");        
         for (var i=0; i < filePathArray.length; i++) {
            writeTagsToFile(filePathArray[i], tagArray);
         }
     }    
+
+    function removeTags(filePathArray, tagArray) {
+        console.log("Remove tags from files");        
+        for (var i=0; i < filePathArray.length; i++) {
+           removeTagsFromFile(filePathArray[i], tagArray);
+        }
+    }       
     
     // Moves the location of tag in the file name
     // possible directions should be next, prev, last, first
@@ -426,6 +456,7 @@ define(function(require, exports, module) {
     exports.moveTagLocation                     = moveTagLocation;
     exports.renameTag                           = renameTag;
     exports.removeTag                           = removeTag;
+    exports.removeTags                          = removeTags;
     exports.addTag                              = addTag;
     exports.changeTitle 						= changeTitle;
     exports.stringEndsWith                      = stringEndsWith;
