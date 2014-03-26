@@ -61,9 +61,9 @@ define(function(require, exports, module) {
         }
 
         // If the folder contains subfolders, automatically opening the directory browser
-        if(hasSubFolders) {
-            TSCORE.showLocationsPanel();
-        }               
+        //if(hasSubFolders) {
+        //    TSCORE.showLocationsPanel();
+        //}               
         
         generateDirPath();
         generateAlternativeDirPath();
