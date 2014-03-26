@@ -157,7 +157,7 @@ define(function(require, exports, module) {
             "data-toggle": "buttons",        
         })      
             .append($("<button>", { 
-                    class: "btn btn-default active", 
+                    class: "btn btn-link active", 
                     title: "Activate Mindmap Visualization",
                     text: " Mindmap"
                 })    
@@ -171,7 +171,7 @@ define(function(require, exports, module) {
             )  
 
             .append($("<button>", { 
-                    class: "btn btn-default", 
+                    class: "btn btn-link", 
                     title: "Activate Treemap Mode",
                     text: " TreeMap"    
                 })
@@ -185,7 +185,7 @@ define(function(require, exports, module) {
             )
 
             .append($("<button>", { 
-                    class: "btn btn-default", 
+                    class: "btn btn-link", 
                     title: "Activate Tree Map Navi",
                     text: " TreeMap Navi"
                 })
@@ -199,7 +199,7 @@ define(function(require, exports, module) {
             ) 
                     
             .append($("<button>", { 
-                    class: "btn btn-default", 
+                    class: "btn btn-link", 
                     title: "Activate Tree Mode",
                     text: " Tree"
                 })
@@ -213,7 +213,7 @@ define(function(require, exports, module) {
             )   
             
             .append($("<button>", { 
-                    class: "btn btn-default", 
+                    class: "btn btn-link", 
                     title: "Activate Bilevel Partition",
                     text: " Bilevel Partition"
                 })
