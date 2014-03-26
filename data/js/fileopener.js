@@ -48,6 +48,11 @@ define(function(require, exports, module) {
             .click(function() {
                 TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getPrevFile(_openedFilePath));
             });
+        
+        $( "#closeFile" )
+	        .click(function() {
+	            closeFile();
+	        });        
 
         $( "#reloadFile" )
             .click(function() {
