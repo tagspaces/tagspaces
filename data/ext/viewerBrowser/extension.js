@@ -37,7 +37,7 @@ define(function(require, exports, module) {
 
         $('#'+containerElID).empty();        
         
-        if(fileExt.indexOf("htm") == 0 || fileExt.indexOf("xhtm") == 0 || fileExt.indexOf("txt") == 0) {
+        if((fileExt.indexOf("htm") == 0 || fileExt.indexOf("xhtm") == 0 || fileExt.indexOf("txt") == 0) && !isFirefox) {
 	        $("#"+containerElID).append($('<iframe>', {
 			    	id: "iframeViewer",
 					"nwdisable": "",
