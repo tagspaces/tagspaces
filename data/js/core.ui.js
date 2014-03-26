@@ -67,7 +67,8 @@ define(function(require, exports, module) {
 	        multiple: true,
 			tags: TSCORE.Config.getAllTags(),
 			tokenSeparators: [",", " "],
-			minimumInputLength: 2
+			minimumInputLength: 2,
+			selectOnBlur: true,
 		});  
    
 		$("#newFileName").val("");     
@@ -100,15 +101,6 @@ define(function(require, exports, module) {
     
     var showTagEditDialog = function() {
         $( "#newTagName" ).val(TSCORE.selectedTag);
-
-        /* $( "#newTagName" ).select2('data', null);        
-        $( "#newTagName" ).select2({
-            multiple: false,
-            tags: TSCORE.Config.getAllTags(),
-            tokenSeparators: [",", " "],
-            minimumInputLength: 2            
-        });  */
-        
         $( '#dialogEditTag' ).modal({backdrop: 'static',show: true});
     };  
     

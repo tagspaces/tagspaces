@@ -409,24 +409,6 @@ define(function(require, exports, module) {
         return tagStyle;	    
 	}	
 	
-    // Helper function generating file extension button
-    /*function generateExtButton(fileExtension, filePath) {
-        //console.log("Creating ext button...");
-        var wrapper = $('<span>');
-        if(fileExtension.length > 0) {
-            wrapper.append($('<button>', {
-                title: "Opens context menu for "+fileExtension,
-                tag: fileExtension,
-                filepath: filePath,
-                "class":  "btn btn-sm extTagButton",                
-                text: fileExtension+" "
-                })
-                .append("<span class='caret'/>")
-                );          
-        } 
-        return wrapper.html();        
-    }*/	
-
     function showDialogTagCreate() {
         $( "#newTagTitle" ).val("");         
         $( '#dialogTagCreate' ).modal({backdrop: 'static',show: true});        
@@ -477,6 +459,7 @@ define(function(require, exports, module) {
 			tags: TSCORE.Config.getAllTags(),
 			tokenSeparators: [",", " "],
 			minimumInputLength: 2,
+			selectOnBlur: true,
 		});                   
 
         $( '#dialogAddTags' ).modal({show: true});
