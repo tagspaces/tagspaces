@@ -764,6 +764,24 @@ input a.resetFilter {
     color: #404040;
 }
 
+#fileViewerMainToolbar .btn-link {
+    height: 40px;
+    width: 55px;
+}
+
+#alternativeNavigator .btn-link {
+    padding-left: 2px;
+    padding-right: 2px;
+    color: #404040;    
+}
+
+#fileViewerMainToolbar {
+    position: fixed; 
+    right: 0px; 
+    top: 0px; 
+    background-color: #F2F2F2; 
+}
+
 @media 
 (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) { 
     #welcomeScreen {
