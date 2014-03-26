@@ -367,54 +367,6 @@ console.log("Loading UI for perspectiveList");
         }            
     }	    
     
-    // Helper function user by basic and search views
-    function buttonizeTitle2(title, filePath, fileExt) {
-        
-    	// TODO refactor title not used
-    	if(title.length < 1) {
-            title = filePath;
-        }
-        
-        //TODO minimize platform specific calls     
-        var tmbPath = undefined;
-        if(isCordova) {
-            tmbPath = filePath;            
-        } else {
-            tmbPath = "file:///"+filePath;  
-        }               
-
-        var thumbHTML = "";     
-        if(supportedFileTypeThumnailing.indexOf(fileExt) >= 0) {
-            thumbHTML = $('<span>').append( $('<img>', { 
-                title: filePath, 
-                class: "thumbImg",
-                filepath: tmbPath, 
-                style: "width: 0px; height: 0px; border: 0px" 
-            })).html();
-            thumbHTML = "<br>" + thumbHTML;
-        }            
-
-        var checkboxHTML = "<button class='btn btn-link fileSelection'><i class='fa fa-square-o'></button>";
-            
-        var buttonHTML = $('<button>', {
-            title: "Options for "+filePath, 
-            filepath: filePath,
-            class: 'btn btn-link fileTitleButton',          
-        }).append($('<span>', { 
-            class: "fileExt"           
-            })
-          .append($("<span>", { text: fileExt }))  
-          .append("&nbsp;<span class='caret white-caret'></span>")
-        );
-        
-        var fileHTML = $('<p>', {})        
-        .append(checkboxHTML)       
-        .append(buttonHTML)     
-        .append(thumbHTML);                     
-            
-        return fileHTML.html();        
-    }	
-	
     ExtUI.prototype.clearSelectedFiles = function() {
         TSCORE.selectedFiles = [];   
         $("#"+this.extensionID+"Container").find(".fileSelection").find("i")
