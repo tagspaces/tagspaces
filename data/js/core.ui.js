@@ -539,6 +539,7 @@ define(function(require, exports, module) {
         
         // Disable send to feature on all platforms except android cordova
         if(!isCordova) {
+        	$("#sendFile").hide();
         	$("#fileMenuSendTo").hide();
         }
         if(isOSX) {

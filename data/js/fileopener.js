@@ -59,6 +59,11 @@ define(function(require, exports, module) {
                 TSCORE.FileOpener.openFile(_openedFilePath);                     
             });
 
+        $( "#sendFile" )
+	        .click(function() {
+	            TSCORE.IO.sendFile(_openedFilePath);                     
+	        });        
+        
         $( "#openFileInNewWindow" )
             .click(function() {
                 window.open("file:///"+_openedFilePath);

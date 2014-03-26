@@ -249,32 +249,33 @@ can be found in the LICENSE file.
 				  <ul class="dropdown-menu">
 					  <li class="dropdown-header"><span id="">File Operations</span><button type="button" class="close">×</button></li>
 				      <li class="divider"></li>	
-                      <li><a id="tagFile"><i class="fa fa-tag"></i>&nbsp;<span data-i18n="app.?;">Add Tags</span></a></li>
-				      <li><a id="openFileInNewWindow"><i class="fa fa-external-link-square"></i>&nbsp;<span data-i18n="app.?;">Open in New Window</span></a></li>
-				      <li><a id="fullscreenFile"><i class="glyphicon glyphicon-fullscreen"></i>&nbsp;<span data-i18n="app.?;">Fullscreen</span></a></li>
+                      <li><a id="tagFile"><i class="fa fa-tag"></i>&nbsp;&nbsp;<span data-i18n="app.?;">Add Tags</span></a></li>
+				      <li><a id="openFileInNewWindow"><i class="fa fa-external-link-square"></i>&nbsp;&nbsp;<span data-i18n="app.?;">Open in New Window</span></a></li>
+				      <li><a id="fullscreenFile"><i class="glyphicon glyphicon-fullscreen"></i>&nbsp;&nbsp;<span data-i18n="app.?;">Fullscreen</span></a></li>
 				      <!--li><a id="suggestTagsFile"><i class="fa fa-tags"></i>&nbsp;<span data-i18n="app.?;">Tags Suggestion</span></a></li-->
                       <!--li><a id="printFile" href="#"><i class="fa fa-edit"></i>&nbsp;<span data-i18n="app.?;">Print</span></a></li-->
 				      <li class="divider"></li> 
-					  <li><a id="renameFile"><i class="fa fa-pencil"></i>&nbsp;<span data-i18n="app.?;">Rename</span></a></li>
-					  <li><a id="deleteFile"><i class="fa fa-trash-o"></i>&nbsp;<span data-i18n="app.?;">Delete</span></a></li>
-                      <li><a id="reloadFile"><i class="fa fa-refresh"></i>&nbsp;<span data-i18n="app.?;">Reload</span></a></li>
-                      <li><a id="closeFile"><i class="fa fa-refresh"></i>&nbsp;<span data-i18n="app.?;">Close</span></a></li>                      
+					  <li><a id="renameFile"><i class="fa fa-pencil"></i>&nbsp;&nbsp;<span data-i18n="app.?;">Rename</span></a></li>
+                      <li><a id="sendFile"><i class="fa fa-fighter-jet"></i>&nbsp;&nbsp;<span data-i18n="app.?;">Send To</span></a></li>
+					  <li><a id="deleteFile"><i class="fa fa-trash-o"></i>&nbsp;&nbsp;<span data-i18n="app.?;">Delete</span></a></li>
+                      <li><a id="reloadFile"><i class="fa fa-refresh"></i>&nbsp;&nbsp;<span data-i18n="app.?;">Reload</span></a></li>
+                      <li><a id="closeFile"><i class="fa fa-times"></i>&nbsp;&nbsp;<span data-i18n="app.?;">Close</span></a></li>                      
                       <li class="divider"></li> 
-                      <li><a id="openNatively"><i class="fa fa-external-link-square"></i>&nbsp;<span data-i18n="app.?;">Open Natively</span></a></li>					  
+                      <li><a id="openNatively"><i class="fa fa-external-link-square"></i>&nbsp;&nbsp;<span data-i18n="app.?;">Open Natively</span></a></li>					  
 					  <!--li><a id="sendTo"><i class="fa fa-external-link-square"></i>&nbsp;<span data-i18n="app.?;">Send to</span></a></li-->  
-					  <li><a id="openDirectory"><i class="fa fa-folder-open"></i>&nbsp;<span data-i18n="app.?;">Open Containing Folder</span></a></li>
+					  <li><a id="openDirectory"><i class="fa fa-folder-open"></i>&nbsp;&nbsp;<span data-i18n="app.?;">Open Containing Folder</span></a></li>
                       <li class="divider"></li> 
-                      <li><a id="openProperties"><i class="fa fa-briefcase"></i>&nbsp;<span data-i18n="app.?;">Properties</span></a></li>  
+                      <li><a id="openProperties"><i class="fa fa-briefcase"></i>&nbsp;&nbsp;<span data-i18n="app.?;">Properties</span></a></li>  
 				  </ul>				  
 				</div>				 
                 <a id="fileTitle"></a>				
-				<div style="position: fixed; right: 0px; top: 0px; background-color: #E5E5E5;" class="btn-group">
-                    <button class="btn btn-link" title="Edit Document" data-i18n="[title]app.?;" id="editDocument">&nbsp;<i class="fa fa-pencil"></i>&nbsp;</button>             
-                    <button class="btn btn-link" title="Save Document" data-i18n="[title]app.?;" id="saveDocument">&nbsp;<i class="fa fa-save"></i>&nbsp;</button>             
-					<button class="btn btn-link" title="Toggle Document in Full Width" data-i18n="[title]app.?;" id="toggleFullWidthButton">&nbsp;<i class="fa fa-expand"></i>&nbsp;</button>				
-					<button class="btn btn-link" title="Go to the previous file" data-i18n="[title]app.?;" id="prevFileButton" id="">&nbsp;<i class="glyphicon glyphicon-chevron-left"></i>&nbsp;</button>				
-					<button class="btn btn-link" title="Go to the next file" data-i18n="[title]app.?;" id="nextFileButton" id="">&nbsp;<i class="glyphicon glyphicon-chevron-right"></i>&nbsp;</button>				
-					<button class="btn btn-link" title="Close file" data-i18n="[title]app.?;" id="closeOpenedFile">&nbsp;<i class="glyphicon glyphicon-remove"></i>&nbsp;</button>					
+				<div id="fileViewerMainToolbar" class="btn-group">
+                    <button class="btn btn-link" title="Edit Document" data-i18n="[title]app.?;" id="editDocument">&nbsp;<i class="fa fa-pencil fa-lg"></i>&nbsp;</button>             
+                    <button class="btn btn-link" title="Save Document" data-i18n="[title]app.?;" id="saveDocument">&nbsp;<i class="fa fa-save fa-lg"></i>&nbsp;</button>             
+					<button class="btn btn-link" title="Toggle Document in Full Width" data-i18n="[title]app.?;" id="toggleFullWidthButton">&nbsp;<i class="fa fa-expand fa-lg"></i>&nbsp;</button>				
+					<button class="btn btn-link" title="Go to the previous file" data-i18n="[title]app.?;" id="prevFileButton" id="">&nbsp;<i class="fa fa-chevron-left fa-lg"></i>&nbsp;</button>				
+					<button class="btn btn-link" title="Go to the next file" data-i18n="[title]app.?;" id="nextFileButton" id="">&nbsp;<i class="fa fa-chevron-right fa-lg"></i>&nbsp;</button>				
+					<button class="btn btn-link" title="Close file" data-i18n="[title]app.?;" id="closeOpenedFile">&nbsp;<i class="fa fa-times fa-lg"></i>&nbsp;</button>					
 				</div>
 			</div>
 			<div id="tagsContainer" class="ui-droppable">
