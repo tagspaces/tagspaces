@@ -371,27 +371,29 @@ define(function(require, exports, module) {
 	    TSCORE.selectedTag = tag;
 	}
 	
+    var tagButtonTmpl = Handlebars.compile('{{#each tags}}\
+            <button class="btn btn-sm tagButton" tag="{{tag}}" filepath="{{filepath}}" style="{{style}}" title="Opens context meni for {{tag}}">\
+    		{{tag}} <span class="caret"></span></button>{{/each}}');	
+	
 	// Helper function generating tag buttons
 	function generateTagButtons(commaSeparatedTags, filePath) {
 	    //console.log("Creating tags...");
 	    var tagString = ""+commaSeparatedTags;
-	    var wrapper = $('<span>');
+
+        var context = { tags : [] };	    
+	    
 	    if(tagString.length > 0) {
 	        var tags = tagString.split(",");
 	        for (var i=0; i < tags.length; i++) { 
-	            wrapper.append($('<button>', {
-	                title: "Opens context menu for "+tags[i],
-	                tag: tags[i],
-	            	filepath: filePath,                
-	                "class":  "btn btn-sm tagButton", 
-	                text: tags[i]+" ",
-	                style: generateTagStyle(TSCORE.Config.findTag(tags[i]))
-	                })
-	                .append("<span class='caret'/>")
-                );   
+	        	context.tags.push({
+	        		filepath: filePath,
+	        		tag: tags[i],
+	        		style: generateTagStyle(TSCORE.Config.findTag(tags[i]))
+	        	});
 	        }   
 	    }
-	    return wrapper.html();        
+	    
+	    return tagButtonTmpl(context);        
 	}
 	
 	// Get the color for a tag
@@ -408,7 +410,7 @@ define(function(require, exports, module) {
 	}	
 	
     // Helper function generating file extension button
-    function generateExtButton(fileExtension, filePath) {
+    /*function generateExtButton(fileExtension, filePath) {
         //console.log("Creating ext button...");
         var wrapper = $('<span>');
         if(fileExtension.length > 0) {
@@ -423,7 +425,7 @@ define(function(require, exports, module) {
                 );          
         } 
         return wrapper.html();        
-    }	
+    }*/	
 
     function showDialogTagCreate() {
         $( "#newTagTitle" ).val("");         
@@ -489,7 +491,6 @@ define(function(require, exports, module) {
     exports.openTagMenu    				     = openTagMenu;
     exports.generateTagStyle                 = generateTagStyle;
     exports.generateTagButtons               = generateTagButtons;
-    exports.generateExtButton                = generateExtButton;
 	exports.showAddTagsDialog				 = showAddTagsDialog;
 	exports.showTagEditInTreeDialog          = showTagEditInTreeDialog;	
     exports.showDialogTagCreate              = showDialogTagCreate;
