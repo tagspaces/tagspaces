@@ -67,7 +67,7 @@ define(function(require, exports, module) {
 	};
 	
 	exports.getContent = function() {
-		$('#'+containerElID).html(); 
+		//$('#'+containerElID).html(); 
 	};
 
 });
