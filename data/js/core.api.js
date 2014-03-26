@@ -82,12 +82,12 @@ define(function(require, exports, module) {
             }	
 		    
 		    // Show start hint by no locations
-            /*if(tsSettings.Settings.tagspacesList.length < 1 ) {
+            if(tsSettings.Settings.tagspacesList.length < 1 ) {
                 $( "#createNewLocation" ).tooltip( "show" );
                 $( "#locationName" ).prop('disabled', true);
                 $( "#selectLocation" ).prop('disabled', true);     
-                tsCoreUI.showWelcomeDialog();         
-            }*/	    
+                // tsCoreUI.showWelcomeDialog();         
+            }	    
 	    
 	        console.log("Layout initialized");
 	    }); 
@@ -540,7 +540,6 @@ define(function(require, exports, module) {
 	
 	// Proxying functions from tsTagsUI
 	exports.generateTagButtons 			= tsTagsUI.generateTagButtons;
-	exports.generateExtButton           = tsTagsUI.generateExtButton;
 	exports.generateTagStyle            = tsTagsUI.generateTagStyle;
 	exports.openTagMenu 				= tsTagsUI.openTagMenu;
 	exports.showAddTagsDialog			= tsTagsUI.showAddTagsDialog;
