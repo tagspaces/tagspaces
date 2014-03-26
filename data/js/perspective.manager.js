@@ -101,10 +101,11 @@ var initPerspectiveSwitcher = function() {
             "viewid":   curPers.ID,
             "title":    curPers.ID,
             "id":       curPers.ID+"Button",
-            "text":     " "+curPers.Title    
+            "text":     curPers.Title    
         })        
         .prepend($("<i>", {
-            "class":  curPers.Icon
+            "class":  curPers.Icon+" fa-lg",
+            "style":  "margin-right: 15px",
         }))));
     
         // Adding event listener & icon to the radio button
@@ -254,6 +255,7 @@ var changePerspective = function (viewType) {
  		if(perspectives[i].ID == viewType) { 			
             $('#currentPerspectitveIcon').removeClass();
             $('#currentPerspectitveIcon').addClass(perspectives[i].Icon);
+            $('#currentPerspectitveIcon').addClass("fa-lg");            
             $('#currentPerspectitveName').text(" "+perspectives[i].Title);   
             $('#currentPerspectitveName').attr("title",perspectives[i].ID);   
 
