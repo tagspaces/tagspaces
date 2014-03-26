@@ -80,6 +80,7 @@ found in the LICENSE file.
 				<include name="viewerText/**/*" />
 				<include name="viewerImage/**/*" />
 				<include name="viewerMD/**/*" />
+				<include name="viewerBrowser/**/*" />
 			</fileset>
 		</copy>
 		<copy todir="${buildFirefoxExt.dir}/data/locales">
@@ -129,6 +130,7 @@ found in the LICENSE file.
 				<include name="viewerPDF/**/*" />
 				<include name="viewerImage/**/*" />
 				<include name="viewerMD/**/*" />
+				<include name="viewerBrowser/**/*" />
 			</fileset>
 		</copy>
 		<copy todir="${buildChrome.dir}/libs">
@@ -192,6 +194,7 @@ found in the LICENSE file.
 				<include name="viewerPDF/**/*" />
 				<include name="viewerImage/**/*" />
 				<include name="viewerMD/**/*" />
+				<include name="viewerBrowser/**/*" />
 			</fileset>
 		</copy>
 		<copy todir="${cordovaDev.dir}/locales">
