@@ -342,7 +342,7 @@ define(function(require, exports, module) {
                 $("#toggleFullWidthButton").show();
                 if(isFullWidth) {
                     // TODO hide tags
-                    $("#viewerContainer").css("top","34px");
+                    $("#viewerContainer").css("top","38px");
                     layoutContainer.close("west"); // workarround
                     shouldOpenCol1 = false;        
                     layoutContainer.sizePane("east", fullWidth);
