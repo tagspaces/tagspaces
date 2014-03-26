@@ -48,7 +48,8 @@ define(function(require, exports, module) {
             TSCORE.updateFileModel(TSCORE.fileList, oldFilePath, newFilePath);
             TSCORE.PerspectiveManager.updateFileUI(oldFilePath, newFilePath);            
         } 
-        TSCORE.hideLoadingAnimation();        
+        TSCORE.hideLoadingAnimation();    
+        TSCORE.PerspectiveManager.clearSelectedFiles();
     };
         
     exports.loadTextFile = function(content) {
