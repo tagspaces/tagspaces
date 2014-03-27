@@ -431,6 +431,10 @@ define(function(require, exports, module) {
         $("#contactUsContent").on('click',"#openUservoice", function () {
                 window.open($(this).attr("url"),"_system");
             });
+        
+        $("#contactUsContent").on('click',"#openGooglePlay", function () {
+            window.open($(this).attr("url"),"_system");
+        });        
 
         $("#contactUsContent").on('click',"#openWhatsnew", function () {
             window.open($(this).attr("url"),"_system");
@@ -503,6 +507,7 @@ define(function(require, exports, module) {
             $("#openDirectory").parent().hide();
             $("#advancedSettings").hide();
             $("#openFileInNewWindow").hide();
+            $("#openGooglePlay").hide();
         } else if(isChrome) {
             $("#directoryMenuOpenDirectory").parent().hide();
             $("#fileMenuOpenDirectory").parent().hide();
