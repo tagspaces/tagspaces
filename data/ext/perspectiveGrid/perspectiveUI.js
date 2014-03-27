@@ -499,10 +499,11 @@ console.log("Loading UI for perspectiveDefault");
         var filePath = $fileTile.attr("filepath");
     	var self = this;
     	
-    	$fileTile.dblclick(function() {
-            TSCORE.FileOpener.openFile(filePath);
-            self.selectFile(filePath); 
-         })
+    	$fileTile
+    	 //.dblclick(function() {
+         //   TSCORE.FileOpener.openFile(filePath);
+         //   self.selectFile(filePath); 
+         //})
          .hammer().on("doubletap", function(event) {
             TSCORE.FileOpener.openFile(filePath);
             self.selectFile(filePath); 
