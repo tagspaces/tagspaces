@@ -38,9 +38,18 @@ define(function(require, exports, module) {
 	};
 	
 	exports.setContent = function(content) {
-	    // removing the script tags from the content 
+		// Cutting preview content 8kb
+		var previewSize = 1024*8; 
+		//console.log("Content size: "+content.length);
+		if(content.length > previewSize) {
+			content = content.substring(0,previewSize);			
+		}
+		//console.log("Content size: "+content);
+	    
+		// removing the script tags from the content 
         var cleanedContent = content.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,""); 	    
         $('#'+containerElID).empty();
+        $('#'+containerElID).append('<p style="font-size: 14px;">Preview of first 8kb from the document:</p>');
         $('#'+containerElID).append($('<textarea>', {
             readonly: "true",
             style: "overflow: auto; height: 100%; width: 100%; font-size: 13px; margin: 3px; background-color: white; border-width: 0px;",
