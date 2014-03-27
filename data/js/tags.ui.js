@@ -114,6 +114,11 @@ define(function(require, exports, module) {
             var tags = $("#tags").val().split(",");
             TSCORE.TagUtils.addTag(TSCORE.selectedFiles, tags);
         });             
+        
+        $( "#removeTagsButton" ).click( function() {
+            var tags = $("#tags").val().split(",");
+            TSCORE.TagUtils.removeTags(TSCORE.selectedFiles, tags);
+        });          
 
         $( "#createTagButton" ).click( function() {
         	var tags = $( "#newTagTitle" ).val().split(",");
