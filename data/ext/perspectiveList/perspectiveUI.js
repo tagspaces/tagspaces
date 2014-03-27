@@ -43,7 +43,7 @@ console.log("Loading UI for perspectiveList");
 
         $("#"+this.extensionID+"ToogleSelectAll")    
             .click(function() {
-                if($(this).find("i").attr("class") == "fa fa-square-o") {
+                if($(this).find("i").hasClass("fa-square-o")) {
                     TSCORE.selectedFiles = [];   
                     $('#'+self.extensionID+'FileTable tbody tr').each(function(){
                         $(this).addClass('ui-selected');
