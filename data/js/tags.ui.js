@@ -467,7 +467,7 @@ define(function(require, exports, module) {
 			selectOnBlur: true,
 		});                   
 
-        $( '#dialogAddTags' ).modal({show: true});
+        $( '#dialogAddTags' ).modal({backdrop: 'static',show: true});
 	}    
 
     // Public Vars
