@@ -432,6 +432,10 @@ define(function(require, exports, module) {
                 window.open($(this).attr("url"),"_system");
             });
 
+        $("#contactUsContent").on('click',"#openWhatsnew", function () {
+            window.open($(this).attr("url"),"_system");
+        });        
+        
         $("#contactUsContent").on('click',"#openGitHubIssues", function () {
                 window.open($(this).attr("url"),"_system");
             });
