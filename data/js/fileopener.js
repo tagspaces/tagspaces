@@ -237,21 +237,6 @@ define(function(require, exports, module) {
                 _tsEditor = viewer;
                 _tsEditor.init(filePath, "viewer", true);
             });        
-	    /* } else if (viewerExt == "viewerBrowser") {
-            var filePathURI = undefined;
-            if(isCordova) {
-                filePathURI = filePath;            
-            } else {
-                filePathURI = "file:///"+filePath;  
-            }
-            
-		    $('#viewer').append($('<iframe>', {
-		    	id: "iframeViewer",
-				src: filePathURI,
-				"nwdisable": "",
-				"nwfaketop": "",
-		    })
-		    ); */
 	    } else {
 	        require([TSCORE.Config.getExtensionPath()+"/"+viewerExt+"/extension.js"], function(viewer) {
 	            _tsEditor = viewer;
