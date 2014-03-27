@@ -3,6 +3,7 @@
   "description": "@@APPDESCRIPTION",
   "version": "@@VERSION.@@BUILD",
   "main": "index.html",
+  "no-edit-menu": true,
   "window": {
     "icon": "assets/icon128.png",
     "toolbar": false,

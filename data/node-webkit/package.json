@@ -3,6 +3,7 @@
   "description": "Dev",
   "version": "1.x",
   "main": "../index.html",
+  "no-edit-menu": true,
   "window": {
     "icon": "../assets/icon128.png",
     "frame": true,
