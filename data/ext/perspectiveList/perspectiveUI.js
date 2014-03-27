@@ -154,7 +154,7 @@ console.log("Loading UI for perspectiveList");
 	        "aoColumnDefs": [
                 { // File extension column
                     "mRender": function ( data, type, row ) { 
-	                	return buttonizeTitle(row[TSCORE.fileListTITLE],row[TSCORE.fileListFILEPATH],row[TSCORE.fileListFILEEXT]); 
+	                	return self.buttonizeTitle(row[TSCORE.fileListTITLE],row[TSCORE.fileListFILEPATH],row[TSCORE.fileListFILEEXT]); 
                         },
                     "aTargets": [ TSCORE.fileListFILEEXT ]
                 }, 
@@ -342,10 +342,10 @@ console.log("Loading UI for perspectiveList");
     var buttonCompTmbTmpl = Handlebars.compile('<button class="btn btn-link fileSelection"><i class="fa fa-square-o"></i></button>\
         	<button title="Options for {{filepath}}" filepath="{{filepath}}" class="btn btn-link fileTitleButton">\
         	<span class="fileExt"><span>{{fileext}}</span>&nbsp;<span class="caret white-caret"></span></span></button>\
-        	<br><img title="{{filepath}}" class="thumbImg" filepath="{{tmbpath}}" style="width: 0px; height: 0px; border: 0px" src="">');            
+        	<br><img title="{{filepath}}" class="thumbImg" filepath="{{filepath}}" style="width: 0px; height: 0px; border: 0px" src="{{tmbpath}}">');            
     
     // Helper function user by basic and search views
-    function buttonizeTitle(title, filePath, fileExt) {
+    ExtUI.prototype.buttonizeTitle = function(title, filePath, fileExt) {
         if(title.length < 1) {
             title = filePath;
         }
@@ -358,7 +358,11 @@ console.log("Loading UI for perspectiveList");
             tmbPath = "file:///"+filePath;  
         }       
 
-        var context = {filepath: filePath, tmbpath: tmbPath, fileext: fileExt }
+        var context = {
+	        		filepath: filePath, 
+	        		tmbpath: this.thumbEnabled?tmbPath:"",
+	        		fileext: fileExt 
+        		}
         
         if(supportedFileTypeThumnailing.indexOf(fileExt) >= 0) {
         	return buttonCompTmbTmpl(context);
@@ -374,6 +378,9 @@ console.log("Loading UI for perspectiveList");
             .addClass("fa-square-o");            
         $("#"+this.extensionID+"Container").find("tr")
             .removeClass('ui-selected');
+        
+        // Reseting select all button
+        //$("#"+this.extensionID+"ToogleSelectAll").find("i").removeClass("fa-check-square").addClass("fa-square-o");           
     };  
     
 	ExtUI.prototype.selectFile = function(uiElement, filePath) {
@@ -497,12 +504,12 @@ console.log("Loading UI for perspectiveList");
             $fileRow = $("#"+this.extensionID+"Container button[filepath='"+oldFilePath+"']").parent().parent();
         }                           
 
-        $($fileRow.find("td")[0]).empty().append(buttonizeTitle(title,newFilePath,fileExt));
+        $($fileRow.find("td")[0]).empty().append(this.buttonizeTitle(title,newFilePath,fileExt));
         $($fileRow.find("td")[1]).text(title);
         $($fileRow.find("td")[2]).empty().append(TSCORE.generateTagButtons(fileTags,newFilePath));
-        
+
         var self = this;
-        $($fileRow.find('.fileTitleButton')[0])
+        $fileRow.find('.fileTitleButton')
             .draggable({
                 "cancel":    false,
                 "appendTo":  "body",
@@ -510,7 +517,37 @@ console.log("Loading UI for perspectiveList");
                 "revert":    true,
                 "start":     function() { self.selectFile(this, $(this).attr("filepath")); }            
             });  
-                
+
+        $fileRow.find('.fileSelection')
+	        .click( function(e) {
+	            e.preventDefault();
+	            var fpath = $(this).parent().find(".fileTitleButton").attr("filepath");
+	            var stateTag = $(this).find("i");
+	            if(stateTag.hasClass("fa-square-o")) { 
+	                stateTag.removeClass("fa-square-o").addClass("fa fa-check-square");                 
+	                $(this).parent().parent().addClass("ui-selected");
+	                TSCORE.selectedFiles.push(fpath);  
+	            } else {
+	                stateTag.removeClass("fa-check-square").addClass("fa-square-o");                                       
+	                $(this).parent().parent().removeClass("ui-selected");
+	                TSCORE.selectedFiles.splice(TSCORE.selectedFiles.indexOf(fpath), 1);
+	            }
+	            self.handleElementActivation();
+	            return false; 
+	        } );        
+    
+        $fileRow.find('.tagButton')        
+	    	.draggable({
+	    		"cancel":   false,
+	    		"appendTo": "body",
+	    		"helper":   "clone",
+	    		"revert":   true,
+		        "start":    function() { 
+	                TSCORE.selectedTag = $(this).attr("tag");
+		            self.selectFile(this, $(this).attr("filepath")); 
+		            }    		
+	    	});         
+        
     }; 
 
     ExtUI.prototype.getNextFile = function(filePath) {
