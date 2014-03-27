@@ -73,7 +73,7 @@ console.log("Loading UI for perspectiveDefault");
         
         var context = {
                 filepath: filePath, 
-                tmbpath: tmbPath, 
+                tmbpath: this.thumbEnabled?tmbPath:"", 
                 fileext: fileExt, 
                 title: title,
                 tags : []    
@@ -574,6 +574,9 @@ console.log("Loading UI for perspectiveDefault");
         $("#"+this.extensionID+"Container").find(".fileTileSelector").find("i")
             .removeClass("fa-check-square")
             .addClass("fa-square-o");   
+        
+        // Reseting select all button
+        //$("#"+this.extensionID+"ToogleSelectAll").find("i").removeClass("fa-check-square").addClass("fa-square-o");   
     };
     
     ExtUI.prototype.selectFile = function(filePath) {
