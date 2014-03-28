@@ -16,6 +16,10 @@ define(function(require, exports, module) {
 
 	var _tsEditor = undefined;
 	
+	$.fn.editableform.buttons = 
+		  '&nbsp;&nbsp;<button type="submit" class="btn btn-primary editable-submit"><i class="fa fa-check"></i> Ok</button>\
+		  <br /><br /><button type="button" class="btn editable-cancel"><i class="fa fa-times"></i> Cancel</button>';  	
+	
 	// If a file is currently opened for editing, this var should be true
 	var _isEditMode = false;	
 
@@ -278,7 +282,19 @@ define(function(require, exports, module) {
 			showFilePropertiesDialog();
 			return false;
 	    });				
-	    
+
+	    Mousetrap.unbind('left');
+		Mousetrap.bind('left', function() {
+			TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getPrevFile(_openedFilePath));
+			return false;
+	    });			
+
+	    Mousetrap.unbind('right');
+		Mousetrap.bind('right', function() {
+			TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getNextFile(_openedFilePath));
+			return false;
+	    });			
+		
 	} 
 	
     function setFileProperties(fileProperties) {
@@ -355,7 +371,7 @@ define(function(require, exports, module) {
         $("#fileTitle").editable({
             type: 'textarea',
             placement: 'bottom',
-            title: 'New File Title',
+            title: 'Change Title',
             //mode: 'inline',
             success: function(response, newValue) {
                 TSCORE.TagUtils.changeTitle(_openedFilePath,newValue);
