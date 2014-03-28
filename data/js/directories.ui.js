@@ -37,7 +37,9 @@ define(function(require, exports, module) {
         
         // Saving the last opened location path in the settings
         TSCORE.Config.setLastOpenedLocation(path);
-        TSCORE.Config.saveSettings();  
+        TSCORE.Config.saveSettings(); 
+        
+        TSCORE.showLocationsPanel();
     }  
     
     // Updates the directory subtree
