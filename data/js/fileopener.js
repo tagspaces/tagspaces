@@ -17,7 +17,7 @@ define(function(require, exports, module) {
 	var _tsEditor = undefined;
 	
 	$.fn.editableform.buttons = 
-		  '&nbsp;&nbsp;<button type="submit" class="btn btn-primary editable-submit"><i class="fa fa-check"></i> Ok</button>\
+		  '<button type="submit" class="btn btn-primary editable-submit" style="margin-left: 8px;"><i class="fa fa-check"></i> Ok</button>\
 		  <br /><br /><button type="button" class="btn editable-cancel"><i class="fa fa-times"></i> Cancel</button>';  	
 	
 	// If a file is currently opened for editing, this var should be true
