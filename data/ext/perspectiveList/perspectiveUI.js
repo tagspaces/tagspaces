@@ -142,13 +142,13 @@ console.log("Loading UI for perspectiveList");
               "sEmptyTable": " " // No files found
             },	        
 	        "aoColumns": [
-	            { "sTitle": "File Ext.", "sWidth": "130px", "sClass": "fileTitle"  },
-                { "sTitle": "Title", "sClass": "fileTitle" },
+	            { "sTitle": "File Ext.", "sClass": "fileTitle noWrap"  },
+                { "sTitle": "Title", "sClass": "fileTitle forceWrap" },
 	            { "sTitle": "Tags", "sClass": "fileTitle"  },            
 	            { "sTitle": "Size(B)", "sClass": "fileTitle" },
 	            { "sTitle": "Date Modified", "sClass": "fileTitle" },
 	            { "sTitle": "Path", "sClass": "fileTitle" },
-                { "sTitle": "File Name", "sClass": "fileTitle" }                
+                { "sTitle": "File Name", "sClass": "fileTitle forceWrap" }                
 	        ],
 	        "aaSorting": [[ 1, "asc" ]],    // softing by filename     
 	        "aoColumnDefs": [

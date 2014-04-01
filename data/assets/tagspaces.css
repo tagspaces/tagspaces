@@ -189,6 +189,14 @@ table .fileTitle {
     color: #333333;
 }
 
+.noWrap {
+    white-space:nowrap;
+}
+
+.forceWrap {
+    word-wrap: break-word;
+}
+
 .titleInFileTile {
     font-size: 13px;
     line-height: 120%;
