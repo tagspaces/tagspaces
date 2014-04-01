@@ -14,7 +14,9 @@ console.log("Loading UI for Image Viewer");
 	function ExtUI(extID, extContainerID, filePath) {
 		this.extensionID = extID;
 	    this.containerElem = $('#'+extContainerID);
-
+	    
+	    this.internPath = filePath;
+	    
         //TODO minimize platform specific calls
         if(isCordova) {
             this.filePath = filePath;            
@@ -54,13 +56,13 @@ console.log("Loading UI for Image Viewer");
                 contain: 'invert'
     //            $zoomRange: $section.find(".zoom-range"),
     //            $reset: $section.find(".reset")
-            });
-    /*		.hammer().on("swipeleft", function(event) {
-    			TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getPrevFile(this.filePath));
+            })
+    		.hammer().on("swipeleft", function(event) {
+    			TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getNextFile(self.internPath));
     		})
     		.hammer().on("swiperight", function(event) {
-    			TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getNextFile(this.filePath));
-    		}); */        
+    			TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getPrevFile(self.internPath));
+    		});         
 
         $("#"+this.extensionID+"imgViewer")
             .parent().on('mousewheel.focal', function( e ) {
@@ -76,13 +78,19 @@ console.log("Loading UI for Image Viewer");
         // Image Processing
         $("#"+this.extensionID+"Brighter")
             .click(function() {
-                $("#"+this.extensionID+"imgViewer").pixastic("brightness", {brightness:60});
+                $("#"+self.extensionID+"imgViewer").pixastic("brightness", {brightness:60});
             });
         
         $("#"+this.extensionID+"RotateLeft")
             .click(function() {
-                $("#"+this.extensionID+"imgViewer").pixastic("rotate", {angle:90});         
-            });
+            	console.log("Rotate");
+                $("#"+self.extensionID+"imgViewer").pixastic("rotate", {angle:90});         
+            }); 
+        
+        
+
+  
+
     };
     
 	exports.ExtUI	 				= ExtUI;
