@@ -19,12 +19,14 @@ define(function(require, exports, module) {
 	var TSCORE = require("tscore");	
 	
 	var containerElID = undefined;
+	var $containerElement = undefined;	
 	
 	var extensionDirectory = TSCORE.Config.getExtensionPath()+"/"+extensionID;
 	
 	exports.init = function(filePath, containerElementID) {
 	    console.log("Initalization Text Viewer...");
 	    containerElID = containerElementID;
+	    $containerElement = $('#'+containerElID);    
 
         var filePathURI = undefined;
         if(isCordova) {
@@ -35,10 +37,11 @@ define(function(require, exports, module) {
         
         var fileExt = TSCORE.TagUtils.extractFileExtension(filePath);
 
-        $('#'+containerElID).empty();        
+        $containerElement.empty();        
+        $containerElement.css("background-color","white");
         
         if((fileExt.indexOf("htm") == 0 || fileExt.indexOf("xhtm") == 0 || fileExt.indexOf("txt") == 0) && !isFirefox) {
-	        $("#"+containerElID).append($('<iframe>', {
+        	$containerElement.append($('<iframe>', {
 			    	id: "iframeViewer",
 					"nwdisable": "",
 					"nwfaketop": "",
@@ -46,7 +49,7 @@ define(function(require, exports, module) {
 	        );
 	     	TSCORE.IO.loadTextFile(filePath);	    	 
         } else {
-        	$("#"+containerElID).append($('<iframe>', {
+        	$containerElement.append($('<iframe>', {
 			    	id: "iframeViewer",
 					src: filePathURI,
 					"nwdisable": "",
