@@ -69,8 +69,14 @@ console.log("Loading UI for perspectiveList");
 
         $("#"+this.extensionID+"IncludeSubDirsButton")    
     	    .click(function() {
-    		    $( this ).prop('disabled', true);
-    			TSCORE.IO.createDirectoryIndex(TSCORE.currentPath);
+	          	  TSCORE.showConfirmDialog(
+	        				"Confirm Include Subdirectories",
+	        				"On directory with many files and/or subdirectories, this operation could be slow! Do you want to continue?",
+	        				function() { 
+	        					$("#"+self.extensionID+"IncludeSubDirsButton").prop('disabled', true);
+	        	    			TSCORE.IO.createDirectoryIndex(TSCORE.currentPath);	        					
+	        				}
+	        			);
     	    });     	    
 
     	$("#"+this.extensionID+"TagButton")    
