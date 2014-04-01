@@ -19,14 +19,16 @@ define(function(require, exports, module) {
 	var TSCORE = require("tscore");	
 	
 	var containerElID = undefined;
+	var $containerElement = undefined;
 	
 	var extensionDirectory = TSCORE.Config.getExtensionPath()+"/"+extensionID;
 	
 	exports.init = function(filePath, containerElementID) {
 	    console.log("Initalization Text Viewer...");
 	    containerElID = containerElementID;
-
-    	TSCORE.IO.loadTextFile(filePath);
+	    $containerElement = $('#'+containerElID);
+	    
+    	TSCORE.IO.loadTextFile(filePath, true);
 	};
 	
 	exports.setFileType = function(fileType) {
@@ -39,20 +41,22 @@ define(function(require, exports, module) {
 	
 	exports.setContent = function(content) {
 		// Cutting preview content 8kb
-		var previewSize = 1024*8; 
-		//console.log("Content size: "+content.length);
+		var previewSize = 1024*10; 
+		console.log("Content size: "+content.length);
 		if(content.length > previewSize) {
 			content = content.substring(0,previewSize);			
 		}
-		//console.log("Content size: "+content);
+		console.log("Content size: "+content);
 	    
 		// removing the script tags from the content 
-        var cleanedContent = content.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,""); 	    
-        $('#'+containerElID).empty();
-        $('#'+containerElID).append('<p style="font-size: 14px;">Preview of first 8kb from the document:</p>');
-        $('#'+containerElID).append($('<textarea>', {
+        var cleanedContent = content.toString().replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,""); 	    
+        
+        $containerElement.empty();
+        $containerElement.css("background-color","darkgray");
+        $containerElement.append('<p style="font-size: 14px; color: white;">&nbsp;Preview of the document begin: </p>');
+        $containerElement.append($('<textarea>', {
             readonly: "true",
-            style: "overflow: auto; height: 100%; width: 100%; font-size: 13px; margin: 3px; background-color: white; border-width: 0px;",
+            style: "overflow: auto; height: 100%; width: 100%; font-size: 13px; margin: 0px; background-color: white; border-width: 0px;",
             })
             .append(cleanedContent)
             ); 
