@@ -154,16 +154,13 @@ requirejs.config({
 define(function (require, exports, module) {
 "use strict";
 
-    if (isCordova) {
-        require(["cordova.js"]);
-        var attachFastClick = require(['cordova/fastclick.js']);
-        attachFastClick(document.body);
-    }
+	if(isCordova) {
+	    require(["cordova.js"]);    		
+	}
 
     var TSCORE = undefined;
     requirejs(['tscore','underscore'], function (core,_) {
         TSCORE = core;
         TSCORE.initApp();
     }); 
-
 });
