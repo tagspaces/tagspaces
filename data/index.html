@@ -182,7 +182,7 @@ can be found in the LICENSE file.
            </div>
 		</div>
 	</div>
-	<div class="row3" style="white-space:nowrap;">
+	<div class="row3 noWrap">
 	  <div class="btn-group" data-toggle="buttons">
           <label class="btn btn-default active" id="showTagGroups" title="Show Tag Library" data-i18n="[title]app.switchToTagsTooltip;">
             <input type="radio" name="options" >&nbsp;<i class="fa fa-tags"></i>
@@ -194,11 +194,11 @@ can be found in the LICENSE file.
             <input type="radio" name="options">&nbsp;<i class="fa fa-info-circle"></i>
           </label>
 	  </div>
-	  <div class="btn-group dropup" id="sideBarButtunGroup" style="margin-right: 5px;">
-          <button class="btn btn-default" data-i18n="[title]app.?;" title="Open new TagSpaces Instance" id="startNewInstanceBack">
-            &nbsp;<i class="fa fa-external-link-square"></i>&nbsp;</button>
-          <button class="btn btn-default" data-i18n="[title]app.?;" title="Settings" id="openOptions">
-            &nbsp;<i class="fa fa-gear"></i>&nbsp;</button>
+	  <div class="btn-group" id="sideBarButtunGroup" style="margin-right: 5px;">
+          <button class="btn btn-link" data-i18n="[title]app.?;" title="Open new TagSpaces Instance" id="startNewInstanceBack">
+            &nbsp;<i class="fa fa-external-link-square fa-lg"></i>&nbsp;</button>
+          <button class="btn btn-link" data-i18n="[title]app.?;" title="Settings" id="openOptions">
+            &nbsp;<i class="fa fa-gear fa-lg"></i>&nbsp;</button>
 	  </div>
 	</div>    	
 </div>
@@ -270,23 +270,23 @@ can be found in the LICENSE file.
 				  <ul class="dropdown-menu">
 					  <li class="dropdown-header"><span id="">File Operations</span><button type="button" class="close">×</button></li>
 				      <li class="divider"></li>	
-                      <li><a id="tagFile"><i class="fa fa-tag"></i>&nbsp;&nbsp;<span data-i18n="app.?;">Add Tags</span></a></li>
-				      <li><a id="openFileInNewWindow"><i class="fa fa-external-link-square"></i>&nbsp;&nbsp;<span data-i18n="app.?;">Open in New Window</span></a></li>
-				      <li><a id="fullscreenFile"><i class="glyphicon glyphicon-fullscreen"></i>&nbsp;&nbsp;<span data-i18n="app.?;">Fullscreen</span></a></li>
-				      <!--li><a id="suggestTagsFile"><i class="fa fa-tags"></i>&nbsp;<span data-i18n="app.?;">Tags Suggestion</span></a></li-->
-                      <!--li><a id="printFile" href="#"><i class="fa fa-edit"></i>&nbsp;<span data-i18n="app.?;">Print</span></a></li-->
+                      <li><a id="tagFile"><i class="fa fa-tag fa-fw"></i>&nbsp;&nbsp;<span data-i18n="app.?;">Add / Remove Tags</span></a></li>
+				      <li><a id="openFileInNewWindow"><i class="fa fa-external-link-square fa-fw"></i>&nbsp;&nbsp;<span data-i18n="app.?;">Open in New Window</span></a></li>
+				      <li><a id="fullscreenFile"><i class="glyphicon glyphicon-fullscreen fa-fw"></i>&nbsp;&nbsp;<span data-i18n="app.?;">Fullscreen</span></a></li>
+				      <!--li><a id="suggestTagsFile"><i class="fa fa-tags fa-fw"></i>&nbsp;<span data-i18n="app.?;">Tags Suggestion</span></a></li-->
+                      <!--li><a id="printFile" href="#"><i class="fa fa-edit fa-fw"></i>&nbsp;<span data-i18n="app.?;">Print</span></a></li-->
 				      <li class="divider"></li> 
-					  <li><a id="renameFile"><i class="fa fa-pencil"></i>&nbsp;&nbsp;<span data-i18n="app.?;">Rename</span></a></li>
-                      <li><a id="sendFile"><i class="fa fa-fighter-jet"></i>&nbsp;&nbsp;<span data-i18n="app.?;">Send To</span></a></li>
-					  <li><a id="deleteFile"><i class="fa fa-trash-o"></i>&nbsp;&nbsp;<span data-i18n="app.?;">Delete</span></a></li>
-                      <li><a id="reloadFile"><i class="fa fa-refresh"></i>&nbsp;&nbsp;<span data-i18n="app.?;">Reload</span></a></li>
-                      <li><a id="closeFile"><i class="fa fa-times"></i>&nbsp;&nbsp;<span data-i18n="app.?;">Close</span></a></li>                      
+					  <li><a id="renameFile"><i class="fa fa-pencil fa-fw"></i>&nbsp;&nbsp;<span data-i18n="app.?;">Rename File</span></a></li>
+                      <li><a id="sendFile"><i class="fa fa-fighter-jet fa-fw"></i>&nbsp;&nbsp;<span data-i18n="app.?;">Send File To</span></a></li>
+					  <li><a id="deleteFile"><i class="fa fa-trash-o fa-fw"></i>&nbsp;&nbsp;<span data-i18n="app.?;">Delete File</span></a></li>
+                      <li><a id="reloadFile"><i class="fa fa-refresh fa-fw"></i>&nbsp;&nbsp;<span data-i18n="app.?;">Reload File</span></a></li>
+                      <li><a id="closeFile"><i class="fa fa-times fa-fw"></i>&nbsp;&nbsp;<span data-i18n="app.?;">Close File</span></a></li>                      
                       <li class="divider"></li> 
-                      <li><a id="openNatively"><i class="fa fa-external-link-square"></i>&nbsp;&nbsp;<span data-i18n="app.?;">Open Natively</span></a></li>					  
-					  <!--li><a id="sendTo"><i class="fa fa-external-link-square"></i>&nbsp;<span data-i18n="app.?;">Send to</span></a></li-->  
-					  <li><a id="openDirectory"><i class="fa fa-folder-open"></i>&nbsp;&nbsp;<span data-i18n="app.?;">Open Containing Folder</span></a></li>
+                      <li><a id="openNatively"><i class="fa fa-external-link-square fa-fw"></i>&nbsp;&nbsp;<span data-i18n="app.?;">Open File Natively</span></a></li>					  
+					  <!--li><a id="sendTo"><i class="fa fa-external-link-square fa-fw"></i>&nbsp;<span data-i18n="app.?;">Send to</span></a></li-->  
+					  <li><a id="openDirectory"><i class="fa fa-folder-open fa-fw"></i>&nbsp;&nbsp;<span data-i18n="app.?;">Open Containing Folder</span></a></li>
                       <li class="divider"></li> 
-                      <li><a id="openProperties"><i class="fa fa-briefcase"></i>&nbsp;&nbsp;<span data-i18n="app.?;">Properties</span></a></li>  
+                      <li><a id="openProperties"><i class="fa fa-briefcase fa-fw"></i>&nbsp;&nbsp;<span data-i18n="app.?;">Properties</span></a></li>  
 				  </ul>				  
 				</div>				 
                 <a id="fileTitle"></a>				
@@ -308,7 +308,7 @@ can be found in the LICENSE file.
 			</div>			
 		</nav> 	
 		<div class="ts-container" id="viewerContainer">
-            <div id="viewer" allowfullscreen style="width: 100%; height: 100%" ></div>			
+            <div id="viewer" allowfullscreen style="width: 100%; height: 100%; background-color: black" ></div>			
   		</div>
 	</div>
 	<!--div class="row3"></div-->  		   	
@@ -624,15 +624,16 @@ can be found in the LICENSE file.
 	<ul class="dropdown-menu" role="menu" style="display:block;position:static;">
 		<li class="dropdown-header"><span id="">File Operations</span><button type="button" class="close">×</button></li>
         <li class="divider"></li>			
-	    <li><a id="fileMenuOpenFile" title=""><i class="fa fa-share"></i> Open File</a></li>               
-        <li><a id="fileMenuOpenNatively" title=""><i class="fa fa-share"></i> Open File Natively</a></li>           
-	    <li><a id="fileMenuSendTo" title=""><i class="fa fa-fighter-jet"></i> Send To</a></li>
-	    <li><a id="fileMenuAddTag" title="Tag current file"><i class="fa fa-tag"></i> Add Tags</a></li>
-	    <li><a id="fileMenuRenameFile" title=""><i class="fa fa-pencil"></i> Rename File</a></li>
-	    <li><a id="fileMenuDeleteFile" title=""><i class="fa fa-trash-o"></i> Delete File</a></li>
-	    <li><a id="fileMenuOpenDirectory" title=""><i class="fa fa-folder-open"></i> Open Containing Folder</a></li>  
-        <!--li class="divider"></li> 
-        <li><a id="fileOpenProperties"><i class="fa fa-briefcase"></i>&nbsp;<span data-i18n="app.?;">Properties</span></a></li-->                     
+        <li><a id="fileMenuAddTag" title="Tag current file"><i class="fa fa-tag fa-fw"></i> Add / Remove Tags</a></li>
+	    <li class="divider"></li> 
+	    <li><a id="fileMenuOpenFile" title=""><i class="fa fa-share fa-fw"></i> Open File</a></li>               
+        <li><a id="fileMenuOpenNatively" title=""><i class="fa fa-external-link-square fa-fw"></i> Open File Natively</a></li>           
+        <li><a id="fileMenuOpenDirectory" title=""><i class="fa fa-folder-open fa-fw"></i> Open Containing Folder</a></li>  
+	    <li><a id="fileMenuSendTo" title=""><i class="fa fa-fighter-jet fa-fw"></i> Send To</a></li>
+        <li class="divider"></li> 
+	    <li><a id="fileMenuRenameFile" title=""><i class="fa fa-pencil fa-fw"></i> Rename File</a></li>
+	    <li><a id="fileMenuDeleteFile" title=""><i class="fa fa-trash-o fa-fw"></i> Delete File</a></li>
+        <!--li><a id="fileOpenProperties"><i class="fa fa-briefcase"></i>&nbsp;<span data-i18n="app.?;">Properties</span></a></li-->                     
 	</ul>
 </div>
 
@@ -640,12 +641,12 @@ can be found in the LICENSE file.
 	<ul class="dropdown-menu" role="menu" style="display:block;position:static;">	
 		<li class="dropdown-header"><span id="">Tag Operations</span><button type="button" class="close">×</button></li>
         <li class="divider"></li>			
-	    <li><a id="tagMenuAddTagAsFilter" title="Search for the selected tag"><i class="fa fa-filter"></i> Show Files With This Tag</a></li>
-	    <li><a id="tagMenuEditTag" title=""><i class="fa fa-pencil"></i> Edit Tag</a></li>               
-	    <li><a id="tagMenuMoveTagFirst" title=""><i class="fa fa-fast-backward"></i> Move Tag to First Position</a></li>  
-	    <li><a id="tagMenuMoveTagLeft" title=""><i class="fa fa-backward"></i> Move Tag to Left</a></li>               
-	    <li><a id="tagMenuMoveTagRight" title=""><i class="fa fa-forward"></i> Move Tag to Right</a></li>
-	    <li><a id="tagMenuRemoveTag" title=""><i class="fa fa-trash-o"></i> Remove Tag</a></li>
+	    <li><a id="tagMenuAddTagAsFilter" title="Search for the selected tag"><i class="fa fa-filter fa-fw"></i> Show Files With This Tag</a></li>
+	    <li><a id="tagMenuEditTag" title=""><i class="fa fa-pencil fa-fw"></i> Edit Tag</a></li>               
+	    <li><a id="tagMenuMoveTagFirst" title=""><i class="fa fa-fast-backward fa-fw"></i> Move Tag to First Position</a></li>  
+	    <li><a id="tagMenuMoveTagLeft" title=""><i class="fa fa-backward fa-fw"></i> Move Tag to Left</a></li>               
+	    <li><a id="tagMenuMoveTagRight" title=""><i class="fa fa-forward fa-fw"></i> Move Tag to Right</a></li>
+	    <li><a id="tagMenuRemoveTag" title=""><i class="fa fa-trash-o fa-fw"></i> Remove Tag</a></li>
 	</ul>
 </div>        
 
@@ -653,10 +654,10 @@ can be found in the LICENSE file.
 	<ul class="dropdown-menu" role="menu" style="display:block;position:static;">	
 		<li class="dropdown-header"><span id="">Tag Operations</span><button type="button" class="close">×</button></li>
         <li class="divider"></li>			
-	    <li><a id="tagTreeMenuAddTagToFile" title="Add current tag to the selected files"><i class="fa fa-tag"></i> Tag Selected Files</a></li>
-	    <li><a id="tagTreeMenuAddTagAsFilter" title="Set current tag as a filter criteria"><i class="fa fa-filter"></i> Show Files With This Tag</a></li>
-	    <li><a id="tagTreeMenuEditTag" title="Edit current tag"><i class="fa fa-pencil"></i> Edit</a></li>               
-	    <li><a id="tagTreeMenuDeleteTag" title="Delete the tag from the taggroup"><i class="fa fa-trash-o"></i> Delete</a></li>
+	    <li><a id="tagTreeMenuAddTagToFile" title="Add current tag to the selected files"><i class="fa fa-tag fa-fw"></i> Tag Selected Files</a></li>
+	    <li><a id="tagTreeMenuAddTagAsFilter" title="Set current tag as a filter criteria"><i class="fa fa-filter fa-fw"></i> Show Files With This Tag</a></li>
+	    <li><a id="tagTreeMenuEditTag" title="Edit current tag"><i class="fa fa-pencil fa-fw"></i> Edit Tag</a></li>               
+	    <li><a id="tagTreeMenuDeleteTag" title="Delete the tag from the taggroup"><i class="fa fa-trash-o fa-fw"></i> Delete Tag</a></li>
 	</ul>
 </div>  
 
@@ -664,12 +665,12 @@ can be found in the LICENSE file.
 	<ul class="dropdown-menu" role="menu" style="display:block;position:static;">
 		<li class="dropdown-header"><span id="">Taggroup Operations</span><button type="button" class="close">×</button></li>
         <li class="divider"></li>					
-	    <li><a id="tagGroupMenuCreateNewTag" title="Add tags to tag group"><i class="fa fa-tag"></i> Add Tags</a></li>
-	    <li><a id="tagGroupMenuCreateTagGroup" title="Create new a tag group"><i class="fa fa-tags"></i> Create Tag Group</a></li>        
-	    <li><a id="tagGroupMenuMoveUp" title="Move current TagGroup one position up"><i class="fa fa-arrow-up"></i> Move Tag Group Up</a></li>                       
-	    <li><a id="tagGroupMenuMoveDown" title="Move current TagGroup one position down"><i class="fa fa-arrow-down"></i> Move Tag Group Down</a></li>                       
-	    <li><a id="tagGroupMenuEditTagGroup" title="Edit Current tagGroup"><i class="fa fa-pencil"></i> Edit Tag Group</a></li>                       
-	    <li><a id="tagGroupMenuDeleteTagGroup" title="Delete Current TagGroup"><i class="fa fa-trash-o"></i> Delete Tag Group</a></li>
+	    <li><a id="tagGroupMenuCreateNewTag" title="Add tags to tag group"><i class="fa fa-tag fa-fw"></i> Add Tags</a></li>
+	    <li><a id="tagGroupMenuCreateTagGroup" title="Create new a tag group"><i class="fa fa-tags fa-fw"></i> Create Tag Group</a></li>        
+	    <li><a id="tagGroupMenuMoveUp" title="Move current TagGroup one position up"><i class="fa fa-arrow-up fa-fw"></i> Move Tag Group Up</a></li>                       
+	    <li><a id="tagGroupMenuMoveDown" title="Move current TagGroup one position down"><i class="fa fa-arrow-down fa-fw"></i> Move Tag Group Down</a></li>                       
+	    <li><a id="tagGroupMenuEditTagGroup" title="Edit Current tagGroup"><i class="fa fa-pencil fa-fw"></i> Edit Tag Group</a></li>                       
+	    <li><a id="tagGroupMenuDeleteTagGroup" title="Delete Current TagGroup"><i class="fa fa-trash-o fa-fw"></i> Delete Tag Group</a></li>
     </ul>
 </div>  
 
