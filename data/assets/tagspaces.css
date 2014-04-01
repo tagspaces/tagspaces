@@ -577,10 +577,9 @@ input a.resetFilter {
   min-width: 70px;
 }
 
-
 .btn-link, .btn-link:hover, .btn-link:focus, .btn-link:active {
   text-decoration: none;
-  color: gray;
+  color: #444444;
   text-shadow: none;
   border-radius: 0px;  
 }
