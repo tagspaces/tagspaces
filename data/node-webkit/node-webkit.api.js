@@ -10,6 +10,9 @@ define(function(require, exports, module) {
     var TSCORE = require("tscore");    
     var TSPOSTIO = require("tspostioapi");
     
+    //var exif = require('../ext/viewerImage/exif-parser-master/lib/exif');
+    //var BufferStream = require('../ext/viewerImage/exif-parser-master/lib/bufferstream');
+    
     process.on("uncaughtException", function(err) { 
         //alert("error: " + err);  
     });
@@ -128,18 +131,43 @@ define(function(require, exports, module) {
         });
     };
         
-    var loadTextFile = function(filePath) {
+    var loadTextFile = function(filePath, isPreview) {
         console.log("Loading file: "+filePath);
         TSCORE.showLoadingAnimation();  
-                
-        fs.readFile(filePath, 'utf8', function(error, content) {
-            if (error) {
+        
+        if(isPreview) {
+        	var stream = fs.createReadStream(filePath,  {start: 0, end: 10000})
+        	
+        	stream.on('error', function(err){
                 console.log("Loading file "+filePath+" failed "+error);
                 return;
-            }
-            TSPOSTIO.loadTextFile(content);
-        }); 
+        	});
+
+    		stream.on('data', function(content) {
+    			console.log("Stream: "+content);
+          	    TSPOSTIO.loadTextFile(content);        		  
+    		});
+
+        } else {
+            fs.readFile(filePath, 'utf8', function(error, content) {
+                if (error) {
+                    console.log("Loading file "+filePath+" failed "+error);
+                    return;
+                }
+                TSPOSTIO.loadTextFile(content);
+            });         	
+        }
     };
+    
+    /* var loadEXIF = function(filePath) {
+        console.log("Loading file: "+filePath);
+        TSCORE.showLoadingAnimation();  
+
+        var buf = fs.readFileSync(filePath);
+		exif.parseTags(new BufferStream(buf, 24, 23960), function(ifdSection, tagType, value, format) {
+			console.log("EXIF: "+ifdSection+" "+tagType+" "+value+" "+format);
+		});  
+    };    */
     
     var saveTextFile = function(filePath,content,overWrite) {
         console.log("Saving file: "+filePath);
