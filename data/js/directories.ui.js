@@ -89,38 +89,36 @@ define(function(require, exports, module) {
                    "style":      "overflow-y: auto; max-height: 430px; width: 250px; padding: 5px;",                
                    "class":      "dropdown-menu"
             })
-            .append($("<li>", { "text": 'Actions for '+directoryHistory[i].name, "class": 'dropdown-header' })
+            .append($("<li>", { "text": 'Actions for \"'+directoryHistory[i].name+'\"', "class": 'dropdown-header' })
                 .append($('<button type="button" class="close">×</button>'))
             )            
             .append($("<li>", {} ) 
-                .append($("<div>", { "class": "btn-group"} ) 
                     .append($("<button>", { 
-                            "class":    "btn btn-default", 
+                            "class":    "btn btn-link", 
                             "path":      directoryHistory[i].path,
-                            "title":    "Open or Reopen "+directoryHistory[i].name,
-                            "style":    "margin: 1px; font-size: 13px",
-                            "text":     " (Re)Open"
+                            "title":    "Open or Reload "+directoryHistory[i].name,
+                            "text":     " Open or Reload Directory"
                         })
-                        .prepend("<i class='fa fa-refresh'></i>")            
+                        .prepend("<i class='fa fa-refresh fa-lg fa-fw'></i>")            
                         .click( function() {
                             navigateToDirectory($(this).attr("path"));
                         })                   
                     )
+             )
+            .append($("<li>", {} )                     
                     .append($("<button>", { 
-                            "class":    "btn btn-default", 
+                            "class":    "btn btn-link", 
                             "path":      directoryHistory[i].path,
                             "title":    "Create Subdirectory",
-                            "style":    "margin: 1px; font-size: 13px",
-                            "text":     " New Directory"
+                            "text":     " Create New Directory"
                         })
-                        .prepend("<i class='fa fa-folder'></i>")            
+                        .prepend("<i class='fa fa-folder fa-lg fa-fw'></i>")            
                         .click( function() {
                             showCreateDirectoryDialog($(this).attr("path"));
                         })                   
                     )
-                )
             )
-            .append($("<li>", { "text": 'Subfolders of : '+directoryHistory[i].name, "class": 'dropdown-header' }));                        
+            .append($("<li>", { "text": 'Subfolders of \"'+directoryHistory[i].name+'\"', "class": 'dropdown-header' }));                        
             //.append('<li class="divider"></li>');
                           
             if(directoryHistory[i]["children"].length <= 0) {
@@ -505,7 +503,6 @@ define(function(require, exports, module) {
 			        }); 
             			        
                     if(isCordova) {
-                        //$("#selectLocalDirectory").hide();		
                         $("#folderLocation").attr("placeholder","Example: DCIM/Camera");	         			        	     		
                     }
 		     	}
