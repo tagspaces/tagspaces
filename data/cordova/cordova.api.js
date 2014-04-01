@@ -5,9 +5,12 @@ define(function (require, exports, module) {
     "use strict";
 
     console.log("Loading ioapi.cordova.js..");
-
+    
     var TSCORE = require("tscore");    
-    var TSPOSTIO = require("tspostioapi");   
+    var TSPOSTIO = require("tspostioapi"); 
+    
+    var attachFastClick = require('cordova/fastclick.min');
+    attachFastClick(document.body);        
 
     var fsRoot = undefined;
 
@@ -294,7 +297,7 @@ define(function (require, exports, module) {
         );
     };
 
-    var loadTextFile = function(filePath) {
+    var loadTextFile = function(filePath, isPreview) {
         console.log("Loading file: "+filePath);
         TSCORE.showLoadingAnimation();  
 
@@ -307,7 +310,11 @@ define(function (require, exports, module) {
                         reader.onloadend = function(evt) {
                             TSPOSTIO.loadTextFile(evt.target.result); 
                         };
-                        reader.readAsText(file);
+                    	if(isPreview) {
+                    		reader.readAsText(file.slice(0,10000));
+                    	} else {
+                            reader.readAsText(file);                    		
+                    	}
                     },
                     function() {
                         console.log("error getting file: "+filePath);
