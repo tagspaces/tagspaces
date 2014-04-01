@@ -28,15 +28,43 @@ define(function(require, exports, module) {
 		require([
               extensionDirectory+'/viewerUI.js',
               "text!"+extensionDirectory+'/mainUI.html',
+              //extensionDirectory+'/loadimage/canvas-to-blob.js',
               extensionDirectory+'/jquery.panzoom/jquery.panzoom.min.js',              
               extensionDirectory+'/jquery.mousewheel/jquery.mousewheel.js',      
-              extensionDirectory+'/pixastic/pixastic.custom.js',
-		    ], function(extUI, uiTPL) {
-                var uiTemplate = Handlebars.compile( uiTPL );
+              ], function(extUI, uiTPL) {
+			//extensionDirectory+'/pixastic/pixastic.custom.js',
+				var uiTemplate = Handlebars.compile( uiTPL );
                 UI = new extUI.ExtUI(extensionID, elementID, filePath);                          
                 UI.buildUI(uiTemplate);
                 
-                TSCORE.hideLoadingAnimation();              
+                /*
+                loadImage(
+                	    filePath,
+                	    function (img) {
+                	        img.toBlob(
+            	                function (blob) {
+            	                    loadImage.parseMetaData(blob, function (data) {
+            	                    	console.log("EXIF: "+data.exif);
+            	                    	if (data.exif) {
+            	                            options.orientation = data.exif.get('Orientation');
+            	                            displayExifData(data.exif);
+            	                        }
+            	                    });                                 	                	
+            	                },
+            	                'image/jpeg'
+            	            );                	        
+                	    },
+                	    {
+                	        maxWidth: 600,
+                	        maxHeight: 300,
+                	        minWidth: 100,
+                	        minHeight: 50,
+                	        canvas: true
+                	    }
+                	); */
+
+                TSCORE.hideLoadingAnimation();       
+                
 		});    
 	};
 	
