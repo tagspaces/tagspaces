@@ -36,20 +36,20 @@ var initPerspectives = function () {
                 $("#viewToolbars").append($("<div>", { 
                     id: perspective.ID+"Toolbar",
                     class: "btn-toolbar",
-                    text: perspective.Title,
+                    //text: perspective.Title,
                 }).hide()); 
                 
                 // Creating perspective's container
                 $("#viewContainers").append($("<div>", { 
                     id: perspective.ID+"Container",
-                    text: perspective.Title,
+                    //text: perspective.Title,
                     style: "width: 100%; height: 100%",
                 }).hide());             
             
                 // Creating perspective's footer
                 $("#viewFooters").append($("<div>", { 
                     id: perspective.ID+"Footer",
-                    text: perspective.Title,
+                    //text: perspective.Title,
                 }).hide());                             
                 perspective.init();
             } catch(e) {
