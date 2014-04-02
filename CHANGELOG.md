@@ -1,5 +1,32 @@
 ﻿#Changelog
 
+##Version 1.7.9 / 2014.04.02
+- removing of many tags on many files now possible in one step
+- making the toolbar icons flat
+- adding swipe gestures for image navigation
+- fixing text wrapping issues in list perspective
+- adding key bindinds for left and right
+- redesigning the alternative path navigation
+- adding "close file" and "send to" actions to the file menu
+- preventing opening links in html files
+- adding confirmation dialog for recursiv scan
+- correcting fastclick integration
+- improving edit title buttons
+- opening location panel on location opening
+- redifining backbutton cordova
+- disable closing of taging dialog by clicking outside of the dialog
+- adding iphone icons for the webapp
+- adding handler for opening of what's new page
+- improving tag handling in dialogs by activating tag selection on blur
+- reactivating showing the popup hint if no location created
+- resigning contact us panel
+- disabling opening the location panel if subfolders exists
+- adding a new iframe viewer extension
+- updating require.js library to a newer version
+- removing the trailing red dot from the editor's content
+- [osx]disabling the file menu on mac
+- [api] extending loadTextFile funcion to support file preview
+
 ##Version 1.7.8 / 2014.03.21
 - enabling opening of the last opened location by the start of the application [#29](https://github.com/uggrock/tagspaces/issues/29)
 - adding the following key bindings
@@ -29,7 +56,6 @@
 - adding new version of pdf.js with support of printing, rotating, dragging, document properties and goto first/last page
 
 ##Version 1.7.6 / 2014.02.28
-
 - remember and open the last state of the application window e.g. maximize or not [#29](https://github.com/uggrock/tagspaces/issues/29)
 - adding openLocation to the TSCORE API
 - making the directory to taglibrary switch buttons brighter
