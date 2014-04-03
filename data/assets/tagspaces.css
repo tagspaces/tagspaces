@@ -162,7 +162,7 @@ user-select: none;
 
 #fileTitle {
     height: 30px;
-    line-height: 1.9;
+    line-height: 2.2;
     padding-left: 4px;
     padding-right: 4px;
     font-size: 16px;
@@ -170,7 +170,6 @@ user-select: none;
     border: 0px;
     background-color: transparent;
     color: #333333;
-    white-space: nowrap;
     max-width: 150px;
 }
 
@@ -190,11 +189,11 @@ table .fileTitle {
 }
 
 .noWrap {
-    white-space:nowrap;
+    white-space:nowrap !important;
 }
 
 .forceWrap {
-    word-wrap: break-word;
+    word-wrap: break-word !important;
 }
 
 .titleInFileTile {
