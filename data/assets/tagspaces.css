@@ -788,6 +788,10 @@ input a.resetFilter {
     background-color: #F2F2F2; 
 }
 
+.keyShortcut {
+    margin-top: 15px;
+}
+
 @media 
 (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) { 
     #welcomeScreen {
