@@ -115,18 +115,18 @@ define(function(require, exports, module) {
     }	
 	
     function initKeyBindings() {
-	  if(isNode) {
-          var win = gui.Window.get();
-          Mousetrap.bind('f12', function() {
-	          win.showDevTools();
-	      });
-          Mousetrap.bind('f5', function() {
+        if(isNode) {
+            var win = gui.Window.get();
+            Mousetrap.bind('f12', function() {
+              win.showDevTools();
+            });
+            Mousetrap.bind('f5', function() {
               win.reloadIgnoringCache();
-          });	      
-          Mousetrap.bind('f11', function() {
+            });
+            Mousetrap.bind('f11', function() {
               win.toggleFullscreen();
-          });                   
-	  }
+            });
+        }
     }		
 	
     function checkForNewVersion() {
@@ -176,16 +176,16 @@ define(function(require, exports, module) {
         }
     }
 	
-	function updateLogger(message) {
+	function updateLogger() {
 		// TODO reactivate
 	    console.log("Updating logger...");
 	}
 	
-	function showLoadingAnimation(message) {
+	function showLoadingAnimation() {
 	    $("#loadingAnimation").css('visibility', "visible");
 	}
 	
-	function hideLoadingAnimation(message) {
+	function hideLoadingAnimation() {
 	    $("#loadingAnimation").css('visibility', "hidden");
 	}
 	
@@ -219,43 +219,43 @@ define(function(require, exports, module) {
     }  
 	
     function exportFileListCSV(fileList) {
-            var csv = '';
-            var headers = [];
-            var rows = [];
-            var numberOfTagColumns = 40; // max. estimated to 40 ca. 5 symbols per tag _[er], max. path length 25x chars   
-    
-            headers.push("path");
-            headers.push("title");
-            headers.push("size");
-            for(var i = 0; i < numberOfTagColumns; i++) {
-                headers.push("tag"+i);
-            }
-            csv += headers.join(',') + "\n";     
-            
-            for(var i = 0; i < fileList.length; i++) {
-                var row = fileList[i][exports.fileListFILEPATH]+","+fileList[i][exports.fileListTITLE]+","+fileList[i][exports.fileListFILESIZE]+","+fileList[i][exports.fileListTAGS];
-                rows.push(row);
-            }
-    
-            csv += rows.join("\n");
-            return csv;
+        var csv = '';
+        var headers = [];
+        var rows = [];
+        var numberOfTagColumns = 40; // max. estimated to 40 ca. 5 symbols per tag _[er], max. path length 25x chars
+
+        headers.push("path");
+        headers.push("title");
+        headers.push("size");
+        for(var i = 0; i < numberOfTagColumns; i++) {
+            headers.push("tag"+i);
+        }
+        csv += headers.join(',') + "\n";
+
+        for(var i = 0; i < fileList.length; i++) {
+            var row = fileList[i][exports.fileListFILEPATH]+","+fileList[i][exports.fileListTITLE]+","+fileList[i][exports.fileListFILESIZE]+","+fileList[i][exports.fileListTAGS];
+            rows.push(row);
+        }
+
+        csv += rows.join("\n");
+        return csv;
     }    	
 
     function exportFileListArray(fileList) {
-            var rows = [];
-            for(var i = 0; i < fileList.length; i++) {
-                var row = [];
-                row["path"] = fileList[i][exports.fileListFILEPATH];
-                row["title"] = fileList[i][exports.fileListTITLE];
-                row["size"] = fileList[i][exports.fileListFILESIZE];
-                
-                var tags = fileList[i][exports.fileListTAGS];
-                for(var j = 0; j < tags.length; j++) {
-                    row["tag"+(j)] = tags[j];
-                }                
-                rows.push(row);
+        var rows = [];
+        for(var i = 0; i < fileList.length; i++) {
+            var row = [];
+            row["path"] = fileList[i][exports.fileListFILEPATH];
+            row["title"] = fileList[i][exports.fileListTITLE];
+            row["size"] = fileList[i][exports.fileListFILESIZE];
+
+            var tags = fileList[i][exports.fileListTAGS];
+            for(var j = 0; j < tags.length; j++) {
+                row["tag"+(j)] = tags[j];
             }
-            return rows;        
+            rows.push(row);
+        }
+        return rows;
     }
 
     // UI and Layout functionalities
