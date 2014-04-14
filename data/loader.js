@@ -20,8 +20,8 @@ var isChrome =  document.URL.indexOf( 'chrome-extension://' ) === 0;
 var isNode;
 var isCordova = document.URL.indexOf( 'file:///android_asset' ) === 0;
 var isWeb = document.URL.indexOf( 'http' ) === 0;
-var isOSX = navigator.appVersion.indexOf("Mac")!=-1;
-var isWin = navigator.appVersion.indexOf("Win")!=-1;
+var isOSX = navigator.appVersion.indexOf("Mac")!==-1;
+var isWin = navigator.appVersion.indexOf("Win")!==-1;
 
 // Check for running in node-webkit
 try {
