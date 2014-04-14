@@ -13,13 +13,13 @@ if (PRODUCTION == "true") {
     console.log = function(){};
 }
 
-var isFirefox = document.URL.indexOf( 'resource://' ) == 0; 
-var isFirefoxOS = document.URL.indexOf( 'app://' ) == 0; 
+var isFirefox = document.URL.indexOf( 'resource://' ) === 0;
+var isFirefoxOS = document.URL.indexOf( 'app://' ) === 0;
 //var isSafari = Object.prototype.toString.call(window.HTMLElement).indexOf('Constructor') > 0;
-var isChrome =  document.URL.indexOf( 'chrome-extension://' ) == 0; 
-var isNode = undefined;
-var isCordova = document.URL.indexOf( 'file:///android_asset' ) == 0; 
-var isWeb = document.URL.indexOf( 'http' ) == 0;
+var isChrome =  document.URL.indexOf( 'chrome-extension://' ) === 0;
+var isNode;
+var isCordova = document.URL.indexOf( 'file:///android_asset' ) === 0;
+var isWeb = document.URL.indexOf( 'http' ) === 0;
 var isOSX = navigator.appVersion.indexOf("Mac")!=-1;
 var isWin = navigator.appVersion.indexOf("Win")!=-1;
 
@@ -31,11 +31,11 @@ try {
     isNode = true;
 } catch(e) {
     isNode = false;
-    console.log("node-webkit not found!");
+    console.log("node-webkit not foundt!");
 }
 
 // Setting up the IO functionality according to the platform
-var IO_JS = undefined;
+var IO_JS;
 if( isFirefox ) {
     IO_JS = "mozilla/mozilla.api";
 } else if ( isFirefoxOS ) {
@@ -60,7 +60,7 @@ requirejs.config({
     map: {
       '*': {
         'css':  'libs/requirecss/css',
-        'text':  'libs/requiretext/text',
+        'text':  'libs/requiretext/text'
       }
     },
     paths: {
@@ -106,7 +106,7 @@ requirejs.config({
         tspostioapi:            'js/postioapi',
         tsioapi:                IO_JS,
         tsioapidropbox:         'js/ioapi.dropbox',
-        tsdirectorybrowser:     'js/directorybrowser',
+        tsdirectorybrowser:     'js/directorybrowser'
     }, 
     shim: {
         'underscore':               { exports: '_' }, 
@@ -146,8 +146,8 @@ requirejs.config({
                 'mousetrap',
                 'select2',
                 'handlebarsjs',  
-                'tssettingsdefault', 
-            ] },
+                'tssettingsdefault'
+            ] }
     } 
 });
 
@@ -158,7 +158,7 @@ define(function (require, exports, module) {
 	    require(["cordova.js"]);    		
 	}
 
-    var TSCORE = undefined;
+    var TSCORE;
     requirejs(['tscore','underscore'], function (core,_) {
         TSCORE = core;
         TSCORE.initApp();
