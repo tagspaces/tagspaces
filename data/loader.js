@@ -154,7 +154,7 @@ requirejs.config({
 define(function (require, exports, module) {
 "use strict";
 
-	if(isCordova) {
+    if(isCordova) {
 	    require(["cordova.js"]);    		
 	}
 
