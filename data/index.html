@@ -2,7 +2,7 @@
 <html>
 <head>
 <!--
-Copyright (c) 2012-2013 The TagSpaces Authors. All rights reserved.
+Copyright (c) 2012-2014 The TagSpaces Authors. All rights reserved.
 Use of this source code is governed by a AGPL3 license that 
 can be found in the LICENSE file.
 -->  	
@@ -275,19 +275,21 @@ can be found in the LICENSE file.
 				      <!--li><a id="suggestTagsFile"><i class="fa fa-tags fa-fw"></i>&nbsp;<span data-i18n="app.?;">Tags Suggestion</span></a></li-->
                       <!--li><a id="printFile" href="#"><i class="fa fa-edit fa-fw"></i>&nbsp;<span data-i18n="app.?;">Print</span></a></li-->
 				      <li class="divider"></li> 
-					  <li><a id="renameFile"><i class="fa fa-pencil fa-fw"></i>&nbsp;&nbsp;<span data-i18n="app.?;">Rename File</span></a></li>
-                      <li><a id="sendFile"><i class="fa fa-fighter-jet fa-fw"></i>&nbsp;&nbsp;<span data-i18n="app.?;">Send File To</span></a></li>
-					  <li><a id="deleteFile"><i class="fa fa-trash-o fa-fw"></i>&nbsp;&nbsp;<span data-i18n="app.?;">Delete File</span></a></li>
-                      <li><a id="reloadFile"><i class="fa fa-refresh fa-fw"></i>&nbsp;&nbsp;<span data-i18n="app.?;">Reload File</span>
+					  <li class="noWrap"><a id="renameFile"><i class="fa fa-pencil fa-fw"></i>&nbsp;&nbsp;<span data-i18n="app.?;">Rename File</span></a></li>
+                      <li class="noWrap"><a id="sendFile"><i class="fa fa-fighter-jet fa-fw"></i>&nbsp;&nbsp;<span data-i18n="app.?;">Send File To</span></a></li>
+					  <li class="noWrap"><a id="deleteFile"><i class="fa fa-trash-o fa-fw"></i>&nbsp;&nbsp;<span data-i18n="app.?;">Delete File</span>
+                          <span class="pull-right label label-default keyShortcut">Del</span></a></li>
+                      <li class="noWrap"><a id="reloadFile"><i class="fa fa-refresh fa-fw"></i>&nbsp;&nbsp;<span data-i18n="app.?;">Reload File</span>
                           <span class="pull-right label label-default keyShortcut">Ctrl/⌘ + R</span></a></li>
                       <li class="noWrap"><a id="closeFile"><i class="fa fa-times fa-fw"></i>&nbsp;&nbsp;<span data-i18n="app.?;">Close File</span>
-                          <span class="pull-right label label-default keyShortcut">ESC</span></a></li>                      
+                          <span class="pull-right label label-default keyShortcut">Esc</span></a></li>
                       <li class="divider"></li> 
-                      <li><a id="openNatively"><i class="fa fa-external-link-square fa-fw"></i>&nbsp;&nbsp;<span data-i18n="app.?;">Open File Natively</span></a></li>					  
-					  <!--li><a id="sendTo"><i class="fa fa-external-link-square fa-fw"></i>&nbsp;<span data-i18n="app.?;">Send to</span></a></li-->  
-					  <li><a id="openDirectory"><i class="fa fa-folder-open fa-fw"></i>&nbsp;&nbsp;<span data-i18n="app.?;">Open Containing Folder</span></a></li>
+                      <li class="noWrap"><a id="openNatively"><i class="fa fa-external-link-square fa-fw"></i>&nbsp;&nbsp;<span data-i18n="app.?;">Open File Natively</span></a></li>
+					  <!--li class="noWrap"><a id="sendTo"><i class="fa fa-external-link-square fa-fw"></i>&nbsp;<span data-i18n="app.?;">Send to</span></a></li-->
+					  <li class="noWrap"><a id="openDirectory"><i class="fa fa-folder-open fa-fw"></i>&nbsp;&nbsp;<span data-i18n="app.?;">Open Containing Folder</span></a></li>
                       <li class="divider"></li> 
-                      <li><a id="openProperties"><i class="fa fa-briefcase fa-fw"></i>&nbsp;&nbsp;<span data-i18n="app.?;">Properties</span></a></li>  
+                      <li class="noWrap"><a id="openProperties"><i class="fa fa-briefcase fa-fw"></i>&nbsp;&nbsp;<span data-i18n="app.?;">Properties</span>
+                          <span class="pull-right label label-default keyShortcut">Alt+Enter</span></a></li>
 				  </ul>				  
 				</div>				 
                 <a id="fileTitle"></a>				
@@ -586,7 +588,7 @@ can be found in the LICENSE file.
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
-<div id="alertDialog" class="modal" style="z-index: 99999">
+<div id="alertDialog" class="modal" style="z-index: 99999" tabindex="-1">
 	<div class="modal-dialog">
 		<div class="modal-content">
 		  <div class="modal-header">
@@ -601,7 +603,7 @@ can be found in the LICENSE file.
 	</div>
 </div>
 
-<div id="confirmDialog" class="modal" style="z-index: 99999">
+<div id="confirmDialog" class="modal" style="z-index: 99999" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
