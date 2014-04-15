@@ -1,4 +1,4 @@
-/* Copyright (c) 2012-2013 The TagSpaces Authors. All rights reserved.
+/* Copyright (c) 2012-2014 The TagSpaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that 
  * can be found in the LICENSE file. */
 define(function(require, exports, module) {
@@ -91,35 +91,37 @@ define(function(require, exports, module) {
             })
             .append($("<li>", { "text": 'Actions for \"'+directoryHistory[i].name+'\"', "class": 'dropdown-header' })
                 .append($('<button type="button" class="close">×</button>'))
-            )            
-            .append($("<li>", {} ) 
-                    .append($("<button>", { 
-                            "class":    "btn btn-link", 
-                            "path":      directoryHistory[i].path,
-                            "title":    "Open or Reload "+directoryHistory[i].name,
-                            "text":     " Open or Reload Directory"
-                        })
-                        .prepend("<i class='fa fa-refresh fa-lg fa-fw'></i>")            
-                        .click( function() {
-                            navigateToDirectory($(this).attr("path"));
-                        })                   
+            )
+            //.append('<li class="divider"></li>')
+            .append($("<li>", {} )
+                .append($("<button>", {
+                        "class":    "btn btn-link",
+                        "path":      directoryHistory[i].path,
+                        "title":    "Open or Reload "+directoryHistory[i].name,
+                        "text":     " Open or Reload Directory"
+                    })
+                    .prepend("<i class='fa fa-refresh fa-lg fa-fw'></i>")
+                    .click( function() {
+                        navigateToDirectory($(this).attr("path"));
+                    })
                     )
              )
             .append($("<li>", {} )                     
-                    .append($("<button>", { 
-                            "class":    "btn btn-link", 
-                            "path":      directoryHistory[i].path,
-                            "title":    "Create Subdirectory",
-                            "text":     " Create New Directory"
-                        })
-                        .prepend("<i class='fa fa-folder fa-lg fa-fw'></i>")            
-                        .click( function() {
-                            showCreateDirectoryDialog($(this).attr("path"));
-                        })                   
-                    )
+                .append($("<button>", {
+                        "class":    "btn btn-link",
+                        "path":      directoryHistory[i].path,
+                        "title":    "Create Subdirectory",
+                        "text":     " Create New Directory"
+                    })
+                    .prepend("<i class='fa fa-folder fa-lg fa-fw'></i>")
+                    .click( function() {
+                        showCreateDirectoryDialog($(this).attr("path"));
+                    })
+                )
             )
-            .append($("<li>", { "text": 'Subfolders of \"'+directoryHistory[i].name+'\"', "class": 'dropdown-header' }));                        
-            //.append('<li class="divider"></li>');
+            .append('<li class="divider"></li>')
+            .append($("<li>", { "text": 'Subfolders of \"'+directoryHistory[i].name+'\"', "class": 'dropdown-header' })
+            );
                           
             if(directoryHistory[i]["children"].length <= 0) {
                     subfolders.append("<div class='alert alert-warning'>No subfolders found</div>");          
@@ -130,8 +132,8 @@ define(function(require, exports, module) {
                               && (directoryHistory[i]["children"][j].name.indexOf(".") != 0)
                              )
                         ) {
-                        subfolders.append($("<button>", { 
-                            "class":    "btn btn-sm dirButton", 
+                        subfolders.append($("<button>", {
+                            "class":    "btn dirButton",
                             "key":      directoryHistory[i]["children"][j].path,
                             "title":    directoryHistory[i]["children"][j].path,
                             "style":    "margin: 1px;",
@@ -147,20 +149,20 @@ define(function(require, exports, module) {
            }            
             
             $("#alternativeNavigator")
-               .append($("<div>", { 
-                        "class":      "btn-group dropup",
+                .append($("<div>", {
+                        "class":      "btn-group dropup"
                     })
-                    .append($("<button>", { 
+                    .append($("<button>", {
                         "class":       "btn btn-link dropdown-toggle",
                         "text":        directoryHistory[i].name,
-                        "key":         directoryHistory[i].path,  
-                        "data-toggle": "dropdown"                        
+                        "key":         directoryHistory[i].path,
+                        "data-toggle": "dropdown"
                     })
                         .prepend(homeIcon)
                         .append("&nbsp;&nbsp;<i class='fa fa-caret-right'></i>&nbsp;")
                     )
-                    .append(subfolders)                                  
-                ); 
+                    .append(subfolders)
+                );
         } // FOR End
     }
     
@@ -171,13 +173,13 @@ define(function(require, exports, module) {
         for(var i=0; i < directoryHistory.length; i++) {
             $("#locationContent").append($("<div>", { 
                 "class":        "accordion-group disableTextSelection",   
-                "style":        "width: 99%; border: 0px #aaa solid;", 
+                "style":        "width: 99%; border: 0px #aaa solid;"
             })
             
             .append($("<div>", { 
                     "class":    "accordion-heading btn-group",
                     "key":      directoryHistory[i].path, 
-                    "style":    "width:100%; margin: 0px; ",
+                    "style":    "width:100%; margin: 0px; "
                 }
             )
 
@@ -186,7 +188,7 @@ define(function(require, exports, module) {
                         "data-toggle":  "collapse",
                         "data-target":  "#dirButtons"+i,                        
                         "key":          directoryHistory[i].path,
-                        "title":        "Toggle Directory",
+                        "title":        "Toggle Directory"
                     }  
                 )
                 .html("<i class='fa fa-folder-open'></i>")   
@@ -196,7 +198,7 @@ define(function(require, exports, module) {
                         "class":        "btn btn-link btn-sm directoryTitle",
                         "key":          directoryHistory[i].path,
                         "title":        "Change Direoctory to: "+directoryHistory[i].path,
-                        "text":         directoryHistory[i].name,
+                        "text":         directoryHistory[i].name
                     }  
                 )
                 .click(function() {
@@ -223,7 +225,7 @@ define(function(require, exports, module) {
             .append($("<button>", {
                     "class":        "btn btn-link directoryActions",
                     "key":          directoryHistory[i].path, 
-                    "title":        "Directory Options", 
+                    "title":        "Directory Options"
             })                       
             //.dropdown( 'attach' , '#directoryMenu' )
             .append("<b class='fa fa-ellipsis-v'>")
@@ -239,7 +241,7 @@ define(function(require, exports, module) {
             .append($("<div>", { 
                 "class":    "accordion-inner",
                 "id":       "dirButtonsContent"+i,
-                "style":    "padding: 2px; border: 0px;",
+                "style":    "padding: 2px; border: 0px;"
             })
             ) // end accordion-inner    
             ) // end accordion button        
@@ -372,7 +374,7 @@ define(function(require, exports, module) {
             directoryHistory.push({
                 "name": locationTitle,
                 "path" : directoryPath,
-                "collapsed" : false,
+                "collapsed" : false
             });             
         }    
         console.log("Dir History: "+JSON.stringify(directoryHistory));
@@ -441,7 +443,7 @@ define(function(require, exports, module) {
 
     function showLocationEditDialog(name,path) {
         require([
-              "text!templates/LocationEditDialog.html",
+              "text!templates/LocationEditDialog.html"
             ], function(uiTPL) {
                 // Check if dialog already created
                 if($("#dialogLocationEdit").length < 1) {
@@ -482,7 +484,7 @@ define(function(require, exports, module) {
     
     function showLocationCreateDialog() {
 		require([
-	          "text!templates/LocationCreateDialog.html",
+	          "text!templates/LocationCreateDialog.html"
 		    ], function(uiTPL) {
                 // Check if dialog already created
 		     	if($("#dialogCreateFolderConnection").length < 1) {
@@ -514,7 +516,7 @@ define(function(require, exports, module) {
     
     function showCreateDirectoryDialog(dirPath) {
 		require([
-	          "text!templates/DirectoryCreateDialog.html",
+	          "text!templates/DirectoryCreateDialog.html"
 		    ], function(uiTPL) {
 		     	if($("#dialogDirectoryCreate").length < 1) {		    	
 		            var uiTemplate = Handlebars.compile( uiTPL );
@@ -607,7 +609,7 @@ define(function(require, exports, module) {
                         .click(function() {
                             openLocation($(this).attr( "path" ));                           
                         })
-                    	.prepend("<i class='fa fa-bookmark'></i>&nbsp;")                         	
+                    	.prepend("<i class='fa fa-bookmark fa-lg'></i>&nbsp;")
                     )
                     .append(
                         $('<button>', { 
@@ -615,10 +617,10 @@ define(function(require, exports, module) {
                             title:    "Edit Location",
                             location: connectionsList[i].name,
                             path:     connectionsList[i].path,
-                            class:    "btn btn-default pull-right",
-                            style:    "margin-right: 5px"
+                            class:    "btn btn-link pull-right",
+                            style:    "margin-right: 5px; margin-top: 5px"
                            } )
-                           .append("<i class='fa fa-pencil'></i>")
+                           .append("<i class='fa fa-pencil fa-lg'></i>")
                            .click(function(e) {
                                 console.log("Edit location");
                                 showLocationEditDialog($(this).attr("location"),$(this).attr("path"));
