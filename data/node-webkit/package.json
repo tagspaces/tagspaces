@@ -4,7 +4,7 @@
   "version": "1.x",
   "main": "../index.html",
   "window": {
-    "icon": "../assets/icon128.png",
+    "icon": "icon128.png",
     "frame": true,
     "toolbar": false,
     "min_width": 320,
