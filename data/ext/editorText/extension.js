@@ -11,38 +11,38 @@ define(function(require, exports, module) {
 	exports.title = "Text Editor based on codemirror";
 	exports.type = "editor";
 	exports.supportedFileTypes = [
-	        "h", "c", "clj", "coffee", "coldfusion", "cpp",
-	        "cs", "css", "groovy", "haxe", "htm", "html",
-	        "java", "js", "jsm", "json", "latex", "less",
-	        "ly", "ily", "lua", "markdown", "md", "mdown",
-	        "mdwn", "mkd", "ml", "mli", "pl", "php", 
-	        "powershell", "py", "rb", "scad", "scala",
-	        "scss", "sh", "sql", "svg", "textile", "txt", "xml"
-	     ] ;
-	     
-	var TSCORE = require("tscore");	     
-	
-	var cmEditor = undefined;
-	var extensionDirectory = TSCORE.Config.getExtensionPath()+"/"+exports.id;
-	
+            "h", "c", "clj", "coffee", "coldfusion", "cpp",
+            "cs", "css", "groovy", "haxe", "htm", "html",
+            "java", "js", "jsm", "json", "latex", "less",
+            "ly", "ily", "lua", "markdown", "md", "mdown",
+            "mdwn", "mkd", "ml", "mli", "pl", "php",
+            "powershell", "py", "rb", "scad", "scala",
+            "scss", "sh", "sql", "svg", "textile", "txt", "xml"
+         ] ;
+
+    var TSCORE = require("tscore");
+
+    var cmEditor = undefined;
+    var extensionDirectory = TSCORE.Config.getExtensionPath()+"/"+exports.id;
+
 	
 	exports.init = function(filePath, containerElementID, isViewerMode) {
-	    console.log("Initalization Text Editor...");
-	    var fileExt = filePath.substring(filePath.lastIndexOf(".")+1,filePath.length).toLowerCase();
+        console.log("Initalization Text Editor...");
+        var fileExt = filePath.substring(filePath.lastIndexOf(".")+1,filePath.length).toLowerCase();
 
-        $("#"+containerElementID).append('<div id="code" name="code" style="width: 100%; height: 100%">');  
-        var mode = filetype[fileExt];		
-		if (mode == null) {
-		    mode = "properties";
-		}
-		require([
-		    extensionDirectory+'/codemirror/codemirror.js',
+        $("#"+containerElementID).append('<div id="code" name="code" style="width: 100%; height: 100%">');
+        var mode = filetype[fileExt];
+        if (mode == null) {
+            mode = "properties";
+        }
+        require([
+            extensionDirectory+'/codemirror/codemirror.js',
             'css!'+extensionDirectory+'/codemirror/codemirror.css',
-		    'css!'+extensionDirectory+'/extension.css',
-		], function() { 
+            'css!'+extensionDirectory+'/extension.css'
+        ], function() {
             require([
-                extensionDirectory+"/codemirror/mode/" + mode + "/" + mode + ".js",
-            ], function() { 
+                extensionDirectory+"/codemirror/mode/" + mode + "/" + mode + ".js"
+            ], function() {
                 cmEditor = CodeMirror(document.getElementById("code"), {
                     fixedGutter: false,
                     mode: mode,
@@ -54,36 +54,37 @@ define(function(require, exports, module) {
                     readOnly: isViewerMode,
                     //theme: "lesser-dark",
                      extraKeys: {
-                      "Cmd-S": function(instance) { TSCORE.FileOpener.saveFile() },
-                      "Ctrl-S": function(instance) { TSCORE.FileOpener.saveFile() },
-                      "Esc": function(instance) { TSCORE.FileOpener.closeFile() },	 
-                      "Ctrl-Space": "autocomplete",
+                      "Cmd-S": function() { TSCORE.FileOpener.saveFile(); },
+                      "Ctrl-S": function() { TSCORE.FileOpener.saveFile(); },
+                      "Esc": function() { TSCORE.FileOpener.closeFile(); },
+                      "Ctrl-Space": "autocomplete"
                     }
                 });
-    
-    	        //cmEditor.readOnly = isViewerMode;
-    	        cmEditor.setSize("100%","100%");  
+
+                //cmEditor.readOnly = isViewerMode;
+                cmEditor.setSize("100%","100%");
                 TSCORE.IO.loadTextFile(filePath);
             });
-		});
-	};
+        });
+    };
 	
-	exports.viewerMode = function(isViewerMode) {
-	    cmEditor.readOnly = isViewerMode;      
-	};
+    exports.viewerMode = function(isViewerMode) {
+        cmEditor.readOnly = isViewerMode;
+    };
 	
 	exports.setContent = function(content) {
-//        console.log("Content: "+content);
+        //console.log("Content: "+content);
         var UTF8_BOM = "\ufeff";
-        if(content.indexOf(UTF8_BOM) == 0) {
+        if(content.indexOf(UTF8_BOM) === 0) {
             content = content.substring(1, content.length);
-        }		
-	    cmEditor.setValue(content);
-	};
-	
-	exports.getContent = function() {
-	    return cmEditor.getValue();
-	};
+        }
+        cmEditor.setValue(content);
+        cmEditor.clearHistory();
+    };
+
+    exports.getContent = function() {
+        return cmEditor.getValue();
+    };
 	
 	var filetype = new Array();
 	filetype["h"] = "clike";
