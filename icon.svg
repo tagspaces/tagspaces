@@ -24,15 +24,15 @@
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.8733225"
-     inkscape:cx="368.34922"
-     inkscape:cy="723.96316"
+     inkscape:cx="346.99678"
+     inkscape:cy="614.65507"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      showguides="true"
      inkscape:guide-bbox="true"
-     inkscape:window-width="2495"
-     inkscape:window-height="1056"
+     inkscape:window-width="1535"
+     inkscape:window-height="876"
      inkscape:window-x="65"
      inkscape:window-y="24"
      inkscape:window-maximized="1" />
@@ -514,6 +514,16 @@
        height="360.02405"
        x="44.472462"
        y="145.19414" />
+    <rect
+       style="fill:none;fill-opacity:1;stroke:none"
+       id="rect3052-8-1"
+       width="112.03896"
+       height="112.03896"
+       x="199.67595"
+       y="316.80139"
+       inkscape:export-filename="/media/z/TagSpaces/repository/data/node-webkit/icon128.png"
+       inkscape:export-xdpi="102.82"
+       inkscape:export-ydpi="102.82" />
     <rect
        style="fill:none;stroke:none"
        id="rect3052-8-6"
@@ -1053,5 +1063,72 @@
        inkscape:export-filename="/media/z/TagSpaces/website/assets/ico/favicon.png"
        inkscape:export-xdpi="33.342979"
        inkscape:export-ydpi="33.342979" />
+    <path
+       style="fill:#ffffff;fill-opacity:1;stroke:none"
+       d="m 267.74792,329.8209 26.52475,16.29134 c -27.12701,54.77238 -24.46203,44.64208 -47.96993,59.06929 l -22.27884,-31.152 z"
+       id="rect3052-8-2-2"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccc"
+       inkscape:export-filename="/media/z/TagSpaces/repository/data/node-webkit/icon128.png"
+       inkscape:export-xdpi="102.82"
+       inkscape:export-ydpi="102.82" />
+    <path
+       transform="matrix(1.5935856,0,0,1.6535653,-281.23413,-221.44708)"
+       sodipodi:type="arc"
+       style="fill:#616577;fill-opacity:1;stroke:none"
+       id="path4875-4-7-5-6-2"
+       sodipodi:cx="346.96429"
+       sodipodi:cy="347.71933"
+       sodipodi:rx="3.75"
+       sodipodi:ry="3.5714285"
+       d="m 350.71429,347.71933 a 3.75,3.5714285 0 1 1 -7.5,0 3.75,3.5714285 0 1 1 7.5,0 z"
+       inkscape:export-xdpi="102.82"
+       inkscape:export-ydpi="102.82"
+       inkscape:export-filename="/media/z/TagSpaces/repository/data/node-webkit/icon128.png" />
+    <path
+       style="fill:none;stroke:#a466aa;stroke-width:10.29371548;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 259.45393,396.11234 -9.42604,-8.71773"
+       id="path3108-5-39-8"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="/media/z/TagSpaces/repository/data/node-webkit/icon128.png"
+       inkscape:export-xdpi="102.82"
+       inkscape:export-ydpi="102.82" />
+    <path
+       style="fill:none;stroke:#ffffff;stroke-width:13.48044967999999955;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 260.04884,330.37247 36.08756,0.53381 0,34.96211 -45.53151,46.23389 -35.66393,-33.58356 z"
+       id="path3923-1-1-4-9-8"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cccccc"
+       inkscape:export-filename="/media/z/TagSpaces/repository/data/node-webkit/icon128.png"
+       inkscape:export-xdpi="102.82"
+       inkscape:export-ydpi="102.82" />
+    <path
+       style="fill:#f7901e;fill-opacity:1;stroke:#33b5be;stroke-width:10.29371548;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="M 276.32156,375.89206 257.4695,358.94093"
+       id="path3108-9-1-76-7"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="/media/z/TagSpaces/repository/data/node-webkit/icon128.png"
+       inkscape:export-xdpi="102.82"
+       inkscape:export-ydpi="102.82" />
+    <path
+       style="fill:#616577;fill-opacity:1;stroke:#f7901e;stroke-width:10.29371548;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="M 268.1358,386.3049 253.74869,373.47047"
+       id="path3108-0-7-9-8"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="/media/z/TagSpaces/repository/data/node-webkit/icon128.png"
+       inkscape:export-xdpi="102.82"
+       inkscape:export-ydpi="102.82" />
+    <path
+       style="fill:none;stroke:#616577;stroke-width:11.96031666;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 261.17803,334.66571 31.07089,0 0,29.59872 -41.34434,42.44115 -30.69503,-28.37564 z"
+       id="path3923-1-1-4-9"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cccccc"
+       inkscape:export-filename="/media/z/TagSpaces/repository/data/node-webkit/icon128.png"
+       inkscape:export-xdpi="102.82"
+       inkscape:export-ydpi="102.82" />
   </g>
 </svg>
