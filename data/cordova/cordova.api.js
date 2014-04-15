@@ -475,21 +475,21 @@ define(function (require, exports, module) {
     };
     
     exports.createDirectory             = createDirectory; 
-    exports.renameFile                     = renameFile;
-    exports.loadTextFile                 = loadTextFile;
-    exports.saveTextFile                 = saveTextFile;
-    exports.listDirectory                 = listDirectory;
+    exports.renameFile                  = renameFile;
+    exports.loadTextFile                = loadTextFile;
+    exports.saveTextFile                = saveTextFile;
+    exports.listDirectory               = listDirectory;
     exports.listSubDirectories          = listSubDirectories;
-    exports.deleteElement                 = deleteElement;
-    exports.createDirectoryIndex         = createDirectoryIndex;
+    exports.deleteElement               = deleteElement;
+    exports.createDirectoryIndex        = createDirectoryIndex;
     exports.createDirectoryTree         = createDirectoryTree;
     exports.selectDirectory             = selectDirectory;
-    exports.openDirectory                = openDirectory;
+    exports.openDirectory               = openDirectory;
     exports.openFile                    = openFile;
     exports.sendFile                    = sendFile;
-    exports.selectFile                     = selectFile;
+    exports.selectFile                  = selectFile;
     exports.openExtensionsDirectory     = openExtensionsDirectory;
-    exports.checkAccessFileURLAllowed     = checkAccessFileURLAllowed;
+    exports.checkAccessFileURLAllowed   = checkAccessFileURLAllowed;
     exports.checkNewVersion             = checkNewVersion;        
     exports.getFileProperties           = getFileProperties;
     
