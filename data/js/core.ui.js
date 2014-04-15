@@ -20,10 +20,10 @@ define(function(require, exports, module) {
         alertModal.find('.modal-body').empty();
         alertModal.find('.modal-body').text(message);
 	    alertModal.find('#okButton')
-	       .off('click')
-	       .click(function(event) {
-	           alertModal.modal('hide');
-	       }
+            .off('click')
+            .click(function(event) {
+               alertModal.modal('hide');
+            }
 	    );
 	
 	    alertModal.modal({backdrop: 'static',show: true});
@@ -38,17 +38,17 @@ define(function(require, exports, module) {
         confirmModal.find('.modal-body').empty();
 	    confirmModal.find('.modal-body').text(message);
 	    confirmModal.find('#okButton')
-	       .off('click')
-	       .click(function(event) {
-	           okCallback();
-	           confirmModal.modal('hide');
-	       }
+            .off('click')
+            .click(function(event) {
+               okCallback();
+               confirmModal.modal('hide');
+            }
 	    );
         confirmModal.find('#cancelButton')
-           .off('click')
-           .click(function(event) {
+            .off('click')
+            .click(function(event) {
                if(cancelCallback != undefined) {
-                   cancelCallback();              
+                   cancelCallback();
                }
                confirmModal.modal('hide');
             }
@@ -68,7 +68,7 @@ define(function(require, exports, module) {
 			tags: TSCORE.Config.getAllTags(),
 			tokenSeparators: [",", " "],
 			minimumInputLength: 2,
-			selectOnBlur: true,
+			selectOnBlur: true
 		});  
    
 		$("#newFileName").val("");     
@@ -122,7 +122,7 @@ define(function(require, exports, module) {
     var showOptionsDialog = function() {
         require([
               "text!templates/OptionsDialog.html",
-              "tsoptions",
+              "tsoptions"
             ], function(uiTPL, controller) {
                 if($("#dialogOptions").length < 1) {                
                     var uiTemplate = Handlebars.compile( uiTPL );
@@ -135,7 +135,7 @@ define(function(require, exports, module) {
     
     var showWelcomeDialog = function() {
         require([
-              "text!templates/WelcomeDialog.html",
+              "text!templates/WelcomeDialog.html"
             ], function(uiTPL) {
                 if($("#dialogWelcome").length < 1) {                
                     var uiTemplate = Handlebars.compile( uiTPL );
@@ -338,7 +338,7 @@ define(function(require, exports, module) {
 			console.log("Show Tags");		
 	    });
 		
-        $('#contactUs').click(function (e) {
+        $('#contactUs').click(function () {
     		showContactUsPanel();
 			console.log("Show Contact Us");    		
     	});   		
@@ -546,7 +546,7 @@ define(function(require, exports, module) {
         if(isOSX) {
             $("body").addClass("osx");                   
         }
-    };	
+    }
 
 	var showContextMenu = function(menuId, sourceObject) {
         var leftPos = sourceObject.offset().left; 
