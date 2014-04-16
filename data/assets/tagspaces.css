@@ -132,14 +132,11 @@ user-select: none;
 
 .fileTile {
     margin: 3px; 
-    padding: 1px;
-    padding-left: 3px; 
-    float: left; 
+    padding: 1px 1px 1px 3px;
+    float: left;
     border: 1px solid #D4D4D4;
     text-align: left;
-    /*width: 25%;
-    height: 25%;*/
-    width: 180px; 
+    width: 180px;
     height: 100px;  
     overflow: hidden;
     position:relative;
@@ -305,10 +302,8 @@ li hr {
 }
 
 .fileButton {
-    padding: 1px;
+    padding: 1px 12px 1px 1px;
     background-color: #E5E5E5;
-    padding-left: 1px;
-    padding-right: 12px;        
     font-weight: normal;
     color: #222222;
     text-align: left;
@@ -329,7 +324,7 @@ li hr {
 
 /* Layout */
 .ui-layout-pane { /* all 'panes' */
-	border:	0px;
+	border:	0;
 }
 	
 .ui-layout-north {
@@ -734,7 +729,6 @@ input a.resetFilter {
     z-index: 9999;
     border-radius: 5px !important;
     text-decoration: none !important;
-    filter: none;
     background-image: none;
     -webkit-box-shadow: none;
     -moz-box-shadow: none;
@@ -760,7 +754,7 @@ input a.resetFilter {
 }
 
 #showTagGroups, #showLocations, #contactUs {
-   width: 50px;*/   
+   width: 50px;
 }
 
 
