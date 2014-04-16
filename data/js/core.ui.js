@@ -29,18 +29,24 @@ define(function(require, exports, module) {
 	    alertModal.modal({backdrop: 'static',show: true});
 	};	
 	
-	var showConfirmDialog = function(title, message, okCallback, cancelCallback) {
+	var showConfirmDialog = function(title, message, okCallback, cancelCallback, confirmShowNextTime) {
 	    if (!title) { title = 'Confirm'; }	
 	    if (!message) { message = 'No Message to Display.'; }
-	    
-	    var confirmModal = $('#confirmDialog');
-        confirmModal.find('h4').text(title);    	
-        confirmModal.find('.modal-body').empty();
-	    confirmModal.find('.modal-body').text(message);
-	    confirmModal.find('#okButton')
+
+        var confirmModal = $('#confirmDialog');
+
+        if(confirmShowNextTime) {
+            confirmModal.find('#showThisDialogAgain').prop('checked', true);
+        } else {
+            confirmModal.find('#showThisDialogAgainContainer').hide();
+        }
+
+        confirmModal.find('h4').text(title);
+        confirmModal.find('#dialogContent').text(message);
+	    confirmModal.find('#confirmButton')
             .off('click')
             .click(function(event) {
-               okCallback();
+               okCallback(confirmModal.find('#showThisDialogAgain').prop('checked'));
                confirmModal.modal('hide');
             }
 	    );
@@ -422,40 +428,46 @@ define(function(require, exports, module) {
         // Search UI END
         
         $('#perspectiveSwitcherButton').prop('disabled', true);
-        
-        $("#contactUsContent").on('click',"#openHints", function () {
+
+        var $contactUsContent = $("#contactUsContent");
+
+        $contactUsContent.on('click',"#openHints", function () {
                 showWelcomeDialog();
-            });
+        });
 
         // Handle external links _system is important in cordova
-        $("#contactUsContent").on('click',"#openUservoice", function () {
-                window.open($(this).attr("url"),"_system");
-            });
-        
-        $("#contactUsContent").on('click',"#openGooglePlay", function () {
-            window.open($(this).attr("url"),"_system");
-        });        
+        $contactUsContent.on('click',"#openUservoice", function () {
+            window.open($(this).attr("data-url"),"_system");
+        });
 
-        $("#contactUsContent").on('click',"#openWhatsnew", function () {
-            window.open($(this).attr("url"),"_system");
-        });        
-        
-        $("#contactUsContent").on('click',"#openGitHubIssues", function () {
-                window.open($(this).attr("url"),"_system");
-            });
-            
-        $("#contactUsContent").on('click',"#openTwitter", function () {
-                window.open($(this).attr("url"),"_system");
-            });    
+        $contactUsContent.on('click',"#openGooglePlay", function () {
+            window.open($(this).attr("data-url"),"_system");
+        });
 
-        $("#contactUsContent").on('click',"#openTwitter2", function () {
-                window.open($(this).attr("url"),"_system");
-            });    
+        $contactUsContent.on('click',"#openWhatsnew", function () {
+            window.open($(this).attr("data-url"),"_system");
+        });
 
-        $("#contactUsContent").on('click',"#openGooglePlus", function () {
-                window.open($(this).attr("url"),"_system");
-            });    
-                    	    
+        $contactUsContent.on('click',"#openGitHubIssues", function () {
+            window.open($(this).attr("data-url"),"_system");
+        });
+
+        $contactUsContent.on('click',"#openTwitter", function () {
+            window.open($(this).attr("data-url"),"_system");
+        });
+
+        $contactUsContent.on('click',"#openTwitter2", function () {
+            window.open($(this).attr("data-url"),"_system");
+        });
+
+        $contactUsContent.on('click',"#openGooglePlus", function () {
+            window.open($(this).attr("data-url"),"_system");
+        });
+
+        $contactUsContent.on('click',"#openFacebook", function () {
+            window.open($(this).attr("data-url"),"_system");
+        });
+
 	    // Hide drop downs by click and drag
 	    $(document).click(function () {
 			TSCORE.hideAllDropDownMenus();
@@ -512,8 +524,7 @@ define(function(require, exports, module) {
             $("#directoryMenuOpenDirectory").parent().hide();
             $("#fileMenuOpenDirectory").parent().hide();
             $("#openDirectory").parent().hide();
-            //$("#openFileInNewWindow").hide();
-            $("#openNatively").hide();            
+            $("#openNatively").hide();
         } else if(isFirefox) {
             $("#openNatively").hide();                   
         } else if(isNode) {
@@ -523,12 +534,10 @@ define(function(require, exports, module) {
             // handling window maximization
             var nwwin = gui.Window.get();        
             nwwin.on('maximize', function() {
-              //console.log('NW Window maximized');
               TSCORE.Config.setIsWindowMaximized(true);
               TSCORE.Config.saveSettings();                    
             });        
             nwwin.on('unmaximize', function() {
-              //console.log('NW Window unmaximize');
               TSCORE.Config.setIsWindowMaximized(false);
               TSCORE.Config.saveSettings();      
             }); 
@@ -619,6 +628,5 @@ define(function(require, exports, module) {
     exports.showTagsPanel       	    = showTagsPanel;    
     exports.showDirectoryBrowserDialog  = showDirectoryBrowserDialog; 
 	exports.hideAllDropDownMenus	    = hideAllDropDownMenus;
-
 
 });
