@@ -74,7 +74,7 @@ user-select: none;
 
 
 #logo {
-	padding: 0px;
+	padding: 0;
 	font-size: 1.5em;
 	margin: 3px;
     color: #616577;
@@ -83,7 +83,7 @@ user-select: none;
     padding-top: 4px;	
 	background: url("icon.svg") no-repeat left center;
     background-size: 28px 28px;
-	background-position: 0px 0px;
+	background-position: 0 0;
 	height: 31px;
 	display: inline-block;
 }
@@ -94,7 +94,7 @@ user-select: none;
 }
 
 #currentLocation {
-  padding: 0px;
+  padding: 0;
   font-size: 1.3em;
   color: lightgray;
   display: inline-block;
@@ -115,7 +115,7 @@ user-select: none;
 #iframeViewer {
     width: 100%;
     height: 100%;
-    border-width: 0px;
+    border-width: 0;
 }
 
 #directoryList .ui-selecting { background: #fff5a3; color: black; }
@@ -156,7 +156,7 @@ user-select: none;
     position:absolute;
     bottom:0;
     right:0;   
-    border: 0px lightgray solid;
+    border: 0 lightgray solid;
     z-index: 1;
 }
 
@@ -167,7 +167,7 @@ user-select: none;
     padding-right: 4px;
     font-size: 16px;
     font-weight: 300;
-    border: 0px;
+    border: 0;
     background-color: transparent;
     color: #333333;
     max-width: 150px;
@@ -224,8 +224,8 @@ table .fileTitle {
     position:absolute;
     bottom:0;
     right:0;
-    -webkit-border-radius: 0px !important;
-    border-radius: 0px !important;
+    -webkit-border-radius: 0 !important;
+    border-radius: 0 !important;
     background: #999 ; 
     text-align: center;
     padding: 1px;
@@ -254,7 +254,7 @@ table .fileTitle {
 }
 
 #viewsRadio {
-    margin: 3px 3px 3px 0px;
+    margin: 3px 3px 3px 0;
   	display: inline-block;
 }
 
@@ -275,8 +275,8 @@ table .fileTitle {
 }
 
 li hr {
-    height: 0px; 
-    border: 0px;
+    height: 0;
+    border: 0;
 }
 
 .tagButton .caret, .extTagButton .caret {
@@ -288,7 +288,7 @@ li hr {
     background: #008000 !important;    
     color: white !important;
     margin: 1px;
-    border: 0px;
+    border: 0;
     z-index: 9999;    
     border-radius: 5px !important;
     text-decoration: none  !important; 
@@ -299,7 +299,7 @@ li hr {
     background: #bbb !important;        
     color: white !important;
     margin: 1px;
-    border: 0px;
+    border: 0;
     border-radius: 5px !important;
     text-decoration: none;
 }
@@ -333,7 +333,7 @@ li hr {
 }
 	
 .ui-layout-north {
-    padding: 0px;
+    padding: 0;
     height: 40px;
 	background-color: #333333;
 	overflow: hidden !important;
@@ -347,7 +347,7 @@ li hr {
 
 .ui-layout-toggler {
     background-color: white;  
-    border-width: 0px;  
+    border-width: 0;
 }
 
 #directoryNavigatorNorth, #locationContent, #tagGroupsContent, .middle-north, .east-north {
@@ -359,12 +359,12 @@ li hr {
 }
 
 #toggleLeftPanel {
-	border: 0px; 
+	border: 0;
 	display: block; 
 	padding-left: 5px; 
 	padding-right: 5px; 
 	padding-top: 10px; 
-	margin: 0px;
+	margin: 0;
 }
 
 #toggleLeftPanel .icon-bar {
@@ -382,7 +382,7 @@ li hr {
 #tagsContainer {
 	width: 100%;
 	min-height: 40px;
-	margin: 0px;
+	margin: 0;
 }
 
 #viewToolbars {
@@ -402,7 +402,7 @@ li hr {
     padding-top: 2px; 
     padding-left: 2px; 
     font-size: 1.0em; 
-    border-width: 0px    
+    border-width: 0
 }
 
 .middle-north {
@@ -536,7 +536,6 @@ table.dataTable tfoot th {
 
 table.dataTable tbody td {
     border-bottom: 1px solid lightgray;
-    text-align: top;
 }
 
 input a.resetFilter {
@@ -572,7 +571,7 @@ input a.resetFilter {
   background-color: white;
 }
 
-.btn-primary {
+.modal .btn {
   min-width: 70px;
 }
 
@@ -580,7 +579,7 @@ input a.resetFilter {
   text-decoration: none;
   color: #444444;
   text-shadow: none;
-  border-radius: 0px;  
+  border-radius: 0;
 }
 
 /* Extension #33b5be from logo */
@@ -672,16 +671,16 @@ input a.resetFilter {
 .ts-container {
 	position: absolute;
 	top: 81px;
-	bottom: 0px; 
-	left: 0px; 
-	right: 0px; 
+	bottom: 0;
+	left: 0;
+	right: 0;
 	overflow: auto;
     z-index: 10;	
 } 
 
 .navbar {
 	border-radius: 0 !important;
-	border: 0px;
+	border: 0;
 	border-bottom: 1px;
 }
 
@@ -731,7 +730,7 @@ input a.resetFilter {
     padding: 4px 4px 4px 15px !important;
     background: #008000 !important;
     color: white !important;
-    border: 0px;
+    border: 0;
     z-index: 9999;
     border-radius: 5px !important;
     text-decoration: none !important;
@@ -783,8 +782,8 @@ input a.resetFilter {
 
 #fileViewerMainToolbar {
     position: fixed; 
-    right: 0px; 
-    top: 0px; 
+    right: 0;
+    top: 0;
     background-color: #F2F2F2; 
 }
 
