@@ -21,6 +21,7 @@ define(function (require, exports, module) {
         "prefixTagContainer": "",
         "tagDelimiter": " ",
         "calculateTags": false,
+        "warnIncludeSubdirs": true,
         "isWindowMaximized": false,
         "lastOpenedLocation": "",
         "ootbPerspectives": [@@DEFAULTPERSPECTIVES],
