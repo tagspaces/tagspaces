@@ -4,34 +4,34 @@
 define(function(require, exports, module) {
 "use strict";
 
-	console.log("Loading core.ui.js ...");
+    console.log("Loading core.ui.js ...");
 
-	var TSCORE = require("tscore");
+    var TSCORE = require("tscore");
 
-	var fileContent = undefined;
-	var fileType = undefined;		
+    var fileContent = undefined;
+    var fileType = undefined;
 
-	var showAlertDialog = function(message, title) {
-	    if (!title) { title = 'Alert'; }	
-	    if (!message) { message = 'No Message to Display.'; }
-	
-	    var alertModal = $('#alertDialog');	
+    var showAlertDialog = function(message, title) {
+        if (!title) { title = 'Alert'; }
+        if (!message) { message = 'No Message to Display.'; }
+
+        var alertModal = $('#alertDialog');
         alertModal.find('h4').text(title);        
         alertModal.find('.modal-body').empty();
         alertModal.find('.modal-body').text(message);
-	    alertModal.find('#okButton')
+        alertModal.find('#okButton')
             .off('click')
             .click(function(event) {
                alertModal.modal('hide');
             }
-	    );
-	
-	    alertModal.modal({backdrop: 'static',show: true});
-	};	
-	
-	var showConfirmDialog = function(title, message, okCallback, cancelCallback, confirmShowNextTime) {
-	    if (!title) { title = 'Confirm'; }	
-	    if (!message) { message = 'No Message to Display.'; }
+        );
+
+        alertModal.modal({backdrop: 'static',show: true});
+    };
+
+    var showConfirmDialog = function(title, message, okCallback, cancelCallback, confirmShowNextTime) {
+        if (!title) { title = 'Confirm'; }
+        if (!message) { message = 'No Message to Display.'; }
 
         var confirmModal = $('#confirmDialog');
 
@@ -43,13 +43,13 @@ define(function(require, exports, module) {
 
         confirmModal.find('h4').text(title);
         confirmModal.find('#dialogContent').text(message);
-	    confirmModal.find('#confirmButton')
+        confirmModal.find('#confirmButton')
             .off('click')
             .click(function(event) {
                okCallback(confirmModal.find('#showThisDialogAgain').prop('checked'));
                confirmModal.modal('hide');
             }
-	    );
+        );
         confirmModal.find('#cancelButton')
             .off('click')
             .click(function(event) {
@@ -59,33 +59,33 @@ define(function(require, exports, module) {
                confirmModal.modal('hide');
             }
         );
-	
-	    confirmModal.modal({backdrop: 'static',show: true});     
-	};	
-	
+
+        confirmModal.modal({backdrop: 'static',show: true});
+    };
+
 
     var showFileCreateDialog = function() {
         fileContent = TSCORE.Config.getNewTextFileContent(); // Default new file in text file
         fileType = "txt";
         
         $('#newFileNameTags').select2('data', null);        
-		$("#newFileNameTags").select2({
-	        multiple: true,
-			tags: TSCORE.Config.getAllTags(),
-			tokenSeparators: [",", " "],
-			minimumInputLength: 2,
-			selectOnBlur: true
-		});  
+        $("#newFileNameTags").select2({
+            multiple: true,
+            tags: TSCORE.Config.getAllTags(),
+            tokenSeparators: [",", " "],
+            minimumInputLength: 2,
+            selectOnBlur: true
+        });
    
-		$("#newFileName").val("");     
-		$("#tagWithCurrentDate").prop('checked', false);     
+        $("#newFileName").val("");
+        $("#tagWithCurrentDate").prop('checked', false);
 
         $( '#dialogFileCreate' ).modal({backdrop: 'static',show: true});
         $( '#txtFileTypeButton' ).button('toggle');
-        		
-		$('#dialogFileCreate').on('shown', function () {
-		    $('#newFileName').focus();
-		});
+
+        $('#dialogFileCreate').on('shown', function () {
+            $('#newFileName').focus();
+        });
     };
     
     var showFileRenameDialog = function(filePath) {
@@ -152,7 +152,7 @@ define(function(require, exports, module) {
         });
     };         
     
-	var initUI = function() {
+    var initUI = function() {
         $("#appVersion").text(TSCORE.Config.DefaultSettings["appVersion"]+"."+TSCORE.Config.DefaultSettings["appBuild"]);
         $("#appVersion").attr("title","BuildID: "+TSCORE.Config.DefaultSettings["appVersion"]+"."+TSCORE.Config.DefaultSettings["appBuild"]+"."+TSCORE.Config.DefaultSettings["appBuildID"]);
  
@@ -162,65 +162,65 @@ define(function(require, exports, module) {
         
         platformTuning();        
  
-	    $( "#toggleLeftPanel" ).click(function() {
-			TSCORE.toggleLeftPanel();
-	    });   
+        $( "#toggleLeftPanel" ).click(function() {
+            TSCORE.toggleLeftPanel();
+        });
 
         $( "#closeLeftPanel" ).click(function() {
             TSCORE.toggleLeftPanel();
         }); 
-		
-	    $( "#txtFileTypeButton" ).click(function(e) {
+
+        $( "#txtFileTypeButton" ).click(function(e) {
             // Fixes reloading of the application by click
             e.preventDefault();
-            	        
-	        fileContent = TSCORE.Config.getNewTextFileContent();
-	        fileType = "txt";
 
-	    });            
-	
-	    $( "#htmlFileTypeButton" ).click(function(e) {
+            fileContent = TSCORE.Config.getNewTextFileContent();
+            fileType = "txt";
+
+        });
+
+        $( "#htmlFileTypeButton" ).click(function(e) {
             // Fixes reloading of the application by click
             e.preventDefault();
-            	        
-	        fileContent = TSCORE.Config.getNewHTMLFileContent();
-			fileType = "html";
-	    }); 
-	    
-	    $( "#mdFileTypeButton" ).click(function(e) {
+
+            fileContent = TSCORE.Config.getNewHTMLFileContent();
+            fileType = "html";
+        });
+
+        $( "#mdFileTypeButton" ).click(function(e) {
             // Fixes reloading of the application by click
             e.preventDefault();
-            	        
-	        fileContent = TSCORE.Config.getNewMDFileContent();
-			fileType = "md";
-	    });     
-	    
-	
-	    $( '#fileCreateConfirmButton' ).click(function() {
-	    	var fileTags = "";
-	    	var rawTags = $( "#newFileNameTags" ).val().split(",");
 
-		    rawTags.forEach(function (value, index) {         
-	            if(index == 0) {
-	                fileTags = value;                 
-	            } else {
-	                fileTags = fileTags + TSCORE.Config.getTagDelimiter() + value;                                 
-	            }
-	        }); 
+            fileContent = TSCORE.Config.getNewMDFileContent();
+            fileType = "md";
+        });
 
-			if($("#tagWithCurrentDate").prop("checked")) {
-	            if(fileTags.length < 1) {
-	                fileTags = TSCORE.TagUtils.formatDateTime4Tag(new Date());                 
-	            } else {
-	                fileTags = fileTags + TSCORE.Config.getTagDelimiter() + TSCORE.TagUtils.formatDateTime4Tag(new Date());                                 
-	            }				
-			}
-			
-			if(fileTags.length > 0) {
-				fileTags = TSCORE.TagUtils.beginTagContainer + fileTags + TSCORE.TagUtils.endTagContainer;
-			}
 
-			var fileName = TSCORE.currentPath+TSCORE.dirSeparator+$( "#newFileName" ).val()+fileTags+"."+fileType;
+        $( '#fileCreateConfirmButton' ).click(function() {
+            var fileTags = "";
+            var rawTags = $( "#newFileNameTags" ).val().split(",");
+
+            rawTags.forEach(function (value, index) {
+                if(index == 0) {
+                    fileTags = value;
+                } else {
+                    fileTags = fileTags + TSCORE.Config.getTagDelimiter() + value;
+                }
+            });
+
+            if($("#tagWithCurrentDate").prop("checked")) {
+                if(fileTags.length < 1) {
+                    fileTags = TSCORE.TagUtils.formatDateTime4Tag(new Date());
+                } else {
+                    fileTags = fileTags + TSCORE.Config.getTagDelimiter() + TSCORE.TagUtils.formatDateTime4Tag(new Date());
+                }
+            }
+
+            if(fileTags.length > 0) {
+                fileTags = TSCORE.TagUtils.beginTagContainer + fileTags + TSCORE.TagUtils.endTagContainer;
+            }
+
+            var fileName = TSCORE.currentPath+TSCORE.dirSeparator+$( "#newFileName" ).val()+fileTags+"."+fileType;
 
             TSCORE.IO.saveTextFile(fileName,fileContent);
             
@@ -243,42 +243,42 @@ define(function(require, exports, module) {
 
         // Edit Tag Dialog
 
-	    $( "#plainTagTypeButton" ).click(function(e) {
+        $( "#plainTagTypeButton" ).click(function(e) {
             // Fixes reloading of the application by click
             e.preventDefault();
-	        
-	        TSCORE.selectedTag, $( "#newTagName" ).datepicker( "destroy" ).val("");
-	    });  
-	
-	    $( "#dateTagTypeButton" ).click(function(e) {
-            // Fixes reloading of the application by click
-            e.preventDefault();
-            
-	        TSCORE.selectedTag, $( "#newTagName" ).datepicker({
-	            showWeek: true,
-	            firstDay: 1,
-	            dateFormat: "yymmdd"
-	        });
-	    });  
-	    
-	    $( "#currencyTagTypeButton" ).click(function(e) {
+
+            TSCORE.selectedTag, $( "#newTagName" ).datepicker( "destroy" ).val("");
+        });
+
+        $( "#dateTagTypeButton" ).click(function(e) {
             // Fixes reloading of the application by click
             e.preventDefault();
             
-	        TSCORE.selectedTag, $( "#newTagName" ).datepicker( "destroy" ).val("XEUR");
-	    });      
-	    
+            TSCORE.selectedTag, $( "#newTagName" ).datepicker({
+                showWeek: true,
+                firstDay: 1,
+                dateFormat: "yymmdd"
+            });
+        });
+
+        $( "#currencyTagTypeButton" ).click(function(e) {
+            // Fixes reloading of the application by click
+            e.preventDefault();
+            
+            TSCORE.selectedTag, $( "#newTagName" ).datepicker( "destroy" ).val("XEUR");
+        });
+
         $( "#editTagButton" ).click(function() {
             TSCORE.TagUtils.renameTag(TSCORE.selectedFiles[0], TSCORE.selectedTag, $( "#newTagName" ).val());
         });  
-	    
-	    // End Edit Tag Dialog
+
+        // End Edit Tag Dialog
 
         $( "#startNewInstanceBack" ).click(function() {
             window.open(window.location.href,'_blank');
         });
     
-	    $( "#aboutDialogBack" ).click(function() {
+        $( "#aboutDialogBack" ).click(function() {
             $("#aboutIframe").attr("src","about.html");
         });
 
@@ -291,8 +291,8 @@ define(function(require, exports, module) {
         $( "#openOptions" ).click(function() {
             showOptionsDialog();
         });
-	    
-	    // File Menu
+
+        // File Menu
         $( "#fileMenuAddTag" ).click( function() {
             TSCORE.showAddTagsDialog();
         }); 
@@ -307,9 +307,9 @@ define(function(require, exports, module) {
             }); 
 
         $( "#fileMenuSendTo" )
-	        .click( function() {
-	            TSCORE.IO.sendFile(TSCORE.selectedFiles[0]);
-	        });         
+            .click( function() {
+                TSCORE.IO.sendFile(TSCORE.selectedFiles[0]);
+            });
         
         $( "#fileMenuOpenDirectory" ).click( function() {
             TSCORE.IO.openDirectory(TSCORE.currentPath);
@@ -328,31 +328,31 @@ define(function(require, exports, module) {
         });         
         // End File Menu  
                 
-		$('#switchLang').click(function(e) {
-			$.i18n.setLng('de', function(t) { 
-				$('[data-i18n]').i18n();
-			});
-	    });
-	    
-		$('#showLocations').click(function(e) {
-			showLocationsPanel();
-			console.log("Show Directories");					
-	    });	
-	    
-		$('#showTagGroups').click(function(e) {
-			showTagsPanel();
-			console.log("Show Tags");		
-	    });
-		
+        $('#switchLang').click(function(e) {
+            $.i18n.setLng('de', function(t) {
+                $('[data-i18n]').i18n();
+            });
+        });
+
+        $('#showLocations').click(function(e) {
+            showLocationsPanel();
+            console.log("Show Directories");
+        });
+
+        $('#showTagGroups').click(function(e) {
+            showTagsPanel();
+            console.log("Show Tags");
+        });
+
         $('#contactUs').click(function () {
-    		showContactUsPanel();
-			console.log("Show Contact Us");    		
-    	});   		
-	    
-	    // Hide the tagGroupsContent or locationContent by default
-	    $('#locationContent').hide(); // #tagGroupsContent
-	    $('#contactUsContent').hide();
-	    
+            showContactUsPanel();
+            console.log("Show Contact Us");
+        });
+
+        // Hide the tagGroupsContent or locationContent by default
+        $('#locationContent').hide(); // #tagGroupsContent
+        $('#contactUsContent').hide();
+
         // Search UI
 
         $("#closeSearchOptionButton")
@@ -468,12 +468,12 @@ define(function(require, exports, module) {
             window.open($(this).attr("data-url"),"_system");
         });
 
-	    // Hide drop downs by click and drag
-	    $(document).click(function () {
-			TSCORE.hideAllDropDownMenus();
-	    });	          	        
+        // Hide drop downs by click and drag
+        $(document).click(function () {
+            TSCORE.hideAllDropDownMenus();
+        });
 
-	};
+    };
 
     function clearSearchFilter() {
         $("#searchOptions").hide();
@@ -495,8 +495,8 @@ define(function(require, exports, module) {
         $("#clearFilterButton")
             .prop('disabled', true);       
     }
-	
-	function enableTopToolbar() {
+
+    function enableTopToolbar() {
         $("#perspectiveSwitcherButton")
             .prop('disabled', false);
             
@@ -508,8 +508,8 @@ define(function(require, exports, module) {
                 
         $("#clearFilterButton")
             .prop('disabled', false);	    
-	}
-	
+    }
+
     function platformTuning() { 
         if(isCordova) {
             $("#startNewInstanceBack").hide();
@@ -549,24 +549,24 @@ define(function(require, exports, module) {
         
         // Disable send to feature on all platforms except android cordova
         if(!isCordova) {
-        	$("#sendFile").hide();
-        	$("#fileMenuSendTo").hide();
+            $("#sendFile").hide();
+            $("#fileMenuSendTo").hide();
         }
         if(isOSX) {
             $("body").addClass("osx");                   
         }
     }
 
-	var showContextMenu = function(menuId, sourceObject) {
+    var showContextMenu = function(menuId, sourceObject) {
         var leftPos = sourceObject.offset().left; 
         var topPos = sourceObject.offset().top+sourceObject.height()+5;	  
         if (sourceObject.offset().top+sourceObject.height()+$(menuId).height() > window.innerHeight) {
-	        topPos = window.innerHeight-$(menuId).height();
-	        leftPos = sourceObject.offset().left+15;	        	
+            topPos = window.innerHeight-$(menuId).height();
+            leftPos = sourceObject.offset().left+15;
         } 
 
         if (sourceObject.offset().left+sourceObject.width()+$(menuId).width() > window.innerWidth) {
-	        leftPos = window.innerWidth-$(menuId).width();	        	
+            leftPos = window.innerWidth-$(menuId).width();
         } 
         
         $(menuId).css({
@@ -574,59 +574,59 @@ define(function(require, exports, module) {
             left:  leftPos,
             top: topPos
         });
-	};
+    };
 
-	var hideAllDropDownMenus = function() {
+    var hideAllDropDownMenus = function() {
         $('#tagGroupMenu').hide();
         $('#tagTreeMenu').hide();
         $('#directoryMenu').hide();
         $('#tagMenu').hide();
         $('#fileMenu').hide();  
-	};
-	
+    };
+
     var showLocationsPanel = function() {
-    	$('#contactUsContent').hide();
-		$('#tagGroupsContent').hide();
-		$('#locationContent').show();
-		$('#showTagGroups').removeClass("active");
-		$('#contactUs').removeClass("active");
-		$('#showLocations').addClass("active");				
+        $('#contactUsContent').hide();
+        $('#tagGroupsContent').hide();
+        $('#locationContent').show();
+        $('#showTagGroups').removeClass("active");
+        $('#contactUs').removeClass("active");
+        $('#showLocations').addClass("active");
     }; 	
 
     var showTagsPanel = function() {
-    	$('#contactUsContent').hide();
-    	$('#locationContent').hide();
-		$('#tagGroupsContent').show();
-		$('#showLocations').removeClass("active");
-		$('#contactUs').removeClass("active");		
-		$('#showTagGroups').addClass("active");				
+        $('#contactUsContent').hide();
+        $('#locationContent').hide();
+        $('#tagGroupsContent').show();
+        $('#showLocations').removeClass("active");
+        $('#contactUs').removeClass("active");
+        $('#showTagGroups').addClass("active");
     }; 	
     
     var showContactUsPanel = function() {
-    	$('#locationContent').hide();
-		$('#tagGroupsContent').hide();	
-    	$('#contactUsContent').show();
-		$('#showLocations').removeClass("active");
-		$('#showTagGroups').removeClass("active");	    	
-		$('#contactUs').addClass("active");				
+        $('#locationContent').hide();
+        $('#tagGroupsContent').hide();
+        $('#contactUsContent').show();
+        $('#showLocations').removeClass("active");
+        $('#showTagGroups').removeClass("active");
+        $('#contactUs').addClass("active");
     };     
 
     // Public API definition
     exports.showContextMenu			    = showContextMenu;
-	exports.initUI 					    = initUI;
-	exports.clearSearchFilter           = clearSearchFilter;
+    exports.initUI 					    = initUI;
+    exports.clearSearchFilter           = clearSearchFilter;
     exports.enableTopToolbar            = enableTopToolbar;
     exports.disableTopToolbar           = disableTopToolbar;
-	exports.showAlertDialog 		    = showAlertDialog;
-	exports.showConfirmDialog 		    = showConfirmDialog;
-	exports.showFileRenameDialog        = showFileRenameDialog;
-	exports.showFileCreateDialog        = showFileCreateDialog;
-	exports.showFileDeleteDialog        = showFileDeleteDialog;
+    exports.showAlertDialog 		    = showAlertDialog;
+    exports.showConfirmDialog 		    = showConfirmDialog;
+    exports.showFileRenameDialog        = showFileRenameDialog;
+    exports.showFileCreateDialog        = showFileCreateDialog;
+    exports.showFileDeleteDialog        = showFileDeleteDialog;
     exports.showWelcomeDialog           = showWelcomeDialog;
     exports.showTagEditDialog           = showTagEditDialog;
     exports.showLocationsPanel          = showLocationsPanel;
     exports.showTagsPanel       	    = showTagsPanel;    
     exports.showDirectoryBrowserDialog  = showDirectoryBrowserDialog; 
-	exports.hideAllDropDownMenus	    = hideAllDropDownMenus;
+    exports.hideAllDropDownMenus	    = hideAllDropDownMenus;
 
 });
