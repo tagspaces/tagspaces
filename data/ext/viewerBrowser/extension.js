@@ -44,7 +44,7 @@ define(function(require, exports, module) {
         	$containerElement.append($('<iframe>', {
 			    	id: "iframeViewer",
 					"nwdisable": "",
-					"nwfaketop": "",
+					"nwfaketop": ""
 	        	})
 	        );
 	     	TSCORE.IO.loadTextFile(filePath);	    	 
@@ -53,7 +53,7 @@ define(function(require, exports, module) {
 			    	id: "iframeViewer",
 					src: filePathURI,
 					"nwdisable": "",
-					"nwfaketop": "",
+					"nwfaketop": ""
 	        	})
 	        );
 	    }
@@ -77,6 +77,7 @@ define(function(require, exports, module) {
 	    	// disabling the links
 	    	$(viewerIframe.contentWindow.document).find( "a" ).bind('click', function(e){
 	            e.preventDefault();
+                TSCORE.openLinkExternally($(this).attr("href"));
 	    	})
 	    }         
     };
