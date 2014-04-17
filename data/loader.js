@@ -84,7 +84,7 @@ requirejs.config({
         underscore:             'libs/underscore/underscore',
         d3:                     'libs/d3/d3.v3',
         dropbox:                'libs/dropbox/dropbox.0.10.2',
-        i18next:                'libs/i18next/i18next.amd.withJQuery-1.7.1',
+        i18next:                'libs/i18next/i18next.amd.withJQuery-1.7.2.min',
         mousetrap:              'libs/mousetrap/mousetrap.min',
         select2:                'libs/select2/select2.min',
         hammerjs:               'libs/hammerjs/jquery.hammer.min',
@@ -151,12 +151,12 @@ requirejs.config({
     } 
 });
 
-define(function (require, exports, module) {
+define(function (require) {
 "use strict";
 
     if(isCordova) {
-	    require(["cordova.js"]);    		
-	}
+        require(["cordova.js"]);
+    }
 
     var TSCORE;
     requirejs(['tscore','underscore'], function (core,_) {
