@@ -4,24 +4,24 @@
 define(function(require, exports, module) {
 "use strict";
     
-	console.log("Loading fileopener...");
-	
-	var TSCORE = require("tscore");
+    console.log("Loading fileopener...");
 
-	var _openedFilePath = undefined; 
-	
-	var _openedFileProperties = undefined;
-	
-	var _isFileOpened = false;	
+    var TSCORE = require("tscore");
 
-	var _tsEditor = undefined;
-	
-	$.fn.editableform.buttons = 
-		  '<button type="submit" class="btn btn-primary editable-submit" style="margin-left: 8px;"><i class="fa fa-check"></i> Ok</button>\
-		  <br /><br /><button type="button" class="btn editable-cancel"><i class="fa fa-times"></i> Cancel</button>';  	
-	
-	// If a file is currently opened for editing, this var should be true
-	var _isEditMode = false;	
+    var _openedFilePath = undefined;
+
+    var _openedFileProperties = undefined;
+
+    var _isFileOpened = false;
+
+    var _tsEditor = undefined;
+
+    $.fn.editableform.buttons =
+          '<button type="submit" class="btn btn-primary editable-submit" style="margin-left: 8px;"><i class="fa fa-check"></i> Ok</button>\
+          <br /><br /><button type="button" class="btn editable-cancel"><i class="fa fa-times"></i> Cancel</button>';
+
+    // If a file is currently opened for editing, this var should be true
+    var _isEditMode = false;
 
     function initUI() {
         var options;
@@ -35,7 +35,7 @@ define(function(require, exports, module) {
             
         $( "#saveDocument" )
             .click(function() {
-            	saveFile();
+                saveFile();
             });                   
 
         $( "#closeOpenedFile" )
@@ -54,9 +54,9 @@ define(function(require, exports, module) {
             });
         
         $( "#closeFile" )
-	        .click(function() {
-	            closeFile();
-	        });        
+            .click(function() {
+                closeFile();
+            });
 
         $( "#reloadFile" )
             .click(function() {
@@ -64,9 +64,9 @@ define(function(require, exports, module) {
             });
 
         $( "#sendFile" )
-	        .click(function() {
-	            TSCORE.IO.sendFile(_openedFilePath);                     
-	        });        
+            .click(function() {
+                TSCORE.IO.sendFile(_openedFilePath);
+            });
         
         $( "#openFileInNewWindow" )
             .click(function() {
@@ -136,21 +136,21 @@ define(function(require, exports, module) {
            
     }
 
-	function isFileEdited() {
-		return _isEditMode;
-	}	
-	
-	function isFileOpened() {
-		return _isFileOpened;
-	}	
+    function isFileEdited() {
+        return _isEditMode;
+    }
 
-	function setFileOpened(fileOpened) {
-		_isFileOpened = fileOpened;
-	}
-	
-	function getOpenedFilePath() {
-		return _openedFilePath;
-	}
+    function isFileOpened() {
+        return _isFileOpened;
+    }
+
+    function setFileOpened(fileOpened) {
+        _isFileOpened = fileOpened;
+    }
+
+    function getOpenedFilePath() {
+        return _openedFilePath;
+    }
 
     function closeFile(forceClose) {
         if(_isEditMode) {
@@ -181,47 +181,42 @@ define(function(require, exports, module) {
             _isEditMode = false;            
         }
         
-        // Unbinding keyboard shortcuts
-        Mousetrap.unbind('mod+r');
-        Mousetrap.unbind('mod+s');
-        Mousetrap.unbind('esc');
-        Mousetrap.unbind('alt+enter');
     }
 
-	function openFile(filePath) {
-	    console.log("Opening file: "+filePath);
-		
-		if(filePath == undefined) {
-		    return false;
-		}
-		
-		if(TSCORE.FileOpener.isFileEdited()) {
-		    // TODO use closeFile method
+    function openFile(filePath) {
+        console.log("Opening file: "+filePath);
+
+        if(filePath == undefined) {
+            return false;
+        }
+
+        if(TSCORE.FileOpener.isFileEdited()) {
+            // TODO use closeFile method
             if(confirm("Any unsaved changes will be lost! Do you want to continue?")) {
                  $("#saveDocument").hide();
                 _isEditMode = false;               
             } else {
                 return false;   
             }
-		}
-                 		
-	    _isEditMode = false;
-	
-	    _openedFilePath = filePath;    
-	    $("#selectedFilePath").val(_openedFilePath.replace("\\\\","\\")); 
-	    
-	    var fileExt = TSCORE.TagUtils.extractFileExtension(filePath);       
-	    
-	    // TODO Improve preventing opening of directories 
-	    if(fileExt.length < 1) {
-	        console.log("Path has no extension, quiting fileopener.");
-	        return false;
-	    } 
-	    
-	    // Getting the viewer for the file extension/type
-	    var viewerExt = TSCORE.Config.getFileTypeViewer(fileExt);  
+        }
+
+        _isEditMode = false;
+
+        _openedFilePath = filePath;
+        $("#selectedFilePath").val(_openedFilePath.replace("\\\\","\\"));
+
+        var fileExt = TSCORE.TagUtils.extractFileExtension(filePath);
+
+        // TODO Improve preventing opening of directories
+        if(fileExt.length < 1) {
+            console.log("Path has no extension, quiting fileopener.");
+            return false;
+        }
+
+        // Getting the viewer for the file extension/type
+        var viewerExt = TSCORE.Config.getFileTypeViewer(fileExt);
         var editorExt = TSCORE.Config.getFileTypeEditor(fileExt);  
-	    console.log("File Viewer: "+viewerExt+" File Editor: "+editorExt);
+        console.log("File Viewer: "+viewerExt+" File Editor: "+editorExt);
 
         // Handling the edit button depending on existense of an editor
         if(editorExt == false || editorExt == "false" || editorExt == "") {
@@ -230,98 +225,104 @@ define(function(require, exports, module) {
             $( "#editDocument" ).show();                
         }
      
-	    $( "#viewer" ).empty();
-	    
-	    TSCORE.IO.checkAccessFileURLAllowed();
-	    
-	    TSCORE.IO.getFileProperties(filePath.replace("\\\\","\\"));
+        $( "#viewer" ).empty();
+
+        TSCORE.IO.checkAccessFileURLAllowed();
+
+        TSCORE.IO.getFileProperties(filePath.replace("\\\\","\\"));
         
         if(!viewerExt) {
             require([TSCORE.Config.getExtensionPath()+"/viewerText/extension.js"], function(viewer) {
                 _tsEditor = viewer;
                 _tsEditor.init(filePath, "viewer", true);
             });        
-	    } else {
-	        require([TSCORE.Config.getExtensionPath()+"/"+viewerExt+"/extension.js"], function(viewer) {
-	            _tsEditor = viewer;
-	            _tsEditor.init(filePath, "viewer", true);
-	        });
-	    }
+        } else {
+            require([TSCORE.Config.getExtensionPath()+"/"+viewerExt+"/extension.js"], function(viewer) {
+                _tsEditor = viewer;
+                _tsEditor.init(filePath, "viewer", true);
+            });
+        }
 
         updateUI();  
         initTagSuggestionMenu(filePath);
-	    
+
         // Clearing file selection on file load and adding the current file path to the selection
         TSCORE.PerspectiveManager.clearSelectedFiles();
         TSCORE.selectedFiles.push(filePath); 	     
-	    
-	    TSCORE.FileOpener.setFileOpened(true); 
-		TSCORE.openFileViewer();
 
-		// Handling the keybindings
-	    Mousetrap.unbind('mod+r');
-		Mousetrap.bind('mod+r', function() {
-	    	reloadFile();
-	    	return false;
-	    });
+        TSCORE.FileOpener.setFileOpened(true);
+        TSCORE.openFileViewer();
 
-	    Mousetrap.unbind('mod+s');
-		Mousetrap.bind('mod+s', function() {
-	    	saveFile();
-	    	return false;
-	    });		
-		
-	    Mousetrap.unbind('esc');
-		Mousetrap.bind('esc', function() {
-	    	closeFile();
-	    	return false;
-	    });		
-		
-	    Mousetrap.unbind('alt+enter');
-		Mousetrap.bind('alt+enter', function() {
-			showFilePropertiesDialog();
-			return false;
-	    });				
+        // Handling the keybindings
+        Mousetrap.unbind('mod+r');
+        Mousetrap.bind('mod+r', function() {
+            reloadFile();
+            return false;
+        });
 
-	    Mousetrap.unbind('left');
-		Mousetrap.bind('left', function() {
-			TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getPrevFile(_openedFilePath));
-			return false;
-	    });			
+        Mousetrap.unbind('mod+s');
+        Mousetrap.bind('mod+s', function() {
+            saveFile();
+            return false;
+        });
 
-	    Mousetrap.unbind('right');
-		Mousetrap.bind('right', function() {
-			TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getNextFile(_openedFilePath));
-			return false;
-	    });			
-		
-	} 
-	
+        Mousetrap.unbind('esc');
+        Mousetrap.bind('esc', function() {
+            closeFile();
+            return false;
+        });
+
+        Mousetrap.unbind('del');
+        Mousetrap.bind('del', function() {
+            TSCORE.showFileDeleteDialog(_openedFilePath);
+            return false;
+        });
+
+        Mousetrap.unbind('alt+enter');
+        Mousetrap.bind('alt+enter', function() {
+            showFilePropertiesDialog();
+            return false;
+        });
+
+        Mousetrap.unbind(['left', 'up']);
+        Mousetrap.bind(['left','up'], function() {
+            TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getPrevFile(_openedFilePath));
+            return false;
+        });
+
+        Mousetrap.unbind(['right', 'down']);
+        Mousetrap.bind(['right', 'down'], function() {
+            TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getNextFile(_openedFilePath));
+            return false;
+        });
+
+    }
+
     function setFileProperties(fileProperties) {
         _openedFileProperties = fileProperties;            
     }	
-	
-	function updateEditorContent(fileContent) {
-	    console.log("Updating editor"); // with data: "+fileContent); 
-    	_tsEditor.setContent(fileContent);
-	}
-	
-	// Should return false if no editor found
-	function getFileEditor(filePath) {
-	    var fileExt = TSCORE.TagUtils.extractFileExtension(filePath);
-	
-	    // Getting the editor for the file extension/type
-	    var editorExt = TSCORE.Config.getFileTypeEditor(fileExt);  
-	    console.log("File Editor: "+editorExt);
-	    return editorExt;    
-	}
-	
-	function editFile(filePath) {
-	    console.log("Editing file: "+filePath);
+
+    function updateEditorContent(fileContent) {
+        console.log("Updating editor"); // with data: "+fileContent);
+        _tsEditor.setContent(fileContent);
+    }
+
+    // Should return false if no editor found
+    function getFileEditor(filePath) {
+        var fileExt = TSCORE.TagUtils.extractFileExtension(filePath);
+
+        // Getting the editor for the file extension/type
+        var editorExt = TSCORE.Config.getFileTypeEditor(fileExt);
+        console.log("File Editor: "+editorExt);
+        return editorExt;
+    }
+
+    function editFile(filePath) {
+        console.log("Editing file: "+filePath);
 
         $( "#viewer" ).empty();
-	
-	    var editorExt = getFileEditor(filePath);
+
+        var editorExt = getFileEditor(filePath);
         try {
             require([TSCORE.Config.getExtensionPath()+"/"+editorExt+"/extension.js"], function(editr) {
                 _tsEditor = editr;
@@ -331,36 +332,36 @@ define(function(require, exports, module) {
         } catch(ex) {
             console.error("Loading editing extension failed: "+ex);
         }
-	} 
+    }
 
-	function reloadFile() {
-	    console.log("Reloading current file.");
-    	TSCORE.FileOpener.openFile(_openedFilePath); 
-	}	
-	
-	function saveFile() {
-	    console.log("Save current file: "+_openedFilePath);
+    function reloadFile() {
+        console.log("Reloading current file.");
+        TSCORE.FileOpener.openFile(_openedFilePath);
+    }
+
+    function saveFile() {
+        console.log("Save current file: "+_openedFilePath);
         TSCORE.showConfirmDialog(
                 "Confirm File Save",
                 "Do you really want to overwrite the current file?", 
                 function() {
                     $("#saveDocument").hide();
                     $("#editDocument").show();      
-            	    var content = _tsEditor.getContent();
-            	    TSCORE.IO.saveTextFile(_openedFilePath, content);   	    	
+                    var content = _tsEditor.getContent();
+                    TSCORE.IO.saveTextFile(_openedFilePath, content);
                     _isEditMode = false;              
                 }
             );	    
-	}
-	
-	function updateUI() {
+    }
+
+    function updateUI() {
         $("#saveDocument").hide();
-        		
-		// Initialize File Extension
+
+        // Initialize File Extension
         var fileExtension = TSCORE.TagUtils.extractFileExtension(_openedFilePath);
-		$( "#fileExtText" ).text(fileExtension);
-	    
-	    // Initialize File Title Editor
+        $( "#fileExtText" ).text(fileExtension);
+
+        // Initialize File Title Editor
         var title = TSCORE.TagUtils.extractTitle(_openedFilePath);
         
         $("#fileTitle").editable('destroy');
@@ -375,64 +376,64 @@ define(function(require, exports, module) {
             //mode: 'inline',
             success: function(response, newValue) {
                 TSCORE.TagUtils.changeTitle(_openedFilePath,newValue);
-            },            
+            }
         });
 
-	    // Generate tag & ext buttons
-	    $( "#fileTags" ).empty();
+        // Generate tag & ext buttons
+        $( "#fileTags" ).empty();
         
         // Appending tag buttons	    
         var tags = TSCORE.TagUtils.extractTags(_openedFilePath);
-	    var tagString = "";
-	    tags.forEach(function (value, index) {         
+        var tagString = "";
+        tags.forEach(function (value, index) {
             if(index == 0) {
                 tagString = value;                 
             } else {
                 tagString = tagString + "," +value;                                 
             }
         }); 
-	    $( "#fileTags" ).append(TSCORE.generateTagButtons(tagString,_openedFilePath));
+        $( "#fileTags" ).append(TSCORE.generateTagButtons(tagString,_openedFilePath));
     
-	    $( "#tagsContainer" ).droppable({
-	        greedy: "true", 
-	    	accept: ".tagButton",
-	    	hoverClass: "activeRow",
-	    	drop: function( event, ui ) {
-				console.log("Tagging file: "+TSCORE.selectedTag+" to "+_openedFilePath);
-				TSCORE.TagUtils.addTag([_openedFilePath], [TSCORE.selectedTag]);
-				
-				//$(ui.helper).remove(); 
-	    	}	            	
-	    });
-	       
-		// Init Tag Context Menus
-	    $('#fileTags').on("contextmenu click", ".tagButton", function (e) {
-			TSCORE.hideAllDropDownMenus();
-			
-	        TSCORE.openTagMenu(this, $(this).attr("tag"), $(this).attr("filepath"));
-	        
-	        $("#tagMenu").css({
-	            display: "block",
-	            left: e.pageX,
-	            top: e.pageY
-	        });
+        $( "#tagsContainer" ).droppable({
+            greedy: "true",
+            accept: ".tagButton",
+            hoverClass: "activeRow",
+            drop: function( event, ui ) {
+                console.log("Tagging file: "+TSCORE.selectedTag+" to "+_openedFilePath);
+                TSCORE.TagUtils.addTag([_openedFilePath], [TSCORE.selectedTag]);
+
+                //$(ui.helper).remove();
+            }
+        });
+
+        // Init Tag Context Menus
+        $('#fileTags').on("contextmenu click", ".tagButton", function (e) {
+            TSCORE.hideAllDropDownMenus();
+
+            TSCORE.openTagMenu(this, $(this).attr("tag"), $(this).attr("filepath"));
+
+            $("#tagMenu").css({
+                display: "block",
+                left: e.pageX,
+                top: e.pageY
+            });
             // TODO use the showContextMenu method
             //TSCORE.showContextMenu("#tagMenu", $(this));	       
-	        return false;
-	    });		
-	}
-	
-	function initTagSuggestionMenu(filePath) {
-	    var tags = TSCORE.TagUtils.extractTags(filePath);	
-	    var suggTags = TSCORE.TagUtils.suggestTags(filePath);
-	
-	    var tsMenu = $( "#tagSuggestionsMenu" );	
-	    tsMenu.empty(); 
+            return false;
+        });
+    }
+
+    function initTagSuggestionMenu(filePath) {
+        var tags = TSCORE.TagUtils.extractTags(filePath);
+        var suggTags = TSCORE.TagUtils.suggestTags(filePath);
+
+        var tsMenu = $( "#tagSuggestionsMenu" );
+        tsMenu.empty();
         tsMenu.append($('<li class="dropdown-header">Tagging Actions<button type="button" class="close">×</button></li>'));      
-        tsMenu.append($('<li>', {name: suggTags[i]}).append($('<a>', { 
+        tsMenu.append($('<li>').append($('<a>', {
             title: "Add a tag to the current file", 
             filepath: filePath,
-            text: " Add Tag",
+            text: " Add Tag"
             })
             .prepend("<i class='fa fa-tag'></i>") 
             .click(function() {
@@ -442,44 +443,44 @@ define(function(require, exports, module) {
             })                
         )); 
         tsMenu.append($('<li class="dropdown-header"><span id="">Suggested Tags:</span></li>'));      
-	
-	    // Add tag suggestion based on the last modified date 
-	    if(_openedFileProperties != undefined) {
+
+        // Add tag suggestion based on the last modified date
+        if(_openedFileProperties != undefined) {
             suggTags.push(TSCORE.TagUtils.formatDateTime4Tag(_openedFileProperties.lmdt));
             suggTags.push(TSCORE.TagUtils.formatDateTime4Tag(_openedFileProperties.lmdt, true));	        
-	    }
-	    
-	    // Adding context menu entries for creating tags according to the suggested tags
-	    for (var i=0; i < suggTags.length; i++) {        
-	        // Ignoring the tags already assigned to a file
-	        if(tags.indexOf(suggTags[i]) < 0) {
-	            tsMenu.append($('<li>', {name: suggTags[i]}).append($('<a>', { 
-	                title: "Add tag "+suggTags[i]+" to current file", 
-					tagname: suggTags[i],
-					filepath: filePath,
-					//text: " Tag with '"+suggTags[i]+"'",
-	                })
+        }
+
+        // Adding context menu entries for creating tags according to the suggested tags
+        for (var i=0; i < suggTags.length; i++) {
+            // Ignoring the tags already assigned to a file
+            if(tags.indexOf(suggTags[i]) < 0) {
+                tsMenu.append($('<li>', {name: suggTags[i]}).append($('<a>', {
+                    title: "Add tag "+suggTags[i]+" to current file",
+                    tagname: suggTags[i],
+                    filepath: filePath
+                    //text: " Tag with '"+suggTags[i]+"'",
+                    })
                     .append($('<button>', {
                         title: "Tag with "+suggTags[i],
                         "class":  "btn btn-sm btn-success tagButton", 
                         text: suggTags[i]
                     }))	                
-	                .click(function() {
-			            var tagName = $(this).attr( "tagname" );    
-			            var filePath = $(this).attr( "filepath" );    		            
-			            console.log("Tag suggestion clicked: "+tagName);
-			            TSCORE.TagUtils.writeTagsToFile(filePath, [tagName]);
-			          	return false;
-	        		})                
-	               ));              
-	        }         
-	    };
-	}
-	
-	// TODO Make file properties dialog accessible from core
+                    .click(function() {
+                        var tagName = $(this).attr( "tagname" );
+                        var filePath = $(this).attr( "filepath" );
+                        console.log("Tag suggestion clicked: "+tagName);
+                        TSCORE.TagUtils.writeTagsToFile(filePath, [tagName]);
+                        return false;
+                    })
+                   ));
+            }
+        };
+    }
+
+    // TODO Make file properties dialog accessible from core
     function showFilePropertiesDialog() {
         require([
-              "text!templates/FilePropertiesDialog.html",
+              "text!templates/FilePropertiesDialog.html"
             ], function(uiTPL) {
                 if($("#dialogFileProperties").length < 1) {                
                     var uiTemplate = Handlebars.compile( uiTPL );
