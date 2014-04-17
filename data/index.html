@@ -62,7 +62,7 @@ can be found in the LICENSE file.
             <div class="btn-toolbar" style="width: 100%">
             <span id="logo">TagSpaces</span>
             <span class="appVersion"><sup  id="appVersion"></sup></span>
-            <a id="newVersionAvailable" style="cursor:pointer; display: none; color: #7bd148; font-size: 18px; margin: 5px" class="appVersion pull-right" title="New TagSpaces version available" data-toggle="dropdown">
+            <a id="newVersionAvailable" style="cursor:pointer; display: inline; color: #7bd148; font-size: 18px; margin: 5px" class="appVersion pull-right" title="New TagSpaces version available" data-toggle="dropdown">
                 <i class="glyphicon glyphicon-gift" style="color: #7bd148"></i>
             </a>
             <div id="newVersionMenu" class="dropdown-menu"></div>
@@ -72,14 +72,11 @@ can be found in the LICENSE file.
                     <button type="button" class="btn btn-default" style="width: 16%; text-align: center; min-width: 40px;" data-placement="right;" title="Connect new location"  data-original-title="Start using TagSpaces by creating a new location!" id="createNewLocation">
                         <i class="glyphicon glyphicon-plus-sign"></i>
                     </button>
-                    <button type="button" class="btn btn-default" style="width: 69%" id="locationName" data-toggle="dropdown">Choose Location</button>
+                    <button type="button" class="btn btn-default" style="width: 69%" id="locationName" data-toggle="dropdown" data-i18n="app.chooseLocation">Choose Location</button>
                     <button type="button" class="btn btn-default dropdown-toggle" id="selectLocation" style="width: 14%" data-toggle="dropdown">
                       <span class="caret"></span>
                     </button>
-                    <ul class="dropdown-menu" id="connectionsList">
-                        <li><a href="#"><i class="fa fa-dropbox"></i>&nbsp;<span data-i18n="app.test1;">My Folder</span>&nbsp;
-                            <button type="button" class="btn btn-link"><i class="fa fa-edit"></i></button></a></li>
-                    </ul>
+                    <ul class="dropdown-menu" id="connectionsList"></ul>
                 </div>
             </div>
 		</nav>  	
@@ -87,73 +84,73 @@ can be found in the LICENSE file.
             <div id="tagGroupsContent"></div>
             <div id="locationContent"></div>
             <div id="contactUsContent">
-                <a class="btn btn-link" title="About TagSpaces" data-toggle="modal" data-target="#dialogAboutTS" data-backdrop="static">
+                <a class="btn btn-link" data-i18n="[title]app.aboutTagSpacesTooltip" data-toggle="modal" data-target="#dialogAboutTS" data-backdrop="static">
                     <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
                     <i class="fa fa-comment fa-stack-1x" style=""></i></span>&nbsp;&nbsp;
-                    <span data-i18n="app.test1;">About TagSpaces</span></a>
-                <a class="btn btn-link" id="openHints" title="Show hints">
+                    <span data-i18n="app.aboutTagSpaces">About TagSpaces</span></a>
+                <a class="btn btn-link" data-i18n="[title]app.startingHintsTooltip" id="openHints">
                     <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
                     <i class="fa fa-video-camera fa-stack-1x" style=""></i></span>&nbsp;&nbsp;
-                    <span data-i18n="app.test1;">Starting Hints</span></a>
-                <a class="btn btn-link" id="openWhatsnew" url="http://www.tagspaces.org/whatsnew/" title="Showing the last changes in TagSpaces">
+                    <span data-i18n="app.startingHints">Starting Hints</span></a>
+                <a class="btn btn-link" data-i18n="[title]app.whatsNewTooltip" href="http://www.tagspaces.org/whatsnew/" id="openWhatsnew">
                     <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
                     <i class="fa fa-leaf fa-stack-1x" style="color: #99CC00"></i></span>&nbsp;&nbsp;
-                    <span data-i18n="app.test1;">What's New</span></a>
-                <a class="btn btn-link" url="https://play.google.com/store/apps/details?id=org.tagspaces.androidapp" target="_system" id="openGooglePlay" title="Take a look on owr Android App">
+                    <span data-i18n="app.whatsNew">What's New</span></a>
+                <a class="btn btn-link" data-i18n="[title]app.getAndroidAppTooltip" href="https://play.google.com/store/apps/details?id=org.tagspaces.androidapp" id="openGooglePlay">
                     <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
                     <i class="fa fa-android fa-stack-1x" style="color: #669900"></i></span>&nbsp;&nbsp;
-                    <span data-i18n="app.test1;">Get the Android App</span></a>
+                    <span data-i18n="app.getAndroidApp">Get the Android App</span></a>
                 <hr style="margin: 0; border-top: 1px solid #ddd" />
-                <a class="btn btn-link" url="https://tagspaces.uservoice.com/forums/213931-general" id="openUservoice" title="Suggest or vote for a feature">
+                <a class="btn btn-link" data-i18n="[title]app.suggestNewFeaturesTooltip" href="https://tagspaces.uservoice.com/forums/213931-general" id="openUservoice">
                     <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
                     <i class="fa fa-bullhorn fa-stack-1x" style=""></i></span>&nbsp;&nbsp;
-                    <span data-i18n="app.test1;">Suggest New Features</span></a>
-                <a class="btn btn-link" url="https://github.com/uggrock/tagspaces/issues/" target="_system" id="openGitHubIssues" title="Report an issue">
+                    <span data-i18n="app.suggestNewFeatures">Suggest New Features</span></a>
+                <a class="btn btn-link" data-i18n="[title]app.reportIssuesTooltip" href="https://github.com/uggrock/tagspaces/issues/" id="openGitHubIssues">
                     <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
                     <i class="fa fa-flag fa-stack-1x" style=""></i></span>&nbsp;&nbsp;
-                    <span data-i18n="app.test1;">Report Issue</span></a>
+                    <span data-i18n="app.reportIssues">Report Issues</span></a>
                 <hr style="margin: 0; border-top: 1px solid #ddd" />
-                <a class="btn btn-link" url="https://twitter.com/intent/tweet?original_referer=http%3A%2F%2Ftagspaces.org%2F&text=Organize%20your%20files%20with%20@tagspaces" target="_system" id="openTwitter" title="Tweet about @tagspaces">
+                <a class="btn btn-link" data-i18n="[title]app.tweetAboutUsTooltip" href="https://twitter.com/intent/tweet?original_referer=http%3A%2F%2Ftagspaces.org%2F&text=Organize%20your%20files%20with%20@tagspaces" id="openTwitter">
                     <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
                     <i class="fa fa-twitter fa-stack-1x" style="color: #55ACEE"></i></span>&nbsp;&nbsp;
-                    <span data-i18n="app.test1;">Tweet About Us</span></a>
-                <a class="btn btn-link" url="https://twitter.com/intent/user?screen_name=tagspaces" target="_system" id="openTwitter2" title="Follow @tagspaces">
+                    <span data-i18n="app.tweetAboutUs;">Tweet About Us</span></a>
+                <a class="btn btn-link" data-i18n="[title]app.followOnTwitterTooltip" href="https://twitter.com/intent/user?screen_name=tagspaces" id="openTwitter2">
                     <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
                     <i class="fa fa-twitter-square fa-stack-1x" style="color: #55ACEE"></i></span>&nbsp;&nbsp;
-                    <span data-i18n="app.test1;">Follow  @tagspaces</span></a>
-                <a class="btn btn-link" url="https://plus.google.com/+TagspacesOrg/" target="_system" id="openGooglePlus" title="Join us in Google+">
+                    <span data-i18n="app.followOnTwitter">Follow @tagspaces</span></a>
+                <a class="btn btn-link" data-i18n="[title]app.joinOnGooglePlusTooltip" href="https://plus.google.com/+TagspacesOrg/" id="openGooglePlus">
                     <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
                     <i class="fa fa-google-plus fa-stack-1x" style="color: red"></i></span>&nbsp;&nbsp;
-                    <span data-i18n="app.test1;">Join us in Google+</span></a>
-                <a class="btn btn-link" url="https://www.facebook.com/tagspacesapp" target="_system" id="openFacebook" title="Like us on facebook">
+                    <span data-i18n="app.joinOnGooglePlus">Join us in Google+</span></a>
+                <a class="btn btn-link" data-i18n="[title]app.likeUsOnFacebookTooltip" href="https://www.facebook.com/tagspacesapp" id="openFacebook">
                     <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
                     <i class="fa fa-facebook fa-stack-1x" style="color: #3B5998"></i></span>&nbsp;&nbsp;
-                    <span data-i18n="app.test1;">Like us on Facebook</span></a>
+                    <span data-i18n="app.likeUsOnFacebook">Like us on Facebook</span></a>
                 <hr style="margin: 0; border-top: 1px solid #ddd" />
-                <a class="btn btn-link" href="mailto:contactus@tagspaces.org" title="Send email to us">
+                <a class="btn btn-link" data-i18n="[title]app.writeUsEmailTooltip" href="mailto:contactus@tagspaces.org">
                     <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
                     <i class="fa fa-envelope fa-stack-1x"></i></span>&nbsp;&nbsp;
-                    <span data-i18n="app.test1;">Contact Us</span></a>
+                    <span data-i18n="app.writeUsEmail">Write Us an Email</span></a>
                 <hr style="margin: 0; border-top: 1px solid #ddd" />
             </div>
 		</div>
 	</div>
 	<div class="row3 noWrap">
         <div class="btn-group" data-toggle="buttons">
-            <label class="btn btn-default active" id="showTagGroups" title="Show Tag Library" data-i18n="[title]app.switchToTagsTooltip;">
+            <label class="btn btn-default active" id="showTagGroups" data-i18n="[title]app.showTagLibraryTooltip">
                 <input type="radio" name="options" >&nbsp;<i class="fa fa-tags"></i>
             </label>
-            <label class="btn btn-default" id="showLocations" data-i18n="[title]app.switchToLocationsTooltip;" title="Show Folder Navigator">
+            <label class="btn btn-default" id="showLocations" data-i18n="[title]app.showLocationNavigatorTooltip">
                 <input type="radio" name="options">&nbsp;<i class="fa fa-folder"></i>
             </label>
-            <label class="btn btn-default" id="contactUs" data-i18n="[title]app.switchToContactUsTooltip;" title="Show Contact Us">
+            <label class="btn btn-default" id="contactUs" data-i18n="[title]app.switchToContactUsTooltip">
                 <input type="radio" name="options">&nbsp;<i class="fa fa-info-circle"></i>
             </label>
         </div>
         <div class="btn-group" id="sideBarButtunGroup" style="margin-right: 5px;">
-            <button class="btn btn-link" data-i18n="[title]app.?;" title="Open New TagSpaces Instance" id="startNewInstanceBack">
+            <button class="btn btn-link" data-i18n="[title]app.openNewInstanceTooltip" id="startNewInstanceBack">
                 &nbsp;<i class="fa fa-external-link-square fa-lg"></i>&nbsp;</button>
-            <button class="btn btn-link" data-i18n="[title]app.?;" title="Settings" id="openOptions">
+            <button class="btn btn-link" data-i18n="[title]app.openSettingTooltip;" id="openOptions">
                 &nbsp;<i class="fa fa-gear fa-lg"></i>&nbsp;</button>
         </div>
 	</div>    	
@@ -170,7 +167,7 @@ can be found in the LICENSE file.
 				</button>
 				<div class="form-inline pull-right" disabled="disabled">
                     <div class="input-group" style="width: 283px; margin-top: 2px;">
-                        <input type="text" class="form-control" id="searchBox" placeholder="Search" title="">
+                        <input type="text" class="form-control" id="searchBox" placeholder="Search">
                         <div class="dropdown-menu" style="width: 300px; padding: 10px; font-size: 13px;" id="searchOptions">
                             <span class="dropdown-header"><span data-i18n="[title]app.searchOptions;">Search Options</span><button type="button" class="close" id="closeSearchOptionButton">×</button></span>
                             <div class="form-group">

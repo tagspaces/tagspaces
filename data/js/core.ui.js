@@ -435,36 +435,49 @@ define(function(require, exports, module) {
             showWelcomeDialog();
         });
 
-        $contactUsContent.on('click',"#openUservoice", function () {
-            openLinkExternally($(this).attr("data-url"));
+        $contactUsContent.on('click',"#openUservoice", function (e) {
+            e.preventDefault();
+            openLinkExternally($(this).attr("href"));
         });
 
-        $contactUsContent.on('click',"#openGooglePlay", function () {
-            openLinkExternally($(this).attr("data-url"));
+        $contactUsContent.on('click',"#openGooglePlay", function (e) {
+            e.preventDefault();
+            openLinkExternally($(this).attr("href"));
         });
 
-        $contactUsContent.on('click',"#openWhatsnew", function () {
-            openLinkExternally($(this).attr("data-url"));
+        $contactUsContent.on('click',"#openWhatsnew", function (e) {
+            e.preventDefault();
+            openLinkExternally($(this).attr("href"));
         });
 
-        $contactUsContent.on('click',"#openGitHubIssues", function () {
-            openLinkExternally($(this).attr("data-url"));
+        $contactUsContent.on('click',"#openGitHubIssues", function (e) {
+            e.preventDefault();
+            openLinkExternally($(this).attr("href"));
         });
 
-        $contactUsContent.on('click',"#openTwitter", function () {
-            openLinkExternally($(this).attr("data-url"));
+        $contactUsContent.on('click',"#openTwitter", function (e) {
+            e.preventDefault();
+            openLinkExternally($(this).attr("href"));
         });
 
-        $contactUsContent.on('click',"#openTwitter2", function () {
-            openLinkExternally($(this).attr("data-url"));
+        $contactUsContent.on('click',"#openTwitter2", function (e) {
+            e.preventDefault();
+            openLinkExternally($(this).attr("href"));
         });
 
-        $contactUsContent.on('click',"#openGooglePlus", function () {
-            openLinkExternally($(this).attr("data-url"));
+        $contactUsContent.on('click',"#openGooglePlus", function (e) {
+            e.preventDefault();
+            openLinkExternally($(this).attr("href"));
         });
 
-        $contactUsContent.on('click',"#openFacebook", function () {
-            openLinkExternally((this).attr("data-url"));
+        $contactUsContent.on('click',"#openFacebook", function (e) {
+            e.preventDefault();
+            openLinkExternally($(this).attr("href"));
+        });
+
+        $("#newVersionMenu").on('click',".whatsNewLink", function (e) {
+            e.preventDefault();
+            openLinkExternally($(this).attr("href"));
         });
 
         // Hide drop downs by click and drag
