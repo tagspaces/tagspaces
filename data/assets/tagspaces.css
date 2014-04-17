@@ -459,14 +459,14 @@ li hr {
 .tagGroupIcon {
     text-align: left; 
     width: 12%; 
-    padding-left: 1px;
+    padding-left: 3px;
     color: #333 !important;
 }
 
 .tagGroupTitle {
     text-align: left;
-    padding-left: 2px; 
-    font-size: 13px !important;
+    padding: 10px 0 0 2px;
+    font-size: 14px !important;
     width:68%;
     color: #333 !important; 
 }
@@ -487,8 +487,8 @@ li hr {
 
 .directoryTitle {
     text-align: left;
-    padding-left: 2px; 
-    font-size: 13px !important;
+    padding: 10px 0 0 2px;
+    font-size: 14px !important;
     width:68%;  
     color: #333 !important;    
 }
@@ -538,7 +538,6 @@ input a.resetFilter {
     width: 16px;
     height: 16px;
     display: inline-block;
-    background: url('filter-reset.png') no-repeat center;
     position: relative;
     left: -20px;
     top: 3px;

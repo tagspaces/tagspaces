@@ -191,7 +191,7 @@ define(function(require, exports, module) {
 	        })
 	        
             .append($("<button>", { // Taggroup toggle button
-                        "class":        "btn btn-link tagGroupIcon",
+                        "class":        "btn btn-link btn-lg tagGroupIcon",
                         "data-toggle":  "collapse",
                         "data-target":  "#tagButtons"+i,
                         "title":        "Toggle TagGroup",
@@ -201,7 +201,7 @@ define(function(require, exports, module) {
             )// End taggroup toggle button  
                         	        
 	        .append($("<button>", {
-				"class":        "btn btn-link btn-sm tagGroupTitle",
+				"class":        "btn btn-link tagGroupTitle",
 	            "text":         TSCORE.Config.Settings["tagGroups"][i].title, 
                 "key":          TSCORE.Config.Settings["tagGroups"][i].key, 	      
 	        })  
@@ -222,7 +222,7 @@ define(function(require, exports, module) {
             })  
 	        
 	        .append($("<button>", {
-	                "class": "btn btn-link tagGroupActions",
+	                "class": "btn btn-link btn-lg tagGroupActions",
 	                "tag": TSCORE.Config.Settings["tagGroups"][i].title, 
 	                "key": TSCORE.Config.Settings["tagGroups"][i].key, 
 	                "title": "Taggroup options",
@@ -462,7 +462,7 @@ define(function(require, exports, module) {
 		$("#tags").select2({
 	        multiple: true,
 			tags: TSCORE.Config.getAllTags(),
-			tokenSeparators: [",", " "],
+			tokenSeparators: [","],
 			minimumInputLength: 2,
 			selectOnBlur: true,
 		});                   
