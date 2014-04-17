@@ -745,6 +745,10 @@ input a.resetFilter {
     color: gray;
 }
 
+#newVersionMessageContent {
+    padding: 15px;
+}
+
 #welcomeScreen {
     background: url(welcome-logo.png) no-repeat center;
     background-size: auto auto;
