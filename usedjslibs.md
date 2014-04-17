@@ -7,7 +7,7 @@ Handlebars - http://handlebarsjs.com/ - http://builds.handlebarsjs.com.s3.amazon
 DataTables - http://datatables.net/ - http://datatables.net/releases/DataTables-1.9.4.zip
 UnderscoreJS - http://underscorejs.org - https://github.com/jashkenas/underscore/blob/1.5.1/underscore.js
 Mousetrap - http://craig.is/killing/mice - https://raw.githubusercontent.com/ccampbell/mousetrap/1.4.6/mousetrap.min.js
-i18next - http://i18next.com/ - https://github.com/jamuhl/i18next/archive/1.7.1.zip
+i18next - http://i18next.com/ - https://github.com/jamuhl/i18next/releases/tag/1.7.2
 hammerjs - http://eightmedia.github.io/hammer.js/ - https://github.com/EightMedia/hammer.js/blob/v1.0.5/dist/jquery.hammer.js
 Select2 - http://ivaynberg.github.io/select2/ - https://github.com/ivaynberg/select2/blob/3.4.5/select2.min.js
 x-editable - http://vitalets.github.io/x-editable/ - https://github.com/vitalets/x-editable/archive/1.5.1.zip
