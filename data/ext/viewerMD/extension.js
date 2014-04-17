@@ -55,7 +55,8 @@ define(function(require, exports, module) {
             );
        
        var fileDirectory = TSCORE.TagUtils.extractContainingDirectoryPath(currentFilePath);
-            
+
+       // fixing embedding of local images
        $('#'+containerElID+" img[src]").each(function(){
            var currentSrc = $( this ).attr("src");
            if(currentSrc.indexOf("http://") == 0 || currentSrc.indexOf("https://") == 0) {
@@ -63,7 +64,14 @@ define(function(require, exports, module) {
            } else {
                $( this ).attr("src","file://"+fileDirectory+TSCORE.dirSeparator+currentSrc);
            }
-       }); 
+       });
+
+        // making all links open in the user default browser
+        $('#'+containerElID+ " a").bind('click', function(e){
+            e.preventDefault();
+            TSCORE.openLinkExternally($(this).attr("href"));
+        })
+
 	};
 	
 	exports.getContent = function() {

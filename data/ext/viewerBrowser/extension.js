@@ -74,7 +74,7 @@ define(function(require, exports, module) {
 	    if(viewerIframe != undefined) {
 	    	viewerIframe.contentWindow.document.write(cleanedContent);
 
-	    	// disabling the links
+	    	// making all links open in the user default browser
 	    	$(viewerIframe.contentWindow.document).find( "a" ).bind('click', function(e){
 	            e.preventDefault();
                 TSCORE.openLinkExternally($(this).attr("href"));
