@@ -62,7 +62,7 @@ can be found in the LICENSE file.
             <div class="btn-toolbar" style="width: 100%">
             <span id="logo">TagSpaces</span>
             <span class="appVersion"><sup  id="appVersion"></sup></span>
-            <a id="newVersionAvailable" style="cursor:pointer; display: inline; color: #7bd148; font-size: 18px; margin: 5px" class="appVersion pull-right" title="New TagSpaces version available" data-toggle="dropdown">
+            <a id="newVersionAvailable" style="cursor:pointer; display: none; color: #7bd148; font-size: 18px; margin: 5px" class="appVersion pull-right" title="New TagSpaces version available" data-toggle="dropdown">
                 <i class="glyphicon glyphicon-gift" style="color: #7bd148"></i>
             </a>
             <div id="newVersionMenu" class="dropdown-menu"></div>
@@ -72,7 +72,7 @@ can be found in the LICENSE file.
                     <button type="button" class="btn btn-default" style="width: 16%; text-align: center; min-width: 40px;" data-placement="right;" title="Connect new location"  data-original-title="Start using TagSpaces by creating a new location!" id="createNewLocation">
                         <i class="glyphicon glyphicon-plus-sign"></i>
                     </button>
-                    <button type="button" class="btn btn-default" style="width: 69%" id="locationName" data-toggle="dropdown" data-i18n="app.chooseLocation">Choose Location</button>
+                    <button type="button" class="btn btn-default" style="width: 69%" id="locationName" data-toggle="dropdown" data-i18n="ns.common:chooseLocation">Choose Location</button>
                     <button type="button" class="btn btn-default dropdown-toggle" id="selectLocation" style="width: 14%" data-toggle="dropdown">
                       <span class="caret"></span>
                     </button>
@@ -84,73 +84,73 @@ can be found in the LICENSE file.
             <div id="tagGroupsContent"></div>
             <div id="locationContent"></div>
             <div id="contactUsContent">
-                <a class="btn btn-link" data-i18n="[title]app.aboutTagSpacesTooltip" data-toggle="modal" data-target="#dialogAboutTS" data-backdrop="static">
+                <a class="btn btn-link" data-i18n="[title]ns.common:aboutTagSpacesTooltip" data-toggle="modal" data-target="#dialogAboutTS" data-backdrop="static">
                     <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
                     <i class="fa fa-comment fa-stack-1x" style=""></i></span>&nbsp;&nbsp;
-                    <span data-i18n="app.aboutTagSpaces">About TagSpaces</span></a>
-                <a class="btn btn-link" data-i18n="[title]app.startingHintsTooltip" id="openHints">
+                    <span data-i18n="ns.common:aboutTagSpaces">About TagSpaces</span></a>
+                <a class="btn btn-link" data-i18n="[title]ns.common:startingHintsTooltip" id="openHints">
                     <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
                     <i class="fa fa-video-camera fa-stack-1x" style=""></i></span>&nbsp;&nbsp;
-                    <span data-i18n="app.startingHints">Starting Hints</span></a>
-                <a class="btn btn-link" data-i18n="[title]app.whatsNewTooltip" href="http://www.tagspaces.org/whatsnew/" id="openWhatsnew">
+                    <span data-i18n="ns.common:startingHints">Starting Hints</span></a>
+                <a class="btn btn-link" data-i18n="[title]ns.common:whatsNewTooltip" href="http://www.tagspaces.org/whatsnew/" id="openWhatsnew">
                     <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
                     <i class="fa fa-leaf fa-stack-1x" style="color: #99CC00"></i></span>&nbsp;&nbsp;
-                    <span data-i18n="app.whatsNew">What's New</span></a>
-                <a class="btn btn-link" data-i18n="[title]app.getAndroidAppTooltip" href="https://play.google.com/store/apps/details?id=org.tagspaces.androidapp" id="openGooglePlay">
+                    <span data-i18n="ns.common:whatsNew">What's New</span></a>
+                <a class="btn btn-link" data-i18n="[title]ns.common:getAndroidAppTooltip" href="https://play.google.com/store/apps/details?id=org.tagspaces.androidapp" id="openGooglePlay">
                     <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
                     <i class="fa fa-android fa-stack-1x" style="color: #669900"></i></span>&nbsp;&nbsp;
-                    <span data-i18n="app.getAndroidApp">Get the Android App</span></a>
+                    <span data-i18n="ns.common:getAndroidApp">Get the Android App</span></a>
                 <hr style="margin: 0; border-top: 1px solid #ddd" />
-                <a class="btn btn-link" data-i18n="[title]app.suggestNewFeaturesTooltip" href="https://tagspaces.uservoice.com/forums/213931-general" id="openUservoice">
+                <a class="btn btn-link" data-i18n="[title]ns.common:suggestNewFeaturesTooltip" href="https://tagspaces.uservoice.com/forums/213931-general" id="openUservoice">
                     <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
                     <i class="fa fa-bullhorn fa-stack-1x" style=""></i></span>&nbsp;&nbsp;
-                    <span data-i18n="app.suggestNewFeatures">Suggest New Features</span></a>
-                <a class="btn btn-link" data-i18n="[title]app.reportIssuesTooltip" href="https://github.com/uggrock/tagspaces/issues/" id="openGitHubIssues">
+                    <span data-i18n="ns.common:suggestNewFeatures">Suggest New Features</span></a>
+                <a class="btn btn-link" data-i18n="[title]ns.common:reportIssuesTooltip" href="https://github.com/uggrock/tagspaces/issues/" id="openGitHubIssues">
                     <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
                     <i class="fa fa-flag fa-stack-1x" style=""></i></span>&nbsp;&nbsp;
-                    <span data-i18n="app.reportIssues">Report Issues</span></a>
+                    <span data-i18n="ns.common:reportIssues">Report Issues</span></a>
                 <hr style="margin: 0; border-top: 1px solid #ddd" />
-                <a class="btn btn-link" data-i18n="[title]app.tweetAboutUsTooltip" href="https://twitter.com/intent/tweet?original_referer=http%3A%2F%2Ftagspaces.org%2F&text=Organize%20your%20files%20with%20@tagspaces" id="openTwitter">
+                <a class="btn btn-link" data-i18n="[title]ns.common:tweetAboutUsTooltip" href="https://twitter.com/intent/tweet?original_referer=http%3A%2F%2Ftagspaces.org%2F&text=Organize%20your%20files%20with%20@tagspaces" id="openTwitter">
                     <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
                     <i class="fa fa-twitter fa-stack-1x" style="color: #55ACEE"></i></span>&nbsp;&nbsp;
-                    <span data-i18n="app.tweetAboutUs;">Tweet About Us</span></a>
-                <a class="btn btn-link" data-i18n="[title]app.followOnTwitterTooltip" href="https://twitter.com/intent/user?screen_name=tagspaces" id="openTwitter2">
+                    <span data-i18n="ns.common:tweetAboutUs;">Tweet About Us</span></a>
+                <a class="btn btn-link" data-i18n="[title]ns.common:followOnTwitterTooltip" href="https://twitter.com/intent/user?screen_name=tagspaces" id="openTwitter2">
                     <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
                     <i class="fa fa-twitter-square fa-stack-1x" style="color: #55ACEE"></i></span>&nbsp;&nbsp;
-                    <span data-i18n="app.followOnTwitter">Follow @tagspaces</span></a>
-                <a class="btn btn-link" data-i18n="[title]app.joinOnGooglePlusTooltip" href="https://plus.google.com/+TagspacesOrg/" id="openGooglePlus">
+                    <span data-i18n="ns.common:followOnTwitter">Follow @tagspaces</span></a>
+                <a class="btn btn-link" data-i18n="[title]ns.common:joinOnGooglePlusTooltip" href="https://plus.google.com/+TagspacesOrg/" id="openGooglePlus">
                     <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
                     <i class="fa fa-google-plus fa-stack-1x" style="color: red"></i></span>&nbsp;&nbsp;
-                    <span data-i18n="app.joinOnGooglePlus">Join us in Google+</span></a>
-                <a class="btn btn-link" data-i18n="[title]app.likeUsOnFacebookTooltip" href="https://www.facebook.com/tagspacesapp" id="openFacebook">
+                    <span data-i18n="ns.common:joinOnGooglePlus">Join us in Google+</span></a>
+                <a class="btn btn-link" data-i18n="[title]ns.common:likeUsOnFacebookTooltip" href="https://www.facebook.com/tagspacesapp" id="openFacebook">
                     <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
                     <i class="fa fa-facebook fa-stack-1x" style="color: #3B5998"></i></span>&nbsp;&nbsp;
-                    <span data-i18n="app.likeUsOnFacebook">Like us on Facebook</span></a>
+                    <span data-i18n="ns.common:likeUsOnFacebook">Like us on Facebook</span></a>
                 <hr style="margin: 0; border-top: 1px solid #ddd" />
-                <a class="btn btn-link" data-i18n="[title]app.writeUsEmailTooltip" href="mailto:contactus@tagspaces.org">
+                <a class="btn btn-link" data-i18n="[title]ns.common:writeUsEmailTooltip" href="mailto:contactus@tagspaces.org">
                     <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
                     <i class="fa fa-envelope fa-stack-1x"></i></span>&nbsp;&nbsp;
-                    <span data-i18n="app.writeUsEmail">Write Us an Email</span></a>
+                    <span data-i18n="ns.common:writeUsEmail">Write Us an Email</span></a>
                 <hr style="margin: 0; border-top: 1px solid #ddd" />
             </div>
 		</div>
 	</div>
 	<div class="row3 noWrap">
         <div class="btn-group" data-toggle="buttons">
-            <label class="btn btn-default active" id="showTagGroups" data-i18n="[title]app.showTagLibraryTooltip">
+            <label class="btn btn-default active" id="showTagGroups" data-i18n="[title]ns.common:showTagLibraryTooltip">
                 <input type="radio" name="options" >&nbsp;<i class="fa fa-tags"></i>
             </label>
-            <label class="btn btn-default" id="showLocations" data-i18n="[title]app.showLocationNavigatorTooltip">
+            <label class="btn btn-default" id="showLocations" data-i18n="[title]ns.common:showLocationNavigatorTooltip">
                 <input type="radio" name="options">&nbsp;<i class="fa fa-folder"></i>
             </label>
-            <label class="btn btn-default" id="contactUs" data-i18n="[title]app.switchToContactUsTooltip">
+            <label class="btn btn-default" id="contactUs" data-i18n="[title]ns.common:switchToContactUsTooltip">
                 <input type="radio" name="options">&nbsp;<i class="fa fa-info-circle"></i>
             </label>
         </div>
         <div class="btn-group" id="sideBarButtunGroup" style="margin-right: 5px;">
-            <button class="btn btn-link" data-i18n="[title]app.openNewInstanceTooltip" id="startNewInstanceBack">
+            <button class="btn btn-link" data-i18n="[title]ns.common:openNewInstanceTooltip" id="startNewInstanceBack">
                 &nbsp;<i class="fa fa-external-link-square fa-lg"></i>&nbsp;</button>
-            <button class="btn btn-link" data-i18n="[title]app.openSettingTooltip;" id="openOptions">
+            <button class="btn btn-link" data-i18n="[title]ns.common:openSettingTooltip;" id="openOptions">
                 &nbsp;<i class="fa fa-gear fa-lg"></i>&nbsp;</button>
         </div>
 	</div>    	
@@ -160,7 +160,7 @@ can be found in the LICENSE file.
 	<div class="row2">
 		<nav class="navbar navbar-default" role="navigation">
 			<div class="btn-toolbar">
-				<button type="button" class="navbar-toggle pull-left" id="toggleLeftPanel" data-i18n="[title]app.toggleLeftPanelTooltip">
+				<button type="button" class="navbar-toggle pull-left" id="toggleLeftPanel" data-i18n="[title]ns.common:toggleLeftPanelTooltip">
 		            <span class="icon-bar"></span>
 		            <span class="icon-bar"></span>
 		            <span class="icon-bar"></span>
@@ -169,17 +169,17 @@ can be found in the LICENSE file.
                     <div class="input-group" style="width: 283px; margin-top: 2px;">
                         <input type="text" class="form-control" id="searchBox" placeholder="Search">
                         <div class="dropdown-menu" style="width: 300px; padding: 10px; font-size: 13px;" id="searchOptions">
-                            <span class="dropdown-header"><span data-i18n="[title]app.searchOptions;">Search Options</span><button type="button" class="close" id="closeSearchOptionButton">×</button></span>
+                            <span class="dropdown-header"><span data-i18n="ns.common:searchOptions">Search Options</span><button type="button" class="close" id="closeSearchOptionButton">×</button></span>
                             <div class="form-group">
                                 <label class="checkbox">
-                                    <input type="checkbox" id="includeSubfoldersOption"> Include files from the subfolders (by adding <i class="fa fa-question"></i> in front of the query)
+                                    <input type="checkbox" id="includeSubfoldersOption" />&nbsp;<span data-i18n="[title]ns.common:includeSubfoldersInSearch">Include files from the subfolders (by adding questionmark '?' in front of the query)</span>
                                 </label>
                             </div><br><br>
-                            <i class="fa fa-angle-double-right"></i> Including "!" in front of a term (e.g. !term) will exclude all files with this term in their filenames.<br>
-                            <i class="fa fa-angle-double-right"></i> Including "+"  in front of a term (e.g. +tag) will include all files tagged with this tag.<br>
-                            <i class="fa fa-angle-double-right"></i> Including "-"  in front of a term (e.g. -tag) will exclude all files tagged with this tag.<br>
-                            <i class="fa fa-angle-double-right"></i> All terms should be true in order the file to appear in the search results.<br>
-                            <i class="fa fa-angle-double-right"></i> The searched term should be part of the filename. Currently the content of the file is ignored.<br>
+                            <i class="fa fa-angle-double-right"></i>&nbsp;<span data-i18n="ns.common:excludeTermFromSearch">Including "!" in front of a term (e.g. !term) will exclude all files with this term in their filenames.</span><br>
+                            <i class="fa fa-angle-double-right"></i>&nbsp;<span data-i18n="ns.common:includeTagInSearch">Including "+" in front of a term (e.g. +tag) will include all files tagged with this tag.</span><br>
+                            <i class="fa fa-angle-double-right"></i>&nbsp;<span data-i18n="ns.common:excludeTagInSearch">Including "-" in front of a term (e.g. -tag) will exclude all files tagged with this tag.</span><br>
+                            <i class="fa fa-angle-double-right"></i>&nbsp;<span data-i18n="ns.common:andedSearch">All terms should be true in order the file to appear in the search results.</span><br>
+                            <i class="fa fa-angle-double-right"></i>&nbsp;<span data-i18n="ns.common:searchInFilenameOnly">The searched term should be part of the filename. Currently the content of the file is ignored.</span><br>
                         </div>
                         <span class="input-group-btn">
                             <button class="btn btn-default" title="Search" id="searchButton" style="border-left-width: 0;">
@@ -191,7 +191,7 @@ can be found in the LICENSE file.
                         </span>
                         <div class="input-group">
                           <button type="button" id="perspectiveSwitcherButton" class="btn btn-link dropdown-toggle" data-toggle="dropdown"><i id="currentPerspectitveIcon" class="fa fa-film"></i>&nbsp;
-                            <span id="currentPerspectitveName">Perspectives</span>&nbsp;<span class="caret"></span>
+                            <span id="currentPerspectitveName" data-i18n="ns.common:perspectivesDropDown">Perspectives</span>&nbsp;<span class="caret"></span>
                           </button>
                           <ul class="dropdown-menu pull-right" style="position:absolute; top:35px; right:2px; width: 200px;" id="viewSwitcher"></ul>
                         </div>
@@ -220,36 +220,53 @@ can be found in the LICENSE file.
                     <span class="fileExt"><span id="fileExtText"></span>&nbsp;&nbsp;<span class="caret white-caret"></span>&nbsp;</span>
                     </button>
                     <ul class="dropdown-menu">
-                        <li class="dropdown-header"><span id="">File Operations</span><button type="button" class="close">×</button></li>
+                        <li class="dropdown-header"><span data-i18n="ns.common:fileOperations">File Operations</span><button type="button" class="close">×</button></li>
                         <li class="divider"></li>
-                        <li><a id="tagFile"><i class="fa fa-tag fa-fw"></i>&nbsp;<span data-i18n="app.?;">Add / Remove Tags</span></a></li>
-                        <li><a id="openFileInNewWindow"><i class="fa fa-external-link-square fa-fw"></i>&nbsp;<span data-i18n="app.?;">Open in New Window</span></a></li>
-                        <li><a id="fullscreenFile"><i class="glyphicon glyphicon-fullscreen fa-fw"></i>&nbsp;<span data-i18n="app.?;">Fullscreen</span></a></li>
+                        <li><a id="tagFile" data-i18n="[title]ns.common:addRemoveTagsTooltip"><i class="fa fa-tag fa-fw"></i>
+                            &nbsp;<span data-i18n="ns.common:addRemoveTags">Add / Remove Tags</span></a></li>
+                        <li><a id="openFileInNewWindow" data-i18n="[title]ns.common:openFileNewWindowTooltip"><i class="fa fa-external-link-square fa-fw"></i>
+                            &nbsp;<span data-i18n="ns.common:openFileNewWindow">Open in New Window</span></a></li>
+                        <li><a id="fullscreenFile" data-i18n="[title]ns.common:fullscreenFileTooltip"><i class="glyphicon glyphicon-fullscreen fa-fw"></i>
+                            &nbsp;<span data-i18n="ns.common:fullscreen">Fullscreen</span></a></li>
                         <li class="divider"></li>
-                        <li class="noWrap"><a id="renameFile"><i class="fa fa-pencil fa-fw"></i>&nbsp;<span data-i18n="app.?;">Rename File</span></a></li>
-                        <li class="noWrap"><a id="sendFile"><i class="glyphicon glyphicon-send fa-fw"></i>&nbsp;<span data-i18n="app.?;">Send File To</span></a></li>
-                        <li class="noWrap"><a id="deleteFile"><i class="fa fa-trash-o fa-fw"></i>&nbsp;<span data-i18n="app.?;">Delete File</span>
+                        <li class="noWrap"><a id="renameFile" data-i18n="[title]ns.common:renameFileTooltip"><i class="fa fa-pencil fa-fw"></i>
+                            &nbsp;<span data-i18n="ns.common:renameFile">Rename File</span></a></li>
+                        <li class="noWrap"><a id="sendFile" data-i18n="[title]ns.common:sendFileToTooltip"><i class="glyphicon glyphicon-send fa-fw"></i>
+                            &nbsp;<span data-i18n="ns.common:sendFileTo">Send File To</span></a></li>
+                        <li class="noWrap"><a id="deleteFile" data-i18n="[title]ns.common:deleteFileTooltip"><i class="fa fa-trash-o fa-fw"></i>
+                            &nbsp;<span data-i18n="ns.common:deleteFile">Delete File</span>
                             <span class="pull-right label label-default keyShortcut">Del</span></a></li>
-                        <li class="noWrap"><a id="reloadFile"><i class="fa fa-refresh fa-fw"></i>&nbsp;<span data-i18n="app.?;">Reload File</span>
+                        <li class="noWrap"><a id="reloadFile" data-i18n="[title]ns.common:reloadFileTooltip"><i class="fa fa-refresh fa-fw"></i>
+                            &nbsp;<span data-i18n="ns.common:reloadFile">Reload File</span>
                             <span class="pull-right label label-default keyShortcut">Ctrl/⌘ + R</span></a></li>
-                        <li class="noWrap"><a id="closeFile"><i class="fa fa-times fa-fw"></i>&nbsp;<span data-i18n="app.?;">Close File</span>
+                        <li class="noWrap"><a id="closeFile" data-i18n="[title]ns.common:closeFileTooltip"><i class="fa fa-times fa-fw"></i>
+                            &nbsp;<span data-i18n="ns.common:closeFile">Close File</span>
                             <span class="pull-right label label-default keyShortcut">Esc</span></a></li>
                         <li class="divider"></li>
-                        <li class="noWrap"><a id="openNatively"><i class="fa fa-external-link-square fa-fw"></i>&nbsp;<span data-i18n="app.?;">Open File Natively</span></a></li>
-                        <li class="noWrap"><a id="openDirectory"><i class="fa fa-folder-open fa-fw"></i>&nbsp;<span data-i18n="app.?;">Open Containing Folder</span></a></li>
+                        <li class="noWrap"><a id="openNatively" data-i18n="[title]ns.common:openFileNativelyTooltip"><i class="fa fa-external-link-square fa-fw"></i>
+                            &nbsp;<span data-i18n="ns.common:openFileNatively">Open File Natively</span></a></li>
+                        <li class="noWrap"><a id="openDirectory" data-i18n="[title]ns.common:openContainingFolderTooltip"><i class="fa fa-folder-open fa-fw"></i>
+                            &nbsp;<span data-i18n="ns.common:openContainingFolder">Open Containing Folder</span></a></li>
                         <li class="divider"></li>
-                        <li class="noWrap"><a id="openProperties"><i class="fa fa-briefcase fa-fw"></i>&nbsp;<span data-i18n="app.?;">Properties</span>
+                        <li class="noWrap"><a id="openProperties" data-i18n="[title]ns.common:filePropertiesTooltip"><i class="fa fa-briefcase fa-fw"></i>
+                            &nbsp;<span data-i18n="ns.common:fileProperties">Properties</span>
                             <span class="pull-right label label-default keyShortcut">Alt+Enter</span></a></li>
                     </ul>
 				</div>				 
                 <a id="fileTitle"></a>				
 				<div id="fileViewerMainToolbar" class="btn-group">
-                    <button class="btn btn-link" title="Edit Document" data-i18n="[title]app.?;" id="editDocument">&nbsp;<i class="fa fa-pencil fa-lg"></i>&nbsp;</button>             
-                    <button class="btn btn-link" title="Save Document" data-i18n="[title]app.?;" id="saveDocument">&nbsp;<i class="fa fa-save fa-lg"></i>&nbsp;</button>             
-					<button class="btn btn-link" title="Toggle Document in Full Width" data-i18n="[title]app.?;" id="toggleFullWidthButton">&nbsp;<i class="fa fa-expand fa-lg"></i>&nbsp;</button>				
-					<button class="btn btn-link" title="Go to the previous file" data-i18n="[title]app.?;" id="prevFileButton">&nbsp;<i class="fa fa-chevron-left fa-lg"></i>&nbsp;</button>
-					<button class="btn btn-link" title="Go to the next file" data-i18n="[title]app.?;" id="nextFileButton">&nbsp;<i class="fa fa-chevron-right fa-lg"></i>&nbsp;</button>
-					<button class="btn btn-link" title="Close file" data-i18n="[title]app.?;" id="closeOpenedFile" style="padding-top: 1px;">&nbsp;<i class="fa fa-times fa-lg"></i>&nbsp;</button>					
+                    <button class="btn btn-link" title="Edit Document" data-i18n="[title]ns.common:editFileTooltip" id="editDocument">
+                        &nbsp;<i class="fa fa-pencil fa-lg"></i>&nbsp;</button>
+                    <button class="btn btn-link" title="Save Document" data-i18n="[title]ns.common:saveFileTooltip" id="saveDocument">
+                        &nbsp;<i class="fa fa-save fa-lg"></i>&nbsp;</button>
+					<button class="btn btn-link" title="Toggle Document in Full Width" data-i18n="[title]ns.common:toggleFullWidthTooltip" id="toggleFullWidthButton">
+                        &nbsp;<i class="fa fa-expand fa-lg"></i>&nbsp;</button>
+					<button class="btn btn-link" title="Go to the previous file" data-i18n="[title]ns.common:openPrevFileTooltip" id="prevFileButton">
+                        &nbsp;<i class="fa fa-chevron-left fa-lg"></i>&nbsp;</button>
+					<button class="btn btn-link" title="Go to the next file" data-i18n="[title]ns.common:openNextFileTooltip" id="nextFileButton">
+                        &nbsp;<i class="fa fa-chevron-right fa-lg"></i>&nbsp;</button>
+					<button class="btn btn-link" title="Close file" data-i18n="[title]ns.common:closeFileTooltip;" id="closeOpenedFile" style="padding-top: 1px;">
+                        &nbsp;<i class="fa fa-times fa-lg"></i>&nbsp;</button>
 				</div>
 			</div>
 			<div id="tagsContainer" class="ui-droppable">
@@ -273,13 +290,13 @@ can be found in the LICENSE file.
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times fa-lg"></i></button>
-                <h4 class="modal-title" id="myModalLabel1">About TagSpaces</h4>
+                <h4 class="modal-title" id="myModalLabel1" data-i18n="ns.dialogs:aboutDialogTitle">About TagSpaces</h4>
             </div>
             <div class="modal-body">
                 <iframe id="aboutIframe" nwdisable style="width: 100%; height: 350px; border: 0;" src="about.html"></iframe>
             </div>
             <div class="modal-footer">
-                <button class="btn" id="aboutDialogBack" title="Go Back (If You Need)">Back</button>
+                <button class="btn" id="aboutDialogBack" title="Go Back (If You Need)"><i class="fa fa-arrow-left fa-lg"></i></button>
                 <button class="btn btn-primary" data-dismiss="modal" title="Close About Box" aria-hidden="true"><i class="fa fa-check fa-lg"></i></button>
             </div>
         </div><!-- /.modal-content -->
@@ -298,7 +315,7 @@ can be found in the LICENSE file.
         </div>
         <div class="modal-footer">
             <button class="btn btn-default" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times fa-lg"></i></button>
-            <button id="saveSettingsButton" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Save</button>
+            <button id="saveSettingsButton" class="btn btn-primary" data-dismiss="modal" aria-hidden="true"><i class="fa fa-check fa-lg"></i></button>
         </div>
     </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
@@ -393,106 +410,106 @@ can be found in the LICENSE file.
 </div><!-- /.modal -->  
 
 <div id="dialogAddTags" class="modal" tabindex="-1" role="dialog" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-	    <div class="modal-header">
-	        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times fa-lg"></i></button>
-	        <h4>Tag operation on multiple files</h4>
-	    </div>
-	    <div class="modal-body form">
-	        <div class="form-group">
-	            <label class="control-label" for="tags">Tags</label>
-                <input class="form-control" type="text" name="tags" id="tags" autocomplete="off" placeholder="List of tags"/>
-                <p class="help-block">Tags should have a minimum length of 2 characters and should not contain special characters such as spaces, #, / ,\ and other.</p>
-	        </div>
-	    </div>
-	    <div class="modal-footer">
-	        <button class="btn" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times fa-lg"></i></button>
-            <button id="removeTagsButton" class="btn btn-warning" data-dismiss="modal" aria-hidden="true">Remove Tags</button>	        
-            <button id="addTagsButton" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Add Tags</button>
-	    </div>
-    </div><!-- /.modal-content -->
-  </div><!-- /.modal-dialog -->
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times fa-lg"></i></button>
+                <h4>Tag operation on multiple files</h4>
+            </div>
+            <div class="modal-body form">
+                <div class="form-group">
+                    <label class="control-label" for="tags">Tags</label>
+                    <input class="form-control" type="text" name="tags" id="tags" autocomplete="off" placeholder="List of tags"/>
+                    <p class="help-block">Tags should have a minimum length of 2 characters and should not contain special characters such as spaces, #, / ,\ and other.</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times fa-lg"></i></button>
+                <button id="removeTagsButton" class="btn btn-warning" data-dismiss="modal" aria-hidden="true">Remove Tags</button>
+                <button id="addTagsButton" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Add Tags</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
 <div id="dialogEditInTreeTag" class="modal" tabindex="-1" role="dialog" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-	    <div class="modal-header">
-	        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times fa-lg"></i></button>
-	        <h4>Edit Tag</h4>
-	    </div>
-	    <div class="modal-body form">
-	        <div class="form-group">
-	            <label class="control-label" for="tagInTreeName">Name</label>
-                <input class="form-control" type="text" name="tagInTreeName" id="tagInTreeName" />
-                <p class="help-block">Tags should have a minimum length of 2 characters and should not contain special characters such as spaces, #, / ,\ and other.</p>         
-	        </div>
-	        <div class="form-group">
-	            <label class="control-label" for="tagColor">Color</label>
-                <select class="form-control" id="tagColor" >
-                  <option value="#ac725e">#ac725e</option>
-                  <option value="#d06b64">#d06b64</option>
-                  <option value="#f83a22">#f83a22</option>
-                  <option value="#fa573c">#fa573c</option>
-                  <option value="#ff7537">#ff7537</option>
-                  <option value="#ffad46">#ffad46</option>
-                  <option value="#42d692">#42d692</option>
-                  <option value="#008000">#008000</option>
-                  <option value="#7bd148">#7bd148</option>
-                  <option value="#fad165">#fad165</option>
-                  <option value="#92e1c0">#92e1c0</option>
-                  <option value="#9fe1e7">#9fe1e7</option>
-                  <option value="#9fc6e7">#9fc6e7</option>
-                  <option value="#4986e7">#4986e7</option>
-                  <option value="#9a9cff">#9a9cff</option>
-                  <option value="#b99aff">#b99aff</option>
-                  <option value="#c2c2c2">#c2c2c2</option>
-                  <option value="#cabdbf">#cabdbf</option>
-                  <option value="#cca6ac">#cca6ac</option>
-                  <option value="#f691b2">#f691b2</option>
-                  <option value="#cd74e6">#cd74e6</option>
-                  <option value="#a47ae2">#a47ae2</option>
-                </select>
-	        </div>
-	        <div class="form-group">
-	            <label class="control-label" for="tagTextColor">Text Color</label>
-                <select class="form-control" id="tagTextColor">
-                  <option value="#ffffff">#ffffff</option>
-                  <option value="#cccccc">#cccccc</option>
-                  <option value="#333333">#333333</option>                      
-                  <option value="#000000">#000000</option>
-                </select>                    
-	        </div>            
-	    </div>
-	    <div class="modal-footer">
-	        <button class="btn" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times fa-lg"></i></button>
-	        <button id="editTagInTreeButton" class="btn btn-primary" data-dismiss="modal" aria-hidden="true"><i class="fa fa-check fa-lg"></i></button>
-	    </div>
-    </div><!-- /.modal-content -->
-  </div><!-- /.modal-dialog -->
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times fa-lg"></i></button>
+                <h4>Edit Tag</h4>
+            </div>
+            <div class="modal-body form">
+                <div class="form-group">
+                    <label class="control-label" for="tagInTreeName">Name</label>
+                    <input class="form-control" type="text" name="tagInTreeName" id="tagInTreeName" />
+                    <p class="help-block">Tags should have a minimum length of 2 characters and should not contain special characters such as spaces, #, / ,\ and other.</p>
+                </div>
+                <div class="form-group">
+                    <label class="control-label" for="tagColor">Color</label>
+                    <select class="form-control" id="tagColor" >
+                        <option value="#ac725e">#ac725e</option>
+                        <option value="#d06b64">#d06b64</option>
+                        <option value="#f83a22">#f83a22</option>
+                        <option value="#fa573c">#fa573c</option>
+                        <option value="#ff7537">#ff7537</option>
+                        <option value="#ffad46">#ffad46</option>
+                        <option value="#42d692">#42d692</option>
+                        <option value="#008000">#008000</option>
+                        <option value="#7bd148">#7bd148</option>
+                        <option value="#fad165">#fad165</option>
+                        <option value="#92e1c0">#92e1c0</option>
+                        <option value="#9fe1e7">#9fe1e7</option>
+                        <option value="#9fc6e7">#9fc6e7</option>
+                        <option value="#4986e7">#4986e7</option>
+                        <option value="#9a9cff">#9a9cff</option>
+                        <option value="#b99aff">#b99aff</option>
+                        <option value="#c2c2c2">#c2c2c2</option>
+                        <option value="#cabdbf">#cabdbf</option>
+                        <option value="#cca6ac">#cca6ac</option>
+                        <option value="#f691b2">#f691b2</option>
+                        <option value="#cd74e6">#cd74e6</option>
+                        <option value="#a47ae2">#a47ae2</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="control-label" for="tagTextColor">Text Color</label>
+                    <select class="form-control" id="tagTextColor">
+                        <option value="#ffffff">#ffffff</option>
+                        <option value="#cccccc">#cccccc</option>
+                        <option value="#333333">#333333</option>
+                        <option value="#000000">#000000</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times fa-lg"></i></button>
+                <button id="editTagInTreeButton" class="btn btn-primary" data-dismiss="modal" aria-hidden="true"><i class="fa fa-check fa-lg"></i></button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
 <div id="dialogTagCreate" class="modal" tabindex="-1" role="dialog" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-	    <div class="modal-header">
-	        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times fa-lg"></i></button>
-	        <h4>Add tags to tag group</h4>
-	    </div>
-	    <div class="modal-body form">
-	        <div class="form-group">
-	            <label class="control-label" for="newTagTitle">Tags</label>
-                <input class="form-control" type="text" name="newTagTitle" id="newTagTitle" placeholder="Comma separated list of tags" />
-                <p class="help-block">Tags should have a minimum length of 2 characters and should not contain special characters such as spaces, #, / ,\ and other.</p>
-	        </div>
-	    </div>
-	    <div class="modal-footer">
-	        <button class="btn" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times fa-lg"></i></button>
-	        <button id="createTagButton" class="btn btn-primary" data-dismiss="modal" aria-hidden="true"><i class="fa fa-check fa-lg"></i></button>
-	    </div>
-    </div><!-- /.modal-content -->
-  </div><!-- /.modal-dialog -->
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times fa-lg"></i></button>
+                <h4>Add tags to tag group</h4>
+            </div>
+            <div class="modal-body form">
+                <div class="form-group">
+                    <label class="control-label" for="newTagTitle">Tags</label>
+                    <input class="form-control" type="text" name="newTagTitle" id="newTagTitle" placeholder="Comma separated list of tags" />
+                    <p class="help-block">Tags should have a minimum length of 2 characters and should not contain special characters such as spaces, #, / ,\ and other.</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times fa-lg"></i></button>
+                <button id="createTagButton" class="btn btn-primary" data-dismiss="modal" aria-hidden="true"><i class="fa fa-check fa-lg"></i></button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
 <div id="dialogEditTagGroup" class="modal" tabindex="-1" role="dialog" aria-hidden="true">
@@ -563,7 +580,7 @@ can be found in the LICENSE file.
                 <span id="dialogContent" style="font-weight: bold;"></span>
                 <label class="checkbox" id="showThisDialogAgainContainer">
                     <input type='checkbox' id='showThisDialogAgain' checked />
-                    <span data-i18n="app.showThisDialogNextTime">Show this dialog next time.</span>
+                    <span data-i18n="ns.common:showThisDialogNextTime">Show this dialog next time.</span>
                 </label>
             </div>
             <div class="modal-footer">
@@ -576,90 +593,90 @@ can be found in the LICENSE file.
 
 <div id="fileMenu" class="dropdown clearfix">
 	<ul class="dropdown-menu" role="menu" style="display:block;position:static;">
-		<li class="dropdown-header"><span data-i18n="app.fileOperations">File Operations</span><button type="button" class="close">×</button></li>
+		<li class="dropdown-header"><span data-i18n="ns.common:fileOperations">File Operations</span><button type="button" class="close">×</button></li>
         <li class="divider"></li>			
-        <li><a id="fileMenuAddTag" data-i18n="[title]app.addRemoveTagsTooltip"><i class="fa fa-tag fa-fw"></i>
-            &nbsp;<span data-i18n="app.addRemoveTags">Add / Remove Tags</span></a></li>
+        <li><a id="fileMenuAddTag" data-i18n="[title]ns.common:addRemoveTagsTooltip"><i class="fa fa-tag fa-fw"></i>
+            &nbsp;<span data-i18n="ns.common:addRemoveTags">Add / Remove Tags</span></a></li>
 	    <li class="divider"></li> 
-	    <li><a id="fileMenuOpenFile" data-i18n="[title]app.openFileTooltip"><i class="fa fa-share fa-fw"></i>
-            &nbsp;<span data-i18n="app.openFile">Open File</span></a></li>
-        <li><a id="fileMenuOpenNatively" data-i18n="[title]app.openFileNativelyTooltip"><i class="fa fa-external-link-square fa-fw"></i>
-            &nbsp;<span data-i18n="app.openFileNatively">Open File Natively</span></a></li>
-        <li><a id="fileMenuOpenDirectory" data-i18n="[title]app.Tooltip"><i class="fa fa-folder-open fa-fw"></i>
-            &nbsp;<span data-i18n="app.openContainingFolder">Open Containing Folder</span></a></li>
-	    <li><a id="fileMenuSendTo" data-i18n="[title]app.sendFileToTooltip"><i class="glyphicon glyphicon-send fa-fw"></i>
-            &nbsp;<span data-i18n="app.sendFileTo">Send To</span></a></li>
+	    <li><a id="fileMenuOpenFile" data-i18n="[title]ns.common:openFileTooltip"><i class="fa fa-share fa-fw"></i>
+            &nbsp;<span data-i18n="ns.common:openFile">Open File</span></a></li>
+        <li><a id="fileMenuOpenNatively" data-i18n="[title]ns.common:openFileNativelyTooltip"><i class="fa fa-external-link-square fa-fw"></i>
+            &nbsp;<span data-i18n="ns.common:openFileNatively">Open File Natively</span></a></li>
+        <li><a id="fileMenuOpenDirectory" data-i18n="[title]ns.common:Tooltip"><i class="fa fa-folder-open fa-fw"></i>
+            &nbsp;<span data-i18n="ns.common:openContainingFolder">Open Containing Folder</span></a></li>
+	    <li><a id="fileMenuSendTo" data-i18n="[title]ns.common:sendFileToTooltip"><i class="glyphicon glyphicon-send fa-fw"></i>
+            &nbsp;<span data-i18n="ns.common:sendFileTo">Send To</span></a></li>
         <li class="divider"></li> 
-	    <li><a id="fileMenuRenameFile" data-i18n="[title]app.renameFilesTooltip"><i class="fa fa-pencil fa-fw"></i>
-            &nbsp;<span data-i18n="app.renameFile">Rename File</span></a></li>
-	    <li><a id="fileMenuDeleteFile" data-i18n="[title]app.deleteFilesTooltip"><i class="fa fa-trash-o fa-fw"></i>
-            &nbsp;<span data-i18n="app.deleteFile">Delete File</span></a></li>
+	    <li><a id="fileMenuRenameFile" data-i18n="[title]ns.common:renameFilesTooltip"><i class="fa fa-pencil fa-fw"></i>
+            &nbsp;<span data-i18n="ns.common:renameFile">Rename File</span></a></li>
+	    <li><a id="fileMenuDeleteFile" data-i18n="[title]ns.common:deleteFilesTooltip"><i class="fa fa-trash-o fa-fw"></i>
+            &nbsp;<span data-i18n="ns.common:deleteFile">Delete File</span></a></li>
 	</ul>
 </div>
 
 <div id="tagMenu" class="dropdown clearfix">
 	<ul class="dropdown-menu" role="menu" style="display:block;position:static;">	
-		<li class="dropdown-header"><span data-i18n="app.tagOperations">Tag Operations</span><button type="button" class="close">×</button></li>
+		<li class="dropdown-header"><span data-i18n="ns.common:tagOperations">Tag Operations</span><button type="button" class="close">×</button></li>
         <li class="divider"></li>			
-	    <li><a id="tagMenuAddTagAsFilter" data-i18n="[title]app.showFilesWithThisTagTooltip"><i class="fa fa-filter fa-fw"></i>
-            &nbsp;<span data-i18n="app.showFilesWithThisTag">Show Files With This Tag</span></a></li>
-	    <li><a id="tagMenuEditTag" data-i18n="[title]app.editTagTooltip"><i class="fa fa-pencil fa-fw"></i>
-            &nbsp;<span data-i18n="app.editTag">Edit Tag</span></a></li>
-	    <li><a id="tagMenuMoveTagFirst" data-i18n="[title]app.moveTagToFirstPositionTooltip"><i class="fa fa-fast-backward fa-fw"></i>
-            &nbsp;<span data-i18n="app.moveTagToFirstPosition">Move Tag to First Position</span></a></li>
-	    <li><a id="tagMenuMoveTagLeft" data-i18n="[title]app.moveTagToLeftTooltip"><i class="fa fa-backward fa-fw"></i>
-            &nbsp;<span data-i18n="app.moveTagToLeft">Move Tag to Left</span></a></li>
-	    <li><a id="tagMenuMoveTagRight" data-i18n="[title]app.moveTagToRightTooltip"><i class="fa fa-forward fa-fw"></i>
-            &nbsp;<span data-i18n="app.moveTagToRight">Move Tag to Right</span></a></li>
-	    <li><a id="tagMenuRemoveTag" data-i18n="[title]app.removeTagTooltip"><i class="fa fa-trash-o fa-fw"></i>
-            &nbsp;<span data-i18n="app.removeTag">Remove Tag</span></a></li>
+	    <li><a id="tagMenuAddTagAsFilter" data-i18n="[title]ns.common:showFilesWithThisTagTooltip"><i class="fa fa-filter fa-fw"></i>
+            &nbsp;<span data-i18n="ns.common:showFilesWithThisTag">Show Files With This Tag</span></a></li>
+	    <li><a id="tagMenuEditTag" data-i18n="[title]ns.common:editTagTooltip"><i class="fa fa-pencil fa-fw"></i>
+            &nbsp;<span data-i18n="ns.common:editTag">Edit Tag</span></a></li>
+	    <li><a id="tagMenuMoveTagFirst" data-i18n="[title]ns.common:moveTagToFirstPositionTooltip"><i class="fa fa-fast-backward fa-fw"></i>
+            &nbsp;<span data-i18n="ns.common:moveTagToFirstPosition">Move Tag to First Position</span></a></li>
+	    <li><a id="tagMenuMoveTagLeft" data-i18n="[title]ns.common:moveTagToLeftTooltip"><i class="fa fa-backward fa-fw"></i>
+            &nbsp;<span data-i18n="ns.common:moveTagToLeft">Move Tag to Left</span></a></li>
+	    <li><a id="tagMenuMoveTagRight" data-i18n="[title]ns.common:moveTagToRightTooltip"><i class="fa fa-forward fa-fw"></i>
+            &nbsp;<span data-i18n="ns.common:moveTagToRight">Move Tag to Right</span></a></li>
+	    <li><a id="tagMenuRemoveTag" data-i18n="[title]ns.common:removeTagTooltip"><i class="fa fa-trash-o fa-fw"></i>
+            &nbsp;<span data-i18n="ns.common:removeTag">Remove Tag</span></a></li>
 	</ul>
 </div>        
 
 <div id="tagTreeMenu" class="dropdown clearfix">
 	<ul class="dropdown-menu" role="menu" style="display:block;position:static;">
-		<li class="dropdown-header"><span data-i18n="app.tagOperations">Tag Operations</span><button type="button" class="close">×</button></li>
+		<li class="dropdown-header"><span data-i18n="ns.common:tagOperations">Tag Operations</span><button type="button" class="close">×</button></li>
         <li class="divider"></li>
-	    <li><a id="tagTreeMenuAddTagToFile" data-i18n="[title]app.tagSelectedFilesTooltip">
-            <i class="fa fa-tag fa-fw"></i>&nbsp;<span data-i18n="app.tagSelectedFiles">Tag Selected Files</span></a></li>
-	    <li><a id="tagTreeMenuAddTagAsFilter" data-i18n="[title]app.showFilesWithThisTagTooltip">
-            <i class="fa fa-filter fa-fw"></i>&nbsp;<span data-i18n="app.showFilesWithThisTag">Show Files With This Tag</span></a></li>
-	    <li><a id="tagTreeMenuEditTag" data-i18n="[title]app.editTagTooltip">
-            <i class="fa fa-pencil fa-fw"></i>&nbsp;<span data-i18n="app.editTag">Edit Tag</span></a></li>
-	    <li><a id="tagTreeMenuDeleteTag" data-i18n="[title]app.deleteTagFromTagGroupTooltip">
-            <i class="fa fa-trash-o fa-fw"></i>&nbsp;<span data-i18n="app.deleteTagFromTagGroup">Delete Tag</span></a></li>
+	    <li><a id="tagTreeMenuAddTagToFile" data-i18n="[title]ns.common:tagSelectedFilesTooltip">
+            <i class="fa fa-tag fa-fw"></i>&nbsp;<span data-i18n="ns.common:tagSelectedFiles">Tag Selected Files</span></a></li>
+	    <li><a id="tagTreeMenuAddTagAsFilter" data-i18n="[title]ns.common:showFilesWithThisTagTooltip">
+            <i class="fa fa-filter fa-fw"></i>&nbsp;<span data-i18n="ns.common:showFilesWithThisTag">Show Files With This Tag</span></a></li>
+	    <li><a id="tagTreeMenuEditTag" data-i18n="[title]ns.common:editTagTooltip">
+            <i class="fa fa-pencil fa-fw"></i>&nbsp;<span data-i18n="ns.common:editTag">Edit Tag</span></a></li>
+	    <li><a id="tagTreeMenuDeleteTag" data-i18n="[title]ns.common:deleteTagFromTagGroupTooltip">
+            <i class="fa fa-trash-o fa-fw"></i>&nbsp;<span data-i18n="ns.common:deleteTagFromTagGroup">Delete Tag</span></a></li>
 	</ul>
 </div>  
 
 <div id="tagGroupMenu" class="dropdown clearfix">
 	<ul class="dropdown-menu" role="menu" style="display:block;position:static;">
-		<li class="dropdown-header"><span data-i18n="app.tagGroupOperations">Tag Group Operations</span><button type="button" class="close">×</button></li>
+		<li class="dropdown-header"><span data-i18n="ns.common:tagGroupOperations">Tag Group Operations</span><button type="button" class="close">×</button></li>
         <li class="divider"></li>					
-	    <li><a id="tagGroupMenuCreateNewTag" data-i18n="[title]app.addTagsTooltip">
-            <i class="fa fa-tag fa-fw"></i>&nbsp;<span data-i18n="app.addTags">Add Tags</span></a></li>
-	    <li><a id="tagGroupMenuCreateTagGroup" data-i18n="[title]app.createTagGroupTooltip">
-            <i class="fa fa-tags fa-fw"></i>&nbsp;<span data-i18n="app.createTagGroup">Create Tag Group</span></a></li>
-	    <li><a id="tagGroupMenuMoveUp" data-i18n="[title]app.moveTagGroupUpTooltip">
-            <i class="fa fa-arrow-up fa-fw"></i>&nbsp;<span data-i18n="app.moveTagGroupUp">Move Tag Group Up</span></a></li>
-	    <li><a id="tagGroupMenuMoveDown" data-i18n="[title]app.moveTagGroupDownTooltip">
-            <i class="fa fa-arrow-down fa-fw"></i>&nbsp;<span data-i18n="app.moveTagGroupDown">Move Tag Group Down</span></a></li>
-	    <li><a id="tagGroupMenuEditTagGroup" data-i18n="[title]app.editTagGroupTooltip">
-            <i class="fa fa-pencil fa-fw"></i>&nbsp;<span data-i18n="app.editTagGroup">Edit Tag Group</span></a></li>
-	    <li><a id="tagGroupMenuDeleteTagGroup" data-i18n="[title]app.deleteTagGroupTooltip">
-            <i class="fa fa-trash-o fa-fw"></i>&nbsp;<span data-i18n="app.deleteTagGroup">Delete Tag Group</span></a></li>
+	    <li><a id="tagGroupMenuCreateNewTag" data-i18n="[title]ns.common:addTagsTooltip">
+            <i class="fa fa-tag fa-fw"></i>&nbsp;<span data-i18n="ns.common:addTags">Add Tags</span></a></li>
+	    <li><a id="tagGroupMenuCreateTagGroup" data-i18n="[title]ns.common:createTagGroupTooltip">
+            <i class="fa fa-tags fa-fw"></i>&nbsp;<span data-i18n="ns.common:createTagGroup">Create Tag Group</span></a></li>
+	    <li><a id="tagGroupMenuMoveUp" data-i18n="[title]ns.common:moveTagGroupUpTooltip">
+            <i class="fa fa-arrow-up fa-fw"></i>&nbsp;<span data-i18n="ns.common:moveTagGroupUp">Move Tag Group Up</span></a></li>
+	    <li><a id="tagGroupMenuMoveDown" data-i18n="[title]ns.common:moveTagGroupDownTooltip">
+            <i class="fa fa-arrow-down fa-fw"></i>&nbsp;<span data-i18n="ns.common:moveTagGroupDown">Move Tag Group Down</span></a></li>
+	    <li><a id="tagGroupMenuEditTagGroup" data-i18n="[title]ns.common:editTagGroupTooltip">
+            <i class="fa fa-pencil fa-fw"></i>&nbsp;<span data-i18n="ns.common:editTagGroup">Edit Tag Group</span></a></li>
+	    <li><a id="tagGroupMenuDeleteTagGroup" data-i18n="[title]ns.common:deleteTagGroupTooltip">
+            <i class="fa fa-trash-o fa-fw"></i>&nbsp;<span data-i18n="ns.common:deleteTagGroup">Delete Tag Group</span></a></li>
     </ul>
 </div>  
 
 <div id="directoryMenu" class="dropdown clearfix">
 	<ul class="dropdown-menu" role="menu" style="display:block;position:static;">
-		<li class="dropdown-header"><span data-i18n="app.directoryOperations">Directory Operations</span><button type="button" class="close">×</button></li>
+		<li class="dropdown-header"><span data-i18n="ns.common:directoryOperations">Directory Operations</span><button type="button" class="close">×</button></li>
         <li class="divider"></li>		
-	    <li><a id="directoryMenuReloadDirectory" data-i18n="[title]app.reloadDirectoryTooltip">
-            <i class="fa fa-refresh"></i>&nbsp;<span data-i18n="app.reloadDirectory">Reload Directory</span></a></li>
-	    <li><a id="directoryMenuCreateDirectory" data-i18n="[title]app.newSubdirectoryTooltip">
-            <i class="fa fa-folder"></i>&nbsp;<span data-i18n="app.newSubdirectory">New Subdirectory</span></a></li>
-	    <li><a id="directoryMenuOpenDirectory" data-i18n="[title]app.openDirectoriyNativelyTooltip">
-            <i class="fa fa-folder-open"></i>&nbsp;<span data-i18n="app.openDirectoriyNatively">Show in File Manager</span></a></li>
+	    <li><a id="directoryMenuReloadDirectory" data-i18n="[title]ns.common:reloadDirectoryTooltip">
+            <i class="fa fa-refresh"></i>&nbsp;<span data-i18n="ns.common:reloadDirectory">Reload Directory</span></a></li>
+	    <li><a id="directoryMenuCreateDirectory" data-i18n="[title]ns.common:newSubdirectoryTooltip">
+            <i class="fa fa-folder"></i>&nbsp;<span data-i18n="ns.common:newSubdirectory">New Subdirectory</span></a></li>
+	    <li><a id="directoryMenuOpenDirectory" data-i18n="[title]ns.common:openDirectoriyNativelyTooltip">
+            <i class="fa fa-folder-open"></i>&nbsp;<span data-i18n="ns.common:openDirectoriyNatively">Show in File Manager</span></a></li>
 	</ul>
 </div>
 
