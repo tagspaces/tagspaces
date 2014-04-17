@@ -1,4 +1,4 @@
-/* Copyright (c) 2012-2013 The TagSpaces Authors. All rights reserved.
+/* Copyright (c) 2012-2014 The TagSpaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that 
  * can be found in the LICENSE file. */
 define(function(require, exports, module) {
@@ -432,48 +432,56 @@ define(function(require, exports, module) {
         var $contactUsContent = $("#contactUsContent");
 
         $contactUsContent.on('click',"#openHints", function () {
-                showWelcomeDialog();
+            showWelcomeDialog();
         });
 
-        // Handle external links _system is important in cordova
         $contactUsContent.on('click',"#openUservoice", function () {
-            window.open($(this).attr("data-url"),"_system");
+            openLinkExternally($(this).attr("data-url"));
         });
 
         $contactUsContent.on('click',"#openGooglePlay", function () {
-            window.open($(this).attr("data-url"),"_system");
+            openLinkExternally($(this).attr("data-url"));
         });
 
         $contactUsContent.on('click',"#openWhatsnew", function () {
-            window.open($(this).attr("data-url"),"_system");
+            openLinkExternally($(this).attr("data-url"));
         });
 
         $contactUsContent.on('click',"#openGitHubIssues", function () {
-            window.open($(this).attr("data-url"),"_system");
+            openLinkExternally($(this).attr("data-url"));
         });
 
         $contactUsContent.on('click',"#openTwitter", function () {
-            window.open($(this).attr("data-url"),"_system");
+            openLinkExternally($(this).attr("data-url"));
         });
 
         $contactUsContent.on('click',"#openTwitter2", function () {
-            window.open($(this).attr("data-url"),"_system");
+            openLinkExternally($(this).attr("data-url"));
         });
 
         $contactUsContent.on('click',"#openGooglePlus", function () {
-            window.open($(this).attr("data-url"),"_system");
+            openLinkExternally($(this).attr("data-url"));
         });
 
         $contactUsContent.on('click',"#openFacebook", function () {
-            window.open($(this).attr("data-url"),"_system");
+            openLinkExternally((this).attr("data-url"));
         });
 
         // Hide drop downs by click and drag
         $(document).click(function () {
             TSCORE.hideAllDropDownMenus();
         });
-
     };
+
+    // Handle external links
+    function openLinkExternally(url) {
+        if(isNode) {
+            gui.Shell.openExternal(url);
+        } else {
+            // _system is needed for cordova
+            window.open(url,"_system");
+        }
+    }
 
     function clearSearchFilter() {
         $("#searchOptions").hide();
@@ -615,6 +623,7 @@ define(function(require, exports, module) {
     exports.showContextMenu			    = showContextMenu;
     exports.initUI 					    = initUI;
     exports.clearSearchFilter           = clearSearchFilter;
+    exports.openLinkExternally          = openLinkExternally;
     exports.enableTopToolbar            = enableTopToolbar;
     exports.disableTopToolbar           = disableTopToolbar;
     exports.showAlertDialog 		    = showAlertDialog;
