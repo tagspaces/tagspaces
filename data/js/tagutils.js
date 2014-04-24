@@ -1,20 +1,15 @@
-/* Copyright (c) 2012 The Tagspaces Authors. All rights reserved.
+/* Copyright (c) 2012-2014 The Tagspaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that 
  * can be found in the LICENSE file. */
 define(function(require, exports, module) {
 "use strict";
 
     console.log("Loading tagutils.js ...");
-    	
+
     var TSCORE = require("tscore");
 
     var BEGIN_TAG_CONTAINER = "[";
     var END_TAG_CONTAINER = "]";
-
-
-    function isWindows() {
-        return (navigator.appVersion.indexOf("Win") !== -1);
-    }
 
     function extractFileName(filePath) {
         return filePath.substring(filePath.lastIndexOf(TSCORE.dirSeparator) + 1, filePath.length);
@@ -25,7 +20,7 @@ define(function(require, exports, module) {
         var indexOfDot = fileName.lastIndexOf(".");
         if(indexOfDot > 0) {
             return fileName.substring(0, indexOfDot);            
-        } else if(indexOfDot == 0) { // case filename: .txt
+        } else if(indexOfDot === 0) { // case filename: .txt
             return "";            
         } else {
             return fileName;
@@ -76,7 +71,7 @@ define(function(require, exports, module) {
 
         if( (beginTagContainer >= 0 ) && (beginTagContainer < endTagContainer) ){
             // case: "asd[tag1, tag2]"         
-            if(endTagContainer == fileName.trim().length) {
+            if(endTagContainer === fileName.trim().length) {
                 return fileName.slice(0,beginTagContainer);                
             // case: "title1 [tag1 tag2] title2"         
             } else {
@@ -91,7 +86,7 @@ define(function(require, exports, module) {
 
     function formatFileSize(sizeInBytes, siSystem) {
         var threshold = siSystem ? 1000 : 1024;
-        if(sizeInBytes < threshold) return sizeInBytes + ' B';
+        if(sizeInBytes < threshold) { return sizeInBytes + ' B'; }
         var units = siSystem ? ['kB','MB','GB','TB','PB','EB'] : ['KiB','MiB','GiB','TiB','PiB','EiB'];
         var cUnit = -1;
         do {
@@ -103,24 +98,24 @@ define(function(require, exports, module) {
     }
 
     function formatDateTime(date, includeTime) {
-        if ((date === undefined) || (date === "")) return "";
+        if ((date === undefined) || (date === "")) { return ""; }
         var d = new Date(date);
         var cDate = d.getDate();
         cDate = cDate + "";
-        if (cDate.length == 1) { cDate = "0" + cDate; }
+        if (cDate.length === 1) { cDate = "0" + cDate; }
         var cMonth = d.getMonth(); cMonth++;
         cMonth = cMonth + "";
-        if (cMonth.length == 1) { cMonth = "0" + cMonth; }    
+        if (cMonth.length === 1) { cMonth = "0" + cMonth; }
         var cYear = d.getFullYear();
         var cHour = d.getHours();
         cHour = cHour + "";
-        if (cHour.length == 1) { cHour = "0" + cHour; }
+        if (cHour.length === 1) { cHour = "0" + cHour; }
         var cMinute = d.getMinutes();
         cMinute = cMinute + "";
-        if (cMinute.length == 1) { cMinute = "0" + cMinute; }
+        if (cMinute.length === 1) { cMinute = "0" + cMinute; }
         var cSecond = d.getSeconds();
         cSecond = cSecond + "";
-        if (cSecond.length == 1) { cSecond = "0" + cSecond; }    
+        if (cSecond.length === 1) { cSecond = "0" + cSecond; }
         var time = "";
         if (includeTime) {
             time = " - "+cHour+":"+cMinute+":"+cSecond; 
@@ -129,24 +124,24 @@ define(function(require, exports, module) {
     }
     
     function formatDateTime4Tag(date, includeTime) {
-        if ((date === undefined) || (date === "")) return "";
+        if ((date === undefined) || (date === "")) { return ""; }
         var d = new Date(date);
         var cDate = d.getDate();
         cDate = cDate + "";
-        if (cDate.length == 1) { cDate = "0" + cDate; }
+        if (cDate.length === 1) { cDate = "0" + cDate; }
         var cMonth = d.getMonth(); cMonth++;
         cMonth = cMonth + "";
-        if (cMonth.length == 1) { cMonth = "0" + cMonth; }    
+        if (cMonth.length === 1) { cMonth = "0" + cMonth; }
         var cYear = d.getFullYear();
         var cHour = d.getHours();
         cHour = cHour + "";
-        if (cHour.length == 1) { cHour = "0" + cHour; }
+        if (cHour.length === 1) { cHour = "0" + cHour; }
         var cMinute = d.getMinutes();
         cMinute = cMinute + "";
-        if (cMinute.length == 1) { cMinute = "0" + cMinute; }
+        if (cMinute.length === 1) { cMinute = "0" + cMinute; }
         var cSecond = d.getSeconds();
         cSecond = cSecond + "";
-        if (cSecond.length == 1) { cSecond = "0" + cSecond; }    
+        if (cSecond.length === 1) { cSecond = "0" + cSecond; }
         var time = "";
         if (includeTime) {
             time = "-"+cHour+""+cMinute+""+cSecond; 
@@ -155,11 +150,11 @@ define(function(require, exports, module) {
     } 
     
     function convertStringToDate(dateString) {
-        if ((dateString === undefined) || (dateString === "")) return false;   
-        if (dateString.length == 8) {
-        	return new Date(dateString.substring(0,4)+"-"+dateString.substring(4,6)+"-"+dateString.substring(6,8));
+        if ((dateString === undefined) || (dateString === "")) { return false; }
+        if (dateString.length === 8) {
+            return new Date(dateString.substring(0,4)+"-"+dateString.substring(4,6)+"-"+dateString.substring(6,8));
         } else {
-        	return false;
+            return false;
         }
     }
 
@@ -196,7 +191,7 @@ define(function(require, exports, module) {
         
         var fileName = extractFileName(filePath);
         
-        var tags = [];
+        var tags;
         var tagContainer;
         var beginTagContainer = fileName.indexOf(BEGIN_TAG_CONTAINER);
         if(beginTagContainer < 0) {
@@ -211,8 +206,7 @@ define(function(require, exports, module) {
         var cleanedTags = [];
         
         // Extracting tags from the name of the containing directory
-        var tagsFromDirName = [];
-        tagsFromDirName = extractContainingDirectoryName(filePath).trim().split(/[\s,+_-]+/);
+        var tagsFromDirName = extractContainingDirectoryName(filePath).trim().split(/[\s,+_-]+/);
 
         for (var i=0; i < tagsFromDirName.length; i++) {
             if(tagsFromDirName[i].trim().length > 1) {
@@ -221,8 +215,8 @@ define(function(require, exports, module) {
         }
         
         // Cleaning the tags from filename        
-        for (var i=0; i < tags.length; i++) {
-            if(tags[i].trim().length > 1) {
+        for (var j=0; j < tags.length; j++) {
+            if(tags[j].trim().length > 1) {
                 cleanedTags.push(tags[i]);
             }
         }
@@ -304,8 +298,8 @@ define(function(require, exports, module) {
 
         for (var i=0; i < tags.length; i++) {
             // check if tag is already in the tag array
-        	var tagLoc = extractedTags.indexOf(tags[i].trim())
-        	if(tagLoc >= 0) {
+            var tagLoc = extractedTags.indexOf(tags[i].trim());
+            if(tagLoc >= 0) {
                 // Remove the new tag
                 extractedTags.splice(tagLoc,1);          
             } 
@@ -342,21 +336,23 @@ define(function(require, exports, module) {
             
         var extractedTags = extractTags(filePath);
 
+        var tmpTag;
+
         for (var i=0; i < extractedTags.length; i++) {
             // check if tag is already in the tag array
-            if(extractedTags[i] == tagName) {
-                if((direction == "prev") && (i > 0)) {
-                    var tmpTag = extractedTags[i-1];
+            if(extractedTags[i] === tagName) {
+                if((direction === "prev") && (i > 0)) {
+                    tmpTag = extractedTags[i-1];
                     extractedTags[i-1] = extractedTags[i];
                     extractedTags[i] = tmpTag;
                     break;
-                } else if ((direction == "next") && i < (extractedTags.length-1) ){
-                    var tmpTag = extractedTags[i];
+                } else if ((direction === "next") && i < (extractedTags.length-1) ){
+                    tmpTag = extractedTags[i];
                     extractedTags[i] = extractedTags[i+1];
                     extractedTags[i+1] = tmpTag;
                     break;
-                } else if ((direction == "first") && i > 0 ){
-                    var tmpTag = extractedTags[i];
+                } else if ((direction === "first") && i > 0 ){
+                    tmpTag = extractedTags[i];
                     extractedTags[i] = extractedTags[0];
                     extractedTags[0] = tmpTag;
                     break;
@@ -382,7 +378,7 @@ define(function(require, exports, module) {
 
         for (var i=0; i < extractedTags.length; i++) {
             // check if tag is already in the tag array
-            if(extractedTags[i] == oldTag) {
+            if(extractedTags[i] === oldTag) {
                 extractedTags[i] = newTag.trim();
             } 
         }    
@@ -400,12 +396,12 @@ define(function(require, exports, module) {
             
         var extractedTags = extractTags(filePath);
 
-		var fileExt = extractFileExtension(filePath);
-		if(fileExt.length > 0) {
-			fileExt = "."+fileExt;
-		}
+        var fileExt = extractFileExtension(filePath);
+        if(fileExt.length > 0) {
+            fileExt = "."+fileExt;
+        }
 
-		// TODO generalize generateFileName to support fileTitle & fileExtension
+        // TODO generalize generateFileName to support fileTitle & fileExtension
         var newFileName = generateFileName(newTitle, extractedTags);
        
         TSCORE.IO.renameFile(filePath, containingDirectoryPath+TSCORE.dirSeparator+newFileName+fileExt);
@@ -425,7 +421,7 @@ define(function(require, exports, module) {
 
         var newTags = [];
         for (var i=0; i < tags.length; i++) {
-            if(tags[i] != tagName) {
+            if(tags[i] !== tagName) {
                 newTags.push(tags[i]);
             }
         }
@@ -437,7 +433,7 @@ define(function(require, exports, module) {
 
     // Public API definition
     exports.beginTagContainer                   = BEGIN_TAG_CONTAINER;
-    exports.endTagContainer	                    = END_TAG_CONTAINER;
+    exports.endTagContainer                     = END_TAG_CONTAINER;
 
     exports.extractFileName                     = extractFileName;
     exports.extractFileNameWithoutExt           = extractFileNameWithoutExt;
@@ -458,7 +454,7 @@ define(function(require, exports, module) {
     exports.removeTag                           = removeTag;
     exports.removeTags                          = removeTags;
     exports.addTag                              = addTag;
-    exports.changeTitle 						= changeTitle;
+    exports.changeTitle                         = changeTitle;
     exports.stringEndsWith                      = stringEndsWith;
 
 });
