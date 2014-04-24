@@ -1,4 +1,4 @@
-/* Copyright (c) 2012-2013 The TagSpaces Authors. All rights reserved.
+/* Copyright (c) 2012-2014 The TagSpaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that 
  * can be found in the LICENSE file. */
 define(function(require, exports, module) {
@@ -6,7 +6,7 @@ define(function(require, exports, module) {
 
 console.log("Loading perspective.manager.js ...");
 
-var perspectives = undefined;
+var perspectives;
 
 var TSCORE = require("tscore");
 
@@ -92,7 +92,7 @@ var initPerspectiveSwitcher = function() {
         var curPers;
         // Finding the right perspective 
         perspectives.forEach(function(value) {
-            if(value.ID == extensions[i].id) {
+            if(value.ID === extensions[i].id) {
                 curPers = value;
             }
         });
@@ -118,7 +118,7 @@ var initPerspectiveSwitcher = function() {
 
 var redrawCurrentPerspective = function () {
     for (var i=0; i < perspectives.length; i++) {   
-        if(perspectives[i].ID == TSCORE.currentView) {  
+        if(perspectives[i].ID === TSCORE.currentView) {
             try {           
                 perspectives[i].load();
                 break;
@@ -153,7 +153,7 @@ var updateFileUI = function (oldFilePath,newFilePath) {
 
 var getNextFile = function (filePath) {
     for (var i=0; i < perspectives.length; i++) {
-        if(perspectives[i].ID == TSCORE.currentView) {
+        if(perspectives[i].ID === TSCORE.currentView) {
             try {
                 return perspectives[i].getNextFile(filePath);
             } catch(e) {
@@ -165,7 +165,7 @@ var getNextFile = function (filePath) {
 
 var getPrevFile = function (filePath) {
     for (var i=0; i < perspectives.length; i++) {
-        if(perspectives[i].ID == TSCORE.currentView) {
+        if(perspectives[i].ID === TSCORE.currentView) {
             try {
                 return perspectives[i].getPrevFile(filePath);
             } catch(e) {
@@ -189,18 +189,19 @@ var updateFileBrowserData = function(dirList) {
     console.log("Updating the file browser data...");
     
     TSCORE.fileList = [];
-    var tags = undefined;
-    var ext = undefined;
-    var title = undefined;
-    var fileSize = undefined;
-    var fileLMDT = undefined;
-    var path = undefined;
-    var filename = undefined;
+    var tags,
+        ext,
+        title,
+        fileSize,
+        fileLMDT,
+        path,
+        filename;
+
     for (var i=0; i < dirList.length; i++) {
         if (dirList[i].isFile){  
             // Considering Unix HiddenEntries (. in the beginning of the filename)
             if (TSCORE.Config.getShowUnixHiddenEntries() || 
-               (!TSCORE.Config.getShowUnixHiddenEntries() && (dirList[i].name.indexOf(".") != 0))) {
+               (!TSCORE.Config.getShowUnixHiddenEntries() && (dirList[i].name.indexOf(".") !== 0))) {
                  filename = dirList[i].name.replace(/(<([^>]+)>)/ig,""); // sanitizing filename
                  path = dirList[i].path.replace(/(<([^>]+)>)/ig,""); // sanitizing filepath
                  tags = TSCORE.TagUtils.extractTags(path);
@@ -209,8 +210,8 @@ var updateFileBrowserData = function(dirList) {
                  fileSize = dirList[i].size;
                  fileLMDT = dirList[i].lmdt;
                  
-                 if(fileSize == undefined) fileSize = "";
-                 if(fileLMDT == undefined) fileLMDT = "";
+                 if(fileSize == undefined)  { fileSize = "" };
+                 if(fileLMDT == undefined) { fileLMDT = "" };
                  var entry = [ext,title,tags,fileSize,fileLMDT,path,filename];   
                  TSCORE.fileList.push(entry);
             }
@@ -253,7 +254,7 @@ var changePerspective = function (viewType) {
     hideAllPerspectives();
 
     for (var i=0; i < perspectives.length; i++) {
-        if(perspectives[i].ID == viewType) {
+        if(perspectives[i].ID === viewType) {
             var $currentPerspectitveIcon = $('#currentPerspectitveIcon');
             $currentPerspectitveIcon.removeClass();
             $currentPerspectitveIcon.addClass(perspectives[i].Icon);
@@ -293,12 +294,12 @@ var clearSelectedFiles = function () {
 exports.initPerspectives 			 = initPerspectives;
 exports.hideAllPerspectives          = hideAllPerspectives;	
 exports.redrawCurrentPerspective     = redrawCurrentPerspective;
-exports.getNextFile					 = getNextFile;
-exports.getPrevFile 				 = getPrevFile;
-exports.updateTreeData				 = updateTreeData;
-exports.updateFileBrowserData		 = updateFileBrowserData;
-exports.refreshFileListContainer	 = refreshFileListContainer;
-exports.clearSelectedFiles			 = clearSelectedFiles;
+exports.getNextFile                  = getNextFile;
+exports.getPrevFile                  = getPrevFile;
+exports.updateTreeData               = updateTreeData;
+exports.updateFileBrowserData        = updateFileBrowserData;
+exports.refreshFileListContainer     = refreshFileListContainer;
+exports.clearSelectedFiles           = clearSelectedFiles;
 exports.removeFileUI                 = removeFileUI;
 exports.updateFileUI                 = updateFileUI;
 exports.changePerspective            = changePerspective;
