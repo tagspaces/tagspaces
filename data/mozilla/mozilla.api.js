@@ -1,6 +1,8 @@
 /* Copyright (c) 2012-2014 The TagSpaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that 
  * can be found in the LICENSE file. */
+/* global define  */
+
 define(function(require, exports, module) {
 "use strict";
 
@@ -41,28 +43,28 @@ define(function(require, exports, module) {
             if(message.success){
                 TSPOSTIO.renameFile(message.content[0],message.content[1]);
             } else {
-                TSCORE.updateLogger("Rename failed");
+                console.error("Rename failed");
             }
             break;
         case "saveTextFile":
             if(message.success){
                 TSPOSTIO.saveTextFile(message.content);
             } else {
-                TSCORE.updateLogger("Save failed");
+                console.error("Save failed");
             }
             break;
         case "createDirectory":
             if(message.success){
                 TSPOSTIO.createDirectory(message.content);
             } else {
-                TSCORE.updateLogger("Create dir failed");
+                console.error("Create dir failed");
             }
             break;
         case "loadTextFile":
             if(message.success){
                 TSPOSTIO.loadTextFile(message.content);
             } else {
-                TSCORE.updateLogger("File loading failed");
+                console.error("File loading failed");
             }
             break;
         case "listDirectory":
@@ -76,7 +78,7 @@ define(function(require, exports, module) {
             if(message.success){
                 TSPOSTIO.createDirectoryIndex(message.content);
             } else {
-                TSCORE.updateLogger("Indexing directory failed");
+                console.error("Indexing directory failed");
             }
             break;
         case "createDirectoryTree":
@@ -84,35 +86,35 @@ define(function(require, exports, module) {
                 console.log("Directory tree: "+JSON.stringify(message.content));
                 TSPOSTIO.createDirectoryTree(message.content);
             } else {
-                TSCORE.updateLogger("Indexing directory failed");
+                console.error("Indexing directory failed");
             }
             break;
         case "delete":
             if(message.success){
                 TSPOSTIO.deleteElement(message.content);
             } else {
-                TSCORE.updateLogger("Delete failed");
+                console.error("Delete failed");
             }
             break;
         case "selectDirectory":
             if(message.success){
                 TSPOSTIO.selectDirectory(message.content);
             } else {
-                TSCORE.updateLogger("Selecting directory failed.");
+                console.error("Selecting directory failed.");
             }
             break;
         case "checkNewVersion":
             if(message.success){
                 TSPOSTIO.checkNewVersion(message.content);
             } else {
-                TSCORE.updateLogger("Checking for new version failed.");
+                console.error("Checking for new version failed.");
             }
             break;
         case "getFileProperties":
             if(message.success){
                 TSPOSTIO.getFileProperties(message.content);
             } else {
-                TSCORE.updateLogger("Getting file properties failed.");
+                console.error("Getting file properties failed.");
             }
             break;
         default:
@@ -294,9 +296,9 @@ define(function(require, exports, module) {
     };    
     
     var openFile = function(filePath) {
-        // TODO implement openFile
-        console.log("Open file functionality not implemented in firefox yet!");
-        TSCORE.showAlertDialog("Open files natively is not implemented on chrome yet!");
+        // TODO implement openFile for firefox
+        console.log("Open file functionality not implemented in Firefox yet!");
+        TSCORE.showAlertDialog($.i18n.t("ns.dialogs:openFileNativelyAlert"));
     };    
     
     exports.saveSettings                = saveSettings;

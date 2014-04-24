@@ -1,7 +1,9 @@
 /* Copyright (c) 2012-2014 The TagSpaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that 
  * can be found in the LICENSE file. */
-/* jshint moz: true,  */
+/* jshint moz: true, strict: false */
+/* global exports */
+
 const {components, Cc, Ci, Cr, Cu} = require("chrome");
 var filesIO = require("sdk/io/file"); // file
 var runtime = require("sdk/system/runtime"); // runtime 
