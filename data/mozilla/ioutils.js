@@ -1,28 +1,28 @@
-/* Copyright (c) 2012-2013 The TagSpaces Authors. All rights reserved.
+/* Copyright (c) 2012-2014 The TagSpaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that 
  * can be found in the LICENSE file. */
-
+/* jshint moz: true,  */
 const {components, Cc, Ci, Cr, Cu} = require("chrome");
 var filesIO = require("sdk/io/file"); // file
 var runtime = require("sdk/system/runtime"); // runtime 
 const { getTabs, getTabId, getOwnerWindow } = require("sdk/tabs/utils"); // tabs/utils
  
 function getWindow(worker) {
-	let { tab } = worker;
+    let { tab } = worker;
  
-	if (!tab) {
-		return null;
-	}		
+    if (!tab) {
+        return null;
+    }
  
-	let rawTabs = getTabs();
+    let rawTabs = getTabs();
  
-	for (let rawTab of rawTabs) {
-		if (getTabId(rawTab) === tab.id) {
-			return getOwnerWindow(rawTab);
-		}			
-	}
-	 
-	return null;
+    for (let rawTab of rawTabs) {
+        if (getTabId(rawTab) === tab.id) {
+            return getOwnerWindow(rawTab);
+        }
+    }
+
+    return null;
 }
 
 function searchDir(dirPath, index, keewords) {
@@ -92,12 +92,12 @@ function directoryTree(dirPath) {
         var tree = {};
         var dirList = filesIO.list(dirPath);
         var directory = Cc['@mozilla.org/file/local;1'].createInstance(Ci.nsIFile);
-		directory.initWithPath(dirPath);
-		tree["name"] = directory.leafName;
+        directory.initWithPath(dirPath);
+        tree["name"] = directory.leafName;
         tree["isFile"] = false;
         tree["lmdt"] = directory.lastModifiedTime;   
         tree["path"] = dirPath; 		
-		tree["children"] = [];
+        tree["children"] = [];
 
         for (var i=0; i < dirList.length; i++) {
             try {
@@ -263,70 +263,70 @@ exports.rename = function rename(filePath, newFilePath, worker) {
 
     if(!filesIO.exists(newFilePath)) {
         try {
-        	// TODO Remove the OSX custom code after https://bugzilla.mozilla.org/show_bug.cgi?id=913663 is fixed 
-        	if(runtime.OS.toLowerCase().indexOf("darwin")>=0) { 
-				console.log("Renaming under macos ");
+            // TODO Remove the OSX custom code after https://bugzilla.mozilla.org/show_bug.cgi?id=913663 is fixed
+            if(runtime.OS.toLowerCase().indexOf("darwin")>=0) {
+                console.log("Renaming under macos ");
 
-				var binaryFile = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsIFile);
-				binaryFile.initWithPath( filePath );
+                var binaryFile = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsIFile);
+                binaryFile.initWithPath( filePath );
                 console.log("Init File: "+filePath);                
                 
-				var istream = Cc["@mozilla.org/network/file-input-stream;1"].createInstance(Ci.nsIFileInputStream);
-				istream.init(binaryFile, -1, -1, false);
-				var bstream = Cc["@mozilla.org/binaryinputstream;1"].createInstance(Ci.nsIBinaryInputStream);
-				bstream.setInputStream(istream);      		
+                var istream = Cc["@mozilla.org/network/file-input-stream;1"].createInstance(Ci.nsIFileInputStream);
+                istream.init(binaryFile, -1, -1, false);
+                var bstream = Cc["@mozilla.org/binaryinputstream;1"].createInstance(Ci.nsIBinaryInputStream);
+                bstream.setInputStream(istream);
                 var binaryStream = bstream.readBytes(bstream.available());
                 
                 var file = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsIFile);
                 file.initWithPath(newFilePath);
                 console.log("InitFile: "+newFilePath);                
                 
-		        var stream = Cc["@mozilla.org/network/file-output-stream;1"].createInstance(Ci.nsIFileOutputStream);
-				stream.init(file, 0x04 | 0x08 | 0x20, 0600, 0); // readwrite, create, truncate
-				stream.write(binaryStream,binaryStream.length);
-				if (stream instanceof Ci.nsISafeOutputStream) {
-				    stream.finish();
-				} else {
-				    stream.close();
-				}        		
-        		
-        		filesIO.remove(filePath);		
-	            worker.postMessage({ "command": "rename", "success": true, "content": [filePath, newFilePath] });        		
-        	} else {
-				var targetDir;
-				var targetFileName;
-				// Detecting WIN os
-	            if(runtime.OS.toLowerCase().indexOf("win")!=-1) {
-					targetDir = newFilePath.substring(0,newFilePath.lastIndexOf("\\"));
-					targetFileName = newFilePath.substring(newFilePath.lastIndexOf("\\")+1,newFilePath.length);	
-				} else {
-					targetDir = newFilePath.substring(0,newFilePath.lastIndexOf("/"));
-					targetFileName = newFilePath.substring(newFilePath.lastIndexOf("/")+1,newFilePath.length);
-				}
-            	console.log("Target dir: "+targetDir+" filename: "+targetFileName);        				
-	            var file = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsIFile);
-	            file.initWithPath(filePath); 
-	            
-	            //let FileUtils = Cu.import('resource://gre/modules/FileUtils.jsm').FileUtils;
-	            //var targetDirFile = new FileUtils.File(targetDir);            
-	            
-	            var targetDirFile = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsIFile);
-	            targetDirFile.initWithPath(filesIO.join(targetDir,""));
-	            //targetDirFile.initWithPath(targetDir);          
-	            
-	            console.log("After init: "+file.path+" targetdir: "+targetDirFile.path+" targetfilename: "+targetFileName); 
-	            file.moveTo(targetDirFile,targetFileName);
-	            var targetPath = filesIO.join(targetDir,targetFileName);
-	            worker.postMessage({ "command": "rename", "success": true, "content": [filePath, targetPath] });            		
-        	} 
+                var stream = Cc["@mozilla.org/network/file-output-stream;1"].createInstance(Ci.nsIFileOutputStream);
+                stream.init(file, 0x04 | 0x08 | 0x20, 0600, 0); // readwrite, create, truncate
+                stream.write(binaryStream,binaryStream.length);
+                if (stream instanceof Ci.nsISafeOutputStream) {
+                    stream.finish();
+                } else {
+                    stream.close();
+                }
+
+                filesIO.remove(filePath);
+                worker.postMessage({ "command": "rename", "success": true, "content": [filePath, newFilePath] });
+            } else {
+                var targetDir;
+                var targetFileName;
+                // Detecting WIN os
+                if(runtime.OS.toLowerCase().indexOf("win")!=-1) {
+                    targetDir = newFilePath.substring(0,newFilePath.lastIndexOf("\\"));
+                    targetFileName = newFilePath.substring(newFilePath.lastIndexOf("\\")+1,newFilePath.length);
+                } else {
+                    targetDir = newFilePath.substring(0,newFilePath.lastIndexOf("/"));
+                    targetFileName = newFilePath.substring(newFilePath.lastIndexOf("/")+1,newFilePath.length);
+                }
+                console.log("Target dir: "+targetDir+" filename: "+targetFileName);
+                var file = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsIFile);
+                file.initWithPath(filePath);
+
+                //let FileUtils = Cu.import('resource://gre/modules/FileUtils.jsm').FileUtils;
+                //var targetDirFile = new FileUtils.File(targetDir);
+
+                var targetDirFile = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsIFile);
+                targetDirFile.initWithPath(filesIO.join(targetDir,""));
+                //targetDirFile.initWithPath(targetDir);
+
+                console.log("After init: "+file.path+" targetdir: "+targetDirFile.path+" targetfilename: "+targetFileName);
+                file.moveTo(targetDirFile,targetFileName);
+                var targetPath = filesIO.join(targetDir,targetFileName);
+                worker.postMessage({ "command": "rename", "success": true, "content": [filePath, targetPath] });
+            }
         } catch(ex) {
             worker.postMessage({ "command": "rename", "success": false });
             console.error("Renaming failed "+ex);
         }   
-	} else {
-	    worker.postMessage({ "command": "rename", "success": false });
-	    console.error("Renaming failed. Target filepath already exists.");
-	}
+    } else {
+        worker.postMessage({ "command": "rename", "success": false });
+        console.error("Renaming failed. Target filepath already exists.");
+    }
 };
 
 exports.saveTextFile = function saveTextFile(filePath, content, worker) {
@@ -379,20 +379,20 @@ exports.saveTextFile = function saveTextFile(filePath, content, worker) {
 exports.promptFileOpenPicker = function promptFileOpenPicker(worker) {
     console.log("Opening file selection dialog");
     try { 
-	  var window = getWindow(worker);
-	  var fp = Cc["@mozilla.org/filepicker;1"].createInstance(Ci.nsIFilePicker);
-	  fp.init(window, "PDF Open", Ci.nsIFilePicker.modeOpen);
-	  fp.appendFilter("PDF files", "*.pdf");
-	  fp.appendFilters(Ci.nsIFilePicker.filterAll);
-	  fp.filterIndex = 0;
-	  var result = fp.show();
-	  if (result === Ci.nsIFilePicker.returnOK || result === Ci.nsIFilePicker.returnReplace) {
+      var window = getWindow(worker);
+      var fp = Cc["@mozilla.org/filepicker;1"].createInstance(Ci.nsIFilePicker);
+      fp.init(window, "PDF Open", Ci.nsIFilePicker.modeOpen);
+      fp.appendFilter("PDF files", "*.pdf");
+      fp.appendFilters(Ci.nsIFilePicker.filterAll);
+      fp.filterIndex = 0;
+      var result = fp.show();
+      if (result === Ci.nsIFilePicker.returnOK || result === Ci.nsIFilePicker.returnReplace) {
         worker.postMessage({
                 "command": "selectFile",
                 "success": true,
-				"content": fp.file.path
+                "content": fp.file.path
             });
-	  }
+      }
     } catch(ex) {
         worker.postMessage({
                 "command": "selectFile",
@@ -410,17 +410,17 @@ exports.promptDirectorySelector = function promptDirectorySelector(worker) {
     console.log("Opening directory selection dialog...");
     try { 
 //	  var window = require("window/utils").getMostRecentBrowserWindow(); 
-	  var window = getWindow(worker);
-	  var fp = Cc["@mozilla.org/filepicker;1"].createInstance(Ci.nsIFilePicker);
-	  fp.init(window, "Directory Selection", Ci.nsIFilePicker.modeGetFolder);
-	  var result = fp.show();
-	  if (result === Ci.nsIFilePicker.returnOK) {
+      var window = getWindow(worker);
+      var fp = Cc["@mozilla.org/filepicker;1"].createInstance(Ci.nsIFilePicker);
+      fp.init(window, "Directory Selection", Ci.nsIFilePicker.modeGetFolder);
+      var result = fp.show();
+      if (result === Ci.nsIFilePicker.returnOK) {
         worker.postMessage({
                 "command": "selectDirectory",
                 "success": true,
-				"content": fp.file.path
+                "content": fp.file.path
             });
-	  }
+      }
     } catch(ex) {
         worker.postMessage({
                 "command": "selectDirectory",
@@ -438,11 +438,11 @@ exports.openDirectory = function openDirectory(dirPath, worker) {
     console.log("Opening directory: "+dirPath);
     dirPath = "file://"+dirPath;
     try { 
-		var ioService = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
-		var uri = ioService.newURI(dirPath, null, null);
-		if (uri instanceof Ci.nsIFileURL && uri.file.isDirectory()) {
-		  uri.file.QueryInterface(Ci.nsILocalFile).launch();
-		}
+        var ioService = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
+        var uri = ioService.newURI(dirPath, null, null);
+        if (uri instanceof Ci.nsIFileURL && uri.file.isDirectory()) {
+          uri.file.QueryInterface(Ci.nsILocalFile).launch();
+        }
     } catch(ex) {
         console.error("Opening directory failed "+ex);
     } 
