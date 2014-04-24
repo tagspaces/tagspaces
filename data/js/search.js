@@ -1,4 +1,4 @@
-/* Copyright (c) 2012-2013 The TagSpaces Authors. All rights reserved.
+/* Copyright (c) 2012-2014 The TagSpaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that 
  * can be found in the LICENSE file. */
 define(function(require, exports, module) {
@@ -36,12 +36,12 @@ define(function(require, exports, module) {
             return obj;
         }); 
 
-        TSCORE.calculatedTags.length = 0;;
+        TSCORE.calculatedTags.length = 0;
         _.each(countData, function(count, tag) {
             TSCORE.calculatedTags.push({
                 "title":     tag,
                 "type" :     "plain",
-                "count":     count,
+                "count":     count
             });  
         }); 
         
@@ -51,7 +51,7 @@ define(function(require, exports, module) {
     var searchData = function(data, query) {
         query = query.toLowerCase().replace(/^\s+|\s+$/g, "");        
 
-        if(query.indexOf("?") == 0) {
+        if(query.indexOf("?") === 0) {
             TSCORE.Search.nextQuery = query.substring(1,query.length);
             TSCORE.IO.createDirectoryIndex(TSCORE.currentPath);
             return false;
@@ -68,7 +68,7 @@ define(function(require, exports, module) {
             var includedTags = [];
             var excludedTags = [];
             
-            queryTerms.forEach(function (value, index) {
+            queryTerms.forEach(function (value) {
                 if(value.length > 1) {
                     if(value.indexOf("!") == 0) {
                         excludedTerms.push([value.substring(1,value.length),false]);
@@ -83,54 +83,54 @@ define(function(require, exports, module) {
             });  
             
             data = _.filter(data, function(value) {
-                    // Searching in the whole filename
-                    var searchIn = value[TSCORE.fileListFILENAME].toLowerCase();
-                    var tags = value[TSCORE.fileListTAGS];
-                    var result = true;
-                    if(tags.length < 1 && includedTags.length > 0) {
+                // Searching in the whole filename
+                var searchIn = value[TSCORE.fileListFILENAME].toLowerCase();
+                var tags = value[TSCORE.fileListTAGS];
+                var result = true;
+                if(tags.length < 1 && includedTags.length > 0) {
+                    return false;
+                }
+                for (var i=0; i < includedTerms.length; i++) {
+                    if(searchIn.indexOf(includedTerms[i][0]) >= 0) {
+                        includedTerms[i][1] = true;
+                    } else {
                         return false;
                     }
-                    for (var i=0; i < includedTerms.length; i++) {
-                        if(searchIn.indexOf(includedTerms[i][0]) >= 0) {
-                            includedTerms[i][1] = true;
-                        } else {
-                            return false;
-                        }
-                    };
-                    for (var i=0; i < excludedTerms.length; i++) {
-                        if(searchIn.indexOf(excludedTerms[i][0]) < 0) {
-                            excludedTerms[i][1] = true;
-                        } else {
-                            return false;
-                        }
-                    };
-                       
-                    for (var i=0; i < includedTags.length; i++) {
-                        includedTags[i][1] = false;
-                        for (var j=0; j < tags.length; j++) {
-                            if(tags[j].toLowerCase() == includedTags[i][0]) {
-                                includedTags[i][1] = true;
-                            }
-                        }
-                    };
-                    for (var i=0; i < includedTags.length; i++) {
-                        result = result & includedTags[i][1];
+                }
+                for (var i=0; i < excludedTerms.length; i++) {
+                    if(searchIn.indexOf(excludedTerms[i][0]) < 0) {
+                        excludedTerms[i][1] = true;
+                    } else {
+                        return false;
                     }
-                   
-                    for (var i=0; i < excludedTags.length; i++) {
-                        excludedTags[i][1] = true;
-                        for (var j=0; j < tags.length; j++) {
-                            if(tags[j].toLowerCase() == excludedTags[i][0]) {
-                                excludedTags[i][1] = false;
-                            }
-                        }   
-                    };                
-                    for (var i=0; i < excludedTags.length; i++) {
-                        result = result & excludedTags[i][1];
+                }
+
+                for (var i=0; i < includedTags.length; i++) {
+                    includedTags[i][1] = false;
+                    for (var j=0; j < tags.length; j++) {
+                        if(tags[j].toLowerCase() == includedTags[i][0]) {
+                            includedTags[i][1] = true;
+                        }
                     }
-                    
-                    return result;        
-                });
+                }
+                for (var i=0; i < includedTags.length; i++) {
+                    result = result & includedTags[i][1];
+                }
+
+                for (var i=0; i < excludedTags.length; i++) {
+                    excludedTags[i][1] = true;
+                    for (var j=0; j < tags.length; j++) {
+                        if(tags[j].toLowerCase() == excludedTags[i][0]) {
+                            excludedTags[i][1] = false;
+                        }
+                    }
+                }
+                for (var i=0; i < excludedTags.length; i++) {
+                    result = result & excludedTags[i][1];
+                }
+
+                return result;
+            });
     
             currentQuery = nextQuery;     
         }
