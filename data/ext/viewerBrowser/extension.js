@@ -79,6 +79,16 @@ define(function(require, exports, module) {
 	            e.preventDefault();
                 TSCORE.openLinkExternally($(this).attr("href"));
 	    	})
+
+            // fixing embedding of local images
+            $(viewerIframe.contentWindow.document).find( "img[src]").each(function(){
+                var currentSrc = $( this ).attr("src");
+                if(currentSrc.indexOf("http://") == 0 || currentSrc.indexOf("https://") == 0 || currentSrc.indexOf("data:") == 0) {
+                    // do nothing if src begins with http(s):// or data:
+                } else {
+                    $( this ).attr("src","file://"+fileDirectory+TSCORE.dirSeparator+currentSrc);
+                }
+            });
 	    }         
     };
 	
