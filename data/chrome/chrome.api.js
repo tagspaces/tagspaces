@@ -80,11 +80,11 @@ IO-API
     function generateDirectoryTree(dirPath) {
         try {
             var tree = {}; 
-            tree["name"] = dirPath.substring(dirPath.lastIndexOf(TSCORE.dirSeparator) + 1, dirPath.length);
-            tree["type"] = false;
-            tree["lmdt"] = 0;   
-            tree["path"] = dirPath;         
-            tree["children"] = [];            
+            tree.name = dirPath.substring(dirPath.lastIndexOf(TSCORE.dirSeparator) + 1, dirPath.length);
+            tree.type = false;
+            tree.lmdt = 0;
+            tree.path = dirPath;
+            tree.children = [];
             var dirList = nativeIO.getDirEntries(dirPath); 
             for (var i=0; i < dirList.length; i++) {
                 var path = dirPath+TSCORE.dirSeparator+dirList[i];
@@ -96,7 +96,7 @@ IO-API
                     if(isWin) {
                         lastDateModified = new Date(nativeIO.getFileLastDateModified(path)*1000);
                     }
-                    tree["children"].push({
+                    tree.children.push({
                         "name":   dirList[i],
                         "isFile": true,
                         "size":   fileSize,
@@ -104,7 +104,7 @@ IO-API
                         "path":   path 
                     });            
                 } else {
-                    tree["children"].push( generateDirectoryTree(path) );                   
+                    tree.children.push( generateDirectoryTree(path) );
                 }  
             }
             return tree;
@@ -113,13 +113,9 @@ IO-API
         }         
     }	
 
-    function isWindows() {
-        return (navigator.platform == 'Win32');
-    }
-
     var checkNewVersion = function() {
         console.log("Checking for new version...");
-        var cVer = TSCORE.Config.DefaultSettings["appVersion"]+"."+TSCORE.Config.DefaultSettings["appBuild"];
+        var cVer = TSCORE.Config.DefaultSettings.appVersion+"."+TSCORE.Config.DefaultSettings.appBuild;
         $.ajax({
             url: 'http://tagspaces.org/releases/version.json?cVer='+cVer,
             type: 'GET'
@@ -262,7 +258,7 @@ IO-API
         var blobInt8 = new Int8Array(byteArray);
         var blob = new Blob([blobInt8]);           
         var reader = new FileReader();
-        reader.onloadend = function(e){
+        reader.onloadend = function(){
             var data = Array.prototype.slice.call(new Uint8Array(reader.result), 0);
             nativeIO.saveBlobToFile(filePath, data);
             TSPOSTIO.saveTextFile(filePath);
@@ -352,11 +348,7 @@ IO-API
     var checkAccessFileURLAllowed = function() {
         chrome.extension.isAllowedFileSchemeAccess(function(isAllowedAccess) {
             if(!isAllowedAccess) {
-               TSCORE.showAlertDialog(
-                    "Please make sure that you check the 'Allow access to file URLs'"+
-                    " checkbox in the extension settings of chrome/chromium ('chrome://extensions/'). ",
-                    "TagSpaces can not read files from your local storage!"
-               );               
+               TSCORE.showAlertDialog($.i18n.t("ns.dialogs:accessFileURLNotAllowedAlert"));
             }
         });          
     };
@@ -395,22 +387,22 @@ IO-API
         }
     };
 
-    exports.createDirectory 			= createDirectory;
-    exports.renameFile 					= renameFile;
-    exports.loadTextFile 				= loadTextFile;
-    exports.saveTextFile 				= saveTextFile;
-    exports.listDirectory 				= listDirectory;
-    exports.listSubDirectories          = listSubDirectories;	
-    exports.deleteElement 				= deleteElement;
-    exports.createDirectoryIndex 		= createDirectoryIndex;
-    exports.createDirectoryTree 		= createDirectoryTree;
-    exports.selectDirectory 			= selectDirectory;
-    exports.openDirectory				= openDirectory;
-    exports.openFile                    = openFile;	
-    exports.selectFile 					= selectFile;
-    exports.openExtensionsDirectory 	= openExtensionsDirectory;
-    exports.checkAccessFileURLAllowed 	= checkAccessFileURLAllowed;
-    exports.checkNewVersion 			= checkNewVersion;
-    exports.getFileProperties           = getFileProperties; 
+    exports.createDirectory             = createDirectory;
+    exports.renameFile                  = renameFile;
+    exports.loadTextFile                = loadTextFile;
+    exports.saveTextFile                = saveTextFile;
+    exports.listDirectory               = listDirectory;
+    exports.listSubDirectories          = listSubDirectories;
+    exports.deleteElement               = deleteElement;
+    exports.createDirectoryIndex        = createDirectoryIndex;
+    exports.createDirectoryTree         = createDirectoryTree;
+    exports.selectDirectory             = selectDirectory;
+    exports.openDirectory               = openDirectory;
+    exports.openFile                    = openFile;
+    exports.selectFile                  = selectFile;
+    exports.openExtensionsDirectory     = openExtensionsDirectory;
+    exports.checkAccessFileURLAllowed   = checkAccessFileURLAllowed;
+    exports.checkNewVersion             = checkNewVersion;
+    exports.getFileProperties           = getFileProperties;
 
 });
