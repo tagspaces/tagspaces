@@ -10,13 +10,6 @@ define(function(require, exports, module) {
     var TSPOSTIO = require("tspostioapi");  
     
     function initUI() {
-        $('#addPerspectiveButton').click(function(e) {
-            // Fixes reloading of the application by click
-            e.preventDefault();
-            
-            addPerspective($('#perspectiveList'), "");
-        });   
-
         $( "#gotoParentDirButton" ).click(function() {
             var parent = TSCORE.TagUtils.extractParentDirectoryPath($("#directoryPath").val());
             TSCORE.IO.listSubDirectories(parent);
@@ -31,14 +24,12 @@ define(function(require, exports, module) {
         $('#directoryPath').val(dirPath);
 
         var subfolders = $('#subdirectoriesArea').empty();
-        if(TSCORE.subfoldersDirBrowser == undefined || TSCORE.subfoldersDirBrowser.length <= 0) {
+        if(TSCORE.subfoldersDirBrowser === undefined || TSCORE.subfoldersDirBrowser.length <= 0) {
                 subfolders.append("<div class='alert alert-warning'>No subfolders found</div>");          
         } else {
             for(var j=0; j < TSCORE.subfoldersDirBrowser.length; j++) {                    
                 if (TSCORE.Config.getShowUnixHiddenEntries() || 
-                        (!TSCORE.Config.getShowUnixHiddenEntries() 
-                          && (TSCORE.subfoldersDirBrowser[j].name.indexOf(".") != 0)
-                         )
+                        (!TSCORE.Config.getShowUnixHiddenEntries() && (TSCORE.subfoldersDirBrowser[j].name.indexOf(".") !== 0))
                     ) {
                     subfolders.append($("<button>", { 
                         "class":    "btn btn-sm dirButton", 
