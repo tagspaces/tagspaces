@@ -1,7 +1,7 @@
 /* Copyright (c) 2012-2014 The TagSpaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that 
  * can be found in the LICENSE file. */
-/* global define  */
+/* global define, Handlebars  */
 
 define(function(require, exports, module) {
 "use strict";
@@ -50,16 +50,16 @@ define(function(require, exports, module) {
         var hasSubFolders = false;
         
         for(var i=0; i < directoryHistory.length; i++) {
-            if(directoryHistory[i].path == TSCORE.currentPath) {
-                directoryHistory[i]["children"] = new Array();
+            if(directoryHistory[i].path === TSCORE.currentPath) {
+                directoryHistory[i].children = [];
                 for(var j=0; j < dirList.length; j++) {
                      if(!dirList[j].isFile) {
-                        directoryHistory[i]["children"].push(dirList[j]);
+                        directoryHistory[i].children.push(dirList[j]);
                         hasSubFolders = true;
                      }
                 }
                 // Sort the dirList alphabetically
-                directoryHistory[i]["children"].sort(function(a,b) { return a.name.localeCompare(b.name); });
+                directoryHistory[i].children.sort(function(a,b) { return a.name.localeCompare(b.name); });
             }
         }
 
@@ -78,11 +78,12 @@ define(function(require, exports, module) {
         var subfolders, 
             homeIcon,
             i;
-            
-        $("#alternativeNavigator").empty();
+
+        var $alternativeNavigator = $("#alternativeNavigator");
+        $alternativeNavigator.empty();
         for(i=0; i < directoryHistory.length; i++) {
             homeIcon = "";
-            if(i==0) {
+            if(i===0) {
                 homeIcon = "<i class='fa fa-home'></i>&nbsp;";
             }
             
@@ -124,21 +125,24 @@ define(function(require, exports, module) {
             .append($("<li>", { "text": 'Subfolders of \"'+directoryHistory[i].name+'\"', "class": 'dropdown-header' })
             );
                           
-            if(directoryHistory[i]["children"].length <= 0) {
-                    subfolders.append("<div class='alert alert-warning'>No subfolders found</div>");          
+            if(directoryHistory[i].children.length <= 0) {
+                    subfolders.append("<div>", {
+                        class:  'alert alert-warning',
+                        text:   $.i18n.t("ns.common:noSubfoldersFound")
+                    });
             } else {
-                for(var j=0; j < directoryHistory[i]["children"].length; j++) {                    
+                for(var j=0; j < directoryHistory[i].children.length; j++) {
                     if (TSCORE.Config.getShowUnixHiddenEntries() || 
                             (!TSCORE.Config.getShowUnixHiddenEntries() 
-                              && (directoryHistory[i]["children"][j].name.indexOf(".") != 0)
+                              && (directoryHistory[i].children[j].name.indexOf(".") !== 0)
                              )
                         ) {
                         subfolders.append($("<button>", {
                             "class":    "btn dirButton",
-                            "key":      directoryHistory[i]["children"][j].path,
-                            "title":    directoryHistory[i]["children"][j].path,
+                            "key":      directoryHistory[i].children[j].path,
+                            "title":    directoryHistory[i].children[j].path,
                             "style":    "margin: 1px;",
-                            "text":     " "+directoryHistory[i]["children"][j].name
+                            "text":     " "+directoryHistory[i].children[j].name
                         })
                         .prepend("<i class='fa fa-folder-o'></i>")            
                         .click( function() {
@@ -147,9 +151,9 @@ define(function(require, exports, module) {
                         );
                     }
                }        
-           }            
-            
-            $("#alternativeNavigator")
+           }
+
+            $alternativeNavigator
                 .append($("<div>", {
                         "class":      "btn-group dropup"
                     })
@@ -169,10 +173,10 @@ define(function(require, exports, module) {
     
     function generateDirPath() {
         console.log("Generating Directory Path...");
-        $("#locationContent").empty();
-        $("#locationContent").addClass("accordion");
+        var $locationContent = $("#locationContent");
+        $locationContent.empty().addClass("accordion");
         for(var i=0; i < directoryHistory.length; i++) {
-            $("#locationContent").append($("<div>", { 
+            $locationContent.append($("<div>", {
                 "class":        "accordion-group disableTextSelection",   
                 "style":        "width: 99%; border: 0px #aaa solid;"
             })
@@ -238,12 +242,12 @@ define(function(require, exports, module) {
             .append($("<div>", { 
                 "class":    "accordion-body collapse in",
                 "id":       "dirButtons"+i,
-                "style":    "margin: 0px 0px 0px 3px; border: 0px;"
+                "style":    "margin: 0 0 0 3px; border: 0;"
             })          
             .append($("<div>", { 
                 "class":    "accordion-inner",
                 "id":       "dirButtonsContent"+i,
-                "style":    "padding: 2px; border: 0px;"
+                "style":    "padding: 2px; border: 0;"
             })
             ) // end accordion-inner    
             ) // end accordion button        
@@ -254,15 +258,15 @@ define(function(require, exports, module) {
             if(directoryHistory[i]["children"].length <= 0) {
                     dirButtons.append("<div class='alert'><strong> No subfolders found</strong></div>");          
             } else {
-                for(var j=0; j < directoryHistory[i]["children"].length; j++) {                    
+                for(var j=0; j < directoryHistory[i].children.length; j++) {
                     if (TSCORE.Config.getShowUnixHiddenEntries() || 
-                            (!TSCORE.Config.getShowUnixHiddenEntries() && (directoryHistory[i]["children"][j].name.indexOf(".") != 0))) {
+                            (!TSCORE.Config.getShowUnixHiddenEntries() && (directoryHistory[i].children[j].name.indexOf(".") != 0))) {
                         dirButtons.append($("<button>", { 
                             "class":    "btn btn-sm dirButton", 
-                            "key":      directoryHistory[i]["children"][j].path,
-                            "title":    directoryHistory[i]["children"][j].path,
+                            "key":      directoryHistory[i].children[j].path,
+                            "title":    directoryHistory[i].children[j].path,
                             "style":    "margin: 1px;",
-                            "text":     " "+directoryHistory[i]["children"][j].name
+                            "text":     " "+directoryHistory[i].children[j].name
                         })
                         .droppable({
                             greedy: "true",
@@ -293,7 +297,7 @@ define(function(require, exports, module) {
     }
     
     function handleDirCollapsion() {
-        $("#locationContent").find(".accordion-heading").each(function(index) {
+        $("#locationContent").find(".accordion-heading").each(function() {
             var key = $(this).attr("key");
             console.log("Entered Header for: "+key);
             if(getDirectoryCollapsed(key)) {
@@ -312,7 +316,7 @@ define(function(require, exports, module) {
     
     function getDirectoryCollapsed(directoryPath) {
         for(var i=0; i < directoryHistory.length; i++) {
-            if(directoryHistory[i].path == directoryPath) {
+            if(directoryHistory[i].path === directoryPath) {
                 return directoryHistory[i].collapsed;
             }
         }
@@ -320,7 +324,7 @@ define(function(require, exports, module) {
     
     function setDirectoryCollapse(directoryPath, collapsed) {
         for(var i=0; i < directoryHistory.length; i++) {
-            if(directoryHistory[i].path == directoryPath) {
+            if(directoryHistory[i].path === directoryPath) {
                 directoryHistory[i].collapsed = collapsed;
             }
         }
@@ -330,16 +334,16 @@ define(function(require, exports, module) {
         console.log("Navigating to directory: "+directoryPath);
     
         // Cleaning the directory path from \\ \ and / 
-        if( (directoryPath.lastIndexOf('/')+1 == directoryPath.length) || (directoryPath.lastIndexOf('\\')+1 == directoryPath.length)) {
+        if( (directoryPath.lastIndexOf('/')+1 === directoryPath.length) || (directoryPath.lastIndexOf('\\')+1 === directoryPath.length)) {
             directoryPath = directoryPath.substring(0,directoryPath.length-1);
         }
-        if( (directoryPath.lastIndexOf('\\\\')+1 == directoryPath.length)) {
+        if( (directoryPath.lastIndexOf('\\\\')+1 === directoryPath.length)) {
             directoryPath = directoryPath.substring(0,directoryPath.length-2);
         }
     
         var directoryFoundOn = -1;    
         for(var i=0; i < directoryHistory.length; i++) {
-            if(directoryHistory[i].path == directoryPath) {
+            if(directoryHistory[i].path === directoryPath) {
                 directoryHistory[i].collapsed = false;
                 directoryFoundOn = i;
             } else {
@@ -361,7 +365,7 @@ define(function(require, exports, module) {
             var parentLocation = TSCORE.TagUtils.extractParentDirectoryPath(directoryPath);
             var parentFound = -1;
             for(var i=0; i < directoryHistory.length; i++) {
-                if(directoryHistory[i].path == parentLocation) {
+                if(directoryHistory[i].path === parentLocation) {
                     parentFound = i;
                 } 
             }       
@@ -387,7 +391,7 @@ define(function(require, exports, module) {
     function initUI() {  
         // Context Menus
 
-        $("body").on("contextmenu click", ".directoryActions", function (e) {
+        $("body").on("contextmenu click", ".directoryActions", function () {
             TSCORE.hideAllDropDownMenus();
             dir4ContextMenu = $(this).attr("key");
             TSCORE.showContextMenu("#directoryMenu", $(this));
@@ -469,7 +473,7 @@ define(function(require, exports, module) {
                 var selectedPerspectiveId = TSCORE.Config.getLocation(path).perspective;
                 $("#locationPerspective2").empty();
                 TSCORE.Config.getActivatedPerspectiveExtensions().forEach( function(value) {
-                        if (selectedPerspectiveId == value.id) { 
+                        if (selectedPerspectiveId === value.id) {
                             $("#locationPerspective2").append($("<option>").attr("selected","selected").text(value.id).val(value.id));                
                         } else {
                             $("#locationPerspective2").append($("<option>").text(value.id).val(value.id));                    
@@ -500,14 +504,14 @@ define(function(require, exports, module) {
 
                     TSCORE.Config.getActivatedPerspectiveExtensions().forEach( function(value) {
                         $("#locationPerspective").append($("<option>").text(value.id).val(value.id));                    
-                    });			        
+                    });
 
                     $( "#createFolderConnectionButton" ).on("click", function() {
                         createLocation();
                     });
 
                     if(isCordova) {
-                        $("#folderLocation").attr("placeholder","Example: DCIM/Camera");	         			        	     		
+                        $("#folderLocation").attr("placeholder","Example: DCIM/Camera");
                     }
                 }
                 $("#connectionName").val("");
@@ -535,7 +539,7 @@ define(function(require, exports, module) {
                     });
                 }
                 // TODO remove use dir4ContextMenu
-                if(dirPath == undefined) {
+                if(dirPath === undefined) {
                     dirPath = dir4ContextMenu;
                 }
                 $( "#createNewDirectoryButton" ).attr("path", dirPath);
@@ -551,17 +555,16 @@ define(function(require, exports, module) {
         initLocations();
         
         //Opens the first location in the settings after deleting a location  
-        if(TSCORE.Config.Settings["tagspacesList"].length > 0) {
-            openLocation(TSCORE.Config.Settings["tagspacesList"][0].path);
+        if(TSCORE.Config.Settings.tagspacesList.length > 0) {
+            openLocation(TSCORE.Config.Settings.tagspacesList[0].path);
         } else {
             closeCurrentLocation();      
-        }                              				
+        }
     }  
 
     function closeCurrentLocation() {
         console.log("Closing location..");
-        $("#locationName").text("Choose Location");
-        $("#locationName").attr("title","");         
+        $("#locationName").text("Choose Location").attr("title","");
         $("#locationContent").empty(); 
         
         // Clear the footer
@@ -573,7 +576,7 @@ define(function(require, exports, module) {
         TSCORE.PerspectiveManager.hideAllPerspectives();
     }  
 
-    function showDeleteFolderConnectionDialog(name) {
+    function showDeleteFolderConnectionDialog() {
         TSCORE.showConfirmDialog(
             "Delete connection to folder",
             "Do you want to delete the connection '"+$("#connectionName2").attr("oldName")+"'?",
@@ -592,7 +595,7 @@ define(function(require, exports, module) {
         $connectionList.attr("style","overflow-y: auto; max-height: 500px; width: 238px;");
         $connectionList.append('<li class="dropdown-header"><span id="">Your Locations</span><button type="button" class="close">×</button></li>');
         $connectionList.append('<li class="divider"></li>');
-        var connectionsList = TSCORE.Config.Settings["tagspacesList"];
+        var connectionsList = TSCORE.Config.Settings.tagspacesList;
         for (var i=0; i < connectionsList.length; i++) { 
             $connectionList.append(
                 $('<li>', {
@@ -619,16 +622,16 @@ define(function(require, exports, module) {
                             path:     connectionsList[i].path,
                             class:    "btn btn-link pull-right",
                             style:    "margin-right: 5px; margin-top: 5px"
-                           } )
-                           .append("<i class='fa fa-pencil fa-lg'></i>")
-                           .click(function(e) {
+                            } )
+                            .append("<i class='fa fa-pencil fa-lg'></i>")
+                            .click(function() {
                                 console.log("Edit location clicked");
                                 showLocationEditDialog($(this).attr("location"),$(this).attr("path"));
                                 return false;
-                           })                              
+                            })
                     )
                 );
-        };
+        }
         
         $( "#createNewLocation" ).click(function() {
             showLocationCreateDialog();         
@@ -640,7 +643,7 @@ define(function(require, exports, module) {
     exports.openLocation               = openLocation;
     exports.closeCurrentLocation       = closeCurrentLocation;
     exports.updateSubDirs              = updateSubDirs;
-    exports.initUI 		               = initUI;
+    exports.initUI                     = initUI;
     exports.initLocations              = initLocations;
     exports.showCreateDirectoryDialog  = showCreateDirectoryDialog;
     exports.navigateToDirectory        = navigateToDirectory;
