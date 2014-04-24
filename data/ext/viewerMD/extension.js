@@ -40,7 +40,7 @@ define(function(require, exports, module) {
 	};
 	
 	exports.setContent = function(content) {
-        var UTF8_BOM = "\ufeff";
+       var UTF8_BOM = "\ufeff";
 
        // removing the UTF8 bom because it brakes thing like #header1 in the beginning of the document
        if(content.indexOf(UTF8_BOM) == 0) {

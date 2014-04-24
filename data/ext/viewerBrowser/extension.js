@@ -18,15 +18,18 @@ define(function(require, exports, module) {
 	
 	var TSCORE = require("tscore");	
 	
-	var containerElID = undefined;
-	var $containerElement = undefined;	
+	var containerElID,
+	    $containerElement,
+        currentFilePath;
 	
 	var extensionDirectory = TSCORE.Config.getExtensionPath()+"/"+extensionID;
 	
 	exports.init = function(filePath, containerElementID) {
 	    console.log("Initalization Text Viewer...");
 	    containerElID = containerElementID;
-	    $containerElement = $('#'+containerElID);    
+	    $containerElement = $('#'+containerElID);
+
+        currentFilePath = filePath;
 
         var filePathURI = undefined;
         if(isCordova) {
@@ -71,6 +74,9 @@ define(function(require, exports, module) {
 	    // removing the script tags from the content 
         var cleanedContent = content.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,""); 	    
 	    var viewerIframe = $("#iframeViewer").get(0);
+
+        var fileDirectory = TSCORE.TagUtils.extractContainingDirectoryPath(currentFilePath);
+
 	    if(viewerIframe != undefined) {
 	    	viewerIframe.contentWindow.document.write(cleanedContent);
 
