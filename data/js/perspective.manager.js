@@ -255,12 +255,14 @@ var changePerspective = function (viewType) {
 
     for (var i=0; i < perspectives.length; i++) {
         if(perspectives[i].ID === viewType) {
-            var $currentPerspectitveIcon = $('#currentPerspectitveIcon');
+            var $currentPerspectitveIcon = $('#currentPerspectitveIcon'),
+                $currentPerspectitveName = $('#currentPerspectitveName');
+
             $currentPerspectitveIcon.removeClass();
             $currentPerspectitveIcon.addClass(perspectives[i].Icon);
             $currentPerspectitveIcon.addClass("fa-lg");
-            $currentPerspectitveIcon.text(" "+perspectives[i].Title);
-            $currentPerspectitveIcon.attr("title",perspectives[i].ID);
+            $currentPerspectitveName.text(" "+perspectives[i].Title);
+            $currentPerspectitveName.attr("title",perspectives[i].ID);
 
             perspectives[i].load();
 
