@@ -1,4 +1,4 @@
-/* Copyright (c) 2012-2013 The TagSpaces Authors. All rights reserved.
+/* Copyright (c) 2012-2014 The TagSpaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that 
  * can be found in the LICENSE file. */
 define(function(require, exports, module) {
@@ -17,15 +17,13 @@ define(function(require, exports, module) {
     var _tsEditor = undefined;
 
     $.fn.editableform.buttons =
-          '<button type="submit" class="btn btn-primary editable-submit" style="margin-left: 8px;"><i class="fa fa-check"></i> Ok</button>\
-          <br /><br /><button type="button" class="btn editable-cancel"><i class="fa fa-times"></i> Cancel</button>';
+          '<button type="submit" class="btn btn-primary editable-submit" style="margin-left: 8px;"><i class="fa fa-check fa-lg"></i></button>\
+          <br /><br /><button type="button" class="btn editable-cancel"><i class="fa fa-times fa-lg"></i></button>';
 
     // If a file is currently opened for editing, this var should be true
     var _isEditMode = false;
 
     function initUI() {
-        var options;
-        
         $( "#editDocument" )
             .click(function() {
                 $("#editDocument").hide();
@@ -161,8 +159,8 @@ define(function(require, exports, module) {
                 _isEditMode = false;                                               
             } else {
                 TSCORE.showConfirmDialog(
-                    "Confirm Close",
-                    "If you confirm, all made changes will be lost.", 
+                    $.i18n.t("ns.dialogs:closingEditedFileTitleConfirm"),
+                    $.i18n.t("ns.dialogs:closingEditedFileContentConfirm"),
                     function() {
                         // Cleaning the viewer/editor
                         document.getElementById("viewer").innerHTML = "";
@@ -186,15 +184,15 @@ define(function(require, exports, module) {
     function openFile(filePath) {
         console.log("Opening file: "+filePath);
 
-        if(filePath == undefined) {
+        if(filePath === undefined) {
             return false;
         }
 
         if(TSCORE.FileOpener.isFileEdited()) {
             // TODO use closeFile method
-            if(confirm("Any unsaved changes will be lost! Do you want to continue?")) {
+            if(confirm($.i18n.t("ns.dialogs:closingEditedFileConfirm"))) {
                  $("#saveDocument").hide();
-                _isEditMode = false;               
+                 _isEditMode = false;
             } else {
                 return false;   
             }
@@ -248,7 +246,7 @@ define(function(require, exports, module) {
 
         // Clearing file selection on file load and adding the current file path to the selection
         TSCORE.PerspectiveManager.clearSelectedFiles();
-        TSCORE.selectedFiles.push(filePath); 	     
+        TSCORE.selectedFiles.push(filePath);
 
         TSCORE.FileOpener.setFileOpened(true);
         TSCORE.openFileViewer();
@@ -342,8 +340,8 @@ define(function(require, exports, module) {
     function saveFile() {
         console.log("Save current file: "+_openedFilePath);
         TSCORE.showConfirmDialog(
-                "Confirm File Save",
-                "Do you really want to overwrite the current file?", 
+                $.i18n.t("ns.dialogs:fileSaveTitleConfirm"),
+                $.i18n.t("ns.dialogs:fileSaveContentConfirm"),
                 function() {
                     $("#saveDocument").hide();
                     $("#editDocument").show();      
@@ -351,7 +349,7 @@ define(function(require, exports, module) {
                     TSCORE.IO.saveTextFile(_openedFilePath, content);
                     _isEditMode = false;              
                 }
-            );	    
+            );
     }
 
     function updateUI() {
@@ -382,11 +380,11 @@ define(function(require, exports, module) {
         // Generate tag & ext buttons
         $( "#fileTags" ).empty();
         
-        // Appending tag buttons	    
+        // Appending tag buttons
         var tags = TSCORE.TagUtils.extractTags(_openedFilePath);
         var tagString = "";
         tags.forEach(function (value, index) {
-            if(index == 0) {
+            if(index === 0) {
                 tagString = value;                 
             } else {
                 tagString = tagString + "," +value;                                 
@@ -418,7 +416,7 @@ define(function(require, exports, module) {
                 top: e.pageY
             });
             // TODO use the showContextMenu method
-            //TSCORE.showContextMenu("#tagMenu", $(this));	       
+            //TSCORE.showContextMenu("#tagMenu", $(this));
             return false;
         });
     }
@@ -429,11 +427,16 @@ define(function(require, exports, module) {
 
         var tsMenu = $( "#tagSuggestionsMenu" );
         tsMenu.empty();
-        tsMenu.append($('<li class="dropdown-header">Tagging Actions<button type="button" class="close">×</button></li>'));      
+        tsMenu.append($('<li>', {
+                class: "dropdown-header",
+                text: $.i18n.t("ns.common:tagOperations")
+            })
+            .append('<button type="button" class="close">×</button>')
+        );
         tsMenu.append($('<li>').append($('<a>', {
-            title: "Add a tag to the current file", 
+            title: $.i18n.t("ns.common:addRemoveTagsTooltip"),
             filepath: filePath,
-            text: " Add Tag"
+            text: " "+$.i18n.t("ns.common:addRemoveTags")
             })
             .prepend("<i class='fa fa-tag'></i>") 
             .click(function() {
@@ -442,12 +445,16 @@ define(function(require, exports, module) {
                 TSCORE.showAddTagsDialog();
             })                
         )); 
-        tsMenu.append($('<li class="dropdown-header"><span id="">Suggested Tags:</span></li>'));      
+        tsMenu.append($('<li>', {
+                class: "dropdown-header",
+                text: $.i18n.t("ns.common:suggestedTags")
+            })
+        );
 
         // Add tag suggestion based on the last modified date
         if(_openedFileProperties != undefined) {
             suggTags.push(TSCORE.TagUtils.formatDateTime4Tag(_openedFileProperties.lmdt));
-            suggTags.push(TSCORE.TagUtils.formatDateTime4Tag(_openedFileProperties.lmdt, true));	        
+            suggTags.push(TSCORE.TagUtils.formatDateTime4Tag(_openedFileProperties.lmdt, true));
         }
 
         // Adding context menu entries for creating tags according to the suggested tags
@@ -464,7 +471,7 @@ define(function(require, exports, module) {
                         title: "Tag with "+suggTags[i],
                         "class":  "btn btn-sm btn-success tagButton", 
                         text: suggTags[i]
-                    }))	                
+                    }))
                     .click(function() {
                         var tagName = $(this).attr( "tagname" );
                         var filePath = $(this).attr( "filepath" );
@@ -474,7 +481,7 @@ define(function(require, exports, module) {
                     })
                    ));
             }
-        };
+        }
     }
 
     // TODO Make file properties dialog accessible from core
@@ -491,17 +498,17 @@ define(function(require, exports, module) {
                 $("#fileLMDTProperty").val(new Date(_openedFileProperties.lmdt));                                
                 $('#dialogFileProperties').modal({backdrop: 'static',show: true});        
         });
-    } 	
+    }
   
     // Public API definition 
     exports.initUI                              = initUI;
-    exports.openFile                    		= openFile;
+    exports.openFile                            = openFile;
     exports.closeFile                           = closeFile;
     exports.saveFile                            = saveFile;
     exports.isFileOpened						= isFileOpened;
-    exports.isFileEdited 						= isFileEdited;
+    exports.isFileEdited						= isFileEdited;
     exports.setFileOpened						= setFileOpened;
-    exports.getOpenedFilePath             		= getOpenedFilePath;  
+    exports.getOpenedFilePath                   = getOpenedFilePath;
     exports.updateEditorContent                 = updateEditorContent;
     exports.setFileProperties                   = setFileProperties;
        
