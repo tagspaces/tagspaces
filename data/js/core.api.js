@@ -1,7 +1,7 @@
-/* Copyright (c) 2012-2013 The TagSpaces Authors. All rights reserved.
+/* Copyright (c) 2012-2014 The TagSpaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that 
  * can be found in the LICENSE file. */
-/*global isNode */
+/*global isNode, isWin, isFirefox, Mousetrap, gui */
 define(function(require, exports, module) {
 "use strict";
 
@@ -18,8 +18,8 @@ define(function(require, exports, module) {
     var tsCoreUI = require("tscoreui");
     var tsSearch = require("tssearch");
     
-    var currentPath = undefined;
-    var currentView = undefined;
+    var currentPath;
+    var currentView;
 
     // Current selected files
     var selectedFiles = [];
@@ -32,28 +32,28 @@ define(function(require, exports, module) {
 
     var selectedTagData = "";
 
-    var startTime = undefined;
+    var startTime;
 
-    var subfoldersDirBrowser = undefined;
+    var subfoldersDirBrowser;
 
-    var directoryBrowser = undefined;
+    var directoryBrowser;
 
     function initApp() {
         console.log("Init application");
 
         tsSettings.loadSettingsLocalStorage();
 
-        checkLocalStorageEnabled();	    
+        checkLocalStorageEnabled();
 
         // In firefox, by empty local storage trying to load the settings from mozilla preferences
-        if(tsSettings.Settings == undefined && isFirefox) {
+        if(tsSettings.Settings === undefined && isFirefox) {
             window.setTimeout(tsIOApi.loadSettings, 1000); // executes initUI and updateSettingMozillaPreferences by success
             console.log("Loading setting with from mozilla pref execured with delay...");
         }
 
         // If still nothing found, loading the default setting from the application's javascript
         // This is usually the case by a new installation
-        if(tsSettings.Settings == undefined) {
+        if(tsSettings.Settings === undefined) {
             tsSettings.Settings = tsSettings.DefaultSettings;
         }
 
@@ -78,7 +78,7 @@ define(function(require, exports, module) {
 
             // Show start hint by no last location
             var lastLocation = tsSettings.getLastOpenedLocation();
-            if(lastLocation == undefined || lastLocation.length < 1 ) {
+            if(lastLocation === undefined || lastLocation.length < 1 ) {
                 tsCoreUI.showWelcomeDialog();         
             }	
 
@@ -88,7 +88,7 @@ define(function(require, exports, module) {
                 $( "#locationName" ).prop('disabled', true);
                 $( "#selectLocation" ).prop('disabled', true);     
                 // tsCoreUI.showWelcomeDialog();         
-            }	    
+            }
 
             console.log("Layout initialized");
         });
@@ -103,12 +103,12 @@ define(function(require, exports, module) {
         } else {
             exports.IO = tsIOApi;
         }
-    }   	
+    }
 
     function initI18N() {
         $.i18n.init({
             ns: { namespaces: ['ns.common','ns.dialogs']},
-            lng: "de",
+            lng: "en",
             //debug: true,
             fallbackLng: "en"
         }, function() {
@@ -143,7 +143,7 @@ define(function(require, exports, module) {
             localStorage.setItem(val, val);
             localStorage.removeItem(val);
         } catch(e) {
-            tsCoreUI.showAlertDialog("Please enable the localStorage support in your browser, in order to use TagSpaces!","Error");
+            tsCoreUI.showAlertDialog($.i18n.t("ns.dialogs:enableLocalStorageAlert"),"Error");
         }
     }    
 
@@ -188,7 +188,7 @@ define(function(require, exports, module) {
     function removeFileModel(model, filePath) {
         console.log("Removing file from model");            
         for(var i = 0; i < model.length; i++) {
-            if(model[i][exports.fileListFILEPATH] == filePath) {
+            if(model[i][exports.fileListFILEPATH] === filePath) {
                 model.splice( i, 1 );                
             }
         }
@@ -257,9 +257,9 @@ define(function(require, exports, module) {
     // UI and Layout functionalities
 
     // Layout vars
-    var layoutContainer = undefined; 
-    var col1Layout = undefined;
-    var col2Layout = undefined; 
+    var layoutContainer;
+    var col1Layout;
+    var col2Layout;
 
     var row1Height = 40; // px
     var row3Height = 45; // px  
@@ -391,78 +391,78 @@ define(function(require, exports, module) {
         console.log("Initializing Layout...");
 
         layoutContainer = $('body').layout({
-            name:			'outerLayout' // for debugging & auto-adding buttons (see below)
-        ,   fxName:         "none" // none, slide
-        //,   fxSpeed:        "normal"
-        ,	autoResize:		true	// try to maintain pane-percentages
-        ,	autoReopen:		true	// auto-open panes that were previously auto-closed due to 'no room'
-        ,   minSize:        1
-        ,	autoBindCustomButtons:	true
-        ,	west__paneSelector: 	'.col1'
-        ,	center__paneSelector: 	'.col2'
-        ,	east__paneSelector: 	'.col3'
-        ,	west__size: 		col1DefaultWidth
-        ,   west__minWidth:     col1DefaultWidth
-        ,	east__size: 		0.5
-        ,   west__spacing_open:         1
-        ,   east__spacing_open:         1
-        ,	center_minWidth:			1
-        ,	center_minHeight:			200
-        ,   spacing_closed:		0
-        ,	noRoomToOpenAction:	"hide" // 'close' or 'hide' when no room to open a pane at minSize
-    //	,   west__showOverflowOnHover:	true
-    //	,   center__showOverflowOnHover:	true
-    //	,   east__showOverflowOnHover:	true
-        ,   enableCursorHotkey:         false
+            name:                       'outerLayout', // for debugging & auto-adding buttons (see below)
+            fxName:                     "none", // none, slide
+        //,   fxSpeed:                  "normal",
+            autoResize:                 true,	// try to maintain pane-percentages
+            autoReopen:                 true,	// auto-open panes that were previously auto-closed due to 'no room'
+            minSize:                    1,
+            autoBindCustomButtons:      true,
+            west__paneSelector:         '.col1',
+            center__paneSelector:       '.col2',
+            east__paneSelector:         '.col3',
+            west__size:                 col1DefaultWidth,
+            west__minWidth:             col1DefaultWidth,
+            east__size:                 0.5,
+            west__spacing_open:         1,
+            east__spacing_open:         1,
+            center_minWidth:            1,
+            center_minHeight:           200,
+            spacing_closed:             0,
+            noRoomToOpenAction:         "hide", // 'close' or 'hide' when no room to open a pane at minSize
+        //  west__showOverflowOnHover:	true,
+        //  center__showOverflowOnHover:	true,
+        //  east__showOverflowOnHover:	true,
+            enableCursorHotkey:          false
         });
 
         // Initially close the right panel
         layoutContainer.close("east");
 
         col1Layout = layoutContainer.panes.west.layout({
-            name:			'col1Layout' // for debugging & auto-adding buttons (see below)
-    //	,	north__paneSelector: 	'.row1'
-        ,	center__paneSelector: 	'.row2'
-        ,	south__paneSelector: 	'.row3'
-    //	,	north__size: 		row1Height	// percentage size expresses as a string
-        ,	south__size: 		row3Height
-        ,   north__spacing_open:        0
-        ,   south__spacing_open:        0
-        ,	autoResize:		false	// try to maintain pane-percentages
-        ,	closable:		false
-        ,	togglerLength_open:	0	// hide toggler-buttons
-        ,	spacing_closed:		0	// hide resizer/slider bar when closed
-        //,	autoReopen:		true	// auto-open panes that were previously auto-closed due to 'no room'
-        ,	autoBindCustomButtons:	true
-        ,	minSize:		1
-        ,	center__minHeight:	25
-    //	,   north__showOverflowOnHover:	true
-    //	,   center__showOverflowOnHover:	true
-    //	,   south__showOverflowOnHover:	true
-        ,   enableCursorHotkey:         false
+            name:                       'col1Layout', // for debugging & auto-adding buttons (see below)
+        //  north__paneSelector:        '.row1',
+            center__paneSelector:       '.row2',
+            south__paneSelector:        '.row3',
+        //  north__size:                row1Height,	// percentage size expresses as a string
+            south__size:                row3Height,
+            north__spacing_open:        0,
+            south__spacing_open:        0,
+            autoResize:                 false,	// try to maintain pane-percentages
+            closable:                   false,
+            togglerLength_open:         0,	// hide toggler-buttons
+            spacing_closed:             0,	// hide resizer/slider bar when closed
+        //	autoReopen:                 true,	// auto-open panes that were previously auto-closed due to 'no room'
+            autoBindCustomButtons:      true,
+            minSize:                    1,
+            center__minHeight:          25,
+        //  north__showOverflowOnHover:	true,
+        //  center__showOverflowOnHover:true,
+        //  south__showOverflowOnHover:	true,
+           enableCursorHotkey:          false
         });
 
         col2Layout = layoutContainer.panes.center.layout({
-            name:			'col2Layout' // for debugging & auto-adding buttons (see below)
-    //	,	north__paneSelector: 	'.row1'
-        ,	center__paneSelector: 	'.row2'
-        ,	south__paneSelector: 	'.row3'
-    //	,	north__size: 		row1Height	// percentage size expresses as a string
-        ,	south__size: 		row3Height
-        ,   north__spacing_open:        0
-        ,   south__spacing_open:        0
-        ,	autoResize:		true	// try to maintain pane-percentages
-        ,	closable:		false
-        ,	togglerLength_open:	0	// hide toggler-buttons
-        ,	spacing_closed:		0	// hide resizer/slider bar when closed
-        ,	autoReopen:		true	// auto-open panes that were previously auto-closed due to 'no room'
-        ,	autoBindCustomButtons:	true
-        ,	minSize:		1
-        ,	center__minHeight:	25
-        ,   north__showOverflowOnHover:	true
-    //	,   center__showOverflowOnHover:	true
-    //	,   south__showOverflowOnHover:	true
-        ,   enableCursorHotkey:         false
+            name:                       'col2Layout', // for debugging & auto-adding buttons (see below)
+        //	north__paneSelector: 	    '.row1',
+            center__paneSelector:       '.row2',
+            south__paneSelector:        '.row3',
+        //  north__size:                row1Height,	// percentage size expresses as a string
+            south__size:                row3Height,
+            north__spacing_open:        0,
+            south__spacing_open:        0,
+            autoResize:                 true,	// try to maintain pane-percentages
+            closable:                   false,
+            togglerLength_open:         0,	// hide toggler-buttons
+            spacing_closed:             0,	// hide resizer/slider bar when closed
+            autoReopen:                 true,	// auto-open panes that were previously auto-closed due to 'no room'
+            autoBindCustomButtons:      true,
+            minSize:                    1,
+            center__minHeight:          25,
+            north__showOverflowOnHover:	true,
+        //  center__showOverflowOnHover:true,
+        //  south__showOverflowOnHover:	true,
+            enableCursorHotkey:         false
         });
 
     /*
@@ -502,11 +502,11 @@ define(function(require, exports, module) {
     exports.Search = tsSearch;	
 
     // Public API definition
-    exports.initApp 					= initApp;
-    exports.updateLogger				= updateLogger;
-    exports.showLoadingAnimation 		= showLoadingAnimation;
-    exports.hideLoadingAnimation 		= hideLoadingAnimation;
-//	exports.fileExists 					= fileExists;
+    exports.initApp                     = initApp;
+    exports.updateLogger                = updateLogger;
+    exports.showLoadingAnimation        = showLoadingAnimation;
+    exports.hideLoadingAnimation        = hideLoadingAnimation;
+//	exports.fileExists                  = fileExists;
     exports.reloadUI 					= reloadUI;
     exports.openFileViewer 				= openFileViewer;
     exports.closeFileViewer 			= closeFileViewer;
@@ -549,19 +549,19 @@ define(function(require, exports, module) {
 
     // Proxying functions from directoriesUI
     exports.openLocation                = tsDirectoriesUI.openLocation;
-    exports.updateSubDirs 				= tsDirectoriesUI.updateSubDirs;
+    exports.updateSubDirs               = tsDirectoriesUI.updateSubDirs;
     exports.initLocations 			    = tsDirectoriesUI.initLocations;
     exports.showCreateDirectoryDialog   = tsDirectoriesUI.showCreateDirectoryDialog;
     exports.closeCurrentLocation        = tsDirectoriesUI.closeCurrentLocation;
     exports.navigateToDirectory         = tsDirectoriesUI.navigateToDirectory; 
 
     // Public variables definition
-    exports.currentPath 				= currentPath;
-    exports.currentView 				= currentView;
-    exports.selectedFiles 				= selectedFiles;
-    exports.fileList 					= fileList;
-    exports.selectedTag 				= selectedTag;
-    exports.selectedTagData 			= selectedTagData;
+    exports.currentPath                 = currentPath;
+    exports.currentView                 = currentView;
+    exports.selectedFiles               = selectedFiles;
+    exports.fileList                    = fileList;
+    exports.selectedTag                 = selectedTag;
+    exports.selectedTagData             = selectedTagData;
     exports.startTime                   = startTime;
     exports.subfoldersDirBrowser        = subfoldersDirBrowser;
     exports.directoryBrowser            = directoryBrowser;
