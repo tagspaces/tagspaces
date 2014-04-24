@@ -1,7 +1,7 @@
 /* Copyright (c) 2012-2014 The TagSpaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that 
  * can be found in the LICENSE file. */
-/* global define */
+/* global define, Handlebars  */
 
  define(function(require, exports, module) {
 "use strict";
@@ -143,35 +143,37 @@
 
     function generateTagGroups() {
         console.log("Generating TagGroups...");
-        $("#tagGroupsContent").empty().addClass("accordion");
+        var $tagGroupsContent = $("#tagGroupsContent");
+        $tagGroupsContent.empty().addClass("accordion");
 
         // Show TagGroup create button if no taggroup exist
-        if(TSCORE.Config.Settings["tagGroups"].length < 1) {
-            $("#tagGroupsContent").append($("<button>", { 
+        if(TSCORE.Config.Settings.tagGroups.length < 1) {
+            $tagGroupsContent.append($("<button>", {
                 "class": "btn",
                 text: "Create New Taggroup"
             })
-            .click( function(event) {
+            .click( function() {
                 TSCORE.showDialogTagGroupCreate();
             })            
-            );	        
+            );
             return true;
         }
 
         if(TSCORE.Config.getCalculateTags()) {
             // Adding tags to the calculated tag group
             //console.log("Calculated tags: "+JSON.stringify(exports.calculatedTags));
-            for(var i=0; i < TSCORE.Config.Settings["tagGroups"].length; i++) {
-                var tagGroupExist = false;
-                if(TSCORE.Config.Settings["tagGroups"][i].key == "CTG") {
-                    TSCORE.Config.Settings["tagGroups"][i].children = exports.calculatedTags;
+            var tagGroupExist;
+            for(var k=0; k < TSCORE.Config.Settings.tagGroups.length; k++) {
+                tagGroupExist = false;
+                if(TSCORE.Config.Settings.tagGroups[k].key === "CTG") {
+                    TSCORE.Config.Settings.tagGroups[k].children = exports.calculatedTags;
                     tagGroupExist = true;
                     break;
                 }        
             }
             // Adding the calculated tag group if it not exists
             if(!tagGroupExist) {
-                TSCORE.Config.Settings["tagGroups"].push({ 
+                TSCORE.Config.Settings.tagGroups.push({
                         "title": "Tags in Perspective", 
                         "key": "CTG", 
                         "expanded": true,
@@ -180,22 +182,22 @@
             } 
         }
 
-        for(var i=0; i < TSCORE.Config.Settings["tagGroups"].length; i++) {
-            $("#tagGroupsContent").append($("<div>", {
+        for(var i=0; i < TSCORE.Config.Settings.tagGroups.length; i++) {
+            $tagGroupsContent.append($("<div>", {
                 "class": "accordion-group disableTextSelection",
-                "style": "width: 99%; border: 0px #aaa solid;",	            
+                "style": "width: 99%; border: 0px #aaa solid;"
             })
             .append($("<div>", {
                 "class":        "accordion-heading  btn-group",
                 "style":        "width:100%; margin: 0px;",
-                "key":          TSCORE.Config.Settings["tagGroups"][i].key,	            
+                "key":          TSCORE.Config.Settings.tagGroups[i].key
             })
 
             .append($("<button>", { // Taggroup toggle button
                         "class":        "btn btn-link btn-lg tagGroupIcon",
                         "data-toggle":  "collapse",
                         "data-target":  "#tagButtons"+i,
-                        "title":        "Toggle TagGroup",
+                        "title":        "Toggle TagGroup"
                     }  
                 )
                 .html("<i class='fa fa-tags'></i>")   
@@ -203,8 +205,8 @@
 
             .append($("<button>", {
                 "class":        "btn btn-link tagGroupTitle",
-                "text":         TSCORE.Config.Settings["tagGroups"][i].title,
-                "key":          TSCORE.Config.Settings["tagGroups"][i].key, 	      
+                "text":         TSCORE.Config.Settings.tagGroups[i].title,
+                "key":          TSCORE.Config.Settings.tagGroups[i].key
             })
             )
             .droppable({
@@ -224,9 +226,9 @@
 
             .append($("<button>", {
                     "class": "btn btn-link btn-lg tagGroupActions",
-                    "tag": TSCORE.Config.Settings["tagGroups"][i].title,
-                    "key": TSCORE.Config.Settings["tagGroups"][i].key,
-                    "title": "Taggroup options",
+                    "tag": TSCORE.Config.Settings.tagGroups[i].title,
+                    "key": TSCORE.Config.Settings.tagGroups[i].key,
+                    "title": "Taggroup options"
             })
             .append("<b class='fa fa-ellipsis-v'></b>")
             ) // end gear
@@ -236,12 +238,12 @@
             .append($("<div>", {
                 "class":   "accordion-body collapse in",
                 "id":      "tagButtons"+i,
-                "style":   "margin: 0px 0px 0px 3px; border: 0px;",
+                "style":   "margin: 0px 0px 0px 3px; border: 0px;"
             })
             .append($("<div>", {
                 "class":   "accordion-inner",
                 "id":      "tagButtonsContent"+i,
-                "style":   "padding: 2px; border: 0px;",
+                "style":   "padding: 2px; border: 0px;"
             })
             ) // end accordion-inner
             ) // end accordion button
@@ -249,34 +251,34 @@
             ); // end group
 
             var tagButtons = $("<div>").appendTo( "#tagButtonsContent"+i );
-            for(var j=0; j < TSCORE.Config.Settings["tagGroups"][i]["children"].length; j++) {
-                var tagTitle = undefined;
-                if(TSCORE.Config.Settings["tagGroups"][i]["children"][j].description != undefined) {
-                    tagTitle = TSCORE.Config.Settings["tagGroups"][i]["children"][j].description;
+            for(var j=0; j < TSCORE.Config.Settings.tagGroups[i].children.length; j++) {
+                var tagTitle;
+                if(TSCORE.Config.Settings.tagGroups[i].children[j].description != undefined) {
+                    tagTitle = TSCORE.Config.Settings.tagGroups[i].children[j].description;
                 } else {
-                    tagTitle = "Opens context menu for "+TSCORE.Config.Settings["tagGroups"][i]["children"][j].title;	                
+                    tagTitle = "Opens context menu for "+TSCORE.Config.Settings.tagGroups[i].children[j].title;
                 }
                 var tagIcon = "";
-                if(TSCORE.Config.Settings["tagGroups"][i]["children"][j].type == "smart"){
+                if(TSCORE.Config.Settings.tagGroups[i].children[j].type == "smart"){
                     tagIcon = "<span class='fa fa-flask'/> ";
                 }
                 var tagCount = "";
-                if(TSCORE.Config.Settings["tagGroups"][i]["children"][j].count != undefined) {
-                    tagCount = " ("+TSCORE.Config.Settings["tagGroups"][i]["children"][j].count+")"; 
+                if(TSCORE.Config.Settings.tagGroups[i].children[j].count != undefined) {
+                    tagCount = " ("+TSCORE.Config.Settings.tagGroups[i].children[j].count+")";
                 }                
                 tagButtons.append($("<a>", {
                     "class":         "btn btn-sm tagButton",
-                    "tag":           TSCORE.Config.Settings["tagGroups"][i]["children"][j].title,
-                    "parentKey":     TSCORE.Config.Settings["tagGroups"][i].key,
+                    "tag":           TSCORE.Config.Settings.tagGroups[i].children[j].title,
+                    "parentKey":     TSCORE.Config.Settings.tagGroups[i].key,
                     "title":         tagTitle,
-                    "text":          TSCORE.Config.Settings["tagGroups"][i]["children"][j].title+tagCount+" ",
-                    "style":         generateTagStyle(TSCORE.Config.Settings["tagGroups"][i]["children"][j]),
+                    "text":          TSCORE.Config.Settings.tagGroups[i].children[j].title+tagCount+" ",
+                    "style":         generateTagStyle(TSCORE.Config.Settings.tagGroups[i].children[j])
                 })
                 .draggable({
                     "appendTo":   "body",
                     "helper":     "clone",
                     "revert":     'invalid',
-                    "start":     function(e, ui) {
+                    "start":     function() {
                         TSCORE.selectedTagData = TSCORE.Config.getTagData($(this).attr("tag"), $(this).attr("parentKey"));
                         TSCORE.selectedTag = generateTagValue(TSCORE.selectedTagData);
                         TSCORE.selectedTagData.parentKey = $(this).attr("parentKey");                         
@@ -287,8 +289,8 @@
                 );
            }
         }
-        
-        $("#tagGroupsContent").on("contextmenu click", ".tagGroupActions", function (e) {
+
+        $tagGroupsContent.on("contextmenu click", ".tagGroupActions", function () {
             TSCORE.hideAllDropDownMenus();
             TSCORE.selectedTag = $(this).attr("tag");
             TSCORE.selectedTagData = TSCORE.Config.getTagGroupData($(this).attr("key"));
@@ -299,7 +301,7 @@
             return false;
         });
 
-        $("#tagGroupsContent").on("contextmenu click", ".tagButton", function (e) {
+        $tagGroupsContent.on("contextmenu click", ".tagButton", function () {
             TSCORE.hideAllDropDownMenus();
             TSCORE.selectedTagData = TSCORE.Config.getTagData($(this).attr("tag"), $(this).attr("parentKey"));
             TSCORE.selectedTag = generateTagValue(TSCORE.selectedTagData);
@@ -314,7 +316,8 @@
 
     function generateTagValue(tagData) {
         var tagValue = tagData.title;
-        if (tagData.type == "smart") {
+        var d;
+        if (tagData.type === "smart") {
             switch (tagData.functionality){
                 case "here": {
                     /* window.onload = function() {
@@ -337,20 +340,20 @@
                     break;                
                 }
                 case "tomorrow": {
-                    var d = new Date();
+                    d = new Date();
                     d.setDate(d.getDate() + 1);
                     tagValue = TSCORE.TagUtils.formatDateTime4Tag(d, false);   
                     break;                
                 }
                 case "yesterday": {
-                    var d = new Date();
+                    d = new Date();
                     d.setDate(d.getDate() - 1);
                     tagValue = TSCORE.TagUtils.formatDateTime4Tag(d, false);   
                     break;                
                 }
                 case "currentMonth": {
                     var cMonth = ""+((new Date()).getMonth()+1);
-                    if(cMonth.length == 1) {
+                    if(cMonth.length === 1) {
                         cMonth = "0"+cMonth;
                     }
                     tagValue = ""+(new Date()).getFullYear()+cMonth;   
@@ -378,7 +381,7 @@
     }
 
     var tagButtonTmpl = Handlebars.compile('{{#each tags}}\
-            <button class="btn btn-sm tagButton" tag="{{tag}}" filepath="{{filepath}}" style="{{style}}" title="Opens context meni for {{tag}}">\
+            <button class="btn btn-sm tagButton" tag="{{tag}}" filepath="{{filepath}}" style="{{style}}">\
             {{tag}} <span class="caret"></span></button>{{/each}}');
 
     // Helper function generating tag buttons
@@ -386,7 +389,7 @@
         //console.log("Creating tags...");
         var tagString = ""+commaSeparatedTags;
 
-        var context = { tags : [] };	    
+        var context = { tags : [] };
 
         if(tagString.length > 0) {
             var tags = tagString.split(",");
@@ -405,14 +408,14 @@
     // Get the color for a tag
     function generateTagStyle(tagObject) {
         var tagStyle = "";
-        if(tagObject.color != undefined) {
+        if(tagObject.color !== undefined) {
            var textColor = tagObject.textcolor;
            if(textColor == undefined) {
               textColor = "white"; 
            }
            tagStyle = "color: "+textColor+" !important; background-color: "+tagObject.color+" !important;";
         }
-        return tagStyle;	    
+        return tagStyle;
     }
 
     function showDialogTagCreate() {
@@ -442,7 +445,7 @@
         
         $( "#tagTextColor" ).simplecolorpicker({picker: false, theme: 'fontawesome'});
         
-        if(TSCORE.selectedTagData.textcolor == undefined || TSCORE.selectedTagData.textcolor.length < 1) {
+        if(TSCORE.selectedTagData.textcolor === undefined || TSCORE.selectedTagData.textcolor.length < 1) {
             $( "#tagTextColor" ).simplecolorpicker('selectColor', '#ffffff');            
         } else {
             $( "#tagTextColor" ).simplecolorpicker('selectColor', TSCORE.selectedTagData.textcolor);            
@@ -465,7 +468,7 @@
             tags: TSCORE.Config.getAllTags(),
             tokenSeparators: [","],
             minimumInputLength: 2,
-            selectOnBlur: true,
+            selectOnBlur: true
         });
 
         $( '#dialogAddTags' ).modal({backdrop: 'static',show: true});
@@ -475,15 +478,15 @@
     exports.calculatedTags                   = [];
 
     // Public API definition
-    exports.initUI			                 = initUI;
+    exports.initUI                           = initUI;
     exports.generateTagGroups                = generateTagGroups;
-    exports.openTagMenu    				     = openTagMenu;
+    exports.openTagMenu                      = openTagMenu;
     exports.generateTagStyle                 = generateTagStyle;
     exports.generateTagButtons               = generateTagButtons;
-    exports.showAddTagsDialog				 = showAddTagsDialog;
+    exports.showAddTagsDialog                = showAddTagsDialog;
     exports.showTagEditInTreeDialog          = showTagEditInTreeDialog;
     exports.showDialogTagCreate              = showDialogTagCreate;
     exports.showDialogEditTagGroup           = showDialogEditTagGroup;
-    exports.showDialogTagGroupCreate	     = showDialogTagGroupCreate;
+    exports.showDialogTagGroupCreate         = showDialogTagGroupCreate;
 
 });
