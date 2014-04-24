@@ -12,17 +12,15 @@ var TSCORE = require("tscore");
 
 var initPerspectives = function () {
     
-	perspectives = [];
-	
-	$("#viewSwitcher").empty();
-	$("#viewToolbars").empty();	
-	$("#viewContainers").empty();
-	$("#viewFooters").empty();
-	
-	initWelcomeScreen();
-	
-	var defaultViewLoaded = false;
-	
+    perspectives = [];
+
+    $("#viewSwitcher").empty();
+    $("#viewToolbars").empty();
+    $("#viewContainers").empty();
+    $("#viewFooters").empty();
+
+    initWelcomeScreen();
+
     var extensions = TSCORE.Config.getPerspectives();
     for (var i=0; i < extensions.length; i++) {
            
@@ -35,27 +33,24 @@ var initPerspectives = function () {
                 // Creating perspective's toolbar
                 $("#viewToolbars").append($("<div>", { 
                     id: perspective.ID+"Toolbar",
-                    class: "btn-toolbar",
-                    //text: perspective.Title,
-                }).hide()); 
+                    class: "btn-toolbar"
+                }).hide());
                 
                 // Creating perspective's container
                 $("#viewContainers").append($("<div>", { 
                     id: perspective.ID+"Container",
-                    //text: perspective.Title,
-                    style: "width: 100%; height: 100%",
+                    style: "width: 100%; height: 100%"
                 }).hide());             
             
                 // Creating perspective's footer
                 $("#viewFooters").append($("<div>", { 
-                    id: perspective.ID+"Footer",
-                    //text: perspective.Title,
-                }).hide());                             
+                    id: perspective.ID+"Footer"
+                }).hide());
                 perspective.init();
             } catch(e) {
                 console.log("Error while executing 'init' on "+perspectives[i].ID+" - "+e);
             } finally {
-                if( perspectives.length == extensions.length) {
+                if( perspectives.length === extensions.length) {
                     initPerspectiveSwitcher();
                     
                     // Opening last saved location by the start of the application
@@ -84,19 +79,25 @@ var initWelcomeScreen = function() {
 
 var initPerspectiveSwitcher = function() {
     var extensions = TSCORE.Config.getPerspectives();
-	$("#viewSwitcher").empty();
-	$("#viewSwitcher").append("<li class='dropdown-header'><span id=''>Perspective Switch</span><button type='button' class='close'>×</button></li>");
-	$("#viewSwitcher").append("<li class='divider'></li>");	
+    var $viewSwitcher = $("#viewSwitcher");
+    $viewSwitcher.empty();
+    $viewSwitcher.append($('<li>', {
+            class: "dropdown-header",
+            text: $.i18n.t("ns.common:perspectiveSwitch")
+        })
+        .append('<button type="button" class="close">×</button>')
+    );
+    $viewSwitcher.append("<li class='divider'></li>");
     for (var i=0; i < extensions.length; i++) {
-        var curPers = undefined;        
+        var curPers;
         // Finding the right perspective 
         perspectives.forEach(function(value) {
             if(value.ID == extensions[i].id) {
                 curPers = value;
             }
-        }); 				
-      
-        $("#viewSwitcher").append($("<li>", {})
+        });
+
+        $viewSwitcher.append($("<li>", {})
         .append($("<a>", { 
             "viewid":   curPers.ID,
             "title":    curPers.ID,
@@ -105,14 +106,14 @@ var initPerspectiveSwitcher = function() {
         })        
         .prepend($("<i>", {
             "class":  curPers.Icon+" fa-lg",
-            "style":  "margin-right: 15px",
+            "style":  "margin-right: 15px"
         }))));
     
         // Adding event listener & icon to the radio button
         $( "#"+curPers.ID+"Button" ).click(function() { 
             changePerspective($(this).attr("viewid"));
         });   
-    };     
+    }
 };
 
 var redrawCurrentPerspective = function () {
@@ -151,37 +152,37 @@ var updateFileUI = function (oldFilePath,newFilePath) {
 };
 
 var getNextFile = function (filePath) {
-	for (var i=0; i < perspectives.length; i++) {   
-		if(perspectives[i].ID == TSCORE.currentView) { 	
-	 		try { 			
-	 			return perspectives[i].getNextFile(filePath);
-	 		} catch(e) {
-	 			console.error("Error while executing 'getNextFile' on "+perspectives[i].ID+" "+e);
-	 		}
- 		}
-	}
+    for (var i=0; i < perspectives.length; i++) {
+        if(perspectives[i].ID == TSCORE.currentView) {
+            try {
+                return perspectives[i].getNextFile(filePath);
+            } catch(e) {
+                console.error("Error while executing 'getNextFile' on "+perspectives[i].ID+" "+e);
+            }
+        }
+    }
 };
 
 var getPrevFile = function (filePath) {
-	for (var i=0; i < perspectives.length; i++) {   
-		if(perspectives[i].ID == TSCORE.currentView) { 	
-	 		try { 			
-	 			return perspectives[i].getPrevFile(filePath);
-	 		} catch(e) {
-	 			console.error("Error while executing 'getPrevFile' on "+perspectives[i].ID+" "+e);
-	 		}
- 		}
-	}
+    for (var i=0; i < perspectives.length; i++) {
+        if(perspectives[i].ID == TSCORE.currentView) {
+            try {
+                return perspectives[i].getPrevFile(filePath);
+            } catch(e) {
+                console.error("Error while executing 'getPrevFile' on "+perspectives[i].ID+" "+e);
+            }
+        }
+    }
 };
 
 var updateTreeData = function (treeData) {
-	for (var i=0; i < perspectives.length; i++) {   
- 		try { 			
- 			perspectives[i].updateTreeData(treeData);
- 		} catch(e) {
- 			console.error("Error while executing 'updateTreeData' on "+perspectives[i].ID+" "+e);
- 		}
-	}
+    for (var i=0; i < perspectives.length; i++) {
+        try {
+            perspectives[i].updateTreeData(treeData);
+        } catch(e) {
+            console.error("Error while executing 'updateTreeData' on "+perspectives[i].ID+" "+e);
+        }
+    }
 };
 
 var updateFileBrowserData = function(dirList) {
@@ -204,7 +205,7 @@ var updateFileBrowserData = function(dirList) {
                  path = dirList[i].path.replace(/(<([^>]+)>)/ig,""); // sanitizing filepath
                  tags = TSCORE.TagUtils.extractTags(path);
                  title = TSCORE.TagUtils.extractTitle(path);
-				 ext = TSCORE.TagUtils.extractFileExtension(path);
+                 ext = TSCORE.TagUtils.extractFileExtension(path);
                  fileSize = dirList[i].size;
                  fileLMDT = dirList[i].lmdt;
                  
@@ -219,7 +220,7 @@ var updateFileBrowserData = function(dirList) {
 };
 
 var refreshFileListContainer = function() {
-	// TODO consider search view
+    // TODO consider search view
     TSCORE.IO.listDirectory(TSCORE.currentPath);  
 };
 
@@ -249,43 +250,44 @@ var changePerspective = function (viewType) {
         return false;
     }
     
-	hideAllPerspectives();        
+    hideAllPerspectives();
 
-	for (var i=0; i < perspectives.length; i++) {   
- 		if(perspectives[i].ID == viewType) { 			
-            $('#currentPerspectitveIcon').removeClass();
-            $('#currentPerspectitveIcon').addClass(perspectives[i].Icon);
-            $('#currentPerspectitveIcon').addClass("fa-lg");            
-            $('#currentPerspectitveName').text(" "+perspectives[i].Title);   
-            $('#currentPerspectitveName').attr("title",perspectives[i].ID);   
+    for (var i=0; i < perspectives.length; i++) {
+        if(perspectives[i].ID == viewType) {
+            var $currentPerspectitveIcon = $('#currentPerspectitveIcon');
+            $currentPerspectitveIcon.removeClass();
+            $currentPerspectitveIcon.addClass(perspectives[i].Icon);
+            $currentPerspectitveIcon.addClass("fa-lg");
+            $currentPerspectitveIcon.text(" "+perspectives[i].Title);
+            $currentPerspectitveIcon.attr("title",perspectives[i].ID);
 
- 			perspectives[i].load();
+            perspectives[i].load();
 
-			$( "#"+perspectives[i].ID+"Container" ).show();
-			$( "#"+perspectives[i].ID+"Toolbar" ).show();
+            $( "#"+perspectives[i].ID+"Container" ).show();
+            $( "#"+perspectives[i].ID+"Toolbar" ).show();
             $( "#"+perspectives[i].ID+"Footer" ).show(); 			 
- 		}
-	}	
-	   	
+        }
+    }
+
     // Clear the list with the selected files    
     clearSelectedFiles(); 
     
     // Enabled the main toolbar e.g. search functionality
     TSCORE.enableTopToolbar();
-	  
+
     TSCORE.hideLoadingAnimation();     
 };
 
 var clearSelectedFiles = function () {
     // Clear selected files
     TSCORE.selectedFiles = [];  
-	for (var i=0; i < perspectives.length; i++) {   
- 		try { 			
- 			perspectives[i].clearSelectedFiles();
- 		} catch(e) {
- 			console.error("Error while executing 'clearSelectedFiles' on "+perspectives[i].ID+" - "+e);
- 		} 		
-	}	
+    for (var i=0; i < perspectives.length; i++) {
+        try {
+            perspectives[i].clearSelectedFiles();
+        } catch(e) {
+            console.error("Error while executing 'clearSelectedFiles' on "+perspectives[i].ID+" - "+e);
+        }
+    }
 };
 
 exports.initPerspectives 			 = initPerspectives;
