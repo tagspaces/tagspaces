@@ -1,4 +1,4 @@
-/* Copyright (c) 2012-2013 The TagSpaces Authors. All rights reserved.
+/* Copyright (c) 2012-2014 The TagSpaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that 
  * can be found in the LICENSE file. */
 define(function(require, exports, module) {
@@ -12,28 +12,24 @@ define(function(require, exports, module) {
         parent.empty();
         parent.append($("<option>").text("").val("false"));
         data.forEach( function(value) {
-                if (selectedId == value) { 
-                    parent.append($("<option>").attr("selected","selected").text(value).val(value));                
-                } else {
-                    parent.append($("<option>").text(value).val(value));                    
-                }    
-            }            
-        );
+            if (selectedId == value) {
+                parent.append($("<option>").attr("selected","selected").text(value).val(value));
+            } else {
+                parent.append($("<option>").text(value).val(value));
+            }
+        });
     }
 
     function addPerspective(parent, perspectiveId) {
         var perspectiveControl = $("<div class='form-inline'>")
-                .append($("<div class='input-group' style='width: 90%'>")
-                    //.append($("<button class='btn btn-default' style='width: 10%' title='Remove Perspective'><i class='fa fa-ellipsis-v'></i></button>"))
-                    .append($("<select class='form-control' style='width: 70%'></select>"))
-                    .append($("<button class='btn btn-default'  style='width: 40px' title='Remove Perspective'><i class='fa fa-times'></button>")
-                        .click(function() {
-                            $(this).parent().parent().remove();
-                        })                
-                  )
-                );
-                //.append($("<button class='btn' title='Remove this extension'><i class='icon-arrow-up'></button>"))
-                //.append($("<button class='btn' title='Remove this extension'><i class='icon-arrow-down'></button>"))  
+            .append($("<div class='input-group' style='width: 90%'>")
+                .append($("<select class='form-control' style='width: 70%'></select>"))
+                .append($("<button class='btn btn-default'  style='width: 40px' title='Remove Perspective'><i class='fa fa-times'></button>")
+                    .click(function() {
+                        $(this).parent().parent().remove();
+                    })
+              )
+            );
 
         generateSelectOptions(perspectiveControl.find("select"), TSCORE.Config.getPerspectiveExtensions(), perspectiveId);
         parent.append(perspectiveControl);
@@ -41,16 +37,16 @@ define(function(require, exports, module) {
    
     function addFileType(parent, fileext, viewerId, editorId) {
         var fileTypeControl = $("<div class='form-inline'>")
-                .append($("<div class='input-group' >")
-                    .append($("<input style='width: 80px' type='text' class='form-control' placeholder='e.g: jpg'>").val(fileext))
-                    .append($("<select class='ftviewer form-control' style='width: 170px' placeholder='Select Viewer'></select>"))
-                    .append($("<select class='fteditor form-control' style='width: 170px' placeholder='Select Editor'></select>"))                
-                    .append($("<button style='width: 40px' class='btn btn-default' title='Remove this file type'><i class='fa fa-times'></button>")
-                        .click(function() {
-                            $(this).parent().parent().remove();
-                        })
-                    )
-                );
+            .append($("<div class='input-group' >")
+                .append($("<input style='width: 80px' type='text' class='form-control' placeholder='e.g: jpg'>").val(fileext))
+                .append($("<select class='ftviewer form-control' style='width: 170px' placeholder='Select Viewer'></select>"))
+                .append($("<select class='fteditor form-control' style='width: 170px' placeholder='Select Editor'></select>"))
+                .append($("<button style='width: 40px' class='btn btn-default' title='Remove this file type'><i class='fa fa-times'></button>")
+                    .click(function() {
+                        $(this).parent().parent().remove();
+                    })
+                )
+            );
         generateSelectOptions(fileTypeControl.find(".ftviewer"), TSCORE.Config.getViewerExtensions(), viewerId);
         generateSelectOptions(fileTypeControl.find(".fteditor"), TSCORE.Config.getEditorExtensions(), editorId);
         parent.append(fileTypeControl);
@@ -99,19 +95,19 @@ define(function(require, exports, module) {
         $("#prefixTagContainerInput").val(TSCORE.Config.getPrefixTagContainer());        
         
         $('#perspectiveList').empty();
-        TSCORE.Config.getPerspectives().forEach(function (value, index) {
+        TSCORE.Config.getPerspectives().forEach(function (value) {
             addPerspective($('#perspectiveList'), value.id);
         });
 
         $('#fileTypesList')
-	        .empty()
-	        .append($("<div class='input-group' >")
-	                .append($("<span style='width: 80px; border: 0px' class='form-control' >File Ext.</span>"))
-	                .append($("<span style=' border: 0px; width: 170px' class='ftviewer form-control'>File Viewer</span>"))
-	                .append($("<span style=' border: 0px; width: 170px' class='fteditor form-control'>File Editor</span>"))                
-	                );
+            .empty()
+            .append($("<div class='input-group' >")
+                    .append($("<span style='width: 80px; border: 0' class='form-control' >File Ext.</span>"))
+                    .append($("<span style=' border: 0; width: 170px' class='ftviewer form-control'>File Viewer</span>"))
+                    .append($("<span style=' border: 0; width: 170px' class='fteditor form-control'>File Editor</span>"))
+                    );
 
-        TSCORE.Config.getSupportedFileTypes().forEach(function (value, index) {
+        TSCORE.Config.getSupportedFileTypes().forEach(function (value) {
             addFileType($('#fileTypesList'), value.type, value.viewer, value.editor);
         });        
        
@@ -134,12 +130,12 @@ define(function(require, exports, module) {
     }
 
     function collectPerspectivesData() {
-        var data = new Array();
+        var data = [];
         $('#perspectiveList').children().each( function(index, element) {
                 if($(element).find("select").val() != "false") {
-	                data.push({
-	                    "id":$(element).find("select").val(),
-	                });                	
+                    data.push({
+                        "id":$(element).find("select").val()
+                    });
                 }
             }            
         ); 
@@ -147,16 +143,16 @@ define(function(require, exports, module) {
     }
 
     function collectSupportedFileTypesData() {
-        var data = new Array();
+        var data = [];
         $('#fileTypesList').children().each( function(index, element) {
-        	// Skiping the first line with the descriptions    
-        	if(index > 0) {
-                    data.push({
-                        "type":     $(element).find("input").val(),
-                        "viewer":   $(element).find(".ftviewer").val(),
-                        "editor":   $(element).find(".fteditor").val(),
-                        });        	    	
-        	    }
+            // Skiping the first line with the descriptions
+            if(index > 0) {
+                data.push({
+                    "type":     $(element).find("input").val(),
+                    "viewer":   $(element).find(".ftviewer").val(),
+                    "editor":   $(element).find(".fteditor").val()
+                    });
+                }
             }            
         ); 
         return data;
