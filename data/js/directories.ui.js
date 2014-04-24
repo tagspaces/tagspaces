@@ -1,6 +1,8 @@
 /* Copyright (c) 2012-2014 The TagSpaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that 
  * can be found in the LICENSE file. */
+/* global define  */
+
 define(function(require, exports, module) {
 "use strict";
 
@@ -21,14 +23,13 @@ define(function(require, exports, module) {
         
         document.title = currentLocation.name + " | " + TSCORE.Config.DefaultSettings.appName;
     
-        $( "#locationName" ).text(currentLocation.name);
-        $( "#locationName" ).attr("title",path);            
+        $( "#locationName" ).text(currentLocation.name).attr("title",path);
        
         // Clear search query
         TSCORE.clearSearchFilter();                         
        
         // Clears the directory history
-        directoryHistory = new Array();
+        directoryHistory = [];
         navigateToDirectory(path);
 
         // Handle open default perspective for a location
@@ -52,13 +53,13 @@ define(function(require, exports, module) {
             if(directoryHistory[i].path == TSCORE.currentPath) {
                 directoryHistory[i]["children"] = new Array();
                 for(var j=0; j < dirList.length; j++) {
-                	 if(!dirList[j].isFile) {
-                     	directoryHistory[i]["children"].push(dirList[j]);                	 	
+                     if(!dirList[j].isFile) {
+                        directoryHistory[i]["children"].push(dirList[j]);
                         hasSubFolders = true;
-                	 }  
+                     }
                 }
-		        // Sort the dirList alphabetically
-		        directoryHistory[i]["children"].sort(function(a,b) { return a.name.localeCompare(b.name); });
+                // Sort the dirList alphabetically
+                directoryHistory[i]["children"].sort(function(a,b) { return a.name.localeCompare(b.name); });
             }
         }
 
@@ -205,7 +206,8 @@ define(function(require, exports, module) {
                         navigateToDirectory($(this).attr("key"));
                     }
                 )                                
-                .droppable({
+                .droppable(
+                    {
                         greedy: "true",                    
                         accept: '.fileTitleButton,.fileTile',
                         hoverClass: "dropOnFolder",
@@ -224,8 +226,8 @@ define(function(require, exports, module) {
             
             .append($("<button>", {
                     "class":        "btn btn-link btn-lg directoryActions",
-                    "key":          directoryHistory[i].path, 
-                    "title":        "Directory Options"
+                    "key":          directoryHistory[i].path,
+                    "title":        $.i18n.t("ns.common:directoryOperations")
             })                       
             //.dropdown( 'attach' , '#directoryMenu' )
             .append("<b class='fa fa-ellipsis-v'>")
@@ -383,15 +385,15 @@ define(function(require, exports, module) {
     } 
     
     function initUI() {  
-		// Context Menus
-		
-	    $("body").on("contextmenu click", ".directoryActions", function (e) {
-			TSCORE.hideAllDropDownMenus();
-	        dir4ContextMenu = $(this).attr("key");	        
-			TSCORE.showContextMenu("#directoryMenu", $(this));	        
-	        return false;
-	    });
-    	  
+        // Context Menus
+
+        $("body").on("contextmenu click", ".directoryActions", function (e) {
+            TSCORE.hideAllDropDownMenus();
+            dir4ContextMenu = $(this).attr("key");
+            TSCORE.showContextMenu("#directoryMenu", $(this));
+            return false;
+        });
+
         // Context menu for the tags in the file table and the file viewer
         $( "#directoryMenuReloadDirectory" ).click( function() {
             navigateToDirectory(dir4ContextMenu);
@@ -404,7 +406,7 @@ define(function(require, exports, module) {
         $( "#directoryMenuOpenDirectory" ).click( function() {
             TSCORE.IO.openDirectory(dir4ContextMenu);
         });                    
-	        
+
     }
 
     function createLocation() {
@@ -483,63 +485,63 @@ define(function(require, exports, module) {
     } 
     
     function showLocationCreateDialog() {
-		require([
-	          "text!templates/LocationCreateDialog.html"
-		    ], function(uiTPL) {
+        require([
+              "text!templates/LocationCreateDialog.html"
+            ], function(uiTPL) {
                 // Check if dialog already created
-		     	if($("#dialogCreateFolderConnection").length < 1) {
-		            var uiTemplate = Handlebars.compile( uiTPL );
-			     	$("body").append(uiTemplate());	
-			     		            
-			        $("#selectLocalDirectory").on("click",function(e) {
-			            e.preventDefault();
+                if($("#dialogCreateFolderConnection").length < 1) {
+                    var uiTemplate = Handlebars.compile( uiTPL );
+                    $("body").append(uiTemplate());
+
+                    $("#selectLocalDirectory").on("click",function(e) {
+                        e.preventDefault();
                         selectLocalDirectory();
-			        }); 	
-			        
+                    });
+
                     TSCORE.Config.getActivatedPerspectiveExtensions().forEach( function(value) {
                         $("#locationPerspective").append($("<option>").text(value.id).val(value.id));                    
                     });			        
-			        
-			        $( "#createFolderConnectionButton" ).on("click", function() { 
-			            createLocation();
-			        }); 
-            			        
+
+                    $( "#createFolderConnectionButton" ).on("click", function() {
+                        createLocation();
+                    });
+
                     if(isCordova) {
                         $("#folderLocation").attr("placeholder","Example: DCIM/Camera");	         			        	     		
                     }
-		     	}
-		        $("#connectionName").val("");
-		        $("#folderLocation").val("");
-		        $("#dialogCreateFolderConnection").modal({backdrop: 'static',show: true});
-		});    	
+                }
+                $("#connectionName").val("");
+                $("#folderLocation").val("");
+                $("#dialogCreateFolderConnection").modal({backdrop: 'static',show: true});
+        });
     }  
     
     function showCreateDirectoryDialog(dirPath) {
-		require([
-	          "text!templates/DirectoryCreateDialog.html"
-		    ], function(uiTPL) {
-		     	if($("#dialogDirectoryCreate").length < 1) {		    	
-		            var uiTemplate = Handlebars.compile( uiTPL );
-			     	$('body').append(uiTemplate());		
-			     	
-			        $( "#createNewDirectoryButton" ).on("click", function() {			
+        require([
+              "text!templates/DirectoryCreateDialog.html"
+            ], function(uiTPL) {
+                if($("#dialogDirectoryCreate").length < 1) {
+                    var uiTemplate = Handlebars.compile( uiTPL );
+                    $('body').append(uiTemplate());
+
+                    $( "#createNewDirectoryButton" ).on("click", function() {
                         // TODO validate folder name
-			            var bValid = true;
-			            //bValid = bValid && checkLength( newDirName, "directory name", 3, 100 );
-			            //bValid = bValid && checkRegexp( newDirName, /^[a-z]([0-9a-z_])+$/i, "Directory name may consist of a-z, 0-9, underscores, begin with a letter." );
-			            if ( bValid ) {
-			                TSCORE.IO.createDirectory($( "#createNewDirectoryButton" ).attr("path")+TSCORE.dirSeparator+$( "#newDirectoryName" ).val());
-			            }
-			        });   			     	            
-		     	}
+                        var bValid = true;
+                        //bValid = bValid && checkLength( newDirName, "directory name", 3, 100 );
+                        //bValid = bValid && checkRegexp( newDirName, /^[a-z]([0-9a-z_])+$/i, "Directory name may consist of a-z, 0-9, underscores, begin with a letter." );
+                        if ( bValid ) {
+                            TSCORE.IO.createDirectory($( "#createNewDirectoryButton" ).attr("path")+TSCORE.dirSeparator+$( "#newDirectoryName" ).val());
+                        }
+                    });
+                }
                 // TODO remove use dir4ContextMenu
                 if(dirPath == undefined) {
                     dirPath = dir4ContextMenu;
                 }
                 $( "#createNewDirectoryButton" ).attr("path", dirPath);
-		        $("#newDirectoryName").val("");
-		        $('#dialogDirectoryCreate').modal({backdrop: 'static',show: true});        
-		});
+                $("#newDirectoryName").val("");
+                $('#dialogDirectoryCreate').modal({backdrop: 'static',show: true});
+        });
     }    
     
     function deleteLocation(name) {
@@ -550,7 +552,7 @@ define(function(require, exports, module) {
         
         //Opens the first location in the settings after deleting a location  
         if(TSCORE.Config.Settings["tagspacesList"].length > 0) {
-        	openLocation(TSCORE.Config.Settings["tagspacesList"][0].path);        	
+            openLocation(TSCORE.Config.Settings["tagspacesList"][0].path);
         } else {
             closeCurrentLocation();      
         }                              				
@@ -572,14 +574,14 @@ define(function(require, exports, module) {
     }  
 
     function showDeleteFolderConnectionDialog(name) {
-		TSCORE.showConfirmDialog(
-			"Delete connection to folder",
-			"Do you want to delete the connection '"+$("#connectionName2").attr("oldName")+"'?",
-			function() {
-			     deleteLocation($("#connectionName2").attr("oldName"));
-			     $("#dialogLocationEdit").modal('hide');
-			 }
-		);
+        TSCORE.showConfirmDialog(
+            "Delete connection to folder",
+            "Do you want to delete the connection '"+$("#connectionName2").attr("oldName")+"'?",
+            function() {
+                 deleteLocation($("#connectionName2").attr("oldName"));
+                 $("#dialogLocationEdit").modal('hide');
+             }
+        );
     }             
     
     function initLocations() {
@@ -607,7 +609,7 @@ define(function(require, exports, module) {
                         .click(function() {
                             openLocation($(this).attr( "path" ));                           
                         })
-                    	.prepend("<i class='fa fa-bookmark'></i>&nbsp;")
+                        .prepend("<i class='fa fa-bookmark'></i>&nbsp;")
                     )
                     .append(
                         $('<button>', { 
