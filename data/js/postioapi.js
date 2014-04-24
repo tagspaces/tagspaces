@@ -1,4 +1,4 @@
-/* Copyright (c) 2012-2013 The TagSpaces Authors. All rights reserved.
+/* Copyright (c) 2012-2014 The TagSpaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that 
  * can be found in the LICENSE file. */
 define(function(require, exports, module) {
@@ -38,7 +38,7 @@ define(function(require, exports, module) {
 
         var oldFileContainingPath = TSCORE.TagUtils.extractContainingDirectoryPath(oldFilePath),
             newFileConaintingPath = TSCORE.TagUtils.extractContainingDirectoryPath(newFilePath);
-        if(oldFileContainingPath != newFileConaintingPath) {
+        if(oldFileContainingPath !== newFileConaintingPath) {
             // File was moved
             // TODO consider case - file was moved in subdir shown in the recursive search results
             TSCORE.removeFileModel(TSCORE.fileList, oldFilePath);
@@ -76,15 +76,14 @@ define(function(require, exports, module) {
     exports.listSubDirectories = function(dirList, dirPath) {
         console.log("Listing Subdirs: "+JSON.stringify(dirList));
         TSCORE.subfoldersDirBrowser = dirList;
-        if(TSCORE.directoryBrowser != undefined) {
+        if(TSCORE.directoryBrowser !== undefined) {
             TSCORE.directoryBrowser.reInitUI(dirPath);            
         }
     };
 
     exports.errorOpeningPath = function() {
-        TSCORE.showAlertDialog("Error occured while opening a path! Currently opened location will be closed."); 
+        TSCORE.showAlertDialog($.i18n.t("ns.dialogs:errorOpeningLocationAlert"));
         TSCORE.closeCurrentLocation();
-        //TSCORE.PerspectiveManager.updateFileBrowserData([]);        
     };
     
     exports.deleteElement = function(filePath) {
