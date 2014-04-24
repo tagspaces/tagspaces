@@ -91,8 +91,8 @@
 
         $( "#tagGroupMenuDeleteTagGroup" ).click( function() {
             TSCORE.showConfirmDialog(
-                "Delete TagGroup",
-                "Do you want to delete taggroup '"+TSCORE.selectedTagData.title+"' ?",
+                $.i18n.t("ns.dialogs:deleteTagGroupTitleConfirm"),
+                $.i18n.t("ns.dialogs:deleteTagGroupContentConfirm", {tagGroup: TSCORE.selectedTagData.title}),
                 function() {
                     TSCORE.Config.deleteTagGroup(TSCORE.selectedTagData);
                     generateTagGroups();                              
@@ -150,7 +150,7 @@
         if(TSCORE.Config.Settings.tagGroups.length < 1) {
             $tagGroupsContent.append($("<button>", {
                 "class": "btn",
-                text: "Create New Taggroup"
+                "data-i18n": "[title]ns.common:createTagGroup"
             })
             .click( function() {
                 TSCORE.showDialogTagGroupCreate();
@@ -174,7 +174,7 @@
             // Adding the calculated tag group if it not exists
             if(!tagGroupExist) {
                 TSCORE.Config.Settings.tagGroups.push({
-                        "title": "Tags in Perspective", 
+                        "title": "Tags in Perspective", // TODO translate
                         "key": "CTG", 
                         "expanded": true,
                         "children": exports.calculatedTags
@@ -197,7 +197,7 @@
                         "class":        "btn btn-link btn-lg tagGroupIcon",
                         "data-toggle":  "collapse",
                         "data-target":  "#tagButtons"+i,
-                        "title":        "Toggle TagGroup"
+                        "data-i18n": "[title]ns.common:toggleTagGroup"
                     }  
                 )
                 .html("<i class='fa fa-tags'></i>")   
@@ -228,7 +228,7 @@
                     "class": "btn btn-link btn-lg tagGroupActions",
                     "tag": TSCORE.Config.Settings.tagGroups[i].title,
                     "key": TSCORE.Config.Settings.tagGroups[i].key,
-                    "title": "Taggroup options"
+                    "data-i18n": "[title]ns.common:tagGroupOperations"
             })
             .append("<b class='fa fa-ellipsis-v'></b>")
             ) // end gear
@@ -253,17 +253,17 @@
             var tagButtons = $("<div>").appendTo( "#tagButtonsContent"+i );
             for(var j=0; j < TSCORE.Config.Settings.tagGroups[i].children.length; j++) {
                 var tagTitle;
-                if(TSCORE.Config.Settings.tagGroups[i].children[j].description != undefined) {
+                if(TSCORE.Config.Settings.tagGroups[i].children[j].description !== undefined) {
                     tagTitle = TSCORE.Config.Settings.tagGroups[i].children[j].description;
                 } else {
                     tagTitle = "Opens context menu for "+TSCORE.Config.Settings.tagGroups[i].children[j].title;
                 }
                 var tagIcon = "";
-                if(TSCORE.Config.Settings.tagGroups[i].children[j].type == "smart"){
+                if(TSCORE.Config.Settings.tagGroups[i].children[j].type === "smart"){
                     tagIcon = "<span class='fa fa-flask'/> ";
                 }
                 var tagCount = "";
-                if(TSCORE.Config.Settings.tagGroups[i].children[j].count != undefined) {
+                if(TSCORE.Config.Settings.tagGroups[i].children[j].count !== undefined) {
                     tagCount = " ("+TSCORE.Config.Settings.tagGroups[i].children[j].count+")";
                 }                
                 tagButtons.append($("<a>", {
@@ -380,9 +380,8 @@
         TSCORE.selectedTag = tag;
     }
 
-    var tagButtonTmpl = Handlebars.compile('{{#each tags}}\
-            <button class="btn btn-sm tagButton" tag="{{tag}}" filepath="{{filepath}}" style="{{style}}">\
-            {{tag}} <span class="caret"></span></button>{{/each}}');
+    var tagButtonTmpl = Handlebars.compile('{{#each tags}} <button class="btn btn-sm tagButton" tag="{{tag}}" ' +
+        'filepath="{{filepath}}" style="{{style}}">{{tag}} <span class="caret"></span></button>{{/each}}');
 
     // Helper function generating tag buttons
     function generateTagButtons(commaSeparatedTags, filePath) {
@@ -410,7 +409,7 @@
         var tagStyle = "";
         if(tagObject.color !== undefined) {
            var textColor = tagObject.textcolor;
-           if(textColor == undefined) {
+           if(textColor === undefined) {
               textColor = "white"; 
            }
            tagStyle = "color: "+textColor+" !important; background-color: "+tagObject.color+" !important;";
@@ -435,20 +434,23 @@
 
     function showTagEditInTreeDialog() {
         $( "#tagInTreeName" ).val(TSCORE.selectedTagData.title);
-        $( "#tagColor" ).simplecolorpicker({picker: false, theme: 'fontawesome'});
+
+        var $tagColor= $( "#tagColor" );
+        $tagColor.simplecolorpicker({picker: false, theme: 'fontawesome'});
         
-        if(TSCORE.selectedTagData.color == undefined || TSCORE.selectedTagData.color.length < 1) {
-            $( "#tagColor" ).simplecolorpicker('selectColor', '#008000');  
+        if(TSCORE.selectedTagData.color === undefined || TSCORE.selectedTagData.color.length < 1) {
+            $tagColor.simplecolorpicker('selectColor', '#008000');
         } else {
-            $( "#tagColor" ).simplecolorpicker('selectColor', TSCORE.selectedTagData.color);   
+            $tagColor.simplecolorpicker('selectColor', TSCORE.selectedTagData.color);
         }
-        
-        $( "#tagTextColor" ).simplecolorpicker({picker: false, theme: 'fontawesome'});
+
+        var $tagTextColor = $( "#tagTextColor" );
+        $tagTextColor.simplecolorpicker({picker: false, theme: 'fontawesome'});
         
         if(TSCORE.selectedTagData.textcolor === undefined || TSCORE.selectedTagData.textcolor.length < 1) {
-            $( "#tagTextColor" ).simplecolorpicker('selectColor', '#ffffff');            
+            $tagTextColor.simplecolorpicker('selectColor', '#ffffff');
         } else {
-            $( "#tagTextColor" ).simplecolorpicker('selectColor', TSCORE.selectedTagData.textcolor);            
+            $tagTextColor.simplecolorpicker('selectColor', TSCORE.selectedTagData.textcolor);
         }
         $( '#dialogEditInTreeTag' ).modal({backdrop: 'static',show: true});        
     }	
