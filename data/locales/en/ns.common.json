@@ -68,6 +68,7 @@
     "moveTagGroupDown": "Move Tag Group Down",
     "editTagGroupTooltip": "Edit current tag group",
     "editTagGroup": "Edit Tag Group",
+    "toggleTagGroup": "Toggle Tag Group",
     "deleteTagGroupTooltip": "Delete current tag group",
     "deleteTagGroup": "Delete Tag Group",
     "directoryOperations": "Directory Operations",
@@ -116,6 +117,19 @@
     "andedSearch": "All terms should be true in order the file to appear in the search results.",
     "searchInFilenameOnly": "The searched term should be part of the filename. Currently the content of the file is ignored.",
     "perspectivesDropDown": "Perspectives",
+
+    "suggestedTags": "Suggested Tags",
+    "perspectiveSwitch": "Perspective Switch",
+    "tagsInPerspective": "Tags in Perspective",
+    "noSubfoldersFound": "No subfolders found",
+    "connectNewLocationTooltip": "Connect New Location",
+    "actionsForDirectory": "Actions for '__dirName__'",
+    "subfodersOfDirectory": "Subfolders of '__dirName__'",
+    "locationPointingTo": "Location pointing to '__dirPath__'",
+    "editLocation": "Edit Location",
+    "toggleDirectory": "Toggle Directory",
+    "": "",
+    "": "",
 
     "": ""
 }
