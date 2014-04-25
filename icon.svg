@@ -521,9 +521,9 @@
        height="112.03896"
        x="199.67595"
        y="316.80139"
-       inkscape:export-filename="/media/z/TagSpaces/repository/data/node-webkit/icon128.png"
-       inkscape:export-xdpi="102.82"
-       inkscape:export-ydpi="102.82" />
+       inkscape:export-filename="/home/na/tagspacesApp/platforms/android/res/drawable-xhdpi/icon.png"
+       inkscape:export-xdpi="77.120003"
+       inkscape:export-ydpi="77.120003" />
     <rect
        style="fill:none;stroke:none"
        id="rect3052-8-6"
@@ -1069,9 +1069,9 @@
        id="rect3052-8-2-2"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="ccccc"
-       inkscape:export-filename="/media/z/TagSpaces/repository/data/node-webkit/icon128.png"
-       inkscape:export-xdpi="102.82"
-       inkscape:export-ydpi="102.82" />
+       inkscape:export-filename="/home/na/tagspacesApp/platforms/android/res/drawable-mdpi/icon.png"
+       inkscape:export-xdpi="47.080002"
+       inkscape:export-ydpi="47.080002" />
     <path
        transform="matrix(1.5935856,0,0,1.6535653,-281.23413,-221.44708)"
        sodipodi:type="arc"
@@ -1082,53 +1082,53 @@
        sodipodi:rx="3.75"
        sodipodi:ry="3.5714285"
        d="m 350.71429,347.71933 a 3.75,3.5714285 0 1 1 -7.5,0 3.75,3.5714285 0 1 1 7.5,0 z"
-       inkscape:export-xdpi="102.82"
-       inkscape:export-ydpi="102.82"
-       inkscape:export-filename="/media/z/TagSpaces/repository/data/node-webkit/icon128.png" />
+       inkscape:export-xdpi="47.080002"
+       inkscape:export-ydpi="47.080002"
+       inkscape:export-filename="/home/na/tagspacesApp/platforms/android/res/drawable-mdpi/icon.png" />
     <path
        style="fill:none;stroke:#a466aa;stroke-width:10.29371548;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        d="m 259.45393,396.11234 -9.42604,-8.71773"
        id="path3108-5-39-8"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cc"
-       inkscape:export-filename="/media/z/TagSpaces/repository/data/node-webkit/icon128.png"
-       inkscape:export-xdpi="102.82"
-       inkscape:export-ydpi="102.82" />
+       inkscape:export-filename="/home/na/tagspacesApp/platforms/android/res/drawable-mdpi/icon.png"
+       inkscape:export-xdpi="47.080002"
+       inkscape:export-ydpi="47.080002" />
     <path
        style="fill:none;stroke:#ffffff;stroke-width:12.79638863;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        d="m 260.36147,332.59663 33.69012,0.12926 0,32.24432 -43.22103,44.0765 -33.09925,-30.55827 z"
        id="path3923-1-1-4-9-8"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cccccc"
-       inkscape:export-filename="/media/z/TagSpaces/repository/data/node-webkit/icon128.png"
-       inkscape:export-xdpi="102.82"
-       inkscape:export-ydpi="102.82" />
+       inkscape:export-filename="/home/na/tagspacesApp/platforms/android/res/drawable-mdpi/icon.png"
+       inkscape:export-xdpi="47.080002"
+       inkscape:export-ydpi="47.080002" />
     <path
        style="fill:#f7901e;fill-opacity:1;stroke:#33b5be;stroke-width:10.29371548;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        d="M 276.32156,375.89206 257.4695,358.94093"
        id="path3108-9-1-76-7"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cc"
-       inkscape:export-filename="/media/z/TagSpaces/repository/data/node-webkit/icon128.png"
-       inkscape:export-xdpi="102.82"
-       inkscape:export-ydpi="102.82" />
+       inkscape:export-filename="/home/na/tagspacesApp/platforms/android/res/drawable-mdpi/icon.png"
+       inkscape:export-xdpi="47.080002"
+       inkscape:export-ydpi="47.080002" />
     <path
        style="fill:#616577;fill-opacity:1;stroke:#f7901e;stroke-width:10.29371548;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        d="M 268.1358,386.3049 253.74869,373.47047"
        id="path3108-0-7-9-8"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cc"
-       inkscape:export-filename="/media/z/TagSpaces/repository/data/node-webkit/icon128.png"
-       inkscape:export-xdpi="102.82"
-       inkscape:export-ydpi="102.82" />
+       inkscape:export-filename="/home/na/tagspacesApp/platforms/android/res/drawable-mdpi/icon.png"
+       inkscape:export-xdpi="47.080002"
+       inkscape:export-ydpi="47.080002" />
     <path
        style="fill:none;stroke:#616577;stroke-width:11.96031666;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        d="m 261.17803,334.66571 31.07089,0 0,29.59872 -41.34434,42.44115 -30.69503,-28.37564 z"
        id="path3923-1-1-4-9"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cccccc"
-       inkscape:export-filename="/media/z/TagSpaces/repository/data/node-webkit/icon128.png"
-       inkscape:export-xdpi="102.82"
-       inkscape:export-ydpi="102.82" />
+       inkscape:export-filename="/home/na/tagspacesApp/platforms/android/res/drawable-mdpi/icon.png"
+       inkscape:export-xdpi="47.080002"
+       inkscape:export-ydpi="47.080002" />
   </g>
 </svg>
