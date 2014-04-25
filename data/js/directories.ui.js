@@ -607,7 +607,11 @@ define(function(require, exports, module) {
         var $connectionList = $( "#connectionsList" ); 
         $connectionList.empty();
         $connectionList.attr("style","overflow-y: auto; max-height: 500px; width: 238px;");
-        $connectionList.append('<li class="dropdown-header"><span id="">Your Locations</span><button type="button" class="close">×</button></li>');
+        $connectionList.append($('<li>', {
+                class: "dropdown-header",
+                "data-i18n": "ns.common:yourLocations"
+            })
+            .append('<button type="button" class="close">×</button>'));
         $connectionList.append('<li class="divider"></li>');
         var connectionsList = TSCORE.Config.Settings.tagspacesList;
         for (var i=0; i < connectionsList.length; i++) { 
