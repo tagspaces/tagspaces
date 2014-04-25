@@ -1,7 +1,9 @@
-/* Copyright (c) 2012-2013 The TagSpaces Authors. All rights reserved.
+/* Copyright (c) 2012-2014 The TagSpaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that 
  * can be found in the LICENSE file. */
-//var LOG = debug ? console.log : function () {};
+/* global define, requirejs, _  */
+
+ //var LOG = debug ? console.log : function () {};
 // the value of this var is replaced to "true" by the build script
 var PRODUCTION = "@@PRODUCTION";
 
@@ -10,7 +12,6 @@ if (PRODUCTION == "true") {
     console = console || {};
     console.log = function(){};
     console.error = function(){};
-    console.log = function(){};
 }
 
 var isFirefox = document.URL.indexOf( 'resource://' ) === 0;
@@ -159,7 +160,7 @@ define(function (require) {
     }
 
     var TSCORE;
-    requirejs(['tscore','underscore'], function (core,_) {
+    requirejs(['tscore','underscore'], function (core) {
         TSCORE = core;
         TSCORE.initApp();
     }); 
