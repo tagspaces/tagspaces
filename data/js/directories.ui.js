@@ -1,7 +1,7 @@
 /* Copyright (c) 2012-2014 The TagSpaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that 
  * can be found in the LICENSE file. */
-/* global define, Handlebars  */
+/* global define, Handlebars, isCordova  */
 
 define(function(require, exports, module) {
 "use strict";
@@ -91,7 +91,10 @@ define(function(require, exports, module) {
                    "style":      "overflow-y: auto; max-height: 430px; width: 250px; padding: 5px;",                
                    "class":      "dropdown-menu"
             })
-            .append($("<li>", { "text": 'Actions for \"'+directoryHistory[i].name+'\"', "class": 'dropdown-header' })
+            .append($("<li>", {
+                    "text": $.i18n.t("ns.common:actionsForDirectory", {dirName: directoryHistory[i].name}),
+                    "class": 'dropdown-header'
+                })
                 .append($('<button type="button" class="close">×</button>'))
             )
             //.append('<li class="divider"></li>')
@@ -122,7 +125,10 @@ define(function(require, exports, module) {
                 )
             )
             .append('<li class="divider"></li>')
-            .append($("<li>", { "text": 'Subfolders of \"'+directoryHistory[i].name+'\"', "class": 'dropdown-header' })
+            .append($("<li>", {
+                "text": $.i18n.t("ns.common:subfodersOfDirectory", {dirName: directoryHistory[i].name}),
+                "class": 'dropdown-header'
+            })
             );
                           
             if(directoryHistory[i].children.length <= 0) {
@@ -133,9 +139,8 @@ define(function(require, exports, module) {
             } else {
                 for(var j=0; j < directoryHistory[i].children.length; j++) {
                     if (TSCORE.Config.getShowUnixHiddenEntries() || 
-                            (!TSCORE.Config.getShowUnixHiddenEntries() 
-                              && (directoryHistory[i].children[j].name.indexOf(".") !== 0)
-                             )
+                            (!TSCORE.Config.getShowUnixHiddenEntries() &&
+                                (directoryHistory[i].children[j].name.indexOf(".") !== 0))
                         ) {
                         subfolders.append($("<button>", {
                             "class":    "btn dirButton",
@@ -193,7 +198,7 @@ define(function(require, exports, module) {
                         "data-toggle":  "collapse",
                         "data-target":  "#dirButtons"+i,                        
                         "key":          directoryHistory[i].path,
-                        "title":        "Toggle Directory"
+                        "title":        $.i18n.t("ns.common:toggleDirectory")
                     }  
                 )
                 .html("<i class='fa fa-folder-open'></i>")   
@@ -202,7 +207,7 @@ define(function(require, exports, module) {
             .append($("<button>", { // Dir main button
                         "class":        "btn btn-link directoryTitle",
                         "key":          directoryHistory[i].path,
-                        "title":        "Change Direoctory to: "+directoryHistory[i].path,
+                        "title":        directoryHistory[i].path,
                         "text":         directoryHistory[i].name
                     }  
                 )
@@ -216,13 +221,13 @@ define(function(require, exports, module) {
                         accept: '.fileTitleButton,.fileTile',
                         hoverClass: "dropOnFolder",
                         drop: function( event, ui ) {
-                                ui.draggable.detach();
-                                var filePath = ui.draggable.attr("filepath");
-                                var fileName = TSCORE.TagUtils.extractFileName(filePath);
-                                var targetDir = $(this).attr("key");
-                                console.log("Moving file: "+filePath+" to "+targetDir);
-                                TSCORE.IO.renameFile(filePath, targetDir+TSCORE.dirSeparator+fileName);
-                                $(ui.helper).remove();                                 
+                            ui.draggable.detach();
+                            var filePath = ui.draggable.attr("filepath");
+                            var fileName = TSCORE.TagUtils.extractFileName(filePath);
+                            var targetDir = $(this).attr("key");
+                            console.log("Moving file: "+filePath+" to "+targetDir);
+                            TSCORE.IO.renameFile(filePath, targetDir+TSCORE.dirSeparator+fileName);
+                            $(ui.helper).remove();
                         }                  
                     }
                 )
@@ -255,12 +260,12 @@ define(function(require, exports, module) {
             ); // end group
 
             var dirButtons = $("<div>").appendTo( "#dirButtonsContent"+i );  
-            if(directoryHistory[i]["children"].length <= 0) {
+            if(directoryHistory[i].children.length <= 0) {
                     dirButtons.append("<div class='alert'><strong> No subfolders found</strong></div>");          
             } else {
                 for(var j=0; j < directoryHistory[i].children.length; j++) {
                     if (TSCORE.Config.getShowUnixHiddenEntries() || 
-                            (!TSCORE.Config.getShowUnixHiddenEntries() && (directoryHistory[i].children[j].name.indexOf(".") != 0))) {
+                            (!TSCORE.Config.getShowUnixHiddenEntries() && (directoryHistory[i].children[j].name.indexOf(".") !== 0))) {
                         dirButtons.append($("<button>", { 
                             "class":    "btn btn-sm dirButton", 
                             "key":      directoryHistory[i].children[j].path,
@@ -353,9 +358,9 @@ define(function(require, exports, module) {
         
         // Removes the history only if it is a completely new path
         if(directoryFoundOn >= 0) { 
-            var diff = directoryHistory.length - (directoryFoundOn+1);
-            if(diff > 0) {
-                directoryHistory.splice(directoryFoundOn+1, diff);
+            var diff1 = directoryHistory.length - (directoryFoundOn+1);
+            if(diff1 > 0) {
+                directoryHistory.splice(directoryFoundOn+1, diff1);
             }    
         }       
         
@@ -364,15 +369,15 @@ define(function(require, exports, module) {
             // var parentLocation = directoryPath.substring(0, directoryPath.lastIndexOf(TSCORE.dirSeparator));
             var parentLocation = TSCORE.TagUtils.extractParentDirectoryPath(directoryPath);
             var parentFound = -1;
-            for(var i=0; i < directoryHistory.length; i++) {
-                if(directoryHistory[i].path === parentLocation) {
-                    parentFound = i;
+            for(var j=0; j < directoryHistory.length; j++) {
+                if(directoryHistory[j].path === parentLocation) {
+                    parentFound = j;
                 } 
             }       
             if(parentFound >= 0) { 
-                var diff = directoryHistory.length - (parentFound+1);
-                if(diff > 0) {
-                    directoryHistory.splice(parentFound+1, diff);
+                var diff2 = directoryHistory.length - (parentFound+1);
+                if(diff2 > 0) {
+                    directoryHistory.splice(parentFound+1, diff2);
                 }    
             }  
                     
@@ -422,8 +427,7 @@ define(function(require, exports, module) {
             );
         
         // Enable the UI behavior by not empty location list
-        $( "#createNewLocation" ).attr("title", "Connect New Location");
-        $( "#createNewLocation" ).tooltip( "destroy" );             
+        $( "#createNewLocation" ).attr("title",$.i18n.t("ns.common:connectNewLocationTooltip")).tooltip( "destroy" );
         $( "#locationName" ).prop('disabled', false);
         $( "#selectLocation" ).prop('disabled', false); 
                         
@@ -432,14 +436,16 @@ define(function(require, exports, module) {
     }
 
     function editLocation() {
+        var $connectionName2 = $("#connectionName2");
+        var $folderLocation2 = $("#folderLocation2");
         TSCORE.Config.editLocation(
-             $("#connectionName2").attr("oldName"), 
-             $("#connectionName2").val(), 
-             $("#folderLocation2").val(),
-             $("#locationPerspective2").val()
+            $connectionName2.attr("oldName"),
+            $connectionName2.val(),
+            $folderLocation2.val(),
+            $("#locationPerspective2").val()
         );
         initLocations();  
-        openLocation($("#folderLocation2").val());                                         
+        openLocation($folderLocation2.val());
     }
     
     function selectLocalDirectory() {
@@ -451,8 +457,10 @@ define(function(require, exports, module) {
         require([
               "text!templates/LocationEditDialog.html"
             ], function(uiTPL) {
+                var $dialogLocationEdit = $("#dialogLocationEdit");
+
                 // Check if dialog already created
-                if($("#dialogLocationEdit").length < 1) {
+                if($dialogLocationEdit.length < 1) {
                     var uiTemplate = Handlebars.compile( uiTPL );
                     $("body").append(uiTemplate()); 
                                     
@@ -470,20 +478,24 @@ define(function(require, exports, module) {
                     });                                                       
                 }
 
+                var $connectionName2 = $("#connectionName2");
+                var $folderLocation2 = $("#folderLocation2");
+                var $locationPerspective2 = $("#locationPerspective2");
+
                 var selectedPerspectiveId = TSCORE.Config.getLocation(path).perspective;
-                $("#locationPerspective2").empty();
+                $locationPerspective2.empty();
                 TSCORE.Config.getActivatedPerspectiveExtensions().forEach( function(value) {
                         if (selectedPerspectiveId === value.id) {
-                            $("#locationPerspective2").append($("<option>").attr("selected","selected").text(value.id).val(value.id));                
+                            $locationPerspective2.append($("<option>").attr("selected","selected").text(value.id).val(value.id));
                         } else {
-                            $("#locationPerspective2").append($("<option>").text(value.id).val(value.id));                    
+                            $locationPerspective2.append($("<option>").text(value.id).val(value.id));
                         }    
                     }            
                 );    
 
-                $("#connectionName2").val(name);
-                $("#connectionName2").attr("oldName",name);
-                $("#folderLocation2").val(path);
+                $connectionName2.val(name);
+                $connectionName2.attr("oldName",name);
+                $folderLocation2.val(path);
                 $("#dialogLocationEdit").modal({backdrop: 'static',show: true});
         });     
     } 
@@ -492,8 +504,10 @@ define(function(require, exports, module) {
         require([
               "text!templates/LocationCreateDialog.html"
             ], function(uiTPL) {
+                var $dialogCreateFolderConnection = $("#dialogCreateFolderConnection");
+
                 // Check if dialog already created
-                if($("#dialogCreateFolderConnection").length < 1) {
+                if($dialogCreateFolderConnection.length < 1) {
                     var uiTemplate = Handlebars.compile( uiTPL );
                     $("body").append(uiTemplate());
 
@@ -564,7 +578,7 @@ define(function(require, exports, module) {
 
     function closeCurrentLocation() {
         console.log("Closing location..");
-        $("#locationName").text("Choose Location").attr("title","");
+        $("#locationName").text($.i18n.t("ns.common:chooseLocation")).attr("title","");
         $("#locationContent").empty(); 
         
         // Clear the footer
@@ -578,8 +592,8 @@ define(function(require, exports, module) {
 
     function showDeleteFolderConnectionDialog() {
         TSCORE.showConfirmDialog(
-            "Delete connection to folder",
-            "Do you want to delete the connection '"+$("#connectionName2").attr("oldName")+"'?",
+            $.i18n.t("ns.dialogs:deleteLocationTitleAlert"),
+            $.i18n.t("ns.dialogs:deleteLocationContentAlert", { locationName: $("#connectionName2").attr("oldName") }),
             function() {
                  deleteLocation($("#connectionName2").attr("oldName"));
                  $("#dialogLocationEdit").modal('hide');
@@ -602,12 +616,12 @@ define(function(require, exports, module) {
                     style: "line-height: 45px"
                 }).append(
                     $('<button>', { 
-                        title:  "Location pointing to "+connectionsList[i].path,
-                        path:   connectionsList[i].path,
-                        name:   connectionsList[i].name,
-                        text:   " "+connectionsList[i].name,
-                        style:  "width: 180px; text-align: left; border: 0px;",
-                        class:  "btn btn-default"
+                        "title":  connectionsList[i].path,
+                        "path":   connectionsList[i].path,
+                        "name":   connectionsList[i].name,
+                        "text":   " "+connectionsList[i].name,
+                        "style":  "width: 180px; text-align: left; border: 0px;",
+                        "class":  "btn btn-default"
                         } )
                         .click(function() {
                             openLocation($(this).attr( "path" ));                           
@@ -616,12 +630,12 @@ define(function(require, exports, module) {
                     )
                     .append(
                         $('<button>', { 
-                            type:     "button",
-                            title:    "Edit Location",
-                            location: connectionsList[i].name,
-                            path:     connectionsList[i].path,
-                            class:    "btn btn-link pull-right",
-                            style:    "margin-right: 5px; margin-top: 5px"
+                            type:        "button",
+                            "data-i18n": "[title]ns.common:editLocation",
+                            location:    connectionsList[i].name,
+                            path:        connectionsList[i].path,
+                            class:       "btn btn-link pull-right",
+                            style:       "margin-right: 5px; margin-top: 5px"
                             } )
                             .append("<i class='fa fa-pencil fa-lg'></i>")
                             .click(function() {
