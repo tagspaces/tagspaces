@@ -298,35 +298,35 @@
     //////////////////// getter and setter methods ///////////////////    
 
     var getPerspectiveExtensions = function() {
-        if(exports.Settings.ootbPerspectives === null) {
+        if(exports.Settings.ootbPerspectives === undefined) {
             exports.Settings.ootbPerspectives = exports.DefaultSettings.ootbPerspectives;
         }
         return exports.Settings.ootbPerspectives;
     };
 
     var getActivatedPerspectiveExtensions = function() {
-        if(exports.Settings.perspectives === null) {
+        if(exports.Settings.perspectives === undefined) {
             exports.Settings.perspectives = exports.DefaultSettings.perspectives;
         }
         return exports.Settings.perspectives;
     };
 
     var getViewerExtensions = function() {
-        if(exports.Settings.ootbViewers === null) {
+        if(exports.Settings.ootbViewers === undefined) {
             exports.Settings.ootbViewers = exports.DefaultSettings.ootbViewers;
         }
         return exports.Settings.ootbViewers;
     };
     
     var getEditorExtensions = function() {
-        if(exports.Settings.ootbEditors === null) {
+        if(exports.Settings.ootbEditors === undefined) {
             exports.Settings.ootbEditors = exports.DefaultSettings.ootbEditors;
         }
         return exports.Settings.ootbEditors;
     };   
     
     var getPerspectives = function() {
-        if(exports.Settings.perspectives === null) {
+        if(exports.Settings.perspectives === undefined) {
             exports.Settings.perspectives = exports.DefaultSettings.perspectives;
         }
         return exports.Settings.perspectives;
@@ -337,7 +337,7 @@
     };
     
     var getExtensionPath = function() {
-        if(exports.Settings.extensionsPath === null) {
+        if(exports.Settings.extensionsPath === undefined) {
             exports.Settings.extensionsPath = exports.DefaultSettings.extensionsPath;
         }
         return exports.Settings.extensionsPath;
@@ -348,7 +348,7 @@
     };
     
     var getIsWindowMaximized = function() {
-        if(exports.Settings.isWindowMaximized === null) {
+        if(exports.Settings.isWindowMaximized === undefined) {
             exports.Settings.isWindowMaximized = exports.DefaultSettings.isWindowMaximized;
         }
         return exports.Settings.isWindowMaximized;
@@ -359,7 +359,7 @@
     };    
     
     var getLastOpenedLocation = function() {
-        if(exports.Settings.lastOpenedLocation === null) {
+        if(exports.Settings.lastOpenedLocation === undefined) {
             exports.Settings.lastOpenedLocation = exports.DefaultSettings.lastOpenedLocation;
         }
         return exports.Settings.lastOpenedLocation;
@@ -367,10 +367,23 @@
 
     var setLastOpenedLocation = function(value) {
         exports.Settings.lastOpenedLocation = value;
-    };        
-    
-    var getShowUnixHiddenEntries = function() {
-        if(exports.Settings.showUnixHiddenEntries === null) {
+    };
+
+     var getShowWarningRecursiveScan = function() {
+         if(exports.Settings.showWarningRecursiveScan === undefined) {
+             exports.Settings.showWarningRecursiveScan = exports.DefaultSettings.showWarningRecursiveScan;
+             saveSettings();
+         }
+         return exports.Settings.showWarningRecursiveScan;
+     };
+
+     var setShowWarningRecursiveScan = function(value) {
+         exports.Settings.showWarningRecursiveScan = value;
+         saveSettings();
+     };
+
+     var getShowUnixHiddenEntries = function() {
+        if(exports.Settings.showUnixHiddenEntries === undefined) {
             exports.Settings.showUnixHiddenEntries = exports.DefaultSettings.showUnixHiddenEntries;
         }
         return exports.Settings.showUnixHiddenEntries;
@@ -381,7 +394,7 @@
     };
     
     var getCheckForUpdates = function() {
-        if(exports.Settings.checkForUpdates === null) {
+        if(exports.Settings.checkForUpdates === undefined) {
             exports.Settings.checkForUpdates = exports.DefaultSettings.checkForUpdates;
         }
         return exports.Settings.checkForUpdates;
@@ -392,7 +405,7 @@
     };    
 
     var getPrefixTagContainer = function() {
-        if(exports.Settings.prefixTagContainer === null) {
+        if(exports.Settings.prefixTagContainer === undefined) {
             exports.Settings.prefixTagContainer = exports.DefaultSettings.prefixTagContainer;
         }
         return exports.Settings.prefixTagContainer;
@@ -403,7 +416,7 @@
     };  
 
     var getTagDelimiter = function() {
-        if(exports.Settings.tagDelimiter === null) {
+        if(exports.Settings.tagDelimiter === undefined) {
             exports.Settings.tagDelimiter = exports.DefaultSettings.tagDelimiter;
         }
         return exports.Settings.tagDelimiter;
@@ -414,7 +427,7 @@
     };    
 
     var getCalculateTags = function() {
-        if(exports.Settings.calculateTags === null) {
+        if(exports.Settings.calculateTags === undefined) {
             exports.Settings.calculateTags = exports.DefaultSettings.calculateTags;
         }
         return exports.Settings.calculateTags;
@@ -425,7 +438,7 @@
     };    
 
     var getSupportedFileTypes = function() {
-        if(exports.Settings.supportedFileTypes === null) {
+        if(exports.Settings.supportedFileTypes === undefined) {
             exports.Settings.supportedFileTypes = exports.DefaultSettings.supportedFileTypes;
         }
         return exports.Settings.supportedFileTypes;
@@ -813,7 +826,9 @@
     exports.getIsWindowMaximized                    = getIsWindowMaximized;
     exports.setIsWindowMaximized                    = setIsWindowMaximized;
     exports.getLastOpenedLocation                   = getLastOpenedLocation;
-    exports.setLastOpenedLocation                   = setLastOpenedLocation; 
+    exports.setLastOpenedLocation                   = setLastOpenedLocation;
+    exports.getShowWarningRecursiveScan             = getShowWarningRecursiveScan;
+    exports.setShowWarningRecursiveScan             = setShowWarningRecursiveScan;
 
     exports.getPerspectiveExtensions                = getPerspectiveExtensions;
     exports.getActivatedPerspectiveExtensions       = getActivatedPerspectiveExtensions;
