@@ -91,6 +91,8 @@
     "suggestNewFeaturesTooltip": "Suggest a new or vote for an existing feature on UserVoice.com",
     "reportIssues": "Report Issues",
     "reportIssuesTooltip": "Submit an issue on GitHub",
+    "helpUsTranslate": "Translate in Your Language",
+    "helpUsTranslateTooltip": "Help us translate TagSpaces in your language",
     "tweetAboutUs": "Tweet About Us",
     "tweetAboutUsTooltip": "Tweet about @tagspaces",
     "followOnTwitter": "Follow @tagspaces",
@@ -128,7 +130,5 @@
     "locationPointingTo": "Location pointing to '__dirPath__'",
     "editLocation": "Edit Location",
     "toggleDirectory": "Toggle Directory",
-    "yourLocations": "Your Locations:",
-    "": "",
-    "": ""
+    "yourLocations": "Your Locations:"
 }
