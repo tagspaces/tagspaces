@@ -5,47 +5,47 @@
 define(function(require, exports, module) {
 "use strict";
 
-	console.log("Loading editorHTML");
-	exports.id = "editorHTML"; // ID should be equal to the directory name where the ext. is located   
-	exports.title = "HTML Editor";
-	exports.type = "editor";
-	exports.supportedFileTypes = [ "htm", "html" ];
-	
-	var TSCORE = require("tscore");	
-	
-	var htmlEditor = undefined;
-	
-	var extensionsPath = TSCORE.Config.getExtensionPath();
-	
-	var extensionDirectory = extensionsPath+"/"+exports.id;
-	
-	var currentContent = undefined;
-	var currentFilePath = undefined;
-	
-	exports.init = function(filePath, containerElementID) {
-	    console.log("Initalization HTML Text Editor...");
-	    currentFilePath = filePath;
-		require([
-			extensionDirectory+'/summernote/summernote.js',
+    console.log("Loading editorHTML");
+    exports.id = "editorHTML"; // ID should be equal to the directory name where the ext. is located
+    exports.title = "HTML Editor";
+    exports.type = "editor";
+    exports.supportedFileTypes = [ "htm", "html" ];
+
+    var TSCORE = require("tscore");
+
+    var htmlEditor;
+
+    var extensionsPath = TSCORE.Config.getExtensionPath();
+
+    var extensionDirectory = extensionsPath+"/"+exports.id;
+
+    var currentContent;
+    var currentFilePath;
+
+    exports.init = function(filePath, containerElementID) {
+        console.log("Initalization HTML Text Editor...");
+        currentFilePath = filePath;
+        require([
+            extensionDirectory+'/summernote/summernote.js',
             'css!'+extensionDirectory+'/summernote/summernote.css',     
-            'css!'+extensionDirectory+'/extension.css',
-		 	], function() {
-				$("#"+containerElementID).append('<div id="htmlEditor"></div>');	 	
-				TSCORE.IO.loadTextFile(filePath);
-		});
-	};
-	
-	exports.setFileType = function(fileType) {
-	    console.log("setFileType not supported on this extension");      
-	};
-	
-	exports.viewerMode = function(isViewerMode) {
-	    // set readonly      
-	};
-	
-	exports.setContent = function(content) {
-		currentContent = content;
-		
+            'css!'+extensionDirectory+'/extension.css'
+            ], function() {
+                $("#"+containerElementID).append('<div id="htmlEditor"></div>');
+                TSCORE.IO.loadTextFile(filePath);
+        });
+    };
+
+    exports.setFileType = function(fileType) {
+        console.log("setFileType not supported on this extension");
+    };
+
+    exports.viewerMode = function(isViewerMode) {
+        // set readonly
+    };
+
+    exports.setContent = function(content) {
+        currentContent = content;
+
         var reg = /\<body[^>]*\>([^]*)\<\/body/m;
         
         var bodyContent = undefined;
@@ -61,9 +61,9 @@ define(function(require, exports, module) {
 
         var cleanedBodyContent = bodyContent.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,"");         
 
-		$('#htmlEditor').append(cleanedBodyContent);
-		$('#htmlEditor').summernote({
-          focus: true, 		
+        $('#htmlEditor').append(cleanedBodyContent);
+        $('#htmlEditor').summernote({
+          focus: true,
           toolbar: [
             ['style', ['style']], 
             ['style', ['bold', 'italic', 'underline', 'clear']],
@@ -73,18 +73,18 @@ define(function(require, exports, module) {
             ['height', ['height']],
             ['insert', ['picture', 'link']], 
             ['table', ['table']], 
-            ['view', ['codeview']], 
+            ['view', ['codeview']]
             //['help', ['help']] //no help button
-          ]		    
-		});
-	};
-	
-	exports.getContent = function() {
-		var code = "<body>"+$('#htmlEditor').code()+"</body>";
+          ]
+        });
+    };
+
+    exports.getContent = function() {
+        var code = "<body>"+$('#htmlEditor').code()+"</body>";
         
         var htmlContent = currentContent.replace(/\<body[^>]*\>([^]*)\<\/body>/m,code);
         console.log("Final html "+htmlContent);
-		return htmlContent;
-	};	
+        return htmlContent;
+    };
 
 });
