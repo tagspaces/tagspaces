@@ -8,7 +8,6 @@
   font-weight: normal;
   src: url(Ubuntu-R.woff) format('woff');
   src: url(Ubuntu-R.ttf) format('truetype');
-  /*  src: local('Ubuntu'), url(Ubuntu-M.woff) format('woff');*/
 }
 
 html, body {
