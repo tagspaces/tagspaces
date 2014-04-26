@@ -218,7 +218,7 @@
         // Cleaning the tags from filename        
         for (var j=0; j < tags.length; j++) {
             if(tags[j].trim().length > 1) {
-                cleanedTags.push(tags[i]);
+                cleanedTags.push(tags[j]);
             }
         }
         return cleanedTags; 
