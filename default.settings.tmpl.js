@@ -18,6 +18,7 @@ define(function (require, exports, module) {
         "lastOpenedDirectory": "",
         "tagspacesList": [@@DEFAULTLOCATIONS],
         "extensionsPath": "ext",
+        "showWarningRecursiveScan": true,
         "prefixTagContainer": "",
         "tagDelimiter": " ",
         "calculateTags": false,
@@ -31,6 +32,25 @@ define(function (require, exports, module) {
             { "id": "perspectiveList" }, // ID should be equal to the directory name where the extension is located
             { "id": "perspectiveGrid" }
         ],
+        "interfaceLanguage": "en-US",
+        "supportedLanguages": [
+            { "iso": "en-US",	"title": "English" },
+            { "iso": "de-DE",	"title": "Deutsch" },
+            { "iso": "bg-BG",	"title": "Български" },
+            { "iso": "fr-FR",	"title": "Français " }
+        ],
+        "keyBindings": {
+            "closeViewer":              "esc",
+            "saveDocument":             "mod+s",
+            "reloadDocument":           "mod+r",
+            "deleteDocument":           "del",
+            "propertiesDocument":       "alt+enter",
+            "nextDocument":             ['right', 'down'],
+            "prevDocument":             ['left', 'up'],
+            "reloadApplication":        "f5",
+            "toogleFullScreen":         "f11",
+            "openDevTools":             "f12"
+        },
         "supportedFileTypes": [
             { "type": "jpg",	"viewer": "viewerImage",     "editor": "false" },
             { "type": "jpeg", 	"viewer": "viewerImage",     "editor": "false" },

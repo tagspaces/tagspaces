@@ -8,7 +8,7 @@ define(function (require, exports, module) {
         "appName": "TagSpaces",
         "appVersion": "1.7",
         "appBuild": "10",
-        "appBuildID": "201404160929",
+        "appBuildID": "201404261741",
         "settingsVersion": 2,
         "newTextFileContent": "Text file created with TagSpaces!",
         "newHTMLFileContent": "<html><head><title>Created with TagSpaces!</title></head><body>Feel free to change this text...</body></html>",
@@ -18,6 +18,7 @@ define(function (require, exports, module) {
         "lastOpenedDirectory": "",
         "tagspacesList": [],
         "extensionsPath": "ext",
+        "showWarningRecursiveScan": true,
         "prefixTagContainer": "",
         "tagDelimiter": " ",
         "calculateTags": false,
@@ -31,6 +32,25 @@ define(function (require, exports, module) {
             { "id": "perspectiveList" }, // ID should be equal to the directory name where the extension is located
             { "id": "perspectiveGrid" }
         ],
+        "interfaceLanguage": "en-US",
+        "supportedLanguages": [
+            { "iso": "en-US",	"title": "English" },
+            { "iso": "de-DE",	"title": "Deutsch" },
+            { "iso": "bg-BG",	"title": "Български" },
+            { "iso": "fr-FR",	"title": "Français " }
+        ],
+        "keyBindings": {
+            "closeViewer":              "esc",
+            "saveDocument":             "mod+s",
+            "reloadDocument":           "mod+r",
+            "deleteDocument":           "del",
+            "propertiesDocument":       "alt+enter",
+            "nextDocument":             ['right', 'down'],
+            "prevDocument":             ['left', 'up'],
+            "reloadApplication":        "f5",
+            "toogleFullScreen":         "f11",
+            "openDevTools":             "f12"
+        },
         "supportedFileTypes": [
             { "type": "jpg",	"viewer": "viewerImage",     "editor": "false" },
             { "type": "jpeg", 	"viewer": "viewerImage",     "editor": "false" },
