@@ -785,6 +785,7 @@ input a.resetFilter {
 
 .keyShortcut {
     margin-top: 15px;
+    display: none;
 }
 
 @media 
