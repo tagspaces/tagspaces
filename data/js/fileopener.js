@@ -1,24 +1,27 @@
 /* Copyright (c) 2012-2014 The TagSpaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that 
  * can be found in the LICENSE file. */
-define(function(require, exports, module) {
+/* undef: true, unused: false */
+/* global define, Mousetrap, Handlebars  */
+
+ define(function(require, exports, module) {
 "use strict";
     
     console.log("Loading fileopener...");
 
     var TSCORE = require("tscore");
 
-    var _openedFilePath = undefined;
+    var _openedFilePath;
 
-    var _openedFileProperties = undefined;
+    var _openedFileProperties;
 
     var _isFileOpened = false;
 
-    var _tsEditor = undefined;
+    var _tsEditor;
 
     $.fn.editableform.buttons =
-          '<button type="submit" class="btn btn-primary editable-submit" style="margin-left: 8px;"><i class="fa fa-check fa-lg"></i></button>\
-          <br /><br /><button type="button" class="btn editable-cancel"><i class="fa fa-times fa-lg"></i></button>';
+          '<button type="submit" class="btn btn-primary editable-submit" style="margin-left: 8px;"><i class="fa fa-check fa-lg"></i></button>'+
+          '<br /><br /><button type="button" class="btn editable-cancel"><i class="fa fa-times fa-lg"></i></button>';
 
     // If a file is currently opened for editing, this var should be true
     var _isEditMode = false;
@@ -153,32 +156,36 @@ define(function(require, exports, module) {
     function closeFile(forceClose) {
         if(_isEditMode) {
             if(forceClose) {
-                document.getElementById("viewer").innerHTML = "";
-                TSCORE.FileOpener.setFileOpened(false);
-                TSCORE.closeFileViewer();
-                _isEditMode = false;                                               
+                cleanViewer()
             } else {
                 TSCORE.showConfirmDialog(
                     $.i18n.t("ns.dialogs:closingEditedFileTitleConfirm"),
                     $.i18n.t("ns.dialogs:closingEditedFileContentConfirm"),
                     function() {
-                        // Cleaning the viewer/editor
-                        document.getElementById("viewer").innerHTML = "";
-                        TSCORE.FileOpener.setFileOpened(false);
-                        TSCORE.closeFileViewer();
-                        _isEditMode = false;                               
+                        cleanViewer();
                     }
                 );                             
             }
 
         } else {
-            // Cleaning the viewer/editor
-            document.getElementById("viewer").innerHTML = "";
-            TSCORE.FileOpener.setFileOpened(false);
-            TSCORE.closeFileViewer();
-            _isEditMode = false;            
+            cleanViewer()
         }
         
+    }
+
+    function cleanViewer() {
+        // Cleaning the viewer/editor
+        document.getElementById("viewer").innerHTML = "";
+        TSCORE.FileOpener.setFileOpened(false);
+        TSCORE.closeFileViewer();
+        _isEditMode = false;
+        Mousetrap.unbind(TSCORE.Config.getSaveDocumentKeyBinding());
+        Mousetrap.unbind(TSCORE.Config.getCloseViewerKeyBinding());
+        Mousetrap.unbind(TSCORE.Config.getReloadDocumentKeyBinding());
+        Mousetrap.unbind(TSCORE.Config.getDeleteDocumentKeyBinding());
+        Mousetrap.unbind(TSCORE.Config.getPropertiesDocumentKeyBinding());
+        Mousetrap.unbind(TSCORE.Config.getPrevDocumentKeyBinding());
+        Mousetrap.unbind(TSCORE.Config.getNextDocumentKeyBinding());
     }
 
     function openFile(filePath) {
@@ -252,48 +259,47 @@ define(function(require, exports, module) {
         TSCORE.openFileViewer();
 
         // Handling the keybindings
-        Mousetrap.unbind('mod+r');
-        Mousetrap.bind('mod+r', function() {
-            reloadFile();
-            return false;
-        });
-
-        Mousetrap.unbind('mod+s');
-        Mousetrap.bind('mod+s', function() {
+        Mousetrap.unbind(TSCORE.Config.getSaveDocumentKeyBinding());
+        Mousetrap.bind(TSCORE.Config.getSaveDocumentKeyBinding(), function() {
             saveFile();
             return false;
         });
 
-        Mousetrap.unbind('esc');
-        Mousetrap.bind('esc', function() {
+        Mousetrap.unbind(TSCORE.Config.getCloseViewerKeyBinding());
+        Mousetrap.bind(TSCORE.Config.getCloseViewerKeyBinding(), function() {
             closeFile();
             return false;
         });
 
-        Mousetrap.unbind('del');
-        Mousetrap.bind('del', function() {
+        Mousetrap.unbind(TSCORE.Config.getReloadDocumentKeyBinding());
+        Mousetrap.bind(TSCORE.Config.getReloadDocumentKeyBinding(), function() {
+            reloadFile();
+            return false;
+        });
+
+        Mousetrap.unbind(TSCORE.Config.getDeleteDocumentKeyBinding());
+        Mousetrap.bind(TSCORE.Config.getDeleteDocumentKeyBinding(), function() {
             TSCORE.showFileDeleteDialog(_openedFilePath);
             return false;
         });
 
-        Mousetrap.unbind('alt+enter');
-        Mousetrap.bind('alt+enter', function() {
+        Mousetrap.unbind(TSCORE.Config.getPropertiesDocumentKeyBinding());
+        Mousetrap.bind(TSCORE.Config.getPropertiesDocumentKeyBinding(), function() {
             showFilePropertiesDialog();
             return false;
         });
 
-        Mousetrap.unbind(['left', 'up']);
-        Mousetrap.bind(['left','up'], function() {
+        Mousetrap.unbind(TSCORE.Config.getPrevDocumentKeyBinding());
+        Mousetrap.bind(TSCORE.Config.getPrevDocumentKeyBinding(), function() {
             TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getPrevFile(_openedFilePath));
             return false;
         });
 
-        Mousetrap.unbind(['right', 'down']);
-        Mousetrap.bind(['right', 'down'], function() {
+        Mousetrap.unbind(TSCORE.Config.getNextDocumentKeyBinding());
+        Mousetrap.bind(TSCORE.Config.getNextDocumentKeyBinding(), function() {
             TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getNextFile(_openedFilePath));
             return false;
         });
-
     }
 
     function setFileProperties(fileProperties) {
@@ -361,13 +367,11 @@ define(function(require, exports, module) {
 
         // Initialize File Title Editor
         var title = TSCORE.TagUtils.extractTitle(_openedFilePath);
-        
-        $("#fileTitle").editable('destroy');
 
-        $("#fileTitle").text(title);
-//        $("#fileTitle").attr("title",title);
-
-        $("#fileTitle").editable({
+        var $fileTitle = $("#fileTitle");
+        $fileTitle.editable('destroy');
+        $fileTitle.text(title);
+        $fileTitle.editable({
             type: 'textarea',
             placement: 'bottom',
             title: 'Change Title',
@@ -378,8 +382,6 @@ define(function(require, exports, module) {
         });
 
         // Generate tag & ext buttons
-        $( "#fileTags" ).empty();
-        
         // Appending tag buttons
         var tags = TSCORE.TagUtils.extractTags(_openedFilePath);
         var tagString = "";
@@ -390,7 +392,7 @@ define(function(require, exports, module) {
                 tagString = tagString + "," +value;                                 
             }
         }); 
-        $( "#fileTags" ).append(TSCORE.generateTagButtons(tagString,_openedFilePath));
+        $( "#fileTags" ).empty().append(TSCORE.generateTagButtons(tagString,_openedFilePath));
     
         $( "#tagsContainer" ).droppable({
             greedy: "true",
@@ -452,7 +454,7 @@ define(function(require, exports, module) {
         );
 
         // Add tag suggestion based on the last modified date
-        if(_openedFileProperties != undefined) {
+        if(_openedFileProperties !== undefined && _openedFileProperties.lmdt !== undefined) {
             suggTags.push(TSCORE.TagUtils.formatDateTime4Tag(_openedFileProperties.lmdt));
             suggTags.push(TSCORE.TagUtils.formatDateTime4Tag(_openedFileProperties.lmdt, true));
         }
@@ -462,16 +464,14 @@ define(function(require, exports, module) {
             // Ignoring the tags already assigned to a file
             if(tags.indexOf(suggTags[i]) < 0) {
                 tsMenu.append($('<li>', {name: suggTags[i]}).append($('<a>', {
-                    title: "Add tag "+suggTags[i]+" to current file",
                     tagname: suggTags[i],
                     filepath: filePath
-                    //text: " Tag with '"+suggTags[i]+"'",
                     })
                     .append($('<button>', {
-                        title: "Tag with "+suggTags[i],
+                        title:  $.i18n.t("ns.common:tagWithTooltip", {tagName: suggTags[i]}),
                         "class":  "btn btn-sm btn-success tagButton", 
                         text: suggTags[i]
-                    }))
+                    })
                     .click(function() {
                         var tagName = $(this).attr( "tagname" );
                         var filePath = $(this).attr( "filepath" );
@@ -479,7 +479,7 @@ define(function(require, exports, module) {
                         TSCORE.TagUtils.writeTagsToFile(filePath, [tagName]);
                         return false;
                     })
-                   ));
+                   )));
             }
         }
     }
