@@ -369,15 +369,194 @@
         exports.Settings.lastOpenedLocation = value;
     };
 
-     var getShowWarningRecursiveScan = function() {
-         if(exports.Settings.showWarningRecursiveScan === undefined) {
+     var getSupportedLanguages = function () {
+         if (exports.Settings.supportedLanguages === undefined) {
+             exports.Settings.supportedLanguages = exports.DefaultSettings.supportedLanguages;
+         }
+         return exports.Settings.supportedLanguages;
+     };
+
+     var getCloseViewerKeyBinding = function () {
+         if (exports.Settings.keyBindings === undefined) {
+             exports.Settings.keyBindings = exports.DefaultSettings.keyBindings;
+             saveSettings();
+         }
+         if (exports.Settings.keyBindings.closeViewer === undefined) {
+             exports.Settings.keyBindings.closeViewer = exports.DefaultSettings.keyBindings.closeViewer;
+             saveSettings();
+         }
+         return exports.Settings.keyBindings.closeViewer;
+     };
+
+     var setCloseViewerKeyBinding = function (value) {
+         exports.Settings.keyBindings.closeViewer = value;
+     };
+
+     var getSaveDocumentKeyBinding = function () {
+         if (exports.Settings.keyBindings === undefined) {
+             exports.Settings.keyBindings = exports.DefaultSettings.keyBindings;
+             saveSettings();
+         }
+         if (exports.Settings.keyBindings.saveDocument === undefined) {
+             exports.Settings.keyBindings.saveDocument = exports.DefaultSettings.keyBindings.saveDocument;
+             saveSettings();
+         }
+         return exports.Settings.keyBindings.saveDocument;
+     };
+
+     var setSaveDocumentKeyBinding = function (value) {
+         exports.Settings.keyBindings.saveDocument = value;
+     };
+
+     var getReloadApplicationKeyBinding = function () {
+         if (exports.Settings.keyBindings === undefined) {
+             exports.Settings.keyBindings = exports.DefaultSettings.keyBindings;
+             saveSettings();
+         }
+         if (exports.Settings.keyBindings.reloadApplication === undefined) {
+             exports.Settings.keyBindings.reloadApplication = exports.DefaultSettings.keyBindings.reloadApplication;
+             saveSettings();
+         }
+         return exports.Settings.keyBindings.reloadApplication;
+     };
+
+     var setReloadApplicationKeyBinding = function (value) {
+         exports.Settings.keyBindings.reloadApplication = value;
+     };
+
+     var getToogleFullScreenKeyBinding = function () {
+         if (exports.Settings.keyBindings === undefined) {
+             exports.Settings.keyBindings = exports.DefaultSettings.keyBindings;
+             saveSettings();
+         }
+         if (exports.Settings.keyBindings.toogleFullScreen === undefined) {
+             exports.Settings.keyBindings.toogleFullScreen = exports.DefaultSettings.keyBindings.toogleFullScreen;
+             saveSettings();
+         }
+         return exports.Settings.keyBindings.toogleFullScreen;
+     };
+
+     var setToogleFullScreenKeyBinding = function (value) {
+         exports.Settings.keyBindings.toogleFullScreen = value;
+     };
+
+     var getReloadDocumentKeyBinding = function () {
+         if (exports.Settings.keyBindings === undefined) {
+             exports.Settings.keyBindings = exports.DefaultSettings.keyBindings;
+             saveSettings();
+         }
+         if (exports.Settings.keyBindings.reloadDocument === undefined) {
+             exports.Settings.keyBindings.reloadDocument = exports.DefaultSettings.keyBindings.reloadDocument;
+             saveSettings();
+         }
+         return exports.Settings.keyBindings.reloadDocument;
+     };
+
+     var setReloadDocumentKeyBinding = function (value) {
+         exports.Settings.keyBindings.reloadDocument = value;
+     };
+
+     var getDeleteDocumentKeyBinding = function () {
+         if (exports.Settings.keyBindings === undefined) {
+             exports.Settings.keyBindings = exports.DefaultSettings.keyBindings;
+             saveSettings();
+         }
+         if (exports.Settings.keyBindings.deleteDocument === undefined) {
+             exports.Settings.keyBindings.deleteDocument = exports.DefaultSettings.keyBindings.deleteDocument;
+             saveSettings();
+         }
+         return exports.Settings.keyBindings.deleteDocument;
+     };
+
+     var setDeleteDocumentKeyBinding = function (value) {
+         exports.Settings.keyBindings.deleteDocument = value;
+     };
+
+     var getPropertiesDocumentKeyBinding = function () {
+         if (exports.Settings.keyBindings === undefined) {
+             exports.Settings.keyBindings = exports.DefaultSettings.keyBindings;
+             saveSettings();
+         }
+         if (exports.Settings.keyBindings.propertiesDocument === undefined) {
+             exports.Settings.keyBindings.propertiesDocument = exports.DefaultSettings.keyBindings.propertiesDocument;
+             saveSettings();
+         }
+         return exports.Settings.keyBindings.propertiesDocument;
+     };
+
+     var setPropertiesDocumentKeyBinding = function (value) {
+         exports.Settings.keyBindings.propertiesDocument = value;
+     };
+
+     var getNextDocumentKeyBinding = function () {
+         if (exports.Settings.keyBindings === undefined) {
+             exports.Settings.keyBindings = exports.DefaultSettings.keyBindings;
+             saveSettings();
+         }
+         if (exports.Settings.keyBindings.nextDocument === undefined) {
+             exports.Settings.keyBindings.nextDocument = exports.DefaultSettings.keyBindings.nextDocument;
+             saveSettings();
+         }
+         return exports.Settings.keyBindings.nextDocument;
+     };
+
+     var setNextDocumentKeyBinding = function (value) {
+         exports.Settings.keyBindings.nextDocument = value;
+     };
+
+     var getPrevDocumentKeyBinding = function () {
+         if (exports.Settings.keyBindings === undefined) {
+             exports.Settings.keyBindings = exports.DefaultSettings.keyBindings;
+             saveSettings();
+         }
+         if (exports.Settings.keyBindings.prevDocument === undefined) {
+             exports.Settings.keyBindings.prevDocument = exports.DefaultSettings.keyBindings.prevDocument;
+             saveSettings();
+         }
+         return exports.Settings.keyBindings.prevDocument;
+     };
+
+     var setPrevDocumentKeyBinding = function (value) {
+         exports.Settings.keyBindings.toogleFullScreen = value;
+     };
+
+     var getOpenDevToolsScreenKeyBinding = function () {
+         if (exports.Settings.keyBindings === undefined) {
+             exports.Settings.keyBindings = exports.DefaultSettings.keyBindings;
+             saveSettings();
+         }
+         if (exports.Settings.keyBindings.openDevTools === undefined) {
+             exports.Settings.keyBindings.openDevTools = exports.DefaultSettings.keyBindings.openDevTools;
+             saveSettings();
+         }
+         return exports.Settings.keyBindings.openDevTools;
+     };
+
+     var setOpenDevToolsScreenKeyBinding = function (value) {
+         exports.Settings.keyBindings.openDevTools = value;
+     };
+
+     var getIntefaceLangauge = function () {
+         if (exports.Settings.interfaceLanguage === undefined) {
+             exports.Settings.interfaceLanguage = exports.DefaultSettings.interfaceLanguage;
+             saveSettings();
+         }
+         return exports.Settings.interfaceLanguage;
+     };
+
+     var setIntefaceLangauge = function (value) {
+         exports.Settings.interfaceLanguage = value.toLowerCase().trim();
+     };
+
+     var getShowWarningRecursiveScan = function () {
+         if (exports.Settings.showWarningRecursiveScan === undefined) {
              exports.Settings.showWarningRecursiveScan = exports.DefaultSettings.showWarningRecursiveScan;
              saveSettings();
          }
          return exports.Settings.showWarningRecursiveScan;
      };
 
-     var setShowWarningRecursiveScan = function(value) {
+     var setShowWarningRecursiveScan = function (value) {
          exports.Settings.showWarningRecursiveScan = value;
          saveSettings();
      };
@@ -829,6 +1008,29 @@
     exports.setLastOpenedLocation                   = setLastOpenedLocation;
     exports.getShowWarningRecursiveScan             = getShowWarningRecursiveScan;
     exports.setShowWarningRecursiveScan             = setShowWarningRecursiveScan;
+    exports.getSupportedLanguages                   = getSupportedLanguages;
+    exports.getIntefaceLangauge                     = getIntefaceLangauge;
+    exports.setIntefaceLangauge                     = setIntefaceLangauge;
+    exports.getCloseViewerKeyBinding                = getCloseViewerKeyBinding;
+    exports.setCloseViewerKeyBinding                = setCloseViewerKeyBinding;
+    exports.getOpenDevToolsScreenKeyBinding         = getOpenDevToolsScreenKeyBinding;
+    exports.setOpenDevToolsScreenKeyBinding         = setOpenDevToolsScreenKeyBinding;
+    exports.getToogleFullScreenKeyBinding           = getToogleFullScreenKeyBinding;
+    exports.setToogleFullScreenKeyBinding           = setToogleFullScreenKeyBinding;
+    exports.getReloadApplicationKeyBinding          = getReloadApplicationKeyBinding;
+    exports.setReloadApplicationKeyBinding          = setReloadApplicationKeyBinding;
+    exports.getSaveDocumentKeyBinding               = getSaveDocumentKeyBinding;
+    exports.setSaveDocumentKeyBinding               = setSaveDocumentKeyBinding;
+    exports.getReloadDocumentKeyBinding             = getReloadDocumentKeyBinding;
+    exports.setReloadDocumentKeyBinding             = setReloadDocumentKeyBinding;
+    exports.getDeleteDocumentKeyBinding             = getDeleteDocumentKeyBinding;
+    exports.setDeleteDocumentKeyBinding             = setDeleteDocumentKeyBinding;
+    exports.getPropertiesDocumentKeyBinding         = getPropertiesDocumentKeyBinding;
+    exports.setPropertiesDocumentKeyBinding         = setPropertiesDocumentKeyBinding;
+    exports.getNextDocumentKeyBinding               = getNextDocumentKeyBinding;
+    exports.setNextDocumentKeyBinding               = setNextDocumentKeyBinding;
+    exports.getPrevDocumentKeyBinding               = getPrevDocumentKeyBinding;
+    exports.setPrevDocumentKeyBinding               = setPrevDocumentKeyBinding;
 
     exports.getPerspectiveExtensions                = getPerspectiveExtensions;
     exports.getActivatedPerspectiveExtensions       = getActivatedPerspectiveExtensions;
