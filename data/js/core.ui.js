@@ -12,7 +12,7 @@ define(function(require, exports, module) {
     var fileType = undefined;
 
     var showAlertDialog = function(message, title) {
-        if (!title) { title = 'Alert'; }
+        if (!title) { title = $.i18n.t("ns.dialogs:titleAlert"); }
         if (!message) { message = 'No Message to Display.'; }
 
         var alertModal = $('#alertDialog');
@@ -30,7 +30,7 @@ define(function(require, exports, module) {
     };
 
     var showConfirmDialog = function(title, message, okCallback, cancelCallback, confirmShowNextTime) {
-        if (!title) { title = 'Confirm'; }
+        if (!title) { title = $.i18n.t("ns.dialogs:titleConfirm"); }
         if (!message) { message = 'No Message to Display.'; }
 
         var confirmModal = $('#confirmDialog');
@@ -97,8 +97,8 @@ define(function(require, exports, module) {
     var showFileDeleteDialog = function(filePath) {
         console.log("Deleting file...");
         TSCORE.showConfirmDialog(
-            "Delete File(s)",
-            "The file \""+filePath+"\" will be permanently deleted and cannot be recovered. Are you sure?",
+            $.i18n.t("ns.dialogs:fileDeleteTitleConfirm"),
+            $.i18n.t("ns.dialogs:fileDeleteContentConfirm", {filePath: filePath}),
             function() {
                 TSCORE.IO.deleteElement(filePath); 
             }
@@ -451,6 +451,11 @@ define(function(require, exports, module) {
         });
 
         $contactUsContent.on('click',"#openGitHubIssues", function (e) {
+            e.preventDefault();
+            openLinkExternally($(this).attr("href"));
+        });
+
+        $contactUsContent.on('click',"#helpUsTranslate", function (e) {
             e.preventDefault();
             openLinkExternally($(this).attr("href"));
         });
