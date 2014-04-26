@@ -72,7 +72,7 @@ define(function(require, exports, module) {
 
         $(document).ready(function() {
             initLayout();
-            initI18N();
+            switchInterfaceLanguage(tsSettings.getIntefaceLangauge()); // "de-DE"
             initKeyBindings();
             $( "#loading" ).hide();
 
@@ -90,6 +90,10 @@ define(function(require, exports, module) {
                 // tsCoreUI.showWelcomeDialog();         
             }
 
+//            console.log("Settings Test: "+JSON.stringify(tsSettings.getSupportedLanguages()));
+//            console.log("Settings Test: "+tsSettings.getIntefaceLangauge());
+//            console.log("Settings Test: "+tsSettings.getCloseViewerKeyBinding());
+
             console.log("Layout initialized");
         });
 
@@ -105,31 +109,37 @@ define(function(require, exports, module) {
         }
     }
 
-    function initI18N() {
+    function switchInterfaceLanguage(language) {
         $.i18n.init({
             ns: { namespaces: ['ns.common','ns.dialogs']},
-            lng: "en",
-            //debug: true,
-            fallbackLng: "en"
+            lng: language,
+            // debug: true,
+            fallbackLng: "en-US"
         }, function() {
             $('[data-i18n]').i18n();
         });
-    }	
+    }
 
     function initKeyBindings() {
         if(isNode) {
             var win = gui.Window.get();
-            Mousetrap.bind('f12', function() {
-              win.showDevTools();
+            Mousetrap.bind(tsSettings.getOpenDevToolsScreenKeyBinding(), function() {
+                win.showDevTools();
             });
-            Mousetrap.bind('f5', function() {
-              win.reloadIgnoringCache();
+            Mousetrap.bind(tsSettings.getReloadApplicationKeyBinding(), function() {
+                win.reloadIgnoringCache();
             });
-            Mousetrap.bind('f11', function() {
-              win.toggleFullscreen();
+            Mousetrap.bind(tsSettings.getToogleFullScreenKeyBinding(), function() {
+                win.toggleFullscreen();
             });
         }
-    }		
+
+        // TODO add swipeleft for closing left panel
+        /* $(".col1").hammer().on("swipeleft", function(event) {
+            console.log("swipeleft");
+           toggleLeftPanel();
+        }) */
+    }
 
     function checkForNewVersion() {
         if(tsSettings.getCheckForUpdates()) {            
@@ -517,6 +527,7 @@ define(function(require, exports, module) {
     exports.exportFileListArray         = exportFileListArray;
     exports.removeFileModel             = removeFileModel;
     exports.updateFileModel             = updateFileModel;
+    exports.switchInterfaceLanguage      = switchInterfaceLanguage;
 
     // Proxying functions from tsCoreUI
     exports.clearSearchFilter           = tsCoreUI.clearSearchFilter;
