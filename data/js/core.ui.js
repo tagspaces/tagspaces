@@ -1,7 +1,7 @@
 /* Copyright (c) 2012-2014 The TagSpaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that 
  * can be found in the LICENSE file. */
-/* global define, Handlebars  */
+/* global define, Handlebars, isNode, isFirefox  */
 define(function(require, exports, module) {
 "use strict";
 
@@ -9,8 +9,8 @@ define(function(require, exports, module) {
 
     var TSCORE = require("tscore");
 
-    var fileContent = undefined;
-    var fileType = undefined;
+    var fileContent;
+    var fileType;
 
     var showAlertDialog = function(message, title) {
         if (!title) { title = $.i18n.t("ns.dialogs:titleAlert"); }
@@ -586,7 +586,7 @@ define(function(require, exports, module) {
 
     var showContextMenu = function(menuId, sourceObject) {
         var leftPos = sourceObject.offset().left; 
-        var topPos = sourceObject.offset().top+sourceObject.height()+5;	  
+        var topPos = sourceObject.offset().top+sourceObject.height()+5;
         if (sourceObject.offset().top+sourceObject.height()+$(menuId).height() > window.innerHeight) {
             topPos = window.innerHeight-$(menuId).height();
             leftPos = sourceObject.offset().left+15;
@@ -618,7 +618,7 @@ define(function(require, exports, module) {
         $('#showTagGroups').removeClass("active");
         $('#contactUs').removeClass("active");
         $('#showLocations').addClass("active");
-    }; 	
+    };
 
     var showTagsPanel = function() {
         $('#contactUsContent').hide();
@@ -627,7 +627,7 @@ define(function(require, exports, module) {
         $('#showLocations').removeClass("active");
         $('#contactUs').removeClass("active");
         $('#showTagGroups').addClass("active");
-    }; 	
+    };
     
     var showContactUsPanel = function() {
         $('#locationContent').hide();
@@ -639,22 +639,22 @@ define(function(require, exports, module) {
     };     
 
     // Public API definition
-    exports.showContextMenu			    = showContextMenu;
-    exports.initUI 					    = initUI;
+    exports.showContextMenu             = showContextMenu;
+    exports.initUI                      = initUI;
     exports.clearSearchFilter           = clearSearchFilter;
     exports.openLinkExternally          = openLinkExternally;
     exports.enableTopToolbar            = enableTopToolbar;
     exports.disableTopToolbar           = disableTopToolbar;
-    exports.showAlertDialog 		    = showAlertDialog;
-    exports.showConfirmDialog 		    = showConfirmDialog;
+    exports.showAlertDialog             = showAlertDialog;
+    exports.showConfirmDialog           = showConfirmDialog;
     exports.showFileRenameDialog        = showFileRenameDialog;
     exports.showFileCreateDialog        = showFileCreateDialog;
     exports.showFileDeleteDialog        = showFileDeleteDialog;
     exports.showWelcomeDialog           = showWelcomeDialog;
     exports.showTagEditDialog           = showTagEditDialog;
     exports.showLocationsPanel          = showLocationsPanel;
-    exports.showTagsPanel       	    = showTagsPanel;    
+    exports.showTagsPanel               = showTagsPanel;
     exports.showDirectoryBrowserDialog  = showDirectoryBrowserDialog; 
-    exports.hideAllDropDownMenus	    = hideAllDropDownMenus;
+    exports.hideAllDropDownMenus        = hideAllDropDownMenus;
 
 });
