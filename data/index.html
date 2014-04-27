@@ -107,8 +107,12 @@ can be found in the LICENSE file.
                     <span data-i18n="ns.common:suggestNewFeatures">Suggest New Features</span></a>
                 <a class="btn btn-link" data-i18n="[title]ns.common:reportIssuesTooltip" href="https://github.com/uggrock/tagspaces/issues/" id="openGitHubIssues">
                     <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
-                    <i class="fa fa-flag fa-stack-1x" style=""></i></span>&nbsp;&nbsp;
+                    <i class="fa fa-bug fa-stack-1x" style=""></i></span>&nbsp;&nbsp;
                     <span data-i18n="ns.common:reportIssues">Report Issues</span></a>
+                <a class="btn btn-link" data-i18n="[title]ns.common:helpUsTranslateTooltip" href="https://www.transifex.com/projects/p/tagspaces" id="helpUsTranslate">
+                    <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
+                    <i class="fa fa-headphones fa-stack-1x" style=""></i></span>&nbsp;&nbsp;
+                    <span data-i18n="ns.common:helpUsTranslate">Translate in Your Language</span></a>
                 <hr style="margin: 0; border-top: 1px solid #ddd" />
                 <a class="btn btn-link" data-i18n="[title]ns.common:tweetAboutUsTooltip" href="https://twitter.com/intent/tweet?original_referer=http%3A%2F%2Ftagspaces.org%2F&text=Organize%20your%20files%20with%20@tagspaces" id="openTwitter">
                     <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
@@ -238,7 +242,7 @@ can be found in the LICENSE file.
                             <span class="pull-right label label-default keyShortcut">Del</span></a></li>
                         <li class="noWrap"><a id="reloadFile" data-i18n="[title]ns.common:reloadFileTooltip"><i class="fa fa-refresh fa-fw"></i>
                             &nbsp;<span data-i18n="ns.common:reloadFile">Reload File</span>
-                            <span class="pull-right label label-default keyShortcut">Ctrl/⌘ + R</span></a></li>
+                            <span class="pull-right label label-default keyShortcut">Ctrl/&#x2318; + R</span></a></li>
                         <li class="noWrap"><a id="closeFile" data-i18n="[title]ns.common:closeFileTooltip"><i class="fa fa-times fa-fw"></i>
                             &nbsp;<span data-i18n="ns.common:closeFile">Close File</span>
                             <span class="pull-right label label-default keyShortcut">Esc</span></a></li>
@@ -249,8 +253,7 @@ can be found in the LICENSE file.
                             &nbsp;<span data-i18n="ns.common:openContainingFolder">Open Containing Folder</span></a></li>
                         <li class="divider"></li>
                         <li class="noWrap"><a id="openProperties" data-i18n="[title]ns.common:filePropertiesTooltip"><i class="fa fa-briefcase fa-fw"></i>
-                            &nbsp;<span data-i18n="ns.common:fileProperties">Properties</span>
-                            <span class="pull-right label label-default keyShortcut">Alt+Enter</span></a></li>
+                            &nbsp;<span data-i18n="ns.common:fileProperties">Properties</span><span class="pull-right label label-default keyShortcut">Alt+Enter</span></a></li>
                     </ul>
 				</div>				 
                 <a id="fileTitle"></a>				
@@ -290,7 +293,7 @@ can be found in the LICENSE file.
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times fa-lg"></i></button>
-                <h4 class="modal-title" id="myModalLabel1" data-i18n="ns.dialogs:aboutDialogTitle">About TagSpaces</h4>
+                <h4 class="modal-title" id="myModalLabel1" data-i18n="ns.dialogs:aboutTitle">About TagSpaces</h4>
             </div>
             <div class="modal-body">
                 <iframe id="aboutIframe" nwdisable style="width: 100%; height: 350px; border: 0;" src="about.html"></iframe>
@@ -308,7 +311,7 @@ can be found in the LICENSE file.
     <div class="modal-content">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times fa-lg"></i></button>
-            <h4>Advanced Settings</h4>
+            <h4 data-i18n="ns.dialogs:advancedSettingTitle">Advanced Settings</h4>
         </div>
         <div class="modal-body">
             <div id="settingsJSON" style="max-height: 400px"></div>
