@@ -62,14 +62,14 @@ can be found in the LICENSE file.
             <div class="btn-toolbar" style="width: 100%">
             <span id="logo">TagSpaces</span>
             <span class="appVersion"><sup  id="appVersion"></sup></span>
-            <a id="newVersionAvailable" style="cursor:pointer; display: none; color: #7bd148; font-size: 18px; margin: 5px" class="appVersion pull-right" title="New TagSpaces version available" data-toggle="dropdown">
+            <a id="newVersionAvailable" style="cursor:pointer; display: none; color: #7bd148; font-size: 18px; margin: 5px" class="appVersion pull-right" data-i18n="[title]ns.common:newVersionAvailableTooltip" data-toggle="dropdown">
                 <i class="glyphicon glyphicon-gift" style="color: #7bd148"></i>
             </a>
             <div id="newVersionMenu" class="dropdown-menu"></div>
             </div>
             <div class="btn-toolbar" style="width: 100%">
                 <div class="btn-group" style="width: 99%">
-                    <button type="button" class="btn btn-default" style="width: 16%; text-align: center; min-width: 40px;" data-placement="right;" title="Connect new location"  data-original-title="Start using TagSpaces by creating a new location!" id="createNewLocation">
+                    <button type="button" class="btn btn-default" style="width: 16%; text-align: center; min-width: 40px;" data-placement="right;" data-i18n="[title]ns.common:connectNewLocationTooltip"  data-original-title="Start using TagSpaces by creating a new location!" id="createNewLocation">
                         <i class="glyphicon glyphicon-plus-sign"></i>
                     </button>
                     <button type="button" class="btn btn-default" style="width: 69%" id="locationName" data-toggle="dropdown" data-i18n="ns.common:chooseLocation">Choose Location</button>
@@ -186,10 +186,10 @@ can be found in the LICENSE file.
                             <i class="fa fa-angle-double-right"></i>&nbsp;<span data-i18n="ns.common:searchInFilenameOnly">The searched term should be part of the filename. Currently the content of the file is ignored.</span><br>
                         </div>
                         <span class="input-group-btn">
-                            <button class="btn btn-default" title="Search" id="searchButton" style="border-left-width: 0;">
+                            <button class="btn btn-default" data-i18n="[title]ns.common:searchPlaceholder" id="searchButton" style="border-left-width: 0;">
                                 <i class="fa fa-search"></i>
                             </button>
-                            <button class="btn btn-default" title="Clear Filter" id="clearFilterButton">
+                            <button class="btn btn-default" data-i18n="[title]ns.common:clearFilterTooltip" id="clearFilterButton">
                                 <i class="fa fa-times"></i>
                             </button>
                         </span>
@@ -220,7 +220,7 @@ can be found in the LICENSE file.
 		<nav class="navbar navbar-default" role="navigation">
 			<div class="btn-toolbar" style="width: 100%">
 				<div class="btn-group">
-                    <button type="button" style="padding-left: 0; padding-right: 0" title="File Actions" class="btn btn-link dropdown-toggle" data-toggle="dropdown">
+                    <button type="button" style="padding-left: 0; padding-right: 0" data-i18n="[title]ns.common:fileOperations" class="btn btn-link dropdown-toggle" data-toggle="dropdown">
                     <span class="fileExt"><span id="fileExtText"></span>&nbsp;&nbsp;<span class="caret white-caret"></span>&nbsp;</span>
                     </button>
                     <ul class="dropdown-menu">
@@ -273,7 +273,7 @@ can be found in the LICENSE file.
 				</div>
 			</div>
 			<div id="tagsContainer" class="ui-droppable">
-				<button type="button" title="Add tags" style="height: 22px; width: 35px" class="btn btn-small extTagButton dropdown-toggle" data-toggle="dropdown">
+				<button type="button" data-i18n="[title]ns.common:addTags" style="height: 22px; width: 35px" class="btn btn-small extTagButton dropdown-toggle" data-toggle="dropdown">
                      <i class="fa fa-plus-square"></i>
 				</button>
 				<ul class="dropdown-menu" id="tagSuggestionsMenu"></ul>
