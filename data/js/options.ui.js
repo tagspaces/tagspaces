@@ -1,7 +1,8 @@
 /* Copyright (c) 2012-2014 The TagSpaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that 
  * can be found in the LICENSE file. */
-define(function(require, exports, module) {
+/* global define, Mousetrap, Handlebars  */
+ define(function(require, exports, module) {
 "use strict";
 
     console.log("Loading options.ui.js ...");
@@ -12,7 +13,7 @@ define(function(require, exports, module) {
         parent.empty();
         parent.append($("<option>").text("").val("false"));
         data.forEach( function(value) {
-            if (selectedId == value) {
+            if (selectedId === value) {
                 parent.append($("<option>").attr("selected","selected").text(value).val(value));
             } else {
                 parent.append($("<option>").text(value).val(value));
@@ -83,7 +84,6 @@ define(function(require, exports, module) {
                 }                
             );
         });
-        
     }    
     
     function reInitUI() {
@@ -92,8 +92,16 @@ define(function(require, exports, module) {
         $("#checkforUpdatesCheckbox").attr("checked",TSCORE.Config.getCheckForUpdates());
         $("#calculateTagsCheckbox").attr("checked",TSCORE.Config.getCalculateTags());
         $("#tagsDelimiterInput").val(TSCORE.Config.getTagDelimiter());
-        $("#prefixTagContainerInput").val(TSCORE.Config.getPrefixTagContainer());        
-        
+        $("#prefixTagContainerInput").val(TSCORE.Config.getPrefixTagContainer());
+
+        $("#nextDocumentKeyBinding").val(TSCORE.Config.getNextDocumentKeyBinding());
+        $("#prevDocumentKeyBinding").val(TSCORE.Config.getPrevDocumentKeyBinding());
+        $("#closeDocumentKeyBinding").val(TSCORE.Config.getCloseViewerKeyBinding());
+        $("#reloadDocumentKeyBinding").val(TSCORE.Config.getReloadDocumentKeyBinding());
+        $("#saveDocumentKeyBinding").val(TSCORE.Config.getSaveDocumentKeyBinding());
+        $("#documentPropertiesKeyBinding").val(TSCORE.Config.getPropertiesDocumentKeyBinding());
+        //$("#").val(TSCORE.Config.get());
+
         $('#perspectiveList').empty();
         TSCORE.Config.getPerspectives().forEach(function (value) {
             addPerspective($('#perspectiveList'), value.id);
@@ -113,7 +121,15 @@ define(function(require, exports, module) {
        
         $('#dialogOptions a:first').tab('show');   
         $('#dialogOptions').modal({backdrop: 'static',show: true});        
-    }        
+    }
+
+    function parseKeyBinding(keybinding) {
+        keybinding = keybinding.trim();
+        if(keybinding.indexOf(",") >= 0) {
+            keybinding = keybinding.split(",");
+        }
+        return keybinding;
+    }
 
     function updateSettings() {
         TSCORE.Config.setExtensionPath($("#extensionsPathInput").val());
@@ -121,7 +137,14 @@ define(function(require, exports, module) {
         TSCORE.Config.setCheckForUpdates($('#checkforUpdatesCheckbox').is(":checked"));
         TSCORE.Config.setCalculateTags($('#calculateTagsCheckbox').is(":checked"));
         TSCORE.Config.setTagDelimiter($("#tagsDelimiterInput").val());
-        TSCORE.Config.setPrefixTagContainer($("#prefixTagContainerInput").val());        
+        TSCORE.Config.setPrefixTagContainer($("#prefixTagContainerInput").val());
+
+        TSCORE.Config.setNextDocumentKeyBinding(parseKeyBinding($("#nextDocumentKeyBinding").val()));
+        TSCORE.Config.setPrevDocumentKeyBinding(parseKeyBinding($("#prevDocumentKeyBinding").val()));
+        TSCORE.Config.setCloseViewerKeyBinding(parseKeyBinding($("#closeDocumentKeyBinding").val()));
+        TSCORE.Config.setReloadDocumentKeyBinding(parseKeyBinding($("#reloadDocumentKeyBinding").val()));
+        TSCORE.Config.setSaveDocumentKeyBinding(parseKeyBinding($("#saveDocumentKeyBinding").val()));
+        TSCORE.Config.setPropertiesDocumentKeyBinding(parseKeyBinding($("#documentPropertiesKeyBinding").val()));
 
         TSCORE.Config.setPerspectives(collectPerspectivesData());
         TSCORE.Config.setSupportedFileTypes(collectSupportedFileTypesData());
