@@ -1,6 +1,7 @@
 /* Copyright (c) 2012-2014 The TagSpaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that 
  * can be found in the LICENSE file. */
+/* global define, Handlebars  */
 define(function(require, exports, module) {
 "use strict";
 
@@ -21,7 +22,7 @@ define(function(require, exports, module) {
         alertModal.find('.modal-body').text(message);
         alertModal.find('#okButton')
             .off('click')
-            .click(function(event) {
+            .click(function() {
                alertModal.modal('hide');
             }
         );
@@ -45,14 +46,14 @@ define(function(require, exports, module) {
         confirmModal.find('#dialogContent').text(message);
         confirmModal.find('#confirmButton')
             .off('click')
-            .click(function(event) {
+            .click(function() {
                okCallback(confirmModal.find('#showThisDialogAgain').prop('checked'));
                confirmModal.modal('hide');
             }
         );
         confirmModal.find('#cancelButton')
             .off('click')
-            .click(function(event) {
+            .click(function() {
                if(cancelCallback != undefined) {
                    cancelCallback();
                }
@@ -157,8 +158,8 @@ define(function(require, exports, module) {
         $("#appVersion").attr("title","BuildID: "+TSCORE.Config.DefaultSettings["appVersion"]+"."+TSCORE.Config.DefaultSettings["appBuild"]+"."+TSCORE.Config.DefaultSettings["appBuildID"]);
  
         // prevent default behavior from changing page on dropped file
-        window.ondragover = function(e) { e.preventDefault(); return false };
-        window.ondrop = function(e) { e.preventDefault(); return false };        
+        window.ondragover = function(e) { e.preventDefault(); return false; };
+        window.ondrop = function(e) { e.preventDefault(); return false; };
         
         platformTuning();        
  
@@ -328,18 +329,18 @@ define(function(require, exports, module) {
         });         
         // End File Menu  
                 
-        $('#switchLang').click(function(e) {
-            $.i18n.setLng('de', function(t) {
+        $('#switchLang').click(function() {
+            $.i18n.setLng('de', function() {
                 $('[data-i18n]').i18n();
             });
         });
 
-        $('#showLocations').click(function(e) {
+        $('#showLocations').click(function() {
             showLocationsPanel();
             console.log("Show Directories");
         });
 
-        $('#showTagGroups').click(function(e) {
+        $('#showTagGroups').click(function() {
             showTagsPanel();
             console.log("Show Tags");
         });
@@ -356,14 +357,14 @@ define(function(require, exports, module) {
         // Search UI
 
         $("#closeSearchOptionButton")
-            .click(function(e) {
+            .click(function() {
                 $("#searchOptions").hide();
             });
 
         $("#includeSubfoldersOption")
-            .click(function(e) {
+            .click(function() {
                 var searchQuery = $("#searchBox").val();
-                if(searchQuery.indexOf("?")==0) {
+                if(searchQuery.indexOf("?")===0) {
                     $("#searchBox").val(searchQuery.substring(1,searchQuery.length));
                 } else {
                     $("#searchBox").val("?"+searchQuery);                    
@@ -372,21 +373,21 @@ define(function(require, exports, module) {
         
         $("#searchBox")
             .prop('disabled', true)
-            .focus(function(e) {
+            .focus(function() {
                 //$(this).removeClass("input-medium");
                 //$(this).addClass("input-large");
                 $("#searchOptions").show();
             })
             .keyup(function(e) {
                 // On enter fire the search
-                if (e.keyCode == 13) {
+                if (e.keyCode === 13) {
                     $( "#clearFilterButton").addClass("filterOn");
                     TSCORE.PerspectiveManager.redrawCurrentPerspective();
                     $("#searchOptions").hide();
                 }  else {
                     TSCORE.Search.nextQuery = this.value;
                 } 
-                if (this.value.length == 0) {
+                if (this.value.length === 0) {
                     $( "#clearFilterButton").removeClass("filterOn");
                     TSCORE.PerspectiveManager.redrawCurrentPerspective();
                 }                 
@@ -394,7 +395,7 @@ define(function(require, exports, module) {
             .blur(function() {
                 //$(this).addClass("input-medium");
                 //$(this).removeClass("input-large");                
-                if (this.value.length == 0) {
+                if (this.value.length === 0) {
                     $( "#clearFilterButton").removeClass("filterOn");
                     TSCORE.PerspectiveManager.redrawCurrentPerspective();
                 } 
@@ -533,7 +534,7 @@ define(function(require, exports, module) {
             .prop('disabled', false);
                 
         $("#clearFilterButton")
-            .prop('disabled', false);	    
+            .prop('disabled', false);
     }
 
     function platformTuning() { 
