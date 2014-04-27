@@ -107,6 +107,16 @@
             addPerspective($('#perspectiveList'), value.id);
         });
 
+        var $languagesDropdown = $("#languagesList");
+        $languagesDropdown.empty();
+        TSCORE.Config.getSupportedLanguages().forEach( function(value) {
+            if (TSCORE.Config.getInterfaceLangauge() === value.iso) {
+                $languagesDropdown.append($("<option>").attr("selected","selected").text(value.title).val(value.iso));
+            } else {
+                $languagesDropdown.append($("<option>").text(value.title).val(value.iso));
+            }
+        });
+
         $('#fileTypesList')
             .empty()
             .append($("<div class='input-group' >")
@@ -145,6 +155,11 @@
         TSCORE.Config.setReloadDocumentKeyBinding(parseKeyBinding($("#reloadDocumentKeyBinding").val()));
         TSCORE.Config.setSaveDocumentKeyBinding(parseKeyBinding($("#saveDocumentKeyBinding").val()));
         TSCORE.Config.setPropertiesDocumentKeyBinding(parseKeyBinding($("#documentPropertiesKeyBinding").val()));
+
+        var interfaceLang = $("#languagesList").val();
+        TSCORE.Config.setInterfaceLangauge(interfaceLang);
+        TSCORE.switchInterfaceLanguage(interfaceLang);
+
 
         TSCORE.Config.setPerspectives(collectPerspectivesData());
         TSCORE.Config.setSupportedFileTypes(collectSupportedFileTypesData());
