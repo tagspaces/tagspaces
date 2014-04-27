@@ -1,90 +1,146 @@
 <div id="dialogOptions" class="modal" tabindex="-1" role="dialog" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times fa-lg"></i></button>
-        <h4>Options</h4>
-      </div>
-      <div class="modal-body form" style="height: 408px;" id="optionsAccordion">
-         <ul class="nav nav-tabs">
-          <li><a href="#general" data-toggle="tab" class="optionsTitle">General</a></li>
-          <li><a href="#perspectives" data-toggle="tab" class="optionsTitle">Perspectives</a></li>
-          <li><a href="#filetypes" data-toggle="tab" class="optionsTitle">File Types</a></li>
-          <li><a href="#experimental" data-toggle="tab" class="optionsTitle">Experimental*</a></li>
-        </ul>          
-        <div class="tab-content">
-            <div class="tab-pane active" id="general" style="height: 320px; padding-top: 10px; overflow-y: auto;">
-                <div class='form-group'>
-                    <label class="checkbox">
-                        <input type='checkbox' id='showHiddenFilesCheckbox' /> 
-                        Show files/directories with a dot(.) in front of the name (e.g. Unix, Linux, OS X hidden files)
-                    </label>
-                </div>
-                <div class='form-group'>
-                    <label class="checkbox">
-                        <input type='checkbox' id='checkforUpdatesCheckbox' /> 
-                        Check for new version on startup
-                    </label>
-                </div>   
-                <div class='form-group'>
-                    <label for='defaultSettingsButton' data-i18n="app.extensionsFolder">Restores Initial Settings</label><br>
-                    <button class="btn btn-danger" id="defaultSettingsButton" title="Restore Default Settings" aria-hidden="true">Reset Settings</button>                        
-                </div>                     
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i
+                        class="fa fa-times fa-lg"></i></button>
+                <h4>Options</h4>
             </div>
-    
-            <div class="tab-pane" id="perspectives" style="height: 320px; padding-top: 10px; overflow-y: auto;">
-                <p class="help-block">The changes made in this tab will take effect after restarting the application.</p>                
-                <div id='perspectiveList'></div>    
-                <button class='btn btn-default' style="margin-top: 10px" id='addPerspectiveButton'>
-                    <i class='fa fa-plus' data-i18n="app.addNewPerspective"> Add new perspective</i>
-                </button>
-            </div> 
-    
-            <div class="tab-pane" id="filetypes" style="height: 320px; padding-top: 10px; overflow-y: auto;"> 
-                <div id='fileTypesList'></div>
-                <button class='btn btn-default' style="margin-top: 10px" id='addFileTypeButton'>
-                    <i class='fa fa-plus' data-i18n="app.addNewFileExtension"> Add new file extension</i>
-                </button>
-            </div> 
-            
-            <div class="tab-pane" id="experimental" style="height: 320px; padding-top: 10px; overflow-y: auto;">
-                <p class="help-block">*) Be carefull changing the following settings.</p>                
-                <div class='form-group'>
-                    <label for='extensionsPathInput' data-i18n="app.extensionsFolder">Extensions folder (default value is "ext")</label>
-                    <input type='text' class='form-control' id='extensionsPathInput' 
-                    data-i18n="[placeholder]app" placeholder='file:///c:\\tagspaces-extensions' 
-                    data-i18n="[title]app" title='Path to your tagspaces extensions' />
-                </div>
-                <!--button class="btn btn-default" style="margin-bottom: 10px" id="switchLang" data-i18n="[title]app.switchLanguageTooltip;">
-                    <i class="fa fa-asterisk"> Test Change Language</i>
-                </button-->
-                <div class='form-group'>
-                    <label class="checkbox">
-                        <input type='checkbox' id='calculateTagsCheckbox' /> 
-                        Calculate tags from the current search results 
-                    </label>
-                    <p class="help-block">Reduces the performance while browsing directories</p>
-                </div>
-                <div class='form-group'>
-                    <label for='tagsDelimiterInput' data-i18n="app.extensionsFolder">Tag delimiter (e.g. Filename[TAG1_TAG2], _ is the delimiter)</label>
-                    <input type='text' class='form-control' id='tagsDelimiterInput' 
-                    data-i18n="[placeholder]app" placeholder='' 
-                    data-i18n="[title]app" title='' />
-                </div>
-                <div class='form-group'>
-                    <label for='prefixTagContainerInput' data-i18n="app.extensionsFolder">Prefix for the tag container (e.g. in "Filename-[TAG1].txt" - is the prefix), </label>
-                    <input type='text' class='form-control' id='prefixTagContainerInput' 
-                    data-i18n="[placeholder]app"
-                    data-i18n="[title]app"  />
-                </div>                                
-            </div>            
+            <div class="modal-body form" style="height: 408px;" id="optionsAccordion">
+                <ul class="nav nav-tabs">
+                    <li><a href="#general" data-toggle="tab" class="optionsTitle">General</a></li>
+                    <li><a href="#perspectives" data-toggle="tab" class="optionsTitle">Perspectives</a></li>
+                    <li><a href="#filetypes" data-toggle="tab" class="optionsTitle">File Types</a></li>
+                    <li><a href="#keyBindings" data-toggle="tab" class="optionsTitle">Key Bindings</a></li>
+                    <li><a href="#experimental" data-toggle="tab" class="optionsTitle">Experimental*</a></li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane active" id="general"
+                         style="height: 320px; padding-top: 10px; overflow-y: auto;">
+                        <div class='form-group'>
+                            <label class="checkbox">
+                                <input type='checkbox' id='showHiddenFilesCheckbox'/>
+                                Show files/directories with a dot(.) in front of the name (e.g. Unix, Linux, OS X hidden
+                                files)
+                            </label>
+                        </div>
+                        <div class='form-group'>
+                            <label class="checkbox">
+                                <input type='checkbox' id='checkforUpdatesCheckbox'/>
+                                Check for new version on startup
+                            </label>
+                        </div>
+                        <div class='form-group'>
+                            <label for='defaultSettingsButton' data-i18n="app.extensionsFolder">Restores Initial
+                                Settings</label><br>
+                            <button class="btn btn-danger" id="defaultSettingsButton" title="Restore Default Settings"
+                                    aria-hidden="true">Reset Settings
+                            </button>
+                        </div>
+                    </div>
 
+                    <div class="tab-pane" id="perspectives" style="height: 320px; padding-top: 10px; overflow-y: auto;">
+                        <p class="help-block">The changes made in this tab will take effect after restarting the
+                            application.</p>
+
+                        <div id='perspectiveList'></div>
+                        <button class='btn btn-default' style="margin-top: 10px" id='addPerspectiveButton'>
+                            <i class='fa fa-plus' data-i18n="app.addNewPerspective"> Add new perspective</i>
+                        </button>
+                    </div>
+
+                    <div class="tab-pane" id="filetypes" style="height: 320px; padding-top: 10px; overflow-y: auto;">
+                        <div id='fileTypesList'></div>
+                        <button class='btn btn-default' style="margin-top: 10px" id='addFileTypeButton'>
+                            <i class='fa fa-plus' data-i18n="app.addNewFileExtension"> Add new file extension</i>
+                        </button>
+                    </div>
+
+                    <div class="tab-pane" id="keyBindings" style="height: 320px; padding-top: 10px; overflow-y: auto;">
+                        <div class='form-group'>
+                            <label class="col-sm-4 control-label" data-i18n="ns.dialogs:reloadDocumentKeyBinding">Reload Document</label>
+                            <div class="col-sm-8"><input type='text' class='form-control' id='reloadDocumentKeyBinding'
+                                                         placeholder='ctrl+r | command+r'/></div>
+                        </div>
+                        <div class='form-group'>
+                            <label class="col-sm-4 control-label" data-i18n="ns.dialogs:closeDocumentKeyBinding">Close Document</label>
+                            <div class="col-sm-8"><input type='text' class='form-control' id='closeDocumentKeyBinding' placeholder='esc'/>
+                            </div>
+                        </div>
+                        <div class='form-group'>
+                            <label class="col-sm-4 control-label" data-i18n="ns.dialogs:documentPropertiesKeyBinding">Document Properties</label>
+                            <div class="col-sm-8"><input type='text' class='form-control' id='documentPropertiesKeyBinding'
+                                                         placeholder='alt+enter'/></div>
+                        </div>
+                        <div class='form-group'>
+                            <label class="col-sm-4 control-label" data-i18n="ns.dialogs:saveDocumentKeyBinding">Save Document</label>
+                            <div class="col-sm-8"><input type='text' class='form-control' id='saveDocumentKeyBinding' placeholder='ctrl+s | command+s'/></div>
+                        </div>
+                        <div class='form-group'>
+                            <label class="col-sm-4 control-label" data-i18n="ns.dialogs:nextDocumentKeyBinding">Next Document</label>
+                            <div class="col-sm-8"><input type='text' class='form-control' id='nextDocumentKeyBinding' placeholder='right'/></div>
+                        </div>
+                        <div class='form-group'>
+                            <label class="col-sm-4 control-label" data-i18n="ns.dialogs:prevDocumentKeyBinding">Previous Document</label>
+                            <div class="col-sm-8"><input type='text' class='form-control' id='prevDocumentKeyBinding' placeholder='left'/></div>
+                        </div>
+                        <!--div class='form-group'>
+                            <label class="col-sm-4 control-label" data-i18n="ns.dialogs:"></label>
+                            <div class="col-sm-8"><input type='text' class='form-control' id='KeyBinding' placeholder=''/></div>
+                        </div-->
+                        <div class='form-group col-sm-12'>
+                            <p class="help-block" data-i18n="ns.dialogs:" style="margin-top: 20px;">Supported Keys:</p>
+                            <p class="help-block"><span data-i18n="ns.dialogs:">For modifier keys you can use </span><code>shift</code>, <code>ctrl</code>, <code>alt</code>, <code>option</code>, <code>meta</code>, &amp; <code>command</code>.</p>
+                            <p class="help-block"><span data-i18n="ns.dialogs:">Other special keys are </span><code>backspace</code>, <code>tab</code>, <code>enter</code>, <code>return</code>, <code>capslock</code>, <code>esc</code>, <code>escape</code>, <code>space</code>, <code>pageup</code>, <code>pagedown</code>, <code>end</code>, <code>home</code>, <code>left</code>, <code>up</code>, <code>right</code>, <code>down</code>, <code>ins</code>, &amp; <code>del</code>.</p>
+                            <p class="help-block"><span data-i18n="ns.dialogs:">Any other key you should be able to reference by name like </span><code>a</code>, <code>/</code>, <code>$</code>, <code>*</code>, or <code>=</code>.</p>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane" id="experimental" style="height: 320px; padding-top: 10px; overflow-y: auto;">
+                        <p class="help-block">*) Be carefull changing the following settings.</p>
+
+                        <div class='form-group'>
+                            <label for='extensionsPathInput' data-i18n="app.extensionsFolder">Extensions folder (default
+                                value is "ext")</label>
+                            <input type='text' class='form-control' id='extensionsPathInput'
+                                   data-i18n="[placeholder]app" placeholder='file:///c:\\tagspaces-extensions'
+                                   data-i18n="[title]app" title='Path to your tagspaces extensions'/>
+                        </div>
+                        <!--button class="btn btn-default" style="margin-bottom: 10px" id="switchLang" data-i18n="[title]app.switchLanguageTooltip;">
+                            <i class="fa fa-asterisk"> Test Change Language</i>
+                        </button-->
+                        <div class='form-group'>
+                            <label class="checkbox">
+                                <input type='checkbox' id='calculateTagsCheckbox'/>
+                                Calculate tags from the current search results
+                            </label>
+
+                            <p class="help-block">Reduces the performance while browsing directories</p>
+                        </div>
+                        <div class='form-group'>
+                            <label for='tagsDelimiterInput' data-i18n="app.extensionsFolder">Tag delimiter (e.g.
+                                Filename[TAG1_TAG2], _ is the delimiter)</label>
+                            <input type='text' class='form-control' id='tagsDelimiterInput'
+                                   data-i18n="[placeholder]app" placeholder=''
+                                   data-i18n="[title]app" title=''/>
+                        </div>
+                        <div class='form-group'>
+                            <label for='prefixTagContainerInput' data-i18n="app.extensionsFolder">Prefix for the tag
+                                container (e.g. in "Filename-[TAG1].txt" - is the prefix), </label>
+                            <input type='text' class='form-control' id='prefixTagContainerInput'
+                                   data-i18n="[placeholder]app"
+                                   data-i18n="[title]app"/>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times fa-lg"></i></button>
+                <button class="btn btn-primary" id="saveSettingsCloseButton"><i class="fa fa-check fa-lg"></i></button>
+            </div>
         </div>
-      </div>
-      <div class="modal-footer">
-        <button class="btn" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times fa-lg"></i></button>
-        <button class="btn btn-primary" id="saveSettingsCloseButton"><i class="fa fa-check fa-lg"></i></button>
-      </div>
-    </div><!-- /.modal-content -->
-  </div><!-- /.modal-dialog -->
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
 </div><!-- /.modal -->
