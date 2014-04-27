@@ -102,8 +102,8 @@ define(function(require, exports, module) {
                 .append($("<button>", {
                         "class":    "btn btn-link",
                         "path":      directoryHistory[i].path,
-                        "title":    "Open or Reload "+directoryHistory[i].name,
-                        "text":     " Open or Reload Directory"
+                        "title":     $.i18n.t("ns.common:reloadCurrentDirectoryTooltip", {dirName: directoryHistory[i].name}),
+                        "text":     " "+$.i18n.t("ns.common:reloadCurrentDirectory")
                     })
                     .prepend("<i class='fa fa-refresh fa-lg fa-fw'></i>")
                     .click( function() {
@@ -115,8 +115,8 @@ define(function(require, exports, module) {
                 .append($("<button>", {
                         "class":    "btn btn-link",
                         "path":      directoryHistory[i].path,
-                        "title":    "Create Subdirectory",
-                        "text":     " Create New Directory"
+                        "title":     $.i18n.t("ns.common:createSubdirectoryTooltip", {dirName: directoryHistory[i].name}),
+                        "text":     " "+$.i18n.t("ns.common:createSubdirectory")
                     })
                     .prepend("<i class='fa fa-folder fa-lg fa-fw'></i>")
                     .click( function() {
