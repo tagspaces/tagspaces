@@ -62,7 +62,8 @@ requirejs.config({
     map: {
       '*': {
         'css':  'libs/requirecss/css',
-        'text':  'libs/requiretext/text'
+        'text':  'libs/requiretext/text',
+        'i18n':  'libs/requirei18n/i18next'
       }
     },
     paths: {
