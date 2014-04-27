@@ -101,7 +101,7 @@
     "joinOnGooglePlusTooltip": "Join us in Google Plus",
     "likeUsOnFacebook": "Like us on Facebook",
     "likeUsOnFacebookTooltip": "Like us on Facebook",
-    "writeUsEmail": "Write Us an Email",
+    "writeUsEmail": "Write us an Email",
     "writeUsEmailTooltip": "Send email to us",
 
     "chooseLocation": "Choose Location",
@@ -112,6 +112,7 @@
     "openSettingTooltip": "Open Settings",
 
     "searchOptions": "Search Options",
+    "searchPlaceholder": "Search",
     "includeSubfoldersInSearch": "Include files from the subfolders (by adding questionmark \" ? \" in front of the query)",
     "excludeTermFromSearch": "Including \" ! \" in front of a term (e.g. !term) will exclude all files with this term in their filenames.",
     "includeTagInSearch": "Including \" + \" in front of a term (e.g. +tag) will include all files tagged with this tag.",
@@ -131,5 +132,10 @@
     "editLocation": "Edit Location",
     "toggleDirectory": "Toggle Directory",
     "yourLocations": "Your Locations:",
-    "tagWithTooltip": "Tag with '__tagName__'"
+    "tagWithTooltip": "Tag with '__tagName__'",
+    "createSubdirectory": "Create Subdirectory",
+    "createSubdirectoryTooltip": "Create New Directory in '__dirName__'",
+    "reloadCurrentDirectory": "Open or Reload Directory",
+    "reloadCurrentDirectoryTooltip": "Open or Reload '__dirName__'",
+    "": ""
 }
