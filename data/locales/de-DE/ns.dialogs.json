@@ -1,5 +1,27 @@
 {
-    "aboutDialogTitle": "Über TagSpaces",
-
-    "": ""
+    "titleConfirm": "Bestätigen",
+    "titleAlert": "Alert",
+    "aboutTitle": "Über TagSpaces",
+    "advancedSettingTitle": "Fortgeschrittene Einstellungen",
+    "enableLocalStorageAlert": "Please enable the localStorage support in your browser, in order to use TagSpaces!",
+    "closingEditedFileConfirm": "Any unsaved changes will be lost! Do you want to continue?",
+    "closingEditedFileTitleConfirm": "Schließen der Datei bestätigen",
+    "closingEditedFileContentConfirm": "If you confirm, all the changes you made will be lost.",
+    "fileDeleteTitleConfirm": "Datei(en) löschen",
+    "fileDeleteContentConfirm": "The file __filePath__ will be permanently deleted and cannot be recovered. Are you sure?",
+    "fileSaveTitleConfirm": "Speichern der Datei bestätigen",
+    "fileSaveContentConfirm": "Möchten Sie die aktuelle Datei wirklich überschreiben?",
+    "errorOpeningLocationAlert": "Error occured while opening a path! Currently opened location will be closed.",
+    "openFileNativelyAlert": "Ein natives Öffnen ist noch nicht implementiert!",
+    "openContainingDirectoryAlert": "Open directoriy functionality not implemented yet!",
+    "accessFileURLNotAllowedAlert": "Please make sure that you check the 'Allow access to file URLs checkbox in the extension settings of chrome/chromium ('chrome://extensions/'). TagSpaces can not read files from your local storage!",
+    "deleteTagGroupTitleConfirm": "Tag-Gruppe löschen",
+    "deleteTagGroupContentConfirm": "Do you want to delete the tag group '__tagGroup__' ?",
+    "selectedLocationNameExistContentAlert": "Selected location name is already in used!",
+    "selectedLocationNameExistTitleAlert": "Duplicated Location Name",
+    "selectedPathExistContentAlert": "Selected path is already in used by a location!",
+    "selectedPathExistTitleAlert": "Duplicated Location Path",
+    "deleteLocationContentAlert": "Do you want to delete the connection '__locationName__'?",
+    "deleteLocationTitleAlert": "Verbindung löschen",
+    "-": "-"
 }
