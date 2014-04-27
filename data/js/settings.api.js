@@ -370,10 +370,7 @@
     };
 
      var getSupportedLanguages = function () {
-         if (exports.Settings.supportedLanguages === undefined) {
-             exports.Settings.supportedLanguages = exports.DefaultSettings.supportedLanguages;
-         }
-         return exports.Settings.supportedLanguages;
+         return exports.DefaultSettings.supportedLanguages;
      };
 
      var getCloseViewerKeyBinding = function () {
@@ -424,20 +421,20 @@
          exports.Settings.keyBindings.reloadApplication = value;
      };
 
-     var getToogleFullScreenKeyBinding = function () {
+     var getToggleFullScreenKeyBinding = function () {
          if (exports.Settings.keyBindings === undefined) {
              exports.Settings.keyBindings = exports.DefaultSettings.keyBindings;
              saveSettings();
          }
-         if (exports.Settings.keyBindings.toogleFullScreen === undefined) {
-             exports.Settings.keyBindings.toogleFullScreen = exports.DefaultSettings.keyBindings.toogleFullScreen;
+         if (exports.Settings.keyBindings.toggleFullScreen === undefined) {
+             exports.Settings.keyBindings.toggleFullScreen = exports.DefaultSettings.keyBindings.toggleFullScreen;
              saveSettings();
          }
-         return exports.Settings.keyBindings.toogleFullScreen;
+         return exports.Settings.keyBindings.toggleFullScreen;
      };
 
-     var setToogleFullScreenKeyBinding = function (value) {
-         exports.Settings.keyBindings.toogleFullScreen = value;
+     var setToggleFullScreenKeyBinding = function (value) {
+         exports.Settings.keyBindings.toggleFullScreen = value;
      };
 
      var getReloadDocumentKeyBinding = function () {
@@ -517,7 +514,7 @@
      };
 
      var setPrevDocumentKeyBinding = function (value) {
-         exports.Settings.keyBindings.toogleFullScreen = value;
+         exports.Settings.keyBindings.prevDocument = value;
      };
 
      var getOpenDevToolsScreenKeyBinding = function () {
@@ -536,7 +533,7 @@
          exports.Settings.keyBindings.openDevTools = value;
      };
 
-     var getIntefaceLangauge = function () {
+     var getInterfaceLangauge = function () {
          if (exports.Settings.interfaceLanguage === undefined) {
              exports.Settings.interfaceLanguage = exports.DefaultSettings.interfaceLanguage;
              saveSettings();
@@ -544,8 +541,8 @@
          return exports.Settings.interfaceLanguage;
      };
 
-     var setIntefaceLangauge = function (value) {
-         exports.Settings.interfaceLanguage = value.toLowerCase().trim();
+     var setInterfaceLangauge = function (value) {
+         exports.Settings.interfaceLanguage = value;
      };
 
      var getShowWarningRecursiveScan = function () {
@@ -1009,14 +1006,14 @@
     exports.getShowWarningRecursiveScan             = getShowWarningRecursiveScan;
     exports.setShowWarningRecursiveScan             = setShowWarningRecursiveScan;
     exports.getSupportedLanguages                   = getSupportedLanguages;
-    exports.getIntefaceLangauge                     = getIntefaceLangauge;
-    exports.setIntefaceLangauge                     = setIntefaceLangauge;
+    exports.getInterfaceLangauge                    = getInterfaceLangauge;
+    exports.setInterfaceLangauge                    = setInterfaceLangauge;
     exports.getCloseViewerKeyBinding                = getCloseViewerKeyBinding;
     exports.setCloseViewerKeyBinding                = setCloseViewerKeyBinding;
     exports.getOpenDevToolsScreenKeyBinding         = getOpenDevToolsScreenKeyBinding;
     exports.setOpenDevToolsScreenKeyBinding         = setOpenDevToolsScreenKeyBinding;
-    exports.getToogleFullScreenKeyBinding           = getToogleFullScreenKeyBinding;
-    exports.setToogleFullScreenKeyBinding           = setToogleFullScreenKeyBinding;
+    exports.getToggleFullScreenKeyBinding           = getToggleFullScreenKeyBinding;
+    exports.setToggleFullScreenKeyBinding           = setToggleFullScreenKeyBinding;
     exports.getReloadApplicationKeyBinding          = getReloadApplicationKeyBinding;
     exports.setReloadApplicationKeyBinding          = setReloadApplicationKeyBinding;
     exports.getSaveDocumentKeyBinding               = getSaveDocumentKeyBinding;

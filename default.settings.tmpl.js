@@ -37,7 +37,8 @@ define(function (require, exports, module) {
             { "iso": "en-US",	"title": "English" },
             { "iso": "de-DE",	"title": "Deutsch" },
             { "iso": "bg-BG",	"title": "Български" },
-            { "iso": "fr-FR",	"title": "Français " }
+            { "iso": "fr-FR",	"title": "Français" },
+            { "iso": "zn-CN",	"title": "中国的" }
         ],
         "keyBindings": {
             "closeViewer":              "esc",
@@ -48,7 +49,7 @@ define(function (require, exports, module) {
             "nextDocument":             ['right', 'down'],
             "prevDocument":             ['left', 'up'],
             "reloadApplication":        "f5",
-            "toogleFullScreen":         "f11",
+            "toggleFullScreen":         "f11",
             "openDevTools":             "f12"
         },
         "supportedFileTypes": [
