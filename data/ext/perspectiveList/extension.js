@@ -25,12 +25,16 @@ define(function(require, exports, module) {
 		console.log("Initializing perspective "+extensionID);
         require([
             extensionDirectory+'/perspectiveUI.js',
-            "text!"+extensionDirectory+'/toolbar.html',     
+            "text!"+extensionDirectory+'/toolbar.html',
+            "i18n!"+extensionDirectory+":ns.perspectiveList",
             extensionDirectory+'/datatables/jquery.dataTables.min.js'
             ], function(extUI, toolbarTPL) {
                 var toolbarTemplate = Handlebars.compile( toolbarTPL );                
                 UI = new extUI.ExtUI(extensionID);                          
                 UI.buildUI(toolbarTemplate);
+
+                $('#'+extensionID+'Toolbar [data-i18n]').i18n();
+
                 platformTuning();                
             }
         );
