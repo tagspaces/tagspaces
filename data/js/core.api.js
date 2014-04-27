@@ -72,7 +72,7 @@ define(function(require, exports, module) {
 
         $(document).ready(function() {
             initLayout();
-            switchInterfaceLanguage(tsSettings.getIntefaceLangauge()); // "de-DE"
+            switchInterfaceLanguage(tsSettings.getInterfaceLangauge()); // "de-DE"
             initKeyBindings();
             $( "#loading" ).hide();
 
@@ -91,7 +91,7 @@ define(function(require, exports, module) {
             }
 
 //            console.log("Settings Test: "+JSON.stringify(tsSettings.getSupportedLanguages()));
-//            console.log("Settings Test: "+tsSettings.getIntefaceLangauge());
+//            console.log("Settings Test: "+tsSettings.getInterfaceLangauge());
 //            console.log("Settings Test: "+tsSettings.getCloseViewerKeyBinding());
 
             console.log("Layout initialized");
@@ -129,7 +129,7 @@ define(function(require, exports, module) {
             Mousetrap.bind(tsSettings.getReloadApplicationKeyBinding(), function() {
                 win.reloadIgnoringCache();
             });
-            Mousetrap.bind(tsSettings.getToogleFullScreenKeyBinding(), function() {
+            Mousetrap.bind(tsSettings.getToggleFullScreenKeyBinding(), function() {
                 win.toggleFullscreen();
             });
         }
