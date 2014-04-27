@@ -113,6 +113,7 @@
 
     "searchOptions": "Search Options",
     "searchPlaceholder": "Search",
+    "clearFilterTooltip": "Clear Filter",
     "includeSubfoldersInSearch": "Include files from the subfolders (by adding questionmark \" ? \" in front of the query)",
     "excludeTermFromSearch": "Including \" ! \" in front of a term (e.g. !term) will exclude all files with this term in their filenames.",
     "includeTagInSearch": "Including \" + \" in front of a term (e.g. +tag) will include all files tagged with this tag.",
@@ -137,5 +138,6 @@
     "createSubdirectoryTooltip": "Create New Directory in '__dirName__'",
     "reloadCurrentDirectory": "Open or Reload Directory",
     "reloadCurrentDirectoryTooltip": "Open or Reload '__dirName__'",
-    "": ""
+    "newVersionAvailableTooltip": "New TagSpaces version available",
+    "-": "-"
 }

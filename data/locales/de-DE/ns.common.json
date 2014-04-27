@@ -98,7 +98,7 @@
     "joinOnGooglePlusTooltip": "Uns auf Google Plus folgen",
     "likeUsOnFacebook": "Uns auf Facebook folgen",
     "likeUsOnFacebookTooltip": "Uns auf Facebook folgen",
-    "writeUsEmail": "Uns eine E-Mail schreiben",
+    "writeUsEmail": "Schreiben Sie uns eine Email",
     "writeUsEmailTooltip": "Uns eine E-Mail schreiben",
     "chooseLocation": "Ort auswählen",
     "showTagLibraryTooltip": "Tag-Bibliothek anzeigen",
@@ -107,6 +107,7 @@
     "openNewInstanceTooltip": "Eine neue Instanz von TagSpaces öffnen",
     "openSettingTooltip": "Einstellungen öffnen",
     "searchOptions": "Suchoptionen",
+    "searchPlaceholder": "Suchen",
     "includeSubfoldersInSearch": "Dateien auf den Unterordnern einschließen (indem Sie ein Fragezeichen \" ? \" an den Anfang der Suchanfrage schreiben)",
     "excludeTermFromSearch": "Ein \" ! \" zu Beginn eines Ausdrucks (z.B. !Ausdruck) schließt alle Dateien mit diesem Ausdruck im Namen aus.",
     "includeTagInSearch": "Ein \" + \" zu Beginn eines Ausdrucks (z.B. +Ausdruck) bezieht alle Dateien, die mit diesem Ausdruck getaggt sind mit ein.",
@@ -125,5 +126,10 @@
     "editLocation": "Ort bearbeiten",
     "toggleDirectory": "Ordner an-/abwählen",
     "yourLocations": "Orte:",
-    "tagWithTooltip": "Tag mit '__tagName__'"
+    "tagWithTooltip": "Tag mit '__tagName__'",
+    "createSubdirectory": "Unterordner erstellen",
+    "createSubdirectoryTooltip": "Unterordner in '__dirName__' erstellen",
+    "reloadCurrentDirectory": "Ordner (wieder) öffnen",
+    "reloadCurrentDirectoryTooltip": "Ordner '__dirName__' (wieder) öffnen",
+    "-": "-"
 }
