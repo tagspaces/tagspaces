@@ -1,0 +1,21 @@
+{
+    "fileExtension": "Dateiendungen",
+    "fileTitle": "Titel",
+    "fileTags": "Tags",
+    "fileSize": "Größe(B)",
+    "fileLDTM": "Änderungsdatum",
+    "filePath": "Pfad",
+    "fileName": "Dateiname",
+    "filesFoundFor": "Suchergebnisse für",
+    "filesFound": "Gefundene Dateien",
+    "toggleSelectAll": "Alle Dateien aus-/abwählen",
+    "createNewFileTooltip": "Neue Datei erstellen",
+    "showSubfolderContentTooltip": "Inhalt der Unterordner anzeigen",
+    "addRemoveTagsTooltip": "Tags für ausgewählte Dateien hinzufügen oder entfernen",
+    "toggleThumbnailsTooltip": "Vorschaubilder an-/ausschalten",
+    "increasThumbnailsTooltip": "Vorschaubilder vergrößern",
+    "toggleFileDetailsTooltip": "Dateidetails ein-/ausblenden",
+    "includeSubdirsTitleConfirm": "Einbeziehen von Unterordnern bestätigen",
+    "includeSubdirsContentConfirm": "Diese Operation könnte in Ordnern mit vielen Dateien und/oder Unterordnern etwas Zeit beanspruchen. Fortfahren?",
+    "-": "-"
+}

@@ -1,0 +1,21 @@
+{
+    "fileExtension": "File Ext.",
+    "fileTitle": "Title",
+    "fileTags": "Tags",
+    "fileSize": "Size(B)",
+    "fileLDTM": "Date Modified",
+    "filePath": "Path",
+    "fileName": "File Name",
+    "filesFoundFor": "files found for",
+    "filesFound": "files found",
+    "toggleSelectAll": "Toggle Select All Files",
+    "createNewFileTooltip": "Create New File",
+    "showSubfolderContentTooltip": "Show Content of the Subfolders",
+    "addRemoveTagsTooltip": "Add or Remove Tags for Selected Files",
+    "toggleThumbnailsTooltip": "Toggle Thumbnails",
+    "increasThumbnailsTooltip": "Increase Thumbnails",
+    "toggleFileDetailsTooltip": "Toggle File Details",
+    "includeSubdirsTitleConfirm": "Confirm Include Subdirectories",
+    "includeSubdirsContentConfirm": "On directory with many files and/or subdirectories, this operation could be slow! Do you want to continue?",
+    "-": "-"
+}
