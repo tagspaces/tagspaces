@@ -608,7 +608,8 @@ define(function(require, exports, module) {
         $('#tagTreeMenu').hide();
         $('#directoryMenu').hide();
         $('#tagMenu').hide();
-        $('#fileMenu').hide();  
+        $('#fileMenu').hide();
+        $(".dirAltNavMenu").hide();
     };
 
     var showLocationsPanel = function() {
