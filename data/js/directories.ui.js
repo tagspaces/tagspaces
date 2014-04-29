@@ -532,6 +532,7 @@ define(function(require, exports, module) {
                 $connectionName2.val(name);
                 $connectionName2.attr("oldName",name);
                 $folderLocation2.val(path);
+                $("#dialogLocationEdit").i18n();
                 $("#dialogLocationEdit").modal({backdrop: 'static',show: true});
         });     
     } 
@@ -566,6 +567,7 @@ define(function(require, exports, module) {
                 }
                 $("#connectionName").val("");
                 $("#folderLocation").val("");
+                $("#dialogCreateFolderConnection").i18n();
                 $("#dialogCreateFolderConnection").modal({backdrop: 'static',show: true});
         });
     }  
@@ -594,6 +596,7 @@ define(function(require, exports, module) {
                 }
                 $( "#createNewDirectoryButton" ).attr("path", dirPath);
                 $("#newDirectoryName").val("");
+                $('#dialogDirectoryCreate').i18n();
                 $('#dialogDirectoryCreate').modal({backdrop: 'static',show: true});
         });
     }    

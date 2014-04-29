@@ -17,7 +17,7 @@
                 <div class="tab-content">
                     <div class="tab-pane active" id="general" style="height: 320px; padding-top: 10px; overflow-y: auto;">
                         <div class='form-group col-sm-12'>
-                            <label for='extensionsPathInput' data-i18n="app.extensionsFolder">Interface Language</label>
+                            <label for='languagesList' data-i18n="">Interface Language</label>
                             <select class='form-control' id='languagesList'></select>
                             <p class="help-block">Switching language will fully take effect after restarting the application</p>
                         </div>
@@ -112,8 +112,7 @@
                         <div class='form-group col-sm-12'>
                             <label for='extensionsPathInput' data-i18n="app.extensionsFolder">Extensions folder (default value is "ext")</label>
                             <input type='text' class='form-control' id='extensionsPathInput'
-                                   data-i18n="[placeholder]app" placeholder='file:///c:\\tagspaces-extensions'
-                                   data-i18n="[title]app" title='Path to your tagspaces extensions'/>
+                                   data-i18n="[placeholder]app" placeholder='file:///c:\\tagspaces-extensions;[title]app' title='Path to your tagspaces extensions'/>
                         </div>
                         <!--button class="btn btn-default" style="margin-bottom: 10px" id="switchLang" data-i18n="[title]app.switchLanguageTooltip;">
                             <i class="fa fa-asterisk"> Test Change Language</i>
@@ -130,18 +129,14 @@
                             <label for='tagsDelimiterInput' data-i18n="app.extensionsFolder">Tag delimiter (e.g.
                                 Filename[TAG1_TAG2], _ is the delimiter)</label>
                             <input type='text' class='form-control' id='tagsDelimiterInput'
-                                   data-i18n="[placeholder]app" placeholder=''
-                                   data-i18n="[title]app" title=''/>
+                                   data-i18n="[placeholder]app;[title]app" placeholder='' title=''/>
                         </div>
                         <div class='form-group col-sm-12'>
                             <label for='prefixTagContainerInput' data-i18n="app.extensionsFolder">Prefix for the tag
                                 container (e.g. in "Filename-[TAG1].txt" - is the prefix) </label>
-                            <input type='text' class='form-control' id='prefixTagContainerInput'
-                                   data-i18n="[placeholder]app"
-                                   data-i18n="[title]app"/>
+                            <input type='text' class='form-control' id='prefixTagContainerInput' data-i18n="[placeholder]app;[title]app"/>
                         </div>
                     </div>
-
                 </div>
             </div>
             <div class="modal-footer">

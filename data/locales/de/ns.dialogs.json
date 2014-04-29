@@ -23,5 +23,6 @@
     "selectedPathExistTitleAlert": "Doppelter Orts-Pfad",
     "deleteLocationContentAlert": "Soll die Verbindung '__locationName__' wirklich gelöscht werden?",
     "deleteLocationTitleAlert": "Verbindung löschen",
+    "welcomeDialogTitle": "Willkommen in TagSpaces",
     "-": "-"
 }

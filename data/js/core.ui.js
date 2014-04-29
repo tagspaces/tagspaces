@@ -122,6 +122,7 @@ define(function(require, exports, module) {
                     $('body').append(uiTemplate());   
                     TSCORE.directoryBrowser.initUI();                        
                 }
+                $("#directoryBrowserDialog").i18n();
                 TSCORE.IO.listSubDirectories(path);                     
         });         
     };  
@@ -136,6 +137,7 @@ define(function(require, exports, module) {
                     $('body').append(uiTemplate());    
                     controller.initUI();
                 }
+                $("#dialogOptions").i18n();
                 controller.reInitUI();                    
         });
     };   
@@ -149,6 +151,7 @@ define(function(require, exports, module) {
                     $('body').append(uiTemplate());    
                     $('#welcomeCarosel').carousel();
                 }
+                $("#dialogWelcome").i18n();
                 $("#dialogWelcome").modal({backdrop: 'static',show: true});
         });
     };         

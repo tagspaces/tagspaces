@@ -488,8 +488,9 @@
                 }
                 $("#filePathProperty").val(_openedFileProperties.path);
                 $("#fileSizeProperty").val(_openedFileProperties.size);
-                $("#fileLMDTProperty").val(new Date(_openedFileProperties.lmdt));                                
-                $('#dialogFileProperties').modal({backdrop: 'static',show: true});        
+                $("#fileLMDTProperty").val(new Date(_openedFileProperties.lmdt));
+                $('#dialogFileProperties').i18n();
+                $('#dialogFileProperties').modal({backdrop: 'static',show: true});
         });
     }
   

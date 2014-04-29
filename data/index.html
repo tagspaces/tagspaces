@@ -80,7 +80,7 @@ can be found in the LICENSE file.
                 </div>
             </div>
 		</nav>  	
-		<div class="ts-container">
+		<div class="ts-container" style="overflow-x: hidden;">
             <div id="tagGroupsContent"></div>
             <div id="locationContent"></div>
             <div id="contactUsContent">
@@ -329,35 +329,35 @@ can be found in the LICENSE file.
     <div class="modal-content">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times fa-lg"></i></button>
-            <h4>Create New File</h4>
+            <h4 data-i18n="ns.dialogs:createNewFileTitle">Create New File</h4>
         </div>
         <div class="modal-body form">
             <div class="form-group">
-                <label class="control-label" for="newFileName">Title</label>
+                <label class="control-label" for="newFileName" data-i18n="ns.dialogs:newFileTitle">Title</label>
                 <input type="text" id="newFileName" class="form-control" placeholder="Title of the file">
             </div>
             <div class="form-group">
-                <label class="control-label" for="newFileNameTags">Tags</label>
+                <label class="control-label" for="newFileNameTags" data-i18n="ns.dialogs:newFileTags">Tags</label>
                 <input type="text" id="newFileNameTags" name="newFileNameTags" autocomplete="off" class="form-control" placeholder="List of tags">
-                <p class="help-block">Tags should have a minimum length of 2 characters and should not contain special characters such as spaces, #, / ,\ and other.</p>
+                <p class="help-block" data-i18n="ns.dialogs:editTagNamesRestrictionsHelp">Tags should have a minimum length of 2 characters and should not contain special characters such as spaces, #, / ,\ and other.</p>
             </div>
             <div class="form-group">
-                <label class="control-label" for="fileTypeChooser">Type</label><br>
+                <label class="control-label" for="fileTypeChooser" data-i18n="ns.dialogs:newFileType">Type</label><br>
                 <div class="btn-group" data-toggle="buttons" id="fileTypeChooser">
                     <label class="btn btn-default active" id="txtFileTypeButton" title="Create a TXT File">
-                        <input type="radio" name="options"> <strong>Plain Text</strong> (.txt)
+                        <input type="radio" name="options"> <strong data-i18n="ns.dialogs:newFileTypePlain">Plain Text</strong> (.txt)
                     </label>
                     <label class="btn btn-default" id="htmlFileTypeButton" title="Create a HTML File">
-                        <input type="radio" name="options"> <strong>Rich Text</strong> (.html)
+                        <input type="radio" name="options"> <strong data-i18n="ns.dialogs:newFileTypeRich">Rich Text</strong> (.html)
                     </label>
                     <label class="btn btn-default" id="mdFileTypeButton" title="Create a MarkDown File">
-                        <input type="radio" name="options"> <strong>MarkDown</strong> (.md)
+                        <input type="radio" name="options"> <strong data-i18n="ns.dialogs:newFileTypeMD">MarkDown</strong> (.md)
                     </label>
                 </div>
             </div>
             <div class="form-group">
               <label class="checkbox">
-                <input type="checkbox" id="tagWithCurrentDate"> Tag with current date (e.g. 20131210 for the 10th of December, 2013)
+                <input type="checkbox" id="tagWithCurrentDate">&nbsp;<span data-i18n="ns.dialogs:tagWithCurrentDate">Tag with current date (e.g. 20131208 for the 8th of December, 2013)</span>
               </label>
             </div>
         </div>
@@ -374,11 +374,11 @@ can be found in the LICENSE file.
     <div class="modal-content">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times fa-lg"></i></button>
-            <h4>Rename File</h4>
+            <h4 data-i18n="ns.dialogs:renameFileTitle">Rename File</h4>
         </div>
         <div class="modal-body form">
             <div class="form-group">
-                <label class="control-label" for="renamedFileName">New Filename</label>
+                <label class="control-label" for="renamedFileName" data-i18n="ns.dialogs:renameNewFileName">New Filename</label>
                 <input class="form-control" type="text" name="renamedFileName" id="renamedFileName" />
             </div>
         </div>
@@ -395,13 +395,13 @@ can be found in the LICENSE file.
     <div class="modal-content">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times fa-lg"></i></button>
-            <h4>Edit Tag</h4>
+            <h4 data-i18n="ns.dialogs:editTagTitle">Edit Tag</h4>
         </div>
         <div class="modal-body form">
             <div class="form-group">
-                <label class="control-label" for="newTagName">Tag Name</label>
+                <label class="control-label" for="newTagName" data-i18n="ns.dialogs:editTagNewName">Tag Name</label>
                 <input class="form-control" type="text" id="newTagName">
-                <p class="help-block">Tags should have a minimum length of 2 characters and should not contain special characters such as spaces, #, / ,\ and other.</p>
+                <p class="help-block" data-i18n="ns.dialogs:editTagNamesRestrictionsHelp">Tags should have a minimum length of 2 characters and should not contain special characters such as spaces, #, / ,\ and other.</p>
             </div>
         </div>
         <div class="modal-footer">
@@ -417,19 +417,19 @@ can be found in the LICENSE file.
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times fa-lg"></i></button>
-                <h4>Tag operation on multiple files</h4>
+                <h4 data-i18n="ns.dialogs:tagOperationTitle">Tag operation on multiple files</h4>
             </div>
             <div class="modal-body form">
                 <div class="form-group">
-                    <label class="control-label" for="tags">Tags</label>
-                    <input class="form-control" type="text" name="tags" id="tags" autocomplete="off" placeholder="List of tags"/>
-                    <p class="help-block">Tags should have a minimum length of 2 characters and should not contain special characters such as spaces, #, / ,\ and other.</p>
+                    <label class="control-label" for="tags" data-i18n="ns.dialogs:tagOperationTag">Tags</label>
+                    <input class="form-control" type="text" name="tags" id="tags" autocomplete="off" data-i18n="[placeholder]ns.dialogs:tagOperationListOfTags"/>
+                    <p class="help-block" data-i18n="ns.dialogs:editTagNamesRestrictionsHelp">Tags should have a minimum length of 2 characters and should not contain special characters such as spaces, #, / ,\ and other.</p>
                 </div>
             </div>
             <div class="modal-footer">
                 <button class="btn" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times fa-lg"></i></button>
-                <button id="removeTagsButton" class="btn btn-warning" data-dismiss="modal" aria-hidden="true">Remove Tags</button>
-                <button id="addTagsButton" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Add Tags</button>
+                <button id="removeTagsButton" class="btn btn-warning" data-dismiss="modal" aria-hidden="true" data-i18n="ns.dialogs:tagOperationRemoveTag">Remove Tags</button>
+                <button id="addTagsButton" class="btn btn-primary" data-dismiss="modal" aria-hidden="true" data-i18n="ns.dialogs:tagOperationAddTag">Add Tags</button>
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
@@ -440,16 +440,16 @@ can be found in the LICENSE file.
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times fa-lg"></i></button>
-                <h4>Edit Tag</h4>
+                <h4 data-i18n="ns.dialogs:editTagMasterTitle">Edit Tag</h4>
             </div>
             <div class="modal-body form">
                 <div class="form-group">
-                    <label class="control-label" for="tagInTreeName">Name</label>
+                    <label class="control-label" for="tagInTreeName" data-i18n="ns.dialogs:editTagMasterName">Name</label>
                     <input class="form-control" type="text" name="tagInTreeName" id="tagInTreeName" />
-                    <p class="help-block">Tags should have a minimum length of 2 characters and should not contain special characters such as spaces, #, / ,\ and other.</p>
+                    <p class="help-block" data-i18n="ns.dialogs:editTagNamesRestrictionsHelp">Tags should have a minimum length of 2 characters and should not contain special characters such as spaces, #, / ,\ and other.</p>
                 </div>
                 <div class="form-group">
-                    <label class="control-label" for="tagColor">Color</label>
+                    <label class="control-label" for="tagColor" data-i18n="ns.dialogs:editTagMasterColor">Color</label>
                     <select class="form-control" id="tagColor" >
                         <option value="#ac725e">#ac725e</option>
                         <option value="#d06b64">#d06b64</option>
@@ -476,7 +476,7 @@ can be found in the LICENSE file.
                     </select>
                 </div>
                 <div class="form-group">
-                    <label class="control-label" for="tagTextColor">Text Color</label>
+                    <label class="control-label" for="tagTextColor" data-i18n="ns.dialogs:editTagMasterTextColor">Text Color</label>
                     <select class="form-control" id="tagTextColor">
                         <option value="#ffffff">#ffffff</option>
                         <option value="#cccccc">#cccccc</option>
@@ -498,13 +498,13 @@ can be found in the LICENSE file.
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times fa-lg"></i></button>
-                <h4>Add tags to tag group</h4>
+                <h4 data-i18n="ns.dialogs:addTagsToGroupTitle">Add tags to tag group</h4>
             </div>
             <div class="modal-body form">
                 <div class="form-group">
-                    <label class="control-label" for="newTagTitle">Tags</label>
-                    <input class="form-control" type="text" name="newTagTitle" id="newTagTitle" placeholder="Comma separated list of tags" />
-                    <p class="help-block">Tags should have a minimum length of 2 characters and should not contain special characters such as spaces, #, / ,\ and other.</p>
+                    <label class="control-label" for="newTagTitle" data-i18n="ns.dialogs:addTagsToGroupTags">Tags</label>
+                    <input class="form-control" type="text" name="newTagTitle" id="newTagTitle" data-i18n="[placeholder]ns.dialogs:addTagsToGroupTagsPlaceholder" />
+                    <p class="help-block" data-i18n="ns.dialogs:editTagNamesRestrictionsHelp">Tags should have a minimum length of 2 characters and should not contain special characters such as spaces, #, / ,\ and other.</p>
                 </div>
             </div>
             <div class="modal-footer">
@@ -520,11 +520,11 @@ can be found in the LICENSE file.
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times fa-lg"></i></button>
-                <h4>Edit TagGroup</h4>
+                <h4 data-i18n="ns.dialogs:editTagGroupTitle">Edit Tag Group</h4>
             </div>
             <div class="modal-body form">
                 <div class="form-group">
-                    <label class="control-label" for="tagGroupName">TagGroup Name</label>
+                    <label class="control-label" for="tagGroupName" data-i18n="ns.dialogs:editTagGroupNewName">Tag Group Name</label>
                     <input class="form-control" type="text" name="tagGroupName" id="tagGroupName" />
                 </div>
             </div>
@@ -541,11 +541,11 @@ can be found in the LICENSE file.
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times fa-lg"></i></button>
-                <h4>Create TagGroup</h4>
+                <h4 data-i18n="ns.dialogs:createTagGroupTitle">Create Tag Group</h4>
             </div>
             <div class="modal-body form">
                 <div class="form-group">
-                    <label class="control-label" for="newTagGroupName">TagGroup Name</label>
+                    <label class="control-label" for="newTagGroupName" data-i18n="ns.dialogs:createTagGroupName">Tag Group Name</label>
                     <input class="form-control" type="text" name="newTagGroupName" id="newTagGroupName" />
                 </div>
             </div>
