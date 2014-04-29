@@ -740,17 +740,9 @@ input a.resetFilter {
 
 .optionsTitle {
     text-transform: uppercase;
-    font-weight: bold; 
+    font-weight: normal;
     color: gray;
     padding: 5px 10px 5px 10px !important;
-}
-
-#keyBindings .col-sm-4 {
-    margin-top: 20px;
-}
-
-#keyBindings .col-sm-8 {
-    margin-top: 15px;
 }
 
 #newVersionMessageContent {
