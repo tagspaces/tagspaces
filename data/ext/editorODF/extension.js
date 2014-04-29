@@ -19,7 +19,7 @@ define(function(require, exports, module) {
     exports.init = function(filePath, elementID) {
         console.log("Initalization ODF Viewer/Editor...");
         //filePath = "file:///"+filePath;
-        //filePath = "http://www.webodf.org/demo/editor/welcome.odt";
+        //filePath = "http://www.webodf.org/demos/presentation/ohm2013.odp";
         var extPath = extensionDirectory+"/index.html";
         $('#'+elementID).append($('<iframe>', {
             id: "iframeViewer",
