@@ -8,11 +8,11 @@ define(function (require, exports, module) {
         "appName": "TagSpaces",
         "appVersion": "1.7",
         "appBuild": "10",
-        "appBuildID": "201404271750",
+        "appBuildID": "201404290847",
         "settingsVersion": 2,
-        "newTextFileContent": "Text file created with TagSpaces!",
-        "newHTMLFileContent": "<html><head><title>Created with TagSpaces!</title></head><body>Feel free to change this text...</body></html>",
-        "newMDFileContent": '#Markdown file created with TagSpaces!',
+        "newTextFileContent": "Created with TagSpaces",
+        "newHTMLFileContent": "<html><head><title>Created with TagSpaces</title><meta http-equiv='Content-Type' content='text/html; charset=utf-8'></head><body></body></html>",
+        "newMDFileContent": '#Created with TagSpaces',
         "showUnixHiddenEntries": false,
         "checkForUpdates": true,
         "lastOpenedDirectory": "",
@@ -32,13 +32,14 @@ define(function (require, exports, module) {
             { "id": "perspectiveList" }, // ID should be equal to the directory name where the extension is located
             { "id": "perspectiveGrid" }
         ],
-        "interfaceLanguage": "en-US",
+        "interfaceLanguage": "en",
         "supportedLanguages": [
-            { "iso": "en-US",	"title": "English" },
-            { "iso": "de-DE",	"title": "Deutsch" },
-            { "iso": "bg-BG",	"title": "Български" },
-            { "iso": "fr-FR",	"title": "Français" },
-            { "iso": "zn-CN",	"title": "中国的" }
+            { "iso": "en",	    "title": "English" },
+            { "iso": "de",	    "title": "Deutsch (almost done)" },
+            { "iso": "bg",  	"title": "Български (started)" },
+            { "iso": "it",	    "title": "Italiano (help needed)" },
+            { "iso": "fr",	    "title": "Français (help needed)" },
+            { "iso": "zn-CN",	"title": "中国的 (help needed)" }
         ],
         "keyBindings": {
             "closeViewer":              "esc",
