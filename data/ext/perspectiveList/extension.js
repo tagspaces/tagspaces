@@ -26,7 +26,6 @@ define(function(require, exports, module) {
         require([
             extensionDirectory+'/perspectiveUI.js',
             "text!"+extensionDirectory+'/toolbar.html',
-            "i18n!"+extensionDirectory+":ns.perspectiveList",
             extensionDirectory+'/datatables/jquery.dataTables.min.js'
             ], function(extUI, toolbarTPL) {
                 var toolbarTemplate = Handlebars.compile( toolbarTPL );                
