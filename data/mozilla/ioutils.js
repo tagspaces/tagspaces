@@ -4,6 +4,7 @@
 /* jshint moz: true, strict: false */
 /* global exports */
 
+// good source for xpcom api https://developer.mozilla.org/en-US/Add-ons/Code_snippets/File_I_O
 const {components, Cc, Ci, Cr, Cu} = require("chrome");
 var filesIO = require("sdk/io/file"); // file
 var runtime = require("sdk/system/runtime"); // runtime 
@@ -336,34 +337,32 @@ exports.saveTextFile = function saveTextFile(filePath, content, worker) {
     try { 
         var file = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsIFile);
         file.initWithPath(filePath); 
-        if(!file.exists()) {
-            file.create(0,0664);
-        }                    
+        //if(!file.exists()) {
+        //    file.create(0,0664);
+        //}
       
-/*      Cu.import("resource://gre/modules/NetUtil.jsm"); 
+/*        Cu.import("resource://gre/modules/NetUtil.jsm");
         Cu.import("resource://gre/modules/FileUtils.jsm"); 
         var ostream = FileUtils.openSafeFileOutputStream(file); 
-        var converter = Cc["@mozilla.org/intl/scriptableunicodeconverter"]. 
-        createInstance(Ci.nsIScriptableUnicodeConverter); 
+        var converter = Cc["@mozilla.org/intl/scriptableunicodeconverter"].createInstance(Ci.nsIScriptableUnicodeConverter);
         converter.charset = "UTF-8"; 
         var istream = converter.convertToInputStream(content); 
         NetUtil.asyncCopy(istream, ostream, function(status) { 
-        //    if (!Components.isSuccessCode(status))  
-                return; 
-        }); */
-            
-        var out = Cc["@mozilla.org/network/file-output-stream;1"].createInstance(Ci.nsIFileOutputStream);
-        out.init(file,0x20|0x02,00004,null);
-        out.write(content,content.length);
-        out.flush();
-        out.close();
-                  
-        worker.postMessage({
-                "command": "saveTextFile",
-                "content": filePath,
-                "success": true
-            });     
-        console.log("Save successed!");       
+            //if (!Components.isSuccessCode(status)) {
+            // handle error
+            // return
+            //}
+        });*/
+
+        var foStream = Cc["@mozilla.org/network/file-output-stream;1"].createInstance(Ci.nsIFileOutputStream);
+        foStream.init(file, 0x02 | 0x08 | 0x20, 0666, 0);
+        var converter = Cc["@mozilla.org/intl/converter-output-stream;1"].createInstance(Ci.nsIConverterOutputStream);
+        converter.init(foStream, "UTF-8", 0, 0);
+        converter.writeString(content);
+        converter.close(); // this closes foStream
+
+        worker.postMessage({ "command": "saveTextFile","content": filePath,"success": true });
+        console.log("Save successed!");
     } catch(ex) {
         worker.postMessage({
                 "command": "saveTextFile",
