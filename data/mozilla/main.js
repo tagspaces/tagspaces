@@ -64,7 +64,8 @@ exports.main = function(options, callbacks) {
     }); 
       
     // A basic click-able image widget.
-    widgets.Widget({
+    // Removing widget for the addon bar due ff29 incorpatability
+    /* widgets.Widget({
         id: "TagSpaces",
         label: "TagSpaces",
         contentURL: data.url("assets/icon16.png"),
@@ -81,7 +82,7 @@ exports.main = function(options, callbacks) {
         onMouseout: function() {
             this.contentURL = data.url("assets/icon16.png");
         }
-    });       
+    }); */
     
     // Adding menuitem to the tools menu
     var menuitem = require("menuitems").Menuitem({
