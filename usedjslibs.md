@@ -8,7 +8,7 @@ DataTables - http://datatables.net/ - http://datatables.net/releases/DataTables-
 UnderscoreJS - http://underscorejs.org - https://github.com/jashkenas/underscore/blob/1.5.1/underscore.js
 Mousetrap - http://craig.is/killing/mice - https://raw.githubusercontent.com/ccampbell/mousetrap/1.4.6/mousetrap.min.js
 i18next - http://i18next.com/ - https://github.com/jamuhl/i18next/releases/tag/1.7.2
-requiere-i18next - https://github.com/jcbvm/require-i18next - https://github.com/jcbvm/require-i18next/releases/tag/v0.4.0
+// - https://github.com/jcbvm/require-i18next - https://github.com/jcbvm/require-i18next/releases/tag/v0.4.0
 hammerjs - http://eightmedia.github.io/hammer.js/ - https://github.com/EightMedia/hammer.js/blob/v1.0.5/dist/jquery.hammer.js
 Select2 - http://ivaynberg.github.io/select2/ - https://github.com/ivaynberg/select2/blob/3.4.5/select2.min.js
 x-editable - http://vitalets.github.io/x-editable/ - https://github.com/vitalets/x-editable/archive/1.5.1.zip
