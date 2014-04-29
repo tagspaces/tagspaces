@@ -156,7 +156,7 @@
     function closeFile(forceClose) {
         if(_isEditMode) {
             if(forceClose) {
-                cleanViewer()
+                cleanViewer();
             } else {
                 TSCORE.showConfirmDialog(
                     $.i18n.t("ns.dialogs:closingEditedFileTitleConfirm"),
@@ -168,7 +168,7 @@
             }
 
         } else {
-            cleanViewer()
+            cleanViewer();
         }
         
     }
@@ -224,7 +224,7 @@
         console.log("File Viewer: "+viewerExt+" File Editor: "+editorExt);
 
         // Handling the edit button depending on existense of an editor
-        if(editorExt == false || editorExt == "false" || editorExt == "") {
+        if(editorExt == false || editorExt == "false" || editorExt === "") {
             $( "#editDocument" ).hide();        
         } else {
             $( "#editDocument" ).show();                
@@ -407,18 +407,12 @@
         });
 
         // Init Tag Context Menus
-        $('#fileTags').on("contextmenu click", ".tagButton", function (e) {
+        $('#fileTags').on("contextmenu click", ".tagButton", function () {
             TSCORE.hideAllDropDownMenus();
 
             TSCORE.openTagMenu(this, $(this).attr("tag"), $(this).attr("filepath"));
 
-            $("#tagMenu").css({
-                display: "block",
-                left: e.pageX,
-                top: e.pageY
-            });
-            // TODO use the showContextMenu method
-            //TSCORE.showContextMenu("#tagMenu", $(this));
+            TSCORE.showContextMenu("#tagMenu", $(this));
             return false;
         });
     }
@@ -463,13 +457,12 @@
         for (var i=0; i < suggTags.length; i++) {
             // Ignoring the tags already assigned to a file
             if(tags.indexOf(suggTags[i]) < 0) {
-                tsMenu.append($('<li>', {name: suggTags[i]}).append($('<a>', {
-                    tagname: suggTags[i],
-                    filepath: filePath
-                    })
+                tsMenu.append($('<li>', {name: suggTags[i]}).append($('<a>', {})
                     .append($('<button>', {
                         title:  $.i18n.t("ns.common:tagWithTooltip", {tagName: suggTags[i]}),
-                        "class":  "btn btn-sm btn-success tagButton", 
+                        "class":  "btn btn-sm btn-success tagButton",
+                        filepath: filePath,
+                        tagname: suggTags[i],
                         text: suggTags[i]
                     })
                     .click(function() {
