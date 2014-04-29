@@ -111,10 +111,10 @@ define(function(require, exports, module) {
 
     function switchInterfaceLanguage(language) {
         $.i18n.init({
-            ns: { namespaces: ['ns.common','ns.dialogs']},
+            ns: { namespaces: ['ns.common','ns.dialogs','ns.perspectiveList']},
             lng: language,
-            // debug: true,
-            fallbackLng: "en-US"
+            //debug: true,
+            fallbackLng: "en"
         }, function() {
             $('[data-i18n]').i18n();
         });
