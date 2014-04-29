@@ -114,7 +114,7 @@ requirejs.config({
         'underscore':               { exports: '_' }, 
         'bootstrap':                { deps: ['jquery'] }, 
         'jquerysimplecolorpicker':  { deps: ['jquery','bootstrap'] },
-        'jqueryui':                 { deps: ['jquery'] },
+        'jqueryui':                 { deps: ['jquery','i18next'] },
         'jqueryuiwidget':           { deps: ['jqueryui'] }, 
         'jqueryuimouse':            { deps: ['jqueryui','jqueryuiwidget'] },
         'jqueryuiposition':         { deps: ['jqueryui'] },
@@ -131,25 +131,25 @@ requirejs.config({
         'select2':                  { deps: ['jquery'] },
         'hammerjs':                 { deps: ['jquery'] },
         'tscore':                   { deps: [
-                'jquery',
-                'jqueryui',
-                'jqueryuidraggable',
-                'jqueryuidroppable',
-                'jqueryuiresizable',
-                'jqueryuiposition',
-                'jqueryuiselectable',
-                'jqueryuisortable',
-                'hammerjs',
-                'bootstrap',
-                'bootstrap3xeditable',
-                'jquerysimplecolorpicker',
-                'jquerylayout',
-                'i18next',
-                'mousetrap',
-                'select2',
-                'handlebarsjs',  
-                'tssettingsdefault'
-            ] }
+                                            'jquery',
+                                            'jqueryui',
+                                            'jqueryuidraggable',
+                                            'jqueryuidroppable',
+                                            'jqueryuiresizable',
+                                            'jqueryuiposition',
+                                            'jqueryuiselectable',
+                                            'jqueryuisortable',
+                                            'hammerjs',
+                                            'bootstrap',
+                                            'bootstrap3xeditable',
+                                            'jquerysimplecolorpicker',
+                                            'jquerylayout',
+                                            'i18next',
+                                            'mousetrap',
+                                            'select2',
+                                            'handlebarsjs',
+                                            'tssettingsdefault'
+                                        ] }
     } 
 });
 
