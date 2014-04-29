@@ -25,12 +25,13 @@
         var perspectiveControl = $("<div class='form-inline'>")
             .append($("<div class='input-group' style='width: 90%'>")
                 .append($("<select class='form-control' style='width: 70%'></select>"))
-                .append($("<button class='btn btn-default'  style='width: 40px' title='Remove Perspective'><i class='fa fa-times'></button>")
+                .append($("<button class='btn btn-default'  style='width: 40px' data-i18n='[title]ns.dialogs:removePerspectiveTooltip'><i class='fa fa-times'></button>")
                     .click(function() {
                         $(this).parent().parent().remove();
                     })
               )
-            );
+            )
+            .i18n();
 
         generateSelectOptions(perspectiveControl.find("select"), TSCORE.Config.getPerspectiveExtensions(), perspectiveId);
         parent.append(perspectiveControl);
@@ -39,15 +40,16 @@
     function addFileType(parent, fileext, viewerId, editorId) {
         var fileTypeControl = $("<div class='form-inline'>")
             .append($("<div class='input-group' >")
-                .append($("<input style='width: 80px' type='text' class='form-control' placeholder='e.g: jpg'>").val(fileext))
-                .append($("<select class='ftviewer form-control' style='width: 170px' placeholder='Select Viewer'></select>"))
-                .append($("<select class='fteditor form-control' style='width: 170px' placeholder='Select Editor'></select>"))
-                .append($("<button style='width: 40px' class='btn btn-default' title='Remove this file type'><i class='fa fa-times'></button>")
+                .append($("<input style='width: 80px' type='text' class='form-control' data-i18n='[placeholder]ns.dialogs:fileExtensionPlaceholder'>").val(fileext))
+                .append($("<select class='ftviewer form-control' style='width: 170px'></select>"))
+                .append($("<select class='fteditor form-control' style='width: 170px'></select>"))
+                .append($("<button style='width: 40px' class='btn btn-default' data-i18n='[title]ns.dialogs:removeFileTypeTooltip'><i class='fa fa-times'></button>")
                     .click(function() {
                         $(this).parent().parent().remove();
                     })
                 )
-            );
+            )
+            .i18n();
         generateSelectOptions(fileTypeControl.find(".ftviewer"), TSCORE.Config.getViewerExtensions(), viewerId);
         generateSelectOptions(fileTypeControl.find(".fteditor"), TSCORE.Config.getEditorExtensions(), editorId);
         parent.append(fileTypeControl);
@@ -76,9 +78,8 @@
         
         $( "#defaultSettingsButton" ).click(function() {
             TSCORE.showConfirmDialog(
-                "Warning",
-                "By restoring the defalt setting, all locations, tags and taggroups will be lost."+
-                " Are you sure you want to continue?",
+                $.i18n.t("ns.dialogs:restoreDefaulSettingTitleConfirm"),
+                $.i18n.t("ns.dialogs:restoreDefaulSettingMessageConfirm"),
                 function() {
                     TSCORE.Config.loadDefaultSettings();                
                 }                
@@ -120,10 +121,10 @@
         $('#fileTypesList')
             .empty()
             .append($("<div class='input-group' >")
-                    .append($("<span style='width: 80px; border: 0' class='form-control' >File Ext.</span>"))
-                    .append($("<span style=' border: 0; width: 170px' class='ftviewer form-control'>File Viewer</span>"))
-                    .append($("<span style=' border: 0; width: 170px' class='fteditor form-control'>File Editor</span>"))
-                    );
+                    .append($("<span style='width: 80px; border: 0' class='form-control' data-i18n='ns.dialogs:fileExtension'></span>"))
+                    .append($("<span style=' border: 0; width: 170px' class='ftviewer form-control' data-i18n='ns.dialogs:fileViewer'></span>"))
+                    .append($("<span style=' border: 0; width: 170px' class='fteditor form-control' data-i18n='ns.dialogs:fileEditor'></span>"))
+            ).i18n();
 
         TSCORE.Config.getSupportedFileTypes().forEach(function (value) {
             addFileType($('#fileTypesList'), value.type, value.viewer, value.editor);
@@ -160,7 +161,6 @@
         TSCORE.Config.setInterfaceLangauge(interfaceLang);
         TSCORE.switchInterfaceLanguage(interfaceLang);
 
-
         TSCORE.Config.setPerspectives(collectPerspectivesData());
         TSCORE.Config.setSupportedFileTypes(collectSupportedFileTypesData());
         
@@ -195,7 +195,6 @@
         ); 
         return data;
     }
-    
     
     // Public Methods
     exports.initUI         = initUI;
