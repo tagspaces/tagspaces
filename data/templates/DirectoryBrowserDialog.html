@@ -3,11 +3,11 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times fa-lg"></i></button>
-                <h4 id="directoryBrowserDialogTitle">Select Directory</h4>
+                <h4 id="directoryBrowserDialogTitle" data-i18n="ns.dialogs:selectDialogTitle">Select Directory</h4>
             </div>
             <div class="modal-body" >
                 <div class="form-group">
-                    <label class="control-label" for="directoryPath">Current Path</label>
+                    <label class="control-label" for="directoryPath" data-i18n="ns.dialogs:selectDialogCurrentPath">Current Path</label>
                     <input class="form-control uneditable-input" readonly="true" type="text" name="directoryPath" id="directoryPath" />
                 </div>
                 <div class="panel panel-default">
@@ -16,8 +16,7 @@
                            <i class="fa fa-mail-reply"></i>
                         </button>
                         </div>
-                        <div class="panel-body" id="subdirectoriesArea" style="overflow-y: auto; max-height: 350px">
-                        Panel content
+                        <div class="panel-body" id="subdirectoriesArea" style="overflow-y: auto; max-height: 350px"></div>
                     </div>
                 </div>
             </div>
