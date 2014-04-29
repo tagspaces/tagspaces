@@ -87,15 +87,28 @@ define(function(require, exports, module) {
                 homeIcon = "<i class='fa fa-home'></i>&nbsp;";
             }
             
-            subfolders = $("<ul>", {
-                   "style":      "overflow-y: auto; max-height: 430px; width: 250px; padding: 5px;",                
+            subfolders = $("<div>", {
+                class: "dropdown clearfix dirAltNavMenu",
+                "id":         "dirMenu"+i
+            })
+            .append($("<ul>", {
+                   "style":      "overflow-y: auto; max-height: 430px; width: 250px; padding: 5px; display: block;",
+                   "role":       "menu",
                    "class":      "dropdown-menu"
             })
             .append($("<li>", {
                     "text": $.i18n.t("ns.common:actionsForDirectory", {dirName: directoryHistory[i].name}),
                     "class": 'dropdown-header'
                 })
-                .append($('<button type="button" class="close">×</button>'))
+                .append($('<button>', {
+                            type: "button",
+                            class: "close",
+                            text: "×"
+                        })
+                        .click(function() {
+                            TSCORE.hideAllDropDownMenus();
+                        })
+                    )
             )
             //.append('<li class="divider"></li>')
             .append($("<li>", {} )
@@ -103,7 +116,7 @@ define(function(require, exports, module) {
                         "class":    "btn btn-link",
                         "path":      directoryHistory[i].path,
                         "title":     $.i18n.t("ns.common:reloadCurrentDirectoryTooltip", {dirName: directoryHistory[i].name}),
-                        "text":     " "+$.i18n.t("ns.common:reloadCurrentDirectory")
+                        "text":      " "+$.i18n.t("ns.common:reloadCurrentDirectory")
                     })
                     .prepend("<i class='fa fa-refresh fa-lg fa-fw'></i>")
                     .click( function() {
@@ -129,20 +142,20 @@ define(function(require, exports, module) {
                 "text": $.i18n.t("ns.common:subfodersOfDirectory", {dirName: directoryHistory[i].name}),
                 "class": 'dropdown-header'
             })
-            );
+            ));
                           
             if(directoryHistory[i].children.length <= 0) {
-                    subfolders.append("<div>", {
+                    subfolders.find("ul").append($("<div>", {
                         class:  'alert alert-warning',
                         text:   $.i18n.t("ns.common:noSubfoldersFound")
-                    });
+                    }));
             } else {
                 for(var j=0; j < directoryHistory[i].children.length; j++) {
                     if (TSCORE.Config.getShowUnixHiddenEntries() || 
                             (!TSCORE.Config.getShowUnixHiddenEntries() &&
                                 (directoryHistory[i].children[j].name.indexOf(".") !== 0))
                         ) {
-                        subfolders.append($("<button>", {
+                        subfolders.find("ul").append($("<button>", {
                             "class":    "btn dirButton",
                             "key":      directoryHistory[i].children[j].path,
                             "title":    directoryHistory[i].children[j].path,
@@ -158,24 +171,47 @@ define(function(require, exports, module) {
                }        
            }
 
-            $alternativeNavigator
-                .append($("<div>", {
-                        "class":      "btn-group dropup"
-                    })
-                    .append($("<button>", {
+            $alternativeNavigator.append(
+                $("<div>", {
+                    "class":      "btn-group dropup"
+                })
+                .append($("<button>", {
                         "class":       "btn btn-link dropdown-toggle",
                         "text":        directoryHistory[i].name,
                         "key":         directoryHistory[i].path,
-                        "data-toggle": "dropdown"
+                        "data-menu":   i
+                        //"data-toggle": "dropdown"
                     })
-                        .prepend(homeIcon)
-                        .append("&nbsp;&nbsp;<i class='fa fa-caret-right'></i>&nbsp;")
-                    )
-                    .append(subfolders)
-                );
+                    .on("contextmenu click", function () {
+                        TSCORE.hideAllDropDownMenus();
+                        showDropUp("#dirMenu"+$(this).attr("data-menu"), $(this));
+                        return false;
+                    })
+                    .prepend(homeIcon)
+                    .append("&nbsp;&nbsp;<i class='fa fa-caret-right'></i>&nbsp;")
+                )
+                .append(subfolders)
+            );
         } // FOR End
     }
-    
+
+    var showDropUp = function(menuId, sourceObject) {
+        var $menu = $(menuId);
+        var leftPos = 0;
+        var topPos = -$menu.height();
+
+        if (sourceObject.offset().left+300 > window.innerWidth) {
+            leftPos = -200+sourceObject.width();
+        }
+        console.log(leftPos+" "+sourceObject.offset().left+" "+$menu.width()+" "+window.innerWidth);
+
+        $menu.css({
+            display: "block",
+            left:  leftPos+"px",
+            top: topPos
+        });
+    };
+
     function generateDirPath() {
         console.log("Generating Directory Path...");
         var $locationContent = $("#locationContent");
