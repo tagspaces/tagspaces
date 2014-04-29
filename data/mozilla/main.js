@@ -25,6 +25,7 @@ var data = require('sdk/self').data; // self
 var ioutils = require("ioutils"); 
 var settings = require("settings"); 
 var request = require("sdk/request"); // request
+var tabs = require("sdk/tabs");
 
 var workers = [];
 
@@ -89,14 +90,8 @@ exports.main = function(options, callbacks) {
         id: "TagSpacesMenuItem",
         menuid: "menu_ToolsPopup",
         label: "TagSpaces",
-        image: data.url("assets/icon16.png"),
-        onCommand: function () {
-            // Opens the main ui in a new pinned tab
-            require("sdk/tabs").open({ // tabs
-                url: data.url("index.html")
-                //isPinned: true,
-            });
-        },
+        // image: data.url("assets/icon16.png"),
+        onCommand: openTagSpacesInNewTab,
         insertbefore: "menu_pageInfo"
     });
     
@@ -114,18 +109,33 @@ function installToolbarButton () {
     });
 }
 
+function openTagSpacesInNewTab() {
+    tabs.open({
+        url: data.url("index.html"),
+        //isPinned: true,
+        isPrivate : true
+    });
+}
+
 function initToobarButton() {
-    toolbarButton = require("toolbarbutton").ToolbarButton({
+    /* code for firefox 29 and up
+    var buttons = require('sdk/ui/button/action');
+    toolbarButton = buttons.ActionButton({
+        id: "TSToolbarButton",
+        label: "TagSpaces",
+        icon: {
+            "16": "assets/icon16.png",
+            "32": "assets/icon32.png",
+            "64": "assets/icon64.png"
+        },
+        onClick: openTagSpacesInNewTab
+    });*/
+
+    toolbarButton  = require("toolbarbutton").ToolbarButton({
         id: "TSToolbarButton",
         label: "TagSpaces",
         image: data.url("assets/icon16.png"),
-        onCommand: function() {
-            require("sdk/tabs").open({ // tabs
-                url: data.url("index.html"),
-                //isPinned: true,
-                isPrivate : true
-            });
-        }
+        onCommand: openTagSpacesInNewTab
     });
 }
  
