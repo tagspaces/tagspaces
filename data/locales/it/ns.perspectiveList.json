@@ -1,0 +1,21 @@
+{
+    "fileExtension": "Est. File",
+    "fileTitle": "Titolo",
+    "fileTags": "Tags",
+    "fileSize": "Dimensione(B)",
+    "fileLDTM": "Data Modifica",
+    "filePath": "Percorso",
+    "fileName": "Nome File",
+    "filesFoundFor": "files trovati per",
+    "filesFound": "files trovati",
+    "toggleSelectAll": "Abilita / Disabilita Mostra Tutti Files",
+    "createNewFileTooltip": "Crea Nuovo File",
+    "showSubfolderContentTooltip": "Mostra Contenuti delle Sottocartelle",
+    "addRemoveTagsTooltip": "Aggiungi o Rimuovi Tags per i Files Selezionati",
+    "toggleThumbnailsTooltip": "Mostra Anteprime",
+    "increasThumbnailsTooltip": "Ingrandisci Anteprime",
+    "toggleFileDetailsTooltip": "Mostra Dettagli File",
+    "includeSubdirsTitleConfirm": "Conferma Includi Sottocartelle",
+    "includeSubdirsContentConfirm": "Su cartelle con molte sottocartelle e files, la operazione potrebbe essere lenta! Vuoi continuare?",
+    "-": "-"
+}
