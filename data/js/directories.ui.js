@@ -450,7 +450,9 @@ define(function(require, exports, module) {
         
         $( "#directoryMenuOpenDirectory" ).click( function() {
             TSCORE.IO.openDirectory(dir4ContextMenu);
-        });                    
+        });
+
+        $("#locationName").text($.i18n.t("ns.common:chooseLocation"));
 
     }
 
