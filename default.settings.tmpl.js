@@ -36,8 +36,9 @@ define(function (require, exports, module) {
         "supportedLanguages": [
             { "iso": "en",	    "title": "English" },
             { "iso": "de",	    "title": "Deutsch (almost done)" },
+            { "iso": "it",	    "title": "Italiano (almost done)" },
             { "iso": "bg",  	"title": "Български (started)" },
-            { "iso": "it",	    "title": "Italiano (help needed)" },
+            { "iso": "ru",	    "title": "Русский (help needed)" },
             { "iso": "fr",	    "title": "Français (help needed)" },
             { "iso": "zn-CN",	"title": "中国的 (help needed)" }
         ],
