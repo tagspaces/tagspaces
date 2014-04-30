@@ -127,7 +127,8 @@ requirejs.config({
         'jquerylayout':             { deps: ['jquery','jqueryuidraggable' ] },
         'jquerydropdown':           { deps: ['jquery','bootstrap'] },
         'bootstrap3xeditable':      { deps: ['jquery','jqueryui','bootstrap'] },
-        'jquerynanoscroller':       { deps: ['jquery'] },        
+        'jquerynanoscroller':       { deps: ['jquery'] },
+        'i18next':                  { deps: ['jquery'] },
         'select2':                  { deps: ['jquery'] },
         'hammerjs':                 { deps: ['jquery'] },
         'tscore':                   { deps: [
