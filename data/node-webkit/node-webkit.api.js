@@ -13,7 +13,12 @@ define(function(require, exports, module) {
     
     var TSCORE = require("tscore");    
     var TSPOSTIO = require("tspostioapi");
-    
+
+    gui.App.on('open', function(cmdline) {
+        console.log('Command line arguments on open: ' + cmdline);
+    });
+    console.log("Command line arguments: "+gui.App.argv);
+
     //var exif = require('../ext/viewerImage/exif-parser-master/lib/exif');
     //var BufferStream = require('../ext/viewerImage/exif-parser-master/lib/bufferstream');
     
