@@ -77,7 +77,7 @@
     "openDirectoriyNativelyTooltip": "Aktuellen Ordner im Dateimanager öffnen",
     "openDirectoriyNatively": "In Dateimanager anzeigen",
     "aboutTagSpaces": "Über TagSpaces",
-    "aboutTagSpacesTooltip": " Dailog mit Informationen über das Projekt öffnen",
+    "aboutTagSpacesTooltip": " Dialog mit Informationen über das Projekt öffnen",
     "startingHints": "Tipps zum Start",
     "startingHintsTooltip": "Tipps zur Nutzung von TagSpaces anzeigen",
     "whatsNew": "Was ist neu",
@@ -108,7 +108,8 @@
     "openSettingTooltip": "Einstellungen öffnen",
     "searchOptions": "Suchoptionen",
     "searchPlaceholder": "Suchen",
-    "includeSubfoldersInSearch": "Dateien auf den Unterordnern einschließen (indem Sie ein Fragezeichen \" ? \" an den Anfang der Suchanfrage schreiben)",
+    "clearFilterTooltip": "Filter zurücksetzen",
+    "includeSubfoldersInSearch": "Dateien aus den Unterordnern einschließen (indem Sie ein Fragezeichen \" ? \" an den Anfang der Suchanfrage schreiben)",
     "excludeTermFromSearch": "Ein \" ! \" zu Beginn eines Ausdrucks (z.B. !Ausdruck) schließt alle Dateien mit diesem Ausdruck im Namen aus.",
     "includeTagInSearch": "Ein \" + \" zu Beginn eines Ausdrucks (z.B. +Ausdruck) bezieht alle Dateien, die mit diesem Ausdruck getaggt sind mit ein.",
     "excludeTagInSearch": "Ein \" - \" zu Beginn eines Ausdrucks (z.B. -Ausdruck) schließt alle Dateien, die mit diesem Ausdruck getaggt sind aus.",
@@ -131,5 +132,6 @@
     "createSubdirectoryTooltip": "Unterordner in '__dirName__' erstellen",
     "reloadCurrentDirectory": "Ordner (wieder) öffnen",
     "reloadCurrentDirectoryTooltip": "Ordner '__dirName__' (wieder) öffnen",
+    "newVersionAvailableTooltip": "Neue Version von TagSpaces vorhanden",
     "-": "-"
 }
