@@ -289,14 +289,18 @@ define(function(require, exports, module) {
         var oneColumn = fullWidth < 660;
         var twoColumn = (fullWidth >= 660 && fullWidth < 1024);
 
+        layoutContainer.options.east.spacing_open = 1;
+
         $("#toggleFullWidthButton").hide();
 
         if(oneColumn) {
             $("#closeLeftPanel").show();
+            layoutContainer.options.east.spacing_open = 0;
             if(shouldOpenCol3) {
                 layoutContainer.close("west"); // workarround
                 shouldOpenCol1 = false; //Closing col1
                 layoutContainer.sizePane("east", fullWidth); // make col3 100%
+                //east__spacing_open:         1
             } else {
                 if(!layoutContainer.state.west.isClosed) {
                     if(isPortret) {
@@ -406,7 +410,7 @@ define(function(require, exports, module) {
         //,   fxSpeed:                  "normal",
             autoResize:                 true,	// try to maintain pane-percentages
             autoReopen:                 true,	// auto-open panes that were previously auto-closed due to 'no room'
-            minSize:                    1,
+            minSize:                    0,
             autoBindCustomButtons:      true,
             west__paneSelector:         '.col1',
             center__paneSelector:       '.col2',
@@ -416,7 +420,7 @@ define(function(require, exports, module) {
             east__size:                 0.5,
             west__spacing_open:         1,
             east__spacing_open:         1,
-            center_minWidth:            1,
+            center_minWidth:            0,
             center_minHeight:           200,
             spacing_closed:             0,
             noRoomToOpenAction:         "hide", // 'close' or 'hide' when no room to open a pane at minSize
@@ -444,7 +448,7 @@ define(function(require, exports, module) {
             spacing_closed:             0,	// hide resizer/slider bar when closed
         //	autoReopen:                 true,	// auto-open panes that were previously auto-closed due to 'no room'
             autoBindCustomButtons:      true,
-            minSize:                    1,
+            minSize:                    0,
             center__minHeight:          25,
         //  north__showOverflowOnHover:	true,
         //  center__showOverflowOnHover:true,
@@ -467,7 +471,7 @@ define(function(require, exports, module) {
             spacing_closed:             0,	// hide resizer/slider bar when closed
             autoReopen:                 true,	// auto-open panes that were previously auto-closed due to 'no room'
             autoBindCustomButtons:      true,
-            minSize:                    1,
+            minSize:                    0,
             center__minHeight:          25,
             north__showOverflowOnHover:	true,
         //  center__showOverflowOnHover:true,
