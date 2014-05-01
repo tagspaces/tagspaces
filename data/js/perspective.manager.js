@@ -19,8 +19,6 @@ var initPerspectives = function () {
     $("#viewContainers").empty();
     $("#viewFooters").empty();
 
-    $("#locationName").text($.i18n.t("ns.common:perspectivesDropDown"));
-
     initWelcomeScreen();
 
     var extensions = TSCORE.Config.getPerspectives();
