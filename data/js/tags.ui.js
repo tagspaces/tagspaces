@@ -200,7 +200,7 @@
                         "data-i18n": "[title]ns.common:toggleTagGroup"
                     }  
                 )
-                .html("<i class='fa fa-tags'></i>")   
+                .html("<i class='fa fa-tags' style='margin-left: 5px;'></i>")
             )// End taggroup toggle button  
 
             .append($("<button>", {

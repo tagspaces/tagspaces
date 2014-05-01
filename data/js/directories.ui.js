@@ -237,7 +237,7 @@ define(function(require, exports, module) {
                         "title":        $.i18n.t("ns.common:toggleDirectory")
                     }  
                 )
-                .html("<i class='fa fa-folder-open'></i>")   
+                .html("<i class='fa fa-folder-open' style='margin-left: 5px;'></i>")
             )// End dir toggle button  
             
             .append($("<button>", { // Dir main button
@@ -451,9 +451,6 @@ define(function(require, exports, module) {
         $( "#directoryMenuOpenDirectory" ).click( function() {
             TSCORE.IO.openDirectory(dir4ContextMenu);
         });
-
-        $("#locationName").text($.i18n.t("ns.common:chooseLocation"));
-
     }
 
     function createLocation() {
