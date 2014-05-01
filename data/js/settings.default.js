@@ -8,7 +8,7 @@ define(function (require, exports, module) {
         "appName": "TagSpaces",
         "appVersion": "1.7",
         "appBuild": "10",
-        "appBuildID": "201404290847",
+        "appBuildID": "201405020118",
         "settingsVersion": 2,
         "newTextFileContent": "Created with TagSpaces",
         "newHTMLFileContent": "<html><head><title>Created with TagSpaces</title><meta http-equiv='Content-Type' content='text/html; charset=utf-8'></head><body></body></html>",
@@ -35,9 +35,10 @@ define(function (require, exports, module) {
         "interfaceLanguage": "en",
         "supportedLanguages": [
             { "iso": "en",	    "title": "English" },
-            { "iso": "de",	    "title": "Deutsch (almost done)" },
+            { "iso": "de",	    "title": "Deutsch" },
+            { "iso": "it",	    "title": "Italiano (almost done)" },
             { "iso": "bg",  	"title": "Български (started)" },
-            { "iso": "it",	    "title": "Italiano (help needed)" },
+            { "iso": "ru",	    "title": "Русский (help needed)" },
             { "iso": "fr",	    "title": "Français (help needed)" },
             { "iso": "zn-CN",	"title": "中国的 (help needed)" }
         ],

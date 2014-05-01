@@ -35,7 +35,7 @@ define(function (require, exports, module) {
         "interfaceLanguage": "en",
         "supportedLanguages": [
             { "iso": "en",	    "title": "English" },
-            { "iso": "de",	    "title": "Deutsch (almost done)" },
+            { "iso": "de",	    "title": "Deutsch" },
             { "iso": "it",	    "title": "Italiano (almost done)" },
             { "iso": "bg",  	"title": "Български (started)" },
             { "iso": "ru",	    "title": "Русский (help needed)" },
