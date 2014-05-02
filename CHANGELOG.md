@@ -1,5 +1,46 @@
 ﻿#Changelog
 
+##Version 1.8.0 / 2014.05.02
+- adding configurable keybinding
+- german and italian translations added
+- improvements in the options dialog
+- fixing [#59](https://github.com/uggrock/tagspaces/issues/59) about saving utf8 content
+- fixing opening links in the default browser instead of the application [#53](https://github.com/uggrock/tagspaces/issues/53) in markdown files
+- fixing undo issue [#45](https://github.com/uggrock/tagspaces/issues/45)
+- reenabling the menu on mac [#44](https://github.com/uggrock/tagspaces/issues/44)
+- [uservoice] adding setting for showing confirmation dialog before recursive scan
+- [firefox] optimizing the start TagSpaces button in the toolbar for support in Firefox 29
+- [android] new icon
+- optimizing icon layout
+- adding back favicon
+- optimizing loading js libs
+- adding basic handler for command line arguments
+- removing the widger from the addon bar
+- optimizing the dropups in the alternative directory navigator
+- optimizing the tags dropdown menu
+- disabling opening of last location of firefox
+- updating the webodf lib
+- fixing thumbnail refresh
+- adding handling for switching languages
+- moving switching language to general tab
+- adding handling for key bindings
+- adding button for help translating
+- adding tab for keybindings
+- adding new method for language switching
+- adding new keybinding settings
+- fixing issues with embeding local images and images in data urls
+- exchanging ok and cancel in buttons with icons
+- added function for opening links in the default browser of the user
+- exchanging dialog close icons with a bigger one
+- exchanging x in dialogs with a bigger icon
+- exchanging the send to icon
+- changing the default viewer for text files to editorText
+- adding a document listing all the used libraries
+- reducing the widht of the tiles in grid perspective
+- changing the backgroud color of the buttons in the image viewer
+- making the status bar not wrappable
+- jshiniting
+
 ##Version 1.7.9 / 2014.04.02
 - removing of many tags on many files now possible in one step
 - making the toolbar icons flat
@@ -24,7 +65,7 @@
 - adding a new iframe viewer extension
 - updating require.js library to a newer version
 - removing the trailing red dot from the editor's content
-- [osx]disabling the file menu on mac
+- [osx] disabling the file menu on mac
 - [api] extending loadTextFile funcion to support file preview
 
 ##Version 1.7.8 / 2014.03.21
