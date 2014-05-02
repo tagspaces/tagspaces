@@ -484,6 +484,11 @@ define(function(require, exports, module) {
             openLinkExternally($(this).attr("href"));
         });
 
+        $contactUsContent.on('click',"#openSupportUs", function (e) {
+            e.preventDefault();
+            openLinkExternally($(this).attr("href"));
+        });
+
         $("#newVersionMenu").on('click',".whatsNewLink", function (e) {
             e.preventDefault();
             openLinkExternally($(this).attr("href"));
