@@ -695,6 +695,16 @@ input a.resetFilter {
     z-index: 88888;	
 }
 
+.modal-header {
+    background-color: #F6F6F6;
+    border-radius: 4px 4px 0px 0px;
+    padding-bottom: 0;
+}
+
+#dialogOptions .modal-header {
+    border-bottom-width: 0;
+}
+
 .white-caret {
 	border-top-color: white; 
 	border-bottom-color: white;	
@@ -743,6 +753,7 @@ input a.resetFilter {
     font-weight: normal;
     color: gray;
     padding: 5px 10px 5px 10px !important;
+    font-size: 12px;
 }
 
 #newVersionMessageContent {

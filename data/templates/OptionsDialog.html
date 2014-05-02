@@ -6,8 +6,6 @@
                     <i class="fa fa-times fa-lg"></i>
                 </button>
                 <h4 data-i18n="ns.dialogs:optionsTitle">Settings</h4>
-            </div>
-            <div class="modal-body form" style="height: 408px;" id="optionsAccordion">
                 <ul class="nav nav-tabs">
                     <li><a href="#general" data-toggle="tab" class="optionsTitle" data-i18n="ns.dialogs:generalTab">General</a></li>
                     <li><a href="#perspectives" data-toggle="tab" class="optionsTitle" data-i18n="ns.dialogs:perspectivesTab">Perspectives</a></li>
@@ -15,8 +13,10 @@
                     <li><a href="#keyBindings" data-toggle="tab" class="optionsTitle" data-i18n="ns.dialogs:keyBindingsTab">Key Bindings</a></li>
                     <li><a href="#experimental" data-toggle="tab" class="optionsTitle" data-i18n="ns.dialogs:experimentalTab">Experimental*</a></li>
                 </ul>
+            </div>
+            <div class="modal-body form" style="height: 408px;" id="optionsAccordion">
                 <div class="tab-content">
-                    <div class="tab-pane active" id="general" style="height: 320px; padding-top: 10px; overflow-y: auto;">
+                    <div class="tab-pane active" id="general" style="height: 360px; overflow-y: auto;">
                         <div class='form-group col-sm-12'>
                             <label for='languagesList'>Interface Language</label>
                             <select class='form-control' id='languagesList'></select>
@@ -39,7 +39,7 @@
                         </div>
                     </div>
 
-                    <div class="tab-pane" id="perspectives" style="height: 320px; padding-top: 10px; overflow-y: auto;">
+                    <div class="tab-pane" id="perspectives" style="height: 360px; overflow-y: auto;">
                         <p class="help-block" data-i18n="ns.dialogs:perspectivesHelp">The changes made in this tab will take effect after restarting the application.</p>
                         <div id='perspectiveList'></div>
                         <button class='btn btn-default' style="margin-top: 10px" id='addPerspectiveButton'>
@@ -47,17 +47,17 @@
                         </button>
                     </div>
 
-                    <div class="tab-pane" id="filetypes" style="height: 320px; padding-top: 10px; overflow-y: auto;">
+                    <div class="tab-pane" id="filetypes" style="height: 360px; overflow-y: auto;">
                         <div id='fileTypesList'></div>
                         <button class='btn btn-default' style="margin-top: 10px" id='addFileTypeButton'>
                             <i class='fa fa-plus'></i>&nbsp;<span data-i18n="ns.dialogs:addNewFileExtensionButton">Add new file extension</span>
                         </button>
                     </div>
 
-                    <div class="tab-pane" id="keyBindings" style="height: 320px; overflow-y: auto; overflow-x: hidden;">
+                    <div class="tab-pane" id="keyBindings" style="height: 360px; overflow-y: auto; overflow-x: hidden;">
                         <form class="form-horizontal" role="form">
                             <div class='form-group col-sm-12'>
-                                <p class="help-block" data-i18n="ns.dialogs:keyBindingInstructions" style="margin-top: 20px; font-weight: bold">Instructions:</p>
+                                <p class="help-block" data-i18n="ns.dialogs:keyBindingInstructions" style="font-weight: bold">Instructions:</p>
                                 <p class="help-block"><span data-i18n="ns.dialogs:keyBindingInstructions1">For modifier keys you can use</span>&nbsp;<code>shift</code>, <code>ctrl</code>, <code>alt</code>, <code>option</code>, <code>meta</code> &amp; <code>command</code>.</p>
                                 <p class="help-block"><span data-i18n="ns.dialogs:keyBindingInstructions2">Other special keys are</span>&nbsp;<code>backspace</code>, <code>tab</code>, <code>enter</code>, <code>return</code>, <code>capslock</code>, <code>esc</code>, <code>escape</code>, <code>space</code>, <code>pageup</code>, <code>pagedown</code>, <code>end</code>, <code>home</code>, <code>left</code>, <code>up</code>, <code>right</code>, <code>down</code>, <code>ins</code> &amp; <code>del</code>.</p>
                                 <p class="help-block"><span data-i18n="ns.dialogs:keyBindingInstructions3">Any other key you should be able to reference by name like</span>&nbsp;<code>a</code>, <code>/</code>, <code>$</code>, <code>*</code>, <code>=</code>.</p>
@@ -108,7 +108,7 @@
                         </form>
                     </div>
 
-                    <div class="tab-pane" id="experimental" style="height: 320px; padding-top: 10px; overflow-y: auto;">
+                    <div class="tab-pane" id="experimental" style="height: 360px; overflow-y: auto;">
                         <p class="help-block col-sm-12" data-i18n="ns.dialogs:experimentalHelp">*) Be carefull changing the following settings.</p>
                         <div class='form-group col-sm-12'>
                             <label for='extensionsPathInput' data-i18n="ns.dialogs:extensionsFolder">Extensions folder (default value is "ext")</label>
