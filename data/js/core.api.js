@@ -512,6 +512,7 @@ define(function(require, exports, module) {
     // Proxying applications parts
     exports.Config = tsSettings;
     exports.IO = tsIOApi;
+    exports.UI = tsCoreUI;
     exports.PerspectiveManager = tsPersManager;
     exports.TagUtils = tsTagUtils;
     exports.FileOpener = tsFileOpener;
@@ -536,6 +537,7 @@ define(function(require, exports, module) {
     exports.switchInterfaceLanguage      = switchInterfaceLanguage;
 
     // Proxying functions from tsCoreUI
+    // TODO use TSCORE.UI instead
     exports.clearSearchFilter           = tsCoreUI.clearSearchFilter;
     exports.openLinkExternally          = tsCoreUI.openLinkExternally;
     exports.enableTopToolbar            = tsCoreUI.enableTopToolbar;
