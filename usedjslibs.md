@@ -15,7 +15,7 @@ jQuery Simple Color Picker - https://github.com/tkrotoff/jquery-simplecolorpicke
 Summernote - https://github.com/HackerWins/summernote/ - https://github.com/HackerWins/summernote/blob/v0.5.0/dist/summernote.js + some manual changes
 Code Mirror - http://codemirror.net/ - https://github.com/marijnh/CodeMirror/releases/tag/3.24.0
 D3.js - http://d3js.org/ - https://github.com/mbostock/d3/blob/v3.2.0/d3.js
-Showdown - https://github.com/coreyti/showdown - https://github.com/coreyti/showdown/blob/master/src/showdown.js
+marked - https://github.com/chjj/marked - https://github.com/chjj/marked/releases/tag/v0.3.2
 Pixastic - http://www.pixastic.com/ - http://www.pixastic.com/lib/download/zip.php
 jQuery Panzoom - https://github.com/timmywil/jquery.panzoom - https://github.com/timmywil/jquery.panzoom/blob/1.8.2/dist/jquery.panzoom.min.js
 jQuery Mousewheel - https://github.com/brandonaaron/jquery-mousewheel - https://github.com/brandonaaron/jquery-mousewheel/archive/3.1.6.zip
