@@ -154,8 +154,12 @@ define(function(require, exports, module) {
                 $("#dialogWelcome").i18n();
                 $("#dialogWelcome").modal({backdrop: 'static',show: true});
         });
-    };         
-    
+    };
+
+    var showAboutDialog = function() {
+        $("#dialogAboutTS").modal({backdrop: 'static',show: true});
+    };
+
     var initUI = function() {
         $("#appVersion").text(TSCORE.Config.DefaultSettings["appVersion"]+"."+TSCORE.Config.DefaultSettings["appBuild"]);
         $("#appVersion").attr("title","BuildID: "+TSCORE.Config.DefaultSettings["appVersion"]+"."+TSCORE.Config.DefaultSettings["appBuild"]+"."+TSCORE.Config.DefaultSettings["appBuildID"]);
@@ -661,6 +665,8 @@ define(function(require, exports, module) {
     exports.showFileDeleteDialog        = showFileDeleteDialog;
     exports.showWelcomeDialog           = showWelcomeDialog;
     exports.showTagEditDialog           = showTagEditDialog;
+    exports.showOptionsDialog           = showOptionsDialog;
+    exports.showAboutDialog             = showAboutDialog;
     exports.showLocationsPanel          = showLocationsPanel;
     exports.showTagsPanel               = showTagsPanel;
     exports.showDirectoryBrowserDialog  = showDirectoryBrowserDialog; 
