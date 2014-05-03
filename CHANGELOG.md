@@ -2,6 +2,7 @@
 
 ##Version 1.8.0 / 2014.05.02
 - adding configurable keybinding
+- adding shortcut for loading the previous and the next document
 - german and italian translations added
 - improvements in the options dialog
 - fixing [#59](https://github.com/uggrock/tagspaces/issues/59) about saving utf8 content
