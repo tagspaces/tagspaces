@@ -14,18 +14,91 @@ define(function(require, exports, module) {
     var TSCORE = require("tscore");    
     var TSPOSTIO = require("tspostioapi");
 
+    //Windows "C:\Users\na\Desktop\TagSpaces\tagspaces.exe" --original-process-start-time=13043601900594583 "G:\data\assets\icon16.png"
+    //Linux /opt/tagspaces/tagspaces /home/na/Dropbox/TagSpaces/README[README].md
     gui.App.on('open', function(cmdline) {
-        console.log('Command line arguments on open: ' + cmdline);
+        alert('Command line arguments on open: ' + cmdline);
+        //TSCORE.FileOpener.openFile(cmdArguments);
     });
-    console.log("Command line arguments: "+gui.App.argv);
+    var cmdArguments = gui.App.argv;
+    //if(cmdArguments != undefined && cmdArguments.length > 1) {
+        alert("Opening: "+cmdArguments);
+        //TSCORE.FileOpener.openFile(cmdArguments);
+    //}
 
     //var exif = require('../ext/viewerImage/exif-parser-master/lib/exif');
     //var BufferStream = require('../ext/viewerImage/exif-parser-master/lib/bufferstream');
     
     process.on("uncaughtException", function(err) { 
-        //alert("error: " + err);  
+        //alert("error: " + err);
+
+        var msg =
+              ' Information | Description \n'
+            + '-------------|-----------------------------\n'
+            + ' Date        | '+ new Date +'\n'
+            + ' Type        | UncaughtException \n'
+            + ' Stack       | '+ err.stack +'\n\n';
+
+        //fs.appendFile(errorLogFile, '---uncaughtException---\n' + msg);
     });
-    
+
+    var initMainMenu = function() {
+        var rootMenu = new gui.Menu({ type: 'menubar'});
+        var aboutMenu = new gui.Menu();
+        var fileMenu = new gui.Menu();
+        var win = gui.Window.get();
+
+        //alert(gui.Window.get().menu.items.length);
+        if(rootMenu.items.length < 1) {
+            aboutMenu.append(new gui.MenuItem({
+                type: 'normal',
+                label: $.i18n.t("ns.common:aboutTagSpaces"),
+                click: function (){
+                    TSCORE.UI.showAboutDialog();
+                } }));
+
+            fileMenu.append(new gui.MenuItem({
+                type: 'normal',
+                label: 'Show Dev Tools',
+                click: function (){
+                    win.showDevTools();
+                } }));
+
+            fileMenu.append(new gui.MenuItem({
+                type: 'normal',
+                label: 'Toggle',
+                click: function (){
+                    win.toggleFullscreen();
+                } }));
+
+            fileMenu.append(new gui.MenuItem({
+                type: 'normal',
+                label: 'Refresh',
+                click: function (){
+                    win.reloadIgnoringCache();
+                } }));
+
+            fileMenu.append(new gui.MenuItem({
+                type: 'normal',
+                label: 'Settings',
+                click: function (){
+                    TSCORE.UI.showOptionsDialog();
+                } }));
+
+            rootMenu.append(new gui.MenuItem({
+                label: 'Actions',
+                submenu: fileMenu
+            }));
+
+            rootMenu.append(new gui.MenuItem({
+                label: 'Help',
+                submenu: aboutMenu
+            }));
+
+            gui.Window.get().menu = rootMenu;
+        }
+    };
+
     function scanDirectory(dirPath, index) {
         try {
             var dirList = fs.readdirSync(dirPath);
@@ -360,5 +433,6 @@ define(function(require, exports, module) {
     exports.checkAccessFileURLAllowed    = checkAccessFileURLAllowed;
     exports.checkNewVersion              = checkNewVersion;
     exports.getFileProperties            = getFileProperties;
+    exports.initMainMenu                 = initMainMenu;
 
 });
