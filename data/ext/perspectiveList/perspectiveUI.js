@@ -349,14 +349,12 @@ console.log("Loading UI for perspectiveList");
         this.refreshThumbnails();
     };
 
-    var buttonCompTmpl = Handlebars.compile('<button class="btn btn-link fileSelection"><i class="fa fa-square-o"></i></button>\
-        <button filepath="{{filepath}}" class="btn btn-link fileTitleButton">\
-        <span class="fileExt"><span>{{fileext}}</span>&nbsp;<span class="caret white-caret"></span></span></button>');
+    var buttonCompTmpl = Handlebars.compile('<button filepath="{{filepath}}" class="btn btn-link fileSelection"><i class="fa fa-square-o"></i></button>' +
+        '<button filepath="{{filepath}}" class="btn btn-link fileTitleButton"><span class="fileExt"><span>{{fileext}}</span>&nbsp;<span class="caret white-caret"></span></span></button>');
 
-    var buttonCompTmbTmpl = Handlebars.compile('<button class="btn btn-link fileSelection"><i class="fa fa-square-o"></i></button>\
-            <button filepath="{{filepath}}" class="btn btn-link fileTitleButton">\
-            <span class="fileExt"><span>{{fileext}}</span>&nbsp;<span class="caret white-caret"></span></span></button>\
-            <br><img title="{{filepath}}" class="thumbImg" filepath="{{tmbpath}}" style="width: 0; height: 0; border: 0" src="">');
+    var buttonCompTmbTmpl = Handlebars.compile('<button filepath="{{filepath}}" class="btn btn-link fileSelection"><i class="fa fa-square-o"></i></button>' +
+        '<button filepath="{{filepath}}" class="btn btn-link fileTitleButton"><span class="fileExt"><span>{{fileext}}</span>&nbsp;<span class="caret white-caret"></span></span></button>' +
+        '<br><img class="thumbImg" filepath="{{tmbpath}}" style="width: 0; height: 0; border: 0" src="">');
     
     // Helper function user by basic and search views
     ExtUI.prototype.buttonizeTitle = function(title, filePath, fileExt) {
@@ -484,18 +482,22 @@ console.log("Loading UI for perspectiveList");
     };
 
     ExtUI.prototype.removeFileUI = function(filePath) {
-        console.log("Removing "+filePath+" from UI");
-        
+        console.log("Removing from UI"+filePath+" from UI");
+
+        var row4remove;
         if(isWin) {
             filePath = filePath.replace("\\","");
             $("#"+this.extensionID+"Container button[filepath]").each(function() {
                 if( $( this ).attr("filepath").replace("\\","") === filePath ) {
-                    $( this ).parent().parent().remove();
+                    row4remove = $( this ).parent().parent();
                 }
             });            
         } else {
-            $("#"+this.extensionID+"Container button[filepath='"+filePath+"']").parent().parent().remove();            
-        }  
+            row4remove = $("#"+this.extensionID+"Container button[filepath='"+filePath+"']").parent().parent();
+        }
+        if(row4remove !== undefined) {
+            row4remove.remove();
+        }
     };	
 
     ExtUI.prototype.updateFileUI = function(oldFilePath, newFilePath) {
