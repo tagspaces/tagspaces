@@ -126,7 +126,13 @@
                     .append($("<span style=' border: 0; width: 170px' class='fteditor form-control' data-i18n='ns.dialogs:fileEditor'></span>"))
             ).i18n();
 
-        TSCORE.Config.getSupportedFileTypes().forEach(function (value) {
+        TSCORE.Config.getSupportedFileTypes().sort(function(a, b){
+            if (a.type > b.type)
+                return 1;
+            if (a.type < b.type)
+                return -1;
+            return 0;
+        }).forEach(function (value) {
             addFileType($('#fileTypesList'), value.type, value.viewer, value.editor);
         });        
        
