@@ -19,6 +19,8 @@
 
     var _tsEditor;
 
+    var generatedTagButtons;
+
     $.fn.editableform.buttons =
           '<button type="submit" class="btn btn-primary editable-submit" style="margin-left: 8px;"><i class="fa fa-check fa-lg"></i></button>'+
           '<br /><br /><button type="button" class="btn editable-cancel"><i class="fa fa-times fa-lg"></i></button>';
@@ -391,8 +393,9 @@
             } else {
                 tagString = tagString + "," +value;                                 
             }
-        }); 
-        $( "#fileTags" ).empty().append(TSCORE.generateTagButtons(tagString,_openedFilePath));
+        });
+        generatedTagButtons = TSCORE.generateTagButtons(tagString,_openedFilePath);
+        $( "#fileTags" ).empty().append(generatedTagButtons);
     
         $( "#tagsContainer" ).droppable({
             greedy: "true",
@@ -489,8 +492,11 @@
                 $("#filePathProperty").val(_openedFileProperties.path);
                 $("#fileSizeProperty").val(_openedFileProperties.size);
                 $("#fileLMDTProperty").val(new Date(_openedFileProperties.lmdt));
-                $('#dialogFileProperties').i18n();
-                $('#dialogFileProperties').modal({backdrop: 'static',show: true});
+                var $fileTagsProperty = $("#fileTagsProperty");
+                $fileTagsProperty.empty();
+                $fileTagsProperty.append(generatedTagButtons);
+                $fileTagsProperty.find(".caret").hide(); // hiding the dropdown trigger
+                $('#dialogFileProperties').i18n().modal({backdrop: 'static',show: true});
         });
     }
   
