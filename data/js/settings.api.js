@@ -406,19 +406,20 @@
      };
 
      var getReloadApplicationKeyBinding = function () {
-         if (exports.Settings.keyBindings === undefined) {
-             exports.Settings.keyBindings = exports.DefaultSettings.keyBindings;
-             saveSettings();
-         }
-         if (exports.Settings.keyBindings.reloadApplication === undefined) {
-             exports.Settings.keyBindings.reloadApplication = exports.DefaultSettings.keyBindings.reloadApplication;
-             saveSettings();
-         }
-         return exports.Settings.keyBindings.reloadApplication;
+         //if (exports.Settings.keyBindings === undefined) {
+         //    exports.Settings.keyBindings = exports.DefaultSettings.keyBindings;
+         //    saveSettings();
+         //}
+         //if (exports.Settings.keyBindings.reloadApplication === undefined) {
+         //    exports.Settings.keyBindings.reloadApplication = exports.DefaultSettings.keyBindings.reloadApplication;
+         //    saveSettings();
+         //}
+         return exports.DefaultSettings.keyBindings.reloadApplication;
      };
 
      var setReloadApplicationKeyBinding = function (value) {
-         exports.Settings.keyBindings.reloadApplication = value;
+         consolo.log("Not supported command");
+         //exports.Settings.keyBindings.reloadApplication = value;
      };
 
      var getToggleFullScreenKeyBinding = function () {
@@ -513,6 +514,38 @@
          return exports.Settings.keyBindings.prevDocument;
      };
 
+     var setShowTagLibraryKeyBinding = function (value) {
+         exports.Settings.keyBindings.showTagLibrary = value;
+     };
+
+     var getShowTagLibraryKeyBinding = function () {
+         if (exports.Settings.keyBindings === undefined) {
+             exports.Settings.keyBindings = exports.DefaultSettings.keyBindings;
+             saveSettings();
+         }
+         if (exports.Settings.keyBindings.showTagLibrary === undefined) {
+             exports.Settings.keyBindings.showTagLibrary = exports.DefaultSettings.keyBindings.showTagLibrary;
+             saveSettings();
+         }
+         return exports.Settings.keyBindings.showTagLibrary;
+     };
+
+     var setShowFolderNavigatorKeyBinding = function (value) {
+         exports.Settings.keyBindings.showFolderNavigator = value;
+     };
+
+     var getShowFolderNavigatorBinding = function () {
+         if (exports.Settings.keyBindings === undefined) {
+             exports.Settings.keyBindings = exports.DefaultSettings.keyBindings;
+             saveSettings();
+         }
+         if (exports.Settings.keyBindings.showFolderNavigator === undefined) {
+             exports.Settings.keyBindings.showFolderNavigator = exports.DefaultSettings.keyBindings.showFolderNavigator;
+             saveSettings();
+         }
+         return exports.Settings.keyBindings.showFolderNavigator;
+     };
+
      var setPrevDocumentKeyBinding = function (value) {
          exports.Settings.keyBindings.prevDocument = value;
      };
@@ -558,17 +591,28 @@
          saveSettings();
      };
 
-     var getShowUnixHiddenEntries = function() {
-        if(exports.Settings.showUnixHiddenEntries === undefined) {
-            exports.Settings.showUnixHiddenEntries = exports.DefaultSettings.showUnixHiddenEntries;
+     var getShowMainMenu = function() {
+        if(exports.Settings.showMainMenu === undefined) {
+            exports.Settings.showMainMenu = exports.DefaultSettings.showMainMenu;
         }
-        return exports.Settings.showUnixHiddenEntries;
+        return exports.Settings.showMainMenu;
     };
 
-    var setShowUnixHiddenEntries = function(value) {
-        exports.Settings.showUnixHiddenEntries = value;
+    var setShowMainMenu = function(value) {
+        exports.Settings.showMainMenu = value;
     };
-    
+
+     var getShowUnixHiddenEntries = function() {
+         if(exports.Settings.showUnixHiddenEntries === undefined) {
+             exports.Settings.showUnixHiddenEntries = exports.DefaultSettings.showUnixHiddenEntries;
+         }
+         return exports.Settings.showUnixHiddenEntries;
+     };
+
+     var setShowUnixHiddenEntries = function(value) {
+         exports.Settings.showUnixHiddenEntries = value;
+     };
+
     var getCheckForUpdates = function() {
         if(exports.Settings.checkForUpdates === undefined) {
             exports.Settings.checkForUpdates = exports.DefaultSettings.checkForUpdates;
@@ -997,6 +1041,8 @@
     exports.getPrefixTagContainer                   = getPrefixTagContainer;
     exports.getTagDelimiter                         = getTagDelimiter;
     exports.setTagDelimiter                         = setTagDelimiter;
+    exports.getShowMainMenu                         = getShowMainMenu;
+    exports.setShowMainMenu                         = setShowMainMenu;
     exports.getCalculateTags                        = getCalculateTags;
     exports.setCalculateTags                        = setCalculateTags;
     exports.getIsWindowMaximized                    = getIsWindowMaximized;
@@ -1028,6 +1074,11 @@
     exports.setNextDocumentKeyBinding               = setNextDocumentKeyBinding;
     exports.getPrevDocumentKeyBinding               = getPrevDocumentKeyBinding;
     exports.setPrevDocumentKeyBinding               = setPrevDocumentKeyBinding;
+    exports.setShowTagLibraryKeyBinding             = setShowTagLibraryKeyBinding;
+    exports.getShowTagLibraryKeyBinding             = getShowTagLibraryKeyBinding;
+    exports.setShowFolderNavigatorKeyBinding        = setShowFolderNavigatorKeyBinding;
+    exports.getShowFolderNavigatorBinding           = getShowFolderNavigatorBinding;
+
 
     exports.getPerspectiveExtensions                = getPerspectiveExtensions;
     exports.getActivatedPerspectiveExtensions       = getActivatedPerspectiveExtensions;
