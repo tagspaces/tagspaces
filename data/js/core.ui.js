@@ -625,6 +625,7 @@ define(function(require, exports, module) {
     };
 
     var showLocationsPanel = function() {
+        TSCORE.openLeftPanel();
         $('#contactUsContent').hide();
         $('#tagGroupsContent').hide();
         $('#locationContent').show();
@@ -634,6 +635,7 @@ define(function(require, exports, module) {
     };
 
     var showTagsPanel = function() {
+        TSCORE.openLeftPanel();
         $('#contactUsContent').hide();
         $('#locationContent').hide();
         $('#tagGroupsContent').show();
@@ -643,6 +645,7 @@ define(function(require, exports, module) {
     };
     
     var showContactUsPanel = function() {
+        TSCORE.openLeftPanel();
         $('#locationContent').hide();
         $('#tagGroupsContent').hide();
         $('#contactUsContent').show();
