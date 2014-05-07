@@ -94,6 +94,11 @@ define(function(require, exports, module) {
 //            console.log("Settings Test: "+tsSettings.getInterfaceLangauge());
 //            console.log("Settings Test: "+tsSettings.getCloseViewerKeyBinding());
 
+            // Handle command line argument in node-webkit
+            if(isNode) {
+                tsIOApi.handleCommandLineArguments();
+            }
+
             console.log("Layout initialized");
         });
 
@@ -138,6 +143,19 @@ define(function(require, exports, module) {
                 win.toggleFullscreen();
             });
         }
+
+        Mousetrap.bind(tsSettings.getShowTagLibraryKeyBinding(), function() {
+            tsCoreUI.showTagsPanel();
+        });
+
+        Mousetrap.bind(tsSettings.getShowFolderNavigatorBinding(), function() {
+            tsCoreUI.showLocationsPanel();
+        });
+
+        //Mousetrap.bind("mod+t", function() {
+            // TODO check if min 1 file is selected
+            //tsTagsUI.showAddTagsDialog();
+        //});
 
         // TODO add swipeleft for closing left panel
         /* $(".col1").hammer().on("swipeleft", function(event) {
@@ -398,6 +416,11 @@ define(function(require, exports, module) {
         shouldOpenCol1 = !shouldOpenCol1;
     }
 
+    function openLeftPanel() {
+        layoutContainer.open("west");
+        shouldOpenCol1 = true;
+    }
+
     function reloadUI() {
         location.reload();
     }
@@ -410,6 +433,11 @@ define(function(require, exports, module) {
         console.log("Initializing Layout...");
 
         layoutContainer = $('body').layout({
+            panes: { // defaults for all panes in layout
+                tips: {
+                    noRoomToOpen: "" // blank = no message
+                }
+            },
             name:                       'outerLayout', // for debugging & auto-adding buttons (see below)
             fxName:                     "none", // none, slide
         //,   fxSpeed:                  "normal",
@@ -432,7 +460,8 @@ define(function(require, exports, module) {
         //  west__showOverflowOnHover:	true,
         //  center__showOverflowOnHover:	true,
         //  east__showOverflowOnHover:	true,
-            enableCursorHotkey:          false
+            enableCursorHotkey:         false
+        //  showErrorMessages:          false,
         });
 
         // Initially close the right panel
@@ -458,7 +487,8 @@ define(function(require, exports, module) {
         //  north__showOverflowOnHover:	true,
         //  center__showOverflowOnHover:true,
         //  south__showOverflowOnHover:	true,
-           enableCursorHotkey:          false
+            enableCursorHotkey:         false
+        //  showErrorMessages:          false
         });
 
         col2Layout = layoutContainer.panes.center.layout({
@@ -482,6 +512,7 @@ define(function(require, exports, module) {
         //  center__showOverflowOnHover:true,
         //  south__showOverflowOnHover:	true,
             enableCursorHotkey:         false
+        //  showErrorMessages:          false
         });
 
     /*
@@ -531,6 +562,7 @@ define(function(require, exports, module) {
     exports.openFileViewer 				= openFileViewer;
     exports.closeFileViewer 			= closeFileViewer;
     exports.toggleLeftPanel 			= toggleLeftPanel;
+    exports.openLeftPanel               = openLeftPanel;
     exports.toggleFullWidth             = toggleFullWidth;
     exports.updateNewVersionData        = updateNewVersionData;
     exports.exportFileListCSV           = exportFileListCSV;
