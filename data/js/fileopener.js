@@ -210,7 +210,7 @@
         _isEditMode = false;
 
         _openedFilePath = filePath;
-        $("#selectedFilePath").val(_openedFilePath.replace("\\\\","\\"));
+        //$("#selectedFilePath").val(_openedFilePath.replace("\\\\","\\"));
 
         var fileExt = TSCORE.TagUtils.extractFileExtension(filePath);
 
