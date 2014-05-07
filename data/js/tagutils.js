@@ -310,9 +310,26 @@
        
         TSCORE.IO.renameFile(filePath, containingDirectoryPath+TSCORE.dirSeparator+newFileName);
     }
-    
-    
-    function addTag(filePathArray, tagArray) {
+
+    function cleanFileFromTags(filePath) {
+        console.log("Cleaning file from tags: " + filePath);
+        var fileTitle = extractTitle(filePath);
+        var fileExt = extractFileExtension(filePath);
+        var containingDirectoryPath = extractContainingDirectoryPath(filePath);
+        if(fileExt.length > 0) {
+            fileExt = "."+fileExt;
+        }
+        TSCORE.IO.renameFile(filePath, containingDirectoryPath+TSCORE.dirSeparator+fileTitle+fileExt);
+    }
+
+     function cleanFilesFromTags(filePathArray) {
+         console.log("Cleaning file from tags");
+         for (var i=0; i < filePathArray.length; i++) {
+             cleanFileFromTags(filePathArray[i]);
+         }
+     }
+
+     function addTag(filePathArray, tagArray) {
         console.log("Adding tags to files");        
         for (var i=0; i < filePathArray.length; i++) {
            writeTagsToFile(filePathArray[i], tagArray);
@@ -455,6 +472,7 @@
     exports.removeTag                           = removeTag;
     exports.removeTags                          = removeTags;
     exports.addTag                              = addTag;
+    exports.cleanFilesFromTags                  = cleanFilesFromTags;
     exports.changeTitle                         = changeTitle;
     exports.stringEndsWith                      = stringEndsWith;
 

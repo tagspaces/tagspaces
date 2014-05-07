@@ -110,7 +110,17 @@
                );
             generateTagGroups();
             TSCORE.PerspectiveManager.refreshFileListContainer();    
-        });   
+        });
+
+        $( "#cleanTagsButton" ).click( function() {
+            TSCORE.showConfirmDialog(
+                $.i18n.t("ns.dialogs:cleanFilesTitleConfirm"),
+                $.i18n.t("ns.dialogs:cleanFilesContentConfirm"),
+                function() {
+                    TSCORE.TagUtils.cleanFilesFromTags(TSCORE.selectedFiles);
+                }
+            );
+        });
 
         $( "#addTagsButton" ).click( function() {
             var tags = $("#tags").val().split(",");
@@ -251,28 +261,37 @@
             ); // end group
 
             var tagButtons = $("<div>").appendTo( "#tagButtonsContent"+i );
+            var tag;
+            var tagTitle;
             for(var j=0; j < TSCORE.Config.Settings.tagGroups[i].children.length; j++) {
-                var tagTitle;
-                if(TSCORE.Config.Settings.tagGroups[i].children[j].description !== undefined) {
-                    tagTitle = TSCORE.Config.Settings.tagGroups[i].children[j].description;
+                tag = TSCORE.Config.Settings.tagGroups[i].children[j];
+                if(tag.description !== undefined) {
+                    tagTitle = tag.description;
                 } else {
-                    tagTitle = "Opens context menu for "+TSCORE.Config.Settings.tagGroups[i].children[j].title;
+                    tagTitle = "Opens context menu for "+tag.title;
                 }
                 var tagIcon = "";
-                if(TSCORE.Config.Settings.tagGroups[i].children[j].type === "smart"){
+                if(tag.type === "smart"){
                     tagIcon = "<span class='fa fa-flask'/> ";
                 }
+                // TODO Add keybinding to tags
+//                if(tag.keyBinding !== undefined) {
+//                    tagIcon = "<span class='fa fa-key'/> ";
+//                    Mousetrap.bind(tag.keyBinding, (function(innerTag) {
+//                        TSCORE.TagUtils.addTag(TSCORE.selectedFiles, [innerTag]);
+//                    } (tag.title) ));
+//                }
                 var tagCount = "";
-                if(TSCORE.Config.Settings.tagGroups[i].children[j].count !== undefined) {
-                    tagCount = " ("+TSCORE.Config.Settings.tagGroups[i].children[j].count+")";
+                if(tag.count !== undefined) {
+                    tagCount = " ("+tag.count+")";
                 }                
                 tagButtons.append($("<a>", {
                     "class":         "btn btn-sm tagButton",
-                    "tag":           TSCORE.Config.Settings.tagGroups[i].children[j].title,
+                    "tag":           tag.title,
                     "parentKey":     TSCORE.Config.Settings.tagGroups[i].key,
                     "title":         tagTitle,
-                    "text":          TSCORE.Config.Settings.tagGroups[i].children[j].title+tagCount+" ",
-                    "style":         generateTagStyle(TSCORE.Config.Settings.tagGroups[i].children[j])
+                    "text":          tag.title+tagCount+" ",
+                    "style":         generateTagStyle(tag)
                 })
                 .draggable({
                     "appendTo":   "body",
