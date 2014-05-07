@@ -8,7 +8,7 @@ define(function (require, exports, module) {
         "appName": "TagSpaces",
         "appVersion": "1.8",
         "appBuild": "1",
-        "appBuildID": "201405032153",
+        "appBuildID": "201405071737",
         "settingsVersion": 2,
         "newTextFileContent": "Created with TagSpaces",
         "newHTMLFileContent": "<html><head><title>Created with TagSpaces</title><meta http-equiv='Content-Type' content='text/html; charset=utf-8'></head><body></body></html>",
@@ -24,6 +24,7 @@ define(function (require, exports, module) {
         "calculateTags": false,
         "warnIncludeSubdirs": true,
         "isWindowMaximized": false,
+        "showMainMenu": true,
         "lastOpenedLocation": "",
         "ootbPerspectives": ['perspectiveList', 'perspectiveGrid', 'perspectiveGraph'],
         "ootbViewers": [ "viewerBrowser", "viewerMD", "viewerImage", "viewerPDF", "editorText", "viewerText", "editorODF"  ],
@@ -35,22 +36,29 @@ define(function (require, exports, module) {
         "interfaceLanguage": "en",
         "supportedLanguages": [
             { "iso": "en",	    "title": "English" },
-            { "iso": "de",	    "title": "Deutsch" },
-            { "iso": "it",	    "title": "Italiano (almost done)" },
-            { "iso": "bg",  	"title": "Български (started)" },
-            { "iso": "ru",	    "title": "Русский (help needed)" },
-            { "iso": "fr",	    "title": "Français (help needed)" },
-            { "iso": "zn-CN",	"title": "中国的 (help needed)" }
+            { "iso": "de",	    "title": "Deutsch (German)" },
+            { "iso": "it",	    "title": "Italiano (Italian)" },
+            { "iso": "bg",  	"title": "Български (Bulgarian - started)" },
+            { "iso": "ru",	    "title": "Русский (Russian - help needed)" },
+            { "iso": "pt",	    "title": "Português (Portuguese - help needed)" },
+            { "iso": "es",	    "title": "Español (Spanish - help needed)" },
+            { "iso": "fr",	    "title": "Français (French help needed)" },
+            { "iso": "zn-CN",	"title": "中国的 (Chinese - help needed)" }
         ],
         "keyBindings": {
-            "closeViewer":              "esc",
+            "closeViewer":              "mod+w",
             "saveDocument":             "mod+s",
             "reloadDocument":           "mod+r",
             "deleteDocument":           "del",
+            "showTagLibrary":           "s t",
+            "showFolderNavigator":      "s f",
+            "toggleShowHiddenEntries":  "mod+h",
+            "addRemoveTags":            "mod+t",
             "propertiesDocument":       "alt+enter",
             "nextDocument":             ['right', 'down'],
             "prevDocument":             ['left', 'up'],
-            "reloadApplication":        "f5",
+            "showHelp":                 "f1",
+            "reloadApplication":        "r a",
             "toggleFullScreen":         "f11",
             "openDevTools":             "f12"
         },
@@ -224,19 +232,22 @@ define(function (require, exports, module) {
                         "type": "plain",
                         "title": "high",
                         "color": "#ff7537",
-                        "textcolor": "#ffffff"
+                        "textcolor": "#ffffff",
+                        "keyBinding": "t h"
                     },
                     {
                         "type": "plain",
                         "title": "medium",
                         "color": "#ffad46",
-                        "textcolor": "#ffffff"
+                        "textcolor": "#ffffff",
+                        "keyBinding": "t m"
                     },
                     {
                         "type": "plain",
                         "title": "low",
                         "color": "#7bd148",
-                        "textcolor": "#ffffff"
+                        "textcolor": "#ffffff",
+                        "keyBinding": "t l"
                     }
                 ]
             },
