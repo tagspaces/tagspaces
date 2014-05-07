@@ -141,5 +141,13 @@
     "reloadCurrentDirectory": "Open or Reload Directory",
     "reloadCurrentDirectoryTooltip": "Open or Reload '__dirName__'",
     "newVersionAvailableTooltip": "New TagSpaces version available",
+    "showDevTools": "Show Developer Tools",
+    "toggleFullScreen": "Toggle Fullscreen",
+    "reloadApplication": "Reload Application",
+    "": "",
+    "": "",
+    "": "",
+    "": "",
+
     "-": "-"
 }
