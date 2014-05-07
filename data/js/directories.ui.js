@@ -20,11 +20,16 @@ define(function(require, exports, module) {
         console.log("Opening connection in : "+path);
     
         var currentLocation = TSCORE.Config.getLocation(path);
-        
-        document.title = currentLocation.name + " | " + TSCORE.Config.DefaultSettings.appName;
-    
-        $( "#locationName" ).text(currentLocation.name).attr("title",path);
-       
+        if(currentLocation != undefined) {
+            document.title = currentLocation.name + " | " + TSCORE.Config.DefaultSettings.appName;
+
+            $( "#locationName" ).text(currentLocation.name).attr("title",path);
+
+            // Handle open default perspective for a location
+            var defaultPerspective = currentLocation.perspective;
+            TSCORE.PerspectiveManager.changePerspective(defaultPerspective);
+        }
+
         // Clear search query
         TSCORE.clearSearchFilter();                         
        
@@ -32,10 +37,6 @@ define(function(require, exports, module) {
         directoryHistory = [];
         navigateToDirectory(path);
 
-        // Handle open default perspective for a location
-        var defaultPerspective = currentLocation.perspective;
-        TSCORE.PerspectiveManager.changePerspective(defaultPerspective);
-        
         // Saving the last opened location path in the settings
         TSCORE.Config.setLastOpenedLocation(path);
         TSCORE.Config.saveSettings(); 
