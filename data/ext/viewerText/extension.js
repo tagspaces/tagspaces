@@ -46,7 +46,7 @@ define(function(require, exports, module) {
 		if(content.length > previewSize) {
 			content = content.substring(0,previewSize);			
 		}
-		console.log("Content size: "+content);
+		//console.log("Content size: "+content);
 	    
 		// removing the script tags from the content 
         var cleanedContent = content.toString().replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,""); 	    
