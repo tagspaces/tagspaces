@@ -14,22 +14,10 @@ define(function(require, exports, module) {
     var TSCORE = require("tscore");    
     var TSPOSTIO = require("tspostioapi");
 
-    //Windows "C:\Users\na\Desktop\TagSpaces\tagspaces.exe" --original-process-start-time=13043601900594583 "G:\data\assets\icon16.png"
-    //Linux /opt/tagspaces/tagspaces /home/na/Dropbox/TagSpaces/README[README].md
-    gui.App.on('open', function(cmdline) {
-        alert('Command line arguments on open: ' + cmdline);
-        //TSCORE.FileOpener.openFile(cmdArguments);
-    });
-    var cmdArguments = gui.App.argv;
-    //if(cmdArguments != undefined && cmdArguments.length > 1) {
-        alert("Opening: "+cmdArguments);
-        //TSCORE.FileOpener.openFile(cmdArguments);
-    //}
-
     //var exif = require('../ext/viewerImage/exif-parser-master/lib/exif');
     //var BufferStream = require('../ext/viewerImage/exif-parser-master/lib/bufferstream');
-    
-    process.on("uncaughtException", function(err) { 
+
+    process.on("uncaughtException", function(err) {
         //alert("error: " + err);
 
         var msg =
@@ -42,14 +30,33 @@ define(function(require, exports, module) {
         //fs.appendFile(errorLogFile, '---uncaughtException---\n' + msg);
     });
 
+    var handleCommandLineArguments = function() {
+        //Windows "C:\Users\na\Desktop\TagSpaces\tagspaces.exe" --original-process-start-time=13043601900594583 "G:\data\assets\icon16.png"
+        //Linux /opt/tagspaces/tagspaces /home/na/Dropbox/TagSpaces/README[README].md
+        //OSX /home/na/Dropbox/TagSpaces/README[README].md
+        //gui.App.on('open', function(cmdline) {
+        //   console.log('Command line arguments on open: ' + cmdline);
+        //   TSCORE.FileOpener.openFile(cmdArguments);
+        //});
+        var cmdArguments = gui.App.argv;
+        if(cmdArguments !== undefined || cmdArguments.length > 0) {
+            console.log("CMD Arguments: "+cmdArguments+" Process running in "+process.cwd());
+            TSCORE.Config.setLastOpenedLocation(undefined);
+            var filePath = ""+cmdArguments
+            TSCORE.toggleFullWidth();
+            TSCORE.FileOpener.openFile(filePath);
+            TSCORE.openLocation(TSCORE.TagUtils.extractContainingDirectoryPath(filePath));
+        }
+    };
+
     var initMainMenu = function() {
         var rootMenu = new gui.Menu({ type: 'menubar'});
         var aboutMenu = new gui.Menu();
-        var fileMenu = new gui.Menu();
+        var viewMenu = new gui.Menu();
         var win = gui.Window.get();
 
-        //alert(gui.Window.get().menu.items.length);
-        if(rootMenu.items.length < 1) {
+        // TODO Clear the menu on reload
+        if(TSCORE.Config.getShowMainMenu()) {
             aboutMenu.append(new gui.MenuItem({
                 type: 'normal',
                 label: $.i18n.t("ns.common:aboutTagSpaces"),
@@ -57,28 +64,46 @@ define(function(require, exports, module) {
                     TSCORE.UI.showAboutDialog();
                 } }));
 
-            fileMenu.append(new gui.MenuItem({
+            viewMenu.append(new gui.MenuItem({
                 type: 'normal',
-                label: 'Show Dev Tools',
+                label: $.i18n.t("ns.common:showTagLibraryTooltip")+" ("+TSCORE.Config.getShowTagLibraryKeyBinding()+")",
                 click: function (){
-                    win.showDevTools();
+                    TSCORE.UI.showTagsPanel();
                 } }));
 
-            fileMenu.append(new gui.MenuItem({
+            viewMenu.append(new gui.MenuItem({
                 type: 'normal',
-                label: 'Toggle',
+                label: $.i18n.t("ns.common:showLocationNavigatorTooltip")+" ("+TSCORE.Config.getShowFolderNavigatorBinding()+")",
+                click: function (){
+                    TSCORE.UI.showLocationsPanel();
+                } }));
+
+            viewMenu.append(new gui.MenuItem({ type: 'separator' }));
+
+            viewMenu.append(new gui.MenuItem({
+                type: 'normal',
+                label: $.i18n.t("ns.common:toggleFullScreen")+" ("+TSCORE.Config.getToggleFullScreenKeyBinding()+")",
                 click: function (){
                     win.toggleFullscreen();
                 } }));
 
-            fileMenu.append(new gui.MenuItem({
+            viewMenu.append(new gui.MenuItem({
                 type: 'normal',
-                label: 'Refresh',
+                label: $.i18n.t("ns.common:showDevTools")+" ("+TSCORE.Config.getOpenDevToolsScreenKeyBinding()+")",
                 click: function (){
-                    win.reloadIgnoringCache();
+                    win.showDevTools();
                 } }));
 
-            fileMenu.append(new gui.MenuItem({
+            //viewMenu.append(new gui.MenuItem({
+            //    type: 'normal',
+            //    label: $.i18n.t("ns.common:reloadApplication")+" ("+TSCORE.Config.getReloadApplicationKeyBinding()+")",
+            //    click: function (){
+            //        win.reloadIgnoringCache();
+            //    } }));
+
+            viewMenu.append(new gui.MenuItem({ type: 'separator' }));
+
+            viewMenu.append(new gui.MenuItem({
                 type: 'normal',
                 label: 'Settings',
                 click: function (){
@@ -86,8 +111,8 @@ define(function(require, exports, module) {
                 } }));
 
             rootMenu.append(new gui.MenuItem({
-                label: 'Actions',
-                submenu: fileMenu
+                label: 'View',
+                submenu: viewMenu
             }));
 
             rootMenu.append(new gui.MenuItem({
@@ -201,8 +226,8 @@ define(function(require, exports, module) {
             return false;            
         }        
         if(fs.existsSync(newFilePath)) {
-            console.log("File renaming failed! Target filename already exists.");
-            return false;            
+            TSCORE.showAlertDialog("Target filename '"+newFilePath+"' already exists.","File renaming failed!");
+            return false;
         }
         fs.rename(filePath, newFilePath, function(error) {
             if (error) {
@@ -434,5 +459,6 @@ define(function(require, exports, module) {
     exports.checkNewVersion              = checkNewVersion;
     exports.getFileProperties            = getFileProperties;
     exports.initMainMenu                 = initMainMenu;
+    exports.handleCommandLineArguments   = handleCommandLineArguments;
 
 });
