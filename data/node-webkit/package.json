@@ -3,12 +3,13 @@
   "description": "Dev",
   "version": "1.x",
   "main": "../index.html",
+  "single-instance": false,
   "window": {
     "icon": "icon128.png",
     "frame": true,
     "toolbar": false,
     "min_width": 320,
-    "min_height": 300,       
+    "min_height": 300,
     "width": 1280,
     "height": 768
   },
