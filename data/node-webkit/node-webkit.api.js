@@ -30,7 +30,7 @@ define(function(require, exports, module) {
         //fs.appendFile(errorLogFile, '---uncaughtException---\n' + msg);
     });
 
-    var handleCommandLineArguments = function() {
+    var handleStartParameters = function() {
         //Windows "C:\Users\na\Desktop\TagSpaces\tagspaces.exe" --original-process-start-time=13043601900594583 "G:\data\assets\icon16.png"
         //Linux /opt/tagspaces/tagspaces /home/na/Dropbox/TagSpaces/README[README].md
         //OSX /home/na/Dropbox/TagSpaces/README[README].md
@@ -39,13 +39,10 @@ define(function(require, exports, module) {
         //   TSCORE.FileOpener.openFile(cmdArguments);
         //});
         var cmdArguments = gui.App.argv;
-        if(cmdArguments !== undefined || cmdArguments.length > 0) {
+        if(cmdArguments !== undefined && cmdArguments.length > 0) {
             console.log("CMD Arguments: "+cmdArguments+" Process running in "+process.cwd());
-            TSCORE.Config.setLastOpenedLocation(undefined);
-            var filePath = ""+cmdArguments
-            TSCORE.toggleFullWidth();
-            TSCORE.FileOpener.openFile(filePath);
-            TSCORE.openLocation(TSCORE.TagUtils.extractContainingDirectoryPath(filePath));
+            var filePath = ""+cmdArguments;
+            TSCORE.FileOpener.openFileOnStartup(filePath);
         }
     };
 
@@ -459,6 +456,6 @@ define(function(require, exports, module) {
     exports.checkNewVersion              = checkNewVersion;
     exports.getFileProperties            = getFileProperties;
     exports.initMainMenu                 = initMainMenu;
-    exports.handleCommandLineArguments   = handleCommandLineArguments;
+    exports.handleStartParameters        = handleStartParameters;
 
 });
