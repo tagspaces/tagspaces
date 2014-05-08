@@ -16,6 +16,8 @@ define(function (require, exports, module) {
 
     var fsRoot = undefined;
 
+    var urlFromIntent;
+
     document.addEventListener("deviceready", onDeviceReady, false);
 
     // Cordova loaded and can be used
@@ -29,14 +31,27 @@ define(function (require, exports, module) {
             e.preventDefault();
         }, false);        
         
+        window.plugins.webintent.getUri(function(url) {
+            urlFromIntent = url;
+        });
+
         getFileSystem();
     }
+
+    var handleStartParameters = function() {
+        if(urlFromIntent !== undefined && urlFromIntent.length > 0) {
+            console.log("Intent URL: "+urlFromIntent);
+            var filePath = decodeURIComponent(urlFromIntent);
+            TSCORE.FileOpener.openFileOnStartup(filePath);
+        }
+    };
 
     function getFileSystem() {
         window.requestFileSystem(LocalFileSystem.PERSISTENT, 0,
             function (fileSystem) { // success get file system
                 fsRoot = fileSystem.root;
                 console.log("Filesystem Name: " + fsRoot.fullPath);
+                handleStartParameters();
             }, 
             function (evt) { // error get file system
                 console.log("File System Error: " + evt.target.error.code);
@@ -494,5 +509,6 @@ define(function (require, exports, module) {
     exports.checkAccessFileURLAllowed   = checkAccessFileURLAllowed;
     exports.checkNewVersion             = checkNewVersion;        
     exports.getFileProperties           = getFileProperties;
+    exports.handleStartParameters        = handleStartParameters;
     
 });
