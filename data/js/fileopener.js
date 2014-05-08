@@ -172,7 +172,6 @@
         } else {
             cleanViewer();
         }
-        
     }
 
     function cleanViewer() {
@@ -188,6 +187,13 @@
         Mousetrap.unbind(TSCORE.Config.getPropertiesDocumentKeyBinding());
         Mousetrap.unbind(TSCORE.Config.getPrevDocumentKeyBinding());
         Mousetrap.unbind(TSCORE.Config.getNextDocumentKeyBinding());
+    }
+
+    function openFileOnStartup(filePath) {
+        TSCORE.Config.setLastOpenedLocation(undefined); // quick and dirty solution, should use flag later
+        TSCORE.toggleFullWidth();
+        TSCORE.FileOpener.openFile(filePath);
+        TSCORE.openLocation(TSCORE.TagUtils.extractContainingDirectoryPath(filePath));
     }
 
     function openFile(filePath) {
@@ -215,10 +221,10 @@
         var fileExt = TSCORE.TagUtils.extractFileExtension(filePath);
 
         // TODO Improve preventing opening of directories
-        if(fileExt.length < 1) {
-            console.log("Path has no extension, quiting fileopener.");
-            return false;
-        }
+        //if(fileExt.length < 1) {
+        //    console.log("Path has no extension, quiting fileopener.");
+        //    return false;
+        //}
 
         // Getting the viewer for the file extension/type
         var viewerExt = TSCORE.Config.getFileTypeViewer(fileExt);
@@ -503,6 +509,7 @@
     // Public API definition 
     exports.initUI                              = initUI;
     exports.openFile                            = openFile;
+    exports.openFileOnStartup                   = openFileOnStartup;
     exports.closeFile                           = closeFile;
     exports.saveFile                            = saveFile;
     exports.isFileOpened						= isFileOpened;
