@@ -15,6 +15,7 @@ define(function (require, exports, module) {
         "newMDFileContent": '#Created with TagSpaces',
         "showUnixHiddenEntries": false,
         "checkForUpdates": true,
+        "firstRun": true,
         "lastOpenedDirectory": "",
         "tagspacesList": [@@DEFAULTLOCATIONS],
         "extensionsPath": "ext",
