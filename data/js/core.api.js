@@ -76,27 +76,22 @@ define(function(require, exports, module) {
             initKeyBindings();
             $( "#loading" ).hide();
 
-            // Show start hint by no last location
-            var lastLocation = tsSettings.getLastOpenedLocation();
-            if(lastLocation === undefined || lastLocation.length < 1 ) {
-                tsCoreUI.showWelcomeDialog();         
-            }	
+            // Show welcome dialog of first start
+            if(tsSettings.isFirstRun()) {
+                tsCoreUI.showWelcomeDialog();
+            }
 
-            // Show start hint by no locations
+            // Show welcome dialog by no locations
             if(tsSettings.Settings.tagspacesList.length < 1 ) {
                 $( "#createNewLocation" ).tooltip( "show" );
                 $( "#locationName" ).prop('disabled', true);
                 $( "#selectLocation" ).prop('disabled', true);     
-                // tsCoreUI.showWelcomeDialog();         
+                tsCoreUI.showWelcomeDialog();
             }
-
-//            console.log("Settings Test: "+JSON.stringify(tsSettings.getSupportedLanguages()));
-//            console.log("Settings Test: "+tsSettings.getInterfaceLangauge());
-//            console.log("Settings Test: "+tsSettings.getCloseViewerKeyBinding());
 
             // Handle command line argument in node-webkit
             if(isNode) {
-                tsIOApi.handleCommandLineArguments();
+                tsIOApi.handleStartParameters();
             }
 
             console.log("Layout initialized");
