@@ -346,7 +346,20 @@
     var setExtensionPath = function(value) {
         exports.Settings.extensionsPath = value;
     };
-    
+
+    var isFirstRun = function() {
+        if(exports.Settings.firstRun === undefined) {
+            exports.Settings.firstRun = false;
+        }
+        if(exports.Settings.firstRun){
+            exports.Settings.firstRun = false;
+            saveSettings();
+            return true;
+        } else {
+            return false;
+        }
+    };
+
     var getIsWindowMaximized = function() {
         if(exports.Settings.isWindowMaximized === undefined) {
             exports.Settings.isWindowMaximized = exports.DefaultSettings.isWindowMaximized;
@@ -1029,6 +1042,7 @@
     exports.upgradeSettings                         = upgradeSettings;
     exports.getPerspectives                         = getPerspectives;
     exports.setPerspectives                         = setPerspectives;
+    exports.isFirstRun                              = isFirstRun;
     exports.getExtensionPath                        = getExtensionPath;    
     exports.setExtensionPath                        = setExtensionPath;    
     exports.getShowUnixHiddenEntries                = getShowUnixHiddenEntries;
