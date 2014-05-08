@@ -55,7 +55,7 @@ var initPerspectives = function () {
                     
                     // Opening last saved location by the start of the application (not in firefox)
                     var lastLocation = TSCORE.Config.getLastOpenedLocation();
-                    if(lastLocation != undefined && lastLocation.length > 1 && !isFirefox) {
+                    if(lastLocation !== undefined && lastLocation.length > 1 && !isFirefox) {
                        TSCORE.openLocation(lastLocation);
                     }                       
                 }
