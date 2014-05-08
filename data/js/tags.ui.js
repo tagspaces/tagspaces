@@ -274,13 +274,18 @@
                 if(tag.type === "smart"){
                     tagIcon = "<span class='fa fa-flask'/> ";
                 }
-                // TODO Add keybinding to tags
-//                if(tag.keyBinding !== undefined) {
-//                    tagIcon = "<span class='fa fa-key'/> ";
-//                    Mousetrap.bind(tag.keyBinding, (function(innerTag) {
-//                        TSCORE.TagUtils.addTag(TSCORE.selectedFiles, [innerTag]);
-//                    } (tag.title) ));
-//                }
+                // Add keybinding to tags
+                if(tag.keyBinding !== undefined) {
+                    tagIcon = "<span class='fa fa-key'/> ";
+                    Mousetrap.bind(
+                        tag.keyBinding,
+                        (function(innerTag) {
+                            return function( e ) {
+                                TSCORE.TagUtils.addTag(TSCORE.selectedFiles, [innerTag]);
+                            };
+                        })(tag.title)
+                    );
+                }
                 var tagCount = "";
                 if(tag.count !== undefined) {
                     tagCount = " ("+tag.count+")";
