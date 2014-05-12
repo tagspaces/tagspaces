@@ -65,7 +65,7 @@ console.log("Loading UI for perspectiveDefault");
     ExtUI.prototype.createFileTile = function(title, filePath, fileExt, fileTags) {
         //TODO minimize platform specific calls     
         var tmbPath = undefined;
-        if(isCordova) {
+        if(isCordova || isWeb) {
             tmbPath = filePath;            
         } else {
             tmbPath = "file:///"+filePath;  
