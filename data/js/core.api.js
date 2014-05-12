@@ -113,7 +113,7 @@ define(function(require, exports, module) {
         $.i18n.init({
             ns: { namespaces: ['ns.common','ns.dialogs','ns.perspectiveList']},
             lng: language,
-            //debug: true,
+            debug: true,
             fallbackLng: "en"
         }, function() {
             $('[data-i18n]').i18n();
@@ -412,8 +412,10 @@ define(function(require, exports, module) {
     }
 
     function openLeftPanel() {
-        layoutContainer.open("west");
-        shouldOpenCol1 = true;
+        if(layoutContainer !== undefined) {
+            layoutContainer.open("west");
+            shouldOpenCol1 = true;
+        }
     }
 
     function reloadUI() {
