@@ -32,7 +32,7 @@ define(function(require, exports, module) {
         currentFilePath = filePath;
 
         var filePathURI = undefined;
-        if(isCordova) {
+        if(isCordova || isWeb) {
             filePathURI = filePath;            
         } else {
             filePathURI = "file:///"+filePath;  
