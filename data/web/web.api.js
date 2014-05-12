@@ -11,54 +11,74 @@ define(function(require, exports, module) {
 	var TSPOSTIO = require("tspostioapi");
 	
     require("webdavlib");	
-	
+
+    var davClient;
+
 	function connectDav() {
-        var davClient = new nl.sara.webdav.Client("192.168.1.71");
+        console.log("Connecting webdav...");
+        davClient = new nl.sara.webdav.Client("127.0.0.1");
+	}
+	
+	window.setTimeout(connectDav(), 2000);
 
-        //var customHeaders = {};
-        //customHeaders[ 'X-Test-Header' ] = 'some header';
-        davClient.get(
-            "/test.txt",
-            function( status, data, headers ) {
-                console.log("Test Status:  "+status);                      
-                console.log("Test Content: "+data);
-                console.log("Test headers: "+headers);     
-            }
-            //,customHeaders
+    function listDirectory(dirPath) {
+        console.log("Listing directory: "+dirPath);
+
+        dirPath = dirPath + "/";
+
+        davClient.propfind(
+            dirPath,
+            function( status, data ) {
+                console.log("Dirlist Status:  "+status);
+                console.log("Dirlist Content: "+JSON.stringify(data._responses));
+                var anotatedDirList = [],
+                    dirList = data._responses,
+                    fileName,
+                    isDir,
+                    filesize,
+                    lmdt;
+
+                for (var entry in dirList) {
+                    var path = dirList[entry].href;
+                    if(dirPath !== path) {
+                        isDir = false,
+                        filesize = undefined;
+                        lmdt = undefined;
+                        //console.log(dirList[entry]._namespaces["DAV:"]);
+                        if (typeof dirList[entry]._namespaces["DAV:"].getcontentlength === 'undefined') {
+                            isDir = true;
+                        } else {
+                            filesize = dirList[entry]._namespaces["DAV:"].getcontentlength;
+                            lmdt = data._responses[entry]._namespaces["DAV:"].getlastmodified._xmlvalue[0].data;
+                        }
+                        fileName = getNameForPath(path);
+                        anotatedDirList.push({
+                            "name": fileName,
+                            "isFile": !isDir,
+                            "size": filesize,
+                            "lmdt": lmdt,
+                            "path": decodeURI(path)
+                        });
+                    }
+                }
+                TSPOSTIO.listDirectory(anotatedDirList);
+            },
+            1 //1 , davClient.INFINITY
         );
-        
+    }
 
-          davClient.propfind(
-              "/TagSpaces/",
-              function( status, data ) {
-                    console.log("Dirlist Status:  "+status);                      
-                    console.log("Dirlist Content: "+JSON.stringify(data));
-              },1
-              //,
-              //undefined, // undefined should be depth 0
-              //undefined, // undefined should be allprop
-              //undefined//, // undefined should not set the include element
-              //customHeaders
-          );
+    function getNameForPath(path) {
+        if(path.lastIndexOf("/") == path.length-1) {
+            path = path.substring(0,path.lastIndexOf("/"));
+        }
+        var encodedName = path.substring(path.lastIndexOf("/")+1, path.length);
+        return decodeURI(encodedName);
+    }
 
-        /*davClient.get(
-            "/test.pdf",
-            function( status, data, headers ) {
-                console.log("Test Status:  "+status);                      
-                console.log("Test Content: "+data);
-                console.log("Test headers: "+headers);     
-            }
-            //,customHeaders
-        );*/        
-	};
-	
-	window.setTimeout(connectDav(), 1000); 
-	
-    /* var directoryExist = function(dirPath) {
-        console.log("Checks if a directory exist: "+dirPath);
-        //TSPOSTIO.
-    }; */
-	
+    function isDirectory(path) {
+        return path.lastIndexOf("/") == path.length-1;
+    }
+
     var createDirectoryIndex = function(dirPath) {
         console.log("Creating index for directory: "+dirPath);
         TSCORE.showLoadingAnimation();  
@@ -77,144 +97,108 @@ define(function(require, exports, module) {
     };    
 	
 	var createDirectory = function(dirPath) {
-	    console.log("Creating directory: "+dirPath);   
-        TSCORE.showLoadingAnimation();  
-                
-            TSPOSTIO.createDirectory(dirPath);
-
+	    console.log("Creating directory: "+dirPath);
+        davClient.mkcol(
+            dirPath,
+            function( status, data, headers ) {
+                console.log("Directory Creation Status/Content/Headers:  "+status+" / "+data+" / "+headers);
+                TSPOSTIO.createDirectory(dirPath);
+            }
+        );
 	};
 
     var renameFile = function(filePath, newFilePath) {
         console.log("Renaming file: "+filePath+" to "+newFilePath);
-        TSCORE.showLoadingAnimation();  
-                
-            TSPOSTIO.renameFile(filePath, newFilePath);
+        davClient.move(
+            filePath,
+            function( status, data, headers ) {
+                console.log("Rename File Status/Content/Headers:  "+status+" / "+data+" / "+headers);
+                TSPOSTIO.renameFile(filePath, newFilePath);
+            },
+            newFilePath,
+            davClient.FAIL_ON_OVERWRITE
+            //,customHeaders
+        );
     };
     	
 	var loadTextFile = function(filePath) {
 		console.log("Loading file: "+filePath);
-        TSCORE.showLoadingAnimation();  
-                
-            TSPOSTIO.loadTextFile(content);            
+        davClient.get(
+            filePath,
+            function( status, data, headers ) {
+                console.log("Loading File Status/Content/Headers:  "+status+" / "+data+" / "+headers);
+                TSPOSTIO.loadTextFile(data);
+            }
+            //,customHeaders
+        );
+        //TODO Perform file locking and unlocking
 	};
 	
 	var saveTextFile = function(filePath,content,overWrite) {
-		console.log("Saving file: "+filePath);
-        TSCORE.showLoadingAnimation();  
-        		
-       
-        // Handling the UTF8 support for text files
-        var UTF8_BOM = "\ufeff";
-        
-        if(content.indexOf(UTF8_BOM) == 0) {
-            // already has a UTF8 bom
-        } else {
-            content = UTF8_BOM+content;
-        }
+		console.log("Saving file: "+filePath+" content: "+content);
 
-        var isNewFile = !pathUtils.existsSync(filePath);
-       
-            TSPOSTIO.saveTextFile(filePath, isNewFile);
-	};
-	
-	var listDirectory = function(dirPath) {
-      console.log("Listing directory: "+dirPath);
-      TSCORE.showLoadingAnimation();  
-              
-
-            TSPOSTIO.errorOpeningPath();
-        
-            var anotatedDirList = [],
-                dirList = []; // remove
-            for (var i=0; i < dirList.length; i++) {
-                var path = dirPath+TSCORE.dirSeparator+dirList[i];
-                var stats = fs.statSync(path);
-                //console.log('stats: ' + JSON.stringify(stats));
-                anotatedDirList.push({
-                    "name": dirList[i],
-                    "isFile": !stats.isDirectory(),
-                    "size": stats.size,
-                    "lmdt": stats.mtime,
-                    "path": path  
-                });                 
-            } 
-            TSPOSTIO.listDirectory(anotatedDirList);
-                    
+        var isNewFile; // = !pathUtils.existsSync(filePath);
+        davClient.put(
+            filePath,
+            function( status, data, headers ) {
+                console.log("Creating File Status/Content/Headers:  "+status+" / "+data+" / "+headers);
+            },
+            content
+        );
+        TSPOSTIO.saveTextFile(filePath, isNewFile);
 	};
 	
 	var deleteElement = function(path) {
 		console.log("Deleting: "+path);
-        TSCORE.showLoadingAnimation();  
-        		
-            TSPOSTIO.deleteElement(path);
-
+        davClient.remove(
+            path,
+            function( status, data, headers ) {
+                console.log("Directory/File Deletion Status/Content/Headers:  "+status+" / "+data+" / "+headers);
+                TSPOSTIO.deleteElement(path);
+            }
+        );
 	};
 	
     var checkAccessFileURLAllowed = function() {
-        console.log("checkAccessFileURLAllowed function not relevant for node..");
+        console.log("checkAccessFileURLAllowed function not relevant for webdav..");
     };	
 	
     var checkNewVersion = function() {
-        console.log("Checking for new version...");
-        var cVer = TSCORE.Config.DefaultSettings["appVersion"]+"."+TSCORE.Config.DefaultSettings["appBuild"];
-        $.ajax({
-            url: 'http://tagspaces.org/releases/version.json?nVer='+cVer,
-            type: 'GET',
-        })
-        .done(function(data) { 
-            TSPOSTIO.checkNewVersion(data);    
-        })
-        .fail(function(data) { 
-            console.log("AJAX failed "+data); 
-        })
-        ;      
-    };	
+        console.log("Checking for new version not relevant fot the webdav version");
+    };
 
     var selectDirectory = function() {
-
+        console.log("selectDirectory function not relevant for webdav..");
     };
     
     var openDirectory = function(dirPath) {
-
+        console.log("openDirectory function not relevant for webdav..");
     };
 
     var openFile = function(filePath) {
-
+        console.log("openFile function not relevant for webdav..");
     };
 
     var selectFile = function() {
+        console.log("selectFile function not relevant for webdav..");
     };
     
     var openExtensionsDirectory = function() {
-
+        console.log("openExtensionsDirectory function not relevant for webdav..");
     };
 
-/* stats for file:
-  dev: 2114,
-  ino: 48064969,
-  mode: 33188,
-  nlink: 1,
-  uid: 85,
-  gid: 100,
-  rdev: 0,
-  size: 527,
-  blksize: 4096,
-  blocks: 8,
-  atime: Mon, 10 Oct 2011 23:24:11 GMT,
-  mtime: Mon, 10 Oct 2011 23:24:11 GMT,
-  ctime: Mon, 10 Oct 2011 23:24:11 GMT 
-*/    
     var getFileProperties = function(filePath) {
-        var fileProperties = {};
-/*        var stats = fs.statSync(filePath);
-        if (stats.isFile()) {
-            fileProperties.path = filePath;
-            fileProperties.size = stats.size;
-            fileProperties.lmdt = stats.mtime;
-            TSPOSTIO.getFileProperties(fileProperties);
-        } else {
-            console.warn("Error getting file properties. "+filePath+" is directory");   
-        }*/        
+        davClient.propfind( filePath, function( status, data ) {
+                console.log("Properties Status / Content: "+status+" / "+JSON.stringify(data._responses));
+                var fileProperties = {};
+                for (var entry in data._responses) {
+                    fileProperties.path = filePath;
+                    fileProperties.size = data._responses[entry]._namespaces["DAV:"].getcontentlength;
+                    fileProperties.lmdt = data._responses[entry]._namespaces["DAV:"].getlastmodified._xmlvalue[0].data;
+                }
+                TSPOSTIO.getFileProperties(fileProperties);
+            },1
+        );
     };    
     
 	exports.createDirectory 			= createDirectory; 
@@ -232,6 +216,5 @@ define(function(require, exports, module) {
 	exports.openExtensionsDirectory 	= openExtensionsDirectory;
 	exports.checkAccessFileURLAllowed 	= checkAccessFileURLAllowed;
 	exports.checkNewVersion 			= checkNewVersion;
-    exports.getFileProperties           = getFileProperties;  	
-
+    exports.getFileProperties           = getFileProperties;
 });
