@@ -235,7 +235,7 @@ var hideAllPerspectives = function() {
 };
 
 var changePerspective = function (viewType) {
-    console.log("Change to "+viewType+" view.");
+    console.log("Change to "+viewType+" perspective.");
     TSCORE.showLoadingAnimation();
        
     // Loading first perspective by default
