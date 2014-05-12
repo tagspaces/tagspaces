@@ -16,8 +16,7 @@ console.log("Loading UI for Image Viewer");
 
         this.internPath = filePath;
 
-        //TODO minimize platform specific calls
-        if(isCordova) {
+        if(isCordova || isWeb) {
             this.filePath = filePath;            
         } else {
             this.filePath = "file:///"+filePath;  
