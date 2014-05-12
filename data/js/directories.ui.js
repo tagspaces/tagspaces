@@ -28,6 +28,10 @@ define(function(require, exports, module) {
             // Handle open default perspective for a location
             var defaultPerspective = currentLocation.perspective;
             TSCORE.PerspectiveManager.changePerspective(defaultPerspective);
+
+            // Saving the last opened location path in the settings
+            TSCORE.Config.setLastOpenedLocation(path);
+            TSCORE.Config.saveSettings();
         }
 
         // Clear search query
@@ -36,10 +40,6 @@ define(function(require, exports, module) {
         // Clears the directory history
         directoryHistory = [];
         navigateToDirectory(path);
-
-        // Saving the last opened location path in the settings
-        TSCORE.Config.setLastOpenedLocation(path);
-        TSCORE.Config.saveSettings(); 
         
         TSCORE.showLocationsPanel();
     }  
@@ -117,6 +117,7 @@ define(function(require, exports, module) {
                         "class":    "btn btn-link",
                         "path":      directoryHistory[i].path,
                         "title":     $.i18n.t("ns.common:reloadCurrentDirectoryTooltip", {dirName: directoryHistory[i].name}),
+                        "data-i18n": "ns.common:reloadCurrentDirectory",
                         "text":      " "+$.i18n.t("ns.common:reloadCurrentDirectory")
                     })
                     .prepend("<i class='fa fa-refresh fa-lg fa-fw'></i>")
@@ -130,6 +131,7 @@ define(function(require, exports, module) {
                         "class":    "btn btn-link",
                         "path":      directoryHistory[i].path,
                         "title":     $.i18n.t("ns.common:createSubdirectoryTooltip", {dirName: directoryHistory[i].name}),
+                        "data-i18n": "ns.common:createSubdirectory",
                         "text":     " "+$.i18n.t("ns.common:createSubdirectory")
                     })
                     .prepend("<i class='fa fa-folder fa-lg fa-fw'></i>")
@@ -147,8 +149,9 @@ define(function(require, exports, module) {
                           
             if(directoryHistory[i].children.length <= 0) {
                     subfolders.find("ul").append($("<div>", {
-                        class:  'alert alert-warning',
-                        text:   $.i18n.t("ns.common:noSubfoldersFound")
+                        "class":        'alert alert-warning',
+                        "data-i18n":    "ns.common:noSubfoldersFound",
+                        "text":         $.i18n.t("ns.common:noSubfoldersFound")
                     }));
             } else {
                 for(var j=0; j < directoryHistory[i].children.length; j++) {
@@ -166,7 +169,7 @@ define(function(require, exports, module) {
                         .prepend("<i class='fa fa-folder-o'></i>")            
                         .click( function() {
                             navigateToDirectory($(this).attr("key"));
-                        })                   
+                        })
                         );
                     }
                }        
@@ -498,14 +501,18 @@ define(function(require, exports, module) {
                 // Check if dialog already created
                 if($dialogLocationEdit.length < 1) {
                     var uiTemplate = Handlebars.compile( uiTPL );
-                    $("body").append(uiTemplate()); 
-                                    
-                    $("#selectLocalDirectory2").on("click",function(e) {
-                        e.preventDefault();
-                        selectLocalDirectory();
-                    });                     
-                    
-                    $( "#saveLocationButton" ).on("click", function() {        
+                    $("body").append(uiTemplate());
+
+                    if(isWeb) {
+                        $("#selectLocalDirectory2").attr("style","visibility: hidden");
+                    } else {
+                        $("#selectLocalDirectory2").on("click",function(e) {
+                            e.preventDefault();
+                            selectLocalDirectory();
+                        });
+                    }
+
+                    $( "#saveLocationButton" ).on("click", function() {
                         editLocation();
                     });  
                     
@@ -519,20 +526,25 @@ define(function(require, exports, module) {
                 var $locationPerspective2 = $("#locationPerspective2");
 
                 var selectedPerspectiveId = TSCORE.Config.getLocation(path).perspective;
-                $locationPerspective2.empty();
-                TSCORE.Config.getActivatedPerspectiveExtensions().forEach( function(value) {
-                        if (selectedPerspectiveId === value.id) {
-                            $locationPerspective2.append($("<option>").attr("selected","selected").text(value.id).val(value.id));
-                        } else {
-                            $locationPerspective2.append($("<option>").text(value.id).val(value.id));
-                        }    
-                    }            
-                );    
+                    $locationPerspective2.empty();
+                    TSCORE.Config.getActivatedPerspectiveExtensions().forEach( function(value) {
+                            if (selectedPerspectiveId === value.id) {
+                                $locationPerspective2.append($("<option>").attr("selected","selected").text(value.id).val(value.id));
+                            } else {
+                                $locationPerspective2.append($("<option>").text(value.id).val(value.id));
+                            }
+                        }
+                    );
 
                 $connectionName2.val(name);
                 $connectionName2.attr("oldName",name);
                 $folderLocation2.val(path);
                 $("#dialogLocationEdit").i18n();
+                if(isCordova) {
+                    $("#folderLocation2").attr("placeholder","e.g.: DCIM/Camera");
+                } else if(isWeb) {
+                    $("#folderLocation2").attr("placeholder","e.g.: /owncloud/remote.php/webdav/");
+                }
                 $("#dialogLocationEdit").modal({backdrop: 'static',show: true});
         });     
     } 
@@ -548,10 +560,14 @@ define(function(require, exports, module) {
                     var uiTemplate = Handlebars.compile( uiTPL );
                     $("body").append(uiTemplate());
 
-                    $("#selectLocalDirectory").on("click",function(e) {
-                        e.preventDefault();
-                        selectLocalDirectory();
-                    });
+                    if(isWeb) {
+                        $("#selectLocalDirectory").attr("style","visibility: hidden");
+                    } else {
+                        $("#selectLocalDirectory").on("click",function(e) {
+                            e.preventDefault();
+                            selectLocalDirectory();
+                        });
+                    }
 
                     TSCORE.Config.getActivatedPerspectiveExtensions().forEach( function(value) {
                         $("#locationPerspective").append($("<option>").text(value.id).val(value.id));                    
@@ -561,13 +577,15 @@ define(function(require, exports, module) {
                         createLocation();
                     });
 
-                    if(isCordova) {
-                        $("#folderLocation").attr("placeholder","Example: DCIM/Camera");
-                    }
                 }
                 $("#connectionName").val("");
                 $("#folderLocation").val("");
                 $("#dialogCreateFolderConnection").i18n();
+                if(isCordova) {
+                    $("#folderLocation").attr("placeholder","e.g.: DCIM/Camera");
+                } else if(isWeb) {
+                    $("#folderLocation").attr("placeholder","e.g.: /owncloud/remote.php/webdav/");
+                }
                 $("#dialogCreateFolderConnection").modal({backdrop: 'static',show: true});
         });
     }  
