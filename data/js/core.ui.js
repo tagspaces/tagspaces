@@ -336,12 +336,6 @@ define(function(require, exports, module) {
         });         
         // End File Menu  
                 
-        $('#switchLang').click(function() {
-            $.i18n.setLng('de', function() {
-                $('[data-i18n]').i18n();
-            });
-        });
-
         $('#showLocations').click(function() {
             showLocationsPanel();
             console.log("Show Directories");
@@ -556,16 +550,23 @@ define(function(require, exports, module) {
             $("#fileMenuOpenDirectory").parent().hide();
             $("#fullscreenFile").parent().hide();
             $("#openDirectory").parent().hide();
-            $("#advancedSettings").hide();
             $("#openFileInNewWindow").hide();
             $("#openGooglePlay").hide();
         } else if(isChrome) {
             $("#directoryMenuOpenDirectory").parent().hide();
             $("#fileMenuOpenDirectory").parent().hide();
+            $("#fileMenuOpenNatively").parent().hide();
+            $("#openDirectory").parent().hide();
+            $("#openNatively").hide();
+        } else if(isWeb) {
+            $("#directoryMenuOpenDirectory").parent().hide();
+            $("#fileMenuOpenDirectory").parent().hide();
+            $("#fileMenuOpenNatively").parent().hide();
             $("#openDirectory").parent().hide();
             $("#openNatively").hide();
         } else if(isFirefox) {
-            $("#openNatively").hide();                   
+            $("#openNatively").hide();
+            $("#fileMenuOpenNatively").parent().hide();
         } else if(isNode) {
             $("#fullscreenFile").hide(); 
             $("#openFileInNewWindow").hide();         
