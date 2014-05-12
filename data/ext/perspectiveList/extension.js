@@ -32,9 +32,24 @@ define(function(require, exports, module) {
                 UI = new extUI.ExtUI(extensionID);                          
                 UI.buildUI(toolbarTemplate);
 
+                $('#'+extensionID+'Container').find("th:contains('File Ext.')").
+                    text($.i18n.t("ns.perspectiveList:fileExtension"));
+                $('#'+extensionID+'Container').find("th:contains('Title')")
+                    .text($.i18n.t("ns.perspectiveList:fileTitle"));
+                $('#'+extensionID+'Container').find("th:contains('Tags')")
+                    .text($.i18n.t("ns.perspectiveList:fileTags"));
+                $('#'+extensionID+'Container').find("th:contains('Size')")
+                    .text($.i18n.t("ns.perspectiveList:fileSize"));
+                $('#'+extensionID+'Container').find("th:contains('Last Modified')")
+                    .text($.i18n.t("ns.perspectiveList:fileLDTM"));
+                $('#'+extensionID+'Container').find("th:contains('File Path')")
+                    .text($.i18n.t("ns.perspectiveList:filePath"));
+                $('#'+extensionID+'Container').find("th:contains('File Name')")
+                    .text($.i18n.t("ns.perspectiveList:fileName"));
+
                 $('#'+extensionID+'Toolbar [data-i18n]').i18n();
 
-                platformTuning();                
+                platformTuning();
             }
         );
 	}
