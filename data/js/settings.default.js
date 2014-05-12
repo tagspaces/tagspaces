@@ -8,7 +8,7 @@ define(function (require, exports, module) {
         "appName": "TagSpaces",
         "appVersion": "1.8",
         "appBuild": "1",
-        "appBuildID": "201405081543",
+        "appBuildID": "201405121526",
         "settingsVersion": 2,
         "newTextFileContent": "Created with TagSpaces",
         "newHTMLFileContent": "<html><head><title>Created with TagSpaces</title><meta http-equiv='Content-Type' content='text/html; charset=utf-8'></head><body></body></html>",
@@ -249,6 +249,48 @@ define(function (require, exports, module) {
                         "color": "#7bd148",
                         "textcolor": "#ffffff",
                         "keyBinding": "t l"
+                    }
+                ]
+            },
+            {
+                "title": "Ratings",
+                "key": "REV",
+                "expanded": true,
+                "children": [
+                    {
+                        "type": "plain",
+                        "title": "1star",
+                        "color": "#FFCC24",
+                        "textcolor": "#ffffff",
+                        "keyBinding": "t 1"
+                    },
+                    {
+                        "type": "plain",
+                        "title": "2star",
+                        "color": "#FFCC24",
+                        "textcolor": "#ffffff",
+                        "keyBinding": "t 2"
+                    },
+                    {
+                        "type": "plain",
+                        "title": "3star",
+                        "color": "#FFCC24",
+                        "textcolor": "#ffffff",
+                        "keyBinding": "t 3"
+                    },
+                    {
+                        "type": "plain",
+                        "title": "4star",
+                        "color": "#FFCC24",
+                        "textcolor": "#ffffff",
+                        "keyBinding": "t 4"
+                    },
+                    {
+                        "type": "plain",
+                        "title": "5star",
+                        "color": "#FFCC24",
+                        "textcolor": "#ffffff",
+                        "keyBinding": "t 5"
                     }
                 ]
             },

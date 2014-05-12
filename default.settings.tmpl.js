@@ -253,6 +253,48 @@ define(function (require, exports, module) {
                 ]
             },
             {
+                "title": "Ratings",
+                "key": "REV",
+                "expanded": true,
+                "children": [
+                    {
+                        "type": "plain",
+                        "title": "1star",
+                        "color": "#FFCC24",
+                        "textcolor": "#ffffff",
+                        "keyBinding": "t 1"
+                    },
+                    {
+                        "type": "plain",
+                        "title": "2star",
+                        "color": "#FFCC24",
+                        "textcolor": "#ffffff",
+                        "keyBinding": "t 2"
+                    },
+                    {
+                        "type": "plain",
+                        "title": "3star",
+                        "color": "#FFCC24",
+                        "textcolor": "#ffffff",
+                        "keyBinding": "t 3"
+                    },
+                    {
+                        "type": "plain",
+                        "title": "4star",
+                        "color": "#FFCC24",
+                        "textcolor": "#ffffff",
+                        "keyBinding": "t 4"
+                    },
+                    {
+                        "type": "plain",
+                        "title": "5star",
+                        "color": "#FFCC24",
+                        "textcolor": "#ffffff",
+                        "keyBinding": "t 5"
+                    }
+                ]
+            },
+            {
                 "title": "Tags in Perspective",
                 "key": "CTG",
                 "expanded": true,
