@@ -16,7 +16,8 @@ define(function(require, exports, module) {
 
 	function connectDav() {
         console.log("Connecting webdav...");
-        davClient = new nl.sara.webdav.Client("127.0.0.1");
+        // TODO handle port and https
+        davClient = new nl.sara.webdav.Client(location.host);
 	}
 	
 	window.setTimeout(connectDav(), 2000);
