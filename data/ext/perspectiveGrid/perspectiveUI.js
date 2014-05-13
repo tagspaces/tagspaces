@@ -612,7 +612,7 @@ console.log("Loading UI for perspectiveDefault");
     ExtUI.prototype.removeFileUI = function(filePath) {
         console.log("Removing "+filePath+" from UI");
 
-        if(isWin) {
+        if(isWin && !isWeb) {
             filePath = filePath.replace("\\","");
             $("#"+this.extensionID+"Container li[filepath]").each(function() {
                 if( $( this ).attr("filepath").replace("\\","") === filePath ) {
@@ -632,7 +632,7 @@ console.log("Loading UI for perspectiveDefault");
 
         var $fileTile;
        
-        if(isWin) {
+        if(isWin && !isWeb) {
             oldFilePath = oldFilePath.replace("\\","");
             $("#"+this.extensionID+"Container li[filepath]").each(function() {
                 if( $( this ).attr("filepath").replace("\\","") === oldFilePath ) {

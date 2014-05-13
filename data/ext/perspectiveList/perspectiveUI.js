@@ -485,7 +485,7 @@ console.log("Loading UI for perspectiveList");
         console.log("Removing from UI"+filePath+" from UI");
 
         var row4remove;
-        if(isWin) {
+        if(isWin && !isWeb) {
             filePath = filePath.replace("\\","");
             $("#"+this.extensionID+"Container button[filepath]").each(function() {
                 if( $( this ).attr("filepath").replace("\\","") === filePath ) {
@@ -509,7 +509,7 @@ console.log("Loading UI for perspectiveList");
         
         var $fileRow = undefined;
        
-        if(isWin) {
+        if(isWin && !isWeb) {
             oldFilePath = oldFilePath.replace("\\","");
             $("#"+this.extensionID+"Container button[filepath]").each(function() {
                 if( $( this ).attr("filepath").replace("\\","") === oldFilePath ) {
