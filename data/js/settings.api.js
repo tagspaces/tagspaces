@@ -773,7 +773,7 @@
         saveSettings();    
     };
     
-    var editTag = function(tagData, newTagName, newColor, newTextColor) {
+    var editTag = function(tagData, newTagName, newColor, newTextColor, newKeyBinding) {
         for(var i=0; i < exports.Settings.tagGroups.length; i++) {
             if(exports.Settings.tagGroups[i].key === tagData.parentKey) {
                 for(var j=0; j < exports.Settings.tagGroups[i].children.length; j++) {
@@ -781,6 +781,7 @@
                         exports.Settings.tagGroups[i].children[j].title = newTagName;
                         exports.Settings.tagGroups[i].children[j].color = newColor;
                         exports.Settings.tagGroups[i].children[j].textcolor = newTextColor;
+                        exports.Settings.tagGroups[i].children[j].keyBinding = newKeyBinding;
                         break;
                     }
                 }
