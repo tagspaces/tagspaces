@@ -157,13 +157,13 @@ console.log("Loading UI for perspectiveList");
               "sEmptyTable": " " // No files found
             },
             "aoColumns": [
-                { "sTitle": $.i18n.t("ns.perspectiveList:fileExtension"), "sClass": "fileTitle noWrap"  },
-                { "sTitle": $.i18n.t("ns.perspectiveList:fileTitle"), "sClass": "fileTitle forceWrap" },
-                { "sTitle": $.i18n.t("ns.perspectiveList:fileTags"), "sClass": "fileTitle"  },
-                { "sTitle": $.i18n.t("ns.perspectiveList:fileSize"), "sClass": "fileTitle" },
-                { "sTitle": $.i18n.t("ns.perspectiveList:fileLDTM"), "sClass": "fileTitle" },
-                { "sTitle": $.i18n.t("ns.perspectiveList:filePath"), "sClass": "fileTitle" },
-                { "sTitle": $.i18n.t("ns.perspectiveList:fileName"), "sClass": "fileTitle forceWrap" }
+                { "sTitle": "File Ext.", "sClass": "fileTitle noWrap"  },
+                { "sTitle": "Title", "sClass": "fileTitle forceWrap" },
+                { "sTitle": "Tags", "sClass": "fileTitle"  },
+                { "sTitle": "Size", "sClass": "fileTitle" },
+                { "sTitle": "Last Modified", "sClass": "fileTitle" },
+                { "sTitle": "File Path", "sClass": "fileTitle" },
+                { "sTitle": "File Name", "sClass": "fileTitle forceWrap" }
             ],
             "aaSorting": [[ 1, "asc" ]],    // softing by filename
             "aoColumnDefs": [
@@ -364,7 +364,7 @@ console.log("Loading UI for perspectiveList");
         
         //TODO minimize platform specific calls     
         var tmbPath = undefined;
-        if(isCordova) {
+        if(isCordova || isWeb) {
             tmbPath = filePath;            
         } else {
             tmbPath = "file:///"+filePath;  
