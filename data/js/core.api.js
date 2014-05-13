@@ -99,7 +99,7 @@ define(function(require, exports, module) {
 
         checkForNewVersion();
     }
-    
+
     function switchIOAPI(type) {
         if(type=="dropbox") {
             tsIOApiDropbox.init();
@@ -550,6 +550,7 @@ define(function(require, exports, module) {
     exports.Search = tsSearch;	
 
     // Public API definition
+    exports.dirSeparator                = (isWin && !isWeb)?"\\":"/";
     exports.initApp                     = initApp;
     exports.updateLogger                = updateLogger;
     exports.showLoadingAnimation        = showLoadingAnimation;
@@ -566,7 +567,7 @@ define(function(require, exports, module) {
     exports.exportFileListArray         = exportFileListArray;
     exports.removeFileModel             = removeFileModel;
     exports.updateFileModel             = updateFileModel;
-    exports.switchInterfaceLanguage      = switchInterfaceLanguage;
+    exports.switchInterfaceLanguage     = switchInterfaceLanguage;
 
     // Proxying functions from tsCoreUI
     // TODO use TSCORE.UI instead
@@ -624,7 +625,5 @@ define(function(require, exports, module) {
     exports.fileListFILELMDT            = 4;
     exports.fileListFILEPATH            = 5;
     exports.fileListFILENAME            = 6;		
-    
-    exports.dirSeparator                = isWin?"\\":"/";    
 
 });
