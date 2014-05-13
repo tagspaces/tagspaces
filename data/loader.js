@@ -56,7 +56,7 @@ if( isFirefox ) {
 
 //IO_JS = "js/ioapi.dropbox";
 
-console.log("Loading Loader - Firefox: "+isFirefox+" | ChromeExt: "+isChrome+" | Node: "+isNode+" | Cordova: "+isCordova);
+console.log("Loading Loader - Firefox: "+isFirefox+" | ChromeExt: "+isChrome+" | Node: "+isNode+" | Cordova: "+isCordova+" | Web: "+isWeb+" | isWin: "+isWin);
 
 requirejs.config({
     map: {
