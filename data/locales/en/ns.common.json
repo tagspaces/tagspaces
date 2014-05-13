@@ -9,6 +9,8 @@
     "addRemoveTags": "Add / Remove Tags",
     "openFileTooltip": "Open File in TagSpaces",
     "openFile": "Open File",
+    "downloadFileTooltip": "Download the current file",
+    "downloadFile": "Download",
     "openFileNewWindowTooltip": "Open the file in a new window or tab",
     "openFileNewWindow": "Open in New Window",
     "openFileNativelyTooltip": "Open the current file with the default application for its file type.",
@@ -144,10 +146,6 @@
     "showDevTools": "Show Developer Tools",
     "toggleFullScreen": "Toggle Fullscreen",
     "reloadApplication": "Reload Application",
-    "": "",
-    "": "",
-    "": "",
-    "": "",
 
     "-": "-"
 }

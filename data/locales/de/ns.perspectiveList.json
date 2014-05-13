@@ -1,5 +1,5 @@
 {
-    "fileExtension": "Dateiendungen",
+    "fileExtension": "Dateiendung",
     "fileTitle": "Titel",
     "fileTags": "Tags",
     "fileSize": "Größe(B)",
@@ -7,7 +7,7 @@
     "filePath": "Pfad",
     "fileName": "Dateiname",
     "filesFoundFor": "Suchergebnisse für",
-    "filesFound": "Gefundene Dateien",
+    "filesFound": "gefundene Datei(en)",
     "toggleSelectAll": "Alle Dateien aus-/abwählen",
     "createNewFileTooltip": "Neue Datei erstellen",
     "showSubfolderContentTooltip": "Inhalt der Unterordner anzeigen",

@@ -51,6 +51,8 @@
     "editTagMasterName": "Name",
     "editTagMasterColor": "Color",
     "editTagMasterTextColor": "Text Color",
+    "editTagInTreeKeyBinding": "Key Binding",
+    "editTagInTreeKeyBindingHelp": "e.g. 't 3', 'ctrl+i' or 'ctrl+shift+5'",
     "addTagsToGroupTitle": "Add tags to tag group",
     "addTagsToGroupTags": "Tags",
     "addTagsToGroupTagsPlaceholder": "Comma separated list of tags",

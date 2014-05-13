@@ -8,6 +8,8 @@
     "addRemoveTags": "Tags hinzufügen / entfernen",
     "openFileTooltip": "Datei in TagSpaces öffnen",
     "openFile": "Datei öffnen",
+    "downloadFileTooltip": "Aktuelle Dokument herunterladen",
+    "downloadFile": "Herunterladen",
     "openFileNewWindowTooltip": "Datei in neuem Fenster oder Tab öffnen",
     "openFileNewWindow": "In neuem Fenster öffnen",
     "openFileNativelyTooltip": "Aktuelle Datei mit der Standardanwendung für den Dateityp öffnen",
@@ -100,6 +102,8 @@
     "likeUsOnFacebookTooltip": "Uns auf Facebook folgen",
     "writeUsEmail": "Schreiben Sie uns eine Email",
     "writeUsEmailTooltip": "Uns eine E-Mail schreiben",
+    "supportUs": "Projekt unterstützen",
+    "supportUsTooltip": "Wie kann ich dieses Projekt unterstützen?",
     "chooseLocation": "Ort auswählen",
     "showTagLibraryTooltip": "Tag-Bibliothek anzeigen",
     "showLocationNavigatorTooltip": "Orte-Navigator anzeigen",
@@ -133,5 +137,8 @@
     "reloadCurrentDirectory": "Ordner (wieder) öffnen",
     "reloadCurrentDirectoryTooltip": "Ordner '__dirName__' (wieder) öffnen",
     "newVersionAvailableTooltip": "Neue Version von TagSpaces vorhanden",
+    "showDevTools": "Entwickleroptionen zeigen",
+    "toggleFullScreen": "Vollbildmodus ein-/ausschalten",
+    "reloadApplication": "Applikation neuladen",
     "-": "-"
 }
