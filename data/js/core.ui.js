@@ -550,6 +550,7 @@ define(function(require, exports, module) {
             $("#fileMenuOpenDirectory").parent().hide();
             $("#fullscreenFile").parent().hide();
             $("#openDirectory").parent().hide();
+            $("#downloadFile").parent().hide();
             $("#openFileInNewWindow").hide();
             $("#openGooglePlay").hide();
         } else if(isChrome) {
