@@ -106,7 +106,8 @@
                 TSCORE.selectedTagData, 
                 $( "#tagInTreeName" ).val(), 
                 $( "#tagColor" ).val(),
-                $( "#tagTextColor" ).val()
+                $( "#tagTextColor" ).val(),
+                $( "#tagInTreeKeyBinding" ).val()
                );
             generateTagGroups();
             TSCORE.PerspectiveManager.refreshFileListContainer();    
@@ -275,8 +276,9 @@
                     tagIcon = "<span class='fa fa-flask'/> ";
                 }
                 // Add keybinding to tags
-                if(tag.keyBinding !== undefined) {
-                    tagIcon = "<span class='fa fa-key'/> ";
+                if(tag.keyBinding !== undefined && tag.keyBinding.length > 0) {
+                    tagIcon = "<span class='fa fa-keyboard-o'/> ";
+                    tagTitle = tagTitle + " [" +tag.keyBinding+ "]";
                     Mousetrap.bind(
                         tag.keyBinding,
                         (function(innerTag) {
@@ -458,6 +460,8 @@
 
     function showTagEditInTreeDialog() {
         $( "#tagInTreeName" ).val(TSCORE.selectedTagData.title);
+
+        $( "#tagInTreeKeyBinding" ).val(TSCORE.selectedTagData.keyBinding);
 
         var $tagColor= $( "#tagColor" );
         $tagColor.simplecolorpicker({picker: false, theme: 'fontawesome'});
