@@ -1,0 +1,21 @@
+{
+  "fileExtension": "文件扩展名",
+  "fileTitle": "标题",
+  "fileTags": "标签",
+  "fileSize": "大小(B)",
+  "fileLDTM": "修改日期",
+  "filePath": "路径",
+  "fileName": "文件名",
+  "filesFoundFor": "来源自",
+  "filesFound": "来源",
+  "toggleSelectAll": "切换选择所有文件 ",
+  "createNewFileTooltip": "创建新文件",
+  "showSubfolderContentTooltip": "显示子文件夹的内容",
+  "addRemoveTagsTooltip": "修改选定文件的标签",
+  "toggleThumbnailsTooltip": "切换缩略图 ",
+  "increasThumbnailsTooltip": "增加缩略图 ",
+  "toggleFileDetailsTooltip": "切换文件详细信息 ",
+  "includeSubdirsTitleConfirm": "确认包含子目录",
+  "includeSubdirsContentConfirm": "在具有许多文件或目录的子目录中，这个操作可能会很慢！要继续吗？ ",
+  "-": "-"
+}
