@@ -622,6 +622,12 @@ input a.resetFilter {
 
 /* NEW DESIGN ---------------------------------------*/
 
+.col1, .col2, .col3 {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+}
+
 .col1 .navbar, .col1 > .row2, .col1 > .row3, .col2 .navbar, .col2 .row3, .col3 .navbar {
 	background-color: #F2F2F2 !important;
 }
@@ -774,7 +780,6 @@ input a.resetFilter {
 #showTagGroups, #showLocations, #contactUs {
    width: 50px;
 }
-
 
 #contactUsContent .btn-link {
     height: 45px;
