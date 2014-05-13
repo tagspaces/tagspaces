@@ -39,7 +39,7 @@
         $( "#saveDocument" )
             .click(function() {
                 saveFile();
-            });                   
+            });
 
         $( "#closeOpenedFile" )
             .click(function() {
@@ -73,7 +73,15 @@
         
         $( "#openFileInNewWindow" )
             .click(function() {
-                window.open("file:///"+_openedFilePath);
+                if(isWeb) {
+                    if(location.port === "") {
+                        window.open(location.protocol+"//"+location.hostname+_openedFilePath);
+                    } else {
+                        window.open(location.protocol+"//"+location.hostname+":"+location.port+_openedFilePath);
+                    }
+                } else {
+                    window.open("file:///"+_openedFilePath);
+                }
             });     
         
         $( "#printFile" )
@@ -217,6 +225,18 @@
 
         _openedFilePath = filePath;
         //$("#selectedFilePath").val(_openedFilePath.replace("\\\\","\\"));
+
+        if(isWeb) {
+            var downloadLink;
+            if(location.port === "") {
+                downloadLink = location.protocol+"//"+location.hostname+_openedFilePath;
+            } else {
+                downloadLink = location.protocol+"//"+location.hostname+":"+location.port+_openedFilePath;
+            }
+            $( "#downloadFile").attr("href",downloadLink).attr("download",TSCORE.TagUtils.extractFileName(_openedFilePath));
+        } else {
+            $( "#downloadFile").attr("href","file:///"+_openedFilePath).attr("download",TSCORE.TagUtils.extractFileName(_openedFilePath));
+        }
 
         var fileExt = TSCORE.TagUtils.extractFileExtension(filePath);
 
@@ -432,6 +452,7 @@
 
         var tsMenu = $( "#tagSuggestionsMenu" );
         tsMenu.empty();
+        tsMenu.attr("style","overflow-y: auto; max-height: 500px;");
         tsMenu.append($('<li>', {
                 class: "dropdown-header",
                 text: $.i18n.t("ns.common:tagOperations")
