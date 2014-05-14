@@ -1,11 +1,11 @@
-* jQuery - http://jquery.com - http://code.jquery.com/jquery-2.0.1.js
+* jQuery - http://jquery.com - http://code.jquery.com/jquery-2.0.1.min.js
 * jQuery UI - http://jqueryui.com - https://github.com/jquery/jquery-ui/archive/1.10.3.zip
-* jQuery Layout - http://layout.jquery-dev.net - 1.3.0 rc30.79 http://layout.jquery-dev.net/lib/js/jquery.layout-latest.js
+* jQuery Layout - http://layout.jquery-dev.net - 1.3.0 rc30.79 http://layout.jquery-dev.net/lib/js/jquery.layout-latest.min.js
 * Bootstrap - http://twitter.github.io/bootstrap - https://raw.githubusercontent.com/twbs/bootstrap/v3.1.1/dist/js/bootstrap.min.js
 * RequireJS - http://requirejs.org - http://requirejs.org/docs/release/2.1.11/minified/require.js
 * Handlebars - http://handlebarsjs.com/ - http://builds.handlebarsjs.com.s3.amazonaws.com/handlebars-v1.1.2.js
 * DataTables - http://datatables.net/ - http://datatables.net/releases/DataTables-1.9.4.zip
-* UnderscoreJS - http://underscorejs.org - https://github.com/jashkenas/underscore/blob/1.5.1/underscore.js
+* UnderscoreJS - http://underscorejs.org - https://raw.githubusercontent.com/jashkenas/underscore/1.6.0/underscore-min.js
 * Mousetrap - http://craig.is/killing/mice - https://raw.githubusercontent.com/ccampbell/mousetrap/1.4.6/mousetrap.min.js
 * i18next - http://i18next.com/ - https://github.com/jamuhl/i18next/releases/tag/1.7.2
 * hammerjs - http://eightmedia.github.io/hammer.js/ - https://github.com/EightMedia/hammer.js/blob/v1.0.5/dist/jquery.hammer.js
