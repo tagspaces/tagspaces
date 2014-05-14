@@ -66,7 +66,7 @@ requirejs.config({
       }
     },
     paths: {
-        jquery:                 'libs/jquery/jquery-2.0.1',
+        jquery:                 'libs/jquery/jquery-2.0.1.min',
         jqueryui:               'libs/jqueryui/jquery.ui.core',
         jqueryuiwidget:         'libs/jqueryui/jquery.ui.widget',
         jqueryuimouse:          'libs/jqueryui/jquery.ui.mouse', 
@@ -82,8 +82,8 @@ requirejs.config({
         bootstrap:              'libs/bootstrap/js/bootstrap.min',
         bootstrap3xeditable:    'libs/bootstrap3xeditable/js/bootstrap-editable.min',
         jquerysimplecolorpicker:'libs/jquery-simplecolorpicker/jquery.simplecolorpicker',
-        jquerylayout:           'libs/jquerylayout/jquery.layout-latest',
-        underscore:             'libs/underscore/underscore',
+        jquerylayout:           'libs/jquerylayout/jquery.layout-latest.min',
+        underscore:             'libs/underscore/underscore-min',
         d3:                     'libs/d3/d3.v3',
         dropbox:                'libs/dropbox/dropbox.0.10.2',
         i18next:                'libs/i18next/i18next.amd.withJQuery-1.7.2.min',
