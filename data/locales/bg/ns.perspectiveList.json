@@ -1,0 +1,21 @@
+{
+    "fileExtension": "Файлово разширение",
+    "fileTitle": "Заглавие",
+    "fileTags": "Етикет",
+    "fileSize": "Размер(В)",
+    "fileLDTM": "Дата на промяната",
+    "filePath": "Път",
+    "fileName": "Име на фйла",
+    "filesFoundFor": "намерени файлове за",
+    "filesFound": "намерени файлове",
+    "toggleSelectAll": "Превключи Избор на всички файлове",
+    "createNewFileTooltip": "Създай нов файл",
+    "showSubfolderContentTooltip": "Покажи съдържанието на поддиректорията",
+    "addRemoveTagsTooltip": "Прибави или премахни етикет от селектираният файл",
+    "toggleThumbnailsTooltip": "Превключи на миниатюрни картини",
+    "increasThumbnailsTooltip": "Увеличи миниатюрните картини",
+    "toggleFileDetailsTooltip": "Превключи детайлите на файла",
+    "includeSubdirsTitleConfirm": "Потвърди добавянето на поддиректория",
+    "includeSubdirsContentConfirm": "Операцията ще отнеме много време при директории с много файлови и/или поддиректории! Желаете ли да продължите?",
+    "-": "-"
+}
