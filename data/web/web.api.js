@@ -16,8 +16,11 @@ define(function(require, exports, module) {
 
 	function connectDav() {
         console.log("Connecting webdav...");
-        // TODO handle port and https
-        davClient = new nl.sara.webdav.Client(location.host);
+        var useHTTPS = false;
+        if(location.href.indexOf("https") === 0) {
+            useHTTPS = true;
+        }
+        davClient = new nl.sara.webdav.Client(location.host, useHTTPS, location.port);
 	}
 	
 	window.setTimeout(connectDav(), 2000);
