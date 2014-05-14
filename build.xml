@@ -20,6 +20,7 @@ found in the LICENSE file.
 			<replacefilter token="@@DEFAULTLOCATIONS" value="" />
 			<replacefilter token="@@DEFAULTPERSPECTIVES" value="'perspectiveList', 'perspectiveGrid', 'perspectiveGraph'" />
 			<replacefilter token="@@PDFVIEWER" value="viewerBrowser" />
+            <replacefilter token="@@MHTVIEWER" value="viewerBrowser" />
 		</replace>
         <copy file="data/mozilla/mozilla.package.tmpl.json" overwrite="true" tofile="package.json" />
         <replace file="package.json">
@@ -217,6 +218,7 @@ found in the LICENSE file.
             <replacefilter token="@@BID" value="${touch.time}" />
 			<replacefilter token="@@DEFAULTLOCATIONS" value="${default.locations.android}" />
 			<replacefilter token="@@PDFVIEWER" value="viewerPDF" />
+            <replacefilter token="@@MHTVIEWER" value="viewerBrowser" />
 		</replace>
 		<replace file="${cordovaDev.dir}/about.html">
             <replacefilter token="@@VERSION" value="${version}" />

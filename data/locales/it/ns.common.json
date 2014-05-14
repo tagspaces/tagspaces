@@ -8,6 +8,8 @@
     "addRemoveTags": "Aggiungi / Rimuovi Tags",
     "openFileTooltip": "Apri File in TagSpaces",
     "openFile": "Apri Fil",
+    "downloadFileTooltip": "Download the current file",
+    "downloadFile": "Scarica",
     "openFileNewWindowTooltip": "Apri il file in una nuova finestra o tab",
     "openFileNewWindow": "Apri in una Nuova Finestra",
     "openFileNativelyTooltip": "Apri il file corrente con l'applicazione predefinita associata.",
@@ -100,6 +102,8 @@
     "likeUsOnFacebookTooltip": "Aggiungi un \"Mi Piace\" su Facebook",
     "writeUsEmail": "Scrivici una Email",
     "writeUsEmailTooltip": "Inviaci la email",
+    "supportUs": "Support the Project",
+    "supportUsTooltip": "Learn how you can support TagSpaces",
     "chooseLocation": "Scegli Luogo",
     "showTagLibraryTooltip": "Mostra Libreria Tags",
     "showLocationNavigatorTooltip": "Mostra Navigatore Luoghi",
@@ -133,5 +137,8 @@
     "reloadCurrentDirectory": "Apri o Ricarica Cartella",
     "reloadCurrentDirectoryTooltip": "Apri o Ricarica '__dirName__'",
     "newVersionAvailableTooltip": "Nuova versione di TagSpaces disponibile",
+    "showDevTools": "Show Developer Tools",
+    "toggleFullScreen": "Toggle Fullscreen",
+    "reloadApplication": "Reload Application",
     "-": "-"
 }
