@@ -1,5 +1,31 @@
 ﻿#Changelog
 
+##Version 1.8.1 / 2014.05.15
+- adding chinese and bulgarian(50%) translation to the project
+- releasing a technology preview of a self hosting version of TagSpaces based on WebDAV
+- [marked](https://github.com/chjj/marked/) integrated as a new markdown rendering library, allowing github's [gfm](https://help.github.com/articles/github-flavored-markdown), tables and more
+- now it is possible to associate a file type to be opened with TagSpaces by default
+- associating the applications in OS X, Ubuntu and Android to open markdown and mhtml files by default
+- adding file 'download' functionality, allowing you to save a file locally wherever you want
+- adding top menu for the native applications, allowing you to access quickly basic functionalities
+- adding a new tag group with rating tags e.g. 1star
+- now it is possible to add keybinding to a tag
+- adding tags to the file properties dialog
+- the file types in settings are now sorted alphabetically
+- adding keybinding for showing tag libraries and directory navigator
+- [#65](https://github.com/uggrock/tagspaces/issues/65) implementing clean tags functionality
+- [#68](https://github.com/uggrock/tagspaces/issues/68) showing files from hidden directories fixed
+- [#62](https://github.com/uggrock/tagspaces/issues/62) fixing issue where the UI was not refreshed after delete
+- opening the tag library and the directory navigator now opens the left panel
+- adding open left panel function to the core api
+- adding setting isFirstRun
+- adding scrolling in the tag suggesion menu
+- adding custom mht viewer for the hosted edition
+- adding TSCORE.UI to the core
+- adding showAboutDialog to the core ui api
+- exchanging pdf.js and underscore.js with a newer versions
+- disabling selection of text in user interface
+
 ##Version 1.8.0 / 2014.05.02
 - adding configurable keybinding
 - adding shortcut for loading the previous and the next document
