@@ -250,10 +250,11 @@ IO-API
     var saveTextFile = function(filePath,content) {
         TSCORE.showLoadingAnimation();        
         console.log("Saving file: "+filePath);
+        var utf8Content = unescape(encodeURIComponent(content));
         var byteArray = [];
-        for (var i = 0; i < content.length; ++i)
+        for (var i = 0; i < utf8Content.length; ++i)
         {
-            byteArray.push(content.charCodeAt(i));
+            byteArray.push(utf8Content.charCodeAt(i));
         }
         var blobInt8 = new Int8Array(byteArray);
         var blob = new Blob([blobInt8]);           
