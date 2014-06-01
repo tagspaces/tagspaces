@@ -8,7 +8,7 @@ define(function (require, exports, module) {
         "appName": "TagSpaces",
         "appVersion": "1.8",
         "appBuild": "2",
-        "appBuildID": "201405261236",
+        "appBuildID": "201405311541",
         "settingsVersion": 2,
         "newTextFileContent": "Created with TagSpaces",
         "newHTMLFileContent": "<html><head><title>Created with TagSpaces</title><meta http-equiv='Content-Type' content='text/html; charset=utf-8'></head><body></body></html>",
@@ -40,11 +40,12 @@ define(function (require, exports, module) {
             { "iso": "de",	    "title": "Deutsch (German)" },
             { "iso": "it",	    "title": "Italiano (Italian)" },
             { "iso": "zh-CN",	"title": "中国的 (Chinese)" },
-            { "iso": "bg",  	"title": "Български (Bulgarian - started)" },
+            { "iso": "bg",  	"title": "Български (Bulgarian)" },
+            { "iso": "pt-BR",   "title": "Português (Portuguese-Brazil)" },
+            { "iso": "fr",	    "title": "Français (French - almost done)" },
+            { "iso": "sk",	    "title": "Slovenský (Slovak - almost done)" },
             { "iso": "ru",	    "title": "Русский (Russian - help needed)" },
-            { "iso": "pt",	    "title": "Português (Portuguese - help needed)" },
-            { "iso": "es",	    "title": "Español (Spanish - help needed)" },
-            { "iso": "fr",	    "title": "Français (French - help needed)" }
+            { "iso": "es",	    "title": "Español (Spanish - help needed)" }
         ],
         "keyBindings": {
             "closeViewer":              "mod+w",
