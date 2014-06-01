@@ -1,0 +1,21 @@
+{
+    "fileExtension": "Prípona",
+    "fileTitle": "Názov",
+    "fileTags": "Značky",
+    "fileSize": "Veľkosť(B)",
+    "fileLDTM": "Dátum úpravy",
+    "filePath": "Cesta",
+    "fileName": "Názov súboru",
+    "filesFoundFor": "súbory nájdené pre",
+    "filesFound": "súbory nájdené",
+    "toggleSelectAll": "Prepnúť označenie všetkých súborov",
+    "createNewFileTooltip": "Vytvoriť nový súbor",
+    "showSubfolderContentTooltip": "Zobraziť obsah podpriečinkov",
+    "addRemoveTagsTooltip": "Pridať alebo odobrať značky na vybraných súboroch",
+    "toggleThumbnailsTooltip": "Prepnúť náhľady",
+    "increasThumbnailsTooltip": "Zväčšiť náhľady",
+    "toggleFileDetailsTooltip": "Prepnúť podrobnosti o súboroch",
+    "includeSubdirsTitleConfirm": "Potvrdenie zahrnutia podpriečinkov",
+    "includeSubdirsContentConfirm": "Na priečinku s množstvom súborov a/alebo podpriečinkov môže byť táto operácia pomalá! Chcete pokračovať?",
+    "-": "-"
+}
