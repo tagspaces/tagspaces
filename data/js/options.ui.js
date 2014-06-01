@@ -127,10 +127,12 @@
             ).i18n();
 
         TSCORE.Config.getSupportedFileTypes().sort(function(a, b){
-            if (a.type > b.type)
+            if (a.type > b.type) {
                 return 1;
-            if (a.type < b.type)
+            }
+            if (a.type < b.type) {
                 return -1;
+            }
             return 0;
         }).forEach(function (value) {
             addFileType($('#fileTypesList'), value.type, value.viewer, value.editor);
