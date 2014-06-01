@@ -251,9 +251,10 @@ IO-API
         TSCORE.showLoadingAnimation();        
         console.log("Saving file: "+filePath);
         var byteArray = [];
-        for (var i = 0; i < content.length; ++i)
+        var contentUTF8 = unescape(encodeURIComponent(content));
+        for (var i = 0; i < contentUTF8.length; ++i)
         {
-            byteArray.push(content.charCodeAt(i));
+            byteArray.push(contentUTF8.charCodeAt(i));
         }
         var blobInt8 = new Int8Array(byteArray);
         var blob = new Blob([blobInt8]);           
