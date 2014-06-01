@@ -81,7 +81,7 @@ define(function(require, exports, module) {
             i;
 
         var $alternativeNavigator = $("#alternativeNavigator");
-        $alternativeNavigator.empty();
+        $alternativeNavigator.children().remove();
         for(i=0; i < directoryHistory.length; i++) {
             homeIcon = "";
             if(i===0) {
@@ -219,7 +219,8 @@ define(function(require, exports, module) {
     function generateDirPath() {
         console.log("Generating Directory Path...");
         var $locationContent = $("#locationContent");
-        $locationContent.empty().addClass("accordion");
+        $locationContent.children().remove();
+        $locationContent.addClass("accordion");
         for(var i=0; i < directoryHistory.length; i++) {
             $locationContent.append($("<div>", {
                 "class":        "accordion-group disableTextSelection",   
@@ -526,7 +527,7 @@ define(function(require, exports, module) {
                 var $locationPerspective2 = $("#locationPerspective2");
 
                 var selectedPerspectiveId = TSCORE.Config.getLocation(path).perspective;
-                    $locationPerspective2.empty();
+                    $locationPerspective2.children().remove();
                     TSCORE.Config.getActivatedPerspectiveExtensions().forEach( function(value) {
                             if (selectedPerspectiveId === value.id) {
                                 $locationPerspective2.append($("<option>").attr("selected","selected").text(value.id).val(value.id));
@@ -636,11 +637,11 @@ define(function(require, exports, module) {
     function closeCurrentLocation() {
         console.log("Closing location..");
         $("#locationName").text($.i18n.t("ns.common:chooseLocation")).attr("title","");
-        $("#locationContent").empty(); 
+        $("#locationContent").children().remove();
         
         // Clear the footer
-        $("#statusBar").empty();
-        $("#alternativeNavigator").empty();
+        $("#statusBar").children().remove();
+        $("#alternativeNavigator").children().remove();
         
         
         TSCORE.disableTopToolbar();
@@ -662,7 +663,7 @@ define(function(require, exports, module) {
         console.log("Creating location menu...");
         
         var $connectionList = $( "#connectionsList" ); 
-        $connectionList.empty();
+        $connectionList.children().remove();
         $connectionList.attr("style","overflow-y: auto; max-height: 500px; width: 238px;");
         $connectionList.append($('<li>', {
                 class: "dropdown-header",
