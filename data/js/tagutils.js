@@ -19,9 +19,14 @@
     function extractFileNameWithoutExt(filePath) {
         var fileName = extractFileName(filePath);
         var indexOfDot = fileName.lastIndexOf(".");
-        if(indexOfDot > 0) {
-            return fileName.substring(0, indexOfDot);            
-        } else if(indexOfDot === 0) { // case filename: .txt
+        var lastIndexBeginTagContainer = filePath.lastIndexOf(BEGIN_TAG_CONTAINER);
+        var lastIndexEndTagContainer = filePath.lastIndexOf(END_TAG_CONTAINER);
+
+        if(indexOfDot > lastIndexBeginTagContainer && indexOfDot < lastIndexEndTagContainer) { // case: "[tag1 tag.2]"
+            return "";
+        } else if(indexOfDot > 0 ) { // case: regular
+            return fileName.substring(0, indexOfDot);
+        } else if(indexOfDot === 0) { // case ".txt"
             return "";            
         } else {
             return fileName;
@@ -48,11 +53,19 @@
         return tmpStr.substring(tmpStr.lastIndexOf(TSCORE.dirSeparator)+1,tmpStr.length);
     }
 
-    // TODO consider [20120125 89.4kg 19.5% 60.5% 39.8% 2.6kg]
     function extractFileExtension(filePath) {
-        var ext = filePath.substring(filePath.lastIndexOf(".") + 1, filePath.length).toLowerCase().trim();
-        if (filePath.lastIndexOf(".") < 0) { ext = ""; }
-        return ext;
+        var lastindexDirSeparator = filePath.lastIndexOf(TSCORE.dirSeparator);
+        var lastIndexEndTagContainer = filePath.lastIndexOf(END_TAG_CONTAINER);
+        var lastindexDot = filePath.lastIndexOf(".");
+        if (lastindexDot < 0) {
+            return "";
+        } else if (lastindexDot < lastindexDirSeparator) { // case: "../remote.php/webdav/somefilename"
+            return "";
+        } else if (lastindexDot < lastIndexEndTagContainer) { // case: "[20120125 89.4kg 19.5% 60.5% 39.8% 2.6kg]"
+            return "";
+        } else {
+            return filePath.substring(lastindexDot + 1, filePath.length).toLowerCase().trim();
+        }
     }
 
     function extractTitle(filePath) {
@@ -71,16 +84,14 @@
         else if ( endTagContainer < 0 ) */
 
         if( (beginTagContainer >= 0 ) && (beginTagContainer < endTagContainer) ){
-            // case: "asd[tag1, tag2]"         
-            if(endTagContainer === fileName.trim().length) {
-                return fileName.slice(0,beginTagContainer);                
-            // case: "title1 [tag1 tag2] title2"         
-            } else {
+            if(beginTagContainer === 0 && endTagContainer === fileName.trim().length) { // case: "[tag1, tag2]"
+                return "";
+            } else if (endTagContainer === fileName.trim().length) { // case: "asd[tag1, tag2]"
+                return fileName.slice(0,beginTagContainer);
+            } else {  // case: "title1 [tag1 tag2] title2"
                 return fileName.slice(0,beginTagContainer)+fileName.slice(endTagContainer+1,fileName.length);
             }
-        } 
-        else 
-        {
+        } else {
             return fileName;                            
         }
     } 
@@ -162,7 +173,7 @@
     function extractTags(filePath) {
         console.log("Extracting tags from: "+filePath);
         
-        var fileName = extractFileNameWithoutExt(filePath);
+        var fileName = extractFileName(filePath); // WithoutExt
         
         var tags = [];
         var beginTagContainer = fileName.indexOf(BEGIN_TAG_CONTAINER);
