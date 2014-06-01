@@ -1,0 +1,21 @@
+{
+    "fileExtension": "Extensão do Arq.",
+    "fileTitle": "Título",
+    "fileTags": "Etiquetas",
+    "fileSize": "Tamanho(B)",
+    "fileLDTM": "Data de Modificação",
+    "filePath": "Local",
+    "fileName": "Nome do Arquivo",
+    "filesFoundFor": "arquivos encontrados para",
+    "filesFound": "arquivos encontrados",
+    "toggleSelectAll": "Alternar para Selecionar Todos os Arquivos",
+    "createNewFileTooltip": "Criar Novo Arquivo",
+    "showSubfolderContentTooltip": "Exibir Conteúdo das Sub-pastas",
+    "addRemoveTagsTooltip": "Adicionar ou Remover Etiquetas para os Arquivos Selecionados",
+    "toggleThumbnailsTooltip": "Alternar para Miniaturas",
+    "increasThumbnailsTooltip": "Aumentar Miniaturas",
+    "toggleFileDetailsTooltip": "Alternar para Detalhes do Arquivo",
+    "includeSubdirsTitleConfirm": "Confirmar Inclusão de Subdiretórios",
+    "includeSubdirsContentConfirm": "Em diretórios com muitos arquivos e/ou subdiretórios esta operação pode ser lenta! Deseja continuar?",
+    "-": "-"
+}
