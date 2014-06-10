@@ -1,7 +1,7 @@
 {
     "name": "@@PACKAGE", 
     "license": "AGPL 3.0", 
-    "author": "Ugg Rock", 
+    "author": "TagSpaces Authors",
     "version": "@@VERSION.@@BUILD", 
     "mainversion": "@@VERSION", 
     "subversion": "@@BUILD", 

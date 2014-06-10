@@ -1,6 +1,6 @@
 {
   "name": "TagSpaces",
-  "version": "1.8.2",
+  "version": "1.8.3",
   "manifest_version": 2,
   "description": "Offline file manager & document browser for your local files, supporting easy file tagging and document editing.",
   "icons": {
