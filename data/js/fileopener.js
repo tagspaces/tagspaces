@@ -425,7 +425,9 @@
             }
         });
         generatedTagButtons = TSCORE.generateTagButtons(tagString,_openedFilePath);
-        $( "#fileTags" ).children().remove().append(generatedTagButtons);
+        var $fileTags = $( "#fileTags" );
+        $fileTags.children().remove();
+        $fileTags.append(generatedTagButtons);
     
         $( "#tagsContainer" ).droppable({
             greedy: "true",
@@ -434,17 +436,14 @@
             drop: function( event, ui ) {
                 console.log("Tagging file: "+TSCORE.selectedTag+" to "+_openedFilePath);
                 TSCORE.TagUtils.addTag([_openedFilePath], [TSCORE.selectedTag]);
-
                 //$(ui.helper).remove();
             }
         });
 
         // Init Tag Context Menus
-        $('#fileTags').on("contextmenu click", ".tagButton", function () {
+        $fileTags.on("contextmenu click", ".tagButton", function () {
             TSCORE.hideAllDropDownMenus();
-
             TSCORE.openTagMenu(this, $(this).attr("tag"), $(this).attr("filepath"));
-
             TSCORE.showContextMenu("#tagMenu", $(this));
             return false;
         });
