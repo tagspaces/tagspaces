@@ -19,7 +19,7 @@ define(function(require, exports, module) {
 	var TSCORE = require("tscore");
 	
 	var extensionDirectory = TSCORE.Config.getExtensionPath()+"/"+extensionID;
-	var UI = undefined;   
+	var UI;
 	   
 	   
 	exports.init = function(filePath, elementID) {
@@ -30,13 +30,15 @@ define(function(require, exports, module) {
               "text!"+extensionDirectory+'/mainUI.html',
               //extensionDirectory+'/loadimage/canvas-to-blob.js',
               extensionDirectory+'/jquery.panzoom/jquery.panzoom.min.js',              
-              extensionDirectory+'/jquery.mousewheel/jquery.mousewheel.js',      
+              extensionDirectory+'/jquery.mousewheel/jquery.mousewheel.js'
               ], function(extUI, uiTPL) {
 			//extensionDirectory+'/pixastic/pixastic.custom.js',
 				var uiTemplate = Handlebars.compile( uiTPL );
-                UI = new extUI.ExtUI(extensionID, elementID, filePath);                          
-                UI.buildUI(uiTemplate);
-                
+                UI = new extUI.ExtUI(extensionID, elementID, filePath, uiTemplate);
+
+                // TODO remove tmp solution for memory leak prevention
+                UI = null;
+
                 /*
                 loadImage(
                 	    filePath,
@@ -62,10 +64,7 @@ define(function(require, exports, module) {
                 	        canvas: true
                 	    }
                 	); */
-
-                TSCORE.hideLoadingAnimation();       
-                
-		});    
+		});
 	};
 	
 	exports.viewerMode = function(isViewerMode) {

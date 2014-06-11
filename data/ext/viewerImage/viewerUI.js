@@ -10,45 +10,44 @@ console.log("Loading UI for Image Viewer");
 
     var TSCORE = require("tscore");
 
-    function ExtUI(extID, extContainerID, filePath) {
-        this.extensionID = extID;
-        this.containerElem = $('#'+extContainerID);
+    var extensionID;
+    var $containerElem;
+    var internPath;
+    var filePath;
 
-        this.internPath = filePath;
+    function ExtUI(extID, extContainerID, filePth, uiTemplate) {
+        extensionID = extID;
+        $containerElem = $('#'+extContainerID);
+        internPath = filePth;
 
         if(isCordova || isWeb) {
-            this.filePath = filePath;            
+            filePath = filePth;
         } else {
-            this.filePath = "file:///"+filePath;  
+            filePath = "file:///"+filePth;
         }
-    }
 
-    ExtUI.prototype.buildUI = function(uiTemplate) {
-        console.log("Init UI module");
+        //$("#"+extensionID+"Image").unbind();
+        //$("#"+extensionID+"Image").remove();
 
-        this.viewContainer = $("#"+this.extensionID+"Container").empty();
-        this.viewToolbar = $("#"+this.extensionID+"Toolbar").empty();
-        this.viewFooter = $("#"+this.extensionID+"Footer").empty();		
-
-        var self = this;
+        $containerElem.children().remove();
 
         var context = {
-            id: this.extensionID,
-            imgPath: this.filePath
+            id: extensionID,
+            imgPath: filePath
         };
         //console.log(uiTemplate(context));
-        this.containerElem.append(uiTemplate(context));
+        $containerElem.append(uiTemplate(context));
 
         if(isCordova) {
-            $("#"+this.extensionID+"ZoomOut").hide();
-            $("#"+this.extensionID+"ZoomIn").hide();
+            $("#"+extensionID+"ZoomOut").hide();
+            $("#"+extensionID+"ZoomIn").hide();
         }
 
-        $("#"+this.extensionID+"imgViewer")
+        $("#"+extensionID+"imgViewer")
             .panzoom({
-                $zoomIn: $("#"+this.extensionID+"ZoomIn"),
-                $zoomOut: $("#"+this.extensionID+"ZoomOut"),
-                $reset: $("#"+this.extensionID+"ZoomReset"),
+                $zoomIn: $("#"+extensionID+"ZoomIn"),
+                $zoomOut: $("#"+extensionID+"ZoomOut"),
+                $reset: $("#"+extensionID+"ZoomReset"),
                 //contain: true,
                 easing: "ease-in-out",                
                 contain: 'invert'
@@ -56,33 +55,36 @@ console.log("Loading UI for Image Viewer");
     //            $reset: $section.find(".reset")
             })
             .hammer().on("swipeleft", function() {
-                TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getNextFile(self.internPath));
+                TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getNextFile(internPath));
             })
             .hammer().on("swiperight", function() {
-                TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getPrevFile(self.internPath));
+                TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getPrevFile(internPath));
             })
-            .parent().on('mousewheel.focal', function( e ) {
-                e.preventDefault();
-                var delta = e.delta || e.originalEvent.wheelDelta;
-                var zoomOut = delta ? delta < 0 : e.originalEvent.deltaY > 0;
-                $("#"+self.extensionID+"imgViewer").panzoom('zoom', zoomOut, {
-                    increment: 0.1,
-                    focal: e
-                });
+            .parent().on('mousewheel.focal', handleMouseWheel );
+
+        function handleMouseWheel(e) {
+            e.preventDefault();
+            var delta = e.delta || e.originalEvent.wheelDelta;
+            var zoomOut = delta ? delta < 0 : e.originalEvent.deltaY > 0;
+            $("#"+extensionID+"imgViewer").panzoom('zoom', zoomOut, {
+                increment: 0.1,
+                focal: e
             });
+        }
 
         // Image Processing
-        $("#"+this.extensionID+"Brighter")
+        /*$("#"+extensionID+"Brighter")
             .click(function() {
-                $("#"+self.extensionID+"imgViewer").pixastic("brightness", {brightness:60});
+                $("#"+extensionID+"imgViewer").pixastic("brightness", {brightness:60});
             });
         
-        $("#"+this.extensionID+"RotateLeft")
+        $("#"+extensionID+"RotateLeft")
             .click(function() {
                 console.log("Rotate");
-                $("#"+self.extensionID+"imgViewer").pixastic("rotate", {angle:90});         
-            });
-    };
+                $("#"+extensionID+"imgViewer").pixastic("rotate", {angle:90});
+            });*/
+        $containerElem = null;
+    }
     
     exports.ExtUI		= ExtUI;
 });
