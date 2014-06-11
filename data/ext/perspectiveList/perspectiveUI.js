@@ -114,6 +114,19 @@ console.log("Loading UI for perspectiveList");
                 self.toggleTags();
             });
 
+
+        $("#"+this.extensionID+"Export2CSVButton")
+            .click(function() {
+                var blob = new Blob([TSCORE.exportFileListCSV(TSCORE.fileList)], {type: "text/csv;charset=utf-8"});
+                saveAs(blob, "Export.csv");
+                //console.log("Export data: "+TSCORE.exportFileListCSV(TSCORE.fileList));
+            });
+
+        $("#"+this.extensionID+"ReloadFolderButton")
+            .click(function() {
+                TSCORE.navigateToDirectory(TSCORE.currentPath   );
+            });
+
         // Disabling all buttons by no data
         this.viewToolbar.find(".btn").prop('disabled', true);
 
@@ -425,6 +438,24 @@ console.log("Loading UI for perspectiveList");
             this.fileTable.fnSetColumnVis( TSCORE.fileListFILELMDT, true );
             this.fileTable.fnSetColumnVis( TSCORE.fileListFILEPATH, true );
         }
+
+        var translation = $.i18n.t("ns.perspectiveList:fileSize");
+        if(translation.length > 0) {
+            $("#"+this.extensionID+"Container").find("th:contains('Size')").text(translation);
+        }
+        translation = $.i18n.t("ns.perspectiveList:fileLDTM");
+        if(translation.length > 0) {
+            $("#"+this.extensionID+"Container").find("th:contains('Last Modified')").text(translation);
+        }
+        translation = $.i18n.t("ns.perspectiveList:filePath");
+        if(translation.length > 0) {
+            $("#"+this.extensionID+"Container").find("th:contains('File Path')").text(translation);
+        }
+        translation = $.i18n.t("ns.perspectiveList:fileName");
+        if(translation.length > 0) {
+            $("#"+this.extensionID+"Container").find("th:contains('File Name')").text();
+        }
+
         this.showFileDetails = !this.showFileDetails;
     };
 
