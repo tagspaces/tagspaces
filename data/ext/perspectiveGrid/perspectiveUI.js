@@ -371,8 +371,8 @@ console.log("Loading UI for perspectiveDefault");
     ExtUI.prototype.reInit = function() {
 
         // Clear old data
-        this.viewContainer.empty();
-        this.viewFooter.empty();
+        this.viewContainer.children().remove();
+        this.viewFooter.children().remove();
 
         this.viewContainer.addClass("accordion");
         $( this.extensionID+"IncludeSubDirsButton" ).prop('disabled', false); 
