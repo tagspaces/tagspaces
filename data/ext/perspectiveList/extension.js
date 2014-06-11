@@ -26,7 +26,8 @@ define(function(require, exports, module) {
         require([
             extensionDirectory+'/perspectiveUI.js',
             "text!"+extensionDirectory+'/toolbar.html',
-            extensionDirectory+'/datatables/jquery.dataTables.min.js'
+            extensionDirectory+'/datatables/jquery.dataTables.min.js',
+            'libs/filesaver.js/FileSaver.js'
             ], function(extUI, toolbarTPL) {
                 var toolbarTemplate = Handlebars.compile( toolbarTPL );                
                 UI = new extUI.ExtUI(extensionID);                          
@@ -73,12 +74,12 @@ define(function(require, exports, module) {
 	
 	var load = function () {
 		console.log("Loading perspective "+extensionID);
-		if(UI === undefined) {
-			window.setTimeout(function() { UI.reInit(); }, 1000);
-		} else {
-            UI.reInit();    
-        }	
-	};
+        if(UI === undefined) {
+            window.setTimeout(function() { UI.reInit(); }, 1000);
+        } else {
+            UI.reInit();
+        }
+    };
 
     var clearSelectedFiles = function() {
         if(UI !== undefined) {
