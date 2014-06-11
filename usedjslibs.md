@@ -19,6 +19,7 @@
 * Pixastic - http://www.pixastic.com/ - http://www.pixastic.com/lib/download/zip.php
 * jQuery Panzoom - https://github.com/timmywil/jquery.panzoom - https://github.com/timmywil/jquery.panzoom/blob/1.8.2/dist/jquery.panzoom.min.js
 * jQuery Mousewheel - https://github.com/brandonaaron/jquery-mousewheel - https://github.com/brandonaaron/jquery-mousewheel/archive/3.1.6.zip
+* filesaver.js - https://github.com/eligrey/FileSaver.js/ - https://raw.githubusercontent.com/eligrey/FileSaver.js/master/FileSaver.js
 
 * Voldsoftware Libs - https://github.com/voldsoftware/
 
