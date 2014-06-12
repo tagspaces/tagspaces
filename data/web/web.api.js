@@ -175,6 +175,17 @@ define(function(require, exports, module) {
             }
         );
 	};
+
+    var deleteDirectory = function(path) {
+        console.log("Deleting directory: "+path);
+        davClient.remove(
+            path,
+            function( status, data, headers ) {
+                console.log("Directory/File Deletion Status/Content/Headers:  "+status+" / "+data+" / "+headers);
+                TSPOSTIO.deleteDirectory(path);
+            }
+        );
+    };
 	
     var checkAccessFileURLAllowed = function() {
         console.log("checkAccessFileURLAllowed function not relevant for webdav..");
@@ -225,6 +236,7 @@ define(function(require, exports, module) {
 	exports.saveTextFile 				= saveTextFile;
 	exports.listDirectory 				= listDirectory;
 	exports.deleteElement 				= deleteElement;
+    exports.deleteDirectory             = deleteDirectory;
     exports.createDirectoryIndex 		= createDirectoryIndex;
     exports.createDirectoryTree 		= createDirectoryTree;
 	exports.selectDirectory 			= selectDirectory;
