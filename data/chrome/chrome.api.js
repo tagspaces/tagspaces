@@ -276,7 +276,11 @@ IO-API
         } catch(ex) {
             console.error("Deleting file failed "+ex);
         }
-    };  
+    };
+
+    var renameDirectory = function(filePath, newFilePath) {
+        TSCORE.showAlertDialog("Renaming directory functionality not implemented on chrome yet!");
+    };
 
     var renameFile = function(filePath, newFilePath) {
         console.log("Renaming file: "+filePath+" to "+newFilePath);
@@ -390,6 +394,7 @@ IO-API
 
     exports.createDirectory             = createDirectory;
     exports.renameFile                  = renameFile;
+    exports.renameDirectory             = renameDirectory;
     exports.loadTextFile                = loadTextFile;
     exports.saveTextFile                = saveTextFile;
     exports.listDirectory               = listDirectory;
