@@ -428,6 +428,40 @@ define(function (require, exports, module) {
         );
     };
 
+    var renameDirectory = function(dirPath, newDirName) {
+        var newDirPath = TSCORE.TagUtils.extractParentDirectoryPath(dirPath) + TSCORE.dirSeparator + newDirName;
+        TSCORE.showLoadingAnimation();
+
+        dirPath = normalizePath(dirPath);
+        var newDirParentPath = normalizePath(newDirPath.substring(0, newDirPath.lastIndexOf('/')));
+        // TODO check if the newFilePath exist or cause issues by renaming
+        fsRoot.getDirectory(newDirParentPath, {create: false, exclusive: false},
+            function (parentDirEntry) {
+                fsRoot.getFile(dirPath, {create: false, exclusive: false},
+                    function(entry) {
+                        entry.moveTo(
+                            parentDirEntry,
+                            newDirName,
+                            function() {
+                                console.log("Directory renamed to: "+newDirPath+" Old name: "+entry.fullPath);
+                                TSPOSTIO.renameFile(entry.fullPath, newDirPath);
+                            },
+                            function() {
+                                console.log("error renaming: "+dirPath);
+                            }
+                        );
+                    },
+                    function() {
+                        console.log("Error getting file: "+dirPath);
+                    }
+                );
+            },
+            function (error) {
+                console.log("Getting dir: "+newDirParentPath+" failed with error code: " + error.code);
+            }
+        );
+    };
+
     var selectDirectory = function() {
         console.log("Open select directory dialog.");        
         //file:///storage/emulated/0/DCIM/Camera/
@@ -493,6 +527,7 @@ define(function (require, exports, module) {
     
     exports.createDirectory             = createDirectory; 
     exports.renameFile                  = renameFile;
+    exports.renameDirectory             = renameDirectory;
     exports.loadTextFile                = loadTextFile;
     exports.saveTextFile                = saveTextFile;
     exports.listDirectory               = listDirectory;

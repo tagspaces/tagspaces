@@ -176,7 +176,11 @@ define(function(require, exports, module) {
         }});
         document.documentElement.dispatchEvent(event);
     };
-    
+
+    var renameDirectory = function(filePath, newFilePath) {
+        TSCORE.showAlertDialog("Rename directory functionality is not implemented in firefox yet.");
+    };
+
     var saveTextFile = function(filePath,content) {
         console.log("Saving file: "+filePath);
         TSCORE.showLoadingAnimation();	
@@ -306,6 +310,7 @@ define(function(require, exports, module) {
     
     exports.createDirectory             = createDirectory;
     exports.renameFile                  = renameFile;
+    exports.renameDirectory             = renameDirectory;
     exports.loadTextFile                = loadTextFile;
     exports.saveTextFile                = saveTextFile;
     exports.listDirectory               = listDirectory;
