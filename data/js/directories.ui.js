@@ -471,6 +471,16 @@ define(function(require, exports, module) {
             showRenameDirectoryDialog(dir4ContextMenu);
         });
 
+        $( "#directoryMenuDeleteDirectory" ).click( function() {
+            TSCORE.showConfirmDialog(
+                $.i18n.t("ns.dialogs:deleteDirectoryTitleConfirm"),
+                $.i18n.t("ns.dialogs:deleteDirectoryContentConfirm", { dirPath: dir4ContextMenu }),
+                function() {
+                    TSCORE.IO.deleteDirectory(dir4ContextMenu);
+                }
+            );
+        });
+
         $( "#directoryMenuOpenDirectory" ).click( function() {
             TSCORE.IO.openDirectory(dir4ContextMenu);
         });
