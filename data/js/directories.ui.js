@@ -148,7 +148,7 @@ define(function(require, exports, module) {
                     "data-i18n": "ns.common:renameDirectory",
                     "text":     " "+$.i18n.t("ns.common:renameDirectory")
                 })
-                    .prepend("<i class='fa fa-terminal fa-lg fa-fw'></i>")
+                    .prepend("<i class='fa fa-paragraph fa-lg fa-fw'></i>")
                     .click( function() {
                         showRenameDirectoryDialog($(this).attr("path"));
                     })
