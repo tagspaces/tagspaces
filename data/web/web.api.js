@@ -121,7 +121,20 @@ define(function(require, exports, module) {
             },
             newFilePath,
             davClient.FAIL_ON_OVERWRITE
-            //,customHeaders
+        );
+    };
+
+    var renameDirectory = function(dirPath, newDirName) {
+        var newDirPath = TSCORE.TagUtils.extractParentDirectoryPath(dirPath) + TSCORE.dirSeparator + newDirName;
+        console.log("Renaming directory: "+dirPath+" to "+newDirPath);
+        davClient.move(
+            dirPath,
+            function( status, data, headers ) {
+                console.log("Rename Directory Status/Content/Headers:  "+status+" / "+data+" / "+headers);
+                TSPOSTIO.renameDirectory(dirPath, newDirPath);
+            },
+            newDirPath,
+            davClient.FAIL_ON_OVERWRITE
         );
     };
     	
@@ -207,6 +220,7 @@ define(function(require, exports, module) {
     
 	exports.createDirectory 			= createDirectory; 
 	exports.renameFile 					= renameFile;
+    exports.renameDirectory             = renameDirectory;
 	exports.loadTextFile 				= loadTextFile;
 	exports.saveTextFile 				= saveTextFile;
 	exports.listDirectory 				= listDirectory;
