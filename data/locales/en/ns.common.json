@@ -142,6 +142,8 @@
     "createSubdirectoryTooltip": "Create New Directory in '__dirName__'",
     "renameDirectory": "Rename Directory",
     "renameDirectoryTooltip": "Rename Current Directory",
+    "deleteDirectory": "Delete Directory",
+    "deleteDirectoryTooltip": "Delete Current Directory",
     "reloadCurrentDirectory": "Open or Reload Directory",
     "reloadCurrentDirectoryTooltip": "Open or Reload '__dirName__'",
     "newVersionAvailableTooltip": "New TagSpaces version available",

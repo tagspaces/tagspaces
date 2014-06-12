@@ -230,6 +230,21 @@ IO-API
         }
     };
 
+    var deleteDirectory = function(dirPath) {
+        TSCORE.showAlertDialog("Delete directory functionality not implemented on Chrome yet!");
+        return false;
+        /* console.log("Deleting: "+path);
+        TSCORE.showLoadingAnimation();
+        try {
+            if(!nativeIO.isDirectory(path)) {
+                nativeIO.removeRecursively(path);
+            }
+            TSPOSTIO.deleteElement(path);
+        } catch(ex) {
+            console.error("Deleting file failed "+ex);
+        }  */
+    };
+
     var createDirectoryIndex = function(dirPath) {
         console.log("Creating index for directory: "+dirPath);
         TSCORE.showLoadingAnimation();     
@@ -400,6 +415,7 @@ IO-API
     exports.listDirectory               = listDirectory;
     exports.listSubDirectories          = listSubDirectories;
     exports.deleteElement               = deleteElement;
+    exports.deleteDirectory             = deleteDirectory;
     exports.createDirectoryIndex        = createDirectoryIndex;
     exports.createDirectoryTree         = createDirectoryTree;
     exports.selectDirectory             = selectDirectory;

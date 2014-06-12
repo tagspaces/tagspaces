@@ -214,6 +214,10 @@ define(function(require, exports, module) {
         }});
         document.documentElement.dispatchEvent(event);	
     };
+
+    var deleteDirectory = function(dirPath) {
+        TSCORE.showAlertDialog("Delete directory functionality is not implemented in Firefox yet.");
+    };
     
     var checkAccessFileURLAllowed = function() {
         console.log("checkAccessFileURLAllowed function not relevant for node..");
@@ -315,6 +319,7 @@ define(function(require, exports, module) {
     exports.saveTextFile                = saveTextFile;
     exports.listDirectory               = listDirectory;
     exports.deleteElement               = deleteElement;
+    exports.deleteDirectory             = deleteDirectory;
     exports.createDirectoryIndex        = createDirectoryIndex;
     exports.createDirectoryTree         = createDirectoryTree;
     exports.selectDirectory             = selectDirectory;

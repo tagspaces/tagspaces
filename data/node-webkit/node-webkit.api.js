@@ -379,6 +379,20 @@ define(function(require, exports, module) {
             TSPOSTIO.deleteElement(path);
         });        
     };
+
+    var deleteDirectory = function(path) {
+        console.log("Deleting directory: "+path);
+        TSCORE.showLoadingAnimation();
+
+        fs.rmdir(path, function(error) {
+            if (error) {
+                console.log("Deleting directory "+path+" failed "+error);
+                TSPOSTIO.deleteDirectoryFailed(path);
+                return;
+            }
+            TSPOSTIO.deleteDirectory(path);
+        });
+    };
     
     var checkAccessFileURLAllowed = function() {
         console.log("checkAccessFileURLAllowed function not relevant for node..");
@@ -474,6 +488,7 @@ define(function(require, exports, module) {
     exports.saveTextFile                 = saveTextFile;
     exports.listDirectory                = listDirectory;
     exports.deleteElement                = deleteElement;
+    exports.deleteDirectory              = deleteDirectory;
     exports.createDirectoryIndex         = createDirectoryIndex;
     exports.createDirectoryTree          = createDirectoryTree;
     exports.selectDirectory              = selectDirectory;

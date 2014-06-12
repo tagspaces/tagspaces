@@ -314,6 +314,30 @@ define(function (require, exports, module) {
         );
     };
 
+    var deleteDirectory = function(dirPath) {
+        console.log("Deleting directory: "+dirPath);
+        TSCORE.showLoadingAnimation();
+
+        var path = normalizePath(dirPath);
+
+        fsRoot.getDirectory(path, {create: false, exclusive: false},
+            function(entry) {
+                entry.remove(
+                    function() {
+                        console.log("file deleted: "+path);
+                        TSPOSTIO.deleteDirectory(dirPath);
+                    },
+                    function() {
+                        console.log("error deleting dir: "+dirPath);
+                    }
+                );
+            },
+            function() {
+                console.log("error getting directory");
+            }
+        );
+    };
+
     var loadTextFile = function(filePath, isPreview) {
         console.log("Loading file: "+filePath);
         TSCORE.showLoadingAnimation();  
@@ -533,6 +557,7 @@ define(function (require, exports, module) {
     exports.listDirectory               = listDirectory;
     exports.listSubDirectories          = listSubDirectories;
     exports.deleteElement               = deleteElement;
+    exports.deleteDirectory             = deleteDirectory;
     exports.createDirectoryIndex        = createDirectoryIndex;
     exports.createDirectoryTree         = createDirectoryTree;
     exports.selectDirectory             = selectDirectory;
