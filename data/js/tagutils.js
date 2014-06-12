@@ -48,6 +48,13 @@
         return dirPath.substring(0, dirPath.lastIndexOf(TSCORE.dirSeparator));
     }
 
+    function extractDirectoryName(dirPath) {
+        if(stringEndsWith(dirPath, TSCORE.dirSeparator)) {
+            dirPath = dirPath.substring(0, dirPath.lastIndexOf(TSCORE.dirSeparator));
+        }
+        return dirPath.substring(dirPath.lastIndexOf(TSCORE.dirSeparator)+1,dirPath.length);
+    }
+
     function extractContainingDirectoryName(filePath) {
         var tmpStr = filePath.substring(0, filePath.lastIndexOf(TSCORE.dirSeparator));
         return tmpStr.substring(tmpStr.lastIndexOf(TSCORE.dirSeparator)+1,tmpStr.length);
@@ -468,6 +475,7 @@
     exports.extractFileNameWithoutExt           = extractFileNameWithoutExt;
     exports.extractContainingDirectoryPath      = extractContainingDirectoryPath;
     exports.extractContainingDirectoryName      = extractContainingDirectoryName;
+    exports.extractDirectoryName                = extractDirectoryName;
     exports.extractParentDirectoryPath          = extractParentDirectoryPath;
     exports.extractFileExtension                = extractFileExtension;
     exports.extractTitle                        = extractTitle;
