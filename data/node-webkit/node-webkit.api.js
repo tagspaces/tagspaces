@@ -234,7 +234,35 @@ define(function(require, exports, module) {
             TSPOSTIO.renameFile(filePath, newFilePath);
         });
     };
-        
+
+    var renameDirectory = function(dirPath, newDirName) {
+        var newDirPath = TSCORE.TagUtils.extractParentDirectoryPath(dirPath) + TSCORE.dirSeparator + newDirName;
+        console.log("Renaming file: "+dirPath+" to "+newDirPath);
+
+        // TODO check if file opened for editing in the same directory as source dir
+
+        if(dirPath.toLowerCase() === newDirPath.toLowerCase()) {
+            console.log("Initial and target directory names are the same...");
+            return false;
+        }
+        if(fs.existsSync(newDirPath)) {
+            TSCORE.showAlertDialog("Target directory name '"+newDirPath+"' already exists.","Directory renaming failed!");
+            return false;
+        }
+        var dirStatus = fs.statSync(dirPath);
+        if(dirStatus.isDirectory) {
+            fs.rename(dirPath, newDirPath, function(error) {
+                if (error) {
+                    console.log("Renaming directory failed "+error);
+                    return;
+                }
+                TSPOSTIO.renameDirectory(dirPath, newDirPath);
+            });
+        } else {
+            console.log("Path: "+dirPath+" is not a directory");
+        }
+    };
+
     var loadTextFile = function(filePath, isPreview) {
         console.log("Loading file: "+filePath);
         TSCORE.showLoadingAnimation();  
@@ -440,6 +468,7 @@ define(function(require, exports, module) {
     };    
     
     exports.createDirectory              = createDirectory;
+    exports.renameDirectory              = renameDirectory;
     exports.renameFile                   = renameFile;
     exports.loadTextFile                 = loadTextFile;
     exports.saveTextFile                 = saveTextFile;

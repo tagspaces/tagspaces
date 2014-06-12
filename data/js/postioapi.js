@@ -21,7 +21,6 @@ define(function(require, exports, module) {
     };    
     
     exports.createDirectory = function(dirPath) {
-        //TODO evtl navigate to parent dir
         TSCORE.navigateToDirectory(dirPath);
         TSCORE.hideLoadingAnimation();        
     };
@@ -51,7 +50,12 @@ define(function(require, exports, module) {
         TSCORE.hideLoadingAnimation();    
         TSCORE.PerspectiveManager.clearSelectedFiles();
     };
-        
+
+    exports.renameDirectory = function(dirOldPath, dirNewPath) {
+        TSCORE.navigateToDirectory(dirNewPath);
+        TSCORE.hideLoadingAnimation();
+    };
+
     exports.loadTextFile = function(content) {
         TSCORE.FileOpener.updateEditorContent(content);
         TSCORE.hideLoadingAnimation();

@@ -140,6 +140,20 @@ define(function(require, exports, module) {
                     })
                 )
             )
+            .append($("<li>", {} )
+                .append($("<button>", {
+                    "class":    "btn btn-link",
+                    "path":      directoryHistory[i].path,
+                    "title":     $.i18n.t("ns.common:renameDirectoryTooltip"),
+                    "data-i18n": "ns.common:renameDirectory",
+                    "text":     " "+$.i18n.t("ns.common:renameDirectory")
+                })
+                    .prepend("<i class='fa fa-terminal fa-lg fa-fw'></i>")
+                    .click( function() {
+                        showRenameDirectoryDialog($(this).attr("path"));
+                    })
+                )
+            )
             .append('<li class="divider"></li>')
             .append($("<li>", {
                 "text": $.i18n.t("ns.common:subfodersOfDirectory", {dirName: directoryHistory[i].name}),
@@ -207,7 +221,7 @@ define(function(require, exports, module) {
         if (sourceObject.offset().left+300 > window.innerWidth) {
             leftPos = -200+sourceObject.width();
         }
-        console.log(leftPos+" "+sourceObject.offset().left+" "+$menu.width()+" "+window.innerWidth);
+        //console.log(leftPos+" "+sourceObject.offset().left+" "+$menu.width()+" "+window.innerWidth);
 
         $menu.css({
             display: "block",
@@ -450,9 +464,13 @@ define(function(require, exports, module) {
         });    
         
         $( "#directoryMenuCreateDirectory" ).click( function() {
-            showCreateDirectoryDialog();
-        });    
-        
+            showCreateDirectoryDialog(dir4ContextMenu);
+        });
+
+        $( "#directoryMenuRenameDirectory" ).click( function() {
+            showRenameDirectoryDialog(dir4ContextMenu);
+        });
+
         $( "#directoryMenuOpenDirectory" ).click( function() {
             TSCORE.IO.openDirectory(dir4ContextMenu);
         });
@@ -601,25 +619,40 @@ define(function(require, exports, module) {
 
                     $( "#createNewDirectoryButton" ).on("click", function() {
                         // TODO validate folder name
-                        var bValid = true;
-                        //bValid = bValid && checkLength( newDirName, "directory name", 3, 100 );
-                        //bValid = bValid && checkRegexp( newDirName, /^[a-z]([0-9a-z_])+$/i, "Directory name may consist of a-z, 0-9, underscores, begin with a letter." );
-                        if ( bValid ) {
-                            TSCORE.IO.createDirectory($( "#createNewDirectoryButton" ).attr("path")+TSCORE.dirSeparator+$( "#newDirectoryName" ).val());
-                        }
+                        TSCORE.IO.createDirectory($( "#createNewDirectoryButton" ).attr("path")+TSCORE.dirSeparator+$( "#newDirectoryName" ).val());
                     });
-                }
-                // TODO remove use dir4ContextMenu
-                if(dirPath === undefined) {
-                    dirPath = dir4ContextMenu;
                 }
                 $( "#createNewDirectoryButton" ).attr("path", dirPath);
                 $("#newDirectoryName").val("");
                 $('#dialogDirectoryCreate').i18n();
                 $('#dialogDirectoryCreate').modal({backdrop: 'static',show: true});
         });
-    }    
-    
+    }
+
+    function showRenameDirectoryDialog(dirPath) {
+        require([
+            "text!templates/DirectoryRenameDialog.html"
+        ], function(uiTPL) {
+            if($("#dialogDirectoryRename").length < 1) {
+                var uiTemplate = Handlebars.compile( uiTPL );
+                $('body').append(uiTemplate());
+
+                $( "#renameDirectoryButton" ).on("click", function() {
+                    TSCORE.IO.renameDirectory($( "#renameDirectoryButton" ).attr("path"), $( "#directoryNewName" ).val());
+                });
+            }
+            // TODO remove use dir4ContextMenu
+            //if(dirPath === undefined) {
+            //    dirPath = dir4ContextMenu;
+            //}
+            $( "#renameDirectoryButton" ).attr("path", dirPath);
+            var dirName = TSCORE.TagUtils.extractDirectoryName(dirPath);
+            $("#directoryNewName").val(dirName);
+            $('#dialogDirectoryRename').i18n();
+            $('#dialogDirectoryRename').modal({backdrop: 'static',show: true});
+        });
+    }
+
     function deleteLocation(name) {
         console.log("Deleting folder connection..");
         TSCORE.Config.deleteLocation(name);
