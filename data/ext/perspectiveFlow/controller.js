@@ -1,26 +1,45 @@
-function TodoCtrl($scope) {
-    $scope.todos = [
-        {text:'learn angular', done:true},
-        {text:'build an angular app', done:false}];
+function myCtrl($scope) {
+    $scope.data;
+    $scope.TSCORE;
 
-    $scope.addTodo = function() {
-        $scope.todos.push({text:$scope.todoText, done:false});
-        $scope.todoText = '';
+    $scope.update = function() {
+        $scope.data = $scope.TSCORE.Search.searchData($scope.TSCORE.fileList, $scope.TSCORE.Search.nextQuery);
+        $scope.$apply();
     };
 
-    $scope.remaining = function() {
-        var count = 0;
-        angular.forEach($scope.todos, function(todo) {
-            count += todo.done ? 0 : 1;
-        });
-        return count;
+    $scope.setTSCORE = function(tscore) {
+        $scope.TSCORE = tscore;
     };
 
-    $scope.archive = function() {
-        var oldTodos = $scope.todos;
-        $scope.todos = [];
-        angular.forEach(oldTodos, function(todo) {
-            if (!todo.done) $scope.todos.push(todo);
-        });
+    $scope.selectFile = function(file) {
+        console.log("Selecting file..."+file);
+        $scope.TSCORE.PerspectiveManager.clearSelectedFiles();
+
+        //var titleBut = $($event.target).parent().find(".fileTitleButton");
+
+        //$(titleBut).parent().parent().toggleClass("ui-selected");
+        //$(titleBut).parent().parent().find(".fileSelection").find("i")
+        //    .toggleClass("fa-check-square")
+        //    .toggleClass("fa-square-o");
+
+        $scope.TSCORE.selectedFiles.push(file);
     };
+
+    $scope.openFile = function(file) {
+        console.log("Open file..."+file);
+        $scope.TSCORE.FileOpener.openFile(file);
+    };
+
+    $scope.openContextMenu = function($event, file, tag) {
+        console.log("Open context menu..."+file);
+        $scope.TSCORE.hideAllDropDownMenus();
+        //self.selectFile(this, $(this).attr("filepath"));
+        $scope.TSCORE.openTagMenu($event.target, tag, file);
+        $scope.TSCORE.showContextMenu("#tagMenu", $event.target);
+
+    };
+}
+
+function myToolbarCtrl($scope) {
+    $scope.TSCORE;
 }
