@@ -62,6 +62,8 @@
     "createTagGroupName": "Tag Group Name",
     "createNewDirectoryTitle": "Create New Directory",
     "createNewDirectoryTitleName": "New Directory Name",
+    "renameDirectoryTitle": "Rename Directory",
+    "renameDirectoryTitleName": "New Name",
     "filePropertiesTitle": "File Properties",
     "filePropertiesPath": "Path",
     "filePropertiesSize": "Size in Bytes",
