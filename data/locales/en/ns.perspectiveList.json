@@ -18,6 +18,8 @@
     "toggleThumbnailsTooltip": "Toggle Thumbnails",
     "increasThumbnailsTooltip": "Increase Thumbnails",
     "toggleFileDetailsTooltip": "Toggle File Details",
+    "reloadDirectory": "Reload Directory",
+    "reloadDirectoryTooltip": "Reload Current Directory",
     "includeSubdirsTitleConfirm": "Confirm Include Subdirectories",
     "includeSubdirsContentConfirm": "On directory with many files and/or subdirectories, this operation could be slow! Do you want to continue?",
     "-": "-"
