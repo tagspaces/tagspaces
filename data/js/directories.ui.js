@@ -113,48 +113,48 @@ define(function(require, exports, module) {
             )
             //.append('<li class="divider"></li>')
             .append($("<li>", {} )
-                .append($("<button>", {
-                        "class":    "btn btn-link",
+                .append($("<a>", {
+                        "class":    "btn btn-link pull-left",
                         "path":      directoryHistory[i].path,
                         "title":     $.i18n.t("ns.common:reloadCurrentDirectoryTooltip", {dirName: directoryHistory[i].name}),
                         "data-i18n": "ns.common:reloadCurrentDirectory",
                         "text":      " "+$.i18n.t("ns.common:reloadCurrentDirectory")
                     })
-                    .prepend("<i class='fa fa-refresh fa-lg fa-fw'></i>")
+                    .prepend("<i class='fa fa-refresh fa-fw'></i>")
                     .click( function() {
                         navigateToDirectory($(this).attr("path"));
                     })
                     )
              )
             .append($("<li>", {} )                     
-                .append($("<button>", {
-                        "class":    "btn btn-link",
+                .append($("<a>", {
+                        "class":    "btn btn-link pull-left",
                         "path":      directoryHistory[i].path,
                         "title":     $.i18n.t("ns.common:createSubdirectoryTooltip", {dirName: directoryHistory[i].name}),
                         "data-i18n": "ns.common:createSubdirectory",
                         "text":     " "+$.i18n.t("ns.common:createSubdirectory")
                     })
-                    .prepend("<i class='fa fa-folder fa-lg fa-fw'></i>")
+                    .prepend("<i class='fa fa-folder fa-fw'></i>")
                     .click( function() {
                         showCreateDirectoryDialog($(this).attr("path"));
                     })
                 )
             )
             .append($("<li>", {} )
-                .append($("<button>", {
-                    "class":    "btn btn-link",
+                .append($("<a>", {
+                    "class":    "btn btn-link pull-left",
                     "path":      directoryHistory[i].path,
                     "title":     $.i18n.t("ns.common:renameDirectoryTooltip"),
                     "data-i18n": "ns.common:renameDirectory",
                     "text":     " "+$.i18n.t("ns.common:renameDirectory")
                 })
-                    .prepend("<i class='fa fa-paragraph fa-lg fa-fw'></i>")
+                    .prepend("<i class='fa fa-paragraph fa-fw'></i>")
                     .click( function() {
                         showRenameDirectoryDialog($(this).attr("path"));
                     })
                 )
             )
-            .append('<li class="divider"></li>')
+            .append('<li class="divider" style="width: 100%"></li>')
             .append($("<li>", {
                 "text": $.i18n.t("ns.common:subfodersOfDirectory", {dirName: directoryHistory[i].name}),
                 "class": 'dropdown-header'
