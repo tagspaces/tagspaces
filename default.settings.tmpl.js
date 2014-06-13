@@ -41,8 +41,10 @@ define(function (require, exports, module) {
             { "iso": "it",	    "title": "Italiano (Italian)" },
             { "iso": "zh-CN",	"title": "中国的 (Chinese)" },
             { "iso": "bg",  	"title": "Български (Bulgarian)" },
-            { "iso": "pt-BR",   "title": "Português (Portuguese-Brazil)" },
-            { "iso": "fr",	    "title": "Français (French - almost done)" },
+            { "iso": "ja",  	"title": "日本の (Japanese)" },
+            { "iso": "pt-BR",   "title": "Português (Brazil)" },
+            { "iso": "pt-PT",   "title": "Português (Portugal)" },
+            { "iso": "fr",	    "title": "Français (French)" },
             { "iso": "sk",	    "title": "Slovenský (Slovak - almost done)" },
             { "iso": "ru",	    "title": "Русский (Russian - help needed)" },
             { "iso": "es",	    "title": "Español (Spanish - help needed)" }
