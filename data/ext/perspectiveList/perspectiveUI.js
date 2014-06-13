@@ -124,7 +124,7 @@ console.log("Loading UI for perspectiveList");
 
         $("#"+this.extensionID+"ReloadFolderButton")
             .click(function() {
-                TSCORE.navigateToDirectory(TSCORE.currentPath   );
+                TSCORE.navigateToDirectory(TSCORE.currentPath);
             });
 
         // Disabling all buttons by no data
