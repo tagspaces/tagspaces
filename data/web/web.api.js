@@ -28,7 +28,8 @@ define(function(require, exports, module) {
     function listDirectory(dirPath) {
         console.log("Listing directory: "+dirPath);
 
-        dirPath = dirPath + "/";
+        dirPath = encodeURI(dirPath + "/");
+
 
         davClient.propfind(
             dirPath,
@@ -45,7 +46,7 @@ define(function(require, exports, module) {
                 for (var entry in dirList) {
                     var path = dirList[entry].href;
                     if(dirPath !== path) {
-                        isDir = false,
+                        isDir = false;
                         filesize = undefined;
                         lmdt = undefined;
                         //console.log(dirList[entry]._namespaces["DAV:"]);
