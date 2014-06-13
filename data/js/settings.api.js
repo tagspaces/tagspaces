@@ -342,10 +342,7 @@
     //////////////////// getter and setter methods ///////////////////    
 
     var getPerspectiveExtensions = function() {
-        if(exports.Settings.ootbPerspectives === undefined) {
-            exports.Settings.ootbPerspectives = exports.DefaultSettings.ootbPerspectives;
-        }
-        return exports.Settings.ootbPerspectives;
+        return exports.DefaultSettings.ootbPerspectives;
     };
 
     var getActivatedPerspectiveExtensions = function() {
@@ -356,10 +353,7 @@
     };
 
     var getViewerExtensions = function() {
-        if(exports.Settings.ootbViewers === undefined) {
-            exports.Settings.ootbViewers = exports.DefaultSettings.ootbViewers;
-        }
-        return exports.Settings.ootbViewers;
+        return exports.DefaultSettings.ootbViewers;
     };
     
     var getEditorExtensions = function() {
