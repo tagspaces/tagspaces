@@ -462,14 +462,14 @@ define(function (require, exports, module) {
         // TODO check if the newFilePath exist or cause issues by renaming
         fsRoot.getDirectory(newDirParentPath, {create: false, exclusive: false},
             function (parentDirEntry) {
-                fsRoot.getFile(dirPath, {create: false, exclusive: false},
+                fsRoot.getDirectory(dirPath, {create: false, exclusive: false},
                     function(entry) {
                         entry.moveTo(
                             parentDirEntry,
                             newDirName,
                             function() {
                                 console.log("Directory renamed to: "+newDirPath+" Old name: "+entry.fullPath);
-                                TSPOSTIO.renameFile(entry.fullPath, newDirPath);
+                                TSPOSTIO.renameDirectory(entry.fullPath, newDirPath);
                             },
                             function() {
                                 console.log("error renaming: "+dirPath);
@@ -477,7 +477,7 @@ define(function (require, exports, module) {
                         );
                     },
                     function() {
-                        console.log("Error getting file: "+dirPath);
+                        console.log("Error getting directory: "+dirPath);
                     }
                 );
             },
