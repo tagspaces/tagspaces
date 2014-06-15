@@ -18,6 +18,8 @@
     "toggleThumbnailsTooltip": "Afficher les miniatures",
     "increasThumbnailsTooltip": "Augmenter les miniatures",
     "toggleFileDetailsTooltip": "Afficher les détails des fichiers",
+    "reloadDirectory": "Recharger le dossier",
+    "reloadDirectoryTooltip": "Recharger ce dossier",
     "includeSubdirsTitleConfirm": "Confirmer l'ajout des sous-dossiers",
     "includeSubdirsContentConfirm": "Si les sous-dossiers contiennent beaucoup de fichiers, cette opération peut être longue ! Êtes-vous sûr de vouloir continuer ?",
     "-": "-"
