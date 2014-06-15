@@ -328,6 +328,7 @@ define(function (require, exports, module) {
                         TSPOSTIO.deleteDirectory(dirPath);
                     },
                     function() {
+                        TSPOSTIO.deleteDirectoryFailed(path);
                         console.log("error deleting dir: "+dirPath);
                     }
                 );
