@@ -583,9 +583,10 @@ define(function(require, exports, module) {
               TSCORE.Config.saveSettings();      
             }); 
 
-            if(TSCORE.Config.getIsWindowMaximized()){
-                nwwin.maximize();
-            }               
+            // Disabling automatic maximazation of the main window
+            //if(TSCORE.Config.getIsWindowMaximized()){
+            //    nwwin.maximize();
+            //}
         }
         
         // Disable send to feature on all platforms except android cordova
