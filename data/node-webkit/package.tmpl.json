@@ -5,7 +5,7 @@
   "main": "index.html",
   "single-instance": false,
   "window": {
-    "icon": "assets/icon128.png",
+    "icon": "assets/icon96w.png",
     "toolbar": false,
     "position": "center",
     "min_width": 320,
