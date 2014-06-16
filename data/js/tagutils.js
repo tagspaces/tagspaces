@@ -19,10 +19,10 @@
     function extractFileNameWithoutExt(filePath) {
         var fileName = extractFileName(filePath);
         var indexOfDot = fileName.lastIndexOf(".");
-        var lastIndexBeginTagContainer = filePath.lastIndexOf(BEGIN_TAG_CONTAINER);
-        var lastIndexEndTagContainer = filePath.lastIndexOf(END_TAG_CONTAINER);
+        var lastIndexBeginTagContainer = fileName.lastIndexOf(BEGIN_TAG_CONTAINER);
+        var lastIndexEndTagContainer = fileName.lastIndexOf(END_TAG_CONTAINER);
 
-        if(indexOfDot > lastIndexBeginTagContainer && indexOfDot < lastIndexEndTagContainer) { // case: "[tag1 tag.2]"
+        if(lastIndexBeginTagContainer === 0 && lastIndexEndTagContainer+1 === fileName.length ) { // case: "[tag1 tag.2]"
             return "";
         } else if(indexOfDot > 0 ) { // case: regular
             return fileName.substring(0, indexOfDot);
@@ -78,7 +78,6 @@
     function extractTitle(filePath) {
         console.log("Extracting title from: "+filePath);
         var fileName = extractFileNameWithoutExt(filePath);
-
         var beginTagContainer = fileName.indexOf(BEGIN_TAG_CONTAINER);
         var endTagContainer = fileName.lastIndexOf(END_TAG_CONTAINER);
         
