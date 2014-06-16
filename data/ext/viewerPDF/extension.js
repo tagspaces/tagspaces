@@ -16,32 +16,26 @@ define(function(require, exports, module) {
 	
 	var extensionDirectory = TSCORE.Config.getExtensionPath()+"/"+exports.id;
 	
-	exports.init = function(filePath, elementID) {
-	    console.log("Initalization Browser PDF Viewer...");
-	    var extPath = extensionDirectory+"/pdfjs/web/viewer.html";
+    exports.init = function(filePath, elementID) {
+        console.log("Initalization Browser PDF Viewer...");
+        var extPath = extensionDirectory+"/index.html";
         $('#'+elementID).append($('<iframe>', {
             id: "iframeViewer",
             src: extPath+"?cp="+filePath,
             "nwdisable": "",
-            "nwfaketop": "",
-        }));        
-	
-	// TODO ext lib integration
-	//	require([extensionDirectory+'/croppr.js'], function() {
-	//
-	//	});    
+            "nwfaketop": ""
+        }));
 	};
 	
-	exports.viewerMode = function(isViewerMode) {
+	exports.viewerMode = function() {
 		console.log("viewerMode not supported on this extension");  
-	}
+	};
 	
-	exports.setContent = function(content) {
+	exports.setContent = function() {
 		console.log("setContent not supported on this extension"); 	
-	}
+	};
 	
 	exports.getContent = function() {
 		console.log("getContent not supported on this extension"); 	
-	}
-
+	};
 });
