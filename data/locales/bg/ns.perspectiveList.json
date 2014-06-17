@@ -18,6 +18,8 @@
     "toggleThumbnailsTooltip": "Превключи миниатюрния преглед",
     "increasThumbnailsTooltip": "Увеличи миниатюрния преглед",
     "toggleFileDetailsTooltip": "Покажи/скрий детайлите на файла",
+    "reloadDirectory": "Презареди директорията",
+    "reloadDirectoryTooltip": "Презареди текушата директория",
     "includeSubdirsTitleConfirm": "Потвърди включването на поддиректориите",
     "includeSubdirsContentConfirm": "Операцията може да отнеме много време при директории с много файлови и/или поддиректории! Желаете ли да продължите?",
     "-": "-"
