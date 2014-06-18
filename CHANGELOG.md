@@ -1,5 +1,25 @@
 ﻿#Changelog
 
+##Version 1.8.3 / 2014.05.18
+- brazilian-portuguese translation added
+- portuguese translation added
+- japanese translation added
+- french translation added
+- slovak translation added
+- adding delete directory functionality
+- adding rename directory functionality
+- adding a export in CSV functionality in the perspectiveList
+- disabling automatic resizing of the main window
+- fixing missing tags in the file viewer
+- fixing saving of UTF8 content in chrome [#14](https://github.com/uggrock/tagspaces/issues/14) , [#64](https://github.com/uggrock/tagspaces/issues/64) , [#80](https://github.com/uggrock/tagspaces/issues/80)
+- [webdav] fixing issue caused by spaces in the directory names
+- [API] ading extractDirectoryName method to the tagutils
+- [debian]adding application new icon
+- downgrading to a old pdf.js lib, due incorpartabilities in PDF rendering of images
+- adding filesaver.js to the project
+- updating to fontawesome 4.1
+- updating hammer.js to a newer version
+
 ##Version 1.8.1 / 2014.05.15
 - adding chinese and bulgarian(50%) translation to the project
 - releasing a technology preview of a self hosting version of TagSpaces based on WebDAV
