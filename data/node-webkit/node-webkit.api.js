@@ -30,6 +30,30 @@ define(function(require, exports, module) {
         //fs.appendFile(errorLogFile, '---uncaughtException---\n' + msg);
     });
 
+    var handleTray = function() {
+        // TODO disable in Ubuntu until node-webkit issue in unity fixed
+
+        // Reference to window and tray
+        var win = gui.Window.get();
+        var tray;
+
+        // Get the minimize event
+        win.on('minimize', function() {
+            // Hide window
+            this.hide();
+
+            // Show tray
+            tray = new gui.Tray({ title: 'Tray', icon: 'icon128.png' });
+
+            // Show window and remove tray when clicked
+            tray.on('click', function() {
+                win.show();
+                this.remove();
+                tray = null;
+            });
+        });
+    };
+
     var handleStartParameters = function() {
         //Windows "C:\Users\na\Desktop\TagSpaces\tagspaces.exe" --original-process-start-time=13043601900594583 "G:\data\assets\icon16.png"
         //Linux /opt/tagspaces/tagspaces /home/na/Dropbox/TagSpaces/README[README].md
@@ -51,6 +75,10 @@ define(function(require, exports, module) {
         var aboutMenu = new gui.Menu();
         var viewMenu = new gui.Menu();
         var win = gui.Window.get();
+
+        /*for (var i = 0; i < win.menu.items.length; ++i) {
+            win.menu.removeAt[i];
+        }*/
 
         // TODO Clear the menu on reload
         if(TSCORE.Config.getShowMainMenu()) {
@@ -91,13 +119,6 @@ define(function(require, exports, module) {
                     win.showDevTools();
                 } }));
 
-            //viewMenu.append(new gui.MenuItem({
-            //    type: 'normal',
-            //    label: $.i18n.t("ns.common:reloadApplication")+" ("+TSCORE.Config.getReloadApplicationKeyBinding()+")",
-            //    click: function (){
-            //        win.reloadIgnoringCache();
-            //    } }));
-
             viewMenu.append(new gui.MenuItem({ type: 'separator' }));
 
             viewMenu.append(new gui.MenuItem({
@@ -117,7 +138,7 @@ define(function(require, exports, module) {
                 submenu: aboutMenu
             }));
 
-            gui.Window.get().menu = rootMenu;
+            win.menu = rootMenu;
         }
     };
 
@@ -501,5 +522,6 @@ define(function(require, exports, module) {
     exports.getFileProperties            = getFileProperties;
     exports.initMainMenu                 = initMainMenu;
     exports.handleStartParameters        = handleStartParameters;
+    exports.handleTray                   = handleTray;
 
 });
