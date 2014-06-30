@@ -198,11 +198,6 @@ define(function(require, exports, module) {
         }         
     }
 
-    /* var directoryExist = function(dirPath) {
-        console.log("Checks if a directory exist: "+dirPath);
-        //TSPOSTIO.
-    }; */
-    
     var createDirectoryIndex = function(dirPath) {
         console.log("Creating index for directory: "+dirPath);
         TSCORE.showLoadingAnimation();  
@@ -436,10 +431,10 @@ define(function(require, exports, module) {
     };    
 
     var selectDirectory = function() {
-        if(document.getElementById('folderDialog') === null) {
-            $("#folderLocation").after('<input style="display:none;" id="folderDialog" type="file" nwdirectory />');
+        if(document.getElementById('folderDialogNodeWebkit') === null) {
+            $("body").append('<input style="display:none;" id="folderDialogNodeWebkit" type="file" nwdirectory />');
         }
-        var chooser = $('#folderDialog');        
+        var chooser = $('#folderDialogNodeWebkit');
         chooser.change(function() {
             TSPOSTIO.selectDirectory($(this).val());
         });
