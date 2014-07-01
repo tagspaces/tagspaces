@@ -89,9 +89,12 @@ define(function(require, exports, module) {
                 tsCoreUI.showWelcomeDialog();
             }
 
-            // Handle command line argument in node-webkit
             if(isNode) {
+                // Handle command line argument in node-webkit
                 tsIOApi.handleStartParameters();
+
+                // Handle minimizing to the tray in node-webkit
+                //tsIOApi.handleTray();
             }
 
             console.log("Layout initialized");
