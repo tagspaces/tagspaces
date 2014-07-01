@@ -189,6 +189,7 @@ found in the LICENSE file.
 				<include name="perspectiveHealth/**/*" />
 				<include name="perspectiveGraph/**/*" />
                 <include name="perspectiveFlow/**/*" />
+                <include name="perspectiveOCRO/**/*" />
 				<include name="editorHTML/**/*" />
 				<include name="editorText/**/*" />
 				<include name="editorODF/**/*" />
