@@ -1,0 +1,17 @@
+#perspectiveOCROContainer .fileTile {
+    margin: 3px;
+    padding: 1px 1px 1px 3px;
+    float: left;
+    border: 1px solid #D4D4D4;
+    text-align: left;
+    width: 170px;
+    height: 170px;
+    overflow: hidden;
+    position:relative;
+    background-color: white;
+}
+
+#perspectiveOCROContainer .thumbImgTile {
+    max-width: 160px;
+    max-height: 160px;
+}
