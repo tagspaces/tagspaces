@@ -15,13 +15,25 @@ define(function(require, exports, module) {
             TSCORE.IO.listSubDirectories(parent);
         });
 
+        if(isWin) {
+            $( "#driveSelectorForm" ).show();
+            var driveSelector = $('#driveSelector');
+            driveSelector.change(function() {
+                $('#subdirectoriesArea').empty();
+                $('#directoryPath').val(driveSelector.val());
+                TSCORE.IO.listSubDirectories(driveSelector.val());
+            });
+        }
+
         $( "#selectDirectoryButton" ).click(function() {
             TSPOSTIO.selectDirectory($("#directoryPath").val());
+            $('#driveSelector').prop('selectedIndex',0);
         });
     }    
     
     function reInitUI(dirPath) {
         $('#directoryPath').val(dirPath);
+
 
         var subfolders = $('#subdirectoriesArea').empty();
         if(TSCORE.subfoldersDirBrowser === undefined || TSCORE.subfoldersDirBrowser.length <= 0) {
