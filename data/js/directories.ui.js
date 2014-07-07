@@ -13,12 +13,90 @@ define(function(require, exports, module) {
     var directoryHistory = [];
     
     var dir4ContextMenu = null;
-    
-//    var currentLocationName = undefined;
-    
+
+    var tsMetadataFolder = ".ts";
+    var tsMetadataFile = "tsm.json";
+
+    var alternativeDirectoryNavigatorTmpl = Handlebars.compile(
+//        '<i class="fa fa-home"></i>&nbsp;' +
+        '{{#each dirHistory}}'+
+        '<div class="btn-group dropup">'+
+            '<button class="btn btn-link dropdown-toggle" data-menu="{{@index}}">'+
+                '{{name}}&nbsp;&nbsp;<i class="fa fa-caret-right"></i>&nbsp;' +
+            '</button>'+
+            '<div class="dropdown clearfix dirAltNavMenu" id="dirMenu{{@index}}">'+
+                '<ul style="overflow-y: auto; max-height: 430px; width: 250px; padding: 5px; display: block;" role="menu" class="dropdown-menu">'+
+                    '<li class="dropdown-header">{{../actionsForDirectory}}&nbsp;"{{name}}"<button type="button" class="close">×</button></li>'+
+                    '<li><a class="btn btn-link pull-left reloadCurrentDirectory" data-path="{{path}}"><i class="fa fa-refresh fa-fw"></i>&nbsp;{{../reloadCurrentDirectory}}</a></li>'+
+                    '<li><a class="btn btn-link pull-left createSubdirectory" data-path="{{path}}"><i class="fa fa-folder fa-fw"></i>&nbsp;{{../createSubdirectory}}</a></li>'+
+                    '<li><a class="btn btn-link pull-left renameDirectory" data-path="{{path}}"><i class="fa fa-paragraph fa-fw"></i>&nbsp;{{../renameDirectory}}</a></li>'+
+                    '<li class="divider" style="width: 100%"></li>'+
+                    '<li class="dropdown-header">{{../subfodersOfDirectory}}&nbsp;"{{name}}"</li>'+
+                    '{{#if children}}'+
+                    '{{#each children}}'+
+                    '<button class="btn dirButton" data-path="{{path}}" title="{{path}}" style="margin: 1px;">'+
+                    '<i class="fa fa-folder-o"></i>{{name}}</button>'+
+                    '{{/each}}'+
+                    '{{else}}'+
+                    '<div>{{../../noSubfoldersFound}}</div>'+
+                    '{{/if}}'+
+                '</ul>'+
+            '</div>'+
+        '</div>'+
+        '{{/each}}'
+    );
+
+    var mainDirectoryNavigatorTmpl = Handlebars.compile(
+        '<div>{{#each dirHistory}}'+
+        '<div class="accordion-group disableTextSelection" style="width: 99%; border: 0px #aaa solid;">'+
+            '<div class="accordion-heading btn-group" key="{{path}}" style="width:100%; margin: 0; ">'+
+                '<button class="btn btn-link btn-lg directoryIcon" data-toggle="collapse" data-target="#dirButtons{{@index}}" key="{{path}}" title="{{../toggleDirectory}}">'+
+                    '<i class="fa fa-folder fa-fw"></i>'+
+                '</button>'+
+                '<button class="btn btn-link directoryTitle ui-droppable" key="{{path}}" title="{{path}}">{{name}}</button>'+
+                '<button class="btn btn-link btn-lg directoryActions" key="{{path}}" title="{{../directoryOperations}}">'+
+                    '<b class="fa fa-ellipsis-v"></b>'+
+                '</button>'+
+            '</div>'+
+            '<div class="accordion-body collapse in" id="dirButtons{{@index}}">'+
+                '<div class="accordion-inner" id="dirButtonsContent{{@index}}" style="padding: 4px;">'+
+                    '{{#if children}}'+
+                    '<div>{{#each children}}'+
+                        '<button class="btn btn-sm dirButton ui-droppable" key="{{path}}" title="{{path}}" style="margin: 1px;">'+
+                            '<i class="fa fa-folder-o"></i>&nbsp;{{name}}</button>'+
+                    '{{/each}}</div>'+
+                    '{{else}}'+
+                        '<div>{{../../noSubfoldersFound}}</div>'+
+                    '{{/if}}'+
+                '</div>'+
+            '</div>'+
+        '</div>'+
+        '{{/each}}</div>'
+    );
+
+    var locationChooserTmpl = Handlebars.compile(
+        '<li class="dropdown-header" data-i18n="ns.common:yourLocations">{{yourLocations}} '+
+            '<button type="button" class="close">×</button>'+
+        '</li>'+
+        '<li class="divider" ></li>'+
+        '{{#each locations}}'+
+        '<li style="line-height: 45px">'+
+            '<button title="/owncloud6/remote.php/webdav" path="{{path}}" name="{{name}}" style="width: 180px; text-align: left; border: 0;" class="btn btn-default">'+
+                '<i class="fa fa-bookmark"></i>&nbsp;{{name}}</button>'+
+            '<button type="button" data-i18n="[title]ns.common:editLocation" title="{{editLocationTitle}}" location="{{name}}" path="{{path}}" class="btn btn-link pull-right" style="margin-right: 5px; margin-top: 5px">'+
+                '<i class="fa fa-pencil fa-lg"></i>'+
+            '</button>'+
+        '</li>'+
+        '{{/each}}'
+    );
+
     function openLocation(path) {
         console.log("Opening connection in : "+path);
-    
+
+        if(TSCORE.Config.getLoadLocationMeta()) {
+            loadFolderMetaData(path);
+        }
+
         var currentLocation = TSCORE.Config.getLocation(path);
         if(currentLocation != undefined) {
             document.title = currentLocation.name + " | " + TSCORE.Config.DefaultSettings.appName;
@@ -42,7 +120,20 @@ define(function(require, exports, module) {
         navigateToDirectory(path);
         
         TSCORE.showLocationsPanel();
-    }  
+    }
+
+    function loadFolderMetaData(path) {
+        var metadataPath = "file://"+path+TSCORE.dirSeparator+tsMetadataFolder+TSCORE.dirSeparator+tsMetadataFile;
+        require(["text!"+metadataPath], function(jsonFile) {
+            var metadata = JSON.parse(jsonFile);
+            //console.log("Location Metadata: "+JSON.stringify(metadata));
+
+            if(metadata.tagGroups.length > 0) {
+                TSCORE.locationTags = metadata.tagGroups[0].children;
+                TSCORE.generateTagGroups();
+            }
+        });
+    }
     
     // Updates the directory subtree
     function updateSubDirs(dirList) {
@@ -55,8 +146,10 @@ define(function(require, exports, module) {
                 directoryHistory[i].children = [];
                 for(var j=0; j < dirList.length; j++) {
                      if(!dirList[j].isFile) {
-                        directoryHistory[i].children.push(dirList[j]);
-                        hasSubFolders = true;
+                         if (TSCORE.Config.getShowUnixHiddenEntries() || (!TSCORE.Config.getShowUnixHiddenEntries() && (dirList[j].name.indexOf(".") !== 0))) {
+                             directoryHistory[i].children.push(dirList[j]);
+                             hasSubFolders = true;
+                         }
                      }
                 }
                 // Sort the dirList alphabetically
@@ -64,11 +157,6 @@ define(function(require, exports, module) {
             }
         }
 
-        // If the folder contains subfolders, automatically opening the directory browser
-        //if(hasSubFolders) {
-        //    TSCORE.showLocationsPanel();
-        //}               
-        
         generateDirPath();
         generateAlternativeDirPath();
         handleDirCollapsion();     
@@ -76,141 +164,56 @@ define(function(require, exports, module) {
 
     function generateAlternativeDirPath() {
         console.log("Generating Alternative Directory Path...");
-        var subfolders, 
-            homeIcon,
-            i;
-
         var $alternativeNavigator = $("#alternativeNavigator");
-        $alternativeNavigator.children().remove();
-        for(i=0; i < directoryHistory.length; i++) {
-            homeIcon = "";
-            if(i===0) {
-                homeIcon = "<i class='fa fa-home'></i>&nbsp;";
-            }
-            
-            subfolders = $("<div>", {
-                class: "dropdown clearfix dirAltNavMenu",
-                "id":         "dirMenu"+i
-            })
-            .append($("<ul>", {
-                   "style":      "overflow-y: auto; max-height: 430px; width: 250px; padding: 5px; display: block;",
-                   "role":       "menu",
-                   "class":      "dropdown-menu"
-            })
-            .append($("<li>", {
-                    "text": $.i18n.t("ns.common:actionsForDirectory", {dirName: directoryHistory[i].name}),
-                    "class": 'dropdown-header'
-                })
-                .append($('<button>', {
-                            type: "button",
-                            class: "close",
-                            text: "×"
-                        })
-                        .click(function() {
-                            TSCORE.hideAllDropDownMenus();
-                        })
-                    )
-            )
-            //.append('<li class="divider"></li>')
-            .append($("<li>", {} )
-                .append($("<a>", {
-                        "class":    "btn btn-link pull-left",
-                        "path":      directoryHistory[i].path,
-                        "title":     $.i18n.t("ns.common:reloadCurrentDirectoryTooltip", {dirName: directoryHistory[i].name}),
-                        "data-i18n": "ns.common:reloadCurrentDirectory",
-                        "text":      " "+$.i18n.t("ns.common:reloadCurrentDirectory")
-                    })
-                    .prepend("<i class='fa fa-refresh fa-fw'></i>")
-                    .click( function() {
-                        navigateToDirectory($(this).attr("path"));
-                    })
-                    )
-             )
-            .append($("<li>", {} )                     
-                .append($("<a>", {
-                        "class":    "btn btn-link pull-left",
-                        "path":      directoryHistory[i].path,
-                        "title":     $.i18n.t("ns.common:createSubdirectoryTooltip", {dirName: directoryHistory[i].name}),
-                        "data-i18n": "ns.common:createSubdirectory",
-                        "text":     " "+$.i18n.t("ns.common:createSubdirectory")
-                    })
-                    .prepend("<i class='fa fa-folder fa-fw'></i>")
-                    .click( function() {
-                        showCreateDirectoryDialog($(this).attr("path"));
-                    })
-                )
-            )
-            .append($("<li>", {} )
-                .append($("<a>", {
-                    "class":    "btn btn-link pull-left",
-                    "path":      directoryHistory[i].path,
-                    "title":     $.i18n.t("ns.common:renameDirectoryTooltip"),
-                    "data-i18n": "ns.common:renameDirectory",
-                    "text":     " "+$.i18n.t("ns.common:renameDirectory")
-                })
-                    .prepend("<i class='fa fa-paragraph fa-fw'></i>")
-                    .click( function() {
-                        showRenameDirectoryDialog($(this).attr("path"));
-                    })
-                )
-            )
-            .append('<li class="divider" style="width: 100%"></li>')
-            .append($("<li>", {
-                "text": $.i18n.t("ns.common:subfodersOfDirectory", {dirName: directoryHistory[i].name}),
-                "class": 'dropdown-header'
-            })
-            ));
-                          
-            if(directoryHistory[i].children.length <= 0) {
-                    subfolders.find("ul").append($("<div>", {
-                        "class":        'alert alert-warning',
-                        "data-i18n":    "ns.common:noSubfoldersFound",
-                        "text":         $.i18n.t("ns.common:noSubfoldersFound")
-                    }));
-            } else {
-                for(var j=0; j < directoryHistory[i].children.length; j++) {
-                    if (TSCORE.Config.getShowUnixHiddenEntries() || 
-                            (!TSCORE.Config.getShowUnixHiddenEntries() &&
-                                (directoryHistory[i].children[j].name.indexOf(".") !== 0))
-                        ) {
-                        subfolders.find("ul").append($("<button>", {
-                            "class":    "btn dirButton",
-                            "key":      directoryHistory[i].children[j].path,
-                            "title":    directoryHistory[i].children[j].path,
-                            "style":    "margin: 1px;",
-                            "text":     " "+directoryHistory[i].children[j].name
-                        })
-                        .prepend("<i class='fa fa-folder-o'></i>")            
-                        .click( function() {
-                            navigateToDirectory($(this).attr("key"));
-                        })
-                        );
-                    }
-               }        
-           }
 
-            $alternativeNavigator.append(
-                $("<div>", {
-                    "class":      "btn-group dropup"
-                })
-                .append($("<button>", {
-                        "class":       "btn btn-link dropdown-toggle",
-                        "text":        directoryHistory[i].name,
-                        "key":         directoryHistory[i].path,
-                        "data-menu":   i
-                        //"data-toggle": "dropdown"
-                    })
-                    .on("contextmenu click", function () {
-                        TSCORE.hideAllDropDownMenus();
-                        showDropUp("#dirMenu"+$(this).attr("data-menu"), $(this));
-                        return false;
-                    })
-                    .prepend(homeIcon)
-                    .append("&nbsp;&nbsp;<i class='fa fa-caret-right'></i>&nbsp;")
-                )
-                .append(subfolders)
-            );
-        } // FOR End
+        $alternativeNavigator.children().remove();
+        $alternativeNavigator.html(alternativeDirectoryNavigatorTmpl({
+            "dirHistory":directoryHistory,
+            "actionsForDirectory":$.i18n.t("ns.common:actionsForDirectory2"),
+            "subfodersOfDirectory":$.i18n.t("ns.common:subfodersOfDirectory2"),
+            "noSubfoldersFound":$.i18n.t("ns.common:noSubfoldersFound"),
+            "reloadCurrentDirectory":$.i18n.t("ns.common:reloadCurrentDirectory"),
+            "createSubdirectory":$.i18n.t("ns.common:createSubdirectory"),
+            "renameDirectory":$.i18n.t("ns.common:renameDirectory")
+        }));
+
+        $alternativeNavigator.find(".reloadCurrentDirectory").each(function() {
+            $(this).on("click", function () {
+                navigateToDirectory($(this).attr("data-path"))
+            })
+        });
+
+        $alternativeNavigator.find(".createSubdirectory").each(function() {
+            $(this).on("click", function () {
+                showCreateDirectoryDialog($(this).attr("data-path"))
+            })
+        });
+
+        $alternativeNavigator.find(".renameDirectory").each(function() {
+            $(this).on("click", function () {
+                showRenameDirectoryDialog($(this).attr("data-path"))
+            })
+        });
+
+        $alternativeNavigator.find(".dropdown-toggle").each(function() {
+            $(this).on("contextmenu click", function () {
+                TSCORE.hideAllDropDownMenus();
+                showDropUp("#dirMenu"+$(this).attr("data-menu"), $(this));
+                return false;
+            })
+        });
+
+        $alternativeNavigator.find(".close").each(function() {
+            $(this).click(function() {
+                TSCORE.hideAllDropDownMenus();
+            })
+        });
+
+        $alternativeNavigator.find(".dirButton").each(function() {
+            $(this).click(function () {
+                navigateToDirectory($(this).attr("data-path"));
+            })
+        });
     }
 
     var showDropUp = function(menuId, sourceObject) {
@@ -234,126 +237,58 @@ define(function(require, exports, module) {
         console.log("Generating Directory Path...");
         var $locationContent = $("#locationContent");
         $locationContent.children().remove();
-        $locationContent.addClass("accordion");
-        for(var i=0; i < directoryHistory.length; i++) {
-            $locationContent.append($("<div>", {
-                "class":        "accordion-group disableTextSelection",   
-                "style":        "width: 99%; border: 0px #aaa solid;"
+
+        $locationContent.html(mainDirectoryNavigatorTmpl({
+            "dirHistory":directoryHistory,
+            "noSubfoldersFound":$.i18n.t("ns.common:noSubfoldersFound"),
+            "toggleDirectory":$.i18n.t("ns.common:toggleDirectory"),
+            "directoryOperations":$.i18n.t("ns.common:directoryOperations")
+        }));
+
+        $locationContent.find(".directoryTitle").each(function() {
+            $(this)
+            .click(function () {
+                navigateToDirectory($(this).attr("key"));
             })
-            
-            .append($("<div>", { 
-                    "class":    "accordion-heading btn-group",
-                    "key":      directoryHistory[i].path, 
-                    "style":    "width:100%; margin: 0px; "
+            .droppable({
+                greedy: "true",
+                accept: '.fileTitleButton,.fileTile',
+                hoverClass: "dropOnFolder",
+                drop: function( event, ui ) {
+                    ui.draggable.detach();
+                    var filePath = ui.draggable.attr("filepath");
+                    var fileName = TSCORE.TagUtils.extractFileName(filePath);
+                    var targetDir = $(this).attr("key");
+                    console.log("Moving file: "+filePath+" to "+targetDir);
+                    TSCORE.IO.renameFile(filePath, targetDir+TSCORE.dirSeparator+fileName);
+                    $(ui.helper).remove();
                 }
-            )
-
-            .append($("<button>", { // Dir toggle button
-                        "class":        "btn btn-link btn-lg directoryIcon",
-                        "data-toggle":  "collapse",
-                        "data-target":  "#dirButtons"+i,                        
-                        "key":          directoryHistory[i].path,
-                        "title":        $.i18n.t("ns.common:toggleDirectory")
-                    }  
-                )
-                .html("<i class='fa fa-folder-open' style='margin-left: 5px;'></i>")
-            )// End dir toggle button  
-            
-            .append($("<button>", { // Dir main button
-                        "class":        "btn btn-link directoryTitle",
-                        "key":          directoryHistory[i].path,
-                        "title":        directoryHistory[i].path,
-                        "text":         directoryHistory[i].name
-                    }  
-                )
-                .click(function() {
-                        navigateToDirectory($(this).attr("key"));
-                    }
-                )                                
-                .droppable(
-                    {
-                        greedy: "true",                    
-                        accept: '.fileTitleButton,.fileTile',
-                        hoverClass: "dropOnFolder",
-                        drop: function( event, ui ) {
-                            ui.draggable.detach();
-                            var filePath = ui.draggable.attr("filepath");
-                            var fileName = TSCORE.TagUtils.extractFileName(filePath);
-                            var targetDir = $(this).attr("key");
-                            console.log("Moving file: "+filePath+" to "+targetDir);
-                            TSCORE.IO.renameFile(filePath, targetDir+TSCORE.dirSeparator+fileName);
-                            $(ui.helper).remove();
-                        }                  
-                    }
-                )
-            )// End dir main button  
-            
-            .append($("<button>", {
-                    "class":        "btn btn-link btn-lg directoryActions",
-                    "key":          directoryHistory[i].path,
-                    "title":        $.i18n.t("ns.common:directoryOperations")
-            })                       
-            //.dropdown( 'attach' , '#directoryMenu' )
-            .append("<b class='fa fa-ellipsis-v'>")
-            ) // end gear    
-                    
-            ) // end heading
-            
-            .append($("<div>", { 
-                "class":    "accordion-body collapse in",
-                "id":       "dirButtons"+i,
-                "style":    "margin: 0 0 0 3px; border: 0;"
-            })          
-            .append($("<div>", { 
-                "class":    "accordion-inner",
-                "id":       "dirButtonsContent"+i,
-                "style":    "padding: 2px; border: 0;"
             })
-            ) // end accordion-inner    
-            ) // end accordion button        
+        });
 
-            ); // end group
-
-            var dirButtons = $("<div>").appendTo( "#dirButtonsContent"+i );  
-            if(directoryHistory[i].children.length <= 0) {
-                    dirButtons.append("<div class='alert'><strong> No subfolders found</strong></div>");          
-            } else {
-                for(var j=0; j < directoryHistory[i].children.length; j++) {
-                    if (TSCORE.Config.getShowUnixHiddenEntries() || 
-                            (!TSCORE.Config.getShowUnixHiddenEntries() && (directoryHistory[i].children[j].name.indexOf(".") !== 0))) {
-                        dirButtons.append($("<button>", { 
-                            "class":    "btn btn-sm dirButton", 
-                            "key":      directoryHistory[i].children[j].path,
-                            "title":    directoryHistory[i].children[j].path,
-                            "style":    "margin: 1px;",
-                            "text":     " "+directoryHistory[i].children[j].name
-                        })
-                        .droppable({
-                            greedy: "true",
-                            accept: ".fileTitleButton,.fileTile",
-                            hoverClass: "dropOnFolder",
-                            drop: function( event, ui ) {
-                                ui.draggable.detach();
-                                // Fixing issue with dropping on stacked/overlapped directories
-                                if( $(this).parent().parent().parent().hasClass("in") ) {
-                                    var filePath = ui.draggable.attr("filepath");
-                                    var fileName = TSCORE.TagUtils.extractFileName(filePath);
-                                    var targetDir = $(this).attr("key");
-                                    console.log("Moving file: "+filePath+" to "+targetDir);
-                                    TSCORE.IO.renameFile(filePath, targetDir+TSCORE.dirSeparator+fileName);
-                                    $(ui.helper).remove();  
-                                }                              
-                            }                   
-                        }) 
-                        .prepend("<i class='fa fa-folder-o'></i>")            
-                        .click( function() {
-                            navigateToDirectory($(this).attr("key"));
-                        })                   
-                        );
+        $locationContent.find(".dirButton").each(function() {
+            $(this)
+            .click(function () {
+                navigateToDirectory($(this).attr("key"));
+            })
+            .droppable({
+                greedy: "true",
+                accept: ".fileTitleButton,.fileTile",
+                hoverClass: "dropOnFolder",
+                drop: function( event, ui ) {
+                    ui.draggable.detach();
+                    // Fixing issue with dropping on stacked/overlapped directories
+                    if( $(this).parent().parent().parent().hasClass("in") ) {
+                        var filePath = ui.draggable.attr("filepath");
+                        var fileName = TSCORE.TagUtils.extractFileName(filePath);
+                        var targetDir = $(this).attr("key");
+                        console.log("Moving file: "+filePath+" to "+targetDir);
+                        TSCORE.IO.renameFile(filePath, targetDir+TSCORE.dirSeparator+fileName);
+                        $(ui.helper).remove();
                     }
-               }        
-           }
-        }
+                }
+            })
+        });
     }
     
     function handleDirCollapsion() {
@@ -439,10 +374,10 @@ define(function(require, exports, module) {
             var locationTitle = directoryPath.substring(directoryPath.lastIndexOf(TSCORE.dirSeparator)+1,directoryPath.length);
             directoryHistory.push({
                 "name": locationTitle,
-                "path" : directoryPath,
-                "collapsed" : false
-            });             
-        }    
+                "path": directoryPath,
+                "collapsed": false
+            });
+        }
         console.log("Dir History: "+JSON.stringify(directoryHistory));
         TSCORE.currentPath = directoryPath;
         TSCORE.IO.listDirectory(directoryPath);    
@@ -483,6 +418,10 @@ define(function(require, exports, module) {
 
         $( "#directoryMenuOpenDirectory" ).click( function() {
             TSCORE.IO.openDirectory(dir4ContextMenu);
+        });
+
+        $( "#createNewLocation" ).click(function() {
+            showLocationCreateDialog();
         });
     }
 
@@ -705,55 +644,27 @@ define(function(require, exports, module) {
     function initLocations() {
         console.log("Creating location menu...");
         
-        var $connectionList = $( "#connectionsList" ); 
-        $connectionList.children().remove();
-        $connectionList.attr("style","overflow-y: auto; max-height: 500px; width: 238px;");
-        $connectionList.append($('<li>', {
-                class: "dropdown-header",
-                "data-i18n": "ns.common:yourLocations"
+        var $locationsList = $( "#locationsList" );
+        $locationsList.children().remove();
+
+        $locationsList.html(locationChooserTmpl({
+            "locations":TSCORE.Config.Settings.tagspacesList,
+            "yourLocations":$.i18n.t("ns.common:yourLocations"),
+            "editLocationTitle":$.i18n.t("ns.common:editLocation")
+        }));
+
+        $locationsList.find(".btn-default").each(function() {
+            $(this).on("click", function () {
+                openLocation($(this).attr( "path" ));
             })
-            .append('<button type="button" class="close">×</button>'));
-        $connectionList.append('<li class="divider"></li>');
-        var connectionsList = TSCORE.Config.Settings.tagspacesList;
-        for (var i=0; i < connectionsList.length; i++) { 
-            $connectionList.append(
-                $('<li>', {
-                    style: "line-height: 45px"
-                }).append(
-                    $('<button>', { 
-                        "title":  connectionsList[i].path,
-                        "path":   connectionsList[i].path,
-                        "name":   connectionsList[i].name,
-                        "text":   " "+connectionsList[i].name,
-                        "style":  "width: 180px; text-align: left; border: 0px;",
-                        "class":  "btn btn-default"
-                        } )
-                        .click(function() {
-                            openLocation($(this).attr( "path" ));                           
-                        })
-                        .prepend("<i class='fa fa-bookmark'></i>&nbsp;")
-                    )
-                    .append(
-                        $('<button>', { 
-                            type:        "button",
-                            "data-i18n": "[title]ns.common:editLocation",
-                            location:    connectionsList[i].name,
-                            path:        connectionsList[i].path,
-                            class:       "btn btn-link pull-right",
-                            style:       "margin-right: 5px; margin-top: 5px"
-                            } )
-                            .append("<i class='fa fa-pencil fa-lg'></i>")
-                            .click(function() {
-                                console.log("Edit location clicked");
-                                showLocationEditDialog($(this).attr("location"),$(this).attr("path"));
-                                return false;
-                            })
-                    )
-                );
-        }
-        
-        $( "#createNewLocation" ).click(function() {
-            showLocationCreateDialog();         
+        });
+
+        $locationsList.find(".btn-link").each(function() {
+            $(this).on("click", function () {
+                console.log("Edit location clicked");
+                showLocationEditDialog($(this).attr("location"),$(this).attr("path"));
+                return false;
+            })
         });
 
     }
