@@ -462,16 +462,26 @@ li hr {
     color: #333 !important;
 }
 
+.tagGroupContainer {
+    width: 99%;
+    border: 0 #aaa solid;
+}
+
+.tagGroupContainerHeading {
+    width:100%;
+    margin: 0;
+}
+
 .tagGroupTitle {
     text-align: left;
     padding: 10px 0 0 2px;
     font-size: 14px !important;
-    width:68%;
+    width:78%;
     color: #333 !important; 
 }
 
 .tagGroupActions {
-    width:20%; 
+    width:10%;
     padding-right: 7px;
     color: #333 !important;
     text-align: right;         

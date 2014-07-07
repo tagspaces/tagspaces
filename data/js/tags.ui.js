@@ -8,7 +8,40 @@
 
     console.log("Loading tags.ui.js...");
 
+    var locationTagGroupKey    = "LTG",
+        calculatedTagGroupKey  = "CTG";
+
     var TSCORE = require("tscore");
+
+    var tagGroupsTmpl = Handlebars.compile(
+        '{{#each tagGroups}}'+
+        '<div class="accordion-group disableTextSelection tagGroupContainer">'+
+            '<div class="accordion-heading  btn-group ui-droppable tagGroupContainerHeading" key="{{key}}">'+
+                '<button class="btn btn-link btn-lg tagGroupIcon" data-toggle="collapse" data-target="#tagButtons{{@index}}" data-i18n="[title]ns.common:toggleTagGroup" title="{{../toggleTagGroup}}">'+
+                    '<i class="fa fa-tags fa-fw"></i>'+
+                '</button>'+
+                '<button class="btn btn-link tagGroupTitle" key="{{key}}">{{title}}</button>'+
+                '<button class="btn btn-link btn-lg tagGroupActions" key="{{key}}" data-i18n="[title]ns.common:tagGroupOperations" title="{{../tagGroupOperations}}">'+
+                    '<b class="fa fa-ellipsis-v"></b>'+
+                '</button>'+
+            '</div>'+
+            '<div class="accordion-body collapse in" id="tagButtons{{@index}}">'+
+                '<div class="accordion-inner" id="tagButtonsContent{{@index}}" style="padding: 2px;">'+
+                    '<div>'+
+                        '{{#each children}}'+
+                        '<a class="btn btn-sm tagButton ui-draggable" tag="{{title}}" parentkey="{{../key}}" style="{{style}}" title="{{titleUI}}" >' +
+                            '<span class="{{icon}}" /> '+
+                            '{{title}}'+
+                            '{{#if count}} [{{count}}]{{/if}}'+
+                            ' <span class="caret"></span>'+
+                        '</a>'+
+                        '{{/each}}'+
+                    '</div>'+
+                '</div>'+
+            '</div>'+
+        '</div>'+
+        '{{/each}}'
+    );
 
     function initUI() {
 
@@ -155,130 +188,76 @@
     function generateTagGroups() {
         console.log("Generating TagGroups...");
         var $tagGroupsContent = $("#tagGroupsContent");
-        $tagGroupsContent.empty().addClass("accordion");
+        $tagGroupsContent.children().remove();
+        $tagGroupsContent.addClass("accordion");
 
         // Show TagGroup create button if no taggroup exist
         if(TSCORE.Config.Settings.tagGroups.length < 1) {
             $tagGroupsContent.append($("<button>", {
-                "class": "btn",
-                "data-i18n": "[title]ns.common:createTagGroup"
+                "class":        "btn",
+                "text":         $.i18n.t("ns.common:createTagGroup"),
+                "data-i18n":    "ns.common:createTagGroup"
             })
             .click( function() {
                 TSCORE.showDialogTagGroupCreate();
             })            
             );
-            return true;
+            return true; // quit the taggroup generation
         }
 
-        if(TSCORE.Config.getCalculateTags()) {
-            // Adding tags to the calculated tag group
-            //console.log("Calculated tags: "+JSON.stringify(exports.calculatedTags));
-            var tagGroupExist;
-            for(var k=0; k < TSCORE.Config.Settings.tagGroups.length; k++) {
-                tagGroupExist = false;
-                if(TSCORE.Config.Settings.tagGroups[k].key === "CTG") {
-                    TSCORE.Config.Settings.tagGroups[k].children = exports.calculatedTags;
-                    tagGroupExist = true;
-                    break;
-                }        
+        var tagGroups = TSCORE.Config.Settings.tagGroups;
+        var tag;
+
+        // Cleaning Special TagGroups
+        for(var k=0; k < tagGroups.length; k++) {
+            if(tagGroups[k].key === locationTagGroupKey || tagGroups[k].key === calculatedTagGroupKey) {
+                console.log("Deleting:"+tagGroups[k].key+" "+k);
+                tagGroups.splice(k, 1);
+                k--;
             }
-            // Adding the calculated tag group if it not exists
-            if(!tagGroupExist) {
-                TSCORE.Config.Settings.tagGroups.push({
-                        "title": "Tags in Perspective", // TODO translate
-                        "key": "CTG", 
-                        "expanded": true,
-                        "children": exports.calculatedTags
-                    });
-            } 
         }
 
-        for(var i=0; i < TSCORE.Config.Settings.tagGroups.length; i++) {
-            $tagGroupsContent.append($("<div>", {
-                "class": "accordion-group disableTextSelection",
-                "style": "width: 99%; border: 0px #aaa solid;"
-            })
-            .append($("<div>", {
-                "class":        "accordion-heading  btn-group",
-                "style":        "width:100%; margin: 0px;",
-                "key":          TSCORE.Config.Settings.tagGroups[i].key
-            })
+        // Adding tags to the calculated tag group
+        if(TSCORE.Config.getCalculateTags() && TSCORE.calculatedTags !== null) {
+            tagGroups.push({
+                "title": $.i18n.t("ns.common:tagsFromCurrentFolder"),
+                "key": calculatedTagGroupKey,
+                "expanded": true,
+                "children": TSCORE.calculatedTags
+            });
+        }
 
-            .append($("<button>", { // Taggroup toggle button
-                        "class":        "btn btn-link btn-lg tagGroupIcon",
-                        "data-toggle":  "collapse",
-                        "data-target":  "#tagButtons"+i,
-                        "data-i18n": "[title]ns.common:toggleTagGroup"
-                    }  
-                )
-                .html("<i class='fa fa-tags' style='margin-left: 5px;'></i>")
-            )// End taggroup toggle button  
+        // Adding the locataion tag group
+        if(TSCORE.Config.getLoadLocationMeta() && TSCORE.locationTags !== null) {
+            tagGroups.push({
+                "title": $.i18n.t("ns.common:tagsFromCurrentLocation"),
+                "key": locationTagGroupKey,
+                "expanded": true,
+                "children": TSCORE.locationTags
+            });
+        }
 
-            .append($("<button>", {
-                "class":        "btn btn-link tagGroupTitle",
-                "text":         TSCORE.Config.Settings.tagGroups[i].title,
-                "key":          TSCORE.Config.Settings.tagGroups[i].key
-            })
-            )
-            .droppable({
-                accept: '.tagButton',
-                hoverClass: "dirButtonActive",
-                drop: function( event, ui ) {
-                    //ui.draggable.detach();
-                    var tagGroupData = TSCORE.Config.getTagData(ui.draggable.attr("tag"), ui.draggable.attr("parentKey"));
-                    tagGroupData.parentKey = ui.draggable.attr("parentKey");
-                    var targetTagGroupKey = $(this).attr("key");
-                    console.log("Moving tag: "+tagGroupData.title+" to "+targetTagGroupKey);
-                    TSCORE.Config.moveTag(tagGroupData, targetTagGroupKey);
-                    generateTagGroups();
-                    $(ui.helper).remove();
-                }                   
-            })  
+        // ehnances the taggroups with addition styling information
+        for(var i=0; i < tagGroups.length; i++) {
+            for(var j=0; j < tagGroups[i].children.length; j++) {
+                tag = tagGroups[i].children[j];
 
-            .append($("<button>", {
-                    "class": "btn btn-link btn-lg tagGroupActions",
-                    "tag": TSCORE.Config.Settings.tagGroups[i].title,
-                    "key": TSCORE.Config.Settings.tagGroups[i].key,
-                    "data-i18n": "[title]ns.common:tagGroupOperations"
-            })
-            .append("<b class='fa fa-ellipsis-v'></b>")
-            ) // end gear
-
-            ) // end heading
-
-            .append($("<div>", {
-                "class":   "accordion-body collapse in",
-                "id":      "tagButtons"+i,
-                "style":   "margin: 0px 0px 0px 3px; border: 0px;"
-            })
-            .append($("<div>", {
-                "class":   "accordion-inner",
-                "id":      "tagButtonsContent"+i,
-                "style":   "padding: 2px; border: 0px;"
-            })
-            ) // end accordion-inner
-            ) // end accordion button
-
-            ); // end group
-
-            var tagButtons = $("<div>").appendTo( "#tagButtonsContent"+i );
-            var tag;
-            var tagTitle;
-            for(var j=0; j < TSCORE.Config.Settings.tagGroups[i].children.length; j++) {
-                tag = TSCORE.Config.Settings.tagGroups[i].children[j];
                 if(tag.description !== undefined) {
-                    tagTitle = tag.description;
+                    tag.titleUI = tag.description;
                 } else {
-                    tagTitle = "Opens context menu for "+tag.title;
+                    tag.titleUI = tag.title;
                 }
-                var tagIcon = "";
+
+                tag.icon = "";
                 if(tag.type === "smart"){
-                    tagIcon = "<span class='fa fa-flask'/> ";
+                    tag.icon = "fa fa-flask";
                 }
+
                 // Add keybinding to tags
                 if(tag.keyBinding !== undefined && tag.keyBinding.length > 0) {
-                    tagIcon = "<span class='fa fa-keyboard-o'/> ";
-                    tagTitle = tagTitle + " [" +tag.keyBinding+ "]";
+                    tag.icon = "fa fa-keyboard-o";
+                    tag.titleUI = tag.titleUI + " [" +tag.keyBinding+ "]";
+                    Mousetrap.unbind(tag.keyBinding);
                     Mousetrap.bind(
                         tag.keyBinding,
                         (function(innerTag) {
@@ -288,18 +267,18 @@
                         })(tag.title)
                     );
                 }
-                var tagCount = "";
-                if(tag.count !== undefined) {
-                    tagCount = " ("+tag.count+")";
-                }                
-                tagButtons.append($("<a>", {
-                    "class":         "btn btn-sm tagButton",
-                    "tag":           tag.title,
-                    "parentKey":     TSCORE.Config.Settings.tagGroups[i].key,
-                    "title":         tagTitle,
-                    "text":          tag.title+tagCount+" ",
-                    "style":         generateTagStyle(tag)
-                })
+                tag.style = generateTagStyle(tag);
+            }
+        }
+
+        $tagGroupsContent.html(tagGroupsTmpl({
+             "tagGroups":           tagGroups,
+             "toggleTagGroup":      $.i18n.t("ns.common:toggleTagGroup"),
+             "tagGroupOperations":  $.i18n.t("ns.common:tagGroupOperations")
+         }));
+
+        $tagGroupsContent.find(".tagButton").each(function() {
+            $(this)
                 .draggable({
                     "appendTo":   "body",
                     "helper":     "clone",
@@ -307,23 +286,35 @@
                     "start":     function() {
                         TSCORE.selectedTagData = TSCORE.Config.getTagData($(this).attr("tag"), $(this).attr("parentKey"));
                         TSCORE.selectedTag = generateTagValue(TSCORE.selectedTagData);
-                        TSCORE.selectedTagData.parentKey = $(this).attr("parentKey");                         
-                    }                     
-                }) 
-                .prepend(tagIcon)
-                .append("<span class='caret'/>")
-                );
-           }
-        }
+                        TSCORE.selectedTagData.parentKey = $(this).attr("parentKey");
+                    }
+                })
+        });
+
+        $tagGroupsContent.find(".tagGroupTitle").each(function() {
+            $(this)
+                .droppable({
+                    accept: '.tagButton',
+                    hoverClass: "dirButtonActive",
+                    drop: function( event, ui ) {
+                        //ui.draggable.detach();
+                        var tagGroupData = TSCORE.Config.getTagData(ui.draggable.attr("tag"), ui.draggable.attr("parentKey"));
+                        tagGroupData.parentKey = ui.draggable.attr("parentKey");
+                        var targetTagGroupKey = $(this).attr("key");
+                        console.log("Moving tag: "+tagGroupData.title+" to "+targetTagGroupKey);
+                        TSCORE.Config.moveTag(tagGroupData, targetTagGroupKey);
+                        generateTagGroups();
+                        $(ui.helper).remove();
+                    }
+                })
+        });
 
         $tagGroupsContent.on("contextmenu click", ".tagGroupActions", function () {
             TSCORE.hideAllDropDownMenus();
             TSCORE.selectedTag = $(this).attr("tag");
             TSCORE.selectedTagData = TSCORE.Config.getTagGroupData($(this).attr("key"));
-            TSCORE.selectedTagData.parentKey = undefined;  
-
+            TSCORE.selectedTagData.parentKey = undefined;
             TSCORE.showContextMenu("#tagGroupMenu", $(this));
-
             return false;
         });
 
@@ -332,12 +323,9 @@
             TSCORE.selectedTagData = TSCORE.Config.getTagData($(this).attr("tag"), $(this).attr("parentKey"));
             TSCORE.selectedTag = generateTagValue(TSCORE.selectedTagData);
             TSCORE.selectedTagData.parentKey = $(this).attr("parentKey");
-
             TSCORE.showContextMenu("#tagTreeMenu", $(this));
-
             return false;
-        });               
-
+        });
     }
 
     function generateTagValue(tagData) {
@@ -506,6 +494,7 @@
 
     // Public Vars
     exports.calculatedTags                   = [];
+    exports.locationTags                     = [];
 
     // Public API definition
     exports.initUI                           = initUI;
