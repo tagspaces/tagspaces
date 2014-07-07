@@ -599,8 +599,9 @@ define(function(require, exports, module) {
     exports.showDialogTagCreate         = tsTagsUI.showDialogTagCreate;
     exports.showDialogEditTagGroup      = tsTagsUI.showDialogEditTagGroup;
     exports.showDialogTagGroupCreate    = tsTagsUI.showDialogTagGroupCreate;	
-    exports.calculatedTags              = tsTagsUI.calculatedTags;  
-    exports.generateTagGroups           = tsTagsUI.generateTagGroups;  
+    exports.calculatedTags              = tsTagsUI.calculatedTags;
+    exports.locationTags                = tsTagsUI.locationTags;
+    exports.generateTagGroups           = tsTagsUI.generateTagGroups;
 
     // Proxying functions from directoriesUI
     exports.openLocation                = tsDirectoriesUI.openLocation;
