@@ -123,14 +123,26 @@ define(function(require, exports, module) {
     }
 
     function loadFolderMetaData(path) {
-        var metadataPath = "file://"+path+TSCORE.dirSeparator+tsMetadataFolder+TSCORE.dirSeparator+tsMetadataFile;
+        var metadataPath;
+        if(isWeb) {
+            metadataPath = path+TSCORE.dirSeparator+tsMetadataFolder+TSCORE.dirSeparator+tsMetadataFile;
+        } else {
+            metadataPath = "file://"+path+TSCORE.dirSeparator+tsMetadataFolder+TSCORE.dirSeparator+tsMetadataFile;
+        }
+
         require(["text!"+metadataPath], function(jsonFile) {
+            if(jsonFile !== null)
             var metadata = JSON.parse(jsonFile);
             //console.log("Location Metadata: "+JSON.stringify(metadata));
 
             if(metadata.tagGroups.length > 0) {
                 TSCORE.locationTags = metadata.tagGroups[0].children;
                 TSCORE.generateTagGroups();
+            }
+
+            if(metadata.desktop !== undefined) {
+                TSCORE.locationDesktop = metadata.desktop;
+                TSCORE.PerspectiveManager.generateDesktop();
             }
         });
     }
