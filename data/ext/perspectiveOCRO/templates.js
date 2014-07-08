@@ -45,7 +45,7 @@ define(function(require, exports, module) {
     );
 
     exports.fileTiles = Handlebars.compile(
-        '<ol style="padding: 0px; margin: 0px;">'+
+        '<ol style="padding: 0; margin: 0;">'+
         '{{#each files}}'+
         '<li title="{{filepath}}" data-filepath="{{filepath}}" class="fileTile">'+
             '<span><img class="thumbImgTile" data-filepath="{{filepath}}" src="{{tmbpath}}"></span>'+
