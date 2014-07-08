@@ -706,7 +706,18 @@
 
     var setCalculateTags = function(value) {
         exports.Settings.calculateTags = value;
-    };    
+    };
+
+    var getLoadLocationMeta = function() {
+        if(exports.Settings.loadLocationMeta === undefined) {
+            exports.Settings.loadLocationMeta = exports.DefaultSettings.loadLocationMeta;
+        }
+        return exports.Settings.loadLocationMeta;
+    };
+
+    var setLoadLocationMeta = function(value) {
+        exports.Settings.loadLocationMeta = value;
+    };
 
     var getSupportedFileTypes = function() {
         if(exports.Settings.supportedFileTypes === undefined) {
@@ -1098,6 +1109,8 @@
     exports.setShowMainMenu                         = setShowMainMenu;
     exports.getCalculateTags                        = getCalculateTags;
     exports.setCalculateTags                        = setCalculateTags;
+    exports.getLoadLocationMeta                     = getLoadLocationMeta;
+    exports.setLoadLocationMeta                     = setLoadLocationMeta;
     exports.getIsWindowMaximized                    = getIsWindowMaximized;
     exports.setIsWindowMaximized                    = setIsWindowMaximized;
     exports.getLastOpenedLocation                   = getLastOpenedLocation;
