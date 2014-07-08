@@ -1,8 +1,8 @@
 {
-  "name": "@@APPNAME",
+  "name": "@@APPNAME Light",
   "version": "@@VERSION.@@BUILD",
   "manifest_version": 2,
-  "description": "@@APPDESCRIPTION",
+  "description": "File Browser with tagging support",
   "icons": {
     "16" : "assets/icon16.png",
     "48" : "assets/icon48.png",
