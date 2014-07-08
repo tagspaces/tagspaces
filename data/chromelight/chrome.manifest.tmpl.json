@@ -1,5 +1,5 @@
 {
-  "name": "@@APPNAME Light",
+  "name": "@@APPNAME",
   "version": "@@VERSION.@@BUILD",
   "manifest_version": 2,
   "description": "File Browser with tagging support",
