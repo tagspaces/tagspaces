@@ -43,7 +43,7 @@ if( isFirefox ) {
 } else if ( isFirefoxOS ) {
     IO_JS = "mozilla/firefoxos.api";
 } else if ( isChrome ) {
-    IO_JS = "chrome/chrome.api";
+    IO_JS = "chromelight/chrome.api";
 } else if (isNode){
     IO_JS = "node-webkit/node-webkit.api";
 } else if (isCordova){
@@ -93,6 +93,9 @@ requirejs.config({
         handlebarsjs:           'libs/handlebars.js/handlebars-v1.1.2',
         webdavlib:              'web/webdavlib',
         fastclick:              'cordova/fastclick.min',
+        //angular:                'libs/angular.js/angular.min',
+        //angularroute:           'libs/angular.js/angular-route.min',
+        //angulartouch:           'libs/angular.js/angular-touch.min',
 
         tscore:                 'js/core.api',
         tssetting:              'js/settings.api',
@@ -131,6 +134,9 @@ requirejs.config({
         'i18next':                  { deps: ['jquery'] },
         'select2':                  { deps: ['jquery'] },
         'hammerjs':                 { deps: ['jquery'] },
+        //'angular':                  { deps: ['jquery'] },
+        //'angularroute':             { deps: ['angular'] },
+        //'angulartouch':             { deps: ['angular'] },
         'tscore':                   { deps: [
                                             'jquery',
                                             'jqueryui',
@@ -149,6 +155,8 @@ requirejs.config({
                                             'mousetrap',
                                             'select2',
                                             'handlebarsjs',
+                                            //'angular',
+                                            //'angularroute',
                                             'tssettingsdefault'
                                         ] }
     } 
