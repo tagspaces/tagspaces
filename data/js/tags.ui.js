@@ -106,7 +106,12 @@
 
         $( "#tagGroupMenuCreateTagGroup" ).click( function() {
             TSCORE.showDialogTagGroupCreate();
-        });                
+        });
+
+        $( "#tagGroupSort" ).click( function() {
+            TSCORE.Config.sortTagGroup(TSCORE.selectedTagData);
+            generateTagGroups();
+        });
 
         $( "#tagGroupMenuMoveUp" ).click( function() {
             TSCORE.Config.moveTagGroup(TSCORE.selectedTagData, "up");
@@ -118,11 +123,11 @@
             generateTagGroups(); 
         });                
 
-        $( "#tagGroupMenuEditTagGroup" ).click( function() {
+        $( "#tagGroupMenuEdit" ).click( function() {
             TSCORE.showDialogEditTagGroup();
         });                
 
-        $( "#tagGroupMenuDeleteTagGroup" ).click( function() {
+        $( "#tagGroupMenuDelete" ).click( function() {
             TSCORE.showConfirmDialog(
                 $.i18n.t("ns.dialogs:deleteTagGroupTitleConfirm"),
                 $.i18n.t("ns.dialogs:deleteTagGroupContentConfirm", {tagGroup: TSCORE.selectedTagData.title}),

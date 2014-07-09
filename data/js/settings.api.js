@@ -913,6 +913,16 @@
         saveSettings();       
     };
 
+     var sortTagGroup = function(tagData) {
+         for(var i=0; i < exports.Settings.tagGroups.length; i++) {
+             if(exports.Settings.tagGroups[i].key === tagData.key) {
+                 exports.Settings.tagGroups[i].children.sort(function(a,b) { return a.title.localeCompare(b.title); });
+                 break;
+             }
+         }
+         saveSettings();
+     };
+
     var createTagGroup = function(tagData, tagGroupName) {
         var newTagGroupModel =  JSON.parse( JSON.stringify( tagGroupTemplate ) );
         newTagGroupModel.title = tagGroupName;
@@ -1167,7 +1177,8 @@
     exports.createTag                               = createTag;
     exports.findTag                                 = findTag;
     exports.moveTag                                 = moveTag;  
-    exports.editTagGroup                            = editTagGroup; 
+    exports.editTagGroup                            = editTagGroup;
+    exports.sortTagGroup                            = sortTagGroup;
     exports.moveTagGroup                            = moveTagGroup;
     exports.createTagGroup                          = createTagGroup;    
     exports.duplicateTagGroup                       = duplicateTagGroup;    

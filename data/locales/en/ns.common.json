@@ -73,6 +73,8 @@
     "toggleTagGroup": "Toggle Tag Group",
     "deleteTagGroupTooltip": "Delete current tag group",
     "deleteTagGroup": "Delete Tag Group",
+    "sortTagGroupTooltip": "Sort the tags in current tag group alphabetically",
+    "sortTagGroup": "Sort Tag Group",
     "directoryOperations": "Directory Operations",
     "reloadDirectoryTooltip": "Reload current directory",
     "reloadDirectory": "Reload Directory",
