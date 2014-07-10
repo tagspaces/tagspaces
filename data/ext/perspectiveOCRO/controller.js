@@ -11,7 +11,9 @@ define(function(require, exports, module) {
     var TSCORE = require("tscore");
     var TSPOSTIO = require("tspostioapi");
 
-    var supportedFileTypeThumnailing = ['jpg','jpeg','png','gif','bmp','svg'];
+    var supportedFileTypesThumbs = ['jpg','jpeg','png','gif','bmp','svg'];
+    var supportedFileTypesViewing = ['jpg','jpeg','png','gif','bmp','svg','pdf','url','website','xls','xlsx','dxf','avi'];
+
     var thumbFolder = ".ts";
     var thumbExt = ".jpg";
     var PREVIEW_TAGS_CNT = 5;
@@ -37,14 +39,17 @@ define(function(require, exports, module) {
         var filesData = [];
 
         _.each(searchResults, function (value) {
-            filesData.push(
-                createFileContext(
-                    value[TSCORE.fileListTITLE],
-                    value[TSCORE.fileListFILEPATH],
-                    value[TSCORE.fileListFILEEXT],
-                    value[TSCORE.fileListTAGS]
+            var fileExt = value[TSCORE.fileListFILEEXT];
+            if(supportedFileTypesViewing.indexOf(fileExt) >= 0) {
+                filesData.push(
+                    createFileContext(
+                        value[TSCORE.fileListTITLE],
+                        value[TSCORE.fileListFILEPATH],
+                        value[TSCORE.fileListFILEEXT],
+                        value[TSCORE.fileListTAGS]
+                    )
                 )
-            )
+            }
         });
 
         $viewContainer.append(templates.fileTiles({files: filesData}));
@@ -53,7 +58,7 @@ define(function(require, exports, module) {
         $viewContainer.find("img").each(function() {
             var filePath = $(this).attr("data-filepath");
             var fileExt = TSCORE.TagUtils.extractFileExtension(filePath);
-            if(supportedFileTypeThumnailing.indexOf(fileExt) >= 0) {
+            if(supportedFileTypesThumbs.indexOf(fileExt) >= 0) {
                 //$(this).error(function() { $(this).attr("src",filePath) });
                 // Start a js worker for the thumbnail generation
                 $(this).attr("onerror","this.src='"+filePath+"'");
@@ -69,9 +74,9 @@ define(function(require, exports, module) {
                 TSCORE.FileOpener.openFile(filePath);
                 //selectFile(filePath);
             })
-                .click(function () {
-                    //selectFile(filePath);
-                })
+            .click(function () {
+                //selectFile(filePath);
+            })
         });
 
         if(searchResults.length !== undefined) {
@@ -190,11 +195,11 @@ define(function(require, exports, module) {
                 data.forEach(function(entry, index) {
                     //if(entry.indexOf("/"+thumbFolder)>0) {
                     searchResults.push({
-                        "name": entry.name,
+                        "name": decodeURI(entry.name),
                         "isFile": true,
                         "size": undefined,
                         "lmdt": undefined,
-                        "path": entry.link
+                        "path": decodeURI(entry.link)
                     });
                 });
                 console.log("Search results "+JSON.stringify(searchResults));
