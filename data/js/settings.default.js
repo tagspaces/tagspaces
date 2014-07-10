@@ -5,35 +5,34 @@ define(function (require, exports, module) {
     "use strict";
 
     exports.defaultSettings = {
-        "appName": "TagSpaces",
-        "appVersion": "1.8",
-        "appBuild": "3",
-        "appBuildID": "201406171120",
-        "settingsVersion": 2,
-        "newTextFileContent": "Created with TagSpaces",
-        "newHTMLFileContent": "<html><head><title>Created with TagSpaces</title><meta http-equiv='Content-Type' content='text/html; charset=utf-8'></head><body></body></html>",
-        "newMDFileContent": '#Created with TagSpaces',
-        "showUnixHiddenEntries": false,
-        "checkForUpdates": true,
-        "firstRun": true,
-        "lastOpenedDirectory": "",
-        "tagspacesList": [],
-        "extensionsPath": "ext",
+        "appName":                  "TagSpaces",
+        "appVersion":               "1.8",
+        "appBuild":                 "4",
+        "appBuildID":               "201407101144",
+        "settingsVersion":           2,
+        "newTextFileContent":       "Created with TagSpaces",
+        "newHTMLFileContent":       "<html><head><title>Created with TagSpaces</title><meta http-equiv='Content-Type' content='text/html; charset=utf-8'></head><body></body></html>",
+        "newMDFileContent":         '#Created with TagSpaces',
+        "showUnixHiddenEntries":    false,
+        "checkForUpdates":          true,
+        "firstRun":                 true,
+        "lastOpenedDirectory":      "",
+        "tagspacesList":            [{'name': 'Android Photos', 'path': 'DCIM'},{'name': 'OC WebDav', 'path': 'oc/remote.php/webdav'}],
+        "extensionsPath":           "ext",
         "showWarningRecursiveScan": true,
-        "prefixTagContainer": "",
-        "tagDelimiter": " ",
-        "calculateTags": false,
-        "warnIncludeSubdirs": true,
-        "isWindowMaximized": false,
-        "showMainMenu": true,
-        "lastOpenedLocation": "",
-        "ootbPerspectives": ['perspectiveList', 'perspectiveGrid', 'perspectiveGraph'],
-        "ootbViewers": [ "viewerBrowser", "viewerMD", "viewerImage", "viewerPDF", "editorText", "viewerText", "editorODF"  ],
-        "ootbEditors": [ "editorHTML", "editorText", "editorODF" ],
-        "perspectives": [
-            { "id": "perspectiveList" }, // ID should be equal to the directory name where the extension is located
-            { "id": "perspectiveGrid" }
-        ],
+        "prefixTagContainer":       "",
+        "tagDelimiter":             " ",
+        "calculateTags":            false,
+        "loadLocationMeta":         false,
+        "warnIncludeSubdirs":       true,
+        "isWindowMaximized":        false,
+        "showMainMenu":             true,
+        "lastOpenedLocation":       "",
+        "webDavPath"  :             "oc/remote.php/webdav",
+        "ootbPerspectives":         ['perspectiveList', 'perspectiveGrid', 'perspectiveGraph', 'perspectiveOCRO', 'perspectiveHealth'],
+        "ootbViewers":              [ "viewerBrowser", "viewerMD", "viewerImage", "viewerPDF", "editorText", "viewerText", "editorODF", "viewerURL" ],
+        "ootbEditors":              [ "editorHTML", "editorText", "editorODF" ],
+        "perspectives":             [{ 'id': 'perspectiveList' }, { 'id': 'perspectiveGrid' }, { 'id': 'perspectiveGraph' }, { 'id': 'perspectiveOCRO' }],
         "interfaceLanguage": "en",
         "supportedLanguages": [
             { "iso": "en",	    "title": "English" },
@@ -45,8 +44,7 @@ define(function (require, exports, module) {
             { "iso": "pt-BR",   "title": "Português (Brazil)" },
             { "iso": "pt-PT",   "title": "Português (Portugal)" },
             { "iso": "fr",	    "title": "Français (French)" },
-            { "iso": "sk",	    "title": "Slovenský (Slovak - almost done)" },
-            { "iso": "ru",	    "title": "Русский (Russian - help needed)" },
+            { "iso": "sk",	    "title": "Slovenský (Slovak)" },
             { "iso": "es",	    "title": "Español (Spanish - help needed)" }
         ],
         "keyBindings": {
@@ -87,7 +85,6 @@ define(function (require, exports, module) {
             { "type": "xml", 	"viewer": "editorText",      "editor": "editorText" },
             { "type": "js", 	"viewer": "editorText",      "editor": "editorText" },
             { "type": "json",   "viewer": "editorText",      "editor": "editorText" },
-            { "type": "url",    "viewer": "editorText",      "editor": "editorText" },
             { "type": "css", 	"viewer": "editorText",      "editor": "editorText" },
             { "type": "h", 		"viewer": "editorText",      "editor": "editorText" },
             { "type": "c", 		"viewer": "editorText",      "editor": "editorText" },
@@ -129,7 +126,10 @@ define(function (require, exports, module) {
             { "type": "webm", 	"viewer": "viewerBrowser",   "editor": "false" },
             { "type": "m4v", 	"viewer": "viewerBrowser",   "editor": "false" },
             { "type": "m4a", 	"viewer": "viewerBrowser",   "editor": "false" },
-            { "type": "mov", 	"viewer": "viewerBrowser",   "editor": "false" }
+            { "type": "mov", 	"viewer": "viewerBrowser",   "editor": "false" },
+            { "type": "desktop","viewer": "viewerURL",       "editor": "false" },
+            { "type": "website","viewer": "viewerURL",       "editor": "false" },
+            { "type": "url", 	"viewer": "viewerURL",       "editor": "false" }
         ],
         "tagGroups": [
             {
@@ -296,14 +296,7 @@ define(function (require, exports, module) {
                         "keyBinding": "t 5"
                     }
                 ]
-            },
-            {
-                "title": "Tags in Perspective",
-                "key": "CTG",
-                "expanded": true,
-                "children": []
             }
         ]
     };
-
 });

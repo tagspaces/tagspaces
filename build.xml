@@ -17,8 +17,9 @@ found in the LICENSE file.
 			<replacefilter token="@@APPNAME" value="${appname}" />
 			<replacefilter token="@@BUILD" value="${subversion}" />
 	        <replacefilter token="@@BID" value="${touch.time}" />
-			<replacefilter token="@@DEFAULTLOCATIONS" value="" />
-			<replacefilter token="@@DEFAULTPERSPECTIVES" value="'perspectiveList', 'perspectiveGrid', 'perspectiveGraph'" />
+			<replacefilter token="@@DEFAULTLOCATIONS" value="{'name': 'Android Photos', 'path': 'DCIM'},{'name': 'OC WebDav', 'path': 'oc/remote.php/webdav'}" />
+			<replacefilter token="@@DEFAULTPERSPECTIVES" value="'perspectiveList', 'perspectiveGrid', 'perspectiveGraph', 'perspectiveOCRO', 'perspectiveHealth'" />
+            <replacefilter token="@@ACTIVATEDPERSPECTIVES" value="{ 'id': 'perspectiveList' }, { 'id': 'perspectiveGrid' }, { 'id': 'perspectiveGraph' }, { 'id': 'perspectiveOCRO' }" />
 			<replacefilter token="@@PDFVIEWER" value="viewerBrowser" />
             <replacefilter token="@@MHTVIEWER" value="viewerBrowser" />
 		</replace>
