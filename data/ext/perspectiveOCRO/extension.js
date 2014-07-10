@@ -40,12 +40,17 @@ define(function(require, exports, module) {
         require([
             extensionDirectory+'/templates.js',
             extensionDirectory+'/controller.js',
-            'css!'+extensionDirectory+'/extension.css'
-        ], function(tmpls, ctrl) {
+            "text!"+extensionDirectory+"/DesktopTMPL.html",
+            'css!'+extensionDirectory+'/extension.css',
+            'css!'+extensionDirectory+'/fontello/css/fontello.css'
+        ], function(tmpls, ctrl, desktoptmpl) {
             controller = ctrl;
 
             // Adding UI blocks
             $viewToolbar.html(tmpls.mainToolBar({"id":extensionID}));
+
+            var desktopTemplate = Handlebars.compile( desktoptmpl );
+            $viewContainer.append(desktopTemplate());
 
             $("body").append(tmpls.dialogOCSetting());
 
@@ -66,14 +71,11 @@ define(function(require, exports, module) {
             .keyup(function(e) {
                 // On enter fire the search
                 if (e.keyCode === 13) {
-                    $( "#clearFilterButton").addClass("filterOn");
                     searchOC(TSCORE.Search.nextQuery);
-                    $("#searchOptions").hide();
                 }  else {
                     TSCORE.Search.nextQuery = this.value;
                 }
                 if (this.value.length === 0) {
-                    $( "#clearFilterButton").removeClass("filterOn");
                     TSCORE.PerspectiveManager.redrawCurrentPerspective();
                 }
             })
@@ -124,8 +126,6 @@ define(function(require, exports, module) {
         $("#tagMenuMoveTagRight").hide();
         $("#tagMenuRemoveTag").hide();
 
-//        $("#").hide();
-
         //TODO hide unneeded area settings
 
     };
@@ -139,15 +139,32 @@ define(function(require, exports, module) {
 
         makeUIReadOnly();
 
-        if(controller === undefined) {
-            window.setTimeout(function() { controller.load(); }, 1000);
-        } else {
+        if(controller !== undefined) {
             controller.load();
         }
     };
 
     var selectFile = function(uiElement, filePath) {
         TSCORE.PerspectiveManager.clearSelectedFiles();
+    };
+
+    var desktopTPML = Handlebars.compile(
+        '<div style="box-sizing: border-box; display: block">'+
+        '<ul style="padding: 0; margin: auto; box-sizing: border-box; display: block">'+
+        '{{#each desktop}}'+
+            '<li title="{{descriptionEn}}" data-filepath="{{filepath}}" style="">'+
+                '<span><i class="{{icon}}" style="font-size: 200%;"></i></span>'+
+                '<p class="">{{nameEn}}</p>' +
+                '<button class="btn btn-link" data-filepath="{{path}}">Navigate</button>'+
+            '</li>'+
+        '{{/each}}'+
+        '</ul>'+
+        '</div>'
+    );
+
+    var generateDesktop = function() {
+        console.log("Generating Desktop "+JSON.stringify(TSCORE.locationDesktop));
+        //$viewContainer.html(desktopTPML({"desktop":TSCORE.locationDesktop}));
     };
 
     var clearSelectedFiles = function() {
@@ -187,5 +204,6 @@ define(function(require, exports, module) {
 	exports.getPrevFile				= getPrevFile;	
     exports.removeFileUI            = removeFileUI;
     exports.updateFileUI            = updateFileUI;
+    exports.generateDesktop         = generateDesktop;
      	
 });
