@@ -15,3 +15,15 @@
     max-width: 160px;
     max-height: 160px;
 }
+
+.notreadonly {
+    display: none;
+}
+
+#perspectiveOCROContainer .row p{
+    padding: 40px;
+    font-size: 22px;
+    font-weight: bold;
+    text-align: center;
+    background: #f2f2f2;
+}
