@@ -550,10 +550,11 @@ define(function(require, exports, module) {
     exports.PerspectiveManager = tsPersManager;
     exports.TagUtils = tsTagUtils;
     exports.FileOpener = tsFileOpener;
-    exports.Search = tsSearch;	
+    exports.Search = tsSearch;
 
     // Public API definition
     exports.dirSeparator                = (isWin && !isWeb)?"\\":"/";
+    exports.locationDesktop;
     exports.initApp                     = initApp;
     exports.updateLogger                = updateLogger;
     exports.showLoadingAnimation        = showLoadingAnimation;
