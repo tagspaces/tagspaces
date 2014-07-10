@@ -118,7 +118,7 @@ var initPerspectiveSwitcher = function() {
 
 var redrawCurrentPerspective = function () {
     for (var i=0; i < perspectives.length; i++) {   
-        if(perspectives[i].ID === TSCORE.currentView) {
+        if(perspectives[i].ID === TSCORE.currentPerspectiveID) {
             try {           
                 perspectives[i].load();
                 break;
@@ -153,7 +153,7 @@ var updateFileUI = function (oldFilePath,newFilePath) {
 
 var getNextFile = function (filePath) {
     for (var i=0; i < perspectives.length; i++) {
-        if(perspectives[i].ID === TSCORE.currentView) {
+        if(perspectives[i].ID === TSCORE.currentPerspectiveID) {
             try {
                 return perspectives[i].getNextFile(filePath);
             } catch(e) {
@@ -165,7 +165,7 @@ var getNextFile = function (filePath) {
 
 var getPrevFile = function (filePath) {
     for (var i=0; i < perspectives.length; i++) {
-        if(perspectives[i].ID === TSCORE.currentView) {
+        if(perspectives[i].ID === TSCORE.currentPerspectiveID) {
             try {
                 return perspectives[i].getPrevFile(filePath);
             } catch(e) {
@@ -217,7 +217,7 @@ var updateFileBrowserData = function(dirList) {
             }
         }
     }    
-    changePerspective(TSCORE.currentView); 
+    changePerspective(TSCORE.currentPerspectiveID);
 };
 
 var refreshFileListContainer = function() {
@@ -240,13 +240,13 @@ var changePerspective = function (viewType) {
        
     // Loading first perspective by default
     if(viewType == undefined) {
-        TSCORE.currentView = perspectives[0].ID;       
+        TSCORE.currentPerspectiveID = perspectives[0].ID;
     } else {
         //Setting the current view
-        TSCORE.currentView = viewType;          
+        TSCORE.currentPerspectiveID = viewType;
     }      
        
-    if(TSCORE.currentView == undefined) {
+    if(TSCORE.currentPerspectiveID == undefined) {
         TSCORE.showAlertDialog("No Perspectives found","");
         return false;
     }
@@ -293,6 +293,17 @@ var clearSelectedFiles = function () {
     }
 };
 
+/*var generateDesktop = function () {
+    for (var i=0; i < perspectives.length; i++) {
+        try {
+            perspectives[i].generateDesktop();
+        } catch(e) {
+            console.error("Error while executing 'generateDesktop' on "+perspectives[i].ID+" - "+e);
+        }
+    }
+};*/
+
+
 exports.initPerspectives 			 = initPerspectives;
 exports.hideAllPerspectives          = hideAllPerspectives;	
 exports.redrawCurrentPerspective     = redrawCurrentPerspective;
@@ -305,5 +316,6 @@ exports.clearSelectedFiles           = clearSelectedFiles;
 exports.removeFileUI                 = removeFileUI;
 exports.updateFileUI                 = updateFileUI;
 exports.changePerspective            = changePerspective;
+//exports.generateDesktop              = generateDesktop;
 
 });
