@@ -11,15 +11,15 @@ define(function(require, exports, module) {
     exports.mainToolBar = Handlebars.compile(
         '<div id="{{id}}MainToolbar" class="btn-toolbar">' +
             '<div class="btn-group">'+
-                '<button class="btn btn-link" data-i18n="[title]ns.perspectiveOCRO:toggleSelectAll" title="" id="{{id}}ToogleSelectAll"><i class="fa fa-square-o fa-lg fa-fw"></i></button>'+
+                //'<button class="btn btn-link" data-i18n="[title]ns.perspectiveOCRO:toggleSelectAll" title="" id="{{id}}ToogleSelectAll"><i class="fa fa-square-o fa-lg fa-fw"></i></button>'+
                 '<button class="btn btn-link" data-i18n="[title]ns.perspectiveOCRO:downloadTooltip" id="{{id}}DownloadButton"><i class="fa fa-download fa-lg"></i></button>'+
                 '<button class="btn btn-link" data-i18n="[title]ns.perspectiveOCRO:reloadDirectoryTooltip" id="{{id}}ReloadFolderButton"><i class="fa fa-refresh fa-lg"></i></button>'+
-                '<button class="btn btn-link" data-i18n="[title]ns.perspectiveOCRO:showSubfolderContentTooltip" id="{{id}}IncludeSubDirsButton"><i class="fa fa-retweet fa-lg"></i></button>'+
+                //'<button class="btn btn-link" data-i18n="[title]ns.perspectiveOCRO:showSubfolderContentTooltip" id="{{id}}IncludeSubDirsButton"><i class="fa fa-retweet fa-lg"></i></button>'+
                 //'<button class="btn btn-link" data-i18n="[title]ns.perspectiveList:toggleThumbnailsTooltip" data-toggle="button" id="{{id}}ShowTmbButton"><i class="fa fa-picture-o fa-lg"></i></button>'+
                 //'<button class="btn btn-link" data-i18n="[title]ns.perspectiveList:increasThumbnailsTooltip" id="{{id}}IncreaseThumbsButton"><i class="fa fa-search-plus fa-lg"></i></button>'+
             '</div>'+
-            '<div class="btn-group pull-right" style="padding-right: 10px;">'+
-                '<input type="search" name="Search" class="form-control" id="{{id}}searchBoxOC" placeholder="Search" data-i18n="[placeholder]ns.common:searchPlaceholder">'+
+            '<div class="btn-group pull-right col-xs-4" style="padding-right: 10px;">'+
+                '<input type="search" name="Search" class="form-control " id="{{id}}searchBoxOC" placeholder="Search" data-i18n="[placeholder]ns.common:searchPlaceholder">'+
                 //'<button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>'+
             '</div>'+
         '</div>'
@@ -30,7 +30,7 @@ define(function(require, exports, module) {
             '<div class="modal-dialog">'+
                 '<div class="modal-content">'+
                     '<div class="modal-header">'+
-                        '<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times fa-lg"></i></button>'+
+                        '<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-timeshttps://developers.facebook.com/tools/debug/https://developers.facebook.com/tools/debug/ fa-lg"></i></button>'+
                         '<h4 class="modal-title" id="myModalLabel1" data-i18n="">Settings</h4>'+
                     '</div>'+
                     '<div class="modal-body">'+
@@ -47,7 +47,7 @@ define(function(require, exports, module) {
     exports.fileTiles = Handlebars.compile(
         '<ol style="padding: 0; margin: 0;">'+
         '{{#each files}}'+
-        '<li title="{{filepath}}" data-filepath="{{filepath}}" class="fileTile">'+
+        '<li title="{{filepath}}" data-filepath="{{filepath}}" class="fileTile thumbnail">'+
             '<span><img class="thumbImgTile" data-filepath="{{filepath}}" src="{{tmbpath}}"></span>'+
             '<p class="titleInFileTile">{{title}}</p>' +
             '<span class="tagsInFileTile">'+
