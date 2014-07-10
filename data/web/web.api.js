@@ -35,7 +35,7 @@ define(function(require, exports, module) {
             dirPath,
             function( status, data ) {
                 console.log("Dirlist Status:  "+status);
-                console.log("Dirlist Content: "+JSON.stringify(data._responses));
+                //console.log("Dirlist Content: "+JSON.stringify(data._responses));
                 var anotatedDirList = [],
                     dirList = data._responses,
                     fileName,
