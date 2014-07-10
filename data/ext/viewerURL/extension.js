@@ -41,6 +41,10 @@ define(function(require, exports, module) {
         var urlBegin = "URL=";
 
         var url = content.substring(content.indexOf(urlBegin)+urlBegin.length, content.length);
+
+        // preventing the case the url is at the end of the file
+        url = url+"\n";
+
         url = url.substring(0,url.indexOf("\n"));
 
         var urlRegExp = /https?:\/\/([-\w\.]+)+(:\d+)?(\/([\w/_\.]*(\?\S+)?)?)?/;
