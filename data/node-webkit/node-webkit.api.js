@@ -70,75 +70,74 @@ define(function(require, exports, module) {
         }
     };
 
+    var rootMenu = new gui.Menu({ type: 'menubar'});
+    var aboutMenu = new gui.Menu();
+    var viewMenu = new gui.Menu();
+    var win = gui.Window.get();
+
     var initMainMenu = function() {
-        var rootMenu = new gui.Menu({ type: 'menubar'});
-        var aboutMenu = new gui.Menu();
-        var viewMenu = new gui.Menu();
-        var win = gui.Window.get();
 
-        /*for (var i = 0; i < win.menu.items.length; ++i) {
-            win.menu.removeAt[i];
-        }*/
-
-        // TODO Clear the menu on reload
-        if(TSCORE.Config.getShowMainMenu()) {
-            aboutMenu.append(new gui.MenuItem({
-                type: 'normal',
-                label: $.i18n.t("ns.common:aboutTagSpaces"),
-                click: function (){
-                    TSCORE.UI.showAboutDialog();
-                } }));
-
-            viewMenu.append(new gui.MenuItem({
-                type: 'normal',
-                label: $.i18n.t("ns.common:showTagLibraryTooltip")+" ("+TSCORE.Config.getShowTagLibraryKeyBinding()+")",
-                click: function (){
-                    TSCORE.UI.showTagsPanel();
-                } }));
-
-            viewMenu.append(new gui.MenuItem({
-                type: 'normal',
-                label: $.i18n.t("ns.common:showLocationNavigatorTooltip")+" ("+TSCORE.Config.getShowFolderNavigatorBinding()+")",
-                click: function (){
-                    TSCORE.UI.showLocationsPanel();
-                } }));
-
-            viewMenu.append(new gui.MenuItem({ type: 'separator' }));
-
-            viewMenu.append(new gui.MenuItem({
-                type: 'normal',
-                label: $.i18n.t("ns.common:toggleFullScreen")+" ("+TSCORE.Config.getToggleFullScreenKeyBinding()+")",
-                click: function (){
-                    win.toggleFullscreen();
-                } }));
-
-            viewMenu.append(new gui.MenuItem({
-                type: 'normal',
-                label: $.i18n.t("ns.common:showDevTools")+" ("+TSCORE.Config.getOpenDevToolsScreenKeyBinding()+")",
-                click: function (){
-                    win.showDevTools();
-                } }));
-
-            viewMenu.append(new gui.MenuItem({ type: 'separator' }));
-
-            viewMenu.append(new gui.MenuItem({
-                type: 'normal',
-                label: 'Settings',
-                click: function (){
-                    TSCORE.UI.showOptionsDialog();
-                } }));
-
-            rootMenu.append(new gui.MenuItem({
-                label: 'View',
-                submenu: viewMenu
-            }));
-
-            rootMenu.append(new gui.MenuItem({
-                label: 'Help',
-                submenu: aboutMenu
-            }));
-
+        if(win.menu === undefined) {
             win.menu = rootMenu;
+
+            // TODO Clear the menu on reload
+            if(TSCORE.Config.getShowMainMenu()) {
+                aboutMenu.append(new gui.MenuItem({
+                    type: 'normal',
+                    label: $.i18n.t("ns.common:aboutTagSpaces"),
+                    click: function (){
+                        TSCORE.UI.showAboutDialog();
+                    } }));
+
+                viewMenu.append(new gui.MenuItem({
+                    type: 'normal',
+                    label: $.i18n.t("ns.common:showTagLibraryTooltip")+" ("+TSCORE.Config.getShowTagLibraryKeyBinding()+")",
+                    click: function (){
+                        TSCORE.UI.showTagsPanel();
+                    } }));
+
+                viewMenu.append(new gui.MenuItem({
+                    type: 'normal',
+                    label: $.i18n.t("ns.common:showLocationNavigatorTooltip")+" ("+TSCORE.Config.getShowFolderNavigatorBinding()+")",
+                    click: function (){
+                        TSCORE.UI.showLocationsPanel();
+                    } }));
+
+                viewMenu.append(new gui.MenuItem({ type: 'separator' }));
+
+                viewMenu.append(new gui.MenuItem({
+                    type: 'normal',
+                    label: $.i18n.t("ns.common:toggleFullScreen")+" ("+TSCORE.Config.getToggleFullScreenKeyBinding()+")",
+                    click: function (){
+                        win.toggleFullscreen();
+                    } }));
+
+                viewMenu.append(new gui.MenuItem({
+                    type: 'normal',
+                    label: $.i18n.t("ns.common:showDevTools")+" ("+TSCORE.Config.getOpenDevToolsScreenKeyBinding()+")",
+                    click: function (){
+                        win.showDevTools();
+                    } }));
+
+                viewMenu.append(new gui.MenuItem({ type: 'separator' }));
+
+                viewMenu.append(new gui.MenuItem({
+                    type: 'normal',
+                    label: 'Settings',
+                    click: function (){
+                        TSCORE.UI.showOptionsDialog();
+                    } }));
+
+                rootMenu.append(new gui.MenuItem({
+                    label: 'View',
+                    submenu: viewMenu
+                }));
+
+                rootMenu.append(new gui.MenuItem({
+                    label: 'Help',
+                    submenu: aboutMenu
+                }));
+            }
         }
     };
 
