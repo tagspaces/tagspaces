@@ -36,6 +36,9 @@ console.log("Loading UI for Image Viewer");
             imgPath: filePath
         };
         //console.log(uiTemplate(context));
+
+        $containerElem.attr("style","width: 100%; height: 100%; background-color: white;");
+
         $containerElem.append(uiTemplate(context));
 
         if(isCordova) {
