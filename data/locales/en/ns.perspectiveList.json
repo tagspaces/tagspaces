@@ -18,6 +18,7 @@
     "toggleThumbnailsTooltip": "Toggle Thumbnails",
     "increasThumbnailsTooltip": "Increase Thumbnails",
     "toggleFileDetailsTooltip": "Toggle File Details",
+    "copyMoveFilesTooltip": "Copy or Move Selected Files",
     "reloadDirectory": "Reload Directory",
     "reloadDirectoryTooltip": "Reload Current Directory",
     "includeSubdirsTitleConfirm": "Confirm Include Subdirectories",

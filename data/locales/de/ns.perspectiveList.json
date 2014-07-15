@@ -18,6 +18,7 @@
     "toggleThumbnailsTooltip": "Vorschaubilder an-/ausschalten",
     "increasThumbnailsTooltip": "Vorschaubilder vergrößern",
     "toggleFileDetailsTooltip": "Dateidetails ein-/ausblenden",
+    "copyMoveFilesTooltip": "Ausgewählte Dateien Kopieren oder Verschieben",
     "reloadDirectory": "Ordner erneut öffnen",
     "reloadDirectoryTooltip": "Aktuelle Ordner erneut öffnen",
     "includeSubdirsTitleConfirm": "Einbeziehen von Unterordnern bestätigen",

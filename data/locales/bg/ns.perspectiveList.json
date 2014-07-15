@@ -18,6 +18,7 @@
     "toggleThumbnailsTooltip": "Превключи миниатюрния преглед",
     "increasThumbnailsTooltip": "Увеличи миниатюрния преглед",
     "toggleFileDetailsTooltip": "Покажи/скрий детайлите на файла",
+    "copyMoveFilesTooltip": "Копирай или премести избраните файлове",
     "reloadDirectory": "Презареди директорията",
     "reloadDirectoryTooltip": "Презареди текушата директория",
     "includeSubdirsTitleConfirm": "Потвърди включването на поддиректориите",
