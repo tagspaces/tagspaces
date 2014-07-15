@@ -16,7 +16,6 @@ if (PRODUCTION == "true") {
 
 var isFirefox = document.URL.indexOf( 'resource://' ) === 0;
 var isFirefoxOS = document.URL.indexOf( 'app://' ) === 0;
-//var isSafari = Object.prototype.toString.call(window.HTMLElement).indexOf('Constructor') > 0;
 var isChrome =  document.URL.indexOf( 'chrome-extension://' ) === 0;
 var isNode;
 // TODO ios cordova file:///var/mobile/Applications/.../App.app/www/index.html
@@ -28,7 +27,7 @@ var isWin = navigator.appVersion.indexOf("Win")!==-1;
 // Check for running in node-webkit
 try {
     var fs = require('fs');
-    var pathUtils = require('path');   
+    var pathUtils = require('path');
     var gui = require('nw.gui');
     isNode = true;
 } catch(e) {
