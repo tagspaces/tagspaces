@@ -195,25 +195,30 @@ var updateFileBrowserData = function(dirList) {
         fileSize,
         fileLMDT,
         path,
-        filename;
+        filename,
+        entry;
 
     for (var i=0; i < dirList.length; i++) {
-        if (dirList[i].isFile){  
-            // Considering Unix HiddenEntries (. in the beginning of the filename)
-            if (TSCORE.Config.getShowUnixHiddenEntries() || 
-               (!TSCORE.Config.getShowUnixHiddenEntries() && (dirList[i].path.indexOf(TSCORE.dirSeparator+".") < 0))) {
-                 filename = dirList[i].name.replace(/(<([^>]+)>)/ig,""); // sanitizing filename
-                 path = dirList[i].path.replace(/(<([^>]+)>)/ig,""); // sanitizing filepath
-                 tags = TSCORE.TagUtils.extractTags(path);
-                 title = TSCORE.TagUtils.extractTitle(path);
-                 ext = TSCORE.TagUtils.extractFileExtension(path);
-                 fileSize = dirList[i].size;
-                 fileLMDT = dirList[i].lmdt;
-                 
-                 if(fileSize == undefined)  { fileSize = "" };
-                 if(fileLMDT == undefined) { fileLMDT = "" };
-                 var entry = [ext,title,tags,fileSize,fileLMDT,path,filename];   
-                 TSCORE.fileList.push(entry);
+        // Considering Unix HiddenEntries (. in the beginning of the filename)
+        if (TSCORE.Config.getShowUnixHiddenEntries() ||
+            (!TSCORE.Config.getShowUnixHiddenEntries() && (dirList[i].path.indexOf(TSCORE.dirSeparator+".") < 0))) {
+            filename = dirList[i].name.replace(/(<([^>]+)>)/ig,""); // sanitizing filename
+            path = dirList[i].path.replace(/(<([^>]+)>)/ig,""); // sanitizing filepath
+            title = TSCORE.TagUtils.extractTitle(path);
+
+            if (dirList[i].isFile){
+                ext = TSCORE.TagUtils.extractFileExtension(path);
+                tags = TSCORE.TagUtils.extractTags(path);
+                fileSize = dirList[i].size;
+                fileLMDT = dirList[i].lmdt;
+
+                if(fileSize == undefined)  { fileSize = "" };
+                if(fileLMDT == undefined) { fileLMDT = "" };
+                entry = [ext,title,tags,fileSize,fileLMDT,path,filename];
+                TSCORE.fileList.push(entry);
+            } else {
+                entry = [path,filename];
+                TSCORE.subDirsList.push(entry);
             }
         }
     }    
