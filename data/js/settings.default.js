@@ -8,7 +8,7 @@ define(function (require, exports, module) {
         "appName":                  "TagSpaces",
         "appVersion":               "1.8",
         "appBuild":                 "4",
-        "appBuildID":               "201407101144",
+        "appBuildID":               "201407161020",
         "settingsVersion":           2,
         "newTextFileContent":       "Created with TagSpaces",
         "newHTMLFileContent":       "<html><head><title>Created with TagSpaces</title><meta http-equiv='Content-Type' content='text/html; charset=utf-8'></head><body></body></html>",
@@ -45,7 +45,7 @@ define(function (require, exports, module) {
             { "iso": "pt-PT",   "title": "Português (Portugal)" },
             { "iso": "fr",	    "title": "Français (French)" },
             { "iso": "sk",	    "title": "Slovenský (Slovak)" },
-            { "iso": "es",	    "title": "Español (Spanish - help needed)" }
+            { "iso": "es",	    "title": "Español (Spanish)" }
         ],
         "keyBindings": {
             "closeViewer":              "mod+w",
@@ -70,7 +70,7 @@ define(function (require, exports, module) {
             { "type": "gif", 	"viewer": "viewerImage",     "editor": "false" },
             { "type": "png", 	"viewer": "viewerImage",     "editor": "false" },
             { "type": "webp", 	"viewer": "viewerImage",     "editor": "false" },
-            { "type": "svg", 	"viewer": "viewerBrowser",   "editor": "editorText" },
+            { "type": "svg", 	"viewer": "viewerImage",   "editor": "editorText" },
             { "type": "pdf", 	"viewer": "viewerBrowser",	 "editor": "false" },
             { "type": "html", 	"viewer": "viewerBrowser",   "editor": "editorHTML" },
             { "type": "htm", 	"viewer": "viewerBrowser",   "editor": "editorHTML" },
