@@ -1,6 +1,12 @@
 .viewerMDContainer *{margin:0;padding:0;}
 
 .viewerMDContainer {
+    user-select: text;
+    -webkit-user-select: text;
+    -moz-user-select: text;
+}
+
+.viewerMDContainer {
     overflow: auto; 
     width: 100%; 
     height: 100%;       
