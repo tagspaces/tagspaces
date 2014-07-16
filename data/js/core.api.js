@@ -19,13 +19,17 @@ define(function(require, exports, module) {
     var tsSearch = require("tssearch");
     
     var currentPath;
-    var currentView;
+    var currentLocationObject;
+    var currentPerspectiveID;
 
     // Current selected files
     var selectedFiles = [];
 
     // Current directory list of files
     var fileList = [];
+
+    // List of the sub directories of the current directory
+    var subDirsList = [];
 
     // Last clicked button for removing a tag
     var selectedTag = "";
@@ -595,6 +599,9 @@ define(function(require, exports, module) {
     exports.generateTagButtons 			= tsTagsUI.generateTagButtons;
     exports.generateTagStyle            = tsTagsUI.generateTagStyle;
     exports.openTagMenu 				= tsTagsUI.openTagMenu;
+    exports.showWaitingDialog           = tsCoreUI.showWaitingDialog;
+    exports.hideWaitingDialog           = tsCoreUI.hideWaitingDialog;
+    exports.showMoveCopyFilesDialog     = tsCoreUI.showMoveCopyFilesDialog;
     exports.showAddTagsDialog			= tsTagsUI.showAddTagsDialog;
     exports.showTagEditInTreeDialog     = tsTagsUI.showTagEditInTreeDialog;
     exports.showDialogTagCreate         = tsTagsUI.showDialogTagCreate;
@@ -614,9 +621,11 @@ define(function(require, exports, module) {
 
     // Public variables definition
     exports.currentPath                 = currentPath;
-    exports.currentView                 = currentView;
+    exports.currentLocationObject       = currentLocationObject;
+    exports.currentPerspectiveID        = currentPerspectiveID;
     exports.selectedFiles               = selectedFiles;
     exports.fileList                    = fileList;
+    exports.subDirsList                 = subDirsList;
     exports.selectedTag                 = selectedTag;
     exports.selectedTagData             = selectedTagData;
     exports.startTime                   = startTime;
