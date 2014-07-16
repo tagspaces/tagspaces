@@ -617,32 +617,32 @@
          exports.Settings.keyBindings.openDevTools = value;
      };
 
-     var getInterfaceLangauge = function () {
-         if (exports.Settings.interfaceLanguage === undefined) {
-             exports.Settings.interfaceLanguage = exports.DefaultSettings.interfaceLanguage;
-             saveSettings();
-         }
-         return exports.Settings.interfaceLanguage;
-     };
+    var getInterfaceLangauge = function () {
+        if (exports.Settings.interfaceLanguage === undefined) {
+            exports.Settings.interfaceLanguage = exports.DefaultSettings.interfaceLanguage;
+            saveSettings();
+        }
+        return exports.Settings.interfaceLanguage;
+    };
 
-     var setInterfaceLangauge = function (value) {
-         exports.Settings.interfaceLanguage = value;
-     };
+    var setInterfaceLangauge = function (value) {
+        exports.Settings.interfaceLanguage = value;
+    };
 
-     var getShowWarningRecursiveScan = function () {
-         if (exports.Settings.showWarningRecursiveScan === undefined) {
-             exports.Settings.showWarningRecursiveScan = exports.DefaultSettings.showWarningRecursiveScan;
-             saveSettings();
-         }
-         return exports.Settings.showWarningRecursiveScan;
-     };
+    var getShowWarningRecursiveScan = function () {
+        if (exports.Settings.showWarningRecursiveScan === undefined) {
+            exports.Settings.showWarningRecursiveScan = exports.DefaultSettings.showWarningRecursiveScan;
+            saveSettings();
+        }
+        return exports.Settings.showWarningRecursiveScan;
+    };
 
-     var setShowWarningRecursiveScan = function (value) {
-         exports.Settings.showWarningRecursiveScan = value;
-         saveSettings();
-     };
+    var setShowWarningRecursiveScan = function (value) {
+        exports.Settings.showWarningRecursiveScan = value;
+        saveSettings();
+    };
 
-     var getShowMainMenu = function() {
+    var getShowMainMenu = function() {
         if(exports.Settings.showMainMenu === undefined) {
             exports.Settings.showMainMenu = exports.DefaultSettings.showMainMenu;
         }
@@ -653,16 +653,27 @@
         exports.Settings.showMainMenu = value;
     };
 
-     var getShowUnixHiddenEntries = function() {
-         if(exports.Settings.showUnixHiddenEntries === undefined) {
-             exports.Settings.showUnixHiddenEntries = exports.DefaultSettings.showUnixHiddenEntries;
-         }
-         return exports.Settings.showUnixHiddenEntries;
-     };
+    var getWebDavPath = function() {
+        if(exports.Settings.webDavPath === undefined) {
+            exports.Settings.webDavPath = exports.DefaultSettings.webDavPath;
+        }
+        return exports.Settings.webDavPath;
+    };
 
-     var setShowUnixHiddenEntries = function(value) {
+    var setWebDavPath = function(value) {
+        exports.Settings.webDavPath = value;
+    };
+
+    var getShowUnixHiddenEntries = function() {
+        if(exports.Settings.showUnixHiddenEntries === undefined) {
+            exports.Settings.showUnixHiddenEntries = exports.DefaultSettings.showUnixHiddenEntries;
+        }
+        return exports.Settings.showUnixHiddenEntries;
+    };
+
+    var setShowUnixHiddenEntries = function(value) {
          exports.Settings.showUnixHiddenEntries = value;
-     };
+    };
 
     var getCheckForUpdates = function() {
         if(exports.Settings.checkForUpdates === undefined) {
@@ -1117,6 +1128,8 @@
     exports.setTagDelimiter                         = setTagDelimiter;
     exports.getShowMainMenu                         = getShowMainMenu;
     exports.setShowMainMenu                         = setShowMainMenu;
+    exports.getWebDavPath                           = getWebDavPath;
+    exports.setWebDavPath                           = setWebDavPath;
     exports.getCalculateTags                        = getCalculateTags;
     exports.setCalculateTags                        = setCalculateTags;
     exports.getLoadLocationMeta                     = getLoadLocationMeta;
