@@ -112,6 +112,19 @@ define(function(require, exports, module) {
         );
 	};
 
+    var copyFile = function(filePath, newFilePath) {
+        console.log("Copying file: "+filePath+" to "+newFilePath);
+        davClient.copy(
+            filePath,
+            function( status, data, headers ) {
+                console.log("Copy File Status/Content/Headers:  "+status+" / "+data+" / "+headers);
+                TSPOSTIO.copyFile(filePath, newFilePath);
+            },
+            newFilePath,
+            davClient.FAIL_ON_OVERWRITE
+        );
+    };
+
     var renameFile = function(filePath, newFilePath) {
         console.log("Renaming file: "+filePath+" to "+newFilePath);
         davClient.move(
@@ -197,7 +210,7 @@ define(function(require, exports, module) {
     };
 
     var selectDirectory = function() {
-        console.log("selectDirectory function not relevant for webdav..");
+        TSCORE.showAlertDialog("Select directory is still not implemented in the webdav edition");
     };
     
     var openDirectory = function(dirPath) {
@@ -230,7 +243,8 @@ define(function(require, exports, module) {
         );
     };    
     
-	exports.createDirectory 			= createDirectory; 
+	exports.createDirectory 			= createDirectory;
+    exports.copyFile                    = copyFile;
 	exports.renameFile 					= renameFile;
     exports.renameDirectory             = renameDirectory;
 	exports.loadTextFile 				= loadTextFile;
