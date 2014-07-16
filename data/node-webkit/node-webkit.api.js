@@ -14,6 +14,12 @@ define(function(require, exports, module) {
     var TSCORE = require("tscore");    
     var TSPOSTIO = require("tspostioapi");
 
+    var win = gui.Window.get();
+
+    var rootMenu = new gui.Menu({ type: 'menubar'});
+    var aboutMenu = new gui.Menu();
+    var viewMenu = new gui.Menu();
+
     //var exif = require('../ext/viewerImage/exif-parser-master/lib/exif');
     //var BufferStream = require('../ext/viewerImage/exif-parser-master/lib/bufferstream');
 
@@ -69,11 +75,6 @@ define(function(require, exports, module) {
             TSCORE.FileOpener.openFileOnStartup(filePath);
         }
     };
-
-    var rootMenu = new gui.Menu({ type: 'menubar'});
-    var aboutMenu = new gui.Menu();
-    var viewMenu = new gui.Menu();
-    var win = gui.Window.get();
 
     var initMainMenu = function() {
 
@@ -229,21 +230,63 @@ define(function(require, exports, module) {
         });
     };
 
+    var copyFile = function(sourceFilePath, targetFilePath) {
+        console.log("Copy file: "+sourceFilePath+" to "+targetFilePath);
+
+        if(sourceFilePath.toLowerCase() === targetFilePath.toLowerCase()) {
+            TSCORE.hideWaitingDialog();
+            TSCORE.showAlertDialog("Initial and target file names are the same.","File was not copyied.");
+            return false;
+        }
+        if(fs.lstatSync(sourceFilePath).isDirectory()) {
+            TSCORE.hideWaitingDialog();
+            TSCORE.showAlertDialog("'"+sourceFilePath+"' is a directory and can not be moved.");
+            return false;
+        }
+        if(fs.existsSync(targetFilePath)) {
+            TSCORE.hideWaitingDialog();
+            TSCORE.showAlertDialog("Target file '"+targetFilePath+"' already exists.","File renaming failed!");
+            return false;
+        }
+
+        var rd = fs.createReadStream(sourceFilePath);
+        rd.on("error", function(err) {
+            TSCORE.hideWaitingDialog();
+            TSCORE.showAlertDialog("Copying of '"+sourceFilePath+"' failed.");
+        });
+        var wr = fs.createWriteStream(targetFilePath);
+        wr.on("error", function(err) {
+            TSCORE.hideWaitingDialog();
+            TSCORE.showAlertDialog("Copying of '"+sourceFilePath+"' failed.");
+        });
+        wr.on("close", function(ex) {
+            TSPOSTIO.copyFile(sourceFilePath, targetFilePath)
+        });
+        rd.pipe(wr);
+    };
+
     var renameFile = function(filePath, newFilePath) {
         console.log("Renaming file: "+filePath+" to "+newFilePath);
-        TSCORE.showLoadingAnimation();  
-                
+
         if(filePath.toLowerCase() === newFilePath.toLowerCase()) {
-            console.log("Initial and target filenames are the same...");
-            return false;            
-        }        
+            TSCORE.hideWaitingDialog();
+            TSCORE.showAlertDialog("Initial and target file names are the same.","File was not moved/renamed.");
+            return false;
+        }
+        if(fs.lstatSync(filePath).isDirectory()) {
+            TSCORE.hideWaitingDialog();
+            TSCORE.showAlertDialog("'"+filePath+"' is a directory and can not be moved.");
+            return false;
+        }
         if(fs.existsSync(newFilePath)) {
-            TSCORE.showAlertDialog("Target filename '"+newFilePath+"' already exists.","File renaming failed!");
+            TSCORE.hideWaitingDialog();
+            TSCORE.showAlertDialog("Target file '"+newFilePath+"' already exists.","File renaming failed!");
             return false;
         }
         fs.rename(filePath, newFilePath, function(error) {
             if (error) {
-                console.log("Renaming file failed "+error);
+                TSCORE.hideWaitingDialog();
+                TSCORE.showAlertDialog("Renaming of '"+filePath+"' failed. The file is probably on a different partion.");
                 return;
             }
             TSPOSTIO.renameFile(filePath, newFilePath);
@@ -257,10 +300,12 @@ define(function(require, exports, module) {
         // TODO check if file opened for editing in the same directory as source dir
 
         if(dirPath.toLowerCase() === newDirPath.toLowerCase()) {
-            console.log("Initial and target directory names are the same...");
+            TSCORE.hideWaitingDialog();
+            TSCORE.showAlertDialog("Initial and target directories are the same.","Directory was not renamed.");
             return false;
         }
         if(fs.existsSync(newDirPath)) {
+            TSCORE.hideWaitingDialog();
             TSCORE.showAlertDialog("Target directory name '"+newDirPath+"' already exists.","Directory renaming failed!");
             return false;
         }
@@ -274,7 +319,9 @@ define(function(require, exports, module) {
                 TSPOSTIO.renameDirectory(dirPath, newDirPath);
             });
         } else {
-            console.log("Path: "+dirPath+" is not a directory");
+            TSCORE.hideWaitingDialog();
+            TSCORE.showAlertDialog("Path '"+dirPath+"' is not a directory.","Directory renaming failed!");
+            return false;
         }
     };
 
@@ -450,6 +497,11 @@ define(function(require, exports, module) {
         gui.Shell.openItem(filePath);
     };
 
+    // Bring the TagSpaces window on top of the windows
+    var focusWindow = function() {
+        gui.Window.get().focus();
+    };
+
     var selectFile = function() {
         if(document.getElementById('fileDialog') === null) {
             $("#folderLocation").after('<input style="display:none;" id="fileDialog" type="file" />');
@@ -499,6 +551,7 @@ define(function(require, exports, module) {
     exports.createDirectory              = createDirectory;
     exports.renameDirectory              = renameDirectory;
     exports.renameFile                   = renameFile;
+    exports.copyFile                     = copyFile;
     exports.loadTextFile                 = loadTextFile;
     exports.saveTextFile                 = saveTextFile;
     exports.listDirectory                = listDirectory;
@@ -517,5 +570,6 @@ define(function(require, exports, module) {
     exports.initMainMenu                 = initMainMenu;
     exports.handleStartParameters        = handleStartParameters;
     exports.handleTray                   = handleTray;
+    exports.focusWindow                  = focusWindow;
 
 });
