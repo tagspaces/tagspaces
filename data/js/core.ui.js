@@ -12,6 +12,21 @@ define(function(require, exports, module) {
     var fileContent;
     var fileType;
 
+    var showWaitingDialog = function(message, title) {
+        if (!title) { title = $.i18n.t("ns.dialogs:titleWaiting"); }
+        if (!message) { message = 'No Message to Display.'; }
+
+        var waitingModal = $('#waitingDialog');
+        waitingModal.find('h4').text(title);
+        waitingModal.find('#waitingMessage').text(message);
+
+        waitingModal.modal({backdrop: 'static',show: true});
+    };
+
+    var hideWaitingDialog = function(message, title) {
+        $('#waitingDialog').modal('hide');
+    };
+
     var showAlertDialog = function(message, title) {
         if (!title) { title = $.i18n.t("ns.dialogs:titleAlert"); }
         if (!message) { message = 'No Message to Display.'; }
@@ -26,6 +41,12 @@ define(function(require, exports, module) {
                alertModal.modal('hide');
             }
         );
+
+        // Focusing the ok button by default
+        alertModal.off('shown.bs.modal');
+        alertModal.on('shown.bs.modal', function () {
+            alertModal.find('#okButton').focus();
+        });
 
         alertModal.modal({backdrop: 'static',show: true});
     };
@@ -51,6 +72,13 @@ define(function(require, exports, module) {
                confirmModal.modal('hide');
             }
         );
+
+        // Focusing the confirm button by default
+        confirmModal.off('shown.bs.modal');
+        confirmModal.on('shown.bs.modal', function () {
+            confirmModal.find('#confirmButton').focus();
+        });
+
         confirmModal.find('#cancelButton')
             .off('click')
             .click(function() {
@@ -156,6 +184,59 @@ define(function(require, exports, module) {
         });
     };
 
+    var showMoveCopyFilesDialog = function() {
+        require([
+            "text!templates/MoveCopyFilesDialog.html"
+        ], function(uiTPL) {
+            if($("#dialogMoveCopyFiles").length < 1) {
+                var uiTemplate = Handlebars.compile( uiTPL );
+                $('body').append(uiTemplate());
+
+                $( "#moveFilesButton" ).click(function(e) {
+                    e.preventDefault();
+                    TSCORE.showWaitingDialog("Files are being renaming");
+                    var newFilePath;
+                    for (var i = 0; i < TSCORE.selectedFiles.length; i++) {
+                        newFilePath = $("#moveCopyDirectoryPath").val()+TSCORE.dirSeparator+TSCORE.TagUtils.extractFileName(TSCORE.selectedFiles[i]);
+                        TSCORE.IO.renameFile(TSCORE.selectedFiles[i],newFilePath);
+                    }
+                });
+
+                $( "#copyFilesButton" ).click(function(e) {
+                    e.preventDefault();
+                    TSCORE.showWaitingDialog("Files are being copied");
+                    var newFilePath;
+                    for (var i = 0; i < TSCORE.selectedFiles.length; i++) {
+                        newFilePath = $("#moveCopyDirectoryPath").val()+TSCORE.dirSeparator+TSCORE.TagUtils.extractFileName(TSCORE.selectedFiles[i]);
+                        TSCORE.IO.copyFile(TSCORE.selectedFiles[i],newFilePath);
+                    }
+                });
+
+                $( "#selectDirectoryMoveCopyDialog" ).click(function(e) {
+                    e.preventDefault();
+                    TSCORE.IO.selectDirectory();
+                });
+            }
+            $("#moveCopyDirectoryPath").val(TSCORE.currentPath);
+
+            $("#moveCopyFileList").children().remove();
+
+            for (var i = 0; i < TSCORE.selectedFiles.length; i++) {
+                $("#moveCopyFileList").append($("<p>", {
+                    text: TSCORE.selectedFiles[i]
+                }));
+            }
+
+            $("#dialogMoveCopyFiles").i18n();
+            $("#dialogMoveCopyFiles").modal({backdrop: 'static',show: true});
+
+            TSCORE.IO.focusWindow();
+
+            console.log("Selected files: "+TSCORE.selectedFiles);
+        });
+    };
+
+
     var showAboutDialog = function() {
         $("#dialogAboutTS").modal({backdrop: 'static',show: true});
     };
@@ -165,9 +246,47 @@ define(function(require, exports, module) {
         $("#appVersion").attr("title","BuildID: "+TSCORE.Config.DefaultSettings["appVersion"]+"."+TSCORE.Config.DefaultSettings["appBuild"]+"."+TSCORE.Config.DefaultSettings["appBuildID"]);
  
         // prevent default behavior from changing page on dropped file
-        window.ondragover = function(e) { e.preventDefault(); return false; };
-        window.ondrop = function(e) { e.preventDefault(); return false; };
-        
+        $(document).on("drop dragend dragstart dragenter dragleave drag dragover", function(event) {
+            event.preventDefault();
+            /*if (event.type === "drop") {
+                console.log(event.originalEvent.dataTransfer.files);
+            }*/
+        });
+
+        // Managing droping of files in the perspectives
+        if(isNode) {
+            $("#viewContainers").on("dragenter", function(event) {
+                event.preventDefault();
+                $("#viewContainers").attr("style","border:2px dashed #098ddf");
+            });
+
+            $("#viewContainers").on("dragleave", function(event) {
+                event.preventDefault();
+                $("#viewContainers").attr("style","border:0px");
+            });
+
+            $("#viewContainers").on("drop", function(event) {
+                event.preventDefault();
+                $("#viewContainers").attr("style","border:0px");
+                TSCORE.PerspectiveManager.clearSelectedFiles();
+                var files = event.originalEvent.dataTransfer.files;
+                var filePath;
+                if(files !== undefined && files.length > 0) {
+                    for (var i = 0; i < files.length; i++) {
+                        filePath = files[i].path;
+                        if(filePath.length > 1) {
+                            //console.log("Selecting files: "+JSON.stringify(files[i]));
+                            TSCORE.selectedFiles.push(filePath);
+                            //{"webkitRelativePath":"","path\":"/home/na/Desktop/Kola2","lastModifiedDate":"2014-07-11T16:40:52.000Z","name":"Kola2","type":"","size":4096}
+                        }
+                    }
+                }
+                if(TSCORE.selectedFiles.length > 0) {
+                    showMoveCopyFilesDialog();
+                }
+            });
+        }
+
         platformTuning();        
  
         $( "#toggleLeftPanel" ).click(function() {
@@ -664,6 +783,8 @@ define(function(require, exports, module) {
     exports.openLinkExternally          = openLinkExternally;
     exports.enableTopToolbar            = enableTopToolbar;
     exports.disableTopToolbar           = disableTopToolbar;
+    exports.hideWaitingDialog           = hideWaitingDialog;
+    exports.showWaitingDialog           = showWaitingDialog;
     exports.showAlertDialog             = showAlertDialog;
     exports.showConfirmDialog           = showConfirmDialog;
     exports.showFileRenameDialog        = showFileRenameDialog;
@@ -675,7 +796,8 @@ define(function(require, exports, module) {
     exports.showAboutDialog             = showAboutDialog;
     exports.showLocationsPanel          = showLocationsPanel;
     exports.showTagsPanel               = showTagsPanel;
-    exports.showDirectoryBrowserDialog  = showDirectoryBrowserDialog; 
+    exports.showDirectoryBrowserDialog  = showDirectoryBrowserDialog;
+    exports.showMoveCopyFilesDialog     = showMoveCopyFilesDialog;
     exports.hideAllDropDownMenus        = hideAllDropDownMenus;
 
 });
