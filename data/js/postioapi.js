@@ -25,6 +25,15 @@ define(function(require, exports, module) {
         TSCORE.hideLoadingAnimation();        
     };
 
+    exports.copyFile = function(sourceFilePath, targetFilePath) {
+        var targetDirectory = TSCORE.TagUtils.extractContainingDirectoryPath(targetFilePath);
+        if(targetDirectory === TSCORE.currentPath) {
+            TSCORE.navigateToDirectory(TSCORE.currentPath);
+            TSCORE.PerspectiveManager.clearSelectedFiles();
+        }
+        TSCORE.hideWaitingDialog();
+    };
+
     exports.renameFile = function(oldFilePath, newFilePath) {
         var lastOpenedFile = TSCORE.FileOpener.getOpenedFilePath();        
         if(lastOpenedFile != undefined) {
@@ -40,14 +49,15 @@ define(function(require, exports, module) {
         if(oldFileContainingPath !== newFileConaintingPath) {
             // File was moved
             // TODO consider case - file was moved in subdir shown in the recursive search results
-            TSCORE.removeFileModel(TSCORE.fileList, oldFilePath);
-            TSCORE.PerspectiveManager.removeFileUI(oldFilePath);    
+            //TSCORE.removeFileModel(TSCORE.fileList, oldFilePath);
+            //TSCORE.PerspectiveManager.removeFileUI(oldFilePath);
+            TSCORE.navigateToDirectory(TSCORE.currentPath);
         } else {
-            // File was just renamed
+            // File was renamed
             TSCORE.updateFileModel(TSCORE.fileList, oldFilePath, newFilePath);
             TSCORE.PerspectiveManager.updateFileUI(oldFilePath, newFilePath);            
         } 
-        TSCORE.hideLoadingAnimation();    
+        TSCORE.hideWaitingDialog();
         TSCORE.PerspectiveManager.clearSelectedFiles();
     };
 
@@ -121,7 +131,8 @@ define(function(require, exports, module) {
         var dirName = TSCORE.TagUtils.extractContainingDirectoryName(dirPath);
         $("#connectionName").val(dirName);                
         $("#folderLocation").val(dirPath);
-        $("#folderLocation2").val(dirPath);        
+        $("#folderLocation2").val(dirPath);
+        $("#moveCopyDirectoryPath").val(dirPath);
     };
     
     exports.openDirectory = function(dirPath) {
