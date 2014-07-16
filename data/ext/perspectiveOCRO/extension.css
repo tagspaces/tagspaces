@@ -9,6 +9,7 @@
     overflow: hidden;
     position:relative;
     background-color: white;
+    cursor: pointer; cursor: hand;
 }
 
 #perspectiveOCROContainer .thumbImgTile {
@@ -20,10 +21,14 @@
     display: none;
 }
 
-#perspectiveOCROContainer .row p{
-    padding: 40px;
-    font-size: 22px;
-    font-weight: bold;
-    text-align: center;
-    background: #f2f2f2;
+#perspectiveOCROContainer .dirNavigator{
+    padding: 15px;
+}
+
+#perspectiveOCROContainer .text-muted {
+    font-size: 12px;
+}
+
+#perspectiveOCROContainer .fa {
+    font-size: 250%;
 }
