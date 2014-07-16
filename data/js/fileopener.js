@@ -104,8 +104,17 @@
         $( "#renameFile" )
             .click( function() {
                 TSCORE.showFileRenameDialog(_openedFilePath);
-            });         
-        
+            });
+
+        $( "#duplicateFile" )
+            .click( function() {
+                var currentDateTime = TSCORE.TagUtils.formatDateTime4Tag(new Date(), true);
+                var fileNameWithOutExt = TSCORE.TagUtils.extractFileNameWithoutExt(_openedFilePath);
+                var fileExt = TSCORE.TagUtils.extractFileExtension(_openedFilePath);
+                var newFilePath = TSCORE.currentPath+TSCORE.dirSeparator+fileNameWithOutExt+"_"+currentDateTime+"."+fileExt;
+                TSCORE.IO.copyFile(_openedFilePath,newFilePath);
+            });
+
         $( "#toggleFullWidthButton" )
             .click(function() {
                 TSCORE.toggleFullWidth();           
