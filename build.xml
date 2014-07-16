@@ -32,7 +32,7 @@ found in the LICENSE file.
             <replacefilter token="@@BUILD" value="${subversion}" />
             <replacefilter token="@@BID" value="${touch.time}" />        	
         </replace>
-        <copy file="data/chrome/chrome.manifest.tmpl.json" overwrite="true" tofile="data/manifest.json" />
+        <copy file="data/chromelight/chrome.manifest.tmpl.json" overwrite="true" tofile="data/manifest.json" />
         <replace file="data/manifest.json">
             <replacefilter token="@@VERSION" value="${version}" />
             <replacefilter token="@@APPNAME" value="${appname}" />
