@@ -249,6 +249,10 @@
         TSCORE.showAlertDialog("Tagging/Renaming files is not supported in TagSpaces Light, please use the desktop version.");
     };
 
+    var copyFile = function(filePath, newFilePath) {
+        TSCORE.showAlertDialog("Copy files is not supported in TagSpaces Light, please use the desktop version.");
+    };
+
     var selectDirectory = function() {
         console.log("Select directory!");
         var rootPath = "/";
@@ -299,6 +303,7 @@
     };
 
     exports.createDirectory             = createDirectory;
+    exports.copyFile                    = copyFile;
     exports.renameFile                  = renameFile;
     exports.renameDirectory             = renameDirectory;
     exports.loadTextFile                = loadTextFile;
