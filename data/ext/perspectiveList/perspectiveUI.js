@@ -92,7 +92,12 @@ console.log("Loading UI for perspectiveList");
             .click(function() {
                 TSCORE.showAddTagsDialog();
             });
-                
+
+        $("#"+this.extensionID+"CopyMoveButton")
+            .click(function() {
+                TSCORE.showMoveCopyFilesDialog();
+            });
+
         $("#"+this.extensionID+"ShowTmbButton")
             .click(function() {
                 self.toggleThumbnails();
@@ -349,6 +354,7 @@ console.log("Loading UI for perspectiveList");
         // Disable certain buttons again	
         $("#"+this.extensionID+"IncreaseThumbsButton" ).prop('disabled', true);
         $("#"+this.extensionID+"TagButton" ).prop('disabled', true);
+        $("#"+this.extensionID+"CopyMoveButton" ).prop('disabled', true);
 
         //Update statusbar
         if(this.searchResults.length !== undefined) {
@@ -502,13 +508,17 @@ console.log("Loading UI for perspectiveList");
         console.log("Entering element activation handler...");
 
         var tagButton = $( "#"+this.extensionID+"TagButton" );
+        var copyMoveButton = $( "#"+this.extensionID+"CopyMoveButton" );
 
         if (TSCORE.selectedFiles.length > 1) {
             tagButton.prop('disabled', false);
+            copyMoveButton.prop('disabled', false);
         } else if (TSCORE.selectedFiles.length === 1) {
             tagButton.prop('disabled', false);
+            copyMoveButton.prop('disabled', false);
         } else {
             tagButton.prop('disabled', true);
+            copyMoveButton.prop('disabled', true);
         }
     };
 
