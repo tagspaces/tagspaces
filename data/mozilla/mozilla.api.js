@@ -7,13 +7,13 @@ define(function(require, exports, module) {
 "use strict";
 
     console.log("Loading mozilla.api.js..");
-    
+
     var TSCORE = require("tscore");
     
     var TSPOSTIO = require("tspostioapi");
     
     document.documentElement.addEventListener("tsMessage", function(event) {
-        console.log("Message received in page script from content script: "); //+JSON.stringify(event.detail));
+        console.log("Message received in page script from content script: "+JSON.stringify(event.detail));
         var message = event.detail;
         switch (message.command) {
         case "loadSettings":
@@ -124,7 +124,6 @@ define(function(require, exports, module) {
     
     var saveSettings = function(content) {
         console.log("Saving setting...");        
-        TSCORE.showLoadingAnimation();
         var event = document.createEvent('CustomEvent');
         event.initCustomEvent("addon-message", true, true, {"detail":{
             "command": "saveSettings",
@@ -135,7 +134,6 @@ define(function(require, exports, module) {
     
     var loadSettings = function() {
         console.log("Loading setting from firefox preferences...");
-        TSCORE.showLoadingAnimation();            
         var event = document.createEvent('CustomEvent');
         event.initCustomEvent("addon-message", true, true, {"detail":{
             "command": "loadSettings"
@@ -145,7 +143,6 @@ define(function(require, exports, module) {
     
     var createDirectory = function(dirPath) {
         console.log("Directory "+dirPath+" created.");
-        TSCORE.showLoadingAnimation();			
         var event = document.createEvent('CustomEvent');
         event.initCustomEvent("addon-message", true, true, {"detail":{
             "command": "createDirectory",
@@ -156,7 +153,6 @@ define(function(require, exports, module) {
     
     var loadTextFile = function(filePath) {
         console.log("Loading file: "+filePath);
-        TSCORE.showLoadingAnimation();	
         var event = document.createEvent('CustomEvent');
         event.initCustomEvent("addon-message", true, true, {"detail":{
             "command": "loadTextFile",
@@ -164,10 +160,21 @@ define(function(require, exports, module) {
         }});
         document.documentElement.dispatchEvent(event);	
     };
-    
+
+    var copyFile = function(filePath, newFilePath) {
+        console.log("Copy "+filePath+" to "+newFilePath);
+        TSCORE.showAlertDialog("Copy file functionality is not implemented in Firefox yet.");
+        /*var event = document.createEvent('CustomEvent');
+        event.initCustomEvent("addon-message", true, true, {"detail":{
+            "command": "rename",
+            "path": filePath,
+            "newPath": newFilePath
+        }});
+        document.documentElement.dispatchEvent(event);*/
+    };
+
     var renameFile = function(filePath, newFilePath) {
         console.log("Renaming "+filePath+" to "+newFilePath);
-        TSCORE.showLoadingAnimation();
         var event = document.createEvent('CustomEvent');
         event.initCustomEvent("addon-message", true, true, {"detail":{
             "command": "rename",
@@ -183,7 +190,6 @@ define(function(require, exports, module) {
 
     var saveTextFile = function(filePath,content) {
         console.log("Saving file: "+filePath);
-        TSCORE.showLoadingAnimation();	
         var event = document.createEvent('CustomEvent');
         event.initCustomEvent("addon-message", true, true, {"detail":{
             "command": "saveTextFile",
@@ -195,24 +201,22 @@ define(function(require, exports, module) {
     
     var listDirectory = function(dirPath) {
         console.log("Listing directory: "+dirPath);
-        TSCORE.showLoadingAnimation();	
         var event = document.createEvent('CustomEvent');
         event.initCustomEvent("addon-message", true, true, {"detail":{
             "command": "listDirectory",
             "path": dirPath
         }});
-        document.documentElement.dispatchEvent(event);		
+        document.documentElement.dispatchEvent(event);
     };
     
     var deleteElement = function(path) {
         console.log("Deleting: "+path);
-        TSCORE.showLoadingAnimation();	
         var event = document.createEvent('CustomEvent');
         event.initCustomEvent("addon-message", true, true, {"detail":{
             "command": "delete",
             "path": path
         }});
-        document.documentElement.dispatchEvent(event);	
+        document.documentElement.dispatchEvent(event);
     };
 
     var deleteDirectory = function(dirPath) {
@@ -262,7 +266,6 @@ define(function(require, exports, module) {
     
     var createDirectoryIndex = function(dirPath) {
         console.log("Creating directory index for: "+dirPath);
-        TSCORE.showLoadingAnimation();   
         var event = document.createEvent('CustomEvent');
         event.initCustomEvent("addon-message", true, true, {"detail":{
             "command": "createDirectoryIndex",
@@ -273,7 +276,6 @@ define(function(require, exports, module) {
     
     var createDirectoryTree = function(dirPath) {
         console.log("Creating directory tree for: "+dirPath);
-        TSCORE.showLoadingAnimation();   
         var event = document.createEvent('CustomEvent');
         event.initCustomEvent("addon-message", true, true, {"detail":{
             "command": "createDirectoryTree",
@@ -284,7 +286,6 @@ define(function(require, exports, module) {
     
     var checkNewVersion = function() {
         console.log("Checking for new version...");
-        TSCORE.showLoadingAnimation();   
         var event = document.createEvent('CustomEvent');
         event.initCustomEvent("addon-message", true, true, {"detail":{
             "command": "checkNewVersion"
@@ -294,7 +295,6 @@ define(function(require, exports, module) {
     
     var getFileProperties = function(filePath) {
         console.log("Getting file properties...");
-        TSCORE.showLoadingAnimation();   
         var event = document.createEvent('CustomEvent');
         event.initCustomEvent("addon-message", true, true, {"detail":{
             "command": "getFileProperties",
@@ -313,6 +313,7 @@ define(function(require, exports, module) {
     exports.loadSettings                = loadSettings;
     
     exports.createDirectory             = createDirectory;
+    exports.copyFile                    = copyFile;
     exports.renameFile                  = renameFile;
     exports.renameDirectory             = renameDirectory;
     exports.loadTextFile                = loadTextFile;
