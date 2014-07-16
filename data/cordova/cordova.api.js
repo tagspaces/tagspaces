@@ -417,15 +417,45 @@ define(function (require, exports, module) {
                 console.log("Creating directory failed: "+dirPath+" failed with error code: " + error.code);
            }  
         );
-    }; 
-    
-    var renameFile = function(filePath, newFilePath) {
-        TSCORE.showLoadingAnimation();  
-        
+    };
+
+    var copyFile = function(filePath, newFilePath) {
         filePath = normalizePath(filePath);
         var newFileName = newFilePath.substring(newFilePath.lastIndexOf('/')+1);
         var newFileParentPath = normalizePath(newFilePath.substring(0, newFilePath.lastIndexOf('/')));
-        // TODO check if the newFilePath exist or cause issues by renaming
+        // TODO check if the newFilePath exist or causes issues by copying
+        fsRoot.getDirectory(newFileParentPath, {create: false, exclusive: false},
+            function (parentDirEntry) {
+                fsRoot.getFile(filePath, {create: false, exclusive: false},
+                    function(entry) {
+                        entry.copyTo(
+                            parentDirEntry,
+                            newFileName,
+                            function() {
+                                console.log("File copy: target: "+newFilePath+" source: "+entry.fullPath);
+                                TSPOSTIO.copyFile(entry.fullPath, newFilePath);
+                            },
+                            function() {
+                                console.log("error copying: "+filePath);
+                            }
+                        );
+                    },
+                    function() {
+                        console.log("Error getting file: "+filePath);
+                    }
+                );
+            },
+            function (error) {
+                console.log("Getting dir: "+newFileParentPath+" failed with error code: " + error.code);
+            }
+        );
+    };
+
+    var renameFile = function(filePath, newFilePath) {
+        filePath = normalizePath(filePath);
+        var newFileName = newFilePath.substring(newFilePath.lastIndexOf('/')+1);
+        var newFileParentPath = normalizePath(newFilePath.substring(0, newFilePath.lastIndexOf('/')));
+        // TODO check if the newFilePath exist or causes issues by renaming
         fsRoot.getDirectory(newFileParentPath, {create: false, exclusive: false}, 
             function (parentDirEntry) {
                 fsRoot.getFile(filePath, {create: false, exclusive: false}, 
@@ -550,7 +580,8 @@ define(function (require, exports, module) {
         );  
     };
     
-    exports.createDirectory             = createDirectory; 
+    exports.createDirectory             = createDirectory;
+    exports.copyFile                    = copyFile;
     exports.renameFile                  = renameFile;
     exports.renameDirectory             = renameDirectory;
     exports.loadTextFile                = loadTextFile;
