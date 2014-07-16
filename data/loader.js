@@ -3,7 +3,6 @@
  * can be found in the LICENSE file. */
 /* global define, requirejs, _  */
 
- //var LOG = debug ? console.log : function () {};
 // the value of this var is replaced to "true" by the build script
 var PRODUCTION = "@@PRODUCTION";
 
@@ -32,7 +31,7 @@ try {
     isNode = true;
 } catch(e) {
     isNode = false;
-    console.log("node-webkit not foundt!");
+    console.log("node-webkit not found!");
 }
 
 // Setting up the IO functionality according to the platform
