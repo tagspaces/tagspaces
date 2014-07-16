@@ -115,7 +115,7 @@ can be found in the LICENSE file.
                     <span data-i18n="ns.common:reportIssues">Report Issues</span></a>
                 <a class="btn btn-link" data-i18n="[title]ns.common:helpUsTranslateTooltip" href="https://www.transifex.com/projects/p/tagspaces" id="helpUsTranslate">
                     <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
-                    <i class="fa fa-headphones fa-stack-1x" style=""></i></span>&nbsp;&nbsp;
+                    <i class="fa fa-language fa-stack-1x" style=""></i></span>&nbsp;&nbsp;
                     <span data-i18n="ns.common:helpUsTranslate">Translate in Your Language</span></a>
                 <a class="btn btn-link" data-i18n="[title]ns.common:supportUsTooltip" href="http://tagspaces.org/donations" id="openSupportUs">
                     <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
@@ -243,6 +243,8 @@ can be found in the LICENSE file.
                         <li class="divider"></li>
                         <li class="noWrap"><a id="renameFile" data-i18n="[title]ns.common:renameFileTooltip"><i class="fa fa-paragraph fa-fw"></i>
                             &nbsp;<span data-i18n="ns.common:renameFile">Rename File</span></a></li>
+                        <li class="noWrap"><a id="duplicateFile" data-i18n="[title]ns.common:duplicateFileTooltip"><i class="fa fa-copy fa-fw"></i>
+                            &nbsp;<span data-i18n="ns.common:duplicateFile">Duplicate File</span></a></li>
                         <li class="noWrap"><a id="sendFile" data-i18n="[title]ns.common:sendFileToTooltip"><i class="glyphicon glyphicon-send fa-fw"></i>
                             &nbsp;<span data-i18n="ns.common:sendFileTo">Send File To</span></a></li>
                         <li><a id="downloadFile" data-i18n="[title]ns.common:downloadFileTooltip"><i class="fa fa-download fa-fw"></i>
@@ -569,6 +571,23 @@ can be found in the LICENSE file.
             </div>
 		</div>
 	</div>
+</div>
+
+<div id="waitingDialog" class="modal" style="z-index: 99999" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <a class="close" data-dismiss="modal"><i class="fa fa-times fa-lg"></i></a>
+                <h4></h4>
+            </div>
+            <div class="modal-body">
+                <i class="fa fa-circle-o-notch fa-spin fa-2x"></i><i class="fa fa-fw"></i><span id="waitingMessage"></span>
+            </div>
+            <!--div class="modal-footer">
+                <button id="closeButton" class="btn btn-primary"><i class="fa fa-check fa-lg"></i></button>
+            </div-->
+        </div>
+    </div>
 </div>
 
 <div id="confirmDialog" class="modal" style="z-index: 99999" tabindex="-1">
