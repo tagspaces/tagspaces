@@ -91,20 +91,20 @@ define(function(require, exports, module) {
     );
 
     function openLocation(path) {
-        console.log("Opening connection in : "+path);
+        console.log("Opening location in : "+path);
 
         if(TSCORE.Config.getLoadLocationMeta()) {
             loadFolderMetaData(path);
         }
 
-        var currentLocation = TSCORE.Config.getLocation(path);
-        if(currentLocation != undefined) {
-            document.title = currentLocation.name + " | " + TSCORE.Config.DefaultSettings.appName;
+        TSCORE.currentLocationObject = TSCORE.Config.getLocation(path);
+        if(TSCORE.currentLocationObject != undefined) {
+            document.title = TSCORE.currentLocationObject.name + " | " + TSCORE.Config.DefaultSettings.appName;
 
-            $( "#locationName" ).text(currentLocation.name).attr("title",path);
+            $( "#locationName" ).text(TSCORE.currentLocationObject.name).attr("title",path);
 
             // Handle open default perspective for a location
-            var defaultPerspective = currentLocation.perspective;
+            var defaultPerspective = TSCORE.currentLocationObject.perspective;
             TSCORE.PerspectiveManager.changePerspective(defaultPerspective);
 
             // Saving the last opened location path in the settings
@@ -140,10 +140,10 @@ define(function(require, exports, module) {
                 TSCORE.generateTagGroups();
             }
 
-            if(metadata.desktop !== undefined) {
+            /*if(metadata.desktop !== undefined) {
                 TSCORE.locationDesktop = metadata.desktop;
                 TSCORE.PerspectiveManager.generateDesktop();
-            }
+            }*/
         });
     }
     
