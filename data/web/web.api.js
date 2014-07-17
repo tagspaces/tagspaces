@@ -241,8 +241,14 @@ define(function(require, exports, module) {
                 TSPOSTIO.getFileProperties(fileProperties);
             },1
         );
-    };    
-    
+    };
+
+    // Bring the TagSpaces window on top of the windows
+    var focusWindow = function() {
+        window.focus();
+    };
+
+    exports.focusWindow                 = focusWindow;
 	exports.createDirectory 			= createDirectory;
     exports.copyFile                    = copyFile;
 	exports.renameFile 					= renameFile;

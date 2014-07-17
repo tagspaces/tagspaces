@@ -579,7 +579,13 @@ define(function (require, exports, module) {
             }        
         );  
     };
-    
+
+    // Bring the TagSpaces window on top of the windows
+    var focusWindow = function() {
+        console.log("Focusing window is not implemented yet.");
+    };
+
+    exports.focusWindow                 = focusWindow;
     exports.createDirectory             = createDirectory;
     exports.copyFile                    = copyFile;
     exports.renameFile                  = renameFile;

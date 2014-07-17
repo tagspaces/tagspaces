@@ -307,11 +307,14 @@ define(function(require, exports, module) {
         // TODO implement openFile for firefox
         console.log("Open file functionality not implemented in Firefox yet!");
         TSCORE.showAlertDialog($.i18n.t("ns.dialogs:openFileNativelyAlert"));
-    };    
-    
-    exports.saveSettings                = saveSettings;
-    exports.loadSettings                = loadSettings;
-    
+    };
+
+    // Bring the TagSpaces window on top of the windows
+    var focusWindow = function() {
+        console.log("Focusing window is not implemented yet.");
+    };
+
+    exports.focusWindow                 = focusWindow;
     exports.createDirectory             = createDirectory;
     exports.copyFile                    = copyFile;
     exports.renameFile                  = renameFile;
@@ -332,4 +335,7 @@ define(function(require, exports, module) {
     exports.checkNewVersion             = checkNewVersion;
     exports.getFileProperties           = getFileProperties;
 
+    // mozilla specific
+    exports.saveSettings                = saveSettings;
+    exports.loadSettings                = loadSettings;
 });
