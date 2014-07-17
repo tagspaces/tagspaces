@@ -12,7 +12,7 @@ define(function(require, exports, module) {
     exports.createDirectoryIndex = function(directoryIndex) {
         console.log("Directory index created");
         TSCORE.PerspectiveManager.updateFileBrowserData(directoryIndex);
-        //TSCORE.hideLoadingAnimation();        
+        TSCORE.hideWaitingDialog();
     };   
     
     exports.createDirectoryTree = function(directoyTree) {
