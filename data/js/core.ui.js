@@ -17,7 +17,7 @@ define(function(require, exports, module) {
         if (!message) { message = 'No Message to Display.'; }
 
         var waitingModal = $('#waitingDialog');
-        waitingModal.find('h4').text(title);
+        waitingModal.find('#waitingHeader').text(title);
         waitingModal.find('#waitingMessage').text(message);
 
         waitingModal.modal({backdrop: 'static',show: true});
@@ -228,14 +228,17 @@ define(function(require, exports, module) {
             }
 
             $("#dialogMoveCopyFiles").i18n();
+
+            $("#dialogMoveCopyFiles").draggable({
+                handle: ".modal-header"
+            });
+
             $("#dialogMoveCopyFiles").modal({backdrop: 'static',show: true});
 
-            TSCORE.IO.focusWindow();
 
             console.log("Selected files: "+TSCORE.selectedFiles);
         });
     };
-
 
     var showAboutDialog = function() {
         $("#dialogAboutTS").modal({backdrop: 'static',show: true});
@@ -244,7 +247,7 @@ define(function(require, exports, module) {
     var initUI = function() {
         $("#appVersion").text(TSCORE.Config.DefaultSettings["appVersion"]+"."+TSCORE.Config.DefaultSettings["appBuild"]);
         $("#appVersion").attr("title","BuildID: "+TSCORE.Config.DefaultSettings["appVersion"]+"."+TSCORE.Config.DefaultSettings["appBuild"]+"."+TSCORE.Config.DefaultSettings["appBuildID"]);
- 
+
         // prevent default behavior from changing page on dropped file
         $(document).on("drop dragend dragstart dragenter dragleave drag dragover", function(event) {
             event.preventDefault();
@@ -267,6 +270,7 @@ define(function(require, exports, module) {
 
             $("#viewContainers").on("drop", function(event) {
                 event.preventDefault();
+                TSCORE.IO.focusWindow();
                 $("#viewContainers").attr("style","border:0px");
                 TSCORE.PerspectiveManager.clearSelectedFiles();
                 var files = event.originalEvent.dataTransfer.files;
