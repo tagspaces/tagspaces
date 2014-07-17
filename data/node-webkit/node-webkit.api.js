@@ -200,7 +200,7 @@ define(function(require, exports, module) {
 
     var createDirectoryIndex = function(dirPath) {
         console.log("Creating index for directory: "+dirPath);
-        TSCORE.showLoadingAnimation();  
+        TSCORE.showWaitingDialog("TagSpaces is indexing the current directory with subdirectories.");
         
         var directoryIndex = [];
         directoryIndex = scanDirectory(dirPath, directoryIndex);
@@ -210,7 +210,7 @@ define(function(require, exports, module) {
     
     var createDirectoryTree = function(dirPath) {
         console.log("Creating directory index for: "+dirPath);
-        TSCORE.showLoadingAnimation();
+        TSCORE.showWaitingDialog("TagSpaces is creating the structure tree of the current directory.");
 
         var directoyTree = generateDirectoryTree(dirPath);
         //console.log(JSON.stringify(directoyTree));
