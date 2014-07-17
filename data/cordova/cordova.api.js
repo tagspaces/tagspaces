@@ -205,13 +205,13 @@ define(function (require, exports, module) {
                         //console.log("Dir content: " + JSON.stringify(entries));
                         TSPOSTIO.listSubDirectories(anotatedDirList, dirPath);  
                     }, function (error) { // error get file system
-                        //TSPOSTIO.errorOpeningPath();            
+                        //TSPOSTIO.errorOpeningPath(dirPath);
                         console.log("Listing sub directories failed: " + error.code);
                     }            
                );
            },
            function (error) {
-                //TSPOSTIO.errorOpeningPath();              
+                //TSPOSTIO.errorOpeningPath(dirPath);
                 console.log("Getting sub directories of : "+dirPath+" failed: " + error.code);
            }                
         ); 
@@ -278,13 +278,13 @@ define(function (require, exports, module) {
                         //console.log("Dir content: " + JSON.stringify(entries));
   
                     }, function (error) { // error get file system
-                        TSPOSTIO.errorOpeningPath();
+                        TSPOSTIO.errorOpeningPath(dirPath);
                         console.log("Dir List Error: " + error.code);
                     }            
                );
            },
            function (error) {
-                TSPOSTIO.errorOpeningPath();
+                TSPOSTIO.errorOpeningPath(dirPath);
                 console.log("Getting dir: "+dirPath+" failed with error code: " + error.code);
            }                
         ); 

@@ -403,7 +403,7 @@ define(function(require, exports, module) {
         try {
             fs.readdir(dirPath, function (error, dirList) {
                 if (error) {
-                    TSPOSTIO.errorOpeningPath();
+                    TSPOSTIO.errorOpeningPath(dirPath);
                     console.log("Listing directory: " + dirPath + " failed " + error);
                     return;
                 }

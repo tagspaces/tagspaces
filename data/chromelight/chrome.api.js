@@ -69,7 +69,7 @@
             return index;
         })
         .fail(function(data) {
-            TSPOSTIO.errorOpeningPath();
+            TSPOSTIO.errorOpeningPath(dirPath);
             console.log("Error opening path "+data);
         });*/
     }
@@ -154,7 +154,7 @@
             TSPOSTIO.listDirectory(anotatedDirList);
         })
         .fail(function(data) {
-            TSPOSTIO.errorOpeningPath();
+            TSPOSTIO.errorOpeningPath(dirPath);
             console.log("Error opening path "+data);
         });
     };
@@ -194,7 +194,7 @@
             TSPOSTIO.listSubDirectories(anotatedDirList, dirPath);
         })
         .fail(function(data) {
-            TSPOSTIO.errorOpeningPath();
+            TSPOSTIO.errorOpeningPath(dirPath);
             console.log("Error opening path "+data);
         });
 
