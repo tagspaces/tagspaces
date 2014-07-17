@@ -17,12 +17,12 @@ define(function(require, exports, module) {
     
     exports.createDirectoryTree = function(directoyTree) {
         TSCORE.PerspectiveManager.updateTreeData(directoyTree);
-        //TSCORE.hideLoadingAnimation();         
-    };    
+        TSCORE.hideWaitingDialog();
+    };
     
     exports.createDirectory = function(dirPath) {
         TSCORE.navigateToDirectory(dirPath);
-        TSCORE.hideLoadingAnimation();        
+        TSCORE.hideWaitingDialog();
     };
 
     exports.copyFile = function(sourceFilePath, targetFilePath) {
@@ -97,7 +97,7 @@ define(function(require, exports, module) {
 
     exports.errorOpeningPath = function() {
         TSCORE.showAlertDialog($.i18n.t("ns.dialogs:errorOpeningLocationAlert"));
-        TSCORE.closeCurrentLocation();
+        //TSCORE.closeCurrentLocation();
     };
     
     exports.deleteElement = function(filePath) {
