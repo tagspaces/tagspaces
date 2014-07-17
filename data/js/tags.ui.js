@@ -29,7 +29,7 @@
                 '<div class="accordion-inner" id="tagButtonsContent{{@index}}" style="padding: 2px;">'+
                     '<div>'+
                         '{{#each children}}'+
-                        '<a class="btn btn-sm tagButton ui-draggable" tag="{{title}}" parentkey="{{../key}}" style="{{style}}" title="{{titleUI}}" >' +
+                        '<a class="btn btn-sm tagButton" tag="{{title}}" parentkey="{{../key}}" style="{{style}}" title="{{titleUI}}" >' +
                             '<span class="{{icon}}" /> '+
                             '{{title}}'+
                             '{{#if count}} [{{count}}]{{/if}}'+
