@@ -13,6 +13,7 @@
     "fileSaveTitleConfirm": "Confirm File Save",
     "fileSaveContentConfirm": "Do you want to overwrite the current file?",
     "errorOpeningLocationAlert": "Error occured while opening a path! Currently opened location will be closed.",
+    "errorOpeningPathAlert": "The desired path could not be opened.",
     "openFileNativelyAlert": "Open files natively is not implemented yet!",
     "openContainingDirectoryAlert": "Open directory functionality not implemented yet!",
     "accessFileURLNotAllowedAlert": "Please make sure that you check the 'Allow access to file URLs' checkbox in the extension settings of chrome/chromium ('chrome://extensions/'). TagSpaces can not read files from your local storage!",
