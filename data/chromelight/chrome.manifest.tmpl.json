@@ -9,14 +9,17 @@
         "64": "assets/icon64.png",
         "128": "assets/icon128.png"
     },
-    "app": {
-        "launch": {
-            "local_path": "index.html"
-        }
+    "background": {
+        "scripts": ["chrome/background.js"]
+    },
+    "browser_action": {
+        "default_icon":  "assets/icon19.png",
+        "default_title": "Launch @@APPNAME"
     },
     "permissions": [
         "<all_urls>",
         "storage"
     ],
-    "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
+    "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
+    "homepage_url": "http://tagspaces.org"
 }
