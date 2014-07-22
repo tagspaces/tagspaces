@@ -3,7 +3,6 @@
     "switchToLocationsTooltip": "Show Folder Navigator",
     "toggleLeftPanelTooltip": "Toggle Left Panel",
     "switchLanguageTooltip": "Switch language",
-
     "fileOperations": "File Operations",
     "addRemoveTagsTooltip": "Add or remove tags to current file selection",
     "addRemoveTags": "Add / Remove Tags",
@@ -43,7 +42,6 @@
     "openPrevFile": "Previous File",
     "openNextFileTooltip": "Open next file",
     "openNextFile": "Next File",
-
     "tagOperations": "Tag Operations",
     "showFilesWithThisTagTooltip": "Set current tag as a filter criteria",
     "showFilesWithThisTag": "Show Files With This Tag",
@@ -84,7 +82,6 @@
     "newSubdirectory": "New Subdirectory",
     "openDirectoriyNativelyTooltip": "Open current directory in the file manager",
     "openDirectoriyNatively": "Show in File Manager",
-
     "aboutTagSpaces": "About TagSpaces",
     "aboutTagSpacesTooltip": "Open the about box",
     "startingHints": "Starting Tips",
@@ -111,14 +108,12 @@
     "writeUsEmailTooltip": "Send email to us",
     "supportUs": "Support the Project",
     "supportUsTooltip": "Learn how you can support TagSpaces",
-
     "chooseLocation": "Choose Location",
     "showTagLibraryTooltip": "Show Tag Library",
     "showLocationNavigatorTooltip": "Show Location Navigator",
     "switchToContactUsTooltip": "Show Contact Us",
     "openNewInstanceTooltip": "Open New TagSpaces Instance",
     "openSettingTooltip": "Open Settings",
-
     "searchOptions": "Search Options",
     "searchPlaceholder": "Search",
     "clearFilterTooltip": "Clear Filter",
@@ -129,7 +124,6 @@
     "andedSearch": "All terms should be true in order the file to appear in the search results.",
     "searchInFilenameOnly": "The searched term should be part of the filename. Currently the content of the file is ignored.",
     "perspectivesDropDown": "Perspectives",
-
     "suggestedTags": "Suggested Tags",
     "tagsFromCurrentFolder": "Tags From Current Folder",
     "tagsFromCurrentLocation": "Tags From Current Location",
@@ -158,6 +152,5 @@
     "showDevTools": "Show Developer Tools",
     "toggleFullScreen": "Toggle Fullscreen",
     "reloadApplication": "Reload Application",
-
     "-": "-"
 }

@@ -46,6 +46,14 @@ define(function(require, exports, module) {
                 console.error("Rename failed");
             }
             break;
+        case "copy":
+            if(message.success){
+                TSPOSTIO.copyFile(message.content[0],message.content[1]);
+            } else {
+                TSCORE.hideWaitingDialog();
+                console.error("Rename failed "+message.content);
+            }
+            break;
         case "saveTextFile":
             if(message.success){
                 TSPOSTIO.saveTextFile(message.content);
@@ -163,14 +171,13 @@ define(function(require, exports, module) {
 
     var copyFile = function(filePath, newFilePath) {
         console.log("Copy "+filePath+" to "+newFilePath);
-        TSCORE.showAlertDialog("Copy file functionality is not implemented in Firefox yet.");
-        /*var event = document.createEvent('CustomEvent');
+        var event = document.createEvent('CustomEvent');
         event.initCustomEvent("addon-message", true, true, {"detail":{
-            "command": "rename",
+            "command": "copy",
             "path": filePath,
             "newPath": newFilePath
         }});
-        document.documentElement.dispatchEvent(event);*/
+        document.documentElement.dispatchEvent(event);
     };
 
     var renameFile = function(filePath, newFilePath) {
@@ -311,7 +318,7 @@ define(function(require, exports, module) {
 
     // Bring the TagSpaces window on top of the windows
     var focusWindow = function() {
-        console.log("Focusing window is not implemented yet.");
+        window.focus();
     };
 
     exports.focusWindow                 = focusWindow;
