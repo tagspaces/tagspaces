@@ -9,7 +9,7 @@ const {components, Cc, Ci, Cr, Cu} = require("chrome");
 var filesIO = require("sdk/io/file"); // file
 var runtime = require("sdk/system/runtime"); // runtime 
 const { getTabs, getTabId, getOwnerWindow } = require("sdk/tabs/utils"); // tabs/utils
- 
+
 function getWindow(worker) {
     let { tab } = worker;
  
@@ -261,9 +261,8 @@ exports.deleteElement = function deleteElement(path, worker) {
 
 exports.rename = function rename(filePath, newFilePath, worker) {
     console.log("Renaming file: "+filePath+" to "+newFilePath);
-    // Checks if the file already exists.
-    console.log("Renaming on "+runtime.OS);
 
+    // Checks if the file already exists.
     if(!filesIO.exists(newFilePath)) {
         try {
             // TODO Remove the OSX custom code after https://bugzilla.mozilla.org/show_bug.cgi?id=913663 is fixed
@@ -329,6 +328,46 @@ exports.rename = function rename(filePath, newFilePath, worker) {
     } else {
         worker.postMessage({ "command": "rename", "success": false });
         console.error("Renaming failed. Target filepath already exists.");
+    }
+};
+
+exports.copy = function copy(filePath, newFilePath, worker) {
+    console.log("Copy file: "+filePath+" to "+newFilePath);
+
+    // Checks if the target file already exists.
+    if(!filesIO.exists(newFilePath)) {
+        try {
+            var binaryFile = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsIFile);
+            binaryFile.initWithPath( filePath );
+            console.log("Init File: "+filePath);
+
+            var istream = Cc["@mozilla.org/network/file-input-stream;1"].createInstance(Ci.nsIFileInputStream);
+            istream.init(binaryFile, -1, -1, false);
+            var bstream = Cc["@mozilla.org/binaryinputstream;1"].createInstance(Ci.nsIBinaryInputStream);
+            bstream.setInputStream(istream);
+            var binaryStream = bstream.readBytes(bstream.available());
+
+            var file = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsIFile);
+            file.initWithPath(newFilePath);
+            console.log("InitFile: "+newFilePath);
+
+            var stream = Cc["@mozilla.org/network/file-output-stream;1"].createInstance(Ci.nsIFileOutputStream);
+            stream.init(file, 0x04 | 0x08 | 0x20, 0600, 0); // readwrite, create, truncate
+            stream.write(binaryStream,binaryStream.length);
+            if (stream instanceof Ci.nsISafeOutputStream) {
+                stream.finish();
+            } else {
+                stream.close();
+            }
+
+            worker.postMessage({ "command": "copy", "success": true, "content": [filePath, newFilePath] });
+        } catch(ex) {
+            worker.postMessage({ "command": "copy", "success": false });
+            console.error("Copy failed "+ex);
+        }
+    } else {
+        worker.postMessage({ "command": "copy", "success": false, "content": "TargetFileAlreadyExistsError" });
+        //console.error("Copy failed. Target filepath already exists.");
     }
 };
 
