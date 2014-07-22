@@ -42,8 +42,9 @@ exports.main = function(options, callbacks) {
         'self.on("message", function(message) {'+
             'console.log("Message received in content script from addon: "+JSON.stringify(message));'+
             'var event = document.createEvent("CustomEvent");'+
-            'event.initCustomEvent("tsMessage", true, true, message);'+    
-            'document.documentElement.dispatchEvent(event);    '+
+            'var cloned = cloneInto(message, document.defaultView);'+
+            'event.initCustomEvent("tsMessage", true, true, cloned);'+
+            'document.documentElement.dispatchEvent(event);'+
         '}); '+
         'document.documentElement.addEventListener("addon-message", function(event) {'+
             'console.log("Message received from page script in content script "+JSON.stringify(event.detail));'+
@@ -197,6 +198,9 @@ function handleMessage(msg, worker) {
             break;
         case "rename":
             ioutils.rename(msg.detail.path, msg.detail.newPath, worker);
+            break;
+        case "copy":
+            ioutils.copy(msg.detail.path, msg.detail.newPath, worker);
             break;
         case "saveTextFile":
             ioutils.saveTextFile(msg.detail.path, msg.detail.content, worker);
