@@ -62,10 +62,10 @@ requirejs.config({
       }
     },
     paths: {
-        jquery:                 'libs/jquery/jquery-2.0.1.min',
+        jquery:                 'libs/jquery/jquery-2.1.1.min',
         jqueryui:               'libs/jqueryui/jquery.ui.core',
         jqueryuiwidget:         'libs/jqueryui/jquery.ui.widget',
-        jqueryuimouse:          'libs/jqueryui/jquery.ui.mouse', 
+        jqueryuimouse:          'libs/jqueryui/jquery.ui.mouse',
         jqueryuiposition:       'libs/jqueryui/jquery.ui.position',
         jqueryuiselectable:     'libs/jqueryui/jquery.ui.selectable',
         jqueryuisortable:       'libs/jqueryui/jquery.ui.sortable',
@@ -81,7 +81,6 @@ requirejs.config({
         jquerylayout:           'libs/jquerylayout/jquery.layout-latest.min',
         underscore:             'libs/underscore/underscore-min',
         d3:                     'libs/d3/d3.v3',
-        dropbox:                'libs/dropbox/dropbox.0.10.2',
         i18next:                'libs/i18next/i18next.amd.withJQuery-1.7.2.min',
         mousetrap:              'libs/mousetrap/mousetrap.min',
         select2:                'libs/select2/select2.min',
@@ -105,8 +104,7 @@ requirejs.config({
         tsdirectoriesui:        'js/directories.ui',
         tscoreui:               'js/core.ui',
         tspostioapi:            'js/postioapi',
-        tsioapi:                IO_JS,
-        tsioapidropbox:         'js/ioapi.dropbox',
+        tsioapi:                 IO_JS,
         tsdirectorybrowser:     'js/directorybrowser'
     }, 
     shim: {
@@ -114,7 +112,7 @@ requirejs.config({
         'bootstrap':                { deps: ['jquery'] }, 
         'jquerysimplecolorpicker':  { deps: ['jquery','bootstrap'] },
         'jqueryui':                 { deps: ['jquery','i18next'] },
-        'jqueryuiwidget':           { deps: ['jqueryui'] }, 
+        'jqueryuiwidget':           { deps: ['jqueryui'] },
         'jqueryuimouse':            { deps: ['jqueryui','jqueryuiwidget'] },
         'jqueryuiposition':         { deps: ['jqueryui'] },
         'jqueryuiselectable':       { deps: ['jqueryui','jqueryuiwidget','jqueryuimouse'] },
