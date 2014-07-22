@@ -296,10 +296,7 @@ define(function(require, exports, module) {
     var col1Layout;
     var col2Layout;
 
-    var row1Height = 40; // px
-    var row3Height = 45; // px  
-    
-    var isFullWidth = false; 
+    var isFullWidth = false;
     var shouldOpenCol1 = true;
     var shouldOpenCol3 = false;    
     var col1DefaultWidth = 250;
@@ -477,7 +474,7 @@ define(function(require, exports, module) {
             center__paneSelector:       '.row2',
             south__paneSelector:        '.row3',
         //  north__size:                row1Height,	// percentage size expresses as a string
-            south__size:                row3Height,
+            south__size:                50,
             north__spacing_open:        0,
             south__spacing_open:        0,
             autoResize:                 false,	// try to maintain pane-percentages
@@ -501,7 +498,7 @@ define(function(require, exports, module) {
             center__paneSelector:       '.row2',
             south__paneSelector:        '.row3',
         //  north__size:                row1Height,	// percentage size expresses as a string
-            south__size:                row3Height,
+            south__size:                45,
             north__spacing_open:        0,
             south__spacing_open:        0,
             autoResize:                 true,	// try to maintain pane-percentages
