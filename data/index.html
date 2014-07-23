@@ -182,8 +182,8 @@ can be found in the LICENSE file.
                         <input type="text" class="form-control" id="searchBox" placeholder="Search" data-i18n="[placeholder]ns.common:searchPlaceholder">
                         <div class="dropdown-menu" style="width: 300px; padding: 10px; font-size: 13px;" id="searchOptions">
                             <span class="dropdown-header"><span data-i18n="ns.common:searchOptions">Search Options</span><button type="button" class="close" id="closeSearchOptionButton">×</button></span>
-                            <div class="form-group">
-                                <label class="checkbox">
+                            <div class="checkbox">
+                                <label>
                                     <input type="checkbox" id="includeSubfoldersOption" />&nbsp;<span data-i18n="ns.common:includeSubfoldersInSearch">Include files from the subfolders (by adding questionmark '?' in front of the query)</span>
                                 </label>
                             </div><br><br>
@@ -349,8 +349,8 @@ can be found in the LICENSE file.
                     </label>
                 </div>
             </div>
-            <div class="form-group">
-              <label class="checkbox">
+            <div class="checkbox">
+              <label>
                 <input type="checkbox" id="tagWithCurrentDate">&nbsp;<span data-i18n="ns.dialogs:tagWithCurrentDate">Tag with current date (e.g. 20131208 for the 8th of December, 2013)</span>
               </label>
             </div>
@@ -596,10 +596,12 @@ can be found in the LICENSE file.
             </div>
             <div class="modal-body">
                 <span id="dialogContent" style="font-weight: bold;"></span>
-                <label class="checkbox" id="showThisDialogAgainContainer">
-                    <input type='checkbox' id='showThisDialogAgain' checked />
-                    <span data-i18n="ns.common:showThisDialogNextTime">Show this dialog next time.</span>
-                </label>
+                <div class="checkbox" id="showThisDialogAgainContainer">
+                    <label>
+                        <input type="checkbox" id="showThisDialogAgain" checked />
+                        <span data-i18n="ns.common:showThisDialogNextTime">Show this dialog next time.</span>
+                    </label>
+                </div>
             </div>
             <div class="modal-footer">
                 <button id="cancelButton" class="btn" data-dismiss="modal"><i class="fa fa-times fa-lg"></i></button>
