@@ -132,6 +132,21 @@ console.log("Loading UI for perspectiveList");
                 TSCORE.navigateToDirectory(TSCORE.currentPath);
             });
 
+        $("#"+this.extensionID+"CreateHTMLFileButton")
+            .click(function() {
+                TSCORE.createHTMLFile();
+            });
+
+        $("#"+this.extensionID+"CreateMDFileButton")
+            .click(function() {
+                TSCORE.createMDFile();
+            });
+
+        $("#"+this.extensionID+"CreateTXTFileButton")
+            .click(function() {
+                TSCORE.createTXTFile();
+            });
+
         // Disabling all buttons by no data
         this.viewToolbar.find(".btn").prop('disabled', true);
 
@@ -316,7 +331,10 @@ console.log("Loading UI for perspectiveList");
                 "appendTo":  "body",
                 "helper":    "clone",
                 "revert":    true,
-                "start":     function() { self.selectFile(this, $(this).attr("filepath")); }
+                "start":     function() {
+                    console.log("Start dragging -----");
+                    self.selectFile(this, $(this).attr("filepath"));
+                }
             });
 
         this.fileTable.$('.fileSelection')
