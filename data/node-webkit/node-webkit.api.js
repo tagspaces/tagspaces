@@ -219,8 +219,7 @@ define(function(require, exports, module) {
     
     var createDirectory = function(dirPath) {
         console.log("Creating directory: "+dirPath);   
-        TSCORE.showLoadingAnimation();  
-                
+
         fs.mkdir(dirPath, function(error) {
             if (error) {
                 console.log("Creating directory "+dirPath+" failed "+error);
@@ -327,8 +326,7 @@ define(function(require, exports, module) {
 
     var loadTextFile = function(filePath, isPreview) {
         console.log("Loading file: "+filePath);
-        TSCORE.showLoadingAnimation();  
-        
+
         if(isPreview) {
             var stream = fs.createReadStream(filePath,  {start: 0, end: 10000});
             stream.on('error', function(err){
@@ -354,7 +352,6 @@ define(function(require, exports, module) {
     
     /* var loadEXIF = function(filePath) {
         console.log("Loading file: "+filePath);
-        TSCORE.showLoadingAnimation();  
 
         var buf = fs.readFileSync(filePath);
         exif.parseTags(new BufferStream(buf, 24, 23960), function(ifdSection, tagType, value, format) {
@@ -364,8 +361,7 @@ define(function(require, exports, module) {
     
     var saveTextFile = function(filePath,content,overWrite) {
         console.log("Saving file: "+filePath);
-        TSCORE.showLoadingAnimation();  
-                
+
         /** TODO check if fileExist by saving needed
         if(overWrite) {
             // Current implementation
@@ -398,7 +394,6 @@ define(function(require, exports, module) {
 
     var listDirectory = function (dirPath) {
         console.log("Listing directory: " + dirPath);
-        TSCORE.showLoadingAnimation();
 
         try {
             fs.readdir(dirPath, function (error, dirList) {
@@ -431,8 +426,7 @@ define(function(require, exports, module) {
     
     var deleteElement = function(path) {
         console.log("Deleting: "+path);
-        TSCORE.showLoadingAnimation();  
-                
+
         fs.unlink(path, function(error) {
             if (error) {
                 console.log("Deleting file "+path+" failed "+error);
@@ -444,7 +438,6 @@ define(function(require, exports, module) {
 
     var deleteDirectory = function(path) {
         console.log("Deleting directory: "+path);
-        TSCORE.showLoadingAnimation();
 
         fs.rmdir(path, function(error) {
             if (error) {
