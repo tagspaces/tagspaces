@@ -14,7 +14,7 @@
     },
     "browser_action": {
         "default_icon":  "assets/icon19.png",
-        "default_title": "Launch @@APPNAME"
+        "default_title": "Launch TagSpaces"
     },
     "permissions": [
         "<all_urls>",
