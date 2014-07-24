@@ -674,6 +674,7 @@ define(function(require, exports, module) {
             $("#downloadFile").parent().hide();
             $("#openFileInNewWindow").hide();
             $("#openGooglePlay").hide();
+            $(".cancelButton").hide();
         } else if(isChrome) {
             $("#directoryMenuOpenDirectory").parent().hide();
             $("#fileMenuOpenDirectory").parent().hide();
