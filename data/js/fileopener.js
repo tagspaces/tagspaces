@@ -31,8 +31,6 @@
     function initUI() {
         $( "#editDocument" )
             .click(function() {
-                $("#editDocument").hide();
-                $("#saveDocument").show();
                 editFile(_openedFilePath);
             });   
             
@@ -164,10 +162,6 @@
         return _isFileOpened;
     }
 
-    function setFileOpened(fileOpened) {
-        _isFileOpened = fileOpened;
-    }
-
     function getOpenedFilePath() {
         return _openedFilePath;
     }
@@ -176,18 +170,21 @@
         if(_isEditMode) {
             if(forceClose) {
                 cleanViewer();
+                TSCORE.closeFileViewer();
             } else {
                 TSCORE.showConfirmDialog(
                     $.i18n.t("ns.dialogs:closingEditedFileTitleConfirm"),
                     $.i18n.t("ns.dialogs:closingEditedFileContentConfirm"),
                     function() {
                         cleanViewer();
+                        TSCORE.closeFileViewer();
                     }
                 );                             
             }
 
         } else {
             cleanViewer();
+            TSCORE.closeFileViewer();
         }
     }
 
@@ -195,7 +192,7 @@
         // Cleaning the viewer/editor
         //document.getElementById("viewer").innerHTML = "";
         $( "#viewer" ).find("*").off().unbind().children().remove();
-        TSCORE.FileOpener.setFileOpened(false);
+        _isFileOpened = false;
         TSCORE.closeFileViewer();
         _isEditMode = false;
         Mousetrap.unbind(TSCORE.Config.getSaveDocumentKeyBinding());
@@ -214,7 +211,7 @@
         TSCORE.openLocation(TSCORE.TagUtils.extractContainingDirectoryPath(filePath));
     }
 
-    function openFile(filePath) {
+    function openFile(filePath, editMode) {
         console.log("Opening file: "+filePath);
 
         if(filePath === undefined) {
@@ -276,27 +273,34 @@
         TSCORE.IO.checkAccessFileURLAllowed();
 
         TSCORE.IO.getFileProperties(filePath.replace("\\\\","\\"));
-        
-        if(!viewerExt) {
-            require([TSCORE.Config.getExtensionPath()+"/viewerText/extension.js"], function(viewer) {
-                _tsEditor = viewer;
-                _tsEditor.init(filePath, "viewer", true);
-            });        
+
+        updateUI();
+
+        if(editMode) {
+            // opening file for editing
+            editFile(filePath);
         } else {
-            require([TSCORE.Config.getExtensionPath()+"/"+viewerExt+"/extension.js"], function(viewer) {
-                _tsEditor = viewer;
-                _tsEditor.init(filePath, "viewer", true);
-            });
+            // opening file for viewing
+            if(!viewerExt) {
+                require([TSCORE.Config.getExtensionPath()+"/viewerText/extension.js"], function(viewer) {
+                    _tsEditor = viewer;
+                    _tsEditor.init(filePath, "viewer", true);
+                });
+            } else {
+                require([TSCORE.Config.getExtensionPath()+"/"+viewerExt+"/extension.js"], function(viewer) {
+                    _tsEditor = viewer;
+                    _tsEditor.init(filePath, "viewer", true);
+                });
+            }
         }
 
-        updateUI();  
         initTagSuggestionMenu(filePath);
 
         // Clearing file selection on file load and adding the current file path to the selection
         TSCORE.PerspectiveManager.clearSelectedFiles();
         TSCORE.selectedFiles.push(filePath);
 
-        TSCORE.FileOpener.setFileOpened(true);
+        _isFileOpened = true;
         TSCORE.openFileViewer();
 
         // Handling the keybindings
@@ -374,6 +378,8 @@
                 _tsEditor.init(filePath, "viewer", false);
             });
             _isEditMode = true;
+            $("#editDocument").hide();
+            $("#saveDocument").show();
         } catch(ex) {
             console.error("Loading editing extension failed: "+ex);
         }
@@ -547,7 +553,6 @@
     exports.saveFile                            = saveFile;
     exports.isFileOpened						= isFileOpened;
     exports.isFileEdited						= isFileEdited;
-    exports.setFileOpened						= setFileOpened;
     exports.getOpenedFilePath                   = getOpenedFilePath;
     exports.updateEditorContent                 = updateEditorContent;
     exports.setFileProperties                   = setFileProperties;
