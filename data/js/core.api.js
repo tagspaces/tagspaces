@@ -124,8 +124,6 @@ define(function(require, exports, module) {
             fallbackLng: "en"
         }, function() {
             $('[data-i18n]').i18n();
-            //$("#locationName").text($.i18n.t("ns.common:chooseLocation"));
-            //$("#currentPerspectitveName").text($.i18n.t("ns.common:perspectivesDropDown"));
             if(isNode) {
                 tsIOApi.initMainMenu();
             }
