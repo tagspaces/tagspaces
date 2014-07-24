@@ -72,14 +72,14 @@ define(function(require, exports, module) {
     };
     
     exports.saveTextFile = function(filePath, isNewFile) {
-        // If the file is new, then refresh the filelist 
+        TSCORE.PerspectiveManager.refreshFileListContainer();
+
         if(isNewFile) {
-            TSCORE.PerspectiveManager.refreshFileListContainer();            
+            // If file is new open it in edit mode
+            TSCORE.FileOpener.openFile(filePath, true);
+        } else {
+            TSCORE.FileOpener.openFile(filePath);
         }
-        //if(!TSCORE.FileOpener.isFileOpened()) {
-            TSCORE.FileOpener.openFile(filePath);                    
-        //}
-        TSCORE.hideLoadingAnimation();                             
     };
     
     exports.listDirectory = function(anotatedDirList) {
@@ -112,7 +112,7 @@ define(function(require, exports, module) {
         TSCORE.removeFileModel(TSCORE.fileList, filePath);
         TSCORE.PerspectiveManager.removeFileUI(filePath);
         if(filePath === TSCORE.FileOpener.getOpenedFilePath()) {
-            TSCORE.closeFileViewer();
+            TSCORE.FileOpener.closeFile(true);
         }
         TSCORE.hideLoadingAnimation();        
     };
