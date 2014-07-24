@@ -64,7 +64,6 @@ define(function(require, exports, module) {
                     }
                 });
 
-                //cmEditor.readOnly = isViewerMode;
                 cmEditor.setSize("100%","100%");
                 TSCORE.IO.loadTextFile(filePath);
             });
