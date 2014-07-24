@@ -43,6 +43,8 @@ define(function(require, exports, module) {
             require([
                 extensionDirectory+"/codemirror/mode/" + mode + "/" + mode + ".js"
             ], function() {
+                var cursorBlinkRate = isViewerMode?-1:530; // disabling the blinking cursor in readonly mode
+
                 cmEditor = CodeMirror(document.getElementById("code"), {
                     fixedGutter: false,
                     mode: mode,
@@ -51,6 +53,7 @@ define(function(require, exports, module) {
                     tabSize: 2,
                     collapseRange: true,
                     matchBrackets: true,
+                    cursorBlinkRate: cursorBlinkRate,
                     readOnly: isViewerMode,
                     //theme: "lesser-dark",
                      extraKeys: {
