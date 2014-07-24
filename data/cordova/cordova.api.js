@@ -380,27 +380,45 @@ define(function (require, exports, module) {
             console.log("Content beging with a UTF8 bom");
         } else {
             content = UTF8_BOM+content;
-        }    
+        }
+
+        var isFileNew = true;
 
         filePath = normalizePath(filePath);
-        fsRoot.getFile(filePath, {create: true, exclusive: false}, 
+
+        // Checks if the file already exists
+        fsRoot.getFile(filePath, {create: false, exclusive: false},
             function(entry) {
-                entry.createWriter(
-                    function(writer) {
-                        writer.onwriteend = function(evt) {
-                            TSPOSTIO.saveTextFile(fsRoot.fullPath+"/"+filePath);
-                        };
-                        writer.write(content);                           
-                    },
-                    function() {
-                        console.log("error creating writter file: "+filePath);
-                    }                                  
-                );
+                if(entry.isFile) {
+                    isFileNew = false;
+                }
+                saveFile(isFileNew);
             },
             function() {
-                console.log("Error getting file entry: "+filePath);
-            }        
-        ); 
+                saveFile(isFileNew)
+            }
+        );
+
+        function saveFile(isFileNew) {
+            fsRoot.getFile(filePath, {create: true, exclusive: false},
+                function(entry) {
+                    entry.createWriter(
+                        function(writer) {
+                            writer.onwriteend = function(evt) {
+                                TSPOSTIO.saveTextFile(fsRoot.fullPath+"/"+filePath, isFileNew);
+                            };
+                            writer.write(content);
+                        },
+                        function() {
+                            console.log("error creating writter file: "+filePath);
+                        }
+                    );
+                },
+                function() {
+                    console.log("Error getting file entry: "+filePath);
+                }
+            );
+        }
     };   
 
     var createDirectory = function(dirPath) {
@@ -607,6 +625,6 @@ define(function (require, exports, module) {
     exports.checkAccessFileURLAllowed   = checkAccessFileURLAllowed;
     exports.checkNewVersion             = checkNewVersion;        
     exports.getFileProperties           = getFileProperties;
-    exports.handleStartParameters        = handleStartParameters;
+    exports.handleStartParameters       = handleStartParameters;
     
 });
