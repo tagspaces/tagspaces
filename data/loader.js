@@ -86,7 +86,6 @@ requirejs.config({
         hammerjs:               'libs/hammerjs/jquery.hammer.min',
         handlebarsjs:           'libs/handlebars.js/handlebars-v1.1.2',
         webdavlib:              'web/webdavlib',
-        fastclick:              'cordova/fastclick.min',
 
         tscore:                 'js/core.api',
         tssetting:              'js/settings.api',
