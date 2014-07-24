@@ -92,6 +92,7 @@
         $("#showHiddenFilesCheckbox").attr("checked",TSCORE.Config.getShowUnixHiddenEntries());
         $("#checkforUpdatesCheckbox").attr("checked",TSCORE.Config.getCheckForUpdates());
         $("#calculateTagsCheckbox").attr("checked",TSCORE.Config.getCalculateTags());
+        $("#loadLocationMetaData").attr("checked",TSCORE.Config.getLoadLocationMeta());
         $("#tagsDelimiterInput").val(TSCORE.Config.getTagDelimiter());
         $("#prefixTagContainerInput").val(TSCORE.Config.getPrefixTagContainer());
 
@@ -101,7 +102,6 @@
         $("#reloadDocumentKeyBinding").val(TSCORE.Config.getReloadDocumentKeyBinding());
         $("#saveDocumentKeyBinding").val(TSCORE.Config.getSaveDocumentKeyBinding());
         $("#documentPropertiesKeyBinding").val(TSCORE.Config.getPropertiesDocumentKeyBinding());
-        //$("#").val(TSCORE.Config.get());
 
         $('#perspectiveList').empty();
         TSCORE.Config.getPerspectives().forEach(function (value) {
@@ -157,6 +157,7 @@
         TSCORE.Config.setCalculateTags($('#calculateTagsCheckbox').is(":checked"));
         TSCORE.Config.setTagDelimiter($("#tagsDelimiterInput").val());
         TSCORE.Config.setPrefixTagContainer($("#prefixTagContainerInput").val());
+        TSCORE.Config.setLoadLocationMeta($("#loadLocationMetaData").is(":checked"));
 
         TSCORE.Config.setNextDocumentKeyBinding(parseKeyBinding($("#nextDocumentKeyBinding").val()));
         TSCORE.Config.setPrevDocumentKeyBinding(parseKeyBinding($("#prevDocumentKeyBinding").val()));
