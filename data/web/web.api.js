@@ -168,15 +168,22 @@ define(function(require, exports, module) {
 	var saveTextFile = function(filePath,content,overWrite) {
 		console.log("Saving file: "+filePath+" content: "+content);
 
-        var isNewFile; // = !pathUtils.existsSync(filePath);
-        davClient.put(
-            filePath,
-            function( status, data, headers ) {
-                console.log("Creating File Status/Content/Headers:  "+status+" / "+data+" / "+headers);
-            },
-            content
+        var isNewFile = true; // = !pathUtils.existsSync(filePath);
+        davClient.propfind( filePath, function( status, data ) {
+                console.log("Check file exists: Status / Content: "+status+" / "+data);
+                if(data !== undefined) {
+                    isNewFile = false;
+                }
+                davClient.put(
+                    filePath,
+                    function( status, data, headers ) {
+                        console.log("Creating File Status/Content/Headers:  "+status+" / "+data+" / "+headers);
+                        TSPOSTIO.saveTextFile(filePath, isNewFile);
+                    },
+                    content
+                );
+            },1
         );
-        TSPOSTIO.saveTextFile(filePath, isNewFile);
 	};
 	
 	var deleteElement = function(path) {
