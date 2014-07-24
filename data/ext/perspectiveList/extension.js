@@ -70,7 +70,11 @@ define(function(require, exports, module) {
         );
 	}
 	
-	var platformTuning = function() {};
+	var platformTuning = function() {
+        if(isCordova) {
+            $('#'+extensionID+'Export2CSVButton').hide();
+        }
+    };
 	
 	var load = function () {
 		console.log("Loading perspective "+extensionID);
