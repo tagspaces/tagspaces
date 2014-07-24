@@ -351,12 +351,10 @@ define(function(require, exports, module) {
                 fileTags = TSCORE.TagUtils.beginTagContainer + fileTags + TSCORE.TagUtils.endTagContainer;
             }
 
-            var fileName = TSCORE.currentPath+TSCORE.dirSeparator+$( "#newFileName" ).val()+fileTags+"."+fileType;
+            var filePath = TSCORE.currentPath+TSCORE.dirSeparator+$( "#newFileName" ).val()+fileTags+"."+fileType;
 
-            TSCORE.IO.saveTextFile(fileName,fileContent);
-            
-            // TODO move this functionality to postio
-            TSCORE.IO.listDirectory(TSCORE.currentPath);
+            TSCORE.IO.saveTextFile(filePath,fileContent);
+
         });
 
         $( '#renameFileButton' ).click(function() {
@@ -778,7 +776,35 @@ define(function(require, exports, module) {
         $('#showLocations').removeClass("active");
         $('#showTagGroups').removeClass("active");
         $('#contactUs').addClass("active");
-    };     
+    };
+
+    var createHTMLFile = function() {
+        var filePath = TSCORE.currentPath+
+                       TSCORE.dirSeparator+
+                       TSCORE.TagUtils.beginTagContainer+
+                       TSCORE.TagUtils.formatDateTime4Tag(new Date(), true)+
+                       TSCORE.TagUtils.endTagContainer+".html";
+        TSCORE.IO.saveTextFile(filePath,TSCORE.Config.getNewHTMLFileContent());
+    };
+
+    var createMDFile = function() {
+        var filePath = TSCORE.currentPath+
+                       TSCORE.dirSeparator+
+                       TSCORE.TagUtils.beginTagContainer+
+                       TSCORE.TagUtils.formatDateTime4Tag(new Date(), true)+
+                       TSCORE.TagUtils.endTagContainer+".md";
+        TSCORE.IO.saveTextFile(filePath,TSCORE.Config.getNewMDFileContent());
+    };
+
+    var createTXTFile = function() {
+        var filePath = TSCORE.currentPath+
+                       TSCORE.dirSeparator+
+                       TSCORE.TagUtils.beginTagContainer+
+                       TSCORE.TagUtils.formatDateTime4Tag(new Date(), true)+
+                       TSCORE.TagUtils.endTagContainer+".txt";
+        TSCORE.IO.saveTextFile(filePath,TSCORE.Config.getNewTextFileContent());
+    };
+
 
     // Public API definition
     exports.showContextMenu             = showContextMenu;
@@ -803,5 +829,8 @@ define(function(require, exports, module) {
     exports.showDirectoryBrowserDialog  = showDirectoryBrowserDialog;
     exports.showMoveCopyFilesDialog     = showMoveCopyFilesDialog;
     exports.hideAllDropDownMenus        = hideAllDropDownMenus;
+    exports.createHTMLFile              = createHTMLFile;
+    exports.createMDFile                = createMDFile;
+    exports.createTXTFile               = createTXTFile;
 
 });

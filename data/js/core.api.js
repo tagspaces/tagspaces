@@ -589,6 +589,9 @@ define(function(require, exports, module) {
     exports.showTagsPanel        		= tsCoreUI.showTagsPanel;
     exports.showContextMenu        		= tsCoreUI.showContextMenu;
     exports.showDirectoryBrowserDialog  = tsCoreUI.showDirectoryBrowserDialog;
+    exports.createHTMLFile              = tsCoreUI.createHTMLFile;
+    exports.createMDFile                = tsCoreUI.createMDFile;
+    exports.createTXTFile               = tsCoreUI.createTXTFile;
 
     // Proxying functions from tsTagsUI
     exports.generateTagButtons 			= tsTagsUI.generateTagButtons;
