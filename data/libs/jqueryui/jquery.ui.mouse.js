@@ -1,5 +1,5 @@
 /*!
- * jQuery UI Mouse @VERSION
+ * jQuery UI Mouse 1.10.4
  * http://jqueryui.com
  *
  * Copyright 2014 jQuery Foundation and other contributors
@@ -19,7 +19,7 @@ $( document ).mouseup( function() {
 });
 
 $.widget("ui.mouse", {
-	version: "@VERSION",
+	version: "1.10.4",
 	options: {
 		cancel: "input,textarea,button,select,option",
 		distance: 1,

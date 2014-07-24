@@ -1,5 +1,5 @@
 /*!
- * jQuery UI Datepicker @VERSION
+ * jQuery UI Datepicker 1.10.4
  * http://jqueryui.com
  *
  * Copyright 2014 jQuery Foundation and other contributors
@@ -13,7 +13,7 @@
  */
 (function( $, undefined ) {
 
-$.extend($.ui, { datepicker: { version: "@VERSION" } });
+$.extend($.ui, { datepicker: { version: "1.10.4" } });
 
 var PROP_NAME = "datepicker",
 	instActive;
@@ -2033,6 +2033,6 @@ $.fn.datepicker = function(options){
 $.datepicker = new Datepicker(); // singleton instance
 $.datepicker.initialized = false;
 $.datepicker.uuid = new Date().getTime();
-$.datepicker.version = "@VERSION";
+$.datepicker.version = "1.10.4";
 
 })(jQuery);

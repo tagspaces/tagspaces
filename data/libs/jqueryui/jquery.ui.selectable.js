@@ -1,5 +1,5 @@
 /*!
- * jQuery UI Selectable @VERSION
+ * jQuery UI Selectable 1.10.4
  * http://jqueryui.com
  *
  * Copyright 2014 jQuery Foundation and other contributors
@@ -16,7 +16,7 @@
 (function( $, undefined ) {
 
 $.widget("ui.selectable", $.ui.mouse, {
-	version: "@VERSION",
+	version: "1.10.4",
 	options: {
 		appendTo: "body",
 		autoRefresh: true,
