@@ -108,14 +108,14 @@ define(function(require, exports, module) {
 
                 viewMenu.append(new gui.MenuItem({
                     type: 'normal',
-                    label: $.i18n.t("ns.common:toggleFullScreen")+" ("+TSCORE.Config.getToggleFullScreenKeyBinding()+")",
+                    label: $.i18n.t("ns.common:toggleFullScreen")+" ("+TSCORE.Config.getToggleFullScreenKeyBinding().toUpperCase()+")",
                     click: function (){
                         win.toggleFullscreen();
                     } }));
 
                 viewMenu.append(new gui.MenuItem({
                     type: 'normal',
-                    label: $.i18n.t("ns.common:showDevTools")+" ("+TSCORE.Config.getOpenDevToolsScreenKeyBinding()+")",
+                    label: $.i18n.t("ns.common:showDevTools")+" ("+TSCORE.Config.getOpenDevToolsScreenKeyBinding().toUpperCase()+")",
                     click: function (){
                         win.showDevTools();
                     } }));
