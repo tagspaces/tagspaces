@@ -18,6 +18,7 @@
     "toggleThumbnailsTooltip": "Alternar Miniaturas",
     "increasThumbnailsTooltip": "Aumentar Miniaturas",
     "toggleFileDetailsTooltip": "Alternar Detalhes de Ficheiros",
+    "copyMoveFilesTooltip": "Copiar ou Mover Ficheiros Seleccionados",
     "reloadDirectory": "Recarregar Pasta",
     "reloadDirectoryTooltip": "Recarregar Pasta Actual",
     "includeSubdirsTitleConfirm": "Confirmar Inclusão de Subpastas",

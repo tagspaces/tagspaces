@@ -18,6 +18,7 @@
     "toggleThumbnailsTooltip": "Afficher les miniatures",
     "increasThumbnailsTooltip": "Augmenter les miniatures",
     "toggleFileDetailsTooltip": "Afficher les détails des fichiers",
+    "copyMoveFilesTooltip": "Copier ou déplacer les fichiers sélectionnés",
     "reloadDirectory": "Recharger le dossier",
     "reloadDirectoryTooltip": "Recharger ce dossier",
     "includeSubdirsTitleConfirm": "Confirmer l'ajout des sous-dossiers",
