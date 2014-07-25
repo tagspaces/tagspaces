@@ -283,12 +283,12 @@
          }));
 
         $tagGroupsContent.find(".tagButton").each(function() {
-            $(this)
-                .draggable({
+            $(this).draggable({
                     "appendTo":   "body",
                     "helper":     "clone",
                     "revert":     'invalid',
                     "start":     function() {
+                        console.log("Start dragging..........");
                         TSCORE.selectedTagData = TSCORE.Config.getTagData($(this).attr("tag"), $(this).attr("parentKey"));
                         TSCORE.selectedTag = generateTagValue(TSCORE.selectedTagData);
                         TSCORE.selectedTagData.parentKey = $(this).attr("parentKey");
