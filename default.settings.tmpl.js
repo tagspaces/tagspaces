@@ -45,7 +45,8 @@ define(function (require, exports, module) {
             { "iso": "pt-PT",   "title": "Português (Portugal)" },
             { "iso": "fr",	    "title": "Français (French)" },
             { "iso": "sk",	    "title": "Slovenský (Slovak)" },
-            { "iso": "es",	    "title": "Español (Spanish)" }
+            { "iso": "es",	    "title": "Español (Spanish)" },
+            { "iso": "uk",	    "title": "Український (Ukrainian)" }
         ],
         "keyBindings": {
             "closeViewer":              "mod+w",
