@@ -1,5 +1,50 @@
 ﻿#Changelog
 
+##Version 1.8.5 / 2014.07.25
+- adding support for drag & drop of files into tagspaces from your native file manager
+- adding copy and move file functionality
+- adding duplicate file functionality
+- viewer for .url .website and .desktop files added, allowing you to use TagSpaces as a kind of a bookmark manager
+- sorting functionality for the tags in a taggroup added
+- updating the french, spanishm german, bulgaria and portugeese translations
+- adding spanish and initial ukrainian translations
+- adding checkbox in the experimental option for loading of the location meta data
+- adding support for loading tags from the current locaton directory, feature can be enabled in the experimental tab of the settings
+- opening new files directly in edit mode
+
+- removing default content of new markdown and text files
+- adding createHTMLFile, createMDFile, createTXTFile to the core API
+- implementing different behaviour by file save depending if the file is new
+- disabling the blinking cursor in readonly mode
+- disable closing of the current location if a path was wrong or can not be opened.
+- adding cleanTrailingDirSeparator for cleaning of directory path from trailing directory separators in the TagUtils
+- utilizing the waiting dialog for creating dir indexes and trees
+- making target path input box editable in the file move/copy dialog
+- adding focus window function to the platform APIs
+- adding set and get webdav path to the settings API
+- adding watingDialog and fileCopyMoveDialog
+- adding a white background for the image viewer, usefull for viewing transparent images
+- adding a locationDesktop variable to the API
+- restricting the perspective OCRO to show only certain file types
+- adding a home template for the OCRO perspective
+- improving the templates for OCRO perspective
+- updating the OCRO perspective by adding thumbnail and search support
+- adding ability to hide actions not needed in the read only perspective
+- adding config variable for webdav path
+- extending the directory browser with drive selector in windows
+- adding initial implementation for the minimizing to tray functionality
+- fixing issue with opening the directory select dialog
+- fixing [#101](https://github.com/uggrock/tagspaces/issues/101) duplicated main menu
+- fixing [#102](https://github.com/uggrock/tagspaces/issues/102) unable ti select text in the markdown viewer
+- upgrading requirejs to 2.1.14
+- upgrading jquery ui to 1.10.4
+- upgrading jquery to 2.1.1
+- upgrading bootstrap lib to 3.2.0
+- [chrome] exchanging the chrome with chromelight ioapi not dependent on NPAPI
+- [android] hiding the cancel/dialog close button in cordova
+- [android] disabling export to csv in cordova
+- [firefox] adding file copy functionality and fixing messaging api change introduced with Firefox 30
+
 ##Version 1.8.3 / 2014.05.18
 - brazilian-portuguese translation added
 - portuguese translation added
