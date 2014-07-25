@@ -62,4 +62,7 @@ define(function(require, exports, module) {
         '</ol>'
     );
 
+    exports.homeScreen;
+
+
 });

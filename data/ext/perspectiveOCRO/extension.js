@@ -41,23 +41,23 @@ define(function(require, exports, module) {
             extensionDirectory+'/templates.js',
             extensionDirectory+'/controller.js',
             "text!"+extensionDirectory+"/DesktopTMPL.html",
-            'css!'+extensionDirectory+'/extension.css',
-            'css!'+extensionDirectory+'/fontello/css/fontello.css'
-        ], function(tmpls, ctrl, desktoptmpl) {
+            "css!"+extensionDirectory+"/extension.css",
+            "css!"+extensionDirectory+"/fontello/css/fontello.css"
+        ], function(templates, ctrl, desktoptmpl) {
             controller = ctrl;
 
             // Adding UI blocks
-            $viewToolbar.html(tmpls.mainToolBar({"id":extensionID}));
+            $viewToolbar.html(templates.mainToolBar({"id":extensionID}));
 
-            var desktopTemplate = Handlebars.compile( desktoptmpl );
-            $viewContainer.append(desktopTemplate());
+            templates.homeScreen = Handlebars.compile( desktoptmpl );
 
-            $("body").append(tmpls.dialogOCSetting());
+            $("body").append(templates.dialogOCSetting());
 
-            ctrl.init(extensionID,tmpls);
+            ctrl.init(extensionID,templates);
+
+            ctrl.showHomeScreen();
 
             initUI();
-
         });
 	}
 
@@ -162,11 +162,6 @@ define(function(require, exports, module) {
         '</div>'
     );
 
-    var generateDesktop = function() {
-        console.log("Generating Desktop "+JSON.stringify(TSCORE.locationDesktop));
-        //$viewContainer.html(desktopTPML({"desktop":TSCORE.locationDesktop}));
-    };
-
     var clearSelectedFiles = function() {
 
     };
@@ -204,6 +199,5 @@ define(function(require, exports, module) {
 	exports.getPrevFile				= getPrevFile;	
     exports.removeFileUI            = removeFileUI;
     exports.updateFileUI            = updateFileUI;
-    exports.generateDesktop         = generateDesktop;
-     	
+
 });

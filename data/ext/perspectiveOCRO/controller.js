@@ -13,6 +13,7 @@ define(function(require, exports, module) {
 
     var supportedFileTypesThumbs = ['jpg','jpeg','png','gif','bmp','svg'];
     var supportedFileTypesViewing = ['jpg','jpeg','png','gif','bmp','svg','pdf','url','website','xls','xlsx','dxf','avi'];
+    var ocSearchPath = '/oc/index.php/search/ajax/search.php?query=';
 
     var thumbFolder = ".ts";
     var thumbExt = ".jpg";
@@ -32,6 +33,12 @@ define(function(require, exports, module) {
 
     var load = function () {
         console.log("Loading data in "+extensionID);
+
+        // Show home screen if user in the root of the location and no search query
+        if((TSCORE.currentLocationObject.path === TSCORE.currentPath) && (TSCORE.Search.nextQuery.length < 1)) {
+            showHomeScreen();
+            return true;
+        }
 
         // Load new filtered data
         searchResults = TSCORE.Search.searchData(TSCORE.fileList, TSCORE.Search.nextQuery);
@@ -88,19 +95,31 @@ define(function(require, exports, module) {
         }
     };
 
+    var showHomeScreen = function() {
+        $viewContainer.children().remove();
+        $viewContainer.append(templates.homeScreen({"id":extensionID}));
+
+        $viewContainer.find(".dirNavigator").each(function() {
+            var dirPath = $(this).attr("data-path");
+            $(this).click(function () {
+                TSCORE.navigateToDirectory(TSCORE.currentLocationObject.path+TSCORE.dirSeparator+dirPath);
+            })
+        });
+    };
+
     var createFileContext = function(title, filePath, fileExt, fileTags) {
         var fileName = TSCORE.TagUtils.extractFileNameWithoutExt(filePath);
         var fileContainingPath = TSCORE.TagUtils.extractContainingDirectoryPath(filePath);
         //var tmbPath = fileContainingPath+TSCORE.dirSeparator+thumbFolder+TSCORE.dirSeparator+fileName+thumbExt;
 
-        var webdavPath = "owncloud6/remote.php/webdav";
+        var webdavPath = "oc/remote.php/webdav";
 
         var fileID = filePath.substring(filePath.indexOf(webdavPath)+webdavPath.length,filePath.length);
 
         //var tmbPath = location.protocol+"//"+location.host+"/owncloud6/index.php/core/preview.png?file="+fileID;
 
         // thumbnail from the gallery plugin, user name have to be specified
-        var tmbPath = location.protocol+"//"+location.host+"/owncloud6/index.php/apps/gallery/ajax/thumbnail.php?file=na"+fileID+"&square=1";
+        var tmbPath = location.protocol+"//"+location.host+"/oc/index.php/apps/gallery/ajax/thumbnail.php?file=na"+fileID+"&square=1";
 
         if(isCordova || isWeb) {
 
@@ -187,7 +206,7 @@ define(function(require, exports, module) {
             filename;
 
         $.ajax({
-            url: location.protocol+"//"+location.host+'/owncloud6/index.php/search/ajax/search.php?query='+query,
+            url: location.protocol+"//"+location.host+ocSearchPath+query,
             type: 'GET'
         })
             .done(function(data) {
@@ -214,6 +233,7 @@ define(function(require, exports, module) {
     exports.init					= init;
     exports.load					= load;
     exports.searchOC    			= searchOC;
+    exports.showHomeScreen          = showHomeScreen;
 //    exports.clearSelectedFiles		= clearSelectedFiles;
     exports.getNextFile				= getNextFile;
     exports.getPrevFile				= getPrevFile;
