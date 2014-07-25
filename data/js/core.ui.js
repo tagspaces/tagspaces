@@ -249,11 +249,8 @@ define(function(require, exports, module) {
         $("#appVersion").attr("title","BuildID: "+TSCORE.Config.DefaultSettings["appVersion"]+"."+TSCORE.Config.DefaultSettings["appBuild"]+"."+TSCORE.Config.DefaultSettings["appBuildID"]);
 
         // prevent default behavior from changing page on dropped file
-        $(document).on("drop dragend dragstart dragenter dragleave drag dragover", function(event) {
+        $(document).on("drop dragend dragenter dragleave dragover", function(event) { //  dragstart drag
             event.preventDefault();
-            /*if (event.type === "drop") {
-                console.log(event.originalEvent.dataTransfer.files);
-            }*/
         });
 
         // Managing droping of files in the perspectives
@@ -269,24 +266,27 @@ define(function(require, exports, module) {
             });
 
             $("#viewContainers").on("drop", function(event) {
-                event.preventDefault();
-                TSCORE.IO.focusWindow();
-                $("#viewContainers").attr("style","border:0px");
-                TSCORE.PerspectiveManager.clearSelectedFiles();
-                var files = event.originalEvent.dataTransfer.files;
-                var filePath;
-                if(files !== undefined && files.length > 0) {
-                    for (var i = 0; i < files.length; i++) {
-                        filePath = files[i].path;
-                        if(filePath.length > 1) {
-                            //console.log("Selecting files: "+JSON.stringify(files[i]));
-                            TSCORE.selectedFiles.push(filePath);
-                            //{"webkitRelativePath":"","path\":"/home/na/Desktop/Kola2","lastModifiedDate":"2014-07-11T16:40:52.000Z","name":"Kola2","type":"","size":4096}
+                //event.preventDefault();
+                if(event.originalEvent.dataTransfer !== undefined) {
+                    var files = event.originalEvent.dataTransfer.files;
+                    TSCORE.IO.focusWindow();
+                    $("#viewContainers").attr("style","border:0px");
+                    TSCORE.PerspectiveManager.clearSelectedFiles();
+
+                    var filePath;
+                    if(files !== undefined && files.length > 0) {
+                        for (var i = 0; i < files.length; i++) {
+                            filePath = files[i].path;
+                            if(filePath.length > 1) {
+                                //console.log("Selecting files: "+JSON.stringify(files[i]));
+                                TSCORE.selectedFiles.push(filePath);
+                                //{"webkitRelativePath":"","path\":"/home/na/Desktop/Kola2","lastModifiedDate":"2014-07-11T16:40:52.000Z","name":"Kola2","type":"","size":4096}
+                            }
                         }
                     }
-                }
-                if(TSCORE.selectedFiles.length > 0) {
-                    showMoveCopyFilesDialog();
+                    if(TSCORE.selectedFiles.length > 0) {
+                        showMoveCopyFilesDialog();
+                    }
                 }
             });
         }
