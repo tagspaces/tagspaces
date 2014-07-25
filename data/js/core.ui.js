@@ -358,16 +358,12 @@ define(function(require, exports, module) {
         });
 
         $( '#renameFileButton' ).click(function() {
-            var bValid = true;           
-    //        bValid = bValid && checkLength( $( "#renamedFileName" ).val(), "filename", 3, 200 );
-    //        bValid = bValid && checkRegexp( renamedFileName, /^[a-z]([0-9a-z_.])+$/i, "Filename may consist of a-z, 0-9, underscores, begin with a letter." );
-            if ( bValid ) {
-                var containingDir = TSCORE.TagUtils.extractContainingDirectoryPath(TSCORE.selectedFiles[0]);
-                TSCORE.IO.renameFile(
-                        $( "#renamedFileName" ).attr("filepath"),
-                        containingDir+TSCORE.dirSeparator+$( "#renamedFileName" ).val()
-                    );
-            }
+            var initialFilePath = $( "#renamedFileName" ).attr("filepath");
+            var containingDir = TSCORE.TagUtils.extractContainingDirectoryPath(initialFilePath);
+            TSCORE.IO.renameFile(
+                initialFilePath,
+                containingDir+TSCORE.dirSeparator+$( "#renamedFileName" ).val()
+            );
         });
 
         // Edit Tag Dialog
