@@ -71,6 +71,7 @@ define(function (require, exports, module) {
             { "type": "gif", 	"viewer": "viewerImage",     "editor": "false" },
             { "type": "png", 	"viewer": "viewerImage",     "editor": "false" },
             { "type": "webp", 	"viewer": "viewerImage",     "editor": "false" },
+            { "type": "bmp", 	"viewer": "viewerImage",     "editor": "false" },
             { "type": "svg", 	"viewer": "viewerImage",   "editor": "editorText" },
             { "type": "pdf", 	"viewer": "@@PDFVIEWER",	 "editor": "false" },
             { "type": "html", 	"viewer": "viewerBrowser",   "editor": "editorHTML" },
