@@ -7,8 +7,8 @@ define(function (require, exports, module) {
     exports.defaultSettings = {
         "appName":                  "TagSpaces",
         "appVersion":               "1.8",
-        "appBuild":                 "5",
-        "appBuildID":               "201407251310",
+        "appBuild":                 "6",
+        "appBuildID":               "201408210943",
         "settingsVersion":           2,
         "newTextFileContent":       "",
         "newHTMLFileContent":       "<html><head><title>Created with TagSpaces</title><meta http-equiv='Content-Type' content='text/html; charset=utf-8'></head><body></body></html>",
@@ -71,6 +71,7 @@ define(function (require, exports, module) {
             { "type": "gif", 	"viewer": "viewerImage",     "editor": "false" },
             { "type": "png", 	"viewer": "viewerImage",     "editor": "false" },
             { "type": "webp", 	"viewer": "viewerImage",     "editor": "false" },
+            { "type": "bmp", 	"viewer": "viewerImage",     "editor": "false" },
             { "type": "svg", 	"viewer": "viewerImage",   "editor": "editorText" },
             { "type": "pdf", 	"viewer": "viewerBrowser",	 "editor": "false" },
             { "type": "html", 	"viewer": "viewerBrowser",   "editor": "editorHTML" },
