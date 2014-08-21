@@ -182,6 +182,7 @@ user-select: none;
 table .fileTitle {
     font-size: 14px;
     color: #333333;
+    padding-left: 0 !important;
 }
 
 .noWrap {
