@@ -6,12 +6,9 @@
 - adding duplicate file functionality
 - viewer for .url .website and .desktop files added, allowing you to use TagSpaces as a kind of a bookmark manager
 - sorting functionality for the tags in a taggroup added
-- updating the french, spanishm german, bulgaria and portugeese translations
-- adding spanish and initial ukrainian translations
-- adding checkbox in the experimental option for loading of the location meta data
-- adding support for loading tags from the current locaton directory, feature can be enabled in the experimental tab of the settings
+- adding Spanish and initial Ukrainian translations
+- adding support for loading tags from the current location directory, feature can be enabled in the experimental tab of the settings
 - opening new files directly in edit mode
-
 - removing default content of new markdown and text files
 - adding createHTMLFile, createMDFile, createTXTFile to the core API
 - implementing different behaviour by file save depending if the file is new
