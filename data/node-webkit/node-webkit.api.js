@@ -267,7 +267,7 @@ define(function(require, exports, module) {
     var renameFile = function(filePath, newFilePath) {
         console.log("Renaming file: "+filePath+" to "+newFilePath);
 
-        if(filePath.toLowerCase() === newFilePath.toLowerCase()) {
+        if(filePath === newFilePath) {
             TSCORE.hideWaitingDialog();
             TSCORE.showAlertDialog("Initial and target file names are the same.","File was not moved/renamed.");
             return false;
@@ -298,7 +298,7 @@ define(function(require, exports, module) {
 
         // TODO check if file opened for editing in the same directory as source dir
 
-        if(dirPath.toLowerCase() === newDirPath.toLowerCase()) {
+        if(dirPath === newDirPath) {
             TSCORE.hideWaitingDialog();
             TSCORE.showAlertDialog("Initial and target directories are the same.","Directory was not renamed.");
             return false;
