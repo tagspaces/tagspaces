@@ -47,17 +47,17 @@ console.log("Loading UI for perspectiveList");
                     TSCORE.selectedFiles = [];   
                     $('#'+self.extensionID+'FileTable tbody tr').each(function(){
                         $(this).addClass('ui-selected');
-                        $(this).find(".fileSelection").find("i").addClass("fa-check-square").removeClass("fa-square-o");
+                        $(this).find(".fileSelection").find("i").addClass("fa-check-square-o").removeClass("fa-square-o");
                         TSCORE.selectedFiles.push($(this).find(".fileTitleButton").attr("filepath"));  
                         self.handleElementActivation();                          
                     });
                     $(this).find("i")
                         .removeClass("fa-square-o") 
-                        .addClass("fa-check-square"); 
+                        .addClass("fa-check-square-o");
                 } else {
                     TSCORE.PerspectiveManager.clearSelectedFiles();
                     $(this).find("i")
-                        .removeClass("fa fa-check-square")                                     
+                        .removeClass("fa fa-check-square-o")
                         .addClass("fa fa-square-o");
                 }            
             });
@@ -343,11 +343,11 @@ console.log("Loading UI for perspectiveList");
                 var fpath = $(this).parent().find(".fileTitleButton").attr("filepath");
                 var stateTag = $(this).find("i");
                 if(stateTag.hasClass("fa-square-o")) { 
-                    stateTag.removeClass("fa-square-o").addClass("fa fa-check-square");                 
+                    stateTag.removeClass("fa-square-o").addClass("fa fa-check-square-o");
                     $(this).parent().parent().addClass("ui-selected");
                     TSCORE.selectedFiles.push(fpath);  
                 } else {
-                    stateTag.removeClass("fa-check-square").addClass("fa-square-o");                                       
+                    stateTag.removeClass("fa-check-square-o").addClass("fa-square-o");
                     $(this).parent().parent().removeClass("ui-selected");
                     TSCORE.selectedFiles.splice(TSCORE.selectedFiles.indexOf(fpath), 1);
                 }
@@ -386,10 +386,10 @@ console.log("Loading UI for perspectiveList");
         this.refreshThumbnails();
     };
 
-    var buttonCompTmpl = Handlebars.compile('<button filepath="{{filepath}}" class="btn btn-link fileSelection"><i class="fa fa-square-o"></i></button>' +
+    var buttonCompTmpl = Handlebars.compile('<button filepath="{{filepath}}" class="btn btn-link fileSelection"><i class="fa fa-square-o fa-fw fa-lg"></i></button>' +
         '<button filepath="{{filepath}}" class="btn btn-link fileTitleButton"><span class="fileExt"><span>{{fileext}}</span>&nbsp;<span class="caret white-caret"></span></span></button>');
 
-    var buttonCompTmbTmpl = Handlebars.compile('<button filepath="{{filepath}}" class="btn btn-link fileSelection"><i class="fa fa-square-o"></i></button>' +
+    var buttonCompTmbTmpl = Handlebars.compile('<button filepath="{{filepath}}" class="btn btn-link fileSelection"><i class="fa fa-square-o fa-fw fa-lg"></i></button>' +
         '<button filepath="{{filepath}}" class="btn btn-link fileTitleButton"><span class="fileExt"><span>{{fileext}}</span>&nbsp;<span class="caret white-caret"></span></span></button>' +
         '<br><img class="thumbImg" filepath="{{tmbpath}}" style="width: 0; height: 0; border: 0" src="">');
     
@@ -423,13 +423,13 @@ console.log("Loading UI for perspectiveList");
     ExtUI.prototype.clearSelectedFiles = function() {
         TSCORE.selectedFiles = [];   
         $("#"+this.extensionID+"Container").find(".fileSelection").find("i")
-            .removeClass("fa-check-square")
+            .removeClass("fa-check-square-o")
             .addClass("fa-square-o");            
         $("#"+this.extensionID+"Container").find("tr")
             .removeClass('ui-selected');
         
         // Reseting select all button
-        //$("#"+this.extensionID+"ToogleSelectAll").find("i").removeClass("fa-check-square").addClass("fa-square-o");           
+        //$("#"+this.extensionID+"ToogleSelectAll").find("i").removeClass("fa-check-square-o").addClass("fa-square-o");
     };  
     
     ExtUI.prototype.selectFile = function(uiElement, filePath) {
@@ -437,7 +437,7 @@ console.log("Loading UI for perspectiveList");
 
         $(uiElement).parent().parent().toggleClass("ui-selected");
         $(uiElement).parent().parent().find(".fileSelection").find("i")
-            .toggleClass("fa-check-square")
+            .toggleClass("fa-check-square-o")
             .toggleClass("fa-square-o");   
 
         TSCORE.selectedFiles.push(filePath);
@@ -601,11 +601,11 @@ console.log("Loading UI for perspectiveList");
                 var fpath = $(this).parent().find(".fileTitleButton").attr("filepath");
                 var stateTag = $(this).find("i");
                 if(stateTag.hasClass("fa-square-o")) {
-                    stateTag.removeClass("fa-square-o").addClass("fa fa-check-square");
+                    stateTag.removeClass("fa-square-o").addClass("fa fa-check-square-o");
                     $(this).parent().parent().addClass("ui-selected");
                     TSCORE.selectedFiles.push(fpath);
                 } else {
-                    stateTag.removeClass("fa-check-square").addClass("fa-square-o");
+                    stateTag.removeClass("fa-check-square-o").addClass("fa-square-o");
                     $(this).parent().parent().removeClass("ui-selected");
                     TSCORE.selectedFiles.splice(TSCORE.selectedFiles.indexOf(fpath), 1);
                 }
