@@ -123,7 +123,7 @@
     "addNewFileExtensionButton": "Add new file extension",
     "showUnixHiddenFiles": "Show files/directories with a dot(.) in front of the name (e.g. Unix, Linux, OS X hidden files)",
     "checkForNewVersion": "Check for new version on startup",
-    "experimentalHelp": "*) Be carefull changing the following settings.",
+    "experimentalHelp": "*) Be careful changing the following settings.",
     "extensionsFolder": "Extensions folder (default value is 'ext')",
     "extensionsFolderPlaceholder": "file:///c:\\tagspaces-extensions",
     "calculateTag": "Calculate tags from the current search results",
