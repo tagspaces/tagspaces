@@ -109,17 +109,23 @@ define(function(require, exports, module) {
         $("#newFileName").val("");
         $("#tagWithCurrentDate").prop('checked', false);
 
-        $( '#dialogFileCreate' ).modal({backdrop: 'static',show: true});
         $( '#txtFileTypeButton' ).button('toggle');
 
-        $('#dialogFileCreate').on('shown', function () {
-            $('#newFileName').focus();
+        $('#dialogFileCreate').on('shown.bs.modal', function () {
+          $('#newFileName').select2().focus();
         });
+
+        $( '#dialogFileCreate' ).modal({backdrop: 'static',show: true});
     };
     
     var showFileRenameDialog = function(filePath) {
         $( "#renamedFileName" ).attr("filepath",filePath);
         $( "#renamedFileName" ).val(TSCORE.TagUtils.extractFileName(filePath));
+
+        $('#dialogFileRename').on('shown.bs.modal', function () {
+          $('#renamedFileName').focus();
+        })
+
         $( '#dialogFileRename' ).modal({backdrop: 'static',show: true});
     };    
     
@@ -136,6 +142,11 @@ define(function(require, exports, module) {
     
     var showTagEditDialog = function() {
         $( "#newTagName" ).val(TSCORE.selectedTag);
+
+        $('#dialogEditTag').on('shown.bs.modal', function () {
+          $('#newTagName').focus();
+        })
+
         $( '#dialogEditTag' ).modal({backdrop: 'static',show: true});
     };  
     
@@ -442,8 +453,12 @@ define(function(require, exports, module) {
         
         $( "#fileMenuRenameFile" ).click( function() {
             TSCORE.showFileRenameDialog(TSCORE.selectedFiles[0]);
-        }); 
-        
+        });
+
+        $( "#fileMenuMoveCopyFile" ).click( function() {
+          TSCORE.showMoveCopyFilesDialog();
+        });
+
         $( "#fileMenuDeleteFile" ).click( function() {
             TSCORE.showFileDeleteDialog(TSCORE.selectedFiles[0]);
         }); 
