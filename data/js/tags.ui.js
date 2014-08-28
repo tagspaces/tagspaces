@@ -437,18 +437,33 @@
     }
 
     function showDialogTagCreate() {
-        $( "#newTagTitle" ).val("");         
-        $( '#dialogTagCreate' ).modal({backdrop: 'static',show: true});        
+        $( "#newTagTitle" ).val("");
+
+        $('#dialogTagCreate').on('shown.bs.modal', function () {
+          $('#newTagTitle').focus();
+        })
+
+        $( '#dialogTagCreate' ).modal({backdrop: 'static',show: true});
     }   
 
     function showDialogEditTagGroup() {
-        $( "#tagGroupName" ).val(TSCORE.selectedTagData.title);              
-        $( '#dialogEditTagGroup' ).modal({backdrop: 'static',show: true});        
+        $( "#tagGroupName" ).val(TSCORE.selectedTagData.title);
+
+        $('#dialogEditTagGroup').on('shown.bs.modal', function () {
+          $('#tagGroupName').focus();
+        })
+
+        $( '#dialogEditTagGroup' ).modal({backdrop: 'static',show: true});
     }
     
     function showDialogTagGroupCreate() {
-        $( "#newTagGroupName" ).val("");         
-        $( '#dialogTagGroupCreate' ).modal({backdrop: 'static',show: true});        
+        $( "#newTagGroupName" ).val("");
+
+        $('#dialogTagGroupCreate').on('shown.bs.modal', function () {
+          $('#newTagGroupName').focus();
+        })
+
+        $( '#dialogTagGroupCreate' ).modal({backdrop: 'static',show: true});
     }
 
     function showTagEditInTreeDialog() {
@@ -473,6 +488,11 @@
         } else {
             $tagTextColor.simplecolorpicker('selectColor', TSCORE.selectedTagData.textcolor);
         }
+
+        $('#dialogEditInTreeTag').on('shown.bs.modal', function () {
+          $('#tagInTreeName').focus();
+        })
+
         $( '#dialogEditInTreeTag' ).modal({backdrop: 'static',show: true});        
     }	
 
@@ -493,6 +513,10 @@
             minimumInputLength: 2,
             selectOnBlur: true
         });
+
+        $('#dialogAddTags').on('shown.bs.modal', function () {
+          $('.select2-input').focus();
+        })
 
         $( '#dialogAddTags' ).modal({backdrop: 'static',show: true});
     }
