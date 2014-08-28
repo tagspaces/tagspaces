@@ -525,6 +525,11 @@ define(function(require, exports, module) {
                 } else if(isWeb) {
                     $("#folderLocation2").attr("placeholder","e.g.: /owncloud/remote.php/webdav/");
                 }
+
+                $('#dialogLocationEdit').on('shown.bs.modal', function () {
+                  $('#folderLocation2').focus();
+                })
+
                 $("#dialogLocationEdit").modal({backdrop: 'static',show: true});
         });     
     } 
@@ -566,6 +571,11 @@ define(function(require, exports, module) {
                 } else if(isWeb) {
                     $("#folderLocation").attr("placeholder","e.g.: /owncloud/remote.php/webdav/");
                 }
+
+                $('#dialogCreateFolderConnection').on('shown.bs.modal', function () {
+                  $('#folderLocation').focus();
+                })
+
                 $("#dialogCreateFolderConnection").modal({backdrop: 'static',show: true});
         });
     }  
@@ -586,6 +596,11 @@ define(function(require, exports, module) {
                 $( "#createNewDirectoryButton" ).attr("path", dirPath);
                 $("#newDirectoryName").val("");
                 $('#dialogDirectoryCreate').i18n();
+
+                $('#dialogDirectoryCreate').on('shown.bs.modal', function () {
+                  $('#newDirectoryName').focus();
+                })
+
                 $('#dialogDirectoryCreate').modal({backdrop: 'static',show: true});
         });
     }
@@ -610,6 +625,11 @@ define(function(require, exports, module) {
             var dirName = TSCORE.TagUtils.extractDirectoryName(dirPath);
             $("#directoryNewName").val(dirName);
             $('#dialogDirectoryRename').i18n();
+
+            $('#dialogDirectoryRename').on('shown.bs.modal', function () {
+              $('#directoryNewName').focus();
+            })
+
             $('#dialogDirectoryRename').modal({backdrop: 'static',show: true});
         });
     }
