@@ -551,8 +551,8 @@
     exports.openFileOnStartup                   = openFileOnStartup;
     exports.closeFile                           = closeFile;
     exports.saveFile                            = saveFile;
-    exports.isFileOpened						= isFileOpened;
-    exports.isFileEdited						= isFileEdited;
+    exports.isFileOpened                        = isFileOpened;
+    exports.isFileEdited                        = isFileEdited;
     exports.getOpenedFilePath                   = getOpenedFilePath;
     exports.updateEditorContent                 = updateEditorContent;
     exports.setFileProperties                   = setFileProperties;
