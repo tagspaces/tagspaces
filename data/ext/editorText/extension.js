@@ -23,27 +23,40 @@ define(function(require, exports, module) {
     var TSCORE = require("tscore");
 
     var cmEditor = undefined;
-    var extensionDirectory = TSCORE.Config.getExtensionPath()+"/"+exports.id;
+    var extensionDirectory = TSCORE.Config.getExtensionPath() + "/" + exports.id;
 
-	
-	exports.init = function(filePath, containerElementID, isViewerMode) {
+    var contentLoaded = false;
+
+    exports.init = function (filePath, containerElementID, isViewerMode) {
         console.log("Initalization Text Editor...");
-        var fileExt = filePath.substring(filePath.lastIndexOf(".")+1,filePath.length).toLowerCase();
+        var fileExt = filePath.substring(filePath.lastIndexOf(".") + 1, filePath.length).toLowerCase();
 
-        $("#"+containerElementID).append('<div id="code" name="code" style="width: 100%; height: 100%">');
+        $("#" + containerElementID).append('<div id="code" name="code" style="width: 100%; height: 100%">');
         var mode = filetype[fileExt];
         if (mode == null) {
             mode = "properties";
         }
         require([
-            extensionDirectory+'/codemirror/codemirror.js',
-            'css!'+extensionDirectory+'/codemirror/codemirror.css',
-            'css!'+extensionDirectory+'/extension.css'
-        ], function() {
+                extensionDirectory + '/codemirror/codemirror.js',
+                'css!' + extensionDirectory + '/codemirror/codemirror.css',
+                'css!' + extensionDirectory + '/extension.css'
+        ], function () {
             require([
-                extensionDirectory+"/codemirror/mode/" + mode + "/" + mode + ".js"
-            ], function() {
-                var cursorBlinkRate = isViewerMode?-1:530; // disabling the blinking cursor in readonly mode
+                    extensionDirectory + "/codemirror/mode/" + mode + "/" + mode + ".js"
+            ], function () {
+                var cursorBlinkRate = isViewerMode ? -1 : 530; // disabling the blinking cursor in readonly mode
+
+                //var saveKB = convertMouseTrapToCodeMirrorKeyBindings(TSCORE.Config.getSaveDocumentKeyBinding());
+
+                var keys = {};
+
+                keys[convertMouseTrapToCodeMirrorKeyBindings(TSCORE.Config.getSaveDocumentKeyBinding())] = function () {
+                    TSCORE.FileOpener.saveFile();
+                };
+
+                keys[convertMouseTrapToCodeMirrorKeyBindings(TSCORE.Config.getCloseViewerKeyBinding())] = function () {
+                    TSCORE.FileOpener.closeFile();
+                };
 
                 cmEditor = CodeMirror(document.getElementById("code"), {
                     fixedGutter: false,
@@ -55,36 +68,50 @@ define(function(require, exports, module) {
                     matchBrackets: true,
                     cursorBlinkRate: cursorBlinkRate,
                     readOnly: isViewerMode,
+                    autofocus: true,
                     //theme: "lesser-dark",
-                     extraKeys: {
-                      "Cmd-S": function() { TSCORE.FileOpener.saveFile(); },
-                      "Ctrl-S": function() { TSCORE.FileOpener.saveFile(); },
-                      "Esc": function() { TSCORE.FileOpener.closeFile(); },
-                      "Ctrl-Space": "autocomplete"
+                    extraKeys: keys
+                });
+
+                cmEditor.on("change", function() {
+                    if(contentLoaded) {
+                        TSCORE.FileOpener.setFileChanged(true);
                     }
                 });
 
-                cmEditor.setSize("100%","100%");
+                cmEditor.setSize("100%", "100%");
                 TSCORE.IO.loadTextFile(filePath);
             });
         });
     };
-	
-    exports.viewerMode = function(isViewerMode) {
+
+    // Converts mod+s to Ctrl+S
+    function convertMouseTrapToCodeMirrorKeyBindings(keyBinding) {
+        if(keyBinding.indexOf("+") < 0) return;
+        var key = keyBinding.split("+");
+        if(key[0] === "mod") {
+            isOSX?key[0]="cmd":key[0]="ctrl";
+        }
+        key[0] = key[0].charAt(0).toUpperCase() + key[0].slice(1);
+        return key[0] + "-" + key[1].toUpperCase();
+    }
+
+    exports.viewerMode = function (isViewerMode) {
         cmEditor.readOnly = isViewerMode;
     };
-	
-	exports.setContent = function(content) {
+
+    exports.setContent = function (content) {
         //console.log("Content: "+content);
         var UTF8_BOM = "\ufeff";
-        if(content.indexOf(UTF8_BOM) === 0) {
+        if (content.indexOf(UTF8_BOM) === 0) {
             content = content.substring(1, content.length);
         }
         cmEditor.setValue(content);
         cmEditor.clearHistory();
+        contentLoaded = true;
     };
 
-    exports.getContent = function() {
+    exports.getContent = function () {
         return cmEditor.getValue();
     };
 	
