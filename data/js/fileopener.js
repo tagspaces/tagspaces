@@ -17,6 +17,8 @@
 
     var _isFileOpened = false;
 
+    var _isFileChanged = false;
+
     var _tsEditor;
 
     var generatedTagButtons;
@@ -154,6 +156,21 @@
            
     }
 
+     function isFileChanged() {
+         return _isFileChanged;
+     }
+
+     function setFileChanged(value) {
+         var $fileExt = $( "#fileExtText" );
+         if(value && !_isFileChanged) {
+             $fileExt.text($fileExt.text() + "*");
+         }
+         if(!value) {
+             $fileExt.text(TSCORE.TagUtils.extractFileExtension(_openedFilePath));
+         }
+         _isFileChanged = value;
+     }
+
     function isFileEdited() {
         return _isEditMode;
     }
@@ -167,7 +184,7 @@
     }
 
     function closeFile(forceClose) {
-        if(_isEditMode) {
+        if(isFileChanged()) {
             if(forceClose) {
                 cleanViewer();
                 TSCORE.closeFileViewer();
@@ -181,7 +198,6 @@
                     }
                 );                             
             }
-
         } else {
             cleanViewer();
             TSCORE.closeFileViewer();
@@ -195,6 +211,7 @@
         _isFileOpened = false;
         TSCORE.closeFileViewer();
         _isEditMode = false;
+        _isFileChanged = false;
         Mousetrap.unbind(TSCORE.Config.getSaveDocumentKeyBinding());
         Mousetrap.unbind(TSCORE.Config.getCloseViewerKeyBinding());
         Mousetrap.unbind(TSCORE.Config.getReloadDocumentKeyBinding());
@@ -202,6 +219,7 @@
         Mousetrap.unbind(TSCORE.Config.getPropertiesDocumentKeyBinding());
         Mousetrap.unbind(TSCORE.Config.getPrevDocumentKeyBinding());
         Mousetrap.unbind(TSCORE.Config.getNextDocumentKeyBinding());
+        Mousetrap.unbind(TSCORE.Config.getEditDocumentKeyBinding());
     }
 
     function openFileOnStartup(filePath) {
@@ -218,7 +236,7 @@
             return false;
         }
 
-        if(TSCORE.FileOpener.isFileEdited()) {
+        if(TSCORE.FileOpener.isFileChanged()) {
             // TODO use closeFile method
             if(confirm($.i18n.t("ns.dialogs:closingEditedFileConfirm"))) {
                  $("#saveDocument").hide();
@@ -345,6 +363,13 @@
             TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getNextFile(_openedFilePath));
             return false;
         });
+
+        Mousetrap.unbind(TSCORE.Config.getEditDocumentKeyBinding());
+        Mousetrap.bind(TSCORE.Config.getEditDocumentKeyBinding(), function() {
+            editFile(_openedFilePath);
+            return false;
+        });
+
     }
 
     function setFileProperties(fileProperties) {
@@ -392,17 +417,17 @@
 
     function saveFile() {
         console.log("Save current file: "+_openedFilePath);
-        TSCORE.showConfirmDialog(
-                $.i18n.t("ns.dialogs:fileSaveTitleConfirm"),
-                $.i18n.t("ns.dialogs:fileSaveContentConfirm"),
-                function() {
-                    $("#saveDocument").hide();
-                    $("#editDocument").show();      
+        //TSCORE.showConfirmDialog(
+                //$.i18n.t("ns.dialogs:fileSaveTitleConfirm"),
+                //$.i18n.t("ns.dialogs:fileSaveContentConfirm"),
+                //function() {
+                    //$("#saveDocument").hide();
+                    //$("#editDocument").show();
                     var content = _tsEditor.getContent();
                     TSCORE.IO.saveTextFile(_openedFilePath, content);
-                    _isEditMode = false;              
-                }
-            );
+                    //_isEditMode = false;
+                //}
+            //);
     }
 
     function updateUI() {
@@ -553,6 +578,8 @@
     exports.saveFile                            = saveFile;
     exports.isFileOpened                        = isFileOpened;
     exports.isFileEdited                        = isFileEdited;
+    exports.isFileChanged                       = isFileChanged;
+    exports.setFileChanged                      = setFileChanged;
     exports.getOpenedFilePath                   = getOpenedFilePath;
     exports.updateEditorContent                 = updateEditorContent;
     exports.setFileProperties                   = setFileProperties;
