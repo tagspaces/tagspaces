@@ -99,6 +99,8 @@
         $("#nextDocumentKeyBinding").val(TSCORE.Config.getNextDocumentKeyBinding());
         $("#prevDocumentKeyBinding").val(TSCORE.Config.getPrevDocumentKeyBinding());
         $("#closeDocumentKeyBinding").val(TSCORE.Config.getCloseViewerKeyBinding());
+        $("#addRemoveTagsKeyBinding").val(TSCORE.Config.getAddRemoveTagsKeyBinding());
+        $("#editDocumentKeyBinding").val(TSCORE.Config.getEditDocumentKeyBinding());
         $("#reloadDocumentKeyBinding").val(TSCORE.Config.getReloadDocumentKeyBinding());
         $("#saveDocumentKeyBinding").val(TSCORE.Config.getSaveDocumentKeyBinding());
         $("#documentPropertiesKeyBinding").val(TSCORE.Config.getPropertiesDocumentKeyBinding());
@@ -162,6 +164,8 @@
         TSCORE.Config.setNextDocumentKeyBinding(parseKeyBinding($("#nextDocumentKeyBinding").val()));
         TSCORE.Config.setPrevDocumentKeyBinding(parseKeyBinding($("#prevDocumentKeyBinding").val()));
         TSCORE.Config.setCloseViewerKeyBinding(parseKeyBinding($("#closeDocumentKeyBinding").val()));
+        TSCORE.Config.setAddRemoveTagsKeyBinding(parseKeyBinding($("#addRemoveTagsKeyBinding").val()));
+        TSCORE.Config.setEditDocumentKeyBinding(parseKeyBinding($("#editDocumentKeyBinding").val()));
         TSCORE.Config.setReloadDocumentKeyBinding(parseKeyBinding($("#reloadDocumentKeyBinding").val()));
         TSCORE.Config.setSaveDocumentKeyBinding(parseKeyBinding($("#saveDocumentKeyBinding").val()));
         TSCORE.Config.setPropertiesDocumentKeyBinding(parseKeyBinding($("#documentPropertiesKeyBinding").val()));
