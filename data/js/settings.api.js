@@ -425,10 +425,7 @@
      };
 
      var getCloseViewerKeyBinding = function () {
-         if (exports.Settings.keyBindings === undefined) {
-             exports.Settings.keyBindings = exports.DefaultSettings.keyBindings;
-             saveSettings();
-         }
+         updateKeyBindingsSetting();
          if (exports.Settings.keyBindings.closeViewer === undefined) {
              exports.Settings.keyBindings.closeViewer = exports.DefaultSettings.keyBindings.closeViewer;
              saveSettings();
@@ -440,11 +437,21 @@
          exports.Settings.keyBindings.closeViewer = value;
      };
 
-     var getSaveDocumentKeyBinding = function () {
-         if (exports.Settings.keyBindings === undefined) {
-             exports.Settings.keyBindings = exports.DefaultSettings.keyBindings;
+     var getEditDocumentKeyBinding = function () {
+         updateKeyBindingsSetting();
+         if (exports.Settings.keyBindings.editDocument === undefined) {
+             exports.Settings.keyBindings.editDocument = exports.DefaultSettings.keyBindings.editDocument;
              saveSettings();
          }
+         return exports.Settings.keyBindings.editDocument;
+     };
+
+     var setEditDocumentKeyBinding = function (value) {
+         exports.Settings.keyBindings.editDocument = value;
+     };
+
+     var getSaveDocumentKeyBinding = function () {
+         updateKeyBindingsSetting();
          if (exports.Settings.keyBindings.saveDocument === undefined) {
              exports.Settings.keyBindings.saveDocument = exports.DefaultSettings.keyBindings.saveDocument;
              saveSettings();
@@ -474,10 +481,7 @@
      };
 
      var getToggleFullScreenKeyBinding = function () {
-         if (exports.Settings.keyBindings === undefined) {
-             exports.Settings.keyBindings = exports.DefaultSettings.keyBindings;
-             saveSettings();
-         }
+         updateKeyBindingsSetting();
          if (exports.Settings.keyBindings.toggleFullScreen === undefined) {
              exports.Settings.keyBindings.toggleFullScreen = exports.DefaultSettings.keyBindings.toggleFullScreen;
              saveSettings();
@@ -489,11 +493,21 @@
          exports.Settings.keyBindings.toggleFullScreen = value;
      };
 
-     var getReloadDocumentKeyBinding = function () {
-         if (exports.Settings.keyBindings === undefined) {
-             exports.Settings.keyBindings = exports.DefaultSettings.keyBindings;
+     var getAddRemoveTagsKeyBinding = function () {
+         updateKeyBindingsSetting();
+         if (exports.Settings.keyBindings.addRemoveTags === undefined) {
+             exports.Settings.keyBindings.addRemoveTags = exports.DefaultSettings.keyBindings.addRemoveTags;
              saveSettings();
          }
+         return exports.Settings.keyBindings.addRemoveTags;
+     };
+
+     var setAddRemoveTagsKeyBinding = function (value) {
+         exports.Settings.keyBindings.addRemoveTags = value;
+     };
+
+     var getReloadDocumentKeyBinding = function () {
+         updateKeyBindingsSetting();
          if (exports.Settings.keyBindings.reloadDocument === undefined) {
              exports.Settings.keyBindings.reloadDocument = exports.DefaultSettings.keyBindings.reloadDocument;
              saveSettings();
@@ -506,10 +520,7 @@
      };
 
      var getDeleteDocumentKeyBinding = function () {
-         if (exports.Settings.keyBindings === undefined) {
-             exports.Settings.keyBindings = exports.DefaultSettings.keyBindings;
-             saveSettings();
-         }
+         updateKeyBindingsSetting();
          if (exports.Settings.keyBindings.deleteDocument === undefined) {
              exports.Settings.keyBindings.deleteDocument = exports.DefaultSettings.keyBindings.deleteDocument;
              saveSettings();
@@ -522,10 +533,7 @@
      };
 
      var getPropertiesDocumentKeyBinding = function () {
-         if (exports.Settings.keyBindings === undefined) {
-             exports.Settings.keyBindings = exports.DefaultSettings.keyBindings;
-             saveSettings();
-         }
+         updateKeyBindingsSetting();
          if (exports.Settings.keyBindings.propertiesDocument === undefined) {
              exports.Settings.keyBindings.propertiesDocument = exports.DefaultSettings.keyBindings.propertiesDocument;
              saveSettings();
@@ -538,10 +546,7 @@
      };
 
      var getNextDocumentKeyBinding = function () {
-         if (exports.Settings.keyBindings === undefined) {
-             exports.Settings.keyBindings = exports.DefaultSettings.keyBindings;
-             saveSettings();
-         }
+         updateKeyBindingsSetting();
          if (exports.Settings.keyBindings.nextDocument === undefined) {
              exports.Settings.keyBindings.nextDocument = exports.DefaultSettings.keyBindings.nextDocument;
              saveSettings();
@@ -554,10 +559,7 @@
      };
 
      var getPrevDocumentKeyBinding = function () {
-         if (exports.Settings.keyBindings === undefined) {
-             exports.Settings.keyBindings = exports.DefaultSettings.keyBindings;
-             saveSettings();
-         }
+         updateKeyBindingsSetting();
          if (exports.Settings.keyBindings.prevDocument === undefined) {
              exports.Settings.keyBindings.prevDocument = exports.DefaultSettings.keyBindings.prevDocument;
              saveSettings();
@@ -570,10 +572,7 @@
      };
 
      var getShowTagLibraryKeyBinding = function () {
-         if (exports.Settings.keyBindings === undefined) {
-             exports.Settings.keyBindings = exports.DefaultSettings.keyBindings;
-             saveSettings();
-         }
+         updateKeyBindingsSetting();
          if (exports.Settings.keyBindings.showTagLibrary === undefined) {
              exports.Settings.keyBindings.showTagLibrary = exports.DefaultSettings.keyBindings.showTagLibrary;
              saveSettings();
@@ -586,10 +585,7 @@
      };
 
      var getShowFolderNavigatorBinding = function () {
-         if (exports.Settings.keyBindings === undefined) {
-             exports.Settings.keyBindings = exports.DefaultSettings.keyBindings;
-             saveSettings();
-         }
+         updateKeyBindingsSetting();
          if (exports.Settings.keyBindings.showFolderNavigator === undefined) {
              exports.Settings.keyBindings.showFolderNavigator = exports.DefaultSettings.keyBindings.showFolderNavigator;
              saveSettings();
@@ -602,10 +598,7 @@
      };
 
      var getOpenDevToolsScreenKeyBinding = function () {
-         if (exports.Settings.keyBindings === undefined) {
-             exports.Settings.keyBindings = exports.DefaultSettings.keyBindings;
-             saveSettings();
-         }
+         updateKeyBindingsSetting();
          if (exports.Settings.keyBindings.openDevTools === undefined) {
              exports.Settings.keyBindings.openDevTools = exports.DefaultSettings.keyBindings.openDevTools;
              saveSettings();
@@ -1108,6 +1101,13 @@
     var getRandomInt = function(min, max) {
         return Math.floor(Math.random() * (max - min + 1)) + min;
     };
+
+    function updateKeyBindingsSetting() {
+        if (exports.Settings.keyBindings === undefined) {
+            exports.Settings.keyBindings = exports.DefaultSettings.keyBindings;
+            saveSettings();
+        }
+    }
     
     // Public API definition
     exports.upgradeSettings                         = upgradeSettings;
@@ -1145,6 +1145,10 @@
     exports.setInterfaceLangauge                    = setInterfaceLangauge;
     exports.getCloseViewerKeyBinding                = getCloseViewerKeyBinding;
     exports.setCloseViewerKeyBinding                = setCloseViewerKeyBinding;
+    exports.getAddRemoveTagsKeyBinding              = getAddRemoveTagsKeyBinding;
+    exports.setAddRemoveTagsKeyBinding              = setAddRemoveTagsKeyBinding;
+    exports.getEditDocumentKeyBinding               = getEditDocumentKeyBinding;
+    exports.setEditDocumentKeyBinding               = setEditDocumentKeyBinding;
     exports.getOpenDevToolsScreenKeyBinding         = getOpenDevToolsScreenKeyBinding;
     exports.setOpenDevToolsScreenKeyBinding         = setOpenDevToolsScreenKeyBinding;
     exports.getToggleFullScreenKeyBinding           = getToggleFullScreenKeyBinding;
