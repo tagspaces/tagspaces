@@ -31,7 +31,7 @@ define(function(require, exports, module) {
         console.log("Initalization Text Editor...");
         var fileExt = filePath.substring(filePath.lastIndexOf(".") + 1, filePath.length).toLowerCase();
 
-        $("#" + containerElementID).append('<div id="code" name="code" style="width: 100%; height: 100%">');
+        $("#" + containerElementID).append('<div id="code" style="width: 100%; height: 100%">');
         var mode = filetype[fileExt];
         if (mode == null) {
             mode = "properties";
@@ -115,7 +115,7 @@ define(function(require, exports, module) {
         return cmEditor.getValue();
     };
 	
-	var filetype = new Array();
+	var filetype = [];
 	filetype["h"] = "clike";
 	filetype["c"] = "clike";
 	filetype["clj"] = "clojure";
