@@ -63,19 +63,21 @@ define(function(require, exports, module) {
 
         $('#htmlEditor').append(cleanedBodyContent);
         $('#htmlEditor').summernote({
-          focus: true,
-          toolbar: [
-            ['style', ['style']], 
-            ['style', ['bold', 'italic', 'underline', 'clear']],
-            ['fontsize', ['fontsize']],
-            ['color', ['color']],
-            ['para', ['ul', 'ol', 'paragraph']],
-            ['height', ['height']],
-            ['insert', ['picture', 'link']], 
-            ['table', ['table']], 
-            ['view', ['codeview']]
-            //['help', ['help']] //no help button
-          ]
+            focus: true,
+            toolbar: [
+              ['style', ['style']],
+              ['style', ['bold', 'italic', 'underline', 'clear']],
+              ['fontsize', ['fontsize']],
+              ['color', ['color']],
+              ['para', ['ul', 'ol', 'paragraph']],
+              ['height', ['height']],
+              ['insert', ['picture', 'link']],
+              ['table', ['table']],
+              ['view', ['codeview']]
+            ],
+            onkeyup: function() {
+                TSCORE.FileOpener.setFileChanged(true);
+            }
         });
     };
 
