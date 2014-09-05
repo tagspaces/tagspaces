@@ -77,9 +77,8 @@ define(function(require, exports, module) {
         if(isNewFile) {
             // If file is new open it in edit mode
             TSCORE.FileOpener.openFile(filePath, true);
-        } else {
-            TSCORE.FileOpener.openFile(filePath);
         }
+        TSCORE.FileOpener.setFileChanged(false);
     };
     
     exports.listDirectory = function(anotatedDirList) {
