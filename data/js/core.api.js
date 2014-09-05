@@ -152,10 +152,9 @@ define(function(require, exports, module) {
             tsCoreUI.showLocationsPanel();
         });
 
-        //Mousetrap.bind("mod+t", function() {
-            // TODO check if min 1 file is selected
-            //tsTagsUI.showAddTagsDialog();
-        //});
+        Mousetrap.bind(tsSettings.getAddRemoveTagsKeyBinding(), function() {
+            tsTagsUI.showAddTagsDialog();
+        });
 
         // TODO add swipeleft for closing left panel
         /* $(".col1").hammer().on("swipeleft", function(event) {
