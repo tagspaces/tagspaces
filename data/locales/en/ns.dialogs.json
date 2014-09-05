@@ -118,6 +118,8 @@
     "saveDocumentKeyBinding": "Save Document",
     "nextDocumentKeyBinding": "Next Document",
     "prevDocumentKeyBinding": "Previous Document",
+    "editDocumentKeyBinding": "Edit Document",
+    "addRemoveTagsKeyBinding": "Add / Remove Tags",
     "perspectivesHelp": "The changes made in this tab will take effect after restarting the application.",
     "addPerspectiveButton": "Add new perspective",
     "addNewFileExtensionButton": "Add new file extension",
