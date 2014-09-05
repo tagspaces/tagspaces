@@ -52,6 +52,7 @@ define(function (require, exports, module) {
             "closeViewer":              "mod+w",
             "saveDocument":             "mod+s",
             "reloadDocument":           "mod+r",
+            "editDocument":             "mod+e",
             "deleteDocument":           "del",
             "showTagLibrary":           "s t",
             "showFolderNavigator":      "s f",
