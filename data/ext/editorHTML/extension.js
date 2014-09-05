@@ -61,8 +61,9 @@ define(function(require, exports, module) {
 
         var cleanedBodyContent = bodyContent.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,"");         
 
-        $('#htmlEditor').append(cleanedBodyContent);
-        $('#htmlEditor').summernote({
+        var $htmlEditor = $('#htmlEditor');
+        $htmlEditor.append(cleanedBodyContent);
+        $htmlEditor.summernote({
             focus: true,
             toolbar: [
               ['style', ['style']],
