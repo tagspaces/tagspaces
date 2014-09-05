@@ -122,6 +122,7 @@ define(function(require, exports, module) {
     };
 
     exports.deleteDirectoryFailed = function(dirPath) {
+        console.log("Deleting of '"+dirPath+"' failed");
         TSCORE.showAlertDialog($.i18n.t("ns.dialogs:errorDeletingDirectoryAlert"));
         TSCORE.hideLoadingAnimation();
     };
