@@ -76,6 +76,7 @@ requirejs.config({
         
         bootstrap:              'libs/bootstrap/js/bootstrap.min',
         bootstrap3xeditable:    'libs/bootstrap3xeditable/js/bootstrap-editable.min',
+        bootstrapvalidator:     'libs/bootstrap-validator/validator.min',
         jquerysimplecolorpicker:'libs/jquery-simplecolorpicker/jquery.simplecolorpicker',
         jquerylayout:           'libs/jquerylayout/jquery.layout-latest.min',
         underscore:             'libs/underscore/underscore-min',
@@ -117,6 +118,7 @@ requirejs.config({
         'jquerylayout':             { deps: ['jquery','jqueryui','jqueryuidraggable' ] },
         'jquerysimplecolorpicker':  { deps: ['jquery','bootstrap'] },
         'bootstrap3xeditable':      { deps: ['jquery','jqueryui','bootstrap'] },
+        'bootstrapvalidator':       { deps: ['jquery','bootstrap'] },
         'i18next':                  { deps: ['jquery'] },
         'select2':                  { deps: ['jquery'] },
         'hammerjs':                 { deps: ['jquery'] },
@@ -134,6 +136,7 @@ requirejs.config({
                                             'hammerjs',
                                             'bootstrap',
                                             'bootstrap3xeditable',
+                                            'bootstrapvalidator',
                                             'jquerysimplecolorpicker',
                                             'i18next',
                                             'mousetrap',
