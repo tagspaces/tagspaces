@@ -161,12 +161,15 @@
      }
 
      function setFileChanged(value) {
-         var $fileExt = $( "#fileExtText" );
+         var $fileExt = $("#fileExtText");
+         var $fileTitle = $("#fileTitle");
          if(value && !_isFileChanged) {
              $fileExt.text($fileExt.text() + "*");
+             $fileTitle.editable("disable");
          }
          if(!value) {
              $fileExt.text(TSCORE.TagUtils.extractFileExtension(_openedFilePath));
+             $fileTitle.editable("enable");
          }
          _isFileChanged = value;
      }
@@ -247,6 +250,7 @@
         }
 
         _isEditMode = false;
+        _isFileChanged = false;
 
         _openedFilePath = filePath;
         //$("#selectedFilePath").val(_openedFilePath.replace("\\\\","\\"));
@@ -264,12 +268,6 @@
         }
 
         var fileExt = TSCORE.TagUtils.extractFileExtension(filePath);
-
-        // TODO Improve preventing opening of directories
-        //if(fileExt.length < 1) {
-        //    console.log("Path has no extension, quiting fileopener.");
-        //    return false;
-        //}
 
         // Getting the viewer for the file extension/type
         var viewerExt = TSCORE.Config.getFileTypeViewer(fileExt);
