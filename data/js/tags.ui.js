@@ -439,11 +439,18 @@
     function showDialogTagCreate() {
         $( "#newTagTitle" ).val("");
 
+        $("#formAddTags").validator();
+        $('#formAddTags').on('invalid.bs.validator', function() {
+            $( "#createTagButton").prop( "disabled", true );
+        });
+        $('#formAddTags').on('valid.bs.validator', function() {
+            $( "#createTagButton").prop( "disabled", false );
+        });
+
         $('#dialogTagCreate').on('shown.bs.modal', function () {
           $('#newTagTitle').focus();
         });
-
-        $( '#dialogTagCreate' ).modal({backdrop: 'static',show: true});
+        $('#dialogTagCreate').modal({backdrop: 'static',show: true});
     }   
 
     function showDialogEditTagGroup() {
@@ -470,7 +477,6 @@
         $( "#tagInTreeName" ).val(TSCORE.selectedTagData.title);
 
         $( "#tagInTreeKeyBinding" ).val(TSCORE.selectedTagData.keyBinding);
-
 
         var $tagColorChooser = $( "#tagColorChooser" );
         var  $tagColor =  $('#tagColor');
