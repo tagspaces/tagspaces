@@ -29,6 +29,8 @@ define(function(require, exports, module) {
 
     exports.init = function (filePath, containerElementID, isViewerMode) {
         console.log("Initalization Text Editor...");
+        contentLoaded = false;
+
         var fileExt = filePath.substring(filePath.lastIndexOf(".") + 1, filePath.length).toLowerCase();
 
         $("#" + containerElementID).append('<div id="code" style="width: 100%; height: 100%">');
