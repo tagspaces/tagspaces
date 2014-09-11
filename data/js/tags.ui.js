@@ -133,10 +133,10 @@
                 $.i18n.t("ns.dialogs:deleteTagGroupContentConfirm", {tagGroup: TSCORE.selectedTagData.title}),
                 function() {
                     TSCORE.Config.deleteTagGroup(TSCORE.selectedTagData);
-                    generateTagGroups();                              
+                    generateTagGroups();
                 }
             );
-        });                
+        });
 
         // Dialogs
         $( "#editTagInTreeButton" ).click( function() {
@@ -441,7 +441,7 @@
 
         $('#dialogTagCreate').on('shown.bs.modal', function () {
           $('#newTagTitle').focus();
-        })
+        });
 
         $( '#dialogTagCreate' ).modal({backdrop: 'static',show: true});
     }   
@@ -451,7 +451,7 @@
 
         $('#dialogEditTagGroup').on('shown.bs.modal', function () {
           $('#tagGroupName').focus();
-        })
+        });
 
         $( '#dialogEditTagGroup' ).modal({backdrop: 'static',show: true});
     }
@@ -461,7 +461,7 @@
 
         $('#dialogTagGroupCreate').on('shown.bs.modal', function () {
           $('#newTagGroupName').focus();
-        })
+        });
 
         $( '#dialogTagGroupCreate' ).modal({backdrop: 'static',show: true});
     }
@@ -471,27 +471,44 @@
 
         $( "#tagInTreeKeyBinding" ).val(TSCORE.selectedTagData.keyBinding);
 
-        var $tagColor= $( "#tagColor" );
-        $tagColor.simplecolorpicker({picker: false, theme: 'fontawesome'});
-        
-        if(TSCORE.selectedTagData.color === undefined || TSCORE.selectedTagData.color.length < 1) {
-            $tagColor.simplecolorpicker('selectColor', '#008000');
+
+        var $tagColorChooser = $( "#tagColorChooser" );
+        var  $tagColor =  $('#tagColor');
+        $tagColorChooser.simplecolorpicker({picker: false, theme: 'fontawesome'});
+        $tagColorChooser.on("change", function() {
+            $tagColor.val($tagColorChooser.val());
+        });
+        if(TSCORE.selectedTagData.color === undefined
+            || TSCORE.selectedTagData.color.length < 1) {
+            $tagColor.val('#008000');
         } else {
-            $tagColor.simplecolorpicker('selectColor', TSCORE.selectedTagData.color);
+            $tagColor.val(TSCORE.selectedTagData.color);
         }
 
-        var $tagTextColor = $( "#tagTextColor" );
-        $tagTextColor.simplecolorpicker({picker: false, theme: 'fontawesome'});
-        
-        if(TSCORE.selectedTagData.textcolor === undefined || TSCORE.selectedTagData.textcolor.length < 1) {
-            $tagTextColor.simplecolorpicker('selectColor', '#ffffff');
+        var $tagTextColorChooser = $( "#tagTextColorChooser" );
+        var  $tagTextColor =  $('#tagTextColor');
+        $tagTextColorChooser.simplecolorpicker({picker: false, theme: 'fontawesome'});
+        $tagTextColorChooser.on("change", function() {
+            $tagTextColor.val($tagTextColorChooser.val());
+        });
+        if(TSCORE.selectedTagData.textcolor === undefined
+            || TSCORE.selectedTagData.textcolor.length < 1) {
+            $tagTextColor.val('#ffffff');
         } else {
-            $tagTextColor.simplecolorpicker('selectColor', TSCORE.selectedTagData.textcolor);
+            $tagTextColor.val(TSCORE.selectedTagData.textcolor);
         }
+
+        $("#formEditInTreeTag").validator();
+        $('#formEditInTreeTag').on('invalid.bs.validator', function() {
+            $( "#editTagInTreeButton").prop( "disabled", true );
+        });
+        $('#formEditInTreeTag').on('valid.bs.validator', function() {
+            $( "#editTagInTreeButton").prop( "disabled", false );
+        });
 
         $('#dialogEditInTreeTag').on('shown.bs.modal', function () {
           $('#tagInTreeName').focus();
-        })
+        });
 
         $( '#dialogEditInTreeTag' ).modal({backdrop: 'static',show: true});        
     }	
@@ -516,7 +533,7 @@
 
         $('#dialogAddTags').on('shown.bs.modal', function () {
           $('.select2-input').focus();
-        })
+        });
 
         $( '#dialogAddTags' ).modal({backdrop: 'static',show: true});
     }
