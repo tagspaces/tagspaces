@@ -438,19 +438,25 @@ can be found in the LICENSE file.
                 <h4 data-i18n="ns.dialogs:editTagMasterTitle">Edit Tag</h4>
             </div>
             <div class="modal-body form">
+                <form role="form" data-toggle="validator" id="formEditInTreeTag">
                 <div class="form-group">
-                    <label class="control-label" for="tagInTreeName" data-i18n="ns.dialogs:editTagMasterName">Name</label>
-                    <input class="form-control" type="text" name="tagInTreeName" id="tagInTreeName" />
-                    <p class="help-block" data-i18n="ns.dialogs:editTagNamesRestrictionsHelp">Tags should have a minimum length of 2 characters and should not contain special characters such as spaces, #, / ,\ and other.</p>
+                    <label class="control-label" for="tagInTreeName" data-i18n="ns.dialogs:editTagMasterName">Name</label>*
+                    <input class="form-control" pattern="^([_\-A-z0-9]){2,}$" type="text" name="tagInTreeName" id="tagInTreeName"
+                           data-i18n="[data-error]ns.dialogs:editTagNamesRestrictionsHelp" required/>
+                    <p class="help-block with-errors"></p>
                 </div>
                 <div class="form-group">
                     <label class="control-label" for="tagInTreeKeyBinding" data-i18n="ns.dialogs:editTagInTreeKeyBinding">Key Binding</label>
-                    <input class="form-control" type="text" name="tagInTreeKeyBinding" id="tagInTreeKeyBinding" />
+                    <input class="form-control" pattern="^([+\ A-z0-9]){2,}$"  type="text" name="tagInTreeKeyBinding" id="tagInTreeKeyBinding" />
+                    <p class="help-block with-errors"></p>
                     <p class="help-block" data-i18n="ns.dialogs:editTagInTreeKeyBindingHelp"></p>
                 </div>
                 <div class="form-group">
                     <label class="control-label" for="tagColor" data-i18n="ns.dialogs:editTagMasterColor">Color</label>
-                    <select class="form-control" id="tagColor" >
+                    <input type="color" class="form-control" id="tagColor" style="padding: 0">
+                    <select class="form-control" id="tagColorChooser">
+                        <option value="#ffffff">#ffffff</option>
+                        <option value="#000000">#000000</option>
                         <option value="#ac725e">#ac725e</option>
                         <option value="#d06b64">#d06b64</option>
                         <option value="#f83a22">#f83a22</option>
@@ -478,13 +484,15 @@ can be found in the LICENSE file.
                 </div>
                 <div class="form-group">
                     <label class="control-label" for="tagTextColor" data-i18n="ns.dialogs:editTagMasterTextColor">Text Color</label>
-                    <select class="form-control" id="tagTextColor">
+                    <input type="color" class="form-control" id="tagTextColor" style="padding: 0">
+                    <select class="form-control" id="tagTextColorChooser">
                         <option value="#ffffff">#ffffff</option>
                         <option value="#cccccc">#cccccc</option>
                         <option value="#333333">#333333</option>
                         <option value="#000000">#000000</option>
                     </select>
                 </div>
+                </form>
             </div>
             <div class="modal-footer">
                 <button class="btn cancelButton" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times fa-lg"></i></button>
