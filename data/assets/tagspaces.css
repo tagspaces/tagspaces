@@ -625,6 +625,7 @@ input a.resetFilter {
 
 .modal-body {
 	font-size: 14px;
+    padding-bottom: 0;
 }
 
 /* Tablet optimization */
