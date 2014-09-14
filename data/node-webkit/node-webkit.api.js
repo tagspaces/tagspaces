@@ -379,7 +379,7 @@ define(function(require, exports, module) {
             console.log("Content beging with a UTF8 bom");
         } else {
             content = UTF8_BOM+content;
-        }            
+        }
 
         var isNewFile = !fs.existsSync(filePath);
        
@@ -390,6 +390,22 @@ define(function(require, exports, module) {
             }
             TSPOSTIO.saveTextFile(filePath, isNewFile);
         }); 
+    };
+
+    var saveBinaryFile = function(filePath,content) {
+        console.log("Saving binary file: "+filePath);
+
+        if(!fs.existsSync(filePath)) {
+            fs.writeFile(filePath, content, 'utf8', function(error) {
+                if (error) {
+                    console.log("Save to file "+filePath+" failed "+error);
+                    return;
+                }
+                TSPOSTIO.saveBinaryFile(filePath);
+            });
+        } else {
+            TSCORE.showAlertDialog("File Already Exists.");
+        }
     };
 
     var listDirectory = function (dirPath) {
@@ -547,6 +563,7 @@ define(function(require, exports, module) {
     exports.copyFile                     = copyFile;
     exports.loadTextFile                 = loadTextFile;
     exports.saveTextFile                 = saveTextFile;
+    exports.saveBinaryFile               = saveBinaryFile;
     exports.listDirectory                = listDirectory;
     exports.deleteElement                = deleteElement;
     exports.deleteDirectory              = deleteDirectory;
