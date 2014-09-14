@@ -13,6 +13,7 @@
     "createHTMLFile": "New Rich Text File",
     "createMDFile": "New Markdown File",
     "createTXTFile": "New Plain Text File",
+    "showAddFileDialog": "Add Existing File",
     "showNewFileDialog": "Advanced File Creation",
     "exportToCSV": "Export to CSV",
     "exportToCSVTooltip": "Export current file structure in CSV(Comma Separated Value) format",
