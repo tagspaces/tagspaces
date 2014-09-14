@@ -8,10 +8,14 @@
                 <h4 data-i18n="ns.dialogs:createNewDirectoryTitle">Create New Directory</h4>
             </div>
             <div class="modal-body form">
-                <div class="form-group">
-                    <label class="control-label" for="newDirectoryName" data-i18n="ns.dialogs:createNewDirectoryTitleName">New Directory Name</label>
-                    <input class="form-control" type="text" name="newDirectoryName" id="newDirectoryName" />
-                </div>
+                <form role="form" data-toggle="validator" id="formDirectoryCreate">
+                    <div class="form-group">
+                        <label class="control-label" for="newDirectoryName" data-i18n="ns.dialogs:createNewDirectoryTitleName">New Directory Name</label>*
+                        <input class="form-control" type="text" name="newDirectoryName" id="newDirectoryName"
+                               pattern='^([^#/\\:*?<>|"]){1,}$' data-i18n="[data-error]ns.dialogs:directoryNameHelp" required />
+                        <p class="help-block with-errors"></p>
+                    </div>
+                </form>
             </div>
             <div class="modal-footer">
                 <button class="btn cancelButton" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times fa-lg"></i></button>

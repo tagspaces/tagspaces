@@ -8,10 +8,14 @@
                 <h4 data-i18n="ns.dialogs:renameDirectoryTitle"></h4>
             </div>
             <div class="modal-body form">
-                <div class="form-group">
-                    <label class="control-label" for="directoryNewName" data-i18n="ns.dialogs:renameDirectoryTitleName"></label>
-                    <input class="form-control" type="text" id="directoryNewName" />
-                </div>
+                <form role="form" data-toggle="validator" id="formDirectoryRename">
+                    <div class="form-group">
+                        <label class="control-label" for="directoryNewName" data-i18n="ns.dialogs:renameDirectoryTitleName"></label>
+                        <input class="form-control" type="text" id="directoryNewName"
+                               pattern='^([^#/\\:*?<>|"]){1,}$' data-i18n="[data-error]ns.dialogs:directoryNameHelp" required />
+                        <p class="help-block with-errors"></p>
+                    </div>
+                </form>
             </div>
             <div class="modal-footer">
                 <button class="btn cancelButton" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times fa-lg"></i></button>
