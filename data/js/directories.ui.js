@@ -28,7 +28,7 @@ define(function(require, exports, module) {
                 '<ul style="overflow-y: auto; max-height: 430px; width: 250px; padding: 5px; display: block;" role="menu" class="dropdown-menu">'+
                     '<li class="dropdown-header">{{../actionsForDirectory}}&nbsp;"{{name}}"<button type="button" class="close">×</button></li>'+
                     '<li><a class="btn btn-link pull-left reloadCurrentDirectory" data-path="{{path}}"><i class="fa fa-refresh fa-fw"></i>&nbsp;{{../reloadCurrentDirectory}}</a></li>'+
-                    '<li class="notreadonly"><a class="btn btn-link pull-left createSubdirectory" data-path="{{path}}"><i class="fa fa-folder fa-fw"></i>&nbsp;{{../createSubdirectory}}</a></li>'+
+                    '<li class="notreadonly"><a class="btn btn-link pull-left createSubdirectory" data-path="{{path}}"><i class="fa fa-folder-o fa-fw"></i>&nbsp;{{../createSubdirectory}}</a></li>'+
                     '<li class="notreadonly"><a class="btn btn-link pull-left renameDirectory" data-path="{{path}}"><i class="fa fa-paragraph fa-fw"></i>&nbsp;{{../renameDirectory}}</a></li>'+
                     '<li class="divider" style="width: 100%"></li>'+
                     '<li class="dropdown-header">{{../subfodersOfDirectory}}&nbsp;"{{name}}"</li>'+
@@ -597,9 +597,17 @@ define(function(require, exports, module) {
                 $("#newDirectoryName").val("");
                 $('#dialogDirectoryCreate').i18n();
 
+                $("#formDirectoryCreate").validator();
+                $('#formDirectoryCreate').on('invalid.bs.validator', function() {
+                    $( "#createNewDirectoryButton").prop( "disabled", true );
+                });
+                $('#formDirectoryCreate').on('valid.bs.validator', function() {
+                    $( "#createNewDirectoryButton").prop( "disabled", false );
+                });
+
                 $('#dialogDirectoryCreate').on('shown.bs.modal', function () {
                   $('#newDirectoryName').focus();
-                })
+                });
 
                 $('#dialogDirectoryCreate').modal({backdrop: 'static',show: true});
         });
