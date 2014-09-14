@@ -111,6 +111,14 @@ define(function(require, exports, module) {
 
         $( '#txtFileTypeButton' ).button('toggle');
 
+        $("#formFileCreate").validator();
+        $('#formFileCreate').on('invalid.bs.validator', function() {
+            $( "#fileCreateConfirmButton").prop( "disabled", true );
+        });
+        $('#formFileCreate').on('valid.bs.validator', function() {
+            $( "#fileCreateConfirmButton").prop( "disabled", false );
+        });
+
         $('#dialogFileCreate').on('shown.bs.modal', function () {
           $('#newFileName').select2().focus();
         });
@@ -122,9 +130,17 @@ define(function(require, exports, module) {
         $( "#renamedFileName" ).attr("filepath",filePath);
         $( "#renamedFileName" ).val(TSCORE.TagUtils.extractFileName(filePath));
 
+        $("#formFileRename").validator();
+        $('#formFileRename').on('invalid.bs.validator', function() {
+            $( "#renameFileButton").prop( "disabled", true );
+        });
+        $('#formFileRename').on('valid.bs.validator', function() {
+            $( "#renameFileButton").prop( "disabled", false );
+        });
+
         $('#dialogFileRename').on('shown.bs.modal', function () {
           $('#renamedFileName').focus();
-        })
+        });
 
         $( '#dialogFileRename' ).modal({backdrop: 'static',show: true});
     };    
@@ -143,9 +159,17 @@ define(function(require, exports, module) {
     var showTagEditDialog = function() {
         $( "#newTagName" ).val(TSCORE.selectedTag);
 
+        $("#formEditTag").validator();
+        $('#formEditTag').on('invalid.bs.validator', function() {
+            $( "#editTagButton").prop( "disabled", true );
+        });
+        $('#formEditTag').on('valid.bs.validator', function() {
+            $( "#editTagButton").prop( "disabled", false );
+        });
+
         $('#dialogEditTag').on('shown.bs.modal', function () {
           $('#newTagName').focus();
-        })
+        });
 
         $( '#dialogEditTag' ).modal({backdrop: 'static',show: true});
     };  
@@ -303,7 +327,23 @@ define(function(require, exports, module) {
         }
 
         platformTuning();        
- 
+
+        var addFileInputName = undefined;
+        $("#addFileInput").on("change", function(selection) {
+            console.log("Selected File: "+selection.currentTarget.value);
+            var file = selection.currentTarget.files[0];
+            addFileInputName = file.name;
+            var reader = new FileReader();
+            reader.onload = onFileReadComplete;
+            reader.readAsBinaryString(file);
+        });
+
+        function onFileReadComplete(event) {
+            //console.log(JSON.stringify(event.currentTarget.result));
+            TSCORE.IO.saveBinaryFile(TSCORE.currentPath+TSCORE.dirSeparator+addFileInputName, event.currentTarget.result);
+            addFileInputName = undefined;
+        }
+
         $( "#toggleLeftPanel" ).click(function() {
             TSCORE.toggleLeftPanel();
         });
