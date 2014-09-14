@@ -326,34 +326,38 @@ can be found in the LICENSE file.
             <h4 data-i18n="ns.dialogs:createNewFileTitle">Create New File</h4>
         </div>
         <div class="modal-body form">
-            <div class="form-group">
-                <label class="control-label" for="newFileName" data-i18n="ns.dialogs:newFileTitle">Title</label>
-                <input type="text" id="newFileName" class="form-control" placeholder="Title of the file">
-            </div>
-            <div class="form-group">
-                <label class="control-label" for="newFileNameTags" data-i18n="ns.dialogs:newFileTags">Tags</label>
-                <input type="text" id="newFileNameTags" name="newFileNameTags" autocomplete="off" class="form-control" placeholder="List of tags">
-                <p class="help-block" data-i18n="ns.dialogs:editTagNamesRestrictionsHelp">Tags should have a minimum length of 2 characters and should not contain special characters such as spaces, #, / ,\ and other.</p>
-            </div>
-            <div class="form-group">
-                <label class="control-label" for="fileTypeChooser" data-i18n="ns.dialogs:newFileType">Type</label><br>
-                <div class="btn-group" data-toggle="buttons" id="fileTypeChooser">
-                    <label class="btn btn-default active" id="txtFileTypeButton" title="Create a TXT File">
-                        <input type="radio" name="options"> <strong data-i18n="ns.dialogs:newFileTypePlain">Plain Text</strong> (.txt)
-                    </label>
-                    <label class="btn btn-default" id="htmlFileTypeButton" title="Create a HTML File">
-                        <input type="radio" name="options"> <strong data-i18n="ns.dialogs:newFileTypeRich">Rich Text</strong> (.html)
-                    </label>
-                    <label class="btn btn-default" id="mdFileTypeButton" title="Create a MarkDown File">
-                        <input type="radio" name="options"> <strong data-i18n="ns.dialogs:newFileTypeMD">MarkDown</strong> (.md)
-                    </label>
+            <form role="form" data-toggle="validator" id="formFileCreate">
+                <div class="form-group">
+                    <label class="control-label" for="newFileName" data-i18n="ns.dialogs:newFileTitle">Title</label>
+                    <input type="text" id="newFileName" class="form-control" placeholder="Title of the file"
+                        pattern='^([^#/\\:*?<>|"]){1,}$' data-i18n="[data-error]ns.dialogs:fileNameHelp" />
+                    <p class="help-block with-errors"></p>
                 </div>
-            </div>
-            <div class="checkbox">
-              <label>
-                <input type="checkbox" id="tagWithCurrentDate">&nbsp;<span data-i18n="ns.dialogs:tagWithCurrentDate">Tag with current date (e.g. 20131208 for the 8th of December, 2013)</span>
-              </label>
-            </div>
+                <div class="form-group">
+                    <label class="control-label" for="newFileNameTags" data-i18n="ns.dialogs:newFileTags">Tags</label>
+                    <input type="text" id="newFileNameTags" name="newFileNameTags" autocomplete="off" class="form-control" placeholder="List of tags">
+                    <p class="help-block" data-i18n="ns.dialogs:editTagNamesRestrictionsHelp">Tags should have a minimum length of 2 characters and should not contain special characters such as spaces, #, / ,\ and other.</p>
+                </div>
+                <div class="form-group">
+                    <label class="control-label" for="fileTypeChooser" data-i18n="ns.dialogs:newFileType">Type</label><br>
+                    <div class="btn-group" data-toggle="buttons" id="fileTypeChooser">
+                        <label class="btn btn-default active" id="txtFileTypeButton" title="Create a TXT File">
+                            <input type="radio" name="options"> <strong data-i18n="ns.dialogs:newFileTypePlain">Plain Text</strong> (.txt)
+                        </label>
+                        <label class="btn btn-default" id="htmlFileTypeButton" title="Create a HTML File">
+                            <input type="radio" name="options"> <strong data-i18n="ns.dialogs:newFileTypeRich">Rich Text</strong> (.html)
+                        </label>
+                        <label class="btn btn-default" id="mdFileTypeButton" title="Create a MarkDown File">
+                            <input type="radio" name="options"> <strong data-i18n="ns.dialogs:newFileTypeMD">MarkDown</strong> (.md)
+                        </label>
+                    </div>
+                </div>
+                <div class="checkbox">
+                  <label>
+                    <input type="checkbox" id="tagWithCurrentDate">&nbsp;<span data-i18n="ns.dialogs:tagWithCurrentDate">Tag with current date (e.g. 20131208 for the 8th of December, 2013)</span>
+                  </label>
+                </div>
+            </form>
         </div>
         <div class="modal-footer">
             <button class="btn cancelButton" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times fa-lg"></i></button>
@@ -371,10 +375,14 @@ can be found in the LICENSE file.
             <h4 data-i18n="ns.dialogs:renameFileTitle">Rename File</h4>
         </div>
         <div class="modal-body form">
-            <div class="form-group">
-                <label class="control-label" for="renamedFileName" data-i18n="ns.dialogs:renameNewFileName">New Filename</label>
-                <input class="form-control" type="text" name="renamedFileName" id="renamedFileName" />
-            </div>
+            <form role="form" data-toggle="validator" id="formFileRename">
+                <div class="form-group">
+                    <label class="control-label" for="renamedFileName" data-i18n="ns.dialogs:renameNewFileName">New Filename</label>*
+                    <input class="form-control" pattern='^([^#/\\:*?<>|"]){1,}$' type="text" name="renamedFileName" id="renamedFileName"
+                       data-i18n="[data-error]ns.dialogs:fileNameHelp" required />
+                    <p class="help-block with-errors"></p>
+                </div>
+            </form>
         </div>
         <div class="modal-footer">
             <button class="btn cancelButton" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times fa-lg"></i></button>
@@ -392,11 +400,14 @@ can be found in the LICENSE file.
             <h4 data-i18n="ns.dialogs:editTagTitle">Edit Tag</h4>
         </div>
         <div class="modal-body form">
-            <div class="form-group">
-                <label class="control-label" for="newTagName" data-i18n="ns.dialogs:editTagNewName">Tag Name</label>
-                <input class="form-control" type="text" id="newTagName">
-                <p class="help-block" data-i18n="ns.dialogs:editTagNamesRestrictionsHelp">Tags should have a minimum length of 2 characters and should not contain special characters such as spaces, #, / ,\ and other.</p>
-            </div>
+            <form role="form" data-toggle="validator" id="formEditTag">
+                <div class="form-group">
+                    <label class="control-label" for="newTagName" data-i18n="ns.dialogs:editTagNewName">Tag Name</label>
+                    <input class="form-control" pattern="^([^\ #/\\]){2,}$" type="text" name="newTagName" id="newTagName"
+                           data-i18n="[data-error]ns.dialogs:editTagNamesRestrictionsHelp" required/>
+                    <p class="help-block with-errors"></p>
+                </div>
+            </form>
         </div>
         <div class="modal-footer">
             <button class="btn cancelButton" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times fa-lg"></i></button>
@@ -423,7 +434,7 @@ can be found in the LICENSE file.
                     </div>
                 </form>
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer noWrap">
                 <button id="cleanTagsButton" class="btn btn-danger pull-left" data-dismiss="modal" aria-hidden="true" data-i18n="ns.dialogs:tagOperationCleanTags">Clean Tags</button>
                 <button class="btn cancelButton" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times fa-lg"></i></button>
                 <button id="removeTagsButton" class="btn btn-warning" data-dismiss="modal" aria-hidden="true" data-i18n="ns.dialogs:tagOperationRemoveTag">Remove Tags</button>
@@ -442,59 +453,59 @@ can be found in the LICENSE file.
             </div>
             <div class="modal-body form">
                 <form role="form" data-toggle="validator" id="formEditInTreeTag">
-                <div class="form-group">
-                    <label class="control-label" for="tagInTreeName" data-i18n="ns.dialogs:editTagMasterName">Name</label>*
-                    <input class="form-control" pattern="^([_\-A-z0-9]){2,}$" type="text" name="tagInTreeName" id="tagInTreeName"
-                           data-i18n="[data-error]ns.dialogs:editTagNamesRestrictionsHelp" required/>
-                    <p class="help-block with-errors"></p>
-                </div>
-                <div class="form-group">
-                    <label class="control-label" for="tagInTreeKeyBinding" data-i18n="ns.dialogs:editTagInTreeKeyBinding">Key Binding</label>
-                    <input class="form-control" pattern="^([+\ A-z0-9]){2,}$"  type="text" name="tagInTreeKeyBinding" id="tagInTreeKeyBinding" />
-                    <p class="help-block with-errors"></p>
-                    <p class="help-block" data-i18n="ns.dialogs:editTagInTreeKeyBindingHelp"></p>
-                </div>
-                <div class="form-group">
-                    <label class="control-label" for="tagColor" data-i18n="ns.dialogs:editTagMasterColor">Color</label>
-                    <input type="color" class="form-control" id="tagColor" style="padding: 0">
-                    <select class="form-control" id="tagColorChooser">
-                        <option value="#ffffff">#ffffff</option>
-                        <option value="#000000">#000000</option>
-                        <option value="#ac725e">#ac725e</option>
-                        <option value="#d06b64">#d06b64</option>
-                        <option value="#f83a22">#f83a22</option>
-                        <option value="#fa573c">#fa573c</option>
-                        <option value="#ff7537">#ff7537</option>
-                        <option value="#ffad46">#ffad46</option>
-                        <option value="#42d692">#42d692</option>
-                        <option value="#008000">#008000</option>
-                        <option value="#7bd148">#7bd148</option>
-                        <option value="#fad165">#fad165</option>
-                        <option value="#FFCC24">#FFCC24</option>
-                        <option value="#92e1c0">#92e1c0</option>
-                        <option value="#9fe1e7">#9fe1e7</option>
-                        <option value="#9fc6e7">#9fc6e7</option>
-                        <option value="#4986e7">#4986e7</option>
-                        <option value="#9a9cff">#9a9cff</option>
-                        <option value="#b99aff">#b99aff</option>
-                        <option value="#c2c2c2">#c2c2c2</option>
-                        <option value="#cabdbf">#cabdbf</option>
-                        <option value="#cca6ac">#cca6ac</option>
-                        <option value="#f691b2">#f691b2</option>
-                        <option value="#cd74e6">#cd74e6</option>
-                        <option value="#a47ae2">#a47ae2</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="control-label" for="tagTextColor" data-i18n="ns.dialogs:editTagMasterTextColor">Text Color</label>
-                    <input type="color" class="form-control" id="tagTextColor" style="padding: 0">
-                    <select class="form-control" id="tagTextColorChooser">
-                        <option value="#ffffff">#ffffff</option>
-                        <option value="#cccccc">#cccccc</option>
-                        <option value="#333333">#333333</option>
-                        <option value="#000000">#000000</option>
-                    </select>
-                </div>
+                    <div class="form-group">
+                        <label class="control-label" for="tagInTreeName" data-i18n="ns.dialogs:editTagMasterName">Name</label>*
+                        <input class="form-control" pattern="^([^\ #/\\]){2,}$" type="text" name="tagInTreeName" id="tagInTreeName"
+                               data-i18n="[data-error]ns.dialogs:editTagNamesRestrictionsHelp" required/>
+                        <p class="help-block with-errors"></p>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label" for="tagInTreeKeyBinding" data-i18n="ns.dialogs:editTagInTreeKeyBinding">Key Binding</label>
+                        <input class="form-control" pattern="^([+\ A-z0-9]){2,}$"  type="text" name="tagInTreeKeyBinding" id="tagInTreeKeyBinding" />
+                        <p class="help-block with-errors"></p>
+                        <p class="help-block" data-i18n="ns.dialogs:editTagInTreeKeyBindingHelp"></p>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label" for="tagColor" data-i18n="ns.dialogs:editTagMasterColor">Color</label>
+                        <input type="color" class="form-control" id="tagColor" style="padding: 0">
+                        <select class="form-control" id="tagColorChooser">
+                            <option value="#ffffff">#ffffff</option>
+                            <option value="#000000">#000000</option>
+                            <option value="#ac725e">#ac725e</option>
+                            <option value="#d06b64">#d06b64</option>
+                            <option value="#f83a22">#f83a22</option>
+                            <option value="#fa573c">#fa573c</option>
+                            <option value="#ff7537">#ff7537</option>
+                            <option value="#ffad46">#ffad46</option>
+                            <option value="#42d692">#42d692</option>
+                            <option value="#008000">#008000</option>
+                            <option value="#7bd148">#7bd148</option>
+                            <option value="#fad165">#fad165</option>
+                            <option value="#FFCC24">#FFCC24</option>
+                            <option value="#92e1c0">#92e1c0</option>
+                            <option value="#9fe1e7">#9fe1e7</option>
+                            <option value="#9fc6e7">#9fc6e7</option>
+                            <option value="#4986e7">#4986e7</option>
+                            <option value="#9a9cff">#9a9cff</option>
+                            <option value="#b99aff">#b99aff</option>
+                            <option value="#c2c2c2">#c2c2c2</option>
+                            <option value="#cabdbf">#cabdbf</option>
+                            <option value="#cca6ac">#cca6ac</option>
+                            <option value="#f691b2">#f691b2</option>
+                            <option value="#cd74e6">#cd74e6</option>
+                            <option value="#a47ae2">#a47ae2</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label" for="tagTextColor" data-i18n="ns.dialogs:editTagMasterTextColor">Text Color</label>
+                        <input type="color" class="form-control" id="tagTextColor" style="padding: 0">
+                        <select class="form-control" id="tagTextColorChooser">
+                            <option value="#ffffff">#ffffff</option>
+                            <option value="#cccccc">#cccccc</option>
+                            <option value="#333333">#333333</option>
+                            <option value="#000000">#000000</option>
+                        </select>
+                    </div>
                 </form>
             </div>
             <div class="modal-footer">
@@ -516,7 +527,7 @@ can be found in the LICENSE file.
                 <form role="form" data-toggle="validator" id="formAddTags">
                     <div class="form-group">
                         <label class="control-label" for="newTagTitle" data-i18n="ns.dialogs:addTagsToGroupTags">Tags</label>
-                        <input pattern="^([_\-\ ,A-z0-9]){2,}$"  class="form-control" type="text" name="newTagTitle"
+                        <input pattern="^([^\ #/\\]){2,}$   "  class="form-control" type="text" name="newTagTitle"
                                id="newTagTitle" data-i18n="[placeholder]ns.dialogs:addTagsToGroupTagsPlaceholder;[data-error]ns.dialogs:editTagNamesRestrictionsHelp" />
                         <p class="help-block with-errors"></p>
                     </div>
@@ -716,11 +727,13 @@ can be found in the LICENSE file.
         <li><a id="directoryMenuDeleteDirectory" data-i18n="[title]ns.common:deleteDirectoryTooltip">
             <i class="fa fa-trash-o fa-fw"></i>&nbsp;<span data-i18n="ns.common:deleteDirectory">Delete Directory</span></a></li>
 	    <li><a id="directoryMenuCreateDirectory" data-i18n="[title]ns.common:newSubdirectoryTooltip">
-            <i class="fa fa-folder fa-fw"></i>&nbsp;<span data-i18n="ns.common:newSubdirectory">New Subdirectory</span></a></li>
+            <i class="fa fa-folder-o fa-fw"></i>&nbsp;<span data-i18n="ns.common:newSubdirectory">New Subdirectory</span></a></li>
 	    <li><a id="directoryMenuOpenDirectory" data-i18n="[title]ns.common:openDirectoriyNativelyTooltip">
             <i class="fa fa-folder-open fa-fw"></i>&nbsp;<span data-i18n="ns.common:openDirectoriyNatively">Show in File Manager</span></a></li>
 	</ul>
 </div>
+
+<input type="file" id="addFileInput" style="visibility:hidden;position:absolute;top:-50;left:-50"/>
 
 </body>
 </html>
