@@ -70,7 +70,11 @@ define(function(require, exports, module) {
         TSCORE.FileOpener.updateEditorContent(content);
         TSCORE.hideLoadingAnimation();
     };
-    
+
+    exports.saveBinaryFile = function(filePath) {
+        TSCORE.PerspectiveManager.refreshFileListContainer();
+    };
+
     exports.saveTextFile = function(filePath, isNewFile) {
         TSCORE.PerspectiveManager.refreshFileListContainer();
 
