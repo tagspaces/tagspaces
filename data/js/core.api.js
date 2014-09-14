@@ -437,8 +437,8 @@ define(function(require, exports, module) {
                 }
             },
             name:                       'outerLayout', // for debugging & auto-adding buttons (see below)
-            fxName:                     "none", // none, slide
-        //,   fxSpeed:                  "normal",
+            //fxName:                     "slide", // none, slide
+            //fxSpeed:                    "normal",
             autoResize:                 true,	// try to maintain pane-percentages
             autoReopen:                 true,	// auto-open panes that were previously auto-closed due to 'no room'
             minSize:                    0,
@@ -476,6 +476,8 @@ define(function(require, exports, module) {
             south__spacing_open:        0,
             autoResize:                 false,	// try to maintain pane-percentages
             closable:                   false,
+            //fxName:                     "slide", // none, slide
+            //fxSpeed:                    "slow", // normal, fast
             togglerLength_open:         0,	// hide toggler-buttons
             spacing_closed:             0,	// hide resizer/slider bar when closed
         //	autoReopen:                 true,	// auto-open panes that were previously auto-closed due to 'no room'
