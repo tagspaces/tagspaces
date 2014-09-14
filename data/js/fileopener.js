@@ -190,29 +190,28 @@
         if(isFileChanged()) {
             if(forceClose) {
                 cleanViewer();
-                TSCORE.closeFileViewer();
             } else {
                 TSCORE.showConfirmDialog(
                     $.i18n.t("ns.dialogs:closingEditedFileTitleConfirm"),
                     $.i18n.t("ns.dialogs:closingEditedFileContentConfirm"),
                     function() {
                         cleanViewer();
-                        TSCORE.closeFileViewer();
                     }
                 );                             
             }
         } else {
             cleanViewer();
-            TSCORE.closeFileViewer();
         }
     }
 
     function cleanViewer() {
+        TSCORE.PerspectiveManager.clearSelectedFiles();
+        TSCORE.closeFileViewer();
+
         // Cleaning the viewer/editor
         //document.getElementById("viewer").innerHTML = "";
         $( "#viewer" ).find("*").off().unbind().children().remove();
         _isFileOpened = false;
-        TSCORE.closeFileViewer();
         _isEditMode = false;
         _isFileChanged = false;
         Mousetrap.unbind(TSCORE.Config.getEditDocumentKeyBinding());
