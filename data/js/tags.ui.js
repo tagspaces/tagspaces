@@ -456,6 +456,14 @@
     function showDialogEditTagGroup() {
         $( "#tagGroupName" ).val(TSCORE.selectedTagData.title);
 
+        $("#formTagGroupEdit").validator();
+        $('#formTagGroupEdit').on('invalid.bs.validator', function() {
+            $( "#editTagGroupButton").prop( "disabled", true );
+        });
+        $('#formTagGroupEdit').on('valid.bs.validator', function() {
+            $( "#editTagGroupButton").prop( "disabled", false );
+        });
+
         $('#dialogEditTagGroup').on('shown.bs.modal', function () {
           $('#tagGroupName').focus();
         });
@@ -465,6 +473,14 @@
     
     function showDialogTagGroupCreate() {
         $( "#newTagGroupName" ).val("");
+
+        $("#formTagGroupCreate").validator();
+        $('#formTagGroupCreate').on('invalid.bs.validator', function() {
+            $( "#createTagGroupButton").prop( "disabled", true );
+        });
+        $('#formTagGroupCreate').on('valid.bs.validator', function() {
+            $( "#createTagGroupButton").prop( "disabled", false );
+        });
 
         $('#dialogTagGroupCreate').on('shown.bs.modal', function () {
           $('#newTagGroupName').focus();
