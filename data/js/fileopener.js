@@ -215,6 +215,7 @@
         TSCORE.closeFileViewer();
         _isEditMode = false;
         _isFileChanged = false;
+        Mousetrap.unbind(TSCORE.Config.getEditDocumentKeyBinding());
         Mousetrap.unbind(TSCORE.Config.getSaveDocumentKeyBinding());
         Mousetrap.unbind(TSCORE.Config.getCloseViewerKeyBinding());
         Mousetrap.unbind(TSCORE.Config.getReloadDocumentKeyBinding());
@@ -222,7 +223,7 @@
         Mousetrap.unbind(TSCORE.Config.getPropertiesDocumentKeyBinding());
         Mousetrap.unbind(TSCORE.Config.getPrevDocumentKeyBinding());
         Mousetrap.unbind(TSCORE.Config.getNextDocumentKeyBinding());
-        Mousetrap.unbind(TSCORE.Config.getEditDocumentKeyBinding());
+
     }
 
     function openFileOnStartup(filePath) {
@@ -415,17 +416,8 @@
 
     function saveFile() {
         console.log("Save current file: "+_openedFilePath);
-        //TSCORE.showConfirmDialog(
-                //$.i18n.t("ns.dialogs:fileSaveTitleConfirm"),
-                //$.i18n.t("ns.dialogs:fileSaveContentConfirm"),
-                //function() {
-                    //$("#saveDocument").hide();
-                    //$("#editDocument").show();
-                    var content = _tsEditor.getContent();
-                    TSCORE.IO.saveTextFile(_openedFilePath, content);
-                    //_isEditMode = false;
-                //}
-            //);
+        var content = _tsEditor.getContent();
+        TSCORE.IO.saveTextFile(_openedFilePath, content);
     }
 
     function updateUI() {
