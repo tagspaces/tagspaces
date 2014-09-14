@@ -53,6 +53,7 @@ define(function(require, exports, module) {
     var clearSelectedFiles = function() {
     if(UI !== undefined) {
         UI.clearSelectedFiles();
+        UI.handleElementActivation();
     }
     };
     
