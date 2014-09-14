@@ -26,7 +26,7 @@ define(function(require, exports, module) {
         console.log("Initalization MD Viewer...");
         containerElID = containerElementID;
         currentFilePath = filePath;
-        require(['css!'+extensionDirectory+'/viewerMD.css']);
+        require(['css!'+extensionDirectory+'/extension.css']);
         require([extensionDirectory+'/marked/marked.js'], function(marked) {
             md2htmlConverter = marked;
             md2htmlConverter.setOptions({
