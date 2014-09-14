@@ -75,6 +75,9 @@ define(function(require, exports, module) {
         if(isCordova) {
             $('#'+extensionID+'Export2CSVButton').hide();
         }
+        if(isCordova || isFirefox || isChrome || isWeb) {
+            $('#'+extensionID+'AddFileButton').hide();
+        }
     };
 	
 	var load = function () {
@@ -89,6 +92,7 @@ define(function(require, exports, module) {
     var clearSelectedFiles = function() {
         if(UI !== undefined) {
             UI.clearSelectedFiles();
+            UI.handleElementActivation();
         }
     };
     
