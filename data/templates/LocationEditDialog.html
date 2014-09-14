@@ -6,24 +6,28 @@
                 <h4 data-i18n="ns.dialogs:editLocationTitle">Edit Location1</h4>
             </div>
             <div class="modal-body form">
-                <div class="form-group">
-                    <label class="control-label" for="folderLocation2" data-i18n="ns.dialogs:editLocationPath">Location Path</label>
-                    <div class="input-group">
-                        <input class="form-control" type="text" name="folderLocation2" id="folderLocation2" data-i18n="[placeholder]ns.dialogs:locationPathPlaceholder" />
-                        <span class="input-group-btn">
-                            <button class="btn btn-default" id="selectLocalDirectory2" data-i18n="[title]ns.dialogs:locationPathSelectFolder">
-                                &nbsp;&nbsp;<i class="fa fa-folder-open"></i>&nbsp;&nbsp;
-                            </button> </span>
-                    </div><!-- /input-group -->
-                </div>
-                <div class="form-group">
-                    <label class="control-label" for="connectionName2" data-i18n="ns.dialogs:editLocationName">Location Name</label>
-                    <input class="form-control" type="text" name="connectionName2" id="connectionName2" data-i18n="[placeholder]ns.dialogs:locationNamePlaceholder"/>
-                </div>
-                <div class="form-group">
-                    <label class="control-label" for="locationPerspective2" data-i18n="ns.dialogs:editLocationDefaultPerspective">Default Perspective</label>
-                    <select class="form-control" name="locationPerspective2" id="locationPerspective2" ></select>
-                </div>                
+                <!--form role="form" data-toggle="validator" id="formLocationEdit"-->
+                    <div class="form-group">
+                        <label class="control-label" for="folderLocation2" data-i18n="ns.dialogs:editLocationPath">Location Path</label>
+                        <div class="input-group">
+                            <input class="form-control" type="text" name="folderLocation2" id="folderLocation2" data-i18n="[placeholder]ns.dialogs:locationPathPlaceholder" required/>
+                            <span class="input-group-btn">
+                                <button class="btn btn-deafault" id="selectLocalDirectory2" data-i18n="[title]ns.dialogs:locationPathSelectFolder">
+                                    &nbsp;&nbsp;<i class="fa fa-folder-open"></i>&nbsp;&nbsp;
+                                </button> </span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label" for="connectionName2" data-i18n="ns.dialogs:editLocationName">Location Name</label>
+                        <input class="form-control" type="text" name="connectionName2" id="connectionName2"
+                               pattern='^([^"]){1,}$' data-i18n="[placeholder]ns.dialogs:locationNamePlaceholder;[data-error]ns.dialogs:locationNameHelp" required />
+                        <p class="help-block with-errors"></p>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label" for="locationPerspective2" data-i18n="ns.dialogs:editLocationDefaultPerspective">Default Perspective</label>
+                        <select class="form-control" name="locationPerspective2" id="locationPerspective2" ></select>
+                    </div>
+                <!--/form-->
             </div>
             <div class="modal-footer">
                 <button id="deleteLocationButton" class="btn btn-danger pull-left" aria-hidden="true" data-i18n="ns.dialogs:removeLocation">Remove Location</button>
