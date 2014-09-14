@@ -62,12 +62,7 @@ console.log("Loading UI for perspectiveList");
                 }            
             });
         
-        $("#"+this.extensionID+"CreateFileButton")
-            .click(function() {
-                TSCORE.showFileCreateDialog();
-            });        
-
-        $("#"+this.extensionID+"IncludeSubDirsButton")    
+        $("#"+this.extensionID+"IncludeSubDirsButton")
             .click(function() {
                 if(TSCORE.Config.getShowWarningRecursiveScan()) {
                     TSCORE.showConfirmDialog(
@@ -132,20 +127,29 @@ console.log("Loading UI for perspectiveList");
                 TSCORE.navigateToDirectory(TSCORE.currentPath);
             });
 
-        $("#"+this.extensionID+"CreateHTMLFileButton")
-            .click(function() {
-                TSCORE.createHTMLFile();
-            });
+        $("#"+this.extensionID+"CreateFileButton").on("click", function () {
+            TSCORE.showFileCreateDialog();
+        });
 
-        $("#"+this.extensionID+"CreateMDFileButton")
-            .click(function() {
-                TSCORE.createMDFile();
-            });
+        $("#"+this.extensionID+"CreateDirectoryButton").on("click", function () {
+            TSCORE.showCreateDirectoryDialog(TSCORE.currentPath)
+        });
 
-        $("#"+this.extensionID+"CreateTXTFileButton")
-            .click(function() {
-                TSCORE.createTXTFile();
-            });
+        $("#"+this.extensionID+"CreateHTMLFileButton").on("click", function () {
+            TSCORE.createHTMLFile();
+        });
+
+        $("#"+this.extensionID+"CreateMDFileButton").on("click", function () {
+            TSCORE.createMDFile();
+        });
+
+        $("#"+this.extensionID+"CreateTXTFileButton").on("click", function () {
+            TSCORE.createTXTFile();
+        });
+
+        $("#"+this.extensionID+"AddFileButton").on("click", function () {
+            $("#addFileInput").click();
+        });
 
         // Disabling all buttons by no data
         this.viewToolbar.find(".btn").prop('disabled', true);
