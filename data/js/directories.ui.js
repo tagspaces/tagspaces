@@ -136,8 +136,11 @@ define(function(require, exports, module) {
             //console.log("Location Metadata: "+JSON.stringify(metadata));
 
             if(metadata.tagGroups.length > 0) {
-                TSCORE.locationTags = metadata.tagGroups[0].children;
+                TSCORE.locationTags = metadata.tagGroups;
                 TSCORE.generateTagGroups();
+            }
+            else {
+                TSCORE.locationTags = null;
             }
 
             /*if(metadata.desktop !== undefined) {

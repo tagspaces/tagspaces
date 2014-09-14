@@ -232,14 +232,11 @@
             });
         }
 
-        // Adding the locataion tag group
+        // Adding the locataion tag groups
         if(TSCORE.Config.getLoadLocationMeta() && TSCORE.locationTags !== null) {
-            tagGroups.push({
-                "title": $.i18n.t("ns.common:tagsFromCurrentLocation"),
-                "key": locationTagGroupKey,
-                "expanded": true,
-                "children": TSCORE.locationTags
-            });
+            for (var i=0;i<TSCORE.locationTags.length;i++) {
+                tagGroups.push(TSCORE.locationTags[i]);
+            }
         }
 
         // ehnances the taggroups with addition styling information
