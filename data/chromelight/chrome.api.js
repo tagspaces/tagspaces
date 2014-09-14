@@ -235,9 +235,21 @@
 
         //TSPOSTIO.saveTextFile(filePath);
 
-    };   
+    };
 
-    var createDirectory = function(dirPath) {
+     var saveBinaryFile = function(filePath,content) {
+         TSCORE.showLoadingAnimation();
+         console.log("Saving binary file: "+filePath);
+
+         var blob = new Blob([content], {type: "text/plain;charset=utf-8"});
+         saveAs(blob, TSCORE.TagUtils.extractFileName(filePath));
+         // TODO close file after save
+
+         //TSPOSTIO.saveTextFile(filePath);
+
+     };
+
+     var createDirectory = function(dirPath) {
         TSCORE.showAlertDialog("Creating directory is not supported in TagSpaces Light, please use the desktop version.");
     };
 
@@ -314,6 +326,7 @@
     exports.renameDirectory             = renameDirectory;
     exports.loadTextFile                = loadTextFile;
     exports.saveTextFile                = saveTextFile;
+    exports.saveBinaryFile              = saveBinaryFile;
     exports.listDirectory               = listDirectory;
     exports.listSubDirectories          = listSubDirectories;
     exports.deleteElement               = deleteElement;
