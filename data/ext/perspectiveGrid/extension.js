@@ -29,7 +29,8 @@ define(function(require, exports, module) {
                 var toolbarTemplate = Handlebars.compile( toolbarTPL );                
                 UI = new extUI.ExtUI(extensionID);                          
                 UI.buildUI(toolbarTemplate);
-				platformTuning();                
+				platformTuning();
+                $('#'+extensionID+'Toolbar [data-i18n]').i18n();
             }
         );
 	};
