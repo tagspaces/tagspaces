@@ -419,7 +419,54 @@ define(function (require, exports, module) {
                 }
             );
         }
-    };   
+    };
+
+    var saveBinaryFile = function(filePath,content) {
+        console.log("Saving file: "+filePath);
+        TSCORE.showLoadingAnimation();
+
+        var isFileNew = true;
+
+        filePath = normalizePath(filePath);
+
+        // Checks if the file already exists
+        fsRoot.getFile(filePath, {create: false, exclusive: false},
+            function(entry) {
+                if(entry.isFile) {
+                    isFileNew = false;
+                }
+            },
+            function() {}
+        );
+
+        if(isFileNew) {
+            fsRoot.getFile(filePath, {create: true, exclusive: false},
+                function(entry) {
+                    entry.createWriter(
+                        function(writer) {
+                            writer.onwriteend = function(evt) {
+                                TSPOSTIO.saveBinaryFile(fsRoot.fullPath+"/"+filePath);
+                            };
+                            var data = content,
+                                dataView = new Int8Array(data);
+                            for (var i=0; i < data.length; i++) {
+                                dataView[i] = i;
+                            }
+                            writer.write(data);
+                        },
+                        function() {
+                            console.log("error creating writter file: "+filePath);
+                        }
+                    );
+                },
+                function() {
+                    console.log("Error getting file entry: "+filePath);
+                }
+            );
+        } else {
+            TSCORE.showAlertDialog("File Already Exists.");
+        }
+    };
 
     var createDirectory = function(dirPath) {
         console.log("Creating directory: "+dirPath);    
@@ -610,6 +657,7 @@ define(function (require, exports, module) {
     exports.renameDirectory             = renameDirectory;
     exports.loadTextFile                = loadTextFile;
     exports.saveTextFile                = saveTextFile;
+    exports.saveBinaryFile              = saveBinaryFile;
     exports.listDirectory               = listDirectory;
     exports.listSubDirectories          = listSubDirectories;
     exports.deleteElement               = deleteElement;
