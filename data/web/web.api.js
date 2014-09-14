@@ -7,29 +7,28 @@ define(function(require, exports, module) {
 	// Activating browser specific exports modul
 	console.log("Loading web.js..");
     
-    var TSCORE = require("tscore");	
-	var TSPOSTIO = require("tspostioapi");
-	
-    require("webdavlib");	
+    var TSCORE = require("tscore");
+    var TSPOSTIO = require("tspostioapi");
+
+    require("webdavlib");
 
     var davClient;
 
-	function connectDav() {
+    function connectDav() {
         console.log("Connecting webdav...");
         var useHTTPS = false;
         if(location.href.indexOf("https") === 0) {
             useHTTPS = true;
         }
         davClient = new nl.sara.webdav.Client(location.host, useHTTPS, location.port);
-	}
-	
-	window.setTimeout(connectDav(), 2000);
+    }
+
+    window.setTimeout(connectDav(), 2000);
 
     function listDirectory(dirPath) {
         console.log("Listing directory: "+dirPath);
 
         dirPath = encodeURI(dirPath + "/");
-
 
         davClient.propfind(
             dirPath,
@@ -101,8 +100,8 @@ define(function(require, exports, module) {
         TSPOSTIO.createDirectoryTree(directoyTree);
     };    
 	
-	var createDirectory = function(dirPath) {
-	    console.log("Creating directory: "+dirPath);
+    var createDirectory = function(dirPath) {
+        console.log("Creating directory: "+dirPath);
         davClient.mkcol(
             dirPath,
             function( status, data, headers ) {
@@ -110,7 +109,7 @@ define(function(require, exports, module) {
                 TSPOSTIO.createDirectory(dirPath);
             }
         );
-	};
+    };
 
     var copyFile = function(filePath, newFilePath) {
         console.log("Copying file: "+filePath+" to "+newFilePath);
@@ -152,8 +151,8 @@ define(function(require, exports, module) {
         );
     };
     	
-	var loadTextFile = function(filePath) {
-		console.log("Loading file: "+filePath);
+    var loadTextFile = function(filePath) {
+        console.log("Loading file: "+filePath);
         davClient.get(
             filePath,
             function( status, data, headers ) {
@@ -163,39 +162,63 @@ define(function(require, exports, module) {
             //,customHeaders
         );
         //TODO Perform file locking and unlocking
-	};
+    };
 	
-	var saveTextFile = function(filePath,content,overWrite) {
-		console.log("Saving file: "+filePath+" content: "+content);
+    var saveTextFile = function(filePath,content,overWrite) {
+      console.log("Saving file: "+filePath+" content: "+content);
 
-        var isNewFile = true; // = !pathUtils.existsSync(filePath);
+      var isNewFile = true; // = !pathUtils.existsSync(filePath);
+      davClient.propfind( filePath, function( status, data ) {
+            console.log("Check file exists: Status / Content: "+status+" / "+data);
+            if(status === "404") {
+                isNewFile = false;
+            }
+            davClient.put(
+                filePath,
+                function( status, data, headers ) {
+                    console.log("Creating File Status/Content/Headers:  "+status+" / "+data+" / "+headers);
+                    TSPOSTIO.saveTextFile(filePath, isNewFile);
+                },
+                content
+            );
+        },1
+      );
+    };
+
+    var saveBinaryFile = function(filePath,content) {
+        console.log("Saving binary file: "+filePath+" content: "+content);
+
+        var isNewFile = true;
         davClient.propfind( filePath, function( status, data ) {
-                console.log("Check file exists: Status / Content: "+status+" / "+data);
-                if(data !== undefined) {
-                    isNewFile = false;
-                }
+            console.log("Check file exists: Status / Content: "+status+" / "+data);
+            if(status === "404") {
+                isNewFile = false;
+            }
+            if(isNewFile) {
                 davClient.put(
                     filePath,
                     function( status, data, headers ) {
                         console.log("Creating File Status/Content/Headers:  "+status+" / "+data+" / "+headers);
-                        TSPOSTIO.saveTextFile(filePath, isNewFile);
+                        TSPOSTIO.saveBinaryFile(filePath, isNewFile);
                     },
                     content
                 );
-            },1
-        );
-	};
-	
-	var deleteElement = function(path) {
-		console.log("Deleting: "+path);
-        davClient.remove(
-            path,
-            function( status, data, headers ) {
-                console.log("Directory/File Deletion Status/Content/Headers:  "+status+" / "+data+" / "+headers);
-                TSPOSTIO.deleteElement(path);
+            } else {
+                TSCORE.showAlertDialog("File Already Exists.");
             }
-        );
-	};
+        },1);
+    };
+
+    var deleteElement = function(path) {
+      console.log("Deleting: "+path);
+          davClient.remove(
+              path,
+              function( status, data, headers ) {
+                  console.log("Directory/File Deletion Status/Content/Headers:  "+status+" / "+data+" / "+headers);
+                  TSPOSTIO.deleteElement(path);
+              }
+          );
+    };
 
     var deleteDirectory = function(path) {
         console.log("Deleting directory: "+path);
@@ -256,23 +279,24 @@ define(function(require, exports, module) {
     };
 
     exports.focusWindow                 = focusWindow;
-	exports.createDirectory 			= createDirectory;
+    exports.createDirectory             = createDirectory;
     exports.copyFile                    = copyFile;
-	exports.renameFile 					= renameFile;
+    exports.renameFile                  = renameFile;
     exports.renameDirectory             = renameDirectory;
-	exports.loadTextFile 				= loadTextFile;
-	exports.saveTextFile 				= saveTextFile;
-	exports.listDirectory 				= listDirectory;
-	exports.deleteElement 				= deleteElement;
+    exports.loadTextFile                = loadTextFile;
+    exports.saveTextFile                = saveTextFile;
+    exports.saveBinaryFile              = saveBinaryFile;
+    exports.listDirectory               = listDirectory;
+    exports.deleteElement               = deleteElement;
     exports.deleteDirectory             = deleteDirectory;
-    exports.createDirectoryIndex 		= createDirectoryIndex;
-    exports.createDirectoryTree 		= createDirectoryTree;
-	exports.selectDirectory 			= selectDirectory;
-	exports.openDirectory				= openDirectory;
+    exports.createDirectoryIndex        = createDirectoryIndex;
+    exports.createDirectoryTree         = createDirectoryTree;
+    exports.selectDirectory             = selectDirectory;
+    exports.openDirectory               = openDirectory;
     exports.openFile                    = openFile;
-	exports.selectFile 					= selectFile;
-	exports.openExtensionsDirectory 	= openExtensionsDirectory;
-	exports.checkAccessFileURLAllowed 	= checkAccessFileURLAllowed;
-	exports.checkNewVersion 			= checkNewVersion;
+    exports.selectFile                  = selectFile;
+    exports.openExtensionsDirectory     = openExtensionsDirectory;
+    exports.checkAccessFileURLAllowed   = checkAccessFileURLAllowed;
+    exports.checkNewVersion             = checkNewVersion;
     exports.getFileProperties           = getFileProperties;
 });
