@@ -480,7 +480,7 @@
 
         var $tagColorChooser = $( "#tagColorChooser" );
         var  $tagColor =  $('#tagColor');
-        $tagColorChooser.simplecolorpicker({picker: false, theme: 'fontawesome'});
+        $tagColorChooser.simplecolorpicker({picker: false});
         $tagColorChooser.on("change", function() {
             $tagColor.val($tagColorChooser.val());
         });
@@ -493,7 +493,7 @@
 
         var $tagTextColorChooser = $( "#tagTextColorChooser" );
         var  $tagTextColor =  $('#tagTextColor');
-        $tagTextColorChooser.simplecolorpicker({picker: false, theme: 'fontawesome'});
+        $tagTextColorChooser.simplecolorpicker({picker: false});
         $tagTextColorChooser.on("change", function() {
             $tagTextColor.val($tagTextColorChooser.val());
         });
@@ -521,18 +521,18 @@
 
     function showAddTagsDialog() {
         console.log("Adding tags...");
-        function split( val ) {
-            return val.split( /,\s*/ );
-        }
-        function extractLast( term ) {
-            return split( term ).pop();
-        }
+        //function split( val ) {
+        //    return val.split( /,\s*/ );
+        //}
+        //function extractLast( term ) {
+        //    return split( term ).pop();
+        //}*/
         
         $('#tags').select2('data', null);
         $("#tags").select2({
             multiple: true,
             tags: TSCORE.Config.getAllTags(),
-            tokenSeparators: [","],
+            tokenSeparators: [","," "],
             minimumInputLength: 2,
             selectOnBlur: true
         });
