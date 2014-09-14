@@ -4,9 +4,33 @@
     </button>
 </div>
 <div class="btn-group">
-    <button class="btn btn-link" title="Create new file" id="{{id}}CreateFileButton">
+    <button type="button" class="btn btn-link dropdown-toggle" data-toggle="dropdown" data-i18n="[title]ns.perspectiveList:createNewFileTooltip">
         <i class="glyphicon glyphicon-plus fa-lg"></i>
+        <span class="caret"></span>
     </button>
+    <ul class="dropdown-menu">
+        <li class="dropdown-header"><span data-i18n="">&nbsp;</span><button type="button" class="close">×</button></li>
+        <li><a id="{{id}}CreateHTMLFileButton">
+            <i class="fa fa-file-image-o fa-lg fa-fw"></i>&nbsp;<span data-i18n="ns.perspectiveList:createHTMLFile"></span>
+        </a></li>
+        <li><a id="{{id}}CreateMDFileButton">
+            <i class="fa fa-file-code-o fa-lg fa-fw"></i>&nbsp;<span data-i18n="ns.perspectiveList:createMDFile"></span>
+        </a></li>
+        <li><a id="{{id}}CreateTXTFileButton">
+            <i class="fa fa-file-text-o fa-lg fa-fw"></i>&nbsp;<span data-i18n="ns.perspectiveList:createTXTFile"></span>
+        </a></li>
+        <li class="divider"></li>
+        <li><a id="{{id}}CreateFileButton">
+            <i class="fa fa-file-o fa-lg fa-fw"></i>&nbsp;<span data-i18n="ns.perspectiveList:showNewFileDialog"></span>
+        </a></li>
+        <!--li><a id="{{id}}AddFileButton">
+            <i class="fa fa-plus-circle fa-lg fa-fw"></i>&nbsp;<span data-i18n="ns.perspectiveList:showAddFileDialog">Add Existing File</span>
+        </a></li-->
+        <li class="divider"></li>
+        <li><a id="{{id}}CreateDirectoryButton">
+            <i class="fa fa-folder-o fa-lg fa-fw"></i>&nbsp;<span data-i18n="ns.common:newSubdirectory"></span>
+        </a></li>
+    </ul>
     <!--button class="btn btn-link" title="Show subfolders content. On subfolder with many files, this step can take some time!" id="{{id}}IncludeSubDirsButton">
         <i class="glyphicon glyphicon-retweet"></i>
     </button-->

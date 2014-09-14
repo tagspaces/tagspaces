@@ -169,11 +169,26 @@ console.log("Loading UI for perspectiveDefault");
                 checkIcon.toggleClass("fa-check-square");                                     
                 checkIcon.toggleClass("fa-square-o");                        
             });
-            
-        $("#"+this.extensionID+"CreateFileButton")
-            .click(function() {
-                TSCORE.showFileCreateDialog();
-            });
+
+        $("#"+this.extensionID+"CreateFileButton").on("click", function () {
+            TSCORE.showFileCreateDialog();
+        });
+
+        $("#"+this.extensionID+"CreateDirectoryButton").on("click", function () {
+            TSCORE.showCreateDirectoryDialog(TSCORE.currentPath)
+        });
+
+        $("#"+this.extensionID+"CreateHTMLFileButton").on("click", function () {
+            TSCORE.createHTMLFile();
+        });
+
+        $("#"+this.extensionID+"CreateMDFileButton").on("click", function () {
+            TSCORE.createMDFile();
+        });
+
+        $("#"+this.extensionID+"CreateTXTFileButton").on("click", function () {
+            TSCORE.createTXTFile();
+        });
                     
         $("#"+this.extensionID+"IncludeSubDirsButton")         
             .click(function() {
