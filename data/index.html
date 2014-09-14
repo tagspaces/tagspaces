@@ -527,7 +527,7 @@ can be found in the LICENSE file.
                 <form role="form" data-toggle="validator" id="formAddTags">
                     <div class="form-group">
                         <label class="control-label" for="newTagTitle" data-i18n="ns.dialogs:addTagsToGroupTags">Tags</label>
-                        <input pattern="^([^\ #/\\]){2,}$   "  class="form-control" type="text" name="newTagTitle"
+                        <input pattern="^([^#/\\]){2,}$"  class="form-control" type="text" name="newTagTitle"
                                id="newTagTitle" data-i18n="[placeholder]ns.dialogs:addTagsToGroupTagsPlaceholder;[data-error]ns.dialogs:editTagNamesRestrictionsHelp" />
                         <p class="help-block with-errors"></p>
                     </div>
@@ -549,10 +549,14 @@ can be found in the LICENSE file.
                 <h4 data-i18n="ns.dialogs:editTagGroupTitle">Edit Tag Group</h4>
             </div>
             <div class="modal-body form">
-                <div class="form-group">
-                    <label class="control-label" for="tagGroupName" data-i18n="ns.dialogs:editTagGroupNewName">Tag Group Name</label>
-                    <input class="form-control" type="text" name="tagGroupName" id="tagGroupName" />
-                </div>
+                <form role="form" data-toggle="validator" id="formTagGroupEdit">
+                    <div class="form-group">
+                        <label class="control-label" for="tagGroupName" data-i18n="ns.dialogs:editTagGroupNewName">Tag Group Name</label>
+                        <input class="form-control" type="text" name="tagGroupName" id="tagGroupName"
+                               pattern='^([^"]){1,}$' data-i18n="[data-error]ns.dialogs:tagGroupNameHelp" required />
+                        <p class="help-block with-errors"></p>
+                    </div>
+                </form>
             </div>
             <div class="modal-footer">
                 <button class="btn cancelButton" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times fa-lg"></i></button>
@@ -570,10 +574,14 @@ can be found in the LICENSE file.
                 <h4 data-i18n="ns.dialogs:createTagGroupTitle">Create Tag Group</h4>
             </div>
             <div class="modal-body form">
-                <div class="form-group">
-                    <label class="control-label" for="newTagGroupName" data-i18n="ns.dialogs:createTagGroupName">Tag Group Name</label>
-                    <input class="form-control" type="text" name="newTagGroupName" id="newTagGroupName" />
-                </div>
+                <form role="form" data-toggle="validator" id="formTagGroupCreate">
+                    <div class="form-group">
+                        <label class="control-label" for="newTagGroupName" data-i18n="ns.dialogs:createTagGroupName">Tag Group Name</label>
+                        <input class="form-control" type="text" name="newTagGroupName" id="newTagGroupName"
+                               pattern='^([^"]){1,}$' data-i18n="[data-error]ns.dialogs:tagGroupNameHelp" required />
+                        <p class="help-block with-errors"></p>
+                    </div>
+                </form>
             </div>
             <div class="modal-footer">
                 <button class="btn cancelButton" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times fa-lg"></i></button>
