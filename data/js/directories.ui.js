@@ -526,9 +526,17 @@ define(function(require, exports, module) {
                     $("#folderLocation2").attr("placeholder","e.g.: /owncloud/remote.php/webdav/");
                 }
 
+                $("#formLocationEdit").validator();
+                $('#formLocationEdit').on('invalid.bs.validator', function() {
+                    $( "#saveLocationButton").prop( "disabled", true );
+                });
+                $('#formLocationEdit').on('valid.bs.validator', function() {
+                    $( "#saveLocationButton").prop( "disabled", false );
+                });
+
                 $('#dialogLocationEdit').on('shown.bs.modal', function () {
                   $('#folderLocation2').focus();
-                })
+                });
 
                 $("#dialogLocationEdit").modal({backdrop: 'static',show: true});
         });     
@@ -572,9 +580,17 @@ define(function(require, exports, module) {
                     $("#folderLocation").attr("placeholder","e.g.: /owncloud/remote.php/webdav/");
                 }
 
+                $("#formLocationCreate").validator();
+                $('#formLocationCreate').on('invalid.bs.validator', function() {
+                    $( "#createFolderConnectionButton").prop( "disabled", true );
+                });
+                $('#formLocationCreate').on('valid.bs.validator', function() {
+                    $( "#createFolderConnectionButton").prop( "disabled", false );
+                });
+
                 $('#dialogCreateFolderConnection').on('shown.bs.modal', function () {
                   $('#folderLocation').focus();
-                })
+                });
 
                 $("#dialogCreateFolderConnection").modal({backdrop: 'static',show: true});
         });
@@ -625,10 +641,15 @@ define(function(require, exports, module) {
                     TSCORE.IO.renameDirectory($( "#renameDirectoryButton" ).attr("path"), $( "#directoryNewName" ).val());
                 });
             }
-            // TODO remove use dir4ContextMenu
-            //if(dirPath === undefined) {
-            //    dirPath = dir4ContextMenu;
-            //}
+
+            $("#formDirectoryRename").validator();
+            $('#formDirectoryRename').on('invalid.bs.validator', function() {
+                $( "#renameDirectoryButton").prop( "disabled", true );
+            });
+            $('#formDirectoryRename').on('valid.bs.validator', function() {
+                $( "#renameDirectoryButton").prop( "disabled", false );
+            });
+
             $( "#renameDirectoryButton" ).attr("path", dirPath);
             var dirName = TSCORE.TagUtils.extractDirectoryName(dirPath);
             $("#directoryNewName").val(dirName);
@@ -636,7 +657,7 @@ define(function(require, exports, module) {
 
             $('#dialogDirectoryRename').on('shown.bs.modal', function () {
               $('#directoryNewName').focus();
-            })
+            });
 
             $('#dialogDirectoryRename').modal({backdrop: 'static',show: true});
         });
