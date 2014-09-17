@@ -51,7 +51,7 @@ console.log("Loading UI for perspectiveDefault");
                <button class="btn btn-sm tagButton fileTagsTile" tag="{{tag}}" filepath="{{filepath}}" style="{{style}}">{{tag}} <span class="caret"></span></button>\
                {{/each}}\
                </span><span class="fileExtTile">{{fileext}}</span>\
-               <button class="btn btn-link fileTileSelector" filepath="{{filepath}}"><i class="fa fa-square-o"></i></button></p></li>');
+               <button class="btn btn-link fileTileSelector" filepath="{{filepath}}"><i class="fa fa-square-o fa-lg"></i></button></p></li>');
     
     var fileTileTmbTmpl = Handlebars.compile('<li title="{{filepath}}" filepath="{{filepath}}" class="fileTile">\
                <span><img class="thumbImgTile" filepath="{{tmbpath}}" style="max-width: 200px; max-height: 200px;" src=""></span>\
@@ -60,7 +60,7 @@ console.log("Loading UI for perspectiveDefault");
                <button class="btn btn-sm tagButton fileTagsTile" tag="{{tag}}" filepath="{{filepath}}" style="{{style}}">{{tag}} <span class="caret"></span></button>\
                {{/each}}\
                </span><span class="fileExtTile">{{fileext}}</span>\
-               <button class="btn btn-link fileTileSelector" filepath="{{filepath}}"><i class="fa fa-square-o"></i></button></p></li>');
+               <button class="btn btn-link fileTileSelector" filepath="{{filepath}}"><i class="fa fa-square-o fa-lg"></i></button></p></li>');
     
     ExtUI.prototype.createFileTile = function(title, filePath, fileExt, fileTags) {
         //TODO minimize platform specific calls     
