@@ -40,14 +40,14 @@ exports.main = function(options, callbacks) {
       include: data.url("index.html"), 
       contentScript: ''+
         'self.on("message", function(message) {'+
-            'console.log("Message received in content script from addon: "+JSON.stringify(message));'+
+//            'console.log("Message received in content script from addon: "+JSON.stringify(message));'+
             'var event = document.createEvent("CustomEvent");'+
             'var cloned = cloneInto(message, document.defaultView);'+
             'event.initCustomEvent("tsMessage", true, true, cloned);'+
             'document.documentElement.dispatchEvent(event);'+
         '}); '+
         'document.documentElement.addEventListener("addon-message", function(event) {'+
-            'console.log("Message received from page script in content script "+JSON.stringify(event.detail));'+
+//            'console.log("Message received from page script in content script "+JSON.stringify(event.detail));'+
             'self.postMessage(event.detail);'+ 
         '}, false);'+
       '',        
@@ -184,7 +184,7 @@ function checkNewVersion(worker) {
 }
 
 function handleMessage(msg, worker) {
-    console.log("Message in main.js: " + JSON.stringify(msg) + " from tab " + worker.tab.title);
+    //console.log("Message in main.js: " + JSON.stringify(msg) + " from tab " + worker.tab.title);
     //console.log("Thumbnail: "+worker.tab.getThumbnail());
     switch (msg.detail.command) {
         case "loadSettings":
@@ -204,6 +204,9 @@ function handleMessage(msg, worker) {
             break;
         case "saveTextFile":
             ioutils.saveTextFile(msg.detail.path, msg.detail.content, worker);
+            break;
+        case "saveBinaryFile":
+            ioutils.saveBinaryFile(msg.detail.path, msg.detail.content, worker);
             break;
         case "createDirectory":
             ioutils.createDirectory(msg.detail.path, worker);

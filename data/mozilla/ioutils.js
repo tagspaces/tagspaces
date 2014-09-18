@@ -412,6 +412,34 @@ exports.saveTextFile = function saveTextFile(filePath, content, worker) {
     }   
 };
 
+exports.saveBinaryFile = function saveBinaryFile(filePath, content, worker) {
+    console.log("Saving binary file: "+filePath);
+    try {
+        var file = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsIFile);
+        file.initWithPath(filePath);
+        if(!file.exists())
+            file.create(0,0664);
+        var out = Cc["@mozilla.org/network/file-output-stream;1"].createInstance(Ci.nsIFileOutputStream);
+        out.init(file,0x20|0x02,00004,null);
+        out.write(content,content.length);
+        out.flush();
+        out.close();
+        worker.postMessage({
+            "command": "saveTextFile",
+            "content": filePath,
+            "success": true
+        });
+        console.log("Save successed!");
+    } catch(ex) {
+        worker.postMessage({
+            "command": "saveTextFile",
+            "content": filePath,
+            "success": false
+        });
+        console.error("Save failed "+ex);
+    }
+};
+
 /**
  * Returning a path to a file selected from the user
  * documentation is https://developer.mozilla.org/en/NsIFilePicker

@@ -13,7 +13,7 @@ define(function(require, exports, module) {
     var TSPOSTIO = require("tspostioapi");
     
     document.documentElement.addEventListener("tsMessage", function(event) {
-        console.log("Message received in page script from content script: "+JSON.stringify(event.detail));
+        console.log("Message received in page script from content script"); //+JSON.stringify(event.detail));
         var message = event.detail;
         switch (message.command) {
         case "loadSettings":
@@ -59,6 +59,13 @@ define(function(require, exports, module) {
                 TSPOSTIO.saveTextFile(message.content);
             } else {
                 console.error("Save failed");
+            }
+            break;
+        case "saveBinaryFile":
+            if(message.success){
+                TSPOSTIO.saveBinaryFile(message.content);
+            } else {
+                console.error("Save binary failed");
             }
             break;
         case "createDirectory":
@@ -205,7 +212,18 @@ define(function(require, exports, module) {
         }});
         document.documentElement.dispatchEvent(event);	
     };
-    
+
+    var saveBinaryFile = function(filePath,content) {
+        console.log("Saving binary file: "+filePath);
+        var event = document.createEvent('CustomEvent');
+        event.initCustomEvent("addon-message", true, true, {"detail":{
+            "command": "saveBinaryFile",
+            "path": filePath,
+            "content": content
+        }});
+        document.documentElement.dispatchEvent(event);
+    };
+
     var listDirectory = function(dirPath) {
         console.log("Listing directory: "+dirPath);
         var event = document.createEvent('CustomEvent');
@@ -328,6 +346,7 @@ define(function(require, exports, module) {
     exports.renameDirectory             = renameDirectory;
     exports.loadTextFile                = loadTextFile;
     exports.saveTextFile                = saveTextFile;
+    exports.saveBinaryFile              = saveBinaryFile;
     exports.listDirectory               = listDirectory;
     exports.deleteElement               = deleteElement;
     exports.deleteDirectory             = deleteDirectory;
