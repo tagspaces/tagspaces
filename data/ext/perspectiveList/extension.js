@@ -75,7 +75,7 @@ define(function(require, exports, module) {
         if(isCordova) {
             $('#'+extensionID+'Export2CSVButton').hide();
         }
-        if(isCordova || isFirefox || isChrome || isWeb) {
+        if(isCordova  || isChrome || isWeb) {
             $('#'+extensionID+'AddFileButton').hide();
         }
     };
