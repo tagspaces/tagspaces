@@ -299,19 +299,11 @@
     };
 
     var getFileProperties = function(filePath) {
-/*        var fileSize = nativeIO.getFileSize(filePath);
         var fileProperties = {};
-        if(!nativeIO.isDirectory(filePath)) {
-            fileProperties.path = filePath;
-            fileProperties.size = fileSize;
-            fileProperties.lmdt = 0;
-            if(isWin) {
-                fileProperties.lmdt = new Date(nativeIO.getFileLastDateModified(filePath)*1000);                       
-            }                        
-            TSPOSTIO.getFileProperties(fileProperties);
-        } else {
-            console.log("Error getting file properties. "+filePath+" is directory");
-        }*/
+        fileProperties.path = filePath;
+        fileProperties.size = 0; // TODO use listDirectory to get size and lmdt
+        fileProperties.lmdt = 0;
+        TSPOSTIO.getFileProperties(fileProperties);
     };
 
     // Bring the TagSpaces window on top of the windows
