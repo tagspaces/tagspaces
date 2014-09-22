@@ -204,6 +204,10 @@ console.log("Loading UI for perspectiveList");
             ],
             "aaSorting": [[ 1, "asc" ]],    // softing by filename
             "aoColumnDefs": [
+                { // File title
+                    sType: 'natural',
+                    aTargets: [ TSCORE.fileListTITLE ]
+                },
                 { // File extension column
                     "mRender": function ( data, type, row ) { 
                         return self.buttonizeTitle(row[TSCORE.fileListTITLE],row[TSCORE.fileListFILEPATH],row[TSCORE.fileListFILEEXT]);

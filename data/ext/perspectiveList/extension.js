@@ -24,49 +24,55 @@ define(function(require, exports, module) {
 	function init() {
 		console.log("Initializing perspective "+extensionID);
         require([
-            extensionDirectory+'/perspectiveUI.js',
-            "text!"+extensionDirectory+'/toolbar.html',
             "css!"+extensionDirectory+'/extension.css',
             extensionDirectory+'/datatables/jquery.dataTables.min.js',
             'libs/filesaver.js/FileSaver.js'
-            ], function(extUI, toolbarTPL) {
-                var toolbarTemplate = Handlebars.compile( toolbarTPL );                
-                UI = new extUI.ExtUI(extensionID);                          
-                UI.buildUI(toolbarTemplate);
+            ], function() {
+            require([
+                    extensionDirectory+'/perspectiveUI.js',
+                    "text!"+extensionDirectory+'/toolbar.html',
+                    extensionDirectory+'/datatables/natural.js',
+                ], function(extUI, toolbarTPL) {
 
-                // TODO refactor translations
-                var translation = $.i18n.t("ns.perspectiveList:fileExtension");
-                if(translation.length > 0) {
-                    $('#'+extensionID+'Container').find("th:contains('File Ext.')").text(translation);
-                }
-                translation = $.i18n.t("ns.perspectiveList:fileTitle");
-                if(translation.length > 0) {
-                    $('#'+extensionID+'Container').find("th:contains('Title')").text(translation);
-                }
-                translation = $.i18n.t("ns.perspectiveList:fileTags");
-                if(translation.length > 0) {
-                    $('#'+extensionID+'Container').find("th:contains('Tags')").text(translation);
-                }
-                translation = $.i18n.t("ns.perspectiveList:fileSize");
-                if(translation.length > 0) {
-                    $('#'+extensionID+'Container').find("th:contains('Size')").text(translation);
-                }
-                translation = $.i18n.t("ns.perspectiveList:fileLDTM");
-                if(translation.length > 0) {
-                    $('#'+extensionID+'Container').find("th:contains('Last Modified')").text(translation);
-                }
-                translation = $.i18n.t("ns.perspectiveList:filePath");
-                if(translation.length > 0) {
-                    $('#'+extensionID+'Container').find("th:contains('File Path')").text(translation);
-                }
-                translation = $.i18n.t("ns.perspectiveList:fileName");
-                if(translation.length > 0) {
-                    $('#' + extensionID + 'Container').find("th:contains('File Name')").text();
-                }
+                    var toolbarTemplate = Handlebars.compile( toolbarTPL );
+                    UI = new extUI.ExtUI(extensionID);
+                    UI.buildUI(toolbarTemplate);
 
-                $('#'+extensionID+'Toolbar [data-i18n]').i18n();
+                    // TODO refactor translations
+                    var translation = $.i18n.t("ns.perspectiveList:fileExtension");
+                    if(translation.length > 0) {
+                        $('#'+extensionID+'Container').find("th:contains('File Ext.')").text(translation);
+                    }
+                    translation = $.i18n.t("ns.perspectiveList:fileTitle");
+                    if(translation.length > 0) {
+                        $('#'+extensionID+'Container').find("th:contains('Title')").text(translation);
+                    }
+                    translation = $.i18n.t("ns.perspectiveList:fileTags");
+                    if(translation.length > 0) {
+                        $('#'+extensionID+'Container').find("th:contains('Tags')").text(translation);
+                    }
+                    translation = $.i18n.t("ns.perspectiveList:fileSize");
+                    if(translation.length > 0) {
+                        $('#'+extensionID+'Container').find("th:contains('Size')").text(translation);
+                    }
+                    translation = $.i18n.t("ns.perspectiveList:fileLDTM");
+                    if(translation.length > 0) {
+                        $('#'+extensionID+'Container').find("th:contains('Last Modified')").text(translation);
+                    }
+                    translation = $.i18n.t("ns.perspectiveList:filePath");
+                    if(translation.length > 0) {
+                        $('#'+extensionID+'Container').find("th:contains('File Path')").text(translation);
+                    }
+                    translation = $.i18n.t("ns.perspectiveList:fileName");
+                    if(translation.length > 0) {
+                        $('#' + extensionID + 'Container').find("th:contains('File Name')").text(translation);
+                    }
 
-                platformTuning();
+                    $('#'+extensionID+'Toolbar [data-i18n]').i18n();
+
+                    platformTuning();
+                }
+            );
             }
         );
 	}
@@ -75,7 +81,7 @@ define(function(require, exports, module) {
         if(isCordova) {
             $('#'+extensionID+'Export2CSVButton').hide();
         }
-        if(isCordova  || isChrome || isWeb) {
+        if(isCordova || isChrome || isWeb) {
             $('#'+extensionID+'AddFileButton').hide();
         }
     };
