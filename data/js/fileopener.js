@@ -91,10 +91,14 @@
 
         $( "#tagFile" )
             .click( function() {
-                TSCORE.PerspectiveManager.clearSelectedFiles();
-                TSCORE.selectedFiles.push(_openedFilePath);                     
-                TSCORE.showAddTagsDialog();
-            });  
+                if(_isFileChanged) {
+                    TSCORE.showAlertDialog($.i18n.t("ns.dialogs:operationNotPermittedInEditModeAlert"));
+                } else {
+                    TSCORE.PerspectiveManager.clearSelectedFiles();
+                    TSCORE.selectedFiles.push(_openedFilePath);
+                    TSCORE.showAddTagsDialog();
+                }
+            });
 
         $( "#suggestTagsFile" )
             .click( function() {
@@ -103,7 +107,11 @@
         
         $( "#renameFile" )
             .click( function() {
-                TSCORE.showFileRenameDialog(_openedFilePath);
+                if(_isFileChanged) {
+                    TSCORE.showAlertDialog($.i18n.t("ns.dialogs:operationNotPermittedInEditModeAlert"));
+                } else {
+                    TSCORE.showFileRenameDialog(_openedFilePath);
+                }
             });
 
         $( "#duplicateFile" )
@@ -166,10 +174,12 @@
          if(value && !_isFileChanged) {
              $fileExt.text($fileExt.text() + "*");
              $fileTitle.editable("disable");
+             $( "#tagsContainer").find("button").prop("disabled",true);
          }
          if(!value) {
              $fileExt.text(TSCORE.TagUtils.extractFileExtension(_openedFilePath));
              $fileTitle.editable("enable");
+             $( "#tagsContainer").find("button").prop("disabled",false);
          }
          _isFileChanged = value;
      }
@@ -205,7 +215,7 @@
     }
 
     function cleanViewer() {
-        TSCORE.PerspectiveManager.clearSelectedFiles();
+        //TSCORE.PerspectiveManager.clearSelectedFiles();
         TSCORE.closeFileViewer();
 
         // Cleaning the viewer/editor
@@ -463,9 +473,13 @@
             accept: ".tagButton",
             hoverClass: "activeRow",
             drop: function( event, ui ) {
-                console.log("Tagging file: "+TSCORE.selectedTag+" to "+_openedFilePath);
-                TSCORE.TagUtils.addTag([_openedFilePath], [TSCORE.selectedTag]);
-                //$(ui.helper).remove();
+                if(_isFileChanged) {
+                    TSCORE.showAlertDialog($.i18n.t("ns.dialogs:operationNotPermittedInEditModeAlert"));
+                } else {
+                    console.log("Tagging file: " + TSCORE.selectedTag + " to " + _openedFilePath);
+                    TSCORE.TagUtils.addTag([_openedFilePath], [TSCORE.selectedTag]);
+                    //$(ui.helper).remove();
+                }
             }
         });
 
