@@ -167,6 +167,7 @@ user-select: none;
     background-color: transparent;
     color: #333333;
     max-width: 150px;
+    z-index: 2;
 }
 
 #fileTitle:hover {
@@ -667,12 +668,12 @@ input a.resetFilter {
 }
 
 .col3 .ts-container {
-	overflow: hidden !important;
+	overflow: inherit;
 }
 
 .col3 .navbar {
 	padding-left: 5px;
-	border-bottom: 1px #ddd solid;	
+	border-bottom: 1px #ddd solid;
 }
 
 .ui-layout-resizer	{ 
