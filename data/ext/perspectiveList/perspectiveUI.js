@@ -321,17 +321,29 @@ console.log("Loading UI for perspectiveList");
                     //$(ui.helper).remove();
                 }
             })
-            .hammer().on("doubletap", function() {
-                console.log("Doubletap & Opening file...");
-                var titleBut = $(this).find(".fileTitleButton");                
-                TSCORE.FileOpener.openFile($(titleBut).attr("filepath"));
-                self.selectFile(titleBut, $(titleBut).attr("filepath"));
-             })
             .click( function() {
                 console.log("Selecting file...");
                 var titleBut = $(this).find(".fileTitleButton");
                 self.selectFile(titleBut, $(titleBut).attr("filepath"));
             } );
+
+        if(isCordova) {
+            this.fileTable.$('tr')
+                .hammer().on("doubletap", function () {
+                    console.log("Doubletap & Opening file...");
+                    var titleBut = $(this).find(".fileTitleButton");
+                    TSCORE.FileOpener.openFile($(titleBut).attr("filepath"));
+                    self.selectFile(titleBut, $(titleBut).attr("filepath"));
+                })
+        } else {
+            this.fileTable.$('tr')
+                .on("dblclick", function () {
+                    console.log("Doubletap & Opening file...");
+                    var titleBut = $(this).find(".fileTitleButton");
+                    TSCORE.FileOpener.openFile($(titleBut).attr("filepath"));
+                    self.selectFile(titleBut, $(titleBut).attr("filepath"));
+                })
+        }
 
         this.fileTable.$('.fileTitleButton')
             .draggable({
