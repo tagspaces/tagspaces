@@ -132,19 +132,15 @@ define(function(require, exports, module) {
         }
 
         require(["text!"+metadataPath], function(jsonFile) {
-            if(jsonFile !== null)
-            var metadata = JSON.parse(jsonFile);
-            //console.log("Location Metadata: "+JSON.stringify(metadata));
+            if(jsonFile !== null && jsonFile !== undefined && jsonFile !== "" ) {
+                var metadata = JSON.parse(jsonFile);
+                //console.log("Location Metadata: "+JSON.stringify(metadata));
 
-            if(metadata.tagGroups.length > 0) {
-                TSCORE.locationTags = metadata.tagGroups[0].children;
-                TSCORE.generateTagGroups();
+                if(metadata.tagGroups.length > 0) {
+                    TSCORE.locationTags = metadata.tagGroups;
+                    TSCORE.generateTagGroups();
+                }
             }
-
-            /*if(metadata.desktop !== undefined) {
-                TSCORE.locationDesktop = metadata.desktop;
-                TSCORE.PerspectiveManager.generateDesktop();
-            }*/
         });
     }
     

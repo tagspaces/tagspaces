@@ -215,7 +215,7 @@
 
         // Cleaning Special TagGroups
         for(var k=0; k < tagGroups.length; k++) {
-            if(tagGroups[k].key === locationTagGroupKey || tagGroups[k].key === calculatedTagGroupKey) {
+            if(tagGroups[k].key.indexOf(locationTagGroupKey) === 0 || tagGroups[k].key === calculatedTagGroupKey) {
                 console.log("Deleting:"+tagGroups[k].key+" "+k);
                 tagGroups.splice(k, 1);
                 k--;
@@ -232,14 +232,17 @@
             });
         }
 
-        // Adding the locataion tag group
+        // Adding tag groups from the current location
         if(TSCORE.Config.getLoadLocationMeta() && TSCORE.locationTags !== null) {
-            tagGroups.push({
-                "title": $.i18n.t("ns.common:tagsFromCurrentLocation"),
-                "key": locationTagGroupKey,
-                "expanded": true,
-                "children": TSCORE.locationTags
+            TSCORE.locationTags.forEach(function(data) {
+                tagGroups.push({
+                    "title": data.title+" (imported)",
+                    "key": locationTagGroupKey+TSCORE.TagUtils.formatDateTime4Tag(new Date(),true, true),
+                    "expanded": true,
+                    "children": data.children
+                });
             });
+
         }
 
         // ehnances the taggroups with addition styling information
