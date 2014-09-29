@@ -21,6 +21,7 @@
 * jQuery Mousewheel - https://github.com/brandonaaron/jquery-mousewheel - https://github.com/brandonaaron/jquery-mousewheel/archive/3.1.6.zip
 * filesaver.js - https://github.com/eligrey/FileSaver.js/ - https://raw.githubusercontent.com/eligrey/FileSaver.js/master/FileSaver.js
 * bootstrap-validator - https://github.com/1000hz/bootstrap-validator - https://github.com/1000hz/bootstrap-validator/blob/v0.5.0/dist/validator.min.js
+* jsoneditor - https://github.com/josdejong/jsoneditor - https://raw.githubusercontent.com/josdejong/jsoneditor/v3.1.2/jsoneditor.js
 
 * Voldsoftware Libs - https://github.com/voldsoftware/
 
