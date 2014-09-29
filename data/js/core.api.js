@@ -121,7 +121,7 @@ define(function(require, exports, module) {
             ns: { namespaces: ['ns.common','ns.dialogs','ns.perspectiveList']},
             lng: language,
             debug: true,
-            fallbackLng: "en"
+            fallbackLng: "en_US"
         }, function() {
             $('[data-i18n]').i18n();
             if(isNode) {
