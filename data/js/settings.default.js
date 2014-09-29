@@ -8,7 +8,7 @@ define(function (require, exports, module) {
         "appName":                  "TagSpaces",
         "appVersion":               "1.8",
         "appBuild":                 "6",
-        "appBuildID":               "201409291752",
+        "appBuildID":               "201409291854",
         "settingsVersion":           2,
         "newTextFileContent":       "",
         "newHTMLFileContent":       "<html><head><title>Created with TagSpaces</title><meta http-equiv='Content-Type' content='text/html; charset=utf-8'></head><body></body></html>",
@@ -35,7 +35,7 @@ define(function (require, exports, module) {
         "perspectives":             [{ 'id': 'perspectiveList' }, { 'id': 'perspectiveGrid' }, { 'id': 'perspectiveGraph' }, { 'id': 'perspectiveOCRO' }],
         "interfaceLanguage": "en_US",
         "supportedLanguages": [
-            { "iso": "en-US",   "title": "English" },
+            { "iso": "en_US",   "title": "English" },
             { "iso": "de_DE",   "title": "Deutsch (German)" },
             { "iso": "it",	    "title": "Italiano (Italian)" },
             { "iso": "zh_CN",	"title": "中国的 (Chinese)" },
