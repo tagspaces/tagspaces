@@ -155,7 +155,7 @@
         return cYear+"."+cMonth+"."+cDate+time;
     }
     
-    function formatDateTime4Tag(date, includeTime) {
+    function formatDateTime4Tag(date, includeTime, includeMS) {
         if ((date === undefined) || (date === "")) { return ""; }
         var d = new Date(date);
         var cDate = d.getDate();
@@ -178,7 +178,11 @@
         if (includeTime) {
             time = "-"+cHour+""+cMinute+""+cSecond; 
         }
-        return cYear+""+cMonth+""+cDate+time;
+        var milliseconds = "";
+        if (includeMS) {
+            milliseconds = "-"+d.getMilliseconds();
+        }
+        return cYear+""+cMonth+""+cDate+time+milliseconds;
     } 
     
     function convertStringToDate(dateString) {
