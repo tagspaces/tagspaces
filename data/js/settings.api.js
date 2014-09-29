@@ -815,6 +815,12 @@
         }  
     };
 
+    var getAllTagGroupData = function() {
+        if(exports.Settings.tagGroups.length > 0) {
+            return exports.Settings.tagGroups;
+        }
+    };
+
     var deleteTagGroup = function(tagData) {
         for(var i=0; i < exports.Settings.tagGroups.length; i++) {
             if(exports.Settings.tagGroups[i].key === tagData.key) {
@@ -1186,7 +1192,8 @@
     exports.getAllTags                              = getAllTags;               
 
     exports.getTagData                              = getTagData;   
-    exports.getTagGroupData                         = getTagGroupData;  
+    exports.getTagGroupData                         = getTagGroupData;
+    exports.getAllTagGroupData                      = getAllTagGroupData;
 
     exports.deleteTag                               = deleteTag;    
     exports.deleteTagGroup                          = deleteTagGroup;   

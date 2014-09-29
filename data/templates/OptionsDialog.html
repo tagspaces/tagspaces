@@ -37,6 +37,9 @@
                         <div class='form-group col-sm-12'>
                             <button class="btn btn-danger" id="defaultSettingsButton" aria-hidden="true" data-i18n="ns.dialogs:restoreDefaulSettingButton">Restore Initial Settings</button>
                         </div>
+                        <div class='form-group col-sm-12'>
+                            <button class="btn btn-warning" id="exportTagGroupsButton" aria-hidden="true" data-i18n="ns.dialogs:exportTagGroupsButton">Export Tag Groups as JSON</button>
+                        </div>
                     </div>
 
                     <div class="tab-pane" id="perspectives" style="height: 360px; overflow-y: auto;">
@@ -129,9 +132,9 @@
                         <div class='checkbox col-sm-12'>
                             <label>
                                 <input type='checkbox' id='loadLocationMetaData'/>
-                                <span>Loads location meta data (currently only tags)</span>
+                                <span>Loads location meta data (currently only tag groups)</span>
                             </label><!-- data-i18n="ns.dialogs:loadLocationMetaData" data-i18n="ns.dialogs:loadLocationMetaDataHelp" -->
-                            <p class="help-block">Location metadata file "tsm.json" should be placed in the ".ts "subfolder of the current location. The file format will be presented on the TagSpaces blog.</p>
+                            <p class="help-block">Location metadata file "tsm.json" should be placed in the ".ts "subfolder of the current location. The file format should be the same as the exported tag groups file from the tab 'general'.</p>
                         </div>
                         <div class='checkbox col-sm-12'>
                             <label>

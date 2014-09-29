@@ -85,6 +85,17 @@
                 }                
             );
         });
+
+        $( "#exportTagGroupsButton" ).click(function() {
+            var jsonFormat = '{ "appName": "'+TSCORE.Config.DefaultSettings['appName']+
+                             '", "appVersion": "'+TSCORE.Config.DefaultSettings['appVersion']+
+                             '", "appBuild": "'+TSCORE.Config.DefaultSettings['appBuild']+
+                             '", "settingsVersion": '+TSCORE.Config.DefaultSettings['settingsVersion']+
+                             ', "tagGroups": '
+            var blob = new Blob([jsonFormat+JSON.stringify(TSCORE.Config.getAllTagGroupData())+"}"], {type: "application/json"});
+            saveAs(blob, "tsm["+TSCORE.TagUtils.formatDateTime4Tag(new Date(),true)+"].json");
+            //console.log("Export data: "+TSCORE.exportFileListCSV(TSCORE.fileList));
+        });
     }    
     
     function reInitUI() {
