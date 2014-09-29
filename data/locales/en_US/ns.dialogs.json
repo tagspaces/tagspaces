@@ -136,6 +136,7 @@
     "directoryNameHelp": "Directory name should be at least one character long and should not contain the following characters: # / \\ : * ? \" < > |",
     "locationNameHelp": "Location name should be at least one character long",
     "tagGroupNameHelp": "Tag group name should be at least one character long",
-    "operationNotPermittedInEditModeAlert": "This operation is not permitted since the document has been changed.",
+    "operationNotPermittedInEditModeAlert": "This operation is not permitted because the document has been already changed.",
+    "exportTagGroupsButton": "Export Tag Groups as JSON",
     "-": "-"
 }
