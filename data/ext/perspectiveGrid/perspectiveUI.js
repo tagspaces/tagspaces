@@ -125,16 +125,16 @@ console.log("Loading UI for perspectiveDefault");
         // Adding context menu entries according to the taggroups
         for (var i=0; i < self.supportedGroupings.length; i++) {        
             suggMenu.append($('<li>').append($('<a>', { 
-                    title: "Group by "+self.supportedGroupings[i].title, 
-                    text: " "+self.supportedGroupings[i].title,
+                    text: " Group by "+self.supportedGroupings[i].title,
                     key: self.supportedGroupings[i].key,
                     group: self.supportedGroupings[i].title
                 })
-                .prepend( "<i class='fa fa-group' />" )            
+                .prepend( "<i class='fa fa-group fa-fw' />" )
                 .click(function() {
                     $("#"+self.extensionID+"GroupingButton")
-                        .text(" Grouped by "+$(this).attr("group")+" ")
-                        .prepend( "<i class='fa fa-group' />" )
+                        .attr("title"," Grouped by "+$(this).attr("group")+" ")
+                        .text(" "+$(this).attr("group")+" ")
+                        .prepend( "<i class='fa fa-group fa-fw' />" )
                         .append( "<span class='caret'></span>" );                                
                     self.switchGrouping($(this).attr("key"));
                 })                
