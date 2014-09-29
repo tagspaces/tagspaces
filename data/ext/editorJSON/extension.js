@@ -22,7 +22,7 @@ define(function(require, exports, module) {
     var currentContent;
     var currentFilePath;
 
-    exports.init = function(filePath, containerElementID) {
+    exports.init = function(filePath, containerElementID, isViewer) {
         console.log("Initalization JSON Editor...");
         currentFilePath = filePath;
         require([
@@ -31,10 +31,15 @@ define(function(require, exports, module) {
             'css!'+extensionDirectory+'/extension.css'
             ], function(JSONEditor) {
                 $("#"+containerElementID).append('<div id="jsonEditor"></div>');
-                jsonEditor = new JSONEditor(document.getElementById("jsonEditor"));
+                var options = {mode: isViewer?'view':'tree', change: contentChanged};
+                jsonEditor = new JSONEditor(document.getElementById("jsonEditor"), options);
                 TSCORE.IO.loadTextFile(filePath);
         });
     };
+
+    function contentChanged() {
+        TSCORE.FileOpener.setFileChanged(true);
+    }
 
     exports.setFileType = function(fileType) {
         console.log("setFileType not supported on this extension");
@@ -42,7 +47,9 @@ define(function(require, exports, module) {
 
     exports.viewerMode = function(isViewerMode) {
         if(isViewerMode) {
-            //jsonEditor.s
+            jsonEditor.setMode('view');
+        } else {
+            jsonEditor.setMode('tree');
         }
     };
 
