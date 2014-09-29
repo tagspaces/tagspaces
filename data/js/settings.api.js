@@ -274,7 +274,11 @@
                     }
                 );
             }
-            
+
+            if(oldBuildNumber <= 201407240000) {
+                addFileType({ "type": "json",    "viewer": "editorJSON", "editor": "editorJSON" });
+            }
+
             saveSettings();         
         }
 
