@@ -35,7 +35,7 @@ define(function (require, exports, module) {
         "perspectives":             [@@ACTIVATEDPERSPECTIVES],
         "interfaceLanguage": "en_US",
         "supportedLanguages": [
-            { "iso": "en-US",   "title": "English" },
+            { "iso": "en_US",   "title": "English" },
             { "iso": "de_DE",   "title": "Deutsch (German)" },
             { "iso": "it",	    "title": "Italiano (Italian)" },
             { "iso": "zh_CN",	"title": "中国的 (Chinese)" },
