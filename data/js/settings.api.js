@@ -275,7 +275,7 @@
                 );
             }
 
-            if(oldBuildNumber <= 201407240000) {
+            if(oldBuildNumber <= 201407251310) {
                 addFileType({ "type": "json",    "viewer": "editorJSON", "editor": "editorJSON" });
                 addToSettingsArray(exports.Settings.ootbViewers,"editorJSON");
                 addToSettingsArray(exports.Settings.ootbEditors,"editorJSON");
