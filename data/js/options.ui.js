@@ -9,6 +9,8 @@
     
     var TSCORE = require("tscore");
 
+    require(['libs/filesaver.js/FileSaver.js'], function() {});
+
     function generateSelectOptions(parent, data, selectedId) {
         parent.empty();
         parent.append($("<option>").text("").val("false"));
@@ -86,6 +88,10 @@
             );
         });
 
+        if(isCordova) {
+            $( "#exportTagGroupsButton").hide();
+        }
+
         $( "#exportTagGroupsButton" ).click(function() {
             var jsonFormat = '{ "appName": "'+TSCORE.Config.DefaultSettings['appName']+
                              '", "appVersion": "'+TSCORE.Config.DefaultSettings['appVersion']+
@@ -94,7 +100,7 @@
                              ', "tagGroups": '
             var blob = new Blob([jsonFormat+JSON.stringify(TSCORE.Config.getAllTagGroupData())+"}"], {type: "application/json"});
             saveAs(blob, "tsm["+TSCORE.TagUtils.formatDateTime4Tag(new Date(),true)+"].json");
-            //console.log("Export data: "+TSCORE.exportFileListCSV(TSCORE.fileList));
+            console.log("Group Data Saved...");
         });
     }    
     
