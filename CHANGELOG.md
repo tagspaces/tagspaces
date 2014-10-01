@@ -1,5 +1,30 @@
 ﻿#Changelog
 
+##Version 1.8.6 / 2014.10.01
+
+- implementing of a new file edit functionality
+- implementing of a add file functionality in the desktop versions
+- implementing of the editorJSON extension as viewer and editor for JSON files
+- adding natural sorting of the file in the list perspective
+- adding initial russian translations thanks to `darvin` and `ijon`
+- adding BMP as supported file type for viewing
+- adding key bindings for edit document `ctrl+e` and adding tags `ctrl+t`
+- enabling the export of all tag groups as json file in the settings
+- enable importing of multiple tag groups from the `.ts\tsm.json` file in a location
+- including milliseconds in the formatDateTime4Tag
+- preventing adding of tags and renaming while file in edit mode
+- disabling cleaning of the file selection on file close
+- fixing broken drag and drop of files and tags
+- increasing the size of the select file button
+- adding input validators for various dialogs
+- adding save binary file function
+- adding new file and dir create functionality
+- adding new color chooser in the some dialogs
+- implementing new file save concept
+- adding file move / copy functionality to the file menu
+- focusing the first edit box automatically after opening of a dialog
+- fixing [#107](https://github.com/uggrock/tagspaces/issues/107) enabling the renaming of tags from for example todo in ToDo
+
 ##Version 1.8.5 / 2014.07.25
 - adding support for drag & drop of files into tagspaces from your native file manager
 - adding copy and move file functionality
