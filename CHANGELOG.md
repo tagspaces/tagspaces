@@ -1,7 +1,6 @@
 ﻿#Changelog
 
 ##Version 1.8.6 / 2014.10.01
-
 - implementing of a new file edit functionality
 - implementing of a add file functionality in the desktop versions
 - implementing of the editorJSON extension as viewer and editor for JSON files
