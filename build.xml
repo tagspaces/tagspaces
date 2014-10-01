@@ -128,7 +128,9 @@ found in the LICENSE file.
 				<include name="perspectiveGraph/**/*" />
 				<include name="editorHTML/**/*" />
 				<include name="editorText/**/*" />
+                <include name="editorJSON/**/*" />
 				<include name="viewerText/**/*" />
+                <include name="viewerURL/**/*" />
 				<include name="viewerPDF/**/*" />
 				<include name="viewerImage/**/*" />
 				<include name="viewerMD/**/*" />
@@ -194,6 +196,8 @@ found in the LICENSE file.
 				<include name="editorHTML/**/*" />
 				<include name="editorText/**/*" />
 				<include name="editorODF/**/*" />
+                <include name="editorJSON/**/*" />
+                <include name="viewerURL/**/*" />
 				<include name="viewerText/**/*" />
 				<include name="viewerPDF/**/*" />
 				<include name="viewerImage/**/*" />
