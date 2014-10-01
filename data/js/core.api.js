@@ -556,6 +556,7 @@ define(function(require, exports, module) {
     exports.dirSeparator                = (isWin && !isWeb)?"\\":"/";
     exports.locationDesktop;
     exports.initApp                     = initApp;
+    exports.reLayout                    = reLayout;
     exports.updateLogger                = updateLogger;
     exports.showLoadingAnimation        = showLoadingAnimation;
     exports.hideLoadingAnimation        = hideLoadingAnimation;
