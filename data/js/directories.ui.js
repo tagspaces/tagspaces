@@ -26,7 +26,7 @@ define(function(require, exports, module) {
             '</button>'+
             '<div class="dropdown clearfix dirAltNavMenu" id="dirMenu{{@index}}">'+
                 '<ul style="overflow-y: auto; max-height: 430px; width: 250px; padding: 5px; display: block;" role="menu" class="dropdown-menu">'+
-                    '<li class="dropdown-header">{{../actionsForDirectory}}&nbsp;"{{name}}"<button type="button" class="close">×</button></li>'+
+                    '<li class="dropdown-header"><button type="button" class="close">&times;</button>{{../actionsForDirectory}}&nbsp;"{{name}}"</li>'+
                     '<li><a class="btn btn-link pull-left reloadCurrentDirectory" data-path="{{path}}"><i class="fa fa-refresh fa-fw"></i>&nbsp;{{../reloadCurrentDirectory}}</a></li>'+
                     '<li class="notreadonly"><a class="btn btn-link pull-left createSubdirectory" data-path="{{path}}"><i class="fa fa-folder-o fa-fw"></i>&nbsp;{{../createSubdirectory}}</a></li>'+
                     '<li class="notreadonly"><a class="btn btn-link pull-left renameDirectory" data-path="{{path}}"><i class="fa fa-paragraph fa-fw"></i>&nbsp;{{../renameDirectory}}</a></li>'+

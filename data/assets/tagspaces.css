@@ -716,6 +716,10 @@ input a.resetFilter {
     z-index: 88888;	
 }
 
+.dropdown-header .close {
+    line-height: 15px;
+}
+
 .modal-header {
     background-color: #F6F6F6;
     border-radius: 5px 5px 0px 0px;
