@@ -1,8 +1,8 @@
 {
     "name": "TagSpaces",
-    "version": "1.8.6",
+    "version": "1.8.7",
     "manifest_version": 2,
-    "description": "File Browser with tagging support",
+    "description": "File Browser with Chromecast Support",
     "icons": {
         "16": "assets/icon16.png",
         "48": "assets/icon48.png",
