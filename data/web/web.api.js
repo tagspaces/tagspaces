@@ -165,12 +165,12 @@ define(function(require, exports, module) {
     };
 	
     var saveTextFile = function(filePath,content,overWrite) {
-      console.log("Saving file: "+filePath+" content: "+content);
+      console.log("Saving file: "+filePath); //+" content: "+content);
 
       var isNewFile = false; // = !pathUtils.existsSync(filePath);
       davClient.propfind( filePath, function( status, data ) {
             console.log("Check file exists: Status / Content: "+status+" / "+data);
-            if(status === "404") {
+            if(parseInt(status) === 404) {
                 isNewFile = true;
             }
             davClient.put(
@@ -186,12 +186,12 @@ define(function(require, exports, module) {
     };
 
     var saveBinaryFile = function(filePath,content) {
-        console.log("Saving binary file: "+filePath+" content: "+content);
+        console.log("Saving binary file: "+filePath); //+" content: "+content);
 
         var isNewFile = false;
         davClient.propfind( filePath, function( status, data ) {
             console.log("Check file exists: Status / Content: "+status+" / "+data);
-            if(status === "404") {
+            if(parseInt(status) === 404) {
                 isNewFile = true;
             }
             if(isNewFile) {
