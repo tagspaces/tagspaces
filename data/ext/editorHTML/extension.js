@@ -46,19 +46,21 @@ define(function(require, exports, module) {
     exports.setContent = function(content) {
         currentContent = content;
 
-        var reg = /\<body[^>]*\>([^]*)\<\/body/m;
-        
+        var bodyRegex = /\<body[^>]*\>([^]*)\<\/body/m;
         var bodyContent = undefined;
         
-        // TODO try this 
         try {
-            bodyContent = content.match( reg )[1];                  
+            bodyContent = content.match( bodyRegex )[1];
         } catch(e) {
             console.log("Error parsing HTML document. "+e);
             TSCORE.FileOpener.closeFile(true);  
             TSCORE.showAlertDialog("Probably a body tag was not found in the document. Document will be closed.","Error parsing HTML document");
         }
 
+//        var titleRegex = /\<title[^>]*\>([^]*)\<\/title/m;
+//        var titleContent = content.match( titleRegex )[1];
+
+        // removing all scripts from the document
         var cleanedBodyContent = bodyContent.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,"");         
 
         var $htmlEditor = $('#htmlEditor');
@@ -83,11 +85,42 @@ define(function(require, exports, module) {
     };
 
     exports.getContent = function() {
-        var code = "<body>"+$('#htmlEditor').code()+"</body>";
-        
-        var htmlContent = currentContent.replace(/\<body[^>]*\>([^]*)\<\/body>/m,code);
+        var content = "<body>"+$('#htmlEditor').code()+"</body>";
+
+
+        // removing all scripts from the document
+        var cleanedContent = content.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,"");
+
+        var match,
+            urls = [],
+            imgUrl = "",
+            rex = /<img.*?src="([^">]*\/([^">]*?))".*?>/g;;
+
+        while ( match = rex.exec( cleanedContent ) ) {
+            imgUrl = match[1];
+            console.log("URLs: "+imgUrl);
+            urls.push([imgUrl, getBase64Image(imgUrl)]);
+        }
+
+        urls.forEach(function(dataURLObject) {
+            cleanedContent = cleanedContent.split(dataURLObject[0]).join(dataURLObject[1]);
+            //console.log(dataURLObject[0]+" - "+dataURLObject[1]);
+        });
+
+        var htmlContent = currentContent.replace(/\<body[^>]*\>([^]*)\<\/body>/m,cleanedContent);
         console.log("Final html "+htmlContent);
         return htmlContent;
     };
+
+    function getBase64Image(imgURL) {
+        var canvas = document.createElement("canvas");
+        var img = new Image();
+        img.src = imgURL;
+        canvas.width = img.width;
+        canvas.height = img.height;
+        var ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0);
+        return canvas.toDataURL("image/png");
+    }
 
 });
