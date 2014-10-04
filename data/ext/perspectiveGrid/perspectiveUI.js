@@ -237,11 +237,35 @@ console.log("Loading UI for perspectiveDefault");
     ExtUI.prototype.enableThumbnails = function() {
         $("#"+this.extensionID+"IncreaseThumbsButton" ).prop('disabled', false);
         $("#"+this.extensionID+"Container .thumbImgTile").each(function() {
+            generateThumbnail($(this).attr('filepath'), $(this));
             $(this).attr('style', "");
-            $(this).attr('src',$(this).attr('filepath'));
         });
         $('.thumbImgTile').css({"max-width":TMB_SIZES[this.currentTmbSize], "max-height":TMB_SIZES[this.currentTmbSize] });     
-    };   
+    };
+
+    function generateThumbnail(imgURL, imgElement) {
+        var maxSize = 200;
+        var canvas = document.createElement("canvas");
+        var ctx = canvas.getContext("2d");
+        var img = new Image();
+        img.onload = function(){
+            if(img.width >= img.height) {
+                canvas.width = maxSize;
+                canvas.height = (maxSize*img.height)/img.width;
+            } else {
+                canvas.height = maxSize;
+                canvas.width = (maxSize*img.width)/img.height;
+            }
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            var dataURL = canvas.toDataURL("image/png");
+            imgElement.attr('src',dataURL);
+            //console.log("<-->"+dataURL);
+            img = null;
+            canvas = null;
+            //canvas.parentNode.removeChild(canvas)
+        };
+        img.src = imgURL;
+    }
     
     ExtUI.prototype.disableThumbnails = function() {
         //this.currentTmbSize = 0;
