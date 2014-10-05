@@ -54,17 +54,28 @@ For Linux, copy `nw, nw.pak` to `data/node-webkit` directory.
 For Mac OS X, copy `node-webkit.app` to `data/node-webkit` directory.
 4. Run the `nw` executable file.
 
+
+### How to setup the TagSpaces WebDAV edition?
+You can find information on this topic on the [TagSpaces blog](http://www.tagspaces.org/webdav-edition/).
+
 ## License
 
 `TagSpaces`'s code uses the AGPL (GNU Affero General Public License) Version 3, see our `LICENSE` file.
 
+## Contribute
+TagSpaces is an open source software, and the code is published under the AGPL License. As such, the code is publicly available on GitHub, and forking is particularly recommanded! Still, contribution must be done following some guidelines.
+Contributor License Agreement
+
+The CLA is an agreement commonly used in major open source project, which aims at protecting all parties implied by a contribution : the contributor, the main code author, and above all, the community. The CLA model we have chosen basically tells the following : the contribution’s copyright is shared between the contributor and the main author. This means each party can do whatever she want in term of relicensing with this contributed piece of code. This is important, because, if in the future, the author wants to change the license in something more in favor of the community, a singular contributor cannot block the process.
+
+The Contributor License Agreement can be signed online on the following [CLA form](http://tagspaces.org/contribute).
+
+## Support and Bugs
+If you are having trouble using TagSpaces or have found a bug or you have some ideas how TagSpaces could be improved: [open a ticket](https://github.com/uggrock/tagspaces/issues) on GitHub.
+
 ## Feeds
 - Subscribe to RSS feed updates for the [tagspaces blog](http://tagspaces.org/blog/feed.xml)
 - Subscribe to RSS feed updates for the [master branch](https://github.com/uggrock/tagspace/commits/master.atom)
-
-## Support and Bugs
-If you are having trouble, have found a bug, or want to contribute don't be shy.
-[Open a ticket](https://github.com/uggrock/tagspaces/issues) on GitHub.
 
 - - -
 This files is created and edited in `TagSpaces`, using the `viewerMD` and `editorText` extensions.
