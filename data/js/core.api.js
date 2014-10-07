@@ -80,6 +80,8 @@ define(function(require, exports, module) {
             initKeyBindings();
             $( "#loading" ).hide();
 
+            tsIOApi.checkAccessFileURLAllowed();
+
             // Show welcome dialog of first start
             if(tsSettings.isFirstRun()) {
                 tsCoreUI.showWelcomeDialog();
@@ -101,7 +103,7 @@ define(function(require, exports, module) {
                 //tsIOApi.handleTray();
             }
 
-            console.log("Layout initialized");
+            console.log("Docoument ready finished. Layout initialized");
         });
 
         checkForNewVersion();

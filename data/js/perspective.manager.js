@@ -57,6 +57,7 @@ var initPerspectives = function () {
                     var lastLocation = TSCORE.Config.getLastOpenedLocation();
                     if(lastLocation !== undefined && lastLocation.length > 1 && !isFirefox) {
                        TSCORE.openLocation(lastLocation);
+                       TSCORE.IO.checkAccessFileURLAllowed();
                     }                       
                 }
             }            
