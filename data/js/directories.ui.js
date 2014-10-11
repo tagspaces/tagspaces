@@ -524,6 +524,7 @@ define(function(require, exports, module) {
                 }
 
                 $("#formLocationEdit").validator();
+                $("#formLocationEdit").submit(function (e) { e.preventDefault(); });
                 $('#formLocationEdit').on('invalid.bs.validator', function() {
                     $( "#saveLocationButton").prop( "disabled", true );
                 });
@@ -578,6 +579,7 @@ define(function(require, exports, module) {
                 }
 
                 $("#formLocationCreate").validator();
+                $("#formLocationCreate").submit(function (e) { e.preventDefault(); });
                 $('#formLocationCreate').on('invalid.bs.validator', function() {
                     $( "#createFolderConnectionButton").prop( "disabled", true );
                 });
@@ -611,6 +613,7 @@ define(function(require, exports, module) {
                 $('#dialogDirectoryCreate').i18n();
 
                 $("#formDirectoryCreate").validator();
+                $("#formDirectoryCreate").submit(function (e) { e.preventDefault(); });
                 $('#formDirectoryCreate').on('invalid.bs.validator', function() {
                     $( "#createNewDirectoryButton").prop( "disabled", true );
                 });
@@ -640,6 +643,7 @@ define(function(require, exports, module) {
             }
 
             $("#formDirectoryRename").validator();
+            $("#formDirectoryRename").submit(function (e) { e.preventDefault(); });
             $('#formDirectoryRename').on('invalid.bs.validator', function() {
                 $( "#renameDirectoryButton").prop( "disabled", true );
             });

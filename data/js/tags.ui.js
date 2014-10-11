@@ -443,6 +443,7 @@
         $( "#newTagTitle" ).val("");
 
         $("#formAddTags").validator();
+        $("#formAddTags").submit(function (e) { e.preventDefault(); });
         $('#formAddTags').on('invalid.bs.validator', function() {
             $( "#createTagButton").prop( "disabled", true );
         });
@@ -460,6 +461,7 @@
         $( "#tagGroupName" ).val(TSCORE.selectedTagData.title);
 
         $("#formTagGroupEdit").validator();
+        $("#formTagGroupEdit").submit(function (e) { e.preventDefault(); });
         $('#formTagGroupEdit').on('invalid.bs.validator', function() {
             $( "#editTagGroupButton").prop( "disabled", true );
         });
@@ -478,6 +480,7 @@
         $( "#newTagGroupName" ).val("");
 
         $("#formTagGroupCreate").validator();
+        $("#formTagGroupCreate").submit(function (e) { e.preventDefault(); });
         $('#formTagGroupCreate').on('invalid.bs.validator', function() {
             $( "#createTagGroupButton").prop( "disabled", true );
         });

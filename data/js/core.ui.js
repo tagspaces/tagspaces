@@ -112,6 +112,7 @@ define(function(require, exports, module) {
         $( '#txtFileTypeButton' ).button('toggle');
 
         $("#formFileCreate").validator();
+        $("#formFileCreate").submit(function (e) { e.preventDefault(); });
         $('#formFileCreate').on('invalid.bs.validator', function() {
             $( "#fileCreateConfirmButton").prop( "disabled", true );
         });
@@ -131,6 +132,7 @@ define(function(require, exports, module) {
         $( "#renamedFileName" ).val(TSCORE.TagUtils.extractFileName(filePath));
 
         $("#formFileRename").validator();
+        $("#formFileRename").submit(function (e) { e.preventDefault(); });
         $('#formFileRename').on('invalid.bs.validator', function() {
             $( "#renameFileButton").prop( "disabled", true );
         });
@@ -160,6 +162,7 @@ define(function(require, exports, module) {
         $( "#newTagName" ).val(TSCORE.selectedTag);
 
         $("#formEditTag").validator();
+        $("#formEditTag").submit(function (e) { e.preventDefault(); });
         $('#formEditTag').on('invalid.bs.validator', function() {
             $( "#editTagButton").prop( "disabled", true );
         });
@@ -330,8 +333,9 @@ define(function(require, exports, module) {
 
         var addFileInputName = undefined;
         $("#addFileInput").on("change", function(selection) {
-            console.log("Selected File: "+selection.currentTarget.value);
+            //console.log("Selected File: "+$("#addFileInput").val());
             var file = selection.currentTarget.files[0];
+            //console.log("Selected File: "+JSON.stringify(selection.currentTarget.files[0]));
             addFileInputName = file.name;
             var reader = new FileReader();
             reader.onload = onFileReadComplete;
