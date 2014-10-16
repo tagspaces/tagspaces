@@ -123,9 +123,7 @@ user-select: none;
 #directoryList li { margin: 3px; padding: 0.4em; font-size: 1.0em; height: 18px; }
 
 /* Thumbs box design    
- * TODO Move to viewThumb extension css
- * */
-.selectableFiles .ui-selecting { background: #fff5a3; color: black; }
+  * */
 .selectableFiles .ui-selected { background: #fff5a3; color: black; }
 .selectableFiles { list-style-type: none; margin: 0; padding: 0; }
 
@@ -178,12 +176,6 @@ user-select: none;
 /* bootstrap3xeditable class */
 .editable-inline {
     margin-top: 5px;
-}
-
-table .fileTitle {
-    font-size: 14px;
-    color: #333333;
-    padding-left: 0 !important;
 }
 
 .noWrap {
@@ -277,42 +269,6 @@ li hr {
     border: 0;
 }
 
-.tagButton .caret, .extTagButton .caret {
-    border-top-color: white !important;
-}
-
-.tagButton {
-    padding: 2px 4px 2px 4px !important;
-    background: #008000 !important;    
-    color: white !important;
-    margin: 1px;
-    border: 0;
-    z-index: 9999;    
-    border-radius: 5px !important;
-    text-decoration: none  !important; 
-}
-
-.extTagButton {
-    padding: 2px 4px 2px 4px;
-    background: #bbb !important;        
-    color: white !important;
-    margin: 1px;
-    border: 0;
-    border-radius: 5px !important;
-    text-decoration: none;
-}
-
-.fileButton {
-    padding: 1px 12px 1px 1px;
-    background-color: #E5E5E5;
-    font-weight: normal;
-    color: #222222;
-    text-align: left;
-    margin: 1px;
-    border: #ddd solid 1px;
-    z-index: 9999;
-}
-
 #container {
     height:     100%;
     margin:     0 auto;
@@ -388,10 +344,6 @@ li hr {
 #viewContainers {
     background-color: white; 
     padding: 0;    
-}
-
-#viewFooters {
-
 }
 
 .searchSummary {
@@ -511,39 +463,6 @@ li hr {
     width:20%; 
     padding-right: 7px;
     color: #333 !important;    
-}
-
-
-table.dataTable tr.even {
-    background-color: white;
-}
-
-table.dataTable tr.odd {
-    background-color: white;
-} 
-
-.activeRow { background: #FFCC99 !important; }
-
-table.dataTable tr.ui-selecting { background: #fff5a3 !important; }
-table.dataTable tr.ui-selected { background: #F7FFC9 !important; }
-
-table.dataTable tr.odd td.sorting_1 { background-color: inherit; }
-table.dataTable tr.odd td.sorting_2 { background-color: inherit; }
-table.dataTable tr.odd td.sorting_3 { background-color: inherit; }
-table.dataTable tr.even td.sorting_1 { background-color: inherit; }
-table.dataTable tr.even td.sorting_2 { background-color: inherit; }
-table.dataTable tr.even td.sorting_3 { background-color: inherit; }
-
-table.dataTable thead th {
-    border-bottom: 1px solid lightgray;
-}
-
-table.dataTable tfoot th {
-    border-top: 1px solid lightgray;
-}
-
-table.dataTable tbody td {
-    border-bottom: 1px solid lightgray;
 }
 
 input a.resetFilter {
@@ -739,16 +658,6 @@ input a.resetFilter {
 	border-bottom-color: white;	
 }
 
-.simplecolorpicker.fontawesome span.color[data-selected]:after {
-  font-family: 'FontAwesome';
-  -webkit-font-smoothing: antialiased;
-
-  content: '\f00c'; /* Ok/check mark */
-
-  margin-right: 1px;
-  margin-left: 1px;
-}
-
 .select2-results {
     font-size: 14px;
 }
@@ -836,4 +745,11 @@ input a.resetFilter {
         background: url(welcome-logo2x.png) no-repeat center;
         background-size: 300px 200px;
     }
-} 
+}
+
+.addFileInput {
+    visibility:hidden;
+    position:absolute;
+    top:-50;
+    left:-50;
+}
