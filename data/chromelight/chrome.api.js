@@ -23,6 +23,9 @@
     var dataFile = '",0,"';
     var dataDir = '",1,"';
 
+    // chrome.browserAction.setBadgeBackgroundColor({ color: '#00ff00' });
+    // chrome.browserAction.setBadgeText({text: '9999'});
+
     function scanDirectory(dirPath, index) {
 /*        $.ajax({
             url: "file://"+dirPath,
