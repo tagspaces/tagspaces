@@ -72,6 +72,8 @@ define(function(require, exports, module) {
         if(cmdArguments !== undefined && cmdArguments.length > 0) {
             console.log("CMD Arguments: "+cmdArguments+" Process running in "+process.cwd());
             var filePath = ""+cmdArguments;
+            var dirPath = TSCORE.TagUtils.extractContainingDirectoryPath(filePath);
+            TSCORE.IO.listDirectory(dirPath);
             TSCORE.FileOpener.openFileOnStartup(filePath);
         }
     };
