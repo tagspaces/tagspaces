@@ -311,8 +311,12 @@ define(function(require, exports, module) {
         var twoColumn = (fullWidth >= 660 && fullWidth < 1024);
 
         layoutContainer.options.east.spacing_open = 1;
+//        $("#toggleFullWidthButton").hide();
 
-        $("#toggleFullWidthButton").hide();
+        if(isFullWidth) {
+            oneColumn = true;
+//            $("#toggleFullWidthButton").show();
+        }
 
         if(oneColumn) {
             $("#closeLeftPanel").show();
@@ -331,6 +335,9 @@ define(function(require, exports, module) {
                         layoutContainer.sizePane("west", col1DefaultWidth); 
                     }                    
                 }
+            }
+            if(!isFullWidth) {
+                $("#toggleFullWidthButton").hide();
             }
         } else if(twoColumn) {
             //$("#closeLeftPanel").show();
