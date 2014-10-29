@@ -513,7 +513,7 @@
 
 - Optimizations in the loading mechanism
 - jquery layout version exchanged
-- [Fireofox] Exporting undate.rdf to the release folder of tagspaces.org repository
+- [Firefox] Exporting undate.rdf to the release folder of tagspaces.org repository
 - Added custom css for MD-files rendering
 - jquery-ui-custom library exchanged with the the developers version of it
 - [Firefox] Extension will be automatically unzipped during the installation
