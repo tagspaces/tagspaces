@@ -2,7 +2,6 @@
  * Use of this source code is governed by a AGPL3 license that 
  * can be found in the LICENSE file. */
 /* global define, Handlebars  */
-
 define(function(require, exports, module) {
 "use strict";
 	
@@ -81,7 +80,7 @@ define(function(require, exports, module) {
         if(isCordova) {
             $('#'+extensionID+'Export2CSVButton').hide();
         }
-        if(isCordova || isChrome || isWeb) {
+        if(isCordova ) {
             $('#'+extensionID+'AddFileButton').hide();
         }
     };
