@@ -160,15 +160,16 @@ console.log("Loading UI for perspectiveList");
         
         // Init File Context Menu
         this.viewContainer.on("contextmenu click", ".fileTitleButton", function (e) {
+            e.preventDefault();
             TSCORE.hideAllDropDownMenus();
-            e.preventDefault();                        
-            self.selectFile(this, $(this).attr("filepath"));            
+            self.selectFile(this, $(this).attr("filepath"));
             TSCORE.showContextMenu("#fileMenu", $(this));
             return false;
         });     
 
         // Init Tag Context Menu               
-        this.viewContainer.on("contextmenu click", ".tagButton", function () {
+        this.viewContainer.on("contextmenu click", ".tagButton", function (e) {
+            e.preventDefault();
             TSCORE.hideAllDropDownMenus();
             self.selectFile(this, $(this).attr("filepath"));
             TSCORE.openTagMenu(this, $(this).attr("tag"), $(this).attr("filepath"));
@@ -222,14 +223,14 @@ console.log("Loading UI for perspectiveList");
                 },
                 { // Filesize column
                     "sType": 'numeric',
-                    "aTargets": [ TSCORE.fileListFILESIZE ]
-                 /*   "mRender": function ( data, type, row ) {
+                    "aTargets": [ TSCORE.fileListFILESIZE ],
+                    "mRender": function ( data, type, row ) {
                         return TSCORE.TagUtils.formatFileSize(data, true);
-                        },*/
+                     }
                 },
                 { // Last changed date column
                     "mRender": function ( data ) {
-                        return TSCORE.TagUtils.formatDateTime(data, true);
+                        return TSCORE.TagUtils.formatDateTime(data, true); // moment(data).fromNow();
                         },
                     "aTargets": [ TSCORE.fileListFILELMDT ]
                 },
@@ -240,8 +241,8 @@ console.log("Loading UI for perspectiveList");
                     "aTargets": [ TSCORE.fileListFILENAME ]
                 },     
                 { "bVisible": false,  "aTargets": [
-                           TSCORE.fileListFILESIZE,
-                           TSCORE.fileListFILELMDT,
+                           //TSCORE.fileListFILESIZE,
+                           //TSCORE.fileListFILELMDT,
                            TSCORE.fileListFILEPATH,
                            TSCORE.fileListFILENAME
                            ]
@@ -338,7 +339,7 @@ console.log("Loading UI for perspectiveList");
         } else {
             this.fileTable.$('tr')
                 .on("dblclick", function () {
-                    console.log("Doubletap & Opening file...");
+                    console.log("Doubletap -> Opening file...");
                     var titleBut = $(this).find(".fileTitleButton");
                     TSCORE.FileOpener.openFile($(titleBut).attr("filepath"));
                     self.selectFile(titleBut, $(titleBut).attr("filepath"));
@@ -346,6 +347,7 @@ console.log("Loading UI for perspectiveList");
         }
 
         this.fileTable.$('.fileTitleButton')
+            //.on('click', function(e) { e.preventDefault(); return false; })
             .draggable({
                 "cancel":    false,
                 "appendTo":  "body",
@@ -358,7 +360,7 @@ console.log("Loading UI for perspectiveList");
             });
 
         this.fileTable.$('.fileSelection')
-            .click( function(e) {
+            .on('click', function(e) {
                 e.preventDefault();
                 var fpath = $(this).parent().find(".fileTitleButton").attr("filepath");
                 var stateTag = $(this).find("i");
@@ -376,6 +378,7 @@ console.log("Loading UI for perspectiveList");
             } );        
 
         this.fileTable.$('.tagButton')
+            //.on('click', function(e) { e.preventDefault(); return false; })
             .draggable({
                 "cancel":   false,
                 "appendTo": "body",
