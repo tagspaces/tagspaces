@@ -348,11 +348,11 @@
             return false;
         });
 
-        Mousetrap.unbind(TSCORE.Config.getDeleteDocumentKeyBinding());
+        /*Mousetrap.unbind(TSCORE.Config.getDeleteDocumentKeyBinding());
         Mousetrap.bind(TSCORE.Config.getDeleteDocumentKeyBinding(), function() {
             TSCORE.showFileDeleteDialog(_openedFilePath);
             return false;
-        });
+        });*/
 
         Mousetrap.unbind(TSCORE.Config.getPropertiesDocumentKeyBinding());
         Mousetrap.bind(TSCORE.Config.getPropertiesDocumentKeyBinding(), function() {
