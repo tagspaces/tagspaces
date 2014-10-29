@@ -16,21 +16,21 @@ if (PRODUCTION == "true") {
 }
 
 // Import the needed APIs
-//var selection = require("selection");
-var widgets = require("sdk/widget"); // widget
 var data = require('sdk/self').data; // self
-// DEPRECATED: The addon-page module is deprecated.In the new Firefox UI design all pages will 
-// include navigational elements;once the new design ships, using the addon-page module will not have any effect.
-//var addontab = require("addon-page"); // Enables the opening of main UI without location bar
-var ioutils = require("ioutils"); 
+var ioutils = require("ioutils");
 var settings = require("settings"); 
 var request = require("sdk/request"); // request
 var tabs = require("sdk/tabs");
+//var userstyles = require("userstyles");
+//var {Cc, Ci, Cu}  = require('chrome');
+//var os = Cc["@mozilla.org/xre/app-info;1"].getService(Ci.nsIXULRuntime).OS;
 
 var workers = [];
-
 var toolbarButton;
-var toolbarButtonDestroyed = false;
+
+if (require("sdk/system").staticArgs.disableStrict) {
+    require("sdk/preferences/service").set("javascript.options.strict", false);
+}
 
 exports.main = function(options, callbacks) {
     console.log("Load reason: "+options.loadReason);
@@ -64,28 +64,7 @@ exports.main = function(options, callbacks) {
         });	
       }  
     }); 
-      
-    // A basic click-able image widget.
-    // Removing widget for the addon bar due ff29 incorpatability
-    /* widgets.Widget({
-        id: "TagSpaces",
-        label: "TagSpaces",
-        contentURL: data.url("assets/icon16.png"),
-        onClick: function() {
-            // Opens the main ui in a new pinned tab
-            require("sdk/tabs").open({ // tabs
-            url: data.url("index.html")
-        //	isPinned: true,
-            });
-        },
-        onMouseover: function() {
-            this.contentURL = data.url("assets/icon16color.png");
-        },
-        onMouseout: function() {
-            this.contentURL = data.url("assets/icon16.png");
-        }
-    }); */
-    
+
     // Adding menuitem to the tools menu
     var menuitem = require("menuitems").Menuitem({
         id: "TagSpacesMenuItem",
@@ -98,14 +77,15 @@ exports.main = function(options, callbacks) {
     
     // Adding toolbar button
     initToobarButton();
-    installToolbarButton();
-    //if (options.loadReason == "install" || options.loadReason == "enable") {}
-
+    if (options.loadReason == "install" || options.loadReason == "enable") {
+        installToolbarButton();
+    }
 };
 
 function installToolbarButton () {
-    toolbarButton.moveTo({
+    tsButton.moveTo({
         toolbarID: "nav-bar",
+        insertbefore: "home-button",
         forceMove: false
     });
 }
@@ -119,24 +99,34 @@ function openTagSpacesInNewTab() {
 }
 
 function initToobarButton() {
-    /* code for firefox 29 and up
+    // Toolbar icon with badge
+    /*toolbarButton = require('toolbarbutton').ToolbarButton({
+        id: "tagspaces",
+        label: "TagSpaces",
+        tooltiptext: "TagSpaces",
+        onClick: openTagSpacesInNewTab
+    });
+    toolbarButton.badge = "1.8.6";
+
+    // Loading style for the toolbar icon with badge
+    userstyles.load(data.url("mozilla/overlay.css"));
+    if (os == "Linux") {
+        userstyles.load(data.url("mozilla/overlay-linux.css"));
+    }
+    else if (os == "Darwin") {
+        userstyles.load(data.url("mozilla/overlay-darwin.css"));
+    }*/
+
     var buttons = require('sdk/ui/button/action');
     toolbarButton = buttons.ActionButton({
         id: "TSToolbarButton",
         label: "TagSpaces",
         icon: {
-            "16": "assets/icon16.png",
-            "32": "assets/icon32.png",
-            "64": "assets/icon64.png"
+            "16": data.url("assets/icon16.png"),
+            "32": data.url("assets/icon32.png"),
+            "64": data.url("assets/icon64.png")
         },
         onClick: openTagSpacesInNewTab
-    });*/
-
-    toolbarButton  = require("toolbarbutton").ToolbarButton({
-        id: "TSToolbarButton",
-        label: "TagSpaces",
-        image: data.url("assets/icon16.png"),
-        onCommand: openTagSpacesInNewTab
     });
 }
  
