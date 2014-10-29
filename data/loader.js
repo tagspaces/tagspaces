@@ -104,7 +104,7 @@ requirejs.config({
         tsdirectorybrowser:     'js/directorybrowser'
     }, 
     shim: {
-        'underscore':               { exports: '_' }, 
+        'underscore':               { exports: '_' },
         'bootstrap':                { deps: ['jquery'] }, 
         'jqueryui':                 { deps: ['jquery'] },
         'jqueryuiwidget':           { deps: ['jqueryui'] },
@@ -158,5 +158,6 @@ define(function (require) {
     requirejs(['tscore','underscore'], function (core) {
         TSCORE = core;
         TSCORE.initApp();
-    }); 
+    });
+
 });
