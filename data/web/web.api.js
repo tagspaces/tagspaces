@@ -20,7 +20,7 @@ define(function(require, exports, module) {
         if(location.href.indexOf("https") === 0) {
             useHTTPS = true;
         }
-        davClient = new nl.sara.webdav.Client(location.host, useHTTPS, location.port);
+        davClient = new nl.sara.webdav.Client(location.hostname, useHTTPS, location.port);
     }
 
     window.setTimeout(connectDav(), 2000);
@@ -31,7 +31,7 @@ define(function(require, exports, module) {
         dirPath = encodeURI(dirPath + "/");
 
         davClient.propfind(
-            dirPath,
+            dirPath, //encodeURI(dirPath),
             function( status, data ) {
                 console.log("Dirlist Status:  "+status);
                 //console.log("Dirlist Content: "+JSON.stringify(data._responses));
@@ -44,7 +44,7 @@ define(function(require, exports, module) {
 
                 for (var entry in dirList) {
                     var path = dirList[entry].href;
-                    if(dirPath !== path) {
+                    if(dirPath.toLowerCase() !== path.toLowerCase()) {
                         isDir = false;
                         filesize = undefined;
                         lmdt = undefined;
@@ -103,7 +103,7 @@ define(function(require, exports, module) {
     var createDirectory = function(dirPath) {
         console.log("Creating directory: "+dirPath);
         davClient.mkcol(
-            dirPath,
+            encodeURI(dirPath),
             function( status, data, headers ) {
                 console.log("Directory Creation Status/Content/Headers:  "+status+" / "+data+" / "+headers);
                 TSPOSTIO.createDirectory(dirPath);
@@ -114,12 +114,12 @@ define(function(require, exports, module) {
     var copyFile = function(filePath, newFilePath) {
         console.log("Copying file: "+filePath+" to "+newFilePath);
         davClient.copy(
-            filePath,
+            encodeURI(filePath),
             function( status, data, headers ) {
                 console.log("Copy File Status/Content/Headers:  "+status+" / "+data+" / "+headers);
                 TSPOSTIO.copyFile(filePath, newFilePath);
             },
-            newFilePath,
+            encodeURI(newFilePath),
             davClient.FAIL_ON_OVERWRITE
         );
     };
@@ -127,26 +127,26 @@ define(function(require, exports, module) {
     var renameFile = function(filePath, newFilePath) {
         console.log("Renaming file: "+filePath+" to "+newFilePath);
         davClient.move(
-            filePath,
+            encodeURI(filePath),
             function( status, data, headers ) {
                 console.log("Rename File Status/Content/Headers:  "+status+" / "+data+" / "+headers);
                 TSPOSTIO.renameFile(filePath, newFilePath);
             },
-            newFilePath,
+            encodeURI(newFilePath),
             davClient.FAIL_ON_OVERWRITE
         );
     };
 
     var renameDirectory = function(dirPath, newDirName) {
-        var newDirPath = TSCORE.TagUtils.extractParentDirectoryPath(dirPath) + TSCORE.dirSeparator + newDirName;
+        var newDirPath = TSCORE.TagUtils.extractParentDirectoryPath(dirPath) + TSCORE.dirSeparator + encodeURIComponent(newDirName);
         console.log("Renaming directory: "+dirPath+" to "+newDirPath);
         davClient.move(
-            dirPath,
+            encodeURI(dirPath),
             function( status, data, headers ) {
                 console.log("Rename Directory Status/Content/Headers:  "+status+" / "+data+" / "+headers);
                 TSPOSTIO.renameDirectory(dirPath, newDirPath);
             },
-            newDirPath,
+            encodeURI(newDirPath),
             davClient.FAIL_ON_OVERWRITE
         );
     };
@@ -154,7 +154,7 @@ define(function(require, exports, module) {
     var loadTextFile = function(filePath) {
         console.log("Loading file: "+filePath);
         davClient.get(
-            filePath,
+            encodeURI(filePath),
             function( status, data, headers ) {
                 console.log("Loading File Status/Content/Headers:  "+status+" / "+data+" / "+headers);
                 TSPOSTIO.loadTextFile(data);
@@ -168,18 +168,19 @@ define(function(require, exports, module) {
       console.log("Saving file: "+filePath); //+" content: "+content);
 
       var isNewFile = false; // = !pathUtils.existsSync(filePath);
-      davClient.propfind( filePath, function( status, data ) {
+      davClient.propfind( encodeURI(filePath), function( status, data ) {
             console.log("Check file exists: Status / Content: "+status+" / "+data);
             if(parseInt(status) === 404) {
                 isNewFile = true;
             }
             davClient.put(
-                filePath,
+                encodeURI(filePath),
                 function( status, data, headers ) {
                     console.log("Creating File Status/Content/Headers:  "+status+" / "+data+" / "+headers);
                     TSPOSTIO.saveTextFile(filePath, isNewFile);
                 },
-                content
+                content,
+                'application/octet-stream'
             );
         },1
       );
@@ -189,19 +190,20 @@ define(function(require, exports, module) {
         console.log("Saving binary file: "+filePath); //+" content: "+content);
 
         var isNewFile = false;
-        davClient.propfind( filePath, function( status, data ) {
+        davClient.propfind( encodeURI(filePath), function( status, data ) {
             console.log("Check file exists: Status / Content: "+status+" / "+data);
             if(parseInt(status) === 404) {
                 isNewFile = true;
             }
             if(isNewFile) {
                 davClient.put(
-                    filePath,
+                    encodeURI(filePath),
                     function( status, data, headers ) {
                         console.log("Creating File Status/Content/Headers:  "+status+" / "+data+" / "+headers);
                         TSPOSTIO.saveBinaryFile(filePath, isNewFile);
                     },
-                    content
+                    content,
+                    'application/octet-stream'
                 );
             } else {
                 TSCORE.showAlertDialog("File Already Exists.");
@@ -212,7 +214,7 @@ define(function(require, exports, module) {
     var deleteElement = function(path) {
       console.log("Deleting: "+path);
           davClient.remove(
-              path,
+              encodeURI(path),
               function( status, data, headers ) {
                   console.log("Directory/File Deletion Status/Content/Headers:  "+status+" / "+data+" / "+headers);
                   TSPOSTIO.deleteElement(path);
@@ -223,7 +225,7 @@ define(function(require, exports, module) {
     var deleteDirectory = function(path) {
         console.log("Deleting directory: "+path);
         davClient.remove(
-            path,
+            encodeURI(path),
             function( status, data, headers ) {
                 console.log("Directory/File Deletion Status/Content/Headers:  "+status+" / "+data+" / "+headers);
                 TSPOSTIO.deleteDirectory(path);
@@ -260,7 +262,7 @@ define(function(require, exports, module) {
     };
 
     var getFileProperties = function(filePath) {
-        davClient.propfind( filePath, function( status, data ) {
+        davClient.propfind( encodeURI(filePath), function( status, data ) {
                 console.log("Properties Status / Content: "+status+" / "+JSON.stringify(data._responses));
                 var fileProperties = {};
                 for (var entry in data._responses) {
