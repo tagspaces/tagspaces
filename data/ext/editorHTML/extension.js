@@ -108,7 +108,7 @@ define(function(require, exports, module) {
         });
 
         var htmlContent = currentContent.replace(/\<body[^>]*\>([^]*)\<\/body>/m,cleanedContent);
-        console.log("Final html "+htmlContent);
+        //console.log("Final html "+htmlContent);
         return htmlContent;
     };
 
