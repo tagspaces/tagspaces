@@ -14,8 +14,10 @@ console.log("Loading UI for Image Viewer");
     var $containerElem;
     var internPath;
     var filePath;
+    var imageRotationClass;
 
     function ExtUI(extID, extContainerID, filePth, uiTemplate) {
+        imageRotationClass = "";
         extensionID = extID;
         $containerElem = $('#'+extContainerID);
         internPath = filePth;
@@ -79,13 +81,54 @@ console.log("Loading UI for Image Viewer");
         /*$("#"+extensionID+"Brighter")
             .click(function() {
                 $("#"+extensionID+"imgViewer").pixastic("brightness", {brightness:60});
-            });
-        
-        $("#"+extensionID+"RotateLeft")
-            .click(function() {
-                console.log("Rotate");
-                $("#"+extensionID+"imgViewer").pixastic("rotate", {angle:90});
             });*/
+        
+        $("#"+extensionID+"RotateLeft").on("click",function() {
+                console.log("Rotate Left");
+                var $image = $("#"+extensionID+"Image");
+                $image.removeClass(imageRotationClass);
+                switch (imageRotationClass) {
+                    case "":
+                        imageRotationClass = "rotate270";
+                        break;
+                    case "rotate270":
+                        imageRotationClass = "rotate180";
+                        break;
+                    case "rotate180":
+                        imageRotationClass = "rotate90";
+                        break;
+                    case "rotate90":
+                        imageRotationClass = "";
+                        break;
+                    default:
+                        imageRotationClass = "";
+                }
+                $image.addClass(imageRotationClass);
+            });
+
+        $("#"+extensionID+"RotateRight").on("click",function() {
+            console.log("Rotate Right");
+            var $image = $("#"+extensionID+"Image");
+            $image.removeClass(imageRotationClass);
+            switch (imageRotationClass) {
+                case "":
+                    imageRotationClass = "rotate90";
+                    break;
+                case "rotate90":
+                    imageRotationClass = "rotate180";
+                    break;
+                case "rotate180":
+                    imageRotationClass = "rotate270";
+                    break;
+                case "rotate270":
+                    imageRotationClass = "";
+                    break;
+                default:
+                    imageRotationClass = "";
+            }
+            $image.addClass(imageRotationClass);
+        });
+
         $containerElem = null;
     }
     

@@ -28,6 +28,7 @@ define(function(require, exports, module) {
 		require([
               extensionDirectory+'/viewerUI.js',
               "text!"+extensionDirectory+'/mainUI.html',
+              'css!'+extensionDirectory+'/extension.css',
               //extensionDirectory+'/loadimage/canvas-to-blob.js',
               extensionDirectory+'/jquery.panzoom/jquery.panzoom.min.js',              
               extensionDirectory+'/jquery.mousewheel/jquery.mousewheel.js'
