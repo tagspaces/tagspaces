@@ -1,4 +1,4 @@
-/* Copyright (c) 2012-2013 The TagSpaces Authors. All rights reserved.
+/* Copyright (c) 2012-2014 The TagSpaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that 
  * can be found in the LICENSE file. */
 
@@ -23,7 +23,7 @@ define(function(require, exports, module) {
         currentFilePath;
 	
 	var extensionDirectory = TSCORE.Config.getExtensionPath()+"/"+extensionID;
-	
+
 	exports.init = function(filePath, containerElementID) {
 	    console.log("Initalization Text Viewer...");
 	    containerElID = containerElementID;
@@ -42,7 +42,7 @@ define(function(require, exports, module) {
 
         $containerElement.empty();        
         $containerElement.css("background-color","white");
-        
+
         if((fileExt.indexOf("htm") == 0 || fileExt.indexOf("xhtm") == 0 || fileExt.indexOf("txt") == 0) && !isFirefox) {
         	$containerElement.append($('<iframe>', {
                     sandbox: "allow-same-origin",
@@ -51,7 +51,7 @@ define(function(require, exports, module) {
 					"nwfaketop": ""
 	        	})
 	        );
-	     	TSCORE.IO.loadTextFile(filePath);	    	 
+	     	TSCORE.IO.loadTextFile(filePath);
         } else {
         	$containerElement.append($('<iframe>', {
                     sandbox: "allow-same-origin",
