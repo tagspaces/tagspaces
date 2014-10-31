@@ -45,6 +45,7 @@ define(function(require, exports, module) {
         
         if((fileExt.indexOf("htm") == 0 || fileExt.indexOf("xhtm") == 0 || fileExt.indexOf("txt") == 0) && !isFirefox) {
         	$containerElement.append($('<iframe>', {
+                    sandbox: "allow-same-origin",
 			    	id: "iframeViewer",
 					"nwdisable": "",
 					"nwfaketop": ""
@@ -53,6 +54,7 @@ define(function(require, exports, module) {
 	     	TSCORE.IO.loadTextFile(filePath);	    	 
         } else {
         	$containerElement.append($('<iframe>', {
+                    sandbox: "allow-same-origin",
 			    	id: "iframeViewer",
 					src: filePathURI,
 					"nwdisable": "",
@@ -84,7 +86,7 @@ define(function(require, exports, module) {
 	    	$(viewerIframe.contentWindow.document).find( "a" ).bind('click', function(e){
 	            e.preventDefault();
                 TSCORE.openLinkExternally($(this).attr("href"));
-	    	})
+	    	});
 
             // fixing embedding of local images
             $(viewerIframe.contentWindow.document).find( "img[src]").each(function(){
