@@ -26,7 +26,6 @@
 
 * Font Awesome - http://fontawesome.io/
 * node-webkit (Windows, Linux and OS X clients) - https://github.com/rogerwang/node-webkit
-* NPAPI-chrome-file-api (Chrome Extension) - https://bitbucket.org/ryanackley/npapi-chrome-file-api
 * fastclick (Android and IPhone Apps) - https://github.com/ftlabs/fastclick
 * Ubuntu Font Family - http://font.ubuntu.com/
 * PDF.js (used in viewerPDF extension) - http://mozilla.github.io/pdf.js/
