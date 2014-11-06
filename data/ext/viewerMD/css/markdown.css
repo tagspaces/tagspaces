@@ -1,0 +1,158 @@
+/**
+ * standard markdown style
+ */
+.markdown {
+  padding: 20px;
+}
+.markdown a {
+  text-decoration: none;
+  vertical-align: baseline;
+}
+.markdown a:hover {
+  text-decoration: underline;
+}
+.markdown h1 {
+  font-size: 2.2em;
+  font-weight: bold;
+  margin: 1.5em 0 1em 0;
+}
+.markdown h2 {
+  font-size: 1.8em;
+  font-weight: bold;
+  margin: 1.275em 0 0.85em 0;
+}
+.markdown h3 {
+  font-size: 1.6em;
+  font-weight: bold;
+  margin: 1.125em 0 0.75em 0;
+}
+.markdown h4 {
+  font-size: 1.4em;
+  font-weight: bold;
+  margin: 0.99em 0 0.66em 0;
+}
+.markdown h5 {
+  font-size: 1.2em;
+  font-weight: bold;
+  margin: 0.855em 0 0.57em 0;
+}
+.markdown h6 {
+  font-size: 1em;
+  font-weight: bold;
+  margin: 0.75em 0 0.5em 0;
+}
+.markdown h1:first-child,
+.markdown h2:first-child,
+.markdown h3:first-child,
+.markdown h4:first-child,
+.markdown h5:first-child,
+.markdown h6:first-child {
+  margin-top: 0;
+}
+.markdown h1 + p,
+.markdown h2 + p,
+.markdown h3 + p,
+.markdown h4 + p,
+.markdown h5 + p,
+.markdown h6 + p {
+  margin-top: 0;
+}
+.markdown hr {
+  border: 1px solid #cccccc;
+}
+.markdown p {
+  margin: 1em 0;
+  word-wrap: break-word;
+}
+.markdown ol {
+  list-style-type: decimal;
+}
+.markdown li {
+  display: list-item;
+  line-height: 1.4em;
+}
+.markdown blockquote {
+  margin: 1em 20px;
+}
+.markdown blockquote > :first-child {
+  margin-top: 0;
+}
+.markdown blockquote > :last-child {
+  margin-bottom: 0;
+}
+.markdown blockquote cite:before {
+  content: '\2014 \00A0';
+}
+.markdown .code {
+  border-radius: 3px;
+  word-break: break-all;
+  word-wrap: break-word;
+}
+.markdown pre {
+  border-radius: 3px;
+  word-break: break-all;
+  word-wrap: break-word;
+  overflow: auto;
+}
+.markdown pre code {
+  display: block;
+}
+.markdown pre > code {
+  border: 1px solid #cccccc;
+  white-space: pre;
+  padding: .5em;
+  margin: 0;
+}
+.markdown code {
+  border-radius: 3px;
+  word-break: break-all;
+  word-wrap: break-word;
+  border: 1px solid #cccccc;
+  padding: 0 5px;
+  margin: 0 2px;
+}
+.markdown img {
+  max-width: 100%;
+}
+.markdown table {
+  padding: 0;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+.markdown table tr th,
+.markdown table tr td {
+  border: 1px solid #cccccc;
+  margin: 0;
+  padding: 6px 13px;
+}
+.markdown table tr th {
+  font-weight: bold;
+}
+.markdown table tr th > :first-child {
+  margin-top: 0;
+}
+.markdown table tr th > :last-child {
+  margin-bottom: 0;
+}
+.markdown table tr td > :first-child {
+  margin-top: 0;
+}
+.markdown table tr td > :last-child {
+  margin-bottom: 0;
+}
+.markdown {
+  /* custom rule for haroopad */
+
+}
+.markdown em.underline {
+  font-style: normal;
+  text-decoration: underline;
+}
+.markdown strong.highlight {
+  color: black;
+  padding: 0 5px;
+  background-color: #fdffb6;
+  -webkit-box-shadow: #fdffb6 0 0 5px;
+  -moz-box-shadow: #fdffb6 0 0 5px;
+  box-shadow: #fdffb6 0 0 5px;
+}

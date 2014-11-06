@@ -1,3 +1,29 @@
+#viewerMD {
+    padding: 2px;
+    background-color: transparent;
+    z-index: 9999999;
+    position:fixed;
+    bottom: 0;
+    right: 0;
+}
+
+#viewerMD .iconBackground {
+    color: rgba(0,0,0,0.8);
+}
+
+#viewerMD .iconForeground {
+    color: #f2f2f2;
+}
+
+#viewerMD #viewerImageToolbar {
+    padding: 2px;
+    background-color: transparent;
+    z-index: 9999999;
+    position:fixed;
+    bottom: 0;
+    right: 0;
+}
+
 .viewerMDContainer *{margin:0;padding:0;}
 
 .viewerMDContainer {
