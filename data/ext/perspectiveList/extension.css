@@ -57,7 +57,7 @@ table.dataTable tr.odd {
 
 table.dataTable tr.ui-selected {
     color: white;
-    background: #7BD8FF !important; /* 00b4ff */
+    background: #1DD19F !important; /* 00b4ff #7BD8FF */
 }
 
 table.dataTable tr.odd td.sorting_1 { background-color: inherit; }
