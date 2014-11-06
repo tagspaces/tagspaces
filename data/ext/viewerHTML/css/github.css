@@ -1,0 +1,58 @@
+/*---------------------------------------------------
+    LESS Elements 0.9
+  ---------------------------------------------------
+    A set of useful LESS mixins
+    More info at: http://lesselements.com
+  ---------------------------------------------------*/
+/**
+ * https://github.com/rhiokim/markdown-css
+ * solarized-light style
+ * made by rhio.kim
+ * powered by http://ethanschoonover.com/solarized
+ */
+.github {
+  padding: 20px;
+  color: #000000;
+  font-size: 15px;
+  font-family: "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", AppleSDGothicNeo-Medium, 'Segoe UI', 'Malgun Gothic', Verdana, Tahoma, sans-serif;
+  background: #ffffff;
+  -webkit-font-smoothing: antialiased;
+}
+.github a {
+  color: #3269a0;
+}
+.github a:hover {
+  color: #4183c4;
+}
+.github h2 {
+  border-bottom: 1px solid #e6e6e6;
+  line-height: 1.7em;
+}
+.github h6 {
+  color: #777;
+}
+.github hr {
+  border: 1px solid #e6e6e6;
+}
+.github pre > code {
+  font-size: .9em;
+  font-family: Consolas, Inconsolata, Courier, monospace;
+}
+.github blockquote {
+  border-left: 4px solid #e6e6e6;
+  padding: 0 15px;
+  font-style: italic;
+}
+.github table {
+  background-color: #fafafa;
+}
+.github table tr th,
+.github table tr td {
+  border: 1px solid #e6e6e6;
+}
+.github table tr:nth-child(2n) {
+  background-color: #f2f2f2;
+}
+/**
+ * after less
+ */

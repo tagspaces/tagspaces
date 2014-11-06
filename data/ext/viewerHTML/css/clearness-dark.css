@@ -1,0 +1,58 @@
+/*---------------------------------------------------
+    LESS Elements 0.9
+  ---------------------------------------------------
+    A set of useful LESS mixins
+    More info at: http://lesselements.com
+  ---------------------------------------------------*/
+/**
+ * https://github.com/rhiokim/markdown-css
+ * solarized-light style
+ * made by rhio.kim
+ * powered by http://ethanschoonover.com/solarized
+ */
+.clearness-dark {
+  padding: 20px;
+  color: #ffffff;
+  font-size: 15px;
+  font-family: "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", AppleSDGothicNeo-Medium, 'Segoe UI', 'Malgun Gothic', Verdana, Tahoma, sans-serif;
+  background: #282a36;
+  -webkit-font-smoothing: antialiased;
+}
+.clearness-dark a {
+  color: #e03300;
+}
+.clearness-dark a:hover {
+  color: #ff4a14;
+}
+.clearness-dark h2 {
+  border-bottom: 1px solid #21232d;
+  line-height: 1.7em;
+}
+.clearness-dark h6 {
+  color: #a4a296;
+}
+.clearness-dark hr {
+  border: 1px solid #21232d;
+}
+.clearness-dark pre > code {
+  font-size: .9em;
+  font-family: Consolas, Inconsolata, Courier, monospace;
+}
+.clearness-dark blockquote {
+  border-left: 4px solid #121319;
+  padding: 0 15px;
+  font-style: italic;
+}
+.clearness-dark table {
+  background-color: #303241;
+}
+.clearness-dark table tr th,
+.clearness-dark table tr td {
+  border: 1px solid #4b4e65;
+}
+.clearness-dark table tr:nth-child(2n) {
+  background-color: #373a4b;
+}
+/**
+ * after less
+ */

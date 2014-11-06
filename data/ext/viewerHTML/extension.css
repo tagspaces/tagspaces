@@ -1,0 +1,58 @@
+#viewerHTML {
+    padding: 2px;
+    background-color: transparent;
+    z-index: 9999999;
+    position:fixed;
+    bottom: 0;
+    right: 0;
+}
+
+#viewerHTML .iconBackground {
+    color: rgba(0,0,0,0.8);
+}
+
+#viewerHTML .iconForeground {
+    color: #f2f2f2;
+}
+
+#viewerHTML #viewerImageToolbar {
+    padding: 2px;
+    background-color: transparent;
+    z-index: 9999999;
+    position:fixed;
+    bottom: 0;
+    right: 0;
+}
+
+/*#htmlContent {
+    width: 100%;
+    height: 100%;
+}*/
+
+.zoomSmallest {
+    zoom:70%;
+}
+
+.zoomSmaller {
+    zoom:80%;
+}
+
+.zoomSmall {
+    zoom:90%;
+}
+
+.zoomDefault {
+    zoom:100%;
+}
+
+.zoomLarge {
+    zoom:110%;
+}
+
+.zoomLarger {
+    zoom:120%;
+}
+
+.zoomLargest {
+    zoom:130%;
+}
