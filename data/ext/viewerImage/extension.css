@@ -6,6 +6,15 @@
     color: #f2f2f2;
 }
 
+#viewerImage #viewerImageToolbar {
+    padding: 2px;
+    background-color: transparent;
+    z-index: 9999999;
+    position:fixed;
+    bottom: 0;
+    right: 0;
+}
+
 #viewerImage .rotate90 {
     -webkit-transform: rotate(90deg);
     -moz-transform: rotate(90deg);
