@@ -30,7 +30,9 @@ define(function(require, exports, module) {
             'css!'+extensionDirectory+'/jsoneditor/jsoneditor.css',
             'css!'+extensionDirectory+'/extension.css'
             ], function(JSONEditor) {
-                $("#"+containerElementID).append('<div id="jsonEditor"></div>');
+                $("#"+containerElementID)
+                    .css("background-color","white")
+                    .append('<div id="jsonEditor"></div>');
                 var options = {mode: isViewer?'view':'tree', change: contentChanged};
                 jsonEditor = new JSONEditor(document.getElementById("jsonEditor"), options);
                 TSCORE.IO.loadTextFile(filePath);
