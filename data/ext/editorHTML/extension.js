@@ -6,33 +6,78 @@ define(function(require, exports, module) {
 "use strict";
 
     console.log("Loading editorHTML");
-    exports.id = "editorHTML"; // ID should be equal to the directory name where the ext. is located
-    exports.title = "HTML Editor";
-    exports.type = "editor";
-    exports.supportedFileTypes = [ "htm", "html" ];
+
+    var extensionTitle = "HTML Editor";
+    var extensionID = "editorHTML";  // ID should be equal to the directory name where the ext. is located
+    var extensionType =  "editor";
+    var extensionIcon = "icon-list";
+    var extensionVersion = "1.0";
+    var extensionManifestVersion = 1;
+    var extensionLicense = "AGPL";
+    var extensionSupportedFileTypes = [ "html", "htm" ];
 
     var TSCORE = require("tscore");
 
-    var htmlEditor;
+    var $htmlEditor;
 
     var extensionsPath = TSCORE.Config.getExtensionPath();
 
-    var extensionDirectory = extensionsPath+"/"+exports.id;
+    var extensionDirectory = extensionsPath+"/"+extensionID;
 
-    var currentContent;
-    var currentFilePath;
+    var currentContent,
+        currentFilePath,
+        $iframeViewer,
+        $containerElement;
 
     exports.init = function(filePath, containerElementID) {
-        console.log("Initalization HTML Text Editor...");
+        console.log("Initalization HTML Editor...");
+
+        $containerElement = $('#'+containerElementID);
+
         currentFilePath = filePath;
-        require([
-            extensionDirectory+'/summernote/summernote.js',
-            'css!'+extensionDirectory+'/summernote/summernote.css',     
-            'css!'+extensionDirectory+'/extension.css'
-            ], function() {
-                $("#"+containerElementID).append('<div id="htmlEditor"></div>');
-                TSCORE.IO.loadTextFile(filePath);
-        });
+
+        //var fileExt = TSCORE.TagUtils.extractFileExtension(filePath);
+
+        $containerElement.empty();
+        $containerElement.css("background-color","white");
+
+        var extPath = extensionDirectory+"/index.html";
+        $containerElement.append($('<iframe>', {
+            id: "iframeViewer",
+            sandbox: "allow-same-origin allow-scripts",
+            scrolling: "no",
+            style: "background-color: white; overflow: hidden;",
+            src: extPath+"?cp="+filePath,
+            "nwdisable": "",
+            "nwfaketop": ""
+        }));
+
+        /*$containerElement.append($('<iframe>', {
+                //sandbox: "allow-same-origin allow-scripts",
+                id: "iframeViewer",
+                "nwdisable": "",
+                "nwfaketop": ""
+            })
+        );
+
+        $iframeViewer = $("#iframeViewer");
+        if($iframeViewer != undefined) {
+            var $iframeViewerHead = $iframeViewer.contents().find('head');
+            $iframeViewerHead.append($('<link/>', { rel: 'stylesheet', href: extensionDirectory+'/extension.css' }));
+            $iframeViewerHead.append($('<link/>', { rel: 'stylesheet', href: extensionDirectory+'/../../libs/bootstrap/css/bootstrap.css' }));
+            $iframeViewerHead.append($('<link/>', { rel: 'stylesheet', href: extensionDirectory+'/../../libs/font-awesome/css/font-awesome.css' }));
+            $iframeViewerHead.append($('<link/>', { rel: 'stylesheet', href: extensionDirectory+'/summernote/summernote.css' }));
+            $iframeViewerHead.append($('<script/>', { type: 'text/javascript', src: extensionDirectory+'/../../libs/jquery/jquery-2.1.1.min.js' }));
+            $iframeViewerHead.append($('<script/>', { type: 'text/javascript', src: extensionDirectory+'/../../libs/bootstrap/js/bootstrap.min.js' }));
+            $iframeViewerHead.append($('<script/>', { type: 'text/javascript', src: extensionDirectory+'/summernote/summernote.js' }));
+            $iframeViewerHead.append($('<script/>', { type: 'text/javascript', src: extensionDirectory+'/editor.js' }));
+        }*/
+
+        //require([
+        //    extensionDirectory+'/summernote/summernote.js'
+        //], function(uiTPL) {
+            //TSCORE.IO.loadTextFile(filePath);
+        //});
     };
 
     exports.setFileType = function(fileType) {
@@ -41,10 +86,11 @@ define(function(require, exports, module) {
 
     exports.viewerMode = function(isViewerMode) {
         // set readonly
+        console.log("viewerMode not supported on this extension");
     };
 
     exports.setContent = function(content) {
-        currentContent = content;
+        /*currentContent = content;
 
         var bodyRegex = /\<body[^>]*\>([^]*)\<\/body/m;
         var bodyContent = undefined;
@@ -61,36 +107,45 @@ define(function(require, exports, module) {
 //        var titleContent = content.match( titleRegex )[1];
 
         // removing all scripts from the document
-        var cleanedBodyContent = bodyContent.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,"");         
+        var cleanedBodyContent = bodyContent.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,"");
 
-        var $htmlEditor = $('#htmlEditor');
-        $htmlEditor.append(cleanedBodyContent);
-        $htmlEditor.summernote({
-            focus: true,
-            toolbar: [
-              ['style', ['style']],
-              ['style', ['bold', 'italic', 'underline', 'clear']],
-              ['fontsize', ['fontsize']],
-              ['color', ['color']],
-              ['para', ['ul', 'ol', 'paragraph']],
-              ['height', ['height']],
-              ['insert', ['picture', 'link']],
-              ['table', ['table']],
-              ['view', ['codeview']]
-            ],
-            onkeyup: function() {
-                TSCORE.FileOpener.setFileChanged(true);
-            }
-        });
+        var $iframeViewer = $("#iframeViewer");
+        $iframeViewer.contents().find("body").append('<div id="htmlEditor"></div>');
+        //console.log(document.getElementById("iframeViewer").contentWindow);
+        window.setTimeout(function() {
+            document.getElementById("iframeViewer").contentWindow.initEditor(cleanedBodyContent);
+        }, 2000);*/
     };
 
-    exports.getContent = function() {
-        var content = "<body>"+$('#htmlEditor').code()+"</body>";
+    var contentVersion = 0;
 
+    function resetContentVersion() {
+        contentVersion = 0;
+        document.getElementById("iframeViewer").contentWindow.resetContentVersion();
+    }
+
+    function checkContentChanged() {
+        var newContentVersion = document.getElementById("iframeViewer").contentWindow.getContentVersion();
+        if(newContentVersion > contentVersion) {
+            contentVersion = newContentVersion;
+            TSCORE.FileOpener.setFileChanged(true);
+            // autosave
+            //TSCORE.FileOpener.saveFile();
+        }
+        window.setTimeout(checkContentChanged, 1000);
+    }
+
+    window.setTimeout(checkContentChanged, 1000);
+
+    exports.getContent = function() {
+        var content = $("#iframeViewer").contents().find(".note-editable").html();
+
+        var currentContent = document.getElementById("iframeViewer").contentWindow.getOriginalContent();
 
         // removing all scripts from the document
         var cleanedContent = content.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,"");
 
+        // saving all images as png in base64 format
         var match,
             urls = [],
             imgUrl = "",
@@ -106,9 +161,13 @@ define(function(require, exports, module) {
             cleanedContent = cleanedContent.split(dataURLObject[0]).join(dataURLObject[1]);
             //console.log(dataURLObject[0]+" - "+dataURLObject[1]);
         });
+        // end saving all images
+
+        cleanedContent = "<body>"+cleanedContent+"</body>";
 
         var htmlContent = currentContent.replace(/\<body[^>]*\>([^]*)\<\/body>/m,cleanedContent);
         //console.log("Final html "+htmlContent);
+        resetContentVersion();
         return htmlContent;
     };
 
@@ -122,5 +181,15 @@ define(function(require, exports, module) {
         ctx.drawImage(img, 0, 0);
         return canvas.toDataURL("image/png");
     }
+
+    // Extension Vars
+    exports.Title                   = extensionTitle;
+    exports.ID                      = extensionID;
+    exports.Type                    = extensionType;
+    exports.Icon                    = extensionIcon;
+    exports.Version                 = extensionVersion;
+    exports.ManifestVersion         = extensionManifestVersion;
+    exports.License                 = extensionLicense;
+    exports.SupportedFileTypes      = extensionSupportedFileTypes;
 
 });
