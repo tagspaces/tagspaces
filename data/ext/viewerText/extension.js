@@ -18,16 +18,18 @@ define(function(require, exports, module) {
 	
 	var TSCORE = require("tscore");	
 	
-	var containerElID = undefined;
-	var $containerElement = undefined;
+	var containerElID,
+	    $containerElement,
+        filePath;
 	
 	var extensionDirectory = TSCORE.Config.getExtensionPath()+"/"+extensionID;
-	
-	exports.init = function(filePath, containerElementID) {
+
+
+	exports.init = function(fPath, containerElementID) {
 	    console.log("Initalization Text Viewer...");
 	    containerElID = containerElementID;
 	    $containerElement = $('#'+containerElID);
-	    
+        filePath = fPath;
     	TSCORE.IO.loadTextFile(filePath, true);
 	};
 	
@@ -53,7 +55,15 @@ define(function(require, exports, module) {
         
         $containerElement.empty();
         $containerElement.css("background-color","darkgray");
-        $containerElement.append('<p style="font-size: 14px; color: white;">&nbsp;Preview of the document begin: </p>');
+        if(isNode) {
+            $containerElement.append($('<button/>', {
+                class: 'btn btn-default',
+                text: 'Open Natively'
+            }).on("click", function(){
+                TSCORE.IO.openFile(filePath)
+            }));
+        }
+        $containerElement.append('<span style="font-size: 14px; color: white;">&nbsp;Preview of the document begin: </span>');
         $containerElement.append($('<textarea>', {
             readonly: "true",
             style: "overflow: auto; height: 100%; width: 100%; font-size: 13px; margin: 0px; background-color: white; border-width: 0px;",
