@@ -296,6 +296,10 @@
                         TSCORE.selectedTag = generateTagValue(TSCORE.selectedTagData);
                         TSCORE.selectedTagData.parentKey = $(this).attr("parentKey");
                     }
+                }).on("dblclick", function() {
+                    TSCORE.selectedTagData = TSCORE.Config.getTagData($(this).attr("tag"), $(this).attr("parentKey"));
+                    TSCORE.selectedTag = generateTagValue(TSCORE.selectedTagData);
+                    TSCORE.TagUtils.addTag(TSCORE.selectedFiles, [TSCORE.selectedTag]);
                 })
         });
 
