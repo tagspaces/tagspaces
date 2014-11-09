@@ -52,8 +52,20 @@ define(function(require, exports, module) {
 	        	})
 	        );
 	     	TSCORE.IO.loadTextFile(filePath);
+        } else if(fileExt.indexOf("mht") == 0 && isChrome) {
+            $containerElement.append($('<button>', {
+                    //href: filePathURI,
+                    class: "btn btn-warning",
+                    //target: "_blank",
+                    text: "Open in new window"
+                }).click(function() {
+                   // if(isNode) {
+                        window.open(filePathURI,'_blank');
+                   // }
+                })
+            );
         } else {
-        	$containerElement.append($('<iframe>', {
+            $containerElement.append($('<iframe>', {
                     sandbox: "allow-same-origin",
 			    	id: "iframeViewer",
 					src: filePathURI,
