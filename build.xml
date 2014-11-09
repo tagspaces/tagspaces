@@ -198,6 +198,7 @@ found in the LICENSE file.
 				<include name="editorODF/**/*" />
                 <include name="editorJSON/**/*" />
                 <include name="viewerURL/**/*" />
+				<include name="viewerHTML/**/*" />
 				<include name="viewerText/**/*" />
 				<include name="viewerPDF/**/*" />
 				<include name="viewerImage/**/*" />
