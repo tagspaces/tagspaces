@@ -57,7 +57,7 @@ define(function(require, exports, module) {
         $containerElement.css("background-color","darkgray");
         if(isNode) {
             $containerElement.append($('<button/>', {
-                class: 'btn btn-default',
+                class: 'btn btn-warning',
                 text: 'Open Natively'
             }).on("click", function(){
                 TSCORE.IO.openFile(filePath)
