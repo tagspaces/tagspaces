@@ -12,7 +12,7 @@
 * Select2 - http://ivaynberg.github.io/select2/ - https://github.com/ivaynberg/select2/blob/3.4.5/select2.min.js
 * x-editable - http://vitalets.github.io/x-editable/ - https://github.com/vitalets/x-editable/archive/1.5.1.zip
 * jQuery Simple Color Picker - https://github.com/tkrotoff/jquery-simplecolorpicker - https://github.com/tkrotoff/jquery-simplecolorpicker/blob/master/jquery.simplecolorpicker.js
-* Summernote - https://github.com/HackerWins/summernote/ - https://github.com/HackerWins/summernote/blob/v0.5.0/dist/summernote.js + some manual changes
+* Summernote - https://github.com/HackerWins/summernote/ - https://github.com/HackerWins/summernote/blob/v0.5.10/dist/summernote.js
 * Code Mirror - http://codemirror.net/ - https://github.com/marijnh/CodeMirror/releases/tag/3.24.0
 * D3.js - http://d3js.org/ - https://github.com/mbostock/d3/blob/v3.2.0/d3.js
 * marked - https://github.com/chjj/marked - https://github.com/chjj/marked/releases/tag/v0.3.2
