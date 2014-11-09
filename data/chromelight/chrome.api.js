@@ -26,6 +26,27 @@
     // chrome.browserAction.setBadgeBackgroundColor({ color: '#00ff00' });
     // chrome.browserAction.setBadgeText({text: '9999'});
 
+    var handleStartParameters = function () {
+        var openFile = getURLParameter("openFile");
+        if (openFile !== undefined && (openFile.length > 0)) { //  && openFile.indexOf("file://") === 0
+            console.log("Opening file in browser: " + openFile);
+            openFile = openFile.split("file://")[1];
+            //var dirPath = TSCORE.TagUtils.extractContainingDirectoryPath(filePath);
+            //TSCORE.IO.listDirectory(dirPath);
+            TSCORE.FileOpener.openFileOnStartup(openFile);
+        }
+    };
+
+     function getURLParameter(variable){
+         var query = window.location.search.substring(1);
+         var vars = query.split("&");
+         for (var i=0;i<vars.length;i++) {
+             var pair = vars[i].split("=");
+             if(pair[0] == variable){return pair[1];}
+         }
+         return(false);
+     }
+
     function scanDirectory(dirPath, index) {
 /*        $.ajax({
             url: "file://"+dirPath,
@@ -336,5 +357,6 @@
     exports.checkAccessFileURLAllowed   = checkAccessFileURLAllowed;
     exports.checkNewVersion             = checkNewVersion;
     exports.getFileProperties           = getFileProperties;
+    exports.handleStartParameters       = handleStartParameters;
 
 });
