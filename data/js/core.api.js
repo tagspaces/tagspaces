@@ -95,7 +95,7 @@ define(function(require, exports, module) {
                 tsCoreUI.showWelcomeDialog();
             }
 
-            if(isNode) {
+            if(isNode || isChrome) {
                 // Handle command line argument in node-webkit
                 tsIOApi.handleStartParameters();
 
