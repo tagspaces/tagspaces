@@ -23,6 +23,8 @@ define(function(require, exports, module) {
         var extPath = extensionDirectory+"/index.html";
         $('#'+elementID).append($('<iframe>', {
             id: "iframeViewer",
+            sandbox: "allow-same-origin allow-scripts",
+            style: "background-color: white",
             src: extPath+"?cp="+filePath,
             "nwdisable": "",
             "nwfaketop": ""
