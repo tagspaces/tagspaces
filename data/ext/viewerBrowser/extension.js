@@ -45,7 +45,7 @@ define(function(require, exports, module) {
 
         if((fileExt.indexOf("htm") == 0 || fileExt.indexOf("xhtm") == 0 || fileExt.indexOf("txt") == 0) && !isFirefox) {
         	$containerElement.append($('<iframe>', {
-                    sandbox: "allow-same-origin",
+                    sandbox: "allow-same-origin allow-scripts",
 			    	id: "iframeViewer",
 					"nwdisable": "",
 					"nwfaketop": ""
@@ -66,7 +66,7 @@ define(function(require, exports, module) {
             );
         } else {
             $containerElement.append($('<iframe>', {
-                    sandbox: "allow-same-origin",
+                    // sandbox: "allow-same-origin allow-scripts", // comment out due not loading pdfs in chrome ext
 			    	id: "iframeViewer",
 					src: filePathURI,
 					"nwdisable": "",
