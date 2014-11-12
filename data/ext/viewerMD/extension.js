@@ -50,21 +50,6 @@ define(function(require, exports, module) {
             })
         );
 
-        $iframeViewer = $("#iframeViewer");
-        if($iframeViewer != undefined) {
-            var $iframeViewerHead = $iframeViewer.contents().find('head');
-            $iframeViewerHead.append($('<link/>', { rel: 'stylesheet', href: extensionDirectory+'/extension.css' }));
-            $iframeViewerHead.append($('<link/>', { rel: 'stylesheet', href: extensionDirectory+'/../../libs/bootstrap/css/bootstrap.css' }));
-            $iframeViewerHead.append($('<link/>', { rel: 'stylesheet', href: extensionDirectory+'/../../libs/font-awesome/css/font-awesome.css' }));
-            $iframeViewerHead.append($('<link/>', { rel: 'stylesheet', href: extensionDirectory+'/css/markdown.css' }));
-            $iframeViewerHead.append($('<link/>', { rel: 'stylesheet', href: extensionDirectory+'/css/github.css' }));
-            $iframeViewerHead.append($('<link/>', { rel: 'stylesheet', href: extensionDirectory+'/css/haroopad.css' }));
-            $iframeViewerHead.append($('<link/>', { rel: 'stylesheet', href: extensionDirectory+'/css/metro-vibes.css' }));
-            $iframeViewerHead.append($('<link/>', { rel: 'stylesheet', href: extensionDirectory+'/css/solarized-dark.css' }));
-            $iframeViewerHead.append($('<link/>', { rel: 'stylesheet', href: extensionDirectory+'/css/clearness.css' }));
-            $iframeViewerHead.append($('<link/>', { rel: 'stylesheet', href: extensionDirectory+'/css/clearness-dark.css' }));
-        }
-
         require([
             extensionDirectory+'/marked/marked.js',
             "text!"+extensionDirectory+'/mainUI.html'
@@ -113,6 +98,21 @@ define(function(require, exports, module) {
 
         var styles = ['','github','haroopad','metro-vibes','solarized-dark','clearness','clearness-dark'];
         var currentStyleIndex = 0;
+
+        $iframeViewer = $("#iframeViewer");
+        if($iframeViewer != undefined) {
+            var $iframeViewerHead = $iframeViewer.contents().find('head');
+            $iframeViewerHead.append($('<link/>', { rel: 'stylesheet', href: extensionDirectory+'/extension.css' }));
+            $iframeViewerHead.append($('<link/>', { rel: 'stylesheet', href: extensionDirectory+'/../../libs/bootstrap/css/bootstrap.css' }));
+            $iframeViewerHead.append($('<link/>', { rel: 'stylesheet', href: extensionDirectory+'/../../libs/font-awesome/css/font-awesome.css' }));
+            $iframeViewerHead.append($('<link/>', { rel: 'stylesheet', href: extensionDirectory+'/css/markdown.css' }));
+            $iframeViewerHead.append($('<link/>', { rel: 'stylesheet', href: extensionDirectory+'/css/github.css' }));
+            $iframeViewerHead.append($('<link/>', { rel: 'stylesheet', href: extensionDirectory+'/css/haroopad.css' }));
+            $iframeViewerHead.append($('<link/>', { rel: 'stylesheet', href: extensionDirectory+'/css/metro-vibes.css' }));
+            $iframeViewerHead.append($('<link/>', { rel: 'stylesheet', href: extensionDirectory+'/css/solarized-dark.css' }));
+            $iframeViewerHead.append($('<link/>', { rel: 'stylesheet', href: extensionDirectory+'/css/clearness.css' }));
+            $iframeViewerHead.append($('<link/>', { rel: 'stylesheet', href: extensionDirectory+'/css/clearness-dark.css' }));
+        }
 
         if($iframeViewer != undefined) {
             // TODO clear content
