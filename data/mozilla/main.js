@@ -21,8 +21,10 @@ var ioutils = require("ioutils");
 var settings = require("settings"); 
 var request = require("sdk/request"); // request
 var tabs = require("sdk/tabs");
+var unload = require('sdk/system/unload');
 //var userstyles = require("userstyles");
-//var {Cc, Ci, Cu}  = require('chrome');
+var {Cc, Ci, Cu}  = require('chrome');
+var utils = require('sdk/window/utils');
 //var os = Cc["@mozilla.org/xre/app-info;1"].getService(Ci.nsIXULRuntime).OS;
 
 var workers = [];
@@ -83,7 +85,7 @@ exports.main = function(options, callbacks) {
 };
 
 function installToolbarButton () {
-    tsButton.moveTo({
+    toolbarButton.moveTo({
         toolbarID: "nav-bar",
         insertbefore: "home-button",
         forceMove: false
@@ -129,6 +131,19 @@ function initToobarButton() {
         onClick: openTagSpacesInNewTab
     });
 }
+
+unload.when(function(reason) {
+    // since FF24 reason is never 'uninstall' see https://bugzilla.mozilla.org/show_bug.cgi?id=571049
+    if (reason === 'uninstall' || reason === 'disable') {
+        // action by uninstall or disable
+        let prompts = Cc["@mozilla.org/embedcomp/prompt-service;1"].getService(Ci.nsIPromptService);
+        if (prompts.confirm(utils.getMostRecentBrowserWindow(), "Fill the uninstall survey", "Please fill the uninstall survey and tell us why are you removing TagSpaces. Your feedback could be very valuable for us! Would you like to fill it out?")) {
+            tabs.open({
+                url: "http://www.tagspaces.com/uninstallsurvey"
+            });
+        }
+    }
+});
  
 exports.onUnload = function(reason) {
   console.log(reason);
