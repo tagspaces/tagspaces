@@ -22,6 +22,7 @@ define(function(require, exports, module) {
         containerElID,
         currentFilePath,
         $iframeViewer,
+        $iframeViewerBody,
         $containerElement,
         viewerToolbar;
 
@@ -71,6 +72,11 @@ define(function(require, exports, module) {
             var uiTemplate = Handlebars.compile( uiTPL );
             viewerToolbar = uiTemplate({ id: extensionID });
 
+            $iframeViewer = $("#iframeViewer");
+            $iframeViewerBody = $iframeViewer.contents().find('body');
+
+
+
             TSCORE.IO.loadTextFile(filePath);
         });
     };
@@ -96,10 +102,9 @@ define(function(require, exports, module) {
         var cleanedContent = content.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,"");
         var mdContent = md2htmlConverter(cleanedContent);
 
-        var styles = ['','github','haroopad','metro-vibes','solarized-dark','clearness','clearness-dark'];
+        var styles = ['','solarized-dark','github','metro-vibes','clearness','clearness-dark'];
         var currentStyleIndex = 0;
 
-        $iframeViewer = $("#iframeViewer");
         if($iframeViewer != undefined) {
             var $iframeViewerHead = $iframeViewer.contents().find('head');
             $iframeViewerHead.append($('<link/>', { rel: 'stylesheet', href: extensionDirectory+'/extension.css' }));
@@ -107,19 +112,20 @@ define(function(require, exports, module) {
             $iframeViewerHead.append($('<link/>', { rel: 'stylesheet', href: extensionDirectory+'/../../libs/font-awesome/css/font-awesome.css' }));
             $iframeViewerHead.append($('<link/>', { rel: 'stylesheet', href: extensionDirectory+'/css/markdown.css' }));
             $iframeViewerHead.append($('<link/>', { rel: 'stylesheet', href: extensionDirectory+'/css/github.css' }));
-            $iframeViewerHead.append($('<link/>', { rel: 'stylesheet', href: extensionDirectory+'/css/haroopad.css' }));
+            //$iframeViewerHead.append($('<link/>', { rel: 'stylesheet', href: extensionDirectory+'/css/haroopad.css' }));
             $iframeViewerHead.append($('<link/>', { rel: 'stylesheet', href: extensionDirectory+'/css/metro-vibes.css' }));
             $iframeViewerHead.append($('<link/>', { rel: 'stylesheet', href: extensionDirectory+'/css/solarized-dark.css' }));
             $iframeViewerHead.append($('<link/>', { rel: 'stylesheet', href: extensionDirectory+'/css/clearness.css' }));
             $iframeViewerHead.append($('<link/>', { rel: 'stylesheet', href: extensionDirectory+'/css/clearness-dark.css' }));
-        }
 
-        if($iframeViewer != undefined) {
             // TODO clear content
-            var $iframeViewerBody = $iframeViewer.contents().find('body');
             $iframeViewerBody.children().remove();
             $iframeViewerBody.append($('<div/>', { id: 'htmlContent', class: "markdown" }).append(mdContent));
             $iframeViewerBody.append(viewerToolbar);
+
+            if(isCordova) {
+                $iframeViewerBody.find( "#print").hide();
+            }
 
             var $iframeHTMLContent = $iframeViewer.contents().find('#htmlContent'); // //"viewerMDContainer"
 
@@ -145,6 +151,12 @@ define(function(require, exports, module) {
                 $iframeHTMLContent.addClass('markdown');
                 $iframeHTMLContent.addClass(styles[currentStyleIndex]);
                 $iframeHTMLContent.addClass('zoomDefault');
+            });
+
+            $iframeViewerBody.find( "#print" ).bind('click', function(e){
+                //document.getElementById("iframeViewer").contentWindow.print();
+                alert();
+                $iframeViewer.get(0).contentWindow.print();
             });
 
             // making all links open in the user default browser
