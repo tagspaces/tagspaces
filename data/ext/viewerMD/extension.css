@@ -1,3 +1,9 @@
+@media print {
+    #viewerMD {
+        display: none;
+    }
+}
+
 #viewerMD {
     padding: 2px;
     background-color: transparent;
