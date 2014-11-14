@@ -18,15 +18,12 @@ define(function(require, exports, module) {
 
     var TSCORE = require("tscore");
 
-    var $htmlEditor;
-
     var extensionsPath = TSCORE.Config.getExtensionPath();
 
     var extensionDirectory = extensionsPath+"/"+extensionID;
 
     var currentContent,
         currentFilePath,
-        $iframeViewer,
         $containerElement;
 
     exports.init = function(filePath, containerElementID) {
@@ -51,33 +48,13 @@ define(function(require, exports, module) {
             "nwdisable": "",
             "nwfaketop": ""
         }));
+        TSCORE.IO.loadTextFile(filePath);
 
-        /*$containerElement.append($('<iframe>', {
-                //sandbox: "allow-same-origin allow-scripts",
-                id: "iframeViewer",
-                "nwdisable": "",
-                "nwfaketop": ""
-            })
-        );
-
-        $iframeViewer = $("#iframeViewer");
-        if($iframeViewer != undefined) {
-            var $iframeViewerHead = $iframeViewer.contents().find('head');
-            $iframeViewerHead.append($('<link/>', { rel: 'stylesheet', href: extensionDirectory+'/extension.css' }));
-            $iframeViewerHead.append($('<link/>', { rel: 'stylesheet', href: extensionDirectory+'/../../libs/bootstrap/css/bootstrap.css' }));
-            $iframeViewerHead.append($('<link/>', { rel: 'stylesheet', href: extensionDirectory+'/../../libs/font-awesome/css/font-awesome.css' }));
-            $iframeViewerHead.append($('<link/>', { rel: 'stylesheet', href: extensionDirectory+'/summernote/summernote.css' }));
-            $iframeViewerHead.append($('<script/>', { type: 'text/javascript', src: extensionDirectory+'/../../libs/jquery/jquery-2.1.1.min.js' }));
-            $iframeViewerHead.append($('<script/>', { type: 'text/javascript', src: extensionDirectory+'/../../libs/bootstrap/js/bootstrap.min.js' }));
-            $iframeViewerHead.append($('<script/>', { type: 'text/javascript', src: extensionDirectory+'/summernote/summernote.js' }));
-            $iframeViewerHead.append($('<script/>', { type: 'text/javascript', src: extensionDirectory+'/editor.js' }));
-        }*/
-
-        //require([
-        //    extensionDirectory+'/summernote/summernote.js'
-        //], function(uiTPL) {
-            //TSCORE.IO.loadTextFile(filePath);
-        //});
+//        if (!window.addEventListener) {
+//            window.attachEvent('onmessage', function(e) {alert(e.origin);alert(e.data);});
+//        } else {
+//            window.addEventListener('message', function(e) {alert(e.origin);alert(e.data);}, false);
+//        }
     };
 
     exports.setFileType = function(fileType) {
@@ -90,16 +67,16 @@ define(function(require, exports, module) {
     };
 
     exports.setContent = function(content) {
-        /*currentContent = content;
+        currentContent = content;
 
         var bodyRegex = /\<body[^>]*\>([^]*)\<\/body/m;
         var bodyContent = undefined;
-        
+
         try {
             bodyContent = content.match( bodyRegex )[1];
         } catch(e) {
             console.log("Error parsing HTML document. "+e);
-            TSCORE.FileOpener.closeFile(true);  
+            TSCORE.FileOpener.closeFile(true);
             TSCORE.showAlertDialog("Probably a body tag was not found in the document. Document will be closed.","Error parsing HTML document");
         }
 
@@ -109,12 +86,7 @@ define(function(require, exports, module) {
         // removing all scripts from the document
         var cleanedBodyContent = bodyContent.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,"");
 
-        var $iframeViewer = $("#iframeViewer");
-        $iframeViewer.contents().find("body").append('<div id="htmlEditor"></div>');
-        //console.log(document.getElementById("iframeViewer").contentWindow);
-        window.setTimeout(function() {
-            document.getElementById("iframeViewer").contentWindow.initEditor(cleanedBodyContent);
-        }, 2000);*/
+        document.getElementById("iframeViewer").contentWindow.setContent(cleanedBodyContent);
     };
 
     var contentVersion = 0;
@@ -125,7 +97,10 @@ define(function(require, exports, module) {
     }
 
     function checkContentChanged() {
-        var newContentVersion = document.getElementById("iframeViewer").contentWindow.getContentVersion();
+        var newContentVersion;
+        //try {
+            newContentVersion = document.getElementById("iframeViewer").contentWindow.getContentVersion();
+        //} catch(e) { }
         if(newContentVersion > contentVersion) {
             contentVersion = newContentVersion;
             TSCORE.FileOpener.setFileChanged(true);
@@ -139,8 +114,6 @@ define(function(require, exports, module) {
 
     exports.getContent = function() {
         var content = $("#iframeViewer").contents().find(".note-editable").html();
-
-        var currentContent = document.getElementById("iframeViewer").contentWindow.getOriginalContent();
 
         // removing all scripts from the document
         var cleanedContent = content.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,"");

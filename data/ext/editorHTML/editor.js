@@ -1,51 +1,43 @@
-function initEditor(cleanedBodyContent) {
-    $htmlEditor = $('#htmlEditor');
-    $htmlEditor.append(cleanedBodyContent);
+var isCordova = document.URL.indexOf( 'file:///android_asset' ) === 0;
+
+var toolbar = [
+    ['style', ['style']],
+    ['font', ['bold', 'italic', 'underline', 'superscript', 'subscript', 'strikethrough', 'clear']],
+    ['fontname', ['fontname']],
+    // ['fontsize', ['fontsize']],
+    ['color', ['color']],
+    ['para', ['ul', 'ol', 'paragraph']],
+    ['height', ['height']],
+    ['table', ['table']],
+    ['insert', ['link', 'picture', 'video', 'hr']],
+    ['view', ['fullscreen', 'codeview']],
+    ['help', ['help']]
+];
+
+if (isCordova) {
+    toolbar = [
+        ['color', ['color']],
+        ['style', ['style']],
+        ['para', ['paragraph', 'ul', 'ol']],
+        ['style', ['bold', 'italic', 'underline', 'clear']],
+        //['fontsize', ['fontsize']],
+        ['height', ['height']],
+        ['insert', ['picture', 'link', 'hr']],
+        ['table', ['table']],
+        ['view', ['codeview']]
+    ];
+}
+
+function initEditor() {
     $htmlEditor.summernote({
         focus: true,
         height: "100%",
-        /*toolbar: [
-            ['style', ['style']],
-            ['style', ['bold', 'italic', 'underline', 'clear']],
-            ['fontsize', ['fontsize']],
-            ['color', ['color']],
-            ['para', ['ul', 'ol', 'paragraph']],
-            ['height', ['height']],
-            ['insert', ['picture', 'link']],
-            ['table', ['table']],
-            ['view', ['codeview']]
-        ],*/
+        toolbar: toolbar,
         onkeyup: function() {
             contentVersion++;
+//            window.parent.postMessage('par1', '*');
         }
     });
-}
-
-function getParameterByName(name) {
-    name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
-    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
-        results = regex.exec(location.search);
-    return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
-}
-
-function init() {
-    var filePath = getParameterByName("cp");
-    $.ajax({
-        url: "file://"+filePath,
-        type: 'POST'
-    })
-        .done(function(data) {
-            originalContent = data;
-            cleanContent(data);
-        })
-        .fail(function(data) {
-            console.log("AJAX failed "+data);
-        });
-}
-
-var originalContent;
-function getOriginalContent() {
-    return originalContent;
 }
 
 var contentVersion = 0;
@@ -57,23 +49,14 @@ function getContentVersion() {
     return contentVersion;
 }
 
-function cleanContent(content) {
-    var bodyRegex = /\<body[^>]*\>([^]*)\<\/body/m;
-    var bodyContent = undefined;
-
-    try {
-        bodyContent = content.match( bodyRegex )[1];
-    } catch(e) {
-        console.log("Error parsing HTML document. "+e);
-        alert("Document could not be proceeded, probably a body tag was! ","Error parsing HTML document");
+function setContent(content) {
+    resetContentVersion();
+    $htmlEditor = $('#htmlEditor');
+    $htmlEditor.append(content);
+    // Check if summernote is loaded
+    if(typeof $htmlEditor.summernote === 'function') {
+        initEditor();
+    } else {
+        // window.setTimeout(initEditor(), 1000);
     }
-
-//        var titleRegex = /\<title[^>]*\>([^]*)\<\/title/m;
-//        var titleContent = content.match( titleRegex )[1];
-
-    // removing all scripts from the document
-    var cleanedBodyContent = bodyContent.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,"");
-    initEditor(cleanedBodyContent)
 }
-
-init();
