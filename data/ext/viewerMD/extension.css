@@ -111,3 +111,31 @@
 .viewerMDContainer blockquote{margin:1em 0;border-left:5px solid #ddd;padding-left:.6em;color:#555;}
 .viewerMDContainer dt{font-weight:bold;margin-left:1em;}
 .viewerMDContainer dd{margin-left:2em;margin-bottom:1em;}
+
+.zoomSmallest {
+    zoom:70%;
+}
+
+.zoomSmaller {
+    zoom:80%;
+}
+
+.zoomSmall {
+    zoom:90%;
+}
+
+.zoomDefault {
+    zoom:100%;
+}
+
+.zoomLarge {
+    zoom:110%;
+}
+
+.zoomLarger {
+    zoom:120%;
+}
+
+.zoomLargest {
+    zoom:130%;
+}
