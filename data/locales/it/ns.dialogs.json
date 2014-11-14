@@ -7,7 +7,7 @@
     "enableLocalStorageAlert": "Abilita il supporto allo Storage Locale nel tuo browser per usare TagSpaces!",
     "closingEditedFileConfirm": "Tutte le modifiche non salvate andranno perse! Vuoi continuare?",
     "closingEditedFileTitleConfirm": "Conferma Chiusura File",
-    "closingEditedFileContentConfirm": "Se confermi, tutte le modifiche andranno perdute.",
+    "closingEditedFileContentConfirm": "Se confermi, tutte le modifiche andranno perse.",
     "fileDeleteTitleConfirm": "Elimina File(s)",
     "fileDeleteContentConfirm": "Il file __filePath__ sarà eliminato e non sarà possibile recuperarlo. Vuoi continuare?",
     "fileSaveTitleConfirm": "Conferma Salvataggio File",
@@ -118,8 +118,8 @@
     "saveDocumentKeyBinding": "Salva Documento",
     "nextDocumentKeyBinding": "Prossimo Documento",
     "prevDocumentKeyBinding": "Documento Precedente",
-    "editDocumentKeyBinding": "Edit Document",
-    "addRemoveTagsKeyBinding": "Add / Remove Tags",
+    "editDocumentKeyBinding": "Modifica Documento",
+    "addRemoveTagsKeyBinding": "Aggiungi / Rimuovi Tags",
     "perspectivesHelp": "I cambiamenti fatti in questa tab saranno effettivi dopo il riavvio della applicazione.",
     "addPerspectiveButton": "Aggiungi nuova prospettiva",
     "addNewFileExtensionButton": "Aggiungi nuova estensione file",
@@ -137,6 +137,6 @@
     "locationNameHelp": "Location name should be at least one character long",
     "tagGroupNameHelp": "Tag group name should be at least one character long",
     "operationNotPermittedInEditModeAlert": "This operation is not permitted because the document has been already changed.",
-    "exportTagGroupsButton": "Export Tag Groups as JSON",
+    "exportTagGroupsButton": "Esporta Gruppi di Tag come file JSON",
     "-": "-"
 }
