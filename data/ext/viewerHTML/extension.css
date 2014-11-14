@@ -56,3 +56,9 @@
 .zoomLargest {
     zoom:130%;
 }
+
+@media print {
+    #viewerHTML {
+        display: none;
+    }
+}

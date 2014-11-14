@@ -46,21 +46,6 @@ define(function(require, exports, module) {
             })
         );
 
-        $iframeViewer = $("#iframeViewer");
-        if($iframeViewer != undefined) {
-            var $iframeViewerHead = $iframeViewer.contents().find('head');
-            $iframeViewerHead.append($('<link/>', { rel: 'stylesheet', href: extensionDirectory+'/extension.css' }));
-            $iframeViewerHead.append($('<link/>', { rel: 'stylesheet', href: extensionDirectory+'/../../libs/bootstrap/css/bootstrap.css' }));
-            $iframeViewerHead.append($('<link/>', { rel: 'stylesheet', href: extensionDirectory+'/../../libs/font-awesome/css/font-awesome.css' }));
-            $iframeViewerHead.append($('<link/>', { rel: 'stylesheet', href: extensionDirectory+'/css/markdown.css' }));
-            $iframeViewerHead.append($('<link/>', { rel: 'stylesheet', href: extensionDirectory+'/css/github.css' }));
-            $iframeViewerHead.append($('<link/>', { rel: 'stylesheet', href: extensionDirectory+'/css/haroopad.css' }));
-            $iframeViewerHead.append($('<link/>', { rel: 'stylesheet', href: extensionDirectory+'/css/metro-vibes.css' }));
-            $iframeViewerHead.append($('<link/>', { rel: 'stylesheet', href: extensionDirectory+'/css/solarized-dark.css' }));
-            $iframeViewerHead.append($('<link/>', { rel: 'stylesheet', href: extensionDirectory+'/css/clearness.css' }));
-            $iframeViewerHead.append($('<link/>', { rel: 'stylesheet', href: extensionDirectory+'/css/clearness-dark.css' }));
-        }
-
         require([
                 "text!"+extensionDirectory+'/mainUI.html'
         ], function(uiTPL) {
@@ -69,32 +54,52 @@ define(function(require, exports, module) {
 
             TSCORE.IO.loadTextFile(filePath);
         });
-
     };
 
+    // set readonly
     exports.setFileType = function(fileType) {
         console.log("setFileType not supported on this extension");
     };
 
     exports.viewerMode = function(isViewerMode) {
-        // set readonly
     };
 
     exports.setContent = function(content) {
-        // removing the script tags from the content
         var cleanedContent = content.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,"");
-        var $iframeViewer = $("#iframeViewer");
+        $iframeViewer = $("#iframeViewer");
 
         var fileDirectory = TSCORE.TagUtils.extractContainingDirectoryPath(currentFilePath);
 
-        var styles = ['','github','haroopad','metro-vibes','solarized-dark','clearness','clearness-dark'];
+        if($iframeViewer != undefined) {
+            var $iframeViewerHead = $iframeViewer.contents().find('head');
+            $iframeViewerHead.append($('<link/>', { rel: 'stylesheet', href: extensionDirectory+'/extension.css' }));
+            $iframeViewerHead.append($('<link/>', { rel: 'stylesheet', href: extensionDirectory+'/../../libs/bootstrap/css/bootstrap.css' }));
+            $iframeViewerHead.append($('<link/>', { rel: 'stylesheet', href: extensionDirectory+'/../../libs/font-awesome/css/font-awesome.css' }));
+            $iframeViewerHead.append($('<link/>', { rel: 'stylesheet', href: extensionDirectory+'/css/markdown.css' }));
+            $iframeViewerHead.append($('<link/>', { rel: 'stylesheet', href: extensionDirectory+'/css/github.css' }));
+            //$iframeViewerHead.append($('<link/>', { rel: 'stylesheet', href: extensionDirectory+'/css/haroopad.css' }));
+            $iframeViewerHead.append($('<link/>', { rel: 'stylesheet', href: extensionDirectory+'/css/metro-vibes.css' }));
+            $iframeViewerHead.append($('<link/>', { rel: 'stylesheet', href: extensionDirectory+'/css/solarized-dark.css' }));
+            $iframeViewerHead.append($('<link/>', { rel: 'stylesheet', href: extensionDirectory+'/css/clearness.css' }));
+            $iframeViewerHead.append($('<link/>', { rel: 'stylesheet', href: extensionDirectory+'/css/clearness-dark.css' }));
+            $iframeViewerHead.append($('<script>', { type: 'text/javascript', src: extensionDirectory+'/readability/readability.js' }));
+        }
+
+        var styles = ['','solarized-dark','github','metro-vibes','clearness','clearness-dark'];
         var currentStyleIndex = 0;
+
+        var zoomSteps = ['zoomSmallest','zoomSmaller','zoomSmall','zoomDefault','zoomLarge','zoomLarger','zoomLargest'];
+        var currentZoomState = 3;
 
         if($iframeViewer != undefined) {
             var $iframeViewerBody = $iframeViewer.contents().find('body');
             $iframeViewerBody.children().remove();
-            $iframeViewerBody.append($('<div/>', { id: 'htmlContent', class: "markdown" }).append(cleanedContent));
+            $iframeViewerBody.append($('<div/>', { id: 'htmlContent' }).append(cleanedContent));
             $iframeViewerBody.append(viewerToolbar);
+
+            if(isCordova) {
+                $iframeViewerBody.find( "#printButton").hide();
+            }
 
             var $iframeHTMLContent = $iframeViewer.contents().find('#htmlContent');
 
@@ -108,18 +113,26 @@ define(function(require, exports, module) {
                 $iframeHTMLContent.addClass(styles[currentStyleIndex]);
             });
 
-            $iframeViewerBody.find( "#increaseFontSizeButton" ).bind('click', function(e){
+            $iframeViewerBody.find( "#zoomInButton" ).bind('click', function(){
+                currentZoomState++;
+                if(currentZoomState >= zoomSteps.length) {
+                    currentZoomState = 6;
+                }
                 $iframeHTMLContent.removeClass();
-                $iframeHTMLContent.addClass('markdown');
-                $iframeHTMLContent.addClass(styles[currentStyleIndex]);
-                $iframeHTMLContent.addClass('zoomLarger');
+                $iframeHTMLContent.addClass('markdown '+styles[currentStyleIndex]+" "+zoomSteps[currentZoomState]);
             });
 
-            $iframeViewerBody.find( "#decreaseFontSizeButton" ).bind('click', function(e){
+            $iframeViewerBody.find( "#zoomOutButton" ).bind('click', function(){
+                currentZoomState--;
+                if(currentZoomState < 0) {
+                    currentZoomState = 0;
+                }
                 $iframeHTMLContent.removeClass();
-                $iframeHTMLContent.addClass('markdown');
-                $iframeHTMLContent.addClass(styles[currentStyleIndex]);
-                $iframeHTMLContent.addClass('zoomDefault');
+                $iframeHTMLContent.addClass('markdown '+styles[currentStyleIndex]+" "+zoomSteps[currentZoomState]);
+            });
+
+            $iframeViewerBody.find( "#printButton" ).bind('click', function(){
+                document.getElementById("iframeViewer").contentWindow.print();
             });
 
             // making all links open in the user default browser
