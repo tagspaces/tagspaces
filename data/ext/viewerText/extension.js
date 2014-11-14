@@ -58,6 +58,7 @@ define(function(require, exports, module) {
         if(isNode) {
             $containerElement.append($('<button/>', {
                 class: 'btn btn-warning',
+                style: 'margin: 5px;',
                 text: 'Open Natively'
             }).on("click", function(){
                 TSCORE.IO.openFile(filePath)
