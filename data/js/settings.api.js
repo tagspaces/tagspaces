@@ -281,6 +281,12 @@
                 addToSettingsArray(exports.Settings.ootbEditors,"editorJSON");
             }
 
+            if(oldBuildNumber <= 201410020000) {
+                updateFileType({ "type": "json",    "viewer": "editorJSON", "editor": "editorJSON" });
+                updateFileType({ "type": "html",    "viewer": "viewerHTML", "editor": "editorHTML" });
+                updateFileType({ "type": "htm",     "viewer": "viewerHTML", "editor": "editorHTML" });
+            }
+
             saveSettings();         
         }
 
@@ -363,10 +369,7 @@
     };
     
     var getEditorExtensions = function() {
-        if(exports.Settings.ootbEditors === undefined) {
-            exports.Settings.ootbEditors = exports.DefaultSettings.ootbEditors;
-        }
-        return exports.Settings.ootbEditors;
+        return exports.DefaultSettings.ootbEditors;
     };   
     
     var getPerspectives = function() {
