@@ -52,16 +52,21 @@ define(function(require, exports, module) {
 	        	})
 	        );
 	     	TSCORE.IO.loadTextFile(filePath);
-        } else if(fileExt.indexOf("mht") == 0 && isChrome) {
+        } else if(fileExt.indexOf("mht") == 0 && (isChrome || isNode)) {
             $containerElement.append($('<button>', {
-                    //href: filePathURI,
-                    class: "btn btn-warning",
-                    //target: "_blank",
+                    class: "btn btn-primary",
+                    style: "margin: 5px;",
                     text: "Open in new window"
                 }).click(function() {
                    // if(isNode) {
                         window.open(filePathURI,'_blank');
                    // }
+                })
+            );
+            $containerElement.append($('<div>', {
+                    class: "alert alert-info",
+                    style: "margin: 5px; font-size: 14px;",
+                    text: "For security reasons, opening of MHT files in iframes has been disabled in Chrome, so to open this MHT file, press the button above. This issue will be solved soon, with a custom MHT viewer."
                 })
             );
         } else {
