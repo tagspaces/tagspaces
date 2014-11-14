@@ -1,12 +1,49 @@
-#viewerImage .iconBackground {
+@media print {
+    #Toolbar {
+        display: none;
+    }
+}
+
+body, html {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+#viewerImage  {
+    width: 100% !important;
+    height: 100% !important;
+    overflow: hidden;
+    position: relative;
+    background-color: white;
+}
+
+#imageContainer {
+    width: 100% !important;
+    height: 100% !important;
+    position: relative;
+}
+
+#viewerImage #Image {
+    max-width: 100%;
+    max-height: 100%;
+    display: block;
+    margin:auto;
+}
+
+#imgViewer {
+    width: 100%;
+    height: 100%;
+}
+
+.iconBackground {
     color: rgba(0,0,0,0.8);
 }
 
-#viewerImage .iconForeground {
+.iconForeground {
     color: #f2f2f2;
 }
 
-#viewerImage #viewerImageToolbar {
+#Toolbar {
     padding: 2px;
     background-color: transparent;
     z-index: 9999999;
@@ -15,21 +52,23 @@
     right: 0;
 }
 
-#viewerImage .rotate90 {
+.rotate90 {
     -webkit-transform: rotate(90deg);
     -moz-transform: rotate(90deg);
     -ms-transform: rotate(90deg);
     -o-transform: rotate(90deg);
     transform: rotate(90deg);
 }
-#viewerImage .rotate180 {
+
+.rotate180 {
     -webkit-transform: rotate(180deg);
     -moz-transform: rotate(180deg);
     -ms-transform: rotate(180deg);
     -o-transform: rotate(180deg);
     transform: rotate(180deg);
 }
-#viewerImage .rotate270 {
+
+.rotate270 {
     -webkit-transform: rotate(270deg);
     -moz-transform: rotate(270deg);
     -ms-transform: rotate(270deg);
@@ -37,27 +76,27 @@
     transform: rotate(270deg);
 }
 
-#viewerImage .makeBlackAndWhite {
+.makeBlackAndWhite {
     -webkit-filter: grayscale(100%);
     -moz-filter: grayscale(100%);
 }
 
-#viewerImage .makeSepia {
+.makeSepia {
     -webkit-filter: sepia(100%);
     -moz-filter: sepia(100%);
 }
 
-#viewerImage .make50Dark {
+.make50Dark {
     -webkit-filter: brightness(50%);
     -moz-filter: brightness(50%);
 }
 
-#viewerImage .increaseContrast {
+.increaseContrast {
     -webkit-filter: contrast(200%);
     -moz-filter: contrast(200%);
 }
 
-#viewerImage .blur {
+.blur {
     -webkit-filter: blur(5px);
     -moz-filter: blur(5px);
 }

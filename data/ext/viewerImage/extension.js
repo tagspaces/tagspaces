@@ -20,12 +20,26 @@ define(function(require, exports, module) {
 	
 	var extensionDirectory = TSCORE.Config.getExtensionPath()+"/"+extensionID;
 	var UI;
-	   
+
+	var currentFilePath,
+		$containerElement;
 	   
 	exports.init = function(filePath, elementID) {
 	    console.log("Initalization Browser Image Viewer...");
 
-		require([
+		$containerElement = $('#'+elementID);
+		currentFilePath = filePath;
+
+		$containerElement.append($('<iframe>', {
+			id: "iframeViewer",
+			sandbox: "allow-same-origin allow-scripts",
+			scrolling: "no",
+			style: "background-color: white; overflow: hidden; width: 100%; height: 100%;",
+			src: extensionDirectory+"/index.html?cp="+filePath,
+			"nwdisable": "",
+			"nwfaketop": ""
+		}));
+		/*require([
               extensionDirectory+'/viewerUI.js',
               "text!"+extensionDirectory+'/mainUI.html',
               'css!'+extensionDirectory+'/extension.css',
@@ -39,7 +53,6 @@ define(function(require, exports, module) {
 
                 // TODO remove tmp solution for memory leak prevention
                 UI = null;
-
                 /*
                 loadImage(
                 	    filePath,
@@ -58,14 +71,10 @@ define(function(require, exports, module) {
             	            );                	        
                 	    },
                 	    {
-                	        maxWidth: 600,
-                	        maxHeight: 300,
-                	        minWidth: 100,
-                	        minHeight: 50,
-                	        canvas: true
+                	        maxWidth: 600,maxHeight: 300,minWidth: 100,minHeight: 50,canvas: true
                 	    }
                 	); */
-		});
+		//});
 	};
 	
 	exports.viewerMode = function(isViewerMode) {

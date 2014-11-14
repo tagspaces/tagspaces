@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html dir="ltr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <script type="text/javascript" src="../../libs/jquery/jquery-2.1.1.min.js"></script>
+    <script type="text/javascript" src="jquery.panzoom/jquery.panzoom.min.js"></script>
+    <script type="text/javascript" src="jquery.mousewheel/jquery.mousewheel.min.js"></script>
+    <script type="text/javascript" src="../../libs/bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="viewer.js"></script>
+    <link rel="stylesheet" href="extension.css" />
+    <link rel="stylesheet" href="../../libs/bootstrap/css/bootstrap.css" />
+    <link rel="stylesheet" href="../../libs/font-awesome/css/font-awesome.css" />
+</head>
+<body id="viewerImage">
+    <div class="btn-toolbar" id="Toolbar">
+        <div class="btn-group">
+            <button class="btn btn-link btn-lg" id="zoomOutButton"><span class="fa-stack">
+                <i class="fa fa-circle fa-stack-base fa-stack-2x iconBackground"></i><i class="fa fa-search-minus fa-stack-1x iconForeground"></i></span></button>
+            <button class="btn btn-link btn-lg" id="zoomInButton"><span class="fa-stack">
+                <i class="fa fa-circle fa-stack-base fa-stack-2x iconBackground"></i><i class="fa fa-search-plus fa-stack-1x iconForeground"></i></span></button>
+            <button class="btn btn-link btn-lg" id="zoomResetButton"><span class="fa-stack">
+                <i class="fa fa-circle fa-stack-base fa-stack-2x iconBackground"></i><i class="fa fa-search fa-stack-1x iconForeground"></i></span></button>
+            <button class="btn btn-link btn-lg" id="rotateRightButton"><span class="fa-stack">
+                <i class="fa fa-circle fa-stack-base fa-stack-2x iconBackground"></i><i class="fa fa-rotate-right fa-stack-1x iconForeground"></i></span></button>
+            <button class="btn btn-link btn-lg" id="rotateLeftButton"><span class="fa-stack">
+                <i class="fa fa-circle fa-stack-base fa-stack-2x iconBackground"></i><i class="fa fa-rotate-left fa-stack-1x iconForeground"></i></span></button>
+            <button class="btn btn-link btn-lg" id="printButton"><span class="fa-stack">
+                <i class="fa fa-circle fa-stack-base fa-stack-2x iconBackground"></i><i class="fa fa-print fa-stack-1x iconForeground"></i></span></button>
+        </div>
+    </div>
+    <div id="imageContainer">
+        <div id="imgViewer"></div>
+    </div>
+</body>
+</html>
