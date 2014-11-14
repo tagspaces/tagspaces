@@ -15,7 +15,6 @@ define(function(require, exports, module) {
     var TSPOSTIO = require("tspostioapi");
 
     var win = gui.Window.get();
-
     var rootMenu = new gui.Menu({ type: 'menubar'});
     var aboutMenu = new gui.Menu();
     var viewMenu = new gui.Menu();
@@ -79,8 +78,7 @@ define(function(require, exports, module) {
     };
 
     var initMainMenu = function() {
-
-        if(win.menu === undefined) {
+        if(win.menu === undefined && isWin) { // disable menubar on linux due a issue in nw
             win.menu = rootMenu;
 
             // TODO Clear the menu on reload
@@ -137,6 +135,7 @@ define(function(require, exports, module) {
                 }));
 
                 rootMenu.append(new gui.MenuItem({
+                    type: 'normal',
                     label: 'Help',
                     submenu: aboutMenu
                 }));
