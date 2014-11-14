@@ -75,8 +75,6 @@ define(function(require, exports, module) {
             $iframeViewer = $("#iframeViewer");
             $iframeViewerBody = $iframeViewer.contents().find('body');
 
-
-
             TSCORE.IO.loadTextFile(filePath);
         });
     };
@@ -122,22 +120,22 @@ define(function(require, exports, module) {
             $iframeViewerHead.append($('<link/>', { rel: 'stylesheet', href: extensionDirectory+'/css/clearness-dark.css' }));
 
             $iframeViewerBody.children().remove();
-            $iframeViewerBody.append($('<div/>', { id: 'htmlContent', class: "markdown" }).append(mdContent));
+            $iframeViewerBody.append($('<div/>', { id: 'viewerContent', class: "markdown" }).append(mdContent));
             $iframeViewerBody.append(viewerToolbar);
 
             if(isCordova) {
                 $iframeViewerBody.find( "#printButton").hide();
             }
 
-            var $iframeHTMLContent = $iframeViewer.contents().find('#htmlContent'); // //"viewerMDContainer"
+            var $viewerContent = $iframeViewer.contents().find('#viewerContent'); 
 
             $iframeViewerBody.find( "#changeStyleButton" ).bind('click', function(){
                 currentStyleIndex = currentStyleIndex + 1;
                 if(currentStyleIndex >= styles.length) {
                     currentStyleIndex = 0;
                 }
-                $iframeHTMLContent.removeClass();
-                $iframeHTMLContent.addClass('markdown '+styles[currentStyleIndex]+" "+zoomSteps[currentZoomState]);
+                $viewerContent.removeClass();
+                $viewerContent.addClass('markdown '+styles[currentStyleIndex]+" "+zoomSteps[currentZoomState]);
             });
 
             $iframeViewerBody.find( "#zoomInButton" ).bind('click', function(e){
@@ -145,8 +143,8 @@ define(function(require, exports, module) {
                 if(currentZoomState >= zoomSteps.length) {
                     currentZoomState = 6;
                 }
-                $iframeHTMLContent.removeClass();
-                $iframeHTMLContent.addClass('markdown '+styles[currentStyleIndex]+" "+zoomSteps[currentZoomState]);
+                $viewerContent.removeClass();
+                $viewerContent.addClass('markdown '+styles[currentStyleIndex]+" "+zoomSteps[currentZoomState]);
             });
 
             $iframeViewerBody.find( "#zoomOutButton" ).bind('click', function(e){
@@ -154,14 +152,14 @@ define(function(require, exports, module) {
                 if(currentZoomState < 0) {
                     currentZoomState = 0;
                 }
-                $iframeHTMLContent.removeClass();
-                $iframeHTMLContent.addClass('markdown '+styles[currentStyleIndex]+" "+zoomSteps[currentZoomState]);
+                $viewerContent.removeClass();
+                $viewerContent.addClass('markdown '+styles[currentStyleIndex]+" "+zoomSteps[currentZoomState]);
             });
 
             $iframeViewerBody.find( "#zoomResetButton" ).bind('click', function(e){
                 currentZoomState = 3;
-                $iframeHTMLContent.removeClass();
-                $iframeHTMLContent.addClass('markdown '+styles[currentStyleIndex]+" "+zoomSteps[currentZoomState]);
+                $viewerContent.removeClass();
+                $viewerContent.addClass('markdown '+styles[currentStyleIndex]+" "+zoomSteps[currentZoomState]);
             });
 
             $iframeViewerBody.find( "#printButton" ).bind('click', function(e){
