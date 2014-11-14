@@ -10,7 +10,7 @@ var toolbar = [
     ['height', ['height']],
     ['table', ['table']],
     ['insert', ['link', 'picture', 'video', 'hr']],
-    ['view', ['fullscreen', 'codeview']],
+    ['view', ['codeview']], // 'fullscreen',
     ['help', ['help']]
 ];
 
