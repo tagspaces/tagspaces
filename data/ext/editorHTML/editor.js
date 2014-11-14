@@ -9,7 +9,7 @@ var toolbar = [
     ['para', ['ul', 'ol', 'paragraph']],
     ['height', ['height']],
     ['table', ['table']],
-    ['insert', ['link', 'picture', 'video', 'hr']],
+    ['insert', ['link', 'picture', 'hr']], // 'video',
     ['view', ['codeview']], // 'fullscreen',
     ['help', ['help']]
 ];
