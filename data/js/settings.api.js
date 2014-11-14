@@ -744,15 +744,15 @@
     };   
         
     var getNewTextFileContent = function() {
-        return exports.Settings.newTextFileContent;
+        return exports.DefaultSettings.newTextFileContent;
     };
     
     var getNewHTMLFileContent = function() {
-        return exports.Settings.newHTMLFileContent;
+        return exports.DefaultSettings.newHTMLFileContent;
     };
     
     var getNewMDFileContent = function() {
-        return exports.Settings.newMDFileContent;
+        return exports.DefaultSettings.newMDFileContent;
     };
     
     //////////////////// API methods ///////////////////
