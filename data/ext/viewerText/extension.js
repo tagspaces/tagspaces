@@ -57,7 +57,7 @@ define(function(require, exports, module) {
         $containerElement.css("background-color","darkgray");
         if(isNode) {
             $containerElement.append($('<button/>', {
-                class: 'btn btn-warning',
+                class: 'btn btn-primary',
                 style: 'margin: 5px;',
                 text: 'Open Natively'
             }).on("click", function(){
