@@ -53,7 +53,7 @@ define(function(require, exports, module) {
 
         if(urlRegExp.test(url)) {
             $('#'+containerElID).append($("<button>", {
-                "class":     "viewerURLButton btn",
+                "class":     "viewerURLButton btn btn-primary",
                 "data-url":  url,
                 "text":      url
             })
