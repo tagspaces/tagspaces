@@ -86,7 +86,15 @@ define(function(require, exports, module) {
         // removing all scripts from the document
         var cleanedBodyContent = bodyContent.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,"");
 
-        document.getElementById("iframeViewer").contentWindow.setContent(cleanedBodyContent);
+        var contentWindow = document.getElementById("iframeViewer").contentWindow;
+        if(typeof contentWindow.setContent === "function") {
+            contentWindow.setContent(cleanedBodyContent);
+        } else {
+            // TODO optimize setTimeout
+            window.setTimeout(function() {
+                contentWindow.setContent(cleanedBodyContent);
+            }, 500);
+        }
     };
 
     var contentVersion = 0;
