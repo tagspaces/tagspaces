@@ -82,7 +82,7 @@ define(function(require, exports, module) {
             $iframeViewerHead.append($('<link/>', { rel: 'stylesheet', href: extensionDirectory+'/css/solarized-dark.css' }));
             $iframeViewerHead.append($('<link/>', { rel: 'stylesheet', href: extensionDirectory+'/css/clearness.css' }));
             $iframeViewerHead.append($('<link/>', { rel: 'stylesheet', href: extensionDirectory+'/css/clearness-dark.css' }));
-            $iframeViewerHead.append($('<script>', { type: 'text/javascript', src: extensionDirectory+'/readability/readability.js' }));
+            //$iframeViewerHead.append($('<script>', { type: 'text/javascript', src: extensionDirectory+'/readability/readability.js' }));
         }
 
         var styles = ['','solarized-dark','github','metro-vibes','clearness','clearness-dark'];
@@ -108,6 +108,8 @@ define(function(require, exports, module) {
                 if(currentStyleIndex >= styles.length) {
                     currentStyleIndex = 0;
                 }
+                $iframeViewerBody.css("padding","0");
+                $iframeViewerBody.css("margin","0");
                 $iframeHTMLContent.removeClass();
                 $iframeHTMLContent.addClass('markdown');
                 $iframeHTMLContent.addClass(styles[currentStyleIndex]);
