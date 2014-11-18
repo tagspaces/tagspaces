@@ -58,7 +58,7 @@ define(function(require, exports, module) {
             TSCORE.PerspectiveManager.updateFileUI(oldFilePath, newFilePath);            
         } 
         TSCORE.hideWaitingDialog();
-        TSCORE.PerspectiveManager.clearSelectedFiles();
+        //TSCORE.PerspectiveManager.clearSelectedFiles();
     };
 
     exports.renameDirectory = function(dirOldPath, dirNewPath) {
