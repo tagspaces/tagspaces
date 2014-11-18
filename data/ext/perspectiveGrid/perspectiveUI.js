@@ -51,7 +51,7 @@ console.log("Loading UI for perspectiveDefault");
                <button class="btn btn-sm tagButton fileTagsTile" tag="{{tag}}" filepath="{{filepath}}" style="{{style}}">{{tag}} <span class="caret"></span></button>\
                {{/each}}\
                </span><span class="fileExtTile">{{fileext}}</span>\
-               <button class="btn btn-link fileTileSelector" filepath="{{filepath}}"><i class="fa fa-square-o fa-lg"></i></button></p></li>');
+               <button class="btn btn-link fileTileSelector" filepath="{{filepath}}"><i class="fa {{selected}} fa-lg"></i></button></p></li>');
     
     var fileTileTmbTmpl = Handlebars.compile('<li title="{{filepath}}" filepath="{{filepath}}" class="fileTile">\
                <span><img class="thumbImgTile" filepath="{{tmbpath}}" style="max-width: 200px; max-height: 200px;" src=""></span>\
@@ -60,9 +60,9 @@ console.log("Loading UI for perspectiveDefault");
                <button class="btn btn-sm tagButton fileTagsTile" tag="{{tag}}" filepath="{{filepath}}" style="{{style}}">{{tag}} <span class="caret"></span></button>\
                {{/each}}\
                </span><span class="fileExtTile">{{fileext}}</span>\
-               <button class="btn btn-link fileTileSelector" filepath="{{filepath}}"><i class="fa fa-square-o fa-lg"></i></button></p></li>');
+               <button class="btn btn-link fileTileSelector" filepath="{{filepath}}"><i class="fa {{selected}} fa-lg"></i></button></p></li>');
     
-    ExtUI.prototype.createFileTile = function(title, filePath, fileExt, fileTags) {
+    ExtUI.prototype.createFileTile = function(title, filePath, fileExt, fileTags, isSelected) {
         //TODO minimize platform specific calls     
         var tmbPath = undefined;
         if(isCordova || isWeb) {
@@ -76,7 +76,8 @@ console.log("Loading UI for perspectiveDefault");
                 tmbpath: tmbPath, 
                 fileext: fileExt, 
                 title: title,
-                tags : []    
+                tags : [],
+                selected: isSelected?"fa-check-square-o":"fa-square-o"
         };
         
         if(fileTags.length > 0) {
@@ -651,6 +652,9 @@ console.log("Loading UI for perspectiveDefault");
     ExtUI.prototype.removeFileUI = function(filePath) {
         console.log("Removing "+filePath+" from UI");
 
+        // Updating the file selection
+        TSCORE.selectedFiles.splice(TSCORE.selectedFiles.indexOf(oldFilePath), 1);
+
         if(isWin && !isWeb) {
             filePath = filePath.replace("\\","");
             $("#"+this.extensionID+"Container li[filepath]").each(function() {
@@ -665,6 +669,11 @@ console.log("Loading UI for perspectiveDefault");
     
     ExtUI.prototype.updateFileUI = function(oldFilePath, newFilePath) {
         console.log("Updating file in UI");
+
+        // Updating the file selection
+        TSCORE.selectedFiles.splice(TSCORE.selectedFiles.indexOf(oldFilePath), 1);
+        TSCORE.selectedFiles.push(newFilePath);
+
         var title = TSCORE.TagUtils.extractTitle(newFilePath),
             fileExt = TSCORE.TagUtils.extractFileExtension(newFilePath),
             fileTags = TSCORE.TagUtils.extractTags(newFilePath);
@@ -682,7 +691,7 @@ console.log("Loading UI for perspectiveDefault");
             $fileTile = $("#"+this.extensionID+"Container li[filepath='"+oldFilePath+"']");
         }   
 
-        $fileTile.replaceWith(this.createFileTile(title, newFilePath, fileExt, fileTags));
+        $fileTile.replaceWith(this.createFileTile(title, newFilePath, fileExt, fileTags, true));
         this.refreshThumbnails();
         this.assingFileTileHandlers($fileTile);
     };    

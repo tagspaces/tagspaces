@@ -409,15 +409,15 @@ console.log("Loading UI for perspectiveList");
         this.refreshThumbnails();
     };
 
-    var buttonCompTmpl = Handlebars.compile('<button filepath="{{filepath}}" class="btn btn-link fileSelection"><i class="fa fa-square-o fa-fw fa-lg"></i></button>' +
+    var buttonCompTmpl = Handlebars.compile('<button filepath="{{filepath}}" class="btn btn-link fileSelection"><i class="fa {{selected}} fa-fw fa-lg"></i></button>' +
         '<button filepath="{{filepath}}" class="btn btn-link fileTitleButton"><span class="fileExt"><span>{{fileext}}</span>&nbsp;<span class="caret white-caret"></span></span></button>');
 
-    var buttonCompTmbTmpl = Handlebars.compile('<button filepath="{{filepath}}" class="btn btn-link fileSelection"><i class="fa fa-square-o fa-fw fa-lg"></i></button>' +
+    var buttonCompTmbTmpl = Handlebars.compile('<button filepath="{{filepath}}" class="btn btn-link fileSelection"><i class="fa {{selected}} fa-fw fa-lg"></i></button>' +
         '<button filepath="{{filepath}}" class="btn btn-link fileTitleButton"><span class="fileExt"><span>{{fileext}}</span>&nbsp;<span class="caret white-caret"></span></span></button>' +
         '<br><img class="thumbImg" filepath="{{tmbpath}}" style="width: 0; height: 0; border: 0" src="">');
     
     // Helper function user by basic and search views
-    ExtUI.prototype.buttonizeTitle = function(title, filePath, fileExt) {
+    ExtUI.prototype.buttonizeTitle = function(title, filePath, fileExt, isSelected) {
         if(title.length < 1) {
             title = filePath;
         }
@@ -433,7 +433,8 @@ console.log("Loading UI for perspectiveList");
         var context = {
                     filepath: filePath,
                     tmbpath: tmbPath,
-                    fileext: fileExt
+                    fileext: fileExt,
+                    selected: isSelected?"fa-check-square-o":"fa-square-o"
                 };
         
         if(supportedFileTypeThumnailing.indexOf(fileExt) >= 0) {
@@ -566,6 +567,9 @@ console.log("Loading UI for perspectiveList");
     ExtUI.prototype.removeFileUI = function(filePath) {
         console.log("Removing from UI"+filePath+" from UI");
 
+        // Updating the file selection
+        TSCORE.selectedFiles.splice(TSCORE.selectedFiles.indexOf(oldFilePath), 1);
+
         var row4remove;
         if(isWin && !isWeb) {
             filePath = filePath.replace("\\","");
@@ -584,7 +588,11 @@ console.log("Loading UI for perspectiveList");
 
     ExtUI.prototype.updateFileUI = function(oldFilePath, newFilePath) {
         console.log("Updating UI for oldfile "+oldFilePath+" newfile "+newFilePath);
-        
+
+        // Updating the file selection
+        TSCORE.selectedFiles.splice(TSCORE.selectedFiles.indexOf(oldFilePath), 1);
+        TSCORE.selectedFiles.push(newFilePath);
+
         var title = TSCORE.TagUtils.extractTitle(newFilePath),
             fileExt = TSCORE.TagUtils.extractFileExtension(newFilePath),
             fileTags = TSCORE.TagUtils.extractTags(newFilePath);
@@ -602,7 +610,7 @@ console.log("Loading UI for perspectiveList");
             $fileRow = $("#"+this.extensionID+"Container button[filepath='"+oldFilePath+"']").parent().parent();
         }                           
 
-        $($fileRow.find("td")[0]).empty().append(this.buttonizeTitle(title,newFilePath,fileExt));
+        $($fileRow.find("td")[0]).empty().append(this.buttonizeTitle(title,newFilePath,fileExt,true));
         $($fileRow.find("td")[1]).text(title);
         $($fileRow.find("td")[2]).empty().append(TSCORE.generateTagButtons(fileTags,newFilePath));
 
