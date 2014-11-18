@@ -36,6 +36,7 @@ $(document).ready(function() {
 
     $imgViewer.append($('<img>', {
             src: filePath,
+            style: "background: repeating-linear-gradient(45deg, #d5d5d5, #d5d5d5 10px, #a7a7a7 10px, #a7a7a7 20px)",
             id: "Image"
         })
     );
