@@ -27,8 +27,8 @@ body, html {
 }
 
 #viewerContent {
-    width: 100% !important;
-    height: 100% !important;
+    /*width: 100% !important;
+    height: 100% !important;*/
     padding: 10px;
     user-select: text;
     -webkit-user-select: text;
