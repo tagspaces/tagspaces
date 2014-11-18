@@ -336,14 +336,14 @@ define(function(require, exports, module) {
             //console.log("Selected File: "+$("#addFileInput").val());
             var file = selection.currentTarget.files[0];
             //console.log("Selected File: "+JSON.stringify(selection.currentTarget.files[0]));
-            addFileInputName = file.name;
+            addFileInputName = decodeURIComponent(file.name);
             var reader = new FileReader();
             reader.onload = onFileReadComplete;
             reader.readAsBinaryString(file);
         });
 
         function onFileReadComplete(event) {
-            //console.log(JSON.stringify(event.currentTarget.result));
+            console.log("Content on file read complete: "+JSON.stringify(event));
             TSCORE.IO.saveBinaryFile(TSCORE.currentPath+TSCORE.dirSeparator+addFileInputName, event.currentTarget.result);
             addFileInputName = undefined;
         }
