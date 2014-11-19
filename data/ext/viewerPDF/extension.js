@@ -18,10 +18,9 @@ define(function(require, exports, module) {
 	
     exports.init = function(filePath, elementID) {
         console.log("Initalization Browser PDF Viewer...");
-        var extPath = extensionDirectory+"/index.html";
         $('#'+elementID).append($('<iframe>', {
             id: "iframeViewer",
-            src: extPath+"?cp="+filePath,
+            src: extensionDirectory+"/web/viewer.html?file="+filePath,
             "nwdisable": "",
             "nwfaketop": ""
         }));
