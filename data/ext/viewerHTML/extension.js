@@ -82,6 +82,7 @@ define(function(require, exports, module) {
             $iframeViewerHead.append($('<link/>', { rel: 'stylesheet', href: extensionDirectory+'/css/solarized-dark.css' }));
             $iframeViewerHead.append($('<link/>', { rel: 'stylesheet', href: extensionDirectory+'/css/clearness.css' }));
             $iframeViewerHead.append($('<link/>', { rel: 'stylesheet', href: extensionDirectory+'/css/clearness-dark.css' }));
+            //$iframeViewerHead.append($('<link/>', { rel: 'stylesheet', href: extensionDirectory+'/readability/readability.css' }));
             //$iframeViewerHead.append($('<script>', { type: 'text/javascript', src: extensionDirectory+'/readability/readability.js' }));
         }
 
