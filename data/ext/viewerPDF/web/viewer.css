@@ -1963,3 +1963,22 @@ html[dir='rtl'] #documentPropertiesOverlay .row > * {
   }
 }
 
+/* Custom scrollbars for chrome */
+::-webkit-scrollbar-track
+{
+  background-color: transparent;
+}
+
+::-webkit-scrollbar
+{
+  width: 8px;
+  height: 8px;
+  background-color: #F5F5F5;
+}
+
+::-webkit-scrollbar-thumb
+{
+  background-color: #bbb;
+  /* border-radius: 6px;*/
+}
+
