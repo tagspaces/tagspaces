@@ -34,11 +34,19 @@ define(function(require, exports, module) {
 			id: "iframeViewer",
 			sandbox: "allow-same-origin allow-scripts",
 			scrolling: "no",
-			style: "background-color: white; overflow: hidden; width: 100%; height: 100%;",
 			src: extensionDirectory+"/index.html?cp="+filePath,
 			"nwdisable": "",
 			"nwfaketop": ""
 		}));
+
+		/* $("#iframeViewer")
+			.hammer().on("swipeleft", function() {
+				TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getNextFile(internPath));
+			})
+			.hammer().on("swiperight", function() {
+				TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getPrevFile(internPath));
+			}); */
+
 		/*require([
               extensionDirectory+'/viewerUI.js',
               "text!"+extensionDirectory+'/mainUI.html',

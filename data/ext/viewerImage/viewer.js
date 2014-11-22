@@ -4,6 +4,13 @@
 /* global define, isCordova */
 
 $(document).ready(function() {
+    function getParameterByName(name) {
+        name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+        var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+            results = regex.exec(location.search);
+        return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+    }
+
     var filePath = getParameterByName("cp");
     /*$.ajax({
         url: fileURL,//"file://"+filePath,
@@ -26,47 +33,40 @@ $(document).ready(function() {
         filePath = "file://"+filePath;
     }
 
-    if(isCordova) {
-        $("#zoomInButton").hide();
-        $("#zoomOutButton").hide();
-        $("#printButton").hide();
-    }
-
     var $imgViewer = $("#imgViewer");
 
-    $imgViewer.append($('<img>', {
-            src: filePath,
-            //style: "background: repeating-linear-gradient(45deg, #d5d5d5, #d5d5d5 10px, #a7a7a7 10px, #a7a7a7 20px)",
-            id: "Image"
-        }).bind("load",function() {
-            $(this).css("background","repeating-linear-gradient(45deg, #d5d5d5, #d5d5d5 10px, #a7a7a7 10px, #a7a7a7 20px");
-        })
-    );
-
-    console.log("inner html: "+$("#Image").attr("src"));
+    $("#imageContent")
+        .attr("src",filePath)
+        .bind("load",function() {
+            $(this).addClass("transparentImageBackground");
+            $imgViewer.addClass("imgViewer");
+        });
 
     $imgViewer
         .panzoom({
             $zoomIn: $("#zoomInButton"),
             $zoomOut: $("#zoomOutButton"),
             $reset: $("#zoomResetButton"),
-            //contain: true,
+            minScale: 0.1,
+            maxScale: 10,
+            increment: 0.2,
             easing: "ease-in-out",
             contain: 'invert'
-//            $zoomRange: $section.find(".zoom-range"),
-//            $reset: $section.find(".reset")
         })
-        //.hammer().on("swipeleft", function() {
-        //    TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getNextFile(internPath));
-        //})
-        //.hammer().on("swiperight", function() {
-        //    TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getPrevFile(internPath));
-        //})
-        .parent().on('mousewheel.focal', handleMouseWheel );
+        .parent().on('mousewheel.focal', function(e){
+            e.preventDefault();
+            var delta = e.delta || e.originalEvent.wheelDelta;
+            var zoomOut = delta ? delta < 0 : e.originalEvent.deltaY > 0;
+            $imgViewer.panzoom('zoom', zoomOut, {
+                increment: 0.1,
+                focal: e,
+                animate: false
+            });
+        });
 
     $("#rotateLeftButton").on("click",function() {
         //console.log("Rotate Left");
-        var $image = $("#Image");
+        var $image = $("#imageContent");
         $image.removeClass(imageRotationClass);
         switch (imageRotationClass) {
             case "":
@@ -89,7 +89,7 @@ $(document).ready(function() {
 
     $("#rotateRightButton").on("click",function() {
         //console.log("Rotate Right");
-        var $image = $("#Image");
+        var $image = $("#imageContent");
         $image.removeClass(imageRotationClass);
         switch (imageRotationClass) {
             case "":
@@ -113,22 +113,10 @@ $(document).ready(function() {
     $("#printButton").on("click",function() {
         window.print();
     });
+
+    if(isCordova) {
+        $("#zoomInButton").hide();
+        $("#zoomOutButton").hide();
+        $("#printButton").hide();
+    }
 });
-
-function handleMouseWheel(e) {
-    e.preventDefault();
-    var delta = e.delta || e.originalEvent.wheelDelta;
-    var zoomOut = delta ? delta < 0 : e.originalEvent.deltaY > 0;
-    $("#imgViewer").panzoom('zoom', zoomOut, {
-        increment: 0.1,
-        focal: e,
-        animate: false
-    });
-}
-
-function getParameterByName(name) {
-    name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
-    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
-        results = regex.exec(location.search);
-    return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
-}
