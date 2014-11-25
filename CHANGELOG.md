@@ -2,7 +2,7 @@
 
 ##Version 1.9.0 / 2014.11.22
 - added new builds for 64bit Windows and Mac OSX
-- adding the viewerHTML as a new extension, with themes and content zooming
+- adding new HTML viewer with themes and content zooming
 - loading the background for transparent images after the loading of the image
 - images pasted in the HTML editor are saved as data urls allowing easy web scrapping
 - adding gradients at the begin and end of the left and middle UI areas
@@ -12,12 +12,10 @@
 - reconfiguring the default viewer and editors for html and json files
 - embedding default css styles in html files created by TagSpaces
 - MHT files are now opened in a new window in chrome and node-webkit, due restriction in security restrictions in chromium
-- adding printing and rotation functionalities in the image viewer
 - adding printing and zooming capabilities to the html, markdown and image viewer
 - enable tagging of the selected files by double click on a tag
-- updating html editor with a newer version of summernote, allowing pasting of images from clipboard
 - adding button for opening of the files natively
-- adding styling thmes for markdown files
+- adding styling themes for markdown files
 - adding sandboxing for the viewer's for image, odf and html files
 - disallowing space as a character in dialog for adding new tags in a tag group
 - opening the containing directory of the by command line opened file in background
