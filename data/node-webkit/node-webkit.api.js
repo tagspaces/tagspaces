@@ -1,5 +1,5 @@
 /* Copyright (c) 2012-2014 The TagSpaces Authors. All rights reserved.
- * Use of this source code is governed by a AGPL3 license that 
+ * Use of this source code is governed by a AGPL3 license that
  * can be found in the LICENSE file. */
 
 /* global define, fs, process, gui  */
@@ -7,11 +7,11 @@
 
 define(function(require, exports, module) {
 "use strict";
-    
+
     // Activating browser specific exports modul
     console.log("Loading ioapi.node.js..");
-    
-    var TSCORE = require("tscore");    
+
+    var TSCORE = require("tscore");
     var TSPOSTIO = require("tspostioapi");
 
     var win = gui.Window.get();
@@ -78,68 +78,65 @@ define(function(require, exports, module) {
     };
 
     var initMainMenu = function() {
-        if(win.menu === undefined && isWin) { // disable menubar on linux due a issue in nw
+        if(TSCORE.Config.getShowMainMenu()) {
+            aboutMenu.append(new gui.MenuItem({
+                type: 'normal',
+                label: $.i18n.t("ns.common:aboutTagSpaces"),
+                click: function (){
+                    TSCORE.UI.showAboutDialog();
+                } }));
+
+            viewMenu.append(new gui.MenuItem({
+                type: 'normal',
+                label: $.i18n.t("ns.common:showTagLibraryTooltip")+" ("+TSCORE.Config.getShowTagLibraryKeyBinding()+")",
+                click: function (){
+                    TSCORE.UI.showTagsPanel();
+                } }));
+
+            viewMenu.append(new gui.MenuItem({
+                type: 'normal',
+                label: $.i18n.t("ns.common:showLocationNavigatorTooltip")+" ("+TSCORE.Config.getShowFolderNavigatorBinding()+")",
+                click: function (){
+                    TSCORE.UI.showLocationsPanel();
+                } }));
+
+            viewMenu.append(new gui.MenuItem({ type: 'separator' }));
+
+            viewMenu.append(new gui.MenuItem({
+                type: 'normal',
+                label: $.i18n.t("ns.common:toggleFullScreen")+" ("+TSCORE.Config.getToggleFullScreenKeyBinding().toUpperCase()+")",
+                click: function (){
+                    win.toggleFullscreen();
+                } }));
+
+            viewMenu.append(new gui.MenuItem({
+                type: 'normal',
+                label: $.i18n.t("ns.common:showDevTools")+" ("+TSCORE.Config.getOpenDevToolsScreenKeyBinding().toUpperCase()+")",
+                click: function (){
+                    win.showDevTools();
+                } }));
+
+            viewMenu.append(new gui.MenuItem({ type: 'separator' }));
+
+            viewMenu.append(new gui.MenuItem({
+                type: 'normal',
+                label: 'Settings',
+                click: function (){
+                    TSCORE.UI.showOptionsDialog();
+                } }));
+
+            rootMenu.append(new gui.MenuItem({
+                type: 'normal',
+                label: 'View',
+                submenu: viewMenu
+            }));
+
+            rootMenu.append(new gui.MenuItem({
+                type: 'normal',
+                label: 'Help',
+                submenu: aboutMenu
+            }));
             win.menu = rootMenu;
-
-            // TODO Clear the menu on reload
-            if(TSCORE.Config.getShowMainMenu()) {
-                aboutMenu.append(new gui.MenuItem({
-                    type: 'normal',
-                    label: $.i18n.t("ns.common:aboutTagSpaces"),
-                    click: function (){
-                        TSCORE.UI.showAboutDialog();
-                    } }));
-
-                viewMenu.append(new gui.MenuItem({
-                    type: 'normal',
-                    label: $.i18n.t("ns.common:showTagLibraryTooltip")+" ("+TSCORE.Config.getShowTagLibraryKeyBinding()+")",
-                    click: function (){
-                        TSCORE.UI.showTagsPanel();
-                    } }));
-
-                viewMenu.append(new gui.MenuItem({
-                    type: 'normal',
-                    label: $.i18n.t("ns.common:showLocationNavigatorTooltip")+" ("+TSCORE.Config.getShowFolderNavigatorBinding()+")",
-                    click: function (){
-                        TSCORE.UI.showLocationsPanel();
-                    } }));
-
-                viewMenu.append(new gui.MenuItem({ type: 'separator' }));
-
-                viewMenu.append(new gui.MenuItem({
-                    type: 'normal',
-                    label: $.i18n.t("ns.common:toggleFullScreen")+" ("+TSCORE.Config.getToggleFullScreenKeyBinding().toUpperCase()+")",
-                    click: function (){
-                        win.toggleFullscreen();
-                    } }));
-
-                viewMenu.append(new gui.MenuItem({
-                    type: 'normal',
-                    label: $.i18n.t("ns.common:showDevTools")+" ("+TSCORE.Config.getOpenDevToolsScreenKeyBinding().toUpperCase()+")",
-                    click: function (){
-                        win.showDevTools();
-                    } }));
-
-                viewMenu.append(new gui.MenuItem({ type: 'separator' }));
-
-                viewMenu.append(new gui.MenuItem({
-                    type: 'normal',
-                    label: 'Settings',
-                    click: function (){
-                        TSCORE.UI.showOptionsDialog();
-                    } }));
-
-                rootMenu.append(new gui.MenuItem({
-                    label: 'View',
-                    submenu: viewMenu
-                }));
-
-                rootMenu.append(new gui.MenuItem({
-                    type: 'normal',
-                    label: 'Help',
-                    submenu: aboutMenu
-                }));
-            }
         }
     };
 
@@ -156,12 +153,12 @@ define(function(require, exports, module) {
                     "isFile": !stats.isDirectory(),
                     "size": stats.size,
                     "lmdt": stats.mtime,
-                    "path": path  
-                });     
+                    "path": path
+                });
                 if (stats.isDirectory()) {
                     scanDirectory(path, index);
-                }                        
-            }        
+                }
+            }
             return index;
         } catch(ex) {
             console.error("Scanning directory "+dirPath+" failed "+ex);
@@ -170,8 +167,8 @@ define(function(require, exports, module) {
 
     function generateDirectoryTree(dirPath) {
         try {
-            var tree = {}; 
-            var dstats = fs.statSync(dirPath);           
+            var tree = {};
+            var dstats = fs.statSync(dirPath);
             tree.name = pathUtils.basename(dirPath);
             tree.isFile = false;
             tree.lmdt = dstats.mtime;
@@ -186,29 +183,29 @@ define(function(require, exports, module) {
                         "name": pathUtils.basename(path),
                         "isFile": true,
                         "size": stats.size,
-                        "lmdt": stats.mtime,   
-                        "path": path 
+                        "lmdt": stats.mtime,
+                        "path": path
                     });
                 } else {
                     tree.children.push( generateDirectoryTree(path) );
-                }  
+                }
             }
             return tree;
         } catch(ex) {
             console.error("Scanning directory "+dirPath+" failed "+ex);
-        }         
+        }
     }
 
     var createDirectoryIndex = function(dirPath) {
         console.log("Creating index for directory: "+dirPath);
         TSCORE.showWaitingDialog("TagSpaces is indexing the current directory with subdirectories.");
-        
+
         var directoryIndex = [];
         directoryIndex = scanDirectory(dirPath, directoryIndex);
         //console.log(JSON.stringify(directoryIndex));
         TSPOSTIO.createDirectoryIndex(directoryIndex);
     };
-    
+
     var createDirectoryTree = function(dirPath) {
         console.log("Creating directory index for: "+dirPath);
         TSCORE.showWaitingDialog("TagSpaces is creating the structure tree of the current directory.");
@@ -217,9 +214,9 @@ define(function(require, exports, module) {
         //console.log(JSON.stringify(directoyTree));
         TSPOSTIO.createDirectoryTree(directoyTree);
     };
-    
+
     var createDirectory = function(dirPath) {
-        console.log("Creating directory: "+dirPath);   
+        console.log("Creating directory: "+dirPath);
 
         fs.mkdir(dirPath, function(error) {
             if (error) {
@@ -350,7 +347,7 @@ define(function(require, exports, module) {
             });
         }
     };
-    
+
     /* var loadEXIF = function(filePath) {
         console.log("Loading file: "+filePath);
 
@@ -359,7 +356,7 @@ define(function(require, exports, module) {
             console.log("EXIF: "+ifdSection+" "+tagType+" "+value+" "+format);
         });
     };    */
-    
+
     var saveTextFile = function(filePath,content,overWrite) {
         console.log("Saving file: "+filePath);
 
@@ -367,12 +364,12 @@ define(function(require, exports, module) {
         if(overWrite) {
             // Current implementation
         } else {
-            if (!pathUtils.existsSync(filePath)) { 
+            if (!pathUtils.existsSync(filePath)) {
                // Current implementation
-            }                     
+            }
         }
         */
- 
+
         // Handling the UTF8 support for text files
         var UTF8_BOM = "\ufeff";
 
@@ -383,14 +380,14 @@ define(function(require, exports, module) {
         }
 
         var isNewFile = !fs.existsSync(filePath);
-       
+
         fs.writeFile(filePath, content, 'utf8', function(error) {
             if (error) {
                 console.log("Save to file "+filePath+" failed "+error);
                 return;
             }
             TSPOSTIO.saveTextFile(filePath, isNewFile);
-        }); 
+        });
     };
 
     var saveBinaryFile = function(filePath,content) {
@@ -440,7 +437,7 @@ define(function(require, exports, module) {
             console.error("Listing directory " + dirPath + " failed " + ex);
         }
     };
-    
+
     var deleteElement = function(path) {
         console.log("Deleting: "+path);
 
@@ -450,7 +447,7 @@ define(function(require, exports, module) {
                 return;
             }
             TSPOSTIO.deleteElement(path);
-        });        
+        });
     };
 
     var deleteDirectory = function(path) {
@@ -465,11 +462,11 @@ define(function(require, exports, module) {
             TSPOSTIO.deleteDirectory(path);
         });
     };
-    
+
     var checkAccessFileURLAllowed = function() {
         console.log("checkAccessFileURLAllowed function not relevant for node..");
-    };    
-    
+    };
+
     var checkNewVersion = function() {
         console.log("Checking for new version...");
         var cVer = TSCORE.Config.DefaultSettings.appVersion+"."+TSCORE.Config.DefaultSettings.appBuild;
@@ -477,14 +474,14 @@ define(function(require, exports, module) {
             url: 'http://tagspaces.org/releases/version.json?nVer='+cVer,
             type: 'GET'
         })
-        .done(function(data) { 
-            TSPOSTIO.checkNewVersion(data);    
+        .done(function(data) {
+            TSPOSTIO.checkNewVersion(data);
         })
-        .fail(function(data) { 
-            console.log("AJAX failed "+data); 
+        .fail(function(data) {
+            console.log("AJAX failed "+data);
         })
-        ;      
-    };    
+        ;
+    };
 
     var selectDirectory = function() {
         if(document.getElementById('folderDialogNodeWebkit') === null) {
@@ -494,9 +491,9 @@ define(function(require, exports, module) {
         chooser.change(function() {
             TSPOSTIO.selectDirectory($(this).val());
         });
-        chooser.trigger('click');  
+        chooser.trigger('click');
     };
-    
+
     var openDirectory = function(dirPath) {
         // showItemInFolder
         gui.Shell.openItem(dirPath);
@@ -516,13 +513,13 @@ define(function(require, exports, module) {
         if(document.getElementById('fileDialog') === null) {
             $("#folderLocation").after('<input style="display:none;" id="fileDialog" type="file" />');
         }
-        var chooser = $('#fileDialog');        
+        var chooser = $('#fileDialog');
         chooser.change(function() {
             console.log("File selected: "+$(this).val());
         });
-        chooser.trigger('click');  
+        chooser.trigger('click');
     };
-    
+
     var openExtensionsDirectory = function() {
         // TODO implement openExtensionsDirectory on node
         //gui.Shell.openItem(extPath);
@@ -543,8 +540,8 @@ define(function(require, exports, module) {
   blocks: 8,
   atime: Mon, 10 Oct 2011 23:24:11 GMT,
   mtime: Mon, 10 Oct 2011 23:24:11 GMT,
-  ctime: Mon, 10 Oct 2011 23:24:11 GMT 
-*/    
+  ctime: Mon, 10 Oct 2011 23:24:11 GMT
+*/
     var getFileProperties = function(filePath) {
         var fileProperties = {};
         var stats = fs.statSync(filePath);
@@ -554,10 +551,10 @@ define(function(require, exports, module) {
             fileProperties.lmdt = stats.mtime;
             TSPOSTIO.getFileProperties(fileProperties);
         } else {
-            console.warn("Error getting file properties. "+filePath+" is directory");   
-        }        
-    };    
-    
+            console.warn("Error getting file properties. "+filePath+" is directory");
+        }
+    };
+
     exports.createDirectory              = createDirectory;
     exports.renameDirectory              = renameDirectory;
     exports.renameFile                   = renameFile;
