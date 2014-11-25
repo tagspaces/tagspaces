@@ -3,9 +3,9 @@
 <head>
 <!--
 Copyright (c) 2012-2014 The TagSpaces Authors. All rights reserved.
-Use of this source code is governed by a AGPL3 license that 
+Use of this source code is governed by a AGPL3 license that
 can be found in the LICENSE file.
--->  	
+-->
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>TagSpaces</title>
@@ -19,10 +19,10 @@ can be found in the LICENSE file.
 
 #loading {
 	text-align: center;
-	width: 100%; 
+	width: 100%;
 	height: 100%;
-	font-size: 1.4em; 
-	position:absolute; 
+	font-size: 1.4em;
+	position:absolute;
 	z-index: 999999;
 	background-color: #F5F5F5;
     user-select: none;
@@ -57,7 +57,7 @@ can be found in the LICENSE file.
             </g>
         </svg>
     </div>
-</div>	
+</div>
 <div class="col1">
 	<div class="row2">
 		<nav class="navbar navbar-default" role="navigation">
@@ -165,7 +165,7 @@ can be found in the LICENSE file.
             <button class="btn btn-link" data-i18n="[title]ns.common:openSettingTooltip;" id="openOptions">
                 &nbsp;<i class="fa fa-gear fa-lg"></i>&nbsp;</button>
         </div>
-	</div>    	
+	</div>
 </div>
 
 <div class="col2">
@@ -207,7 +207,7 @@ can be found in the LICENSE file.
                           </button>
                           <ul class="dropdown-menu pull-right" style="position:absolute; top:35px; right:2px; width: 200px;" id="viewSwitcher"></ul>
                         </div>
-                    </div>				
+                    </div>
 				</div>
 			</div>
 			<div id="viewToolbars">&nbsp;</div>
@@ -218,11 +218,11 @@ can be found in the LICENSE file.
 	</div>
 	<div class="row3">
 	    <div class="btn-toolbar">
-            <div class="btn-group" id="alternativeNavigator" style="margin: 5px 5px 5px 10px;"></div>  
-            <div id="statusBar" class="noWrap"></div>    
+            <div class="btn-group" id="alternativeNavigator" style="margin: 5px 5px 5px 10px;"></div>
+            <div id="statusBar" class="noWrap"></div>
             <div class="btn btn-link" id="loadingAnimation"></div>
         </div>
-    </div>		
+    </div>
 </div>
 
 <div class="col3">
@@ -269,7 +269,7 @@ can be found in the LICENSE file.
                         <li class="noWrap"><a id="openProperties" data-i18n="[title]ns.common:filePropertiesTooltip"><i class="fa fa-briefcase fa-fw"></i>
                             &nbsp;<span data-i18n="ns.common:fileProperties">Properties</span><span class="pull-right label label-default keyShortcut">Alt+Enter</span></a></li>
                     </ul>
-				</div>				 
+				</div>
                 <a id="fileTitle"></a>
 				<div id="fileViewerMainToolbar" class="btn-group">
                     <button class="btn btn-link" title="Edit Document" data-i18n="[title]ns.common:editFileTooltip" id="editDocument">
@@ -292,13 +292,13 @@ can be found in the LICENSE file.
 				</button>
 				<ul class="dropdown-menu" id="tagSuggestionsMenu"></ul>
 				<span id="fileTags"></span>
-			</div>			
-		</nav> 	
+			</div>
+		</nav>
 		<div class="ts-container" id="viewerContainer">
             <div id="viewer" allowfullscreen ></div>
   		</div>
 	</div>
-	<!--div class="row3"></div-->  		   	
+	<!--div class="row3"></div-->
 </div>
 
 <!-- Modals -->
@@ -417,7 +417,7 @@ can be found in the LICENSE file.
         </div>
     </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->  
+</div><!-- /.modal -->
 
 <div id="dialogAddTags" class="modal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog">
@@ -566,8 +566,8 @@ can be found in the LICENSE file.
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
-</div><!-- /.modal --> 
- 
+</div><!-- /.modal -->
+
 <div id="dialogTagGroupCreate" class="modal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -649,10 +649,10 @@ can be found in the LICENSE file.
 <div id="fileMenu" class="dropdown clearfix">
 	<ul class="dropdown-menu" role="menu" style="display:block;position:static;">
 		<li class="dropdown-header"><button class="close">&times;</button><span data-i18n="ns.common:fileOperations">File Operations</span></li>
-        <li class="divider"></li>			
+        <li class="divider"></li>
         <li><a id="fileMenuAddTag" data-i18n="[title]ns.common:addRemoveTagsTooltip"><i class="fa fa-tag fa-fw"></i>
             &nbsp;<span data-i18n="ns.common:addRemoveTags">Add / Remove Tags</span></a></li>
-	    <li class="divider"></li> 
+	    <li class="divider"></li>
 	    <li><a id="fileMenuOpenFile" data-i18n="[title]ns.common:openFileTooltip"><i class="fa fa-share fa-fw"></i>
             &nbsp;<span data-i18n="ns.common:openFile">Open File</span></a></li>
         <li><a id="fileMenuOpenNatively" data-i18n="[title]ns.common:openFileNativelyTooltip"><i class="fa fa-external-link-square fa-fw"></i>
@@ -672,9 +672,9 @@ can be found in the LICENSE file.
 </div>
 
 <div id="tagMenu" class="dropdown clearfix">
-	<ul class="dropdown-menu" role="menu" style="display:block;position:static;">	
+	<ul class="dropdown-menu" role="menu" style="display:block;position:static;">
 		<li class="dropdown-header"><button class="close">&times;</button><span data-i18n="ns.common:tagOperations">Tag Operations</span></li>
-        <li class="divider"></li>			
+        <li class="divider"></li>
 	    <li><a id="tagMenuAddTagAsFilter" data-i18n="[title]ns.common:showFilesWithThisTagTooltip"><i class="fa fa-filter fa-fw"></i>
             &nbsp;<span data-i18n="ns.common:showFilesWithThisTag">Show Files With This Tag</span></a></li>
 	    <li><a id="tagMenuEditTag" data-i18n="[title]ns.common:editTagTooltip"><i class="fa fa-pencil fa-fw"></i>
@@ -688,7 +688,7 @@ can be found in the LICENSE file.
 	    <li><a id="tagMenuRemoveTag" data-i18n="[title]ns.common:removeTagTooltip"><i class="fa fa-trash-o fa-fw"></i>
             &nbsp;<span data-i18n="ns.common:removeTag">Remove Tag</span></a></li>
 	</ul>
-</div>        
+</div>
 
 <div id="tagTreeMenu" class="dropdown clearfix">
 	<ul class="dropdown-menu" role="menu" style="display:block;position:static;">
@@ -703,12 +703,12 @@ can be found in the LICENSE file.
 	    <li><a id="tagTreeMenuDeleteTag" data-i18n="[title]ns.common:deleteTagFromTagGroupTooltip">
             <i class="fa fa-trash-o fa-fw"></i>&nbsp;<span data-i18n="ns.common:deleteTagFromTagGroup">Delete Tag</span></a></li>
 	</ul>
-</div>  
+</div>
 
 <div id="tagGroupMenu" class="dropdown clearfix">
 	<ul class="dropdown-menu" role="menu" style="display:block;position:static;">
 		<li class="dropdown-header"><button class="close">&times;</button><span data-i18n="ns.common:tagGroupOperations">Tag Group Operations</span></li>
-        <li class="divider"></li>					
+        <li class="divider"></li>
 	    <li><a id="tagGroupMenuCreateNewTag" data-i18n="[title]ns.common:addTagsTooltip">
             <i class="fa fa-tag fa-fw"></i>&nbsp;<span data-i18n="ns.common:addTags">Add Tags</span></a></li>
 	    <li><a id="tagGroupMenuCreateTagGroup" data-i18n="[title]ns.common:createTagGroupTooltip">
@@ -724,12 +724,12 @@ can be found in the LICENSE file.
 	    <li><a id="tagGroupMenuDelete" data-i18n="[title]ns.common:deleteTagGroupTooltip">
             <i class="fa fa-trash-o fa-fw"></i>&nbsp;<span data-i18n="ns.common:deleteTagGroup">Delete Tag Group</span></a></li>
     </ul>
-</div>  
+</div>
 
 <div id="directoryMenu" class="dropdown clearfix">
 	<ul class="dropdown-menu" role="menu" style="display:block;position:static;">
 		<li class="dropdown-header"><button class="close">&times;</button><span data-i18n="ns.common:directoryOperations">Directory Operations</span></li>
-        <li class="divider"></li>		
+        <li class="divider"></li>
 	    <li><a id="directoryMenuReloadDirectory" data-i18n="[title]ns.common:reloadDirectoryTooltip">
             <i class="fa fa-refresh fa-fw"></i>&nbsp;<span data-i18n="ns.common:reloadDirectory">Reload Directory</span></a></li>
         <li><a id="directoryMenuRenameDirectory" data-i18n="[title]ns.common:renameDirectoryTooltip">
