@@ -2,10 +2,10 @@ var isCordova = document.URL.indexOf( 'file:///android_asset' ) === 0;
 
 var toolbar = [
     ['style', ['style']],
+    ['color', ['color']],
     ['font', ['bold', 'italic', 'underline', 'superscript', 'subscript', 'strikethrough', 'clear']],
     ['fontname', ['fontname']],
     // ['fontsize', ['fontsize']],
-    ['color', ['color']],
     ['para', ['ul', 'ol', 'paragraph']],
     ['height', ['height']],
     ['table', ['table']],
