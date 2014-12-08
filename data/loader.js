@@ -83,6 +83,7 @@ requirejs.config({
         d3:                     'libs/d3/d3.v3',
         i18next:                'libs/i18next/i18next.amd.withJQuery-1.7.2.min',
         mousetrap:              'libs/mousetrap/mousetrap.min',
+        mousetrapgb:            'libs/mousetrap/mousetrap-global-bind',
         select2:                'libs/select2/select2.min',
         hammerjs:               'libs/hammerjs/jquery.hammer.min',
         handlebarsjs:           'libs/handlebars.js/handlebars-v1.1.2',
@@ -122,6 +123,7 @@ requirejs.config({
         'i18next':                  { deps: ['jquery'] },
         'select2':                  { deps: ['jquery'] },
         'hammerjs':                 { deps: ['jquery'] },
+        'mousetrapgb':              { deps: ['mousetrap'] },
         'tscore':                   { deps: [
                                             'jquery',
                                             'jqueryui',
@@ -140,6 +142,7 @@ requirejs.config({
                                             'jquerysimplecolorpicker',
                                             'i18next',
                                             'mousetrap',
+                                            'mousetrapgb',
                                             'select2',
                                             'handlebarsjs',
                                             'tssettingsdefault'

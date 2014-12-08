@@ -331,19 +331,19 @@
 
         // Handling the keybindings
         Mousetrap.unbind(TSCORE.Config.getSaveDocumentKeyBinding());
-        Mousetrap.bind(TSCORE.Config.getSaveDocumentKeyBinding(), function() {
+        Mousetrap.bindGlobal(TSCORE.Config.getSaveDocumentKeyBinding(), function() {
             saveFile();
             return false;
         });
 
         Mousetrap.unbind(TSCORE.Config.getCloseViewerKeyBinding());
-        Mousetrap.bind(TSCORE.Config.getCloseViewerKeyBinding(), function() {
+        Mousetrap.bindGlobal(TSCORE.Config.getCloseViewerKeyBinding(), function() {
             closeFile();
             return false;
         });
 
         Mousetrap.unbind(TSCORE.Config.getReloadDocumentKeyBinding());
-        Mousetrap.bind(TSCORE.Config.getReloadDocumentKeyBinding(), function() {
+        Mousetrap.bindGlobal(TSCORE.Config.getReloadDocumentKeyBinding(), function() {
             reloadFile();
             return false;
         });
@@ -355,7 +355,7 @@
         });*/
 
         Mousetrap.unbind(TSCORE.Config.getPropertiesDocumentKeyBinding());
-        Mousetrap.bind(TSCORE.Config.getPropertiesDocumentKeyBinding(), function() {
+        Mousetrap.bindGlobal(TSCORE.Config.getPropertiesDocumentKeyBinding(), function() {
             showFilePropertiesDialog();
             return false;
         });
@@ -373,7 +373,7 @@
         });
 
         Mousetrap.unbind(TSCORE.Config.getEditDocumentKeyBinding());
-        Mousetrap.bind(TSCORE.Config.getEditDocumentKeyBinding(), function() {
+        Mousetrap.bindGlobal(TSCORE.Config.getEditDocumentKeyBinding(), function() {
             editFile(_openedFilePath);
             return false;
         });
