@@ -70,6 +70,16 @@ define(function(require, exports, module) {
         var cmdArguments = gui.App.argv;
         if(cmdArguments !== undefined && cmdArguments.length > 0) {
             console.log("CMD Arguments: "+cmdArguments+" Process running in "+process.cwd());
+            var dataPathIndex;
+            cmdArguments.forEach(function(part, index){
+                if(part === "--data-path") {
+                    dataPathIndex = index;
+                }
+            });
+            if(dataPathIndex >= 0 && cmdArguments.length >= dataPathIndex+1) {
+                cmdArguments.splice(dataPathIndex,2);
+            }
+            console.log("CMD Arguments cleaned: "+cmdArguments);
             var filePath = ""+cmdArguments;
             var dirPath = TSCORE.TagUtils.extractContainingDirectoryPath(filePath);
             TSCORE.IO.listDirectory(dirPath);
