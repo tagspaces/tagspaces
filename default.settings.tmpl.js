@@ -26,7 +26,7 @@ define(function (require, exports, module) {
         "loadLocationMeta":         false,
         "warnIncludeSubdirs":       true,
         "isWindowMaximized":        false,
-        "showMainMenu":             true,
+        "showMainMenu":             false,
         "lastOpenedLocation":       "",
         "webDavPath"  :             "oc/remote.php/webdav",
         "ootbPerspectives":         [@@DEFAULTPERSPECTIVES],

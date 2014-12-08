@@ -30,12 +30,14 @@ can be found in the LICENSE file.
     -moz-user-select: none;
 }
 </style>
-<link rel="stylesheet" type="text/css" href="libs/bootstrap/css/bootstrap.css">
+<link rel="stylesheet" type="text/css" href="libs/bootstrap/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="libs/animate.css/animate.css">
 <link rel="stylesheet" type="text/css" href="libs/select2/select2.css">
 <link rel="stylesheet" type="text/css" href="libs/select2/select2-bootstrap.css">
 <link rel="stylesheet" type="text/css" href="libs/jquery-simplecolorpicker/jquery.simplecolorpicker.css">
 <link rel="stylesheet" type="text/css" href="libs/font-awesome/css/font-awesome.css">
 <link rel="stylesheet" type="text/css" href="libs/bootstrap3xeditable/css/bootstrap-editable.css">
+<link rel="stylesheet" type="text/css" href="libs/css-toogle-switch/toggle-switch.css">
 <link rel="stylesheet" type="text/css" href="assets/tagspaces.css">
 <link rel="apple-touch-icon-precomposed" sizes="144x144" href="assets/apple-touch-icon-144-precomposed.png" />
 <link rel="apple-touch-icon-precomposed" sizes="114x114" href="assets/apple-touch-icon-114-precomposed.png" />
@@ -62,12 +64,18 @@ can be found in the LICENSE file.
 	<div class="row2">
 		<nav class="navbar navbar-default" role="navigation">
             <div class="btn-toolbar" style="width: 100%">
-            <span id="logo">TagSpaces</span>
-            <span class="appVersion"><sup  id="appVersion"></sup></span>
-            <a id="newVersionAvailable" style="cursor:pointer; display: none; color: #7bd148; font-size: 18px; margin: 5px" class="appVersion pull-right" data-i18n="[title]ns.common:newVersionAvailableTooltip" data-toggle="dropdown">
-                <i class="glyphicon glyphicon-gift" style="color: #7bd148"></i>
-            </a>
-            <div id="newVersionMenu" class="dropdown-menu"></div>
+                <span id="logo">TagSpaces</span>
+                <span class="appVersion"><sup  id="appVersion"></sup></span>
+                <a id="newVersionAvailable" style="cursor:pointer; display: none; color: #7bd148; font-size: 18px; margin: 5px" class="appVersion pull-right" data-i18n="[title]ns.common:newVersionAvailableTooltip" data-toggle="dropdown">
+                    <i class="glyphicon glyphicon-gift" style="color: #7bd148"></i>
+                </a>
+                <div class="btn-group pull-right" id="sideBarButtonGroup" style="margin-right: 5px;">
+                    <button class="btn btn-link" data-i18n="[title]ns.common:openNewInstanceTooltip" id="startNewInstanceBack">
+                        &nbsp;<i class="fa fa-external-link-square fa-lg"></i>&nbsp;</button>
+                    <button class="btn btn-link" data-i18n="[title]ns.common:openSettingTooltip;" id="openOptions">
+                        &nbsp;<i class="fa fa-gear fa-lg"></i>&nbsp;</button>
+                    <div id="newVersionMenu" class="dropdown-menu"></div>
+                </div>
             </div>
             <div class="btn-toolbar" style="width: 100%">
                 <div class="btn-group" style="width: 99%" id="locationSwitch">
@@ -147,23 +155,17 @@ can be found in the LICENSE file.
 		</div>
         <div class="bottomEdge"></div>
 	</div>
-	<div class="row3 noWrap">
+	<div class="row3 noWrap text-center">
         <div class="btn-group" data-toggle="buttons">
-            <label class="btn btn-default active" id="showTagGroups" data-i18n="[title]ns.common:showTagLibraryTooltip">
+            <label class="btn btn-default active" id="showTagGroups" style="width: 60px" data-i18n="[title]ns.common:showTagLibraryTooltip">
                 <input type="radio" name="options" >&nbsp;<i class="fa fa-tags"></i>
             </label>
-            <label class="btn btn-default" id="showLocations" data-i18n="[title]ns.common:showLocationNavigatorTooltip">
+            <label class="btn btn-default" id="showLocations" style="width: 60px" data-i18n="[title]ns.common:showLocationNavigatorTooltip">
                 <input type="radio" name="options">&nbsp;<i class="fa fa-folder"></i>
             </label>
-            <label class="btn btn-default" id="contactUs" data-i18n="[title]ns.common:switchToContactUsTooltip">
+            <label class="btn btn-default" id="contactUs" style="width: 60px" data-i18n="[title]ns.common:switchToContactUsTooltip">
                 <input type="radio" name="options">&nbsp;<i class="fa fa-info-circle"></i>
             </label>
-        </div>
-        <div class="btn-group" id="sideBarButtonGroup" style="margin-right: 5px;">
-            <button class="btn btn-link" data-i18n="[title]ns.common:openNewInstanceTooltip" id="startNewInstanceBack">
-                &nbsp;<i class="fa fa-external-link-square fa-lg"></i>&nbsp;</button>
-            <button class="btn btn-link" data-i18n="[title]ns.common:openSettingTooltip;" id="openOptions">
-                &nbsp;<i class="fa fa-gear fa-lg"></i>&nbsp;</button>
         </div>
 	</div>
 </div>
@@ -172,43 +174,29 @@ can be found in the LICENSE file.
 	<div class="row2">
 		<nav class="navbar navbar-default" role="navigation">
 			<div class="btn-toolbar">
-				<button type="button" class="navbar-toggle pull-left" id="toggleLeftPanel" data-i18n="[title]ns.common:toggleLeftPanelTooltip">
+				<button type="button" class="navbar-toggle" id="toggleLeftPanel" data-i18n="[title]ns.common:toggleLeftPanelTooltip">
 		            <span class="icon-bar"></span>
 		            <span class="icon-bar"></span>
 		            <span class="icon-bar"></span>
 				</button>
-				<div id="mainTopMenu" class="form-inline pull-right" disabled="disabled">
-                    <div class="input-group" style="width: 283px; margin-top: 2px;">
-                        <input type="text" class="form-control" id="searchBox" placeholder="Search" data-i18n="[placeholder]ns.common:searchPlaceholder">
-                        <div class="dropdown-menu" style="width: 300px; padding: 10px; font-size: 13px;" id="searchOptions">
-                            <span class="dropdown-header"><button class="close" id="closeSearchOptionButton">&times;</button><span data-i18n="ns.common:searchOptions">Search Options</span></span>
-                            <div class="checkbox">
-                                <label>
-                                    <input type="checkbox" id="includeSubfoldersOption" />&nbsp;<span data-i18n="ns.common:includeSubfoldersInSearch">Include files from the subfolders (by adding questionmark '?' in front of the query)</span>
-                                </label>
-                            </div><br><br>
-                            <i class="fa fa-angle-double-right"></i>&nbsp;<span data-i18n="ns.common:excludeTermFromSearch">Including "!" in front of a term (e.g. !term) will exclude all files with this term in their filenames.</span><br>
-                            <i class="fa fa-angle-double-right"></i>&nbsp;<span data-i18n="ns.common:includeTagInSearch">Including "+" in front of a term (e.g. +tag) will include all files tagged with this tag.</span><br>
-                            <i class="fa fa-angle-double-right"></i>&nbsp;<span data-i18n="ns.common:excludeTagInSearch">Including "-" in front of a term (e.g. -tag) will exclude all files tagged with this tag.</span><br>
-                            <i class="fa fa-angle-double-right"></i>&nbsp;<span data-i18n="ns.common:andedSearch">All terms should be true in order the file to appear in the search results.</span><br>
-                            <i class="fa fa-angle-double-right"></i>&nbsp;<span data-i18n="ns.common:searchInFilenameOnly">The searched term should be part of the filename. Currently the content of the file is ignored.</span><br>
-                        </div>
-                        <span class="input-group-btn">
-                            <button class="btn btn-default" data-i18n="[title]ns.common:searchPlaceholder" id="searchButton" style="border-left-width: 0;">
-                                <i class="fa fa-search"></i>
-                            </button>
-                            <button class="btn btn-default" data-i18n="[title]ns.common:clearFilterTooltip" id="clearFilterButton">
-                                <i class="fa fa-times"></i>
-                            </button>
-                        </span>
-                        <div class="input-group">
-                          <button type="button" id="perspectiveSwitcherButton" class="btn btn-link dropdown-toggle" data-toggle="dropdown"><i id="currentPerspectitveIcon" class="fa fa-film"></i>&nbsp;
-                            <span id="currentPerspectitveName">Perspectives</span>&nbsp;<span class="caret"></span>
-                          </button>
-                          <ul class="dropdown-menu pull-right" style="position:absolute; top:35px; right:2px; width: 200px;" id="viewSwitcher"></ul>
-                        </div>
-                    </div>
+				<div id="searchToolbar" class="form-inline">
+                    <button class="btn btn-link" data-i18n="[title]ns.common:clearFilterTooltip" id="clearFilterButton" style="padding-top: 0; padding-right: 2px;">
+                        <i class="fa fa-times"></i>
+                    </button>
+                    <input type="text" id="searchBox" rel="popover" data-i18n-bak="ns.common:searchPlaceholder" placeholder="Search" data-i18n="[placeholder]ns.common:searchPlaceholder"></span>
+                    <button class="btn btn-link" data-i18n="[title]ns.common:searchPlaceholder" id="searchButton" style="border-left-width: 0; padding-left: 2px; padding-top: 1px;">
+                        <i class="fa fa-lg fa-search"></i>
+                    </button>
 				</div>
+                <div id="mainTopMenu" class="input-group" style="position: absolute; top: 0; right: 0;">
+                    <button class="btn btn-link" data-i18n="[title]ns.common:searchPlaceholder" id="showSearchButton" style="border-left-width: 0;">
+                        <i class="fa fa-lg fa-search"></i>
+                    </button>
+                    <button type="button" id="perspectiveSwitcherButton" class="btn btn-link dropdown-toggle" data-toggle="dropdown"><i id="currentPerspectitveIcon" class="fa fa-film"></i>&nbsp;
+                        <span id="currentPerspectitveName">Perspectives</span>&nbsp;<span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu pull-right" style="position:absolute; top:35px; right:2px; width: 200px;" id="viewSwitcher"></ul>
+                </div>
 			</div>
 			<div id="viewToolbars">&nbsp;</div>
 		</nav>
@@ -310,7 +298,7 @@ can be found in the LICENSE file.
                 <h4 class="modal-title" id="myModalLabel1" data-i18n="ns.dialogs:aboutTitle">About TagSpaces</h4>
             </div>
             <div class="modal-body">
-                <iframe id="aboutIframe" nwdisable style="width: 100%; height: 350px; border: 0;" src="about.html"></iframe>
+                <iframe id="aboutIframe" sandbox="allow-same-origin" nwdisable style="width: 100%; height: 350px; border: 0;" src="about.html"></iframe>
             </div>
             <div class="modal-footer">
                 <button class="btn" id="aboutDialogBack" title="Go Back (If You Need)"><i class="fa fa-arrow-left fa-lg"></i></button>
@@ -744,6 +732,19 @@ can be found in the LICENSE file.
 </div>
 
 <input type="file" id="addFileInput" />
+
+<div id="searchOptions">
+    <div style="font-size: 12px;">
+        <span class="dropdown-header"><button class="close" id="closeSearchOptionButton">&times;</button><span data-i18n="ns.common:searchOptions">Search Options</span></span>
+        <button class="btn-link" id="includeSubfoldersOption"><i class="fa fa-2x fa-toggle-off" style="color: #00b4ff"></i></button>&nbsp;<span data-i18n="ns.common:includeSubfoldersInSearch">Include files from the subfolders (by adding questionmark '?' in front of the query)</span>
+        <br>
+        <i class="fa fa-angle-double-right"></i>&nbsp;<span data-i18n="ns.common:excludeTermFromSearch">Including "!" in front of a term (e.g. !term) will exclude all files with this term in their filenames.</span><br>
+        <i class="fa fa-angle-double-right"></i>&nbsp;<span data-i18n="ns.common:includeTagInSearch">Including "+" in front of a term (e.g. +tag) will include all files tagged with this tag.</span><br>
+        <i class="fa fa-angle-double-right"></i>&nbsp;<span data-i18n="ns.common:excludeTagInSearch">Including "-" in front of a term (e.g. -tag) will exclude all files tagged with this tag.</span><br>
+        <i class="fa fa-angle-double-right"></i>&nbsp;<span data-i18n="ns.common:andedSearch">All terms should be true in order the file to appear in the search results.</span><br>
+        <i class="fa fa-angle-double-right"></i>&nbsp;<span data-i18n="ns.common:searchInFilenameOnly">The searched term should be part of the filename. Currently the content of the file is ignored.</span><br>
+    </div>
+</div>
 
 </body>
 </html>

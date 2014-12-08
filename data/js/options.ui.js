@@ -107,6 +107,7 @@
     function reInitUI() {
         $("#extensionsPathInput").val(TSCORE.Config.getExtensionPath()); 
         $("#showHiddenFilesCheckbox").attr("checked",TSCORE.Config.getShowUnixHiddenEntries());
+        $("#showMainMenuCheckbox").attr("checked",TSCORE.Config.getShowMainMenu());
         $("#checkforUpdatesCheckbox").attr("checked",TSCORE.Config.getCheckForUpdates());
         $("#calculateTagsCheckbox").attr("checked",TSCORE.Config.getCalculateTags());
         $("#loadLocationMetaData").attr("checked",TSCORE.Config.getLoadLocationMeta());
@@ -172,6 +173,7 @@
     function updateSettings() {
         TSCORE.Config.setExtensionPath($("#extensionsPathInput").val());
         TSCORE.Config.setShowUnixHiddenEntries($('#showHiddenFilesCheckbox').is(":checked"));
+        TSCORE.Config.setShowMainMenu($('#showMainMenuCheckbox').is(":checked"));
         TSCORE.Config.setCheckForUpdates($('#checkforUpdatesCheckbox').is(":checked"));
         TSCORE.Config.setCalculateTags($('#calculateTagsCheckbox').is(":checked"));
         TSCORE.Config.setTagDelimiter($("#tagsDelimiterInput").val());
