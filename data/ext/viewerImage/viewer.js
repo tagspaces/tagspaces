@@ -40,6 +40,14 @@ $(document).ready(function() {
         .bind("load",function() {
             $(this).addClass("transparentImageBackground");
             $imgViewer.addClass("imgViewer");
+            if(filePath.toLowerCase().indexOf("jpg") === (filePath.length-3) ||
+                filePath.toLowerCase().indexOf("jpeg") === (filePath.length-4)) {
+                EXIF.getData(this, function() {
+                    var orientation = EXIF.getTag(this, "Orientation");
+                    correctOrientation(orientation);
+                    //console.log(EXIF.pretty(this));
+                });
+            }
         });
 
     $imgViewer
@@ -63,6 +71,29 @@ $(document).ready(function() {
                 animate: false
             });
         });
+
+    function correctOrientation(orientation) {
+        var $image = $("#imageContent");
+        $image.removeClass(imageRotationClass);
+        console.log("ORIENTATION: "+orientation);
+        switch (orientation) {
+            case 8:
+                imageRotationClass = "rotate270";
+                break;
+            case 3:
+                imageRotationClass = "rotate180";
+                break;
+            case 6:
+                imageRotationClass = "rotate90";
+                break;
+            case 1:
+                imageRotationClass = "";
+                break;
+            default:
+                imageRotationClass = "";
+        }
+        $image.addClass(imageRotationClass);
+    }
 
     $("#rotateLeftButton").on("click",function() {
         //console.log("Rotate Left");

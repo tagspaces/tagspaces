@@ -14,7 +14,7 @@ define(function(require, exports, module) {
     var extensionVersion = "1.0";
     var extensionManifestVersion = 1;
     var extensionLicense = "AGPL";
-    var extensionSupportedFileTypes = [ "jpeg", "jpg", "png",  "gif", "bmp" ];
+    var extensionSupportedFileTypes = [ "jpeg", "jpg", "png",  "gif", "bmp", "ico", "webp" ];
 	
 	var TSCORE = require("tscore");
 	
