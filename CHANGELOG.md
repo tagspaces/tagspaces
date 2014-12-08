@@ -18,7 +18,6 @@
 - adding styling themes for markdown files
 - adding sandboxing for the viewer's for image, odf and html files
 - disallowing space as a character in dialog for adding new tags in a tag group
-- opening the containing directory of the by command line opened file in background
 - enabling the export to csv button in chrome and Webdav edition
 - adding experimental thumbnail generation to the grid perspective
 - fixing [#119](https://github.com/uggrock/tagspaces/issues/119)

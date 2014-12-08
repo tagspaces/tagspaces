@@ -40,7 +40,7 @@ The full changelog is available here: [Changelog](CHANGELOG.md)
 
 ## Screenshots
 
-![Lead TagSpaces Screenshot](http://www.tagspaces.org/content/v1.7/tagspaces-lead-screenshot.png)
+![Lead TagSpaces Screenshot](http://www.tagspaces.org/content/v1.9/tagspaces-html-viewer2.png)
 
 ## Documentation
 
