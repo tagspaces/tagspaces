@@ -72,7 +72,7 @@ define(function(require, exports, module) {
                     readOnly: isViewerMode,
                     autofocus: true,
                     //theme: "lesser-dark",
-                    extraKeys: keys
+                    //extraKeys: keys // workarrounded with bindGlobal plugin for mousetrap
                 });
 
                 cmEditor.on("change", function() {
