@@ -3,7 +3,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-                    <i class="fa fa-times fa-lg"></i>
+                    <i class="fa fa-times"></i>
                 </button>
                 <h4 data-i18n="ns.dialogs:optionsTitle">Settings</h4>
                 <ul class="nav nav-tabs">
@@ -17,56 +17,76 @@
             <div class="modal-body form" style="height: 408px;" id="optionsAccordion">
                 <div class="tab-content">
                     <div class="tab-pane active" id="general" style="height: 360px; overflow-y: auto;">
+                        <div class='form-group'>
+                            <button class="btn btn-default" id="exportTagGroupsButton" aria-hidden="true">
+                                <i class="fa fa-upload"></i>&nbsp;
+                                <span data-i18n="ns.dialogs:exportTagGroupsButton">Export Tag Groups as JSON</span>
+                            </button>
+                        </div>
                         <div class='form-group col-sm-12'>
                             <label for='languagesList'>Interface Language</label>
                             <select class='form-control' id='languagesList'></select>
                             <p class="help-block" data-i18n="ns.dialogs:switchLanguageHelp">Switching language will fully take effect after restarting the application</p>
                         </div>
-                        <div class='checkbox col-sm-12'>
-                            <label>
-                                <input type='checkbox' id='showHiddenFilesCheckbox' />
-                                <span data-i18n="ns.dialogs:showUnixHiddenFiles">Show files/directories with a dot(.) in front of the name (e.g. Unix, Linux, OS X hidden files)</span>
-                            </label>
-                        </div>
-                        <div class='checkbox col-sm-12'>
-                            <label>
-                                <input type='checkbox' id='checkforUpdatesCheckbox'/>
-                                <span data-i18n="ns.dialogs:checkForNewVersion">Check for new version on startup</span>
-                            </label>
-                        </div>
-                        <div class='checkbox col-sm-12'>
-                            <label>
-                                <input type='checkbox' id='showMainMenuCheckbox'/>
-                                <span data-i18n="ns.dialogs:showMainMenu">Show main menu</span>
-                            </label>
+                        <div class='form-group col-sm-12'>
+                            <div class="col-sm-2">
+                                <div class="onoffswitch">
+                                    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="showHiddenFilesCheckbox" checked>
+                                    <label class="onoffswitch-label" for="showHiddenFilesCheckbox">
+                                        <span class="onoffswitch-inner"></span>
+                                        <span class="onoffswitch-switch"></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-sm-10" style="margin-top: 0px;" data-i18n="ns.dialogs:showUnixHiddenFiles"></div>
                         </div>
                         <div class='form-group col-sm-12'>
-                            <button class="btn btn-danger" id="defaultSettingsButton" aria-hidden="true" data-i18n="ns.dialogs:restoreDefaulSettingButton">Restore Initial Settings</button>
+                            <div class="col-sm-2">
+                                <div class="onoffswitch">
+                                    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="checkforUpdatesCheckbox" checked>
+                                    <label class="onoffswitch-label" for="checkforUpdatesCheckbox">
+                                        <span class="onoffswitch-inner"></span>
+                                        <span class="onoffswitch-switch"></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-sm-10" style="margin-top: 0;" data-i18n="ns.dialogs:checkForNewVersion"></div>
                         </div>
                         <div class='form-group col-sm-12'>
-                            <button class="btn btn-warning" id="exportTagGroupsButton" aria-hidden="true" data-i18n="ns.dialogs:exportTagGroupsButton">Export Tag Groups as JSON</button>
+                            <div class="col-sm-2">
+                                <div class="onoffswitch">
+                                    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="showMainMenuCheckbox" checked>
+                                    <label class="onoffswitch-label" for="showMainMenuCheckbox">
+                                        <span class="onoffswitch-inner"></span>
+                                        <span class="onoffswitch-switch"></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-sm-10" style="margin-top: 0;" data-i18n="ns.dialogs:showMainMenu"></div>
                         </div>
                     </div>
 
                     <div class="tab-pane" id="perspectives" style="height: 360px; overflow-y: auto;">
-                        <p class="help-block" data-i18n="ns.dialogs:perspectivesHelp">The changes made in this tab will take effect after restarting the application.</p>
-                        <div id='perspectiveList'></div>
-                        <button class='btn btn-default' style="margin-top: 10px" id='addPerspectiveButton'>
+                        <button class='btn btn-default' id='addPerspectiveButton'>
                             <i class='fa fa-plus'></i>&nbsp;<span data-i18n="ns.dialogs:addPerspectiveButton">Add new perspective</span>
                         </button>
+                        <div id='perspectiveList' style="margin-top: 10px"></div>
+                        <p class="help-block" data-i18n="ns.dialogs:perspectivesHelp">The changes made in this tab will take effect after restarting the application.</p>
                     </div>
 
                     <div class="tab-pane" id="filetypes" style="height: 360px; overflow-y: auto;">
-                        <div id='fileTypesList'></div>
-                        <button class='btn btn-default' style="margin-top: 10px" id='addFileTypeButton'>
+                        <button class='btn btn-default' id='addFileTypeButton'>
                             <i class='fa fa-plus'></i>&nbsp;<span data-i18n="ns.dialogs:addNewFileExtensionButton">Add new file extension</span>
                         </button>
+                        <div id='fileTypesList' style="margin-top: 10px"></div>
                     </div>
 
                     <div class="tab-pane" id="keyBindings" style="height: 360px; overflow-y: auto; overflow-x: hidden;">
                         <form class="form-horizontal" role="form">
-                            <div class='form-group col-sm-12'>
-                                <p class="help-block" data-i18n="ns.dialogs:keyBindingInstructions" style="font-weight: bold">Instructions:</p>
+                            <button class='btn btn-default' id='keyBindingInstructionsToggle'>
+                                <i class='fa fa-info-circle'></i>&nbsp;<span data-i18n="ns.dialogs:keyBindingInstructions"></span>
+                            </button>
+                            <div class='form-group col-sm-12' id="keyBindingInstructions">
                                 <p class="help-block"><span data-i18n="ns.dialogs:keyBindingInstructions1">For modifier keys you can use</span>&nbsp;<code>shift</code>, <code>ctrl</code>, <code>alt</code>, <code>option</code>, <code>meta</code>, <code>command</code> &amp; <code>mod</code>.</p>
                                 <p class="help-block"><span data-i18n="ns.dialogs:keyBindingInstructions2">Other special keys are</span>&nbsp;<code>backspace</code>, <code>tab</code>, <code>enter</code>, <code>return</code>, <code>capslock</code>, <code>esc</code>, <code>escape</code>, <code>space</code>, <code>pageup</code>, <code>pagedown</code>, <code>end</code>, <code>home</code>, <code>left</code>, <code>up</code>, <code>right</code>, <code>down</code>, <code>ins</code> &amp; <code>del</code>.</p>
                                 <p class="help-block"><span data-i18n="ns.dialogs:keyBindingInstructions3">Any other key you should be able to reference by name like</span>&nbsp;<code>a</code>, <code>/</code>, <code>$</code>, <code>*</code>, <code>=</code>.</p>
@@ -130,24 +150,42 @@
                     </div>
 
                     <div class="tab-pane" id="experimental" style="height: 360px; overflow-y: auto;">
-                        <p class="help-block col-sm-12" data-i18n="ns.dialogs:experimentalHelp">*) Be carefull changing the following settings.</p>
-                        <div class='form-group col-sm-12'>
-                            <label for='extensionsPathInput' data-i18n="ns.dialogs:extensionsFolder">Extensions folder (default value is "ext")</label>
-                            <input type='text' class='form-control' id='extensionsPathInput' data-i18n="[placeholder]ns.dialogs:extensionsFolderPlaceholder"/>
+                        <div class="alert alert-danger col-sm-11" role="alert" data-i18n="ns.dialogs:experimentalHelp">Be carefull changing the following settings.</div>
+                        <div class='form-group'>
+                            <button class="btn btn-warning" id="defaultSettingsButton" aria-hidden="true">
+                                <i class="fa fa-rotate-left"></i>&nbsp;
+                                <span data-i18n="ns.dialogs:restoreDefaulSettingButton">Restore Initial Settings</span>
+                            </button>
                         </div>
-                        <div class='checkbox col-sm-12'>
-                            <label>
-                                <input type='checkbox' id='loadLocationMetaData'/>
-                                <span>Loads location meta data (currently only tag groups)</span>
-                            </label><!-- data-i18n="ns.dialogs:loadLocationMetaData" data-i18n="ns.dialogs:loadLocationMetaDataHelp" -->
-                            <p class="help-block">Location metadata file "tsm.json" should be placed in the ".ts "subfolder of the current location. The file format should be the same as the exported tag groups file from the tab 'general'.</p>
+                        <div class='form-group'>
+                            <div class="col-sm-2">
+                                <div class="onoffswitch">
+                                    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="loadLocationMetaData" checked>
+                                    <label class="onoffswitch-label" for="loadLocationMetaData">
+                                        <span class="onoffswitch-inner"></span>
+                                        <span class="onoffswitch-switch"></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-sm-10" style="margin-top: 0;">
+                                <span>Loads location meta data (currently only tag groups)</span><!-- data-i18n="ns.dialogs:loadLocationMetaData" data-i18n="ns.dialogs:loadLocationMetaDataHelp" -->
+                                <p class="help-block">Location metadata file "tsm.json" should be placed in the ".ts "subfolder of the current location. The file format should be the same as the exported tag groups file from the tab 'general'.</p>
+                            </div>
                         </div>
-                        <div class='checkbox col-sm-12'>
-                            <label>
-                                <input type='checkbox' id='calculateTagsCheckbox'/>
-                                <span data-i18n="ns.dialogs:calculateTag">Calculate tags from the current search results</span>
-                            </label>
-                            <p class="help-block" data-i18n="ns.dialogs:calculateTagHelp">Reduces the performance while browsing directories</p>
+                        <div class='form-group'>
+                            <div class="col-sm-2">
+                                <div class="onoffswitch">
+                                    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="calculateTagsCheckbox" checked>
+                                    <label class="onoffswitch-label" for="calculateTagsCheckbox">
+                                        <span class="onoffswitch-inner"></span>
+                                        <span class="onoffswitch-switch"></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-sm-10" style="margin-top: 0;">
+                                <span data-i18n="ns.dialogs:calculateTag"></span>
+                                <p class="help-block" data-i18n="ns.dialogs:calculateTagHelp">Reduces the performance while browsing directories</p>
+                            </div>
                         </div>
                         <div class='form-group col-sm-12'>
                             <label for='tagsDelimiterInput' data-i18n="ns.dialogs:tagDelimiter">Tag delimiter (e.g. Filename[TAG1_TAG2], _ is the delimiter)</label>
@@ -156,6 +194,10 @@
                         <div class='form-group col-sm-12'>
                             <label for='prefixTagContainerInput' data-i18n="ns.dialogs:prefixTagContainer">Prefix for the tag container (e.g. in "Filename-[TAG1].txt" - is the prefix)</label>
                             <input type='text' class='form-control' id='prefixTagContainerInput' data-i18n=""/>
+                        </div>
+                        <div class='form-group col-sm-12'>
+                            <label for='extensionsPathInput' data-i18n="ns.dialogs:extensionsFolder">Extensions folder (default value is "ext")</label>
+                            <input type='text' class='form-control' id='extensionsPathInput' data-i18n="[placeholder]ns.dialogs:extensionsFolderPlaceholder"/>
                         </div>
                     </div>
                 </div>

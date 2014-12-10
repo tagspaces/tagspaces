@@ -315,22 +315,44 @@ li hr {
 	border: 0;
 	display: block; 
 	padding-left: 5px; 
-	padding-right: 5px; 
-	padding-top: 10px; 
+	padding-top: 10px;
 	margin: 0;
+    position: absolute;
+    top: 0;
+    left: 3px;
+    z-index: 999;
+    padding-right: 100px;
+    background-color: #f2f2f2;
 }
 
 #toggleLeftPanel .icon-bar {
     height: 3px;
 }
 #toggleLeftPanel:focus {
-    background-color: transparent !important;
+    background-color: #f2f2f2 !important;
 }
 
 #toggleLeftPanel:hover {
-    background-color: transparent !important;
+    background-color: #f2f2f2 !important;
 }
 
+#searchToolbar {
+    z-index: 1000;
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 40px;
+}
+
+#searchBox {
+    margin-top: 8px;
+    border: 0;
+    background-color: transparent;
+    /*border-bottom: 1px solid gray;*/
+    font-size: 14px;
+    min-width: 30px;
+    width: 180px;
+}
 
 #tagsContainer {
 	width: 100%;
@@ -814,3 +836,56 @@ input a.resetFilter {
     width: 100%;
     z-index: 99;
 }
+
+/* Toggle Switch Begin */
+.onoffswitch {
+    position: relative; width: 80px;
+    -webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;
+}
+.onoffswitch-checkbox {
+    display: none;
+}
+.onoffswitch-label {
+    display: block; overflow: hidden; cursor: pointer;
+    border: 1px solid #666666; border-radius: 5px;
+}
+.onoffswitch-inner {
+    display: block; width: 200%; margin-left: -100%;
+    -moz-transition: margin 0.2s ease-in 0s; -webkit-transition: margin 0.2s ease-in 0s;
+    -o-transition: margin 0.2s ease-in 0s; transition: margin 0.2s ease-in 0s;
+}
+.onoffswitch-inner:before, .onoffswitch-inner:after {
+    display: block; float: left; width: 50%; height: 27px; padding: 0; line-height: 27px;
+    font-size: 21px; color: white; font-family: Trebuchet, Arial, sans-serif; font-weight: bold;
+    -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
+}
+.onoffswitch-inner:before {
+    content: "I";
+    padding-left: 12px;
+    background-color: #619AFD; color: #FFFFFF;
+}
+.onoffswitch-inner:after {
+    content: "O";
+    padding-right: 12px;
+    background-color: #F8F8F8; color: #666666;
+    text-align: right;
+}
+.onoffswitch-switch {
+    display: block; width: 45px; margin: 0px;
+    background: #FFFFFF;
+    border: 1px solid #666666; border-radius: 5px;
+    position: absolute; top: 0; bottom: 0; right: 38px;
+    -moz-transition: all 0.2s ease-in 0s; -webkit-transition: all 0.2s ease-in 0s;
+    -o-transition: all 0.2s ease-in 0s; transition: all 0.2s ease-in 0s;
+    background-image: -moz-linear-gradient(center top, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0) 100%);
+    background-image: -webkit-linear-gradient(center top, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0) 100%);
+    background-image: -o-linear-gradient(center top, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0) 100%);
+    background-image: linear-gradient(center top, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0) 100%);
+}
+.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-inner {
+    margin-left: 0;
+}
+.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-switch {
+    right: 0px;
+}
+/* Toggle Switch End */

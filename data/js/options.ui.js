@@ -88,6 +88,12 @@
             );
         });
 
+        $("#keyBindingInstructions").toggle();
+        $("#keyBindingInstructionsToggle").on("click", function(){
+            $("#keyBindingInstructions").toggle();
+            return false;
+        })
+
         if(isCordova) {
             $( "#exportTagGroupsButton").hide();
         }
