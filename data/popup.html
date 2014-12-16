@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<!--
+Copyright (c) 2012-2014 The TagSpaces Authors. All rights reserved.
+Use of this source code is governed by a AGPL3 license that
+can be found in the LICENSE file.
+-->
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="libs/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="libs/select2/select2.css">
+    <link rel="stylesheet" type="text/css" href="libs/select2/select2-bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="libs/font-awesome/css/font-awesome.css">
+    <link rel="stylesheet" type="text/css" href="assets/tagspaces.css">
+    <!--script type="text/javascript" data-main="loader" src="libs/requirejs/require.js"></script-->
+</head>
+<body style="width: 300px; height: 320px; padding:0; font-size: 14px;">
+<div class="well">
+    <a href="#" class="btn btn-primary" id="startTagSpaces" style="width: 100%;"><img src="assets/icon128.png" style="max-height: 32px; max-width: 32px;"/>&nbsp;Start TagSpaces</a>
+    <form role="form" data-toggle="validator" style="margin-top: 20px;">
+        <div class="form-group">
+            <label class="control-label" for="tags" data-i18n="ns.dialogs:tagOperationTag">Tags</label>
+            <input class="form-control" type="text" name="tags" id="tags" autocomplete="off"
+                   data-i18n="[placeholder]ns.dialogs:tagOperationTagsPlaceholder"/>
+            <p class="help-block" data-i18n="ns.dialogs:editTagNamesRestrictionsHelp">Tags should have a minimum length of 2 characters and should not contain special characters such as spaces, #, / ,\ and other.</p>
+        </div>
+    </form>
+    <div class="btn-toolbar text-center">
+        <a href="#" class="btn btn-primary" id="saveAsMhtml">Save current page as MHTML</a><br>
+    </div>
+</div>
+<script type="text/javascript" src="libs/jquery/jquery-2.1.1.min.js"></script>
+<script type="text/javascript" src="libs/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="libs/filesaver.js/FileSaver.js"></script>
+<script type="text/javascript" src="libs/i18next/i18next.amd.withJQuery-1.7.2.min.js"></script>
+<script type="text/javascript" src="libs/select2/select2.min.js"></script>
+<!--script type="text/javascript" src="chromelight/chrome.api.js"></script-->
+<script type="text/javascript" src="chromelight/popup.js"></script>
+</body>
+</html>

@@ -13,12 +13,15 @@
         "scripts": ["chromelight/background.js"]
     },
     "browser_action": {
-        "default_icon":  "assets/icon19.png",
-        "default_title": "Launch TagSpaces"
+        "default_icon":  "assets/icon128.png",
+        "default_title": "Launch TagSpaces",
+        "default_popup": "popup.html"
     },
     "permissions": [
         "<all_urls>",
-        "storage"
+        "storage",
+        "pageCapture",
+        "tabs"
     ],
     "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
     "homepage_url": "http://tagspaces.org"
