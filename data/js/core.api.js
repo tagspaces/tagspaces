@@ -193,17 +193,18 @@ define(function(require, exports, module) {
         var currentVersion = parseFloat(tsSettings.DefaultSettings["appVersion"]);        
 
         /* Testing the new version notifications
-        availableVersion = 1;
+
+        availableVersion = 2;
         currentVersion = 1;
         availableBuild = 2;
         currentBuild = 1; */
 
-        if(availableVersion > currentVersion) {
-            $("#newVersionMenu").html('<p id="newVersionMessageContent"><span data-i18n="app.newMinorReleaseAvailable">New TagSpaces major release available! See what\'s new on</span> ' +
-                '<a href="http://tagspaces.org/whatsnew/" class="whatsNewLink">tagspaces.org/whatsnew</a></p>');
-        } else if ((availableVersion == currentVersion) && (availableBuild > currentBuild)) {
-            $("#newVersionMenu").html('<p id="newVersionMessageContent"><span data-i18n="app.newMajorReleaseAvailable">New TagSpaces minor release available! See what\'s new on</span> ' +
-                '<a href="http://tagspaces.org/whatsnew/" class="whatsNewLink">tagspaces.org/whatsnew</a></p>');
+        if(availableVersion > currentVersion || ((availableVersion == currentVersion) && (availableBuild > currentBuild))) {
+            $("#newVersionAvailable").css("display","block");
+            $("#whatsNewModal iframe").attr("src","http://tagspaces.org/whatsnew/");
+            $('#whatsNewModal').on('show.bs.modal', function (e) {
+                $("#whatsNewModal iframe").attr("src","http://tagspaces.org/whatsnew/");
+            })
         }
     }
 
