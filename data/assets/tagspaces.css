@@ -860,7 +860,7 @@ input a.resetFilter {
 
 /* Toggle Switch Begin */
 .onoffswitch {
-    position: relative; width: 80px;
+    position: relative; width: 58px;
     -webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;
 }
 .onoffswitch-checkbox {
@@ -868,36 +868,36 @@ input a.resetFilter {
 }
 .onoffswitch-label {
     display: block; overflow: hidden; cursor: pointer;
-    border: 1px solid #666666; border-radius: 5px;
+    border: 1px solid #2e6da4; border-radius: 3px;
 }
 .onoffswitch-inner {
     display: block; width: 200%; margin-left: -100%;
-    -moz-transition: margin 0.2s ease-in 0s; -webkit-transition: margin 0.2s ease-in 0s;
-    -o-transition: margin 0.2s ease-in 0s; transition: margin 0.2s ease-in 0s;
+    -moz-transition: margin 0.3s ease-in 0s; -webkit-transition: margin 0.3s ease-in 0s;
+    -o-transition: margin 0.3s ease-in 0s; transition: margin 0.3s ease-in 0s;
 }
 .onoffswitch-inner:before, .onoffswitch-inner:after {
-    display: block; float: left; width: 50%; height: 24px; padding: 0; line-height: 24px;
-    font-size: 21px; color: white; font-family: Trebuchet, Arial, sans-serif; font-weight: bold;
+    display: block; float: left; width: 50%; height: 20px; padding: 0; line-height: 20px;
+    font-size: 16px; color: white; font-family: Trebuchet, Arial, sans-serif; font-weight: bold;
     -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
 }
 .onoffswitch-inner:before {
-    content: "I";
-    padding-left: 12px;
-    background-color: #619AFD; color: #FFFFFF;
+    content: "";
+    padding-left: 10px;
+    background-color: #337ab7; color: #FFFFFF;
 }
 .onoffswitch-inner:after {
-    content: "O";
-    padding-right: 12px;
+    content: "";
+    padding-right: 10px;
     background-color: #F8F8F8; color: #666666;
     text-align: right;
 }
 .onoffswitch-switch {
-    display: block; width: 45px; margin: 0px;
+    display: block; width: 30px; margin: 0px;
     background: #FFFFFF;
-    border: 1px solid #666666; border-radius: 5px;
-    position: absolute; top: 0; bottom: 0; right: 38px;
-    -moz-transition: all 0.2s ease-in 0s; -webkit-transition: all 0.2s ease-in 0s;
-    -o-transition: all 0.2s ease-in 0s; transition: all 0.2s ease-in 0s;
+    border: 1px solid #2e6da4; border-radius: 3px;
+    position: absolute; top: 0; bottom: 0; right: 24px;
+    -moz-transition: all 0.3s ease-in 0s; -webkit-transition: all 0.3s ease-in 0s;
+    -o-transition: all 0.3s ease-in 0s; transition: all 0.3s ease-in 0s;
     background-image: -moz-linear-gradient(center top, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0) 100%);
     background-image: -webkit-linear-gradient(center top, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0) 100%);
     background-image: -o-linear-gradient(center top, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0) 100%);
