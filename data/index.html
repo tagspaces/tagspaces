@@ -30,7 +30,7 @@ can be found in the LICENSE file.
     -moz-user-select: none;
 }
 </style>
-<link rel="stylesheet" type="text/css" href="libs/bootstrap/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="libs/bootstrap/css/bootstrap.css">
 <link rel="stylesheet" type="text/css" href="libs/animate.css/animate.css">
 <link rel="stylesheet" type="text/css" href="libs/select2/select2.css">
 <link rel="stylesheet" type="text/css" href="libs/select2/select2-bootstrap.css">
@@ -64,17 +64,15 @@ can be found in the LICENSE file.
 	<div class="row2">
 		<nav class="navbar navbar-default" role="navigation">
             <div class="btn-toolbar" style="width: 100%">
-                <span id="logo">TagSpaces</span>
-                <span class="appVersion"><sup  id="appVersion"></sup></span>
-                <a id="newVersionAvailable" style="cursor:pointer; display: none; color: #7bd148; font-size: 18px; margin: 5px" class="appVersion pull-right" data-i18n="[title]ns.common:newVersionAvailableTooltip" data-toggle="dropdown">
-                    <i class="glyphicon glyphicon-gift" style="color: #7bd148"></i>
-                </a>
-                <div class="btn-group pull-right" id="sideBarButtonGroup" style="margin-right: 5px;">
-                    <button class="btn btn-link" data-i18n="[title]ns.common:openNewInstanceTooltip" id="startNewInstanceBack">
-                        &nbsp;<i class="fa fa-external-link-square fa-lg"></i>&nbsp;</button>
-                    <button class="btn btn-link" data-i18n="[title]ns.common:openSettingTooltip;" id="openOptions">
-                        &nbsp;<i class="fa fa-gear fa-lg"></i>&nbsp;</button>
-                    <div id="newVersionMenu" class="dropdown-menu"></div>
+                <span id="startNewInstanceBack" data-i18n="[title]ns.common:openNewInstanceTooltip">
+                    <span id="logo">TagSpaces</span>
+                    <sup id="appVersion"></sup>
+                </span>
+                <div class="btn-group pull-right" id="sideBarButtonGroup">
+                    <button id="newVersionAvailable" class="btn btn-link" data-toggle="modal" data-target="#whatsNewModal" data-i18n="[title]ns.common:newVersionAvailableTooltip">
+                        <i class="glyphicon glyphicon-gift fa-lg"></i></button>
+                    <button class="btn btn-link" data-i18n="[title]ns.common:openSettingTooltip;" id="openOptions" style="padding-right: 0px;">
+                        <i class="fa fa-gears fa-lg"></i>&nbsp;</button>
                 </div>
             </div>
             <div class="btn-toolbar" style="width: 100%">
@@ -175,7 +173,7 @@ can be found in the LICENSE file.
 		<nav class="navbar navbar-default" role="navigation">
 			<div class="btn-toolbar">
 				<button type="button" class="navbar-toggle" id="toggleLeftPanel" data-i18n="[title]ns.common:toggleLeftPanelTooltip">
-		            <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
 		            <span class="icon-bar"></span>
 		            <span class="icon-bar"></span>
 				</button>
@@ -183,12 +181,12 @@ can be found in the LICENSE file.
                     <button class="btn btn-link" data-i18n="[title]ns.common:clearFilterTooltip" id="clearFilterButton" style="padding-top: 0; padding-right: 2px;">
                         <i class="fa fa-times"></i>
                     </button>
-                    <input type="text" id="searchBox" rel="popover" data-i18n-bak="ns.common:searchPlaceholder" placeholder="Search" data-i18n="[placeholder]ns.common:searchPlaceholder"></span>
+                    <input type="text" id="searchBox" rel="popover" placeholder="Search" data-i18n="[placeholder]ns.common:searchPlaceholder"></span>
                     <button class="btn btn-link" data-i18n="[title]ns.common:searchPlaceholder" id="searchButton" style="border-left-width: 0; padding-left: 2px; padding-top: 1px;">
                         <i class="fa fa-lg fa-search"></i>
                     </button>
 				</div>
-                <div id="mainTopMenu" class="input-group" style="position: absolute; top: 0; right: 0;">
+                <div id="mainTopMenu" class="input-group" style="position: absolute; top: 0; right: 0; white-space: nowrap;">
                     <button class="btn btn-link" data-i18n="[title]ns.common:searchPlaceholder" id="showSearchButton" style="border-left-width: 0;">
                         <i class="fa fa-lg fa-search"></i>
                     </button>
@@ -302,7 +300,7 @@ can be found in the LICENSE file.
             </div>
             <div class="modal-footer">
                 <button class="btn" id="aboutDialogBack" title="Go Back (If You Need)"><i class="fa fa-arrow-left fa-lg"></i></button>
-                <button class="btn btn-primary" data-dismiss="modal" title="Close About Box" aria-hidden="true"><i class="fa fa-check fa-lg"></i></button>
+                <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true"><i class="fa fa-check fa-lg"></i></button>
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
@@ -734,17 +732,33 @@ can be found in the LICENSE file.
 <input type="file" id="addFileInput" />
 
 <div id="searchOptions">
-    <div style="font-size: 12px;">
+    <div style="font-size: 13px;">
         <span class="dropdown-header"><button class="close" id="closeSearchOptionButton">&times;</button><span data-i18n="ns.common:searchOptions">Search Options</span></span>
-        <button class="btn-link" id="includeSubfoldersOption"><i class="fa fa-2x fa-toggle-off" style="color: #00b4ff"></i></button>&nbsp;<span data-i18n="ns.common:includeSubfoldersInSearch">Include files from the subfolders (by adding questionmark '?' in front of the query)</span>
-        <br>
-        <i class="fa fa-angle-double-right"></i>&nbsp;<span data-i18n="ns.common:excludeTermFromSearch">Including "!" in front of a term (e.g. !term) will exclude all files with this term in their filenames.</span><br>
-        <i class="fa fa-angle-double-right"></i>&nbsp;<span data-i18n="ns.common:includeTagInSearch">Including "+" in front of a term (e.g. +tag) will include all files tagged with this tag.</span><br>
-        <i class="fa fa-angle-double-right"></i>&nbsp;<span data-i18n="ns.common:excludeTagInSearch">Including "-" in front of a term (e.g. -tag) will exclude all files tagged with this tag.</span><br>
-        <i class="fa fa-angle-double-right"></i>&nbsp;<span data-i18n="ns.common:andedSearch">All terms should be true in order the file to appear in the search results.</span><br>
-        <i class="fa fa-angle-double-right"></i>&nbsp;<span data-i18n="ns.common:searchInFilenameOnly">The searched term should be part of the filename. Currently the content of the file is ignored.</span><br>
+        <i class="fa fa-exclamation-circle"></i>&nbsp;<span data-i18n="ns.common:includeSubfoldersInSearch">Include files from the subfolders (by adding questionmark '?' in front of the query)</span><br>
+        <i class="fa fa-exclamation-circle"></i>&nbsp;<span data-i18n="ns.common:excludeTermFromSearch">Including "!" in front of a term (e.g. !term) will exclude all files with this term in their filenames.</span><br>
+        <i class="fa fa-exclamation-circle"></i>&nbsp;<span data-i18n="ns.common:includeTagInSearch">Including "+" in front of a term (e.g. +tag) will include all files tagged with this tag.</span><br>
+        <i class="fa fa-exclamation-circle"></i>&nbsp;<span data-i18n="ns.common:excludeTagInSearch">Including "-" in front of a term (e.g. -tag) will exclude all files tagged with this tag.</span><br>
+        <i class="fa fa-exclamation-circle"></i>&nbsp;<span data-i18n="ns.common:andedSearch">All terms should be true in order the file to appear in the search results.</span><br>
+        <i class="fa fa-exclamation-circle"></i>&nbsp;<span data-i18n="ns.common:searchInFilenameOnly">The searched term should be part of the filename. Currently the content of the file is ignored.</span><br>
     </div>
 </div>
+
+<div class="modal" id="whatsNewModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times fa-lg"></i></button>
+                <h4 class="modal-title" data-i18n="ns.common:newVersionAvailableTooltip"></h4>
+            </div>
+            <div class="modal-body">
+                <iframe id="aboutIframe" nwdisable style="width: 100%; height: 350px; border: 0;"></iframe>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true"><i class="fa fa-check fa-lg"></i></button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 
 </body>
 </html>
