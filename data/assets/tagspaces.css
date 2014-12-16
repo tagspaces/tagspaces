@@ -30,6 +30,8 @@ body.osx {
 * { 
 	-webkit-tap-highlight-color: rgba(0,0,0,0); 
     -webkit-touch-callout: none;
+    tap-highlight-color: rgba(0,0,0,0);
+    touch-callout: none;
 /*
 -webkit-user-select: none;
 -khtml-user-select: none;
@@ -87,9 +89,13 @@ user-select: none;
 	display: inline-block;
 }
 
-.appVersion {
+#appVersion {
   font-size: 1.3em; 
   color: #616577;  
+}
+
+#startNewInstanceBack {
+    cursor: pointer;
 }
 
 #currentLocation {
@@ -348,7 +354,7 @@ li hr {
     margin-top: 8px;
     border: 0;
     background-color: transparent;
-    /*border-bottom: 1px solid gray;*/
+    border-bottom: 2px solid gray;
     font-size: 14px;
     min-width: 30px;
     width: 180px;
@@ -510,10 +516,16 @@ input a.resetFilter {
 
 /* Bootstrap Styles  white !important */
 
+.btn-link, .btn-link:hover, .btn-link:focus, .btn-link:active {
+    outline: none !important;
+    background-image: none;
+    border-radius: 0;
+}
+
 .btn, .btn:hover, .btn:focus, .btn:active {
+  outline: none !important;
   background-image: none;
-  border-radius: 2px;
-  outline: 0;  
+  border-radius: 0;
 }
 
 .btn-default:focus {
@@ -717,15 +729,24 @@ input a.resetFilter {
     font-size: 12px;
 }
 
-#newVersionMessageContent {
-    padding: 15px;
-}
-
 #welcomeScreen {
     background: url(welcome-logo.png) no-repeat center;
     background-size: auto auto;
     width: 100%; 
     height: 100%;
+}
+
+#newVersionAvailable {
+    padding-top: 8px;
+    padding-right: 3px;
+    padding-left: 3px;
+    color: #7bd148;
+    display: none;
+}
+
+#sideBarButtonGroup {
+    margin-right: 3px;
+    white-space: nowrap;
 }
 
 #showTagGroups, #showLocations, #contactUs {
@@ -855,7 +876,7 @@ input a.resetFilter {
     -o-transition: margin 0.2s ease-in 0s; transition: margin 0.2s ease-in 0s;
 }
 .onoffswitch-inner:before, .onoffswitch-inner:after {
-    display: block; float: left; width: 50%; height: 27px; padding: 0; line-height: 27px;
+    display: block; float: left; width: 50%; height: 24px; padding: 0; line-height: 24px;
     font-size: 21px; color: white; font-family: Trebuchet, Arial, sans-serif; font-weight: bold;
     -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
 }
