@@ -1,0 +1,1 @@
+nw.exe --data-path . %0
