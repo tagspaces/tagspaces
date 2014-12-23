@@ -4,9 +4,9 @@
     "manifest_version": 2,
     "description": "File Browser with Chromecast support",
     "icons": {
-        "16": "assets/icon16.png",
-        "48": "assets/icon48.png",
-        "64": "assets/icon64.png",
+        "16":  "assets/icon16.png",
+        "48":  "assets/icon48.png",
+        "64":  "assets/icon64.png",
         "128": "assets/icon128.png"
     },
     "background": {
