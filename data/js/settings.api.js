@@ -735,7 +735,7 @@
     var createTag = function(tagData, newTagName, newTagColor, newTagTextColor) {
         exports.Settings.tagGroups.forEach(function (value) {
             if(value.key === tagData.key) {
-                console.log("Creating tag: "+JSON.stringify(newTagModel)+" with parent: "+tagData.key);
+                //console.log("Creating tag: "+newTagName+" with parent: "+tagData.key);
                 var tagExistsInGroup = false;
                 value.children.forEach(function (child) {
                     if(child.title === newTagName) {
@@ -958,7 +958,7 @@
         localStorage.setItem('tagSpacesSettings', JSON.stringify(exports.Settings));
         
         // Storing settings in firefox native preferences
-        if(isFirefox) {
+        if(isFirefox || isChrome) {
             TSCORE.IO.saveSettings(JSON.stringify(exports.Settings));
         }
         
