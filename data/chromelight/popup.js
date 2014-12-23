@@ -16,9 +16,9 @@
             chrome.tabs.create({url: '../index.html'});
         });
 
-        var tagList = extractAllTags(tagLibrary);
-
         loadSettingsLocalStorage();
+
+        var tagList = extractAllTags(tagLibrary);
 
         $('#tags').select2('data', null);
         $("#tags").select2({
