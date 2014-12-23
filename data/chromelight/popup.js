@@ -12,19 +12,24 @@
     var tagLibrary;
 
     function init() {
+        $("#startTagSpaces").on("click", function (e) {
+            chrome.tabs.create({url: '../index.html'});
+        });
+
+        var tagList = extractAllTags(tagLibrary);
+        if(tagList == undefined) {
+            tagList = [];
+        }
+
         loadSettingsLocalStorage();
 
         $('#tags').select2('data', null);
         $("#tags").select2({
             multiple: true,
-            tags: extractAllTags(tagLibrary),
+            tags: tagList,
             tokenSeparators: [","," "],
             minimumInputLength: 2,
             selectOnBlur: true
-        });
-
-        $("#startTagSpaces").on("click", function (e) {
-            chrome.tabs.create({url: '../index.html'});
         });
 
         $("#saveAsMhtml").on('click', saveAsMHTML);
