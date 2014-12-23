@@ -23,12 +23,12 @@
                                 <span data-i18n="ns.dialogs:exportTagGroupsButton">Export Tag Groups as JSON</span>
                             </button>
                         </div>
-                        <div class='form-group col-sm-12'>
+                        <div class='form-group'>
                             <label for='languagesList'>Interface Language</label>
                             <select class='form-control' id='languagesList'></select>
                             <p class="help-block" data-i18n="ns.dialogs:switchLanguageHelp">Switching language will fully take effect after restarting the application</p>
                         </div>
-                        <div class='form-group col-sm-12'>
+                        <div class='form-group row' style="margin: 15px 0 0 0;">
                             <div class="col-sm-2">
                                 <div class="onoffswitch">
                                     <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="showHiddenFilesCheckbox" checked>
@@ -38,9 +38,9 @@
                                     </label>
                                 </div>
                             </div>
-                            <div class="col-sm-10" style="margin-top: 0px;" data-i18n="ns.dialogs:showUnixHiddenFiles"></div>
+                            <div class="col-sm-9" style="margin-top: 0px;" data-i18n="ns.dialogs:showUnixHiddenFiles"></div>
                         </div>
-                        <div class='form-group col-sm-12'>
+                        <div class='form-group row' style="margin: 15px 0 0 0;">
                             <div class="col-sm-2">
                                 <div class="onoffswitch">
                                     <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="checkforUpdatesCheckbox" checked>
@@ -50,9 +50,9 @@
                                     </label>
                                 </div>
                             </div>
-                            <div class="col-sm-10" style="margin-top: 0;" data-i18n="ns.dialogs:checkForNewVersion"></div>
+                            <div class="col-sm-9" style="margin-top: 0;" data-i18n="ns.dialogs:checkForNewVersion"></div>
                         </div>
-                        <div class='form-group col-sm-12'>
+                        <div class='form-group row' style="margin: 15px 0 0 0;">
                             <div class="col-sm-2">
                                 <div class="onoffswitch">
                                     <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="showMainMenuCheckbox" checked>
@@ -62,7 +62,7 @@
                                     </label>
                                 </div>
                             </div>
-                            <div class="col-sm-10" style="margin-top: 0;" data-i18n="ns.dialogs:showMainMenu"></div>
+                            <div class="col-sm-9" style="margin-top: 0;" data-i18n="ns.dialogs:showMainMenu"></div>
                         </div>
                     </div>
 
@@ -150,9 +150,8 @@
                     </div>
 
                     <div class="tab-pane" id="experimental" style="height: 360px; overflow-y: auto;">
-                        <div class="alert alert-danger col-sm-11" role="alert" data-i18n="ns.dialogs:experimentalHelp">Be carefull changing the following settings.</div>
                         <div class='form-group'>
-                            <button class="btn btn-warning" id="defaultSettingsButton" aria-hidden="true">
+                            <button class="btn btn-default" id="defaultSettingsButton" aria-hidden="true">
                                 <i class="fa fa-rotate-left"></i>&nbsp;
                                 <span data-i18n="ns.dialogs:restoreDefaulSettingButton">Restore Initial Settings</span>
                             </button>
@@ -187,6 +186,7 @@
                                 <p class="help-block" data-i18n="ns.dialogs:calculateTagHelp">Reduces the performance while browsing directories</p>
                             </div>
                         </div>
+                        <div class="alert alert-danger col-sm-11" role="alert" data-i18n="ns.dialogs:experimentalHelp">Be carefull changing the following settings.</div>
                         <div class='form-group col-sm-12'>
                             <label for='tagsDelimiterInput' data-i18n="ns.dialogs:tagDelimiter">Tag delimiter (e.g. Filename[TAG1_TAG2], _ is the delimiter)</label>
                             <input type='text' class='form-control' id='tagsDelimiterInput' data-i18n="" />
