@@ -330,6 +330,13 @@
         TSPOSTIO.getFileProperties(fileProperties);
     };
 
+    var saveSettings = function(content) {
+        /*chrome.storage.sync.set({'tagSpacesSettings': content}, function() {
+            // Notify that we saved.
+            message('Settings saved');
+        });*/
+    };
+
     // Bring the TagSpaces window on top of the windows
     var focusWindow = function() {
         window.focus();
@@ -357,6 +364,7 @@
     exports.checkAccessFileURLAllowed   = checkAccessFileURLAllowed;
     exports.checkNewVersion             = checkNewVersion;
     exports.getFileProperties           = getFileProperties;
+    exports.saveSettings                = saveSettings;
     exports.handleStartParameters       = handleStartParameters;
 
 });

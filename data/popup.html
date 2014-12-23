@@ -15,19 +15,22 @@ can be found in the LICENSE file.
     <link rel="stylesheet" type="text/css" href="assets/tagspaces.css">
     <!--script type="text/javascript" data-main="loader" src="libs/requirejs/require.js"></script-->
 </head>
-<body style="width: 300px; height: 320px; padding:0; font-size: 14px;">
-<div class="well">
+<body style="width: 520px; height: 300px; padding:0; font-size: 14px;">
+<div class="well" style="margin: 0;">
     <a href="#" class="btn btn-primary" id="startTagSpaces" style="width: 100%;"><img src="assets/icon128.png" style="max-height: 32px; max-width: 32px;"/>&nbsp;Start TagSpaces</a>
     <form role="form" data-toggle="validator" style="margin-top: 20px;">
         <div class="form-group">
-            <label class="control-label" for="tags" data-i18n="ns.dialogs:tagOperationTag">Tags</label>
+            <label class="control-label" for="tags" data-i18n="ns.dialogs:tagOperationTag">1. Tags</label>
             <input class="form-control" type="text" name="tags" id="tags" autocomplete="off"
                    data-i18n="[placeholder]ns.dialogs:tagOperationTagsPlaceholder"/>
             <p class="help-block" data-i18n="ns.dialogs:editTagNamesRestrictionsHelp">Tags should have a minimum length of 2 characters and should not contain special characters such as spaces, #, / ,\ and other.</p>
         </div>
     </form>
-    <div class="btn-toolbar text-center">
-        <a href="#" class="btn btn-primary" id="saveAsMhtml">Save current page as MHTML</a><br>
+    <label>2. Action</label>
+    <div class="btn-toolbar text-center noWrap">
+        <a href="#" class="btn btn-primary" id="saveAsMhtml" title="Save whole page as MHTML"><i class="fa fa-file fa-lg fa-fw"></i>&nbsp;<span>Save Whole Page</span></a>
+        <a href="#" class="btn btn-primary" id="saveSelectionAsHtml" title="Save selected content as HTML"><i class="fa fa-file-text fa-lg fa-fw"></i>&nbsp;<span>Save Selected</span></a>
+        <a href="#" class="btn btn-primary" id="saveScreenshot" title="Save screenshot as PNG"><i class="fa fa-camera fa-lg fa-fw"></i>&nbsp;<span>Screenshot</span></a>
     </div>
 </div>
 <script type="text/javascript" src="libs/jquery/jquery-2.1.1.min.js"></script>
@@ -35,7 +38,7 @@ can be found in the LICENSE file.
 <script type="text/javascript" src="libs/filesaver.js/FileSaver.js"></script>
 <script type="text/javascript" src="libs/i18next/i18next.amd.withJQuery-1.7.2.min.js"></script>
 <script type="text/javascript" src="libs/select2/select2.min.js"></script>
-<!--script type="text/javascript" src="chromelight/chrome.api.js"></script-->
+<script type="text/javascript" src="libs/dompurify/purify.js"></script>
 <script type="text/javascript" src="chromelight/popup.js"></script>
 </body>
 </html>
