@@ -17,9 +17,6 @@
         });
 
         var tagList = extractAllTags(tagLibrary);
-        if(tagList == undefined) {
-            tagList = [];
-        }
 
         loadSettingsLocalStorage();
 
@@ -167,6 +164,9 @@
 
     function extractAllTags() {
         var allTags = [];
+        if(tagLibrary === undefined) {
+            return allTags;
+        }
         for(var i=0; i < tagLibrary.length; i++) {
             for(var j=0; j < tagLibrary[i].children.length; j++) {
                 if(tagLibrary[i].children[j].type === "plain") {
