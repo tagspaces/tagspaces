@@ -15,18 +15,19 @@ can be found in the LICENSE file.
     <link rel="stylesheet" type="text/css" href="assets/tagspaces.css">
     <!--script type="text/javascript" data-main="loader" src="libs/requirejs/require.js"></script-->
 </head>
-<body style="width: 520px; height: 300px; padding:0; font-size: 14px;">
+<body style="width: 520px; height: 320px; padding:0; font-size: 14px; background-color: #f9f9f9;">
 <div class="well" style="margin: 0;">
     <a href="#" class="btn btn-primary" id="startTagSpaces" style="width: 100%;"><img src="assets/icon128.png" style="max-height: 32px; max-width: 32px;"/>&nbsp;Start TagSpaces</a>
-    <form role="form" data-toggle="validator" style="margin-top: 20px;">
+    <label style="margin-top: 15px; font-size: 17px;">Capture Web Content</label>
+    <form role="form" data-toggle="validator">
         <div class="form-group">
-            <label class="control-label" for="tags" data-i18n="ns.dialogs:tagOperationTag">1. Tags</label>
+            <label class="control-label" for="tags" data-i18n="ns.dialogs:tagOperationTag">1. Add Tags</label>
             <input class="form-control" type="text" name="tags" id="tags" autocomplete="off"
                    data-i18n="[placeholder]ns.dialogs:tagOperationTagsPlaceholder"/>
             <p class="help-block" data-i18n="ns.dialogs:editTagNamesRestrictionsHelp">Tags should have a minimum length of 2 characters and should not contain special characters such as spaces, #, / ,\ and other.</p>
         </div>
     </form>
-    <label>2. Action</label>
+    <label>2. Save as File</label>
     <div class="btn-toolbar text-center noWrap">
         <a href="#" class="btn btn-primary" id="saveAsMhtml" title="Save whole page as MHTML"><i class="fa fa-file fa-lg fa-fw"></i>&nbsp;<span>Save Whole Page</span></a>
         <a href="#" class="btn btn-primary" id="saveSelectionAsHtml" title="Save selected content as HTML"><i class="fa fa-file-text fa-lg fa-fw"></i>&nbsp;<span>Save Selected</span></a>

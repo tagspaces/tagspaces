@@ -121,10 +121,10 @@
     }
 
     function prepareContent(uncleanedHTML) {
-        console.log("uncleaned "+uncleanedHTML);
+        //console.log("uncleaned "+uncleanedHTML);
         var cleanedHTML = DOMPurify.sanitize(uncleanedHTML);
 
-        console.log("cleaned "+cleanedHTML);
+        /*console.log("cleaned "+cleanedHTML);
         // saving all images as png in base64 format
         var match,
             urls = [],
@@ -141,7 +141,7 @@
             cleanedHTML = cleanedHTML.split(dataURLObject[0]).join(dataURLObject[1]);
             //console.log(dataURLObject[0]+" - "+dataURLObject[1]);
         });
-        // end saving all images
+        // end saving all images*/
 
         cleanedHTML = "<body>"+cleanedHTML+"</body>";
         cleanedHTML = htmlTemplate.replace(/\<body[^>]*\>([^]*)\<\/body>/m,cleanedHTML);
