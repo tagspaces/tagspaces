@@ -24,6 +24,7 @@
 
 * Voldsoftware Libs - https://github.com/voldsoftware/
 
+* DOM Purify - https://github.com/cure53/DOMPurify - https://raw.githubusercontent.com/cure53/DOMPurify/0.4.4/purify.js
 * Font Awesome - http://fontawesome.io/
 * node-webkit (Windows, Linux and OS X clients) - https://github.com/rogerwang/node-webkit
 * fastclick (Android and IPhone Apps) - https://github.com/ftlabs/fastclick
