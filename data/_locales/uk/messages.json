@@ -1,0 +1,10 @@
+{
+    "appDesc": {
+        "message": "File browser supporting web content scraping and projecting of local files to Chromecast.",
+        "description": "The description of the application, displayed in the web store."
+    },
+    "appName": {
+        "message": "TagSpaces",
+        "description": "The title of the application, displayed in the web store."
+    }
+}

@@ -1,0 +1,10 @@
+{
+    "appDesc": {
+        "message": "Datei Browser mit Unterstützung der Speicherung von Web-Inhalten und Projektierung von lokalen Dateien zu Chromecast. ",
+        "description": "The description of the application, displayed in the web store."
+    },
+    "appName": {
+        "message": "TagSpaces",
+        "description": "The title of the application, displayed in the web store."
+    }
+}
