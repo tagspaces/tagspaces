@@ -2,7 +2,8 @@
     "name": "@@APPNAME",
     "version": "@@VERSION.@@BUILD",
     "manifest_version": 2,
-    "description": "File Browser with Web Content Scraping and Chromecast Support",
+    "description": "__MSG_appDesc__",
+    "default_locale": "en",
     "icons": {
         "16":  "assets/icon16.png",
         "48":  "assets/icon48.png",
