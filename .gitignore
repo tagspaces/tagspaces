@@ -1,6 +1,8 @@
 build.properties
 .settings
 CHANGELOG.TXT
+runfirefox
+runfirefoxbeta
 node-webkit/data
 node-webkit/ffmpegsumo.dll
 node-webkit/icudt.dll
