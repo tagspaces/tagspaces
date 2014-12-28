@@ -15,7 +15,7 @@
     },
     "browser_action": {
         "default_icon":  "assets/icon128.png",
-        "default_title": "Launch @@APPNAME",
+        "default_title": "__MSG_appLauncher__",
         "default_popup": "popup.html"
     },
     "permissions": [
