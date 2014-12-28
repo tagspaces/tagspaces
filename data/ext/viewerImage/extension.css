@@ -1,3 +1,9 @@
+.btn, .btn:hover, .btn:focus, .btn:active, .btn-link, .btn-link:hover, .btn-link:focus, .btn-link:active {
+    outline: none !important;
+    background-image: none;
+    border-radius: 0;
+}
+
 @media print {
     #Toolbar {
         display: none;
