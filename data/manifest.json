@@ -2,7 +2,8 @@
     "name": "TagSpaces",
     "version": "1.9.1",
     "manifest_version": 2,
-    "description": "File Browser with Chromecast support",
+    "description": "__MSG_appDesc__",
+    "default_locale": "en",
     "icons": {
         "16":  "assets/icon16.png",
         "48":  "assets/icon48.png",
@@ -14,7 +15,7 @@
     },
     "browser_action": {
         "default_icon":  "assets/icon128.png",
-        "default_title": "Launch TagSpaces",
+        "default_title": "__MSG_appLauncher__",
         "default_popup": "popup.html"
     },
     "permissions": [
