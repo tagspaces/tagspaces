@@ -69,22 +69,22 @@ Get the TagSpaces source code by cloning its repository:
 * Start the extension by clicking on the TagSpaces icon in the upper right part of Chrome/Chromium
 
 #### Run as Firefox extension
-* Download and install the Mozilla Addon SDK following the this [article](https://developer.mozilla.org/en-US/Add-ons/SDK/Tutorials/Installation)
+* Download and install the Mozilla Addon SDK following this [article](https://developer.mozilla.org/en-US/Add-ons/SDK/Tutorials/Installation)
 * Start the SDK by executing `source bin/activate` in the Addon SDK folder
-* Go to the your local tagspaces folder and run, where the -p argument specifies some local firefox profile:
+* Go to the your local tagspaces folder and run the following command, where the -p argument specifies some local firefox profile:
 
     `$cfx run -p /tmp/mozprofile`
 
 * Start the addon by clicking the TagSpaces icon in the upper right area of Firefox
 
-### How to setup the TagSpaces WebDAV edition?
+#### How to setup the WebDAV edition?
 You can find information on this topic on the [TagSpaces blog](http://www.tagspaces.org/webdav-edition/).
 
 ## License
-TagSpaces's code is licensed under the AGPL (GNU Affero General Public License) Version 3, for the license text see [LICENSE](LICENSE) file.
+TagSpaces's source code is licensed under the AGPL (GNU Affero General Public License) Version 3, for the license text see [LICENSE](LICENSE) file.
 
 ## Contribute
-TagSpaces is an open source software, and the code is published under the AGPL License. As such, the code is publicly available on GitHub, and forking is particularly recommended! Still, contribution must be done following some guidelines.
+TagSpaces is an open source software and as such, the code is publicly available on GitHub, and forking is particularly recommended! Still, contribution must be done following some guidelines.
 Contributor License Agreement
 
 The CLA is an agreement commonly used in major open source project, which aims at protecting all parties implied by a contribution : the contributor, the main code author, and above all, the community. The CLA model we have chosen basically tells the following : the contribution’s copyright is shared between the contributor and the main author. This means each party can do whatever she want in term of relicensing with this contributed piece of code. This is important, because, if in the future, the author wants to change the license in something more in favor of the community, a singular contributor cannot block the process.
