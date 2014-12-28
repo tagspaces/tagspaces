@@ -604,6 +604,7 @@ define(function(require, exports, module) {
     exports.createHTMLFile              = tsCoreUI.createHTMLFile;
     exports.createMDFile                = tsCoreUI.createMDFile;
     exports.createTXTFile               = tsCoreUI.createTXTFile;
+    exports.showSearchArea              = tsCoreUI.showSearchArea;
 
     // Proxying functions from tsTagsUI
     exports.generateTagButtons 			= tsTagsUI.generateTagButtons;

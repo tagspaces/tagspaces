@@ -14,12 +14,14 @@ define(function(require, exports, module) {
         TSCORE.Search.nextQuery = "+"+tagQuery;
         $("#searchBox").val("+"+tagQuery);
         TSCORE.PerspectiveManager.redrawCurrentPerspective();
+        TSCORE.showSearchArea();
     };
 
     var search4String = function(query) {
         TSCORE.Search.nextQuery = "+"+query;
         $("#searchBox").val("+"+query);
-        TSCORE.PerspectiveManager.redrawCurrentPerspective();        
+        TSCORE.PerspectiveManager.redrawCurrentPerspective();
+        TSCORE.showSearchArea();
     };
 
     var calculateTags = function(data) {
@@ -142,7 +144,7 @@ define(function(require, exports, module) {
         }
          
         return data;
-    };       
+    };
 
     // Public variables definition
     exports.currentQuery                 = currentQuery;
@@ -153,5 +155,5 @@ define(function(require, exports, module) {
     exports.searchForTag                 = search4Tag;       
     exports.searchForString              = search4String;    
     exports.calculateTags                = calculateTags;
-    
+
 });

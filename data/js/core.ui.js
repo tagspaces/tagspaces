@@ -593,8 +593,7 @@ define(function(require, exports, module) {
             });
 
         $("#showSearchButton").on("click", function() {
-            $("#searchToolbar").show(); //.addClass('animated bounceIn');
-            $("#showSearchButton").hide();
+            TSCORE.showSearchArea();
         });
 
         $("#searchButton")
@@ -689,6 +688,11 @@ define(function(require, exports, module) {
             TSCORE.hideAllDropDownMenus();
         });
     };
+
+    function showSearchArea() {
+        $("#searchToolbar").show(); //.addClass('animated bounceIn');
+        $("#showSearchButton").hide();
+    }
 
     // Handle external links
     function openLinkExternally(url) {
@@ -903,5 +907,6 @@ define(function(require, exports, module) {
     exports.createHTMLFile              = createHTMLFile;
     exports.createMDFile                = createMDFile;
     exports.createTXTFile               = createTXTFile;
+    exports.showSearchArea              = showSearchArea;
 
 });
