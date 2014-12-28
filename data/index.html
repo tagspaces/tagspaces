@@ -113,7 +113,7 @@ can be found in the LICENSE file.
                     <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
                     <i class="fa fa-bullhorn fa-stack-1x" style=""></i></span>&nbsp;&nbsp;
                     <span data-i18n="ns.common:suggestNewFeatures">Suggest New Features</span></a>
-                <a class="btn btn-link" data-i18n="[title]ns.common:reportIssuesTooltip" href="https://github.com/uggrock/tagspaces/issues/" id="openGitHubIssues">
+                <a class="btn btn-link" data-i18n="[title]ns.common:reportIssuesTooltip" href="https://github.com/tagspaces/tagspaces/issues/" id="openGitHubIssues">
                     <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
                     <i class="fa fa-bug fa-stack-1x" style=""></i></span>&nbsp;&nbsp;
                     <span data-i18n="ns.common:reportIssues">Report Issues</span></a>
@@ -176,7 +176,10 @@ can be found in the LICENSE file.
 		            <span class="icon-bar"></span>
 		            <span class="icon-bar"></span>
 				</button>
-				<div id="searchToolbar" class="form-inline">
+                <button class="btn btn-link" data-i18n="[title]ns.common:searchPlaceholder" id="showSearchButton">
+                   <i class="fa fa-lg fa-search"></i>
+               </button>
+               <div id="searchToolbar" class="form-inline">
                     <button class="btn btn-link" data-i18n="[title]ns.common:clearFilterTooltip" id="clearFilterButton" style="padding-top: 0; padding-right: 2px;">
                         <i class="fa fa-times"></i>
                     </button>
@@ -186,9 +189,6 @@ can be found in the LICENSE file.
                     </button>
 				</div>
                 <div id="mainTopMenu" class="input-group" style="position: absolute; top: 0; right: 0; white-space: nowrap;">
-                    <button class="btn btn-link" data-i18n="[title]ns.common:searchPlaceholder" id="showSearchButton" style="border-left-width: 0;">
-                        <i class="fa fa-lg fa-search"></i>
-                    </button>
                     <button type="button" id="perspectiveSwitcherButton" class="btn btn-link dropdown-toggle" data-toggle="dropdown"><i id="currentPerspectitveIcon" class="fa fa-film"></i>&nbsp;
                         <span id="currentPerspectitveName">Perspectives</span>&nbsp;<span class="caret"></span>
                     </button>

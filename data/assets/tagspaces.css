@@ -352,6 +352,15 @@ li hr {
     width: 250px;
 }
 
+#showSearchButton {
+    z-index: 1000;
+    position: absolute;
+    top: 0;
+    left:0; right:0;
+    margin: 0 auto;
+    width: 50px;
+}
+
 #searchBox {
     margin-top: 8px;
     border: 0;
@@ -518,16 +527,10 @@ input a.resetFilter {
 
 /* Bootstrap Styles  white !important */
 
-.btn-link, .btn-link:hover, .btn-link:focus, .btn-link:active {
+.btn, .btn:hover, .btn:focus, .btn:active, .btn-link, .btn-link:hover, .btn-link:focus, .btn-link:active {
     outline: none !important;
     background-image: none;
     border-radius: 0;
-}
-
-.btn, .btn:hover, .btn:focus, .btn:active {
-  outline: none !important;
-  background-image: none;
-  border-radius: 0;
 }
 
 .btn-default:focus {
