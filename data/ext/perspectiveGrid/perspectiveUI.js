@@ -653,7 +653,7 @@ console.log("Loading UI for perspectiveDefault");
         console.log("Removing "+filePath+" from UI");
 
         // Updating the file selection
-        TSCORE.selectedFiles.splice(TSCORE.selectedFiles.indexOf(oldFilePath), 1);
+        TSCORE.selectedFiles.splice(TSCORE.selectedFiles.indexOf(filePath), 1);
 
         if(isWin && !isWeb) {
             filePath = filePath.replace("\\","");

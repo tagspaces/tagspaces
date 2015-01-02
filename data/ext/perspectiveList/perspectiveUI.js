@@ -568,7 +568,7 @@ console.log("Loading UI for perspectiveList");
         console.log("Removing from UI"+filePath+" from UI");
 
         // Updating the file selection
-        TSCORE.selectedFiles.splice(TSCORE.selectedFiles.indexOf(oldFilePath), 1);
+        TSCORE.selectedFiles.splice(TSCORE.selectedFiles.indexOf(filePath), 1);
 
         var row4remove;
         if(isWin && !isWeb) {
