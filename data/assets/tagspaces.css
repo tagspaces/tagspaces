@@ -369,7 +369,7 @@ li hr {
     border-bottom: 2px solid gray;
     font-size: 14px;
     min-width: 30px;
-    width: 180px;
+    width: 170px;
 }
 
 #tagsContainer {
@@ -795,10 +795,6 @@ input a.resetFilter {
         background: url(welcome-logo2x.png) no-repeat center;
         background-size: 300px 200px;
     }
-}
-
-.addFileInput {
-    visibility:hidden;
 }
 
 .topEdge {
