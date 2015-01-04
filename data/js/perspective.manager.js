@@ -58,7 +58,9 @@ var initPerspectives = function () {
                     if(lastLocation !== undefined && lastLocation.length > 1 && !isFirefox) {
                        TSCORE.openLocation(lastLocation);
                        TSCORE.IO.checkAccessFileURLAllowed();
-                    }                       
+                    }
+
+                    $( "#loading" ).hide();
                 }
             }            
         });       

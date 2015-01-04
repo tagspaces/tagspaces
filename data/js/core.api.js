@@ -78,7 +78,6 @@ define(function(require, exports, module) {
             initLayout();
             switchInterfaceLanguage(tsSettings.getInterfaceLangauge()); // "de-DE"
             initKeyBindings();
-            $( "#loading" ).hide();
 
             tsIOApi.checkAccessFileURLAllowed();
 
@@ -104,9 +103,10 @@ define(function(require, exports, module) {
             }
 
             console.log("Docoument ready finished. Layout initialized");
-        });
 
-        checkForNewVersion();
+            //$( "#loading" ).hide(); moved to perspective manager
+            checkForNewVersion();
+        });
     }
 
     function switchIOAPI(type) {
@@ -310,7 +310,7 @@ define(function(require, exports, module) {
         var isPortret = fullWidth < window.innerHeight; 
         var oneColumn = fullWidth < 660;
         var twoColumn = (fullWidth >= 660 && fullWidth < 1024);
-
+        //$(".col3").css("left","auto");
         layoutContainer.options.east.spacing_open = 1;
 //        $("#toggleFullWidthButton").hide();
 
@@ -457,9 +457,11 @@ define(function(require, exports, module) {
             west__paneSelector:         '.col1',
             center__paneSelector:       '.col2',
             east__paneSelector:         '.col3',
+            east__resizable:            false,
             west__size:                 col1DefaultWidth,
             west__minWidth:             col1DefaultWidth,
             east__size:                 0.5,
+            west__resizable:            false,
             west__spacing_open:         1,
             east__spacing_open:         1,
             center_minWidth:            0,
