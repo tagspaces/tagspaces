@@ -21,7 +21,7 @@ found in the LICENSE file.
 			<replacefilter token="@@DEFAULTPERSPECTIVES" value="'perspectiveList', 'perspectiveGrid', 'perspectiveGraph', 'perspectiveOCRO', 'perspectiveHealth'" />
             <replacefilter token="@@ACTIVATEDPERSPECTIVES" value="{ 'id': 'perspectiveList' }, { 'id': 'perspectiveGrid' }, { 'id': 'perspectiveGraph' }, { 'id': 'perspectiveOCRO' }" />
 			<replacefilter token="@@PDFVIEWER" value="viewerBrowser" />
-            <replacefilter token="@@MHTVIEWER" value="viewerBrowser" />
+            <replacefilter token="@@MHTVIEWER" value="viewerMHTML" />
 		</replace>
         <copy file="data/mozilla/mozilla.package.tmpl.json" overwrite="true" tofile="package.json" />
         <replace file="package.json">
@@ -199,6 +199,7 @@ found in the LICENSE file.
                 <include name="editorJSON/**/*" />
                 <include name="viewerURL/**/*" />
 				<include name="viewerHTML/**/*" />
+				<include name="viewerMHTML/**/*" />
 				<include name="viewerText/**/*" />
 				<include name="viewerPDF/**/*" />
 				<include name="viewerImage/**/*" />
