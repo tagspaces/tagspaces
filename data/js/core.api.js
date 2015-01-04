@@ -326,6 +326,7 @@ define(function(require, exports, module) {
                 layoutContainer.close("west"); // workarround
                 shouldOpenCol1 = false; //Closing col1
                 layoutContainer.sizePane("east", fullWidth); // make col3 100%
+                //$(".col3").css("left","0"); // workarround for removing 1px balkan on the left
                 //east__spacing_open:         1
             } else {
                 if(!layoutContainer.state.west.isClosed) {

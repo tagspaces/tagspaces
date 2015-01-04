@@ -326,7 +326,7 @@ li hr {
     position: absolute;
     top: 0;
     left: 3px;
-    z-index: 999;
+    z-index: 1999;
     padding-right: 100px;
     background-color: #f2f2f2;
 }
@@ -343,13 +343,14 @@ li hr {
 }
 
 #searchToolbar {
-    z-index: 1000;
+    z-index: 2999;
     display: none;
     position: absolute;
     top: 0;
     left:0; right:0;
     margin: 0 auto;
     width: 250px;
+    background-color: #f2f2f2;
 }
 
 #showSearchButton {
@@ -798,9 +799,6 @@ input a.resetFilter {
 
 .addFileInput {
     visibility:hidden;
-    position:absolute;
-    top:-500px;
-    left:-500px;
 }
 
 .topEdge {

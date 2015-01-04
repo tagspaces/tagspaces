@@ -577,7 +577,9 @@ define(function(require, exports, module) {
                     TSCORE.PerspectiveManager.redrawCurrentPerspective();
                     $("#searchOptions").hide();
                     $("#searchButton").focus();
-                }  else {
+                } else if (e.keyCode == 27) {
+                    cancelSearch();
+                } else {
                     TSCORE.Search.nextQuery = this.value;
                 }
                 if (this.value.length === 0) {
@@ -594,6 +596,7 @@ define(function(require, exports, module) {
 
         $("#showSearchButton").on("click", function() {
             TSCORE.showSearchArea();
+            $("#searchBox").focus();
         });
 
         $("#searchButton")
@@ -608,14 +611,9 @@ define(function(require, exports, module) {
 
         $("#clearFilterButton")
             .prop('disabled', true)
-            .click(function(evt) {
-                evt.preventDefault();
-                clearSearchFilter();
-                $("#searchBox").popover("hide");
-                $("#searchToolbar").hide();
-                $("#showSearchButton").show();
-                // Restoring initial dir listing without subdirectories  
-                TSCORE.IO.listDirectory(TSCORE.currentPath);
+            .click(function(e) {
+                e.preventDefault();
+                cancelSearch();
             });
 
         // Search UI END
@@ -688,6 +686,15 @@ define(function(require, exports, module) {
             TSCORE.hideAllDropDownMenus();
         });
     };
+
+    function cancelSearch() {
+        clearSearchFilter();
+        $("#searchBox").popover("hide");
+        $("#searchToolbar").hide();
+        $("#showSearchButton").show();
+        // Restoring initial dir listing without subdirectories
+        TSCORE.IO.listDirectory(TSCORE.currentPath);
+    }
 
     function showSearchArea() {
         $("#searchToolbar").show(); //.addClass('animated bounceIn');
