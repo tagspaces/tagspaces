@@ -1,2 +1,2 @@
 #!/bin/bash
-./nw --data-path . $1
+./tagspaces --data-path . $1
