@@ -46,7 +46,7 @@ define(function(require, exports, module) {
                     subfolders.append($("<button>", { 
                         "class":    "btn btn-sm dirButton", 
                         "path":      TSCORE.subfoldersDirBrowser[j].path,
-                        //"title":    TSCORE.subfoldersDirBrowser[j].path,
+                        "title":    TSCORE.subfoldersDirBrowser[j].path,
                         "style":    "margin: 1px;",
                         "text":     " "+TSCORE.subfoldersDirBrowser[j].name
                     })

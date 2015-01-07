@@ -498,8 +498,10 @@ define(function(require, exports, module) {
             $("body").append('<input style="display:none;" id="folderDialogNodeWebkit" type="file" nwdirectory />');
         }
         var chooser = $('#folderDialogNodeWebkit');
-        chooser.change(function() {
+        chooser.on("change", function() {
             TSPOSTIO.selectDirectory($(this).val());
+            $(this).off("change");
+            $(this).val("");
         });
         chooser.trigger('click');
     };

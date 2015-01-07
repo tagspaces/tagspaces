@@ -202,11 +202,15 @@
                 isDir;
 
             var anotatedDirList = [];
-            // sciping the first entry pointing to the parent directory
+            // skiping the first entry pointing to the parent directory
             for (var i=1; i < folders.length; i++) {
                 console.log("Dir "+folders[i]);
                 name = folders[i].substring(2,folders[i].indexOf('","'));
-                path = dirPath+TSCORE.dirSeparator+name;
+                if(dirPath === TSCORE.dirSeparator) {
+                    path = dirPath+name;
+                } else {
+                    path = dirPath+TSCORE.dirSeparator+name;
+                }
                 isDir = (folders[i].indexOf(dataDir) > 1);
                 if(isDir) {
                     anotatedDirList.push({
