@@ -129,14 +129,20 @@
 
             if(oldBuildNumber <= 201407251310) {
                 addFileType({ "type": "json",    "viewer": "editorJSON", "editor": "editorJSON" });
-                addToSettingsArray(exports.Settings.ootbViewers,"editorJSON");
-                addToSettingsArray(exports.Settings.ootbEditors,"editorJSON");
+                //addToSettingsArray(exports.Settings.ootbViewers,"editorJSON");
+                //addToSettingsArray(exports.Settings.ootbEditors,"editorJSON");
             }
 
             if(oldBuildNumber <= 201410020000) {
                 updateFileType({ "type": "json",    "viewer": "editorJSON", "editor": "editorJSON" });
                 updateFileType({ "type": "html",    "viewer": "viewerHTML", "editor": "editorHTML" });
                 updateFileType({ "type": "htm",     "viewer": "viewerHTML", "editor": "editorHTML" });
+            }
+
+            if(oldBuildNumber <= 201411230000) {
+                //addToSettingsArray(exports.Settings.ootbViewers,"viewerMHTML");
+                updateFileType({ "type": "mhtml",    "viewer": "viewerMHTML", "editor": "false" });
+                updateFileType({ "type": "mht",      "viewer": "viewerMHTML", "editor": "false" });
             }
 
             saveSettings();         
