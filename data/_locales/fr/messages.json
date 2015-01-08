@@ -1,6 +1,10 @@
 {
+    "appLauncher": {
+        "message": "Lancer TagSpaces",
+        "description": "Title of the application launcher in the browser."
+    },
     "appDesc": {
-        "message": "File browser supporting web content scraping and projecting of local files to Chromecast.",
+        "message": "Navigateur de fichiers supportant le  \"Web content scraping\" et l'envoi de fichiers locaux vers Chromecast.",
         "description": "The description of the application, displayed in the web store."
     },
     "appName": {

@@ -1,4 +1,8 @@
 {
+    "appLauncher": {
+        "message": "Стартиране на TagSpaces",
+        "description": "Title of the application launcher in the browser."
+    },
     "appDesc": {
         "message": "File browser supporting web content scraping and projecting of local files to Chromecast.",
         "description": "The description of the application, displayed in the web store."

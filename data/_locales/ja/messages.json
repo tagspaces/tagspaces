@@ -1,6 +1,10 @@
 {
+    "appLauncher": {
+        "message": "TagSpacesを起動",
+        "description": "Title of the application launcher in the browser."
+    },
     "appDesc": {
-        "message": "File browser supporting web content scraping and projecting of local files to Chromecast.",
+        "message": "ファイルブラウザは、Chromecastへのローカルファイルのウェブコンテンツのスクラップやプロジェクトをサポートしてます。",
         "description": "The description of the application, displayed in the web store."
     },
     "appName": {
