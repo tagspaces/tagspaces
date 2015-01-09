@@ -1,1 +1,1 @@
-nw.exe --data-path . %0
+tagspaces.exe --data-path "."
