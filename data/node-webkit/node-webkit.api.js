@@ -146,6 +146,7 @@ define(function(require, exports, module) {
                 label: 'Help',
                 submenu: aboutMenu
             }));
+            rootMenu.createMacBuiltin("TagSpaces");
             win.menu = rootMenu;
         }
     };
@@ -156,7 +157,7 @@ define(function(require, exports, module) {
             var path, stats;
             for (var i=0; i < dirList.length; i++) {
                 path = dirPath+TSCORE.dirSeparator+dirList[i];
-                stats = fs.statSync(path);
+                stats = fs.lstatSync(path);
                 //console.log('stats: ' + JSON.stringify(stats));
                 index.push({
                     "name": dirList[i],
@@ -178,7 +179,7 @@ define(function(require, exports, module) {
     function generateDirectoryTree(dirPath) {
         try {
             var tree = {};
-            var dstats = fs.statSync(dirPath);
+            var dstats = fs.lstatSync(dirPath);
             tree.name = pathUtils.basename(dirPath);
             tree.isFile = false;
             tree.lmdt = dstats.mtime;
@@ -187,7 +188,7 @@ define(function(require, exports, module) {
             var dirList = fs.readdirSync(dirPath);
             for (var i=0; i < dirList.length; i++) {
                 var path = dirPath+TSCORE.dirSeparator+dirList[i];
-                var stats = fs.statSync(path);
+                var stats = fs.lstatSync(path);
                 if (stats.isFile()) {
                     tree.children.push({
                         "name": pathUtils.basename(path),
@@ -316,7 +317,7 @@ define(function(require, exports, module) {
             TSCORE.showAlertDialog("Target directory name '"+newDirPath+"' already exists.","Directory renaming failed!");
             return false;
         }
-        var dirStatus = fs.statSync(dirPath);
+        var dirStatus = fs.lstatSync(dirPath);
         if(dirStatus.isDirectory) {
             fs.rename(dirPath, newDirPath, function(error) {
                 if (error) {
@@ -430,15 +431,18 @@ define(function(require, exports, module) {
                 var anotatedDirList = [];
                 for (var i = 0; i < dirList.length; i++) {
                     var path = dirPath + TSCORE.dirSeparator + dirList[i];
-                    var stats = fs.statSync(path);
-                    //console.log('stats: ' + JSON.stringify(stats));
-                    anotatedDirList.push({
-                        "name": dirList[i],
-                        "isFile": !stats.isDirectory(),
-                        "size": stats.size,
-                        "lmdt": stats.mtime,
-                        "path": path
-                    });
+                    var stats = fs.lstatSync(path);
+                    console.log("Drin "+path+" "+stats);
+                    if(stats !== undefined) {
+                        //console.log('stats: ' + JSON.stringify(stats));
+                        anotatedDirList.push({
+                            "name": dirList[i],
+                            "isFile": !stats.isDirectory(),
+                            "size": stats.size,
+                            "lmdt": stats.mtime,
+                            "path": path
+                        });
+                    }
                 }
                 TSPOSTIO.listDirectory(anotatedDirList);
             });
@@ -556,7 +560,7 @@ define(function(require, exports, module) {
 */
     var getFileProperties = function(filePath) {
         var fileProperties = {};
-        var stats = fs.statSync(filePath);
+        var stats = fs.lstatSync(filePath);
         if (stats.isFile()) {
             fileProperties.path = filePath;
             fileProperties.size = stats.size;
