@@ -88,6 +88,7 @@ define(function(require, exports, module) {
     };
 
     var initMainMenu = function() {
+        rootMenu.createMacBuiltin("TagSpaces");
         if(TSCORE.Config.getShowMainMenu()) {
             aboutMenu.append(new gui.MenuItem({
                 type: 'normal',
@@ -146,7 +147,6 @@ define(function(require, exports, module) {
                 label: 'Help',
                 submenu: aboutMenu
             }));
-            rootMenu.createMacBuiltin("TagSpaces");
             win.menu = rootMenu;
         }
     };
