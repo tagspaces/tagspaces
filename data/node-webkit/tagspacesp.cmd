@@ -1,1 +1,1 @@
-tagspaces.exe --data-path "."
+start /B tagspaces.exe --data-path "."
