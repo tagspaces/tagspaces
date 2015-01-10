@@ -186,11 +186,19 @@ define(function(require, exports, module) {
         var versioningData = JSON.parse(data);
         
         // Analysing Version Information
-        var availableBuild = parseInt(versioningData['appBuild']); 
-        var availableVersion = parseFloat(versioningData['appVersion']);
+        var availableBuild = parseInt(versioningData['appBuild']);
+        var verA = versioningData['appVersion'].split(".");
+        if(verA[1].length == 1) {
+            verA[1] = "0"+verA[1];
+        }
+        var availableVersion = parseFloat(verA[0]+"."+verA[1]);
                  
         var currentBuild = parseInt(tsSettings.DefaultSettings["appBuild"]);
-        var currentVersion = parseFloat(tsSettings.DefaultSettings["appVersion"]);        
+        var verC = tsSettings.DefaultSettings["appVersion"].split(".");
+        if(verC[1].length == 1) {
+            verC[1] = "0"+verC[1];
+        }
+        var currentVersion = parseFloat(verC[0]+"."+verC[1]);
 
         /* Testing the new version notifications
 
