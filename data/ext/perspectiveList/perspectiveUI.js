@@ -184,6 +184,7 @@ console.log("Loading UI for perspectiveList");
         }));
 
         this.fileTable = $('#'+this.extensionID+"FileTable").dataTable( {
+            "bStateSave": true,
             "bJQueryUI": false,
             "bPaginate": false,
             "bLengthChange": false,
@@ -203,7 +204,7 @@ console.log("Loading UI for perspectiveList");
                 { "sTitle": "File Path", "sClass": "fileTitle" },
                 { "sTitle": "File Name", "sClass": "fileTitle forceWrap" }
             ],
-            "aaSorting": [[ 1, "asc" ]],    // softing by filename
+            "aaSorting": [[ 1, "asc" ]],    // sorting by filename
             "aoColumnDefs": [
                 { // File title
                     sType: 'natural',
