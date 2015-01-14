@@ -106,9 +106,9 @@ define(function(require, exports, module) {
 
     function checkContentChanged() {
         var newContentVersion;
-        //try {
+        try {
             newContentVersion = document.getElementById("iframeViewer").contentWindow.getContentVersion();
-        //} catch(e) { }
+        } catch(e) { }
         if(newContentVersion > contentVersion) {
             contentVersion = newContentVersion;
             TSCORE.FileOpener.setFileChanged(true);
