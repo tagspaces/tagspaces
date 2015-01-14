@@ -18,7 +18,7 @@ define(function (require, exports, module) {
 
     var urlFromIntent;
 
-    document.addEventListener("deviceready", onDeviceReady, false);
+        document.addEventListener("deviceready", onDeviceReady, false);
 
     // Cordova loaded and can be used
     function onDeviceReady() {
@@ -50,7 +50,7 @@ define(function (require, exports, module) {
         window.requestFileSystem(LocalFileSystem.PERSISTENT, 0,
             function (fileSystem) { // success get file system
                 fsRoot = fileSystem.root;
-                console.log("Filesystem Name: " + fsRoot.fullPath);
+                console.log("Filesystem Details: " + JSON.stringify(fsRoot));
                 handleStartParameters();
             }, 
             function (evt) { // error get file system
@@ -218,7 +218,14 @@ define(function (require, exports, module) {
     };    
     
     var listDirectory = function (dirPath) {
-        TSCORE.showLoadingAnimation();          
+        TSCORE.showLoadingAnimation();
+
+        /*window.resolveLocalFileSystemURL(dirPath, function(entry) {
+            console.log("--------"+entry.name);
+        }, function(e) {
+            console.log("-----"+e);
+        });*/
+
         // directory path format DCIM/Camera/ !
         dirPath = dirPath+"/"; // TODO make it platform independent
         dirPath = normalizePath(dirPath);
