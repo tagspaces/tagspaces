@@ -185,6 +185,7 @@ console.log("Loading UI for perspectiveList");
 
         this.fileTable = $('#'+this.extensionID+"FileTable").dataTable( {
             "bStateSave": true,
+            "iCookieDuration": 60*60*24*365,
             "bJQueryUI": false,
             "bPaginate": false,
             "bLengthChange": false,
