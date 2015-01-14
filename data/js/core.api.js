@@ -64,7 +64,7 @@ define(function(require, exports, module) {
         tsSettings.upgradeSettings();
         
         // Init UI components
-        tsCoreUI.initUI();  
+        tsCoreUI.initUI();
         tsTagsUI.initUI();      
         tsTagsUI.generateTagGroups();
         tsDirectoriesUI.initUI();
