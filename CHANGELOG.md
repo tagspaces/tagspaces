@@ -1,5 +1,32 @@
 ﻿#Changelog
 
+##Version 1.10.0 / 2015.01.10
+- redesigning the search functionality
+- typing esc in the search box will close the search area
+- adding new extension(viewerMHTML) for previewing of MHTML files
+- considering the parent directory name in the search results
+- showing search area by filtering for tags
+- updating the Russian, German, French, Japanese, Slovak, Portuguese and Bulgarian translations
+- redesigning settings adding new css toggle switch
+- adding exif reader and automatically rotation of JPG files according to their exif orientation
+- showing main menu made configurable in the settings
+- adding the path to the file in the tooltip of the extension button
+- adding ico as supported file type
+- updating setting auto update
+- adding dom purify lib to the project
+- fixing [#176](https://github.com/uggrock/tagspaces/issues/149) selecting the same directory twice
+- fixing refresh after deleting [#149](https://github.com/uggrock/tagspaces/issues/149)
+- fixing broken notification for new versions
+- [native] adding script for running TagSpaces in portable mode
+- [native] fixing handling of broken symlinks links [#182](https://github.com/uggrock/tagspaces/issues/182)
+- [OSX] fixing native menu with edit, copy, paste and window menus [#174](https://github.com/uggrock/tagspaces/issues/174)
+- [chrome] adding page capturing capabilities to the chrome extension
+- [chrome] disabling opening of the application on first install
+- [chrome] adding internationalization for the chrome store
+- [chrome] fixing double slash in the begin of a path in chrome
+- updating bootstrap to 3.2.0 and font-awesome to 4.2
+- adding spinkit to the project
+
 ##Version 1.9.0 / 2014.11.22
 - added new builds for 64bit Windows and Mac OSX
 - adding new HTML viewer with themes and content zooming
