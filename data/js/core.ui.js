@@ -559,6 +559,10 @@ define(function(require, exports, module) {
             }
         });
 
+        $('#searchBox').on('shown.bs.popover', function() {
+            $(".popover").i18n();
+        });
+
         $("#searchBox")
             .prop('disabled', true)
             /*.focus(function() {
@@ -582,7 +586,8 @@ define(function(require, exports, module) {
                 } else {
                     TSCORE.Search.nextQuery = this.value;
                 }
-                if (this.value.length === 0) {
+                if (this.value.length <= 1) {
+                    TSCORE.Search.nextQuery = this.value;
                     $( "#clearFilterButton").removeClass("filterOn");
                     TSCORE.PerspectiveManager.redrawCurrentPerspective();
                 }
