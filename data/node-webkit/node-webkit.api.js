@@ -167,7 +167,7 @@ define(function(require, exports, module) {
                 //console.log('stats: ' + JSON.stringify(stats));
                 index.push({
                     "name": dirList[i],
-                    "isFile": !stats.isDirectory(),
+                    "isFile": stats.isFile(),
                     "size": stats.size,
                     "lmdt": stats.mtime,
                     "path": path
@@ -438,12 +438,11 @@ define(function(require, exports, module) {
                 for (var i = 0; i < dirList.length; i++) {
                     var path = dirPath + TSCORE.dirSeparator + dirList[i];
                     var stats = fs.lstatSync(path);
-                    console.log("Drin "+path+" "+stats);
                     if(stats !== undefined) {
                         //console.log('stats: ' + JSON.stringify(stats));
                         anotatedDirList.push({
                             "name": dirList[i],
-                            "isFile": !stats.isDirectory(),
+                            "isFile": stats.isFile(),
                             "size": stats.size,
                             "lmdt": stats.mtime,
                             "path": path
