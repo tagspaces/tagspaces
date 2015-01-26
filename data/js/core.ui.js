@@ -586,7 +586,7 @@ define(function(require, exports, module) {
                 } else {
                     TSCORE.Search.nextQuery = this.value;
                 }
-                if (this.value.length <= 1) {
+                if (this.value.length === 0) {
                     TSCORE.Search.nextQuery = this.value;
                     $( "#clearFilterButton").removeClass("filterOn");
                     TSCORE.PerspectiveManager.redrawCurrentPerspective();
