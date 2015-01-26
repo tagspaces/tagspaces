@@ -131,12 +131,11 @@ define(function(require, exports, module) {
             metadataPath = "file://"+path+TSCORE.dirSeparator+tsMetadataFolder+TSCORE.dirSeparator+tsMetadataFile;
         }
 
-        require(["text!"+metadataPath], function(jsonFile) {
-            if(jsonFile !== null && jsonFile !== undefined && jsonFile !== "" ) {
-                var metadata = JSON.parse(jsonFile);
-                //console.log("Location Metadata: "+JSON.stringify(metadata));
-
-                if(metadata.tagGroups.length > 0) {
+        $.get( metadataPath, function( data ) {
+            if (data.length > 1) {
+                var metadata = JSON.parse(data);
+                console.log("Location Metadata: " + JSON.stringify(metadata));
+                if (metadata.tagGroups.length > 0) {
                     TSCORE.locationTags = metadata.tagGroups;
                     TSCORE.generateTagGroups();
                 }
