@@ -205,7 +205,7 @@ console.log("Loading UI for perspectiveList");
                 { "sTitle": "File Path", "sClass": "fileTitle" },
                 { "sTitle": "File Name", "sClass": "fileTitle forceWrap" }
             ],
-            "aaSorting": [[ 1, "asc" ]],    // sorting by filename
+            "aaSorting": [[ 1, "asc" ]],    // default sorting by filename
             "aoColumnDefs": [
                 { // File title
                     sType: 'natural',
