@@ -19,8 +19,7 @@ define(function(require, exports, module) {
     var aboutMenu = new gui.Menu();
     var viewMenu = new gui.Menu();
 
-    //var exif = require('../ext/viewerImage/exif-parser-master/lib/exif');
-    //var BufferStream = require('../ext/viewerImage/exif-parser-master/lib/bufferstream');
+    var menuInitialuzed = false;
 
     process.on("uncaughtException", function(err) {
         //alert("error: " + err);
@@ -91,7 +90,7 @@ define(function(require, exports, module) {
         if(isOSX) {
             rootMenu.createMacBuiltin("TagSpaces");
         }
-        if(TSCORE.Config.getShowMainMenu()) {
+        if(TSCORE.Config.getShowMainMenu() && !menuInitialuzed) {
             aboutMenu.append(new gui.MenuItem({
                 type: 'normal',
                 label: $.i18n.t("ns.common:aboutTagSpaces"),
@@ -133,23 +132,25 @@ define(function(require, exports, module) {
 
             viewMenu.append(new gui.MenuItem({
                 type: 'normal',
-                label: 'Settings',
+                label: $.i18n.t("ns.common:settings"),
                 click: function (){
                     TSCORE.UI.showOptionsDialog();
                 } }));
 
             rootMenu.append(new gui.MenuItem({
                 type: 'normal',
-                label: 'View',
+                label: $.i18n.t("ns.common:view"),
                 submenu: viewMenu
             }));
 
             rootMenu.append(new gui.MenuItem({
                 type: 'normal',
-                label: 'Help',
+                label: $.i18n.t("ns.common:help"),
                 submenu: aboutMenu
             }));
             win.menu = rootMenu;
+
+            menuInitialuzed = true;
         } else {
             if(isOSX) {
                 win.menu = rootMenu;
@@ -411,7 +412,7 @@ define(function(require, exports, module) {
         console.log("Saving binary file: "+filePath);
 
         if(!fs.existsSync(filePath)) {
-            fs.writeFile(filePath, content, 'utf8', function(error) {
+            fs.writeFile(filePath, arrayBufferToBuffer(content), 'utf8', function(error) {
                 if (error) {
                     console.log("Save to file "+filePath+" failed "+error);
                     return;
@@ -422,6 +423,15 @@ define(function(require, exports, module) {
             TSCORE.showAlertDialog("File Already Exists.");
         }
     };
+
+    function arrayBufferToBuffer(ab) {
+        var buffer = new Buffer(ab.byteLength);
+        var view = new Uint8Array(ab);
+        for (var i = 0; i < buffer.length; ++i) {
+            buffer[i] = view[i];
+        }
+        return buffer;
+    }
 
     var listDirectory = function (dirPath) {
         console.log("Listing directory: " + dirPath);
