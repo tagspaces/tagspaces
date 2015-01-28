@@ -413,7 +413,7 @@ exports.saveTextFile = function saveTextFile(filePath, content, worker) {
 };
 
 exports.saveBinaryFile = function saveBinaryFile(filePath, content, worker) {
-    console.log("Saving binary file: "+filePath);
+    console.log("Saving binary file: "+filePath); //+" - "+content);
     try {
         var file = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsIFile);
         file.initWithPath(filePath);
@@ -422,10 +422,6 @@ exports.saveBinaryFile = function saveBinaryFile(filePath, content, worker) {
         }
         var out = Cc["@mozilla.org/network/file-output-stream;1"].createInstance(Ci.nsIFileOutputStream);
         out.init(file,0x20|0x02,00004,null);
-        //var contentString = '';
-        //for (var i = 0; i < part.content.length; i++) {
-        //    contentString += String.fromCharCode(part.content[i]);
-        //}
         out.write(content,content.length);
         out.flush();
         out.close();

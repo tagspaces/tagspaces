@@ -213,13 +213,18 @@ define(function(require, exports, module) {
         document.documentElement.dispatchEvent(event);	
     };
 
+    function ab2str(buf) {
+        // todo add support larger files
+        return String.fromCharCode.apply(null, new Uint8Array(buf));
+    }
+
     var saveBinaryFile = function(filePath,content) {
-        console.log("Saving binary file: "+filePath);
+        console.log("Saving binary file post: "+filePath); //+" - "+content);
         var event = document.createEvent('CustomEvent');
         event.initCustomEvent("addon-message", true, true, {"detail":{
             "command": "saveBinaryFile",
             "path": filePath,
-            "content": content
+            "content": ab2str(content)
         }});
         document.documentElement.dispatchEvent(event);
     };
