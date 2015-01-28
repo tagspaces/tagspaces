@@ -124,7 +124,6 @@ function initToobarButton() {
         id: "TSToolbarButton",
         label: "TagSpaces",
         icon: {
-            "16": data.url("assets/icon16.png"),
             "32": data.url("assets/icon32.png"),
             "64": data.url("assets/icon64.png")
         },
