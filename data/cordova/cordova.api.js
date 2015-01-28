@@ -454,12 +454,8 @@ define(function (require, exports, module) {
                             writer.onwriteend = function(evt) {
                                 TSPOSTIO.saveBinaryFile(fsRoot.fullPath+"/"+filePath);
                             };
-                            var data = content,
-                                dataView = new Int8Array(data);
-                            for (var i=0; i < data.length; i++) {
-                                dataView[i] = i;
-                            }
-                            writer.write(data);
+                            var dataView = new Int8Array(content);
+                            writer.write(dataView.buffer);
                         },
                         function() {
                             console.log("error creating writter file: "+filePath);

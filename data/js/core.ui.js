@@ -339,7 +339,7 @@ define(function(require, exports, module) {
             addFileInputName = decodeURIComponent(file.name);
             var reader = new FileReader();
             reader.onload = onFileReadComplete;
-            reader.readAsBinaryString(file);
+            reader.readAsArrayBuffer(file);
         });
 
         function onFileReadComplete(event) {
