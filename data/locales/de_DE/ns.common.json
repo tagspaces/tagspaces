@@ -23,7 +23,7 @@
     "renameFileTooltip": "Aktuelle Datei umbenennen",
     "renameFile": "Datei umbenennen",
     "moveCopyFileTooltip": "Aktuelle Datei kopieren oder verschieben",
-    "moveCopyFile": "Datei Verschiben / Kopieren",
+    "moveCopyFile": "Datei Verschieben / Kopieren",
     "duplicateFileTooltip": "Die Datei wird dubliziert. Das aktuelle Datum und Zeit werden zu der Dateiname hinzugefügt.",
     "duplicateFile": "Datei dublizieren",
     "deleteFileTooltip": "Aktuelle Datei löschen",

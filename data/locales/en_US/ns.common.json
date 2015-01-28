@@ -154,5 +154,8 @@
     "showDevTools": "Show Developer Tools",
     "toggleFullScreen": "Toggle Fullscreen",
     "reloadApplication": "Reload Application",
+    "view": "View",
+    "help": "Help",
+    "settings": "Settings",
     "-": "-"
 }

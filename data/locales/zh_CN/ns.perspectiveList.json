@@ -16,7 +16,7 @@
     "showAddFileDialog": "添加已存在的文件",
     "showNewFileDialog": "高级文件创建",
     "exportToCSV": "导出为CSV格式（*.csv）",
-    "exportToCSVTooltip": "当前文件结构导出为CSV格式(以逗号分隔值)",
+    "exportToCSVTooltip": "导出当前文件结构为CSV格式(以逗号分隔)",
     "showSubfolderContent": "显示该子文件夹的内容",
     "showSubfolderContentTooltip": "显示子文件夹的内容",
     "addRemoveTagsTooltip": "修改选定文件的标签",

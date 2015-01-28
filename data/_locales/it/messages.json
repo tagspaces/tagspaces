@@ -1,6 +1,6 @@
 {
     "appLauncher": {
-        "message": "Launch TagSpaces",
+        "message": "Avvia TagSpaces",
         "description": "Title of the application launcher in the browser."
     },
     "appDesc": {
