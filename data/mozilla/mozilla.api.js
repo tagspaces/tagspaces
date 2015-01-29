@@ -214,7 +214,7 @@ define(function(require, exports, module) {
     };
 
     function ab2str(buf) {
-        // todo add support larger files
+        //TODO add support for larger files
         return String.fromCharCode.apply(null, new Uint8Array(buf));
     }
 
