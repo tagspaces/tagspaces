@@ -188,19 +188,6 @@ define(function(require, exports, module) {
 
     var saveBinaryFile = function(filePath,content) {
         console.log("Saving binary file: "+filePath); //+" content: "+content);
-        /*
-         // https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/Sending_and_Receiving_Binary_Data
-         var myArray = new ArrayBuffer(512);
-         var longInt8View = new Uint8Array(myArray);
-
-         for (var i=0; i< longInt8View.length; i++) {
-         longInt8View[i] = i % 255;
-         }
-
-         var xhr = new XMLHttpRequest;
-         xhr.open("POST", url, false);
-         xhr.send(myArray);
-         */
         var isNewFile = false;
         davClient.propfind( encodeURI(filePath), function( status, data ) {
             console.log("Check file exists: Status / Content: "+status+" / "+data);
