@@ -1,5 +1,17 @@
 ﻿#Changelog
 
+##Version 1.10.3 / 2015.01.29
+- Supporting adding of files on Android and the WebDAV edition
+- Fixing issue in the search
+- Fixing adding existing files in the native version [#187](https://github.com/uggrock/tagspaces/issues/187)
+- Fixing broken following of symlinks
+- Updating translations
+- Enable setting of the language throught url parameter
+- Fixing doubling the main menu [#193](https://github.com/uggrock/tagspaces/issues/193)
+- Fixing not loading of external json with tag groups on windows
+- Enabling strikeout on Android
+- Persisting sort order in list perspective [#165](https://github.com/uggrock/tagspaces/issues/165)
+
 ##Version 1.10.0 / 2015.01.10
 - redesigning the search functionality
 - typing esc in the search box will close the search area
