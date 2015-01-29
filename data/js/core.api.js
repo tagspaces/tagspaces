@@ -76,7 +76,12 @@ define(function(require, exports, module) {
 
         $(document).ready(function() {
             initLayout();
-            switchInterfaceLanguage(tsSettings.getInterfaceLangauge()); // "de-DE"
+            var language = tsSettings.getInterfaceLangauge(); // "de-DE"
+            var langURLParam = getParameterByName("locale");
+            if(langURLParam.length > 1) {
+                language = langURLParam;
+            }
+            switchInterfaceLanguage(language);
             initKeyBindings();
 
             tsIOApi.checkAccessFileURLAllowed();
@@ -170,7 +175,7 @@ define(function(require, exports, module) {
             tsIOApi.checkNewVersion();
         }
     }	
-    
+
     function checkLocalStorageEnabled() {
         var val = 'tagspaces';
         try {
@@ -179,7 +184,14 @@ define(function(require, exports, module) {
         } catch(e) {
             tsCoreUI.showAlertDialog($.i18n.t("ns.dialogs:enableLocalStorageAlert"),"Error");
         }
-    }    
+    }
+
+    function getParameterByName(name) {
+        name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+        var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+            results = regex.exec(location.search);
+        return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+    }
 
     function updateNewVersionData(data) {
         console.log("Version Information: "+data);
@@ -594,6 +606,7 @@ define(function(require, exports, module) {
     exports.removeFileModel             = removeFileModel;
     exports.updateFileModel             = updateFileModel;
     exports.switchInterfaceLanguage     = switchInterfaceLanguage;
+    exports.getParameterByName          = getParameterByName;
 
     // Proxying functions from tsCoreUI
     // TODO use TSCORE.UI instead
