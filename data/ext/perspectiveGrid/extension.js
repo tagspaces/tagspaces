@@ -38,9 +38,7 @@ define(function(require, exports, module) {
 	var platformTuning = function() {
 		if(isCordova) {
 			$("#"+extensionID+"IncludeSubDirsButton").hide();
-		} else if(isWeb) {
-            $('#'+extensionID+'AddFileButton').hide();
-        } else if(isChrome) {
+		} else if(isChrome) {
             $('#'+extensionID+'AddFileButton').hide();
         } else if(isFirefox) {
             $('#'+extensionID+'AddFileButton').hide(); // Current impl has 0.5mb limit

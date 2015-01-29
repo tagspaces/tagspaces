@@ -79,8 +79,6 @@ define(function(require, exports, module) {
 	var platformTuning = function() {
         if(isCordova) {
             $('#'+extensionID+'Export2CSVButton').hide();
-        } else if(isWeb) {
-            $('#'+extensionID+'AddFileButton').hide();
         } else if(isChrome) {
             $('#'+extensionID+'AddFileButton').hide();
             $('#'+extensionID+'TagButton').hide();
