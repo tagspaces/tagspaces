@@ -215,6 +215,7 @@ define(function(require, exports, module) {
 
     function ab2str(buf) {
         //TODO add support for larger files
+        // http://updates.html5rocks.com/2014/08/Easier-ArrayBuffer---String-conversion-with-the-Encoding-API
         return String.fromCharCode.apply(null, new Uint8Array(buf));
     }
 
