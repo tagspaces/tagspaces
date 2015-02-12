@@ -7,6 +7,7 @@
 (function() {
     console.log("Loading Popup...");
     var tags;
+    var title;
     var html;
     var htmlTemplate;
     var tagLibrary;
@@ -19,6 +20,11 @@
         loadSettingsLocalStorage();
 
         var tagList = extractAllTags(tagLibrary);
+        chrome.tabs.getSelected(null, function (tab) {
+            $('#title').val(tab.title);
+        });
+
+        $('#title').focus();
 
         $('#tags').select2('data', null);
         $("#tags").select2({
@@ -50,11 +56,12 @@
                     var cleanenHTML = prepareContent(request.source);
                     var htmlBlob = new Blob([cleanenHTML], {type: "text/html;charset=utf-8"});
                     tags = document.getElementById("tags").value;
+                    title = document.getElementById("title").value;
                     if (tags) {
                         tags = tags.split(",").join(" ");
-                        saveAs(htmlBlob, tab.title + ' [' + tags + '].html');
+                        saveAs(htmlBlob, title + ' [' + tags + '].html');
                     } else {
-                        saveAs(htmlBlob, tab.title + '.html');
+                        saveAs(htmlBlob, title + '.html');
                     }
                 });
             }
@@ -67,9 +74,9 @@
             chrome.pageCapture.saveAsMHTML({tabId: tab.id}, function (mhtml) {
                 if (tags) {
                     tags = tags.split(",").join(" ");
-                    saveAs(mhtml, tab.title + ' [' + tags + '].mhtml');
+                    saveAs(mhtml, $('#title').val() + ' [' + tags + '].mhtml');
                 } else {
-                    saveAs(mhtml, tab.title + '.mhtml');
+                    saveAs(mhtml, $('#title').val() + '.mhtml');
                 }
             });
         });
@@ -82,9 +89,9 @@
                 console.log("Screenshot: " + image);
                 if (tags) {
                     tags = tags.split(",").join(" ");
-                    saveAs(dataURItoBlob(image), tab.title + ' [' + tags + '].png');
+                    saveAs(dataURItoBlob(image), $('#title').val() + ' [' + tags + '].png');
                 } else {
-                    saveAs(dataURItoBlob(image), tab.title + '.png');
+                    saveAs(dataURItoBlob(image), $('#title').val() + '.png');
                 }
             });
         });
