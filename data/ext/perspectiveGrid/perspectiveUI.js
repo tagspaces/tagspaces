@@ -211,6 +211,10 @@ console.log("Loading UI for perspectiveDefault");
                 self.switchThumbnailSize();
             })      
             .prop('disabled', true);
+
+        $("#"+this.extensionID+"AddFileButton").on("click", function () {
+            $("#addFileInput").click();
+        });
         
         // Init Tag Context Menus
         this.viewContainer.on("contextmenu click", ".tagButton", function () {
