@@ -336,6 +336,9 @@ define(function(require, exports, module) {
     function navigateToDirectory(directoryPath) {
         console.log("Navigating to directory: "+directoryPath);
     
+        // Clearing search results on directory change
+        TSCORE.clearSearchFilter();
+    
         // Cleaning the directory path from \\ \ and / 
         if( (directoryPath.lastIndexOf('/')+1 === directoryPath.length) || (directoryPath.lastIndexOf('\\')+1 === directoryPath.length)) {
             directoryPath = directoryPath.substring(0,directoryPath.length-1);
