@@ -1,0 +1,43 @@
+{
+    // JSHint Configuration File
+    // See http://jshint.com/docs/ for more details
+
+    "maxerr"        : 5,       // {int} Maximum error before stopping
+
+    // Enforcing
+    "curly"         : true,     // true: Require {} for every new block or scope
+    "immed"         : true,    // true: Require immediate invocations to be wrapped in parens e.g. `(function () { } ());`
+    "indent"        : 2,        // {int} Number of spaces to use for indentation
+    "newcap"        : true,    // true: Require capitalization of all constructor functions e.g. `new F()`
+    "noarg"         : true,     // true: Prohibit use of `arguments.caller` and `arguments.callee`
+    "nonbsp"        : true,     // true: Prohibit "non-breaking whitespace" characters.
+    "nonew"         : true,    // true: Prohibit use of constructors for side-effects (without assignment)
+
+    // Relaxing
+    "boss"          : true,     // true: Tolerate assignments where comparisons would be expected
+    "debug"         : true,     // true: Allow debugger statements e.g. browser breakpoints.
+    "esnext"        : true,     // true: Allow ES.next (ES6) syntax (ex: `const`)
+    "evil"          : true,     // true: Tolerate use of `eval` and `new Function()`
+    "expr"          : true,     // true: Tolerate `ExpressionStatement` as Programs
+    "globalstrict"  : true,     // true: Allow global "use strict" (also enables 'strict')
+    "multistr"      : true,     // true: Tolerate multi-line strings
+    "shadow"        : true,     // true: Allows re-define variables later in code e.g. `var x=1; x=2;`
+    "validthis"     : true,     // true: Tolerate using this in a non-constructor function
+
+    // Environments
+    "browser"       : true,     // Web Browser (window, document, etc)
+    "devel"         : true,     // Development/debugging (alert, confirm, etc)
+    "jquery"        : true,    // jQuery
+    "node"          : true,    // Node.js
+    "nonstandard"   : true,    // Widely adopted globals (escape, unescape, etc)
+
+    // Custom Globals
+    "globals": {
+        "define": false,
+        "self": false,
+        "requirejs": false,
+        "chrome": false,
+        "addon": false,
+        "performance": false
+    }
+}
