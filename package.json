@@ -1,17 +1,42 @@
 {
-    "name": "tagspaces", 
-    "license": "AGPL 3.0", 
-    "author": "TagSpaces Authors",
-    "version": "1.10.4", 
-    "mainversion": "1.10", 
-    "subversion": "4", 
-    "buildid": "201502121716",
-    "fullName": "TagSpaces", 
-    "id": "jid1-FBaMKxTifTSahQ",
-    "lib": "data/mozilla",      
-    "description": "Offline file manager & document browser for your local files, supporting easy file tagging and document editing.",
-    "icon": "data/assets/icon48.png",	
-    "icon64": "data/assets/icon64.png",
-    "homepage": "http://tagspaces.org",
-    "unpack": true
+  "name": "tagspaces",
+  "license": "AGPL 3.0",
+  "author": "TagSpaces Authors",
+  "version": "1.10.5",
+  "mainversion": "1.10",
+  "subversion": "5",
+  "buildid": "20150302234014",
+  "fullName": "TagSpaces",
+  "id": "jid1-FBaMKxTifTSahQ",
+  "lib": "data/mozilla",
+  "description": "Offline file manager & document browser for your local files, supporting easy file tagging and document editing.",
+  "icon": "data/assets/icon48.png",
+  "icon64": "data/assets/icon64.png",
+  "homepage": "http://tagspaces.org",
+  "unpack": true,
+    
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tagspaces/tagspaces.git"
+  },
+  "keywords": [
+    "file manager"
+  ],
+  "readmeFilename": "Readme.md",
+  "dependencies": {},
+  "devDependencies": {
+    "grunt": "~0.4.2",
+    "grunt-contrib-clean": "~0.5.0",
+    "grunt-contrib-compress": "~0.6.1",
+    "grunt-contrib-concat": "~0.3.0",
+    "grunt-contrib-copy": "~0.8.0",
+    "grunt-text-replace": "~0.3.11",
+    "grunt-contrib-jshint": "~0.10.0",
+    "grunt-contrib-watch": "~0.5.3",
+    "grunt-jscs": "~1.1.0",
+    "grunt-jsdoc": "^0.5.7",
+    "grunt-mozilla-addon-sdk": "~0.3.2",
+    "jsDAV": "~0.3.2"
+  },
+  "private": true
 }

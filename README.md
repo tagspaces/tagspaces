@@ -54,7 +54,7 @@ Get the TagSpaces source code by cloning its repository:
     $git clone https://github.com/tagspaces/tagspaces.git
 
 #### Run as native Windows, Linux or Mac OS X application
-* Download [node-webkit](https://github.com/rogerwang/node-webkit) prebuilt binaries for your system environment.
+* Download [nw.js](https://github.com/nwjs/nw.js) prebuilt binaries for your system environment.
     * For Windows: copy `nw.exe, nw.pak, icudt.dll, ffmpegsumo.dll` to `tagspaces/data/node-webkit` directory.
     * For Linux: copy `nw, nw.pak, icudtl.dat, libffmpegsumo.so` to `tagspaces/data/node-webkit` directory. If you experience issue related to libudev.so.0 read the following [article](https://github.com/rogerwang/node-webkit/wiki/The-solution-of-lacking-libudev.so.0).
     * For Mac OS X: copy `node-webkit.app` to `tagspaces/data/node-webkit` directory.
