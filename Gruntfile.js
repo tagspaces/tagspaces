@@ -9,7 +9,16 @@ module.exports = function(grunt) {
     //default.locations.android = {"name": "Photos", "path": "DCIM"}, {"name": "Downloads", "path": "Download"}
 
     clean: {
-      cordova: ['<%= cordovaDevDir %>'],
+      cordova: {
+        options: {
+          force: true
+        },
+        files: [{
+          expand: true,
+          cwd: '<%= cordovaDevDir %>',
+          src: ['**/*'],
+        }]
+      },
     },
 
     copy: {
@@ -176,7 +185,7 @@ module.exports = function(grunt) {
           'mozilla-addon-sdk': '1_17',
           extension_dir: 'build/firefox',
           dist_dir: 'dist/',
-          arguments: '--output-file=mailvelope.firefox.xpi'
+          arguments: '--output-file=tagspaces.firefox.xpi'
         }
       }
     },
@@ -208,7 +217,7 @@ module.exports = function(grunt) {
   grunt.registerTask('checkstyle', ['jshint', 'jscs']);
   //grunt.registerTask('dist-doc', ['jsdoc', 'compress:doc']);
   grunt.registerTask('bump-version', ['init', 'replace:templates']);
-  grunt.registerTask('prepare-cordova', ['init', /*'clean:cordova',*/'copy:cordova', 'replace:cordova']);
+  grunt.registerTask('prepare-cordova', ['init', 'clean:cordova', 'copy:cordova', 'replace:cordova']);
   grunt.registerTask('default', ['init', 'checkstyle']);
 
   grunt.registerTask('init', 'Initializing variables.', function() {
