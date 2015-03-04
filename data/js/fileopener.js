@@ -1,4 +1,4 @@
-/* Copyright (c) 2012-2014 The TagSpaces Authors. All rights reserved.
+/* Copyright (c) 2012-2015 The TagSpaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that
  * can be found in the LICENSE file. */
 /* undef: true, unused: false */
@@ -217,7 +217,7 @@ define(function(require, exports, module) {
     var editorExt = TSCORE.Config.getFileTypeEditor(fileExt);
     console.log('File Viewer: ' + viewerExt + ' File Editor: ' + editorExt);
     // Handling the edit button depending on existense of an editor
-    if (editorExt == false || editorExt == 'false' || editorExt === '') {
+    if (editorExt === false || editorExt === 'false' || editorExt === '') {
       $('#editDocument').hide();
     } else {
       $('#editDocument').show();
@@ -452,11 +452,11 @@ define(function(require, exports, module) {
           console.log('Tag suggestion clicked: ' + tagName);
           TSCORE.TagUtils.writeTagsToFile(filePath, [tagName]);
           return false;
-        }))));
+        })))); // jshint ignore:line
       }
     }
   }
-  
+
   // TODO Make file properties dialog accessible from core
   function showFilePropertiesDialog() {
     require(['text!templates/FilePropertiesDialog.html'], function(uiTPL) {
@@ -478,7 +478,7 @@ define(function(require, exports, module) {
       });
     });
   }
-  
+
   // Public API definition
   exports.initUI = initUI;
   exports.openFile = openFile;
