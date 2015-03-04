@@ -1,13 +1,9 @@
 'use strict';
-
 module.exports = function(grunt) {
-
   grunt.initConfig({
-
     buildsDir: "../builds",
     cordovaDevDir: "/home/na/TagSpaces/cordova/www",
     //default.locations.android = {"name": "Photos", "path": "DCIM"}, {"name": "Downloads", "path": "Download"}
-
     clean: {
       cordova: {
         options: {
@@ -20,7 +16,6 @@ module.exports = function(grunt) {
         }]
       },
     },
-
     copy: {
       /*templates: {
         files: [
@@ -30,36 +25,124 @@ module.exports = function(grunt) {
         ]
       },*/
       cordova: {
-        files: [
-          { expand: true, cwd: 'data/assets', src: ['**'], dest: '<%= cordovaDevDir %>/assets' },
-          { expand: true, cwd: 'data/libs', src: ['**'], dest: '<%= cordovaDevDir %>/libs' },
-          { expand: true, cwd: 'data/js', src: ['**'], dest: '<%= cordovaDevDir %>/js' },
-          { expand: true, cwd: 'data/locales', src: ['**'], dest: '<%= cordovaDevDir %>/locales' },
-          { expand: true, cwd: 'data/templates', src: ['**'], dest: '<%= cordovaDevDir %>/templates' },
-          { expand: true, cwd: 'data/ext/perspectiveList/', src: ['**'], dest: '<%= cordovaDevDir %>/ext/perspectiveList/' },
-          { expand: true, cwd: 'data/ext/perspectiveGrid/', src: ['**'], dest: '<%= cordovaDevDir %>/ext/perspectiveGrid/' },
-          { expand: true, cwd: 'data/ext/editorHTML/', src: ['**'], dest: '<%= cordovaDevDir %>/ext/editorHTML/' },
-          { expand: true, cwd: 'data/ext/editorJSON/', src: ['**'], dest: '<%= cordovaDevDir %>/ext/editorJSON/' },
-          { expand: true, cwd: 'data/ext/editorText/', src: ['**'], dest: '<%= cordovaDevDir %>/ext/editorText/' },
-          { expand: true, cwd: 'data/ext/editorODF/', src: ['**'], dest: '<%= cordovaDevDir %>/ext/editorODF/' },
-          { expand: true, cwd: 'data/ext/viewerText/', src: ['**'], dest: '<%= cordovaDevDir %>/ext/viewerText' },
-          { expand: true, cwd: 'data/ext/viewerHTML/', src: ['**'], dest: '<%= cordovaDevDir %>/ext/viewerHTML' },
-          { expand: true, cwd: 'data/ext/viewerMHTML/', src: ['**'], dest: '<%= cordovaDevDir %>/ext/viewerMHTML' },
-          { expand: true, cwd: 'data/ext/viewerPDF/', src: ['**'], dest: '<%= cordovaDevDir %>/ext/viewerPDF' },
-          { expand: true, cwd: 'data/ext/viewerImage/', src: ['**'], dest: '<%= cordovaDevDir %>/ext/viewerImage/' },
-          { expand: true, cwd: 'data/ext/viewerURL/', src: ['**'], dest: '<%= cordovaDevDir %>/ext/viewerURL/' },
-          { expand: true, cwd: 'data/ext/viewerMD/', src: ['**'], dest: '<%= cordovaDevDir %>/ext/viewerMD/' },
-          { expand: true, cwd: 'data/ext/viewerBrowser/', src: ['**'], dest: '<%= cordovaDevDir %>/ext/viewerBrowser/' },
-          { expand: true, cwd: 'data/cordova', src: ['*.js'], dest: '<%= cordovaDevDir %>/cordova' },
-          { src: 'data/about.html', dest: '<%= cordovaDevDir %>/about.html' },
-          { src: 'data/index.html', dest: '<%= cordovaDevDir %>/index.html' },
-          { src: 'data/LICENSE.txt', dest: '<%= cordovaDevDir %>/LICENSE.txt' },
-          { src: 'data/EULA.txt', dest: '<%= cordovaDevDir %>/EULA.txt' },
-          { src: 'data/loader.js', dest: '<%= cordovaDevDir %>/loader.js' }
-        ]
+        files: [{
+          expand: true,
+          cwd: 'data/assets',
+          src: ['**'],
+          dest: '<%= cordovaDevDir %>/assets'
+        }, {
+          expand: true,
+          cwd: 'data/libs',
+          src: ['**'],
+          dest: '<%= cordovaDevDir %>/libs'
+        }, {
+          expand: true,
+          cwd: 'data/js',
+          src: ['**'],
+          dest: '<%= cordovaDevDir %>/js'
+        }, {
+          expand: true,
+          cwd: 'data/locales',
+          src: ['**'],
+          dest: '<%= cordovaDevDir %>/locales'
+        }, {
+          expand: true,
+          cwd: 'data/templates',
+          src: ['**'],
+          dest: '<%= cordovaDevDir %>/templates'
+        }, {
+          expand: true,
+          cwd: 'data/ext/perspectiveList/',
+          src: ['**'],
+          dest: '<%= cordovaDevDir %>/ext/perspectiveList/'
+        }, {
+          expand: true,
+          cwd: 'data/ext/perspectiveGrid/',
+          src: ['**'],
+          dest: '<%= cordovaDevDir %>/ext/perspectiveGrid/'
+        }, {
+          expand: true,
+          cwd: 'data/ext/editorHTML/',
+          src: ['**'],
+          dest: '<%= cordovaDevDir %>/ext/editorHTML/'
+        }, {
+          expand: true,
+          cwd: 'data/ext/editorJSON/',
+          src: ['**'],
+          dest: '<%= cordovaDevDir %>/ext/editorJSON/'
+        }, {
+          expand: true,
+          cwd: 'data/ext/editorText/',
+          src: ['**'],
+          dest: '<%= cordovaDevDir %>/ext/editorText/'
+        }, {
+          expand: true,
+          cwd: 'data/ext/editorODF/',
+          src: ['**'],
+          dest: '<%= cordovaDevDir %>/ext/editorODF/'
+        }, {
+          expand: true,
+          cwd: 'data/ext/viewerText/',
+          src: ['**'],
+          dest: '<%= cordovaDevDir %>/ext/viewerText'
+        }, {
+          expand: true,
+          cwd: 'data/ext/viewerHTML/',
+          src: ['**'],
+          dest: '<%= cordovaDevDir %>/ext/viewerHTML'
+        }, {
+          expand: true,
+          cwd: 'data/ext/viewerMHTML/',
+          src: ['**'],
+          dest: '<%= cordovaDevDir %>/ext/viewerMHTML'
+        }, {
+          expand: true,
+          cwd: 'data/ext/viewerPDF/',
+          src: ['**'],
+          dest: '<%= cordovaDevDir %>/ext/viewerPDF'
+        }, {
+          expand: true,
+          cwd: 'data/ext/viewerImage/',
+          src: ['**'],
+          dest: '<%= cordovaDevDir %>/ext/viewerImage/'
+        }, {
+          expand: true,
+          cwd: 'data/ext/viewerURL/',
+          src: ['**'],
+          dest: '<%= cordovaDevDir %>/ext/viewerURL/'
+        }, {
+          expand: true,
+          cwd: 'data/ext/viewerMD/',
+          src: ['**'],
+          dest: '<%= cordovaDevDir %>/ext/viewerMD/'
+        }, {
+          expand: true,
+          cwd: 'data/ext/viewerBrowser/',
+          src: ['**'],
+          dest: '<%= cordovaDevDir %>/ext/viewerBrowser/'
+        }, {
+          expand: true,
+          cwd: 'data/cordova',
+          src: ['*.js'],
+          dest: '<%= cordovaDevDir %>/cordova'
+        }, {
+          src: 'data/about.html',
+          dest: '<%= cordovaDevDir %>/about.html'
+        }, {
+          src: 'data/index.html',
+          dest: '<%= cordovaDevDir %>/index.html'
+        }, {
+          src: 'data/LICENSE.txt',
+          dest: '<%= cordovaDevDir %>/LICENSE.txt'
+        }, {
+          src: 'data/EULA.txt',
+          dest: '<%= cordovaDevDir %>/EULA.txt'
+        }, {
+          src: 'data/loader.js',
+          dest: '<%= cordovaDevDir %>/loader.js'
+        }]
       }
     },
-    
     replace: {
       templates: {
         options: {
@@ -79,11 +162,16 @@ module.exports = function(grunt) {
           },
           prefix: '@@'
         },
-        files: [
-          { src: 'default.settings.tmpl.js', dest: 'data/js/settings.default.js' },
-          { src: 'data/mozilla/mozilla.package.tmpl.json', dest: 'package.json' },
-          { src: 'data/chromelight/chrome.manifest.tmpl.json', dest: 'data/manifest.json' },
-        ]
+        files: [{
+          src: 'default.settings.tmpl.js',
+          dest: 'data/js/settings.default.js'
+        }, {
+          src: 'data/mozilla/mozilla.package.tmpl.json',
+          dest: 'package.json'
+        }, {
+          src: 'data/chromelight/chrome.manifest.tmpl.json',
+          dest: 'data/manifest.json'
+        }]
       },
       cordova: {
         options: {
@@ -103,13 +191,15 @@ module.exports = function(grunt) {
           },
           prefix: '@@'
         },
-        files: [
-          { src: 'data/cordova/config.xml', dest: '<%= cordovaDevDir %>/config.xml' },
-          { src: 'data/about.html', dest: '<%= cordovaDevDir %>/about.html' },
-        ]
+        files: [{
+          src: 'data/cordova/config.xml',
+          dest: '<%= cordovaDevDir %>/config.xml'
+        }, {
+          src: 'data/about.html',
+          dest: '<%= cordovaDevDir %>/about.html'
+        }]
       }
     },
-
     jshint: {
       options: {
         jshintrc: true
@@ -117,11 +207,10 @@ module.exports = function(grunt) {
       all: {
         src: [
           'Gruntfile.js',
-          //'data/js/**/*.js'
+          'data/js/**/*.js'
         ]
       }
     },
-
     jscs: {
       options: {
         config: ".jscs.json",
@@ -131,10 +220,60 @@ module.exports = function(grunt) {
         src: [
           'Gruntfile.js',
           'data/js/**/*.js',
+          '!data/js/settings.default.js '
         ]
       }
     },
-
+    fixmyjs: {
+      options: {
+        //config: '.jshintrc',
+        //legacy: true,
+        //dry: true
+        //indentpref: 'spaces'
+      },
+      core: {
+        files: [
+          {
+            expand: true,
+            cwd: 'data/',
+            src: ['js/**/*.js', '!js/fileopener.js'],
+            dest: 'data',
+            //ext: '.js'
+          }
+        ]
+      },
+      extensions: {
+        files: [{
+          expand: true,
+          cwd: 'data/',
+          src: ['ext/**/*.js', '!js/fileopener.js'],
+          dest: 'data',
+          ext: '.js'
+        }]
+      }
+    },
+    jsbeautifier : {
+      files : ['data/js/**/*.js'],
+      options : {
+        js: {
+          "indent_size": 2,
+          "indent_char": " ",
+          "indent_level": 0,
+          "preserve_newlines": true,
+          "max_preserve_newlines": 2,
+          "jslint_happy": false,
+          "space_after_anon_function": false,
+          "brace_style": "collapse",
+          "keep_array_indentation": false,
+          "keep_function_indentation": false,
+          "space_before_conditional": true,
+          "break_chained_methods": false,
+          "eval_code": false,
+          "unescape_strings": false,
+          "wrap_line_length": 0
+        }
+      }
+    },
     /*jsdoc : {
         dist : {
             src: ['data/js/*.js', "Readme.md"],
@@ -146,7 +285,6 @@ module.exports = function(grunt) {
             }
         }
     },*/
-
     watch: {
       scripts: {
         files: ['Gruntfile.js', '{data/js,data/ext}/**/*.js'],
@@ -156,7 +294,6 @@ module.exports = function(grunt) {
         }
       }
     },
-
     compress: {
       chrome: {
         options: {
@@ -171,7 +308,6 @@ module.exports = function(grunt) {
         }]
       },
     },
-
     'mozilla-addon-sdk': {
       '1_17': {
         options: {
@@ -198,9 +334,7 @@ module.exports = function(grunt) {
         }
       }
     },
-    
   });
-
   //loading modules
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-concat');
@@ -212,14 +346,15 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-mozilla-addon-sdk');
   grunt.loadNpmTasks("grunt-jscs");
   grunt.loadNpmTasks('grunt-jsdoc');
-
+  grunt.loadNpmTasks('grunt-fixmyjs');
+  grunt.loadNpmTasks('grunt-jsbeautifier');
   //tasks
   grunt.registerTask('checkstyle', ['jshint', 'jscs']);
   //grunt.registerTask('dist-doc', ['jsdoc', 'compress:doc']);
+  grunt.registerTask('jsfix', ['fixmyjs:core', 'jsbeautifier', 'checkstyle']);
   grunt.registerTask('bump-version', ['init', 'replace:templates']);
   grunt.registerTask('prepare-cordova', ['init', 'clean:cordova', 'copy:cordova', 'replace:cordova']);
   grunt.registerTask('default', ['init', 'checkstyle']);
-
   grunt.registerTask('init', 'Initializing variables.', function() {
     grunt.log.writeln("Initializing builder...");
     var cfg = grunt.file.readJSON('package.json');
@@ -231,34 +366,46 @@ module.exports = function(grunt) {
     grunt.config("description", cfg.description);
 
     function formatDateTime(date, includeTime, includeMS) {
-      if ((date === undefined) || (date === "")) { return ""; }
+      if ((date === undefined) || (date === "")) {
+        return "";
+      }
       var d = new Date(date);
       var cDate = d.getDate();
       cDate = cDate + "";
-      if (cDate.length === 1) { cDate = "0" + cDate; }
-      var cMonth = d.getMonth(); cMonth++;
+      if (cDate.length === 1) {
+        cDate = "0" + cDate;
+      }
+      var cMonth = d.getMonth();
+      cMonth++;
       cMonth = cMonth + "";
-      if (cMonth.length === 1) { cMonth = "0" + cMonth; }
+      if (cMonth.length === 1) {
+        cMonth = "0" + cMonth;
+      }
       var cYear = d.getFullYear();
       var cHour = d.getHours();
       cHour = cHour + "";
-      if (cHour.length === 1) { cHour = "0" + cHour; }
+      if (cHour.length === 1) {
+        cHour = "0" + cHour;
+      }
       var cMinute = d.getMinutes();
       cMinute = cMinute + "";
-      if (cMinute.length === 1) { cMinute = "0" + cMinute; }
+      if (cMinute.length === 1) {
+        cMinute = "0" + cMinute;
+      }
       var cSecond = d.getSeconds();
       cSecond = cSecond + "";
-      if (cSecond.length === 1) { cSecond = "0" + cSecond; }
+      if (cSecond.length === 1) {
+        cSecond = "0" + cSecond;
+      }
       var time = "";
       if (includeTime) {
-          time = cHour+""+cMinute+""+cSecond;
+        time = cHour + "" + cMinute + "" + cSecond;
       }
       var milliseconds = "";
       if (includeMS) {
-          milliseconds = d.getMilliseconds();
+        milliseconds = d.getMilliseconds();
       }
-      return cYear+""+cMonth+""+cDate+time+milliseconds;
+      return cYear + "" + cMonth + "" + cDate + time + milliseconds;
     }
   });
-
 };
