@@ -1,0 +1,23 @@
+language: node_js
+node_js:
+- '0.10'
+before_install:
+- npm install -g grunt-cli
+install:
+- grunt
+script:
+- grunt checkstyle
+#- npm run-script deploy-doc
+# env:
+#  global:
+#  - GH_REF=github.com/tagspaces/tagspaces.git
+#  - secure: ""
+# deploy:
+#  provider: releases
+#  api-key: ${GH_TOKEN}
+#  file: dist/*
+#  file_glob: true
+#  skip_cleanup: true
+#  on:
+#   tags: true
+#   all_branches: true
