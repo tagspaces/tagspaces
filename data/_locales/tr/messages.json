@@ -1,0 +1,14 @@
+{
+    "appLauncher": {
+        "message": "TagSpaces'i Başlat",
+        "description": "Title of the application launcher in the browser."
+    },
+    "appDesc": {
+        "message": "Dosya tarayıcısı web içeriğinde veri ayıklamayı ve yerel dosyaları  Chromecast'e yansıtmayı destekler.",
+        "description": "The description of the application, displayed in the web store."
+    },
+    "appName": {
+        "message": "TagSpaces",
+        "description": "The title of the application, displayed in the web store."
+    }
+}

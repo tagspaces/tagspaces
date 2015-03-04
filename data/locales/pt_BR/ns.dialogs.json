@@ -119,7 +119,7 @@
     "nextDocumentKeyBinding": "Próximo Documento",
     "prevDocumentKeyBinding": "Documento Anterior",
     "editDocumentKeyBinding": "Edit Document",
-    "addRemoveTagsKeyBinding": "Add / Remove Tags",
+    "addRemoveTagsKeyBinding": "Adicionar / Remover Etiquetas",
     "perspectivesHelp": "The changes made in this tab will take effect after restarting the application.",
     "addPerspectiveButton": "Add new perspective",
     "addNewFileExtensionButton": "Add new file extension",

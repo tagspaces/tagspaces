@@ -1,0 +1,14 @@
+{
+    "appLauncher": {
+        "message": "Spustit TagSpaces",
+        "description": "Title of the application launcher in the browser."
+    },
+    "appDesc": {
+        "message": "Souborový manažer podporující vyzobávání webového obsahu a přehrávání lokálních souborů pomocí Chromecast.",
+        "description": "The description of the application, displayed in the web store."
+    },
+    "appName": {
+        "message": "TagSpaces",
+        "description": "The title of the application, displayed in the web store."
+    }
+}
