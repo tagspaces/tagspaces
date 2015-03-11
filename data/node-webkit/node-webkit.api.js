@@ -301,7 +301,7 @@ define(function(require, exports, module) {
         fs.rename(filePath, newFilePath, function(error) {
             if (error) {
                 TSCORE.hideWaitingDialog();
-                TSCORE.showAlertDialog("Renaming of '"+filePath+"' failed. The file is probably on a different partion.");
+                TSCORE.showAlertDialog("Renaming of '"+filePath+"' failed. The file is probably on a different partition.");
                 return;
             }
             TSPOSTIO.renameFile(filePath, newFilePath);
