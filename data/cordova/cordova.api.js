@@ -14,7 +14,7 @@ define(function(require, exports, module) {
   var attachFastClick = require('cordova/fastclick/fastclick.min');
   attachFastClick(document.body);
 
-  var fsRoot = undefined;
+  var fsRoot;
 
   var urlFromIntent;
 
@@ -125,7 +125,7 @@ define(function(require, exports, module) {
     for (i = 0; i < entries.length; i++) {
       if (entries[i].isFile) {
         console.log("File: " + entries[i].name);
-        tree["children"].push({
+        tree.children.push({
           "name": entries[i].name,
           "isFile": entries[i].isFile,
           "size": "", // TODO size and lmtd
@@ -149,7 +149,7 @@ define(function(require, exports, module) {
     }
   }
 
-  var anotatedTree = undefined;
+  var anotatedTree;
   var pendingCallbacks = 0;
   var createDirectoryTree = function(dirPath) {
     console.log("Creating directory index for: " + dirPath);
@@ -425,7 +425,7 @@ define(function(require, exports, module) {
         saveFile(isFileNew);
       },
       function() {
-        saveFile(isFileNew)
+        saveFile(isFileNew);
       }
     );
 

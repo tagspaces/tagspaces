@@ -303,7 +303,7 @@ define(function(require, exports, module) {
     console.log("Select directory!");
     var rootPath = "/";
     if (isWin) {
-      rootPath = "C:"
+      rootPath = "C:";
     }
     TSCORE.showDirectoryBrowserDialog(rootPath);
   };

@@ -102,11 +102,11 @@ function directoryTree(dirPath) {
     var dirList = filesIO.list(dirPath);
     var directory = Cc['@mozilla.org/file/local;1'].createInstance(Ci.nsIFile);
     directory.initWithPath(dirPath);
-    tree["name"] = directory.leafName;
-    tree["isFile"] = false;
-    tree["lmdt"] = directory.lastModifiedTime;
-    tree["path"] = dirPath;
-    tree["children"] = [];
+    tree.name = directory.leafName;
+    tree.isFile = false;
+    tree.lmdt = directory.lastModifiedTime;
+    tree.path = dirPath;
+    tree.children = [];
 
     for (var i = 0; i < dirList.length; i++) {
       try {
@@ -114,7 +114,7 @@ function directoryTree(dirPath) {
         var file = Cc['@mozilla.org/file/local;1'].createInstance(Ci.nsIFile);
         file.initWithPath(path);
         if (file.isFile()) {
-          tree["children"].push({
+          tree.children.push({
             "name": file.leafName,
             "isFile": true,
             "size": file.fileSize,
@@ -122,7 +122,7 @@ function directoryTree(dirPath) {
             "path": path
           });
         } else {
-          tree["children"].push(directoryTree(path));
+          tree.children.push(directoryTree(path));
         }
       } catch (ex) {
         console.error("Filepath has a invalid encoding " + ex);
@@ -457,7 +457,7 @@ exports.saveBinaryFile = function saveBinaryFile(filePath, content, worker) {
       file.create(0, 0664);
     }
     var out = Cc["@mozilla.org/network/file-output-stream;1"].createInstance(Ci.nsIFileOutputStream);
-    out.init(file, 0x20 | 0x02, 00004, null);
+    out.init(file, 0x20 | 0x02, 00004, null); // jshint ignore:line
     out.write(content, content.length);
     out.flush();
     out.close();

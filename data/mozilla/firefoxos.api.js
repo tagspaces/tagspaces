@@ -61,7 +61,7 @@ define(function(require, exports, module) {
     // Handling the UTF8 support for text files
     var UTF8_BOM = "\ufeff";
 
-    if (content.indexOf(UTF8_BOM) == 0) {
+    if (content.indexOf(UTF8_BOM) === 0) {
       // already has a UTF8 bom
     } else {
       content = UTF8_BOM + content;
@@ -88,7 +88,7 @@ define(function(require, exports, module) {
     cursor.onsuccess = function() {
       console.log("Listing storage success!");
       var file = this.result;
-      if (file != null) {
+      if (file !== null) {
         //var imageElement = $('<img height="100" width="75">');
         //imageElement.attr('src', window.URL.createObjectURL(file));
         //$("<p>" + file.name + "," + file.lastModifiedDate + "," + file.type + "," + file.size  + "</p>").appendTo('#results');
@@ -147,7 +147,7 @@ define(function(require, exports, module) {
 
   var checkNewVersion = function() {
     console.log("Checking for new version...");
-    var cVer = TSCORE.Config.DefaultSettings["appVersion"] + "." + TSCORE.Config.DefaultSettings["appBuild"];
+    var cVer = TSCORE.Config.DefaultSettings.appVersion + "." + TSCORE.Config.DefaultSettings.appBuild;
     $.ajax({
         url: 'http://tagspaces.org/releases/version.json?nVer=' + cVer,
         type: 'GET',

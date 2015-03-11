@@ -1,3 +1,5 @@
+"use strict";
+
 function DOMtoString(document_root) {
   var html = '',
     node = document_root.firstChild;
