@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <widget id="org.tagspaces.androidapp" version="@@VERSION.@@BUILD" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>@@APPNAME</name>
-    <description>@@DEFAULTLOCATIONS</description>
+    <description>@@APPDESCRIPTION</description>
     <author email="info@tagspaces.org" href="http://tagspaces.org">
         @@APPNAME Team
     </author>
@@ -23,4 +23,6 @@
     <preference name="exit-on-suspend" value="false" />
     <preference name="fullscreen" value="false" />
     <preference name="webviewbounce" value="true" />
+    <preference name="AndroidPersistentFileLocation" value="Compatibility" />
+    <preference name="AndroidExtraFilesystems" value="sdcard,cache" />
 </widget>
