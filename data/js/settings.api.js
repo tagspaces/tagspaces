@@ -577,7 +577,7 @@ define(function(require, exports, module) {
         if (exports.Settings.tagGroups[i].children[j].title === tagName) {
           return exports.Settings.tagGroups[i].children[j];
         }
-      }        
+      }
     }
     return false;
   };
@@ -945,23 +945,23 @@ define(function(require, exports, module) {
   exports.getShowTagLibraryKeyBinding = getShowTagLibraryKeyBinding;
   exports.setShowFolderNavigatorKeyBinding = setShowFolderNavigatorKeyBinding;
   exports.getShowFolderNavigatorBinding = getShowFolderNavigatorBinding;
-  
+
   exports.getPerspectiveExtensions = getPerspectiveExtensions;
   exports.getActivatedPerspectiveExtensions = getActivatedPerspectiveExtensions;
   exports.getViewerExtensions = getViewerExtensions;
   exports.getEditorExtensions = getEditorExtensions;
-  
+
   exports.getNewTextFileContent = getNewTextFileContent;
   exports.getNewHTMLFileContent = getNewHTMLFileContent;
   exports.getNewMDFileContent = getNewMDFileContent;
   exports.getFileTypeEditor = getFileTypeEditor;
   exports.getFileTypeViewer = getFileTypeViewer;
   exports.getAllTags = getAllTags;
-  
+
   exports.getTagData = getTagData;
   exports.getTagGroupData = getTagGroupData;
   exports.getAllTagGroupData = getAllTagGroupData;
-  
+
   exports.deleteTag = deleteTag;
   exports.deleteTagGroup = deleteTagGroup;
   exports.editTag = editTag;

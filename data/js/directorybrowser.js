@@ -52,7 +52,7 @@ define(function(require, exports, module) {
       show: true
     });
   }
-  
+
   // Public Methods
   exports.initUI = initUI;
   exports.reInitUI = reInitUI;

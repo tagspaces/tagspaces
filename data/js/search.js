@@ -7,21 +7,21 @@ define(function(require, exports, module) {
   var TSCORE = require('tscore');
   var currentQuery = '';
   var nextQuery = '';
-  
+
   var search4Tag = function(tagQuery) {
     TSCORE.Search.nextQuery = '+' + tagQuery;
     $('#searchBox').val('+' + tagQuery);
     TSCORE.PerspectiveManager.redrawCurrentPerspective();
     TSCORE.showSearchArea();
   };
-  
+
   var search4String = function(query) {
     TSCORE.Search.nextQuery = '+' + query;
     $('#searchBox').val('+' + query);
     TSCORE.PerspectiveManager.redrawCurrentPerspective();
     TSCORE.showSearchArea();
   };
-  
+
   var calculateTags = function(data) {
     console.log('Calculating tags from search results');
     var allTags = [];
@@ -43,7 +43,7 @@ define(function(require, exports, module) {
     });
     TSCORE.generateTagGroups();
   };
-  
+
   var searchData = function(data, query) {
     query = query.toLowerCase().replace(/^\s+|\s+$/g, '');
     if (query.indexOf('?') === 0) {
@@ -139,11 +139,11 @@ define(function(require, exports, module) {
     }
     return data;
   };
-  
+
   // Public variables definition
   exports.currentQuery = currentQuery;
   exports.nextQuery = nextQuery;
-  
+
   // Public API definition    
   exports.searchData = searchData;
   exports.searchForTag = search4Tag;

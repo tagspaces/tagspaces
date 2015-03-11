@@ -169,7 +169,7 @@ define(function(require, exports, module) {
         filename = dirList[i].name.replace(/(<([^>]+)>)/gi, ''); // sanitizing filename
         path = dirList[i].path.replace(/(<([^>]+)>)/gi, ''); // sanitizing filepath
         title = TSCORE.TagUtils.extractTitle(path);
-        
+
         if (dirList[i].isFile) {
           ext = TSCORE.TagUtils.extractFileExtension(path);
           tags = TSCORE.TagUtils.extractTags(path);

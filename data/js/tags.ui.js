@@ -276,7 +276,7 @@ define(function(require, exports, module) {
     var d;
     if (tagData.type === 'smart') {
       switch (tagData.functionality) {
-        case 'here': { 
+        case 'here': {
           /* window.onload = function() {
               if (navigator.geolocation) {
                   navigator.geolocation.getCurrentPosition(function(position) {
@@ -504,11 +504,11 @@ define(function(require, exports, module) {
       show: true
     });
   }
-  
+
   // Public Vars
   exports.calculatedTags = [];
   exports.locationTags = [];
-  
+
   // Public API definition
   exports.initUI = initUI;
   exports.generateTagGroups = generateTagGroups;

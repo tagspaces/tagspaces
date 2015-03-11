@@ -292,7 +292,7 @@ define(function(require, exports, module) {
     }
     return cleanedTags;
   }
-  
+
   // Internal
   function generateFileName(fileName, tags) {
     var tagsString = '';
@@ -428,7 +428,7 @@ define(function(require, exports, module) {
     var newFileName = generateFileName(fileName, extractedTags);
     TSCORE.IO.renameFile(filePath, containingDirectoryPath + TSCORE.dirSeparator + newFileName);
   }
-    
+
   // Replaces a tag with a new one
   function renameTag(filePath, oldTag, newTag) {
     console.log('Rename tag for file: ' + filePath);
@@ -458,7 +458,7 @@ define(function(require, exports, module) {
     TSCORE.IO.renameFile(filePath, containingDirectoryPath + TSCORE.dirSeparator + newFileName + fileExt);
     return true;
   }
-    
+
   // Removing a tag from a filename
   function removeTag(filePath, tagName) {
     console.log('Removing tag: ' + tagName + ' from ' + filePath);
@@ -474,7 +474,7 @@ define(function(require, exports, module) {
     var newFileName = generateFileName(fileName, newTags);
     TSCORE.IO.renameFile(filePath, containingDirectoryPath + TSCORE.dirSeparator + newFileName);
   }
-    
+
   // Public API definition
   exports.beginTagContainer = BEGIN_TAG_CONTAINER;
   exports.endTagContainer = END_TAG_CONTAINER;

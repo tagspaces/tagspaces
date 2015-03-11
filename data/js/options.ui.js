@@ -66,11 +66,11 @@ define(function(require, exports, module) {
       $('#exportTagGroupsButton').hide();
     }
     $('#exportTagGroupsButton').click(function() {
-      var jsonFormat = '{ "appName": "' + TSCORE.Config.DefaultSettings.appName + 
-                      '", "appVersion": "' + TSCORE.Config.DefaultSettings.appVersion + 
-                      '", "appBuild": "' + TSCORE.Config.DefaultSettings.appBuild + 
-                      '", "settingsVersion": ' + TSCORE.Config.DefaultSettings.settingsVersion + 
-                      ', "tagGroups": ';
+      var jsonFormat = '{ "appName": "' + TSCORE.Config.DefaultSettings.appName +
+        '", "appVersion": "' + TSCORE.Config.DefaultSettings.appVersion +
+        '", "appBuild": "' + TSCORE.Config.DefaultSettings.appBuild +
+        '", "settingsVersion": ' + TSCORE.Config.DefaultSettings.settingsVersion +
+        ', "tagGroups": ';
       var blob = new Blob([jsonFormat + JSON.stringify(TSCORE.Config.getAllTagGroupData()) + '}'], {
         type: 'application/json'
       });
@@ -153,7 +153,7 @@ define(function(require, exports, module) {
     TSCORE.Config.setReloadDocumentKeyBinding(parseKeyBinding($('#reloadDocumentKeyBinding').val()));
     TSCORE.Config.setSaveDocumentKeyBinding(parseKeyBinding($('#saveDocumentKeyBinding').val()));
     TSCORE.Config.setPropertiesDocumentKeyBinding(parseKeyBinding($('#documentPropertiesKeyBinding').val()));
-    
+
     var interfaceLang = $('#languagesList').val();
     TSCORE.Config.setInterfaceLangauge(interfaceLang);
     TSCORE.switchInterfaceLanguage(interfaceLang);
@@ -188,7 +188,7 @@ define(function(require, exports, module) {
     });
     return data;
   }
-  
+
   // Public Methods
   exports.initUI = initUI;
   exports.reInitUI = reInitUI;

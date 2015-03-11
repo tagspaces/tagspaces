@@ -10,7 +10,7 @@ define(function(require, exports, module) {
   var dir4ContextMenu = null;
   var tsMetadataFolder = '.ts';
   var tsMetadataFile = 'tsm.json';
-  var alternativeDirectoryNavigatorTmpl = Handlebars.compile( 
+  var alternativeDirectoryNavigatorTmpl = Handlebars.compile(
     '{{#each dirHistory}}' +
     '<div class="btn-group dropup">' +
         '<button class="btn btn-link dropdown-toggle" data-menu="{{@index}}">' +
@@ -639,7 +639,7 @@ define(function(require, exports, module) {
       });
     });
   }
-    
+
   // Public API definition
   exports.openLocation = openLocation;
   exports.closeCurrentLocation = closeCurrentLocation;
