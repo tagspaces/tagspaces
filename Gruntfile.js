@@ -207,7 +207,35 @@ module.exports = function(grunt) {
       all: {
         src: [
           'Gruntfile.js',
-          'data/js/**/*.js'
+          'data/js/**/*.js',
+          '!data/js/settings.default.js',
+          'data/chrome/**/*.js',
+          'data/chromelight/**/*.js',
+          'data/cordova/*.js',
+          '!data/cordova/cordova.api.3.4.js',
+          //'data/ext/editorHTML/*.js',
+          //'data/ext/editorJSON/*.js',
+          //'data/ext/editorODF/*.js',
+          //'data/ext/editorText/*.js',
+          //'data/ext/perspectiveGrid/*.js',
+          //'data/ext/perspectiveList/*.js',
+          //'data/ext/viewerBrowser/*.js',
+          //'data/ext/viewerHTML/*.js',
+          //'data/ext/viewerImage/*.js',
+          //'data/ext/viewerMD/*.js',
+          //'data/ext/viewerMHTML/*.js',
+          //'data/ext/viewerPDF/*.js',
+          //'data/ext/viewerText/*.js',
+          //'data/ext/viewerURL/*.js',
+          'data/mozilla/**/*.js',
+          '!data/mozilla/listen.js',
+          '!data/mozilla/menuitems.js',
+          '!data/mozilla/toolbarbutton.js',
+          '!data/mozilla/upload+.js',
+          '!data/mozilla/update.js',
+          //'data/node-webkit/**/*.js',
+          //'data/web/**/*.js',
+          //'!data/web/webdavlib.js'
         ]
       }
     },
@@ -220,7 +248,28 @@ module.exports = function(grunt) {
         src: [
           'Gruntfile.js',
           'data/js/**/*.js',
-          '!data/js/settings.default.js '
+          '!data/js/settings.default.js',
+          'data/chrome/**/*.js',
+          'data/chromelight/**/*.js',
+          'data/cordova/**/*.js',
+          //'data/ext/editorHTML/*.js',
+          //'data/ext/editorJSON/*.js',
+          //'data/ext/editorODF/*.js',
+          //'data/ext/editorText/*.js',
+          //'data/ext/perspectiveGrid/*.js',
+          //'data/ext/perspectiveList/*.js',
+          //'data/ext/viewerBrowser/*.js',
+          //'data/ext/viewerHTML/*.js',
+          //'data/ext/viewerImage/*.js',
+          //'data/ext/viewerMD/*.js',
+          //'data/ext/viewerMHTML/*.js',
+          //'data/ext/viewerPDF/*.js',
+          //'data/ext/viewerText/*.js',
+          //'data/ext/viewerURL/*.js',
+          'data/mozilla/**/*.js',
+          'data/node-webkit/**/*.js',
+          'data/web/**/*.js',
+          '!data/web/webdavlib.js'
         ]
       }
     },
@@ -253,7 +302,32 @@ module.exports = function(grunt) {
       }
     },
     jsbeautifier : {
-      files : ['data/js/**/*.js'],
+      files : [
+        //'Gruntfile.js',
+        //'data/js/**/*.js',
+        //'!data/js/settings.default.js',
+        //'data/chrome/**/*.js',
+        //'data/chromelight/**/*.js',
+        //'data/cordova/**/*.js',
+        //'data/ext/editorHTML/*.js',
+        //'data/ext/editorJSON/*.js',
+        //'data/ext/editorODF/*.js',
+        //'data/ext/editorText/*.js',
+        //'data/ext/perspectiveGrid/*.js',
+        //'data/ext/perspectiveList/*.js',
+        //'data/ext/viewerBrowser/*.js',
+        //'data/ext/viewerHTML/*.js',
+        //'data/ext/viewerImage/*.js',
+        //'data/ext/viewerMD/*.js',
+        //'data/ext/viewerMHTML/*.js',
+        //'data/ext/viewerPDF/*.js',
+        //'data/ext/viewerText/*.js',
+        //'data/ext/viewerURL/*.js',
+        //'data/mozilla/**/*.js',
+        //'data/node-webkit/**/*.js',
+        //'data/web/**/*.js',
+        //'!data/web/webdavlib.js'
+      ],
       options : {
         js: {
           "indent_size": 2,
@@ -348,13 +422,25 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-jsdoc');
   grunt.loadNpmTasks('grunt-fixmyjs');
   grunt.loadNpmTasks('grunt-jsbeautifier');
+  
   //tasks
   grunt.registerTask('checkstyle', ['jshint', 'jscs']);
   //grunt.registerTask('dist-doc', ['jsdoc', 'compress:doc']);
-  grunt.registerTask('jsfix', ['fixmyjs:core', 'jsbeautifier', 'checkstyle']);
+  grunt.registerTask('jsfix', ['jsbeautifier', 'checkstyle']); // 'fixmyjs:core'
   grunt.registerTask('bump-version', ['init', 'replace:templates']);
   grunt.registerTask('prepare-cordova', ['init', 'clean:cordova', 'copy:cordova', 'replace:cordova']);
   grunt.registerTask('default', ['init', 'checkstyle']);
+  grunt.registerTask('jsdav', 'Run JSDav Server.', function() {
+    var jsDAV = require("jsDAV/lib/jsdav");
+    jsDAV.debugMode = true;
+    var jsDAV_Auth_Backend_File = require("jsDAV/lib/DAV/plugins/auth/file");
+    grunt.log.writeln("Starting WebDAV server");
+    jsDAV.createServer({
+        node: "/home/na/TagSpaces/repo/data",
+        authBackend:  jsDAV_Auth_Backend_File.new("/home/na/TagSpaces/repo/jsdavauth"),
+        realm: "jdavtest"
+    }, 8000);
+  }),  
   grunt.registerTask('init', 'Initializing variables.', function() {
     grunt.log.writeln("Initializing builder...");
     var cfg = grunt.file.readJSON('package.json');
