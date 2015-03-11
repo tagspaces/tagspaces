@@ -1,4 +1,7 @@
 ![tagspaces logo](https://raw.github.com/tagspaces/tagspaces/master/data/assets/icon96.png)
+
+![tagspaces@travis](https://travis-ci.org/tagspaces/tagspaces.svg?branch=master)
+
 ## Introduction
 
 `TagSpaces` is a open source application for managing of your local files. You can find more information about it on its website [tagspaces.org](http://tagspaces.org/). For a quick TagSpaces introduction please see this [video](https://www.youtube.com/embed/CJ2hYU6U-C8) on youtube.
