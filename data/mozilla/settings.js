@@ -9,7 +9,7 @@ const prefs = require('sdk/preferences/service'); // preferences-service
 const PREF_PREFIX = 'extensions.tagspaces.';
 
 function save(field, value) {
-  if (typeof value != 'undefined' && value != null) {
+  if (value) {
     prefs.set(PREF_PREFIX + field, value);
   }
 }

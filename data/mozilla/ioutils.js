@@ -5,14 +5,10 @@
 /* global exports */
 
 // good source for xpcom api https://developer.mozilla.org/en-US/Add-ons/Code_snippets/File_I_O
-const {
-  components, Cc, Ci, Cr, Cu
-} = require("chrome");
+const { components, Cc, Ci, Cr, Cu } = require("chrome"); // jshint ignore:line
 var filesIO = require("sdk/io/file"); // file
 var runtime = require("sdk/system/runtime"); // runtime 
-const {
-  getTabs, getTabId, getOwnerWindow
-} = require("sdk/tabs/utils"); // tabs/utils
+const { getTabs, getTabId, getOwnerWindow } = require("sdk/tabs/utils"); // jshint ignore:line
 
 function getWindow(worker) {
   let {

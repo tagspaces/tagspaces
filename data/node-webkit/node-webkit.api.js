@@ -24,15 +24,11 @@ define(function(require, exports, module) {
   var menuInitialuzed = false;
 
   process.on("uncaughtException", function(err) {
-    //alert("error: " + err);
-
-    var msg =
-              ' Information | Description \n'
-            + '-------------|-----------------------------\n'
-            + ' Date        | '+ new Date +'\n'
-            + ' Type        | UncaughtException \n'
-            + ' Stack       | '+ err.stack +'\n\n';
-
+    //var msg = ' Information | Description \n' +
+    //          '-------------|-----------------------------\n' +
+    //          ' Date        | '+ new Date +'\n' +
+    //          ' Type        | UncaughtException \n' +
+    //          ' Stack       | '+ err.stack +'\n\n';
     //fs.appendFile(errorLogFile, '---uncaughtException---\n' + msg);
   });
 

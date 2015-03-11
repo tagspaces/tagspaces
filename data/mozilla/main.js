@@ -8,7 +8,7 @@ var PRODUCTION = "@@PRODUCTION";
 var VERSION = "@@VERSION";
 // Disabling all output to console in production mode
 if (PRODUCTION == "true") {
-  console = console || {};
+  console = console || {}; // jshint ignore:line
   console.log = function() {};
   console.error = function() {};
 }

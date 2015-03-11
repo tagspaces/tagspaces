@@ -79,7 +79,7 @@ define(function(require, exports, module) {
           scanDirectory,
           function(error) {
             console.log("Error reading dir entries: " + error.code);
-          });
+          }); // jshint ignore:line
       }
     }
     pendingRecursions--;
@@ -139,7 +139,7 @@ define(function(require, exports, module) {
           generateDirectoryTree,
           function(error) {
             console.log("Error reading dir entries: " + error.code);
-          });
+          }); // jshint ignore:line
       }
     }
     pendingCallbacks--;
@@ -268,11 +268,11 @@ define(function(require, exports, module) {
                     if (pendingCallbacks === 0 && i === entries.length) {
                       TSPOSTIO.listDirectory(anotatedDirList);
                     }
-                  },
+                  }, // jshint ignore:line
                   function(error) { // error get file system
                     console.log("Getting file meta error: " + error.code);
-                  }
-                );
+                  } // jshint ignore:line
+                ); // jshint ignore:line
               } else {
                 normalizedPath = normalizePath(entries[i].fullPath);
                 anotatedDirList.push({
