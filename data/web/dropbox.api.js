@@ -1,4 +1,4 @@
-/* Copyright (c) 2012-2014 The TagSpaces Authors. All rights reserved.
+/* Copyright (c) 2013-2015 The TagSpaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that
  * can be found in the LICENSE file. */
 define(function(require, exports, module) {
@@ -62,7 +62,7 @@ define(function(require, exports, module) {
 
   var checkNewVersion = function() {
     console.log("Checking for new version...");
-    var cVer = TSCORE.Config.DefaultSettings["appVersion"] + "." + TSCORE.Config.DefaultSettings["appBuild"];
+    var cVer = TSCORE.Config.DefaultSettings.appVersion + "." + TSCORE.Config.DefaultSettings.appBuild;
     $.ajax({
         url: 'http://tagspaces.org/releases/version.json?pVer=' + cVer,
         type: 'GET'
