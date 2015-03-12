@@ -47,8 +47,8 @@ define(function (require, exports, module) {
             { "iso": "sk_SK",   "title": "Slovenský (Slovak)" },
             { "iso": "es",	    "title": "Español (Spanish)" },
             { "iso": "uk",	    "title": "Український (Ukrainian)" },
-            { "iso": "ru",	    "title": "Русский (Russian)" }
-            { "iso": "tr",	    "title": " (Türk)" }
+            { "iso": "ru",	    "title": "Русский (Russian)" },
+            { "iso": "tr",	    "title": " (Türk)" },
             { "iso": "cs",	    "title": " (Čeština)" }
         ],
         "keyBindings": {
