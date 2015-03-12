@@ -5,7 +5,7 @@
   "version": "1.10.5",
   "mainversion": "1.10",
   "subversion": "5",
-  "buildid": "20150302234014",
+  "buildid": "20150312172424",
   "fullName": "TagSpaces",
   "id": "jid1-FBaMKxTifTSahQ",
   "lib": "data/mozilla",
@@ -36,8 +36,6 @@
     "grunt-jscs": "~1.1.0",
     "grunt-jsdoc": "^0.5.7",
     "grunt-mozilla-addon-sdk": "~0.3.2",
-    "grunt-fixmyjs": "~0.3.0",
-    "grunt-jsbeautifier": "~0.2.8",
     "jsDAV": "~0.3.2"
   },
   "private": true
