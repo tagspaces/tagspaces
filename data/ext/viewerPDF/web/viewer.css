@@ -1,4 +1,4 @@
-/* Copyright 2012 Mozilla Foundation
+/* Copyright 2014 Mozilla Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,6 +12,158 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+.textLayer {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  opacity: 0.2;
+}
+
+.textLayer > div {
+  color: transparent;
+  position: absolute;
+  white-space: pre;
+  cursor: text;
+  -webkit-transform-origin: 0% 0%;
+  -moz-transform-origin: 0% 0%;
+  -o-transform-origin: 0% 0%;
+  -ms-transform-origin: 0% 0%;
+  transform-origin: 0% 0%;
+}
+
+.textLayer .highlight {
+  margin: -1px;
+  padding: 1px;
+
+  background-color: rgb(180, 0, 170);
+  border-radius: 4px;
+}
+
+.textLayer .highlight.begin {
+  border-radius: 4px 0px 0px 4px;
+}
+
+.textLayer .highlight.end {
+  border-radius: 0px 4px 4px 0px;
+}
+
+.textLayer .highlight.middle {
+  border-radius: 0px;
+}
+
+.textLayer .highlight.selected {
+  background-color: rgb(0, 100, 0);
+}
+
+.textLayer ::selection { background: rgb(0,0,255); }
+.textLayer ::-moz-selection { background: rgb(0,0,255); }
+
+.pdfViewer .canvasWrapper {
+  overflow: hidden;
+}
+
+.pdfViewer .page {
+  direction: ltr;
+  width: 816px;
+  height: 1056px;
+  margin: 1px auto -8px auto;
+  position: relative;
+  overflow: visible;
+  border: 9px solid transparent;
+  background-clip: content-box;
+  border-image: url(images/shadow.png) 9 9 repeat;
+  background-color: white;
+}
+
+.pdfViewer .page canvas {
+  margin: 0;
+  display: block;
+}
+
+.pdfViewer .page .loadingIcon {
+  position: absolute;
+  display: block;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background: url('images/loading-icon.gif') center no-repeat;
+}
+
+.pdfViewer .page .annotLink > a:hover {
+  opacity: 0.2;
+  background: #ff0;
+  box-shadow: 0px 2px 10px #ff0;
+}
+
+:-webkit-full-screen .pdfViewer .page {
+  margin-bottom: 100%;
+  border: 0;
+}
+
+:-moz-full-screen .pdfViewer .page {
+  margin-bottom: 100%;
+  border: 0;
+}
+
+:-ms-fullscreen .pdfViewer .page {
+  margin-bottom: 100% !important;
+  border: 0;
+}
+
+:fullscreen .pdfViewer .page {
+  margin-bottom: 100%;
+  border: 0;
+}
+
+.pdfViewer .page .annotText > img {
+  position: absolute;
+  cursor: pointer;
+}
+
+.pdfViewer .page .annotTextContentWrapper {
+  position: absolute;
+  width: 20em;
+}
+
+.pdfViewer .page .annotTextContent {
+  z-index: 200;
+  float: left;
+  max-width: 20em;
+  background-color: #FFFF99;
+  box-shadow: 0px 2px 5px #333;
+  border-radius: 2px;
+  padding: 0.6em;
+  cursor: pointer;
+}
+
+.pdfViewer .page .annotTextContent > h1 {
+  font-size: 1em;
+  border-bottom: 1px solid #000000;
+  padding-bottom: 0.2em;
+}
+
+.pdfViewer .page .annotTextContent > p {
+  padding-top: 0.2em;
+}
+
+.pdfViewer .page .annotLink > a {
+  position: absolute;
+  font-size: 1em;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.pdfViewer .page .annotLink > a /* -ms-a */  {
+  background: url("data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAA\
+                   LAAAAAABAAEAAAIBRAA7") 0 0 repeat;
+}
 
 * {
   padding: 0;
@@ -53,6 +205,7 @@ select {
   height: 100%;
   overflow: hidden;
   cursor: none;
+  -webkit-user-select: none;
 }
 
 #viewerContainer:-moz-full-screen {
@@ -63,6 +216,7 @@ select {
   height: 100%;
   overflow: hidden;
   cursor: none;
+  -moz-user-select: none;
 }
 
 #viewerContainer:-ms-fullscreen {
@@ -72,6 +226,7 @@ select {
   height: 100%;
   overflow: hidden !important;
   cursor: none;
+  -ms-user-select: none;
 }
 
 #viewerContainer:-ms-fullscreen::-ms-backdrop {
@@ -86,26 +241,9 @@ select {
   height: 100%;
   overflow: hidden;
   cursor: none;
-}
-
-:-webkit-full-screen .page {
-  margin-bottom: 100%;
-  border: 0;
-}
-
-:-moz-full-screen .page {
-  margin-bottom: 100%;
-  border: 0;
-}
-
-:-ms-fullscreen .page {
-  margin-bottom: 100% !important;
-  border: 0;
-}
-
-:fullscreen .page {
-  margin-bottom: 100%;
-  border: 0;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 }
 
 :-webkit-full-screen a:not(.internalLink) {
@@ -410,6 +548,9 @@ html[dir='rtl'] .findbar {
   background-repeat: no-repeat;
   background-position: right;
 }
+html[dir='rtl'] #findInput[data-status="pending"] {
+  background-position: left;
+}
 
 .secondaryToolbar {
   padding: 6px;
@@ -487,8 +628,8 @@ html[dir='ltr'] .doorHangerRight:before {
   color: #A6B7D0;
 }
 
-.notFound {
-  background-color: rgb(255, 137, 153);
+#findInput.notFound {
+  background-color: rgb(255, 102, 102);
 }
 
 html[dir='ltr'] #toolbarViewerLeft {
@@ -764,8 +905,6 @@ html[dir='rtl'] .dropdownToolbarButton {
 }
 
 .dropdownToolbarButton > select {
-  -webkit-appearance: none;
-  -moz-appearance: none; /* in the future this might matter, see bugzilla bug #649849 */
   min-width: 140px;
   font-size: 12px;
   color: hsl(0,0%,95%);
@@ -1027,7 +1166,7 @@ html[dir='rtl'] .verticalToolbarSeparator {
 }
 
 .horizontalToolbarSeparator {
-  display: block; 
+  display: block;
   margin: 0 0 4px 0;
   height: 1px;
   width: 100%;
@@ -1066,6 +1205,12 @@ html[dir='rtl'] .verticalToolbarSeparator {
   min-width: 16px;
   text-align: right;
   width: 40px;
+}
+
+.toolbarField.pageNumber.visiblePageIsLoading {
+  background-image: url(images/loading-small.png);
+  background-repeat: no-repeat;
+  background-position: 1px;
 }
 
 .toolbarField.pageNumber::-webkit-inner-spin-button,
@@ -1118,9 +1263,13 @@ html[dir='rtl'] .verticalToolbarSeparator {
   margin-bottom: 10px;
 }
 
+#thumbnailView > a:last-of-type > .thumbnail:not([data-loaded]) {
+  margin-bottom: 9px;
+}
+
 .thumbnail:not([data-loaded]) {
   border: 1px dashed rgba(255, 255, 255, 0.5);
-  margin-bottom: 10px;
+  margin: -1px -1px 4px -1px;
 }
 
 .thumbnailImage {
@@ -1129,6 +1278,8 @@ html[dir='rtl'] .verticalToolbarSeparator {
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.5), 0 2px 8px rgba(0, 0, 0, 0.3);
   opacity: 0.8;
   z-index: 99;
+  background-color: white;
+  background-clip: content-box;
 }
 
 .thumbnailSelectionRing {
@@ -1261,141 +1412,11 @@ html[dir='rtl'] .attachmentsItem > button {
   cursor: default;
 }
 
-.canvasWrapper {
-  overflow: hidden;
-}
-
-canvas {
-  margin: 0;
-  display: block;
-}
-
-.page {
-  direction: ltr;
-  width: 816px;
-  height: 1056px;
-  margin: 1px auto -8px auto;
-  position: relative;
-  overflow: visible;
-  border: 9px solid transparent;
-  background-clip: content-box;
-  border-image: url(images/shadow.png) 9 9 repeat;
-  background-color: white;
-}
-
-.annotLink > a:hover {
-  opacity: 0.2;
-  background: #ff0;
-  box-shadow: 0px 2px 10px #ff0;
-}
-
-.loadingIcon {
-  position: absolute;
-  display: block;
-  left: 0;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  background: url('images/loading-icon.gif') center no-repeat;
-}
-
-.textLayer {
-  position: absolute;
-  left: 0;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  color: #000;
-  font-family: sans-serif;
-  overflow: hidden;
-}
-
-.textLayer > div {
-  color: transparent;
-  position: absolute;
-  white-space: pre;
-  cursor: text;
-}
-
-.textLayer .highlight {
-  margin: -1px;
-  padding: 1px;
-
-  background-color: rgba(180, 0, 170, 0.2);
-  border-radius: 4px;
-}
-
-.textLayer .highlight.begin {
-  border-radius: 4px 0px 0px 4px;
-}
-
-.textLayer .highlight.end {
-  border-radius: 0px 4px 4px 0px;
-}
-
-.textLayer .highlight.middle {
-  border-radius: 0px;
-}
-
-.textLayer .highlight.selected {
-  background-color: rgba(0, 100, 0, 0.2);
-}
-
 /* TODO: file FF bug to support ::-moz-selection:window-inactive
    so we can override the opaque grey background when the window is inactive;
    see https://bugzilla.mozilla.org/show_bug.cgi?id=706209 */
-::selection { background:rgba(0,0,255,0.3); }
-::-moz-selection { background:rgba(0,0,255,0.3); }
-
-.annotationHighlight {
-  position: absolute;
-  border: 2px #FFFF99 solid;
-}
-
-.annotText > img {
-  position: absolute;
-  cursor: pointer;
-}
-
-.annotTextContentWrapper {
-  position: absolute;
-  width: 20em;
-}
-
-.annotTextContent {
-  z-index: 200;
-  float: left;
-  max-width: 20em;
-  background-color: #FFFF99;
-  box-shadow: 0px 2px 5px #333;
-  border-radius: 2px;
-  padding: 0.6em;
-  cursor: pointer;
-}
-
-.annotTextContent > h1 {
-  font-size: 1em;
-  border-bottom: 1px solid #000000;
-  padding-bottom: 0.2em;
-}
-
-.annotTextContent > p {
-  padding-top: 0.2em;
-}
-
-.annotLink > a {
-  position: absolute;
-  font-size: 1em;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-}
-
-.annotLink > a /* -ms-a */ {
-  background: url("data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAA\
-                   LAAAAAABAAEAAAIBRAA7") 0 0 repeat;
-}
+::selection { background: rgba(0,0,255,0.3); }
+::-moz-selection { background: rgba(0,0,255,0.3); }
 
 #errorWrapper {
   background: none repeat scroll 0 0 #FF5555;
@@ -1489,7 +1510,7 @@ canvas {
 }
 
 .dialog .separator {
-  display: block; 
+  display: block;
   margin: 4px 0 4px 0;
   height: 1px;
   width: 100%;
@@ -1578,11 +1599,9 @@ html[dir='rtl'] #documentPropertiesOverlay .row > * {
 .debuggerShowText {
   background: none repeat scroll 0 0 yellow;
   color: blue;
-  opacity: 0.3;
 }
 .debuggerHideText:hover {
   background: none repeat scroll 0 0 yellow;
-  opacity: 0.3;
 }
 #PDFBug .stats {
   font-family: courier;
@@ -1668,11 +1687,17 @@ html[dir='rtl'] #documentPropertiesOverlay .row > * {
     left: 186px;
   }
 
+  .toolbarField.pageNumber.visiblePageIsLoading,
+  #findInput[data-status="pending"] {
+    background-image: url(images/loading-small@2x.png);
+    background-size: 16px 17px;
+  }
+
   .dropdownToolbarButton {
     background: url(images/toolbarButton-menuArrows@2x.png) no-repeat;
     background-size: 7px 16px;
   }
-  
+
   html[dir='ltr'] .toolbarButton#sidebarToggle::before {
     content: url(images/toolbarButton-sidebarToggle@2x.png);
   }
@@ -1817,6 +1842,8 @@ html[dir='rtl'] #documentPropertiesOverlay .row > * {
     display: none;
     border: none;
     box-shadow: none;
+    background-clip: content-box;
+    background-color: white;
   }
 
   .page[data-loaded] {
@@ -1838,6 +1865,7 @@ html[dir='rtl'] #documentPropertiesOverlay .row > * {
     position: relative;
     top: 0;
     left: 0;
+    display: block;
   }
 }
 
@@ -1962,23 +1990,3 @@ html[dir='rtl'] #documentPropertiesOverlay .row > * {
     display: none;
   }
 }
-
-/* Custom scrollbars for chrome */
-::-webkit-scrollbar-track
-{
-  background-color: transparent;
-}
-
-::-webkit-scrollbar
-{
-  width: 8px;
-  height: 8px;
-  background-color: #F5F5F5;
-}
-
-::-webkit-scrollbar-thumb
-{
-  background-color: #bbb;
-  /* border-radius: 6px;*/
-}
-

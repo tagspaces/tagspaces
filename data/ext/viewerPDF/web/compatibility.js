@@ -167,6 +167,21 @@ if (typeof PDFJS === 'undefined') {
   // The worker will be using XHR, so we can save time and disable worker.
   PDFJS.disableWorker = true;
 
+  Object.defineProperty(xhrPrototype, 'responseType', {
+    get: function xmlHttpRequestGetResponseType() {
+      return this._responseType || 'text';
+    },
+    set: function xmlHttpRequestSetResponseType(value) {
+      if (value === 'text' || value === 'arraybuffer') {
+        this._responseType = value;
+        if (value === 'arraybuffer' &&
+            typeof this.overrideMimeType === 'function') {
+          this.overrideMimeType('text/plain; charset=x-user-defined');
+        }
+      }
+    }
+  });
+
   // Support: IE9
   if (typeof VBArray !== 'undefined') {
     Object.defineProperty(xhrPrototype, 'response', {
@@ -181,25 +196,20 @@ if (typeof PDFJS === 'undefined') {
     return;
   }
 
-  // other browsers
-  function responseTypeSetter() {
-    // will be only called to set "arraybuffer"
-    this.overrideMimeType('text/plain; charset=x-user-defined');
-  }
-  if (typeof xhr.overrideMimeType === 'function') {
-    Object.defineProperty(xhrPrototype, 'responseType',
-                          { set: responseTypeSetter });
-  }
-  function responseGetter() {
-    var text = this.responseText;
-    var i, n = text.length;
-    var result = new Uint8Array(n);
-    for (i = 0; i < n; ++i) {
-      result[i] = text.charCodeAt(i) & 0xFF;
+  Object.defineProperty(xhrPrototype, 'response', {
+    get: function xmlHttpRequestResponseGet() {
+      if (this.responseType !== 'arraybuffer') {
+        return this.responseText;
+      }
+      var text = this.responseText;
+      var i, n = text.length;
+      var result = new Uint8Array(n);
+      for (i = 0; i < n; ++i) {
+        result[i] = text.charCodeAt(i) & 0xFF;
+      }
+      return result.buffer;
     }
-    return result.buffer;
-  }
-  Object.defineProperty(xhrPrototype, 'response', { get: responseGetter });
+  });
 })();
 
 // window.btoa (base64 encode function) ?
@@ -437,20 +447,10 @@ if (typeof PDFJS === 'undefined') {
 
 // Checks if navigator.language is supported
 (function checkNavigatorLanguage() {
-  if ('language' in navigator &&
-      /^[a-z]+(-[A-Z]+)?$/.test(navigator.language)) {
+  if ('language' in navigator) {
     return;
   }
-  function formatLocale(locale) {
-    var split = locale.split(/[-_]/);
-    split[0] = split[0].toLowerCase();
-    if (split.length > 1) {
-      split[1] = split[1].toUpperCase();
-    }
-    return split.join('-');
-  }
-  var language = navigator.language || navigator.userLanguage || 'en-US';
-  PDFJS.locale = formatLocale(language);
+  PDFJS.locale = navigator.userLanguage || 'en-US';
 })();
 
 (function checkRangeRequests() {
@@ -471,6 +471,7 @@ if (typeof PDFJS === 'undefined') {
 
   if (isSafari || isOldAndroid) {
     PDFJS.disableRange = true;
+    PDFJS.disableStream = true;
   }
 })();
 
@@ -559,5 +560,15 @@ if (typeof PDFJS === 'undefined') {
   if (isIOS || isAndroid) {
     // 5MP
     PDFJS.maxCanvasPixels = 5242880;
+  }
+})();
+
+// Disable fullscreen support for certain problematic configurations.
+// Support: IE11+ (when embedded).
+(function checkFullscreenSupport() {
+  var isEmbeddedIE = (navigator.userAgent.indexOf('Trident') >= 0 &&
+                      window.parent !== window);
+  if (isEmbeddedIE) {
+    PDFJS.disableFullscreen = true;
   }
 })();
