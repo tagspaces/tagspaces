@@ -1,0 +1,14 @@
+{
+    "appLauncher": {
+        "message": "Arrenca TagSpaces",
+        "description": "Title of the application launcher in the browser."
+    },
+    "appDesc": {
+        "message": "Navegador que suporti \"web scraping\" i projecció de fitxers cap a Chromecast.",
+        "description": "The description of the application, displayed in the web store."
+    },
+    "appName": {
+        "message": "TagSpaces",
+        "description": "The title of the application, displayed in the web store."
+    }
+}

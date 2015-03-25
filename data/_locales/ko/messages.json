@@ -1,0 +1,14 @@
+{
+    "appLauncher": {
+        "message": "TagSpaces를 시작합니다",
+        "description": "Title of the application launcher in the browser."
+    },
+    "appDesc": {
+        "message": "웹 콘텐츠를 스크랩하고, 내 컴퓨터의 파일을 크롬캐스트로 프로젝트 할 수 있는 파일탐색기",
+        "description": "The description of the application, displayed in the web store."
+    },
+    "appName": {
+        "message": "TagSpaces",
+        "description": "The title of the application, displayed in the web store."
+    }
+}

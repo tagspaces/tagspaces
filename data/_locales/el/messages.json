@@ -4,11 +4,11 @@
         "description": "The title of the application, displayed in the web store."
     },
     "appDesc": {
-        "message": "Файловый менеджер, поддерживающий web scraping и перенаправление локальных файлов на Chromecast.",
+        "message": "Πρόγραμμα περιήγησης αρχείων που υποστηρίζουν το περιεχόμενο ιστοσελίδων απόξεσης και σχεδιασμός των τοπικών αρχείων στο Chromecast.",
         "description": "The description of the application, displayed in the web store."
     },
     "appLauncher": {
-        "message": "Запустить TagSpaces",
+        "message": "TagSpaces Έναρξη",
         "description": "Title of the application launcher in the browser."
     }
 }

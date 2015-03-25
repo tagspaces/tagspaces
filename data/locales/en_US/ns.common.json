@@ -157,5 +157,6 @@
     "view": "View",
     "help": "Help",
     "settings": "Settings",
+    "confirmApplicationClose": "There is unsaved file. Do you really want to quit the application?",
     "-": "-"
 }

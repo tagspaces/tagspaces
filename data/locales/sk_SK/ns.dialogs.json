@@ -102,7 +102,7 @@
     "fileViewer": "Prehliadač súborov",
     "fileEditor": "Editor súborov",
     "restoreDefaulSettingButton": "Obnoviť predvolené nastavenia",
-    "restoreDefaulSettingTitleConfirm": "Restoring Default Settings",
+    "restoreDefaulSettingTitleConfirm": "Obnovujú sa predvolené nastavenia",
     "restoreDefaulSettingMessageConfirm": "By restoring the default setting, all locations, tags and taggroups will be lost.Are you sure you want to continue?",
     "removeFileTypeTooltip": "Odobrať tento typ súboru",
     "removePerspectiveTooltip": "Odobrať pohľad",
