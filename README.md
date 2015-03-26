@@ -24,8 +24,8 @@ To get updates you can:
     ./data/chrome........contains files specific for the old NPAPI basse Chrome browser extension, which is not supported anymore
     ./data/chromelight...contains files specific for the current Chrome browser extension
     ./data/cordova ......contains files needed for the building of the Android application which is based on Cordova
-	./data/mozilla.......contains files needed for the Firefox extension based on addon sdk
-	./data/web...........contains files needed for the WebDAV/ownCloud based release of TagSpaces
+	  ./data/mozilla.......contains files needed for the Firefox extension based on addon sdk
+	  ./data/web...........contains files needed for the WebDAV/ownCloud based release of TagSpaces
     ./data/node-webkit...contains files needed for the windows, linux and mac os build of the application
     ./data/templates.....contains HTML templates needed for the UI
     ./data/locales.......contains files need for the localisation of the application UI
