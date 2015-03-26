@@ -15,6 +15,31 @@ define(function(require, exports, module) {
   var TSPOSTIO = require("tspostioapi");
 
   var win = gui.Window.get();
+
+  /* var splashwin = gui.Window.open('splashscreen.html', {
+    'frame': false,
+    'toolbar': false,
+    'position': 'center',
+    'always-on-top': true,
+    "width": 400,
+    "height": 200
+  }); */
+
+  var showMainWindow = function() {
+    splashwin.hide();
+    win.show();
+  };
+
+  win.on('close', function() {
+    if (TSCORE.FileOpener.isFileChanged()) {
+      if (confirm($.i18n.t("ns.common:confirmApplicationClose"))) {
+        win.close(true);
+      }
+    } else {
+      win.close(true);
+    }
+  });
+
   var rootMenu = new gui.Menu({
     type: 'menubar'
   });
@@ -623,5 +648,6 @@ define(function(require, exports, module) {
   exports.handleStartParameters = handleStartParameters;
   exports.handleTray = handleTray;
   exports.focusWindow = focusWindow;
+  exports.showMainWindow = showMainWindow;
 
 });

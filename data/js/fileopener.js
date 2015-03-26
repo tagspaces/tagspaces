@@ -17,6 +17,12 @@ define(function(require, exports, module) {
   // If a file is currently opened for editing, this var should be true
   var _isEditMode = false;
 
+  window.onbeforeunload = function() {
+    if (_isFileChanged) {
+      return "Confirm close";
+    }
+  };
+
   function initUI() {
     $('#editDocument').click(function() {
       editFile(_openedFilePath);
