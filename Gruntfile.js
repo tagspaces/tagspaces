@@ -428,7 +428,7 @@ module.exports = function(grunt) {
   grunt.registerTask('jsfix', ['jsbeautifier', 'checkstyle']); // 'fixmyjs:core'
   grunt.registerTask('bump-version', ['init', 'replace:templates']);
   grunt.registerTask('prepare-cordova', ['init', 'clean:cordova', 'copy:cordova', 'replace:cordova']);
-  grunt.registerTask('default', ['init', 'checkstyle']);
+  grunt.registerTask('default', ['help']);
   grunt.registerTask('jsdav', 'Run JSDav Server.', function() {
     var jsDAV = require("jsDAV/lib/jsdav");
     jsDAV.debugMode = true;
@@ -439,7 +439,15 @@ module.exports = function(grunt) {
         authBackend:  jsDAV_Auth_Backend_File.new("/home/na/TagSpaces/repo/jsdavauth"),
         realm: "jdavtest"
     }, 8000);
-  }),  
+  }),
+
+  grunt.registerTask('help', 'Printing help for this script.', function() {
+    grunt.log.writeln("Supported grunt tasks:");
+    grunt.log.writeln(" - checkstyle");
+    grunt.log.writeln(" - prepare-cordova");
+    grunt.log.writeln(" - bump-version");
+  });
+
   grunt.registerTask('init', 'Initializing variables.', function() {
     grunt.log.writeln("Initializing builder...");
     var cfg = grunt.file.readJSON('package.json');
