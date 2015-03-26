@@ -38,9 +38,9 @@ define(function (require, exports, module) {
             { "iso": "en_US",   "title": "English" },
             { "iso": "de_DE",   "title": "Deutsch (German)" },
             { "iso": "it",	    "title": "Italiano (Italian)" },
-            { "iso": "zh_CN",	"title": "中国的 (Chinese)" },
-            { "iso": "bg",  	"title": "Български (Bulgarian)" },
-            { "iso": "ja",  	"title": "日本の (Japanese)" },
+            { "iso": "zh_CN",	  "title": "中国的 (Chinese)" },
+            { "iso": "bg",  	  "title": "Български (Bulgarian)" },
+            { "iso": "ja",  	  "title": "日本の (Japanese)" },
             { "iso": "pt_BR",   "title": "Português (Brazil)" },
             { "iso": "pt_PT",   "title": "Português (Portugal)" },
             { "iso": "fr",	    "title": "Français (French)" },
@@ -48,8 +48,11 @@ define(function (require, exports, module) {
             { "iso": "es",	    "title": "Español (Spanish)" },
             { "iso": "uk",	    "title": "Український (Ukrainian)" },
             { "iso": "ru",	    "title": "Русский (Russian)" },
-            { "iso": "tr",	    "title": " (Türk)" },
-            { "iso": "cs",	    "title": " (Čeština)" }
+            { "iso": "tr",	    "title": "Türk (Turkish)" },
+            { "iso": "cs",	    "title": "Čeština (Czech)" },
+            { "iso": "ca",	    "title": "Catalan (Català)" },
+            { "iso": "ko",	    "title": "한국의 (Korean)" },
+            { "iso": "el",	    "title": "ελληνικά (Greek)" }
         ],
         "keyBindings": {
             "closeViewer":              "mod+w",
