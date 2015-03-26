@@ -47,6 +47,9 @@ define(function(require, exports, module) {
               TSCORE.IO.checkAccessFileURLAllowed();
             }
             $('#loading').hide();
+            if (isNode) {
+              TSCORE.IO.showMainWindow();
+            }
           }
         }
       }); // jshint ignore:line
