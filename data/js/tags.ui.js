@@ -5,8 +5,13 @@
 define(function(require, exports, module) {
   'use strict';
   console.log('Loading tags.ui.js...');
-  var locationTagGroupKey = 'LTG',
-    calculatedTagGroupKey = 'CTG';
+
+  var locationTagGroupKey = 'LTG';
+  var calculatedTagGroupKey = 'CTG';
+
+  var defaultTagColor = "#008000";
+  var defaultTagTextColor = "#ffffff";
+
   var TSCORE = require('tscore');
   var tagGroupsTmpl = Handlebars.compile(
     '{{#each tagGroups}}' +
@@ -243,11 +248,17 @@ define(function(require, exports, module) {
         hoverClass: 'dirButtonActive',
         drop: function(event, ui) {
           //ui.draggable.detach();
-          var tagGroupData = TSCORE.Config.getTagData(ui.draggable.attr('tag'), ui.draggable.attr('parentKey'));
-          tagGroupData.parentKey = ui.draggable.attr('parentKey');
+          var parentKeyAttr = ui.draggable.attr('parentKey');
+          var tagAttr = ui.draggable.attr('tag');
           var targetTagGroupKey = $(this).attr('key');
-          console.log('Moving tag: ' + tagGroupData.title + ' to ' + targetTagGroupKey);
-          TSCORE.Config.moveTag(tagGroupData, targetTagGroupKey);
+          if (parentKeyAttr) { // move from taggroup
+            var tagGroupData = TSCORE.Config.getTagData(tagAttr, parentKeyAttr);
+            //console.log('Moving tag: ' + tagGroupData.title + ' to ' + targetTagGroupKey);
+            TSCORE.Config.moveTag(tagGroupData, targetTagGroupKey);
+          } else if (tagAttr && tagAttr.length > 1) { // create from file
+            var targetTagGroupData = TSCORE.Config.getTagGroupData(targetTagGroupKey);
+            TSCORE.Config.createTag(targetTagGroupData, tagAttr, defaultTagColor, defaultTagTextColor);
+          }
           generateTagGroups();
           $(ui.helper).remove();
         }
@@ -444,7 +455,7 @@ define(function(require, exports, module) {
       $tagColor.val($tagColorChooser.val());
     });
     if (TSCORE.selectedTagData.color === undefined || TSCORE.selectedTagData.color.length < 1) {
-      $tagColor.val('#008000');
+      $tagColor.val(defaultTagColor);
     } else {
       $tagColor.val(TSCORE.selectedTagData.color);
     }
@@ -457,7 +468,7 @@ define(function(require, exports, module) {
       $tagTextColor.val($tagTextColorChooser.val());
     });
     if (TSCORE.selectedTagData.textcolor === undefined || TSCORE.selectedTagData.textcolor.length < 1) {
-      $tagTextColor.val('#ffffff');
+      $tagTextColor.val(defaultTagTextColor);
     } else {
       $tagTextColor.val(TSCORE.selectedTagData.textcolor);
     }
