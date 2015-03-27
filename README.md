@@ -56,14 +56,14 @@ Get the TagSpaces source code by cloning its repository:
 
     $git clone https://github.com/tagspaces/tagspaces.git
 
-#### Run as native Windows, Linux or Mac OS X application
+#### Run the native Windows, Linux or Mac OS X application
 * Download [nw.js](https://github.com/nwjs/nw.js) prebuilt binaries for your system environment.
     * For Windows: copy `nw.exe, nw.pak, icudt.dll, ffmpegsumo.dll` to `tagspaces/data/node-webkit` directory.
     * For Linux: copy `nw, nw.pak, icudtl.dat, libffmpegsumo.so` to `tagspaces/data/node-webkit` directory. If you experience issue related to libudev.so.0 read the following [article](https://github.com/rogerwang/node-webkit/wiki/The-solution-of-lacking-libudev.so.0).
     * For Mac OS X: copy `node-webkit.app` to `tagspaces/data/node-webkit` directory.
 * Run the `nw` executable file.
 
-#### Run as Chrome/Chromium extension
+#### Run the Chrome/Chromium extension
 * Go to the chrome `Settings` and then to `Extension`
 * Enable the `Developer mode` checkbox in the upper right part of the screen
 * Click on the `Load unpacked extension...` button
@@ -71,7 +71,7 @@ Get the TagSpaces source code by cloning its repository:
 * Activate the `Allow access to file URLs` check box in the TagSpaces entry, in order to enable the access to your local file system
 * Start the extension by clicking on the TagSpaces icon in the upper right part of Chrome/Chromium
 
-#### Run as Firefox extension
+#### Run the Firefox extension
 * Download and install the Mozilla Addon SDK following this [article](https://developer.mozilla.org/en-US/Add-ons/SDK/Tutorials/Installation)
 * Start the SDK by executing `source bin/activate` in the Addon SDK folder
 * Go to the your local tagspaces folder and run the following command, where the -p argument specifies some local firefox profile:
@@ -102,7 +102,7 @@ If you are having trouble using TagSpaces or have found a bug or you have some i
 
 ## Feeds
 - Subscribe to RSS feed updates for the [tagspaces blog](http://tagspaces.org/blog/feed.xml)
-- Subscribe to RSS feed updates for the [master branch](https://github.com/tagspaces/tagspace/commits/master.atom)
+- Subscribe to RSS feed updates for the [master branch](https://github.com/tagspaces/tagspaces/commits/master.atom)
 
 - - -
 This files is created and edited in `TagSpaces`, using the `viewerMD` and `editorText` extensions.

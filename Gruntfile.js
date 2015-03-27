@@ -3,9 +3,10 @@ module.exports = function(grunt) {
   grunt.initConfig({
     buildsDir: "../builds",
     cordovaDevDir: "/home/na/TagSpaces/cordova/www",
+    cordovaIOSDevDir: "/home/na/TagSpaces/cordova-ios/www",
     //default.locations.android = {"name": "Photos", "path": "DCIM"}, {"name": "Downloads", "path": "Download"}
     clean: {
-      cordova: {
+      cordovaAndroid: {
         options: {
           force: true
         },
@@ -15,16 +16,19 @@ module.exports = function(grunt) {
           src: ['**/*'],
         }]
       },
+      cordovaIOS: {
+        options: {
+          force: true
+        },
+        files: [{
+          expand: true,
+          cwd: '<%= cordovaIOSDevDir %>',
+          src: ['**/*'],
+        }]
+      }
     },
     copy: {
-      /*templates: {
-        files: [
-          { src: 'default.settings.tmpl.js', dest: 'data/js/settings.default.js' },
-          //{ src: 'data/mozilla/mozilla.package.tmpl.json', dest: 'package.json' },
-          { src: 'data/chromelight/chrome.manifest.tmpl.json', dest: 'data/manifest.json' }
-        ]
-      },*/
-      cordova: {
+      cordovaAndroid: {
         files: [{
           expand: true,
           cwd: 'data/assets',
@@ -141,6 +145,124 @@ module.exports = function(grunt) {
           src: 'data/loader.js',
           dest: '<%= cordovaDevDir %>/loader.js'
         }]
+      },
+      cordovaIOS: {
+        files: [{
+          expand: true,
+          cwd: 'data/assets',
+          src: ['**'],
+          dest: '<%= cordovaIOSDevDir %>/assets'
+        }, {
+          expand: true,
+          cwd: 'data/libs',
+          src: ['**'],
+          dest: '<%= cordovaIOSDevDir %>/libs'
+        }, {
+          expand: true,
+          cwd: 'data/js',
+          src: ['**'],
+          dest: '<%= cordovaIOSDevDir %>/js'
+        }, {
+          expand: true,
+          cwd: 'data/locales',
+          src: ['**'],
+          dest: '<%= cordovaIOSDevDir %>/locales'
+        }, {
+          expand: true,
+          cwd: 'data/templates',
+          src: ['**'],
+          dest: '<%= cordovaIOSDevDir %>/templates'
+        }, {
+          expand: true,
+          cwd: 'data/ext/perspectiveList/',
+          src: ['**'],
+          dest: '<%= cordovaIOSDevDir %>/ext/perspectiveList/'
+        }, {
+          expand: true,
+          cwd: 'data/ext/perspectiveGrid/',
+          src: ['**'],
+          dest: '<%= cordovaIOSDevDir %>/ext/perspectiveGrid/'
+        }, {
+          expand: true,
+          cwd: 'data/ext/editorHTML/',
+          src: ['**'],
+          dest: '<%= cordovaIOSDevDir %>/ext/editorHTML/'
+        }, {
+          expand: true,
+          cwd: 'data/ext/editorJSON/',
+          src: ['**'],
+          dest: '<%= cordovaIOSDevDir %>/ext/editorJSON/'
+        }, {
+          expand: true,
+          cwd: 'data/ext/editorText/',
+          src: ['**'],
+          dest: '<%= cordovaIOSDevDir %>/ext/editorText/'
+        }, {
+          expand: true,
+          cwd: 'data/ext/editorODF/',
+          src: ['**'],
+          dest: '<%= cordovaIOSDevDir %>/ext/editorODF/'
+        }, {
+          expand: true,
+          cwd: 'data/ext/viewerText/',
+          src: ['**'],
+          dest: '<%= cordovaIOSDevDir %>/ext/viewerText'
+        }, {
+          expand: true,
+          cwd: 'data/ext/viewerHTML/',
+          src: ['**'],
+          dest: '<%= cordovaIOSDevDir %>/ext/viewerHTML'
+        }, {
+          expand: true,
+          cwd: 'data/ext/viewerMHTML/',
+          src: ['**'],
+          dest: '<%= cordovaIOSDevDir %>/ext/viewerMHTML'
+        }, {
+          expand: true,
+          cwd: 'data/ext/viewerPDF/',
+          src: ['**'],
+          dest: '<%= cordovaIOSDevDir %>/ext/viewerPDF'
+        }, {
+          expand: true,
+          cwd: 'data/ext/viewerImage/',
+          src: ['**'],
+          dest: '<%= cordovaIOSDevDir %>/ext/viewerImage/'
+        }, {
+          expand: true,
+          cwd: 'data/ext/viewerURL/',
+          src: ['**'],
+          dest: '<%= cordovaIOSDevDir %>/ext/viewerURL/'
+        }, {
+          expand: true,
+          cwd: 'data/ext/viewerMD/',
+          src: ['**'],
+          dest: '<%= cordovaIOSDevDir %>/ext/viewerMD/'
+        }, {
+          expand: true,
+          cwd: 'data/ext/viewerBrowser/',
+          src: ['**'],
+          dest: '<%= cordovaIOSDevDir %>/ext/viewerBrowser/'
+        }, {
+          expand: true,
+          cwd: 'data/cordova',
+          src: ['*.js'],
+          dest: '<%= cordovaIOSDevDir %>/cordova'
+        }, {
+          src: 'data/about.html',
+          dest: '<%= cordovaIOSDevDir %>/about.html'
+        }, {
+          src: 'data/index.html',
+          dest: '<%= cordovaIOSDevDir %>/index.html'
+        }, {
+          src: 'data/LICENSE.txt',
+          dest: '<%= cordovaIOSDevDir %>/LICENSE.txt'
+        }, {
+          src: 'data/EULA.txt',
+          dest: '<%= cordovaIOSDevDir %>/EULA.txt'
+        }, {
+          src: 'data/loader.js',
+          dest: '<%= cordovaIOSDevDir %>/loader.js'
+        }]
       }
     },
     replace: {
@@ -173,7 +295,7 @@ module.exports = function(grunt) {
           dest: 'data/manifest.json'
         }]
       },
-      cordova: {
+      cordovaAndroid: {
         options: {
           variables: {
             VERSION: '<%= mainVersion %>',
@@ -197,6 +319,32 @@ module.exports = function(grunt) {
         }, {
           src: 'data/about.html',
           dest: '<%= cordovaDevDir %>/about.html'
+        }]
+      },
+      cordovaIOS: {
+        options: {
+          variables: {
+            VERSION: '<%= mainVersion %>',
+            BUILD: '<%= subVersion %>',
+            BID: '<%= buildId %>',
+            APPNAME: '<%= name %>',
+            APPDESCRIPTION: '<%= description %>',
+            PACKAGE: '<%= package %>',
+            PRODUCTION: 'false',
+            DEFAULTLOCATIONS: '',
+            DEFAULTPERSPECTIVES: "'perspectiveList', 'perspectiveGrid', 'perspectiveGraph'",
+            ACTIVATEDPERSPECTIVES: "{ 'id': 'perspectiveList' }, { 'id': 'perspectiveGrid' }, { 'id': 'perspectiveGraph' }",
+            MHTVIEWER: 'viewerBrowser',
+            PDFVIEWER: 'viewerBrowser'
+          },
+          prefix: '@@'
+        },
+        files: [{
+          src: 'data/cordova/config.xml',
+          dest: '<%= cordovaIOSDevDir %>/config.xml'
+        }, {
+          src: 'data/about.html',
+          dest: '<%= cordovaIOSDevDir %>/about.html'
         }]
       }
     },
@@ -427,7 +575,8 @@ module.exports = function(grunt) {
   //grunt.registerTask('dist-doc', ['jsdoc', 'compress:doc']);
   grunt.registerTask('jsfix', ['jsbeautifier', 'checkstyle']); // 'fixmyjs:core'
   grunt.registerTask('bump-version', ['init', 'replace:templates']);
-  grunt.registerTask('prepare-cordova', ['init', 'clean:cordova', 'copy:cordova', 'replace:cordova']);
+  grunt.registerTask('prepare-android', ['init', 'clean:cordovaAndroid', 'copy:cordovaAndroid', 'replace:cordovaAndroid']);
+  grunt.registerTask('prepare-ios', ['init', 'clean:cordovaIOS', 'copy:cordovaIOS', 'replace:cordovaIOS']);
   grunt.registerTask('default', ['help']);
   grunt.registerTask('jsdav', 'Run JSDav Server.', function() {
     var jsDAV = require("jsDAV/lib/jsdav");
@@ -444,7 +593,8 @@ module.exports = function(grunt) {
   grunt.registerTask('help', 'Printing help for this script.', function() {
     grunt.log.writeln("Supported grunt tasks:");
     grunt.log.writeln(" - checkstyle");
-    grunt.log.writeln(" - prepare-cordova");
+    grunt.log.writeln(" - prepare-android");
+    grunt.log.writeln(" - prepare-ios");
     grunt.log.writeln(" - bump-version");
   });
 
