@@ -171,11 +171,8 @@
     "directoryTheSame": "Initial and target directories are the same.",
     "directoryNotMoved": "Directory was not renamed.",
     "directoryExists": "Target directory name '__dirName__' already exists.",
-    "directoryRenameFailed": "Directory renaming failed!",
-    "directoryRenameNotImplemented" : "Rename directory functionality is not implemented yet.",
-    "directoryDeleteNotImplemented" : "Delete directory functionality is not implemented yet.",
     "pathIsNotDirectory": "Path '__dirName__' is not a directory.",
-    "openExtentionDirectoryNotImplemented": "Open extensions directory functionality not implemented yet!",
-    "openExtentionDirectoryNotSupported": "Open extensions directory functionality not supported on this platform!",
+    "directoryRenameFailed": "Directory renaming failed!",
+    "functionalityNotImplemented" : "This functionality is not implemented yet.",
     "-": "-"
 }

@@ -216,7 +216,7 @@ define(function(require, exports, module) {
     setTimeout(function() {
       $loadingAnimation.hide();
       $col2Footer.show();
-    }, 500);;
+    }, 500);
   }
 
   function removeFileModel(model, filePath) {

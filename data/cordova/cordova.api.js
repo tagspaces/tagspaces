@@ -670,7 +670,7 @@ define(function(require, exports, module) {
   };
 
   var openExtensionsDirectory = function() {
-    TSCORE.showAlertDialog($.i18n.t("ns.common:openExtentionDirectoryNotSupported"));
+    TSCORE.showAlertDialog($.i18n.t("ns.common:functionalityNotImplemented"));
   };
 
   var getFileProperties = function(filePath) {

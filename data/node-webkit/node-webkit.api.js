@@ -474,6 +474,7 @@ define(function(require, exports, module) {
 
   var listDirectory = function(dirPath) {
     console.log("Listing directory: " + dirPath);
+    TSCORE.showLoadingAnimation();
 
     try {
       fs.readdir(dirPath, function(error, dirList) {
@@ -593,7 +594,7 @@ define(function(require, exports, module) {
     // TODO implement openExtensionsDirectory on node
     //gui.Shell.openItem(extPath);
     console.log("Open extensions directory functionality not implemented on chrome yet!");
-    TSCORE.showAlertDialog($.i18n.t("ns.common:openExtentionDirectoryNotImplemented"));
+    TSCORE.showAlertDialog($.i18n.t("ns.common:functionalityNotImplemented"));
   };
 
   /* stats for file:

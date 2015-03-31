@@ -211,7 +211,7 @@ define(function(require, exports, module) {
   };
 
   var renameDirectory = function(filePath, newFilePath) {
-    TSCORE.showAlertDialog($.i18n.t("ns.common:directoryRenameNotImplemented"));
+    TSCORE.showAlertDialog($.i18n.t("ns.common:functionalityNotImplemented"));
   };
 
   var saveTextFile = function(filePath, content) {
@@ -271,7 +271,7 @@ define(function(require, exports, module) {
   };
 
   var deleteDirectory = function(dirPath) {
-    TSCORE.showAlertDialog($.i18n.t("ns.common:directoryDeleteNotImplemented"));
+    TSCORE.showAlertDialog($.i18n.t("ns.common:functionalityNotImplemented"));
   };
 
   var checkAccessFileURLAllowed = function() {
