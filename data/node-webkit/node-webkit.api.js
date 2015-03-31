@@ -252,7 +252,7 @@ define(function(require, exports, module) {
 
   var createDirectoryIndex = function(dirPath) {
     console.log("Creating index for directory: " + dirPath);
-    TSCORE.showWaitingDialog("TagSpaces is indexing the current directory with subdirectories.");
+    TSCORE.showWaitingDialog($.i18n.t("ns.common:waitDialogDiectoryIndexing"));
 
     var directoryIndex = [];
     directoryIndex = scanDirectory(dirPath, directoryIndex);
@@ -262,7 +262,7 @@ define(function(require, exports, module) {
 
   var createDirectoryTree = function(dirPath) {
     console.log("Creating directory index for: " + dirPath);
-    TSCORE.showWaitingDialog("TagSpaces is creating the structure tree of the current directory.");
+    TSCORE.showWaitingDialog($.i18n.t("ns.common:waitDialogDiectoryIndexing"));
 
     var directoyTree = generateDirectoryTree(dirPath);
     //console.log(JSON.stringify(directoyTree));
@@ -286,29 +286,29 @@ define(function(require, exports, module) {
 
     if (sourceFilePath.toLowerCase() === targetFilePath.toLowerCase()) {
       TSCORE.hideWaitingDialog();
-      TSCORE.showAlertDialog("Initial and target file names are the same.", "File was not copyied.");
+      TSCORE.showAlertDialog($.i18n.t("ns.common:fileTheSame"), $.i18n.t("ns.common:fileNotCopyied"));
       return false;
     }
     if (fs.lstatSync(sourceFilePath).isDirectory()) {
       TSCORE.hideWaitingDialog();
-      TSCORE.showAlertDialog("'" + sourceFilePath + "' is a directory and can not be moved.");
+      TSCORE.showAlertDialog($.i18n.t("ns.common:fileIsDirectory", { fileName:sourceFilePath }));
       return false;
     }
     if (fs.existsSync(targetFilePath)) {
       TSCORE.hideWaitingDialog();
-      TSCORE.showAlertDialog("Target file '" + targetFilePath + "' already exists.", "File renaming failed!");
+      TSCORE.showAlertDialog($.i18n.t("ns.common:fileExists", { fileName:targetFilePath }),  $.i18n.t("ns.common:fileRenameFailed"));
       return false;
     }
 
     var rd = fs.createReadStream(sourceFilePath);
     rd.on("error", function(err) {
       TSCORE.hideWaitingDialog();
-      TSCORE.showAlertDialog("Copying of '" + sourceFilePath + "' failed.");
+      TSCORE.showAlertDialog($.i18n.t("ns.common:fileCopyFailed", { fileName:sourceFilePath }));
     });
     var wr = fs.createWriteStream(targetFilePath);
     wr.on("error", function(err) {
       TSCORE.hideWaitingDialog();
-      TSCORE.showAlertDialog("Copying of '" + sourceFilePath + "' failed.");
+      TSCORE.showAlertDialog($.i18n.t("ns.common:fileCopyFailed", { fileName:sourceFilePath }));
     });
     wr.on("close", function(ex) {
       TSPOSTIO.copyFile(sourceFilePath, targetFilePath);
@@ -321,23 +321,23 @@ define(function(require, exports, module) {
 
     if (filePath === newFilePath) {
       TSCORE.hideWaitingDialog();
-      TSCORE.showAlertDialog("Initial and target file names are the same.", "File was not moved/renamed.");
+      TSCORE.showAlertDialog($.i18n.t("ns.common:fileTheSame"), $.i18n.t("ns.common:fileNotMoved"));
       return false;
     }
     if (fs.lstatSync(filePath).isDirectory()) {
       TSCORE.hideWaitingDialog();
-      TSCORE.showAlertDialog("'" + filePath + "' is a directory and can not be moved.");
+      TSCORE.showAlertDialog($.i18n.t("ns.common:fileIsDirectory", { fileName:filePath }));
       return false;
     }
     if (fs.existsSync(newFilePath)) {
       TSCORE.hideWaitingDialog();
-      TSCORE.showAlertDialog("Target file '" + newFilePath + "' already exists.", "File renaming failed!");
+      TSCORE.showAlertDialog($.i18n.t("ns.common:fileExists", { fileName:newFilePath }), $.i18n.t("ns.common:fileRenameFailed"));
       return false;
     }
     fs.rename(filePath, newFilePath, function(error) {
       if (error) {
         TSCORE.hideWaitingDialog();
-        TSCORE.showAlertDialog("Renaming of '" + filePath + "' failed. The file is probably on a different partition.");
+        TSCORE.showAlertDialog($.i18n.t("ns.common:fileRenameFailedDiffPartition", { fileName:filePath }));
         return;
       }
       TSPOSTIO.renameFile(filePath, newFilePath);
@@ -352,12 +352,12 @@ define(function(require, exports, module) {
 
     if (dirPath === newDirPath) {
       TSCORE.hideWaitingDialog();
-      TSCORE.showAlertDialog("Initial and target directories are the same.", "Directory was not renamed.");
+      TSCORE.showAlertDialog($.i18n.t("ns.common:directoryTheSame"), $.i18n.t("ns.common:directoryNotMoved"));
       return false;
     }
     if (fs.existsSync(newDirPath)) {
       TSCORE.hideWaitingDialog();
-      TSCORE.showAlertDialog("Target directory name '" + newDirPath + "' already exists.", "Directory renaming failed!");
+      TSCORE.showAlertDialog($.i18n.t("ns.common:directoryExists", { dirName:newDirPath }), $.i18n.t("ns.common:directoryRenameFailed"));
       return false;
     }
     var dirStatus = fs.lstatSync(dirPath);
@@ -371,7 +371,7 @@ define(function(require, exports, module) {
       });
     } else {
       TSCORE.hideWaitingDialog();
-      TSCORE.showAlertDialog("Path '" + dirPath + "' is not a directory.", "Directory renaming failed!");
+      TSCORE.showAlertDialog($.i18n.t("ns.common:pathIsNotDirectory", { dirName:dirPath }), $.i18n.t("ns.common:directoryRenameFailed"));
       return false;
     }
   };
@@ -459,7 +459,7 @@ define(function(require, exports, module) {
         TSPOSTIO.saveBinaryFile(filePath);
       });
     } else {
-      TSCORE.showAlertDialog("File Already Exists.");
+      TSCORE.showAlertDialog($.i18n.t("ns.common:fileExists", {fileName: filePath}));
     }
   };
 
@@ -593,7 +593,7 @@ define(function(require, exports, module) {
     // TODO implement openExtensionsDirectory on node
     //gui.Shell.openItem(extPath);
     console.log("Open extensions directory functionality not implemented on chrome yet!");
-    TSCORE.showAlertDialog("Open extensions directory functionality not implemented yet!");
+    TSCORE.showAlertDialog($.i18n.t("ns.common:openExtentionDirectoryNotImplemented"));
   };
 
   /* stats for file:

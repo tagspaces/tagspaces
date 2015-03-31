@@ -499,7 +499,7 @@ define(function(require, exports, module) {
         }
       );
     } else {
-      TSCORE.showAlertDialog("File Already Exists.");
+      TSCORE.showAlertDialog($.i18n.t("ns.common:fileExists", { fileName:filePath }));
     }
   };
 
@@ -670,7 +670,7 @@ define(function(require, exports, module) {
   };
 
   var openExtensionsDirectory = function() {
-    TSCORE.showAlertDialog("Open extensions directory functionality not supported on Android!");
+    TSCORE.showAlertDialog($.i18n.t("ns.common:openExtentionDirectoryNotSupported"));
   };
 
   var getFileProperties = function(filePath) {

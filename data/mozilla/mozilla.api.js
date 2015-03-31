@@ -211,7 +211,7 @@ define(function(require, exports, module) {
   };
 
   var renameDirectory = function(filePath, newFilePath) {
-    TSCORE.showAlertDialog("Rename directory functionality is not implemented in firefox yet.");
+    TSCORE.showAlertDialog($.i18n.t("ns.common:directoryRenameNotImplemented"));
   };
 
   var saveTextFile = function(filePath, content) {
@@ -271,7 +271,7 @@ define(function(require, exports, module) {
   };
 
   var deleteDirectory = function(dirPath) {
-    TSCORE.showAlertDialog("Delete directory functionality is not implemented in Firefox yet.");
+    TSCORE.showAlertDialog($.i18n.t("ns.common:directoryDeleteNotImplemented"));
   };
 
   var checkAccessFileURLAllowed = function() {
