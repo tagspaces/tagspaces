@@ -204,12 +204,19 @@ define(function(require, exports, module) {
     console.log('Updating logger...');
   }
 
+  var $loadingAnimation = $('#loadingAnimation');
+  var $col2Footer = $('#col2Footer');
+
   function showLoadingAnimation() {
-    $('#loadingAnimation').css('visibility', 'visible');
+    $col2Footer.hide();
+    $loadingAnimation.show();
   }
 
   function hideLoadingAnimation() {
-    $('#loadingAnimation').css('visibility', 'hidden');
+    setTimeout(function() {
+      $loadingAnimation.hide();
+      $col2Footer.show();
+    }, 500);;
   }
 
   function removeFileModel(model, filePath) {
