@@ -251,7 +251,7 @@ define(function(require, exports, module) {
           var parentKeyAttr = ui.draggable.attr('parentKey');
           var tagAttr = ui.draggable.attr('tag');
           var targetTagGroupKey = $(this).attr('key');
-          if (parentKeyAttr && (targetTagGroupKey !== parentKeyAttr) ) { // move from taggroup
+          if (parentKeyAttr && (targetTagGroupKey !== parentKeyAttr)) { // move from taggroup
             var tagGroupData = TSCORE.Config.getTagData(tagAttr, parentKeyAttr);
             //console.log('Moving tag: ' + tagGroupData.title + ' to ' + targetTagGroupKey);
             TSCORE.Config.moveTag(tagGroupData, targetTagGroupKey);
