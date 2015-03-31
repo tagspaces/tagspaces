@@ -6,6 +6,7 @@ define(function(require, exports, module) {
   console.log('Loading perspective.manager.js ...');
   var perspectives;
   var TSCORE = require('tscore');
+
   var initPerspectives = function() {
     perspectives = [];
     $('#viewSwitcher').empty();
@@ -15,7 +16,6 @@ define(function(require, exports, module) {
     initWelcomeScreen();
     var extensions = TSCORE.Config.getPerspectives();
     for (var i = 0; i < extensions.length; i++) {
-      // TODO Some libraries such as ace editor are not working using paths like this "file:///C:/blabal/extension.js"
       var extPath = TSCORE.Config.getExtensionPath() + '/' + extensions[i].id + '/extension.js';
       require([extPath], function(perspective) {
         perspectives.push(perspective);
@@ -55,6 +55,7 @@ define(function(require, exports, module) {
       }); // jshint ignore:line
     }
   };
+
   var initWelcomeScreen = function() {
     /* require([
               "text!templates/WelcomeScreen.html",
@@ -67,6 +68,7 @@ define(function(require, exports, module) {
         }); */
     $('#viewContainers').append('<div id="welcomeScreen"></div>');
   };
+
   var initPerspectiveSwitcher = function() {
     var extensions = TSCORE.Config.getPerspectives();
     var $viewSwitcher = $('#viewSwitcher');
@@ -99,6 +101,7 @@ define(function(require, exports, module) {
       }); // jshint ignore:line
     }
   };
+
   var redrawCurrentPerspective = function() {
     for (var i = 0; i < perspectives.length; i++) {
       if (perspectives[i].ID === TSCORE.currentPerspectiveID) {
@@ -111,6 +114,7 @@ define(function(require, exports, module) {
       }
     }
   };
+
   var removeFileUI = function(filePath) {
     console.log('Removing file from perspectives');
     for (var i = 0; i < perspectives.length; i++) {
@@ -121,6 +125,7 @@ define(function(require, exports, module) {
       }
     }
   };
+
   var updateFileUI = function(oldFilePath, newFilePath) {
     console.log('Updating file in perspectives');
     for (var i = 0; i < perspectives.length; i++) {
@@ -131,6 +136,7 @@ define(function(require, exports, module) {
       }
     }
   };
+
   var getNextFile = function(filePath) {
     for (var i = 0; i < perspectives.length; i++) {
       if (perspectives[i].ID === TSCORE.currentPerspectiveID) {
@@ -142,6 +148,7 @@ define(function(require, exports, module) {
       }
     }
   };
+
   var getPrevFile = function(filePath) {
     for (var i = 0; i < perspectives.length; i++) {
       if (perspectives[i].ID === TSCORE.currentPerspectiveID) {
@@ -153,6 +160,7 @@ define(function(require, exports, module) {
       }
     }
   };
+
   var updateTreeData = function(treeData) {
     for (var i = 0; i < perspectives.length; i++) {
       try {
@@ -162,6 +170,7 @@ define(function(require, exports, module) {
       }
     }
   };
+
   var updateFileBrowserData = function(dirList) {
     console.log('Updating the file browser data...');
     TSCORE.fileList = [];
@@ -205,10 +214,12 @@ define(function(require, exports, module) {
     }
     changePerspective(TSCORE.currentPerspectiveID);
   };
+
   var refreshFileListContainer = function() {
     // TODO consider search view
     TSCORE.IO.listDirectory(TSCORE.currentPath);
   };
+
   var hideAllPerspectives = function() {
     $('#welcomeScreen').hide();
     for (var i = 0; i < perspectives.length; i++) {
@@ -217,6 +228,7 @@ define(function(require, exports, module) {
       $('#' + perspectives[i].ID + 'Footer').hide();
     }
   };
+
   var changePerspective = function(viewType) {
     console.log('Change to ' + viewType + ' perspective.');
     TSCORE.showLoadingAnimation();
@@ -251,8 +263,8 @@ define(function(require, exports, module) {
     clearSelectedFiles();
     // Enabled the main toolbar e.g. search functionality
     TSCORE.enableTopToolbar();
-    TSCORE.hideLoadingAnimation();
   };
+
   var clearSelectedFiles = function() {
     // Clear selected files
     TSCORE.selectedFiles = [];

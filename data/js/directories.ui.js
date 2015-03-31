@@ -123,7 +123,8 @@ define(function(require, exports, module) {
         }
       });
     }
-    // Updates the directory subtree
+
+  // Updates the directory subtree
   function updateSubDirs(dirList) {
     //console.log("Updating subdirs(TSCORE)..."+JSON.stringify(dirList));
     var hasSubFolders = false;
@@ -195,6 +196,7 @@ define(function(require, exports, module) {
       });
     });
   }
+
   var showDropUp = function(menuId, sourceObject) {
     var $menu = $(menuId);
     var leftPos = 0;
