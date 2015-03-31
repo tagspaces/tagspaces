@@ -423,6 +423,7 @@ define(function(require, exports, module) {
     }
 
     this.refreshThumbnails();
+    TSCORE.hideLoadingAnimation();
   };
 
   var buttonCompTmpl = Handlebars.compile('<button filepath="{{filepath}}" class="btn btn-link fileSelection"><i class="fa {{selected}} fa-fw fa-lg"></i></button>' +
