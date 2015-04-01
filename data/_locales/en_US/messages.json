@@ -4,5 +4,13 @@
   },
   "appDesc": {
     "message": "File Browser with Web Content Scraping and Chromecast Support."
+  },
+  "appLauncher": {
+    "message": "Launch TagSpaces",
+    "description": "Title of the application launcher in the browser."
+  },
+  "appLauncherTitle": {
+    "message": "Start TagSpaces Browser in a new tab",
+    "description": "Title of the application launcher in the browser."
   }
 }

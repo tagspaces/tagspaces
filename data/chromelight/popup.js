@@ -71,6 +71,19 @@
         });
       }
     });
+
+    // I18n this panel
+    $('[data-i18n]').each(function() {
+        var me = $(this);
+        var key = me.data('i18n');
+        me.html(chrome.i18n.getMessage(key));
+    });
+
+    $('[data-i18n-title]').each(function() {
+        var me = $(this);
+        var key = me.data('i18n-title');
+        me.attr("title", chrome.i18n.getMessage(key));
+    });
   }
 
   function saveAsMHTML() {
