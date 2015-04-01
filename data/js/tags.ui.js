@@ -84,6 +84,32 @@ define(function(require, exports, module) {
     $('#tagGroupMenuCreateNewTag').click(function() {
       TSCORE.showDialogTagCreate();
     });
+    $('#tagGroupMenuImportTags').click(function() {
+      //var addFileInputName;
+      console.log("tagGroupMenuImportTags");
+      $('#jsonImportFileInput').click();
+      $('#jsonImportFileInput').on('change', function(selection) {
+      
+        var file = selection.currentTarget.files[0];
+        //addFileInputName = decodeURIComponent(file.name);
+        var reader = new FileReader();
+        reader.onload = function() {
+          try {
+            var jsonObj = JSON.parse(reader.result);
+            if ($.isArray(jsonObj.tagGroups)) {
+              showImportTagsDialog(jsonObj.tagGroups);
+            } else {
+              TSCORE.showAlertDialog($.i18n.t("ns.dialogs:invalidImportFile"));
+            }
+          } catch (e) {
+            console.log(e);
+            TSCORE.showAlertDialog($.i18n.t("ns.dialogs:invalidImportFile"));
+          }
+        };
+        reader.readAsText(file);
+
+      });
+    });
     $('#tagGroupMenuCreateTagGroup').click(function() {
       TSCORE.showDialogTagGroupCreate();
     });
@@ -398,6 +424,29 @@ define(function(require, exports, module) {
     $('#dialogTagCreate').modal({
       backdrop: 'static',
       show: true
+    });
+  }
+
+  function showImportTagsDialog(tagGroups) {
+   
+    require(['text!templates/ImportTagsDialog.html'], function(uiTPL) {
+
+      if ($('#dialogImportTags').length < 1) {
+        var uiTemplate = Handlebars.compile(uiTPL);
+        $('body').append(uiTemplate({objects:tagGroups})); 
+
+        $('#importTagsButton').on('click', function() {
+         
+          tagGroups.forEach(function(value) {
+            TSCORE.Config.addTagGroup(value);
+          });
+        });
+      }
+
+      $('#dialogImportTags').modal({
+        backdrop: 'static',
+        show: true
+      });
     });
   }
 
