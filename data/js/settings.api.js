@@ -981,4 +981,5 @@ define(function(require, exports, module) {
   exports.loadSettingsLocalStorage = loadSettingsLocalStorage;
   exports.loadDefaultSettings = loadDefaultSettings;
   exports.saveSettings = saveSettings;
+  exports.addTagGroup = addTagGroup;
 });
