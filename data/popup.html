@@ -21,26 +21,30 @@ can be found in the LICENSE file.
         <img src="assets/icon128.png" class="pull-left" style="margin-left: 20px; max-height: 32px; max-width: 32px;"/>&nbsp;&nbsp;
         <a href="#" class="btn btn-primary" id="startTagSpaces" style="width: 350px;" data-i18n="appLauncher" data-i18n-title="appLauncherTitle"></a>
     </div>
-    <label style="margin-top: 15px; font-size: 17px;">Capture Web Content</label>
+    <label style="margin-top: 15px; font-size: 17px;" data-i18n="appLauncherLabel"></label>
     <div class="form-group">
-        <label class="control-label" for="title">1. <span>Edit Title</span></label>
-        <input class="form-control" type="text" name="title" id="title" autocomplete="off"
-               data-i18n="[placeholder]ns.dialogs:tagOperationTagsPlaceholder"/>
-        <p class="help-block" data-i18n="ns.dialogs:editTagNamesRestrictionsHelp"></p>
+        <label class="control-label" for="title">1. <span data-i18n="editTitleLabel"></span></label>
+        <input class="form-control" type="text" name="title" id="title" autocomplete="off"/>
+        <p class="help-block"></p>
     </div>
     <form role="form" data-toggle="validator">
         <div class="form-group">
-            <label class="control-label" for="tags">2. <span>Add Tags</span></label>
-            <input class="form-control" type="text" name="tags" id="tags" autocomplete="off"
-                   data-i18n="[placeholder]ns.dialogs:tagOperationTagsPlaceholder"/>
-            <p class="help-block">Tags should have a minimum length of 2 characters and should not contain special characters such as spaces, #, / ,\ and other.</p>
+            <label class="control-label" for="tags">2. <span data-i18n="addTagLabel"></span></label>
+            <input class="form-control" type="text" name="tags" id="tags" autocomplete="off"/>
+            <p class="help-block" data-i18n="addTagHelp"></p>
         </div>
     </form>
-    <label>3. <span>Save as File</span></label>
+    <label>3. <span data-i18n="saveFileLabel"></span></label>
     <div class="btn-toolbar text-center noWrap">
-        <a href="#" class="btn btn-primary" id="saveAsMhtml" title="Save whole page as MHTML"><i class="fa fa-file fa-lg fa-fw"></i>&nbsp;<span>Save Whole Page</span></a>
-        <a href="#" class="btn btn-primary" id="saveSelectionAsHtml" title="Save selected content as HTML"><i class="fa fa-file-text fa-lg fa-fw"></i>&nbsp;<span>Save Selected</span></a>
-        <a href="#" class="btn btn-primary" id="saveScreenshot" title="Save screenshot of the visible page area as PNG"><i class="fa fa-camera fa-lg fa-fw"></i>&nbsp;<span>Screenshot</span></a>
+        <a href="#" class="btn btn-primary" id="saveAsMhtml" data-i18n-title="saveAsMhtmlTitle">
+            <i class="fa fa-file fa-lg fa-fw"></i>&nbsp;<span data-i18n="saveAsMhtmlLabel"></span>
+        </a>
+        <a href="#" class="btn btn-primary" id="saveSelectionAsHtml" data-i18n-title="saveSelectionAsHtmlTitle">
+            <i class="fa fa-file-text fa-lg fa-fw"></i>&nbsp;<span data-i18n="saveAsSelectionLabel"></span>
+        </a>
+        <a href="#" class="btn btn-primary" id="saveScreenshot" data-i18n-title="saveScreenshotTitle">
+            <i class="fa fa-camera fa-lg fa-fw"></i>&nbsp;<span data-i18n="saveScreenshotLabel"></span>
+        </a>
     </div>
 </div>
 <script type="text/javascript" src="libs/jquery/jquery-2.1.1.min.js"></script>

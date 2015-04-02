@@ -12,5 +12,49 @@
   "appLauncherTitle": {
     "message": "Start TagSpaces Browser in a new tab",
     "description": "Title of the application launcher in the browser."
+  },
+  "appLauncherLabel": {
+    "message": "Capture Web Content",
+    "description": "Title of label."
+  },
+  "editTitleLabel": {
+    "message": "Edit Title",
+    "description": "Title of label."
+  },
+  "addTagLabel": {
+    "message": "Add Tags",
+    "description": "Title of label."
+  },
+  "addTagHelp": {
+    "message": "Tags should have a minimum length of 2 characters and should not contain special characters such as spaces, #, / ,\\ and other.",
+    "description": "Add tag help message"
+  },
+  "saveFileLabel": {
+    "message": "Save as File",
+    "description": "Title of label."
+  },
+  "saveAsMhtmlTitle": {
+    "message": "Save whole page as MHTML",
+    "description": "Title of save page button"
+  },
+  "saveAsMhtmlLabel": {
+    "message": "Save Whole Page",
+    "description": "Title of label."
+  },
+  "saveSelectionAsHtmlTitle": {
+    "message": "Save selected content as HTML",
+    "description": "Title of save selection button"
+  },
+  "saveAsSelectionLabel": {
+    "message": "Save Selected",
+    "description": "Title of label."
+  },
+  "saveScreenshotTitle": {
+    "message": "Save screenshot of the visible page area as PNG",
+    "description": "Title of screenshot button"
+  },
+  "saveScreenshotLabel": {
+    "message": "Screenshot",
+    "description": "Title of label."
   }
 }
