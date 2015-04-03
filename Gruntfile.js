@@ -127,7 +127,7 @@ module.exports = function(grunt) {
         }, {
           expand: true,
           cwd: 'data/cordova',
-          src: ['*.js'],
+          src: ['**/*.js'],
           dest: '<%= cordovaDevDir %>/cordova'
         }, {
           src: 'data/about.html',
@@ -245,7 +245,7 @@ module.exports = function(grunt) {
         }, {
           expand: true,
           cwd: 'data/cordova',
-          src: ['*.js'],
+          src: ['**/*.js'],
           dest: '<%= cordovaIOSDevDir %>/cordova'
         }, {
           src: 'data/about.html',
@@ -306,8 +306,8 @@ module.exports = function(grunt) {
             PACKAGE: '<%= package %>',
             PRODUCTION: 'false',
             DEFAULTLOCATIONS: '',
-            DEFAULTPERSPECTIVES: "'perspectiveList', 'perspectiveGrid', 'perspectiveGraph'",
-            ACTIVATEDPERSPECTIVES: "{ 'id': 'perspectiveList' }, { 'id': 'perspectiveGrid' }, { 'id': 'perspectiveGraph' }",
+            DEFAULTPERSPECTIVES: "'perspectiveList', 'perspectiveGrid'",
+            ACTIVATEDPERSPECTIVES: "{ 'id': 'perspectiveList' }, { 'id': 'perspectiveGrid' }",
             MHTVIEWER: 'viewerBrowser',
             PDFVIEWER: 'viewerBrowser'
           },
@@ -332,8 +332,8 @@ module.exports = function(grunt) {
             PACKAGE: '<%= package %>',
             PRODUCTION: 'false',
             DEFAULTLOCATIONS: '',
-            DEFAULTPERSPECTIVES: "'perspectiveList', 'perspectiveGrid', 'perspectiveGraph'",
-            ACTIVATEDPERSPECTIVES: "{ 'id': 'perspectiveList' }, { 'id': 'perspectiveGrid' }, { 'id': 'perspectiveGraph' }",
+            DEFAULTPERSPECTIVES: "'perspectiveList', 'perspectiveGrid'",
+            ACTIVATEDPERSPECTIVES: "{ 'id': 'perspectiveList' }, { 'id': 'perspectiveGrid' }",
             MHTVIEWER: 'viewerBrowser',
             PDFVIEWER: 'viewerBrowser'
           },
