@@ -15,7 +15,7 @@ define(function(require, exports, module) {
 
   var PREVIEW_TAGS_CNT = 5;
 
-  var supportedFileTypeThumnailing = ['jpg', 'jpeg', 'png', 'gif'];
+  var supportedFileTypeThumnailing = ['jpg', 'jpeg', 'png', 'gif', 'pdf', 'svg', 'webp', 'bmp'];
 
   function ExtUI(extID) {
     this.extensionID = extID;
@@ -269,28 +269,54 @@ define(function(require, exports, module) {
     });
   };
 
-  function generateThumbnail(imgURL, imgElement) {
+  function generateThumbnail(fileURL, imgElement) {
     var maxSize = 200;
     var canvas = document.createElement("canvas");
     var ctx = canvas.getContext("2d");
-    var img = new Image();
-    img.onload = function() {
-      if (img.width >= img.height) {
-        canvas.width = maxSize;
-        canvas.height = (maxSize * img.height) / img.width;
-      } else {
-        canvas.height = maxSize;
-        canvas.width = (maxSize * img.width) / img.height;
-      }
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-      var dataURL = canvas.toDataURL("image/png");
-      imgElement.attr('src', dataURL);
-      //console.log("<-->"+dataURL);
-      img = null;
-      canvas = null;
-      //canvas.parentNode.removeChild(canvas)
-    };
-    img.src = imgURL;
+    var dataURL;
+    if (fileURL.indexOf(".pdf") > 1) {
+      PDFJS.workerSrc="libs/pdfjs/build/pdf.worker.js";
+      PDFJS.getDocument(fileURL).then( function(pdf) {
+        pdf.getPage(1).then( function(page) {  //1 is the page number we want to retrieve
+          var viewport = page.getViewport(0.5);
+          if (viewport.width >= viewport.height) {
+            canvas.width = maxSize;
+            canvas.height = (maxSize * viewport.height) / viewport.width;
+          } else {
+            canvas.height = maxSize;
+            canvas.width = (maxSize * viewport.width) / viewport.height;
+          }
+          var renderContext = { canvasContext: ctx, viewport: viewport };
+          page.render(renderContext).then(function() {
+            //set to draw behind current content
+            ctx.globalCompositeOperation = "destination-over";
+            //set background color
+            ctx.fillStyle = "#ffffff";
+            //draw background / rect on entire canvas
+            ctx.fillRect(0,0,canvas.width,canvas.height);
+            dataURL = canvas.toDataURL("image/png");
+            imgElement.attr('src', dataURL);
+          });
+        });
+      });
+    } else {
+      var img = new Image();
+      img.onload = function() {
+        if (img.width >= img.height) {
+          canvas.width = maxSize;
+          canvas.height = (maxSize * img.height) / img.width;
+        } else {
+          canvas.height = maxSize;
+          canvas.width = (maxSize * img.width) / img.height;
+        }
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        dataURL = canvas.toDataURL("image/png");
+        imgElement.attr('src', dataURL);
+        img = null;
+        canvas = null;
+      };
+      img.src = fileURL;
+    }
   }
 
   ExtUI.prototype.disableThumbnails = function() {
