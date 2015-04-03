@@ -10,6 +10,7 @@
     "closingEditedFileContentConfirm": "If you confirm, all the changes you made will be lost.",
     "fileDeleteTitleConfirm": "Delete File(s)",
     "fileDeleteContentConfirm": "The file __filePath__ will be permanently deleted and cannot be recovered. Are you sure?",
+    "selectedFilesDeleteContentConfirm": "All selected files will be permanently deleted and cannot be recovered. Are you sure?",
     "fileSaveTitleConfirm": "Confirm File Save",
     "fileSaveContentConfirm": "Do you want to overwrite the current file?",
     "errorOpeningLocationAlert": "Error occurred while opening a path! Currently opened location will be closed.",
