@@ -275,9 +275,9 @@ define(function(require, exports, module) {
     var ctx = canvas.getContext("2d");
     var dataURL;
     if (fileURL.indexOf(".pdf") > 1) {
-      PDFJS.workerSrc="libs/pdfjs/build/pdf.worker.js";
-      PDFJS.getDocument(fileURL).then( function(pdf) {
-        pdf.getPage(1).then( function(page) {  //1 is the page number we want to retrieve
+      PDFJS.workerSrc = "libs/pdfjs/build/pdf.worker.js";
+      PDFJS.getDocument(fileURL).then(function(pdf) {
+        pdf.getPage(1).then(function(page) {  //1 is the page number we want to retrieve
           var viewport = page.getViewport(0.5);
           if (viewport.width >= viewport.height) {
             canvas.width = maxSize;
@@ -293,7 +293,7 @@ define(function(require, exports, module) {
             //set background color
             ctx.fillStyle = "#ffffff";
             //draw background / rect on entire canvas
-            ctx.fillRect(0,0,canvas.width,canvas.height);
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
             dataURL = canvas.toDataURL("image/png");
             imgElement.attr('src', dataURL);
           });
