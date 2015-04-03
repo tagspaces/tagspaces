@@ -26,7 +26,7 @@ define(function(require, exports, module) {
   }); */
 
   var showMainWindow = function() {
-    splashwin.hide();
+    //splashwin.hide();
     win.show();
   };
 
@@ -253,7 +253,7 @@ define(function(require, exports, module) {
   var createDirectoryIndex = function(dirPath) {
     console.log("Creating index for directory: " + dirPath);
     TSCORE.showWaitingDialog($.i18n.t("ns.common:waitDialogDiectoryIndexing"));
-
+    TSCORE.showLoadingAnimation();
     var directoryIndex = [];
     directoryIndex = scanDirectory(dirPath, directoryIndex);
     //console.log(JSON.stringify(directoryIndex));
