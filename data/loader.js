@@ -87,6 +87,7 @@ requirejs.config({
         select2:                'libs/select2/select2.min',
         hammerjs:               'libs/hammerjs/jquery.hammer.min',
         handlebarsjs:           'libs/handlebars.js/handlebars-v1.1.2',
+        pdfjs:                  'libs/pdfjs/build/pdf',
         webdavlib:              'web/webdavlib',
 
         tscore:                 'js/core.api',
@@ -145,7 +146,8 @@ requirejs.config({
                                             'mousetrapgb',
                                             'select2',
                                             'handlebarsjs',
-                                            'tssettingsdefault'
+                                            'tssettingsdefault',
+                                            'pdfjs'
                                         ] }
     } 
 });
