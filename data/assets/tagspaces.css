@@ -241,7 +241,7 @@ user-select: none;
     max-width: 100px; 
     max-height: 100px;
     vertical-align: text-top;
-    border: 1px lightgray solid;
+    border: 0px lightgray solid;
 }
 
 #viewsRadio {
