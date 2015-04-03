@@ -346,6 +346,7 @@ define(function(require, exports, module) {
     }
     var newFileName = generateFileName(fileName, extractedTags);
     TSCORE.IO.renameFile(filePath, containingDirectoryPath + TSCORE.dirSeparator + newFileName);
+    collectRecentTags(tags);
   }
 
   function removeTagsFromFile(filePath, tags) {
@@ -473,6 +474,31 @@ define(function(require, exports, module) {
     }
     var newFileName = generateFileName(fileName, newTags);
     TSCORE.IO.renameFile(filePath, containingDirectoryPath + TSCORE.dirSeparator + newFileName);
+  }
+
+  //Collect recent tags to gorup 
+  //TODO: UI is not refreshed 
+  function collectRecentTags (newTags) {
+
+    var collectGroupKey = 'COL';
+    var collectGroup = TSCORE.Config.getTagGroupData(collectGroupKey);
+    if (!collectGroup) {
+
+      var collectGroupTemplate = {
+        'title': 'Collected Tags',
+        'key': collectGroupKey,
+        'expanded': true,
+        'children': []
+      };
+
+      TSCORE.Config.addTagGroup(collectGroupTemplate);
+      TSCORE.Config.saveSettings();
+      collectGroup = collectGroupTemplate;
+    }
+
+    newTags.forEach(function(newTagName) {
+      TSCORE.Config.createTag(collectGroup, newTagName);
+    });
   }
 
   // Public API definition
