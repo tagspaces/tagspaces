@@ -431,7 +431,7 @@ define(function(require, exports, module) {
 
   var buttonCompTmbTmpl = Handlebars.compile('<button filepath="{{filepath}}" class="btn btn-link fileSelection"><i class="fa {{selected}} fa-fw fa-lg"></i></button>' +
     '<button filepath="{{filepath}}" title="{{filepath}}" class="btn btn-link fileTitleButton"><span class="fileExt"><span>{{fileext}}</span>&nbsp;<span class="caret white-caret"></span></span></button>' +
-    '<br><img class="thumbImg" filepath="{{tmbpath}}" style="width: 0; height: 0; border: 0" src="">');
+    '<br><img class="thumbImg" filepath="{{tmbpath}}" >');
 
   // Helper function user by basic and search views
   ExtUI.prototype.buttonizeTitle = function(title, filePath, fileExt, isSelected) {
