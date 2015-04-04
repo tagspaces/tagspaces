@@ -35,7 +35,7 @@ define(function(require, exports, module) {
 
     $("#" + containerElementID).append('<div id="code" style="width: 100%; height: 100%">');
     var mode = filetype[fileExt];
-    if (mode === null) {
+    if (!mode) {
       mode = "properties";
     }
     require([
