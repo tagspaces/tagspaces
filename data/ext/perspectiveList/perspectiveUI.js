@@ -90,7 +90,6 @@ define(function(require, exports, module) {
           $.i18n.t('ns.dialogs:selectedFilesDeleteContentConfirm'), function() {
             TSCORE.selectedFiles.forEach(function(file) {
               TSCORE.IO.deleteElement(file);
-              TSCORE.PerspectiveManager.removeFileUI(file);
             });
           });
       });
