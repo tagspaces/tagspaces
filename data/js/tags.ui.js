@@ -440,6 +440,8 @@ define(function(require, exports, module) {
           tagGroups.forEach(function(value) {
             TSCORE.Config.addTagGroup(value);
           });
+          TSCORE.Config.saveSettings();
+          generateTagGroups();
         });
       }
 
