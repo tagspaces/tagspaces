@@ -700,19 +700,23 @@ can be found in the LICENSE file.
 		<li class="dropdown-header"><button class="close">&times;</button><span data-i18n="ns.common:tagGroupOperations">Tag Group Operations</span></li>
         <li class="divider"></li>
 	    <li><a id="tagGroupMenuCreateNewTag" data-i18n="[title]ns.common:addTagsTooltip">
-            <i class="fa fa-tag fa-fw"></i>&nbsp;<span data-i18n="ns.common:addTags">Add Tags</span></a></li>
+            <i class="fa fa-tag fa-lg fa-fw"></i>&nbsp;<span data-i18n="ns.common:addTags">Add Tags</span></a></li>
+        <li><a id="tagGroupMenuImportTags" data-i18n="[title]ns.common:importTagsTooltip">
+            <span class="fa-stack fa-fw">
+                <i class="fa fa-tag fa-stack-2x fa-fw"></i><i class="fa fa-arrow-right fa-stack-1x fa-inverse"></i>
+            </span>&nbsp;<span data-i18n="ns.common:importTags">Import Tags</span></a></li>
 	    <li><a id="tagGroupMenuCreateTagGroup" data-i18n="[title]ns.common:createTagGroupTooltip">
-            <i class="fa fa-tags fa-fw"></i>&nbsp;<span data-i18n="ns.common:createTagGroup">Create Tag Group</span></a></li>
+            <i class="fa fa-tags fa-lg fa-fw"></i>&nbsp;<span data-i18n="ns.common:createTagGroup">Create Tag Group</span></a></li>
 	    <li><a id="tagGroupMenuMoveUp" data-i18n="[title]ns.common:moveTagGroupUpTooltip">
-            <i class="fa fa-arrow-up fa-fw"></i>&nbsp;<span data-i18n="ns.common:moveTagGroupUp">Move Tag Group Up</span></a></li>
+            <i class="fa fa-arrow-up fa-lg fa-fw"></i>&nbsp;<span data-i18n="ns.common:moveTagGroupUp">Move Tag Group Up</span></a></li>
 	    <li><a id="tagGroupMenuMoveDown" data-i18n="[title]ns.common:moveTagGroupDownTooltip">
-            <i class="fa fa-arrow-down fa-fw"></i>&nbsp;<span data-i18n="ns.common:moveTagGroupDown">Move Tag Group Down</span></a></li>
+            <i class="fa fa-arrow-down fa-lg fa-fw"></i>&nbsp;<span data-i18n="ns.common:moveTagGroupDown">Move Tag Group Down</span></a></li>
 	    <li><a id="tagGroupMenuEdit" data-i18n="[title]ns.common:editTagGroupTooltip">
-            <i class="fa fa-pencil fa-fw"></i>&nbsp;<span data-i18n="ns.common:editTagGroup">Edit Tag Group</span></a></li>
+            <i class="fa fa-pencil fa-lg fa-fw"></i>&nbsp;<span data-i18n="ns.common:editTagGroup">Edit Tag Group</span></a></li>
         <li><a id="tagGroupSort" data-i18n="[title]ns.common:sortTagGroupTooltip">
-            <i class="fa fa-sort-alpha-asc fa-fw"></i>&nbsp;<span data-i18n="ns.common:sortTagGroup">Sort Tag Group</span></a></li>
+            <i class="fa fa-sort-alpha-asc fa-lg fa-fw"></i>&nbsp;<span data-i18n="ns.common:sortTagGroup">Sort Tag Group</span></a></li>
 	    <li><a id="tagGroupMenuDelete" data-i18n="[title]ns.common:deleteTagGroupTooltip">
-            <i class="fa fa-trash-o fa-fw"></i>&nbsp;<span data-i18n="ns.common:deleteTagGroup">Delete Tag Group</span></a></li>
+            <i class="fa fa-trash-o fa-lg fa-fw"></i>&nbsp;<span data-i18n="ns.common:deleteTagGroup">Delete Tag Group</span></a></li>
     </ul>
 </div>
 
@@ -734,6 +738,7 @@ can be found in the LICENSE file.
 </div>
 
 <input type="file" id="addFileInput" style="display: none;" />
+<input type="file" id="jsonImportFileInput" style="display: none;" />
 
 <div id="searchOptions">
     <div style="font-size: 13px;">
