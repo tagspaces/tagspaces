@@ -52,7 +52,8 @@ define(function (require, exports, module) {
             { "iso": "cs",	    "title": "Čeština (Czech)" },
             { "iso": "ca",	    "title": "Catalan (Català)" },
             { "iso": "ko",	    "title": "한국의 (Korean)" },
-            { "iso": "el",	    "title": "ελληνικά (Greek)" }
+            { "iso": "el",	    "title": "ελληνικά (Greek)" },
+            { "iso": "sv",	    "title": "svenska (Swedish)" }
         ],
         "keyBindings": {
             "closeViewer":              "mod+w",
