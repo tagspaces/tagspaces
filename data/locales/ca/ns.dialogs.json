@@ -138,5 +138,6 @@
     "tagGroupNameHelp": "El nom del grup d'etiquetes ha de tenir almenys un caràcter",
     "operationNotPermittedInEditModeAlert": "No es permet aquesta operació pel fet que el document ha estat ja canviat.",
     "exportTagGroupsButton": "Exporta grups d'etiquetes com a JSON",
+    "showMainMenu": "Show main menu (restart needed)",
     "-": "-"
 }

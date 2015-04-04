@@ -138,5 +138,6 @@
     "tagGroupNameHelp": "标签组名称至少包含一个字符",
     "operationNotPermittedInEditModeAlert": "不允许该操作，因为文档已被更改",
     "exportTagGroupsButton": "导出标签组到.JSON文件",
+    "showMainMenu": "Show main menu (restart needed)",
     "-": "-"
 }

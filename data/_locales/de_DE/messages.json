@@ -1,14 +1,62 @@
 {
+    "saveAsSelectionLabel": {
+        "message": "Ausgewähltes speichern",
+        "description": "Title of label."
+    },
     "appLauncher": {
         "message": "TagSpaces starten",
         "description": "Title of the application launcher in the browser."
     },
     "appDesc": {
         "message": "Datei Browser mit Unterstützung der Speicherung von Web-Inhalten und Projektierung von lokalen Dateien zu Chromecast. ",
-        "description": "The description of the application, displayed in the web store."
+        "description": ""
+    },
+    "addTagHelp": {
+        "message": "Tags sollten mindestens 2 Zeichen lang sein und dürfen keine Sonderzeichen, wie Leerzeichen, #, /, \\ und andere enthalten.",
+        "description": "Add tag help message"
+    },
+    "saveScreenshotTitle": {
+        "message": "Screenshot des sichtbaren Seitenbereichs als PNG speichern",
+        "description": "Title of screenshot button"
+    },
+    "editTitleLabel": {
+        "message": "Titel bearbeiten",
+        "description": "Title of label."
     },
     "appName": {
         "message": "TagSpaces",
-        "description": "The title of the application, displayed in the web store."
+        "description": ""
+    },
+    "appLauncherLabel": {
+        "message": "Erfassen von Web-Inhalten",
+        "description": "Title of label."
+    },
+    "saveScreenshotLabel": {
+        "message": "Screenshot",
+        "description": "Title of label."
+    },
+    "addTagLabel": {
+        "message": "Tags hinzufügen",
+        "description": "Title of label."
+    },
+    "saveAsMhtmlTitle": {
+        "message": "Ganze Seite als MHTML speichern",
+        "description": "Title of save page button"
+    },
+    "appLauncherTitle": {
+        "message": "TagSpaces Browser in einem neuen Tab starten",
+        "description": "Title of the application launcher in the browser."
+    },
+    "saveSelectionAsHtmlTitle": {
+        "message": "Ausgewählte Inhalte wie HTML speichern",
+        "description": "Title of save selection button"
+    },
+    "saveAsMhtmlLabel": {
+        "message": "Ganze Seite speichern",
+        "description": "Title of label."
+    },
+    "saveFileLabel": {
+        "message": "Speichern als Datei",
+        "description": "Title of label."
     }
 }

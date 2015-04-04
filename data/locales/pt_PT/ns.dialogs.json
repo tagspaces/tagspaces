@@ -138,5 +138,6 @@
     "tagGroupNameHelp": "O nome do grupo de etiquetas deve ter pelo menos um carácter",
     "operationNotPermittedInEditModeAlert": "Esta operação não é permitida porque o ficheiro já foi alterado",
     "exportTagGroupsButton": "Exportar grupos de etiquetas como JSON",
+    "showMainMenu": "Mostrar menu principal (necessita reiniciar)",
     "-": "-"
 }

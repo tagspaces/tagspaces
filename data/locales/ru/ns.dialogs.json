@@ -138,5 +138,6 @@
     "tagGroupNameHelp": "Имя группы тегов должно состоять как минимум из 1 символа",
     "operationNotPermittedInEditModeAlert": "Данное действие невозможно выполнить, потому как документ уже был изменен.",
     "exportTagGroupsButton": "Экспорт группы тегов в формате JSON",
+    "showMainMenu": "Show main menu (restart needed)",
     "-": "-"
 }

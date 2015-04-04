@@ -138,5 +138,6 @@
     "tagGroupNameHelp": "タググループ名は、1文字以上の長さが必要です。",
     "operationNotPermittedInEditModeAlert": "この操作は、ドキュメントが既に変更されているため、許可されません。",
     "exportTagGroupsButton": "JSONとしてタググループをエクスポート",
+    "showMainMenu": "Show main menu (restart needed)",
     "-": "-"
 }

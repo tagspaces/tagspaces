@@ -138,5 +138,6 @@
     "tagGroupNameHelp": "Name der Tag Gruppe sollte mindestens einen Zeichen lang sein.",
     "operationNotPermittedInEditModeAlert": "Diese Operation ist nicht gestattet, da das aktuelle Dokument bereits geändert ist.",
     "exportTagGroupsButton": "Експортира групуте от тагове в JSON формат",
+    "showMainMenu": "Show main menu (restart needed)",
     "-": "-"
 }

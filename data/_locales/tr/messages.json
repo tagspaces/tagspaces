@@ -1,14 +1,62 @@
 {
+    "saveAsSelectionLabel": {
+        "message": "Save Selected",
+        "description": "Title of label."
+    },
     "appLauncher": {
         "message": "TagSpaces'i Başlat",
         "description": "Title of the application launcher in the browser."
     },
     "appDesc": {
-        "message": "Dosya tarayıcısı web içeriğinde veri ayıklamayı ve yerel dosyaları  Chromecast'e yansıtmayı destekler.",
-        "description": "The description of the application, displayed in the web store."
+        "message": "File Browser with Web Content Scraping and Chromecast Support.",
+        "description": ""
+    },
+    "addTagHelp": {
+        "message": "Etiket adları en az 2 karakter uzunluğunda olmalı ve boşluk, #, /, \\ gibi özel karakterler içermemeli.",
+        "description": "Add tag help message"
+    },
+    "saveScreenshotTitle": {
+        "message": "Save screenshot of the visible page area as PNG",
+        "description": "Title of screenshot button"
+    },
+    "editTitleLabel": {
+        "message": "Edit Title",
+        "description": "Title of label."
     },
     "appName": {
         "message": "TagSpaces",
-        "description": "The title of the application, displayed in the web store."
+        "description": ""
+    },
+    "appLauncherLabel": {
+        "message": "Capture Web Content",
+        "description": "Title of label."
+    },
+    "saveScreenshotLabel": {
+        "message": "Screenshot",
+        "description": "Title of label."
+    },
+    "addTagLabel": {
+        "message": "Etiket Ekle",
+        "description": "Title of label."
+    },
+    "saveAsMhtmlTitle": {
+        "message": "Save whole page as MHTML",
+        "description": "Title of save page button"
+    },
+    "appLauncherTitle": {
+        "message": "Start TagSpaces Browser in a new tab",
+        "description": "Title of the application launcher in the browser."
+    },
+    "saveSelectionAsHtmlTitle": {
+        "message": "Save selected content as HTML",
+        "description": "Title of save selection button"
+    },
+    "saveAsMhtmlLabel": {
+        "message": "Save Whole Page",
+        "description": "Title of label."
+    },
+    "saveFileLabel": {
+        "message": "Save as File",
+        "description": "Title of label."
     }
 }

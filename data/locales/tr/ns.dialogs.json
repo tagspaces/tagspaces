@@ -138,5 +138,6 @@
     "tagGroupNameHelp": "Etiket grup adı en az bir karakter uzunluğunda olmalı.",
     "operationNotPermittedInEditModeAlert": "Belge halihazırda değiştirilmiş olduğundan bu işleme izin verilmedi.",
     "exportTagGroupsButton": "Etiket gruplarını JSON şeklinde dışa aktar",
+    "showMainMenu": "Show main menu (restart needed)",
     "-": "-"
 }

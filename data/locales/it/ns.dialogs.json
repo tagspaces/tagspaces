@@ -138,5 +138,6 @@
     "tagGroupNameHelp": "Tag group name should be at least one character long",
     "operationNotPermittedInEditModeAlert": "This operation is not permitted because the document has been already changed.",
     "exportTagGroupsButton": "Esporta Gruppi di Tag come file JSON",
+    "showMainMenu": "Show main menu (restart needed)",
     "-": "-"
 }
