@@ -497,7 +497,9 @@ define(function(require, exports, module) {
     }
 
     newTags.forEach(function(newTagName) {
-      TSCORE.Config.createTag(collectGroup, newTagName);
+      if (!TSCORE.Config.findTag(newTagName)) {
+        TSCORE.Config.createTag(collectGroup, newTagName);
+      }
     });
   }
 
