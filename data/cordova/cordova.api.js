@@ -31,9 +31,11 @@ define(function(require, exports, module) {
       e.preventDefault();
     }, false);
 
-    window.plugins.webintent.getUri(function(url) {
-      urlFromIntent = url;
-    });
+    if (window.plugins && window.plugins.webintent) {
+      window.plugins.webintent.getUri(function(url) {
+        urlFromIntent = url;
+      });
+    }
 
     getFileSystem();
   }
