@@ -184,6 +184,11 @@ module.exports = function(grunt) {
           dest: '<%= cordovaIOSDevDir %>/ext/perspectiveGrid/'
         }, {
           expand: true,
+          cwd: 'data/ext/perspectiveGraph/',
+          src: ['**'],
+          dest: '<%= cordovaIOSDevDir %>/ext/perspectiveGraph/'
+        }, {
+          expand: true,
           cwd: 'data/ext/editorHTML/',
           src: ['**'],
           dest: '<%= cordovaIOSDevDir %>/ext/editorHTML/'
@@ -247,6 +252,11 @@ module.exports = function(grunt) {
           cwd: 'data/cordova',
           src: ['**/*.js'],
           dest: '<%= cordovaIOSDevDir %>/cordova'
+        }, {
+          expand: true,
+          cwd: 'data/web',
+          src: ['**'],
+          dest: '<%= cordovaIOSDevDir %>/web'
         }, {
           src: 'data/about.html',
           dest: '<%= cordovaIOSDevDir %>/about.html'
