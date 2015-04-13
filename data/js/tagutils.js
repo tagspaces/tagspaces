@@ -476,16 +476,14 @@ define(function(require, exports, module) {
     TSCORE.IO.renameFile(filePath, containingDirectoryPath + TSCORE.dirSeparator + newFileName);
   }
 
-  //Collect recent tags to gorup 
-  //TODO: UI is not refreshed 
+  //Collect recent tags in a custom tag-group
   function collectRecentTags (newTags) {
-
     var collectGroupKey = 'COL';
     var collectGroup = TSCORE.Config.getTagGroupData(collectGroupKey);
     if (!collectGroup) {
 
       var collectGroupTemplate = {
-        'title': 'Collected Tags',
+        'title': $.i18n.t('ns.common:collectedTagsTagGroupTitle'),
         'key': collectGroupKey,
         'expanded': true,
         'children': []
@@ -499,11 +497,12 @@ define(function(require, exports, module) {
     newTags.forEach(function(newTagName) {
       if (!TSCORE.Config.findTag(newTagName)) {
         TSCORE.Config.createTag(collectGroup, newTagName);
+        TSCORE.generateTagGroups();
       }
     });
   }
 
-  // Public API definition
+  // Public API definitions
   exports.beginTagContainer = BEGIN_TAG_CONTAINER;
   exports.endTagContainer = END_TAG_CONTAINER;
   exports.extractFileName = extractFileName;
