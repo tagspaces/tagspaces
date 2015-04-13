@@ -1,0 +1,62 @@
+{
+    "saveAsSelectionLabel": {
+        "message": "Sla geselecteerde op",
+        "description": "Title of label."
+    },
+    "appLauncher": {
+        "message": "Start TagSpaces",
+        "description": "Title of the application launcher in the browser."
+    },
+    "appDesc": {
+        "message": "Bestandsbeheerder met Web Content Scraping en Chromecast ondersteuning.",
+        "description": ""
+    },
+    "addTagHelp": {
+        "message": "Labels moeten een minimale lengte hebben van 2 karakters en mogen geen speciale karakters bevatten als spaties, #, / ,\\\\ en zo.",
+        "description": "Add tag help message"
+    },
+    "saveScreenshotTitle": {
+        "message": "Sla schermafdruk van de zichtbare pagina op als PNG",
+        "description": "Title of screenshot button"
+    },
+    "editTitleLabel": {
+        "message": "Bewerk titel",
+        "description": "Title of label."
+    },
+    "appName": {
+        "message": "TagSpaces",
+        "description": ""
+    },
+    "appLauncherLabel": {
+        "message": "Vang Web Content",
+        "description": "Title of label."
+    },
+    "saveScreenshotLabel": {
+        "message": "Schermafdruk",
+        "description": "Title of label."
+    },
+    "addTagLabel": {
+        "message": "Voeg labels toe",
+        "description": "Title of label."
+    },
+    "saveAsMhtmlTitle": {
+        "message": "Sla hele pagina op als MHTML",
+        "description": "Title of save page button"
+    },
+    "appLauncherTitle": {
+        "message": "Start TagSpaces Browser in een nieuwe tab",
+        "description": "Title of the application launcher in the browser."
+    },
+    "saveSelectionAsHtmlTitle": {
+        "message": "Sla geselecteerde inhoud op als HTML",
+        "description": "Title of save selection button"
+    },
+    "saveAsMhtmlLabel": {
+        "message": "Sla hele pagina op",
+        "description": "Title of label."
+    },
+    "saveFileLabel": {
+        "message": "Sla op als bestand",
+        "description": "Title of label."
+    }
+}
