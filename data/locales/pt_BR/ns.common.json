@@ -64,6 +64,8 @@
     "tagGroupOperations": "Tag Group Operations",
     "addTagsTooltip": "Adicionar etiquetas ao grupo de etiquetas",
     "addTags": "Adicionar Etiquetas",
+    "importTagsTooltip": "Import tags to tag group",
+    "importTags": "Import Tags",
     "createTagGroupTooltip": "Create new a tag group",
     "createTagGroup": "Criar Grupo de Etiquetas",
     "moveTagGroupUpTooltip": "Move current tag group one position up",
@@ -174,5 +176,6 @@
     "pathIsNotDirectory": "Path '__dirName__' is not a directory.",
     "directoryRenameFailed": "Directory renaming failed!",
     "functionalityNotImplemented": "This functionality is not implemented yet.",
+    "invalidImportFile": "The imported file has invalid format",
     "-": "-"
 }

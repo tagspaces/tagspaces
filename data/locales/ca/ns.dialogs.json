@@ -10,6 +10,7 @@
     "closingEditedFileContentConfirm": "Si confirma, tots els canvis fets es perdran.",
     "fileDeleteTitleConfirm": "Borrar Fitxer(s)",
     "fileDeleteContentConfirm": "El fitxer __filePath__ serà permanentment borrar i no podrà ser recuperat. N'està segur?",
+    "selectedFilesDeleteContentConfirm": "All selected files will be permanently deleted and cannot be recovered. Are you sure?",
     "fileSaveTitleConfirm": "Confirmar Guardar Fitxer",
     "fileSaveContentConfirm": "Vol sobreescriure el fitxer actual?",
     "errorOpeningLocationAlert": "Error succeït mentre s'obria un camí! Ara mateix la ubicació actual serà tancada.",
@@ -139,5 +140,7 @@
     "operationNotPermittedInEditModeAlert": "No es permet aquesta operació pel fet que el document ha estat ja canviat.",
     "exportTagGroupsButton": "Exporta grups d'etiquetes com a JSON",
     "showMainMenu": "Show main menu (restart needed)",
+    "invalidImportFile": "The imported file has invalid format",
+    "importGroupTagsTitle": "Import tags from file",
     "-": "-"
 }

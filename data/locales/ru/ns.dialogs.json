@@ -10,6 +10,7 @@
     "closingEditedFileContentConfirm": "После подтверждения все внесенные изменения будут отменены.",
     "fileDeleteTitleConfirm": "Удалить файл(ы)",
     "fileDeleteContentConfirm": "Файл __filePath__ будет удален безвозвратно. Продолжить?",
+    "selectedFilesDeleteContentConfirm": "All selected files will be permanently deleted and cannot be recovered. Are you sure?",
     "fileSaveTitleConfirm": "Подтвердить сохранение файла",
     "fileSaveContentConfirm": "Перезаписать текущий файл?",
     "errorOpeningLocationAlert": "При задании пути возникла ошибка! Текущий каталог будет закрыт.",
@@ -139,5 +140,7 @@
     "operationNotPermittedInEditModeAlert": "Данное действие невозможно выполнить, потому как документ уже был изменен.",
     "exportTagGroupsButton": "Экспорт группы тегов в формате JSON",
     "showMainMenu": "Show main menu (restart needed)",
+    "invalidImportFile": "The imported file has invalid format",
+    "importGroupTagsTitle": "Import tags from file",
     "-": "-"
 }

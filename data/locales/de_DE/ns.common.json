@@ -64,6 +64,8 @@
     "tagGroupOperations": "Tag-Gruppen Operationen",
     "addTagsTooltip": "Tags zur Tag-Gruppe hinzufügen",
     "addTags": "Tags hinzufügen",
+    "importTagsTooltip": "Import-Tags gruppieren",
+    "importTags": "Import Tags",
     "createTagGroupTooltip": "Neue Tag-Gruppe erstellen",
     "createTagGroup": "Tag-Gruppe erstellen",
     "moveTagGroupUpTooltip": "Aktuelle Tag-Gruppe eine Position nach oben verschieben",
@@ -174,5 +176,6 @@
     "pathIsNotDirectory": "Pfad '__dirName__' ist kein Verzeichnis.",
     "directoryRenameFailed": "Verzeichnis Umbenennen fehlgeschlagen!",
     "functionalityNotImplemented": "Diese Funktion ist noch nicht implementiert.",
+    "invalidImportFile": "Die importierte Datei hat ein ungültiges Format",
     "-": "-"
 }

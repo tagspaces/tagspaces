@@ -19,6 +19,7 @@
     "exportToCSVTooltip": "Exportar a estrutura de ficheiros actual para formato CSV (Valores Separados por Vírgulas)",
     "showSubfolderContent": "Conteúdo das Subpastas",
     "showSubfolderContentTooltip": "Mostrar conteúdo das Subpastas",
+    "deleteSelectedFilesTooltip": "Apagar ficheiros seleccionados",
     "addRemoveTagsTooltip": "Adicionar ou Remover Etiquetas dos Ficheiros Seleccionados",
     "toggleThumbnailsTooltip": "Alternar Miniaturas",
     "increasThumbnailsTooltip": "Aumentar Miniaturas",

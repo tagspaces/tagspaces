@@ -64,6 +64,8 @@
     "tagGroupOperations": "标签组操作",
     "addTagsTooltip": "添加标签到标签组",
     "addTags": "添加标签",
+    "importTagsTooltip": "Import tags to tag group",
+    "importTags": "Import Tags",
     "createTagGroupTooltip": "创建新标签组",
     "createTagGroup": "创建标签组",
     "moveTagGroupUpTooltip": "将当前标签组上移一位",
@@ -174,5 +176,6 @@
     "pathIsNotDirectory": "Path '__dirName__' is not a directory.",
     "directoryRenameFailed": "Directory renaming failed!",
     "functionalityNotImplemented": "This functionality is not implemented yet.",
+    "invalidImportFile": "The imported file has invalid format",
     "-": "-"
 }

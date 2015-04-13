@@ -10,6 +10,7 @@
     "closingEditedFileContentConfirm": "Se confirmar, perderá todas as alterações feitas.",
     "fileDeleteTitleConfirm": "Apagar Ficheiro(s)",
     "fileDeleteContentConfirm": "O __filePath__ será permanentemente apagado e não pode ser recuperado. Tem a certeza?",
+    "selectedFilesDeleteContentConfirm": "Todos os ficheiros seleccionados serão permanentemente eliminados e não podem ser recuperados. Tem a certeza?",
     "fileSaveTitleConfirm": "Confimar gravação do ficheiro",
     "fileSaveContentConfirm": "Pretende substituir o ficheiro actual?",
     "errorOpeningLocationAlert": "Ocorreu um erro ao abrir o caminho! A localização actualmente aberta será fechada.",
@@ -139,5 +140,7 @@
     "operationNotPermittedInEditModeAlert": "Esta operação não é permitida porque o ficheiro já foi alterado",
     "exportTagGroupsButton": "Exportar grupos de etiquetas como JSON",
     "showMainMenu": "Mostrar menu principal (necessita reiniciar)",
+    "invalidImportFile": "O ficheiro importado tem formato inválido",
+    "importGroupTagsTitle": "Importar etiquetas de ficheiro",
     "-": "-"
 }

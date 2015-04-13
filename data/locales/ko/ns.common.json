@@ -64,6 +64,8 @@
     "tagGroupOperations": "태그 그룹 작업하기",
     "addTagsTooltip": "태그를 태그 그룹에 추가하기",
     "addTags": "태그 추가",
+    "importTagsTooltip": "Import tags to tag group",
+    "importTags": "Import Tags",
     "createTagGroupTooltip": "새 태그 그룹 생성하기",
     "createTagGroup": "태그 그룹 생성",
     "moveTagGroupUpTooltip": "이 태그 그룹을 한단계 위로 이동하기",
@@ -174,5 +176,6 @@
     "pathIsNotDirectory": "Path '__dirName__' is not a directory.",
     "directoryRenameFailed": "Directory renaming failed!",
     "functionalityNotImplemented": "This functionality is not implemented yet.",
+    "invalidImportFile": "The imported file has invalid format",
     "-": "-"
 }

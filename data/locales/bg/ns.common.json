@@ -64,6 +64,8 @@
     "tagGroupOperations": "Операции върху етикетната група",
     "addTagsTooltip": "Добави етикети към етикетната група",
     "addTags": "Добави етикети",
+    "importTagsTooltip": "Import tags to tag group",
+    "importTags": "Import Tags",
     "createTagGroupTooltip": "Създай нова етикетна група",
     "createTagGroup": "Създай етикетна група",
     "moveTagGroupUpTooltip": "Премести текущата етикетна група с една позиция на горе",
@@ -174,5 +176,6 @@
     "pathIsNotDirectory": "Path '__dirName__' is not a directory.",
     "directoryRenameFailed": "Directory renaming failed!",
     "functionalityNotImplemented": "This functionality is not implemented yet.",
+    "invalidImportFile": "The imported file has invalid format",
     "-": "-"
 }

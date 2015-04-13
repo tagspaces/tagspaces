@@ -10,6 +10,7 @@
     "closingEditedFileContentConfirm": "Ако потвърдите, всички направени промени ще бъдат изгубени.",
     "fileDeleteTitleConfirm": "Изтрий файла/-овете",
     "fileDeleteContentConfirm": "Файлът __filePath__ ще бъде окончателни изтрит и няма да може да бъде възстановен отново. Сигурни ли сте, че искате да продължите?",
+    "selectedFilesDeleteContentConfirm": "All selected files will be permanently deleted and cannot be recovered. Are you sure?",
     "fileSaveTitleConfirm": "Потвърди записването на файла",
     "fileSaveContentConfirm": "Искате ли да презапишете текущия файл?",
     "errorOpeningLocationAlert": "Грешка при отварянето на пътят! Настоящото  местоположение ще бъде затворено!",
@@ -139,5 +140,7 @@
     "operationNotPermittedInEditModeAlert": "Diese Operation ist nicht gestattet, da das aktuelle Dokument bereits geändert ist.",
     "exportTagGroupsButton": "Експортира групуте от тагове в JSON формат",
     "showMainMenu": "Show main menu (restart needed)",
+    "invalidImportFile": "The imported file has invalid format",
+    "importGroupTagsTitle": "Import tags from file",
     "-": "-"
 }

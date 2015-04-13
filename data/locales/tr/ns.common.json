@@ -64,6 +64,8 @@
     "tagGroupOperations": "Etiket Grubu İşlemleri",
     "addTagsTooltip": "Etiketleri etiket grubuna ekle",
     "addTags": "Etiketleri Ekle",
+    "importTagsTooltip": "Import tags to tag group",
+    "importTags": "Import Tags",
     "createTagGroupTooltip": "Yeni etiket grubu oluştur",
     "createTagGroup": "Etiket Grubu Oluştur",
     "moveTagGroupUpTooltip": "Geçerli etiket grubunu bir üst konuma taşı",
@@ -174,5 +176,6 @@
     "pathIsNotDirectory": "Path '__dirName__' is not a directory.",
     "directoryRenameFailed": "Directory renaming failed!",
     "functionalityNotImplemented": "This functionality is not implemented yet.",
+    "invalidImportFile": "The imported file has invalid format",
     "-": "-"
 }

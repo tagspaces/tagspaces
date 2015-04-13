@@ -19,6 +19,7 @@
     "exportToCSVTooltip": "Εξαγωγή σημερινής δομής του αρχείου σε μορφή CSV (Comma Separated Value)",
     "showSubfolderContent": "Περιεχόμενο από τους υποφακέλους",
     "showSubfolderContentTooltip": "Εμφάνιση Περιεχομένου από τους υποφακέλους",
+    "deleteSelectedFilesTooltip": "Διαγραφή επιλεγμένων αρχείων",
     "addRemoveTagsTooltip": "Προσθήκη ή κατάργηση Ετικετών για τα επιλεγμένα αρχεία",
     "toggleThumbnailsTooltip": "Εναλλαγή μικρογραφιών",
     "increasThumbnailsTooltip": "Αύξηση μικρογραφιών",

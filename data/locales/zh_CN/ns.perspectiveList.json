@@ -19,6 +19,7 @@
     "exportToCSVTooltip": "导出当前文件结构为CSV格式(以逗号分隔)",
     "showSubfolderContent": "显示该子文件夹的内容",
     "showSubfolderContentTooltip": "显示子文件夹的内容",
+    "deleteSelectedFilesTooltip": "Delete Selected Files",
     "addRemoveTagsTooltip": "修改选定文件的标签",
     "toggleThumbnailsTooltip": "切换缩略图 ",
     "increasThumbnailsTooltip": "增加缩略图 ",

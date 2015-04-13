@@ -10,6 +10,7 @@
     "closingEditedFileContentConfirm": "Εάν επιβεβαιώσετε, όλες οι αλλαγές που κάνατε θα χαθούν.",
     "fileDeleteTitleConfirm": "Διαγραφή αρχείου(ων)",
     "fileDeleteContentConfirm": "Το __filePath__ αρχείο θα διαγραφεί οριστικά και δεν μπορεί να ανακτηθεί. Είστε σίγουρος;",
+    "selectedFilesDeleteContentConfirm": "Όλα τα επιλεγμένα αρχεία θα διαγραφθούν οριστικά και δεν μπορούν να ανακτηθούν. Ειστε σιγουρος?",
     "fileSaveTitleConfirm": "Επιβεβαίωση αποθήκευσης αρχείου",
     "fileSaveContentConfirm": "Θέλετε να αντικαταστήσετε το τρέχον αρχείο;",
     "errorOpeningLocationAlert": "Παρουσιάστηκε σφάλμα κατά το άνοιγμα μιας διαδρομής! Η ανοιχτη θέση θα κλείσει.",
@@ -139,5 +140,7 @@
     "operationNotPermittedInEditModeAlert": "Αυτή η λειτουργία δεν επιτρέπεται, διότι το έγγραφο έχει ήδη αλλάξει.",
     "exportTagGroupsButton": "Επεξεργασία ομάδας ετικετών JSON",
     "showMainMenu": "Εμφάνιση κεντρικου μενού (απαιτείται επανεκκίνηση)",
+    "invalidImportFile": "Το εισαγόμενο αρχείο έχει άκυρη μορφή",
+    "importGroupTagsTitle": "Εισαγωγή ετικετών από αρχείο",
     "-": "-"
 }

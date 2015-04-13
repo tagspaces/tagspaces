@@ -64,6 +64,8 @@
     "tagGroupOperations": "Ετικέτα Λειτουργιών ομάδας",
     "addTagsTooltip": "Προσθήκη ετικέτων για επισημανση ομάδας",
     "addTags": "Προσθήκη Ετικετών",
+    "importTagsTooltip": "Προσθήκη ετικέτων για επισημανση ομάδας",
+    "importTags": "Προσθήκη ετικέτων ",
     "createTagGroupTooltip": "Δημιουργία νέας ομάδας ετικετών",
     "createTagGroup": "Δημιουργία ομάδας ετικετών",
     "moveTagGroupUpTooltip": "Μετακίνηση τρέχουσας ομάδας ετικετών μία θέση προς τα πάνω",
@@ -174,5 +176,6 @@
     "pathIsNotDirectory": "Διαδρομή »__dirName__» δεν είναι κατάλογος.",
     "directoryRenameFailed": "Η μετονομασία καταλογου απέτυχε!",
     "functionalityNotImplemented": "Αυτή η λειτουργία δεν έχει υλοποιηθεί ακόμη.",
+    "invalidImportFile": "Το εισαγόμενο αρχείο έχει άκυρη μορφή",
     "-": "-"
 }

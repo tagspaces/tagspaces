@@ -10,6 +10,7 @@
     "closingEditedFileContentConfirm": "Onaylarsan, yaptığın tüm değişiklikler kaybedilecek",
     "fileDeleteTitleConfirm": "Dosya(ları) sil",
     "fileDeleteContentConfirm": "__filePath__ dosyası kalıcı olarak silinecek ve kurtarılamayacak. Emin misin?",
+    "selectedFilesDeleteContentConfirm": "All selected files will be permanently deleted and cannot be recovered. Are you sure?",
     "fileSaveTitleConfirm": "Dosya kayıt işlemini onayla",
     "fileSaveContentConfirm": "Geçerli dosyanın üzerine yazmak istiyor musun?",
     "errorOpeningLocationAlert": "Dizin yolu açılırken hata oluştu! Açık olan konum kapatılacak.",
@@ -139,5 +140,7 @@
     "operationNotPermittedInEditModeAlert": "Belge halihazırda değiştirilmiş olduğundan bu işleme izin verilmedi.",
     "exportTagGroupsButton": "Etiket gruplarını JSON şeklinde dışa aktar",
     "showMainMenu": "Show main menu (restart needed)",
+    "invalidImportFile": "The imported file has invalid format",
+    "importGroupTagsTitle": "Import tags from file",
     "-": "-"
 }

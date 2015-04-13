@@ -64,6 +64,8 @@
     "tagGroupOperations": "Operacions Grup Etiquetes",
     "addTagsTooltip": "Afegir etiquetes a grup d'etiquetes",
     "addTags": "Afegeix Etiquetes",
+    "importTagsTooltip": "Import tags to tag group",
+    "importTags": "Import Tags",
     "createTagGroupTooltip": "Crear nou a grup d'etiquetes",
     "createTagGroup": "Crea un Grup d'Etiquetes",
     "moveTagGroupUpTooltip": "Moure grup d'etiquetes actual una posició amunt",
@@ -174,5 +176,6 @@
     "pathIsNotDirectory": "Path '__dirName__' is not a directory.",
     "directoryRenameFailed": "Directory renaming failed!",
     "functionalityNotImplemented": "This functionality is not implemented yet.",
+    "invalidImportFile": "The imported file has invalid format",
     "-": "-"
 }
