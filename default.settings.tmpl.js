@@ -122,7 +122,6 @@ define(function (require, exports, module) {
             { "type": "markdown","viewer": "viewerMD",       "editor": "editorText" },
             { "type": "mdown", 	"viewer": "viewerMD",        "editor": "editorText" },
             { "type": "md", 	"viewer": "viewerMD",        "editor": "editorText" },
-            { "type": "avi", 	"viewer": "viewerBrowser",   "editor": "false" },
             { "type": "ogg", 	"viewer": "viewerBrowser",   "editor": "false" },
             { "type": "ogv", 	"viewer": "viewerBrowser",   "editor": "false" },
             { "type": "oga", 	"viewer": "viewerBrowser",   "editor": "false" },
