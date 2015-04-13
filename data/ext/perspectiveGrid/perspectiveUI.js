@@ -229,6 +229,17 @@ define(function(require, exports, module) {
       $("#addFileInput").click();
     });
 
+    $("#" + this.extensionID + "DeleteSelectedFilesButton")
+      .click(function() {
+
+        TSCORE.showConfirmDialog($.i18n.t('ns.dialogs:fileDeleteTitleConfirm'), 
+          $.i18n.t('ns.dialogs:selectedFilesDeleteContentConfirm'), function() {
+            TSCORE.selectedFiles.forEach(function(file) {
+              TSCORE.IO.deleteElement(file);
+            });
+          });
+      });
+
     // Init Tag Context Menus
     this.viewContainer.on("contextmenu click", ".tagButton", function() {
       TSCORE.hideAllDropDownMenus();
@@ -678,13 +689,17 @@ define(function(require, exports, module) {
     console.log("Entering element activation handler...");
 
     var tagButton = $("#" + this.extensionID + "TagButton");
+    var deleteSelectedFilesButton = $("#" + this.extensionID + "DeleteSelectedFilesButton"); 
 
     if (TSCORE.selectedFiles.length > 1) {
       tagButton.prop('disabled', false);
+      deleteSelectedFilesButton.prop('disabled', false);
     } else if (TSCORE.selectedFiles.length === 1) {
       tagButton.prop('disabled', false);
+      deleteSelectedFilesButton.prop('disabled', false);
     } else {
       tagButton.prop('disabled', true);
+      deleteSelectedFilesButton.prop('disabled', true);
     }
   };
 
