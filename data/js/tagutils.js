@@ -346,6 +346,7 @@ define(function(require, exports, module) {
     }
     var newFileName = generateFileName(fileName, extractedTags);
     TSCORE.IO.renameFile(filePath, containingDirectoryPath + TSCORE.dirSeparator + newFileName);
+    collectRecentTags(tags);
   }
 
   function removeTagsFromFile(filePath, tags) {
@@ -475,7 +476,33 @@ define(function(require, exports, module) {
     TSCORE.IO.renameFile(filePath, containingDirectoryPath + TSCORE.dirSeparator + newFileName);
   }
 
-  // Public API definition
+  //Collect recent tags in a custom tag-group
+  function collectRecentTags (newTags) {
+    var collectGroupKey = 'COL';
+    var collectGroup = TSCORE.Config.getTagGroupData(collectGroupKey);
+    if (!collectGroup) {
+
+      var collectGroupTemplate = {
+        'title': $.i18n.t('ns.common:collectedTagsTagGroupTitle'),
+        'key': collectGroupKey,
+        'expanded': true,
+        'children': []
+      };
+
+      TSCORE.Config.addTagGroup(collectGroupTemplate);
+      TSCORE.Config.saveSettings();
+      collectGroup = collectGroupTemplate;
+    }
+
+    newTags.forEach(function(newTagName) {
+      if (!TSCORE.Config.findTag(newTagName)) {
+        TSCORE.Config.createTag(collectGroup, newTagName);
+        TSCORE.generateTagGroups();
+      }
+    });
+  }
+
+  // Public API definitions
   exports.beginTagContainer = BEGIN_TAG_CONTAINER;
   exports.endTagContainer = END_TAG_CONTAINER;
   exports.extractFileName = extractFileName;
