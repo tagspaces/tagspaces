@@ -173,7 +173,7 @@ define(function(require, exports, module) {
 
   function normalizePath(path) {
     if (path.indexOf(fsRoot.fullPath) >= 0) {
-      path = path.substring(fsRoot.fullPath.length + 1, path.length);
+      path = path.substring(fsRoot.fullPath.length, path.length);
     }
     return path;
   }
