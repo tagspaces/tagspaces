@@ -17,8 +17,7 @@ var isFirefox = document.URL.indexOf( 'resource://' ) === 0;
 var isFirefoxOS = document.URL.indexOf( 'app://' ) === 0;
 var isChrome =  document.URL.indexOf( 'chrome-extension://' ) === 0;
 var isNode;
-// TODO ios cordova file:///var/mobile/Applications/.../App.app/www/index.html
-var isCordova = document.URL.indexOf( 'file:///android_asset' ) === 0;
+var isCordova = document.URL.indexOf( 'file:///android_asset' ) === 0 || navigator.isCordovaApp == true;
 var isWeb = document.URL.indexOf( 'http' ) === 0;
 var isOSX = navigator.appVersion.indexOf("Mac")!==-1;
 var isWin = navigator.appVersion.indexOf("Win")!==-1;

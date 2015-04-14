@@ -31,9 +31,19 @@ define(function(require, exports, module) {
       e.preventDefault();
     }, false);
 
-    window.plugins.webintent.getUri(function(url) {
-      urlFromIntent = url;
-    });
+    // iOS specific initialization
+    if (cordova.platformId.match(/ios/i)) {
+      window.plugins = window.plugins || {};
+      // TODO: use fileOpener2 plugin on all platforms
+      // https://build.phonegap.com/plugins/1117
+      window.plugins.fileOpener = cordova.plugins.fileOpener2;
+    }
+    
+    if (window.plugins.webintent) {
+      window.plugins.webintent.getUri(function(url) {
+        urlFromIntent = url;
+      });
+    }
 
     getFileSystem();
   }
