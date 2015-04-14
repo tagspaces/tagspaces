@@ -66,6 +66,11 @@ module.exports = function(grunt) {
           dest: '<%= cordovaDevDir %>/ext/perspectiveGrid/'
         }, {
           expand: true,
+          cwd: 'data/ext/perspectiveGraph/',
+          src: ['**'],
+          dest: '<%= cordovaDevDir %>/ext/perspectiveGraph/'
+        }, {
+          expand: true,
           cwd: 'data/ext/editorHTML/',
           src: ['**'],
           dest: '<%= cordovaDevDir %>/ext/editorHTML/'
