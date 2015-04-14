@@ -12,7 +12,6 @@ define(function(require, exports, module) {
   var TSPOSTIO = require("tspostioapi");
 
   var attachFastClick = require('cordova/fastclick/fastclick.min');
-  attachFastClick(document.body);
 
   var fsRoot;
 
@@ -22,7 +21,7 @@ define(function(require, exports, module) {
 
   // Cordova loaded and can be used
   function onDeviceReady() {
-    console.log("Devive Ready:"); // "+device.platform+" - "+device.version);
+    console.log("Device Ready:"); // "+device.platform+" - "+device.version);
 
     // Redifining the back button
     document.addEventListener("backbutton", function(e) {
@@ -37,12 +36,17 @@ define(function(require, exports, module) {
       // TODO: use fileOpener2 plugin on all platforms
       // https://build.phonegap.com/plugins/1117
       window.plugins.fileOpener = cordova.plugins.fileOpener2;
-    }
-    
-    if (window.plugins.webintent) {
-      window.plugins.webintent.getUri(function(url) {
-        urlFromIntent = url;
-      });
+    } 
+
+    if (cordova.platformId.match(/Android/i)) {
+
+      if (window.plugins.webintent) {
+        window.plugins.webintent.getUri(function(url) {
+          urlFromIntent = url;
+        });
+      }
+
+      attachFastClick(document.body);
     }
 
     getFileSystem();
@@ -264,6 +268,7 @@ define(function(require, exports, module) {
             for (i = 0; i < entries.length; i++) {
               if (entries[i].isFile) {
                 pendingCallbacks++;
+                var fullPath = entries[i].fullPath;
                 entries[i].file(
                   function(entry) {
                     anotatedDirList.push({
@@ -271,7 +276,7 @@ define(function(require, exports, module) {
                       "isFile": true,
                       "size": entry.size,
                       "lmdt": entry.lastModifiedDate,
-                      "path": entry.fullPath
+                      "path": fullPath //entry.fullPath is null in ios
                     });
                     pendingCallbacks--;
                     console.log("File: " + entry.name + " Size: " + entry.size + " i:" + i + " Callb: " + pendingCallbacks);
