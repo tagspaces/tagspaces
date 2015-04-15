@@ -1,5 +1,23 @@
 ﻿#Changelog
 
+##Version 1.11.0 / 2015.04.15
+- adding korean, greek, catalan, czech, swedish, turkish and dutch translations
+- add a new system tag group collecting all new applied tags
+- added delete selected files functionality to the list and grid perspectives
+- adding generating thumbs for pdf, bmp, webp and svg files in grid perspective
+- added import tag groups functionality
+- internationalizing the UI of the chrome extension
+- reimplementing loading animation
+- adding confirmation on the app closing by unsaved changes on the currently opened file
+- fixing drag and drop issue of tags from files to tag groups
+- exchanging pdf.js with a newer version, moving it as core lib
+- improving code quality by adding jshint and jscs to the project
+- clearing search results on directory change
+- adding handler for the add file button
+- adding title editing to the web scrapping function
+- correcting binding of fastclick lib
+- disabling the support of AVI files in the default settings [#242](https://github.com/uggrock/tagspaces/issues/242)
+
 ##Version 1.10.3 / 2015.01.29
 - Supporting adding of files on Android and the WebDAV edition
 - Fixing issue in the search
