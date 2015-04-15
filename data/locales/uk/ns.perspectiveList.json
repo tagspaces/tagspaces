@@ -19,6 +19,7 @@
     "exportToCSVTooltip": "Експортувати поточну структуру файлів в формат CSV(Comma Separated Value)",
     "showSubfolderContent": "Вміст підтек",
     "showSubfolderContentTooltip": "Показати вміст підтек",
+    "deleteSelectedFilesTooltip": "Delete Selected Files",
     "addRemoveTagsTooltip": "Додати чи видалити мітки в обраних файлах",
     "toggleThumbnailsTooltip": "Мініатюри",
     "increasThumbnailsTooltip": "Збільшити мініатюри",

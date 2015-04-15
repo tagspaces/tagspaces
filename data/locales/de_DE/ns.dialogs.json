@@ -10,6 +10,7 @@
     "closingEditedFileContentConfirm": "Alle Änderungen gehen bei Bestätigung verloren.",
     "fileDeleteTitleConfirm": "Datei(en) löschen",
     "fileDeleteContentConfirm": "Die Datei __filePath__ wird dauerhaft gelöscht und kann nicht wiederhergestellt werden. Sind Sie sicher?",
+    "selectedFilesDeleteContentConfirm": "Alle ausgewählten Dateien werden dauerhaft gelöscht und können nicht wiederhergestellt werden. Sind Sie sicher?",
     "fileSaveTitleConfirm": "Wollen Sie die Datei speichern?",
     "fileSaveContentConfirm": "Wollen Sie die aktuelle Datei überschreiben?",
     "errorOpeningLocationAlert": "Ein Fehler ereignete sich beim öffnen eines Pfades! Der aktuell geöffnete Ort wird geschlossen.",
@@ -139,5 +140,7 @@
     "operationNotPermittedInEditModeAlert": "Diese Operation ist nicht gestattet, da das aktuelle Dokument bereits bearbeitet ist.",
     "exportTagGroupsButton": "Tag Gruppen als JSON exportieren",
     "showMainMenu": "Hauptmenü anzeigen (Neustart erforderlich)",
+    "invalidImportFile": "Die importierte Datei hat ein ungültiges Format",
+    "importGroupTagsTitle": "Import-Tags aus Datei",
     "-": "-"
 }

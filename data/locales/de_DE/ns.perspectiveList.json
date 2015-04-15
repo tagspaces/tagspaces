@@ -19,6 +19,7 @@
     "exportToCSVTooltip": "Die aktuelle Dateistruktur als CSV (Comma Separated Value) Format exportieren",
     "showSubfolderContent": "Inhalt der Unterordner",
     "showSubfolderContentTooltip": "Inhalt der Unterordner anzeigen",
+    "deleteSelectedFilesTooltip": "Ausgewählte Dateien löschen",
     "addRemoveTagsTooltip": "Tags für ausgewählte Dateien hinzufügen oder entfernen",
     "toggleThumbnailsTooltip": "Vorschaubilder an-/ausschalten",
     "increasThumbnailsTooltip": "Vorschaubilder vergrößern",

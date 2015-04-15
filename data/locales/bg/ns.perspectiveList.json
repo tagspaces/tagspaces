@@ -19,6 +19,7 @@
     "exportToCSVTooltip": "Експортирай текущата файлова структура в CSV формат",
     "showSubfolderContent": "Съдържанието на поддиректориите",
     "showSubfolderContentTooltip": "Покажи съдържанието на поддиректориите",
+    "deleteSelectedFilesTooltip": "Delete Selected Files",
     "addRemoveTagsTooltip": "Прибави или премахни етикет от селектираните файлове",
     "toggleThumbnailsTooltip": "Превключи миниатюрния преглед",
     "increasThumbnailsTooltip": "Увеличи миниатюрния преглед",

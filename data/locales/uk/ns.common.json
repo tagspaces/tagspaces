@@ -64,6 +64,8 @@
     "tagGroupOperations": "Операції над групами міток",
     "addTagsTooltip": "Додати мітку до групи міток",
     "addTags": "Додати мітки",
+    "importTagsTooltip": "Import tags to tag group",
+    "importTags": "Import Tags",
     "createTagGroupTooltip": "Створити нову групу міток",
     "createTagGroup": "Створити групу міток",
     "moveTagGroupUpTooltip": "Перенести поточну групу міток на позицію вгору",
@@ -174,5 +176,6 @@
     "pathIsNotDirectory": "Path '__dirName__' is not a directory.",
     "directoryRenameFailed": "Directory renaming failed!",
     "functionalityNotImplemented": "This functionality is not implemented yet.",
+    "invalidImportFile": "The imported file has invalid format",
     "-": "-"
 }

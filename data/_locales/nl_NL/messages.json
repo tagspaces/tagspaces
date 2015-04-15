@@ -1,26 +1,26 @@
 {
     "saveAsSelectionLabel": {
-        "message": "選択を保存",
+        "message": "Sla geselecteerde op",
         "description": "Title of label."
     },
     "appLauncher": {
-        "message": "TagSpacesを起動",
+        "message": "Start TagSpaces",
         "description": "Title of the application launcher in the browser."
     },
     "appDesc": {
-        "message": "ウェブコンテンツのスクラップとChromecast支援のファイルブラウザ。",
+        "message": "Bestandsbeheerder met Web Content Scraping en Chromecast ondersteuning.",
         "description": ""
     },
     "addTagHelp": {
-        "message": "タグは2文字以上の長さが必要であり、スペース、#、/、\\などの特殊文字を含めることは出来ません。",
+        "message": "Labels moeten een minimale lengte hebben van 2 karakters en mogen geen speciale karakters bevatten als spaties, #, / ,\\\\ en zo.",
         "description": "Add tag help message"
     },
     "saveScreenshotTitle": {
-        "message": "PNGとして表示ページのスクリーンショットを保存",
+        "message": "Sla schermafdruk van de zichtbare pagina op als PNG",
         "description": "Title of screenshot button"
     },
     "editTitleLabel": {
-        "message": "タイトルの編集",
+        "message": "Bewerk titel",
         "description": "Title of label."
     },
     "appName": {
@@ -28,35 +28,35 @@
         "description": ""
     },
     "appLauncherLabel": {
-        "message": "ウェブコンテンツのキャプチャ",
+        "message": "Vang Web Content",
         "description": "Title of label."
     },
     "saveScreenshotLabel": {
-        "message": "スクリーンショット",
+        "message": "Schermafdruk",
         "description": "Title of label."
     },
     "addTagLabel": {
-        "message": "タグの追加",
+        "message": "Voeg labels toe",
         "description": "Title of label."
     },
     "saveAsMhtmlTitle": {
-        "message": "MHTMLとしてページ全体を保存",
+        "message": "Sla hele pagina op als MHTML",
         "description": "Title of save page button"
     },
     "appLauncherTitle": {
-        "message": "新規タブでTagSpacesブラウザを起動",
+        "message": "Start TagSpaces Browser in een nieuwe tab",
         "description": "Title of the application launcher in the browser."
     },
     "saveSelectionAsHtmlTitle": {
-        "message": "HTMLとして選択されたコンテンツを保存",
+        "message": "Sla geselecteerde inhoud op als HTML",
         "description": "Title of save selection button"
     },
     "saveAsMhtmlLabel": {
-        "message": "ページ全体の保存",
+        "message": "Sla hele pagina op",
         "description": "Title of label."
     },
     "saveFileLabel": {
-        "message": "ファイルとして保存",
+        "message": "Sla op als bestand",
         "description": "Title of label."
     }
 }

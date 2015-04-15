@@ -19,6 +19,7 @@
     "exportToCSVTooltip": "Exporter l'arborescence des fichiers en CSV (la virgule étant le séparateur)",
     "showSubfolderContent": "Contenu des sous-dossiers",
     "showSubfolderContentTooltip": "Voir le contenu des sous-dossiers",
+    "deleteSelectedFilesTooltip": "Effacer les fichiers sélectionnés",
     "addRemoveTagsTooltip": "Ajouter ou enlever des étiquettes sur les fichiers sélectionnés",
     "toggleThumbnailsTooltip": "Afficher les miniatures",
     "increasThumbnailsTooltip": "Augmenter les miniatures",

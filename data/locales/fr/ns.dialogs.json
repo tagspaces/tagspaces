@@ -10,6 +10,7 @@
     "closingEditedFileContentConfirm": "Si vous confirmez, tous les changements seront perdus.",
     "fileDeleteTitleConfirm": "Effacer le(s) fichier(s)",
     "fileDeleteContentConfirm": "Ce fichier __filePath__ sera détruit de façon permanent. Êtes-vous sûr ?",
+    "selectedFilesDeleteContentConfirm": "Tous les fichiers sélectionnés seront supprimés définitivement et ne pourront pas être récupérés. Êtes-vous sûr ?",
     "fileSaveTitleConfirm": "Confirmer la sauvegarde du fichier",
     "fileSaveContentConfirm": "Voulez-vous écraser le fichier courant ?",
     "errorOpeningLocationAlert": "Une erreur est survenue en ouvrant le chemin ! L'emplacement actuel va être fermé.",
@@ -139,5 +140,7 @@
     "operationNotPermittedInEditModeAlert": "Cette opération n'est pas possible car le document a déjà été modifié.",
     "exportTagGroupsButton": "Exporter les groupes d'étiquette en JSON",
     "showMainMenu": "Voir le menu principal (redémarrage nécessaire)",
+    "invalidImportFile": "Le fichier importé a un format invalide",
+    "importGroupTagsTitle": "Importer les étiquettes depuis le fichier",
     "-": "-"
 }

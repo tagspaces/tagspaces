@@ -10,6 +10,7 @@
     "closingEditedFileContentConfirm": "Se confirmado, todas as alterações feitas serão perdidas.",
     "fileDeleteTitleConfirm": "Excluir Arquivo(s)",
     "fileDeleteContentConfirm": "O arquivo __filePath__ será permanentemente excluído e não poderá ser recuperado. Tem certeza? ",
+    "selectedFilesDeleteContentConfirm": "All selected files will be permanently deleted and cannot be recovered. Are you sure?",
     "fileSaveTitleConfirm": "Confirmar Salvar Arquivo",
     "fileSaveContentConfirm": "Deseja sobrescrever o arquivo atual?",
     "errorOpeningLocationAlert": "Error occurred while opening a path! Currently opened location will be closed.",
@@ -139,5 +140,7 @@
     "operationNotPermittedInEditModeAlert": "This operation is not permitted because the document has been already changed.",
     "exportTagGroupsButton": "Export Tag Groups as JSON",
     "showMainMenu": "Show main menu (restart needed)",
+    "invalidImportFile": "The imported file has invalid format",
+    "importGroupTagsTitle": "Import tags from file",
     "-": "-"
 }

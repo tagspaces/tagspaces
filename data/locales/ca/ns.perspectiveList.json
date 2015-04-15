@@ -19,6 +19,7 @@
     "exportToCSVTooltip": "Exporta l'estructura actual del fitxer en format CSV (valors separats per comes)",
     "showSubfolderContent": "Contingut de les subcarpetes",
     "showSubfolderContentTooltip": "Mostra contingut de subcarpetes",
+    "deleteSelectedFilesTooltip": "Delete Selected Files",
     "addRemoveTagsTooltip": "Afegeix o suprimeix etiquetes dels fitxers seleccionats ",
     "toggleThumbnailsTooltip": "Activa o desactiva miniatures",
     "increasThumbnailsTooltip": "Augmenta miniatures",

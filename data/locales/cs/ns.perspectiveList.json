@@ -19,6 +19,7 @@
     "exportToCSVTooltip": "Exportovat aktuální strukturu souborů do CSV (formát s čárkou coby oddělovačem)",
     "showSubfolderContent": "Obsah podsložek",
     "showSubfolderContentTooltip": "Zobrazit obsah podsložek",
+    "deleteSelectedFilesTooltip": "Delete Selected Files",
     "addRemoveTagsTooltip": "Přidat nebo odebrat štítky vybraným souborům",
     "toggleThumbnailsTooltip": "Přepnout náhledy",
     "increasThumbnailsTooltip": "Zvětšit náhledy",

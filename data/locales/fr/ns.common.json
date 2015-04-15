@@ -64,6 +64,8 @@
     "tagGroupOperations": "Opérations sur le groupe d'étiquette",
     "addTagsTooltip": "Ajouter les étiquettes dans le groupe",
     "addTags": "Ajouter des étiquettes",
+    "importTagsTooltip": "Importer les étiquettes dans un groupe",
+    "importTags": "Importer les étiquettes",
     "createTagGroupTooltip": "Créer un nouveau groupe d'étiquettes",
     "createTagGroup": "Créer un groupe",
     "moveTagGroupUpTooltip": "Déplacer ce groupe en première position vers le haut",
@@ -174,5 +176,6 @@
     "pathIsNotDirectory": "Le chemin '__dirName__' n'est pas un répertoire.",
     "directoryRenameFailed": "Le renommage du répertoire a échoué !",
     "functionalityNotImplemented": "Cette fonctionnalité n'est pas encore implémentée !",
+    "invalidImportFile": "Le fichier importé a un format invalide",
     "-": "-"
 }

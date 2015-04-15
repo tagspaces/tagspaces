@@ -10,6 +10,7 @@
     "closingEditedFileContentConfirm": "Potvrdením sa všetky zmeny stratia.",
     "fileDeleteTitleConfirm": "Odstrániť súbor(y)",
     "fileDeleteContentConfirm": "Súbor __filePath__ bude trvalo odstránený a bude ho možné obnoviť. Ste si istí?",
+    "selectedFilesDeleteContentConfirm": "All selected files will be permanently deleted and cannot be recovered. Are you sure?",
     "fileSaveTitleConfirm": "Potvrdenie uloženia súboru",
     "fileSaveContentConfirm": "Chcete prepísať aktuálny súbor?",
     "errorOpeningLocationAlert": "Error occurred while opening a path! Currently opened location will be closed.",
@@ -139,5 +140,7 @@
     "operationNotPermittedInEditModeAlert": "This operation is not permitted because the document has been already changed.",
     "exportTagGroupsButton": "Export Tag Groups as JSON",
     "showMainMenu": "Show main menu (restart needed)",
+    "invalidImportFile": "The imported file has invalid format",
+    "importGroupTagsTitle": "Import tags from file",
     "-": "-"
 }

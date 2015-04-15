@@ -19,6 +19,7 @@
     "exportToCSVTooltip": "Сохранить файловую структуру в формате CSV (Comma-Separated Values — значения, разделённые запятыми)",
     "showSubfolderContent": "Содержимое дочерних папок",
     "showSubfolderContentTooltip": "Показать содержимое дочерних папок",
+    "deleteSelectedFilesTooltip": "Delete Selected Files",
     "addRemoveTagsTooltip": "Добавить или удалить теги для выделенных файлов",
     "toggleThumbnailsTooltip": "Миниатюры",
     "increasThumbnailsTooltip": "Увеличить размер миниатюр",

@@ -19,6 +19,7 @@
     "exportToCSVTooltip": "Esporta la struttura dei file corrente in formato CSV(Comma Separated Value)",
     "showSubfolderContent": "Contenuto delle Sottocartelle",
     "showSubfolderContentTooltip": "Mostra Contenuti delle Sottocartelle",
+    "deleteSelectedFilesTooltip": "Delete Selected Files",
     "addRemoveTagsTooltip": "Aggiungi o Rimuovi Tags per i File Selezionati",
     "toggleThumbnailsTooltip": "Mostra Anteprime",
     "increasThumbnailsTooltip": "Ingrandisci Anteprime",

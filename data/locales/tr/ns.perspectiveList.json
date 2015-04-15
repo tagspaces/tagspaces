@@ -19,6 +19,7 @@
     "exportToCSVTooltip": "Geçerli dosya yapısını CSV(Comma Separated Value) biçiminde dışa aktar",
     "showSubfolderContent": "Alt Klasörlerin İçeriği",
     "showSubfolderContentTooltip": "Alt Klasörlerin İçeriğini Göster",
+    "deleteSelectedFilesTooltip": "Delete Selected Files",
     "addRemoveTagsTooltip": "Seçili Dosyalar için Etiket Ekle veya Kaldır",
     "toggleThumbnailsTooltip": "Önizlemeleri Aç/Kapa",
     "increasThumbnailsTooltip": "Önizlemeleri Büyült",

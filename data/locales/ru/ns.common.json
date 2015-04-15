@@ -64,6 +64,8 @@
     "tagGroupOperations": "Операции над группами тегов",
     "addTagsTooltip": "Добавить теги в группу",
     "addTags": "Добавить теги",
+    "importTagsTooltip": "Import tags to tag group",
+    "importTags": "Import Tags",
     "createTagGroupTooltip": "Создать новую группу тегов",
     "createTagGroup": "Новая группа тегов",
     "moveTagGroupUpTooltip": "Переместить выделенную группу тегов на позицию выше",
@@ -174,5 +176,6 @@
     "pathIsNotDirectory": "Path '__dirName__' is not a directory.",
     "directoryRenameFailed": "Directory renaming failed!",
     "functionalityNotImplemented": "This functionality is not implemented yet.",
+    "invalidImportFile": "The imported file has invalid format",
     "-": "-"
 }

@@ -64,6 +64,8 @@
     "tagGroupOperations": "Akce se skupinou štítků",
     "addTagsTooltip": "Přidat štítky do skupiny",
     "addTags": "Přidat štítky",
+    "importTagsTooltip": "Import tags to tag group",
+    "importTags": "Import Tags",
     "createTagGroupTooltip": "Vytvořit novou skupinu",
     "createTagGroup": "Vytvořit skupinu štítků",
     "moveTagGroupUpTooltip": "Přesunout tuto skupinu štítků o jednu pozici výše",
@@ -174,5 +176,6 @@
     "pathIsNotDirectory": "Path '__dirName__' is not a directory.",
     "directoryRenameFailed": "Directory renaming failed!",
     "functionalityNotImplemented": "This functionality is not implemented yet.",
+    "invalidImportFile": "The imported file has invalid format",
     "-": "-"
 }

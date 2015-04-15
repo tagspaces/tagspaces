@@ -19,6 +19,7 @@
     "exportToCSVTooltip": "Export current file structure in CSV(Comma Separated Value) format",
     "showSubfolderContent": "Content of the Subfolders",
     "showSubfolderContentTooltip": "Exibir Conteúdo das Sub-pastas",
+    "deleteSelectedFilesTooltip": "Delete Selected Files",
     "addRemoveTagsTooltip": "Adicionar ou Remover Etiquetas para os Arquivos Selecionados",
     "toggleThumbnailsTooltip": "Alternar para Miniaturas",
     "increasThumbnailsTooltip": "Aumentar Miniaturas",
