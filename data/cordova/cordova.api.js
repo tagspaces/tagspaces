@@ -267,15 +267,21 @@ define(function(require, exports, module) {
             for (i = 0; i < entries.length; i++) {
               if (entries[i].isFile) {
                 pendingCallbacks++;
-                var fullPath = entries[i].fullPath;
                 entries[i].file(
                   function(entry) {
+                    //ios entry.fullPath is null
+                    if (!entry.fullPath) {
+                      var URL = "cdvfile://localhost/persistent";
+                      entry.fullPath = decodeURIComponent(entry.localURL);
+                      entry.fullPath = entry.fullPath.substring(URL.length, entry.fullPath.length);
+                    }
+
                     anotatedDirList.push({
                       "name": entry.name,
                       "isFile": true,
                       "size": entry.size,
                       "lmdt": entry.lastModifiedDate,
-                      "path": fullPath //entry.fullPath is null in ios
+                      "path": entry.fullPath
                     });
                     pendingCallbacks--;
                     console.log("File: " + entry.name + " Size: " + entry.size + " i:" + i + " Callb: " + pendingCallbacks);
