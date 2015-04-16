@@ -1,3 +1,6 @@
 [submodule "data/ext/viewerMHTML"]
 	path = data/ext/viewerMHTML
 	url = https://github.com/tagspaces/viewerMHTML.git
+[submodule "data/pro"]
+	path = data/pro
+	url = https://bitbucket.org/tagspaces/tagspacespro.git
