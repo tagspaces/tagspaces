@@ -45,10 +45,9 @@ define(function(require, exports, module) {
           urlFromIntent = url;
         });
       }
-
-      attachFastClick(document.body);
     }
-
+    
+    attachFastClick(document.body);
     getFileSystem();
   }
 
