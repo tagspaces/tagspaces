@@ -9,10 +9,13 @@ node_modules
 data/node-webkit/data
 data/node-webkit/ffmpegsumo.dll
 data/node-webkit/icudt.dll
+data/node-webkit/icudtl.dat
 data/node-webkit/libEGL.dll
 data/node-webkit/libffmpegsumo.so
 data/node-webkit/libGLESv2.dll
+data/node-webkit/credits.html
 data/node-webkit/nw
+data/node-webkit/nwjc
 data/node-webkit/nw.exe
 data/node-webkit/nw.pak
 data/node-webkit/debug.log
