@@ -266,7 +266,7 @@ define(function(require, exports, module) {
     });
   };
   var initUI = function() {
-    if(TSCORE.PRO) {
+    if (TSCORE.PRO) {
       TSCORE.PRO.sayHi();
     }
 

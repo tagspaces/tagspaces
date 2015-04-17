@@ -540,7 +540,7 @@ define(function(require, exports, module) {
   exports.FileOpener = tsFileOpener;
   exports.Search = tsSearch;
 
-  if(tsPro.available) {
+  if (tsPro.available) {
     exports.PRO = tsPro;
   }
 
