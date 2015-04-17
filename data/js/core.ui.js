@@ -320,6 +320,13 @@ define(function(require, exports, module) {
 
     function onFileReadComplete(event) {
       console.log('Content on file read complete: ' + JSON.stringify(event));
+      //change name for ios fakepath
+      if (navigator.isCordovaApp) {
+        var parts = addFileInputName.split('.');
+        var ext = (parts.length > 1) ? '.' + parts.pop() : '';
+        addFileInputName = TSCORE.TagUtils.beginTagContainer + TSCORE.TagUtils.formatDateTime4Tag(new Date(), true) + TSCORE.TagUtils.endTagContainer + ext;
+      }
+
       TSCORE.IO.saveBinaryFile(TSCORE.currentPath + TSCORE.dirSeparator + addFileInputName, event.currentTarget.result);
       addFileInputName = undefined;
     }
