@@ -15,6 +15,8 @@ define(function(require, exports, module) {
   var tsDirectoriesUI = require('tsdirectoriesui');
   var tsCoreUI = require('tscoreui');
   var tsSearch = require('tssearch');
+  var tsPro = require('tspro');
+
   var currentPath;
   var currentLocationObject;
   var currentPerspectiveID;
@@ -537,6 +539,10 @@ define(function(require, exports, module) {
   exports.TagUtils = tsTagUtils;
   exports.FileOpener = tsFileOpener;
   exports.Search = tsSearch;
+
+  if(tsPro.available) {
+    exports.PRO = tsPro;
+  }
 
   // Public API definition
   exports.dirSeparator = isWin && !isWeb ? '\\' : '/';

@@ -5,6 +5,7 @@
 
 // the value of this var is replaced to "true" by the build script
 var PRODUCTION = "@@PRODUCTION";
+var PRO = "@@PRO";
 
 // Disabling all output to console in production mode
 if (PRODUCTION == "true") {
@@ -34,7 +35,7 @@ try {
 }
 
 // Setting up the IO functionality according to the platform
-var IO_JS;
+var IO_JS = "web/web.api";
 if( isFirefox ) {
     IO_JS = "mozilla/mozilla.api";
 } else if ( isFirefoxOS ) {
@@ -47,8 +48,11 @@ if( isFirefox ) {
     IO_JS = "cordova/cordova.api";
 } else if (isWeb){
     IO_JS = "web/web.api";
-} else {
-    IO_JS = "web/web.api";
+}
+
+var PRO_JS = "js/pro";
+if(PRO === "true" || PRO === "@@PRO") {
+    PRO_JS = 'pro/js/pro.api'
 }
 
 console.log("Loading Loader - Firefox: "+isFirefox+" | ChromeExt: "+isChrome+" | Node: "+isNode+" | Cordova: "+isCordova+" | Web: "+isWeb+" | isWin: "+isWin);
@@ -101,9 +105,10 @@ requirejs.config({
         tsdirectoriesui:        'js/directories.ui',
         tscoreui:               'js/core.ui',
         tspostioapi:            'js/postioapi',
+        tsdirectorybrowser:     'js/directorybrowser',
         tsioapi:                 IO_JS,
-        tsdirectorybrowser:     'js/directorybrowser'
-    }, 
+        tspro:                   PRO_JS
+    },
     shim: {
         'underscore':               { exports: '_' },
         'bootstrap':                { deps: ['jquery'] }, 
