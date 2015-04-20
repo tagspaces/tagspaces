@@ -33,6 +33,7 @@ define(function(require, exports, module) {
 
     // iOS specific initialization
     if (isCordovaiOS) {
+      navigator.splashscreen.hide();
       window.plugins = window.plugins || {};
       // TODO: use fileOpener2 plugin on all platforms
       // https://build.phonegap.com/plugins/1117
