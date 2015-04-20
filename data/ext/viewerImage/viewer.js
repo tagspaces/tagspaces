@@ -30,7 +30,7 @@ $(document).ready(function() {
 
   if (isCordova || isWeb) {
 
-    if (parent.cordova && parent.cordova.platformId.match(/ios/i)) {
+    if (parent.isCordovaiOS) {
       filePath = "cdvfile://localhost/persistent" + encodeURIComponent(filePath);
     }
   } else {
