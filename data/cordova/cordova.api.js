@@ -18,6 +18,7 @@ define(function(require, exports, module) {
   var urlFromIntent;
 
   document.addEventListener("deviceready", onDeviceReady, false);
+  document.addEventListener("resume", onDeviceResume, false);
 
   // Cordova loaded and can be used
   function onDeviceReady() {
@@ -49,6 +50,11 @@ define(function(require, exports, module) {
     
     attachFastClick(document.body);
     getFileSystem();
+  }
+
+  function onDeviceResume() {
+    //TODO: reload curtent dir after background operation
+    TSCORE.IO.listDirectory(TSCORE.currentPath);
   }
 
   var handleStartParameters = function() {
