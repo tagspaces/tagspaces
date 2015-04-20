@@ -31,14 +31,14 @@ define(function(require, exports, module) {
     }, false);
 
     // iOS specific initialization
-    if (cordova.platformId.match(/ios/i)) {
+    if (isCordovaiOS) {
       window.plugins = window.plugins || {};
       // TODO: use fileOpener2 plugin on all platforms
       // https://build.phonegap.com/plugins/1117
       window.plugins.fileOpener = cordova.plugins.fileOpener2;
     } 
 
-    if (cordova.platformId.match(/Android/i)) {
+    if (isCordovaAndroid) {
 
       if (window.plugins.webintent) {
         window.plugins.webintent.getUri(function(url) {
@@ -171,8 +171,15 @@ define(function(require, exports, module) {
   };
 
   function normalizePath(path) {
-    if (path.indexOf(fsRoot.fullPath) === 0) {
-      path = path.substring(fsRoot.fullPath.length, path.length);
+    if (isCordovaiOS) {
+      if (path.indexOf(fsRoot.fullPath) === 0) {
+        path = path.substring(fsRoot.fullPath.length, path.length);
+      } 
+    } else {
+      //Android 
+      if (path.indexOf(fsRoot.fullPath) >= 0) {
+        path = path.substring(fsRoot.fullPath.length + 1, path.length);
+      }
     }
     return path;
   }
@@ -269,8 +276,8 @@ define(function(require, exports, module) {
                 pendingCallbacks++;
                 entries[i].file(
                   function(entry) {
-                    //ios entry.fullPath is null
-                    if (!entry.fullPath) {
+                   
+                    if (!entry.fullPath && isCordovaiOS) {
                       var URL = "cdvfile://localhost/persistent";
                       entry.fullPath = decodeURIComponent(entry.localURL);
                       entry.fullPath = entry.fullPath.substring(URL.length, entry.fullPath.length);
