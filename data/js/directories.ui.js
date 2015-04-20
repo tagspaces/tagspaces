@@ -4,6 +4,8 @@
 /* global define, Handlebars, isCordova  */
 define(function(require, exports, module) {
   'use strict';
+  var homeFolderTitle = 'Home';
+
   console.log('Loading directories.ui.js ...');
   var TSCORE = require('tscore');
   var directoryHistory = [];
@@ -341,6 +343,10 @@ define(function(require, exports, module) {
         }
       }
       var locationTitle = directoryPath.substring(directoryPath.lastIndexOf(TSCORE.dirSeparator) + 1, directoryPath.length);
+      //ios workarround for empty directory title
+      if (isCordovaiOS && locationTitle.length === 0) {
+        locationTitle = homeFolderTitle;
+      }
       directoryHistory.push({
         'name': locationTitle,
         'path': directoryPath,
