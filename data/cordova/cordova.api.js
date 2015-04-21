@@ -285,9 +285,9 @@ define(function(require, exports, module) {
                   function(entry) {
                    
                     if (!entry.fullPath && isCordovaiOS) {
-                      var URL = "cdvfile://localhost/persistent";
+                      var URL = "cdvfile://localhost/persistent/";
                       entry.fullPath = decodeURIComponent(entry.localURL);
-                      entry.fullPath = entry.fullPath.substring(URL.length, entry.fullPath.length);
+                      entry.fullPath = fsRoot.nativeURL + entry.fullPath.substring(URL.length, entry.fullPath.length);
                     }
 
                     anotatedDirList.push({
