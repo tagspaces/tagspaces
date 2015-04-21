@@ -25,11 +25,14 @@ $(document).ready(function() {
       }); */
 
   var imageRotationClass = "";
-  var isCordova = document.URL.indexOf('file:///android_asset') === 0;
+  var isCordova = parent.isCordova;
   var isWeb = document.URL.indexOf('http') === 0;
 
   if (isCordova || isWeb) {
 
+    if (parent.isCordovaiOS) {
+      filePath = "cdvfile://localhost/persistent" + encodeURIComponent(filePath);
+    }
   } else {
     filePath = "file://" + filePath;
   }

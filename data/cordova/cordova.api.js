@@ -12,17 +12,17 @@ define(function(require, exports, module) {
   var TSPOSTIO = require("tspostioapi");
 
   var attachFastClick = require('cordova/fastclick/fastclick.min');
-  attachFastClick(document.body);
 
   var fsRoot;
 
   var urlFromIntent;
 
   document.addEventListener("deviceready", onDeviceReady, false);
+  document.addEventListener("resume", onDeviceResume, false);
 
   // Cordova loaded and can be used
   function onDeviceReady() {
-    console.log("Devive Ready:"); // "+device.platform+" - "+device.version);
+    console.log("Device Ready:"); // "+device.platform+" - "+device.version);
 
     // Redifining the back button
     document.addEventListener("backbutton", function(e) {
@@ -32,20 +32,30 @@ define(function(require, exports, module) {
     }, false);
 
     // iOS specific initialization
-    if (cordova.platformId.match(/ios/i)) {
+    if (isCordovaiOS) {
+      navigator.splashscreen.hide();
       window.plugins = window.plugins || {};
       // TODO: use fileOpener2 plugin on all platforms
       // https://build.phonegap.com/plugins/1117
       window.plugins.fileOpener = cordova.plugins.fileOpener2;
+    } 
+
+    if (isCordovaAndroid) {
+
+      if (window.plugins.webintent) {
+        window.plugins.webintent.getUri(function(url) {
+          urlFromIntent = url;
+        });
+      }
     }
     
-    if (window.plugins.webintent) {
-      window.plugins.webintent.getUri(function(url) {
-        urlFromIntent = url;
-      });
-    }
-
+    attachFastClick(document.body);
     getFileSystem();
+  }
+
+  function onDeviceResume() {
+    //TODO: reload curtent dir after background operation
+    TSCORE.IO.listDirectory(TSCORE.currentPath);
   }
 
   var handleStartParameters = function() {
@@ -168,8 +178,15 @@ define(function(require, exports, module) {
   };
 
   function normalizePath(path) {
-    if (path.indexOf(fsRoot.fullPath) >= 0) {
-      path = path.substring(fsRoot.fullPath.length + 1, path.length);
+    if (isCordovaiOS) {
+      if (path.indexOf(fsRoot.fullPath) === 0) {
+        path = path.substring(fsRoot.fullPath.length, path.length);
+      } 
+    } else {
+      //Android 
+      if (path.indexOf(fsRoot.fullPath) >= 0) {
+        path = path.substring(fsRoot.fullPath.length + 1, path.length);
+      }
     }
     return path;
   }
@@ -266,6 +283,13 @@ define(function(require, exports, module) {
                 pendingCallbacks++;
                 entries[i].file(
                   function(entry) {
+                   
+                    if (!entry.fullPath && isCordovaiOS) {
+                      var URL = "cdvfile://localhost/persistent";
+                      entry.fullPath = decodeURIComponent(entry.localURL);
+                      entry.fullPath = entry.fullPath.substring(URL.length, entry.fullPath.length);
+                    }
+
                     anotatedDirList.push({
                       "name": entry.name,
                       "isFile": true,

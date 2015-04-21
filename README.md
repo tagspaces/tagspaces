@@ -1,6 +1,6 @@
 ![tagspaces logo](https://raw.github.com/tagspaces/tagspaces/master/data/assets/icon96.png)
 
-![tagspaces@travis](https://travis-ci.org/tagspaces/tagspaces.svg?branch=master)
+![tagspaces@travis](https://travis-ci.org/tagspaces/tagspaces.svg?branch=master)  [![Join the chat at https://gitter.im/tagspaces/tagspaces](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/tagspaces/tagspaces?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 ## Introduction
 
