@@ -1,5 +1,8 @@
 'use strict';
 module.exports = function(grunt) {
+  if (!grunt.file.exists('developer.json')) {
+    grunt.file.copy('developer.tmpl.json', 'developer.json');
+  }
   grunt.initConfig({
     dev: grunt.file.readJSON('developer.json'),
     //default.locations.android = {"name": "Photos", "path": "DCIM"}, {"name": "Downloads", "path": "Download"}

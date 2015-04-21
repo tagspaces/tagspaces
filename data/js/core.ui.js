@@ -266,6 +266,10 @@ define(function(require, exports, module) {
     });
   };
   var initUI = function() {
+    if (TSCORE.PRO) {
+      TSCORE.PRO.sayHi();
+    }
+
     $('#appVersion').text(TSCORE.Config.DefaultSettings.appVersion + '.' + TSCORE.Config.DefaultSettings.appBuild);
     $('#appVersion').attr('title', 'BuildID: ' + TSCORE.Config.DefaultSettings.appVersion + '.' + TSCORE.Config.DefaultSettings.appBuild + '.' + TSCORE.Config.DefaultSettings.appBuildID);
     // prevent default behavior from changing page on dropped file
