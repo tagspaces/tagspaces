@@ -53,9 +53,9 @@ if( isFirefox ) {
 }
 
 var PRO_JS = "js/pro";
-if(PRO === "true" || PRO === "@@PRO") {
-    PRO_JS = 'pro/js/pro.api'
-}
+//if(PRO === "true" || PRO === "@@PRO") {
+//    PRO_JS = 'pro/js/pro.api'
+//}
 
 console.log("Loading Loader - Firefox: "+isFirefox+" | ChromeExt: "+isChrome+" | Node: "+isNode+" | Cordova: "+isCordova+" | Web: "+isWeb+" | isWin: "+isWin);
 
