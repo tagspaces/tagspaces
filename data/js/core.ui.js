@@ -267,7 +267,7 @@ define(function(require, exports, module) {
   };
   var initUI = function() {
     if (TSCORE.PRO) {
-      TSCORE.PRO.sayHi();
+      //TSCORE.PRO.sayHi();
     }
 
     $('#appVersion').text(TSCORE.Config.DefaultSettings.appVersion + '.' + TSCORE.Config.DefaultSettings.appBuild);
