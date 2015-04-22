@@ -30,7 +30,6 @@ $(document).ready(function() {
 
   if (isCordova || isWeb) {
 
-
   } else {
     filePath = "file://" + filePath;
   }

@@ -20,6 +20,14 @@ define(function(require, exports, module) {
   document.addEventListener("deviceready", onDeviceReady, false);
   document.addEventListener("resume", onDeviceResume, false);
 
+  // Register ios file open handler
+  handleOpenURL = function(url) {
+    var fileName = url.substring(url.lastIndexOf('/') + 1, url.length);
+    TSCORE.showConfirmDialog("File copied", "File " + fileName + " is copied in inbox folder. Would you like to open it ?", function() {
+      TSCORE.FileOpener.openFile(url);
+    });
+  };
+
   // Cordova loaded and can be used
   function onDeviceReady() {
     console.log("Device Ready:"); // "+device.platform+" - "+device.version);

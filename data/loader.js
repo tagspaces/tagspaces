@@ -24,6 +24,8 @@ var isCordova = isCordovaAndroid  == true || isCordovaiOS == true;
 var isWeb = document.URL.indexOf( 'http' ) === 0;
 var isOSX = navigator.appVersion.indexOf("Mac")!==-1;
 var isWin = navigator.appVersion.indexOf("Win")!==-1;
+//cordova ios handleOpenURL is global 
+var handleOpenURL;
 
 // Check for running in node-webkit
 try {
@@ -53,9 +55,9 @@ if( isFirefox ) {
 }
 
 var PRO_JS = "js/pro";
-//if(PRO === "true" || PRO === "@@PRO") {
-//    PRO_JS = 'pro/js/pro.api'
-//}
+if(PRO === "true" || PRO === "@@PRO") {
+    PRO_JS = 'pro/js/pro.api'
+}
 
 console.log("Loading Loader - Firefox: "+isFirefox+" | ChromeExt: "+isChrome+" | Node: "+isNode+" | Cordova: "+isCordova+" | Web: "+isWeb+" | isWin: "+isWin);
 
