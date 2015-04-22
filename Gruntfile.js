@@ -136,6 +136,11 @@ module.exports = function(grunt) {
           src: ['**/*.js'],
           dest: '<%= dev.cordovaDevDir %>/cordova'
         }, {
+          expand: true,
+          cwd: 'data/pro',
+          src: ['**/*.js'],
+          dest: '<%= dev.cordovaDevDir %>/pro'
+        }, {
           src: 'data/about.html',
           dest: '<%= dev.cordovaDevDir %>/about.html'
         }, {
@@ -258,6 +263,11 @@ module.exports = function(grunt) {
           cwd: 'data/cordova',
           src: ['**/*.js'],
           dest: '<%= dev.cordovaIOSDevDir %>/cordova'
+        }, {
+          expand: true,
+          cwd: 'data/pro',
+          src: ['**/*.js'],
+          dest: '<%= dev.cordovaIOSDevDir %>/pro'
         }, {
           expand: true,
           cwd: 'data/web',
@@ -400,6 +410,7 @@ module.exports = function(grunt) {
           '!data/mozilla/userstyles.js',
           'data/node-webkit/*.js',
           'data/web/*.js',
+          'data/pro/*.js',
         ]
       }
     },
@@ -434,6 +445,7 @@ module.exports = function(grunt) {
           '!data/mozilla/*.js',
           'data/node-webkit/**/*.js',
           'data/web/*.js',
+          'data/pro/*.js',
         ]
       }
     },

@@ -166,16 +166,18 @@ define(function(require, exports, module) {
     }
   };
   //////////////////// Settings upgrade methods ///////////////////   
-  var addTagGroup = function(newTagGroup) {
+  var addTagGroup = function(newTagGroup) { // TODO add parameters replace and merge
     var tagGroupExist = false;
     exports.Settings.tagGroups.forEach(function(value) {
       if (value.key === newTagGroup.key) {
+        //exports.Settings.tagGroups.splice($.inArray(value, exports.Settings.tagGroups), 1);
         tagGroupExist = true;
       }
     });
     if (!tagGroupExist) {
       exports.Settings.tagGroups.push(newTagGroup);
     }
+    //exports.Settings.tagGroups.push(newTagGroup);
   };
   var addFileType = function(newFileType) {
     var fileTypeExist = false;
