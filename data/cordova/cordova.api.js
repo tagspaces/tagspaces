@@ -222,7 +222,10 @@ define(function(require, exports, module) {
   var listSubDirectories = function(dirPath) {
     console.log("Listing sub directories of: " + dirPath);
     // directory path format DCIM/Camera/ !
-    dirPath = dirPath + "/"; // TODO make it platform independent
+    if (dirPath.lastIndexOf("/") === 0 || dirPath.lastIndexOf("/")  != dirPath.length - 1) {
+      dirPath = dirPath + "/"; // TODO make it platform independent  
+    }
+    
     dirPath = normalizePath(dirPath);
     console.log("Listing sub directories of : " + dirPath + " normalized.");
     TSCORE.showLoadingAnimation();
