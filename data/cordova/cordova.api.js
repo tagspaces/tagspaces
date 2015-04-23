@@ -192,6 +192,12 @@ define(function(require, exports, module) {
 
   function normalizePath(path) {
     if (isCordovaiOS) {
+      //we set absoilute path in ios because some extensions didn't recognize cdvfile
+      //but in cordova.api implementation we didn't need absolute path so we strip nativeURL
+      if(path.indexOf(fsRoot.nativeURL) ===0) {
+        path = path.replace(fsRoot.nativeURL , "/");
+      }
+
       if (path.indexOf(fsRoot.fullPath) === 0) {
         path = path.substring(fsRoot.fullPath.length, path.length);
       } 
@@ -301,6 +307,8 @@ define(function(require, exports, module) {
                   function(entry) {
                    
                     if (!entry.fullPath && isCordovaiOS) {
+                      //In ios localsytem plugin didn't set fullpath so we set fullpath as absolute
+                      //this solve problem with extensions which cant use the cdvfile
                       var URL = "cdvfile://localhost/persistent/";
                       entry.fullPath = decodeURIComponent(entry.localURL);
                       entry.fullPath = fsRoot.nativeURL + entry.fullPath.substring(URL.length, entry.fullPath.length);
