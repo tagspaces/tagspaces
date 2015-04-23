@@ -194,7 +194,7 @@ define(function(require, exports, module) {
     if (isCordovaiOS) {
       //we set absoilute path in ios because some extensions didn't recognize cdvfile
       //but in cordova.api implementation we didn't need absolute path so we strip nativeURL
-      if(path.indexOf(fsRoot.nativeURL) ===0) {
+      if (path.indexOf(fsRoot.nativeURL) === 0) {
         path = path.replace(fsRoot.nativeURL , "/");
       }
 
