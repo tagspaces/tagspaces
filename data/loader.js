@@ -24,6 +24,8 @@ var isCordova = isCordovaAndroid  == true || isCordovaiOS == true;
 var isWeb = document.URL.indexOf( 'http' ) === 0;
 var isOSX = navigator.appVersion.indexOf("Mac")!==-1;
 var isWin = navigator.appVersion.indexOf("Win")!==-1;
+//cordova ios handleOpenURL is global 
+var handleOpenURL;
 
 // Check for running in node-webkit
 try {

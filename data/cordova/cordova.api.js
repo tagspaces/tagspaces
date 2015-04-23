@@ -20,6 +20,14 @@ define(function(require, exports, module) {
   document.addEventListener("deviceready", onDeviceReady, false);
   document.addEventListener("resume", onDeviceResume, false);
 
+  // Register ios file open handler
+  handleOpenURL = function(url) {
+    var fileName = url.substring(url.lastIndexOf('/') + 1, url.length);
+    TSCORE.showConfirmDialog("File copied", "File " + fileName + " is copied in inbox folder. Would you like to open it ?", function() {
+      TSCORE.FileOpener.openFile(url);
+    });
+  };
+
   // Cordova loaded and can be used
   function onDeviceReady() {
     console.log("Device Ready:"); // "+device.platform+" - "+device.version);
@@ -33,7 +41,6 @@ define(function(require, exports, module) {
 
     // iOS specific initialization
     if (isCordovaiOS) {
-      navigator.splashscreen.hide();
       window.plugins = window.plugins || {};
       // TODO: use fileOpener2 plugin on all platforms
       // https://build.phonegap.com/plugins/1117
@@ -51,6 +58,12 @@ define(function(require, exports, module) {
     
     attachFastClick(document.body);
     getFileSystem();
+
+    if (isCordovaiOS) {
+      setTimeout(function() {
+        navigator.splashscreen.hide();
+      }, 1000);
+    }
   }
 
   function onDeviceResume() {
@@ -179,6 +192,12 @@ define(function(require, exports, module) {
 
   function normalizePath(path) {
     if (isCordovaiOS) {
+      //we set absoilute path in ios because some extensions didn't recognize cdvfile
+      //but in cordova.api implementation we didn't need absolute path so we strip nativeURL
+      if (path.indexOf(fsRoot.nativeURL) === 0) {
+        path = path.replace(fsRoot.nativeURL , "/");
+      }
+
       if (path.indexOf(fsRoot.fullPath) === 0) {
         path = path.substring(fsRoot.fullPath.length, path.length);
       } 
@@ -209,7 +228,10 @@ define(function(require, exports, module) {
   var listSubDirectories = function(dirPath) {
     console.log("Listing sub directories of: " + dirPath);
     // directory path format DCIM/Camera/ !
-    dirPath = dirPath + "/"; // TODO make it platform independent
+    if (dirPath.lastIndexOf("/") === 0 || dirPath.lastIndexOf("/")  != dirPath.length - 1) {
+      dirPath = dirPath + "/"; // TODO make it platform independent  
+    }
+    
     dirPath = normalizePath(dirPath);
     console.log("Listing sub directories of : " + dirPath + " normalized.");
     TSCORE.showLoadingAnimation();
@@ -285,9 +307,11 @@ define(function(require, exports, module) {
                   function(entry) {
                    
                     if (!entry.fullPath && isCordovaiOS) {
-                      var URL = "cdvfile://localhost/persistent";
+                      //In ios localsytem plugin didn't set fullpath so we set fullpath as absolute
+                      //this solve problem with extensions which cant use the cdvfile
+                      var URL = "cdvfile://localhost/persistent/";
                       entry.fullPath = decodeURIComponent(entry.localURL);
-                      entry.fullPath = entry.fullPath.substring(URL.length, entry.fullPath.length);
+                      entry.fullPath = fsRoot.nativeURL + entry.fullPath.substring(URL.length, entry.fullPath.length);
                     }
 
                     anotatedDirList.push({

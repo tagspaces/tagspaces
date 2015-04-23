@@ -30,9 +30,6 @@ $(document).ready(function() {
 
   if (isCordova || isWeb) {
 
-    if (parent.isCordovaiOS) {
-      filePath = "cdvfile://localhost/persistent" + encodeURIComponent(filePath);
-    }
   } else {
     filePath = "file://" + filePath;
   }
