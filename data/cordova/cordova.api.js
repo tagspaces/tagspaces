@@ -621,7 +621,8 @@ define(function(require, exports, module) {
   var renameFile = function(filePath, newFilePath) {
     filePath = normalizePath(filePath);
     var newFileName = newFilePath.substring(newFilePath.lastIndexOf('/') + 1);
-    var newFileParentPath = normalizePath(newFilePath.substring(0, newFilePath.lastIndexOf('/')));
+    var newFileParentPath = normalizePath(newFilePath.substring(0, newFilePath.lastIndexOf('/') + 1));
+    console.log("renameFile: " + newFileName + " newFilePath: " + newFilePath);
     // TODO check if the newFilePath exist or causes issues by renaming
     fsRoot.getDirectory(newFileParentPath, {
         create: false,
