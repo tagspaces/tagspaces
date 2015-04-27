@@ -5,7 +5,7 @@
 
 // the value of this var is replaced to "true" by the build script
 var PRODUCTION = "@@PRODUCTION";
-var PRO = "@@PRO";
+var PRO; // ="@@PRO";
 
 // Disabling all output to console in production mode
 if (PRODUCTION == "true") {
@@ -56,7 +56,7 @@ if( isFirefox ) {
 
 var PRO_JS = "js/pro";
 if(PRO === "true" || PRO === "@@PRO") {
-    PRO_JS = 'pro/js/pro.api'
+    PRO_JS = 'pro/js/pro.api';
 }
 
 console.log("Loading Loader - Firefox: "+isFirefox+" | ChromeExt: "+isChrome+" | Node: "+isNode+" | Cordova: "+isCordova+" | Web: "+isWeb+" | isWin: "+isWin);
