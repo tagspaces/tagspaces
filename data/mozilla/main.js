@@ -78,11 +78,15 @@ exports.main = function(options, callbacks) {
 };
 
 function installToolbarButton() {
-  toolbarButton.moveTo({
-    toolbarID: "nav-bar",
-    insertbefore: "home-button",
-    forceMove: false
-  });
+
+  if (typeof(toolbarButton.moveTo) === 'function') {
+
+    toolbarButton.moveTo({
+      toolbarID: "nav-bar",
+      insertbefore: "home-button",
+      forceMove: false
+    });    
+  }
 }
 
 function openTagSpacesInNewTab() {
@@ -111,11 +115,26 @@ function initToobarButton() {
   else if (os == "Darwin") {
       userstyles.load(data.url("mozilla/overlay-darwin.css"));
   }*/
+
   var tagspacesPanel = new Panel({
     width: 520,
     height: 400,
-    contentURL: data.url('popup.html')
+    contentURL: data.url('popup.html'),
+    contentScriptFile:[data.url('libs/jquery/jquery-2.1.1.min.js'), data.url('mozilla/popup.js')],
+    onHide: null
   });
+
+  tagspacesPanel.port.on("tagspaces.openNewTab", function() {
+    
+      openTagSpacesInNewTab();
+  });
+
+  var handleChange = function (ctx) {
+    tagspacesPanel.show({
+      position: toolbarButton
+    });
+  };
+
   var buttons = require('sdk/ui/button/action');
   toolbarButton = buttons.ActionButton({
     id: "TSToolbarButton",
@@ -124,12 +143,7 @@ function initToobarButton() {
       "32": data.url("assets/icon32.png"),
       "64": data.url("assets/icon64.png")
     },
-    onClick: openTagSpacesInNewTab
-      /*onClick: function() {
-          tagspacesPanel.show({
-            position: toolbarButton
-          });
-      }*/
+    onClick: handleChange
   });
 }
 unload.when(function(reason) {
