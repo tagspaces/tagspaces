@@ -1,6 +1,6 @@
 "use strict";
 
-var isCordova = document.URL.indexOf('file:///android_asset') === 0;
+var isCordova = parent.isCordova;
 var $htmlEditor;
 
 var toolbar = [
