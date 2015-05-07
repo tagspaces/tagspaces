@@ -166,7 +166,9 @@ define(function(require, exports, module) {
     TSCORE.closeFileViewer();
     // Cleaning the viewer/editor
     //document.getElementById("viewer").innerHTML = "";
-    $('#viewer').find('*').off().unbind().children().remove();
+    $('#viewer').find('*').off().unbind();
+    $('#viewer').find('iframe').remove();
+    $('#viewer').find('*').children().remove();
     _isFileOpened = false;
     _isEditMode = false;
     _isFileChanged = false;
