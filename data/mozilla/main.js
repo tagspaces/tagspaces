@@ -20,6 +20,7 @@ var request = require("sdk/request"); // request
 var tabs = require("sdk/tabs");
 var unload = require('sdk/system/unload');
 var Panel = require('sdk/panel').Panel;
+var selection = require("sdk/selection");
 //var userstyles = require("userstyles");
 var {
   Cc, Ci, Cu
@@ -115,21 +116,53 @@ function initToobarButton() {
   else if (os == "Darwin") {
       userstyles.load(data.url("mozilla/overlay-darwin.css"));
   }*/
-
   var tagspacesPanel = new Panel({
     width: 520,
     height: 400,
-    contentURL: data.url('popup.html'),
-    contentScriptFile:[data.url('libs/jquery/jquery-2.1.1.min.js'), data.url('mozilla/popup.js')],
-    onHide: null
+    contentURL: data.url('popup-mozilla.html'),
+    contentScriptFile: [ 
+      data.url('libs/jquery/jquery-2.1.1.min.js'), 
+      data.url('libs/select2/select2.min.js'),
+      //data.url('libs/filesaver.js/FileSaver.js'),
+      data.url('libs/dompurify/purify.js'),
+      data.url('mozilla/popup.js')
+    ],
+    //contentScriptWhen: "ready",
+    onShow: function() {
+      var ttt = tabs.activeTab.title;
+      tagspacesPanel.port.emit("show", selection.html, tabs.activeTab.title);
+    },
+    onHide: function() { 
+      tagspacesPanel.port.emit("hide");
+    }
+  });
+  //Panel emited messages
+  tagspacesPanel.on("message", function(msg){
+    console.log("MSG "+ msg);
   });
 
-  tagspacesPanel.port.on("tagspaces.openNewTab", function() {
-    
-      openTagSpacesInNewTab();
+  tagspacesPanel.port.on('openNewTab', function(content) {  
+    tagspacesPanel.hide(); 
+    openTagSpacesInNewTab();
   });
 
-  var handleChange = function (ctx) {
+  tagspacesPanel.port.on('saveSelectionAsHtml', function(content) { 
+    tagspacesPanel.hide(); 
+    console.log("saveSelectionAsHtml: " + content);
+  });
+
+  tagspacesPanel.port.on('saveAsMHTML', function(content){
+    tagspacesPanel.hide(); 
+    console.log("saveAsMHTML: " + content);
+  });
+  
+  tagspacesPanel.port.on('saveScreenshot', function(content){
+    tagspacesPanel.hide(); 
+    console.log("saveScreenshot" + content);
+  });
+  
+
+  var handleChange = function (elem) {
     tagspacesPanel.show({
       position: toolbarButton
     });
