@@ -21,6 +21,7 @@ var tabs = require("sdk/tabs");
 var unload = require('sdk/system/unload');
 var Panel = require('sdk/panel').Panel;
 var selection = require("sdk/selection");
+var capture = require("capture");
 //var userstyles = require("userstyles");
 var {
   Cc, Ci, Cu
@@ -123,13 +124,10 @@ function initToobarButton() {
     contentScriptFile: [ 
       data.url('libs/jquery/jquery-2.1.1.min.js'), 
       data.url('libs/select2/select2.min.js'),
-      //data.url('libs/filesaver.js/FileSaver.js'),
       data.url('libs/dompurify/purify.js'),
       data.url('mozilla/popup.js')
     ],
-    //contentScriptWhen: "ready",
     onShow: function() {
-      var ttt = tabs.activeTab.title;
       tagspacesPanel.port.emit("show", selection.html, tabs.activeTab.title);
     },
     onHide: function() { 
@@ -146,19 +144,21 @@ function initToobarButton() {
     openTagSpacesInNewTab();
   });
 
-  tagspacesPanel.port.on('saveSelectionAsHtml', function(content) { 
-    tagspacesPanel.hide(); 
-    console.log("saveSelectionAsHtml: " + content);
+  tagspacesPanel.port.on('saveSelectionAsHtml', function(name, content) { 
+    tagspacesPanel.hide();
+    capture.saveContentToFile(name, content);
   });
 
-  tagspacesPanel.port.on('saveAsMHTML', function(content){
+  tagspacesPanel.port.on('saveAsMHTML', function(name) {
     tagspacesPanel.hide(); 
-    console.log("saveAsMHTML: " + content);
+    capture.saveURLToFile(name, tabs.activeTab.url.toString());
   });
   
-  tagspacesPanel.port.on('saveScreenshot', function(content){
+  tagspacesPanel.port.on('saveScreenshot', function(name) {
     tagspacesPanel.hide(); 
-    console.log("saveScreenshot" + content);
+    var screenCastData = capture.captureTab();
+    var content = capture.dataURItoBlob(screenCastData);
+    capture.saveContentToBinaryFile(name, content);
   });
   
 

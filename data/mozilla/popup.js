@@ -14,34 +14,45 @@
 
   function init(selection) {
     console.log("Mozilla Popup init...");
-
-    loadSettingsLocalStorage();
-
     $("#startTagSpaces").on("click", function(e) {
       self.port.emit('openNewTab', e.toString());
     });
-
     $("#saveAsMhtml").on('click', saveAsMHTML);
-
-    $("#saveSelectionAsHtml").on("click", function() {
-      
-      if(currentSelection) {
-        var content = prepareContent(currentSelection);  
-        self.port.emit('saveSelectionAsHtml', content);  
-      } else {
-        alert("Please select text");
-      }
-    });
-
+    $("#saveSelectionAsHtml").on("click", saveSelectionAsHtml);
     $("#saveScreenshot").on("click", saveScreenshot);
   }
 
+  function saveSelectionAsHtml() {
+    if (currentSelection) {
+      var content = prepareContent(currentSelection);  
+       
+      if (tags) {
+        tags = tags.split(",").join(" ");
+        self.port.emit('saveSelectionAsHtml', $('#title').val() + ' [' + tags + '].html', content);
+      } else {
+        self.port.emit('saveSelectionAsHtml', $('#title').val() + '.html', content);
+      }
+    } else {
+      alert("Please select text");
+    }
+  }
+
   function saveAsMHTML() {
-    self.port.emit('saveAsMHTML');
+    if (tags) {
+      tags = tags.split(",").join(" ");
+      self.port.emit('saveAsMHTML', $('#title').val() + ' [' + tags + '].html');
+    } else {
+      self.port.emit('saveAsMHTML', $('#title').val() + '.html');
+    }
   }
 
   function saveScreenshot() { 
-    self.port.emit('saveScreenshot');
+    if (tags) {
+      tags = tags.split(",").join(" ");
+      self.port.emit('saveScreenshot', $('#title').val() + ' [' + tags + '].png');
+    } else {
+      self.port.emit('saveScreenshot', $('#title').val() + '.png');
+    }
   }
 
   function prepareContent(uncleanedHTML) {
@@ -56,10 +67,12 @@
   function loadSettingsLocalStorage() {
     try {
       var settings = JSON.parse(localStorage.getItem('tagSpacesSettings'));
-      //console.log("Settings: "+JSON.stringify(tmpSettings));
+      //console.log("Settings: " + JSON.stringify(settings));
       if (settings !== null) {
         htmlTemplate = settings.newHTMLFileContent;
         tagLibrary = settings.tagGroups;
+      } else {
+          htmlTemplate = "<html><body></body></html>";
       }
       console.log("Loaded settings from local storage: " + JSON.stringify(tagLibrary));
     } catch (ex) {
@@ -88,12 +101,11 @@
   self.port.on("show", function(selection, title) {
    
     //self.postMessage('show', "ddd1");
+    loadSettingsLocalStorage();
     currentSelection = selection;
     var tagList = extractAllTags(tagLibrary);
-    console.log("currentSelection: " + currentSelection);
-
+    
     $('#title').val(title);
-  
     $('#title').focus();
 
     $('#tags').select2('data', null);
@@ -104,7 +116,6 @@
       minimumInputLength: 2,
       selectOnBlur: true
     });
-
   });
 
   self.port.on("hide", function(){
