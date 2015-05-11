@@ -5,8 +5,6 @@
 'use strict';
 
 (function() {
-  var tags;
-  var title;
   var html;
   var htmlTemplate;
   var tagLibrary;
@@ -14,6 +12,8 @@
 
   function init(selection) {
     console.log("Mozilla Popup init...");
+    htmlTemplate = "<html><body></body></html>";
+
     $("#startTagSpaces").on("click", function(e) {
       self.port.emit('openNewTab', e.toString());
     });
@@ -25,7 +25,7 @@
   function saveSelectionAsHtml() {
     if (currentSelection) {
       var content = prepareContent(currentSelection);  
-       
+      var tags = document.getElementById("tags").value;
       if (tags) {
         tags = tags.split(",").join(" ");
         self.port.emit('saveSelectionAsHtml', $('#title').val() + ' [' + tags + '].html', content);
@@ -38,6 +38,7 @@
   }
 
   function saveAsMHTML() {
+    var tags = document.getElementById("tags").value;
     if (tags) {
       tags = tags.split(",").join(" ");
       self.port.emit('saveAsMHTML', $('#title').val() + ' [' + tags + '].html');
@@ -47,6 +48,7 @@
   }
 
   function saveScreenshot() { 
+    var tags = document.getElementById("tags").value;
     if (tags) {
       tags = tags.split(",").join(" ");
       self.port.emit('saveScreenshot', $('#title').val() + ' [' + tags + '].png');
@@ -71,10 +73,8 @@
       if (settings !== null) {
         htmlTemplate = settings.newHTMLFileContent;
         tagLibrary = settings.tagGroups;
-      } else {
-          htmlTemplate = "<html><body></body></html>";
-      }
-      console.log("Loaded settings from local storage: " + JSON.stringify(tagLibrary));
+      } 
+      //console.log("Loaded settings from local storage: " + JSON.stringify(tagLibrary));
     } catch (ex) {
       console.log("Loading settings from local storage failed due exception: " + ex);
     }
