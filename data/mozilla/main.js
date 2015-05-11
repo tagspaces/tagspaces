@@ -120,7 +120,7 @@ function initToobarButton() {
   var tagspacesPanel = new Panel({
     width: 520,
     height: 400,
-    contentURL: data.url('popup-mozilla.html'),
+    contentURL: data.url('mozilla/popup.html'),
     contentScriptFile: [ 
       data.url('libs/jquery/jquery-2.1.1.min.js'), 
       data.url('libs/select2/select2.min.js'),

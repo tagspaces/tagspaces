@@ -6,7 +6,7 @@
 const { getTabContentWindow, getActiveTab } = require('sdk/tabs/utils');
 const { getMostRecentBrowserWindow } = require('sdk/window/utils');
 const { pathFor } = require('sdk/system');
-var {Cc, Ci} = require("chrome");
+var {Cc, Ci, Cr, components: Components} = require("chrome");
 
 exports.captureTab = function(tab=getActiveTab(getMostRecentBrowserWindow())) {
   
@@ -54,16 +54,14 @@ function getSaveLocationDialog (name) {
 
   var rv = picker.show();
   if (rv == Ci.nsIFilePicker.returnOK || rv == Ci.nsIFilePicker.returnReplace) {
-    return picker.file.path;
+    return picker.file;
   }
   return null;
 }
 
 exports.saveContentToFile = function (name, content) {
 
-  var filePath = getSaveLocationDialog(name);
-  var aFile = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsILocalFile);
-  aFile.initWithPath(filePath);
+  var aFile = getSaveLocationDialog(name);
   //aFile.createUnique(Ci.nsIFile.NORMAL_FILE_TYPE, 0600);
   var foStream = Cc["@mozilla.org/network/file-output-stream;1"].
       createInstance(Ci.nsIFileOutputStream);
@@ -79,13 +77,11 @@ exports.saveContentToFile = function (name, content) {
 
 exports.saveContentToBinaryFile = function (name, content) {
 
-  var filePath = getSaveLocationDialog(name);
-  var aFile = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsILocalFile);
-  aFile.initWithPath(filePath);
+  var aFile = getSaveLocationDialog(name);
   //aFile.createUnique(Ci.nsIFile.NORMAL_FILE_TYPE, 0600);
   var stream = Cc["@mozilla.org/network/safe-file-output-stream;1"].
                createInstance(Ci.nsIFileOutputStream);
-  stream.init(aFile, 0x04 | 0x08 | 0x20, 600, 0); // readwrite, create, truncate
+  stream.init(aFile, 0x04 | 0x08 | 0x20, 666, 0); // readwrite, create, truncate
               
   stream.write(content, content.length);
   if (stream instanceof Ci.nsISafeOutputStream) {
@@ -96,17 +92,36 @@ exports.saveContentToBinaryFile = function (name, content) {
 };
 
 exports.saveURLToFile = function(name, url) {
-  var pageWorker = require("sdk/page-worker");
-  // This content script sends header titles from the page to the add-on:
-  var script = "self.postMessage(document.body.innerHTML)";
-  // Create a page worker that loads Wikipedia:
-  pageWorker.Page({
-    contentURL: url,
-    contentScript: script,
-    contentScriptWhen: "ready",
-    onMessage: function(message) {
-      exports.saveContentToFile(name, message);
-      this.destroy();
-    }
-  });
+  // TODO: attach event handler nsContextMenu
+  // http://stackoverflow.com/questions/26694442/how-to-launch-a-normal-download-from-an-addon
+
+  let tab = getActiveTab(getMostRecentBrowserWindow());
+  let window = getTabContentWindow(tab);
+  
+  //Create an object in which we attach nsContextMenu.js.
+  //  It needs some support properties/functions which
+  //  nsContextMenu.js assumes are part of its context.
+  let contextMenuObj = {
+      window: window,
+      makeURI: function (aURL, aOriginCharset, aBaseURI) {
+        var ioService = Cc["@mozilla.org/network/io-service;1"]
+                                  .getService(Ci.nsIIOService);
+        return ioService.newURI(aURL, aOriginCharset, aBaseURI);
+      },
+      gPrefService: Cc["@mozilla.org/preferences-service;1"]
+                              .getService(Ci.nsIPrefService)
+                              .QueryInterface(Ci.nsIPrefBranch)
+  };
+
+  Cc["@mozilla.org/moz/jssubscript-loader;1"]
+      .getService(Ci.mozIJSSubScriptLoader)
+      .loadSubScript("chrome://browser/content/nsContextMenu.js", contextMenuObj);
+
+  //Re-define the initMenu function, as there is not a desire to actually
+  //  initialize a menu.        
+  contextMenuObj.nsContextMenu.prototype.initMenu = function() { };
+
+  let myContextMenu = new contextMenuObj.nsContextMenu();
+  //Save the specified URL
+  myContextMenu.saveHelper(url, name, null, true, window.content.document);
 };
