@@ -62,15 +62,13 @@ function getSaveLocationDialog (name) {
 exports.saveContentToFile = function (name, content) {
 
   var aFile = getSaveLocationDialog(name);
-  //aFile.createUnique(Ci.nsIFile.NORMAL_FILE_TYPE, 0600);
   if (!aFile.exists()) {
-      aFile.create(0, 664);
+      aFile.create(Ci.nsIFile.NORMAL_FILE_TYPE, 438/*0666*/);
   }
 
   var foStream = Cc["@mozilla.org/network/file-output-stream;1"].
       createInstance(Ci.nsIFileOutputStream);
-
-  foStream.init(aFile, 0x02 | 0x08 | 0x20, 666, 0); // readwrite, create, truncate
+  foStream.init(aFile, 0x02 | 0x08 | 0x20, 438/*0666*/, 0); // readwrite, create, truncate
 
   var converter = Cc["@mozilla.org/intl/converter-output-stream;1"].
       createInstance(Ci.nsIConverterOutputStream);
@@ -82,15 +80,14 @@ exports.saveContentToFile = function (name, content) {
 exports.saveContentToBinaryFile = function (name, content) {
 
   var aFile = getSaveLocationDialog(name);
-  //aFile.createUnique(Ci.nsIFile.NORMAL_FILE_TYPE, 0600);
   if (!aFile.exists()) {
-      aFile.create(0, 664);
+      aFile.create(Ci.nsIFile.NORMAL_FILE_TYPE, 438/*0666*/);
   }
 
   var stream = Cc["@mozilla.org/network/safe-file-output-stream;1"].
                createInstance(Ci.nsIFileOutputStream);
-  stream.init(aFile, 0x04 | 0x08 | 0x20, 600, 0); // readwrite, create, truncate
-              
+  stream.init(aFile, 0x04 | 0x08 | 0x20, 438/*0666*/, 0); // readwrite, create, truncate
+
   stream.write(content, content.length);
   if (stream instanceof Ci.nsISafeOutputStream) {
       stream.finish();
