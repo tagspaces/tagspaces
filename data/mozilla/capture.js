@@ -3,7 +3,7 @@
  * can be found in the LICENSE file. */
 /* global */
 'use strict';
-const { getTabContentWindow, getActiveTab } = require('sdk/tabs/utils');
+const { getTabContentWindow, getActiveTab, getTabs, getTabURL } = require('sdk/tabs/utils');
 const { getMostRecentBrowserWindow } = require('sdk/window/utils');
 const { pathFor } = require('sdk/system');
 var {Cc, Ci, Cr, components: Components} = require("chrome");
@@ -48,7 +48,7 @@ function getSaveLocationDialog (name) {
 
   picker.init(win, "Save File as", Ci.nsIFilePicker.modeSave);
   picker.appendFilters(Ci.nsIFilePicker.filterAll | Ci.nsIFilePicker.filterText | Ci.nsIFilePicker.filterHTML);
-  
+  picker.appendFilters("XXX Files", "*.mhtml");
   picker.defaultString = name;
   picker.displayDirectory = dir;
 
@@ -63,6 +63,10 @@ exports.saveContentToFile = function (name, content) {
 
   var aFile = getSaveLocationDialog(name);
   //aFile.createUnique(Ci.nsIFile.NORMAL_FILE_TYPE, 0600);
+  if (!aFile.exists()) {
+      aFile.create(0, 664);
+  }
+
   var foStream = Cc["@mozilla.org/network/file-output-stream;1"].
       createInstance(Ci.nsIFileOutputStream);
 
@@ -79,9 +83,13 @@ exports.saveContentToBinaryFile = function (name, content) {
 
   var aFile = getSaveLocationDialog(name);
   //aFile.createUnique(Ci.nsIFile.NORMAL_FILE_TYPE, 0600);
+  if (!aFile.exists()) {
+      aFile.create(0, 664);
+  }
+
   var stream = Cc["@mozilla.org/network/safe-file-output-stream;1"].
                createInstance(Ci.nsIFileOutputStream);
-  stream.init(aFile, 0x04 | 0x08 | 0x20, 666, 0); // readwrite, create, truncate
+  stream.init(aFile, 0x04 | 0x08 | 0x20, 600, 0); // readwrite, create, truncate
               
   stream.write(content, content.length);
   if (stream instanceof Ci.nsISafeOutputStream) {
@@ -92,36 +100,24 @@ exports.saveContentToBinaryFile = function (name, content) {
 };
 
 exports.saveURLToFile = function(name, url) {
-  // TODO: attach event handler nsContextMenu
-  // http://stackoverflow.com/questions/26694442/how-to-launch-a-normal-download-from-an-addon
 
-  let tab = getActiveTab(getMostRecentBrowserWindow());
-  let window = getTabContentWindow(tab);
-  
-  //Create an object in which we attach nsContextMenu.js.
-  //  It needs some support properties/functions which
-  //  nsContextMenu.js assumes are part of its context.
-  let contextMenuObj = {
-      window: window,
-      makeURI: function (aURL, aOriginCharset, aBaseURI) {
-        var ioService = Cc["@mozilla.org/network/io-service;1"]
-                                  .getService(Ci.nsIIOService);
-        return ioService.newURI(aURL, aOriginCharset, aBaseURI);
-      },
-      gPrefService: Cc["@mozilla.org/preferences-service;1"]
-                              .getService(Ci.nsIPrefService)
-                              .QueryInterface(Ci.nsIPrefBranch)
-  };
-
-  Cc["@mozilla.org/moz/jssubscript-loader;1"]
-      .getService(Ci.mozIJSSubScriptLoader)
-      .loadSubScript("chrome://browser/content/nsContextMenu.js", contextMenuObj);
-
-  //Re-define the initMenu function, as there is not a desire to actually
-  //  initialize a menu.        
-  contextMenuObj.nsContextMenu.prototype.initMenu = function() { };
-
-  let myContextMenu = new contextMenuObj.nsContextMenu();
-  //Save the specified URL
-  myContextMenu.saveHelper(url, name, null, true, window.content.document);
+  var window = null;  
+  try {
+    var tabs = getTabs();
+    for (let tab of tabs) {
+      var tabURL = getTabURL(tab);
+      if(tabURL === url) {
+        window = getTabContentWindow(tab);  
+        break;   
+      }
+    }
+    var persist = Cc["@mozilla.org/embedding/browser/nsWebBrowserPersist;1"]
+        .createInstance(Ci.nsIWebBrowserPersist);
+    var localFile = getSaveLocationDialog(name);
+    var flags = persist.ENCODE_FLAGS_FORMAT_FLOWED | 
+                persist.ENCODE_FLAGS_ABSOLUTE_LINKS;
+    persist.saveDocument(window.content.document, localFile, null, null, flags, 0);
+  } catch (e) {
+    console.log("saveURLToFile Error: " + e.message);
+  }
 };

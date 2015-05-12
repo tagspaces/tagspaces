@@ -118,8 +118,8 @@ function initToobarButton() {
       userstyles.load(data.url("mozilla/overlay-darwin.css"));
   }*/
   var tagspacesPanel = new Panel({
-    width: 520,
-    height: 400,
+    width: 530,
+    height: 410,
     contentURL: data.url('mozilla/popup.html'),
     contentScriptFile: [ 
       data.url('libs/jquery/jquery-2.1.1.min.js'), 
@@ -133,10 +133,6 @@ function initToobarButton() {
     onHide: function() { 
       tagspacesPanel.port.emit("hide");
     }
-  });
-  //Panel emited messages
-  tagspacesPanel.on("message", function(msg){
-    console.log("MSG "+ msg);
   });
 
   tagspacesPanel.port.on('openNewTab', function(content) {  
