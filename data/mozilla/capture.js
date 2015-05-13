@@ -48,7 +48,6 @@ function getSaveLocationDialog (name) {
 
   picker.init(win, "Save File as", Ci.nsIFilePicker.modeSave);
   picker.appendFilters(Ci.nsIFilePicker.filterAll | Ci.nsIFilePicker.filterText | Ci.nsIFilePicker.filterHTML);
-  picker.appendFilters("XXX Files", "*.mhtml");
   picker.defaultString = name;
   picker.displayDirectory = dir;
 
@@ -113,8 +112,58 @@ exports.saveURLToFile = function(name, url) {
     var localFile = getSaveLocationDialog(name);
     var flags = persist.ENCODE_FLAGS_FORMAT_FLOWED | 
                 persist.ENCODE_FLAGS_ABSOLUTE_LINKS;
+
+    purifyContent(window.content.document);
     persist.saveDocument(window.content.document, localFile, null, null, flags, 0);
   } catch (e) {
     console.log("saveURLToFile Error: " + e.message);
   }
 };
+
+function purifyContent (document) {
+ 
+  var content = document.body.innerHTML;
+  var head = document.head.innerHTML;
+  // removing all scripts from the document
+  if (head) {
+    document.head.innerHTML = head.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "");  
+  }
+  
+  var cleanedContent = content.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "");
+  // saving all images as png in base64 format
+  var match,
+    urls = [],
+    imgUrl = "",
+    rex = /<img.*?src="([^">]*\/([^">]*?))".*?>/g;
+
+  while (match = rex.exec(cleanedContent)) {
+    imgUrl = match[1];
+    console.log("URLs: " + imgUrl);
+    urls.push([imgUrl, getBase64Image(imgUrl)]);
+  }
+
+  urls.forEach(function(dataURLObject) {
+    if (dataURLObject[1].length > 7) {
+      cleanedContent = cleanedContent.split(dataURLObject[0]).join(dataURLObject[1]);
+    }
+    //console.log(dataURLObject[0]+" - "+dataURLObject[1]);
+  });
+
+  if (cleanedContent) {
+    document.body.innerHTML = cleanedContent;  
+  }
+}
+
+function getBase64Image(imgURL) {
+  let tab = getActiveTab(getMostRecentBrowserWindow());
+  let contentWindow = getTabContentWindow(tab);
+  let { document } = contentWindow;
+  var canvas = document.createElement("canvas");
+  var img = new contentWindow.Image();
+  img.src = imgURL;
+  canvas.width = img.width;
+  canvas.height = img.height;
+  var ctx = canvas.getContext("2d");
+  ctx.drawImage(img, 0, 0);
+  return canvas.toDataURL("image/png");
+}
