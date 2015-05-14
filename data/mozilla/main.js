@@ -80,15 +80,13 @@ exports.main = function(options, callbacks) {
 };
 
 function installToolbarButton() {
-
-  if (typeof(toolbarButton.moveTo) === 'function') {
-
+//  if (typeof(toolbarButton.moveTo) === 'function') {
     toolbarButton.moveTo({
       toolbarID: "nav-bar",
       insertbefore: "home-button",
       forceMove: false
     });    
-  }
+//  }
 }
 
 function openTagSpacesInNewTab() {
@@ -156,7 +154,6 @@ function initToobarButton() {
     var content = capture.dataURItoBlob(screenCastData);
     capture.saveContentToBinaryFile(name, content);
   });
-  
 
   var handleChange = function (elem) {
     tagspacesPanel.show({
@@ -175,6 +172,7 @@ function initToobarButton() {
     onClick: handleChange
   });
 }
+
 unload.when(function(reason) {
   // since FF24 reason is never 'uninstall' see https://bugzilla.mozilla.org/show_bug.cgi?id=571049
   if (reason === 'uninstall' || reason === 'disable') {
@@ -187,6 +185,7 @@ unload.when(function(reason) {
     }
   }
 });
+
 exports.onUnload = function(reason) {
   console.log(reason);
 };
@@ -196,6 +195,7 @@ function detachWorker(worker) {
   var index = workers.indexOf(worker);
   workers.splice(index, 1);
 }
+
 var checkForNewVersion = request.Request({
   url: "http://tagspaces.org/releases/version.json?fVer=" + VERSION,
   onComplete: function(response) {
