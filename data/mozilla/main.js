@@ -20,6 +20,8 @@ var request = require("sdk/request"); // request
 var tabs = require("sdk/tabs");
 var unload = require('sdk/system/unload');
 var Panel = require('sdk/panel').Panel;
+var selection = require("sdk/selection");
+var capture = require("capture");
 //var userstyles = require("userstyles");
 var {
   Cc, Ci, Cu
@@ -78,11 +80,15 @@ exports.main = function(options, callbacks) {
 };
 
 function installToolbarButton() {
-  toolbarButton.moveTo({
-    toolbarID: "nav-bar",
-    insertbefore: "home-button",
-    forceMove: false
-  });
+
+  if (typeof(toolbarButton.moveTo) === 'function') {
+
+    toolbarButton.moveTo({
+      toolbarID: "nav-bar",
+      insertbefore: "home-button",
+      forceMove: false
+    });    
+  }
 }
 
 function openTagSpacesInNewTab() {
@@ -112,10 +118,52 @@ function initToobarButton() {
       userstyles.load(data.url("mozilla/overlay-darwin.css"));
   }*/
   var tagspacesPanel = new Panel({
-    width: 520,
-    height: 400,
-    contentURL: data.url('popup.html')
+    width: 530,
+    height: 410,
+    contentURL: data.url('mozilla/popup.html'),
+    contentScriptFile: [ 
+      data.url('libs/jquery/jquery-2.1.1.min.js'), 
+      data.url('libs/select2/select2.min.js'),
+      data.url('libs/dompurify/purify.js'),
+      data.url('mozilla/popup.js')
+    ],
+    onShow: function() {
+      tagspacesPanel.port.emit("show", selection.html, tabs.activeTab.title);
+    },
+    onHide: function() { 
+      tagspacesPanel.port.emit("hide");
+    }
   });
+
+  tagspacesPanel.port.on('openNewTab', function(content) {  
+    tagspacesPanel.hide(); 
+    openTagSpacesInNewTab();
+  });
+
+  tagspacesPanel.port.on('saveSelectionAsHtml', function(name, content) { 
+    tagspacesPanel.hide();
+    capture.saveContentToFile(name, content);
+  });
+
+  tagspacesPanel.port.on('saveAsMHTML', function(name) {
+    tagspacesPanel.hide(); 
+    capture.saveURLToFile(name, tabs.activeTab.url.toString());
+  });
+  
+  tagspacesPanel.port.on('saveScreenshot', function(name) {
+    tagspacesPanel.hide(); 
+    var screenCastData = capture.captureTab();
+    var content = capture.dataURItoBlob(screenCastData);
+    capture.saveContentToBinaryFile(name, content);
+  });
+  
+
+  var handleChange = function (elem) {
+    tagspacesPanel.show({
+      position: toolbarButton
+    });
+  };
+
   var buttons = require('sdk/ui/button/action');
   toolbarButton = buttons.ActionButton({
     id: "TSToolbarButton",
@@ -124,12 +172,7 @@ function initToobarButton() {
       "32": data.url("assets/icon32.png"),
       "64": data.url("assets/icon64.png")
     },
-    onClick: openTagSpacesInNewTab
-      /*onClick: function() {
-          tagspacesPanel.show({
-            position: toolbarButton
-          });
-      }*/
+    onClick: handleChange
   });
 }
 unload.when(function(reason) {
