@@ -95,6 +95,11 @@ exports.saveContentToBinaryFile = function (name, content) {
   }
 };
 
+exports.getFileExt = function(fileName) {
+  var ext = fileName.replace(/^.*?\.([a-zA-Z0-9]+)$/, "$1");
+  return (ext.length === fileName.length) ? 'html' : ext;
+};
+
 exports.saveURLToFile = function(name, url) {
 
   var window = null;  
@@ -107,18 +112,50 @@ exports.saveURLToFile = function(name, url) {
         break;   
       }
     }
+
     var persist = Cc["@mozilla.org/embedding/browser/nsWebBrowserPersist;1"]
         .createInstance(Ci.nsIWebBrowserPersist);
     var localFile = getSaveLocationDialog(name);
-    var flags = persist.ENCODE_FLAGS_FORMAT_FLOWED | 
-                persist.ENCODE_FLAGS_ABSOLUTE_LINKS;
 
-    purifyContent(window.content.document);
-    persist.saveDocument(window.content.document, localFile, null, null, flags, 0);
+    var ext = exports.getFileExt(name);
+    if(ext === 'html') {
+        var flags = persist.ENCODE_FLAGS_FORMAT_FLOWED | 
+          persist.ENCODE_FLAGS_ABSOLUTE_LINKS;
+
+      purifyContent(window.content.document);
+      persist.saveDocument(window.content.document, localFile, null, null, flags, 0);      
+    } else {
+      var data = getContentFromURL(url);
+      exports.saveContentToBinaryFile(name, data);
+    }
   } catch (e) {
     console.log("saveURLToFile Error: " + e.message);
   }
 };
+
+function getContentFromURL(url) {
+
+  var ioserv = Cc["@mozilla.org/network/io-service;1"] 
+               .getService(Ci.nsIIOService); 
+  var channel = ioserv.newChannel(url, 0, null); 
+  var stream = channel.open(); 
+
+  if (channel instanceof Ci.nsIHttpChannel && channel.responseStatus != 200) { 
+    return ""; 
+  }
+
+  var bstream = Cc["@mozilla.org/binaryinputstream;1"] 
+                .createInstance(Ci.nsIBinaryInputStream); 
+  bstream.setInputStream(stream); 
+
+  var size = 0; 
+  var file_data = ""; 
+  while(size = bstream.available()) { 
+    file_data += bstream.readBytes(size); 
+  }
+
+  return file_data; 
+}
 
 function purifyContent (document) {
  

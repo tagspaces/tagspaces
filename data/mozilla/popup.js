@@ -9,10 +9,11 @@
   var htmlTemplate;
   var tagLibrary;
   var currentSelection;
+  var currentExt;
 
-  function init(selection) {
+  function init() {
     console.log("Mozilla Popup init...");
-    htmlTemplate = "<html><body></body></html>";
+    htmlTemplate = "<html><head><meta charset=\"UTF-8\"></head><body></body></html>";
 
     $("#startTagSpaces").on("click", function(e) {
       self.port.emit('openNewTab', e.toString());
@@ -41,9 +42,9 @@
     var tags = document.getElementById("tags").value;
     if (tags) {
       tags = tags.split(",").join(" ");
-      self.port.emit('saveAsMHTML', $('#title').val() + ' [' + tags + '].html');
+      self.port.emit('saveAsMHTML', $('#title').val() + ' [' + tags + '].' + currentExt);
     } else {
-      self.port.emit('saveAsMHTML', $('#title').val() + '.html');
+      self.port.emit('saveAsMHTML', $('#title').val() + '.' + currentExt);
     }
   }
 
@@ -98,11 +99,12 @@
   //$(document).ready(init);
   init();
 
-  self.port.on("show", function(selection, title) {
+  self.port.on("show", function(selection, title, ext) {
    
     //self.postMessage('show', "ddd1");
     loadSettingsLocalStorage();
     currentSelection = selection;
+    currentExt = ext;
     var tagList = extractAllTags(tagLibrary);
     
     $('#title').val(title);
@@ -116,10 +118,13 @@
       minimumInputLength: 2,
       selectOnBlur: true
     });
+
+    $("#saveSelectionAsHtml").attr("disabled", (ext !== 'html'));
   });
 
   self.port.on("hide", function(){
     console.log("Hide Popup");
+    currentSelection = currentExt = null;
   });
 
   return {};
