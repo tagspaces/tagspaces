@@ -25,8 +25,8 @@
 
     var tagList = extractAllTags(tagLibrary);
     chrome.tabs.getSelected(null, function(tab) {
-      $('#title').val(tab.title);
       fileExt = getFileExt(tab.url);
+      $('#title').val(tab.title.substring(tab.title.lastIndexOf("/") + 1, tab.title.length));
       $("#saveSelectionAsHtml").attr("disabled", (fileExt !== 'mhtml'));
     }); 
 
@@ -101,7 +101,7 @@
 
     chrome.tabs.getSelected(null, function(tab) {
       
-      if(fileExt == 'mhtml') {
+      if (fileExt === 'mhtml') {
         chrome.pageCapture.saveAsMHTML({
           tabId: tab.id
         }, function(mhtml) {
