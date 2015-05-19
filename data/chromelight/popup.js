@@ -12,6 +12,7 @@
   var html;
   var htmlTemplate;
   var tagLibrary;
+  var fileExt;
 
   function init() {
     $("#startTagSpaces").on("click", function(e) {
@@ -25,7 +26,9 @@
     var tagList = extractAllTags(tagLibrary);
     chrome.tabs.getSelected(null, function(tab) {
       $('#title').val(tab.title);
-    });
+      fileExt = getFileExt(tab.url);
+      $("#saveSelectionAsHtml").attr("disabled", (fileExt !== 'mhtml'));
+    }); 
 
     $('#title').focus();
 
@@ -87,18 +90,30 @@
   }
 
   function saveAsMHTML() {
+    var filename;
+    tags = document.getElementById("tags").value;
+    if (tags) {
+      tags = tags.split(",").join(" ");
+      filename = $('#title').val() + ' [' + tags + '].' + fileExt;
+    } else {
+      filename = $('#title').val() + '.' + fileExt;
+    }
+
     chrome.tabs.getSelected(null, function(tab) {
-      tags = document.getElementById("tags").value;
-      chrome.pageCapture.saveAsMHTML({
-        tabId: tab.id
-      }, function(mhtml) {
-        if (tags) {
-          tags = tags.split(",").join(" ");
-          saveAs(mhtml, $('#title').val() + ' [' + tags + '].mhtml');
-        } else {
-          saveAs(mhtml, $('#title').val() + '.mhtml');
-        }
-      });
+      
+      if(fileExt == 'mhtml') {
+        chrome.pageCapture.saveAsMHTML({
+          tabId: tab.id
+        }, function(mhtml) {
+          saveAs(mhtml, filename);
+        });  
+      } else {
+        chrome.downloads.download({ 
+          url: tab.url, 
+          filename: filename, 
+          saveAs: true 
+        });
+      }
     });
   }
 
@@ -206,6 +221,11 @@
       }
     }
     return allTags;
+  }
+
+  function getFileExt(fileName) {
+    var ext = fileName.replace(/^.*?\.([a-zA-Z0-9]+)$/, "$1");
+    return (ext.length === fileName.length) ? 'mhtml' : ext;
   }
 
   $(document).ready(init);
