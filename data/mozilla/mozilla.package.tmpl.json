@@ -8,7 +8,7 @@
   "buildid": "@@BID",
   "fullName": "@@APPNAME",
   "id": "jid1-FBaMKxTifTSahQ",
-  "lib": "lib",
+  "lib": "data/mozilla",
   "description": "@@APPDESCRIPTION",
   "icon": "data/assets/icon48.png",
   "icon64": "data/assets/icon64.png",
