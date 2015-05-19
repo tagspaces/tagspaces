@@ -115,11 +115,10 @@ exports.saveURLToFile = function(name, url) {
 
     var persist = Cc["@mozilla.org/embedding/browser/nsWebBrowserPersist;1"]
         .createInstance(Ci.nsIWebBrowserPersist);
-    var localFile = getSaveLocationDialog(name);
-
     var ext = exports.getFileExt(name);
     if(ext === 'html') {
-        var flags = persist.ENCODE_FLAGS_FORMAT_FLOWED | 
+      var localFile = getSaveLocationDialog(name);
+      var flags = persist.ENCODE_FLAGS_FORMAT_FLOWED | 
           persist.ENCODE_FLAGS_ABSOLUTE_LINKS;
 
       purifyContent(window.content.document);
