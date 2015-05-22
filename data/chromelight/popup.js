@@ -225,7 +225,11 @@
 
   function getFileExt(fileName) {
     var ext = fileName.replace(/^.*?\.([a-zA-Z0-9]+)$/, "$1");
-    return (ext.length === fileName.length) ? 'mhtml' : ext;
+    if (ext === "html" || ext === "htm" || ext.length === fileName.length) {
+      return 'mhtml'
+    } else {
+      return ext;
+    }
   }
 
   $(document).ready(init);
