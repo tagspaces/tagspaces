@@ -6,18 +6,6 @@
         @@APPNAME Team
     </author>
     <content src="index.html" />
-    <feature name="App">
-        <param name="android-package" value="org.apache.cordova.App" />
-    </feature>
-    <feature name="Device">
-        <param name="android-package" value="org.apache.cordova.device.Device" />
-    </feature>
-    <feature name="File">
-        <param name="android-package" value="org.apache.cordova.file.FileUtils" />
-    </feature>
-    <feature name="WebIntent">
-        <param name="android-package" value="com.borismus.webintent.WebIntent" />
-    </feature>
     <access origin="*" />
     <preference name="useBrowserHistory" value="true" />
     <preference name="exit-on-suspend" value="false" />
