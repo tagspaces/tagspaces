@@ -51,7 +51,17 @@ define(function(require, exports, module) {
 
       if (window.plugins.webintent) {
         window.plugins.webintent.getUri(function(url) {
-          urlFromIntent = url;
+          if ("createTXTFile" === intentUri) {
+            TSCORE.createTXTFile();
+          } else {
+            urlFromIntent = url;   
+          }
+        });
+
+        window.plugins.webintent.onNewIntent(function(url) {
+          if ("createTXTFile" === url) {
+            TSCORE.createTXTFile();
+          }
         });
       }
     }
