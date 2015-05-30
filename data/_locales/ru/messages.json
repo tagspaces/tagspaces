@@ -20,7 +20,7 @@
         "description": "Title of screenshot button"
     },
     "editTitleLabel": {
-        "message": "Edit Title",
+        "message": "Редактировать название",
         "description": "Title of label."
     },
     "appName": {
@@ -40,7 +40,7 @@
         "description": "Title of label."
     },
     "saveAsMhtmlTitle": {
-        "message": "Save whole page as MHTML",
+        "message": "Сохранить целую страницу в формате MHTML",
         "description": "Title of save page button"
     },
     "appLauncherTitle": {

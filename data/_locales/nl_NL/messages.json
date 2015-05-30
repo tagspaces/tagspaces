@@ -1,10 +1,10 @@
 {
     "saveAsSelectionLabel": {
-        "message": "Sla geselecteerde op",
+        "message": "Selectie opslaan",
         "description": "Title of label."
     },
     "appLauncher": {
-        "message": "Start TagSpaces",
+        "message": "TagSpaces starten",
         "description": "Title of the application launcher in the browser."
     },
     "appDesc": {
@@ -12,15 +12,15 @@
         "description": ""
     },
     "addTagHelp": {
-        "message": "Labels moeten een minimale lengte hebben van 2 karakters en mogen geen speciale karakters bevatten als spaties, #, / ,\\\\ en zo.",
+        "message": "Tags moeten een minimale lengte hebben van 2 karakters en mogen geen speciale karakters bevatten als spaties, #, / ,\\\\ enz.",
         "description": "Add tag help message"
     },
     "saveScreenshotTitle": {
-        "message": "Sla schermafdruk van de zichtbare pagina op als PNG",
+        "message": "Schermafdruk opslaan van het zichtbare paginagebied als PNG",
         "description": "Title of screenshot button"
     },
     "editTitleLabel": {
-        "message": "Bewerk titel",
+        "message": "Titel bewerken",
         "description": "Title of label."
     },
     "appName": {
@@ -28,7 +28,7 @@
         "description": ""
     },
     "appLauncherLabel": {
-        "message": "Vang Web Content",
+        "message": "Web Content vangen",
         "description": "Title of label."
     },
     "saveScreenshotLabel": {
@@ -36,27 +36,27 @@
         "description": "Title of label."
     },
     "addTagLabel": {
-        "message": "Voeg labels toe",
+        "message": "Tags toevoegen",
         "description": "Title of label."
     },
     "saveAsMhtmlTitle": {
-        "message": "Sla hele pagina op als MHTML",
+        "message": "Hele pagina opslaan als MHTML",
         "description": "Title of save page button"
     },
     "appLauncherTitle": {
-        "message": "Start TagSpaces Browser in een nieuwe tab",
+        "message": "Start TagSpaces Browser in een nieuw tabblad",
         "description": "Title of the application launcher in the browser."
     },
     "saveSelectionAsHtmlTitle": {
-        "message": "Sla geselecteerde inhoud op als HTML",
+        "message": "Geselecteerde inhoud opslaan als HTML",
         "description": "Title of save selection button"
     },
     "saveAsMhtmlLabel": {
-        "message": "Sla hele pagina op",
+        "message": "Hele pagina opslaan",
         "description": "Title of label."
     },
     "saveFileLabel": {
-        "message": "Sla op als bestand",
+        "message": "Bestand opslaan als",
         "description": "Title of label."
     }
 }
