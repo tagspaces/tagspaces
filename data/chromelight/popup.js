@@ -191,7 +191,7 @@
 
     cleanedHTML = "<body>" + cleanedHTML + "</body>";
     if (htmlTemplate) {
-        cleanedHTML = htmlTemplate.replace(/\<body[^>]*\>([^]*)\<\/body>/m, cleanedHTML); // jshint ignore:line
+      cleanedHTML = htmlTemplate.replace(/\<body[^>]*\>([^]*)\<\/body>/m, cleanedHTML); // jshint ignore:line
     }
     return cleanedHTML;
   }
