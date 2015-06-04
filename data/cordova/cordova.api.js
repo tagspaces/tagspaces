@@ -10,16 +10,14 @@ define(function(require, exports, module) {
 
   var TSCORE = require("tscore");
   var TSPOSTIO = require("tspostioapi");
-
   var attachFastClick = require('cordova/fastclick/fastclick.min');
-
   var fsRoot;
-
   var urlFromIntent;
+  var widgetAction;
 
   document.addEventListener("deviceready", onDeviceReady, false);
   document.addEventListener("resume", onDeviceResume, false);
-
+  document.addEventListener("initApp", onApplicationLoad, false);
   // Register ios file open handler
   handleOpenURL = function(url) {
     var fileName = url.substring(url.lastIndexOf('/') + 1, url.length);
@@ -31,7 +29,6 @@ define(function(require, exports, module) {
   // Cordova loaded and can be used
   function onDeviceReady() {
     console.log("Device Ready:"); // "+device.platform+" - "+device.version);
-
     // Redifining the back button
     document.addEventListener("backbutton", function(e) {
       TSCORE.FileOpener.closeFile();
@@ -48,20 +45,17 @@ define(function(require, exports, module) {
     } 
 
     if (isCordovaAndroid) {
-
       if (window.plugins.webintent) {
         window.plugins.webintent.getUri(function(url) {
-          if ("createTXTFile" === intentUri) {
-            TSCORE.createTXTFile();
+          if ("createTXTFile" === url || url.indexOf("TagSpaces") > 0) {
+            widgetAction = url;
           } else {
-            urlFromIntent = url;   
+            urlFromIntent = url; 
           }
         });
-
         window.plugins.webintent.onNewIntent(function(url) {
-          if ("createTXTFile" === url) {
-            TSCORE.createTXTFile();
-          }
+          widgetAction = url;
+          widgetActionHandler();
         });
       }
     }
@@ -81,6 +75,32 @@ define(function(require, exports, module) {
     TSCORE.IO.listDirectory(TSCORE.currentPath);
   }
 
+  function widgetActionHandler() {
+
+    if (TSCORE.currentPath === null) {
+      TSCORE.showAlertDialog("Please set location folder to use widget");  
+      return;
+    }
+
+    if (widgetAction === "createTXTFile") {
+      TSCORE.createTXTFile();
+    } else {
+      var fileName = widgetAction.substring(widgetAction.lastIndexOf('/'), widgetAction.length);
+      var newFileName = TSCORE.currentPath + fileName;
+      var newFileFullPath = fsRoot.fullPath + "/" + newFileName;
+      renameFile(widgetAction, newFileName);
+      TSCORE.FileOpener.openFile(newFileFullPath);
+    }
+
+    widgetAction = undefined;
+  }
+
+  function onApplicationLoad() {
+    if (widgetAction) {
+      widgetActionHandler();
+    }
+  }
+
   var handleStartParameters = function() {
     if (urlFromIntent !== undefined && urlFromIntent.length > 0) {
       console.log("Intent URL: " + urlFromIntent);
@@ -93,7 +113,7 @@ define(function(require, exports, module) {
     window.requestFileSystem(LocalFileSystem.PERSISTENT, 0,
       function(fileSystem) { // success get file system
         fsRoot = fileSystem.root;
-        console.log("Filesystem Details: " + JSON.stringify(fsRoot));
+        //console.log("Filesystem Details: " + JSON.stringify(fsRoot));
         handleStartParameters();
       },
       function(evt) { // error get file system
