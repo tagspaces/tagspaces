@@ -45,6 +45,8 @@ define(function(require, exports, module) {
             if (lastLocation !== undefined && lastLocation.length >= 1 && !isFirefox) {
               TSCORE.openLocation(lastLocation);
               TSCORE.IO.checkAccessFileURLAllowed();
+              var evt = TSCORE.createDocumentEvent("initApp");
+              TSCORE.fireDocumentEvent(evt);
             }
             $('#loading').hide();
             if (isNode) {
