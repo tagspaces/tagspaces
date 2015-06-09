@@ -110,14 +110,16 @@ define(function(require, exports, module) {
   };
 
   function getFileSystem() {
-    window.requestFileSystem(LocalFileSystem.PERSISTENT, 0,
-      function(fileSystem) { // success get file system
-        fsRoot = fileSystem.root;
-        //console.log("Filesystem Details: " + JSON.stringify(fsRoot));
+    //on android cordova.file.externalRootDirectory points to sdcard0
+    var fsURI = (isCordovaiOS === true) ? cordova.file.applicationDirectory : "file:///";
+    window.resolveLocalFileSystemURI(fsURI, 
+      function(fileSystem) {
+        fsRoot = fileSystem;
+        console.log("Filesystem Details: " + JSON.stringify(fsRoot));
         handleStartParameters();
       },
-      function(evt) { // error get file system
-        console.log("File System Error: " + evt.target.error.code);
+      function(err) {
+        console.log("File System Error: " + JSON.stringify(err));
       }
     );
   }
@@ -221,21 +223,14 @@ define(function(require, exports, module) {
   };
 
   function normalizePath(path) {
-    if (isCordovaiOS) {
-      //we set absoilute path in ios because some extensions didn't recognize cdvfile
-      //but in cordova.api implementation we didn't need absolute path so we strip nativeURL
-      if (path.indexOf(fsRoot.nativeURL) === 0) {
-        path = path.replace(fsRoot.nativeURL , "/");
-      }
+    //we set absoilute path because some extensions didn't recognize cdvfile
+    //but in cordova.api implementation we didn't need absolute path so we strip nativeURL
+    if (path.indexOf(fsRoot.nativeURL) === 0) {
+      path = path.replace(fsRoot.nativeURL , "/");
+    }
 
-      if (path.indexOf(fsRoot.fullPath) === 0) {
-        path = path.substring(fsRoot.fullPath.length, path.length);
-      } 
-    } else {
-      //Android 
-      if (path.indexOf(fsRoot.fullPath) >= 0) {
-        path = path.substring(fsRoot.fullPath.length + 1, path.length);
-      }
+    if (path.indexOf(fsRoot.fullPath) === 0) {
+      path = path.substring(fsRoot.fullPath.length, path.length);
     }
     return path;
   }
@@ -336,11 +331,14 @@ define(function(require, exports, module) {
                 entries[i].file(
                   function(entry) {
                    
-                    if (!entry.fullPath && isCordovaiOS) {
-                      //In ios localsytem plugin didn't set fullpath so we set fullpath as absolute
-                      //this solve problem with extensions which cant use the cdvfile
+                    if (!entry.fullPath) {
+                      //Cordova file plugin didn't set fullpath so we set fullpath as absolute
+                      //this solve problem with extensions which can't use the cdvfile
                       var URL = "cdvfile://localhost/persistent/";
                       entry.fullPath = decodeURIComponent(entry.localURL);
+                      if (entry.fullPath.indexOf("cdvfile://localhost/root/") === 0) {
+                        URL = "cdvfile://localhost/root/";
+                      }
                       entry.fullPath = fsRoot.nativeURL + entry.fullPath.substring(URL.length, entry.fullPath.length);
                     }
 
@@ -358,7 +356,7 @@ define(function(require, exports, module) {
                     }
                   }, // jshint ignore:line
                   function(error) { // error get file system
-                    console.log("Getting file meta error: " + error.code);
+                    console.log("Getting file " + entry.name + " meta error: " + error.code);
                   } // jshint ignore:line
                 ); // jshint ignore:line
               } else {
