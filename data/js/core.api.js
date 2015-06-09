@@ -531,6 +531,18 @@ define(function(require, exports, module) {
     reLayout();
   }
 
+  function createDocumentEvent(type, data) {
+    var evt = document.createEvent('Events');
+    evt.initEvent(type, false, false);
+    return evt;
+  }
+
+  function fireDocumentEvent(evt) {
+    setTimeout(function() {
+      document.dispatchEvent(evt);
+    }, 0);
+  }
+
   // Proxying applications parts
   exports.Config = tsSettings;
   exports.IO = tsIOApi;
@@ -631,5 +643,7 @@ define(function(require, exports, module) {
   exports.fileListFILELMDT = 4;
   exports.fileListFILEPATH = 5;
   exports.fileListFILENAME = 6;
-
+  //document events
+  exports.createDocumentEvent = createDocumentEvent;
+  exports.fireDocumentEvent = fireDocumentEvent;
 });
