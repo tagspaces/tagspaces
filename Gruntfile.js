@@ -29,266 +29,63 @@ module.exports = function(grunt) {
       }
     },
     copy: {
-      cordovaAndroid: {
-        files: [{
-          expand: true,
-          cwd: 'data/assets',
-          src: ['**'],
-          dest: '<%= dev.cordovaDevDir %>/assets'
-        }, {
-          expand: true,
-          cwd: 'data/libs',
-          src: ['**'],
-          dest: '<%= dev.cordovaDevDir %>/libs'
-        }, {
-          expand: true,
-          cwd: 'data/js',
-          src: ['**'],
-          dest: '<%= dev.cordovaDevDir %>/js'
-        }, {
-          expand: true,
-          cwd: 'data/locales',
-          src: ['**'],
-          dest: '<%= dev.cordovaDevDir %>/locales'
-        }, {
-          expand: true,
-          cwd: 'data/templates',
-          src: ['**'],
-          dest: '<%= dev.cordovaDevDir %>/templates'
-        }, {
-          expand: true,
-          cwd: 'data/ext/perspectiveList/',
-          src: ['**'],
-          dest: '<%= dev.cordovaDevDir %>/ext/perspectiveList/'
-        }, {
-          expand: true,
-          cwd: 'data/ext/perspectiveGrid/',
-          src: ['**'],
-          dest: '<%= dev.cordovaDevDir %>/ext/perspectiveGrid/'
-        }, {
-          expand: true,
-          cwd: 'data/ext/perspectiveGraph/',
-          src: ['**'],
-          dest: '<%= dev.cordovaDevDir %>/ext/perspectiveGraph/'
-        }, {
-          expand: true,
-          cwd: 'data/ext/editorHTML/',
-          src: ['**'],
-          dest: '<%= dev.cordovaDevDir %>/ext/editorHTML/'
-        }, {
-          expand: true,
-          cwd: 'data/ext/editorJSON/',
-          src: ['**'],
-          dest: '<%= dev.cordovaDevDir %>/ext/editorJSON/'
-        }, {
-          expand: true,
-          cwd: 'data/ext/editorText/',
-          src: ['**'],
-          dest: '<%= dev.cordovaDevDir %>/ext/editorText/'
-        }, {
-          expand: true,
-          cwd: 'data/ext/editorODF/',
-          src: ['**'],
-          dest: '<%= dev.cordovaDevDir %>/ext/editorODF/'
-        }, {
-          expand: true,
-          cwd: 'data/ext/viewerText/',
-          src: ['**'],
-          dest: '<%= dev.cordovaDevDir %>/ext/viewerText'
-        }, {
-          expand: true,
-          cwd: 'data/ext/viewerHTML/',
-          src: ['**'],
-          dest: '<%= dev.cordovaDevDir %>/ext/viewerHTML'
-        }, {
-          expand: true,
-          cwd: 'data/ext/viewerMHTML/',
-          src: ['**'],
-          dest: '<%= dev.cordovaDevDir %>/ext/viewerMHTML'
-        }, {
-          expand: true,
-          cwd: 'data/ext/viewerPDF/',
-          src: ['**'],
-          dest: '<%= dev.cordovaDevDir %>/ext/viewerPDF'
-        }, {
-          expand: true,
-          cwd: 'data/ext/viewerImage/',
-          src: ['**'],
-          dest: '<%= dev.cordovaDevDir %>/ext/viewerImage/'
-        }, {
-          expand: true,
-          cwd: 'data/ext/viewerURL/',
-          src: ['**'],
-          dest: '<%= dev.cordovaDevDir %>/ext/viewerURL/'
-        }, {
-          expand: true,
-          cwd: 'data/ext/viewerMD/',
-          src: ['**'],
-          dest: '<%= dev.cordovaDevDir %>/ext/viewerMD/'
-        }, {
-          expand: true,
-          cwd: 'data/ext/viewerBrowser/',
-          src: ['**'],
-          dest: '<%= dev.cordovaDevDir %>/ext/viewerBrowser/'
-        }, {
-          expand: true,
-          cwd: 'data/cordova',
-          src: ['**/*.js'],
-          dest: '<%= dev.cordovaDevDir %>/cordova'
-        }, {
-          expand: true,
-          cwd: 'data/pro',
-          src: ['**/*.js'],
-          dest: '<%= dev.cordovaDevDir %>/pro'
-        }, {
-          src: 'data/about.html',
-          dest: '<%= dev.cordovaDevDir %>/about.html'
-        }, {
-          src: 'data/index.html',
-          dest: '<%= dev.cordovaDevDir %>/index.html'
-        }, {
-          src: 'data/LICENSE.txt',
-          dest: '<%= dev.cordovaDevDir %>/LICENSE.txt'
-        }, {
-          src: 'data/EULA.txt',
-          dest: '<%= dev.cordovaDevDir %>/EULA.txt'
-        }, {
-          src: 'data/loader.js',
-          dest: '<%= dev.cordovaDevDir %>/loader.js'
-        }]
-      },
       cordovaIOS: {
         files: [{
-          expand: true,
-          cwd: 'data/assets',
-          src: ['**'],
-          dest: '<%= dev.cordovaIOSDevDir %>/assets'
+          expand: true, cwd: 'data/assets', src: ['**'], dest: '<%= dev.cordovaIOSDevDir %>/assets'
         }, {
-          expand: true,
-          cwd: 'data/libs',
-          src: ['**'],
-          dest: '<%= dev.cordovaIOSDevDir %>/libs'
+          expand: true, cwd: 'data/libs', src: ['**'], dest: '<%= dev.cordovaIOSDevDir %>/libs'
         }, {
-          expand: true,
-          cwd: 'data/js',
-          src: ['**'],
-          dest: '<%= dev.cordovaIOSDevDir %>/js'
+          expand: true, cwd: 'data/js', src: ['**'], dest: '<%= dev.cordovaIOSDevDir %>/js'
         }, {
-          expand: true,
-          cwd: 'data/locales',
-          src: ['**'],
-          dest: '<%= dev.cordovaIOSDevDir %>/locales'
+          expand: true, cwd: 'data/locales', src: ['**'], dest: '<%= dev.cordovaIOSDevDir %>/locales'
         }, {
-          expand: true,
-          cwd: 'data/templates',
-          src: ['**'],
-          dest: '<%= dev.cordovaIOSDevDir %>/templates'
+          expand: true, cwd: 'data/templates', src: ['**'], dest: '<%= dev.cordovaIOSDevDir %>/templates'
         }, {
-          expand: true,
-          cwd: 'data/ext/perspectiveList/',
-          src: ['**'],
-          dest: '<%= dev.cordovaIOSDevDir %>/ext/perspectiveList/'
+          expand: true, cwd: 'data/ext/perspectiveList/', src: ['**'], dest: '<%= dev.cordovaIOSDevDir %>/ext/perspectiveList/'
         }, {
-          expand: true,
-          cwd: 'data/ext/perspectiveGrid/',
-          src: ['**'],
-          dest: '<%= dev.cordovaIOSDevDir %>/ext/perspectiveGrid/'
+          expand: true, cwd: 'data/ext/perspectiveGrid/', src: ['**'], dest: '<%= dev.cordovaIOSDevDir %>/ext/perspectiveGrid/'
         }, {
-          expand: true,
-          cwd: 'data/ext/perspectiveGraph/',
-          src: ['**'],
-          dest: '<%= dev.cordovaIOSDevDir %>/ext/perspectiveGraph/'
+          expand: true, cwd: 'data/ext/perspectiveGraph/', src: ['**'], dest: '<%= dev.cordovaIOSDevDir %>/ext/perspectiveGraph/'
         }, {
-          expand: true,
-          cwd: 'data/ext/editorHTML/',
-          src: ['**'],
-          dest: '<%= dev.cordovaIOSDevDir %>/ext/editorHTML/'
+          expand: true, cwd: 'data/ext/editorHTML/', src: ['**'], dest: '<%= dev.cordovaIOSDevDir %>/ext/editorHTML/'
         }, {
-          expand: true,
-          cwd: 'data/ext/editorJSON/',
-          src: ['**'],
-          dest: '<%= dev.cordovaIOSDevDir %>/ext/editorJSON/'
+          expand: true, cwd: 'data/ext/editorJSON/', src: ['**'], dest: '<%= dev.cordovaIOSDevDir %>/ext/editorJSON/'
         }, {
-          expand: true,
-          cwd: 'data/ext/editorText/',
-          src: ['**'],
-          dest: '<%= dev.cordovaIOSDevDir %>/ext/editorText/'
+          expand: true, cwd: 'data/ext/editorText/', src: ['**'], dest: '<%= dev.cordovaIOSDevDir %>/ext/editorText/'
         }, {
-          expand: true,
-          cwd: 'data/ext/editorODF/',
-          src: ['**'],
-          dest: '<%= dev.cordovaIOSDevDir %>/ext/editorODF/'
+          expand: true, cwd: 'data/ext/editorODF/', src: ['**'], dest: '<%= dev.cordovaIOSDevDir %>/ext/editorODF/'
         }, {
-          expand: true,
-          cwd: 'data/ext/viewerText/',
-          src: ['**'],
-          dest: '<%= dev.cordovaIOSDevDir %>/ext/viewerText'
+          expand: true, cwd: 'data/ext/viewerText/', src: ['**'], dest: '<%= dev.cordovaIOSDevDir %>/ext/viewerText'
         }, {
-          expand: true,
-          cwd: 'data/ext/viewerHTML/',
-          src: ['**'],
-          dest: '<%= dev.cordovaIOSDevDir %>/ext/viewerHTML'
+          expand: true, cwd: 'data/ext/viewerHTML/', src: ['**'], dest: '<%= dev.cordovaIOSDevDir %>/ext/viewerHTML'
         }, {
-          expand: true,
-          cwd: 'data/ext/viewerMHTML/',
-          src: ['**'],
-          dest: '<%= dev.cordovaIOSDevDir %>/ext/viewerMHTML'
+          expand: true, cwd: 'data/ext/viewerMHTML/', src: ['**'], dest: '<%= dev.cordovaIOSDevDir %>/ext/viewerMHTML'
         }, {
-          expand: true,
-          cwd: 'data/ext/viewerPDF/',
-          src: ['**'],
-          dest: '<%= dev.cordovaIOSDevDir %>/ext/viewerPDF'
+          expand: true, cwd: 'data/ext/viewerPDF/', src: ['**'], dest: '<%= dev.cordovaIOSDevDir %>/ext/viewerPDF'
         }, {
-          expand: true,
-          cwd: 'data/ext/viewerImage/',
-          src: ['**'],
-          dest: '<%= dev.cordovaIOSDevDir %>/ext/viewerImage/'
+          expand: true, cwd: 'data/ext/viewerImage/', src: ['**'], dest: '<%= dev.cordovaIOSDevDir %>/ext/viewerImage/'
         }, {
-          expand: true,
-          cwd: 'data/ext/viewerURL/',
-          src: ['**'],
-          dest: '<%= dev.cordovaIOSDevDir %>/ext/viewerURL/'
+          expand: true, cwd: 'data/ext/viewerURL/', src: ['**'], dest: '<%= dev.cordovaIOSDevDir %>/ext/viewerURL/'
         }, {
-          expand: true,
-          cwd: 'data/ext/viewerMD/',
-          src: ['**'],
-          dest: '<%= dev.cordovaIOSDevDir %>/ext/viewerMD/'
+          expand: true, cwd: 'data/ext/viewerMD/', src: ['**'], dest: '<%= dev.cordovaIOSDevDir %>/ext/viewerMD/'
         }, {
-          expand: true,
-          cwd: 'data/ext/viewerBrowser/',
-          src: ['**'],
-          dest: '<%= dev.cordovaIOSDevDir %>/ext/viewerBrowser/'
+          expand: true, cwd: 'data/ext/viewerBrowser/', src: ['**'], dest: '<%= dev.cordovaIOSDevDir %>/ext/viewerBrowser/'
         }, {
-          expand: true,
-          cwd: 'data/cordova',
-          src: ['**/*.js'],
-          dest: '<%= dev.cordovaIOSDevDir %>/cordova'
+          expand: true, cwd: 'data/cordova', src: ['**/*.js'], dest: '<%= dev.cordovaIOSDevDir %>/cordova'
         }, {
-          expand: true,
-          cwd: 'data/pro',
-          src: ['**/*.js'],
-          dest: '<%= dev.cordovaIOSDevDir %>/pro'
+          expand: true, cwd: 'data/pro', src: ['**/*.js'], dest: '<%= dev.cordovaIOSDevDir %>/pro'
         }, {
-          expand: true,
-          cwd: 'data/web',
-          src: ['**'],
-          dest: '<%= dev.cordovaIOSDevDir %>/web'
+          expand: true, cwd: 'data/web', src: ['**'], dest: '<%= dev.cordovaIOSDevDir %>/web'
         }, {
-          src: 'data/about.html',
-          dest: '<%= dev.cordovaIOSDevDir %>/about.html'
+          src: 'data/about.html', dest: '<%= dev.cordovaIOSDevDir %>/about.html'
         }, {
-          src: 'data/index.html',
-          dest: '<%= dev.cordovaIOSDevDir %>/index.html'
+          src: 'data/index.html', dest: '<%= dev.cordovaIOSDevDir %>/index.html'
         }, {
-          src: 'data/LICENSE.txt',
-          dest: '<%= dev.cordovaIOSDevDir %>/LICENSE.txt'
+          src: 'data/LICENSE.txt', dest: '<%= dev.cordovaIOSDevDir %>/LICENSE.txt'
         }, {
-          src: 'data/EULA.txt',
-          dest: '<%= dev.cordovaIOSDevDir %>/EULA.txt'
+          src: 'data/EULA.txt', dest: '<%= dev.cordovaIOSDevDir %>/EULA.txt'
         }, {
-          src: 'data/loader.js',
-          dest: '<%= dev.cordovaIOSDevDir %>/loader.js'
-        }]
+          src: 'data/loader.js', dest: '<%= dev.cordovaIOSDevDir %>/loader.js' }]
       }
     },
     replace: {
