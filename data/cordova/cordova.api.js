@@ -47,10 +47,12 @@ define(function(require, exports, module) {
     if (isCordovaAndroid) {
       if (window.plugins.webintent) {
         window.plugins.webintent.getUri(function(url) {
-          if ("createTXTFile" === url || url.indexOf("TagSpaces") > 0) {
-            widgetAction = url;
-          } else {
-            urlFromIntent = url; 
+          if(url) {
+            if ("createTXTFile" === url || url.indexOf("TagSpaces") > 0) {
+              widgetAction = url;
+            } else {
+              urlFromIntent = url; 
+            }
           }
         });
         window.plugins.webintent.onNewIntent(function(url) {
@@ -111,8 +113,8 @@ define(function(require, exports, module) {
 
   function getFileSystem() {
     //on android cordova.file.externalRootDirectory points to sdcard0
-    var fsURI = (isCordovaiOS === true) ? cordova.file.applicationDirectory : "file:///";
-    window.resolveLocalFileSystemURI(fsURI, 
+    var fsURL = (isCordovaiOS === true) ? cordova.file.applicationDirectory : "file:///";
+    window.resolveLocalFileSystemURL(fsURL, 
       function(fileSystem) {
         fsRoot = fileSystem;
         console.log("Filesystem Details: " + JSON.stringify(fsRoot));
