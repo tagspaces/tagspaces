@@ -190,7 +190,9 @@
     // end saving all images*/
 
     cleanedHTML = "<body>" + cleanedHTML + "</body>";
-    cleanedHTML = htmlTemplate.replace(/\<body[^>]*\>([^]*)\<\/body>/m, cleanedHTML); // jshint ignore:line
+    if (htmlTemplate) {
+      cleanedHTML = htmlTemplate.replace(/\<body[^>]*\>([^]*)\<\/body>/m, cleanedHTML); // jshint ignore:line
+    }
     return cleanedHTML;
   }
 

@@ -49,7 +49,9 @@ define(function(require, exports, module) {
             filesize = undefined;
             lmdt = undefined;
             //console.log(dirList[entry]._namespaces["DAV:"]);
-            if (typeof dirList[entry]._namespaces["DAV:"].getcontentlength === 'undefined') {
+            if (typeof dirList[entry]._namespaces["DAV:"].getcontentlength === 'undefined' ||
+              dirList[entry]._namespaces["DAV:"].getcontentlength._xmlvalue.length === 0
+            ) {
               isDir = true;
             } else {
               filesize = dirList[entry]._namespaces["DAV:"].getcontentlength;

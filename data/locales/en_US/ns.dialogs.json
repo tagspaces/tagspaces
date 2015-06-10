@@ -104,7 +104,7 @@
     "fileEditor": "File Editor",
     "restoreDefaulSettingButton": "Restore Initial Settings",
     "restoreDefaulSettingTitleConfirm": "Restoring Default Settings",
-    "restoreDefaulSettingMessageConfirm": "By restoring the default setting, all locations, tags and taggroups will be lost.Are you sure you want to continue?",
+    "restoreDefaulSettingMessageConfirm": "By restoring the default setting, all locations, tags and taggroups will be lost. Are you sure you want to continue?",
     "removeFileTypeTooltip": "Remove this file type",
     "removePerspectiveTooltip": "Remove Perspective",
     "switchLanguageHelp": "Switching language will fully take effect after restarting the application",

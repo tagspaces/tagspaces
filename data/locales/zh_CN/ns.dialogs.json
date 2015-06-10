@@ -1,6 +1,6 @@
 {
     "titleConfirm": "确认",
-    "titleAlert": "警报",
+    "titleAlert": "警告",
     "titleWaiting": "TagSpaces正忙",
     "aboutTitle": "关于 TagSpaces",
     "advancedSettingTitle": "高级设置",
@@ -10,7 +10,7 @@
     "closingEditedFileContentConfirm": "如果您确认，您所做的更改将丢失。",
     "fileDeleteTitleConfirm": "删除文件",
     "fileDeleteContentConfirm": "该文件 __filePath__ 将被永久删除，无法恢复。你确定吗？",
-    "selectedFilesDeleteContentConfirm": "All selected files will be permanently deleted and cannot be recovered. Are you sure?",
+    "selectedFilesDeleteContentConfirm": "所有选中的文件将被永久删除，是否确定？",
     "fileSaveTitleConfirm": "确认保存文件",
     "fileSaveContentConfirm": "是否覆盖当前文件？",
     "errorOpeningLocationAlert": "打开路径时出错！当前打开的位置将被关闭。",
@@ -139,8 +139,8 @@
     "tagGroupNameHelp": "标签组名称至少包含一个字符",
     "operationNotPermittedInEditModeAlert": "不允许该操作，因为文档已被更改",
     "exportTagGroupsButton": "导出标签组到.JSON文件",
-    "showMainMenu": "Show main menu (restart needed)",
-    "invalidImportFile": "The imported file has invalid format",
-    "importGroupTagsTitle": "Import tags from file",
+    "showMainMenu": "显示主菜单(需要重启)",
+    "invalidImportFile": "导入的文件格式无效",
+    "importGroupTagsTitle": "从文件导入标签",
     "-": "-"
 }
