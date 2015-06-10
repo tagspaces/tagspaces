@@ -42,24 +42,27 @@ define(function(require, exports, module) {
       // TODO: use fileOpener2 plugin on all platforms
       // https://build.phonegap.com/plugins/1117
       window.plugins.fileOpener = cordova.plugins.fileOpener2;
-    } 
+    }
 
-    if (isCordovaAndroid) {
-      if (window.plugins.webintent) {
-        window.plugins.webintent.getUri(function(url) {
+    if (window.plugins.webintent) {
+      window.plugins.webintent.getUri(
+        function(url) {
           if ("createTXTFile" === url || url.indexOf("TagSpaces") > 0) {
             widgetAction = url;
           } else {
             urlFromIntent = url; 
           }
-        });
-        window.plugins.webintent.onNewIntent(function(url) {
-          widgetAction = url;
-          widgetActionHandler();
-        });
-      }
+        }, 
+        function(error) {
+          TSCORE.showAlertDialog("WebIntent Error: " + error);
+        }
+      );
+      window.plugins.webintent.onNewIntent(function(url) {
+        widgetAction = url;
+        widgetActionHandler();
+      });
     }
-    
+
     attachFastClick(document.body);
     getFileSystem();
 
