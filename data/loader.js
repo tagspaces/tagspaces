@@ -170,7 +170,9 @@ define(function (require) {
     var TSCORE;
     requirejs(['tscore','underscore'], function (core) {
         TSCORE = core;
-        TSCORE.initApp();
+        if(!isCordova) {
+            TSCORE.initApp();    
+        }
     });
 
 });

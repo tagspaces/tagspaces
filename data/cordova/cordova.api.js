@@ -120,6 +120,7 @@ define(function(require, exports, module) {
         fsRoot = fileSystem;
         console.log("Filesystem Details: " + JSON.stringify(fsRoot));
         handleStartParameters();
+        TSCORE.initApp();
       },
       function(err) {
         console.log("File System Error: " + JSON.stringify(err));
