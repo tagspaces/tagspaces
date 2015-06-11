@@ -90,7 +90,7 @@ define(function(require, exports, module) {
     } else {
       var fileName = widgetAction.substring(widgetAction.lastIndexOf('/'), widgetAction.length);
       var newFileName = TSCORE.currentPath + fileName;
-      var newFileFullPath = fsRoot.fullPath + "/" + newFileName;
+      var newFileFullPath = fsRoot.nativeURL + "/" + newFileName;
       renameFile(widgetAction, newFileName);
       TSCORE.FileOpener.openFile(newFileFullPath);
     }
