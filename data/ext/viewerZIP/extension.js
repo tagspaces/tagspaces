@@ -17,52 +17,52 @@ define(function(require, exports, module) {
 
   var extensionDirectory = TSCORE.Config.getExtensionPath() + "/" + exports.id;
   
-  function createPrewiew(filePath, elementID) {
+  function createZipPrewiew(filePath, elementID) {
 
     var fileReader = new FileReader();
 
-    fileReader.onload = function(fileLoadedEvent) {
+    fileReader.onload = function(event) {
 
-      var zipFileLoaded = new JSZip(fileLoadedEvent.target.result);
+      var zipFile = new JSZip(event.target.result);
 
-      $('#' + elementID).append( "<p><h4>" + filePath + "<h4></p>" );
+      var $parent = $('#' + elementID);
 
-      var ulFilesContained = $("#" + elementID).append("<ul/>");
+      var $frame = $('<iframe/>')
+        .width($parent.width())
+        .height($parent.height())
+        .appendTo($parent).contents().find('body');
+      
+      $frame.append( "<p> Contents of file " + filePath + "</p>" );
 
-      for (var nameOfFileContainedInZipFile in zipFileLoaded.files)
-      {
+      var ulFiles = $frame.append("<ul/>");
 
-        var fileContainedInZipFile = zipFileLoaded.files[nameOfFileContainedInZipFile];
-        
-        console.log("zip file: " + fileContainedInZipFile);
+      for (var fileName in zipFile.files) {
 
-        var linkFileContained = $('<a>').attr('href', '#').text(fileContainedInZipFile);
-       
-        //linkFileContained.file = fileContainedInZipFile;
-        //linkFileContained.onclick = displayFileAsText;
-
-        var liFileContained = $('<li/>')
-        liFileContained.append(linkFileContained);
-        ulFilesContained.append(liFileContained);
-
+        var file = zipFile.files[fileName];
+        var link = $('<a>').attr('href', '#').text(file.name);
+        link.click(function(event){
+          event.preventDefault();
+          alert($(this).text());
+        });
+        var liFile = $('<li/>').append(link);
+        ulFiles.append(liFile);
       }
     };
     
-    var file = new File(filePath,0);
+    var file = new File(filePath, 0);
     fileReader.readAsArrayBuffer(file);
   }
 
   exports.init = function(filePath, elementID) {
     console.log("Initalization Browser ZIP Viewer...");
-    createPrewiew(filePath, elementID);
-    
+    createZipPrewiew(filePath, elementID);
   };
 
   exports.viewerMode = function() {
     console.log("viewerMode not supported on this extension");
   };
 
-  exports.setContent = function() {
+  exports.setContent = function(content) {
     console.log("setContent not supported on this extension");
   };
 
