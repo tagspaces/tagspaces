@@ -16,10 +16,29 @@ define(function(require, exports, module) {
   var JSZip = require("jszip");
 
   var extensionDirectory = TSCORE.Config.getExtensionPath() + "/" + exports.id;
-  
+
+  function showContentFilePreviewDialog(containFile) {
+
+    var html = "<p><pre>" + containFile.asText() + "</pre></p>";
+    require(['text!' + extensionDirectory + '/previewDialog.html'], function(uiTPL) {
+      
+      if ($('#previewDialog').length < 1) {
+        var uiTemplate = Handlebars.compile(uiTPL);
+        $('body').append(uiTemplate());
+      }
+      var dialogPreview = $('#previewDialog');
+      dialogPreview.find('.modal-body').empty().append(html);
+      dialogPreview.modal({
+        backdrop: 'static',
+        show: true
+      });
+    });
+  }
+
   function createZipPrewiew(filePath, elementID) {
 
     var fileReader = new FileReader();
+    TSCORE.showLoadingAnimation();
 
     fileReader.onload = function(event) {
 
@@ -37,15 +56,21 @@ define(function(require, exports, module) {
 
       for (var fileName in zipFile.files) {
 
-        var containFile = zipFile.files[fileName];
-        var linkToFile = $('<a>').attr('href', '#').text(containFile.name);
+        if(zipFile.files[fileName].dir === true) {
+          continue;
+        }
+
+        var linkToFile = $('<a>').attr('href', '#').text(fileName);
         linkToFile.click(function(event){
           event.preventDefault();
-          alert($(this).text());
+          var containFile = zipFile.files[$(this).text()];
+          showContentFilePreviewDialog(containFile);
         });
         var liFile = $('<li/>').css('list-style-type','none').append(linkToFile);
         ulFiles.append(liFile);
       }
+
+      TSCORE.hideLoadingAnimation();
     };
     
     var file = new File(filePath, 0);
