@@ -26,25 +26,24 @@ define(function(require, exports, module) {
       var zipFile = new JSZip(event.target.result);
 
       var $parent = $('#' + elementID);
-
-      var $frame = $('<iframe/>')
+      var $previewElement = $('<div/>').css({'overflow': 'auto', 'padding': '5px'})
         .width($parent.width())
         .height($parent.height())
-        .appendTo($parent).contents().find('body');
-      
-      $frame.append( "<p> Contents of file " + filePath + "</p>" );
+        .appendTo($parent);
 
-      var ulFiles = $frame.append("<ul/>");
+      $previewElement.append( "<p> Contents of file " + filePath + "</p>" );
+
+      var ulFiles = $previewElement.append("<ul/>");
 
       for (var fileName in zipFile.files) {
 
-        var file = zipFile.files[fileName];
-        var link = $('<a>').attr('href', '#').text(file.name);
-        link.click(function(event){
+        var containFile = zipFile.files[fileName];
+        var linkToFile = $('<a>').attr('href', '#').text(containFile.name);
+        linkToFile.click(function(event){
           event.preventDefault();
           alert($(this).text());
         });
-        var liFile = $('<li/>').append(link);
+        var liFile = $('<li/>').css('list-style-type','none').append(linkToFile);
         ulFiles.append(liFile);
       }
     };
