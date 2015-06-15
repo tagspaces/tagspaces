@@ -869,7 +869,7 @@ define(function(require, exports, module) {
     // Storing setting in the local storage of mozilla and chorme
     localStorage.setItem('tagSpacesSettings', JSON.stringify(exports.Settings));
     // Storing settings in firefox native preferences
-    if (isFirefox || isChrome) {
+    if (isFirefox || isChrome || isCordova) {
       TSCORE.IO.saveSettings(JSON.stringify(exports.Settings));
     }
     console.log('Tagspace Settings Saved!');
