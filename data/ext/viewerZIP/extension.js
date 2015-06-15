@@ -14,12 +14,21 @@ define(function(require, exports, module) {
 
   var TSCORE = require("tscore");
   var JSZip = require("jszip");
+  var maxPreviewSize = (1024 * 3); //3kb limit for preview
 
   var extensionDirectory = TSCORE.Config.getExtensionPath() + "/" + exports.id;
 
   function showContentFilePreviewDialog(containFile) {
 
-    var fileContent = $("<pre/>").text(containFile.asText());
+    var unitArr = containFile.asUint8Array();
+    var previewText ="";
+    var byteLength = unitArr.byteLength > maxPreviewSize ?  maxPreviewSize : unitArr.byteLength;
+    
+    for (var i=0; i < byteLength; i++) {
+      previewText += String.fromCharCode(unitArr[i]);
+    }
+
+    var fileContent = $("<pre/>").text(previewText);
     require(['text!' + extensionDirectory + '/previewDialog.html'], function(uiTPL) {
       
       if ($('#previewDialog').length < 1) {
