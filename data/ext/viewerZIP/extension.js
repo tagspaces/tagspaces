@@ -45,7 +45,7 @@ define(function(require, exports, module) {
       var zipFile = new JSZip(event.target.result);
 
       var $parent = $('#' + elementID);
-      var $previewElement = $('<div/>').css({'overflow': 'auto', 'padding': '5px'})
+      var $previewElement = $('<div/>').css({'overflow': 'auto', 'padding': '5px','fontSize': 12})
         .width($parent.width())
         .height($parent.height())
         .appendTo($parent);

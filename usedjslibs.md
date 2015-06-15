@@ -33,3 +33,4 @@
 * Ubuntu Font Family - http://font.ubuntu.com/
 * PDF.js (used in viewerPDF extension) - http://mozilla.github.io/pdf.js/
 * webodf (used in editorODF extension) - http://webodf.org/
+* jszip (used in viewerZIP extension) - http://stuk.github.io/jszip/
