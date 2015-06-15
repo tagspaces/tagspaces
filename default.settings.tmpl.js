@@ -30,7 +30,7 @@ define(function (require, exports, module) {
         "lastOpenedLocation":       "",
         "webDavPath"  :             "oc/remote.php/webdav",
         "ootbPerspectives":         [@@DEFAULTPERSPECTIVES],
-        "ootbViewers":              [ "viewerBrowser", "viewerMD", "viewerImage", "viewerPDF", "editorText", "viewerText", "editorODF", "viewerURL", "viewerHTML", "viewerMHTML", "editorJSON" ],
+        "ootbViewers":              [ "viewerBrowser", "viewerMD", "viewerImage", "viewerPDF", "editorText", "viewerText", "editorODF", "viewerURL", "viewerHTML", "viewerMHTML", "editorJSON", "viewerZIP" ],
         "ootbEditors":              [ "editorHTML", "editorText", "editorODF", "editorJSON" ],
         "perspectives":             [@@ACTIVATEDPERSPECTIVES],
         "interfaceLanguage": "en_US",
@@ -140,7 +140,8 @@ define(function (require, exports, module) {
             { "type": "mov", "viewer": "viewerBrowser", "editor": "false" },
             { "type": "desktop", "viewer": "viewerURL", "editor": "false" },
             { "type": "website", "viewer": "viewerURL", "editor": "false" },
-            { "type": "url", "viewer": "viewerURL", "editor": "false" }
+            { "type": "url", "viewer": "viewerURL", "editor": "false" },
+            { "type": "zip", "viewer": "viewerZIP", "editor": "false" }
         ],
         "tagGroups": [
             {
