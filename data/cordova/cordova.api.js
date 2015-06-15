@@ -10,16 +10,14 @@ define(function(require, exports, module) {
 
   var TSCORE = require("tscore");
   var TSPOSTIO = require("tspostioapi");
-
   var attachFastClick = require('cordova/fastclick/fastclick.min');
-
   var fsRoot;
-
   var urlFromIntent;
+  var widgetAction;
 
   document.addEventListener("deviceready", onDeviceReady, false);
   document.addEventListener("resume", onDeviceResume, false);
-
+  document.addEventListener("initApp", onApplicationLoad, false);
   // Register ios file open handler
   handleOpenURL = function(url) {
     var fileName = url.substring(url.lastIndexOf('/') + 1, url.length);
@@ -31,7 +29,6 @@ define(function(require, exports, module) {
   // Cordova loaded and can be used
   function onDeviceReady() {
     console.log("Device Ready:"); // "+device.platform+" - "+device.version);
-
     // Redifining the back button
     document.addEventListener("backbutton", function(e) {
       TSCORE.FileOpener.closeFile();
@@ -45,17 +42,27 @@ define(function(require, exports, module) {
       // TODO: use fileOpener2 plugin on all platforms
       // https://build.phonegap.com/plugins/1117
       window.plugins.fileOpener = cordova.plugins.fileOpener2;
-    } 
-
-    if (isCordovaAndroid) {
-
-      if (window.plugins.webintent) {
-        window.plugins.webintent.getUri(function(url) {
-          urlFromIntent = url;
-        });
-      }
     }
-    
+
+    if (window.plugins.webintent) {
+      window.plugins.webintent.getUri(
+        function(url) {
+          if ("createTXTFile" === url || url.indexOf("TagSpaces") > 0) {
+            widgetAction = url;
+          } else {
+            urlFromIntent = url; 
+          }
+        }
+        //, function(error) {
+        //  TSCORE.showAlertDialog("WebIntent Error: " + error);
+        //}
+      );
+      window.plugins.webintent.onNewIntent(function(url) {
+        widgetAction = url;
+        widgetActionHandler();
+      });
+    }
+
     attachFastClick(document.body);
     getFileSystem();
 
@@ -71,6 +78,32 @@ define(function(require, exports, module) {
     TSCORE.IO.listDirectory(TSCORE.currentPath);
   }
 
+  function widgetActionHandler() {
+
+    if (TSCORE.currentPath === null) {
+      TSCORE.showAlertDialog("Please set location folder to use widget");  
+      return;
+    }
+
+    if (widgetAction === "createTXTFile") {
+      TSCORE.createTXTFile();
+    } else {
+      var fileName = widgetAction.substring(widgetAction.lastIndexOf('/'), widgetAction.length);
+      var newFileName = TSCORE.currentPath + fileName;
+      var newFileFullPath = fsRoot.nativeURL + "/" + newFileName;
+      renameFile(widgetAction, newFileName);
+      TSCORE.FileOpener.openFile(newFileFullPath);
+    }
+
+    widgetAction = undefined;
+  }
+
+  function onApplicationLoad() {
+    if (widgetAction) {
+      widgetActionHandler();
+    }
+  }
+
   var handleStartParameters = function() {
     if (urlFromIntent !== undefined && urlFromIntent.length > 0) {
       console.log("Intent URL: " + urlFromIntent);
@@ -80,14 +113,17 @@ define(function(require, exports, module) {
   };
 
   function getFileSystem() {
-    window.requestFileSystem(LocalFileSystem.PERSISTENT, 0,
-      function(fileSystem) { // success get file system
-        fsRoot = fileSystem.root;
+    //on android cordova.file.externalRootDirectory points to sdcard0
+    var fsURL = (isCordovaiOS === true) ? cordova.file.applicationDirectory : "file:///";
+    window.resolveLocalFileSystemURL(fsURL, 
+      function(fileSystem) {
+        fsRoot = fileSystem;
         console.log("Filesystem Details: " + JSON.stringify(fsRoot));
         handleStartParameters();
+        TSCORE.initApp();
       },
-      function(evt) { // error get file system
-        console.log("File System Error: " + evt.target.error.code);
+      function(err) {
+        console.log("File System Error: " + JSON.stringify(err));
       }
     );
   }
@@ -191,21 +227,14 @@ define(function(require, exports, module) {
   };
 
   function normalizePath(path) {
-    if (isCordovaiOS) {
-      //we set absoilute path in ios because some extensions didn't recognize cdvfile
-      //but in cordova.api implementation we didn't need absolute path so we strip nativeURL
-      if (path.indexOf(fsRoot.nativeURL) === 0) {
-        path = path.replace(fsRoot.nativeURL , "/");
-      }
+    //we set absoilute path because some extensions didn't recognize cdvfile
+    //but in cordova.api implementation we didn't need absolute path so we strip nativeURL
+    if (path.indexOf(fsRoot.nativeURL) === 0) {
+      path = path.replace(fsRoot.nativeURL , "/");
+    }
 
-      if (path.indexOf(fsRoot.fullPath) === 0) {
-        path = path.substring(fsRoot.fullPath.length, path.length);
-      } 
-    } else {
-      //Android 
-      if (path.indexOf(fsRoot.fullPath) >= 0) {
-        path = path.substring(fsRoot.fullPath.length + 1, path.length);
-      }
+    if (path.indexOf(fsRoot.fullPath) === 0) {
+      path = path.substring(fsRoot.fullPath.length, path.length);
     }
     return path;
   }
@@ -306,11 +335,14 @@ define(function(require, exports, module) {
                 entries[i].file(
                   function(entry) {
                    
-                    if (!entry.fullPath && isCordovaiOS) {
-                      //In ios localsytem plugin didn't set fullpath so we set fullpath as absolute
-                      //this solve problem with extensions which cant use the cdvfile
+                    if (!entry.fullPath) {
+                      //Cordova file plugin didn't set fullpath so we set fullpath as absolute
+                      //this solve problem with extensions which can't use the cdvfile
                       var URL = "cdvfile://localhost/persistent/";
                       entry.fullPath = decodeURIComponent(entry.localURL);
+                      if (entry.fullPath.indexOf("cdvfile://localhost/root/") === 0) {
+                        URL = "cdvfile://localhost/root/";
+                      }
                       entry.fullPath = fsRoot.nativeURL + entry.fullPath.substring(URL.length, entry.fullPath.length);
                     }
 
@@ -328,7 +360,7 @@ define(function(require, exports, module) {
                     }
                   }, // jshint ignore:line
                   function(error) { // error get file system
-                    console.log("Getting file meta error: " + error.code);
+                    console.log("Getting file " + entry.name + " meta error: " + error.code);
                   } // jshint ignore:line
                 ); // jshint ignore:line
               } else {
