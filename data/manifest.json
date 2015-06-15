@@ -16,7 +16,7 @@
     "browser_action": {
         "default_icon":  "assets/icon128.png",
         "default_title": "__MSG_appLauncher__",
-        "default_popup": "popup.html"
+        "default_popup": "chromelight/popup.html"
     },
     "permissions": [
         "<all_urls>",
