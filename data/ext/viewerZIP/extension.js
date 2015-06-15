@@ -19,7 +19,7 @@ define(function(require, exports, module) {
 
   function showContentFilePreviewDialog(containFile) {
 
-    var html = "<p><pre>" + containFile.asText() + "</pre></p>";
+    var fileContent = $("<pre/>").text(containFile.asText());
     require(['text!' + extensionDirectory + '/previewDialog.html'], function(uiTPL) {
       
       if ($('#previewDialog').length < 1) {
@@ -27,7 +27,7 @@ define(function(require, exports, module) {
         $('body').append(uiTemplate());
       }
       var dialogPreview = $('#previewDialog');
-      dialogPreview.find('.modal-body').empty().append(html);
+      dialogPreview.find('.modal-body').empty().append(fileContent);
       dialogPreview.modal({
         backdrop: 'static',
         show: true
