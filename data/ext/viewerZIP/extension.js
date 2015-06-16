@@ -46,7 +46,7 @@ define(function(require, exports, module) {
 
   function createZipPrewiew(filePath, elementID) {
 
-    var fileReader = new FileReader();
+    var fileReader = new window.FileReader();
     TSCORE.showLoadingAnimation();
 
     fileReader.onload = function(event) {
@@ -81,10 +81,37 @@ define(function(require, exports, module) {
 
       TSCORE.hideLoadingAnimation();
     };
-    
-    var file = new File(filePath, 0);
-    fileReader.readAsArrayBuffer(file);
+
+    /*try{
+      var file = new window.File(filePath);
+      fileReader.readAsArrayBuffer(file);
+    } catch(e) {
+      alert(e.message);
+    }*/
+
+    if (isCordova) {
+      TSCORE.IO.getFile(filePath, 
+        function(file){
+          fileReader.readAsArrayBuffer(file);
+        },
+        function(error){
+          console.log("error: " + JSON.stringify(error));
+        }
+      );
+    } else {
+
+      var xhr = new XMLHttpRequest(); 
+      xhr.open("GET", "file://"+filePath, true); 
+      xhr.responseType = "blob";
+
+      xhr.onload = function() {
+        fileReader.readAsArrayBuffer(xhr.response);
+      }
+      xhr.send();
+    }
   }
+
+ 
 
   exports.init = function(filePath, elementID) {
     console.log("Initalization Browser ZIP Viewer...");
