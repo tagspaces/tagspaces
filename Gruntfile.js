@@ -5,89 +5,6 @@ module.exports = function(grunt) {
   }
   grunt.initConfig({
     dev: grunt.file.readJSON('developer.json'),
-    //default.locations.android = {"name": "Photos", "path": "DCIM"}, {"name": "Downloads", "path": "Download"}
-    clean: {
-      cordovaAndroid: {
-        options: {
-          force: true
-        },
-        files: [{
-          expand: true,
-          cwd: '<%= dev.cordovaDevDir %>',
-          src: ['**/*'],
-        }]
-      },
-      cordovaIOS: {
-        options: {
-          force: true
-        },
-        files: [{
-          expand: true,
-          cwd: '<%= dev.cordovaIOSDevDir %>',
-          src: ['**/*'],
-        }]
-      }
-    },
-    copy: {
-      cordovaIOS: {
-        files: [{
-          expand: true, cwd: 'data/assets', src: ['**'], dest: '<%= dev.cordovaIOSDevDir %>/assets'
-        }, {
-          expand: true, cwd: 'data/libs', src: ['**'], dest: '<%= dev.cordovaIOSDevDir %>/libs'
-        }, {
-          expand: true, cwd: 'data/js', src: ['**'], dest: '<%= dev.cordovaIOSDevDir %>/js'
-        }, {
-          expand: true, cwd: 'data/locales', src: ['**'], dest: '<%= dev.cordovaIOSDevDir %>/locales'
-        }, {
-          expand: true, cwd: 'data/templates', src: ['**'], dest: '<%= dev.cordovaIOSDevDir %>/templates'
-        }, {
-          expand: true, cwd: 'data/ext/perspectiveList/', src: ['**'], dest: '<%= dev.cordovaIOSDevDir %>/ext/perspectiveList/'
-        }, {
-          expand: true, cwd: 'data/ext/perspectiveGrid/', src: ['**'], dest: '<%= dev.cordovaIOSDevDir %>/ext/perspectiveGrid/'
-        }, {
-          expand: true, cwd: 'data/ext/perspectiveGraph/', src: ['**'], dest: '<%= dev.cordovaIOSDevDir %>/ext/perspectiveGraph/'
-        }, {
-          expand: true, cwd: 'data/ext/editorHTML/', src: ['**'], dest: '<%= dev.cordovaIOSDevDir %>/ext/editorHTML/'
-        }, {
-          expand: true, cwd: 'data/ext/editorJSON/', src: ['**'], dest: '<%= dev.cordovaIOSDevDir %>/ext/editorJSON/'
-        }, {
-          expand: true, cwd: 'data/ext/editorText/', src: ['**'], dest: '<%= dev.cordovaIOSDevDir %>/ext/editorText/'
-        }, {
-          expand: true, cwd: 'data/ext/editorODF/', src: ['**'], dest: '<%= dev.cordovaIOSDevDir %>/ext/editorODF/'
-        }, {
-          expand: true, cwd: 'data/ext/viewerText/', src: ['**'], dest: '<%= dev.cordovaIOSDevDir %>/ext/viewerText'
-        }, {
-          expand: true, cwd: 'data/ext/viewerHTML/', src: ['**'], dest: '<%= dev.cordovaIOSDevDir %>/ext/viewerHTML'
-        }, {
-          expand: true, cwd: 'data/ext/viewerMHTML/', src: ['**'], dest: '<%= dev.cordovaIOSDevDir %>/ext/viewerMHTML'
-        }, {
-          expand: true, cwd: 'data/ext/viewerPDF/', src: ['**'], dest: '<%= dev.cordovaIOSDevDir %>/ext/viewerPDF'
-        }, {
-          expand: true, cwd: 'data/ext/viewerImage/', src: ['**'], dest: '<%= dev.cordovaIOSDevDir %>/ext/viewerImage/'
-        }, {
-          expand: true, cwd: 'data/ext/viewerURL/', src: ['**'], dest: '<%= dev.cordovaIOSDevDir %>/ext/viewerURL/'
-        }, {
-          expand: true, cwd: 'data/ext/viewerMD/', src: ['**'], dest: '<%= dev.cordovaIOSDevDir %>/ext/viewerMD/'
-        }, {
-          expand: true, cwd: 'data/ext/viewerBrowser/', src: ['**'], dest: '<%= dev.cordovaIOSDevDir %>/ext/viewerBrowser/'
-        }, {
-          expand: true, cwd: 'data/cordova', src: ['**/*.js'], dest: '<%= dev.cordovaIOSDevDir %>/cordova'
-        }, {
-          expand: true, cwd: 'data/pro', src: ['**/*.js'], dest: '<%= dev.cordovaIOSDevDir %>/pro'
-        }, {
-          expand: true, cwd: 'data/web', src: ['**'], dest: '<%= dev.cordovaIOSDevDir %>/web'
-        }, {
-          src: 'data/about.html', dest: '<%= dev.cordovaIOSDevDir %>/about.html'
-        }, {
-          src: 'data/index.html', dest: '<%= dev.cordovaIOSDevDir %>/index.html'
-        }, {
-          src: 'data/LICENSE.txt', dest: '<%= dev.cordovaIOSDevDir %>/LICENSE.txt'
-        }, {
-          src: 'data/EULA.txt', dest: '<%= dev.cordovaIOSDevDir %>/EULA.txt'
-        }, {
-          src: 'data/loader.js', dest: '<%= dev.cordovaIOSDevDir %>/loader.js' }]
-      }
-    },
     replace: {
       templates: {
         options: {
@@ -118,58 +35,6 @@ module.exports = function(grunt) {
           dest: 'data/manifest.json'
         }]
       },
-      cordovaAndroid: {
-        options: {
-          variables: {
-            VERSION: '<%= mainVersion %>',
-            BUILD: '<%= subVersion %>',
-            BID: '<%= buildId %>',
-            APPNAME: '<%= name %>',
-            APPDESCRIPTION: '<%= description %>',
-            PACKAGE: '<%= package %>',
-            PRODUCTION: 'false',
-            DEFAULTLOCATIONS: '',
-            DEFAULTPERSPECTIVES: "'perspectiveList', 'perspectiveGrid'",
-            ACTIVATEDPERSPECTIVES: "{ 'id': 'perspectiveList' }, { 'id': 'perspectiveGrid' }",
-            MHTVIEWER: 'viewerBrowser',
-            PDFVIEWER: 'viewerBrowser'
-          },
-          prefix: '@@'
-        },
-        files: [{
-          src: 'data/cordova/config.xml',
-          dest: '<%= dev.cordovaDevDir %>/config.xml'
-        }, {
-          src: 'data/about.html',
-          dest: '<%= dev.cordovaDevDir %>/about.html'
-        }]
-      },
-      cordovaIOS: {
-        options: {
-          variables: {
-            VERSION: '<%= mainVersion %>',
-            BUILD: '<%= subVersion %>',
-            BID: '<%= buildId %>',
-            APPNAME: '<%= name %>',
-            APPDESCRIPTION: '<%= description %>',
-            PACKAGE: '<%= package %>',
-            PRODUCTION: 'false',
-            DEFAULTLOCATIONS: '',
-            DEFAULTPERSPECTIVES: "'perspectiveList', 'perspectiveGrid'",
-            ACTIVATEDPERSPECTIVES: "{ 'id': 'perspectiveList' }, { 'id': 'perspectiveGrid' }",
-            MHTVIEWER: 'viewerBrowser',
-            PDFVIEWER: 'viewerBrowser'
-          },
-          prefix: '@@'
-        },
-        files: [{
-          src: 'data/cordova/config.xml',
-          dest: '<%= dev.cordovaIOSDevDir %>/config.xml'
-        }, {
-          src: 'data/about.html',
-          dest: '<%= dev.cordovaIOSDevDir %>/about.html'
-        }]
-      }
     },
     jshint: {
       options: {
@@ -198,6 +63,7 @@ module.exports = function(grunt) {
           'data/ext/viewerPDF/*.js',
           'data/ext/viewerText/*.js',
           'data/ext/viewerURL/*.js',
+          'data/ext/viewerZIP/*.js',
           'data/mozilla/**/*.js',
           '!data/mozilla/listen.js',
           '!data/mozilla/menuitems.js',
@@ -239,6 +105,7 @@ module.exports = function(grunt) {
           'data/ext/viewerPDF/*.js',
           'data/ext/viewerText/*.js',
           'data/ext/viewerURL/*.js',
+          'data/ext/viewerZIP/*.js',
           '!data/mozilla/*.js',
           'data/node-webkit/**/*.js',
           'data/web/*.js',
@@ -354,32 +221,6 @@ module.exports = function(grunt) {
         }]
       },
     },
-    'mozilla-addon-sdk': {
-      '1_17': {
-        options: {
-          revision: '1.17'
-        }
-      }
-    },
-    'mozilla-cfx-xpi': {
-      stable: {
-        options: {
-          'mozilla-addon-sdk': '1_17',
-          extension_dir: 'build/firefox',
-          dist_dir: 'dist/',
-          arguments: '--output-file=tagspaces.firefox.xpi'
-        }
-      }
-    },
-    'mozilla-cfx': {
-      'run_stable': {
-        options: {
-          "mozilla-addon-sdk": "1_17",
-          extension_dir: "build/firefox",
-          command: "run"
-        }
-      }
-    },
   });
   //loading modules
   grunt.loadNpmTasks('grunt-contrib-clean');
@@ -400,8 +241,6 @@ module.exports = function(grunt) {
   //grunt.registerTask('dist-doc', ['jsdoc', 'compress:doc']);
   grunt.registerTask('jsfix', ['jsbeautifier', 'checkstyle']); // 'fixmyjs:core'
   grunt.registerTask('bump-version', ['init', 'replace:templates']);
-  grunt.registerTask('prepare-android', ['init', 'clean:cordovaAndroid', 'copy:cordovaAndroid', 'replace:cordovaAndroid']);
-  grunt.registerTask('prepare-ios', ['init', 'clean:cordovaIOS', 'copy:cordovaIOS', 'replace:cordovaIOS']);
   grunt.registerTask('default', ['help']);
   grunt.registerTask('jsdav', 'Run JSDav Server.', function() {
     var jsDAV = require("jsDAV/lib/jsdav");
@@ -418,8 +257,6 @@ module.exports = function(grunt) {
   grunt.registerTask('help', 'Printing help for this script.', function() {
     grunt.log.writeln("Supported grunt tasks:");
     grunt.log.writeln(" - checkstyle");
-    grunt.log.writeln(" - prepare-android");
-    grunt.log.writeln(" - prepare-ios");
     grunt.log.writeln(" - bump-version");
   });
 
