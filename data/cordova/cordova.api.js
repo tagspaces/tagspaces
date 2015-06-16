@@ -134,6 +134,21 @@ define(function(require, exports, module) {
     );
   }
 
+  function getFile(filePath, result, fail) {
+
+    filePath = normalizePath(filePath);
+
+    fsRoot.getFile(filePath, {create: false},
+      function(fileEntry) {
+        fileEntry.file(function(file) { 
+          result(file); 
+        }, fail);
+      },
+      fail
+    );
+
+  }
+
   // TODO recursively calling callback not really working        
   function scanDirectory(entries) {
     var i;
@@ -830,5 +845,5 @@ define(function(require, exports, module) {
   exports.checkNewVersion = checkNewVersion;
   exports.getFileProperties = getFileProperties;
   exports.handleStartParameters = handleStartParameters;
-
+  exports.getFile = getFile;
 });
