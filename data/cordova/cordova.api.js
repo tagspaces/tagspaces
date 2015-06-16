@@ -70,6 +70,12 @@ define(function(require, exports, module) {
       setTimeout(function() {
         navigator.splashscreen.hide();
       }, 1000);
+
+      //Enable TestFairy if available
+      if(TestFairy) {
+        //app.receivedEvent("deviceready");
+        TestFairy.begin("ef5d3fd8bfa17164b8068e71ccb32e1beea25f2f");
+      }
     }
   }
 
