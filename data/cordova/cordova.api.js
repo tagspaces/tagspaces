@@ -14,7 +14,9 @@ define(function(require, exports, module) {
   var fsRoot;
   var urlFromIntent;
   var widgetAction;
-  var loadedSettings = null;
+  var loadedSettings, loadedSettingsTags;
+  var appSettingFile = "settings.json";
+  var appSettingTagsFile = "settingsTags.json";
 
   document.addEventListener("deviceready", onDeviceReady, false);
   document.addEventListener("resume", onDeviceResume, false);
@@ -113,21 +115,21 @@ define(function(require, exports, module) {
     }
   };
 
-  function getSettingsFileSystem(fileCallback, fail) {
+  function getAppStorageFileSystem(fileName, fileCallback, fail) {
         
-    window.resolveLocalFileSystemURL(cordova.file.applicationStorageDirectory, 
+    window.resolveLocalFileSystemURL(cordova.file.dataDirectory, 
       function(fs) {
-        fs.getFile("settings.json", {create:true}, fileCallback, fail);
+        fs.getFile(fileName, {create:true}, fileCallback, fail);
       }, 
-      function(error){
+      function(error) {
         console.log("getSettingsFileSystem error: " + JSON.stringify(error));
       }
     );
   }
 
-  function saveSettingsFile(data) {
+  function saveSettingsFile(fileName, data) {
 
-    getSettingsFileSystem(
+    getAppStorageFileSystem(fileName,
       function(fileEntry) {
         fileEntry.createWriter(
           function(writer) {
@@ -137,45 +139,58 @@ define(function(require, exports, module) {
           }
         );
       },
-      function(error){
+      function(error) {
         console.log("Error " + JSON.stringify(error));
       }
     );
   }
 
-  function loadSettingsFile(ready) {
+  function loadSettingsFile(fileName, ready) {
 
-    getSettingsFileSystem(
+    getAppStorageFileSystem(fileName,
       function(fileEntry) {
         fileEntry.file(
           function(file) {
             var reader = new FileReader();
             reader.onloadend = function(evt) {
               var content = null;
-              if(evt.target.result.length > 0) {
+              if (evt.target.result.length > 0) {
                 content = evt.target.result;
               }
               ready(content);
             };
-          reader.readAsText(file);
+            reader.readAsText(file);
           }, 
-          function(error){
+          function(error) {
             console.log("Error " + JSON.stringify(error));
           }
         );
       },
-      function(error){
+      function(error) {
         console.log("Error " + JSON.stringify(error));
       }
     );
   }
 
   function saveSettings(settings) {
-    saveSettingsFile(settings);
+    saveSettingsFile(appSettingFile, settings);
   }
   
   function loadSettings() {
     return loadedSettings;
+  }
+
+  function saveSettingsTags(tagGroups) {
+    var jsonFormat = '{ "appName": "' + TSCORE.Config.DefaultSettings.appName +
+        '", "appVersion": "' + TSCORE.Config.DefaultSettings.appVersion +
+        '", "appBuild": "' + TSCORE.Config.DefaultSettings.appBuild +
+        '", "settingsVersion": ' + TSCORE.Config.DefaultSettings.settingsVersion +
+        ', "tagGroups": ' + tagGroups + ' }';
+    saveSettingsFile(appSettingTagsFile, jsonFormat);
+  }
+  
+  function loadSettingsTags() {
+    return loadedSettingsTags;
   }
 
   function getFileSystem() {
@@ -186,9 +201,13 @@ define(function(require, exports, module) {
         fsRoot = fileSystem;
         console.log("Filesystem Details: " + JSON.stringify(fsRoot));
         handleStartParameters();
-        loadSettingsFile(function(settings) {
+
+        loadSettingsFile(appSettingFile, function(settings) {
           loadedSettings = settings;
-          TSCORE.initApp();
+          loadSettingsFile(appSettingTagsFile, function(settingsTags) {
+            loadedSettingsTags = settingsTags;
+            TSCORE.initApp();
+          });
         });
       },
       function(err) {
@@ -895,4 +914,6 @@ define(function(require, exports, module) {
   exports.handleStartParameters = handleStartParameters;
   exports.saveSettings = saveSettings;
   exports.loadSettings = loadSettings;
+  exports.saveSettingsTags = saveSettingsTags;
+  exports.loadSettingsTags = loadSettingsTags;
 });
