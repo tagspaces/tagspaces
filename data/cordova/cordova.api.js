@@ -120,7 +120,7 @@ define(function(require, exports, module) {
 
   function getFileSystem() {
     //on android cordova.file.externalRootDirectory points to sdcard0
-    var fsURL = (isCordovaiOS === true) ? cordova.file.applicationDirectory : "file:///";
+    var fsURL = (isCordovaiOS === true) ? cordova.file.documentsDirectory : "file:///";
     window.resolveLocalFileSystemURL(fsURL, 
       function(fileSystem) {
         fsRoot = fileSystem;
