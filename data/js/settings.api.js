@@ -848,6 +848,17 @@ define(function(require, exports, module) {
   var loadSettingsLocalStorage = function() {
     try {
       var tmpSettings = JSON.parse(localStorage.getItem('tagSpacesSettings'));
+      //Cordova try to load saved setting in app storage
+      if (isCordova) {
+        var appStorageSettings = JSON.parse(TSCORE.IO.loadSettings());
+        var appStorageTagGroups = JSON.parse(TSCORE.IO.loadSettingsTags());
+        if (appStorageSettings) {
+          tmpSettings = appStorageSettings;
+        }
+        if (appStorageTagGroups) {
+          tmpSettings.tagGroups = appStorageTagGroups.tagGroups;
+        }
+      } 
       //console.log("Settings: "+JSON.stringify(tmpSettings));        
       if (tmpSettings !== null) {
         exports.Settings = tmpSettings;
@@ -869,8 +880,9 @@ define(function(require, exports, module) {
     // Storing setting in the local storage of mozilla and chorme
     localStorage.setItem('tagSpacesSettings', JSON.stringify(exports.Settings));
     // Storing settings in firefox native preferences
-    if (isFirefox || isChrome) {
+    if (isFirefox || isChrome || isCordova) {
       TSCORE.IO.saveSettings(JSON.stringify(exports.Settings));
+      TSCORE.IO.saveSettingsTags(JSON.stringify(exports.Settings.tagGroups));
     }
     console.log('Tagspace Settings Saved!');
   };
