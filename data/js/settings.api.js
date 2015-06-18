@@ -855,9 +855,9 @@ define(function(require, exports, module) {
         if (appStorageSettings) {
           tmpSettings = appStorageSettings;
         }
-        //if (appStorageTagGroups && appStorageTagGroups.tagGroups) {
-        //  exports.Settings.tagGroups = appStorageTagGroups.tagGroups;
-        //}
+        if (appStorageTagGroups) {
+          tmpSettings.tagGroups = appStorageTagGroups.tagGroups;
+        }
       } 
       //console.log("Settings: "+JSON.stringify(tmpSettings));        
       if (tmpSettings !== null) {
