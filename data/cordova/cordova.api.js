@@ -14,6 +14,9 @@ define(function(require, exports, module) {
   var fsRoot;
   var urlFromIntent;
   var widgetAction;
+  var loadedSettings, loadedSettingsTags;
+  var appSettingFile = "settings.json";
+  var appSettingTagsFile = "settingsTags.json";
 
   document.addEventListener("deviceready", onDeviceReady, false);
   document.addEventListener("resume", onDeviceResume, false);
@@ -118,6 +121,84 @@ define(function(require, exports, module) {
     }
   };
 
+  function getAppStorageFileSystem(fileName, fileCallback, fail) {
+        
+    window.resolveLocalFileSystemURL(cordova.file.dataDirectory, 
+      function(fs) {
+        fs.getFile(fileName, {create:true}, fileCallback, fail);
+      }, 
+      function(error) {
+        console.log("getSettingsFileSystem error: " + JSON.stringify(error));
+      }
+    );
+  }
+
+  function saveSettingsFile(fileName, data) {
+
+    getAppStorageFileSystem(fileName,
+      function(fileEntry) {
+        fileEntry.createWriter(
+          function(writer) {
+            writer.write(data);
+          }, function(error) { 
+            console.log("Error " + JSON.stringify(error));
+          }
+        );
+      },
+      function(error) {
+        console.log("Error " + JSON.stringify(error));
+      }
+    );
+  }
+
+  function loadSettingsFile(fileName, ready) {
+
+    getAppStorageFileSystem(fileName,
+      function(fileEntry) {
+        fileEntry.file(
+          function(file) {
+            var reader = new FileReader();
+            reader.onloadend = function(evt) {
+              var content = null;
+              if (evt.target.result.length > 0) {
+                content = evt.target.result;
+              }
+              ready(content);
+            };
+            reader.readAsText(file);
+          }, 
+          function(error) {
+            console.log("Error " + JSON.stringify(error));
+          }
+        );
+      },
+      function(error) {
+        console.log("Error " + JSON.stringify(error));
+      }
+    );
+  }
+
+  function saveSettings(settings) {
+    saveSettingsFile(appSettingFile, settings);
+  }
+  
+  function loadSettings() {
+    return loadedSettings;
+  }
+
+  function saveSettingsTags(tagGroups) {
+    var jsonFormat = '{ "appName": "' + TSCORE.Config.DefaultSettings.appName +
+        '", "appVersion": "' + TSCORE.Config.DefaultSettings.appVersion +
+        '", "appBuild": "' + TSCORE.Config.DefaultSettings.appBuild +
+        '", "settingsVersion": ' + TSCORE.Config.DefaultSettings.settingsVersion +
+        ', "tagGroups": ' + tagGroups + ' }';
+    saveSettingsFile(appSettingTagsFile, jsonFormat);
+  }
+  
+  function loadSettingsTags() {
+    return loadedSettingsTags;
+  }
+
   function getFileSystem() {
     //on android cordova.file.externalRootDirectory points to sdcard0
     var fsURL = (isCordovaiOS === true) ? cordova.file.documentsDirectory : "file:///";
@@ -126,7 +207,14 @@ define(function(require, exports, module) {
         fsRoot = fileSystem;
         console.log("Filesystem Details: " + JSON.stringify(fsRoot));
         handleStartParameters();
-        TSCORE.initApp();
+
+        loadSettingsFile(appSettingFile, function(settings) {
+          loadedSettings = settings;
+          loadSettingsFile(appSettingTagsFile, function(settingsTags) {
+            loadedSettingsTags = settingsTags;
+            TSCORE.initApp();
+          });
+        });
       },
       function(err) {
         console.log("File System Error: " + JSON.stringify(err));
@@ -849,5 +937,9 @@ define(function(require, exports, module) {
   exports.checkNewVersion = checkNewVersion;
   exports.getFileProperties = getFileProperties;
   exports.handleStartParameters = handleStartParameters;
+  exports.saveSettings = saveSettings;
+  exports.loadSettings = loadSettings;
+  exports.saveSettingsTags = saveSettingsTags;
+  exports.loadSettingsTags = loadSettingsTags;
   exports.getFile = getFile;
 });
