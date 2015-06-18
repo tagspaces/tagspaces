@@ -15,7 +15,7 @@ define(function(require, exports, module) {
   var TSPOSTIO = require("tspostioapi");
 
   var win = gui.Window.get();
-
+  document.addEventListener("initApp", onApplicationLoad, false);
   /* var splashwin = gui.Window.open('splashscreen.html', {
     'frame': false,
     'toolbar': false,
@@ -25,6 +25,14 @@ define(function(require, exports, module) {
     "height": 200
   }); */
 
+  function onApplicationLoad(event) {
+    if (TSCORE.currentPath) {
+      watchDirecotory(TSCORE.currentPath, function(event, file) {
+        TSCORE.IO.listDirectory(TSCORE.currentPath);
+      });
+    }
+  }
+  
   var showMainWindow = function() {
     //splashwin.hide();
     win.show();
@@ -625,6 +633,10 @@ define(function(require, exports, module) {
     }
   };
 
+  var watchDirecotory = function(dirPath, listener) {
+    fs.watch(dirPath, { persistent: true, recursive: true }, listener);
+  };
+
   exports.createDirectory = createDirectory;
   exports.renameDirectory = renameDirectory;
   exports.renameFile = renameFile;
@@ -650,5 +662,4 @@ define(function(require, exports, module) {
   exports.handleTray = handleTray;
   exports.focusWindow = focusWindow;
   exports.showMainWindow = showMainWindow;
-
 });
