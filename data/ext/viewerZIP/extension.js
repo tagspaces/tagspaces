@@ -2,6 +2,8 @@
  * Use of this source code is governed by a AGPL3 license that
  * can be found in the LICENSE file. */
 
+/*jshint loopfunc: true */
+
 define(function(require, exports, module) {
   "use strict";
 
@@ -21,10 +23,10 @@ define(function(require, exports, module) {
   function showContentFilePreviewDialog(containFile) {
 
     var unitArr = containFile.asUint8Array();
-    var previewText ="";
-    var byteLength = unitArr.byteLength > maxPreviewSize ?  maxPreviewSize : unitArr.byteLength;
+    var previewText = "";
+    var byteLength = (unitArr.byteLength > maxPreviewSize) ? maxPreviewSize : unitArr.byteLength;
     
-    for (var i=0; i < byteLength; i++) {
+    for (var i = 0; i < byteLength; i++) {
       previewText += String.fromCharCode(unitArr[i]);
     }
 
@@ -54,28 +56,28 @@ define(function(require, exports, module) {
       var zipFile = new JSZip(event.target.result);
 
       var $parent = $('#' + elementID);
-      var $previewElement = $('<div/>').css({'overflow': 'auto', 'padding': '5px','fontSize': 12})
+      var $previewElement = $('<div/>').css({'overflow': 'auto', 'padding': '5px', 'fontSize': 12})
         .width($parent.width())
         .height($parent.height())
         .appendTo($parent);
 
-      $previewElement.append( "<p> Contents of file " + filePath + "</p>" );
+      $previewElement.append("<p> Contents of file " + filePath + "</p>");
 
       var ulFiles = $previewElement.append("<ul/>");
 
       for (var fileName in zipFile.files) {
 
-        if(zipFile.files[fileName].dir === true) {
+        if (zipFile.files[fileName].dir === true) {
           continue;
         }
 
         var linkToFile = $('<a>').attr('href', '#').text(fileName);
-        linkToFile.click(function(event){
+        linkToFile.click(function(event) {
           event.preventDefault();
           var containFile = zipFile.files[$(this).text()];
           showContentFilePreviewDialog(containFile);
         });
-        var liFile = $('<li/>').css('list-style-type','none').append(linkToFile);
+        var liFile = $('<li/>').css('list-style-type', 'none').append(linkToFile);
         ulFiles.append(liFile);
       }
 
@@ -91,27 +93,25 @@ define(function(require, exports, module) {
 
     if (isCordova) {
       TSCORE.IO.getFile(filePath, 
-        function(file){
+        function(file) {
           fileReader.readAsArrayBuffer(file);
         },
-        function(error){
+        function(error) {
           console.log("error: " + JSON.stringify(error));
         }
       );
     } else {
 
       var xhr = new XMLHttpRequest(); 
-      xhr.open("GET", "file://"+filePath, true); 
+      xhr.open("GET", "file://" + filePath, true);
       xhr.responseType = "blob";
 
       xhr.onload = function() {
         fileReader.readAsArrayBuffer(xhr.response);
-      }
+      };
       xhr.send();
     }
   }
-
- 
 
   exports.init = function(filePath, elementID) {
     console.log("Initalization Browser ZIP Viewer...");
