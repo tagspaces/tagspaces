@@ -216,6 +216,21 @@ define(function(require, exports, module) {
     );
   }
 
+  function getFile(filePath, result, fail) {
+
+    filePath = normalizePath(filePath);
+
+    fsRoot.getFile(filePath, {create: false},
+      function(fileEntry) {
+        fileEntry.file(function(file) { 
+          result(file); 
+        }, fail);
+      },
+      fail
+    );
+
+  }
+
   // TODO recursively calling callback not really working        
   function scanDirectory(entries) {
     var i;
@@ -448,7 +463,11 @@ define(function(require, exports, module) {
                     }
                   }, // jshint ignore:line
                   function(error) { // error get file system
-                    console.log("Getting file " + entry.name + " meta error: " + error.code);
+                    console.log("listDirectory error: " + JSON.stringify(error));
+                    pendingCallbacks--;
+                    if(pendingCallbacks === 0 && i === entries.length){
+                      TSPOSTIO.listDirectory(anotatedDirList);
+                    }
                   } // jshint ignore:line
                 ); // jshint ignore:line
               } else {
@@ -916,4 +935,5 @@ define(function(require, exports, module) {
   exports.loadSettings = loadSettings;
   exports.saveSettingsTags = saveSettingsTags;
   exports.loadSettingsTags = loadSettingsTags;
+  exports.getFile = getFile;
 });

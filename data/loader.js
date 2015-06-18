@@ -96,6 +96,7 @@ requirejs.config({
         handlebarsjs:           'libs/handlebars.js/handlebars-v1.1.2',
         pdfjs:                  'libs/pdfjs/build/pdf',
         webdavlib:              'web/webdavlib',
+        jszip:                  'libs/jszip/jszip.min',
 
         tscore:                 'js/core.api',
         tssetting:              'js/settings.api',
