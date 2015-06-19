@@ -13,9 +13,8 @@ define(function(require, exports, module) {
 
   var TSCORE = require("tscore");
   var TSPOSTIO = require("tspostioapi");
-
+  var fsWatcher;
   var win = gui.Window.get();
-
   /* var splashwin = gui.Window.open('splashscreen.html', {
     'frame': false,
     'toolbar': false,
@@ -500,6 +499,10 @@ define(function(require, exports, module) {
           }
         }
         TSPOSTIO.listDirectory(anotatedDirList);
+
+        watchDirecotory(dirPath, function(event, file) {
+          TSCORE.IO.listDirectory(dirPath);
+        });
       });
     } catch (ex) {
       TSPOSTIO.errorOpeningPath();
@@ -625,6 +628,13 @@ define(function(require, exports, module) {
     }
   };
 
+  var watchDirecotory = function(dirPath, listener) {
+    if (fsWatcher) {
+      fsWatcher.close();
+    }
+    fsWatcher = fs.watch(dirPath, { persistent: true, recursive: false }, listener);
+  };
+
   exports.createDirectory = createDirectory;
   exports.renameDirectory = renameDirectory;
   exports.renameFile = renameFile;
@@ -650,5 +660,4 @@ define(function(require, exports, module) {
   exports.handleTray = handleTray;
   exports.focusWindow = focusWindow;
   exports.showMainWindow = showMainWindow;
-
 });
