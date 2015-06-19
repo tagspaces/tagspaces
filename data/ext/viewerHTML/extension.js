@@ -17,6 +17,7 @@ define(function(require, exports, module) {
   var extensionSupportedFileTypes = ["html", "htm"];
 
   var TSCORE = require("tscore");
+  var TSPRO = require("tspro");
 
   var containerElID,
     $containerElement,
@@ -182,6 +183,11 @@ define(function(require, exports, module) {
           $(this).attr("src", "file://" + fileDirectory + TSCORE.dirSeparator + currentSrc);
         }
       });
+
+      if(TSPRO.available){
+        var fileName = TSPRO.baseName(currentFilePath) + ".txt";
+        TSPRO.saveTextContent(fileName, $iframeHTMLContent.text());
+      }
     }
   };
 
