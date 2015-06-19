@@ -882,7 +882,9 @@ define(function(require, exports, module) {
     // Storing settings in firefox native preferences
     if (isFirefox || isChrome || isCordova) {
       TSCORE.IO.saveSettings(JSON.stringify(exports.Settings));
-      TSCORE.IO.saveSettingsTags(JSON.stringify(exports.Settings.tagGroups));
+      if (isCordova) {
+        TSCORE.IO.saveSettingsTags(JSON.stringify(exports.Settings.tagGroups));
+      }
     }
     console.log('Tagspace Settings Saved!');
   };
