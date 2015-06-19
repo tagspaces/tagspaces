@@ -377,7 +377,7 @@ define(function(require, exports, module) {
                   function(error) { // error get file system
                     console.log("listDirectory error: " + JSON.stringify(error));
                     pendingCallbacks--;
-                    if(pendingCallbacks === 0 && i === entries.length){
+                    if (pendingCallbacks === 0 && i === entries.length) {
                       TSPOSTIO.listDirectory(anotatedDirList);
                     }
                   } // jshint ignore:line
