@@ -499,6 +499,10 @@ define(function(require, exports, module) {
           }
         }
         TSPOSTIO.listDirectory(anotatedDirList);
+
+        watchDirecotory(dirPath, function(event, file) {
+          TSCORE.IO.listDirectory(dirPath);
+        });
       });
     } catch (ex) {
       TSPOSTIO.errorOpeningPath();
@@ -628,7 +632,7 @@ define(function(require, exports, module) {
     if (fsWatcher) {
       fsWatcher.close();
     }
-    fsWatcher = fs.watch(dirPath, { persistent: true, recursive: true }, listener);
+    fsWatcher = fs.watch(dirPath, { persistent: true, recursive: false }, listener);
   };
 
   exports.createDirectory = createDirectory;
@@ -656,5 +660,4 @@ define(function(require, exports, module) {
   exports.handleTray = handleTray;
   exports.focusWindow = focusWindow;
   exports.showMainWindow = showMainWindow;
-  exports.watchDirecotory = watchDirecotory;
 });

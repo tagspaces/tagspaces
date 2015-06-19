@@ -98,11 +98,6 @@ define(function(require, exports, module) {
       // Saving the last opened location path in the settings
       TSCORE.Config.setLastOpenedLocation(path);
       TSCORE.Config.saveSettings();
-      if (typeof TSCORE.IO.watchDirecotory === 'function') {
-        TSCORE.IO.watchDirecotory(path, function(event, file) {
-          TSCORE.IO.listDirectory(path);
-        });
-      }
     }
     // Clear search query
     TSCORE.clearSearchFilter();
