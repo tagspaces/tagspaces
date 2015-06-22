@@ -34,6 +34,11 @@ define(function(require, exports, module) {
 
     currentFilePath = filePath;
 
+    if (TSPRO.available) {
+      exports.getTextContent(filePath, function(content) {
+        TSPRO.saveTextContent(filePath, content);
+      });
+    }
     //var fileExt = TSCORE.TagUtils.extractFileExtension(filePath);
 
     $containerElement.empty();
@@ -183,16 +188,24 @@ define(function(require, exports, module) {
           $(this).attr("src", "file://" + fileDirectory + TSCORE.dirSeparator + currentSrc);
         }
       });
-
-      if(TSPRO.available){
-        var fileName = TSPRO.baseName(currentFilePath) + ".txt";
-        TSPRO.saveTextContent(fileName, $iframeHTMLContent.text());
-      }
     }
   };
 
   exports.getContent = function() {
     console.log("Not implemented");
+  };
+
+  exports.getTextContent = function(file, loaded) {
+   
+    var iframe = $('<iframe/>', { 
+        id:'fileIframe', 
+        src: file, 
+        style:'display:none;',
+        load: function() {
+          loaded(this.contentWindow.document.body.innerText); 
+        }
+      });
+    $('body').append(iframe);
   };
 
   // Extension Vars

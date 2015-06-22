@@ -414,7 +414,7 @@ define(function(require, exports, module) {
       });
   };    */
 
-  var saveTextFile = function(filePath, content, overWrite) {
+  var saveTextFile = function(filePath, content, overWrite, dontReloadUI) {
     console.log("Saving file: " + filePath);
 
     /** TODO check if fileExist by saving needed
@@ -443,7 +443,9 @@ define(function(require, exports, module) {
         console.log("Save to file " + filePath + " failed " + error);
         return;
       }
-      TSPOSTIO.saveTextFile(filePath, isNewFile);
+      if (dontReloadUI !== true) {
+        TSPOSTIO.saveTextFile(filePath, isNewFile);
+      }
     });
   };
 
