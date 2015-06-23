@@ -8,7 +8,7 @@ define(function(require, exports, module) {
   console.log("Loading UI for perspectiveDefault");
 
   var TSCORE = require("tscore");
-
+  var TSPRO = require("tspro");
   var TMB_SIZES = ["200px", "300px", "100px"];
 
   var MONTH = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -327,6 +327,9 @@ define(function(require, exports, module) {
         canvas = null;
       };
       img.src = fileURL;
+    }
+    if (TSPRO.available) {
+      TSPRO.saveThumbnail(fileURL, dataURL);
     }
   }
 
