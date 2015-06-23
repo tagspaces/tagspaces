@@ -17,7 +17,7 @@ define(function(require, exports, module) {
   var extensionSupportedFileTypes = ["md", "markdown", "mdown"];
 
   var TSCORE = require("tscore");
-
+  var TSPRO = require("tspro");
   var md2htmlConverter,
     containerElID,
     currentFilePath,
@@ -39,6 +39,11 @@ define(function(require, exports, module) {
     currentFilePath = filePath;
 
     //var fileExt = TSCORE.TagUtils.extractFileExtension(filePath);
+    if (TSPRO.available) {
+      exports.getTextContent(filePath, function(content) {
+        TSPRO.saveTextContent(filePath, content);
+      });
+    }
 
     $containerElement.empty();
     $containerElement.css("background-color", "white");
@@ -218,6 +223,33 @@ define(function(require, exports, module) {
 
   exports.getContent = function() {
     //$('#'+containerElID).html();
+  };
+
+  exports.getTextContent = function(file, loaded) {
+
+    var fileReader = new FileReader();
+    fileReader.onload = function(event) {
+      require([extensionDirectory + '/marked/marked.js'], function(marked) {
+        md2htmlConverter = marked;
+        md2htmlConverter.setOptions({
+          renderer: new marked.Renderer(),
+          gfm: true,
+          tables: true,
+          breaks: false,
+          pedantic: false,
+          smartLists: true,
+          smartypants: false
+        });
+
+        var mdContent = md2htmlConverter(fileReader.result);
+        var txt = $("<body>").append(mdContent).text();
+        loaded(txt);
+      });
+    }
+
+    TSCORE.IO.getFile(file, function(file) {
+      fileReader.readAsText(file);
+    });
   };
 
   // Extension Vars
