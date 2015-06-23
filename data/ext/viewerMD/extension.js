@@ -245,7 +245,7 @@ define(function(require, exports, module) {
         var txt = $("<body>").append(mdContent).text();
         loaded(txt);
       });
-    }
+    };
 
     TSCORE.IO.getFile(file, function(file) {
       fileReader.readAsText(file);
