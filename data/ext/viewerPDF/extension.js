@@ -18,17 +18,16 @@ define(function(require, exports, module) {
 
   exports.init = function(filePath, elementID) {
     console.log("Initalization Browser PDF Viewer...");
+    if (TSPRO.available) {
+      exports.getTextContent(filePath, function(content) {
+        TSPRO.saveTextContent(filePath, content);
+      });
+    }
     $('#' + elementID).append($('<iframe>', {
       id: "iframeViewer",
       src: "libs/pdfjs/web/viewer.html?file=" + filePath,
       "nwdisable": "",
       "nwfaketop": ""
-    }).load(function() {
-      if (TSPRO.available) {
-        exports.getTextContent(filePath, function(content) {
-          TSPRO.saveTextContent(filePath, content);
-        });
-      }
     }));
   };
 
