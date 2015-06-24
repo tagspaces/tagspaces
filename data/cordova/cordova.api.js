@@ -236,6 +236,22 @@ define(function(require, exports, module) {
 
   }
 
+  function getFileContent(fullPath, resutl, error) {
+
+    getFile(filePath, function(file) {
+      var reader = new FileReader();
+      reader.onerror = function(){
+        error(reader.error);
+      };
+
+      reader.onload = function() {
+        result(reader.result);
+      };
+
+      reader.readAsArrayBuffer(file);
+    }, error);
+  }
+
   // TODO recursively calling callback not really working        
   function scanDirectory(entries) {
     var i;
@@ -941,4 +957,5 @@ define(function(require, exports, module) {
   exports.saveSettingsTags = saveSettingsTags;
   exports.loadSettingsTags = loadSettingsTags;
   exports.getFile = getFile;
+  exports.getFileContent = getFileContent;
 });
