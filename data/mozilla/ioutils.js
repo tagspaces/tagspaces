@@ -602,4 +602,41 @@ exports.getFileProperties = function(filePath, worker) {
   } catch (ex) {
     console.error("Error getting properties for file " + filePath + " - " + ex);
   }
+
+  function getFile(fileURL, result, error) {
+
+    let xhr = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"]
+      .createInstance(Ci.nsIXMLHttpRequest);
+
+    request.onload = function() {
+      result(new File([xhr.response], fileURL, {}));
+    };
+    request.onerror = function() {
+      error(xhr.status);
+    };
+
+    xhr.mozBackgroundRequest = true;
+    xhr.responseType = "arraybuffer";
+    xhr.open("GET", fileURL, true);
+    xhr.send(null);
+  }
+
+  exports.getFileContent = function(fullPath, result, error) {
+
+    if (fullPath.indexOf("file://") === -1) {
+      fullPath = "file://" + fullPath;
+    }
+
+    getFile(filePath, function(file) {
+      var reader = new FileReader();
+      reader.onerror = function() {
+        error(reader.error);
+      };
+      reader.onload = function() {
+        result(reader.result);
+      };
+
+      reader.readAsArrayBuffer(file);
+    }, error);
+  }
 };
