@@ -413,7 +413,7 @@ define(function(require, exports, module) {
       });
   };    */
 
-  var saveTextFile = function(filePath, content, overWrite) {
+  var saveTextFile = function(filePath, content, overWrite, dontReloadUI) {
     console.log("Saving file: " + filePath);
 
     /** TODO check if fileExist by saving needed
@@ -442,7 +442,9 @@ define(function(require, exports, module) {
         console.log("Save to file " + filePath + " failed " + error);
         return;
       }
-      TSPOSTIO.saveTextFile(filePath, isNewFile);
+      if (dontReloadUI !== true) {
+        TSPOSTIO.saveTextFile(filePath, isNewFile);
+      }
     });
   };
 
@@ -635,6 +637,22 @@ define(function(require, exports, module) {
     fsWatcher = fs.watch(dirPath, { persistent: true, recursive: false }, listener);
   };
 
+  function getFile(filePath, result, fail) {
+
+    var xhr = new XMLHttpRequest(); 
+    var fileURL = "file://" + filePath; 
+    xhr.open("GET", fileURL, true);
+    xhr.responseType = "arraybuffer";
+    xhr.onload = function() {
+      if (xhr.response) {
+        result(new File([xhr.response], fileURL, {}));
+      } else {
+        fail(xhr.statusText);
+      }
+    };
+    xhr.send();
+  }
+
   exports.createDirectory = createDirectory;
   exports.renameDirectory = renameDirectory;
   exports.renameFile = renameFile;
@@ -660,4 +678,5 @@ define(function(require, exports, module) {
   exports.handleTray = handleTray;
   exports.focusWindow = focusWindow;
   exports.showMainWindow = showMainWindow;
+  exports.getFile = getFile;
 });
