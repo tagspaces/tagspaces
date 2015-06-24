@@ -276,7 +276,7 @@ define(function(require, exports, module) {
         console.log("Creating directory " + dirPath + " failed " + error);
         return;
       }
-      if(dontReloadUI !== true) {
+      if (dontReloadUI !== true) {
         TSPOSTIO.createDirectory(dirPath);
       }
     });
