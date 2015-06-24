@@ -637,10 +637,9 @@ define(function(require, exports, module) {
     fsWatcher = fs.watch(dirPath, { persistent: true, recursive: false }, listener);
   };
 
-  function getFile(filePath, result, fail) {
+  function getFile(fileURL, result, fail) {
 
     var xhr = new XMLHttpRequest(); 
-    var fileURL = "file://" + filePath; 
     xhr.open("GET", fileURL, true);
     xhr.responseType = "arraybuffer";
     xhr.onload = function() {
@@ -651,6 +650,26 @@ define(function(require, exports, module) {
       }
     };
     xhr.send();
+  }
+
+  function getFileContent(fullPath, resutl, error) {
+
+    if(fullPath.indexOf("file://") === -1) {
+      fullPath = "file://" + fullPath;
+    }
+
+    getFile(filePath, function(file) {
+      var reader = new FileReader();
+      reader.onerror = function(){
+        error(reader.error);
+      };
+
+      reader.onload = function() {
+        result(reader.result);
+      };
+
+      reader.readAsArrayBuffer(file);
+    }, error);
   }
 
   exports.createDirectory = createDirectory;
@@ -679,4 +698,5 @@ define(function(require, exports, module) {
   exports.focusWindow = focusWindow;
   exports.showMainWindow = showMainWindow;
   exports.getFile = getFile;
+  exports.getFileContent = getFileContent;
 });
