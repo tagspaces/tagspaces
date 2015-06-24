@@ -268,7 +268,7 @@ define(function(require, exports, module) {
     TSPOSTIO.createDirectoryTree(directoyTree);
   };
 
-  var createDirectory = function(dirPath) {
+  var createDirectory = function(dirPath, dontReloadUI) {
     console.log("Creating directory: " + dirPath);
 
     fs.mkdir(dirPath, function(error) {
@@ -276,7 +276,9 @@ define(function(require, exports, module) {
         console.log("Creating directory " + dirPath + " failed " + error);
         return;
       }
-      TSPOSTIO.createDirectory(dirPath);
+      if(dontReloadUI !== true) {
+        TSPOSTIO.createDirectory(dirPath);
+      }
     });
   };
 
@@ -446,10 +448,10 @@ define(function(require, exports, module) {
     });
   };
 
-  var saveBinaryFile = function(filePath, content, dontReloadUI) {
+  var saveBinaryFile = function(filePath, content, overWrite, dontReloadUI) {
     console.log("Saving binary file: " + filePath);
 
-    if (!fs.existsSync(filePath)) {
+    if (!fs.existsSync(filePath) || overWrite === true) {
       fs.writeFile(filePath, arrayBufferToBuffer(content), 'utf8', function(error) {
         if (error) {
           console.log("Save to file " + filePath + " failed " + error);
