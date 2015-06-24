@@ -637,39 +637,30 @@ define(function(require, exports, module) {
     fsWatcher = fs.watch(dirPath, { persistent: true, recursive: false }, listener);
   };
 
-  function getFile(fileURL, result, fail) {
+  function getFile(fileURL, result, error) {
+
+    getFileContent(fileURL, function(content) {
+      result(new File([content], fileURL, {}));
+    }, error);
+  }
+
+  function getFileContent(fullPath, result, error) {
+    var fileURL = fullPath;
+    if (fileURL.indexOf("file://") === -1) {
+      fileURL = "file://" + fileURL;
+    }
 
     var xhr = new XMLHttpRequest(); 
     xhr.open("GET", fileURL, true);
     xhr.responseType = "arraybuffer";
     xhr.onload = function() {
       if (xhr.response) {
-        result(new File([xhr.response], fileURL, {}));
+        result(xhr.response);
       } else {
         fail(xhr.statusText);
       }
     };
     xhr.send();
-  }
-
-  function getFileContent(fullPath, result, error) {
-
-    if (fullPath.indexOf("file://") === -1) {
-      fullPath = "file://" + fullPath;
-    }
-
-    getFile(filePath, function(file) {
-      var reader = new FileReader();
-      reader.onerror = function() {
-        error(reader.error);
-      };
-
-      reader.onload = function() {
-        result(reader.result);
-      };
-
-      reader.readAsArrayBuffer(file);
-    }, error);
   }
 
   exports.createDirectory = createDirectory;
