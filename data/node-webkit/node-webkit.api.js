@@ -654,13 +654,13 @@ define(function(require, exports, module) {
 
   function getFileContent(fullPath, resutl, error) {
 
-    if(fullPath.indexOf("file://") === -1) {
+    if (fullPath.indexOf("file://") === -1) {
       fullPath = "file://" + fullPath;
     }
 
     getFile(filePath, function(file) {
       var reader = new FileReader();
-      reader.onerror = function(){
+      reader.onerror = function() {
         error(reader.error);
       };
 

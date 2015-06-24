@@ -240,7 +240,7 @@ define(function(require, exports, module) {
 
     getFile(filePath, function(file) {
       var reader = new FileReader();
-      reader.onerror = function(){
+      reader.onerror = function() {
         error(reader.error);
       };
 
