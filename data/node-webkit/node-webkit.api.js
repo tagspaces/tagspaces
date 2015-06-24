@@ -446,7 +446,7 @@ define(function(require, exports, module) {
     });
   };
 
-  var saveBinaryFile = function(filePath, content) {
+  var saveBinaryFile = function(filePath, content, dontReloadUI) {
     console.log("Saving binary file: " + filePath);
 
     if (!fs.existsSync(filePath)) {
@@ -455,7 +455,9 @@ define(function(require, exports, module) {
           console.log("Save to file " + filePath + " failed " + error);
           return;
         }
-        TSPOSTIO.saveBinaryFile(filePath);
+        if (dontReloadUI !== true) {
+          TSPOSTIO.saveBinaryFile(filePath);
+        }
       });
     } else {
       TSCORE.showAlertDialog($.i18n.t("ns.common:fileExists", {fileName: filePath}));
