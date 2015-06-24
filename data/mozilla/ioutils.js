@@ -603,13 +603,18 @@ exports.getFileProperties = function(filePath, worker) {
     console.error("Error getting properties for file " + filePath + " - " + ex);
   }
 
-  function getFile(fileURL, result, error) {
+  exports.getFileContent = function(fullPath, result, error) {
 
+    var fileURL = fullPath;
+    if (fileURL.indexOf("file://") === -1) {
+      fileURL = "file://" + fileURL;
+    }
+    
     let xhr = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"]
       .createInstance(Ci.nsIXMLHttpRequest);
 
     request.onload = function() {
-      result(new File([xhr.response], fileURL, {}));
+      result(xhr.response);
     };
     request.onerror = function() {
       error(xhr.status);
@@ -619,24 +624,5 @@ exports.getFileProperties = function(filePath, worker) {
     xhr.responseType = "arraybuffer";
     xhr.open("GET", fileURL, true);
     xhr.send(null);
-  }
-
-  exports.getFileContent = function(fullPath, result, error) {
-
-    if (fullPath.indexOf("file://") === -1) {
-      fullPath = "file://" + fullPath;
-    }
-
-    getFile(filePath, function(file) {
-      var reader = new FileReader();
-      reader.onerror = function() {
-        error(reader.error);
-      };
-      reader.onload = function() {
-        result(reader.result);
-      };
-
-      reader.readAsArrayBuffer(file);
-    }, error);
   }
 };
