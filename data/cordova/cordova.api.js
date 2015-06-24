@@ -236,7 +236,7 @@ define(function(require, exports, module) {
 
   }
 
-  function getFileContent(fullPath, resutl, error) {
+  function getFileContent(fullPath, result, error) {
 
     getFile(filePath, function(file) {
       var reader = new FileReader();

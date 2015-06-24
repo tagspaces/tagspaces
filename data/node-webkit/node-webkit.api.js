@@ -652,7 +652,7 @@ define(function(require, exports, module) {
     xhr.send();
   }
 
-  function getFileContent(fullPath, resutl, error) {
+  function getFileContent(fullPath, result, error) {
 
     if (fullPath.indexOf("file://") === -1) {
       fullPath = "file://" + fullPath;
