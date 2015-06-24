@@ -602,27 +602,27 @@ exports.getFileProperties = function(filePath, worker) {
   } catch (ex) {
     console.error("Error getting properties for file " + filePath + " - " + ex);
   }
+};
 
-  exports.getFileContent = function(fullPath, result, error) {
+exports.getFileContent = function(fullPath, result, error) {
 
-    var fileURL = fullPath;
-    if (fileURL.indexOf("file://") === -1) {
-      fileURL = "file://" + fileURL;
-    }
-    
-    let xhr = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"]
-      .createInstance(Ci.nsIXMLHttpRequest);
-
-    request.onload = function() {
-      result(xhr.response);
-    };
-    request.onerror = function() {
-      error(xhr.status);
-    };
-
-    xhr.mozBackgroundRequest = true;
-    xhr.responseType = "arraybuffer";
-    xhr.open("GET", fileURL, true);
-    xhr.send(null);
+  var fileURL = fullPath;
+  if (fileURL.indexOf("file://") === -1) {
+    fileURL = "file://" + fileURL;
   }
+    
+  let xhr = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"]
+    .createInstance(Ci.nsIXMLHttpRequest);
+
+  request.onload = function() {
+    result(xhr.response);
+  };
+  request.onerror = function() {
+    error(xhr.status);
+  };
+
+  xhr.mozBackgroundRequest = true;
+  xhr.responseType = "arraybuffer";
+  xhr.open("GET", fileURL, true);
+  xhr.send(null);
 };
