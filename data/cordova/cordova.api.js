@@ -614,7 +614,7 @@ define(function(require, exports, module) {
     );
   };
 
-  var saveTextFile = function(filePath, content) {
+  var saveTextFile = function(filePath, content, overWrite, silentMode) {
     console.log("Saving file: " + filePath);
     TSCORE.showLoadingAnimation();
 
@@ -647,7 +647,7 @@ define(function(require, exports, module) {
       }
     );
 
-    function saveFile(isFileNew) {
+    function saveFile(isFileNew, silentMode) {
       fsRoot.getFile(filePath, {
           create: true,
           exclusive: false
@@ -656,7 +656,9 @@ define(function(require, exports, module) {
           entry.createWriter(
             function(writer) {
               writer.onwriteend = function(evt) {
-                TSPOSTIO.saveTextFile(fsRoot.fullPath + "/" + filePath, isFileNew);
+                if (silentMode !== true) {
+                  TSPOSTIO.saveTextFile(fsRoot.fullPath + "/" + filePath, isFileNew);
+                }
               };
               writer.write(content);
             },
@@ -672,7 +674,7 @@ define(function(require, exports, module) {
     }
   };
 
-  var saveBinaryFile = function(filePath, content) {
+  var saveBinaryFile = function(filePath, content, overWrite, silentMode) {
     console.log("Saving file: " + filePath);
     TSCORE.showLoadingAnimation();
 
@@ -693,7 +695,7 @@ define(function(require, exports, module) {
       function() {}
     );
 
-    if (isFileNew) {
+    if (isFileNew || overWrite === true) {
       fsRoot.getFile(filePath, {
           create: true,
           exclusive: false
@@ -702,7 +704,9 @@ define(function(require, exports, module) {
           entry.createWriter(
             function(writer) {
               writer.onwriteend = function(evt) {
-                TSPOSTIO.saveBinaryFile(fsRoot.fullPath + "/" + filePath);
+                if (silentMode !== true) {
+                  TSPOSTIO.saveBinaryFile(fsRoot.fullPath + "/" + filePath);
+                }
               };
               var dataView = new Int8Array(content);
               writer.write(dataView.buffer);
@@ -721,7 +725,7 @@ define(function(require, exports, module) {
     }
   };
 
-  var createDirectory = function(dirPath) {
+  var createDirectory = function(dirPath, silentMode) {
     console.log("Creating directory: " + dirPath);
     TSCORE.showLoadingAnimation();
 
@@ -732,7 +736,9 @@ define(function(require, exports, module) {
         exclusive: false
       },
       function(dirEntry) {
-        TSPOSTIO.createDirectory(dirPath);
+        if (silentMode !== true) {
+          TSPOSTIO.createDirectory(dirPath);
+        }
       },
       function(error) {
         console.log("Creating directory failed: " + dirPath + " failed with error code: " + error.code);

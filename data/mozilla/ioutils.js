@@ -69,7 +69,7 @@ exports.searchDirectory = function searchDirectory(dirPath, keewords, worker) {
   });
 };
 
-exports.createDirectoryIndex = function createDirectoryIndex(dirPath, worker) {
+exports.createDirectoryIndex = function createDirectoryIndex(dirPath, worker, silentMode) {
   console.log("Creating index for directory: " + dirPath);
   var directoryIndex = [];
   directoryIndex = scanDirectory(dirPath, directoryIndex);
@@ -77,7 +77,8 @@ exports.createDirectoryIndex = function createDirectoryIndex(dirPath, worker) {
   worker.postMessage({
     "command": "indexDirectory",
     "success": true,
-    "content": directoryIndex
+    "content": directoryIndex,
+    "silent" : silentMode
   });
 };
 
@@ -399,7 +400,7 @@ exports.copy = function copy(filePath, newFilePath, worker) {
   }
 };
 
-exports.saveTextFile = function saveTextFile(filePath, content, worker) {
+exports.saveTextFile = function saveTextFile(filePath, content, worker, overWrite, silentMode) {
   console.log("Saving file: " + filePath);
   try {
     var file = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsIFile);
@@ -431,7 +432,8 @@ exports.saveTextFile = function saveTextFile(filePath, content, worker) {
     worker.postMessage({
       "command": "saveTextFile",
       "content": filePath,
-      "success": true
+      "success": true,
+      "silent": silentMode
     });
     console.log("Save successed!");
   } catch (ex) {
@@ -444,7 +446,7 @@ exports.saveTextFile = function saveTextFile(filePath, content, worker) {
   }
 };
 
-exports.saveBinaryFile = function saveBinaryFile(filePath, content, worker) {
+exports.saveBinaryFile = function saveBinaryFile(filePath, content, worker, overWrite, silentMode) {
   console.log("Saving binary file: " + filePath); //+" - "+content);
   try {
     var file = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsIFile);
@@ -460,7 +462,8 @@ exports.saveBinaryFile = function saveBinaryFile(filePath, content, worker) {
     worker.postMessage({
       "command": "saveTextFile", // TODO change saveBinarFile
       "content": filePath,
-      "success": true
+      "success": true,
+      "silent": silentMode
     });
     console.log("Save successed!");
   } catch (ex) {

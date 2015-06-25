@@ -102,13 +102,15 @@ define(function(require, exports, module) {
     TSPOSTIO.createDirectoryTree(directoyTree);
   };
 
-  var createDirectory = function(dirPath) {
+  var createDirectory = function(dirPath, silentMode) {
     console.log("Creating directory: " + dirPath);
     davClient.mkcol(
       encodeURI(dirPath),
       function(status, data, headers) {
         console.log("Directory Creation Status/Content/Headers:  " + status + " / " + data + " / " + headers);
-        TSPOSTIO.createDirectory(dirPath);
+        if(silentMode !== true) {
+          TSPOSTIO.createDirectory(dirPath);
+        }
       }
     );
   };
@@ -166,7 +168,7 @@ define(function(require, exports, module) {
     //TODO Perform file locking and unlocking
   };
 
-  var saveTextFile = function(filePath, content, overWrite) {
+  var saveTextFile = function(filePath, content, overWrite, silentMode) {
     console.log("Saving file: " + filePath); //+" content: "+content);
 
     var isNewFile = false; // = !pathUtils.existsSync(filePath);
@@ -179,7 +181,9 @@ define(function(require, exports, module) {
         encodeURI(filePath),
         function(status, data, headers) {
           console.log("Creating File Status/Content/Headers:  " + status + " / " + data + " / " + headers);
-          TSPOSTIO.saveTextFile(filePath, isNewFile);
+          if(silentMode !== true) {
+            TSPOSTIO.saveTextFile(filePath, isNewFile);
+          }
         },
         content,
         'application/octet-stream'
@@ -187,7 +191,7 @@ define(function(require, exports, module) {
     }, 1);
   };
 
-  var saveBinaryFile = function(filePath, content) {
+  var saveBinaryFile = function(filePath, content, overWrite, silentMode) {
     console.log("Saving binary file: " + filePath); //+" content: "+content);
     var isNewFile = false;
     davClient.propfind(encodeURI(filePath), function(status, data) {
@@ -195,12 +199,14 @@ define(function(require, exports, module) {
       if (parseInt(status) === 404) {
         isNewFile = true;
       }
-      if (isNewFile) {
+      if (isNewFile || overWrite === true) {
         davClient.put(
           encodeURI(filePath),
           function(status, data, headers) {
             console.log("Creating File Status/Content/Headers:  " + status + " / " + data + " / " + headers);
-            TSPOSTIO.saveBinaryFile(filePath, isNewFile);
+            if(silentMode !== true) {
+              TSPOSTIO.saveBinaryFile(filePath, isNewFile);
+            }
           },
           content,
           'application/octet-stream'
@@ -279,6 +285,20 @@ define(function(require, exports, module) {
     window.focus();
   };
 
+  var getFileContent = function(filePath, result, error) {
+
+    console.log("getFileContent file: " + filePath);
+    davClient.get(
+      encodeURI(filePath),
+      function(status, data, headers) {
+        //TODO: complete 
+        console.log("status: " + status);
+        result(data);
+      }
+      //,customHeaders
+    );
+  };
+
   exports.focusWindow = focusWindow;
   exports.createDirectory = createDirectory;
   exports.copyFile = copyFile;
@@ -300,4 +320,5 @@ define(function(require, exports, module) {
   exports.checkAccessFileURLAllowed = checkAccessFileURLAllowed;
   exports.checkNewVersion = checkNewVersion;
   exports.getFileProperties = getFileProperties;
+  exports.getFileContent = getFileContent;
 });

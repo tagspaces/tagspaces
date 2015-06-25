@@ -268,7 +268,7 @@ define(function(require, exports, module) {
     TSPOSTIO.createDirectoryTree(directoyTree);
   };
 
-  var createDirectory = function(dirPath) {
+  var createDirectory = function(dirPath, silentMode) {
     console.log("Creating directory: " + dirPath);
 
     fs.mkdir(dirPath, function(error) {
@@ -276,7 +276,9 @@ define(function(require, exports, module) {
         console.log("Creating directory " + dirPath + " failed " + error);
         return;
       }
-      TSPOSTIO.createDirectory(dirPath);
+      if (silentMode !== true) {
+        TSPOSTIO.createDirectory(dirPath);
+      }
     });
   };
 
@@ -413,7 +415,7 @@ define(function(require, exports, module) {
       });
   };    */
 
-  var saveTextFile = function(filePath, content, overWrite, dontReloadUI) {
+  var saveTextFile = function(filePath, content, overWrite, silentMode) {
     console.log("Saving file: " + filePath);
 
     /** TODO check if fileExist by saving needed
@@ -442,22 +444,24 @@ define(function(require, exports, module) {
         console.log("Save to file " + filePath + " failed " + error);
         return;
       }
-      if (dontReloadUI !== true) {
+      if (silentMode !== true) {
         TSPOSTIO.saveTextFile(filePath, isNewFile);
       }
     });
   };
 
-  var saveBinaryFile = function(filePath, content) {
+  var saveBinaryFile = function(filePath, content, overWrite, silentMode) {
     console.log("Saving binary file: " + filePath);
 
-    if (!fs.existsSync(filePath)) {
+    if (!fs.existsSync(filePath) || overWrite === true) {
       fs.writeFile(filePath, arrayBufferToBuffer(content), 'utf8', function(error) {
         if (error) {
           console.log("Save to file " + filePath + " failed " + error);
           return;
         }
-        TSPOSTIO.saveBinaryFile(filePath);
+        if (silentMode !== true) {
+          TSPOSTIO.saveBinaryFile(filePath);
+        }
       });
     } else {
       TSCORE.showAlertDialog($.i18n.t("ns.common:fileExists", {fileName: filePath}));

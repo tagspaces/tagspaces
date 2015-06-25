@@ -251,13 +251,15 @@ function handleMessage(msg, worker) {
       ioutils.copy(msg.detail.path, msg.detail.newPath, worker);
       break;
     case "saveTextFile":
-      ioutils.saveTextFile(msg.detail.path, msg.detail.content, worker);
+      ioutils.saveTextFile(msg.detail.path, msg.detail.content, worker, 
+          msg.detail.overwrite, msg.detail.silent);
       break;
     case "saveBinaryFile":
-      ioutils.saveBinaryFile(msg.detail.path, msg.detail.content, worker);
+      ioutils.saveBinaryFile(msg.detail.path, msg.detail.content, worker, 
+          msg.detail.overwrite, msg.detail.silent);
       break;
     case "createDirectory":
-      ioutils.createDirectory(msg.detail.path, worker);
+      ioutils.createDirectory(msg.detail.path, worker, msg.detail.silent);
       break;
     case "loadTextFile":
       ioutils.loadTextFile(msg.detail.path, worker);

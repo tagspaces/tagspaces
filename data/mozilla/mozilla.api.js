@@ -56,21 +56,27 @@ define(function(require, exports, module) {
         break;
       case "saveTextFile":
         if (message.success) {
-          TSPOSTIO.saveTextFile(message.content);
+          if (message.silent !== true) {
+            TSPOSTIO.saveTextFile(message.content);
+          }
         } else {
           console.error("Save failed");
         }
         break;
       case "saveBinaryFile":
         if (message.success) {
-          TSPOSTIO.saveBinaryFile(message.content);
+          if(message.silent !== true) {
+            TSPOSTIO.saveBinaryFile(message.content);
+          }
         } else {
           console.error("Save binary failed");
         }
         break;
       case "createDirectory":
         if (message.success) {
-          TSPOSTIO.createDirectory(message.content);
+          if (message.silent !== true) {
+            TSPOSTIO.createDirectory(message.content);  
+          }
         } else {
           console.error("Create dir failed");
         }
@@ -169,13 +175,14 @@ define(function(require, exports, module) {
     document.documentElement.dispatchEvent(event);
   };
 
-  var createDirectory = function(dirPath) {
+  var createDirectory = function(dirPath, silentMode) {
     console.log("Directory " + dirPath + " created.");
     var event = document.createEvent('CustomEvent');
     event.initCustomEvent("addon-message", true, true, {
       "detail": {
         "command": "createDirectory",
-        "path": dirPath
+        "path": dirPath,
+        "silent" : silentMode
       }
     });
     document.documentElement.dispatchEvent(event);
@@ -223,14 +230,16 @@ define(function(require, exports, module) {
     TSCORE.showAlertDialog($.i18n.t("ns.common:functionalityNotImplemented"));
   };
 
-  var saveTextFile = function(filePath, content) {
+  var saveTextFile = function(filePath, content, overWrite, silentMode) {
     console.log("Saving file: " + filePath);
     var event = document.createEvent('CustomEvent');
     event.initCustomEvent("addon-message", true, true, {
       "detail": {
         "command": "saveTextFile",
         "path": filePath,
-        "content": content
+        "content": content,
+        "overwrite": overWrite,
+        "silent": silentMode
       }
     });
     document.documentElement.dispatchEvent(event);
@@ -242,14 +251,16 @@ define(function(require, exports, module) {
     return String.fromCharCode.apply(null, new Uint8Array(buf));
   }
 
-  var saveBinaryFile = function(filePath, content) {
+  var saveBinaryFile = function(filePath, content, overWrite, silentMode) {
     console.log("Saving binary file post: " + filePath); //+" - "+content);
     var event = document.createEvent('CustomEvent');
     event.initCustomEvent("addon-message", true, true, {
       "detail": {
         "command": "saveBinaryFile",
         "path": filePath,
-        "content": ab2str(content)
+        "content": ab2str(content),
+        "overwrite": overWrite,
+        "silent": silentMode
       }
     });
     document.documentElement.dispatchEvent(event);
