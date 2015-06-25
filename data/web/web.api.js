@@ -108,7 +108,7 @@ define(function(require, exports, module) {
       encodeURI(dirPath),
       function(status, data, headers) {
         console.log("Directory Creation Status/Content/Headers:  " + status + " / " + data + " / " + headers);
-        if(silentMode !== true) {
+        if (silentMode !== true) {
           TSPOSTIO.createDirectory(dirPath);
         }
       }
@@ -181,7 +181,7 @@ define(function(require, exports, module) {
         encodeURI(filePath),
         function(status, data, headers) {
           console.log("Creating File Status/Content/Headers:  " + status + " / " + data + " / " + headers);
-          if(silentMode !== true) {
+          if (silentMode !== true) {
             TSPOSTIO.saveTextFile(filePath, isNewFile);
           }
         },
@@ -204,7 +204,7 @@ define(function(require, exports, module) {
           encodeURI(filePath),
           function(status, data, headers) {
             console.log("Creating File Status/Content/Headers:  " + status + " / " + data + " / " + headers);
-            if(silentMode !== true) {
+            if (silentMode !== true) {
               TSPOSTIO.saveBinaryFile(filePath, isNewFile);
             }
           },
