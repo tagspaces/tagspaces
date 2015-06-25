@@ -604,7 +604,17 @@ exports.getFileProperties = function(filePath, worker) {
   }
 };
 
-exports.getFileContent = function(fullPath, result, error) {
+function arrayBufferToBase64(buffer, window) {
+  var binary = '';
+  var bytes = new Uint8Array( buffer );
+  var len = bytes.byteLength;
+  for (var i = 0; i < len; i++) {
+    binary += String.fromCharCode( bytes[ i ] );
+  }
+  return window.btoa( binary );
+}
+
+exports.getFileContent = function(fullPath, worker) {
 
   var fileURL = fullPath;
   if (fileURL.indexOf("file://") === -1) {
@@ -614,11 +624,20 @@ exports.getFileContent = function(fullPath, result, error) {
   let xhr = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"]
     .createInstance(Ci.nsIXMLHttpRequest);
 
-  request.onload = function() {
-    result(xhr.response);
+  xhr.onload = function() {
+    var contentBase64 = arrayBufferToBase64(xhr.response, getWindow(worker));
+    worker.postMessage({
+      "command": "getFileContent",
+      "success": true,
+      "content": contentBase64
+    });
   };
-  request.onerror = function() {
-    error(xhr.status);
+  xhr.onerror = function() {
+    worker.postMessage({
+      "command": "getFileContent",
+      "success": false,
+      "content": xhr.status
+    });
   };
 
   xhr.mozBackgroundRequest = true;

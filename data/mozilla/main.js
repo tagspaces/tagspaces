@@ -289,6 +289,9 @@ function handleMessage(msg, worker) {
     case "getFileProperties":
       ioutils.getFileProperties(msg.detail.path, worker);
       break;
+    case "getFileContent":
+      ioutils.getFileContent(msg.detail.path, worker);
+      break;
     default:
       break;
   }
