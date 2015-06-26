@@ -268,7 +268,7 @@ define(function(require, exports, module) {
     TSPOSTIO.createDirectoryTree(directoyTree);
   };
 
-  var createDirectory = function(dirPath, dontReloadUI) {
+  var createDirectory = function(dirPath, silentMode) {
     console.log("Creating directory: " + dirPath);
 
     fs.mkdir(dirPath, function(error) {
@@ -276,7 +276,7 @@ define(function(require, exports, module) {
         console.log("Creating directory " + dirPath + " failed " + error);
         return;
       }
-      if (dontReloadUI !== true) {
+      if (silentMode !== true) {
         TSPOSTIO.createDirectory(dirPath);
       }
     });
@@ -415,7 +415,7 @@ define(function(require, exports, module) {
       });
   };    */
 
-  var saveTextFile = function(filePath, content, overWrite) {
+  var saveTextFile = function(filePath, content, overWrite, silentMode) {
     console.log("Saving file: " + filePath);
 
     /** TODO check if fileExist by saving needed
@@ -444,11 +444,13 @@ define(function(require, exports, module) {
         console.log("Save to file " + filePath + " failed " + error);
         return;
       }
-      TSPOSTIO.saveTextFile(filePath, isNewFile);
+      if (silentMode !== true) {
+        TSPOSTIO.saveTextFile(filePath, isNewFile);
+      }
     });
   };
 
-  var saveBinaryFile = function(filePath, content, overWrite, dontReloadUI) {
+  var saveBinaryFile = function(filePath, content, overWrite, silentMode) {
     console.log("Saving binary file: " + filePath);
 
     if (!fs.existsSync(filePath) || overWrite === true) {
@@ -457,7 +459,7 @@ define(function(require, exports, module) {
           console.log("Save to file " + filePath + " failed " + error);
           return;
         }
-        if (dontReloadUI !== true) {
+        if (silentMode !== true) {
           TSPOSTIO.saveBinaryFile(filePath);
         }
       });
@@ -639,6 +641,32 @@ define(function(require, exports, module) {
     fsWatcher = fs.watch(dirPath, { persistent: true, recursive: false }, listener);
   };
 
+  function getFile(fileURL, result, error) {
+
+    getFileContent(fileURL, function(content) {
+      result(new File([content], fileURL, {}));
+    }, error);
+  }
+
+  function getFileContent(fullPath, result, error) {
+    var fileURL = fullPath;
+    if (fileURL.indexOf("file://") === -1) {
+      fileURL = "file://" + fileURL;
+    }
+
+    var xhr = new XMLHttpRequest(); 
+    xhr.open("GET", fileURL, true);
+    xhr.responseType = "arraybuffer";
+    xhr.onload = function() {
+      if (xhr.response) {
+        result(xhr.response);
+      } else {
+        fail(xhr.statusText);
+      }
+    };
+    xhr.send();
+  }
+
   exports.createDirectory = createDirectory;
   exports.renameDirectory = renameDirectory;
   exports.renameFile = renameFile;
@@ -664,4 +692,6 @@ define(function(require, exports, module) {
   exports.handleTray = handleTray;
   exports.focusWindow = focusWindow;
   exports.showMainWindow = showMainWindow;
+  exports.getFile = getFile;
+  exports.getFileContent = getFileContent;
 });
