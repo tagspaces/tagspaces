@@ -621,16 +621,26 @@ define(function(require, exports, module) {
     mtime: Mon, 10 Oct 2011 23:24:11 GMT,
     ctime: Mon, 10 Oct 2011 23:24:11 GMT
   */
-  var getFileProperties = function(filePath) {
+  var getFileProperties = function(filePath, result) {
     var fileProperties = {};
-    var stats = fs.lstatSync(filePath);
-    if (stats.isFile()) {
-      fileProperties.path = filePath;
-      fileProperties.size = stats.size;
-      fileProperties.lmdt = stats.mtime;
-      TSPOSTIO.getFileProperties(fileProperties);
-    } else {
-      console.warn("Error getting file properties. " + filePath + " is directory");
+    try {
+      var stats = fs.lstatSync(filePath);
+      if (stats.isFile()) {
+        fileProperties.path = filePath;
+        fileProperties.size = stats.size;
+        fileProperties.lmdt = stats.mtime;
+        if (resultCb) {
+          result(fileProperties);
+        } else {
+          TSPOSTIO.getFileProperties(fileProperties);
+        }
+      } else {
+        console.warn("Error getting file properties. " + filePath + " is directory");
+      }
+    } catch (e) {
+      if(result) {
+        result(false);
+      }
     }
   };
 

@@ -271,8 +271,15 @@ define(function(require, exports, module) {
   ExtUI.prototype.enableThumbnails = function() {
     $("#" + this.extensionID + "IncreaseThumbsButton").prop('disabled', false);
     $("#" + this.extensionID + "Container .thumbImgTile").each(function() {
-      generateThumbnail($(this).attr('filepath'), $(this));
-      $(this).attr('style', "");
+      var $element = $(this);
+      if (TSPRO.available) {
+        TSPRO.getThumbnailURL($element.attr('filepath'), function(dataURL) {
+          $element.attr('src', dataURL);
+        });
+      } else {
+        generateThumbnail($element.attr('filepath'), $element);  
+      }
+      $element.attr('style', "");
     });
     $('.thumbImgTile').css({
       "max-width": TMB_SIZES[this.currentTmbSize],
