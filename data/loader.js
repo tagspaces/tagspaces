@@ -5,7 +5,7 @@
 
 // the value of this var is replaced to "true" by the build script
 var PRODUCTION = "@@PRODUCTION";
-var PRO = "@@PROVERSION";
+var PRO = "@@PRO";
 
 // Disabling all output to console in production mode
 if (PRODUCTION == "true") {
@@ -111,6 +111,7 @@ requirejs.config({
         tscoreui:               'js/core.ui',
         tspostioapi:            'js/postioapi',
         tsdirectorybrowser:     'js/directorybrowser',
+        tsutils:                'js/utils', 
         tsioapi:                 IO_JS,
         tspro:                   PRO_JS
     },

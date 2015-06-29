@@ -16,7 +16,7 @@ define(function(require, exports, module) {
   var tsCoreUI = require('tscoreui');
   var tsSearch = require('tssearch');
   var tsPro = require('tspro');
-
+  var tsUtils = require('tsutils');
   var currentPath;
   var currentLocationObject;
   var currentPerspectiveID;
@@ -553,7 +553,7 @@ define(function(require, exports, module) {
   exports.TagUtils = tsTagUtils;
   exports.FileOpener = tsFileOpener;
   exports.Search = tsSearch;
-
+  exports.Utils = tsUtils;
   if (tsPro.available) {
     exports.PRO = tsPro;
   }
