@@ -355,7 +355,7 @@ define(function(require, exports, module) {
     }
     console.log('Dir History: ' + JSON.stringify(directoryHistory));
     TSCORE.currentPath = directoryPath;
-    if(TSCORE.IO.getDirectoryMetaInformation) {
+    if (TSCORE.IO.getDirectoryMetaInformation) {
       TSCORE.IO.getDirectoryMetaInformation(directoryPath);
     }
     TSCORE.IO.listDirectory(directoryPath);

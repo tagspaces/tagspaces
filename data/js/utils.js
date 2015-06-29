@@ -8,7 +8,7 @@ define(function(require, exports, module) {
 
   //Conversion utility  
   function arrayBufferToDataURL(arrayBuffer, mime) {
-    var blob = new Blob([ arrayBuffer ], { type: mime});
+    var blob = new Blob([arrayBuffer], {type: mime});
     var url = window.URL || window.webkitURL;
     return url.createObjectURL(blob);
   }
