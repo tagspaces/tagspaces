@@ -314,9 +314,6 @@ define(function(require, exports, module) {
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             dataURL = canvas.toDataURL("image/png");
             imgElement.attr('src', dataURL);
-            if (TSPRO.available) {
-              TSPRO.saveThumbnail(fileURL, dataURL);
-            }
           });
         });
       });
@@ -335,9 +332,6 @@ define(function(require, exports, module) {
         imgElement.attr('src', dataURL);
         img = null;
         canvas = null;
-        if (TSPRO.available) {
-          TSPRO.saveThumbnail(fileURL, dataURL);
-        }
       };
       img.src = fileURL;
     }

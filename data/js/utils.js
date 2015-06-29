@@ -14,12 +14,12 @@ define(function(require, exports, module) {
   }
 
   function base64ToArrayBuffer(base64) {
-      var bstr =  window.atob(base64);
-      var bytes = new Uint8Array( bstr.length );
-      for (var i = 0; i < bstr.length; i++)        {
-          bytes[i] = bstr.charCodeAt(i);
-      }
-      return bytes.buffer;
+    var bstr = window.atob(base64);
+    var bytes = new Uint8Array(bstr.length);
+    for (var i = 0; i < bstr.length; i++)        {
+      bytes[i] = bstr.charCodeAt(i);
+    }
+    return bytes.buffer;
   }
 
   function dataURLtoBlob(dataURI) {
