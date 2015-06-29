@@ -26,6 +26,8 @@ define(function(require, exports, module) {
   var fileList = [];
   // List of the sub directories of the current directory
   var subDirsList = [];
+  // List of meta files
+  var metaFileList = [];
   // Last clicked button for removing a tag
   var selectedTag = '';
   var selectedTagData = '';
@@ -646,4 +648,5 @@ define(function(require, exports, module) {
   //document events
   exports.createDocumentEvent = createDocumentEvent;
   exports.fireDocumentEvent = fireDocumentEvent;
+  exports.metaFileList = metaFileList;
 });
