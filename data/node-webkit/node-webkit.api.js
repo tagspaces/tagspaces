@@ -654,7 +654,7 @@ define(function(require, exports, module) {
     mtime: Mon, 10 Oct 2011 23:24:11 GMT,
     ctime: Mon, 10 Oct 2011 23:24:11 GMT
   */
-  var getFileProperties = function(filePath, result) {
+  var getFileProperties = function(filePath) {
     var fileProperties = {};
     try {
       var stats = fs.lstatSync(filePath);
@@ -662,18 +662,12 @@ define(function(require, exports, module) {
         fileProperties.path = filePath;
         fileProperties.size = stats.size;
         fileProperties.lmdt = stats.mtime;
-        if (resultCb) {
-          result(fileProperties);
-        } else {
-          TSPOSTIO.getFileProperties(fileProperties);
-        }
+        TSPOSTIO.getFileProperties(fileProperties);
       } else {
         console.warn("Error getting file properties. " + filePath + " is directory");
       }
     } catch (e) {
-      if(result) {
-        result(false);
-      }
+      console.warn("File " + filePath + " didn't exits");
     }
   };
 
