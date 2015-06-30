@@ -55,7 +55,7 @@ if( isFirefox ) {
 }
 
 var PRO_JS = "js/pro";
-if(PRO === "true" || PRO === "@@PRO") {
+if(PRO === "true" || PRO === "@@PROVERSION") {
     PRO_JS = 'pro/js/pro.api';
 }
 
@@ -111,6 +111,7 @@ requirejs.config({
         tscoreui:               'js/core.ui',
         tspostioapi:            'js/postioapi',
         tsdirectorybrowser:     'js/directorybrowser',
+        tsutils:                'js/utils', 
         tsioapi:                 IO_JS,
         tspro:                   PRO_JS
     },
