@@ -517,7 +517,7 @@ define(function(require, exports, module) {
   };
 
   var getDirectoryMetaInformation = function(dirPath) {
-    dirPath = dirPath + "/ts";
+    
     console.log("getDirectoryMetaInformation directory: " + dirPath);
     try {
       fs.readdir(dirPath, function(error, dirList) {
