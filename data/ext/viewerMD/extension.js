@@ -241,9 +241,8 @@ define(function(require, exports, module) {
           smartypants: false
         });
 
-        var mdContent = md2htmlConverter(fileReader.result);
-        var txt = $("<body>").append(mdContent).text();
-        loaded(txt);
+        var txtContent = $(md2htmlConverter(fileReader.result)).text();
+        loaded(txtContent);
       });
     };
 
