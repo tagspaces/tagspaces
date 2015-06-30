@@ -111,6 +111,7 @@ requirejs.config({
         tscoreui:               'js/core.ui',
         tspostioapi:            'js/postioapi',
         tsdirectorybrowser:     'js/directorybrowser',
+        tsutils:                'js/utils', 
         tsioapi:                 IO_JS,
         tspro:                   PRO_JS
     },

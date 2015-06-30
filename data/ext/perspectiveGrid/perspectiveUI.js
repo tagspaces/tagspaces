@@ -8,7 +8,7 @@ define(function(require, exports, module) {
   console.log("Loading UI for perspectiveDefault");
 
   var TSCORE = require("tscore");
-
+  var TSPRO = require("tspro");
   var TMB_SIZES = ["200px", "300px", "100px"];
 
   var MONTH = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -271,8 +271,15 @@ define(function(require, exports, module) {
   ExtUI.prototype.enableThumbnails = function() {
     $("#" + this.extensionID + "IncreaseThumbsButton").prop('disabled', false);
     $("#" + this.extensionID + "Container .thumbImgTile").each(function() {
-      generateThumbnail($(this).attr('filepath'), $(this));
-      $(this).attr('style', "");
+      var $element = $(this);
+      if (TSPRO.available) {
+        TSPRO.getThumbnailURL($element.attr('filepath'), function(dataURL) {
+          $element.attr('src', dataURL);
+        });
+      } else {
+        generateThumbnail($element.attr('filepath'), $element);  
+      }
+      $element.attr('style', "");
     });
     $('.thumbImgTile').css({
       "max-width": TMB_SIZES[this.currentTmbSize],
