@@ -5,7 +5,7 @@
 
 // the value of this var is replaced to "true" by the build script
 var PRODUCTION = "@@PRODUCTION";
-var PRO = "@@PRO";
+var PRO = "@@PROVERSION";
 
 // Disabling all output to console in production mode
 if (PRODUCTION == "true") {
