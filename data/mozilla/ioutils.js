@@ -69,7 +69,7 @@ exports.searchDirectory = function searchDirectory(dirPath, keewords, worker) {
   });
 };
 
-exports.createDirectoryIndex = function createDirectoryIndex(dirPath, worker) {
+exports.createDirectoryIndex = function createDirectoryIndex(dirPath, worker, silentMode) {
   console.log("Creating index for directory: " + dirPath);
   var directoryIndex = [];
   directoryIndex = scanDirectory(dirPath, directoryIndex);
@@ -77,7 +77,8 @@ exports.createDirectoryIndex = function createDirectoryIndex(dirPath, worker) {
   worker.postMessage({
     "command": "indexDirectory",
     "success": true,
-    "content": directoryIndex
+    "content": directoryIndex,
+    "silent" : silentMode
   });
 };
 
@@ -399,7 +400,7 @@ exports.copy = function copy(filePath, newFilePath, worker) {
   }
 };
 
-exports.saveTextFile = function saveTextFile(filePath, content, worker) {
+exports.saveTextFile = function saveTextFile(filePath, content, worker, overWrite, silentMode) {
   console.log("Saving file: " + filePath);
   try {
     var file = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsIFile);
@@ -431,7 +432,8 @@ exports.saveTextFile = function saveTextFile(filePath, content, worker) {
     worker.postMessage({
       "command": "saveTextFile",
       "content": filePath,
-      "success": true
+      "success": true,
+      "silent": silentMode
     });
     console.log("Save successed!");
   } catch (ex) {
@@ -444,7 +446,7 @@ exports.saveTextFile = function saveTextFile(filePath, content, worker) {
   }
 };
 
-exports.saveBinaryFile = function saveBinaryFile(filePath, content, worker) {
+exports.saveBinaryFile = function saveBinaryFile(filePath, content, worker, overWrite, silentMode) {
   console.log("Saving binary file: " + filePath); //+" - "+content);
   try {
     var file = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsIFile);
@@ -460,7 +462,8 @@ exports.saveBinaryFile = function saveBinaryFile(filePath, content, worker) {
     worker.postMessage({
       "command": "saveTextFile", // TODO change saveBinarFile
       "content": filePath,
-      "success": true
+      "success": true,
+      "silent": silentMode
     });
     console.log("Save successed!");
   } catch (ex) {
@@ -602,4 +605,46 @@ exports.getFileProperties = function(filePath, worker) {
   } catch (ex) {
     console.error("Error getting properties for file " + filePath + " - " + ex);
   }
+};
+
+function arrayBufferToBase64(buffer, window) {
+  var binary = '';
+  var bytes = new Uint8Array( buffer );
+  var len = bytes.byteLength;
+  for (var i = 0; i < len; i++) {
+    binary += String.fromCharCode( bytes[ i ] );
+  }
+  return window.btoa( binary );
+}
+
+exports.getFileContent = function(fullPath, worker) {
+
+  var fileURL = fullPath;
+  if (fileURL.indexOf("file://") === -1) {
+    fileURL = "file://" + fileURL;
+  }
+    
+  let xhr = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"]
+    .createInstance(Ci.nsIXMLHttpRequest);
+
+  xhr.onload = function() {
+    var contentBase64 = arrayBufferToBase64(xhr.response, getWindow(worker));
+    worker.postMessage({
+      "command": "getFileContent",
+      "success": true,
+      "content": contentBase64
+    });
+  };
+  xhr.onerror = function() {
+    worker.postMessage({
+      "command": "getFileContent",
+      "success": false,
+      "content": xhr.status
+    });
+  };
+
+  xhr.mozBackgroundRequest = true;
+  xhr.responseType = "arraybuffer";
+  xhr.open("GET", fileURL, true);
+  xhr.send(null);
 };

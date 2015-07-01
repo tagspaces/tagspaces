@@ -11,7 +11,7 @@ define(function(require, exports, module) {
   var TSCORE = require("tscore");
 
   var TSPOSTIO = require("tspostioapi");
-
+  var args = [];
   document.documentElement.addEventListener("tsMessage", function(event) {
     console.log("Message received in page script from content script"); //+JSON.stringify(event.detail));
     var message = event.detail;
@@ -56,21 +56,27 @@ define(function(require, exports, module) {
         break;
       case "saveTextFile":
         if (message.success) {
-          TSPOSTIO.saveTextFile(message.content);
+          if (message.silent !== true) {
+            TSPOSTIO.saveTextFile(message.content);
+          }
         } else {
           console.error("Save failed");
         }
         break;
       case "saveBinaryFile":
         if (message.success) {
-          TSPOSTIO.saveBinaryFile(message.content);
+          if(message.silent !== true) {
+            TSPOSTIO.saveBinaryFile(message.content);
+          }
         } else {
           console.error("Save binary failed");
         }
         break;
       case "createDirectory":
         if (message.success) {
-          TSPOSTIO.createDirectory(message.content);
+          if (message.silent !== true) {
+            TSPOSTIO.createDirectory(message.content);  
+          }
         } else {
           console.error("Create dir failed");
         }
@@ -132,6 +138,15 @@ define(function(require, exports, module) {
           console.error("Getting file properties failed.");
         }
         break;
+      case "getFileContent":
+        if (message.success) {
+          var arrBuff = base64toArrayBuffer(message.content);
+          args[0](arrBuff);
+        } else {
+          args[1](message.content);
+        }
+        args = [];
+        break;
       default:
         break;
     }
@@ -160,13 +175,14 @@ define(function(require, exports, module) {
     document.documentElement.dispatchEvent(event);
   };
 
-  var createDirectory = function(dirPath) {
+  var createDirectory = function(dirPath, silentMode) {
     console.log("Directory " + dirPath + " created.");
     var event = document.createEvent('CustomEvent');
     event.initCustomEvent("addon-message", true, true, {
       "detail": {
         "command": "createDirectory",
-        "path": dirPath
+        "path": dirPath,
+        "silent" : silentMode
       }
     });
     document.documentElement.dispatchEvent(event);
@@ -214,14 +230,16 @@ define(function(require, exports, module) {
     TSCORE.showAlertDialog($.i18n.t("ns.common:functionalityNotImplemented"));
   };
 
-  var saveTextFile = function(filePath, content) {
+  var saveTextFile = function(filePath, content, overWrite, silentMode) {
     console.log("Saving file: " + filePath);
     var event = document.createEvent('CustomEvent');
     event.initCustomEvent("addon-message", true, true, {
       "detail": {
         "command": "saveTextFile",
         "path": filePath,
-        "content": content
+        "content": content,
+        "overwrite": overWrite,
+        "silent": silentMode
       }
     });
     document.documentElement.dispatchEvent(event);
@@ -233,14 +251,16 @@ define(function(require, exports, module) {
     return String.fromCharCode.apply(null, new Uint8Array(buf));
   }
 
-  var saveBinaryFile = function(filePath, content) {
+  var saveBinaryFile = function(filePath, content, overWrite, silentMode) {
     console.log("Saving binary file post: " + filePath); //+" - "+content);
     var event = document.createEvent('CustomEvent');
     event.initCustomEvent("addon-message", true, true, {
       "detail": {
         "command": "saveBinaryFile",
         "path": filePath,
-        "content": ab2str(content)
+        "content": ab2str(content),
+        "overwrite": overWrite,
+        "silent": silentMode
       }
     });
     document.documentElement.dispatchEvent(event);
@@ -381,6 +401,28 @@ define(function(require, exports, module) {
     window.focus();
   };
 
+  var getFileContent = function(filePath, result, error) {
+    args = [result, error];
+    var event = document.createEvent('CustomEvent');
+    event.initCustomEvent("addon-message", true, true, {
+      "detail": {
+        "command": "getFileContent",
+        "path": filePath
+      }
+    });
+    document.documentElement.dispatchEvent(event);
+  };
+
+  function base64toArrayBuffer(str) {
+    var bstr =  atob(str);
+    var len = bstr.length;
+    var bytes = new Uint8Array(len);
+    for (var i = 0; i < len; i++)        {
+      bytes[i] = bstr.charCodeAt(i);
+    }
+    return bytes.buffer;
+  }
+
   exports.focusWindow = focusWindow;
   exports.createDirectory = createDirectory;
   exports.copyFile = copyFile;
@@ -402,7 +444,7 @@ define(function(require, exports, module) {
   exports.checkAccessFileURLAllowed = checkAccessFileURLAllowed;
   exports.checkNewVersion = checkNewVersion;
   exports.getFileProperties = getFileProperties;
-
+  exports.getFileContent = getFileContent;
   // mozilla specific
   exports.saveSettings = saveSettings;
   exports.loadSettings = loadSettings;

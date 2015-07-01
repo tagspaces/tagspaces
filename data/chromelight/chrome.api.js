@@ -352,6 +352,25 @@ define(function(require, exports, module) {
     window.focus();
   };
 
+  function getFileContent(fullPath, result, error) {
+    var fileURL = fullPath;
+    if (fileURL.indexOf("file://") === -1) {
+      fileURL = "file://" + fileURL;
+    }
+
+    var xhr = new XMLHttpRequest(); 
+    xhr.open("GET", fileURL, true);
+    xhr.responseType = "arraybuffer";
+    xhr.onload = function() {
+      if (xhr.response) {
+        result(xhr.response);
+      } else {
+        fail(xhr.statusText);
+      }
+    };
+    xhr.send();
+  }
+
   exports.focusWindow = focusWindow;
   exports.createDirectory = createDirectory;
   exports.copyFile = copyFile;
@@ -376,5 +395,5 @@ define(function(require, exports, module) {
   exports.getFileProperties = getFileProperties;
   exports.saveSettings = saveSettings;
   exports.handleStartParameters = handleStartParameters;
-
+  exports.getFileContent = getFileContent;
 });

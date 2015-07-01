@@ -732,4 +732,5 @@ define(function(require, exports, module) {
   exports.getFile = getFile;
   exports.getFileContent = getFileContent;
   exports.getDirectoryMetaInformation = getDirectoryMetaInformation;
+
 });
