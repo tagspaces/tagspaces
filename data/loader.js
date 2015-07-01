@@ -55,7 +55,7 @@ if( isFirefox ) {
 }
 
 var PRO_JS = "js/pro";
-if(PRO === "@@PROVERSION") {
+if(PRO != "false") {
   PRO_JS = 'pro/js/pro.api';
 }
 
