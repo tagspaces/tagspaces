@@ -329,6 +329,7 @@ define(function(require, exports, module) {
       });
     } else {
       var img = new Image();
+      img.crossOrigin = 'anonymous';
       img.onload = function() {
         if (img.width >= img.height) {
           canvas.width = maxSize;
