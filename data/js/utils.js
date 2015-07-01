@@ -28,7 +28,20 @@ define(function(require, exports, module) {
     return new window.Blob([arrBuff], {type:mime});
   }
 
+  function getBase64Image(imgURL) {
+    var canvas = document.createElement("canvas");
+    var img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.src = imgURL;
+    canvas.width = img.width;
+    canvas.height = img.height;
+    var ctx = canvas.getContext("2d");
+    ctx.drawImage(img, 0, 0);
+    return canvas.toDataURL("image/png");
+  }
+
   exports.arrayBufferToDataURL = arrayBufferToDataURL;
   exports.base64ToArrayBuffer = base64ToArrayBuffer;
   exports.dataURLtoBlob = dataURLtoBlob;
+  exports.getBase64Image = getBase64Image;
 });
