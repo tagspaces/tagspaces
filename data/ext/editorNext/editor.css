@@ -1,0 +1,33 @@
+html, body {
+    height: 100%;
+    width: 100%;
+}
+
+#htmlEditor {
+    height: 80%;
+    width: 100%;
+}
+
+textarea {
+    height: 100%;
+    width: 100%;
+    border: 3px double #f99;
+}
+
+/* Custom scrollbars for chrome */
+::-webkit-scrollbar-track
+{
+    background-color: transparent;
+}
+
+::-webkit-scrollbar
+{
+    width: 8px;
+    height: 8px;
+    background-color: #F5F5F5;
+}
+
+::-webkit-scrollbar-thumb
+{
+    background-color: #bbb;
+}
