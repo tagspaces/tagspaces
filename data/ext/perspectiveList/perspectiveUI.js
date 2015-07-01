@@ -346,7 +346,7 @@ define(function(require, exports, module) {
           TSCORE.TagUtils.addTag(TSCORE.selectedFiles, [tagName]);
           self.handleElementActivation();
 
-          //$(ui.helper).remove();
+          $(ui.helper).remove();
         }
       })
       .click(function() {
