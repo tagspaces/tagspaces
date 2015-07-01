@@ -277,14 +277,14 @@ define(function(require, exports, module) {
       if (TSPRO.available) {
         TSPRO.getThumbnailURL($element.attr('filepath'), function(dataURL) {
           $element.attr('src', dataURL);
-          if( $tiltleElem.length -1 === index) {
+          if (($tiltleElem.length - 1) === index) {
             TSCORE.hideLoadingAnimation();
           }
         });
       } else {
         generateThumbnail($element.attr('filepath'), function(dataURL) {
           $element.attr('src', dataURL);
-          if( $tiltleElem.length -1 === index) {
+          if (($tiltleElem.length - 1) === index) {
             TSCORE.hideLoadingAnimation();
           }
         });  
