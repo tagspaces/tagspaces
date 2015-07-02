@@ -9,46 +9,100 @@ define(function(require, exports, module) {
 
   console.log("Loading editorNext");
 
-  console.log("Loading editorHTML");
-
   var extensionTitle = "HTML Editor";
-  var extensionID = "editorHTML"; // ID should be equal to the directory name where the ext. is located
+  var extensionID = "editorNext"; // ID should be equal to the directory name where the ext. is located
   var extensionType = "editor";
   var extensionSupportedFileTypes = ["html", "htm"];
 
   var TSCORE = require("tscore");
 
-  var extensionDirectory = TSCORE.Config.getExtensionPath() + "/" + exports.id;
+  var extensionDirectory = TSCORE.Config.getExtensionPath() + "/" + extensionID//exports.id;
+  var currentContent;
 
   exports.init = function(filePath, elementID) {
     console.log("Initalization editorNext");
-    var $parent = $('#' + elementID);
 
-    alert(filePath);
-
-    var newDiv =  $("<div />"); 
-    var textArea = $('<textarea style="padding-left:100px" />'); 
-    textArea.text("Hello world");
-    newDiv.append(textArea);
-    $parent.append(newDiv);
-
-    require(["ext/editorNext/woofmark/woofmark.min"], function() {
-      alert(woofmark);
-      woofmark(textArea, {
-          //parseMarkdown: megamark,
-          //parseHTML: domador
-        });
-    };
+    var $containerElement = $('#' + elementID);
+    $containerElement.empty();
+    $containerElement.css("background-color", "white");
+    
+    var extPath = extensionDirectory + "/index.html";
+    $containerElement.append($('<iframe>', {
+      id: "iframeViewer",
+      sandbox: "allow-same-origin allow-scripts",
+      scrolling: "no",
+      style: "background-color: white; overflow: hidden;",
+      src: extPath,
+      "nwdisable": "",
+      "nwfaketop": ""
+    }).load(function() {
+      TSCORE.IO.loadTextFile(filePath);   
+    }));
+    
+  };
 
   exports.viewerMode = function() {
     console.log("viewerMode not supported on this extension");
   };
 
   exports.setContent = function(content) {
-    console.log("setContent not supported on this extension");
+    currentContent = content;
+
+    var bodyRegex = /\<body[^>]*\>([^]*)\<\/body/m; // jshint ignore:line
+    var bodyContent;
+
+    try {
+      bodyContent = content.match(bodyRegex)[1];
+    } catch (e) {
+      console.log("Error parsing HTML document. " + e);
+      TSCORE.FileOpener.closeFile(true);
+      TSCORE.showAlertDialog("Probably a body tag was not found in the document. Document will be closed.", "Error parsing HTML document");
+    }
+
+    // removing all scripts from the document
+    var cleanedBodyContent = bodyContent.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "");
+
+    var contentWindow = document.getElementById("iframeViewer").contentWindow;
+    if (typeof contentWindow.setContent === "function") {
+      contentWindow.setContent(cleanedBodyContent);
+    } else {
+      alert("TODO optimize setTimeout");
+    }
+
   };
 
   exports.getContent = function() {
-    console.log("getContent not supported on this extension");
+
+     var content = $("#iframeViewer").contents().find("textarea").val();
+
+    // removing all scripts from the document
+    var cleanedContent = content.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "");
+
+    // saving all images as png in base64 format
+    var match,
+      urls = [],
+      imgUrl = "",
+      rex = /<img.*?src="([^">]*\/([^">]*?))".*?>/g;
+
+    while (match = rex.exec(cleanedContent)) {
+      imgUrl = match[1];
+      console.log("URLs: " + imgUrl);
+      urls.push([imgUrl, TSCORE.Utils.getBase64Image(imgUrl)]);
+    }
+
+    urls.forEach(function(dataURLObject) {
+      if (dataURLObject[1].length > 7) {
+        cleanedContent = cleanedContent.split(dataURLObject[0]).join(dataURLObject[1]);
+      }
+      //console.log(dataURLObject[0]+" - "+dataURLObject[1]);
+    });
+    // end saving all images
+
+    cleanedContent = "<body>" + cleanedContent + "</body>";
+
+    var htmlContent = currentContent.replace(/\<body[^>]*\>([^]*)\<\/body>/m, cleanedContent); // jshint ignore:line
+    //console.log("Final html "+htmlContent);
+    //resetContentVersion();
+    return htmlContent;
   };
 });

@@ -1,7 +1,6 @@
 "use strict";
 
 var isCordova = parent.isCordova;
-var $htmlEditor;
 var editor = null;
 function initEditor() {
  
@@ -24,10 +23,10 @@ function getContentVersion() {
 }
 
 function setContent(content) {
+	
   resetContentVersion();
-  $htmlEditor = $('#htmlEditor');
 
-  $htmlEditor.find('textarea').val(content);
-  
+  $('#htmlEditor').find('textarea').val(content);
+
   initEditor();
 }
