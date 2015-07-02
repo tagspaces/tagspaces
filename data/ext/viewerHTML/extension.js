@@ -195,17 +195,15 @@ define(function(require, exports, module) {
     console.log("Not implemented");
   };
 
-  exports.getTextContent = function(file, loaded) {
+  exports.getTextContent = function(file, result) {
    
-    var iframe = $('<iframe/>', { 
-        id:'fileIframe', 
-        src: file, 
-        style:'display:none;',
-        load: function() {
-          loaded(this.contentWindow.document.body.innerText); 
-        }
-      });
-    $('body').append(iframe);
+    TSCORE.IO.getFileContent(file, function(buf) {
+      var text = TSCORE.Utils.arrayBufferToStr(buf);
+      var matched = text.match(/<body[^>]*>([\w|\W]*)<\/body>/im);
+      result($(matched[1]).text());
+    }, function(err) {
+      console.log(err);
+    });
   };
 
   // Extension Vars

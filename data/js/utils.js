@@ -40,8 +40,14 @@ define(function(require, exports, module) {
     return canvas.toDataURL("image/png");
   }
 
+  function arrayBufferToStr(buf) {
+    var s = String.fromCharCode.apply(null, new Uint8Array(buf));
+    return decodeURIComponent(escape(s));
+  }
+
   exports.arrayBufferToDataURL = arrayBufferToDataURL;
   exports.base64ToArrayBuffer = base64ToArrayBuffer;
   exports.dataURLtoBlob = dataURLtoBlob;
   exports.getBase64Image = getBase64Image;
+  exports.arrayBufferToStr = arrayBufferToStr;
 });
