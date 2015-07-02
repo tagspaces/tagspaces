@@ -16,7 +16,7 @@ define(function(require, exports, module) {
   var tsCoreUI = require('tscoreui');
   var tsSearch = require('tssearch');
   var tsPro = require('tspro');
-
+  var tsUtils = require('tsutils');
   var currentPath;
   var currentLocationObject;
   var currentPerspectiveID;
@@ -26,6 +26,8 @@ define(function(require, exports, module) {
   var fileList = [];
   // List of the sub directories of the current directory
   var subDirsList = [];
+  // List of meta files
+  var metaFileList = [];
   // Last clicked button for removing a tag
   var selectedTag = '';
   var selectedTagData = '';
@@ -551,7 +553,7 @@ define(function(require, exports, module) {
   exports.TagUtils = tsTagUtils;
   exports.FileOpener = tsFileOpener;
   exports.Search = tsSearch;
-
+  exports.Utils = tsUtils;
   if (tsPro.available) {
     exports.PRO = tsPro;
   }
@@ -646,4 +648,5 @@ define(function(require, exports, module) {
   //document events
   exports.createDocumentEvent = createDocumentEvent;
   exports.fireDocumentEvent = fireDocumentEvent;
+  exports.metaFileList = metaFileList;
 });

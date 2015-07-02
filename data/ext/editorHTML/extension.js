@@ -135,7 +135,7 @@ define(function(require, exports, module) {
     while (match = rex.exec(cleanedContent)) {
       imgUrl = match[1];
       console.log("URLs: " + imgUrl);
-      urls.push([imgUrl, getBase64Image(imgUrl)]);
+      urls.push([imgUrl, TSCORE.Utils.getBase64Image(imgUrl)]);
     }
 
     urls.forEach(function(dataURLObject) {
@@ -153,17 +153,6 @@ define(function(require, exports, module) {
     resetContentVersion();
     return htmlContent;
   };
-
-  function getBase64Image(imgURL) {
-    var canvas = document.createElement("canvas");
-    var img = new Image();
-    img.src = imgURL;
-    canvas.width = img.width;
-    canvas.height = img.height;
-    var ctx = canvas.getContext("2d");
-    ctx.drawImage(img, 0, 0);
-    return canvas.toDataURL("image/png");
-  }
 
   // Extension Vars
   exports.Title = extensionTitle;

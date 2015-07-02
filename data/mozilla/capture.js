@@ -71,7 +71,7 @@ exports.saveContentToFile = function (name, content) {
 
   var converter = Cc["@mozilla.org/intl/converter-output-stream;1"].
       createInstance(Ci.nsIConverterOutputStream);
-  converter.init(foStream, "UTF-8", 0, 0);
+  converter.init(foStream, "UTF-8", 0, 0xFFFD);
   converter.writeString(content);
   converter.close();
 };

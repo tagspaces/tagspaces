@@ -47,22 +47,15 @@ define(function(require, exports, module) {
   }
 
   function createZipPrewiew(filePath, elementID) {
+    var $parent = $('#' + elementID);
+    var $previewElement = $('<div/>').css({'overflow': 'auto', 'padding': '5px', 'fontSize': 12})
+      .width($parent.width()).height($parent.height()).appendTo($parent);
 
-    var fileReader = new window.FileReader();
     TSCORE.showLoadingAnimation();
-
-    fileReader.onload = function(event) {
-
-      var zipFile = new JSZip(event.target.result);
-
-      var $parent = $('#' + elementID);
-      var $previewElement = $('<div/>').css({'overflow': 'auto', 'padding': '5px', 'fontSize': 12})
-        .width($parent.width())
-        .height($parent.height())
-        .appendTo($parent);
-
+    
+    TSCORE.IO.getFileContent(filePath, function(content) {
+      var zipFile = new JSZip(content);
       $previewElement.append("<p> Contents of file " + filePath + "</p>");
-
       var ulFiles = $previewElement.append("<ul/>");
 
       for (var fileName in zipFile.files) {
@@ -70,7 +63,6 @@ define(function(require, exports, module) {
         if (zipFile.files[fileName].dir === true) {
           continue;
         }
-
         var linkToFile = $('<a>').attr('href', '#').text(fileName);
         linkToFile.click(function(event) {
           event.preventDefault();
@@ -82,35 +74,10 @@ define(function(require, exports, module) {
       }
 
       TSCORE.hideLoadingAnimation();
-    };
-
-    /*try{
-      var file = new window.File(filePath);
-      fileReader.readAsArrayBuffer(file);
-    } catch(e) {
-      alert(e.message);
-    }*/
-
-    if (isCordova) {
-      TSCORE.IO.getFile(filePath, 
-        function(file) {
-          fileReader.readAsArrayBuffer(file);
-        },
-        function(error) {
-          console.log("error: " + JSON.stringify(error));
-        }
-      );
-    } else {
-
-      var xhr = new XMLHttpRequest(); 
-      xhr.open("GET", "file://" + filePath, true);
-      xhr.responseType = "blob";
-
-      xhr.onload = function() {
-        fileReader.readAsArrayBuffer(xhr.response);
-      };
-      xhr.send();
-    }
+    }, 
+    function(error) {
+      $previewElement.append("<p> Error in getFileContent :" + error + "</p>");
+    });
   }
 
   exports.init = function(filePath, elementID) {

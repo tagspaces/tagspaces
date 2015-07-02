@@ -13,9 +13,8 @@ define(function(require, exports, module) {
 
   var TSCORE = require("tscore");
   var TSPOSTIO = require("tspostioapi");
-
+  var fsWatcher;
   var win = gui.Window.get();
-
   /* var splashwin = gui.Window.open('splashscreen.html', {
     'frame': false,
     'toolbar': false,
@@ -269,7 +268,7 @@ define(function(require, exports, module) {
     TSPOSTIO.createDirectoryTree(directoyTree);
   };
 
-  var createDirectory = function(dirPath) {
+  var createDirectory = function(dirPath, silentMode) {
     console.log("Creating directory: " + dirPath);
 
     fs.mkdir(dirPath, function(error) {
@@ -277,7 +276,9 @@ define(function(require, exports, module) {
         console.log("Creating directory " + dirPath + " failed " + error);
         return;
       }
-      TSPOSTIO.createDirectory(dirPath);
+      if (silentMode !== true) {
+        TSPOSTIO.createDirectory(dirPath);
+      }
     });
   };
 
@@ -414,7 +415,7 @@ define(function(require, exports, module) {
       });
   };    */
 
-  var saveTextFile = function(filePath, content, overWrite, dontReloadUI) {
+  var saveTextFile = function(filePath, content, overWrite, silentMode) {
     console.log("Saving file: " + filePath);
 
     /** TODO check if fileExist by saving needed
@@ -443,22 +444,24 @@ define(function(require, exports, module) {
         console.log("Save to file " + filePath + " failed " + error);
         return;
       }
-      if (dontReloadUI !== true) {
+      if (silentMode !== true) {
         TSPOSTIO.saveTextFile(filePath, isNewFile);
       }
     });
   };
 
-  var saveBinaryFile = function(filePath, content) {
+  var saveBinaryFile = function(filePath, content, overWrite, silentMode) {
     console.log("Saving binary file: " + filePath);
 
-    if (!fs.existsSync(filePath)) {
+    if (!fs.existsSync(filePath) || overWrite === true) {
       fs.writeFile(filePath, arrayBufferToBuffer(content), 'utf8', function(error) {
         if (error) {
           console.log("Save to file " + filePath + " failed " + error);
           return;
         }
-        TSPOSTIO.saveBinaryFile(filePath);
+        if (silentMode !== true) {
+          TSPOSTIO.saveBinaryFile(filePath);
+        }
       });
     } else {
       TSCORE.showAlertDialog($.i18n.t("ns.common:fileExists", {fileName: filePath}));
@@ -502,9 +505,46 @@ define(function(require, exports, module) {
           }
         }
         TSPOSTIO.listDirectory(anotatedDirList);
+
+        watchDirecotory(dirPath, function(event, file) {
+          TSCORE.IO.listDirectory(dirPath);
+        });
       });
     } catch (ex) {
       TSPOSTIO.errorOpeningPath();
+      console.error("Listing directory " + dirPath + " failed " + ex);
+    }
+  };
+
+  var getDirectoryMetaInformation = function(dirPath) {
+    
+    console.log("getDirectoryMetaInformation directory: " + dirPath);
+    try {
+      fs.readdir(dirPath, function(error, dirList) {
+        if (error) {
+          console.log("Listing directory: " + dirPath + " failed " + error);
+          return;
+        }
+        
+        var anotatedDirList = [];
+        for (var i = 0; i < dirList.length; i++) {
+          var path = dirPath + TSCORE.dirSeparator + dirList[i];
+          var stats = fs.lstatSync(path);
+          if (stats !== undefined) {
+            //console.log('stats: ' + JSON.stringify(stats));
+            anotatedDirList.push({
+              "name": dirList[i],
+              "isFile": stats.isFile(),
+              "size": stats.size,
+              "lmdt": stats.mtime,
+              "path": path
+            });
+          }
+        }
+        //TSPOSTIO.listDirectory(anotatedDirList);
+        TSCORE.metaFileList = anotatedDirList;
+      });
+    } catch (ex) {
       console.error("Listing directory " + dirPath + " failed " + ex);
     }
   };
@@ -616,16 +656,53 @@ define(function(require, exports, module) {
   */
   var getFileProperties = function(filePath) {
     var fileProperties = {};
-    var stats = fs.lstatSync(filePath);
-    if (stats.isFile()) {
-      fileProperties.path = filePath;
-      fileProperties.size = stats.size;
-      fileProperties.lmdt = stats.mtime;
-      TSPOSTIO.getFileProperties(fileProperties);
-    } else {
-      console.warn("Error getting file properties. " + filePath + " is directory");
+    try {
+      var stats = fs.lstatSync(filePath);
+      if (stats.isFile()) {
+        fileProperties.path = filePath;
+        fileProperties.size = stats.size;
+        fileProperties.lmdt = stats.mtime;
+        TSPOSTIO.getFileProperties(fileProperties);
+      } else {
+        console.warn("Error getting file properties. " + filePath + " is directory");
+      }
+    } catch (e) {
+      console.warn("File " + filePath + " didn't exits");
     }
   };
+
+  var watchDirecotory = function(dirPath, listener) {
+    if (fsWatcher) {
+      fsWatcher.close();
+    }
+    fsWatcher = fs.watch(dirPath, { persistent: true, recursive: false }, listener);
+  };
+
+  function getFile(fileURL, result, error) {
+
+    getFileContent(fileURL, function(content) {
+      result(new File([content], fileURL, {}));
+    }, error);
+  }
+
+  function getFileContent(fullPath, result, error) {
+    var fileURL = fullPath;
+    if (fileURL.indexOf("file://") === -1) {
+      fileURL = "file://" + fileURL;
+    }
+
+    var xhr = new XMLHttpRequest(); 
+    xhr.open("GET", fileURL, true);
+    xhr.responseType = "arraybuffer";
+    xhr.onload = function() {
+      if (xhr.response) {
+        result(xhr.response);
+      } else {
+        fail(xhr.statusText);
+      }
+    };
+    xhr.send();
+  }
 
   exports.createDirectory = createDirectory;
   exports.renameDirectory = renameDirectory;
@@ -652,5 +729,8 @@ define(function(require, exports, module) {
   exports.handleTray = handleTray;
   exports.focusWindow = focusWindow;
   exports.showMainWindow = showMainWindow;
+  exports.getFile = getFile;
+  exports.getFileContent = getFileContent;
+  exports.getDirectoryMetaInformation = getDirectoryMetaInformation;
 
 });
