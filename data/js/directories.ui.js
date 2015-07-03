@@ -356,8 +356,10 @@ define(function(require, exports, module) {
     }
     console.log('Dir History: ' + JSON.stringify(directoryHistory));
     TSCORE.currentPath = directoryPath;
-    if (TSPRO.available && TSCORE.IO.getDirectoryMetaInformation) {
-      TSCORE.IO.getDirectoryMetaInformation(TSPRO.getMetaDirectoryPath());
+    if (TSCORE.IO.getDirectoryMetaInformation) {
+      //TODO: get folder name
+      var metaFolderPath = TSCORE.currentPath + TSCORE.dirSeparator + ".ts";
+      TSCORE.IO.getDirectoryMetaInformation(metaFolderPath);
     }
     TSCORE.IO.listDirectory(directoryPath);
   }
