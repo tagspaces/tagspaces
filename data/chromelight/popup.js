@@ -91,7 +91,8 @@
   }
 
   function saveAsBookmark() {
-      var filename;
+	chrome.tabs.getSelected(null, function(tab) {      
+	  var filename;
       tags = document.getElementById("tags").value;
       if (tags) {
           tags = tags.split(",").join(" ");
@@ -101,6 +102,7 @@
       }
       var content = '[InternetShortcut]\r\nURL=' + tab.url;
       saveAs(content, filename);
+	});
   }  
   
   function saveAsMHTML() {
