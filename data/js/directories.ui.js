@@ -8,6 +8,7 @@ define(function(require, exports, module) {
 
   console.log('Loading directories.ui.js ...');
   var TSCORE = require('tscore');
+  var TSPRO = require('tspro');
   var directoryHistory = [];
   var dir4ContextMenu = null;
   var tsMetadataFolder = '.ts';
@@ -355,6 +356,9 @@ define(function(require, exports, module) {
     }
     console.log('Dir History: ' + JSON.stringify(directoryHistory));
     TSCORE.currentPath = directoryPath;
+    if (TSPRO.available && TSCORE.IO.getDirectoryMetaInformation) {
+      TSCORE.IO.getDirectoryMetaInformation(TSPRO.getMetaDirectoryPath());
+    }
     TSCORE.IO.listDirectory(directoryPath);
   }
 

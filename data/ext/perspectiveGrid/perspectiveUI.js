@@ -8,7 +8,7 @@ define(function(require, exports, module) {
   console.log("Loading UI for perspectiveDefault");
 
   var TSCORE = require("tscore");
-
+  var TSPRO = require("tspro");
   var TMB_SIZES = ["200px", "300px", "100px"];
 
   var MONTH = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -270,9 +270,26 @@ define(function(require, exports, module) {
 
   ExtUI.prototype.enableThumbnails = function() {
     $("#" + this.extensionID + "IncreaseThumbsButton").prop('disabled', false);
-    $("#" + this.extensionID + "Container .thumbImgTile").each(function() {
-      generateThumbnail($(this).attr('filepath'), $(this));
-      $(this).attr('style', "");
+    TSCORE.showLoadingAnimation();
+    var $tiltleElem = $("#" + this.extensionID + "Container .thumbImgTile");
+    $tiltleElem.each(function(index) {
+      var $element = $(this);
+      if (TSPRO.available) {
+        TSPRO.getThumbnailURL($element.attr('filepath'), function(dataURL) {
+          $element.attr('src', dataURL);
+          if (($tiltleElem.length - 1) === index) {
+            TSCORE.hideLoadingAnimation();
+          }
+        });
+      } else {
+        generateThumbnail($element.attr('filepath'), function(dataURL) {
+          $element.attr('src', dataURL);
+          if (($tiltleElem.length - 1) === index) {
+            TSCORE.hideLoadingAnimation();
+          }
+        });  
+      }
+      $element.attr('style', "");
     });
     $('.thumbImgTile').css({
       "max-width": TMB_SIZES[this.currentTmbSize],
@@ -280,7 +297,7 @@ define(function(require, exports, module) {
     });
   };
 
-  function generateThumbnail(fileURL, imgElement) {
+  function generateThumbnail(fileURL, result) {
     var maxSize = 200;
     var canvas = document.createElement("canvas");
     var ctx = canvas.getContext("2d");
@@ -306,7 +323,7 @@ define(function(require, exports, module) {
             //draw background / rect on entire canvas
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             dataURL = canvas.toDataURL("image/png");
-            imgElement.attr('src', dataURL);
+            result(dataURL);
           });
         });
       });
@@ -322,7 +339,7 @@ define(function(require, exports, module) {
         }
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
         dataURL = canvas.toDataURL("image/png");
-        imgElement.attr('src', dataURL);
+        result(dataURL);
         img = null;
         canvas = null;
       };
