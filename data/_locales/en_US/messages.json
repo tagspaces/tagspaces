@@ -56,5 +56,13 @@
   "saveScreenshotLabel": {
     "message": "Screenshot",
     "description": "Title of label."
+  },
+  "saveBookmarkTitle": {
+    "message": "Bookmark the page",
+    "description": "Title of bookmark button"
+  },
+  "saveBookmarkLabel": {
+    "message": "Bookmark",
+    "description": "Title of label."
   }
 }
