@@ -66,10 +66,17 @@ define(function(require, exports, module) {
     if (typeof contentWindow.setContent === "function") {
       contentWindow.setContent(cleanedBodyContent);
     } else {
-      alert("TODO optimize setTimeout");
+      console.log("editor is not initalized");
     }
 
   };
+
+  var contentVersion = 0;
+
+  function resetContentVersion() {
+    contentVersion = 0;
+    document.getElementById("iframeViewer").contentWindow.resetContentVersion();
+  }
 
   exports.getContent = function() {
 
@@ -102,7 +109,7 @@ define(function(require, exports, module) {
 
     var htmlContent = currentContent.replace(/\<body[^>]*\>([^]*)\<\/body>/m, cleanedContent); // jshint ignore:line
     //console.log("Final html "+htmlContent);
-    //resetContentVersion();
+    resetContentVersion();
     return htmlContent;
   };
 });

@@ -1,18 +1,21 @@
 "use strict";
-
+var contentVersion = 0;
 var isCordova = parent.isCordova;
 var editor = null;
+
 function initEditor() {
- 
-	editor = woofmark(document.querySelector('textarea'), {
+  var el = document.querySelector("textarea");
+	editor = woofmark(el, {
      	parseMarkdown: megamark,
      	parseHTML: domador
  	});
 
 	editor.setMode("html");
+  
+  $(el).on("change keyup cut paste", function(event) {
+    contentVersion++;
+  });
 }
-
-var contentVersion = 0;
 
 function resetContentVersion() {
   contentVersion = 0;
