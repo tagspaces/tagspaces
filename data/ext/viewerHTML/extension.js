@@ -17,6 +17,7 @@ define(function(require, exports, module) {
   var extensionSupportedFileTypes = ["html", "htm"];
 
   var TSCORE = require("tscore");
+  var TSPRO = require("tspro");
 
   var containerElID,
     $containerElement,
@@ -33,6 +34,11 @@ define(function(require, exports, module) {
 
     currentFilePath = filePath;
 
+    if (TSPRO.available) {
+      exports.getTextContent(filePath, function(content) {
+        TSPRO.saveTextContent(filePath, content);
+      });
+    }
     //var fileExt = TSCORE.TagUtils.extractFileExtension(filePath);
 
     $containerElement.empty();
@@ -187,6 +193,17 @@ define(function(require, exports, module) {
 
   exports.getContent = function() {
     console.log("Not implemented");
+  };
+
+  exports.getTextContent = function(file, result) {
+   
+    TSCORE.IO.getFileContent(file, function(buf) {
+      var text = TSCORE.Utils.arrayBufferToStr(buf);
+      var matched = text.match(/<body[^>]*>([\w|\W]*)<\/body>/im);
+      result($(matched[1]).text());
+    }, function(err) {
+      console.log(err);
+    });
   };
 
   // Extension Vars
