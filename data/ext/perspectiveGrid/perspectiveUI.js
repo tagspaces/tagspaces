@@ -253,6 +253,8 @@ define(function(require, exports, module) {
 
     // Disable all buttons    
     this.viewToolbar.find(".btn").prop('disabled', true);
+
+    this.toggleThumbnails();
   };
 
   ExtUI.prototype.switchThumbnailSize = function() {
@@ -282,12 +284,17 @@ define(function(require, exports, module) {
           }
         });
       } else {
-        generateThumbnail($element.attr('filepath'), function(dataURL) {
-          $element.attr('src', dataURL);
-          if (($tiltleElem.length - 1) === index) {
-            TSCORE.hideLoadingAnimation();
+        TSCORE.metaFileList.every(function(element) {
+          
+          var filePath = $element.attr('filepath') + ".png";
+          if (filePath.indexOf(element.name) > 0) {
+            var metaFilePath = TSCORE.currentPath + TSCORE.dirSeparator + 
+              ".ts" + TSCORE.dirSeparator + element.name;
+            $element.attr('src', metaFilePath);
+            return false;
           }
-        });  
+          return true;
+        });
       }
       $element.attr('style', "");
     });
