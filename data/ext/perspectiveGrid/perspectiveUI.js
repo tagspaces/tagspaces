@@ -15,7 +15,7 @@ define(function(require, exports, module) {
 
   var PREVIEW_TAGS_CNT = 5;
 
-  var supportedFileTypeThumnailing = ['jpg', 'jpeg', 'png', 'gif', 'pdf', 'svg', 'webp', 'bmp'];
+  var supportedFileTypeThumnailing = ['jpg', 'jpeg', 'png', 'gif', 'pdf', 'svg', 'webp', 'bmp', "zip", "epub", "docx", "xslx", "odf"];
 
   function ExtUI(extID) {
     this.extensionID = extID;
