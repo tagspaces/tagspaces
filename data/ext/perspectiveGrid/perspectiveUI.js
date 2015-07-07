@@ -19,7 +19,7 @@ define(function(require, exports, module) {
     "jpg", "jpeg", "png", "gif", "pdf", "svg", "webp", "bmp", 
     "zip", "epub", "docx", "pptx", "pptm", "potx", "potm", 
     "ppxs", "ppsm", "sldx", "sldm", "dotx",  "dotm", "xlsx", 
-    "xlsm", "xlst", "odp", "odg"
+    "xlsm", "xlst", "odp", "odg", "ods", "odt" 
   ];
 
   function ExtUI(extID) {
