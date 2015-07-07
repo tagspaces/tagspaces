@@ -122,7 +122,7 @@ define(function(require, exports, module) {
 
   function getAppStorageFileSystem(fileName, fileCallback, fail) {
         
-    window.resolveLocalFileSystemURL(cordova.file.dataDirectory, 
+    window.resolveLocalFileSystemURL(cordova.file.externalApplicationStorageDirectory, //dataDirectory,
       function(fs) {
         fs.getFile(fileName, {create:true}, fileCallback, fail);
       }, 
