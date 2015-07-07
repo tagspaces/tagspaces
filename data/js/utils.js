@@ -45,9 +45,15 @@ define(function(require, exports, module) {
     return decodeURIComponent(escape(s));
   }
 
+  var baseName = function(dirPath) {
+    var fileName = dirPath.substring(dirPath.lastIndexOf("/") + 1, dirPath.length);
+    return fileName ? fileName : dirPath; 
+  };
+
   exports.arrayBufferToDataURL = arrayBufferToDataURL;
   exports.base64ToArrayBuffer = base64ToArrayBuffer;
   exports.dataURLtoBlob = dataURLtoBlob;
   exports.getBase64Image = getBase64Image;
   exports.arrayBufferToStr = arrayBufferToStr;
+  exports.baseName  = baseName;
 });
