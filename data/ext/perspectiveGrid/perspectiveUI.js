@@ -15,7 +15,12 @@ define(function(require, exports, module) {
 
   var PREVIEW_TAGS_CNT = 5;
 
-  var supportedFileTypeThumnailing = ['jpg', 'jpeg', 'png', 'gif', 'pdf', 'svg', 'webp', 'bmp', "zip", "epub", "docx", "xslx", "odf"];
+  var supportedFileTypeThumnailing = [
+    "jpg", "jpeg", "png", "gif", "pdf", "svg", "webp", "bmp", 
+    "zip", "epub", "docx", "pptx", "pptm", "potx", "potm", 
+    "ppxs", "ppsm", "sldx", "sldm", "dotx",  "dotm", "xlsx", 
+    "xlsm", "xlst", "odp", "odg"
+  ];
 
   function ExtUI(extID) {
     this.extensionID = extID;
