@@ -221,9 +221,9 @@ define(function(require, exports, module) {
     );
   }
 
-  function getFile(filePath, result, fail) {
+  function getFile(fullPath, result, fail) {
 
-    filePath = normalizePath(filePath);
+    var filePath = normalizePath(fullPath);
 
     fsRoot.getFile(filePath, {create: false},
       function(fileEntry) {
@@ -238,7 +238,7 @@ define(function(require, exports, module) {
 
   function getFileContent(fullPath, result, error) {
 
-    getFile(filePath, function(file) {
+    getFile(fullPath, function(file) {
       var reader = new FileReader();
       reader.onerror = function() {
         error(reader.error);
