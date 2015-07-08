@@ -246,12 +246,12 @@ module.exports = function(grunt) {
     var jsDAV = require("jsDAV/lib/jsdav");
     jsDAV.debugMode = true;
     var jsDAV_Auth_Backend_File = require("jsDAV/lib/DAV/plugins/auth/file");
-    grunt.log.writeln("Starting WebDAV server");
     jsDAV.createServer({
-        node: "/home/na/TagSpaces/repo/data",
-        authBackend:  jsDAV_Auth_Backend_File.new("/home/na/TagSpaces/repo/jsdavauth"),
+        node: "./data",
+        authBackend:  jsDAV_Auth_Backend_File.new("./jsdavauth"),
         realm: "jdavtest"
     }, 8000);
+    grunt.log.writeln("WebDAV server started");
   }),
 
   grunt.registerTask('help', 'Printing help for this script.', function() {
