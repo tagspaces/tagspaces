@@ -425,6 +425,19 @@ define(function(require, exports, module) {
     );
   };
 
+  function resolveFullPath(localURL) {
+    //Cordova file plugin didn't set fullpath so we set fullpath as absolute
+    //this solve problem with extensions which can't use the cdvfile
+    var URL = "cdvfile://localhost/persistent/";
+    var fullPath = decodeURIComponent(localURL);
+    if (fullPath.indexOf("cdvfile://localhost/root/") === 0) {
+       URL = "cdvfile://localhost/root/";
+    }
+
+    fullPath = fsRoot.nativeURL + fullPath.substring(URL.length, fullPath.length);
+    return fullPath;
+  }
+
   var listDirectory = function(dirPath) {
     TSCORE.showLoadingAnimation();
 
@@ -460,14 +473,7 @@ define(function(require, exports, module) {
                   function(entry) {
                    
                     if (!entry.fullPath) {
-                      //Cordova file plugin didn't set fullpath so we set fullpath as absolute
-                      //this solve problem with extensions which can't use the cdvfile
-                      var URL = "cdvfile://localhost/persistent/";
-                      entry.fullPath = decodeURIComponent(entry.localURL);
-                      if (entry.fullPath.indexOf("cdvfile://localhost/root/") === 0) {
-                        URL = "cdvfile://localhost/root/";
-                      }
-                      entry.fullPath = fsRoot.nativeURL + entry.fullPath.substring(URL.length, entry.fullPath.length);
+                      entry.fullPath = resolveFullPath(entry.localURL);
                     }
 
                     anotatedDirList.push({
@@ -524,6 +530,65 @@ define(function(require, exports, module) {
         console.log("Getting dir: " + dirPath + " failed with error code: " + error.code);
       }
     );
+  };
+
+  var getDirectoryMetaInformation = function(dirPath) {
+      
+    console.log("getDirectoryMetaInformation directory: " + dirPath);
+    dirPath = dirPath + "/"; // TODO make it platform independent
+    dirPath = normalizePath(dirPath);
+
+    fsRoot.getDirectory(dirPath, {
+        create: false,
+        exclusive: false
+      },
+      function(dirEntry) {
+        var directoryReader = dirEntry.createReader();
+        var anotatedDirList = [];
+        // Get a list of all the entries in the directory
+        directoryReader.readEntries(
+          function(entries) {
+            var i;
+            var normalizedPath;
+            for (i = 0; i < entries.length; i++) {
+              if (entries[i].isFile) {
+               
+                entries[i].file(
+                  function(entry) {
+                    if (!entry.fullPath) {
+                      entry.fullPath = resolveFullPath(entry.localURL);
+                    }
+
+                    anotatedDirList.push({
+                      "name": entry.name,
+                      "isFile": true,
+                      "size": entry.size,
+                      "lmdt": entry.lastModifiedDate,
+                      "path": entry.fullPath
+                    });
+                    TSCORE.metaFileList=(anotatedDirList);
+                  }, // jshint ignore:line
+                  function(error) { // error get file system
+                    console.log("listDirectory error: " + JSON.stringify(error));
+                  } // jshint ignore:line
+                ); // jshint ignore:line
+              } else {
+                normalizedPath = normalizePath(entries[i].fullPath);
+                anotatedDirList.push({
+                  "name": entries[i].name,
+                  "isFile": false,
+                  "size": "",
+                  "lmdt": "",
+                  "path": normalizedPath
+                });
+                //TSCORE.metaFileList.push(anotatedDirList);
+              }
+            }
+          }
+        );
+      }
+    );
+
   };
 
   var deleteElement = function(filePath) {
@@ -964,4 +1029,5 @@ define(function(require, exports, module) {
   exports.loadSettingsTags = loadSettingsTags;
   exports.getFile = getFile;
   exports.getFileContent = getFileContent;
+  exports.getDirectoryMetaInformation = getDirectoryMetaInformation;
 });
