@@ -292,13 +292,13 @@ define(function(require, exports, module) {
     var ajax = davClient.getAjax("GET", filePath);
     ajax.onreadystatechange = null;
     ajax.onload = function() {
-      if(ajax.response.byteLength !== null) {
+      if (ajax.response.byteLength !== null) {
         result(ajax.response);
       } else {
         error(ajax.responseText);
       }
     };
-    ajax.responseType= "arraybuffer";
+    ajax.responseType = "arraybuffer";
     ajax.send();
   };
 
