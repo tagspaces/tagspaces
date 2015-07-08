@@ -288,15 +288,18 @@ define(function(require, exports, module) {
   var getFileContent = function(filePath, result, error) {
 
     console.log("getFileContent file: " + filePath);
-    davClient.get(
-      encodeURI(filePath),
-      function(status, data, headers) {
-        //TODO: complete 
-        console.log("status: " + status);
-        result(data);
+
+    var ajax = davClient.getAjax("GET", filePath);
+    ajax.onreadystatechange = null;
+    ajax.onload = function() {
+      if (ajax.response.byteLength !== null) {
+        result(ajax.response);
+      } else {
+        error(ajax.responseText);
       }
-      //,customHeaders
-    );
+    };
+    ajax.responseType = "arraybuffer";
+    ajax.send();
   };
 
   exports.focusWindow = focusWindow;
