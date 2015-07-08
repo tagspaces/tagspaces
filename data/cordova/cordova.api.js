@@ -431,7 +431,7 @@ define(function(require, exports, module) {
     var URL = "cdvfile://localhost/persistent/";
     var fullPath = decodeURIComponent(localURL);
     if (fullPath.indexOf("cdvfile://localhost/root/") === 0) {
-       URL = "cdvfile://localhost/root/";
+      URL = "cdvfile://localhost/root/";
     }
 
     fullPath = fsRoot.nativeURL + fullPath.substring(URL.length, fullPath.length);
@@ -558,7 +558,6 @@ define(function(require, exports, module) {
                     if (!entry.fullPath) {
                       entry.fullPath = resolveFullPath(entry.localURL);
                     }
-
                     anotatedDirList.push({
                       "name": entry.name,
                       "isFile": true,
@@ -566,7 +565,7 @@ define(function(require, exports, module) {
                       "lmdt": entry.lastModifiedDate,
                       "path": entry.fullPath
                     });
-                    TSCORE.metaFileList=(anotatedDirList);
+                    TSCORE.metaFileList = (anotatedDirList);
                   }, // jshint ignore:line
                   function(error) { // error get file system
                     console.log("listDirectory error: " + JSON.stringify(error));
@@ -588,7 +587,6 @@ define(function(require, exports, module) {
         );
       }
     );
-
   };
 
   var deleteElement = function(filePath) {
