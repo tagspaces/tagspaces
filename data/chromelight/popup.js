@@ -42,7 +42,8 @@
     });
 
     $("#saveAsMhtml").on('click', saveAsMHTML);
-
+	$("#saveAsBookmark").on('click', saveAsBookmark);
+	
     $("#saveSelectionAsHtml").on("click", function() {
       chrome.tabs.executeScript(null, {
         file: "chromelight/captureContent.js"
@@ -89,6 +90,21 @@
     });
   }
 
+  function saveAsBookmark() {
+	chrome.tabs.getSelected(null, function(tab) {      
+	  var filename;
+      tags = document.getElementById("tags").value;
+      if (tags) {
+          tags = tags.split(",").join(" ");
+          filename = $('#title').val() + ' [' + tags + '].url';
+      } else {
+          filename = $('#title').val() + '.url';
+      }
+      var content = '[InternetShortcut]\r\nURL=' + tab.url;
+      saveAs(content, filename);
+	});
+  }  
+  
   function saveAsMHTML() {
     var filename;
     tags = document.getElementById("tags").value;
