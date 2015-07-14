@@ -55,8 +55,7 @@ if( isFirefox ) {
 }
 
 var PRO_JS = "pro/js/pro.api";
-// Comment this line to test the pro version if available
-if(PRO == "false" || PRO == "@@PROVERSION") { PRO_JS = 'js/pro'; }
+if(PRO.indexOf("@@PROVERS") == 0 || PRO == "false") { PRO_JS = 'js/pro'; }
 
 console.log("Loading Loader - Firefox: "+isFirefox+" | ChromeExt: "+isChrome+" | Node: "+isNode+" | Cordova: "+isCordova+" | Web: "+isWeb+" | isWin: "+isWin);
 
