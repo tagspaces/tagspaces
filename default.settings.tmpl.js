@@ -30,7 +30,7 @@ define(function (require, exports, module) {
         "lastOpenedLocation":       "",
         "webDavPath"  :             "oc/remote.php/webdav",
         "ootbPerspectives":         [@@DEFAULTPERSPECTIVES],
-        "ootbViewers":              [ "viewerBrowser", "viewerMD", "viewerImage", "viewerPDF", "editorText", "viewerText", "editorODF", "viewerURL", "viewerHTML", "viewerMHTML", "editorJSON", "viewerZIP", "viewerEPUB" ],
+        "ootbViewers":              [ "viewerBrowser", "viewerMD", "viewerImage", "viewerPDF", "editorText", "viewerText", "editorODF", "viewerURL", "viewerHTML", "viewerMHTML", "editorJSON", "viewerZIP", "viewerEPUB", "viewerAudioVideo" ],
         "ootbEditors":              [ "editorHTML", "editorText", "editorODF", "editorJSON", "editorNext" ],
         "perspectives":             [@@ACTIVATEDPERSPECTIVES],
         "interfaceLanguage": "en_US",
