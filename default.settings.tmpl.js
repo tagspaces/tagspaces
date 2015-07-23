@@ -55,7 +55,8 @@ define(function (require, exports, module) {
             { "iso": "el", "title": "ελληνικά (Greek)" },
             { "iso": "sv", "title": "svenska (Swedish)" },
             { "iso": "nl_NL", "title": "Nederlands (Dutch)" },
-            { "iso": "zh_TW", "title": "台灣 (Chinese Taiwan BIG5)" }
+            { "iso": "zh_TW", "title": "台灣 (Chinese Taiwan BIG5)" },
+            { "iso": "hu", "title": "Magyar (Hungarian)" },
         ],
         "keyBindings": {
             "closeViewer": "mod+w",
