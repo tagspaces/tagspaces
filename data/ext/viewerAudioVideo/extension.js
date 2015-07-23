@@ -63,9 +63,10 @@ define(function(require, exports, module) {
     };
     
     function loadSprite(body) {
-        $.get( extensionDirectory + "/plyr/sprite.svg", function( data ) {
-            var $el = $("<div/>").html(data);
-            body.append($el);
+        
+        var jqxhr = $.get( extensionDirectory + "/plyr/sprite.svg", function() {
+            var $el = $("<div/>").css("display","none").html(jqxhr.responseText);
+            body.prepend($el);
         });
     }
 
