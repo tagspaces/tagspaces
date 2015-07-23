@@ -42,9 +42,10 @@ define(function(require, exports, module) {
           style: "background-color: white; overflow: hidden;",
           src: extPath,
           "nwdisable": "",
-          "nwfaketop": ""
+          "nwfaketop": "",
+          "allowFullScreen": ""
         }).load(function() {
-            
+            loadSprite($(this).contents().find("body"));            
             var ext = filePath.split(".").pop().toLowerCase();
             if(extensionSupportedFileTypesVideo.indexOf(ext) !== -1) {
                 $(this).contents().find(".player").append("<video controls>");
@@ -61,6 +62,13 @@ define(function(require, exports, module) {
 
     };
     
+    function loadSprite(body) {
+        $.get( extensionDirectory + "/plyr/sprite.svg", function( data ) {
+            var $el = $("<div/>").html(data);
+            body.append($el);
+        });
+    }
+
     exports.viewerMode = function(isViewerMode) {
         console.log("viewerMode not supported on this extension");  
     };
