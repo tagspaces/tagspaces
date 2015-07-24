@@ -15,7 +15,7 @@ define(function(require, exports, module) {
     var extensionManifestVersion = 1;
     var extensionLicense = "AGPL";
 
-    var  extensionSupportedFileTypesVideo = [ "mp4", "webm" ];
+    var  extensionSupportedFileTypesVideo = [ "mp4", "webm", "ogv", "m4v" ];
     var  extensionSupportedFileTypesAudio = [ "mp3", "ogg" ];
 
 
