@@ -3,14 +3,34 @@ define(function(require, exports, module) {
 
     var TSCORE = require("tscore");
     var extDir;
+    var supportedFileTypesThumbs = ['jpg','jpeg','png','gif','bmp','svg'];
+    var defaultThumnailPath;
 
     function initUI(dir) {
         extDir = dir;
+        defaultThumnailPath = extDir + "/default.png";
     }
 
-    function load(container, template) {
-        var compiledTemplate = Handlebars.compile( template );
-        container.append(compiledTemplate);
+    function load(container, template, files) {
+        var data = [];
+        var compiledTemplate = Handlebars.compile(template);
+        files.forEach(function(fileInfo) {
+            var ext = fileInfo[TSCORE.fileListFILEEXT];
+            
+            if(supportedFileTypesThumbs.indexOf(ext) !== -1) {
+                
+                var doc = {
+                    name: fileInfo[TSCORE.fileListFILENAME],
+                    path: fileInfo[TSCORE.fileListFILEPATH],
+                    thumbnail: defaultThumnailPath,
+                    title: fileInfo[TSCORE.fileListTITLE]
+                }
+                data.push(doc);                
+            }
+        });
+
+        var html = compiledTemplate({data: data});
+        container.append(html);
         initPhotoSwipeFromDOM('.my-gallery');
     }
 
@@ -41,17 +61,19 @@ define(function(require, exports, module) {
 
                 linkEl = figureEl.children[0]; // <a> element
 
-                size = linkEl.getAttribute('data-size').split('x');
+                //size = linkEl.getAttribute('data-size').split('x');
 
+                var img = new Image();
+                img.src = linkEl.getAttribute('href');
+                size = [img.width, img.height];
+              
                 // create slide object
                 item = {
                     src: linkEl.getAttribute('href'),
                     w: parseInt(size[0], 10),
                     h: parseInt(size[1], 10)
                 };
-
-
-
+                
                 if(figureEl.children.length > 1) {
                     // <figcaption> content
                     item.title = figureEl.children[1].innerHTML; 
