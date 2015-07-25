@@ -90,6 +90,12 @@ define(function(require, exports, module) {
         var searchIn = value[TSCORE.fileListFILENAME].toLowerCase();
         var tags = value[TSCORE.fileListTAGS];
         var result = true;
+
+        // Excluding fils from tagspacec meta folders
+        if (parentDir.indexOf(".ts") > 0 ) {
+          return false;
+        }
+
         if (tags.length < 1 && includedTags.length > 0) {
           return false;
         }
