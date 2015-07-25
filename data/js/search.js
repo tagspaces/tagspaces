@@ -92,7 +92,7 @@ define(function(require, exports, module) {
         var result = true;
 
         // Excluding fils from tagspacec meta folders
-        if (parentDir.indexOf(".ts") > 0 ) {
+        if (parentDir.indexOf("\/.ts") > 0 ) {
           return false;
         }
 
