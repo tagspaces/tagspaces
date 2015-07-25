@@ -22,6 +22,9 @@
 * bootstrap-validator - https://github.com/1000hz/bootstrap-validator - https://github.com/1000hz/bootstrap-validator/blob/v0.5.0/dist/validator.min.js
 * jsoneditor - https://github.com/josdejong/jsoneditor - https://raw.githubusercontent.com/josdejong/jsoneditor/v3.1.2/jsoneditor.js
 * exif-js - https://github.com/jseidelin/exif-js - https://raw.githubusercontent.com/jseidelin/exif-js/master/exif.js
+* plyr.io - https://github.com/selz/plyr - https://raw.githubusercontent.com/Selz/plyr/v1.2.0/dist/plyr.js
+* photoswipe - http://photoswipe.com/ - https://github.com/dimsemenov/PhotoSwipe/
+* jszip (used in viewerZIP extension) - http://stuk.github.io/jszip/
 
 * Voldsoftware Libs - https://github.com/voldsoftware/
 
@@ -33,4 +36,3 @@
 * Ubuntu Font Family - http://font.ubuntu.com/
 * PDF.js (used in viewerPDF extension) - http://mozilla.github.io/pdf.js/
 * webodf (used in editorODF extension) - http://webodf.org/
-* jszip (used in viewerZIP extension) - http://stuk.github.io/jszip/
