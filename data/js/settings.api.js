@@ -162,6 +162,30 @@ define(function(require, exports, module) {
           'editor': 'false'
         });
       }
+
+      if (oldBuildNumber <= 201507270000) {
+        updateFileType({
+          'type': 'ogg',
+          'viewer': 'viewerAudioVideo',
+          'editor': 'false'
+        });
+        updateFileType({
+          'type': 'ogv',
+          'viewer': 'viewerAudioVideo',
+          'editor': 'false'
+        });
+        addFileType({
+          'type': 'zip',
+          'viewer': 'viewerEPUB',
+          'editor': 'false'
+        });
+        addFileType({
+          'type': 'json',
+          'viewer': 'viewerZIP',
+          'editor': 'false'
+        });
+      }
+
       saveSettings();
     }
   };
