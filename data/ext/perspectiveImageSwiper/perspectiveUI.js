@@ -11,6 +11,19 @@ define(function(require, exports, module) {
         defaultThumnailPath = extDir + "/default.png";
     }
 
+    function loadThumbnail(fileName) {
+
+        var name = TSCORE.Utils.baseName(fileName);
+        var res = null;
+        TSCORE.metaFileList.forEach(function(element) {
+            if(element.name.indexOf(name) >= 0) {
+                res = element.path;
+            }
+        });
+
+        return res;
+    }
+
     function load(container, template, files) {
         var data = [];
         var compiledTemplate = Handlebars.compile(template);
@@ -24,6 +37,11 @@ define(function(require, exports, module) {
                     path: encodeURI(fileInfo[TSCORE.fileListFILEPATH]),
                     thumbnail: encodeURI(defaultThumnailPath),
                     title: fileInfo[TSCORE.fileListTITLE]
+                }
+
+                var thumb = loadThumbnail(doc.path);
+                if(thumb) {
+                    doc.thumbnail = thumb;
                 }
                 data.push(doc);                
             }
