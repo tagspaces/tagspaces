@@ -21,11 +21,10 @@ define(function(require, exports, module) {
                 
                 var doc = {
                     name: fileInfo[TSCORE.fileListFILENAME],
-                    path: fileInfo[TSCORE.fileListFILEPATH],
-                    thumbnail: defaultThumnailPath,
+                    path: encodeURI(fileInfo[TSCORE.fileListFILEPATH]),
+                    thumbnail: encodeURI(defaultThumnailPath),
                     title: fileInfo[TSCORE.fileListTITLE]
                 }
-
                 data.push(doc);                
             }
         });
