@@ -47,6 +47,7 @@ define(function(require, exports, module) {
     console.log("Loading perspective " + extensionID);
     $viewContainer.children().remove();
     UI.load($viewContainer, template, TSCORE.fileList);
+    TSCORE.hideLoadingAnimation();
   };
 
   var clearSelectedFiles = function() {
