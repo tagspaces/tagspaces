@@ -34,14 +34,14 @@ define(function(require, exports, module) {
                 
                 var doc = {
                     name: fileInfo[TSCORE.fileListFILENAME],
-                    path: encodeURI(fileInfo[TSCORE.fileListFILEPATH]),
-                    thumbnail: encodeURI(defaultThumnailPath),
+                    path:  encodeURI("file://" + fileInfo[TSCORE.fileListFILEPATH]),
+                    thumbnail:  encodeURI(defaultThumnailPath),
                     title: fileInfo[TSCORE.fileListTITLE]
                 }
 
                 var thumb = loadThumbnail(doc.path);
                 if(thumb) {
-                    doc.thumbnail = thumb;
+                    doc.thumbnail = encodeURI("file://" + thumb);
                 }
                 data.push(doc);                
             }
@@ -155,11 +155,9 @@ define(function(require, exports, module) {
 
         var openPhotoSwipe = function(index, galleryElement, disableAnimation, fromURL) {
             var pswpElement = document.querySelectorAll('.pswp')[0],
-                gallery,
-                options,
-                items;
+                gallery, options;
 
-            items = parseThumbnailElements(galleryElement);
+            var items = parseThumbnailElements(galleryElement);
 
             options = {
                 // define gallery index (for URL)
@@ -172,7 +170,8 @@ define(function(require, exports, module) {
                         rect = thumbnail.getBoundingClientRect(); 
 
                     return {x:rect.left, y:rect.top + pageYScroll, w:rect.width};
-                }
+                },
+                shareEl: false
             };
 
             options.index = parseInt(index, 10);
