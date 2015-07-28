@@ -143,7 +143,11 @@ define(function(require, exports, module) {
     });
     Mousetrap.bind(tsSettings.getAddRemoveTagsKeyBinding(), function() {
       tsTagsUI.showAddTagsDialog();
-    }); // TODO add swipeleft for closing left panel
+    });
+    Mousetrap.bind(tsSettings.getSearchKeyBinding(), function() {
+      tsCoreUI.showSearchArea();
+    });
+    // TODO add swipeleft for closing left panel
     /* $(".col1").hammer().on("swipeleft", function(event) {
             console.log("swipeleft");
            toggleLeftPanel();

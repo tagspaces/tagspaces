@@ -531,7 +531,6 @@ define(function(require, exports, module) {
       });
     $('#showSearchButton').on('click', function() {
       TSCORE.showSearchArea();
-      $('#searchBox').focus();
     });
     $('#searchButton').prop('disabled', true).click(function(evt) {
       evt.preventDefault();
@@ -613,6 +612,7 @@ define(function(require, exports, module) {
       $('#searchToolbar').show();
       //.addClass('animated bounceIn');
       $('#showSearchButton').hide();
+      $('#searchBox').focus();
     }
     // Handle external links
   function openLinkExternally(url) {
