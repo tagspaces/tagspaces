@@ -307,6 +307,12 @@ define(function(require, exports, module) {
   var setLastOpenedLocation = function(value) {
     exports.Settings.lastOpenedLocation = value;
   };
+  var getDefaultLocation = function() {
+    return exports.Settings.defaultLocation || "";
+  };
+  var setDefaultLocation = function(value) {
+    exports.Settings.defaultLocation = value;
+  };
   var getSupportedLanguages = function() {
     return exports.DefaultSettings.supportedLanguages;
   };
@@ -985,7 +991,8 @@ define(function(require, exports, module) {
   exports.getShowTagLibraryKeyBinding = getShowTagLibraryKeyBinding;
   exports.setShowFolderNavigatorKeyBinding = setShowFolderNavigatorKeyBinding;
   exports.getShowFolderNavigatorBinding = getShowFolderNavigatorBinding;
-
+  exports.getDefaultLocation = getDefaultLocation;
+  exports.setDefaultLocation = setDefaultLocation;
   exports.getPerspectiveExtensions = getPerspectiveExtensions;
   exports.getActivatedPerspectiveExtensions = getActivatedPerspectiveExtensions;
   exports.getViewerExtensions = getViewerExtensions;

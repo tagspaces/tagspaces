@@ -98,6 +98,13 @@ define(function(require, exports, module) {
       TSCORE.PerspectiveManager.changePerspective(defaultPerspective);
       // Saving the last opened location path in the settings
       TSCORE.Config.setLastOpenedLocation(path);
+      if($('#defaultLocation').prop('checked') === true 
+        || $('#defaultLocationEdit').prop('checked') === true) {
+        console.log("set default path " + path);
+        TSCORE.Config.setDefaultLocation(path);
+        $('#defaultLocation').prop('checked', false);
+        $('#defaultLocationEdit').prop('checked', false);
+      }
       TSCORE.Config.saveSettings();
     }
     // Clear search query
@@ -513,6 +520,10 @@ define(function(require, exports, module) {
       } else if (isWeb) {
         $('#folderLocation').attr('placeholder', 'e.g.: /owncloud/remote.php/webdav/');
       }
+      var enableDefaultlocation = (TSCORE.Config.getDefaultLocation() === "");
+      $('#defaultLocation').attr('checked', enableDefaultlocation);
+      $('#defaultLocation').attr('disabled', enableDefaultlocation);
+
       $('#formLocationCreate').validator();
       $('#formLocationCreate').submit(function(e) {
         e.preventDefault();
@@ -602,12 +613,16 @@ define(function(require, exports, module) {
   function deleteLocation(name) {
     console.log('Deleting folder connection..');
     TSCORE.Config.deleteLocation(name);
+    alert("del " + name + " list "+ JSON.stringify(TSCORE.Config.Settings.tagspacesList));
     initLocations();
     //Opens the first location in the settings after deleting a location  
     if (TSCORE.Config.Settings.tagspacesList.length > 0) {
       openLocation(TSCORE.Config.Settings.tagspacesList[0].path);
     } else {
       closeCurrentLocation();
+      TSCORE.Config.setLastOpenedLocation("");
+      TSCORE.Config.setDefaultLocation("");
+      TSCORE.Config.saveSettings();
     }
   }
 
