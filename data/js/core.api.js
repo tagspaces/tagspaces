@@ -545,6 +545,20 @@ define(function(require, exports, module) {
     }, 0);
   }
 
+  function findMetaFilebyPath(filePath, type) {
+    var metaFilePath = null;
+    filePath = filePath + "." + type;
+    exports.metaFileList.every(function(element) {
+      if (filePath.indexOf(element.name) > 0) {
+        metaFilePath = exports.currentPath + exports.dirSeparator + 
+          ".ts" + exports.dirSeparator + element.name;
+        return false;
+      }
+      return true;
+    });
+    return  metaFilePath;
+  }
+
   // Proxying applications parts
   exports.Config = tsSettings;
   exports.IO = tsIOApi;
@@ -649,4 +663,5 @@ define(function(require, exports, module) {
   exports.createDocumentEvent = createDocumentEvent;
   exports.fireDocumentEvent = fireDocumentEvent;
   exports.metaFileList = metaFileList;
+  exports.findMetaFilebyPath = findMetaFilebyPath;
 });

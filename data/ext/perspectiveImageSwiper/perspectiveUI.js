@@ -31,18 +31,22 @@ define(function(require, exports, module) {
             var ext = fileInfo[TSCORE.fileListFILEEXT];
             
             if(supportedFileTypesThumbs.indexOf(ext) !== -1) {
-                
+                var filePath = fileInfo[TSCORE.fileListFILEPATH];    
                 var doc = {
                     name: fileInfo[TSCORE.fileListFILENAME],
-                    path:  encodeURI("file://" + fileInfo[TSCORE.fileListFILEPATH]),
+                    path:  encodeURI("file://" + filePath),
                     thumbnail:  encodeURI(defaultThumnailPath),
                     title: fileInfo[TSCORE.fileListTITLE]
                 }
 
-                var thumb = loadThumbnail(doc.path);
+                var metaFilePath = TSCORE.findMetaFilebyPath(filePath, "png");
+                if(metaFilePath) {
+                    doc.thumbnail = encodeURI("file://" + metaFilePath);
+                }
+                /*var thumb = loadThumbnail(doc.path);
                 if(thumb) {
                     doc.thumbnail = encodeURI("file://" + thumb);
-                }
+                }*/
                 data.push(doc);                
             }
         });

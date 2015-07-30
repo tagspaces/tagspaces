@@ -289,17 +289,10 @@ define(function(require, exports, module) {
           }
         });
       } else {
-        TSCORE.metaFileList.every(function(element) {
-          
-          var filePath = $element.attr('filepath') + ".png";
-          if (filePath.indexOf(element.name) > 0) {
-            var metaFilePath = TSCORE.currentPath + TSCORE.dirSeparator + 
-              ".ts" + TSCORE.dirSeparator + element.name;
-            $element.attr('src', metaFilePath);
-            return false;
-          }
-          return true;
-        });
+        var metaFilePath = TSCORE.findMetaFilebyPath($element.attr('filepath'), "png");
+        if (metaFilePath) {
+          $element.attr('src', metaFilePath);  
+        }
       }
       $element.attr('style', "");
     });
