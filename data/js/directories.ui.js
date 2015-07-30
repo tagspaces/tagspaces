@@ -610,6 +610,10 @@ define(function(require, exports, module) {
     });
   }
 
+  function isDefaultLocation(path) {
+    return (TSCORE.Config.setDefaultLocation() === path);
+  }
+  
   function deleteLocation(name) {
     console.log('Deleting folder connection..');
     TSCORE.Config.deleteLocation(name);
@@ -618,6 +622,10 @@ define(function(require, exports, module) {
     //Opens the first location in the settings after deleting a location  
     if (TSCORE.Config.Settings.tagspacesList.length > 0) {
       openLocation(TSCORE.Config.Settings.tagspacesList[0].path);
+      if(isDefaultLocation(TSCORE.Config.Settings.tagspacesList[0].path)) {
+        TSCORE.Config.setDefaultLocation(path);
+        TSCORE.Config.saveSettings();
+      }
     } else {
       closeCurrentLocation();
       TSCORE.Config.setLastOpenedLocation("");
