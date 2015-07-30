@@ -98,12 +98,15 @@ define(function(require, exports, module) {
       TSCORE.PerspectiveManager.changePerspective(defaultPerspective);
       // Saving the last opened location path in the settings
       TSCORE.Config.setLastOpenedLocation(path);
-      if($('#defaultLocation').prop('checked') === true 
-        || $('#defaultLocationEdit').prop('checked') === true) {
+      if ($('#defaultLocation').prop('checked') === true 
+          || $('#defaultLocationEdit').prop('checked') === true) {
         console.log("set default path " + path);
         TSCORE.Config.setDefaultLocation(path);
         $('#defaultLocation').prop('checked', false);
         $('#defaultLocationEdit').prop('checked', false);
+      }
+      if ($('#defaultLocationEdit').prop('checked') === false) {
+        TSCORE.Config.setDefaultLocation(TSCORE.Config.Settings.tagspacesList[0].path);
       }
       TSCORE.Config.saveSettings();
     }
@@ -483,6 +486,9 @@ define(function(require, exports, module) {
       $('#dialogLocationEdit').on('shown.bs.modal', function() {
         $('#folderLocation2').focus();
       });
+      var isDefault = isDefaultLocation(path);
+      $('#defaultLocationEdit').attr('checked', isDefault);
+      //$('#defaultLocationEdit').attr('disabled', isDefault);
       $('#dialogLocationEdit').modal({
         backdrop: 'static',
         show: true
@@ -611,21 +617,18 @@ define(function(require, exports, module) {
   }
 
   function isDefaultLocation(path) {
-    return (TSCORE.Config.setDefaultLocation() === path);
+    return (TSCORE.Config.getDefaultLocation() === path);
   }
   
   function deleteLocation(name) {
     console.log('Deleting folder connection..');
     TSCORE.Config.deleteLocation(name);
-    alert("del " + name + " list "+ JSON.stringify(TSCORE.Config.Settings.tagspacesList));
     initLocations();
     //Opens the first location in the settings after deleting a location  
     if (TSCORE.Config.Settings.tagspacesList.length > 0) {
       openLocation(TSCORE.Config.Settings.tagspacesList[0].path);
-      if(isDefaultLocation(TSCORE.Config.Settings.tagspacesList[0].path)) {
-        TSCORE.Config.setDefaultLocation(path);
-        TSCORE.Config.saveSettings();
-      }
+      TSCORE.Config.setDefaultLocation(TSCORE.Config.Settings.tagspacesList[0].path);
+      TSCORE.Config.saveSettings();
     } else {
       closeCurrentLocation();
       TSCORE.Config.setLastOpenedLocation("");
