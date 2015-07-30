@@ -495,6 +495,17 @@ define(function(require, exports, module) {
   var setOpenDevToolsScreenKeyBinding = function(value) {
     exports.Settings.keyBindings.openDevTools = value;
   };
+  var getSearchKeyBinding = function() {
+    updateKeyBindingsSetting();
+    if (exports.Settings.keyBindings.openSearch === undefined) {
+      exports.Settings.keyBindings.openSearch = exports.DefaultSettings.keyBindings.openSearch;
+      saveSettings();
+    }
+    return exports.Settings.keyBindings.openSearch;
+  };
+  var setSearchKeyBinding = function(value) {
+    exports.Settings.keyBindings.openSearch = value;
+  };
   var getInterfaceLangauge = function() {
     if (exports.Settings.interfaceLanguage === undefined) {
       exports.Settings.interfaceLanguage = exports.DefaultSettings.interfaceLanguage;
@@ -1013,7 +1024,8 @@ define(function(require, exports, module) {
   exports.getShowTagLibraryKeyBinding = getShowTagLibraryKeyBinding;
   exports.setShowFolderNavigatorKeyBinding = setShowFolderNavigatorKeyBinding;
   exports.getShowFolderNavigatorBinding = getShowFolderNavigatorBinding;
-
+  exports.getSearchKeyBinding = getSearchKeyBinding;
+  exports.setSearchKeyBinding = setSearchKeyBinding;
   exports.getPerspectiveExtensions = getPerspectiveExtensions;
   exports.getActivatedPerspectiveExtensions = getActivatedPerspectiveExtensions;
   exports.getViewerExtensions = getViewerExtensions;
