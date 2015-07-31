@@ -78,7 +78,11 @@ define(function(require, exports, module) {
             '<i class="fa fa-bookmark"></i>&nbsp;{{name}}'  +
         '</button>' +
         '<button type="button" data-i18n="[title]ns.common:editLocation" title="{{editLocationTitle}}" location="{{name}}" path="{{path}}" class="btn btn-link pull-right" style="margin-right: 5px; margin-top: 5px">' +
+         '{{#if isDefault}}' +
+            '<i class="fa fa-pencil-square-o fa-lg"></i>' +
+         '{{else}}' +
             '<i class="fa fa-pencil fa-lg"></i>' +
+        '{{/if}}' +
         '</button>' +
     '</li>' +
     '{{/each}}'
@@ -98,6 +102,11 @@ define(function(require, exports, module) {
       TSCORE.PerspectiveManager.changePerspective(defaultPerspective);
       // Saving the last opened location path in the settings
       TSCORE.Config.setLastOpenedLocation(path);
+      
+      if ($('#defaultLocationEdit').prop('checked') === false) {
+        TSCORE.Config.setDefaultLocation(TSCORE.Config.Settings.tagspacesList[0].path);
+      }
+
       if ($('#defaultLocation').prop('checked') === true 
           || $('#defaultLocationEdit').prop('checked') === true) {
         console.log("set default path " + path);
@@ -105,9 +114,7 @@ define(function(require, exports, module) {
         $('#defaultLocation').prop('checked', false);
         $('#defaultLocationEdit').prop('checked', false);
       }
-      if ($('#defaultLocationEdit').prop('checked') === false) {
-        TSCORE.Config.setDefaultLocation(TSCORE.Config.Settings.tagspacesList[0].path);
-      }
+      
       TSCORE.Config.saveSettings();
     }
     // Clear search query
@@ -414,16 +421,16 @@ define(function(require, exports, module) {
     $('#createNewLocation').attr('title', $.i18n.t('ns.common:connectNewLocationTooltip')).tooltip('destroy');
     $('#locationName').prop('disabled', false);
     $('#selectLocation').prop('disabled', false);
-    initLocations();
     openLocation(locationPath);
+    initLocations();
   }
 
   function editLocation() {
     var $connectionName2 = $('#connectionName2');
     var $folderLocation2 = $('#folderLocation2');
     TSCORE.Config.editLocation($connectionName2.attr('oldName'), $connectionName2.val(), $folderLocation2.val(), $('#locationPerspective2').val());
-    initLocations();
     openLocation($folderLocation2.val());
+    initLocations();
   }
 
   function selectLocalDirectory() {
@@ -487,7 +494,7 @@ define(function(require, exports, module) {
         $('#folderLocation2').focus();
       });
       var isDefault = isDefaultLocation(path);
-      $('#defaultLocationEdit').attr('checked', isDefault);
+      $('#defaultLocationEdit').prop('checked', isDefault);
       //$('#defaultLocationEdit').attr('disabled', isDefault);
       $('#dialogLocationEdit').modal({
         backdrop: 'static',
@@ -527,8 +534,8 @@ define(function(require, exports, module) {
         $('#folderLocation').attr('placeholder', 'e.g.: /owncloud/remote.php/webdav/');
       }
       var enableDefaultlocation = (TSCORE.Config.getDefaultLocation() === "");
-      $('#defaultLocation').attr('checked', enableDefaultlocation);
-      $('#defaultLocation').attr('disabled', enableDefaultlocation);
+      $('#defaultLocation').prop('checked', enableDefaultlocation);
+      $('#defaultLocation').prop('disabled', enableDefaultlocation);
 
       $('#formLocationCreate').validator();
       $('#formLocationCreate').submit(function(e) {
@@ -623,7 +630,6 @@ define(function(require, exports, module) {
   function deleteLocation(name) {
     console.log('Deleting folder connection..');
     TSCORE.Config.deleteLocation(name);
-    initLocations();
     //Opens the first location in the settings after deleting a location  
     if (TSCORE.Config.Settings.tagspacesList.length > 0) {
       openLocation(TSCORE.Config.Settings.tagspacesList[0].path);
@@ -635,6 +641,7 @@ define(function(require, exports, module) {
       TSCORE.Config.setDefaultLocation("");
       TSCORE.Config.saveSettings();
     }
+    initLocations();
   }
 
   function closeCurrentLocation() {
@@ -661,6 +668,13 @@ define(function(require, exports, module) {
     console.log('Creating location menu...');
     var $locationsList = $('#locationsList');
     $locationsList.children().remove();
+    TSCORE.Config.Settings.tagspacesList.forEach(function(element) {
+      if (isDefaultLocation(element.path)) {
+        element.isDefault = true;
+      } else {
+        element.isDefault = false;
+      } 
+    });
     $locationsList.html(locationChooserTmpl({
       'locations': TSCORE.Config.Settings.tagspacesList,
       'yourLocations': $.i18n.t('ns.common:yourLocations'),
