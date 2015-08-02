@@ -74,16 +74,16 @@ define(function(require, exports, module) {
     '<li class="divider" ></li>' +
     '{{#each locations}}' +
     '<li style="line-height: 45px">' +
-        '<button title="{{path}}" path="{{path}}" name="{{name}}" style="width: 180px; text-align: left; border: 0;" class="btn btn-default">' +
-            '<i class="fa fa-bookmark"></i>&nbsp;{{name}}'  +
-        '</button>' +
-        '<button type="button" data-i18n="[title]ns.common:editLocation" title="{{editLocationTitle}}" location="{{name}}" path="{{path}}" class="btn btn-link pull-right" style="margin-right: 5px; margin-top: 5px">' +
-         '{{#if isDefault}}' +
-            '<i class="fa fa-pencil-square-o fa-lg"></i>' +
-         '{{else}}' +
-            '<i class="fa fa-pencil fa-lg"></i>' +
-        '{{/if}}' +
-        '</button>' +
+      '<button title="{{path}}" path="{{path}}" name="{{name}}" style="width: 180px; text-align: left; border: 0;" class="btn btn-default">' +
+      '{{#if isDefault}}' +
+        '<i style="color: darkred" class="fa fa-bookmark" title="Default location"></i>&nbsp;{{name}}'  +
+      '{{else}}' +
+        '<i class="fa fa-bookmark"></i>&nbsp;{{name}}'  +
+      '{{/if}}' +
+      '</button>' +
+      '<button type="button" data-i18n="[title]ns.common:editLocation" title="{{editLocationTitle}}" location="{{name}}" path="{{path}}" class="btn btn-link pull-right" style="margin-right: 5px; margin-top: 5px">' +
+        '<i class="fa fa-pencil fa-lg"></i>' +
+      '</button>' +
     '</li>' +
     '{{/each}}'
   );
