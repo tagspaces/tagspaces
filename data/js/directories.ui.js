@@ -103,10 +103,6 @@ define(function(require, exports, module) {
       // Saving the last opened location path in the settings
       TSCORE.Config.setLastOpenedLocation(path);
       
-      if ($('#defaultLocationEdit').prop('checked') === false) {
-        TSCORE.Config.setDefaultLocation(TSCORE.Config.Settings.tagspacesList[0].path);
-      }
-
       if ($('#defaultLocation').prop('checked') === true 
           || $('#defaultLocationEdit').prop('checked') === true) {
         console.log("set default path " + path);
@@ -429,6 +425,9 @@ define(function(require, exports, module) {
     var $connectionName2 = $('#connectionName2');
     var $folderLocation2 = $('#folderLocation2');
     TSCORE.Config.editLocation($connectionName2.attr('oldName'), $connectionName2.val(), $folderLocation2.val(), $('#locationPerspective2').val());
+    if ($('#defaultLocationEdit').prop('checked') === false) {
+      TSCORE.Config.setDefaultLocation(TSCORE.Config.Settings.tagspacesList[0].path);
+    }
     openLocation($folderLocation2.val());
     initLocations();
   }
