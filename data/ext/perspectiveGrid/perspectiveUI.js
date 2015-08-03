@@ -293,6 +293,24 @@ define(function(require, exports, module) {
         if (metaFilePath) {
           $element.attr('src', metaFilePath);  
         }
+        var metaFileJson = TSCORE.findMetaFilebyPath($element.attr('filepath'), "json");
+        if(metaFileJson) {
+          var span = $("<span class=\"tagsInFileTile\">");
+
+          TSCORE.IO.getFileContent(metaFileJson, function(result) {
+            var str = String.fromCharCode.apply(null, new Uint8Array(result));
+            var tags = JSON.parse(str);
+            tags.tags.forEach(function(tag) {
+              //alert(tag.title);
+              var btn = $("<button class=\"btn btn-sm tagButton fileTagsTile\" tag=\"\" filepath=\"\" style=\"\"><span class=\"caret\"></span></button>");
+              btn.text(tag.title);
+              span.append(btn);
+              
+            });
+              
+            $element.parent().parent().append(span);
+          });
+        }
       }
       $element.attr('style', "");
     });
