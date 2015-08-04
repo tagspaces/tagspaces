@@ -7,10 +7,10 @@ define(function(require, exports, module) {
   "use strict";
 
   // Activating browser specific exports modul
-  console.log("Loading light chrome.api.js..");
+  console.log("Loading Lite chrome.api.js..");
 
   // changing the name of the app
-  $("#logo").text("TagSpaces Light");
+  $("#logo").text("TagSpaces Lite");
 
   var TSCORE = require("tscore");
 
@@ -231,11 +231,11 @@ define(function(require, exports, module) {
   };
 
   var deleteElement = function(path) {
-    TSCORE.showAlertDialog("Deleting files is not supported in TagSpaces Light, please use the desktop version.");
+    TSCORE.showAlertDialog("Deleting files is not supported in TagSpaces Lite, please use the desktop version.");
   };
 
   var deleteDirectory = function(dirPath) {
-    TSCORE.showAlertDialog("Deleting directory is not supported in TagSpaces Light, please use the desktop version.");
+    TSCORE.showAlertDialog("Deleting directory is not supported in TagSpaces Lite, please use the desktop version.");
   };
 
   var createDirectoryIndex = function(dirPath) {
@@ -284,19 +284,19 @@ define(function(require, exports, module) {
   };
 
   var createDirectory = function(dirPath) {
-    TSCORE.showAlertDialog("Creating directory is not supported in TagSpaces Light, please use the desktop version.");
+    TSCORE.showAlertDialog("Creating directory is not supported in TagSpaces Lite, please use the desktop version.");
   };
 
   var renameDirectory = function(filePath, newFilePath) {
-    TSCORE.showAlertDialog("Renaming directory is not supported in TagSpaces Light, please use the desktop version.");
+    TSCORE.showAlertDialog("Renaming directory is not supported in TagSpaces Lite, please use the desktop version.");
   };
 
   var renameFile = function(filePath, newFilePath) {
-    TSCORE.showAlertDialog("Tagging/Renaming files is not supported in TagSpaces Light, please use the desktop version.");
+    TSCORE.showAlertDialog("Tagging/Renaming files is not supported in TagSpaces Lite, please use the desktop version.");
   };
 
   var copyFile = function(filePath, newFilePath) {
-    TSCORE.showAlertDialog("Copy files is not supported in TagSpaces Light, please use the desktop version.");
+    TSCORE.showAlertDialog("Copy files is not supported in TagSpaces Lite, please use the desktop version.");
   };
 
   var selectDirectory = function() {
