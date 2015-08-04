@@ -660,6 +660,9 @@ define(function(require, exports, module) {
   exports.fileListFILEPATH = 5;
   exports.fileListFILENAME = 6;
   exports.fileListMETA = 7;
+  exports.metsFileExt = "json";
+  exports.metaFolder = ".ts";
+  exports.thumbFileExt = "png";
   //document events
   exports.createDocumentEvent = createDocumentEvent;
   exports.fireDocumentEvent = fireDocumentEvent;

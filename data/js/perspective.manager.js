@@ -212,7 +212,7 @@ define(function(require, exports, module) {
             metaObj
           ];
           TSCORE.fileList.push(entry);
-          workers.push(loadMetaDataFromFile(path,entry));
+          workers.push(loadMetaDataFromFile(entry));
         } else {
           entry = [
             path,
@@ -227,13 +227,15 @@ define(function(require, exports, module) {
     Promise.all(workers).then(function(result) {
       //TSCORE.fileList = result;
       //refreshFileListContainer();
+      //alert("Loaded");
     }).catch(function(error) {
-      console.log("MetaData Error: " + error);
+      alert("MetaData Error: " + error);
     });
   };
 
-  function loadMetaDataFromFile(filePath, entry) {
+  function loadMetaDataFromFile(entry) {
     
+    var filePath = entry[TSCORE.fileListFILEPATH];
     var promise = new Promise(function(resolve, reject) {
       if (TSPRO.available) {
         TSPRO.getThumbnailURL(filePath, function(dataURL) {
@@ -241,18 +243,21 @@ define(function(require, exports, module) {
           resolve(entry);
         }, reject);
       } else {
-        var metaFilePath = TSCORE.findMetaFilebyPath(filePath, "png");
+        var metaFilePath = TSCORE.findMetaFilebyPath(filePath, TSCORE.thumbFileExt);
         if (metaFilePath) {
+          //alert("metaFilePath: " + metaFilePath);
           entry[TSCORE.fileListMETA].thumbnailPath = metaFilePath; 
         }
-        var metaFileJson = TSCORE.findMetaFilebyPath(filePath, "json");
+        var metaFileJson = TSCORE.findMetaFilebyPath(filePath, TSCORE.metsFileExt);
         if(metaFileJson) {
           TSCORE.IO.getFileContent(metaFileJson, function(result) {
             var str = String.fromCharCode.apply(null, new Uint8Array(result));
             entry[TSCORE.fileListMETA].metaData = JSON.parse(str);
+            resolve(entry);
           }, reject);
+        } else {
+          resolve(entry);
         }
-        resolve(entry);
       }
     });
     return promise;
