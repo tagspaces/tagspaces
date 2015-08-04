@@ -659,6 +659,7 @@ define(function(require, exports, module) {
   exports.fileListFILELMDT = 4;
   exports.fileListFILEPATH = 5;
   exports.fileListFILENAME = 6;
+  exports.fileListMETA = 7;
   //document events
   exports.createDocumentEvent = createDocumentEvent;
   exports.fireDocumentEvent = fireDocumentEvent;

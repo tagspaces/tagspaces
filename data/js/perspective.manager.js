@@ -6,6 +6,7 @@ define(function(require, exports, module) {
   console.log('Loading perspective.manager.js ...');
   var perspectives;
   var TSCORE = require('tscore');
+  var TSPRO = require("tspro");
 
   var initPerspectives = function() {
     perspectives = [];
@@ -176,6 +177,7 @@ define(function(require, exports, module) {
   var updateFileBrowserData = function(dirList) {
     console.log('Updating the file browser data...');
     TSCORE.fileList = [];
+    var workers = [];
     var tags, ext, title, fileSize, fileLMDT, path, filename, entry;
     for (var i = 0; i < dirList.length; i++) {
       // Considering Unix HiddenEntries (. in the beginning of the filename)
@@ -195,6 +197,10 @@ define(function(require, exports, module) {
           if (fileLMDT === undefined) {
             fileLMDT = '';
           }
+          var metaObj = {
+            thumbnailPath: "",
+            metaData: null
+          };
           entry = [
             ext,
             title,
@@ -202,9 +208,11 @@ define(function(require, exports, module) {
             fileSize,
             fileLMDT,
             path,
-            filename
+            filename,
+            metaObj
           ];
           TSCORE.fileList.push(entry);
+          workers.push(loadMetaDataFromFile(path,entry));
         } else {
           entry = [
             path,
@@ -215,7 +223,40 @@ define(function(require, exports, module) {
       }
     }
     changePerspective(TSCORE.currentPerspectiveID);
+    
+    Promise.all(workers).then(function(result) {
+      //TSCORE.fileList = result;
+      //refreshFileListContainer();
+    }).catch(function(error) {
+      console.log("MetaData Error: " + error);
+    });
   };
+
+  function loadMetaDataFromFile(filePath, entry) {
+    
+    var promise = new Promise(function(resolve, reject) {
+      if (TSPRO.available) {
+        TSPRO.getThumbnailURL(filePath, function(dataURL) {
+          entry[TSCORE.fileListMETA].thumbnailPath = dataURL;
+          resolve(entry);
+        }, reject);
+      } else {
+        var metaFilePath = TSCORE.findMetaFilebyPath(filePath, "png");
+        if (metaFilePath) {
+          entry[TSCORE.fileListMETA].thumbnailPath = metaFilePath; 
+        }
+        var metaFileJson = TSCORE.findMetaFilebyPath(filePath, "json");
+        if(metaFileJson) {
+          TSCORE.IO.getFileContent(metaFileJson, function(result) {
+            var str = String.fromCharCode.apply(null, new Uint8Array(result));
+            entry[TSCORE.fileListMETA].metaData = JSON.parse(str);
+          }, reject);
+        }
+        resolve(entry);
+      }
+    });
+    return promise;
+  }
 
   var refreshFileListContainer = function() {
     // TODO consider search view

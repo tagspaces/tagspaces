@@ -68,7 +68,7 @@ define(function(require, exports, module) {
                <button class="btn btn-link fileTileSelector" filepath="{{filepath}}"><i class="fa {{selected}} fa-lg"></i></button></p></li>');
 
   var fileTileTmbTmpl = Handlebars.compile('<li title="{{filepath}}" filepath="{{filepath}}" class="fileTile">\
-               <span><img class="thumbImgTile" filepath="{{tmbpath}}" style="max-width: 200px; max-height: 200px;" src=""></span>\
+               <span><img class="thumbImgTile" filepath="{{tmbpath}}" style="max-width: 200px; max-height: 200px;" src="{{thumbPath}}"></span>\
                <p class="titleInFileTile">{{title}}</p><span class="tagsInFileTile">\
                {{#each tags}}\
                <button class="btn btn-sm tagButton fileTagsTile" tag="{{tag}}" filepath="{{filepath}}" style="{{style}}">{{tag}} <span class="caret"></span></button>\
@@ -76,7 +76,7 @@ define(function(require, exports, module) {
                </span><span class="fileExtTile">{{fileext}}</span>\
                <button class="btn btn-link fileTileSelector" filepath="{{filepath}}"><i class="fa {{selected}} fa-lg"></i></button></p></li>');
 
-  ExtUI.prototype.createFileTile = function(title, filePath, fileExt, fileTags, isSelected) {
+  ExtUI.prototype.createFileTile = function(title, filePath, fileExt, fileTags, isSelected, metaObj) {
     //TODO minimize platform specific calls     
     var tmbPath;
     if (isCordova || isWeb) {
@@ -84,16 +84,17 @@ define(function(require, exports, module) {
     } else {
       tmbPath = "file:///" + filePath;
     }
-
+    var metaObj = metaObj || { thumbnailPath : ""};
     var context = {
       filepath: filePath,
       tmbpath: tmbPath,
       fileext: fileExt,
       title: title,
       tags: [],
-      selected: isSelected ? "fa-check-square-o" : "fa-square-o"
+      selected: isSelected ? "fa-check-square-o" : "fa-square-o",
+      thumbPath: metaObj.thumbnailPath
     };
-
+    
     if (fileTags.length > 0) {
       var tagString = "" + fileTags;
       var tags = tagString.split(",");
@@ -279,7 +280,7 @@ define(function(require, exports, module) {
     $("#" + this.extensionID + "IncreaseThumbsButton").prop('disabled', false);
     TSCORE.showLoadingAnimation();
     var $tiltleElem = $("#" + this.extensionID + "Container .thumbImgTile");
-    $tiltleElem.each(function(index) {
+    /*$tiltleElem.each(function(index) {
       var $element = $(this);
       if (TSPRO.available) {
         TSPRO.getThumbnailURL($element.attr('filepath'), function(dataURL) {
@@ -310,7 +311,7 @@ define(function(require, exports, module) {
         }
       }
       $element.attr('style', "");
-    });
+    });*/
     $('.thumbImgTile').css({
       "max-width": TMB_SIZES[this.currentTmbSize],
       "max-height": TMB_SIZES[this.currentTmbSize]
@@ -581,7 +582,9 @@ define(function(require, exports, module) {
           value[j][TSCORE.fileListTITLE],
           value[j][TSCORE.fileListFILEPATH],
           value[j][TSCORE.fileListFILEEXT],
-          value[j][TSCORE.fileListTAGS]
+          value[j][TSCORE.fileListTAGS],
+          false,
+          value[j][TSCORE.fileListMETA]
         ));
       }
 
