@@ -155,7 +155,6 @@ requirejs.config({
                                         'select2',
                                         'handlebarsjs',
                                         'tssettingsdefault',
-                                        'pdfjs'
                                     ] }
   }
 });
