@@ -551,7 +551,7 @@ define(function(require, exports, module) {
     exports.metaFileList.every(function(element) {
       if (filePath.indexOf(element.name) > 0) {
         metaFilePath = exports.currentPath + exports.dirSeparator + 
-          ".ts" + exports.dirSeparator + element.name;
+          exports.metaFolder + exports.dirSeparator + element.name;
         return false;
       }
       return true;

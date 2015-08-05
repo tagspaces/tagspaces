@@ -357,11 +357,14 @@ define(function(require, exports, module) {
     console.log('Dir History: ' + JSON.stringify(directoryHistory));
     TSCORE.currentPath = directoryPath;
     if (TSCORE.IO.getDirectoryMetaInformation) {
-      //TODO: get folder name
-      var metaFolderPath = TSCORE.currentPath + TSCORE.dirSeparator + ".ts";
-      TSCORE.IO.getDirectoryMetaInformation(metaFolderPath);
+      var metaFolderPath = TSCORE.currentPath + TSCORE.dirSeparator + TSCORE.metaFolder;
+      TSCORE.IO.getDirectoryMetaInformation(metaFolderPath, function() {
+        TSCORE.IO.listDirectory(directoryPath); 
+      });
+    } else {
+      TSCORE.IO.listDirectory(directoryPath);  
     }
-    TSCORE.IO.listDirectory(directoryPath);
+    
   }
 
   function initUI() {
