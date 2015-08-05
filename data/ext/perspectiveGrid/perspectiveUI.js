@@ -115,6 +115,18 @@ define(function(require, exports, module) {
       }
     }
 
+    if (metaObj.metaData) {
+      //TODO: 
+      context.tags = [];
+      metaObj.metaData.tags.forEach(function(elem) {
+        context.tags.push({
+          tag: elem.title,
+          filepath: filePath,
+          style: TSCORE.generateTagStyle(TSCORE.Config.findTag(elem.title))
+        });
+      });
+    }
+
     if (supportedFileTypeThumnailing.indexOf(fileExt) >= 0) {
       return fileTileTmbTmpl(context);
     } else {

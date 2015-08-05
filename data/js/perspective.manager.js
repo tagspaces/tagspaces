@@ -245,7 +245,6 @@ define(function(require, exports, module) {
       } else {
         var metaFilePath = TSCORE.findMetaFilebyPath(filePath, TSCORE.thumbFileExt);
         if (metaFilePath) {
-          //alert("metaFilePath: " + metaFilePath);
           entry[TSCORE.fileListMETA].thumbnailPath = metaFilePath; 
         }
         var metaFileJson = TSCORE.findMetaFilebyPath(filePath, TSCORE.metsFileExt);
