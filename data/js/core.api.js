@@ -35,6 +35,8 @@ define(function(require, exports, module) {
   var subfoldersDirBrowser;
   var directoryBrowser;
 
+  var slideout;
+
   function initApp() {
     console.log('Init application');
     tsSettings.loadSettingsLocalStorage();
@@ -62,6 +64,7 @@ define(function(require, exports, module) {
     hideLoadingAnimation();
     $(document).ready(function() {
       initLayout();
+
       var language = tsSettings.getInterfaceLangauge();
       // "de-DE"
       var langURLParam = getParameterByName('locale');
@@ -147,11 +150,6 @@ define(function(require, exports, module) {
     Mousetrap.bind(tsSettings.getSearchKeyBinding(), function() {
       tsCoreUI.showSearchArea();
     });
-    // TODO add swipeleft for closing left panel
-    /* $(".col1").hammer().on("swipeleft", function(event) {
-            console.log("swipeleft");
-           toggleLeftPanel();
-        }) */
   }
 
   function checkForNewVersion() {
@@ -276,22 +274,23 @@ define(function(require, exports, module) {
   }
 
   function exportFileListArray(fileList) {
-      var rows = [];
-      for (var i = 0; i < fileList.length; i++) {
-        var row = [];
-        row.path = fileList[i][exports.fileListFILEPATH];
-        row.title = fileList[i][exports.fileListTITLE];
-        row.size = fileList[i][exports.fileListFILESIZE];
-        var tags = fileList[i][exports.fileListTAGS];
-        for (var j = 0; j < tags.length; j++) {
-          row['tag' + j] = tags[j];
-        }
-        rows.push(row);
+    var rows = [];
+    for (var i = 0; i < fileList.length; i++) {
+      var row = [];
+      row.path = fileList[i][exports.fileListFILEPATH];
+      row.title = fileList[i][exports.fileListTITLE];
+      row.size = fileList[i][exports.fileListFILESIZE];
+      var tags = fileList[i][exports.fileListTAGS];
+      for (var j = 0; j < tags.length; j++) {
+        row['tag' + j] = tags[j];
       }
-      return rows;
+      rows.push(row);
     }
-    // UI and Layout functionalities
-    // Layout vars
+    return rows;
+  }
+
+  // UI and Layout functionalities
+  // Layout vars
   var layoutContainer;
   var col1Layout;
   var col2Layout;
@@ -300,7 +299,9 @@ define(function(require, exports, module) {
   var shouldOpenCol3 = false;
   var col1DefaultWidth = 250;
   // End Layout Vars
+
   function reLayout() {
+    return;
     //console.log("Window w: "+window.innerWidth+" h: "+window.innerHeight+" orient: "+window.orientation+" dpi: "+window.devicePixelRatio);
     var fullWidth = window.innerWidth;
     var halfWidth = Math.round(window.innerWidth / 2);
@@ -420,14 +421,14 @@ define(function(require, exports, module) {
   }
 
   function toggleLeftPanel() {
-    layoutContainer.toggle('west');
-    shouldOpenCol1 = !shouldOpenCol1;
+    if(slideout) {
+        slideout.toggle();
+    }
   }
 
   function openLeftPanel() {
-    if (layoutContainer !== undefined) {
-      layoutContainer.open('west');
-      shouldOpenCol1 = true;
+    if(slideout) {
+        slideout.open();
     }
   }
 
@@ -439,99 +440,12 @@ define(function(require, exports, module) {
 
   function initLayout() {
     console.log('Initializing Layout...');
-    layoutContainer = $('body').layout({
-      panes: {
-        // defaults for all panes in layout
-        tips: {
-          noRoomToOpen: '' // blank = no message
-        }
-      },
-      name: 'outerLayout',
-      // for debugging & auto-adding buttons (see below)
-      //fxName:                     "slide", // none, slide
-      //fxSpeed:                    "normal",
-      autoResize: true,
-      // try to maintain pane-percentages
-      autoReopen: true,
-      // auto-open panes that were previously auto-closed due to 'no room'
-      minSize: 0,
-      autoBindCustomButtons: true,
-      west__paneSelector: '.col1',
-      center__paneSelector: '.col2',
-      east__paneSelector: '.col3',
-      east__resizable: true,
-      west__size: col1DefaultWidth,
-      west__minWidth: col1DefaultWidth,
-      east__size: 0.5,
-      west__resizable: true,
-      west__spacing_open: 1,
-      east__spacing_open: 1,
-      center_minWidth: 0,
-      center_minHeight: 200,
-      spacing_closed: 0,
-      noRoomToOpenAction: 'hide',
-      // 'close' or 'hide' when no room to open a pane at minSize
-      //  west__showOverflowOnHover:	true,
-      //  center__showOverflowOnHover:	true,
-      //  east__showOverflowOnHover:	true,
-      enableCursorHotkey: false //  showErrorMessages:          false,
-    });
-    // Initially close the right panel
-    layoutContainer.close('east');
-    col1Layout = layoutContainer.panes.west.layout({
-      name: 'col1Layout',
-      // for debugging & auto-adding buttons (see below)
-      //  north__paneSelector:        '.row1',
-      center__paneSelector: '.row2',
-      south__paneSelector: '.row3',
-      //  north__size:                row1Height,	// percentage size expresses as a string
-      south__size: 50,
-      north__spacing_open: 0,
-      south__spacing_open: 0,
-      autoResize: false,
-      // try to maintain pane-percentages
-      closable: false,
-      //fxName:                     "slide", // none, slide
-      //fxSpeed:                    "slow", // normal, fast
-      togglerLength_open: 0,
-      // hide toggler-buttons
-      spacing_closed: 0,
-      // hide resizer/slider bar when closed
-      //	autoReopen:                 true,	// auto-open panes that were previously auto-closed due to 'no room'
-      autoBindCustomButtons: true,
-      minSize: 0,
-      center__minHeight: 25,
-      //  north__showOverflowOnHover:	true,
-      //  center__showOverflowOnHover:true,
-      //  south__showOverflowOnHover:	true,
-      enableCursorHotkey: false //  showErrorMessages:          false
-    });
-    col2Layout = layoutContainer.panes.center.layout({
-      name: 'col2Layout',
-      // for debugging & auto-adding buttons (see below)
-      //	north__paneSelector: 	    '.row1',
-      center__paneSelector: '.row2',
-      south__paneSelector: '.row3',
-      //  north__size:                row1Height,	// percentage size expresses as a string
-      south__size: 45,
-      north__spacing_open: 0,
-      south__spacing_open: 0,
-      autoResize: true,
-      // try to maintain pane-percentages
-      closable: false,
-      togglerLength_open: 0,
-      // hide toggler-buttons
-      spacing_closed: 0,
-      // hide resizer/slider bar when closed
-      autoReopen: true,
-      // auto-open panes that were previously auto-closed due to 'no room'
-      autoBindCustomButtons: true,
-      minSize: 0,
-      center__minHeight: 25,
-      north__showOverflowOnHover: true,
-      //  center__showOverflowOnHover:true,
-      //  south__showOverflowOnHover:	true,
-      enableCursorHotkey: false //  showErrorMessages:          false
+
+    slideout = new Slideout({
+      'panel': document.getElementById('panel'),
+      'menu': document.getElementById('menu'),
+      'padding': 256,
+      'tolerance': 70
     });
 
     reLayout();
