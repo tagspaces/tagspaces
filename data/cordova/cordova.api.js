@@ -532,7 +532,7 @@ define(function(require, exports, module) {
     );
   };
 
-  var getDirectoryMetaInformation = function(dirPath) {
+  var getDirectoryMetaInformation = function(dirPath, readyCallback) {
       
     console.log("getDirectoryMetaInformation directory: " + dirPath);
     dirPath = dirPath + "/"; // TODO make it platform independent
@@ -571,17 +571,10 @@ define(function(require, exports, module) {
                     console.log("listDirectory error: " + JSON.stringify(error));
                   } // jshint ignore:line
                 ); // jshint ignore:line
-              } else {
-                normalizedPath = normalizePath(entries[i].fullPath);
-                anotatedDirList.push({
-                  "name": entries[i].name,
-                  "isFile": false,
-                  "size": "",
-                  "lmdt": "",
-                  "path": normalizedPath
-                });
-                //TSCORE.metaFileList.push(anotatedDirList);
-              }
+              } 
+            }
+            if (readyCallback) {
+              readyCallback(anotatedDirList);
             }
           }
         );

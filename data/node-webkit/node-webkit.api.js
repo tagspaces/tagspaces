@@ -477,19 +477,21 @@ define(function(require, exports, module) {
     return buffer;
   }
 
-  var listDirectory = function(dirPath) {
+  var listDirectory = function(dirPath, readyCallback) {
     console.log("Listing directory: " + dirPath);
     TSCORE.showLoadingAnimation();
-
+    var anotatedDirList = [];
     try {
       fs.readdir(dirPath, function(error, dirList) {
         if (error) {
-          TSPOSTIO.errorOpeningPath(dirPath);
+          if(readyCallback) {
+            readyCallback(anotatedDirList);
+          } else {
+            TSPOSTIO.errorOpeningPath(dirPath);
+          }
           console.log("Listing directory: " + dirPath + " failed " + error);
           return;
         }
-
-        var anotatedDirList = [];
         for (var i = 0; i < dirList.length; i++) {
           var path = dirPath + TSCORE.dirSeparator + dirList[i];
           var stats = fs.lstatSync(path);
@@ -504,29 +506,41 @@ define(function(require, exports, module) {
             });
           }
         }
-        TSPOSTIO.listDirectory(anotatedDirList);
-
-        watchDirecotory(dirPath, function(event, file) {
-          TSCORE.IO.listDirectory(dirPath);
-        });
+        if (readyCallback) {
+          readyCallback(anotatedDirList);
+        } else {
+          TSPOSTIO.listDirectory(anotatedDirList);
+          //TODO: find better place
+          watchDirecotory(dirPath, function(event, file) {
+            TSCORE.IO.listDirectory(dirPath);
+          });
+        }
       });
     } catch (ex) {
-      TSPOSTIO.errorOpeningPath();
+      if (readyCallback) {
+        readyCallback(anotatedDirList);
+      } else {
+        TSPOSTIO.errorOpeningPath();
+      }
       console.error("Listing directory " + dirPath + " failed " + ex);
     }
   };
 
   var getDirectoryMetaInformation = function(dirPath, readyCallback) {
-    
+    listDirectory(dirPath, function(anotatedDirList) {
+    TSCORE.metaFileList = anotatedDirList;
+      readyCallback(anotatedDirList);
+    });
+  
+    /*var anotatedDirList = [];
     console.log("getDirectoryMetaInformation directory: " + dirPath);
     try {
       fs.readdir(dirPath, function(error, dirList) {
         if (error) {
           console.log("Listing directory: " + dirPath + " failed " + error);
+          readyCallback(anotatedDirList);
           return;
         }
-        
-        var anotatedDirList = [];
         for (var i = 0; i < dirList.length; i++) {
           var path = dirPath + TSCORE.dirSeparator + dirList[i];
           var stats = fs.lstatSync(path);
@@ -549,7 +563,8 @@ define(function(require, exports, module) {
       });
     } catch (ex) {
       console.error("Listing directory " + dirPath + " failed " + ex);
-    }
+      readyCallback(anotatedDirList);
+    }*/
   };
 
   var deleteElement = function(path) {
