@@ -463,6 +463,23 @@ define(function(require, exports, module) {
   // Removing a tag from a filename
   function removeTag(filePath, tagName) {
     console.log('Removing tag: ' + tagName + ' from ' + filePath);
+
+    var metaObj = TSCORE.findMetaObjectFromFileList(filePath);
+    if(metaObj) {
+      metaObj.metaData.tags.forEach(function(tag , index) {
+        if(tag.title === tagName) {
+          metaObj.metaData.tags.splice(index , 1);
+        }
+      });
+      var metaFileJson = TSCORE.findMetaFilebyPath(filePath, TSCORE.metsFileExt);
+      if (metaFileJson) {
+        var content = JSON.stringify(metaObj.metaData);
+        //TODO: Uncaught SyntaxError: Unexpected token 
+        //TSCORE.IO.saveTextFile(metaFileJson, content, true, true);
+      }
+      TSCORE.PerspectiveManager.updateFileUI(filePath, filePath);
+    }
+
     var fileName = extractFileName(filePath);
     var containingDirectoryPath = extractContainingDirectoryPath(filePath);
     var tags = extractTags(filePath);
@@ -473,7 +490,9 @@ define(function(require, exports, module) {
       }
     }
     var newFileName = generateFileName(fileName, newTags);
-    TSCORE.IO.renameFile(filePath, containingDirectoryPath + TSCORE.dirSeparator + newFileName);
+    if(newFileName !== filename) {
+      TSCORE.IO.renameFile(filePath, containingDirectoryPath + TSCORE.dirSeparator + newFileName);
+    }
   }
 
   //Collect recent tags in a custom tag-group

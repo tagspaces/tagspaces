@@ -116,8 +116,6 @@ define(function(require, exports, module) {
     }
 
     if (metaObj.metaData) {
-      //TODO: 
-      context.tags = [];
       metaObj.metaData.tags.forEach(function(elem) {
         context.tags.push({
           tag: elem.title,
@@ -798,7 +796,9 @@ define(function(require, exports, module) {
       $fileTile = $("#" + this.extensionID + "Container li[filepath='" + oldFilePath + "']");
     }
 
-    $fileTile.replaceWith(this.createFileTile(title, newFilePath, fileExt, fileTags, true));
+    var metaObj = TSCORE.findMetaObjectFromFileList(oldFilePath);
+    $fileTile.replaceWith(this.createFileTile(title, newFilePath, fileExt, fileTags, true, metaObj)); 
+    
     this.refreshThumbnails();
     this.assingFileTileHandlers($fileTile);
   };

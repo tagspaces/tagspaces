@@ -559,6 +559,18 @@ define(function(require, exports, module) {
     return  metaFilePath;
   }
 
+  function findMetaObjectFromFileList(filePath) {
+    var metaObj = null;
+    exports.fileList.every(function(element) {
+      if(element[exports.fileListFILEPATH] === filePath) {
+        metaObj = element[exports.fileListMETA];
+        return false;
+      }
+      return true;
+    });
+    return  metaObj;
+  }
+
   // Proxying applications parts
   exports.Config = tsSettings;
   exports.IO = tsIOApi;
@@ -668,4 +680,5 @@ define(function(require, exports, module) {
   exports.fireDocumentEvent = fireDocumentEvent;
   exports.metaFileList = metaFileList;
   exports.findMetaFilebyPath = findMetaFilebyPath;
+  exports.findMetaObjectFromFileList = findMetaObjectFromFileList;
 });
