@@ -222,12 +222,9 @@ define(function(require, exports, module) {
         }
       }
     }
-    changePerspective(TSCORE.currentPerspectiveID);
     
     Promise.all(workers).then(function(result) {
-      //TSCORE.fileList = result;
-      //refreshFileListContainer();
-      //alert("Loaded");
+      changePerspective(TSCORE.currentPerspectiveID);
     }).catch(function(error) {
       alert("MetaData Error: " + error);
     });
@@ -245,6 +242,9 @@ define(function(require, exports, module) {
       } else {
         var metaFilePath = TSCORE.findMetaFilebyPath(filePath, TSCORE.thumbFileExt);
         if (metaFilePath) {
+          if(isChrome) {
+            metaFilePath = "file://" + metaFilePath;
+          }
           entry[TSCORE.fileListMETA].thumbnailPath = metaFilePath; 
         }
         var metaFileJson = TSCORE.findMetaFilebyPath(filePath, TSCORE.metsFileExt);
