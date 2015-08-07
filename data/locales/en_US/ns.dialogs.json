@@ -90,6 +90,7 @@
     "editLocationName": "Location Name",
     "locationNamePlaceholder": "Example: My Documents",
     "editLocationDefaultPerspective": "Default Perspective",
+    "startupLocation": "Startup location",
     "removeLocation": "Remove Location",
     "locationPathSelectFolder": "Select local folder",
     "optionsTitle": "Options",

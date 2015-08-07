@@ -76,7 +76,7 @@ define(function(require, exports, module) {
     '<li style="line-height: 45px">' +
       '<button title="{{path}}" path="{{path}}" name="{{name}}" style="width: 180px; text-align: left; border: 0;" class="btn btn-default">' +
       '{{#if isDefault}}' +
-        '<i style="color: darkred" class="fa fa-bookmark" title="Default location"></i>&nbsp;{{name}}'  +
+        '<i style="color: darkred" class="fa fa-bookmark" data-i18n="[title]ns.dialogs:startupLocation"></i>&nbsp;{{name}}'  +
       '{{else}}' +
         '<i class="fa fa-bookmark"></i>&nbsp;{{name}}'  +
       '{{/if}}' +
