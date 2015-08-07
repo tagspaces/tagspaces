@@ -251,6 +251,9 @@ define(function(require, exports, module) {
         if(metaFileJson) {
           TSCORE.IO.getFileContent(metaFileJson, function(result) {
             var str = String.fromCharCode.apply(null, new Uint8Array(result));
+            if (str.charCodeAt(0) != 0x7B) {
+              str = str.substring(3, str.length);
+            }
             entry[TSCORE.fileListMETA].metaData = JSON.parse(str);
             resolve(entry);
           }, reject);

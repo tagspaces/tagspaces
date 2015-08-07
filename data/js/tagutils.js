@@ -474,8 +474,7 @@ define(function(require, exports, module) {
       var metaFileJson = TSCORE.findMetaFilebyPath(filePath, TSCORE.metsFileExt);
       if (metaFileJson) {
         var content = JSON.stringify(metaObj.metaData);
-        //TODO: Uncaught SyntaxError: Unexpected token 
-        //TSCORE.IO.saveTextFile(metaFileJson, content, true, true);
+        TSCORE.IO.saveTextFile(metaFileJson, content, true, true);
       }
       TSCORE.PerspectiveManager.updateFileUI(filePath, filePath);
     }
