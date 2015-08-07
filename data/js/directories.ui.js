@@ -103,8 +103,7 @@ define(function(require, exports, module) {
       // Saving the last opened location path in the settings
       TSCORE.Config.setLastOpenedLocation(path);
       
-      if ($('#defaultLocation').prop('checked') === true 
-          || $('#defaultLocationEdit').prop('checked') === true) {
+      if ($('#defaultLocation').prop('checked') === true || $('#defaultLocationEdit').prop('checked') === true) {
         console.log("set default path " + path);
         TSCORE.Config.setDefaultLocation(path);
         $('#defaultLocation').prop('checked', false);
