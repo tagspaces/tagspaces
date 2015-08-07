@@ -77,7 +77,6 @@ requirejs.config({
     //jqueryuiresizable:      'libs/jqueryui/jquery.ui.resizable',
     jqueryuidraggable:      'libs/jqueryui/jquery.ui.draggable',
     jqueryuidroppable:      'libs/jqueryui/jquery.ui.droppable',
-    jqueryuidatepicker:     'libs/jqueryui/jquery.ui.datepicker',
 
     bootstrap:              'libs/bootstrap/js/bootstrap.min',
     bootstrap3xeditable:    'libs/bootstrap3xeditable/js/bootstrap-editable.min',

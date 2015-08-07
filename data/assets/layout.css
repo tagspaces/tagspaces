@@ -1,0 +1,170 @@
+.slideout-menu {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  z-index: 0;
+  width: 200px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  display: none;
+  background-color: rebeccapurple;
+}
+
+.slideout-panel {
+  position:relative;
+  z-index: 1;
+}
+
+.slideout-open,
+  .slideout-open body,
+  .slideout-open .slideout-panel {
+  overflow: hidden;
+}
+
+.slideout-open .slideout-menu {
+  display: block;
+}
+
+#panel {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  align-content: flex-start;
+  align-items: stretch;
+
+  width: 100%;
+  height: 100%;
+}
+
+/*==== COL1 ====== */
+
+.col1 {
+  order: 0;
+  flex: 0 1 300px;
+  align-self: auto;
+
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  align-content: flex-start;
+  align-items: stretch;
+
+  height: 100%;
+  min-width: 300px;
+}
+
+.col1 .row1 {
+  order: 0;
+  flex: 0 1 80px;
+  align-self: auto;
+
+  min-height: 80px;
+}
+
+.col1 .row2 {
+  order: 0;
+  flex: 1 1 auto;
+  align-self: auto;
+
+  overflow-y: auto;
+  min-height: 0px;
+}
+
+.col1 .row3 {
+  order: 0;
+  flex: 0 1 50px;
+  align-self: auto;
+
+  min-height: 50px;
+  box-shadow: 0px -5px 5px -2px rgba(0,0,0,0.1);
+}
+
+/*==== COL2 ====== */
+
+.col2 {
+  order: 0;
+  flex: 1 1 auto;
+  align-self: auto;
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  align-content: flex-start;
+  align-items: stretch;
+
+  max-width: 100%;
+}
+
+.col2 .row1 {
+  order: 0;
+  flex: 0 1 80px;
+  align-self: auto;
+
+  min-height: 80px;
+}
+
+.col2 .row2 {
+  order: 0;
+  flex: 1 1 auto;
+  align-self: auto;
+
+  overflow-y: auto;
+  min-height: 0px;
+}
+
+.col2 .row3 {
+  order: 0;
+  flex: 0 1 50px;
+  align-self: auto;
+
+  min-height: 50px;
+  box-shadow: 0px -5px 5px -2px rgba(0,0,0,0.1);
+}
+
+/*==== COL3 ====== */
+
+.col3 {
+  order: 0;
+  flex: 1 1 auto;
+  align-self: auto;
+
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  align-content: flex-start;
+  align-items: stretch;
+
+  max-width: 100%;
+  min-width: 50%;
+  display: none;
+}
+
+.col3 .row1 {
+  order: 0;
+  flex: 0 1 100px;
+  align-self: auto;
+}
+
+.col3 .row2 {
+  order: 0;
+  flex: 1 1 100%;
+  align-self: auto;
+
+  overflow-y: auto;
+  min-height: 0px;
+  height: 100%
+}
+
+.col3 .row3 {
+  order: 0;
+  flex: 0 1 0px;
+  align-self: auto;
+
+  min-height: 0px;
+}

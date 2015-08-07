@@ -427,7 +427,8 @@ define(function(require, exports, module) {
     });
     // Open Options Dialog
     $('#openOptions').click(function() {
-      showOptionsDialog();
+      TSCORE.showRightMenu();
+      //showOptionsDialog();
     });
     // File Menu
     $('#fileMenuAddTag').click(function() {
@@ -468,10 +469,10 @@ define(function(require, exports, module) {
       showContactUsPanel();
       console.log('Show Contact Us');
     });
+
     // Hide the tagGroupsContent or locationContent by default
     $('#locationContent').hide();
-    // #tagGroupsContent
-    $('#contactUsContent').hide();
+
     // Search UI
     $('#searchToolbar').on('click', '#closeSearchOptionButton', function() {
       $('#searchBox').popover('hide');
@@ -722,7 +723,6 @@ define(function(require, exports, module) {
   };
   var showLocationsPanel = function() {
     TSCORE.openLeftPanel();
-    $('#contactUsContent').hide();
     $('#tagGroupsContent').hide();
     $('#locationContent').show();
     $('#showTagGroups').removeClass('active');
@@ -731,21 +731,11 @@ define(function(require, exports, module) {
   };
   var showTagsPanel = function() {
     TSCORE.openLeftPanel();
-    $('#contactUsContent').hide();
     $('#locationContent').hide();
     $('#tagGroupsContent').show();
     $('#showLocations').removeClass('active');
     $('#contactUs').removeClass('active');
     $('#showTagGroups').addClass('active');
-  };
-  var showContactUsPanel = function() {
-    TSCORE.openLeftPanel();
-    $('#locationContent').hide();
-    $('#tagGroupsContent').hide();
-    $('#contactUsContent').show();
-    $('#showLocations').removeClass('active');
-    $('#showTagGroups').removeClass('active');
-    $('#contactUs').addClass('active');
   };
   var createHTMLFile = function() {
     var filePath = TSCORE.currentPath + TSCORE.dirSeparator + TSCORE.TagUtils.beginTagContainer + TSCORE.TagUtils.formatDateTime4Tag(new Date(), true) + TSCORE.TagUtils.endTagContainer + '.html';

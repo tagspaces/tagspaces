@@ -626,7 +626,6 @@ input a.resetFilter {
 
 .col3 .navbar {
 	padding-left: 5px;
-	/*border-bottom: 1px #ddd solid;*/
 }
 
 .ui-layout-resizer	{ 
@@ -636,14 +635,8 @@ input a.resetFilter {
 }
 
 .ts-container {
-	position: absolute;
-	top: 81px;
-	bottom: 0;
-	left: 0;
-	right: 0;
-	overflow: auto;
-    z-index: 10;	
-} 
+
+}
 
 .navbar {
 	border-radius: 0 !important;

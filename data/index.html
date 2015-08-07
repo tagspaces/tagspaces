@@ -10,202 +10,25 @@ can be found in the LICENSE file.
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>TagSpaces</title>
 <style type="text/css">
-  #loadingLogo {
-    top:45%;
-    width: 100%;
-    text-align: center;
-    position:absolute;
-  }
+#loadingLogo {
+  top:45%;
+  width: 100%;
+  text-align: center;
+  position:absolute;
+}
 
-  #loading {
-    text-align: center;
-    width: 100%;
-    height: 100%;
-    font-size: 1.4em;
-    position:absolute;
-    z-index: 999999;
-    background-color: #F5F5F5;
-    user-select: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-  }
-
-  .slideout-menu {
-    position: fixed;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    right: 0;
-    z-index: 0;
-    width: 256px;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    display: none;
-  }
-
-  .slideout-panel {
-    position:relative;
-    z-index: 1;
-  }
-
-  .slideout-open,
-    .slideout-open body,
-    .slideout-open .slideout-panel {
-    overflow: hidden;
-  }
-
-  .slideout-open .slideout-menu {
-    display: block;
-  }
-
-  #panel {
-    height: 100%;
-    display: -ms-flex;
-    display: -webkit-flex;
-    display: flex;
-  }
-
-  .col1 {
-    height: 100%;
-
-    display: -webkit-box;
-    display: -moz-box;
-    display: -ms-flexbox;
-    display: -webkit-flex;
-    display: flex;
-    -webkit-box-direction: normal;
-    -moz-box-direction: normal;
-    -webkit-box-orient: vertical;
-    -moz-box-orient: vertical;
-    -webkit-flex-direction: column;
-    -ms-flex-direction: column;
-    flex-direction: column;
-    -webkit-flex-wrap: nowrap;
-    -ms-flex-wrap: nowrap;
-    flex-wrap: nowrap;
-    -webkit-box-pack: start;
-    -moz-box-pack: start;
-    -webkit-justify-content: flex-start;
-    -ms-flex-pack: start;
-    justify-content: flex-start;
-    -webkit-align-content: flex-start;
-    -ms-flex-line-pack: start;
-    align-content: flex-start;
-    -webkit-box-align: stretch;
-    -moz-box-align: stretch;
-    -webkit-align-items: stretch;
-    -ms-flex-align: stretch;
-    align-items: stretch;
-  }
-
-  .col1 .row2 {
-    -webkit-box-ordinal-group: 1;
-    -moz-box-ordinal-group: 1;
-    -webkit-order: 0;
-    -ms-flex-order: 0;
-    order: 0;
-    -webkit-box-flex: 1;
-    -moz-box-flex: 1;
-    -webkit-flex: 1 1 auto;
-    -ms-flex: 1 1 auto;
-    flex: 1 1 auto;
-    -webkit-align-self: auto;
-    -ms-flex-item-align: auto;
-    align-self: auto;
-
-    overflow-y: auto;
-    min-height: 0px;
-  }
-
-  .col1 .row3 {
-    -webkit-box-ordinal-group: 1;
-    -moz-box-ordinal-group: 1;
-    -webkit-order: 0;
-    -ms-flex-order: 0;
-    order: 0;
-    -webkit-box-flex: 0;
-    -moz-box-flex: 0;
-    -webkit-flex: 0 1 45px;
-    -ms-flex: 0 1 45px;
-    flex: 0 1 45px;
-    -webkit-align-self: auto;
-    -ms-flex-item-align: auto;
-    align-self: auto;
-    z-index: 10;
-  }
-
-  .col2 {
-    height: 100%;
-    width: 50%;
-
-    display: -webkit-box;
-    display: -moz-box;
-    display: -ms-flexbox;
-    display: -webkit-flex;
-    display: flex;
-    -webkit-box-direction: normal;
-    -moz-box-direction: normal;
-    -webkit-box-orient: vertical;
-    -moz-box-orient: vertical;
-    -webkit-flex-direction: column;
-    -ms-flex-direction: column;
-    flex-direction: column;
-    -webkit-flex-wrap: nowrap;
-    -ms-flex-wrap: nowrap;
-    flex-wrap: nowrap;
-    -webkit-box-pack: start;
-    -moz-box-pack: start;
-    -webkit-justify-content: flex-start;
-    -ms-flex-pack: start;
-    justify-content: flex-start;
-    -webkit-align-content: flex-start;
-    -ms-flex-line-pack: start;
-    align-content: flex-start;
-    -webkit-box-align: stretch;
-    -moz-box-align: stretch;
-    -webkit-align-items: stretch;
-    -ms-flex-align: stretch;
-    align-items: stretch;
-  }
-
-  .col2 .row2 {
-    -webkit-box-ordinal-group: 1;
-    -moz-box-ordinal-group: 1;
-    -webkit-order: 0;
-    -ms-flex-order: 0;
-    order: 0;
-    -webkit-box-flex: 1;
-    -moz-box-flex: 1;
-    -webkit-flex: 1 1 auto;
-    -ms-flex: 1 1 auto;
-    flex: 1 1 auto;
-    -webkit-align-self: auto;
-    -ms-flex-item-align: auto;
-    align-self: auto;
-  }
-
-  .col2 .row3 {
-    -webkit-box-ordinal-group: 1;
-    -moz-box-ordinal-group: 1;
-    -webkit-order: 0;
-    -ms-flex-order: 0;
-    order: 0;
-    -webkit-box-flex: 0;
-    -moz-box-flex: 0;
-    -webkit-flex: 0 1 45px;
-    -ms-flex: 0 1 45px;
-    flex: 0 1 45px;
-    -webkit-align-self: auto;
-    -ms-flex-item-align: auto;
-    align-self: auto;
-    z-index: 10;
-  }
-
-  .col3 {
-    height: 100%;
-    width: 50%;
-  }
-
+#loading {
+  text-align: center;
+  width: 100%;
+  height: 100%;
+  font-size: 1.4em;
+  position:absolute;
+  z-index: 999999;
+  background-color: #F5F5F5;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+}
 
 </style>
 <link rel="stylesheet" type="text/css" href="libs/bootstrap/css/bootstrap.css">
@@ -215,6 +38,7 @@ can be found in the LICENSE file.
 <link rel="stylesheet" type="text/css" href="libs/font-awesome/css/font-awesome.css">
 <link rel="stylesheet" type="text/css" href="libs/bootstrap3xeditable/css/bootstrap-editable.css">
 <link rel="stylesheet" type="text/css" href="assets/tagspaces.css">
+<link rel="stylesheet" type="text/css" href="assets/layout.css">
 <link rel="apple-touch-icon-precomposed" sizes="144x144" href="assets/apple-touch-icon-144-precomposed.png" />
 <link rel="apple-touch-icon-precomposed" sizes="114x114" href="assets/apple-touch-icon-114-precomposed.png" />
 <link rel="apple-touch-icon-precomposed" sizes="72x72" href="assets/apple-touch-icon-72-precomposed.png" />
@@ -240,8 +64,80 @@ can be found in the LICENSE file.
 </div>
 
 <nav id="menu">
+  <div id="contactUsContent">
+    <a class="btn btn-link" data-i18n="[title]ns.common:aboutTagSpacesTooltip" data-toggle="modal" data-target="#dialogAboutTS" data-backdrop="static">
+            <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
+            <i class="fa fa-comment fa-stack-1x" style=""></i></span>&nbsp;&nbsp;
+      <span data-i18n="ns.common:aboutTagSpaces"></span>
+    </a>
+    <a class="btn btn-link" data-i18n="[title]ns.common:startingHintsTooltip" id="openHints">
+            <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
+            <i class="fa fa-video-camera fa-stack-1x" style=""></i></span>&nbsp;&nbsp;
+      <span data-i18n="ns.common:startingHints"></span>
+    </a>
+    <a class="btn btn-link" data-i18n="[title]ns.common:whatsNewTooltip" href="http://www.tagspaces.org/whatsnew/" id="openWhatsnew">
+            <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
+            <i class="fa fa-leaf fa-stack-1x" style="color: #99CC00"></i></span>&nbsp;&nbsp;
+      <span data-i18n="ns.common:whatsNew"></span>
+    </a>
+    <a class="btn btn-link" data-i18n="[title]ns.common:getAndroidAppTooltip" href="https://play.google.com/store/apps/details?id=org.tagspaces.androidapp" id="openGooglePlay">
+            <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
+            <i class="fa fa-android fa-stack-1x" style="color: #669900"></i></span>&nbsp;&nbsp;
+      <span data-i18n="ns.common:getAndroidApp"></span>
+    </a>
+    <!--hr style="margin: 0; border-top: 1px solid #ddd" /-->
+    <a class="btn btn-link" data-i18n="[title]ns.common:suggestNewFeaturesTooltip" href="https://tagspaces.uservoice.com/forums/213931-general" id="openUservoice">
+            <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
+            <i class="fa fa-bullhorn fa-stack-1x" style=""></i></span>&nbsp;&nbsp;
+      <span data-i18n="ns.common:suggestNewFeatures"></span>
+    </a>
+    <a class="btn btn-link" data-i18n="[title]ns.common:reportIssuesTooltip" href="https://github.com/tagspaces/tagspaces/issues/" id="openGitHubIssues">
+            <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
+            <i class="fa fa-bug fa-stack-1x" style=""></i></span>&nbsp;&nbsp;
+      <span data-i18n="ns.common:reportIssues"></span>
+    </a>
+    <a class="btn btn-link" data-i18n="[title]ns.common:helpUsTranslateTooltip" href="https://www.transifex.com/projects/p/tagspaces" id="helpUsTranslate">
+            <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
+            <i class="fa fa-language fa-stack-1x" style=""></i></span>&nbsp;&nbsp;
+      <span data-i18n="ns.common:helpUsTranslate"></span>
+    </a>
+    <a class="btn btn-link" data-i18n="[title]ns.common:supportUsTooltip" href="http://tagspaces.org/donations" id="openSupportUs">
+            <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
+            <i class="fa fa-thumbs-o-up fa-stack-1x" ></i></span>&nbsp;&nbsp;
+      <span data-i18n="ns.common:supportUs"></span>
+    </a>
+    <a class="btn btn-link" data-i18n="[title]ns.common:tweetAboutUsTooltip" href="https://twitter.com/intent/tweet?original_referer=http%3A%2F%2Ftagspaces.org%2F&text=Organize%20your%20files%20with%20@tagspaces" id="openTwitter">
+            <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
+            <i class="fa fa-twitter fa-stack-1x" style="color: #55ACEE"></i></span>&nbsp;&nbsp;
+      <span data-i18n="ns.common:tweetAboutUs;"></span>
+    </a>
+    <a class="btn btn-link" data-i18n="[title]ns.common:followOnTwitterTooltip" href="https://twitter.com/intent/user?screen_name=tagspaces" id="openTwitter2">
+            <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
+            <i class="fa fa-twitter-square fa-stack-1x" style="color: #55ACEE"></i></span>&nbsp;&nbsp;
+      <span data-i18n="ns.common:followOnTwitter"></span>
+    </a>
+    <a class="btn btn-link" data-i18n="[title]ns.common:joinOnGooglePlusTooltip" href="https://plus.google.com/+TagspacesOrg/" id="openGooglePlus">
+            <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
+            <i class="fa fa-google-plus-square fa-stack-1x" style="color: red"></i></span>&nbsp;&nbsp;
+      <span data-i18n="ns.common:joinOnGooglePlus"></span>
+    </a>
+    <a class="btn btn-link" data-i18n="[title]ns.common:likeUsOnFacebookTooltip" href="https://www.facebook.com/tagspacesapp" id="openFacebook">
+            <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
+            <i class="fa fa-facebook fa-stack-1x" style="color: #3B5998"></i></span>&nbsp;&nbsp;
+      <span data-i18n="ns.common:likeUsOnFacebook"></span>
+    </a>
+    <a class="btn btn-link" data-i18n="[title]ns.common:writeUsEmailTooltip" href="mailto:contactus@tagspaces.org">
+            <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
+            <i class="fa fa-envelope fa-stack-1x"></i></span>&nbsp;&nbsp;
+      <span data-i18n="ns.common:writeUsEmail"></span>
+    </a>
+  </div>
+
+</nav>
+
+<main id="panel">
   <div class="col1">
-    <div class="row2">
+    <div class="row1">
       <nav class="navbar navbar-default" role="navigation">
         <div class="btn-toolbar" style="width: 100%">
           <span id="startNewInstanceBack" data-i18n="[title]ns.common:openNewInstanceTooltip">
@@ -251,9 +147,6 @@ can be found in the LICENSE file.
           <div class="btn-group pull-right" id="sideBarButtonGroup">
             <button id="newVersionAvailable" class="btn btn-link" data-toggle="modal" data-target="#whatsNewModal" data-i18n="[title]ns.common:newVersionAvailableTooltip">
               <i class="glyphicon glyphicon-gift fa-lg"></i>
-            </button>
-            <button class="btn btn-link" data-i18n="[title]ns.common:openSettingTooltip;" id="openOptions" style="padding-right: 0px;">
-              <i class="fa fa-gears fa-lg"></i>&nbsp;
             </button>
           </div>
         </div>
@@ -270,80 +163,12 @@ can be found in the LICENSE file.
           </div>
         </div>
       </nav>
-      <div class="topEdge"></div>
+    </div>
+    <div class="row2">
       <div class="ts-container" style="overflow-x: hidden;">
         <div id="tagGroupsContent"></div>
         <div id="locationContent"></div>
-        <div id="contactUsContent">
-          <a class="btn btn-link" data-i18n="[title]ns.common:aboutTagSpacesTooltip" data-toggle="modal" data-target="#dialogAboutTS" data-backdrop="static">
-            <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
-            <i class="fa fa-comment fa-stack-1x" style=""></i></span>&nbsp;&nbsp;
-            <span data-i18n="ns.common:aboutTagSpaces"></span>
-          </a>
-          <a class="btn btn-link" data-i18n="[title]ns.common:startingHintsTooltip" id="openHints">
-            <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
-            <i class="fa fa-video-camera fa-stack-1x" style=""></i></span>&nbsp;&nbsp;
-            <span data-i18n="ns.common:startingHints"></span>
-          </a>
-          <a class="btn btn-link" data-i18n="[title]ns.common:whatsNewTooltip" href="http://www.tagspaces.org/whatsnew/" id="openWhatsnew">
-            <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
-            <i class="fa fa-leaf fa-stack-1x" style="color: #99CC00"></i></span>&nbsp;&nbsp;
-            <span data-i18n="ns.common:whatsNew"></span>
-          </a>
-          <a class="btn btn-link" data-i18n="[title]ns.common:getAndroidAppTooltip" href="https://play.google.com/store/apps/details?id=org.tagspaces.androidapp" id="openGooglePlay">
-            <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
-            <i class="fa fa-android fa-stack-1x" style="color: #669900"></i></span>&nbsp;&nbsp;
-            <span data-i18n="ns.common:getAndroidApp"></span>
-          </a>
-          <!--hr style="margin: 0; border-top: 1px solid #ddd" /-->
-          <a class="btn btn-link" data-i18n="[title]ns.common:suggestNewFeaturesTooltip" href="https://tagspaces.uservoice.com/forums/213931-general" id="openUservoice">
-            <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
-            <i class="fa fa-bullhorn fa-stack-1x" style=""></i></span>&nbsp;&nbsp;
-            <span data-i18n="ns.common:suggestNewFeatures"></span>
-          </a>
-          <a class="btn btn-link" data-i18n="[title]ns.common:reportIssuesTooltip" href="https://github.com/tagspaces/tagspaces/issues/" id="openGitHubIssues">
-            <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
-            <i class="fa fa-bug fa-stack-1x" style=""></i></span>&nbsp;&nbsp;
-            <span data-i18n="ns.common:reportIssues"></span>
-          </a>
-          <a class="btn btn-link" data-i18n="[title]ns.common:helpUsTranslateTooltip" href="https://www.transifex.com/projects/p/tagspaces" id="helpUsTranslate">
-            <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
-            <i class="fa fa-language fa-stack-1x" style=""></i></span>&nbsp;&nbsp;
-            <span data-i18n="ns.common:helpUsTranslate"></span>
-          </a>
-          <a class="btn btn-link" data-i18n="[title]ns.common:supportUsTooltip" href="http://tagspaces.org/donations" id="openSupportUs">
-            <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
-            <i class="fa fa-thumbs-o-up fa-stack-1x" ></i></span>&nbsp;&nbsp;
-            <span data-i18n="ns.common:supportUs"></span>
-          </a>
-          <a class="btn btn-link" data-i18n="[title]ns.common:tweetAboutUsTooltip" href="https://twitter.com/intent/tweet?original_referer=http%3A%2F%2Ftagspaces.org%2F&text=Organize%20your%20files%20with%20@tagspaces" id="openTwitter">
-            <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
-            <i class="fa fa-twitter fa-stack-1x" style="color: #55ACEE"></i></span>&nbsp;&nbsp;
-            <span data-i18n="ns.common:tweetAboutUs;"></span>
-          </a>
-          <a class="btn btn-link" data-i18n="[title]ns.common:followOnTwitterTooltip" href="https://twitter.com/intent/user?screen_name=tagspaces" id="openTwitter2">
-            <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
-            <i class="fa fa-twitter-square fa-stack-1x" style="color: #55ACEE"></i></span>&nbsp;&nbsp;
-            <span data-i18n="ns.common:followOnTwitter"></span>
-          </a>
-          <a class="btn btn-link" data-i18n="[title]ns.common:joinOnGooglePlusTooltip" href="https://plus.google.com/+TagspacesOrg/" id="openGooglePlus">
-            <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
-            <i class="fa fa-google-plus-square fa-stack-1x" style="color: red"></i></span>&nbsp;&nbsp;
-            <span data-i18n="ns.common:joinOnGooglePlus"></span>
-          </a>
-          <a class="btn btn-link" data-i18n="[title]ns.common:likeUsOnFacebookTooltip" href="https://www.facebook.com/tagspacesapp" id="openFacebook">
-            <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
-            <i class="fa fa-facebook fa-stack-1x" style="color: #3B5998"></i></span>&nbsp;&nbsp;
-            <span data-i18n="ns.common:likeUsOnFacebook"></span>
-          </a>
-          <a class="btn btn-link" data-i18n="[title]ns.common:writeUsEmailTooltip" href="mailto:contactus@tagspaces.org">
-            <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
-            <i class="fa fa-envelope fa-stack-1x"></i></span>&nbsp;&nbsp;
-            <span data-i18n="ns.common:writeUsEmail"></span>
-          </a>
-        </div>
       </div>
-      <div class="bottomEdge"></div>
     </div>
     <div class="row3 noWrap text-center">
       <div class="btn-group" data-toggle="buttons">
@@ -359,11 +184,9 @@ can be found in the LICENSE file.
       </div>
     </div>
   </div>
-</nav>
 
-<main id="panel">
   <div class="col2">
-    <div class="row2">
+    <div class="row1">
       <nav class="navbar navbar-default" role="navigation">
         <div class="btn-toolbar">
           <button type="button" class="navbar-toggle" id="toggleLeftPanel" data-i18n="[title]ns.common:toggleLeftPanelTooltip">
@@ -379,18 +202,21 @@ can be found in the LICENSE file.
               <i class="fa fa-lg fa-search"></i>
             </button>
           </div>
-            <div id="mainTopMenu" class="input-group" style="position: absolute; top: 0; right: 0; white-space: nowrap;">
-              <button type="button" id="perspectiveSwitcherButton" class="btn btn-link dropdown-toggle" data-toggle="dropdown"><i id="currentPerspectitveIcon" class="fa fa-film"></i>&nbsp;
-                <span id="currentPerspectitveName">Perspectives</span>&nbsp;<span class="caret"></span>
-              </button>
-              <ul class="dropdown-menu pull-right" style="position:absolute; top:35px; right:2px; width: 200px;" id="viewSwitcher"></ul>
-            </div>
+          <div id="mainTopMenu" class="input-group" style="position: absolute; top: 0; right: 0; white-space: nowrap;">
+            <button type="button" id="perspectiveSwitcherButton" class="btn btn-link dropdown-toggle" data-toggle="dropdown"><i id="currentPerspectitveIcon" class="fa fa-film"></i>&nbsp;
+              <span id="currentPerspectitveName">Perspectives</span>&nbsp;<span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu pull-right" style="position:absolute; top:35px; right:2px; width: 200px;" id="viewSwitcher"></ul>
+            <button class="btn btn-link" data-i18n="[title]ns.common:openSettingTooltip;" id="openOptions" style="padding-right: 0px;">
+              <i class="fa fa-gears fa-lg"></i>&nbsp;
+            </button>
+          </div>
         </div>
         <div id="viewToolbars">&nbsp;</div>
       </nav>
-      <div class="topEdgeCol2"></div>
+    </div>
+    <div class="row2">
       <div class="ts-container" id="viewContainers"></div>
-      <div class="bottomEdgeCol2"></div>
     </div>
     <div class="row3">
       <div class="btn-toolbar" id="col2Footer">
@@ -408,7 +234,7 @@ can be found in the LICENSE file.
   </div>
 
   <div class="col3">
-    <div class="row2">
+    <div class="row1">
       <nav class="navbar navbar-default" role="navigation">
         <div class="btn-toolbar" style="width: 100%; white-space: nowrap;">
           <div class="btn-group">
@@ -470,11 +296,13 @@ can be found in the LICENSE file.
           <span id="fileTags"></span>
         </div>
       </nav>
+    </div>
+    <div class="row2">
       <div class="ts-container" id="viewerContainer">
         <div id="viewer" allowfullscreen ></div>
       </div>
     </div>
-    <!--div class="row3"></div-->
+    <div class="row3"></div>
   </div>
 
 </main>

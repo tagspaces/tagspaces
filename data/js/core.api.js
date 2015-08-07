@@ -404,15 +404,17 @@ define(function(require, exports, module) {
   }
 
   function openFileViewer() {
-    tsCoreUI.hideAllDropDownMenus();
+    $(".col3").show();
+    /*tsCoreUI.hideAllDropDownMenus();
     shouldOpenCol3 = true;
-    reLayout();
+    reLayout();*/
   }
 
   function closeFileViewer() {
-    shouldOpenCol3 = false;
+    $(".col3").hide();
+    /*shouldOpenCol3 = false;
     isFullWidth = false;
-    reLayout();
+    reLayout();*/
   }
 
   function toggleFullWidth() {
@@ -421,22 +423,25 @@ define(function(require, exports, module) {
   }
 
   function toggleLeftPanel() {
-    if(slideout) {
-        slideout.toggle();
-    }
+    $(".col1").toggle();
   }
 
   function openLeftPanel() {
-    if(slideout) {
-        slideout.open();
-    }
+    $(".col1").show();
   }
 
   function reloadUI() {
     location.reload();
   }
+
   window.addEventListener('orientationchange', reLayout);
   $(window).on('resize', reLayout);
+
+  function showRightMenu() {
+    if(slideout) {
+      slideout.toggle();
+    }
+  }
 
   function initLayout() {
     console.log('Initializing Layout...');
@@ -444,8 +449,9 @@ define(function(require, exports, module) {
     slideout = new Slideout({
       'panel': document.getElementById('panel'),
       'menu': document.getElementById('menu'),
-      'padding': 256,
-      'tolerance': 70
+      'padding': 200,
+      'tolerance': 70,
+      'side': 'right',
     });
 
     reLayout();
@@ -497,6 +503,7 @@ define(function(require, exports, module) {
   exports.updateFileModel = updateFileModel;
   exports.switchInterfaceLanguage = switchInterfaceLanguage;
   exports.getParameterByName = getParameterByName;
+  exports.showRightMenu = showRightMenu;
 
   // Proxying functions from tsCoreUI
   // TODO use TSCORE.UI instead
