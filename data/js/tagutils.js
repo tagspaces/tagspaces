@@ -332,8 +332,44 @@ define(function(require, exports, module) {
     return newFileName;
   }
 
+  function addMetaTags(filePath, tags) {
+    var metaObj = TSCORE.findMetaObjectFromFileList(filePath);
+    if (!metaObj) {
+      metaObj = {
+        thumbnailPath: "",
+        metaData: null,
+      };  
+    }
+
+    if (!metaObj.metaData) {
+      metaObj.metaData = {
+        tags: []
+      };
+    }
+
+    tags.forEach(function(element) {
+      var newTag = {
+        "title": element,
+        "type":"plain",
+        "titleUI": element,
+        "icon":"",
+        "style":""
+      };
+      metaObj.metaData.tags.push(newTag);
+    });
+
+    TSCORE.saveMetaData(filePath, metaObj.metaData);
+    TSCORE.PerspectiveManager.updateFileUI(filePath, filePath);
+  }
+
   function writeTagsToFile(filePath, tags) {
     console.log('Add the tags to: ' + filePath);
+
+    if (TSCORE.Config.DefaultSettings.writeTagsToFile !== true) {
+      addMetaTags(filePath, tags);
+      return;
+    }
+
     var fileName = extractFileName(filePath);
     var containingDirectoryPath = extractContainingDirectoryPath(filePath);
     var extractedTags = extractTags(filePath);
@@ -430,9 +466,27 @@ define(function(require, exports, module) {
     TSCORE.IO.renameFile(filePath, containingDirectoryPath + TSCORE.dirSeparator + newFileName);
   }
 
+  function reanmeMetaTag(filePath, oldTag, newTag) {
+    var metaObj = TSCORE.findMetaObjectFromFileList(filePath);
+    if(metaObj) {
+      metaObj.metaData.tags.forEach(function(tag , index) {
+        if(tag.title === oldTag) {
+          tag.title = newTag;
+        }
+      });
+      TSCORE.saveMetaData(filePath, metaObj.metaData);
+      TSCORE.PerspectiveManager.updateFileUI(filePath, filePath);
+    }
+  }
   // Replaces a tag with a new one
   function renameTag(filePath, oldTag, newTag) {
     console.log('Rename tag for file: ' + filePath);
+
+    if (TSCORE.Config.DefaultSettings.writeTagsToFile !== true) {
+      reanmeMetaTag(filePath, oldTag, newTag);
+      return;
+    }
+
     var fileName = extractFileName(filePath);
     var containingDirectoryPath = extractContainingDirectoryPath(filePath);
     var extractedTags = extractTags(filePath);
@@ -460,10 +514,7 @@ define(function(require, exports, module) {
     return true;
   }
 
-  // Removing a tag from a filename
-  function removeTag(filePath, tagName) {
-    console.log('Removing tag: ' + tagName + ' from ' + filePath);
-
+  function removeMetaTag(filePath, tagName) {
     var metaObj = TSCORE.findMetaObjectFromFileList(filePath);
     if(metaObj) {
       metaObj.metaData.tags.forEach(function(tag , index) {
@@ -477,6 +528,15 @@ define(function(require, exports, module) {
         TSCORE.IO.saveTextFile(metaFileJson, content, true, true);
       }
       TSCORE.PerspectiveManager.updateFileUI(filePath, filePath);
+    }
+  }
+  
+  // Removing a tag from a filename
+  function removeTag(filePath, tagName) {
+    console.log('Removing tag: ' + tagName + ' from ' + filePath);
+
+    if (TSCORE.Config.DefaultSettings.writeTagsToFile !== true) {
+      removeMetaTag(filePath, tagName);
     }
 
     var fileName = extractFileName(filePath);

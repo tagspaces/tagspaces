@@ -531,40 +531,6 @@ define(function(require, exports, module) {
     TSCORE.metaFileList = anotatedDirList;
       readyCallback(anotatedDirList);
     });
-  
-    /*var anotatedDirList = [];
-    console.log("getDirectoryMetaInformation directory: " + dirPath);
-    try {
-      fs.readdir(dirPath, function(error, dirList) {
-        if (error) {
-          console.log("Listing directory: " + dirPath + " failed " + error);
-          readyCallback(anotatedDirList);
-          return;
-        }
-        for (var i = 0; i < dirList.length; i++) {
-          var path = dirPath + TSCORE.dirSeparator + dirList[i];
-          var stats = fs.lstatSync(path);
-          if (stats !== undefined) {
-            //console.log('stats: ' + JSON.stringify(stats));
-            anotatedDirList.push({
-              "name": dirList[i],
-              "isFile": stats.isFile(),
-              "size": stats.size,
-              "lmdt": stats.mtime,
-              "path": path
-            });
-          }
-        }
-        //TSPOSTIO.listDirectory(anotatedDirList);
-        TSCORE.metaFileList = anotatedDirList;
-        if(readyCallback) {
-          readyCallback(anotatedDirList);
-        }
-      });
-    } catch (ex) {
-      console.error("Listing directory " + dirPath + " failed " + ex);
-      readyCallback(anotatedDirList);
-    }*/
   };
 
   var deleteElement = function(path) {

@@ -571,6 +571,26 @@ define(function(require, exports, module) {
     return  metaObj;
   }
 
+  function saveMetaData(filePath, metaData) {
+    
+    var metaFilePath = findMetaFilebyPath(filePath, exports.metsFileExt);
+
+    if(!metaFilePath) {
+      var name = exports.Utils.baseName(filePath) + "." + exports.metsFileExt;
+      metaFilePath = exports.currentPath + exports.dirSeparator + 
+        exports.metaFolder + exports.dirSeparator + name;
+    
+      var entry = {
+        "name": name,
+        "isFile": true,
+        "path": metaFilePath,
+      };
+      exports.metaFileList.push(entry);
+    }
+    var content = JSON.stringify(metaData);
+    exports.IO.saveTextFile(metaFilePath, content, true, true);
+  }
+
   // Proxying applications parts
   exports.Config = tsSettings;
   exports.IO = tsIOApi;
@@ -681,4 +701,5 @@ define(function(require, exports, module) {
   exports.metaFileList = metaFileList;
   exports.findMetaFilebyPath = findMetaFilebyPath;
   exports.findMetaObjectFromFileList = findMetaObjectFromFileList;
+  exports.saveMetaData  = saveMetaData;
 });
