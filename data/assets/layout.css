@@ -1,3 +1,6 @@
+/* Copyright (c) 2012-2015 The TagSpaces Authors. All rights reserved. Use of this source code
+ * is governed by a AGPL3 license that can be found in the LICENSE file. */
+
 .slideout-menu {
   position: fixed;
   top: 0;
@@ -167,4 +170,48 @@
   align-self: auto;
 
   min-height: 0px;
+}
+
+/* NEW DESIGN ---------------------------------------*/
+
+.col1, .col2, .col3 {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+}
+
+.col1 .navbar, .col1 > .row2, .col1 > .row3, .col2 .navbar, .col2 .row3, .col3 .navbar {
+	background-color: #F2F2F2 !important;
+}
+
+.col1 .navbar {
+	padding-left: 5px;
+}
+
+.col1 .row3 {
+	padding-left: 5px;
+	padding-top: 5px;
+}
+
+.col2 .navbar {
+	padding-left: 5px;
+	border-bottom: 0 #ddd solid;
+}
+
+.col2 .row3 {
+    border-top: 0 #ddd solid;
+}
+
+.col3 .ts-container {
+	overflow: inherit;
+}
+
+.col3 .navbar {
+	padding-left: 5px;
+}
+
+.ui-layout-resizer	{
+    background-color: white;
+    border-top: 1px solid #ddd;
+    border-left: 1px solid #ddd;
 }
