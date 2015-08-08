@@ -62,6 +62,7 @@ define(function(require, exports, module) {
     tsFileOpener.initUI();
     tsPersManager.initPerspectives();
     hideLoadingAnimation();
+
     $(document).ready(function() {
       initLayout();
 
@@ -290,131 +291,68 @@ define(function(require, exports, module) {
   }
 
   // UI and Layout functionalities
-  // Layout vars
-  var layoutContainer;
-  var col1Layout;
-  var col2Layout;
   var isFullWidth = false;
   var shouldOpenCol1 = true;
+  var shouldOpenCol2 = true;
   var shouldOpenCol3 = false;
-  var col1DefaultWidth = 250;
-  // End Layout Vars
 
   function reLayout() {
-    return;
     //console.log("Window w: "+window.innerWidth+" h: "+window.innerHeight+" orient: "+window.orientation+" dpi: "+window.devicePixelRatio);
     var fullWidth = window.innerWidth;
     var halfWidth = Math.round(window.innerWidth / 2);
     var isPortret = fullWidth < window.innerHeight;
     var oneColumn = fullWidth < 660;
     var twoColumn = fullWidth >= 660 && fullWidth < 1024;
-    //$(".col3").css("left","auto");
-    layoutContainer.options.east.spacing_open = 1;
-    //        $("#toggleFullWidthButton").hide();
+
     if (isFullWidth) {
-      oneColumn = true; //            $("#toggleFullWidthButton").show();
+      oneColumn = true;
     }
     if (oneColumn) {
-      $('#closeLeftPanel').show();
-      layoutContainer.options.east.spacing_open = 0;
       if (shouldOpenCol3) {
-        layoutContainer.close('west');
-        // workarround
         shouldOpenCol1 = false;
-        //Closing col1
-        layoutContainer.sizePane('east', fullWidth); // make col3 100%
-        //$(".col3").css("left","0"); // workarround for removing 1px balkan on the left
-        //east__spacing_open:         1
+        shouldOpenCol2 = false;
+      } else if (shouldOpenCol1) {
+        shouldOpenCol1 = true;
+        shouldOpenCol2 = true;
+        shouldOpenCol3 = false;
       } else {
-        if (!layoutContainer.state.west.isClosed) {
-          if (isPortret) {
-            // by opened col1 panel make it 75%
-            layoutContainer.sizePane('west', Math.round(3 * (window.innerWidth / 4)));
-          } else {
-            layoutContainer.sizePane('west', col1DefaultWidth);
-          }
-        }
+        shouldOpenCol2 = true;
       }
       if (!isFullWidth) {
         $('#toggleFullWidthButton').hide();
       }
     } else if (twoColumn) {
-      //$("#closeLeftPanel").show();
-      if (isPortret) {
-        if (shouldOpenCol3) {
-          layoutContainer.close('west');
-          // workarround
-          shouldOpenCol1 = false;
-          //Closing col1
-          layoutContainer.sizePane('east', fullWidth); // make col3 100%
-        } else {
-          // by opened col1 panel make it 250
-          if (!layoutContainer.state.west.isClosed) {
-            layoutContainer.sizePane('west', col1DefaultWidth);
-          }
-        }
-      } else {
-        if (shouldOpenCol3) {
-          shouldOpenCol1 = false;
-          //Closing col1
-          layoutContainer.sizePane('east', halfWidth); // make col3 100%
-        } else {
-          // by opened col1 panel make it 250
-          if (!layoutContainer.state.west.isClosed) {
-            layoutContainer.sizePane('west', col1DefaultWidth);
-          }
-        }
+      shouldOpenCol2 = true;
+      if (shouldOpenCol3) {
+        shouldOpenCol1 = false;
+        shouldOpenCol3 = true;
       }
-    } else {
-      // Regular case
-      $('#closeLeftPanel').hide();
-      if (isPortret) {
-        if (shouldOpenCol3) {
-          layoutContainer.close('west');
-          // workarround
-          shouldOpenCol1 = false;
-          //Closing col1
-          layoutContainer.sizePane('east', fullWidth); // make col3 100%
-        } else {
-          // by opened col1 panel make it 50%
-          if (!layoutContainer.state.west.isClosed) {
-            layoutContainer.sizePane('west', col1DefaultWidth);
-          }
-        }
+    } else { // three column
+      $('#toggleFullWidthButton').show();
+      if (isFullWidth) {
+        shouldOpenCol1 = false;
+        shouldOpenCol2 = false;
+        shouldOpenCol3 = true;
       } else {
-        $('#toggleFullWidthButton').show();
-        if (isFullWidth) {
-          // TODO hide tags
-          $('#viewerContainer').css('top', '38px');
-          layoutContainer.close('west');
-          // workarround
-          shouldOpenCol1 = false;
-          layoutContainer.sizePane('east', fullWidth);
-        } else {
-          $('#viewerContainer').css('top', '81px');
-          layoutContainer.sizePane('west', col1DefaultWidth);
-          layoutContainer.sizePane('east', halfWidth);
-        }
+        shouldOpenCol1 = true;
+        shouldOpenCol2 = true;
       }
     }
-    // Handle opening col1
-    shouldOpenCol1 ? layoutContainer.open('west') : layoutContainer.close('west');
-    // Handle opening col3
-    shouldOpenCol3 ? layoutContainer.open('east') : layoutContainer.close('east');
+    shouldOpenCol1 ? $(".col1").show() : $(".col1").hide();
+    shouldOpenCol2 ? $(".col2").show() : $(".col2").hide();
+    shouldOpenCol3 ? $(".col3").show() : $(".col3").hide();
   }
 
   function openFileViewer() {
-    $(".col3").show();
-    /*tsCoreUI.hideAllDropDownMenus();
+    tsCoreUI.hideAllDropDownMenus();
     shouldOpenCol3 = true;
-    reLayout();*/
+    reLayout();
   }
 
   function closeFileViewer() {
-    $(".col3").hide();
-    /*shouldOpenCol3 = false;
+    shouldOpenCol3 = false;
     isFullWidth = false;
-    reLayout();*/
+    reLayout();
   }
 
   function toggleFullWidth() {
@@ -424,10 +362,12 @@ define(function(require, exports, module) {
 
   function toggleLeftPanel() {
     $(".col1").toggle();
+    shouldOpenCol1 = !shouldOpenCol1;
   }
 
   function openLeftPanel() {
     $(".col1").show();
+    shouldOpenCol1 = true;
   }
 
   function reloadUI() {
@@ -435,6 +375,7 @@ define(function(require, exports, module) {
   }
 
   window.addEventListener('orientationchange', reLayout);
+
   $(window).on('resize', reLayout);
 
   function showRightMenu() {
@@ -449,7 +390,7 @@ define(function(require, exports, module) {
     slideout = new Slideout({
       'panel': document.getElementById('panel'),
       'menu': document.getElementById('menu'),
-      'padding': 200,
+      'padding': 300,
       'tolerance': 70,
       'side': 'right',
     });
