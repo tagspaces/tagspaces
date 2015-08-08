@@ -105,4 +105,31 @@ Licensed under MIT https://github.com/tobiasahlin/SpinKit/blob/master/LICENSE
 .onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-switch {
     right: 0px;
 }
-/* End OGGLE SWITCH */
+/* End TOGGLE SWITCH */
+
+/* SELECT2 */
+
+.select2-results {
+    font-size: 14px;
+}
+
+.select2-search-choice-close {
+    background-position: right -11px;
+}
+
+.select2-container-multi .select2-choices .select2-search-choice {
+    margin: 3px;
+    padding: 4px 4px 4px 15px !important;
+    background: #008000 !important;
+    color: white !important;
+    border: 0;
+    z-index: 9999;
+    border-radius: 5px !important;
+    text-decoration: none !important;
+    background-image: none;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+}
+
+/* End SELECT2 */

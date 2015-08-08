@@ -5,8 +5,8 @@
   font-family: 'Ubuntu';
   font-style: normal;
   font-weight: normal;
-  src: url(Ubuntu-R.woff) format('woff');
-  src: url(Ubuntu-R.ttf) format('truetype');
+  src: url("../libs/ubuntu-font/Ubuntu-R.woff") format('woff');
+  src: url("../libs/ubuntu-font/Ubuntu-R.ttf"") format('truetype');
 }
 
 html, body {
@@ -22,27 +22,15 @@ html, body {
 /* Removes the selection border on ui elements on android */
 * {
 	-webkit-tap-highlight-color: rgba(0,0,0,0);
-    -webkit-touch-callout: none;
-    tap-highlight-color: rgba(0,0,0,0);
-    touch-callout: none;
-/*
--webkit-user-select: none;
--khtml-user-select: none;
--moz-user-select: none;
-user-select: none;
-* */
+  -webkit-touch-callout: none;
+  tap-highlight-color: rgba(0,0,0,0);
+  touch-callout: none;
 }
 
-/* {
-    -webkit-user-select: none;
-    user-select: none;
-    -moz-user-select: -moz-none;
-} */
-
 .disableTextSelection {
-    -webkit-user-select: none;
-    user-select: none;
-    -moz-user-select: -moz-none;
+  -webkit-user-select: none;
+  user-select: none;
+  -moz-user-select: -moz-none;
 }
 
 /* Custom scrollbars for chrome */
@@ -53,30 +41,28 @@ user-select: none;
 
 ::-webkit-scrollbar
 {
-    width: 8px;
-    height: 8px;
-    background-color: #F5F5F5;
+  width: 8px;
+  height: 8px;
+  background-color: #F5F5F5;
 }
 
 ::-webkit-scrollbar-thumb
 {
-    background-color: #bbb;
-   /* border-radius: 6px;*/
+  background-color: #bbb;
 }
 
 * { outline:none; }
-
 
 #logo {
 	padding: 0;
 	font-size: 1.5em;
 	margin: 3px;
-    color: #616577;
+  color: #616577;
 	font-weight: bold;
 	padding-left: 32px;
-    padding-top: 4px;
+  padding-top: 4px;
 	background: url("icon.svg") no-repeat left center;
-    background-size: 28px 28px;
+  background-size: 28px 28px;
 	background-position: 0 0;
 	height: 31px;
 	display: inline-block;
@@ -88,7 +74,7 @@ user-select: none;
 }
 
 #startNewInstanceBack {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 #currentLocation {
@@ -100,14 +86,14 @@ user-select: none;
 }
 
 #statusBar {
-    margin-top: 12px;
-    font-size: 14px;
+  margin-top: 12px;
+  font-size: 14px;
 }
 
 #iframeViewer {
-    width: 100%;
-    height: 100%;
-    border-width: 0;
+  width: 100%;
+  height: 100%;
+  border-width: 0;
 }
 
 #directoryList .ui-selecting { background: #fff5a3; color: black; }
@@ -121,16 +107,16 @@ user-select: none;
 .selectableFiles { list-style-type: none; margin: 0; padding: 0; }
 
 .fileTile {
-    margin: 3px;
-    padding: 1px 1px 1px 3px;
-    float: left;
-    border: 1px solid #D4D4D4;
-    text-align: left;
-    width: 180px;
-    height: 100px;
-    overflow: hidden;
-    position:relative;
-    background-color: white;
+  margin: 3px;
+  padding: 1px 1px 1px 3px;
+  float: left;
+  border: 1px solid #D4D4D4;
+  text-align: left;
+  width: 180px;
+  height: 100px;
+  overflow: hidden;
+  position:relative;
+  background-color: white;
 }
 
 .fileTile button:hover {
@@ -138,108 +124,108 @@ user-select: none;
 }
 
 .thumbImgTile {
-    max-width: 100px;
-    max-height: 100px;
-    position:absolute;
-    bottom:0;
-    right:0;
-    border: 0 lightgray solid;
-    z-index: 1;
+  max-width: 100px;
+  max-height: 100px;
+  position:absolute;
+  bottom:0;
+  right:0;
+  border: 0 lightgray solid;
+  z-index: 1;
 }
 
 #fileTitle {
-    height: 30px;
-    line-height: 2.2;
-    padding-left: 4px;
-    padding-right: 4px;
-    font-size: 16px;
-    font-weight: 300;
-    border: 0;
-    background-color: transparent;
-    color: #333333;
-    max-width: 150px;
-    z-index: 2;
-    white-space: nowrap;
+  height: 30px;
+  line-height: 2.2;
+  padding-left: 4px;
+  padding-right: 4px;
+  font-size: 16px;
+  font-weight: 300;
+  border: 0;
+  background-color: transparent;
+  color: #333333;
+  max-width: 150px;
+  z-index: 2;
+  white-space: nowrap;
 }
 
 #fileTitle:hover {
-    text-decoration: none;
-    background-color: rgb(210, 210, 210);
+  text-decoration: none;
+  background-color: rgb(210, 210, 210);
 }
 
 /* bootstrap3xeditable class */
 .editable-inline {
-    margin-top: 5px;
+  margin-top: 5px;
 }
 
 .noWrap {
-    white-space:nowrap !important;
+  white-space:nowrap !important;
 }
 
 .forceWrap {
-    word-wrap: break-word !important;
+  word-wrap: break-word !important;
 }
 
 .titleInFileTile {
-    font-size: 13px;
-    line-height: 120%;
-    color: #333333;
-    z-index: 99;
-    position: absolute;
-    left: 5px;
-    top: 5px;
+  font-size: 13px;
+  line-height: 120%;
+  color: #333333;
+  z-index: 99;
+  position: absolute;
+  left: 5px;
+  top: 5px;
 }
 
 .tagsInFileTile {
-    position: absolute;
-    z-index: 100;
-    left: 5px;
-    top: 35px;
+  position: absolute;
+  z-index: 100;
+  left: 5px;
+  top: 35px;
 }
 
 .fileTileSelector {
-    position:absolute;
-    bottom:0;
-    left:0;
-    z-index: 101;
+  position:absolute;
+  bottom:0;
+  left:0;
+  z-index: 101;
 }
 
 .fileExtTile {
-    position:absolute;
-    bottom:0;
-    right:0;
-    -webkit-border-radius: 0 !important;
-    border-radius: 0 !important;
-    background: #999 ;
-    text-align: center;
-    padding: 1px;
-    color: white ;
-    z-index: 99;
+  position:absolute;
+  bottom:0;
+  right:0;
+  -webkit-border-radius: 0 !important;
+  border-radius: 0 !important;
+  background: #999 ;
+  text-align: center;
+  padding: 1px;
+  color: white ;
+  z-index: 99;
 	text-transform:uppercase;
 }
 
 .fileTagsTile {
-    opacity: 0.5;
+  opacity: 0.5;
 }
 
 .fileExtension {
-    padding: 2px;
-    float: right;
-    color: white;
-    font-weight: bold;
-    background-color: gray;
+  padding: 2px;
+  float: right;
+  color: white;
+  font-weight: bold;
+  background-color: gray;
 }
 
 .thumbImg {
-    max-width: 100px;
-    max-height: 100px;
-    vertical-align: text-top;
-    border: 0px lightgray solid;
+  max-width: 100px;
+  max-height: 100px;
+  vertical-align: text-top;
+  border: 0px lightgray solid;
 }
 
 #viewsRadio {
-    margin: 3px 3px 3px 0;
-  	display: inline-block;
+  margin: 3px 3px 3px 0;
+  display: inline-block;
 }
 
 #viewsRadio input {
@@ -255,22 +241,22 @@ user-select: none;
 }
 
 #dialogAbout {
-    width: 600px;
+  width: 600px;
 }
 
 li hr {
-    height: 0;
-    border: 0;
+  height: 0;
+  border: 0;
 }
 
 #container {
-    height:     100%;
-    margin:     0 auto;
-    width:      100%;
-    min-width:  700px;
+  height:     100%;
+  margin:     0 auto;
+  width:      100%;
+  min-width:  700px;
 }
 .pane {
-    display:    none; /* will appear when layout inits */
+  display:    none; /* will appear when layout inits */
 }
 
 /* Layout */
@@ -279,7 +265,7 @@ li hr {
 }
 
 #directoryNavigatorNorth {
-    overflow: hidden !important;
+  overflow: hidden !important;
 }
 
 #toggleLeftPanel {
@@ -288,53 +274,53 @@ li hr {
 	padding-left: 5px;
 	padding-top: 10px;
 	margin: 0;
-    position: absolute;
-    top: 0;
-    left: 3px;
-    z-index: 1999;
-    padding-right: 100px;
-    background-color: #f2f2f2;
+  position: absolute;
+  top: 0;
+  left: 3px;
+  z-index: 1999;
+  padding-right: 100px;
+  background-color: #f2f2f2;
 }
 
 #toggleLeftPanel .icon-bar {
-    height: 3px;
+  height: 3px;
 }
 #toggleLeftPanel:focus {
-    background-color: #f2f2f2 !important;
+  background-color: #f2f2f2 !important;
 }
 
 #toggleLeftPanel:hover {
-    background-color: #f2f2f2 !important;
+  background-color: #f2f2f2 !important;
 }
 
 #searchToolbar {
-    z-index: 2999;
-    display: none;
-    position: absolute;
-    top: 0;
-    left:0; right:0;
-    margin: 0 auto;
-    width: 250px;
-    background-color: #f2f2f2;
+  z-index: 2999;
+  display: none;
+  position: absolute;
+  top: 0;
+  left:0; right:0;
+  margin: 0 auto;
+  width: 250px;
+  background-color: #f2f2f2;
 }
 
 #showSearchButton {
-    z-index: 1000;
-    position: absolute;
-    top: 0;
-    left:0; right:0;
-    margin: 0 auto;
-    width: 50px;
+  z-index: 1000;
+  position: absolute;
+  top: 0;
+  left:0; right:0;
+  margin: 0 auto;
+  width: 50px;
 }
 
 #searchBox {
-    margin-top: 8px;
-    border: 0;
-    background-color: transparent;
-    border-bottom: 2px solid gray;
-    font-size: 14px;
-    min-width: 30px;
-    width: 170px;
+  margin-top: 8px;
+  border: 0;
+  background-color: transparent;
+  border-bottom: 2px solid gray;
+  font-size: 14px;
+  min-width: 30px;
+  width: 170px;
 }
 
 #tagsContainer {
@@ -344,19 +330,19 @@ li hr {
 }
 
 #viewToolbars {
-    min-height: 40px;
+  min-height: 40px;
 }
 
 #viewContainers {
-    background-color: white;
-    padding: 0;
+  background-color: white;
+  padding: 0;
 }
 
 .searchSummary {
-    padding-top: 2px;
-    padding-left: 2px;
-    font-size: 1.0em;
-    border-width: 0
+  padding-top: 2px;
+  padding-left: 2px;
+  font-size: 1.0em;
+  border-width: 0
 }
 
 .middle-north {
@@ -365,138 +351,132 @@ li hr {
 }
 
 .middle-south {
-    overflow: hidden !important;
+  overflow: hidden !important;
 }
 
 .east-north {
 	background-color: #FFFFFF;
-    overflow: hidden !important;
+  overflow: hidden !important;
 }
 
 /* Full screen workaround for webkit browser*/
 :-webkit-full-screen #viewer {
-    width: 100%;
-    height: 100%;
+  width: 100%;
+  height: 100%;
 }
 
 #viewer {
-    background-color: white;
-    width: 100%;
-    height: 100%;
+  background-color: white;
+  width: 100%;
+  height: 100%;
 }
 
 /* Directory Navigation #F6A828*/
 
 .dirButton  {
-    font-size: 13px;
-    background-color: #E5E5E5;
-    color: #444444;
-    background-image: none;
-/*    border-color: transparent; */
+  font-size: 13px;
+  background-color: #E5E5E5;
+  color: #444444;
+  background-image: none;
 }
 
 .dirButton:hover, .dirButton:active, .dirButton:focus {
-    background-color: #ddd;
+  background-color: #ddd;
 }
 
 .dropOnFolder {
   background-color: #F6A828 !important;
 }
 
-/*desaturate(@directoryColor, 30%) */
 .dirButtonActive  {
-    background-color: #FFCC99;
+  background-color: #FFCC99;
 }
 
 #location .selectedDirectory {
-    background-color: #EBD5AA;
+  background-color: #EBD5AA;
 }
 
 #locationContent {
-    overflow-x: hidden;
-    overflow-y: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .tagGroupIcon {
-    text-align: left;
-    width: 12%;
-    padding-left: 0 !important;
-    color: #333 !important;
+  text-align: left;
+  width: 12%;
+  padding-left: 0 !important;
+  color: #333 !important;
 }
 
 .tagGroupContainer {
-    width: 99%;
-    border: 0 #aaa solid;
+  width: 99%;
+  border: 0 #aaa solid;
 }
 
 .tagGroupContainerHeading {
-    width:100%;
-    margin: 0;
+  width:100%;
+  margin: 0;
 }
 
 .tagGroupTitle {
-    text-align: left;
-    padding: 10px 0 0 2px;
-    font-size: 14px !important;
-    width:78%;
-    color: #333 !important;
+  text-align: left;
+  padding: 10px 0 0 2px;
+  font-size: 14px !important;
+  width:78%;
+  color: #333 !important;
 }
 
 .tagGroupActions {
-    width:10%;
-    padding-right: 7px;
-    color: #333 !important;
-    text-align: right;
+  width:10%;
+  padding-right: 7px;
+  color: #333 !important;
+  text-align: right;
 }
 
 .directoryIcon {
-    text-align: left;
-    width: 12%;
-    padding-left: 0 !important;
-    color: #333 !important;
+  text-align: left;
+  width: 12%;
+  padding-left: 0 !important;
+  color: #333 !important;
 }
 
 .directoryTitle {
-    text-align: left;
-    padding: 10px 0 0 2px;
-    font-size: 14px !important;
-    width:68%;
-    color: #333 !important;
+  text-align: left;
+  padding: 10px 0 0 2px;
+  font-size: 14px !important;
+  width:68%;
+  color: #333 !important;
 }
 
 .directoryActions {
-    text-align: right;
-    width:20%;
-    padding-right: 7px;
-    color: #333 !important;
+  text-align: right;
+  width:20%;
+  padding-right: 7px;
+  color: #333 !important;
 }
 
 input a.resetFilter {
-    text-indent: -1000em;
-    width: 16px;
-    height: 16px;
-    display: inline-block;
-    position: relative;
-    left: -20px;
-    top: 3px;
+  text-indent: -1000em;
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+  position: relative;
+  left: -20px;
+  top: 3px;
 }
-
 
 /* Hiding the OOTB filter box */
 .dataTables_filter {
     display: none;
 }
 
-/*#selectedFilePath {
-    color: #363636;
-}*/
-
 /* Bootstrap Styles  white !important */
 
 .btn, .btn:hover, .btn:focus, .btn:active, .btn-link, .btn-link:hover, .btn-link:focus, .btn-link:active {
-    outline: none !important;
-    background-image: none;
-    border-radius: 0;
+  outline: none !important;
+  background-image: none;
+  border-radius: 0;
+  text-transform: none;
 }
 
 .btn-default:focus {
@@ -529,9 +509,9 @@ input a.resetFilter {
 }
 
 .carousel-inner > .item > img {
-    margin: 0 auto;
-    max-height: 100%;
-    max-width: 100%;
+  margin: 0 auto;
+  max-height: 100%;
+  max-width: 100%;
 }
 
 .icon-leaf:hover {
@@ -543,24 +523,22 @@ input a.resetFilter {
 }
 
 .groupTitle {
-    color: #444444;
-    font-weight: bold;
-    font-size: 12px;
-    display: inline-block;
+  color: #444444;
+  font-weight: bold;
+  font-size: 12px;
+  display: inline-block;
 }
 
 .modal-body {
 	font-size: 14px;
-    padding-bottom: 0;
+  padding-bottom: 0;
 }
 
 /* Tablet optimization */
 .dropdown-menu LI > A {
-    line-height: 45px !important;
-    height: 45px !important;
+  line-height: 45px !important;
+  height: 45px !important;
 }
-
-
 
 .navbar {
 	border-radius: 0 !important;
@@ -573,35 +551,35 @@ input a.resetFilter {
 }
 
 .fileExt {
-	background-color: #515151;
-	text-transform:uppercase;
-	font-size: 12px;
-	padding: 4px;
-	color: white;
+  background-color: #515151;
+  text-transform:uppercase;
+  font-size: 12px;
+  padding: 4px;
+  color: white;
 }
 
 .dropdown {
-    position: absolute;
-    display:none;
-    z-index: 88888;
+  position: absolute;
+  display:none;
+  z-index: 88888;
 }
 
 .dropdown-header .close {
-    line-height: 15px;
+  line-height: 15px;
 }
 
 .modal-header {
-    background-color: #F6F6F6;
-    border-radius: 5px 5px 0px 0px;
+  background-color: #F6F6F6;
+  border-radius: 5px 5px 0px 0px;
 }
 
 .modal-header .close {
-    margin-top: 7px;
+  margin-top: 7px;
 }
 
 #dialogOptions .modal-header {
-    border-bottom-width: 0;
-    padding-bottom: 0;
+  border-bottom-width: 0;
+  padding-bottom: 0;
 }
 
 .white-caret {
@@ -609,104 +587,81 @@ input a.resetFilter {
 	border-bottom-color: white;
 }
 
-.select2-results {
-    font-size: 14px;
-}
-
-.select2-search-choice-close {
-    background-position: right -11px;
-}
-
-.select2-container-multi .select2-choices .select2-search-choice {
-    margin: 3px;
-    padding: 4px 4px 4px 15px !important;
-    background: #008000 !important;
-    color: white !important;
-    border: 0;
-    z-index: 9999;
-    border-radius: 5px !important;
-    text-decoration: none !important;
-    background-image: none;
-    -webkit-box-shadow: none;
-    -moz-box-shadow: none;
-    box-shadow: none;
-}
-
 .fileTitleButton {
-    margin: 1px;
-    padding: 1px;
+  margin: 1px;
+  padding: 1px;
 }
 
 .optionsTitle {
-    text-transform: uppercase;
-    font-weight: normal;
-    color: gray;
-    padding: 5px 10px 5px 10px !important;
-    font-size: 12px;
+  text-transform: uppercase;
+  font-weight: normal;
+  color: gray;
+  padding: 5px 10px 5px 10px !important;
+  font-size: 12px;
 }
 
 #welcomeScreen {
-    background: url(welcome-logo.png) no-repeat center;
-    background-size: auto auto;
-    width: 100%;
-    height: 100%;
+  background: url(welcome-logo.png) no-repeat center;
+  background-size: auto auto;
+  width: 100%;
+  height: 100%;
 }
 
 #newVersionAvailable {
-    padding-top: 8px;
-    padding-right: 3px;
-    padding-left: 3px;
-    color: #7bd148;
-    display: none;
+  padding-top: 8px;
+  padding-right: 3px;
+  padding-left: 3px;
+  color: #7bd148;
+  display: none;
 }
 
 #sideBarButtonGroup {
-    margin-right: 3px;
-    white-space: nowrap;
+  margin-right: 3px;
+  white-space: nowrap;
 }
 
 #showTagGroups, #showLocations, #contactUs {
-   width: 50px;
+  width: 50px;
 }
 
 #contactUsContent .btn-link {
-    height: 45px;
-    color: #404040;
+  height: 45px;
+  color: #404040;
 }
 
 #fileViewerMainToolbar .btn-link {
-    height: 40px;
-    width: 55px;
+  height: 40px;
+  width: 55px;
 }
 
 #alternativeNavigator .btn-link {
-    padding-left: 2px;
-    padding-right: 2px;
-    color: #404040;
+  padding-left: 2px;
+  padding-right: 2px;
+  color: #404040;
 }
 
 #alternativeNavigator {
-    margin: 5px 5px 5px 10px;
+  margin: 5px 5px 5px 10px;
 }
 
 #fileViewerMainToolbar {
-    position: fixed;
-    right: 0;
-    top: 0;
-    background-color: #F2F2F2;
+  position: fixed;
+  right: 0;
+  top: 0;
+  background-color: #F2F2F2;
 }
 
 .keyShortcut {
-    margin-top: 15px;
-    display: none;
+  margin-top: 15px;
+  display: none;
 }
 
 @media
 (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-    #welcomeScreen {
-        width: 100%;
-        height: 100%;
-        background: url(welcome-logo2x.png) no-repeat center;
-        background-size: 300px 200px;
-    }
+  #welcomeScreen {
+    width: 100%;
+    height: 100%;
+    background: url(welcome-logo2x.png) no-repeat center;
+    background-size: 300px 200px;
+  }
 }

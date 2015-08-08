@@ -15,7 +15,7 @@ define(function(require, exports, module) {
   var tsMetadataFile = 'tsm.json';
   var alternativeDirectoryNavigatorTmpl = Handlebars.compile(
     '{{#each dirHistory}}' +
-    '<div class="btn-group dropup">' +
+    '<div class="btn-group">' +
         '<button class="btn btn-link dropdown-toggle" data-menu="{{@index}}">' +
             '{{name}}&nbsp;&nbsp;<i class="fa fa-caret-right"></i>&nbsp;'  +
         '</button>' +
@@ -74,7 +74,7 @@ define(function(require, exports, module) {
     '<li class="divider" ></li>' +
     '{{#each locations}}' +
     '<li style="line-height: 45px">' +
-      '<button title="{{path}}" path="{{path}}" name="{{name}}" style="width: 180px; text-align: left; border: 0;" class="btn btn-default">' +
+      '<button title="{{path}}" path="{{path}}" name="{{name}}" style="width: 180px; text-align: left; border: 0;" class="btn btn-link">' +
       '{{#if isDefault}}' +
         '<i style="color: darkred" class="fa fa-bookmark" data-i18n="[title]ns.dialogs:startupLocation"></i>&nbsp;{{name}}'  +
       '{{else}}' +

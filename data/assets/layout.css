@@ -174,9 +174,9 @@
 /* NEW DESIGN ---------------------------------------*/
 
 .col1, .col2, .col3 {
-    user-select: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
 }
 
 .col1 .navbar, .col1 > .row2, .col1 > .row3, .col2 .navbar, .col2 .row3, .col3 .navbar {
@@ -201,16 +201,6 @@
     border-top: 0 #ddd solid;
 }
 
-.col3 .ts-container {
-	overflow: inherit;
-}
-
 .col3 .navbar {
 	padding-left: 5px;
-}
-
-.ui-layout-resizer	{
-    background-color: white;
-    border-top: 1px solid #ddd;
-    border-left: 1px solid #ddd;
 }

@@ -379,7 +379,7 @@ define(function(require, exports, module) {
   $(window).on('resize', reLayout);
 
   function showRightMenu() {
-    if(slideout) {
+    if (slideout) {
       slideout.toggle();
     }
   }
