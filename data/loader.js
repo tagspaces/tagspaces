@@ -74,7 +74,6 @@ requirejs.config({
     jqueryuiposition:       'libs/jqueryui/jquery.ui.position',
     jqueryuiselectable:     'libs/jqueryui/jquery.ui.selectable',
     jqueryuisortable:       'libs/jqueryui/jquery.ui.sortable',
-    //jqueryuiresizable:      'libs/jqueryui/jquery.ui.resizable',
     jqueryuidraggable:      'libs/jqueryui/jquery.ui.draggable',
     jqueryuidroppable:      'libs/jqueryui/jquery.ui.droppable',
 
@@ -82,7 +81,6 @@ requirejs.config({
     bootstrap3xeditable:    'libs/bootstrap3xeditable/js/bootstrap-editable.min',
     bootstrapvalidator:     'libs/bootstrap-validator/validator.min',
     jquerysimplecolorpicker:'libs/jquery-simplecolorpicker/jquery.simplecolorpicker',
-    jquerylayout:           'libs/jquerylayout/jquery.layout-latest.min',
     underscore:             'libs/underscore/underscore-min',
     d3:                     'libs/d3/d3.v3',
     i18next:                'libs/i18next/i18next.amd.withJQuery-1.7.2.min',

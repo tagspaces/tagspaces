@@ -685,6 +685,10 @@ input a.resetFilter {
     color: #404040;
 }
 
+#alternativeNavigator {
+    margin: 5px 5px 5px 10px;
+}
+
 #fileViewerMainToolbar {
     position: fixed;
     right: 0;
