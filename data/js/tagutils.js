@@ -333,6 +333,7 @@ define(function(require, exports, module) {
   }
 
   function addMetaTags(filePath, tags) {
+
     var metaObj = TSCORE.findMetaObjectFromFileList(filePath);
     if (!metaObj) {
       metaObj = {
@@ -355,7 +356,15 @@ define(function(require, exports, module) {
         "icon":"",
         "style":""
       };
-      metaObj.metaData.tags.push(newTag);
+      var isNewTag = true;
+      metaObj.metaData.tags.forEach(function(oldTag) {
+        if (oldTag.title === element) {
+          isNewTag = false;
+        }
+      });
+      if (isNewTag) {
+        metaObj.metaData.tags.push(newTag);  
+      }
     });
 
     TSCORE.saveMetaData(filePath, metaObj.metaData);
@@ -468,7 +477,7 @@ define(function(require, exports, module) {
 
   function reanmeMetaTag(filePath, oldTag, newTag) {
     var metaObj = TSCORE.findMetaObjectFromFileList(filePath);
-    if(metaObj) {
+    if(metaObj.metaData) {
       metaObj.metaData.tags.forEach(function(tag , index) {
         if(tag.title === oldTag) {
           tag.title = newTag;
@@ -484,7 +493,6 @@ define(function(require, exports, module) {
 
     if (TSCORE.Config.DefaultSettings.writeTagsToFile !== true) {
       reanmeMetaTag(filePath, oldTag, newTag);
-      return;
     }
 
     var fileName = extractFileName(filePath);
@@ -497,7 +505,9 @@ define(function(require, exports, module) {
       }
     }
     var newFileName = generateFileName(fileName, extractedTags);
-    TSCORE.IO.renameFile(filePath, containingDirectoryPath + TSCORE.dirSeparator + newFileName);
+    if(newFileName !== fileName) {
+      TSCORE.IO.renameFile(filePath, containingDirectoryPath + TSCORE.dirSeparator + newFileName);
+    }
   }
 
   function changeTitle(filePath, newTitle) {
@@ -516,7 +526,7 @@ define(function(require, exports, module) {
 
   function removeMetaTag(filePath, tagName) {
     var metaObj = TSCORE.findMetaObjectFromFileList(filePath);
-    if(metaObj) {
+    if(metaObj.metaData) {
       metaObj.metaData.tags.forEach(function(tag , index) {
         if(tag.title === tagName) {
           metaObj.metaData.tags.splice(index , 1);
@@ -549,7 +559,7 @@ define(function(require, exports, module) {
       }
     }
     var newFileName = generateFileName(fileName, newTags);
-    if(newFileName !== filename) {
+    if(newFileName !== fileName) {
       TSCORE.IO.renameFile(filePath, containingDirectoryPath + TSCORE.dirSeparator + newFileName);
     }
   }
