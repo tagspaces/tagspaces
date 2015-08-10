@@ -141,7 +141,6 @@
             <span id="logo">TagSpaces</span>
             <sup id="appVersion"></sup>
           </span>
-
           <div class="btn-group pull-right" id="sideBarButtonGroup">
             <button id="newVersionAvailable" class="btn btn-link" data-toggle="modal" data-target="#whatsNewModal"
                     data-i18n="[title]ns.common:newVersionAvailableTooltip">
@@ -229,7 +228,7 @@
           </div>
         </div>
         <div>
-          <div class="btn-toolbar" id="col2Footer">
+          <div class="btn-toolbar">
             <div class="btn-group" id="alternativeNavigator"></div>
             <div id="statusBar" class="noWrap"></div>
           </div>
@@ -243,9 +242,7 @@
         </div>
       </nav>
     </div>
-    <div class="row2">
-      <div id="viewContainers"></div>
-    </div>
+    <div class="row2" id="viewContainers"></div>
     <div class="row3">
       <div id="viewToolbars">&nbsp;</div>
     </div>
@@ -340,27 +337,21 @@
         </div>
       </nav>
     </div>
-    <div class="row2">
-      <div id="viewerContainer">
-        <div id="viewer" allowfullscreen></div>
-      </div>
-    </div>
-    <div class="row3"></div>
+    <div class="row2" id="viewer" allowfullscreen></div>
   </div>
 
 </main>
 
-<!-- Modals -->
+<!-- Dialogs -->
 <div class="modal" id="dialogAboutTS" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
+        <a type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></a>
         <h4 class="modal-title" id="myModalLabel1" data-i18n="ns.dialogs:aboutTitle"></h4>
       </div>
       <div class="modal-body">
-        <iframe id="aboutIframe" sandbox="allow-same-origin" nwdisable style="width: 100%; height: 350px; border: 0;"
-                src="about.html"></iframe>
+        <iframe id="aboutIframe" sandbox="allow-same-origin" nwdisable style="width: 100%; height: 350px; border: 0;" src="about.html"></iframe>
       </div>
       <div class="modal-footer">
         <button class="btn" id="aboutDialogBack" title="Go Back"><i class="fa fa-arrow-left fa-lg"></i>
@@ -369,11 +360,8 @@
         </button>
       </div>
     </div>
-    <!-- /.modal-content -->
   </div>
-  <!-- /.modal-dialog -->
 </div>
-<!-- /.modal -->
 
 <div id="dialogFileCreate" class="modal" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog">
@@ -430,11 +418,8 @@
           class="fa fa-check fa-lg"></i></button>
       </div>
     </div>
-    <!-- /.modal-content -->
   </div>
-  <!-- /.modal-dialog -->
 </div>
-<!-- /.modal -->
 
 <div id="dialogFileRename" class="modal" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog">
@@ -462,11 +447,8 @@
           class="fa fa-check fa-lg"></i></button>
       </div>
     </div>
-    <!-- /.modal-content -->
   </div>
-  <!-- /.modal-dialog -->
 </div>
-<!-- /.modal -->
 
 <div id="dialogEditTag" class="modal" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog">
@@ -492,11 +474,8 @@
           class="fa fa-check fa-lg"></i></button>
       </div>
     </div>
-    <!-- /.modal-content -->
   </div>
-  <!-- /.modal-dialog -->
 </div>
-<!-- /.modal -->
 
 <div id="dialogAddTags" class="modal" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog">
@@ -526,11 +505,8 @@
                 data-i18n="ns.dialogs:tagOperationAddTag"></button>
       </div>
     </div>
-    <!-- /.modal-content -->
   </div>
-  <!-- /.modal-dialog -->
 </div>
-<!-- /.modal -->
 
 <div id="dialogEditInTreeTag" class="modal" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog">
@@ -545,7 +521,6 @@
             <label class="control-label" for="tagInTreeName" data-i18n="ns.dialogs:editTagMasterName"></label>*
             <input class="form-control" pattern="^([^\ #/\\]){2,}$" type="text" name="tagInTreeName" id="tagInTreeName"
                    data-i18n="[data-error]ns.dialogs:editTagNamesRestrictionsHelp" required/>
-
             <p class="help-block with-errors"></p>
           </div>
           <div class="form-group">
@@ -553,9 +528,7 @@
                    data-i18n="ns.dialogs:editTagInTreeKeyBinding"></label>
             <input class="form-control" pattern="^([+\ A-z0-9]){2,}$" type="text" name="tagInTreeKeyBinding"
                    id="tagInTreeKeyBinding"/>
-
             <p class="help-block with-errors"></p>
-
             <p class="help-block" data-i18n="ns.dialogs:editTagInTreeKeyBindingHelp"></p>
           </div>
           <div class="form-group">
@@ -608,11 +581,8 @@
           class="fa fa-check fa-lg"></i></button>
       </div>
     </div>
-    <!-- /.modal-content -->
   </div>
-  <!-- /.modal-dialog -->
 </div>
-<!-- /.modal -->
 
 <div id="dialogTagCreate" class="modal" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog">
@@ -628,7 +598,6 @@
             <input pattern="^([^#/\\\ ]){2,}$" class="form-control" type="text" name="newTagTitle"
                    id="newTagTitle"
                    data-i18n="[placeholder]ns.dialogs:addTagsToGroupTagsPlaceholder;[data-error]ns.dialogs:editTagNamesRestrictionsHelp"/>
-
             <p class="help-block with-errors"></p>
           </div>
         </form>
@@ -640,11 +609,8 @@
           class="fa fa-check fa-lg"></i></button>
       </div>
     </div>
-    <!-- /.modal-content -->
   </div>
-  <!-- /.modal-dialog -->
 </div>
-<!-- /.modal -->
 
 <div id="dialogEditTagGroup" class="modal" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog">
@@ -659,7 +625,6 @@
             <label class="control-label" for="tagGroupName" data-i18n="ns.dialogs:editTagGroupNewName"></label>
             <input class="form-control" type="text" name="tagGroupName" id="tagGroupName"
                    pattern='^([^"]){1,}$' data-i18n="[data-error]ns.dialogs:tagGroupNameHelp" required/>
-
             <p class="help-block with-errors"></p>
           </div>
         </form>
@@ -671,11 +636,8 @@
           class="fa fa-check fa-lg"></i></button>
       </div>
     </div>
-    <!-- /.modal-content -->
   </div>
-  <!-- /.modal-dialog -->
 </div>
-<!-- /.modal -->
 
 <div id="dialogTagGroupCreate" class="modal" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog">
@@ -690,7 +652,6 @@
             <label class="control-label" for="newTagGroupName" data-i18n="ns.dialogs:createTagGroupName"></label>
             <input class="form-control" type="text" name="newTagGroupName" id="newTagGroupName"
                    pattern='^([^"]){1,}$' data-i18n="[data-error]ns.dialogs:tagGroupNameHelp" required/>
-
             <p class="help-block with-errors"></p>
           </div>
         </form>
@@ -702,11 +663,8 @@
           class="fa fa-check fa-lg"></i></button>
       </div>
     </div>
-    <!-- /.modal-content -->
   </div>
-  <!-- /.modal-dialog -->
 </div>
-<!-- /.modal -->
 
 <div id="alertDialog" class="modal" style="z-index: 99999" tabindex="-1">
   <div class="modal-dialog">
@@ -779,6 +737,7 @@
   </div>
 </div>
 
+<!-- Context menus -->
 <div id="fileMenu" class="dropdown clearfix">
   <ul class="dropdown-menu" role="menu" style="display:block;position:static;">
     <li class="dropdown-header">
