@@ -54,6 +54,8 @@ define(function(require, exports, module) {
       TSCORE.updateFileModel(TSCORE.fileList, oldFilePath, newFilePath);
       TSCORE.PerspectiveManager.updateFileUI(oldFilePath, newFilePath);
     }
+    TSCORE.updateMetaData(oldFilePath, newFilePath);
+
     TSCORE.hideWaitingDialog(); //TSCORE.PerspectiveManager.clearSelectedFiles();
   };
 
@@ -108,6 +110,7 @@ define(function(require, exports, module) {
 
   exports.deleteElement = function(filePath) {
     TSCORE.removeFileModel(TSCORE.fileList, filePath);
+    TSCORE.updateMetaData(filePath);
     TSCORE.PerspectiveManager.removeFileUI(filePath);
     if (filePath === TSCORE.FileOpener.getOpenedFilePath()) {
       TSCORE.FileOpener.closeFile(true);

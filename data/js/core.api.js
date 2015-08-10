@@ -591,6 +591,30 @@ define(function(require, exports, module) {
     exports.IO.saveTextFile(metaFilePath, content, true, true);
   }
 
+  function updateTsMetaData(oldFileName, newFileName)  { 
+    var name = exports.Utils.baseName(oldFileName);
+    exports.metaFileList.forEach(function(element, index) {
+
+        if(element.name.indexOf(name) >= 0) {
+          
+          if(newFileName) {
+            var newName = exports.Utils.baseName(newFileName) + "." + element.name.split('.').pop(); 
+            var newFilePath = exports.currentPath + exports.dirSeparator +  
+              exports.metaFolder + exports.dirSeparator + newName;
+
+            exports.IO.renameFile(element.path, newFilePath);
+            element.name = newName;
+            element.path = newFilePath;
+            
+          } else {
+
+            exports.IO.deleteElement(element.path);
+            exports.metaFileList.splice(index, 1);
+          }
+        }
+    });
+  }
+
   // Proxying applications parts
   exports.Config = tsSettings;
   exports.IO = tsIOApi;
@@ -702,4 +726,5 @@ define(function(require, exports, module) {
   exports.findMetaFilebyPath = findMetaFilebyPath;
   exports.findMetaObjectFromFileList = findMetaObjectFromFileList;
   exports.saveMetaData  = saveMetaData;
+  exports.updateMetaData = updateTsMetaData;
 });
