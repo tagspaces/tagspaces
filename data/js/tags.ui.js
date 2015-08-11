@@ -391,6 +391,18 @@ define(function(require, exports, module) {
           });
         }
       }
+
+      var metaObj = TSCORE.findMetaObjectFromFileList(filePath);
+      if (metaObj.metaData && metaObj.metaData.tags) {
+        metaObj.metaData.tags.forEach(function(elem) {
+          context.tags.push({
+            tag: elem.title,
+            filepath: filePath,
+            style: elem.style
+          });
+        });
+      }
+
       return tagButtonTmpl(context);
     }
     // Get the color for a tag
