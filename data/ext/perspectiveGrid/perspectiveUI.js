@@ -288,9 +288,9 @@ define(function(require, exports, module) {
 
   ExtUI.prototype.enableThumbnails = function() {
     $("#" + this.extensionID + "IncreaseThumbsButton").prop('disabled', false);
-    TSCORE.showLoadingAnimation();
+    /*TSCORE.showLoadingAnimation();
     var $tiltleElem = $("#" + this.extensionID + "Container .thumbImgTile");
-    /*$tiltleElem.each(function(index) {
+    $tiltleElem.each(function(index) {
       var $element = $(this);
       if (TSPRO.available) {
         TSPRO.getThumbnailURL($element.attr('filepath'), function(dataURL) {
@@ -321,11 +321,11 @@ define(function(require, exports, module) {
         }
       }
       $element.attr('style', "");
-    });*/
+    });
     $('.thumbImgTile').css({
       "max-width": TMB_SIZES[this.currentTmbSize],
       "max-height": TMB_SIZES[this.currentTmbSize]
-    });
+    });*/
   };
 
   function generateThumbnail(fileURL, result) {
