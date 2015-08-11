@@ -115,12 +115,12 @@ define(function(require, exports, module) {
       }
     }
 
-    if (metaObj.metaData) {
+    if (metaObj.metaData && metaObj.metaData.tags) {
       metaObj.metaData.tags.forEach(function(elem) {
         context.tags.push({
           tag: elem.title,
           filepath: filePath,
-          style: TSCORE.generateTagStyle(TSCORE.Config.findTag(elem.title))
+          style: elem.style
         });
       });
     }
