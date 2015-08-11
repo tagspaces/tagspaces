@@ -230,37 +230,52 @@ define(function(require, exports, module) {
     });
   };
 
-  function loadMetaDataFromFile(entry) {
-    
-    var filePath = entry[TSCORE.fileListFILEPATH];
+  function loadThumbnail(filePath) {
     var promise = new Promise(function(resolve, reject) {
       if (TSPRO.available) {
         TSPRO.getThumbnailURL(filePath, function(dataURL) {
-          entry[TSCORE.fileListMETA].thumbnailPath = dataURL;
-          resolve(entry);
-        }, reject);
+          resolve(dataURL);
+        });
       } else {
         var metaFilePath = TSCORE.findMetaFilebyPath(filePath, TSCORE.thumbFileExt);
-        if (metaFilePath) {
-          if(isChrome) {
-            metaFilePath = "file://" + metaFilePath;
-          }
-          entry[TSCORE.fileListMETA].thumbnailPath = metaFilePath; 
+        if (metaFilePath && isChrome) {
+          metaFilePath = "file://" + metaFilePath;
         }
-        var metaFileJson = TSCORE.findMetaFilebyPath(filePath, TSCORE.metsFileExt);
-        if(metaFileJson) {
-          TSCORE.IO.getFileContent(metaFileJson, function(result) {
-            var str = String.fromCharCode.apply(null, new Uint8Array(result));
-            if (str.charCodeAt(0) != 0x7B) {
-              str = str.substring(3, str.length);
-            }
-            entry[TSCORE.fileListMETA].metaData = JSON.parse(str);
-            resolve(entry);
-          }, reject);
-        } else {
-          resolve(entry);
-        }
+        resolve(metaFilePath); 
       }
+    });
+    return promise;
+  }
+
+  function loadMetaFileJson(filePath) {
+    var promise = new Promise(function(resolve, reject) {
+      var metaFileJson = TSCORE.findMetaFilebyPath(filePath, TSCORE.metsFileExt);
+      if(metaFileJson) {
+        TSCORE.IO.getFileContent(metaFileJson, function(result) {
+          var str = String.fromCharCode.apply(null, new Uint8Array(result));
+            if (str.charCodeAt(0) != 0x7B) {
+                str = str.substring(3, str.length);
+            }
+            var metaData = JSON.parse(str);
+            resolve(metaData);
+          });
+        } else {
+          resolve(null);
+      }
+    });
+    return promise;
+  }
+
+  function loadMetaDataFromFile(entry) {
+    var filePath = entry[TSCORE.fileListFILEPATH];
+    var promise = new Promise(function(resolve, reject) {
+      loadMetaFileJson(filePath).then(function(result) {
+        entry[TSCORE.fileListMETA].metaData = result;
+        loadThumbnail(filePath).then(function(result) {
+          entry[TSCORE.fileListMETA].thumbnailPath = result;
+          resolve(entry);
+        });
+      });
     });
     return promise;
   }
