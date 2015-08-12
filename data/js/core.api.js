@@ -58,7 +58,12 @@ define(function(require, exports, module) {
     tsDirectoriesUI.initUI();
     tsDirectoriesUI.initLocations();
     tsFileOpener.initUI();
-    tsPersManager.initPerspectives();
+    tsPersManager.initPerspectives().then(function(result) {
+      console.log("initPerspectives: " + result);
+    }).catch(function(err) { 
+      alert("initPerspectives: " + err);
+    });
+
     hideLoadingAnimation();
     $(document).ready(function() {
       initLayout();
