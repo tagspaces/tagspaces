@@ -243,7 +243,8 @@
 
   function getFileExt(fileName) {
     var ext = fileName.replace(/^.*?\.([a-zA-Z0-9]+)$/, "$1");
-    if (ext === "html" || ext === "htm" || ext.length === fileName.length) {
+    var textExts = ["html", "htm", "php", "md"];
+    if (textExts.indexOf(ext) >= 0 || ext.length === fileName.length) {
       return 'mhtml';
     } else {
       return ext;
