@@ -9,7 +9,6 @@ define(function(require, exports, module) {
   console.log("Loading mozilla.api.js..");
 
   var TSCORE = require("tscore");
-
   var TSPOSTIO = require("tspostioapi");
   var args = [];
   document.documentElement.addEventListener("tsMessage", function(event) {
@@ -89,10 +88,15 @@ define(function(require, exports, module) {
         }
         break;
       case "listDirectory":
-        if (message.success) {
-          TSPOSTIO.listDirectory(message.content);
+        if(args[0]) {
+          args[0](message.content);
+          args = [];
         } else {
-          TSPOSTIO.errorOpeningPath();
+          if (message.success) {
+            TSPOSTIO.listDirectory(message.content);
+          } else {
+            TSPOSTIO.errorOpeningPath();
+          }
         }
         break;
       case "indexDirectory":
@@ -417,11 +421,23 @@ define(function(require, exports, module) {
     var bstr =  atob(str);
     var len = bstr.length;
     var bytes = new Uint8Array(len);
-    for (var i = 0; i < len; i++)        {
+    for (var i = 0; i < len; i++) {
       bytes[i] = bstr.charCodeAt(i);
     }
     return bytes.buffer;
   }
+
+  var getDirectoryMetaInformation = function(dirPath, readyCallback) {
+    args = [readyCallback];
+    var event = document.createEvent('CustomEvent');
+    event.initCustomEvent("addon-message", true, true, {
+      "detail": {
+        "command": "listDirectory",
+        "path": dirPath
+      }
+    });
+    document.documentElement.dispatchEvent(event);
+  };
 
   exports.focusWindow = focusWindow;
   exports.createDirectory = createDirectory;
@@ -445,6 +461,7 @@ define(function(require, exports, module) {
   exports.checkNewVersion = checkNewVersion;
   exports.getFileProperties = getFileProperties;
   exports.getFileContent = getFileContent;
+  exports.getDirectoryMetaInformation = getDirectoryMetaInformation;
   // mozilla specific
   exports.saveSettings = saveSettings;
   exports.loadSettings = loadSettings;
