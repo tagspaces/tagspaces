@@ -378,22 +378,8 @@ define(function(require, exports, module) {
 
   $(window).on('resize', reLayout);
 
-  function showRightMenu() {
-    if (slideout) {
-      slideout.toggle();
-    }
-  }
-
   function initLayout() {
     console.log('Initializing Layout...');
-
-    slideout = new Slideout({
-      'panel': document.getElementById('panel'),
-      'menu': document.getElementById('menu'),
-      'padding': 300,
-      'tolerance': 70,
-      'side': 'right',
-    });
 
     reLayout();
   }
@@ -444,7 +430,6 @@ define(function(require, exports, module) {
   exports.updateFileModel = updateFileModel;
   exports.switchInterfaceLanguage = switchInterfaceLanguage;
   exports.getParameterByName = getParameterByName;
-  exports.showRightMenu = showRightMenu;
 
   // Proxying functions from tsCoreUI
   // TODO use TSCORE.UI instead

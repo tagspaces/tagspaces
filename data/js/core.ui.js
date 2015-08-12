@@ -424,8 +424,7 @@ define(function(require, exports, module) {
     });
     // Open Options Dialog
     $('#openOptions').click(function() {
-      TSCORE.showRightMenu();
-      //showOptionsDialog();
+      showOptionsDialog();
     });
     // File Menu
     $('#fileMenuAddTag').click(function() {
@@ -456,15 +455,12 @@ define(function(require, exports, module) {
     // End File Menu
     $('#showLocations').click(function() {
       showLocationsPanel();
-      console.log('Show Directories');
     });
     $('#showTagGroups').click(function() {
       showTagsPanel();
-      console.log('Show Tags');
     });
     $('#contactUs').click(function() {
       showContactUsPanel();
-      console.log('Show Contact Us');
     });
 
     // Hide the tagGroupsContent or locationContent by default
@@ -711,8 +707,9 @@ define(function(require, exports, module) {
     });
   };
   var hideAllDropDownMenus = function() {
-    $('#tagGroupMenu').hide();
-    $('#tagTreeMenu').hide();
+    //$('#tagGroupMenu').hide();
+    //$('#tagTreeMenu').hide();
+    //$('#contactUsContent').hide();
     $('#directoryMenu').hide();
     $('#tagMenu').hide();
     $('#fileMenu').hide();
@@ -721,6 +718,7 @@ define(function(require, exports, module) {
   var showLocationsPanel = function() {
     TSCORE.openLeftPanel();
     $('#tagGroupsContent').hide();
+    $('#contactUsContent').hide();
     $('#locationContent').show();
     $('#showTagGroups').removeClass('active');
     $('#contactUs').removeClass('active');
@@ -729,10 +727,20 @@ define(function(require, exports, module) {
   var showTagsPanel = function() {
     TSCORE.openLeftPanel();
     $('#locationContent').hide();
+    $('#contactUsContent').hide();
     $('#tagGroupsContent').show();
     $('#showLocations').removeClass('active');
     $('#contactUs').removeClass('active');
     $('#showTagGroups').addClass('active');
+  };
+  var showContactUsPanel = function() {
+    TSCORE.openLeftPanel();
+    $('#locationContent').hide();
+    $('#tagGroupsContent').hide();
+    $('#contactUsContent').show();
+    $('#showLocations').removeClass('active');
+    $('#showTagGroups').removeClass('active');
+    $('#contactUs').addClass('active');
   };
   var createHTMLFile = function() {
     var filePath = TSCORE.currentPath + TSCORE.dirSeparator + TSCORE.TagUtils.beginTagContainer + TSCORE.TagUtils.formatDateTime4Tag(new Date(), true) + TSCORE.TagUtils.endTagContainer + '.html';
