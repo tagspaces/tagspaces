@@ -568,7 +568,7 @@ input a.resetFilter {
     top: 0;
     right: 0;
     left: 0;
-    height: 50px;
+    height: 78px;
     padding: 10px;
     border: 0;
   }
@@ -581,7 +581,7 @@ input a.resetFilter {
 
   .modal-body {
     position: absolute;
-    top: 50px;
+    top: 79px;
     bottom: 60px;
     width: 100%;
     font-weight: 300;

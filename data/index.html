@@ -63,27 +63,21 @@
               <i class="glyphicon glyphicon-gift fa-lg"></i>
             </button>
             <button class="btn btn-link" data-i18n="[title]ns.common:openSettingTooltip;" id="openOptions"
-                    style="padding-right: 0px;">
+                    style="padding-right: 0px;" data-placement="bottom;" data-original-title="Start using TagSpaces by creating a new location!">
               <i class="fa fa-gears fa-lg"></i>&nbsp;
             </button>
           </div>
         </div>
-        <div class="btn-toolbar" style="width: 100%">
-          <div class="btn-group" style="width: 99%" id="locationSwitch">
-            <button type="button" class="btn btn-default" style="width: 16%; text-align: center; min-width: 40px;"
-                    data-placement="right;" data-i18n="[title]ns.common:connectNewLocationTooltip"
-                    data-original-title="Start using TagSpaces by creating a new location!" id="createNewLocation">
-              <i class="glyphicon glyphicon-plus-sign"></i>
-            </button>
-            <button type="button" class="btn btn-default" data-i18n="ns.common:chooseLocation" style="width: 69%"
+        <div class="btn-toolbar">
+          <div class="btn-group" style="width: 96%; display: flex;" id="locationSwitch">
+            <button type="button" class="btn btn-default" data-i18n="ns.common:chooseLocation" style="flex: 1 1 auto;"
                     id="locationName" data-toggle="dropdown">Choose Location
             </button>
-            <button type="button" class="btn btn-default dropdown-toggle" id="selectLocation" style="width: 14%"
+            <button type="button" class="btn btn-default dropdown-toggle" id="selectLocation" style="flex: 0 1 40px;"
                     data-toggle="dropdown">
               <span class="caret"></span>
             </button>
-            <ul class="dropdown-menu" id="locationsList"
-                style="overflow-y: auto; max-height: 500px; width: 238px;"></ul>
+            <ul class="dropdown-menu" id="locationsList" style="overflow-y: auto; max-height: 500px; width: 280px;"></ul>
           </div>
         </div>
       </nav>
@@ -98,80 +92,80 @@
             <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
             <i class="fa fa-comment fa-stack-1x" style=""></i></span>&nbsp;&nbsp;
             <span data-i18n="ns.common:aboutTagSpaces"></span>
-          </a>
+          </a><br>
           <a class="btn btn-link" data-i18n="[title]ns.common:startingHintsTooltip" id="openHints">
             <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
             <i class="fa fa-video-camera fa-stack-1x" style=""></i></span>&nbsp;&nbsp;
             <span data-i18n="ns.common:startingHints"></span>
-          </a>
+          </a><br>
           <a class="btn btn-link" data-i18n="[title]ns.common:whatsNewTooltip" href="http://www.tagspaces.org/whatsnew/"
              id="openWhatsnew">
             <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
             <i class="fa fa-leaf fa-stack-1x" style="color: #99CC00"></i></span>&nbsp;&nbsp;
             <span data-i18n="ns.common:whatsNew"></span>
-          </a>
+          </a><br>
           <a class="btn btn-link" data-i18n="[title]ns.common:getAndroidAppTooltip"
              href="https://play.google.com/store/apps/details?id=org.tagspaces.androidapp" id="openGooglePlay">
             <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
             <i class="fa fa-android fa-stack-1x" style="color: #669900"></i></span>&nbsp;&nbsp;
             <span data-i18n="ns.common:getAndroidApp"></span>
-          </a>
+          </a><br>
           <!--hr style="margin: 0; border-top: 1px solid #ddd" /-->
           <a class="btn btn-link" data-i18n="[title]ns.common:suggestNewFeaturesTooltip"
              href="https://tagspaces.uservoice.com/forums/213931-general" id="openUservoice">
             <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
             <i class="fa fa-bullhorn fa-stack-1x" style=""></i></span>&nbsp;&nbsp;
             <span data-i18n="ns.common:suggestNewFeatures"></span>
-          </a>
+          </a><br>
           <a class="btn btn-link" data-i18n="[title]ns.common:reportIssuesTooltip"
              href="https://github.com/tagspaces/tagspaces/issues/" id="openGitHubIssues">
             <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
             <i class="fa fa-bug fa-stack-1x" style=""></i></span>&nbsp;&nbsp;
             <span data-i18n="ns.common:reportIssues"></span>
-          </a>
+          </a><br>
           <a class="btn btn-link" data-i18n="[title]ns.common:helpUsTranslateTooltip"
              href="https://www.transifex.com/projects/p/tagspaces" id="helpUsTranslate">
             <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
             <i class="fa fa-language fa-stack-1x" style=""></i></span>&nbsp;&nbsp;
             <span data-i18n="ns.common:helpUsTranslate"></span>
-          </a>
+          </a><br>
           <a class="btn btn-link" data-i18n="[title]ns.common:supportUsTooltip" href="http://tagspaces.org/donations"
              id="openSupportUs">
             <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
             <i class="fa fa-thumbs-o-up fa-stack-1x"></i></span>&nbsp;&nbsp;
             <span data-i18n="ns.common:supportUs"></span>
-          </a>
+          </a><br>
           <a class="btn btn-link" data-i18n="[title]ns.common:tweetAboutUsTooltip"
              href="https://twitter.com/intent/tweet?original_referer=http%3A%2F%2Ftagspaces.org%2F&text=Organize%20your%20files%20with%20@tagspaces"
              id="openTwitter">
             <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
             <i class="fa fa-twitter fa-stack-1x" style="color: #55ACEE"></i></span>&nbsp;&nbsp;
             <span data-i18n="ns.common:tweetAboutUs;"></span>
-          </a>
+          </a><br>
           <a class="btn btn-link" data-i18n="[title]ns.common:followOnTwitterTooltip"
              href="https://twitter.com/intent/user?screen_name=tagspaces" id="openTwitter2">
             <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
             <i class="fa fa-twitter-square fa-stack-1x" style="color: #55ACEE"></i></span>&nbsp;&nbsp;
             <span data-i18n="ns.common:followOnTwitter"></span>
-          </a>
+          </a><br>
           <a class="btn btn-link" data-i18n="[title]ns.common:joinOnGooglePlusTooltip"
              href="https://plus.google.com/+TagspacesOrg/" id="openGooglePlus">
             <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
             <i class="fa fa-google-plus-square fa-stack-1x" style="color: red"></i></span>&nbsp;&nbsp;
             <span data-i18n="ns.common:joinOnGooglePlus"></span>
-          </a>
+          </a><br>
           <a class="btn btn-link" data-i18n="[title]ns.common:likeUsOnFacebookTooltip"
              href="https://www.facebook.com/tagspacesapp" id="openFacebook">
             <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
             <i class="fa fa-facebook fa-stack-1x" style="color: #3B5998"></i></span>&nbsp;&nbsp;
             <span data-i18n="ns.common:likeUsOnFacebook"></span>
-          </a>
+          </a><br>
           <a class="btn btn-link" data-i18n="[title]ns.common:writeUsEmailTooltip"
              href="mailto:contactus@tagspaces.org">
             <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
             <i class="fa fa-envelope fa-stack-1x"></i></span>&nbsp;&nbsp;
             <span data-i18n="ns.common:writeUsEmail"></span>
-          </a>
+          </a><br>
         </div>
       </div>
     </div>

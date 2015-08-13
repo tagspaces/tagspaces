@@ -68,20 +68,24 @@ define(function(require, exports, module) {
     '{{/each}}</div>'
   );
   var locationChooserTmpl = Handlebars.compile(
-    '<li class="dropdown-header" data-i18n="ns.common:yourLocations">{{yourLocations}} ' +
-        '<button type="button" class="close">×</button>' +
+    '<li style="display: flex;">' +
+      '<button style="text-align: left;" class="btn btn-link" id="createNewLocation">' +
+        '<i class="fa fa-plus"></i>&nbsp;<span data-i18n="[title]ns.common:connectNewLocationTooltip;ns.common:connectNewLocationTooltip"></span>'  +
+      '</button>' +
     '</li>' +
-    '<li class="divider" ></li>' +
+    '<li class="divider"></li>' +
+    '<li class="dropdown-header" data-i18n="ns.common:yourLocations">{{yourLocations}}</li>' +
+    //'<li class="divider"></li>' +
     '{{#each locations}}' +
-    '<li style="line-height: 45px">' +
-      '<button title="{{path}}" path="{{path}}" name="{{name}}" style="width: 180px; text-align: left; border: 0;" class="btn btn-link">' +
+    '<li style="line-height: 45px; display: flex;">' +
+      '<button title="{{path}}" path="{{path}}" name="{{name}}" style="flex: 1 1 auto; text-align: left;" class="btn btn-link openLocation">' +
       '{{#if isDefault}}' +
         '<i style="color: darkred" class="fa fa-bookmark" data-i18n="[title]ns.dialogs:startupLocation"></i>&nbsp;{{name}}'  +
       '{{else}}' +
         '<i class="fa fa-bookmark"></i>&nbsp;{{name}}'  +
       '{{/if}}' +
       '</button>' +
-      '<button type="button" data-i18n="[title]ns.common:editLocation" title="{{editLocationTitle}}" location="{{name}}" path="{{path}}" class="btn btn-link pull-right" style="margin-right: 5px; margin-top: 5px">' +
+      '<button type="button" data-i18n="[title]ns.common:editLocation" title="{{editLocationTitle}}" location="{{name}}" path="{{path}}" class="btn btn-link pull-right editLocation" style="flex: 0 1 50px;">' +
         '<i class="fa fa-pencil fa-lg"></i>' +
       '</button>' +
     '</li>' +
@@ -404,9 +408,9 @@ define(function(require, exports, module) {
     $('#directoryMenuOpenDirectory').click(function() {
       TSCORE.IO.openDirectory(dir4ContextMenu);
     });
-    $('#createNewLocation').click(function() {
-      showLocationCreateDialog();
-    });
+    //$('#createNewLocation').click(function() {
+    //  showLocationCreateDialog();
+    //});
   }
 
   function createLocation() {
@@ -678,17 +682,20 @@ define(function(require, exports, module) {
       'yourLocations': $.i18n.t('ns.common:yourLocations'),
       'editLocationTitle': $.i18n.t('ns.common:editLocation')
     }));
-    $locationsList.find('.btn-default').each(function() {
+    $locationsList.find('.openLocation').each(function() {
       $(this).on('click', function() {
         openLocation($(this).attr('path'));
       });
     });
-    $locationsList.find('.btn-link').each(function() {
+    $locationsList.find('.editLocation').each(function() {
       $(this).on('click', function() {
         console.log('Edit location clicked');
         showLocationEditDialog($(this).attr('location'), $(this).attr('path'));
         return false;
       });
+    });
+    $locationsList.find('#createNewLocation').on('click', function() {
+      showLocationCreateDialog();
     });
   }
 
