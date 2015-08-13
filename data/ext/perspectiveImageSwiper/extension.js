@@ -34,8 +34,8 @@ define(function(require, exports, module) {
       extensionDirectory+"/perspectiveUI.js",
       "text!"+extensionDirectory + "/galleryTMPL.html",
       "css!"+extensionDirectory + "/gallery.css",
-      "css!"+extensionDirectory + "/dist/photoswipe.css?v=4.0.3-1.0.4",
-      "css!"+extensionDirectory + "/dist/default-skin/default-skin.css?v=4.0.3-1.0.4"
+      "css!"+extensionDirectory + "/dist/photoswipe.css",
+      "css!"+extensionDirectory + "/dist/default-skin/default-skin.css"
       ], function(perspectiveUI, tmpl) {
         UI = perspectiveUI;
         template = tmpl;
@@ -46,29 +46,25 @@ define(function(require, exports, module) {
   var load = function() {
     console.log("Loading perspective " + extensionID);
     $viewContainer.children().remove();
-    UI.load($viewContainer, template, TSCORE.fileList);
-    TSCORE.hideLoadingAnimation();
+    if (UI) {
+      UI.load($viewContainer, template, TSCORE.fileList);
+      TSCORE.hideLoadingAnimation();
+    } else {
+      window.setTimeout(function() {
+        load();
+      }, 1000);
+    }
   };
 
-  var clearSelectedFiles = function() {
-
-  };
+  var clearSelectedFiles = function() {};
     
-  var removeFileUI = function(filePath) {
-
-  };    
+  var removeFileUI = function(filePath) {};
     
-  var updateFileUI = function(oldFilePath, newFilePath) {
-
-  };     
+  var updateFileUI = function(oldFilePath, newFilePath) {};
   
-  var getNextFile = function (filePath) {
+  var getNextFile = function (filePath) {};
 
-  };
-
-  var getPrevFile = function (filePath) {
-  
-  };
+  var getPrevFile = function (filePath) {};
 
   // Vars
   exports.Title = extensionTitle;
@@ -80,12 +76,12 @@ define(function(require, exports, module) {
   exports.License = extensionLicense;
 
   // Methods
-  exports.init          = init;
-  exports.load          = load;
-  exports.clearSelectedFiles    = clearSelectedFiles;
-  exports.getNextFile       = getNextFile;
-  exports.getPrevFile       = getPrevFile;  
-  exports.removeFileUI            = removeFileUI;
-  exports.updateFileUI            = updateFileUI;
+  exports.init = init;
+  exports.load = load;
+  exports.clearSelectedFiles = clearSelectedFiles;
+  exports.getNextFile = getNextFile;
+  exports.getPrevFile = getPrevFile;
+  exports.removeFileUI = removeFileUI;
+  exports.updateFileUI = updateFileUI;
   
 });
