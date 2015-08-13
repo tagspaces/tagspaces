@@ -88,6 +88,7 @@ html, body {
 #statusBar {
   margin-top: 12px;
   font-size: 14px;
+  font-size: 12px;
 }
 
 #iframeViewer {
@@ -273,43 +274,21 @@ li hr {
 	padding-left: 5px;
 	padding-top: 10px;
 	margin: 0;
-  position: absolute;
-  top: 0;
-  left: 3px;
-  z-index: 1999;
-  padding-right: 100px;
   background-color: #f2f2f2;
 }
 
 #toggleLeftPanel .icon-bar {
   height: 3px;
 }
-#toggleLeftPanel:focus {
-  background-color: #f2f2f2 !important;
-}
 
-#toggleLeftPanel:hover {
+#toggleLeftPanel:focus, #toggleLeftPanel:hover {
   background-color: #f2f2f2 !important;
 }
 
 #searchToolbar {
-  z-index: 2999;
-  display: none;
-  position: absolute;
-  top: 0;
-  left:0; right:0;
-  margin: 0 auto;
   width: 250px;
   background-color: #f2f2f2;
-}
-
-#showSearchButton {
-  z-index: 1000;
-  position: absolute;
-  top: 0;
-  left:0; right:0;
-  margin: 0 auto;
-  width: 50px;
+  display: none;
 }
 
 #searchBox {
@@ -319,7 +298,7 @@ li hr {
   border-bottom: 2px solid gray;
   font-size: 14px;
   min-width: 30px;
-  width: 170px;
+  width: 100%;
 }
 
 #tagsContainer {
@@ -690,9 +669,11 @@ input a.resetFilter {
   width: 50px;
 }
 
-#contactUsContent .btn-link {
+#contactUsContent a {
   height: 45px;
   color: #404040;
+  width: 100%;
+  text-align: left;
 }
 
 #fileViewerMainToolbar .btn-link {

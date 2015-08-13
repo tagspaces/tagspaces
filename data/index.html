@@ -215,29 +215,28 @@
                     data-toggle="dropdown"><i id="currentPerspectitveIcon" class="fa fa-film"></i>&nbsp;
               <span id="currentPerspectitveName">Perspectives</span>&nbsp;<span class="caret"></span>
             </button>
-            <ul class="dropdown-menu pull-right" style="position:absolute; top:35px; right:2px; width: 200px;"
-                id="viewSwitcher"></ul>
+            <ul class="dropdown-menu pull-right" id="viewSwitcher"></ul>
           </div>
         </div>
-        <div>
-          <div class="btn-toolbar">
-            <div class="btn-group" id="alternativeNavigator"></div>
-            <div id="statusBar" class="noWrap"></div>
+        <div class="flexLayout">
+          <div class="btn-toolbar flexMaxWidth flexLayout">
+            <div class="btn-group " id="alternativeNavigator"></div>
+            <div id="statusBar" class="noWrap flexMaxWidth"></div>
+            <div id="searchToolbar">
+              <div class="flexLayout">
+                <button class="btn btn-link" data-i18n="[title]ns.common:clearFilterTooltip" id="clearFilterButton">
+                  <i class="fa fa-lg fa-eraser"></i>
+                </button>
+                <input class="flexMaxWidth" id="searchBox" placeholder="Search" data-i18n="[placeholder]ns.common:searchPlaceholder" type="text" rel="popover">
+                <button class="btn btn-link" data-i18n="[title]ns.common:searchPlaceholder" id="searchButton">
+                  <i class="fa fa-lg fa-search"></i>
+                </button>
+              </div>
+            </div>
           </div>
-          <button class="btn btn-link" data-i18n="[title]ns.common:searchPlaceholder" id="showSearchButton"><i
-            class="fa fa-lg fa-search"></i></button>
-          <div id="searchToolbar" class="form-inline">
-            <button class="btn btn-link" data-i18n="[title]ns.common:clearFilterTooltip" id="clearFilterButton"
-                    style="padding-top: 0; padding-right: 2px;">
-              <i class="fa fa-lg fa-eraser"></i>
-            </button>
-            <input type="text" id="searchBox" rel="popover" placeholder="Search"
-                   data-i18n="[placeholder]ns.common:searchPlaceholder">
-            <button class="btn btn-link" data-i18n="[title]ns.common:searchPlaceholder" id="searchButton"
-                    style="border-left-width: 0; padding-left: 2px; padding-top: 1px;">
-              <i class="fa fa-lg fa-search"></i>
-            </button>
-          </div>
+          <button class="btn btn-link" data-i18n="[title]ns.common:searchPlaceholder" id="showSearchButton">
+            <i class="fa fa-lg fa-search"></i>
+          </button>
         </div>
       </nav>
     </div>

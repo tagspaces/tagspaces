@@ -15,6 +15,10 @@
   -ms-flex: 1 1 auto;
 }
 
+.fullWidth {
+  width: 100%;
+}
+
 #mainContainer {
   display: flex;
   display: -webkit-flex;

@@ -82,8 +82,6 @@ define(function(require, exports, module) {
       // Show welcome dialog by no locations
       if (tsSettings.Settings.tagspacesList.length < 1) {
         $('#createNewLocation').tooltip('show');
-        $('#locationName').prop('disabled', true);
-        $('#selectLocation').prop('disabled', true);
         tsCoreUI.showWelcomeDialog();
       }
       if (isNode || isChrome) {
