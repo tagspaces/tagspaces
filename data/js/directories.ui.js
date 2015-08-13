@@ -70,8 +70,8 @@ define(function(require, exports, module) {
   );
 
   var locationChooserTmpl = Handlebars.compile(
-    '<li class="flexLayout"">' +
-      '<button style="text-align: left;" class="btn btn-link" id="createNewLocation">' +
+    '<li class="flexLayout">' +
+      '<button style="text-align: left;" class="btn btn-link flexMaxWidth" id="createNewLocation">' +
         '<i class="fa fa-plus"></i>&nbsp;<span data-i18n="[title]ns.common:connectNewLocationTooltip;ns.common:connectNewLocationTooltip"></span>'  +
       '</button>' +
     '</li>' +
