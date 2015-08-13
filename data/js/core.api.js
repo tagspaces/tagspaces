@@ -17,6 +17,8 @@ define(function(require, exports, module) {
   var tsSearch = require('tssearch');
   var tsPro = require('tspro');
   var tsUtils = require('tsutils');
+  var tsMeta = require('tsmeta');
+
   var currentPath;
   var currentLocationObject;
   var currentPerspectiveID;
@@ -550,76 +552,6 @@ define(function(require, exports, module) {
     }, 0);
   }
 
-  function findMetaFilebyPath(filePath, type) {
-    var metaFilePath = null;
-    filePath = filePath + "." + type;
-    exports.metaFileList.every(function(element) {
-      if (filePath.indexOf(element.name) > 0) {
-        metaFilePath = exports.currentPath + exports.dirSeparator + 
-          exports.metaFolder + exports.dirSeparator + element.name;
-        return false;
-      }
-      return true;
-    });
-    return  metaFilePath;
-  }
-
-  function findMetaObjectFromFileList(filePath) {
-    var metaObj = null;
-    exports.fileList.every(function(element) {
-      if(element[exports.fileListFILEPATH] === filePath) {
-        metaObj = element[exports.fileListMETA];
-        return false;
-      }
-      return true;
-    });
-    return  metaObj;
-  }
-
-  function saveMetaData(filePath, metaData) {
-    
-    var metaFilePath = findMetaFilebyPath(filePath, exports.metsFileExt);
-
-    if(!metaFilePath) {
-      var name = exports.Utils.baseName(filePath) + "." + exports.metsFileExt;
-      metaFilePath = exports.currentPath + exports.dirSeparator + 
-        exports.metaFolder + exports.dirSeparator + name;
-    
-      var entry = {
-        "name": name,
-        "isFile": true,
-        "path": metaFilePath,
-      };
-      exports.metaFileList.push(entry);
-    }
-    var content = JSON.stringify(metaData);
-    exports.IO.saveTextFile(metaFilePath, content, true, true);
-  }
-
-  function updateTsMetaData(oldFileName, newFileName)  { 
-    var name = exports.Utils.baseName(oldFileName);
-    exports.metaFileList.forEach(function(element, index) {
-
-        if(element.name.indexOf(name) >= 0) {
-          
-          if(newFileName) {
-            var newName = exports.Utils.baseName(newFileName) + "." + element.name.split('.').pop(); 
-            var newFilePath = exports.currentPath + exports.dirSeparator +  
-              exports.metaFolder + exports.dirSeparator + newName;
-
-            exports.IO.renameFile(element.path, newFilePath);
-            element.name = newName;
-            element.path = newFilePath;
-            
-          } else {
-
-            exports.IO.deleteElement(element.path);
-            exports.metaFileList.splice(index, 1);
-          }
-        }
-    });
-  }
-
   // Proxying applications parts
   exports.Config = tsSettings;
   exports.IO = tsIOApi;
@@ -632,7 +564,7 @@ define(function(require, exports, module) {
   if (tsPro.available) {
     exports.PRO = tsPro;
   }
-
+  exports.Meta = tsMeta;
   // Public API definition
   exports.dirSeparator = isWin && !isWeb ? '\\' : '/';
   exports.locationDesktop;
@@ -721,15 +653,8 @@ define(function(require, exports, module) {
   exports.fileListFILEPATH = 5;
   exports.fileListFILENAME = 6;
   exports.fileListMETA = 7;
-  exports.metsFileExt = "json";
-  exports.metaFolder = ".ts";
-  exports.thumbFileExt = "png";
   //document events
   exports.createDocumentEvent = createDocumentEvent;
   exports.fireDocumentEvent = fireDocumentEvent;
   exports.metaFileList = metaFileList;
-  exports.findMetaFilebyPath = findMetaFilebyPath;
-  exports.findMetaObjectFromFileList = findMetaObjectFromFileList;
-  exports.saveMetaData  = saveMetaData;
-  exports.updateMetaData = updateTsMetaData;
 });

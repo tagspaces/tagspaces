@@ -796,7 +796,7 @@ define(function(require, exports, module) {
       $fileTile = $("#" + this.extensionID + "Container li[filepath='" + oldFilePath + "']");
     }
 
-    var metaObj = TSCORE.findMetaObjectFromFileList(oldFilePath);
+    var metaObj = TSCORE.Meta.findMetaObjectFromFileList(oldFilePath);
     $fileTile.replaceWith(this.createFileTile(title, newFilePath, fileExt, fileTags, true, metaObj)); 
     
     this.refreshThumbnails();

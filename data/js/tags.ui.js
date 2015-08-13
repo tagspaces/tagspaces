@@ -391,18 +391,10 @@ define(function(require, exports, module) {
           });
         }
       }
-
-      var metaObj = TSCORE.findMetaObjectFromFileList(filePath);
-      if (metaObj.metaData && metaObj.metaData.tags) {
-        metaObj.metaData.tags.forEach(function(elem) {
-          context.tags.push({
-            tag: elem.title,
-            filepath: filePath,
-            style: elem.style
-          });
-        });
+      var metaTags = TSCORE.Meta.getTagsFromMetaFile(filePath);
+      if(metaTags.length > 0) {
+        context.tags = context.tags.concat(metaTags);
       }
-
       return tagButtonTmpl(context);
     }
     // Get the color for a tag

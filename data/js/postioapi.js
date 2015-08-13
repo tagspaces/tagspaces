@@ -54,7 +54,7 @@ define(function(require, exports, module) {
       TSCORE.updateFileModel(TSCORE.fileList, oldFilePath, newFilePath);
       TSCORE.PerspectiveManager.updateFileUI(oldFilePath, newFilePath);
     }
-    TSCORE.updateMetaData(oldFilePath, newFilePath);
+    TSCORE.Meta.updateMetaData(oldFilePath, newFilePath);
 
     TSCORE.hideWaitingDialog(); //TSCORE.PerspectiveManager.clearSelectedFiles();
   };

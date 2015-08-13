@@ -332,50 +332,12 @@ define(function(require, exports, module) {
     return newFileName;
   }
 
-  function addMetaTags(filePath, tags) {
-
-    var metaObj = TSCORE.findMetaObjectFromFileList(filePath);
-    if (!metaObj) {
-      metaObj = {
-        thumbnailPath: "",
-        metaData: null,
-      };  
-    }
-
-    if (!metaObj.metaData) {
-      metaObj.metaData = {
-        tags: []
-      };
-    }
-
-    tags.forEach(function(element) {
-      var newTag = {
-        "title": element,
-        "type":"plain",
-        "titleUI": element,
-        "icon":"",
-        "style":""
-      };
-      var isNewTag = true;
-      metaObj.metaData.tags.forEach(function(oldTag) {
-        if (oldTag.title === element) {
-          isNewTag = false;
-        }
-      });
-      if (isNewTag) {
-        metaObj.metaData.tags.push(newTag);  
-      }
-    });
-
-    TSCORE.saveMetaData(filePath, metaObj.metaData);
-    TSCORE.PerspectiveManager.updateFileUI(filePath, filePath);
-  }
-
   function writeTagsToFile(filePath, tags) {
     console.log('Add the tags to: ' + filePath);
 
     if (TSCORE.Config.DefaultSettings.writeTagsToFile !== true) {
-      addMetaTags(filePath, tags);
+      TSCORE.Meta.addMetaTags(filePath, tags);
+      TSCORE.PerspectiveManager.updateFileUI(filePath, filePath);
       return;
     }
 
@@ -475,24 +437,13 @@ define(function(require, exports, module) {
     TSCORE.IO.renameFile(filePath, containingDirectoryPath + TSCORE.dirSeparator + newFileName);
   }
 
-  function reanmeMetaTag(filePath, oldTag, newTag) {
-    var metaObj = TSCORE.findMetaObjectFromFileList(filePath);
-    if(metaObj.metaData) {
-      metaObj.metaData.tags.forEach(function(tag , index) {
-        if(tag.title === oldTag) {
-          tag.title = newTag;
-        }
-      });
-      TSCORE.saveMetaData(filePath, metaObj.metaData);
-      TSCORE.PerspectiveManager.updateFileUI(filePath, filePath);
-    }
-  }
   // Replaces a tag with a new one
   function renameTag(filePath, oldTag, newTag) {
     console.log('Rename tag for file: ' + filePath);
 
     if (TSCORE.Config.DefaultSettings.writeTagsToFile !== true) {
-      reanmeMetaTag(filePath, oldTag, newTag);
+      TSCORE.Meta.reanmeMetaTag(filePath, oldTag, newTag);
+      TSCORE.PerspectiveManager.updateFileUI(filePath, filePath);
     }
 
     var fileName = extractFileName(filePath);
@@ -524,29 +475,13 @@ define(function(require, exports, module) {
     return true;
   }
 
-  function removeMetaTag(filePath, tagName) {
-    var metaObj = TSCORE.findMetaObjectFromFileList(filePath);
-    if(metaObj.metaData) {
-      metaObj.metaData.tags.forEach(function(tag , index) {
-        if(tag.title === tagName) {
-          metaObj.metaData.tags.splice(index , 1);
-        }
-      });
-      var metaFileJson = TSCORE.findMetaFilebyPath(filePath, TSCORE.metsFileExt);
-      if (metaFileJson) {
-        var content = JSON.stringify(metaObj.metaData);
-        TSCORE.IO.saveTextFile(metaFileJson, content, true, true);
-      }
-      TSCORE.PerspectiveManager.updateFileUI(filePath, filePath);
-    }
-  }
-  
   // Removing a tag from a filename
   function removeTag(filePath, tagName) {
     console.log('Removing tag: ' + tagName + ' from ' + filePath);
 
     if (TSCORE.Config.DefaultSettings.writeTagsToFile !== true) {
-      removeMetaTag(filePath, tagName);
+      TSCORE.Meta.removeMetaTag(filePath, tagName);
+      TSCORE.PerspectiveManager.updateFileUI(filePath, filePath);
     }
 
     var fileName = extractFileName(filePath);
