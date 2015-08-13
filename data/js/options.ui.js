@@ -27,7 +27,7 @@ define(function(require, exports, module) {
           .append($('<button class="btn btn-link" style="width: 40px" data-i18n="[title]ns.dialogs:removePerspectiveTooltip"><i class="fa fa-times"></button>')
             .click(function() {
               $(this).parent().parent().remove();
-    }))).i18n();
+            }))).i18n();
     generateSelectOptions(perspectiveControl.find('select'), TSCORE.Config.getPerspectiveExtensions(), perspectiveId);
     parent.append(perspectiveControl);
   }
@@ -41,7 +41,7 @@ define(function(require, exports, module) {
           .append($('<button style="width: 30px" class="btn btn-link" data-i18n="[title]ns.dialogs:removeFileTypeTooltip"><i class="fa fa-times"></button>')
             .click(function() {
               $(this).parent().parent().remove();
-    }))).i18n();
+            }))).i18n();
     generateSelectOptions(fileTypeControl.find('.ftviewer'), TSCORE.Config.getViewerExtensions(), viewerId);
     generateSelectOptions(fileTypeControl.find('.fteditor'), TSCORE.Config.getEditorExtensions(), editorId);
     parent.append(fileTypeControl);
