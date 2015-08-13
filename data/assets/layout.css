@@ -1,6 +1,20 @@
 /* Copyright (c) 2012-2015 The TagSpaces Authors. All rights reserved. Use of this source code
  * is governed by a AGPL3 license that can be found in the LICENSE file. */
 
+/*==== General ====== */
+
+.flexLayout {
+  display: flex;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+}
+
+.flexMaxWidth {
+  flex: 1 1 auto;
+  -webkit-flex: 1 1 auto;
+  -ms-flex: 1 1 auto;
+}
+
 #mainContainer {
   display: flex;
   display: -webkit-flex;
@@ -25,6 +39,20 @@
 
   width: 100%;
   height: 100%;
+}
+
+.col1, .col2, .col3 {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+}
+
+.col1 .navbar, .col1 > .row2, .col1 > .row3, .col2 .navbar, .col2 .row3, .col3 .navbar {
+	background-color: #F2F2F2 !important;
+}
+
+.col1 .navbar, .col2 .navbar, .col3 .navbar {
+	padding-left: 5px;
 }
 
 /*==== COL1 ====== */
@@ -182,28 +210,6 @@
 
   overflow-y: auto;
   min-height: 0px;
-}
-
-/*==== General ====== */
-
-.col1, .col2, .col3 {
-  user-select: none;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-}
-
-.col1 .navbar, .col1 > .row2, .col1 > .row3, .col2 .navbar, .col2 .row3, .col3 .navbar {
-	background-color: #F2F2F2 !important;
-}
-
-.col1 .navbar, .col2 .navbar, .col3 .navbar {
-	padding-left: 5px;
-}
-
-.flexLayout {
-  display: flex;
-  display: -webkit-flex;
-  display: -ms-flexbox;
 }
 
 /*==== Location Management ====== */

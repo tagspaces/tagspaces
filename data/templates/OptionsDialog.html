@@ -6,17 +6,17 @@
                     <i class="fa fa-times"></i>
                 </button>
                 <h4 data-i18n="ns.dialogs:optionsTitle"></h4>
-                <ul class="nav nav-tabs">
+            </div>
+            <div class="modal-body form" style="" id="optionsAccordion">
+                <ul class="nav nav-tabs" style="margin-bottom: 15px;">
                     <li><a href="#general" data-toggle="tab" class="optionsTitle" data-i18n="ns.dialogs:generalTab"></a></li>
                     <li><a href="#perspectives" data-toggle="tab" class="optionsTitle" data-i18n="ns.dialogs:perspectivesTab"></a></li>
                     <li><a href="#filetypes" data-toggle="tab" class="optionsTitle" data-i18n="ns.dialogs:fileTypeTab"></a></li>
                     <li><a href="#keyBindings" data-toggle="tab" class="optionsTitle" data-i18n="ns.dialogs:keyBindingsTab"></a></li>
                     <li><a href="#experimental" data-toggle="tab" class="optionsTitle" data-i18n="ns.dialogs:experimentalTab"></a></li>
                 </ul>
-            </div>
-            <div class="modal-body form" style="height: 380px;" id="optionsAccordion">
-                <div class="tab-content">
-                    <div class="tab-pane active" id="general" style="height: 360px; overflow-y: auto;">
+                <div class="tab-content" style="height: 400px; overflow-y: auto;">
+                    <div class="tab-pane active" id="general" style="height: 100%;">
                         <div class='form-group'>
                             <button class="btn btn-default" id="exportTagGroupsButton" aria-hidden="true">
                                 <i class="fa fa-upload"></i>&nbsp;
@@ -66,7 +66,7 @@
                         </div>
                     </div>
 
-                    <div class="tab-pane" id="perspectives" style="height: 360px; overflow-y: auto;">
+                    <div class="tab-pane" id="perspectives" style="height: 100%;">
                         <button class='btn btn-default' id='addPerspectiveButton'>
                             <i class='fa fa-plus'></i>&nbsp;<span data-i18n="ns.dialogs:addPerspectiveButton"></span>
                         </button>
@@ -74,14 +74,14 @@
                         <p class="help-block" data-i18n="ns.dialogs:perspectivesHelp"></p>
                     </div>
 
-                    <div class="tab-pane" id="filetypes" style="height: 360px; overflow-y: auto;">
+                    <div class="tab-pane" id="filetypes" style="height: 100%;">
                         <button class='btn btn-default' id='addFileTypeButton'>
                             <i class='fa fa-plus'></i>&nbsp;<span data-i18n="ns.dialogs:addNewFileExtensionButton"></span>
                         </button>
                         <div id='fileTypesList' style="margin-top: 10px"></div>
                     </div>
 
-                    <div class="tab-pane" id="keyBindings" style="height: 360px; overflow-y: auto; overflow-x: hidden;">
+                    <div class="tab-pane" id="keyBindings" style="height: 100%; overflow-x: hidden;">
                         <form class="form-horizontal" role="form">
                             <button class='btn btn-default' id='keyBindingInstructionsToggle'>
                                 <i class='fa fa-info-circle'></i>&nbsp;<span data-i18n="ns.dialogs:keyBindingInstructions"></span>
@@ -155,7 +155,7 @@
                         </form>
                     </div>
 
-                    <div class="tab-pane" id="experimental" style="height: 360px; overflow-y: auto;">
+                    <div class="tab-pane" id="experimental" style="height: 100%;">
                         <div class='form-group'>
                             <button class="btn btn-default" id="defaultSettingsButton" aria-hidden="true">
                                 <i class="fa fa-rotate-left"></i>&nbsp;
