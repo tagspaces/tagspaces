@@ -103,13 +103,20 @@
             <i class="fa fa-leaf fa-stack-1x" style="color: #99CC00"></i></span>&nbsp;&nbsp;
             <span data-i18n="ns.common:whatsNew"></span>
           </a><br>
+          <hr style="margin: 0; border-top: 1px solid #ddd" />
           <a class="btn btn-link" data-i18n="[title]ns.common:getAndroidAppTooltip"
              href="https://play.google.com/store/apps/details?id=org.tagspaces.androidapp" id="openGooglePlay">
             <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
             <i class="fa fa-android fa-stack-1x" style="color: #669900"></i></span>&nbsp;&nbsp;
             <span data-i18n="ns.common:getAndroidApp"></span>
           </a><br>
-          <!--hr style="margin: 0; border-top: 1px solid #ddd" /-->
+          <a class="btn btn-link" data-i18n="[title]ns.common:getIOSAppTooltip"
+             href="https://itunes.apple.com/nz/app/tagspaces/id1008944433" id="openAppleAppStore">
+            <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
+            <i class="fa fa-apple fa-stack-1x" style="color: black"></i></span>&nbsp;&nbsp;
+            <span data-i18n="ns.common:getIOSApp"></span>
+          </a><br>
+          <hr style="margin: 0; border-top: 1px solid #ddd" />
           <a class="btn btn-link" data-i18n="[title]ns.common:suggestNewFeaturesTooltip"
              href="https://tagspaces.uservoice.com/forums/213931-general" id="openUservoice">
             <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
@@ -189,26 +196,21 @@
   <div class="col2">
     <div class="row1">
       <nav class="navbar navbar-default" role="navigation">
-        <div class="btn-toolbar">
+        <div class="btn-toolbar flexLayout">
           <button type="button" class="navbar-toggle" id="toggleLeftPanel"
                   data-i18n="[title]ns.common:toggleLeftPanelTooltip">
             <span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>
           </button>
-          <button class="btn btn-link" data-i18n="[title]ns.common:searchPlaceholder" id="showSearchButton"><i
-            class="fa fa-lg fa-search"></i></button>
-          <div id="searchToolbar" class="form-inline">
-            <button class="btn btn-link" data-i18n="[title]ns.common:clearFilterTooltip" id="clearFilterButton"
-                    style="padding-top: 0; padding-right: 2px;">
-              <i class="fa fa-lg fa-eraser"></i>
-            </button>
-            <input type="text" id="searchBox" rel="popover" placeholder="Search"
-                   data-i18n="[placeholder]ns.common:searchPlaceholder">
-            <button class="btn btn-link" data-i18n="[title]ns.common:searchPlaceholder" id="searchButton"
-                    style="border-left-width: 0; padding-left: 2px; padding-top: 1px;">
-              <i class="fa fa-lg fa-search"></i>
-            </button>
+          <div class="flexMaxWidth">
+            <div id="loadingAnimation" class="">
+              <div class="spinner">
+                <div class="bounce1"></div>
+                <div class="bounce2"></div>
+                <div class="bounce3"></div>
+              </div>
+            </div>
           </div>
-          <div id="mainTopMenu" class="input-group" style="position: absolute; top: 0; right: 0; white-space: nowrap;">
+          <div id="mainTopMenu" class="input-group" style="white-space: nowrap;">
             <button type="button" id="perspectiveSwitcherButton" class="btn btn-link dropdown-toggle"
                     data-toggle="dropdown"><i id="currentPerspectitveIcon" class="fa fa-film"></i>&nbsp;
               <span id="currentPerspectitveName">Perspectives</span>&nbsp;<span class="caret"></span>
@@ -222,12 +224,19 @@
             <div class="btn-group" id="alternativeNavigator"></div>
             <div id="statusBar" class="noWrap"></div>
           </div>
-          <div id="loadingAnimation">
-            <div class="spinner">
-              <div class="bounce1"></div>
-              <div class="bounce2"></div>
-              <div class="bounce3"></div>
-            </div>
+          <button class="btn btn-link" data-i18n="[title]ns.common:searchPlaceholder" id="showSearchButton"><i
+            class="fa fa-lg fa-search"></i></button>
+          <div id="searchToolbar" class="form-inline">
+            <button class="btn btn-link" data-i18n="[title]ns.common:clearFilterTooltip" id="clearFilterButton"
+                    style="padding-top: 0; padding-right: 2px;">
+              <i class="fa fa-lg fa-eraser"></i>
+            </button>
+            <input type="text" id="searchBox" rel="popover" placeholder="Search"
+                   data-i18n="[placeholder]ns.common:searchPlaceholder">
+            <button class="btn btn-link" data-i18n="[title]ns.common:searchPlaceholder" id="searchButton"
+                    style="border-left-width: 0; padding-left: 2px; padding-top: 1px;">
+              <i class="fa fa-lg fa-search"></i>
+            </button>
           </div>
         </div>
       </nav>

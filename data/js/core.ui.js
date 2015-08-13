@@ -551,6 +551,10 @@ define(function(require, exports, module) {
       e.preventDefault();
       openLinkExternally($(this).attr('href'));
     });
+    $contactUsContent.on('click', '#openAppleAppStore', function(e) {
+      e.preventDefault();
+      openLinkExternally($(this).attr('href'));
+    });
     $contactUsContent.on('click', '#openWhatsnew', function(e) {
       e.preventDefault();
       openLinkExternally($(this).attr('href'));
