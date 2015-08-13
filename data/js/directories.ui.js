@@ -21,7 +21,7 @@ define(function(require, exports, module) {
         '</button>' +
         '<div class="dropdown clearfix dirAltNavMenu" id="dirMenu{{@index}}">' +
             '<ul style="overflow-y: auto; max-height: 430px; width: 250px; padding: 5px; display: block;" role="menu" class="dropdown-menu">' +
-                '<li class="dropdown-header"><button type="button" class="close">&times;</button>{{../actionsForDirectory}}&nbsp;"{{name}}"</li>' +
+                '<li class="dropdown-header">{{../actionsForDirectory}}&nbsp;"{{name}}"</li>' +
                 '<li><a class="btn btn-link pull-left reloadCurrentDirectory" data-path="{{path}}"><i class="fa fa-refresh fa-fw"></i>&nbsp;{{../reloadCurrentDirectory}}</a></li>' +
                 '<li class="notreadonly"><a class="btn btn-link pull-left createSubdirectory" data-path="{{path}}"><i class="fa fa-folder-o fa-fw"></i>&nbsp;{{../createSubdirectory}}</a></li>' +
                 '<li class="notreadonly"><a class="btn btn-link pull-left renameDirectory" data-path="{{path}}"><i class="fa fa-paragraph fa-fw"></i>&nbsp;{{../renameDirectory}}</a></li>' +
@@ -43,12 +43,12 @@ define(function(require, exports, module) {
 
   var mainDirectoryNavigatorTmpl = Handlebars.compile(
     '<div>{{#each dirHistory}}' +
-    '<div class="accordion-group disableTextSelection" style="width: 99%; border: 0px #aaa solid;">' +
-        '<div class="accordion-heading btn-group" key="{{path}}" style="width:100%; margin: 0; ">' +
+    '<div class="accordion-group disableTextSelection">' +
+        '<div class="accordion-heading btn-group flexLayout" key="{{path}}">' +
             '<button class="btn btn-link btn-lg directoryIcon" data-toggle="collapse" data-target="#dirButtons{{@index}}" key="{{path}}" title="{{../toggleDirectory}}">' +
                 '<i class="fa fa-folder fa-fw"></i>' +
             '</button>' +
-            '<button class="btn btn-link directoryTitle ui-droppable" key="{{path}}" title="{{path}}">{{name}}</button>' +
+            '<button class="btn btn-link directoryTitle ui-droppable flexMaxWidth" key="{{path}}" title="{{path}}">{{name}}</button>' +
             '<button class="btn btn-link btn-lg directoryActions" key="{{path}}" title="{{../directoryOperations}}">' +
                 '<b class="fa fa-ellipsis-v"></b>' +
             '</button>' +

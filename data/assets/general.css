@@ -380,57 +380,33 @@ li hr {
 }
 
 .tagGroupIcon {
-  text-align: left;
-  width: 12%;
-  padding-left: 0 !important;
-  color: #333 !important;
-}
-
-.tagGroupContainer {
-  width: 99%;
-  border: 0 #aaa solid;
-}
-
-.tagGroupContainerHeading {
-  width:100%;
-  margin: 0;
+  width: 40px;
+  padding-left: 5px;
 }
 
 .tagGroupTitle {
   text-align: left;
   padding: 10px 0 0 2px;
   font-size: 14px !important;
-  width:78%;
-  color: #333 !important;
 }
 
 .tagGroupActions {
-  width:10%;
-  padding-right: 7px;
-  color: #333 !important;
-  text-align: right;
+  width: 40px;
 }
 
 .directoryIcon {
-  text-align: left;
-  width: 12%;
-  padding-left: 0 !important;
-  color: #333 !important;
+  width: 40px;
+  padding-left: 5px;
 }
 
 .directoryTitle {
   text-align: left;
-  padding: 10px 0 0 2px;
+  padding-left: 5px;
   font-size: 14px !important;
-  width:68%;
-  color: #333 !important;
 }
 
 .directoryActions {
-  text-align: right;
-  width:20%;
-  padding-right: 7px;
-  color: #333 !important;
+  width: 40px;
 }
 
 input a.resetFilter {
