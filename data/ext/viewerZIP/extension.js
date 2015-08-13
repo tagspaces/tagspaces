@@ -48,8 +48,14 @@ define(function(require, exports, module) {
 
   function createZipPrewiew(filePath, elementID) {
     var $parent = $('#' + elementID);
-    var $previewElement = $('<div/>').css({'overflow': 'auto', 'padding': '5px', 'fontSize': 12})
-      .width($parent.width()).height($parent.height()).appendTo($parent);
+    var $previewElement = $('<div/>').css({
+      'overflow': 'auto',
+      'padding': '5px',
+      'fontSize': 12,
+      'width': '100%',
+      'height': '100%',
+      }).appendTo($parent);
+      //.width($parent.width()).height($parent.height()).appendTo($parent);
 
     TSCORE.showLoadingAnimation();
     

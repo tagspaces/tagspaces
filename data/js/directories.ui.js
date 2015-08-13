@@ -15,7 +15,7 @@ define(function(require, exports, module) {
   var tsMetadataFile = 'tsm.json';
   var alternativeDirectoryNavigatorTmpl = Handlebars.compile(
     '{{#each dirHistory}}' +
-    '<div class="btn-group dropup">' +
+    '<div class="btn-group">' +
         '<button class="btn btn-link dropdown-toggle" data-menu="{{@index}}">' +
             '{{name}}&nbsp;&nbsp;<i class="fa fa-caret-right"></i>&nbsp;'  +
         '</button>' +
@@ -40,6 +40,7 @@ define(function(require, exports, module) {
     '</div>' +
     '{{/each}}'
   );
+
   var mainDirectoryNavigatorTmpl = Handlebars.compile(
     '<div>{{#each dirHistory}}' +
     '<div class="accordion-group disableTextSelection" style="width: 99%; border: 0px #aaa solid;">' +
@@ -67,19 +68,28 @@ define(function(require, exports, module) {
     '</div>' +
     '{{/each}}</div>'
   );
+
   var locationChooserTmpl = Handlebars.compile(
-    '<li class="dropdown-header" data-i18n="ns.common:yourLocations">{{yourLocations}} ' +
-        '<button type="button" class="close">×</button>' +
+    '<li class="flexLayout">' +
+      '<button style="text-align: left;" class="btn btn-link flexMaxWidth" id="createNewLocation">' +
+        '<i class="fa fa-plus"></i>&nbsp;<span data-i18n="[title]ns.common:connectNewLocationTooltip;ns.common:connectNewLocationTooltip"></span>'  +
+      '</button>' +
     '</li>' +
-    '<li class="divider" ></li>' +
+    '<li class="divider"></li>' +
+    '<li class="dropdown-header" data-i18n="ns.common:yourLocations">{{yourLocations}}</li>' +
+    '<li class="divider"></li>' +
     '{{#each locations}}' +
-    '<li style="line-height: 45px">' +
-        '<button title="{{path}}" path="{{path}}" name="{{name}}" style="width: 180px; text-align: left; border: 0;" class="btn btn-default">' +
-            '<i class="fa fa-bookmark"></i>&nbsp;{{name}}'  +
-        '</button>' +
-        '<button type="button" data-i18n="[title]ns.common:editLocation" title="{{editLocationTitle}}" location="{{name}}" path="{{path}}" class="btn btn-link pull-right" style="margin-right: 5px; margin-top: 5px">' +
-            '<i class="fa fa-pencil fa-lg"></i>' +
-        '</button>' +
+    '<li class="flexLayout">' +
+      '<button title="{{path}}" path="{{path}}" name="{{name}}" class="btn btn-link openLocation">' +
+      '{{#if isDefault}}' +
+        '<i style="color: darkred" class="fa fa-bookmark" data-i18n="[title]ns.dialogs:startupLocation"></i>&nbsp;{{name}}'  +
+      '{{else}}' +
+        '<i class="fa fa-bookmark"></i>&nbsp;{{name}}'  +
+      '{{/if}}' +
+      '</button>' +
+      '<button type="button" data-i18n="[title]ns.common:editLocation" title="{{editLocationTitle}}" location="{{name}}" path="{{path}}" class="btn btn-link pull-right editLocation">' +
+        '<i class="fa fa-pencil fa-lg"></i>' +
+      '</button>' +
     '</li>' +
     '{{/each}}'
   );
@@ -98,6 +108,14 @@ define(function(require, exports, module) {
       TSCORE.PerspectiveManager.changePerspective(defaultPerspective);
       // Saving the last opened location path in the settings
       TSCORE.Config.setLastOpenedLocation(path);
+      
+      if ($('#defaultLocation').prop('checked') === true || $('#defaultLocationEdit').prop('checked') === true) {
+        console.log("set default path " + path);
+        TSCORE.Config.setDefaultLocation(path);
+        $('#defaultLocation').prop('checked', false);
+        $('#defaultLocationEdit').prop('checked', false);
+      }
+      
       TSCORE.Config.saveSettings();
     }
     // Clear search query
@@ -389,9 +407,9 @@ define(function(require, exports, module) {
     $('#directoryMenuOpenDirectory').click(function() {
       TSCORE.IO.openDirectory(dir4ContextMenu);
     });
-    $('#createNewLocation').click(function() {
-      showLocationCreateDialog();
-    });
+    //$('#createNewLocation').click(function() {
+    //  showLocationCreateDialog();
+    //});
   }
 
   function createLocation() {
@@ -401,16 +419,19 @@ define(function(require, exports, module) {
     $('#createNewLocation').attr('title', $.i18n.t('ns.common:connectNewLocationTooltip')).tooltip('destroy');
     $('#locationName').prop('disabled', false);
     $('#selectLocation').prop('disabled', false);
-    initLocations();
     openLocation(locationPath);
+    initLocations();
   }
 
   function editLocation() {
     var $connectionName2 = $('#connectionName2');
     var $folderLocation2 = $('#folderLocation2');
     TSCORE.Config.editLocation($connectionName2.attr('oldName'), $connectionName2.val(), $folderLocation2.val(), $('#locationPerspective2').val());
-    initLocations();
+    if ($('#defaultLocationEdit').prop('checked') === false) {
+      TSCORE.Config.setDefaultLocation(TSCORE.Config.Settings.tagspacesList[0].path);
+    }
     openLocation($folderLocation2.val());
+    initLocations();
   }
 
   function selectLocalDirectory() {
@@ -473,6 +494,9 @@ define(function(require, exports, module) {
       $('#dialogLocationEdit').on('shown.bs.modal', function() {
         $('#folderLocation2').focus();
       });
+      var isDefault = isDefaultLocation(path);
+      $('#defaultLocationEdit').prop('checked', isDefault);
+      //$('#defaultLocationEdit').attr('disabled', isDefault);
       $('#dialogLocationEdit').modal({
         backdrop: 'static',
         show: true
@@ -510,6 +534,10 @@ define(function(require, exports, module) {
       } else if (isWeb) {
         $('#folderLocation').attr('placeholder', 'e.g.: /owncloud/remote.php/webdav/');
       }
+      var enableDefaultlocation = (TSCORE.Config.getDefaultLocation() === "");
+      $('#defaultLocation').prop('checked', enableDefaultlocation);
+      $('#defaultLocation').prop('disabled', enableDefaultlocation);
+
       $('#formLocationCreate').validator();
       $('#formLocationCreate').submit(function(e) {
         e.preventDefault();
@@ -596,16 +624,25 @@ define(function(require, exports, module) {
     });
   }
 
+  function isDefaultLocation(path) {
+    return (TSCORE.Config.getDefaultLocation() === path);
+  }
+  
   function deleteLocation(name) {
     console.log('Deleting folder connection..');
     TSCORE.Config.deleteLocation(name);
-    initLocations();
     //Opens the first location in the settings after deleting a location  
     if (TSCORE.Config.Settings.tagspacesList.length > 0) {
       openLocation(TSCORE.Config.Settings.tagspacesList[0].path);
+      TSCORE.Config.setDefaultLocation(TSCORE.Config.Settings.tagspacesList[0].path);
+      TSCORE.Config.saveSettings();
     } else {
       closeCurrentLocation();
+      TSCORE.Config.setLastOpenedLocation("");
+      TSCORE.Config.setDefaultLocation("");
+      TSCORE.Config.saveSettings();
     }
+    initLocations();
   }
 
   function closeCurrentLocation() {
@@ -632,22 +669,32 @@ define(function(require, exports, module) {
     console.log('Creating location menu...');
     var $locationsList = $('#locationsList');
     $locationsList.children().remove();
+    TSCORE.Config.Settings.tagspacesList.forEach(function(element) {
+      if (isDefaultLocation(element.path)) {
+        element.isDefault = true;
+      } else {
+        element.isDefault = false;
+      } 
+    });
     $locationsList.html(locationChooserTmpl({
       'locations': TSCORE.Config.Settings.tagspacesList,
       'yourLocations': $.i18n.t('ns.common:yourLocations'),
       'editLocationTitle': $.i18n.t('ns.common:editLocation')
     }));
-    $locationsList.find('.btn-default').each(function() {
+    $locationsList.find('.openLocation').each(function() {
       $(this).on('click', function() {
         openLocation($(this).attr('path'));
       });
     });
-    $locationsList.find('.btn-link').each(function() {
+    $locationsList.find('.editLocation').each(function() {
       $(this).on('click', function() {
         console.log('Edit location clicked');
         showLocationEditDialog($(this).attr('location'), $(this).attr('path'));
         return false;
       });
+    });
+    $locationsList.find('#createNewLocation').on('click', function() {
+      showLocationCreateDialog();
     });
   }
 

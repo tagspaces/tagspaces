@@ -37,6 +37,8 @@ define(function(require, exports, module) {
   var subfoldersDirBrowser;
   var directoryBrowser;
 
+  var slideout;
+
   function initApp() {
     console.log('Init application');
     tsSettings.loadSettingsLocalStorage();
@@ -67,8 +69,10 @@ define(function(require, exports, module) {
     });
 
     hideLoadingAnimation();
+
     $(document).ready(function() {
       initLayout();
+
       var language = tsSettings.getInterfaceLangauge();
       // "de-DE"
       var langURLParam = getParameterByName('locale');
@@ -85,8 +89,6 @@ define(function(require, exports, module) {
       // Show welcome dialog by no locations
       if (tsSettings.Settings.tagspacesList.length < 1) {
         $('#createNewLocation').tooltip('show');
-        $('#locationName').prop('disabled', true);
-        $('#selectLocation').prop('disabled', true);
         tsCoreUI.showWelcomeDialog();
       }
       if (isNode || isChrome) {
@@ -150,11 +152,10 @@ define(function(require, exports, module) {
     });
     Mousetrap.bind(tsSettings.getAddRemoveTagsKeyBinding(), function() {
       tsTagsUI.showAddTagsDialog();
-    }); // TODO add swipeleft for closing left panel
-    /* $(".col1").hammer().on("swipeleft", function(event) {
-            console.log("swipeleft");
-           toggleLeftPanel();
-        }) */
+    });
+    Mousetrap.bind(tsSettings.getSearchKeyBinding(), function() {
+      tsCoreUI.showSearchArea();
+    });
   }
 
   function checkForNewVersion() {
@@ -279,30 +280,27 @@ define(function(require, exports, module) {
   }
 
   function exportFileListArray(fileList) {
-      var rows = [];
-      for (var i = 0; i < fileList.length; i++) {
-        var row = [];
-        row.path = fileList[i][exports.fileListFILEPATH];
-        row.title = fileList[i][exports.fileListTITLE];
-        row.size = fileList[i][exports.fileListFILESIZE];
-        var tags = fileList[i][exports.fileListTAGS];
-        for (var j = 0; j < tags.length; j++) {
-          row['tag' + j] = tags[j];
-        }
-        rows.push(row);
+    var rows = [];
+    for (var i = 0; i < fileList.length; i++) {
+      var row = [];
+      row.path = fileList[i][exports.fileListFILEPATH];
+      row.title = fileList[i][exports.fileListTITLE];
+      row.size = fileList[i][exports.fileListFILESIZE];
+      var tags = fileList[i][exports.fileListTAGS];
+      for (var j = 0; j < tags.length; j++) {
+        row['tag' + j] = tags[j];
       }
-      return rows;
+      rows.push(row);
     }
-    // UI and Layout functionalities
-    // Layout vars
-  var layoutContainer;
-  var col1Layout;
-  var col2Layout;
+    return rows;
+  }
+
+  // UI and Layout functionalities
   var isFullWidth = false;
   var shouldOpenCol1 = true;
+  var shouldOpenCol2 = true;
   var shouldOpenCol3 = false;
-  var col1DefaultWidth = 250;
-  // End Layout Vars
+
   function reLayout() {
     //console.log("Window w: "+window.innerWidth+" h: "+window.innerHeight+" orient: "+window.orientation+" dpi: "+window.devicePixelRatio);
     var fullWidth = window.innerWidth;
@@ -310,99 +308,44 @@ define(function(require, exports, module) {
     var isPortret = fullWidth < window.innerHeight;
     var oneColumn = fullWidth < 660;
     var twoColumn = fullWidth >= 660 && fullWidth < 1024;
-    //$(".col3").css("left","auto");
-    layoutContainer.options.east.spacing_open = 1;
-    //        $("#toggleFullWidthButton").hide();
+
     if (isFullWidth) {
-      oneColumn = true; //            $("#toggleFullWidthButton").show();
+      oneColumn = true;
     }
     if (oneColumn) {
-      $('#closeLeftPanel').show();
-      layoutContainer.options.east.spacing_open = 0;
       if (shouldOpenCol3) {
-        layoutContainer.close('west');
-        // workarround
         shouldOpenCol1 = false;
-        //Closing col1
-        layoutContainer.sizePane('east', fullWidth); // make col3 100%
-        //$(".col3").css("left","0"); // workarround for removing 1px balkan on the left
-        //east__spacing_open:         1
+        shouldOpenCol2 = false;
+      } else if (shouldOpenCol1) {
+        shouldOpenCol1 = true;
+        shouldOpenCol2 = true;
+        shouldOpenCol3 = false;
       } else {
-        if (!layoutContainer.state.west.isClosed) {
-          if (isPortret) {
-            // by opened col1 panel make it 75%
-            layoutContainer.sizePane('west', Math.round(3 * (window.innerWidth / 4)));
-          } else {
-            layoutContainer.sizePane('west', col1DefaultWidth);
-          }
-        }
+        shouldOpenCol2 = true;
       }
       if (!isFullWidth) {
         $('#toggleFullWidthButton').hide();
       }
     } else if (twoColumn) {
-      //$("#closeLeftPanel").show();
-      if (isPortret) {
-        if (shouldOpenCol3) {
-          layoutContainer.close('west');
-          // workarround
-          shouldOpenCol1 = false;
-          //Closing col1
-          layoutContainer.sizePane('east', fullWidth); // make col3 100%
-        } else {
-          // by opened col1 panel make it 250
-          if (!layoutContainer.state.west.isClosed) {
-            layoutContainer.sizePane('west', col1DefaultWidth);
-          }
-        }
-      } else {
-        if (shouldOpenCol3) {
-          shouldOpenCol1 = false;
-          //Closing col1
-          layoutContainer.sizePane('east', halfWidth); // make col3 100%
-        } else {
-          // by opened col1 panel make it 250
-          if (!layoutContainer.state.west.isClosed) {
-            layoutContainer.sizePane('west', col1DefaultWidth);
-          }
-        }
+      shouldOpenCol2 = true;
+      if (shouldOpenCol3) {
+        shouldOpenCol1 = false;
+        shouldOpenCol3 = true;
       }
-    } else {
-      // Regular case
-      $('#closeLeftPanel').hide();
-      if (isPortret) {
-        if (shouldOpenCol3) {
-          layoutContainer.close('west');
-          // workarround
-          shouldOpenCol1 = false;
-          //Closing col1
-          layoutContainer.sizePane('east', fullWidth); // make col3 100%
-        } else {
-          // by opened col1 panel make it 50%
-          if (!layoutContainer.state.west.isClosed) {
-            layoutContainer.sizePane('west', col1DefaultWidth);
-          }
-        }
+    } else { // three column
+      $('#toggleFullWidthButton').show();
+      if (isFullWidth) {
+        shouldOpenCol1 = false;
+        shouldOpenCol2 = false;
+        shouldOpenCol3 = true;
       } else {
-        $('#toggleFullWidthButton').show();
-        if (isFullWidth) {
-          // TODO hide tags
-          $('#viewerContainer').css('top', '38px');
-          layoutContainer.close('west');
-          // workarround
-          shouldOpenCol1 = false;
-          layoutContainer.sizePane('east', fullWidth);
-        } else {
-          $('#viewerContainer').css('top', '81px');
-          layoutContainer.sizePane('west', col1DefaultWidth);
-          layoutContainer.sizePane('east', halfWidth);
-        }
+        shouldOpenCol1 = true;
+        shouldOpenCol2 = true;
       }
     }
-    // Handle opening col1
-    shouldOpenCol1 ? layoutContainer.open('west') : layoutContainer.close('west');
-    // Handle opening col3
-    shouldOpenCol3 ? layoutContainer.open('east') : layoutContainer.close('east');
+    shouldOpenCol1 ? $(".col1").show() : $(".col1").hide();
+    shouldOpenCol2 ? $(".col2").show() : $(".col2").hide();
+    shouldOpenCol3 ? $(".col3").show() : $(".col3").hide();
   }
 
   function openFileViewer() {
@@ -423,119 +366,25 @@ define(function(require, exports, module) {
   }
 
   function toggleLeftPanel() {
-    layoutContainer.toggle('west');
+    $(".col1").toggle();
     shouldOpenCol1 = !shouldOpenCol1;
   }
 
   function openLeftPanel() {
-    if (layoutContainer !== undefined) {
-      layoutContainer.open('west');
-      shouldOpenCol1 = true;
-    }
+    $(".col1").show();
+    shouldOpenCol1 = true;
   }
 
   function reloadUI() {
     location.reload();
   }
+
   window.addEventListener('orientationchange', reLayout);
+
   $(window).on('resize', reLayout);
 
   function initLayout() {
     console.log('Initializing Layout...');
-    layoutContainer = $('body').layout({
-      panes: {
-        // defaults for all panes in layout
-        tips: {
-          noRoomToOpen: '' // blank = no message
-        }
-      },
-      name: 'outerLayout',
-      // for debugging & auto-adding buttons (see below)
-      //fxName:                     "slide", // none, slide
-      //fxSpeed:                    "normal",
-      autoResize: true,
-      // try to maintain pane-percentages
-      autoReopen: true,
-      // auto-open panes that were previously auto-closed due to 'no room'
-      minSize: 0,
-      autoBindCustomButtons: true,
-      west__paneSelector: '.col1',
-      center__paneSelector: '.col2',
-      east__paneSelector: '.col3',
-      east__resizable: true,
-      west__size: col1DefaultWidth,
-      west__minWidth: col1DefaultWidth,
-      east__size: 0.5,
-      west__resizable: true,
-      west__spacing_open: 1,
-      east__spacing_open: 1,
-      center_minWidth: 0,
-      center_minHeight: 200,
-      spacing_closed: 0,
-      noRoomToOpenAction: 'hide',
-      // 'close' or 'hide' when no room to open a pane at minSize
-      //  west__showOverflowOnHover:	true,
-      //  center__showOverflowOnHover:	true,
-      //  east__showOverflowOnHover:	true,
-      enableCursorHotkey: false //  showErrorMessages:          false,
-    });
-    // Initially close the right panel
-    layoutContainer.close('east');
-    col1Layout = layoutContainer.panes.west.layout({
-      name: 'col1Layout',
-      // for debugging & auto-adding buttons (see below)
-      //  north__paneSelector:        '.row1',
-      center__paneSelector: '.row2',
-      south__paneSelector: '.row3',
-      //  north__size:                row1Height,	// percentage size expresses as a string
-      south__size: 50,
-      north__spacing_open: 0,
-      south__spacing_open: 0,
-      autoResize: false,
-      // try to maintain pane-percentages
-      closable: false,
-      //fxName:                     "slide", // none, slide
-      //fxSpeed:                    "slow", // normal, fast
-      togglerLength_open: 0,
-      // hide toggler-buttons
-      spacing_closed: 0,
-      // hide resizer/slider bar when closed
-      //	autoReopen:                 true,	// auto-open panes that were previously auto-closed due to 'no room'
-      autoBindCustomButtons: true,
-      minSize: 0,
-      center__minHeight: 25,
-      //  north__showOverflowOnHover:	true,
-      //  center__showOverflowOnHover:true,
-      //  south__showOverflowOnHover:	true,
-      enableCursorHotkey: false //  showErrorMessages:          false
-    });
-    col2Layout = layoutContainer.panes.center.layout({
-      name: 'col2Layout',
-      // for debugging & auto-adding buttons (see below)
-      //	north__paneSelector: 	    '.row1',
-      center__paneSelector: '.row2',
-      south__paneSelector: '.row3',
-      //  north__size:                row1Height,	// percentage size expresses as a string
-      south__size: 45,
-      north__spacing_open: 0,
-      south__spacing_open: 0,
-      autoResize: true,
-      // try to maintain pane-percentages
-      closable: false,
-      togglerLength_open: 0,
-      // hide toggler-buttons
-      spacing_closed: 0,
-      // hide resizer/slider bar when closed
-      autoReopen: true,
-      // auto-open panes that were previously auto-closed due to 'no room'
-      autoBindCustomButtons: true,
-      minSize: 0,
-      center__minHeight: 25,
-      north__showOverflowOnHover: true,
-      //  center__showOverflowOnHover:true,
-      //  south__showOverflowOnHover:	true,
-      enableCursorHotkey: false //  showErrorMessages:          false
-    });
 
     reLayout();
   }

@@ -337,9 +337,6 @@ define(function(require, exports, module) {
     $('#toggleLeftPanel').click(function() {
       TSCORE.toggleLeftPanel();
     });
-    $('#closeLeftPanel').click(function() {
-      TSCORE.toggleLeftPanel();
-    });
     $('#txtFileTypeButton').click(function(e) {
       // Fixes reloading of the application by click
       e.preventDefault();
@@ -458,20 +455,17 @@ define(function(require, exports, module) {
     // End File Menu
     $('#showLocations').click(function() {
       showLocationsPanel();
-      console.log('Show Directories');
     });
     $('#showTagGroups').click(function() {
       showTagsPanel();
-      console.log('Show Tags');
     });
     $('#contactUs').click(function() {
       showContactUsPanel();
-      console.log('Show Contact Us');
     });
+
     // Hide the tagGroupsContent or locationContent by default
     $('#locationContent').hide();
-    // #tagGroupsContent
-    $('#contactUsContent').hide();
+
     // Search UI
     $('#searchToolbar').on('click', '#closeSearchOptionButton', function() {
       $('#searchBox').popover('hide');
@@ -531,7 +525,6 @@ define(function(require, exports, module) {
       });
     $('#showSearchButton').on('click', function() {
       TSCORE.showSearchArea();
-      $('#searchBox').focus();
     });
     $('#searchButton').prop('disabled', true).click(function(evt) {
       evt.preventDefault();
@@ -555,6 +548,10 @@ define(function(require, exports, module) {
       openLinkExternally($(this).attr('href'));
     });
     $contactUsContent.on('click', '#openGooglePlay', function(e) {
+      e.preventDefault();
+      openLinkExternally($(this).attr('href'));
+    });
+    $contactUsContent.on('click', '#openAppleAppStore', function(e) {
       e.preventDefault();
       openLinkExternally($(this).attr('href'));
     });
@@ -613,6 +610,7 @@ define(function(require, exports, module) {
       $('#searchToolbar').show();
       //.addClass('animated bounceIn');
       $('#showSearchButton').hide();
+      $('#searchBox').focus();
     }
     // Handle external links
   function openLinkExternally(url) {
@@ -722,8 +720,8 @@ define(function(require, exports, module) {
   };
   var showLocationsPanel = function() {
     TSCORE.openLeftPanel();
-    $('#contactUsContent').hide();
     $('#tagGroupsContent').hide();
+    $('#contactUsContent').hide();
     $('#locationContent').show();
     $('#showTagGroups').removeClass('active');
     $('#contactUs').removeClass('active');
@@ -731,8 +729,8 @@ define(function(require, exports, module) {
   };
   var showTagsPanel = function() {
     TSCORE.openLeftPanel();
-    $('#contactUsContent').hide();
     $('#locationContent').hide();
+    $('#contactUsContent').hide();
     $('#tagGroupsContent').show();
     $('#showLocations').removeClass('active');
     $('#contactUs').removeClass('active');

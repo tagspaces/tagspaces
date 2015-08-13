@@ -74,7 +74,8 @@ define(function (require, exports, module) {
             "showHelp": "f1",
             "reloadApplication": "r a",
             "toggleFullScreen": "f11",
-            "openDevTools": "f12"
+            "openDevTools": "f12",
+            "openSearch": "mod+f"
         },
         "supportedFileTypes": [
             { "type": "jpg", "viewer": "viewerImage", "editor": "false" },
