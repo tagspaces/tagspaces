@@ -62,8 +62,7 @@
                     data-i18n="[title]ns.common:newVersionAvailableTooltip">
               <i class="glyphicon glyphicon-gift fa-lg"></i>
             </button>
-            <button class="btn btn-link" data-i18n="[title]ns.common:openSettingTooltip;" id="openOptions"
-                    data-placement="bottom;" data-original-title="Start using TagSpaces by creating a new location!">
+            <button class="btn btn-link" data-i18n="[title]ns.common:openSettingTooltip;" id="openOptions">
               <i class="fa fa-gears fa-lg"></i>&nbsp;
             </button>
           </div>
@@ -73,7 +72,8 @@
             <button type="button" class="btn btn-default" data-i18n="ns.common:chooseLocation"
                     id="locationName" data-toggle="dropdown">
             </button>
-            <button type="button" class="btn btn-default dropdown-toggle" id="selectLocation" data-toggle="dropdown">
+            <button type="button" class="btn btn-default dropdown-toggle" id="selectLocation" data-toggle="dropdown"
+                    data-placement="bottom;" data-original-title="Start using TagSpaces by creating a new location!">
               <span class="caret"></span>
             </button>
             <ul class="dropdown-menu" id="locationsList"></ul>
@@ -246,15 +246,17 @@
   <div class="col3">
     <div class="row1">
       <nav class="navbar navbar-default" role="navigation">
-        <div class="btn-toolbar" style="width: 100%; white-space: nowrap;">
+        <div class="btn-toolbar flexLayout" >
           <div class="btn-group">
-            <button type="button" style="padding-left: 0; padding-right: 0" data-i18n="[title]ns.common:fileOperations"
+            <button type="button" style="padding-left: 0;" data-i18n="[title]ns.common:fileOperations"
                     class="btn btn-link dropdown-toggle" data-toggle="dropdown">
-              <span class="fileExt"><span id="fileExtText"></span>&nbsp;&nbsp;<span class="caret white-caret"></span>&nbsp;</span>
+              <span class="fileExt">
+                <span id="fileExtText"></span>&nbsp;&nbsp;
+                <span class="caret white-caret"></span>&nbsp;
+              </span>
             </button>
             <ul class="dropdown-menu">
               <li class="dropdown-header">
-                <button class="close">&times;</button>
                 <span data-i18n="ns.common:fileOperations"></span></li>
               <li class="divider"></li>
               <li><a id="tagFile" data-i18n="[title]ns.common:addRemoveTagsTooltip">
@@ -304,23 +306,22 @@
                 <span class="pull-right label label-default keyShortcut">Alt+Enter</span></a></li>
             </ul>
           </div>
-          <a id="fileTitle"></a>
-
-          <div id="fileViewerMainToolbar" class="btn-group">
-            <button class="btn btn-link" data-i18n="[title]ns.common:closeFileTooltip;" id="closeOpenedFile">
-              &nbsp;<i class="fa fa-times fa-lg"></i>&nbsp;
-            </button>
+          <div class="flexMaxWidth">
+            <a id="fileTitle"></a>
           </div>
+          <button class="btn btn-link" data-i18n="[title]ns.common:closeFileTooltip;" id="closeOpenedFile" style="margin-top: -8px;">
+            &nbsp;<i class="fa fa-times fa-lg"></i>&nbsp;
+          </button>
         </div>
-        <div id="tagsContainer" class="ui-droppable">
+        <div id="tagsContainer" class="ui-droppable flexLayout">
           <button id="addTagFileViewer" type="button" data-i18n="[title]ns.common:addTags"
-                  style="height: 22px; width: 35px" class="btn btn-small extTagButton dropdown-toggle"
+                  style="height: 22px; width: 35px; margin-right: 4px;" class="btn btn-small extTagButton dropdown-toggle"
                   data-toggle="dropdown">
             <i class="fa fa-plus-square"></i>
           </button>
           <ul class="dropdown-menu" id="tagSuggestionsMenu"></ul>
-          <span id="fileTags"></span>
-          <div id="fileViewerMainToolbar1" class="btn-group">
+          <span id="fileTags" class="flexMaxWidth"></span>
+          <div id="fileViewerMainToolbar1" class="btn-group" style="white-space: nowrap; margin-top: -8px;">
             <button class="btn btn-link" data-i18n="[title]ns.common:editFileTooltip" id="editDocument">
               &nbsp;<i class="fa fa-pencil fa-lg"></i>&nbsp;
             </button>
@@ -850,9 +851,8 @@
 </div>
 
 <div id="searchOptions">
-  <div style="font-size: 13px;">
-    <span class="dropdown-header"><button class="close" id="closeSearchOptionButton">&times;</button><span
-      data-i18n="ns.common:searchOptions">Search Options</span></span>
+  <div>
+    <span class="dropdown-header" data-i18n="ns.common:searchOptions" style="text-align: left;">Search Options</span>
     <i class="fa fa-exclamation-circle"></i>&nbsp;<span data-i18n="ns.common:includeSubfoldersInSearch"></span><br>
     <i class="fa fa-exclamation-circle"></i>&nbsp;<span data-i18n="ns.common:excludeTermFromSearch"></span><br>
     <i class="fa fa-exclamation-circle"></i>&nbsp;<span data-i18n="ns.common:includeTagInSearch"></span><br>

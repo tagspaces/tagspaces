@@ -652,11 +652,6 @@ input a.resetFilter {
   text-align: left;
 }
 
-#fileViewerMainToolbar .btn-link {
-  height: 40px;
-  width: 55px;
-}
-
 #alternativeNavigator .btn-link {
   padding-left: 2px;
   padding-right: 2px;
@@ -666,13 +661,6 @@ input a.resetFilter {
 #alternativeNavigator {
   margin: 5px 5px 5px 10px;
   height: 30px;
-}
-
-#fileViewerMainToolbar {
-  position: fixed;
-  right: 0;
-  top: 0;
-  background-color: #F2F2F2;
 }
 
 .keyShortcut {
