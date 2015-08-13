@@ -29,7 +29,7 @@ define(function (require, exports, module) {
         "showMainMenu":             false,
         "lastOpenedLocation":       "",
         "webDavPath"  :             "oc/remote.php/webdav",
-        "ootbPerspectives":         ['perspectiveList', 'perspectiveGrid', 'perspectiveGraph'],
+        "ootbPerspectives":         ['perspectiveList', 'perspectiveGrid', 'perspectiveGraph', 'perspectiveImageSwiper'],
         "ootbViewers":              [ "viewerBrowser", "viewerMD", "viewerImage", "viewerPDF", "editorText", "viewerText", "editorODF", "viewerURL", "viewerHTML", "viewerMHTML", "editorJSON", "viewerZIP", "viewerEPUB", "viewerAudioVideo" ],
         "ootbEditors":              [ "editorHTML", "editorText", "editorODF", "editorJSON", "editorNext" ],
         "perspectives":             [{ 'id': 'perspectiveList' }, { 'id': 'perspectiveGrid' }, { 'id': 'perspectiveGraph' }],
