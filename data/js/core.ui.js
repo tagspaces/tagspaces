@@ -707,9 +707,8 @@ define(function(require, exports, module) {
     });
   };
   var hideAllDropDownMenus = function() {
-    //$('#tagGroupMenu').hide();
-    //$('#tagTreeMenu').hide();
-    //$('#contactUsContent').hide();
+    $('#tagGroupMenu').hide();
+    $('#tagTreeMenu').hide();
     $('#directoryMenu').hide();
     $('#tagMenu').hide();
     $('#fileMenu').hide();

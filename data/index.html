@@ -48,11 +48,11 @@
   </div>
 </div>
 
-<main id="panel">
+<main id="mainContainer">
   <div class="col1">
     <div class="row1">
       <nav class="navbar navbar-default" role="navigation">
-        <div class="btn-toolbar" style="width: 100%">
+        <div class="btn-toolbar">
           <span id="startNewInstanceBack" data-i18n="[title]ns.common:openNewInstanceTooltip">
             <span id="logo">TagSpaces</span>
             <sup id="appVersion"></sup>
@@ -63,21 +63,20 @@
               <i class="glyphicon glyphicon-gift fa-lg"></i>
             </button>
             <button class="btn btn-link" data-i18n="[title]ns.common:openSettingTooltip;" id="openOptions"
-                    style="padding-right: 0px;" data-placement="bottom;" data-original-title="Start using TagSpaces by creating a new location!">
+                    data-placement="bottom;" data-original-title="Start using TagSpaces by creating a new location!">
               <i class="fa fa-gears fa-lg"></i>&nbsp;
             </button>
           </div>
         </div>
         <div class="btn-toolbar">
-          <div class="btn-group" style="width: 96%; display: flex;" id="locationSwitch">
-            <button type="button" class="btn btn-default" data-i18n="ns.common:chooseLocation" style="flex: 1 1 auto;"
-                    id="locationName" data-toggle="dropdown">Choose Location
+          <div class="btn-group flexLayout" id="locationSwitch">
+            <button type="button" class="btn btn-default" data-i18n="ns.common:chooseLocation"
+                    id="locationName" data-toggle="dropdown">
             </button>
-            <button type="button" class="btn btn-default dropdown-toggle" id="selectLocation" style="flex: 0 1 40px;"
-                    data-toggle="dropdown">
+            <button type="button" class="btn btn-default dropdown-toggle" id="selectLocation" data-toggle="dropdown">
               <span class="caret"></span>
             </button>
-            <ul class="dropdown-menu" id="locationsList" style="overflow-y: auto; max-height: 500px; width: 280px;"></ul>
+            <ul class="dropdown-menu" id="locationsList"></ul>
           </div>
         </div>
       </nav>

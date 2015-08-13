@@ -1,7 +1,7 @@
 /* Copyright (c) 2012-2015 The TagSpaces Authors. All rights reserved. Use of this source code
  * is governed by a AGPL3 license that can be found in the LICENSE file. */
 
-#panel {
+#mainContainer {
   display: flex;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -198,4 +198,48 @@
 
 .col1 .navbar, .col2 .navbar, .col3 .navbar {
 	padding-left: 5px;
+}
+
+.flexLayout {
+  display: flex;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+}
+
+/*==== Location Management ====== */
+
+#locationSwitch {
+  width: 96%;
+}
+
+#locationName {
+  flex: 1 1 auto;
+  -webkit-flex: 1 1 auto;
+  -ms-flex: 1 1 auto;
+}
+
+#selectLocation {
+  flex: 0 1 40px;
+  -webkit-flex: 0 1 40px;
+  -ms-flex: 0 1 40px;
+}
+
+#locationsList {
+  overflow-y: auto;
+  max-height: 500px;
+  width: 280px;
+}
+
+.openLocation {
+  flex: 1 1 auto;
+  -webkit-flex: 1 1 auto;
+  -ms-flex: 1 1 auto;
+  text-align: left;
+  line-height: 30px;
+}
+
+.editLocation {
+  flex: 0 1 50px;
+  -webkit-flex: 0 1 50px;
+  -ms-flex: 0 1 50px;
 }

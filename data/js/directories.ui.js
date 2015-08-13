@@ -40,6 +40,7 @@ define(function(require, exports, module) {
     '</div>' +
     '{{/each}}'
   );
+
   var mainDirectoryNavigatorTmpl = Handlebars.compile(
     '<div>{{#each dirHistory}}' +
     '<div class="accordion-group disableTextSelection" style="width: 99%; border: 0px #aaa solid;">' +
@@ -67,25 +68,26 @@ define(function(require, exports, module) {
     '</div>' +
     '{{/each}}</div>'
   );
+
   var locationChooserTmpl = Handlebars.compile(
-    '<li style="display: flex;">' +
+    '<li class="flexLayout"">' +
       '<button style="text-align: left;" class="btn btn-link" id="createNewLocation">' +
         '<i class="fa fa-plus"></i>&nbsp;<span data-i18n="[title]ns.common:connectNewLocationTooltip;ns.common:connectNewLocationTooltip"></span>'  +
       '</button>' +
     '</li>' +
     '<li class="divider"></li>' +
     '<li class="dropdown-header" data-i18n="ns.common:yourLocations">{{yourLocations}}</li>' +
-    //'<li class="divider"></li>' +
+    '<li class="divider"></li>' +
     '{{#each locations}}' +
-    '<li style="line-height: 45px; display: flex;">' +
-      '<button title="{{path}}" path="{{path}}" name="{{name}}" style="flex: 1 1 auto; text-align: left;" class="btn btn-link openLocation">' +
+    '<li class="flexLayout">' +
+      '<button title="{{path}}" path="{{path}}" name="{{name}}" class="btn btn-link openLocation">' +
       '{{#if isDefault}}' +
         '<i style="color: darkred" class="fa fa-bookmark" data-i18n="[title]ns.dialogs:startupLocation"></i>&nbsp;{{name}}'  +
       '{{else}}' +
         '<i class="fa fa-bookmark"></i>&nbsp;{{name}}'  +
       '{{/if}}' +
       '</button>' +
-      '<button type="button" data-i18n="[title]ns.common:editLocation" title="{{editLocationTitle}}" location="{{name}}" path="{{path}}" class="btn btn-link pull-right editLocation" style="flex: 0 1 50px;">' +
+      '<button type="button" data-i18n="[title]ns.common:editLocation" title="{{editLocationTitle}}" location="{{name}}" path="{{path}}" class="btn btn-link pull-right editLocation">' +
         '<i class="fa fa-pencil fa-lg"></i>' +
       '</button>' +
     '</li>' +
