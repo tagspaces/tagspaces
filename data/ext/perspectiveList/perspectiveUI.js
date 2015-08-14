@@ -37,9 +37,9 @@ define(function(require, exports, module) {
     var context = {
       id: this.extensionID
     };
-    // Init Toolbar
 
-    this.viewToolbar.append(toolbarTemplate(context));
+    // Init Toolbar
+    this.viewContainer.append(toolbarTemplate(context));
 
     $("#" + this.extensionID + "ToogleSelectAll")
       .click(function() {

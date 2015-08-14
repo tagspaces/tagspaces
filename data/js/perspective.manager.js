@@ -41,7 +41,7 @@ define(function(require, exports, module) {
           if (perspectives.length === extensions.length) {
             initPerspectiveSwitcher();
             // Opening last saved location by the start of the application (not in firefox)
-            var lastLocation = TSCORE.Config.getLastOpenedLocation();
+            var lastLocation = TSCORE.Config.getDefaultLocation();
             if (lastLocation !== undefined && lastLocation.length >= 1 && !isFirefox) {
               TSCORE.openLocation(lastLocation);
               TSCORE.IO.checkAccessFileURLAllowed();
@@ -78,7 +78,7 @@ define(function(require, exports, module) {
     $viewSwitcher.append($('<li>', {
       class: 'dropdown-header',
       text: $.i18n.t('ns.common:perspectiveSwitch')
-    }).append('<button type="button" class="close">\xD7</button>'));
+    }));
     $viewSwitcher.append('<li class=\'divider\'></li>');
     for (var i = 0; i < extensions.length; i++) {
       var curPers;

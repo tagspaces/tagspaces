@@ -64,7 +64,7 @@ define(function(require, exports, module) {
         setTagDelimiter(' ');
         setCalculateTags(false);
       }
-      if (oldBuildNumber <= 201403070000) {
+      if (oldBuildNumber <= 20140307000000) {
         addFileType({
           'type': 'odt',
           'viewer': 'editorODF',
@@ -86,7 +86,7 @@ define(function(require, exports, module) {
           'editor': 'false'
         });
       }
-      if (oldBuildNumber <= 201405120000) {
+      if (oldBuildNumber <= 20140512000000) {
         addTagGroup({
           'title': 'Ratings',
           'key': 'REV',
@@ -124,7 +124,7 @@ define(function(require, exports, module) {
           }]
         });
       }
-      if (oldBuildNumber <= 201407251310) {
+      if (oldBuildNumber <= 20140725131000) {
         addFileType({
           'type': 'json',
           'viewer': 'editorJSON',
@@ -132,7 +132,7 @@ define(function(require, exports, module) {
         }); //addToSettingsArray(exports.Settings.ootbViewers,"editorJSON");
         //addToSettingsArray(exports.Settings.ootbEditors,"editorJSON");
       }
-      if (oldBuildNumber <= 201410020000) {
+      if (oldBuildNumber <= 20141002000000) {
         updateFileType({
           'type': 'json',
           'viewer': 'editorJSON',
@@ -149,7 +149,7 @@ define(function(require, exports, module) {
           'editor': 'editorHTML'
         });
       }
-      if (oldBuildNumber <= 201411230000) {
+      if (oldBuildNumber <= 20141123000000) {
         //addToSettingsArray(exports.Settings.ootbViewers,"viewerMHTML");
         updateFileType({
           'type': 'mhtml',
@@ -162,6 +162,58 @@ define(function(require, exports, module) {
           'editor': 'false'
         });
       }
+
+      if (oldBuildNumber <= 20150727000000) {
+        updateFileType({
+          'type': 'ogg',
+          'viewer': 'viewerAudioVideo',
+          'editor': 'false'
+        });
+        updateFileType({
+          'type': 'oga',
+          'viewer': 'viewerAudioVideo',
+          'editor': 'false'
+        });
+        updateFileType({
+          'type': 'ogv',
+          'viewer': 'viewerAudioVideo',
+          'editor': 'false'
+        });
+        updateFileType({
+          'type': 'ogx',
+          'viewer': 'viewerAudioVideo',
+          'editor': 'false'
+        });
+        updateFileType({
+          'type': 'webm',
+          'viewer': 'viewerAudioVideo',
+          'editor': 'false'
+        });
+        updateFileType({
+          'type': 'mp3',
+          'viewer': 'viewerAudioVideo',
+          'editor': 'false'
+        });
+        updateFileType({
+          'type': 'mp4',
+          'viewer': 'viewerAudioVideo',
+          'editor': 'false'
+        });
+        addFileType({
+          'type': 'epub',
+          'viewer': 'viewerEPUB',
+          'editor': 'false'
+        });
+        addFileType({
+          'type': 'zip',
+          'viewer': 'viewerZIP',
+          'editor': 'false'
+        });
+        if (isCordovaAndroid) {
+          TSCORE.showAlertDialog("Due some major changes in the app, you have to manually reconnect your locations. Please excuse us for this inconvenience.");
+        }
+      }
+
       saveSettings();
     }
   };
@@ -282,6 +334,12 @@ define(function(require, exports, module) {
   };
   var setLastOpenedLocation = function(value) {
     exports.Settings.lastOpenedLocation = value;
+  };
+  var getDefaultLocation = function() {
+    return exports.Settings.defaultLocation || "";
+  };
+  var setDefaultLocation = function(value) {
+    exports.Settings.defaultLocation = value;
   };
   var getSupportedLanguages = function() {
     return exports.DefaultSettings.supportedLanguages;
@@ -442,6 +500,17 @@ define(function(require, exports, module) {
   };
   var setOpenDevToolsScreenKeyBinding = function(value) {
     exports.Settings.keyBindings.openDevTools = value;
+  };
+  var getSearchKeyBinding = function() {
+    updateKeyBindingsSetting();
+    if (exports.Settings.keyBindings.openSearch === undefined) {
+      exports.Settings.keyBindings.openSearch = exports.DefaultSettings.keyBindings.openSearch;
+      saveSettings();
+    }
+    return exports.Settings.keyBindings.openSearch;
+  };
+  var setSearchKeyBinding = function(value) {
+    exports.Settings.keyBindings.openSearch = value;
   };
   var getInterfaceLangauge = function() {
     if (exports.Settings.interfaceLanguage === undefined) {
@@ -961,7 +1030,10 @@ define(function(require, exports, module) {
   exports.getShowTagLibraryKeyBinding = getShowTagLibraryKeyBinding;
   exports.setShowFolderNavigatorKeyBinding = setShowFolderNavigatorKeyBinding;
   exports.getShowFolderNavigatorBinding = getShowFolderNavigatorBinding;
-
+  exports.getSearchKeyBinding = getSearchKeyBinding;
+  exports.setSearchKeyBinding = setSearchKeyBinding;
+  exports.getDefaultLocation = getDefaultLocation;
+  exports.setDefaultLocation = setDefaultLocation;
   exports.getPerspectiveExtensions = getPerspectiveExtensions;
   exports.getActivatedPerspectiveExtensions = getActivatedPerspectiveExtensions;
   exports.getViewerExtensions = getViewerExtensions;

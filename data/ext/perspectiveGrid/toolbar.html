@@ -1,15 +1,12 @@
-<div class="btn-group">
+<div class="btn-group dropup">
     <button class="btn btn-link" title="Toggle Select All Files" id="{{id}}ToogleSelectAll">
         <i class="fa fa-square-o fa-lg fa-fw"></i>
     </button>
-</div>
-<div class="btn-group">
     <button type="button" class="btn btn-link dropdown-toggle" data-toggle="dropdown" data-i18n="[title]ns.perspectiveList:createNewFileTooltip">
         <i class="glyphicon glyphicon-plus fa-lg"></i>
         <span class="caret"></span>
     </button>
     <ul class="dropdown-menu">
-        <li class="dropdown-header"><button class="close">×</button><span data-i18n="">&nbsp;</span></li>
         <li><a id="{{id}}CreateHTMLFileButton">
             <i class="fa fa-file-image-o fa-lg fa-fw"></i>&nbsp;<span data-i18n="ns.perspectiveList:createHTMLFile"></span>
         </a></li>
@@ -31,20 +28,17 @@
             <i class="fa fa-folder-o fa-lg fa-fw"></i>&nbsp;<span data-i18n="ns.common:newSubdirectory"></span>
         </a></li>
     </ul>
-    <!--button class="btn btn-link" title="Show subfolders content. On subfolder with many files, this step can take some time!" id="{{id}}IncludeSubDirsButton">
+    <button class="btn btn-link" title="Show subfolders content. On subfolder with many files, this step can take some time!" id="{{id}}IncludeSubDirsButton">
         <i class="glyphicon glyphicon-retweet"></i>
-    </button-->
+    </button>
     <button class="btn btn-link" title="Add or Remove Tags for Selected Files" id="{{id}}TagButton">
         <i class="fa fa-tag fa-lg"></i>
-    </button>
-    <button class="btn btn-link" data-toggle="button" title="Toggle file thumbnails" id="{{id}}ShowTmbButton">
-        <i class="fa fa-picture-o fa-lg"></i>
     </button>
     <button class="btn btn-link" data-i18n="[title]ns.perspectiveList:deleteSelectedFilesTooltip" id="{{id}}DeleteSelectedFilesButton">
         <i class="fa fa-trash fa-lg"></i>
     </button>
 </div>
-<div class="btn-group">
+<div class="btn-group dropup">
     <button class="btn btn-link" type="button" title="Group" id="{{id}}GroupingButton" data-toggle="dropdown">
         <i class="fa fa-group fa-lg"></i> Group <span class="caret"></span>
     </button>

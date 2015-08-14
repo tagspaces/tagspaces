@@ -1,0 +1,679 @@
+/* Copyright (c) 2012-2015 The TagSpaces Authors. All rights reserved. Use of this source code
+ * is governed by a AGPL3 license that can be found in the LICENSE file. */
+
+@font-face {
+  font-family: 'Ubuntu';
+  font-style: normal;
+  font-weight: normal;
+  src: url("../libs/ubuntu-font/Ubuntu-R.woff") format('woff');
+  src: url("../libs/ubuntu-font/Ubuntu-R.ttf") format('truetype');
+}
+
+html, body {
+	width: 100%;
+	height: 100%;
+	padding: 0;
+	margin: 0;
+	overflow: hidden;
+	font-size: 9px;
+	font-family: Ubuntu, Geneva, Arial, Helvetica, sans-serif;
+}
+
+/* Removes the selection border on ui elements on android */
+* {
+	-webkit-tap-highlight-color: rgba(0,0,0,0);
+  -webkit-touch-callout: none;
+  tap-highlight-color: rgba(0,0,0,0);
+  touch-callout: none;
+}
+
+.disableTextSelection {
+  -webkit-user-select: none;
+  user-select: none;
+  -moz-user-select: -moz-none;
+}
+
+/* Custom scrollbars for chrome */
+::-webkit-scrollbar-track
+{
+   background-color: transparent;
+}
+
+::-webkit-scrollbar
+{
+  width: 8px;
+  height: 8px;
+  background-color: #F5F5F5;
+}
+
+::-webkit-scrollbar-thumb
+{
+  background-color: #bbb;
+}
+
+* { outline:none; }
+
+#logo {
+	padding: 0;
+	font-size: 1.5em;
+	margin: 3px;
+  color: #616577;
+	font-weight: bold;
+	padding-left: 32px;
+  padding-top: 4px;
+	background: url("icon.svg") no-repeat left center;
+  background-size: 28px 28px;
+	background-position: 0 0;
+	height: 31px;
+	display: inline-block;
+}
+
+#appVersion {
+  font-size: 1.3em;
+  color: #616577;
+}
+
+#startNewInstanceBack {
+  cursor: pointer;
+}
+
+#currentLocation {
+  padding: 0;
+  font-size: 1.3em;
+  color: lightgray;
+  display: inline-block;
+  margin: 6px;
+}
+
+#statusBar {
+  margin-top: 12px;
+  font-size: 14px;
+  font-size: 12px;
+}
+
+#iframeViewer {
+  width: 100%;
+  border-width: 0;
+}
+
+#directoryList .ui-selecting { background: #fff5a3; color: black; }
+#directoryList .ui-selected { background: #fff5a3; color: black; }
+#directoryList { list-style-type: none; margin: 0; padding: 0; width: 100%; }
+#directoryList li { margin: 3px; padding: 0.4em; font-size: 1.0em; height: 18px; }
+
+/* Thumbs box design
+  * */
+.selectableFiles .ui-selected { background: #fff5a3; color: black; }
+.selectableFiles { list-style-type: none; margin: 0; padding: 0; }
+
+.fileTile {
+  margin: 3px;
+  padding: 1px 1px 1px 3px;
+  float: left;
+  border: 1px solid #D4D4D4;
+  text-align: left;
+  width: 180px;
+  height: 100px;
+  overflow: hidden;
+  position:relative;
+  background-color: white;
+}
+
+.fileTile button:hover {
+    opacity: 1;
+}
+
+.thumbImgTile {
+  max-width: 100px;
+  max-height: 100px;
+  position:absolute;
+  bottom:0;
+  right:0;
+  border: 0 lightgray solid;
+  z-index: 1;
+}
+
+#fileTitle {
+  height: 30px;
+  line-height: 2.2;
+  padding-left: 4px;
+  padding-right: 4px;
+  font-size: 16px;
+  font-weight: 300;
+  border: 0;
+  background-color: transparent;
+  color: #333333;
+  max-width: 150px;
+  z-index: 2;
+  white-space: nowrap;
+}
+
+#fileTitle:hover {
+  text-decoration: none;
+  background-color: rgb(210, 210, 210);
+}
+
+/* bootstrap3xeditable class */
+.editable-inline {
+  margin-top: 5px;
+}
+
+.noWrap {
+  white-space:nowrap !important;
+}
+
+.forceWrap {
+  word-wrap: break-word !important;
+}
+
+.titleInFileTile {
+  font-size: 13px;
+  line-height: 120%;
+  color: #333333;
+  z-index: 99;
+  position: absolute;
+  left: 5px;
+  top: 5px;
+}
+
+.tagsInFileTile {
+  position: absolute;
+  z-index: 100;
+  left: 5px;
+  top: 35px;
+}
+
+.fileTileSelector {
+  position:absolute;
+  bottom:0;
+  left:0;
+  z-index: 101;
+}
+
+.fileExtTile {
+  position:absolute;
+  bottom:0;
+  right:0;
+  -webkit-border-radius: 0 !important;
+  border-radius: 0 !important;
+  background: #999 ;
+  text-align: center;
+  padding: 1px;
+  color: white ;
+  z-index: 99;
+	text-transform:uppercase;
+}
+
+.fileTagsTile {
+  opacity: 0.5;
+}
+
+.fileExtension {
+  padding: 2px;
+  float: right;
+  color: white;
+  font-weight: bold;
+  background-color: gray;
+}
+
+.thumbImg {
+  max-width: 100px;
+  max-height: 100px;
+  vertical-align: text-top;
+  border: 0px lightgray solid;
+}
+
+#viewsRadio {
+  margin: 3px 3px 3px 0;
+  display: inline-block;
+}
+
+#viewsRadio input {
+	display: inline-block;
+}
+
+#fileSortRadio {
+	display: inline-block;
+}
+
+#fileSortRadio input {
+	display: inline-block;
+}
+
+#dialogAbout {
+  width: 600px;
+}
+
+li hr {
+  height: 0;
+  border: 0;
+}
+
+#container {
+  height:     100%;
+  margin:     0 auto;
+  width:      100%;
+  min-width:  700px;
+}
+.pane {
+  display:    none; /* will appear when layout inits */
+}
+
+/* Layout */
+#directoryNavigatorNorth, #locationContent, #tagGroupsContent{
+	background-color:  transparent;
+}
+
+#directoryNavigatorNorth {
+  overflow: hidden !important;
+}
+
+#toggleLeftPanel {
+	border: 0;
+	display: block;
+	padding-left: 5px;
+	padding-top: 10px;
+	margin: 0;
+  background-color: #f2f2f2;
+}
+
+#toggleLeftPanel .icon-bar {
+  height: 3px;
+}
+
+#toggleLeftPanel:focus, #toggleLeftPanel:hover {
+  background-color: #f2f2f2 !important;
+}
+
+#searchToolbar {
+  width: 250px;
+  background-color: #f2f2f2;
+  display: none;
+}
+
+#searchBox {
+  margin-top: 8px;
+  border: 0;
+  background-color: transparent;
+  border-bottom: 2px solid gray;
+  font-size: 14px;
+  min-width: 30px;
+  width: 100%;
+}
+
+#tagsContainer {
+	width: 100%;
+	min-height: 40px;
+	margin: 0;
+}
+
+#viewToolbars {
+  min-height: 40px;
+}
+
+#viewContainers {
+  background-color: white;
+  padding: 0;
+}
+
+.searchSummary {
+  padding-top: 2px;
+  padding-left: 2px;
+  font-size: 1.0em;
+  border-width: 0
+}
+
+.middle-north {
+	background-color: #FFFFFF;
+	overflow: hidden !important;
+}
+
+.middle-south {
+  overflow: hidden !important;
+}
+
+.east-north {
+	background-color: #FFFFFF;
+  overflow: hidden !important;
+}
+
+/* Full screen workaround for webkit browser*/
+:-webkit-full-screen #viewer {
+  width: 100%;
+  height: 100%;
+}
+
+#viewer {
+  background-color: white;
+  width: 100%;
+  /*height: 100%;*/
+}
+
+/* Directory Navigation #F6A828*/
+
+.dirButton  {
+  font-size: 13px;
+  background-color: #E5E5E5;
+  color: #444444;
+  background-image: none;
+}
+
+.dirButton:hover, .dirButton:active, .dirButton:focus {
+  background-color: #ddd;
+}
+
+.dropOnFolder {
+  background-color: #F6A828 !important;
+}
+
+.dirButtonActive  {
+  background-color: #FFCC99;
+}
+
+#location .selectedDirectory {
+  background-color: #EBD5AA;
+}
+
+#locationContent {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.tagGroupIcon {
+  width: 40px;
+  padding-left: 5px;
+}
+
+.tagGroupTitle {
+  text-align: left;
+  padding: 10px 0 0 2px;
+  font-size: 14px !important;
+}
+
+.tagGroupActions {
+  width: 40px;
+}
+
+.directoryIcon {
+  width: 40px;
+  padding-left: 5px;
+}
+
+.directoryTitle {
+  text-align: left;
+  padding-left: 5px;
+  font-size: 14px !important;
+}
+
+.directoryActions {
+  width: 40px;
+}
+
+input a.resetFilter {
+  text-indent: -1000em;
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+  position: relative;
+  left: -20px;
+  top: 3px;
+}
+
+/* Hiding the OOTB filter box */
+.dataTables_filter {
+    display: none;
+}
+
+/* Bootstrap Styles  white !important */
+
+.btn, .btn:hover, .btn:focus, .btn:active, .btn-link, .btn-link:hover, .btn-link:focus, .btn-link:active {
+  outline: none !important;
+  background-image: none;
+  border-radius: 0;
+  text-transform: none;
+}
+
+.btn-default:focus {
+  background-color: white;
+}
+
+.modal .btn {
+  min-width: 70px;
+}
+
+.btn-link, .btn-link:hover, .btn-link:focus, .btn-link:active {
+  text-decoration: none;
+  color: #444444;
+  text-shadow: none;
+  border-radius: 0;
+}
+
+/* Extension #33b5be from logo */
+.btn-info, .btn-info:hover, .btn-info:focus, .btn-info:active {
+  background-color: #417200;
+  background-image: none;
+  text-shadow: none;
+}
+
+/* Tags */
+.btn-success, .btn-success:hover, .btn-success:focus, .btn-success:active {
+  background-color: green;
+  background-image: none;
+  text-shadow: none;
+}
+
+.carousel-inner > .item > img {
+  margin: 0 auto;
+  max-height: 100%;
+  max-width: 100%;
+}
+
+.icon-leaf:hover {
+  color: green;
+}
+
+.filterOn {
+  color: #E45C00;
+}
+
+.groupTitle {
+  color: #444444;
+  font-weight: bold;
+  font-size: 12px;
+  display: inline-block;
+}
+
+.modal-body {
+	font-size: 14px;
+  padding-bottom: 0;
+}
+
+/* Bootstap modals fullscreen on small screen */
+
+@media (max-width: 768px) {
+  .modal {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    overflow: hidden;
+  }
+
+  .modal-dialog {
+    position: fixed;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+  }
+
+  .modal-content {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .modal-header {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    height: 78px;
+    padding: 10px;
+    border: 0;
+  }
+
+  .modal-title {
+    font-weight: 300;
+    font-size: 2em;
+    line-height: 30px;
+  }
+
+  .modal-body {
+    position: absolute;
+    top: 79px;
+    bottom: 60px;
+    width: 100%;
+    font-weight: 300;
+    overflow: auto;
+  }
+
+  .modal-footer {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 60px;
+    padding: 10px;
+  }
+
+  .modal-content {
+    height: 100%;
+    border-radius: 0;
+  }
+}
+
+/* END Bootstap modals fullscreen on small screen */
+
+/* Tablet optimization */
+.dropdown-menu LI > A {
+  line-height: 45px !important;
+  height: 45px !important;
+}
+
+.navbar {
+	border-radius: 0 !important;
+	border: 0;
+	border-bottom: 1px;
+}
+
+.btn-toolbar {
+	min-height: 40px;
+}
+
+.fileExt {
+  background-color: #515151;
+  text-transform:uppercase;
+  font-size: 12px;
+  padding: 4px;
+  color: white;
+}
+
+.dropdown {
+  position: absolute;
+  display:none;
+  z-index: 88888;
+}
+
+.dropdown-header .close {
+  line-height: 15px;
+}
+
+.modal-header {
+  background-color: #F6F6F6;
+  border-radius: 5px 5px 0px 0px;
+}
+
+.modal-header .close {
+  margin-top: 7px;
+}
+
+.white-caret {
+	border-top-color: white;
+	border-bottom-color: white;
+}
+
+.fileTitleButton {
+  margin: 1px;
+  padding: 1px;
+}
+
+.optionsTitle {
+  text-transform: uppercase;
+  font-weight: normal;
+  color: gray;
+  padding: 5px 10px 5px 10px !important;
+  font-size: 12px;
+}
+
+#welcomeScreen {
+  background: url(welcome-logo.png) no-repeat center;
+  background-size: auto auto;
+  width: 100%;
+  height: 100%;
+}
+
+#newVersionAvailable {
+  padding-top: 8px;
+  padding-right: 3px;
+  padding-left: 3px;
+  color: #7bd148;
+  display: none;
+}
+
+#sideBarButtonGroup {
+  margin-right: 3px;
+  white-space: nowrap;
+}
+
+#showTagGroups, #showLocations, #contactUs {
+  width: 50px;
+}
+
+#contactUsContent a {
+  height: 45px;
+  color: #404040;
+  width: 100%;
+  text-align: left;
+}
+
+#alternativeNavigator .btn-link {
+  padding-left: 2px;
+  padding-right: 2px;
+  color: #404040;
+}
+
+#alternativeNavigator {
+  margin: 5px 5px 5px 10px;
+  height: 30px;
+}
+
+.keyShortcut {
+  margin-top: 15px;
+  display: none;
+}
+
+@media
+(-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  #welcomeScreen {
+    width: 100%;
+    height: 100%;
+    background: url(welcome-logo2x.png) no-repeat center;
+    background-size: 300px 200px;
+  }
+}

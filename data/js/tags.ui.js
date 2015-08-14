@@ -16,11 +16,11 @@ define(function(require, exports, module) {
   var tagGroupsTmpl = Handlebars.compile(
     '{{#each tagGroups}}' +
     '<div class="accordion-group disableTextSelection tagGroupContainer">' +
-        '<div class="accordion-heading  btn-group ui-droppable tagGroupContainerHeading" key="{{key}}">' +
+        '<div class="accordion-heading btn-group ui-droppable tagGroupContainerHeading flexLayout" key="{{key}}">' +
             '<button class="btn btn-link btn-lg tagGroupIcon" data-toggle="collapse" data-target="#tagButtons{{@index}}" data-i18n="[title]ns.common:toggleTagGroup" title="{{../toggleTagGroup}}">' +
                 '<i class="fa fa-tags fa-fw"></i>' +
             '</button>' +
-            '<button class="btn btn-link tagGroupTitle" key="{{key}}">{{title}}</button>' +
+            '<button class="btn btn-link tagGroupTitle flexMaxWidth" key="{{key}}">{{title}}</button>' +
             '<button class="btn btn-link btn-lg tagGroupActions" key="{{key}}" data-i18n="[title]ns.common:tagGroupOperations" title="{{../tagGroupOperations}}">' +
                 '<b class="fa fa-ellipsis-v"></b>' +
             '</button>' +

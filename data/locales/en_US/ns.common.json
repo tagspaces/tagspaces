@@ -94,6 +94,8 @@
     "whatsNewTooltip": "Open the what's new page in the TagSpaces website",
     "getAndroidApp": "Get the Android App",
     "getAndroidAppTooltip": "Take a look on our Android App",
+    "getIOSApp": "Get the iPhone App",
+    "getIOSAppTooltip": "Take a look on our App for iPhone and iPad",
     "suggestNewFeatures": "Suggest New Features",
     "suggestNewFeaturesTooltip": "Suggest a new or vote for an existing feature on UserVoice.com",
     "reportIssues": "Report Issues",

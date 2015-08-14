@@ -1,5 +1,20 @@
 ﻿#Changelog
 
+##Version 1.12.0 / 2015.07.28
+- Added a new audio/video player extension based on plyr.io library
+- Added a new viewer for EPUB files
+- Added a new viewer for ZIP files
+- Hungarian and Chinese Taiwan (big5) languages added
+- Scrolling to bottom of the settings after adding new file type
+- Fixing drag and drop issue for smart tags
+- Directory watcher implemented for node webkit
+- Import tagGroups from settings
+- Added a web clipper for the Firefox
+- Added a an Android widget allowing to take photos and create notes directly from desktop
+- Fixing stopping of the playback of audio and video files after closing them [#251](https://github.com/uggrock/tagspaces/issues/251)
+- The settings of the Android app are now saved in a file in the app folder
+- Fixing issue with not recognizing folder on some webdav servers
+
 ##Version 1.11.0 / 2015.04.15
 - adding korean, greek, catalan, czech, swedish, turkish and dutch translations
 - add a new system tag group collecting all new applied tags

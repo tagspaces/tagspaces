@@ -1,0 +1,62 @@
+{
+    "saveAsSelectionLabel": {
+        "message": "Kijelölés mentése",
+        "description": "Title of label."
+    },
+    "appLauncher": {
+        "message": "TagSpaces indítása",
+        "description": "Title of the application launcher in the browser."
+    },
+    "appDesc": {
+        "message": "Fájl tallózás webes tartalom elkapással és Chromcast támogatással.",
+        "description": ""
+    },
+    "addTagHelp": {
+        "message": "A címkéknek legalább 2 karakter hosszúnak kell lennie és nem tartalmazhat speciális karaktereket mint a szóköz, #, /,\\ és a többi.",
+        "description": "Add tag help message"
+    },
+    "saveScreenshotTitle": {
+        "message": "Látható lap mentése HTML-be",
+        "description": "Title of screenshot button"
+    },
+    "editTitleLabel": {
+        "message": "Cím módosítása",
+        "description": "Title of label."
+    },
+    "appName": {
+        "message": "TagSpaces",
+        "description": ""
+    },
+    "appLauncherLabel": {
+        "message": "Webtartalom elkapása",
+        "description": "Title of label."
+    },
+    "saveScreenshotLabel": {
+        "message": "Képernyő mentés",
+        "description": "Title of label."
+    },
+    "addTagLabel": {
+        "message": "Címke hozzáadása",
+        "description": "Title of label."
+    },
+    "saveAsMhtmlTitle": {
+        "message": "Teljes mentés MHTML formátumba",
+        "description": "Title of save page button"
+    },
+    "appLauncherTitle": {
+        "message": "TagSpaces indítása új lapon",
+        "description": "Title of the application launcher in the browser."
+    },
+    "saveSelectionAsHtmlTitle": {
+        "message": "Kijelölt tartalom mentése HTML-be",
+        "description": "Title of save selection button"
+    },
+    "saveAsMhtmlLabel": {
+        "message": "Teljes lap mentése",
+        "description": "Title of label."
+    },
+    "saveFileLabel": {
+        "message": "Mentés fájlba",
+        "description": "Title of label."
+    }
+}
