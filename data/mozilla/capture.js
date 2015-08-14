@@ -97,8 +97,8 @@ exports.saveContentToBinaryFile = function (name, content) {
 
 exports.getFileExt = function(fileName) {
   var ext = fileName.replace(/^.*?\.([a-zA-Z0-9]+)$/, "$1");
-  var supportedExts = ["png", "jpg", "jpeg","svg", "webp", "gif","pdf", "ogg", "mp4"];
-  return  (supportedExts.indexOf(ext) >= 0) ? ext : "html";
+  var supportedExts = ["png", "jpg", "jpeg", "svg", "webp", "gif", "pdf", "ogg", "mp4"];
+  return (supportedExts.indexOf(ext) >= 0) ? ext : "html";
 };
 
 exports.saveURLToFile = function(name, url) {
