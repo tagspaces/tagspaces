@@ -67,7 +67,7 @@ define(function(require, exports, module) {
           $('#' + extensionID + 'Container').find("th:contains('File Name')").text(translation);
         }
 
-        $('#' + extensionID + 'Toolbar [data-i18n]').i18n();
+        $('#' + extensionID + 'Container [data-i18n]').i18n();
 
         platformTuning();
       });

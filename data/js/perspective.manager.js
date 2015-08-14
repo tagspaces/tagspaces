@@ -78,7 +78,7 @@ define(function(require, exports, module) {
     $viewSwitcher.append($('<li>', {
       class: 'dropdown-header',
       text: $.i18n.t('ns.common:perspectiveSwitch')
-    }).append('<button type="button" class="close">\xD7</button>'));
+    }));
     $viewSwitcher.append('<li class=\'divider\'></li>');
     for (var i = 0; i < extensions.length; i++) {
       var curPers;

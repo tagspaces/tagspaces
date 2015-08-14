@@ -1,0 +1,254 @@
+/* Copyright (c) 2012-2015 The TagSpaces Authors. All rights reserved. Use of this source code
+ * is governed by a AGPL3 license that can be found in the LICENSE file. */
+
+/*==== General ====== */
+
+.flexLayout {
+  display: flex;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+}
+
+.flexMaxWidth {
+  flex: 1 1 auto;
+  -webkit-flex: 1 1 auto;
+  -ms-flex: 1 1 auto;
+}
+
+.fullWidth {
+  width: 100%;
+}
+
+#mainContainer {
+  display: flex;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+
+  flex-direction: row;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+
+  flex-wrap: nowrap;
+  -webkit-flex-wrap: nowrap;
+  -ms-flex-wrap: nowrap;
+
+  justify-content: flex-start;
+  -webkit-justify-content: flex-start;
+  align-content: flex-start;
+  -ms-flex-pack: start;
+
+  align-items: stretch;
+  -webkit-align-content: stretch;
+  -ms-flex-line-pack: stretch;
+
+  width: 100%;
+  height: 100%;
+}
+
+.col1, .col2, .col3 {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+}
+
+.col1 .navbar, .col1 > .row2, .col1 > .row3, .col2 .navbar, .col2 .row3, .col3 .navbar {
+	background-color: #F2F2F2 !important;
+}
+
+.col1 .navbar, .col2 .navbar, .col3 .navbar {
+	padding-left: 5px;
+}
+
+/*==== COL1 ====== */
+
+.col1 {
+  flex: 0 1 300px;
+  -webkit-flex: 0 1 300px;
+  -ms-flex: 0 1 300px;
+
+  display: flex;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+
+  flex-direction: column;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+
+  align-items: stretch;
+  -webkit-align-content: stretch;
+  -ms-flex-line-pack: stretch;
+
+  height: 100%;
+  min-width: 300px;
+  box-shadow: 2px 0px 3px -1px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+.col1 .row1 {
+  flex: 0 1 80px;
+  -webkit-flex: 0 1 80px;
+  -ms-flex: 0 1 80px;
+
+  min-height: 80px;
+}
+
+.col1 .row2 {
+  flex: 1 1 auto;
+  -webkit-flex: 1 1 auto;
+  -ms-flex: 1 1 auto;
+
+  overflow-y: auto;
+  min-height: 0px;
+}
+
+.col1 .row3 {
+  flex: 0 1 50px;
+  -webkit-flex: 0 1 50px;
+  -ms-flex: 0 1 50px;
+
+  min-height: 50px;
+	padding-left: 5px;
+	padding-top: 5px;
+}
+
+/*==== COL2 ====== */
+
+.col2 {
+  flex: 1 1 auto;
+  -webkit-flex: 1 1 auto;
+  -ms-flex: 1 1 auto;
+
+  display: flex;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+
+  flex-direction: column;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+
+  align-items: stretch;
+  -webkit-align-content: stretch;
+  -ms-flex-line-pack: stretch;
+
+  max-width: 100%;
+}
+
+.col2 .row1 {
+  flex: 0 1 80px;
+  -webkit-flex: 0 1 80px;
+  -ms-flex: 0 1 80px;
+
+  min-height: 80px;
+  box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.1);
+  /*z-index: 1;*/
+}
+
+.col2 .row2 {
+  flex: 1 1 auto;
+  -webkit-flex: 1 1 auto;
+  -ms-flex: 1 1 auto;
+
+  overflow-y: auto;
+  min-height: 0px;
+}
+
+.col2 .row3 {
+  flex: 0 1 50px;
+  -webkit-flex: 0 1 50px;
+  -ms-flex: 0 1 50px;
+
+  min-height: 50px;
+  box-shadow: 0px -5px 5px -2px rgba(0,0,0,0.1);
+}
+
+/*==== COL3 ====== */
+
+.col3 {
+  flex: 1 1 auto;
+  -webkit-flex: 1 1 auto;
+  -ms-flex: 1 1 auto;
+
+  display: flex;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+
+  flex-direction: column;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+
+  align-items: stretch;
+  -webkit-align-content: stretch;
+  -ms-flex-line-pack: stretch;
+
+  max-width: 100%;
+  min-width: 50%;
+}
+
+.col3 .row1 {
+  flex: 0 1 80px;
+  -webkit-flex: 0 1 80px;
+  -ms-flex: 0 1 80px;
+
+  min-height: 80px;
+  box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.1);
+  z-index: 1;
+}
+
+.col3 .row2 {
+  flex: 1 1 auto;
+  -webkit-flex: 1 1 auto;
+  -ms-flex: 1 1 auto;
+
+  display: flex;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+
+  align-items: stretch;
+  -webkit-align-content: stretch;
+  -ms-flex-line-pack: stretch;
+
+  align-content: stretch;
+  -webkit-align-content: stretch;
+  -ms-flex-line-pack: stretch;
+
+  overflow-y: auto;
+  min-height: 0px;
+}
+
+/*==== Location Management ====== */
+
+#locationSwitch {
+  width: 96%;
+}
+
+#locationName {
+  flex: 1 1 auto;
+  -webkit-flex: 1 1 auto;
+  -ms-flex: 1 1 auto;
+}
+
+#selectLocation {
+  flex: 0 1 40px;
+  -webkit-flex: 0 1 40px;
+  -ms-flex: 0 1 40px;
+}
+
+#locationsList {
+  overflow-y: auto;
+  max-height: 500px;
+  width: 280px;
+}
+
+.openLocation {
+  flex: 1 1 auto;
+  -webkit-flex: 1 1 auto;
+  -ms-flex: 1 1 auto;
+  text-align: left;
+  line-height: 30px;
+}
+
+.editLocation {
+  flex: 0 1 50px;
+  -webkit-flex: 0 1 50px;
+  -ms-flex: 0 1 50px;
+}

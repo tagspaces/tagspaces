@@ -21,17 +21,27 @@ define(function(require, exports, module) {
   }
 
   function addPerspective(parent, perspectiveId) {
-    var perspectiveControl = $('<div class=\'form-inline\'>').append($('<div class=\'input-group\' style=\'width: 90%\'>').append($('<select class=\'form-control\' style=\'width: 70%\'></select>')).append($('<button class=\'btn btn-default\'  style=\'width: 40px\' data-i18n=\'[title]ns.dialogs:removePerspectiveTooltip\'><i class=\'fa fa-times\'></button>').click(function() {
-      $(this).parent().parent().remove();
-    }))).i18n();
+    var perspectiveControl = $('<div class="form-inline">')
+        .append($('<div class="flexLayout">')
+          .append($('<select class="form-control flexMaxWidth"></select>'))
+          .append($('<button class="btn btn-link" style="width: 40px" data-i18n="[title]ns.dialogs:removePerspectiveTooltip"><i class="fa fa-times"></button>')
+            .click(function() {
+              $(this).parent().parent().remove();
+            }))).i18n();
     generateSelectOptions(perspectiveControl.find('select'), TSCORE.Config.getPerspectiveExtensions(), perspectiveId);
     parent.append(perspectiveControl);
   }
 
   function addFileType(parent, fileext, viewerId, editorId) {
-    var fileTypeControl = $('<div class=\'form-inline\'>').append($('<div class=\'input-group\' >').append($('<input style=\'width: 80px\' type=\'text\' class=\'form-control\' data-i18n=\'[placeholder]ns.dialogs:fileExtensionPlaceholder\'>').val(fileext)).append($('<select class=\'ftviewer form-control\' style=\'width: 170px\'></select>')).append($('<select class=\'fteditor form-control\' style=\'width: 170px\'></select>')).append($('<button style=\'width: 40px\' class=\'btn btn-default\' data-i18n=\'[title]ns.dialogs:removeFileTypeTooltip\'><i class=\'fa fa-times\'></button>').click(function() {
-      $(this).parent().parent().remove();
-    }))).i18n();
+    var fileTypeControl = $('<div class="form-inline">')
+        .append($('<div class="flexLayout" >')
+          .append($('<input style="width: 80px" type="text" class="form-control" data-i18n="[placeholder]ns.dialogs:fileExtensionPlaceholder">').val(fileext))
+          .append($('<select class="ftviewer form-control flexMaxWidth"></select>'))
+          .append($('<select class="fteditor form-control flexMaxWidth"></select>'))
+          .append($('<button style="width: 30px" class="btn btn-link" data-i18n="[title]ns.dialogs:removeFileTypeTooltip"><i class="fa fa-times"></button>')
+            .click(function() {
+              $(this).parent().parent().remove();
+            }))).i18n();
     generateSelectOptions(fileTypeControl.find('.ftviewer'), TSCORE.Config.getViewerExtensions(), viewerId);
     generateSelectOptions(fileTypeControl.find('.fteditor'), TSCORE.Config.getEditorExtensions(), editorId);
     parent.append(fileTypeControl);
@@ -111,7 +121,12 @@ define(function(require, exports, module) {
         $languagesDropdown.append($('<option>').text(value.title).val(value.iso));
       }
     });
-    $('#fileTypesList').empty().append($('<div class=\'input-group\' >').append($('<span style=\'width: 80px; border: 0\' class=\'form-control\' data-i18n=\'ns.dialogs:fileExtension\'></span>')).append($('<span style=\' border: 0; width: 170px\' class=\'ftviewer form-control\' data-i18n=\'ns.dialogs:fileViewer\'></span>')).append($('<span style=\' border: 0; width: 170px\' class=\'fteditor form-control\' data-i18n=\'ns.dialogs:fileEditor\'></span>'))).i18n();
+    $('#fileTypesList').empty()
+      .append($('<div class="flexLayout" >')
+        .append($('<span style="border: 0; white-space: nowrap; width: 80px; padding-left: 2px;" class="form-control" data-i18n="ns.dialogs:fileExtension"></span>'))
+        .append($('<span style="border: 0;" class="ftviewer form-control flexMaxWidth" data-i18n="ns.dialogs:fileViewer"></span>'))
+        .append($('<span style="border: 0;" class="fteditor form-control flexMaxWidth" data-i18n="ns.dialogs:fileEditor"></span>'))
+      ).i18n();
     TSCORE.Config.getSupportedFileTypes().sort(function(a, b) {
       if (a.type > b.type) {
         return 1;

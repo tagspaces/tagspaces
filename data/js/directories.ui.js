@@ -15,13 +15,13 @@ define(function(require, exports, module) {
   var tsMetadataFile = 'tsm.json';
   var alternativeDirectoryNavigatorTmpl = Handlebars.compile(
     '{{#each dirHistory}}' +
-    '<div class="btn-group dropup">' +
+    '<div class="btn-group">' +
         '<button class="btn btn-link dropdown-toggle" data-menu="{{@index}}">' +
             '{{name}}&nbsp;&nbsp;<i class="fa fa-caret-right"></i>&nbsp;'  +
         '</button>' +
         '<div class="dropdown clearfix dirAltNavMenu" id="dirMenu{{@index}}">' +
             '<ul style="overflow-y: auto; max-height: 430px; width: 250px; padding: 5px; display: block;" role="menu" class="dropdown-menu">' +
-                '<li class="dropdown-header"><button type="button" class="close">&times;</button>{{../actionsForDirectory}}&nbsp;"{{name}}"</li>' +
+                '<li class="dropdown-header">{{../actionsForDirectory}}&nbsp;"{{name}}"</li>' +
                 '<li><a class="btn btn-link pull-left reloadCurrentDirectory" data-path="{{path}}"><i class="fa fa-refresh fa-fw"></i>&nbsp;{{../reloadCurrentDirectory}}</a></li>' +
                 '<li class="notreadonly"><a class="btn btn-link pull-left createSubdirectory" data-path="{{path}}"><i class="fa fa-folder-o fa-fw"></i>&nbsp;{{../createSubdirectory}}</a></li>' +
                 '<li class="notreadonly"><a class="btn btn-link pull-left renameDirectory" data-path="{{path}}"><i class="fa fa-paragraph fa-fw"></i>&nbsp;{{../renameDirectory}}</a></li>' +
@@ -40,14 +40,15 @@ define(function(require, exports, module) {
     '</div>' +
     '{{/each}}'
   );
+
   var mainDirectoryNavigatorTmpl = Handlebars.compile(
     '<div>{{#each dirHistory}}' +
-    '<div class="accordion-group disableTextSelection" style="width: 99%; border: 0px #aaa solid;">' +
-        '<div class="accordion-heading btn-group" key="{{path}}" style="width:100%; margin: 0; ">' +
+    '<div class="accordion-group disableTextSelection">' +
+        '<div class="accordion-heading btn-group flexLayout" key="{{path}}">' +
             '<button class="btn btn-link btn-lg directoryIcon" data-toggle="collapse" data-target="#dirButtons{{@index}}" key="{{path}}" title="{{../toggleDirectory}}">' +
                 '<i class="fa fa-folder fa-fw"></i>' +
             '</button>' +
-            '<button class="btn btn-link directoryTitle ui-droppable" key="{{path}}" title="{{path}}">{{name}}</button>' +
+            '<button class="btn btn-link directoryTitle ui-droppable flexMaxWidth" key="{{path}}" title="{{path}}">{{name}}</button>' +
             '<button class="btn btn-link btn-lg directoryActions" key="{{path}}" title="{{../directoryOperations}}">' +
                 '<b class="fa fa-ellipsis-v"></b>' +
             '</button>' +
@@ -67,21 +68,26 @@ define(function(require, exports, module) {
     '</div>' +
     '{{/each}}</div>'
   );
+
   var locationChooserTmpl = Handlebars.compile(
-    '<li class="dropdown-header" data-i18n="ns.common:yourLocations">{{yourLocations}} ' +
-        '<button type="button" class="close">×</button>' +
+    '<li class="flexLayout">' +
+      '<button style="text-align: left;" class="btn btn-link flexMaxWidth" id="createNewLocation">' +
+        '<i class="fa fa-plus"></i>&nbsp;<span data-i18n="[title]ns.common:connectNewLocationTooltip;ns.common:connectNewLocationTooltip"></span>'  +
+      '</button>' +
     '</li>' +
-    '<li class="divider" ></li>' +
+    '<li class="divider"></li>' +
+    '<li class="dropdown-header" data-i18n="ns.common:yourLocations">{{yourLocations}}</li>' +
+    '<li class="divider"></li>' +
     '{{#each locations}}' +
-    '<li style="line-height: 45px">' +
-      '<button title="{{path}}" path="{{path}}" name="{{name}}" style="width: 180px; text-align: left; border: 0;" class="btn btn-default">' +
+    '<li class="flexLayout">' +
+      '<button title="{{path}}" path="{{path}}" name="{{name}}" class="btn btn-link openLocation">' +
       '{{#if isDefault}}' +
         '<i style="color: darkred" class="fa fa-bookmark" data-i18n="[title]ns.dialogs:startupLocation"></i>&nbsp;{{name}}'  +
       '{{else}}' +
         '<i class="fa fa-bookmark"></i>&nbsp;{{name}}'  +
       '{{/if}}' +
       '</button>' +
-      '<button type="button" data-i18n="[title]ns.common:editLocation" title="{{editLocationTitle}}" location="{{name}}" path="{{path}}" class="btn btn-link pull-right" style="margin-right: 5px; margin-top: 5px">' +
+      '<button type="button" data-i18n="[title]ns.common:editLocation" title="{{editLocationTitle}}" location="{{name}}" path="{{path}}" class="btn btn-link pull-right editLocation">' +
         '<i class="fa fa-pencil fa-lg"></i>' +
       '</button>' +
     '</li>' +
@@ -404,9 +410,9 @@ define(function(require, exports, module) {
     $('#directoryMenuOpenDirectory').click(function() {
       TSCORE.IO.openDirectory(dir4ContextMenu);
     });
-    $('#createNewLocation').click(function() {
-      showLocationCreateDialog();
-    });
+    //$('#createNewLocation').click(function() {
+    //  showLocationCreateDialog();
+    //});
   }
 
   function createLocation() {
@@ -678,17 +684,20 @@ define(function(require, exports, module) {
       'yourLocations': $.i18n.t('ns.common:yourLocations'),
       'editLocationTitle': $.i18n.t('ns.common:editLocation')
     }));
-    $locationsList.find('.btn-default').each(function() {
+    $locationsList.find('.openLocation').each(function() {
       $(this).on('click', function() {
         openLocation($(this).attr('path'));
       });
     });
-    $locationsList.find('.btn-link').each(function() {
+    $locationsList.find('.editLocation').each(function() {
       $(this).on('click', function() {
         console.log('Edit location clicked');
         showLocationEditDialog($(this).attr('location'), $(this).attr('path'));
         return false;
       });
+    });
+    $locationsList.find('#createNewLocation').on('click', function() {
+      showLocationCreateDialog();
     });
   }
 

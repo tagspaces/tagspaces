@@ -43,6 +43,10 @@ define(function(require, exports, module) {
                 if(thumb) {
                     doc.thumbnail = encodeURI("file://" + thumb);
                 }
+                if (isCordova) {
+                    doc.thumbnail = doc.thumbnail.replace("file://","");
+                    doc.path = doc.path.replace("file://", "");
+                }
                 data.push(doc);                
             }
         });
