@@ -9,7 +9,23 @@
   display: -ms-flexbox;
 }
 
+.flexLayoutVertical {
+  display: flex;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+
+  flex-direction: column;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+}
+
 .flexMaxWidth {
+  flex: 1 1 auto;
+  -webkit-flex: 1 1 auto;
+  -ms-flex: 1 1 auto;
+}
+
+.flexMaxHeight {
   flex: 1 1 auto;
   -webkit-flex: 1 1 auto;
   -ms-flex: 1 1 auto;
