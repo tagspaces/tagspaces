@@ -125,12 +125,14 @@ define(function(require, exports, module) {
     if (value && !_isFileChanged) {
       $fileExt.text($fileExt.text() + '*');
       $fileTitle.editable('disable');
-      $('#tagsContainer').find('button').prop('disabled', true);
+      $('#fileTags').find('button').prop('disabled', true);
+      $('#addTagFileViewer').prop('disabled', true);
     }
     if (!value) {
       $fileExt.text(TSCORE.TagUtils.extractFileExtension(_openedFilePath));
       $fileTitle.editable('enable');
-      $('#tagsContainer').find('button').prop('disabled', false);
+      $('#fileTags').find('button').prop('disabled', false);
+      $('#addTagFileViewer').prop('disabled', false);
     }
     _isFileChanged = value;
   }
