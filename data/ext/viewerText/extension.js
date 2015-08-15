@@ -18,9 +18,9 @@ define(function(require, exports, module) {
 
   var TSCORE = require("tscore");
 
-  var containerElID,
-    $containerElement,
-    filePath;
+  var containerElID;
+  var $containerElement;
+  var filePath;
 
   var extensionDirectory = TSCORE.Config.getExtensionPath() + "/" + extensionID;
 
@@ -52,10 +52,22 @@ define(function(require, exports, module) {
     // removing the script tags from the content 
     var cleanedContent = content.toString().replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "");
 
-    $containerElement.empty();
-    $containerElement.css("background-color", "darkgray");
+    $containerElement.empty().append($('<div>', {
+        style: "background-color: darkgray; width: 100%;",
+        class: "flexLayoutVertical",
+        id: "mainLayout",
+      })
+      .append('<span style="font-size: 14px; color: white;">&nbsp;Preview of the document begin: </span>')
+      .append($('<textarea>', {
+          readonly: "true",
+          style: "overflow: auto; height: 100%; width: 100%; font-size: 13px; margin: 0px; background-color: white; border-width: 0px;",
+          class: "flexMaxHeight"
+        })
+        .append(cleanedContent)
+      ));
+
     if (isNode) {
-      $containerElement.append($('<button/>', {
+      $containerElement.find("#mainLayout").prepend($('<button/>', {
         class: 'btn btn-primary',
         style: 'margin: 5px;',
         text: 'Open Natively'
@@ -63,13 +75,7 @@ define(function(require, exports, module) {
         TSCORE.IO.openFile(filePath);
       }));
     }
-    $containerElement.append('<span style="font-size: 14px; color: white;">&nbsp;Preview of the document begin: </span>');
-    $containerElement.append($('<textarea>', {
-        readonly: "true",
-        style: "overflow: auto; height: 100%; width: 100%; font-size: 13px; margin: 0px; background-color: white; border-width: 0px;",
-      })
-      .append(cleanedContent)
-    );
+
   };
 
   exports.getContent = function() {

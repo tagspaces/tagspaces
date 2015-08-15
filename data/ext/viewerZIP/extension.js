@@ -51,6 +51,7 @@ define(function(require, exports, module) {
     var $previewElement = $('<div/>').css({
       'overflow': 'auto',
       'padding': '5px',
+      'background-color': 'white',
       'fontSize': 12,
       'width': '100%',
       'height': '100%',
