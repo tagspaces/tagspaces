@@ -13,7 +13,8 @@ define(function(require, exports, module) {
   var _isFileChanged = false;
   var _tsEditor;
   var generatedTagButtons;
-  $.fn.editableform.buttons = '<button type="submit" class="btn btn-primary editable-submit" style="margin-left: 8px;"><i class="fa fa-check fa-lg"></i></button>' + '<br /><br /><button type="button" class="btn editable-cancel"><i class="fa fa-times fa-lg"></i></button>';
+  // Backup cancel button <!--button type="button" class="btn editable-cancel"><i class="fa fa-times fa-lg"></i></button-->
+  $.fn.editableform.buttons = '<button type="submit" class="btn btn-primary editable-submit"><i class="fa fa-check fa-lg"></i></button>';
   // If a file is currently opened for editing, this var should be true
   var _isEditMode = false;
 
@@ -369,10 +370,10 @@ define(function(require, exports, module) {
     $fileTitle.editable('destroy');
     $fileTitle.text(title);
     $fileTitle.editable({
-      type: 'textarea',
-      placement: 'bottom',
+      type: 'text',
+      //placement: 'bottom',
       title: 'Change Title',
-      //mode: 'inline',
+      mode: 'inline',
       success: function(response, newValue) {
         TSCORE.TagUtils.changeTitle(_openedFilePath, newValue);
       }
