@@ -84,11 +84,7 @@ define(function(require, exports, module) {
       }));
       $iframeViewerHead.append($('<link/>', {
         rel: 'stylesheet',
-        href: extensionDirectory + '/../../libs/bootstrap/css/bootstrap.css'
-      }));
-      $iframeViewerHead.append($('<link/>', {
-        rel: 'stylesheet',
-        href: extensionDirectory + '/../../libs/font-awesome/css/font-awesome.css'
+        href: extensionDirectory + '/../../assets/tagspaces.css'
       }));
       $iframeViewerHead.append($('<link/>', {
         rel: 'stylesheet',

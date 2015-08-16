@@ -10,26 +10,45 @@
     <script type="text/javascript" src="../../libs/bootstrap/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="viewer.js"></script>
     <link rel="stylesheet" href="extension.css" />
-    <link rel="stylesheet" href="../../libs/bootstrap/css/bootstrap.css" />
-    <link rel="stylesheet" href="../../libs/font-awesome/css/font-awesome.css" />
+    <link rel="stylesheet" href="../../assets/tagspaces.css" />
 </head>
 <body>
-    <div class="btn-toolbar" id="Toolbar">
-        <div class="btn-group">
+    <div class="btn-group dropup extMainMenu">
+        <button type="button" class="btn btn-link dropdown-toggle" data-toggle="dropdown" style="right: 10px; z-index: 9999;">
+            <span class="fa-stack fa-2x">
+                <i class="fa fa-circle fa-stack-base fa-stack-2x" style="color: coral;"></i>
+                <i class="fa fa-ellipsis-v fa-stack-1x"></i>
+            </span>
+        </button>
+        <ul class="dropdown-menu pull-right" style="background-color: rgba(255, 255, 255, 0.56);">
             <button class="btn btn-link btn-lg" id="zoomOutButton"><span class="fa-stack">
-                <i class="fa fa-circle fa-stack-base fa-stack-2x iconBackground"></i><i class="fa fa-search-minus fa-stack-1x iconForeground"></i></span></button>
+                <i class="fa fa-circle fa-stack-base fa-stack-2x iconBackground"></i><i class="fa fa-search-minus fa-stack-1x iconForeground"></i></span>
+            </button>
             <button class="btn btn-link btn-lg" id="zoomInButton"><span class="fa-stack">
-                <i class="fa fa-circle fa-stack-base fa-stack-2x iconBackground"></i><i class="fa fa-search-plus fa-stack-1x iconForeground"></i></span></button>
+                <i class="fa fa-circle fa-stack-base fa-stack-2x iconBackground"></i><i class="fa fa-search-plus fa-stack-1x iconForeground"></i></span>
+            </button>
             <button class="btn btn-link btn-lg" id="zoomResetButton"><span class="fa-stack">
-                <i class="fa fa-circle fa-stack-base fa-stack-2x iconBackground"></i><i class="fa fa-search fa-stack-1x iconForeground"></i></span></button>
+                <i class="fa fa-circle fa-stack-base fa-stack-2x iconBackground"></i><i class="fa fa-search fa-stack-1x iconForeground"></i></span>
+            </button>
             <button class="btn btn-link btn-lg" id="rotateRightButton"><span class="fa-stack">
-                <i class="fa fa-circle fa-stack-base fa-stack-2x iconBackground"></i><i class="fa fa-rotate-right fa-stack-1x iconForeground"></i></span></button>
+                <i class="fa fa-circle fa-stack-base fa-stack-2x iconBackground"></i><i class="fa fa-rotate-right fa-stack-1x iconForeground"></i></span>
+            </button>
             <button class="btn btn-link btn-lg" id="rotateLeftButton"><span class="fa-stack">
-                <i class="fa fa-circle fa-stack-base fa-stack-2x iconBackground"></i><i class="fa fa-rotate-left fa-stack-1x iconForeground"></i></span></button>
+                <i class="fa fa-circle fa-stack-base fa-stack-2x iconBackground"></i><i class="fa fa-rotate-left fa-stack-1x iconForeground"></i></span>
+            </button>
             <button class="btn btn-link btn-lg" id="printButton"><span class="fa-stack">
-                <i class="fa fa-circle fa-stack-base fa-stack-2x iconBackground"></i><i class="fa fa-print fa-stack-1x iconForeground"></i></span></button>
-        </div>
+                <i class="fa fa-circle fa-stack-base fa-stack-2x iconBackground"></i><i class="fa fa-print fa-stack-1x iconForeground"></i></span>
+            </button>
+            <!--li><a id="{{id}}ToogleSelectAll">
+                <i class="fa fa-square-o fa-lg fa-fw"></i>&nbsp;<span data-i18n="ns.perspectiveList:toggleSelectAll"></span>
+            </a></li>
+            <li class="divider"></li>
+            <li><a id="{{id}}IncludeSubDirsButton">
+                <i class="fa  fa-lg fa-fw"></i>&nbsp;<span data-i18n="ns.perspectiveList:showSubfolderContentTooltip"></span>
+            </a></li-->
+        </ul>
     </div>
+
     <div id="imgViewer">
         <img id="imageContent" src="">
     </div>

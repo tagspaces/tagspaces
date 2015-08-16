@@ -26,7 +26,6 @@ define(function(require, exports, module) {
     this.extensionID = extID;
     this.viewContainer = $("#" + this.extensionID + "Container").empty();
     this.viewToolbar = $("#" + this.extensionID + "Toolbar").empty();
-    this.viewFooter = $("#" + this.extensionID + "Footer").empty();
 
     this.currentGrouping = ""; // tagchain, day, month, year
     this.thumbEnabled = false;
@@ -169,7 +168,8 @@ define(function(require, exports, module) {
     var context = {
       id: this.extensionID
     };
-    this.viewToolbar.append(toolbarTemplate(context));
+    this.viewContainer.append("<div class='extMainContent'></div>");
+    this.viewContainer.append(toolbarTemplate(context));
 
     $("#" + this.extensionID + "ToogleSelectAll")
       .click(function() {
@@ -224,12 +224,6 @@ define(function(require, exports, module) {
         self.toggleThumbnails();
       });
 
-    $("#" + this.extensionID + "IncreaseThumbsButton")
-      .click(function() {
-        self.switchThumbnailSize();
-      })
-      .prop('disabled', true);
-
     $("#" + this.extensionID + "AddFileButton").on("click", function() {
       $("#addFileInput").click();
     });
@@ -260,19 +254,6 @@ define(function(require, exports, module) {
     this.viewToolbar.find(".btn").prop('disabled', true);
 
     this.toggleThumbnails();
-  };
-
-  ExtUI.prototype.switchThumbnailSize = function() {
-    this.currentTmbSize = this.currentTmbSize + 1;
-
-    if (this.currentTmbSize >= TMB_SIZES.length) {
-      this.currentTmbSize = 0;
-    }
-
-    $('.thumbImgTile').css({
-      "max-width": TMB_SIZES[this.currentTmbSize],
-      "max-height": TMB_SIZES[this.currentTmbSize]
-    });
   };
 
   ExtUI.prototype.enableThumbnails = function() {
@@ -493,12 +474,12 @@ define(function(require, exports, module) {
   };
 
   ExtUI.prototype.reInit = function() {
+    var $extMainContent = this.viewContainer.find(".extMainContent");
 
     // Clear old data
-    this.viewContainer.children().remove();
-    this.viewFooter.children().remove();
+    $extMainContent.children().remove();
+    $extMainContent.addClass("accordion");
 
-    this.viewContainer.addClass("accordion");
     $(this.extensionID + "IncludeSubDirsButton").prop('disabled', false);
 
     var self = this;
@@ -512,7 +493,7 @@ define(function(require, exports, module) {
 
       var groupingTitle = self.calculateGroupTitle(value[0]);
 
-      self.viewContainer.append($("<div>", {
+      $extMainContent.append($("<div>", {
           "class": "accordion-group disableTextSelection",
           "style": "width: 100%; border: 0px #aaa solid;"
         })
@@ -599,7 +580,7 @@ define(function(require, exports, module) {
     });
 
     // Enable all buttons    
-    this.viewToolbar.find(".btn").prop('disabled', false);
+    this.viewContainer.find(".extMainMenu .btn").prop('disabled', false);
     // Disable certain buttons again    
     $("#" + this.extensionID + "IncreaseThumbsButton").prop('disabled', true);
     $("#" + this.extensionID + "TagButton").prop('disabled', true);
