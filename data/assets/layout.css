@@ -35,6 +35,16 @@
   width: 100%;
 }
 
+.extMainMenu {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+}
+
+.extMainMenuButton {
+  color: #FFAA23;
+}
+
 #mainContainer {
   display: flex;
   display: -webkit-flex;

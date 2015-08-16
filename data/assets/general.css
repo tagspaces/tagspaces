@@ -424,13 +424,17 @@ input a.resetFilter {
     display: none;
 }
 
-/* Bootstrap Styles  white !important */
+/* Bootstrap Styles */
 
 .btn, .btn:hover, .btn:focus, .btn:active, .btn-link, .btn-link:hover, .btn-link:focus, .btn-link:active {
   outline: none !important;
   background-image: none;
   border-radius: 0;
   text-transform: none;
+  -webkit-transition: none;
+  transition: none;
+  -webkit-transform: none;
+  transform: none;
 }
 
 .btn-default:focus {
@@ -441,11 +445,19 @@ input a.resetFilter {
   min-width: 70px;
 }
 
-.btn-link, .btn-link:hover, .btn-link:focus, .btn-link:active {
+.btn-link, .btn-link:hover, .btn-link:focus, .btn-link:active, .btn-link:active:hover {
   text-decoration: none;
   color: #444444;
+  background-color: transparent;
+  background-image: none;
   text-shadow: none;
   border-radius: 0;
+  -webkit-transform: none;
+  transform: none;
+  -webkit-transition: none;
+  transition: none;
+  -webkit-box-shadow: none;
+  box-shadow: none;
 }
 
 /* Extension #33b5be from logo */
@@ -491,7 +503,7 @@ input a.resetFilter {
 /* Bootstap modals fullscreen on small screen */
 
 @media (max-width: 768px) {
-  .modal {
+  .fullScreenMobile {
     position: fixed;
     top: 0;
     right: 0;
@@ -500,7 +512,7 @@ input a.resetFilter {
     overflow: hidden;
   }
 
-  .modal-dialog {
+  .fullScreenMobile .modal-dialog {
     position: fixed;
     margin: 0;
     width: 100%;
@@ -508,7 +520,7 @@ input a.resetFilter {
     padding: 0;
   }
 
-  .modal-content {
+  .fullScreenMobile .modal-content {
     position: absolute;
     top: 0;
     right: 0;
@@ -518,7 +530,7 @@ input a.resetFilter {
     box-shadow: none;
   }
 
-  .modal-header {
+  .fullScreenMobile .modal-header {
     position: absolute;
     top: 0;
     right: 0;
@@ -528,13 +540,13 @@ input a.resetFilter {
     border: 0;
   }
 
-  .modal-title {
+  .fullScreenMobile .modal-title {
     font-weight: 300;
     font-size: 2em;
     line-height: 30px;
   }
 
-  .modal-body {
+  .fullScreenMobile .modal-body {
     position: absolute;
     top: 79px;
     bottom: 60px;
@@ -543,7 +555,7 @@ input a.resetFilter {
     overflow: auto;
   }
 
-  .modal-footer {
+  .fullScreenMobile .modal-footer {
     position: absolute;
     right: 0;
     bottom: 0;
@@ -552,7 +564,7 @@ input a.resetFilter {
     padding: 10px;
   }
 
-  .modal-content {
+  .fullScreenMobile .modal-content {
     height: 100%;
     border-radius: 0;
   }
