@@ -1,58 +1,60 @@
-<div class="btn-group dropup" style="position: absolute; right: 10px; bottom: 10px;">
-    <button type="button" class="btn btn-link dropdown-toggle" data-toggle="dropdown">
-        <span class="fa-stack fa-2x">
-            <i style="color: #FFAA23" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
-            <i class="fa fa-ellipsis-v fa-stack-1x"></i>
-        </span>
-    </button>
-    <ul class="dropdown-menu pull-right">
-        <li><a id="{{id}}ToogleSelectAll">
-            <i class="fa fa-square-o fa-lg fa-fw"></i>&nbsp;<span data-i18n="ns.perspectiveList:toggleSelectAll"></span>
-        </a></li>
-        <li class="divider"></li>
-        <li><a id="{{id}}CreateHTMLFileButton">
-            <i class="fa fa-file-image-o fa-lg fa-fw"></i>&nbsp;<span data-i18n="ns.perspectiveList:createHTMLFile"></span>
-        </a></li>
-        <li><a id="{{id}}CreateMDFileButton">
-            <i class="fa fa-file-code-o fa-lg fa-fw"></i>&nbsp;<span data-i18n="ns.perspectiveList:createMDFile"></span>
-        </a></li>
-        <li><a id="{{id}}CreateTXTFileButton">
-            <i class="fa fa-file-text-o fa-lg fa-fw"></i>&nbsp;<span data-i18n="ns.perspectiveList:createTXTFile"></span>
-        </a></li>
-        <li class="divider"></li>
-        <li><a id="{{id}}CreateFileButton">
-            <i class="fa fa-file-o fa-lg fa-fw"></i>&nbsp;<span data-i18n="ns.perspectiveList:showNewFileDialog"></span>
-        </a></li>
-        <li><a id="{{id}}AddFileButton">
-            <i class="fa fa-plus-circle fa-lg fa-fw"></i>&nbsp;<span data-i18n="ns.perspectiveList:showAddFileDialog"></span>
-        </a></li>
-        <li class="divider"></li>
-        <li><a id="{{id}}TagButton">
-            <i class="fa fa-tag fa-lg fa-fw"></i>&nbsp;<span data-i18n="ns.perspectiveList:addRemoveTagsTooltip"></span>
-        </a></li>
-        <li><a id="{{id}}CopyMoveButton">
-            <i class="fa fa-copy fa-lg fa-fw"></i>&nbsp;<span data-i18n="ns.perspectiveList:copyMoveFilesTooltip"></span>
-        </a></li>
-        <li><a id="{{id}}DeleteSelectedFilesButton">
-            <i class="fa fa-trash fa-lg fa-fw"></i>&nbsp;<span data-i18n="ns.perspectiveList:deleteSelectedFilesTooltip"></span>
-        </a></li>
-        <li><a id="{{id}}IncludeSubDirsButton">
-            <i class="fa fa-refresh fa-lg fa-fw"></i>&nbsp;<span data-i18n="ns.perspectiveList:showSubfolderContentTooltip"></span>
-        </a></li>
-    </ul>
-
-    <!--
-    <li><a id="{{id}}CreateDirectoryButton">
-        <i class="fa fa-folder-o fa-lg fa-fw"></i>&nbsp;<span data-i18n="ns.common:newSubdirectory"></span>
+<div class="btn-group dropup extMainMenu" style="">
+  <button type="button" class="btn btn-link dropdown-toggle" data-toggle="dropdown">
+    <span class="fa-stack fa-2x">
+      <i class="fa fa-circle fa-stack-base fa-stack-2x extMainMenuButton"></i>
+      <i class="fa fa-ellipsis-v fa-stack-1x"></i>
+    </span>
+  </button>
+  <ul class="dropdown-menu pull-right">
+    <li><a id="{{id}}ToogleSelectAll">
+      <i class="fa fa-square-o fa-lg fa-fw"></i>&nbsp;<span data-i18n="ns.perspectiveList:toggleSelectAll"></span>
     </a></li>
-    <button class="btn btn-link" data-i18n="[title]ns.perspectiveList:reloadDirectoryTooltip" id="{{id}}ReloadFolderButton">
-        <i class="fa fa-refresh fa-lg"></i>
-    </button>
-    <button class="btn btn-link" data-i18n="[title]ns.perspectiveList:toggleThumbnailsTooltip" data-toggle="button" id="{{id}}ShowTmbButton">
-        <i class="fa fa-picture-o fa-lg"></i>
-    </button>
-    <button class="btn btn-link" data-i18n="[title]ns.perspectiveList:exportToCSVTooltip" id="{{id}}Export2CSVButton">
-        <i class="fa fa-share fa-lg"></i>
-    </button>
-    -->
+    <li class="divider"></li>
+    <li><a id="{{id}}CreateHTMLFileButton">
+      <i class="fa fa-file-image-o fa-lg fa-fw"></i>&nbsp;<span data-i18n="ns.perspectiveList:createHTMLFile"></span>
+    </a></li>
+    <li><a id="{{id}}CreateMDFileButton">
+      <i class="fa fa-file-code-o fa-lg fa-fw"></i>&nbsp;<span data-i18n="ns.perspectiveList:createMDFile"></span>
+    </a></li>
+    <li><a id="{{id}}CreateTXTFileButton">
+      <i class="fa fa-file-text-o fa-lg fa-fw"></i>&nbsp;<span data-i18n="ns.perspectiveList:createTXTFile"></span>
+    </a></li>
+    <li class="divider"></li>
+    <li><a id="{{id}}CreateFileButton">
+      <i class="fa fa-file-o fa-lg fa-fw"></i>&nbsp;<span data-i18n="ns.perspectiveList:showNewFileDialog"></span>
+    </a></li>
+    <li><a id="{{id}}AddFileButton">
+      <i class="fa fa-plus-circle fa-lg fa-fw"></i>&nbsp;<span data-i18n="ns.perspectiveList:showAddFileDialog"></span>
+    </a></li>
+    <li class="divider"></li>
+    <li><a id="{{id}}TagButton">
+      <i class="fa fa-tag fa-lg fa-fw"></i>&nbsp;<span data-i18n="ns.perspectiveList:addRemoveTagsTooltip"></span>
+    </a></li>
+    <li><a id="{{id}}CopyMoveButton">
+      <i class="fa fa-copy fa-lg fa-fw"></i>&nbsp;<span data-i18n="ns.perspectiveList:copyMoveFilesTooltip"></span>
+    </a></li>
+    <li><a id="{{id}}DeleteSelectedFilesButton">
+      <i class="fa fa-trash fa-lg fa-fw"></i>&nbsp;<span
+      data-i18n="ns.perspectiveList:deleteSelectedFilesTooltip"></span>
+    </a></li>
+    <li><a id="{{id}}IncludeSubDirsButton">
+      <i class="fa fa-refresh fa-lg fa-fw"></i>&nbsp;<span
+      data-i18n="ns.perspectiveList:showSubfolderContentTooltip"></span>
+    </a></li>
+  </ul>
+
+  <!--
+  <li><a id="{{id}}CreateDirectoryButton">
+      <i class="fa fa-folder-o fa-lg fa-fw"></i>&nbsp;<span data-i18n="ns.common:newSubdirectory"></span>
+  </a></li>
+  <button class="btn btn-link" data-i18n="[title]ns.perspectiveList:reloadDirectoryTooltip" id="{{id}}ReloadFolderButton">
+      <i class="fa fa-refresh fa-lg"></i>
+  </button>
+  <button class="btn btn-link" data-i18n="[title]ns.perspectiveList:toggleThumbnailsTooltip" data-toggle="button" id="{{id}}ShowTmbButton">
+      <i class="fa fa-picture-o fa-lg"></i>
+  </button>
+  <button class="btn btn-link" data-i18n="[title]ns.perspectiveList:exportToCSVTooltip" id="{{id}}Export2CSVButton">
+      <i class="fa fa-share fa-lg"></i>
+  </button>
+  -->
 </div>
