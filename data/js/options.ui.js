@@ -10,12 +10,12 @@ define(function(require, exports, module) {
 
   function generateSelectOptions(parent, data, selectedId, helpI18NString) {
     parent.empty();
-    if(!helpI18NString) {
+    if (!helpI18NString) {
       helpI18NString = "";
     }
     parent.append($('<option>')
       .text('')
-      .attr("data-i18n",helpI18NString)
+      .attr("data-i18n", helpI18NString)
       .val('false'));
     data.forEach(function(value) {
       if (selectedId === value) {
@@ -48,7 +48,7 @@ define(function(require, exports, module) {
           .append($('<button style="width: 30px" class="btn btn-link" data-i18n="[title]ns.dialogs:removeFileTypeTooltip"><i class="fa fa-times"></button>')
             .click(function() {
               $(this).parent().parent().remove();
-            })))
+            })));
     generateSelectOptions(fileTypeControl.find('.ftviewer'), TSCORE.Config.getViewerExtensions(), viewerId, "ns.dialogs:chooseFileViewer");
     generateSelectOptions(fileTypeControl.find('.fteditor'), TSCORE.Config.getEditorExtensions(), editorId, "ns.dialogs:chooseFileEditor");
     fileTypeControl.i18n();
