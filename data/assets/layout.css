@@ -42,6 +42,10 @@
   bottom: 0px;
 }
 
+.extMainMenu .dropdown-menu {
+  right: 4px;
+}
+
 .perspectiveMainMenuButton .fa-circle {
   color: #FFAA23;
 }
