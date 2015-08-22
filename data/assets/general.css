@@ -690,6 +690,13 @@ input a.resetFilter {
   display: none;
 }
 
+#addTagFileViewer {
+  height: 22px;
+  width: 35px;
+  margin-right: 4px;
+  padding-top: 0px;
+}
+
 @media
 (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
   #welcomeScreen {
