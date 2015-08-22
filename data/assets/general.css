@@ -602,10 +602,6 @@ input a.resetFilter {
   z-index: 88888;
 }
 
-.dropdown-header .close {
-  line-height: 15px;
-}
-
 .modal-header {
   background-color: #F6F6F6;
   border-radius: 5px 5px 0px 0px;
@@ -613,6 +609,7 @@ input a.resetFilter {
 
 .modal-header .close {
   margin-top: 7px;
+  font-size: x-large;
 }
 
 .white-caret {
@@ -655,6 +652,10 @@ input a.resetFilter {
 
 #showTagGroups, #showLocations, #contactUs {
   width: 50px;
+}
+
+#contactUsContent {
+  display: none;
 }
 
 #contactUsContent a {
