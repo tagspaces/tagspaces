@@ -8,9 +8,15 @@ define(function(require, exports, module) {
   var TSCORE = require('tscore');
   require(['libs/filesaver.js/FileSaver.js'], function() {});
 
-  function generateSelectOptions(parent, data, selectedId) {
+  function generateSelectOptions(parent, data, selectedId, helpI18NString) {
     parent.empty();
-    parent.append($('<option>').text('').val('false'));
+    if(!helpI18NString) {
+      helpI18NString = "";
+    }
+    parent.append($('<option>')
+      .text('')
+      .attr("data-i18n",helpI18NString)
+      .val('false'));
     data.forEach(function(value) {
       if (selectedId === value) {
         parent.append($('<option>').attr('selected', 'selected').text(value).val(value));
@@ -27,8 +33,9 @@ define(function(require, exports, module) {
           .append($('<button class="btn btn-link" style="width: 40px" data-i18n="[title]ns.dialogs:removePerspectiveTooltip"><i class="fa fa-times"></button>')
             .click(function() {
               $(this).parent().parent().remove();
-            }))).i18n();
-    generateSelectOptions(perspectiveControl.find('select'), TSCORE.Config.getPerspectiveExtensions(), perspectiveId);
+            })));
+    generateSelectOptions(perspectiveControl.find('select'), TSCORE.Config.getPerspectiveExtensions(), perspectiveId, "ns.dialogs:choosePerspective");
+    perspectiveControl.i18n();
     parent.append(perspectiveControl);
   }
 
@@ -41,10 +48,11 @@ define(function(require, exports, module) {
           .append($('<button style="width: 30px" class="btn btn-link" data-i18n="[title]ns.dialogs:removeFileTypeTooltip"><i class="fa fa-times"></button>')
             .click(function() {
               $(this).parent().parent().remove();
-            }))).i18n();
-    generateSelectOptions(fileTypeControl.find('.ftviewer'), TSCORE.Config.getViewerExtensions(), viewerId);
-    generateSelectOptions(fileTypeControl.find('.fteditor'), TSCORE.Config.getEditorExtensions(), editorId);
-    parent.append(fileTypeControl);
+            })))
+    generateSelectOptions(fileTypeControl.find('.ftviewer'), TSCORE.Config.getViewerExtensions(), viewerId, "ns.dialogs:chooseFileViewer");
+    generateSelectOptions(fileTypeControl.find('.fteditor'), TSCORE.Config.getEditorExtensions(), editorId, "ns.dialogs:chooseFileEditor");
+    fileTypeControl.i18n();
+    parent.prepend(fileTypeControl);
   }
 
   function initUI() {
@@ -52,7 +60,7 @@ define(function(require, exports, module) {
       // Fixes reloading of the application by click
       e.preventDefault();
       addFileType($('#fileTypesList'), '', '', '');
-      $('#fileTypesList').parent().animate({ scrollTop: ($('#fileTypesList').height()) }, 'slow');
+      //$('#fileTypesList').parent().animate({ scrollTop: ($('#fileTypesList').height()) }, 'slow');
     });
     $('#addPerspectiveButton').click(function(e) {
       // Fixes reloading of the application by click
@@ -121,23 +129,20 @@ define(function(require, exports, module) {
         $languagesDropdown.append($('<option>').text(value.title).val(value.iso));
       }
     });
-    $('#fileTypesList').empty()
-      .append($('<div class="flexLayout" >')
-        .append($('<span style="border: 0; white-space: nowrap; width: 80px; padding-left: 2px;" class="form-control" data-i18n="ns.dialogs:fileExtension"></span>'))
-        .append($('<span style="border: 0;" class="ftviewer form-control flexMaxWidth" data-i18n="ns.dialogs:fileViewer"></span>'))
-        .append($('<span style="border: 0;" class="fteditor form-control flexMaxWidth" data-i18n="ns.dialogs:fileEditor"></span>'))
-      ).i18n();
+    $('#fileTypesList').empty();
+
     TSCORE.Config.getSupportedFileTypes().sort(function(a, b) {
       if (a.type > b.type) {
-        return 1;
+        return -1;
       }
       if (a.type < b.type) {
-        return -1;
+        return 1;
       }
       return 0;
     }).forEach(function(value) {
       addFileType($('#fileTypesList'), value.type, value.viewer, value.editor);
     });
+
     $('#dialogOptions a:first').tab('show');
     $('#dialogOptions').modal({
       backdrop: 'static',
