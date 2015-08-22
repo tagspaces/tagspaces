@@ -137,13 +137,14 @@
 }
 
 .col1 .row3 {
-  flex: 0 1 50px;
-  -webkit-flex: 0 1 50px;
-  -ms-flex: 0 1 50px;
+  flex: 0 1 45px;
+  -webkit-flex: 0 1 45px;
+  -ms-flex: 0 1 45px;
 
-  min-height: 50px;
+  min-height: 45px;
 	padding-left: 5px;
 	padding-top: 5px;
+	box-shadow: 0px -1px 3px 0px rgba(0,0,0,0.2);
 }
 
 /*==== COL2 ====== */
