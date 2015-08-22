@@ -72,7 +72,7 @@
                     id="locationName" data-toggle="dropdown">
             </button>
             <button type="button" class="btn btn-default dropdown-toggle" id="selectLocation" data-toggle="dropdown"
-                    data-placement="bottom;" data-original-title="Start using TagSpaces by creating a new location!">
+                    data-placement="bottom;" data-original-title="Start using TagSpaces by connecting a new location!">
               <span class="caret"></span>
             </button>
             <ul class="dropdown-menu" id="locationsList"></ul>
@@ -256,11 +256,13 @@
             </button>
             <ul class="dropdown-menu">
               <li class="dropdown-header">
+                <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <span data-i18n="ns.common:fileOperations"></span></li>
               <li class="divider"></li>
               <li><a id="tagFile" data-i18n="[title]ns.common:addRemoveTagsTooltip">
                 <i class="fa fa-tag fa-fw"></i>
                 &nbsp;<span data-i18n="ns.common:addRemoveTags"></span></a></li>
+              <li class="divider"></li>
               <li><a id="openFileInNewWindow" data-i18n="[title]ns.common:openFileNewWindowTooltip">
                 <i class="fa fa-external-link-square fa-fw"></i>
                 &nbsp;<span data-i18n="ns.common:openFileNewWindow"></span></a></li>
@@ -320,21 +322,21 @@
           </button>
           <ul class="dropdown-menu" id="tagSuggestionsMenu"></ul>
           <span id="fileTags" class="flexMaxWidth"></span>
-          <div id="fileViewerMainToolbar" class="btn-group" style="white-space: nowrap; margin-top: -8px;">
-            <button class="btn btn-link" data-i18n="[title]ns.common:editFileTooltip" id="editDocument">
-              &nbsp;<i class="fa fa-pencil fa-lg"></i>&nbsp;
+          <div id="fileViewerMainToolbar" class="btn-group" style="margin-top: -8px;">
+            <button class="btn btn-link pull-right" data-i18n="[title]ns.common:openNextFileTooltip" id="nextFileButton">
+              <i class="fa fa-chevron-right fa-lg"></i>
             </button>
-            <button class="btn btn-link" data-i18n="[title]ns.common:saveFileTooltip" id="saveDocument">
-              &nbsp;<i class="fa fa-save fa-lg"></i>&nbsp;
+            <button class="btn btn-link pull-right" data-i18n="[title]ns.common:openPrevFileTooltip" id="prevFileButton">
+              <i class="fa fa-chevron-left fa-lg"></i>
             </button>
-            <button class="btn btn-link" data-i18n="[title]ns.common:toggleFullWidthTooltip" id="toggleFullWidthButton">
-              &nbsp;<i class="fa fa-expand fa-lg"></i>&nbsp;
+            <button class="btn btn-link pull-right" data-i18n="[title]ns.common:toggleFullWidthTooltip" id="toggleFullWidthButton">
+              <i class="fa fa-expand fa-lg"></i>
             </button>
-            <button class="btn btn-link" data-i18n="[title]ns.common:openPrevFileTooltip" id="prevFileButton">
-              &nbsp;<i class="fa fa-chevron-left fa-lg"></i>&nbsp;
+            <button class="btn btn-link pull-right" data-i18n="[title]ns.common:saveFileTooltip" id="saveDocument">
+              <i class="fa fa-save fa-lg"></i>
             </button>
-            <button class="btn btn-link" data-i18n="[title]ns.common:openNextFileTooltip" id="nextFileButton">
-              &nbsp;<i class="fa fa-chevron-right fa-lg"></i>&nbsp;
+            <button class="btn btn-link pull-right" data-i18n="[title]ns.common:editFileTooltip" id="editDocument">
+              <i class="fa fa-pencil fa-lg"></i>
             </button>
           </div>
         </div>
@@ -756,7 +758,7 @@
     <li><a id="fileMenuOpenDirectory" data-i18n="[title]ns.common:Tooltip">
       <i class="fa fa-folder-open fa-fw"></i>&nbsp;<span data-i18n="ns.common:openContainingFolder"></span></a></li>
     <li><a id="fileMenuSendTo" data-i18n="[title]ns.common:sendFileToTooltip">
-      <i class="glyphicon glyphicon-send fa-fw"></i>&nbsp;<span data-i18n="ns.common:sendFileTo"></span></a></li>
+      <i class="fa fa-send fa-fw"></i>&nbsp;<span data-i18n="ns.common:sendFileTo"></span></a></li>
     <li class="divider"></li>
     <li><a id="fileMenuMoveCopyFile" data-i18n="[title]ns.common:moveCopyFileTooltip">
       <i class="fa fa-copy fa-fw"></i>&nbsp;<span data-i18n="ns.common:moveCopyFile"></span></a></li>
