@@ -344,14 +344,14 @@ define(function(require, exports, module) {
   function openFileViewer() {
     tsCoreUI.hideAllDropDownMenus();
     shouldOpenCol3 = true;
-    $(".extMainMenuButton").parent().hide();
+    $(".perspectiveMainMenuButton").parent().hide();
     reLayout();
   }
 
   function closeFileViewer() {
     shouldOpenCol3 = false;
     isFullWidth = false;
-    $(".extMainMenuButton").parent().show();
+    $(".perspectiveMainMenuButton").parent().show();
     reLayout();
   }
 
