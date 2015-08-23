@@ -83,7 +83,7 @@ requirejs.config({
     jquerysimplecolorpicker:'libs/jquery-simplecolorpicker/jquery.simplecolorpicker',
     underscore:             'libs/underscore/underscore-min',
     d3:                     'libs/d3/d3.v3',
-    i18next:                'libs/i18next/i18next.amd.withJQuery-1.7.2.min',
+    i18next:                'libs/i18next/i18next.amd.withJQuery-1.10.1.min',
     mousetrap:              'libs/mousetrap/mousetrap.min',
     mousetrapgb:            'libs/mousetrap/mousetrap-global-bind',
     select2:                'libs/select2/select2.min',
