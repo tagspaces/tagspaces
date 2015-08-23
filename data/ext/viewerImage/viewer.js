@@ -1,6 +1,5 @@
 /* Copyright (c) 2012-2015 The TagSpaces Authors. All rights reserved.
- * Use of this source code is governed by a AGPL3 license that
- * can be found in the LICENSE file. */
+ * Use of this source code is governed by a AGPL3 license that can be found in the LICENSE file. */
 /* global define, EXIF */
 "use strict";
 
@@ -152,4 +151,14 @@ $(document).ready(function() {
     $("#zoomOutButton").hide();
     $("#printButton").hide();
   }
+
+  // Init internationalization
+  $.i18n.init({
+    ns: { namespaces: [ 'ns.viewerImage' ] },
+    debug: true,
+    fallbackLng: 'en_US'
+  }, function() {
+    $('[data-i18n]').i18n();
+  });
+
 });

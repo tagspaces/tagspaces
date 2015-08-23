@@ -30,11 +30,13 @@ define(function(require, exports, module) {
     $containerElement = $('#' + elementID);
     currentFilePath = filePath;
 
+    var lng = $.i18n.lng();
+
     $containerElement.append($('<iframe>', {
       id: "iframeViewer",
       sandbox: "allow-same-origin allow-scripts",
       scrolling: "no",
-      src: extensionDirectory + "/index.html?cp=" + filePath,
+      src: extensionDirectory + "/index.html?cp=" + filePath + "&setLng=" + lng,
       "nwdisable": "",
       "nwfaketop": ""
     }));
