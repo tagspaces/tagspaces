@@ -143,6 +143,7 @@ $(document).ready(function() {
   });
 
   $("#printButton").on("click", function() {
+    $(".dropdown-menu").dropdown('toggle');
     window.print();
   });
 

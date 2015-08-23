@@ -4,56 +4,67 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
   <script type="text/javascript" src="../../libs/jquery/jquery-2.1.1.min.js"></script>
+  <script type="text/javascript" src="../../libs/bootstrap/js/bootstrap.min.js"></script>
   <script type="text/javascript" src="jquery.panzoom/jquery.panzoom.min.js"></script>
   <script type="text/javascript" src="jquery.mousewheel/jquery.mousewheel.min.js"></script>
   <script type="text/javascript" src="exif-js/exif.js"></script>
-  <script type="text/javascript" src="../../libs/bootstrap/js/bootstrap.min.js"></script>
   <script type="text/javascript" src="viewer.js"></script>
-  <link rel="stylesheet" href="extension.css"/>
   <link rel="stylesheet" href="../../assets/tagspaces.css"/>
+  <link rel="stylesheet" href="extension.css"/>
 </head>
 <body>
 <div class="btn-group dropup extMainMenu">
-  <button type="button" class="btn btn-link dropdown-toggle" data-toggle="dropdown"
-    style="right: 0; bottom: 0; z-index: 9999;">
-      <span class="fa-stack fa-2x">
-        <i class="fa fa-circle fa-stack-base fa-stack-2x" style="color: coral;"></i>
-        <i class="fa fa-ellipsis-v fa-stack-1x"></i>
-      </span>
+  <button type="button" class="btn dropdown-toggle roundButton viewerMainMenuButton" data-toggle="dropdown">
+     <i class="fa fa-ellipsis-v fa-2x"></i>
   </button>
-  <ul class="dropdown-menu pull-right" style="background-color: rgba(255, 255, 255, 0.56);">
-    <button class="btn btn-link btn-lg" id="zoomOutButton"><span class="fa-stack">
-      <i class="fa fa-circle fa-stack-base fa-stack-2x iconBackground"></i>
-      <i class="fa fa-search-minus fa-stack-1x iconForeground"></i></span>
-    </button>
-    <button class="btn btn-link btn-lg" id="zoomInButton"><span class="fa-stack">
-      <i class="fa fa-circle fa-stack-base fa-stack-2x iconBackground"></i>
-      <i class="fa fa-search-plus fa-stack-1x iconForeground"></i></span>
-    </button>
-    <button class="btn btn-link btn-lg" id="zoomResetButton"><span class="fa-stack">
-      <i class="fa fa-circle fa-stack-base fa-stack-2x iconBackground"></i>
-      <i class="fa fa-search fa-stack-1x iconForeground"></i></span>
-    </button>
-    <button class="btn btn-link btn-lg" id="rotateRightButton"><span class="fa-stack">
-      <i class="fa fa-circle fa-stack-base fa-stack-2x iconBackground"></i>
-      <i class="fa fa-rotate-right fa-stack-1x iconForeground"></i></span>
-    </button>
-    <button class="btn btn-link btn-lg" id="rotateLeftButton"><span class="fa-stack">
-      <i class="fa fa-circle fa-stack-base fa-stack-2x iconBackground"></i>
-      <i class="fa fa-rotate-left fa-stack-1x iconForeground"></i></span>
-    </button>
-    <button class="btn btn-link btn-lg" id="printButton"><span class="fa-stack">
-      <i class="fa fa-circle fa-stack-base fa-stack-2x iconBackground"></i>
-      <i class="fa fa-print fa-stack-1x iconForeground"></i></span>
-    </button>
-    <!--li><a id="{{id}}ToogleSelectAll">
-        <i class="fa fa-square-o fa-lg fa-fw"></i>&nbsp;<span data-i18n="ns.perspectiveList:toggleSelectAll"></span>
+  <ul class="dropdown-menu pull-right">
+    <li class="dropdown-header">
+      <button class="close">&times;</button>
+    </li>
+    <li><a id="zoomOutButton">
+      <i class="fa fa fa-search-minus fa-lg fa-fw"></i>&nbsp;<span data-i18n="ns.viewerImage:">Zoom out</span>
     </a></li>
-    <li class="divider"></li-->
+    <li><a id="zoomInButton">
+      <i class="fa fa-search-plus fa-lg fa-fw"></i>&nbsp;<span data-i18n="ns.viewerImage:">Zoom in</span>
+    </a></li>
+    <li><a id="zoomResetButton">
+      <i class="fa fa-search fa-lg fa-fw"></i>&nbsp;<span data-i18n="ns.viewerImage:">Zoom reset</span>
+    </a></li>
+    <li class="divider"></li>
+    <li><a id="rotateRightButton">
+      <i class="fa fa-rotate-right fa-lg fa-fw"></i>&nbsp;<span data-i18n="ns.viewerImage:">Rotate right</span>
+    </a></li>
+    <li><a id="rotateLeftButton">
+      <i class="fa fa-rotate-left fa-lg fa-fw"></i>&nbsp;<span data-i18n="ns.viewerImage:">Rotate left</span>
+    </a></li>
+    <li><a id="printButton">
+        <i class="fa fa-print fa-lg fa-fw"></i>&nbsp;<span data-i18n="ns.viewerImage:">Print</span>
+    </a></li>
+    <li class="divider"></li>
+    <li><a id="aboutButton" data-toggle="modal" data-target="#aboutExtensionModal">
+      <i class="fa fa-comment fa-lg fa-fw"></i>&nbsp;<span data-i18n="ns.viewerImage:">About</span>
+    </a></li>
   </ul>
 </div>
 <div id="imgViewer">
   <img id="imageContent" src="">
+</div>
+<div class="modal" id="aboutExtensionModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
+        <h4 class="modal-title" data-i18n="ns.viewerImage">About ViewerImage</h4>
+      </div>
+      <div class="modal-body">
+        Some
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true"><i class="fa fa-check fa-lg"></i>
+        </button>
+      </div>
+    </div>
+  </div>
 </div>
 </body>
 </html>

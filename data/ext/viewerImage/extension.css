@@ -1,11 +1,10 @@
 .btn, .btn:hover, .btn:focus, .btn:active, .btn-link, .btn-link:hover, .btn-link:focus, .btn-link:active {
     outline: none !important;
     background-image: none;
-    border-radius: 0;
 }
 
 @media print {
-    #Toolbar {
+    .extMainMenu {
         display: none;
     }
 }
@@ -40,15 +39,6 @@ body, html {
 .transparentImageBackground {
     display: block !important;
     background: repeating-linear-gradient(45deg, #d5d5d5, #d5d5d5 10px, #a7a7a7 10px, #a7a7a7 20px);
-}
-
-#Toolbar {
-    padding: 2px;
-    background-color: transparent;
-    z-index: 9999999;
-    position:fixed;
-    bottom: 0;
-    right: 0;
 }
 
 .rotate90 {
