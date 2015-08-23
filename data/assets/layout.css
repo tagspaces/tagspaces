@@ -38,20 +38,34 @@
 .extMainMenu {
   z-index: 999;
   position: absolute;
-  right: 0px;
-  bottom: 0px;
+  right: 15px;
+  bottom: 15px;
 }
 
 .extMainMenu .dropdown-menu {
-  right: 4px;
+  margin-bottom: -50px;
+  margin-right: 0px;
 }
 
-.perspectiveMainMenuButton .fa-circle {
-  color: #FFAA23;
+.roundButton {
+  padding: 0;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  min-width: 50px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.12), 0 1px 2px 0 rgba(0, 0, 0, 0.24);
 }
 
-.viewerMainMenuButton .fa-circle {
-  color: coral;
+.roundButton:hover, .roundButton:active,  .roundButton:focus {
+  border-radius: 50%;
+}
+
+.perspectiveMainMenuButton {
+  background-color: #FFAA23;
+}
+
+.viewerMainMenuButton {
+  background-color: coral;
 }
 
 #mainContainer {

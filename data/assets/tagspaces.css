@@ -7,6 +7,6 @@
 @import '../libs/jquery-simplecolorpicker/jquery.simplecolorpicker.css';
 @import '../libs/font-awesome/css/font-awesome.css';
 @import '../libs/bootstrap3xeditable/css/bootstrap-editable.css';
+@import 'general.css';
 @import 'layout.css';
 @import 'components.css';
-@import 'general.css';
