@@ -1,5 +1,9 @@
 ﻿#Changelog
 
+##Version 1.12.0-fixie / 2015.08.25
+- TODO: Color themes support
+    - Monokai theme
+
 ##Version 1.12.0 / 2015.07.28
 - Added a new audio/video player extension based on plyr.io library
 - Added a new viewer for EPUB files
