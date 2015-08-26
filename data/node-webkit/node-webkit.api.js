@@ -506,9 +506,9 @@ define(function(require, exports, module) {
         }
         TSPOSTIO.listDirectory(anotatedDirList);
 
-        watchDirecotory(dirPath, function(event, file) {
-          TSCORE.IO.listDirectory(dirPath);
-        });
+        //watchDirecotory(dirPath, function(event, file) {
+        //  TSCORE.IO.listDirectory(dirPath);
+        //});
       });
     } catch (ex) {
       TSPOSTIO.errorOpeningPath();
