@@ -78,8 +78,7 @@ define(function(require, exports, module) {
     $viewSwitcher.append($('<li>', {
       class: 'dropdown-header',
       text: $.i18n.t('ns.common:perspectiveSwitch')
-    }));
-    $viewSwitcher.append('<li class=\'divider\'></li>');
+    }).prepend("<button class='close'>&times;</button>"));
     for (var i = 0; i < extensions.length; i++) {
       var curPers;
       // Finding the right perspective 
