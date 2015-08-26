@@ -588,18 +588,14 @@ define(function(require, exports, module) {
     var copyMoveButton = $("#" + this.extensionID + "CopyMoveButton");
     var deleteSelectedFilesButton = $("#" + this.extensionID + "DeleteSelectedFilesButton"); 
 
-    if (TSCORE.selectedFiles.length > 1) {
-      tagButton.prop('disabled', false);
-      copyMoveButton.prop('disabled', false);
-      deleteSelectedFilesButton.prop('disabled', false);
-    } else if (TSCORE.selectedFiles.length === 1) {
-      tagButton.prop('disabled', false);
-      copyMoveButton.prop('disabled', false);
-      deleteSelectedFilesButton.prop('disabled', false);
+    if (TSCORE.selectedFiles.length >= 1) {
+      tagButton.parent().removeClass("disabled");
+      copyMoveButton.parent().removeClass("disabled");
+      deleteSelectedFilesButton.parent().removeClass("disabled");
     } else {
-      tagButton.prop('disabled', true);
-      copyMoveButton.prop('disabled', true);
-      deleteSelectedFilesButton.prop('disabled', true);
+      tagButton.parent().addClass("disabled");
+      copyMoveButton.parent().addClass("disabled");
+      deleteSelectedFilesButton.parent().addClass("disabled");
     }
   };
 

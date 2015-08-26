@@ -26,34 +26,49 @@
     <li><a id="{{id}}ToogleSelectAll">
       <i class="fa fa-square-o fa-lg fa-fw"></i>&nbsp;<span data-i18n="ns.perspectiveList:toggleSelectAll"></span>
     </a></li>
-    <li><a id="{{id}}TagButton">
-      <i class="fa fa-tag fa-lg fa-fw"></i>&nbsp;<span data-i18n="ns.perspectiveList:addRemoveTagsTooltip"></span>
+    <li class="disabled"><a id="{{id}}TagButton">
+      <i class="fa fa-tag fa-lg fa-fw"></i>&nbsp;<span data-i18n="ns.perspectiveList:addRemoveTags"></span>
     </a></li>
-    <li><a id="{{id}}CopyMoveButton">
-      <i class="fa fa-copy fa-lg fa-fw"></i>&nbsp;<span data-i18n="ns.perspectiveList:copyMoveFilesTooltip"></span>
+    <li class="disabled"><a id="{{id}}CopyMoveButton">
+      <i class="fa fa-copy fa-lg fa-fw"></i>&nbsp;<span data-i18n="ns.perspectiveList:copyMoveFiles"></span>
     </a></li>
-    <li><a id="{{id}}DeleteSelectedFilesButton">
-      <i class="fa fa-trash fa-lg fa-fw"></i>&nbsp;<span
-      data-i18n="ns.perspectiveList:deleteSelectedFilesTooltip"></span>
+    <li class="disabled"><a id="{{id}}DeleteSelectedFilesButton">
+      <i class="fa fa-trash fa-lg fa-fw"></i>&nbsp;<span data-i18n="ns.perspectiveList:deleteSelectedFiles"></span>
     </a></li>
     <li><a id="{{id}}IncludeSubDirsButton">
-      <i class="fa fa-refresh fa-lg fa-fw"></i>&nbsp;<span
-      data-i18n="ns.perspectiveList:showSubfolderContentTooltip"></span>
+      <i class="fa fa-refresh fa-lg fa-fw"></i>&nbsp;<span data-i18n="ns.perspectiveList:showSubfolderContent"></span>
+    </a></li>
+    <li class="divider"></li>
+    <li><a id="moreButton" data-toggle="modal" data-target="#{{id}}ExtensionModal">
+      <i class="fa fa-ellipsis-h fa-lg fa-fw"></i>&nbsp;<span data-i18n="ns.perspectiveList:moreOperations"></span>
     </a></li>
   </ul>
-
-  <!--
-  <li><a id="{{id}}CreateDirectoryButton">
-      <i class="fa fa-folder-o fa-lg fa-fw"></i>&nbsp;<span data-i18n="ns.common:newSubdirectory"></span>
-  </a></li>
-  <button class="btn btn-link" data-i18n="[title]ns.perspectiveList:reloadDirectoryTooltip" id="{{id}}ReloadFolderButton">
-      <i class="fa fa-refresh fa-lg"></i>
-  </button>
-  <button class="btn btn-link" data-i18n="[title]ns.perspectiveList:toggleThumbnailsTooltip" data-toggle="button" id="{{id}}ShowTmbButton">
-      <i class="fa fa-picture-o fa-lg"></i>
-  </button>
-  <button class="btn btn-link" data-i18n="[title]ns.perspectiveList:exportToCSVTooltip" id="{{id}}Export2CSVButton">
-      <i class="fa fa-share fa-lg"></i>
-  </button>
-  -->
+</div>
+<div class="modal" id="{{id}}ExtensionModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
+        <h4 class="modal-title" data-i18n="ns.perspectiveList:moreOperations"></h4>
+      </div>
+      <div class="modal-body">
+        <button class="btn" data-dismiss="modal" data-i18n="[title]ns.common:newSubdirectory" id="{{id}}CreateDirectoryButton">
+          <i class="fa fa-folder-o fa-lg"></i>&nbsp;<span data-i18n="ns.common:newSubdirectory"></span>
+        </button>
+        <button class="btn" data-dismiss="modal" data-i18n="[title]ns.perspectiveList:reloadDirectoryTooltip" id="{{id}}ReloadFolderButton">
+          <i class="fa fa-refresh fa-lg"></i>&nbsp;<span data-i18n="ns.perspectiveList:reloadDirectory"></span>
+        </button>
+        <!--button class="btn" data-dismiss="modal" data-i18n="[title]ns.perspectiveList:toggleThumbnailsTooltip" data-toggle="button" id="{{id}}ShowTmbButton">
+          <i class="fa fa-picture-o fa-lg"></i>&nbsp;<span data-i18n="ns.perspectiveList:toggleThumbnailsTooltip"></span>
+        </button-->
+        <button class="btn" data-dismiss="modal" data-i18n="[title]ns.perspectiveList:exportToCSVTooltip" id="{{id}}Export2CSVButton">
+          <i class="fa fa-share fa-lg"></i>&nbsp;<span data-i18n="ns.perspectiveList:exportToCSV"></span>
+        </button>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true"><i class="fa fa-check fa-lg"></i>
+        </button>
+      </div>
+    </div>
+  </div>
 </div>

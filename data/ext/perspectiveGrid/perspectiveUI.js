@@ -58,22 +58,28 @@ define(function(require, exports, module) {
     }
   }
 
-  var fileTileTmpl = Handlebars.compile('<li title="{{filepath}}" filepath="{{filepath}}" class="fileTile">\
-               <p class="titleInFileTile">{{title}}</p><span class="tagsInFileTile">\
-               {{#each tags}}\
-               <button class="btn btn-sm tagButton fileTagsTile" tag="{{tag}}" filepath="{{filepath}}" style="{{style}}">{{tag}} <span class="caret"></span></button>\
-               {{/each}}\
-               </span><span class="fileExtTile">{{fileext}}</span>\
-               <button class="btn btn-link fileTileSelector" filepath="{{filepath}}"><i class="fa {{selected}} fa-lg"></i></button></p></li>');
+  var fileTileTmpl = Handlebars.compile(
+    '<li title="{{filepath}}" filepath="{{filepath}}" class="fileTile">' +
+      '<p class="titleInFileTile">{{title}}</p><span class="tagsInFileTile">' +
+      '{{#each tags}}' +
+        '<button class="btn btn-sm tagButton fileTagsTile" tag="{{tag}}" filepath="{{filepath}}" style="{{style}}">{{tag}} <span class="caret"></span></button>' +
+      '{{/each}}' +
+      '</span><span class="fileExtTile">{{fileext}}</span>' +
+      '<button class="btn btn-link fileTileSelector" filepath="{{filepath}}"><i class="fa {{selected}} fa-lg"></i></button>' +
+    '</p></li>'
+    );
 
-  var fileTileTmbTmpl = Handlebars.compile('<li title="{{filepath}}" filepath="{{filepath}}" class="fileTile">\
-               <span><img class="thumbImgTile" filepath="{{tmbpath}}" style="max-width: 200px; max-height: 200px;" src="{{thumbPath}}"></span>\
-               <p class="titleInFileTile">{{title}}</p><span class="tagsInFileTile">\
-               {{#each tags}}\
-               <button class="btn btn-sm tagButton fileTagsTile" tag="{{tag}}" filepath="{{filepath}}" style="{{style}}">{{tag}} <span class="caret"></span></button>\
-               {{/each}}\
-               </span><span class="fileExtTile">{{fileext}}</span>\
-               <button class="btn btn-link fileTileSelector" filepath="{{filepath}}"><i class="fa {{selected}} fa-lg"></i></button></p></li>');
+  var fileTileTmbTmpl = Handlebars.compile(
+    '<li title="{{filepath}}" filepath="{{filepath}}" class="fileTile">' +
+      '<span><img class="thumbImgTile" filepath="{{tmbpath}}" style="max-width: 200px; max-height: 200px;" src="{{thumbPath}}"></span>' +
+      '<p class="titleInFileTile">{{title}}</p><span class="tagsInFileTile">' +
+      '{{#each tags}}' +
+        '<button class="btn btn-sm tagButton fileTagsTile" tag="{{tag}}" filepath="{{filepath}}" style="{{style}}">{{tag}} <span class="caret"></span></button>' +
+      '{{/each}}' +
+      '</span><span class="fileExtTile">{{fileext}}</span>' +
+      '<button class="btn btn-link fileTileSelector" filepath="{{filepath}}"><i class="fa {{selected}} fa-lg"></i></button>' +
+    '</p></li>'
+    );
 
   ExtUI.prototype.createFileTile = function(title, filePath, fileExt, fileTags, isSelected, metaObj) {
     //TODO minimize platform specific calls     
@@ -176,9 +182,7 @@ define(function(require, exports, module) {
 
     var self = this;
 
-    var context = {
-      id: this.extensionID
-    };
+    var context = { id: this.extensionID };
     this.viewContainer.append("<div class='extMainContent'></div>");
     this.viewContainer.append(toolbarTemplate(context));
 
@@ -233,6 +237,11 @@ define(function(require, exports, module) {
     $("#" + this.extensionID + "ShowTmbButton")
       .click(function() {
         self.toggleThumbnails();
+      });
+
+    $("#" + this.extensionID + "CopyMoveButton")
+      .click(function() {
+        TSCORE.showMoveCopyFilesDialog();
       });
 
     $("#" + this.extensionID + "AddFileButton").on("click", function() {
@@ -308,57 +317,6 @@ define(function(require, exports, module) {
       "max-height": TMB_SIZES[this.currentTmbSize]
     });*/
   };
-
-  function generateThumbnail(fileURL, result) {
-    var maxSize = 200;
-    var canvas = document.createElement("canvas");
-    var ctx = canvas.getContext("2d");
-    var dataURL;
-    if (fileURL.indexOf(".pdf") > 1) {
-      PDFJS.workerSrc = "libs/pdfjs/build/pdf.worker.js";
-      PDFJS.getDocument(fileURL).then(function(pdf) {
-        pdf.getPage(1).then(function(page) {  //1 is the page number we want to retrieve
-          var viewport = page.getViewport(0.5);
-          if (viewport.width >= viewport.height) {
-            canvas.width = maxSize;
-            canvas.height = (maxSize * viewport.height) / viewport.width;
-          } else {
-            canvas.height = maxSize;
-            canvas.width = (maxSize * viewport.width) / viewport.height;
-          }
-          var renderContext = { canvasContext: ctx, viewport: viewport };
-          page.render(renderContext).then(function() {
-            //set to draw behind current content
-            ctx.globalCompositeOperation = "destination-over";
-            //set background color
-            ctx.fillStyle = "#ffffff";
-            //draw background / rect on entire canvas
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            dataURL = canvas.toDataURL("image/png");
-            result(dataURL);
-          });
-        });
-      });
-    } else {
-      var img = new Image();
-      img.crossOrigin = 'anonymous';
-      img.onload = function() {
-        if (img.width >= img.height) {
-          canvas.width = maxSize;
-          canvas.height = (maxSize * img.height) / img.width;
-        } else {
-          canvas.height = maxSize;
-          canvas.width = (maxSize * img.width) / img.height;
-        }
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-        dataURL = canvas.toDataURL("image/png");
-        result(dataURL);
-        img = null;
-        canvas = null;
-      };
-      img.src = fileURL;
-    }
-  }
 
   ExtUI.prototype.disableThumbnails = function() {
     //this.currentTmbSize = 0;
@@ -520,7 +478,6 @@ define(function(require, exports, module) {
             "class": "accordion-heading  btn-group",
             "style": "width:100%; margin: 0px; border-bottom: solid 1px #eee; background-color: #ddd;"
           })
-
           .append($("<button>", { // Grouped content toggle button
               "class": "btn btn-link groupTitle",
               "data-toggle": "collapse",
@@ -535,8 +492,6 @@ define(function(require, exports, module) {
 
           .append($("<span>", {
             "class": "btn btn-link groupTitle",
-            // "data-toggle":  "collapse",
-            // "data-target":  "#"+self.extensionID+"sortingButtons"+i,                
             "style": "margin-left: 0px; padding-left: 0px;",
             "text": groupingTitle
           }))
@@ -583,21 +538,6 @@ define(function(require, exports, module) {
       groupedContent.find(".fileTile").each(function() {
         self.assingFileTileHandlers($(this));
       });
-
-      // Disabling the file tile selection
-      /* $( "#"+self.extensionID+"sortingButtonsContent"+i ).selectable({
-          start: function() {
-              TSCORE.PerspectiveManager.clearSelectedFiles();   
-          },                
-          stop: function() {
-              TSCORE.selectedFiles = [];          
-              $( ".ui-selected", this ).each(function() {
-                  TSCORE.selectedFiles.push($(this).attr("filepath"));
-              });
-              console.log("Selected files: "+TSCORE.selectedFiles);
-              self.handleElementActivation();
-          }
-      });  */
     });
 
     // Enable all buttons    
@@ -624,11 +564,7 @@ define(function(require, exports, module) {
     var self = this;
 
     $fileTile
-    //.dblclick(function() {
-    //   TSCORE.FileOpener.openFile(filePath);
-    //   self.selectFile(filePath); 
-    //})
-      .hammer().on("doubletap", function() {
+      .hammer().on("doubletap", function() { //.dblclick(function() {
         TSCORE.FileOpener.openFile(filePath);
         self.selectFile(filePath);
       })
@@ -721,17 +657,17 @@ define(function(require, exports, module) {
     console.log("Entering element activation handler...");
 
     var tagButton = $("#" + this.extensionID + "TagButton");
+    var copyMoveButton = $("#" + this.extensionID + "CopyMoveButton");
     var deleteSelectedFilesButton = $("#" + this.extensionID + "DeleteSelectedFilesButton"); 
 
-    if (TSCORE.selectedFiles.length > 1) {
-      tagButton.prop('disabled', false);
-      deleteSelectedFilesButton.prop('disabled', false);
-    } else if (TSCORE.selectedFiles.length === 1) {
-      tagButton.prop('disabled', false);
-      deleteSelectedFilesButton.prop('disabled', false);
+    if (TSCORE.selectedFiles.length >= 1) {
+      tagButton.parent().removeClass("disabled");
+      copyMoveButton.parent().removeClass("disabled");
+      deleteSelectedFilesButton.parent().removeClass("disabled");
     } else {
-      tagButton.prop('disabled', true);
-      deleteSelectedFilesButton.prop('disabled', true);
+      tagButton.parent().addClass("disabled");
+      copyMoveButton.parent().addClass("disabled");
+      deleteSelectedFilesButton.parent().addClass("disabled");
     }
   };
 
@@ -823,5 +759,4 @@ define(function(require, exports, module) {
   };
 
   exports.ExtUI = ExtUI;
-
 });
