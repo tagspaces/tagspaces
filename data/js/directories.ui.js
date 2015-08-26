@@ -17,23 +17,23 @@ define(function(require, exports, module) {
     '{{#each dirHistory}}' +
     '<div class="btn-group">' +
         '<button class="btn btn-link dropdown-toggle" data-menu="{{@index}}">' +
-            '{{name}}&nbsp;&nbsp;<i class="fa fa-caret-right"></i>&nbsp;'  +
+            '{{name}}&nbsp;&nbsp;<i class="fa fa-angle-right"></i>&nbsp;'  +
         '</button>' +
         '<div class="dropdown clearfix dirAltNavMenu" id="dirMenu{{@index}}">' +
-            '<ul style="overflow-y: auto; max-height: 430px; width: 250px; padding: 5px; display: block;" role="menu" class="dropdown-menu">' +
-                '<li class="dropdown-header"><button class="close">&times;</button>{{../actionsForDirectory}}&nbsp;"{{name}}"</li>' +
-                '<li><a class="btn btn-link pull-left reloadCurrentDirectory" data-path="{{path}}"><i class="fa fa-refresh fa-fw"></i>&nbsp;{{../reloadCurrentDirectory}}</a></li>' +
-                '<li class="notreadonly"><a class="btn btn-link pull-left createSubdirectory" data-path="{{path}}"><i class="fa fa-folder-o fa-fw"></i>&nbsp;{{../createSubdirectory}}</a></li>' +
-                '<li class="notreadonly"><a class="btn btn-link pull-left renameDirectory" data-path="{{path}}"><i class="fa fa-paragraph fa-fw"></i>&nbsp;{{../renameDirectory}}</a></li>' +
+            '<ul role="menu" class="dropdown-menu">' +
+                '<li class="dropdown-header"><button class="close">&times;</button><span data-i18n="ns.common:actionsForDirectory2"></span>&nbsp;"{{name}}"</li>' +
+                '<li><a class="btn btn-link pull-left reloadCurrentDirectory" data-path="{{path}}"><i class="fa fa-refresh fa-fw"></i><span data-i18n="ns.common:reloadCurrentDirectory"></span></a></li>' +
+                '<li><a class="btn btn-link pull-left createSubdirectory" data-path="{{path}}"><i class="fa fa-folder-o fa-fw"></i><span data-i18n="ns.common:createSubdirectory"></span></a></li>' +
+                '<li><a class="btn btn-link pull-left renameDirectory" data-path="{{path}}"><i class="fa fa-paragraph fa-fw"></i><span data-i18n="ns.common:renameDirectory"></span></a></li>' +
                 '<li class="divider" style="width: 100%"></li>' +
-                '<li class="dropdown-header">{{../subfodersOfDirectory}}&nbsp;"{{name}}"</li>' +
+                '<li class="dropdown-header"><span data-i18n="ns.common:subfodersOfDirectory2"></span>&nbsp;"{{name}}"</li>' +
                 '{{#if children}}' +
                 '{{#each children}}' +
                 '<button class="btn dirButton" data-path="{{path}}" title="{{path}}" style="margin: 1px;">' +
                 '<i class="fa fa-folder-o"></i>&nbsp;{{name}}</button>' +
                 '{{/each}}' +
                 '{{else}}' +
-                '<div>{{../../noSubfoldersFound}}</div>' +
+                '<div><span data-i18n="ns.common:noSubfoldersFound"></span></div>' +
                 '{{/if}}' +
             '</ul>' +
         '</div>' +
@@ -176,14 +176,9 @@ define(function(require, exports, module) {
     var $alternativeNavigator = $('#alternativeNavigator');
     $alternativeNavigator.children().remove();
     $alternativeNavigator.html(alternativeDirectoryNavigatorTmpl({
-      'dirHistory': directoryHistory,
-      'actionsForDirectory': $.i18n.t('ns.common:actionsForDirectory2'),
-      'subfodersOfDirectory': $.i18n.t('ns.common:subfodersOfDirectory2'),
-      'noSubfoldersFound': $.i18n.t('ns.common:noSubfoldersFound'),
-      'reloadCurrentDirectory': $.i18n.t('ns.common:reloadCurrentDirectory'),
-      'createSubdirectory': $.i18n.t('ns.common:createSubdirectory'),
-      'renameDirectory': $.i18n.t('ns.common:renameDirectory')
+      'dirHistory': directoryHistory
     }));
+    $alternativeNavigator.i18n();
     $alternativeNavigator.find('.reloadCurrentDirectory').each(function() {
       $(this).on('click', function() {
         navigateToDirectory($(this).attr('data-path'));
@@ -202,7 +197,7 @@ define(function(require, exports, module) {
     $alternativeNavigator.find('.dropdown-toggle').each(function() {
       $(this).on('contextmenu click', function() {
         TSCORE.hideAllDropDownMenus();
-        showDropUp('#dirMenu' + $(this).attr('data-menu'), $(this));
+        showDropDown('#dirMenu' + $(this).attr('data-menu'), $(this));
         return false;
       });
     });
@@ -218,18 +213,18 @@ define(function(require, exports, module) {
     });
   }
 
-  var showDropUp = function(menuId, sourceObject) {
+  var showDropDown = function(menuId, sourceObject) {
     var $menu = $(menuId);
-    var leftPos = 0;
-    var topPos = -$menu.height();
-    if (sourceObject.offset().left + 300 > window.innerWidth) {
-      leftPos = -200 + sourceObject.width();
-    }
+    //var leftPos = 0;
+    //var topPos = -$menu.height();
+    //if (sourceObject.offset().left + 300 > window.innerWidth) {
+    //  leftPos = -200 + sourceObject.width();
+    //}
     //console.log(leftPos+" "+sourceObject.offset().left+" "+$menu.width()+" "+window.innerWidth);
     $menu.css({
       display: 'block',
-      left: leftPos + 'px',
-      top: topPos
+    //  left: leftPos + 'px',
+    //  top: topPos + 'px'
     });
   };
 

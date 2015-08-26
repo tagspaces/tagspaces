@@ -657,6 +657,14 @@ input a.resetFilter {
   height: 30px;
 }
 
+.dirAltNavMenu ul {
+  overflow-y: auto;
+  max-height: 430px;
+  width: 250px;
+  padding: 5px;
+  display: block;
+}
+
 #closeOpenedFile {
   margin-top: -8px;
   background-color: #F2F2F2;
