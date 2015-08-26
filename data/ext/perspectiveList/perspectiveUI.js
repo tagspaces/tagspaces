@@ -10,7 +10,6 @@ define(function(require, exports, module) {
   var TSCORE = require("tscore");
 
   var TMB_SIZES = ["100px", "200px", "300px", "400px", "500px"];
-
   var supportedFileTypeThumnailing = ['jpg', 'jpeg', 'png', 'gif'];
 
   var extensionDirectory;
@@ -19,7 +18,6 @@ define(function(require, exports, module) {
     this.extensionID = extID;
     this.viewContainer = $("#" + this.extensionID + "Container").empty();
     this.viewToolbar = $("#" + this.extensionID + "Toolbar").empty();
-    this.viewFooter = $("#" + this.extensionID + "Footer").empty();
 
     this.thumbEnabled = false;
     this.showFileDetails = false;
@@ -437,10 +435,10 @@ define(function(require, exports, module) {
     TSCORE.hideLoadingAnimation();
   };
 
-  var buttonCompTmpl = Handlebars.compile('<button filepath="{{filepath}}" class="btn btn-link fileSelection"><i class="fa {{selected}} fa-fw fa-lg"></i></button>' +
+  var buttonCompTmpl = Handlebars.compile('<button filepath="{{filepath}}" class="btn btn-link fileSelection"><i class="fa {{selected}} fa-fw fa-lg"></i></button><br>' +
     '<button filepath="{{filepath}}" title="{{filepath}}" class="btn btn-link fileTitleButton"><span class="fileExt"><span>{{fileext}}</span>&nbsp;<span class="caret white-caret"></span></span></button>');
 
-  var buttonCompTmbTmpl = Handlebars.compile('<button filepath="{{filepath}}" class="btn btn-link fileSelection"><i class="fa {{selected}} fa-fw fa-lg"></i></button>' +
+  var buttonCompTmbTmpl = Handlebars.compile('<button filepath="{{filepath}}" class="btn btn-link fileSelection"><i class="fa {{selected}} fa-fw fa-lg"></i></button><br>' +
     '<button filepath="{{filepath}}" title="{{filepath}}" class="btn btn-link fileTitleButton"><span class="fileExt"><span>{{fileext}}</span>&nbsp;<span class="caret white-caret"></span></span></button>' +
     '<br><img class="thumbImg" filepath="{{tmbpath}}" >');
 
@@ -465,11 +463,12 @@ define(function(require, exports, module) {
       selected: isSelected ? "fa-check-square-o" : "fa-square-o"
     };
 
-    if (supportedFileTypeThumnailing.indexOf(fileExt) >= 0) {
-      return buttonCompTmbTmpl(context);
-    } else {
+    // Disabling thumb suport
+    //if (supportedFileTypeThumnailing.indexOf(fileExt) >= 0) {
+    //  return buttonCompTmbTmpl(context);
+    //} else {
       return buttonCompTmpl(context);
-    }
+    //}
   };
 
   ExtUI.prototype.clearSelectedFiles = function() {
