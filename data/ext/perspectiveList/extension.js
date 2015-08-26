@@ -67,7 +67,7 @@ define(function(require, exports, module) {
           $('#' + extensionID + 'Container').find("th:contains('File Name')").text(translation);
         }
 
-        if(isCordova) {
+        if (isCordova) {
           TSCORE.reLayout();
         }
 

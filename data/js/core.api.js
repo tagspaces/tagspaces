@@ -291,6 +291,7 @@ define(function(require, exports, module) {
     var twoColumn = fullWidth >= 660 && fullWidth < 1024;
 
     showPerspectiveMenu();
+    tsCoreUI.hideAllDropDownMenus();
 
     if (isFullWidth) {
       oneColumn = true;
@@ -328,13 +329,31 @@ define(function(require, exports, module) {
       }
     }
 
-    if(shouldOpenCol1) {
+    if (shouldOpenCol1) {
       $("#openLeftPanel").hide();
+      $("#closeLeftPanel").show();
+      $(".col1").show();
+    } else {
+      $("#closeLeftPanel").hide();
+      $("#openLeftPanel").show();
+      $(".col1").hide();
     }
 
-    shouldOpenCol1 ? $(".col1").show() : $(".col1").hide();
-    shouldOpenCol2 ? $(".col2").show() : $(".col2").hide();
-    shouldOpenCol3 ? $(".col3").show() : $(".col3").hide();
+    if (shouldOpenCol2) {
+//      $("#openLeftPanel").hide();
+      $(".col2").show();
+    } else {
+      $(".col2").hide();
+    }
+
+    if (shouldOpenCol3) {
+//      $("#openLeftPanel").hide();
+      $(".col3").show();
+      hidePerspectiveMenu();
+    } else {
+      $(".col3").hide();
+      showPerspectiveMenu();
+    }
   }
 
   function hidePerspectiveMenu() {
@@ -346,16 +365,13 @@ define(function(require, exports, module) {
   }
 
   function openFileViewer() {
-    tsCoreUI.hideAllDropDownMenus();
     shouldOpenCol3 = true;
-    hidePerspectiveMenu();
     reLayout();
   }
 
   function closeFileViewer() {
     shouldOpenCol3 = false;
     isFullWidth = false;
-    showPerspectiveMenu();
     reLayout();
   }
 
@@ -365,15 +381,11 @@ define(function(require, exports, module) {
   }
 
   function closeLeftPanel() {
-    $("#closeLeftPanel").hide();
-    $("#openLeftPanel").show();
     shouldOpenCol1 = false;
     reLayout();
   }
 
   function openLeftPanel() {
-    $("#openLeftPanel").hide();
-    $("#closeLeftPanel").show();
     shouldOpenCol1 = true;
     reLayout();
   }

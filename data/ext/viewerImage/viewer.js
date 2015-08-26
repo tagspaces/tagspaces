@@ -154,7 +154,7 @@ $(document).ready(function() {
 
   // Init internationalization
   $.i18n.init({
-    ns: { namespaces: [ 'ns.viewerImage' ] },
+    ns: {namespaces: ['ns.viewerImage']},
     debug: true,
     fallbackLng: 'en_US'
   }, function() {
