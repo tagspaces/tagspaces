@@ -6,8 +6,9 @@ define(function(require, exports, module) {
   console.log('Loading perspective.manager.js ...');
   var perspectives;
   var TSCORE = require('tscore');
+  var TSPRO = require("tspro");
 
-  var initPerspectives = function() {
+  var initPerspectivesOLD = function() {
     perspectives = [];
     $('#perspectiveSwitcher').empty();
     $('#viewToolbars').empty();
@@ -52,11 +53,74 @@ define(function(require, exports, module) {
             if (isNode) {
               TSCORE.IO.showMainWindow();
             }
+
           }
         }
       }); // jshint ignore:line
     }
   };
+  
+  function initPerspective(extPath) {
+
+    return new Promise(function(resolve, reject) {
+
+      require([extPath], function(perspective) {
+        perspectives.push(perspective);
+       
+          // Creating perspective's toolbar
+          $('#viewToolbars').append($('<div>', {
+            id: perspective.ID + 'Toolbar',
+            class: 'btn-toolbar'
+          }).hide());
+          // Creating perspective's container
+          $('#viewContainers').append($('<div>', {
+            id: perspective.ID + 'Container',
+            style: 'width: 100%; height: 100%'
+          }).hide());
+          // Creating perspective's footer
+          $('#viewFooters').append($('<div>', {
+            id: perspective.ID + 'Footer'
+          }).hide());
+          //TODO: return init as promise
+          perspective.init();
+          resolve(true);
+        }); // jshint ignore:line
+    }); 
+  }
+
+  function initPerspectives() {
+
+    perspectives = [];
+    $('#viewSwitcher').empty();
+    $('#viewToolbars').empty();
+    $('#viewContainers').empty();
+    $('#viewFooters').empty();
+    initWelcomeScreen();
+
+    var extensions = TSCORE.Config.getPerspectives();
+    var promises = [];
+    for (var i = 0; i < extensions.length; i++) {
+      var extPath = TSCORE.Config.getExtensionPath() + '/' + extensions[i].id + '/extension.js';
+      promises.push(initPerspective(extPath));
+    }
+    
+    return Promise.all(promises).then(function() {
+      initPerspectiveSwitcher();
+      // Opening last saved location by the start of the application (not in firefox)
+      var lastLocation = TSCORE.Config.getLastOpenedLocation();
+      if (lastLocation !== undefined && lastLocation.length >= 1 && !isFirefox) {
+        TSCORE.openLocation(lastLocation);
+        TSCORE.IO.checkAccessFileURLAllowed();
+        var evt = TSCORE.createDocumentEvent("initApp");
+        TSCORE.fireDocumentEvent(evt);
+      }
+      $('#loading').hide();
+      if (isNode) {
+        TSCORE.IO.showMainWindow();
+      }
+      return true;
+    });
+  }
 
   var initWelcomeScreen = function() {
     /* require([
@@ -175,6 +239,7 @@ define(function(require, exports, module) {
   var updateFileBrowserData = function(dirList) {
     console.log('Updating the file browser data...');
     TSCORE.fileList = [];
+    var workers = [];
     var tags, ext, title, fileSize, fileLMDT, path, filename, entry;
     for (var i = 0; i < dirList.length; i++) {
       // Considering Unix HiddenEntries (. in the beginning of the filename)
@@ -194,6 +259,10 @@ define(function(require, exports, module) {
           if (fileLMDT === undefined) {
             fileLMDT = '';
           }
+          var metaObj = {
+            thumbnailPath: "",
+            metaData: null
+          };
           entry = [
             ext,
             title,
@@ -201,9 +270,11 @@ define(function(require, exports, module) {
             fileSize,
             fileLMDT,
             path,
-            filename
+            filename,
+            metaObj
           ];
           TSCORE.fileList.push(entry);
+          workers.push(TSCORE.Meta.loadMetaDataFromFile(entry));
         } else {
           entry = [
             path,
@@ -213,9 +284,14 @@ define(function(require, exports, module) {
         }
       }
     }
-    changePerspective(TSCORE.currentPerspectiveID);
+    
+    Promise.all(workers).then(function(result) {
+      changePerspective(TSCORE.currentPerspectiveID);
+    }).catch(function(error) {
+      alert("MetaData Error: " + error);
+    });
   };
-
+  
   var refreshFileListContainer = function() {
     // TODO consider search view
     TSCORE.IO.listDirectory(TSCORE.currentPath);

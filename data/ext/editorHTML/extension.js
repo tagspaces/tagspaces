@@ -38,13 +38,15 @@ define(function(require, exports, module) {
     $containerElement.empty();
     $containerElement.css("background-color", "white");
 
+    var lng = $.i18n.lng();
+
     var extPath = extensionDirectory + "/index.html";
     $containerElement.append($('<iframe>', {
       id: "iframeViewer",
       sandbox: "allow-same-origin allow-scripts",
       scrolling: "no",
       style: "background-color: white; overflow: hidden;",
-      src: extPath + "?cp=" + filePath,
+      src: extPath + "?cp=" + filePath + "&setLng=" + lng,
       "nwdisable": "",
       "nwfaketop": ""
     }));

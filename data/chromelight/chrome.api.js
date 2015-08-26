@@ -133,7 +133,7 @@ define(function(require, exports, module) {
       });
   };
 
-  var listDirectory = function(dirPath) {
+  var listDirectory = function(dirPath, resultCallback) {
     console.log("Listing directory: " + dirPath);
     TSCORE.showLoadingAnimation();
 
@@ -177,12 +177,27 @@ define(function(require, exports, module) {
             "path": path
           });
         }
-        TSPOSTIO.listDirectory(anotatedDirList);
+        if(resultCallback) {
+          resultCallback(anotatedDirList);
+        } else {
+          TSPOSTIO.listDirectory(anotatedDirList);
+        }
       })
       .fail(function(data) {
-        TSPOSTIO.errorOpeningPath(dirPath);
+        if(resultCallback) {
+          resultCallback(anotatedDirList);
+        } else {
+          TSPOSTIO.errorOpeningPath(dirPath);
+        }  
         console.log("Error opening path " + data);
       });
+  };
+
+  var getDirectoryMetaInformation = function(dirPath, readyCallback) {
+    listDirectory(dirPath, function(anotatedDirList) {
+    TSCORE.metaFileList = anotatedDirList;
+      readyCallback(anotatedDirList);
+    });
   };
 
   var listSubDirectories = function(dirPath) {
@@ -396,4 +411,5 @@ define(function(require, exports, module) {
   exports.saveSettings = saveSettings;
   exports.handleStartParameters = handleStartParameters;
   exports.getFileContent = getFileContent;
+  exports.getDirectoryMetaInformation = getDirectoryMetaInformation;
 });

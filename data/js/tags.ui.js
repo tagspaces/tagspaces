@@ -391,6 +391,10 @@ define(function(require, exports, module) {
           });
         }
       }
+      var metaTags = TSCORE.Meta.getTagsFromMetaFile(filePath);
+      if(metaTags.length > 0) {
+        context.tags = context.tags.concat(metaTags);
+      }
       return tagButtonTmpl(context);
     }
     // Get the color for a tag

@@ -33,7 +33,8 @@ define(function (require, exports, module) {
         "ootbViewers":              [ "viewerBrowser", "viewerMD", "viewerImage", "viewerPDF", "editorText", "viewerText", "editorODF", "viewerURL", "viewerHTML", "viewerMHTML", "editorJSON", "viewerZIP", "viewerEPUB", "viewerAudioVideo" ],
         "ootbEditors":              [ "editorHTML", "editorText", "editorODF", "editorJSON", "editorNext" ],
         "perspectives":             [{ 'id': 'perspectiveList' }, { 'id': 'perspectiveGrid' }, { 'id': 'perspectiveGraph' }],
-        "interfaceLanguage": "en_US",
+        "interfaceLanguage":        "en_US",
+        "writeTagsToFile":          false,
         "supportedLanguages": [
             { "iso": "en_US", "title": "English" },
             { "iso": "de_DE", "title": "Deutsch (German)" },

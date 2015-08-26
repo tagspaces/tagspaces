@@ -17,6 +17,8 @@ define(function(require, exports, module) {
   var tsSearch = require('tssearch');
   var tsPro = require('tspro');
   var tsUtils = require('tsutils');
+  var tsMeta = require('tsmeta');
+
   var currentPath;
   var currentLocationObject;
   var currentPerspectiveID;
@@ -60,7 +62,12 @@ define(function(require, exports, module) {
     tsDirectoriesUI.initUI();
     tsDirectoriesUI.initLocations();
     tsFileOpener.initUI();
-    tsPersManager.initPerspectives();
+    tsPersManager.initPerspectives().then(function(result) {
+      console.log("initPerspectives: " + result);
+    }).catch(function(err) { 
+      alert("initPerspectives: " + err);
+    });
+
     hideLoadingAnimation();
 
     $(document).ready(function() {
@@ -422,7 +429,7 @@ define(function(require, exports, module) {
   if (tsPro.available) {
     exports.PRO = tsPro;
   }
-
+  exports.Meta = tsMeta;
   // Public API definition
   exports.dirSeparator = isWin && !isWeb ? '\\' : '/';
   exports.locationDesktop;
@@ -511,6 +518,7 @@ define(function(require, exports, module) {
   exports.fileListFILELMDT = 4;
   exports.fileListFILEPATH = 5;
   exports.fileListFILENAME = 6;
+  exports.fileListMETA = 7;
   //document events
   exports.createDocumentEvent = createDocumentEvent;
   exports.fireDocumentEvent = fireDocumentEvent;

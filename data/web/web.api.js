@@ -25,7 +25,7 @@ define(function(require, exports, module) {
 
   window.setTimeout(connectDav(), 2000);
 
-  function listDirectory(dirPath) {
+  function listDirectory(dirPath, readyCallback) {
     console.log("Listing directory: " + dirPath);
 
     dirPath = encodeURI(dirPath + "/");
@@ -67,11 +67,22 @@ define(function(require, exports, module) {
             });
           }
         }
-        TSPOSTIO.listDirectory(anotatedDirList);
+        if (readyCallback) {
+          readyCallback(anotatedDirList);
+        } else {
+          TSPOSTIO.listDirectory(anotatedDirList);
+        }
       },
       1 //1 , davClient.INFINITY
     );
   }
+
+  var getDirectoryMetaInformation = function(dirPath, readyCallback) {
+    listDirectory(dirPath, function(anotatedDirList) {
+    TSCORE.metaFileList = anotatedDirList;
+      readyCallback(anotatedDirList);
+    });
+  };
 
   function getNameForPath(path) {
     if (path.lastIndexOf("/") == path.length - 1) {

@@ -108,6 +108,7 @@ requirejs.config({
     tspostioapi:            'js/postioapi',
     tsdirectorybrowser:     'js/directorybrowser',
     tsutils:                'js/utils',
+    tsmeta:                 'js/meta', 
     tsioapi:                 IO_JS,
     tspro:                   PRO_JS
   },

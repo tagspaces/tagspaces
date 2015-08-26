@@ -334,6 +334,13 @@ define(function(require, exports, module) {
 
   function writeTagsToFile(filePath, tags) {
     console.log('Add the tags to: ' + filePath);
+
+    if (TSCORE.Config.DefaultSettings.writeTagsToFile !== true) {
+      TSCORE.Meta.addMetaTags(filePath, tags);
+      TSCORE.PerspectiveManager.updateFileUI(filePath, filePath);
+      return;
+    }
+
     var fileName = extractFileName(filePath);
     var containingDirectoryPath = extractContainingDirectoryPath(filePath);
     var extractedTags = extractTags(filePath);
@@ -433,6 +440,12 @@ define(function(require, exports, module) {
   // Replaces a tag with a new one
   function renameTag(filePath, oldTag, newTag) {
     console.log('Rename tag for file: ' + filePath);
+
+    if (TSCORE.Config.DefaultSettings.writeTagsToFile !== true) {
+      TSCORE.Meta.reanmeMetaTag(filePath, oldTag, newTag);
+      TSCORE.PerspectiveManager.updateFileUI(filePath, filePath);
+    }
+
     var fileName = extractFileName(filePath);
     var containingDirectoryPath = extractContainingDirectoryPath(filePath);
     var extractedTags = extractTags(filePath);
@@ -443,7 +456,9 @@ define(function(require, exports, module) {
       }
     }
     var newFileName = generateFileName(fileName, extractedTags);
-    TSCORE.IO.renameFile(filePath, containingDirectoryPath + TSCORE.dirSeparator + newFileName);
+    if(newFileName !== fileName) {
+      TSCORE.IO.renameFile(filePath, containingDirectoryPath + TSCORE.dirSeparator + newFileName);
+    }
   }
 
   function changeTitle(filePath, newTitle) {
@@ -463,6 +478,12 @@ define(function(require, exports, module) {
   // Removing a tag from a filename
   function removeTag(filePath, tagName) {
     console.log('Removing tag: ' + tagName + ' from ' + filePath);
+
+    if (TSCORE.Config.DefaultSettings.writeTagsToFile !== true) {
+      TSCORE.Meta.removeMetaTag(filePath, tagName);
+      TSCORE.PerspectiveManager.updateFileUI(filePath, filePath);
+    }
+
     var fileName = extractFileName(filePath);
     var containingDirectoryPath = extractContainingDirectoryPath(filePath);
     var tags = extractTags(filePath);
@@ -473,7 +494,9 @@ define(function(require, exports, module) {
       }
     }
     var newFileName = generateFileName(fileName, newTags);
-    TSCORE.IO.renameFile(filePath, containingDirectoryPath + TSCORE.dirSeparator + newFileName);
+    if(newFileName !== fileName) {
+      TSCORE.IO.renameFile(filePath, containingDirectoryPath + TSCORE.dirSeparator + newFileName);
+    }
   }
 
   //Collect recent tags in a custom tag-group

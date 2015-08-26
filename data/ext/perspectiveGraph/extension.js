@@ -149,6 +149,8 @@ define(function(require, exports, module) {
 	};   
 	
 	var initUI = function() {
+	  // Tmp disabling of the perspective
+	  return;
     viewToolbar.append($("<div >", {
         class: "btn-group",
         "data-toggle": "buttons",

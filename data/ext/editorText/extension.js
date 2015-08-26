@@ -47,6 +47,7 @@ define(function(require, exports, module) {
         extensionDirectory + "/codemirror/mode/" + mode + "/" + mode + ".js"
       ], function() {
         var cursorBlinkRate = isViewerMode ? -1 : 530; // disabling the blinking cursor in readonly mode
+        var lineNumbers = !isViewerMode;
 
         //var saveKB = convertMouseTrapToCodeMirrorKeyBindings(TSCORE.Config.getSaveDocumentKeyBinding());
 
@@ -63,13 +64,13 @@ define(function(require, exports, module) {
         cmEditor = new CodeMirror(document.getElementById("code"), {
           fixedGutter: false,
           mode: mode,
-          lineNumbers: true,
+          lineNumbers: lineNumbers,
           lineWrapping: true,
           tabSize: 2,
           collapseRange: true,
           matchBrackets: true,
           cursorBlinkRate: cursorBlinkRate,
-          readOnly: isViewerMode,
+          readOnly: isViewerMode ? "nocursor" : isViewerMode,
           autofocus: true,
           //theme: "lesser-dark",
           //extraKeys: keys // workarrounded with bindGlobal plugin for mousetrap

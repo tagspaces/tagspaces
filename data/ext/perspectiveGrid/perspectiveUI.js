@@ -67,7 +67,7 @@ define(function(require, exports, module) {
                <button class="btn btn-link fileTileSelector" filepath="{{filepath}}"><i class="fa {{selected}} fa-lg"></i></button></p></li>');
 
   var fileTileTmbTmpl = Handlebars.compile('<li title="{{filepath}}" filepath="{{filepath}}" class="fileTile">\
-               <span><img class="thumbImgTile" filepath="{{tmbpath}}" style="max-width: 200px; max-height: 200px;" src=""></span>\
+               <span><img class="thumbImgTile" filepath="{{tmbpath}}" style="max-width: 200px; max-height: 200px;" src="{{thumbPath}}"></span>\
                <p class="titleInFileTile">{{title}}</p><span class="tagsInFileTile">\
                {{#each tags}}\
                <button class="btn btn-sm tagButton fileTagsTile" tag="{{tag}}" filepath="{{filepath}}" style="{{style}}">{{tag}} <span class="caret"></span></button>\
@@ -75,7 +75,7 @@ define(function(require, exports, module) {
                </span><span class="fileExtTile">{{fileext}}</span>\
                <button class="btn btn-link fileTileSelector" filepath="{{filepath}}"><i class="fa {{selected}} fa-lg"></i></button></p></li>');
 
-  ExtUI.prototype.createFileTile = function(title, filePath, fileExt, fileTags, isSelected) {
+  ExtUI.prototype.createFileTile = function(title, filePath, fileExt, fileTags, isSelected, metaObj) {
     //TODO minimize platform specific calls     
     var tmbPath;
     if (isCordova || isWeb) {
@@ -83,16 +83,17 @@ define(function(require, exports, module) {
     } else {
       tmbPath = "file:///" + filePath;
     }
-
+    var metaObj = metaObj || { thumbnailPath : ""};
     var context = {
       filepath: filePath,
       tmbpath: tmbPath,
       fileext: fileExt,
       title: title,
       tags: [],
-      selected: isSelected ? "fa-check-square-o" : "fa-square-o"
+      selected: isSelected ? "fa-check-square-o" : "fa-square-o",
+      thumbPath: metaObj.thumbnailPath
     };
-
+    
     if (fileTags.length > 0) {
       var tagString = "" + fileTags;
       var tags = tagString.split(",");
@@ -111,6 +112,16 @@ define(function(require, exports, module) {
           style: TSCORE.generateTagStyle(TSCORE.Config.findTag(tags[i]))
         });
       }
+    }
+
+    if (metaObj.metaData && metaObj.metaData.tags) {
+      metaObj.metaData.tags.forEach(function(elem) {
+        context.tags.push({
+          tag: elem.title,
+          filepath: filePath,
+          style: elem.style
+        });
+      });
     }
 
     if (supportedFileTypeThumnailing.indexOf(fileExt) >= 0) {
@@ -258,7 +269,7 @@ define(function(require, exports, module) {
 
   ExtUI.prototype.enableThumbnails = function() {
     $("#" + this.extensionID + "IncreaseThumbsButton").prop('disabled', false);
-    TSCORE.showLoadingAnimation();
+    /*TSCORE.showLoadingAnimation();
     var $tiltleElem = $("#" + this.extensionID + "Container .thumbImgTile");
     $tiltleElem.each(function(index) {
       var $element = $(this);
@@ -270,24 +281,32 @@ define(function(require, exports, module) {
           }
         });
       } else {
-        TSCORE.metaFileList.every(function(element) {
-          
-          var filePath = $element.attr('filepath') + ".png";
-          if (filePath.indexOf(element.name) > 0) {
-            var metaFilePath = TSCORE.currentPath + TSCORE.dirSeparator + 
-              ".ts" + TSCORE.dirSeparator + element.name;
-            $element.attr('src', metaFilePath);
-            return false;
-          }
-          return true;
-        });
+        var metaFilePath = TSCORE.findMetaFilebyPath($element.attr('filepath'), "png");
+        if (metaFilePath) {
+          $element.attr('src', metaFilePath);  
+        }
+        var metaFileJson = TSCORE.findMetaFilebyPath($element.attr('filepath'), "json");
+        if(metaFileJson) {
+          var span = $("<span class=\"tagsInFileTile\">");
+          TSCORE.IO.getFileContent(metaFileJson, function(result) {
+            var str = String.fromCharCode.apply(null, new Uint8Array(result));
+            var metaData = JSON.parse(str);
+            metaData.tags.forEach(function(tag) {
+              var btn = $("<button class=\"btn btn-sm tagButton fileTagsTile\" tag=\"\" filepath=\"\" style=\"\"><span class=\"caret\"></span></button>");
+              btn.text(tag.title);
+              span.append(btn);
+            });
+              
+            $element.parent().parent().append(span);
+          });
+        }
       }
       $element.attr('style', "");
     });
     $('.thumbImgTile').css({
       "max-width": TMB_SIZES[this.currentTmbSize],
       "max-height": TMB_SIZES[this.currentTmbSize]
-    });
+    });*/
   };
 
   function generateThumbnail(fileURL, result) {
@@ -554,7 +573,9 @@ define(function(require, exports, module) {
           value[j][TSCORE.fileListTITLE],
           value[j][TSCORE.fileListFILEPATH],
           value[j][TSCORE.fileListFILEEXT],
-          value[j][TSCORE.fileListTAGS]
+          value[j][TSCORE.fileListTAGS],
+          false,
+          value[j][TSCORE.fileListMETA]
         ));
       }
 
@@ -756,7 +777,9 @@ define(function(require, exports, module) {
       $fileTile = $("#" + this.extensionID + "Container li[filepath='" + oldFilePath + "']");
     }
 
-    $fileTile.replaceWith(this.createFileTile(title, newFilePath, fileExt, fileTags, true));
+    var metaObj = TSCORE.Meta.findMetaObjectFromFileList(oldFilePath);
+    $fileTile.replaceWith(this.createFileTile(title, newFilePath, fileExt, fileTags, true, metaObj)); 
+    
     this.refreshThumbnails();
     this.assingFileTileHandlers($fileTile);
   };

@@ -369,12 +369,9 @@ define(function(require, exports, module) {
     }
     console.log('Dir History: ' + JSON.stringify(directoryHistory));
     TSCORE.currentPath = directoryPath;
-    if (TSCORE.IO.getDirectoryMetaInformation) {
-      //TODO: get folder name
-      var metaFolderPath = TSCORE.currentPath + TSCORE.dirSeparator + ".ts";
-      TSCORE.IO.getDirectoryMetaInformation(metaFolderPath);
-    }
-    TSCORE.IO.listDirectory(directoryPath);
+    TSCORE.Meta.getDirectoryMetaInformation(function() {
+      TSCORE.IO.listDirectory(directoryPath); 
+    });
   }
 
   function initUI() {

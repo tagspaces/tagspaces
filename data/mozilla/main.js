@@ -294,6 +294,9 @@ function handleMessage(msg, worker) {
     case "getFileContent":
       ioutils.getFileContent(msg.detail.path, worker);
       break;
+    case "getDirectoryMetaInformation":
+      ioutils.getDirectoryMetaInformation(msg.detail.path, worker);
+      break;
     default:
       break;
   }
