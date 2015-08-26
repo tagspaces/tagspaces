@@ -77,7 +77,7 @@ define(function(require, exports, module) {
     '</li>' +
     '<li class="divider"></li>' +
     '<li class="dropdown-header" data-i18n="ns.common:yourLocations">{{yourLocations}}</li>' +
-    '<li class="divider"></li>' +
+    //'<li class="divider"></li>' +
     '{{#each locations}}' +
     '<li class="flexLayout">' +
       '<button title="{{path}}" path="{{path}}" name="{{name}}" class="btn btn-link openLocation">' +
@@ -667,6 +667,9 @@ define(function(require, exports, module) {
     console.log('Creating location menu...');
     var $locationsList = $('#locationsList');
     $locationsList.children().remove();
+
+    $('#locationName').text($.i18n.t('ns.common:chooseLocation'));
+
     TSCORE.Config.Settings.tagspacesList.forEach(function(element) {
       if (isDefaultLocation(element.path)) {
         element.isDefault = true;

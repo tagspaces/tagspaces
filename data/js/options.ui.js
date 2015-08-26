@@ -69,10 +69,13 @@ define(function(require, exports, module) {
     });
     $('#saveSettingsCloseButton').click(function() {
       updateSettings();
-      $('#dialogOptions').modal('hide'); //TSCORE.reloadUI();            
+      $('#dialogOptions').modal('hide');
+      //TSCORE.reloadUI();
     });
     $('#defaultSettingsButton').click(function() {
-      TSCORE.showConfirmDialog($.i18n.t('ns.dialogs:restoreDefaulSettingTitleConfirm'), $.i18n.t('ns.dialogs:restoreDefaulSettingMessageConfirm'), function() {
+      TSCORE.showConfirmDialog(
+          $.i18n.t('ns.dialogs:restoreDefaulSettingTitleConfirm'),
+          $.i18n.t('ns.dialogs:restoreDefaulSettingMessageConfirm'), function() {
         TSCORE.Config.loadDefaultSettings();
       });
     });
