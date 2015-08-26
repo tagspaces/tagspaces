@@ -268,23 +268,6 @@ li hr {
   overflow: hidden !important;
 }
 
-#toggleLeftPanel {
-	border: 0;
-	display: block;
-	padding-left: 5px;
-	padding-top: 10px;
-	margin: 0;
-  background-color: #f2f2f2;
-}
-
-#toggleLeftPanel .icon-bar {
-  height: 3px;
-}
-
-#toggleLeftPanel:focus, #toggleLeftPanel:hover {
-  background-color: #f2f2f2 !important;
-}
-
 #searchToolbar {
   width: 250px;
   background-color: #f2f2f2;
@@ -639,8 +622,6 @@ input a.resetFilter {
 
 #newVersionAvailable {
   padding-top: 8px;
-  padding-right: 3px;
-  padding-left: 3px;
   color: #7bd148;
   display: none;
 }

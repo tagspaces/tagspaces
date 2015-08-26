@@ -64,7 +64,7 @@ define(function(require, exports, module) {
     hideLoadingAnimation();
 
     $(document).ready(function() {
-      initLayout();
+      reLayout();
 
       var language = tsSettings.getInterfaceLangauge();
       // "de-DE"
@@ -93,15 +93,6 @@ define(function(require, exports, module) {
       //$( "#loading" ).hide(); moved to perspective manager
       checkForNewVersion();
     });
-  }
-
-  function switchIOAPI(type) {
-    if (type == 'dropbox') {
-      tsIOApiDropbox.init();
-      exports.IO = tsIOApiDropbox;
-    } else {
-      exports.IO = tsIOApi;
-    }
   }
 
   function switchInterfaceLanguage(language) {
@@ -210,17 +201,14 @@ define(function(require, exports, module) {
   }
 
   var $loadingAnimation = $('#loadingAnimation');
-  var $col2Footer = $('#col2Footer');
 
   function showLoadingAnimation() {
-    $col2Footer.hide();
     $loadingAnimation.show();
   }
 
   function hideLoadingAnimation() {
     setTimeout(function() {
       $loadingAnimation.hide();
-      $col2Footer.show();
     }, 500);
   }
 
@@ -302,6 +290,8 @@ define(function(require, exports, module) {
     var oneColumn = fullWidth < 660;
     var twoColumn = fullWidth >= 660 && fullWidth < 1024;
 
+    showPerspectiveMenu();
+
     if (isFullWidth) {
       oneColumn = true;
     }
@@ -313,6 +303,7 @@ define(function(require, exports, module) {
         shouldOpenCol1 = true;
         shouldOpenCol2 = true;
         shouldOpenCol3 = false;
+        hidePerspectiveMenu();
       } else {
         shouldOpenCol2 = true;
       }
@@ -320,6 +311,7 @@ define(function(require, exports, module) {
         $('#toggleFullWidthButton').hide();
       }
     } else if (twoColumn) {
+      $("#openLeftPanel").show();
       shouldOpenCol2 = true;
       if (shouldOpenCol3) {
         shouldOpenCol1 = false;
@@ -332,26 +324,38 @@ define(function(require, exports, module) {
         shouldOpenCol2 = false;
         shouldOpenCol3 = true;
       } else {
-        shouldOpenCol1 = true;
         shouldOpenCol2 = true;
       }
     }
+
+    if(shouldOpenCol1) {
+      $("#openLeftPanel").hide();
+    }
+
     shouldOpenCol1 ? $(".col1").show() : $(".col1").hide();
     shouldOpenCol2 ? $(".col2").show() : $(".col2").hide();
     shouldOpenCol3 ? $(".col3").show() : $(".col3").hide();
   }
 
+  function hidePerspectiveMenu() {
+    $(".perspectiveMainMenuButton").hide();
+  }
+
+  function showPerspectiveMenu() {
+    $(".perspectiveMainMenuButton").show();
+  }
+
   function openFileViewer() {
     tsCoreUI.hideAllDropDownMenus();
     shouldOpenCol3 = true;
-    $(".perspectiveMainMenuButton").parent().hide();
+    hidePerspectiveMenu();
     reLayout();
   }
 
   function closeFileViewer() {
     shouldOpenCol3 = false;
     isFullWidth = false;
-    $(".perspectiveMainMenuButton").parent().show();
+    showPerspectiveMenu();
     reLayout();
   }
 
@@ -360,14 +364,18 @@ define(function(require, exports, module) {
     reLayout();
   }
 
-  function toggleLeftPanel() {
-    $(".col1").toggle();
-    shouldOpenCol1 = !shouldOpenCol1;
+  function closeLeftPanel() {
+    $("#closeLeftPanel").hide();
+    $("#openLeftPanel").show();
+    shouldOpenCol1 = false;
+    reLayout();
   }
 
   function openLeftPanel() {
-    $(".col1").show();
+    $("#openLeftPanel").hide();
+    $("#closeLeftPanel").show();
     shouldOpenCol1 = true;
+    reLayout();
   }
 
   function reloadUI() {
@@ -377,12 +385,6 @@ define(function(require, exports, module) {
   window.addEventListener('orientationchange', reLayout);
 
   $(window).on('resize', reLayout);
-
-  function initLayout() {
-    console.log('Initializing Layout...');
-
-    reLayout();
-  }
 
   function createDocumentEvent(type, data) {
     var evt = document.createEvent('Events');
@@ -418,10 +420,11 @@ define(function(require, exports, module) {
   exports.showLoadingAnimation = showLoadingAnimation;
   exports.hideLoadingAnimation = hideLoadingAnimation;
   exports.reloadUI = reloadUI;
+  exports.reLayout = reLayout;
   exports.openFileViewer = openFileViewer;
   exports.closeFileViewer = closeFileViewer;
-  exports.toggleLeftPanel = toggleLeftPanel;
   exports.openLeftPanel = openLeftPanel;
+  exports.closeLeftPanel = closeLeftPanel;
   exports.toggleFullWidth = toggleFullWidth;
   exports.updateNewVersionData = updateNewVersionData;
   exports.exportFileListCSV = exportFileListCSV;

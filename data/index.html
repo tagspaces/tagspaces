@@ -61,8 +61,8 @@
                     data-i18n="[title]ns.common:newVersionAvailableTooltip">
               <i class="glyphicon glyphicon-gift fa-lg"></i>
             </button>
-            <button class="btn btn-link" data-i18n="[title]ns.common:openSettingTooltip;" id="openOptions">
-              <i class="fa fa-gears fa-lg"></i>&nbsp;
+            <button class="btn btn-link" data-i18n="[title]ns.common:;" id="closeLeftPanel">
+              <i class="fa fa-arrow-left fa-lg"></i>
             </button>
           </div>
         </div>
@@ -140,6 +140,7 @@
             <i class="fa fa-thumbs-o-up fa-stack-1x"></i></span>&nbsp;&nbsp;
             <span data-i18n="ns.common:supportUs"></span>
           </a><br>
+          <hr style="margin: 0; border-top: 1px solid #ddd" />
           <a class="btn btn-link" data-i18n="[title]ns.common:tweetAboutUsTooltip"
              href="https://twitter.com/intent/tweet?original_referer=http%3A%2F%2Ftagspaces.org%2F&text=Organize%20your%20files%20with%20@tagspaces"
              id="openTwitter">
@@ -189,16 +190,18 @@
           <input type="radio" name="options">&nbsp;<i class="fa fa-info-circle"></i>
         </label>
       </div>
+      <button class="btn btn-link pull-right" data-i18n="[title]ns.common:openSettingTooltip;" id="openOptions">
+        <i class="fa fa-gears fa-lg"></i>
+      </button>
     </div>
   </div>
 
   <div class="col2">
     <div class="row1">
       <nav class="navbar navbar-default" role="navigation">
-        <div class="btn-toolbar flexLayout">
-          <button type="button" class="navbar-toggle" id="toggleLeftPanel"
-                  data-i18n="[title]ns.common:toggleLeftPanelTooltip">
-            <span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>
+        <div class="flexLayout" style="min-height: 40px;">
+          <button type="button" class="btn btn-link" id="openLeftPanel" data-i18n="[title]ns.common:toggleLeftPanelTooltip">
+            <i class="fa fa-arrow-right fa-lg"></i>
           </button>
           <div class="flexMaxWidth">
             <div id="loadingAnimation" class="">
@@ -209,7 +212,7 @@
               </div>
             </div>
           </div>
-          <div id="mainTopMenu" class="input-group" style="white-space: nowrap;">
+          <div id="mainTopMenu" class="input-group">
             <button type="button" id="perspectiveSwitcherButton" class="btn btn-link dropdown-toggle"
                     data-toggle="dropdown"><i id="currentPerspectitveIcon" class="fa fa-film"></i>&nbsp;
               <span id="currentPerspectitveName">Perspectives</span>&nbsp;<span class="caret"></span>
@@ -218,8 +221,8 @@
           </div>
         </div>
         <div class="flexLayout">
-          <div class="btn-toolbar flexMaxWidth flexLayout">
-            <div class="btn-group " id="alternativeNavigator"></div>
+          <div class="flexMaxWidth flexLayout" style="min-width: 100px;">
+            <div class="btn-group " id="alternativeNavigator" style="min-width: 100px;"></div>
             <div id="statusBar" class="noWrap flexMaxWidth"></div>
             <div id="searchToolbar">
               <div class="flexLayout">
@@ -242,7 +245,7 @@
     <div class="row2" id="viewContainers"></div>
   </div>
 
-  <div class="col3">
+  <div class="col3" style="display: none;">
     <div class="row1">
       <nav class="navbar navbar-default" role="navigation">
         <div class="btn-toolbar flexLayout" >
@@ -809,6 +812,7 @@
 <div id="tagGroupMenu" class="dropdown clearfix">
   <ul class="dropdown-menu" role="menu" style="display:block;position:static;">
     <li class="dropdown-header">
+      <button class="close">&times;</button>
       <span data-i18n="ns.common:tagGroupOperations"></span></li>
     <li class="divider"></li>
     <li><a id="tagGroupMenuCreateNewTag" data-i18n="[title]ns.common:addTagsTooltip">
@@ -835,6 +839,7 @@
 <div id="directoryMenu" class="dropdown clearfix">
   <ul class="dropdown-menu" role="menu" style="display:block;position:static;">
     <li class="dropdown-header">
+      <button class="close">&times;</button>
       <span data-i18n="ns.common:directoryOperations"></span></li>
     <li class="divider"></li>
     <li><a id="directoryMenuReloadDirectory" data-i18n="[title]ns.common:reloadDirectoryTooltip">

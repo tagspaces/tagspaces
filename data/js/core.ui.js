@@ -334,8 +334,11 @@ define(function(require, exports, module) {
       TSCORE.IO.saveBinaryFile(TSCORE.currentPath + TSCORE.dirSeparator + addFileInputName, event.currentTarget.result);
       addFileInputName = undefined;
     }
-    $('#toggleLeftPanel').click(function() {
-      TSCORE.toggleLeftPanel();
+    $('#openLeftPanel').click(function() {
+      TSCORE.openLeftPanel();
+    });
+    $('#closeLeftPanel').click(function() {
+      TSCORE.closeLeftPanel();
     });
     $('#txtFileTypeButton').click(function(e) {
       // Fixes reloading of the application by click

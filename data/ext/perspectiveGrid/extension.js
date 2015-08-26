@@ -30,7 +30,9 @@ define(function(require, exports, module) {
       UI = new extUI.ExtUI(extensionID);
       UI.buildUI(toolbarTemplate);
       platformTuning();
-
+      if(isCordova) {
+        TSCORE.reLayout();
+      }
       $('#' + extensionID + 'Container [data-i18n]').i18n();
     });
   };
