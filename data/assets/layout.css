@@ -108,6 +108,10 @@
 	padding-left: 5px;
 }
 
+#showTagGroups, #showLocations, #contactUs {
+  width: 60px;
+}
+
 /*==== COL1 ====== */
 
 .col1 {
