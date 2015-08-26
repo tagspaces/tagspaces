@@ -9,7 +9,7 @@ define(function(require, exports, module) {
 
   var initPerspectives = function() {
     perspectives = [];
-    $('#viewSwitcher').empty();
+    $('#perspectiveSwitcher').empty();
     $('#viewToolbars').empty();
     $('#viewContainers').empty();
     $('#viewFooters').empty();
@@ -73,9 +73,9 @@ define(function(require, exports, module) {
 
   var initPerspectiveSwitcher = function() {
     var extensions = TSCORE.Config.getPerspectives();
-    var $viewSwitcher = $('#viewSwitcher');
-    $viewSwitcher.empty();
-    $viewSwitcher.append($('<li>', {
+    var $perspectiveSwitcher = $('#perspectiveSwitcher');
+    $perspectiveSwitcher.empty();
+    $perspectiveSwitcher.append($('<li>', {
       class: 'dropdown-header',
       text: $.i18n.t('ns.common:perspectiveSwitch')
     }).prepend("<button class='close'>&times;</button>"));
@@ -87,7 +87,7 @@ define(function(require, exports, module) {
           curPers = value;
         }
       }); // jshint ignore:line
-      $viewSwitcher.append($('<li>', {}).append($('<a>', {
+      $perspectiveSwitcher.append($('<li>', {}).append($('<a>', {
         'viewid': curPers.ID,
         'title': curPers.ID,
         'id': curPers.ID + 'Button',
@@ -247,8 +247,8 @@ define(function(require, exports, module) {
     hideAllPerspectives();
     for (var i = 0; i < perspectives.length; i++) {
       if (perspectives[i].ID === viewType) {
-        var $currentPerspectitveIcon = $('#currentPerspectitveIcon'),
-          $currentPerspectitveName = $('#currentPerspectitveName');
+        var $currentPerspectitveIcon = $('#currentPerspectitveIcon');
+        var $currentPerspectitveName = $('#currentPerspectitveName');
         $currentPerspectitveIcon.removeClass();
         $currentPerspectitveIcon.addClass(perspectives[i].Icon);
         $currentPerspectitveIcon.addClass('fa-lg');
@@ -277,15 +277,7 @@ define(function(require, exports, module) {
       }
     }
   };
-  /*var generateDesktop = function () {
-    for (var i=0; i < perspectives.length; i++) {
-        try {
-            perspectives[i].generateDesktop();
-        } catch(e) {
-            console.error("Error while executing 'generateDesktop' on "+perspectives[i].ID+" - "+e);
-        }
-    }
-};*/
+
   exports.initPerspectives = initPerspectives;
   exports.hideAllPerspectives = hideAllPerspectives;
   exports.redrawCurrentPerspective = redrawCurrentPerspective;
