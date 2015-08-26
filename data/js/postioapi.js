@@ -110,7 +110,7 @@ define(function(require, exports, module) {
 
   exports.deleteElement = function(filePath) {
     TSCORE.removeFileModel(TSCORE.fileList, filePath);
-    TSCORE.updateMetaData(filePath);
+    TSCORE.Meta.updateMetaData(filePath);
     TSCORE.PerspectiveManager.removeFileUI(filePath);
     if (filePath === TSCORE.FileOpener.getOpenedFilePath()) {
       TSCORE.FileOpener.closeFile(true);
