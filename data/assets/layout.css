@@ -134,7 +134,7 @@
   height: 100%;
   min-width: 300px;
   box-shadow: 2px 0px 3px -1px rgba(0,0,0,0.2);
-  z-index: 1;
+  z-index: 2;
 }
 
 .col1 .row1 {
@@ -194,6 +194,7 @@
 
   min-height: 80px;
   box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.1);
+  z-index: 1;
 }
 
 .col2 .row2 {
