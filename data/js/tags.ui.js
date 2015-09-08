@@ -20,12 +20,16 @@ define(function(require, exports, module) {
             '<button class="btn btn-link btn-lg tagGroupIcon" data-toggle="collapse" data-target="#tagButtons{{@index}}" data-i18n="[title]ns.common:toggleTagGroup" title="{{../toggleTagGroup}}">' +
                 '<i class="fa fa-tags fa-fw"></i>' +
             '</button>' +
-            '<button class="btn btn-link tagGroupTitle flexMaxWidth" key="{{key}}">{{title}}</button>' +
+            '<button class="btn btn-link tagGroupTitle flexMaxWidth" key="{{key}}">{{title}}({{children.length}})</button>' +
             '<button class="btn btn-link btn-lg tagGroupActions" key="{{key}}" data-i18n="[title]ns.common:tagGroupOperations" title="{{../tagGroupOperations}}">' +
                 '<b class="fa fa-ellipsis-v"></b>' +
             '</button>' +
         '</div>' +
-        '<div class="accordion-body collapse in" id="tagButtons{{@index}}">' +
+        '{{#if collapse}}' +
+          '<div class="accordion-body collapse" id="tagButtons{{@index}}">' +
+        '{{else}}' +
+          '<div class="accordion-body collapse in" id="tagButtons{{@index}}">' +
+        '{{/if}}' +
             '<div class="accordion-inner" id="tagButtonsContent{{@index}}" style="padding: 2px;">' +
                 '<div>' +
                     '{{#each children}}' +
@@ -250,6 +254,19 @@ define(function(require, exports, module) {
       'toggleTagGroup': $.i18n.t('ns.common:toggleTagGroup'),
       'tagGroupOperations': $.i18n.t('ns.common:tagGroupOperations')
     }));
+
+    $tagGroupsContent.find('.tagGroupIcon').each(function() {
+
+      $(this).on('click', function() {
+
+        var areaId = $(this).attr('data-target');
+        if (areaId) {
+          var index = areaId.substring(areaId.length-1);
+          tagGroups[index].collapse = $(areaId).is(':visible');
+          TSCORE.Config.saveSettings();
+        }
+      });
+    });
     $tagGroupsContent.find('.tagButton').each(function() {
       $(this).draggable({
         'appendTo': 'body',
