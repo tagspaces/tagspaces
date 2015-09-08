@@ -25,7 +25,6 @@ define(function(require, exports, module) {
   function ExtUI(extID) {
     this.extensionID = extID;
     this.viewContainer = $("#" + this.extensionID + "Container").empty();
-    this.viewToolbar = $("#" + this.extensionID + "Toolbar").empty();
 
     this.currentGrouping = ""; // tagchain, day, month, year
     this.thumbEnabled = false;
@@ -80,6 +79,25 @@ define(function(require, exports, module) {
       '<button class="btn btn-link fileTileSelector" filepath="{{filepath}}"><i class="fa {{selected}} fa-lg"></i></button>' +
     '</p></li>'
     );
+
+  var mainLayoutTemplate = Handlebars.compile(
+    '<div class="extMainContent accordion">' +
+      '<div class="accordion-group disableTextSelection" style="width: 100%; border: 0px #aaa solid;">' +
+        '<div class="accordion-heading  btn-group" style="width:100%; margin: 0px; border-bottom: solid 1px #eee; background-color: #ddd;">' +
+          '<button class="btn btn-link groupTitle" data-toggle="collapse" data-target="#perspectiveGridsortingButtons1" title="Toggle Group">' +
+            '<i class="fa fa-minus-square" i="">&nbsp;</i>' +
+          '</button>' +
+          '<span class="btn btn-link groupTitle" style="margin-left: 0px; padding-left: 0px;">No Grouping</span>' +
+        '</div>' +
+        '<div class="accordion-body collapse in" id="perspectiveGridsortingButtons1" style="margin: 0px 0px 0px 3px; border: 0px;">' +
+          '<div class="accordion-inner" id="perspectiveGridsortingButtonsContent1" style="padding: 2px; border: 0px;">' +
+            '<ol style="overflow: visible;" class="selectableFiles">' +
+            '</ol>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+    '</div>'
+  );
 
   ExtUI.prototype.createFileTile = function(title, filePath, fileExt, fileTags, isSelected, metaObj) {
     //TODO minimize platform specific calls     
@@ -181,28 +199,24 @@ define(function(require, exports, module) {
     console.log("Init UI module");
 
     var self = this;
+    this.viewContainer.append(toolbarTemplate({ id: this.extensionID }));
 
-    var context = { id: this.extensionID };
-    this.viewContainer.append("<div class='extMainContent'></div>");
-    this.viewContainer.append(toolbarTemplate(context));
-
-    $("#" + this.extensionID + "ToogleSelectAll")
-      .click(function() {
-        var checkIcon = $(this).find("i");
-        if (checkIcon.hasClass("fa-square-o")) {
-          TSCORE.selectedFiles = [];
-          $(self.viewContainer).find('.fileTileSelector').each(function() {
-            $(this).parent().parent().addClass("ui-selected");
-            $(this).find("i").addClass("fa-check-square").removeClass("fa-square-o");
-            TSCORE.selectedFiles.push($(this).attr("filepath"));
-          });
-        } else {
-          TSCORE.PerspectiveManager.clearSelectedFiles();
-        }
-        self.handleElementActivation();
-        checkIcon.toggleClass("fa-check-square");
-        checkIcon.toggleClass("fa-square-o");
-      });
+    $("#" + this.extensionID + "ToogleSelectAll").on("click", function() {
+      var checkIcon = $(this).find("i");
+      if (checkIcon.hasClass("fa-square-o")) {
+        TSCORE.selectedFiles = [];
+        $(self.viewContainer).find('.fileTileSelector').each(function() {
+          $(this).parent().parent().addClass("ui-selected");
+          $(this).find("i").addClass("fa-check-square").removeClass("fa-square-o");
+          TSCORE.selectedFiles.push($(this).attr("filepath"));
+        });
+      } else {
+        TSCORE.PerspectiveManager.clearSelectedFiles();
+      }
+      self.handleElementActivation();
+      checkIcon.toggleClass("fa-check-square");
+      checkIcon.toggleClass("fa-square-o");
+    });
 
     $("#" + this.extensionID + "CreateFileButton").on("click", function() {
       TSCORE.showFileCreateDialog();
@@ -224,40 +238,34 @@ define(function(require, exports, module) {
       TSCORE.createTXTFile();
     });
 
-    $("#" + this.extensionID + "IncludeSubDirsButton")
-      .click(function() {
-        TSCORE.IO.createDirectoryIndex(TSCORE.currentPath);
-      });
+    $("#" + this.extensionID + "IncludeSubDirsButton").on("click", function() {
+      TSCORE.IO.createDirectoryIndex(TSCORE.currentPath);
+    });
 
-    $("#" + this.extensionID + "TagButton")
-      .click(function() {
-        TSCORE.showAddTagsDialog();
-      });
+    $("#" + this.extensionID + "TagButton").on("click", function() {
+      TSCORE.showAddTagsDialog();
+    });
 
-    $("#" + this.extensionID + "ShowTmbButton")
-      .click(function() {
-        self.toggleThumbnails();
-      });
+    $("#" + this.extensionID + "ShowTmbButton").on("click", function() {
+      self.toggleThumbnails();
+    });
 
-    $("#" + this.extensionID + "CopyMoveButton")
-      .click(function() {
-        TSCORE.showMoveCopyFilesDialog();
-      });
+    $("#" + this.extensionID + "CopyMoveButton").on("click", function() {
+      TSCORE.showMoveCopyFilesDialog();
+    });
 
     $("#" + this.extensionID + "AddFileButton").on("click", function() {
       $("#addFileInput").click();
     });
 
-    $("#" + this.extensionID + "DeleteSelectedFilesButton")
-      .click(function() {
-
-        TSCORE.showConfirmDialog($.i18n.t('ns.dialogs:fileDeleteTitleConfirm'), 
-          $.i18n.t('ns.dialogs:selectedFilesDeleteContentConfirm'), function() {
-            TSCORE.selectedFiles.forEach(function(file) {
-              TSCORE.IO.deleteElement(file);
-            });
+    $("#" + this.extensionID + "DeleteSelectedFilesButton").on("click", function() {
+      TSCORE.showConfirmDialog($.i18n.t('ns.dialogs:fileDeleteTitleConfirm'),
+        $.i18n.t('ns.dialogs:selectedFilesDeleteContentConfirm'), function() {
+          TSCORE.selectedFiles.forEach(function(file) {
+            TSCORE.IO.deleteElement(file);
           });
-      });
+        });
+    });
 
     // Init Tag Context Menus
     this.viewContainer.on("contextmenu click", ".tagButton", function() {
@@ -269,9 +277,6 @@ define(function(require, exports, module) {
     });
 
     this.initFileGroupingMenu();
-
-    // Disable all buttons    
-    this.viewToolbar.find(".btn").prop('disabled', true);
 
     this.toggleThumbnails();
   };
@@ -319,7 +324,6 @@ define(function(require, exports, module) {
   };
 
   ExtUI.prototype.disableThumbnails = function() {
-    //this.currentTmbSize = 0;
     $("#" + this.extensionID + "IncreaseThumbsButton").prop('disabled', true);
     $("#" + this.extensionID + "Container .thumbImgTile").each(function() {
       $(this).attr('style', "width: 0px; height: 0px; border: 0px");
@@ -451,6 +455,9 @@ define(function(require, exports, module) {
   };
 
   ExtUI.prototype.reInit = function() {
+
+    this.viewContainer.append(mainLayoutTemplate({ id: this.extensionID }));
+
     var $extMainContent = this.viewContainer.find(".extMainContent");
 
     // Clear old data
@@ -484,7 +491,7 @@ define(function(require, exports, module) {
               "data-target": "#" + self.extensionID + "sortingButtons" + i,
               "title": "Toggle Group"
             })
-            .html("<i class='fa fa-minus-square' /i>&nbsp;")
+            .html("<i class='fa fa-minus-square'>&nbsp;")
             .click(function() {
               $(this).find('i').toggleClass("fa-minus-square").toggleClass("fa-plus-square");
             })

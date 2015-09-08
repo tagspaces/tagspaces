@@ -24,7 +24,8 @@ define(function(require, exports, module) {
     console.log("Initializing perspective " + extensionID);
     require([
       extensionDirectory + '/perspectiveUI.js',
-      "text!" + extensionDirectory + '/toolbar.html'
+      "text!" + extensionDirectory + '/toolbar.html',
+      "css!" + extensionDirectory + '/extension.css',
     ], function(extUI, toolbarTPL) {
       var toolbarTemplate = Handlebars.compile(toolbarTPL);
       UI = new extUI.ExtUI(extensionID);
