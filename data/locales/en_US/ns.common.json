@@ -62,6 +62,7 @@
     "deleteTagFromTagGroupTooltip": "Delete the tag from the taggroup",
     "deleteTagFromTagGroup": "Delete Tag",
     "tagGroupOperations": "Tag Group Operations",
+    "tagGroupTagsCount": "Number of tags in the tag group",
     "addTagsTooltip": "Add tags to tag group",
     "addTags": "Add Tags",
     "importTagsTooltip": "Import tags to tag group",
