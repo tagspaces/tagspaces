@@ -207,6 +207,10 @@ define(function(require, exports, module) {
         return false;
       }
     }
+
+    $('#fileTags').find('button').prop('disabled', false);
+    $('#addTagFileViewer').prop('disabled', false);
+
     _isEditMode = false;
     _isFileChanged = false;
     _openedFilePath = filePath;
