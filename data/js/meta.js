@@ -150,7 +150,7 @@ define(function(require, exports, module) {
   function getTagsFromMetaFile(filePath) {
     var tags = [];
     var metaObj = findMetaObjectFromFileList(filePath);
-    if (metaObj.metaData && metaObj.metaData.tags) {
+    if (metaObj && metaObj.metaData && metaObj.metaData.tags) {
       metaObj.metaData.tags.forEach(function(elem) {
         tags.push({
           tag: elem.title,
