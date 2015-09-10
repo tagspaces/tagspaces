@@ -95,6 +95,7 @@
     "locationPathSelectFolder": "Select local folder",
     "optionsTitle": "Options",
     "generalTab": "General",
+    "proTab": "PRO",
     "perspectivesTab": "Perspectives",
     "fileTypeTab": "File Types",
     "keyBindingsTab": "Key Bindings",
@@ -145,6 +146,7 @@
     "operationNotPermittedInEditModeAlert": "This operation is not permitted because the document has been already changed.",
     "exportTagGroupsButton": "Export Tag Groups as JSON",
     "showMainMenu": "Show main menu (restart needed)",
+    "writeTagsToFiles": "Write tags to files",
     "invalidImportFile": "The imported file has invalid format",
     "importGroupTagsTitle": "Import tags from file",
     "-": "-"

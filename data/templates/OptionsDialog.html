@@ -10,6 +10,9 @@
             <div class="modal-body form" id="optionsAccordion" style="">
                 <ul class="nav nav-tabs" style="margin-bottom: 15px;">
                     <li><a href="#general" data-toggle="tab" class="optionsTitle" data-i18n="ns.dialogs:generalTab"></a></li>
+                    {{#if isProVersion}}
+                        <li><a href="#pro" data-toggle="tab" class="optionsTitle" data-i18n="ns.dialogs:proTab"></a></li>
+                    {{/if}}
                     <li><a href="#perspectives" data-toggle="tab" class="optionsTitle" data-i18n="ns.dialogs:perspectivesTab"></a></li>
                     <li><a href="#filetypes" data-toggle="tab" class="optionsTitle" data-i18n="ns.dialogs:fileTypeTab"></a></li>
                     <li><a href="#keyBindings" data-toggle="tab" class="optionsTitle" data-i18n="ns.dialogs:keyBindingsTab"></a></li>
@@ -65,7 +68,22 @@
                             <div class="col-sm-9" style="margin-top: 0;" data-i18n="ns.dialogs:showMainMenu"></div>
                         </div>
                     </div>
-
+                    {{#if isProVersion}}
+                    <div class="tab-pane active" id="pro" style="height: 100%;">
+                        <div class='form-group row' style="margin: 15px 0 0 0;">
+                            <div class="col-sm-2">
+                                <div class="onoffswitch">
+                                    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="writeTagsToFiles" checked>
+                                    <label class="onoffswitch-label" for="writeTagsToFiles">
+                                        <span class="onoffswitch-inner"></span>
+                                        <span class="onoffswitch-switch"></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-sm-9" style="margin-top: 0;" data-i18n="ns.dialogs:writeTagsToFiles"></div>
+                        </div>
+                    </div> 
+                    {{/if}}
                     <div class="tab-pane" id="perspectives" style="height: 100%;">
                         <button class='btn btn-default' id='addPerspectiveButton'>
                             <i class='fa fa-plus'></i>&nbsp;<span data-i18n="ns.dialogs:addPerspectiveButton"></span>
