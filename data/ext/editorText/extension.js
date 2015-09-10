@@ -33,7 +33,7 @@ define(function(require, exports, module) {
 
     var fileExt = filePath.substring(filePath.lastIndexOf(".") + 1, filePath.length).toLowerCase();
 
-    $("#" + containerElementID).append('<div id="code" style="width: 100%; height: 100%">');
+    $("#" + containerElementID).append('<div id="code" style="width: 100%; height: 100%; z-index: 0;">');
     var mode = filetype[fileExt];
     if (!mode) {
       mode = "properties";
