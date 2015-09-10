@@ -57,6 +57,7 @@ define(function (require, exports, module) {
             { "iso": "nl_NL", "title": "Nederlands (Dutch)" },
             { "iso": "zh_TW", "title": "台灣 (Chinese Taiwan BIG5)" },
             { "iso": "hu", "title": "Magyar (Hungarian)" },
+            { "iso": "id_ID", "title": "bahasa Indonesia (Indonesian)" },
         ],
         "keyBindings": {
             "closeViewer": "mod+w",
