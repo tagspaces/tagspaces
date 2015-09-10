@@ -177,14 +177,14 @@ define(function(require, exports, module) {
             "path": path
           });
         }
-        if(resultCallback) {
+        if (resultCallback) {
           resultCallback(anotatedDirList);
         } else {
           TSPOSTIO.listDirectory(anotatedDirList);
         }
       })
       .fail(function(data) {
-        if(resultCallback) {
+        if (resultCallback) {
           resultCallback(anotatedDirList);
         } else {
           TSPOSTIO.errorOpeningPath(dirPath);
@@ -195,7 +195,7 @@ define(function(require, exports, module) {
 
   var getDirectoryMetaInformation = function(dirPath, readyCallback) {
     listDirectory(dirPath, function(anotatedDirList) {
-    TSCORE.metaFileList = anotatedDirList;
+      TSCORE.metaFileList = anotatedDirList;
       readyCallback(anotatedDirList);
     });
   };
