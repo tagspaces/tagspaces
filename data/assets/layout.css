@@ -204,6 +204,7 @@
 
   overflow-y: auto;
   min-height: 0px;
+  border-right: solid 1px #ddd;
 }
 
 .col2 .row3 {
