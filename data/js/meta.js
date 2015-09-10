@@ -17,7 +17,7 @@ define(function(require, exports, module) {
     if (TSCORE.IO.getDirectoryMetaInformation) {
       var metaFolderPath = TSCORE.currentPath + TSCORE.dirSeparator + metaFolder;
       TSCORE.IO.getDirectoryMetaInformation(metaFolderPath, function() {
-        readyCallback()
+        readyCallback();
       });
     } else {
       readyCallback();

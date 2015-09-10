@@ -96,9 +96,9 @@ define(function(require, exports, module) {
 
   function openLocation(path) {
     console.log('Opening location in : ' + path);
-    if (TSCORE.Config.getLoadLocationMeta()) {
-      loadFolderMetaData(path);
-    }
+    //if (TSCORE.Config.getLoadLocationMeta()) {
+    //  loadFolderMetaData(path);
+    //}
     TSCORE.currentLocationObject = TSCORE.Config.getLocation(path);
     if (TSCORE.currentLocationObject !== undefined) {
       document.title = TSCORE.currentLocationObject.name + ' | ' + TSCORE.Config.DefaultSettings.appName;
@@ -133,14 +133,25 @@ define(function(require, exports, module) {
       } else {
         metadataPath = 'file://' + path + TSCORE.dirSeparator + tsMetadataFolder + TSCORE.dirSeparator + tsMetadataFile;
       }
+
       $.get(metadataPath, function(data) {
         if (data.length > 1) {
           var metadata = JSON.parse(data);
           console.log('Location Metadata: ' + JSON.stringify(metadata));
           if (metadata.tagGroups.length > 0) {
-            TSCORE.locationTags = metadata.tagGroups;
-            TSCORE.generateTagGroups();
+            if ($('#locationContentTagGroups').length === 0) {
+              $('#locationContent').append('<div id="locationContentTagGroups"></div>');
+            }
+            TSCORE.generateTagGroups('#locationContentTagGroups', metadata.tagGroups);
           }
+        }
+      }).fail(function() {
+        if (TSCORE.PRO) {
+          var tagGroups = TSCORE.PRO.getDefaultTagGroups();
+          if ($('#locationContentTagGroups').length === 0) {
+            $('#locationContent').append('<div id="locationContentTagGroups"></div>');
+          }
+          TSCORE.generateTagGroups('#locationContentTagGroups', tagGroups);
         }
       });
     }
@@ -371,6 +382,7 @@ define(function(require, exports, module) {
     TSCORE.currentPath = directoryPath;
     TSCORE.Meta.getDirectoryMetaInformation(function() {
       TSCORE.IO.listDirectory(directoryPath); 
+      loadFolderMetaData(directoryPath);
     });
   }
 
