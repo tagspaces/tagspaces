@@ -92,11 +92,11 @@ define(function(require, exports, module) {
     //   TSCORE.FileOpener.openFile(cmdArguments);
     //});
     var cmdArguments = gui.App.argv;
-    if (cmdArguments !== undefined && cmdArguments.length > 0) {
-      console.log("CMD Arguments: " + cmdArguments + " Process running in " + process.cwd());
+    if (cmdArguments && cmdArguments.length > 0) {
+      console.log("CMD Arguments: " + cmdArguments[0] + " Process running in " + process.cwd());
       var dataPathIndex;
       cmdArguments.forEach(function(part, index) {
-        if (part === "--data-path") {
+        if (part.indexOf("--data-path") === 0) {
           dataPathIndex = index;
         }
       });
@@ -105,9 +105,11 @@ define(function(require, exports, module) {
       }
       console.log("CMD Arguments cleaned: " + cmdArguments);
       var filePath = "" + cmdArguments;
-      var dirPath = TSCORE.TagUtils.extractContainingDirectoryPath(filePath);
-      TSCORE.IO.listDirectory(dirPath);
-      TSCORE.FileOpener.openFileOnStartup(filePath);
+      if(filePath.length > 1 ) {
+        var dirPath = TSCORE.TagUtils.extractContainingDirectoryPath(filePath);
+        TSCORE.IO.listDirectory(dirPath);
+        TSCORE.FileOpener.openFileOnStartup(filePath);
+      }
     }
   };
 

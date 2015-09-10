@@ -1,2 +1,2 @@
 #!/bin/bash
-./tagspaces --data-path . &
+./tagspaces --data-path=data &
