@@ -1,26 +1,26 @@
 {
     "saveAsSelectionLabel": {
-        "message": "Salvar Seleção",
+        "message": "Simpan bagian terpilih",
         "description": "Title of label."
     },
     "appLauncher": {
-        "message": "Abrir TagSpaces",
+        "message": "Buka TagSpaces",
         "description": "Title of the application launcher in the browser."
     },
     "appDesc": {
-        "message": "Navegador de Arquivos com Varredura de Conteúdo Web e Suporte ao Chromecast.",
+        "message": "Browser File dengan Support Web Content Scraping dan Chromecast.",
         "description": ""
     },
     "addTagHelp": {
-        "message": "Nome de etiquetas devem ter, no mínimo,  2 caracteres e não devem conter caracteres especiais, tais como, espaço, #, /, \\ dentre outros.",
+        "message": "Tag harus minimal 2 karakter dan tidak boleh mengandung karakter khusus seperti spasi, #, /,\\ dan lain-lain.",
         "description": "Add tag help message"
     },
     "saveScreenshotTitle": {
-        "message": "Salvar captura de tela da parte visível da página como PNG",
+        "message": "Simpan screenshot dari bagian halaman yang tampak sebagai PNG",
         "description": "Title of screenshot button"
     },
     "editTitleLabel": {
-        "message": "Editar Título",
+        "message": "Edit Judul",
         "description": "Title of label."
     },
     "appName": {
@@ -28,35 +28,35 @@
         "description": ""
     },
     "appLauncherLabel": {
-        "message": "Capturar Conteúdo Web",
+        "message": "Capture Web Content",
         "description": "Title of label."
     },
     "saveScreenshotLabel": {
-        "message": "Captura de Tela",
+        "message": "screenshot",
         "description": "Title of label."
     },
     "addTagLabel": {
-        "message": "Adicionar Etiquetas",
+        "message": "Tambahkan Tag",
         "description": "Title of label."
     },
     "saveAsMhtmlTitle": {
-        "message": "Salvar página inteira como MHTML",
+        "message": "Simpan seluruh halaman sebagai MHTML",
         "description": "Title of save page button"
     },
     "appLauncherTitle": {
-        "message": "Iniciar Navegador TagSpaces em uma nova aba",
+        "message": "Buka Browser TagSpaces pada halaman baru",
         "description": "Title of the application launcher in the browser."
     },
     "saveSelectionAsHtmlTitle": {
-        "message": "Salvar conteúdo selecionado como HTML",
+        "message": "Simpan bagian yang dipilih sebagai HTML",
         "description": "Title of save selection button"
     },
     "saveAsMhtmlLabel": {
-        "message": "Salvar Página Inteira",
+        "message": "Simpan Seluruh Halaman",
         "description": "Title of label."
     },
     "saveFileLabel": {
-        "message": "Salvar como Arquivo",
+        "message": "Simpan sebagai file",
         "description": "Title of label."
     }
 }

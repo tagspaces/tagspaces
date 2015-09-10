@@ -12,7 +12,7 @@
         "description": ""
     },
     "addTagHelp": {
-        "message": "Tags should have a minimum length of 2 characters and should not contain special characters such as spaces, #, / ,\\ and other.",
+        "message": "태그는 최소 2글자 이상이어야 합니다. 태그에 공백, #, /, \\ 등 특수기호를 사용할 수 없습니다",
         "description": "Add tag help message"
     },
     "saveScreenshotTitle": {
@@ -20,7 +20,7 @@
         "description": "Title of screenshot button"
     },
     "editTitleLabel": {
-        "message": "Edit Title",
+        "message": "제목 수정",
         "description": "Title of label."
     },
     "appName": {
@@ -44,7 +44,7 @@
         "description": "Title of save page button"
     },
     "appLauncherTitle": {
-        "message": "Start TagSpaces Browser in a new tab",
+        "message": "새로운 브라우저 탭에서 TagSpaces 시작",
         "description": "Title of the application launcher in the browser."
     },
     "saveSelectionAsHtmlTitle": {
