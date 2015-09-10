@@ -261,7 +261,7 @@ define(function(require, exports, module) {
 
         var areaId = $(this).attr('data-target');
         if (areaId) {
-          var index = areaId.substring(areaId.length-1);
+          var index = areaId.substring(areaId.length - 1);
           tagGroups[index].collapse = $(areaId).is(':visible');
           TSCORE.Config.saveSettings();
         }
@@ -409,7 +409,7 @@ define(function(require, exports, module) {
         }
       }
       var metaTags = TSCORE.Meta.getTagsFromMetaFile(filePath);
-      if(metaTags.length > 0) {
+      if (metaTags.length > 0) {
         context.tags = context.tags.concat(metaTags);
       }
       return tagButtonTmpl(context);

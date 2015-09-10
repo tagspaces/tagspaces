@@ -17,7 +17,7 @@ define(function(require, exports, module) {
     if (TSCORE.IO.getDirectoryMetaInformation) {
       var metaFolderPath = TSCORE.currentPath + TSCORE.dirSeparator + metaFolder;
       TSCORE.IO.getDirectoryMetaInformation(metaFolderPath, function() {
-        readyCallback()
+        readyCallback();
       });
     } else {
       readyCallback();
@@ -35,26 +35,26 @@ define(function(require, exports, module) {
       }
       return true;
     });
-    return  metaFilePath;
+    return metaFilePath;
   }
 
   function findMetaObjectFromFileList(filePath) {
     var metaObj = null;
     TSCORE.fileList.every(function(element) {
-      if(element[TSCORE.fileListFILEPATH] === filePath) {
+      if (element[TSCORE.fileListFILEPATH] === filePath) {
         metaObj = element[TSCORE.fileListMETA];
         return false;
       }
       return true;
     });
-    return  metaObj;
+    return metaObj;
   }
 
   function saveMetaData(filePath, metaData) {
     
     var metaFilePath = findMetaFilebyPath(filePath, metaFileExt);
 
-    if(!metaFilePath) {
+    if (!metaFilePath) {
       var name = TSCORE.Utils.baseName(filePath) + "." + metaFileExt;
       metaFilePath = TSCORE.currentPath + TSCORE.dirSeparator + 
         metaFolder + TSCORE.dirSeparator + name;
@@ -74,23 +74,20 @@ define(function(require, exports, module) {
   function updateTsMetaData(oldFileName, newFileName)  { 
     var name = TSCORE.Utils.baseName(oldFileName);
     TSCORE.metaFileList.forEach(function(element, index) {
+      if (element.name.indexOf(name) >= 0) {
+        if (newFileName) {
+          var newName = TSCORE.Utils.baseName(newFileName) + "." + element.name.split('.').pop();
+          var newFilePath = TSCORE.currentPath + TSCORE.dirSeparator +
+            metaFolder + TSCORE.dirSeparator + newName;
 
-        if(element.name.indexOf(name) >= 0) {
-          
-          if(newFileName) {
-            var newName = TSCORE.Utils.baseName(newFileName) + "." + element.name.split('.').pop(); 
-            var newFilePath = TSCORE.currentPath + TSCORE.dirSeparator +  
-              metaFolder + TSCORE.dirSeparator + newName;
-
-            TSCORE.IO.renameFile(element.path, newFilePath);
-            element.name = newName;
-            element.path = newFilePath;
-            
-          } else {
-            TSCORE.IO.deleteElement(element.path);
-            TSCORE.metaFileList.splice(index, 1);
-          }
+          TSCORE.IO.renameFile(element.path, newFilePath);
+          element.name = newName;
+          element.path = newFilePath;
+        } else {
+          TSCORE.IO.deleteElement(element.path);
+          TSCORE.metaFileList.splice(index, 1);
         }
+      }
     });
   }
 
@@ -202,9 +199,9 @@ define(function(require, exports, module) {
 
   function reanmeMetaTag(filePath, oldTag, newTag) {
     var metaObj = findMetaObjectFromFileList(filePath);
-    if(metaObj.metaData) {
+    if (metaObj.metaData) {
       metaObj.metaData.tags.forEach(function(tag , index) {
-        if(tag.title === oldTag) {
+        if (tag.title === oldTag) {
           tag.title = newTag;
         }
       });
@@ -214,9 +211,9 @@ define(function(require, exports, module) {
 
   function removeMetaTag(filePath, tagName) {
     var metaObj = findMetaObjectFromFileList(filePath);
-    if(metaObj.metaData) {
+    if (metaObj.metaData) {
       metaObj.metaData.tags.forEach(function(tag , index) {
-        if(tag.title === tagName) {
+        if (tag.title === tagName) {
           metaObj.metaData.tags.splice(index , 1);
         }
       });

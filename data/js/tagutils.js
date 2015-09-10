@@ -456,7 +456,7 @@ define(function(require, exports, module) {
       }
     }
     var newFileName = generateFileName(fileName, extractedTags);
-    if(newFileName !== fileName) {
+    if (newFileName !== fileName) {
       TSCORE.IO.renameFile(filePath, containingDirectoryPath + TSCORE.dirSeparator + newFileName);
     }
   }
@@ -494,7 +494,7 @@ define(function(require, exports, module) {
       }
     }
     var newFileName = generateFileName(fileName, newTags);
-    if(newFileName !== fileName) {
+    if (newFileName !== fileName) {
       TSCORE.IO.renameFile(filePath, containingDirectoryPath + TSCORE.dirSeparator + newFileName);
     }
   }

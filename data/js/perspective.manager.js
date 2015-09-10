@@ -63,28 +63,27 @@ define(function(require, exports, module) {
   function initPerspective(extPath) {
 
     return new Promise(function(resolve, reject) {
-
       require([extPath], function(perspective) {
         perspectives.push(perspective);
        
-          // Creating perspective's toolbar
-          $('#viewToolbars').append($('<div>', {
-            id: perspective.ID + 'Toolbar',
-            class: 'btn-toolbar'
-          }).hide());
-          // Creating perspective's container
-          $('#viewContainers').append($('<div>', {
-            id: perspective.ID + 'Container',
-            style: 'width: 100%; height: 100%'
-          }).hide());
-          // Creating perspective's footer
-          $('#viewFooters').append($('<div>', {
-            id: perspective.ID + 'Footer'
-          }).hide());
-          //TODO: return init as promise
-          perspective.init();
-          resolve(true);
-        }); // jshint ignore:line
+        // Creating perspective's toolbar
+        $('#viewToolbars').append($('<div>', {
+          id: perspective.ID + 'Toolbar',
+          class: 'btn-toolbar'
+        }).hide());
+        // Creating perspective's container
+        $('#viewContainers').append($('<div>', {
+          id: perspective.ID + 'Container',
+          style: 'width: 100%; height: 100%'
+        }).hide());
+        // Creating perspective's footer
+        $('#viewFooters').append($('<div>', {
+          id: perspective.ID + 'Footer'
+        }).hide());
+        //TODO: return init as promise
+        perspective.init();
+        resolve(true);
+      }); // jshint ignore:line
     }); 
   }
 
