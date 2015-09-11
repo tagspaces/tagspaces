@@ -172,14 +172,13 @@ define(function(require, exports, module) {
     });
   }
 
-  function generateTagGroups(tabId, tagGroups) {
+  function generateTagGroups() {
     console.log('Generating TagGroups...');
-    var $tagGroupsContent = (tabId !== null) ? $(tabId) : $('#tagGroupsContent');
-    var tagGroups = (tagGroups !== null) ? tagGroups : TSCORE.Config.Settings.tagGroups;
+    var $tagGroupsContent = $('#tagGroupsContent');
     $tagGroupsContent.children().remove();
     $tagGroupsContent.addClass('accordion');
     // Show TagGroup create button if no taggroup exist
-    if (tagGroups.length < 1) {
+    if (TSCORE.Config.Settings.tagGroups.length < 1) {
       $tagGroupsContent.append($('<button>', {
         'class': 'btn',
         'text': $.i18n.t('ns.common:createTagGroup'),
@@ -189,7 +188,7 @@ define(function(require, exports, module) {
       }));
       return true; // quit the taggroup generation
     }
-    
+    var tagGroups = TSCORE.Config.Settings.tagGroups;
     var tag;
     // Cleaning Special TagGroups
     for (var k = 0; k < tagGroups.length; k++) {
@@ -251,14 +250,6 @@ define(function(require, exports, module) {
       'toggleTagGroup': $.i18n.t('ns.common:toggleTagGroup'),
       'tagGroupOperations': $.i18n.t('ns.common:tagGroupOperations')
     }));
-
-    if(tabId !== null) {
-      if (TSCORE.PRO) {
-        TSCORE.PRO.setContextMenu($tagGroupsContent, tagGroups);
-      }
-      return false;
-    }
-
     $tagGroupsContent.find('.tagButton').each(function() {
       $(this).draggable({
         'appendTo': 'body',

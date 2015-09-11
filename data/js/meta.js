@@ -7,7 +7,8 @@ define(function(require, exports, module) {
   var metaFileExt = "json";
   var metaFolder = ".ts";
   var thumbFileExt = "png";
-
+  var tsMetadataFile = 'tsm.json';
+  
   function makeMetaPathByName(name) {
     return TSCORE.currentPath + TSCORE.dirSeparator + metaFolder + name;
   }
@@ -150,7 +151,7 @@ define(function(require, exports, module) {
   function getTagsFromMetaFile(filePath) {
     var tags = [];
     var metaObj = findMetaObjectFromFileList(filePath);
-    if (metaObj.metaData && metaObj.metaData.tags) {
+    if (metaObj && metaObj.metaData && metaObj.metaData.tags) {
       metaObj.metaData.tags.forEach(function(elem) {
         tags.push({
           tag: elem.title,
@@ -228,6 +229,25 @@ define(function(require, exports, module) {
     }
   }
 
+  function loadFolderMetaData(path , resultCb) {
+    var metadataPath;
+    if (isWeb) {
+      metadataPath = path + TSCORE.dirSeparator + metaFolder + TSCORE.dirSeparator + tsMetadataFile;
+    } else {
+      metadataPath = 'file://' + path + TSCORE.dirSeparator + metaFolder + TSCORE.dirSeparator + tsMetadataFile;
+    }
+
+    $.get(metadataPath, function(data) {
+        if (data.length > 1) {
+          var metadata = JSON.parse(data);
+          console.log('Location Metadata: ' + JSON.stringify(metadata));
+          resultCb(metadata);
+        }
+      }).fail(function() {
+        resultCb();
+    });
+  }
+
   exports.getDirectoryMetaInformation = getDirectoryMetaInformation;
   exports.findMetaFilebyPath  =  findMetaFilebyPath;
   exports.findMetaObjectFromFileList = findMetaObjectFromFileList;
@@ -239,4 +259,5 @@ define(function(require, exports, module) {
   exports.addMetaTags = addMetaTags;
   exports.reanmeMetaTag = reanmeMetaTag;
   exports.removeMetaTag = removeMetaTag;
+  exports.loadFolderMetaData = loadFolderMetaData;
 });

@@ -11,8 +11,7 @@ define(function(require, exports, module) {
   var TSPRO = require('tspro');
   var directoryHistory = [];
   var dir4ContextMenu = null;
-  var tsMetadataFolder = '.ts';
-  var tsMetadataFile = 'tsm.json';
+
   var alternativeDirectoryNavigatorTmpl = Handlebars.compile(
     '{{#each dirHistory}}' +
     '<div class="btn-group">' +
@@ -96,9 +95,6 @@ define(function(require, exports, module) {
 
   function openLocation(path) {
     console.log('Opening location in : ' + path);
-    //if (TSCORE.Config.getLoadLocationMeta()) {
-    //  loadFolderMetaData(path);
-    //}
     TSCORE.currentLocationObject = TSCORE.Config.getLocation(path);
     if (TSCORE.currentLocationObject !== undefined) {
       document.title = TSCORE.currentLocationObject.name + ' | ' + TSCORE.Config.DefaultSettings.appName;
@@ -127,34 +123,40 @@ define(function(require, exports, module) {
   }
 
   function loadFolderMetaData(path) {
-      var metadataPath;
-      if (isWeb) {
-        metadataPath = path + TSCORE.dirSeparator + tsMetadataFolder + TSCORE.dirSeparator + tsMetadataFile;
-      } else {
-        metadataPath = 'file://' + path + TSCORE.dirSeparator + tsMetadataFolder + TSCORE.dirSeparator + tsMetadataFile;
-      }
 
-      $.get(metadataPath, function(data) {
-        if (data.length > 1) {
-          var metadata = JSON.parse(data);
-          console.log('Location Metadata: ' + JSON.stringify(metadata));
-          if (metadata.tagGroups.length > 0) {
-            if ($('#locationContentTagGroups').length === 0) {
-              $('#locationContent').append('<div id="locationContentTagGroups"></div>');
-            }
-            TSCORE.generateTagGroups('#locationContentTagGroups', metadata.tagGroups);
-          }
-        }
-      }).fail(function() {
-        if (TSCORE.PRO) {
-          var tagGroups = TSCORE.PRO.getDefaultTagGroups();
-          if ($('#locationContentTagGroups').length === 0) {
-            $('#locationContent').append('<div id="locationContentTagGroups"></div>');
-          }
-          TSCORE.generateTagGroups('#locationContentTagGroups', tagGroups);
+    TSCORE.Meta.loadFolderMetaData(path, function(metaData) {
+      generateFolderTags(metaData ? metaData.tags : null);
+    });
+  }
+
+  function generateFolderTags(tags) {
+
+    if ($('#locationContentTags').length === 0) {
+      $('#locationContent').append('<div id="locationContentTags" style="padding: 2px;"></div>');
+    } else {
+      $('#locationContentTags').empty();
+    }
+
+    var tagString = '';
+    if (tags) {
+      tags.forEach(function(value, index) {
+        if (index === 0) {
+          tagString = value.title;
+        } else {
+          tagString = tagString + ',' + value.title;
         }
       });
+
+      var genTagsBtns = TSCORE.generateTagButtons(tagString);
+      if (genTagsBtns) {
+        $('#locationContentTags').append(genTagsBtns);  
+      }
     }
+
+    if(TSCORE.PRO) {
+      TSCORE.PRO.setContextMenu($('#locationContentTags'), tags);
+    }
+  }
 
   // Updates the directory subtree
   function updateSubDirs(dirList) {
@@ -716,4 +718,5 @@ define(function(require, exports, module) {
   exports.initLocations = initLocations;
   exports.showCreateDirectoryDialog = showCreateDirectoryDialog;
   exports.navigateToDirectory = navigateToDirectory;
+  exports.generateFolderTags = generateFolderTags;
 });

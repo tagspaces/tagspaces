@@ -498,7 +498,7 @@ define(function(require, exports, module) {
   exports.showCreateDirectoryDialog = tsDirectoriesUI.showCreateDirectoryDialog;
   exports.closeCurrentLocation = tsDirectoriesUI.closeCurrentLocation;
   exports.navigateToDirectory = tsDirectoriesUI.navigateToDirectory;
-
+  exports.generateFolderTags = tsDirectoriesUI.generateFolderTags;
   // Public variables definition
   exports.currentPath = currentPath;
   exports.currentLocationObject = currentLocationObject;
