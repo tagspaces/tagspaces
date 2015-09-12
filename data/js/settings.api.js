@@ -978,6 +978,18 @@ define(function(require, exports, module) {
   var setWriteTagsToFile = function(value) {
     exports.Settings.writeTagsToFile = value;
   };
+
+  var getUseDefaultLocation = function() {
+    if (exports.Settings.useDefaultLocation === undefined) {
+      exports.Settings.useDefaultLocation = exports.DefaultSettings.useDefaultLocation;
+      saveSettings();
+    }
+    return exports.Settings.useDefaultLocation;
+  };
+
+  var setUseDefaultLocation = function(value) {
+    exports.Settings.useDefaultLocation = value;
+  };
   // Public API definition
   exports.upgradeSettings = upgradeSettings;
   exports.getPerspectives = getPerspectives;
@@ -1082,4 +1094,6 @@ define(function(require, exports, module) {
   exports.addTagGroup = addTagGroup;
   exports.setWriteTagsToFile = setWriteTagsToFile;
   exports.getWriteTagsToFile = getWriteTagsToFile;
+  exports.getUseDefaultLocation = getUseDefaultLocation;
+  exports.setUseDefaultLocation = setUseDefaultLocation;
 });

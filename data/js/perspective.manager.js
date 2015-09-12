@@ -107,7 +107,10 @@ define(function(require, exports, module) {
     return Promise.all(promises).then(function() {
       initPerspectiveSwitcher();
       // Opening last saved location by the start of the application (not in firefox)
-      var lastLocation = TSCORE.Config.getLastOpenedLocation();
+      var lastLocation = TSCORE.Config.getLastOpenedLocation(); 
+      if (TSCORE.Config.getUseDefaultLocation()) {
+        lastLocation = TSCORE.Config.getDefaultLocation();
+      }
       if (lastLocation !== undefined && lastLocation.length >= 1 && !isFirefox) {
         TSCORE.openLocation(lastLocation);
         TSCORE.IO.checkAccessFileURLAllowed();
