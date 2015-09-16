@@ -28,6 +28,7 @@ define(function (require, exports, module) {
         "isWindowMaximized":        false,
         "showMainMenu":             false,
         "useDefaultLocation":       false,
+        "writeMetaToSidecarFile":   false,
         "lastOpenedLocation":       "",
         "webDavPath"  :             "oc/remote.php/webdav",
         "ootbPerspectives":         ['perspectiveList', 'perspectiveGrid', 'perspectiveGraph', 'perspectiveImageSwiper'],

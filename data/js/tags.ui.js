@@ -33,7 +33,7 @@ define(function(require, exports, module) {
             '<div class="accordion-inner" id="tagButtonsContent{{@index}}" style="padding: 2px;">' +
                 '<div>' +
                     '{{#each children}}' +
-                    '<a class="btn btn-sm tagButton" tag="{{title}}" parentkey="{{../key}}" style="{{style}}" title="{{titleUI}}" >'  +
+                    '<a class="btn btn-sm tagButton" tag="{{title}}" parentkey="{{../key}}" style="{{style}}" title="{{description}}" >'  +
                         '<span class="{{icon}}" /> ' +
                         '{{title}}' +
                         '{{#if count}} [{{count}}]{{/if}}' +
@@ -227,9 +227,9 @@ define(function(require, exports, module) {
       for (var j = 0; j < tagGroups[i].children.length; j++) {
         tag = tagGroups[i].children[j];
         if (tag.description !== undefined) {
-          tag.titleUI = tag.description;
+          tag.description = tag.description;
         } else {
-          tag.titleUI = tag.title;
+          tag.description = tag.title;
         }
         tag.icon = '';
         if (tag.type === 'smart') {
@@ -238,7 +238,7 @@ define(function(require, exports, module) {
         // Add keybinding to tags
         if (tag.keyBinding !== undefined && tag.keyBinding.length > 0) {
           tag.icon = 'fa fa-keyboard-o';
-          tag.titleUI = tag.titleUI + ' [' + tag.keyBinding + ']';
+          tag.description = tag.description + ' [' + tag.keyBinding + ']';
           Mousetrap.unbind(tag.keyBinding);
           Mousetrap.bind(tag.keyBinding, function(innerTag) {
             return function(e) {

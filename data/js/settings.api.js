@@ -968,15 +968,15 @@ define(function(require, exports, module) {
     }
   }
 
-  var getWriteTagsToFile = function() {
-    if (exports.Settings.writeTagsToFile === undefined) {
-      exports.Settings.writeTagsToFile = exports.DefaultSettings.writeTagsToFile;
+  var getWriteMetaToSidecarFile = function() {
+    if (exports.Settings.writeMetaToSidecarFile === undefined) {
+      exports.Settings.writeMetaToSidecarFile = exports.DefaultSettings.writeMetaToSidecarFile;
       saveSettings();
     }
-    return exports.Settings.writeTagsToFile;
+    return exports.Settings.writeMetaToSidecarFile;
   };
-  var setWriteTagsToFile = function(value) {
-    exports.Settings.writeTagsToFile = value;
+  var setWriteMetaToSidecarFile = function(value) {
+    exports.Settings.writeMetaToSidecarFile = value;
   };
 
   var getUseDefaultLocation = function() {
@@ -1092,8 +1092,8 @@ define(function(require, exports, module) {
   exports.loadDefaultSettings = loadDefaultSettings;
   exports.saveSettings = saveSettings;
   exports.addTagGroup = addTagGroup;
-  exports.setWriteTagsToFile = setWriteTagsToFile;
-  exports.getWriteTagsToFile = getWriteTagsToFile;
+  exports.setWriteMetaToSidecarFile = setWriteMetaToSidecarFile;
+  exports.getWriteMetaToSidecarFile = getWriteMetaToSidecarFile;
   exports.getUseDefaultLocation = getUseDefaultLocation;
   exports.setUseDefaultLocation = setUseDefaultLocation;
 });

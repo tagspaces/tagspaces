@@ -178,10 +178,10 @@ define(function(require, exports, module) {
     tags.forEach(function(element) {
       var newTag = {
         "title": element,
-        "type":"plain",
-        "titleUI": element,
-        "icon":"",
-        "style":""
+        "type":"sidecar",
+        //"description": "",
+        //"icon":"",
+        //"style":""
       };
       var isNewTag = true;
       metaObj.metaData.tags.forEach(function(oldTag) {
@@ -197,7 +197,7 @@ define(function(require, exports, module) {
     saveMetaData(filePath, metaObj.metaData);
   }
 
-  function reanmeMetaTag(filePath, oldTag, newTag) {
+  function renameMetaTag(filePath, oldTag, newTag) {
     var metaObj = findMetaObjectFromFileList(filePath);
     if (metaObj.metaData) {
       metaObj.metaData.tags.forEach(function(tag , index) {
@@ -234,6 +234,6 @@ define(function(require, exports, module) {
   exports.getTagsFromMetaFile = getTagsFromMetaFile;
   //tag utils
   exports.addMetaTags = addMetaTags;
-  exports.reanmeMetaTag = reanmeMetaTag;
+  exports.renameMetaTag = renameMetaTag;
   exports.removeMetaTag = removeMetaTag;
 });

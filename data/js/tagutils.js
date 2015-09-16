@@ -333,26 +333,26 @@ define(function(require, exports, module) {
   }
 
   function writeTagsToFile(filePath, tags) {
-    console.log('Add the tags to: ' + filePath);
+    console.log('Add the tags for: ' + filePath);
 
-    if (TSCORE.Config.getWriteTagsToFile() !== true) {
+    if (TSCORE.Config.getWriteMetaToSidecarFile()) {
       TSCORE.Meta.addMetaTags(filePath, tags);
       TSCORE.PerspectiveManager.updateFileUI(filePath, filePath);
-      return;
+    } else {
+      var fileName = extractFileName(filePath);
+      var containingDirectoryPath = extractContainingDirectoryPath(filePath);
+      var extractedTags = extractTags(filePath);
+      for (var i = 0; i < tags.length; i++) {
+        // check if tag is already in the tag array
+        if (extractedTags.indexOf(tags[i].trim()) < 0) {
+          // Adding the new tag
+          extractedTags.push(tags[i].trim());
+        }
+      }
+      var newFileName = generateFileName(fileName, extractedTags);
+      TSCORE.IO.renameFile(filePath, containingDirectoryPath + TSCORE.dirSeparator + newFileName);
     }
 
-    var fileName = extractFileName(filePath);
-    var containingDirectoryPath = extractContainingDirectoryPath(filePath);
-    var extractedTags = extractTags(filePath);
-    for (var i = 0; i < tags.length; i++) {
-      // check if tag is already in the tag array
-      if (extractedTags.indexOf(tags[i].trim()) < 0) {
-        // Adding the new tag
-        extractedTags.push(tags[i].trim());
-      }
-    }
-    var newFileName = generateFileName(fileName, extractedTags);
-    TSCORE.IO.renameFile(filePath, containingDirectoryPath + TSCORE.dirSeparator + newFileName);
     collectRecentTags(tags);
   }
 
@@ -441,23 +441,24 @@ define(function(require, exports, module) {
   function renameTag(filePath, oldTag, newTag) {
     console.log('Rename tag for file: ' + filePath);
 
-    if (TSCORE.Config.getWriteTagsToFile() !== true) {
-      TSCORE.Meta.reanmeMetaTag(filePath, oldTag, newTag);
+    //todo Refine the logic to consider renaming tags from filename in a sidecar mode and vice versa
+    if (TSCORE.Config.getWriteMetaToSidecarFile()) {
+      TSCORE.Meta.renameMetaTag(filePath, oldTag, newTag);
       TSCORE.PerspectiveManager.updateFileUI(filePath, filePath);
-    }
-
-    var fileName = extractFileName(filePath);
-    var containingDirectoryPath = extractContainingDirectoryPath(filePath);
-    var extractedTags = extractTags(filePath);
-    for (var i = 0; i < extractedTags.length; i++) {
-      // check if tag is already in the tag array
-      if (extractedTags[i] === oldTag) {
-        extractedTags[i] = newTag.trim();
+    } else {
+      var fileName = extractFileName(filePath);
+      var containingDirectoryPath = extractContainingDirectoryPath(filePath);
+      var extractedTags = extractTags(filePath);
+      for (var i = 0; i < extractedTags.length; i++) {
+        // check if tag is already in the tag array
+        if (extractedTags[i] === oldTag) {
+          extractedTags[i] = newTag.trim();
+        }
       }
-    }
-    var newFileName = generateFileName(fileName, extractedTags);
-    if (newFileName !== fileName) {
-      TSCORE.IO.renameFile(filePath, containingDirectoryPath + TSCORE.dirSeparator + newFileName);
+      var newFileName = generateFileName(fileName, extractedTags);
+      if (newFileName !== fileName) {
+        TSCORE.IO.renameFile(filePath, containingDirectoryPath + TSCORE.dirSeparator + newFileName);
+      }
     }
   }
 
@@ -479,23 +480,24 @@ define(function(require, exports, module) {
   function removeTag(filePath, tagName) {
     console.log('Removing tag: ' + tagName + ' from ' + filePath);
 
-    if (TSCORE.Config.getWriteTagsToFile() !== true) {
+    //todo Refine the logic to consider removing tags from filename in a sidecar mode and vice versa
+    if (TSCORE.Config.getWriteMetaToSidecarFile()) {
       TSCORE.Meta.removeMetaTag(filePath, tagName);
       TSCORE.PerspectiveManager.updateFileUI(filePath, filePath);
-    }
-
-    var fileName = extractFileName(filePath);
-    var containingDirectoryPath = extractContainingDirectoryPath(filePath);
-    var tags = extractTags(filePath);
-    var newTags = [];
-    for (var i = 0; i < tags.length; i++) {
-      if (tags[i] !== tagName) {
-        newTags.push(tags[i]);
+    } else {
+      var fileName = extractFileName(filePath);
+      var containingDirectoryPath = extractContainingDirectoryPath(filePath);
+      var tags = extractTags(filePath);
+      var newTags = [];
+      for (var i = 0; i < tags.length; i++) {
+        if (tags[i] !== tagName) {
+          newTags.push(tags[i]);
+        }
       }
-    }
-    var newFileName = generateFileName(fileName, newTags);
-    if (newFileName !== fileName) {
-      TSCORE.IO.renameFile(filePath, containingDirectoryPath + TSCORE.dirSeparator + newFileName);
+      var newFileName = generateFileName(fileName, newTags);
+      if (newFileName !== fileName) {
+        TSCORE.IO.renameFile(filePath, containingDirectoryPath + TSCORE.dirSeparator + newFileName);
+      }
     }
   }
 

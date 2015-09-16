@@ -29,6 +29,7 @@ define(function (require, exports, module) {
         "showMainMenu":             false,
         "lastOpenedLocation":       "",
         "useDefaultLocation":       false, 
+        "writeMetaToSidecarFile":   false,
         "webDavPath"  :             "oc/remote.php/webdav",
         "ootbPerspectives":         [@@DEFAULTPERSPECTIVES],
         "ootbViewers":              [ "viewerBrowser", "viewerMD", "viewerImage", "viewerPDF", "editorText", "viewerText", "editorODF", "viewerURL", "viewerHTML", "viewerMHTML", "editorJSON", "viewerZIP", "viewerEPUB", "viewerAudioVideo" ],
