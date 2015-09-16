@@ -202,14 +202,11 @@ define(function(require, exports, module) {
   function collectSupportedFileTypesData() {
     var data = [];
     $('#fileTypesList').children().each(function(index, element) {
-      // Skiping the first line with the descriptions
-      if (index > 0) {
-        data.push({
-          'type': $(element).find('input').val(),
-          'viewer': $(element).find('.ftviewer').val(),
-          'editor': $(element).find('.fteditor').val()
-        });
-      }
+      data.push({
+        'type': $(element).find('input').val(),
+        'viewer': $(element).find('.ftviewer').val(),
+        'editor': $(element).find('.fteditor').val()
+      });
     });
     return data;
   }
