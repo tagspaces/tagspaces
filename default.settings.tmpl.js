@@ -28,6 +28,7 @@ define(function (require, exports, module) {
         "isWindowMaximized":        false,
         "showMainMenu":             false,
         "lastOpenedLocation":       "",
+        "useDefaultLocation":       false, 
         "webDavPath"  :             "oc/remote.php/webdav",
         "ootbPerspectives":         [@@DEFAULTPERSPECTIVES],
         "ootbViewers":              [ "viewerBrowser", "viewerMD", "viewerImage", "viewerPDF", "editorText", "viewerText", "editorODF", "viewerURL", "viewerHTML", "viewerMHTML", "editorJSON", "viewerZIP", "viewerEPUB", "viewerAudioVideo" ],

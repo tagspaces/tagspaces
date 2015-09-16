@@ -335,7 +335,7 @@ define(function(require, exports, module) {
   function writeTagsToFile(filePath, tags) {
     console.log('Add the tags to: ' + filePath);
 
-    if (TSCORE.Config.DefaultSettings.writeTagsToFile !== true) {
+    if (TSCORE.Config.getWriteTagsToFile() !== true) {
       TSCORE.Meta.addMetaTags(filePath, tags);
       TSCORE.PerspectiveManager.updateFileUI(filePath, filePath);
       return;
@@ -441,7 +441,7 @@ define(function(require, exports, module) {
   function renameTag(filePath, oldTag, newTag) {
     console.log('Rename tag for file: ' + filePath);
 
-    if (TSCORE.Config.DefaultSettings.writeTagsToFile !== true) {
+    if (TSCORE.Config.getWriteTagsToFile() !== true) {
       TSCORE.Meta.reanmeMetaTag(filePath, oldTag, newTag);
       TSCORE.PerspectiveManager.updateFileUI(filePath, filePath);
     }
@@ -479,7 +479,7 @@ define(function(require, exports, module) {
   function removeTag(filePath, tagName) {
     console.log('Removing tag: ' + tagName + ' from ' + filePath);
 
-    if (TSCORE.Config.DefaultSettings.writeTagsToFile !== true) {
+    if (TSCORE.Config.getWriteTagsToFile() !== true) {
       TSCORE.Meta.removeMetaTag(filePath, tagName);
       TSCORE.PerspectiveManager.updateFileUI(filePath, filePath);
     }

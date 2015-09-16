@@ -192,7 +192,9 @@ define(function(require, exports, module) {
     ], function(uiTPL, controller) {
       if ($('#dialogOptions').length < 1) {
         var uiTemplate = Handlebars.compile(uiTPL);
-        $('body').append(uiTemplate());
+        $('body').append(uiTemplate({ isProVersion: TSCORE.PRO ? true : false }));
+        
+
         controller.initUI();
       }
       $('#dialogOptions').i18n();
