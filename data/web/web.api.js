@@ -79,7 +79,7 @@ define(function(require, exports, module) {
 
   var getDirectoryMetaInformation = function(dirPath, readyCallback) {
     listDirectory(dirPath, function(anotatedDirList) {
-    TSCORE.metaFileList = anotatedDirList;
+      TSCORE.metaFileList = anotatedDirList;
       readyCallback(anotatedDirList);
     });
   };

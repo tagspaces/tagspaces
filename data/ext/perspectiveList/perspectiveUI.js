@@ -467,7 +467,7 @@ define(function(require, exports, module) {
     //if (supportedFileTypeThumnailing.indexOf(fileExt) >= 0) {
     //  return buttonCompTmbTmpl(context);
     //} else {
-      return buttonCompTmpl(context);
+    return buttonCompTmpl(context);
     //}
   };
 

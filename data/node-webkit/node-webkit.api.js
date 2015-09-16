@@ -105,7 +105,7 @@ define(function(require, exports, module) {
       }
       console.log("CMD Arguments cleaned: " + cmdArguments);
       var filePath = "" + cmdArguments;
-      if(filePath.length > 1 ) {
+      if (filePath.length > 1) {
         var dirPath = TSCORE.TagUtils.extractContainingDirectoryPath(filePath);
         TSCORE.IO.listDirectory(dirPath);
         TSCORE.FileOpener.openFileOnStartup(filePath);
@@ -486,7 +486,7 @@ define(function(require, exports, module) {
     try {
       fs.readdir(dirPath, function(error, dirList) {
         if (error) {
-          if(readyCallback) {
+          if (readyCallback) {
             readyCallback(anotatedDirList);
           } else {
             TSPOSTIO.errorOpeningPath(dirPath);
@@ -530,7 +530,7 @@ define(function(require, exports, module) {
 
   var getDirectoryMetaInformation = function(dirPath, readyCallback) {
     listDirectory(dirPath, function(anotatedDirList) {
-    TSCORE.metaFileList = anotatedDirList;
+      TSCORE.metaFileList = anotatedDirList;
       readyCallback(anotatedDirList);
     });
   };
