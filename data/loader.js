@@ -67,7 +67,7 @@ requirejs.config({
     }
   },
   paths: {
-    jquery:                 'libs/jquery/jquery-2.1.1.min',
+    jquery:                 'libs/jquery/jquery.min',
     jqueryui:               'libs/jqueryui/jquery.ui.core',
     jqueryuiwidget:         'libs/jqueryui/jquery.ui.widget',
     jqueryuimouse:          'libs/jqueryui/jquery.ui.mouse',
