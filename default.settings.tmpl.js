@@ -90,6 +90,7 @@ define(function (require, exports, module) {
             { "type": "ico", "viewer": "viewerImage", "editor": "false" },
             { "type": "svg", "viewer": "viewerImage", "editor": "editorText" },
             { "type": "pdf", "viewer": "@@PDFVIEWER", "editor": "false" },
+            { "type": "epub", "viewer": "viewerEPUB", "editor": "false" },
             { "type": "html", "viewer": "viewerHTML", "editor": "editorHTML" },
             { "type": "htm", "viewer": "viewerHTML", "editor": "editorHTML" },
             { "type": "xhtml", "viewer": "viewerHTML", "editor": "editorText" },
