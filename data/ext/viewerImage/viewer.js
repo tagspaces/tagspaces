@@ -12,16 +12,6 @@ $(document).ready(function() {
   }
 
   var filePath = getParameterByName("cp");
-  /*$.ajax({
-      url: fileURL,//"file://"+filePath,
-      type: 'POST'
-  })
-      .done(function(data) {
-          cleanContent(data);
-      })
-      .fail(function(data) {
-          console.log("AJAX failed "+data);
-      }); */
 
   var imageRotationClass = "";
   var isCordova = parent.isCordova;
