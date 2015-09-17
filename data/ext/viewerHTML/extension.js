@@ -19,11 +19,9 @@ define(function(require, exports, module) {
   var TSCORE = require("tscore");
   var TSPRO = require("tspro");
 
-  var containerElID,
-    $containerElement,
-    currentFilePath,
-    viewerToolbar,
-    $iframeViewer;
+  var containerElID;
+  var $containerElement;
+  var currentFilePath;
 
   var extensionDirectory = TSCORE.Config.getExtensionPath() + "/" + extensionID;
 
@@ -78,7 +76,7 @@ define(function(require, exports, module) {
 
     var contentWindow = document.getElementById("iframeViewer").contentWindow;
     if (typeof contentWindow.setContent === "function") {
-      contentWindow.setContent(cleanedBodyContent);
+      contentWindow.setContent(cleanedBodyContent, fileDirectory);
     } else {
       // TODO optimize setTimeout
       window.setTimeout(function() {
