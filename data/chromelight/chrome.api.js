@@ -137,6 +137,8 @@ define(function(require, exports, module) {
     console.log("Listing directory: " + dirPath);
     TSCORE.showLoadingAnimation();
 
+    var anotatedDirList = [];
+
     $.ajax({
         url: "file://" + dirPath,
         type: 'GET'
@@ -154,7 +156,7 @@ define(function(require, exports, module) {
           lastDateModified,
           fileProp;
 
-        var anotatedDirList = [];
+        anotatedDirList = [];
         // sciping the first entry pointing to the parent directory
         for (var i = 1; i < folders.length; i++) {
           console.log("Dir " + folders[i]);
