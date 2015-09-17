@@ -75,9 +75,10 @@ define(function(require, exports, module) {
     try {
       bodyContent = content.match(bodyRegex)[1];
     } catch (e) {
-      console.log("Error parsing HTML document. " + e);
-      TSCORE.FileOpener.closeFile(true);
-      TSCORE.showAlertDialog("Probably a body tag was not found in the document. Document will be closed.", "Error parsing HTML document");
+      console.log("Error parsing the body of the HTML document. " + e);
+      bodyContent = content;
+//      TSCORE.FileOpener.closeFile(true);
+//      TSCORE.showAlertDialog("Probably a body tag was not found in the document. Document will be closed.", "Error parsing HTML document");
     }
 
     //        var titleRegex = /\<title[^>]*\>([^]*)\<\/title/m;
