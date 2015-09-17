@@ -1,4 +1,0 @@
-/* Localized versions of Info.plist keys */
-
-CFBundleName = "NPAPIFileIOforChrome.plugin";
-NSHumanReadableCopyright = "Copyright 2012 Benryan Software Inc.";
