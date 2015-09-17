@@ -22,7 +22,6 @@ define(function(require, exports, module) {
   var currentPath;
   var currentLocationObject;
   var currentPerspectiveID;
-  var currentLanguage;
   // Current selected files
   var selectedFiles = [];
   // Current directory list of files
@@ -121,7 +120,7 @@ define(function(require, exports, module) {
         tsIOApi.initMainMenu();
       }
     });
-    currentLanguage = language;
+    exports.currentLanguage = language;
   }
 
   function initKeyBindings() {
@@ -503,7 +502,7 @@ define(function(require, exports, module) {
 
   // Public variables definition
   exports.currentPath = currentPath;
-  exports.currentLanguage = currentLanguage;
+  exports.currentLanguage = exports.currentLanguage;
   exports.currentLocationObject = currentLocationObject;
   exports.currentPerspectiveID = currentPerspectiveID;
   exports.selectedFiles = selectedFiles;
