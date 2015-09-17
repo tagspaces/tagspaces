@@ -226,9 +226,7 @@ define(function(require, exports, module) {
     for (var i = 0; i < tagGroups.length; i++) {
       for (var j = 0; j < tagGroups[i].children.length; j++) {
         tag = tagGroups[i].children[j];
-        if (tag.description !== undefined) {
-          tag.description = tag.description;
-        } else {
+        if (!tag.description) {
           tag.description = tag.title;
         }
         tag.icon = '';
@@ -236,9 +234,9 @@ define(function(require, exports, module) {
           tag.icon = 'fa fa-flask';
         }
         // Add keybinding to tags
-        if (tag.keyBinding !== undefined && tag.keyBinding.length > 0) {
+        if (tag.keyBinding && tag.keyBinding.length > 0) {
           tag.icon = 'fa fa-keyboard-o';
-          tag.description = tag.description + ' [' + tag.keyBinding + ']';
+          tag.description = tag.title + ' [' + tag.keyBinding + ']';
           Mousetrap.unbind(tag.keyBinding);
           Mousetrap.bind(tag.keyBinding, function(innerTag) {
             return function(e) {
