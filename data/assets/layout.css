@@ -42,6 +42,12 @@
   bottom: 15px;
 }
 
+@media print {
+  .extMainMenu {
+    display: none;
+  }
+}
+
 .extMainMenu .dropdown-menu {
   margin-bottom: -50px;
   margin-right: 0px;
