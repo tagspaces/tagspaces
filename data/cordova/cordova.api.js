@@ -696,10 +696,10 @@ define(function(require, exports, module) {
         if (entry.isFile) {
           isFileNew = false;
         }
-        saveFile(isFileNew);
+        saveFile(isFileNew, silentMode);
       },
       function() {
-        saveFile(isFileNew);
+        saveFile(isFileNew, silentMode);
       }
     );
 
@@ -712,7 +712,7 @@ define(function(require, exports, module) {
           entry.createWriter(
             function(writer) {
               writer.onwriteend = function(evt) {
-                if (silentMode !== true) {
+                if (!silentMode) {
                   TSPOSTIO.saveTextFile(fsRoot.fullPath + "/" + filePath, isFileNew);
                 }
               };
@@ -760,7 +760,7 @@ define(function(require, exports, module) {
           entry.createWriter(
             function(writer) {
               writer.onwriteend = function(evt) {
-                if (silentMode !== true) {
+                if (!silentMode) {
                   TSPOSTIO.saveBinaryFile(fsRoot.fullPath + "/" + filePath);
                 }
               };
@@ -792,7 +792,7 @@ define(function(require, exports, module) {
         exclusive: false
       },
       function(dirEntry) {
-        if (silentMode !== true) {
+        if (!silentMode) {
           TSPOSTIO.createDirectory(dirPath);
         }
       },

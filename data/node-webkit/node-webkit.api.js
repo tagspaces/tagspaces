@@ -446,7 +446,7 @@ define(function(require, exports, module) {
         console.log("Save to file " + filePath + " failed " + error);
         return;
       }
-      if (silentMode !== true) {
+      if (!silentMode) {
         TSPOSTIO.saveTextFile(filePath, isNewFile);
       }
     });
