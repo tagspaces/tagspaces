@@ -13,8 +13,6 @@ define(function(require, exports, module) {
 
   var MONTH = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
-  var PREVIEW_TAGS_CNT = 5;
-
   var supportedFileTypeThumnailing = [
     "jpg", "jpeg", "png", "gif", "pdf", "svg", "webp", "bmp", 
     "zip", "epub", "docx", "pptx", "pptm", "potx", "potm", 
@@ -58,26 +56,15 @@ define(function(require, exports, module) {
   }
 
   var fileTileTmpl = Handlebars.compile(
-    '<li title="{{filepath}}" filepath="{{filepath}}" class="fileTile">' +
-      '<p class="titleInFileTile">{{title}}</p><span class="tagsInFileTile">' +
+    '<div title="{{filepath}}" filepath="{{filepath}}" class="fileTile" style="background-image: url(\'{{thumbPath}}\')">' +
+      '<button class="btn btn-link fileTileSelector" filepath="{{filepath}}"><i class="fa {{selected}} fa-lg"></i> <span class="fileExtTile">{{fileext}}</span></button>' +
+      '<div class="tagsInFileTile">' +
       '{{#each tags}}' +
         '<button class="btn btn-sm tagButton fileTagsTile" tag="{{tag}}" filepath="{{filepath}}" style="{{style}}">{{tag}} <span class="caret"></span></button>' +
       '{{/each}}' +
-      '</span><span class="fileExtTile">{{fileext}}</span>' +
-      '<button class="btn btn-link fileTileSelector" filepath="{{filepath}}"><i class="fa {{selected}} fa-lg"></i></button>' +
-    '</p></li>'
-    );
-
-  var fileTileTmbTmpl = Handlebars.compile(
-    '<div title="{{filepath}}" filepath="{{filepath}}" class="fileTile">' +
-      '<span><img class="thumbImgTile" filepath="{{tmbpath}}" style="max-width: 200px; max-height: 200px;" src="{{thumbPath}}"></span>' +
-      '<p class="titleInFileTile">{{title}}</p><span class="tagsInFileTile">' +
-      '{{#each tags}}' +
-        '<button class="btn btn-sm tagButton fileTagsTile" tag="{{tag}}" filepath="{{filepath}}" style="{{style}}">{{tag}} <span class="caret"></span></button>' +
-      '{{/each}}' +
-      '</span><span class="fileExtTile">{{fileext}}</span>' +
-      '<button class="btn btn-link fileTileSelector" filepath="{{filepath}}"><i class="fa {{selected}} fa-lg"></i></button>' +
-    '</p></div>'
+      '</div>'+
+      '<div class="titleInFileTile">{{title}}</div>' +
+    '</div>'
     );
 
   var mainLayoutTemplate = Handlebars.compile(
@@ -86,20 +73,21 @@ define(function(require, exports, module) {
       '<div class="accordion-group disableTextSelection" style="width: 100%; border: 0px #aaa solid;">' +
         '<div class="accordion-heading btn-group" style="width:100%; margin: 0px; border-bottom: solid 1px #eee; background-color: #ddd;">' +
           '<button class="btn btn-link groupTitle" data-toggle="collapse" data-target="#{{../id}}SortingButtons{{@index}}">' +
-            '<i class="fa fa-minus-square" i="">&nbsp;</i>' +
+            '<i class="fa fa-minus-square">&nbsp;</i>' +
           '</button>' +
           '<span class="btn btn-link groupTitle" id="{{../id}}HeaderTitle{{@index}}" style="margin-left: 0px; padding-left: 0px;"></span>' +
         '</div>' +
         '<div class="accordion-body collapse in" id="{{../id}}SortingButtons{{@index}}" style="margin: 0px 0px 0px 3px; border: 0px;">' +
-          '<div class="accordion-inner" id="{{../id}}GroupContent{{@index}}" style="padding: 2px; border: 0px;"></div>' +
+          '<div class="accordion-inner tileContainer" id="{{../id}}GroupContent{{@index}}"></div>' +
         '</div>' +
       '</div>' +
+      '{{else}}' +
+      '<p style="margin: 5px;">No files found</p>' +
       '{{/each}}' +
     '</div>'
   );
 
   ExtUI.prototype.createFileTile = function(title, filePath, fileExt, fileTags, isSelected, metaObj) {
-    //TODO minimize platform specific calls     
     var tmbPath;
     if (isCordova || isWeb) {
       tmbPath = filePath;
@@ -121,14 +109,7 @@ define(function(require, exports, module) {
       var tagString = "" + fileTags;
       var tags = tagString.split(",");
 
-      var tagCounter = 0;
-      if (tags.length > PREVIEW_TAGS_CNT) {
-        tagCounter = PREVIEW_TAGS_CNT + 1;
-        tags[PREVIEW_TAGS_CNT] = "...";
-      } else {
-        tagCounter = tags.length;
-      }
-      for (var i = 0; i < tagCounter; i++) {
+      for (var i = 0; i < tags.length; i++) {
         context.tags.push({
           tag: tags[i],
           filepath: filePath,
@@ -147,11 +128,7 @@ define(function(require, exports, module) {
       });
     }
 
-    if (supportedFileTypeThumnailing.indexOf(fileExt) >= 0) {
-      return fileTileTmbTmpl(context);
-    } else {
-      return fileTileTmpl(context);
-    }
+    return fileTileTmpl(context);
   };
 
   ExtUI.prototype.initFileGroupingMenu = function() {

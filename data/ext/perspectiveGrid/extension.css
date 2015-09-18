@@ -1,14 +1,35 @@
+.tileContainer {
+  display: flex;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+
+  flex-wrap: wrap;
+}
+
 .fileTile {
-  margin: 3px;
+  margin: 5px;
   padding: 1px 1px 1px 3px;
-  float: left;
   border: 1px solid #D4D4D4;
   text-align: left;
-  width: 180px;
-  height: 100px;
+  height: 150px;
+  max-width: 300px;
   overflow: hidden;
   position:relative;
   background-color: white;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+
+  flex: 1 1 200px;
+  -webkit-flex: 1 1 200px;
+  -ms-flex: 1 1 200px;
+}
+
+@media (max-width: 768px) {
+  .fileTile {
+    max-width: 500px;
+  }
 }
 
 .fileTile button:hover {
@@ -16,39 +37,49 @@
 }
 
 .titleInFileTile {
-  font-size: 13px;
+  font-size: 14px;
   line-height: 120%;
   color: #333333;
+  background-color: rgba(220,220,220,0.7);
   z-index: 99;
   position: absolute;
-  left: 5px;
-  top: 5px;
+  left: 0px;
+  bottom: 0px;
+  width: 100%;
+  height: 50px;
+  padding: 5px;
 }
 
 .tagsInFileTile {
   position: absolute;
   z-index: 100;
-  left: 5px;
+  left: 2px;
   top: 35px;
+  max-height: 48px;
+  overflow: hidden;
 }
 
 .fileTileSelector {
+  border-radius: 3px;
   position:absolute;
-  bottom:0;
+  top:0;
   left:0;
   z-index: 101;
+  background-color: rgba(220,220,220,0.7);
+  margin: 5px;
+  padding: 2px 4px 2px 4px;
+}
+
+.fileTileSelector:hover, .fileTileSelector:active, .fileTileSelector:focus {
+  border-radius: 3px;
+  background-color: rgba(220,220,220,0.7);
 }
 
 .fileExtTile {
-  position:absolute;
-  bottom:0;
-  right:0;
-  -webkit-border-radius: 0 !important;
   border-radius: 0 !important;
-  background: #999 ;
   text-align: center;
   padding: 1px;
-  color: white ;
+  color: black ;
   z-index: 99;
 	text-transform:uppercase;
 }
@@ -70,14 +101,4 @@
   max-height: 100px;
   vertical-align: text-top;
   border: 0px lightgray solid;
-}
-
-.thumbImgTile {
-  max-width: 100px;
-  max-height: 100px;
-  position:absolute;
-  bottom:0;
-  right:0;
-  border: 0 lightgray solid;
-  z-index: 1;
 }
