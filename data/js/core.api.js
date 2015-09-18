@@ -360,7 +360,6 @@ define(function(require, exports, module) {
       hidePerspectiveMenu();
     } else {
       $(".col3").hide();
-      showPerspectiveMenu();
     }
   }
 
