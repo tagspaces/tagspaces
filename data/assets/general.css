@@ -578,6 +578,11 @@ input a.resetFilter {
   padding-top: 0px;
 }
 
+.contactUsSeparator {
+  margin: 0 15px 0 15px;
+  border-top: 1px solid #ddd
+}
+
 @media
 (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
   #welcomeScreen {
