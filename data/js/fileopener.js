@@ -308,6 +308,19 @@ define(function(require, exports, module) {
       editFile(_openedFilePath);
       return false;
     });
+
+    Mousetrap.bindGlobal("esc", function() {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if (document.msExitFullscreen) {
+        document.msExitFullscreen();
+      } else if (document.mozCancelFullScreen) {
+        document.mozCancelFullScreen();
+      } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+      }
+      return false;
+    });
   }
 
   function setFileProperties(fileProperties) {

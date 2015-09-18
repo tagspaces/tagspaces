@@ -674,7 +674,7 @@ define(function(require, exports, module) {
       $('#openNatively').hide();
       $('#fileMenuOpenNatively').parent().hide();
     } else if (isNode) {
-      $('#fullscreenFile').hide();
+     // $('#fullscreenFile').hide();
       $('#openFileInNewWindow').hide();
       // handling window maximization
       var nwwin = gui.Window.get();
