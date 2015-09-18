@@ -49,6 +49,24 @@ define(function(require, exports, module) {
     }));
 
     TSCORE.IO.loadTextFile(filePath);
+
+    /*window.addEventListener("message", receiveMessage, false);
+    function receiveMessage(event) {
+      console.log("Test event: " + event);
+      if (event.origin !== "http://example.org:8080") {
+        //TSCORE.openLinkExternally();
+      }
+    }*/
+
+    /* var eventMethod = window.addEventListener ? "addEventListener" : "attachEvent";
+    var eventer = window[eventMethod];
+    var messageEvent = eventMethod == "attachEvent" ? "onmessage" : "message";
+    eventer(messageEvent,function(e) {
+        var key = e.message ? "message" : "data";
+        var data = e[key];
+        console.log("Message: " + e);
+    },false); */
+
   };
 
   // set readonly

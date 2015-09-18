@@ -5,6 +5,7 @@
 
 var isCordova;
 var isWin;
+var $htmlContent;
 
 $(document).ready(function() {
   function getParameterByName(name) {
@@ -22,7 +23,7 @@ $(document).ready(function() {
   isCordova = parent.isCordova;
   isWin = parent.isWin;
 
-  var $htmlContent = $("#htmlContent");
+  $htmlContent = $("#htmlContent");
 
   var styles = ['', 'solarized-dark', 'github', 'metro-vibes', 'clearness', 'clearness-dark'];
   var currentStyleIndex = 0;
@@ -76,12 +77,6 @@ $(document).ready(function() {
     saveExtSettings();
   });
 
-  //TODO making all links open in the user default browser
-  $htmlContent.find("a").bind('click', function(e) {
-    e.preventDefault();
-    //TSCORE.openLinkExternally($(this).attr("href"));
-  });
-
   $("#printButton").on("click", function() {
     $(".dropdown-menu").dropdown('toggle');
     window.print();
@@ -116,8 +111,16 @@ $(document).ready(function() {
 });
 
 function setContent(content, fileDirectory) {
-  var $htmlContent = $('#htmlContent');
+  $htmlContent = $("#htmlContent");
+
   $htmlContent.append(content);
+
+  $htmlContent.find("a").bind('click', function(e) {
+    e.preventDefault();
+    //var url = $(this).attr("href"); // { "openLinkExternally": url }
+    //parent.postMessage("message", "*");
+    //console.log("Url: " + url);
+  });
 
   // fixing embedding of local images
   $htmlContent.find("img[src]").each(function() {
