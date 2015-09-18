@@ -69,6 +69,13 @@ $(document).ready(function() {
     saveExtSettings();
   });
 
+  $("#zoomResetButton").bind('click', function() {
+    currentZoomState = 3;
+    $htmlContent.removeClass();
+    $htmlContent.addClass('markdown ' + styles[currentStyleIndex] + " " + zoomSteps[currentZoomState]);
+    saveExtSettings();
+  });
+
   //TODO making all links open in the user default browser
   $htmlContent.find("a").bind('click', function(e) {
     e.preventDefault();
