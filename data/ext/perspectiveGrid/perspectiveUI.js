@@ -62,7 +62,7 @@ define(function(require, exports, module) {
       '{{#each tags}}' +
         '<button class="btn btn-sm tagButton fileTagsTile" tag="{{tag}}" filepath="{{filepath}}" style="{{style}}">{{tag}} <span class="caret"></span></button>' +
       '{{/each}}' +
-      '</div>'+
+      '</div>' +
       '<div class="titleInFileTile">{{title}}</div>' +
     '</div>'
     );
@@ -434,14 +434,14 @@ define(function(require, exports, module) {
     var self = this;
 
     var $extMainContent = this.viewContainer.find(".extMainContent");
-    if($extMainContent) {
+    if ($extMainContent) {
       $extMainContent.remove();
     }
 
     // Load new filtered data
     this.searchResults = TSCORE.Search.searchData(TSCORE.fileList, TSCORE.Search.nextQuery);
 
-    var fileGroups = self.calculateGrouping(this.searchResults)
+    var fileGroups = self.calculateGrouping(this.searchResults);
 
     this.viewContainer.append(mainLayoutTemplate({
       id: self.extensionID,

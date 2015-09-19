@@ -176,7 +176,7 @@ define(function(require, exports, module) {
           perspectives[i].load();
           break;
         } catch (e) {
-          console.error('Error while executing \'redrawCurrentPerspective\' on ' + perspectives[i].ID + ' ' + e);
+          console.warning('Error while executing \'redrawCurrentPerspective\' on ' + perspectives[i].ID + ' ' + e);
         }
       }
     }
@@ -188,7 +188,7 @@ define(function(require, exports, module) {
       try {
         perspectives[i].removeFileUI(filePath);
       } catch (e) {
-        console.error('Error while executing \'removeFileUI\' on ' + perspectives[i].ID + ' ' + e);
+        console.warning('Error while executing \'removeFileUI\' on ' + perspectives[i].ID + ' ' + e);
       }
     }
   };
@@ -199,7 +199,7 @@ define(function(require, exports, module) {
       try {
         perspectives[i].updateFileUI(oldFilePath, newFilePath);
       } catch (e) {
-        console.error('Error while executing \'updateFileUI\' on ' + perspectives[i].ID + ' ' + e);
+        console.warning('Error while executing \'updateFileUI\' on ' + perspectives[i].ID + ' ' + e);
       }
     }
   };
@@ -210,7 +210,7 @@ define(function(require, exports, module) {
         try {
           return perspectives[i].getNextFile(filePath);
         } catch (e) {
-          console.error('Error while executing \'getNextFile\' on ' + perspectives[i].ID + ' ' + e);
+          console.warning('Error while executing \'getNextFile\' on ' + perspectives[i].ID + ' ' + e);
         }
       }
     }
@@ -222,7 +222,7 @@ define(function(require, exports, module) {
         try {
           return perspectives[i].getPrevFile(filePath);
         } catch (e) {
-          console.error('Error while executing \'getPrevFile\' on ' + perspectives[i].ID + ' ' + e);
+          console.warning('Error while executing \'getPrevFile\' on ' + perspectives[i].ID + ' ' + e);
         }
       }
     }
@@ -233,7 +233,7 @@ define(function(require, exports, module) {
       try {
         perspectives[i].updateTreeData(treeData);
       } catch (e) {
-        console.error('Error while executing \'updateTreeData\' on ' + perspectives[i].ID + ' ' + e);
+        console.warning('Error while executing \'updateTreeData\' on ' + perspectives[i].ID + ' ' + e);
       }
     }
   };
