@@ -33,7 +33,7 @@ define(function(require, exports, module) {
     $containerElement.empty();
     $containerElement.css("background-color", "white");
 
-    var extPath = extensionDirectory + "/player.html";
+    var extPath = extensionDirectory + "/index.html";
     $containerElement.append($('<iframe>', {
       id: "iframeViewer",
       sandbox: "allow-same-origin allow-scripts",
