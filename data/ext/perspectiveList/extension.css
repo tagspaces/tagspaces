@@ -1,11 +1,11 @@
 /*.perspectiveListContainer*/
 table th.fileTitle {
     padding-left: 8px !important;
+    white-space: nowrap;
 }
 
 table .fileTitle {
     font-size: 14px;
-    /*color: #333333;*/
     padding-left: 0 !important;
 }
 
