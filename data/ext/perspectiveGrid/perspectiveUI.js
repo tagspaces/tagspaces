@@ -222,10 +222,6 @@ define(function(require, exports, module) {
       TSCORE.showAddTagsDialog();
     });
 
-    $("#" + this.extensionID + "ShowTmbButton").on("click", function() {
-      self.toggleThumbnails();
-    });
-
     $("#" + this.extensionID + "CopyMoveButton").on("click", function() {
       TSCORE.showMoveCopyFilesDialog();
     });
@@ -254,70 +250,6 @@ define(function(require, exports, module) {
 
     this.initFileGroupingMenu();
 
-    this.toggleThumbnails();
-  };
-
-  ExtUI.prototype.enableThumbnails = function() {
-    $("#" + this.extensionID + "IncreaseThumbsButton").prop('disabled', false);
-    /*TSCORE.showLoadingAnimation();
-    var $tiltleElem = $("#" + this.extensionID + "Container .thumbImgTile");
-    $tiltleElem.each(function(index) {
-      var $element = $(this);
-      if (TSPRO.available) {
-        TSPRO.getThumbnailURL($element.attr('filepath'), function(dataURL) {
-          $element.attr('src', dataURL);
-          if (($tiltleElem.length - 1) === index) {
-            TSCORE.hideLoadingAnimation();
-          }
-        });
-      } else {
-        var metaFilePath = TSCORE.findMetaFilebyPath($element.attr('filepath'), "png");
-        if (metaFilePath) {
-          $element.attr('src', metaFilePath);  
-        }
-        var metaFileJson = TSCORE.findMetaFilebyPath($element.attr('filepath'), "json");
-        if(metaFileJson) {
-          var span = $("<span class=\"tagsInFileTile\">");
-          TSCORE.IO.getFileContent(metaFileJson, function(result) {
-            var str = String.fromCharCode.apply(null, new Uint8Array(result));
-            var metaData = JSON.parse(str);
-            metaData.tags.forEach(function(tag) {
-              var btn = $("<button class=\"btn btn-sm tagButton fileTagsTile\" tag=\"\" filepath=\"\" style=\"\"><span class=\"caret\"></span></button>");
-              btn.text(tag.title);
-              span.append(btn);
-            });
-              
-            $element.parent().parent().append(span);
-          });
-        }
-      }
-      $element.attr('style', "");
-    });
-    $('.thumbImgTile').css({
-      "max-width": TMB_SIZES[this.currentTmbSize],
-      "max-height": TMB_SIZES[this.currentTmbSize]
-    });*/
-  };
-
-  ExtUI.prototype.disableThumbnails = function() {
-    $("#" + this.extensionID + "IncreaseThumbsButton").prop('disabled', true);
-    $("#" + this.extensionID + "Container .thumbImgTile").each(function() {
-      $(this).attr('style', "width: 0px; height: 0px; border: 0px");
-      $(this).attr('src', "");
-    });
-  };
-
-  ExtUI.prototype.refreshThumbnails = function() {
-    if (this.thumbEnabled) {
-      this.enableThumbnails();
-    } else {
-      this.disableThumbnails();
-    }
-  };
-
-  ExtUI.prototype.toggleThumbnails = function() {
-    this.thumbEnabled = !this.thumbEnabled;
-    this.refreshThumbnails();
   };
 
   ExtUI.prototype.switchGrouping = function(grouping) {
@@ -495,8 +427,6 @@ define(function(require, exports, module) {
     $("#" + this.extensionID + "IncreaseThumbsButton").prop('disabled', true);
     $("#" + this.extensionID + "TagButton").prop('disabled', true);
 
-    this.refreshThumbnails();
-
     if (this.searchResults.length !== undefined) {
       if (TSCORE.Search.nextQuery.length > 0) {
         $("#statusBar").text(this.searchResults.length + " files found for '" + TSCORE.Search.nextQuery + "'");
@@ -552,7 +482,7 @@ define(function(require, exports, module) {
           TSCORE.TagUtils.addTag(TSCORE.selectedFiles, [tagName]);
           self.handleElementActivation();
 
-          //$(ui.helper).remove();  
+          $(ui.helper).remove();
         }
       })
       .find(".fileTileSelector").click(function(e) {
@@ -665,7 +595,6 @@ define(function(require, exports, module) {
     var metaObj = TSCORE.Meta.findMetaObjectFromFileList(oldFilePath);
     $fileTile.replaceWith(this.createFileTile(title, newFilePath, fileExt, fileTags, true, metaObj)); 
     
-    this.refreshThumbnails();
     this.assingFileTileHandlers($fileTile);
   };
 

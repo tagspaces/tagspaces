@@ -54,10 +54,12 @@
         <button class="btn btn-link" type="button" id="{{id}}CreateFileButton">
           <i class="fa fa-file-o fa-lg"></i> <span data-i18n="ns.perspectiveList:showNewFileDialog"></span>
         </button>
-        <button class="btn btn-link" type="button" title="Group" id="{{id}}GroupingButton" data-toggle="dropdown">
-          <i class="fa fa-group fa-lg"></i> Group Files<span class="caret"></span>
-        </button>
-        <ul id="{{id}}GroupingMenu" class="dropdown-menu "></ul>
+        <div class="btn-group">
+          <button class="btn btn-link" type="button" title="Group" id="{{id}}GroupingButton" data-toggle="dropdown">
+            <i class="fa fa-group fa-lg"></i> Group Files<span class="caret"></span>
+          </button>
+          <ul id="{{id}}GroupingMenu" class="dropdown-menu "></ul>
+        </div>
       </div>
       <div class="modal-footer">
         <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true"><i class="fa fa-check fa-lg"></i>
