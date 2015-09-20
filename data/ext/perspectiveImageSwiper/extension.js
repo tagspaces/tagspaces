@@ -66,6 +66,10 @@ define(function(require, exports, module) {
 
   var getPrevFile = function (filePath) {};
 
+	exports.updateTreeData = function updateIndexData(fsTreeData) {
+		console.log("Updating tree data not implemented");
+	};
+
   // Vars
   exports.Title = extensionTitle;
   exports.ID = extensionID;
