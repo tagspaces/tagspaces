@@ -513,9 +513,6 @@ define(function(require, exports, module) {
     $("#" + this.extensionID + "Container").find(".fileTileSelector").find("i")
       .removeClass("fa-check-square")
       .addClass("fa-square-o");
-
-    // Reseting select all button
-    //$("#"+this.extensionID+"ToogleSelectAll").find("i").removeClass("fa-check-square").addClass("fa-square-o");   
   };
 
   ExtUI.prototype.selectFile = function(filePath) {
@@ -594,7 +591,17 @@ define(function(require, exports, module) {
 
     var metaObj = TSCORE.Meta.findMetaObjectFromFileList(oldFilePath);
     $fileTile.replaceWith(this.createFileTile(title, newFilePath, fileExt, fileTags, true, metaObj)); 
-    
+
+    if (isWin && !isWeb) {
+      newFilePath = newFilePath.replace("\\", "");
+      $("#" + this.extensionID + "Container div[filepath]").each(function() {
+        if ($(this).attr("filepath").replace("\\", "") === newFilePath) {
+          $fileTile = $(this);
+        }
+      });
+    } else {
+      $fileTile = $("#" + this.extensionID + "Container div[filepath='" + newFilePath + "']");
+    }
     this.assingFileTileHandlers($fileTile);
   };
 
