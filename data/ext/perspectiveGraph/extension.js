@@ -17,10 +17,8 @@ define(function(require, exports, module) {
 
 	var TSCORE = require("tscore");
 	
-	var viewContainer = undefined;
-	var viewToolbar = undefined;
-	var viewFooter = undefined;
-	
+	var $viewContainer;
+
 	var extensionDirectory = TSCORE.Config.getExtensionPath()+"/"+extensionID;
 	
 	var graphMode = "mindmap"; 
@@ -30,9 +28,19 @@ define(function(require, exports, module) {
 	exports.init = function init() {
 		console.log("Initializing View "+extensionID);
 		
-    viewContainer = $("#"+extensionID+"Container").empty();
+    $viewContainer = $("#"+extensionID+"Container").empty();
 
-    initUI();
+    require([
+      "text!" + extensionDirectory + '/toolbar.html',
+     // "css!" + extensionDirectory + '/extension.css',
+    ], function(toolbarTPL) {
+      var toolbarTemplate = Handlebars.compile(toolbarTPL);
+      $viewContainer.append(toolbarTemplate({ id: extensionID }));
+
+      initUI();
+
+      $('#' + extensionID + 'Container [data-i18n]').i18n();
+    });
 	};
 	
 	exports.load = function load() {
@@ -41,6 +49,9 @@ define(function(require, exports, module) {
 	};
 	
 	var reDraw = function() {
+	  var $viewContainers = $("#viewContainers");
+	  var height = $viewContainers.height() - 5;
+	  var width = $viewContainers.width() - 5;
     switch (graphMode) {
       case "treeMap":
         require([
@@ -50,8 +61,8 @@ define(function(require, exports, module) {
                 d3.select("svg").remove();
                 var svg = d3.select("#"+extensionID+"Container")
                     .append("svg")
-                    .attr("width", viewContainer.width())
-                    .attr("height", viewContainer.height());
+                    .attr("width", width)
+                    .attr("height", height);
                 viz.drawTreeMap(svg, treeData);
                 TSCORE.hideLoadingAnimation();
         });
@@ -64,8 +75,8 @@ define(function(require, exports, module) {
                 d3.select("svg").remove();
                 var svg = d3.select("#"+extensionID+"Container")
                     .append("svg")
-                    .attr("width", viewContainer.width())
-                    .attr("height", viewContainer.height());
+                    .attr("width", width)
+                    .attr("height", height);
                 viz.drawZoomableTreeMap(svg, treeData);
                 TSCORE.hideLoadingAnimation();
         });
@@ -78,8 +89,8 @@ define(function(require, exports, module) {
                 d3.select("svg").remove();
                 var svg = d3.select("#"+extensionID+"Container")
                     .append("svg")
-                    .attr("width", viewContainer.width())
-                    .attr("height", viewContainer.height());
+                    .attr("width", width)
+                    .attr("height", height);
                 viz.drawTree(svg, treeData);
                 TSCORE.hideLoadingAnimation();
         });
@@ -93,8 +104,8 @@ define(function(require, exports, module) {
             var svg = d3.select("#"+extensionID+"Container")
               .append("svg")
               .attr("id", "tagspacesMindmap")
-              .attr("width", viewContainer.width())
-              .attr("height", viewContainer.height());
+              .attr("width", width)
+              .attr("height", height);
             viz.drawMindMap(svg, treeData);
             TSCORE.hideLoadingAnimation();
         });
@@ -107,8 +118,8 @@ define(function(require, exports, module) {
             d3.select("svg").remove();
             var svg = d3.select("#"+extensionID+"Container")
                 .append("svg")
-                .attr("width", viewContainer.width())
-                .attr("height", viewContainer.height());
+                .attr("width", width)
+                .attr("height", height);
             viz.drawPartition(svg, treeData);
             TSCORE.hideLoadingAnimation();
         });
@@ -149,83 +160,36 @@ define(function(require, exports, module) {
 	};   
 	
 	var initUI = function() {
-	  // Tmp disabling of the perspective
-	  return;
-    viewToolbar.append($("<div >", {
-        class: "btn-group",
-        "data-toggle": "buttons",
+
+    $("#" + extensionID + "ActivateMindmapButton").click(function() {
+      graphMode = "mindmap";
+      TSCORE.showLoadingAnimation();
+      TSCORE.IO.createDirectoryTree(TSCORE.currentPath);
+    });
+
+    $("#" + extensionID + "ActivateTreeMapButton").click(function() {
+      graphMode = "treeMap";
+      TSCORE.showLoadingAnimation();
+      TSCORE.IO.createDirectoryTree(TSCORE.currentPath);
     })
-      .append($("<button>", {
-              class: "btn btn-link active",
-              title: "Activate Mindmap Visualization",
-              text: " Mindmap"
-          })
-          .click(function() {
-              graphMode = "mindmap";
-              TSCORE.showLoadingAnimation();
-              TSCORE.IO.createDirectoryTree(TSCORE.currentPath);
-          })
-          .append( "<input type='radio' name='options'>")
-          .prepend( "<i class='fa fa-sitemap' />")
-      )
 
-      .append($("<button>", {
-              class: "btn btn-link",
-              title: "Activate Treemap Mode",
-              text: " TreeMap"
-          })
-          .click(function() {
-              graphMode = "treeMap";
-              TSCORE.showLoadingAnimation();
-              TSCORE.IO.createDirectoryTree(TSCORE.currentPath);
-          })
-          .append( "<input type='radio' name='options'>")
-          .prepend( "<i class='fa fa-th-large' />")
-      )
+    $("#" + extensionID + "ActivateTreeMapNaviButton").click(function() {
+      graphMode = "treeMap2";
+      TSCORE.showLoadingAnimation();
+      TSCORE.IO.createDirectoryTree(TSCORE.currentPath);
+    })
 
-      .append($("<button>", {
-              class: "btn btn-link",
-              title: "Activate Tree Map Navi",
-              text: " TreeMap Navi"
-          })
-          .click(function() {
-              graphMode = "treeMap2";
-              TSCORE.showLoadingAnimation();
-              TSCORE.IO.createDirectoryTree(TSCORE.currentPath);
-          })
-          .append( "<input type='radio' name='options'>")
-          .prepend( "<i class='fa fa-th-large' />")
-      )
+    $("#" + extensionID + "ActivateTreeButton").click(function() {
+      graphMode = "tree";
+      TSCORE.showLoadingAnimation();
+      TSCORE.IO.createDirectoryTree(TSCORE.currentPath);
+    })
 
-      .append($("<button>", {
-              class: "btn btn-link",
-              title: "Activate Tree Mode",
-              text: " Tree"
-          })
-          .click(function() {
-              graphMode = "tree";
-              TSCORE.showLoadingAnimation();
-              TSCORE.IO.createDirectoryTree(TSCORE.currentPath);
-          })
-          .append( "<input type='radio' name='options'>")
-          .prepend( "<i class='fa fa-sitemap' />")
-      )
-
-      .append($("<button>", {
-              class: "btn btn-link",
-              title: "Activate Bilevel Partition",
-              text: " Bilevel Partition"
-          })
-          .click(function() {
-              graphMode = "bilevelPartition";
-              TSCORE.showLoadingAnimation();
-              TSCORE.IO.createDirectoryTree(TSCORE.currentPath);
-          })
-          .append( "<input type='radio' name='options'>")
-          .prepend( "<i class='fa fa-adjust' />")
-      )
-
-   ); // end button group
+    $("#" + extensionID + "ActivateBilevelPartitionButton").click(function() {
+      graphMode = "bilevelPartition";
+      TSCORE.showLoadingAnimation();
+      TSCORE.IO.createDirectoryTree(TSCORE.currentPath);
+    })
 	};
 	
   // Vars
@@ -238,8 +202,6 @@ define(function(require, exports, module) {
   exports.License = extensionLicense;
     
   // Methods
-//    exports.init                    = init;
-//    exports.load                    = load;
 	exports.clearSelectedFiles = clearSelectedFiles;
 	exports.getNextFile	= getNextFile;
 	exports.getPrevFile = getPrevFile;
