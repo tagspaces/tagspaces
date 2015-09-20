@@ -71,7 +71,7 @@ define(function(require, exports, module) {
     '<div class="extMainContent accordion">' +
       '{{#each groups}}' +
       '<div class="accordion-group disableTextSelection" style="width: 100%; border: 0px #aaa solid;">' +
-        '<div class="accordion-heading btn-group" style="width:100%; margin: 0px; border-bottom: solid 1px #eee; background-color: #ddd;">' +
+        '<div class="accordion-heading btn-group" style="width:100%; margin: 0px; border-bottom: solid 1px #eee; background-color: #f0f0f0;">' +
           '<button class="btn btn-link groupTitle" data-toggle="collapse" data-target="#{{../id}}SortingButtons{{@index}}">' +
             '<i class="fa fa-minus-square">&nbsp;</i>' +
           '</button>' +
@@ -101,7 +101,7 @@ define(function(require, exports, module) {
       fileext: fileExt,
       title: title,
       tags: [],
-      selected: isSelected ? "fa-check-square-o" : "fa-square-o",
+      selected: isSelected ? "fa-check-square" : "fa-square-o",
       thumbPath: metaObj.thumbnailPath
     };
     
@@ -628,13 +628,13 @@ define(function(require, exports, module) {
 
     if (isWin && !isWeb) {
       filePath = filePath.replace("\\", "");
-      $("#" + this.extensionID + "Container li[filepath]").each(function() {
+      $("#" + this.extensionID + "Container div[filepath]").each(function() {
         if ($(this).attr("filepath").replace("\\", "") === filePath) {
           $(this).remove();
         }
       });
     } else {
-      $("#" + this.extensionID + "Container li[filepath='" + filePath + "']").remove();
+      $("#" + this.extensionID + "Container div[filepath='" + filePath + "']").remove();
     }
   };
 
@@ -653,13 +653,13 @@ define(function(require, exports, module) {
 
     if (isWin && !isWeb) {
       oldFilePath = oldFilePath.replace("\\", "");
-      $("#" + this.extensionID + "Container li[filepath]").each(function() {
+      $("#" + this.extensionID + "Container div[filepath]").each(function() {
         if ($(this).attr("filepath").replace("\\", "") === oldFilePath) {
           $fileTile = $(this);
         }
       });
     } else {
-      $fileTile = $("#" + this.extensionID + "Container li[filepath='" + oldFilePath + "']");
+      $fileTile = $("#" + this.extensionID + "Container div[filepath='" + oldFilePath + "']");
     }
 
     var metaObj = TSCORE.Meta.findMetaObjectFromFileList(oldFilePath);
