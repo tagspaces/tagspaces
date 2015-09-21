@@ -161,7 +161,7 @@
 - upgrading jquery ui to 1.10.4
 - upgrading jquery to 2.1.1
 - upgrading bootstrap lib to 3.2.0
-- [chrome] exchanging the chrome with chromelight ioapi not dependent on NPAPI
+- [chrome] exchanging the chrome with chromium ioapi not dependent on NPAPI
 - [android] hiding the cancel/dialog close button in cordova
 - [android] disabling export to csv in cordova
 - [firefox] adding file copy functionality and fixing messaging api change introduced with Firefox 30
