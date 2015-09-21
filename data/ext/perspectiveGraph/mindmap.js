@@ -38,7 +38,7 @@ define(function(require, exports, module) {
               d.children.forEach(toggleAll);
               toggle(d);
             }
-          };
+          }
         
           // Initialize the display to show a few nodes.
           root.children.forEach(toggleAll);
@@ -133,11 +133,11 @@ define(function(require, exports, module) {
             d.x0 = d.x;
             d.y0 = d.y;
           });
-        };
+        }
         
         // Toggle children.
         function toggle(d) {
-          if(d.children == undefined || d.children == null) { //  || d.children.length < 1
+          if(d.children === undefined || d.children === null) { //  || d.children.length < 1
               TSCORE.FileOpener.openFile(d.path);                
           } 
           if (d.children) {
@@ -147,7 +147,7 @@ define(function(require, exports, module) {
               d.children = d._children;
               d._children = null;
           }
-        };
+        }
     };    
     
     // Methods

@@ -3,7 +3,7 @@
  * can be found in the LICENSE file. */
 
 define(function(require, exports, module) {
-"use strict";
+    "use strict";
     console.log("Loading Quantified Self");
 
     var TSCORE = require("tscore");
@@ -35,7 +35,7 @@ define(function(require, exports, module) {
               .data(nodes)
             .enter().append("g")
               .attr("class", "node")
-              .attr("transform", function(d) { return "rotate(" + (d.x - 90) + ")translate(" + d.y + ")"; })
+              .attr("transform", function(d) { return "rotate(" + (d.x - 90) + ")translate(" + d.y + ")"; });
         
           node.append("circle")
               .attr("r", 4.5);
@@ -48,7 +48,7 @@ define(function(require, exports, module) {
         
         d3.select(self.frameElement).style("height", diameter - 150 + "px");
         
-    }
+    };
       
     var drawTree = function(svg, treeData) {
                     
@@ -75,7 +75,7 @@ define(function(require, exports, module) {
               .data(nodes)
               .enter().append("g")
               .attr("class", "node")
-              .attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; })
+              .attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; });
         
           node.append("circle")
               .attr("r", 4.5);
@@ -87,7 +87,7 @@ define(function(require, exports, module) {
               .text(function(d) { return d.name; });
         
           d3.select(self.frameElement).style("height", svg.attr("height") + "px");  
-    }
+    };
     
     var drawTreeMap2 = function(svg, treeData) {
         var margin = {top: 40, right: 10, bottom: 10, left: 10},
@@ -117,15 +117,13 @@ define(function(require, exports, module) {
               .text(function(d) { return d.children ? null : d.name; });
         
           d3.selectAll("input").on("change", function change() {
-            var value = this.value === "count"
-                ? function() { return 1; }
-                : function(d) { return d.size; };
+            var value = this.value === "count" ? function() { return 1; } : function(d) { return d.size; };
         
             node
-                .data(treemap.value(value).nodes)
+              .data(treemap.value(value).nodes)
               .transition()
-                .duration(1500)
-                .call(position);
+              .duration(1500)
+              .call(position);
           });
     
         
@@ -134,8 +132,8 @@ define(function(require, exports, module) {
               .style("top", function(d) { return d.y + "px"; })
               .style("width", function(d) { return Math.max(0, d.dx - 1) + "px"; })
               .style("height", function(d) { return Math.max(0, d.dy - 1) + "px"; });
-        }
-    }
+        };
+    };
     
     var drawTreeMapZoom = function(svg, treeData) {
         // http://bl.ocks.org/mbostock/raw/1005873/e741416b4271859f1dfb3e0440d2f20bfc989e27/
@@ -176,7 +174,7 @@ define(function(require, exports, module) {
               .attr("height", function(d) { return y(d.y + d.dy) - y(d.y); });
           }
         });        
-    }
+    };
     
     var drawTreeMap = function(svg, treeData) {
         svg.append("g");
@@ -190,24 +188,24 @@ define(function(require, exports, module) {
     
         var color = d3.scale.category20();  
         
-          svg.selectAll(".node")
-              .data(nodes)
-              .enter().append("rect")
-              .attr("class", "node")
-              .attr("x", function(d) { return d.x; })
-              .attr("y", function(d) { return d.y; })
-              .attr("width", function(d) { return d.dx; })
-              .attr("height", function(d) { return d.dy; })
-              .style("fill", function(d) { return color((d.children ? d : d.parent).name); });
-        
-          svg.selectAll(".label")
-              .data(nodes.filter(function(d) { return d.dx > 6; }))
-              .enter().append("text")
-              .attr("class", "label")
-              .attr("dy", ".35em")
-              .attr("transform", function(d) { return "translate(" + (d.x + d.dx / 2) + "," + (d.y + d.dy / 2) + ")rotate(90)"; })
-              .text(function(d) { return d.name; });    
-    }    
+        svg.selectAll(".node")
+            .data(nodes)
+            .enter().append("rect")
+            .attr("class", "node")
+            .attr("x", function(d) { return d.x; })
+            .attr("y", function(d) { return d.y; })
+            .attr("width", function(d) { return d.dx; })
+            .attr("height", function(d) { return d.dy; })
+            .style("fill", function(d) { return color((d.children ? d : d.parent).name); });
+
+        svg.selectAll(".label")
+            .data(nodes.filter(function(d) { return d.dx > 6; }))
+            .enter().append("text")
+            .attr("class", "label")
+            .attr("dy", ".35em")
+            .attr("transform", function(d) { return "translate(" + (d.x + d.dx / 2) + "," + (d.y + d.dy / 2) + ")rotate(90)"; })
+            .text(function(d) { return d.name; });
+    };
     
     // Methods
     exports.drawTreeMap                    = drawTreeMap;

@@ -23,7 +23,7 @@ define(function(require, exports, module) {
 	
 	var graphMode = "mindmap"; 
 	
-	var treeData = undefined;
+	var treeData;
 	
 	exports.init = function init() {
 		console.log("Initializing View "+extensionID);
@@ -171,25 +171,25 @@ define(function(require, exports, module) {
       graphMode = "treeMap";
       TSCORE.showLoadingAnimation();
       TSCORE.IO.createDirectoryTree(TSCORE.currentPath);
-    })
+    });
 
     $("#" + extensionID + "ActivateTreeMapNaviButton").click(function() {
       graphMode = "treeMap2";
       TSCORE.showLoadingAnimation();
       TSCORE.IO.createDirectoryTree(TSCORE.currentPath);
-    })
+    });
 
     $("#" + extensionID + "ActivateTreeButton").click(function() {
       graphMode = "tree";
       TSCORE.showLoadingAnimation();
       TSCORE.IO.createDirectoryTree(TSCORE.currentPath);
-    })
+    });
 
     $("#" + extensionID + "ActivateBilevelPartitionButton").click(function() {
       graphMode = "bilevelPartition";
       TSCORE.showLoadingAnimation();
       TSCORE.IO.createDirectoryTree(TSCORE.currentPath);
-    })
+    });
 	};
 	
   // Vars
