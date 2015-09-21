@@ -46,7 +46,7 @@
 	
     $("#saveSelectionAsHtml").on("click", function() {
       chrome.tabs.executeScript(null, {
-        file: "chromelight/captureContent.js"
+        file: "chromium/captureContent.js"
       }, function() {
         if (chrome.extension.lastError) {
           console.log('There was an error injecting script : \n' + chrome.extension.lastError.message);

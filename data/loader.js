@@ -45,7 +45,7 @@ if( isFirefox ) {
 } else if ( isFirefoxOS ) {
   IO_JS = "mozilla/firefoxos.api";
 } else if ( isChrome ) {
-  IO_JS = "chromelight/chrome.api";
+  IO_JS = "chromium/chrome.api";
 } else if (isNode){
   IO_JS = "node-webkit/node-webkit.api";
 } else if (isCordova){
