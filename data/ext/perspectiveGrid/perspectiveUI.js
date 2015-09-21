@@ -71,12 +71,14 @@ define(function(require, exports, module) {
     '<div class="extMainContent accordion">' +
       '{{#each groups}}' +
       '<div class="accordion-group disableTextSelection" style="width: 100%; border: 0px #aaa solid;">' +
+        '{{#if ../moreThanOneGroup}}' +
         '<div class="accordion-heading btn-group" style="width:100%; margin: 0px; border-bottom: solid 1px #eee; background-color: #f0f0f0;">' +
-          '<button class="btn btn-link groupTitle" data-toggle="collapse" data-target="#{{../id}}SortingButtons{{@index}}">' +
+          '<button class="btn btn-link groupTitle" data-toggle="collapse" data-target="#{{../../id}}SortingButtons{{@index}}">' +
             '<i class="fa fa-minus-square">&nbsp;</i>' +
           '</button>' +
-          '<span class="btn btn-link groupTitle" id="{{../id}}HeaderTitle{{@index}}" style="margin-left: 0px; padding-left: 0px;"></span>' +
+          '<span class="btn btn-link groupTitle" id="{{../../id}}HeaderTitle{{@index}}" style="margin-left: 0px; padding-left: 0px;"></span>' +
         '</div>' +
+        '{{/if}}' +
         '<div class="accordion-body collapse in" id="{{../id}}SortingButtons{{@index}}" style="margin: 0px 0px 0px 3px; border: 0px;">' +
           '<div class="accordion-inner tileContainer" id="{{../id}}GroupContent{{@index}}"></div>' +
         '</div>' +
@@ -375,9 +377,12 @@ define(function(require, exports, module) {
 
     var fileGroups = self.calculateGrouping(this.searchResults);
 
+    var moreThanOneGroup = (fileGroups.length > 1) ? true : false;
+
     this.viewContainer.append(mainLayoutTemplate({
       id: self.extensionID,
-      groups: fileGroups
+      groups: fileGroups,
+      moreThanOneGroup: moreThanOneGroup
     }));
 
     $extMainContent = this.viewContainer.find(".extMainContent");
