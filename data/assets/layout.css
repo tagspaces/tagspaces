@@ -42,6 +42,11 @@
   bottom: 15px;
 }
 
+.extMainMenu .dropdown-menu {
+  max-height: 500px;
+  overflow-y: auto;
+}
+
 @media print {
   .extMainMenu {
     display: none;
