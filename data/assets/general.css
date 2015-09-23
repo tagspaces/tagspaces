@@ -562,7 +562,8 @@ input a.resetFilter {
 }
 
 #perspectiveSwitcher {
-  right: 2px;
+  top: 7px;
+  right: 7px;
   min-width: 200px;
 }
 

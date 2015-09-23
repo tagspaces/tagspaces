@@ -701,7 +701,7 @@ define(function(require, exports, module) {
   }
   var showContextMenu = function(menuId, sourceObject) {
     var leftPos = sourceObject.offset().left;
-    var topPos = sourceObject.offset().top + sourceObject.height() + 5;
+    var topPos = sourceObject.offset().top;
     if (sourceObject.offset().top + sourceObject.height() + $(menuId).height() > window.innerHeight) {
       topPos = window.innerHeight - $(menuId).height();
       leftPos = sourceObject.offset().left + 15;
