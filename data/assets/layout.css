@@ -156,6 +156,10 @@
   min-height: 80px;
 }
 
+.col1 .row1 .navbar {
+	box-shadow: 0px 7px 20px 0px rgba(242, 242, 242, 1);
+}
+
 .col1 .row2 {
   flex: 1 1 auto;
   -webkit-flex: 1 1 auto;
@@ -173,7 +177,7 @@
   min-height: 45px;
 	padding-left: 5px;
 	padding-top: 5px;
-	box-shadow: 0px -1px 3px 0px rgba(0,0,0,0.2);
+	box-shadow: 0px -7px 20px 0px rgba(242, 242, 242, 1);
 }
 
 /*==== COL2 ====== */
