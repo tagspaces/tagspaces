@@ -36,7 +36,7 @@ define(function(require, exports, module) {
     document.addEventListener("backbutton", function(e) {
       TSCORE.FileOpener.closeFile();
       $('.modal').modal('hide');
-      e.preventDefault();
+      //e.preventDefault();
     }, false);
 
     // iOS specific initialization
