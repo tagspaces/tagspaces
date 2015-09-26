@@ -50,6 +50,13 @@ $(document).ready(function() {
     saveExtSettings();
   });
 
+  $("#resetStyleButton").bind('click', function() {
+    currentStyleIndex = 0;
+    $htmlContent.removeClass();
+    $htmlContent.addClass('markdown ' + styles[currentStyleIndex] + " " + zoomSteps[currentZoomState]);
+    saveExtSettings();
+  });
+
   $("#zoomInButton").bind('click', function() {
     currentZoomState++;
     if (currentZoomState >= zoomSteps.length) {
