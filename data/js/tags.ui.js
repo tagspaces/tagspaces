@@ -20,7 +20,8 @@ define(function(require, exports, module) {
             '<button class="btn btn-link btn-lg tagGroupIcon" data-toggle="collapse" data-target="#tagButtons{{@index}}" data-i18n="[title]ns.common:toggleTagGroup" title="{{../toggleTagGroup}}">' +
                 '<i class="fa fa-tags fa-fw"></i>' +
             '</button>' +
-            '<button class="btn btn-link tagGroupTitle flexMaxWidth" key="{{key}}">{{title}}<span data-i18n="[title]ns.common:tagGroupTagsCount"> ({{children.length}}) </span></button>' +
+            '<button class="btn btn-link tagGroupTitle flexMaxWidth" key="{{key}}">{{title}}&nbsp;' +
+                '<sup><span class="badge" style="font-size: 9px;" data-i18n="[title]ns.common:tagGroupTagsCount">{{children.length}}</span></sup></button>' +
             '<button class="btn btn-link btn-lg tagGroupActions" key="{{key}}" data-i18n="[title]ns.common:tagGroupOperations" title="{{../tagGroupOperations}}">' +
                 '<b class="fa fa-ellipsis-v"></b>' +
             '</button>' +
