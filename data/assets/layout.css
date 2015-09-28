@@ -154,10 +154,13 @@
   -ms-flex: 0 1 80px;
 
   min-height: 80px;
+
+	box-shadow: 0px 7px 20px 0px rgba(242, 242, 242, 1);
+	z-index: 1;
 }
 
 .col1 .row1 .navbar {
-	box-shadow: 0px 7px 20px 0px rgba(242, 242, 242, 1);
+  box-shadow: none;
 }
 
 .col1 .row2 {
@@ -178,6 +181,7 @@
 	padding-left: 5px;
 	padding-top: 5px;
 	box-shadow: 0px -7px 20px 0px rgba(242, 242, 242, 1);
+  z-index: 1;
 }
 
 /*==== COL2 ====== */
