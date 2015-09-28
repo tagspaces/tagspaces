@@ -222,13 +222,26 @@ li hr {
   /*height: 100%;*/
 }
 
-/* Directory Navigation #F6A828*/
+/* Directory Navigation */
 
 .dirButton  {
   font-size: 13px;
   background-color: #E5E5E5;
   color: #444444;
   background-image: none;
+  margin: 1px;
+
+  flex: 1 1 auto;
+  -webkit-flex: 1 1 auto;
+  -ms-flex: 1 1 auto;
+}
+
+.dirButtonContainer {
+  display: flex;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+
+  flex-wrap: wrap;
 }
 
 .dirButton:hover, .dirButton:active, .dirButton:focus {

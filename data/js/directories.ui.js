@@ -22,16 +22,16 @@ define(function(require, exports, module) {
         '<div class="dropdown clearfix dirAltNavMenu" id="dirMenu{{@index}}">' +
             '<ul role="menu" class="dropdown-menu">' +
                 '<li class="dropdown-header"><button class="close">&times;</button><span data-i18n="ns.common:actionsForDirectory2"></span>&nbsp;"{{name}}"</li>' +
-                '<li><a class="btn btn-link pull-left reloadCurrentDirectory" data-path="{{path}}"><i class="fa fa-refresh fa-fw"></i><span data-i18n="ns.common:reloadCurrentDirectory"></span></a></li>' +
-                '<li><a class="btn btn-link pull-left createSubdirectory" data-path="{{path}}"><i class="fa fa-folder-o fa-fw"></i><span data-i18n="ns.common:createSubdirectory"></span></a></li>' +
-                '<li><a class="btn btn-link pull-left renameDirectory" data-path="{{path}}"><i class="fa fa-paragraph fa-fw"></i><span data-i18n="ns.common:renameDirectory"></span></a></li>' +
+                '<li><a class="btn btn-link reloadCurrentDirectory" data-path="{{path}}" style="text-align: left"><i class="fa fa-refresh fa-fw fa-lg"></i><span data-i18n="ns.common:reloadCurrentDirectory"></span></a></li>' +
+                '<li><a class="btn btn-link createSubdirectory" data-path="{{path}}" style="text-align: left"><i class="fa fa-folder-o fa-fw fa-lg"></i><span data-i18n="ns.common:createSubdirectory"></span></a></li>' +
+                '<li><a class="btn btn-link renameDirectory" data-path="{{path}}" style="text-align: left"><i class="fa fa-paragraph fa-fw fa-lg"></i><span data-i18n="ns.common:renameDirectory"></span></a></li>' +
                 '<li class="divider" style="width: 100%"></li>' +
                 '<li class="dropdown-header"><span data-i18n="ns.common:subfodersOfDirectory2"></span>&nbsp;"{{name}}"</li>' +
                 '{{#if children}}' +
-                '{{#each children}}' +
-                '<button class="btn dirButton" data-path="{{path}}" title="{{path}}" style="margin: 1px;">' +
+                '<div class="dirButtonContainer">{{#each children}}' +
+                '<button class="btn dirButton" data-path="{{path}}" title="{{path}}">' +
                 '<i class="fa fa-folder-o"></i>&nbsp;{{name}}</button>' +
-                '{{/each}}' +
+                '{{/each}}</div>' +
                 '{{else}}' +
                 '<div><span data-i18n="ns.common:noSubfoldersFound"></span></div>' +
                 '{{/if}}' +
@@ -56,8 +56,8 @@ define(function(require, exports, module) {
         '<div class="accordion-body collapse in" id="dirButtons{{@index}}">' +
             '<div class="accordion-inner" id="dirButtonsContent{{@index}}" style="padding: 4px;">' +
                 '{{#if children}}' +
-                '<div>{{#each children}}' +
-                    '<button class="btn btn-sm dirButton ui-droppable" key="{{path}}" title="{{path}}" style="margin: 1px;">' +
+                '<div class="dirButtonContainer">{{#each children}}' +
+                    '<button class="btn btn-sm dirButton ui-droppable" key="{{path}}" title="{{path}}">' +
                         '<i class="fa fa-folder-o"></i>&nbsp;{{name}}</button>' +
                 '{{/each}}</div>' +
                 '{{else}}' +
