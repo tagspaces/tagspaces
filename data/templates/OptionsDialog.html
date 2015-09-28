@@ -17,8 +17,8 @@
                     <li><a href="#filetypes" data-toggle="tab" class="optionsTitle" data-i18n="ns.dialogs:fileTypeTab"></a></li>
                     <li><a href="#keyBindings" data-toggle="tab" class="optionsTitle" data-i18n="ns.dialogs:keyBindingsTab"></a></li>
                 </ul>
-                <div class="tab-content" style="min-height: 300px; max-height: 500px; overflow-y: auto; overflow-x: hidden;">
-                    <div class="tab-pane active" id="general" style="height: 100%;">
+                <div class="tab-content" style="max-height: 450px; overflow-y: auto; overflow-x: hidden;">
+                    <div class="tab-pane active" id="general" style="overflow-y: auto; overflow-x: hidden;">
                         <div class='form-group'>
                             <button class="btn btn-default" id="exportTagGroupsButton" aria-hidden="true">
                                 <i class="fa fa-upload"></i>&nbsp;
@@ -68,7 +68,7 @@
                         </div>
                     </div>
                     {{#if isProVersion}}
-                    <div class="tab-pane active" id="pro" style="height: 100%;">
+                    <div class="tab-pane active" id="pro" style="overflow-y: auto; overflow-x: hidden;">
                         <div class="form-group">
                             <div class="col-sm-12 checkbox">
                                 <label for="writeMetaToSidecarFile" >
@@ -110,22 +110,20 @@
                         </div>
                     </div> 
                     {{/if}}
-                    <div class="tab-pane" id="perspectives" style="height: 100%;">
+                    <div class="tab-pane" id="perspectives" style="overflow-y: auto; overflow-x: hidden;">
                         <button class='btn btn-default' id='addPerspectiveButton'>
                             <i class='fa fa-plus'></i>&nbsp;<span data-i18n="ns.dialogs:addPerspectiveButton"></span>
                         </button>
                         <div id='perspectiveList' style="margin-top: 10px"></div>
                         <p class="help-block" data-i18n="ns.dialogs:perspectivesHelp"></p>
                     </div>
-
-                    <div class="tab-pane" id="filetypes" style="height: 100%;">
+                    <div class="tab-pane" id="filetypes" style="overflow-y: auto; overflow-x: hidden;">
                         <button class='btn btn-default' id='addFileTypeButton'>
                             <i class='fa fa-plus'></i>&nbsp;<span data-i18n="ns.dialogs:addNewFileExtensionButton"></span>
                         </button>
                         <div id='fileTypesList' style="margin-top: 10px"></div>
                     </div>
-
-                    <div class="tab-pane" id="keyBindings" style="height: 100%; overflow-x: hidden;">
+                    <div class="tab-pane" id="keyBindings" style="overflow-y: auto; overflow-x: hidden;">
                         <form class="form-horizontal" role="form">
                             <button class='btn btn-default' id='keyBindingInstructionsToggle'>
                                 <i class='fa fa-info-circle'></i>&nbsp;<span data-i18n="ns.dialogs:keyBindingInstructions"></span>
@@ -199,7 +197,5 @@
                 <button class="btn btn-primary" id="saveSettingsCloseButton"><i class="fa fa-check fa-lg"></i></button>
             </div>
         </div>
-        <!-- /.modal-content -->
     </div>
-    <!-- /.modal-dialog -->
-</div><!-- /.modal -->
+</div>
