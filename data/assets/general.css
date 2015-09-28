@@ -230,6 +230,7 @@ li hr {
   color: #444444;
   background-image: none;
   margin: 1px;
+  text-align: left;
 
   flex: 1 1 auto;
   -webkit-flex: 1 1 auto;
