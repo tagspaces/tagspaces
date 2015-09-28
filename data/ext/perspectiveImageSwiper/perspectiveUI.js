@@ -30,16 +30,23 @@ define(function(require, exports, module) {
 
       if (supportedFileTypesThumbs.indexOf(ext) !== -1) {
         var filePath = fileInfo[TSCORE.fileListFILEPATH];
+        var encodedPath;
+        if (isChrome) {
+          encodedPath = encodeURI("file://" + filePath)
+        } else {
+          encodedPath = encodeURI(filePath);
+        }
         var doc = {
           name: fileInfo[TSCORE.fileListFILENAME],
-          path:  encodeURI("file://" + filePath),
+          path: encodedPath,
           thumbnail:  encodeURI(defaultThumnailPath),
           title: fileInfo[TSCORE.fileListTITLE]
         };
 
         var metaFilePath = TSCORE.Meta.findMetaFilebyPath(filePath, "png");
         if (metaFilePath) {
-          doc.thumbnail = encodeURI("file://" + metaFilePath);
+          //doc.thumbnail = encodeURI("file://" + metaFilePath);
+          doc.thumbnail = encodeURI("file:///" + metaFilePath);
         }
         data.push(doc);
       }
