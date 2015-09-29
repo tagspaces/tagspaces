@@ -32,7 +32,7 @@ define(function(require, exports, module) {
         var filePath = fileInfo[TSCORE.fileListFILEPATH];
         var encodedPath;
         if (isChrome) {
-          encodedPath = encodeURI("file://" + filePath)
+          encodedPath = encodeURI("file://" + filePath);
         } else {
           encodedPath = encodeURI(filePath);
         }
