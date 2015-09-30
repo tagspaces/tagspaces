@@ -20,7 +20,7 @@ define(function(require, exports, module) {
             '<button class="btn btn-link btn-lg tagGroupIcon" data-toggle="collapse" data-target="#tagButtons{{@index}}" data-i18n="[title]ns.common:toggleTagGroup" title="{{../toggleTagGroup}}">' +
                 '<i class="fa fa-tags fa-fw"></i>' +
             '</button>' +
-            '<button class="btn btn-link tagGroupTitle flexMaxWidth" key="{{key}}">{{title}}&nbsp;' +
+            '<button class="btn btn-link tagGroupTitle flexMaxWidth" data-toggle="collapse" data-target="#tagButtons{{@index}}" key="{{key}}">{{title}}&nbsp;' +
                 '<sup><span class="badge" style="font-size: 9px;" data-i18n="[title]ns.common:tagGroupTagsCount">{{children.length}}</span></sup></button>' +
             '<button class="btn btn-link btn-lg tagGroupActions" key="{{key}}" data-i18n="[title]ns.common:tagGroupOperations" title="{{../tagGroupOperations}}">' +
                 '<b class="fa fa-ellipsis-v"></b>' +
@@ -254,10 +254,8 @@ define(function(require, exports, module) {
       'tagGroupOperations': $.i18n.t('ns.common:tagGroupOperations')
     }));
 
-    $tagGroupsContent.find('.tagGroupIcon').each(function() {
-
+    $tagGroupsContent.find('.tagGroupTitle').each(function() {
       $(this).on('click', function() {
-
         var areaId = $(this).attr('data-target');
         if (areaId) {
           var index = areaId.substring(areaId.length - 1);
@@ -266,6 +264,18 @@ define(function(require, exports, module) {
         }
       });
     });
+
+    $tagGroupsContent.find('.tagGroupIcon').each(function() {
+      $(this).on('click', function() {
+        var areaId = $(this).attr('data-target');
+        if (areaId) {
+          var index = areaId.substring(areaId.length - 1);
+          tagGroups[index].collapse = $(areaId).is(':visible');
+          TSCORE.Config.saveSettings();
+        }
+      });
+    });
+
     $tagGroupsContent.find('.tagButton').each(function() {
       $(this).draggable({
         'appendTo': 'body',
