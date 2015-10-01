@@ -486,9 +486,10 @@ define(function(require, exports, module) {
       $('#formLocationEdit').on('valid.bs.validator', function() {
         $('#saveLocationButton').prop('disabled', false);
       });
-      $('#dialogLocationEdit').on('shown.bs.modal', function() {
+      // Auto focus disabled due usability issue on mobiles
+      /*$('#dialogLocationEdit').on('shown.bs.modal', function() {
         $('#folderLocation2').focus();
-      });
+      });*/
       var isDefault = isDefaultLocation(path);
       $('#defaultLocationEdit').prop('checked', isDefault);
       //$('#defaultLocationEdit').attr('disabled', isDefault);
