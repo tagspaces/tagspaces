@@ -11,8 +11,6 @@ define(function(require, exports, module) {
   var TSPRO = require('tspro');
   var directoryHistory = [];
   var dir4ContextMenu = null;
-  var tsMetadataFolder = '.ts';
-  var tsMetadataFile = 'tsm.json';
   var alternativeDirectoryNavigatorTmpl = Handlebars.compile(
     '{{#each dirHistory}}' +
     '<div class="btn-group">' +
@@ -72,12 +70,11 @@ define(function(require, exports, module) {
   var locationChooserTmpl = Handlebars.compile(
     '<li class="flexLayout">' +
       '<button style="text-align: left;" class="btn btn-link flexMaxWidth" id="createNewLocation">' +
-        '<i class="fa fa-plus"></i>&nbsp;<span data-i18n="[title]ns.common:connectNewLocationTooltip;ns.common:connectNewLocationTooltip"></span>'  +
+        '<i class="fa fa-plus"></i>&nbsp;<span data-i18n="[title]ns.common:connectNewLocationTooltip;ns.common:connectNewLocationTooltip">{{connectLocation}}</span>'  +
       '</button>' +
     '</li>' +
     '<li class="divider"></li>' +
     '<li class="dropdown-header" data-i18n="ns.common:yourLocations">{{yourLocations}}</li>' +
-    //'<li class="divider"></li>' +
     '{{#each locations}}' +
     '<li class="flexLayout">' +
       '<button title="{{path}}" path="{{path}}" name="{{name}}" class="btn btn-link openLocation">' +
@@ -129,15 +126,15 @@ define(function(require, exports, module) {
   function loadFolderMetaData(path) {
       var metadataPath;
       if (isWeb) {
-        metadataPath = path + TSCORE.dirSeparator + tsMetadataFolder + TSCORE.dirSeparator + tsMetadataFile;
+        metadataPath = path + TSCORE.dirSeparator + TSCORE.metaFolder + TSCORE.dirSeparator + TSCORE.metaFolderFile;
       } else {
-        metadataPath = 'file://' + path + TSCORE.dirSeparator + tsMetadataFolder + TSCORE.dirSeparator + tsMetadataFile;
+        metadataPath = 'file://' + path + TSCORE.dirSeparator + TSCORE.metaFolder + TSCORE.dirSeparator + TSCORE.metaFolderFile;
       }
       $.get(metadataPath, function(data) {
         if (data.length > 1) {
           var metadata = JSON.parse(data);
           console.log('Location Metadata: ' + JSON.stringify(metadata));
-          if (metadata.tagGroups.length > 0) {
+          if (metadata.tagGroups && metadata.tagGroups.length > 0) {
             TSCORE.locationTags = metadata.tagGroups;
             TSCORE.generateTagGroups();
           }
@@ -178,7 +175,6 @@ define(function(require, exports, module) {
     $alternativeNavigator.html(alternativeDirectoryNavigatorTmpl({
       'dirHistory': directoryHistory
     }));
-    $alternativeNavigator.i18n();
     $alternativeNavigator.find('.reloadCurrentDirectory').each(function() {
       $(this).on('click', function() {
         navigateToDirectory($(this).attr('data-path'));
@@ -211,6 +207,7 @@ define(function(require, exports, module) {
         navigateToDirectory($(this).attr('data-path'));
       });
     });
+    $alternativeNavigator.i18n();
   }
 
   var showDropDown = function(menuId, sourceObject) {
@@ -370,7 +367,10 @@ define(function(require, exports, module) {
     console.log('Dir History: ' + JSON.stringify(directoryHistory));
     TSCORE.currentPath = directoryPath;
     TSCORE.Meta.getDirectoryMetaInformation(function() {
-      TSCORE.IO.listDirectory(directoryPath); 
+      TSCORE.IO.listDirectory(directoryPath);
+      if(TSCORE.IO.createMetaFolder && TSCORE.PRO) {
+        TSCORE.IO.createMetaFolder(directoryPath);
+      }
     });
   }
 
@@ -666,8 +666,6 @@ define(function(require, exports, module) {
     var $locationsList = $('#locationsList');
     $locationsList.children().remove();
 
-    $('#locationName').text($.i18n.t('ns.common:chooseLocation'));
-
     TSCORE.Config.Settings.tagspacesList.forEach(function(element) {
       if (isDefaultLocation(element.path)) {
         element.isDefault = true;
@@ -678,6 +676,7 @@ define(function(require, exports, module) {
     $locationsList.html(locationChooserTmpl({
       'locations': TSCORE.Config.Settings.tagspacesList,
       'yourLocations': $.i18n.t('ns.common:yourLocations'),
+      'connectLocation': $.i18n.t('ns.common:connectNewLocationTooltip'),
       'editLocationTitle': $.i18n.t('ns.common:editLocation')
     }));
     $locationsList.find('.openLocation').each(function() {
