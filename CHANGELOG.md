@@ -1,5 +1,24 @@
 ﻿#Changelog
 
+##Version 2.0.0 / 2015.10.xx [DRAFT]
+- exchanging the pdf.js lib with a newer version
+- enabling fullscreen mode in the native desktop apps
+- redesigning the viewerHTML and viewerMD extensions
+- adding a default viewer for the EPUB files
+- added Korean and Indonesian
+- fixing issue with opening files from command line
+- fixing issue with start in portable mode
+- save collapsed state of tag groups
+- rearranging file opener button toolbar, exchanging icons
+- adding perspective image swiper
+- sync meta files on delete and rename
+- change perspective after meta data load
+- added default location functionality
+- added key binding `ctrl+f` for the search functionality
+- layout migration to flexbox
+- disabling directory watcher in native apps, due to performance issue
+- reenabling back button on android
+
 ##Version 1.12.0 / 2015.07.28
 - Added a new audio/video player extension based on plyr.io library
 - Added a new viewer for EPUB files
