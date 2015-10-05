@@ -7,7 +7,6 @@ define(function(require, exports, module) {
   console.log('Loading core.api.js ...');
   var tsSettings = require('tssetting');
   var tsIOApi = require('tsioapi');
-  //  var tsIOApiDropbox = require("tsioapidropbox");
   var tsPersManager = require('tspersmanager');
   var tsTagUtils = require('tstagutils');
   var tsFileOpener = require('tsfileopener');
@@ -432,6 +431,11 @@ define(function(require, exports, module) {
   exports.Meta = tsMeta;
   // Public API definition
   exports.dirSeparator = isWin && !isWeb ? '\\' : '/';
+  exports.metaFolder = ".ts";
+  exports.metaFolderFile = "tsm.json";
+  exports.metaFileExt = ".json";
+  exports.thumbFileExt = ".png";
+  exports.contentFileExt = ".txt";
   exports.locationDesktop;
   exports.initApp = initApp;
   exports.reLayout = reLayout;

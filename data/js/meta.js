@@ -4,33 +4,25 @@ define(function(require, exports, module) {
   var TSCORE = require("tscore");
   var TSPRO = require("tspro");
 
-  var metaFileExt = "json";
-  var metaFolder = ".ts";
-  var thumbFileExt = "png";
-
   function makeMetaPathByName(name) {
-    return TSCORE.currentPath + TSCORE.dirSeparator + metaFolder + name;
+    return TSCORE.currentPath + TSCORE.dirSeparator + TSCORE.metaFolder + name;
   }
 
   function getDirectoryMetaInformation(readyCallback) {
-
     if (TSCORE.IO.getDirectoryMetaInformation) {
-      var metaFolderPath = TSCORE.currentPath + TSCORE.dirSeparator + metaFolder;
-      TSCORE.IO.getDirectoryMetaInformation(metaFolderPath, function() {
-        readyCallback();
-      });
+      var metaFolderPath = TSCORE.currentPath + TSCORE.dirSeparator + TSCORE.metaFolder;
+      TSCORE.IO.getDirectoryMetaInformation(metaFolderPath, readyCallback);
     } else {
       readyCallback();
     }
   }
 
-  function findMetaFilebyPath(filePath, type) {
+  function findMetaFilebyPath(filePath, extension) {
     var metaFilePath = null;
-    filePath = filePath + "." + type;
+    filePath = filePath + extension;
     TSCORE.metaFileList.every(function(element) {
       if (filePath.indexOf(element.name) > 0) {
-        metaFilePath = TSCORE.currentPath + TSCORE.dirSeparator + 
-          metaFolder + TSCORE.dirSeparator + element.name;
+        metaFilePath = TSCORE.currentPath + TSCORE.dirSeparator + TSCORE.metaFolder + TSCORE.dirSeparator + element.name;
         return false;
       }
       return true;
@@ -51,14 +43,10 @@ define(function(require, exports, module) {
   }
 
   function saveMetaData(filePath, metaData) {
-    
-    var metaFilePath = findMetaFilebyPath(filePath, metaFileExt);
-
+    var metaFilePath = findMetaFilebyPath(filePath, TSCORE.metaFileExt);
     if (!metaFilePath) {
-      var name = TSCORE.Utils.baseName(filePath) + "." + metaFileExt;
-      metaFilePath = TSCORE.currentPath + TSCORE.dirSeparator + 
-        metaFolder + TSCORE.dirSeparator + name;
-    
+      var name = TSCORE.Utils.baseName(filePath) + TSCORE.metaFileExt;
+      metaFilePath = TSCORE.currentPath + TSCORE.dirSeparator + TSCORE.metaFolder + TSCORE.dirSeparator + name;
       var entry = {
         "name": name,
         "isFile": true,
@@ -66,7 +54,6 @@ define(function(require, exports, module) {
       };
       TSCORE.metaFileList.push(entry);
     }
-
     var content = JSON.stringify(metaData);
     TSCORE.IO.saveTextFile(metaFilePath, content, true, true);
   }
@@ -77,9 +64,7 @@ define(function(require, exports, module) {
       if (element.name.indexOf(name) >= 0) {
         if (newFileName) {
           var newName = TSCORE.Utils.baseName(newFileName) + "." + element.name.split('.').pop();
-          var newFilePath = TSCORE.currentPath + TSCORE.dirSeparator +
-            metaFolder + TSCORE.dirSeparator + newName;
-
+          var newFilePath = TSCORE.currentPath + TSCORE.dirSeparator + TSCORE.metaFolder + TSCORE.dirSeparator + newName;
           TSCORE.IO.renameFile(element.path, newFilePath);
           element.name = newName;
           element.path = newFilePath;
@@ -98,7 +83,7 @@ define(function(require, exports, module) {
           resolve(dataURL);
         });
       } else {
-        var metaFilePath = findMetaFilebyPath(filePath, thumbFileExt);
+        var metaFilePath = findMetaFilebyPath(filePath, TSCORE.thumbFileExt);
         if (metaFilePath && isChrome) {
           metaFilePath = "file://" + metaFilePath;
         }
@@ -110,7 +95,7 @@ define(function(require, exports, module) {
 
   function loadMetaFileJson(filePath) {
     var promise = new Promise(function(resolve, reject) {
-      var metaFileJson = findMetaFilebyPath(filePath, metaFileExt);
+      var metaFileJson = findMetaFilebyPath(filePath, TSCORE.metaFileExt);
       if (metaFileJson) {
         TSCORE.IO.getFileContent(metaFileJson, function(result) {
           try {
@@ -158,9 +143,9 @@ define(function(require, exports, module) {
     }
     return tags;
   }
+
   //meta tag utils
   function addMetaTags(filePath, tags) {
-
     var metaObj = findMetaObjectFromFileList(filePath);
     if (!metaObj) {
       metaObj = {
@@ -217,7 +202,7 @@ define(function(require, exports, module) {
           metaObj.metaData.tags.splice(index , 1);
         }
       });
-      var metaFileJson = findMetaFilebyPath(filePath, metaFileExt);
+      var metaFileJson = findMetaFilebyPath(filePath, TSCORE.metaFileExt);
       if (metaFileJson) {
         var content = JSON.stringify(metaObj.metaData);
         TSCORE.IO.saveTextFile(metaFileJson, content, true, true);
