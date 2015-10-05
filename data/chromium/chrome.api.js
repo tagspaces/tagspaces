@@ -129,7 +129,8 @@ define(function(require, exports, module) {
         TSPOSTIO.loadTextFile(data);
       })
       .fail(function(data) {
-        console.log("AJAX failed " + data);
+        TSCORE.hideLoadingAnimation();
+        console.error("loading text file failed " + data);
       });
   };
 
@@ -190,8 +191,9 @@ define(function(require, exports, module) {
           resultCallback(anotatedDirList);
         } else {
           TSPOSTIO.errorOpeningPath(dirPath);
-        }  
-        console.log("Error opening path " + data);
+        }
+        TSCORE.hideLoadingAnimation();
+        console.error("Error opening path " + data);
       });
   };
 
@@ -242,7 +244,8 @@ define(function(require, exports, module) {
       })
       .fail(function(data) {
         TSPOSTIO.errorOpeningPath(dirPath);
-        console.log("Error opening path " + data);
+        TSCORE.hideLoadingAnimation();
+        console.error("Error opening path " + data);
       });
 
   };
@@ -382,6 +385,8 @@ define(function(require, exports, module) {
       if (xhr.response) {
         result(xhr.response);
       } else {
+        TSCORE.hideLoadingAnimation();
+        console.error("Getting file content failed");
         fail(xhr.statusText);
       }
     };
