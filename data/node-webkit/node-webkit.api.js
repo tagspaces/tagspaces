@@ -15,17 +15,8 @@ define(function(require, exports, module) {
   var TSPOSTIO = require("tspostioapi");
   var fsWatcher;
   var win = gui.Window.get();
-  /* var splashwin = gui.Window.open('splashscreen.html', {
-    'frame': false,
-    'toolbar': false,
-    'position': 'center',
-    'always-on-top': true,
-    "width": 400,
-    "height": 200
-  }); */
 
   var showMainWindow = function() {
-    //splashwin.hide();
     win.show();
   };
 
@@ -216,6 +207,7 @@ define(function(require, exports, module) {
       }
       return index;
     } catch (ex) {
+      TSCORE.hideLoadingAnimation();
       console.error("Scanning directory " + dirPath + " failed " + ex);
     }
   }
@@ -247,6 +239,7 @@ define(function(require, exports, module) {
       }
       return tree;
     } catch (ex) {
+      TSCORE.hideLoadingAnimation();
       console.error("Scanning directory " + dirPath + " failed " + ex);
     }
   }
@@ -254,7 +247,7 @@ define(function(require, exports, module) {
   var createDirectoryIndex = function(dirPath) {
     console.log("Creating index for directory: " + dirPath);
     TSCORE.showWaitingDialog($.i18n.t("ns.common:waitDialogDiectoryIndexing"));
-    TSCORE.showLoadingAnimation();
+    //TSCORE.showLoadingAnimation();
     var directoryIndex = [];
     directoryIndex = scanDirectory(dirPath, directoryIndex);
     //console.log(JSON.stringify(directoryIndex));
@@ -272,10 +265,10 @@ define(function(require, exports, module) {
 
   var createDirectory = function(dirPath, silentMode) {
     console.log("Creating directory: " + dirPath);
-
     fs.mkdir(dirPath, function(error) {
       if (error) {
-        console.log("Creating directory " + dirPath + " failed " + error);
+        TSCORE.hideLoadingAnimation();
+        console.error("Creating directory " + dirPath + " failed " + error);
         return;
       }
       if (silentMode !== true) {
@@ -283,6 +276,24 @@ define(function(require, exports, module) {
       }
     });
   };
+
+  var createMetaFolder = function (dirPath) {
+    if (dirPath.lastIndexOf(TSCORE.metaFolder) >= dirPath.length-TSCORE.metaFolder.length) {
+      console.log("Can not create meta folder in a meta folder");
+      return;
+    }
+    var metaDirPath = dirPath + TSCORE.dirSeparator + TSCORE.metaFolder;
+    fs.stat(metaDirPath, function(error, stats) {
+      if (error) {
+        console.log("Getting fstats failed");
+      }
+      if (stats && stats.isDirectory()) {
+        console.log("Directory already exists ");
+        return;
+      }
+      createDirectory(metaDirPath, true);
+    });
+  }
 
   var copyFile = function(sourceFilePath, targetFilePath) {
     console.log("Copy file: " + sourceFilePath + " to " + targetFilePath);
@@ -367,7 +378,8 @@ define(function(require, exports, module) {
     if (dirStatus.isDirectory) {
       fs.rename(dirPath, newDirPath, function(error) {
         if (error) {
-          console.log("Renaming directory failed " + error);
+          TSCORE.hideLoadingAnimation();
+          console.error("Renaming directory failed " + error);
           return;
         }
         TSPOSTIO.renameDirectory(dirPath, newDirPath);
@@ -388,7 +400,8 @@ define(function(require, exports, module) {
         end: 10000
       });
       stream.on('error', function(err) {
-        console.log("Loading file " + filePath + " failed " + err);
+        TSCORE.hideLoadingAnimation();
+        console.error("Loading file " + filePath + " failed " + err);
         return;
       });
 
@@ -400,22 +413,14 @@ define(function(require, exports, module) {
     } else {
       fs.readFile(filePath, 'utf8', function(error, content) {
         if (error) {
-          console.log("Loading file " + filePath + " failed " + error);
+          TSCORE.hideLoadingAnimation();
+          console.error("Loading file " + filePath + " failed " + error);
           return;
         }
         TSPOSTIO.loadTextFile(content);
       });
     }
   };
-
-  /* var loadEXIF = function(filePath) {
-      console.log("Loading file: "+filePath);
-
-      var buf = fs.readFileSync(filePath);
-      exif.parseTags(new BufferStream(buf, 24, 23960), function(ifdSection, tagType, value, format) {
-          console.log("EXIF: "+ifdSection+" "+tagType+" "+value+" "+format);
-      });
-  };    */
 
   var saveTextFile = function(filePath, content, overWrite, silentMode) {
     console.log("Saving file: " + filePath);
@@ -443,7 +448,8 @@ define(function(require, exports, module) {
 
     fs.writeFile(filePath, content, 'utf8', function(error) {
       if (error) {
-        console.log("Save to file " + filePath + " failed " + error);
+        TSCORE.hideLoadingAnimation();
+        console.error("Save to file " + filePath + " failed " + error);
         return;
       }
       if (!silentMode) {
@@ -454,11 +460,11 @@ define(function(require, exports, module) {
 
   var saveBinaryFile = function(filePath, content, overWrite, silentMode) {
     console.log("Saving binary file: " + filePath);
-
     if (!fs.existsSync(filePath) || overWrite === true) {
       fs.writeFile(filePath, arrayBufferToBuffer(content), 'utf8', function(error) {
         if (error) {
-          console.log("Save to file " + filePath + " failed " + error);
+          TSCORE.hideLoadingAnimation();
+          console.error("Save to file " + filePath + " failed " + error);
           return;
         }
         if (silentMode !== true) {
@@ -491,7 +497,8 @@ define(function(require, exports, module) {
           } else {
             TSPOSTIO.errorOpeningPath(dirPath);
           }
-          console.log("Listing directory: " + dirPath + " failed " + error);
+          TSCORE.hideLoadingAnimation();
+          console.error("Listing directory: " + dirPath + " failed " + error);
           return;
         }
         for (var i = 0; i < dirList.length; i++) {
@@ -524,6 +531,7 @@ define(function(require, exports, module) {
       } else {
         TSPOSTIO.errorOpeningPath();
       }
+      TSCORE.hideLoadingAnimation();
       console.error("Listing directory " + dirPath + " failed " + ex);
     }
   };
@@ -537,10 +545,10 @@ define(function(require, exports, module) {
 
   var deleteElement = function(path) {
     console.log("Deleting: " + path);
-
     fs.unlink(path, function(error) {
       if (error) {
-        console.log("Deleting file " + path + " failed " + error);
+        TSCORE.hideLoadingAnimation();
+        console.error("Deleting file " + path + " failed " + error);
         return;
       }
       TSPOSTIO.deleteElement(path);
@@ -549,10 +557,10 @@ define(function(require, exports, module) {
 
   var deleteDirectory = function(path) {
     console.log("Deleting directory: " + path);
-
     fs.rmdir(path, function(error) {
       if (error) {
-        console.log("Deleting directory " + path + " failed " + error);
+        TSCORE.hideLoadingAnimation();
+        console.error("Deleting directory " + path + " failed " + error);
         TSPOSTIO.deleteDirectoryFailed(path);
         return;
       }
@@ -650,10 +658,12 @@ define(function(require, exports, module) {
         fileProperties.lmdt = stats.mtime;
         TSPOSTIO.getFileProperties(fileProperties);
       } else {
-        console.warn("Error getting file properties. " + filePath + " is directory");
+        TSCORE.hideLoadingAnimation();
+        console.error("Error getting file properties. " + filePath + " is directory");
       }
     } catch (e) {
-      console.warn("File " + filePath + " didn't exits");
+      TSCORE.hideLoadingAnimation();
+      console.error("File " + filePath + " didn't exits");
     }
   };
 
@@ -665,7 +675,6 @@ define(function(require, exports, module) {
   };
 
   function getFile(fileURL, result, error) {
-
     getFileContent(fileURL, function(content) {
       result(new File([content], fileURL, {}));
     }, error);
@@ -691,6 +700,7 @@ define(function(require, exports, module) {
   }
 
   exports.createDirectory = createDirectory;
+  exports.createMetaFolder = createMetaFolder;
   exports.renameDirectory = renameDirectory;
   exports.renameFile = renameFile;
   exports.copyFile = copyFile;
@@ -718,5 +728,4 @@ define(function(require, exports, module) {
   exports.getFile = getFile;
   exports.getFileContent = getFileContent;
   exports.getDirectoryMetaInformation = getDirectoryMetaInformation;
-
 });
