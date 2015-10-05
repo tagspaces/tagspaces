@@ -11,7 +11,8 @@ var PRO = "@@PROVERSION";
 if (PRODUCTION == "true") {
   console = console || {};
   console.log = function(){};
-  console.error = function(){};
+  console.warning = function(){};
+//  console.error = function(){};
 }
 
 var isFirefox = document.URL.indexOf( 'resource://' ) === 0;
