@@ -368,7 +368,7 @@ define(function(require, exports, module) {
     TSCORE.currentPath = directoryPath;
     TSCORE.Meta.getDirectoryMetaInformation(function() {
       TSCORE.IO.listDirectory(directoryPath);
-      if(TSCORE.IO.createMetaFolder && TSCORE.PRO) {
+      if (TSCORE.IO.createMetaFolder && TSCORE.PRO) {
         TSCORE.IO.createMetaFolder(directoryPath);
       }
     });

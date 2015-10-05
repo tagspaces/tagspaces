@@ -277,8 +277,8 @@ define(function(require, exports, module) {
     });
   };
 
-  var createMetaFolder = function (dirPath) {
-    if (dirPath.lastIndexOf(TSCORE.metaFolder) >= dirPath.length-TSCORE.metaFolder.length) {
+  var createMetaFolder = function(dirPath) {
+    if (dirPath.lastIndexOf(TSCORE.metaFolder) >= dirPath.length - TSCORE.metaFolder.length) {
       console.log("Can not create meta folder in a meta folder");
       return;
     }
@@ -293,7 +293,7 @@ define(function(require, exports, module) {
       }
       createDirectory(metaDirPath, true);
     });
-  }
+  };
 
   var copyFile = function(sourceFilePath, targetFilePath) {
     console.log("Copy file: " + sourceFilePath + " to " + targetFilePath);
