@@ -93,6 +93,7 @@ requirejs.config({
     webdavlib:              'web/webdavlib',
     jszip:                  'libs/jszip/jszip.min',
     slideout:               'libs/slideoutjs/slideout.min',
+    rasterizehtml:          'libs/rasterizeHTML/rasterizeHTML.allinone',
 
     tscore:                 'js/core.api',
     tssetting:              'js/settings.api',
