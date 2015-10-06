@@ -601,3 +601,7 @@ input a.resetFilter {
     background-size: 300px 200px;
   }
 }
+
+.uiEmphasizer {
+  border: 3px dashed #1DD19F;
+}

@@ -202,7 +202,8 @@ define(function(require, exports, module) {
     });
   };
   var showWelcomeDialog = function() {
-    require(['text!templates/WelcomeDialog.html'], function(uiTPL) {
+    startGettingStartedTour();
+    /*require(['text!templates/WelcomeDialog.html'], function(uiTPL) {
       if ($('#dialogWelcome').length < 1) {
         var uiTemplate = Handlebars.compile(uiTPL);
         $('body').append(uiTemplate());
@@ -213,8 +214,14 @@ define(function(require, exports, module) {
         backdrop: 'static',
         show: true
       });
-    });
+    });*/
   };
+
+  var startGettingStartedTour = function() {
+    var tsGettingStarted = require('tsgettingstarted');
+    tsGettingStarted.startTour();
+  };
+
   var showMoveCopyFilesDialog = function() {
     require(['text!templates/MoveCopyFilesDialog.html'], function(uiTPL) {
       if ($('#dialogMoveCopyFiles').length < 1) {
@@ -777,11 +784,13 @@ define(function(require, exports, module) {
   exports.showFileCreateDialog = showFileCreateDialog;
   exports.showFileDeleteDialog = showFileDeleteDialog;
   exports.showWelcomeDialog = showWelcomeDialog;
+  exports.startGettingStartedTour = startGettingStartedTour;
   exports.showTagEditDialog = showTagEditDialog;
   exports.showOptionsDialog = showOptionsDialog;
   exports.showAboutDialog = showAboutDialog;
   exports.showLocationsPanel = showLocationsPanel;
   exports.showTagsPanel = showTagsPanel;
+  exports.showContactUsPanel = showContactUsPanel;
   exports.showDirectoryBrowserDialog = showDirectoryBrowserDialog;
   exports.showMoveCopyFilesDialog = showMoveCopyFilesDialog;
   exports.hideAllDropDownMenus = hideAllDropDownMenus;

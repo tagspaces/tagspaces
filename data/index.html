@@ -18,7 +18,8 @@
       user-select: none; -webkit-user-select: none; -moz-user-select: none;
     }
   </style>
-  <link rel="stylesheet" type="text/css" href="assets/tagspaces.css">
+  <link rel="stylesheet" type="text/css" href="assets/tagspaces.css" />
+  <link rel="stylesheet" href="libs/hopscotch/css/hopscotch.css" />
   <link rel="apple-touch-icon-precomposed" sizes="144x144" href="assets/apple-touch-icon-144-precomposed.png"/>
   <link rel="apple-touch-icon-precomposed" sizes="114x114" href="assets/apple-touch-icon-114-precomposed.png"/>
   <link rel="apple-touch-icon-precomposed" sizes="72x72" href="assets/apple-touch-icon-72-precomposed.png"/>
@@ -69,10 +70,8 @@
         </div>
         <div class="btn-toolbar">
           <div class="btn-group flexLayout" id="locationSwitch">
-            <button type="button" class="btn btn-default" id="locationName" data-toggle="dropdown"
-                    data-i18n="ns.common:chooseLocation"></button>
-            <button type="button" class="btn btn-default dropdown-toggle" id="selectLocation" data-toggle="dropdown"
-                    data-placement="bottom;" data-original-title="Start using TagSpaces by connecting a new location!">
+            <button type="button" class="btn btn-default" id="locationName" data-toggle="dropdown">Choose Location</button>
+            <button type="button" class="btn btn-default dropdown-toggle" id="selectLocation" data-toggle="dropdown">
               <span class="caret"></span>
             </button>
             <ul class="dropdown-menu" id="locationsList"></ul>

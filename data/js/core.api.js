@@ -36,8 +36,6 @@ define(function(require, exports, module) {
   var subfoldersDirBrowser;
   var directoryBrowser;
 
-  var slideout;
-
   function initApp() {
     console.log('Init application');
     tsSettings.loadSettingsLocalStorage();
@@ -87,8 +85,7 @@ define(function(require, exports, module) {
       }
       // Show welcome dialog by no locations
       if (tsSettings.Settings.tagspacesList.length < 1) {
-        $('#selectLocation').tooltip('show');
-        tsCoreUI.showWelcomeDialog();
+        tsCoreUI.startGettingStartedTour();
       }
       if (isNode || isChrome) {
         // Handle command line argument in node-webkit
@@ -96,7 +93,6 @@ define(function(require, exports, module) {
         //tsIOApi.handleTray();
       }
       console.log('Docoument ready finished. Layout initialized');
-      //$( "#loading" ).hide(); moved to perspective manager
       checkForNewVersion();
     });
   }
