@@ -86,6 +86,7 @@ define(function(require, exports, module) {
     });
     if (isCordova) {
       $('#exportTagGroupsButton').hide();
+      $('#showMainMenuCheckbox').parent().hide();
     }
     $('#exportTagGroupsButton').click(function() {
       var jsonFormat = '{ "appName": "' + TSCORE.Config.DefaultSettings.appName +
