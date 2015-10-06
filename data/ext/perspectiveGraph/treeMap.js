@@ -3,7 +3,7 @@
  * can be found in the LICENSE file. */
 
 define(function(require, exports, module) {
-"use strict";
+    "use strict";
     console.log("Loading Tree Map");
 
     var TSCORE = require("tscore");
@@ -88,7 +88,7 @@ define(function(require, exports, module) {
         
           t.select("rect")
               .attr("width", function(d) { return kx * d.dx - 1; })
-              .attr("height", function(d) { return ky * d.dy - 1; })
+              .attr("height", function(d) { return ky * d.dy - 1; });
         
           t.select("text")
               .attr("x", function(d) { return kx * d.dx / 2; })
@@ -98,7 +98,7 @@ define(function(require, exports, module) {
           node = d;
           d3.event.stopPropagation();
         }        
-    }    
+    };
     
     // Based on http://mbostock.github.io/d3/talk/20111018/partition.html    
     // Not working
@@ -134,13 +134,14 @@ define(function(require, exports, module) {
               .attr("transform", transform)
               .attr("dy", ".35em")
               .style("opacity", function(d) { return d.dx * ky > 12 ? 1 : 0; })
-              .text(function(d) { return d.name; })
+              .text(function(d) { return d.name; });
         
-          d3.select(window)
-              .on("click", function() { click(root); })
+          d3.select(window).on("click", function() { click(root); });
         
           function click(d) {
-            if (!d.children) return;
+            if (!d.children) {
+              return;
+            }
         
             kx = (d.y ? w - 40 : w) / (1 - d.y);
             ky = h / d.dx;
@@ -166,8 +167,7 @@ define(function(require, exports, module) {
             return "translate(8," + d.dx * ky / 2 + ")";
           }
 
-
-    }    
+    };
     
     // Methods
     exports.drawTreeMap                    = drawTreeMap;

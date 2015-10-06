@@ -79,7 +79,7 @@ define(function(require, exports, module) {
 
   var getDirectoryMetaInformation = function(dirPath, readyCallback) {
     listDirectory(dirPath, function(anotatedDirList) {
-    TSCORE.metaFileList = anotatedDirList;
+      TSCORE.metaFileList = anotatedDirList;
       readyCallback(anotatedDirList);
     });
   };
@@ -234,7 +234,11 @@ define(function(require, exports, module) {
       encodeURI(path),
       function(status, data, headers) {
         console.log("Directory/File Deletion Status/Content/Headers:  " + status + " / " + data + " / " + headers);
-        TSPOSTIO.deleteElement(path);
+        if (status === 204) {
+          TSPOSTIO.deleteElement(path);
+        } else {
+          TSCORE.showAlertDialog("Deletion of the file failed");
+        }
       }
     );
   };

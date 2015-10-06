@@ -192,7 +192,9 @@ define(function(require, exports, module) {
     ], function(uiTPL, controller) {
       if ($('#dialogOptions').length < 1) {
         var uiTemplate = Handlebars.compile(uiTPL);
-        $('body').append(uiTemplate());
+        $('body').append(uiTemplate({ isProVersion: TSCORE.PRO ? true : false }));
+        
+
         controller.initUI();
       }
       $('#dialogOptions').i18n();
@@ -672,7 +674,7 @@ define(function(require, exports, module) {
       $('#openNatively').hide();
       $('#fileMenuOpenNatively').parent().hide();
     } else if (isNode) {
-      $('#fullscreenFile').hide();
+     // $('#fullscreenFile').hide();
       $('#openFileInNewWindow').hide();
       // handling window maximization
       var nwwin = gui.Window.get();
@@ -699,7 +701,7 @@ define(function(require, exports, module) {
   }
   var showContextMenu = function(menuId, sourceObject) {
     var leftPos = sourceObject.offset().left;
-    var topPos = sourceObject.offset().top + sourceObject.height() + 5;
+    var topPos = sourceObject.offset().top;
     if (sourceObject.offset().top + sourceObject.height() + $(menuId).height() > window.innerHeight) {
       topPos = window.innerHeight - $(menuId).height();
       leftPos = sourceObject.offset().left + 15;

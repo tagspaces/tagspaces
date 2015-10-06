@@ -20,16 +20,21 @@ define(function(require, exports, module) {
             '<button class="btn btn-link btn-lg tagGroupIcon" data-toggle="collapse" data-target="#tagButtons{{@index}}" data-i18n="[title]ns.common:toggleTagGroup" title="{{../toggleTagGroup}}">' +
                 '<i class="fa fa-tags fa-fw"></i>' +
             '</button>' +
-            '<button class="btn btn-link tagGroupTitle flexMaxWidth" key="{{key}}">{{title}}</button>' +
+            '<button class="btn btn-link tagGroupTitle flexMaxWidth" data-toggle="collapse" data-target="#tagButtons{{@index}}" key="{{key}}">{{title}}&nbsp;' +
+                '<sup><span class="badge" style="font-size: 9px;" data-i18n="[title]ns.common:tagGroupTagsCount">{{children.length}}</span></sup></button>' +
             '<button class="btn btn-link btn-lg tagGroupActions" key="{{key}}" data-i18n="[title]ns.common:tagGroupOperations" title="{{../tagGroupOperations}}">' +
                 '<b class="fa fa-ellipsis-v"></b>' +
             '</button>' +
         '</div>' +
-        '<div class="accordion-body collapse in" id="tagButtons{{@index}}">' +
+        '{{#if collapse}}' +
+          '<div class="accordion-body collapse" id="tagButtons{{@index}}">' +
+        '{{else}}' +
+          '<div class="accordion-body collapse in" id="tagButtons{{@index}}">' +
+        '{{/if}}' +
             '<div class="accordion-inner" id="tagButtonsContent{{@index}}" style="padding: 2px;">' +
                 '<div>' +
                     '{{#each children}}' +
-                    '<a class="btn btn-sm tagButton" tag="{{title}}" parentkey="{{../key}}" style="{{style}}" title="{{titleUI}}" >'  +
+                    '<a class="btn btn-sm tagButton" tag="{{title}}" parentkey="{{../key}}" style="{{style}}" title="{{description}}" >'  +
                         '<span class="{{icon}}" /> ' +
                         '{{title}}' +
                         '{{#if count}} [{{count}}]{{/if}}' +
@@ -222,19 +227,17 @@ define(function(require, exports, module) {
     for (var i = 0; i < tagGroups.length; i++) {
       for (var j = 0; j < tagGroups[i].children.length; j++) {
         tag = tagGroups[i].children[j];
-        if (tag.description !== undefined) {
-          tag.titleUI = tag.description;
-        } else {
-          tag.titleUI = tag.title;
+        if (!tag.description) {
+          tag.description = tag.title;
         }
         tag.icon = '';
         if (tag.type === 'smart') {
           tag.icon = 'fa fa-flask';
         }
         // Add keybinding to tags
-        if (tag.keyBinding !== undefined && tag.keyBinding.length > 0) {
+        if (tag.keyBinding && tag.keyBinding.length > 0) {
           tag.icon = 'fa fa-keyboard-o';
-          tag.titleUI = tag.titleUI + ' [' + tag.keyBinding + ']';
+          tag.description = tag.title + ' [' + tag.keyBinding + ']';
           Mousetrap.unbind(tag.keyBinding);
           Mousetrap.bind(tag.keyBinding, function(innerTag) {
             return function(e) {
@@ -250,6 +253,29 @@ define(function(require, exports, module) {
       'toggleTagGroup': $.i18n.t('ns.common:toggleTagGroup'),
       'tagGroupOperations': $.i18n.t('ns.common:tagGroupOperations')
     }));
+
+    $tagGroupsContent.find('.tagGroupTitle').each(function() {
+      $(this).on('click', function() {
+        var areaId = $(this).attr('data-target');
+        if (areaId) {
+          var index = areaId.substring(areaId.length - 1);
+          tagGroups[index].collapse = $(areaId).is(':visible');
+          TSCORE.Config.saveSettings();
+        }
+      });
+    });
+
+    $tagGroupsContent.find('.tagGroupIcon').each(function() {
+      $(this).on('click', function() {
+        var areaId = $(this).attr('data-target');
+        if (areaId) {
+          var index = areaId.substring(areaId.length - 1);
+          tagGroups[index].collapse = $(areaId).is(':visible');
+          TSCORE.Config.saveSettings();
+        }
+      });
+    });
+
     $tagGroupsContent.find('.tagButton').each(function() {
       $(this).draggable({
         'appendTo': 'body',
@@ -392,7 +418,7 @@ define(function(require, exports, module) {
         }
       }
       var metaTags = TSCORE.Meta.getTagsFromMetaFile(filePath);
-      if(metaTags.length > 0) {
+      if (metaTags.length > 0) {
         context.tags = context.tags.concat(metaTags);
       }
       return tagButtonTmpl(context);

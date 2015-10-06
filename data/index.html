@@ -5,6 +5,7 @@
   source code is governed by a AGPL3 license that can be found in the LICENSE file. -->
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta http-equiv="Content-Security-Policy" content="default-src file: ; img-src 'self' data: ; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-eval'">
   <title>TagSpaces</title>
   <style type="text/css">
     #loadingLogo {
@@ -61,15 +62,15 @@
                     data-i18n="[title]ns.common:newVersionAvailableTooltip">
               <i class="glyphicon glyphicon-gift fa-lg"></i>
             </button>
-            <button class="btn btn-link" data-i18n="[title]ns.common:;" id="closeLeftPanel">
+            <button class="btn btn-link" id="closeLeftPanel">
               <i class="fa fa-arrow-left fa-lg"></i>
             </button>
           </div>
         </div>
         <div class="btn-toolbar">
           <div class="btn-group flexLayout" id="locationSwitch">
-            <button type="button" class="btn btn-default" id="locationName" data-toggle="dropdown">
-            </button>
+            <button type="button" class="btn btn-default" id="locationName" data-toggle="dropdown"
+                    data-i18n="ns.common:chooseLocation"></button>
             <button type="button" class="btn btn-default dropdown-toggle" id="selectLocation" data-toggle="dropdown"
                     data-placement="bottom;" data-original-title="Start using TagSpaces by connecting a new location!">
               <span class="caret"></span>
@@ -101,7 +102,7 @@
             <i class="fa fa-leaf fa-stack-1x" style="color: #99CC00"></i></span>&nbsp;&nbsp;
             <span data-i18n="ns.common:whatsNew"></span>
           </a><br>
-          <hr style="margin: 0; border-top: 1px solid #ddd" />
+          <hr class="contactUsSeparator" />
           <a class="btn btn-link" data-i18n="[title]ns.common:getAndroidAppTooltip"
              href="https://play.google.com/store/apps/details?id=org.tagspaces.androidapp" id="openGooglePlay">
             <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
@@ -114,7 +115,7 @@
             <i class="fa fa-apple fa-stack-1x" style="color: black"></i></span>&nbsp;&nbsp;
             <span data-i18n="ns.common:getIOSApp"></span>
           </a><br>
-          <hr style="margin: 0; border-top: 1px solid #ddd" />
+          <hr class="contactUsSeparator" />
           <a class="btn btn-link" data-i18n="[title]ns.common:suggestNewFeaturesTooltip"
              href="https://tagspaces.uservoice.com/forums/213931-general" id="openUservoice">
             <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
@@ -139,7 +140,7 @@
             <i class="fa fa-thumbs-o-up fa-stack-1x"></i></span>&nbsp;&nbsp;
             <span data-i18n="ns.common:supportUs"></span>
           </a><br>
-          <hr style="margin: 0; border-top: 1px solid #ddd" />
+          <hr class="contactUsSeparator" />
           <a class="btn btn-link" data-i18n="[title]ns.common:tweetAboutUsTooltip"
              href="https://twitter.com/intent/tweet?original_referer=http%3A%2F%2Ftagspaces.org%2F&text=Organize%20your%20files%20with%20@tagspaces"
              id="openTwitter">
@@ -218,14 +219,14 @@
         </div>
         <div class="flexLayout">
           <div class="flexMaxWidth flexLayout" style="min-width: 100px;">
-            <div class="btn-group " id="alternativeNavigator" style="min-width: 100px;"></div>
+            <div class="flexLayout" id="alternativeNavigator" style="min-width: 100px;"></div>
             <div id="statusBar" class="noWrap flexMaxWidth"></div>
             <div id="searchToolbar">
               <div class="flexLayout">
                 <button class="btn btn-link" data-i18n="[title]ns.common:clearFilterTooltip" id="clearFilterButton">
                   <i class="fa fa-lg fa-eraser"></i>
                 </button>
-                <input class="flexMaxWidth" id="searchBox" placeholder="Search" data-i18n="[placeholder]ns.common:searchPlaceholder" type="text" rel="popover">
+                <input class="flexMaxWidth" id="searchBox" data-i18n="[placeholder]ns.common:searchPlaceholder" type="text" rel="popover">
                 <button class="btn btn-link" data-i18n="[title]ns.common:searchPlaceholder" id="searchButton">
                   <i class="fa fa-lg fa-search"></i>
                 </button>
@@ -248,25 +249,16 @@
           <div class="btn-group" style="min-width: 50px;">
             <button id="fileMenuButton" class="btn btn-link dropdown-toggle" data-toggle="dropdown">
               <span class="fileExt" data-i18n="[title]ns.common:fileOperations">
-                <span id="fileExtText"></span>&nbsp;&nbsp;
-                <span class="caret white-caret"></span>&nbsp;
+                <span id="fileExtText"></span><span style="margin-left: 5px;" class="caret white-caret"></span>
               </span>
             </button>
             <ul class="dropdown-menu">
               <li class="dropdown-header">
                 <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <span data-i18n="ns.common:fileOperations"></span></li>
-              <li class="divider"></li>
               <li><a id="tagFile" data-i18n="[title]ns.common:addRemoveTagsTooltip">
                 <i class="fa fa-tag fa-fw"></i>
                 &nbsp;<span data-i18n="ns.common:addRemoveTags"></span></a></li>
-              <li class="divider"></li>
-              <li><a id="openFileInNewWindow" data-i18n="[title]ns.common:openFileNewWindowTooltip">
-                <i class="fa fa-external-link-square fa-fw"></i>
-                &nbsp;<span data-i18n="ns.common:openFileNewWindow"></span></a></li>
-              <li><a id="fullscreenFile" data-i18n="[title]ns.common:fullscreenFileTooltip">
-                <i class="glyphicon glyphicon-fullscreen fa-fw"></i>
-                &nbsp;<span data-i18n="ns.common:fullscreen"></span></a></li>
               <li class="divider"></li>
               <li class="noWrap"><a id="renameFile" data-i18n="[title]ns.common:renameFileTooltip">
                 <i class="fa fa-paragraph fa-fw"></i>
@@ -293,6 +285,12 @@
                 &nbsp;<span data-i18n="ns.common:closeFile"></span>
                 <span class="pull-right label label-default keyShortcut">Esc</span></a></li>
               <li class="divider"></li>
+              <li><a id="openFileInNewWindow" data-i18n="[title]ns.common:openFileNewWindowTooltip">
+                <i class="fa fa-external-link-square fa-fw"></i>
+                &nbsp;<span data-i18n="ns.common:openFileNewWindow"></span></a></li>
+              <li><a id="fullscreenFile" data-i18n="[title]ns.common:fullscreenFileTooltip">
+                <i class="glyphicon glyphicon-fullscreen fa-fw"></i>
+                &nbsp;<span data-i18n="ns.common:fullscreen"></span></a></li>
               <li class="noWrap"><a id="openNatively" data-i18n="[title]ns.common:openFileNativelyTooltip">
                 <i class="fa fa-external-link-square fa-fw"></i>
                 &nbsp;<span data-i18n="ns.common:openFileNatively"></span></a></li>
@@ -318,8 +316,8 @@
             <i class="fa fa-plus-square"></i>
           </button>
           <ul class="dropdown-menu" id="tagSuggestionsMenu"></ul>
-          <span id="fileTags" class="flexMaxWidth"></span>
-          <div id="fileViewerMainToolbar" class="btn-group" style="margin-top: -8px;">
+          <span id="fileTags" class="flexMaxWidth" style="width: 100%"></span>
+          <div id="fileViewerMainToolbar" class="btn-group" style="margin-top: -8px; min-width: 190px;">
             <button class="btn btn-link pull-right" data-i18n="[title]ns.common:openNextFileTooltip" id="nextFileButton">
               <i class="fa fa-chevron-right fa-lg"></i>
             </button>
@@ -352,8 +350,8 @@
         <a type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></a>
         <h4 class="modal-title" id="myModalLabel1" data-i18n="ns.dialogs:aboutTitle"></h4>
       </div>
-      <div class="modal-body" style="">
-        <iframe id="aboutIframe" sandbox="allow-same-origin" nwdisable style="width: 100%; height: 100%; min-height: 350px; border: 0;" src="about.html"></iframe>
+      <div class="modal-body">
+        <iframe id="aboutIframe" sandbox="allow-same-origin allow-scripts" nwdisable style="width: 100%; height: 100%; min-height: 350px; border: 0;" src="about.html"></iframe>
       </div>
       <div class="modal-footer">
         <button class="btn pull-left" id="aboutDialogBack" title="Go Back"><i class="fa fa-arrow-left fa-lg"></i></button>
@@ -742,8 +740,9 @@
   <ul class="dropdown-menu" role="menu" style="display:block;position:static;">
     <li class="dropdown-header">
       <button class="close">&times;</button>
-      <span data-i18n="ns.common:fileOperations"></span></li>
-    <li class="divider"></li>
+      <span data-i18n="ns.common:fileOperations"></span>
+    </li>
+    <!--li class="divider"></li-->
     <li><a id="fileMenuAddTag" data-i18n="[title]ns.common:addRemoveTagsTooltip">
       <i class="fa fa-tag fa-fw"></i>&nbsp;<span data-i18n="ns.common:addRemoveTags"></span></a></li>
     <li class="divider"></li>
@@ -770,8 +769,9 @@
   <ul class="dropdown-menu" role="menu" style="display:block;position:static;">
     <li class="dropdown-header">
       <button class="close">&times;</button>
-      <span data-i18n="ns.common:tagOperations"></span></li>
-    <li class="divider"></li>
+      <span data-i18n="ns.common:tagOperations"></span>
+    </li>
+    <!--li class="divider"></li-->
     <li><a id="tagMenuAddTagAsFilter" data-i18n="[title]ns.common:showFilesWithThisTagTooltip">
       <i class="fa fa-filter fa-fw"></i>&nbsp;<span data-i18n="ns.common:showFilesWithThisTag"></span></a></li>
     <li><a id="tagMenuEditTag" data-i18n="[title]ns.common:editTagTooltip">
@@ -791,8 +791,9 @@
   <ul class="dropdown-menu" role="menu" style="display:block;position:static;">
     <li class="dropdown-header">
       <button class="close">&times;</button>
-      <span data-i18n="ns.common:tagOperations"></span></li>
-    <li class="divider"></li>
+      <span data-i18n="ns.common:tagOperations"></span>
+    </li>
+    <!--li class="divider"></li-->
     <li><a id="tagTreeMenuAddTagToFile" data-i18n="[title]ns.common:tagSelectedFilesTooltip">
       <i class="fa fa-tag fa-fw"></i>&nbsp;<span data-i18n="ns.common:tagSelectedFiles"></span></a></li>
     <li><a id="tagTreeMenuAddTagAsFilter" data-i18n="[title]ns.common:showFilesWithThisTagTooltip">
@@ -808,8 +809,9 @@
   <ul class="dropdown-menu" role="menu" style="display:block;position:static;">
     <li class="dropdown-header">
       <button class="close">&times;</button>
-      <span data-i18n="ns.common:tagGroupOperations"></span></li>
-    <li class="divider"></li>
+      <span data-i18n="ns.common:tagGroupOperations"></span>
+    </li>
+    <!--li class="divider"></li-->
     <li><a id="tagGroupMenuCreateNewTag" data-i18n="[title]ns.common:addTagsTooltip">
       <i class="fa fa-tag fa-lg fa-fw"></i>&nbsp;<span data-i18n="ns.common:addTags"></span></a></li>
     <li><a id="tagGroupMenuImportTags" data-i18n="[title]ns.common:importTagsTooltip">
@@ -835,8 +837,9 @@
   <ul class="dropdown-menu" role="menu" style="display:block;position:static;">
     <li class="dropdown-header">
       <button class="close">&times;</button>
-      <span data-i18n="ns.common:directoryOperations"></span></li>
-    <li class="divider"></li>
+      <span data-i18n="ns.common:directoryOperations"></span>
+    </li>
+    <!--li class="divider"></li-->
     <li><a id="directoryMenuReloadDirectory" data-i18n="[title]ns.common:reloadDirectoryTooltip">
       <i class="fa fa-refresh fa-fw"></i>&nbsp;<span data-i18n="ns.common:reloadDirectory"></span></a></li>
     <li><a id="directoryMenuRenameDirectory" data-i18n="[title]ns.common:renameDirectoryTooltip">

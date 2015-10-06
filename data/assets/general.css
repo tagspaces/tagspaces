@@ -96,43 +96,6 @@ html, body {
   border-width: 0;
 }
 
-#directoryList .ui-selecting { background: #fff5a3; color: black; }
-#directoryList .ui-selected { background: #fff5a3; color: black; }
-#directoryList { list-style-type: none; margin: 0; padding: 0; width: 100%; }
-#directoryList li { margin: 3px; padding: 0.4em; font-size: 1.0em; height: 18px; }
-
-/* Thumbs box design
-  * */
-.selectableFiles .ui-selected { background: #fff5a3; color: black; }
-.selectableFiles { list-style-type: none; margin: 0; padding: 0; }
-
-.fileTile {
-  margin: 3px;
-  padding: 1px 1px 1px 3px;
-  float: left;
-  border: 1px solid #D4D4D4;
-  text-align: left;
-  width: 180px;
-  height: 100px;
-  overflow: hidden;
-  position:relative;
-  background-color: white;
-}
-
-.fileTile button:hover {
-  opacity: 1;
-}
-
-.thumbImgTile {
-  max-width: 100px;
-  max-height: 100px;
-  position:absolute;
-  bottom:0;
-  right:0;
-  border: 0 lightgray solid;
-  z-index: 1;
-}
-
 #fileMenuButton {
   padding-left: 0;
   padding-right: 0;
@@ -171,63 +134,6 @@ html, body {
   word-wrap: break-word !important;
 }
 
-.titleInFileTile {
-  font-size: 13px;
-  line-height: 120%;
-  color: #333333;
-  z-index: 99;
-  position: absolute;
-  left: 5px;
-  top: 5px;
-}
-
-.tagsInFileTile {
-  position: absolute;
-  z-index: 100;
-  left: 5px;
-  top: 35px;
-}
-
-.fileTileSelector {
-  position:absolute;
-  bottom:0;
-  left:0;
-  z-index: 101;
-}
-
-.fileExtTile {
-  position:absolute;
-  bottom:0;
-  right:0;
-  -webkit-border-radius: 0 !important;
-  border-radius: 0 !important;
-  background: #999 ;
-  text-align: center;
-  padding: 1px;
-  color: white ;
-  z-index: 99;
-	text-transform:uppercase;
-}
-
-.fileTagsTile {
-  opacity: 0.5;
-}
-
-.fileExtension {
-  padding: 2px;
-  float: right;
-  color: white;
-  font-weight: bold;
-  background-color: gray;
-}
-
-.thumbImg {
-  max-width: 100px;
-  max-height: 100px;
-  vertical-align: text-top;
-  border: 0px lightgray solid;
-}
-
 #viewsRadio {
   margin: 3px 3px 3px 0;
   display: inline-block;
@@ -260,17 +166,10 @@ li hr {
   width:      100%;
   min-width:  700px;
 }
-.pane {
-  display:    none; /* will appear when layout inits */
-}
 
 /* Layout */
-#directoryNavigatorNorth, #locationContent, #tagGroupsContent{
+#locationContent, #tagGroupsContent{
 	background-color:  transparent;
-}
-
-#directoryNavigatorNorth {
-  overflow: hidden !important;
 }
 
 #searchToolbar {
@@ -311,20 +210,6 @@ li hr {
   border-width: 0
 }
 
-.middle-north {
-	background-color: #FFFFFF;
-	overflow: hidden !important;
-}
-
-.middle-south {
-  overflow: hidden !important;
-}
-
-.east-north {
-	background-color: #FFFFFF;
-  overflow: hidden !important;
-}
-
 /* Full screen workaround for webkit browser*/
 :-webkit-full-screen #viewer {
   width: 100%;
@@ -337,13 +222,27 @@ li hr {
   /*height: 100%;*/
 }
 
-/* Directory Navigation #F6A828*/
+/* Directory Navigation */
 
 .dirButton  {
   font-size: 13px;
   background-color: #E5E5E5;
   color: #444444;
   background-image: none;
+  margin: 1px;
+  text-align: left;
+
+  flex: 1 1 auto;
+  -webkit-flex: 1 1 auto;
+  -ms-flex: 1 1 auto;
+}
+
+.dirButtonContainer {
+  display: flex;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+
+  flex-wrap: wrap;
 }
 
 .dirButton:hover, .dirButton:active, .dirButton:focus {
@@ -409,7 +308,7 @@ input a.resetFilter {
 
 /* Hiding the OOTB filter box */
 .dataTables_filter {
-    display: none;
+  display: none;
 }
 
 /* Bootstrap Styles */
@@ -456,12 +355,6 @@ input a.resetFilter {
 }
 
 /* Tags */
-.btn-success, .btn-success:hover, .btn-success:focus, .btn-success:active {
-  background-color: green;
-  background-image: none;
-  text-shadow: none;
-}
-
 .carousel-inner > .item > img {
   margin: 0 auto;
   max-height: 100%;
@@ -677,7 +570,8 @@ input a.resetFilter {
 }
 
 #perspectiveSwitcher {
-  right: 2px;
+  top: 7px;
+  right: 7px;
   min-width: 200px;
 }
 
@@ -691,6 +585,11 @@ input a.resetFilter {
   width: 35px;
   margin-right: 4px;
   padding-top: 0px;
+}
+
+.contactUsSeparator {
+  margin: 0 15px 0 15px;
+  border-top: 1px solid #ddd
 }
 
 @media

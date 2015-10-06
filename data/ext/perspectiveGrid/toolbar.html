@@ -6,7 +6,6 @@
     <li class="dropdown-header">
       <button class="close">&times;</button>&nbsp;
     </li>
-    <li class="divider"></li>
     <li><a id="{{id}}CreateHTMLFileButton">
       <i class="fa fa-file-image-o fa-lg fa-fw"></i>&nbsp;<span data-i18n="ns.perspectiveList:createHTMLFile"></span>
     </a></li>
@@ -16,9 +15,9 @@
     <li><a id="{{id}}CreateTXTFileButton">
       <i class="fa fa-file-text-o fa-lg fa-fw"></i>&nbsp;<span data-i18n="ns.perspectiveList:createTXTFile"></span>
     </a></li>
-    <li><a id="{{id}}CreateFileButton">
+    <!--li><a id="{{id}}CreateFileButton">
       <i class="fa fa-file-o fa-lg fa-fw"></i>&nbsp;<span data-i18n="ns.perspectiveList:showNewFileDialog"></span>
-    </a></li>
+    </a></li-->
     <li><a id="{{id}}AddFileButton">
       <i class="fa fa-plus-circle fa-lg fa-fw"></i>&nbsp;<span data-i18n="ns.perspectiveList:showAddFileDialog"></span>
     </a></li>
@@ -52,10 +51,15 @@
         <h4 class="modal-title" data-i18n="ns.perspectiveList:moreOperations"></h4>
       </div>
       <div class="modal-body">
-        <button class="btn btn-link" type="button" title="Group" id="{{id}}GroupingButton" data-toggle="dropdown">
-          <i class="fa fa-group fa-lg"></i> Group Files<span class="caret"></span>
+        <button class="btn btn-link" type="button" id="{{id}}CreateFileButton">
+          <i class="fa fa-file-o fa-lg"></i> <span data-i18n="ns.perspectiveList:showNewFileDialog"></span>
         </button>
-        <ul id="{{id}}GroupingMenu" class="dropdown-menu "></ul>
+        <div class="btn-group">
+          <button class="btn btn-link" type="button" title="Group" id="{{id}}GroupingButton" data-toggle="dropdown">
+            <i class="fa fa-group fa-lg"></i> Group Files<span class="caret"></span>
+          </button>
+          <ul id="{{id}}GroupingMenu" class="dropdown-menu "></ul>
+        </div>
       </div>
       <div class="modal-footer">
         <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true"><i class="fa fa-check fa-lg"></i>

@@ -968,6 +968,28 @@ define(function(require, exports, module) {
     }
   }
 
+  var getWriteMetaToSidecarFile = function() {
+    if (exports.Settings.writeMetaToSidecarFile === undefined) {
+      exports.Settings.writeMetaToSidecarFile = exports.DefaultSettings.writeMetaToSidecarFile;
+      saveSettings();
+    }
+    return exports.Settings.writeMetaToSidecarFile;
+  };
+  var setWriteMetaToSidecarFile = function(value) {
+    exports.Settings.writeMetaToSidecarFile = value;
+  };
+
+  var getUseDefaultLocation = function() {
+    if (exports.Settings.useDefaultLocation === undefined) {
+      exports.Settings.useDefaultLocation = exports.DefaultSettings.useDefaultLocation;
+      saveSettings();
+    }
+    return exports.Settings.useDefaultLocation;
+  };
+
+  var setUseDefaultLocation = function(value) {
+    exports.Settings.useDefaultLocation = value;
+  };
   // Public API definition
   exports.upgradeSettings = upgradeSettings;
   exports.getPerspectives = getPerspectives;
@@ -1070,4 +1092,8 @@ define(function(require, exports, module) {
   exports.loadDefaultSettings = loadDefaultSettings;
   exports.saveSettings = saveSettings;
   exports.addTagGroup = addTagGroup;
+  exports.setWriteMetaToSidecarFile = setWriteMetaToSidecarFile;
+  exports.getWriteMetaToSidecarFile = getWriteMetaToSidecarFile;
+  exports.getUseDefaultLocation = getUseDefaultLocation;
+  exports.setUseDefaultLocation = setUseDefaultLocation;
 });

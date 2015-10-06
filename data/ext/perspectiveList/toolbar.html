@@ -6,7 +6,7 @@
     <li class="dropdown-header">
       <button class="close">&times;</button>&nbsp;
     </li>
-    <li class="divider"></li>
+    <!--li class="divider"></li-->
     <li><a id="{{id}}CreateHTMLFileButton">
       <i class="fa fa-file-image-o fa-lg fa-fw"></i>&nbsp;<span data-i18n="ns.perspectiveList:createHTMLFile"></span>
     </a></li>
@@ -51,23 +51,21 @@
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
         <h4 class="modal-title" data-i18n="ns.perspectiveList:moreOperations"></h4>
       </div>
-      <div class="modal-body">
+      <div class="modal-body" style="text-align: center;">
         <button class="btn" data-dismiss="modal" data-i18n="[title]ns.common:newSubdirectory" id="{{id}}CreateDirectoryButton">
           <i class="fa fa-folder-o fa-lg"></i>&nbsp;<span data-i18n="ns.common:newSubdirectory"></span>
         </button>
         <button class="btn" data-dismiss="modal" data-i18n="[title]ns.perspectiveList:reloadDirectoryTooltip" id="{{id}}ReloadFolderButton">
           <i class="fa fa-refresh fa-lg"></i>&nbsp;<span data-i18n="ns.perspectiveList:reloadDirectory"></span>
         </button>
-        <!--button class="btn" data-dismiss="modal" data-i18n="[title]ns.perspectiveList:toggleThumbnailsTooltip" data-toggle="button" id="{{id}}ShowTmbButton">
-          <i class="fa fa-picture-o fa-lg"></i>&nbsp;<span data-i18n="ns.perspectiveList:toggleThumbnailsTooltip"></span>
-        </button-->
         <button class="btn" data-dismiss="modal" data-i18n="[title]ns.perspectiveList:exportToCSVTooltip" id="{{id}}Export2CSVButton">
           <i class="fa fa-share fa-lg"></i>&nbsp;<span data-i18n="ns.perspectiveList:exportToCSV"></span>
         </button>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true"><i class="fa fa-check fa-lg"></i>
-        </button>
+        <!--button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">
+          <i class="fa fa-check fa-lg"></i>
+        </button-->
       </div>
     </div>
   </div>

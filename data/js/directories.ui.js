@@ -11,7 +11,6 @@ define(function(require, exports, module) {
   var TSPRO = require('tspro');
   var directoryHistory = [];
   var dir4ContextMenu = null;
-
   var alternativeDirectoryNavigatorTmpl = Handlebars.compile(
     '{{#each dirHistory}}' +
     '<div class="btn-group">' +
@@ -21,16 +20,16 @@ define(function(require, exports, module) {
         '<div class="dropdown clearfix dirAltNavMenu" id="dirMenu{{@index}}">' +
             '<ul role="menu" class="dropdown-menu">' +
                 '<li class="dropdown-header"><button class="close">&times;</button><span data-i18n="ns.common:actionsForDirectory2"></span>&nbsp;"{{name}}"</li>' +
-                '<li><a class="btn btn-link pull-left reloadCurrentDirectory" data-path="{{path}}"><i class="fa fa-refresh fa-fw"></i><span data-i18n="ns.common:reloadCurrentDirectory"></span></a></li>' +
-                '<li><a class="btn btn-link pull-left createSubdirectory" data-path="{{path}}"><i class="fa fa-folder-o fa-fw"></i><span data-i18n="ns.common:createSubdirectory"></span></a></li>' +
-                '<li><a class="btn btn-link pull-left renameDirectory" data-path="{{path}}"><i class="fa fa-paragraph fa-fw"></i><span data-i18n="ns.common:renameDirectory"></span></a></li>' +
+                '<li><a class="btn btn-link reloadCurrentDirectory" data-path="{{path}}" style="text-align: left"><i class="fa fa-refresh fa-fw fa-lg"></i><span data-i18n="ns.common:reloadCurrentDirectory"></span></a></li>' +
+                '<li><a class="btn btn-link createSubdirectory" data-path="{{path}}" style="text-align: left"><i class="fa fa-folder-o fa-fw fa-lg"></i><span data-i18n="ns.common:createSubdirectory"></span></a></li>' +
+                '<li><a class="btn btn-link renameDirectory" data-path="{{path}}" style="text-align: left"><i class="fa fa-paragraph fa-fw fa-lg"></i><span data-i18n="ns.common:renameDirectory"></span></a></li>' +
                 '<li class="divider" style="width: 100%"></li>' +
                 '<li class="dropdown-header"><span data-i18n="ns.common:subfodersOfDirectory2"></span>&nbsp;"{{name}}"</li>' +
                 '{{#if children}}' +
-                '{{#each children}}' +
-                '<button class="btn dirButton" data-path="{{path}}" title="{{path}}" style="margin: 1px;">' +
+                '<div class="dirButtonContainer">{{#each children}}' +
+                '<button class="btn dirButton" data-path="{{path}}" title="{{path}}">' +
                 '<i class="fa fa-folder-o"></i>&nbsp;{{name}}</button>' +
-                '{{/each}}' +
+                '{{/each}}</div>' +
                 '{{else}}' +
                 '<div><span data-i18n="ns.common:noSubfoldersFound"></span></div>' +
                 '{{/if}}' +
@@ -55,8 +54,8 @@ define(function(require, exports, module) {
         '<div class="accordion-body collapse in" id="dirButtons{{@index}}">' +
             '<div class="accordion-inner" id="dirButtonsContent{{@index}}" style="padding: 4px;">' +
                 '{{#if children}}' +
-                '<div>{{#each children}}' +
-                    '<button class="btn btn-sm dirButton ui-droppable" key="{{path}}" title="{{path}}" style="margin: 1px;">' +
+                '<div class="dirButtonContainer">{{#each children}}' +
+                    '<button class="btn btn-sm dirButton ui-droppable" key="{{path}}" title="{{path}}">' +
                         '<i class="fa fa-folder-o"></i>&nbsp;{{name}}</button>' +
                 '{{/each}}</div>' +
                 '{{else}}' +
@@ -71,12 +70,11 @@ define(function(require, exports, module) {
   var locationChooserTmpl = Handlebars.compile(
     '<li class="flexLayout">' +
       '<button style="text-align: left;" class="btn btn-link flexMaxWidth" id="createNewLocation">' +
-        '<i class="fa fa-plus"></i>&nbsp;<span data-i18n="[title]ns.common:connectNewLocationTooltip;ns.common:connectNewLocationTooltip"></span>'  +
+        '<i class="fa fa-plus"></i>&nbsp;<span data-i18n="[title]ns.common:connectNewLocationTooltip;ns.common:connectNewLocationTooltip">{{connectLocation}}</span>'  +
       '</button>' +
     '</li>' +
     '<li class="divider"></li>' +
     '<li class="dropdown-header" data-i18n="ns.common:yourLocations">{{yourLocations}}</li>' +
-    //'<li class="divider"></li>' +
     '{{#each locations}}' +
     '<li class="flexLayout">' +
       '<button title="{{path}}" path="{{path}}" name="{{name}}" class="btn btn-link openLocation">' +
@@ -191,7 +189,6 @@ define(function(require, exports, module) {
     $alternativeNavigator.html(alternativeDirectoryNavigatorTmpl({
       'dirHistory': directoryHistory
     }));
-    $alternativeNavigator.i18n();
     $alternativeNavigator.find('.reloadCurrentDirectory').each(function() {
       $(this).on('click', function() {
         navigateToDirectory($(this).attr('data-path'));
@@ -224,6 +221,7 @@ define(function(require, exports, module) {
         navigateToDirectory($(this).attr('data-path'));
       });
     });
+    $alternativeNavigator.i18n();
   }
 
   var showDropDown = function(menuId, sourceObject) {
@@ -383,8 +381,11 @@ define(function(require, exports, module) {
     console.log('Dir History: ' + JSON.stringify(directoryHistory));
     TSCORE.currentPath = directoryPath;
     TSCORE.Meta.getDirectoryMetaInformation(function() {
-      TSCORE.IO.listDirectory(directoryPath); 
+      TSCORE.IO.listDirectory(directoryPath);
       loadFolderMetaData(directoryPath);
+      if (TSCORE.IO.createMetaFolder && TSCORE.PRO) {
+        TSCORE.IO.createMetaFolder(directoryPath);
+      }
     });
   }
 
@@ -500,9 +501,10 @@ define(function(require, exports, module) {
       $('#formLocationEdit').on('valid.bs.validator', function() {
         $('#saveLocationButton').prop('disabled', false);
       });
-      $('#dialogLocationEdit').on('shown.bs.modal', function() {
+      // Auto focus disabled due usability issue on mobiles
+      /*$('#dialogLocationEdit').on('shown.bs.modal', function() {
         $('#folderLocation2').focus();
-      });
+      });*/
       var isDefault = isDefaultLocation(path);
       $('#defaultLocationEdit').prop('checked', isDefault);
       //$('#defaultLocationEdit').attr('disabled', isDefault);
@@ -679,8 +681,6 @@ define(function(require, exports, module) {
     var $locationsList = $('#locationsList');
     $locationsList.children().remove();
 
-    $('#locationName').text($.i18n.t('ns.common:chooseLocation'));
-
     TSCORE.Config.Settings.tagspacesList.forEach(function(element) {
       if (isDefaultLocation(element.path)) {
         element.isDefault = true;
@@ -691,6 +691,7 @@ define(function(require, exports, module) {
     $locationsList.html(locationChooserTmpl({
       'locations': TSCORE.Config.Settings.tagspacesList,
       'yourLocations': $.i18n.t('ns.common:yourLocations'),
+      'connectLocation': $.i18n.t('ns.common:connectNewLocationTooltip'),
       'editLocationTitle': $.i18n.t('ns.common:editLocation')
     }));
     $locationsList.find('.openLocation').each(function() {

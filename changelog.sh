@@ -1,3 +1,3 @@
 #!/bin/bash
-git log v1.11.0..HEAD --no-merges --format=%B > CHANGELOG.TXT
+git log v1.12.0..HEAD --no-merges --format=%B > CHANGELOG.TXT
 

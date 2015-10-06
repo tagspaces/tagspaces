@@ -18,13 +18,10 @@ define(function(require, exports, module) {
 
   var TSCORE = require("tscore");
 
-  var md2htmlConverter,
-    containerElID,
-    currentFilePath,
-    $iframeViewer,
-    $iframeViewerBody,
-    $containerElement,
-    viewerToolbar;
+  var md2htmlConverter;
+  var containerElID;
+  var currentFilePath;
+  var $containerElement;
 
   var extensionDirectory = TSCORE.Config.getExtensionPath() + "/" + extensionID;
 
@@ -33,27 +30,23 @@ define(function(require, exports, module) {
   exports.init = function(filePath, containerElementID) {
     console.log("Initalization MD Viewer...");
     containerElID = containerElementID;
-
     $containerElement = $('#' + containerElID);
 
     currentFilePath = filePath;
 
-    //var fileExt = TSCORE.TagUtils.extractFileExtension(filePath);
-
     $containerElement.empty();
     $containerElement.css("background-color", "white");
-
     $containerElement.append($('<iframe>', {
       sandbox: "allow-same-origin allow-scripts",
       id: "iframeViewer",
       "nwdisable": "",
-      "nwfaketop": ""
+      "nwfaketop": "",
+      "src": extensionDirectory + "/index.html?&locale=" + TSCORE.currentLanguage,
     }));
 
     require([
       extensionDirectory + '/marked/marked.js',
-      "text!" + extensionDirectory + '/mainUI.html'
-    ], function(marked, uiTPL) {
+    ], function(marked) {
       md2htmlConverter = marked;
       md2htmlConverter.setOptions({
         renderer: new marked.Renderer(),
@@ -67,14 +60,6 @@ define(function(require, exports, module) {
         smartLists: true,
         smartypants: false
       });
-
-      var uiTemplate = Handlebars.compile(uiTPL);
-      viewerToolbar = uiTemplate({
-        id: extensionID
-      });
-
-      $iframeViewer = $("#iframeViewer");
-      $iframeViewerBody = $iframeViewer.contents().find('body');
 
       TSCORE.IO.loadTextFile(filePath);
     });
@@ -101,127 +86,23 @@ define(function(require, exports, module) {
     var cleanedContent = content.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "");
     var mdContent = md2htmlConverter(cleanedContent);
 
-    var styles = ['', 'solarized-dark', 'github', 'metro-vibes', 'clearness', 'clearness-dark'];
-    var currentStyleIndex = 0;
-
-    var zoomSteps = ['zoomSmallest', 'zoomSmaller', 'zoomSmall', 'zoomDefault', 'zoomLarge', 'zoomLarger', 'zoomLargest'];
-    var currentZoomState = 3;
-
-    if ($iframeViewer !== undefined) {
-      var $iframeViewerHead = $iframeViewer.contents().find('head');
-      $iframeViewerHead.append($('<link/>', {
-        rel: 'stylesheet',
-        href: extensionDirectory + '/extension.css'
-      }));
-      $iframeViewerHead.append($('<link/>', {
-        rel: 'stylesheet',
-        href: extensionDirectory + '/../../libs/bootstrap/css/bootstrap.css'
-      }));
-      $iframeViewerHead.append($('<link/>', {
-        rel: 'stylesheet',
-        href: extensionDirectory + '/../../libs/font-awesome/css/font-awesome.css'
-      }));
-      $iframeViewerHead.append($('<link/>', {
-        rel: 'stylesheet',
-        href: extensionDirectory + '/css/markdown.css'
-      }));
-      $iframeViewerHead.append($('<link/>', {
-        rel: 'stylesheet',
-        href: extensionDirectory + '/css/github.css'
-      }));
-      //$iframeViewerHead.append($('<link/>', { rel: 'stylesheet', href: extensionDirectory+'/css/haroopad.css' }));
-      $iframeViewerHead.append($('<link/>', {
-        rel: 'stylesheet',
-        href: extensionDirectory + '/css/metro-vibes.css'
-      }));
-      $iframeViewerHead.append($('<link/>', {
-        rel: 'stylesheet',
-        href: extensionDirectory + '/css/solarized-dark.css'
-      }));
-      $iframeViewerHead.append($('<link/>', {
-        rel: 'stylesheet',
-        href: extensionDirectory + '/css/clearness.css'
-      }));
-      $iframeViewerHead.append($('<link/>', {
-        rel: 'stylesheet',
-        href: extensionDirectory + '/css/clearness-dark.css'
-      }));
-
-      $iframeViewerBody.children().remove();
-      $iframeViewerBody.append($('<div/>', {
-        id: 'viewerContent',
-        class: "markdown"
-      }).append(mdContent));
-      $iframeViewerBody.append(viewerToolbar);
-
-      if (isCordova) {
-        $iframeViewerBody.find("#printButton").hide();
-      }
-
-      var $viewerContent = $iframeViewer.contents().find('#viewerContent');
-
-      $iframeViewerBody.find("#changeStyleButton").bind('click', function() {
-        currentStyleIndex = currentStyleIndex + 1;
-        if (currentStyleIndex >= styles.length) {
-          currentStyleIndex = 0;
-        }
-        $viewerContent.removeClass();
-        $viewerContent.addClass('markdown ' + styles[currentStyleIndex] + " " + zoomSteps[currentZoomState]);
-      });
-
-      $iframeViewerBody.find("#zoomInButton").bind('click', function(e) {
-        currentZoomState++;
-        if (currentZoomState >= zoomSteps.length) {
-          currentZoomState = 6;
-        }
-        $viewerContent.removeClass();
-        $viewerContent.addClass('markdown ' + styles[currentStyleIndex] + " " + zoomSteps[currentZoomState]);
-      });
-
-      $iframeViewerBody.find("#zoomOutButton").bind('click', function(e) {
-        currentZoomState--;
-        if (currentZoomState < 0) {
-          currentZoomState = 0;
-        }
-        $viewerContent.removeClass();
-        $viewerContent.addClass('markdown ' + styles[currentStyleIndex] + " " + zoomSteps[currentZoomState]);
-      });
-
-      $iframeViewerBody.find("#zoomResetButton").bind('click', function(e) {
-        currentZoomState = 3;
-        $viewerContent.removeClass();
-        $viewerContent.addClass('markdown ' + styles[currentStyleIndex] + " " + zoomSteps[currentZoomState]);
-      });
-
-      $iframeViewerBody.find("#printButton").bind('click', function(e) {
-        //document.getElementById("iframeViewer").contentWindow.print();
-        $iframeViewer.get(0).contentWindow.print();
-      });
-
-      // making all links open in the user default browser
-      $iframeViewerBody.find("a").bind('click', function(e) {
-        e.preventDefault();
-        TSCORE.openLinkExternally($(this).attr("href"));
-      });
-
-      // fixing embedding of local images
-      $iframeViewerBody.find("img[src]").each(function() {
-        var currentSrc = $(this).attr("src");
-        if (currentSrc.indexOf("http://") === 0 || currentSrc.indexOf("https://") === 0 || currentSrc.indexOf("data:") === 0) {
-          // do nothing if src begins with http(s):// or data:
-        } else {
-          $(this).attr("src", "file://" + fileDirectory + TSCORE.dirSeparator + currentSrc);
-        }
-      });
+    var contentWindow = document.getElementById("iframeViewer").contentWindow;
+    if (typeof contentWindow.setContent === "function") {
+      contentWindow.setContent(mdContent, fileDirectory);
+    } else {
+      // TODO optimize setTimeout
+      window.setTimeout(function() {
+        contentWindow.setContent(mdContent, fileDirectory);
+      }, 500);
     }
   };
 
   exports.getContent = function() {
     //$('#'+containerElID).html();
+    console.log("Not implemented");
   };
 
   exports.getTextContent = function(file, loaded) {
-
     var fileReader = new FileReader();
     fileReader.onload = function(event) {
       require([extensionDirectory + '/marked/marked.js'], function(marked) {

@@ -1,0 +1,62 @@
+{
+    "saveAsSelectionLabel": {
+        "message": "Simpan bagian terpilih",
+        "description": "Title of label."
+    },
+    "appLauncher": {
+        "message": "Buka TagSpaces",
+        "description": "Title of the application launcher in the browser."
+    },
+    "appDesc": {
+        "message": "Browser File dengan Support Web Content Scraping dan Chromecast.",
+        "description": ""
+    },
+    "addTagHelp": {
+        "message": "Tag harus minimal 2 karakter dan tidak boleh mengandung karakter khusus seperti spasi, #, /,\\ dan lain-lain.",
+        "description": "Add tag help message"
+    },
+    "saveScreenshotTitle": {
+        "message": "Simpan screenshot dari bagian halaman yang tampak sebagai PNG",
+        "description": "Title of screenshot button"
+    },
+    "editTitleLabel": {
+        "message": "Edit Judul",
+        "description": "Title of label."
+    },
+    "appName": {
+        "message": "TagSpaces",
+        "description": ""
+    },
+    "appLauncherLabel": {
+        "message": "Capture Web Content",
+        "description": "Title of label."
+    },
+    "saveScreenshotLabel": {
+        "message": "screenshot",
+        "description": "Title of label."
+    },
+    "addTagLabel": {
+        "message": "Tambahkan Tag",
+        "description": "Title of label."
+    },
+    "saveAsMhtmlTitle": {
+        "message": "Simpan seluruh halaman sebagai MHTML",
+        "description": "Title of save page button"
+    },
+    "appLauncherTitle": {
+        "message": "Buka Browser TagSpaces pada halaman baru",
+        "description": "Title of the application launcher in the browser."
+    },
+    "saveSelectionAsHtmlTitle": {
+        "message": "Simpan bagian yang dipilih sebagai HTML",
+        "description": "Title of save selection button"
+    },
+    "saveAsMhtmlLabel": {
+        "message": "Simpan Seluruh Halaman",
+        "description": "Title of label."
+    },
+    "saveFileLabel": {
+        "message": "Simpan sebagai file",
+        "description": "Title of label."
+    }
+}

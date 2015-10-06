@@ -53,7 +53,9 @@ define(function(require, exports, module) {
 
     if (urlRegExp.test(url)) {
       $('#' + containerElID).append($("<button>", {
-          "class": "viewerURLButton btn btn-primary",
+          "class": "viewerURLButton btn btn-primary flexMaxWidth",
+          "style": "height: 40px;",
+          "title": "Opens the URL in the default browser",
           "data-url": url,
           "text": url
         })

@@ -1,44 +1,6 @@
-.btn, .btn:hover, .btn:focus, .btn:active, .btn-link, .btn-link:hover, .btn-link:focus, .btn-link:active {
-    outline: none !important;
-    background-image: none;
-    border-radius: 0;
-}
-
-@media print {
-    #viewerToolbar {
-        display: none;
-    }
-}
-
-#viewerToolbar .iconBackground {
-    color: rgba(0,0,0,0.8);
-}
-
-#viewerToolbar .iconForeground {
-    color: #f2f2f2;
-}
-
-#viewerToolbar {
-    padding: 2px;
-    background-color: transparent;
-    z-index: 9999999;
-    position:fixed;
-    bottom: 0;
-    right: 0;
-}
-
-body, html {
-    width: 100% !important;
-    height: 100% !important;
-}
-
-#viewerContent {
-    /*width: 100% !important;
-    height: 100% !important;*/
-    padding: 10px;
-    user-select: text;
-    -webkit-user-select: text;
-    -moz-user-select: text;
+#htmlContent {
+  overflow: auto;
+  height: 100%;
 }
 
 .zoomSmallest {
@@ -68,3 +30,4 @@ body, html {
 .zoomLargest {
     zoom:130%;
 }
+

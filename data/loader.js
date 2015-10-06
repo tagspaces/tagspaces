@@ -11,7 +11,8 @@ var PRO = "@@PROVERSION";
 if (PRODUCTION == "true") {
   console = console || {};
   console.log = function(){};
-  console.error = function(){};
+  console.warning = function(){};
+//  console.error = function(){};
 }
 
 var isFirefox = document.URL.indexOf( 'resource://' ) === 0;
@@ -45,7 +46,7 @@ if( isFirefox ) {
 } else if ( isFirefoxOS ) {
   IO_JS = "mozilla/firefoxos.api";
 } else if ( isChrome ) {
-  IO_JS = "chromelight/chrome.api";
+  IO_JS = "chromium/chrome.api";
 } else if (isNode){
   IO_JS = "node-webkit/node-webkit.api";
 } else if (isCordova){
@@ -67,7 +68,7 @@ requirejs.config({
     }
   },
   paths: {
-    jquery:                 'libs/jquery/jquery-2.1.1.min',
+    jquery:                 'libs/jquery/jquery.min',
     jqueryui:               'libs/jqueryui/jquery.ui.core',
     jqueryuiwidget:         'libs/jqueryui/jquery.ui.widget',
     jqueryuimouse:          'libs/jqueryui/jquery.ui.mouse',
@@ -93,6 +94,7 @@ requirejs.config({
     webdavlib:              'web/webdavlib',
     jszip:                  'libs/jszip/jszip.min',
     slideout:               'libs/slideoutjs/slideout.min',
+    rasterizehtml:          'libs/rasterizeHTML/rasterizeHTML.allinone',
 
     tscore:                 'js/core.api',
     tssetting:              'js/settings.api',

@@ -20,7 +20,7 @@ define(function(require, exports, module) {
   var extensionDirectory = TSCORE.Config.getExtensionPath() + "/" + extensionID;
   var UI;
 
-  var $viewContainer = $("#"+extensionID+"Container");
+  var $viewContainer = $("#" + extensionID + "Container");
   var homeScreen;
   var template;
   var UI;
@@ -28,14 +28,14 @@ define(function(require, exports, module) {
   var init = function() {
     console.log("Initializing perspective " + extensionID);
 
-    $viewContainer = $("#"+extensionID+"Container").empty();
+    $viewContainer = $("#" + extensionID + "Container").empty();
     
     require([
-      extensionDirectory+"/perspectiveUI.js",
-      "text!"+extensionDirectory + "/galleryTMPL.html",
-      "css!"+extensionDirectory + "/gallery.css",
-      "css!"+extensionDirectory + "/dist/photoswipe.css",
-      "css!"+extensionDirectory + "/dist/default-skin/default-skin.css"
+      extensionDirectory + "/perspectiveUI.js",
+      "text!" + extensionDirectory + "/galleryTMPL.html",
+      "css!" + extensionDirectory + "/gallery.css",
+      "css!" + extensionDirectory + "/dist/photoswipe.css",
+      "css!" + extensionDirectory + "/dist/default-skin/default-skin.css"
       ], function(perspectiveUI, tmpl) {
         UI = perspectiveUI;
         template = tmpl;
@@ -62,9 +62,13 @@ define(function(require, exports, module) {
     
   var updateFileUI = function(oldFilePath, newFilePath) {};
   
-  var getNextFile = function (filePath) {};
+  var getNextFile = function(filePath) {};
 
-  var getPrevFile = function (filePath) {};
+  var getPrevFile = function(filePath) {};
+
+  exports.updateTreeData = function updateIndexData(fsTreeData) {
+    console.log("Updating tree data not implemented");
+  };
 
   // Vars
   exports.Title = extensionTitle;

@@ -120,7 +120,7 @@ function initToobarButton() {
     height: 410,
     contentURL: data.url('mozilla/popup.html'),
     contentScriptFile: [ 
-      data.url('libs/jquery/jquery-2.1.1.min.js'), 
+      data.url('libs/jquery/jquery.min.js'),
       data.url('libs/select2/select2.min.js'),
       data.url('libs/dompurify/purify.js'),
       data.url('mozilla/popup.js')

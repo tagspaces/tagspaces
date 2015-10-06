@@ -51,21 +51,6 @@ define(function(require, exports, module) {
         "nwfaketop": ""
       }));
       TSCORE.IO.loadTextFile(filePath);
-    } else if (fileExt.indexOf("mht") === 0 && (isChrome || isNode)) {
-      $containerElement.append($('<button>', {
-        class: "btn btn-primary",
-        style: "margin: 5px;",
-        text: "Open in new window"
-      }).click(function() {
-        // if(isNode) {
-        window.open(filePathURI, '_blank');
-        // }
-      }));
-      $containerElement.append($('<div>', {
-        class: "alert alert-info",
-        style: "margin: 5px; font-size: 14px;",
-        text: "For security reasons, opening of MHT files in iframes has been disabled in Chrome, so to open this MHT file, press the button above. This issue will be solved soon, with a custom MHT viewer."
-      }));
     } else {
       $containerElement.append($('<iframe>', {
         // sandbox: "allow-same-origin allow-scripts", // comment out due not loading pdfs in chrome ext

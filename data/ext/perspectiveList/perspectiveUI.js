@@ -467,7 +467,7 @@ define(function(require, exports, module) {
     //if (supportedFileTypeThumnailing.indexOf(fileExt) >= 0) {
     //  return buttonCompTmbTmpl(context);
     //} else {
-      return buttonCompTmpl(context);
+    return buttonCompTmpl(context);
     //}
   };
 
@@ -476,11 +476,7 @@ define(function(require, exports, module) {
     $("#" + this.extensionID + "Container").find(".fileSelection").find("i")
       .removeClass("fa-check-square-o")
       .addClass("fa-square-o");
-    $("#" + this.extensionID + "Container").find("tr")
-      .removeClass('ui-selected');
-
-    // Reseting select all button
-    //$("#"+this.extensionID+"ToogleSelectAll").find("i").removeClass("fa-check-square-o").addClass("fa-square-o");
+    $("#" + this.extensionID + "Container").find("tr").removeClass('ui-selected');
   };
 
   ExtUI.prototype.selectFile = function(uiElement, filePath) {
@@ -519,22 +515,10 @@ define(function(require, exports, module) {
       this.fileTable.fnSetColumnVis(TSCORE.fileListFILEPATH, true);
     }
 
-    var translation = $.i18n.t("ns.perspectiveList:fileSize");
-    if (translation.length > 0) {
-      $("#" + this.extensionID + "Container").find("th:contains('Size')").text(translation);
-    }
-    translation = $.i18n.t("ns.perspectiveList:fileLDTM");
-    if (translation.length > 0) {
-      $("#" + this.extensionID + "Container").find("th:contains('Last Modified')").text(translation);
-    }
-    translation = $.i18n.t("ns.perspectiveList:filePath");
-    if (translation.length > 0) {
-      $("#" + this.extensionID + "Container").find("th:contains('File Path')").text(translation);
-    }
-    translation = $.i18n.t("ns.perspectiveList:fileName");
-    if (translation.length > 0) {
-      $("#" + this.extensionID + "Container").find("th:contains('File Name')").text();
-    }
+    $("#" + this.extensionID + "Container").find("th:contains('Size')").text($.i18n.t("ns.perspectiveList:fileSize"));
+    $("#" + this.extensionID + "Container").find("th:contains('Last Modified')").text($.i18n.t("ns.perspectiveList:fileLDTM"));
+    $("#" + this.extensionID + "Container").find("th:contains('File Path')").text($.i18n.t("ns.perspectiveList:filePath"));
+    $("#" + this.extensionID + "Container").find("th:contains('File Name')").text($.i18n.t("ns.perspectiveList:fileName"));
 
     this.showFileDetails = !this.showFileDetails;
   };

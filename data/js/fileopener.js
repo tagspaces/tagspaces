@@ -207,6 +207,10 @@ define(function(require, exports, module) {
         return false;
       }
     }
+
+    $('#fileTags').find('button').prop('disabled', false);
+    $('#addTagFileViewer').prop('disabled', false);
+
     _isEditMode = false;
     _isFileChanged = false;
     _openedFilePath = filePath;
@@ -302,6 +306,19 @@ define(function(require, exports, module) {
     Mousetrap.unbind(TSCORE.Config.getEditDocumentKeyBinding());
     Mousetrap.bindGlobal(TSCORE.Config.getEditDocumentKeyBinding(), function() {
       editFile(_openedFilePath);
+      return false;
+    });
+
+    Mousetrap.bindGlobal("esc", function() {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if (document.msExitFullscreen) {
+        document.msExitFullscreen();
+      } else if (document.mozCancelFullScreen) {
+        document.mozCancelFullScreen();
+      } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+      }
       return false;
     });
   }

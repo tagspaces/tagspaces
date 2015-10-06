@@ -1,0 +1,11 @@
+{
+    "zoomOut": "Zoom arrière",
+    "zoomIn": "Zoom avant",
+    "zoomReset": "Taille normale",
+    "rotateRight": "Pivoter à droite",
+    "rotateLeft": "Pivoter à gauche",
+    "print": "Imprimer",
+    "about": "A propos",
+    "aboutTitle": "A propos de la visionneuse d'images",
+    "-": "-"
+}

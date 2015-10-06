@@ -13,8 +13,6 @@ define(function(require, exports, module) {
 
   var MONTH = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
-  var PREVIEW_TAGS_CNT = 5;
-
   var supportedFileTypeThumnailing = [
     "jpg", "jpeg", "png", "gif", "pdf", "svg", "webp", "bmp", 
     "zip", "epub", "docx", "pptx", "pptm", "potx", "potm", 
@@ -25,7 +23,6 @@ define(function(require, exports, module) {
   function ExtUI(extID) {
     this.extensionID = extID;
     this.viewContainer = $("#" + this.extensionID + "Container").empty();
-    this.viewToolbar = $("#" + this.extensionID + "Toolbar").empty();
 
     this.currentGrouping = ""; // tagchain, day, month, year
     this.thumbEnabled = false;
@@ -59,30 +56,40 @@ define(function(require, exports, module) {
   }
 
   var fileTileTmpl = Handlebars.compile(
-    '<li title="{{filepath}}" filepath="{{filepath}}" class="fileTile">' +
-      '<p class="titleInFileTile">{{title}}</p><span class="tagsInFileTile">' +
+    '<div title="{{filepath}}" filepath="{{filepath}}" class="fileTile" style="background-image: url(\'{{thumbPath}}\')">' +
+      '<button class="btn btn-link fileTileSelector" filepath="{{filepath}}"><i class="fa {{selected}} fa-lg"></i> <span class="fileExtTile">{{fileext}}</span></button>' +
+      '<div class="tagsInFileTile">' +
       '{{#each tags}}' +
         '<button class="btn btn-sm tagButton fileTagsTile" tag="{{tag}}" filepath="{{filepath}}" style="{{style}}">{{tag}} <span class="caret"></span></button>' +
       '{{/each}}' +
-      '</span><span class="fileExtTile">{{fileext}}</span>' +
-      '<button class="btn btn-link fileTileSelector" filepath="{{filepath}}"><i class="fa {{selected}} fa-lg"></i></button>' +
-    '</p></li>'
+      '</div>' +
+      '<div class="titleInFileTile">{{title}}</div>' +
+    '</div>'
     );
 
-  var fileTileTmbTmpl = Handlebars.compile(
-    '<li title="{{filepath}}" filepath="{{filepath}}" class="fileTile">' +
-      '<span><img class="thumbImgTile" filepath="{{tmbpath}}" style="max-width: 200px; max-height: 200px;" src="{{thumbPath}}"></span>' +
-      '<p class="titleInFileTile">{{title}}</p><span class="tagsInFileTile">' +
-      '{{#each tags}}' +
-        '<button class="btn btn-sm tagButton fileTagsTile" tag="{{tag}}" filepath="{{filepath}}" style="{{style}}">{{tag}} <span class="caret"></span></button>' +
+  var mainLayoutTemplate = Handlebars.compile(
+    '<div class="extMainContent accordion">' +
+      '{{#each groups}}' +
+      '<div class="accordion-group disableTextSelection" style="width: 100%; border: 0px #aaa solid;">' +
+        '{{#if ../moreThanOneGroup}}' +
+        '<div class="accordion-heading btn-group" style="width:100%; margin: 0px; border-bottom: solid 1px #eee; background-color: #f0f0f0;">' +
+          '<button class="btn btn-link groupTitle" data-toggle="collapse" data-target="#{{../../id}}SortingButtons{{@index}}">' +
+            '<i class="fa fa-minus-square">&nbsp;</i>' +
+          '</button>' +
+          '<span class="btn btn-link groupTitle" id="{{../../id}}HeaderTitle{{@index}}" style="margin-left: 0px; padding-left: 0px;"></span>' +
+        '</div>' +
+        '{{/if}}' +
+        '<div class="accordion-body collapse in" id="{{../id}}SortingButtons{{@index}}" style="margin: 0px 0px 0px 3px; border: 0px;">' +
+          '<div class="accordion-inner tileContainer" id="{{../id}}GroupContent{{@index}}"></div>' +
+        '</div>' +
+      '</div>' +
+      '{{else}}' +
+      '<p style="margin: 5px;">No files found</p>' +
       '{{/each}}' +
-      '</span><span class="fileExtTile">{{fileext}}</span>' +
-      '<button class="btn btn-link fileTileSelector" filepath="{{filepath}}"><i class="fa {{selected}} fa-lg"></i></button>' +
-    '</p></li>'
-    );
+    '</div>'
+  );
 
   ExtUI.prototype.createFileTile = function(title, filePath, fileExt, fileTags, isSelected, metaObj) {
-    //TODO minimize platform specific calls     
     var tmbPath;
     if (isCordova || isWeb) {
       tmbPath = filePath;
@@ -96,7 +103,7 @@ define(function(require, exports, module) {
       fileext: fileExt,
       title: title,
       tags: [],
-      selected: isSelected ? "fa-check-square-o" : "fa-square-o",
+      selected: isSelected ? "fa-check-square" : "fa-square-o",
       thumbPath: metaObj.thumbnailPath
     };
     
@@ -104,14 +111,7 @@ define(function(require, exports, module) {
       var tagString = "" + fileTags;
       var tags = tagString.split(",");
 
-      var tagCounter = 0;
-      if (tags.length > PREVIEW_TAGS_CNT) {
-        tagCounter = PREVIEW_TAGS_CNT + 1;
-        tags[PREVIEW_TAGS_CNT] = "...";
-      } else {
-        tagCounter = tags.length;
-      }
-      for (var i = 0; i < tagCounter; i++) {
+      for (var i = 0; i < tags.length; i++) {
         context.tags.push({
           tag: tags[i],
           filepath: filePath,
@@ -130,11 +130,7 @@ define(function(require, exports, module) {
       });
     }
 
-    if (supportedFileTypeThumnailing.indexOf(fileExt) >= 0) {
-      return fileTileTmbTmpl(context);
-    } else {
-      return fileTileTmpl(context);
-    }
+    return fileTileTmpl(context);
   };
 
   ExtUI.prototype.initFileGroupingMenu = function() {
@@ -181,28 +177,24 @@ define(function(require, exports, module) {
     console.log("Init UI module");
 
     var self = this;
+    this.viewContainer.append(toolbarTemplate({ id: this.extensionID }));
 
-    var context = { id: this.extensionID };
-    this.viewContainer.append("<div class='extMainContent'></div>");
-    this.viewContainer.append(toolbarTemplate(context));
-
-    $("#" + this.extensionID + "ToogleSelectAll")
-      .click(function() {
-        var checkIcon = $(this).find("i");
-        if (checkIcon.hasClass("fa-square-o")) {
-          TSCORE.selectedFiles = [];
-          $(self.viewContainer).find('.fileTileSelector').each(function() {
-            $(this).parent().parent().addClass("ui-selected");
-            $(this).find("i").addClass("fa-check-square").removeClass("fa-square-o");
-            TSCORE.selectedFiles.push($(this).attr("filepath"));
-          });
-        } else {
-          TSCORE.PerspectiveManager.clearSelectedFiles();
-        }
-        self.handleElementActivation();
-        checkIcon.toggleClass("fa-check-square");
-        checkIcon.toggleClass("fa-square-o");
-      });
+    $("#" + this.extensionID + "ToogleSelectAll").on("click", function() {
+      var checkIcon = $(this).find("i");
+      if (checkIcon.hasClass("fa-square-o")) {
+        TSCORE.selectedFiles = [];
+        $(self.viewContainer).find('.fileTileSelector').each(function() {
+          $(this).parent().parent().addClass("ui-selected");
+          $(this).find("i").addClass("fa-check-square").removeClass("fa-square-o");
+          TSCORE.selectedFiles.push($(this).attr("filepath"));
+        });
+      } else {
+        TSCORE.PerspectiveManager.clearSelectedFiles();
+      }
+      self.handleElementActivation();
+      checkIcon.toggleClass("fa-check-square");
+      checkIcon.toggleClass("fa-square-o");
+    });
 
     $("#" + this.extensionID + "CreateFileButton").on("click", function() {
       TSCORE.showFileCreateDialog();
@@ -224,40 +216,30 @@ define(function(require, exports, module) {
       TSCORE.createTXTFile();
     });
 
-    $("#" + this.extensionID + "IncludeSubDirsButton")
-      .click(function() {
-        TSCORE.IO.createDirectoryIndex(TSCORE.currentPath);
-      });
+    $("#" + this.extensionID + "IncludeSubDirsButton").on("click", function() {
+      TSCORE.IO.createDirectoryIndex(TSCORE.currentPath);
+    });
 
-    $("#" + this.extensionID + "TagButton")
-      .click(function() {
-        TSCORE.showAddTagsDialog();
-      });
+    $("#" + this.extensionID + "TagButton").on("click", function() {
+      TSCORE.showAddTagsDialog();
+    });
 
-    $("#" + this.extensionID + "ShowTmbButton")
-      .click(function() {
-        self.toggleThumbnails();
-      });
-
-    $("#" + this.extensionID + "CopyMoveButton")
-      .click(function() {
-        TSCORE.showMoveCopyFilesDialog();
-      });
+    $("#" + this.extensionID + "CopyMoveButton").on("click", function() {
+      TSCORE.showMoveCopyFilesDialog();
+    });
 
     $("#" + this.extensionID + "AddFileButton").on("click", function() {
       $("#addFileInput").click();
     });
 
-    $("#" + this.extensionID + "DeleteSelectedFilesButton")
-      .click(function() {
-
-        TSCORE.showConfirmDialog($.i18n.t('ns.dialogs:fileDeleteTitleConfirm'), 
-          $.i18n.t('ns.dialogs:selectedFilesDeleteContentConfirm'), function() {
-            TSCORE.selectedFiles.forEach(function(file) {
-              TSCORE.IO.deleteElement(file);
-            });
+    $("#" + this.extensionID + "DeleteSelectedFilesButton").on("click", function() {
+      TSCORE.showConfirmDialog($.i18n.t('ns.dialogs:fileDeleteTitleConfirm'),
+        $.i18n.t('ns.dialogs:selectedFilesDeleteContentConfirm'), function() {
+          TSCORE.selectedFiles.forEach(function(file) {
+            TSCORE.IO.deleteElement(file);
           });
-      });
+        });
+    });
 
     // Init Tag Context Menus
     this.viewContainer.on("contextmenu click", ".tagButton", function() {
@@ -270,74 +252,6 @@ define(function(require, exports, module) {
 
     this.initFileGroupingMenu();
 
-    // Disable all buttons    
-    this.viewToolbar.find(".btn").prop('disabled', true);
-
-    this.toggleThumbnails();
-  };
-
-  ExtUI.prototype.enableThumbnails = function() {
-    $("#" + this.extensionID + "IncreaseThumbsButton").prop('disabled', false);
-    /*TSCORE.showLoadingAnimation();
-    var $tiltleElem = $("#" + this.extensionID + "Container .thumbImgTile");
-    $tiltleElem.each(function(index) {
-      var $element = $(this);
-      if (TSPRO.available) {
-        TSPRO.getThumbnailURL($element.attr('filepath'), function(dataURL) {
-          $element.attr('src', dataURL);
-          if (($tiltleElem.length - 1) === index) {
-            TSCORE.hideLoadingAnimation();
-          }
-        });
-      } else {
-        var metaFilePath = TSCORE.findMetaFilebyPath($element.attr('filepath'), "png");
-        if (metaFilePath) {
-          $element.attr('src', metaFilePath);  
-        }
-        var metaFileJson = TSCORE.findMetaFilebyPath($element.attr('filepath'), "json");
-        if(metaFileJson) {
-          var span = $("<span class=\"tagsInFileTile\">");
-          TSCORE.IO.getFileContent(metaFileJson, function(result) {
-            var str = String.fromCharCode.apply(null, new Uint8Array(result));
-            var metaData = JSON.parse(str);
-            metaData.tags.forEach(function(tag) {
-              var btn = $("<button class=\"btn btn-sm tagButton fileTagsTile\" tag=\"\" filepath=\"\" style=\"\"><span class=\"caret\"></span></button>");
-              btn.text(tag.title);
-              span.append(btn);
-            });
-              
-            $element.parent().parent().append(span);
-          });
-        }
-      }
-      $element.attr('style', "");
-    });
-    $('.thumbImgTile').css({
-      "max-width": TMB_SIZES[this.currentTmbSize],
-      "max-height": TMB_SIZES[this.currentTmbSize]
-    });*/
-  };
-
-  ExtUI.prototype.disableThumbnails = function() {
-    //this.currentTmbSize = 0;
-    $("#" + this.extensionID + "IncreaseThumbsButton").prop('disabled', true);
-    $("#" + this.extensionID + "Container .thumbImgTile").each(function() {
-      $(this).attr('style', "width: 0px; height: 0px; border: 0px");
-      $(this).attr('src', "");
-    });
-  };
-
-  ExtUI.prototype.refreshThumbnails = function() {
-    if (this.thumbEnabled) {
-      this.enableThumbnails();
-    } else {
-      this.disableThumbnails();
-    }
-  };
-
-  ExtUI.prototype.toggleThumbnails = function() {
-    this.thumbEnabled = !this.thumbEnabled;
-    this.refreshThumbnails();
   };
 
   ExtUI.prototype.switchGrouping = function(grouping) {
@@ -451,80 +365,46 @@ define(function(require, exports, module) {
   };
 
   ExtUI.prototype.reInit = function() {
-    var $extMainContent = this.viewContainer.find(".extMainContent");
-
-    // Clear old data
-    $extMainContent.children().remove();
-    $extMainContent.addClass("accordion");
-
-    $(this.extensionID + "IncludeSubDirsButton").prop('disabled', false);
-
     var self = this;
+
+    var $extMainContent = this.viewContainer.find(".extMainContent");
+    if ($extMainContent) {
+      $extMainContent.remove();
+    }
 
     // Load new filtered data
     this.searchResults = TSCORE.Search.searchData(TSCORE.fileList, TSCORE.Search.nextQuery);
 
-    var i = 0;
-    _.each(self.calculateGrouping(this.searchResults), function(value) {
-      i++;
+    var fileGroups = self.calculateGrouping(this.searchResults);
+
+    var moreThanOneGroup = (fileGroups.length > 1) ? true : false;
+
+    this.viewContainer.append(mainLayoutTemplate({
+      id: self.extensionID,
+      groups: fileGroups,
+      moreThanOneGroup: moreThanOneGroup
+    }));
+
+    $extMainContent = this.viewContainer.find(".extMainContent");
+
+    var $groupeContent;
+    var $groupeTitle;
+
+    _.each(fileGroups, function(value, index) {
+      $groupeContent = $("#" + self.extensionID + "GroupContent" + index);
+      $groupeTitle = $("#" + self.extensionID + "HeaderTitle" + index);
 
       var groupingTitle = self.calculateGroupTitle(value[0]);
-
-      $extMainContent.append($("<div>", {
-          "class": "accordion-group disableTextSelection",
-          "style": "width: 100%; border: 0px #aaa solid;"
-        })
-        .append($("<div>", {
-            "class": "accordion-heading  btn-group",
-            "style": "width:100%; margin: 0px; border-bottom: solid 1px #eee; background-color: #ddd;"
-          })
-          .append($("<button>", { // Grouped content toggle button
-              "class": "btn btn-link groupTitle",
-              "data-toggle": "collapse",
-              "data-target": "#" + self.extensionID + "sortingButtons" + i,
-              "title": "Toggle Group"
-            })
-            .html("<i class='fa fa-minus-square' /i>&nbsp;")
-            .click(function() {
-              $(this).find('i').toggleClass("fa-minus-square").toggleClass("fa-plus-square");
-            })
-          ) // End date toggle button  
-
-          .append($("<span>", {
-            "class": "btn btn-link groupTitle",
-            "style": "margin-left: 0px; padding-left: 0px;",
-            "text": groupingTitle
-          }))
-
-        ) // end heading
-
-        .append($("<div>", {
-            "class": "accordion-body collapse in",
-            "id": self.extensionID + "sortingButtons" + i,
-            "style": "margin: 0px 0px 0px 3px; border: 0px;"
-          })
-          .append($("<div>", {
-            "class": "accordion-inner",
-            "id": self.extensionID + "sortingButtonsContent" + i,
-            "style": "padding: 2px; border: 0px;"
-          })) // end accordion-inner    
-        ) // end accordion button        
-
-      ); // end group
-
-      var groupedContent = $("<ol>", {
-        style: "overflow: visible;",
-        class: "selectableFiles"
-      }).appendTo("#" + self.extensionID + "sortingButtonsContent" + i);
+      $groupeTitle.text(groupingTitle);
 
       // Sort the files in group by name
       value = _.sortBy(value, function(entry) {
         return entry[TSCORE.fileListFILENAME];
       });
 
-      // Iterating over the files in group 
+      // Iterating over the files in group
       for (var j = 0; j < value.length; j++) {
-        groupedContent.append(self.createFileTile(
+        $groupeContent.append(self.createFileTile(
           value[j][TSCORE.fileListTITLE],
           value[j][TSCORE.fileListFILEPATH],
           value[j][TSCORE.fileListFILEEXT],
@@ -533,20 +413,24 @@ define(function(require, exports, module) {
           value[j][TSCORE.fileListMETA]
         ));
       }
-
-      // Adding event listeners
-      groupedContent.find(".fileTile").each(function() {
-        self.assingFileTileHandlers($(this));
-      });
     });
 
-    // Enable all buttons    
+    // Adding event listeners
+    $extMainContent.find(".fileTile").each(function() {
+      self.assingFileTileHandlers($(this));
+    });
+
+    $extMainContent.find(".groupTitle").click(function() {
+      $(this).find('i').toggleClass("fa-minus-square").toggleClass("fa-plus-square");
+    });
+
+    // Enable all buttons
+    $(this.extensionID + "IncludeSubDirsButton").prop('disabled', false);
+
     this.viewContainer.find(".extMainMenu .btn").prop('disabled', false);
     // Disable certain buttons again    
     $("#" + this.extensionID + "IncreaseThumbsButton").prop('disabled', true);
     $("#" + this.extensionID + "TagButton").prop('disabled', true);
-
-    this.refreshThumbnails();
 
     if (this.searchResults.length !== undefined) {
       if (TSCORE.Search.nextQuery.length > 0) {
@@ -603,7 +487,7 @@ define(function(require, exports, module) {
           TSCORE.TagUtils.addTag(TSCORE.selectedFiles, [tagName]);
           self.handleElementActivation();
 
-          //$(ui.helper).remove();  
+          $(ui.helper).remove();
         }
       })
       .find(".fileTileSelector").click(function(e) {
@@ -634,9 +518,6 @@ define(function(require, exports, module) {
     $("#" + this.extensionID + "Container").find(".fileTileSelector").find("i")
       .removeClass("fa-check-square")
       .addClass("fa-square-o");
-
-    // Reseting select all button
-    //$("#"+this.extensionID+"ToogleSelectAll").find("i").removeClass("fa-check-square").addClass("fa-square-o");   
   };
 
   ExtUI.prototype.selectFile = function(filePath) {
@@ -679,13 +560,13 @@ define(function(require, exports, module) {
 
     if (isWin && !isWeb) {
       filePath = filePath.replace("\\", "");
-      $("#" + this.extensionID + "Container li[filepath]").each(function() {
+      $("#" + this.extensionID + "Container div[filepath]").each(function() {
         if ($(this).attr("filepath").replace("\\", "") === filePath) {
           $(this).remove();
         }
       });
     } else {
-      $("#" + this.extensionID + "Container li[filepath='" + filePath + "']").remove();
+      $("#" + this.extensionID + "Container div[filepath='" + filePath + "']").remove();
     }
   };
 
@@ -704,19 +585,28 @@ define(function(require, exports, module) {
 
     if (isWin && !isWeb) {
       oldFilePath = oldFilePath.replace("\\", "");
-      $("#" + this.extensionID + "Container li[filepath]").each(function() {
+      $("#" + this.extensionID + "Container div[filepath]").each(function() {
         if ($(this).attr("filepath").replace("\\", "") === oldFilePath) {
           $fileTile = $(this);
         }
       });
     } else {
-      $fileTile = $("#" + this.extensionID + "Container li[filepath='" + oldFilePath + "']");
+      $fileTile = $("#" + this.extensionID + "Container div[filepath='" + oldFilePath + "']");
     }
 
     var metaObj = TSCORE.Meta.findMetaObjectFromFileList(oldFilePath);
     $fileTile.replaceWith(this.createFileTile(title, newFilePath, fileExt, fileTags, true, metaObj)); 
-    
-    this.refreshThumbnails();
+
+    if (isWin && !isWeb) {
+      newFilePath = newFilePath.replace("\\", "");
+      $("#" + this.extensionID + "Container div[filepath]").each(function() {
+        if ($(this).attr("filepath").replace("\\", "") === newFilePath) {
+          $fileTile = $(this);
+        }
+      });
+    } else {
+      $fileTile = $("#" + this.extensionID + "Container div[filepath='" + newFilePath + "']");
+    }
     this.assingFileTileHandlers($fileTile);
   };
 

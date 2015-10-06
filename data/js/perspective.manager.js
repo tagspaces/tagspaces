@@ -63,28 +63,27 @@ define(function(require, exports, module) {
   function initPerspective(extPath) {
 
     return new Promise(function(resolve, reject) {
-
       require([extPath], function(perspective) {
         perspectives.push(perspective);
        
-          // Creating perspective's toolbar
-          $('#viewToolbars').append($('<div>', {
-            id: perspective.ID + 'Toolbar',
-            class: 'btn-toolbar'
-          }).hide());
-          // Creating perspective's container
-          $('#viewContainers').append($('<div>', {
-            id: perspective.ID + 'Container',
-            style: 'width: 100%; height: 100%'
-          }).hide());
-          // Creating perspective's footer
-          $('#viewFooters').append($('<div>', {
-            id: perspective.ID + 'Footer'
-          }).hide());
-          //TODO: return init as promise
-          perspective.init();
-          resolve(true);
-        }); // jshint ignore:line
+        // Creating perspective's toolbar
+        $('#viewToolbars').append($('<div>', {
+          id: perspective.ID + 'Toolbar',
+          class: 'btn-toolbar'
+        }).hide());
+        // Creating perspective's container
+        $('#viewContainers').append($('<div>', {
+          id: perspective.ID + 'Container',
+          style: 'width: 100%; height: 100%'
+        }).hide());
+        // Creating perspective's footer
+        $('#viewFooters').append($('<div>', {
+          id: perspective.ID + 'Footer'
+        }).hide());
+        //TODO: return init as promise
+        perspective.init();
+        resolve(true);
+      }); // jshint ignore:line
     }); 
   }
 
@@ -107,7 +106,10 @@ define(function(require, exports, module) {
     return Promise.all(promises).then(function() {
       initPerspectiveSwitcher();
       // Opening last saved location by the start of the application (not in firefox)
-      var lastLocation = TSCORE.Config.getLastOpenedLocation();
+      var lastLocation = TSCORE.Config.getLastOpenedLocation(); 
+      if (TSCORE.Config.getUseDefaultLocation()) {
+        lastLocation = TSCORE.Config.getDefaultLocation();
+      }
       if (lastLocation !== undefined && lastLocation.length >= 1 && !isFirefox) {
         TSCORE.openLocation(lastLocation);
         TSCORE.IO.checkAccessFileURLAllowed();
@@ -174,7 +176,7 @@ define(function(require, exports, module) {
           perspectives[i].load();
           break;
         } catch (e) {
-          console.error('Error while executing \'redrawCurrentPerspective\' on ' + perspectives[i].ID + ' ' + e);
+          console.warn("Error while executing 'redrawCurrentPerspective' on " + perspectives[i].ID + ' ' + e);
         }
       }
     }
@@ -186,7 +188,7 @@ define(function(require, exports, module) {
       try {
         perspectives[i].removeFileUI(filePath);
       } catch (e) {
-        console.error('Error while executing \'removeFileUI\' on ' + perspectives[i].ID + ' ' + e);
+        console.warn("Error while executing 'removeFileUI' on " + perspectives[i].ID + ' ' + e);
       }
     }
   };
@@ -197,7 +199,7 @@ define(function(require, exports, module) {
       try {
         perspectives[i].updateFileUI(oldFilePath, newFilePath);
       } catch (e) {
-        console.error('Error while executing \'updateFileUI\' on ' + perspectives[i].ID + ' ' + e);
+        console.warn("Error while executing 'updateFileUI' on " + perspectives[i].ID + ' ' + e);
       }
     }
   };
@@ -208,7 +210,7 @@ define(function(require, exports, module) {
         try {
           return perspectives[i].getNextFile(filePath);
         } catch (e) {
-          console.error('Error while executing \'getNextFile\' on ' + perspectives[i].ID + ' ' + e);
+          console.warn("Error while executing 'getNextFile' on " + perspectives[i].ID + ' ' + e);
         }
       }
     }
@@ -220,7 +222,7 @@ define(function(require, exports, module) {
         try {
           return perspectives[i].getPrevFile(filePath);
         } catch (e) {
-          console.error('Error while executing \'getPrevFile\' on ' + perspectives[i].ID + ' ' + e);
+          console.warn("Error while executing 'getPrevFile' on " + perspectives[i].ID + ' ' + e);
         }
       }
     }
@@ -231,7 +233,7 @@ define(function(require, exports, module) {
       try {
         perspectives[i].updateTreeData(treeData);
       } catch (e) {
-        console.error('Error while executing \'updateTreeData\' on ' + perspectives[i].ID + ' ' + e);
+        console.warn("Error while executing 'updateTreeData' on "); // + perspectives[i].ID + ' ' + e);
       }
     }
   };
@@ -287,8 +289,8 @@ define(function(require, exports, module) {
     
     Promise.all(workers).then(function(result) {
       changePerspective(TSCORE.currentPerspectiveID);
-    }).catch(function(error) {
-      alert("MetaData Error: " + error);
+    }).catch(function(e) {
+      console.error("MetaData Error: " + e);
     });
   };
   

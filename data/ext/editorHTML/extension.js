@@ -38,15 +38,13 @@ define(function(require, exports, module) {
     $containerElement.empty();
     $containerElement.css("background-color", "white");
 
-    var lng = $.i18n.lng();
-
     var extPath = extensionDirectory + "/index.html";
     $containerElement.append($('<iframe>', {
       id: "iframeViewer",
       sandbox: "allow-same-origin allow-scripts",
       scrolling: "no",
       style: "background-color: white; overflow: hidden;",
-      src: extPath + "?cp=" + filePath + "&setLng=" + lng,
+      src: extPath + "?cp=" + filePath + "&setLng=" + TSCORE.currentLanguage,
       "nwdisable": "",
       "nwfaketop": ""
     }));
@@ -77,9 +75,10 @@ define(function(require, exports, module) {
     try {
       bodyContent = content.match(bodyRegex)[1];
     } catch (e) {
-      console.log("Error parsing HTML document. " + e);
-      TSCORE.FileOpener.closeFile(true);
-      TSCORE.showAlertDialog("Probably a body tag was not found in the document. Document will be closed.", "Error parsing HTML document");
+      console.log("Error parsing the body of the HTML document. " + e);
+      bodyContent = content;
+//      TSCORE.FileOpener.closeFile(true);
+//      TSCORE.showAlertDialog("Probably a body tag was not found in the document. Document will be closed.", "Error parsing HTML document");
     }
 
     //        var titleRegex = /\<title[^>]*\>([^]*)\<\/title/m;

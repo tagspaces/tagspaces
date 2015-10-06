@@ -1,16 +1,28 @@
 .my-gallery {
   width: 100%;
   float: left;
+
+  display: flex;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+
+  flex-wrap: wrap;
 }
 .my-gallery img {
   width: 100%;
   height: auto;
+  max-width: 200px;
+  max-height: 200px;
 }
 .my-gallery figure {
   display: block;
   float: left;
   margin: 0 5px 5px 0;
   width: 150px;
+
+  flex: 1 1 auto;
+  -webkit-flex: 1 1 auto;
+  -ms-flex: 1 1 auto;
 }
 .my-gallery figcaption {
   display: none;

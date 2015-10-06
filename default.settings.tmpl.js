@@ -1,4 +1,4 @@
-/* Copyright (c) 2012-2014 The TagSpaces Authors. All rights reserved.
+/* Copyright (c) 2012-2015 The TagSpaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that 
  * can be found in the LICENSE file. */
 define(function (require, exports, module) {
@@ -28,12 +28,15 @@ define(function (require, exports, module) {
         "isWindowMaximized":        false,
         "showMainMenu":             false,
         "lastOpenedLocation":       "",
+        "useDefaultLocation":       false, 
+        "writeMetaToSidecarFile":   false,
         "webDavPath"  :             "oc/remote.php/webdav",
         "ootbPerspectives":         [@@DEFAULTPERSPECTIVES],
         "ootbViewers":              [ "viewerBrowser", "viewerMD", "viewerImage", "viewerPDF", "editorText", "viewerText", "editorODF", "viewerURL", "viewerHTML", "viewerMHTML", "editorJSON", "viewerZIP", "viewerEPUB", "viewerAudioVideo" ],
         "ootbEditors":              [ "editorHTML", "editorText", "editorODF", "editorJSON", "editorNext" ],
         "perspectives":             [@@ACTIVATEDPERSPECTIVES],
-        "interfaceLanguage": "en_US",
+        "interfaceLanguage":        "en_US",
+        "writeTagsToFile":          false,
         "supportedLanguages": [
             { "iso": "en_US", "title": "English" },
             { "iso": "de_DE", "title": "Deutsch (German)" },
@@ -57,6 +60,7 @@ define(function (require, exports, module) {
             { "iso": "nl_NL", "title": "Nederlands (Dutch)" },
             { "iso": "zh_TW", "title": "台灣 (Chinese Taiwan BIG5)" },
             { "iso": "hu", "title": "Magyar (Hungarian)" },
+            { "iso": "id_ID", "title": "bahasa Indonesia (Indonesian)" },
         ],
         "keyBindings": {
             "closeViewer": "mod+w",
@@ -87,6 +91,7 @@ define(function (require, exports, module) {
             { "type": "ico", "viewer": "viewerImage", "editor": "false" },
             { "type": "svg", "viewer": "viewerImage", "editor": "editorText" },
             { "type": "pdf", "viewer": "@@PDFVIEWER", "editor": "false" },
+            { "type": "epub", "viewer": "viewerEPUB", "editor": "false" },
             { "type": "html", "viewer": "viewerHTML", "editor": "editorHTML" },
             { "type": "htm", "viewer": "viewerHTML", "editor": "editorHTML" },
             { "type": "xhtml", "viewer": "viewerHTML", "editor": "editorText" },

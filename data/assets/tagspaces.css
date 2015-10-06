@@ -2,10 +2,10 @@
  * is governed by a AGPL3 license that can be found in the LICENSE file. */
 
 @import '../libs/bootstrap/css/bootstrap.css';
+@import '../libs/font-awesome/css/font-awesome.css';
 @import '../libs/select2/select2.css';
 @import '../libs/select2/select2-bootstrap.css';
 @import '../libs/jquery-simplecolorpicker/jquery.simplecolorpicker.css';
-@import '../libs/font-awesome/css/font-awesome.css';
 @import '../libs/bootstrap3xeditable/css/bootstrap-editable.css';
 @import 'general.css';
 @import 'layout.css';

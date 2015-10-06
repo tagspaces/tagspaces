@@ -21,8 +21,7 @@ To get updates you can:
     ./data/ext...........contains the code of tagspaces extensions
     ./data/js............contains the javascripts which run the application 
     ./data/libs..........contains external javascript libraries together with the license they are distributed 
-    ./data/chrome........contains files specific for the old NPAPI basse Chrome browser extension, which is not supported anymore
-    ./data/chromelight...contains files specific for the current Chrome browser extension
+    ./data/chromium...contains files specific for the current Chrome browser extension
     ./data/cordova ......contains files needed for the building of the Android application which is based on Cordova
     ./data/mozilla.......contains files needed for the Firefox extension based on addon sdk
     ./data/web...........contains files needed for the WebDAV/ownCloud based release of TagSpaces

@@ -1,5 +1,6 @@
 html, body {
     height: 100%;
+    font-size: 13px;
 }
 
 .note-editor {
