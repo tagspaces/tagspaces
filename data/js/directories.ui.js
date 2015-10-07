@@ -647,6 +647,7 @@ define(function(require, exports, module) {
     $('#locationContent').children().remove();
     // Clear the footer
     $('#statusBar').children().remove();
+    $('#statusBar').text("");
     $('#alternativeNavigator').children().remove();
     TSCORE.disableTopToolbar();
     TSCORE.PerspectiveManager.hideAllPerspectives();
