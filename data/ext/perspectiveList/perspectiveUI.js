@@ -374,6 +374,7 @@ define(function(require, exports, module) {
     this.fileTable.$('.fileTitleButton')
       //.on('click', function(e) { e.preventDefault(); return false; })
       .draggable({
+        "zIndex": 10000,
         "cancel": false,
         "appendTo": "body",
         "helper": "clone",
