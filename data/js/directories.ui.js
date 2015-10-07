@@ -120,19 +120,26 @@ define(function(require, exports, module) {
     TSCORE.showLocationsPanel();
   }
 
-  function loadFolderMetaData(path) {
-
+  function loadFolderMetaData(path, element) {
     TSCORE.Meta.loadFolderMetaData(path, function(metaData) {
-      generateFolderTags(metaData ? metaData.tags : null);
+      generateFolderTags(metaData ? metaData.tags : null, element);
     });
   }
 
-  function generateFolderTags(tags) {
-
-    if ($('#locationContentTags').length === 0) {
-      $('#locationContent').append('<div id="locationContentTags" style="padding: 2px;"></div>');
+  function generateFolderTags(tags, element) {
+    var $tagsElement = null;
+    if (element) {
+      var tagId = element.attr('key').split(TSCORE.dirSeparator).pop();
+      $tagsElement = $('#' + tagId);
+      if ($tagsElement.length === 0) {
+        $tagsElement = $('<div style="padding: 2px;"></div>');
+        $tagsElement.attr('id', tagId);
+        element.append($tagsElement);
+      } else {
+        $tagsElement.empty();
+      }
     } else {
-      $('#locationContentTags').empty();
+      console.log("generateFolderTags error");
     }
 
     var tagString = '';
@@ -147,12 +154,12 @@ define(function(require, exports, module) {
 
       var genTagsBtns = TSCORE.generateTagButtons(tagString);
       if (genTagsBtns) {
-        $('#locationContentTags').append(genTagsBtns);  
+        $tagsElement.append(genTagsBtns);
       }
     }
 
     if(TSCORE.PRO) {
-      TSCORE.PRO.setContextMenu($('#locationContentTags'), tags);
+      TSCORE.PRO.setContextMenu($tagsElement, tags);
     }
   }
 
@@ -250,6 +257,7 @@ define(function(require, exports, module) {
       'directoryOperations': $.i18n.t('ns.common:directoryOperations')
     }));
     $locationContent.find('.directoryTitle').each(function() {
+      loadFolderMetaData($(this).attr('key'), $(this));
       $(this).click(function() {
         navigateToDirectory($(this).attr('key'));
       }).droppable({
@@ -382,7 +390,6 @@ define(function(require, exports, module) {
     TSCORE.currentPath = directoryPath;
     TSCORE.Meta.getDirectoryMetaInformation(function() {
       TSCORE.IO.listDirectory(directoryPath);
-      loadFolderMetaData(directoryPath);
       if (TSCORE.IO.createMetaFolder && TSCORE.PRO) {
         TSCORE.IO.createMetaFolder(directoryPath);
       }
