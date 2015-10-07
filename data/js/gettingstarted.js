@@ -16,19 +16,21 @@ define(function(require, exports, module) {
     steps: [
       {
         title: "Welcome to TagSpaces!",
-        content: "Start using TagSpaces by connecting a location from your device to TagSpaces.",
+        content: "Start using TagSpaces by choosing a location from your locale storage.",
         target: "locationName",
         placement: "bottom",
         onNext: function() {
           $("#locationsList").css("display","block");
+          $("#createNewLocation").addClass("uiEmphasizer");
         }
       },
       {
         title: "Connecting location",
-        content: "Connect ",
+        content: "If you don't have an already connected location, you can create one with this button. You can connect for example folders containing document or photos. And remember TagSpaces is <b>completely offline</b> tool so <b>no data will leave you device</b>.",
         target: "createNewLocation",
         placement: "bottom",
         onNext: function() {
+          $("#createNewLocation").removeClass("uiEmphasizer");
           $("#locationsList").css("display","");
           $('#tagGroupsContent').hide();
           $('#contactUsContent').hide();
@@ -41,7 +43,7 @@ define(function(require, exports, module) {
       },
       {
         title: "Your folder navigator",
-        content: "...",
+        content: "In the selected area, you will find after opening of a location the subfolders of the opened location folder. Clicking on a folder will open it and list the its subfolder ",
         target: "showLocations",
         placement: "top",
         onNext: function() {
@@ -59,7 +61,7 @@ define(function(require, exports, module) {
       },
       {
         title: "Your tag library",
-        content: "...",
+        content: "Clicking on this button will open your tag library. For your convenience, it is divided in tag groups containing the single tags.",
         target: "showTagGroups",
         placement: "top",
         onNext: function() {
@@ -75,7 +77,7 @@ define(function(require, exports, module) {
       },
       {
         title: "About the project",
-        content: "Here you'll find useful information and links regarding the TagSpaces project",
+        content: "Clicking on this button will open a panel, containing useful information and links regarding the TagSpaces project.",
         target: "contactUs",
         placement: "top",
         onNext: function() {
@@ -97,7 +99,7 @@ define(function(require, exports, module) {
       },
       {
         title: "Closing side panel",
-        content: ".",
+        content: "This button will close the left panel, in order to have more working space for the perspectives.",
         target: "closeLeftPanel",
         placement: "bottom",
         onNext: function() {
@@ -109,16 +111,59 @@ define(function(require, exports, module) {
         arrowOffset: 220,
       },
       {
-        title: "Main area",
-        content: ".",
+        title: "Perspectives area",
+        content: "This is the ",
         target: "viewContainers",
         placement: "top",
         onNext: function() {
           $('#viewContainers').removeClass("uiEmphasizer");
+          $('#perspectiveSwitcherButton').addClass("uiEmphasizer");
         },
         yOffset: 220,
         xOffset: 'center',
         arrowOffset: 'center',
+      },
+      {
+        title: "Perspectives switch",
+        content: "This is place where your can switch between the supported perspectives.",
+        target: "perspectiveSwitcherButton",
+        placement: "bottom",
+        onNext: function() {
+          $('#perspectiveSwitcherButton').removeClass("uiEmphasizer");
+          $('#showSearchButton').addClass("uiEmphasizer");
+        },
+        xOffset: -220,
+        arrowOffset: 220,
+      },
+      {
+        title: "Search",
+        content: "",
+        target: "showSearchButton",
+        placement: "bottom",
+        onNext: function() {
+          $('#showSearchButton').removeClass("uiEmphasizer");
+          $('#openLeftPanel').addClass("uiEmphasizer");
+        },
+        xOffset: -275,
+        arrowOffset: 275,
+      },
+      {
+        title: "Opening the left panel",
+        content: "Here you can open the left panel.",
+        target: "openLeftPanel",
+        placement: "bottom",
+        onNext: function() {
+          $('#openLeftPanel').removeClass("uiEmphasizer");
+          $('#openLeftPanel').click();
+        },
+      },
+      {
+        title: "Thanks for your attention!",
+        content: "Enjoy using TagSpaces.",
+        target: "startNewInstanceBack",
+        placement: "bottom",
+        onNext: function() {
+        },
       },
     ],
     onEnd: function() {
@@ -129,6 +174,7 @@ define(function(require, exports, module) {
     },
     showCloseButton: true,
     showNextButton: true,
+    showPrevButton: true, // disable in production
     i18n: {
       nextBtn: nextI18N,
     }
@@ -137,11 +183,15 @@ define(function(require, exports, module) {
   function closeTour() {
     $('#openLeftPanel').click();
     $("#locationsList").css("display","");
+    $("#createNewLocation").removeClass("uiEmphasizer");
     $('#tagGroupsContent').removeClass("uiEmphasizer");
     $('#contactUsContent').removeClass("uiEmphasizer");
     $('#closeLeftPanel').removeClass("uiEmphasizer");
     $('.col1 .row2').removeClass("uiEmphasizer");
     $('#viewContainers').removeClass("uiEmphasizer");
+    $('#showSearchButton').removeClass("uiEmphasizer");
+    $('#perspectiveSwitcherButton').removeClass("uiEmphasizer");
+    $('#openLeftPanel').removeClass("uiEmphasizer");
   }
 
   exports.closeTour = closeTour();
