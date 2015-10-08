@@ -20,7 +20,7 @@ define(function(require, exports, module) {
         target: "locationName",
         placement: "bottom",
         onNext: function() {
-          $("#locationsList").css("display","block");
+          $("#locationsList").css("display", "block");
           $("#createNewLocation").addClass("uiEmphasizer");
         }
       },
@@ -31,7 +31,7 @@ define(function(require, exports, module) {
         placement: "bottom",
         onNext: function() {
           $("#createNewLocation").removeClass("uiEmphasizer");
-          $("#locationsList").css("display","");
+          $("#locationsList").css("display", "");
           $('#tagGroupsContent').hide();
           $('#contactUsContent').hide();
           $('#locationContent').show();
@@ -182,7 +182,7 @@ define(function(require, exports, module) {
 
   function closeTour() {
     $('#openLeftPanel').click();
-    $("#locationsList").css("display","");
+    $("#locationsList").css("display", "");
     $("#createNewLocation").removeClass("uiEmphasizer");
     $('#tagGroupsContent').removeClass("uiEmphasizer");
     $('#contactUsContent').removeClass("uiEmphasizer");
