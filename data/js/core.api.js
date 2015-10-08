@@ -44,7 +44,7 @@ define(function(require, exports, module) {
     if (tsSettings.Settings === undefined && isFirefox) {
       window.setTimeout(tsIOApi.loadSettings, 1000);
       // executes initUI and updateSettingMozillaPreferences by success
-      console.log('Loading setting with from mozilla pref execured with delay...');
+      console.log('Loading setting with from mozilla pref executed with delay...');
     }
     // If still nothing found, loading the default setting from the application's javascript
     // This is usually the case by a new installation
