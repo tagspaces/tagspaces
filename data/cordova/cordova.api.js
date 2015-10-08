@@ -121,8 +121,10 @@ define(function(require, exports, module) {
   };
 
   function getAppStorageFileSystem(fileName, fileCallback, fail) {
-        
-    window.resolveLocalFileSystemURL(cordova.file.externalApplicationStorageDirectory, //dataDirectory,
+    var dataFolderPath = (isCordovaiOS === true) ? 
+      cordova.file.dataDirectory : cordova.file.externalApplicationStorageDirectory;
+   
+    window.resolveLocalFileSystemURL(dataFolderPath,
       function(fs) {
         fs.getFile(fileName, {create:true}, fileCallback, fail);
       }, 
@@ -207,7 +209,7 @@ define(function(require, exports, module) {
     window.resolveLocalFileSystemURL(fsURL, 
       function(fileSystem) {
         fsRoot = fileSystem;
-        console.log("Filesystem Details: " + JSON.stringify(fsRoot));
+        //console.log("Filesystem Details: " + JSON.stringify(fsRoot));
         handleStartParameters();
 
         loadSettingsFile(appSettingFile, function(settings) {
