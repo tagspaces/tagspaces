@@ -26,7 +26,7 @@ define(function(require, exports, module) {
       },
       {
         title: "Connecting location",
-        content: "If you don't have an already connected location, you can create one with this button. You can connect for example folders containing document or photos. And remember TagSpaces is <b>completely offline</b> tool so <b>no data will leave you device</b>.",
+        content: "If you don't have an already connected location, you can create one with this button. You can connect for example folders containing document or photos. And remember TagSpaces is <b>completely offline</b> tool so <b>no data will leave your device</b>.",
         target: "createNewLocation",
         placement: "bottom",
         onNext: function() {
