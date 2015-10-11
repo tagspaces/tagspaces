@@ -26,7 +26,7 @@ define(function(require, exports, module) {
       },
       {
         title: "Connecting location",
-        content: "If you don't have an already connected location, you can create one with this button. You can connect for example folders containing document or photos. And remember TagSpaces is <b>completely offline</b> tool so <b>no data will leave you device</b>.",
+        content: "If you don't have an already connected location, you can create one with this button. You can connect for example folders containing document or photos. And remember TagSpaces is <b>completely offline</b> tool so <b>no data will leave your device</b>.",
         target: "createNewLocation",
         placement: "bottom",
         onNext: function() {
@@ -82,6 +82,7 @@ define(function(require, exports, module) {
         placement: "top",
         onNext: function() {
           $('#contactUsContent').removeClass("uiEmphasizer");
+          $('#openOptions').addClass("uiEmphasizer");
         },
         xOffset: -120,
         arrowOffset: 120,
@@ -93,6 +94,7 @@ define(function(require, exports, module) {
         placement: "top",
         onNext: function() {
           $('#closeLeftPanel').addClass("uiEmphasizer");
+          $('#openOptions').removeClass("uiEmphasizer");
         },
         xOffset: -220,
         arrowOffset: 220,
@@ -112,7 +114,7 @@ define(function(require, exports, module) {
       },
       {
         title: "Perspectives area",
-        content: "This is the ",
+        content: "This is the area where you can browse later your files. TagSpaces supports some different views on your files, which are called here perspectives. Every perspective has some emphasis, e.g. the default <b>list perspective</b> is suitable for file management operations.",
         target: "viewContainers",
         placement: "top",
         onNext: function() {
@@ -137,7 +139,7 @@ define(function(require, exports, module) {
       },
       {
         title: "Search",
-        content: "",
+        content: "Here you can activate the search area of the application. Selecting the search field will explain you the search syntax. Please note that currently the search engine is <b>ignoring the content of the files</b>.",
         target: "showSearchButton",
         placement: "bottom",
         onNext: function() {
@@ -149,7 +151,7 @@ define(function(require, exports, module) {
       },
       {
         title: "Opening the left panel",
-        content: "Here you can open the left panel.",
+        content: "Here you can open the left panel again.",
         target: "openLeftPanel",
         placement: "bottom",
         onNext: function() {
@@ -158,8 +160,8 @@ define(function(require, exports, module) {
         },
       },
       {
-        title: "Thanks for your attention!",
-        content: "Enjoy using TagSpaces.",
+        title: "Enjoy using TagSpaces!",
+        content: "... and thank you for your attention.",
         target: "startNewInstanceBack",
         placement: "bottom",
         onNext: function() {
@@ -192,6 +194,7 @@ define(function(require, exports, module) {
     $('#showSearchButton').removeClass("uiEmphasizer");
     $('#perspectiveSwitcherButton').removeClass("uiEmphasizer");
     $('#openLeftPanel').removeClass("uiEmphasizer");
+    $('#openOptions').removeClass("uiEmphasizer");
   }
 
   exports.closeTour = closeTour();
