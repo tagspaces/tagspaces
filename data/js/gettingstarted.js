@@ -88,7 +88,7 @@ define(function(require, exports, module) {
       },
       {
         title: "Settings",
-        content: "This button will open the settings dialog of the app, where you can change language of the user interface or manage the file associations.",
+        content: "This button will open the settings dialog of the app, where you can <b>change language</b> of the user interface or manage the <b>file associations</b>.",
         target: "openOptions",
         placement: "top",
         onNext: function() {
