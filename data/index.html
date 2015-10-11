@@ -69,10 +69,10 @@
           </div>
         </div>
         <div class="btn-toolbar">
-          <div class="btn-group flexLayout" id="locationSwitch">
-            <button type="button" class="btn btn-default" id="locationName" data-toggle="dropdown">Choose Location</button>
-            <button type="button" class="btn btn-default dropdown-toggle" id="selectLocation" data-toggle="dropdown">
-              <span class="caret"></span>
+          <div id="locationSwitch">
+            <button type="button" class="btn btn-default dropdown-toggle flexLayout fullWidth" id="selectLocation" data-toggle="dropdown">
+              <span class="flexMaxWidth" id="locationName">Choose Location</span>
+              <span class="fa fa-caret-down" style="padding-top: 5px;"></span>
             </button>
             <ul class="dropdown-menu" id="locationsList"></ul>
           </div>
