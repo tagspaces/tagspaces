@@ -242,10 +242,10 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-jsbeautifier');
   
   //tasks
-  grunt.registerTask('checkstyle', ['jshint', 'jscs']);
+  grunt.registerTask('checkStyle', ['jshint', 'jscs']);
   //grunt.registerTask('dist-doc', ['jsdoc', 'compress:doc']);
   grunt.registerTask('jsfix', ['jsbeautifier', 'checkstyle']); // 'fixmyjs:core'
-  grunt.registerTask('bump-version', ['init', 'replace:templates']);
+  grunt.registerTask('bumpVersion', ['init', 'replace:templates']);
   grunt.registerTask('default', ['help']);
   grunt.registerTask('jsdav', 'Run JSDav Server.', function() {
     var jsDAV = require("jsDAV/lib/jsdav");
@@ -261,8 +261,8 @@ module.exports = function(grunt) {
 
   grunt.registerTask('help', 'Printing help for this script.', function() {
     grunt.log.writeln("Supported grunt tasks:");
-    grunt.log.writeln(" - checkstyle");
-    grunt.log.writeln(" - bump-version");
+    grunt.log.writeln(" - checkStyle");
+    grunt.log.writeln(" - bumpVersion");
   });
 
   grunt.registerTask('init', 'Initializing variables.', function() {

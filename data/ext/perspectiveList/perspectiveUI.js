@@ -397,7 +397,7 @@ define(function(require, exports, module) {
 
     Mousetrap.unbind("mod+a");
     Mousetrap.bindGlobal("mod+a", function() {
-       self.toggleSelectAll();
+      self.toggleSelectAll();
     });
 
     this.refreshThumbnails();
@@ -685,7 +685,6 @@ define(function(require, exports, module) {
     console.log("Prev file: " + prevFilePath);
     return prevFilePath;
   };
-
 
   ExtUI.prototype.toggleSelectAll = function() {
     var $checkIcon = $("#" + this.extensionID + "ToogleSelectAll").find("i");
