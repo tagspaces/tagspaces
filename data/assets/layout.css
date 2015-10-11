@@ -299,14 +299,13 @@
 
 /*==== Location Management ====== */
 
-#locationSwitch {
-  width: 96%;
+#locationName {
+  text-align: left;
 }
 
-#locationName {
-  flex: 1 1 auto;
-  -webkit-flex: 1 1 auto;
-  -ms-flex: 1 1 auto;
+#locationSwitch {
+  max-width: 100%;
+  padding: 0 5px 0 5px;
 }
 
 #selectLocation {
@@ -318,7 +317,9 @@
 #locationsList {
   overflow-y: auto;
   max-height: 500px;
-  width: 280px;
+  width: 290px;
+  margin-top: -40px;
+  margin-left: 5px;
 }
 
 .openLocation {
