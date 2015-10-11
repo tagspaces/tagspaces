@@ -180,20 +180,7 @@ define(function(require, exports, module) {
     this.viewContainer.append(toolbarTemplate({ id: this.extensionID }));
 
     $("#" + this.extensionID + "ToogleSelectAll").on("click", function() {
-      var checkIcon = $(this).find("i");
-      if (checkIcon.hasClass("fa-square-o")) {
-        TSCORE.selectedFiles = [];
-        $(self.viewContainer).find('.fileTileSelector').each(function() {
-          $(this).parent().parent().addClass("ui-selected");
-          $(this).find("i").addClass("fa-check-square").removeClass("fa-square-o");
-          TSCORE.selectedFiles.push($(this).attr("filepath"));
-        });
-      } else {
-        TSCORE.PerspectiveManager.clearSelectedFiles();
-      }
-      self.handleElementActivation();
-      checkIcon.toggleClass("fa-check-square");
-      checkIcon.toggleClass("fa-square-o");
+      self.toggleSelectAll();
     });
 
     $("#" + this.extensionID + "CreateFileButton").on("click", function() {
@@ -448,14 +435,15 @@ define(function(require, exports, module) {
     var self = this;
 
     $fileTile
-      .hammer().on("doubletap", function() { //.dblclick(function() {
+      /*.hammer().on("doubletap", function() { //.dblclick(function() {
+        TSCORE.FileOpener.openFile(filePath);
+        self.selectFile(filePath);
+      })*/
+      .click(function() {
         TSCORE.FileOpener.openFile(filePath);
         self.selectFile(filePath);
       })
-      .click(function() {
-        self.selectFile(filePath);
-      })
-      .draggable({
+      /*.draggable({
         "cancel": false,
         "appendTo": "body",
         "helper": "clone",
@@ -464,7 +452,7 @@ define(function(require, exports, module) {
         "start": function() {
           self.selectFile(filePath);
         }
-      })
+      })*/
       .droppable({
         accept: ".tagButton",
         hoverClass: "activeRow",
@@ -505,9 +493,15 @@ define(function(require, exports, module) {
         self.handleElementActivation();
         return false;
       })
-      .find(".fileTagsTile").click(function() {
+      .find(".fileTagsTile").click(function(e) {
+        //e.preventDefault();
         self.selectFile($(this).attr("filepath"));
         TSCORE.openTagMenu(this, $(this).attr("tag"), $(this).attr("filepath"));
+      });
+
+      Mousetrap.unbind("mod+a");
+      Mousetrap.bindGlobal("mod+a", function() {
+         self.toggleSelectAll();
       });
   };
 
@@ -646,6 +640,23 @@ define(function(require, exports, module) {
     TSCORE.PerspectiveManager.clearSelectedFiles();
     console.log("Prev file: " + prevFilePath);
     return prevFilePath;
+  };
+
+  ExtUI.prototype.toggleSelectAll = function() {
+    var checkIcon = $("#" + this.extensionID + "ToogleSelectAll").find("i");
+    if (checkIcon.hasClass("fa-square-o")) {
+      TSCORE.selectedFiles = [];
+      $(this.viewContainer).find('.fileTileSelector').each(function() {
+        $(this).parent().parent().addClass("ui-selected");
+        $(this).find("i").addClass("fa-check-square").removeClass("fa-square-o");
+        TSCORE.selectedFiles.push($(this).attr("filepath"));
+      });
+    } else {
+      TSCORE.PerspectiveManager.clearSelectedFiles();
+    }
+    this.handleElementActivation();
+    checkIcon.toggleClass("fa-check-square");
+    checkIcon.toggleClass("fa-square-o");
   };
 
   exports.ExtUI = ExtUI;

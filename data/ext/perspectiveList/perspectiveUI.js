@@ -39,103 +39,66 @@ define(function(require, exports, module) {
     // Init Toolbar
     this.viewContainer.append(toolbarTemplate(context));
 
-    $("#" + this.extensionID + "ToogleSelectAll")
-      .click(function() {
-        if ($(this).find("i").hasClass("fa-square-o")) {
-          TSCORE.selectedFiles = [];
-          $('#' + self.extensionID + 'FileTable tbody tr').each(function() {
-            $(this).addClass('ui-selected');
-            $(this).find(".fileSelection").find("i").addClass("fa-check-square-o").removeClass("fa-square-o");
-            TSCORE.selectedFiles.push($(this).find(".fileTitleButton").attr("filepath"));
-            self.handleElementActivation();
+    $("#" + this.extensionID + "ToogleSelectAll").on("click", function() {
+      self.toggleSelectAll();
+    });
+
+    $("#" + this.extensionID + "IncludeSubDirsButton").on("click", function() {
+      if (TSCORE.Config.getShowWarningRecursiveScan()) {
+        TSCORE.showConfirmDialog(
+          $.i18n.t("ns.perspectiveList:includeSubdirsTitleConfirm"),
+          $.i18n.t("ns.perspectiveList:includeSubdirsContentConfirm"),
+          function() {
+            TSCORE.Config.setShowWarningRecursiveScan($("#confirmDialog").find("#showThisDialogAgain").prop('checked'));
+            //console.log("Shownextime : "+$("#confirmDialog").find("#showThisDialogAgain").prop('checked'));
+            $("#" + self.extensionID + "IncludeSubDirsButton").prop('disabled', true);
+            TSCORE.IO.createDirectoryIndex(TSCORE.currentPath);
+          },
+          function() {},
+          TSCORE.Config.getShowWarningRecursiveScan()
+        );
+      } else {
+        $("#" + self.extensionID + "IncludeSubDirsButton").prop('disabled', true);
+        TSCORE.IO.createDirectoryIndex(TSCORE.currentPath);
+      }
+    });
+
+    $("#" + this.extensionID + "DeleteSelectedFilesButton").on("click", function() {
+      TSCORE.showConfirmDialog($.i18n.t('ns.dialogs:fileDeleteTitleConfirm'),
+        $.i18n.t('ns.dialogs:selectedFilesDeleteContentConfirm'), function() {
+          TSCORE.selectedFiles.forEach(function(file) {
+            TSCORE.IO.deleteElement(file);
           });
-          $(this).find("i")
-            .removeClass("fa-square-o")
-            .addClass("fa-check-square-o");
-        } else {
-          TSCORE.PerspectiveManager.clearSelectedFiles();
-          $(this).find("i")
-            .removeClass("fa fa-check-square-o")
-            .addClass("fa fa-square-o");
-        }
-      });
-
-    $("#" + this.extensionID + "IncludeSubDirsButton")
-      .click(function() {
-        if (TSCORE.Config.getShowWarningRecursiveScan()) {
-          TSCORE.showConfirmDialog(
-            $.i18n.t("ns.perspectiveList:includeSubdirsTitleConfirm"),
-            $.i18n.t("ns.perspectiveList:includeSubdirsContentConfirm"),
-            function() {
-              TSCORE.Config.setShowWarningRecursiveScan($("#confirmDialog").find("#showThisDialogAgain").prop('checked'));
-              //console.log("Shownextime : "+$("#confirmDialog").find("#showThisDialogAgain").prop('checked'));
-              $("#" + self.extensionID + "IncludeSubDirsButton").prop('disabled', true);
-              TSCORE.IO.createDirectoryIndex(TSCORE.currentPath);
-            },
-            function() {},
-            TSCORE.Config.getShowWarningRecursiveScan()
-          );
-        } else {
-          $("#" + self.extensionID + "IncludeSubDirsButton").prop('disabled', true);
-          TSCORE.IO.createDirectoryIndex(TSCORE.currentPath);
-        }
-      });
-
-    $("#" + this.extensionID + "DeleteSelectedFilesButton")
-      .click(function() {
-
-        TSCORE.showConfirmDialog($.i18n.t('ns.dialogs:fileDeleteTitleConfirm'), 
-          $.i18n.t('ns.dialogs:selectedFilesDeleteContentConfirm'), function() {
-            TSCORE.selectedFiles.forEach(function(file) {
-              TSCORE.IO.deleteElement(file);
-            });
-          });
-      });
-
-    $("#" + this.extensionID + "TagButton")
-      .click(function() {
-        TSCORE.showAddTagsDialog();
-      });
-
-    $("#" + this.extensionID + "CopyMoveButton")
-      .click(function() {
-        TSCORE.showMoveCopyFilesDialog();
-      });
-
-    $("#" + this.extensionID + "ShowTmbButton")
-      .click(function() {
-        self.toggleThumbnails();
-      });
-
-    $("#" + this.extensionID + "IncreaseThumbsButton")
-      .click(function() {
-        self.switchThumbnailSize();
-      })
-      .prop('disabled', true);
-
-    $("#" + this.extensionID + "ShowFileDetailsButton")
-      .click(function() {
-        self.toggleFileDetails();
-      });
-
-    $("#" + this.extensionID + "ShowTagsButton")
-      .click(function() {
-        self.toggleTags();
-      });
-
-    $("#" + this.extensionID + "Export2CSVButton")
-      .click(function() {
-        var blob = new Blob([TSCORE.exportFileListCSV(TSCORE.fileList)], {
-          type: "text/csv;charset=utf-8"
         });
-        saveAs(blob, "Export.csv");
-        //console.log("Export data: "+TSCORE.exportFileListCSV(TSCORE.fileList));
-      });
+    });
 
-    $("#" + this.extensionID + "ReloadFolderButton")
-      .click(function() {
-        TSCORE.navigateToDirectory(TSCORE.currentPath);
+    $("#" + this.extensionID + "TagButton").on("click", function() {
+      TSCORE.showAddTagsDialog();
+    });
+
+    $("#" + this.extensionID + "CopyMoveButton").on("click", function() {
+      TSCORE.showMoveCopyFilesDialog();
+    });
+
+    $("#" + this.extensionID + "ShowFileDetailsButton").on("click", function() {
+      self.toggleFileDetails();
+    });
+
+    $("#" + this.extensionID + "ShowTagsButton").on("click", function() {
+      self.toggleTags();
+    });
+
+    $("#" + this.extensionID + "Export2CSVButton").on("click", function() {
+      var blob = new Blob([TSCORE.exportFileListCSV(TSCORE.fileList)], {
+        type: "text/csv;charset=utf-8"
       });
+      saveAs(blob, "Export.csv");
+      //console.log("Export data: "+TSCORE.exportFileListCSV(TSCORE.fileList));
+    });
+
+    $("#" + this.extensionID + "ReloadFolderButton").on("click", function() {
+      TSCORE.navigateToDirectory(TSCORE.currentPath);
+    });
 
     $("#" + this.extensionID + "CreateFileButton").on("click", function() {
       TSCORE.showFileCreateDialog();
@@ -432,6 +395,11 @@ define(function(require, exports, module) {
       }
     }
 
+    Mousetrap.unbind("mod+a");
+    Mousetrap.bindGlobal("mod+a", function() {
+       self.toggleSelectAll();
+    });
+
     this.refreshThumbnails();
     TSCORE.hideLoadingAnimation();
   };
@@ -716,6 +684,24 @@ define(function(require, exports, module) {
     TSCORE.PerspectiveManager.clearSelectedFiles();
     console.log("Prev file: " + prevFilePath);
     return prevFilePath;
+  };
+
+
+  ExtUI.prototype.toggleSelectAll = function() {
+    var $checkIcon = $("#" + this.extensionID + "ToogleSelectAll").find("i");
+    if ($checkIcon.hasClass("fa-square-o")) {
+      TSCORE.selectedFiles = [];
+      $('#' + this.extensionID + 'FileTable tbody tr').each(function() {
+        $(this).addClass('ui-selected');
+        $(this).find(".fileSelection").find("i").addClass("fa-check-square-o").removeClass("fa-square-o");
+        TSCORE.selectedFiles.push($(this).find(".fileTitleButton").attr("filepath"));
+      });
+      $checkIcon.removeClass("fa-square-o").addClass("fa-check-square-o");
+    } else {
+      TSCORE.PerspectiveManager.clearSelectedFiles();
+      $checkIcon.removeClass("fa fa-check-square-o").addClass("fa fa-square-o");
+    }
+    this.handleElementActivation();
   };
 
   exports.ExtUI = ExtUI;
