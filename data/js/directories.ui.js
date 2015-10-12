@@ -133,9 +133,10 @@ define(function(require, exports, module) {
       var tagId = element.attr('key').split(TSCORE.dirSeparator).pop();
       $tagsElement = $('#' + tagId);
       if ($tagsElement.length === 0) {
-        $tagsElement = $('<div style="padding: 2px;"></div>');
+        $tagsElement = $('<div style="padding: 4px;"></div>');
         $tagsElement.attr('id', tagId);
-        element.append($tagsElement);
+        var $el = element.parent().find('.accordion-body');
+        $el.prepend($tagsElement);
       } else {
         $tagsElement.empty();
       }
@@ -258,7 +259,7 @@ define(function(require, exports, module) {
       'directoryOperations': $.i18n.t('ns.common:directoryOperations')
     }));
     $locationContent.find('.directoryTitle').each(function() {
-      loadFolderMetaData($(this).attr('key'), $(this));
+      loadFolderMetaData($(this).attr('key'), $(this).parent());
       $(this).click(function() {
         navigateToDirectory($(this).attr('key'));
       }).droppable({
