@@ -601,3 +601,28 @@ input a.resetFilter {
     background-size: 300px 200px;
   }
 }
+
+/* Used in the tours for hapscotch  */
+.uiEmphasizer {
+  border: 3px dashed #1DD19F;
+}
+
+.appBackgroundTile {
+  background-image: url('background.png');
+  background-repeat: repeat;
+  margin: 0;
+}
+
+@media (-webkit-min-device-pixel-ratio: 2),
+(min-resolution: 192dpi) {
+  .appBackgroundTile {
+    background-image: url('background@2x.png');
+    background-repeat: repeat;
+    background-size: 387px 273px;
+  }
+}
+
+/* Setting the background of every perspective to white */
+.col2 > .row2 > div {
+  background-color: white;
+}

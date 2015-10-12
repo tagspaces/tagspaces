@@ -8,60 +8,7 @@ define(function(require, exports, module) {
   var TSCORE = require('tscore');
   var TSPRO = require("tspro");
 
-  var initPerspectivesOLD = function() {
-    perspectives = [];
-    $('#perspectiveSwitcher').empty();
-    $('#viewToolbars').empty();
-    $('#viewContainers').empty();
-    $('#viewFooters').empty();
-    initWelcomeScreen();
-    var extensions = TSCORE.Config.getPerspectives();
-    for (var i = 0; i < extensions.length; i++) {
-      var extPath = TSCORE.Config.getExtensionPath() + '/' + extensions[i].id + '/extension.js';
-      require([extPath], function(perspective) {
-        perspectives.push(perspective);
-        try {
-          // Creating perspective's toolbar
-          $('#viewToolbars').append($('<div>', {
-            id: perspective.ID + 'Toolbar',
-            class: 'btn-toolbar'
-          }).hide());
-          // Creating perspective's container
-          $('#viewContainers').append($('<div>', {
-            id: perspective.ID + 'Container',
-            style: 'width: 100%; height: 100%'
-          }).hide());
-          // Creating perspective's footer
-          $('#viewFooters').append($('<div>', {
-            id: perspective.ID + 'Footer'
-          }).hide());
-          perspective.init();
-        } catch (e) {
-          console.log('Error while executing \'init\' on ' + perspectives[i].ID + ' - ' + e);
-        } finally {
-          if (perspectives.length === extensions.length) {
-            initPerspectiveSwitcher();
-            // Opening last saved location by the start of the application (not in firefox)
-            var lastLocation = TSCORE.Config.getDefaultLocation();
-            if (lastLocation !== undefined && lastLocation.length >= 1 && !isFirefox) {
-              TSCORE.openLocation(lastLocation);
-              TSCORE.IO.checkAccessFileURLAllowed();
-              var evt = TSCORE.createDocumentEvent("initApp");
-              TSCORE.fireDocumentEvent(evt);
-            }
-            $('#loading').hide();
-            if (isNode) {
-              TSCORE.IO.showMainWindow();
-            }
-
-          }
-        }
-      }); // jshint ignore:line
-    }
-  };
-  
   function initPerspective(extPath) {
-
     return new Promise(function(resolve, reject) {
       require([extPath], function(perspective) {
         perspectives.push(perspective);
@@ -88,7 +35,6 @@ define(function(require, exports, module) {
   }
 
   function initPerspectives() {
-
     perspectives = [];
     $('#viewSwitcher').empty();
     $('#viewToolbars').empty();
@@ -115,6 +61,7 @@ define(function(require, exports, module) {
         TSCORE.IO.checkAccessFileURLAllowed();
         var evt = TSCORE.createDocumentEvent("initApp");
         TSCORE.fireDocumentEvent(evt);
+        $("#viewContainers").removeClass("appBackgroundTile");
       }
       $('#loading').hide();
       if (isNode) {

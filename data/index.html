@@ -5,7 +5,7 @@
   source code is governed by a AGPL3 license that can be found in the LICENSE file. -->
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta http-equiv="Content-Security-Policy" content="default-src file: ; img-src 'self' data: ; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-eval'">
+  <meta http-equiv="Content-Security-Policy" content="default-src file: gap:; img-src 'self' data: ; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-eval'">
   <title>TagSpaces</title>
   <style type="text/css">
     #loadingLogo {
@@ -18,7 +18,8 @@
       user-select: none; -webkit-user-select: none; -moz-user-select: none;
     }
   </style>
-  <link rel="stylesheet" type="text/css" href="assets/tagspaces.css">
+  <link rel="stylesheet" type="text/css" href="assets/tagspaces.css" />
+  <link rel="stylesheet" href="libs/hopscotch/css/hopscotch.css" />
   <link rel="apple-touch-icon-precomposed" sizes="144x144" href="assets/apple-touch-icon-144-precomposed.png"/>
   <link rel="apple-touch-icon-precomposed" sizes="114x114" href="assets/apple-touch-icon-114-precomposed.png"/>
   <link rel="apple-touch-icon-precomposed" sizes="72x72" href="assets/apple-touch-icon-72-precomposed.png"/>
@@ -28,7 +29,7 @@
 </head>
 <body>
 
-<div id="loading">
+<div id="loading" class="appBackgroundTile">
   <div id="loadingLogo">
     <svg style="vertical-align: middle" xmlns="http://www.w3.org/2000/svg" version="1.1" width="100" height="100">
       <g transform="translate(0,-952.36215)" id="layer1">
@@ -68,12 +69,10 @@
           </div>
         </div>
         <div class="btn-toolbar">
-          <div class="btn-group flexLayout" id="locationSwitch">
-            <button type="button" class="btn btn-default" id="locationName" data-toggle="dropdown"
-                    data-i18n="ns.common:chooseLocation"></button>
-            <button type="button" class="btn btn-default dropdown-toggle" id="selectLocation" data-toggle="dropdown"
-                    data-placement="bottom;" data-original-title="Start using TagSpaces by connecting a new location!">
-              <span class="caret"></span>
+          <div id="locationSwitch">
+            <button type="button" class="btn btn-default dropdown-toggle flexLayout fullWidth" id="selectLocation" data-toggle="dropdown">
+              <span class="flexMaxWidth" id="locationName">Choose Location</span>
+              <span class="fa fa-caret-down" style="padding-top: 5px;"></span>
             </button>
             <ul class="dropdown-menu" id="locationsList"></ul>
           </div>
@@ -201,7 +200,7 @@
             <i class="fa fa-arrow-right fa-lg"></i>
           </button>
           <div class="flexMaxWidth">
-            <div id="loadingAnimation" class="">
+            <div id="loadingAnimation">
               <div class="spinner">
                 <div class="bounce1"></div>
                 <div class="bounce2"></div>
@@ -239,7 +238,7 @@
         </div>
       </nav>
     </div>
-    <div class="row2" id="viewContainers"></div>
+    <div class="row2 appBackgroundTile" id="viewContainers"></div>
   </div>
 
   <div class="col3" style="display: none;">
@@ -249,7 +248,7 @@
           <div class="btn-group" style="min-width: 50px;">
             <button id="fileMenuButton" class="btn btn-link dropdown-toggle" data-toggle="dropdown">
               <span class="fileExt" data-i18n="[title]ns.common:fileOperations">
-                <span id="fileExtText"></span><span style="margin-left: 5px;" class="caret white-caret"></span>
+                <span id="fileExtText"></span><span style="margin-left: 5px;" class="fa fa-ellipsis-v"></span>
               </span>
             </button>
             <ul class="dropdown-menu">
@@ -280,10 +279,10 @@
                 <i class="fa fa-trash-o fa-fw"></i>
                 &nbsp;<span data-i18n="ns.common:deleteFile"></span>
                 <span class="pull-right label label-default keyShortcut">Del</span></a></li>
-              <li class="noWrap"><a id="closeFile" data-i18n="[title]ns.common:closeFileTooltip">
+              <!--li class="noWrap"><a id="closeFile" data-i18n="[title]ns.common:closeFileTooltip">
                 <i class="fa fa-times fa-fw"></i>
                 &nbsp;<span data-i18n="ns.common:closeFile"></span>
-                <span class="pull-right label label-default keyShortcut">Esc</span></a></li>
+                <span class="pull-right label label-default keyShortcut">Esc</span></a></li-->
               <li class="divider"></li>
               <li><a id="openFileInNewWindow" data-i18n="[title]ns.common:openFileNewWindowTooltip">
                 <i class="fa fa-external-link-square fa-fw"></i>
@@ -346,7 +345,7 @@
 <div class="modal fullScreenMobile" id="dialogAboutTS" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
-      <div class="modal-header">
+      <div class="modal-header appBackgroundTile">
         <a type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></a>
         <h4 class="modal-title" id="myModalLabel1" data-i18n="ns.dialogs:aboutTitle"></h4>
       </div>

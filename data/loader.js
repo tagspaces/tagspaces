@@ -95,6 +95,7 @@ requirejs.config({
     jszip:                  'libs/jszip/jszip.min',
     slideout:               'libs/slideoutjs/slideout.min',
     rasterizehtml:          'libs/rasterizeHTML/rasterizeHTML.allinone',
+    hopscotch:              'libs/hopscotch/js/hopscotch.min',
 
     tscore:                 'js/core.api',
     tssetting:              'js/settings.api',
@@ -111,6 +112,7 @@ requirejs.config({
     tsdirectorybrowser:     'js/directorybrowser',
     tsutils:                'js/utils',
     tsmeta:                 'js/meta', 
+    tsgettingstarted:       'js/gettingstarted',
     tsioapi:                 IO_JS,
     tspro:                   PRO_JS
   },
