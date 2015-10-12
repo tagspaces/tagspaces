@@ -30,7 +30,7 @@ var handleOpenURL;
 
 // Check for running in node-webkit
 try {
-  var fs = require('fs');
+  var fs = require('fs-extra');
   var pathUtils = require('path');
   var gui = require('nw.gui');
   isNode = true;
