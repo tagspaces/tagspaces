@@ -124,9 +124,13 @@ define(function(require, exports, module) {
   var showFileRenameDialog = function(filePath) {
     $('#renamedFileName').attr('filepath', filePath);
     $('#renamedFileName').val(TSCORE.TagUtils.extractFileName(filePath));
+
     $('#formFileRename').validator();
     $('#formFileRename').submit(function(e) {
       e.preventDefault();
+      if ($('#renameFileButton').prop('disabled') === false) {
+        $('#renameFileButton').click();
+      }
     });
     $('#formFileRename').on('invalid.bs.validator', function() {
       $('#renameFileButton').prop('disabled', true);
