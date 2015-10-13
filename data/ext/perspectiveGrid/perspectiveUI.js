@@ -499,8 +499,8 @@ define(function(require, exports, module) {
         TSCORE.openTagMenu(this, $(this).attr("tag"), $(this).attr("filepath"));
       });
 
-    Mousetrap.unbind("mod+a");
-    Mousetrap.bindGlobal("mod+a", function() {
+    Mousetrap.unbind(TSCORE.Config.getSelectAllKeyBinding());
+    Mousetrap.bindGlobal(TSCORE.Config.getSelectAllKeyBinding(), function() {
       self.toggleSelectAll();
     });
   };
