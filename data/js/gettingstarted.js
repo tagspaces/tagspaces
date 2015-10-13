@@ -8,6 +8,10 @@ define(function(require, exports, module) {
   var hopscotch = require('hopscotch');
   var TSCORE = require('tscore');
 
+  require([
+    "css!libs/hopscotch/css/hopscotch.css",
+    ], function() {});
+
   var nextI18N = $.i18n.t('ns.dialogs:titleWaiting'); // not working
   //console.log("nextI18N "+ nextI18N);
 
