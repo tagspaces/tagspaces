@@ -17,7 +17,7 @@ define(function(require, exports, module) {
         '<button class="btn btn-link dropdown-toggle" data-menu="{{@index}}">' +
             '{{name}}&nbsp;&nbsp;<i class="fa fa-angle-right"></i>&nbsp;'  +
         '</button>' +
-        '<div class="dropdown clearfix dirAltNavMenu" id="dirMenu{{@index}}">' +
+        '<div class="dropdown clearfix dirAltNavMenu" id="dirMenu{{@index}}" data-path="{{path}}">' +
             '<ul role="menu" class="dropdown-menu">' +
                 '<li class="dropdown-header"><button class="close">&times;</button><span data-i18n="ns.common:actionsForDirectory2"></span>&nbsp;"{{name}}"</li>' +
                 '<li><a class="btn btn-link reloadCurrentDirectory" data-path="{{path}}" style="text-align: left"><i class="fa fa-refresh fa-fw fa-lg"></i><span data-i18n="ns.common:reloadCurrentDirectory"></span></a></li>' +
@@ -121,13 +121,13 @@ define(function(require, exports, module) {
     TSCORE.showLocationsPanel();
   }
 
-  function loadFolderMetaData(path, element) {
+  function loadFolderMetaData(path, element, menuItem) {
     TSCORE.Meta.loadFolderMetaData(path, function(metaData) {
-      generateFolderTags(metaData ? metaData.tags : null, element);
+      generateFolderTags(metaData ? metaData.tags : null, element, menuItem);
     });
   }
 
-  function generateFolderTags(tags, element) {
+  function generateFolderTags(tags, element, menuItem) {
     var $tagsElement = null;
     if (element) {
       var tagId = element.attr('key').split(TSCORE.dirSeparator).pop();
@@ -136,10 +136,17 @@ define(function(require, exports, module) {
         $tagsElement = $('<div style="padding: 4px;"></div>');
         $tagsElement.attr('id', tagId);
         var $el = element.parent().find('.accordion-body');
-        $el.prepend($tagsElement);
+        if ($el.length > 0) {
+          $el.prepend($tagsElement);  
+        }
       } else {
         $tagsElement.empty();
       }
+    } 
+    else if (menuItem) {
+      menuItem.empty();
+      $tagsElement = $('<div id style="padding: 4px;"></div>');
+      menuItem.append($tagsElement);
     } else {
       console.log("generateFolderTags error");
     }
@@ -160,7 +167,7 @@ define(function(require, exports, module) {
       }
     }
 
-    if(TSCORE.PRO) {
+    if(TSCORE.PRO && !menuItem) {
       TSCORE.PRO.setContextMenu($tagsElement, tags);
     }
   }
@@ -235,6 +242,16 @@ define(function(require, exports, module) {
 
   var showDropDown = function(menuId, sourceObject) {
     var $menu = $(menuId);
+
+    if ($menu.attr('data-path')) {
+      var $dropDown = $menu.find('.dropdown-menu');
+      var $dropItemTags = $dropDown.find('#tagsAlternativeDirPath');
+      if($dropItemTags.length === 0) {
+        $dropItemTags = $('<li id=\"tagsAlternativeDirPath\">');
+        $dropDown.append($dropItemTags);
+      }
+      loadFolderMetaData($menu.attr('data-path'), null, $dropItemTags);
+    }
     //var leftPos = 0;
     //var topPos = -$menu.height();
     //if (sourceObject.offset().left + 300 > window.innerWidth) {
