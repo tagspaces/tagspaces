@@ -96,6 +96,7 @@ requirejs.config({
     slideout:               'libs/slideoutjs/slideout.min',
     rasterizehtml:          'libs/rasterizeHTML/rasterizeHTML.allinone',
     hopscotch:              'libs/hopscotch/js/hopscotch.min',
+    noty:                   'libs/noty/jquery.noty.packaged.min',
 
     tscore:                 'js/core.api',
     tssetting:              'js/settings.api',
@@ -154,6 +155,7 @@ requirejs.config({
       'select2',
       'handlebarsjs',
       'tssettingsdefault',
+      'noty',
   ] }
   }
 });
