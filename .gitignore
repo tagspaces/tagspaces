@@ -22,3 +22,4 @@ data/node-webkit/nw.pak
 data/node-webkit/debug.log
 *.DS_Store
 data/package.json
+bower_components
