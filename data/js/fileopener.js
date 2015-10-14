@@ -15,7 +15,7 @@ define(function(require, exports, module) {
   var generatedTagButtons;
   // Backup cancel button <!--button type="button" class="btn editable-cancel"><i class="fa fa-times fa-lg"></i></button-->
   $.fn.editableform.buttons = '<button type="submit" class="btn btn-primary editable-submit"><i class="fa fa-check fa-lg"></i></button>';
-  var closeBtn = '<button type="button" class="btn btn-primary"><span class="glyphicon glyphicon glyphicon-remove"></span> </button>';
+  var closeBtn = '<button type="button" class="btn btn-link" style="position: absolute; top: 5px; right: 5px; color: white;"><span class="glyphicon glyphicon-remove"></span></button>';
   var $closeBtn = null;
 
   // If a file is currently opened for editing, this var should be true
