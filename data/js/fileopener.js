@@ -28,14 +28,13 @@ define(function(require, exports, module) {
   };
 
   function onFullScreenChange(event) {
-
     if ($closeBtn === null) {
       $closeBtn = $(closeBtn).click(function() {
         if (document.exitFullscreen) {
           document.exitFullscreen();
-        } else if(document.mozCancelFullScreen) {
+        } else if (document.mozCancelFullScreen) {
           document.mozCancelFullScreen();
-        } else if(document.webkitExitFullscreen) {
+        } else if (document.webkitExitFullscreen) {
           document.webkitExitFullscreen();
         }
       });
@@ -139,9 +138,9 @@ define(function(require, exports, module) {
 
     if (document.exitFullscreen) {
       document.addEventListener("fullscreenchange", onFullScreenChange);
-    } else if(document.mozCancelFullScreen) {
+    } else if (document.mozCancelFullScreen) {
       document.addEventListener("mozfullscreenchange", onFullScreenChange);
-    } else if(document.webkitExitFullscreen) {
+    } else if (document.webkitExitFullscreen) {
       document.addEventListener("webkitfullscreenchange", onFullScreenChange);
     }
   }
