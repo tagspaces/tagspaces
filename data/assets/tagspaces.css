@@ -7,6 +7,7 @@
 @import '../libs/select2/select2-bootstrap.css';
 @import '../libs/jquery-simplecolorpicker/jquery.simplecolorpicker.css';
 @import '../libs/bootstrap3xeditable/css/bootstrap-editable.css';
+@import '../libs/animate.css/animate.css';
 @import 'general.css';
 @import 'layout.css';
 @import 'components.css';
