@@ -8,7 +8,6 @@ define(function(require, exports, module) {
 
   console.log('Loading directories.ui.js ...');
   var TSCORE = require('tscore');
-  var TSPRO = require('tspro');
   var directoryHistory = [];
   var dir4ContextMenu = null;
   var alternativeDirectoryNavigatorTmpl = Handlebars.compile(
@@ -367,12 +366,16 @@ define(function(require, exports, module) {
     }
     console.log('Dir History: ' + JSON.stringify(directoryHistory));
     TSCORE.currentPath = directoryPath;
-    TSCORE.Meta.getDirectoryMetaInformation(function() {
+
+    if (TSCORE.PRO && TSCORE.Config.getEnableMetaData()) {
+      TSCORE.Meta.getDirectoryMetaInformation(function() {
+        TSCORE.IO.listDirectory(directoryPath);
+          TSCORE.IO.createMetaFolder(directoryPath);
+      });
+    } else {
       TSCORE.IO.listDirectory(directoryPath);
-      if (TSCORE.IO.createMetaFolder && TSCORE.PRO) {
-        TSCORE.IO.createMetaFolder(directoryPath);
-      }
-    });
+    }
+
   }
 
   function initUI() {

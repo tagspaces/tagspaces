@@ -6,8 +6,7 @@ define(function(require, exports, module) {
   console.log('Loading perspective.manager.js ...');
   var perspectives;
   var TSCORE = require('tscore');
-  var TSPRO = require("tspro");
-
+  
   function initPerspective(extPath) {
     return new Promise(function(resolve, reject) {
       require([extPath], function(perspective) {

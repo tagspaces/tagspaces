@@ -55,6 +55,19 @@ define(function(require, exports, module) {
     parent.prepend(fileTypeControl);
   }
 
+  function enableMetaData() 
+  {
+    if (!TSCORE.PRO) {
+      return;
+    }
+    var isMetaEnabled = $('#enableMetaData').is(':checked');
+    if (!isMetaEnabled) { 
+      $('#writeMetaToSidecarFile').attr('checked', false);
+      TSCORE.Config.setWriteMetaToSidecarFile(false);
+    }
+    $('#writeMetaToSidecarFile').attr('disabled', !isMetaEnabled);
+  }
+
   function initUI() {
     $('#addFileTypeButton').click(function(e) {
       // Fixes reloading of the application by click
@@ -100,6 +113,10 @@ define(function(require, exports, module) {
       saveAs(blob, 'tsm[' + TSCORE.TagUtils.formatDateTime4Tag(new Date(), true) + '].json');
       console.log('Group Data Saved...');
     });
+
+    $('#enableMetaData').change(function() {
+      enableMetaData();
+    });
   }
 
   function reInitUI() {
@@ -123,6 +140,8 @@ define(function(require, exports, module) {
     $('#perspectiveList').empty();
     $('#writeMetaToSidecarFile').attr('checked', TSCORE.Config.getWriteMetaToSidecarFile());
     $('#useDefaultLocationCheckbox').attr('checked', TSCORE.Config.getUseDefaultLocation());
+    $('#enableMetaData').attr('checked', TSCORE.Config.getEnableMetaData()); 
+    enableMetaData();
     TSCORE.Config.getPerspectives().forEach(function(value) {
       addPerspective($('#perspectiveList'), value.id);
     });
@@ -182,6 +201,7 @@ define(function(require, exports, module) {
     TSCORE.Config.setSaveDocumentKeyBinding(parseKeyBinding($('#saveDocumentKeyBinding').val()));
     TSCORE.Config.setPropertiesDocumentKeyBinding(parseKeyBinding($('#documentPropertiesKeyBinding').val()));
     TSCORE.Config.setSearchKeyBinding(parseKeyBinding($('#showSearchKeyBinding').val()));
+    TSCORE.Config.setEnableMetaData($('#enableMetaData').is(':checked'));
     var interfaceLang = $('#languagesList').val();
     TSCORE.Config.setInterfaceLangauge(interfaceLang);
     TSCORE.switchInterfaceLanguage(interfaceLang);

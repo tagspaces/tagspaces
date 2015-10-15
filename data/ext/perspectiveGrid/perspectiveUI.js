@@ -8,17 +8,16 @@ define(function(require, exports, module) {
   console.log("Loading UI for perspectiveDefault");
 
   var TSCORE = require("tscore");
-  var TSPRO = require("tspro");
   var TMB_SIZES = ["200px", "300px", "100px"];
 
   var MONTH = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
-  var supportedFileTypeThumnailing = [
+  /*var supportedFileTypeThumnailing = [
     "jpg", "jpeg", "png", "gif", "pdf", "svg", "webp", "bmp", 
     "zip", "epub", "docx", "pptx", "pptm", "potx", "potm", 
     "ppxs", "ppsm", "sldx", "sldm", "dotx",  "dotm", "xlsx", 
     "xlsm", "xlst", "odp", "odg", "ods", "odt" 
-  ];
+  ];*/
 
   function ExtUI(extID) {
     this.extensionID = extID;

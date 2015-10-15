@@ -605,6 +605,15 @@ define(function(require, exports, module) {
   var setLoadLocationMeta = function(value) {
     exports.Settings.loadLocationMeta = value;
   };
+  var getEnableMetaData = function() {
+    if (exports.Settings.enableMetaData === undefined) {
+      exports.Settings.enableMetaData = exports.DefaultSettings.enableMetaData;
+    }
+    return exports.Settings.enableMetaData;
+  };
+  var setEnableMetaData = function(value) {
+    exports.Settings.enableMetaData = value;
+  };
   var getSupportedFileTypes = function() {
     if (exports.Settings.supportedFileTypes === undefined) {
       exports.Settings.supportedFileTypes = exports.DefaultSettings.supportedFileTypes;
@@ -1015,6 +1024,8 @@ define(function(require, exports, module) {
   exports.setCalculateTags = setCalculateTags;
   exports.getLoadLocationMeta = getLoadLocationMeta;
   exports.setLoadLocationMeta = setLoadLocationMeta;
+  exports.setEnableMetaData = setEnableMetaData;
+  exports.getEnableMetaData = getEnableMetaData;
   exports.getIsWindowMaximized = getIsWindowMaximized;
   exports.setIsWindowMaximized = setIsWindowMaximized;
   exports.getLastOpenedLocation = getLastOpenedLocation;
