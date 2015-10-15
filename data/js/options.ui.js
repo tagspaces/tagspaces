@@ -184,7 +184,7 @@ define(function(require, exports, module) {
     TSCORE.Config.setSaveDocumentKeyBinding(parseKeyBinding($('#saveDocumentKeyBinding').val()));
     TSCORE.Config.setPropertiesDocumentKeyBinding(parseKeyBinding($('#documentPropertiesKeyBinding').val()));
     TSCORE.Config.setSearchKeyBinding(parseKeyBinding($('#showSearchKeyBinding').val()));
-    TSCORE.Config.getSelectAllKeyBinding(parseKeyBinding($('#selectAllKeyBinding').val()));
+    TSCORE.Config.setSelectAllKeyBinding(parseKeyBinding($('#selectAllKeyBinding').val()));
     var interfaceLang = $('#languagesList').val();
     TSCORE.Config.setInterfaceLangauge(interfaceLang);
     TSCORE.switchInterfaceLanguage(interfaceLang);

@@ -119,7 +119,7 @@
     "keyBindingInstructions3": "Any other key you should be able to reference by name like",
     "keyBindingInstructions4": "You can assign many keys to a single operation, simply by separating them by",
     "reloadDocumentKeyBinding": "Reload Document",
-    "selectAll": "Select All",
+    "selectAllFiles": "Select all files",
     "closeDocumentKeyBinding": "Close Document",
     "documentPropertiesKeyBinding": "Document Properties",
     "saveDocumentKeyBinding": "Save Document",
