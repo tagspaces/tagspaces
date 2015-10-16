@@ -370,12 +370,11 @@ define(function(require, exports, module) {
     if (TSCORE.PRO && TSCORE.Config.getEnableMetaData()) {
       TSCORE.Meta.getDirectoryMetaInformation(function() {
         TSCORE.IO.listDirectory(directoryPath);
-          TSCORE.IO.createMetaFolder(directoryPath);
+        TSCORE.IO.createMetaFolder(directoryPath);
       });
     } else {
       TSCORE.IO.listDirectory(directoryPath);
     }
-
   }
 
   function initUI() {

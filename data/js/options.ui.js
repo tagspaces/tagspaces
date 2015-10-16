@@ -55,8 +55,7 @@ define(function(require, exports, module) {
     parent.prepend(fileTypeControl);
   }
 
-  function enableMetaData() 
-  {
+  function enableMetaData() {
     if (!TSCORE.PRO) {
       return;
     }
