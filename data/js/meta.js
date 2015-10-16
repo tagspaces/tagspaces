@@ -67,6 +67,10 @@ define(function(require, exports, module) {
           var pathNew = TSCORE.Utils.dirName(newFileName);
           var path = TSCORE.currentPath;
 
+          if (pathNew.lastIndexOf(TSCORE.dirSeparator) === 0) {
+            pathOld += TSCORE.dirSeparator;
+          }
+
           if(pathOld != pathNew) {
             path = pathNew;
           }
