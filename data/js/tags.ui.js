@@ -38,7 +38,7 @@ define(function(require, exports, module) {
                         '<span class="{{icon}}" /> ' +
                         '{{title}}' +
                         '{{#if count}} [{{count}}]{{/if}}' +
-                        ' <span class="caret"></span>' +
+                        '&nbsp;&nbsp;<span class="fa fa-ellipsis-v"></span>' +
                     '</a>' +
                     '{{/each}}' +
                 '</div>' +
@@ -399,7 +399,7 @@ define(function(require, exports, module) {
     TSCORE.selectedFiles.push(filePath);
     TSCORE.selectedTag = tag;
   }
-  var tagButtonTmpl = Handlebars.compile('{{#each tags}} <button class="btn btn-sm tagButton" tag="{{tag}}" ' + 'filepath="{{filepath}}" style="{{style}}">{{tag}} <span class="caret"></span></button>{{/each}}');
+  var tagButtonTmpl = Handlebars.compile('{{#each tags}} <button class="btn btn-sm tagButton" tag="{{tag}}" ' + 'filepath="{{filepath}}" style="{{style}}">{{tag}}&nbsp;&nbsp;<span class="fa fa-ellipsis-v"></span></button>{{/each}}');
   // Helper function generating tag buttons
   function generateTagButtons(commaSeparatedTags, filePath) {
       //console.log("Creating tags...");

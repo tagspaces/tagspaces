@@ -15,6 +15,9 @@ define(function(require, exports, module) {
   var generatedTagButtons;
   // Backup cancel button <!--button type="button" class="btn editable-cancel"><i class="fa fa-times fa-lg"></i></button-->
   $.fn.editableform.buttons = '<button type="submit" class="btn btn-primary editable-submit"><i class="fa fa-check fa-lg"></i></button>';
+  var closeBtn = '<button type="button" class="btn btn-link" style="position: absolute; top: 5px; right: 5px; color: white;"><span class="glyphicon glyphicon-remove"></span></button>';
+  var $closeBtn = null;
+
   // If a file is currently opened for editing, this var should be true
   var _isEditMode = false;
 
@@ -23,6 +26,24 @@ define(function(require, exports, module) {
       return "Confirm close";
     }
   };
+
+  function onFullScreenChange(event) {
+    if ($closeBtn === null) {
+      $closeBtn = $(closeBtn).click(function() {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        } else if (document.mozCancelFullScreen) {
+          document.mozCancelFullScreen();
+        } else if (document.webkitExitFullscreen) {
+          document.webkitExitFullscreen();
+        }
+      });
+      $('#viewer').append($closeBtn);
+    } else {
+      $closeBtn.remove();
+      $closeBtn = null;
+    }
+  }
 
   function initUI() {
     $('#editDocument').click(function() {
@@ -114,6 +135,14 @@ define(function(require, exports, module) {
     $('#openProperties').click(function() {
       showFilePropertiesDialog();
     });
+
+    if (document.exitFullscreen) {
+      document.addEventListener("fullscreenchange", onFullScreenChange);
+    } else if (document.mozCancelFullScreen) {
+      document.addEventListener("mozfullscreenchange", onFullScreenChange);
+    } else if (document.webkitExitFullscreen) {
+      document.addEventListener("webkitfullscreenchange", onFullScreenChange);
+    }
   }
 
   function isFileChanged() {

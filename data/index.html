@@ -5,7 +5,7 @@
   source code is governed by a AGPL3 license that can be found in the LICENSE file. -->
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta http-equiv="Content-Security-Policy" content="default-src file: gap:; img-src 'self' data: ; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-eval'">
+  <meta http-equiv="Content-Security-Policy" content="default-src file: gap: ; frame-src 'self' file: ; img-src 'self' data: ; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-eval'">
   <title>TagSpaces</title>
   <style type="text/css">
     #loadingLogo {
@@ -19,7 +19,6 @@
     }
   </style>
   <link rel="stylesheet" type="text/css" href="assets/tagspaces.css" />
-  <link rel="stylesheet" href="libs/hopscotch/css/hopscotch.css" />
   <link rel="apple-touch-icon-precomposed" sizes="144x144" href="assets/apple-touch-icon-144-precomposed.png"/>
   <link rel="apple-touch-icon-precomposed" sizes="114x114" href="assets/apple-touch-icon-114-precomposed.png"/>
   <link rel="apple-touch-icon-precomposed" sizes="72x72" href="assets/apple-touch-icon-72-precomposed.png"/>
@@ -248,7 +247,7 @@
           <div class="btn-group" style="min-width: 50px;">
             <button id="fileMenuButton" class="btn btn-link dropdown-toggle" data-toggle="dropdown">
               <span class="fileExt" data-i18n="[title]ns.common:fileOperations">
-                <span id="fileExtText"></span><span style="margin-left: 5px;" class="caret white-caret"></span>
+                <span id="fileExtText"></span><span style="margin-left: 5px;" class="fa fa-ellipsis-v"></span>
               </span>
             </button>
             <ul class="dropdown-menu">
@@ -279,10 +278,10 @@
                 <i class="fa fa-trash-o fa-fw"></i>
                 &nbsp;<span data-i18n="ns.common:deleteFile"></span>
                 <span class="pull-right label label-default keyShortcut">Del</span></a></li>
-              <li class="noWrap"><a id="closeFile" data-i18n="[title]ns.common:closeFileTooltip">
+              <!--li class="noWrap"><a id="closeFile" data-i18n="[title]ns.common:closeFileTooltip">
                 <i class="fa fa-times fa-fw"></i>
                 &nbsp;<span data-i18n="ns.common:closeFile"></span>
-                <span class="pull-right label label-default keyShortcut">Esc</span></a></li>
+                <span class="pull-right label label-default keyShortcut">Esc</span></a></li-->
               <li class="divider"></li>
               <li><a id="openFileInNewWindow" data-i18n="[title]ns.common:openFileNewWindowTooltip">
                 <i class="fa fa-external-link-square fa-fw"></i>

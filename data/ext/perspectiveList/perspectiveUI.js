@@ -397,7 +397,7 @@ define(function(require, exports, module) {
 
     Mousetrap.unbind("mod+a");
     Mousetrap.bindGlobal("mod+a", function() {
-       self.toggleSelectAll();
+      self.toggleSelectAll();
     });
 
     this.refreshThumbnails();
@@ -405,10 +405,10 @@ define(function(require, exports, module) {
   };
 
   var buttonCompTmpl = Handlebars.compile('<button filepath="{{filepath}}" class="btn btn-link fileSelection"><i class="fa {{selected}} fa-fw fa-lg"></i></button><br>' +
-    '<button filepath="{{filepath}}" title="{{filepath}}" class="btn btn-link fileTitleButton"><span class="fileExt"><span>{{fileext}}</span>&nbsp;<span class="caret white-caret"></span></span></button>');
+    '<button filepath="{{filepath}}" title="{{filepath}}" class="btn btn-link fileTitleButton"><span class="fileExt"><span>{{fileext}}</span>&nbsp;&nbsp;<span class="fa fa-ellipsis-v"></span></span></button>');
 
   var buttonCompTmbTmpl = Handlebars.compile('<button filepath="{{filepath}}" class="btn btn-link fileSelection"><i class="fa {{selected}} fa-fw fa-lg"></i></button><br>' +
-    '<button filepath="{{filepath}}" title="{{filepath}}" class="btn btn-link fileTitleButton"><span class="fileExt"><span>{{fileext}}</span>&nbsp;<span class="caret white-caret"></span></span></button>' +
+    '<button filepath="{{filepath}}" title="{{filepath}}" class="btn btn-link fileTitleButton"><span class="fileExt"><span>{{fileext}}</span>&nbsp;&nbsp;<span class="fa fa-ellipsis-v"></span></span></button>' +
     '<br><img class="thumbImg" filepath="{{tmbpath}}" >');
 
   // Helper function user by basic and search views
@@ -685,7 +685,6 @@ define(function(require, exports, module) {
     console.log("Prev file: " + prevFilePath);
     return prevFilePath;
   };
-
 
   ExtUI.prototype.toggleSelectAll = function() {
     var $checkIcon = $("#" + this.extensionID + "ToogleSelectAll").find("i");

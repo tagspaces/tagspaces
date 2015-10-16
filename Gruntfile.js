@@ -45,9 +45,8 @@ module.exports = function(grunt) {
           'Gruntfile.js',
           'data/js/**/*.js',
           '!data/js/settings.default.js',
-          'data/chromium/**/*.js',
+          'data/chromium/*.js',
           'data/cordova/*.js',
-          '!data/cordova/cordova.api.3.4.js',
           'data/ext/editorHTML/*.js',
           'data/ext/editorJSON/*.js',
           'data/ext/editorODF/*.js',
@@ -113,7 +112,7 @@ module.exports = function(grunt) {
           'data/ext/viewerURL/*.js',
           'data/ext/viewerZIP/*.js',
           '!data/mozilla/*.js',
-          'data/node-webkit/**/*.js',
+          'data/node-webkit/*.js',
           'data/web/*.js',
           'data/pro/*.js',
         ]
@@ -242,10 +241,10 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-jsbeautifier');
   
   //tasks
-  grunt.registerTask('checkstyle', ['jshint', 'jscs']);
+  grunt.registerTask('checkStyle', ['jshint', 'jscs']);
   //grunt.registerTask('dist-doc', ['jsdoc', 'compress:doc']);
   grunt.registerTask('jsfix', ['jsbeautifier', 'checkstyle']); // 'fixmyjs:core'
-  grunt.registerTask('bump-version', ['init', 'replace:templates']);
+  grunt.registerTask('bumpVersion', ['init', 'replace:templates']);
   grunt.registerTask('default', ['help']);
   grunt.registerTask('jsdav', 'Run JSDav Server.', function() {
     var jsDAV = require("jsDAV/lib/jsdav");
@@ -261,8 +260,8 @@ module.exports = function(grunt) {
 
   grunt.registerTask('help', 'Printing help for this script.', function() {
     grunt.log.writeln("Supported grunt tasks:");
-    grunt.log.writeln(" - checkstyle");
-    grunt.log.writeln(" - bump-version");
+    grunt.log.writeln(" - checkStyle");
+    grunt.log.writeln(" - bumpVersion");
   });
 
   grunt.registerTask('init', 'Initializing variables.', function() {

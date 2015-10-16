@@ -33,7 +33,11 @@ define(function(require, exports, module) {
     if (!message) {
       message = 'No Message to Display.';
     }
-    var alertModal = $('#alertDialog');
+    var n = noty({
+        text: message,
+        layout: 'bottomCenter',
+    });
+    /*var alertModal = $('#alertDialog');
     alertModal.find('h4').text(title);
     alertModal.find('.modal-body').empty();
     alertModal.find('.modal-body').text(message);
@@ -48,7 +52,7 @@ define(function(require, exports, module) {
     alertModal.modal({
       backdrop: 'static',
       show: true
-    });
+    });*/
   };
   var showConfirmDialog = function(title, message, okCallback, cancelCallback, confirmShowNextTime) {
     if (!title) {
@@ -124,9 +128,13 @@ define(function(require, exports, module) {
   var showFileRenameDialog = function(filePath) {
     $('#renamedFileName').attr('filepath', filePath);
     $('#renamedFileName').val(TSCORE.TagUtils.extractFileName(filePath));
+
     $('#formFileRename').validator();
     $('#formFileRename').submit(function(e) {
       e.preventDefault();
+      if ($('#renameFileButton').prop('disabled') === false) {
+        $('#renameFileButton').click();
+      }
     });
     $('#formFileRename').on('invalid.bs.validator', function() {
       $('#renameFileButton').prop('disabled', true);
@@ -624,7 +632,8 @@ define(function(require, exports, module) {
       $('#showSearchButton').hide();
       $('#searchBox').focus();
     }
-    // Handle external links
+
+  // Handle external links
   function openLinkExternally(url) {
     if (isNode) {
       gui.Shell.openExternal(url);

@@ -61,7 +61,7 @@ define(function(require, exports, module) {
     tsFileOpener.initUI();
     tsPersManager.initPerspectives().then(function(result) {
       console.log("initPerspectives: " + result);
-    }).catch(function(err) { 
+    }).catch(function(err) {
       alert("initPerspectives: " + err);
     });
 

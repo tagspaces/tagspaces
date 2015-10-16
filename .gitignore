@@ -4,7 +4,7 @@ build.properties
 CHANGELOG.TXT
 runfirefox
 runfirefoxbeta
-node_modules
+node_modules/*
 data/pro
 data/node-webkit/data
 data/node-webkit/locales
@@ -22,3 +22,4 @@ data/node-webkit/nw.pak
 data/node-webkit/debug.log
 *.DS_Store
 data/package.json
+bower_components

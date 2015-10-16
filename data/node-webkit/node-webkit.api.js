@@ -348,7 +348,7 @@ define(function(require, exports, module) {
       TSCORE.showAlertDialog($.i18n.t("ns.common:fileExists", { fileName:newFilePath }), $.i18n.t("ns.common:fileRenameFailed"));
       return false;
     }
-    fs.rename(filePath, newFilePath, function(error) {
+    fs.move(filePath, newFilePath, function(error) {
       if (error) {
         TSCORE.hideWaitingDialog();
         TSCORE.showAlertDialog($.i18n.t("ns.common:fileRenameFailedDiffPartition", { fileName:filePath }));

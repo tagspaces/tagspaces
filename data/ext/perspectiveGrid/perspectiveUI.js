@@ -60,7 +60,7 @@ define(function(require, exports, module) {
       '<button class="btn btn-link fileTileSelector" filepath="{{filepath}}"><i class="fa {{selected}} fa-lg"></i> <span class="fileExtTile">{{fileext}}</span></button>' +
       '<div class="tagsInFileTile">' +
       '{{#each tags}}' +
-        '<button class="btn btn-sm tagButton fileTagsTile" tag="{{tag}}" filepath="{{filepath}}" style="{{style}}">{{tag}} <span class="caret"></span></button>' +
+        '<button class="btn btn-sm tagButton fileTagsTile" tag="{{tag}}" filepath="{{filepath}}" style="{{style}}">{{tag}}<!-- <span class="fa fa-ellipsis-v"></span--></button>' +
       '{{/each}}' +
       '</div>' +
       '<div class="titleInFileTile">{{title}}</div>' +
@@ -229,13 +229,13 @@ define(function(require, exports, module) {
     });
 
     // Init Tag Context Menus
-    this.viewContainer.on("contextmenu click", ".tagButton", function() {
+    /*this.viewContainer.on("contextmenu click", ".tagButton", function() {
       TSCORE.hideAllDropDownMenus();
       self.selectFile($(this).attr("filepath"));
       TSCORE.openTagMenu(this, $(this).attr("tag"), $(this).attr("filepath"));
       TSCORE.showContextMenu("#tagMenu", $(this));
       return false;
-    });
+    });*/
 
     this.initFileGroupingMenu();
 
@@ -499,10 +499,10 @@ define(function(require, exports, module) {
         TSCORE.openTagMenu(this, $(this).attr("tag"), $(this).attr("filepath"));
       });
 
-      Mousetrap.unbind("mod+a");
-      Mousetrap.bindGlobal("mod+a", function() {
-         self.toggleSelectAll();
-      });
+    Mousetrap.unbind("mod+a");
+    Mousetrap.bindGlobal("mod+a", function() {
+      self.toggleSelectAll();
+    });
   };
 
   ExtUI.prototype.clearSelectedFiles = function() {
