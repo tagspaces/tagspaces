@@ -51,7 +51,7 @@ define(function(require, exports, module) {
   };
 
   var dirName = function(dirPath) {
-    return dirPath.replace(/\/[^\/]*$/,'');
+    return dirPath.replace(/\/[^\/]*$/, '');
     //return dirPath.match( /(.*)[/\]/)[1];
   };
 

@@ -71,14 +71,14 @@ define(function(require, exports, module) {
             pathOld += TSCORE.dirSeparator;
           }
 
-          if(pathOld != pathNew) {
+          if (pathOld != pathNew) {
             path = pathNew;
           }
           var newName = TSCORE.Utils.baseName(newFileName) + "." + element.name.split('.').pop();
           var newFilePath = path + TSCORE.dirSeparator + TSCORE.metaFolder + TSCORE.dirSeparator + newName;
           TSCORE.IO.renameFile(element.path, newFilePath);
 
-          if(pathOld == TSCORE.currentPath) {
+          if (pathOld == TSCORE.currentPath) {
             element.name = newName;
             element.path = newFilePath;  
           } else {
