@@ -17,7 +17,6 @@ define(function(require, exports, module) {
   var extensionSupportedFileTypes = ["html", "htm"];
 
   var TSCORE = require("tscore");
-  var TSPRO = require("tspro");
 
   var containerElID;
   var $containerElement;
@@ -32,9 +31,9 @@ define(function(require, exports, module) {
 
     currentFilePath = filePath;
 
-    if (TSPRO.available) {
+    if (TSCORE.PRO) {
       exports.getTextContent(filePath, function(content) {
-        TSPRO.saveTextContent(filePath, content);
+        TSCORE.PRO.saveTextContent(filePath, content);
       });
     }
 
