@@ -167,7 +167,7 @@ define(function(require, exports, module) {
       }
     }
 
-    if(TSCORE.PRO && !menuItem) {
+    if (TSCORE.PRO && !menuItem) {
       TSCORE.PRO.setContextMenu($tagsElement, tags);
     }
   }
@@ -246,7 +246,7 @@ define(function(require, exports, module) {
     if ($menu.attr('data-path')) {
       var $dropDown = $menu.find('.dropdown-menu');
       var $dropItemTags = $dropDown.find('#tagsAlternativeDirPath');
-      if($dropItemTags.length === 0) {
+      if ($dropItemTags.length === 0) {
         $dropItemTags = $('<li id=\"tagsAlternativeDirPath\">');
         $dropDown.append($dropItemTags);
       }

@@ -231,7 +231,7 @@ define(function(require, exports, module) {
         }
       }).fail(function() {
         resultCb();
-    });
+      });
   }
 
   exports.getDirectoryMetaInformation = getDirectoryMetaInformation;
