@@ -63,6 +63,7 @@ define(function (require, exports, module) {
             { "iso": "id_ID", "title": "bahasa Indonesia (Indonesian)" },
         ],
         "keyBindings": {
+            "selectAll": "mod+a",
             "closeViewer": "mod+w",
             "saveDocument": "mod+s",
             "reloadDocument": "mod+r",

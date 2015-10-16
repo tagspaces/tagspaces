@@ -424,6 +424,18 @@ define(function(require, exports, module) {
   var setReloadDocumentKeyBinding = function(value) {
     exports.Settings.keyBindings.reloadDocument = value;
   };
+  var setSelectAllKeyBinding = function(value) {
+    exports.Settings.keyBindings.selectAll = value;
+  };
+
+  var getSelectAllKeyBinding = function() {
+    updateKeyBindingsSetting();
+    if (exports.Settings.keyBindings.selectAll === undefined) {
+      exports.Settings.keyBindings.selectAll = exports.DefaultSettings.keyBindings.selectAll;
+      saveSettings();
+    }
+    return exports.Settings.keyBindings.selectAll;
+  };
   var getDeleteDocumentKeyBinding = function() {
     updateKeyBindingsSetting();
     if (exports.Settings.keyBindings.deleteDocument === undefined) {
@@ -1040,6 +1052,8 @@ define(function(require, exports, module) {
   exports.setSaveDocumentKeyBinding = setSaveDocumentKeyBinding;
   exports.getReloadDocumentKeyBinding = getReloadDocumentKeyBinding;
   exports.setReloadDocumentKeyBinding = setReloadDocumentKeyBinding;
+  exports.getSelectAllKeyBinding = getSelectAllKeyBinding;
+  exports.setSelectAllKeyBinding = setSelectAllKeyBinding;
   exports.getDeleteDocumentKeyBinding = getDeleteDocumentKeyBinding;
   exports.setDeleteDocumentKeyBinding = setDeleteDocumentKeyBinding;
   exports.getPropertiesDocumentKeyBinding = getPropertiesDocumentKeyBinding;

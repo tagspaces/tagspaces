@@ -123,6 +123,8 @@ define(function(require, exports, module) {
     $('#perspectiveList').empty();
     $('#writeMetaToSidecarFile').attr('checked', TSCORE.Config.getWriteMetaToSidecarFile());
     $('#useDefaultLocationCheckbox').attr('checked', TSCORE.Config.getUseDefaultLocation());
+    $('#selectAllKeyBinding').val(TSCORE.Config.getSelectAllKeyBinding());
+
     TSCORE.Config.getPerspectives().forEach(function(value) {
       addPerspective($('#perspectiveList'), value.id);
     });
@@ -182,6 +184,7 @@ define(function(require, exports, module) {
     TSCORE.Config.setSaveDocumentKeyBinding(parseKeyBinding($('#saveDocumentKeyBinding').val()));
     TSCORE.Config.setPropertiesDocumentKeyBinding(parseKeyBinding($('#documentPropertiesKeyBinding').val()));
     TSCORE.Config.setSearchKeyBinding(parseKeyBinding($('#showSearchKeyBinding').val()));
+    TSCORE.Config.setSelectAllKeyBinding(parseKeyBinding($('#selectAllKeyBinding').val()));
     var interfaceLang = $('#languagesList').val();
     TSCORE.Config.setInterfaceLangauge(interfaceLang);
     TSCORE.switchInterfaceLanguage(interfaceLang);
