@@ -221,8 +221,8 @@ define(function(require, exports, module) {
     //console.log(leftPos+" "+sourceObject.offset().left+" "+$menu.width()+" "+window.innerWidth);
     $menu.css({
       display: 'block',
-    //  left: leftPos + 'px',
-    //  top: topPos + 'px'
+      //left: leftPos + 'px',
+      //top: topPos + 'px'
     });
   };
 

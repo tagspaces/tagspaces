@@ -798,7 +798,7 @@ define(function(require, exports, module) {
       );
     } else {
       TSCORE.hideLoadingAnimation();
-      TSCORE.showAlertDialog($.i18n.t("ns.common:fileExists", { fileName:filePath }));
+      TSCORE.showAlertDialog($.i18n.t("ns.common:fileExists", {fileName:filePath}));
     }
   };
 

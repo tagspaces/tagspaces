@@ -11,20 +11,20 @@ define(function(require, exports, module) {
   var tagTemplate = {
     'title': undefined,
     'type': 'plain'
-      /*          ,
-               "pattern":"yyyymmddhhmmss-yyyymmddhhmmss",
-               "example":"20120114123456-20120823231235",
-               "regex":"",
-               "maxlength":17,
-               "chainedTags":[
-               "isbn","autor"
-               ],
-               "url": "http://example.com",
-               "action":"showDatePicker",
-               "prefixes":[
-               "EUR", "USD", "BGN"
-               ]
-               */
+    /*
+    "pattern":"yyyymmddhhmmss-yyyymmddhhmmss",
+    "example":"20120114123456-20120823231235",
+    "regex":"",
+    "maxlength":17,
+    "chainedTags":[
+    "isbn","autor"
+    ],
+    "url": "http://example.com",
+    "action":"showDatePicker",
+    "prefixes":[
+    "EUR", "USD", "BGN"
+    ]
+    */
   };
   var locationTemplate = {
     'name': undefined,

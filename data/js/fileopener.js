@@ -357,11 +357,12 @@ define(function(require, exports, module) {
   }
 
   function updateEditorContent(fileContent) {
-      console.log('Updating editor');
-      // with data: "+fileContent);
-      _tsEditor.setContent(fileContent);
-    }
-    // Should return false if no editor found
+    console.log('Updating editor');
+    // with data: "+fileContent);
+    _tsEditor.setContent(fileContent);
+  }
+
+  // Should return false if no editor found
   function getFileEditor(filePath) {
     var fileExt = TSCORE.TagUtils.extractFileExtension(filePath);
     // Getting the editor for the file extension/type

@@ -402,28 +402,29 @@ define(function(require, exports, module) {
   var tagButtonTmpl = Handlebars.compile('{{#each tags}} <button class="btn btn-sm tagButton" tag="{{tag}}" ' + 'filepath="{{filepath}}" style="{{style}}">{{tag}}&nbsp;&nbsp;<span class="fa fa-ellipsis-v"></span></button>{{/each}}');
   // Helper function generating tag buttons
   function generateTagButtons(commaSeparatedTags, filePath) {
-      //console.log("Creating tags...");
-      var tagString = '' + commaSeparatedTags;
-      var context = {
-        tags: []
-      };
-      if (tagString.length > 0) {
-        var tags = tagString.split(',');
-        for (var i = 0; i < tags.length; i++) {
-          context.tags.push({
-            filepath: filePath,
-            tag: tags[i],
-            style: generateTagStyle(TSCORE.Config.findTag(tags[i]))
-          });
-        }
+    //console.log("Creating tags...");
+    var tagString = '' + commaSeparatedTags;
+    var context = {
+      tags: []
+    };
+    if (tagString.length > 0) {
+      var tags = tagString.split(',');
+      for (var i = 0; i < tags.length; i++) {
+        context.tags.push({
+          filepath: filePath,
+          tag: tags[i],
+          style: generateTagStyle(TSCORE.Config.findTag(tags[i]))
+        });
       }
-      var metaTags = TSCORE.Meta.getTagsFromMetaFile(filePath);
-      if (metaTags.length > 0) {
-        context.tags = context.tags.concat(metaTags);
-      }
-      return tagButtonTmpl(context);
     }
-    // Get the color for a tag
+    var metaTags = TSCORE.Meta.getTagsFromMetaFile(filePath);
+    if (metaTags.length > 0) {
+      context.tags = context.tags.concat(metaTags);
+    }
+    return tagButtonTmpl(context);
+  }
+
+  // Get the color for a tag
   function generateTagStyle(tagObject) {
     var tagStyle = '';
     if (tagObject.color !== undefined) {

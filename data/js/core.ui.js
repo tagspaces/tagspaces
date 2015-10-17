@@ -34,8 +34,8 @@ define(function(require, exports, module) {
       message = 'No Message to Display.';
     }
     var n = noty({
-        text: message,
-        layout: 'bottomCenter',
+      text: message,
+      layout: 'bottomCenter',
     });
     /*var alertModal = $('#alertDialog');
     alertModal.find('h4').text(title);
@@ -200,8 +200,7 @@ define(function(require, exports, module) {
     ], function(uiTPL, controller) {
       if ($('#dialogOptions').length < 1) {
         var uiTemplate = Handlebars.compile(uiTPL);
-        $('body').append(uiTemplate({ isProVersion: TSCORE.PRO ? true : false }));
-        
+        $('body').append(uiTemplate({isProVersion: TSCORE.PRO ? true : false}));
 
         controller.initUI();
       }
@@ -690,9 +689,9 @@ define(function(require, exports, module) {
       $('#openNatively').hide();
       $('#fileMenuOpenNatively').parent().hide();
     } else if (isNode) {
-     // $('#fullscreenFile').hide();
+      //$('#fullscreenFile').hide();
       $('#openFileInNewWindow').hide();
-      // handling window maximization
+      //handling window maximization
       var nwwin = gui.Window.get();
       nwwin.on('maximize', function() {
         TSCORE.Config.setIsWindowMaximized(true);

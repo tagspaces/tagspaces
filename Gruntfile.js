@@ -82,7 +82,7 @@ module.exports = function(grunt) {
     jscs: {
       options: {
         config: ".jscs.json",
-        maxErrors: 5
+        maxErrors: 10
       },
       files: {
         src: [
@@ -251,9 +251,9 @@ module.exports = function(grunt) {
     jsDAV.debugMode = true;
     var jsDAV_Auth_Backend_File = require("jsDAV/lib/DAV/plugins/auth/file");
     jsDAV.createServer({
-        node: "./data",
-        authBackend:  jsDAV_Auth_Backend_File.new("./jsdavauth"),
-        realm: "jdavtest"
+      node: "./data",
+      authBackend:  jsDAV_Auth_Backend_File.new("./jsdavauth"),
+      realm: "jdavtest"
     }, 8000);
     grunt.log.writeln("WebDAV server started");
   }),

@@ -103,8 +103,8 @@ $(document).ready(function() {
 
   function saveExtSettings() {
     var settings = {
-        "styleIndex": currentStyleIndex,
-        "zoomState":  currentZoomState
+      "styleIndex": currentStyleIndex,
+      "zoomState":  currentZoomState
     };
     localStorage.setItem('viewerMDSettings', JSON.stringify(settings));
   }

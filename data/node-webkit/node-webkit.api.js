@@ -305,24 +305,24 @@ define(function(require, exports, module) {
     }
     if (fs.lstatSync(sourceFilePath).isDirectory()) {
       TSCORE.hideWaitingDialog();
-      TSCORE.showAlertDialog($.i18n.t("ns.common:fileIsDirectory", { fileName:sourceFilePath }));
+      TSCORE.showAlertDialog($.i18n.t("ns.common:fileIsDirectory", {fileName:sourceFilePath}));
       return false;
     }
     if (fs.existsSync(targetFilePath)) {
       TSCORE.hideWaitingDialog();
-      TSCORE.showAlertDialog($.i18n.t("ns.common:fileExists", { fileName:targetFilePath }),  $.i18n.t("ns.common:fileRenameFailed"));
+      TSCORE.showAlertDialog($.i18n.t("ns.common:fileExists", {fileName:targetFilePath}),  $.i18n.t("ns.common:fileRenameFailed"));
       return false;
     }
 
     var rd = fs.createReadStream(sourceFilePath);
     rd.on("error", function(err) {
       TSCORE.hideWaitingDialog();
-      TSCORE.showAlertDialog($.i18n.t("ns.common:fileCopyFailed", { fileName:sourceFilePath }));
+      TSCORE.showAlertDialog($.i18n.t("ns.common:fileCopyFailed", {fileName:sourceFilePath}));
     });
     var wr = fs.createWriteStream(targetFilePath);
     wr.on("error", function(err) {
       TSCORE.hideWaitingDialog();
-      TSCORE.showAlertDialog($.i18n.t("ns.common:fileCopyFailed", { fileName:sourceFilePath }));
+      TSCORE.showAlertDialog($.i18n.t("ns.common:fileCopyFailed", {fileName:sourceFilePath}));
     });
     wr.on("close", function(ex) {
       TSPOSTIO.copyFile(sourceFilePath, targetFilePath);
@@ -340,18 +340,18 @@ define(function(require, exports, module) {
     }
     if (fs.lstatSync(filePath).isDirectory()) {
       TSCORE.hideWaitingDialog();
-      TSCORE.showAlertDialog($.i18n.t("ns.common:fileIsDirectory", { fileName:filePath }));
+      TSCORE.showAlertDialog($.i18n.t("ns.common:fileIsDirectory", {fileName:filePath}));
       return false;
     }
     if (fs.existsSync(newFilePath)) {
       TSCORE.hideWaitingDialog();
-      TSCORE.showAlertDialog($.i18n.t("ns.common:fileExists", { fileName:newFilePath }), $.i18n.t("ns.common:fileRenameFailed"));
+      TSCORE.showAlertDialog($.i18n.t("ns.common:fileExists", {fileName:newFilePath}), $.i18n.t("ns.common:fileRenameFailed"));
       return false;
     }
     fs.move(filePath, newFilePath, function(error) {
       if (error) {
         TSCORE.hideWaitingDialog();
-        TSCORE.showAlertDialog($.i18n.t("ns.common:fileRenameFailedDiffPartition", { fileName:filePath }));
+        TSCORE.showAlertDialog($.i18n.t("ns.common:fileRenameFailedDiffPartition", {fileName:filePath}));
         return;
       }
       TSPOSTIO.renameFile(filePath, newFilePath);
@@ -371,7 +371,7 @@ define(function(require, exports, module) {
     }
     if (fs.existsSync(newDirPath)) {
       TSCORE.hideWaitingDialog();
-      TSCORE.showAlertDialog($.i18n.t("ns.common:directoryExists", { dirName:newDirPath }), $.i18n.t("ns.common:directoryRenameFailed"));
+      TSCORE.showAlertDialog($.i18n.t("ns.common:directoryExists", {dirName:newDirPath}), $.i18n.t("ns.common:directoryRenameFailed"));
       return false;
     }
     var dirStatus = fs.lstatSync(dirPath);
@@ -386,7 +386,7 @@ define(function(require, exports, module) {
       });
     } else {
       TSCORE.hideWaitingDialog();
-      TSCORE.showAlertDialog($.i18n.t("ns.common:pathIsNotDirectory", { dirName:dirPath }), $.i18n.t("ns.common:directoryRenameFailed"));
+      TSCORE.showAlertDialog($.i18n.t("ns.common:pathIsNotDirectory", {dirName:dirPath}), $.i18n.t("ns.common:directoryRenameFailed"));
       return false;
     }
   };
@@ -671,7 +671,7 @@ define(function(require, exports, module) {
     if (fsWatcher) {
       fsWatcher.close();
     }
-    fsWatcher = fs.watch(dirPath, { persistent: true, recursive: false }, listener);
+    fsWatcher = fs.watch(dirPath, {persistent: true, recursive: false}, listener);
   };
 
   function getFile(fileURL, result, error) {

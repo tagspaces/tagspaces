@@ -96,7 +96,7 @@ define(function(require, exports, module) {
     } else {
       tmbPath = "file:///" + filePath;
     }
-    var metaObj = metaObj || { thumbnailPath : ""};
+    var metaObj = metaObj || {thumbnailPath : ""};
     var context = {
       filepath: filePath,
       tmbpath: tmbPath,
@@ -177,7 +177,7 @@ define(function(require, exports, module) {
     console.log("Init UI module");
 
     var self = this;
-    this.viewContainer.append(toolbarTemplate({ id: this.extensionID }));
+    this.viewContainer.append(toolbarTemplate({id: this.extensionID}));
 
     $("#" + this.extensionID + "ToogleSelectAll").on("click", function() {
       self.toggleSelectAll();

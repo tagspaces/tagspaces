@@ -50,11 +50,11 @@ define(function(require, exports, module) {
     }));
     TSCORE.IO.loadTextFile(filePath);
 
-    //        if (!window.addEventListener) {
-    //            window.attachEvent('onmessage', function(e) {alert(e.origin);alert(e.data);});
-    //        } else {
-    //            window.addEventListener('message', function(e) {alert(e.origin);alert(e.data);}, false);
-    //        }
+    //if (!window.addEventListener) {
+    //  window.attachEvent('onmessage', function(e) {alert(e.origin);alert(e.data);});
+    //} else {
+    //  window.addEventListener('message', function(e) {alert(e.origin);alert(e.data);}, false);
+    //}
   };
 
   exports.setFileType = function(fileType) {
@@ -77,12 +77,12 @@ define(function(require, exports, module) {
     } catch (e) {
       console.log("Error parsing the body of the HTML document. " + e);
       bodyContent = content;
-//      TSCORE.FileOpener.closeFile(true);
-//      TSCORE.showAlertDialog("Probably a body tag was not found in the document. Document will be closed.", "Error parsing HTML document");
+      //TSCORE.FileOpener.closeFile(true);
+      //TSCORE.showAlertDialog("Probably a body tag was not found in the document. Document will be closed.", "Error parsing HTML document");
     }
 
-    //        var titleRegex = /\<title[^>]*\>([^]*)\<\/title/m;
-    //        var titleContent = content.match( titleRegex )[1];
+    //var titleRegex = /\<title[^>]*\>([^]*)\<\/title/m;
+    //var titleContent = content.match( titleRegex )[1];
 
     // removing all scripts from the document
     var cleanedBodyContent = bodyContent.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "");
