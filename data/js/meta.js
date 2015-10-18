@@ -62,11 +62,28 @@ define(function(require, exports, module) {
     TSCORE.metaFileList.forEach(function(element, index) {
       if (element.name.indexOf(name) >= 0) {
         if (newFileName) {
+          var pathOld  = TSCORE.Utils.dirName(oldFileName);
+          var pathNew = TSCORE.Utils.dirName(newFileName);
+          var path = TSCORE.currentPath;
+
+          if (pathNew.lastIndexOf(TSCORE.dirSeparator) === 0) {
+            pathOld += TSCORE.dirSeparator;
+          }
+
+          if (pathOld != pathNew) {
+            path = pathNew;
+          }
           var newName = TSCORE.Utils.baseName(newFileName) + "." + element.name.split('.').pop();
-          var newFilePath = TSCORE.currentPath + TSCORE.dirSeparator + TSCORE.metaFolder + TSCORE.dirSeparator + newName;
+          var newFilePath = path + TSCORE.dirSeparator + TSCORE.metaFolder + TSCORE.dirSeparator + newName;
           TSCORE.IO.renameFile(element.path, newFilePath);
-          element.name = newName;
-          element.path = newFilePath;
+
+          if (pathOld == TSCORE.currentPath) {
+            element.name = newName;
+            element.path = newFilePath;  
+          } else {
+            TSCORE.metaFileList.splice(index, 1);
+          }
+          
         } else {
           TSCORE.IO.deleteElement(element.path);
           TSCORE.metaFileList.splice(index, 1);
