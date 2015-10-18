@@ -2,7 +2,6 @@ define(function(require, exports, module) {
   'use strict';
 
   var TSCORE = require("tscore");
-  var TSPRO = require("tspro");
 
   function makeMetaPathByName(name) {
     return TSCORE.currentPath + TSCORE.dirSeparator + TSCORE.metaFolder + name;
@@ -78,8 +77,8 @@ define(function(require, exports, module) {
 
   function loadThumbnail(filePath) {
     var promise = new Promise(function(resolve, reject) {
-      if (TSPRO.available) {
-        TSPRO.getThumbnailURL(filePath, function(dataURL) {
+      if (TSCORE.PRO) {
+        TSCORE.PRO.getThumbnailURL(filePath, function(dataURL) {
           resolve(dataURL);
         });
       } else {
