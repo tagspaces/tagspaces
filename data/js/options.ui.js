@@ -79,10 +79,13 @@ define(function(require, exports, module) {
       e.preventDefault();
       addPerspective($('#perspectiveList'), '');
     });
-    $('#saveSettingsCloseButton').click(function() {
+    $('#saveSettingsButton').click(function() {
       updateSettings();
       $('#dialogOptions').modal('hide');
-      //TSCORE.reloadUI();
+    });
+    $('#saveSettingsRestartButton').click(function() {
+      updateSettings();
+      TSCORE.reloadUI();
     });
     $('#defaultSettingsButton').click(function() {
       TSCORE.showConfirmDialog(

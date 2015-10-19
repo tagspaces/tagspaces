@@ -133,7 +133,7 @@
     "addNewFileExtensionButton": "Add new file extension",
     "showUnixHiddenFiles": "Show files/directories with a dot(.) in front of the name (e.g. Unix, Linux, OS X hidden files)",
     "checkForNewVersion": "Check for new version on startup",
-    "experimentalHelp": "*) Be careful changing the following settings.",
+    "experimentalHelp": "Experimental Functionality! Please be careful changing any of the following settings.",
     "extensionsFolder": "Extensions folder (default value is 'ext')",
     "extensionsFolderPlaceholder": "file:///c:\\tagspaces-extensions",
     "calculateTag": "Calculate tags from the current search results",
@@ -148,8 +148,11 @@
     "exportTagGroupsButton": "Export Tag Groups as JSON",
     "showMainMenu": "Show main menu (restart needed)",
     "useDefaultLocation": "Use default location as a startup location",
-    "writeMetaToSidecarFile": "Use sidecar files in the .ts folders for saving meta information (e.g. tags)",
+    "enablingUsingMetaFolder": "Enable the use of a hidden folder(.ts) for storing meta data and thumbnails",
+    "writeMetaToSidecarFile": "Use sidecar files in the hidden folders for saving meta data (e.g. tags)",
     "invalidImportFile": "The imported file has invalid format",
     "importGroupTagsTitle": "Import tags from file",
+    "confirmSaveButton": "Save",
+    "confirmSaveAndRestartButton": "Save & Restart",
     "-": "-"
 }

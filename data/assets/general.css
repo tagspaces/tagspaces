@@ -416,7 +416,7 @@ input a.resetFilter {
     top: 0;
     right: 0;
     left: 0;
-    height: 78px;
+    height: 123px !important;
     padding: 10px;
     border: 0;
   }
@@ -429,11 +429,12 @@ input a.resetFilter {
 
   .fullScreenMobile .modal-body {
     position: absolute;
-    top: 79px;
+    top: 125px;
     bottom: 60px;
     width: 100%;
     font-weight: 300;
     overflow: auto;
+    max-height: 1550px !important;
   }
 
   .fullScreenMobile .modal-footer {
@@ -449,6 +450,31 @@ input a.resetFilter {
     height: 100%;
     border-radius: 0;
   }
+}
+
+.modal-header {
+  background-color: #F6F6F6;
+  border-radius: 5px 5px 0px 0px;
+}
+
+.modal-footer {
+  background-color: #F6F6F6;
+}
+
+.modal-header .close {
+  margin-top: 7px;
+  font-size: x-large;
+}
+
+#dialogOptions .modal-header {
+  height: 97px;
+}
+
+#dialogOptions .modal-body {
+  overflow-y: auto;
+  overflow-x: hidden;
+  min-height: 400px;
+  max-height: 400px;
 }
 
 /* END Bootstap modals fullscreen on small screen */
@@ -481,16 +507,6 @@ input a.resetFilter {
   position: absolute;
   display:none;
   z-index: 88888;
-}
-
-.modal-header {
-  background-color: #F6F6F6;
-  border-radius: 5px 5px 0px 0px;
-}
-
-.modal-header .close {
-  margin-top: 7px;
-  font-size: x-large;
 }
 
 .white-caret {

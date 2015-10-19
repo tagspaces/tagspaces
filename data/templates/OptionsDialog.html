@@ -6,209 +6,210 @@
                     <i class="fa fa-times"></i>
                 </button>
                 <h4 data-i18n="ns.dialogs:optionsTitle"></h4>
-            </div>
-            <div class="modal-body form" id="optionsAccordion" style="">
                 <ul class="nav nav-tabs" style="margin-bottom: 15px; border-bottom: 1px solid lightgray;">
                     <li><a href="#general" data-toggle="tab" class="optionsTitle" data-i18n="ns.dialogs:generalTab"></a></li>
                     {{#if isProVersion}}
-                        <li style="min-width: 70px; text-align: center;"><a href="#pro" data-toggle="tab" class="optionsTitle" data-i18n="ns.dialogs:proTab"></a></li>
+                    <li style="min-width: 70px; text-align: center;"><a href="#pro" data-toggle="tab" class="optionsTitle" data-i18n="ns.dialogs:proTab"></a></li>
                     {{/if}}
                     <li><a href="#perspectives" data-toggle="tab" class="optionsTitle" data-i18n="ns.dialogs:perspectivesTab"></a></li>
                     <li><a href="#filetypes" data-toggle="tab" class="optionsTitle" data-i18n="ns.dialogs:fileTypeTab"></a></li>
                     <li><a href="#keyBindings" data-toggle="tab" class="optionsTitle" data-i18n="ns.dialogs:keyBindingsTab"></a></li>
                 </ul>
-                <div class="tab-content" style="max-height: 450px; overflow-y: auto; overflow-x: hidden;">
-                    <div class="tab-pane active" id="general" style="overflow-y: auto; overflow-x: hidden;">
+            </div>
+            <div class="modal-body form tab-content" id="optionsAccordion">
+                <div class="tab-pane active" id="general">
+                    <div class="form-group">
+                        <label for='languagesList'>Interface Language</label>
+                        <select class='form-control' id='languagesList'></select>
+                        <p class="help-block" data-i18n="ns.dialogs:switchLanguageHelp"></p>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-12 checkbox">
+                            <label for="showHiddenFilesCheckbox" >
+                                <input type="checkbox" id="showHiddenFilesCheckbox" />
+                                <span data-i18n="ns.dialogs:showUnixHiddenFiles"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-12 checkbox">
+                            <label for="checkforUpdatesCheckbox" >
+                                <input type="checkbox" id="checkforUpdatesCheckbox" />
+                                <span data-i18n="ns.dialogs:checkForNewVersion"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-12 checkbox">
+                            <label for="showMainMenuCheckbox" >
+                                <input type="checkbox" id="showMainMenuCheckbox" />
+                                <span data-i18n="ns.dialogs:showMainMenu"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-12 checkbox">
+                            <label for="useDefaultLocationCheckbox" >
+                                <input type="checkbox" id="useDefaultLocationCheckbox" />
+                                <span data-i18n="ns.dialogs:useDefaultLocation"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class='form-group'>
+                        <button class="btn btn-default" id="exportTagGroupsButton" aria-hidden="true">
+                            <i class="fa fa-upload"></i>&nbsp;
+                            <span data-i18n="ns.dialogs:exportTagGroupsButton"></span>
+                        </button>
+                        <button class="btn btn-default" id="defaultSettingsButton" aria-hidden="true">
+                            <i class="fa fa-rotate-left"></i>&nbsp;
+                            <span data-i18n="ns.dialogs:restoreDefaulSettingButton"></span>
+                        </button>
+                    </div>
+                </div>
+                {{#if isProVersion}}
+                <div class="tab-pane active" id="pro" >
+                    <div class="form-group">
+                        <div class="col-sm-12 checkbox">
+                            <label for="calculateTagsCheckbox" >
+                                <input type="checkbox" id="calculateTagsCheckbox" />
+                                <span data-i18n="ns.dialogs:calculateTag"></span>
+                            </label>
+                            <p class="help-block" data-i18n="ns.dialogs:calculateTagHelp"></p>
+                        </div>
+                    </div>
+                    <div class="alert alert-warning col-sm-11" role="alert" data-i18n="ns.dialogs:experimentalHelp"></div>
+                    <div class="form-group">
+                        <div class="col-sm-12 checkbox">
+                            <label for="enableMetaData" >
+                                <input type="checkbox" id="enableMetaData" />
+                                <span data-i18n="ns.dialogs:enablingUsingMetaFolder"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-12 checkbox">
+                            <label for="writeMetaToSidecarFile" >
+                                <input type="checkbox" id="writeMetaToSidecarFile" />
+                                <span data-i18n="ns.dialogs:writeMetaToSidecarFile"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-12 checkbox">
+                            <label for="loadLocationMetaData" >
+                                <input type="checkbox" id="loadLocationMetaData" />
+                                <span>Loads location meta data (currently only tag groups)</span>
+                            </label>
+                            <p class="help-block">Location metadata file "tsm.json" should be placed in the ".ts "subfolder of the current location. The file format should be the same as the exported tag groups file from the tab 'general'.</p>
+                        </div>
+                    </div>
+                    <!--div class='form-group col-sm-12'>
+                        <label for='tagsDelimiterInput' data-i18n="ns.dialogs:tagDelimiter"></label>
+                        <input type='text' class='form-control' id='tagsDelimiterInput' />
+                    </div>
+                    <div class='form-group col-sm-12'>
+                        <label for='prefixTagContainerInput' data-i18n="ns.dialogs:prefixTagContainer"></label>
+                        <input type='text' class='form-control' id='prefixTagContainerInput' />
+                    </div>
+                    <div class='form-group col-sm-12'>
+                        <label for='extensionsPathInput' data-i18n="ns.dialogs:extensionsFolder"></label>
+                        <input type='text' class='form-control' id='extensionsPathInput' data-i18n="[placeholder]ns.dialogs:extensionsFolderPlaceholder"/>
+                    </div-->
+                </div>
+                {{/if}}
+                <div class="tab-pane" id="perspectives">
+                    <button class='btn btn-default' id='addPerspectiveButton'>
+                        <i class='fa fa-plus'></i>&nbsp;<span data-i18n="ns.dialogs:addPerspectiveButton"></span>
+                    </button>
+                    <br><br>
+                    <div id='perspectiveList'></div>
+                    <p class="help-block" data-i18n="ns.dialogs:perspectivesHelp"></p>
+                </div>
+                <div class="tab-pane" id="filetypes">
+                    <button class='btn btn-default' id='addFileTypeButton'>
+                        <i class='fa fa-plus'></i>&nbsp;<span data-i18n="ns.dialogs:addNewFileExtensionButton"></span>
+                    </button>
+                    <br><br>
+                    <div id='fileTypesList'></div>
+                </div>
+                <div class="tab-pane" id="keyBindings">
+                    <form class="form-horizontal" role="form">
+                        <button class='btn btn-default' id='keyBindingInstructionsToggle'>
+                            <i class='fa fa-info-circle'></i>&nbsp;<span data-i18n="ns.dialogs:keyBindingInstructions"></span>
+                        </button>
+                        <div class='form-group col-sm-12' id="keyBindingInstructions">
+                            <p class="help-block"><span data-i18n="ns.dialogs:keyBindingInstructions1">For modifier keys you can use</span>&nbsp;<code>shift</code>, <code>ctrl</code>, <code>alt</code>, <code>option</code>, <code>meta</code>, <code>command</code> &amp; <code>mod</code>.</p>
+                            <p class="help-block"><span data-i18n="ns.dialogs:keyBindingInstructions2">Other special keys are</span>&nbsp;<code>backspace</code>, <code>tab</code>, <code>enter</code>, <code>return</code>, <code>capslock</code>, <code>esc</code>, <code>escape</code>, <code>space</code>, <code>pageup</code>, <code>pagedown</code>, <code>end</code>, <code>home</code>, <code>left</code>, <code>up</code>, <code>right</code>, <code>down</code>, <code>ins</code> &amp; <code>del</code>.</p>
+                            <p class="help-block"><span data-i18n="ns.dialogs:keyBindingInstructions3">Any other key you should be able to reference by name like</span>&nbsp;<code>a</code>, <code>/</code>, <code>$</code>, <code>*</code>, <code>=</code>.</p>
+                            <p class="help-block"><span data-i18n="ns.dialogs:keyBindingInstructions4">You can assign many keys to a single operation, simply by separating them by</span>&nbsp;<code>,</code>.</p>
+                        </div>
                         <div class='form-group'>
-                            <button class="btn btn-default" id="exportTagGroupsButton" aria-hidden="true">
-                                <i class="fa fa-upload"></i>&nbsp;
-                                <span data-i18n="ns.dialogs:exportTagGroupsButton"></span>
-                            </button>
-                            <button class="btn btn-default" id="defaultSettingsButton" aria-hidden="true">
-                                <i class="fa fa-rotate-left"></i>&nbsp;
-                                <span data-i18n="ns.dialogs:restoreDefaulSettingButton"></span>
-                            </button>
-                        </div>
-                        <div class="form-group">
-                            <label for='languagesList'>Interface Language</label>
-                            <select class='form-control' id='languagesList'></select>
-                            <p class="help-block" data-i18n="ns.dialogs:switchLanguageHelp"></p>
-                        </div>
-                        <div class="form-group">
-                            <div class="col-sm-12 checkbox">
-                                <label for="showHiddenFilesCheckbox" >
-                                    <input type="checkbox" id="showHiddenFilesCheckbox" />
-                                    <span data-i18n="ns.dialogs:showUnixHiddenFiles"></span>
-                                </label>
+                            <label class="col-sm-4 control-label" data-i18n="ns.dialogs:selectAllFiles"></label>
+                            <div class="col-sm-7">
+                                <input type='text' class='form-control' id='selectAllKeyBinding' placeholder='ctrl+a | command+a'/>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <div class="col-sm-12 checkbox">
-                                <label for="checkforUpdatesCheckbox" >
-                                    <input type="checkbox" id="checkforUpdatesCheckbox" />
-                                    <span data-i18n="ns.dialogs:checkForNewVersion"></span>
-                                </label>
+                        <div class='form-group'>
+                            <label class="col-sm-4 control-label" data-i18n="ns.dialogs:reloadDocumentKeyBinding"></label>
+                            <div class="col-sm-7">
+                                <input type='text' class='form-control' id='reloadDocumentKeyBinding' placeholder='ctrl+r | command+r'/>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <div class="col-sm-12 checkbox">
-                                <label for="showMainMenuCheckbox" >
-                                    <input type="checkbox" id="showMainMenuCheckbox" />
-                                    <span data-i18n="ns.dialogs:showMainMenu"></span>
-                                </label>
+                        <div class='form-group'>
+                            <label class="col-sm-4 control-label" data-i18n="ns.dialogs:closeDocumentKeyBinding"></label>
+                            <div class="col-sm-7">
+                                <input type='text' class='form-control' id='closeDocumentKeyBinding' placeholder='esc'/>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <div class="col-sm-12 checkbox">
-                                <label for="useDefaultLocationCheckbox" >
-                                    <input type="checkbox" id="useDefaultLocationCheckbox" />
-                                    <span data-i18n="ns.dialogs:useDefaultLocation"></span>
-                                </label>
+                        <div class='form-group'>
+                            <label class="col-sm-4 control-label" data-i18n="ns.dialogs:documentPropertiesKeyBinding"></label>
+                            <div class="col-sm-7">
+                                <input type='text' class='form-control' id='documentPropertiesKeyBinding' placeholder='alt+enter'/>
                             </div>
                         </div>
-                    </div>
-                    {{#if isProVersion}}
-                    <div class="tab-pane active" id="pro" style="overflow-y: auto; overflow-x: hidden;">
-                        <div class="form-group">
-                            <div class="col-sm-12 checkbox">
-                                <label for="enableMetaData" >
-                                    <input type="checkbox" id="enableMetaData" />
-                                    <span>Enable the use of a hidden meta directory, for storing meta information and thumbnails</span>
-                                </label>
+                        <div class='form-group'>
+                            <label class="col-sm-4 control-label" data-i18n="ns.dialogs:saveDocumentKeyBinding"></label>
+                            <div class="col-sm-7">
+                                <input type='text' class='form-control' id='saveDocumentKeyBinding' placeholder='ctrl+s | command+s'/>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <div class="col-sm-12 checkbox">
-                                <label for="writeMetaToSidecarFile" >
-                                    <input type="checkbox" id="writeMetaToSidecarFile" />
-                                    <span data-i18n="ns.dialogs:writeMetaToSidecarFile"></span>
-                                </label>
+                        <div class='form-group'>
+                            <label class="col-sm-4 control-label" data-i18n="ns.dialogs:nextDocumentKeyBinding"></label>
+                            <div class="col-sm-7">
+                                <input type='text' class='form-control' id='nextDocumentKeyBinding' placeholder='right'/>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <div class="col-sm-12 checkbox">
-                                <label for="loadLocationMetaData" >
-                                    <input type="checkbox" id="loadLocationMetaData" />
-                                    <span>Loads location meta data (currently only tag groups)</span>
-                                </label>
-                                <p class="help-block">Location metadata file "tsm.json" should be placed in the ".ts "subfolder of the current location. The file format should be the same as the exported tag groups file from the tab 'general'.</p>
+                        <div class='form-group'>
+                            <label class="col-sm-4 control-label" data-i18n="ns.dialogs:prevDocumentKeyBinding"></label>
+                            <div class="col-sm-7">
+                                <input type='text' class='form-control' id='prevDocumentKeyBinding' placeholder='left'/>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <div class="col-sm-12 checkbox">
-                                <label for="calculateTagsCheckbox" >
-                                    <input type="checkbox" id="calculateTagsCheckbox" />
-                                    <span data-i18n="ns.dialogs:calculateTag"></span>
-                                </label>
-                                <p class="help-block" data-i18n="ns.dialogs:calculateTagHelp"></p>
+                        <div class='form-group'>
+                            <label class="col-sm-4 control-label" data-i18n="ns.dialogs:editDocumentKeyBinding"></label>
+                            <div class="col-sm-7">
+                                <input type='text' class='form-control' id='editDocumentKeyBinding' placeholder='ctrl+e | command+e'/>
                             </div>
                         </div>
-                        <div class="alert alert-warning col-sm-11" role="alert" data-i18n="ns.dialogs:experimentalHelp"></div>
-                        <div class='form-group col-sm-12'>
-                            <label for='tagsDelimiterInput' data-i18n="ns.dialogs:tagDelimiter"></label>
-                            <input type='text' class='form-control' id='tagsDelimiterInput' />
+                        <div class='form-group'>
+                            <label class="col-sm-4 control-label" data-i18n="ns.dialogs:addRemoveTagsKeyBinding"></label>
+                            <div class="col-sm-7">
+                                <input type='text' class='form-control' id='addRemoveTagsKeyBinding' placeholder='ctrl+t | command+t'/>
+                            </div>
                         </div>
-                        <div class='form-group col-sm-12'>
-                            <label for='prefixTagContainerInput' data-i18n="ns.dialogs:prefixTagContainer"></label>
-                            <input type='text' class='form-control' id='prefixTagContainerInput' />
+                        <div class='form-group'>
+                            <label class="col-sm-4 control-label" data-i18n="ns.dialogs:showSearchKeyBinding"></label>
+                            <div class="col-sm-7">
+                                <input type='text' class='form-control' id='showSearchKeyBinding' placeholder='ctrl+f | command+f'/>
+                            </div>
                         </div>
-                        <div class='form-group col-sm-12'>
-                            <label for='extensionsPathInput' data-i18n="ns.dialogs:extensionsFolder"></label>
-                            <input type='text' class='form-control' id='extensionsPathInput' data-i18n="[placeholder]ns.dialogs:extensionsFolderPlaceholder"/>
-                        </div>
-                    </div> 
-                    {{/if}}
-                    <div class="tab-pane" id="perspectives" style="overflow-y: auto; overflow-x: hidden;">
-                        <button class='btn btn-default' id='addPerspectiveButton'>
-                            <i class='fa fa-plus'></i>&nbsp;<span data-i18n="ns.dialogs:addPerspectiveButton"></span>
-                        </button>
-                        <div id='perspectiveList' style="margin-top: 10px"></div>
-                        <p class="help-block" data-i18n="ns.dialogs:perspectivesHelp"></p>
-                    </div>
-                    <div class="tab-pane" id="filetypes" style="overflow-y: auto; overflow-x: hidden;">
-                        <button class='btn btn-default' id='addFileTypeButton'>
-                            <i class='fa fa-plus'></i>&nbsp;<span data-i18n="ns.dialogs:addNewFileExtensionButton"></span>
-                        </button>
-                        <div id='fileTypesList' style="margin-top: 10px"></div>
-                    </div>
-                    <div class="tab-pane" id="keyBindings" style="overflow-y: auto; overflow-x: hidden;">
-                        <form class="form-horizontal" role="form">
-                            <button class='btn btn-default' id='keyBindingInstructionsToggle'>
-                                <i class='fa fa-info-circle'></i>&nbsp;<span data-i18n="ns.dialogs:keyBindingInstructions"></span>
-                            </button>
-                            <div class='form-group col-sm-12' id="keyBindingInstructions">
-                                <p class="help-block"><span data-i18n="ns.dialogs:keyBindingInstructions1">For modifier keys you can use</span>&nbsp;<code>shift</code>, <code>ctrl</code>, <code>alt</code>, <code>option</code>, <code>meta</code>, <code>command</code> &amp; <code>mod</code>.</p>
-                                <p class="help-block"><span data-i18n="ns.dialogs:keyBindingInstructions2">Other special keys are</span>&nbsp;<code>backspace</code>, <code>tab</code>, <code>enter</code>, <code>return</code>, <code>capslock</code>, <code>esc</code>, <code>escape</code>, <code>space</code>, <code>pageup</code>, <code>pagedown</code>, <code>end</code>, <code>home</code>, <code>left</code>, <code>up</code>, <code>right</code>, <code>down</code>, <code>ins</code> &amp; <code>del</code>.</p>
-                                <p class="help-block"><span data-i18n="ns.dialogs:keyBindingInstructions3">Any other key you should be able to reference by name like</span>&nbsp;<code>a</code>, <code>/</code>, <code>$</code>, <code>*</code>, <code>=</code>.</p>
-                                <p class="help-block"><span data-i18n="ns.dialogs:keyBindingInstructions4">You can assign many keys to a single operation, simply by separating them by</span>&nbsp;<code>,</code>.</p>
-                            </div>
-                            <div class='form-group'>
-                                <label class="col-sm-4 control-label" data-i18n="ns.dialogs:selectAllFiles"></label>
-                                <div class="col-sm-7">
-                                    <input type='text' class='form-control' id='selectAllKeyBinding' placeholder='ctrl+a | command+a'/>
-                                </div>
-                            </div>
-                            <div class='form-group'>
-                                <label class="col-sm-4 control-label" data-i18n="ns.dialogs:reloadDocumentKeyBinding"></label>
-                                <div class="col-sm-7">
-                                    <input type='text' class='form-control' id='reloadDocumentKeyBinding' placeholder='ctrl+r | command+r'/>
-                                </div>
-                            </div>
-                            <div class='form-group'>
-                                <label class="col-sm-4 control-label" data-i18n="ns.dialogs:closeDocumentKeyBinding"></label>
-                                <div class="col-sm-7">
-                                    <input type='text' class='form-control' id='closeDocumentKeyBinding' placeholder='esc'/>
-                                </div>
-                            </div>
-                            <div class='form-group'>
-                                <label class="col-sm-4 control-label" data-i18n="ns.dialogs:documentPropertiesKeyBinding"></label>
-                                <div class="col-sm-7">
-                                    <input type='text' class='form-control' id='documentPropertiesKeyBinding' placeholder='alt+enter'/>
-                                </div>
-                            </div>
-                            <div class='form-group'>
-                                <label class="col-sm-4 control-label" data-i18n="ns.dialogs:saveDocumentKeyBinding"></label>
-                                <div class="col-sm-7">
-                                    <input type='text' class='form-control' id='saveDocumentKeyBinding' placeholder='ctrl+s | command+s'/>
-                                </div>
-                            </div>
-                            <div class='form-group'>
-                                <label class="col-sm-4 control-label" data-i18n="ns.dialogs:nextDocumentKeyBinding"></label>
-                                <div class="col-sm-7">
-                                    <input type='text' class='form-control' id='nextDocumentKeyBinding' placeholder='right'/>
-                                </div>
-                            </div>
-                            <div class='form-group'>
-                                <label class="col-sm-4 control-label" data-i18n="ns.dialogs:prevDocumentKeyBinding"></label>
-                                <div class="col-sm-7">
-                                    <input type='text' class='form-control' id='prevDocumentKeyBinding' placeholder='left'/>
-                                </div>
-                            </div>
-                            <div class='form-group'>
-                                <label class="col-sm-4 control-label" data-i18n="ns.dialogs:editDocumentKeyBinding"></label>
-                                <div class="col-sm-7">
-                                    <input type='text' class='form-control' id='editDocumentKeyBinding' placeholder='ctrl+e | command+e'/>
-                                </div>
-                            </div>
-                            <div class='form-group'>
-                                <label class="col-sm-4 control-label" data-i18n="ns.dialogs:addRemoveTagsKeyBinding"></label>
-                                <div class="col-sm-7">
-                                    <input type='text' class='form-control' id='addRemoveTagsKeyBinding' placeholder='ctrl+t | command+t'/>
-                                </div>
-                            </div>
-                            <div class='form-group'>
-                                <label class="col-sm-4 control-label" data-i18n="ns.dialogs:showSearchKeyBinding"></label>
-                                <div class="col-sm-7">
-                                    <input type='text' class='form-control' id='showSearchKeyBinding' placeholder='ctrl+f | command+f'/>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
+                    </form>
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn cancelButton" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times fa-lg"></i></button>
-                <button class="btn btn-primary" id="saveSettingsCloseButton"><i class="fa fa-check fa-lg"></i></button>
+                <!--button class="btn cancelButton" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times fa-lg"></i></button-->
+                <button class="btn btn-primary" id="saveSettingsButton" data-i18n="ns.dialogs:confirmSaveButton"></button>
+                <button class="btn btn-primary" id="saveSettingsRestartButton" data-i18n="ns.dialogs:confirmSaveAndRestartButton"></button>
             </div>
         </div>
     </div>
