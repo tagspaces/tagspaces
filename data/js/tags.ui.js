@@ -442,6 +442,9 @@ define(function(require, exports, module) {
     $('#formAddTags').validator();
     $('#formAddTags').submit(function(e) {
       e.preventDefault();
+      if ($('#createTagButton').prop('disabled') === false) {
+        $('#createTagButton').click();
+      }
     });
     $('#formAddTags').on('invalid.bs.validator', function() {
       $('#createTagButton').prop('disabled', true);
@@ -488,6 +491,9 @@ define(function(require, exports, module) {
     $('#formTagGroupEdit').validator();
     $('#formTagGroupEdit').submit(function(e) {
       e.preventDefault();
+      if ($('#editTagGroupButton').prop('disabled') === false) {
+        $('#editTagGroupButton').click();
+      }
     });
     $('#formTagGroupEdit').on('invalid.bs.validator', function() {
       $('#editTagGroupButton').prop('disabled', true);
@@ -509,6 +515,9 @@ define(function(require, exports, module) {
     $('#formTagGroupCreate').validator();
     $('#formTagGroupCreate').submit(function(e) {
       e.preventDefault();
+      if ($('#createTagGroupButton').prop('disabled') === false) {
+        $('#createTagGroupButton').click();
+      }
     });
     $('#formTagGroupCreate').on('invalid.bs.validator', function() {
       $('#createTagGroupButton').prop('disabled', true);
