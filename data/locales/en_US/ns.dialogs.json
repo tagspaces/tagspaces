@@ -80,6 +80,8 @@
     "filePropertiesSize": "Size in Bytes",
     "filePropertiesLMDT": "Last Modified Datetime",
     "filePropertiesTags": "Tags",
+    "directoryPropertiesDescription": "Directory Description",
+    "directoryPropertiesTitle": "Directory Properties",
     "createLocationTitle": "Connect a Location",
     "createLocationPath": "Location Path",
     "createLocationName": "Location Name",

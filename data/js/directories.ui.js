@@ -121,9 +121,24 @@ define(function(require, exports, module) {
     TSCORE.showLocationsPanel();
   }
 
+  function getDirHistoryItem(path) {
+    for (var i = 0; i < directoryHistory.length; i++) {
+      if(directoryHistory[i].path === path) {
+        return directoryHistory[i];
+      }
+    }
+  }
+
   function loadFolderMetaData(path, element, menuItem) {
+    var historyItem = getDirHistoryItem(path);
+    if(historyItem.metaData !== undefined) {
+      generateFolderTags(historyItem.metaData.tags, element, menuItem);
+      return;
+    }
+
     TSCORE.Meta.loadFolderMetaData(path, function(metaData) {
-      generateFolderTags(metaData ? metaData.tags : null, element, menuItem);
+      historyItem.metaData = metaData;
+      generateFolderTags(metaData ? metaData.tags : null , element, menuItem);
     });
   }
 
@@ -747,4 +762,5 @@ define(function(require, exports, module) {
   exports.showCreateDirectoryDialog = showCreateDirectoryDialog;
   exports.navigateToDirectory = navigateToDirectory;
   exports.generateFolderTags = generateFolderTags;
+  exports.getDirHistoryItem = getDirHistoryItem;
 });
