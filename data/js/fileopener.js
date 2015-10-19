@@ -15,8 +15,7 @@ define(function(require, exports, module) {
   var generatedTagButtons;
   // Backup cancel button <!--button type="button" class="btn editable-cancel"><i class="fa fa-times fa-lg"></i></button-->
   $.fn.editableform.buttons = '<button type="submit" class="btn btn-primary editable-submit"><i class="fa fa-check fa-lg"></i></button>';
-  var closeBtn = '<button type="button" class="btn btn-link" style="position: absolute; top: 5px; right: 5px; color: white;"><span class="glyphicon glyphicon-remove"></span></button>';
-  var $closeBtn = null;
+  var exitFullscreenButton = '<button id="exitFullScreen" class="btn btn-link" title="Exit fullscreen mode (ESC)"><span class="fa fa-remove"></span></button>';
 
   // If a file is currently opened for editing, this var should be true
   var _isEditMode = false;
@@ -27,49 +26,53 @@ define(function(require, exports, module) {
     }
   };
 
-  function onFullScreenChange(event) {
-    if ($closeBtn === null) {
-      $closeBtn = $(closeBtn).click(function() {
-        if (document.exitFullscreen) {
-          document.exitFullscreen();
-        } else if (document.mozCancelFullScreen) {
-          document.mozCancelFullScreen();
-        } else if (document.webkitExitFullscreen) {
-          document.webkitExitFullscreen();
-        }
-      });
-      $('#viewer').append($closeBtn);
-    } else {
-      $closeBtn.remove();
-      $closeBtn = null;
+  function isFullScreen() {
+    return (window.innerHeight === screen.height);
+  }
+
+  function leaveFullScreen() {
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+    } else if (document.msExitFullscreen) {
+      document.msExitFullscreen();
+    } else if (document.mozCancelFullScreen) {
+      document.mozCancelFullScreen();
+    } else if (document.webkitExitFullscreen) {
+      document.webkitExitFullscreen();
+    }
+    $("#exitFullScreen").remove();
+    return false;
+  }
+
+  function switchToFullScreen() {
+    $('#viewer').append(exitFullscreenButton);
+    $("#exitFullScreen")
+      .on("click", leaveFullScreen)
+      .show();
+
+    var docElm = $('#viewer')[0];
+    if (docElm.requestFullscreen) {
+      docElm.requestFullscreen();
+    } else if (docElm.mozRequestFullScreen) {
+      docElm.mozRequestFullScreen();
+    } else if (docElm.webkitRequestFullScreen) {
+      docElm.webkitRequestFullScreen();
     }
   }
 
   function initUI() {
-    $('#editDocument').click(function() {
-      editFile(_openedFilePath);
-    });
-    $('#saveDocument').click(function() {
-      saveFile();
-    });
-    $('#closeOpenedFile').click(function() {
-      closeFile();
-    });
+    $('#editDocument').click(function() { editFile(_openedFilePath); });
+    $('#saveDocument').click(function() { saveFile(); });
+    $('#closeOpenedFile').click(function() { closeFile(); });
     $('#nextFileButton').click(function() {
       TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getNextFile(_openedFilePath));
     });
     $('#prevFileButton').click(function() {
       TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getPrevFile(_openedFilePath));
     });
-    $('#closeFile').click(function() {
-      closeFile();
-    });
-    $('#reloadFile').click(function() {
-      TSCORE.FileOpener.openFile(_openedFilePath);
-    });
-    $('#sendFile').click(function() {
-      TSCORE.IO.sendFile(_openedFilePath);
-    });
+    $('#closeFile').click(function() { closeFile(); });
+    $('#reloadFile').click(function() { TSCORE.FileOpener.openFile(_openedFilePath); });
+    $('#sendFile').click(function() { TSCORE.IO.sendFile(_openedFilePath); });
     $('#openFileInNewWindow').click(function() {
       if (isWeb) {
         if (location.port === '') {
@@ -81,9 +84,7 @@ define(function(require, exports, module) {
         window.open('file:///' + _openedFilePath);
       }
     });
-    $('#printFile').click(function() {
-      $('iframe').get(0).contentWindow.print();
-    });
+    $('#printFile').click(function() { $('iframe').get(0).contentWindow.print(); });
     $('#tagFile').click(function() {
       if (_isFileChanged) {
         TSCORE.showAlertDialog($.i18n.t('ns.dialogs:operationNotPermittedInEditModeAlert'));
@@ -110,39 +111,14 @@ define(function(require, exports, module) {
       var newFilePath = TSCORE.currentPath + TSCORE.dirSeparator + fileNameWithOutExt + '_' + currentDateTime + '.' + fileExt;
       TSCORE.IO.copyFile(_openedFilePath, newFilePath);
     });
-    $('#toggleFullWidthButton').click(function() {
-      TSCORE.toggleFullWidth();
-    });
-    $('#deleteFile').click(function() {
-      TSCORE.showFileDeleteDialog(_openedFilePath);
-    });
-    $('#openNatively').click(function() {
-      TSCORE.IO.openFile(_openedFilePath);
-    });
+    $('#toggleFullWidthButton').on("click", TSCORE.toggleFullWidth);
+    $('#fullscreenFile').on("click", switchToFullScreen);
+    $('#openProperties').on("click", showFilePropertiesDialog);
+    $('#deleteFile').click(function() { TSCORE.showFileDeleteDialog(_openedFilePath); });
+    $('#openNatively').click(function() { TSCORE.IO.openFile(_openedFilePath); });
     $('#openDirectory').click(function() {
       TSCORE.IO.openDirectory(TSCORE.TagUtils.extractParentDirectoryPath(_openedFilePath));
     });
-    $('#fullscreenFile').click(function() {
-      var docElm = $('#viewer')[0];
-      if (docElm.requestFullscreen) {
-        docElm.requestFullscreen();
-      } else if (docElm.mozRequestFullScreen) {
-        docElm.mozRequestFullScreen();
-      } else if (docElm.webkitRequestFullScreen) {
-        docElm.webkitRequestFullScreen();
-      }
-    });
-    $('#openProperties').click(function() {
-      showFilePropertiesDialog();
-    });
-
-    if (document.exitFullscreen) {
-      document.addEventListener("fullscreenchange", onFullScreenChange);
-    } else if (document.mozCancelFullScreen) {
-      document.addEventListener("mozfullscreenchange", onFullScreenChange);
-    } else if (document.webkitExitFullscreen) {
-      document.addEventListener("webkitfullscreenchange", onFullScreenChange);
-    }
   }
 
   function isFileChanged() {
@@ -194,10 +170,8 @@ define(function(require, exports, module) {
   }
 
   function cleanViewer() {
-    //TSCORE.PerspectiveManager.clearSelectedFiles();
     TSCORE.closeFileViewer();
     // Cleaning the viewer/editor
-    //document.getElementById("viewer").innerHTML = "";
     $('#viewer').find('*').off().unbind();
     $('#viewer').find('iframe').remove();
     $('#viewer').find('*').children().remove();
@@ -338,18 +312,11 @@ define(function(require, exports, module) {
       return false;
     });
 
-    Mousetrap.bindGlobal("esc", function() {
-      if (document.exitFullscreen) {
-        document.exitFullscreen();
-      } else if (document.msExitFullscreen) {
-        document.msExitFullscreen();
-      } else if (document.mozCancelFullScreen) {
-        document.mozCancelFullScreen();
-      } else if (document.webkitExitFullscreen) {
-        document.webkitExitFullscreen();
-      }
-      return false;
-    });
+    Mousetrap.bindGlobal("esc", leaveFullScreen);
+
+    if (isFullScreen()) {
+      switchToFullScreen();
+    }
   }
 
   function setFileProperties(fileProperties) {
