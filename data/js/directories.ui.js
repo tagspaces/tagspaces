@@ -482,6 +482,9 @@ define(function(require, exports, module) {
       $('#formLocationEdit').validator();
       $('#formLocationEdit').submit(function(e) {
         e.preventDefault();
+        //if ($('#saveLocationButton').prop('disabled') === false) {
+        //  $('#saveLocationButton').click();
+        //}
       });
       $('#formLocationEdit').on('invalid.bs.validator', function() {
         $('#saveLocationButton').prop('disabled', true);
@@ -540,6 +543,9 @@ define(function(require, exports, module) {
       $('#formLocationCreate').validator();
       $('#formLocationCreate').submit(function(e) {
         e.preventDefault();
+        //if ($('#createFolderConnectionButton').prop('disabled') === false) {
+        //  $('#createFolderConnectionButton').click();
+        //}
       });
       $('#formLocationCreate').on('invalid.bs.validator', function() {
         $('#createFolderConnectionButton').prop('disabled', true);
@@ -573,6 +579,9 @@ define(function(require, exports, module) {
       $('#formDirectoryCreate').validator();
       $('#formDirectoryCreate').submit(function(e) {
         e.preventDefault();
+        if ($('#createNewDirectoryButton').prop('disabled') === false) {
+          $('#createNewDirectoryButton').click();
+        }
       });
       $('#formDirectoryCreate').on('invalid.bs.validator', function() {
         $('#createNewDirectoryButton').prop('disabled', true);
@@ -602,6 +611,9 @@ define(function(require, exports, module) {
       $('#formDirectoryRename').validator();
       $('#formDirectoryRename').submit(function(e) {
         e.preventDefault();
+        if ($('#renameDirectoryButton').prop('disabled') === false) {
+          $('#renameDirectoryButton').click();
+        }
       });
       $('#formDirectoryRename').on('invalid.bs.validator', function() {
         $('#renameDirectoryButton').prop('disabled', true);
