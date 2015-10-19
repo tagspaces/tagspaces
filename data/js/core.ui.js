@@ -667,7 +667,6 @@ define(function(require, exports, module) {
     if (isCordova) {
       $('#directoryMenuOpenDirectory').parent().hide();
       $('#fileMenuOpenDirectory').parent().hide();
-      $('#fullscreenFile').parent().hide();
       $('#openDirectory').parent().hide();
       $('#downloadFile').parent().hide();
       $('#openFileInNewWindow').hide();
@@ -689,7 +688,6 @@ define(function(require, exports, module) {
       $('#openNatively').hide();
       $('#fileMenuOpenNatively').parent().hide();
     } else if (isNode) {
-      //$('#fullscreenFile').hide();
       $('#openFileInNewWindow').hide();
       //handling window maximization
       var nwwin = gui.Window.get();
