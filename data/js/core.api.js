@@ -343,14 +343,14 @@ define(function(require, exports, module) {
     }
 
     if (shouldOpenCol2) {
-//      $("#openLeftPanel").hide();
+      //$("#openLeftPanel").hide();
       $(".col2").show();
     } else {
       $(".col2").hide();
     }
 
     if (shouldOpenCol3) {
-//      $("#openLeftPanel").hide();
+      //$("#openLeftPanel").hide();
       $(".col3").show();
       hidePerspectiveMenu();
     } else {

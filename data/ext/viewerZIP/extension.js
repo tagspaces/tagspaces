@@ -55,8 +55,8 @@ define(function(require, exports, module) {
       'fontSize': 12,
       'width': '100%',
       'height': '100%',
-      }).appendTo($parent);
-      //.width($parent.width()).height($parent.height()).appendTo($parent);
+    }).appendTo($parent);
+    //.width($parent.width()).height($parent.height()).appendTo($parent);
 
     TSCORE.showLoadingAnimation();
     
@@ -66,7 +66,6 @@ define(function(require, exports, module) {
       var ulFiles = $previewElement.append("<ul/>");
 
       for (var fileName in zipFile.files) {
-
         if (zipFile.files[fileName].dir === true) {
           continue;
         }

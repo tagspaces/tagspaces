@@ -399,13 +399,13 @@ define(function(require, exports, module) {
   }
 
   function removeTags(filePathArray, tagArray) {
-      console.log('Remove tags from files');
-      for (var i = 0; i < filePathArray.length; i++) {
-        removeTagsFromFile(filePathArray[i], tagArray);
-      }
+    console.log('Remove tags from files');
+    for (var i = 0; i < filePathArray.length; i++) {
+      removeTagsFromFile(filePathArray[i], tagArray);
     }
-    // Moves the location of tag in the file name
-    // possible directions should be next, prev, last, first
+  }
+
+  // Moves the location of tag in the file name possible directions should be next, prev, last, first
   function moveTagLocation(filePath, tagName, direction) {
     console.log('Moves the location of tag in the file name: ' + filePath);
     var fileName = extractFileName(filePath);

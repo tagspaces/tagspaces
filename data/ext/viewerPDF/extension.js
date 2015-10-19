@@ -13,12 +13,11 @@ define(function(require, exports, module) {
   exports.supportedFileTypes = ["pdf"];
 
   var TSCORE = require("tscore");
-  var TSPRO = require("tspro");
   var extensionDirectory = TSCORE.Config.getExtensionPath() + "/" + exports.id;
 
   exports.init = function(filePath, elementID) {
     console.log("Initalization Browser PDF Viewer...");
-    if (TSPRO.available) {
+    if (TSCORE.PRO) {
       exports.getTextContent(filePath, function(content) {
         TSPRO.saveTextContent(filePath, content);
       });

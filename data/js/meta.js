@@ -2,7 +2,6 @@ define(function(require, exports, module) {
   'use strict';
 
   var TSCORE = require("tscore");
-  var TSPRO = require("tspro");
 
   function makeMetaPathByName(name) {
     return TSCORE.currentPath + TSCORE.dirSeparator + TSCORE.metaFolder + name;
@@ -63,11 +62,28 @@ define(function(require, exports, module) {
     TSCORE.metaFileList.forEach(function(element, index) {
       if (element.name.indexOf(name) >= 0) {
         if (newFileName) {
+          var pathOld  = TSCORE.Utils.dirName(oldFileName);
+          var pathNew = TSCORE.Utils.dirName(newFileName);
+          var path = TSCORE.currentPath;
+
+          if (pathNew.lastIndexOf(TSCORE.dirSeparator) === 0) {
+            pathOld += TSCORE.dirSeparator;
+          }
+
+          if (pathOld != pathNew) {
+            path = pathNew;
+          }
           var newName = TSCORE.Utils.baseName(newFileName) + "." + element.name.split('.').pop();
-          var newFilePath = TSCORE.currentPath + TSCORE.dirSeparator + TSCORE.metaFolder + TSCORE.dirSeparator + newName;
+          var newFilePath = path + TSCORE.dirSeparator + TSCORE.metaFolder + TSCORE.dirSeparator + newName;
           TSCORE.IO.renameFile(element.path, newFilePath);
-          element.name = newName;
-          element.path = newFilePath;
+
+          if (pathOld == TSCORE.currentPath) {
+            element.name = newName;
+            element.path = newFilePath;  
+          } else {
+            TSCORE.metaFileList.splice(index, 1);
+          }
+          
         } else {
           TSCORE.IO.deleteElement(element.path);
           TSCORE.metaFileList.splice(index, 1);
@@ -78,8 +94,8 @@ define(function(require, exports, module) {
 
   function loadThumbnail(filePath) {
     var promise = new Promise(function(resolve, reject) {
-      if (TSPRO.available) {
-        TSPRO.getThumbnailURL(filePath, function(dataURL) {
+      if (TSCORE.PRO) {
+        TSCORE.PRO.getThumbnailURL(filePath, function(dataURL) {
           resolve(dataURL);
         });
       } else {

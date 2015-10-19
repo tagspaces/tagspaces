@@ -82,7 +82,7 @@ module.exports = function(grunt) {
     jscs: {
       options: {
         config: ".jscs.json",
-        maxErrors: 5
+        maxErrors: 10
       },
       files: {
         src: [
@@ -234,7 +234,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-replace');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-compress');
-  grunt.loadNpmTasks('grunt-mozilla-addon-sdk');
   grunt.loadNpmTasks("grunt-jscs");
   grunt.loadNpmTasks('grunt-jsdoc');
   grunt.loadNpmTasks('grunt-fixmyjs');
@@ -251,9 +250,9 @@ module.exports = function(grunt) {
     jsDAV.debugMode = true;
     var jsDAV_Auth_Backend_File = require("jsDAV/lib/DAV/plugins/auth/file");
     jsDAV.createServer({
-        node: "./data",
-        authBackend:  jsDAV_Auth_Backend_File.new("./jsdavauth"),
-        realm: "jdavtest"
+      node: "./data",
+      authBackend:  jsDAV_Auth_Backend_File.new("./jsdavauth"),
+      realm: "jdavtest"
     }, 8000);
     grunt.log.writeln("WebDAV server started");
   }),

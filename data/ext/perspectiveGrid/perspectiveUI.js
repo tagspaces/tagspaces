@@ -8,17 +8,16 @@ define(function(require, exports, module) {
   console.log("Loading UI for perspectiveDefault");
 
   var TSCORE = require("tscore");
-  var TSPRO = require("tspro");
   var TMB_SIZES = ["200px", "300px", "100px"];
 
   var MONTH = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
-  var supportedFileTypeThumnailing = [
+  /*var supportedFileTypeThumnailing = [
     "jpg", "jpeg", "png", "gif", "pdf", "svg", "webp", "bmp", 
     "zip", "epub", "docx", "pptx", "pptm", "potx", "potm", 
     "ppxs", "ppsm", "sldx", "sldm", "dotx",  "dotm", "xlsx", 
     "xlsm", "xlst", "odp", "odg", "ods", "odt" 
-  ];
+  ];*/
 
   function ExtUI(extID) {
     this.extensionID = extID;
@@ -96,7 +95,7 @@ define(function(require, exports, module) {
     } else {
       tmbPath = "file:///" + filePath;
     }
-    var metaObj = metaObj || { thumbnailPath : ""};
+    var metaObj = metaObj || {thumbnailPath : ""};
     var context = {
       filepath: filePath,
       tmbpath: tmbPath,
@@ -177,7 +176,7 @@ define(function(require, exports, module) {
     console.log("Init UI module");
 
     var self = this;
-    this.viewContainer.append(toolbarTemplate({ id: this.extensionID }));
+    this.viewContainer.append(toolbarTemplate({id: this.extensionID}));
 
     $("#" + this.extensionID + "ToogleSelectAll").on("click", function() {
       self.toggleSelectAll();
@@ -499,8 +498,8 @@ define(function(require, exports, module) {
         TSCORE.openTagMenu(this, $(this).attr("tag"), $(this).attr("filepath"));
       });
 
-    Mousetrap.unbind("mod+a");
-    Mousetrap.bindGlobal("mod+a", function() {
+    Mousetrap.unbind(TSCORE.Config.getSelectAllKeyBinding());
+    Mousetrap.bindGlobal(TSCORE.Config.getSelectAllKeyBinding(), function() {
       self.toggleSelectAll();
     });
   };

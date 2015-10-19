@@ -627,3 +627,13 @@ input a.resetFilter {
 .col2 > .row2 > div {
   background-color: white;
 }
+
+#exitFullScreen {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  color: white;
+  background-color: rgba(173, 173, 173, 0.5);
+  display: none;
+  z-index: 99999;
+}

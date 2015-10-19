@@ -47,7 +47,12 @@ define(function(require, exports, module) {
 
   var baseName = function(dirPath) {
     var fileName = dirPath.substring(dirPath.lastIndexOf("/") + 1, dirPath.length);
-    return fileName ? fileName : dirPath; 
+    return fileName ? fileName : dirPath;
+  };
+
+  var dirName = function(dirPath) {
+    return dirPath.replace(/\/[^\/]*$/, '');
+    //return dirPath.match( /(.*)[/\]/)[1];
   };
 
   exports.arrayBufferToDataURL = arrayBufferToDataURL;
@@ -56,4 +61,5 @@ define(function(require, exports, module) {
   exports.getBase64Image = getBase64Image;
   exports.arrayBufferToStr = arrayBufferToStr;
   exports.baseName  = baseName;
+  exports.dirName = dirName;
 });

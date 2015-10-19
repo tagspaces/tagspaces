@@ -11,20 +11,20 @@ define(function(require, exports, module) {
   var tagTemplate = {
     'title': undefined,
     'type': 'plain'
-      /*          ,
-               "pattern":"yyyymmddhhmmss-yyyymmddhhmmss",
-               "example":"20120114123456-20120823231235",
-               "regex":"",
-               "maxlength":17,
-               "chainedTags":[
-               "isbn","autor"
-               ],
-               "url": "http://example.com",
-               "action":"showDatePicker",
-               "prefixes":[
-               "EUR", "USD", "BGN"
-               ]
-               */
+    /*
+    "pattern":"yyyymmddhhmmss-yyyymmddhhmmss",
+    "example":"20120114123456-20120823231235",
+    "regex":"",
+    "maxlength":17,
+    "chainedTags":[
+    "isbn","autor"
+    ],
+    "url": "http://example.com",
+    "action":"showDatePicker",
+    "prefixes":[
+    "EUR", "USD", "BGN"
+    ]
+    */
   };
   var locationTemplate = {
     'name': undefined,
@@ -424,6 +424,18 @@ define(function(require, exports, module) {
   var setReloadDocumentKeyBinding = function(value) {
     exports.Settings.keyBindings.reloadDocument = value;
   };
+  var setSelectAllKeyBinding = function(value) {
+    exports.Settings.keyBindings.selectAll = value;
+  };
+
+  var getSelectAllKeyBinding = function() {
+    updateKeyBindingsSetting();
+    if (exports.Settings.keyBindings.selectAll === undefined) {
+      exports.Settings.keyBindings.selectAll = exports.DefaultSettings.keyBindings.selectAll;
+      saveSettings();
+    }
+    return exports.Settings.keyBindings.selectAll;
+  };
   var getDeleteDocumentKeyBinding = function() {
     updateKeyBindingsSetting();
     if (exports.Settings.keyBindings.deleteDocument === undefined) {
@@ -604,6 +616,15 @@ define(function(require, exports, module) {
   };
   var setLoadLocationMeta = function(value) {
     exports.Settings.loadLocationMeta = value;
+  };
+  var getEnableMetaData = function() {
+    if (exports.Settings.enableMetaData === undefined) {
+      exports.Settings.enableMetaData = exports.DefaultSettings.enableMetaData;
+    }
+    return exports.Settings.enableMetaData;
+  };
+  var setEnableMetaData = function(value) {
+    exports.Settings.enableMetaData = value;
   };
   var getSupportedFileTypes = function() {
     if (exports.Settings.supportedFileTypes === undefined) {
@@ -1015,6 +1036,8 @@ define(function(require, exports, module) {
   exports.setCalculateTags = setCalculateTags;
   exports.getLoadLocationMeta = getLoadLocationMeta;
   exports.setLoadLocationMeta = setLoadLocationMeta;
+  exports.setEnableMetaData = setEnableMetaData;
+  exports.getEnableMetaData = getEnableMetaData;
   exports.getIsWindowMaximized = getIsWindowMaximized;
   exports.setIsWindowMaximized = setIsWindowMaximized;
   exports.getLastOpenedLocation = getLastOpenedLocation;
@@ -1040,6 +1063,8 @@ define(function(require, exports, module) {
   exports.setSaveDocumentKeyBinding = setSaveDocumentKeyBinding;
   exports.getReloadDocumentKeyBinding = getReloadDocumentKeyBinding;
   exports.setReloadDocumentKeyBinding = setReloadDocumentKeyBinding;
+  exports.getSelectAllKeyBinding = getSelectAllKeyBinding;
+  exports.setSelectAllKeyBinding = setSelectAllKeyBinding;
   exports.getDeleteDocumentKeyBinding = getDeleteDocumentKeyBinding;
   exports.setDeleteDocumentKeyBinding = setDeleteDocumentKeyBinding;
   exports.getPropertiesDocumentKeyBinding = getPropertiesDocumentKeyBinding;
