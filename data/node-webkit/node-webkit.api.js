@@ -351,7 +351,8 @@ define(function(require, exports, module) {
     fs.move(filePath, newFilePath, function(error) {
       if (error) {
         TSCORE.hideWaitingDialog();
-        TSCORE.showAlertDialog($.i18n.t("ns.common:fileRenameFailedDiffPartition", {fileName:filePath}));
+        //TSCORE.showAlertDialog($.i18n.t("ns.common:fileRenameFailedDiffPartition", {fileName:filePath}));
+        TSCORE.showAlertDialog("Renaming: " + filePath + " failed.");
         return;
       }
       TSPOSTIO.renameFile(filePath, newFilePath);
