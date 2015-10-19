@@ -19,11 +19,13 @@ define(function(require, exports, module) {
   };
 
   exports.createDirectory = function(dirPath) {
+    TSCORE.showSuccessDialog("Directory created successfully.");
     TSCORE.navigateToDirectory(dirPath);
     TSCORE.hideWaitingDialog();
   };
 
   exports.copyFile = function(sourceFilePath, targetFilePath) {
+    TSCORE.showSuccessDialog("Directory copied successfully.");
     var targetDirectory = TSCORE.TagUtils.extractContainingDirectoryPath(targetFilePath);
     if (targetDirectory === TSCORE.currentPath) {
       TSCORE.navigateToDirectory(TSCORE.currentPath);
@@ -55,11 +57,11 @@ define(function(require, exports, module) {
       TSCORE.PerspectiveManager.updateFileUI(oldFilePath, newFilePath);
     }
     TSCORE.Meta.updateMetaData(oldFilePath, newFilePath);
-
-    TSCORE.hideWaitingDialog(); //TSCORE.PerspectiveManager.clearSelectedFiles();
+    TSCORE.hideWaitingDialog();
   };
 
   exports.renameDirectory = function(dirOldPath, dirNewPath) {
+    TSCORE.showSuccessDialog("Directory renamed successfully.");
     TSCORE.navigateToDirectory(dirNewPath);
     TSCORE.hideLoadingAnimation();
   };
@@ -70,14 +72,18 @@ define(function(require, exports, module) {
   };
 
   exports.saveBinaryFile = function(filePath) {
+    TSCORE.showSuccessDialog("File saved successfully.");
     TSCORE.PerspectiveManager.refreshFileListContainer();
   };
 
   exports.saveTextFile = function(filePath, isNewFile) {
     TSCORE.PerspectiveManager.refreshFileListContainer();
     if (isNewFile) {
+      TSCORE.showSuccessDialog("File created successfully.");
       // If file is new open it in edit mode
       TSCORE.FileOpener.openFile(filePath, true);
+    } else {
+      TSCORE.showSuccessDialog("File saved successfully.");
     }
     TSCORE.FileOpener.setFileChanged(false);
   };
@@ -109,6 +115,7 @@ define(function(require, exports, module) {
   };
 
   exports.deleteElement = function(filePath) {
+    TSCORE.showSuccessDialog("File deleted successfully.");
     TSCORE.removeFileModel(TSCORE.fileList, filePath);
     TSCORE.Meta.updateMetaData(filePath);
     TSCORE.PerspectiveManager.removeFileUI(filePath);
@@ -119,12 +126,12 @@ define(function(require, exports, module) {
   };
 
   exports.deleteDirectory = function(dirPath) {
+    TSCORE.showSuccessDialog("Directory deleted successfully.");
     TSCORE.navigateToDirectory(TSCORE.TagUtils.extractParentDirectoryPath(dirPath));
     TSCORE.hideLoadingAnimation();
   };
 
   exports.deleteDirectoryFailed = function(dirPath) {
-    console.log('Deleting of \'' + dirPath + '\' failed');
     TSCORE.showAlertDialog($.i18n.t('ns.dialogs:errorDeletingDirectoryAlert'));
     TSCORE.hideLoadingAnimation();
   };

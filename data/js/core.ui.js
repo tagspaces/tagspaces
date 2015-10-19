@@ -26,6 +26,28 @@ define(function(require, exports, module) {
   var hideWaitingDialog = function(message, title) {
     $('#waitingDialog').modal('hide');
   };
+
+  var showSuccessDialog = function(message) {
+    if (!message) {
+      return;
+    }
+    var n = noty({
+      text: message,
+      layout: 'bottomCenter',
+      theme: 'relax',
+      type: 'success',
+      animation: {
+        open: 'animated pulse',
+        close: 'animated flipOutX',
+        easing: 'swing',
+        speed: 500
+      },
+      timeout: 4000,
+      maxVisible: 5,
+      closeWith: ['button', 'click'],
+    });
+  };
+
   var showAlertDialog = function(message, title) {
     if (!title) {
       title = $.i18n.t('ns.dialogs:titleAlert');
@@ -34,8 +56,19 @@ define(function(require, exports, module) {
       message = 'No Message to Display.';
     }
     var n = noty({
-      text: message,
+      text: "<strong>" + title + "</strong><br>" + message,
       layout: 'bottomCenter',
+      theme: 'relax',
+      type: 'warning',
+      animation: {
+        open: 'animated pulse',
+        close: 'animated flipOutX',
+        easing: 'swing',
+        speed: 500
+      },
+      timeout: 10000,
+      maxVisible: 5,
+      closeWith: ['button', 'click'],
     });
     /*var alertModal = $('#alertDialog');
     alertModal.find('h4').text(title);
@@ -163,6 +196,9 @@ define(function(require, exports, module) {
     $('#formEditTag').validator();
     $('#formEditTag').submit(function(e) {
       e.preventDefault();
+      if ($('#editTagButton').prop('disabled') === false) {
+        $('#editTagButton').click();
+      }
     });
     $('#formEditTag').on('invalid.bs.validator', function() {
       $('#editTagButton').prop('disabled', true);
@@ -672,6 +708,8 @@ define(function(require, exports, module) {
       $('#openFileInNewWindow').hide();
       $('#openGooglePlay').hide();
       $('.cancelButton').hide();
+    } else if (isCordovaiOS) {
+      $('#fullscreenFile').parent().hide();
     } else if (isChrome) {
       $('#directoryMenuOpenDirectory').parent().hide();
       $('#fileMenuOpenDirectory').parent().hide();
@@ -785,6 +823,7 @@ define(function(require, exports, module) {
   exports.hideWaitingDialog = hideWaitingDialog;
   exports.showWaitingDialog = showWaitingDialog;
   exports.showAlertDialog = showAlertDialog;
+  exports.showSuccessDialog = showSuccessDialog;
   exports.showConfirmDialog = showConfirmDialog;
   exports.showFileRenameDialog = showFileRenameDialog;
   exports.showFileCreateDialog = showFileCreateDialog;
