@@ -30,6 +30,7 @@ define(function (require, exports, module) {
         "lastOpenedLocation":       "",
         "useDefaultLocation":       false, 
         "writeMetaToSidecarFile":   false,
+        "enableMetaData":           false,
         "webDavPath"  :             "oc/remote.php/webdav",
         "ootbPerspectives":         [@@DEFAULTPERSPECTIVES],
         "ootbViewers":              [ "viewerBrowser", "viewerMD", "viewerImage", "viewerPDF", "editorText", "viewerText", "editorODF", "viewerURL", "viewerHTML", "viewerMHTML", "editorJSON", "viewerZIP", "viewerEPUB", "viewerAudioVideo" ],
