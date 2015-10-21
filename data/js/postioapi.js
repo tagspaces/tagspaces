@@ -13,8 +13,8 @@ define(function(require, exports, module) {
     TSCORE.hideWaitingDialog();
   };
 
-  exports.createDirectoryTree = function(directoyTree) {
-    TSCORE.PerspectiveManager.updateTreeData(directoyTree);
+  exports.createDirectoryTree = function(directoryTree) {
+    TSCORE.PerspectiveManager.updateTreeData(directoryTree);
     TSCORE.hideWaitingDialog();
   };
 
@@ -25,7 +25,7 @@ define(function(require, exports, module) {
   };
 
   exports.copyFile = function(sourceFilePath, targetFilePath) {
-    TSCORE.showSuccessDialog("Directory copied successfully.");
+    TSCORE.showSuccessDialog("File copied successfully.");
     var targetDirectory = TSCORE.TagUtils.extractContainingDirectoryPath(targetFilePath);
     if (targetDirectory === TSCORE.currentPath) {
       TSCORE.navigateToDirectory(TSCORE.currentPath);
