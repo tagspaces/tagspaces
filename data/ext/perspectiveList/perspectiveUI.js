@@ -64,8 +64,14 @@ define(function(require, exports, module) {
     });
 
     $("#" + this.extensionID + "DeleteSelectedFilesButton").on("click", function() {
+      var selFiles = [];
+      TSCORE.selectedFiles.forEach(function(file) {
+        selFiles.push(TSCORE.Utils.baseName(file));
+      });
       TSCORE.showConfirmDialog($.i18n.t('ns.dialogs:fileDeleteTitleConfirm'),
-        $.i18n.t('ns.dialogs:selectedFilesDeleteContentConfirm'), function() {
+        $.i18n.t('ns.dialogs:selectedFilesDeleteContentConfirm', {
+          selectedFiles:  selFiles.toString()
+        }), function() {
           TSCORE.selectedFiles.forEach(function(file) {
             TSCORE.IO.deleteElement(file);
           });
