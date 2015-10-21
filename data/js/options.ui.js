@@ -28,18 +28,15 @@ define(function(require, exports, module) {
 
   function addPerspective(parent, perspectiveId) {
     var perspectiveControl = $('<div class="form-inline">')
-        .append($('<div class="flexLayout">')
-          .append($('<select class="form-control flexMaxWidth"></select>'))
-          .append($('<button class="btn btn-link" style="width: 40px" data-i18n="[title]ns.dialogs:removePerspectiveTooltip"><i class="fa fa-times"></button>')
-            .click(function() {
-              var row4Remove = $(this).parent().parent();
-              TSCORE.showConfirmDialog(
-                $.i18n.t('ns.dialogs:titleConfirm'),
-                "Do you really want to remove this perspective?",
-                function() {
-                  row4Remove.remove();
-                });
-              })));
+      .append($('<div class="flexLayout">')
+        .append($('<select class="form-control flexMaxWidth"></select>'))
+        .append($('<button class="btn btn-link" style="width: 40px" data-i18n="[title]ns.dialogs:removePerspectiveTooltip"><i class="fa fa-times"></button>')
+          .click(function() {
+            var row4Remove = $(this).parent().parent();
+            TSCORE.showConfirmDialog($.i18n.t('ns.dialogs:titleConfirm'), "Do you really want to remove this perspective?", function() {
+              row4Remove.remove();
+            });
+          })));
     generateSelectOptions(perspectiveControl.find('select'), TSCORE.Config.getPerspectiveExtensions(), perspectiveId, "ns.dialogs:choosePerspective");
     perspectiveControl.i18n();
     parent.append(perspectiveControl);
@@ -47,20 +44,17 @@ define(function(require, exports, module) {
 
   function addFileType(parent, fileext, viewerId, editorId) {
     var fileTypeControl = $('<div class="form-inline">')
-        .append($('<div class="flexLayout" >')
-          .append($('<input style="width: 80px" type="text" class="form-control" data-i18n="[placeholder]ns.dialogs:fileExtensionPlaceholder">').val(fileext))
-          .append($('<select class="ftviewer form-control flexMaxWidth"></select>'))
-          .append($('<select class="fteditor form-control flexMaxWidth"></select>'))
-          .append($('<button style="width: 30px" class="btn btn-link" data-i18n="[title]ns.dialogs:removeFileTypeTooltip"><i class="fa fa-times"></button>')
-            .click(function() {
-              var row4Remove = $(this).parent().parent();
-              TSCORE.showConfirmDialog(
-                $.i18n.t('ns.dialogs:titleConfirm'),
-                "Do you really want to remove this file type?",
-                function() {
-                  row4Remove.remove();
-                });
-            })));
+      .append($('<div class="flexLayout" >')
+        .append($('<input style="width: 80px" type="text" class="form-control" data-i18n="[placeholder]ns.dialogs:fileExtensionPlaceholder">').val(fileext))
+        .append($('<select class="ftviewer form-control flexMaxWidth"></select>'))
+        .append($('<select class="fteditor form-control flexMaxWidth"></select>'))
+        .append($('<button style="width: 30px" class="btn btn-link" data-i18n="[title]ns.dialogs:removeFileTypeTooltip"><i class="fa fa-times"></button>')
+        .click(function() {
+          var row4Remove = $(this).parent().parent();
+          TSCORE.showConfirmDialog($.i18n.t('ns.dialogs:titleConfirm'), "Do you really want to remove this file type?", function() {
+            row4Remove.remove();
+          });
+        })));
     generateSelectOptions(fileTypeControl.find('.ftviewer'), TSCORE.Config.getViewerExtensions(), viewerId, "ns.dialogs:chooseFileViewer");
     generateSelectOptions(fileTypeControl.find('.fteditor'), TSCORE.Config.getEditorExtensions(), editorId, "ns.dialogs:chooseFileEditor");
     fileTypeControl.i18n();
