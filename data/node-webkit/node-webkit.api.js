@@ -1,9 +1,11 @@
 /* Copyright (c) 2012-2015 The TagSpaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that
  * can be found in the LICENSE file. */
-
-/* global define, fs, process, gui  */
+/* global define, fs, process, gui, pathUtils  */
 /* undef: true, unused: true */
+var fs = require('fs-extra'); // jshint ignore:line
+var pathUtils = require('path'); // jshint ignore:line
+var gui = require('nw.gui'); // jshint ignore:line
 
 define(function(require, exports, module) {
   "use strict";
@@ -209,6 +211,7 @@ define(function(require, exports, module) {
     } catch (ex) {
       TSCORE.hideLoadingAnimation();
       console.error("Scanning directory " + dirPath + " failed " + ex);
+      //TSCORE.showAlertDialog("Scanning directory " + dirPath + " failed.");
     }
   }
 
@@ -240,7 +243,8 @@ define(function(require, exports, module) {
       return tree;
     } catch (ex) {
       TSCORE.hideLoadingAnimation();
-      console.error("Scanning directory " + dirPath + " failed " + ex);
+      console.error("Generating tree for " + dirPath + " failed " + ex);
+      //TSCORE.showAlertDialog("Generating folder tree for " + dirPath + " failed.");
     }
   }
 
@@ -269,6 +273,7 @@ define(function(require, exports, module) {
       if (error) {
         TSCORE.hideLoadingAnimation();
         console.error("Creating directory " + dirPath + " failed " + error);
+        TSCORE.showAlertDialog("Creating " + dirPath + " failed.");
         return;
       }
       if (silentMode !== true) {
@@ -381,6 +386,7 @@ define(function(require, exports, module) {
         if (error) {
           TSCORE.hideLoadingAnimation();
           console.error("Renaming directory failed " + error);
+          TSCORE.showAlertDialog("Renaming " + dirPath + " failed.");
           return;
         }
         TSPOSTIO.renameDirectory(dirPath, newDirPath);
@@ -403,11 +409,12 @@ define(function(require, exports, module) {
       stream.on('error', function(err) {
         TSCORE.hideLoadingAnimation();
         console.error("Loading file " + filePath + " failed " + err);
+        TSCORE.showAlertDialog("Lading " + filePath + " failed.");
         return;
       });
 
       stream.on('data', function(content) {
-        console.log("Stream: " + content);
+        //console.log("Stream: " + content);
         TSPOSTIO.loadTextFile(content);
       });
 
@@ -416,6 +423,7 @@ define(function(require, exports, module) {
         if (error) {
           TSCORE.hideLoadingAnimation();
           console.error("Loading file " + filePath + " failed " + error);
+          TSCORE.showAlertDialog("Loading " + filePath + " failed.");
           return;
         }
         TSPOSTIO.loadTextFile(content);
@@ -451,6 +459,7 @@ define(function(require, exports, module) {
       if (error) {
         TSCORE.hideLoadingAnimation();
         console.error("Save to file " + filePath + " failed " + error);
+        TSCORE.showAlertDialog("Saving " + filePath + " failed.");
         return;
       }
       if (!silentMode) {
@@ -466,6 +475,7 @@ define(function(require, exports, module) {
         if (error) {
           TSCORE.hideLoadingAnimation();
           console.error("Save to file " + filePath + " failed " + error);
+          TSCORE.showAlertDialog("Saving " + filePath + " failed.");
           return;
         }
         if (silentMode !== true) {
@@ -500,6 +510,7 @@ define(function(require, exports, module) {
           }
           TSCORE.hideLoadingAnimation();
           console.error("Listing directory: " + dirPath + " failed " + error);
+          TSCORE.showAlertDialog("Listing " + dirPath + " failed.");
           return;
         }
         for (var i = 0; i < dirList.length; i++) {
@@ -533,6 +544,7 @@ define(function(require, exports, module) {
         TSPOSTIO.errorOpeningPath();
       }
       TSCORE.hideLoadingAnimation();
+      TSCORE.showAlertDialog("Listing " + dirPath + " failed.");
       console.error("Listing directory " + dirPath + " failed " + ex);
     }
   };
@@ -549,6 +561,7 @@ define(function(require, exports, module) {
     fs.unlink(path, function(error) {
       if (error) {
         TSCORE.hideLoadingAnimation();
+        TSCORE.showAlertDialog("Deleting file " + path + " failed.");
         console.error("Deleting file " + path + " failed " + error);
         return;
       }
@@ -602,12 +615,10 @@ define(function(require, exports, module) {
   };
 
   var openDirectory = function(dirPath) {
-    // showItemInFolder
     gui.Shell.openItem(dirPath);
   };
 
   var openFile = function(filePath) {
-    // TODO prevent opening executables in windows
     gui.Shell.openItem(filePath);
   };
 
@@ -630,7 +641,7 @@ define(function(require, exports, module) {
   var openExtensionsDirectory = function() {
     // TODO implement openExtensionsDirectory on node
     //gui.Shell.openItem(extPath);
-    console.log("Open extensions directory functionality not implemented on chrome yet!");
+    console.log("Open extensions directory functionality not implemented yet!");
     TSCORE.showAlertDialog($.i18n.t("ns.common:functionalityNotImplemented"));
   };
 
@@ -649,6 +660,7 @@ define(function(require, exports, module) {
     mtime: Mon, 10 Oct 2011 23:24:11 GMT,
     ctime: Mon, 10 Oct 2011 23:24:11 GMT
   */
+
   var getFileProperties = function(filePath) {
     var fileProperties = {};
     try {
@@ -659,12 +671,15 @@ define(function(require, exports, module) {
         fileProperties.lmdt = stats.mtime;
         TSPOSTIO.getFileProperties(fileProperties);
       } else {
-        TSCORE.hideLoadingAnimation();
         console.error("Error getting file properties. " + filePath + " is directory");
+        TSCORE.hideLoadingAnimation();
+        TSCORE.showAlertDialog("Error getting properties for: " + filePath + "!");
       }
     } catch (e) {
+      console.error("File " + filePath + " didn't exists");
       TSCORE.hideLoadingAnimation();
-      console.error("File " + filePath + " didn't exits");
+      TSCORE.closeFileViewer();
+      TSCORE.showAlertDialog("File " + filePath + " didn't exists.");
     }
   };
 
