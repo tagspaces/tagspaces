@@ -17,9 +17,9 @@ define(function(require, exports, module) {
 
   exports.init = function(filePath, elementID) {
     console.log("Initalization Browser PDF Viewer...");
-    if (TSCORE.PRO) {
+    if (TSCORE.PRO && TSCORE.Config.getEnableMetaData()) {
       exports.getTextContent(filePath, function(content) {
-        TSPRO.saveTextContent(filePath, content);
+        TSCORE.PRO.saveTextContent(filePath, content);
       });
     }
     $('#' + elementID).append($('<iframe>', {
