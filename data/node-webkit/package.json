@@ -18,5 +18,5 @@
   "dependencies": {
     "fs-extra": "~0.24.0"
   },
-  "chromium-args" : "--data-path='./data/'"
+  "chromium-args" : "--data-path='../../nwjsdata/'"
 }
