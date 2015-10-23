@@ -4,9 +4,10 @@ build.properties
 CHANGELOG.TXT
 runfirefox
 runfirefoxbeta
-node_modules/*
+node_modules
+docs
 data/pro
-data/node-webkit/data
+nwjsdata
 data/node-webkit/locales
 data/node-webkit/ffmpegsumo.dll
 data/node-webkit/icudt.dll

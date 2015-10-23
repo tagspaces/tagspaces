@@ -195,17 +195,6 @@ module.exports = function(grunt) {
         }
       }
     },
-    /*jsdoc : {
-        dist : {
-            src: ['data/js/*.js', "Readme.md"],
-            options: {
-                destination: 'build/doc',
-                template: "node_modules/grunt-jsdoc/node_modules/ink-docstrap/template",
-                tutorials: "doc/client-api",
-                configure: "jsdoc.conf.json"
-            }
-        }
-    },*/
     watch: {
       scripts: {
         files: ['Gruntfile.js', '{data/js,data/ext}/**/*.js'],
@@ -214,6 +203,19 @@ module.exports = function(grunt) {
           spawn: false
         }
       }
+    },
+    shell: {
+      jsdav: {
+        command: 'node webdavserver.js',
+        options: {
+          execOptions: {
+            maxBuffer: 1024 * 1024 * 1024
+          }
+        }
+      },
+      jsdoc: {
+        command: 'node node_modules/jsdoc/jsdoc.js -c jsdoc.conf.json --verbose',
+      },
     },
     compress: {
       chrome: {
@@ -239,31 +241,22 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-compress');
   grunt.loadNpmTasks("grunt-jscs");
-  grunt.loadNpmTasks('grunt-jsdoc');
+  grunt.loadNpmTasks('grunt-shell');
   grunt.loadNpmTasks('grunt-fixmyjs');
   grunt.loadNpmTasks('grunt-jsbeautifier');
   
   //tasks
   grunt.registerTask('checkStyle', ['jshint', 'jscs']);
-  //grunt.registerTask('dist-doc', ['jsdoc', 'compress:doc']);
   grunt.registerTask('jsfix', ['jsbeautifier', 'checkstyle']); // 'fixmyjs:core'
   grunt.registerTask('bumpVersion', ['init', 'replace:templates']);
   grunt.registerTask('default', ['help']);
-  grunt.registerTask('jsdav', 'Run JSDav Server.', function() {
-    var jsDAV = require("jsDAV/lib/jsdav");
-    jsDAV.debugMode = true;
-    var jsDAV_Auth_Backend_File = require("jsDAV/lib/DAV/plugins/auth/file");
-    jsDAV.createServer({
-      node: "./data",
-      authBackend:  jsDAV_Auth_Backend_File.new("./jsdavauth"),
-      realm: "jdavtest"
-    }, 8000);
-    grunt.log.writeln("WebDAV server started");
-  }),
-
+  grunt.registerTask('runDav', ['shell:jsdav']),
+  grunt.registerTask('generateDocs', ['shell:jsdoc']),
   grunt.registerTask('help', 'Printing help for this script.', function() {
     grunt.log.writeln("Supported grunt tasks:");
     grunt.log.writeln(" - checkStyle");
+    grunt.log.writeln(" - runDav");
+    grunt.log.writeln(" - generateDocs");
     grunt.log.writeln(" - bumpVersion");
   });
 

@@ -468,7 +468,11 @@ define(function(require, exports, module) {
       }
     });
     $('#aboutDialogBack').click(function() {
-      $('#aboutIframe').attr('src', 'about.html');
+      if(TSCORE.PRO) {
+        $('#aboutIframe').attr('src', 'pro/about.html');
+      } else {
+        $('#aboutIframe').attr('src', 'about.html');
+      }
     });
     // Open About Dialog
     $('#openAboutBox').click(function() {

@@ -1,0 +1,44 @@
+{
+    "tags": {
+        "allowUnknownTags" : true
+    },
+    "plugins": ["node_modules/jsdoc/plugins/markdown"],
+    "source": {
+        "include": [ "data/" ],
+        "exclude": [
+            "data/libs/",
+            "data/ext/",
+            "data/mozilla/",
+            "data/node-webkit/node_modules/",
+            "data/pro/node_modules/",
+            "data/web/webdavlib/",
+            "data/cordova/fastclick/"
+        ]
+    },
+    "templates": {
+        "cleverLinks"           : false,
+        "monospaceLinks"        : false,
+        "outputSourceFiles"     : true,
+        "outputSourcePath"      : true,
+        "systemName"            : "TagSpaces API",
+        "footer"                : "",
+        "copyright"             : "Copyright © 2012-2015 The contributors to the TagSpaces project.",
+        "navType"               : "vertical",
+        "theme"                 : "united",
+        "linenums"              : true,
+        "collapseSymbols"       : false,
+        "inverseNav"            : true,
+        "highlightTutorialCode" : true
+    },
+    "markdown": {
+        "parser"   : "gfm",
+        "hardwrap" : true
+    },
+    "opts": {
+        "template": "node_modules/ink-docstrap/template",
+        "encoding": "utf8",
+        "destination": "./docs/",
+        "recurse": true,
+        "readme": "README.md"
+    }
+}

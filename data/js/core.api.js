@@ -2,6 +2,11 @@
  * Use of this source code is governed by a AGPL3 license that
  * can be found in the LICENSE file. */
 /*global isNode, isWin, isFirefox, Mousetrap, gui */
+
+/**
+ * Description
+ * @class TSCORE
+ */
 define(function(require, exports, module) {
   'use strict';
   console.log('Loading core.api.js ...');
@@ -36,6 +41,12 @@ define(function(require, exports, module) {
   var subfoldersDirBrowser;
   var directoryBrowser;
 
+
+  /**
+   * Initalizes the application
+   * @memberof TSCORE
+   * @method initApp
+   */
   function initApp() {
     console.log('Init application');
     tsSettings.loadSettingsLocalStorage();
