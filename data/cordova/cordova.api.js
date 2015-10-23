@@ -2,6 +2,8 @@
  * Use of this source code is governed by a AGPL3 license that
  * can be found in the LICENSE file. */
 /* global define */
+//cordova ios handleOpenURL is global
+var handleOpenURL; // jshint ignore:line
 
 define(function(require, exports, module) {
   "use strict";
