@@ -468,7 +468,7 @@ define(function(require, exports, module) {
       }
     });
     $('#aboutDialogBack').click(function() {
-      if(TSCORE.PRO) {
+      if (TSCORE.PRO) {
         $('#aboutIframe').attr('src', 'pro/about.html');
       } else {
         $('#aboutIframe').attr('src', 'about.html');

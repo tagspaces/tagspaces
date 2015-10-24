@@ -41,7 +41,6 @@ define(function(require, exports, module) {
   var subfoldersDirBrowser;
   var directoryBrowser;
 
-
   /**
    * Initalizes the application
    * @memberof TSCORE
