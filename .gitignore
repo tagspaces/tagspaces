@@ -10,7 +10,6 @@ data/pro
 nwjsdata
 data/node-webkit/locales
 data/node-webkit/ffmpegsumo.dll
-data/node-webkit/icudt.dll
 data/node-webkit/icudtl.dat
 data/node-webkit/libEGL.dll
 data/node-webkit/libffmpegsumo.so
