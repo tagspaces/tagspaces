@@ -495,6 +495,10 @@ input a.resetFilter {
 	min-height: 40px;
 }
 
+.dropdown-menu .divider {
+  background-color: #FAFAFA;
+}
+
 .fileExt {
   background-color: #515151;
   text-transform:uppercase;
