@@ -1,23 +1,34 @@
 ﻿#Changelog
 
 ##Version 2.0.0 / 2015.10.xx [DRAFT]
-- exchanging the pdf.js lib with a newer version
-- enabling fullscreen mode in the native desktop apps
-- redesigning the viewerHTML and viewerMD extensions
+- redesign of the user interface using material paragims
+- using flexbox for performance optimization of the user interface 
+- show file names in delete confirmation message
+- adding noty as a notification framework for the project, showing messages for failed operations
+- confirming the rename file, create tag, create tag group, edit tag group, create and rename directory dialogs with enter key
+- support opening of files in fullscreen
+- adding fx-extra node module. solving the issue with moving files over different partitions in the Windows, Linux and Mac apps
+- cleaning search results count on location close
+- adding initial getting started tour with the hopscotch library
+- making the tag group title also collapse and persist the tag groups
+- adding the new image swiper perspective for convenient image viewing
 - adding a default viewer for the EPUB files
-- added Korean and Indonesian
-- fixing issue with opening files from command line
-- fixing issue with start in portable mode
+- single click opens files in grid perspective
 - save collapsed state of tag groups
 - rearranging file opener button toolbar, exchanging icons
-- adding perspective image swiper
-- sync meta files on delete and rename
-- change perspective after meta data load
-- added default location functionality
+- added default startup location functionality
+- redesigning the viewerHTML and viewerMD extensions
+- fixing issue with opening files from command line
+- fixing issue with start in portable mode
 - added key binding `ctrl+f` for the search functionality
-- layout migration to flexbox
+- added key binding `ctrl+a` for selecting all files
+- adding badges for order of steps in the web clippers
+- adding confirm dialog for deleting perspective and filetype in the settings
 - disabling directory watcher in native apps, due to performance issue
-- reenabling back button on android
+- added Korean and Indonesian
+- integrating of the rendering engine crosswalk(chromium) for supporting older android devices with SDK 4.1
+- exchanging the pdf.js lib with a newer version
+- enabling back button on android
 
 ##Version 1.12.0 / 2015.07.28
 - Added a new audio/video player extension based on plyr.io library
