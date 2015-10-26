@@ -301,6 +301,9 @@
 
 #locationName {
   text-align: left;
+  max-width: 230px;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 #locationSwitch {
@@ -309,9 +312,8 @@
 }
 
 #selectLocation {
-  flex: 0 1 40px;
-  -webkit-flex: 0 1 40px;
-  -ms-flex: 0 1 40px;
+  width: 100%;
+  margin-left: 2px;
 }
 
 #locationsList {
@@ -327,7 +329,10 @@
   -webkit-flex: 1 1 auto;
   -ms-flex: 1 1 auto;
   text-align: left;
-  line-height: 30px;
+  line-height: 35px;
+  max-width: 250px;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 .editLocation {

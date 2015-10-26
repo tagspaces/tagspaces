@@ -67,14 +67,12 @@
             </button>
           </div>
         </div>
-        <div class="btn-toolbar">
-          <div id="locationSwitch">
-            <button type="button" class="btn btn-default dropdown-toggle flexLayout fullWidth" id="selectLocation" data-toggle="dropdown">
-              <span class="flexMaxWidth" id="locationName">Choose Location</span>
-              <span class="fa fa-caret-down" style="padding-top: 5px;"></span>
-            </button>
-            <ul class="dropdown-menu" id="locationsList"></ul>
-          </div>
+        <div class="btn-toolbar" id="locationSwitch">
+          <button type="button" class="btn btn-default" id="selectLocation" data-toggle="dropdown">
+            <span class="pull-left" id="locationName">Choose Location</span>
+            <span class="fa fa-caret-down pull-right" style="padding-top: 5px;"></span>
+          </button>
+          <ul class="dropdown-menu" id="locationsList"></ul>
         </div>
       </nav>
     </div>
@@ -185,7 +183,7 @@
           <input type="radio" name="options">&nbsp;<i class="fa fa-info-circle"></i>
         </label>
       </div>
-      <button class="btn btn-link pull-right" data-i18n="[title]ns.common:openSettingTooltip;" id="openOptions">
+      <button class="btn btn-link" style="margin-left: 20px;" data-i18n="[title]ns.common:openSettingTooltip;" id="openOptions">
         <i class="fa fa-gears fa-lg"></i>
       </button>
     </div>
