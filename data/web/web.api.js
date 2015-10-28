@@ -253,7 +253,7 @@ define(function(require, exports, module) {
     davClient.get(
       encodeURI(filePath),
       function(status, data, headers) {
-        console.log("Loading File Status/Content/Headers:  " + status + " / " + data + " / " + headers);
+        console.log("Loading File Status/Content/Headers:  " + status + " / " + headers); // " + data + " /
         if (checkStatusCode(status)) {
           TSPOSTIO.loadTextFile(data);
         } else {
