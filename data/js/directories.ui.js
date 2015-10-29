@@ -367,14 +367,14 @@ define(function(require, exports, module) {
     console.log('Dir History: ' + JSON.stringify(directoryHistory));
     TSCORE.currentPath = directoryPath;
 
-    if (TSCORE.PRO && TSCORE.Config.getEnableMetaData()) {
+    //if (TSCORE.PRO && TSCORE.Config.getEnableMetaData()) {
       TSCORE.Meta.getDirectoryMetaInformation(function() {
         TSCORE.IO.listDirectory(directoryPath);
         TSCORE.IO.createMetaFolder(directoryPath);
       });
-    } else {
-      TSCORE.IO.listDirectory(directoryPath);
-    }
+    //} else {
+    //  TSCORE.IO.listDirectory(directoryPath);
+    //}
   }
 
   function initUI() {

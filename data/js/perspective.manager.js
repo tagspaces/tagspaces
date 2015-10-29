@@ -224,8 +224,7 @@ define(function(require, exports, module) {
             metaObj
           ];
           TSCORE.fileList.push(entry);
-          TSCORE.Meta.loadMetaDataFromFile(entry);
-          //workers.push(TSCORE.Meta.loadMetaDataFromFile(entry));
+          workers.push(TSCORE.Meta.loadMetaDataFromFile(entry));
         } else {
           entry = [
             path,
@@ -235,14 +234,14 @@ define(function(require, exports, module) {
         }
       }
     }
-    
-    /*Promise.all(workers).then(function(result) {
-      changePerspective(TSCORE.currentPerspectiveID);
+
+    changePerspective(TSCORE.currentPerspectiveID);
+    Promise.all(workers).then(function(result) {
+      console.log("MetaData loaded");
+      //changePerspective(TSCORE.currentPerspectiveID);
     }).catch(function(e) {
       console.error("MetaData Error: " + e);
-    });*/
-    changePerspective(TSCORE.currentPerspectiveID);
-
+    });
   };
   
   var refreshFileListContainer = function() {
