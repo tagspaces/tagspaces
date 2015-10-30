@@ -185,7 +185,11 @@ define(function(require, exports, module) {
   };
   var showFileDeleteDialog = function(filePath) {
     console.log('Deleting file...');
-    TSCORE.showConfirmDialog($.i18n.t('ns.dialogs:fileDeleteTitleConfirm'), $.i18n.t('ns.dialogs:fileDeleteContentConfirm', {
+    var dlgConfirmMsgId = 'ns.dialogs:fileDeleteContentConfirm';
+    if (TSCORE.Config.getUseTrashCan()) {
+      dlgConfirmMsgId = 'ns.pro:trashDeleteContentConfirm';
+    }
+    TSCORE.showConfirmDialog($.i18n.t('ns.dialogs:fileDeleteTitleConfirm'), $.i18n.t(dlgConfirmMsgId, {
       filePath: filePath
     }), function() {
       TSCORE.IO.deleteElement(filePath);

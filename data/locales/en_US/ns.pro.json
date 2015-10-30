@@ -1,0 +1,6 @@
+{
+	"trashDeleteContentConfirm": "The file __filePath__ wbe moved to trash folder. Are you sure?",
+	"trashDirectoryContentConfirm": "Do you want to move the directory '__dirPath__' to trash folder ?",
+	"trashFilesDeleteContentConfirm": "All selected files '__selectedFiles__' will be moved to trash folder. Are you sure?",
+	"-": "-"
+}
