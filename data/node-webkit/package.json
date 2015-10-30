@@ -16,7 +16,8 @@
   },
   "nodejs": true,
   "dependencies": {
-    "fs-extra": "~0.24.0"
+    "fs-extra": "~0.24.0",
+    "trash": "~3.1.2"
   },
   "chromium-args" : "--data-path='../../nwjsdata/'"
 }

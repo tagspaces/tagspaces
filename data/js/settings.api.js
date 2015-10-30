@@ -644,6 +644,15 @@ define(function(require, exports, module) {
   var getNewMDFileContent = function() {
     return exports.DefaultSettings.newMDFileContent;
   };
+  var getUseTrashCan = function() {
+    if (exports.Settings.useTrashCan === undefined) {
+      exports.Settings.useTrashCan = exports.DefaultSettings.useTrashCan;
+    }
+    return exports.Settings.useTrashCan;
+  };
+  var setUseTrashCan = function(value) {
+    exports.Settings.useTrashCan = value;
+  };
   //////////////////// API methods ///////////////////
   var getFileTypeEditor = function(fileTypeExt) {
     for (var i = 0; i < exports.Settings.supportedFileTypes.length; i++) {
@@ -1085,7 +1094,9 @@ define(function(require, exports, module) {
   exports.getActivatedPerspectiveExtensions = getActivatedPerspectiveExtensions;
   exports.getViewerExtensions = getViewerExtensions;
   exports.getEditorExtensions = getEditorExtensions;
-
+  exports.getUseTrashCan = getUseTrashCan;
+  exports.setUseTrashCan = setUseTrashCan;
+  
   exports.getNewTextFileContent = getNewTextFileContent;
   exports.getNewHTMLFileContent = getNewHTMLFileContent;
   exports.getNewMDFileContent = getNewMDFileContent;
