@@ -223,8 +223,12 @@ define(function(require, exports, module) {
       TSCORE.selectedFiles.forEach(function(file) {
         selFiles.push(TSCORE.Utils.baseName(file));
       });
+      var dlgConfirmMsgId = 'ns.dialogs:selectedFilesDeleteContentConfirm';
+      if (TSCORE.Config.getUseTrashCan()) {
+        dlgConfirmMsgId = 'ns.pro:trashFilesDeleteContentConfirm';
+      }
       TSCORE.showConfirmDialog($.i18n.t('ns.dialogs:fileDeleteTitleConfirm'),
-        $.i18n.t('ns.dialogs:selectedFilesDeleteContentConfirm', {
+        $.i18n.t(dlgConfirmMsgId, {
           selectedFiles:  selFiles.toString()
         }), function() {
           TSCORE.selectedFiles.forEach(function(file) {
