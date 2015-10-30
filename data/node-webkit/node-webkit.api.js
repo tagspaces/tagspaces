@@ -3,10 +3,12 @@
  * can be found in the LICENSE file. */
 /* global define, fs, process, gui, pathUtils  */
 /* undef: true, unused: true */
+
 var fs = require('fs-extra'); // jshint ignore:line
 var pathUtils = require('path'); // jshint ignore:line
 var gui = require('nw.gui'); // jshint ignore:line
-var trash = require('trash');
+var trash = require('trash'); // jshint ignore:line
+
 define(function(require, exports, module) {
   "use strict";
 
@@ -559,9 +561,9 @@ define(function(require, exports, module) {
   var deleteElement = function(path) {
     console.log("Deleting: " + path);
     if (TSCORE.PRO && TSCORE.Config.getUseTrashCan()) {
-      trash([path]) .then(function() { 
+      trash([path]).then(function() {
         TSPOSTIO.deleteElement(path); 
-      }).catch(function(){
+      }).catch(function() {
         TSCORE.hideLoadingAnimation();
         TSCORE.showAlertDialog("Deleting file " + path + " failed.");
         console.error("Deleting file " + path + " failed " + error);
@@ -584,7 +586,7 @@ define(function(require, exports, module) {
     if (TSCORE.PRO && TSCORE.Config.getUseTrashCan()) {
       trash([path]).then(function() { 
         TSPOSTIO.deleteDirectory(path);
-      }).catch(function(){
+      }).catch(function() {
         console.error("Deleting directory " + path + " failed " + error);
         TSPOSTIO.deleteDirectoryFailed(path);
       });      
