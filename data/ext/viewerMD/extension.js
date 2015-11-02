@@ -101,32 +101,7 @@ define(function(require, exports, module) {
     //$('#'+containerElID).html();
     console.log("Not implemented");
   };
-
-  exports.getTextContent = function(file, loaded) {
-    var fileReader = new FileReader();
-    fileReader.onload = function(event) {
-      require([extensionDirectory + '/marked/marked.js'], function(marked) {
-        md2htmlConverter = marked;
-        md2htmlConverter.setOptions({
-          renderer: new marked.Renderer(),
-          gfm: true,
-          tables: true,
-          breaks: false,
-          pedantic: false,
-          smartLists: true,
-          smartypants: false
-        });
-
-        var txtContent = $(md2htmlConverter(fileReader.result)).text();
-        loaded(txtContent);
-      });
-    };
-
-    TSCORE.IO.getFile(file, function(file) {
-      fileReader.readAsText(file);
-    });
-  };
-
+  
   // Extension Vars
   exports.Title = extensionTitle;
   exports.ID = extensionID;

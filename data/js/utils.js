@@ -55,6 +55,11 @@ define(function(require, exports, module) {
     //return dirPath.match( /(.*)[/\]/)[1];
   };
 
+  var getFileExt = function(fileURL) {
+    var ext = fileURL.split('.').pop();
+    return (ext === fileURL) ? "" : ext;
+  };
+
   exports.arrayBufferToDataURL = arrayBufferToDataURL;
   exports.base64ToArrayBuffer = base64ToArrayBuffer;
   exports.dataURLtoBlob = dataURLtoBlob;
@@ -62,4 +67,5 @@ define(function(require, exports, module) {
   exports.arrayBufferToStr = arrayBufferToStr;
   exports.baseName  = baseName;
   exports.dirName = dirName;
+  exports.getFileExt = getFileExt;
 });
