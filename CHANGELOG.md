@@ -1,7 +1,7 @@
 ﻿#Changelog
 
-##Version 2.0.0 / 2015.10.xx [DRAFT]
-- redesign of the user interface using material paragims
+##Version 2.0.1 / 2015.10.31
+- redesign of the user interface using material paradigms
 - using flexbox for performance optimization of the user interface 
 - show file names in delete confirmation message
 - adding noty as a notification framework for the project, showing messages for failed operations
@@ -11,7 +11,6 @@
 - cleaning search results count on location close
 - adding initial getting started tour with the hopscotch library
 - making the tag group title also collapse and persist the tag groups
-- adding the new image swiper perspective for convenient image viewing
 - adding a default viewer for the EPUB files
 - single click opens files in grid perspective
 - save collapsed state of tag groups
@@ -23,7 +22,7 @@
 - added key binding `ctrl+f` for the search functionality
 - added key binding `ctrl+a` for selecting all files
 - adding badges for order of steps in the web clippers
-- adding confirm dialog for deleting perspective and filetype in the settings
+- adding confirm dialog for deleting perspective and file types in the settings
 - disabling directory watcher in native apps, due to performance issue
 - added Korean and Indonesian
 - integrating of the rendering engine crosswalk(chromium) for supporting older android devices with SDK 4.1
