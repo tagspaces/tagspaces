@@ -40,11 +40,15 @@ define(function(require, exports, module) {
     return canvas.toDataURL("image/png");
   }
 
-  function arrayBufferToStr(buf) {
-    var s = String.fromCharCode.apply(null, new Uint8Array(buf));
-    return decodeURIComponent(escape(s));
+  var arrayBufferToStr = function(buf) {
+    var str = '',
+    bytes = new Uint8Array(buf);
+    for (var i = 0; i < bytes.length; i++) {
+      str += String.fromCharCode(bytes[i]);
+    }
+    return decodeURIComponent(escape(str));
   }
-
+  
   var baseName = function(dirPath) {
     var fileName = dirPath.substring(dirPath.lastIndexOf("/") + 1, dirPath.length);
     return fileName ? fileName : dirPath;
