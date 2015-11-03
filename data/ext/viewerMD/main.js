@@ -76,12 +76,6 @@ $(document).ready(function() {
     saveExtSettings();
   });
 
-  //TODO making all links open in the user default browser
-  $htmlContent.find("a").bind('click', function(e) {
-    e.preventDefault();
-    //TSCORE.openLinkExternally($(this).attr("href"));
-  });
-
   $("#printButton").on("click", function() {
     $(".dropdown-menu").dropdown('toggle');
     window.print();
@@ -131,5 +125,11 @@ function setContent(content, fileDirectory) {
       var path = "file://" + fileDirectory + (isWin ? "\\" : "/") + currentSrc;
       $(this).attr("src", path);
     }
+  });
+
+  $("#htmlContent").find("a").bind('click', function(e) {
+    e.preventDefault();
+    //TODO making all links open in the user default browser
+    //message to parent openLinkExternally($(this).attr("href"));
   });
 }
