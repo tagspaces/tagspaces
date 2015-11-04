@@ -114,6 +114,7 @@ var isWin = navigator.appVersion.indexOf("Win")!==-1;
       tsutils:                'js/utils',
       tsmeta:                 'js/meta',
       tsgettingstarted:       'js/gettingstarted',
+      tsextapi:               'js/ext.api',
       tsioapi:                 IO_JS,
       tspro:                   PRO_JS
     },

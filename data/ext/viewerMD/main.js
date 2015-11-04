@@ -129,7 +129,7 @@ function setContent(content, fileDirectory) {
 
   $("#htmlContent").find("a").bind('click', function(e) {
     e.preventDefault();
-    //TODO making all links open in the user default browser
-    //message to parent openLinkExternally($(this).attr("href"));
+    var msg = { link : $(this).attr("href") };
+    window.parent.postMessage(JSON.stringify(msg), "*");
   });
 }

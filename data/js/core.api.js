@@ -22,7 +22,7 @@ define(function(require, exports, module) {
   var tsPro = require('tspro');
   var tsUtils = require('tsutils');
   var tsMeta = require('tsmeta');
-
+  var tsExt = require('tsextapi');
   var currentPath;
   var currentLocationObject;
   var currentPerspectiveID;

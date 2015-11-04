@@ -40,7 +40,7 @@ define(function(require, exports, module) {
       sandbox: "allow-same-origin allow-scripts",
       id: "iframeViewer",
       "nwdisable": "",
-      "nwfaketop": "",
+      //"nwfaketop": "",
       "src": extensionDirectory + "/index.html?&locale=" + TSCORE.currentLanguage,
     }));
 
