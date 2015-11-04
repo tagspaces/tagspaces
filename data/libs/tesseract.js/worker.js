@@ -9424,7 +9424,8 @@ var tesseractinit = (function createTesseractInstance(memory){
 					}
 				})
 				var xhr = new XMLHttpRequest();
-				xhr.open('GET', 'https://cdn.rawgit.com/naptha/tessdata/gh-pages/3.02/'+lang+'.traineddata.gz', true);
+				//xhr.open('GET', 'https://cdn.rawgit.com/naptha/tessdata/gh-pages/3.02/'+lang+'.traineddata.gz', true);
+        xhr.open('GET', lang+'.traineddata.gz', true);
 				xhr.responseType = 'arraybuffer';
 				xhr.onerror = function(){ cb(xhr, null) }
 				xhr.onprogress = function(e){
