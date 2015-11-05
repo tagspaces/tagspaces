@@ -124,9 +124,8 @@ function setContent(content, fileDirectory) {
 
   $htmlContent.find("a").bind('click', function(e) {
     e.preventDefault();
-    //var url = $(this).attr("href"); // { "openLinkExternally": url }
-    //parent.postMessage("message", "*");
-    //console.log("Url: " + url);
+    var msg = { link : $(this).attr("href") };
+    window.parent.postMessage(JSON.stringify(msg), "*");
   });
 
   // fixing embedding of local images
