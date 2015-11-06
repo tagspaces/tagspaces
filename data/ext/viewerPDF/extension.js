@@ -17,11 +17,6 @@ define(function(require, exports, module) {
 
   exports.init = function(filePath, elementID) {
     console.log("Initalization Browser PDF Viewer...");
-    if (TSCORE.PRO && TSCORE.Config.getEnableMetaData()) {
-      exports.getTextContent(filePath, function(content) {
-        TSCORE.PRO.saveTextContent(filePath, content);
-      });
-    }
     $('#' + elementID).append($('<iframe>', {
       id: "iframeViewer",
       src: "libs/pdfjs/web/viewer.html?file=" + filePath,
@@ -40,35 +35,5 @@ define(function(require, exports, module) {
 
   exports.getContent = function() {
     console.log("getContent not supported on this extension");
-  };
-
-  var pdfToText = function(file) {
-
-    PDFJS.workerSrc = 'libs/pdfjs/build/pdf.worker.js';
-    return PDFJS.getDocument(file).then(function(pdf) {
-      var pages = [];
-      for (var i = 0; i < pdf.numPages; i++) {
-        pages.push(i);
-      }
-      return Promise.all(pages.map(function(pageNumber) {
-        return pdf.getPage(pageNumber + 1).then(function(page) {
-          return page.getTextContent().then(function(textContent) {
-            return textContent.items.map(function(item) {
-              return item.str;
-            }).join(' ');
-          });
-        });
-      })).then(function(pages) {
-        return pages.join("\r\n");
-      });
-    }, function(error) {
-      console.log("Failed! " + error);
-    });
-  };
-
-  exports.getTextContent = function(file, loaded) {
-    pdfToText(file).then(function(result) {
-      loaded(result);
-    });
   };
 });

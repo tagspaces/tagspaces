@@ -40,11 +40,15 @@ define(function(require, exports, module) {
     return canvas.toDataURL("image/png");
   }
 
-  function arrayBufferToStr(buf) {
-    var s = String.fromCharCode.apply(null, new Uint8Array(buf));
-    return decodeURIComponent(escape(s));
+  var arrayBufferToStr = function(buf) {
+    var str = '',
+    bytes = new Uint8Array(buf);
+    for (var i = 0; i < bytes.length; i++) {
+      str += String.fromCharCode(bytes[i]);
+    }
+    return decodeURIComponent(escape(str));
   }
-
+  
   var baseName = function(dirPath) {
     var fileName = dirPath.substring(dirPath.lastIndexOf("/") + 1, dirPath.length);
     return fileName ? fileName : dirPath;
@@ -55,6 +59,11 @@ define(function(require, exports, module) {
     //return dirPath.match( /(.*)[/\]/)[1];
   };
 
+  var getFileExt = function(fileURL) {
+    var ext = fileURL.split('.').pop();
+    return (ext === fileURL) ? "" : ext;
+  };
+
   exports.arrayBufferToDataURL = arrayBufferToDataURL;
   exports.base64ToArrayBuffer = base64ToArrayBuffer;
   exports.dataURLtoBlob = dataURLtoBlob;
@@ -62,4 +71,5 @@ define(function(require, exports, module) {
   exports.arrayBufferToStr = arrayBufferToStr;
   exports.baseName  = baseName;
   exports.dirName = dirName;
+  exports.getFileExt = getFileExt;
 });
