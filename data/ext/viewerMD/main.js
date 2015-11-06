@@ -127,9 +127,22 @@ function setContent(content, fileDirectory) {
     }
   });
 
+  $htmlContent.find("a[href]").each(function() {
+    var currentSrc = $(this).attr("href");
+    if (currentSrc.indexOf("http://") === 0 ||
+        currentSrc.indexOf("https://") === 0 ||
+        currentSrc.indexOf("file://") === 0 ||
+        currentSrc.indexOf("data:") === 0) {
+      // do nothing if src begins with http(s):// or data:
+    } else {
+      var path = "file://" + fileDirectory + (isWin ? "\\" : "/") + currentSrc;
+      $(this).attr("href", path);
+    }
+  });
+
   $("#htmlContent").find("a").bind('click', function(e) {
     e.preventDefault();
-    var msg = { link : $(this).attr("href") };
+    var msg = { command: "openLinkExternally", link : $(this).attr("href") };
     window.parent.postMessage(JSON.stringify(msg), "*");
   });
 }
