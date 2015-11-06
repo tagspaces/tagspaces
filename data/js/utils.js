@@ -47,7 +47,7 @@ define(function(require, exports, module) {
       str += String.fromCharCode(bytes[i]);
     }
     return decodeURIComponent(escape(str));
-  }
+  };
   
   var baseName = function(dirPath) {
     var fileName = dirPath.substring(dirPath.lastIndexOf("/") + 1, dirPath.length);
