@@ -22,7 +22,7 @@ define(function(require, exports, module) {
   }
 
   function openLinkExternally(url) {
-    if (url.indexOf("http://") === 0 || url.indexOf("https://") === 0 || url.indexOf("file://") === 0 ) {
+    if (url.indexOf("http://") === 0 || url.indexOf("https://") === 0 || url.indexOf("file://") === 0) {
       TSCORE.openLinkExternally(url);
     } else {
       console.log("Not supported URL format: " + url);
