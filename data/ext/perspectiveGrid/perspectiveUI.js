@@ -493,11 +493,11 @@ define(function(require, exports, module) {
         var $stateTag = $(this).find("i");
         if ($stateTag.hasClass("fa-square-o")) {
           $stateTag.removeClass("fa-square-o").addClass("fa fa-check-square");
-          $(this).parent().parent().addClass("ui-selected");
+          $(this).parent().addClass("ui-selected");
           TSCORE.selectedFiles.push(filePath);
         } else {
           $stateTag.removeClass("fa-check-square").addClass("fa-square-o");
-          $(this).parent().parent().removeClass("ui-selected");
+          $(this).parent().removeClass("ui-selected");
           TSCORE.selectedFiles.splice(TSCORE.selectedFiles.indexOf(filePath), 1);
         }
         self.handleElementActivation();
