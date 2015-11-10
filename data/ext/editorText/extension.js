@@ -39,10 +39,10 @@ define(function(require, exports, module) {
       mode = "properties";
     }
     require([
-      extensionDirectory + '/codemirror/codemirror.js',
-      'css!' + extensionDirectory + '/codemirror/codemirror.css',
+      extensionDirectory + '/codemirror/lib/codemirror.js',
+      'css!' + extensionDirectory + '/codemirror/lib/codemirror.css',
       'css!' + extensionDirectory + '/extension.css'
-    ], function() {
+    ], function(CodeMirror) {
       require([
         extensionDirectory + "/codemirror/mode/" + mode + "/" + mode + ".js"
       ], function() {
