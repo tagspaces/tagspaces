@@ -14,7 +14,7 @@
   "icon64": "data/assets/icon64.png",
   "homepage": "http://tagspaces.org",
   "permissions": {
-    "private-browsing": true
+    "private-browsing": false
   },
   "unpack": true,
     
