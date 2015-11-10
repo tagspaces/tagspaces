@@ -102,7 +102,7 @@ define(function(require, exports, module) {
   };
 
   var clearSelectedFiles = function() {
-    if(UI) {
+    if (UI) {
       UI.clearSelectedFiles();
       UI.handleElementActivation();
     }

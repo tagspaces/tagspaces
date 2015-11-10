@@ -51,10 +51,10 @@ define(function(require, exports, module) {
   var load = function() {
     console.log("Loading perspective " + extensionID);
     $viewContainer.children().remove();
-    extensionLoaded.then(function(){
+    extensionLoaded.then(function() {
       UI.load($viewContainer, template, TSCORE.fileList);
       TSCORE.hideLoadingAnimation();
-    })
+    });
   };
 
   var clearSelectedFiles = function() {};
