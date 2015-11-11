@@ -1,3 +1,16 @@
+// CodeMirror, copyright (c) by Marijn Haverbeke and others
+// Distributed under an MIT license: http://codemirror.net/LICENSE
+
+(function(mod) {
+  if (typeof exports == "object" && typeof module == "object") // CommonJS
+    mod(require("../../lib/codemirror"));
+  else if (typeof define == "function" && define.amd) // AMD
+    define(["../../lib/codemirror"], mod);
+  else // Plain browser env
+    mod(CodeMirror);
+})(function(CodeMirror) {
+"use strict";
+
 CodeMirror.defineMode("groovy", function(config) {
   function words(str) {
     var obj = {}, words = str.split(" ");
@@ -11,6 +24,7 @@ CodeMirror.defineMode("groovy", function(config) {
     "short static strictfp super switch synchronized threadsafe throw throws transient " +
     "try void volatile while");
   var blockKeywords = words("catch class do else finally for if switch try while enum interface def");
+  var standaloneKeywords = words("return break continue");
   var atoms = words("null true false this");
 
   var curPunc;
@@ -37,7 +51,7 @@ CodeMirror.defineMode("groovy", function(config) {
         stream.skipToEnd();
         return "comment";
       }
-      if (expectExpression(state.lastToken)) {
+      if (expectExpression(state.lastToken, false)) {
         return startString(ch, stream, state);
       }
     }
@@ -57,6 +71,7 @@ CodeMirror.defineMode("groovy", function(config) {
     if (atoms.propertyIsEnumerable(cur)) { return "atom"; }
     if (keywords.propertyIsEnumerable(cur)) {
       if (blockKeywords.propertyIsEnumerable(cur)) curPunc = "newstatement";
+      else if (standaloneKeywords.propertyIsEnumerable(cur)) curPunc = "standalone";
       return "keyword";
     }
     return "variable";
@@ -119,9 +134,10 @@ CodeMirror.defineMode("groovy", function(config) {
     return "comment";
   }
 
-  function expectExpression(last) {
+  function expectExpression(last, newline) {
     return !last || last == "operator" || last == "->" || /[\.\[\{\(,;:]/.test(last) ||
-      last == "newstatement" || last == "keyword" || last == "proplabel";
+      last == "newstatement" || last == "keyword" || last == "proplabel" ||
+      (last == "standalone" && !newline);
   }
 
   function Context(indented, column, type, align, prev) {
@@ -161,7 +177,7 @@ CodeMirror.defineMode("groovy", function(config) {
         state.indented = stream.indentation();
         state.startOfLine = true;
         // Automatic semicolon insertion
-        if (ctx.type == "statement" && !expectExpression(state.lastToken)) {
+        if (ctx.type == "statement" && !expectExpression(state.lastToken, true)) {
           popContext(state); ctx = state.context;
         }
       }
@@ -196,7 +212,7 @@ CodeMirror.defineMode("groovy", function(config) {
     indent: function(state, textAfter) {
       if (!state.tokenize[state.tokenize.length-1].isBase) return 0;
       var firstChar = textAfter && textAfter.charAt(0), ctx = state.context;
-      if (ctx.type == "statement" && !expectExpression(state.lastToken)) ctx = ctx.prev;
+      if (ctx.type == "statement" && !expectExpression(state.lastToken, true)) ctx = ctx.prev;
       var closing = firstChar == ctx.type;
       if (ctx.type == "statement") return ctx.indented + (firstChar == "{" ? 0 : config.indentUnit);
       else if (ctx.align) return ctx.column + (closing ? 0 : 1);
@@ -204,8 +220,11 @@ CodeMirror.defineMode("groovy", function(config) {
     },
 
     electricChars: "{}",
+    closeBrackets: {triples: "'\""},
     fold: "brace"
   };
 });
 
 CodeMirror.defineMIME("text/x-groovy", "groovy");
+
+});

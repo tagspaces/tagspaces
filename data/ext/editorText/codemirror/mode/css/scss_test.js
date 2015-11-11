@@ -1,3 +1,6 @@
+// CodeMirror, copyright (c) by Marijn Haverbeke and others
+// Distributed under an MIT license: http://codemirror.net/LICENSE
+
 (function() {
   var mode = CodeMirror.getMode({indentUnit: 2}, "text/x-scss");
   function MT(name) { test.mode(name, mode, Array.prototype.slice.call(arguments, 1), "scss"); }
@@ -70,7 +73,7 @@
     "[tag foo]#{[variable-2 $hello]} { [property color]:[atom #000]; }");
 
   MT('interpolation_error',
-    "[tag foo]#{[error foo]} { [property color]:[atom #000]; }");
+    "[tag foo]#{[variable foo]} { [property color]:[atom #000]; }");
 
   MT("divide_operator",
     "[tag foo] { [property width]:[number 4] [operator /] [number 2] }");
