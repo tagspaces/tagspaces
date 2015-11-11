@@ -528,7 +528,7 @@ define(function(require, exports, module) {
     TSCORE.PerspectiveManager.clearSelectedFiles();
     $(this.viewContainer).find('.fileTileSelector').each(function() {
       if ($(this).attr("filepath") === filePath) {
-        $(this).parent().parent().toggleClass("ui-selected");
+        $(this).parent().toggleClass("ui-selected");
         $(this).find("i").toggleClass("fa-check-square").toggleClass("fa-square-o");
         TSCORE.selectedFiles.push($(this).attr("filepath"));
       }
@@ -657,7 +657,7 @@ define(function(require, exports, module) {
     if (checkIcon.hasClass("fa-square-o")) {
       TSCORE.selectedFiles = [];
       $(this.viewContainer).find('.fileTileSelector').each(function() {
-        $(this).parent().parent().addClass("ui-selected");
+        $(this).parent().addClass("ui-selected");
         $(this).find("i").addClass("fa-check-square").removeClass("fa-square-o");
         TSCORE.selectedFiles.push($(this).attr("filepath"));
       });
