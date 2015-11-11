@@ -38,19 +38,17 @@ define(function(require, exports, module) {
     if (!mode) {
       mode = "properties";
     }
+
     require([
-      extensionDirectory + '/codemirror/lib/codemirror.js',
+      extensionDirectory + '/codemirror/lib/codemirror',
+      extensionDirectory + "/codemirror/mode/" + mode + "/" + mode, 
       'css!' + extensionDirectory + '/codemirror/lib/codemirror.css',
       'css!' + extensionDirectory + '/extension.css'
     ], function(CodeMirror) {
-      require([
-        extensionDirectory + "/codemirror/mode/" + mode + "/" + mode + ".js"
-      ], function() {
+
         var cursorBlinkRate = isViewerMode ? -1 : 530; // disabling the blinking cursor in readonly mode
         var lineNumbers = !isViewerMode;
-
         //var saveKB = convertMouseTrapToCodeMirrorKeyBindings(TSCORE.Config.getSaveDocumentKeyBinding());
-
         var keys = {};
 
         keys[convertMouseTrapToCodeMirrorKeyBindings(TSCORE.Config.getSaveDocumentKeyBinding())] = function() {
@@ -75,7 +73,7 @@ define(function(require, exports, module) {
           //theme: "lesser-dark",
           //extraKeys: keys // workarrounded with bindGlobal plugin for mousetrap
         });
-
+        
         cmEditor.on("change", function() {
           if (contentLoaded) {
             TSCORE.FileOpener.setFileChanged(true);
@@ -84,7 +82,6 @@ define(function(require, exports, module) {
 
         cmEditor.setSize("100%", "100%");
         TSCORE.IO.loadTextFile(filePath);
-      });
     });
   };
 
