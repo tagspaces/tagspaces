@@ -1,0 +1,30 @@
+{
+  "name": "viewerImage",
+  "type": "viewer",
+  "version": "0.0.1",
+  "dependencies": {
+    "exif-js": "1.3.x",
+    "jquery-panzoom": "1.3.x",
+    "jquery-mousewheel": "1.3.x"
+  },
+  "devDependencies": {
+    "jquery-mocks": "1.3.x"
+  },
+  "authors": [
+    "Ilian Sapundshiev - http://tagspaces.org"
+  ],
+  "keywords": [
+    "viewer",
+    "jpg",
+    "png"
+  ],
+  "license": "MIT?",
+  "main": [
+    "./extension.js"
+  ],
+  "ignore": [
+    "build",
+    "gulpfile.js"
+  ],
+  "private": true
+}
