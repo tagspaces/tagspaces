@@ -113,6 +113,8 @@ function setContent(content, fileDirectory) {
   var $htmlContent = $('#htmlContent');
   $htmlContent.append(content);
 
+  $("base").attr("href", fileDirectory + "//");
+
   // fixing embedding of local images
   $htmlContent.find("img[src]").each(function() {
     var currentSrc = $(this).attr("src");
