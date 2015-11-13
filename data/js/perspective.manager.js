@@ -234,9 +234,11 @@ define(function(require, exports, module) {
         }
       }
     }
-    
+
+    changePerspective(TSCORE.currentPerspectiveID);
     Promise.all(workers).then(function(result) {
-      changePerspective(TSCORE.currentPerspectiveID);
+      console.log("MetaData loaded");
+      //changePerspective(TSCORE.currentPerspectiveID);
     }).catch(function(e) {
       console.error("MetaData Error: " + e);
     });

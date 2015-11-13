@@ -511,8 +511,10 @@ define(function(require, exports, module) {
             TSPOSTIO.errorOpeningPath(dirPath);
           }
           TSCORE.hideLoadingAnimation();
-          console.error("Listing directory: " + dirPath + " failed " + error);
-          TSCORE.showAlertDialog("Listing " + dirPath + " failed.");
+          console.warn("Listing directory: " + dirPath + " failed " + error);
+          if (!readyCallback) {
+            TSCORE.showAlertDialog("Listing " + dirPath + " failed.");
+          }
           return;
         }
         for (var i = 0; i < dirList.length; i++) {
@@ -546,8 +548,7 @@ define(function(require, exports, module) {
         TSPOSTIO.errorOpeningPath();
       }
       TSCORE.hideLoadingAnimation();
-      TSCORE.showAlertDialog("Listing " + dirPath + " failed.");
-      console.error("Listing directory " + dirPath + " failed " + ex);
+      console.warn("Listing directory " + dirPath + " failed " + ex);
     }
   };
 
