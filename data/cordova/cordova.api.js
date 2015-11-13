@@ -577,7 +577,7 @@ define(function(require, exports, module) {
           },
           function(error) {
             TSCORE.hideLoadingAnimation();
-            console.error("Error reading dir entries: " + error.code);
+            console.warn("Error reading dir entries: " + error.code);
             if (readyCallback) {
               readyCallback(anotatedDirList);
             }
@@ -586,7 +586,7 @@ define(function(require, exports, module) {
       },
       function(err) {
         TSCORE.hideLoadingAnimation();
-        console.error("error getting directory: " + err);
+        console.warn("error getting directory: " + err);
         if (readyCallback) {
           readyCallback(anotatedDirList);
         }
