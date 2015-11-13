@@ -5,7 +5,7 @@ define(function(require, exports, module) {
 
   var bowerFileName = "bower.json";
 
-  document.addEventListener("initApp", function() {
+  /*document.addEventListener("initApp", function() {
 
     loadExtFolder().then(function(values) {
       alert("extension list loaded");
@@ -14,15 +14,23 @@ define(function(require, exports, module) {
       console.log("loadExtFolder error: " + err);
     });
 
-  }, false);
+  }, false);*/
 
+  function getExtFolderPath() {
+    var path = "ext";
+    return path;
+  }
   function loadBowerData(filePath) {
 
     var promise = new Promise(function(resolve, reject) {
       $.get(filePath, function(data) {
-        var bowerData = JSON.parse(data);
-        console.log('bowerData: ' + JSON.stringify(bowerData));
-        resolve(bowerData);
+        try {
+          var bowerData = JSON.parse(data);
+          console.log('bowerData: ' + JSON.stringify(bowerData));
+          resolve(bowerData);
+        } catch (e) {
+          resolve();
+        }
       }).fail(function() {
         resolve();
       });
@@ -30,12 +38,12 @@ define(function(require, exports, module) {
     return promise;
   }
 
-  function loadExtFolder() {
-    var extFolderPath = "ext";
+  function loadExtensionData() {
+    var extFolderPath = getExtFolderPath();
     var promise = new Promise(function(resolve, reject) {
       TSCORE.IO.listDirectory(extFolderPath, function(dirList) {
         var readBowerFileWorkers = [];
-        for(var i=0; i < dirList.length; i++) {
+        for (var i in dirList) {
           var dirItem = dirList[i];
           if (!dirItem.isFile) {
             var filePath = dirItem.path + TSCORE.dirSeparator + bowerFileName;
@@ -43,11 +51,17 @@ define(function(require, exports, module) {
           }
         }
         Promise.all(readBowerFileWorkers).then(function(values) {
-          resolve(values);
+          var result = [];
+          for (var val in values) {
+            if (values[val]) {
+              result.push(values[val]);
+            }
+          }
+          resolve(result);
         }).catch(reject);
       });
     });
     return promise;
   }
-
+  exports.loadExtensionData = loadExtensionData;
 });

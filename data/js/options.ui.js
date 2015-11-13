@@ -6,7 +6,10 @@ define(function(require, exports, module) {
   'use strict';
   console.log('Loading options.ui.js ...');
   var TSCORE = require('tscore');
+  var tsExtManager = require('tsextmanager');
   require(['libs/filesaver.js/FileSaver.js'], function() {});
+  
+  var extList = [];
 
   function generateSelectOptions(parent, data, selectedId, helpI18NString) {
     parent.empty();
@@ -42,6 +45,19 @@ define(function(require, exports, module) {
     parent.append(perspectiveControl);
   }
 
+  function getExtensionsByType(type) {
+    var result =[];
+    if(extList.length === 0) {
+      alert("error: extList is empty");
+    }
+    for(var i in extList) {
+      if(extList[i].type === type) {
+        result.push(extList[i].name);
+      }
+    }
+    return result;
+  }
+
   function addFileType(parent, fileext, viewerId, editorId) {
     var fileTypeControl = $('<div class="form-inline">')
       .append($('<div class="flexLayout" >')
@@ -55,8 +71,10 @@ define(function(require, exports, module) {
             row4Remove.remove();
           });
         })));
-    generateSelectOptions(fileTypeControl.find('.ftviewer'), TSCORE.Config.getViewerExtensions(), viewerId, "ns.dialogs:chooseFileViewer");
-    generateSelectOptions(fileTypeControl.find('.fteditor'), TSCORE.Config.getEditorExtensions(), editorId, "ns.dialogs:chooseFileEditor");
+    generateSelectOptions(fileTypeControl.find('.ftviewer'), getExtensionsByType("viewer"), viewerId, "ns.dialogs:chooseFileViewer");
+    generateSelectOptions(fileTypeControl.find('.fteditor'), getExtensionsByType("editor"), editorId, "ns.dialogs:chooseFileEditor");
+    //generateSelectOptions(fileTypeControl.find('.ftviewer'), TSCORE.Config.getViewerExtensions(), viewerId, "ns.dialogs:chooseFileViewer");
+    //generateSelectOptions(fileTypeControl.find('.fteditor'), TSCORE.Config.getEditorExtensions(), editorId, "ns.dialogs:chooseFileEditor");
     fileTypeControl.i18n();
     parent.prepend(fileTypeControl);
   }
@@ -168,16 +186,23 @@ define(function(require, exports, module) {
     });
     $('#fileTypesList').empty();
 
-    TSCORE.Config.getSupportedFileTypes().sort(function(a, b) {
-      if (a.type > b.type) {
-        return -1;
-      }
-      if (a.type < b.type) {
-        return 1;
-      }
-      return 0;
-    }).forEach(function(value) {
-      addFileType($('#fileTypesList'), value.type, value.viewer, value.editor);
+    tsExtManager.loadExtensionData().then(function(values) {
+      //console.log(values);
+      extList = values;
+   
+      TSCORE.Config.getSupportedFileTypes().sort(function(a, b) {
+        if (a.type > b.type) {
+          return -1;
+        }
+        if (a.type < b.type) {
+          return 1;
+        }
+        return 0;
+      }).forEach(function(value) {
+        addFileType($('#fileTypesList'), value.type, value.viewer, value.editor);
+      });
+    }).catch(function(err) {
+      console.log("loadExtFolder error: " + err);
     });
 
     $('#dialogOptions a:first').tab('show');
