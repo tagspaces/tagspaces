@@ -24,36 +24,37 @@ define(function(require, exports, module) {
   var homeScreen;
   var template;
   var UI;
+  var extensionLoaded;
 
   var init = function() {
     console.log("Initializing perspective " + extensionID);
 
     $viewContainer = $("#" + extensionID + "Container").empty();
-    
-    require([
-      extensionDirectory + "/perspectiveUI.js",
-      "text!" + extensionDirectory + "/galleryTMPL.html",
-      "css!" + extensionDirectory + "/gallery.css",
-      "css!" + extensionDirectory + "/dist/photoswipe.css",
-      "css!" + extensionDirectory + "/dist/default-skin/default-skin.css"
-      ], function(perspectiveUI, tmpl) {
-        UI = perspectiveUI;
-        template = tmpl;
-        UI.initUI(extensionDirectory);
-      });
+
+    extensionLoaded = new Promise(function(resolve, reject) {
+      require([
+        extensionDirectory + "/perspectiveUI.js",
+        "text!" + extensionDirectory + "/galleryTMPL.html",
+        "css!" + extensionDirectory + "/gallery.css",
+        "css!" + extensionDirectory + "/dist/photoswipe.css",
+        "css!" + extensionDirectory + "/dist/default-skin/default-skin.css"
+        ], function(perspectiveUI, tmpl) {
+          UI = perspectiveUI;
+          template = tmpl;
+          UI.initUI(extensionDirectory);
+          resolve(true);
+        }
+      );
+    });
   };
 
   var load = function() {
     console.log("Loading perspective " + extensionID);
     $viewContainer.children().remove();
-    if (UI) {
+    extensionLoaded.then(function() {
       UI.load($viewContainer, template, TSCORE.fileList);
       TSCORE.hideLoadingAnimation();
-    } else {
-      window.setTimeout(function() {
-        load();
-      }, 1000);
-    }
+    });
   };
 
   var clearSelectedFiles = function() {};

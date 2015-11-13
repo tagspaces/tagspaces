@@ -396,7 +396,11 @@ define(function(require, exports, module) {
       showRenameDirectoryDialog(dir4ContextMenu);
     });
     $('#directoryMenuDeleteDirectory').click(function() {
-      TSCORE.showConfirmDialog($.i18n.t('ns.dialogs:deleteDirectoryTitleConfirm'), $.i18n.t('ns.dialogs:deleteDirectoryContentConfirm', {
+      var dlgConfirmMsgId = 'ns.dialogs:deleteDirectoryContentConfirm';
+      if (TSCORE.Config.getUseTrashCan()) {
+        dlgConfirmMsgId = 'ns.pro:trashDirectoryContentConfirm';
+      }
+      TSCORE.showConfirmDialog($.i18n.t('ns.dialogs:deleteDirectoryTitleConfirm'), $.i18n.t(dlgConfirmMsgId, {
         dirPath: dir4ContextMenu
       }), function() {
         TSCORE.IO.deleteDirectory(dir4ContextMenu);

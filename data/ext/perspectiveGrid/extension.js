@@ -19,22 +19,27 @@ define(function(require, exports, module) {
 
   var extensionDirectory = TSCORE.Config.getExtensionPath() + "/" + extensionID;
   var UI;
+  var extensionLoaded;
 
   var init = function() {
     console.log("Initializing perspective " + extensionID);
-    require([
-      extensionDirectory + '/perspectiveUI.js',
-      "text!" + extensionDirectory + '/toolbar.html',
-      "css!" + extensionDirectory + '/extension.css',
-    ], function(extUI, toolbarTPL) {
-      var toolbarTemplate = Handlebars.compile(toolbarTPL);
-      UI = new extUI.ExtUI(extensionID);
-      UI.buildUI(toolbarTemplate);
-      platformTuning();
-      if (isCordova) {
-        TSCORE.reLayout();
-      }
-      $('#' + extensionID + 'Container [data-i18n]').i18n();
+
+    extensionLoaded = new Promise(function(resolve, reject) {
+      require([
+        extensionDirectory + '/perspectiveUI.js',
+        "text!" + extensionDirectory + '/toolbar.html',
+        "css!" + extensionDirectory + '/extension.css',
+      ], function(extUI, toolbarTPL) {
+        var toolbarTemplate = Handlebars.compile(toolbarTPL);
+        UI = new extUI.ExtUI(extensionID);
+        UI.buildUI(toolbarTemplate);
+        platformTuning();
+        if (isCordova) {
+          TSCORE.reLayout();
+        }
+        $('#' + extensionID + 'Container [data-i18n]').i18n();
+        resolve(true);
+      });
     });
   };
 
@@ -50,17 +55,13 @@ define(function(require, exports, module) {
 
   var load = function() {
     console.log("Loading perspective " + extensionID);
-    if (UI === undefined) {
-      window.setTimeout(function() {
-        UI.reInit();
-      }, 1000);
-    } else {
+    extensionLoaded.then(function() {
       UI.reInit();
-    }
+    });
   };
 
   var clearSelectedFiles = function() {
-    if (UI !== undefined) {
+    if (UI) {
       UI.clearSelectedFiles();
       UI.handleElementActivation();
     }

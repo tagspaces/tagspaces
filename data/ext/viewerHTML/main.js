@@ -122,20 +122,36 @@ function setContent(content, fileDirectory) {
 
   $htmlContent.append(content);
 
-  $htmlContent.find("a").bind('click', function(e) {
-    e.preventDefault();
-    //var url = $(this).attr("href"); // { "openLinkExternally": url }
-    //parent.postMessage("message", "*");
-    //console.log("Url: " + url);
+  $htmlContent.find("a[href]").each(function() {
+    var currentSrc = $(this).attr("href");
+    if (currentSrc.indexOf("http://") === 0 ||
+        currentSrc.indexOf("https://") === 0 ||
+        currentSrc.indexOf("file://") === 0 ||
+        currentSrc.indexOf("data:") === 0) {
+      // do nothing if src begins with http(s):// or data:
+    } else {
+      var path = "file://" + fileDirectory + "/" + currentSrc;
+      $(this).attr("href", path);
+    }
   });
 
   // fixing embedding of local images
   $htmlContent.find("img[src]").each(function() {
     var currentSrc = $(this).attr("src");
-    if (currentSrc.indexOf("http://") === 0 || currentSrc.indexOf("https://") === 0 || currentSrc.indexOf("data:") === 0) {
+    if (currentSrc.indexOf("http://") === 0 ||
+        currentSrc.indexOf("https://") === 0 ||
+        currentSrc.indexOf("file://") === 0 ||
+        currentSrc.indexOf("data:") === 0) {
       // do nothing if src begins with http(s):// or data:
     } else {
-      $(this).attr("src", "file://" + fileDirectory + isWin ? "\\" : "/" + currentSrc);
+      $(this).attr("src", "file://" + fileDirectory + "/" + currentSrc);
     }
   });
+
+  $htmlContent.find("a").bind('click', function(e) {
+    e.preventDefault();
+    var msg = { command: "openLinkExternally", link : $(this).attr("href") };
+    window.parent.postMessage(JSON.stringify(msg), "*");
+  });
+
 }

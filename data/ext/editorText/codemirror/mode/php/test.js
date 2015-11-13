@@ -1,3 +1,6 @@
+// CodeMirror, copyright (c) by Marijn Haverbeke and others
+// Distributed under an MIT license: http://codemirror.net/LICENSE
+
 (function() {
   var mode = CodeMirror.getMode({indentUnit: 2}, "php");
   function MT(name) { test.mode(name, mode, Array.prototype.slice.call(arguments, 1)); }
@@ -142,4 +145,10 @@
      '[keyword echo] ' + m3[2] + ';',
      '[keyword echo] [string "end"];',
      '[meta ?>]');
+
+  MT("variable_interpolation_heredoc",
+     "[meta <?php]",
+     "[string <<<here]",
+     "[string doc ][variable-2 $]{[variable yay]}[string more]",
+     "[string here]; [comment // normal]");
 })();

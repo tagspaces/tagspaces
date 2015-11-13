@@ -1,0 +1,6 @@
+{
+	"trashDeleteContentConfirm": "Do you want to move '__filePath__' to the trash bin ?",
+	"trashDirectoryContentConfirm": "Do you want to move the directory '__dirPath__' to the trash bin ?",
+	"trashFilesDeleteContentConfirm": "Do you want to move these files '__selectedFiles__' to the trash bin ?",
+	"-": "-"
+}

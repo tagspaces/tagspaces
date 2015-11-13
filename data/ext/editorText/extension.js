@@ -38,53 +38,49 @@ define(function(require, exports, module) {
     if (!mode) {
       mode = "properties";
     }
+
     require([
-      extensionDirectory + '/codemirror/codemirror.js',
-      'css!' + extensionDirectory + '/codemirror/codemirror.css',
+      extensionDirectory + '/codemirror/lib/codemirror',
+      extensionDirectory + "/codemirror/mode/" + mode + "/" + mode, 
+      'css!' + extensionDirectory + '/codemirror/lib/codemirror.css',
       'css!' + extensionDirectory + '/extension.css'
-    ], function() {
-      require([
-        extensionDirectory + "/codemirror/mode/" + mode + "/" + mode + ".js"
-      ], function() {
-        var cursorBlinkRate = isViewerMode ? -1 : 530; // disabling the blinking cursor in readonly mode
-        var lineNumbers = !isViewerMode;
+    ], function(CodeMirror) {
+      var cursorBlinkRate = isViewerMode ? -1 : 530; // disabling the blinking cursor in readonly mode
+      var lineNumbers = !isViewerMode;
+      //var saveKB = convertMouseTrapToCodeMirrorKeyBindings(TSCORE.Config.getSaveDocumentKeyBinding());
+      var keys = {};
 
-        //var saveKB = convertMouseTrapToCodeMirrorKeyBindings(TSCORE.Config.getSaveDocumentKeyBinding());
+      keys[convertMouseTrapToCodeMirrorKeyBindings(TSCORE.Config.getSaveDocumentKeyBinding())] = function() {
+        TSCORE.FileOpener.saveFile();
+      };
 
-        var keys = {};
+      keys[convertMouseTrapToCodeMirrorKeyBindings(TSCORE.Config.getCloseViewerKeyBinding())] = function() {
+        TSCORE.FileOpener.closeFile();
+      };
 
-        keys[convertMouseTrapToCodeMirrorKeyBindings(TSCORE.Config.getSaveDocumentKeyBinding())] = function() {
-          TSCORE.FileOpener.saveFile();
-        };
-
-        keys[convertMouseTrapToCodeMirrorKeyBindings(TSCORE.Config.getCloseViewerKeyBinding())] = function() {
-          TSCORE.FileOpener.closeFile();
-        };
-
-        cmEditor = new CodeMirror(document.getElementById("code"), {
-          fixedGutter: false,
-          mode: mode,
-          lineNumbers: lineNumbers,
-          lineWrapping: true,
-          tabSize: 2,
-          collapseRange: true,
-          matchBrackets: true,
-          cursorBlinkRate: cursorBlinkRate,
-          readOnly: isViewerMode ? "nocursor" : isViewerMode,
-          autofocus: true,
-          //theme: "lesser-dark",
-          //extraKeys: keys // workarrounded with bindGlobal plugin for mousetrap
-        });
-
-        cmEditor.on("change", function() {
-          if (contentLoaded) {
-            TSCORE.FileOpener.setFileChanged(true);
-          }
-        });
-
-        cmEditor.setSize("100%", "100%");
-        TSCORE.IO.loadTextFile(filePath);
+      cmEditor = new CodeMirror(document.getElementById("code"), {
+        fixedGutter: false,
+        mode: mode,
+        lineNumbers: lineNumbers,
+        lineWrapping: true,
+        tabSize: 2,
+        collapseRange: true,
+        matchBrackets: true,
+        cursorBlinkRate: cursorBlinkRate,
+        readOnly: isViewerMode ? "nocursor" : isViewerMode,
+        autofocus: true,
+        //theme: "lesser-dark",
+        //extraKeys: keys // workarrounded with bindGlobal plugin for mousetrap
       });
+
+      cmEditor.on("change", function() {
+        if (contentLoaded) {
+          TSCORE.FileOpener.setFileChanged(true);
+        }
+      });
+
+      cmEditor.setSize("100%", "100%");
+      TSCORE.IO.loadTextFile(filePath);
     });
   };
 

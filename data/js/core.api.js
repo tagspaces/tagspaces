@@ -22,7 +22,7 @@ define(function(require, exports, module) {
   var tsPro = require('tspro');
   var tsUtils = require('tsutils');
   var tsMeta = require('tsmeta');
-
+  var tsExt = require('tsextapi');
   var currentPath;
   var currentLocationObject;
   var currentPerspectiveID;
@@ -113,7 +113,8 @@ define(function(require, exports, module) {
         namespaces: [
           'ns.common',
           'ns.dialogs',
-          'ns.perspectiveList'
+          'ns.perspectiveList',
+          'ns.pro',
         ]
       },
       lng: language,

@@ -30,20 +30,13 @@ define(function(require, exports, module) {
     $containerElement = $('#' + containerElID);
 
     currentFilePath = filePath;
-
-    if (TSCORE.PRO) {
-      exports.getTextContent(filePath, function(content) {
-        TSCORE.PRO.saveTextContent(filePath, content);
-      });
-    }
-
     $containerElement.empty();
     $containerElement.css("background-color", "white");
     $containerElement.append($('<iframe>', {
       "sandbox": "allow-same-origin allow-scripts",
       "id": "iframeViewer",
       "nwdisable": "",
-      "nwfaketop": "",
+      //"nwfaketop": "",
       "src": extensionDirectory + "/index.html?&locale=" + TSCORE.currentLanguage,
     }));
 
@@ -105,17 +98,7 @@ define(function(require, exports, module) {
   exports.getContent = function() {
     console.log("Not implemented");
   };
-
-  exports.getTextContent = function(file, result) {
-    TSCORE.IO.getFileContent(file, function(buf) {
-      var text = TSCORE.Utils.arrayBufferToStr(buf);
-      var matched = text.match(/<body[^>]*>([\w|\W]*)<\/body>/im);
-      result($(matched[1]).text());
-    }, function(err) {
-      console.log(err);
-    });
-  };
-
+  
   // Extension Vars
   exports.Title = extensionTitle;
   exports.ID = extensionID;

@@ -13,6 +13,37 @@ define(function(require, exports, module) {
   require("webdavlib/webdavlib");
 
   var davClient;
+  //exact copy of getAjax with timeout added 
+  nl.sara.webdav.Client.prototype.getAjax = function(method, url, callback, headers) {
+    var /** @type XMLHttpRequest */ ajax = (((typeof Components !== 'undefined') && (typeof Components.classes !== 'undefined')) ? Components.classes["@mozilla.org/xmlextras/xmlhttprequest;1"].createInstance(Components.interfaces.nsIXMLHttpRequest) : new XMLHttpRequest());
+    if (this._username !== null) {
+      ajax.open(method, url, true, this._username, this._password);
+    } else {
+      ajax.open(method, url, true);
+    }
+    ajax.onreadystatechange = function() {
+      nl.sara.webdav.Client.ajaxHandler(ajax, callback);
+    };
+    
+    ajax.ontimeout = function() {
+      ajax.readyState = 4;
+      ajax.ajax.status = -1;
+      nl.sara.webdav.Client.ajaxHandler(ajax, callback);
+    };
+
+    if (headers === undefined) {
+      headers = {};
+    }
+    for (var header in this._headers) {
+      if (headers[header] === undefined) {
+        ajax.setRequestHeader(header, this._headers[header]);
+      }
+    }
+    for (var header in headers) {
+      ajax.setRequestHeader(header, headers[header]);
+    }
+    return ajax;
+  };
 
   function connectDav() {
     console.log("Connecting webdav...");
@@ -25,22 +56,36 @@ define(function(require, exports, module) {
 
   window.setTimeout(connectDav(), 2000);
 
+  function checkStatusCode(code) {
+    var status = parseInt(code / 100);
+    if (status === 2) {
+      return true;
+    }
+    return false;
+  }
+
   function listDirectory(dirPath, readyCallback) {
     console.log("Listing directory: " + dirPath);
-
+    var anotatedDirList = [];
     dirPath = encodeURI(dirPath + "/");
-
+    
     davClient.propfind(
       dirPath, //encodeURI(dirPath),
       function(status, data) {
         console.log("Dirlist Status:  " + status);
-        //console.log("Dirlist Content: "+JSON.stringify(data._responses));
-        var anotatedDirList = [],
-          dirList = data._responses,
-          fileName,
-          isDir,
-          filesize,
-          lmdt;
+        if (!checkStatusCode(status)) { 
+          if (readyCallback) {
+            readyCallback(anotatedDirList);
+          } else {
+            //TSPOSTIO.errorOpeningPath();
+          }
+          TSCORE.hideLoadingAnimation();
+          TSCORE.showAlertDialog("Listing " + dirPath + " failed.");
+          console.error("Listing directory " + dirPath + " failed " + status); 
+          return;
+        }
+        var dirList = data._responses,
+        fileName, isDir, filesize, lmdt;
 
         for (var entry in dirList) {
           var path = dirList[entry].href;
@@ -120,7 +165,12 @@ define(function(require, exports, module) {
       function(status, data, headers) {
         console.log("Directory Creation Status/Content/Headers:  " + status + " / " + data + " / " + headers);
         if (silentMode !== true) {
-          TSPOSTIO.createDirectory(dirPath);
+          if (checkStatusCode(status)) {
+            TSPOSTIO.createDirectory(dirPath);
+          } else {
+            TSCORE.showAlertDialog("Creating directory" + dirPath + "failed");
+            console.error("createDirectory " + dirPath + " failed " + status);
+          }
         }
       }
     );
@@ -128,11 +178,24 @@ define(function(require, exports, module) {
 
   var copyFile = function(filePath, newFilePath) {
     console.log("Copying file: " + filePath + " to " + newFilePath);
+
+    if (filePath.toLowerCase() === newFilePath.toLowerCase()) {
+      TSCORE.hideWaitingDialog();
+      TSCORE.showAlertDialog($.i18n.t("ns.common:fileTheSame"), $.i18n.t("ns.common:fileNotCopyied"));
+      return false;
+    }
+
     davClient.copy(
       encodeURI(filePath),
       function(status, data, headers) {
         console.log("Copy File Status/Content/Headers:  " + status + " / " + data + " / " + headers);
-        TSPOSTIO.copyFile(filePath, newFilePath);
+        if (checkStatusCode(status)) {
+          TSPOSTIO.copyFile(filePath, newFilePath);  
+        } else {
+          TSCORE.hideWaitingDialog();
+          TSCORE.showAlertDialog($.i18n.t("ns.common:fileCopyFailed", {fileName:newFilePath}));
+          console.error("copyFile " + filePath + " failed " + status);
+        }
       },
       encodeURI(newFilePath),
       davClient.FAIL_ON_OVERWRITE
@@ -141,11 +204,23 @@ define(function(require, exports, module) {
 
   var renameFile = function(filePath, newFilePath) {
     console.log("Renaming file: " + filePath + " to " + newFilePath);
+
+    if (filePath === newFilePath) {
+      TSCORE.hideWaitingDialog();
+      TSCORE.showAlertDialog($.i18n.t("ns.common:fileTheSame"), $.i18n.t("ns.common:fileNotMoved"));
+      return false;
+    }
+
     davClient.move(
       encodeURI(filePath),
       function(status, data, headers) {
         console.log("Rename File Status/Content/Headers:  " + status + " / " + data + " / " + headers);
-        TSPOSTIO.renameFile(filePath, newFilePath);
+        if (checkStatusCode(status)) {
+          TSPOSTIO.renameFile(filePath, newFilePath);
+        } else {
+          TSCORE.showAlertDialog("Renaming: " + filePath + " failed.");
+          console.error("renameFile " + filePath + " failed " + status);
+        }
       },
       encodeURI(newFilePath),
       davClient.FAIL_ON_OVERWRITE
@@ -159,7 +234,14 @@ define(function(require, exports, module) {
       encodeURI(dirPath),
       function(status, data, headers) {
         console.log("Rename Directory Status/Content/Headers:  " + status + " / " + data + " / " + headers);
-        TSPOSTIO.renameDirectory(dirPath, newDirPath);
+        if (checkStatusCode(status)) {
+          TSPOSTIO.renameDirectory(dirPath, newDirPath);
+        } else {
+          TSCORE.hideWaitingDialog();
+          TSCORE.showAlertDialog($.i18n.t("ns.common:pathIsNotDirectory", {dirName:dirPath}), 
+            $.i18n.t("ns.common:directoryRenameFailed"));
+          console.error("renameDirectory: " + dirPath + " failed " + status);
+        }
       },
       encodeURI(newDirPath),
       davClient.FAIL_ON_OVERWRITE
@@ -171,8 +253,13 @@ define(function(require, exports, module) {
     davClient.get(
       encodeURI(filePath),
       function(status, data, headers) {
-        console.log("Loading File Status/Content/Headers:  " + status + " / " + data + " / " + headers);
-        TSPOSTIO.loadTextFile(data);
+        console.log("Loading File Status/Content/Headers:  " + status + " / " + headers); // " + data + " /
+        if (checkStatusCode(status)) {
+          TSPOSTIO.loadTextFile(data);
+        } else {
+          TSCORE.showAlertDialog("Loading " + filePath + " failed.");
+          console.error("Loading file " + filePath + " failed " + status);
+        }
       }
       //,customHeaders
     );
@@ -181,7 +268,6 @@ define(function(require, exports, module) {
 
   var saveTextFile = function(filePath, content, overWrite, silentMode) {
     console.log("Saving file: " + filePath); //+" content: "+content);
-
     var isNewFile = false; // = !pathUtils.existsSync(filePath);
     davClient.propfind(encodeURI(filePath), function(status, data) {
       console.log("Check file exists: Status / Content: " + status + " / " + data);
@@ -193,7 +279,12 @@ define(function(require, exports, module) {
         function(status, data, headers) {
           console.log("Creating File Status/Content/Headers:  " + status + " / " + data + " / " + headers);
           if (silentMode !== true) {
-            TSPOSTIO.saveTextFile(filePath, isNewFile);
+            if (checkStatusCode(status)) {
+              TSPOSTIO.saveTextFile(filePath, isNewFile);
+            } else {
+              TSCORE.showAlertDialog("Save file " + filePath + " failed.");
+              console.error("saveBinaryFile: " + filePath + " failed " + status);
+            }
           }
         },
         content,
@@ -216,7 +307,12 @@ define(function(require, exports, module) {
           function(status, data, headers) {
             console.log("Creating File Status/Content/Headers:  " + status + " / " + data + " / " + headers);
             if (silentMode !== true) {
-              TSPOSTIO.saveBinaryFile(filePath, isNewFile);
+              if (checkStatusCode(status)) {
+                TSPOSTIO.saveBinaryFile(filePath, isNewFile);
+              } else {
+                TSCORE.showAlertDialog("Save file " + filePath + " failed.");
+                console.error("saveBinaryFile: " + filePath + " failed " + status);
+              }
             }
           },
           content,
@@ -234,22 +330,30 @@ define(function(require, exports, module) {
       encodeURI(path),
       function(status, data, headers) {
         console.log("Directory/File Deletion Status/Content/Headers:  " + status + " / " + data + " / " + headers);
-        if (status === 204) {
+        if (checkStatusCode(status)) {
           TSPOSTIO.deleteElement(path);
         } else {
-          TSCORE.showAlertDialog("Deletion of the file failed");
+          TSCORE.hideLoadingAnimation();
+          TSCORE.showAlertDialog("Deletion of the file " + path + " failed");
+          console.error("Deleting file " + path + " failed " + status);
         }
       }
     );
   };
 
   var deleteDirectory = function(path) {
-    console.log("Deleting directory: " + path);
+    console.log("Deleting directory: " + path);    
     davClient.remove(
       encodeURI(path),
       function(status, data, headers) {
         console.log("Directory/File Deletion Status/Content/Headers:  " + status + " / " + data + " / " + headers);
-        TSPOSTIO.deleteDirectory(path);
+        if (checkStatusCode(status)) {
+          TSPOSTIO.deleteDirectory(path);  
+        } else {
+          TSCORE.hideLoadingAnimation();
+          TSCORE.showAlertDialog("Deleting directory " + path + " failed.");
+          console.error("deleteDirectory " + path + " failed " + status);
+        }
       }
     );
   };
@@ -283,6 +387,7 @@ define(function(require, exports, module) {
   };
 
   var getFileProperties = function(filePath) {
+    
     davClient.propfind(encodeURI(filePath), function(status, data) {
       console.log("Properties Status / Content: " + status + " / " + JSON.stringify(data._responses));
       var fileProperties = {};
@@ -291,7 +396,14 @@ define(function(require, exports, module) {
         fileProperties.size = data._responses[entry]._namespaces["DAV:"].getcontentlength;
         fileProperties.lmdt = data._responses[entry]._namespaces["DAV:"].getlastmodified._xmlvalue[0].data;
       }
-      TSPOSTIO.getFileProperties(fileProperties);
+      if (checkStatusCode(status)) {
+        TSPOSTIO.getFileProperties(fileProperties);
+      } else {
+        TSCORE.hideLoadingAnimation();
+        TSCORE.closeFileViewer();
+        TSCORE.showAlertDialog("File " + filePath + " get properties failed");
+        console.error("getFileProperties " + filePath + " failed " + status);
+      }
     }, 1);
   };
 

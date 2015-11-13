@@ -150,6 +150,7 @@
     "useDefaultLocation": "Use default location as a startup location",
     "enablingUsingMetaFolder": "Enable the use of a hidden folder(.ts) for storing meta data and thumbnails",
     "writeMetaToSidecarFile": "Use sidecar files in the hidden folders for saving meta data (e.g. tags)",
+    "useTrashCan": "Move deleted files or folders to trash bin",
     "invalidImportFile": "The imported file has invalid format",
     "importGroupTagsTitle": "Import tags from file",
     "confirmSaveButton": "Save",

@@ -19,61 +19,64 @@ define(function(require, exports, module) {
 
   var extensionDirectory = TSCORE.Config.getExtensionPath() + "/" + extensionID;
   var UI;
+  var extensionLoaded;
 
   function init() {
     console.log("Initializing perspective " + extensionID);
-    require([
-      "css!" + extensionDirectory + '/extension.css',
-      extensionDirectory + '/datatables/jquery.dataTables.min.js',
-      'libs/filesaver.js/FileSaver.js'
-    ], function() {
+
+    extensionLoaded = new Promise(function(resolve, reject) {
       require([
-        extensionDirectory + '/perspectiveUI.js',
-        "text!" + extensionDirectory + '/toolbar.html',
-        extensionDirectory + '/datatables/natural.js',
-      ], function(extUI, toolbarTPL) {
+        "css!" + extensionDirectory + '/extension.css',
+        extensionDirectory + '/datatables/jquery.dataTables.min.js',
+        'libs/filesaver.js/FileSaver.js'
+      ], function() {
+        require([
+          extensionDirectory + '/perspectiveUI.js',
+          "text!" + extensionDirectory + '/toolbar.html',
+          extensionDirectory + '/datatables/natural.js',
+        ], function(extUI, toolbarTPL) {
 
-        var toolbarTemplate = Handlebars.compile(toolbarTPL);
-        UI = new extUI.ExtUI(extensionID);
-        UI.buildUI(toolbarTemplate);
+          var toolbarTemplate = Handlebars.compile(toolbarTPL);
+          UI = new extUI.ExtUI(extensionID);
+          UI.buildUI(toolbarTemplate);
 
-        // TODO refactor translations
-        var translation = $.i18n.t("ns.perspectiveList:fileExtension");
-        if (translation.length > 0) {
-          $('#' + extensionID + 'Container').find("th:contains('File Ext.')").text(translation);
-        }
-        translation = $.i18n.t("ns.perspectiveList:fileTitle");
-        if (translation.length > 0) {
-          $('#' + extensionID + 'Container').find("th:contains('Title')").text(translation);
-        }
-        translation = $.i18n.t("ns.perspectiveList:fileTags");
-        if (translation.length > 0) {
-          $('#' + extensionID + 'Container').find("th:contains('Tags')").text(translation);
-        }
-        translation = $.i18n.t("ns.perspectiveList:fileSize");
-        if (translation.length > 0) {
-          $('#' + extensionID + 'Container').find("th:contains('Size')").text(translation);
-        }
-        translation = $.i18n.t("ns.perspectiveList:fileLDTM");
-        if (translation.length > 0) {
-          $('#' + extensionID + 'Container').find("th:contains('Last Modified')").text(translation);
-        }
-        translation = $.i18n.t("ns.perspectiveList:filePath");
-        if (translation.length > 0) {
-          $('#' + extensionID + 'Container').find("th:contains('File Path')").text(translation);
-        }
-        translation = $.i18n.t("ns.perspectiveList:fileName");
-        if (translation.length > 0) {
-          $('#' + extensionID + 'Container').find("th:contains('File Name')").text(translation);
-        }
+          // TODO refactor translations
+          var translation = $.i18n.t("ns.perspectiveList:fileExtension");
+          if (translation.length > 0) {
+            $('#' + extensionID + 'Container').find("th:contains('File Ext.')").text(translation);
+          }
+          translation = $.i18n.t("ns.perspectiveList:fileTitle");
+          if (translation.length > 0) {
+            $('#' + extensionID + 'Container').find("th:contains('Title')").text(translation);
+          }
+          translation = $.i18n.t("ns.perspectiveList:fileTags");
+          if (translation.length > 0) {
+            $('#' + extensionID + 'Container').find("th:contains('Tags')").text(translation);
+          }
+          translation = $.i18n.t("ns.perspectiveList:fileSize");
+          if (translation.length > 0) {
+            $('#' + extensionID + 'Container').find("th:contains('Size')").text(translation);
+          }
+          translation = $.i18n.t("ns.perspectiveList:fileLDTM");
+          if (translation.length > 0) {
+            $('#' + extensionID + 'Container').find("th:contains('Last Modified')").text(translation);
+          }
+          translation = $.i18n.t("ns.perspectiveList:filePath");
+          if (translation.length > 0) {
+            $('#' + extensionID + 'Container').find("th:contains('File Path')").text(translation);
+          }
+          translation = $.i18n.t("ns.perspectiveList:fileName");
+          if (translation.length > 0) {
+            $('#' + extensionID + 'Container').find("th:contains('File Name')").text(translation);
+          }
+          $('#' + extensionID + 'Container [data-i18n]').i18n();
 
-        if (isCordova) {
-          TSCORE.reLayout();
-        }
-
-        $('#' + extensionID + 'Container [data-i18n]').i18n();
-
-        platformTuning();
+          if (isCordova) {
+            TSCORE.reLayout();
+          }
+          platformTuning();
+          resolve(true);
+        });
       });
     });
   }
@@ -93,17 +96,13 @@ define(function(require, exports, module) {
 
   var load = function() {
     console.log("Loading perspective " + extensionID);
-    if (UI === undefined) {
-      window.setTimeout(function() {
-        UI.reInit();
-      }, 1000);
-    } else {
+    extensionLoaded.then(function() {
       UI.reInit();
-    }
+    });
   };
 
   var clearSelectedFiles = function() {
-    if (UI !== undefined) {
+    if (UI) {
       UI.clearSelectedFiles();
       UI.handleElementActivation();
     }

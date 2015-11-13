@@ -223,8 +223,12 @@ define(function(require, exports, module) {
       TSCORE.selectedFiles.forEach(function(file) {
         selFiles.push(TSCORE.Utils.baseName(file));
       });
+      var dlgConfirmMsgId = 'ns.dialogs:selectedFilesDeleteContentConfirm';
+      if (TSCORE.Config.getUseTrashCan()) {
+        dlgConfirmMsgId = 'ns.pro:trashFilesDeleteContentConfirm';
+      }
       TSCORE.showConfirmDialog($.i18n.t('ns.dialogs:fileDeleteTitleConfirm'),
-        $.i18n.t('ns.dialogs:selectedFilesDeleteContentConfirm', {
+        $.i18n.t(dlgConfirmMsgId, {
           selectedFiles:  selFiles.toString()
         }), function() {
           TSCORE.selectedFiles.forEach(function(file) {
@@ -440,10 +444,11 @@ define(function(require, exports, module) {
     var self = this;
 
     $fileTile
-      /*.hammer().on("doubletap", function() { //.dblclick(function() {
-        TSCORE.FileOpener.openFile(filePath);
-        self.selectFile(filePath);
-      })*/
+      .hammer().on("doubletap", function() { //.dblclick(function() {
+        return false;
+        //TSCORE.FileOpener.openFile(filePath);
+        //self.selectFile(filePath);
+      })
       .click(function() {
         TSCORE.FileOpener.openFile(filePath);
         self.selectFile(filePath);
@@ -488,11 +493,11 @@ define(function(require, exports, module) {
         var $stateTag = $(this).find("i");
         if ($stateTag.hasClass("fa-square-o")) {
           $stateTag.removeClass("fa-square-o").addClass("fa fa-check-square");
-          $(this).parent().parent().addClass("ui-selected");
+          $(this).parent().addClass("ui-selected");
           TSCORE.selectedFiles.push(filePath);
         } else {
           $stateTag.removeClass("fa-check-square").addClass("fa-square-o");
-          $(this).parent().parent().removeClass("ui-selected");
+          $(this).parent().removeClass("ui-selected");
           TSCORE.selectedFiles.splice(TSCORE.selectedFiles.indexOf(filePath), 1);
         }
         self.handleElementActivation();
@@ -523,7 +528,7 @@ define(function(require, exports, module) {
     TSCORE.PerspectiveManager.clearSelectedFiles();
     $(this.viewContainer).find('.fileTileSelector').each(function() {
       if ($(this).attr("filepath") === filePath) {
-        $(this).parent().parent().toggleClass("ui-selected");
+        $(this).parent().toggleClass("ui-selected");
         $(this).find("i").toggleClass("fa-check-square").toggleClass("fa-square-o");
         TSCORE.selectedFiles.push($(this).attr("filepath"));
       }
@@ -652,7 +657,7 @@ define(function(require, exports, module) {
     if (checkIcon.hasClass("fa-square-o")) {
       TSCORE.selectedFiles = [];
       $(this.viewContainer).find('.fileTileSelector').each(function() {
-        $(this).parent().parent().addClass("ui-selected");
+        $(this).parent().addClass("ui-selected");
         $(this).find("i").addClass("fa-check-square").removeClass("fa-square-o");
         TSCORE.selectedFiles.push($(this).attr("filepath"));
       });
