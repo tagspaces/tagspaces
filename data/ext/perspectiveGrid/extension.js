@@ -48,6 +48,9 @@ define(function(require, exports, module) {
       $("#" + extensionID + "IncludeSubDirsButton").hide();
     } else if (isChrome) {
       $('#' + extensionID + 'AddFileButton').hide();
+      $('#' + extensionID + 'TagButton').hide();
+      $('#' + extensionID + 'CopyMoveButton').hide();
+      $('#' + extensionID + 'CreateDirectoryButton').hide();
     } else if (isFirefox) {
       $('#' + extensionID + 'AddFileButton').hide(); // Current impl has 0.5mb limit
     }
