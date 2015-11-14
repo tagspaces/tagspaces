@@ -238,7 +238,7 @@ define(function(require, exports, module) {
     changePerspective(TSCORE.currentPerspectiveID);
     Promise.all(workers).then(function(result) {
       console.log("MetaData loaded");
-      //changePerspective(TSCORE.currentPerspectiveID);
+      changePerspective(TSCORE.currentPerspectiveID);
     }).catch(function(e) {
       console.error("MetaData Error: " + e);
     });
@@ -284,8 +284,7 @@ define(function(require, exports, module) {
         $currentPerspectitveName.attr('title', perspectives[i].ID);
         perspectives[i].load();
         $('#' + perspectives[i].ID + 'Container').show();
-        $('#' + perspectives[i].ID + 'Toolbar').show();
-        $('#' + perspectives[i].ID + 'Footer').show();
+        //$('#' + perspectives[i].ID + 'Toolbar').show();
       }
     }
     // Clear the list with the selected files    
