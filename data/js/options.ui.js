@@ -8,7 +8,6 @@ define(function(require, exports, module) {
   var TSCORE = require('tscore');
   var tsExtManager = require('tsextmanager');
   require(['libs/filesaver.js/FileSaver.js'], function() {});
-  
   var extList = [];
 
   function generateSelectOptions(parent, data, selectedId, helpI18NString) {
@@ -46,12 +45,12 @@ define(function(require, exports, module) {
   }
 
   function getExtensionsByType(type) {
-    var result =[];
-    if(extList.length === 0) {
-      alert("error: extList is empty");
+    var result = [];
+    if (extList.length === 0) {
+      console.error("error: extList is empty");
     }
-    for(var i in extList) {
-      if(extList[i].type === type) {
+    for (var i in extList) {
+      if (extList[i].type === type) {
         result.push(extList[i].name);
       }
     }
@@ -172,9 +171,9 @@ define(function(require, exports, module) {
       $('#useTrashCan').attr('checked', TSCORE.Config.getUseTrashCan());
       enableMetaData();
     }
-    TSCORE.Config.getPerspectives().forEach(function(value) {
-      addPerspective($('#perspectiveList'), value.id);
-    });
+    //TSCORE.Config.getPerspectives().forEach(function(value) {
+    //  addPerspective($('#perspectiveList'), value.id);
+    //});
     var $languagesDropdown = $('#languagesList');
     $languagesDropdown.empty();
     TSCORE.Config.getSupportedLanguages().forEach(function(value) {
@@ -189,7 +188,11 @@ define(function(require, exports, module) {
     tsExtManager.loadExtensionData().then(function(values) {
       //console.log(values);
       extList = values;
-   
+      
+      getExtensionsByType("perspective").forEach(function(perspectiveName) {
+        addPerspective($('#perspectiveList'), perspectiveName);
+      });
+
       TSCORE.Config.getSupportedFileTypes().sort(function(a, b) {
         if (a.type > b.type) {
           return -1;

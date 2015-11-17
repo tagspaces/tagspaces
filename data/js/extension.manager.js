@@ -57,8 +57,12 @@ define(function(require, exports, module) {
               result.push(values[val]);
             }
           }
+          TSCORE.hideLoadingAnimation();
           resolve(result);
-        }).catch(reject);
+        }).catch(function(err) {
+          TSCORE.hideLoadingAnimation();
+          reject(err);
+        });
       });
     });
     return promise;
