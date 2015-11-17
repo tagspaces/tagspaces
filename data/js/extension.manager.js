@@ -17,8 +17,8 @@ define(function(require, exports, module) {
   }, false);*/
 
   function getExtFolderPath() {
-    var path = "ext";
-    return path;
+    var extPath = "ext";
+    return location.href.replace(/file:\/\//gi, "").replace(/index.html/gi, extPath);
   }
   function loadBowerData(filePath) {
 
