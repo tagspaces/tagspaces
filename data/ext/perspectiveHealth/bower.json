@@ -1,8 +1,8 @@
 {
-  "name": "viewerImage",
-  "id": "viewerImage",
-  "description": "A TagSpaces extension allowing .",
-  "type": "viewer",
+  "name": "perspectiveHealth",
+  "id": "perspectiveHealth",
+  "description": "An experimental TagSpaces extension allowing to view your health data.",
+  "type": "perspective",
   "version": "1.0.0",
   "dependencies": {
 

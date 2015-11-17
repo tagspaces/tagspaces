@@ -1,6 +1,6 @@
 {
-  "name": "viewerImage",
-  "id": "viewerImage",
+  "name": "viewerZIP",
+  "id": "viewerZIP",
   "description": "A TagSpaces extension allowing .",
   "type": "viewer",
   "version": "1.0.0",

@@ -1,11 +1,11 @@
 {
-  "name": "viewerImage",
-  "id": "viewerImage",
-  "description": "A TagSpaces extension allowing .",
+  "name": "viewerAudioVideo",
+  "id": "viewerAudioVideo",
+  "description": "A TagSpaces extension allowing playing of audio and video files.",
   "type": "viewer",
   "version": "1.0.0",
   "dependencies": {
-
+    "plyr": "~1.3.5"
   },
   "devDependencies": {},
   "authors": [
@@ -13,8 +13,9 @@
     "Ilian Sapundshiev - http://ilian.me"
   ],
   "keywords": [
-    "",
-    ""
+    "player",
+    "ogv",
+    "ogg"
   ],
   "license": "",
   "main": [

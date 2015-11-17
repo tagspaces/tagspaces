@@ -1,11 +1,10 @@
     {
-      "name": "viewerHTML",
-      "id": "viewerHTML",
-      "description": "A TagSpaces extension allowing open HTML files.",
+      "name": "viewerBrowser",
+      "id": "viewerBrowser",
+      "description": "A TagSpaces extension allowing to open files in the embedded browser.",
       "type": "viewer",
       "version": "1.0.0",
       "dependencies": {
-    
       },
       "devDependencies": {},
       "authors": [
@@ -13,8 +12,8 @@
         "Ilian Sapundshiev - http://ilian.me"
       ],
       "keywords": [
-        "html",
-        "viewer"
+        "viewer",
+        "iframe"
       ],
       "license": "",
       "main": [

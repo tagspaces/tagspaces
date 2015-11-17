@@ -1,7 +1,7 @@
 {
-  "name": "viewerImage",
-  "id": "viewerImage",
-  "description": "A TagSpaces extension allowing .",
+  "name": "viewerHTML",
+  "id": "viewerHTML",
+  "description": "A TagSpaces extension allowing open HTML files.",
   "type": "viewer",
   "version": "1.0.0",
   "dependencies": {
@@ -13,8 +13,8 @@
     "Ilian Sapundshiev - http://ilian.me"
   ],
   "keywords": [
-    "",
-    ""
+    "html",
+    "viewer"
   ],
   "license": "",
   "main": [

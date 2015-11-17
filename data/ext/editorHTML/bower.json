@@ -1,11 +1,11 @@
 {
-  "name": "viewerImage",
-  "id": "viewerImage",
-  "description": "A TagSpaces extension allowing .",
-  "type": "viewer",
+  "name": "editorHTML",
+  "id": "editorHTML",
+  "description": "A TagSpaces extension allowing editing of HTML documents.",
+  "type": "editor",
   "version": "1.0.0",
   "dependencies": {
-
+    "summernote": "~0.5.10"
   },
   "devDependencies": {},
   "authors": [
@@ -13,8 +13,9 @@
     "Ilian Sapundshiev - http://ilian.me"
   ],
   "keywords": [
-    "",
-    ""
+    "editor",
+    "html",
+    "htm"
   ],
   "license": "",
   "main": [

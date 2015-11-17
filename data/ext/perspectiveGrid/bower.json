@@ -1,8 +1,8 @@
 {
-  "name": "viewerImage",
-  "id": "viewerImage",
-  "description": "A TagSpaces extension allowing .",
-  "type": "viewer",
+  "name": "perspectiveGrid",
+  "id": "perspectiveGrid",
+  "description": "A TagSpaces perspective extension allowing you to view your files in a grid with a image preview.",
+  "type": "perspective",
   "version": "1.0.0",
   "dependencies": {
 
@@ -13,8 +13,9 @@
     "Ilian Sapundshiev - http://ilian.me"
   ],
   "keywords": [
-    "",
-    ""
+    "preview",
+    "grid",
+    "thumbs"
   ],
   "license": "",
   "main": [

@@ -1,8 +1,8 @@
 {
-  "name": "viewerImage",
-  "id": "viewerImage",
-  "description": "A TagSpaces extension allowing .",
-  "type": "viewer",
+  "name": "perspectiveOCRO",
+  "id": "perspectiveOCRO",
+  "description": "An experimental TagSpaces extension .",
+  "type": "",
   "version": "1.0.0",
   "dependencies": {
 

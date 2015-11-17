@@ -1,11 +1,11 @@
 {
-  "name": "viewerImage",
-  "id": "viewerImage",
-  "description": "A TagSpaces extension allowing .",
-  "type": "viewer",
+  "name": "editorText",
+  "id": "editorText",
+  "description": "A TagSpaces extension allowing editing of text based documents.",
+  "type": "editor",
   "version": "1.0.0",
   "dependencies": {
-
+    "codemirror": "~3.24.0"
   },
   "devDependencies": {},
   "authors": [
@@ -13,8 +13,8 @@
     "Ilian Sapundshiev - http://ilian.me"
   ],
   "keywords": [
-    "",
-    ""
+    "text",
+    "editor"
   ],
   "license": "",
   "main": [

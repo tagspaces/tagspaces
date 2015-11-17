@@ -1,11 +1,10 @@
 {
-  "name": "viewerImage",
-  "id": "viewerImage",
-  "description": "A TagSpaces extension allowing .",
+  "name": "viewerBrowser",
+  "id": "viewerBrowser",
+  "description": "A TagSpaces extension allowing to open files in the embedded browser.",
   "type": "viewer",
   "version": "1.0.0",
   "dependencies": {
-
   },
   "devDependencies": {},
   "authors": [
@@ -13,8 +12,8 @@
     "Ilian Sapundshiev - http://ilian.me"
   ],
   "keywords": [
-    "",
-    ""
+    "viewer",
+    "iframe"
   ],
   "license": "",
   "main": [

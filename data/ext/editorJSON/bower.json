@@ -1,11 +1,11 @@
 {
-  "name": "viewerImage",
-  "id": "viewerImage",
-  "description": "A TagSpaces extension allowing .",
-  "type": "viewer",
+  "name": "editorJSON",
+  "id": "editorJSON",
+  "description": "A TagSpaces extension allowing editing of JSON documents.",
+  "type": "editor",
   "version": "1.0.0",
   "dependencies": {
-
+    "jsoneditor": "~3.1.2"
   },
   "devDependencies": {},
   "authors": [
@@ -13,8 +13,8 @@
     "Ilian Sapundshiev - http://ilian.me"
   ],
   "keywords": [
-    "",
-    ""
+    "editor",
+    "json"
   ],
   "license": "",
   "main": [
