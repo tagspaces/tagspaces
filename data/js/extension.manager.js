@@ -26,7 +26,8 @@ define(function(require, exports, module) {
       $.get(filePath, function(data) {
         try {
           var bowerData = JSON.parse(data);
-          console.log('bowerData: ' + JSON.stringify(bowerData));
+          console.log('Extension descriptor loaded: ' + filePath);
+          //console.log('bowerData: ' + JSON.stringify(bowerData));
           resolve(bowerData);
         } catch (e) {
           resolve();
