@@ -444,7 +444,7 @@ define(function(require, exports, module) {
         }
         resolve(content);
       });
-    })
+    });
   };
 
   var saveTextFile = function(filePath, content, overWrite, silentMode) {
@@ -722,11 +722,11 @@ define(function(require, exports, module) {
   var getPropertiesPromise = function(path) {
     return new Promise(function(resolve, reject) {
       fs.stat(path, function(err, stats) {
-        if(err) {
+        if (err) {
           resolve(false);
           //reject("Failed getting properties for " +path + " with "+ err);
         }
-        if(stats) {
+        if (stats) {
           //console.log("Properties for " + path + " - " + JSON.stringify(stats));
           resolve(stats);
         }
