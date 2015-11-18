@@ -1,0 +1,12 @@
+/libs/jquery.panzoom/src
+/libs/jquery.panzoom/dist/jquery.panzoom.js
+/libs/jquery.panzoom/*.json
+/libs/jquery.panzoom/*.md
+/libs/jquery
+/libs/exif-js/README.md
+/libs/exif-js/package.json
+/libs/exif-js/bower.json
+/libs/exif-js/.bower.json
+/libs/jquery-mousewheel/*.json
+/libs/jquery-mousewheel/*.md
+/libs/jquery-mousewheel/jquery.mousewheel.js
