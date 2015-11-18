@@ -5,7 +5,9 @@
   "type": "viewer",
   "version": "1.0.0",
   "dependencies": {
-
+    "exif-js": "~2.1.1",
+    "jquery.panzoom": "~2.0.5",
+    "jquery-mousewheel": "~3.1.13"
   },
   "devDependencies": {},
   "authors": [
@@ -13,8 +15,9 @@
     "Ilian Sapundshiev - http://ilian.me"
   ],
   "keywords": [
-    "",
-    ""
+    "viewer",
+    "jpg",
+    "png"
   ],
   "license": "",
   "main": [
