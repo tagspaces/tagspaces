@@ -39,7 +39,8 @@ define(function(require, exports, module) {
               row4Remove.remove();
             });
           })));
-    generateSelectOptions(perspectiveControl.find('select'), TSCORE.Config.getPerspectiveExtensions(), perspectiveId, "ns.dialogs:choosePerspective");
+    generateSelectOptions(perspectiveControl.find('select'), getExtensionsByType("perspective"), perspectiveId, "ns.dialogs:choosePerspective");
+    //generateSelectOptions(perspectiveControl.find('select'), TSCORE.Config.getPerspectiveExtensions(), perspectiveId, "ns.dialogs:choosePerspective");
     perspectiveControl.i18n();
     parent.append(perspectiveControl);
   }
@@ -70,8 +71,11 @@ define(function(require, exports, module) {
             row4Remove.remove();
           });
         })));
-    generateSelectOptions(fileTypeControl.find('.ftviewer'), getExtensionsByType("viewer"), viewerId, "ns.dialogs:chooseFileViewer");
-    generateSelectOptions(fileTypeControl.find('.fteditor'), getExtensionsByType("editor"), editorId, "ns.dialogs:chooseFileEditor");
+    var viewers = getExtensionsByType("viewer");
+    var editors = getExtensionsByType("editor");
+    viewers = viewers.concat(editors);
+    generateSelectOptions(fileTypeControl.find('.ftviewer'), viewers, viewerId, "ns.dialogs:chooseFileViewer");
+    generateSelectOptions(fileTypeControl.find('.fteditor'), editors, editorId, "ns.dialogs:chooseFileEditor");
     //generateSelectOptions(fileTypeControl.find('.ftviewer'), TSCORE.Config.getViewerExtensions(), viewerId, "ns.dialogs:chooseFileViewer");
     //generateSelectOptions(fileTypeControl.find('.fteditor'), TSCORE.Config.getEditorExtensions(), editorId, "ns.dialogs:chooseFileEditor");
     fileTypeControl.i18n();
@@ -171,9 +175,7 @@ define(function(require, exports, module) {
       $('#useTrashCan').attr('checked', TSCORE.Config.getUseTrashCan());
       enableMetaData();
     }
-    //TSCORE.Config.getPerspectives().forEach(function(value) {
-    //  addPerspective($('#perspectiveList'), value.id);
-    //});
+    
     var $languagesDropdown = $('#languagesList');
     $languagesDropdown.empty();
     TSCORE.Config.getSupportedLanguages().forEach(function(value) {
@@ -186,11 +188,11 @@ define(function(require, exports, module) {
     $('#fileTypesList').empty();
 
     tsExtManager.loadExtensionData().then(function(values) {
-      //console.log(values);
+
       extList = values;
       
-      getExtensionsByType("perspective").forEach(function(perspectiveName) {
-        addPerspective($('#perspectiveList'), perspectiveName);
+      TSCORE.Config.getPerspectives().forEach(function(value) {
+        addPerspective($('#perspectiveList'), value.id);
       });
 
       TSCORE.Config.getSupportedFileTypes().sort(function(a, b) {
