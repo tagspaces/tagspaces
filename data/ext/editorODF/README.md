@@ -1,11 +1,11 @@
     {
-      "name": "viewerHTML",
-      "id": "viewerHTML",
-      "description": "A TagSpaces extension allowing open HTML files.",
-      "type": "viewer",
+      "name": "editorODF",
+      "id": "editorODF",
+      "description": "A TagSpaces extension allowing opening and editing of ODF based documents like ODT, ODP or ODS.",
+      "type": "editor",
       "version": "1.0.0",
       "dependencies": {
-    
+        "webodf.js": "~0.5.9"
       },
       "devDependencies": {},
       "authors": [
@@ -13,10 +13,10 @@
         "Ilian Sapundshiev - http://ilian.me"
       ],
       "keywords": [
-        "html",
-        "viewer"
+        "editor",
+        "odf"
       ],
-      "license": "",
+      "license": "AGPL",
       "main": [
         "extension.js"
       ],

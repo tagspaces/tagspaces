@@ -1,0 +1,30 @@
+{
+  "name": "editorNext",
+  "id": "editorNext",
+  "description": "A TagSpaces extension allowing editing of text, markdown and html documents.",
+  "type": "editor",
+  "version": "1.0.0",
+  "dependencies": {
+    "woofmark": "~3.0.2"
+  },
+  "devDependencies": {},
+  "authors": [
+    "TagSpaces Authors - http://tagspaces.org",
+    "Ilian Sapundshiev - http://ilian.me"
+  ],
+  "keywords": [
+    "editor",
+    "text",
+    "txt",
+    "md",
+    "markdown"
+  ],
+  "license": "",
+  "main": [
+    "extension.js"
+  ],
+  "ignore": [
+    "Gruntfile.js"
+  ],
+  "private": true
+}

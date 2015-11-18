@@ -1,11 +1,11 @@
     {
-      "name": "viewerHTML",
-      "id": "viewerHTML",
-      "description": "A TagSpaces extension allowing open HTML files.",
-      "type": "viewer",
+      "name": "perspectiveImageSwiper",
+      "id": "perspectiveImageSwiper",
+      "description": "A TagSpaces perspective extension allowing viewing of images in the current folder.",
+      "type": "perspective",
       "version": "1.0.0",
       "dependencies": {
-    
+        "photoswipe": "4.1.0"
       },
       "devDependencies": {},
       "authors": [
@@ -13,7 +13,9 @@
         "Ilian Sapundshiev - http://ilian.me"
       ],
       "keywords": [
-        "html",
+        "images",
+        "jpg",
+        "photos",
         "viewer"
       ],
       "license": "",
