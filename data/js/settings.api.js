@@ -966,7 +966,7 @@ define(function(require, exports, module) {
         // the application runs for the first time.
         firstRun = true;
       }
-      console.log('Loaded settings from local storage: ' + JSON.stringify(exports.Settings));
+      console.log('Loaded settings from local storage: '); //+ JSON.stringify(exports.Settings));
     } catch (ex) {
       console.log('Loading settings from local storage failed due exception: ' + ex);
     }

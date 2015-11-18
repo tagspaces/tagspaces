@@ -55,8 +55,12 @@ function getContentVersion() {
   return contentVersion;
 }
 
-function setContent(content) {
+function setContent(content, currentFilePath) {
   resetContentVersion();
+
+  // adjusting releative paths
+  $("base").attr("href", currentFilePath);
+
   $htmlEditor = $('#htmlEditor');
   $htmlEditor.append(content);
   // Check if summernote is loaded

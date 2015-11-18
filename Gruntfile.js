@@ -79,7 +79,7 @@ module.exports = function(grunt) {
           '!data/mozilla/userstyles.js',
           'data/node-webkit/*.js',
           'data/web/*.js',
-          'data/pro/*.js',
+          'data/pro/js/*.js',
         ]
       }
     },
@@ -118,7 +118,7 @@ module.exports = function(grunt) {
           '!data/mozilla/*.js',
           'data/node-webkit/*.js',
           'data/web/*.js',
-          'data/pro/*.js',
+          'data/pro/js/*.js',
         ]
       }
     },
