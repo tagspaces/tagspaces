@@ -393,6 +393,27 @@ define(function(require, exports, module) {
     xhr.send();
   }
 
+  function getFileContentPromise(fullPath, type) {
+
+    return new Promise(function(resolve, reject) {
+      var fileURL = fullPath;
+      if (fileURL.indexOf("file://") === -1) {
+        fileURL = "file://" + fileURL;
+      }
+      var xhr = new XMLHttpRequest(); 
+      xhr.open("GET", fileURL, true);
+      xhr.responseType = type || "arraybuffer";
+      xhr.onload = function() {
+        if (xhr.response) {
+          resolve(xhr.response);
+        } else {
+          reject(xhr.statusText);
+        }
+      };
+      xhr.send();
+    });
+  }
+
   exports.focusWindow = focusWindow;
   exports.createDirectory = createDirectory;
   exports.copyFile = copyFile;
@@ -419,4 +440,5 @@ define(function(require, exports, module) {
   exports.handleStartParameters = handleStartParameters;
   exports.getFileContent = getFileContent;
   exports.getDirectoryMetaInformation = getDirectoryMetaInformation;
+  exports.getFileContentPromise = getFileContentPromise;
 });

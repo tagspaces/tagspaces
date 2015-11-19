@@ -766,6 +766,27 @@ define(function(require, exports, module) {
     xhr.send();
   }
 
+  function getFileContentPromise(fullPath, type) {
+
+    return new Promise(function(resolve, reject) {
+      var fileURL = fullPath;
+      if (fileURL.indexOf("file://") === -1) {
+        fileURL = "file://" + fileURL;
+      }
+      var xhr = new XMLHttpRequest(); 
+      xhr.open("GET", fileURL, true);
+      xhr.responseType = type || "arraybuffer";
+      xhr.onload = function() {
+        if (xhr.response) {
+          resolve(xhr.response);
+        } else {
+          reject(xhr.statusText);
+        }
+      };
+      xhr.send();
+    });
+  }
+
   exports.createDirectory = createDirectory;
   exports.createMetaFolder = createMetaFolder;
   exports.renameDirectory = renameDirectory;
@@ -797,4 +818,5 @@ define(function(require, exports, module) {
   exports.getFile = getFile;
   exports.getFileContent = getFileContent;
   exports.getDirectoryMetaInformation = getDirectoryMetaInformation;
+  exports.getFileContentPromise = getFileContentPromise;
 });

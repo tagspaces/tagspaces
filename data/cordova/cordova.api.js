@@ -255,6 +255,27 @@ define(function(require, exports, module) {
     }, error);
   }
 
+  function getFileContentPromise(fullPath, type) {
+
+    return new Promise(function(resolve, reject) {
+
+      getFile(fullPath, function(file) {
+        var reader = new FileReader();
+        reader.onerror = function() {
+          error(reader.error);
+        };
+        reader.onload = function() {
+          resolve(reader.result);
+        };
+        if(type === "text") {
+          reader.readAsText(file);
+        } else {
+          reader.readAsArrayBuffer(file);
+        }
+      }, resolve);
+    });
+  }
+
   // TODO recursively calling callback not really working        
   function scanDirectory(entries) {
     var i;
@@ -1072,4 +1093,5 @@ define(function(require, exports, module) {
   exports.getFile = getFile;
   exports.getFileContent = getFileContent;
   exports.getDirectoryMetaInformation = getDirectoryMetaInformation;
+  exports.getFileContentPromise = getFileContentPromise;
 });
