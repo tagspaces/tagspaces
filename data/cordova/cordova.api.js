@@ -270,6 +270,27 @@ define(function(require, exports, module) {
     }, error);
   }
 
+  function getFileContentPromise(fullPath, type) {
+
+    return new Promise(function(resolve, reject) {
+
+      getFile(fullPath, function(file) {
+        var reader = new FileReader();
+        reader.onerror = function() {
+          error(reader.error);
+        };
+        reader.onload = function() {
+          resolve(reader.result);
+        };
+        if(type === "text") {
+          reader.readAsText(file);
+        } else {
+          reader.readAsArrayBuffer(file);
+        }
+      }, resolve);
+    });
+  }
+
   // TODO recursively calling callback not really working        
   function scanDirectory(entries) {
     var i;
@@ -460,7 +481,7 @@ define(function(require, exports, module) {
     return fullPath;
   }
 
-  var listDirectory = function(dirPath) {
+  var listDirectory = function(dirPath, callback, fs) {
     TSCORE.showLoadingAnimation();
 
     // directory path format DCIM/Camera/ !
@@ -468,8 +489,8 @@ define(function(require, exports, module) {
     dirPath = normalizePath(dirPath);
 
     console.log("Listing directory: " + dirPath);
-
-    fsRoot.getDirectory(dirPath, {
+    var rootFS = fs || fsRoot;
+    rootFS.getDirectory(dirPath, {
         create: false,
         exclusive: false
       },
@@ -500,7 +521,11 @@ define(function(require, exports, module) {
                     pendingCallbacks--;
                     console.log("File: " + entry.name + " Size: " + entry.size + " i:" + i + " Callb: " + pendingCallbacks);
                     if (pendingCallbacks === 0 && i === entries.length) {
-                      TSPOSTIO.listDirectory(anotatedDirList);
+                      if(callback) {
+                        callback(anotatedDirList);
+                      } else {
+                        TSPOSTIO.listDirectory(anotatedDirList);
+                      }
                     }
                   }, // jshint ignore:line
                   function(error) { // error get file system
@@ -508,7 +533,11 @@ define(function(require, exports, module) {
                     console.error("listDirectory error: " + JSON.stringify(error));
                     pendingCallbacks--;
                     if (pendingCallbacks === 0 && i === entries.length) {
-                      TSPOSTIO.listDirectory(anotatedDirList);
+                      if(callback) {
+                        callback(anotatedDirList);
+                      } else {
+                        TSPOSTIO.listDirectory(anotatedDirList);
+                      }
                     }
                   } // jshint ignore:line
                 ); // jshint ignore:line
@@ -519,16 +548,25 @@ define(function(require, exports, module) {
                   "isFile": false,
                   "size": "",
                   "lmdt": "",
-                  "path": normalizedPath
+                  "path": normalizedPath,
+                  "fullPath": entries[i].fullPath
                 });
                 console.log("Dir: " + entries[i].name + " I:" + i + " Callb: " + pendingCallbacks);
                 if ((pendingCallbacks === 0) && ((i + 1) == entries.length)) {
-                  TSPOSTIO.listDirectory(anotatedDirList);
+                  if(callback) {
+                    callback(anotatedDirList);
+                  } else {
+                    TSPOSTIO.listDirectory(anotatedDirList);
+                  }
                 }
               }
             }
             if (pendingCallbacks === 0) {
-              TSPOSTIO.listDirectory(anotatedDirList);
+              if(callback) {
+                callback(anotatedDirList);
+              } else {
+                TSPOSTIO.listDirectory(anotatedDirList);
+              }
             }
             //console.log("Dir content: " + JSON.stringify(entries));
           },
@@ -536,6 +574,9 @@ define(function(require, exports, module) {
             TSCORE.hideLoadingAnimation();
             TSPOSTIO.errorOpeningPath(dirPath);
             console.error("Dir List Error: " + error.code);
+            if(callback) {
+              callback(anotatedDirList);
+            }
           }
         );
       },
@@ -543,21 +584,20 @@ define(function(require, exports, module) {
         TSCORE.hideLoadingAnimation();
         TSPOSTIO.errorOpeningPath(dirPath);
         console.error("Getting dir: " + dirPath + " failed with error code: " + error.code);
+        if(callback) {
+          callback(anotatedDirList);
+        }
       }
     );
   };
 
-  var getDirectoryMetaInformation = function(dirPath, readyCallback, resolvedFs) {
+  var getDirectoryMetaInformation = function(dirPath, readyCallback) {
     console.log("getDirectoryMetaInformation directory: " + dirPath);
     dirPath = dirPath + "/"; // TODO make it platform independent
     dirPath = normalizePath(dirPath);
     var anotatedDirList = [];
 
-    var rFS = fsRoot; 
-    if(resolvedFs) {
-      rFS = resolvedFs;
-    }
-    rFS.getDirectory(dirPath, {
+    fsRoot.getDirectory(dirPath, {
         create: false,
         exclusive: false
       },
@@ -596,7 +636,7 @@ define(function(require, exports, module) {
           },
           function(error) {
             TSCORE.hideLoadingAnimation();
-            console.error("Error reading dir entries: " + error.code);
+            console.warn("Error reading dir entries: " + error.code);
             if (readyCallback) {
               readyCallback(anotatedDirList);
             }
@@ -605,7 +645,7 @@ define(function(require, exports, module) {
       },
       function(err) {
         TSCORE.hideLoadingAnimation();
-        console.error("error getting directory: " + err);
+        console.warn("error getting directory: " + err);
         if (readyCallback) {
           readyCallback(anotatedDirList);
         }
@@ -613,13 +653,13 @@ define(function(require, exports, module) {
     );
   };
 
-  var listExtensionFolder = function() {
-    var extFolderPath = "ext/";
-    var appFolder = cordova.file.applicationDirectory;
-
+  var listDirectoryPromise = function(resolvePath) {
+    
+    resolvePath = "file://" + resolvePath;
+    
     return new Promise(function(resolve, reject) {
-      getFileSystemPromise(appFolder).then(function(fs) {
-        getDirectoryMetaInformation(extFolderPath, resolve, fs);
+      getFileSystemPromise(resolvePath).then(function(resfs) {
+        listDirectory("", resolve, resfs);
       }).catch(reject);
     });
   };
@@ -1102,5 +1142,6 @@ define(function(require, exports, module) {
   exports.getFile = getFile;
   exports.getFileContent = getFileContent;
   exports.getDirectoryMetaInformation = getDirectoryMetaInformation;
-  exports.listExtensionFolder = listExtensionFolder;
+  exports.getFileContentPromise = getFileContentPromise;
+  exports.listDirectoryPromise = listDirectoryPromise;
 });

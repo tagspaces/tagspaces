@@ -22,12 +22,16 @@ define(function(require, exports, module) {
 
   var extensionDirectory = extensionsPath + "/" + extensionID;
 
+  var fileDirectory;
+
   var currentContent,
     currentFilePath,
     $containerElement;
 
   exports.init = function(filePath, containerElementID) {
     console.log("Initalization HTML Editor...");
+
+    fileDirectory = TSCORE.TagUtils.extractContainingDirectoryPath(filePath);
 
     $containerElement = $('#' + containerElementID);
 
@@ -89,11 +93,11 @@ define(function(require, exports, module) {
 
     var contentWindow = document.getElementById("iframeViewer").contentWindow;
     if (typeof contentWindow.setContent === "function") {
-      contentWindow.setContent(cleanedBodyContent);
+      contentWindow.setContent(cleanedBodyContent, currentFilePath);
     } else {
       // TODO optimize setTimeout
       window.setTimeout(function() {
-        contentWindow.setContent(cleanedBodyContent);
+        contentWindow.setContent(cleanedBodyContent, currentFilePath);
       }, 500);
     }
   };

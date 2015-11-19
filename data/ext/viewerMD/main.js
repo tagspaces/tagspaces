@@ -113,6 +113,8 @@ function setContent(content, fileDirectory) {
   var $htmlContent = $('#htmlContent');
   $htmlContent.append(content);
 
+  $("base").attr("href", fileDirectory + "//");
+
   // fixing embedding of local images
   $htmlContent.find("img[src]").each(function() {
     var currentSrc = $(this).attr("src");
@@ -122,7 +124,7 @@ function setContent(content, fileDirectory) {
         currentSrc.indexOf("data:") === 0) {
       // do nothing if src begins with http(s):// or data:
     } else {
-      var path = "file://" + fileDirectory + (isWin ? "\\" : "/") + currentSrc;
+      var path = "file://" + fileDirectory + "/" + currentSrc;
       $(this).attr("src", path);
     }
   });
@@ -135,12 +137,12 @@ function setContent(content, fileDirectory) {
         currentSrc.indexOf("data:") === 0) {
       // do nothing if src begins with http(s):// or data:
     } else {
-      var path = "file://" + fileDirectory + (isWin ? "\\" : "/") + currentSrc;
+      var path = "file://" + fileDirectory + "/" + currentSrc;
       $(this).attr("href", path);
     }
   });
 
-  $("#htmlContent").find("a").bind('click', function(e) {
+  $htmlContent.find("a").bind('click', function(e) {
     e.preventDefault();
     var msg = { command: "openLinkExternally", link : $(this).attr("href") };
     window.parent.postMessage(JSON.stringify(msg), "*");

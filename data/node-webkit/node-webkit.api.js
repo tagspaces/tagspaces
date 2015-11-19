@@ -433,6 +433,20 @@ define(function(require, exports, module) {
     }
   };
 
+  var loadTextFilePromise = function(filePath, isPreview) {
+    console.log("Loading file: " + filePath);
+    return new Promise(function(resolve, reject) {
+      fs.readFile(filePath, 'utf8', function(error, content) {
+        if (error) {
+          TSCORE.hideLoadingAnimation();
+          console.error("Loading file " + filePath + " failed " + error);
+          reject(error);
+        }
+        resolve(content);
+      });
+    });
+  };
+
   var saveTextFile = function(filePath, content, overWrite, silentMode) {
     console.log("Saving file: " + filePath);
 
@@ -511,8 +525,10 @@ define(function(require, exports, module) {
             TSPOSTIO.errorOpeningPath(dirPath);
           }
           TSCORE.hideLoadingAnimation();
-          console.error("Listing directory: " + dirPath + " failed " + error);
-          TSCORE.showAlertDialog("Listing " + dirPath + " failed.");
+          console.warn("Listing directory: " + dirPath + " failed " + error);
+          if (!readyCallback) {
+            TSCORE.showAlertDialog("Listing " + dirPath + " failed.");
+          }
           return;
         }
         for (var i = 0; i < dirList.length; i++) {
@@ -546,8 +562,7 @@ define(function(require, exports, module) {
         TSPOSTIO.errorOpeningPath();
       }
       TSCORE.hideLoadingAnimation();
-      TSCORE.showAlertDialog("Listing " + dirPath + " failed.");
-      console.error("Listing directory " + dirPath + " failed " + ex);
+      console.warn("Listing directory " + dirPath + " failed " + ex);
     }
   };
 
@@ -704,6 +719,21 @@ define(function(require, exports, module) {
     }
   };
 
+  var getPropertiesPromise = function(path) {
+    return new Promise(function(resolve, reject) {
+      fs.stat(path, function(err, stats) {
+        if (err) {
+          resolve(false);
+          //reject("Failed getting properties for " +path + " with "+ err);
+        }
+        if (stats) {
+          //console.log("Properties for " + path + " - " + JSON.stringify(stats));
+          resolve(stats);
+        }
+      });
+    });
+  };
+
   var watchDirecotory = function(dirPath, listener) {
     if (fsWatcher) {
       fsWatcher.close();
@@ -736,12 +766,34 @@ define(function(require, exports, module) {
     xhr.send();
   }
 
+  function getFileContentPromise(fullPath, type) {
+
+    return new Promise(function(resolve, reject) {
+      var fileURL = fullPath;
+      if (fileURL.indexOf("file://") === -1) {
+        fileURL = "file://" + fileURL;
+      }
+      var xhr = new XMLHttpRequest(); 
+      xhr.open("GET", fileURL, true);
+      xhr.responseType = type || "arraybuffer";
+      xhr.onload = function() {
+        if (xhr.response) {
+          resolve(xhr.response);
+        } else {
+          reject(xhr.statusText);
+        }
+      };
+      xhr.send();
+    });
+  }
+
   exports.createDirectory = createDirectory;
   exports.createMetaFolder = createMetaFolder;
   exports.renameDirectory = renameDirectory;
   exports.renameFile = renameFile;
   exports.copyFile = copyFile;
   exports.loadTextFile = loadTextFile;
+  exports.loadTextFilePromise = loadTextFilePromise;
   exports.saveTextFile = saveTextFile;
   exports.saveBinaryFile = saveBinaryFile;
   exports.listDirectory = listDirectory;
@@ -762,7 +814,9 @@ define(function(require, exports, module) {
   exports.handleTray = handleTray;
   exports.focusWindow = focusWindow;
   exports.showMainWindow = showMainWindow;
+  exports.getPropertiesPromise = getPropertiesPromise;
   exports.getFile = getFile;
   exports.getFileContent = getFileContent;
   exports.getDirectoryMetaInformation = getDirectoryMetaInformation;
+  exports.getFileContentPromise = getFileContentPromise;
 });

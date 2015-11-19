@@ -41,9 +41,12 @@ define(function(require, exports, module) {
 
   function loadExtensionData() {
 
+    var extFolderPath = getExtFolderPath();
+
     var promise = new Promise(function(resolve, reject) {
 
-      TSCORE.IO.listExtensionFolder().then(function(dirList) {
+      TSCORE.IO.listDirectoryPromise(extFolderPath).then(function(dirList) {
+        //alert(dirList);
         var readBowerFileWorkers = [];
         for (var i in dirList) {
           var dirItem = dirList[i];
@@ -67,12 +70,13 @@ define(function(require, exports, module) {
         });
       });
     });
-    
+
     return promise;
   }
-  /*
-  function loadExtensionData() {
+  
+  function loadExtensionDataOld() {
     var extFolderPath = getExtFolderPath();
+    alert(extFolderPath);
     var promise = new Promise(function(resolve, reject) {
       TSCORE.IO.listDirectory(extFolderPath, function(dirList) {
         var readBowerFileWorkers = [];
@@ -99,6 +103,6 @@ define(function(require, exports, module) {
       });
     });
     return promise;
-  }*/
+  }
   exports.loadExtensionData = loadExtensionData;
 });

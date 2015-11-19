@@ -130,7 +130,7 @@ function setContent(content, fileDirectory) {
         currentSrc.indexOf("data:") === 0) {
       // do nothing if src begins with http(s):// or data:
     } else {
-      var path = "file://" + fileDirectory + (isWin ? "\\" : "/") + currentSrc;
+      var path = "file://" + fileDirectory + "/" + currentSrc;
       $(this).attr("href", path);
     }
   });
@@ -144,7 +144,7 @@ function setContent(content, fileDirectory) {
         currentSrc.indexOf("data:") === 0) {
       // do nothing if src begins with http(s):// or data:
     } else {
-      $(this).attr("src", "file://" + fileDirectory + isWin ? "\\" : "/" + currentSrc);
+      $(this).attr("src", "file://" + fileDirectory + "/" + currentSrc);
     }
   });
 
