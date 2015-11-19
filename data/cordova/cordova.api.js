@@ -122,6 +122,21 @@ define(function(require, exports, module) {
     }
   };
 
+  function getFileSystemPromise(cordovaFolderPath) {
+
+    return new Promise(function(resolve, reject) {
+      window.resolveLocalFileSystemURL(cordovaFolderPath,
+        function(fs) {
+          resolve(fs);
+        }, 
+        function(error) {
+          TSCORE.hideLoadingAnimation();
+          console.error("Error getSettingsFileSystem: " + JSON.stringify(error));
+          reject(error);
+        });
+    });
+  }
+
   function getAppStorageFileSystem(fileName, fileCallback, fail) {
     var dataFolderPath = (isCordovaiOS === true) ? 
       cordova.file.dataDirectory : cordova.file.externalApplicationStorageDirectory;
@@ -532,13 +547,17 @@ define(function(require, exports, module) {
     );
   };
 
-  var getDirectoryMetaInformation = function(dirPath, readyCallback) {
+  var getDirectoryMetaInformation = function(dirPath, readyCallback, resolvedFs) {
     console.log("getDirectoryMetaInformation directory: " + dirPath);
     dirPath = dirPath + "/"; // TODO make it platform independent
     dirPath = normalizePath(dirPath);
     var anotatedDirList = [];
 
-    fsRoot.getDirectory(dirPath, {
+    var rFS = fsRoot; 
+    if(resolvedFs) {
+      rFS = resolvedFs;
+    }
+    rFS.getDirectory(dirPath, {
         create: false,
         exclusive: false
       },
@@ -592,6 +611,17 @@ define(function(require, exports, module) {
         }
       }
     );
+  };
+
+  var listExtensionFolder = function() {
+    var extFolderPath = "ext/";
+    var appFolder = cordova.file.applicationDirectory;
+
+    return new Promise(function(resolve, reject) {
+      getFileSystemPromise(appFolder).then(function(fs) {
+        getDirectoryMetaInformation(extFolderPath, resolve, fs);
+      }).catch(reject);
+    });
   };
 
   var deleteElement = function(filePath) {
@@ -1072,4 +1102,5 @@ define(function(require, exports, module) {
   exports.getFile = getFile;
   exports.getFileContent = getFileContent;
   exports.getDirectoryMetaInformation = getDirectoryMetaInformation;
+  exports.listExtensionFolder = listExtensionFolder;
 });
