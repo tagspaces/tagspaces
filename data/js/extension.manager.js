@@ -18,9 +18,12 @@ define(function(require, exports, module) {
 
   function getExtFolderPath() {
     var extPath = "ext";
-    //return location.href.replace(/file:\/\//gi, "").replace(/index.html/gi, extPath);
-    return location.href.replace(/index.html/gi, extPath);
+    if(isCordova) {
+      return location.href.replace(/index.html/gi, extPath);
+    }
+    return location.href.replace(/file:\/\//gi, "").replace(/index.html/gi, extPath);
   }
+
   function loadBowerData(filePath) {
 
     var resolvePath = (isCordova) ? cordova.file.applicationDirectory : null;
@@ -35,7 +38,6 @@ define(function(require, exports, module) {
           resolve();
         }
       }).catch(function(error) {
-        console.log(error);
         console.error("Error reading " + filePath);
         resolve();
       });
@@ -48,9 +50,7 @@ define(function(require, exports, module) {
     var extFolderPath = getExtFolderPath();
 
     var promise = new Promise(function(resolve, reject) {
-
       TSCORE.IO.listDirectoryPromise(extFolderPath).then(function(dirList) {
-        
         var readBowerFileWorkers = [];
         for (var i in dirList) {
           var dirItem = dirList[i];
@@ -77,35 +77,6 @@ define(function(require, exports, module) {
 
     return promise;
   }
-  
-  /*function loadExtensionDataOld() {
-    var extFolderPath = getExtFolderPath();
-    var promise = new Promise(function(resolve, reject) {
-      TSCORE.IO.listDirectory(extFolderPath, function(dirList) {
-        var readBowerFileWorkers = [];
-        for (var i in dirList) {
-          var dirItem = dirList[i];
-          if (!dirItem.isFile) {
-            var filePath = dirItem.path + TSCORE.dirSeparator + bowerFileName;
-            readBowerFileWorkers.push(loadBowerData(filePath));
-          }
-        }
-        Promise.all(readBowerFileWorkers).then(function(values) {
-          var result = [];
-          for (var val in values) {
-            if (values[val]) {
-              result.push(values[val]);
-            }
-          }
-          TSCORE.hideLoadingAnimation();
-          resolve(result);
-        }).catch(function(err) {
-          TSCORE.hideLoadingAnimation();
-          reject(err);
-        });
-      });
-    });
-    return promise;
-  }*/
+
   exports.loadExtensionData = loadExtensionData;
 });
