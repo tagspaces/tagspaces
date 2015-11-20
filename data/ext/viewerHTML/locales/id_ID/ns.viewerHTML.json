@@ -1,0 +1,11 @@
+{
+    "zoomOut": "Perkecil",
+    "zoomIn": "Perbesar",
+    "zoomReset": "Reset Pembesaran",
+    "changeTheme": "Ganti Tema",
+    "resetTheme": "Reset Tema",
+    "print": "Cetak",
+    "about": "Tentang",
+    "aboutTitle": "Tentang ViewerHTML extension",
+    "-": "-"
+}
