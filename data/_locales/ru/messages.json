@@ -1,6 +1,6 @@
 {
     "saveAsSelectionLabel": {
-        "message": "Save Selected",
+        "message": "Сохранить выделенное",
         "description": "Title of label."
     },
     "appLauncher": {
@@ -8,7 +8,7 @@
         "description": "Title of the application launcher in the browser."
     },
     "appDesc": {
-        "message": "File Browser with Web Content Scraping and Chromecast Support.",
+        "message": "Файловый браузер с функцией извления содержимого веб-страниц и поддержкой Chromecast.",
         "description": ""
     },
     "addTagHelp": {
@@ -16,7 +16,7 @@
         "description": "Add tag help message"
     },
     "saveScreenshotTitle": {
-        "message": "Save screenshot of the visible page area as PNG",
+        "message": "Сохранить скриншот видимой области страницы в PNG",
         "description": "Title of screenshot button"
     },
     "editTitleLabel": {
@@ -28,11 +28,11 @@
         "description": ""
     },
     "appLauncherLabel": {
-        "message": "Capture Web Content",
+        "message": "Получить содержимое страницы",
         "description": "Title of label."
     },
     "saveScreenshotLabel": {
-        "message": "Screenshot",
+        "message": "Сделать скриншот",
         "description": "Title of label."
     },
     "addTagLabel": {
@@ -44,19 +44,19 @@
         "description": "Title of save page button"
     },
     "appLauncherTitle": {
-        "message": "Start TagSpaces Browser in a new tab",
+        "message": "Запустить браузер TagSpaces в новой вкладке",
         "description": "Title of the application launcher in the browser."
     },
     "saveSelectionAsHtmlTitle": {
-        "message": "Save selected content as HTML",
+        "message": "Сохранить выделенный контент в HTML",
         "description": "Title of save selection button"
     },
     "saveAsMhtmlLabel": {
-        "message": "Save Whole Page",
+        "message": "Сохранить всю страницу",
         "description": "Title of label."
     },
     "saveFileLabel": {
-        "message": "Save as File",
+        "message": "Сохранить в файл",
         "description": "Title of label."
     }
 }

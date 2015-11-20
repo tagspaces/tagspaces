@@ -16,7 +16,7 @@
         "description": "Add tag help message"
     },
     "saveScreenshotTitle": {
-        "message": "Látható lap mentése HTML-be",
+        "message": "Mentés képként",
         "description": "Title of screenshot button"
     },
     "editTitleLabel": {
