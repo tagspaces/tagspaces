@@ -125,10 +125,7 @@ define(function(require, exports, module) {
   function getFileSystemPromise(cordovaFolderPath) {
 
     return new Promise(function(resolve, reject) {
-      window.resolveLocalFileSystemURL(cordovaFolderPath,
-        function(fs) {
-          resolve(fs);
-        }, 
+      window.resolveLocalFileSystemURL(cordovaFolderPath, resolve, 
         function(error) {
           TSCORE.hideLoadingAnimation();
           console.error("Error getSettingsFileSystem: " + JSON.stringify(error));
@@ -270,14 +267,29 @@ define(function(require, exports, module) {
     }, error);
   }
 
-  function getFileContentPromise(fullPath, type) {
+  function getFilePromise(filePath, resolvePath) {
 
     return new Promise(function(resolve, reject) {
+      if(resolvePath) {
+        getFileSystemPromise(resolvePath).then(function(resfs) {
+          resfs.getFile(filePath, {create: false},
+            function(fileEntry) {
+              fileEntry.file(resolve, reject);
+          }, reject);
+        }).catch(reject);
+      } else {
+        getFile(filePath, resolve, reject);
+      }
+    });
+  }
 
-      getFile(fullPath, function(file) {
+  function getFileContentPromise(filePath, type, resolvePath) {
+
+    return new Promise(function(resolve, reject) {
+      getFilePromise(filePath, resolvePath).then(function(file) {
         var reader = new FileReader();
         reader.onerror = function() {
-          error(reader.error);
+          reject(reader.error);
         };
         reader.onload = function() {
           resolve(reader.result);
@@ -287,7 +299,7 @@ define(function(require, exports, module) {
         } else {
           reader.readAsArrayBuffer(file);
         }
-      }, resolve);
+      }, reject);
     });
   }
 
@@ -548,8 +560,7 @@ define(function(require, exports, module) {
                   "isFile": false,
                   "size": "",
                   "lmdt": "",
-                  "path": normalizedPath,
-                  "fullPath": entries[i].fullPath
+                  "path": normalizedPath
                 });
                 console.log("Dir: " + entries[i].name + " I:" + i + " Callb: " + pendingCallbacks);
                 if ((pendingCallbacks === 0) && ((i + 1) == entries.length)) {
@@ -654,9 +665,6 @@ define(function(require, exports, module) {
   };
 
   var listDirectoryPromise = function(resolvePath) {
-    
-    resolvePath = "file://" + resolvePath;
-    
     return new Promise(function(resolve, reject) {
       getFileSystemPromise(resolvePath).then(function(resfs) {
         listDirectory("", resolve, resfs);
