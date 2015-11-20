@@ -1,0 +1,11 @@
+{
+    "zoomOut": "Perkecil",
+    "zoomIn": "Perbesar",
+    "zoomReset": "Reset Pembesaran",
+    "rotateRight": "Rotasi Kanan",
+    "rotateLeft": "Rotasi Kiri",
+    "print": "Cetak",
+    "about": "Tentang",
+    "aboutTitle": "Tentang ViewerImage",
+    "-": "-"
+}

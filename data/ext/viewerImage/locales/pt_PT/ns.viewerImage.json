@@ -1,0 +1,11 @@
+{
+    "zoomOut": "Afastar",
+    "zoomIn": "Aproximar",
+    "zoomReset": "Repor Vista",
+    "rotateRight": "Rodar para a dreita",
+    "rotateLeft": "Rodar para a esquerda",
+    "print": "Imprimir",
+    "about": "Acerca de",
+    "aboutTitle": "Acerca do ViewerImage",
+    "-": "-"
+}
