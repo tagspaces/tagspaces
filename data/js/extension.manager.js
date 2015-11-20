@@ -18,21 +18,25 @@ define(function(require, exports, module) {
 
   function getExtFolderPath() {
     var extPath = "ext";
-    return location.href.replace(/file:\/\//gi, "").replace(/index.html/gi, extPath);
+    //return location.href.replace(/file:\/\//gi, "").replace(/index.html/gi, extPath);
+    return location.href.replace(/index.html/gi, extPath);
   }
   function loadBowerData(filePath) {
 
+    var resolvePath = (isCordova) ? cordova.file.applicationDirectory : null;
+    
     var promise = new Promise(function(resolve, reject) {
-      $.get(filePath, function(data) {
+      TSCORE.IO.getFileContentPromise(filePath, "text", resolvePath).then(function(data) {
         try {
           var bowerData = JSON.parse(data);
           console.log('Extension descriptor loaded: ' + filePath);
-          //console.log('bowerData: ' + JSON.stringify(bowerData));
           resolve(bowerData);
         } catch (e) {
           resolve();
         }
-      }).fail(function() {
+      }).catch(function(error) {
+        console.log(error);
+        console.error("Error reading " + filePath);
         resolve();
       });
     });
@@ -46,7 +50,7 @@ define(function(require, exports, module) {
     var promise = new Promise(function(resolve, reject) {
 
       TSCORE.IO.listDirectoryPromise(extFolderPath).then(function(dirList) {
-        //alert(dirList);
+        
         var readBowerFileWorkers = [];
         for (var i in dirList) {
           var dirItem = dirList[i];
@@ -74,9 +78,8 @@ define(function(require, exports, module) {
     return promise;
   }
   
-  function loadExtensionDataOld() {
+  /*function loadExtensionDataOld() {
     var extFolderPath = getExtFolderPath();
-    alert(extFolderPath);
     var promise = new Promise(function(resolve, reject) {
       TSCORE.IO.listDirectory(extFolderPath, function(dirList) {
         var readBowerFileWorkers = [];
@@ -103,6 +106,6 @@ define(function(require, exports, module) {
       });
     });
     return promise;
-  }
+  }*/
   exports.loadExtensionData = loadExtensionData;
 });
