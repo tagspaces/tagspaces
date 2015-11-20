@@ -12,15 +12,18 @@
 html, body {
 	width: 100%;
 	height: 100%;
-	position: fixed;
-	top: 0;
-	left: 0;
-	right:0;
 	padding: 0;
 	margin: 0;
 	overflow: hidden;
 	font-size: 9px;
 	font-family: Ubuntu, Geneva, Arial, Helvetica, sans-serif;
+}
+
+.appbody {
+  position: fixed;
+	top: 0;
+	left: 0;
+	right:0;
 }
 
 /* Removes the selection border on ui elements on android */
