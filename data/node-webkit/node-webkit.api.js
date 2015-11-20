@@ -756,11 +756,12 @@ define(function(require, exports, module) {
     var xhr = new XMLHttpRequest(); 
     xhr.open("GET", fileURL, true);
     xhr.responseType = "arraybuffer";
+    xhr.onerror = error;
     xhr.onload = function() {
       if (xhr.response) {
         result(xhr.response);
       } else {
-        fail(xhr.statusText);
+        error(xhr.statusText);
       }
     };
     xhr.send();
@@ -776,14 +777,24 @@ define(function(require, exports, module) {
       var xhr = new XMLHttpRequest(); 
       xhr.open("GET", fileURL, true);
       xhr.responseType = type || "arraybuffer";
+      xhr.onerror = reject;
+
       xhr.onload = function() {
-        if (xhr.response) {
-          resolve(xhr.response);
+        var response = xhr.response || xhr.responseText;
+        if (response) {
+          resolve(response);
         } else {
-          reject(xhr.statusText);
+          reject("getFileContentPromise error");
         }
       };
       xhr.send();
+    });
+  }
+
+  function listDirectoryPromise(fullPath) {
+
+    return new Promise(function(resolve, reject) {
+      listDirectory(fullPath, resolve);
     });
   }
 
@@ -819,4 +830,5 @@ define(function(require, exports, module) {
   exports.getFileContent = getFileContent;
   exports.getDirectoryMetaInformation = getDirectoryMetaInformation;
   exports.getFileContentPromise = getFileContentPromise;
+  exports.listDirectoryPromise = listDirectoryPromise;
 });
