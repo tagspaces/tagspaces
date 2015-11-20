@@ -12,7 +12,7 @@
     "downloadFile": "Letöltés",
     "openFileNewWindowTooltip": "Fájl megnyitása új ablakban vagy fülön",
     "openFileNewWindow": "Megnyitás új ablakban",
-    "openFileNativelyTooltip": "Aktuális fájl megnyitása az alapértelmezett alkalmazással, fájl típus alapján.",
+    "openFileNativelyTooltip": "Aktuális fájl megnyitása az alapértelmezett alkalmazással, fájltípus alapján.",
     "openFileNatively": "Fájl megnyitása natívan",
     "openContainingFolderTooltip": "Kijelölt fájlt tartalmazó mappa megnyitása.",
     "openContainingFolder": "Tartalmazó mappa megnyitása",

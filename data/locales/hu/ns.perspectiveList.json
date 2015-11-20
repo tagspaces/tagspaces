@@ -1,5 +1,5 @@
 {
-    "fileExtension": "Fájl kiterjesztés",
+    "fileExtension": "Fájl kit.",
     "fileTitle": "Cím",
     "fileTags": "Címkék",
     "fileSize": "Méret",
@@ -9,7 +9,7 @@
     "filesFoundFor": "fájl találatok",
     "filesFound": "fájl találat",
     "toggleSelectAll": "Összes fájl kijelölése",
-    "createNewFileTooltip": "Új fájlmenü létrehozása",
+    "createNewFileTooltip": "Új fájl létrehozása",
     "createHTMLFile": "Új Rich Text fájl",
     "createMDFile": "Új Markdown fájl",
     "createTXTFile": "Új szöveges fájl",
@@ -28,6 +28,6 @@
     "reloadDirectory": "Könyvtár újratöltése",
     "reloadDirectoryTooltip": "Kijelölt könyvtár újratöltése",
     "includeSubdirsTitleConfirm": "Alkönyvtárak megerősítése",
-    "includeSubdirsContentConfirm": "A könyvtárakon végzett művelet sok fájlok és / vagy könyvtárak esetén sokig is tarthat! Biztosan folytatni akarod?",
+    "includeSubdirsContentConfirm": "A könyvtárakon végzett művelet nagy mennyiségű fájlok és / vagy könyvtárak esetén sokig is eltarthat! Biztosan folytatni akarod?",
     "-": "-"
 }
