@@ -7,6 +7,8 @@ runfirefoxbeta
 /node_modules
 docs
 data/pro
+data/ext/perspectiveOCRO
+data/ext/editorNext
 nwjsdata
 data/node-webkit/locales
 data/node-webkit/ffmpegsumo.dll
@@ -16,7 +18,6 @@ data/node-webkit/libffmpegsumo.so
 data/node-webkit/libGLESv2.dll
 data/node-webkit/credits.html
 data/node-webkit/nw
-data/node-webkit/nwjc
 data/node-webkit/nw.exe
 data/node-webkit/nw.pak
 data/node-webkit/debug.log

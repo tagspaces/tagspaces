@@ -10,10 +10,7 @@ define(function(require, exports, module) {
   var extensionTitle = "Image Viewer";
   var extensionID = "viewerImage"; // ID should be equal to the directory name where the ext. is located   
   var extensionType = "viewer";
-  var extensionIcon = "icon-list";
-  var extensionVersion = "1.0";
-  var extensionManifestVersion = 1;
-  var extensionLicense = "AGPL";
+  var extensionIcon = "icon-list"; // A name of an icon from the font-awesome set
   var extensionSupportedFileTypes = ["jpeg", "jpg", "png", "gif", "bmp", "ico", "webp"];
 
   var TSCORE = require("tscore");
@@ -67,9 +64,6 @@ define(function(require, exports, module) {
   exports.ID = extensionID;
   exports.Type = extensionType;
   exports.Icon = extensionIcon;
-  exports.Version = extensionVersion;
-  exports.ManifestVersion = extensionManifestVersion;
-  exports.License = extensionLicense;
   exports.SupportedFileTypes = extensionSupportedFileTypes;
 
 });
