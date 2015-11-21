@@ -80,13 +80,13 @@ define(function(require, exports, module) {
           console.error("Create dir failed");
         }
         break;
-      case "loadTextFile":
+      /*case "loadTextFile":
         if (message.success) {
           TSPOSTIO.loadTextFile(message.content);
         } else {
           console.error("File loading failed");
         }
-        break;
+        break;*/
       case "listDirectory":
         if(args[0]) {
           args[0](message.content);
@@ -194,14 +194,14 @@ define(function(require, exports, module) {
 
   var loadTextFile = function(filePath) {
     console.log("Loading file: " + filePath);
-    var event = document.createEvent('CustomEvent');
-    event.initCustomEvent("addon-message", true, true, {
-      "detail": {
-        "command": "loadTextFile",
-        "path": filePath
+    getFileContentPromise(filePath).then(
+      function(success) {
+        TSPOSTIO.loadTextFile(success);
+      },
+      function(error) {
+        console.warn("Error: " + error);
       }
-    });
-    document.documentElement.dispatchEvent(event);
+    );
   };
 
   function getFileContentPromise(filePath, type) {
@@ -236,15 +236,6 @@ define(function(require, exports, module) {
       document.documentElement.addEventListener("tsMessage", eventListener);
     });
   }
-
-  /*window.setTimeout(function() { getFileContentPromise("/home/na/gdriveup.sh").then(
-    function(success) {
-      console.log("-------------content: " + success)
-    },
-    function(error) {
-      console.log("-------------error: " + error)
-    }
-  )}, 1000);*/
 
   var copyFile = function(filePath, newFilePath) {
     console.log("Copy " + filePath + " to " + newFilePath);
