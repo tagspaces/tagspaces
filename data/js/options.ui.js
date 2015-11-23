@@ -39,8 +39,12 @@ define(function(require, exports, module) {
               row4Remove.remove();
             });
           })));
-    generateSelectOptions(perspectiveControl.find('select'), getExtensionsByType("perspective"), perspectiveId, "ns.dialogs:choosePerspective");
-    //generateSelectOptions(perspectiveControl.find('select'), TSCORE.Config.getPerspectiveExtensions(), perspectiveId, "ns.dialogs:choosePerspective");
+    if (isChrome) {
+      generateSelectOptions(perspectiveControl.find('select'), TSCORE.Config.getPerspectiveExtensions(), perspectiveId, "ns.dialogs:choosePerspective");
+    } else {
+      generateSelectOptions(perspectiveControl.find('select'), getExtensionsByType("perspective"), perspectiveId, "ns.dialogs:choosePerspective");
+    }
+    
     perspectiveControl.i18n();
     parent.append(perspectiveControl);
   }
@@ -74,10 +78,15 @@ define(function(require, exports, module) {
     var viewers = getExtensionsByType("viewer");
     var editors = getExtensionsByType("editor");
     viewers = viewers.concat(editors);
-    generateSelectOptions(fileTypeControl.find('.ftviewer'), viewers, viewerId, "ns.dialogs:chooseFileViewer");
-    generateSelectOptions(fileTypeControl.find('.fteditor'), editors, editorId, "ns.dialogs:chooseFileEditor");
-    //generateSelectOptions(fileTypeControl.find('.ftviewer'), TSCORE.Config.getViewerExtensions(), viewerId, "ns.dialogs:chooseFileViewer");
-    //generateSelectOptions(fileTypeControl.find('.fteditor'), TSCORE.Config.getEditorExtensions(), editorId, "ns.dialogs:chooseFileEditor");
+    
+    if (isChrome) {
+      generateSelectOptions(fileTypeControl.find('.ftviewer'), TSCORE.Config.getViewerExtensions(), viewerId, "ns.dialogs:chooseFileViewer");
+      generateSelectOptions(fileTypeControl.find('.fteditor'), TSCORE.Config.getEditorExtensions(), editorId, "ns.dialogs:chooseFileEditor");   
+    } else {
+      generateSelectOptions(fileTypeControl.find('.ftviewer'), viewers, viewerId, "ns.dialogs:chooseFileViewer");
+      generateSelectOptions(fileTypeControl.find('.fteditor'), editors, editorId, "ns.dialogs:chooseFileEditor");
+    }
+
     fileTypeControl.i18n();
     parent.prepend(fileTypeControl);
   }
