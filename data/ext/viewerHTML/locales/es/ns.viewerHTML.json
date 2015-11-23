@@ -1,0 +1,11 @@
+{
+    "zoomOut": "Reducir",
+    "zoomIn": "Aumentar",
+    "zoomReset": "Restablecer aumento",
+    "changeTheme": "Cambiar tema",
+    "resetTheme": "Restablecer tema",
+    "print": "Imprimir",
+    "about": "Acerca de",
+    "aboutTitle": "Acerca de la extensión ViewerHTML",
+    "-": "-"
+}

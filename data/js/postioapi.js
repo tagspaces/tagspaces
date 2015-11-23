@@ -39,6 +39,9 @@ define(function(require, exports, module) {
     if (lastOpenedFile !== undefined) {
       console.log('Last opened Filename: ' + lastOpenedFile);
       // TODO handle case in which a file opened for editing and a tag has been added / file renamed
+      if (isCordova) {
+        lastOpenedFile = lastOpenedFile.substring(("file://").length, lastOpenedFile.length);
+      }
       if (TSCORE.FileOpener.isFileOpened() && oldFilePath == lastOpenedFile) {
         TSCORE.FileOpener.openFile(newFilePath);
       }

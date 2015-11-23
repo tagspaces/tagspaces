@@ -1,0 +1,11 @@
+{
+    "zoomOut": "Zoom Out",
+    "zoomIn": "Zoom In",
+    "zoomReset": "Zoom Reset",
+    "changeTheme": "Change Theme",
+    "resetTheme": "Reset Theme",
+    "print": "Print",
+    "about": "About",
+    "aboutTitle": "About ViewerHTML extension",
+    "-": "-"
+}

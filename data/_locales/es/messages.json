@@ -1,6 +1,6 @@
 {
     "saveAsSelectionLabel": {
-        "message": "Save Selected",
+        "message": "Guardar selección",
         "description": "Title of label."
     },
     "appLauncher": {
@@ -8,7 +8,7 @@
         "description": "Title of the application launcher in the browser."
     },
     "appDesc": {
-        "message": "File Browser with Web Content Scraping and Chromecast Support.",
+        "message": "Navegador de archivos con extracción de contenido web y soporte de Chromecast",
         "description": ""
     },
     "addTagHelp": {
@@ -16,11 +16,11 @@
         "description": "Add tag help message"
     },
     "saveScreenshotTitle": {
-        "message": "Save screenshot of the visible page area as PNG",
+        "message": "Guardar captura de pantalla del área visible de la página como PNG",
         "description": "Title of screenshot button"
     },
     "editTitleLabel": {
-        "message": "Edit Title",
+        "message": "Editar título",
         "description": "Title of label."
     },
     "appName": {
@@ -28,11 +28,11 @@
         "description": ""
     },
     "appLauncherLabel": {
-        "message": "Capture Web Content",
+        "message": "Capturar contenido web",
         "description": "Title of label."
     },
     "saveScreenshotLabel": {
-        "message": "Screenshot",
+        "message": "Captura de pantalla",
         "description": "Title of label."
     },
     "addTagLabel": {
@@ -40,23 +40,23 @@
         "description": "Title of label."
     },
     "saveAsMhtmlTitle": {
-        "message": "Save whole page as MHTML",
+        "message": "Guardar la página completa como MHTML",
         "description": "Title of save page button"
     },
     "appLauncherTitle": {
-        "message": "Start TagSpaces Browser in a new tab",
+        "message": "Iniciar el navegador de TagSpaces en una pestaña nueva",
         "description": "Title of the application launcher in the browser."
     },
     "saveSelectionAsHtmlTitle": {
-        "message": "Save selected content as HTML",
+        "message": "Guardar el contenido seleccionado como HTML",
         "description": "Title of save selection button"
     },
     "saveAsMhtmlLabel": {
-        "message": "Save Whole Page",
+        "message": "Guardar la página completa",
         "description": "Title of label."
     },
     "saveFileLabel": {
-        "message": "Save as File",
+        "message": "Guardar como archivo",
         "description": "Title of label."
     }
 }

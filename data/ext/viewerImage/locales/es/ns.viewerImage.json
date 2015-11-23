@@ -1,0 +1,11 @@
+{
+    "zoomOut": "Reducir",
+    "zoomIn": "Aumentar",
+    "zoomReset": "Restablecer aumento",
+    "rotateRight": "Girar a la derecha",
+    "rotateLeft": "Girar a la izquierda",
+    "print": "Imprimir",
+    "about": "Acerca de",
+    "aboutTitle": "Acerca de ViewerImage",
+    "-": "-"
+}

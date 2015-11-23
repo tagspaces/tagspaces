@@ -19,6 +19,13 @@ html, body {
 	font-family: Ubuntu, Geneva, Arial, Helvetica, sans-serif;
 }
 
+.appbody {
+  position: fixed;
+	top: 0;
+	left: 0;
+	right:0;
+}
+
 /* Removes the selection border on ui elements on android */
 * {
 	-webkit-tap-highlight-color: rgba(0,0,0,0);

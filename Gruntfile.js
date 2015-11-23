@@ -216,6 +216,9 @@ module.exports = function(grunt) {
       jsdoc: {
         command: 'node node_modules/jsdoc/jsdoc.js -c jsdoc.conf.json --verbose',
       },
+      transifexpull: {
+        command: 'tx pull -a --disable-overwrite',
+      },
     },
     compress: {
       chrome: {
@@ -251,13 +254,15 @@ module.exports = function(grunt) {
   grunt.registerTask('bumpVersion', ['init', 'replace:templates']);
   grunt.registerTask('default', ['help']);
   grunt.registerTask('runDav', ['shell:jsdav']),
+  grunt.registerTask('updateI18N', ['shell:transifexpull']),
   grunt.registerTask('generateDocs', ['shell:jsdoc']),
   grunt.registerTask('help', 'Printing help for this script.', function() {
     grunt.log.writeln("Supported grunt tasks:");
-    grunt.log.writeln(" - checkStyle");
-    grunt.log.writeln(" - runDav");
-    grunt.log.writeln(" - generateDocs");
-    grunt.log.writeln(" - bumpVersion");
+    grunt.log.writeln(" * checkStyle - checking the javascript files complying with the coding standards");
+    grunt.log.writeln(" * runDav - runs the webdav server");
+    grunt.log.writeln(" * updateI18N - update the translations");
+    grunt.log.writeln(" * generateDocs - generates the javascript docs");
+    grunt.log.writeln(" * bumpVersion - update the current version from the packages.json accross the application");
   });
 
   grunt.registerTask('init', 'Initializing variables.', function() {

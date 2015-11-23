@@ -80,13 +80,13 @@ define(function(require, exports, module) {
           console.error("Create dir failed");
         }
         break;
-      case "loadTextFile":
+      /*case "loadTextFile":
         if (message.success) {
           TSPOSTIO.loadTextFile(message.content);
         } else {
           console.error("File loading failed");
         }
-        break;
+        break;*/
       case "listDirectory":
         if(args[0]) {
           args[0](message.content);
@@ -194,15 +194,48 @@ define(function(require, exports, module) {
 
   var loadTextFile = function(filePath) {
     console.log("Loading file: " + filePath);
-    var event = document.createEvent('CustomEvent');
-    event.initCustomEvent("addon-message", true, true, {
-      "detail": {
-        "command": "loadTextFile",
-        "path": filePath
+    getFileContentPromise(filePath).then(
+      function(success) {
+        TSPOSTIO.loadTextFile(success);
+      },
+      function(error) {
+        console.warn("Error: " + error);
       }
-    });
-    document.documentElement.dispatchEvent(event);
+    );
   };
+
+  function getFileContentPromise(filePath, type) {
+    return new Promise(function(resolve, reject) {
+      //var fileURL = fullPath;
+      //if (fileURL.indexOf("file://") === -1) {
+      //  fileURL = "file://" + fileURL;
+      //}
+      console.log("Loading file: " + filePath);
+      var event = document.createEvent('CustomEvent');
+      event.initCustomEvent("addon-message", true, true, {
+        "detail": {
+          "command": "loadTextFile",
+          "path": filePath
+        }
+      });
+      document.documentElement.dispatchEvent(event);
+
+      function eventListener(event) {
+        console.log("Message received in page script from content script"); //+JSON.stringify(event.detail));
+        var message = event.detail;
+        if (message.command === "loadTextFile") {
+          if (message.success) {
+            resolve(message.content);
+          } else {
+            reject("File content loading failed");
+          }
+          document.documentElement.removeEventListener("tsMessage", eventListener);
+        }
+      }
+
+      document.documentElement.addEventListener("tsMessage", eventListener);
+    });
+  }
 
   var copyFile = function(filePath, newFilePath) {
     console.log("Copy " + filePath + " to " + newFilePath);
@@ -445,6 +478,7 @@ define(function(require, exports, module) {
   exports.renameFile = renameFile;
   exports.renameDirectory = renameDirectory;
   exports.loadTextFile = loadTextFile;
+  exports.getFileContentPromise = getFileContentPromise;
   exports.saveTextFile = saveTextFile;
   exports.saveBinaryFile = saveBinaryFile;
   exports.listDirectory = listDirectory;
