@@ -4,18 +4,7 @@ define(function(require, exports, module) {
   console.log("Loading: extension.manager.js");
 
   var bowerFileName = "bower.json";
-
-  /*document.addEventListener("initApp", function() {
-
-    loadExtFolder().then(function(values) {
-      alert("extension list loaded");
-      console.log(values);
-    }).catch(function(err) {
-      console.log("loadExtFolder error: " + err);
-    });
-
-  }, false);*/
-
+  
   function getExtFolderPath() {
     var extPath = "ext";
     if(isCordova) {

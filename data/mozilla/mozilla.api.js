@@ -237,6 +237,35 @@ define(function(require, exports, module) {
     });
   }
 
+  function listDirectoryPromise(dirPath) {
+
+     return new Promise(function(resolve, reject) {
+
+      console.log("Listing directory: " + dirPath);
+      var event = document.createEvent('CustomEvent');
+      event.initCustomEvent("addon-message", true, true, {
+        "detail": {
+        "command": "listDirectory",
+        "path": dirPath
+        }
+      });
+      document.documentElement.dispatchEvent(event);
+
+      function eventListener(event) {
+        var message = event.detail;
+        if (message.command === "listDirectory") {
+          if (message.success) {
+            resolve(message.content);
+          } else {
+            reject("listDirectory" + dirPath + " failed");
+          }
+          document.documentElement.removeEventListener("tsMessage", eventListener);
+        }
+      }
+      document.documentElement.addEventListener("tsMessage", eventListener);
+     });
+  }
+
   var copyFile = function(filePath, newFilePath) {
     console.log("Copy " + filePath + " to " + newFilePath);
     var event = document.createEvent('CustomEvent');
@@ -496,6 +525,7 @@ define(function(require, exports, module) {
   exports.getFileProperties = getFileProperties;
   exports.getFileContent = getFileContent;
   exports.getDirectoryMetaInformation = getDirectoryMetaInformation;
+  exports.listDirectoryPromise = listDirectoryPromise;
   // mozilla specific
   exports.saveSettings = saveSettings;
   exports.loadSettings = loadSettings;
