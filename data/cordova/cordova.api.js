@@ -270,12 +270,14 @@ define(function(require, exports, module) {
   function getFilePromise(filePath, resolvePath) {
 
     return new Promise(function(resolve, reject) {
-      if(resolvePath) {
+      if (resolvePath) {
         getFileSystemPromise(resolvePath).then(function(resfs) {
           resfs.getFile(filePath, {create: false},
             function(fileEntry) {
               fileEntry.file(resolve, reject);
-          }, reject);
+            },  
+            reject
+          );
         }).catch(reject);
       } else {
         getFile(filePath, resolve, reject);
@@ -294,7 +296,7 @@ define(function(require, exports, module) {
         reader.onload = function() {
           resolve(reader.result);
         };
-        if(type === "text") {
+        if (type === "text") {
           reader.readAsText(file);
         } else {
           reader.readAsArrayBuffer(file);
@@ -533,7 +535,7 @@ define(function(require, exports, module) {
                     pendingCallbacks--;
                     console.log("File: " + entry.name + " Size: " + entry.size + " i:" + i + " Callb: " + pendingCallbacks);
                     if (pendingCallbacks === 0 && i === entries.length) {
-                      if(callback) {
+                      if (callback) {
                         callback(anotatedDirList);
                       } else {
                         TSPOSTIO.listDirectory(anotatedDirList);
@@ -545,7 +547,7 @@ define(function(require, exports, module) {
                     console.error("listDirectory error: " + JSON.stringify(error));
                     pendingCallbacks--;
                     if (pendingCallbacks === 0 && i === entries.length) {
-                      if(callback) {
+                      if (callback) {
                         callback(anotatedDirList);
                       } else {
                         TSPOSTIO.listDirectory(anotatedDirList);
@@ -564,7 +566,7 @@ define(function(require, exports, module) {
                 });
                 console.log("Dir: " + entries[i].name + " I:" + i + " Callb: " + pendingCallbacks);
                 if ((pendingCallbacks === 0) && ((i + 1) == entries.length)) {
-                  if(callback) {
+                  if (callback) {
                     callback(anotatedDirList);
                   } else {
                     TSPOSTIO.listDirectory(anotatedDirList);
@@ -573,7 +575,7 @@ define(function(require, exports, module) {
               }
             }
             if (pendingCallbacks === 0) {
-              if(callback) {
+              if (callback) {
                 callback(anotatedDirList);
               } else {
                 TSPOSTIO.listDirectory(anotatedDirList);
@@ -585,7 +587,7 @@ define(function(require, exports, module) {
             TSCORE.hideLoadingAnimation();
             TSPOSTIO.errorOpeningPath(dirPath);
             console.error("Dir List Error: " + error.code);
-            if(callback) {
+            if (callback) {
               callback(anotatedDirList);
             }
           }
@@ -595,7 +597,7 @@ define(function(require, exports, module) {
         TSCORE.hideLoadingAnimation();
         TSPOSTIO.errorOpeningPath(dirPath);
         console.error("Getting dir: " + dirPath + " failed with error code: " + error.code);
-        if(callback) {
+        if (callback) {
           callback(anotatedDirList);
         }
       }
