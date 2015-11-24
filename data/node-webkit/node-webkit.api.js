@@ -400,52 +400,59 @@ define(function(require, exports, module) {
     }
   };
 
-  var loadTextFile = function(filePath, isPreview) {
-    console.log("Loading file: " + filePath);
-
-    if (isPreview) {
-      var stream = fs.createReadStream(filePath, {
-        start: 0,
-        end: 10000
-      });
-      stream.on('error', function(err) {
-        TSCORE.hideLoadingAnimation();
-        console.error("Loading file " + filePath + " failed " + err);
-        TSCORE.showAlertDialog("Lading " + filePath + " failed.");
-        return;
-      });
-
-      stream.on('data', function(content) {
-        //console.log("Stream: " + content);
-        TSPOSTIO.loadTextFile(content);
-      });
-
-    } else {
-      fs.readFile(filePath, 'utf8', function(error, content) {
-        if (error) {
-          TSCORE.hideLoadingAnimation();
-          console.error("Loading file " + filePath + " failed " + error);
-          TSCORE.showAlertDialog("Loading " + filePath + " failed.");
-          return;
-        }
-        TSPOSTIO.loadTextFile(content);
-      });
-    }
-  };
-
   var loadTextFilePromise = function(filePath, isPreview) {
     console.log("Loading file: " + filePath);
     return new Promise(function(resolve, reject) {
-      fs.readFile(filePath, 'utf8', function(error, content) {
-        if (error) {
-          TSCORE.hideLoadingAnimation();
-          console.error("Loading file " + filePath + " failed " + error);
-          reject(error);
-        }
-        resolve(content);
-      });
+      if (isPreview) {
+        var stream = fs.createReadStream(filePath, {
+          start: 0,
+          end: 10000
+        });
+        stream.on('error', function(err) {
+          reject(err);
+        });
+
+        stream.on('data', function(content) {
+          //console.log("Stream: " + content);
+          resolve(content);
+        });
+
+      } else {
+        fs.readFile(filePath, 'utf8', function(error, content) {
+          if (error) {
+            reject(error)
+          } else {
+            resolve(content);
+          }
+        });
+      }
     });
   };
+
+  var loadTextFile = function(filePath, isPreview) {
+    console.log("Loading file: " + filePath);
+    loadTextFilePromise(filePath, isPreview).then(function() {
+        TSPOSTIO.loadTextFile(content);
+      }, 
+      function(error) {
+        TSCORE.hideLoadingAnimation();
+        console.error("Loading file " + filePath + " failed " + error);
+        TSCORE.showAlertDialog("Lading " + filePath + " failed.");
+      }
+    );
+  };
+
+  function saveFilePromise(filePath, content) {
+    return new Promise(function(resolve,reject){
+      fs.writeFile(filePath, content, 'utf8', function(error) {
+        if (error) {
+          reject(error);
+          return;
+        }
+        resolve();
+      });
+    });
+  }
 
   var saveTextFile = function(filePath, content, overWrite, silentMode) {
     console.log("Saving file: " + filePath);
@@ -471,46 +478,38 @@ define(function(require, exports, module) {
 
     var isNewFile = !fs.existsSync(filePath);
 
-    fs.writeFile(filePath, content, 'utf8', function(error) {
-      if (error) {
+    saveFilePromise(filePath, content).then(function() {
+        if (!silentMode) {
+          TSPOSTIO.saveTextFile(filePath, isNewFile);
+        }
+      }, 
+      function(error) {
         TSCORE.hideLoadingAnimation();
         console.error("Save to file " + filePath + " failed " + error);
         TSCORE.showAlertDialog("Saving " + filePath + " failed.");
-        return;
       }
-      if (!silentMode) {
-        TSPOSTIO.saveTextFile(filePath, isNewFile);
-      }
-    });
+    );
   };
 
   var saveBinaryFile = function(filePath, content, overWrite, silentMode) {
     console.log("Saving binary file: " + filePath);
     if (!fs.existsSync(filePath) || overWrite === true) {
-      fs.writeFile(filePath, arrayBufferToBuffer(content), 'utf8', function(error) {
-        if (error) {
+        var buff = TSCORE.Utils.arrayBufferToBuffer(content);
+        saveFilePromise(filePath, buff).then(function() {
+          if (!silentMode) {
+            TSPOSTIO.saveBinaryFile(filePath);
+          }
+        }, 
+        function(error) {
           TSCORE.hideLoadingAnimation();
           console.error("Save to file " + filePath + " failed " + error);
           TSCORE.showAlertDialog("Saving " + filePath + " failed.");
-          return;
         }
-        if (silentMode !== true) {
-          TSPOSTIO.saveBinaryFile(filePath);
-        }
-      });
+      );
     } else {
       TSCORE.showAlertDialog($.i18n.t("ns.common:fileExists", {fileName: filePath}));
     }
   };
-
-  function arrayBufferToBuffer(ab) {
-    var buffer = new Buffer(ab.byteLength);
-    var view = new Uint8Array(ab);
-    for (var i = 0; i < buffer.length; ++i) {
-      buffer[i] = view[i];
-    }
-    return buffer;
-  }
 
   var listDirectory = function(dirPath, readyCallback) {
     console.log("Listing directory: " + dirPath);
@@ -573,49 +572,62 @@ define(function(require, exports, module) {
     });
   };
 
-  var deleteElement = function(path) {
-    console.log("Deleting: " + path);
+  function deleteFilePromise(path) {
+
     if (TSCORE.PRO && TSCORE.Config.getUseTrashCan()) {
-      trash([path]).then(function() {
+      return trash([path]);      
+    } 
+
+    return new Promise(function(resolve, reject) {
+      fs.unlink(path, function(error) {
+        if (error) {
+          reject(error);
+        } else {
+          resolve();
+        }
+      });
+    });
+  }
+
+  function deleteDirectoryPromise(path) {
+
+    if (TSCORE.PRO && TSCORE.Config.getUseTrashCan()) {
+      return trash([path]);      
+    } 
+
+    return new Promise(function(resolve,reject) {
+      fs.rmdir(path, function(error) {
+        if (error) {
+         reject(error);
+        } else {
+          resolve();
+        }  
+      });
+    });
+  }
+
+  var deleteElement = function(path) {
+    deleteFilePromise(path).then(function() {
         TSPOSTIO.deleteElement(path); 
-      }).catch(function() {
+      }, 
+      function(error) {
         TSCORE.hideLoadingAnimation();
         TSCORE.showAlertDialog("Deleting file " + path + " failed.");
         console.error("Deleting file " + path + " failed " + error);
-      });      
-    } else {
-      fs.unlink(path, function(error) {
-        if (error) {
-          TSCORE.hideLoadingAnimation();
-          TSCORE.showAlertDialog("Deleting file " + path + " failed.");
-          console.error("Deleting file " + path + " failed " + error);
-          return;
-        }
-        TSPOSTIO.deleteElement(path);
-      });
-    }
+      }
+    );
   };
 
   var deleteDirectory = function(path) {
-    console.log("Deleting directory: " + path);
-    if (TSCORE.PRO && TSCORE.Config.getUseTrashCan()) {
-      trash([path]).then(function() { 
+    deleteDirectoryPromise(path).then(function(){
         TSPOSTIO.deleteDirectory(path);
-      }).catch(function() {
+      },  
+      function(error) {
+        TSCORE.hideLoadingAnimation();
         console.error("Deleting directory " + path + " failed " + error);
         TSPOSTIO.deleteDirectoryFailed(path);
-      });      
-    } else {
-      fs.rmdir(path, function(error) {
-        if (error) {
-          TSCORE.hideLoadingAnimation();
-          console.error("Deleting directory " + path + " failed " + error);
-          TSPOSTIO.deleteDirectoryFailed(path);
-          return;
-        }
-        TSPOSTIO.deleteDirectory(path);
-      });
-    }
+      }
+    );
   };
 
   var checkAccessFileURLAllowed = function() {
@@ -697,10 +709,23 @@ define(function(require, exports, module) {
     ctime: Mon, 10 Oct 2011 23:24:11 GMT
   */
 
+  var getPropertiesPromise = function(path) {
+    return new Promise(function(resolve, reject) {
+      fs.stat(path, function(err, stats) {
+        if (err) {
+          resolve(false);
+          //reject("Failed getting properties for " +path + " with "+ err);
+        }
+        //console.log("Properties for " + path + " - " + JSON.stringify(stats));
+        resolve(stats);
+      });
+    });
+  };
+
   var getFileProperties = function(filePath) {
     var fileProperties = {};
-    try {
-      var stats = fs.lstatSync(filePath);
+    console.log("getFileProperties: " + filePath);
+    getPropertiesPromise(filePath).then(function(stats) {
       if (stats.isFile()) {
         fileProperties.path = filePath;
         fileProperties.size = stats.size;
@@ -711,26 +736,12 @@ define(function(require, exports, module) {
         TSCORE.hideLoadingAnimation();
         TSCORE.showAlertDialog("Error getting properties for: " + filePath + "!");
       }
-    } catch (e) {
+    }).catch(function(error) {
+      alert(JSON.stringify(error));
       console.error("File " + filePath + " didn't exists");
       TSCORE.hideLoadingAnimation();
       TSCORE.closeFileViewer();
       TSCORE.showAlertDialog("File " + filePath + " didn't exists.");
-    }
-  };
-
-  var getPropertiesPromise = function(path) {
-    return new Promise(function(resolve, reject) {
-      fs.stat(path, function(err, stats) {
-        if (err) {
-          resolve(false);
-          //reject("Failed getting properties for " +path + " with "+ err);
-        }
-        if (stats) {
-          //console.log("Properties for " + path + " - " + JSON.stringify(stats));
-          resolve(stats);
-        }
-      });
     });
   };
 
@@ -742,29 +753,13 @@ define(function(require, exports, module) {
   };
 
   function getFile(fileURL, result, error) {
-    getFileContent(fileURL, function(content) {
+    getFileContentPromise(fullPath).then(function(content) {
       result(new File([content], fileURL, {}));
     }, error);
   }
 
   function getFileContent(fullPath, result, error) {
-    var fileURL = fullPath;
-    if (fileURL.indexOf("file://") === -1) {
-      fileURL = "file://" + fileURL;
-    }
-
-    var xhr = new XMLHttpRequest(); 
-    xhr.open("GET", fileURL, true);
-    xhr.responseType = "arraybuffer";
-    xhr.onerror = error;
-    xhr.onload = function() {
-      if (xhr.response) {
-        result(xhr.response);
-      } else {
-        error(xhr.statusText);
-      }
-    };
-    xhr.send();
+    getFileContentPromise(fullPath).then(result, error);
   }
 
   function getFileContentPromise(fullPath, type) {
@@ -792,7 +787,6 @@ define(function(require, exports, module) {
   }
 
   function listDirectoryPromise(fullPath) {
-
     return new Promise(function(resolve, reject) {
       listDirectory(fullPath, resolve);
     });

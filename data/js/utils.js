@@ -49,6 +49,15 @@ define(function(require, exports, module) {
     return decodeURIComponent(escape(str));
   };
   
+  function arrayBufferToBuffer(ab) {
+    var buffer = new Buffer(ab.byteLength);
+    var view = new Uint8Array(ab);
+    for (var i = 0; i < buffer.length; ++i) {
+      buffer[i] = view[i];
+    }
+    return buffer;
+  }
+
   var baseName = function(dirPath) {
     var fileName = dirPath.substring(dirPath.lastIndexOf("/") + 1, dirPath.length);
     return fileName ? fileName : dirPath;
@@ -72,4 +81,5 @@ define(function(require, exports, module) {
   exports.baseName  = baseName;
   exports.dirName = dirName;
   exports.getFileExt = getFileExt;
+  exports.arrayBufferToBuffer = arrayBufferToBuffer;
 });
