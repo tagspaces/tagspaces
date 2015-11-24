@@ -279,9 +279,6 @@ function handleMessage(msg, worker) {
     case "openDirectory":
       ioutils.openDirectory(msg.detail.path, worker);
       break;
-    case "openExtensionsDirectory":
-      ioutils.openExtensionsDirectory(worker);
-      break;
     case "createDirectoryIndex":
       ioutils.createDirectoryIndex(msg.detail.path, worker);
       break;

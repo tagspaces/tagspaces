@@ -398,17 +398,6 @@ define(function(require, exports, module) {
     document.documentElement.dispatchEvent(event);
   };
 
-  var openExtensionsDirectory = function() {
-    console.log("Opening extensions directory...");
-    var event = document.createEvent('CustomEvent');
-    event.initCustomEvent("addon-message", true, true, {
-      "detail": {
-        "command": "openExtensionsDirectory"
-      }
-    });
-    document.documentElement.dispatchEvent(event);
-  };
-
   var createDirectoryIndex = function(dirPath) {
     console.log("Creating directory index for: " + dirPath);
     var event = document.createEvent('CustomEvent');
@@ -519,7 +508,6 @@ define(function(require, exports, module) {
   exports.openDirectory = openDirectory;
   exports.openFile = openFile;
   exports.selectFile = selectFile;
-  exports.openExtensionsDirectory = openExtensionsDirectory;
   exports.checkAccessFileURLAllowed = checkAccessFileURLAllowed;
   exports.checkNewVersion = checkNewVersion;
   exports.getFileProperties = getFileProperties;

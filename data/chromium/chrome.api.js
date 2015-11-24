@@ -348,10 +348,6 @@ define(function(require, exports, module) {
     TSCORE.showAlertDialog($.i18n.t("ns.dialogs:openFileNativelyAlert"));
   };
 
-  var openExtensionsDirectory = function() {
-    TSCORE.showAlertDialog("Open extensions directory functionality not implemented on chrome yet!");
-  };
-
   var getFileProperties = function(filePath) {
     var fileProperties = {};
     fileProperties.path = filePath;
@@ -442,7 +438,6 @@ define(function(require, exports, module) {
   exports.openDirectory = openDirectory;
   exports.openFile = openFile;
   exports.selectFile = selectFile;
-  exports.openExtensionsDirectory = openExtensionsDirectory;
   exports.checkAccessFileURLAllowed = checkAccessFileURLAllowed;
   exports.checkNewVersion = checkNewVersion;
   exports.getFileProperties = getFileProperties;

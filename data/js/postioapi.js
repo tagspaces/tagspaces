@@ -161,8 +161,6 @@ define(function(require, exports, module) {
     console.log('File selected: ' + $(this).val());
   };
 
-  exports.openExtensionsDirectory = function() {};
-
   exports.getFileProperties = function(fileProperties) {
     console.log('File properties: ' + JSON.stringify(fileProperties));
     TSCORE.FileOpener.setFileProperties(fileProperties);

@@ -556,27 +556,7 @@ exports.openDirectory = function openDirectory(dirPath, worker) {
   }
 };
 
-/**
- * Open the directory where the user can install tagspaces extensions
- * This directory is located in the profile with which firefox is started
- */
-exports.openExtensionsDirectory = function openExtensionsDirectory(worker) {
-  console.log("Opening extensions directory (not implemented yet)");
-  /*    try { 
-          // Other nsIPropertues such as ProfD could be found on
-          // https://developer.mozilla.org/de/docs/Code_snippets/File_I_O
-          var file = Cc["@mozilla.org/file/directory_service;1"].getService(Ci.nsIProperties).get("ProfD", Ci.nsIFile);        
-          var profileDir = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsIFile);
-          profileDir.initWithPath(file.path+"/extensions/jid1-FBaMKxTifTSahQ@jetpack/resources/tagspaces/data/ext"); 
-          if (profileDir.isDirectory()) {
-            profileDir.QueryInterface(Ci.nsILocalFile).launch();
-          }
-      } catch(ex) {
-          console.error("Opening extensions directory failed "+ex);
-      } */
-};
-
-/* 
+/*
     "leafName":"2013",
     "permissions":438,
     "permissionsOfLink":438,

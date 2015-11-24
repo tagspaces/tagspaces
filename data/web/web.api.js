@@ -386,10 +386,6 @@ define(function(require, exports, module) {
     console.log("selectFile function not relevant for webdav..");
   };
 
-  var openExtensionsDirectory = function() {
-    console.log("openExtensionsDirectory function not relevant for webdav..");
-  };
-
   var getFileProperties = function(filePath) {
     
     davClient.propfind(encodeURI(filePath), function(status, data) {
@@ -450,7 +446,6 @@ define(function(require, exports, module) {
   exports.openDirectory = openDirectory;
   exports.openFile = openFile;
   exports.selectFile = selectFile;
-  exports.openExtensionsDirectory = openExtensionsDirectory;
   exports.checkAccessFileURLAllowed = checkAccessFileURLAllowed;
   exports.checkNewVersion = checkNewVersion;
   exports.getFileProperties = getFileProperties;
