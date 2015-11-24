@@ -163,6 +163,10 @@ function scanDirectory(dirPath, index) {
 exports.listDirectory = function listDirectory(dirPath, worker) {
   console.log("Listing directory: " + dirPath);
   try {
+    if(dirPath.indexOf("resource://") >=0) {
+      dirPath = require("sdk/url").toFilename(dirPath);
+    }
+    
     var dirList = filesIO.list(dirPath);
     var anotatedDirList = [];
     for (var i = 0; i < dirList.length; i++) {

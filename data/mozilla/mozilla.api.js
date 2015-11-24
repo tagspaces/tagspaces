@@ -87,7 +87,7 @@ define(function(require, exports, module) {
           console.error("File loading failed");
         }
         break;*/
-      case "listDirectory":
+      /*case "listDirectory":
         if(args[0]) {
           args[0](message.content);
           args = [];
@@ -98,7 +98,7 @@ define(function(require, exports, module) {
             TSPOSTIO.errorOpeningPath();
           }
         }
-        break;
+        break;*/
       case "indexDirectory":
         if (message.success) {
           TSPOSTIO.createDirectoryIndex(message.content);
@@ -334,14 +334,14 @@ define(function(require, exports, module) {
 
   var listDirectory = function(dirPath) {
     console.log("Listing directory: " + dirPath);
-    var event = document.createEvent('CustomEvent');
-    event.initCustomEvent("addon-message", true, true, {
-      "detail": {
-        "command": "listDirectory",
-        "path": dirPath
+    listDirectoryPromise(dirPath).then( function(success) {
+        TSPOSTIO.listDirectory(success);
+      },
+      function(error) {
+        console.warn("Error: " + error);
+        TSPOSTIO.errorOpeningPath();
       }
-    });
-    document.documentElement.dispatchEvent(event);
+    );
   };
 
   var deleteElement = function(path) {
@@ -490,15 +490,15 @@ define(function(require, exports, module) {
   }
 
   var getDirectoryMetaInformation = function(dirPath, readyCallback) {
-    args = [readyCallback];
-    var event = document.createEvent('CustomEvent');
-    event.initCustomEvent("addon-message", true, true, {
-      "detail": {
-        "command": "listDirectory",
-        "path": dirPath
+    console.log("getDirectoryMetaInformation: " + dirPath);
+    listDirectoryPromise(dirPath).then( function(success) {
+        readyCallback(success);
+      },
+      function(error) {
+        console.warn("Error: " + error);
+        TSPOSTIO.errorOpeningPath();
       }
-    });
-    document.documentElement.dispatchEvent(event);
+    );
   };
 
   exports.focusWindow = focusWindow;
