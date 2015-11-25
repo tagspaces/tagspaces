@@ -1077,10 +1077,6 @@ define(function(require, exports, module) {
     window.plugins.fileOpener.send(filePath);
   };
 
-  var openExtensionsDirectory = function() {
-    TSCORE.showAlertDialog($.i18n.t("ns.common:functionalityNotImplemented"));
-  };
-
   var getFileProperties = function(filePath) {
     filePath = normalizePath(filePath);
     var fileProperties = {};
@@ -1120,6 +1116,46 @@ define(function(require, exports, module) {
     console.log("Focusing window is not implemented in cordova.");
   };
 
+  function walkDirectory(path, options, fileCallback, dirCallback) {
+    console.log("Walking: " + path);
+    if(!options) {
+      options.recursive = false;
+    }
+
+    return listDirectoryPR(path).then(function(entries) {
+      return Promise.all(entries.map(function(e) {
+        if (e.isFile) {
+          //console.log("Start coping file " + e.nativeURL)
+          return fileCallback(e.nativeURL);
+          //return null;  // Don't wait for anything
+        } else {
+          // Do something
+          return walkDirectory(e.nativeURL, fileCallback);
+        }
+      }));
+    });
+  }
+
+  function listDirectoryPR(path){
+    return new Promise(function(resolve, reject) {
+      window.resolveLocalFileSystemURL(path,
+        function (fileSystem) {
+          var reader = fileSystem.createReader();
+          reader.readEntries(
+            function (entries) {
+              resolve(entries);
+            },
+            function (err) {
+              reject(err);
+            }
+          );
+        }, function (err) {
+          reject(err);
+        }
+      );
+    });
+  }
+
   exports.focusWindow = focusWindow;
   exports.createDirectory = createDirectory;
   exports.createMetaFolder = createMetaFolder;
@@ -1140,7 +1176,6 @@ define(function(require, exports, module) {
   exports.openFile = openFile;
   exports.sendFile = sendFile;
   exports.selectFile = selectFile;
-  exports.openExtensionsDirectory = openExtensionsDirectory;
   exports.checkAccessFileURLAllowed = checkAccessFileURLAllowed;
   exports.checkNewVersion = checkNewVersion;
   exports.getFileProperties = getFileProperties;
