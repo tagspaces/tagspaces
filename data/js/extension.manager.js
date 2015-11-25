@@ -7,6 +7,9 @@ define(function(require, exports, module) {
   
   function getExtFolderPath() {
     var extPath = "ext";
+    if(isWeb) {
+      return extPath;
+    }
     if (isCordova) {
       return location.href.replace(/index.html/gi, extPath);
     }

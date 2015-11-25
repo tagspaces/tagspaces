@@ -39,7 +39,7 @@ define(function(require, exports, module) {
               row4Remove.remove();
             });
           })));
-    if (isChrome || isFirefox) {
+    if (isChrome) {
       generateSelectOptions(perspectiveControl.find('select'), TSCORE.Config.getPerspectiveExtensions(), perspectiveId, "ns.dialogs:choosePerspective");
     } else {
       generateSelectOptions(perspectiveControl.find('select'), getExtensionsByType("perspective"), perspectiveId, "ns.dialogs:choosePerspective");
@@ -79,7 +79,7 @@ define(function(require, exports, module) {
     var editors = getExtensionsByType("editor");
     viewers = viewers.concat(editors);
     
-    if (isChrome || isFirefox) {
+    if (isChrome) {
       generateSelectOptions(fileTypeControl.find('.ftviewer'), TSCORE.Config.getViewerExtensions(), viewerId, "ns.dialogs:chooseFileViewer");
       generateSelectOptions(fileTypeControl.find('.fteditor'), TSCORE.Config.getEditorExtensions(), editorId, "ns.dialogs:chooseFileEditor");   
     } else {
