@@ -707,15 +707,15 @@ define(function(require, exports, module) {
         fileProperties.lmdt = stats.mtime;
         TSPOSTIO.getFileProperties(fileProperties);
       } else {
-        console.error("Error getting file properties. " + filePath + " is directory");
+        console.error("Error getting file properties. " + filePath + " is a directory");
         TSCORE.hideLoadingAnimation();
         TSCORE.showAlertDialog("Error getting properties for: " + filePath + "!");
       }
     } catch (e) {
-      console.error("File " + filePath + " didn't exists");
+      console.error("File " + filePath + " didn't exist");
       TSCORE.hideLoadingAnimation();
       TSCORE.closeFileViewer();
-      TSCORE.showAlertDialog("File " + filePath + " didn't exists.");
+      TSCORE.showAlertDialog("File " + filePath + " didn't exist.");
     }
   };
 
