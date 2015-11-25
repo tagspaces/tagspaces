@@ -65,56 +65,8 @@ define(function(require, exports, module) {
   }
 
   function listDirectory(dirPath, readyCallback) {
-    console.log("Listing directory: " + dirPath);
-    var anotatedDirList = [];
-    dirPath = encodeURI(dirPath + "/");
     
-    davClient.propfind(
-      dirPath, //encodeURI(dirPath),
-      function(status, data) {
-        console.log("Dirlist Status:  " + status);
-        if (!checkStatusCode(status)) { 
-          if (readyCallback) {
-            readyCallback(anotatedDirList);
-          } else {
-            //TSPOSTIO.errorOpeningPath();
-          }
-          TSCORE.hideLoadingAnimation();
-          if (!readyCallback) {
-            TSCORE.showAlertDialog("Listing " + dirPath + " failed.");
-          }
-          TSCORE.hideLoadingAnimation();
-          console.warn("Listing directory " + dirPath + " failed " + status);
-          return;
-        }
-        var dirList = data._responses,
-        fileName, isDir, filesize, lmdt;
-
-        for (var entry in dirList) {
-          var path = dirList[entry].href;
-          if (dirPath.toLowerCase() !== path.toLowerCase()) {
-            isDir = false;
-            filesize = undefined;
-            lmdt = undefined;
-            //console.log(dirList[entry]._namespaces["DAV:"]);
-            if (typeof dirList[entry]._namespaces["DAV:"].getcontentlength === 'undefined' ||
-              dirList[entry]._namespaces["DAV:"].getcontentlength._xmlvalue.length === 0
-            ) {
-              isDir = true;
-            } else {
-              filesize = dirList[entry]._namespaces["DAV:"].getcontentlength;
-              lmdt = data._responses[entry]._namespaces["DAV:"].getlastmodified._xmlvalue[0].data;
-            }
-            fileName = getNameForPath(path);
-            anotatedDirList.push({
-              "name": fileName,
-              "isFile": !isDir,
-              "size": filesize,
-              "lmdt": lmdt,
-              "path": decodeURI(path)
-            });
-          }
-        }
+    listDirectoryPromise(dirPath).then(function(anotatedDirList) {
         if (readyCallback) {
           readyCallback(anotatedDirList);
         } else {
@@ -122,9 +74,70 @@ define(function(require, exports, module) {
         }
         TSCORE.hideLoadingAnimation();
       },
-      1 //1 , davClient.INFINITY
-    );
+      function(error) {
+        if (readyCallback) {
+          readyCallback(anotatedDirList);
+        } else {
+          //TSPOSTIO.errorOpeningPath();
+        }
+        TSCORE.hideLoadingAnimation();
+        if (!readyCallback) {
+          TSCORE.showAlertDialog("Listing " + dirPath + " failed.");
+        }
+        TSCORE.hideLoadingAnimation();
+        console.warn("Listing directory " + dirPath + " failed " + status);
+      }
+    ); 
   }
+
+  function listDirectoryPromise(dirPath) {
+    console.log("Listing directory: " + dirPath);
+    return new Promise(function(resolve, reject) {
+      var anotatedDirList = [];
+      dirPath = encodeURI(dirPath + "/");
+      davClient.propfind(
+        dirPath, //encodeURI(dirPath),
+        function(status, data) {
+          console.log("Dirlist Status:  " + status);
+          if (!checkStatusCode(status)) { 
+            reject("Listing directory " + dirPath + " failed " + status);
+            console.warn("Listing directory " + dirPath + " failed " + status);
+            return;
+          }
+          var dirList = data._responses,
+          fileName, isDir, filesize, lmdt;
+
+          for (var entry in dirList) {
+            var path = dirList[entry].href;
+            if (dirPath.toLowerCase() !== path.toLowerCase()) {
+              isDir = false;
+              filesize = undefined;
+              lmdt = undefined;
+              //console.log(dirList[entry]._namespaces["DAV:"]);
+              if (typeof dirList[entry]._namespaces["DAV:"].getcontentlength === 'undefined' ||
+                dirList[entry]._namespaces["DAV:"].getcontentlength._xmlvalue.length === 0
+              ) {
+                isDir = true;
+              } else {
+                filesize = dirList[entry]._namespaces["DAV:"].getcontentlength;
+                lmdt = data._responses[entry]._namespaces["DAV:"].getlastmodified._xmlvalue[0].data;
+              }
+              fileName = getNameForPath(path);
+              anotatedDirList.push({
+                "name": fileName,
+                "isFile": !isDir,
+                "size": filesize,
+                "lmdt": lmdt,
+                "path": decodeURI(path)
+              });
+            }
+          }
+          resolve(anotatedDirList);
+        },
+        1 //1 , davClient.INFINITY
+      );
+    });
+  };
 
   var getDirectoryMetaInformation = function(dirPath, readyCallback) {
     listDirectory(dirPath, function(anotatedDirList) {
@@ -413,21 +426,29 @@ define(function(require, exports, module) {
   };
 
   var getFileContent = function(filePath, result, error) {
-
-    console.log("getFileContent file: " + filePath);
-
-    var ajax = davClient.getAjax("GET", filePath);
-    ajax.onreadystatechange = null;
-    ajax.onload = function() {
-      if (ajax.response.byteLength !== null) {
-        result(ajax.response);
-      } else {
-        error(ajax.responseText);
-      }
-    };
-    ajax.responseType = "arraybuffer";
-    ajax.send();
+    getFileContentPromise(filePath).then(result, error);
   };
+
+  function getFileContentPromise(filePath, type) {
+    
+    console.log("getFileContent file: " + filePath);
+    return new Promise(function(resolve, reject) {
+      var ajax = davClient.getAjax("GET", filePath);
+      ajax.onreadystatechange = null;
+      ajax.responseType = type || "arraybuffer";
+      ajax.onerror = reject;
+
+      ajax.onload = function() {
+        var response = ajax.response || ajax.responseText;
+        if (response) {
+          resolve(response);
+        } else {
+          reject("getFileContentPromise ajax error");
+        }
+      };
+      ajax.send();
+    });
+  }
 
   exports.focusWindow = focusWindow;
   exports.createDirectory = createDirectory;
@@ -450,4 +471,6 @@ define(function(require, exports, module) {
   exports.checkNewVersion = checkNewVersion;
   exports.getFileProperties = getFileProperties;
   exports.getFileContent = getFileContent;
+  exports.listDirectoryPromise = listDirectoryPromise;
+  exports.getFileContentPromise = getFileContentPromise;
 });
