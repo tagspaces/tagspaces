@@ -267,110 +267,115 @@ define(function(require, exports, module) {
 
   var loadTextFile = function(filePath) {
     console.log("Loading file: " + filePath);
-    davClient.get(
-      encodeURI(filePath),
-      function(status, data, headers) {
-        console.log("Loading File Status/Content/Headers:  " + status + " / " + headers); // " + data + " /
-        if (checkStatusCode(status)) {
-          TSPOSTIO.loadTextFile(data);
-        } else {
-          TSCORE.showAlertDialog("Loading " + filePath + " failed.");
-          console.error("Loading file " + filePath + " failed " + status);
-        }
+    loadTextFilePromise(filePath).then(function(data) {
+        TSPOSTIO.loadTextFile(data);
+      }, function(error) {
+        TSCORE.showAlertDialog("Loading " + filePath + " failed.");
+        console.error(error);
       }
-      //,customHeaders
     );
-    //TODO Perform file locking and unlocking
   };
+
+  function loadTextFilePromise(filePath) {
+    return getFileContentPromise(filePath, "text");
+  }
 
   var saveTextFile = function(filePath, content, overWrite, silentMode) {
     console.log("Saving file: " + filePath); //+" content: "+content);
-    var isNewFile = false; // = !pathUtils.existsSync(filePath);
-    davClient.propfind(encodeURI(filePath), function(status, data) {
-      console.log("Check file exists: Status / Content: " + status + " / " + data);
-      if (parseInt(status) === 404) {
-        isNewFile = true;
+    saveFilePromise(filePath,content, overWrite, silentMode).then(function(filePath, isNewFile) {
+        if (silentMode !== true) {
+           TSPOSTIO.saveTextFile(filePath, isNewFile);
+        }
+      }, function(error) {
+        TSCORE.showAlertDialog("Save file " + filePath + " failed.");
+        console.error(error);
       }
-      davClient.put(
-        encodeURI(filePath),
-        function(status, data, headers) {
-          console.log("Creating File Status/Content/Headers:  " + status + " / " + data + " / " + headers);
-          if (silentMode !== true) {
-            if (checkStatusCode(status)) {
-              TSPOSTIO.saveTextFile(filePath, isNewFile);
-            } else {
-              TSCORE.showAlertDialog("Save file " + filePath + " failed.");
-              console.error("saveBinaryFile: " + filePath + " failed " + status);
-            }
-          }
-        },
-        content,
-        'application/octet-stream'
-      );
-    }, 1);
+    );
   };
 
   var saveBinaryFile = function(filePath, content, overWrite, silentMode) {
     console.log("Saving binary file: " + filePath); //+" content: "+content);
-    var isNewFile = false;
-    davClient.propfind(encodeURI(filePath), function(status, data) {
-      console.log("Check file exists: Status / Content: " + status + " / " + data);
-      if (parseInt(status) === 404) {
-        isNewFile = true;
-      }
-      if (isNewFile || overWrite === true) {
-        davClient.put(
-          encodeURI(filePath),
-          function(status, data, headers) {
-            console.log("Creating File Status/Content/Headers:  " + status + " / " + data + " / " + headers);
-            if (silentMode !== true) {
-              if (checkStatusCode(status)) {
-                TSPOSTIO.saveBinaryFile(filePath, isNewFile);
-              } else {
-                TSCORE.showAlertDialog("Save file " + filePath + " failed.");
-                console.error("saveBinaryFile: " + filePath + " failed " + status);
-              }
-            }
-          },
-          content,
-          'application/octet-stream'
-        );
-      } else {
-        TSCORE.showAlertDialog("File Already Exists.");
-      }
-    }, 1);
-  };
-
-  var deleteElement = function(path) {
-    console.log("Deleting: " + path);
-    davClient.remove(
-      encodeURI(path),
-      function(status, data, headers) {
-        console.log("Directory/File Deletion Status/Content/Headers:  " + status + " / " + data + " / " + headers);
-        if (checkStatusCode(status)) {
-          TSPOSTIO.deleteElement(path);
-        } else {
-          TSCORE.hideLoadingAnimation();
-          TSCORE.showAlertDialog("Deletion of the file " + path + " failed");
-          console.error("Deleting file " + path + " failed " + status);
+    saveFilePromise(filePath,content, overWrite, silentMode).then(function(filePath, isNewFile){
+        if (silentMode !== true) {
+          TSPOSTIO.saveBinaryFile(filePath, isNewFile); 
         }
+      }, function(error) {
+        TSCORE.showAlertDialog("Save file " + filePath + " failed.");
+        console.error(error);
       }
     );
   };
 
-  var deleteDirectory = function(path) {
-    console.log("Deleting directory: " + path);    
-    davClient.remove(
-      encodeURI(path),
-      function(status, data, headers) {
-        console.log("Directory/File Deletion Status/Content/Headers:  " + status + " / " + data + " / " + headers);
-        if (checkStatusCode(status)) {
-          TSPOSTIO.deleteDirectory(path);  
-        } else {
-          TSCORE.hideLoadingAnimation();
-          TSCORE.showAlertDialog("Deleting directory " + path + " failed.");
-          console.error("deleteDirectory " + path + " failed " + status);
+  function saveFilePromise(filePath, content, overWrite, silentMod) {
+
+    return new Promise(function(resolve, reject) {
+      var isNewFile = false;
+      davClient.propfind(encodeURI(filePath), function(status, data) {
+        console.log("Check file exists: Status / Content: " + status + " / " + data);
+        if (parseInt(status) === 404) {
+          isNewFile = true;
         }
+        if (isNewFile || overWrite === true) {
+          davClient.put(
+            encodeURI(filePath),
+            function(status, data, headers) {
+              console.log("Creating File Status/Content/Headers:  " + status + " / " + data + " / " + headers);
+              if (checkStatusCode(status)) {
+                resolve(filePath, isNewFile);
+              } else {
+                reject("saveFilePromise: " + filePath + " failed " + status);
+              }
+            },
+            content,
+            'application/octet-stream'
+          );
+        } else {
+          reject("File Already Exists.");
+        }
+      }, 1);
+    });
+  }
+
+  var deleteElement = function(path) {
+    console.log("Deleting: " + path);
+    deleteDirectoryPromise(path).then(function() {
+        TSPOSTIO.deleteElement(path);
+      }, function(error) {
+        TSCORE.hideLoadingAnimation();
+        TSCORE.showAlertDialog("Deletion of the file " + path + " failed");
+        console.error(error);
+      }
+    );
+  };
+
+  function deleteDirectoryPromise(path) {
+    return new Promise(function(resolve, reject) {
+      davClient.remove(
+        encodeURI(path),
+        function(status, data, headers) {
+          console.log("Directory/File Deletion Status/Content/Headers:  " + status + " / " + data + " / " + headers);
+          if (checkStatusCode(status)) { 
+            resolve(path);
+          } else {
+            reject("delete " + path + " failed " + status);
+          }
+        }
+      );
+    });
+  }
+
+  function deleteFilePromise(path) {
+    return deleteDirectoryPromise(path);
+  }
+
+  var deleteDirectory = function(path) {
+    console.log("deleteDirectory: " + path);
+    deleteDirectoryPromise(path).then(function() {
+        TSPOSTIO.deleteDirectory(path);
+      }, function(error) {
+        TSCORE.hideLoadingAnimation();
+        TSCORE.showAlertDialog("Deleting directory " + path + " failed.");
+        console.error(error);
       }
     );
   };
@@ -404,25 +409,35 @@ define(function(require, exports, module) {
   };
 
   var getFileProperties = function(filePath) {
-    
-    davClient.propfind(encodeURI(filePath), function(status, data) {
-      console.log("Properties Status / Content: " + status + " / " + JSON.stringify(data._responses));
-      var fileProperties = {};
-      for (var entry in data._responses) {
-        fileProperties.path = filePath;
-        fileProperties.size = data._responses[entry]._namespaces["DAV:"].getcontentlength;
-        fileProperties.lmdt = data._responses[entry]._namespaces["DAV:"].getlastmodified._xmlvalue[0].data;
-      }
-      if (checkStatusCode(status)) {
+    getFilePropertiesPromise(filePath).then(function(fileProperties) {
         TSPOSTIO.getFileProperties(fileProperties);
-      } else {
+      }, function(error) {
         TSCORE.hideLoadingAnimation();
         TSCORE.closeFileViewer();
         TSCORE.showAlertDialog("File " + filePath + " get properties failed");
-        console.error("getFileProperties " + filePath + " failed " + status);
+        console.error(error);;
       }
-    }, 1);
+    );
   };
+
+  function getFilePropertiesPromise(filePath) {
+    return new Promise(function(resolve, reject) {
+      davClient.propfind(encodeURI(filePath), function(status, data) {
+        console.log("Properties Status / Content: " + status + " / " + JSON.stringify(data._responses));
+        var fileProperties = {};
+        if (checkStatusCode(status)) {
+          for (var entry in data._responses) {
+            fileProperties.path = filePath;
+            fileProperties.size = data._responses[entry]._namespaces["DAV:"].getcontentlength;
+            fileProperties.lmdt = data._responses[entry]._namespaces["DAV:"].getlastmodified._xmlvalue[0].data;
+          }
+          resolve(fileProperties);
+        } else {
+          reject("getFileProperties " + filePath + " failed " + status);
+        }
+      }, 1);
+    });
+  }
 
   // Bring the TagSpaces window on top of the windows
   var focusWindow = function() {
