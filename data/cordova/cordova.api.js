@@ -666,6 +666,62 @@ define(function(require, exports, module) {
     );
   };
 
+  function listDirectoryPromise(path) {
+
+    return new Promise(function(resolve, reject) {
+      var anotatedDirList = [];
+      var fileWorkers = [];
+      getFileSystemPromise(path).then(function(fileSystem) {
+        var reader = fileSystem.createReader();
+        reader.readEntries(
+          function (entries) {
+            for (var i = 0; i < entries.length; i++) {
+              if (entries[i].isDirectory) {
+                var obj = {
+                  "name": entries[i].name,
+                  "path": entries[i].fullPath,
+                  "isFile": false,
+                  "size": "",
+                  "lmdt": ""
+                };
+                anotatedDirList.push(obj);
+              } else {
+                var filePromise = Promise.resolve({ 
+                  then: function(resolve, reject) { 
+                    entries[i].file(function(entry) {            
+                        resolve({
+                          "name": entry.name,
+                          "isFile": true,
+                          "size": entry.size,
+                          "lmdt": entry.lastModifiedDate,
+                          "path": entry.fullPath
+                        });
+                      }, function(err) {
+                        reject("Error reading entry " + entry.name);
+                      }
+                    );
+                  }
+                });
+                fileWorkers.push(filePromise);
+              }
+            }
+            Promise.all(fileWorkers).then(function(values) {
+              if(values.length > 0) {
+                anotatedDirList = anotatedDirList.concat(values);
+              }
+              resolve(anotatedDirList);  
+            });
+          },
+          function (err) {
+            console.log(err);
+            reject(err);
+          }
+        );
+      }).catch(reject);
+    });
+  }
+
+/*
   var listDirectoryPromise = function(resolvePath) {
     return new Promise(function(resolve, reject) {
       getFileSystemPromise(resolvePath).then(function(resfs) {
@@ -673,7 +729,7 @@ define(function(require, exports, module) {
       }).catch(reject);
     });
   };
-
+*/
   var deleteElement = function(filePath) {
     console.log("Deleting: " + filePath);
     TSCORE.showLoadingAnimation();

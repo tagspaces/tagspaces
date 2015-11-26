@@ -11,7 +11,8 @@ define(function(require, exports, module) {
       return extPath;
     }
     if (isCordova) {
-      return location.href.replace(/index.html/gi, extPath);
+      return cordova.file.applicationDirectory + "www/ext/";
+      //return location.href.replace(/index.html/gi, extPath);
     }
     return location.href.replace(/file:\/\//gi, "").replace(/index.html/gi, extPath);
   }
