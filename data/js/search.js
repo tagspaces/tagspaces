@@ -44,106 +44,222 @@ define(function(require, exports, module) {
     TSCORE.generateTagGroups();
   };
 
-  var searchData = function(data, query) {
-    query = query.toLowerCase().replace(/^\s+|\s+$/g, '');
-    if (query.indexOf('?') === 0) {
-      TSCORE.Search.nextQuery = query.substring(1, query.length);
-      TSCORE.IO.createDirectoryIndex(TSCORE.currentPath);
+  function prepareQuery(queryText) {
+    // cleaning up the query, reducing the spaces
+    var queryText = queryText.toLowerCase().replace(/^\s+|\s+$/g, '');
+    var recursive = queryText.indexOf('?') === 0;
+    if(recursive) {
+      queryText = queryText.substring(1, queryText.length);
+    }
+    var queryTerms = queryText.split(' ');
+    var queryObj = {
+      includedTerms: [],
+      excludedTerms: [],
+      includedTags: [],
+      excludedTags: [],
+      recursive: recursive,
+    }
+
+    // parsing the query
+    queryTerms.forEach(function(value) {
+      if (value.length > 1) {
+        if (value.indexOf('!') === 0) {
+          queryObj.excludedTerms.push([
+            value.substring(1, value.length),
+            false
+          ]);
+        } else if (value.indexOf('+') === 0) {
+          queryObj.includedTags.push([
+            value.substring(1, value.length),
+            true
+          ]);
+        } else if (value.indexOf('-') === 0) {
+          queryObj.excludedTags.push([
+            value.substring(1, value.length),
+            true
+          ]);
+        } else {
+          queryObj.includedTerms.push([
+            value,
+            false
+          ]);
+        }
+      }
+    });
+
+    return queryObj;
+  }
+
+  function fileContentFilter(filePath) {
+    return /\.(html|txt|xml|md|json)$/i.test(filePath);
+  }
+
+  function filterFileObject(fileEntry, queryObj) {
+    var parentDir = TSCORE.TagUtils.extractParentDirectoryPath(fileEntry.path).toLowerCase();
+    var searchIn = fileEntry.name.toLowerCase();
+    var tags;
+
+    // TODO consider tags in .ts/meta.json and ./ts/ts.json
+    if(fileEntry.tags) {
+      tags = fileEntry.tags;
+    } else {
+      tags = TSCORE.TagUtils.extractTags(fileEntry.path)
+    }
+
+    var result = true;
+
+    if (tags.length < 1 && queryObj.includedTags.length > 0) {
       return false;
     }
-    // By empty filter just return the data
-    if (query.length > 0) {
-      var queryTerms = query.split(' ');
-      // Analysing filter
-      var includedTerms = [];
-      var excludedTerms = [];
-      var includedTags = [];
-      var excludedTags = [];
-      queryTerms.forEach(function(value) {
-        if (value.length > 1) {
-          if (value.indexOf('!') === 0) {
-            excludedTerms.push([
-              value.substring(1, value.length),
-              false
-            ]);
-          } else if (value.indexOf('+') === 0) {
-            includedTags.push([
-              value.substring(1, value.length),
-              true
-            ]);
-          } else if (value.indexOf('-') === 0) {
-            excludedTags.push([
-              value.substring(1, value.length),
-              true
-            ]);
-          } else {
-            includedTerms.push([
-              value,
-              false
-            ]);
-          }
-        }
-      });
-      data = _.filter(data, function(value) {
-        // Searching in the whole filename
-        var parentDir = TSCORE.TagUtils.extractParentDirectoryPath(value[TSCORE.fileListFILEPATH].toLowerCase());
-        var searchIn = value[TSCORE.fileListFILENAME].toLowerCase();
-        var tags = value[TSCORE.fileListTAGS];
-        var result = true;
-
-        // Excluding fils from tagspacec meta folders
-        if (parentDir.indexOf("\/.ts") > 0) {
-          return false;
-        }
-
-        if (tags.length < 1 && includedTags.length > 0) {
-          return false;
-        }
-        for (var i = 0; i < includedTerms.length; i++) {
-          if ((parentDir + searchIn).indexOf(includedTerms[i][0]) >= 0) {
-            includedTerms[i][1] = true;
-          } else {
-            return false;
-          }
-        }
-        for (var i = 0; i < excludedTerms.length; i++) {
-          if (searchIn.indexOf(excludedTerms[i][0]) < 0) {
-            excludedTerms[i][1] = true;
-          } else {
-            return false;
-          }
-        }
-        for (var i = 0; i < includedTags.length; i++) {
-          includedTags[i][1] = false;
-          for (var j = 0; j < tags.length; j++) {
-            if (tags[j].toLowerCase() == includedTags[i][0]) {
-              includedTags[i][1] = true;
-            }
-          }
-        }
-        for (var i = 0; i < includedTags.length; i++) {
-          result = result & includedTags[i][1];
-        }
-        for (var i = 0; i < excludedTags.length; i++) {
-          excludedTags[i][1] = true;
-          for (var j = 0; j < tags.length; j++) {
-            if (tags[j].toLowerCase() == excludedTags[i][0]) {
-              excludedTags[i][1] = false;
-            }
-          }
-        }
-        for (var i = 0; i < excludedTags.length; i++) {
-          result = result & excludedTags[i][1];
-        }
-        return result;
-      });
-      currentQuery = nextQuery;
+    for (var i = 0; i < queryObj.includedTerms.length; i++) {
+      if ((parentDir + searchIn).indexOf(queryObj.includedTerms[i][0]) >= 0) {
+        queryObj.includedTerms[i][1] = true;
+      } else {
+        return false;
+      }
     }
-    if (TSCORE.Config.getCalculateTags()) {
-      // Find all tags in the current search results
-      exports.calculateTags(data);
+    for (var i = 0; i < queryObj.excludedTerms.length; i++) {
+      if (searchIn.indexOf(excludedTerms[i][0]) < 0) {
+        queryObj.excludedTerms[i][1] = true;
+      } else {
+        return false;
+      }
     }
-    return data;
+    for (var i = 0; i < queryObj.includedTags.length; i++) {
+      queryObj.includedTags[i][1] = false;
+      for (var j = 0; j < tags.length; j++) {
+        if (tags[j].toLowerCase() == queryObj.includedTags[i][0]) {
+          queryObj.includedTags[i][1] = true;
+        }
+      }
+    }
+    for (var i = 0; i < queryObj.includedTags.length; i++) {
+      result = result & queryObj.includedTags[i][1];
+    }
+    for (var i = 0; i < queryObj.excludedTags.length; i++) {
+      queryObj.excludedTags[i][1] = true;
+      for (var j = 0; j < tags.length; j++) {
+        if (tags[j].toLowerCase() == queryObj.excludedTags[i][0]) {
+          queryObj.excludedTags[i][1] = false;
+        }
+      }
+    }
+    for (var i = 0; i < queryObj.excludedTags.length; i++) {
+      result = result & queryObj.excludedTags[i][1];
+    }
+    return result;
+  }
+
+  var searchData = function(data, query) {
+    var queryObj = prepareQuery(query);
+
+    if (TSCORE.IO.walkDirectory) {
+      var searchResults = [];
+
+      function scan(content, fileEntry) {
+        return new Promise(function(resolve, reject){
+          var found = false;
+          queryObj.includedTerms.forEach(function(term) {
+            if(content.indexOf(term[0]) >= 0) {
+              found = true;
+            }
+            if(found) {
+              console.log("Term " + term[0] + " found in " + fileEntry.path);
+              searchResults.push(fileEntry);
+            }
+          })
+          resolve();
+        });
+      }
+
+      if(query.length > 0) {
+        TSCORE.showWaitingDialog($.i18n.t("ns.common:waitDialogDiectoryIndexing"));
+
+        TSCORE.IO.walkDirectory(TSCORE.currentPath, {recursive: queryObj.recursive},
+          function(fileEntry) {
+            return new Promise(function(resolve, reject){
+              if(filterFileObject(fileEntry, queryObj)) {
+                searchResults.push(fileEntry);
+                resolve();
+              }
+              if(fileContentFilter(fileEntry.name)) {
+                TSCORE.IO.loadTextFilePromise(fileEntry.path).then(function(content) {
+                  //return scan(content, fileEntry);
+                  var found = false;
+                  queryObj.includedTerms.forEach(function(term) {
+                    if(content.indexOf(term[0]) >= 0) {
+                      found = true;
+                    }
+                    if(found) {
+                      console.log("Term " + term[0] + " found in " + fileEntry.path);
+                      searchResults.push(fileEntry);
+                    }
+                  })
+                  resolve();
+                }, function(err) {
+                  resolve();
+                  console.log("Failed loading content for: " + fileEntry.path);
+                });
+              } else {
+                resolve();
+              }
+            });
+          }
+          //, function(dirEntry) {}
+        ).then(
+          function(entries) {
+            console.log("Found " + searchResults.length + " out of " + entries.length + " entries.");
+            TSCORE.Search.nextQuery = "";
+            TSCORE.PerspectiveManager.updateFileBrowserData(searchResults);
+            TSCORE.hideWaitingDialog();
+            //TSPOSTIO.createDirectoryIndex(searchResults);
+          },
+          function(err) {
+            console.warn("Error creating index: " + err);
+          }
+        ).catch(function() {
+          TSCORE.hideWaitingDialog();
+        });
+        return false;
+      } else {
+        if (TSCORE.Config.getCalculateTags()) {
+          // Find all tags in the current search results
+          exports.calculateTags(data);
+        }
+        return data;
+      }
+
+    } else {
+      // old implementation
+      if (queryObj.recursive) {
+        TSCORE.Search.nextQuery = query.substring(1, query.length);
+        TSCORE.IO.createDirectoryIndex(TSCORE.currentPath);
+        return false;
+      }
+
+      // By empty filter just return the data
+      if (query.length > 0) {
+        data = _.filter(data, function(value) {
+            var fileEntry = {
+              path: value[TSCORE.fileListFILEPATH],
+              name: value[TSCORE.fileListFILENAME],
+              tags: value[TSCORE.fileListTAGS],
+            }
+            // Excluding files from tagspacec meta folders
+            if (fileEntry.path.indexOf(TSCORE.dirSeparator + ".ts") > 0) {
+              return false;
+            }
+            return filterFileObject(fileEntry, queryObj);
+          }
+        );
+        currentQuery = nextQuery;
+      }
+      if (TSCORE.Config.getCalculateTags()) {
+        // Find all tags in the current search results
+        exports.calculateTags(data);
+      }
+      return data;
+    }
   };
 
   // Public variables definition
