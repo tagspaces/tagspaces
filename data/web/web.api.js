@@ -282,7 +282,7 @@ define(function(require, exports, module) {
 
   var saveTextFile = function(filePath, content, overWrite, silentMode) {
     console.log("Saving file: " + filePath); //+" content: "+content);
-    saveFilePromise(filePath,content, overWrite, silentMode).then(function(filePath, isNewFile) {
+    saveFilePromise(filePath, content, overWrite, silentMode, "text").then(function(filePath, isNewFile) {
         if (silentMode !== true) {
            TSPOSTIO.saveTextFile(filePath, isNewFile);
         }
@@ -306,7 +306,7 @@ define(function(require, exports, module) {
     );
   };
 
-  function saveFilePromise(filePath, content, overWrite, silentMod) {
+  function saveFilePromise(filePath, content, overWrite, silentMod, mode) {
 
     return new Promise(function(resolve, reject) {
       var isNewFile = false;
@@ -315,7 +315,7 @@ define(function(require, exports, module) {
         if (parseInt(status) === 404) {
           isNewFile = true;
         }
-        if (isNewFile || overWrite === true) {
+        if (isNewFile || overWrite === true || mode === "text") {
           davClient.put(
             encodeURI(filePath),
             function(status, data, headers) {
