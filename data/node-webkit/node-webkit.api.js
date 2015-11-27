@@ -223,13 +223,15 @@ define(function(require, exports, module) {
     }
   }
 
+
   var createDirectoryIndex = function(dirPath) {
     console.log("Creating index for directory: " + dirPath);
     TSCORE.showWaitingDialog($.i18n.t("ns.common:waitDialogDiectoryIndexing"));
     //TSCORE.showLoadingAnimation();
+
     var directoryIndex = [];
-    walkDirectory(dirPath, {recursive: true}, function(entry) {
-      directoryIndex.push(entry);
+    walkDirectory(dirPath, {recursive: true}, function(fileEntry) {
+      directoryIndex.push(fileEntry);
     }).then(
       function(entries) {
         TSPOSTIO.createDirectoryIndex(directoryIndex);
@@ -237,8 +239,49 @@ define(function(require, exports, module) {
       function(err) {
         console.warn("Error creating index: " + err);
       }
-    )
+    ).catch(function() {
+      TSCORE.hideWaitingDialog();
+    });
+
   };
+
+  var liveSearch = function(dirPath, query) {
+    console.log("Searching directory: " + dirPath);
+    TSCORE.showWaitingDialog($.i18n.t("ns.common:waitDialogDiectoryIndexing"));
+    //TSCORE.showLoadingAnimation();
+
+    function fileFilter(file) {
+      return /\.(html|txt|xml|md|json)$/i.test(file);
+    }
+
+    var searchResults = [];
+    walkDirectory(dirPath, {recursive: true},
+      function(fileEntry) {
+        if(fileEntry.name.indexOf(query) > 0) {
+          searchResults.push(fileEntry);
+        }
+        if(fileFilter(fileEntry.name)) {
+
+        }
+      },
+      function(dirEntry) {
+        if(dirEntry.name.indexOf(query) > 0) {
+          searchResults.push(dirEntry);
+        }
+      }
+    ).then(
+      function(entries) {
+        TSPOSTIO.createDirectoryIndex(directoryIndex);
+      },
+      function(err) {
+        console.warn("Error creating index: " + err);
+      }
+    ).catch(function() {
+      TSCORE.hideWaitingDialog();
+    });
+
+  };
+
 
   var createDirectoryTree = function(dirPath) {
     console.log("Creating directory index for: " + dirPath);
