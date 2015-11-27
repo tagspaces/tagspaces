@@ -240,14 +240,14 @@ define(function(require, exports, module) {
   }
 
   function extractTags(filePath) {
-    console.log('Extracting tags from: ' + filePath);
+    //console.log('Extracting tags from: ' + filePath);
     var fileName = extractFileName(filePath);
     // WithoutExt
     var tags = [];
     var beginTagContainer = fileName.indexOf(BEGIN_TAG_CONTAINER);
     var endTagContainer = fileName.indexOf(END_TAG_CONTAINER);
     if (beginTagContainer < 0 || endTagContainer < 0 || beginTagContainer >= endTagContainer) {
-      console.log('Filename does not contains tags. Aborting extraction.');
+      //console.log('Filename does not contains tags. Aborting extraction.');
       return tags;
     }
     var cleanedTags = [];
@@ -259,7 +259,6 @@ define(function(require, exports, module) {
         cleanedTags.push(tags[i]);
       }
     }
-    console.log('Extracting finished ');
     return cleanedTags;
   }
 
