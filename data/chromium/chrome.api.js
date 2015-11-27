@@ -408,7 +408,7 @@ define(function(require, exports, module) {
           }
           resolve(anotatedDirList);
         }).fail(function(error) {
-          alert(error);
+          console.warn("Error listing files" + JSON.stringify(error));
           reject(error);
         });
     });
