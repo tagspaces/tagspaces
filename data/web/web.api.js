@@ -295,7 +295,7 @@ define(function(require, exports, module) {
 
   var saveBinaryFile = function(filePath, content, overWrite, silentMode) {
     console.log("Saving binary file: " + filePath); //+" content: "+content);
-    saveFilePromise(filePath,content, overWrite, silentMode).then(function(filePath, isNewFile){
+    saveFilePromise(filePath, content, overWrite, silentMode).then(function(filePath, isNewFile) {
         if (silentMode !== true) {
           TSPOSTIO.saveBinaryFile(filePath, isNewFile); 
         }
@@ -449,7 +449,6 @@ define(function(require, exports, module) {
   };
 
   function getFileContentPromise(filePath, type) {
-    
     console.log("getFileContent file: " + filePath);
     return new Promise(function(resolve, reject) {
       var ajax = davClient.getAjax("GET", filePath);
@@ -459,7 +458,7 @@ define(function(require, exports, module) {
 
       ajax.onload = function() {
         var response = ajax.response || ajax.responseText;
-        if (response) {
+        if (checkStatusCode(ajax.status)) {
           resolve(response);
         } else {
           reject("getFileContentPromise ajax error");
