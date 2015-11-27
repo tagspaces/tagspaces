@@ -121,80 +121,33 @@ define(function(require, exports, module) {
 
   var loadTextFile = function(filePath) {
     console.log("Loading file: " + filePath);
-    $.ajax({
-        url: "file://" + filePath,
-        type: 'POST'
-      })
-      .done(function(data) {
+    getFileContentPromise(filePath, "text").then(function(data) {
         TSPOSTIO.loadTextFile(data);
-      })
-      .fail(function(data) {
+      }, function(error) {
         TSCORE.hideLoadingAnimation();
         console.error("loading text file failed " + data);
-      });
+      }
+    );
   };
 
   var listDirectory = function(dirPath, resultCallback) {
-    console.log("Listing directory: " + dirPath);
     TSCORE.showLoadingAnimation();
-
-    var anotatedDirList = [];
-
-    $.ajax({
-        url: "file://" + dirPath,
-        type: 'GET'
-      })
-      .done(function(data) {
-        //console.log("Dir List "+data);
-        var folders = data.substring(data.indexOf(dataBegin) + dataBegin.length, data.lastIndexOf(dataEnd));
-        folders = folders.split(dataBegin).join("");
-        folders = folders.split(dataEnd);
-
-        var name,
-          path,
-          isFile,
-          fileSize,
-          lastDateModified,
-          fileProp;
-
-        anotatedDirList = [];
-        // sciping the first entry pointing to the parent directory
-        for (var i = 1; i < folders.length; i++) {
-          console.log("Dir " + folders[i]);
-          name = folders[i].substring(2, folders[i].indexOf('","'));
-          path = dirPath + TSCORE.dirSeparator + name;
-          isFile = (folders[i].indexOf(dataFile) > 1);
-          fileSize = 0;
-          lastDateModified = 0;
-          if (isFile) {
-            fileProp = folders[i].substring(folders[i].indexOf(dataFile) + dataFile.length + 1, folders[i].length - 1);
-            fileProp = fileProp.split('","');
-            fileSize = fileProp[0];
-            lastDateModified = fileProp[1];
-          }
-          anotatedDirList.push({
-            "name": name,
-            "isFile": isFile,
-            "size": fileSize,
-            "lmdt": lastDateModified,
-            "path": path
-          });
-        }
+    listDirectoryPromise(dirPath).then(function(anotatedDirList) {
         if (resultCallback) {
           resultCallback(anotatedDirList);
         } else {
           TSPOSTIO.listDirectory(anotatedDirList);
         }
-      })
-      .fail(function(data) {
+      }, function(error) {
         if (resultCallback) {
-          resultCallback(anotatedDirList);
+          resultCallback();
         } else {
           TSPOSTIO.errorOpeningPath(dirPath);
         }
         TSCORE.hideLoadingAnimation();
-        console.error("Error opening path " + JSON.stringify(data));
-      });
+        console.error("Error listDirectory " + dirPath + " error: " + error);
+      }
+    );
   };
 
   var getDirectoryMetaInformation = function(dirPath, readyCallback) {
@@ -278,30 +231,39 @@ define(function(require, exports, module) {
   var saveTextFile = function(filePath, content) {
     TSCORE.showLoadingAnimation();
     console.log("Saving file: " + filePath);
-
-    var blob = new Blob([content], {
-      type: "text/plain;charset=utf-8"
-    });
-    saveAs(blob, TSCORE.TagUtils.extractFileName(filePath));
-    // TODO close file after save
-
-    //TSPOSTIO.saveTextFile(filePath);
-
+    saveFilePromise(filePath).then(function() {
+        // TODO close file after save
+        //TSPOSTIO.saveTextFile(filePath);
+      }, function(error) {
+        TSCORE.showAlertDialog("Save text file " + filePath + "filed");
+        console.error(error);
+      }
+    );
   };
 
   var saveBinaryFile = function(filePath, content) {
     TSCORE.showLoadingAnimation();
     console.log("Saving binary file: " + filePath);
-
-    var blob = new Blob([content], {
-      type: "text/plain;charset=utf-8"
-    });
-    saveAs(blob, TSCORE.TagUtils.extractFileName(filePath));
-    // TODO close file after save
-
-    //TSPOSTIO.saveTextFile(filePath);
-
+    saveFilePromise(filePath).then(function() {
+        // TODO close file after save
+        //TSPOSTIO.saveTextFile(filePath);
+      }, function(error) {
+        TSCORE.showAlertDialog("Save binary file " + filePath + "filed");
+        console.error(error);
+      }
+    );
   };
+
+  function saveFilePromise(filePath, content, mode) {
+    console.log("Saving binary file: " + filePath);
+    return new Promise(function(resolve, reject){
+      var blob = new Blob([content], {
+        type: "text/plain;charset=utf-8"
+      });
+      saveAs(blob, TSCORE.TagUtils.extractFileName(filePath));
+      resolve();
+    });
+  }
 
   var createDirectory = function(dirPath) {
     TSCORE.showAlertDialog("Creating directory is not supported in TagSpaces Lite, please use the desktop version.");
@@ -369,28 +331,11 @@ define(function(require, exports, module) {
   };
 
   function getFileContent(fullPath, result, error) {
-    var fileURL = fullPath;
-    if (fileURL.indexOf("file://") === -1) {
-      fileURL = "file://" + fileURL;
-    }
-
-    var xhr = new XMLHttpRequest(); 
-    xhr.open("GET", fileURL, true);
-    xhr.responseType = "arraybuffer";
-    xhr.onload = function() {
-      if (xhr.response) {
-        result(xhr.response);
-      } else {
-        TSCORE.hideLoadingAnimation();
-        console.error("Getting file content failed");
-        fail(xhr.statusText);
-      }
-    };
-    xhr.send();
+    getFileContentPromise(fullPath).then(result, error);
   }
 
   function getFileContentPromise(fullPath, type) {
-
+    console.log("getFileContentPromise: " + fullPath);
     return new Promise(function(resolve, reject) {
       var fileURL = fullPath;
       if (fileURL.indexOf("file://") === -1) {
@@ -413,10 +358,55 @@ define(function(require, exports, module) {
     });
   }
 
-  function listDirectoryPromise(fullPath) {
-
+  function listDirectoryPromise(dirPath) {
+    console.log("Listing directory: " + dirPath);
     return new Promise(function(resolve, reject) {
-      listDirectory(fullPath, resolve);
+      var anotatedDirList = [];
+      $.ajax({
+          url: "file://" + dirPath,
+          type: 'GET'
+        })
+        .done(function(data) {
+          //console.log("Dir List "+data);
+          var folders = data.substring(data.indexOf(dataBegin) + dataBegin.length, data.lastIndexOf(dataEnd));
+          folders = folders.split(dataBegin).join("");
+          folders = folders.split(dataEnd);
+
+          var name,
+            path,
+            isFile,
+            fileSize,
+            lastDateModified,
+            fileProp;
+
+          anotatedDirList = [];
+          // sciping the first entry pointing to the parent directory
+          for (var i = 1; i < folders.length; i++) {
+            console.log("Dir " + folders[i]);
+            name = folders[i].substring(2, folders[i].indexOf('","'));
+            path = dirPath + TSCORE.dirSeparator + name;
+            isFile = (folders[i].indexOf(dataFile) > 1);
+            fileSize = 0;
+            lastDateModified = 0;
+            if (isFile) {
+              fileProp = folders[i].substring(folders[i].indexOf(dataFile) + dataFile.length + 1, folders[i].length - 1);
+              fileProp = fileProp.split('","');
+              fileSize = fileProp[0];
+              lastDateModified = fileProp[1];
+            }
+            anotatedDirList.push({
+              "name": name,
+              "isFile": isFile,
+              "size": fileSize,
+              "lmdt": lastDateModified,
+              "path": path
+            });
+          }
+          resolve(anotatedDirList);
+        }).fail(function(error) {
+          console.warn("Error listing files" + JSON.stringify(error));
+          reject(error);
+        });
     });
   }
 
