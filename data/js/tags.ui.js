@@ -37,7 +37,7 @@ define(function(require, exports, module) {
                     '<a class="btn btn-sm tagButton" tag="{{title}}" parentkey="{{../key}}" style="{{style}}" title="{{description}}" >'  +
                         '<span class="{{icon}}" /> ' +
                         '{{title}}' +
-                        '{{#if count}} [{{count}}]{{/if}}' +
+                        '{{#if count}} <span class="badge" style="font-size: 9px; background-color: rgba(187, 187, 187, 0.26);" data-i18n="[title]ns.common:tagGroupTagsCount1">{{count}}</span>{{/if}}' +
                         '&nbsp;&nbsp;<span class="fa fa-ellipsis-v"></span>' +
                     '</a>' +
                     '{{/each}}' +
