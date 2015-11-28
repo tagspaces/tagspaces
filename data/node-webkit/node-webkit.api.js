@@ -769,26 +769,6 @@ define(function(require, exports, module) {
     });
   }
 
-  /*window.setTimeout(function() {
-    walkDirectory("/home/na/Desktop/4Read", {recursive: true}, function(entry) {
-      //console.log("File entry: " + JSON.stringify(entry));
-      if(entry && entry.path && entry.path.indexOf(".pdf") > 0) {
-        console.log("Found entry: " + entry.path);
-      }
-    }, function(entry) {
-      //console.log("Directory entry: " + JSON.stringify(entry));
-      if(entry && entry.path && entry.path.indexOf("wired") > 0) {
-        console.log("Directory entry: " + entry.path);
-      }
-    }).then(
-    function(entries) {
-      console.log("------Deep walk done!");
-    },
-    function(err) {
-      console.log(err);
-    })
-  }, 3000);*/
-
   var listDirectory = function(dirPath, readyCallback) {
     //walkDirectory(dirPath).then(
     listDirectoryPromise(dirPath).then(
