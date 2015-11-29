@@ -1,5 +1,10 @@
 define(function(require, exports, module) {
   'use strict';
+  
+  var metaFileExt = "json";
+  var metaFolder = ".ts";
+  var thumbFileExt = "png";
+  var tsMetadataFile = 'tsm.json';
 
   var TSCORE = require("tscore");
 
@@ -226,6 +231,25 @@ define(function(require, exports, module) {
     }
   }
 
+  function loadFolderMetaData(path , resultCb) {
+    var metadataPath;
+    if (isWeb) {
+      metadataPath = path + TSCORE.dirSeparator + metaFolder + TSCORE.dirSeparator + tsMetadataFile;
+    } else {
+      metadataPath = 'file://' + path + TSCORE.dirSeparator + metaFolder + TSCORE.dirSeparator + tsMetadataFile;
+    }
+
+    $.get(metadataPath, function(data) {
+        if (data.length > 1) {
+          var metadata = JSON.parse(data);
+          console.log('Location Metadata: ' + JSON.stringify(metadata));
+          resultCb(metadata);
+        }
+      }).fail(function() {
+        resultCb();
+      });
+  }
+
   exports.getDirectoryMetaInformation = getDirectoryMetaInformation;
   exports.findMetaFilebyPath  =  findMetaFilebyPath;
   exports.findMetaObjectFromFileList = findMetaObjectFromFileList;
@@ -237,4 +261,5 @@ define(function(require, exports, module) {
   exports.addMetaTags = addMetaTags;
   exports.renameMetaTag = renameMetaTag;
   exports.removeMetaTag = removeMetaTag;
+  exports.loadFolderMetaData = loadFolderMetaData;
 });
