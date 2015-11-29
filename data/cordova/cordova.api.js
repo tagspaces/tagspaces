@@ -34,7 +34,7 @@ define(function(require, exports, module) {
   // Cordova loaded and can be used
   function onDeviceReady() {
     console.log("Device Ready:"); // "+device.platform+" - "+device.version);
-    // Redifining the back button
+    // Redefining the back button
     document.addEventListener("backbutton", function(e) {
       TSCORE.FileOpener.closeFile();
       $('.modal').modal('hide');

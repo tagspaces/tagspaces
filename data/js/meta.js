@@ -1,10 +1,5 @@
 define(function(require, exports, module) {
   'use strict';
-  
-  var metaFileExt = "json";
-  var metaFolder = ".ts";
-  var thumbFileExt = "png";
-  var tsMetadataFile = 'tsm.json';
 
   var TSCORE = require("tscore");
 
@@ -234,9 +229,9 @@ define(function(require, exports, module) {
   function loadFolderMetaData(path , resultCb) {
     var metadataPath;
     if (isWeb) {
-      metadataPath = path + TSCORE.dirSeparator + metaFolder + TSCORE.dirSeparator + tsMetadataFile;
+      metadataPath = path + TSCORE.dirSeparator + TSCORE.metaFolder + TSCORE.dirSeparator + TSCORE.metaFolderFile;
     } else {
-      metadataPath = 'file://' + path + TSCORE.dirSeparator + metaFolder + TSCORE.dirSeparator + tsMetadataFile;
+      metadataPath = 'file://' + path + TSCORE.dirSeparator + TSCORE.metaFolder + TSCORE.dirSeparator + TSCORE.metaFolderFile;
     }
 
     $.get(metadataPath, function(data) {
