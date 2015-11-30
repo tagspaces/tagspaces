@@ -1118,7 +1118,7 @@ define(function(require, exports, module) {
 
   function getFilePropertiesPromise(filePath) {
     return new Promise(function(resolve, reject) {
-      getFileSystemPromise(path).then(function(fileSystem) {
+      getFileSystemPromise(filePath).then(function(fileSystem) {
         var fileProperties = {};
         fileSystem.getFile(filePath, {
             create: false,
