@@ -65,7 +65,6 @@ define(function(require, exports, module) {
   }
 
   function listDirectory(dirPath, readyCallback) {
-    
     listDirectoryPromise(dirPath).then(function(anotatedDirList) {
         if (readyCallback) {
           readyCallback(anotatedDirList);
@@ -159,11 +158,21 @@ define(function(require, exports, module) {
   }
 
   var createDirectoryIndex = function(dirPath) {
-    console.log("Creating index for directory: " + dirPath);
-    TSCORE.showLoadingAnimation();
+    TSCORE.showWaitingDialog($.i18n.t("ns.common:waitDialogDiectoryIndexing"));
 
     var directoryIndex = [];
-    TSPOSTIO.createDirectoryIndex(directoryIndex);
+    TSCORE.Utils.walkDirectory(dirPath, {recursive: true}, function(fileEntry) {
+      directoryIndex.push(fileEntry);
+    }).then(
+      function(entries) {
+        TSPOSTIO.createDirectoryIndex(directoryIndex);
+      },
+      function(err) {
+        console.warn("Error creating index: " + err);
+      }
+    ).catch(function() {
+      TSCORE.hideWaitingDialog();
+    });
   };
 
   var createDirectoryTree = function(dirPath) {

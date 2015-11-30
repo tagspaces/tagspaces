@@ -123,12 +123,11 @@ define(function(require, exports, module) {
   };
 
   function getFileSystemPromise(cordovaFolderPath) {
-
     return new Promise(function(resolve, reject) {
       window.resolveLocalFileSystemURL(cordovaFolderPath, resolve, 
         function(error) {
           TSCORE.hideLoadingAnimation();
-          console.error("Error getSettingsFileSystem: " + JSON.stringify(error));
+          console.error("Error getting FileSystem: " + JSON.stringify(error));
           reject(error);
         });
     });
@@ -204,6 +203,7 @@ define(function(require, exports, module) {
     return loadedSettings;
   }
 
+  //TODO use js objects
   function saveSettingsTags(tagGroups) {
     var jsonFormat = '{ "appName": "' + TSCORE.Config.DefaultSettings.appName +
         '", "appVersion": "' + TSCORE.Config.DefaultSettings.appVersion +
@@ -268,7 +268,6 @@ define(function(require, exports, module) {
   }
 
   function getFilePromise(filePath, resolvePath) {
-
     return new Promise(function(resolve, reject) {
       if (resolvePath) {
         getFileSystemPromise(resolvePath).then(function(resfs) {
@@ -305,67 +304,22 @@ define(function(require, exports, module) {
     });
   }
 
-  // TODO recursively calling callback not really working        
-  function scanDirectory(entries) {
-    var i;
-    for (i = 0; i < entries.length; i++) {
-      if (entries[i].isFile) {
-        console.log("File: " + entries[i].name);
-        anotatedDirListing.push({
-          "name": entries[i].name,
-          "isFile": entries[i].isFile,
-          "size": "", // TODO
-          "lmdt": "", //
-          "path": entries[i].fullPath
-        });
-      } else {
-        var directoryReader = entries[i].createReader();
-        pendingRecursions++;
-        directoryReader.readEntries(
-          scanDirectory,
-          function(error) {
-            TSCORE.hideLoadingAnimation();
-            console.error("Error reading dir entries: " + error.code);
-          }); // jshint ignore:line
-      }
-    }
-    pendingRecursions--;
-    console.log("Pending recursions: " + pendingRecursions);
-    if (pendingRecursions <= 0) {
-      TSPOSTIO.createDirectoryIndex(anotatedDirListing);
-    }
-  }
-
-  var anotatedDirListing;
-  var pendingRecursions = 0;
   var createDirectoryIndex = function(dirPath) {
-    dirPath = dirPath + "/"; // TODO make it platform independent
-    dirPath = normalizePath(dirPath);
-    console.log("Creating index for directory: " + dirPath);
-    anotatedDirListing = [];
-    pendingRecursions = 0;
-    fsRoot.getDirectory(dirPath, {
-        create: false,
-        exclusive: false
-      },
-      function(dirEntry) {
-        var directoryReader = dirEntry.createReader();
+    TSCORE.showWaitingDialog($.i18n.t("ns.common:waitDialogDiectoryIndexing"));
 
-        // Get a list of all the entries in the directory
-        pendingRecursions++;
-        directoryReader.readEntries(
-          scanDirectory,
-          function(error) { // error get file system
-            TSCORE.hideLoadingAnimation();
-            console.error("Error getting directory: " + error.code);
-          }
-        );
+    var directoryIndex = [];
+    walkDirectory(dirPath, {recursive: true}, function(fileEntry) {
+      directoryIndex.push(fileEntry);
+    }).then(
+      function(entries) {
+        TSPOSTIO.createDirectoryIndex(directoryIndex);
       },
-      function(error) {
-        TSCORE.hideLoadingAnimation();
-        console.error("Getting dir: " + dirPath + " failed with error code: " + error.code);
+      function(err) {
+        console.warn("Error creating index: " + JSON.stringify(err));
       }
-    );
+    ).catch(function() {
+      TSCORE.hideWaitingDialog();
+    });
   };
 
   function generateDirectoryTree(entries) {
@@ -666,8 +620,7 @@ define(function(require, exports, module) {
     );
   };
 
-  function listDirectoryPromise(path) {
-
+  function listDirectoryPromiseOld(path) {
     return new Promise(function(resolve, reject) {
       var anotatedDirList = [];
       var fileWorkers = [];
@@ -721,15 +674,6 @@ define(function(require, exports, module) {
     });
   }
 
-/*
-  var listDirectoryPromise = function(resolvePath) {
-    return new Promise(function(resolve, reject) {
-      getFileSystemPromise(resolvePath).then(function(resfs) {
-        listDirectory("", resolve, resfs);
-      }).catch(reject);
-    });
-  };
-*/
   var deleteElement = function(filePath) {
     console.log("Deleting: " + filePath);
     TSCORE.showLoadingAnimation();
@@ -1173,41 +1117,95 @@ define(function(require, exports, module) {
   };
 
   function walkDirectory(path, options, fileCallback, dirCallback) {
-    console.log("Walking: " + path);
-    if(!options) {
-      options.recursive = false;
-    }
-
-    return listDirectoryPR(path).then(function(entries) {
-      return Promise.all(entries.map(function(e) {
-        if (e.isFile) {
-          //console.log("Start coping file " + e.nativeURL)
-          return fileCallback(e.nativeURL);
-          //return null;  // Don't wait for anything
-        } else {
-          // Do something
-          return walkDirectory(e.nativeURL, fileCallback);
+    return listDirectoryPromise(path).then(function(entries) {
+      return Promise.all(entries.map(function(entry) {
+        if(!options) {
+          options = {};
+          options.recursive = false;
         }
-      }));
+
+        if (entry.isFile) {
+          if(fileCallback) {
+            return fileCallback(entry);
+          } else {
+            return entry;
+          }
+        } else {
+          if(dirCallback) {
+            return dirCallback(entry);
+          }
+          if(options.recursive) {
+            return walkDirectory(entry.path, options, fileCallback, dirCallback);
+          } else {
+            return entry;
+          }
+        }
+      }), function(err) {
+        console.error("Error list dir prom " + err);
+        return null;
+      });
     });
   }
 
-  function listDirectoryPR(path){
+  function listDirectoryPromise(path){
+    if(path.indexOf(cordova.file.applicationDirectory) === 0) {
+
+    } else {
+      path = "file:///" + path; // TODO consider IOS
+    }
+
     return new Promise(function(resolve, reject) {
-      window.resolveLocalFileSystemURL(path,
-        function (fileSystem) {
-          var reader = fileSystem.createReader();
-          reader.readEntries(
-            function (entries) {
-              resolve(entries);
-            },
-            function (err) {
-              reject(err);
+      var anotatedDirList = [];
+      var fileWorkers = [];
+      getFileSystemPromise(path).then(function(fileSystem) {
+        var reader = fileSystem.createReader();
+        reader.readEntries(
+          function (entries) {
+            for (var i = 0; i < entries.length; i++) {
+              if (entries[i].isDirectory) {
+                anotatedDirList.push({
+                  "name": entries[i].name,
+                  "path": entries[i].fullPath,
+                  "isFile": false,
+                  "size": "",
+                  "lmdt": ""
+                });
+              } else {
+                var filePromise = Promise.resolve({
+                  then: function(resolve, reject) {
+                    if(entries[i] && entries[i].isFile) {
+                      entries[i].file(function(entry) {
+                          resolve({
+                            "name": entry.name,
+                            "isFile": true,
+                            "size": entry.size,
+                            "lmdt": entry.lastModifiedDate,
+                            "path": entry.fullPath
+                          });
+                        }, function(err) {
+                          console.log("Error reading entry " + entry.name);
+                        }
+                      );
+                    }
+                  }
+                });
+                fileWorkers.push(filePromise);
+              }
             }
-          );
-        }, function (err) {
-          reject(err);
-        }
+            Promise.all(fileWorkers).then(function(values) {
+              if(values.length > 0) {
+                anotatedDirList = anotatedDirList.concat(values);
+              }
+              resolve(anotatedDirList);
+            });
+          },
+          function (err) {
+            reject(err);
+          }
+        );
+      }, function (err) {
+        reject(err);
+      }
       );
     });
   }
@@ -1245,4 +1243,5 @@ define(function(require, exports, module) {
   exports.getDirectoryMetaInformation = getDirectoryMetaInformation;
   exports.getFileContentPromise = getFileContentPromise;
   exports.listDirectoryPromise = listDirectoryPromise;
+  exports.walkDirectory = walkDirectory;
 });

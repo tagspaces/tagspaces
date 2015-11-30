@@ -6,6 +6,8 @@ define(function(require, exports, module) {
   'use strict';
   console.log('Loading utils.js ...');
 
+  var TSCORE = require('tscore');
+
   //Conversion utility  
   function arrayBufferToDataURL(arrayBuffer, mime) {
     var blob = new Blob([arrayBuffer], {type: mime});
@@ -73,6 +75,36 @@ define(function(require, exports, module) {
     return (ext === fileURL) ? "" : ext;
   };
 
+  function walkDirectory(path, options, fileCallback, dirCallback) {
+    return TSCORE.IO.listDirectoryPromise(path).then(function(entries) {
+      return Promise.all(entries.map(function(entry) {
+        if(!options) {
+          options = {};
+          options.recursive = false;
+        }
+        if (entry.isFile) {
+          if(fileCallback) {
+            return fileCallback(entry);
+          } else {
+            return entry;
+          }
+        } else {
+          if(dirCallback) {
+            return dirCallback(entry);
+          }
+          if(options.recursive) {
+            return walkDirectory(entry.path, options, fileCallback, dirCallback);
+          } else {
+            return entry;
+          }
+        }
+      }), function(err) {
+        console.error("Error list dir prom " + err);
+        return null;
+      });
+    });
+  }
+
   exports.arrayBufferToDataURL = arrayBufferToDataURL;
   exports.base64ToArrayBuffer = base64ToArrayBuffer;
   exports.dataURLtoBlob = dataURLtoBlob;
@@ -82,4 +114,6 @@ define(function(require, exports, module) {
   exports.dirName = dirName;
   exports.getFileExt = getFileExt;
   exports.arrayBufferToBuffer = arrayBufferToBuffer;
+
+  exports.walkDirectory = walkDirectory;
 });

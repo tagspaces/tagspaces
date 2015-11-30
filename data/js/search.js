@@ -153,7 +153,7 @@ define(function(require, exports, module) {
   var searchData = function(data, query) {
     var queryObj = prepareQuery(query);
 
-    if (TSCORE.IO.walkDirectory) {
+    if (TSCORE.Utils.walkDirectory) {
       var searchResults = [];
 
       function scan(content, fileEntry) {
@@ -175,7 +175,7 @@ define(function(require, exports, module) {
       if(query.length > 0) {
         TSCORE.showWaitingDialog($.i18n.t("ns.common:waitDialogDiectoryIndexing"));
 
-        TSCORE.IO.walkDirectory(TSCORE.currentPath, {recursive: queryObj.recursive},
+        TSCORE.Utils.walkDirectory(TSCORE.currentPath, {recursive: queryObj.recursive},
           function(fileEntry) {
             return new Promise(function(resolve, reject){
               if(filterFileObject(fileEntry, queryObj)) {

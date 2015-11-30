@@ -224,12 +224,10 @@ define(function(require, exports, module) {
   }
 
   var createDirectoryIndex = function(dirPath) {
-    console.log("Creating index for directory: " + dirPath);
     TSCORE.showWaitingDialog($.i18n.t("ns.common:waitDialogDiectoryIndexing"));
-    //TSCORE.showLoadingAnimation();
 
     var directoryIndex = [];
-    walkDirectory(dirPath, {recursive: true}, function(fileEntry) {
+    TSCORE.Utils.walkDirectory(dirPath, {recursive: true}, function(fileEntry) {
       directoryIndex.push(fileEntry);
     }).then(
       function(entries) {
@@ -738,37 +736,6 @@ define(function(require, exports, module) {
     });
   };
 
-  function walkDirectory(path, options, fileCallback, dirCallback) {
-    return listDirectoryPromise(path).then(function(entries) {
-      return Promise.all(entries.map(function(entry) {
-        if(!options) {
-          options = {};
-          options.recursive = false;
-        }
-
-        if (entry.isFile) {
-          if(fileCallback) {
-            return fileCallback(entry);
-          } else {
-            return entry;
-          }
-        } else {
-          if(dirCallback) {
-            return dirCallback(entry);
-          }
-          if(options.recursive) {
-            return walkDirectory(entry.path, options, fileCallback, dirCallback);
-          } else {
-            return entry;
-          }
-        }
-      }), function(err) {
-        console.error("Error list dir prom " + err);
-        return null;
-      });
-    });
-  }
-
   var listDirectory = function(dirPath, readyCallback) {
     //walkDirectory(dirPath).then(
     listDirectoryPromise(dirPath).then(
@@ -848,5 +815,4 @@ define(function(require, exports, module) {
   exports.getDirectoryMetaInformation = getDirectoryMetaInformation;
   exports.getFileContentPromise = getFileContentPromise;
   exports.listDirectoryPromise = listDirectoryPromise;
-  exports.walkDirectory = walkDirectory;
 });
