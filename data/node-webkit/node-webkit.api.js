@@ -402,7 +402,7 @@ define(function(require, exports, module) {
       } else {
         fs.readFile(filePath, 'utf8', function(error, content) {
           if (error) {
-            reject(error)
+            reject(error);
           } else {
             resolve(content);
           }
@@ -454,7 +454,7 @@ define(function(require, exports, module) {
   };
 
   function saveFilePromise(filePath, content) {
-    return new Promise(function(resolve,reject){
+    return new Promise(function(resolve,reject) {
       fs.writeFile(filePath, content, 'utf8', function(error) {
         if (error) {
           reject(error);
