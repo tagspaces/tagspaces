@@ -247,7 +247,7 @@ define(function(require, exports, module) {
       return false;
     }
 
-    renameFilePromise(filePath,newFilePath).then(function(filePath, newFilePath) {
+    renameFilePromise(filePath, newFilePath).then(function() {
         TSPOSTIO.renameFile(filePath, newFilePath);
       }, function(error) {
         TSCORE.showAlertDialog("Renaming: " + filePath + " failed.");
@@ -258,8 +258,8 @@ define(function(require, exports, module) {
 
   var renameDirectory = function(dirPath, newDirName) {
     var newDirPath = TSCORE.TagUtils.extractParentDirectoryPath(dirPath) + TSCORE.dirSeparator + encodeURIComponent(newDirName);
-    renameDirectoryPromise(dirPath, newDirPath).then(function(dirPath, newDirPath) {
-        TSPOSTIO.renameDirectory(dirPath, newDirPath);
+    renameDirectoryPromise(dirPath, newDirPath).then(function() {
+        TSPOSTIO.renameDirectory(dirPath, newDirName);
       }, function(error) {
         TSCORE.hideWaitingDialog();
         TSCORE.showAlertDialog($.i18n.t("ns.common:pathIsNotDirectory", {dirName:dirPath}), 
@@ -282,7 +282,7 @@ define(function(require, exports, module) {
         function(status, data, headers) {
           console.log("Rename Directory Status/Content/Headers:  " + status + " / " + data + " / " + headers);
           if (checkStatusCode(status)) {
-            resolve(dirPath, newDirPath);
+            resolve([dirPath, newDirPath]);
           } else {
             reject("rename: " + dirPath + " failed " + status);
           }
@@ -310,7 +310,7 @@ define(function(require, exports, module) {
 
   var saveTextFile = function(filePath, content, overWrite, silentMode) {
     console.log("Saving file: " + filePath); //+" content: "+content);
-    saveFilePromise(filePath, content, overWrite, silentMode, "text").then(function(filePath, isNewFile) {
+    saveFilePromise(filePath, content, overWrite, silentMode, "text").then(function(isNewFile) {
         if (silentMode !== true) {
            TSPOSTIO.saveTextFile(filePath, isNewFile);
         }
@@ -323,7 +323,7 @@ define(function(require, exports, module) {
 
   var saveBinaryFile = function(filePath, content, overWrite, silentMode) {
     console.log("Saving binary file: " + filePath); //+" content: "+content);
-    saveFilePromise(filePath, content, overWrite, silentMode).then(function(filePath, isNewFile) {
+    saveFilePromise(filePath, content, overWrite, silentMode).then(function(isNewFile) {
         if (silentMode !== true) {
           TSPOSTIO.saveBinaryFile(filePath, isNewFile); 
         }
@@ -349,7 +349,7 @@ define(function(require, exports, module) {
             function(status, data, headers) {
               console.log("Creating File Status/Content/Headers:  " + status + " / " + data + " / " + headers);
               if (checkStatusCode(status)) {
-                resolve(filePath, isNewFile);
+                resolve(isNewFile);
               } else {
                 reject("saveFilePromise: " + filePath + " failed " + status);
               }
