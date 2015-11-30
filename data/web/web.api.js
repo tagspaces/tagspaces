@@ -137,7 +137,7 @@ define(function(require, exports, module) {
         1 //1 , davClient.INFINITY
       );
     });
-  };
+  }
 
   var getDirectoryMetaInformation = function(dirPath, readyCallback) {
     listDirectory(dirPath, function(anotatedDirList) {
@@ -443,7 +443,7 @@ define(function(require, exports, module) {
         TSCORE.hideLoadingAnimation();
         TSCORE.closeFileViewer();
         TSCORE.showAlertDialog("File " + filePath + " get properties failed");
-        console.error(error);;
+        console.error(error);
       }
     );
   };

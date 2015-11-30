@@ -122,9 +122,14 @@ define(function(require, exports, module) {
     }
   };
 
-  function getFileSystemPromise(cordovaFolderPath) {
+  function getFileSystemPromise(path) {
+    console.log("getFileSystemPromise: " + path);
+    if(path.indexOf(cordova.file.applicationDirectory) === 0) {
+    } else {
+      path = (isCordovaiOS) ? cordova.file.applicationDirectory +"/"+ file : "file:///" + path;
+    }
     return new Promise(function(resolve, reject) {
-      window.resolveLocalFileSystemURL(cordovaFolderPath, resolve, 
+      window.resolveLocalFileSystemURL(path, resolve, 
         function(error) {
           TSCORE.hideLoadingAnimation();
           console.error("Error getting FileSystem: " + JSON.stringify(error));
@@ -966,89 +971,114 @@ define(function(require, exports, module) {
   };
 
   var renameFile = function(filePath, newFilePath) {
-    filePath = normalizePath(filePath);
-    var newFileName = newFilePath.substring(newFilePath.lastIndexOf('/') + 1);
-    var newFileParentPath = normalizePath(newFilePath.substring(0, newFilePath.lastIndexOf('/') + 1));
-    console.log("renameFile: " + newFileName + " newFilePath: " + newFilePath);
-    // TODO check if the newFilePath exist or causes issues by renaming
-    fsRoot.getDirectory(newFileParentPath, {
-        create: false,
-        exclusive: false
-      },
-      function(parentDirEntry) {
-        fsRoot.getFile(filePath, {
-            create: false,
-            exclusive: false
-          },
-          function(entry) {
-            entry.moveTo(
-              parentDirEntry,
-              newFileName,
-              function() {
-                console.log("File renamed to: " + newFilePath + " Old name: " + entry.fullPath);
-                TSPOSTIO.renameFile(entry.fullPath, newFilePath);
-              },
-              function() {
-                TSCORE.hideLoadingAnimation();
-                console.error("error renaming: " + filePath);
-              }
-            );
-          },
-          function() {
-            TSCORE.hideLoadingAnimation();
-            console.error("Error getting file: " + filePath);
-          }
-        );
-      },
-      function(error) {
-        TSCORE.hideLoadingAnimation();
-        console.error("Getting dir: " + newFileParentPath + " failed with error code: " + error.code);
-      }
-    );
+ 
+    renameFilePromise(filePath, newFilePath).then(function(){
+      TSPOSTIO.renameFile(filePath, newFilePath);
+    }).catch(function(error){
+      TSCORE.hideLoadingAnimation();
+      console.error(error);
+    });
   };
+
+  function renameFilePromise(filePath, newFilePath) {
+
+    return new Promise(function(resolve, reject) {
+
+      filePath = normalizePath(filePath);
+      var newFileName = newFilePath.substring(newFilePath.lastIndexOf('/') + 1);
+      var newFileParentPath = normalizePath(newFilePath.substring(0, newFilePath.lastIndexOf('/') + 1));
+      console.log("renameFile: " + newFileName + " newFilePath: " + newFilePath);
+      // TODO check if the newFilePath exist or causes issues by renaming
+      fsRoot.getDirectory(newFileParentPath, {
+          create: false,
+          exclusive: false
+        },
+        function(parentDirEntry) {
+          fsRoot.getFile(filePath, {
+              create: false,
+              exclusive: false
+            },
+            function(entry) {
+              entry.moveTo(
+                parentDirEntry,
+                newFileName,
+                function() {
+                  console.log("File renamed to: " + newFilePath + " Old name: " + entry.fullPath);
+                  resolve(newFilePath);
+                },
+                function() {
+                  reject("error renaming: " + filePath);
+                }
+              );
+            },
+            function() {
+              reject("Error getting file: " + filePath);
+            }
+          );
+        },
+        function(error) {
+          console.error("Getting dir: " + newFileParentPath + " failed with error code: " + error.code);
+          reject(error);
+        }
+      );
+    });
+  }
 
   var renameDirectory = function(dirPath, newDirName) {
-    var newDirPath = TSCORE.TagUtils.extractParentDirectoryPath(dirPath) + TSCORE.dirSeparator + newDirName;
-    TSCORE.showLoadingAnimation();
 
-    dirPath = normalizePath(dirPath);
-    var newDirParentPath = normalizePath(newDirPath.substring(0, newDirPath.lastIndexOf('/')));
-    // TODO check if the newFilePath exist or cause issues by renaming
-    fsRoot.getDirectory(newDirParentPath, {
-        create: false,
-        exclusive: false
-      },
-      function(parentDirEntry) {
-        fsRoot.getDirectory(dirPath, {
-            create: false,
-            exclusive: false
-          },
-          function(entry) {
-            entry.moveTo(
-              parentDirEntry,
-              newDirName,
-              function() {
-                console.log("Directory renamed to: " + newDirPath + " Old name: " + entry.fullPath);
-                TSPOSTIO.renameDirectory(entry.fullPath, newDirPath);
-              },
-              function() {
-                TSCORE.hideLoadingAnimation();
-                console.error("error renaming: " + dirPath);
-              }
-            );
-          },
-          function() {
-            TSCORE.hideLoadingAnimation();
-            console.error("Error getting directory: " + dirPath);
-          }
-        );
-      },
-      function(error) {
-        TSCORE.hideLoadingAnimation();
-        console.error("Getting dir: " + newDirParentPath + " failed with error code: " + error.code);
-      }
-    );
+    renameDirectoryPromise(dirPath, newDirName).then(function(newDirPath) {
+      TSPOSTIO.renameDirectory(dirPath, newDirPath);
+    }).catch(function(error) {
+       TSCORE.hideLoadingAnimation();
+      console.error(error);
+    });
   };
+
+  function renameDirectoryPromise(dirPath, newDirName) {
+
+    return new Promise(function(resolve, reject) {
+
+      var newDirPath = TSCORE.TagUtils.extractParentDirectoryPath(dirPath) + TSCORE.dirSeparator + newDirName;
+      TSCORE.showLoadingAnimation();
+
+      dirPath = normalizePath(dirPath);
+      var newDirParentPath = normalizePath(newDirPath.substring(0, newDirPath.lastIndexOf('/')));
+      console.log("renameDirectoryPromise: " + dirPath + "to: " + newDirPath);
+      // TODO check if the newFilePath exist or cause issues by renaming
+      fsRoot.getDirectory(newDirParentPath, {
+          create: false,
+          exclusive: false
+        },
+        function(parentDirEntry) {
+          fsRoot.getDirectory(dirPath, {
+              create: false,
+              exclusive: false
+            },
+            function(entry) {
+              entry.moveTo(
+                parentDirEntry,
+                newDirName,
+                function() {
+                  console.log("Directory renamed to: " + newDirPath + " Old name: " + entry.fullPath);
+                  resolve(newDirPath);
+                },
+                function() {
+                  reject("error renaming: " + dirPath);
+                }
+              );
+            },
+            function() {
+              reject("Error getting directory: " + dirPath);
+            }
+          );
+        },
+        function(error) {
+          console.error("Getting dir: " + newDirParentPath + " failed with error code: " + error.code);
+          reject(error);
+        }
+      );
+    });
+  }
 
   var selectDirectory = function() {
     console.log("Open select directory dialog.");
@@ -1078,38 +1108,47 @@ define(function(require, exports, module) {
   };
 
   var getFileProperties = function(filePath) {
-    filePath = normalizePath(filePath);
-    var fileProperties = {};
-    fsRoot.getFile(filePath, {
-        create: false,
-        exclusive: false
-      },
-      function(entry) {
-        if (entry.isFile) {
-          entry.file(
-            function(file) {
-              fileProperties.path = entry.fullPath;
-              fileProperties.size = file.size;
-              fileProperties.lmdt = file.lastModifiedDate;
-              fileProperties.mimetype = file.type;
-              TSPOSTIO.getFileProperties(fileProperties);
-            },
-            function() {
-              TSCORE.hideLoadingAnimation();
-              console.error("Error retrieving file properties of " + filePath);
-            }
-          );
-        } else {
-          TSCORE.hideLoadingAnimation();
-          console.error("Error getting file properties. " + filePath + " is directory");
-        }
-      },
-      function() {
-        TSCORE.hideLoadingAnimation();
-        console.error("error getting file");
-      }
-    );
+    getFilePropertiesPromise(filePath).then(function() {
+      TSPOSTIO.getFileProperties(fileProperties);
+    }).catch(function(error){
+      TSCORE.hideLoadingAnimation();
+      console.error(error);
+    });
   };
+
+  function getFilePropertiesPromise(filePath) {
+    return new Promise(function(resolve, reject) {
+      getFileSystemPromise(path).then(function(fileSystem) {
+        var fileProperties = {};
+        fileSystem.getFile(filePath, {
+            create: false,
+            exclusive: false
+          },
+          function(entry) {
+            if (entry.isFile) {
+              entry.file(
+                function(file) {
+                  fileProperties.path = entry.fullPath;
+                  fileProperties.size = file.size;
+                  fileProperties.lmdt = file.lastModifiedDate;
+                  fileProperties.mimetype = file.type;
+                  resolve(fileProperties);
+                },
+                function() {
+                  reject("Error retrieving file properties of " + filePath);
+                }
+              );
+            } else {
+              reject("Error getting file properties. " + filePath + " is directory");
+            }
+          },
+          function() {
+            reject("error getting file");
+          }
+        );
+      });
+    });
+  }
 
   // Bring the TagSpaces window on top of the windows
   var focusWindow = function() {
@@ -1148,11 +1187,6 @@ define(function(require, exports, module) {
   }
 
   function listDirectoryPromise(path){
-    if(path.indexOf(cordova.file.applicationDirectory) === 0) {
-
-    } else {
-      path = "file:///" + path; // TODO consider IOS
-    }
 
     return new Promise(function(resolve, reject) {
       var anotatedDirList = [];
