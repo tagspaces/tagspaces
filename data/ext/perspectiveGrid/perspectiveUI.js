@@ -103,7 +103,7 @@ define(function(require, exports, module) {
       title: title,
       tags: [],
       selected: isSelected ? "fa-check-square" : "fa-square-o",
-      thumbPath: metaObj.thumbnailPath
+      thumbPath: encodeURI(metaObj.thumbnailPath)
     };
     
     if (fileTags.length > 0) {
