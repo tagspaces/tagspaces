@@ -44,7 +44,7 @@ define(function(require, exports, module) {
     });
 
     $("#" + this.extensionID + "IncludeSubDirsButton").on("click", function() {
-      if (TSCORE.Config.getShowWarningRecursiveScan()) {
+      /*if (TSCORE.Config.getShowWarningRecursiveScan()) {
         TSCORE.showConfirmDialog(
           $.i18n.t("ns.perspectiveList:includeSubdirsTitleConfirm"),
           $.i18n.t("ns.perspectiveList:includeSubdirsContentConfirm"),
@@ -60,7 +60,8 @@ define(function(require, exports, module) {
       } else {
         $("#" + self.extensionID + "IncludeSubDirsButton").prop('disabled', true);
         TSCORE.IO.createDirectoryIndex(TSCORE.currentPath);
-      }
+      }*/
+      TSCORE.IO.createDirectoryIndex(TSCORE.currentPath);
     });
 
     $("#" + this.extensionID + "DeleteSelectedFilesButton").on("click", function() {
