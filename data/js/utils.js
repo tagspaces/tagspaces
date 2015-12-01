@@ -4,6 +4,7 @@
 /* global define  */
 define(function(require, exports, module) {
   'use strict';
+  var TSCORE = require('tscore');
   console.log('Loading utils.js ...');
 
   var TSCORE = require('tscore');
@@ -61,13 +62,12 @@ define(function(require, exports, module) {
   }
 
   var baseName = function(dirPath) {
-    var fileName = dirPath.substring(dirPath.lastIndexOf("/") + 1, dirPath.length);
+    var fileName = dirPath.substring(dirPath.lastIndexOf(TSCORE.dirSeparator) + 1, dirPath.length);
     return fileName ? fileName : dirPath;
   };
 
   var dirName = function(dirPath) {
-    return dirPath.replace(/\/[^\/]*$/, '');
-    //return dirPath.match( /(.*)[/\]/)[1];
+    return dirPath.replace(/\\/g,'/').replace(/\/[^\/]*$/, ''); 
   };
 
   var getFileExt = function(fileURL) {
