@@ -5,7 +5,7 @@
   "type": "editor",
   "version": "1.0.0",
   "dependencies": {
-    "codemirror": "~3.24.0"
+    "codemirror": ">=5.9.0"
   },
   "devDependencies": {},
   "authors": [

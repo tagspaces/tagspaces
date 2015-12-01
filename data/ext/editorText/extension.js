@@ -109,6 +109,7 @@ define(function(require, exports, module) {
     }
     cmEditor.setValue(content);
     cmEditor.clearHistory();
+    cmEditor.refresh();
     contentLoaded = true;
   };
 
