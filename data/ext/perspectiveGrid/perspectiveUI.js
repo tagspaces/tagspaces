@@ -12,13 +12,6 @@ define(function(require, exports, module) {
 
   var MONTH = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
-  /*var supportedFileTypeThumnailing = [
-    "jpg", "jpeg", "png", "gif", "pdf", "svg", "webp", "bmp", 
-    "zip", "epub", "docx", "pptx", "pptm", "potx", "potm", 
-    "ppxs", "ppsm", "sldx", "sldm", "dotx",  "dotm", "xlsx", 
-    "xlsm", "xlst", "odp", "odg", "ods", "odt" 
-  ];*/
-
   function ExtUI(extID) {
     this.extensionID = extID;
     this.viewContainer = $("#" + this.extensionID + "Container").empty();
@@ -89,11 +82,12 @@ define(function(require, exports, module) {
   );
 
   ExtUI.prototype.createFileTile = function(title, filePath, fileExt, fileTags, isSelected, metaObj) {
-    var tmbPath;
+    var fileParentDir = TSCORE.TagUtils.extractParentDirectoryPath(filePath);
+    var fileName = TSCORE.TagUtils.extractFileName(filePath);
+    var tmbPath = fileParentDir + TSCORE.dirSeparator + TSCORE.metaFolder + TSCORE.dirSeparator + fileName + TSCORE.thumbFileExt;
     if (isCordova || isWeb) {
-      tmbPath = filePath;
     } else {
-      tmbPath = "file:///" + filePath;
+      tmbPath = "file:///" + tmbPath;
     }
     var metaObj = metaObj || {thumbnailPath : ""};
     var context = {
@@ -103,7 +97,7 @@ define(function(require, exports, module) {
       title: title,
       tags: [],
       selected: isSelected ? "fa-check-square" : "fa-square-o",
-      thumbPath: encodeURI(metaObj.thumbnailPath)
+      thumbPath: tmbPath //encodeURI(metaObj.thumbnailPath)
     };
     
     if (fileTags.length > 0) {
