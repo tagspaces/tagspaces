@@ -56,7 +56,7 @@ define(function(require, exports, module) {
   };
 
   var dirName = function(dirPath) {
-    return dirPath.replace(/\\/g,'/').replace(/\/[^\/]*$/, ''); 
+    return dirPath.replace(/\\/g, '/').replace(/\/[^\/]*$/, '');
   };
 
   var getFileExt = function(fileURL) {
