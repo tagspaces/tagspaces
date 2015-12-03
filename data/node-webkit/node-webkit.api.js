@@ -412,7 +412,6 @@ define(function(require, exports, module) {
   };
 
   var loadTextStreamPromise = function(filePath, isPreview) {
-//    console.log("Loading text stream for: " + filePath);
     return new Promise(function(resolve, reject) {
       if (isPreview) {
         var stream = fs.createReadStream(filePath, {
@@ -444,7 +443,7 @@ define(function(require, exports, module) {
     console.log("Loading file: " + filePath);
     loadTextFilePromise(filePath, isPreview).then(function(content) {
         TSPOSTIO.loadTextFile(content);
-      }, 
+      },
       function(error) {
         TSCORE.hideLoadingAnimation();
         console.error("Loading file " + filePath + " failed " + error);
@@ -493,7 +492,7 @@ define(function(require, exports, module) {
         if (!silentMode) {
           TSPOSTIO.saveTextFile(filePath, isNewFile);
         }
-      }, 
+      },
       function(error) {
         TSCORE.hideLoadingAnimation();
         console.error("Save to file " + filePath + " failed " + error);
@@ -510,7 +509,7 @@ define(function(require, exports, module) {
           if (!silentMode) {
             TSPOSTIO.saveBinaryFile(filePath);
           }
-        }, 
+        },
         function(error) {
           TSCORE.hideLoadingAnimation();
           console.error("Save to file " + filePath + " failed " + error);
@@ -532,8 +531,8 @@ define(function(require, exports, module) {
   function deleteFilePromise(path) {
 
     if (TSCORE.PRO && TSCORE.Config.getUseTrashCan()) {
-      return trash([path]);      
-    } 
+      return trash([path]);
+    }
 
     return new Promise(function(resolve, reject) {
       fs.unlink(path, function(error) {
@@ -549,8 +548,8 @@ define(function(require, exports, module) {
   function deleteDirectoryPromise(path) {
 
     if (TSCORE.PRO && TSCORE.Config.getUseTrashCan()) {
-      return trash([path]);      
-    } 
+      return trash([path]);
+    }
 
     return new Promise(function(resolve,reject) {
       fs.rmdir(path, function(error) {
@@ -558,15 +557,15 @@ define(function(require, exports, module) {
          reject(error);
         } else {
           resolve();
-        }  
+        }
       });
     });
   }
 
   var deleteElement = function(path) {
     deleteFilePromise(path).then(function() {
-        TSPOSTIO.deleteElement(path); 
-      }, 
+        TSPOSTIO.deleteElement(path);
+      },
       function(error) {
         TSCORE.hideLoadingAnimation();
         TSCORE.showAlertDialog("Deleting file " + path + " failed.");
@@ -578,7 +577,7 @@ define(function(require, exports, module) {
   var deleteDirectory = function(path) {
     deleteDirectoryPromise(path).then(function(){
         TSPOSTIO.deleteDirectory(path);
-      },  
+      },
       function(error) {
         TSCORE.hideLoadingAnimation();
         console.error("Deleting directory " + path + " failed " + error);
@@ -667,7 +666,7 @@ define(function(require, exports, module) {
       if (fileURL.indexOf("file://") === -1) {
         fileURL = "file://" + fileURL;
       }
-      var xhr = new XMLHttpRequest(); 
+      var xhr = new XMLHttpRequest();
       xhr.open("GET", fileURL, true);
       xhr.responseType = type || "arraybuffer";
       xhr.onerror = reject;
