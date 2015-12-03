@@ -132,13 +132,26 @@ define(function(require, exports, module) {
     var historyItem = getDirHistoryItem(path);
     if(historyItem.metaData !== undefined) {
       generateFolderTags(historyItem.metaData.tags, element, menuItem);
+      loadMetaTagGroups(historyItem.metaData);
       return;
     }
 
     TSCORE.Meta.loadFolderMetaData(path, function(metaData) {
       historyItem.metaData = metaData;
       generateFolderTags(metaData ? metaData.tags : null , element, menuItem);
+      loadMetaTagGroups(historyItem.metaData);
     });
+  }
+
+  function loadMetaTagGroups(metaData) {
+    //Load tagGroups only from location folder
+    if(TSCORE.Config.getDefaultLocation().indexOf(TSCORE.currentPath) >= 0 ) {
+      metaData.tagGroups.forEach(function(value) {
+        TSCORE.Config.addTagGroup(value);
+      });
+      //TSCORE.Config.saveSettings();
+      TSCORE.generateTagGroups();
+    }
   }
 
   function generateFolderTags(tags, element, menuItem) {
