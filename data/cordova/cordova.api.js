@@ -55,7 +55,7 @@ define(function(require, exports, module) {
           if ("createTXTFile" === url || url.indexOf("TagSpaces") > 0) {
             widgetAction = url;
           } else {
-            urlFromIntent = url; 
+            urlFromIntent = url;
           }
         }
         //, function(error) {
@@ -91,7 +91,7 @@ define(function(require, exports, module) {
   function widgetActionHandler() {
 
     if (TSCORE.currentPath === null) {
-      TSCORE.showAlertDialog("Please set location folder to use widget");  
+      TSCORE.showAlertDialog("Please set location folder to use widget");
       return;
     }
 
@@ -129,7 +129,7 @@ define(function(require, exports, module) {
       path = (isCordovaiOS) ? cordova.file.applicationDirectory +"/"+ file : "file:///" + path;
     }
     return new Promise(function(resolve, reject) {
-      window.resolveLocalFileSystemURL(path, resolve, 
+      window.resolveLocalFileSystemURL(path, resolve,
         function(error) {
           TSCORE.hideLoadingAnimation();
           console.error("Error getting FileSystem: " + JSON.stringify(error));
@@ -139,13 +139,13 @@ define(function(require, exports, module) {
   }
 
   function getAppStorageFileSystem(fileName, fileCallback, fail) {
-    var dataFolderPath = (isCordovaiOS === true) ? 
+    var dataFolderPath = (isCordovaiOS === true) ?
       cordova.file.dataDirectory : cordova.file.externalApplicationStorageDirectory;
-   
+
     window.resolveLocalFileSystemURL(dataFolderPath,
       function(fs) {
         fs.getFile(fileName, {create:true}, fileCallback, fail);
-      }, 
+      },
       function(error) {
         TSCORE.hideLoadingAnimation();
         console.error("Error getSettingsFileSystem: " + JSON.stringify(error));
@@ -159,7 +159,7 @@ define(function(require, exports, module) {
         fileEntry.createWriter(
           function(writer) {
             writer.write(data);
-          }, function(error) { 
+          }, function(error) {
             TSCORE.hideLoadingAnimation();
             console.error("Error creating writter: " + JSON.stringify(error));
           }
@@ -186,7 +186,7 @@ define(function(require, exports, module) {
               ready(content);
             };
             reader.readAsText(file);
-          }, 
+          },
           function(error) {
             TSCORE.hideLoadingAnimation();
             console.error("Error reading file: " + JSON.stringify(error));
@@ -203,13 +203,13 @@ define(function(require, exports, module) {
   function saveSettings(settings) {
     saveSettingsFile(appSettingFile, settings);
   }
-  
+
   function loadSettings() {
     return loadedSettings;
   }
 
-  //TODO use js objects
   function saveSettingsTags(tagGroups) {
+    //TODO use js objects
     var jsonFormat = '{ "appName": "' + TSCORE.Config.DefaultSettings.appName +
         '", "appVersion": "' + TSCORE.Config.DefaultSettings.appVersion +
         '", "appBuild": "' + TSCORE.Config.DefaultSettings.appBuild +
@@ -217,7 +217,7 @@ define(function(require, exports, module) {
         ', "tagGroups": ' + tagGroups + ' }';
     saveSettingsFile(appSettingTagsFile, jsonFormat);
   }
-  
+
   function loadSettingsTags() {
     return loadedSettingsTags;
   }
@@ -225,7 +225,7 @@ define(function(require, exports, module) {
   function getFileSystem() {
     //on android cordova.file.externalRootDirectory points to sdcard0
     var fsURL = (isCordovaiOS === true) ? cordova.file.documentsDirectory : "file:///";
-    window.resolveLocalFileSystemURL(fsURL, 
+    window.resolveLocalFileSystemURL(fsURL,
       function(fileSystem) {
         fsRoot = fileSystem;
         //console.log("Filesystem Details: " + JSON.stringify(fsRoot));
@@ -251,8 +251,8 @@ define(function(require, exports, module) {
 
     fsRoot.getFile(filePath, {create: false},
       function(fileEntry) {
-        fileEntry.file(function(file) { 
-          result(file); 
+        fileEntry.file(function(file) {
+          result(file);
         }, fail);
       },
       fail
@@ -279,7 +279,7 @@ define(function(require, exports, module) {
           resfs.getFile(filePath, {create: false},
             function(fileEntry) {
               fileEntry.file(resolve, reject);
-            },  
+            },
             reject
           );
         }).catch(reject);
@@ -337,7 +337,7 @@ define(function(require, exports, module) {
           "name": entries[i].name,
           "isFile": entries[i].isFile,
           "size": "", // TODO size and lmtd
-          "lmdt": "", // 
+          "lmdt": "", //
           "path": entries[i].fullPath
         });
       } else {
@@ -396,9 +396,9 @@ define(function(require, exports, module) {
     console.log("Listing sub directories of: " + dirPath);
     // directory path format DCIM/Camera/ !
     if (dirPath.lastIndexOf("/") === 0 || dirPath.lastIndexOf("/")  != dirPath.length - 1) {
-      dirPath = dirPath + "/"; // TODO make it platform independent  
+      dirPath = dirPath + "/"; // TODO make it platform independent
     }
-    
+
     dirPath = normalizePath(dirPath);
     console.log("Listing sub directories of : " + dirPath + " normalized.");
     TSCORE.showLoadingAnimation();
@@ -600,7 +600,7 @@ define(function(require, exports, module) {
                     console.error("listDirectory error: " + JSON.stringify(error));
                   } // jshint ignore:line
                 ); // jshint ignore:line
-              } 
+              }
             }
             if (readyCallback) {
               readyCallback(anotatedDirList);
@@ -644,9 +644,9 @@ define(function(require, exports, module) {
                 };
                 anotatedDirList.push(obj);
               } else {
-                var filePromise = Promise.resolve({ 
-                  then: function(resolve, reject) { 
-                    entries[i].file(function(entry) {            
+                var filePromise = Promise.resolve({
+                  then: function(resolve, reject) {
+                    entries[i].file(function(entry) {
                         resolve({
                           "name": entry.name,
                           "isFile": true,
@@ -667,7 +667,7 @@ define(function(require, exports, module) {
               if(values.length > 0) {
                 anotatedDirList = anotatedDirList.concat(values);
               }
-              resolve(anotatedDirList);  
+              resolve(anotatedDirList);
             });
           },
           function (err) {
@@ -680,7 +680,7 @@ define(function(require, exports, module) {
   }
 
   var deleteElement = function(filePath) {
-   
+
     TSCORE.showLoadingAnimation();
     deleteFilePromise(filePath).then(function() {
       TSPOSTIO.deleteElement(filePath);
@@ -950,7 +950,7 @@ define(function(require, exports, module) {
   }
 
   var renameFile = function(filePath, newFilePath) {
- 
+
     renameFilePromise(filePath, newFilePath).then(function(){
       TSPOSTIO.renameFile(filePath, newFilePath);
     }).catch(function(error){
