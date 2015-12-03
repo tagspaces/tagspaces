@@ -65,6 +65,8 @@
     "tagGroupTagsCount": "Number of tags in the tag group",
     "addTagsTooltip": "Add tags to tag group",
     "addTags": "Add Tags",
+    "addFolderDescription": "Add Folder Description",
+    "updateFolderThumbnails": "Update thumbnails",
     "importTagsTooltip": "Import tags to tag group",
     "importTags": "Import Tags",
     "createTagGroupTooltip": "Create new a tag group",
