@@ -65,6 +65,15 @@
                             <span data-i18n="ns.dialogs:restoreDefaulSettingButton"></span>
                         </button>
                     </div>
+                    <div class="form-group">
+                        <div class="col-sm-12 checkbox">
+                            <label for="loadLocationMetaData" >
+                                <input type="checkbox" id="loadLocationMetaData" />
+                                <span>Loads location meta data (currently only tag groups)</span>
+                            </label>
+                            <p class="help-block">Location metadata file "tsm.json" should be placed in the ".ts "subfolder of the current location. The file format should be the same as the exported tag groups file from the tab 'general'.</p>
+                        </div>
+                    </div>
                 </div>
                 {{#if isProVersion}}
                 <div class="tab-pane active" id="pro" >
@@ -92,15 +101,6 @@
                                 <input type="checkbox" id="writeMetaToSidecarFile" />
                                 <span data-i18n="ns.dialogs:writeMetaToSidecarFile"></span>
                             </label>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="col-sm-12 checkbox">
-                            <label for="loadLocationMetaData" >
-                                <input type="checkbox" id="loadLocationMetaData" />
-                                <span>Loads location meta data (currently only tag groups)</span>
-                            </label>
-                            <p class="help-block">Location metadata file "tsm.json" should be placed in the ".ts "subfolder of the current location. The file format should be the same as the exported tag groups file from the tab 'general'.</p>
                         </div>
                     </div>
                     <div class="form-group">
