@@ -9,6 +9,7 @@ define(function(require, exports, module) {
   console.log('Loading directories.ui.js ...');
   var TSCORE = require('tscore');
   var directoryHistory = [];
+  var metaTagGroupsHistory = null;
   var dir4ContextMenu = null;
   var alternativeDirectoryNavigatorTmpl = Handlebars.compile(
     '{{#each dirHistory}}' +
@@ -145,12 +146,17 @@ define(function(require, exports, module) {
 
   function loadMetaTagGroups(metaData) {
     //Load tagGroups only from location folder
-    if(TSCORE.Config.getDefaultLocation().indexOf(TSCORE.currentPath) >= 0 ) {
+    if(TSCORE.Config.getLastOpenedLocation().indexOf(TSCORE.currentPath) >= 0 ) {
+      if (metaTagGroupsHistory) {
+        metaTagGroupsHistory.forEach(function(value) {
+          TSCORE.Config.deleteTagGroup(value);
+        });
+      }
+      metaTagGroupsHistory = metaData.tagGroups;
       metaData.tagGroups.forEach(function(value) {
         TSCORE.Config.addTagGroup(value);
       });
-      //TSCORE.Config.saveSettings();
-      TSCORE.generateTagGroups();
+      TSCORE.generateTagGroups(metaData.tagGroups);
     }
   }
 
