@@ -57,7 +57,7 @@ define(function(require, exports, module) {
       }
       if (lastLocation && lastLocation.length >= 1) {
         TSCORE.openLocation(lastLocation);
-        TSCORE.IO.checkAccessFileURLAllowed();
+        TSCORE.IO.checkAccessFileURLAllowed?TSCORE.IO.checkAccessFileURLAllowed():true;
         var evt = TSCORE.createDocumentEvent("initApp");
         TSCORE.fireDocumentEvent(evt);
         $("#viewContainers").removeClass("appBackgroundTile");
