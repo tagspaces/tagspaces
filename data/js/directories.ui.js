@@ -123,7 +123,7 @@ define(function(require, exports, module) {
 
   function getDirHistoryItem(path) {
     for (var i = 0; i < directoryHistory.length; i++) {
-      if(directoryHistory[i].path === path) {
+      if (directoryHistory[i].path === path) {
         return directoryHistory[i];
       }
     }
@@ -131,7 +131,7 @@ define(function(require, exports, module) {
 
   function loadFolderMetaData(path, element, menuItem) {
     var historyItem = getDirHistoryItem(path);
-    if(historyItem.metaData !== undefined) {
+    if (historyItem.metaData !== undefined) {
       generateFolderTags(historyItem.metaData.tags, element, menuItem);
       loadMetaTagGroups(historyItem.metaData);
       return;
@@ -146,7 +146,7 @@ define(function(require, exports, module) {
 
   function loadMetaTagGroups(metaData) {
     //Load tagGroups only from location folder
-    if(TSCORE.Config.getLastOpenedLocation().indexOf(TSCORE.currentPath) >= 0 ) {
+    if (TSCORE.Config.getLastOpenedLocation().indexOf(TSCORE.currentPath) >= 0) {
       if (metaTagGroupsHistory) {
         metaTagGroupsHistory.forEach(function(value) {
           TSCORE.Config.deleteTagGroup(value);
