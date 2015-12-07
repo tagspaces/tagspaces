@@ -414,10 +414,13 @@ define(function(require, exports, module) {
     TSCORE.showAlertDialog($.i18n.t("ns.dialogs:openFileNativelyAlert"));
   };
 
-  exports.handleStartParameters = handleStartParameters;
+  // Platform specific calls
   exports.checkAccessFileURLAllowed = checkAccessFileURLAllowed;
-  exports.focusWindow = focusWindow;
   exports.saveSettings = saveSettings;
+
+  // Platform API
+  exports.handleStartParameters = handleStartParameters;
+  exports.focusWindow = focusWindow;
   exports.checkNewVersion = checkNewVersion;
 
   exports.createDirectoryIndex = createDirectoryIndex;

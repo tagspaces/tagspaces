@@ -540,6 +540,7 @@ define(function(require, exports, module) {
     TSCORE.showAlertDialog("openFile not relevant for webdav");
   };
 
+  // Platform API
   exports.focusWindow = focusWindow;
   exports.checkNewVersion = checkNewVersion;
 

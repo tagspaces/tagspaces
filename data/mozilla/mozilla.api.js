@@ -156,7 +156,28 @@ define(function(require, exports, module) {
     }
   }, false);
 
-  var saveSettings = function(content) {
+  function base64toArrayBuffer(str) {
+    var bstr =  atob(str);
+    var len = bstr.length;
+    var bytes = new Uint8Array(len);
+    for (var i = 0; i < len; i++) {
+      bytes[i] = bstr.charCodeAt(i);
+    }
+    return bytes.buffer;
+  }
+
+  function ab2str(buf) {
+    //TODO add support for larger files
+    // http://updates.html5rocks.com/2014/08/Easier-ArrayBuffer---String-conversion-with-the-Encoding-API
+    return String.fromCharCode.apply(null, new Uint8Array(buf));
+  }
+
+  function focusWindow() {
+    // Bring the TagSpaces window on top of the windows
+    window.focus();
+  };
+
+  function saveSettings(content) {
     console.log("Saving setting...");
     var event = document.createEvent('CustomEvent');
     event.initCustomEvent("addon-message", true, true, {
@@ -168,7 +189,7 @@ define(function(require, exports, module) {
     document.documentElement.dispatchEvent(event);
   };
 
-  var loadSettings = function() {
+  function loadSettings() {
     console.log("Loading setting from firefox preferences...");
     var event = document.createEvent('CustomEvent');
     event.initCustomEvent("addon-message", true, true, {
@@ -179,20 +200,60 @@ define(function(require, exports, module) {
     document.documentElement.dispatchEvent(event);
   };
 
-  var createDirectory = function(dirPath, silentMode) {
-    console.log("Directory " + dirPath + " created.");
+  function checkNewVersion() {
+    console.log("Checking for new version...");
     var event = document.createEvent('CustomEvent');
     event.initCustomEvent("addon-message", true, true, {
       "detail": {
-        "command": "createDirectory",
-        "path": dirPath,
-        "silent" : silentMode
+        "command": "checkNewVersion"
       }
     });
     document.documentElement.dispatchEvent(event);
   };
 
-  var loadTextFile = function(filePath) {
+
+  function listDirectoryPromise(dirPath) {
+     return new Promise(function(resolve, reject) {
+
+      console.log("Listing directory: " + dirPath);
+      var event = document.createEvent('CustomEvent');
+      event.initCustomEvent("addon-message", true, true, {
+        "detail": {
+        "command": "listDirectory",
+        "path": dirPath
+        }
+      });
+      document.documentElement.dispatchEvent(event);
+
+      function eventListener(event) {
+        var message = event.detail;
+        if (message.command === "listDirectory") {
+          if (message.success) {
+            resolve(message.content);
+          } else {
+            reject("listDirectory" + dirPath + " failed");
+          }
+          document.documentElement.removeEventListener("tsMessage", eventListener);
+        }
+      }
+      document.documentElement.addEventListener("tsMessage", eventListener);
+     });
+  }
+
+  function getDirectoryMetaInformation(dirPath, readyCallback) {
+    console.log("getDirectoryMetaInformation: " + dirPath);
+    listDirectoryPromise(dirPath).then( function(success) {
+        readyCallback(success);
+      },
+      function(error) {
+        console.warn("Error: " + error);
+        TSPOSTIO.errorOpeningPath();
+      }
+    );
+  };
+
+
+  function loadTextFile(filePath) {
     console.log("Loading file: " + filePath);
     getFileContentPromise(filePath).then(
       function(success) {
@@ -237,66 +298,8 @@ define(function(require, exports, module) {
     });
   }
 
-  function listDirectoryPromise(dirPath) {
 
-     return new Promise(function(resolve, reject) {
-
-      console.log("Listing directory: " + dirPath);
-      var event = document.createEvent('CustomEvent');
-      event.initCustomEvent("addon-message", true, true, {
-        "detail": {
-        "command": "listDirectory",
-        "path": dirPath
-        }
-      });
-      document.documentElement.dispatchEvent(event);
-
-      function eventListener(event) {
-        var message = event.detail;
-        if (message.command === "listDirectory") {
-          if (message.success) {
-            resolve(message.content);
-          } else {
-            reject("listDirectory" + dirPath + " failed");
-          }
-          document.documentElement.removeEventListener("tsMessage", eventListener);
-        }
-      }
-      document.documentElement.addEventListener("tsMessage", eventListener);
-     });
-  }
-
-  var copyFile = function(filePath, newFilePath) {
-    console.log("Copy " + filePath + " to " + newFilePath);
-    var event = document.createEvent('CustomEvent');
-    event.initCustomEvent("addon-message", true, true, {
-      "detail": {
-        "command": "copy",
-        "path": filePath,
-        "newPath": newFilePath
-      }
-    });
-    document.documentElement.dispatchEvent(event);
-  };
-
-  var renameFile = function(filePath, newFilePath) {
-    console.log("Renaming " + filePath + " to " + newFilePath);
-    var event = document.createEvent('CustomEvent');
-    event.initCustomEvent("addon-message", true, true, {
-      "detail": {
-        "command": "rename",
-        "path": filePath,
-        "newPath": newFilePath
-      }
-    });
-    document.documentElement.dispatchEvent(event);
-  };
-
-  var renameDirectory = function(filePath, newFilePath) {
-    TSCORE.showAlertDialog($.i18n.t("ns.common:functionalityNotImplemented"));
-  };
-
-  var saveTextFile = function(filePath, content, overWrite, silentMode) {
+  function saveTextFile(filePath, content, overWrite, silentMode) {
     console.log("Saving file: " + filePath);
     var event = document.createEvent('CustomEvent');
     event.initCustomEvent("addon-message", true, true, {
@@ -311,13 +314,7 @@ define(function(require, exports, module) {
     document.documentElement.dispatchEvent(event);
   };
 
-  function ab2str(buf) {
-    //TODO add support for larger files
-    // http://updates.html5rocks.com/2014/08/Easier-ArrayBuffer---String-conversion-with-the-Encoding-API
-    return String.fromCharCode.apply(null, new Uint8Array(buf));
-  }
-
-  var saveBinaryFile = function(filePath, content, overWrite, silentMode) {
+  function saveBinaryFile(filePath, content, overWrite, silentMode) {
     console.log("Saving binary file post: " + filePath); //+" - "+content);
     var event = document.createEvent('CustomEvent');
     event.initCustomEvent("addon-message", true, true, {
@@ -332,7 +329,53 @@ define(function(require, exports, module) {
     document.documentElement.dispatchEvent(event);
   };
 
-  var listDirectory = function(dirPath) {
+
+  function createDirectory(dirPath, silentMode) {
+    console.log("Directory " + dirPath + " created.");
+    var event = document.createEvent('CustomEvent');
+    event.initCustomEvent("addon-message", true, true, {
+      "detail": {
+        "command": "createDirectory",
+        "path": dirPath,
+        "silent" : silentMode
+      }
+    });
+    document.documentElement.dispatchEvent(event);
+  };
+
+  function copyFile(filePath, newFilePath) {
+    console.log("Copy " + filePath + " to " + newFilePath);
+    var event = document.createEvent('CustomEvent');
+    event.initCustomEvent("addon-message", true, true, {
+      "detail": {
+        "command": "copy",
+        "path": filePath,
+        "newPath": newFilePath
+      }
+    });
+    document.documentElement.dispatchEvent(event);
+  };
+
+  function renameFile(filePath, newFilePath) {
+    console.log("Renaming " + filePath + " to " + newFilePath);
+    var event = document.createEvent('CustomEvent');
+    event.initCustomEvent("addon-message", true, true, {
+      "detail": {
+        "command": "rename",
+        "path": filePath,
+        "newPath": newFilePath
+      }
+    });
+    document.documentElement.dispatchEvent(event);
+  };
+
+  function renameDirectory(filePath, newFilePath) {
+    //
+    TSCORE.showAlertDialog($.i18n.t("ns.common:functionalityNotImplemented"));
+  };
+
+
+  function listDirectory(dirPath) {
     console.log("Listing directory: " + dirPath);
     listDirectoryPromise(dirPath).then( function(success) {
         TSPOSTIO.listDirectory(success);
@@ -344,7 +387,7 @@ define(function(require, exports, module) {
     );
   };
 
-  var deleteElement = function(path) {
+  function deleteElement(path) {
     console.log("Deleting: " + path);
     var event = document.createEvent('CustomEvent');
     event.initCustomEvent("addon-message", true, true, {
@@ -356,49 +399,13 @@ define(function(require, exports, module) {
     document.documentElement.dispatchEvent(event);
   };
 
-  var deleteDirectory = function(dirPath) {
+  function deleteDirectory(dirPath) {
+    //
     TSCORE.showAlertDialog($.i18n.t("ns.common:functionalityNotImplemented"));
   };
 
-  var checkAccessFileURLAllowed = function() {
-    console.log("checkAccessFileURLAllowed function not relevant for node..");
-  };
 
-  var selectDirectory = function() {
-    console.log("Selecting directory...");
-    var event = document.createEvent('CustomEvent');
-    event.initCustomEvent("addon-message", true, true, {
-      "detail": {
-        "command": "selectDirectory"
-      }
-    });
-    document.documentElement.dispatchEvent(event);
-  };
-
-  var selectFile = function() {
-    console.log("Selecting file...");
-    var event = document.createEvent('CustomEvent');
-    event.initCustomEvent("addon-message", true, true, {
-      "detail": {
-        "command": "selectFile"
-      }
-    });
-    document.documentElement.dispatchEvent(event);
-  };
-
-  var openDirectory = function(dirPath) {
-    console.log("Opening directory: " + dirPath);
-    var event = document.createEvent('CustomEvent');
-    event.initCustomEvent("addon-message", true, true, {
-      "detail": {
-        "command": "openDirectory",
-        "path": dirPath
-      }
-    });
-    document.documentElement.dispatchEvent(event);
-  };
-
-  var createDirectoryIndex = function(dirPath) {
+  function createDirectoryIndex(dirPath) {
     console.log("Creating directory index for: " + dirPath);
     var event = document.createEvent('CustomEvent');
     event.initCustomEvent("addon-message", true, true, {
@@ -410,7 +417,7 @@ define(function(require, exports, module) {
     document.documentElement.dispatchEvent(event);
   };
 
-  var createDirectoryTree = function(dirPath) {
+  function createDirectoryTree(dirPath) {
     console.log("Creating directory tree for: " + dirPath);
     var event = document.createEvent('CustomEvent');
     event.initCustomEvent("addon-message", true, true, {
@@ -422,18 +429,7 @@ define(function(require, exports, module) {
     document.documentElement.dispatchEvent(event);
   };
 
-  var checkNewVersion = function() {
-    console.log("Checking for new version...");
-    var event = document.createEvent('CustomEvent');
-    event.initCustomEvent("addon-message", true, true, {
-      "detail": {
-        "command": "checkNewVersion"
-      }
-    });
-    document.documentElement.dispatchEvent(event);
-  };
-
-  var getFileProperties = function(filePath) {
+  function getFileProperties(filePath) {
     console.log("Getting file properties...");
     var event = document.createEvent('CustomEvent');
     event.initCustomEvent("addon-message", true, true, {
@@ -445,18 +441,8 @@ define(function(require, exports, module) {
     document.documentElement.dispatchEvent(event);
   };
 
-  var openFile = function(filePath) {
-    // TODO implement openFile for firefox
-    console.log("Open file functionality not implemented in Firefox yet!");
-    TSCORE.showAlertDialog($.i18n.t("ns.dialogs:openFileNativelyAlert"));
-  };
 
-  // Bring the TagSpaces window on top of the windows
-  var focusWindow = function() {
-    window.focus();
-  };
-
-  var getFileContent = function(filePath, result, error) {
+  function getFileContent(filePath, result, error) {
     args = [result, error];
     var event = document.createEvent('CustomEvent');
     event.initCustomEvent("addon-message", true, true, {
@@ -468,53 +454,93 @@ define(function(require, exports, module) {
     document.documentElement.dispatchEvent(event);
   };
 
-  function base64toArrayBuffer(str) {
-    var bstr =  atob(str);
-    var len = bstr.length;
-    var bytes = new Uint8Array(len);
-    for (var i = 0; i < len; i++) {
-      bytes[i] = bstr.charCodeAt(i);
-    }
-    return bytes.buffer;
-  }
 
-  var getDirectoryMetaInformation = function(dirPath, readyCallback) {
-    console.log("getDirectoryMetaInformation: " + dirPath);
-    listDirectoryPromise(dirPath).then( function(success) {
-        readyCallback(success);
-      },
-      function(error) {
-        console.warn("Error: " + error);
-        TSPOSTIO.errorOpeningPath();
+  function selectDirectory() {
+    console.log("Selecting directory...");
+    var event = document.createEvent('CustomEvent');
+    event.initCustomEvent("addon-message", true, true, {
+      "detail": {
+        "command": "selectDirectory"
       }
-    );
+    });
+    document.documentElement.dispatchEvent(event);
   };
 
-  exports.focusWindow = focusWindow;
-  exports.createDirectory = createDirectory;
-  exports.copyFile = copyFile;
-  exports.renameFile = renameFile;
-  exports.renameDirectory = renameDirectory;
-  exports.loadTextFile = loadTextFile;
-  exports.getFileContentPromise = getFileContentPromise;
-  exports.saveTextFile = saveTextFile;
-  exports.saveBinaryFile = saveBinaryFile;
-  exports.listDirectory = listDirectory;
-  exports.deleteElement = deleteElement;
-  exports.deleteDirectory = deleteDirectory;
-  exports.createDirectoryIndex = createDirectoryIndex;
-  exports.createDirectoryTree = createDirectoryTree;
-  exports.selectDirectory = selectDirectory;
-  exports.openDirectory = openDirectory;
-  exports.openFile = openFile;
-  exports.selectFile = selectFile;
-  exports.checkAccessFileURLAllowed = checkAccessFileURLAllowed;
-  exports.checkNewVersion = checkNewVersion;
-  exports.getFileProperties = getFileProperties;
-  exports.getFileContent = getFileContent;
-  exports.getDirectoryMetaInformation = getDirectoryMetaInformation;
-  exports.listDirectoryPromise = listDirectoryPromise;
+  function selectFile() {
+    console.log("Selecting file...");
+    var event = document.createEvent('CustomEvent');
+    event.initCustomEvent("addon-message", true, true, {
+      "detail": {
+        "command": "selectFile"
+      }
+    });
+    document.documentElement.dispatchEvent(event);
+  };
+
+  function openDirectory(dirPath) {
+    console.log("Opening directory: " + dirPath);
+    var event = document.createEvent('CustomEvent');
+    event.initCustomEvent("addon-message", true, true, {
+      "detail": {
+        "command": "openDirectory",
+        "path": dirPath
+      }
+    });
+    document.documentElement.dispatchEvent(event);
+  };
+
+  function openFile(filePath) {
+    // TODO implement openFile for firefox
+    console.log("Open file functionality not implemented in Firefox yet!");
+    TSCORE.showAlertDialog($.i18n.t("ns.dialogs:openFileNativelyAlert"));
+  };
+
   // mozilla specific
   exports.saveSettings = saveSettings;
   exports.loadSettings = loadSettings;
+
+  // Platform API
+  exports.focusWindow = focusWindow;
+  exports.checkNewVersion = checkNewVersion;
+
+  exports.createDirectoryIndex = createDirectoryIndex;
+  exports.createDirectoryTree = createDirectoryTree;
+
+  exports.listDirectoryPromise = listDirectoryPromise;
+  exports.listDirectory = listDirectory;
+  exports.getDirectoryMetaInformation = getDirectoryMetaInformation;
+
+  exports.getFileProperties = getFileProperties;
+
+  exports.loadTextFile = loadTextFile;
+  exports.getFileContentPromise = getFileContentPromise;
+  exports.getFileContent = getFileContent;
+
+  //exports.saveFilePromise = saveFilePromise;
+  exports.saveTextFile = saveTextFile; /** @deprecated */
+  exports.saveBinaryFile = saveBinaryFile; /** @deprecated */
+
+  //exports.createDirectoryPromise = createDirectoryPromise;
+  exports.createDirectory = createDirectory; /** @deprecated */
+
+  //exports.copyFilePromise = copyFilePromise;
+  exports.copyFile = copyFile; /** @deprecated */
+
+  //exports.renameFilePromise = renameFilePromise;
+  exports.renameFile = renameFile; /** @deprecated */
+
+  //exports.renameDirectoryPromise = renameDirectoryPromise;
+  exports.renameDirectory = renameDirectory; /** @deprecated */
+
+  //exports.deleteFilePromise = deleteFilePromise;
+  exports.deleteElement = deleteElement; /** @deprecated */
+
+  //exports.deleteDirectoryPromise = deleteDirectoryPromise;
+  exports.deleteDirectory = deleteDirectory; /** @deprecated */
+
+  exports.selectDirectory = selectDirectory;
+  exports.selectFile = selectFile;
+
+  exports.openDirectory = openDirectory;
+  exports.openFile = openFile;
 });

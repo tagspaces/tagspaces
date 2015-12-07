@@ -824,12 +824,12 @@ define(function(require, exports, module) {
   };
 
   // Platform specific calls
-  exports.handleStartParameters = handleStartParameters;
   exports.initMainMenu = initMainMenu;
-  exports.focusWindow = focusWindow;
   exports.showMainWindow = showMainWindow;
 
-  // API
+  // Platform API
+  exports.handleStartParameters = handleStartParameters;
+  exports.focusWindow = focusWindow;
   exports.checkNewVersion = checkNewVersion;
 
   exports.createDirectoryIndex = createDirectoryIndex;
@@ -848,13 +848,13 @@ define(function(require, exports, module) {
   exports.getFileContent = getFileContent; /** @deprecated */
   exports.getFileContentPromise = getFileContentPromise;
 
-  exports.createDirectoryPromise = createDirectoryPromise;
-  exports.createDirectory = createDirectory; /** @deprecated */
-  exports.createMetaFolder = createMetaFolder; /** @deprecated */
-
   exports.saveFilePromise = saveFilePromise;
   exports.saveTextFile = saveTextFile; /** @deprecated */
   exports.saveBinaryFile = saveBinaryFile; /** @deprecated */
+
+  exports.createDirectoryPromise = createDirectoryPromise;
+  exports.createDirectory = createDirectory; /** @deprecated */
+  exports.createMetaFolder = createMetaFolder; /** @deprecated */
 
   exports.copyFilePromise = copyFilePromise;
   exports.copyFile = copyFile; /** @deprecated */
