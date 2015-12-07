@@ -12,7 +12,6 @@ var trash = require('trash'); // jshint ignore:line
 define(function(require, exports, module) {
   "use strict";
 
-  // Activating browser specific exports modul
   console.log("Loading ioapi.node.js..");
 
   var TSCORE = require("tscore");
@@ -847,15 +846,6 @@ define(function(require, exports, module) {
   exports.createDirectory = createDirectory; /** @deprecated */
   exports.createMetaFolder = createMetaFolder; /** @deprecated */
 
-  exports.copyFilePromise = copyFilePromise;
-  exports.copyFile = copyFile; /** @deprecated */
-
-  exports.renameFilePromise = renameFilePromise;
-  exports.renameFile = renameFile; /** @deprecated */
-
-  exports.renameDirectoryPromise = renameDirectoryPromise;
-  exports.renameDirectory = renameDirectory; /** @deprecated */
-
   exports.loadTextFilePromise = loadTextFilePromise;
   exports.loadTextFile = loadTextFile;
   exports.getFile = getFile;
@@ -865,6 +855,15 @@ define(function(require, exports, module) {
   exports.saveFilePromise = saveFilePromise;
   exports.saveTextFile = saveTextFile; /** @deprecated */
   exports.saveBinaryFile = saveBinaryFile; /** @deprecated */
+
+  exports.copyFilePromise = copyFilePromise;
+  exports.copyFile = copyFile; /** @deprecated */
+
+  exports.renameFilePromise = renameFilePromise;
+  exports.renameFile = renameFile; /** @deprecated */
+
+  exports.renameDirectoryPromise = renameDirectoryPromise;
+  exports.renameDirectory = renameDirectory; /** @deprecated */
 
   exports.deleteFilePromise = deleteFilePromise;
   exports.deleteElement = deleteElement; /** @deprecated */
