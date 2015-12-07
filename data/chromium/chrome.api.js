@@ -287,9 +287,9 @@ define(function(require, exports, module) {
   function saveTextFile(filePath, content) {
     TSCORE.showLoadingAnimation();
     console.log("Saving file: " + filePath);
-    saveFilePromise(filePath).then(function() {
+    saveFilePromise(filePath, content).then(function() {
         // TODO close file after save
-        //TSPOSTIO.saveTextFile(filePath);
+        TSPOSTIO.saveTextFile(filePath);
       }, function(error) {
         TSCORE.showAlertDialog("Save text file " + filePath + "filed");
         console.error(error);
@@ -300,9 +300,9 @@ define(function(require, exports, module) {
   function saveBinaryFile(filePath, content) {
     TSCORE.showLoadingAnimation();
     console.log("Saving binary file: " + filePath);
-    saveFilePromise(filePath).then(function() {
+    saveFilePromise(filePath, content).then(function() {
         // TODO close file after save
-        //TSPOSTIO.saveTextFile(filePath);
+        TSPOSTIO.saveTextFile(filePath);
       }, function(error) {
         TSCORE.showAlertDialog("Save binary file " + filePath + "filed");
         console.error(error);
