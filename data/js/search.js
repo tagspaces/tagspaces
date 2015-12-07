@@ -91,6 +91,7 @@ define(function(require, exports, module) {
   }
 
   function fileContentFilter(filePath) {
+
     return /\.(html|txt|xml|md|json)$/i.test(filePath);
   }
 
@@ -153,24 +154,24 @@ define(function(require, exports, module) {
   var searchData = function(data, query) {
     var queryObj = prepareQuery(query);
 
-    if (TSCORE.Utils.walkDirectory) {
-      var searchResults = [];
+    var searchResults = [];
+    var scan = function(content, fileEntry) {
+      return new Promise(function(resolve, reject){
+        var found = false;
+        queryObj.includedTerms.forEach(function(term) {
+          if(content.indexOf(term[0]) >= 0) {
+            found = true;
+          }
+          if(found) {
+            console.log("Term " + term[0] + " found in " + fileEntry.path);
+            searchResults.push(fileEntry);
+          }
+        })
+        resolve();
+      });
+    }
 
-      function scan(content, fileEntry) {
-        return new Promise(function(resolve, reject){
-          var found = false;
-          queryObj.includedTerms.forEach(function(term) {
-            if(content.indexOf(term[0]) >= 0) {
-              found = true;
-            }
-            if(found) {
-              console.log("Term " + term[0] + " found in " + fileEntry.path);
-              searchResults.push(fileEntry);
-            }
-          })
-          resolve();
-        });
-      }
+    if (TSCORE.Utils.walkDirectory) {
 
       if(query.length > 0) {
         TSCORE.showWaitingDialog($.i18n.t("ns.common:waitDialogDiectoryIndexing"));
