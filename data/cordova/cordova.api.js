@@ -205,6 +205,7 @@ define(function(require, exports, module) {
   }
 
   function loadSettings() {
+
     return loadedSettings;
   }
 
@@ -219,6 +220,7 @@ define(function(require, exports, module) {
   }
 
   function loadSettingsTags() {
+
     return loadedSettingsTags;
   }
 
