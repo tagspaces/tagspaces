@@ -835,22 +835,22 @@ define(function(require, exports, module) {
   exports.createDirectoryIndex = createDirectoryIndex;
   exports.createDirectoryTree = createDirectoryTree;
 
-  exports.listDirectory = listDirectory; /** @deprecated */
   exports.listDirectoryPromise = listDirectoryPromise;
+  exports.listDirectory = listDirectory; /** @deprecated */
   exports.getDirectoryMetaInformation = getDirectoryMetaInformation;
 
   exports.getPropertiesPromise = getPropertiesPromise;
   exports.getFileProperties = getFileProperties; /** @deprecated */
-
-  exports.createDirectoryPromise = createDirectoryPromise;
-  exports.createDirectory = createDirectory; /** @deprecated */
-  exports.createMetaFolder = createMetaFolder; /** @deprecated */
 
   exports.loadTextFilePromise = loadTextFilePromise;
   exports.loadTextFile = loadTextFile;
   exports.getFile = getFile;
   exports.getFileContent = getFileContent; /** @deprecated */
   exports.getFileContentPromise = getFileContentPromise;
+
+  exports.createDirectoryPromise = createDirectoryPromise;
+  exports.createDirectory = createDirectory; /** @deprecated */
+  exports.createMetaFolder = createMetaFolder; /** @deprecated */
 
   exports.saveFilePromise = saveFilePromise;
   exports.saveTextFile = saveTextFile; /** @deprecated */

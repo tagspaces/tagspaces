@@ -54,7 +54,22 @@ define(function(require, exports, module) {
     davClient = new nl.sara.webdav.Client(location.hostname, useHTTPS, location.port);
   }
 
-  window.setTimeout(connectDav(), 2000);
+  //window.setTimeout(
+  connectDav()
+  //, 2000);
+
+  function getNameForPath(path) {
+    if (path.lastIndexOf("/") == path.length - 1) {
+      path = path.substring(0, path.lastIndexOf("/"));
+    }
+    var encodedName = path.substring(path.lastIndexOf("/") + 1, path.length);
+    return decodeURI(encodedName);
+  }
+
+  function isDirectory(path) {
+    // TODO find a better solution
+    return path.lastIndexOf("/") == path.length - 1;
+  }
 
   function checkStatusCode(code) {
     var status = parseInt(code / 100);
@@ -63,6 +78,46 @@ define(function(require, exports, module) {
     }
     return false;
   }
+
+
+  function focusWindow() {
+    // Bring the TagSpaces window on top of the windows
+    window.focus();
+  };
+
+  function checkNewVersion() {
+    //
+    console.log("Checking for new version not relevant fot the webdav version");
+  };
+
+
+  function createDirectoryIndex(dirPath) {
+    TSCORE.showWaitingDialog($.i18n.t("ns.common:waitDialogDiectoryIndexing"));
+
+    var directoryIndex = [];
+    TSCORE.Utils.walkDirectory(dirPath, {recursive: true}, function(fileEntry) {
+      directoryIndex.push(fileEntry);
+    }).then(
+      function(entries) {
+        TSPOSTIO.createDirectoryIndex(directoryIndex);
+      },
+      function(err) {
+        console.warn("Error creating index: " + err);
+      }
+    ).catch(function() {
+      TSCORE.hideWaitingDialog();
+    });
+  };
+
+  function createDirectoryTree(dirPath) {
+    console.log("Creating directory index for: " + dirPath);
+    TSCORE.showLoadingAnimation();
+
+    var directoyTree = [];
+    //console.log(JSON.stringify(directoyTree));
+    TSPOSTIO.createDirectoryTree(directoyTree);
+  };
+
 
   function listDirectory(dirPath, readyCallback) {
     listDirectoryPromise(dirPath).then(function(anotatedDirList) {
@@ -138,171 +193,47 @@ define(function(require, exports, module) {
     });
   }
 
-  var getDirectoryMetaInformation = function(dirPath, readyCallback) {
+  function getDirectoryMetaInformation(dirPath, readyCallback) {
     listDirectory(dirPath, function(anotatedDirList) {
       TSCORE.metaFileList = anotatedDirList;
       readyCallback(anotatedDirList);
     });
   };
 
-  function getNameForPath(path) {
-    if (path.lastIndexOf("/") == path.length - 1) {
-      path = path.substring(0, path.lastIndexOf("/"));
-    }
-    var encodedName = path.substring(path.lastIndexOf("/") + 1, path.length);
-    return decodeURI(encodedName);
-  }
 
-  function isDirectory(path) {
-    return path.lastIndexOf("/") == path.length - 1;
-  }
-
-  var createDirectoryIndex = function(dirPath) {
-    TSCORE.showWaitingDialog($.i18n.t("ns.common:waitDialogDiectoryIndexing"));
-
-    var directoryIndex = [];
-    TSCORE.Utils.walkDirectory(dirPath, {recursive: true}, function(fileEntry) {
-      directoryIndex.push(fileEntry);
-    }).then(
-      function(entries) {
-        TSPOSTIO.createDirectoryIndex(directoryIndex);
-      },
-      function(err) {
-        console.warn("Error creating index: " + err);
-      }
-    ).catch(function() {
-      TSCORE.hideWaitingDialog();
-    });
-  };
-
-  var createDirectoryTree = function(dirPath) {
-    console.log("Creating directory index for: " + dirPath);
-    TSCORE.showLoadingAnimation();
-
-    var directoyTree = [];
-    //console.log(JSON.stringify(directoyTree));
-    TSPOSTIO.createDirectoryTree(directoyTree);
-  };
-
-  var createDirectory = function(dirPath, silentMode) {
-    createDirectoryPromise(dirPath).then(function(dirPath) {
-        if (silentMode !== true) {
-          TSPOSTIO.createDirectory(dirPath);
-        }
-      }, function(error) {
-        TSCORE.showAlertDialog("Creating directory" + dirPath + "failed");
-        console.error(error);
-      }
-    );
-  };
-
-  function createDirectoryPromise(dirPath) {
-    console.log("Creating directory: " + dirPath);
+  function getPropertiesPromise(filePath) {
     return new Promise(function(resolve, reject) {
-      davClient.mkcol(
-        encodeURI(dirPath),
-        function(status, data, headers) {
-          console.log("Directory Creation Status/Content/Headers:  " + status + " / " + data + " / " + headers);
-          if (checkStatusCode(status)) {
-            resolve(dirPath);
-          } else {
-            reject("createDirectory " + dirPath + " failed " + status);
+      davClient.propfind(encodeURI(filePath), function(status, data) {
+        console.log("Properties Status / Content: " + status + " / " + JSON.stringify(data._responses));
+        var fileProperties = {};
+        if (checkStatusCode(status)) {
+          for (var entry in data._responses) {
+            fileProperties.path = filePath;
+            fileProperties.size = data._responses[entry]._namespaces["DAV:"].getcontentlength;
+            fileProperties.lmdt = data._responses[entry]._namespaces["DAV:"].getlastmodified._xmlvalue[0].data;
           }
+          resolve(fileProperties);
+        } else {
+          reject("getFileProperties " + filePath + " failed " + status);
         }
-      );
+      }, 1);
     });
   }
 
-  var copyFile = function(filePath, newFilePath) {
-    if (filePath.toLowerCase() === newFilePath.toLowerCase()) {
-      TSCORE.hideWaitingDialog();
-      TSCORE.showAlertDialog($.i18n.t("ns.common:fileTheSame"), $.i18n.t("ns.common:fileNotCopyied"));
-      return false;
-    }
-
-    copyFilePromise(filePath, newFilePath).then(function(filePath, newFilePath) {
-        TSPOSTIO.copyFile(filePath, newFilePath); 
+  function getFileProperties(filePath) {
+    getPropertiesPromise(filePath).then(function(fileProperties) {
+        TSPOSTIO.getFileProperties(fileProperties);
       }, function(error) {
-        TSCORE.hideWaitingDialog();
-        TSCORE.showAlertDialog($.i18n.t("ns.common:fileCopyFailed", {fileName:newFilePath}));
+        TSCORE.hideLoadingAnimation();
+        TSCORE.closeFileViewer();
+        TSCORE.showAlertDialog("File " + filePath + " get properties failed");
         console.error(error);
       }
     );
   };
 
-  function copyFilePromise(filePath, newFilePath) {
-    console.log("Copying file: " + filePath + " to " + newFilePath);
-    return new Promise(function(resolve, reject) {
-      davClient.copy(
-        encodeURI(filePath),
-        function(status, data, headers) {
-          console.log("Copy File Status/Content/Headers:  " + status + " / " + data + " / " + headers);
-          if (checkStatusCode(status)) {
-            resolve(filePath, newFilePath);  
-          } else {
-            reject("copyFile " + filePath + " failed " + status);
-          }
-        },
-        encodeURI(newFilePath),
-        davClient.FAIL_ON_OVERWRITE
-      );
-    });
-  }
 
-  var renameFile = function(filePath, newFilePath) {
-    if (filePath === newFilePath) {
-      TSCORE.hideWaitingDialog();
-      TSCORE.showAlertDialog($.i18n.t("ns.common:fileTheSame"), $.i18n.t("ns.common:fileNotMoved"));
-      return false;
-    }
-
-    renameFilePromise(filePath, newFilePath).then(function() {
-        TSPOSTIO.renameFile(filePath, newFilePath);
-      }, function(error) {
-        TSCORE.showAlertDialog("Renaming: " + filePath + " failed.");
-        console.error(error);
-      }
-    );
-  };
-
-  var renameDirectory = function(dirPath, newDirName) {
-    var newDirPath = TSCORE.TagUtils.extractParentDirectoryPath(dirPath) + TSCORE.dirSeparator + encodeURIComponent(newDirName);
-    renameDirectoryPromise(dirPath, newDirPath).then(function() {
-        TSPOSTIO.renameDirectory(dirPath, newDirName);
-      }, function(error) {
-        TSCORE.hideWaitingDialog();
-        TSCORE.showAlertDialog($.i18n.t("ns.common:pathIsNotDirectory", {dirName:dirPath}), 
-          $.i18n.t("ns.common:directoryRenameFailed"));
-        console.error(error);
-      }
-    );
-  };
-
-  function renameFilePromise(filePath, newFilePath) {
-    console.log("Renaming file: " + filePath + " to " + newFilePath);
-    return renameDirectoryPromise(filePath, newFilePath);
-  }
-
-  function renameDirectoryPromise(dirPath, newDirPath) {
-    console.log("Renaming directory: " + dirPath + " to " + newDirPath);
-    return new Promise(function(resolve, reject){
-      davClient.move(
-        encodeURI(dirPath),
-        function(status, data, headers) {
-          console.log("Rename Directory Status/Content/Headers:  " + status + " / " + data + " / " + headers);
-          if (checkStatusCode(status)) {
-            resolve([dirPath, newDirPath]);
-          } else {
-            reject("rename: " + dirPath + " failed " + status);
-          }
-        },
-        encodeURI(newDirPath),
-        davClient.FAIL_ON_OVERWRITE
-      );
-    });
-  }
-
-  var loadTextFile = function(filePath) {
+  function loadTextFile(filePath) {
     console.log("Loading file: " + filePath);
     loadTextFilePromise(filePath).then(function(data) {
         TSPOSTIO.loadTextFile(data);
@@ -314,37 +245,37 @@ define(function(require, exports, module) {
   };
 
   function loadTextFilePromise(filePath) {
+    // TODO refactor
     return getFileContentPromise(filePath, "text");
   }
 
-  var saveTextFile = function(filePath, content, overWrite, silentMode) {
-    console.log("Saving file: " + filePath); //+" content: "+content);
-    saveFilePromise(filePath, content, overWrite, silentMode, "text").then(function(isNewFile) {
-        if (silentMode !== true) {
-           TSPOSTIO.saveTextFile(filePath, isNewFile);
-        }
-      }, function(error) {
-        TSCORE.showAlertDialog("Save file " + filePath + " failed.");
-        console.error(error);
-      }
-    );
+  function getFileContent(filePath, result, error) {
+
+    getFileContentPromise(filePath).then(result, error);
   };
 
-  var saveBinaryFile = function(filePath, content, overWrite, silentMode) {
-    console.log("Saving binary file: " + filePath); //+" content: "+content);
-    saveFilePromise(filePath, content, overWrite, silentMode).then(function(isNewFile) {
-        if (silentMode !== true) {
-          TSPOSTIO.saveBinaryFile(filePath, isNewFile); 
+  function getFileContentPromise(filePath, type) {
+    console.log("getFileContent file: " + filePath);
+    return new Promise(function(resolve, reject) {
+      var ajax = davClient.getAjax("GET", filePath);
+      ajax.onreadystatechange = null;
+      ajax.responseType = type || "arraybuffer";
+      ajax.onerror = reject;
+
+      ajax.onload = function() {
+        var response = ajax.response || ajax.responseText;
+        if (checkStatusCode(ajax.status)) {
+          resolve(response);
+        } else {
+          reject("getFileContentPromise ajax error");
         }
-      }, function(error) {
-        TSCORE.showAlertDialog("Save file " + filePath + " failed.");
-        console.error(error);
-      }
-    );
-  };
+      };
+      ajax.send();
+    });
+  }
+
 
   function saveFilePromise(filePath, content, overWrite, silentMod, mode) {
-
     return new Promise(function(resolve, reject) {
       var isNewFile = false;
       davClient.propfind(encodeURI(filePath), function(status, data) {
@@ -373,7 +304,180 @@ define(function(require, exports, module) {
     });
   }
 
-  var deleteElement = function(path) {
+  function saveTextFile(filePath, content, overWrite, silentMode) {
+    console.log("Saving file: " + filePath); //+" content: "+content);
+    saveFilePromise(filePath, content, overWrite, silentMode, "text").then(function(isNewFile) {
+        if (silentMode !== true) {
+           TSPOSTIO.saveTextFile(filePath, isNewFile);
+        }
+      }, function(error) {
+        TSCORE.showAlertDialog("Save file " + filePath + " failed.");
+        console.error(error);
+      }
+    );
+  };
+
+  function saveBinaryFile(filePath, content, overWrite, silentMode) {
+    console.log("Saving binary file: " + filePath); //+" content: "+content);
+    saveFilePromise(filePath, content, overWrite, silentMode).then(function(isNewFile) {
+        if (silentMode !== true) {
+          TSPOSTIO.saveBinaryFile(filePath, isNewFile); 
+        }
+      }, function(error) {
+        TSCORE.showAlertDialog("Save file " + filePath + " failed.");
+        console.error(error);
+      }
+    );
+  };
+
+
+  function createDirectoryPromise(dirPath) {
+    console.log("Creating directory: " + dirPath);
+    return new Promise(function(resolve, reject) {
+      davClient.mkcol(
+        encodeURI(dirPath),
+        function(status, data, headers) {
+          console.log("Directory Creation Status/Content/Headers:  " + status + " / " + data + " / " + headers);
+          if (checkStatusCode(status)) {
+            resolve(dirPath);
+          } else {
+            reject("createDirectory " + dirPath + " failed " + status);
+          }
+        }
+      );
+    });
+  }
+
+  function createDirectory(dirPath, silentMode) {
+    createDirectoryPromise(dirPath).then(function(dirPath) {
+        if (silentMode !== true) {
+          TSPOSTIO.createDirectory(dirPath);
+        }
+      }, function(error) {
+        TSCORE.showAlertDialog("Creating directory" + dirPath + "failed");
+        console.error(error);
+      }
+    );
+  };
+
+
+  function copyFilePromise(filePath, newFilePath) {
+    console.log("Copying file: " + filePath + " to " + newFilePath);
+    return new Promise(function(resolve, reject) {
+      if (filePath.toLowerCase() === newFilePath.toLowerCase()) {
+        TSCORE.hideWaitingDialog();
+        TSCORE.showAlertDialog($.i18n.t("ns.common:fileTheSame"), $.i18n.t("ns.common:fileNotCopyied"));
+        reject($.i18n.t("ns.common:fileTheSame"));
+      } else {
+        davClient.copy(
+          encodeURI(filePath),
+          function(status, data, headers) {
+            console.log("Copy File Status/Content/Headers:  " + status + " / " + data + " / " + headers);
+            if (checkStatusCode(status)) {
+              resolve(filePath, newFilePath);
+            } else {
+              reject("copyFile " + filePath + " failed " + status);
+            }
+          },
+          encodeURI(newFilePath),
+          davClient.FAIL_ON_OVERWRITE
+        );
+      }
+    });
+  }
+
+  function copyFile(filePath, newFilePath) {
+    copyFilePromise(filePath, newFilePath).then(function(filePath, newFilePath) {
+        TSPOSTIO.copyFile(filePath, newFilePath);
+      }, function(error) {
+        TSCORE.hideWaitingDialog();
+        TSCORE.showAlertDialog($.i18n.t("ns.common:fileCopyFailed", {fileName:newFilePath}));
+        console.error(error);
+      }
+    );
+  };
+
+
+  function renameFilePromise(filePath, newFilePath) {
+    console.log("Renaming file: " + filePath + " to " + newFilePath);
+    return new Promise(function(resolve, reject){
+      if (filePath === newFilePath) {
+        TSCORE.hideWaitingDialog();
+        TSCORE.showAlertDialog($.i18n.t("ns.common:fileTheSame"), $.i18n.t("ns.common:fileNotMoved"));
+        reject($.i18n.t("ns.common:fileTheSame"));
+      } else {
+        davClient.move(
+          encodeURI(filePath),
+          function(status, data, headers) {
+            console.log("Rename File Status/Content/Headers:  " + status + " / " + data + " / " + headers);
+            if (checkStatusCode(status)) {
+              resolve([filePath, newFilePath]);
+            } else {
+              reject("rename: " + filePath + " failed " + status);
+            }
+          },
+          encodeURI(newFilePath),
+          davClient.FAIL_ON_OVERWRITE
+        );
+      }
+    });
+  }
+
+  function renameFile(filePath, newFilePath) {
+    renameFilePromise(filePath, newFilePath).then(function() {
+        TSPOSTIO.renameFile(filePath, newFilePath);
+      }, function(error) {
+        TSCORE.showAlertDialog("Renaming: " + filePath + " failed.");
+        console.error(error);
+      }
+    );
+  };
+
+
+  function renameDirectoryPromise(dirPath, newDirName) {
+    console.log("Renaming directory: " + dirPath + " to " + newDirName);
+    return new Promise(function(resolve, reject){
+      var newDirPath = TSCORE.TagUtils.extractParentDirectoryPath(dirPath) + TSCORE.dirSeparator + newDirName;
+      if (dirPath === newDirPath) {
+        TSCORE.hideWaitingDialog();
+        TSCORE.showAlertDialog($.i18n.t("ns.common:fileTheSame"), $.i18n.t("ns.common:fileNotMoved"));
+        reject($.i18n.t("ns.common:fileTheSame"));
+      } else {
+        davClient.move(
+          encodeURI(dirPath),
+          function(status, data, headers) {
+            console.log("Rename Directory Status/Content/Headers:  " + status + " / " + data + " / " + headers);
+            if (checkStatusCode(status)) {
+              resolve([dirPath, newDirPath]);
+            } else {
+              reject("rename: " + dirPath + " failed " + status);
+            }
+          },
+          encodeURI(newDirPath),
+          davClient.FAIL_ON_OVERWRITE
+        );
+      }
+    });
+  }
+
+  function renameDirectory(dirPath, newDirName) {
+    renameDirectoryPromise(dirPath, newDirName).then(function() {
+        TSPOSTIO.renameDirectory(dirPath, newDirName);
+      }, function(error) {
+        TSCORE.hideWaitingDialog();
+        TSCORE.showAlertDialog($.i18n.t("ns.common:pathIsNotDirectory", {dirName:dirPath}),
+          $.i18n.t("ns.common:directoryRenameFailed"));
+      }
+    );
+  };
+
+
+  function deleteFilePromise(path) {
+    //
+    return deleteDirectoryPromise(path);
+  }
+
+  function deleteElement(path) {
     console.log("Deleting: " + path);
     deleteDirectoryPromise(path).then(function() {
         TSPOSTIO.deleteElement(path);
@@ -384,6 +488,7 @@ define(function(require, exports, module) {
       }
     );
   };
+
 
   function deleteDirectoryPromise(path) {
     return new Promise(function(resolve, reject) {
@@ -401,11 +506,7 @@ define(function(require, exports, module) {
     });
   }
 
-  function deleteFilePromise(path) {
-    return deleteDirectoryPromise(path);
-  }
-
-  var deleteDirectory = function(path) {
+  function deleteDirectory(path) {
     console.log("deleteDirectory: " + path);
     deleteDirectoryPromise(path).then(function() {
         TSPOSTIO.deleteDirectory(path);
@@ -417,111 +518,70 @@ define(function(require, exports, module) {
     );
   };
 
-  var checkAccessFileURLAllowed = function() {
-    console.log("checkAccessFileURLAllowed function not relevant for webdav..");
-  };
 
-  var checkNewVersion = function() {
-    console.log("Checking for new version not relevant fot the webdav version");
-  };
-
-  var selectDirectory = function() {
+  function selectDirectory() {
+    //
     TSCORE.showAlertDialog("Select directory is still not implemented in the webdav edition");
   };
 
-  var openDirectory = function(dirPath) {
-    console.log("openDirectory function not relevant for webdav..");
+  function selectFile() {
+    //
+    TSCORE.showAlertDialog("selectFile not relevant for webdav");
   };
 
-  var openFile = function(filePath) {
-    console.log("openFile function not relevant for webdav..");
+
+  function openDirectory(dirPath) {
+    //
+    TSCORE.showAlertDialog("openDirectory not relevant for webdav.");
   };
 
-  var selectFile = function() {
-    console.log("selectFile function not relevant for webdav..");
+  function openFile(filePath) {
+    //
+    TSCORE.showAlertDialog("openFile not relevant for webdav");
   };
-
-  var getFileProperties = function(filePath) {
-    getFilePropertiesPromise(filePath).then(function(fileProperties) {
-        TSPOSTIO.getFileProperties(fileProperties);
-      }, function(error) {
-        TSCORE.hideLoadingAnimation();
-        TSCORE.closeFileViewer();
-        TSCORE.showAlertDialog("File " + filePath + " get properties failed");
-        console.error(error);
-      }
-    );
-  };
-
-  function getFilePropertiesPromise(filePath) {
-    return new Promise(function(resolve, reject) {
-      davClient.propfind(encodeURI(filePath), function(status, data) {
-        console.log("Properties Status / Content: " + status + " / " + JSON.stringify(data._responses));
-        var fileProperties = {};
-        if (checkStatusCode(status)) {
-          for (var entry in data._responses) {
-            fileProperties.path = filePath;
-            fileProperties.size = data._responses[entry]._namespaces["DAV:"].getcontentlength;
-            fileProperties.lmdt = data._responses[entry]._namespaces["DAV:"].getlastmodified._xmlvalue[0].data;
-          }
-          resolve(fileProperties);
-        } else {
-          reject("getFileProperties " + filePath + " failed " + status);
-        }
-      }, 1);
-    });
-  }
-
-  // Bring the TagSpaces window on top of the windows
-  var focusWindow = function() {
-    window.focus();
-  };
-
-  var getFileContent = function(filePath, result, error) {
-    getFileContentPromise(filePath).then(result, error);
-  };
-
-  function getFileContentPromise(filePath, type) {
-    console.log("getFileContent file: " + filePath);
-    return new Promise(function(resolve, reject) {
-      var ajax = davClient.getAjax("GET", filePath);
-      ajax.onreadystatechange = null;
-      ajax.responseType = type || "arraybuffer";
-      ajax.onerror = reject;
-
-      ajax.onload = function() {
-        var response = ajax.response || ajax.responseText;
-        if (checkStatusCode(ajax.status)) {
-          resolve(response);
-        } else {
-          reject("getFileContentPromise ajax error");
-        }
-      };
-      ajax.send();
-    });
-  }
 
   exports.focusWindow = focusWindow;
-  exports.createDirectory = createDirectory;
-  exports.copyFile = copyFile;
-  exports.renameFile = renameFile;
-  exports.renameDirectory = renameDirectory;
-  exports.loadTextFile = loadTextFile;
-  exports.saveTextFile = saveTextFile;
-  exports.saveBinaryFile = saveBinaryFile;
-  exports.listDirectory = listDirectory;
-  exports.deleteElement = deleteElement;
-  exports.deleteDirectory = deleteDirectory;
+  exports.checkNewVersion = checkNewVersion;
+
   exports.createDirectoryIndex = createDirectoryIndex;
   exports.createDirectoryTree = createDirectoryTree;
+
+  exports.listDirectoryPromise = listDirectoryPromise;
+  exports.listDirectory = listDirectory;
+
+  exports.getPropertiesPromise = getPropertiesPromise;
+  exports.getFileProperties = getFileProperties; /** @deprecated */
+
+  exports.loadTextFile = loadTextFile;
+  exports.getFileContent = getFileContent;
+  exports.getFileContentPromise = getFileContentPromise;
+
+  exports.saveFilePromise = saveFilePromise;
+  exports.saveTextFile = saveTextFile; /** @deprecated */
+  exports.saveBinaryFile = saveBinaryFile; /** @deprecated */
+
+  exports.createDirectoryPromise = createDirectoryPromise;
+  exports.createDirectory = createDirectory; /** @deprecated */
+
+  exports.copyFilePromise = copyFilePromise;
+  exports.copyFile = copyFile; /** @deprecated */
+
+  exports.renameFilePromise = renameFilePromise;
+  exports.renameFile = renameFile; /** @deprecated */
+
+  exports.renameDirectoryPromise = renameDirectoryPromise;
+  exports.renameDirectory = renameDirectory; /** @deprecated */
+
+  exports.deleteFilePromise = deleteFilePromise;
+  exports.deleteElement = deleteElement; /** @deprecated */
+
+  exports.deleteDirectoryPromise = deleteDirectoryPromise;
+  exports.deleteDirectory = deleteDirectory; /** @deprecated */
+
   exports.selectDirectory = selectDirectory;
+  exports.selectFile = selectFile;
+
   exports.openDirectory = openDirectory;
   exports.openFile = openFile;
-  exports.selectFile = selectFile;
-  exports.checkAccessFileURLAllowed = checkAccessFileURLAllowed;
-  exports.checkNewVersion = checkNewVersion;
-  exports.getFileProperties = getFileProperties;
-  exports.getFileContent = getFileContent;
-  exports.listDirectoryPromise = listDirectoryPromise;
-  exports.getFileContentPromise = getFileContentPromise;
+
 });
