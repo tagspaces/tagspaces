@@ -54,7 +54,7 @@ define(function(require, exports, module) {
       fsWatcher.close();
     }
     fsWatcher = fs.watch(dirPath, {persistent: true, recursive: false}, listener);
-  };
+  }
 
   function handleTray() {
     // TODO disable in Ubuntu until node-webkit issue in unity fixed
@@ -81,7 +81,7 @@ define(function(require, exports, module) {
         tray = null;
       });
     });
-  };
+  }
 
   function handleStartParameters() {
     //Windows "C:\Users\na\Desktop\TagSpaces\tagspaces.exe" --original-process-start-time=13043601900594583 "G:\data\assets\icon16.png"
@@ -111,7 +111,7 @@ define(function(require, exports, module) {
         TSCORE.FileOpener.openFileOnStartup(filePath);
       }
     }
-  };
+  }
 
   function initMainMenu() {
     if (isOSX) {
@@ -193,12 +193,12 @@ define(function(require, exports, module) {
         win.menu = rootMenu;
       }
     }
-  };
+  }
 
   // Bring the TagSpaces window on top of the windows
   function focusWindow() {
     gui.Window.get().focus();
-  };
+  }
 
   // IOAPI
 
@@ -215,7 +215,7 @@ define(function(require, exports, module) {
       .fail(function(data) {
         console.log("AJAX failed " + data);
       });
-  };
+  }
 
   function createDirectoryTree(dirPath) {
     console.log("Creating directory index for: " + dirPath);
@@ -251,11 +251,11 @@ define(function(require, exports, module) {
         TSCORE.hideLoadingAnimation();
         console.error("Generating tree for " + dirPath + " failed " + ex);
       }
-    }
+    };
     var directoyTree = generateDirectoryTree(dirPath);
     //console.log(JSON.stringify(directoyTree));
     TSPOSTIO.createDirectoryTree(directoyTree);
-  };
+  }
 
   function createDirectoryIndex(dirPath) {
     TSCORE.showWaitingDialog($.i18n.t("ns.common:waitDialogDiectoryIndexing"));
@@ -274,7 +274,7 @@ define(function(require, exports, module) {
       TSCORE.hideWaitingDialog();
     });
 
-  };
+  }
 
 
   function listDirectory(dirPath, readyCallback) {
@@ -295,7 +295,7 @@ define(function(require, exports, module) {
         console.log("Error listing directory" + err);
       }
     );
-  };
+  }
 
   function listDirectoryPromise(path){
     return new Promise(function(resolve, reject) {
@@ -327,7 +327,7 @@ define(function(require, exports, module) {
       TSCORE.metaFileList = anotatedDirList;
       readyCallback(anotatedDirList);
     });
-  };
+  }
 
 
   function getPropertiesPromise(path) {
@@ -356,7 +356,7 @@ define(function(require, exports, module) {
           resolve(false);
         }
         if (stats) {
-          var entry = {}
+          var entry = {};
           entry.name = path.substring(path.lastIndexOf(TSCORE.dirSeparator)+1, path.length);
           entry.isFile = stats.isFile();
           entry.size = stats.size;
@@ -368,7 +368,7 @@ define(function(require, exports, module) {
         }
       });
     });
-  };
+  }
 
   /** @deprecated */
   function getFileProperties(filePath) {
@@ -380,7 +380,7 @@ define(function(require, exports, module) {
       TSCORE.hideLoadingAnimation();
       TSCORE.showAlertDialog("Error getting properties for " + filePath);
     });
-  };
+  }
 
   /**
    * Create a directory
@@ -400,7 +400,7 @@ define(function(require, exports, module) {
         resolve();
       });
     });
-  };
+  }
 
   /** @deprecated */
   function createDirectory(dirPath, silentMode) {
@@ -415,7 +415,7 @@ define(function(require, exports, module) {
         TSCORE.showAlertDialog("Creating " + dirPath + " failed.");
       }
     });
-  };
+  }
 
   /** @deprecated */
   function createMetaFolder(dirPath) {
@@ -435,7 +435,7 @@ define(function(require, exports, module) {
       }
       createDirectory(metaDirPath, true);
     });
-  };
+  }
 
 
   function copyFilePromise(sourceFilePath, targetFilePath) {
@@ -465,13 +465,13 @@ define(function(require, exports, module) {
             }
           }, function(err) {
             reject(err);
-          })
+          });
         }
       }, function(err) {
         reject(err);
-      })
+      });
     });
-  };
+  }
 
   /** @deprecated */
   function copyFile(sourceFilePath, targetFilePath) {
@@ -483,7 +483,7 @@ define(function(require, exports, module) {
       TSCORE.hideWaitingDialog();
       TSCORE.showAlertDialog(err);
     });
-  };
+  }
 
 
   function renameFilePromise(filePath, newFilePath) {
@@ -516,7 +516,7 @@ define(function(require, exports, module) {
       TSCORE.hideWaitingDialog();
       TSCORE.showAlertDialog(err);
     });
-  };
+  }
 
 
   function renameDirectoryPromise(dirPath, newDirPath) {
@@ -553,7 +553,7 @@ define(function(require, exports, module) {
       TSCORE.hideWaitingDialog();
       TSCORE.showAlertDialog(err);
     });
-  };
+  }
 
 
   function loadTextFilePromise(filePath, isPreview) {
@@ -583,7 +583,7 @@ define(function(require, exports, module) {
         });
       }
     });
-  };
+  }
 
   function loadTextStreamPromise(filePath) {
     return new Promise(function(resolve, reject) {
@@ -600,7 +600,7 @@ define(function(require, exports, module) {
         resolve(content);
       });
     });
-  };
+  }
 
   /** @deprecated */
   function loadTextFile(filePath, isPreview) {
@@ -614,7 +614,7 @@ define(function(require, exports, module) {
         TSCORE.showAlertDialog("Loading " + filePath + " failed.");
       }
     );
-  };
+  }
 
   function getFile(fileURL, result, error) {
     getFileContentPromise(fullPath).then(function(content) {
@@ -703,7 +703,7 @@ define(function(require, exports, module) {
         TSCORE.showAlertDialog("Saving " + filePath + " failed.");
       }
     });
-  };
+  }
 
   /** @deprecated */
   function saveBinaryFile(filePath, content, overwrite, silentMode) {
@@ -720,7 +720,7 @@ define(function(require, exports, module) {
         TSCORE.showAlertDialog("Saving " + filePath + " failed.");
       }
     });
-  };
+  }
 
 
   function deleteFilePromise(path) {
@@ -750,7 +750,7 @@ define(function(require, exports, module) {
         console.error("Deleting file " + path + " failed " + error);
       }
     );
-  };
+  }
 
 
   function deleteDirectoryPromise(path) {
@@ -780,7 +780,7 @@ define(function(require, exports, module) {
         TSPOSTIO.deleteDirectoryFailed(path);
       }
     );
-  };
+  }
 
 
   function selectDirectory() {
@@ -794,7 +794,7 @@ define(function(require, exports, module) {
       $(this).val("");
     });
     chooser.trigger('click');
-  };
+  }
 
   function selectFile() {
     if (document.getElementById('fileDialog') === null) {
@@ -805,18 +805,18 @@ define(function(require, exports, module) {
       console.log("File selected: " + $(this).val());
     });
     chooser.trigger('click');
-  };
+  }
 
 
   function openDirectory(dirPath) {
     // opens directory
     gui.Shell.openItem(dirPath);
-  };
+  }
 
   function openFile(filePath) {
     // opens file with the native program
     gui.Shell.openItem(filePath);
-  };
+  }
 
   // Platform specific calls
   exports.initMainMenu = initMainMenu;

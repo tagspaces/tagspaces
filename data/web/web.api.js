@@ -55,7 +55,7 @@ define(function(require, exports, module) {
   }
 
   //window.setTimeout(
-  connectDav()
+  connectDav();
   //, 2000);
 
   function getNameForPath(path) {
@@ -83,12 +83,12 @@ define(function(require, exports, module) {
   function focusWindow() {
     // Bring the TagSpaces window on top of the windows
     window.focus();
-  };
+  }
 
   function checkNewVersion() {
     //
     console.log("Checking for new version not relevant fot the webdav version");
-  };
+  }
 
 
   function createDirectoryIndex(dirPath) {
@@ -107,7 +107,7 @@ define(function(require, exports, module) {
     ).catch(function() {
       TSCORE.hideWaitingDialog();
     });
-  };
+  }
 
   function createDirectoryTree(dirPath) {
     console.log("Creating directory index for: " + dirPath);
@@ -116,7 +116,7 @@ define(function(require, exports, module) {
     var directoyTree = [];
     //console.log(JSON.stringify(directoyTree));
     TSPOSTIO.createDirectoryTree(directoyTree);
-  };
+  }
 
 
   function listDirectory(dirPath, readyCallback) {
@@ -198,7 +198,7 @@ define(function(require, exports, module) {
       TSCORE.metaFileList = anotatedDirList;
       readyCallback(anotatedDirList);
     });
-  };
+  }
 
 
   function getPropertiesPromise(filePath) {
@@ -230,7 +230,7 @@ define(function(require, exports, module) {
         console.error(error);
       }
     );
-  };
+  }
 
 
   function loadTextFile(filePath) {
@@ -242,7 +242,7 @@ define(function(require, exports, module) {
         console.error(error);
       }
     );
-  };
+  }
 
   function loadTextFilePromise(filePath) {
     // TODO refactor
@@ -252,7 +252,7 @@ define(function(require, exports, module) {
   function getFileContent(filePath, result, error) {
 
     getFileContentPromise(filePath).then(result, error);
-  };
+  }
 
   function getFileContentPromise(filePath, type) {
     console.log("getFileContent file: " + filePath);
@@ -315,7 +315,7 @@ define(function(require, exports, module) {
         console.error(error);
       }
     );
-  };
+  }
 
   function saveBinaryFile(filePath, content, overWrite, silentMode) {
     console.log("Saving binary file: " + filePath); //+" content: "+content);
@@ -328,7 +328,7 @@ define(function(require, exports, module) {
         console.error(error);
       }
     );
-  };
+  }
 
 
   function createDirectoryPromise(dirPath) {
@@ -358,7 +358,7 @@ define(function(require, exports, module) {
         console.error(error);
       }
     );
-  };
+  }
 
 
   function copyFilePromise(filePath, newFilePath) {
@@ -395,7 +395,7 @@ define(function(require, exports, module) {
         console.error(error);
       }
     );
-  };
+  }
 
 
   function renameFilePromise(filePath, newFilePath) {
@@ -431,7 +431,7 @@ define(function(require, exports, module) {
         console.error(error);
       }
     );
-  };
+  }
 
 
   function renameDirectoryPromise(dirPath, newDirPath) {
@@ -469,7 +469,7 @@ define(function(require, exports, module) {
           $.i18n.t("ns.common:directoryRenameFailed"));
       }
     );
-  };
+  }
 
 
   function deleteFilePromise(path) {
@@ -487,7 +487,7 @@ define(function(require, exports, module) {
         console.error(error);
       }
     );
-  };
+  }
 
 
   function deleteDirectoryPromise(path) {
@@ -516,29 +516,29 @@ define(function(require, exports, module) {
         console.error(error);
       }
     );
-  };
+  }
 
 
   function selectDirectory() {
     //
     TSCORE.showAlertDialog("Select directory is still not implemented in the webdav edition");
-  };
+  }
 
   function selectFile() {
     //
     TSCORE.showAlertDialog("selectFile not relevant for webdav");
-  };
+  }
 
 
   function openDirectory(dirPath) {
     //
     TSCORE.showAlertDialog("openDirectory not relevant for webdav.");
-  };
+  }
 
   function openFile(filePath) {
     //
     TSCORE.showAlertDialog("openFile not relevant for webdav");
-  };
+  }
 
   // Platform API
   exports.focusWindow = focusWindow;
