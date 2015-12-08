@@ -308,7 +308,7 @@ define(function(require, exports, module) {
     console.log("Saving file: " + filePath); //+" content: "+content);
     saveFilePromise(filePath, content, overWrite, silentMode, "text").then(function(isNewFile) {
         if (silentMode !== true) {
-           TSPOSTIO.saveTextFile(filePath, isNewFile);
+          TSPOSTIO.saveTextFile(filePath, isNewFile);
         }
       }, function(error) {
         TSCORE.showAlertDialog("Save file " + filePath + " failed.");
@@ -400,7 +400,7 @@ define(function(require, exports, module) {
 
   function renameFilePromise(filePath, newFilePath) {
     console.log("Renaming file: " + filePath + " to " + newFilePath);
-    return new Promise(function(resolve, reject){
+    return new Promise(function(resolve, reject) {
       if (filePath === newFilePath) {
         TSCORE.hideWaitingDialog();
         TSCORE.showAlertDialog($.i18n.t("ns.common:fileTheSame"), $.i18n.t("ns.common:fileNotMoved"));

@@ -89,7 +89,7 @@ define(function(require, exports, module) {
       }
       switchInterfaceLanguage(language);
       initKeyBindings();
-      tsIOApi.checkAccessFileURLAllowed?tsIOApi.checkAccessFileURLAllowed():true;
+      tsIOApi.checkAccessFileURLAllowed ? tsIOApi.checkAccessFileURLAllowed() : true;
       // Show welcome dialog of first start
       if (tsSettings.isFirstRun()) {
         tsCoreUI.showWelcomeDialog();

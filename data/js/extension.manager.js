@@ -7,7 +7,7 @@ define(function(require, exports, module) {
   
   function getExtFolderPath() {
     var extPath = "ext";
-    if(isWeb) {
+    if (isWeb) {
       return extPath;
     }
     if (isCordova) {

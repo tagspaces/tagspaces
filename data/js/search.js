@@ -48,7 +48,7 @@ define(function(require, exports, module) {
     // cleaning up the query, reducing the spaces
     var queryText = queryText.toLowerCase().replace(/^\s+|\s+$/g, '');
     var recursive = queryText.indexOf('?') === 0;
-    if(recursive) {
+    if (recursive) {
       queryText = queryText.substring(1, queryText.length);
     }
     var queryTerms = queryText.split(' ');
@@ -58,7 +58,7 @@ define(function(require, exports, module) {
       includedTags: [],
       excludedTags: [],
       recursive: recursive,
-    }
+    };
 
     // parsing the query
     queryTerms.forEach(function(value) {
@@ -101,10 +101,10 @@ define(function(require, exports, module) {
     var tags;
 
     // TODO consider tags in .ts/meta.json and ./ts/ts.json
-    if(fileEntry.tags) {
+    if (fileEntry.tags) {
       tags = fileEntry.tags;
     } else {
-      tags = TSCORE.TagUtils.extractTags(fileEntry.path)
+      tags = TSCORE.TagUtils.extractTags(fileEntry.path);
     }
 
     var result = true;
@@ -156,46 +156,46 @@ define(function(require, exports, module) {
 
     var searchResults = [];
     var scan = function(content, fileEntry) {
-      return new Promise(function(resolve, reject){
+      return new Promise(function(resolve, reject) {
         var found = false;
         queryObj.includedTerms.forEach(function(term) {
-          if(content.indexOf(term[0]) >= 0) {
+          if (content.indexOf(term[0]) >= 0) {
             found = true;
           }
-          if(found) {
+          if (found) {
             console.log("Term " + term[0] + " found in " + fileEntry.path);
             searchResults.push(fileEntry);
           }
-        })
+        });
         resolve();
       });
-    }
+    };
 
     if (TSCORE.Utils.walkDirectory) {
 
-      if(query.length > 0) {
+      if (query.length > 0) {
         TSCORE.showWaitingDialog($.i18n.t("ns.common:waitDialogDiectoryIndexing"));
 
         TSCORE.Utils.walkDirectory(TSCORE.currentPath, {recursive: queryObj.recursive},
           function(fileEntry) {
-            return new Promise(function(resolve, reject){
-              if(filterFileObject(fileEntry, queryObj)) {
+            return new Promise(function(resolve, reject) {
+              if (filterFileObject(fileEntry, queryObj)) {
                 searchResults.push(fileEntry);
                 resolve();
               }
-              if(fileContentFilter(fileEntry.name)) {
+              if (fileContentFilter(fileEntry.name)) {
                 TSCORE.IO.loadTextFilePromise(fileEntry.path).then(function(content) {
                   //return scan(content, fileEntry);
                   var found = false;
                   queryObj.includedTerms.forEach(function(term) {
-                    if(content.indexOf(term[0]) >= 0) {
+                    if (content.indexOf(term[0]) >= 0) {
                       found = true;
                     }
-                    if(found) {
+                    if (found) {
                       console.log("Term " + term[0] + " found in " + fileEntry.path);
                       searchResults.push(fileEntry);
                     }
-                  })
+                  });
                   resolve();
                 }, function(err) {
                   resolve();
@@ -245,7 +245,7 @@ define(function(require, exports, module) {
               path: value[TSCORE.fileListFILEPATH],
               name: value[TSCORE.fileListFILENAME],
               tags: value[TSCORE.fileListTAGS],
-            }
+            };
             // Excluding files from tagspacec meta folders
             if (fileEntry.path.indexOf(TSCORE.dirSeparator + ".ts") > 0) {
               return false;

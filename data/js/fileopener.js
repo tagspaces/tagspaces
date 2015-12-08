@@ -244,7 +244,7 @@ define(function(require, exports, module) {
     $viewer.find('*').off();
     $viewer.find('*').unbind();
     $viewer.find('*').remove();
-    TSCORE.IO.checkAccessFileURLAllowed?TSCORE.IO.checkAccessFileURLAllowed():true;
+    TSCORE.IO.checkAccessFileURLAllowed ? TSCORE.IO.checkAccessFileURLAllowed() : true;
     TSCORE.IO.getFileProperties(filePath.replace('\\\\', '\\'));
     updateUI();
     if (editMode) {

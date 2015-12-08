@@ -42,7 +42,7 @@ define(function(require, exports, module) {
         TSCORE.showAlertDialog($.i18n.t("ns.dialogs:accessFileURLNotAllowedAlert"));
       }
     });
-  };
+  }
 
   function handleStartParameters() {
     var openFile = getURLParameter("openFile");
@@ -53,19 +53,19 @@ define(function(require, exports, module) {
       //TSCORE.IO.listDirectory(dirPath);
       TSCORE.FileOpener.openFileOnStartup(openFile);
     }
-  };
+  }
 
   function focusWindow() {
     // Places the TagSpaces window on top of the windows
     window.focus();
-  };
+  }
 
   function saveSettings(content) {
     /*chrome.storage.sync.set({'tagSpacesSettings': content}, function() {
         // Notify that we saved.
         message('Settings saved');
     });*/
-  };
+  }
 
   function checkNewVersion() {
     console.log("Checking for new version...");
@@ -80,7 +80,7 @@ define(function(require, exports, module) {
       .fail(function(data) {
         console.log("AJAX failed " + data);
       });
-  };
+  }
 
 
   function createDirectoryIndex(dirPath) {
@@ -99,15 +99,14 @@ define(function(require, exports, module) {
     ).catch(function() {
       TSCORE.hideWaitingDialog();
     });
-  };
+  }
 
   function createDirectoryTree(dirPath) {
-    TSCORE.showLoadingAnimation();
-    console.log("Creating directory not supported: " + dirPath);
+    TSCORE.showAlertDialog("Creating directory not supported.");
     //var directoyTree = generateDirectoryTree(dirPath);
     //console.log(JSON.stringify(directoyTree));
     //TSPOSTIO.createDirectoryTree(directoyTree);
-  };
+  }
 
 
   function listDirectoryPromise(dirPath) {
@@ -180,14 +179,14 @@ define(function(require, exports, module) {
         console.error("Error listDirectory " + dirPath + " error: " + error);
       }
     );
-  };
+  }
 
   function getDirectoryMetaInformation(dirPath, readyCallback) {
     listDirectory(dirPath, function(anotatedDirList) {
       TSCORE.metaFileList = anotatedDirList;
       readyCallback(anotatedDirList);
     });
-  };
+  }
 
   function listSubDirectories(dirPath) {
     console.log("Listing sub directories: " + dirPath);
@@ -209,7 +208,7 @@ define(function(require, exports, module) {
       TSCORE.hideLoadingAnimation();
       console.error("Error listDirectory " + dirPath + " error: " + error);
     });
-  };
+  }
 
 
   function getPropertiesPromise(filePath) {
@@ -221,15 +220,15 @@ define(function(require, exports, module) {
       fileProperties.lmdt = 0;
       resolve(fileProperties);
     });
-  };
+  }
 
   function getFileProperties(filePath) {
     getPropertiesPromise().then(function(fileProperties) {
       TSPOSTIO.getFileProperties(fileProperties);
     }, function(err) {
       TSCORE.showAlertDialog("Could not get properties for: " + filePath);
-    })
-  };
+    });
+  }
 
 
   function loadTextFile(filePath) {
@@ -241,7 +240,7 @@ define(function(require, exports, module) {
         console.error("loading text file failed " + data);
       }
     );
-  };
+  }
 
   function getFileContent(fullPath, result, error) {
     // TODO 4remove
@@ -275,7 +274,7 @@ define(function(require, exports, module) {
 
   function saveFilePromise(filePath, content, mode) {
     console.log("Saving binary file: " + filePath);
-    return new Promise(function(resolve, reject){
+    return new Promise(function(resolve, reject) {
       var blob = new Blob([content], {
         type: "text/plain;charset=utf-8"
       });
@@ -295,7 +294,7 @@ define(function(require, exports, module) {
         console.error(error);
       }
     );
-  };
+  }
 
   function saveBinaryFile(filePath, content) {
     TSCORE.showLoadingAnimation();
@@ -308,7 +307,7 @@ define(function(require, exports, module) {
         console.error(error);
       }
     );
-  };
+  }
 
 
   function createDirectoryPromise(dirPath) {
@@ -316,12 +315,12 @@ define(function(require, exports, module) {
       TSCORE.showAlertDialog("Creating directory is not supported in Chrome, please use the desktop version.");
       res(true);
     });
-  };
+  }
 
   function createDirectory(dirPath) {
     // TODO 4 remove
     createDirectoryPromise();
-  };
+  }
 
 
   function renameDirectoryPromise() {
@@ -329,12 +328,12 @@ define(function(require, exports, module) {
       TSCORE.showAlertDialog("Renaming directory is not supported in Chrome, please use the desktop version.");
       res(true);
     });
-  };
+  }
 
   function renameDirectory() {
     // TODO 4remove
     renameDirectoryPromise();
-  };
+  }
 
 
   function renameFilePromise() {
@@ -342,12 +341,12 @@ define(function(require, exports, module) {
       TSCORE.showAlertDialog("Renaming file is not supported in Chrome, please use the desktop version.");
       res(true);
     });
-  };
+  }
 
   function renameFile() {
     // TODO 4remove
     renameFilePromise();
-  };
+  }
 
 
   function copyFilePromise() {
@@ -355,12 +354,12 @@ define(function(require, exports, module) {
       TSCORE.showAlertDialog("Copy file is not supported in Chrome, please use the desktop version.");
       res(true);
     });
-  };
+  }
 
   function copyFile() {
     // TODO 4remove
     copyFilePromise();
-  };
+  }
 
 
   function deleteFilePromise() {
@@ -368,12 +367,12 @@ define(function(require, exports, module) {
       TSCORE.showAlertDialog("Creating directory is not supported in Chrome, please use the desktop version.");
       res(true);
     });
-  };
+  }
 
   function deleteElement() {
     // TODO 4remove
     deleteDirectoryPromise();
-  };
+  }
 
 
   function deleteDirectoryPromise() {
@@ -381,12 +380,12 @@ define(function(require, exports, module) {
       TSCORE.showAlertDialog("Deleting directory is not supported in Chrome, please use the desktop version.");
       res(true);
     });
-  };
+  }
 
   function deleteDirectory() {
     // TODO 4remove
     deleteDirectoryPromise();
-  };
+  }
 
 
   function selectDirectory() {
@@ -396,23 +395,23 @@ define(function(require, exports, module) {
       rootPath = "C:";
     }
     TSCORE.showDirectoryBrowserDialog(rootPath);
-  };
+  }
 
   function selectFile() {
     // TODO
     TSCORE.showAlertDialog("Select file not implemented!");
-  };
+  }
 
 
   function openDirectory(dirPath) {
     // TODO
     TSCORE.showAlertDialog($.i18n.t("ns.dialogs:openContainingDirectoryAlert"));
-  };
+  }
 
   function openFile(filePath) {
     // TODO
     TSCORE.showAlertDialog($.i18n.t("ns.dialogs:openFileNativelyAlert"));
-  };
+  }
 
   // Platform specific calls
   exports.checkAccessFileURLAllowed = checkAccessFileURLAllowed;

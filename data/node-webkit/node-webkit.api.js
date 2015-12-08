@@ -297,7 +297,7 @@ define(function(require, exports, module) {
     );
   }
 
-  function listDirectoryPromise(path){
+  function listDirectoryPromise(path) {
     return new Promise(function(resolve, reject) {
       var statEntriesPromises = [];
       fs.readdir(path, function(error, entries) {
@@ -305,7 +305,7 @@ define(function(require, exports, module) {
           console.log("Error listing directory " + path);
           resolve(statEntriesPromises);
         } else {
-          if(entries) {
+          if (entries) {
             entries.forEach(function(entry) {
               statEntriesPromises.push(getPropertiesPromise(path + TSCORE.dirSeparator + entry));
             });
@@ -357,7 +357,7 @@ define(function(require, exports, module) {
         }
         if (stats) {
           var entry = {};
-          entry.name = path.substring(path.lastIndexOf(TSCORE.dirSeparator)+1, path.length);
+          entry.name = path.substring(path.lastIndexOf(TSCORE.dirSeparator) + 1, path.length);
           entry.isFile = stats.isFile();
           entry.size = stats.size;
           entry.lmdt = stats.mtime;
@@ -549,7 +549,7 @@ define(function(require, exports, module) {
     renameDirectoryPromise(dirPath, newDirName).then(function() {
       TSCORE.hideWaitingDialog();
       TSPOSTIO.renameDirectory(dirPath, newDirPath);
-    }, function(err){
+    }, function(err) {
       TSCORE.hideWaitingDialog();
       TSCORE.showAlertDialog(err);
     });
@@ -653,7 +653,7 @@ define(function(require, exports, module) {
 
 
   function saveFilePromise(filePath, content, overwrite) {
-    return new Promise(function(resolve,reject) {
+    return new Promise(function(resolve, reject) {
       function saveFile(filePath, content) {
         fs.writeFile(filePath, content, 'utf8', function(error) {
           if (error) {
@@ -664,9 +664,9 @@ define(function(require, exports, module) {
       }
 
       getPropertiesPromise(filePath).then(function(entry) {
-        if(entry && entry.isFile && overwrite) {
+        if (entry && entry.isFile && overwrite) {
           saveFile(filePath, content);
-        } else if (!entry){
+        } else if (!entry) {
           saveFile(filePath, content);
         } else {
           resolve();
@@ -754,10 +754,10 @@ define(function(require, exports, module) {
 
 
   function deleteDirectoryPromise(path) {
-    return new Promise(function(resolve,reject) {
+    return new Promise(function(resolve, reject) {
       fs.rmdir(path, function(error) {
         if (error) {
-         reject(error);
+          reject(error);
         } else {
           resolve();
         }
@@ -771,7 +771,7 @@ define(function(require, exports, module) {
       return trash([path]);
     }
 
-    deleteDirectoryPromise(path).then(function(){
+    deleteDirectoryPromise(path).then(function() {
         TSPOSTIO.deleteDirectory(path);
       },
       function(error) {

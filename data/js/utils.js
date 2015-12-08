@@ -78,21 +78,21 @@ define(function(require, exports, module) {
   function walkDirectory(path, options, fileCallback, dirCallback) {
     return TSCORE.IO.listDirectoryPromise(path).then(function(entries) {
       return Promise.all(entries.map(function(entry) {
-        if(!options) {
+        if (!options) {
           options = {};
           options.recursive = false;
         }
         if (entry.isFile) {
-          if(fileCallback) {
+          if (fileCallback) {
             return fileCallback(entry);
           } else {
             return entry;
           }
         } else {
-          if(dirCallback) {
+          if (dirCallback) {
             return dirCallback(entry);
           }
-          if(options.recursive) {
+          if (options.recursive) {
             return walkDirectory(entry.path, options, fileCallback, dirCallback);
           } else {
             return entry;

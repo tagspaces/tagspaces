@@ -175,7 +175,7 @@ define(function(require, exports, module) {
   function focusWindow() {
     // Bring the TagSpaces window on top of the windows
     window.focus();
-  };
+  }
 
   function saveSettings(content) {
     console.log("Saving setting...");
@@ -187,7 +187,7 @@ define(function(require, exports, module) {
       }
     });
     document.documentElement.dispatchEvent(event);
-  };
+  }
 
   function loadSettings() {
     console.log("Loading setting from firefox preferences...");
@@ -198,7 +198,7 @@ define(function(require, exports, module) {
       }
     });
     document.documentElement.dispatchEvent(event);
-  };
+  }
 
   function checkNewVersion() {
     console.log("Checking for new version...");
@@ -209,7 +209,7 @@ define(function(require, exports, module) {
       }
     });
     document.documentElement.dispatchEvent(event);
-  };
+  }
 
 
   function listDirectoryPromise(dirPath) {
@@ -250,7 +250,7 @@ define(function(require, exports, module) {
         TSPOSTIO.errorOpeningPath();
       }
     );
-  };
+  }
 
 
   function loadTextFile(filePath) {
@@ -263,7 +263,7 @@ define(function(require, exports, module) {
         console.warn("Error: " + error);
       }
     );
-  };
+  }
 
   function getFileContentPromise(filePath, type) {
     console.log("getFileContentPromise: " + filePath);
@@ -314,7 +314,7 @@ define(function(require, exports, module) {
       }
     });
     document.documentElement.dispatchEvent(event);
-  };
+  }
 
   function saveBinaryFile(filePath, content, overWrite, silentMode) {
     console.log("Saving binary file post: " + filePath); //+" - "+content);
@@ -329,7 +329,7 @@ define(function(require, exports, module) {
       }
     });
     document.documentElement.dispatchEvent(event);
-  };
+  }
 
 
   function createDirectory(dirPath, silentMode) {
@@ -343,7 +343,7 @@ define(function(require, exports, module) {
       }
     });
     document.documentElement.dispatchEvent(event);
-  };
+  }
 
   function copyFile(filePath, newFilePath) {
     console.log("Copy " + filePath + " to " + newFilePath);
@@ -356,7 +356,7 @@ define(function(require, exports, module) {
       }
     });
     document.documentElement.dispatchEvent(event);
-  };
+  }
 
   function renameFile(filePath, newFilePath) {
     console.log("Renaming " + filePath + " to " + newFilePath);
@@ -369,12 +369,12 @@ define(function(require, exports, module) {
       }
     });
     document.documentElement.dispatchEvent(event);
-  };
+  }
 
   function renameDirectory(filePath, newFilePath) {
     //
     TSCORE.showAlertDialog($.i18n.t("ns.common:functionalityNotImplemented"));
-  };
+  }
 
 
   function listDirectory(dirPath) {
@@ -387,7 +387,7 @@ define(function(require, exports, module) {
         TSPOSTIO.errorOpeningPath();
       }
     );
-  };
+  }
 
   function deleteElement(path) {
     console.log("Deleting: " + path);
@@ -399,12 +399,12 @@ define(function(require, exports, module) {
       }
     });
     document.documentElement.dispatchEvent(event);
-  };
+  }
 
   function deleteDirectory(dirPath) {
     //
     TSCORE.showAlertDialog($.i18n.t("ns.common:functionalityNotImplemented"));
-  };
+  }
 
 
   function createDirectoryIndex(dirPath) {
@@ -417,7 +417,7 @@ define(function(require, exports, module) {
       }
     });
     document.documentElement.dispatchEvent(event);
-  };
+  }
 
   function createDirectoryTree(dirPath) {
     console.log("Creating directory tree for: " + dirPath);
@@ -429,7 +429,7 @@ define(function(require, exports, module) {
       }
     });
     document.documentElement.dispatchEvent(event);
-  };
+  }
 
   function getFileProperties(filePath) {
     getFilePropertiesPromise(filePath).then(function(properties) {
