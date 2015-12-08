@@ -434,10 +434,9 @@ define(function(require, exports, module) {
   };
 
 
-  function renameDirectoryPromise(dirPath, newDirName) {
-    console.log("Renaming directory: " + dirPath + " to " + newDirName);
-    return new Promise(function(resolve, reject){
-      var newDirPath = TSCORE.TagUtils.extractParentDirectoryPath(dirPath) + TSCORE.dirSeparator + newDirName;
+  function renameDirectoryPromise(dirPath, newDirPath) {
+    console.log("Renaming directory: " + dirPath + " to " + newDirPath);
+    return new Promise(function(resolve, reject) {
       if (dirPath === newDirPath) {
         TSCORE.hideWaitingDialog();
         TSCORE.showAlertDialog($.i18n.t("ns.common:fileTheSame"), $.i18n.t("ns.common:fileNotMoved"));
@@ -461,8 +460,9 @@ define(function(require, exports, module) {
   }
 
   function renameDirectory(dirPath, newDirName) {
-    renameDirectoryPromise(dirPath, newDirName).then(function() {
-        TSPOSTIO.renameDirectory(dirPath, newDirName);
+    var newDirPath = TSCORE.TagUtils.extractParentDirectoryPath(dirPath) + TSCORE.dirSeparator + newDirName;
+    renameDirectoryPromise(dirPath, newDirPath).then(function() {
+        TSPOSTIO.renameDirectory(dirPath, newDirPath);
       }, function(error) {
         TSCORE.hideWaitingDialog();
         TSCORE.showAlertDialog($.i18n.t("ns.common:pathIsNotDirectory", {dirName:dirPath}),
