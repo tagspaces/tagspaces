@@ -487,77 +487,72 @@ define(function(require, exports, module) {
 
 
   function renameFilePromise(filePath, newFilePath) {
-    // TODO
-
+    console.log("Renaming file: " + filePath + " to " + newFilePath);
+    return new Promise(function(resolve, reject) {
+      if (filePath === newFilePath) {
+        reject($.i18n.t("ns.common:fileTheSame"), $.i18n.t("ns.common:fileNotMoved"));
+      }
+      if (fs.lstatSync(filePath).isDirectory()) {
+        reject($.i18n.t("ns.common:fileIsDirectory", {fileName:filePath}));
+      }
+      if (fs.existsSync(newFilePath)) {
+        reject($.i18n.t("ns.common:fileExists", {fileName:newFilePath}), $.i18n.t("ns.common:fileRenameFailed"));
+      }
+      fs.move(filePath, newFilePath, function(error) {
+        if (error) {
+          reject("Renaming: " + filePath + " failed.");
+        }
+        resolve(true);
+      });
+    });
   }
 
   /** @deprecated */
   function renameFile(filePath, newFilePath) {
-    console.log("Renaming file: " + filePath + " to " + newFilePath);
-
-    if (filePath === newFilePath) {
+    renameFilePromise(filePath, newFilePath).then(function(success) {
       TSCORE.hideWaitingDialog();
-      TSCORE.showAlertDialog($.i18n.t("ns.common:fileTheSame"), $.i18n.t("ns.common:fileNotMoved"));
-      return false;
-    }
-    if (fs.lstatSync(filePath).isDirectory()) {
-      TSCORE.hideWaitingDialog();
-      TSCORE.showAlertDialog($.i18n.t("ns.common:fileIsDirectory", {fileName:filePath}));
-      return false;
-    }
-    if (fs.existsSync(newFilePath)) {
-      TSCORE.hideWaitingDialog();
-      TSCORE.showAlertDialog($.i18n.t("ns.common:fileExists", {fileName:newFilePath}), $.i18n.t("ns.common:fileRenameFailed"));
-      return false;
-    }
-    fs.move(filePath, newFilePath, function(error) {
-      if (error) {
-        TSCORE.hideWaitingDialog();
-        //TSCORE.showAlertDialog($.i18n.t("ns.common:fileRenameFailedDiffPartition", {fileName:filePath}));
-        TSCORE.showAlertDialog("Renaming: " + filePath + " failed.");
-        return;
-      }
       TSPOSTIO.renameFile(filePath, newFilePath);
+    }, function(err) {
+      TSCORE.hideWaitingDialog();
+      TSCORE.showAlertDialog(err);
     });
   };
 
 
-  function renameDirectoryPromise(dirPath, newDirName) {
-    // TODO
-
+  function renameDirectoryPromise(dirPath, newDirPath) {
+    console.log("Renaming dir: " + dirPath + " to " + newDirPath);
+    return new Promise(function(resolve, reject) {
+      if (dirPath === newDirPath) { 
+        reject($.i18n.t("ns.common:directoryTheSame"), $.i18n.t("ns.common:directoryNotMoved"));
+      }
+      if (fs.existsSync(newDirPath)) {
+        reject($.i18n.t("ns.common:directoryExists", {dirName:newDirPath}), $.i18n.t("ns.common:directoryRenameFailed"));
+      }
+      var dirStatus = fs.lstatSync(dirPath);
+      if (dirStatus.isDirectory) {
+        fs.rename(dirPath, newDirPath, function(error) {
+          if (error) {
+            console.error("Renaming directory failed " + error);
+            reject("Renaming " + dirPath + " failed."); 
+          }
+          resolve(true);
+        });
+      } else {
+        reject($.i18n.t("ns.common:pathIsNotDirectory", {dirName:dirPath}), $.i18n.t("ns.common:directoryRenameFailed"));
+      }
+    });
   }
 
   /** @deprecated */
   function renameDirectory(dirPath, newDirName) {
     var newDirPath = TSCORE.TagUtils.extractParentDirectoryPath(dirPath) + TSCORE.dirSeparator + newDirName;
-    console.log("Renaming file: " + dirPath + " to " + newDirPath);
-
-    if (dirPath === newDirPath) {
+    renameDirectoryPromise(dirPath, newDirName).then(function() {
       TSCORE.hideWaitingDialog();
-      TSCORE.showAlertDialog($.i18n.t("ns.common:directoryTheSame"), $.i18n.t("ns.common:directoryNotMoved"));
-      return false;
-    }
-    if (fs.existsSync(newDirPath)) {
+      TSPOSTIO.renameDirectory(dirPath, newDirPath);
+    }, function(err){
       TSCORE.hideWaitingDialog();
-      TSCORE.showAlertDialog($.i18n.t("ns.common:directoryExists", {dirName:newDirPath}), $.i18n.t("ns.common:directoryRenameFailed"));
-      return false;
-    }
-    var dirStatus = fs.lstatSync(dirPath);
-    if (dirStatus.isDirectory) {
-      fs.rename(dirPath, newDirPath, function(error) {
-        if (error) {
-          TSCORE.hideLoadingAnimation();
-          console.error("Renaming directory failed " + error);
-          TSCORE.showAlertDialog("Renaming " + dirPath + " failed.");
-          return;
-        }
-        TSPOSTIO.renameDirectory(dirPath, newDirPath);
-      });
-    } else {
-      TSCORE.hideWaitingDialog();
-      TSCORE.showAlertDialog($.i18n.t("ns.common:pathIsNotDirectory", {dirName:dirPath}), $.i18n.t("ns.common:directoryRenameFailed"));
-      return false;
-    }
+      TSCORE.showAlertDialog(err);
+    });
   };
 
 
