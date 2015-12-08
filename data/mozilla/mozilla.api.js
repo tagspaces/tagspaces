@@ -135,14 +135,14 @@ define(function(require, exports, module) {
           console.error("Checking for new version failed.");
         }
         break;
-      case "getFileProperties":
+      /*case "getFileProperties":
         if (message.success) {
           TSPOSTIO.getFileProperties(message.content);
         } else {
           console.error("Getting file properties failed.");
         }
-        break;
-      case "getFileContent":
+        break;*/
+      /*case "getFileContent":
         if (message.success) {
           var arrBuff = base64toArrayBuffer(message.content);
           args[0](arrBuff);
@@ -150,7 +150,7 @@ define(function(require, exports, module) {
           args[1](message.content);
         }
         args = [];
-        break;
+        break;*/
       default:
         break;
     }
@@ -255,7 +255,7 @@ define(function(require, exports, module) {
 
   function loadTextFile(filePath) {
     console.log("Loading file: " + filePath);
-    getFileContentPromise(filePath).then(
+    getFileContentPromise(filePath, "text").then(
       function(success) {
         TSPOSTIO.loadTextFile(success);
       },
@@ -266,16 +266,13 @@ define(function(require, exports, module) {
   };
 
   function getFileContentPromise(filePath, type) {
+    console.log("getFileContentPromise: " + filePath);
     return new Promise(function(resolve, reject) {
-      //var fileURL = fullPath;
-      //if (fileURL.indexOf("file://") === -1) {
-      //  fileURL = "file://" + fileURL;
-      //}
-      console.log("Loading file: " + filePath);
       var event = document.createEvent('CustomEvent');
+      var command = (type === "text") ? "loadTextFile" : "getFileContent";
       event.initCustomEvent("addon-message", true, true, {
         "detail": {
-          "command": "loadTextFile",
+          "command": command,
           "path": filePath
         }
       });
@@ -284,9 +281,14 @@ define(function(require, exports, module) {
       function eventListener(event) {
         console.log("Message received in page script from content script"); //+JSON.stringify(event.detail));
         var message = event.detail;
-        if (message.command === "loadTextFile") {
+        if (message.command === command) {
           if (message.success) {
-            resolve(message.content);
+            if(message.command === "getFileContent") {
+              var arrBuff = base64toArrayBuffer(message.content);
+              resolve(arrBuff);
+            } else {
+              resolve(message.content);
+            }
           } else {
             reject("File content loading failed");
           }
@@ -430,29 +432,44 @@ define(function(require, exports, module) {
   };
 
   function getFileProperties(filePath) {
-    console.log("Getting file properties...");
-    var event = document.createEvent('CustomEvent');
-    event.initCustomEvent("addon-message", true, true, {
-      "detail": {
-        "command": "getFileProperties",
-        "path": filePath
-      }
+    getFilePropertiesPromise(filePath).then(function(properties) {
+      TSPOSTIO.getFileProperties(properties);
+    }, function(error) {
+      console.log("Error: " + error);
     });
-    document.documentElement.dispatchEvent(event);
-  };
+  }
 
+  function getFilePropertiesPromise(filePath) {
+    console.log("Getting file properties...");
+    return new Promise(function(resolve, reject) {
+      var event = document.createEvent('CustomEvent');
+      event.initCustomEvent("addon-message", true, true, {
+        "detail": {
+          "command": "getFileProperties",
+          "path": filePath
+        }
+      });
+      document.documentElement.dispatchEvent(event);
+
+      function eventListener(event) {
+        console.log("Message received in page script from content script"); //+JSON.stringify(event.detail));
+        var message = event.detail;
+        if (message.command === "getFileProperties") {
+          if (message.success) {
+            resolve(message.content);
+          } else {
+            reject("Getting file properties failed");
+          }
+          document.documentElement.removeEventListener("tsMessage", eventListener);
+        }
+      }
+      document.documentElement.addEventListener("tsMessage", eventListener);
+    });
+  }
 
   function getFileContent(filePath, result, error) {
-    args = [result, error];
-    var event = document.createEvent('CustomEvent');
-    event.initCustomEvent("addon-message", true, true, {
-      "detail": {
-        "command": "getFileContent",
-        "path": filePath
-      }
-    });
-    document.documentElement.dispatchEvent(event);
-  };
+    getFileContentPromise(filePath).then(result, error);
+  }
 
 
   function selectDirectory() {
@@ -464,7 +481,7 @@ define(function(require, exports, module) {
       }
     });
     document.documentElement.dispatchEvent(event);
-  };
+  }
 
   function selectFile() {
     console.log("Selecting file...");
@@ -475,7 +492,7 @@ define(function(require, exports, module) {
       }
     });
     document.documentElement.dispatchEvent(event);
-  };
+  }
 
   function openDirectory(dirPath) {
     console.log("Opening directory: " + dirPath);
@@ -487,13 +504,13 @@ define(function(require, exports, module) {
       }
     });
     document.documentElement.dispatchEvent(event);
-  };
+  }
 
   function openFile(filePath) {
     // TODO implement openFile for firefox
     console.log("Open file functionality not implemented in Firefox yet!");
     TSCORE.showAlertDialog($.i18n.t("ns.dialogs:openFileNativelyAlert"));
-  };
+  }
 
   // mozilla specific
   exports.saveSettings = saveSettings;
