@@ -244,6 +244,12 @@ li hr {
   -ms-flex: 1 1 auto;
 }
 
+.dirButton div {
+  max-width: 265px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
 .dirButtonContainer {
   display: flex;
   display: -webkit-flex;
@@ -579,7 +585,7 @@ input a.resetFilter {
 }
 
 #alternativeNavigator {
-  margin: 5px 5px 5px 10px;
+  margin: 5px 5px 5px 0;
   height: 30px;
 }
 
@@ -589,6 +595,19 @@ input a.resetFilter {
   width: 250px;
   padding: 5px;
   display: block;
+}
+
+.dirAltNavMenu li {
+  max-width: 240px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.altNavFolderTitle {
+  max-width: 200px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  margin-left: 0;
 }
 
 #closeOpenedFile {
