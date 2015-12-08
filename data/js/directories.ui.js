@@ -14,7 +14,7 @@ define(function(require, exports, module) {
     '{{#each dirHistory}}' +
     '<div class="btn-group">' +
         '<button class="btn btn-link dropdown-toggle" data-menu="{{@index}}">' +
-            '{{name}}&nbsp;&nbsp;<i class="fa fa-angle-right"></i>&nbsp;'  +
+            '<div class="altNavFolderTitle"><i class="fa fa-angle-right"></i>&nbsp;{{name}}</div>'  +
         '</button>' +
         '<div class="dropdown clearfix dirAltNavMenu" id="dirMenu{{@index}}" data-path="{{path}}">' +
             '<ul role="menu" class="dropdown-menu">' +
@@ -55,7 +55,7 @@ define(function(require, exports, module) {
                 '{{#if children}}' +
                 '<div class="dirButtonContainer">{{#each children}}' +
                     '<button class="btn btn-sm dirButton ui-droppable" key="{{path}}" title="{{path}}">' +
-                        '<i class="fa fa-folder-o"></i>&nbsp;{{name}}</button>' +
+                        '<div><i class="fa fa-folder-o"></i>&nbsp;{{name}}</div></button>' +
                 '{{/each}}</div>' +
                 '{{else}}' +
                     '<div>{{../../noSubfoldersFound}}</div>' +
