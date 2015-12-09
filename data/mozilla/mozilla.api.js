@@ -38,22 +38,22 @@ define(function(require, exports, module) {
           console.log("Saving setting as native mozilla preference failed!");
         }
         break;
-      case "rename":
+      /*case "rename":
         if (message.success) {
           TSPOSTIO.renameFile(message.content[0], message.content[1]);
         } else {
           console.error("Rename failed");
         }
-        break;
-      case "copy":
+        break;*/
+      /*case "copy":
         if (message.success) {
           TSPOSTIO.copyFile(message.content[0], message.content[1]);
         } else {
           TSCORE.hideWaitingDialog();
           console.error("Rename failed " + message.content);
         }
-        break;
-      case "saveTextFile":
+        break;*/
+      /*case "saveTextFile":
         if (message.success) {
           if (message.silent !== true) {
             TSPOSTIO.saveTextFile(message.content);
@@ -61,8 +61,8 @@ define(function(require, exports, module) {
         } else {
           console.error("Save failed");
         }
-        break;
-      case "saveBinaryFile":
+        break;*/
+      /*case "saveBinaryFile":
         if (message.success) {
           if(message.silent !== true) {
             TSPOSTIO.saveBinaryFile(message.content);
@@ -70,8 +70,8 @@ define(function(require, exports, module) {
         } else {
           console.error("Save binary failed");
         }
-        break;
-      case "createDirectory":
+        break;*/
+      /*case "createDirectory":
         if (message.success) {
           if (message.silent !== true) {
             TSPOSTIO.createDirectory(message.content);  
@@ -79,7 +79,7 @@ define(function(require, exports, module) {
         } else {
           console.error("Create dir failed");
         }
-        break;
+        break;*/
       /*case "loadTextFile":
         if (message.success) {
           TSPOSTIO.loadTextFile(message.content);
@@ -114,13 +114,13 @@ define(function(require, exports, module) {
           console.error("Indexing directory failed");
         }
         break;
-      case "delete":
+      /*case "delete":
         if (message.success) {
           TSPOSTIO.deleteElement(message.content);
         } else {
           console.error("Delete failed");
         }
-        break;
+        break;*/
       case "selectDirectory":
         if (message.success) {
           TSPOSTIO.selectDirectory(message.content);
@@ -284,8 +284,10 @@ define(function(require, exports, module) {
         if (message.command === command) {
           if (message.success) {
             if(message.command === "getFileContent") {
+              //TODO: fix buffer conversion
               var arrBuff = base64toArrayBuffer(message.content);
               resolve(arrBuff);
+              resolve(myStringView1.buffer);
             } else {
               resolve(message.content);
             }
@@ -302,21 +304,59 @@ define(function(require, exports, module) {
 
 
   function saveTextFile(filePath, content, overWrite, silentMode) {
-    console.log("Saving file: " + filePath);
-    var event = document.createEvent('CustomEvent');
-    event.initCustomEvent("addon-message", true, true, {
-      "detail": {
-        "command": "saveTextFile",
-        "path": filePath,
-        "content": content,
-        "overwrite": overWrite,
-        "silent": silentMode
+
+    saveTextFilePromise(filePath, content, overWrite).then(function() {
+      if(!silentMode) {
+        TSPOSTIO.saveTextFile(filePath);
       }
+    }, function(error) {
+      console.log(error);
     });
-    document.documentElement.dispatchEvent(event);
+  }
+
+  function saveTextFilePromise(filePath, content, overWrite) {
+
+    return new Promise(function(resolve, reject) {
+      console.log("Saving file: " + filePath);
+      var event = document.createEvent('CustomEvent');
+      event.initCustomEvent("addon-message", true, true, {
+        "detail": {
+          "command": "saveTextFile",
+          "path": filePath,
+          "content": content,
+          "overwrite": overWrite
+        }
+      });
+      document.documentElement.dispatchEvent(event);
+      function eventListener(event) {
+        var message = event.detail;
+        if (message.command === "saveTextFile") {
+          if (message.success) {
+            resolve(message.content);
+          } else {
+            reject("Save text file failed");
+          }
+          document.documentElement.removeEventListener("tsMessage", eventListener);
+        }
+      }
+      document.documentElement.addEventListener("tsMessage", eventListener);
+    });
   }
 
   function saveBinaryFile(filePath, content, overWrite, silentMode) {
+
+    saveBinaryFilePromise(filePath, content, overWrite).then(function() {
+      if(!silentMode) {
+        TSPOSTIO.saveBinaryFile(filePath);
+      }
+    }, function(error) {
+      console.log(error);
+    })
+  }
+
+  function saveBinaryFilePromise(filePath, content, overWrite) {
+
+    return new Promise(function(resolve, reject) {
     console.log("Saving binary file post: " + filePath); //+" - "+content);
     var event = document.createEvent('CustomEvent');
     event.initCustomEvent("addon-message", true, true, {
@@ -324,51 +364,133 @@ define(function(require, exports, module) {
         "command": "saveBinaryFile",
         "path": filePath,
         "content": ab2str(content),
-        "overwrite": overWrite,
-        "silent": silentMode
+        "overwrite": overWrite
       }
     });
     document.documentElement.dispatchEvent(event);
+      function eventListener(event) {
+        var message = event.detail;
+        if (message.command === "saveBinaryFile") {
+          if (message.success) {
+            resolve(message.content);
+          } else {
+            reject("Save bin file failed");
+          }
+          document.documentElement.removeEventListener("tsMessage", eventListener);
+        }
+      }
+      document.documentElement.addEventListener("tsMessage", eventListener);
+    });
   }
 
-
   function createDirectory(dirPath, silentMode) {
-    console.log("Directory " + dirPath + " created.");
-    var event = document.createEvent('CustomEvent');
-    event.initCustomEvent("addon-message", true, true, {
-      "detail": {
-        "command": "createDirectory",
-        "path": dirPath,
-        "silent" : silentMode
+    createDirectoryPromise().then(function() {
+      if(!silentMode) {
+        TSPOSTIO.createDirectory(dirPath);  
       }
+    }, function(error){
+      console.log(error);
     });
-    document.documentElement.dispatchEvent(event);
+  }
+
+  function createDirectoryPromise(dirPath) {
+
+    return new Promise(function(resolve, reject) {
+      console.log("Directory " + dirPath + " created.");
+      var event = document.createEvent('CustomEvent');
+      event.initCustomEvent("addon-message", true, true, {
+        "detail": {
+          "command": "createDirectory",
+          "path": dirPath
+        }
+      });
+      document.documentElement.dispatchEvent(event);
+      function eventListener(event) {
+        var message = event.detail;
+        if (message.command === "createDirectory") {
+          if (message.success) {
+            resolve(message.content);
+          } else {
+            reject("Copy file failed");
+          }
+          document.documentElement.removeEventListener("tsMessage", eventListener);
+        }
+      }
+      document.documentElement.addEventListener("tsMessage", eventListener);
+    });
   }
 
   function copyFile(filePath, newFilePath) {
-    console.log("Copy " + filePath + " to " + newFilePath);
-    var event = document.createEvent('CustomEvent');
-    event.initCustomEvent("addon-message", true, true, {
-      "detail": {
-        "command": "copy",
-        "path": filePath,
-        "newPath": newFilePath
-      }
+    copyFilePromise(filePath, newFilePath).then(function() {
+      TSPOSTIO.copyFile(filePath, newFilePath);
+    },function(error){
+      console.log(error);
     });
-    document.documentElement.dispatchEvent(event);
+  }
+
+  function copyFilePromise(filePath, newFilePath) {
+
+    return new Promise(function(resolve, reject) {
+      console.log("Copy " + filePath + " to " + newFilePath);
+      var event = document.createEvent('CustomEvent');
+      event.initCustomEvent("addon-message", true, true, {
+        "detail": {
+          "command": "copy",
+          "path": filePath,
+          "newPath": newFilePath
+        }
+      });
+      document.documentElement.dispatchEvent(event);
+      function eventListener(event) {
+        var message = event.detail;
+        if (message.command === "copy") {
+          if (message.success) {
+            resolve(message.content);
+          } else {
+            reject("Copy file failed");
+          }
+          document.documentElement.removeEventListener("tsMessage", eventListener);
+        }
+      }
+      document.documentElement.addEventListener("tsMessage", eventListener);
+    });
   }
 
   function renameFile(filePath, newFilePath) {
-    console.log("Renaming " + filePath + " to " + newFilePath);
-    var event = document.createEvent('CustomEvent');
-    event.initCustomEvent("addon-message", true, true, {
-      "detail": {
-        "command": "rename",
-        "path": filePath,
-        "newPath": newFilePath
-      }
+    renameFilePromise(filePath, newFilePath).then(function() {
+      TSPOSTIO.renameFile(filePath, newPath);
+    }, function(error){
+      console.log(error);
     });
-    document.documentElement.dispatchEvent(event);
+  }
+
+  function renameFilePromise(filePath, newPath) {
+
+    return new Promise(function(resolve, reject) {
+      console.log("Renaming " + filePath + " to " + newFilePath);
+      var event = document.createEvent('CustomEvent');
+      event.initCustomEvent("addon-message", true, true, {
+        "detail": {
+          "command": "rename",
+          "path": filePath,
+          "newPath": newFilePath
+        }
+      });
+
+      document.documentElement.dispatchEvent(event);
+      function eventListener(event) {
+        var message = event.detail;
+        if (message.command === "rename") {
+          if (message.success) {
+            resolve(message.content);
+          } else {
+            reject("Rename file failed");
+          }
+          document.documentElement.removeEventListener("tsMessage", eventListener);
+        }
+      }
+      document.documentElement.addEventListener("tsMessage", eventListener);
+    });
   }
 
   function renameDirectory(filePath, newFilePath) {
@@ -390,15 +512,40 @@ define(function(require, exports, module) {
   }
 
   function deleteElement(path) {
-    console.log("Deleting: " + path);
-    var event = document.createEvent('CustomEvent');
-    event.initCustomEvent("addon-message", true, true, {
-      "detail": {
-        "command": "delete",
-        "path": path
-      }
+    deleteFilePromise(path).then(function(result) {
+       TSPOSTIO.deleteElement(content);
+    }, function(error) {
+      console.log(error);
     });
-    document.documentElement.dispatchEvent(event);
+  }
+
+  function deleteFilePromise(path) {
+
+    return new Promise(function(resolve, reject) {
+
+      console.log("Deleting: " + path);
+      var event = document.createEvent('CustomEvent');
+      event.initCustomEvent("addon-message", true, true, {
+        "detail": {
+          "command": "delete",
+          "path": path
+        }
+      });
+      document.documentElement.dispatchEvent(event);
+
+      function eventListener(event) {
+        var message = event.detail;
+        if (message.command === "delete") {
+          if (message.success) {
+            resolve(message.content);
+          } else {
+            reject("Delete file failed");
+          }
+          document.documentElement.removeEventListener("tsMessage", eventListener);
+        }
+      }
+      document.documentElement.addEventListener("tsMessage", eventListener);
+    });
   }
 
   function deleteDirectory(dirPath) {
