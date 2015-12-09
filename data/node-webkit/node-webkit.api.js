@@ -546,7 +546,7 @@ define(function(require, exports, module) {
   /** @deprecated */
   function renameDirectory(dirPath, newDirName) {
     var newDirPath = TSCORE.TagUtils.extractParentDirectoryPath(dirPath) + TSCORE.dirSeparator + newDirName;
-    renameDirectoryPromise(dirPath, newDirName).then(function() {
+    renameDirectoryPromise(dirPath, newDirPath).then(function() {
       TSCORE.hideWaitingDialog();
       TSPOSTIO.renameDirectory(dirPath, newDirPath);
     }, function(err) {
