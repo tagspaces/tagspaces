@@ -395,7 +395,7 @@ define(function(require, exports, module) {
     return new Promise(function(resolve, reject) {
       fs.mkdir(dirPath, function(error) {
         if (error) {
-          resolve("Error creating folder: " + dirPath);
+          reject("Error creating folder: " + dirPath);
         }
         resolve();
       });
@@ -404,7 +404,7 @@ define(function(require, exports, module) {
 
   /** @deprecated */
   function createDirectory(dirPath, silentMode) {
-    createDirectoryPromise.then(function() {
+    createDirectoryPromise(dirPath).then(function() {
       if (!silentMode) {
         TSPOSTIO.createDirectory(dirPath);
       }
