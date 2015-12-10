@@ -7,12 +7,14 @@ define(function(require, exports, module) {
     return TSCORE.currentPath + TSCORE.dirSeparator + TSCORE.metaFolder + name;
   }
 
-  function getDirectoryMetaInformation(readyCallback) {
-    if (TSCORE.IO.getDirectoryMetaInformation) {
+  function getDirectoryMetaInformation() {
+    
+    if (TSCORE.IO.listDirectoryPromise) {
       var metaFolderPath = TSCORE.currentPath + TSCORE.dirSeparator + TSCORE.metaFolder;
-      TSCORE.IO.getDirectoryMetaInformation(metaFolderPath, readyCallback);
+      console.log("getDirectoryMetaInformation: " + metaFolderPath);
+      return TSCORE.IO.listDirectoryPromise(metaFolderPath);
     } else {
-      readyCallback();
+      return Promise.resolve();
     }
   }
 

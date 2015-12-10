@@ -422,12 +422,21 @@ define(function(require, exports, module) {
     console.log('Dir History: ' + JSON.stringify(directoryHistory));
     TSCORE.currentPath = directoryPath;
 
-    TSCORE.Meta.getDirectoryMetaInformation(function() {
-      TSCORE.IO.listDirectory(directoryPath);
-      if (TSCORE.PRO) {
-        TSCORE.IO.createMetaFolder(directoryPath);
-      }
+    TSCORE.Meta.getDirectoryMetaInformation().then(function(dirList) {
+      TSCORE.metaFileList = dirList;
+      listDirectory(directoryPath);
+    }, function(error){
+      console.log(error);
+      listDirectory(directoryPath);
     });
+  }
+
+  function listDirectory(dirPath) {
+
+    TSCORE.IO.listDirectory(dirPath);
+    if (TSCORE.PRO) {
+      TSCORE.IO.createMetaFolder(dirPath);
+    }
   }
 
   function initUI() {
