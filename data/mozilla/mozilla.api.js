@@ -176,7 +176,11 @@ define(function(require, exports, module) {
       },
       function(error) {
         console.warn("Error: " + error);
-        TSPOSTIO.errorOpeningPath();
+        if(readyCallback) {
+          readyCallback();
+        } else {
+          TSPOSTIO.errorOpeningPath();  
+        }
       }
     );
   }
@@ -278,7 +282,6 @@ define(function(require, exports, module) {
               //TODO: fix buffer conversion
               var arrBuff = base64toArrayBuffer(message.content);
               resolve(arrBuff);
-              resolve(myStringView1.buffer);
             } else {
               resolve(message.content);
             }
@@ -377,7 +380,7 @@ define(function(require, exports, module) {
 
 
   function createDirectory(dirPath, silentMode) {
-    createDirectoryPromise().then(function() {
+    createDirectoryPromise(dirPath).then(function() {
       if(!silentMode) {
         TSPOSTIO.createDirectory(dirPath);
       }
@@ -403,7 +406,7 @@ define(function(require, exports, module) {
           if (message.success) {
             resolve(message.content);
           } else {
-            reject("Copy file failed");
+            reject("Create directory failed");
           }
           document.documentElement.removeEventListener("tsMessage", eventListener);
         }
