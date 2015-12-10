@@ -8,6 +8,7 @@ define(function(require, exports, module) {
 
   console.log('Loading directories.ui.js ...');
   var TSCORE = require('tscore');
+  var TSPOSTIO = require("tspostioapi");
   var directoryHistory = [];
   var dir4ContextMenu = null;
   var alternativeDirectoryNavigatorTmpl = Handlebars.compile(
@@ -636,7 +637,15 @@ define(function(require, exports, module) {
         $('body').append(uiTemplate());
         $('#createNewDirectoryButton').on('click', function() {
           // TODO validate folder name
-          TSCORE.IO.createDirectory($('#createNewDirectoryButton').attr('path') + TSCORE.dirSeparator + $('#newDirectoryName').val());
+          //TSCORE.IO.createDirectory($('#createNewDirectoryButton').attr('path') + TSCORE.dirSeparator + $('#newDirectoryName').val());
+          var dirPath = $('#createNewDirectoryButton').attr('path') + TSCORE.dirSeparator + $('#newDirectoryName').val();
+          TSCORE.IO.createDirectoryPromise(dirPath).then(function() {
+            TSPOSTIO.createDirectory(dirPath);
+          }, function(error) {
+            TSCORE.hideLoadingAnimation();
+            console.error("Creating directory " + dirPath + " failed" + error);
+            TSCORE.showAlertDialog("Creating " + dirPath + " failed.");
+          });
         });
       }
       $('#createNewDirectoryButton').attr('path', dirPath);
