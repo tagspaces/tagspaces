@@ -11,6 +11,7 @@ define(function(require, exports, module) {
   var TSCORE = require("tscore");
   var TSPOSTIO = require("tspostioapi");
   var args = [];
+  
   document.documentElement.addEventListener("tsMessage", function(event) {
     console.log("Message received in page script from content script"); //+JSON.stringify(event.detail));
     var message = event.detail;
@@ -38,67 +39,6 @@ define(function(require, exports, module) {
           console.log("Saving setting as native mozilla preference failed!");
         }
         break;
-      /*case "rename":
-        if (message.success) {
-          TSPOSTIO.renameFile(message.content[0], message.content[1]);
-        } else {
-          console.error("Rename failed");
-        }
-        break;*/
-      /*case "copy":
-        if (message.success) {
-          TSPOSTIO.copyFile(message.content[0], message.content[1]);
-        } else {
-          TSCORE.hideWaitingDialog();
-          console.error("Rename failed " + message.content);
-        }
-        break;*/
-      /*case "saveTextFile":
-        if (message.success) {
-          if (message.silent !== true) {
-            TSPOSTIO.saveTextFile(message.content);
-          }
-        } else {
-          console.error("Save failed");
-        }
-        break;*/
-      /*case "saveBinaryFile":
-        if (message.success) {
-          if(message.silent !== true) {
-            TSPOSTIO.saveBinaryFile(message.content);
-          }
-        } else {
-          console.error("Save binary failed");
-        }
-        break;*/
-      /*case "createDirectory":
-        if (message.success) {
-          if (message.silent !== true) {
-            TSPOSTIO.createDirectory(message.content);  
-          }
-        } else {
-          console.error("Create dir failed");
-        }
-        break;*/
-      /*case "loadTextFile":
-        if (message.success) {
-          TSPOSTIO.loadTextFile(message.content);
-        } else {
-          console.error("File loading failed");
-        }
-        break;*/
-      /*case "listDirectory":
-        if(args[0]) {
-          args[0](message.content);
-          args = [];
-        } else {
-          if (message.success) {
-            TSPOSTIO.listDirectory(message.content);
-          } else {
-            TSPOSTIO.errorOpeningPath();
-          }
-        }
-        break;*/
       case "indexDirectory":
         if (message.success) {
           TSPOSTIO.createDirectoryIndex(message.content);
@@ -114,13 +54,6 @@ define(function(require, exports, module) {
           console.error("Indexing directory failed");
         }
         break;
-      /*case "delete":
-        if (message.success) {
-          TSPOSTIO.deleteElement(message.content);
-        } else {
-          console.error("Delete failed");
-        }
-        break;*/
       case "selectDirectory":
         if (message.success) {
           TSPOSTIO.selectDirectory(message.content);
@@ -135,22 +68,6 @@ define(function(require, exports, module) {
           console.error("Checking for new version failed.");
         }
         break;
-      /*case "getFileProperties":
-        if (message.success) {
-          TSPOSTIO.getFileProperties(message.content);
-        } else {
-          console.error("Getting file properties failed.");
-        }
-        break;*/
-      /*case "getFileContent":
-        if (message.success) {
-          var arrBuff = base64toArrayBuffer(message.content);
-          args[0](arrBuff);
-        } else {
-          args[1](message.content);
-        }
-        args = [];
-        break;*/
       default:
         break;
     }
@@ -240,6 +157,18 @@ define(function(require, exports, module) {
      });
   }
 
+  function listDirectory(dirPath) {
+    console.log("Listing directory: " + dirPath);
+    listDirectoryPromise(dirPath).then( function(success) {
+        TSPOSTIO.listDirectory(success);
+      },
+      function(error) {
+        console.warn("Error: " + error);
+        TSPOSTIO.errorOpeningPath();
+      }
+    );
+  }
+
   function getDirectoryMetaInformation(dirPath, readyCallback) {
     console.log("getDirectoryMetaInformation: " + dirPath);
     listDirectoryPromise(dirPath).then( function(success) {
@@ -250,6 +179,68 @@ define(function(require, exports, module) {
         TSPOSTIO.errorOpeningPath();
       }
     );
+  }
+
+
+  function getFilePropertiesPromise(filePath) {
+    console.log("Getting file properties...");
+    return new Promise(function(resolve, reject) {
+      var event = document.createEvent('CustomEvent');
+      event.initCustomEvent("addon-message", true, true, {
+        "detail": {
+          "command": "getFileProperties",
+          "path": filePath
+        }
+      });
+      document.documentElement.dispatchEvent(event);
+
+      function eventListener(event) {
+        console.log("Message received in page script from content script"); //+JSON.stringify(event.detail));
+        var message = event.detail;
+        if (message.command === "getFileProperties") {
+          if (message.success) {
+            resolve(message.content);
+          } else {
+            reject("Getting file properties failed");
+          }
+          document.documentElement.removeEventListener("tsMessage", eventListener);
+        }
+      }
+      document.documentElement.addEventListener("tsMessage", eventListener);
+    });
+  }
+
+  function getFileProperties(filePath) {
+    getFilePropertiesPromise(filePath).then(function(properties) {
+      TSPOSTIO.getFileProperties(properties);
+    }, function(error) {
+      console.log("Error: " + error);
+    });
+  }
+
+
+  function createDirectoryIndex(dirPath) {
+    console.log("Creating directory index for: " + dirPath);
+    var event = document.createEvent('CustomEvent');
+    event.initCustomEvent("addon-message", true, true, {
+      "detail": {
+        "command": "createDirectoryIndex",
+        "path": dirPath
+      }
+    });
+    document.documentElement.dispatchEvent(event);
+  }
+
+  function createDirectoryTree(dirPath) {
+    console.log("Creating directory tree for: " + dirPath);
+    var event = document.createEvent('CustomEvent');
+    event.initCustomEvent("addon-message", true, true, {
+      "detail": {
+        "command": "createDirectoryTree",
+        "path": dirPath
+      }
+    });
+    document.documentElement.dispatchEvent(event);
   }
 
 
@@ -302,20 +293,12 @@ define(function(require, exports, module) {
     });
   }
 
-
-  function saveTextFile(filePath, content, overWrite, silentMode) {
-
-    saveTextFilePromise(filePath, content, overWrite).then(function() {
-      if(!silentMode) {
-        TSPOSTIO.saveTextFile(filePath);
-      }
-    }, function(error) {
-      console.log(error);
-    });
+  function getFileContent(filePath, result, error) {
+    getFileContentPromise(filePath).then(result, error);
   }
 
-  function saveTextFilePromise(filePath, content, overWrite) {
 
+  function saveFilePromise(filePath, content, overWrite) {
     return new Promise(function(resolve, reject) {
       console.log("Saving file: " + filePath);
       var event = document.createEvent('CustomEvent');
@@ -343,19 +326,18 @@ define(function(require, exports, module) {
     });
   }
 
-  function saveBinaryFile(filePath, content, overWrite, silentMode) {
-
-    saveBinaryFilePromise(filePath, content, overWrite).then(function() {
+  function saveTextFile(filePath, content, overWrite, silentMode) {
+    saveFilePromise(filePath, content, overWrite).then(function() {
       if(!silentMode) {
-        TSPOSTIO.saveBinaryFile(filePath);
+        TSPOSTIO.saveTextFile(filePath);
       }
     }, function(error) {
       console.log(error);
-    })
+    });
   }
 
-  function saveBinaryFilePromise(filePath, content, overWrite) {
 
+  function saveBinaryFilePromise(filePath, content, overWrite) {
     return new Promise(function(resolve, reject) {
     console.log("Saving binary file post: " + filePath); //+" - "+content);
     var event = document.createEvent('CustomEvent');
@@ -383,10 +365,21 @@ define(function(require, exports, module) {
     });
   }
 
+  function saveBinaryFile(filePath, content, overWrite, silentMode) {
+    saveBinaryFilePromise(filePath, content, overWrite).then(function() {
+      if(!silentMode) {
+        TSPOSTIO.saveBinaryFile(filePath);
+      }
+    }, function(error) {
+      console.log(error);
+    });
+  }
+
+
   function createDirectory(dirPath, silentMode) {
     createDirectoryPromise().then(function() {
       if(!silentMode) {
-        TSPOSTIO.createDirectory(dirPath);  
+        TSPOSTIO.createDirectory(dirPath);
       }
     }, function(error){
       console.log(error);
@@ -394,7 +387,6 @@ define(function(require, exports, module) {
   }
 
   function createDirectoryPromise(dirPath) {
-
     return new Promise(function(resolve, reject) {
       console.log("Directory " + dirPath + " created.");
       var event = document.createEvent('CustomEvent');
@@ -420,16 +412,8 @@ define(function(require, exports, module) {
     });
   }
 
-  function copyFile(filePath, newFilePath) {
-    copyFilePromise(filePath, newFilePath).then(function() {
-      TSPOSTIO.copyFile(filePath, newFilePath);
-    },function(error){
-      console.log(error);
-    });
-  }
 
   function copyFilePromise(filePath, newFilePath) {
-
     return new Promise(function(resolve, reject) {
       console.log("Copy " + filePath + " to " + newFilePath);
       var event = document.createEvent('CustomEvent');
@@ -456,16 +440,16 @@ define(function(require, exports, module) {
     });
   }
 
-  function renameFile(filePath, newFilePath) {
-    renameFilePromise(filePath, newFilePath).then(function() {
-      TSPOSTIO.renameFile(filePath, newPath);
-    }, function(error){
+  function copyFile(filePath, newFilePath) {
+    copyFilePromise(filePath, newFilePath).then(function() {
+      TSPOSTIO.copyFile(filePath, newFilePath);
+    },function(error){
       console.log(error);
     });
   }
 
-  function renameFilePromise(filePath, newPath) {
 
+  function renameFilePromise(filePath, newPath) {
     return new Promise(function(resolve, reject) {
       console.log("Renaming " + filePath + " to " + newFilePath);
       var event = document.createEvent('CustomEvent');
@@ -493,36 +477,29 @@ define(function(require, exports, module) {
     });
   }
 
-  function renameDirectory(filePath, newFilePath) {
-    //
-    TSCORE.showAlertDialog($.i18n.t("ns.common:functionalityNotImplemented"));
-  }
-
-
-  function listDirectory(dirPath) {
-    console.log("Listing directory: " + dirPath);
-    listDirectoryPromise(dirPath).then( function(success) {
-        TSPOSTIO.listDirectory(success);
-      },
-      function(error) {
-        console.warn("Error: " + error);
-        TSPOSTIO.errorOpeningPath();
-      }
-    );
-  }
-
-  function deleteElement(path) {
-    deleteFilePromise(path).then(function(result) {
-       TSPOSTIO.deleteElement(content);
-    }, function(error) {
+  function renameFile(filePath, newFilePath) {
+    renameFilePromise(filePath, newFilePath).then(function() {
+      TSPOSTIO.renameFile(filePath, newPath);
+    }, function(error){
       console.log(error);
     });
   }
 
+
+  function renameDirectoryPromise(path) {
+    return new Promise(function(res, rej) {
+      TSCORE.showAlertDialog($.i18n.t("ns.common:functionalityNotImplemented"));
+      res(true);
+    });
+  }
+
+  function renameDirectory(filePath, newFilePath) {
+    renameDirectoryPromise();
+  }
+
+
   function deleteFilePromise(path) {
-
     return new Promise(function(resolve, reject) {
-
       console.log("Deleting: " + path);
       var event = document.createEvent('CustomEvent');
       event.initCustomEvent("addon-message", true, true, {
@@ -548,74 +525,24 @@ define(function(require, exports, module) {
     });
   }
 
-  function deleteDirectory(dirPath) {
-    //
-    TSCORE.showAlertDialog($.i18n.t("ns.common:functionalityNotImplemented"));
-  }
-
-
-  function createDirectoryIndex(dirPath) {
-    console.log("Creating directory index for: " + dirPath);
-    var event = document.createEvent('CustomEvent');
-    event.initCustomEvent("addon-message", true, true, {
-      "detail": {
-        "command": "createDirectoryIndex",
-        "path": dirPath
-      }
-    });
-    document.documentElement.dispatchEvent(event);
-  }
-
-  function createDirectoryTree(dirPath) {
-    console.log("Creating directory tree for: " + dirPath);
-    var event = document.createEvent('CustomEvent');
-    event.initCustomEvent("addon-message", true, true, {
-      "detail": {
-        "command": "createDirectoryTree",
-        "path": dirPath
-      }
-    });
-    document.documentElement.dispatchEvent(event);
-  }
-
-  function getFileProperties(filePath) {
-    getFilePropertiesPromise(filePath).then(function(properties) {
-      TSPOSTIO.getFileProperties(properties);
+  function deleteElement(path) {
+    deleteFilePromise(path).then(function(result) {
+       TSPOSTIO.deleteElement(content);
     }, function(error) {
-      console.log("Error: " + error);
+      console.log(error);
     });
   }
 
-  function getFilePropertiesPromise(filePath) {
-    console.log("Getting file properties...");
-    return new Promise(function(resolve, reject) {
-      var event = document.createEvent('CustomEvent');
-      event.initCustomEvent("addon-message", true, true, {
-        "detail": {
-          "command": "getFileProperties",
-          "path": filePath
-        }
-      });
-      document.documentElement.dispatchEvent(event);
 
-      function eventListener(event) {
-        console.log("Message received in page script from content script"); //+JSON.stringify(event.detail));
-        var message = event.detail;
-        if (message.command === "getFileProperties") {
-          if (message.success) {
-            resolve(message.content);
-          } else {
-            reject("Getting file properties failed");
-          }
-          document.documentElement.removeEventListener("tsMessage", eventListener);
-        }
-      }
-      document.documentElement.addEventListener("tsMessage", eventListener);
+  function deleteDirectoryPromise(path) {
+    return new Promise(function(res, rej) {
+      TSCORE.showAlertDialog($.i18n.t("ns.common:functionalityNotImplemented"));
+      res(true);
     });
   }
 
-  function getFileContent(filePath, result, error) {
-    getFileContentPromise(filePath).then(result, error);
+  function deleteDirectory(dirPath) {
+    deleteDirectoryPromise();
   }
 
 
@@ -680,26 +607,26 @@ define(function(require, exports, module) {
   exports.getFileContentPromise = getFileContentPromise;
   exports.getFileContent = getFileContent;
 
-  //exports.saveFilePromise = saveFilePromise;
+  exports.saveFilePromise = saveFilePromise;
   exports.saveTextFile = saveTextFile; /** @deprecated */
   exports.saveBinaryFile = saveBinaryFile; /** @deprecated */
 
-  //exports.createDirectoryPromise = createDirectoryPromise;
+  exports.createDirectoryPromise = createDirectoryPromise;
   exports.createDirectory = createDirectory; /** @deprecated */
 
-  //exports.copyFilePromise = copyFilePromise;
+  exports.copyFilePromise = copyFilePromise;
   exports.copyFile = copyFile; /** @deprecated */
 
-  //exports.renameFilePromise = renameFilePromise;
+  exports.renameFilePromise = renameFilePromise;
   exports.renameFile = renameFile; /** @deprecated */
 
-  //exports.renameDirectoryPromise = renameDirectoryPromise;
+  exports.renameDirectoryPromise = renameDirectoryPromise;
   exports.renameDirectory = renameDirectory; /** @deprecated */
 
-  //exports.deleteFilePromise = deleteFilePromise;
+  exports.deleteFilePromise = deleteFilePromise;
   exports.deleteElement = deleteElement; /** @deprecated */
 
-  //exports.deleteDirectoryPromise = deleteDirectoryPromise;
+  exports.deleteDirectoryPromise = deleteDirectoryPromise;
   exports.deleteDirectory = deleteDirectory; /** @deprecated */
 
   exports.selectDirectory = selectDirectory;
