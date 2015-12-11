@@ -56,7 +56,7 @@ define(function(require, exports, module) {
       TSCORE.metaFileList.push(entry);
     }
     var content = JSON.stringify(metaData);
-    TSCORE.IO.saveTextFile(metaFilePath, content, true, true);
+    TSCORE.IO.saveFilePromise(metaFilePath, content, true);
   }
 
   function updateTsMetaData(oldFileName, newFileName)  { 
@@ -77,7 +77,7 @@ define(function(require, exports, module) {
           }
           var newName = TSCORE.Utils.baseName(newFileName) + "." + element.name.split('.').pop();
           var newFilePath = path + TSCORE.dirSeparator + TSCORE.metaFolder + TSCORE.dirSeparator + newName;
-          TSCORE.IO.renameFile(element.path, newFilePath);
+          TSCORE.IO.renameFilePromise(element.path, newFilePath);
 
           if (pathOld == TSCORE.currentPath) {
             element.name = newName;
@@ -87,8 +87,9 @@ define(function(require, exports, module) {
           }
           
         } else {
-          TSCORE.IO.deleteElement(element.path);
-          TSCORE.metaFileList.splice(index, 1);
+          TSCORE.IO.deleteFilePromise(element.path).then(function() {
+            TSCORE.metaFileList.splice(index, 1);
+          });
         }
       }
     });
@@ -112,19 +113,15 @@ define(function(require, exports, module) {
   }
 
   function loadMetaFileJson(filePath) {
+    console.log("loadMetaFileJson: " + filePath);
     var promise = new Promise(function(resolve, reject) {
       var metaFileJson = findMetaFilebyPath(filePath, TSCORE.metaFileExt);
       if (metaFileJson) {
-        TSCORE.IO.getFileContent(metaFileJson, function(result) {
-          try {
-            var str = String.fromCharCode.apply(null, new Uint8Array(result));
-            str = (str.charCodeAt(0) != 0x7B) ? str.substring(3, str.length) : str;
-            var metaData = JSON.parse(str);
-            resolve(metaData);
-          } catch (e) {
-            console.log("loadMetaFileJson: error: " + e.message);
-            resolve(null);
-          }
+        TSCORE.IO.getFileContentPromise(metaFileJson, "text").then(function(result) {
+          var metaData = JSON.parse(result);
+          resolve(metaData);
+        }, function(error){
+          reject(error);
         });
       } else {
         resolve(null);
