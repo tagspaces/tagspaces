@@ -6,6 +6,7 @@ define(function(require, exports, module) {
   'use strict';
   console.log('Loading tagutils.js ...');
   var TSCORE = require('tscore');
+  var TSPOSTIO = require("tspostioapi");
   var BEGIN_TAG_CONTAINER = '[';
   var END_TAG_CONTAINER = ']';
 
@@ -331,6 +332,17 @@ define(function(require, exports, module) {
     return newFileName;
   }
 
+  function renameFile(filePath, newFilePath) {
+    console.log("tagutils.renameFile " + filePath);
+    TSCORE.IO.renameFilePromise(filePath, newFilePath).then(function(success) {
+      TSCORE.hideWaitingDialog();
+      TSPOSTIO.renameFile(filePath, newFilePath);
+    }, function(err) {
+      TSCORE.hideWaitingDialog();
+      TSCORE.showAlertDialog(err);
+    });
+  }
+
   function writeTagsToFile(filePath, tags) {
     console.log('Add the tags for: ' + filePath);
 
@@ -349,7 +361,7 @@ define(function(require, exports, module) {
         }
       }
       var newFileName = generateFileName(fileName, extractedTags);
-      TSCORE.IO.renameFile(filePath, containingDirectoryPath + TSCORE.dirSeparator + newFileName);
+      renameFile(filePath, containingDirectoryPath + TSCORE.dirSeparator + newFileName);
     }
 
     collectRecentTags(tags);
@@ -369,7 +381,7 @@ define(function(require, exports, module) {
       }
     }
     var newFileName = generateFileName(fileName, extractedTags);
-    TSCORE.IO.renameFile(filePath, containingDirectoryPath + TSCORE.dirSeparator + newFileName);
+    renameFile(filePath, containingDirectoryPath + TSCORE.dirSeparator + newFileName);
   }
 
   function cleanFileFromTags(filePath) {
@@ -380,7 +392,7 @@ define(function(require, exports, module) {
     if (fileExt.length > 0) {
       fileExt = '.' + fileExt;
     }
-    TSCORE.IO.renameFile(filePath, containingDirectoryPath + TSCORE.dirSeparator + fileTitle + fileExt);
+    renameFile(filePath, containingDirectoryPath + TSCORE.dirSeparator + fileTitle + fileExt);
   }
 
   function cleanFilesFromTags(filePathArray) {
@@ -433,7 +445,7 @@ define(function(require, exports, module) {
       }
     }
     var newFileName = generateFileName(fileName, extractedTags);
-    TSCORE.IO.renameFile(filePath, containingDirectoryPath + TSCORE.dirSeparator + newFileName);
+    renameFile(filePath, containingDirectoryPath + TSCORE.dirSeparator + newFileName);
   }
 
   // Replaces a tag with a new one
@@ -456,7 +468,7 @@ define(function(require, exports, module) {
       }
       var newFileName = generateFileName(fileName, extractedTags);
       if (newFileName !== fileName) {
-        TSCORE.IO.renameFile(filePath, containingDirectoryPath + TSCORE.dirSeparator + newFileName);
+        renameFile(filePath, containingDirectoryPath + TSCORE.dirSeparator + newFileName);
       }
     }
   }
@@ -471,7 +483,7 @@ define(function(require, exports, module) {
     }
     // TODO generalize generateFileName to support fileTitle & fileExtension
     var newFileName = generateFileName(newTitle, extractedTags);
-    TSCORE.IO.renameFile(filePath, containingDirectoryPath + TSCORE.dirSeparator + newFileName + fileExt);
+    renameFile(filePath, containingDirectoryPath + TSCORE.dirSeparator + newFileName + fileExt);
     return true;
   }
 
@@ -495,7 +507,7 @@ define(function(require, exports, module) {
       }
       var newFileName = generateFileName(fileName, newTags);
       if (newFileName !== fileName) {
-        TSCORE.IO.renameFile(filePath, containingDirectoryPath + TSCORE.dirSeparator + newFileName);
+        renameFile(filePath, containingDirectoryPath + TSCORE.dirSeparator + newFileName);
       }
     }
   }
