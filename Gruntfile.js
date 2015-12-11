@@ -35,6 +35,9 @@ module.exports = function(grunt) {
           src: 'data/mozilla/mozilla.package.tmpl.json',
           dest: 'package.json'
         }, {
+          src: 'data/node-webkit/package.tmpl.json',
+          dest: 'data/package.json'
+        }, {
           src: 'data/chromium/chrome.manifest.tmpl.json',
           dest: 'data/manifest.json'
         }]
