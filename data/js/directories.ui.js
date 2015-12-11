@@ -433,8 +433,18 @@ define(function(require, exports, module) {
   }
 
   function listDirectory(dirPath) {
+    //TSCORE.IO.listDirectory(dirPath);
+    TSCORE.IO.listDirectoryPromise(dirPath).then(
+      function(entries) {
+        TSPOSTIO.listDirectory(entries);
+        console.log("Listing: " + dirPath + " done!");
+      },
+      function(err) {
+        TSPOSTIO.errorOpeningPath();
+        console.log("Error listing directory" + err);
+      }
+    );
 
-    TSCORE.IO.listDirectory(dirPath);
     if (TSCORE.PRO) {
       TSCORE.IO.createMetaFolder(dirPath);
     }
@@ -466,7 +476,15 @@ define(function(require, exports, module) {
       TSCORE.showConfirmDialog($.i18n.t('ns.dialogs:deleteDirectoryTitleConfirm'), $.i18n.t(dlgConfirmMsgId, {
         dirPath: dir4ContextMenu
       }), function() {
-        TSCORE.IO.deleteDirectory(dir4ContextMenu);
+        TSCORE.IO.deleteDirectoryPromise(dir4ContextMenu).then(function() {
+            TSPOSTIO.deleteDirectory(dir4ContextMenu);
+          },
+          function(error) {
+            TSCORE.hideLoadingAnimation();
+            console.error("Deleting directory " + dir4ContextMenu + " failed " + error);
+            TSPOSTIO.deleteDirectoryFailed(dir4ContextMenu);
+          }
+        );
       });
     });
     $('#directoryMenuOpenDirectory').click(function() {
@@ -680,7 +698,16 @@ define(function(require, exports, module) {
         var uiTemplate = Handlebars.compile(uiTPL);
         $('body').append(uiTemplate());
         $('#renameDirectoryButton').on('click', function() {
-          TSCORE.IO.renameDirectory($('#renameDirectoryButton').attr('path'), $('#directoryNewName').val());
+          var dirPath = $('#renameDirectoryButton').attr('path');
+          var newDirPath = $('#directoryNewName').val();
+          TSCORE.IO.renameDirectoryPromise(dirPath, newDirPath)
+          .then(function(newDirName) {
+            TSCORE.hideWaitingDialog();
+            TSPOSTIO.renameDirectory(dirPath, newDirName);
+          }, function(err) {
+            TSCORE.hideWaitingDialog();
+            TSCORE.showAlertDialog(err);
+          });
         });
       }
       $('#formDirectoryRename').validator();

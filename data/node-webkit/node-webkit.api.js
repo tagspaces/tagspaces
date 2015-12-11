@@ -519,7 +519,8 @@ define(function(require, exports, module) {
   }
 
 
-  function renameDirectoryPromise(dirPath, newDirPath) {
+  function renameDirectoryPromise(dirPath, newDirName) {
+    var newDirPath = TSCORE.TagUtils.extractParentDirectoryPath(dirPath) + TSCORE.dirSeparator + newDirName;
     console.log("Renaming dir: " + dirPath + " to " + newDirPath);
     return new Promise(function(resolve, reject) {
       if (dirPath === newDirPath) { 
@@ -535,7 +536,7 @@ define(function(require, exports, module) {
             console.error("Renaming directory failed " + error);
             reject("Renaming " + dirPath + " failed."); 
           }
-          resolve(true);
+          resolve(newDirPath);
         });
       } else {
         reject($.i18n.t("ns.common:pathIsNotDirectory", {dirName:dirPath}), $.i18n.t("ns.common:directoryRenameFailed"));
@@ -545,14 +546,15 @@ define(function(require, exports, module) {
 
   /** @deprecated */
   function renameDirectory(dirPath, newDirName) {
-    var newDirPath = TSCORE.TagUtils.extractParentDirectoryPath(dirPath) + TSCORE.dirSeparator + newDirName;
+    alert("Not implemented");
+    /*var newDirPath = TSCORE.TagUtils.extractParentDirectoryPath(dirPath) + TSCORE.dirSeparator + newDirName;
     renameDirectoryPromise(dirPath, newDirPath).then(function() {
       TSCORE.hideWaitingDialog();
       TSPOSTIO.renameDirectory(dirPath, newDirPath);
     }, function(err) {
       TSCORE.hideWaitingDialog();
       TSCORE.showAlertDialog(err);
-    });
+    });*/
   }
 
 
@@ -754,6 +756,11 @@ define(function(require, exports, module) {
 
 
   function deleteDirectoryPromise(path) {
+
+    if (TSCORE.PRO && TSCORE.Config.getUseTrashCan()) {
+      return trash([path]);
+    }
+
     return new Promise(function(resolve, reject) {
       fs.rmdir(path, function(error) {
         if (error) {
@@ -767,9 +774,9 @@ define(function(require, exports, module) {
 
   /** @deprecated */
   function deleteDirectory(path) {
-    if (TSCORE.PRO && TSCORE.Config.getUseTrashCan()) {
-      return trash([path]);
-    }
+    //if (TSCORE.PRO && TSCORE.Config.getUseTrashCan()) {
+    //  return trash([path]);
+    //}
 
     deleteDirectoryPromise(path).then(function() {
         TSPOSTIO.deleteDirectory(path);
@@ -781,7 +788,6 @@ define(function(require, exports, module) {
       }
     );
   }
-
 
   function selectDirectory() {
     if (document.getElementById('folderDialogNodeWebkit') === null) {
