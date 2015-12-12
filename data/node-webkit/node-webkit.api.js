@@ -747,6 +747,11 @@ define(function(require, exports, module) {
 
 
   function deleteFilePromise(path) {
+    
+    if (TSCORE.PRO && TSCORE.Config.getUseTrashCan()) {
+      return trash([path]);
+    }
+
     return new Promise(function(resolve, reject) {
       fs.unlink(path, function(error) {
         if (error) {
@@ -760,9 +765,6 @@ define(function(require, exports, module) {
 
   /** @deprecated */
   function deleteElement(path) {
-    if (TSCORE.PRO && TSCORE.Config.getUseTrashCan()) {
-      return trash([path]);
-    }
 
     deleteFilePromise(path).then(function() {
         TSPOSTIO.deleteElement(path);

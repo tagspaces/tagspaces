@@ -8,6 +8,7 @@ define(function(require, exports, module) {
   console.log("Loading UI for perspectiveList");
 
   var TSCORE = require("tscore");
+  var TSPOSTIO = require("tspostioapi");
 
   var TMB_SIZES = ["100px", "200px", "300px", "400px", "500px"];
   var supportedFileTypeThumnailing = ['jpg', 'jpeg', 'png', 'gif'];
@@ -77,8 +78,14 @@ define(function(require, exports, module) {
         $.i18n.t(dlgConfirmMsgId, {
           selectedFiles:  selFiles.toString()
         }), function() {
-          TSCORE.selectedFiles.forEach(function(file) {
-            TSCORE.IO.deleteElement(file);
+          TSCORE.selectedFiles.forEach(function(path) {
+            TSCORE.IO.deleteFilePromise(path).then(function() {
+              TSPOSTIO.deleteElement(path);
+            }, function(error) {
+              TSCORE.hideLoadingAnimation();
+              TSCORE.showAlertDialog("Deleting file " + path + " failed.");
+              console.error("Deleting file " + path + " failed " + error);
+            });
           });
         });
     });
