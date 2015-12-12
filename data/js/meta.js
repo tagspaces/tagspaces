@@ -56,7 +56,7 @@ define(function(require, exports, module) {
       TSCORE.metaFileList.push(entry);
     }
     var content = JSON.stringify(metaData);
-    TSCORE.IO.saveFilePromise(metaFilePath, content, true);
+    TSCORE.IO.saveTextFilePromise(metaFilePath, content, true);
   }
 
   function updateTsMetaData(oldFileName, newFileName)  { 
@@ -220,7 +220,7 @@ define(function(require, exports, module) {
       var metaFileJson = findMetaFilebyPath(filePath, TSCORE.metaFileExt);
       if (metaFileJson) {
         var content = JSON.stringify(metaObj.metaData);
-        TSCORE.IO.saveTextFile(metaFileJson, content, true, true);
+        TSCORE.IO.saveTextFilePromise(metaFileJson, content, true);
       }
     }
   }
