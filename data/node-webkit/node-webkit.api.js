@@ -656,20 +656,20 @@ define(function(require, exports, module) {
 
   function saveFilePromise(filePath, content, overwrite) {
     return new Promise(function(resolve, reject) {
-      function saveFile(filePath, content) {
+      function saveFile(filePath, content, isNewFile) {
         fs.writeFile(filePath, content, 'utf8', function(error) {
           if (error) {
             reject(error);
           }
-          resolve();
+          resolve(isNewFile);
         });
       }
 
       getPropertiesPromise(filePath).then(function(entry) {
         if (entry && entry.isFile && overwrite) {
-          saveFile(filePath, content);
+          saveFile(filePath, content, false);
         } else if (!entry) {
-          saveFile(filePath, content);
+          saveFile(filePath, content, true);
         } else {
           resolve();
         }
