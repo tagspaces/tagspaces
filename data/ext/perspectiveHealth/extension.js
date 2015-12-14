@@ -99,7 +99,7 @@ define(function(require, exports, module) {
     				  +TSCORE.Config.getTagDelimiter()+"MUS"+$("#musclesData").val()+"%"
     				  +TSCORE.Config.getTagDelimiter()+"BON"+$("#bonesData").val()+"kg"
     				  +TSCORE.TagUtils.endTagContainer+".tsd";
-        TSCORE.IO.saveTextFile(filePath,"Weight Data Created by TagSpaces");    
+        TSCORE.IO.saveTextFilePromise(filePath, "Weight Data Created by TagSpaces");    
     } 	    
 	
 	exports.updateTreeData = function updateIndexData(fsTreeData) {
