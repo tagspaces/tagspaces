@@ -8,6 +8,7 @@ define(function(require, exports, module) {
   console.log("Loading UI for perspectiveDefault");
 
   var TSCORE = require("tscore");
+  var TSPOSTIO = require("tspostioapi");
   var TMB_SIZES = ["200px", "300px", "100px"];
 
   var MONTH = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -225,8 +226,16 @@ define(function(require, exports, module) {
         $.i18n.t(dlgConfirmMsgId, {
           selectedFiles:  selFiles.toString()
         }), function() {
-          TSCORE.selectedFiles.forEach(function(file) {
-            TSCORE.IO.deleteElement(file);
+          TSCORE.selectedFiles.forEach(function(filePath) {
+            TSCORE.IO.deleteFilePromise(filePath).then(function() {
+                TSPOSTIO.deleteElement(filePath);
+              },
+              function(error) {
+                TSCORE.hideLoadingAnimation();
+                TSCORE.showAlertDialog("Deleting file " + filePath + " failed.");
+                console.error("Deleting file " + filePath + " failed " + error);
+              }
+            );
           });
         });
     });
