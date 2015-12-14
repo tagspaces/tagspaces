@@ -666,15 +666,14 @@ define(function(require, exports, module) {
       }
 
       getPropertiesPromise(filePath).then(function(entry) {
+        overwrite = overwrite || true;
         if (entry && entry.isFile && overwrite) {
           saveFile(filePath, content, false);
-        } else if (!entry) {
-          saveFile(filePath, content, true);
         } else {
-          resolve();
+          saveFile(filePath, content, true);
         }
       }, function(err) {
-        saveFile(filePath, content);
+        saveFile(filePath, content, true);
       });
     });
   }
