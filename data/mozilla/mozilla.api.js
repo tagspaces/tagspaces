@@ -611,6 +611,8 @@ define(function(require, exports, module) {
   exports.getFileContent = getFileContent;
 
   exports.saveFilePromise = saveFilePromise;
+  exports.saveTextFilePromise = saveFilePromise;
+  exports.saveBinaryFilePromise = saveBinaryFilePromise;
   exports.saveTextFile = saveTextFile; /** @deprecated */
   exports.saveBinaryFile = saveBinaryFile; /** @deprecated */
 

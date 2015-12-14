@@ -272,13 +272,16 @@ define(function(require, exports, module) {
   }
 
 
-  function saveFilePromise(filePath, content, mode) {
+  function saveFilePromise(filePath, content, overwrite) {
     console.log("Saving binary file: " + filePath);
     return new Promise(function(resolve, reject) {
-      var blob = new Blob([content], {
-        type: "text/plain;charset=utf-8"
-      });
-      saveAs(blob, TSCORE.TagUtils.extractFileName(filePath));
+      overwrite = overwrite || true;
+      if(overwrite) {
+        var blob = new Blob([content], {
+          type: "text/plain;charset=utf-8"
+        });
+        saveAs(blob, TSCORE.TagUtils.extractFileName(filePath));
+      }
       resolve();
     });
   }
@@ -441,6 +444,8 @@ define(function(require, exports, module) {
   exports.getFileContent = getFileContent; /** @deprecated */
 
   exports.saveFilePromise = saveFilePromise;
+  exports.saveTextFilePromise = saveFilePromise;
+  exports.saveBinaryFilePromise = saveFilePromise;
   exports.saveTextFile = saveTextFile; /** @deprecated */
   exports.saveBinaryFile = saveBinaryFile; /** @deprecated */
 

@@ -811,6 +811,24 @@ define(function(require, exports, module) {
     });
   }
 
+  function saveTextFilePromise(filePath, content, overWrite) {
+    console.log("Saving file: " + filePath);
+    // Handling the UTF8 support for text files
+    var UTF8_BOM = "\ufeff";
+    if (content.indexOf(UTF8_BOM) === 0) {
+      console.log("Content beging with a UTF8 bom");
+    } else {
+      content = UTF8_BOM + content;
+    }
+    return saveFilePromise(filePath, content, overWrite);
+  }
+
+  function saveBinaryFilePromise(filePath, content, overWrite) {
+    console.log("Saveing binary file: " + filePath);
+    var dataView = new Int8Array(content);
+    return saveFilePromise(filePath, content, overWrite);
+  }
+
   function saveTextFile(filePath, content, overWrite, silentMode) {
     console.log("Saving file: " + filePath);
     TSCORE.showLoadingAnimation();
@@ -1178,6 +1196,8 @@ define(function(require, exports, module) {
   exports.getFileContentPromise = getFileContentPromise;
 
   exports.saveFilePromise = saveFilePromise;
+  exports.saveTextFilePromise = saveTextFilePromise;
+  exports.saveBinaryFilePromise = saveBinaryFilePromise;
   exports.saveTextFile = saveTextFile; /** @deprecated */
   exports.saveBinaryFile = saveBinaryFile; /** @deprecated */
 

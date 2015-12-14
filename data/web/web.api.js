@@ -275,7 +275,7 @@ define(function(require, exports, module) {
   }
 
 
-  function saveFilePromise(filePath, content, overWrite, silentMod, mode) {
+  function saveFilePromise(filePath, content, overWrite, mode) {
     return new Promise(function(resolve, reject) {
       var isNewFile = false;
       davClient.propfind(encodeURI(filePath), function(status, data) {
@@ -304,9 +304,19 @@ define(function(require, exports, module) {
     });
   }
 
+  function saveTextFilePromise(filePath, content, overWrite) {
+    console.log("Saving text file: " + filePath);
+    return saveFilePromise(filePath, content, overWrite, "text");
+  }
+
+  function saveBinaryFilePromise(filePath, content, overWrite) {
+    console.log("Saving binary file: " + filePath);
+    return saveFilePromise(filePath, content, overWrite);
+  }
+
   function saveTextFile(filePath, content, overWrite, silentMode) {
     console.log("Saving file: " + filePath); //+" content: "+content);
-    saveFilePromise(filePath, content, overWrite, silentMode, "text").then(function(isNewFile) {
+    saveFilePromise(filePath, content, overWrite, "text").then(function(isNewFile) {
         if (silentMode !== true) {
           TSPOSTIO.saveTextFile(filePath, isNewFile);
         }
@@ -558,6 +568,8 @@ define(function(require, exports, module) {
   exports.getFileContentPromise = getFileContentPromise;
 
   exports.saveFilePromise = saveFilePromise;
+  exports.saveTextFilePromise = saveTextFilePromise;
+  exports.saveBinaryFilePromise = saveBinaryFilePromise;
   exports.saveTextFile = saveTextFile; /** @deprecated */
   exports.saveBinaryFile = saveBinaryFile; /** @deprecated */
 
