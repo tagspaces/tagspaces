@@ -876,7 +876,7 @@ define(function(require, exports, module) {
   }
 
   function createNewTextFile(filePath, content) {
-   TSCORE.IO.saveFilePromise(filePath, content).then(function() {
+   TSCORE.IO.saveFilePromise(filePath, content).then(function(isNewFile) {
       TSPOSTIO.saveTextFile(filePath, isNewFile);
     }, function(error) {
       TSCORE.hideLoadingAnimation();

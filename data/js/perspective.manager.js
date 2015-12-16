@@ -6,6 +6,7 @@ define(function(require, exports, module) {
   console.log('Loading perspective.manager.js ...');
   var perspectives;
   var TSCORE = require('tscore');
+  var TSPOSTIO = require("tspostioapi");
   
   function initPerspective(extPath) {
     return new Promise(function(resolve, reject) {
