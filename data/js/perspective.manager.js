@@ -246,7 +246,16 @@ define(function(require, exports, module) {
   
   var refreshFileListContainer = function() {
     // TODO consider search view
-    TSCORE.IO.listDirectory(TSCORE.currentPath);
+    //TSCORE.showLoadingAnimation();
+    TSCORE.IO.listDirectoryPromise(TSCORE.currentPath).then(
+      function(entries) {
+        TSPOSTIO.listDirectory(entries);
+      },
+      function(err) {
+        TSPOSTIO.errorOpeningPath();
+        console.warn("Error listing directory" + err);
+      }
+    );
   };
 
   var hideAllPerspectives = function() {

@@ -433,7 +433,7 @@ define(function(require, exports, module) {
   }
 
   function listDirectory(dirPath) {
-    //TSCORE.IO.listDirectory(dirPath);
+    TSCORE.showLoadingAnimation();
     TSCORE.IO.listDirectoryPromise(dirPath).then(
       function(entries) {
         TSPOSTIO.listDirectory(entries);
@@ -445,8 +445,8 @@ define(function(require, exports, module) {
       }
     );
 
-    if (TSCORE.PRO) {
-      TSCORE.IO.createMetaFolder(dirPath);
+    if (TSCORE.PRO) { // TODO add additional check if the creation of meta folders is enabled
+      TSCORE.IO.createMetaFolder(dirPath); // TODO use createDirectoryPromise
     }
   }
 

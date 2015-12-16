@@ -92,6 +92,7 @@ define(function(require, exports, module) {
   };
 
   exports.listDirectory = function(anotatedDirList) {
+    TSCORE.hideLoadingAnimation();
     TSCORE.PerspectiveManager.updateFileBrowserData(anotatedDirList);
     TSCORE.updateSubDirs(anotatedDirList);
   };
