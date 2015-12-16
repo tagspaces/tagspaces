@@ -39,9 +39,15 @@ define(function(require, exports, module) {
       //"nwfaketop": "",
       "src": extensionDirectory + "/index.html?&locale=" + TSCORE.currentLanguage,
     }));
-
-    TSCORE.IO.loadTextFile(filePath);
-
+    
+    TSCORE.IO.loadTextFilePromise(filePath).then(function(content) {
+      exports.setContent(content);
+    }, 
+    function(error) {
+      TSCORE.hideLoadingAnimation();
+      TSCORE.showAlertDialog("Loading " + filePath + " failed.");
+      console.error("Loading file " + filePath + " failed " + error);
+    });
     /*window.addEventListener("message", receiveMessage, false);
     function receiveMessage(event) {
       console.log("Test event: " + event);

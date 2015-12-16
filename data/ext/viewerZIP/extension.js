@@ -60,7 +60,7 @@ define(function(require, exports, module) {
 
     TSCORE.showLoadingAnimation();
     
-    TSCORE.IO.getFileContent(filePath, function(content) {
+    TSCORE.IO.getFileContentPromise(filePath).then(function(content) {
       var zipFile = new JSZip(content);
       $previewElement.append("<p> Contents of file " + filePath + "</p>");
       var ulFiles = $previewElement.append("<ul/>");

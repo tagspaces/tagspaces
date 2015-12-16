@@ -50,7 +50,15 @@ define(function(require, exports, module) {
         "nwdisable": "",
         "nwfaketop": ""
       }));
-      TSCORE.IO.loadTextFile(filePath);
+      
+      TSCORE.IO.loadTextFilePromise(filePath).then(function(content) {
+        exports.setContent(content);
+      }, 
+      function(error) {
+        TSCORE.hideLoadingAnimation();
+        TSCORE.showAlertDialog("Loading " + filePath + " failed.");
+        console.error("Loading file " + filePath + " failed " + error);
+      });
     } else {
       $containerElement.append($('<iframe>', {
         // sandbox: "allow-same-origin allow-scripts", // comment out due not loading pdfs in chrome ext
