@@ -14,7 +14,7 @@ define(function(require, exports, module) {
       return cordova.file.applicationDirectory + "www/ext/";
       //return location.href.replace(/index.html/gi, extPath);
     }
-    if(isChrome) {
+    if (isChrome) {
       //TODO: chrome fail to read resource://
       return chrome.extension.getURL(extPath); 
     }
@@ -45,7 +45,7 @@ define(function(require, exports, module) {
   function loadExtensionData() {
 
     var extFolderPath = getExtFolderPath();
-    if(isChrome) {
+    if (isChrome) {
       //TODO: chrome
       return Promise.resolve();
     }

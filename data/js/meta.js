@@ -120,7 +120,7 @@ define(function(require, exports, module) {
         TSCORE.IO.getFileContentPromise(metaFileJson, "text").then(function(result) {
           var metaData = JSON.parse(result);
           resolve(metaData);
-        }, function(error){
+        }, function(error) {
           reject(error);
         });
       } else {

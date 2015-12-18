@@ -276,7 +276,7 @@ define(function(require, exports, module) {
     console.log("Saving binary file: " + filePath);
     return new Promise(function(resolve, reject) {
       overwrite = overwrite || true;
-      if(overwrite) {
+      if (overwrite) {
         var blob = new Blob([content], {
           type: "text/plain;charset=utf-8"
         });

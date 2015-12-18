@@ -286,6 +286,7 @@ define(function(require, exports, module) {
         $('#moveFilesButton').click(function(e) {
           e.preventDefault();
           TSCORE.showWaitingDialog('Files are being renaming');
+          /*jshint loopfunc: true */
           for (var i = 0; i < TSCORE.selectedFiles.length; i++) {
             var newFilePath = $('#moveCopyDirectoryPath').val() + TSCORE.dirSeparator + TSCORE.TagUtils.extractFileName(TSCORE.selectedFiles[i]);
             var filePath = TSCORE.selectedFiles[i];
@@ -301,7 +302,7 @@ define(function(require, exports, module) {
         $('#copyFilesButton').click(function(e) {
           e.preventDefault();
           TSCORE.showWaitingDialog('Files are being copied');
-          
+          /*jshint loopfunc: true */
           for (var i = 0; i < TSCORE.selectedFiles.length; i++) {
             var newFilePath = $('#moveCopyDirectoryPath').val() + TSCORE.dirSeparator + TSCORE.TagUtils.extractFileName(TSCORE.selectedFiles[i]);
             var filePath = TSCORE.selectedFiles[i];
@@ -876,7 +877,7 @@ define(function(require, exports, module) {
   }
 
   function createNewTextFile(filePath, content) {
-   TSCORE.IO.saveFilePromise(filePath, content).then(function(isNewFile) {
+    TSCORE.IO.saveFilePromise(filePath, content).then(function(isNewFile) {
       TSPOSTIO.saveTextFile(filePath, isNewFile);
     }, function(error) {
       TSCORE.hideLoadingAnimation();
