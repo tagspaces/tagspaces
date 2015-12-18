@@ -381,41 +381,38 @@ define(function(require, exports, module) {
                   "lmdt": ""
                 });
               } else {
-                var filePromise = Promise.resolve({
-                  then: function(resolve, reject) {
-                    if (entries[i] && entries[i].isFile) {
-                      entries[i].file(function(entry) {
-                          resolve({
+                if (entries[i] && entries[i].isFile) {
+                  var wFile = entries[i];
+                  var filePromise = Promise.resolve({
+                  then: function(onFulfill, onReject) {
+                      wFile.file(function(entry) {
+                          if (!entry.fullPath) {
+                            entry.fullPath = resolveFullPath(entry.localURL);
+                          }
+                          anotatedDirList.push({
                             "name": entry.name,
                             "isFile": true,
                             "size": entry.size,
                             "lmdt": entry.lastModifiedDate,
                             "path": entry.fullPath
                           });
+                          onFulfill();
                         }, function(err) {
-                          console.log("Error reading entry " + entry.name);
+                          onReject("Error reading entry " + entry.name);
                         }
                       );
                     }
-                  }
-                }); // jshint ignore:line
-                fileWorkers.push(filePromise);
+                  }); // jshint ignore:line
+                  fileWorkers.push(filePromise);
+                }
               }
             }
-            Promise.all(fileWorkers).then(function(values) {
-              if (values.length > 0) {
-                anotatedDirList = anotatedDirList.concat(values);
-              }
+            Promise.all(fileWorkers).then(function() { 
               resolve(anotatedDirList);
-            });
-          },
-          function(err) {
-            reject(err);
-          }
+            }, reject);
+          }, reject
         );
-      }, function(err) {
-        reject(err);
-      }
+      }, reject
       );
     });
   }
