@@ -25,6 +25,7 @@
 * plyr.io - https://github.com/selz/plyr - https://raw.githubusercontent.com/Selz/plyr/v1.2.0/dist/plyr.js
 * photoswipe - http://photoswipe.com/ - https://github.com/dimsemenov/PhotoSwipe/
 * jszip (used in viewerZIP extension) - http://stuk.github.io/jszip/
+* epub.js - https://github.com/futurepress/epub.js/ - https://raw.githubusercontent.com/futurepress/epub.js/master/build/epub.js
 
 * Voldsoftware Libs - https://github.com/voldsoftware/
 
