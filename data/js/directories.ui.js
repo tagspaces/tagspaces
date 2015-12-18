@@ -445,8 +445,8 @@ define(function(require, exports, module) {
       }
     );
 
-    if (TSCORE.PRO) { // TODO add additional check if the creation of meta folders is enabled
-      TSCORE.IO.createMetaFolder(dirPath); // TODO use createDirectoryPromise
+    if (TSCORE.PRO && TSCORE.Config.getEnableMetaData()) {
+      TSCORE.Meta.createMetaFolder(dirPath);
     }
   }
 

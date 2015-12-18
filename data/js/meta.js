@@ -244,6 +244,20 @@ define(function(require, exports, module) {
       });
   }
 
+  function createMetaFolder(dirPath) {
+    if (dirPath.lastIndexOf(TSCORE.metaFolder) >= dirPath.length - TSCORE.metaFolder.length) {
+      console.log("Can not create meta folder in a meta folder");
+      return;
+    }
+    var metaDirPath = dirPath + TSCORE.dirSeparator + TSCORE.metaFolder;
+    TSCORE.IO.createDirectoryPromise(metaDirPath).then(function() {
+      console.log("Metafolder created: " + metaDirPath);
+    }).catch(function(error) {
+      TSCORE.hideLoadingAnimation();
+      console.error(error);
+    });
+  }
+
   exports.getDirectoryMetaInformation = getDirectoryMetaInformation;
   exports.findMetaFilebyPath  =  findMetaFilebyPath;
   exports.findMetaObjectFromFileList = findMetaObjectFromFileList;
@@ -256,4 +270,5 @@ define(function(require, exports, module) {
   exports.renameMetaTag = renameMetaTag;
   exports.removeMetaTag = removeMetaTag;
   exports.loadFolderMetaData = loadFolderMetaData;
+  exports.createMetaFolder = createMetaFolder;
 });
