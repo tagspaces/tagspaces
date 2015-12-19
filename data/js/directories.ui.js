@@ -304,7 +304,14 @@ define(function(require, exports, module) {
           var fileName = TSCORE.TagUtils.extractFileName(filePath);
           var targetDir = $(this).attr('key');
           console.log('Moving file: ' + filePath + ' to ' + targetDir);
-          TSCORE.IO.renameFile(filePath, targetDir + TSCORE.dirSeparator + fileName);
+          var newFilePath = targetDir + TSCORE.dirSeparator + fileName;
+          TSCORE.IO.renameFilePromise(filePath, newFilePath).then(function(success) {
+            TSCORE.hideWaitingDialog();
+            TSPOSTIO.renameFile(filePath, newFilePath);
+          }, function(err) {
+            TSCORE.hideWaitingDialog();
+            TSCORE.showAlertDialog(err);
+          });
           $(ui.helper).remove();
         }
       });
@@ -324,7 +331,14 @@ define(function(require, exports, module) {
             var fileName = TSCORE.TagUtils.extractFileName(filePath);
             var targetDir = $(this).attr('key');
             console.log('Moving file: ' + filePath + ' to ' + targetDir);
-            TSCORE.IO.renameFile(filePath, targetDir + TSCORE.dirSeparator + fileName);
+            var newFilePath = targetDir + TSCORE.dirSeparator + fileName;
+            TSCORE.IO.renameFilePromise(filePath, newFilePath).then(function(success) {
+              TSCORE.hideWaitingDialog();
+              TSPOSTIO.renameFile(filePath, newFilePath);
+            }, function(err) {
+              TSCORE.hideWaitingDialog();
+              TSCORE.showAlertDialog(err);
+            });
             $(ui.helper).remove();
           }
         }
