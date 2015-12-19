@@ -195,7 +195,7 @@ define(function(require, exports, module) {
     }
   }
 
-  // Bring the TagSpaces window on top of the windows
+  // Brings the TagSpaces window on top of the windows
   function focusWindow() {
     gui.Window.get().focus();
   }
@@ -277,26 +277,6 @@ define(function(require, exports, module) {
   }
 
 
-  function listDirectory(dirPath, readyCallback) {
-    listDirectoryPromise(dirPath).then(
-      function(entries) {
-        if (readyCallback) {
-          readyCallback(entries);
-        }
-        TSPOSTIO.listDirectory(entries);
-        console.log("Listing: " + dirPath + " done!");
-      },
-      function(err) {
-        if (readyCallback) {
-          readyCallback([]);
-        } else {
-          TSPOSTIO.errorOpeningPath();
-        }
-        console.log("Error listing directory" + err);
-      }
-    );
-  }
-
   function listDirectoryPromise(path) {
     return new Promise(function(resolve, reject) {
       var statEntriesPromises = [];
@@ -318,14 +298,6 @@ define(function(require, exports, module) {
           });
         }
       });
-    });
-  }
-
-  /** @deprecated */
-  function getDirectoryMetaInformation(dirPath, readyCallback) {
-    listDirectory(dirPath, function(anotatedDirList) {
-      TSCORE.metaFileList = anotatedDirList;
-      readyCallback(anotatedDirList);
     });
   }
 
@@ -370,18 +342,6 @@ define(function(require, exports, module) {
     });
   }
 
-  /** @deprecated */
-  function getFileProperties(filePath) {
-    getPropertiesPromise(filePath).then(function(fileProperties) {
-      if (fileProperties) {
-        TSPOSTIO.getFileProperties(fileProperties);
-      }
-    }).catch(function(error) {
-      TSCORE.hideLoadingAnimation();
-      TSCORE.showAlertDialog("Error getting properties for " + filePath);
-    });
-  }
-
   /**
    * Create a directory
    * @name createDirectoryPromise
@@ -401,42 +361,6 @@ define(function(require, exports, module) {
       });
     });
   }
-
-  /** @deprecated */
-  function createDirectory(dirPath, silentMode) {
-    createDirectoryPromise(dirPath).then(function() {
-      if (!silentMode) {
-        TSPOSTIO.createDirectory(dirPath);
-      }
-    }, function(error) {
-      TSCORE.hideLoadingAnimation();
-      console.error("Creating directory " + dirPath + " failed");
-      if (!silentMode) {
-        TSCORE.showAlertDialog("Creating " + dirPath + " failed.");
-      }
-    });
-  }
-
-  /** @deprecated */
-  function createMetaFolder(dirPath) {
-    if (dirPath.lastIndexOf(TSCORE.metaFolder) >= dirPath.length - TSCORE.metaFolder.length) {
-      console.log("Can not create meta folder in a meta folder");
-      return;
-    }
-    var metaDirPath = dirPath + TSCORE.dirSeparator + TSCORE.metaFolder;
-
-    fs.stat(metaDirPath, function(error, stats) {
-      if (error) {
-        console.log("Getting fstats failed");
-      }
-      if (stats && stats.isDirectory()) {
-        console.log("Directory already exists ");
-        return;
-      }
-      createDirectory(metaDirPath, true);
-    });
-  }
-
 
   function copyFilePromise(sourceFilePath, targetFilePath) {
     return new Promise(function(resolve, reject) {
@@ -473,19 +397,6 @@ define(function(require, exports, module) {
     });
   }
 
-  /** @deprecated */
-  function copyFile(sourceFilePath, targetFilePath) {
-    console.log("Copy file: " + sourceFilePath + " to " + targetFilePath);
-    copyFilePromise(sourceFilePath, targetFilePath).then(function(success) {
-      TSCORE.hideWaitingDialog();
-      TSPOSTIO.copyFile(sourceFilePath, targetFilePath);
-    }, function(err) {
-      TSCORE.hideWaitingDialog();
-      TSCORE.showAlertDialog(err);
-    });
-  }
-
-
   function renameFilePromise(filePath, newFilePath) {
     console.log("Renaming file: " + filePath + " to " + newFilePath);
     return new Promise(function(resolve, reject) {
@@ -502,22 +413,10 @@ define(function(require, exports, module) {
         if (error) {
           reject("Renaming: " + filePath + " failed.");
         }
-        resolve(true);
+        resolve([filePath, newFilePath]);
       });
     });
   }
-
-  /** @deprecated */
-  function renameFile(filePath, newFilePath) {
-    renameFilePromise(filePath, newFilePath).then(function(success) {
-      TSCORE.hideWaitingDialog();
-      TSPOSTIO.renameFile(filePath, newFilePath);
-    }, function(err) {
-      TSCORE.hideWaitingDialog();
-      TSCORE.showAlertDialog(err);
-    });
-  }
-
 
   function renameDirectoryPromise(dirPath, newDirName) {
     var newDirPath = TSCORE.TagUtils.extractParentDirectoryPath(dirPath) + TSCORE.dirSeparator + newDirName;
@@ -542,19 +441,6 @@ define(function(require, exports, module) {
         reject($.i18n.t("ns.common:pathIsNotDirectory", {dirName:dirPath}), $.i18n.t("ns.common:directoryRenameFailed"));
       }
     });
-  }
-
-  /** @deprecated */
-  function renameDirectory(dirPath, newDirName) {
-    alert("Not implemented");
-    /*var newDirPath = TSCORE.TagUtils.extractParentDirectoryPath(dirPath) + TSCORE.dirSeparator + newDirName;
-    renameDirectoryPromise(dirPath, newDirPath).then(function() {
-      TSCORE.hideWaitingDialog();
-      TSPOSTIO.renameDirectory(dirPath, newDirPath);
-    }, function(err) {
-      TSCORE.hideWaitingDialog();
-      TSCORE.showAlertDialog(err);
-    });*/
   }
 
 
@@ -602,32 +488,6 @@ define(function(require, exports, module) {
         resolve(content);
       });
     });
-  }
-
-  /** @deprecated */
-  function loadTextFile(filePath, isPreview) {
-    console.log("Loading file: " + filePath);
-    loadTextFilePromise(filePath, isPreview).then(function(content) {
-        TSPOSTIO.loadTextFile(content);
-      },
-      function(error) {
-        TSCORE.hideLoadingAnimation();
-        console.error("Loading file " + filePath + " failed " + error);
-        TSCORE.showAlertDialog("Loading " + filePath + " failed.");
-      }
-    );
-  }
-
-  function getFile(fileURL, result, error) {
-    getFileContentPromise(fullPath).then(function(content) {
-      result(new File([content], fileURL, {}));
-    }, error);
-  }
-
-  /** @deprecated */
-  function getFileContent(fullPath, result, error) {
-
-    getFileContentPromise(fullPath).then(result, error);
   }
 
   function getFileContentPromise(fullPath, type) {
@@ -699,51 +559,6 @@ define(function(require, exports, module) {
     return saveFilePromise(filePath, content, overwrite);
   }
 
-  /** @deprecated */
-  function saveTextFile(filePath, content, overwrite, silentMode) {
-    console.log("Saving file: " + filePath);
-
-    // Handling the UTF8 support for text files
-    var UTF8_BOM = "\ufeff";
-
-    if (content.indexOf(UTF8_BOM) === 0) {
-      console.log("Content beging with a UTF8 bom");
-    } else {
-      content = UTF8_BOM + content;
-    }
-
-    var isNewFile = !fs.existsSync(filePath);
-
-    saveFilePromise(filePath, content, overwrite).then(function() {
-      if (!silentMode) {
-        TSPOSTIO.saveTextFile(filePath, isNewFile);
-      }
-    }, function(error) {
-      TSCORE.hideLoadingAnimation();
-      console.error("Save to file " + filePath + " failed " + error);
-      if (!silentMode) {
-        TSCORE.showAlertDialog("Saving " + filePath + " failed.");
-      }
-    });
-  }
-
-  /** @deprecated */
-  function saveBinaryFile(filePath, content, overwrite, silentMode) {
-    console.log("Saving binary file: " + filePath);
-    var buff = TSCORE.Utils.arrayBufferToBuffer(content);
-    saveFilePromise(filePath, buff, overwrite).then(function() {
-      if (!silentMode) {
-        TSPOSTIO.saveBinaryFile(filePath);
-      }
-    }, function(error) {
-      TSCORE.hideLoadingAnimation();
-      console.error("Save to file " + filePath + " failed " + error);
-      if (!silentMode) {
-        TSCORE.showAlertDialog("Saving " + filePath + " failed.");
-      }
-    });
-  }
-
 
   function deleteFilePromise(path) {
     
@@ -762,21 +577,6 @@ define(function(require, exports, module) {
     });
   }
 
-  /** @deprecated */
-  function deleteElement(path) {
-
-    deleteFilePromise(path).then(function() {
-        TSPOSTIO.deleteElement(path);
-      },
-      function(error) {
-        TSCORE.hideLoadingAnimation();
-        TSCORE.showAlertDialog("Deleting file " + path + " failed.");
-        console.error("Deleting file " + path + " failed " + error);
-      }
-    );
-  }
-
-
   function deleteDirectoryPromise(path) {
 
     if (TSCORE.PRO && TSCORE.Config.getUseTrashCan()) {
@@ -794,22 +594,6 @@ define(function(require, exports, module) {
     });
   }
 
-  /** @deprecated */
-  function deleteDirectory(path) {
-    //if (TSCORE.PRO && TSCORE.Config.getUseTrashCan()) {
-    //  return trash([path]);
-    //}
-
-    deleteDirectoryPromise(path).then(function() {
-        TSPOSTIO.deleteDirectory(path);
-      },
-      function(error) {
-        TSCORE.hideLoadingAnimation();
-        console.error("Deleting directory " + path + " failed " + error);
-        TSPOSTIO.deleteDirectoryFailed(path);
-      }
-    );
-  }
 
   function selectDirectory() {
     if (document.getElementById('folderDialogNodeWebkit') === null) {
@@ -859,47 +643,28 @@ define(function(require, exports, module) {
   exports.createDirectoryTree = createDirectoryTree;
 
   exports.listDirectoryPromise = listDirectoryPromise;
-  exports.listDirectory = listDirectory; /** @deprecated */
-  exports.getDirectoryMetaInformation = getDirectoryMetaInformation;
 
   exports.getPropertiesPromise = getPropertiesPromise;
-  exports.getFileProperties = getFileProperties; /** @deprecated */
 
   exports.loadTextFilePromise = loadTextFilePromise;
-  exports.loadTextFile = loadTextFile;
-  exports.getFile = getFile;
-  exports.getFileContent = getFileContent; /** @deprecated */
   exports.getFileContentPromise = getFileContentPromise;
 
   exports.saveFilePromise = saveFilePromise;
   exports.saveTextFilePromise = saveTextFilePromise;
   exports.saveBinaryFilePromise = saveBinaryFilePromise;
-  exports.saveTextFile = saveTextFile; /** @deprecated */
-  exports.saveBinaryFile = saveBinaryFile; /** @deprecated */
 
   exports.createDirectoryPromise = createDirectoryPromise;
-  exports.createDirectory = createDirectory; /** @deprecated */
-  exports.createMetaFolder = createMetaFolder; /** @deprecated */
 
   exports.copyFilePromise = copyFilePromise;
-  exports.copyFile = copyFile; /** @deprecated */
-
   exports.renameFilePromise = renameFilePromise;
-  exports.renameFile = renameFile; /** @deprecated */
-
   exports.renameDirectoryPromise = renameDirectoryPromise;
-  exports.renameDirectory = renameDirectory; /** @deprecated */
 
   exports.deleteFilePromise = deleteFilePromise;
-  exports.deleteElement = deleteElement; /** @deprecated */
-
   exports.deleteDirectoryPromise = deleteDirectoryPromise;
-  exports.deleteDirectory = deleteDirectory; /** @deprecated */
 
   exports.selectDirectory = selectDirectory;
   exports.selectFile = selectFile;
 
   exports.openDirectory = openDirectory;
   exports.openFile = openFile;
-
 });
