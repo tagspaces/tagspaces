@@ -1,7 +1,7 @@
 /* Copyright (c) 2012-2015 The TagSpaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that
  * can be found in the LICENSE file. */
-/* global define, nativeIO, isWin */
+/* global define, isWin */
 
 define(function(require, exports, module) {
   "use strict";
@@ -161,26 +161,6 @@ define(function(require, exports, module) {
     });
   }
 
-  function listDirectory(dirPath, resultCallback) {
-    TSCORE.showLoadingAnimation();
-    listDirectoryPromise(dirPath).then(function(anotatedDirList) {
-        if (resultCallback) {
-          resultCallback(anotatedDirList);
-        } else {
-          TSPOSTIO.listDirectory(anotatedDirList);
-        }
-      }, function(error) {
-        if (resultCallback) {
-          resultCallback();
-        } else {
-          TSPOSTIO.errorOpeningPath(dirPath);
-        }
-        TSCORE.hideLoadingAnimation();
-        console.error("Error listDirectory " + dirPath + " error: " + error);
-      }
-    );
-  }
-
   function getDirectoryMetaInformation(dirPath, readyCallback) {
     listDirectory(dirPath, function(anotatedDirList) {
       TSCORE.metaFileList = anotatedDirList;
@@ -222,29 +202,9 @@ define(function(require, exports, module) {
     });
   }
 
-  function getFileProperties(filePath) {
-    getPropertiesPromise().then(function(fileProperties) {
-      TSPOSTIO.getFileProperties(fileProperties);
-    }, function(err) {
-      TSCORE.showAlertDialog("Could not get properties for: " + filePath);
-    });
-  }
-
-
-  function loadTextFile(filePath) {
-    console.log("Loading file: " + filePath);
-    getFileContentPromise(filePath, "text").then(function(data) {
-        TSPOSTIO.loadTextFile(data);
-      }, function(error) {
-        TSCORE.hideLoadingAnimation();
-        console.error("loading text file failed " + data);
-      }
-    );
-  }
-
-  function getFileContent(fullPath, result, error) {
-    // TODO 4remove
-    getFileContentPromise(fullPath).then(result, error);
+  function loadTextFilePromise(filePath) {
+    //
+    return getFileContentPromise(filePath, "text");
   }
 
   function getFileContentPromise(fullPath, type) {
@@ -271,7 +231,6 @@ define(function(require, exports, module) {
     });
   }
 
-
   function saveFilePromise(filePath, content, overwrite) {
     console.log("Saving binary file: " + filePath);
     return new Promise(function(resolve, reject) {
@@ -286,45 +245,12 @@ define(function(require, exports, module) {
     });
   }
 
-  function saveTextFile(filePath, content) {
-    TSCORE.showLoadingAnimation();
-    console.log("Saving file: " + filePath);
-    saveFilePromise(filePath, content).then(function() {
-        // TODO close file after save
-        TSPOSTIO.saveTextFile(filePath);
-      }, function(error) {
-        TSCORE.showAlertDialog("Save text file " + filePath + "filed");
-        console.error(error);
-      }
-    );
-  }
-
-  function saveBinaryFile(filePath, content) {
-    TSCORE.showLoadingAnimation();
-    console.log("Saving binary file: " + filePath);
-    saveFilePromise(filePath, content).then(function() {
-        // TODO close file after save
-        TSPOSTIO.saveTextFile(filePath);
-      }, function(error) {
-        TSCORE.showAlertDialog("Save binary file " + filePath + "filed");
-        console.error(error);
-      }
-    );
-  }
-
-
   function createDirectoryPromise(dirPath) {
     return new Promise(function(res, rej) {
       TSCORE.showAlertDialog("Creating directory is not supported in Chrome, please use the desktop version.");
       res(true);
     });
   }
-
-  function createDirectory(dirPath) {
-    // TODO 4 remove
-    createDirectoryPromise();
-  }
-
 
   function renameDirectoryPromise() {
     return new Promise(function(res, rej) {
@@ -333,24 +259,12 @@ define(function(require, exports, module) {
     });
   }
 
-  function renameDirectory() {
-    // TODO 4remove
-    renameDirectoryPromise();
-  }
-
-
   function renameFilePromise() {
     return new Promise(function(res, rej) {
       TSCORE.showAlertDialog("Renaming file is not supported in Chrome, please use the desktop version.");
       res(true);
     });
   }
-
-  function renameFile() {
-    // TODO 4remove
-    renameFilePromise();
-  }
-
 
   function copyFilePromise() {
     return new Promise(function(res, rej) {
@@ -359,12 +273,6 @@ define(function(require, exports, module) {
     });
   }
 
-  function copyFile() {
-    // TODO 4remove
-    copyFilePromise();
-  }
-
-
   function deleteFilePromise() {
     return new Promise(function(res, rej) {
       TSCORE.showAlertDialog("Creating directory is not supported in Chrome, please use the desktop version.");
@@ -372,22 +280,11 @@ define(function(require, exports, module) {
     });
   }
 
-  function deleteElement() {
-    // TODO 4remove
-    deleteDirectoryPromise();
-  }
-
-
   function deleteDirectoryPromise() {
     return new Promise(function(res, rej) {
       TSCORE.showAlertDialog("Deleting directory is not supported in Chrome, please use the desktop version.");
       res(true);
     });
-  }
-
-  function deleteDirectory() {
-    // TODO 4remove
-    deleteDirectoryPromise();
   }
 
 
@@ -429,45 +326,29 @@ define(function(require, exports, module) {
   exports.createDirectoryTree = createDirectoryTree;
 
   exports.listDirectoryPromise = listDirectoryPromise;
-  exports.listDirectory = listDirectory; /** @deprecated */
   exports.listSubDirectories = listSubDirectories; /** TODO move in ioutils */
-  exports.getDirectoryMetaInformation = getDirectoryMetaInformation; /** @deprecated */
 
   exports.getPropertiesPromise = getPropertiesPromise;
-  exports.getFileProperties = getFileProperties; /** @deprecated */
 
-  exports.createDirectoryPromise = createDirectoryPromise;
-  exports.createDirectory = createDirectory; /** @deprecated */
-
+  exports.loadTextFilePromise = loadTextFilePromise;
   exports.getFileContentPromise = getFileContentPromise;
-  exports.loadTextFile = loadTextFile; /** @deprecated */
-  exports.getFileContent = getFileContent; /** @deprecated */
 
   exports.saveFilePromise = saveFilePromise;
   exports.saveTextFilePromise = saveFilePromise;
   exports.saveBinaryFilePromise = saveFilePromise;
-  exports.saveTextFile = saveTextFile; /** @deprecated */
-  exports.saveBinaryFile = saveBinaryFile; /** @deprecated */
+
+  exports.createDirectoryPromise = createDirectoryPromise;
 
   exports.copyFilePromise = copyFilePromise;
-  exports.copyFile = copyFile; /** @deprecated */
-
   exports.renameFilePromise = renameFilePromise;
-  exports.renameFile = renameFile; /** @deprecated */
-
   exports.renameDirectoryPromise = renameDirectoryPromise;
-  exports.renameDirectory = renameDirectory; /** @deprecated */
 
   exports.deleteFilePromise = deleteFilePromise;
-  exports.deleteElement = deleteElement; /** @deprecated */
-
   exports.deleteDirectoryPromise = deleteDirectoryPromise;
-  exports.deleteDirectory = deleteDirectory; /** @deprecated */
 
   exports.selectFile = selectFile;
   exports.selectDirectory = selectDirectory;
 
   exports.openDirectory = openDirectory;
   exports.openFile = openFile;
-
 });
