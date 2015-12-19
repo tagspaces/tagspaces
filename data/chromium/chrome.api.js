@@ -161,13 +161,6 @@ define(function(require, exports, module) {
     });
   }
 
-  function getDirectoryMetaInformation(dirPath, readyCallback) {
-    listDirectory(dirPath, function(anotatedDirList) {
-      TSCORE.metaFileList = anotatedDirList;
-      readyCallback(anotatedDirList);
-    });
-  }
-
   function listSubDirectories(dirPath) {
     console.log("Listing sub directories: " + dirPath);
     TSCORE.showLoadingAnimation();
