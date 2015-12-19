@@ -417,115 +417,6 @@ define(function(require, exports, module) {
     });
   }
 
-  function listDirectory(dirPath, callback, fs) {
-    TSCORE.showLoadingAnimation();
-
-    // directory path format DCIM/Camera/ !
-    dirPath = dirPath + "/"; // TODO make it platform independent
-    dirPath = normalizePath(dirPath);
-
-    console.log("Listing directory: " + dirPath);
-    var rootFS = fs || fsRoot;
-    rootFS.getDirectory(dirPath, {
-        create: false,
-        exclusive: false
-      },
-      function(dirEntry) {
-        var directoryReader = dirEntry.createReader();
-        var anotatedDirList = [];
-        var pendingCallbacks = 0;
-        // Get a list of all the entries in the directory
-        directoryReader.readEntries(
-          function(entries) {
-            var i;
-            var normalizedPath;
-            for (i = 0; i < entries.length; i++) {
-              if (entries[i].isFile) {
-                pendingCallbacks++;
-                entries[i].file(
-                  function(entry) {
-                    if (!entry.fullPath) {
-                      entry.fullPath = resolveFullPath(entry.localURL);
-                    }
-                    anotatedDirList.push({
-                      "name": entry.name,
-                      "isFile": true,
-                      "size": entry.size,
-                      "lmdt": entry.lastModifiedDate,
-                      "path": entry.fullPath
-                    });
-                    pendingCallbacks--;
-                    console.log("File: " + entry.name + " Size: " + entry.size + " i:" + i + " Callb: " + pendingCallbacks);
-                    if (pendingCallbacks === 0 && i === entries.length) {
-                      if (callback) {
-                        callback(anotatedDirList);
-                      } else {
-                        TSPOSTIO.listDirectory(anotatedDirList);
-                      }
-                    }
-                  }, // jshint ignore:line
-                  function(error) { // error get file system
-                    TSCORE.hideLoadingAnimation();
-                    console.error("listDirectory error: " + JSON.stringify(error));
-                    pendingCallbacks--;
-                    if (pendingCallbacks === 0 && i === entries.length) {
-                      if (callback) {
-                        callback(anotatedDirList);
-                      } else {
-                        TSPOSTIO.listDirectory(anotatedDirList);
-                      }
-                    }
-                  } // jshint ignore:line
-                ); // jshint ignore:line
-              } else {
-                normalizedPath = normalizePath(entries[i].fullPath);
-                anotatedDirList.push({
-                  "name": entries[i].name,
-                  "isFile": false,
-                  "size": "",
-                  "lmdt": "",
-                  "path": normalizedPath
-                });
-                console.log("Dir: " + entries[i].name + " I:" + i + " Callb: " + pendingCallbacks);
-                if ((pendingCallbacks === 0) && ((i + 1) == entries.length)) {
-                  if (callback) {
-                    callback(anotatedDirList);
-                  } else {
-                    TSPOSTIO.listDirectory(anotatedDirList);
-                  }
-                }
-              }
-            }
-            if (pendingCallbacks === 0) {
-              if (callback) {
-                callback(anotatedDirList);
-              } else {
-                TSPOSTIO.listDirectory(anotatedDirList);
-              }
-            }
-            //console.log("Dir content: " + JSON.stringify(entries));
-          },
-          function(error) { // error get file system
-            TSCORE.hideLoadingAnimation();
-            TSPOSTIO.errorOpeningPath(dirPath);
-            console.error("Dir List Error: " + error.code);
-            if (callback) {
-              callback(anotatedDirList);
-            }
-          }
-        );
-      },
-      function(error) {
-        TSCORE.hideLoadingAnimation();
-        TSPOSTIO.errorOpeningPath(dirPath);
-        console.error("Getting dir: " + dirPath + " failed with error code: " + error.code);
-        if (callback) {
-          callback(anotatedDirList);
-        }
-      }
-    );
-  }
-
   function listSubDirectories(dirPath) {
     console.log("Listing sub directories of: " + dirPath);
     // directory path format DCIM/Camera/ !
@@ -575,68 +466,6 @@ define(function(require, exports, module) {
     );
   }
 
-  function getDirectoryMetaInformation(dirPath, readyCallback) {
-    console.log("getDirectoryMetaInformation directory: " + dirPath);
-    dirPath = dirPath + "/"; // TODO make it platform independent
-    dirPath = normalizePath(dirPath);
-    var anotatedDirList = [];
-
-    fsRoot.getDirectory(dirPath, {
-        create: false,
-        exclusive: false
-      },
-      function(dirEntry) {
-        var directoryReader = dirEntry.createReader();
-        directoryReader.readEntries(
-          function(entries) {
-            var i;
-            var normalizedPath;
-            for (i = 0; i < entries.length; i++) {
-              if (entries[i].isFile) {
-                entries[i].file(
-                  function(entry) {
-                    if (!entry.fullPath) {
-                      entry.fullPath = resolveFullPath(entry.localURL);
-                    }
-                    anotatedDirList.push({
-                      "name": entry.name,
-                      "isFile": true,
-                      "size": entry.size,
-                      "lmdt": entry.lastModifiedDate,
-                      "path": entry.fullPath
-                    });
-                    TSCORE.metaFileList = (anotatedDirList);
-                  }, // jshint ignore:line
-                  function(error) { // error get file system
-                    TSCORE.hideLoadingAnimation();
-                    console.error("listDirectory error: " + JSON.stringify(error));
-                  } // jshint ignore:line
-                ); // jshint ignore:line
-              }
-            }
-            if (readyCallback) {
-              readyCallback(anotatedDirList);
-            }
-          },
-          function(error) {
-            TSCORE.hideLoadingAnimation();
-            console.warn("Error reading dir entries: " + error.code);
-            if (readyCallback) {
-              readyCallback(anotatedDirList);
-            }
-          }
-        );
-      },
-      function(err) {
-        TSCORE.hideLoadingAnimation();
-        console.warn("error getting directory: " + err);
-        if (readyCallback) {
-          readyCallback(anotatedDirList);
-        }
-      }
-    );
-  }
-
 
   function getPropertiesPromise(filePath) {
     return new Promise(function(resolve, reject) {
@@ -673,55 +502,6 @@ define(function(require, exports, module) {
     //});
   }
 
-  function getFileProperties(filePath) {
-    getPropertiesPromise(filePath).then(function(fileProperties) {
-      TSPOSTIO.getFileProperties(fileProperties);
-    }).catch(function(error) {
-      TSCORE.hideLoadingAnimation();
-      console.error(error);
-    });
-  }
-
-
-  function loadTextFile(filePath, isPreview) {
-    console.log("Loading file: " + filePath);
-    TSCORE.showLoadingAnimation();
-    getFileContentPromise(filePath, "text").then(function(text) {
-      if (isPreview) {
-        text = text.slice(0, 10000);
-      }
-      TSPOSTIO.loadTextFile(text);
-    }).catch(function(error) {
-      TSCORE.hideLoadingAnimation();
-      console.error(error);
-    });
-  }
-
-  function getFile(fullPath, result, fail) {
-    var filePath = normalizePath(fullPath);
-
-    fsRoot.getFile(filePath, {create: false},
-      function(fileEntry) {
-        fileEntry.file(function(file) {
-          result(file);
-        }, fail);
-      },
-      fail
-    );
-  }
-
-  function getFileContent(fullPath, result, error) {
-    getFile(fullPath, function(file) {
-      var reader = new FileReader();
-      reader.onerror = function() {
-        error(reader.error);
-      };
-      reader.onload = function() {
-        result(reader.result);
-      };
-      reader.readAsArrayBuffer(file);
-    }, error);
-  }
 
   function getFilePromise(filePath, resolvePath) {
     return new Promise(function(resolve, reject) {
@@ -738,6 +518,11 @@ define(function(require, exports, module) {
         getFile(filePath, resolve, reject);
       }
     });
+  }
+
+  function loadTextFilePromise(filePath) {
+    //
+    return getFileContentPromise(filePath, "text");
   }
 
   function getFileContentPromise(filePath, type, resolvePath) {
@@ -826,42 +611,6 @@ define(function(require, exports, module) {
     return saveFilePromise(filePath, content, overWrite);
   }
 
-  function saveTextFile(filePath, content, overWrite, silentMode) {
-    console.log("Saving file: " + filePath);
-    TSCORE.showLoadingAnimation();
-
-    // Handling the UTF8 support for text files
-    var UTF8_BOM = "\ufeff";
-
-    if (content.indexOf(UTF8_BOM) === 0) {
-      console.log("Content beging with a UTF8 bom");
-    } else {
-      content = UTF8_BOM + content;
-    }
-
-    saveFilePromise(filePath, content, overWrite).then(function(isFileNew) {
-      if (!silentMode) {
-        TSPOSTIO.saveTextFile(filePath, isFileNew);
-      }
-    }).catch(function(error) {
-      TSCORE.hideLoadingAnimation();
-      console.log(error);
-    });
-  }
-
-  function saveBinaryFile(filePath, content, overWrite, silentMode) {
-    TSCORE.showLoadingAnimation();
-    var dataView = new Int8Array(content);
-    saveFilePromise(filePath, dataView.buffer, overWrite).then(function(isFileNew) {
-      if (!silentMode) {
-        TSPOSTIO.saveBinaryFile(filePath);
-      }
-    }).catch(function(error) {
-      TSCORE.hideLoadingAnimation();
-      console.log(error);
-    });
-  }
-
 
   function createDirectoryPromise(dirPath) {
     console.log("Creating directory: " + dirPath);
@@ -878,32 +627,6 @@ define(function(require, exports, module) {
           reject("Creating directory failed: " + dirPath + " failed with error code: " + error.code);
         }
       );
-    });
-  }
-
-  function createDirectory(dirPath, silentMode) {
-    createDirectoryPromise(dirPath).then(function() {
-      if (!silentMode) {
-        TSPOSTIO.createDirectory(dirPath);
-      }
-    }).catch(function(error) {
-      TSCORE.hideLoadingAnimation();
-      console.error(error);
-    });
-  }
-
-  function createMetaFolder(dirPath) {
-    if (dirPath.lastIndexOf(TSCORE.metaFolder) >= dirPath.length - TSCORE.metaFolder.length) {
-      console.log("Can not create meta folder in a meta folder");
-      return;
-    }
-
-    var metaDirPath = dirPath + TSCORE.dirSeparator + TSCORE.metaFolder;
-    createDirectoryPromise(metaDirPath).then(function() {
-      console.log("Metafolder created: " + metaDirPath);
-    }).catch(function(error) {
-      TSCORE.hideLoadingAnimation();
-      console.error(error);
     });
   }
 
@@ -948,16 +671,6 @@ define(function(require, exports, module) {
     });
   }
 
-  function copyFile(filePath, newFilePath) {
-    copyFilePromise(filePath, newFilePath).then(function(newFilePath) {
-      TSPOSTIO.copyFile(filePath, newFilePath);
-    }).catch(function(error) {
-      TSCORE.hideLoadingAnimation();
-      console.log(error);
-    });
-  }
-
-
   function renameFilePromise(filePath, newFilePath) {
     return new Promise(function(resolve, reject) {
 
@@ -981,7 +694,7 @@ define(function(require, exports, module) {
                 newFileName,
                 function() {
                   console.log("File renamed to: " + newFilePath + " Old name: " + entry.fullPath);
-                  resolve(newFilePath);
+                  resolve([filePath, newFilePath]);
                 },
                 function() {
                   reject("error renaming: " + filePath);
@@ -1000,16 +713,6 @@ define(function(require, exports, module) {
       );
     });
   }
-
-  function renameFile(filePath, newFilePath) {
-    renameFilePromise(filePath, newFilePath).then(function() {
-      TSPOSTIO.renameFile(filePath, newFilePath);
-    }).catch(function(error) {
-      TSCORE.hideLoadingAnimation();
-      console.error(error);
-    });
-  }
-
 
   function renameDirectoryPromise(dirPath, newDirName) {
     return new Promise(function(resolve, reject) {
@@ -1056,15 +759,6 @@ define(function(require, exports, module) {
     });
   }
 
-  function renameDirectory(dirPath, newDirName) {
-    renameDirectoryPromise(dirPath, newDirName).then(function(newDirPath) {
-      TSPOSTIO.renameDirectory(dirPath, newDirPath);
-    }).catch(function(error) {
-      TSCORE.hideLoadingAnimation();
-      console.error(error);
-    });
-  }
-
 
   function deleteFilePromise(filePath) {
     return new Promise(function(resolve, reject) {
@@ -1090,16 +784,6 @@ define(function(require, exports, module) {
       );
     });
   }
-
-  function deleteElement(filePath) {
-    deleteFilePromise(filePath).then(function() {
-      TSPOSTIO.deleteElement(filePath);
-    }).catch(function(error) {
-      TSCORE.hideLoadingAnimation();
-      console.error(error);
-    });
-  }
-
 
   function deleteDirectoryPromise(dirPath) {
     console.log("Deleting directory: " + dirPath);
@@ -1127,17 +811,6 @@ define(function(require, exports, module) {
           reject("error getting directory");
         }
       );
-    });
-  }
-
-  function deleteDirectory(dirPath) {
-    TSCORE.showLoadingAnimation();
-    deleteDirectoryPromise(dirPath).then(function() {
-      TSPOSTIO.deleteDirectory(dirPath);
-    }).catch(function(error) {
-      TSCORE.hideLoadingAnimation();
-      TSPOSTIO.deleteDirectoryFailed(dirPath);
-      console.error(error);
     });
   }
 
@@ -1179,43 +852,25 @@ define(function(require, exports, module) {
   exports.createDirectoryTree = createDirectoryTree;
 
   exports.listDirectoryPromise = listDirectoryPromise;
-  exports.listDirectory = listDirectory; /** @deprecated */
   exports.listSubDirectories = listSubDirectories; /** @deprecated */
-  exports.getDirectoryMetaInformation = getDirectoryMetaInformation;
 
   exports.getPropertiesPromise = getPropertiesPromise;
-  exports.getFileProperties = getFileProperties; /** @deprecated */
 
-  //exports.loadTextFilePromise = loadTextFilePromise;
-  exports.loadTextFile = loadTextFile;
-  exports.getFile = getFile; // export ??
-  exports.getFileContent = getFileContent;
+  exports.loadTextFilePromise = loadTextFilePromise;
   exports.getFileContentPromise = getFileContentPromise;
 
   exports.saveFilePromise = saveFilePromise;
   exports.saveTextFilePromise = saveTextFilePromise;
   exports.saveBinaryFilePromise = saveBinaryFilePromise;
-  exports.saveTextFile = saveTextFile; /** @deprecated */
-  exports.saveBinaryFile = saveBinaryFile; /** @deprecated */
 
   exports.createDirectoryPromise = createDirectoryPromise;
-  exports.createDirectory = createDirectory; /** @deprecated */
-  exports.createMetaFolder = createMetaFolder; /** @deprecated */
 
   exports.copyFilePromise = copyFilePromise;
-  exports.copyFile = copyFile; /** @deprecated */
-
   exports.renameFilePromise = renameFilePromise;
-  exports.renameFile = renameFile; /** @deprecated */
-
   exports.renameDirectoryPromise = renameDirectoryPromise;
-  exports.renameDirectory = renameDirectory; /** @deprecated */
 
   exports.deleteFilePromise = deleteFilePromise;
-  exports.deleteElement = deleteElement; /** @deprecated */
-
   exports.deleteDirectoryPromise = deleteDirectoryPromise;
-  exports.deleteDirectory = deleteDirectory; /** @deprecated */
 
   exports.selectDirectory = selectDirectory;
   exports.selectFile = selectFile;
