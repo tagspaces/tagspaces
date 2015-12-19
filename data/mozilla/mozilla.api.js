@@ -157,35 +157,6 @@ define(function(require, exports, module) {
      });
   }
 
-  function listDirectory(dirPath) {
-    console.log("Listing directory: " + dirPath);
-    listDirectoryPromise(dirPath).then( function(success) {
-        TSPOSTIO.listDirectory(success);
-      },
-      function(error) {
-        console.warn("Error: " + error);
-        TSPOSTIO.errorOpeningPath();
-      }
-    );
-  }
-
-  function getDirectoryMetaInformation(dirPath, readyCallback) {
-    console.log("getDirectoryMetaInformation: " + dirPath);
-    listDirectoryPromise(dirPath).then( function(success) {
-        readyCallback(success);
-      },
-      function(error) {
-        console.warn("Error: " + error);
-        if(readyCallback) {
-          readyCallback();
-        } else {
-          TSPOSTIO.errorOpeningPath();  
-        }
-      }
-    );
-  }
-
-
   function getFilePropertiesPromise(filePath) {
     console.log("Getting file properties...");
     return new Promise(function(resolve, reject) {
@@ -214,15 +185,6 @@ define(function(require, exports, module) {
     });
   }
 
-  function getFileProperties(filePath) {
-    getFilePropertiesPromise(filePath).then(function(properties) {
-      TSPOSTIO.getFileProperties(properties);
-    }, function(error) {
-      console.log("Error: " + error);
-    });
-  }
-
-
   function createDirectoryIndex(dirPath) {
     console.log("Creating directory index for: " + dirPath);
     var event = document.createEvent('CustomEvent');
@@ -248,16 +210,9 @@ define(function(require, exports, module) {
   }
 
 
-  function loadTextFile(filePath) {
-    console.log("Loading file: " + filePath);
-    getFileContentPromise(filePath, "text").then(
-      function(success) {
-        TSPOSTIO.loadTextFile(success);
-      },
-      function(error) {
-        console.warn("Error: " + error);
-      }
-    );
+  function loadTextFilePromise(filePath) {
+    //
+    return getFileContentPromise(filePath, "text");
   }
 
   function getFileContentPromise(filePath, type) {
@@ -296,10 +251,6 @@ define(function(require, exports, module) {
     });
   }
 
-  function getFileContent(filePath, result, error) {
-    getFileContentPromise(filePath).then(result, error);
-  }
-
 
   function saveFilePromise(filePath, content, overWrite) {
     return new Promise(function(resolve, reject) {
@@ -329,17 +280,6 @@ define(function(require, exports, module) {
     });
   }
 
-  function saveTextFile(filePath, content, overWrite, silentMode) {
-    saveFilePromise(filePath, content, overWrite).then(function() {
-      if(!silentMode) {
-        TSPOSTIO.saveTextFile(filePath);
-      }
-    }, function(error) {
-      console.log(error);
-    });
-  }
-
-
   function saveBinaryFilePromise(filePath, content, overWrite) {
     return new Promise(function(resolve, reject) {
     console.log("Saving binary file post: " + filePath); //+" - "+content);
@@ -365,16 +305,6 @@ define(function(require, exports, module) {
         }
       }
       document.documentElement.addEventListener("tsMessage", eventListener);
-    });
-  }
-
-  function saveBinaryFile(filePath, content, overWrite, silentMode) {
-    saveBinaryFilePromise(filePath, content, overWrite).then(function() {
-      if(!silentMode) {
-        TSPOSTIO.saveBinaryFile(filePath);
-      }
-    }, function(error) {
-      console.log(error);
     });
   }
 
@@ -443,15 +373,6 @@ define(function(require, exports, module) {
     });
   }
 
-  function copyFile(filePath, newFilePath) {
-    copyFilePromise(filePath, newFilePath).then(function() {
-      TSPOSTIO.copyFile(filePath, newFilePath);
-    },function(error){
-      console.log(error);
-    });
-  }
-
-
   function renameFilePromise(filePath, newPath) {
     return new Promise(function(resolve, reject) {
       console.log("Renaming " + filePath + " to " + newFilePath);
@@ -480,24 +401,11 @@ define(function(require, exports, module) {
     });
   }
 
-  function renameFile(filePath, newFilePath) {
-    renameFilePromise(filePath, newFilePath).then(function() {
-      TSPOSTIO.renameFile(filePath, newPath);
-    }, function(error){
-      console.log(error);
-    });
-  }
-
-
   function renameDirectoryPromise(path) {
     return new Promise(function(res, rej) {
       TSCORE.showAlertDialog($.i18n.t("ns.common:functionalityNotImplemented"));
       res(true);
     });
-  }
-
-  function renameDirectory(filePath, newFilePath) {
-    renameDirectoryPromise();
   }
 
 
@@ -528,24 +436,11 @@ define(function(require, exports, module) {
     });
   }
 
-  function deleteElement(path) {
-    deleteFilePromise(path).then(function(result) {
-       TSPOSTIO.deleteElement(content);
-    }, function(error) {
-      console.log(error);
-    });
-  }
-
-
   function deleteDirectoryPromise(path) {
     return new Promise(function(res, rej) {
       TSCORE.showAlertDialog($.i18n.t("ns.common:functionalityNotImplemented"));
       res(true);
     });
-  }
-
-  function deleteDirectory(dirPath) {
-    deleteDirectoryPromise();
   }
 
 
@@ -570,6 +465,7 @@ define(function(require, exports, module) {
     });
     document.documentElement.dispatchEvent(event);
   }
+
 
   function openDirectory(dirPath) {
     console.log("Opening directory: " + dirPath);
@@ -601,38 +497,24 @@ define(function(require, exports, module) {
   exports.createDirectoryTree = createDirectoryTree;
 
   exports.listDirectoryPromise = listDirectoryPromise;
-  exports.listDirectory = listDirectory;
-  exports.getDirectoryMetaInformation = getDirectoryMetaInformation;
 
-  exports.getFileProperties = getFileProperties;
+  exports.getFilePropertiesPromise = getFilePropertiesPromise;
 
-  exports.loadTextFile = loadTextFile;
+  exports.loadTextFilePromise = loadTextFilePromise;
   exports.getFileContentPromise = getFileContentPromise;
-  exports.getFileContent = getFileContent;
 
   exports.saveFilePromise = saveFilePromise;
   exports.saveTextFilePromise = saveFilePromise;
   exports.saveBinaryFilePromise = saveBinaryFilePromise;
-  exports.saveTextFile = saveTextFile; /** @deprecated */
-  exports.saveBinaryFile = saveBinaryFile; /** @deprecated */
 
   exports.createDirectoryPromise = createDirectoryPromise;
-  exports.createDirectory = createDirectory; /** @deprecated */
 
   exports.copyFilePromise = copyFilePromise;
-  exports.copyFile = copyFile; /** @deprecated */
-
   exports.renameFilePromise = renameFilePromise;
-  exports.renameFile = renameFile; /** @deprecated */
-
   exports.renameDirectoryPromise = renameDirectoryPromise;
-  exports.renameDirectory = renameDirectory; /** @deprecated */
 
   exports.deleteFilePromise = deleteFilePromise;
-  exports.deleteElement = deleteElement; /** @deprecated */
-
   exports.deleteDirectoryPromise = deleteDirectoryPromise;
-  exports.deleteDirectory = deleteDirectory; /** @deprecated */
 
   exports.selectDirectory = selectDirectory;
   exports.selectFile = selectFile;
