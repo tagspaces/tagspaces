@@ -346,7 +346,6 @@ define(function(require, exports, module) {
    * Create a directory
    * @name createDirectoryPromise
    * @method
-   * @private
    * @memberof nwjs.ioapi
    * @param {string} dirPath - the full path of the folder which should be created
    * @returns {Promise.<Success, Error>}
