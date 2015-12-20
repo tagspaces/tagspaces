@@ -45,6 +45,7 @@ define(function(require, exports, module) {
     });
 
     $("#" + this.extensionID + "IncludeSubDirsButton").on("click", function() {
+      // TODO remove from all places e.g. config
       /*if (TSCORE.Config.getShowWarningRecursiveScan()) {
         TSCORE.showConfirmDialog(
           $.i18n.t("ns.perspectiveList:includeSubdirsTitleConfirm"),
@@ -62,7 +63,7 @@ define(function(require, exports, module) {
         $("#" + self.extensionID + "IncludeSubDirsButton").prop('disabled', true);
         TSCORE.IO.createDirectoryIndex(TSCORE.currentPath);
       }*/
-      TSCORE.IO.createDirectoryIndex(TSCORE.currentPath);
+      TSCORE.Utils.createDirectoryIndex(TSCORE.currentPath);
     });
 
     $("#" + this.extensionID + "DeleteSelectedFilesButton").on("click", function() {

@@ -257,45 +257,62 @@ define(function(require, exports, module) {
     TSPOSTIO.createDirectoryTree(directoyTree);
   }
 
-  function createDirectoryIndex(dirPath) {
-    TSCORE.showWaitingDialog($.i18n.t("ns.common:waitDialogDiectoryIndexing"));
-
-    var directoryIndex = [];
-    TSCORE.Utils.walkDirectory(dirPath, {recursive: true}, function(fileEntry) {
-      directoryIndex.push(fileEntry);
-    }).then(
-      function(entries) {
-        TSPOSTIO.createDirectoryIndex(directoryIndex);
-      },
-      function(err) {
-        console.warn("Error creating index: " + err);
-      }
-    ).catch(function() {
-      TSCORE.hideWaitingDialog();
-    });
-
-  }
-
-
-  function listDirectoryPromise(path) {
+  function listDirectoryPromiseAsync(path) {
+    console.time("listDirectoryPromise");
     return new Promise(function(resolve, reject) {
       var statEntriesPromises = [];
       fs.readdir(path, function(error, entries) {
         if (error) {
           console.log("Error listing directory " + path);
-          resolve(statEntriesPromises);
-        } else {
-          if (entries) {
-            entries.forEach(function(entry) {
-              statEntriesPromises.push(getPropertiesPromise(path + TSCORE.dirSeparator + entry));
-            });
-          }
+          resolve([]); // returning results even if any promise fails
+        }
+
+        if (entries) {
+          entries.forEach(function(entry) {
+            statEntriesPromises.push(getPropertiesPromise(path + TSCORE.dirSeparator + entry));
+          });
           Promise.all(statEntriesPromises).then(function(enhancedEntries) {
+            console.timeEnd("listDirectoryPromise");
             resolve(enhancedEntries);
           }, function(err) {
-            resolve(statEntriesPromises);
-            //reject("At least one get file properties failed.");
+            resolve([]); // returning results even if any promise fails
           });
+        }
+      });
+    });
+  }
+
+  function listDirectoryPromise(path) {
+    console.time("listDirectoryPromise");
+    return new Promise(function(resolve, reject) {
+      var enhancedEntries = [];
+      var entryPath;
+      var stats;
+      var eentry;
+      fs.readdir(path, function(error, entries) {
+        if (error) {
+          console.log("Error listing directory " + path);
+          resolve(enhancedEntries); // returning results even if any promise fails
+        }
+
+        if (entries) {
+          entries.forEach(function(entry) {
+            entryPath = path + TSCORE.dirSeparator + entry;
+            try {
+              stats = fs.statSync(entryPath);
+              eentry = {};
+              eentry.name = entry;
+              eentry.isFile = stats.isFile();
+              eentry.size = stats.size;
+              eentry.lmdt = stats.mtime;
+              eentry.path = entryPath;
+              enhancedEntries.push(eentry);
+            } catch(e) {
+              console.warn("Error getting stats for " + entryPath);
+            }
+          });
+          console.timeEnd("listDirectoryPromise");
+          resolve(enhancedEntries);
         }
       });
     });
@@ -327,6 +344,7 @@ define(function(require, exports, module) {
         if (err) {
           resolve(false);
         }
+
         if (stats) {
           var entry = {};
           entry.name = path.substring(path.lastIndexOf(TSCORE.dirSeparator) + 1, path.length);
@@ -335,8 +353,6 @@ define(function(require, exports, module) {
           entry.lmdt = stats.mtime;
           entry.path = path;
           resolve(entry);
-        } else {
-          resolve(false);
         }
       });
     });
@@ -638,7 +654,6 @@ define(function(require, exports, module) {
   exports.focusWindow = focusWindow;
   exports.checkNewVersion = checkNewVersion;
 
-  exports.createDirectoryIndex = createDirectoryIndex;
   exports.createDirectoryTree = createDirectoryTree;
 
   exports.listDirectoryPromise = listDirectoryPromise;

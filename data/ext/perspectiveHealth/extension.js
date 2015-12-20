@@ -165,7 +165,7 @@ define(function(require, exports, module) {
                 .click(function() {
                     vizMode = "quantYours";
                     TSCORE.showLoadingAnimation();    
-                    TSCORE.IO.createDirectoryIndex(TSCORE.currentPath);
+                    TSCORE.Utils.createDirectoryIndex(TSCORE.currentPath);
                 })
                 .prepend( "<i class='fa fa-tasks' />")                
             )       

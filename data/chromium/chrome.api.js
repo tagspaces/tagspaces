@@ -83,24 +83,6 @@ define(function(require, exports, module) {
   }
 
 
-  function createDirectoryIndex(dirPath) {
-    TSCORE.showWaitingDialog($.i18n.t("ns.common:waitDialogDiectoryIndexing"));
-
-    var directoryIndex = [];
-    TSCORE.Utils.walkDirectory(dirPath, {recursive: true}, function(fileEntry) {
-      directoryIndex.push(fileEntry);
-    }).then(
-      function(entries) {
-        TSPOSTIO.createDirectoryIndex(directoryIndex);
-      },
-      function(err) {
-        console.warn("Error creating index: " + err);
-      }
-    ).catch(function() {
-      TSCORE.hideWaitingDialog();
-    });
-  }
-
   function createDirectoryTree(dirPath) {
     TSCORE.showAlertDialog("Creating directory not supported.");
     //var directoyTree = generateDirectoryTree(dirPath);
@@ -292,7 +274,6 @@ define(function(require, exports, module) {
   exports.focusWindow = focusWindow;
   exports.checkNewVersion = checkNewVersion;
 
-  exports.createDirectoryIndex = createDirectoryIndex;
   exports.createDirectoryTree = createDirectoryTree;
 
   exports.listDirectoryPromise = listDirectoryPromise;

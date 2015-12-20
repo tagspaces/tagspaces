@@ -198,7 +198,7 @@ define(function(require, exports, module) {
     });
 
     $("#" + this.extensionID + "IncludeSubDirsButton").on("click", function() {
-      TSCORE.IO.createDirectoryIndex(TSCORE.currentPath);
+      TSCORE.Utils.createDirectoryIndex(TSCORE.currentPath);
     });
 
     $("#" + this.extensionID + "TagButton").on("click", function() {

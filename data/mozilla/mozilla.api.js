@@ -39,13 +39,6 @@ define(function(require, exports, module) {
           console.log("Saving setting as native mozilla preference failed!");
         }
         break;
-      case "indexDirectory":
-        if (message.success) {
-          TSPOSTIO.createDirectoryIndex(message.content);
-        } else {
-          console.error("Indexing directory failed");
-        }
-        break;
       case "createDirectoryTree":
         if (message.success) {
           console.log("Directory tree: " + JSON.stringify(message.content));
@@ -183,18 +176,6 @@ define(function(require, exports, module) {
       }
       document.documentElement.addEventListener("tsMessage", eventListener);
     });
-  }
-
-  function createDirectoryIndex(dirPath) {
-    console.log("Creating directory index for: " + dirPath);
-    var event = document.createEvent('CustomEvent');
-    event.initCustomEvent("addon-message", true, true, {
-      "detail": {
-        "command": "createDirectoryIndex",
-        "path": dirPath
-      }
-    });
-    document.documentElement.dispatchEvent(event);
   }
 
   function createDirectoryTree(dirPath) {
@@ -493,7 +474,6 @@ define(function(require, exports, module) {
   exports.focusWindow = focusWindow;
   exports.checkNewVersion = checkNewVersion;
 
-  exports.createDirectoryIndex = createDirectoryIndex;
   exports.createDirectoryTree = createDirectoryTree;
 
   exports.listDirectoryPromise = listDirectoryPromise;
