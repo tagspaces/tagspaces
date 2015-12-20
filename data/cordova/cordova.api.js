@@ -339,31 +339,14 @@ define(function(require, exports, module) {
   }
 
 
-  function createDirectoryIndex(dirPath) {
-    TSCORE.showWaitingDialog($.i18n.t("ns.common:waitDialogDiectoryIndexing"));
-
-    var directoryIndex = [];
-    TSCORE.Utils.walkDirectory(dirPath, {recursive: true}, function(fileEntry) {
-      directoryIndex.push(fileEntry);
-    }).then(
-      function(entries) {
-        TSPOSTIO.createDirectoryIndex(directoryIndex);
-      },
-      function(err) {
-        console.warn("Error creating index: " + JSON.stringify(err));
-      }
-    ).catch(function() {
-      TSCORE.hideWaitingDialog();
-    });
-  }
-
   function createDirectoryTree(dirPath) {
     // TODO
     TSCORE.showAlertDialog("Creating directory tree is not supported in Cordova yet.");
   }
 
 
-  function listDirectoryPromise(path) {
+  function listDirectoryPromise(path, lite) {
+    console.time("listDirectoryPromise");
     return new Promise(function(resolve, reject) {
       var anotatedDirList = [];
       var fileWorkers = [];
@@ -371,48 +354,72 @@ define(function(require, exports, module) {
         var reader = fileSystem.createReader();
         reader.readEntries(
           function(entries) {
-            for (var i = 0; i < entries.length; i++) {
-              if (entries[i].isDirectory) {
+            entries.forEach(function(entry) {
+              if (entry.isDirectory) {
                 anotatedDirList.push({
-                  "name": entries[i].name,
-                  "path": entries[i].fullPath,
+                  "name": entry.name,
+                  "path": entry.fullPath,
                   "isFile": false,
                   "size": "",
                   "lmdt": ""
                 });
-              } else {
-                if (entries[i] && entries[i].isFile) {
-                  var wFile = entries[i];
+              } else if (entry.isFile) {
+                if(lite) {
+                  anotatedDirList.push({
+                    "name": entry.name,
+                    "path": entry.fullPath,
+                    "isFile": true,
+                    "size": "",
+                    "lmdt": ""
+                  });
+                } else {
                   var filePromise = Promise.resolve({
-                  then: function(onFulfill, onReject) {
-                      wFile.file(function(entry) {
-                          if (!entry.fullPath) {
-                            entry.fullPath = resolveFullPath(entry.localURL);
+                    then: function(onFulfill, onReject) {
+                      entry.file(
+                        function(fileEntry) {
+                          if (!fileEntry.fullPath) {
+                            fileEntry.fullPath = resolveFullPath(fileEntry.localURL);
                           }
-                          anotatedDirList.push({
-                            "name": entry.name,
+                          anotatedDirList.push();
+                          onFulfill({
+                            "name": fileEntry.name,
                             "isFile": true,
-                            "size": entry.size,
-                            "lmdt": entry.lastModifiedDate,
-                            "path": entry.fullPath
+                             "size": fileEntry.size,
+                            "lmdt": fileEntry.lastModifiedDate,
+                            "path": fileEntry.fullPath
                           });
-                          onFulfill();
-                        }, function(err) {
-                          onReject("Error reading entry " + entry.name);
-                        }
-                      );
-                    }
+                        },
+                        function(err) {
+                          onReject("Error reading entry " + fileEntry.name);
+                        });
+                      }
                   }); // jshint ignore:line
                   fileWorkers.push(filePromise);
                 }
               }
-            }
-            Promise.all(fileWorkers).then(function() { 
+            });
+
+            Promise.all(fileWorkers).then(function(entries) {
+              entries.forEach(function(entry) {
+                anotatedDirList.push(entry);
+              });
+              console.timeEnd("listDirectoryPromise");
               resolve(anotatedDirList);
-            }, reject);
-          }, reject
+            }, function(err){
+              console.warn("At least one file worker failed for " + path + "err " + JSON.stringify(err));
+              console.timeEnd("listDirectoryPromise");
+              resolve(anotatedDirList);  // returning results even if any promise fails
+            });
+
+          }, function(err) {
+            console.warn("Error reading entries promise from " + path + "err " + JSON.stringify(err));
+            resolve(anotatedDirList);  // returning results even if any promise fails
+          }
         );
-      }, reject
+      }, function() {
+        console.warn("Error getting file system promise");
+        resolve(anotatedDirList);  // returning results even if any promise fails
+      }
       );
     });
   }
@@ -453,29 +460,44 @@ define(function(require, exports, module) {
   }
 
 
-  function getFilePromise(filePath, resolvePath) {
-    return new Promise(function(resolve, reject) {
-      if (resolvePath) {
-        getFileSystemPromise(resolvePath).then(function(resfs) {
-          resfs.getFile(filePath, {create: false},
-            function(fileEntry) {
-              fileEntry.file(resolve, reject);
-            },
-            reject
-          );
-        }).catch(reject);
-      } else {
-        getFile(filePath, resolve, reject);
-      }
-    });
-  }
-
   function loadTextFilePromise(filePath) {
     //
     return getFileContentPromise(filePath, "text");
   }
 
   function getFileContentPromise(filePath, type, resolvePath) {
+    // TODO refactor
+    var getFilePromise = function(filePath, resolvePath) {
+
+      var getFile = function(fullPath, result, fail) {
+        var filePath = normalizePath(fullPath);
+
+        fsRoot.getFile(filePath, {create: false},
+          function(fileEntry) {
+            fileEntry.file(function(file) {
+              result(file);
+            }, fail);
+          },
+          fail
+        );
+      };
+
+      return new Promise(function(resolve, reject) {
+        if (resolvePath) {
+          getFileSystemPromise(resolvePath).then(function(resfs) {
+            resfs.getFile(filePath, {create: false},
+              function(fileEntry) {
+                fileEntry.file(resolve, reject);
+              },
+              reject
+            );
+          }).catch(reject);
+        } else {
+          getFile(filePath, resolve, reject);
+        }
+      });
+    };
+
     return new Promise(function(resolve, reject) {
       getFilePromise(filePath, resolvePath).then(function(file) {
         var reader = new FileReader();
@@ -798,7 +820,6 @@ define(function(require, exports, module) {
   exports.focusWindow = focusWindow;
   exports.handleStartParameters = handleStartParameters;
 
-  exports.createDirectoryIndex = createDirectoryIndex;
   exports.createDirectoryTree = createDirectoryTree;
 
   exports.listDirectoryPromise = listDirectoryPromise;
