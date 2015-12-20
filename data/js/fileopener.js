@@ -522,6 +522,9 @@ define(function(require, exports, module) {
         backdrop: 'static',
         show: true
       });
+      $('#dialogFileProperties').draggable({
+        handle: ".modal-header"
+      });
     });
   }
 

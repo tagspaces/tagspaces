@@ -459,6 +459,9 @@ define(function(require, exports, module) {
       backdrop: 'static',
       show: true
     });
+    $('#dialogTagCreate').draggable({
+      handle: ".modal-header"
+    });
   }
 
   function showImportTagsDialog(tagGroups) {
@@ -482,6 +485,9 @@ define(function(require, exports, module) {
       $('#dialogImportTags').modal({
         backdrop: 'static',
         show: true
+      });
+      $('#dialogImportTags').draggable({
+        handle: ".modal-header"
       });
     });
   }
@@ -508,6 +514,9 @@ define(function(require, exports, module) {
       backdrop: 'static',
       show: true
     });
+    $('#dialogEditTagGroup').draggable({
+      handle: ".modal-header"
+    });
   }
 
   function showDialogTagGroupCreate() {
@@ -531,6 +540,9 @@ define(function(require, exports, module) {
     $('#dialogTagGroupCreate').modal({
       backdrop: 'static',
       show: true
+    });
+    $('#dialogTagGroupCreate').draggable({
+      handle: ".modal-header"
     });
   }
 
@@ -577,6 +589,9 @@ define(function(require, exports, module) {
       backdrop: 'static',
       show: true
     });
+    $('#dialogEditInTreeTag').draggable({
+      handle: ".modal-header"
+    });
   }
 
   function showAddTagsDialog() {
@@ -604,6 +619,9 @@ define(function(require, exports, module) {
     $('#dialogAddTags').modal({
       backdrop: 'static',
       show: true
+    });
+    $('#dialogAddTags').draggable({
+      handle: ".modal-header"
     });
   }
 

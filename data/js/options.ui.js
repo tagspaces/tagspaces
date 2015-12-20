@@ -225,6 +225,9 @@ define(function(require, exports, module) {
       backdrop: 'static',
       show: true
     });
+    $('#dialogOptions').draggable({
+      handle: ".modal-header"
+    });
   }
 
   function parseKeyBinding(keybinding) {

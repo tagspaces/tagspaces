@@ -158,6 +158,9 @@ define(function(require, exports, module) {
       backdrop: 'static',
       show: true
     });
+    $('#dialogFileCreate').draggable({
+      handle: ".modal-header"
+    });
   };
   var showFileRenameDialog = function(filePath) {
     $('#renamedFileName').attr('filepath', filePath);
@@ -182,6 +185,9 @@ define(function(require, exports, module) {
     $('#dialogFileRename').modal({
       backdrop: 'static',
       show: true
+    });
+    $('#dialogFileRename').draggable({
+      handle: ".modal-header"
     });
   };
   var showFileDeleteDialog = function(filePath) {
@@ -225,6 +231,9 @@ define(function(require, exports, module) {
     $('#dialogEditTag').modal({
       backdrop: 'static',
       show: true
+    });
+    $('#dialogEditTag').draggable({
+      handle: ".modal-header"
     });
   };
   var showDirectoryBrowserDialog = function(path) {
@@ -335,6 +344,9 @@ define(function(require, exports, module) {
         backdrop: 'static',
         show: true
       });
+      $('#dialogMoveCopyFiles').draggable({
+        handle: ".modal-header"
+      });
       console.log('Selected files: ' + TSCORE.selectedFiles);
     });
   };
@@ -342,6 +354,9 @@ define(function(require, exports, module) {
     $('#dialogAboutTS').modal({
       backdrop: 'static',
       show: true
+    });
+    $('#dialogAboutTS').draggable({
+      handle: ".modal-header"
     });
   };
   var initUI = function() {
@@ -525,6 +540,9 @@ define(function(require, exports, module) {
       $('#dialogAbout').modal({
         backdrop: 'static',
         show: true
+      });
+      $('#dialogAbout').draggable({
+        handle: ".modal-header"
       });
     });
     // Open Options Dialog

@@ -602,6 +602,9 @@ define(function(require, exports, module) {
         backdrop: 'static',
         show: true
       });
+      $('#dialogLocationEdit').draggable({
+        handle: ".modal-header"
+      });
     });
   }
 
@@ -659,6 +662,9 @@ define(function(require, exports, module) {
         backdrop: 'static',
         show: true
       });
+      $('#dialogCreateFolderConnection').draggable({
+        handle: ".modal-header"
+      });
     });
   }
 
@@ -702,6 +708,9 @@ define(function(require, exports, module) {
       $('#dialogDirectoryCreate').modal({
         backdrop: 'static',
         show: true
+      });
+      $('#dialogDirectoryCreate').draggable({
+        handle: ".modal-header"
       });
     });
   }
@@ -747,6 +756,9 @@ define(function(require, exports, module) {
       $('#dialogDirectoryRename').modal({
         backdrop: 'static',
         show: true
+      });
+      $('#dialogDirectoryRename').draggable({
+         handle: ".modal-header"
       });
     });
   }

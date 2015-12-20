@@ -51,6 +51,9 @@ define(function(require, exports, module) {
       backdrop: 'static',
       show: true
     });
+    $('#directoryBrowserDialog').draggable({
+      handle: ".modal-header"
+    });
   }
 
   // Public Methods
