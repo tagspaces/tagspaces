@@ -114,7 +114,7 @@ define(function(require, exports, module) {
       var anotatedDirList = [];
       var firstEntry = 0;
       // skiping the first entry pointing to the parent directory
-      if(isChrome) {
+      if (isChrome) {
         firstEntry = 1;
       }
       for (var i = firstEntry; i < entries.length; i++) {

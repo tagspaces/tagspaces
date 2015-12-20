@@ -307,7 +307,7 @@ define(function(require, exports, module) {
               eentry.lmdt = stats.mtime;
               eentry.path = entryPath;
               enhancedEntries.push(eentry);
-            } catch(e) {
+            } catch (e) {
               console.warn("Error getting stats for " + entryPath);
             }
           });

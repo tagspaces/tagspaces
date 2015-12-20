@@ -154,7 +154,7 @@ define(function(require, exports, module) {
   var searchData = function(data, query) {
 
     //todo make a switch in gui for content search
-    var searchInContent = (isChrome || isFirefox)?false:true
+    var searchInContent = (isChrome || isFirefox) ? false : true;
     var queryObj = prepareQuery(query);
 
     var searchResults = [];

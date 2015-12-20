@@ -364,7 +364,7 @@ define(function(require, exports, module) {
                   "lmdt": ""
                 });
               } else if (entry.isFile) {
-                if(lite) {
+                if (lite) {
                   anotatedDirList.push({
                     "name": entry.name,
                     "path": entry.fullPath,
@@ -392,7 +392,7 @@ define(function(require, exports, module) {
                         function(err) {
                           onReject("Error reading entry " + fileEntry.name);
                         });
-                      }
+                    }
                   }); // jshint ignore:line
                   fileWorkers.push(filePromise);
                 }
@@ -405,7 +405,7 @@ define(function(require, exports, module) {
               });
               console.timeEnd("listDirectoryPromise");
               resolve(anotatedDirList);
-            }, function(err){
+            }, function(err) {
               console.warn("At least one file worker failed for " + path + "err " + JSON.stringify(err));
               console.timeEnd("listDirectoryPromise");
               resolve(anotatedDirList);  // returning results even if any promise fails
@@ -580,7 +580,7 @@ define(function(require, exports, module) {
   function saveBinaryFilePromise(filePath, content, overWrite) {
     console.log("Saveing binary file: " + filePath);
     var dataView = new Int8Array(content);
-    return saveFilePromise(filePath, content, overWrite);
+    return saveFilePromise(filePath, dataView, overWrite);
   }
 
 
