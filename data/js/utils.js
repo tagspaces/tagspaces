@@ -78,7 +78,7 @@ define(function(require, exports, module) {
   }
 
   function walkDirectory(path, options, fileCallback, dirCallback) {
-    return TSCORE.IO.listDirectoryPromise(path).then(function(entries) {
+    return TSCORE.IO.listDirectoryPromise(path, true).then(function(entries) {
       return Promise.all(entries.map(function(entry) {
         if (!options) {
           options = {};
@@ -112,8 +112,12 @@ define(function(require, exports, module) {
     TSCORE.showLoadingAnimation();
     TSCORE.IO.listDirectoryPromise(dirPath).then(function(entries) {
       var anotatedDirList = [];
+      var firstEntry = 0;
       // skiping the first entry pointing to the parent directory
-      for (var i = 1; i < entries.length; i++) {
+      if(isChrome) {
+        firstEntry = 1;
+      }
+      for (var i = firstEntry; i < entries.length; i++) {
         if (!entries[i].isFile) {
           anotatedDirList.push({
             "name": entries[i].name,
@@ -129,6 +133,24 @@ define(function(require, exports, module) {
     });
   }
 
+  function createDirectoryIndex(dirPath) {
+    TSCORE.showWaitingDialog($.i18n.t("ns.common:waitDialogDiectoryIndexing"));
+
+    var directoryIndex = [];
+    TSCORE.Utils.walkDirectory(dirPath, {recursive: true}, function(fileEntry) {
+      directoryIndex.push(fileEntry);
+    }).then(
+      function(entries) {
+        TSPOSTIO.createDirectoryIndex(directoryIndex);
+      },
+      function(err) {
+        console.warn("Error creating index: " + err);
+      }
+    ).catch(function() {
+      TSCORE.hideWaitingDialog();
+    });
+  }
+
   exports.arrayBufferToDataURL = arrayBufferToDataURL;
   exports.base64ToArrayBuffer = base64ToArrayBuffer;
   exports.dataURLtoBlob = dataURLtoBlob;
@@ -141,4 +163,5 @@ define(function(require, exports, module) {
 
   exports.walkDirectory = walkDirectory;
   exports.listSubDirectories = listSubDirectories;
+  exports.createDirectoryIndex = createDirectoryIndex;
 });
