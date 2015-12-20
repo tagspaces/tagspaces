@@ -152,6 +152,9 @@ define(function(require, exports, module) {
   }
 
   var searchData = function(data, query) {
+
+    //todo make a switch in gui for content search
+    var searchInContent = (isChrome || isFirefox)?false:true
     var queryObj = prepareQuery(query);
 
     var searchResults = [];
@@ -171,90 +174,52 @@ define(function(require, exports, module) {
       });
     };
 
-    if (TSCORE.Utils.walkDirectory) {
-
-      if (query.length > 0) {
-        TSCORE.showWaitingDialog($.i18n.t("ns.common:waitDialogDiectoryIndexing"));
-
-        TSCORE.Utils.walkDirectory(TSCORE.currentPath, {recursive: queryObj.recursive},
-          function(fileEntry) {
-            return new Promise(function(resolve, reject) {
-              if (filterFileObject(fileEntry, queryObj)) {
-                searchResults.push(fileEntry);
-                resolve();
-              }
-              if (fileContentFilter(fileEntry.name)) {
-                TSCORE.IO.loadTextFilePromise(fileEntry.path).then(function(content) {
-                  //return scan(content, fileEntry);
-                  var found = false;
-                  queryObj.includedTerms.forEach(function(term) {
-                    if (content.indexOf(term[0]) >= 0) {
-                      found = true;
-                    }
-                    if (found) {
-                      console.log("Term " + term[0] + " found in " + fileEntry.path);
-                      searchResults.push(fileEntry);
-                    }
-                  });
-                  resolve();
-                }, function(err) {
-                  resolve();
-                  console.log("Failed loading content for: " + fileEntry.path);
-                });
-              } else {
-                resolve();
-              }
-            });
-          }
-          //, function(dirEntry) {}
-        ).then(
-          function(entries) {
-            console.log("Found " + searchResults.length + " out of " + entries.length + " entries.");
-            TSCORE.Search.nextQuery = "";
-            TSCORE.PerspectiveManager.updateFileBrowserData(searchResults);
-            TSCORE.hideWaitingDialog();
-            //TSPOSTIO.createDirectoryIndex(searchResults);
-          },
-          function(err) {
-            console.warn("Error creating index: " + err);
-          }
-        ).catch(function() {
-          TSCORE.hideWaitingDialog();
-        });
-        return false;
-      } else {
-        if (TSCORE.Config.getCalculateTags()) {
-          // Find all tags in the current search results
-          exports.calculateTags(data);
-        }
-        return data;
-      }
-
-    } else {
-      // old implementation
-      if (queryObj.recursive) {
-        TSCORE.Search.nextQuery = query.substring(1, query.length);
-        TSCORE.IO.createDirectoryIndex(TSCORE.currentPath);
-        return false;
-      }
-
-      // By empty filter just return the data
-      if (query.length > 0) {
-        data = _.filter(data, function(value) {
-            var fileEntry = {
-              path: value[TSCORE.fileListFILEPATH],
-              name: value[TSCORE.fileListFILENAME],
-              tags: value[TSCORE.fileListTAGS],
-            };
-            // Excluding files from tagspacec meta folders
-            if (fileEntry.path.indexOf(TSCORE.dirSeparator + ".ts") > 0) {
-              return false;
+    if (query.length > 0) {
+      TSCORE.showWaitingDialog($.i18n.t("ns.common:waitDialogDiectoryIndexing"));
+      console.time("walkDirectorySearch");
+      TSCORE.Utils.walkDirectory(TSCORE.currentPath, {recursive: queryObj.recursive},
+        function(fileEntry) {
+          return new Promise(function(resolve, reject) {
+            if (filterFileObject(fileEntry, queryObj)) {
+              searchResults.push(fileEntry);
             }
-            return filterFileObject(fileEntry, queryObj);
-          }
-        );
-        currentQuery = nextQuery;
-      }
+            if (searchInContent && fileContentFilter(fileEntry.name)) {
+              TSCORE.IO.loadTextFilePromise(fileEntry.path).then(function(content) {
+                //return scan(content, fileEntry);
+                var found = false;
+                queryObj.includedTerms.forEach(function(term) {
+                  if (content.indexOf(term[0]) >= 0) {
+                    found = true;
+                  }
+                  if (found) {
+                    console.log("Term " + term[0] + " found in " + fileEntry.path);
+                    searchResults.push(fileEntry);
+                  }
+                });
+              }, function(err) {
+                console.log("Failed loading content for: " + fileEntry.path);
+              });
+            }
+            resolve();
+          });
+        }
+        //, function(dirEntry) {}
+      ).then(
+        function(entries) {
+          console.timeEnd("walkDirectorySearch");
+          console.log("Found " + searchResults.length + " out of " + entries.length + " entries.");
+          TSCORE.Search.nextQuery = "";
+          TSCORE.PerspectiveManager.updateFileBrowserData(searchResults);
+          TSCORE.hideWaitingDialog();
+        },
+        function(err) {
+          console.warn("Error creating index: " + err);
+        }
+      ).catch(function() {
+        TSCORE.hideWaitingDialog();
+      });
+      return false;
+    } else {
       if (TSCORE.Config.getCalculateTags()) {
         // Find all tags in the current search results
         exports.calculateTags(data);
