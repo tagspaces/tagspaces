@@ -758,7 +758,7 @@ define(function(require, exports, module) {
         show: true
       });
       $('#dialogDirectoryRename').draggable({
-         handle: ".modal-header"
+        handle: ".modal-header"
       });
     });
   }

@@ -33,7 +33,7 @@ define(function(require, exports, module) {
     }
   });
 
-  var rootMenu = new gui.Menu({ type: 'menubar' });
+  var rootMenu = new gui.Menu({type: 'menubar'});
   var aboutMenu = new gui.Menu();
   var viewMenu = new gui.Menu();
 

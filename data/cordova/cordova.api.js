@@ -384,7 +384,7 @@ define(function(require, exports, module) {
                           onFulfill({
                             "name": fileEntry.name,
                             "isFile": true,
-                             "size": fileEntry.size,
+                            "size": fileEntry.size,
                             "lmdt": fileEntry.lastModifiedDate,
                             "path": fileEntry.fullPath
                           });
@@ -427,7 +427,7 @@ define(function(require, exports, module) {
   function getPropertiesPromise(filePath) {
     return new Promise(function(resolve, reject) {
         filePath = normalizePath(filePath);
-      //getFileSystemPromise(dir).then(function(fileSystem) {
+        //getFileSystemPromise(dir).then(function(fileSystem) {
         var fileProperties = {};
         fsRoot.getFile(filePath, {
             create: false,
