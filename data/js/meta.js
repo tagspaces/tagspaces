@@ -8,14 +8,9 @@ define(function(require, exports, module) {
   }
 
   function getDirectoryMetaInformation() {
-    
-    if (TSCORE.IO.listDirectoryPromise) {
-      var metaFolderPath = TSCORE.currentPath + TSCORE.dirSeparator + TSCORE.metaFolder;
-      console.log("getDirectoryMetaInformation: " + metaFolderPath);
-      return TSCORE.IO.listDirectoryPromise(metaFolderPath);
-    } else {
-      return Promise.resolve();
-    }
+    var metaFolderPath = TSCORE.currentPath + TSCORE.dirSeparator + TSCORE.metaFolder;
+    console.log("getDirectoryMetaInformation: " + metaFolderPath);
+    return TSCORE.IO.listDirectoryPromise(metaFolderPath, true);
   }
 
   function findMetaFilebyPath(filePath, extension) {
@@ -113,7 +108,7 @@ define(function(require, exports, module) {
   }
 
   function loadMetaFileJson(filePath) {
-    console.log("loadMetaFileJson: " + filePath);
+    //console.log("loadMetaFileJson: " + filePath);
     var promise = new Promise(function(resolve, reject) {
       var metaFileJson = findMetaFilebyPath(filePath, TSCORE.metaFileExt);
       if (metaFileJson) {
