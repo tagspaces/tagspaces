@@ -239,7 +239,7 @@ define(function(require, exports, module) {
         TSCORE.directoryBrowser.initUI();
       }
       $('#directoryBrowserDialog').i18n();
-      TSCORE.IO.listSubDirectories(path);
+      TSCORE.Utils.listSubDirectories(path);
     });
   };
   var showOptionsDialog = function() {
