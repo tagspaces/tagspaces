@@ -89,7 +89,7 @@ module.exports = function(grunt) {
     jscs: {
       options: {
         config: ".jscs.json",
-        maxErrors: 10
+        maxErrors: 20
       },
       files: {
         src: [
