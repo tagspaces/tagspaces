@@ -150,7 +150,7 @@ define(function(require, exports, module) {
      });
   }
 
-  function getFilePropertiesPromise(filePath) {
+  function getPropertiesPromise(filePath) {
     console.log("Getting file properties...");
     return new Promise(function(resolve, reject) {
       var event = document.createEvent('CustomEvent');
@@ -478,7 +478,7 @@ define(function(require, exports, module) {
 
   exports.listDirectoryPromise = listDirectoryPromise;
 
-  exports.getFilePropertiesPromise = getFilePropertiesPromise;
+  exports.getPropertiesPromise = getPropertiesPromise;
 
   exports.loadTextFilePromise = loadTextFilePromise;
   exports.getFileContentPromise = getFileContentPromise;
