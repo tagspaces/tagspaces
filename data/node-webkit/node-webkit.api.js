@@ -571,7 +571,7 @@ define(function(require, exports, module) {
   function saveBinaryFilePromise(filePath, content, overwrite) {
     console.log("Saving binary file: " + filePath);
     var buff = TSCORE.Utils.arrayBufferToBuffer(content);
-    return saveFilePromise(filePath, content, overwrite);
+    return saveFilePromise(filePath, buff, overwrite);
   }
 
 
