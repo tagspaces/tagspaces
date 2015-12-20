@@ -37,6 +37,7 @@ define(function(require, exports, module) {
     $containerElement.append($('<iframe>', {
       id: "iframeViewer",
       sandbox: "allow-same-origin allow-scripts",
+      type: "content",
       //scrolling: "no",
       style: "background-color: white; overflow: hidden;",
       src: extPath,
