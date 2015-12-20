@@ -5,6 +5,8 @@
 define(function(require, exports, module) {
   'use strict';
   var TSCORE = require('tscore');
+  var TSPOSTIO = require('tspostioapi');
+
   console.log('Loading utils.js ...');
 
   var TSCORE = require('tscore');
@@ -43,14 +45,14 @@ define(function(require, exports, module) {
     return canvas.toDataURL("image/png");
   }
 
-  var arrayBufferToStr = function(buf) {
+  function arrayBufferToStr(buf) {
     var str = '',
     bytes = new Uint8Array(buf);
     for (var i = 0; i < bytes.length; i++) {
       str += String.fromCharCode(bytes[i]);
     }
     return decodeURIComponent(escape(str));
-  };
+  }
   
   function arrayBufferToBuffer(ab) {
     var buffer = new Buffer(ab.byteLength);
@@ -61,19 +63,19 @@ define(function(require, exports, module) {
     return buffer;
   }
 
-  var baseName = function(dirPath) {
+  function baseName(dirPath) {
     var fileName = dirPath.substring(dirPath.lastIndexOf(TSCORE.dirSeparator) + 1, dirPath.length);
     return fileName ? fileName : dirPath;
-  };
+  }
 
-  var dirName = function(dirPath) {
+  function dirName(dirPath) {
     return dirPath.replace(/\\/g, '/').replace(/\/[^\/]*$/, '');
-  };
+  }
 
-  var getFileExt = function(fileURL) {
+  function getFileExt(fileURL) {
     var ext = fileURL.split('.').pop();
     return (ext === fileURL) ? "" : ext;
-  };
+  }
 
   function walkDirectory(path, options, fileCallback, dirCallback) {
     return TSCORE.IO.listDirectoryPromise(path).then(function(entries) {
@@ -105,6 +107,28 @@ define(function(require, exports, module) {
     });
   }
 
+  function listSubDirectories(dirPath) {
+    console.log("Listing sub directories: " + dirPath);
+    TSCORE.showLoadingAnimation();
+    TSCORE.IO.listDirectoryPromise(dirPath).then(function(entries) {
+      var anotatedDirList = [];
+      // skiping the first entry pointing to the parent directory
+      for (var i = 1; i < entries.length; i++) {
+        if (!entries[i].isFile) {
+          anotatedDirList.push({
+            "name": entries[i].name,
+            "path": entries[i].path
+          });
+        }
+      }
+      TSPOSTIO.listSubDirectories(anotatedDirList, dirPath);
+    }, function(error) {
+      TSPOSTIO.errorOpeningPath(dirPath);
+      TSCORE.hideLoadingAnimation();
+      console.error("Error listDirectory " + dirPath + " error: " + error);
+    });
+  }
+
   exports.arrayBufferToDataURL = arrayBufferToDataURL;
   exports.base64ToArrayBuffer = base64ToArrayBuffer;
   exports.dataURLtoBlob = dataURLtoBlob;
@@ -116,4 +140,5 @@ define(function(require, exports, module) {
   exports.arrayBufferToBuffer = arrayBufferToBuffer;
 
   exports.walkDirectory = walkDirectory;
+  exports.listSubDirectories = listSubDirectories;
 });

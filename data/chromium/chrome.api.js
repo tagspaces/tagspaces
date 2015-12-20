@@ -110,7 +110,7 @@ define(function(require, exports, module) {
 
 
   function listDirectoryPromise(dirPath) {
-    console.log("Listing directory: " + dirPath);
+    //console.log("Listing directory: " + dirPath);
     return new Promise(function(resolve, reject) {
       var anotatedDirList = [];
       $.ajax({
@@ -118,7 +118,6 @@ define(function(require, exports, module) {
           type: 'GET'
         })
         .done(function(data) {
-          //console.log("Dir List "+data);
           var folders = data.substring(data.indexOf(dataBegin) + dataBegin.length, data.lastIndexOf(dataEnd));
           folders = folders.split(dataBegin).join("");
           folders = folders.split(dataEnd);
@@ -131,9 +130,10 @@ define(function(require, exports, module) {
             fileProp;
 
           anotatedDirList = [];
+
           // sciping the first entry pointing to the parent directory
           for (var i = 1; i < folders.length; i++) {
-            console.log("Dir " + folders[i]);
+            //console.log("Dir " + folders[i]);
             name = folders[i].substring(2, folders[i].indexOf('","'));
             path = dirPath + TSCORE.dirSeparator + name;
             isFile = (folders[i].indexOf(dataFile) > 1);
@@ -160,29 +160,6 @@ define(function(require, exports, module) {
         });
     });
   }
-
-  function listSubDirectories(dirPath) {
-    console.log("Listing sub directories: " + dirPath);
-    TSCORE.showLoadingAnimation();
-    listDirectoryPromise(dirPath).then(function(entries) {
-      var anotatedDirList = [];
-      // skiping the first entry pointing to the parent directory
-      for (var i = 1; i < entries.length; i++) {
-        if (!entries[i].isFile) {
-          anotatedDirList.push({
-            "name": entries[i].name,
-            "path": entries[i].path
-          });
-        }
-      }
-      TSPOSTIO.listSubDirectories(anotatedDirList, dirPath);
-    }, function(error) {
-      TSPOSTIO.errorOpeningPath(dirPath);
-      TSCORE.hideLoadingAnimation();
-      console.error("Error listDirectory " + dirPath + " error: " + error);
-    });
-  }
-
 
   function getPropertiesPromise(filePath) {
     return new Promise(function(resolve, reject) {
@@ -319,7 +296,6 @@ define(function(require, exports, module) {
   exports.createDirectoryTree = createDirectoryTree;
 
   exports.listDirectoryPromise = listDirectoryPromise;
-  exports.listSubDirectories = listSubDirectories; /** TODO move in ioutils */
 
   exports.getPropertiesPromise = getPropertiesPromise;
 

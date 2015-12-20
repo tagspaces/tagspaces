@@ -417,56 +417,6 @@ define(function(require, exports, module) {
     });
   }
 
-  function listSubDirectories(dirPath) {
-    console.log("Listing sub directories of: " + dirPath);
-    // directory path format DCIM/Camera/ !
-    if (dirPath.lastIndexOf("/") === 0 || dirPath.lastIndexOf("/")  != dirPath.length - 1) {
-      dirPath = dirPath + "/"; // TODO make it platform independent
-    }
-
-    dirPath = normalizePath(dirPath);
-    console.log("Listing sub directories of : " + dirPath + " normalized.");
-    TSCORE.showLoadingAnimation();
-
-    fsRoot.getDirectory(dirPath, {
-        create: false,
-        exclusive: false
-      },
-      function(dirEntry) {
-        var directoryReader = dirEntry.createReader();
-
-        // Get a list of all the entries in the directory
-        directoryReader.readEntries(
-          function(entries) {
-            var i;
-            var anotatedDirList = [];
-            for (i = 0; i < entries.length; i++) {
-              if (entries[i].isDirectory) {
-                anotatedDirList.push({
-                  "name": entries[i].name,
-                  "path": entries[i].fullPath
-                });
-              }
-            }
-            //console.log("Dir content: " + JSON.stringify(entries));
-            TSPOSTIO.listSubDirectories(anotatedDirList, dirPath);
-          },
-          function(error) { // error get file system
-            //TSPOSTIO.errorOpeningPath(dirPath);
-            TSCORE.hideLoadingAnimation();
-            console.error("Listing sub directories failed: " + error.code);
-          }
-        );
-      },
-      function(error) {
-        //TSPOSTIO.errorOpeningPath(dirPath);
-        TSCORE.hideLoadingAnimation();
-        console.error("Getting sub directories of : " + dirPath + " failed: " + error.code);
-      }
-    );
-  }
-
-
   function getPropertiesPromise(filePath) {
     return new Promise(function(resolve, reject) {
         filePath = normalizePath(filePath);
@@ -852,7 +802,6 @@ define(function(require, exports, module) {
   exports.createDirectoryTree = createDirectoryTree;
 
   exports.listDirectoryPromise = listDirectoryPromise;
-  exports.listSubDirectories = listSubDirectories; /** @deprecated */
 
   exports.getPropertiesPromise = getPropertiesPromise;
 
