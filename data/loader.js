@@ -27,7 +27,9 @@ var isWin = navigator.appVersion.indexOf("Win")!==-1;
   if (PRODUCTION == "true") {
     console = console || {};
     console.log = function(){};
-    console.warning = function(){};
+    console.warn = function(){};
+    console.time = function(){};
+    console.timeEnd = function(){};
     //console.error = function(){};
   }
 
