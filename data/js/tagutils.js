@@ -92,7 +92,7 @@ define(function(require, exports, module) {
   }
 
   function extractTitle(filePath) {
-    console.log('Extracting title from: ' + filePath);
+    //console.log('Extracting title from: ' + filePath);
     var fileName = extractFileNameWithoutExt(filePath);
     var beginTagContainer = fileName.indexOf(BEGIN_TAG_CONTAINER);
     var endTagContainer = fileName.lastIndexOf(END_TAG_CONTAINER);
