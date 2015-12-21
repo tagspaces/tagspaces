@@ -101,49 +101,60 @@ define(function(require, exports, module) {
   }
 
   function listDirectoryPromise(dirPath) {
+    dirPath = dirPath.split("//").join("/");
     console.log("Listing directory: " + dirPath);
     return new Promise(function(resolve, reject) {
-      var anotatedDirList = [];
-      dirPath = encodeURI(dirPath + "/");
-      davClient.propfind(
-        dirPath, //encodeURI(dirPath),
-        function(status, data) {
-          console.log("Dirlist Status:  " + status);
-          if (!checkStatusCode(status)) { 
-            reject("Listing directory " + dirPath + " failed " + status);
-            console.warn("Listing directory " + dirPath + " failed " + status);
-            return;
-          }
-          var dirList = data._responses,
-          fileName, isDir, filesize, lmdt;
+      var anotatedDirList;
 
-          for (var entry in dirList) {
-            var path = dirList[entry].href;
-            if (dirPath.toLowerCase() !== path.toLowerCase()) {
-              isDir = false;
-              filesize = undefined;
-              lmdt = undefined;
-              //console.log(dirList[entry]._namespaces["DAV:"]);
-              if (typeof dirList[entry]._namespaces["DAV:"].getcontentlength === 'undefined' ||
-                dirList[entry]._namespaces["DAV:"].getcontentlength._xmlvalue.length === 0
-              ) {
-                isDir = true;
-              } else {
-                filesize = dirList[entry]._namespaces["DAV:"].getcontentlength;
-                lmdt = data._responses[entry]._namespaces["DAV:"].getlastmodified._xmlvalue[0].data;
-              }
-              fileName = getNameForPath(path);
-              anotatedDirList.push({
-                "name": fileName,
-                "isFile": !isDir,
-                "size": filesize,
-                "lmdt": lmdt,
-                "path": decodeURI(path)
-              });
+      var davSuccess = function(status, data) {
+        console.log("Dirlist Status:  " + status);
+        if (!checkStatusCode(status)) {
+          console.warn("Listing directory " + dirPath + " failed " + status);
+          reject("Listing directory " + dirPath + " failed " + status);
+        }
+        var dirList = data._responses, fileName, isDir, filesize, lmdt, path;
+
+        anotatedDirList = [];
+        for (var entry in dirList) {
+          path = dirList[entry].href;
+          console.log("---dP" + dirPath.toLowerCase());
+          console.log("---p" + path.toLowerCase());
+          if (dirPath.toLowerCase() === path.toLowerCase()) {
+            console.log("Skipping current folder");
+          } else {
+            isDir = false;
+            filesize = undefined;
+            lmdt = undefined;
+            //console.log(dirList[entry]._namespaces["DAV:"]);
+            if (typeof dirList[entry]._namespaces["DAV:"].getcontentlength === 'undefined' ||
+              dirList[entry]._namespaces["DAV:"].getcontentlength._xmlvalue.length === 0
+            ) {
+              isDir = true;
+            } else {
+              filesize = dirList[entry]._namespaces["DAV:"].getcontentlength._xmlvalue[0].data;
+              lmdt = data._responses[entry]._namespaces["DAV:"].getlastmodified._xmlvalue[0].data;
             }
+            fileName = getNameForPath(path);
+            anotatedDirList.push({
+              "name": fileName,
+              "isFile": !isDir,
+              "size": filesize,
+              "lmdt": lmdt,
+              "path": decodeURI(path)
+            });
           }
-          resolve(anotatedDirList);
-        },
+        }
+        resolve(anotatedDirList);
+      }
+
+      if(dirPath.substring(dirPath.length-1) !== "/") {
+        dirPath = dirPath + "/"
+      }
+      dirPath = encodeURI(dirPath);
+
+      davClient.propfind(
+        dirPath,
+        davSuccess,
         1 //1 , davClient.INFINITY
       );
     });
