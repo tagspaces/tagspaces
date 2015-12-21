@@ -6,6 +6,7 @@ define(function(require, exports, module) {
   console.log('Loading perspective.manager.js ...');
   var perspectives;
   var TSCORE = require('tscore');
+  var TSPOSTIO = require("tspostioapi");
   
   function initPerspective(extPath) {
     return new Promise(function(resolve, reject) {
@@ -57,7 +58,7 @@ define(function(require, exports, module) {
       }
       if (lastLocation && lastLocation.length >= 1) {
         TSCORE.openLocation(lastLocation);
-        TSCORE.IO.checkAccessFileURLAllowed();
+        TSCORE.IO.checkAccessFileURLAllowed ? TSCORE.IO.checkAccessFileURLAllowed() : true;
         var evt = TSCORE.createDocumentEvent("initApp");
         TSCORE.fireDocumentEvent(evt);
         $("#viewContainers").removeClass("appBackgroundTile");
@@ -246,7 +247,16 @@ define(function(require, exports, module) {
   
   var refreshFileListContainer = function() {
     // TODO consider search view
-    TSCORE.IO.listDirectory(TSCORE.currentPath);
+    //TSCORE.showLoadingAnimation();
+    TSCORE.IO.listDirectoryPromise(TSCORE.currentPath).then(
+      function(entries) {
+        TSPOSTIO.listDirectory(entries);
+      },
+      function(err) {
+        TSPOSTIO.errorOpeningPath();
+        console.warn("Error listing directory" + err);
+      }
+    );
   };
 
   var hideAllPerspectives = function() {

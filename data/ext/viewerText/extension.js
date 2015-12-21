@@ -29,7 +29,14 @@ define(function(require, exports, module) {
     containerElID = containerElementID;
     $containerElement = $('#' + containerElID);
     filePath = fPath;
-    TSCORE.IO.loadTextFile(filePath, true);
+    TSCORE.IO.loadTextFilePromise(filePath).then(function(content) {
+      exports.setContent(content);
+    }, 
+    function(error) {
+      TSCORE.hideLoadingAnimation();
+      TSCORE.showAlertDialog("Loading " + filePath + " failed.");
+      console.error("Loading file " + filePath + " failed " + error);
+    });
   };
 
   exports.setFileType = function(fileType) {

@@ -8,6 +8,7 @@ define(function(require, exports, module) {
 
   console.log('Loading directories.ui.js ...');
   var TSCORE = require('tscore');
+  var TSPOSTIO = require("tspostioapi");
   var directoryHistory = [];
   var metaTagGroupsHistory = null;
   var dir4ContextMenu = null;
@@ -15,7 +16,7 @@ define(function(require, exports, module) {
     '{{#each dirHistory}}' +
     '<div class="btn-group">' +
         '<button class="btn btn-link dropdown-toggle" data-menu="{{@index}}">' +
-            '{{name}}&nbsp;&nbsp;<i class="fa fa-angle-right"></i>&nbsp;'  +
+            '<div class="altNavFolderTitle"><i class="fa fa-angle-right"></i>&nbsp;{{name}}</div>'  +
         '</button>' +
         '<div class="dropdown clearfix dirAltNavMenu" id="dirMenu{{@index}}" data-path="{{path}}">' +
             '<ul role="menu" class="dropdown-menu">' +
@@ -56,7 +57,7 @@ define(function(require, exports, module) {
                 '{{#if children}}' +
                 '<div class="dirButtonContainer">{{#each children}}' +
                     '<button class="btn btn-sm dirButton ui-droppable" key="{{path}}" title="{{path}}">' +
-                        '<i class="fa fa-folder-o"></i>&nbsp;{{name}}</button>' +
+                        '<div><i class="fa fa-folder-o"></i>&nbsp;{{name}}</div></button>' +
                 '{{/each}}</div>' +
                 '{{else}}' +
                     '<div>{{../../noSubfoldersFound}}</div>' +
@@ -322,7 +323,14 @@ define(function(require, exports, module) {
           var fileName = TSCORE.TagUtils.extractFileName(filePath);
           var targetDir = $(this).attr('key');
           console.log('Moving file: ' + filePath + ' to ' + targetDir);
-          TSCORE.IO.renameFile(filePath, targetDir + TSCORE.dirSeparator + fileName);
+          var newFilePath = targetDir + TSCORE.dirSeparator + fileName;
+          TSCORE.IO.renameFilePromise(filePath, newFilePath).then(function(success) {
+            TSCORE.hideWaitingDialog();
+            TSPOSTIO.renameFile(filePath, newFilePath);
+          }, function(err) {
+            TSCORE.hideWaitingDialog();
+            TSCORE.showAlertDialog(err);
+          });
           $(ui.helper).remove();
         }
       });
@@ -342,7 +350,14 @@ define(function(require, exports, module) {
             var fileName = TSCORE.TagUtils.extractFileName(filePath);
             var targetDir = $(this).attr('key');
             console.log('Moving file: ' + filePath + ' to ' + targetDir);
-            TSCORE.IO.renameFile(filePath, targetDir + TSCORE.dirSeparator + fileName);
+            var newFilePath = targetDir + TSCORE.dirSeparator + fileName;
+            TSCORE.IO.renameFilePromise(filePath, newFilePath).then(function(success) {
+              TSCORE.hideWaitingDialog();
+              TSPOSTIO.renameFile(filePath, newFilePath);
+            }, function(err) {
+              TSCORE.hideWaitingDialog();
+              TSCORE.showAlertDialog(err);
+            });
             $(ui.helper).remove();
           }
         }
@@ -441,12 +456,31 @@ define(function(require, exports, module) {
     console.log('Dir History: ' + JSON.stringify(directoryHistory));
     TSCORE.currentPath = directoryPath;
 
-    TSCORE.Meta.getDirectoryMetaInformation(function() {
-      TSCORE.IO.listDirectory(directoryPath);
-      if (TSCORE.PRO) {
-        TSCORE.IO.createMetaFolder(directoryPath);
-      }
+    TSCORE.Meta.getDirectoryMetaInformation().then(function(dirList) {
+      TSCORE.metaFileList = dirList;
+      listDirectory(directoryPath);
+    }, function(error) {
+      console.log(error);
+      listDirectory(directoryPath);
     });
+  }
+
+  function listDirectory(dirPath) {
+    TSCORE.showLoadingAnimation();
+    TSCORE.IO.listDirectoryPromise(dirPath).then(
+      function(entries) {
+        TSPOSTIO.listDirectory(entries);
+        console.log("Listing: " + dirPath + " done!");
+      },
+      function(err) {
+        TSPOSTIO.errorOpeningPath();
+        console.log("Error listing directory" + err);
+      }
+    );
+
+    if (TSCORE.PRO && TSCORE.Config.getEnableMetaData()) {
+      TSCORE.Meta.createMetaFolder(dirPath);
+    }
   }
 
   function initUI() {
@@ -475,7 +509,15 @@ define(function(require, exports, module) {
       TSCORE.showConfirmDialog($.i18n.t('ns.dialogs:deleteDirectoryTitleConfirm'), $.i18n.t(dlgConfirmMsgId, {
         dirPath: dir4ContextMenu
       }), function() {
-        TSCORE.IO.deleteDirectory(dir4ContextMenu);
+        TSCORE.IO.deleteDirectoryPromise(dir4ContextMenu).then(function() {
+            TSPOSTIO.deleteDirectory(dir4ContextMenu);
+          },
+          function(error) {
+            TSCORE.hideLoadingAnimation();
+            console.error("Deleting directory " + dir4ContextMenu + " failed " + error);
+            TSPOSTIO.deleteDirectoryFailed(dir4ContextMenu);
+          }
+        );
       });
     });
     $('#directoryMenuOpenDirectory').click(function() {
@@ -579,6 +621,9 @@ define(function(require, exports, module) {
         backdrop: 'static',
         show: true
       });
+      $('#dialogLocationEdit').draggable({
+        handle: ".modal-header"
+      });
     });
   }
 
@@ -636,6 +681,9 @@ define(function(require, exports, module) {
         backdrop: 'static',
         show: true
       });
+      $('#dialogCreateFolderConnection').draggable({
+        handle: ".modal-header"
+      });
     });
   }
 
@@ -646,7 +694,15 @@ define(function(require, exports, module) {
         $('body').append(uiTemplate());
         $('#createNewDirectoryButton').on('click', function() {
           // TODO validate folder name
-          TSCORE.IO.createDirectory($('#createNewDirectoryButton').attr('path') + TSCORE.dirSeparator + $('#newDirectoryName').val());
+          //TSCORE.IO.createDirectory($('#createNewDirectoryButton').attr('path') + TSCORE.dirSeparator + $('#newDirectoryName').val());
+          var dirPath = $('#createNewDirectoryButton').attr('path') + TSCORE.dirSeparator + $('#newDirectoryName').val();
+          TSCORE.IO.createDirectoryPromise(dirPath).then(function() {
+            TSPOSTIO.createDirectory(dirPath);
+          }, function(error) {
+            TSCORE.hideLoadingAnimation();
+            console.error("Creating directory " + dirPath + " failed" + error);
+            TSCORE.showAlertDialog("Creating " + dirPath + " failed.");
+          });
         });
       }
       $('#createNewDirectoryButton').attr('path', dirPath);
@@ -672,6 +728,9 @@ define(function(require, exports, module) {
         backdrop: 'static',
         show: true
       });
+      $('#dialogDirectoryCreate').draggable({
+        handle: ".modal-header"
+      });
     });
   }
 
@@ -681,7 +740,16 @@ define(function(require, exports, module) {
         var uiTemplate = Handlebars.compile(uiTPL);
         $('body').append(uiTemplate());
         $('#renameDirectoryButton').on('click', function() {
-          TSCORE.IO.renameDirectory($('#renameDirectoryButton').attr('path'), $('#directoryNewName').val());
+          var dirPath = $('#renameDirectoryButton').attr('path');
+          var newDirPath = $('#directoryNewName').val();
+          TSCORE.IO.renameDirectoryPromise(dirPath, newDirPath)
+          .then(function(newDirName) {
+            TSCORE.hideWaitingDialog();
+            TSPOSTIO.renameDirectory(dirPath, newDirName);
+          }, function(err) {
+            TSCORE.hideWaitingDialog();
+            TSCORE.showAlertDialog(err);
+          });
         });
       }
       $('#formDirectoryRename').validator();
@@ -707,6 +775,9 @@ define(function(require, exports, module) {
       $('#dialogDirectoryRename').modal({
         backdrop: 'static',
         show: true
+      });
+      $('#dialogDirectoryRename').draggable({
+        handle: ".modal-header"
       });
     });
   }

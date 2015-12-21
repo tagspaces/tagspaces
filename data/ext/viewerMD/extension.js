@@ -37,7 +37,7 @@ define(function(require, exports, module) {
     $containerElement.empty();
     $containerElement.css("background-color", "white");
     $containerElement.append($('<iframe>', {
-      sandbox: "allow-same-origin allow-scripts",
+      sandbox: "allow-same-origin allow-scripts allow-modals",
       id: "iframeViewer",
       "nwdisable": "",
       //"nwfaketop": "",
@@ -60,8 +60,15 @@ define(function(require, exports, module) {
         smartLists: true,
         smartypants: false
       });
-
-      TSCORE.IO.loadTextFile(filePath);
+      
+      TSCORE.IO.loadTextFilePromise(filePath).then(function(content) {
+        exports.setContent(content);
+      }, 
+      function(error) {
+        TSCORE.hideLoadingAnimation();
+        TSCORE.showAlertDialog("Loading " + filePath + " failed.");
+        console.error("Loading file " + filePath + " failed " + error);
+      });
     });
   };
 

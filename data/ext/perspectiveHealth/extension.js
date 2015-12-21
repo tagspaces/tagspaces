@@ -34,36 +34,36 @@ define(function(require, exports, module) {
 	    viewToolbar = $("#"+extensionID+"Toolbar").empty();
 		viewFooter = $("#"+extensionID+"Footer").empty();
 	
-	    initUI();  
+	    initUI();
 	};
 	
 	exports.load = function load() {
 		console.log("Loading View "+extensionID);
-        reDraw();        
+    reDraw();
 	};
 	
 	var reDraw = function() {
-	    switch (vizMode) {
-          case "quantYours":
-            require([
-                extensionDirectory+'/myweight2.js',
-                extensionDirectory+'/nvd3/nv.d3.min.js',
-                'css!'+extensionDirectory+'/styles.css',
-                'css!'+extensionDirectory+'/nvd3/nv.d3.min.css',
-                ], function(viz) {
-                    d3.select("svg").remove();                
-                    var svg = d3.select("#"+extensionID+"Container")
-                        .append("svg")
-                        .attr("width", viewContainer.width())
-                        .attr("height", viewContainer.height()
-                    );
-                    viz.draw(svg);
-                    TSCORE.hideLoadingAnimation();
-            });            
-            break;
-	      default:
-	        break;
-	    }
+    switch (vizMode) {
+      case "quantYours":
+        require([
+          extensionDirectory+'/myweight2.js',
+          extensionDirectory+'/nvd3/nv.d3.min.js',
+          'css!'+extensionDirectory+'/styles.css',
+          'css!'+extensionDirectory+'/nvd3/nv.d3.min.css',
+          ], function(viz) {
+            d3.select("svg").remove();
+            var svg = d3.select("#"+extensionID+"Container")
+              .append("svg")
+              .attr("width", viewContainer.width())
+              .attr("height", viewContainer.height()
+            );
+            viz.draw(svg);
+            TSCORE.hideLoadingAnimation();
+        });
+        break;
+    default:
+      break;
+    }
 	};
 	
     function showAddWeightDataDialog() {
@@ -92,14 +92,14 @@ define(function(require, exports, module) {
     
     function createWeightDataEntry() { 
     	var filePath = TSCORE.currentPath+TSCORE.dirSeparator+TSCORE.TagUtils.beginTagContainer
-    				  +TSCORE.Config.getTagDelimiter()+$("#dateData").val()
-    				  +TSCORE.Config.getTagDelimiter()+"WEI"+$("#weightData").val()+"kg"
-    				  +TSCORE.Config.getTagDelimiter()+"FAT"+$("#fatData").val()+"%"
-    				  +TSCORE.Config.getTagDelimiter()+"WAT"+$("#watterData").val()+"%"
-    				  +TSCORE.Config.getTagDelimiter()+"MUS"+$("#musclesData").val()+"%"
-    				  +TSCORE.Config.getTagDelimiter()+"BON"+$("#bonesData").val()+"kg"
-    				  +TSCORE.TagUtils.endTagContainer+".tsd";
-        TSCORE.IO.saveTextFile(filePath,"Weight Data Created by TagSpaces");    
+        +TSCORE.Config.getTagDelimiter()+$("#dateData").val()
+        +TSCORE.Config.getTagDelimiter()+"WEI"+$("#weightData").val()+"kg"
+        +TSCORE.Config.getTagDelimiter()+"FAT"+$("#fatData").val()+"%"
+        +TSCORE.Config.getTagDelimiter()+"WAT"+$("#watterData").val()+"%"
+        +TSCORE.Config.getTagDelimiter()+"MUS"+$("#musclesData").val()+"%"
+        +TSCORE.Config.getTagDelimiter()+"BON"+$("#bonesData").val()+"kg"
+        +TSCORE.TagUtils.endTagContainer+".tsd";
+      TSCORE.IO.saveTextFilePromise(filePath, "Weight Data Created by TagSpaces");
     } 	    
 	
 	exports.updateTreeData = function updateIndexData(fsTreeData) {
@@ -112,13 +112,13 @@ define(function(require, exports, module) {
 		console.log("clearSelectedFiles not implemented in "+extensionID);
 	};
 	
-    var removeFileUI = function(filePath) {
-        console.log("removeFileUI not implemented in "+extensionID);
-    };    
-    
-    var updateFileUI = function(oldFilePath, newFilePath) {
-    	console.log("updateFileUI not implemented in "+extensionID);
-    };     	
+  var removeFileUI = function(filePath) {
+    console.log("removeFileUI not implemented in "+extensionID);
+  };
+
+  var updateFileUI = function(oldFilePath, newFilePath) {
+    console.log("updateFileUI not implemented in "+extensionID);
+  };
     
 	var getNextFile = function (filePath) {
 		console.log("getNextFile not implemented in "+extensionID);
@@ -129,79 +129,74 @@ define(function(require, exports, module) {
 	};    
 	
 	var initUI = function() {
+    viewToolbar.append($("<div >", {
+        class: "btn-group",
+    })
+      .append($("<button>", {
+          class: "btn btn-default",
+          title: "Add new weight data",
+          id: extensionID+"CreateFileButton",
+      })
+      .click(function() {
+        showAddWeightDataDialog();
+          //TSCORE.showFileCreateDialog();
+      })
+      .append( "<i class='fa fa-plus'>" )
+      )
 
-        viewToolbar.append($("<div >", { 
-            class: "btn-group", 
-        })  
+    ); // end button group
 
-            .append($("<button>", { 
-                class: "btn btn-default",
-                title: "Add new weight data",
-                id: extensionID+"CreateFileButton",    
-            })
-            .click(function() {
-            	showAddWeightDataDialog();
-                //TSCORE.showFileCreateDialog();
-            })
-            .append( "<i class='fa fa-plus'>" )
-            )
-       
-        ); // end button group  
+    viewToolbar.append($("<div >", {
+      class: "btn-group",
+      //"data-toggle": "buttons-radio",
+    })
 
+      .append($("<button>", {
+          class: "btn btn-default",
+          title: "Index the directory structure",
+          id: extensionID+"QAMode",
+          text: " Index Subdirectories"
+      })
+      //.button('toggle')
+      .click(function() {
+          vizMode = "quantYours";
+          TSCORE.showLoadingAnimation();
+          TSCORE.Utils.createDirectoryIndex(TSCORE.currentPath);
+      })
+      .prepend( "<i class='fa fa-tasks' />")
+      )
+    ); // end button group
 
-        viewToolbar.append($("<div >", { 
-            class: "btn-group", 
-            //"data-toggle": "buttons-radio",        
-        })  
-            
-            
-            .append($("<button>", {
-                    class: "btn btn-default",           
-                    title: "Index the directory structure",
-                    id: extensionID+"QAMode",    
-                    text: " Index Subdirectories"
-                })
-                //.button('toggle')   
-                .click(function() {
-                    vizMode = "quantYours";
-                    TSCORE.showLoadingAnimation();    
-                    TSCORE.IO.createDirectoryIndex(TSCORE.currentPath);
-                })
-                .prepend( "<i class='fa fa-tasks' />")                
-            )       
-        ); // end button group  
-            
-        viewToolbar.append($("<div >", { 
-            class: "btn-group", 
-        })       
-            .append($("<button>", { 
-                class: "btn btn-default",           
-                title: "Exports current table data as CSV",
-                id: extensionID+"ExportButton",    
-            })
-            .click(function() {
-                var dialogContent = $('<textarea>', {
-                    style: "width: 500px; height: 350px;",
-                    text: TSCORE.exportFileListCSV(TSCORE.fileList)
-                });                
-                //TSCORE.showAlertDialog(dialogContent,"Export to CSV Dialog");
-                console.log("Export data: "+TSCORE.exportFileListCSV(TSCORE.fileList));
-            })
-            .append( $("<i class='fa fa-download' />") )
-            )          
-                        
-        ); // end toolbar
+    viewToolbar.append($("<div >", {
+      class: "btn-group",
+    })
+    .append($("<button>", {
+        class: "btn btn-default",
+        title: "Exports current table data as CSV",
+        id: extensionID+"ExportButton",
+    })
+    .click(function() {
+        var dialogContent = $('<textarea>', {
+            style: "width: 500px; height: 350px;",
+            text: TSCORE.exportFileListCSV(TSCORE.fileList)
+        });
+        //TSCORE.showAlertDialog(dialogContent,"Export to CSV Dialog");
+        console.log("Export data: "+TSCORE.exportFileListCSV(TSCORE.fileList));
+    })
+    .append( $("<i class='fa fa-download' />") )
+    )
 
-    };
+    ); // end toolbar
+  };
 	
-    // Vars
-    exports.Title                   = extensionTitle;
-    exports.ID                      = extensionID;   
-    exports.Type                    = extensionType;
-    exports.Icon                    = extensionIcon;
-    exports.Version                 = extensionVersion;
-    exports.ManifestVersion         = extensionManifestVersion;
-    exports.License                 = extensionLicense;
+  // Vars
+  exports.Title                   = extensionTitle;
+  exports.ID                      = extensionID;
+  exports.Type                    = extensionType;
+  exports.Icon                    = extensionIcon;
+  exports.Version                 = extensionVersion;
+  exports.ManifestVersion         = extensionManifestVersion;
+  exports.License                 = extensionLicense;
     
     // Methods
 //    exports.init                    = init;
@@ -209,6 +204,6 @@ define(function(require, exports, module) {
 	exports.clearSelectedFiles		= clearSelectedFiles;
 	exports.getNextFile				= getNextFile;
 	exports.getPrevFile				= getPrevFile;	
-    exports.removeFileUI            = removeFileUI;
-    exports.updateFileUI            = updateFileUI;	
+  exports.removeFileUI            = removeFileUI;
+  exports.updateFileUI            = updateFileUI;
 });

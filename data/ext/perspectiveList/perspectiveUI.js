@@ -8,6 +8,7 @@ define(function(require, exports, module) {
   console.log("Loading UI for perspectiveList");
 
   var TSCORE = require("tscore");
+  var TSPOSTIO = require("tspostioapi");
 
   var TMB_SIZES = ["100px", "200px", "300px", "400px", "500px"];
   var supportedFileTypeThumnailing = ['jpg', 'jpeg', 'png', 'gif'];
@@ -44,7 +45,8 @@ define(function(require, exports, module) {
     });
 
     $("#" + this.extensionID + "IncludeSubDirsButton").on("click", function() {
-      if (TSCORE.Config.getShowWarningRecursiveScan()) {
+      // TODO remove from all places e.g. config
+      /*if (TSCORE.Config.getShowWarningRecursiveScan()) {
         TSCORE.showConfirmDialog(
           $.i18n.t("ns.perspectiveList:includeSubdirsTitleConfirm"),
           $.i18n.t("ns.perspectiveList:includeSubdirsContentConfirm"),
@@ -60,7 +62,8 @@ define(function(require, exports, module) {
       } else {
         $("#" + self.extensionID + "IncludeSubDirsButton").prop('disabled', true);
         TSCORE.IO.createDirectoryIndex(TSCORE.currentPath);
-      }
+      }*/
+      TSCORE.Utils.createDirectoryIndex(TSCORE.currentPath);
     });
 
     $("#" + this.extensionID + "DeleteSelectedFilesButton").on("click", function() {
@@ -76,8 +79,14 @@ define(function(require, exports, module) {
         $.i18n.t(dlgConfirmMsgId, {
           selectedFiles:  selFiles.toString()
         }), function() {
-          TSCORE.selectedFiles.forEach(function(file) {
-            TSCORE.IO.deleteElement(file);
+          TSCORE.selectedFiles.forEach(function(path) {
+            TSCORE.IO.deleteFilePromise(path).then(function() {
+              TSPOSTIO.deleteElement(path);
+            }, function(error) {
+              TSCORE.hideLoadingAnimation();
+              TSCORE.showAlertDialog("Deleting file " + path + " failed.");
+              console.error("Deleting file " + path + " failed " + error);
+            });
           });
         });
     });

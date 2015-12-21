@@ -174,10 +174,6 @@ define(function(require, exports, module) {
 
   var selectFile = function() {};
 
-  var openExtensionsDirectory = function() {
-
-  };
-
   /* stats for file:
     dev: 2114,
     ino: 48064969,
@@ -218,7 +214,6 @@ define(function(require, exports, module) {
   exports.openDirectory = openDirectory;
   exports.openFile = openFile;
   exports.selectFile = selectFile;
-  exports.openExtensionsDirectory = openExtensionsDirectory;
   exports.checkAccessFileURLAllowed = checkAccessFileURLAllowed;
   exports.checkNewVersion = checkNewVersion;
   exports.getFileProperties = getFileProperties;

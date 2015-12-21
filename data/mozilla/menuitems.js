@@ -52,11 +52,14 @@ exports.Menuitem = function Menuitem(options) {
       }
       menuitem.addEventListener("command", onCmd, true);
 
-      if (options.menuid) {
-        let ($ = function(id) window.document.getElementById(id)) {
+      //Disabling for FF43
+      /*if (options.menuid) {
+        let ($ = function(id) {
+              window.document.getElementById(id);
+            }) {
           $(options.menuid).insertBefore(menuitem, $(options.insertbefore));
         }
-      }
+      }*/
 
       // add unloader
       require("unload+").unload(function() {

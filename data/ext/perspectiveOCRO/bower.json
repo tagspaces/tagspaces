@@ -1,11 +1,11 @@
 {
-  "name": "editorText",
-  "id": "editorText",
-  "description": "A TagSpaces extension allowing editing of text based documents.",
-  "type": "editor",
+  "name": "perspectiveOCRO",
+  "id": "perspectiveOCRO",
+  "description": "An experimental TagSpaces extension .",
+  "type": "",
   "version": "1.0.0",
   "dependencies": {
-    "codemirror": ">=5.9.0"
+
   },
   "devDependencies": {},
   "authors": [
@@ -13,8 +13,8 @@
     "Ilian Sapundshiev - http://ilian.me"
   ],
   "keywords": [
-    "text",
-    "editor"
+    "",
+    ""
   ],
   "license": "",
   "main": [

@@ -27,7 +27,9 @@ var isWin = navigator.appVersion.indexOf("Win")!==-1;
   if (PRODUCTION == "true") {
     console = console || {};
     console.log = function(){};
-    console.warning = function(){};
+    console.warn = function(){};
+    console.time = function(){};
+    console.timeEnd = function(){};
     //console.error = function(){};
   }
 
@@ -115,6 +117,7 @@ var isWin = navigator.appVersion.indexOf("Win")!==-1;
       tsmeta:                 'js/meta',
       tsgettingstarted:       'js/gettingstarted',
       tsextapi:               'js/ext.api',
+      tsextmanager:           'js/extension.manager', 
       tsioapi:                 IO_JS,
       tspro:                   PRO_JS
     },

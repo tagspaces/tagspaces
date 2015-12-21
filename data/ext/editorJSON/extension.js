@@ -38,7 +38,13 @@ define(function(require, exports, module) {
         change: contentChanged
       };
       jsonEditor = new JSONEditor(document.getElementById("jsonEditor"), options);
-      TSCORE.IO.loadTextFile(filePath);
+      TSCORE.IO.loadTextFilePromise(filePath).then(function(content) {
+        exports.setContent(content);
+      }, function(error) {
+        TSCORE.hideLoadingAnimation();
+        TSCORE.showAlertDialog("Loading " + filePath + " failed.");
+        console.error("Loading file " + filePath + " failed " + error);
+      });
     });
   };
 

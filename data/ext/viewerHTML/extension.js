@@ -33,15 +33,21 @@ define(function(require, exports, module) {
     $containerElement.empty();
     $containerElement.css("background-color", "white");
     $containerElement.append($('<iframe>', {
-      "sandbox": "allow-same-origin allow-scripts",
+      "sandbox": "allow-same-origin allow-scripts allow-modals",
       "id": "iframeViewer",
       "nwdisable": "",
       //"nwfaketop": "",
       "src": extensionDirectory + "/index.html?&locale=" + TSCORE.currentLanguage,
     }));
-
-    TSCORE.IO.loadTextFile(filePath);
-
+    
+    TSCORE.IO.loadTextFilePromise(filePath).then(function(content) {
+      exports.setContent(content);
+    }, 
+    function(error) {
+      TSCORE.hideLoadingAnimation();
+      TSCORE.showAlertDialog("Loading " + filePath + " failed.");
+      console.error("Loading file " + filePath + " failed " + error);
+    });
     /*window.addEventListener("message", receiveMessage, false);
     function receiveMessage(event) {
       console.log("Test event: " + event);

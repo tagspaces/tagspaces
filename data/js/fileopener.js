@@ -7,6 +7,7 @@ define(function(require, exports, module) {
   'use strict';
   console.log('Loading fileopener...');
   var TSCORE = require('tscore');
+  var TSPOSTIO = require("tspostioapi");
   var _openedFilePath;
   var _openedFileProperties;
   var _isFileOpened = false;
@@ -109,7 +110,13 @@ define(function(require, exports, module) {
       var fileNameWithOutExt = TSCORE.TagUtils.extractFileNameWithoutExt(_openedFilePath);
       var fileExt = TSCORE.TagUtils.extractFileExtension(_openedFilePath);
       var newFilePath = TSCORE.currentPath + TSCORE.dirSeparator + fileNameWithOutExt + '_' + currentDateTime + '.' + fileExt;
-      TSCORE.IO.copyFile(_openedFilePath, newFilePath);
+      TSCORE.IO.copyFilePromise(_openedFilePath, newFilePath).then(function(success) {
+        TSCORE.hideWaitingDialog();
+        TSPOSTIO.copyFile(_openedFilePath, newFilePath);
+      }, function(err) {
+        TSCORE.hideWaitingDialog();
+        TSCORE.showAlertDialog(err);
+      });
     });
     $('#toggleFullWidthButton').on("click", TSCORE.toggleFullWidth);
     $('#fullscreenFile').on("click", switchToFullScreen);
@@ -244,8 +251,16 @@ define(function(require, exports, module) {
     $viewer.find('*').off();
     $viewer.find('*').unbind();
     $viewer.find('*').remove();
-    TSCORE.IO.checkAccessFileURLAllowed();
-    TSCORE.IO.getFileProperties(filePath.replace('\\\\', '\\'));
+    TSCORE.IO.checkAccessFileURLAllowed ? TSCORE.IO.checkAccessFileURLAllowed() : true;
+    TSCORE.IO.getPropertiesPromise(filePath).then(function(fileProperties) {
+      if (fileProperties) {
+        TSPOSTIO.getFileProperties(fileProperties);
+      }
+    }).catch(function(error) {
+      TSCORE.hideLoadingAnimation();
+      TSCORE.showAlertDialog("Error getting properties for " + filePath);
+    });
+
     updateUI();
     if (editMode) {
       // opening file for editing
@@ -370,7 +385,13 @@ define(function(require, exports, module) {
                 title = title.substring(0,99);
             }
         }*/
-    TSCORE.IO.saveTextFile(_openedFilePath, content);
+    TSCORE.IO.saveTextFilePromise(_openedFilePath, content).then(function(isNewFile) {
+      TSPOSTIO.saveTextFile(_openedFilePath, isNewFile);
+    }, function(error) {
+      TSCORE.hideLoadingAnimation();
+      console.error("Save to file " + _openedFilePath + " failed " + error);
+      TSCORE.showAlertDialog("Saving " + _openedFilePath + " failed.");
+    });
   }
 
   function updateUI() {
@@ -500,6 +521,9 @@ define(function(require, exports, module) {
       $('#dialogFileProperties').i18n().modal({
         backdrop: 'static',
         show: true
+      });
+      $('#dialogFileProperties').draggable({
+        handle: ".modal-header"
       });
     });
   }

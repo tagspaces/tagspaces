@@ -144,7 +144,7 @@ function setContent(content, fileDirectory) {
 
   $htmlContent.find("a").bind('click', function(e) {
     e.preventDefault();
-    var msg = { command: "openLinkExternally", link : $(this).attr("href") };
+    var msg = {command: "openLinkExternally", link : $(this).attr("href")};
     window.parent.postMessage(JSON.stringify(msg), "*");
   });
 }

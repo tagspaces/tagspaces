@@ -17,7 +17,7 @@ define(function(require, exports, module) {
   var extensionSupportedFileTypes = ["html", "htm"];
 
   var TSCORE = require("tscore");
-
+  //var TSPOSTIO = require("tspostioapi");
   var extensionsPath = TSCORE.Config.getExtensionPath();
 
   var extensionDirectory = extensionsPath + "/" + extensionID;
@@ -52,8 +52,17 @@ define(function(require, exports, module) {
       "nwdisable": "",
       "nwfaketop": ""
     }));
-    TSCORE.IO.loadTextFile(filePath);
 
+    TSCORE.IO.loadTextFilePromise(filePath).then(function(content) {
+        //TSPOSTIO.loadTextFile(content);
+        exports.setContent(content);
+      },
+      function(error) {
+        TSCORE.hideLoadingAnimation();
+        TSCORE.showAlertDialog("Loading " + filePath + " failed.");
+        console.error("Loading file " + filePath + " failed " + error);
+      }
+    );
     //if (!window.addEventListener) {
     //  window.attachEvent('onmessage', function(e) {alert(e.origin);alert(e.data);});
     //} else {

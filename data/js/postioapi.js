@@ -92,6 +92,7 @@ define(function(require, exports, module) {
   };
 
   exports.listDirectory = function(anotatedDirList) {
+    TSCORE.hideLoadingAnimation();
     TSCORE.PerspectiveManager.updateFileBrowserData(anotatedDirList);
     TSCORE.updateSubDirs(anotatedDirList);
   };
@@ -160,8 +161,6 @@ define(function(require, exports, module) {
   exports.selectFile = function() {
     console.log('File selected: ' + $(this).val());
   };
-
-  exports.openExtensionsDirectory = function() {};
 
   exports.getFileProperties = function(fileProperties) {
     console.log('File properties: ' + JSON.stringify(fileProperties));

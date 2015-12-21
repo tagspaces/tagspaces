@@ -20,9 +20,13 @@ define(function(require, exports, module) {
   var appSettingFile = "settings.json";
   var appSettingTagsFile = "settingsTags.json";
 
+  var anotatedTree;
+  var pendingCallbacks = 0;
+
   document.addEventListener("deviceready", onDeviceReady, false);
   document.addEventListener("resume", onDeviceResume, false);
   document.addEventListener("initApp", onApplicationLoad, false);
+
   // Register ios file open handler
   handleOpenURL = function(url) {
     var fileName = url.substring(url.lastIndexOf('/') + 1, url.length);
@@ -31,10 +35,22 @@ define(function(require, exports, module) {
     });
   };
 
-  // Cordova loaded and can be used
+  // Platform specific functions
+  function normalizePath(path) {
+    //we set absoilute path because some extensions didn't recognize cdvfile
+    //but in cordova.api implementation we didn't need absolute path so we strip nativeURL
+    if (path.indexOf(fsRoot.nativeURL) === 0) {
+      path = path.replace(fsRoot.nativeURL , "/");
+    }
+    if (path.indexOf(fsRoot.fullPath) === 0) {
+      path = path.substring(fsRoot.fullPath.length, path.length);
+    }
+    return path;
+  }
+
   function onDeviceReady() {
     console.log("Device Ready:"); // "+device.platform+" - "+device.version);
-    // Redifining the back button
+    // Redefining the back button
     document.addEventListener("backbutton", function(e) {
       TSCORE.FileOpener.closeFile();
       $('.modal').modal('hide');
@@ -55,7 +71,7 @@ define(function(require, exports, module) {
           if ("createTXTFile" === url || url.indexOf("TagSpaces") > 0) {
             widgetAction = url;
           } else {
-            urlFromIntent = url; 
+            urlFromIntent = url;
           }
         }
         //, function(error) {
@@ -91,7 +107,7 @@ define(function(require, exports, module) {
   function widgetActionHandler() {
 
     if (TSCORE.currentPath === null) {
-      TSCORE.showAlertDialog("Please set location folder to use widget");  
+      TSCORE.showAlertDialog("Please set location folder to use widget");
       return;
     }
 
@@ -114,27 +130,103 @@ define(function(require, exports, module) {
     }
   }
 
-  var handleStartParameters = function() {
-    if (urlFromIntent !== undefined && urlFromIntent.length > 0) {
-      console.log("Intent URL: " + urlFromIntent);
-      var filePath = decodeURIComponent(urlFromIntent);
-      TSCORE.FileOpener.openFileOnStartup(filePath);
+  function getFileSystemPromise(path) {
+    console.log("getFileSystemPromise: " + path);
+    if (path.indexOf(cordova.file.applicationDirectory) === 0) {
+    } else {
+      path = (isCordovaiOS) ? cordova.file.applicationDirectory + "/" + path : "file:///" + path;
     }
-  };
+    return new Promise(function(resolve, reject) {
+      window.resolveLocalFileSystemURL(path, resolve,
+        function(error) {
+          TSCORE.hideLoadingAnimation();
+          console.error("Error getting FileSystem: " + JSON.stringify(error));
+          reject(error);
+        });
+    });
+  }
+
+  function resolveFullPath(localURL) {
+    //Cordova file plugin didn't set fullpath so we set fullpath as absolute
+    //this solve problem with extensions which can't use the cdvfile
+    var URL = "cdvfile://localhost/persistent/";
+    var fullPath = decodeURIComponent(localURL);
+    if (fullPath.indexOf("cdvfile://localhost/root/") === 0) {
+      URL = "cdvfile://localhost/root/";
+    }
+
+    fullPath = fsRoot.nativeURL + fullPath.substring(URL.length, fullPath.length);
+    return fullPath;
+  }
 
   function getAppStorageFileSystem(fileName, fileCallback, fail) {
-    var dataFolderPath = (isCordovaiOS === true) ? 
+    var dataFolderPath = (isCordovaiOS === true) ?
       cordova.file.dataDirectory : cordova.file.externalApplicationStorageDirectory;
-   
+
     window.resolveLocalFileSystemURL(dataFolderPath,
       function(fs) {
         fs.getFile(fileName, {create:true}, fileCallback, fail);
-      }, 
+      },
       function(error) {
         TSCORE.hideLoadingAnimation();
         console.error("Error getSettingsFileSystem: " + JSON.stringify(error));
       }
     );
+  }
+
+  function getFileSystem() {
+    //on android cordova.file.externalRootDirectory points to sdcard0
+    var fsURL = (isCordovaiOS === true) ? cordova.file.documentsDirectory : "file:///";
+    window.resolveLocalFileSystemURL(fsURL,
+      function(fileSystem) {
+        fsRoot = fileSystem;
+        //console.log("Filesystem Details: " + JSON.stringify(fsRoot));
+        handleStartParameters();
+
+        loadSettingsFile(appSettingFile, function(settings) {
+          loadedSettings = settings;
+          loadSettingsFile(appSettingTagsFile, function(settingsTags) {
+            loadedSettingsTags = settingsTags;
+            TSCORE.initApp();
+          });
+        });
+      },
+      function(err) {
+        TSCORE.hideLoadingAnimation();
+        console.error("Error resolving local file system url: " + JSON.stringify(err));
+      }
+    );
+  }
+
+  function generateDirectoryTree(entries) {
+    var tree = {};
+    var i;
+    for (i = 0; i < entries.length; i++) {
+      if (entries[i].isFile) {
+        console.log("File: " + entries[i].name);
+        tree.children.push({
+          "name": entries[i].name,
+          "isFile": entries[i].isFile,
+          "size": "", // TODO size and lmtd
+          "lmdt": "", //
+          "path": entries[i].fullPath
+        });
+      } else {
+        var directoryReader = entries[i].createReader();
+        pendingCallbacks++;
+        directoryReader.readEntries(
+          generateDirectoryTree,
+          function(error) {
+            TSCORE.hideLoadingAnimation();
+            console.error("Error reading dir entries: " + error.code);
+          }); // jshint ignore:line
+      }
+    }
+    pendingCallbacks--;
+    console.log("Pending recursions: " + pendingCallbacks);
+    if (pendingCallbacks <= 0) {
+      TSPOSTIO.createDirectoryTree(anotatedTree);
+    }
   }
 
   function saveSettingsFile(fileName, data) {
@@ -143,7 +235,7 @@ define(function(require, exports, module) {
         fileEntry.createWriter(
           function(writer) {
             writer.write(data);
-          }, function(error) { 
+          }, function(error) {
             TSCORE.hideLoadingAnimation();
             console.error("Error creating writter: " + JSON.stringify(error));
           }
@@ -170,7 +262,7 @@ define(function(require, exports, module) {
               ready(content);
             };
             reader.readAsText(file);
-          }, 
+          },
           function(error) {
             TSCORE.hideLoadingAnimation();
             console.error("Error reading file: " + JSON.stringify(error));
@@ -184,15 +276,20 @@ define(function(require, exports, module) {
     );
   }
 
+  // Platform specific API calls
+
   function saveSettings(settings) {
+    //
     saveSettingsFile(appSettingFile, settings);
   }
-  
+
   function loadSettings() {
+    //
     return loadedSettings;
   }
 
   function saveSettingsTags(tagGroups) {
+    //TODO use js objects
     var jsonFormat = '{ "appName": "' + TSCORE.Config.DefaultSettings.appName +
         '", "appVersion": "' + TSCORE.Config.DefaultSettings.appVersion +
         '", "appBuild": "' + TSCORE.Config.DefaultSettings.appBuild +
@@ -200,175 +297,20 @@ define(function(require, exports, module) {
         ', "tagGroups": ' + tagGroups + ' }';
     saveSettingsFile(appSettingTagsFile, jsonFormat);
   }
-  
+
   function loadSettingsTags() {
+
     return loadedSettingsTags;
   }
 
-  function getFileSystem() {
-    //on android cordova.file.externalRootDirectory points to sdcard0
-    var fsURL = (isCordovaiOS === true) ? cordova.file.documentsDirectory : "file:///";
-    window.resolveLocalFileSystemURL(fsURL, 
-      function(fileSystem) {
-        fsRoot = fileSystem;
-        //console.log("Filesystem Details: " + JSON.stringify(fsRoot));
-        handleStartParameters();
-
-        loadSettingsFile(appSettingFile, function(settings) {
-          loadedSettings = settings;
-          loadSettingsFile(appSettingTagsFile, function(settingsTags) {
-            loadedSettingsTags = settingsTags;
-            TSCORE.initApp();
-          });
-        });
-      },
-      function(err) {
-        TSCORE.hideLoadingAnimation();
-        console.error("Error resolving local file system url: " + JSON.stringify(err));
-      }
-    );
+  function sendFile(filePath) {
+    console.log("Sending file: " + filePath);
+    window.plugins.fileOpener.send(filePath);
   }
 
-  function getFile(fullPath, result, fail) {
-    var filePath = normalizePath(fullPath);
+  // Platform API
 
-    fsRoot.getFile(filePath, {create: false},
-      function(fileEntry) {
-        fileEntry.file(function(file) { 
-          result(file); 
-        }, fail);
-      },
-      fail
-    );
-  }
-
-  function getFileContent(fullPath, result, error) {
-    getFile(fullPath, function(file) {
-      var reader = new FileReader();
-      reader.onerror = function() {
-        error(reader.error);
-      };
-      reader.onload = function() {
-        result(reader.result);
-      };
-      reader.readAsArrayBuffer(file);
-    }, error);
-  }
-
-  // TODO recursively calling callback not really working        
-  function scanDirectory(entries) {
-    var i;
-    for (i = 0; i < entries.length; i++) {
-      if (entries[i].isFile) {
-        console.log("File: " + entries[i].name);
-        anotatedDirListing.push({
-          "name": entries[i].name,
-          "isFile": entries[i].isFile,
-          "size": "", // TODO
-          "lmdt": "", //
-          "path": entries[i].fullPath
-        });
-      } else {
-        var directoryReader = entries[i].createReader();
-        pendingRecursions++;
-        directoryReader.readEntries(
-          scanDirectory,
-          function(error) {
-            TSCORE.hideLoadingAnimation();
-            console.error("Error reading dir entries: " + error.code);
-          }); // jshint ignore:line
-      }
-    }
-    pendingRecursions--;
-    console.log("Pending recursions: " + pendingRecursions);
-    if (pendingRecursions <= 0) {
-      TSPOSTIO.createDirectoryIndex(anotatedDirListing);
-    }
-  }
-
-  var anotatedDirListing;
-  var pendingRecursions = 0;
-  var createDirectoryIndex = function(dirPath) {
-    dirPath = dirPath + "/"; // TODO make it platform independent
-    dirPath = normalizePath(dirPath);
-    console.log("Creating index for directory: " + dirPath);
-    anotatedDirListing = [];
-    pendingRecursions = 0;
-    fsRoot.getDirectory(dirPath, {
-        create: false,
-        exclusive: false
-      },
-      function(dirEntry) {
-        var directoryReader = dirEntry.createReader();
-
-        // Get a list of all the entries in the directory
-        pendingRecursions++;
-        directoryReader.readEntries(
-          scanDirectory,
-          function(error) { // error get file system
-            TSCORE.hideLoadingAnimation();
-            console.error("Error getting directory: " + error.code);
-          }
-        );
-      },
-      function(error) {
-        TSCORE.hideLoadingAnimation();
-        console.error("Getting dir: " + dirPath + " failed with error code: " + error.code);
-      }
-    );
-  };
-
-  function generateDirectoryTree(entries) {
-    var tree = {};
-    var i;
-    for (i = 0; i < entries.length; i++) {
-      if (entries[i].isFile) {
-        console.log("File: " + entries[i].name);
-        tree.children.push({
-          "name": entries[i].name,
-          "isFile": entries[i].isFile,
-          "size": "", // TODO size and lmtd
-          "lmdt": "", // 
-          "path": entries[i].fullPath
-        });
-      } else {
-        var directoryReader = entries[i].createReader();
-        pendingCallbacks++;
-        directoryReader.readEntries(
-          generateDirectoryTree,
-          function(error) {
-            TSCORE.hideLoadingAnimation();
-            console.error("Error reading dir entries: " + error.code);
-          }); // jshint ignore:line
-      }
-    }
-    pendingCallbacks--;
-    console.log("Pending recursions: " + pendingCallbacks);
-    if (pendingCallbacks <= 0) {
-      TSPOSTIO.createDirectoryTree(anotatedTree);
-    }
-  }
-
-  var anotatedTree;
-  var pendingCallbacks = 0;
-  var createDirectoryTree = function(dirPath) {
-    console.log("Creating directory index for: " + dirPath);
-    TSCORE.showAlertDialog("Creating directory tree is not supported in Cordova yet.");
-  };
-
-  function normalizePath(path) {
-    //we set absoilute path because some extensions didn't recognize cdvfile
-    //but in cordova.api implementation we didn't need absolute path so we strip nativeURL
-    if (path.indexOf(fsRoot.nativeURL) === 0) {
-      path = path.replace(fsRoot.nativeURL , "/");
-    }
-    if (path.indexOf(fsRoot.fullPath) === 0) {
-      path = path.substring(fsRoot.fullPath.length, path.length);
-    }
-    return path;
-  }
-
-  var checkNewVersion = function() {
+  function checkNewVersion() {
     console.log("Checking for new version...");
     var cVer = TSCORE.Config.DefaultSettings.appVersion + "." + TSCORE.Config.DefaultSettings.appBuild;
     $.ajax({
@@ -381,695 +323,528 @@ define(function(require, exports, module) {
       .fail(function(data) {
         console.log("AJAX failed " + data);
       });
-  };
-
-  var listSubDirectories = function(dirPath) {
-    console.log("Listing sub directories of: " + dirPath);
-    // directory path format DCIM/Camera/ !
-    if (dirPath.lastIndexOf("/") === 0 || dirPath.lastIndexOf("/")  != dirPath.length - 1) {
-      dirPath = dirPath + "/"; // TODO make it platform independent  
-    }
-    
-    dirPath = normalizePath(dirPath);
-    console.log("Listing sub directories of : " + dirPath + " normalized.");
-    TSCORE.showLoadingAnimation();
-
-    fsRoot.getDirectory(dirPath, {
-        create: false,
-        exclusive: false
-      },
-      function(dirEntry) {
-        var directoryReader = dirEntry.createReader();
-
-        // Get a list of all the entries in the directory
-        directoryReader.readEntries(
-          function(entries) {
-            var i;
-            var anotatedDirList = [];
-            for (i = 0; i < entries.length; i++) {
-              if (entries[i].isDirectory) {
-                anotatedDirList.push({
-                  "name": entries[i].name,
-                  "path": entries[i].fullPath
-                });
-              }
-            }
-            //console.log("Dir content: " + JSON.stringify(entries));
-            TSPOSTIO.listSubDirectories(anotatedDirList, dirPath);
-          },
-          function(error) { // error get file system
-            //TSPOSTIO.errorOpeningPath(dirPath);
-            TSCORE.hideLoadingAnimation();
-            console.error("Listing sub directories failed: " + error.code);
-          }
-        );
-      },
-      function(error) {
-        //TSPOSTIO.errorOpeningPath(dirPath);
-        TSCORE.hideLoadingAnimation();
-        console.error("Getting sub directories of : " + dirPath + " failed: " + error.code);
-      }
-    );
-  };
-
-  function resolveFullPath(localURL) {
-    //Cordova file plugin didn't set fullpath so we set fullpath as absolute
-    //this solve problem with extensions which can't use the cdvfile
-    var URL = "cdvfile://localhost/persistent/";
-    var fullPath = decodeURIComponent(localURL);
-    if (fullPath.indexOf("cdvfile://localhost/root/") === 0) {
-      URL = "cdvfile://localhost/root/";
-    }
-
-    fullPath = fsRoot.nativeURL + fullPath.substring(URL.length, fullPath.length);
-    return fullPath;
   }
 
-  var listDirectory = function(dirPath) {
-    TSCORE.showLoadingAnimation();
+  function focusWindow() {
+    // Bring the TagSpaces window on top of the windows
+    console.log("Focusing window is not implemented in cordova.");
+  }
 
-    // directory path format DCIM/Camera/ !
-    dirPath = dirPath + "/"; // TODO make it platform independent
-    dirPath = normalizePath(dirPath);
+  function handleStartParameters() {
+    if (urlFromIntent !== undefined && urlFromIntent.length > 0) {
+      console.log("Intent URL: " + urlFromIntent);
+      var filePath = decodeURIComponent(urlFromIntent);
+      TSCORE.FileOpener.openFileOnStartup(filePath);
+    }
+  }
 
-    console.log("Listing directory: " + dirPath);
 
-    fsRoot.getDirectory(dirPath, {
-        create: false,
-        exclusive: false
-      },
-      function(dirEntry) {
-        var directoryReader = dirEntry.createReader();
-        var anotatedDirList = [];
-        var pendingCallbacks = 0;
-        // Get a list of all the entries in the directory
-        directoryReader.readEntries(
+  function createDirectoryTree(dirPath) {
+    // TODO
+    TSCORE.showAlertDialog("Creating directory tree is not supported in Cordova yet.");
+  }
+
+
+  function listDirectoryPromise(path, lite) {
+    console.time("listDirectoryPromise");
+    return new Promise(function(resolve, reject) {
+      var anotatedDirList = [];
+      var fileWorkers = [];
+      getFileSystemPromise(path).then(function(fileSystem) {
+        var reader = fileSystem.createReader();
+        reader.readEntries(
           function(entries) {
-            var i;
-            var normalizedPath;
-            for (i = 0; i < entries.length; i++) {
-              if (entries[i].isFile) {
-                pendingCallbacks++;
-                entries[i].file(
-                  function(entry) {
-                    if (!entry.fullPath) {
-                      entry.fullPath = resolveFullPath(entry.localURL);
-                    }
-                    anotatedDirList.push({
-                      "name": entry.name,
-                      "isFile": true,
-                      "size": entry.size,
-                      "lmdt": entry.lastModifiedDate,
-                      "path": entry.fullPath
-                    });
-                    pendingCallbacks--;
-                    console.log("File: " + entry.name + " Size: " + entry.size + " i:" + i + " Callb: " + pendingCallbacks);
-                    if (pendingCallbacks === 0 && i === entries.length) {
-                      TSPOSTIO.listDirectory(anotatedDirList);
-                    }
-                  }, // jshint ignore:line
-                  function(error) { // error get file system
-                    TSCORE.hideLoadingAnimation();
-                    console.error("listDirectory error: " + JSON.stringify(error));
-                    pendingCallbacks--;
-                    if (pendingCallbacks === 0 && i === entries.length) {
-                      TSPOSTIO.listDirectory(anotatedDirList);
-                    }
-                  } // jshint ignore:line
-                ); // jshint ignore:line
-              } else {
-                normalizedPath = normalizePath(entries[i].fullPath);
+            entries.forEach(function(entry) {
+              if (entry.isDirectory) {
                 anotatedDirList.push({
-                  "name": entries[i].name,
+                  "name": entry.name,
+                  "path": entry.fullPath,
                   "isFile": false,
                   "size": "",
-                  "lmdt": "",
-                  "path": normalizedPath
+                  "lmdt": ""
                 });
-                console.log("Dir: " + entries[i].name + " I:" + i + " Callb: " + pendingCallbacks);
-                if ((pendingCallbacks === 0) && ((i + 1) == entries.length)) {
-                  TSPOSTIO.listDirectory(anotatedDirList);
+              } else if (entry.isFile) {
+                if (lite) {
+                  anotatedDirList.push({
+                    "name": entry.name,
+                    "path": entry.fullPath,
+                    "isFile": true,
+                    "size": "",
+                    "lmdt": ""
+                  });
+                } else {
+                  var filePromise = Promise.resolve({
+                    then: function(onFulfill, onReject) {
+                      entry.file(
+                        function(fileEntry) {
+                          if (!fileEntry.fullPath) {
+                            fileEntry.fullPath = resolveFullPath(fileEntry.localURL);
+                          }
+                          anotatedDirList.push();
+                          onFulfill({
+                            "name": fileEntry.name,
+                            "isFile": true,
+                            "size": fileEntry.size,
+                            "lmdt": fileEntry.lastModifiedDate,
+                            "path": fileEntry.fullPath
+                          });
+                        },
+                        function(err) {
+                          onReject("Error reading entry " + fileEntry.name);
+                        });
+                    }
+                  }); // jshint ignore:line
+                  fileWorkers.push(filePromise);
                 }
               }
-            }
-            if (pendingCallbacks === 0) {
-              TSPOSTIO.listDirectory(anotatedDirList);
-            }
-            //console.log("Dir content: " + JSON.stringify(entries));
-          },
-          function(error) { // error get file system
-            TSCORE.hideLoadingAnimation();
-            TSPOSTIO.errorOpeningPath(dirPath);
-            console.error("Dir List Error: " + error.code);
+            });
+
+            Promise.all(fileWorkers).then(function(entries) {
+              entries.forEach(function(entry) {
+                anotatedDirList.push(entry);
+              });
+              console.timeEnd("listDirectoryPromise");
+              resolve(anotatedDirList);
+            }, function(err) {
+              console.warn("At least one file worker failed for " + path + "err " + JSON.stringify(err));
+              console.timeEnd("listDirectoryPromise");
+              resolve(anotatedDirList);  // returning results even if any promise fails
+            });
+
+          }, function(err) {
+            console.warn("Error reading entries promise from " + path + "err " + JSON.stringify(err));
+            resolve(anotatedDirList);  // returning results even if any promise fails
           }
         );
-      },
-      function(error) {
-        TSCORE.hideLoadingAnimation();
-        TSPOSTIO.errorOpeningPath(dirPath);
-        console.error("Getting dir: " + dirPath + " failed with error code: " + error.code);
+      }, function() {
+        console.warn("Error getting file system promise");
+        resolve(anotatedDirList);  // returning results even if any promise fails
       }
-    );
-  };
+      );
+    });
+  }
 
-  var getDirectoryMetaInformation = function(dirPath, readyCallback) {
-    console.log("getDirectoryMetaInformation directory: " + dirPath);
-    dirPath = dirPath + "/"; // TODO make it platform independent
-    dirPath = normalizePath(dirPath);
-    var anotatedDirList = [];
-
-    fsRoot.getDirectory(dirPath, {
-        create: false,
-        exclusive: false
-      },
-      function(dirEntry) {
-        var directoryReader = dirEntry.createReader();
-        directoryReader.readEntries(
-          function(entries) {
-            var i;
-            var normalizedPath;
-            for (i = 0; i < entries.length; i++) {
-              if (entries[i].isFile) {
-                entries[i].file(
-                  function(entry) {
-                    if (!entry.fullPath) {
-                      entry.fullPath = resolveFullPath(entry.localURL);
-                    }
-                    anotatedDirList.push({
-                      "name": entry.name,
-                      "isFile": true,
-                      "size": entry.size,
-                      "lmdt": entry.lastModifiedDate,
-                      "path": entry.fullPath
-                    });
-                    TSCORE.metaFileList = (anotatedDirList);
-                  }, // jshint ignore:line
-                  function(error) { // error get file system
-                    TSCORE.hideLoadingAnimation();
-                    console.error("listDirectory error: " + JSON.stringify(error));
-                  } // jshint ignore:line
-                ); // jshint ignore:line
-              } 
-            }
-            if (readyCallback) {
-              readyCallback(anotatedDirList);
-            }
+  function getPropertiesPromise(filePath) {
+    return new Promise(function(resolve, reject) {
+        filePath = normalizePath(filePath);
+        //getFileSystemPromise(dir).then(function(fileSystem) {
+        var fileProperties = {};
+        fsRoot.getFile(filePath, {
+            create: false,
+            exclusive: false
           },
-          function(error) {
-            TSCORE.hideLoadingAnimation();
-            console.warn("Error reading dir entries: " + error.code);
-            if (readyCallback) {
-              readyCallback(anotatedDirList);
-            }
-          }
-        );
-      },
-      function(err) {
-        TSCORE.hideLoadingAnimation();
-        console.warn("error getting directory: " + err);
-        if (readyCallback) {
-          readyCallback(anotatedDirList);
-        }
-      }
-    );
-  };
-
-  var deleteElement = function(filePath) {
-    console.log("Deleting: " + filePath);
-    TSCORE.showLoadingAnimation();
-
-    var path = normalizePath(filePath);
-
-    fsRoot.getFile(path, {
-        create: false,
-        exclusive: false
-      },
-      function(entry) {
-        entry.remove(
-          function() {
-            console.log("file deleted: " + path);
-            TSPOSTIO.deleteElement(filePath);
-          },
-          function() {
-            TSCORE.hideLoadingAnimation();
-            console.error("error deleting: " + filePath);
-          }
-        );
-      },
-      function() {
-        TSCORE.hideLoadingAnimation();
-        console.error("error getting file");
-      }
-    );
-  };
-
-  var deleteDirectory = function(dirPath) {
-    console.log("Deleting directory: " + dirPath);
-    TSCORE.showLoadingAnimation();
-
-    var path = normalizePath(dirPath);
-
-    fsRoot.getDirectory(path, {
-        create: false,
-        exclusive: false
-      },
-      function(entry) {
-        entry.remove(
-          function() {
-            console.log("file deleted: " + path);
-            TSPOSTIO.deleteDirectory(dirPath);
-          },
-          function() {
-            TSCORE.hideLoadingAnimation();
-            TSPOSTIO.deleteDirectoryFailed(path);
-            console.error("error deleting dir: " + dirPath);
-          }
-        );
-      },
-      function() {
-        TSCORE.hideLoadingAnimation();
-        console.error("error getting directory");
-      }
-    );
-  };
-
-  var loadTextFile = function(filePath, isPreview) {
-    console.log("Loading file: " + filePath);
-    TSCORE.showLoadingAnimation();
-
-    filePath = normalizePath(filePath);
-    fsRoot.getFile(filePath, {
-        create: false,
-        exclusive: false
-      },
-      function(entry) {
-        entry.file(
-          function(file) {
-            var reader = new FileReader();
-            reader.onloadend = function(evt) {
-              TSPOSTIO.loadTextFile(evt.target.result);
-            };
-            if (isPreview) {
-              reader.readAsText(file.slice(0, 10000));
+          function(entry) {
+            if (entry.isFile) {
+              entry.file(
+                function(file) {
+                  fileProperties.path = entry.fullPath;
+                  fileProperties.size = file.size;
+                  fileProperties.lmdt = file.lastModifiedDate;
+                  fileProperties.mimetype = file.type;
+                  resolve(fileProperties);
+                },
+                function() {
+                  reject("Error retrieving file properties of " + filePath);
+                }
+              );
             } else {
-              reader.readAsText(file);
+              reject("Error getting file properties. " + filePath + " is directory");
             }
           },
           function() {
-            TSCORE.hideLoadingAnimation();
-            console.error("error getting file: " + filePath);
+            reject("error getting file");
           }
         );
-      },
-      function() {
-        TSCORE.hideLoadingAnimation();
-        console.error("Error getting file entry: " + filePath);
-      }
-    );
-  };
+      });
+    //});
+  }
 
-  var saveTextFile = function(filePath, content, overWrite, silentMode) {
+
+  function loadTextFilePromise(filePath) {
+    //
+    return getFileContentPromise(filePath, "text");
+  }
+
+  function getFileContentPromise(filePath, type, resolvePath) {
+    // TODO refactor
+    var getFilePromise = function(filePath, resolvePath) {
+
+      var getFile = function(fullPath, result, fail) {
+        var filePath = normalizePath(fullPath);
+
+        fsRoot.getFile(filePath, {create: false},
+          function(fileEntry) {
+            fileEntry.file(function(file) {
+              result(file);
+            }, fail);
+          },
+          fail
+        );
+      };
+
+      return new Promise(function(resolve, reject) {
+        if (resolvePath) {
+          getFileSystemPromise(resolvePath).then(function(resfs) {
+            resfs.getFile(filePath, {create: false},
+              function(fileEntry) {
+                fileEntry.file(resolve, reject);
+              },
+              reject
+            );
+          }).catch(reject);
+        } else {
+          getFile(filePath, resolve, reject);
+        }
+      });
+    };
+
+    return new Promise(function(resolve, reject) {
+      getFilePromise(filePath, resolvePath).then(function(file) {
+        var reader = new FileReader();
+        reader.onerror = function() {
+          reject(reader.error);
+        };
+        reader.onload = function() {
+          resolve(reader.result);
+        };
+        if (type === "text") {
+          reader.readAsText(file);
+        } else {
+          reader.readAsArrayBuffer(file);
+        }
+      }, reject);
+    });
+  }
+
+
+  function saveFilePromise(filePath, content, overWrite) {
     console.log("Saving file: " + filePath);
-    TSCORE.showLoadingAnimation();
+    return new Promise(function(resolve, reject) {
+      var isFileNew = true;
+      filePath = normalizePath(filePath);
+      // Checks if the file already exists
+      fsRoot.getFile(filePath, {
+            create: false,
+            exclusive: false
+          },
+          function(entry) {
+            if (entry.isFile) {
+              isFileNew = false;
+            }
+          },
+          function() {}
+      );
+      if (isFileNew || overWrite === true) {
+        fsRoot.getFile(filePath, {
+            create: true,
+            exclusive: false
+          },
+          function(entry) {
+            entry.createWriter(
+              function(writer) {
+                writer.onwriteend = function(evt) {
+                  //resolve(fsRoot.fullPath + "/" + filePath);
+                  resolve(isFileNew);
+                };
+                writer.write(content);
+              },
+              function() {
+                reject("error creating writter file: " + filePath);
+              }
+            );
+          },
+          function() {
+            reject("Error getting file entry: " + filePath);
+          }
+        );
+      } else {
+        var errMsg = $.i18n.t("ns.common:fileExists", {fileName:filePath});
+        TSCORE.showAlertDialog(errMsg);
+        reject(errMsg);
+      }
+    });
+  }
 
+  function saveTextFilePromise(filePath, content, overWrite) {
+    console.log("Saving file: " + filePath);
     // Handling the UTF8 support for text files
     var UTF8_BOM = "\ufeff";
-
     if (content.indexOf(UTF8_BOM) === 0) {
       console.log("Content beging with a UTF8 bom");
     } else {
       content = UTF8_BOM + content;
     }
+    return saveFilePromise(filePath, content, overWrite);
+  }
 
-    var isFileNew = true;
+  function saveBinaryFilePromise(filePath, content, overWrite) {
+    console.log("Saveing binary file: " + filePath);
+    var dataView = new Int8Array(content);
+    return saveFilePromise(filePath, dataView, overWrite);
+  }
 
-    filePath = normalizePath(filePath);
 
-    // Checks if the file already exists
-    fsRoot.getFile(filePath, {
-        create: false,
-        exclusive: false
-      },
-      function(entry) {
-        if (entry.isFile) {
-          isFileNew = false;
-        }
-        saveFile(isFileNew, silentMode);
-      },
-      function() {
-        saveFile(isFileNew, silentMode);
-      }
-    );
-
-    function saveFile(isFileNew, silentMode) {
-      fsRoot.getFile(filePath, {
-          create: true,
-          exclusive: false
-        },
-        function(entry) {
-          entry.createWriter(
-            function(writer) {
-              writer.onwriteend = function(evt) {
-                if (!silentMode) {
-                  TSPOSTIO.saveTextFile(fsRoot.fullPath + "/" + filePath, isFileNew);
-                }
-              };
-              writer.write(content);
-            },
-            function() {
-              TSCORE.hideLoadingAnimation();
-              console.error("error creating writter file: " + filePath);
-            }
-          );
-        },
-        function() {
-          TSCORE.hideLoadingAnimation();
-          console.error("Error getting file entry: " + filePath);
-        }
-      );
-    }
-  };
-
-  var saveBinaryFile = function(filePath, content, overWrite, silentMode) {
-    console.log("Saving file: " + filePath);
-    TSCORE.showLoadingAnimation();
-
-    var isFileNew = true;
-
-    filePath = normalizePath(filePath);
-
-    // Checks if the file already exists
-    fsRoot.getFile(filePath, {
-        create: false,
-        exclusive: false
-      },
-      function(entry) {
-        if (entry.isFile) {
-          isFileNew = false;
-        }
-      },
-      function() {}
-    );
-
-    if (isFileNew || overWrite === true) {
-      fsRoot.getFile(filePath, {
-          create: true,
-          exclusive: false
-        },
-        function(entry) {
-          entry.createWriter(
-            function(writer) {
-              writer.onwriteend = function(evt) {
-                if (!silentMode) {
-                  TSPOSTIO.saveBinaryFile(fsRoot.fullPath + "/" + filePath);
-                }
-              };
-              var dataView = new Int8Array(content);
-              writer.write(dataView.buffer);
-            },
-            function() {
-              TSCORE.hideLoadingAnimation();
-              console.error("error creating writter file: " + filePath);
-            }
-          );
-        },
-        function() {
-          TSCORE.hideLoadingAnimation();
-          console.error("Error getting file entry: " + filePath);
-        }
-      );
-    } else {
-      TSCORE.hideLoadingAnimation();
-      TSCORE.showAlertDialog($.i18n.t("ns.common:fileExists", {fileName:filePath}));
-    }
-  };
-
-  var createDirectory = function(dirPath, silentMode) {
+  function createDirectoryPromise(dirPath) {
     console.log("Creating directory: " + dirPath);
-    dirPath = normalizePath(dirPath);
-
-    fsRoot.getDirectory(dirPath, {
-        create: true,
-        exclusive: false
-      },
-      function(dirEntry) {
-        if (!silentMode) {
-          TSPOSTIO.createDirectory(dirPath);
+    return new Promise(function(resolve, reject) {
+      dirPath = normalizePath(dirPath);
+      fsRoot.getDirectory(dirPath, {
+          create: true,
+          exclusive: false
+        },
+        function(dirEntry) {
+          resolve(dirPath);
+        },
+        function(error) {
+          reject("Creating directory failed: " + dirPath + " failed with error code: " + error.code);
         }
-      },
-      function(error) {
-        TSCORE.hideLoadingAnimation();
-        console.error("Creating directory failed: " + dirPath + " failed with error code: " + error.code);
-      }
-    );
-  };
+      );
+    });
+  }
 
-  var createMetaFolder = function(dirPath) {
-    if (dirPath.lastIndexOf(TSCORE.metaFolder) >= dirPath.length - TSCORE.metaFolder.length) {
-      console.log("Can not create meta folder in a meta folder");
-      return;
-    }
-    var metaDirPath = dirPath + TSCORE.dirSeparator + TSCORE.metaFolder;
-    fsRoot.getDirectory(metaDirPath, {
-        create: true,
-        exclusive: false
-      },
-      function(dirEntry) {
-        console.log("Metafolder created: " + metaDirPath);
-      },
-      function(error) {
-        TSCORE.hideLoadingAnimation();
-        console.error("Creating meta folder failed for " + dirPath + " error code: " + error.code);
-      }
-    );
-  };
 
-  var copyFile = function(filePath, newFilePath) {
-    filePath = normalizePath(filePath);
-    var newFileName = newFilePath.substring(newFilePath.lastIndexOf('/') + 1);
-    var newFileParentPath = normalizePath(newFilePath.substring(0, newFilePath.lastIndexOf('/')));
-    // TODO check if the newFilePath exist or causes issues by copying
-    fsRoot.getDirectory(newFileParentPath, {
-        create: false,
-        exclusive: false
-      },
-      function(parentDirEntry) {
-        fsRoot.getFile(filePath, {
-            create: false,
-            exclusive: false
-          },
-          function(entry) {
-            entry.copyTo(
-              parentDirEntry,
-              newFileName,
-              function() {
-                console.log("File copy: target: " + newFilePath + " source: " + entry.fullPath);
-                TSPOSTIO.copyFile(entry.fullPath, newFilePath);
-              },
-              function() {
-                TSCORE.hideLoadingAnimation();
-                console.error("error copying: " + filePath);
-              }
-            );
-          },
-          function() {
-            TSCORE.hideLoadingAnimation();
-            console.error("Error getting file: " + filePath);
-          }
-        );
-      },
-      function(error) {
-        TSCORE.hideLoadingAnimation();
-        console.error("Getting dir: " + newFileParentPath + " failed with error code: " + error.code);
-      }
-    );
-  };
+  function copyFilePromise(filePath, newFilePath) {
+    return new Promise(function(resolve, reject) {
+      filePath = normalizePath(filePath);
+      var newFileName = newFilePath.substring(newFilePath.lastIndexOf('/') + 1);
+      var newFileParentPath = normalizePath(newFilePath.substring(0, newFilePath.lastIndexOf('/')));
+      // TODO check if the newFilePath exist or causes issues by copying
+      fsRoot.getDirectory(newFileParentPath, {
+          create: false,
+          exclusive: false
+        },
+        function(parentDirEntry) {
+          fsRoot.getFile(filePath, {
+              create: false,
+              exclusive: false
+            },
+            function(entry) {
+              entry.copyTo(
+                parentDirEntry,
+                newFileName,
+                function() {
+                  console.log("File copy: target: " + newFilePath + " source: " + entry.fullPath);
+                  resolve(newFilePath);
+                },
+                function() {
+                  reject("error copying: " + filePath);
+                }
+              );
+            },
+            function() {
+              reject("Error getting file: " + filePath);
+            }
+          );
+        },
+        function(error) {
+          reject("Getting dir: " + newFileParentPath + " failed with error code: " + error.code);
+        }
+      );
+    });
+  }
 
-  var renameFile = function(filePath, newFilePath) {
-    filePath = normalizePath(filePath);
-    var newFileName = newFilePath.substring(newFilePath.lastIndexOf('/') + 1);
-    var newFileParentPath = normalizePath(newFilePath.substring(0, newFilePath.lastIndexOf('/') + 1));
-    console.log("renameFile: " + newFileName + " newFilePath: " + newFilePath);
-    // TODO check if the newFilePath exist or causes issues by renaming
-    fsRoot.getDirectory(newFileParentPath, {
-        create: false,
-        exclusive: false
-      },
-      function(parentDirEntry) {
-        fsRoot.getFile(filePath, {
-            create: false,
-            exclusive: false
-          },
-          function(entry) {
-            entry.moveTo(
-              parentDirEntry,
-              newFileName,
-              function() {
-                console.log("File renamed to: " + newFilePath + " Old name: " + entry.fullPath);
-                TSPOSTIO.renameFile(entry.fullPath, newFilePath);
-              },
-              function() {
-                TSCORE.hideLoadingAnimation();
-                console.error("error renaming: " + filePath);
-              }
-            );
-          },
-          function() {
-            TSCORE.hideLoadingAnimation();
-            console.error("Error getting file: " + filePath);
-          }
-        );
-      },
-      function(error) {
-        TSCORE.hideLoadingAnimation();
-        console.error("Getting dir: " + newFileParentPath + " failed with error code: " + error.code);
-      }
-    );
-  };
+  function renameFilePromise(filePath, newFilePath) {
+    return new Promise(function(resolve, reject) {
 
-  var renameDirectory = function(dirPath, newDirName) {
-    var newDirPath = TSCORE.TagUtils.extractParentDirectoryPath(dirPath) + TSCORE.dirSeparator + newDirName;
-    TSCORE.showLoadingAnimation();
+      filePath = normalizePath(filePath);
+      var newFileName = newFilePath.substring(newFilePath.lastIndexOf('/') + 1);
+      var newFileParentPath = normalizePath(newFilePath.substring(0, newFilePath.lastIndexOf('/') + 1));
+      console.log("renameFile: " + newFileName + " newFilePath: " + newFilePath);
+      // TODO check if the newFilePath exist or causes issues by renaming
+      fsRoot.getDirectory(newFileParentPath, {
+          create: false,
+          exclusive: false
+        },
+        function(parentDirEntry) {
+          fsRoot.getFile(filePath, {
+              create: false,
+              exclusive: false
+            },
+            function(entry) {
+              entry.moveTo(
+                parentDirEntry,
+                newFileName,
+                function() {
+                  console.log("File renamed to: " + newFilePath + " Old name: " + entry.fullPath);
+                  resolve([filePath, newFilePath]);
+                },
+                function() {
+                  reject("error renaming: " + filePath);
+                }
+              );
+            },
+            function() {
+              reject("Error getting file: " + filePath);
+            }
+          );
+        },
+        function(error) {
+          console.error("Getting dir: " + newFileParentPath + " failed with error code: " + error.code);
+          reject(error);
+        }
+      );
+    });
+  }
 
-    dirPath = normalizePath(dirPath);
-    var newDirParentPath = normalizePath(newDirPath.substring(0, newDirPath.lastIndexOf('/')));
-    // TODO check if the newFilePath exist or cause issues by renaming
-    fsRoot.getDirectory(newDirParentPath, {
-        create: false,
-        exclusive: false
-      },
-      function(parentDirEntry) {
-        fsRoot.getDirectory(dirPath, {
-            create: false,
-            exclusive: false
-          },
-          function(entry) {
-            entry.moveTo(
-              parentDirEntry,
-              newDirName,
-              function() {
-                console.log("Directory renamed to: " + newDirPath + " Old name: " + entry.fullPath);
-                TSPOSTIO.renameDirectory(entry.fullPath, newDirPath);
-              },
-              function() {
-                TSCORE.hideLoadingAnimation();
-                console.error("error renaming: " + dirPath);
-              }
-            );
-          },
-          function() {
-            TSCORE.hideLoadingAnimation();
-            console.error("Error getting directory: " + dirPath);
-          }
-        );
-      },
-      function(error) {
-        TSCORE.hideLoadingAnimation();
-        console.error("Getting dir: " + newDirParentPath + " failed with error code: " + error.code);
-      }
-    );
-  };
+  function renameDirectoryPromise(dirPath, newDirName) {
+    return new Promise(function(resolve, reject) {
 
-  var selectDirectory = function() {
+      var newDirPath = TSCORE.TagUtils.extractParentDirectoryPath(dirPath) + TSCORE.dirSeparator + newDirName;
+      TSCORE.showLoadingAnimation();
+
+      dirPath = normalizePath(dirPath);
+      var newDirParentPath = normalizePath(newDirPath.substring(0, newDirPath.lastIndexOf('/')));
+      console.log("renameDirectoryPromise: " + dirPath + "to: " + newDirPath);
+      // TODO check if the newFilePath exist or cause issues by renaming
+      fsRoot.getDirectory(newDirParentPath, {
+          create: false,
+          exclusive: false
+        },
+        function(parentDirEntry) {
+          fsRoot.getDirectory(dirPath, {
+              create: false,
+              exclusive: false
+            },
+            function(entry) {
+              entry.moveTo(
+                parentDirEntry,
+                newDirName,
+                function() {
+                  console.log("Directory renamed to: " + newDirPath + " Old name: " + entry.fullPath);
+                  resolve(newDirPath);
+                },
+                function() {
+                  reject("error renaming: " + dirPath);
+                }
+              );
+            },
+            function() {
+              reject("Error getting directory: " + dirPath);
+            }
+          );
+        },
+        function(error) {
+          console.error("Getting dir: " + newDirParentPath + " failed with error code: " + error.code);
+          reject(error);
+        }
+      );
+    });
+  }
+
+
+  function deleteFilePromise(filePath) {
+    return new Promise(function(resolve, reject) {
+      var path = normalizePath(filePath);
+      fsRoot.getFile(path, {
+          create: false,
+          exclusive: false
+        },
+        function(entry) {
+          entry.remove(
+            function() {
+              console.log("file deleted: " + path);
+              resolve(filePath);
+            },
+            function() {
+              reject("error deleting: " + filePath);
+            }
+          );
+        },
+        function() {
+          reject("error getting file");
+        }
+      );
+    });
+  }
+
+  function deleteDirectoryPromise(dirPath) {
+    console.log("Deleting directory: " + dirPath);
+    return new Promise(function(resolve, reject) {
+      var path = normalizePath(dirPath);
+
+      fsRoot.getDirectory(path, {
+          create: false,
+          exclusive: false
+        },
+        function(entry) {
+          entry.remove(
+            function() {
+              console.log("file deleted: " + path);
+              resolve(dirPath);
+            },
+            function() {
+              //TSCORE.hideLoadingAnimation();
+              //TSPOSTIO.deleteDirectoryFailed(path);
+              reject("error deleting dir: " + dirPath);
+            }
+          );
+        },
+        function() {
+          reject("error getting directory");
+        }
+      );
+    });
+  }
+
+
+  function selectDirectory() {
     console.log("Open select directory dialog.");
     TSCORE.showDirectoryBrowserDialog(fsRoot.fullPath);
-  };
+  }
 
-  var selectFile = function() {
+  function selectFile() {
+    //
     console.log("Operation selectFile not supported.");
-  };
+  }
 
-  var checkAccessFileURLAllowed = function() {
-    console.log("checkAccessFileURLAllowed function not relevant for in Cordova...");
-  };
 
-  var openDirectory = function(dirPath) {
+  function openDirectory(dirPath) {
+    //
     TSCORE.showAlertDialog($.i18n.t("ns.dialogs:openContainingDirectoryAlert"));
-  };
+  }
 
-  var openFile = function(filePath) {
+  function openFile(filePath) {
     console.log("Opening natively: " + filePath);
     window.plugins.fileOpener.open(filePath);
-  };
+  }
 
-  var sendFile = function(filePath) {
-    console.log("Sending file: " + filePath);
-    window.plugins.fileOpener.send(filePath);
-  };
-
-  var openExtensionsDirectory = function() {
-    TSCORE.showAlertDialog($.i18n.t("ns.common:functionalityNotImplemented"));
-  };
-
-  var getFileProperties = function(filePath) {
-    filePath = normalizePath(filePath);
-    var fileProperties = {};
-    fsRoot.getFile(filePath, {
-        create: false,
-        exclusive: false
-      },
-      function(entry) {
-        if (entry.isFile) {
-          entry.file(
-            function(file) {
-              fileProperties.path = entry.fullPath;
-              fileProperties.size = file.size;
-              fileProperties.lmdt = file.lastModifiedDate;
-              fileProperties.mimetype = file.type;
-              TSPOSTIO.getFileProperties(fileProperties);
-            },
-            function() {
-              TSCORE.hideLoadingAnimation();
-              console.error("Error retrieving file properties of " + filePath);
-            }
-          );
-        } else {
-          TSCORE.hideLoadingAnimation();
-          console.error("Error getting file properties. " + filePath + " is directory");
-        }
-      },
-      function() {
-        TSCORE.hideLoadingAnimation();
-        console.error("error getting file");
-      }
-    );
-  };
-
-  // Bring the TagSpaces window on top of the windows
-  var focusWindow = function() {
-    console.log("Focusing window is not implemented in cordova.");
-  };
-
-  exports.focusWindow = focusWindow;
-  exports.createDirectory = createDirectory;
-  exports.createMetaFolder = createMetaFolder;
-  exports.copyFile = copyFile;
-  exports.renameFile = renameFile;
-  exports.renameDirectory = renameDirectory;
-  exports.loadTextFile = loadTextFile;
-  exports.saveTextFile = saveTextFile;
-  exports.saveBinaryFile = saveBinaryFile;
-  exports.listDirectory = listDirectory;
-  exports.listSubDirectories = listSubDirectories;
-  exports.deleteElement = deleteElement;
-  exports.deleteDirectory = deleteDirectory;
-  exports.createDirectoryIndex = createDirectoryIndex;
-  exports.createDirectoryTree = createDirectoryTree;
-  exports.selectDirectory = selectDirectory;
-  exports.openDirectory = openDirectory;
-  exports.openFile = openFile;
-  exports.sendFile = sendFile;
-  exports.selectFile = selectFile;
-  exports.openExtensionsDirectory = openExtensionsDirectory;
-  exports.checkAccessFileURLAllowed = checkAccessFileURLAllowed;
-  exports.checkNewVersion = checkNewVersion;
-  exports.getFileProperties = getFileProperties;
-  exports.handleStartParameters = handleStartParameters;
+  // Platform specific API calls
   exports.saveSettings = saveSettings;
   exports.loadSettings = loadSettings;
   exports.saveSettingsTags = saveSettingsTags;
   exports.loadSettingsTags = loadSettingsTags;
-  exports.getFile = getFile;
-  exports.getFileContent = getFileContent;
-  exports.getDirectoryMetaInformation = getDirectoryMetaInformation;
+  exports.sendFile = sendFile;
+
+  // Platform API
+  exports.checkNewVersion = checkNewVersion;
+  exports.focusWindow = focusWindow;
+  exports.handleStartParameters = handleStartParameters;
+
+  exports.createDirectoryTree = createDirectoryTree;
+
+  exports.listDirectoryPromise = listDirectoryPromise;
+
+  exports.getPropertiesPromise = getPropertiesPromise;
+
+  exports.loadTextFilePromise = loadTextFilePromise;
+  exports.getFileContentPromise = getFileContentPromise;
+
+  exports.saveFilePromise = saveFilePromise;
+  exports.saveTextFilePromise = saveTextFilePromise;
+  exports.saveBinaryFilePromise = saveBinaryFilePromise;
+
+  exports.createDirectoryPromise = createDirectoryPromise;
+
+  exports.copyFilePromise = copyFilePromise;
+  exports.renameFilePromise = renameFilePromise;
+  exports.renameDirectoryPromise = renameDirectoryPromise;
+
+  exports.deleteFilePromise = deleteFilePromise;
+  exports.deleteDirectoryPromise = deleteDirectoryPromise;
+
+  exports.selectDirectory = selectDirectory;
+  exports.selectFile = selectFile;
+
+  exports.openDirectory = openDirectory;
+  exports.openFile = openFile;
 });

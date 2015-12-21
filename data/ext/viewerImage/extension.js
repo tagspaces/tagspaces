@@ -31,8 +31,9 @@ define(function(require, exports, module) {
 
     $containerElement.append($('<iframe>', {
       id: "iframeViewer",
-      sandbox: "allow-same-origin allow-scripts",
+      sandbox: "allow-same-origin allow-scripts allow-modals",
       scrolling: "no",
+      type: "content",
       src: extensionDirectory + "/index.html?cp=" + filePath + "&setLng=" + lng,
       "nwdisable": "",
       "nwfaketop": ""

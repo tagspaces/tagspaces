@@ -23,6 +23,7 @@ define(function(require, exports, module) {
   var tsUtils = require('tsutils');
   var tsMeta = require('tsmeta');
   var tsExt = require('tsextapi');
+  var tsExtManager = require('tsextmanager');
   var currentPath;
   var currentLocationObject;
   var currentPerspectiveID;
@@ -88,7 +89,7 @@ define(function(require, exports, module) {
       }
       switchInterfaceLanguage(language);
       initKeyBindings();
-      tsIOApi.checkAccessFileURLAllowed();
+      tsIOApi.checkAccessFileURLAllowed ? tsIOApi.checkAccessFileURLAllowed() : true;
       // Show welcome dialog of first start
       if (tsSettings.isFirstRun()) {
         tsCoreUI.showWelcomeDialog();
@@ -156,6 +157,7 @@ define(function(require, exports, module) {
     });
   }
 
+  // TODO
   function checkForNewVersion() {
     if (tsSettings.getCheckForUpdates()) {
       tsIOApi.checkNewVersion();

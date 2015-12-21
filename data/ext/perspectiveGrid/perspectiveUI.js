@@ -8,16 +8,10 @@ define(function(require, exports, module) {
   console.log("Loading UI for perspectiveDefault");
 
   var TSCORE = require("tscore");
+  var TSPOSTIO = require("tspostioapi");
   var TMB_SIZES = ["200px", "300px", "100px"];
 
   var MONTH = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-
-  /*var supportedFileTypeThumnailing = [
-    "jpg", "jpeg", "png", "gif", "pdf", "svg", "webp", "bmp", 
-    "zip", "epub", "docx", "pptx", "pptm", "potx", "potm", 
-    "ppxs", "ppsm", "sldx", "sldm", "dotx",  "dotm", "xlsx", 
-    "xlsm", "xlst", "odp", "odg", "ods", "odt" 
-  ];*/
 
   function ExtUI(extID) {
     this.extensionID = extID;
@@ -89,11 +83,12 @@ define(function(require, exports, module) {
   );
 
   ExtUI.prototype.createFileTile = function(title, filePath, fileExt, fileTags, isSelected, metaObj) {
-    var tmbPath;
+    var fileParentDir = TSCORE.TagUtils.extractParentDirectoryPath(filePath);
+    var fileName = TSCORE.TagUtils.extractFileName(filePath);
+    var tmbPath = fileParentDir + TSCORE.dirSeparator + TSCORE.metaFolder + TSCORE.dirSeparator + fileName + TSCORE.thumbFileExt;
     if (isCordova || isWeb) {
-      tmbPath = filePath;
     } else {
-      tmbPath = "file:///" + filePath;
+      tmbPath = "file:///" + tmbPath;
     }
     var metaObj = metaObj || {thumbnailPath : ""};
     var context = {
@@ -103,7 +98,7 @@ define(function(require, exports, module) {
       title: title,
       tags: [],
       selected: isSelected ? "fa-check-square" : "fa-square-o",
-      thumbPath: encodeURI(metaObj.thumbnailPath)
+      thumbPath: tmbPath //encodeURI(metaObj.thumbnailPath)
     };
     
     if (fileTags.length > 0) {
@@ -203,7 +198,7 @@ define(function(require, exports, module) {
     });
 
     $("#" + this.extensionID + "IncludeSubDirsButton").on("click", function() {
-      TSCORE.IO.createDirectoryIndex(TSCORE.currentPath);
+      TSCORE.Utils.createDirectoryIndex(TSCORE.currentPath);
     });
 
     $("#" + this.extensionID + "TagButton").on("click", function() {
@@ -231,8 +226,16 @@ define(function(require, exports, module) {
         $.i18n.t(dlgConfirmMsgId, {
           selectedFiles:  selFiles.toString()
         }), function() {
-          TSCORE.selectedFiles.forEach(function(file) {
-            TSCORE.IO.deleteElement(file);
+          TSCORE.selectedFiles.forEach(function(filePath) {
+            TSCORE.IO.deleteFilePromise(filePath).then(function() {
+                TSPOSTIO.deleteElement(filePath);
+              },
+              function(error) {
+                TSCORE.hideLoadingAnimation();
+                TSCORE.showAlertDialog("Deleting file " + filePath + " failed.");
+                console.error("Deleting file " + filePath + " failed " + error);
+              }
+            );
           });
         });
     });

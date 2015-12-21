@@ -10,7 +10,7 @@ define(function(require, exports, module) {
   function initUI() {
     $('#gotoParentDirButton').click(function() {
       var parent = TSCORE.TagUtils.extractParentDirectoryPath($('#directoryPath').val());
-      TSCORE.IO.listSubDirectories(parent);
+      TSCORE.Utils.listSubDirectories(parent);
     });
     if (isWin) {
       $('#driveSelectorForm').show();
@@ -18,7 +18,7 @@ define(function(require, exports, module) {
       driveSelector.change(function() {
         $('#subdirectoriesArea').empty();
         $('#directoryPath').val(driveSelector.val());
-        TSCORE.IO.listSubDirectories(driveSelector.val());
+        TSCORE.Utils.listSubDirectories(driveSelector.val());
       });
     }
     $('#selectDirectoryButton').click(function() {
@@ -42,7 +42,7 @@ define(function(require, exports, module) {
             'style': 'margin: 1px;',
             'text': ' ' + TSCORE.subfoldersDirBrowser[j].name
           }).prepend('<i class=\'fa fa-folder-o\'></i>').click(function() {
-            TSCORE.IO.listSubDirectories($(this).attr('path'));
+            TSCORE.Utils.listSubDirectories($(this).attr('path'));
           })); // jshint ignore:line
         }
       }
@@ -50,6 +50,9 @@ define(function(require, exports, module) {
     $('#directoryBrowserDialog').modal({
       backdrop: 'static',
       show: true
+    });
+    $('#directoryBrowserDialog').draggable({
+      handle: ".modal-header"
     });
   }
 

@@ -1,10 +1,5 @@
 define(function(require, exports, module) {
   'use strict';
-  
-  var metaFileExt = "json";
-  var metaFolder = ".ts";
-  var thumbFileExt = "png";
-  var tsMetadataFile = 'tsm.json';
 
   var TSCORE = require("tscore");
 
@@ -12,13 +7,10 @@ define(function(require, exports, module) {
     return TSCORE.currentPath + TSCORE.dirSeparator + TSCORE.metaFolder + name;
   }
 
-  function getDirectoryMetaInformation(readyCallback) {
-    if (TSCORE.IO.getDirectoryMetaInformation) {
-      var metaFolderPath = TSCORE.currentPath + TSCORE.dirSeparator + TSCORE.metaFolder;
-      TSCORE.IO.getDirectoryMetaInformation(metaFolderPath, readyCallback);
-    } else {
-      readyCallback();
-    }
+  function getDirectoryMetaInformation() {
+    var metaFolderPath = TSCORE.currentPath + TSCORE.dirSeparator + TSCORE.metaFolder;
+    console.log("getDirectoryMetaInformation: " + metaFolderPath);
+    return TSCORE.IO.listDirectoryPromise(metaFolderPath, true);
   }
 
   function findMetaFilebyPath(filePath, extension) {
@@ -59,7 +51,7 @@ define(function(require, exports, module) {
       TSCORE.metaFileList.push(entry);
     }
     var content = JSON.stringify(metaData);
-    TSCORE.IO.saveTextFile(metaFilePath, content, true, true);
+    TSCORE.IO.saveTextFilePromise(metaFilePath, content, true);
   }
 
   function updateTsMetaData(oldFileName, newFileName)  { 
@@ -80,7 +72,7 @@ define(function(require, exports, module) {
           }
           var newName = TSCORE.Utils.baseName(newFileName) + "." + element.name.split('.').pop();
           var newFilePath = path + TSCORE.dirSeparator + TSCORE.metaFolder + TSCORE.dirSeparator + newName;
-          TSCORE.IO.renameFile(element.path, newFilePath);
+          TSCORE.IO.renameFilePromise(element.path, newFilePath);
 
           if (pathOld == TSCORE.currentPath) {
             element.name = newName;
@@ -90,8 +82,9 @@ define(function(require, exports, module) {
           }
           
         } else {
-          TSCORE.IO.deleteElement(element.path);
-          TSCORE.metaFileList.splice(index, 1);
+          TSCORE.IO.deleteFilePromise(element.path).then(function() {
+            TSCORE.metaFileList.splice(index, 1);
+          });
         }
       }
     });
@@ -115,19 +108,15 @@ define(function(require, exports, module) {
   }
 
   function loadMetaFileJson(filePath) {
+    //console.log("loadMetaFileJson: " + filePath);
     var promise = new Promise(function(resolve, reject) {
       var metaFileJson = findMetaFilebyPath(filePath, TSCORE.metaFileExt);
       if (metaFileJson) {
-        TSCORE.IO.getFileContent(metaFileJson, function(result) {
-          try {
-            var str = String.fromCharCode.apply(null, new Uint8Array(result));
-            str = (str.charCodeAt(0) != 0x7B) ? str.substring(3, str.length) : str;
-            var metaData = JSON.parse(str);
-            resolve(metaData);
-          } catch (e) {
-            console.log("loadMetaFileJson: error: " + e.message);
-            resolve(null);
-          }
+        TSCORE.IO.getFileContentPromise(metaFileJson, "text").then(function(result) {
+          var metaData = JSON.parse(result);
+          resolve(metaData);
+        }, function(error) {
+          reject(error);
         });
       } else {
         resolve(null);
@@ -226,7 +215,7 @@ define(function(require, exports, module) {
       var metaFileJson = findMetaFilebyPath(filePath, TSCORE.metaFileExt);
       if (metaFileJson) {
         var content = JSON.stringify(metaObj.metaData);
-        TSCORE.IO.saveTextFile(metaFileJson, content, true, true);
+        TSCORE.IO.saveTextFilePromise(metaFileJson, content, true);
       }
     }
   }
@@ -234,9 +223,9 @@ define(function(require, exports, module) {
   function loadFolderMetaData(path , resultCb) {
     var metadataPath;
     if (isWeb) {
-      metadataPath = path + TSCORE.dirSeparator + metaFolder + TSCORE.dirSeparator + tsMetadataFile;
+      metadataPath = path + TSCORE.dirSeparator + TSCORE.metaFolder + TSCORE.dirSeparator + TSCORE.metaFolderFile;
     } else {
-      metadataPath = 'file://' + path + TSCORE.dirSeparator + metaFolder + TSCORE.dirSeparator + tsMetadataFile;
+      metadataPath = 'file://' + path + TSCORE.dirSeparator + TSCORE.metaFolder + TSCORE.dirSeparator + TSCORE.metaFolderFile;
     }
 
     $.get(metadataPath, function(data) {
@@ -248,6 +237,20 @@ define(function(require, exports, module) {
       }).fail(function() {
         resultCb();
       });
+  }
+
+  function createMetaFolder(dirPath) {
+    if (dirPath.lastIndexOf(TSCORE.metaFolder) >= dirPath.length - TSCORE.metaFolder.length) {
+      console.log("Can not create meta folder in a meta folder");
+      return;
+    }
+    var metaDirPath = dirPath + TSCORE.dirSeparator + TSCORE.metaFolder;
+    TSCORE.IO.createDirectoryPromise(metaDirPath).then(function() {
+      console.log("Metafolder created: " + metaDirPath);
+    }).catch(function(error) {
+      TSCORE.hideLoadingAnimation();
+      console.error(error);
+    });
   }
 
   exports.getDirectoryMetaInformation = getDirectoryMetaInformation;
@@ -262,4 +265,5 @@ define(function(require, exports, module) {
   exports.renameMetaTag = renameMetaTag;
   exports.removeMetaTag = removeMetaTag;
   exports.loadFolderMetaData = loadFolderMetaData;
+  exports.createMetaFolder = createMetaFolder;
 });
