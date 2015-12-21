@@ -145,10 +145,10 @@ define(function(require, exports, module) {
           }
         }
         resolve(anotatedDirList);
-      }
+      };
 
-      if(dirPath.substring(dirPath.length-1) !== "/") {
-        dirPath = dirPath + "/"
+      if (dirPath.substring(dirPath.length - 1) !== "/") {
+        dirPath = dirPath + "/";
       }
       dirPath = encodeURI(dirPath);
 
