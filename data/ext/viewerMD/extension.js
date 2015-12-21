@@ -37,7 +37,7 @@ define(function(require, exports, module) {
     $containerElement.empty();
     $containerElement.css("background-color", "white");
     $containerElement.append($('<iframe>', {
-      sandbox: "allow-same-origin allow-scripts",
+      sandbox: "allow-same-origin allow-scripts allow-modals",
       id: "iframeViewer",
       "nwdisable": "",
       //"nwfaketop": "",
