@@ -101,7 +101,7 @@ define(function(require, exports, module) {
           }
         }
       }), function(err) {
-        console.error("Error list dir prom " + err);
+        console.warn("Error walking directory prom " + err);
         return null;
       });
     });
