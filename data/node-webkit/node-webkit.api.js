@@ -107,8 +107,8 @@ define(function(require, exports, module) {
       var filePath = "" + cmdArguments;
       if (filePath.length > 1) {
         var dirPath = TSCORE.TagUtils.extractContainingDirectoryPath(filePath);
-        TSCORE.IO.listDirectory(dirPath);
         TSCORE.FileOpener.openFileOnStartup(filePath);
+        //TSCORE.IO.listDirectoryPromise(dirPath).then();
       }
     }
   }
