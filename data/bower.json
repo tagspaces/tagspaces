@@ -1,0 +1,10 @@
+{
+  "name": "TagSpacesExt",
+  "dependencies": {
+    "viewerMHTML": "git+https://github.com/tagspaces/viewerMHTML.git",
+    "viewerHTML": "git+https://github.com/tagspaces/viewerHTML.git",
+    "viewerEPUB": "git+https://github.com/tagspaces/viewerEPUB.git",
+    "editorHTML": "git+https://github.com/tagspaces/editorHTML.git"
+  },
+  "private": true
+}

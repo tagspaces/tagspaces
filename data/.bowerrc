@@ -1,0 +1,13 @@
+{
+  "directory": "ext",
+  "ignoredDependencies": [
+    "bootstrap",
+    "backbone",
+    "fontawesome",
+    "summernote",
+    "epub.js",
+    "jquery",
+    "jquery-highlight",
+    "polymer"
+  ]
+}

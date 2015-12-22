@@ -5,6 +5,7 @@ CHANGELOG.TXT
 runfirefox
 runfirefoxbeta
 /node_modules
+extensions
 docs
 data/pro
 data/ext/perspectiveOCRO
@@ -22,5 +23,4 @@ data/node-webkit/nw.exe
 data/node-webkit/nw.pak
 data/node-webkit/debug.log
 *.DS_Store
-bower_components
-data/Content
+
