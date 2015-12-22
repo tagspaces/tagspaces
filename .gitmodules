@@ -1,6 +1,0 @@
-[submodule "data/ext/viewerMHTML"]
-	path = data/ext/viewerMHTML
-	url = https://github.com/tagspaces/viewerMHTML.git
-[submodule "data/ext/viewerEPUB"]
-	path = data/ext/viewerEPUB
-	url = https://github.com/tagspaces/viewerEPUB.git
