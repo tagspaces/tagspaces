@@ -249,7 +249,7 @@ define(function(require, exports, module) {
       console.log("Metafolder created: " + metaDirPath);
     }).catch(function(error) {
       TSCORE.hideLoadingAnimation();
-      console.error(error);
+      console.log("Error creating folder, it was probably already created " + error);
     });
   }
 
