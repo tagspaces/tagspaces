@@ -69,6 +69,7 @@ define(function(require, exports, module) {
   }
 
   function dirName(dirPath) {
+
     return dirPath.replace(/\\/g, '/').replace(/\/[^\/]*$/, '');
   }
 

@@ -252,7 +252,9 @@ define(function(require, exports, module) {
         navigateToDirectory($(this).attr('data-path'));
       });
     });
-    $alternativeNavigator.i18n();
+    if($alternativeNavigator.i18n) {
+      $alternativeNavigator.i18n();
+    }
   }
 
   var showDropDown = function(menuId, sourceObject) {

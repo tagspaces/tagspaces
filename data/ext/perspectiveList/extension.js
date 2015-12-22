@@ -28,7 +28,7 @@ define(function(require, exports, module) {
       require([
         "css!" + extensionDirectory + '/extension.css',
         extensionDirectory + '/datatables/jquery.dataTables.min.js',
-        'libs/filesaver.js/FileSaver.js'
+        'libs/FileSaver.js/FileSaver.min.js'
       ], function() {
         require([
           extensionDirectory + '/perspectiveUI.js',

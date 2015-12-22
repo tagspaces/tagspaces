@@ -5,8 +5,8 @@
   font-family: 'Ubuntu';
   font-style: normal;
   font-weight: normal;
-  src: url("../libs/ubuntu-font/Ubuntu-R.woff") format('woff');
-  src: url("../libs/ubuntu-font/Ubuntu-R.ttf") format('truetype');
+  src: url("ubuntu-font/Ubuntu-R.woff") format('woff');
+  src: url("ubuntu-font/Ubuntu-R.ttf") format('truetype');
 }
 
 html, body {

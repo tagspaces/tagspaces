@@ -122,7 +122,7 @@ function initToobarButton() {
     contentScriptFile: [ 
       data.url('libs/jquery/jquery.min.js'),
       data.url('libs/select2/select2.min.js'),
-      data.url('libs/dompurify/purify.js'),
+      data.url('libs/dompurify/dist/purify.min.js'),
       data.url('mozilla/popup.js')
     ],
     onShow: function() {

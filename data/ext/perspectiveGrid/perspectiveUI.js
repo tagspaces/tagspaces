@@ -447,11 +447,11 @@ define(function(require, exports, module) {
     var self = this;
 
     $fileTile
-      .hammer().on("doubletap", function() { //.dblclick(function() {
-        return false;
+      //.hammer().on("doubletap", function() { //.dblclick(function() {
+      //  return false;
         //TSCORE.FileOpener.openFile(filePath);
         //self.selectFile(filePath);
-      })
+      //})
       .click(function() {
         TSCORE.FileOpener.openFile(filePath);
         self.selectFile(filePath);
