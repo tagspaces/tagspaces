@@ -179,6 +179,10 @@ li hr {
 	background-color:  transparent;
 }
 
+#tagGroupsContent {
+	min-height: 50px;
+}
+
 #searchToolbar {
   width: 250px;
   background-color: #f2f2f2;

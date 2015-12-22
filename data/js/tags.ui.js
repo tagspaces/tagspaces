@@ -185,7 +185,8 @@ define(function(require, exports, module) {
     // Show TagGroup create button if no taggroup exist
     if (TSCORE.Config.Settings.tagGroups.length < 1) {
       $tagGroupsContent.append($('<button>', {
-        'class': 'btn',
+        'class': 'btn btn-default',
+        'style': 'margin-top: 5px; margin-left: 7px;',
         'text': $.i18n.t('ns.common:createTagGroup'),
         'data-i18n': 'ns.common:createTagGroup'
       }).click(function() {
