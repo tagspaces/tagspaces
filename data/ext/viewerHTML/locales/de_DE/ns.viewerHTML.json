@@ -2,9 +2,9 @@
     "zoomOut": "Ansicht verkleinern",
     "zoomIn": "Ansicht vergrössern",
     "zoomReset": "Ansicht zurücksetzen",
-    "changeTheme": "Thema wechseln",
-    "resetTheme": "Thema zurücksetzen",
-    "print": "Drucken",
+    "changeTheme": "Farbenthema wechseln",
+    "resetTheme": "Farbenthema zurücksetzen",
+    "print": "Print",
     "about": "Über",
     "aboutTitle": "Über ViewerHTML Erweiterung",
     "-": "-"

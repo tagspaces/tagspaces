@@ -2,9 +2,9 @@
     "zoomOut": "Ansicht verkleinern",
     "zoomIn": "Ansicht vergrössern",
     "zoomReset": "Ansicht zurücksetzen",
-    "changeTheme": "Thema wechseln",
+    "changeTheme": "Farbenthema wechseln",
     "print": "Drucken",
     "about": "Über",
-    "aboutTitle": "Über ViewerMD Erweiterung",
+    "aboutTitle": "About ViewerMD extension",
     "-": "-"
 }

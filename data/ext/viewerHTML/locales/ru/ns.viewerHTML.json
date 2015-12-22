@@ -2,10 +2,10 @@
     "zoomOut": "Уменьшить масштаб",
     "zoomIn": "Увеличить масштаб",
     "zoomReset": "Сбросить масштаб",
-    "changeTheme": "Change Theme",
-    "resetTheme": "Reset Theme",
+    "changeTheme": "Сменить оформление",
+    "resetTheme": "Сбросить оформление",
     "print": "Печать",
-    "about": "О программе",
-    "aboutTitle": "About ViewerHTML extension",
+    "about": "О расширении",
+    "aboutTitle": "О расширении ViewerHTML",
     "-": "-"
 }

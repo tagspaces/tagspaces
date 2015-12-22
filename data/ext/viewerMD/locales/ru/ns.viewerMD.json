@@ -2,9 +2,9 @@
     "zoomOut": "Уменьшить масштаб",
     "zoomIn": "Увеличить масштаб",
     "zoomReset": "Сбросить масштаб",
-    "changeTheme": "Change Theme",
+    "changeTheme": "Сменить оформление",
     "print": "Печать",
-    "about": "О программе",
-    "aboutTitle": "About ViewerMD extension",
+    "about": "О расширении",
+    "aboutTitle": "О расширении ViewerMD",
     "-": "-"
 }

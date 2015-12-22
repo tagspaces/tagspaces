@@ -220,7 +220,7 @@ module.exports = function(grunt) {
         command: 'node node_modules/jsdoc/jsdoc.js -c jsdoc.conf.json --verbose',
       },
       transifexpull: {
-        command: 'tx pull -a --disable-overwrite',
+        command: 'tx pull -a',
       },
     },
     compress: {

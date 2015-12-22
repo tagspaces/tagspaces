@@ -1,6 +1,6 @@
 {
     "saveAsSelectionLabel": {
-        "message": "Kijelölés mentése",
+        "message": "Kijelölt tartalmat",
         "description": "Title of label."
     },
     "appLauncher": {
@@ -16,7 +16,7 @@
         "description": "Add tag help message"
     },
     "saveScreenshotTitle": {
-        "message": "Mentés képként",
+        "message": "Képként",
         "description": "Title of screenshot button"
     },
     "editTitleLabel": {
@@ -52,7 +52,7 @@
         "description": "Title of save selection button"
     },
     "saveAsMhtmlLabel": {
-        "message": "Teljes lap mentése",
+        "message": "Teljes lapot",
         "description": "Title of label."
     },
     "saveFileLabel": {

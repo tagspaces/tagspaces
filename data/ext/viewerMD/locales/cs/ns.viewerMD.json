@@ -1,10 +1,10 @@
 {
-    "zoomOut": "Zoom Out",
-    "zoomIn": "Zoom In",
-    "zoomReset": "Zoom Reset",
-    "changeTheme": "Change Theme",
-    "print": "Print",
-    "about": "About",
-    "aboutTitle": "About ViewerMD extension",
+    "zoomOut": "Odálit",
+    "zoomIn": "Přiblížit",
+    "zoomReset": "Resetovat Přiblížení/odálení",
+    "changeTheme": "Změnit téma",
+    "print": "Tisknout",
+    "about": "O",
+    "aboutTitle": "O rozšíření ViewerMD",
     "-": "-"
 }

@@ -2,10 +2,10 @@
     "zoomOut": "Kicsinyítés",
     "zoomIn": "Nagyítás",
     "zoomReset": "Nézet nagyításának visszaállítása",
-    "changeTheme": "Change Theme",
-    "resetTheme": "Reset Theme",
+    "changeTheme": "Kinézet váltása",
+    "resetTheme": "Kinézet visszaállítása",
     "print": "Nyomtatás",
     "about": "A programról",
-    "aboutTitle": "About ViewerHTML extension",
+    "aboutTitle": "A ViewerHTML kiegészítőről",
     "-": "-"
 }
