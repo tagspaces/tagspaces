@@ -8,8 +8,6 @@ runfirefoxbeta
 extensions
 docs
 data/pro
-data/ext/perspectiveOCRO
-data/ext/editorNext
 nwjsdata
 data/node-webkit/locales
 data/node-webkit/ffmpegsumo.dll
