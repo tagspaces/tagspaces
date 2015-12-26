@@ -65,7 +65,7 @@ var isWin = navigator.appVersion.indexOf("Win")!==-1;
   requirejs.config({
     map: {
       '*': {
-        'css':   'libs/require-css/css',
+        'css':   'libs/require-css/css.min',
         'text':  'libs/requiretext/index'
       }
     },
