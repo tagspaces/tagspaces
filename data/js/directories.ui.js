@@ -252,7 +252,7 @@ define(function(require, exports, module) {
         navigateToDirectory($(this).attr('data-path'));
       });
     });
-    if($alternativeNavigator.i18n) {
+    if ($alternativeNavigator.i18n) {
       $alternativeNavigator.i18n();
     }
   }
@@ -683,7 +683,7 @@ define(function(require, exports, module) {
           }, function(error) {
             TSCORE.hideLoadingAnimation();
             console.error("Creating directory " + dirPath + " failed" + error);
-            if(error) {
+            if (error) {
               TSCORE.showAlertDialog(error);
             } else {
               TSCORE.showAlertDialog("Creating " + dirPath + " failed.");
