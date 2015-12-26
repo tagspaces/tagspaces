@@ -1,7 +1,7 @@
 /* Copyright (c) 2012-2015 The TagSpaces Authors. All rights reserved. Use of this source code
  * is governed by a AGPL3 license that can be found in the LICENSE file. */
 
-@import '../libs/bootswatch/paper/bootstrap.css';
+@import '../libs/bootswatch/paper/bootstrap.min.css';
 @import '../libs/fontawesome/css/font-awesome.min.css';
 @import '../libs/select2/select2.css';
 @import '../libs/select2/select2-bootstrap.css';
