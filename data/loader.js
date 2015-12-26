@@ -91,6 +91,7 @@ var isWin = navigator.appVersion.indexOf("Win")!==-1;
       mousetrapgb:            'libs/mousetrap/plugins/global-bind/mousetrap-global-bind.min',
       select2:                'libs/select2/select2.min',
       hammerjs:               'libs/hammerjs/hammer.min',
+      jqueryhammerjs:         'libs/jquery.hammer.js/jquery.hammer',
       handlebarsjs:           'libs/handlebars/handlebars.min',
       pdfjs:                  'libs/pdfjs/build/pdf',
       webdavlib:              'web/webdavlib',
@@ -136,6 +137,7 @@ var isWin = navigator.appVersion.indexOf("Win")!==-1;
       'i18next':                  { deps: ['jquery'] },
       'select2':                  { deps: ['jquery'] },
       'hammerjs':                 { deps: ['jquery'] },
+      'jqueryhammerjs':           { deps: ['hammerjs'] },
       'mousetrapgb':              { deps: ['mousetrap'] },
       'tscore':                   { deps: [
         'jquery',
@@ -147,6 +149,7 @@ var isWin = navigator.appVersion.indexOf("Win")!==-1;
 //        'jqueryuiselectable',
 //        'jqueryuisortable',
         'hammerjs',
+        'jqueryhammerjs',
         'bootstrap',
         'bootstrap3xeditable',
         'bootstrapvalidator',
