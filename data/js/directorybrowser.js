@@ -47,9 +47,9 @@ define(function(require, exports, module) {
         }
       }
     }
-    $('#directoryBrowserDialog').on('hidden.bs.modal', function () {
+    $('#directoryBrowserDialog').on('hidden.bs.modal', function() {
       TSCORE.hideLoadingAnimation();
-    })
+    });
     $('#directoryBrowserDialog').modal({
       backdrop: 'static',
       show: true
