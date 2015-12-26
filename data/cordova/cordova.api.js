@@ -341,6 +341,7 @@ define(function(require, exports, module) {
 
   function createDirectoryTree(dirPath) {
     // TODO
+    TSCORE.hideLoadingAnimation();
     TSCORE.showAlertDialog("Creating directory tree is not supported in Cordova yet.");
   }
 
@@ -390,7 +391,7 @@ define(function(require, exports, module) {
                           });
                         },
                         function(err) {
-                          onReject("Error reading entry " + fileEntry.name);
+                          onReject("Error reading entry " + path);
                         });
                     }
                   }); // jshint ignore:line
@@ -799,7 +800,7 @@ define(function(require, exports, module) {
 
 
   function openDirectory(dirPath) {
-    //
+
     TSCORE.showAlertDialog($.i18n.t("ns.dialogs:openContainingDirectoryAlert"));
   }
 
