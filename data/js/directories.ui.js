@@ -677,14 +677,17 @@ define(function(require, exports, module) {
         $('body').append(uiTemplate());
         $('#createNewDirectoryButton').on('click', function() {
           // TODO validate folder name
-          //TSCORE.IO.createDirectory($('#createNewDirectoryButton').attr('path') + TSCORE.dirSeparator + $('#newDirectoryName').val());
           var dirPath = $('#createNewDirectoryButton').attr('path') + TSCORE.dirSeparator + $('#newDirectoryName').val();
           TSCORE.IO.createDirectoryPromise(dirPath).then(function() {
             TSPOSTIO.createDirectory(dirPath);
           }, function(error) {
             TSCORE.hideLoadingAnimation();
             console.error("Creating directory " + dirPath + " failed" + error);
-            TSCORE.showAlertDialog("Creating " + dirPath + " failed.");
+            if(error) {
+              TSCORE.showAlertDialog(error);
+            } else {
+              TSCORE.showAlertDialog("Creating " + dirPath + " failed.");
+            }
           });
         });
       }
