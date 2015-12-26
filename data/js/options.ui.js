@@ -7,7 +7,7 @@ define(function(require, exports, module) {
   console.log('Loading options.ui.js ...');
   var TSCORE = require('tscore');
   var tsExtManager = require('tsextmanager');
-  require(['libs/filesaver.js/FileSaver.js'], function() {});
+  require(['libs/filesaver.js/FileSaver.min.js'], function() {});
   var extList = [];
 
   function generateSelectOptions(parent, data, selectedId, helpI18NString) {
