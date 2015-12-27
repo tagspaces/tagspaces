@@ -225,9 +225,9 @@ define(function(require, exports, module) {
       backdrop: 'static',
       show: true
     });
-    $('#dialogOptions').draggable({
+    /*$('#dialogOptions').draggable({ // disabling dragging due to issue with option's tabs
       handle: ".modal-header"
-    });
+    });*/
   }
 
   function parseKeyBinding(keybinding) {
