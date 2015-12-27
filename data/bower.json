@@ -7,6 +7,7 @@
     "editorText": "git+https://github.com/tagspaces/editorText.git",
     "perspectiveGraph": "git+https://github.com/tagspaces/perspectiveGraph.git",
     "perspectiveGrid": "git+https://github.com/tagspaces/perspectiveGrid.git",
+    "perspectiveImageSwiper": "git+https://github.com/tagspaces/perspectiveImageSwiper.git",
     "perspectiveList": "git+https://github.com/tagspaces/perspectiveList.git",
     "viewerAudioVideo": "git+https://github.com/tagspaces/viewerAudioVideo.git",
     "viewerBrowser": "git+https://github.com/tagspaces/viewerBrowser.git",

@@ -4,6 +4,7 @@
     "bootstrap",
     "backbone",
     "fontawesome",
+    "photoswipe",
     "summernote",
     "codemirror",
     "webodf.js",
