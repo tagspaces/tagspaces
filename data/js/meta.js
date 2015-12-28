@@ -125,7 +125,7 @@ define(function(require, exports, module) {
     return promise;
   }
 
-  function loadMetaDataFromFile(entry) {
+  function loadMetaDataFromFilePromise(entry) {
     var filePath = entry[TSCORE.fileListFILEPATH];
     var promise = new Promise(function(resolve, reject) {
       loadMetaFileJson(filePath).then(function(result) {
@@ -228,11 +228,16 @@ define(function(require, exports, module) {
       metadataPath = 'file://' + path + TSCORE.dirSeparator + TSCORE.metaFolder + TSCORE.dirSeparator + TSCORE.metaFolderFile;
     }
 
+    // TODO use the API
     $.get(metadataPath, function(data) {
         if (data.length > 1) {
-          var metadata = JSON.parse(data);
-          console.log('Location Metadata: ' + JSON.stringify(metadata));
-          resultCb(metadata);
+          try {
+            var metadata = JSON.parse(data);
+            console.log('Location Metadata: ' + JSON.stringify(metadata));
+            resultCb(metadata);
+          } catch (err) {
+            console.warn('Error while parsing json from ' + metadataPath);
+          }
         }
       }).fail(function() {
         resultCb();
@@ -249,7 +254,7 @@ define(function(require, exports, module) {
       console.log("Metafolder created: " + metaDirPath);
     }).catch(function(error) {
       TSCORE.hideLoadingAnimation();
-      console.log("Error creating folder, it was probably already created " + error);
+      console.log("Creating metafolder failed, it was probably already created " + error);
     });
   }
 
@@ -258,7 +263,7 @@ define(function(require, exports, module) {
   exports.findMetaObjectFromFileList = findMetaObjectFromFileList;
   exports.saveMetaData = saveMetaData;
   exports.updateMetaData = updateTsMetaData;
-  exports.loadMetaDataFromFile = loadMetaDataFromFile;
+  exports.loadMetaDataFromFilePromise = loadMetaDataFromFilePromise;
   exports.getTagsFromMetaFile = getTagsFromMetaFile;
   //tag utils
   exports.addMetaTags = addMetaTags;
