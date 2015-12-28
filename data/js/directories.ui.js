@@ -506,16 +506,13 @@ define(function(require, exports, module) {
     $('#directoryMenuOpenDirectory').click(function() {
       TSCORE.IO.openDirectory(dir4ContextMenu);
     });
-    //$('#createNewLocation').click(function() {
-    //  showLocationCreateDialog();
-    //});
   }
 
   function createLocation() {
     var locationPath = $('#folderLocation').val();
     TSCORE.Config.createLocation($('#connectionName').val(), locationPath, $('#locationPerspective').val());
-    // Enable the UI behavior by not empty location list
-    $('#createNewLocation').attr('title', $.i18n.t('ns.common:connectNewLocationTooltip')).tooltip('destroy');
+    // Enable the UI behavior of a not empty location list
+    $('#createNewLocation').attr('title', $.i18n.t('ns.common:connectNewLocationTooltip'));
     $('#locationName').prop('disabled', false);
     $('#selectLocation').prop('disabled', false);
     openLocation(locationPath);
