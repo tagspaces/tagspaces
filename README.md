@@ -51,9 +51,21 @@ The full changelog is available here: [Changelog](CHANGELOG.md)
 The native Windows, Linux and Mac OS X versions of `TagSpaces` are built with [node-webkit](https://github.com/rogerwang/node-webkit). node-webkit is an app runtime based on Chromium and node.js. You can write native apps in HTML and Javascript with node-webkit.
 
 ### How to run TagSpaces from the source code?
+Install [node.js, npm](http://nodejs.org/) and [git](http://git-scm.org/) for your platform (e.g. OS X, Windows or Linux).
+
+Install bower package manager
+
+    $ npm install -g bower
+
 Get the TagSpaces source code by cloning its repository:
 
-    $git clone https://github.com/tagspaces/tagspaces.git
+    $ git clone https://github.com/tagspaces/tagspaces.git
+
+Go to the data folder and install the TagSpaces extensions with bower:
+    
+    $ cd tagspaces && cd data
+    $ bower install
+    
 
 #### Run the native Windows, Linux or Mac OS X application
 * Download [nw.js](https://github.com/nwjs/nw.js) prebuilt binaries for your system environment.
