@@ -734,11 +734,10 @@ define(function(require, exports, module) {
     TSCORE.IO.listDirectoryPromise(TSCORE.currentPath).then(
       function(entries) {
         TSPOSTIO.listDirectory(entries);
-        console.log("Listing: " + dirPath + " done!");
       },
       function(err) {
         TSPOSTIO.errorOpeningPath();
-        console.log("Error listing directory" + err);
+        console.warn("Error listing directory" + err);
       }
     );
   }
