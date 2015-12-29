@@ -5,7 +5,7 @@ var pify = require('pify');
 var Promise = require('pinkie-promise');
 var uuid = require('uuid');
 var xdgTrashdir = require('xdg-trashdir');
-var fs = pify.all(fsExtra, Promise);
+var fs = pify(fsExtra, Promise);
 
 function trash(src) {
 	return xdgTrashdir(src).then(function (dir) {

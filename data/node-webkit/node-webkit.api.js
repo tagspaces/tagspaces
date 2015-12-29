@@ -596,37 +596,42 @@ define(function(require, exports, module) {
 
 
   function deleteFilePromise(path) {
-    
+    //TODO Handling the trash can case
     if (TSCORE.PRO && TSCORE.Config.getUseTrashCan()) {
-      return trash([path]);
-    }
-
-    return new Promise(function(resolve, reject) {
-      fs.unlink(path, function(error) {
-        if (error) {
-          reject(error);
-        } else {
-          resolve();
-        }
+      return new Promise(function(resolve, reject) {
+        trash([path]).then(function() {
+          resolve(path);
+        }, function(err) {
+          reject(err);
+        });
       });
-    });
+    } else {
+      return new Promise(function(resolve, reject) {
+        fs.unlink(path, function(error) {
+          if (error) {
+            reject(error);
+          } else {
+            resolve(path);
+          }
+        });
+      });
+    }
   }
 
   function deleteDirectoryPromise(path) {
-
     if (TSCORE.PRO && TSCORE.Config.getUseTrashCan()) {
       return trash([path]);
-    }
-
-    return new Promise(function(resolve, reject) {
-      fs.rmdir(path, function(error) {
-        if (error) {
-          reject(error);
-        } else {
-          resolve();
-        }
+    } else {
+      return new Promise(function(resolve, reject) {
+        fs.rmdir(path, function(error) {
+          if (error) {
+            reject(error);
+          } else {
+            resolve(path);
+          }
+        });
       });
-    });
+    }
   }
 
 
