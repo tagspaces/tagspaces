@@ -21,6 +21,7 @@ define(function(require, exports, module) {
   var tsSearch = require('tssearch');
   var tsPro = require('tspro');
   var tsUtils = require('tsutils');
+  var tsIOUtils = require('tsioutils');
   var tsMeta = require('tsmeta');
   var tsExt = require('tsextapi');
   var tsExtManager = require('tsextmanager');
@@ -428,6 +429,7 @@ define(function(require, exports, module) {
   // Proxying applications parts
   exports.Config = tsSettings;
   exports.IO = tsIOApi;
+  exports.IOUtils = tsIOUtils;
   exports.UI = tsCoreUI;
   exports.PerspectiveManager = tsPersManager;
   exports.TagUtils = tsTagUtils;

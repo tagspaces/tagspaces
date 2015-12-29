@@ -113,6 +113,7 @@ var isWin = navigator.appVersion.indexOf("Win")!==-1;
       tspostioapi:            'js/postioapi',
       tsdirectorybrowser:     'js/directorybrowser',
       tsutils:                'js/utils',
+      tsioutils:              'js/ioutils',
       tsmeta:                 'js/meta',
       tsgettingstarted:       'js/gettingstarted',
       tsextapi:               'js/ext.api',
