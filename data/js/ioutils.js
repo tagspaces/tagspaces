@@ -4,12 +4,10 @@
 /* global define  */
 define(function(require, exports, module) {
   'use strict';
-  var TSCORE = require('tscore');
-  var TSPOSTIO = require('tspostioapi');
-
   console.log('Loading ioutils.js ...');
 
   var TSCORE = require('tscore');
+  var TSPOSTIO = require('tspostioapi');
 
   function walkDirectory(path, options, fileCallback, dirCallback) {
     return TSCORE.IO.listDirectoryPromise(path, true).then(function(entries) {
@@ -110,11 +108,11 @@ define(function(require, exports, module) {
   }
 
 
-  //TODO exports.createTree = createTree;
-  //TODO exports.copyFiles = copyFiles;
-  //TODO exports.moveFiles = moveFiles;
-  exports.deleteFiles = deleteFiles;
   exports.walkDirectory = walkDirectory;
   exports.listSubDirectories = listSubDirectories;
   exports.createDirectoryIndex = createDirectoryIndex;
+  exports.deleteFiles = deleteFiles;
+  //TODO exports.createTree = createTree;
+  //TODO exports.copyFiles = copyFiles;
+  //TODO exports.moveFiles = moveFiles;
 });
