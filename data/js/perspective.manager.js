@@ -37,9 +37,7 @@ define(function(require, exports, module) {
   function initPerspectives() {
     perspectives = [];
     $('#viewSwitcher').empty();
-    $('#viewToolbars').empty();
     $('#viewContainers').empty();
-    $('#viewFooters').empty();
     initWelcomeScreen();
 
     var extensions = TSCORE.Config.getPerspectives();
@@ -144,6 +142,11 @@ define(function(require, exports, module) {
 
   var updateFileUI = function(oldFilePath, newFilePath) {
     console.log('Updating file in perspectives');
+
+    if (TSCORE.FileOpener.getOpenedFilePath() === oldFilePath && !TSCORE.FileOpener.isFileEdited) {
+      TSCORE.FileOpener.openFile(newFilePath);
+    }
+
     for (var i = 0; i < perspectives.length; i++) {
       try {
         perspectives[i].updateFileUI(oldFilePath, newFilePath);
@@ -190,8 +193,12 @@ define(function(require, exports, module) {
   var updateFileBrowserData = function(dirList) {
     console.log('Updating the file browser data...');
     TSCORE.fileList = [];
-    var workers = [];
-    var tags, ext, title, fileSize, fileLMDT, path, filename, entry;
+    TSCORE.showLoadingAnimation();
+    //TSCORE.showWaitingDialog("Loading metadata / Generating thumbnails");
+
+    var metaDataLoadingPromises = [];
+    var tags, ext, title, fileSize, fileLMDT, path, filename, entry, thumbPath, metaObj;
+
     for (var i = 0; i < dirList.length; i++) {
       // Considering Unix HiddenEntries (. in the beginning of the filename)
       if (TSCORE.Config.getShowUnixHiddenEntries() || !TSCORE.Config.getShowUnixHiddenEntries() && dirList[i].path.indexOf(TSCORE.dirSeparator + '.') < 0) {
@@ -202,18 +209,30 @@ define(function(require, exports, module) {
         if (dirList[i].isFile) {
           ext = TSCORE.TagUtils.extractFileExtension(path);
           tags = TSCORE.TagUtils.extractTags(path);
-          fileSize = dirList[i].size;
-          fileLMDT = dirList[i].lmdt;
-          if (fileSize === undefined) {
-            fileSize = '';
+
+          if (dirList[i].size) {
+            fileSize = dirList[i].size;
+          } else {
+            fileSize = "";
           }
-          if (fileLMDT === undefined) {
+
+          if (dirList[i].lmdt) {
+            fileLMDT = dirList[i].lmdt;
+          } else {
             fileLMDT = '';
           }
-          var metaObj = {
-            thumbnailPath: "",
+
+          if (dirList[i].thumbPath) {
+            thumbPath = dirList[i].thumbPath;
+          } else {
+            thumbPath = '';
+          }
+
+          metaObj = {
+            thumbnailPath: thumbPath,
             metaData: null
           };
+
           entry = [
             ext,
             title,
@@ -225,7 +244,7 @@ define(function(require, exports, module) {
             metaObj
           ];
           TSCORE.fileList.push(entry);
-          workers.push(TSCORE.Meta.loadMetaDataFromFile(entry));
+          metaDataLoadingPromises.push(TSCORE.Meta.loadMetaDataFromFilePromise(entry));
         } else {
           entry = [
             path,
@@ -236,12 +255,14 @@ define(function(require, exports, module) {
       }
     }
 
-    changePerspective(TSCORE.currentPerspectiveID);
-    Promise.all(workers).then(function(result) {
+    Promise.all(metaDataLoadingPromises).then(function(result) {
       console.log("MetaData loaded");
+      //TSCORE.hideWaitingDialog();
       changePerspective(TSCORE.currentPerspectiveID);
     }).catch(function(e) {
-      console.error("MetaData Error: " + e);
+      console.error("MetaData loading failed: " + e);
+      //TSCORE.hideWaitingDialog();
+      changePerspective(TSCORE.currentPerspectiveID);
     });
   };
   
