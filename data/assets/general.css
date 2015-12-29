@@ -271,7 +271,7 @@ li hr {
 }
 
 .dirButtonActive  {
-  background-color: #FFCC99;
+  background-color: #E2E2E2 !important;
 }
 
 #location .selectedDirectory {
