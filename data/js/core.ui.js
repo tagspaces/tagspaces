@@ -46,7 +46,7 @@ define(function(require, exports, module) {
         speed: 500
       },
       timeout: 4000,
-      maxVisible: 5,
+      maxVisible: 1,
       closeWith: ['button', 'click'],
     });
   };
@@ -69,8 +69,8 @@ define(function(require, exports, module) {
         easing: 'swing',
         speed: 500
       },
-      timeout: 10000,
-      maxVisible: 5,
+      timeout: 6000,
+      maxVisible: 4,
       closeWith: ['button', 'click'],
     });
     /*var alertModal = $('#alertDialog');
@@ -256,7 +256,7 @@ define(function(require, exports, module) {
         TSCORE.directoryBrowser.initUI();
       }
       $('#directoryBrowserDialog').i18n();
-      TSCORE.Utils.listSubDirectories(path);
+      TSCORE.IOUtils.listSubDirectories(path);
     });
   };
 
