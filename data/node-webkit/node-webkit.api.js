@@ -282,13 +282,17 @@ define(function(require, exports, module) {
     });
   }
 
-  function listDirectoryPromise(path) {
+  function listDirectoryPromise(path, lite) {
     console.time("listDirectoryPromise");
     return new Promise(function(resolve, reject) {
       var enhancedEntries = [];
       var entryPath;
+      var thumbPath;
       var stats;
+      var thumbStats;
       var eentry;
+      var metaMetaFolder = TSCORE.metaFolder + TSCORE.dirSeparator + TSCORE.metaFolder;
+
       fs.readdir(path, function(error, entries) {
         if (error) {
           console.log("Error listing directory " + path);
@@ -298,18 +302,34 @@ define(function(require, exports, module) {
         if (entries) {
           entries.forEach(function(entry) {
             entryPath = path + TSCORE.dirSeparator + entry;
+            thumbPath = path + TSCORE.dirSeparator + TSCORE.metaFolder + TSCORE.dirSeparator + entry + TSCORE.thumbFileExt;
+            eentry = {};
+            eentry.name = entry;
+            eentry.path = entryPath;
+
             try {
               stats = fs.statSync(entryPath);
-              eentry = {};
-              eentry.name = entry;
               eentry.isFile = stats.isFile();
               eentry.size = stats.size;
-              eentry.lmdt = stats.mtime;
-              eentry.path = entryPath;
-              enhancedEntries.push(eentry);
+              eentry.lmdt = stats.mtime.getTime();
+
+              if (!lite && eentry.isFile && thumbPath.indexOf(metaMetaFolder) < 0) { // prevent checking in .ts/.ts folder
+                try {
+                  thumbStats = fs.statSync(thumbPath);
+                  if (thumbStats.isFile) {
+                    eentry.thumbPath = thumbPath;
+                  }
+                } catch (e) {
+                  console.warn("Error getting stats for " + thumbPath);
+                }
+                // TODO Extract the name of the sidecar json file
+              }
+
             } catch (e) {
               console.warn("Error getting stats for " + entryPath);
             }
+
+            enhancedEntries.push(eentry);
           });
           console.timeEnd("listDirectoryPromise");
           resolve(enhancedEntries);
