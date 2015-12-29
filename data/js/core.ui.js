@@ -291,6 +291,7 @@ define(function(require, exports, module) {
 
         $('#moveFilesButton').click(function(e) {
           e.preventDefault();
+          // TODO move to ioutils
           TSCORE.showWaitingDialog('Please wait, while files are being renamed.');
           var newFilePath, filePath;
           var fileOperations = [];
