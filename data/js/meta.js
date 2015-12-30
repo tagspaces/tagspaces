@@ -90,8 +90,8 @@ define(function(require, exports, module) {
     });
   }
 
-  function loadThumbnail(filePath) {
-    var promise = new Promise(function(resolve, reject) {
+  function loadThumbnailPromise(filePath) {
+    return new Promise(function(resolve, reject) {
       if (TSCORE.PRO) {
         TSCORE.PRO.getThumbnailURL(filePath, function(dataURL) {
           resolve(dataURL);
@@ -104,12 +104,10 @@ define(function(require, exports, module) {
         resolve(metaFilePath); 
       }
     });
-    return promise;
   }
 
-  function loadMetaFileJson(filePath) {
-    //console.log("loadMetaFileJson: " + filePath);
-    var promise = new Promise(function(resolve, reject) {
+  function loadMetaFileJsonPromise(filePath) {
+    return new Promise(function(resolve, reject) {
       var metaFileJson = findMetaFilebyPath(filePath, TSCORE.metaFileExt);
       if (metaFileJson) {
         TSCORE.IO.getFileContentPromise(metaFileJson, "text").then(function(result) {
@@ -122,21 +120,21 @@ define(function(require, exports, module) {
         resolve(null);
       }
     });
-    return promise;
   }
 
   function loadMetaDataFromFilePromise(entry) {
     var filePath = entry[TSCORE.fileListFILEPATH];
-    var promise = new Promise(function(resolve, reject) {
-      loadMetaFileJson(filePath).then(function(result) {
+    return new Promise(function(resolve, reject) {
+      loadMetaFileJsonPromise(filePath).then(function(result) {
+
         entry[TSCORE.fileListMETA].metaData = result;
-        loadThumbnail(filePath).then(function(result) {
+
+        loadThumbnailPromise(filePath).then(function(result) {
           entry[TSCORE.fileListMETA].thumbnailPath = result;
           resolve(entry);
         });
       });
     });
-    return promise;
   }
 
   function getTagsFromMetaFile(filePath) {
