@@ -257,11 +257,9 @@ define(function(require, exports, module) {
 
     Promise.all(metaDataLoadingPromises).then(function(result) {
       console.log("MetaData loaded");
-      //TSCORE.hideWaitingDialog();
       changePerspective(TSCORE.currentPerspectiveID);
     }).catch(function(e) {
       console.error("MetaData loading failed: " + e);
-      //TSCORE.hideWaitingDialog();
       changePerspective(TSCORE.currentPerspectiveID);
     });
   };
