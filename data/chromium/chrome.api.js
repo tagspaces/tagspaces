@@ -84,7 +84,7 @@ define(function(require, exports, module) {
 
 
   function createDirectoryTree(dirPath) {
-    TSCORE.showAlertDialog("Creating directory not supported.");
+    TSCORE.showAlertDialog("Creating directory tree not supported.");
     //var directoyTree = generateDirectoryTree(dirPath);
     //console.log(JSON.stringify(directoyTree));
     //TSPOSTIO.createDirectoryTree(directoyTree);
