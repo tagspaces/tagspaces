@@ -15,7 +15,7 @@ define(function(require, exports, module) {
     '{{#each dirHistory}}' +
     '<div class="btn-group">' +
         '<button class="btn btn-link dropdown-toggle" data-menu="{{@index}}">' +
-            '<div class="altNavFolderTitle"><i class="fa fa-angle-right"></i>&nbsp;{{name}}</div>'  +
+            '<div class="altNavFolderTitle">{{name}}&nbsp;<i class="fa fa-caret-right"></i></div>'  +
         '</button>' +
         '<div class="dropdown clearfix dirAltNavMenu" id="dirMenu{{@index}}" data-path="{{path}}">' +
             '<ul role="menu" class="dropdown-menu">' +

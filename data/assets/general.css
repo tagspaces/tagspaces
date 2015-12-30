@@ -613,6 +613,12 @@ input a.resetFilter {
   text-overflow: ellipsis;
   overflow: hidden;
   margin-left: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+.altNavFolderTitle:hover {
+  background-color: lightgray;
 }
 
 #closeOpenedFile {
