@@ -8,6 +8,9 @@ define(function(require, exports, module) {
 
   var TSCORE = require('tscore');
   var TSPOSTIO = require('tspostioapi');
+  var MAXSEARCHRESULTS = 1000;
+  var stopDirectoryWalking = false;
+  var searchResultsCounter = 0;
 
   function walkDirectory(path, options, fileCallback, dirCallback) {
     return TSCORE.IO.listDirectoryPromise(path, true).then(function(entries) {
@@ -26,7 +29,7 @@ define(function(require, exports, module) {
           if (dirCallback) {
             return dirCallback(entry);
           }
-          if (options.recursive) {
+          if (options.recursive) { //  && !stopDirectoryWalking &&
             return walkDirectory(entry.path, options, fileCallback, dirCallback);
           } else {
             return entry;
@@ -107,6 +110,8 @@ define(function(require, exports, module) {
     });
   }
 
+  exports.stopDirectoryWalking = stopDirectoryWalking;
+  exports.MAXSEARCHRESULTS = MAXSEARCHRESULTS;
 
   exports.walkDirectory = walkDirectory;
   exports.listSubDirectories = listSubDirectories;

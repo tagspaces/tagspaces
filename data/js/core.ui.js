@@ -36,12 +36,13 @@ define(function(require, exports, module) {
     }
     var n = noty({
       text: message,
+      //dismissQueue: false,
       layout: 'bottomCenter',
       theme: 'relax',
       type: 'success',
       animation: {
-        open: 'animated pulse',
-        close: 'animated flipOutX',
+        open: 'animated fadeIn',
+        close: 'animated fadeOut',
         easing: 'swing',
         speed: 500
       },
@@ -64,8 +65,8 @@ define(function(require, exports, module) {
       theme: 'relax',
       type: 'warning',
       animation: {
-        open: 'animated pulse',
-        close: 'animated flipOutX',
+        open: 'animated fadeIn',
+        close: 'animated fadeOut',
         easing: 'swing',
         speed: 500
       },
@@ -599,8 +600,13 @@ define(function(require, exports, module) {
 
     // Search UI
     $('#searchToolbar').on('click', '#closeSearchOptionButton', function() {
-      $('#searchBox').popover('hide');
+      $('#searchOptions').hide();
     });
+
+    $('#searchOptions').on('click', '.close', function() {
+      $('#searchOptions').hide();
+    });
+
     $('#searchToolbar').on('click', '#includeSubfoldersOption', function() {
       var searchQuery = $('#searchBox').val();
       if (searchQuery.indexOf('?') === 0) {
@@ -611,27 +617,23 @@ define(function(require, exports, module) {
         $('#searchBox').val('?' + searchQuery);
       }
     });
-    $('#searchBox').on('show.bs.popover', function() {
+
+    /*$('#searchBox').on('show.bs.popover', function() {
       var searchQuery = $('#searchBox').val();
       if (searchQuery.indexOf('?') === 0) {
         $('#includeSubfoldersOption i').removeClass('fa-toggle-off').addClass('fa-toggle-on');
       } else {
         $('#includeSubfoldersOption i').removeClass('fa-toggle-on').addClass('fa-toggle-off');
       }
-    });
-    $('#searchBox').on('shown.bs.popover', function() {
-      $('.popover').i18n();
-    });
+    });*/
+
     $('#searchBox').prop('disabled', true)
-      /*.focus(function() {
-                      $("#searchOptions").show();
-                  })*/
-      .popover({
-        html: true,
-        placement: 'bottom',
-        trigger: 'focus',
-        content: $('#searchOptions').html()
-      }).keyup(function(e) {
+      .focus(function() {
+        if(!TSCORE.FileOpener.isFileOpened()) {
+          $("#searchOptions").show();
+        }
+      })
+      .keyup(function(e) {
         // On enter fire the search
         if (e.keyCode === 13) {
           $('#clearFilterButton').addClass('filterOn');
@@ -654,21 +656,24 @@ define(function(require, exports, module) {
           TSCORE.PerspectiveManager.redrawCurrentPerspective();
         }
       });
+
     $('#showSearchButton').on('click', function() {
       TSCORE.showSearchArea();
     });
+
     $('#searchButton').prop('disabled', true).click(function(evt) {
       evt.preventDefault();
       $('#clearFilterButton').addClass('filterOn');
       $('#searchOptions').hide();
       TSCORE.PerspectiveManager.redrawCurrentPerspective();
-      $('#searchBox').popover('hide');
     });
+
     $('#clearFilterButton').prop('disabled', true).click(function(e) {
       e.preventDefault();
       cancelSearch();
     });
     // Search UI END
+
     $('#perspectiveSwitcherButton').prop('disabled', true);
     var $contactUsContent = $('#contactUsContent');
     $contactUsContent.on('click', '#openHints', showWelcomeDialog);
@@ -728,7 +733,7 @@ define(function(require, exports, module) {
 
   function cancelSearch() {
     clearSearchFilter();
-    $('#searchBox').popover('hide');
+    //$('#searchBox').popover('hide');
     $('#searchToolbar').hide();
     $('#showSearchButton').show();
     // Restoring initial dir listing without subdirectories
@@ -744,11 +749,10 @@ define(function(require, exports, module) {
   }
 
   function showSearchArea() {
-      $('#searchToolbar').show();
-      //.addClass('animated bounceIn');
-      $('#showSearchButton').hide();
-      $('#searchBox').focus();
-    }
+    $('#searchToolbar').show();
+    $('#showSearchButton').hide();
+    $('#searchBox').focus();
+  }
 
   // Handle external links
   function openLinkExternally(url) {

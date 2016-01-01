@@ -218,14 +218,17 @@ define(function(require, exports, module) {
   }
 
   var $loadingAnimation = $('#loadingAnimation');
+  var $statusBar = $('#statusBar');
 
   function showLoadingAnimation() {
+    $statusBar.hide();
     $loadingAnimation.show();
   }
 
   function hideLoadingAnimation() {
     setTimeout(function() {
       $loadingAnimation.hide();
+      $statusBar.show();
     }, 500);
   }
 
@@ -306,6 +309,8 @@ define(function(require, exports, module) {
     var isPortret = fullWidth < window.innerHeight;
     var oneColumn = fullWidth < 660;
     var twoColumn = fullWidth >= 660 && fullWidth < 1024;
+
+    $("#searchOptions").hide();
 
     showPerspectiveMenu();
     tsCoreUI.hideAllDropDownMenus();

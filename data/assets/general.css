@@ -96,7 +96,7 @@ html, body {
   margin-top: 12px;
   font-size: 14px;
   font-size: 12px;
-  text-align: right;
+  text-align: center;
 }
 
 #iframeViewer {
@@ -184,17 +184,33 @@ li hr {
 	min-height: 50px;
 }
 
+#clearFilterButton {
+  padding-left: 8px;
+  padding-right: 10px;
+}
+
+#searchButton {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
 #searchToolbar {
+  border-radius: 4px;
   width: 250px;
-  background-color: #f2f2f2;
+  background-color: #DBDBDB;
   display: none;
+  margin-left: 4px;
+  margin-right: 4px;
+  margin-bottom: 4px;
+  z-index: 1;
+  box-shadow: -20px 0px 28px -7px rgba(244, 244, 244, 1);
 }
 
 #searchBox {
-  margin-top: 8px;
+  margin-top: 4px;
   border: 0;
   background-color: transparent;
-  border-bottom: 2px solid gray;
+  border-bottom: 0;
   font-size: 14px;
   min-width: 30px;
   width: 100%;
