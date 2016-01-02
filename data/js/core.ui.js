@@ -629,7 +629,7 @@ define(function(require, exports, module) {
 
     $('#searchBox').prop('disabled', true)
       .focus(function() {
-        if(!TSCORE.FileOpener.isFileOpened()) {
+        if (!TSCORE.FileOpener.isFileOpened()) {
           $("#searchOptions").show();
         }
       })
