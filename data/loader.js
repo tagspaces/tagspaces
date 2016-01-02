@@ -41,14 +41,17 @@ var isWin = navigator.appVersion.indexOf("Win")!==-1;
     console.log("node-webkit not found!");
   }
 
+  var PRO_JS = "pro/js/pro.api";
+  if(PRO.indexOf("@@PROVERS") == 0 || PRO == "false") { PRO_JS = 'js/pro'; }
+
   // Setting up the IO functionality according to the platform
   var IO_JS = "web/web.api";
   if( isFirefox ) {
     IO_JS = "mozilla/mozilla.api";
-  } else if ( isFirefoxOS ) {
-    IO_JS = "mozilla/firefoxos.api";
+    PRO_JS = 'js/pro';
   } else if ( isChrome ) {
     IO_JS = "chromium/chrome.api";
+    PRO_JS = 'js/pro';
   } else if (isNode){
     IO_JS = "node-webkit/node-webkit.api";
   } else if (isCordova){
@@ -56,9 +59,6 @@ var isWin = navigator.appVersion.indexOf("Win")!==-1;
   } else if (isWeb){
     IO_JS = "web/web.api";
   }
-
-  var PRO_JS = "pro/js/pro.api";
-  if(PRO.indexOf("@@PROVERS") == 0 || PRO == "false") { PRO_JS = 'js/pro'; }
 
   console.log("Loading Loader - Firefox: "+isFirefox+" | ChromeExt: "+isChrome+" | Node: "+isNode+" | Cordova: "+isCordova+" | Web: "+isWeb+" | isWin: "+isWin);
 
