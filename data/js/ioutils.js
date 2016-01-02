@@ -35,10 +35,10 @@ define(function(require, exports, module) {
             return entry;
           }
         }
-      }), function(err) {
-        console.warn("Error walking directory prom " + err);
-        return null;
-      });
+      }));
+    }).catch(function(err) {
+      console.warn("Error walking directory " + err);
+      return null;
     });
   }
 
@@ -74,14 +74,10 @@ define(function(require, exports, module) {
     var directoryIndex = [];
     TSCORE.IOUtils.walkDirectory(dirPath, {recursive: true}, function(fileEntry) {
       directoryIndex.push(fileEntry);
-    }).then(
-      function(entries) {
+    }).then(function(entries) {
         TSPOSTIO.createDirectoryIndex(directoryIndex);
-      },
-      function(err) {
-        console.warn("Error creating index: " + err);
-      }
-    ).catch(function() {
+    }).catch(function(err) {
+      console.warn("Error creating index: " + err);
       TSCORE.hideWaitingDialog();
     });
   }
