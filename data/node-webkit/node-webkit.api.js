@@ -320,13 +320,13 @@ define(function(require, exports, module) {
                     eentry.thumbPath = thumbPath;
                   }
                 } catch (e) {
-                  console.warn("Error getting stats for " + thumbPath);
+                  console.log("Can not find thumbnail for file: " + thumbPath);
                 }
                 // TODO Extract the name of the sidecar json file
               }
 
             } catch (e) {
-              console.warn("Error getting stats for " + entryPath);
+              console.warn("Can not load properties for: " + entryPath);
             }
 
             enhancedEntries.push(eentry);
