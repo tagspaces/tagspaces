@@ -7,7 +7,7 @@ define(function(require, exports, module) {
   var perspectives;
   var TSCORE = require('tscore');
   var TSPOSTIO = require("tspostioapi");
-  
+
   function initPerspective(extPath) {
     return new Promise(function(resolve, reject) {
       require([extPath], function(perspective) {
@@ -244,7 +244,8 @@ define(function(require, exports, module) {
             metaObj
           ];
           TSCORE.fileList.push(entry);
-          metaDataLoadingPromises.push(TSCORE.Meta.loadMetaDataFromFilePromise(entry));
+          metaDataLoadingPromises.push(TSCORE.Meta.loadMetaFileJsonPromise(entry));
+          metaDataLoadingPromises.push(TSCORE.Meta.loadThumbnailPromise(entry));
         } else {
           entry = [
             path,
@@ -255,15 +256,45 @@ define(function(require, exports, module) {
       }
     }
 
-    Promise.all(metaDataLoadingPromises).then(function(result) {
-      console.log("MetaData loaded");
+    var loadAllHandler = function() {
+      TSCORE.hideLoadingAnimation();
       changePerspective(TSCORE.currentPerspectiveID);
+      /*if(TSCORE.PRO) { // TODO add check for setting enabling text extraction
+        TSCORE.showLoadingAnimation();
+        TSCORE.PRO.extractTextContentFromFilesPromise(TSCORE.fileList).then(function() {
+          console.log("Text extraction completed!");
+          TSCORE.hideLoadingAnimation();
+        });
+      }*/
+    };
+
+    Promise.all(metaDataLoadingPromises).then(function(result) {
+      console.log("MetaData loaded " + result);
+      loadAllHandler();
     }).catch(function(e) {
       console.error("MetaData loading failed: " + e);
-      changePerspective(TSCORE.currentPerspectiveID);
+      loadAllHandler();
     });
+
+    /*executeSequentially(metaDataLoadingPromises).then(function(result) {
+      console.log("MetaData loaded " + result);
+      loadAllHandler();
+    }).catch(function(e) {
+      console.error("MetaData loading failed: " + e);
+      loadAllHandler();
+    });*/
   };
-  
+
+  function executeSequentially(promiseFactories) {
+    var result = Promise.resolve();
+    for (var i = 0; i < promiseFactories.length; i++) {
+      //console.log("------------->" + i);
+      //if (i >= 10) { break; }
+      result = result.then(promiseFactories[i]);
+    }
+    return result;
+  }
+
   var refreshFileListContainer = function() {
     // TODO consider search view
     //TSCORE.showLoadingAnimation();
