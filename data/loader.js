@@ -5,7 +5,7 @@
 
 var isFirefox = document.URL.indexOf( 'resource://' ) === 0;
 var isFirefoxOS = document.URL.indexOf( 'app://' ) === 0;
-var isChrome =  document.URL.indexOf( 'chrome-extension://' ) === 0;
+var isChrome = document.URL.indexOf( 'chrome-extension://' ) === 0;
 var isNode = false;
 var isCordovaAndroid = document.URL.indexOf( 'file:///android_asset' ) === 0;
 var isCordovaiOS = navigator.isCordovaApp == true;
