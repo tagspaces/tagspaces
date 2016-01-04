@@ -450,16 +450,14 @@ define(function(require, exports, module) {
 
   function listDirectory(dirPath) {
     TSCORE.showLoadingAnimation();
-    TSCORE.IO.listDirectoryPromise(dirPath).then(
-      function(entries) {
-        TSPOSTIO.listDirectory(entries);
-        console.log("Listing: " + dirPath + " done!");
-      },
-      function(err) {
-        TSPOSTIO.errorOpeningPath();
-        console.log("Error listing directory" + err);
-      }
-    );
+    TSCORE.PerspectiveManager.removeAllFiles();
+    TSCORE.IO.listDirectoryPromise(dirPath).then(function(entries) {
+      TSPOSTIO.listDirectory(entries);
+      console.log("Listing: " + dirPath + " done!");
+    }).catch(function(err) {
+      TSPOSTIO.errorOpeningPath();
+      console.log("Error listing directory" + err);
+    });
 
     if (TSCORE.PRO && TSCORE.Config.getEnableMetaData()) {
       TSCORE.Meta.createMetaFolder(dirPath);
