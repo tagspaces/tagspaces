@@ -197,7 +197,7 @@
             <i class="fa fa-arrow-right fa-lg"></i>
           </button>
           <div class="flexMaxWidth">
-            <div id="loadingAnimation">
+            <div class="loadingAnimation">
               <div class="spinner">
                 <div class="bounce1"></div>
                 <div class="bounce2"></div>
@@ -682,10 +682,17 @@
     <div class="modal-content">
       <div class="modal-header">
         <a class="close" data-dismiss="modal"><i class="fa fa-times"></i></a>
-        <h4><i class="fa fa-circle-o-notch fa-spin"></i><i class="fa fa-fw"></i><span id="waitingHeader"></span></h4>
+        <h4><span id="waitingHeader"></span></h4>
       </div>
       <div class="modal-body">
-        <span id="waitingMessage"></span>
+        <div class="waitingAnimation" style="display: block; text-align: center;">
+          <div class="spinner">
+            <div class="bounce1"></div>
+            <div class="bounce2"></div>
+            <div class="bounce3"></div>
+          </div>
+          <span id="waitingMessage"></span>
+        </div>
       </div>
     </div>
   </div>
