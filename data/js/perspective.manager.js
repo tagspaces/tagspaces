@@ -140,6 +140,12 @@ define(function(require, exports, module) {
     }
   };
 
+  var removeAllFiles = function(filePath) {
+    console.log('Removing file from perspectives');
+    TSCORE.fileList = [];
+    changePerspective(TSCORE.currentPerspectiveID);
+  };
+
   var updateFileUI = function(oldFilePath, newFilePath) {
     console.log('Updating file in perspectives');
 
@@ -194,7 +200,7 @@ define(function(require, exports, module) {
     console.log('Updating the file browser data...');
     TSCORE.fileList = [];
     TSCORE.showLoadingAnimation();
-    //TSCORE.showWaitingDialog("Loading metadata / Generating thumbnails");
+    TSCORE.showWaitingDialog("Loading metadata and generating thumbnails");
 
     var metaDataLoadingPromises = [];
     var tags, ext, title, fileSize, fileLMDT, path, filename, entry, thumbPath, metaObj;
@@ -258,21 +264,28 @@ define(function(require, exports, module) {
 
     var loadAllHandler = function() {
       TSCORE.hideLoadingAnimation();
+      TSCORE.hideWaitingDialog();
       changePerspective(TSCORE.currentPerspectiveID);
-      /*if(TSCORE.PRO) { // TODO add check for setting enabling text extraction
+      if (TSCORE.PRO) { // TODO add check for setting enabling text extraction
         TSCORE.showLoadingAnimation();
+        //TSCORE.showWaitingDialog("Extracting text content");
         TSCORE.PRO.extractTextContentFromFilesPromise(TSCORE.fileList).then(function() {
           console.log("Text extraction completed!");
           TSCORE.hideLoadingAnimation();
+          TSCORE.hideWaitingDialog();
+        }).catch(function(e) {
+          console.log("Text extraction failed!");
+          TSCORE.hideLoadingAnimation();
+          TSCORE.hideWaitingDialog();
         });
-      }*/
+      }
     };
 
     Promise.all(metaDataLoadingPromises).then(function(result) {
-      console.log("MetaData loaded " + result);
+      console.log("MetaData loaded / Creating thumbs finished!");
       loadAllHandler();
     }).catch(function(e) {
-      console.error("MetaData loading failed: " + e);
+      console.warn("MetaData loading / Creating thumbs failed: " + e);
       loadAllHandler();
     });
 
@@ -288,8 +301,6 @@ define(function(require, exports, module) {
   function executeSequentially(promiseFactories) {
     var result = Promise.resolve();
     for (var i = 0; i < promiseFactories.length; i++) {
-      //console.log("------------->" + i);
-      //if (i >= 10) { break; }
       result = result.then(promiseFactories[i]);
     }
     return result;
@@ -344,7 +355,6 @@ define(function(require, exports, module) {
         $currentPerspectitveName.attr('title', perspectives[i].ID);
         perspectives[i].load();
         $('#' + perspectives[i].ID + 'Container').show();
-        //$('#' + perspectives[i].ID + 'Toolbar').show();
       }
     }
     // Clear the list with the selected files    
@@ -374,6 +384,7 @@ define(function(require, exports, module) {
   exports.updateFileBrowserData = updateFileBrowserData;
   exports.refreshFileListContainer = refreshFileListContainer;
   exports.clearSelectedFiles = clearSelectedFiles;
+  exports.removeAllFiles = removeAllFiles;
   exports.removeFileUI = removeFileUI;
   exports.updateFileUI = updateFileUI;
   exports.changePerspective = changePerspective; //exports.generateDesktop              = generateDesktop;

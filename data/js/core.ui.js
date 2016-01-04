@@ -9,6 +9,8 @@ define(function(require, exports, module) {
   var TSPOSTIO = require("tspostioapi");
   var fileContent;
   var fileType;
+  var waitingDialogTimeoutID;
+
   var showWaitingDialog = function(message, title) {
     if (!title) {
       title = $.i18n.t('ns.dialogs:titleWaiting');
@@ -19,14 +21,17 @@ define(function(require, exports, module) {
     var waitingModal = $('#waitingDialog');
     waitingModal.find('#waitingHeader').text(title);
     waitingModal.find('#waitingMessage').text(message);
-    waitingModal.modal({
-      backdrop: 'static',
-      show: true
-    });
+
+    waitingDialogTimeoutID = window.setTimeout(function() {
+      waitingModal.modal({
+        backdrop: 'static',
+        show: true
+      });
+    }, 500);
   };
 
   var hideWaitingDialog = function(message, title) {
-    //
+    window.clearTimeout(waitingDialogTimeoutID);
     $('#waitingDialog').modal('hide');
   };
 

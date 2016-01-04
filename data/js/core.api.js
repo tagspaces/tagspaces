@@ -217,7 +217,7 @@ define(function(require, exports, module) {
     console.log('Updating logger...');
   }
 
-  var $loadingAnimation = $('#loadingAnimation');
+  var $loadingAnimation = $('.loadingAnimation');
   var $statusBar = $('#statusBar');
 
   function showLoadingAnimation() {
