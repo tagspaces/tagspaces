@@ -177,7 +177,7 @@ define(function(require, exports, module) {
     if (query.length > 0) {
       TSCORE.showWaitingDialog($.i18n.t("ns.common:waitDialogDiectoryIndexing"));
       console.time("walkDirectorySearch");
-      TSCORE.Utils.walkDirectory(TSCORE.currentPath, {recursive: queryObj.recursive},
+      TSCORE.IOUtils.walkDirectory(TSCORE.currentPath, {recursive: queryObj.recursive},
         function(fileEntry) {
           return new Promise(function(resolve, reject) {
             if (filterFileObject(fileEntry, queryObj)) {

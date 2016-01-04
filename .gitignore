@@ -5,12 +5,10 @@ CHANGELOG.TXT
 runfirefox
 runfirefoxbeta
 /node_modules
+extensions
 docs
 data/pro
-data/ext/viewerMHTML
-data/ext/viewerEPUB
-data/ext/perspectiveOCRO
-data/ext/editorNext
+data/ext
 nwjsdata
 data/node-webkit/locales
 data/node-webkit/ffmpegsumo.dll
@@ -24,5 +22,4 @@ data/node-webkit/nw.exe
 data/node-webkit/nw.pak
 data/node-webkit/debug.log
 *.DS_Store
-bower_components
-data/Content
+

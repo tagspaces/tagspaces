@@ -7,7 +7,7 @@ define(function(require, exports, module) {
   console.log('Loading options.ui.js ...');
   var TSCORE = require('tscore');
   var tsExtManager = require('tsextmanager');
-  require(['libs/filesaver.js/FileSaver.js'], function() {});
+  var saveAs = require('libs/filesaver.js/FileSaver.min.js');
   var extList = [];
 
   function generateSelectOptions(parent, data, selectedId, helpI18NString) {
@@ -225,9 +225,9 @@ define(function(require, exports, module) {
       backdrop: 'static',
       show: true
     });
-    $('#dialogOptions').draggable({
+    /*$('#dialogOptions').draggable({ // disabling dragging due to issue with option's tabs
       handle: ".modal-header"
-    });
+    });*/
   }
 
   function parseKeyBinding(keybinding) {

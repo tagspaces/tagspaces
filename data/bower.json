@@ -1,0 +1,25 @@
+{
+  "name": "TagSpacesExt",
+  "dependencies": {
+    "editorHTML": "git+https://github.com/tagspaces/editorHTML.git",
+    "editorJSON": "git+https://github.com/tagspaces/editorJSON.git",
+    "editorODF": "git+https://github.com/tagspaces/editorODF.git",
+    "editorText": "git+https://github.com/tagspaces/editorText.git",
+    "perspectiveGraph": "git+https://github.com/tagspaces/perspectiveGraph.git",
+    "perspectiveGrid": "git+https://github.com/tagspaces/perspectiveGrid.git",
+    "perspectiveImageSwiper": "git+https://github.com/tagspaces/perspectiveImageSwiper.git",
+    "perspectiveList": "git+https://github.com/tagspaces/perspectiveList.git",
+    "viewerAudioVideo": "git+https://github.com/tagspaces/viewerAudioVideo.git",
+    "viewerBrowser": "git+https://github.com/tagspaces/viewerBrowser.git",
+    "viewerHTML": "git+https://github.com/tagspaces/viewerHTML.git",
+    "viewerEPUB": "git+https://github.com/tagspaces/viewerEPUB.git",
+    "viewerImage": "git+https://github.com/tagspaces/viewerImage.git",
+    "viewerMD": "git+https://github.com/tagspaces/viewerMD.git",
+    "viewerMHTML": "git+https://github.com/tagspaces/viewerMHTML.git",
+    "viewerPDF": "git+https://github.com/tagspaces/viewerPDF.git",
+    "viewerText": "git+https://github.com/tagspaces/viewerText.git",
+    "viewerURL": "git+https://github.com/tagspaces/viewerURL.git",
+    "viewerZIP": "git+https://github.com/tagspaces/viewerZIP.git"
+  },
+  "private": true
+}

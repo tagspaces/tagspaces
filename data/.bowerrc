@@ -1,0 +1,24 @@
+{
+  "directory": "ext",
+  "ignoredDependencies": [
+    "bootstrap",
+    "backbone",
+    "fontawesome",
+    "photoswipe",
+    "summernote",
+    "codemirror",
+    "webodf.js",
+    "woofmark",
+    "jsoneditor",
+    "marked",
+    "jquery.panzoom",
+    "jquery-mousewheel",
+    "exif-js",
+    "plyr",
+    "datatables",
+    "epub.js",
+    "jquery",
+    "jquery-highlight",
+    "polymer"
+  ]
+}
