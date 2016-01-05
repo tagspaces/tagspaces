@@ -20,10 +20,11 @@ define(function(require, exports, module) {
       .attr("data-i18n", helpI18NString)
       .val('false'));
     data.forEach(function(value) {
+      var name = getExtensionNameByID(value);
       if (selectedId === value) {
-        parent.append($('<option>').attr('selected', 'selected').text(value).val(value));
+        parent.append($('<option>').attr('selected', 'selected').text(name).val(value));
       } else {
-        parent.append($('<option>').text(value).val(value));
+        parent.append($('<option>').text(name).val(value));
       }
     });
   }
@@ -49,6 +50,15 @@ define(function(require, exports, module) {
     parent.append(perspectiveControl);
   }
 
+  function getExtensionNameByID(extId) {
+    for (var i in extList) {
+      if (extList[i].id === extId) {
+        return extList[i].name;
+      }
+    }
+    return extId;
+  }
+
   function getExtensionsByType(type) {
     var result = [];
     if (extList.length === 0) {
@@ -56,7 +66,7 @@ define(function(require, exports, module) {
     }
     for (var i in extList) {
       if (extList[i].type === type) {
-        result.push(extList[i].name);
+        result.push(extList[i].id);
       }
     }
     return result;
