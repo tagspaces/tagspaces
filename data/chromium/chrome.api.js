@@ -16,7 +16,7 @@ define(function(require, exports, module) {
 
   var TSCORE = require("tscore");
   var TSPOSTIO = require("tspostioapi");
-  require("libs/filesaver.js/FileSaver");
+  var saveAs = require("libs/filesaver.js/FileSaver.min");
 
   var dataBegin = "<script>addRow(";
   var dataEnd = ");</script>";
@@ -84,7 +84,7 @@ define(function(require, exports, module) {
 
 
   function createDirectoryTree(dirPath) {
-    TSCORE.showAlertDialog("Creating directory not supported.");
+    TSCORE.showAlertDialog("Creating directory tree not supported.");
     //var directoyTree = generateDirectoryTree(dirPath);
     //console.log(JSON.stringify(directoyTree));
     //TSPOSTIO.createDirectoryTree(directoyTree);
@@ -199,43 +199,37 @@ define(function(require, exports, module) {
 
   function createDirectoryPromise(dirPath) {
     return new Promise(function(res, rej) {
-      TSCORE.showAlertDialog("Creating directory is not supported in Chrome, please use the desktop version.");
-      res(true);
+      rej("Creating directory is not supported in Chrome, please use the desktop version.");
     });
   }
 
   function renameDirectoryPromise() {
     return new Promise(function(res, rej) {
-      TSCORE.showAlertDialog("Renaming directory is not supported in Chrome, please use the desktop version.");
-      res(true);
+      rej("Renaming directory is not supported in Chrome, please use the desktop version.");
     });
   }
 
   function renameFilePromise() {
     return new Promise(function(res, rej) {
-      TSCORE.showAlertDialog("Renaming file is not supported in Chrome, please use the desktop version.");
-      res(true);
+      rej("Renaming file is not supported in Chrome, please use the desktop version.");
     });
   }
 
   function copyFilePromise() {
     return new Promise(function(res, rej) {
-      TSCORE.showAlertDialog("Copy file is not supported in Chrome, please use the desktop version.");
-      res(true);
+      rej("Copy file is not supported in Chrome, please use the desktop version.");
     });
   }
 
   function deleteFilePromise() {
     return new Promise(function(res, rej) {
-      TSCORE.showAlertDialog("Creating directory is not supported in Chrome, please use the desktop version.");
-      res(true);
+      rej("Creating directory is not supported in Chrome, please use the desktop version.");
     });
   }
 
   function deleteDirectoryPromise() {
     return new Promise(function(res, rej) {
-      TSCORE.showAlertDialog("Deleting directory is not supported in Chrome, please use the desktop version.");
-      res(true);
+      rej("Deleting directory is not supported in Chrome, please use the desktop version.");
     });
   }
 

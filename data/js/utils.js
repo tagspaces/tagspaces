@@ -69,6 +69,7 @@ define(function(require, exports, module) {
   }
 
   function dirName(dirPath) {
+
     return dirPath.replace(/\\/g, '/').replace(/\/[^\/]*$/, '');
   }
 
@@ -77,79 +78,6 @@ define(function(require, exports, module) {
     return (ext === fileURL) ? "" : ext;
   }
 
-  function walkDirectory(path, options, fileCallback, dirCallback) {
-    return TSCORE.IO.listDirectoryPromise(path, true).then(function(entries) {
-      return Promise.all(entries.map(function(entry) {
-        if (!options) {
-          options = {};
-          options.recursive = false;
-        }
-        if (entry.isFile) {
-          if (fileCallback) {
-            return fileCallback(entry);
-          } else {
-            return entry;
-          }
-        } else {
-          if (dirCallback) {
-            return dirCallback(entry);
-          }
-          if (options.recursive) {
-            return walkDirectory(entry.path, options, fileCallback, dirCallback);
-          } else {
-            return entry;
-          }
-        }
-      }), function(err) {
-        console.error("Error list dir prom " + err);
-        return null;
-      });
-    });
-  }
-
-  function listSubDirectories(dirPath) {
-    console.log("Listing sub directories: " + dirPath);
-    TSCORE.showLoadingAnimation();
-    TSCORE.IO.listDirectoryPromise(dirPath).then(function(entries) {
-      var anotatedDirList = [];
-      var firstEntry = 0;
-      // skiping the first entry pointing to the parent directory
-      if (isChrome) {
-        firstEntry = 1;
-      }
-      for (var i = firstEntry; i < entries.length; i++) {
-        if (!entries[i].isFile) {
-          anotatedDirList.push({
-            "name": entries[i].name,
-            "path": entries[i].path
-          });
-        }
-      }
-      TSPOSTIO.listSubDirectories(anotatedDirList, dirPath);
-    }, function(error) {
-      TSPOSTIO.errorOpeningPath(dirPath);
-      TSCORE.hideLoadingAnimation();
-      console.error("Error listDirectory " + dirPath + " error: " + error);
-    });
-  }
-
-  function createDirectoryIndex(dirPath) {
-    TSCORE.showWaitingDialog($.i18n.t("ns.common:waitDialogDiectoryIndexing"));
-
-    var directoryIndex = [];
-    TSCORE.Utils.walkDirectory(dirPath, {recursive: true}, function(fileEntry) {
-      directoryIndex.push(fileEntry);
-    }).then(
-      function(entries) {
-        TSPOSTIO.createDirectoryIndex(directoryIndex);
-      },
-      function(err) {
-        console.warn("Error creating index: " + err);
-      }
-    ).catch(function() {
-      TSCORE.hideWaitingDialog();
-    });
-  }
 
   exports.arrayBufferToDataURL = arrayBufferToDataURL;
   exports.base64ToArrayBuffer = base64ToArrayBuffer;
@@ -161,7 +89,4 @@ define(function(require, exports, module) {
   exports.getFileExt = getFileExt;
   exports.arrayBufferToBuffer = arrayBufferToBuffer;
 
-  exports.walkDirectory = walkDirectory;
-  exports.listSubDirectories = listSubDirectories;
-  exports.createDirectoryIndex = createDirectoryIndex;
 });

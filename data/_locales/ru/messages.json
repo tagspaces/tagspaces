@@ -8,7 +8,7 @@
         "description": "Title of the application launcher in the browser."
     },
     "appDesc": {
-        "message": "Файловый браузер с функцией извления содержимого веб-страниц и поддержкой Chromecast.",
+        "message": "Файловый браузер с функцией извлечения содержимого веб-страниц и поддержкой Chromecast.",
         "description": ""
     },
     "addTagHelp": {
@@ -40,7 +40,7 @@
         "description": "Title of label."
     },
     "saveAsMhtmlTitle": {
-        "message": "Сохранить целую страницу в формате MHTML",
+        "message": "Сохранить всю страницу в MHTML",
         "description": "Title of save page button"
     },
     "appLauncherTitle": {

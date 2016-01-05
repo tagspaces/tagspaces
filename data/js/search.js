@@ -154,7 +154,7 @@ define(function(require, exports, module) {
   var searchData = function(data, query) {
 
     //todo make a switch in gui for content search
-    var searchInContent = (isChrome || isFirefox) ? false : true;
+    var searchInContent = (isChrome || isFirefox || isWeb) ? false : true;
     var queryObj = prepareQuery(query);
 
     var searchResults = [];
@@ -177,7 +177,7 @@ define(function(require, exports, module) {
     if (query.length > 0) {
       TSCORE.showWaitingDialog($.i18n.t("ns.common:waitDialogDiectoryIndexing"));
       console.time("walkDirectorySearch");
-      TSCORE.Utils.walkDirectory(TSCORE.currentPath, {recursive: queryObj.recursive},
+      TSCORE.IOUtils.walkDirectory(TSCORE.currentPath, {recursive: queryObj.recursive},
         function(fileEntry) {
           return new Promise(function(resolve, reject) {
             if (filterFileObject(fileEntry, queryObj)) {

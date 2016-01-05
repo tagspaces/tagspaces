@@ -21,6 +21,7 @@ define(function(require, exports, module) {
   var tsSearch = require('tssearch');
   var tsPro = require('tspro');
   var tsUtils = require('tsutils');
+  var tsIOUtils = require('tsioutils');
   var tsMeta = require('tsmeta');
   var tsExt = require('tsextapi');
   var tsExtManager = require('tsextmanager');
@@ -216,15 +217,18 @@ define(function(require, exports, module) {
     console.log('Updating logger...');
   }
 
-  var $loadingAnimation = $('#loadingAnimation');
+  var $loadingAnimation = $('.loadingAnimation');
+  var $statusBar = $('#statusBar');
 
   function showLoadingAnimation() {
+    $statusBar.hide();
     $loadingAnimation.show();
   }
 
   function hideLoadingAnimation() {
     setTimeout(function() {
       $loadingAnimation.hide();
+      $statusBar.show();
     }, 500);
   }
 
@@ -305,6 +309,8 @@ define(function(require, exports, module) {
     var isPortret = fullWidth < window.innerHeight;
     var oneColumn = fullWidth < 660;
     var twoColumn = fullWidth >= 660 && fullWidth < 1024;
+
+    $("#searchOptions").hide();
 
     showPerspectiveMenu();
     tsCoreUI.hideAllDropDownMenus();
@@ -428,6 +434,7 @@ define(function(require, exports, module) {
   // Proxying applications parts
   exports.Config = tsSettings;
   exports.IO = tsIOApi;
+  exports.IOUtils = tsIOUtils;
   exports.UI = tsCoreUI;
   exports.PerspectiveManager = tsPersManager;
   exports.TagUtils = tsTagUtils;

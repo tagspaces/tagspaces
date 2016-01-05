@@ -92,13 +92,11 @@ define(function(require, exports, module) {
   };
 
   exports.listDirectory = function(anotatedDirList) {
-    TSCORE.hideLoadingAnimation();
     TSCORE.PerspectiveManager.updateFileBrowserData(anotatedDirList);
     TSCORE.updateSubDirs(anotatedDirList);
   };
 
   exports.listSubDirectories = function(dirList, dirPath) {
-    console.log('Listing Subdirs: ' + JSON.stringify(dirList));
     TSCORE.subfoldersDirBrowser = dirList;
     if (TSCORE.directoryBrowser !== undefined) {
       TSCORE.directoryBrowser.reInitUI(dirPath);

@@ -9,7 +9,7 @@ define(function(require, exports, module) {
   var TSCORE = require('tscore');
 
   require([
-    "css!libs/hopscotch/css/hopscotch.css",
+    "css!libs/hopscotch/dist/css/hopscotch.min.css",
     ], function() {});
 
   var nextI18N = $.i18n.t('ns.dialogs:titleWaiting'); // not working

@@ -112,13 +112,12 @@ define(function(require, exports, module) {
           console.warn("Listing directory " + dirPath + " failed " + status);
           reject("Listing directory " + dirPath + " failed " + status);
         }
-        var dirList = data._responses, fileName, isDir, filesize, lmdt, path;
+        var dirList = data._responses;
+        var fileName, isDir, filesize, lmdt, path;
 
         anotatedDirList = [];
         for (var entry in dirList) {
           path = dirList[entry].href;
-          console.log("---dP" + dirPath.toLowerCase());
-          console.log("---p" + path.toLowerCase());
           if (dirPath.toLowerCase() === path.toLowerCase()) {
             console.log("Skipping current folder");
           } else {
@@ -145,10 +144,10 @@ define(function(require, exports, module) {
           }
         }
         resolve(anotatedDirList);
-      }
+      };
 
-      if(dirPath.substring(dirPath.length-1) !== "/") {
-        dirPath = dirPath + "/"
+      if (dirPath.substring(dirPath.length - 1) !== "/") {
+        dirPath = dirPath + "/";
       }
       dirPath = encodeURI(dirPath);
 

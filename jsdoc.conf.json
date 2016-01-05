@@ -4,8 +4,9 @@
     },
     "plugins": ["node_modules/jsdoc/plugins/markdown"],
     "source": {
-        "include": [ "data/" ],
+        "include": [ "data/js" ],
         "exclude": [
+            "data/testfiles",
             "data/libs/",
             "data/ext/",
             "data/mozilla/",

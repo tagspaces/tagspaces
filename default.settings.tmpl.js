@@ -39,6 +39,7 @@ define(function (require, exports, module) {
         "interfaceLanguage":        "en_US",
         "writeTagsToFile":          false,
         "useTrashCan":              false,
+        "useOCR":                   false, 
         "supportedLanguages": [
             { "iso": "en_US", "title": "English" },
             { "iso": "de_DE", "title": "Deutsch (German)" },

@@ -15,7 +15,7 @@ define(function(require, exports, module) {
     '{{#each dirHistory}}' +
     '<div class="btn-group">' +
         '<button class="btn btn-link dropdown-toggle" data-menu="{{@index}}">' +
-            '<div class="altNavFolderTitle"><i class="fa fa-angle-right"></i>&nbsp;{{name}}</div>'  +
+            '<div class="altNavFolderTitle">{{name}}&nbsp;<i class="fa fa-caret-right"></i></div>'  +
         '</button>' +
         '<div class="dropdown clearfix dirAltNavMenu" id="dirMenu{{@index}}" data-path="{{path}}">' +
             '<ul role="menu" class="dropdown-menu">' +
@@ -252,7 +252,9 @@ define(function(require, exports, module) {
         navigateToDirectory($(this).attr('data-path'));
       });
     });
-    $alternativeNavigator.i18n();
+    if ($alternativeNavigator.i18n) {
+      $alternativeNavigator.i18n();
+    }
   }
 
   var showDropDown = function(menuId, sourceObject) {
@@ -448,16 +450,14 @@ define(function(require, exports, module) {
 
   function listDirectory(dirPath) {
     TSCORE.showLoadingAnimation();
-    TSCORE.IO.listDirectoryPromise(dirPath).then(
-      function(entries) {
-        TSPOSTIO.listDirectory(entries);
-        console.log("Listing: " + dirPath + " done!");
-      },
-      function(err) {
-        TSPOSTIO.errorOpeningPath();
-        console.log("Error listing directory" + err);
-      }
-    );
+    TSCORE.PerspectiveManager.removeAllFiles();
+    TSCORE.IO.listDirectoryPromise(dirPath).then(function(entries) {
+      TSPOSTIO.listDirectory(entries);
+      console.log("Listing: " + dirPath + " done!");
+    }).catch(function(err) {
+      TSPOSTIO.errorOpeningPath();
+      console.log("Error listing directory" + err);
+    });
 
     if (TSCORE.PRO && TSCORE.Config.getEnableMetaData()) {
       TSCORE.Meta.createMetaFolder(dirPath);
@@ -504,16 +504,13 @@ define(function(require, exports, module) {
     $('#directoryMenuOpenDirectory').click(function() {
       TSCORE.IO.openDirectory(dir4ContextMenu);
     });
-    //$('#createNewLocation').click(function() {
-    //  showLocationCreateDialog();
-    //});
   }
 
   function createLocation() {
     var locationPath = $('#folderLocation').val();
     TSCORE.Config.createLocation($('#connectionName').val(), locationPath, $('#locationPerspective').val());
-    // Enable the UI behavior by not empty location list
-    $('#createNewLocation').attr('title', $.i18n.t('ns.common:connectNewLocationTooltip')).tooltip('destroy');
+    // Enable the UI behavior of a not empty location list
+    $('#createNewLocation').attr('title', $.i18n.t('ns.common:connectNewLocationTooltip'));
     $('#locationName').prop('disabled', false);
     $('#selectLocation').prop('disabled', false);
     openLocation(locationPath);
@@ -675,14 +672,17 @@ define(function(require, exports, module) {
         $('body').append(uiTemplate());
         $('#createNewDirectoryButton').on('click', function() {
           // TODO validate folder name
-          //TSCORE.IO.createDirectory($('#createNewDirectoryButton').attr('path') + TSCORE.dirSeparator + $('#newDirectoryName').val());
           var dirPath = $('#createNewDirectoryButton').attr('path') + TSCORE.dirSeparator + $('#newDirectoryName').val();
           TSCORE.IO.createDirectoryPromise(dirPath).then(function() {
             TSPOSTIO.createDirectory(dirPath);
           }, function(error) {
             TSCORE.hideLoadingAnimation();
             console.error("Creating directory " + dirPath + " failed" + error);
-            TSCORE.showAlertDialog("Creating " + dirPath + " failed.");
+            if (error) {
+              TSCORE.showAlertDialog(error);
+            } else {
+              TSCORE.showAlertDialog("Creating " + dirPath + " failed.");
+            }
           });
         });
       }

@@ -90,53 +90,46 @@ define(function(require, exports, module) {
     });
   }
 
-  function loadThumbnail(filePath) {
-    var promise = new Promise(function(resolve, reject) {
-      if (TSCORE.PRO) {
-        TSCORE.PRO.getThumbnailURL(filePath, function(dataURL) {
-          resolve(dataURL);
+  function loadThumbnailPromise(entry) {
+    return new Promise(function(resolve, reject) {
+      var filePath = entry[TSCORE.fileListFILEPATH];
+      if (TSCORE.PRO && TSCORE.Config.getEnableMetaData()) {
+        TSCORE.PRO.getThumbnailURLPromise(filePath).then(function(dataURL) {
+          entry[TSCORE.fileListMETA].thumbnailPath = dataURL;
+          resolve(filePath);
+        }).catch(function(err) {
+          console.warn("Thumb generation failed for: " + filePath + " failed with: " + err);
+          resolve(filePath);
         });
       } else {
         var metaFilePath = findMetaFilebyPath(filePath, TSCORE.thumbFileExt);
         if (metaFilePath && isChrome) {
           metaFilePath = "file://" + metaFilePath;
         }
-        resolve(metaFilePath); 
+        entry[TSCORE.fileListMETA].thumbnailPath = metaFilePath;
+        resolve(filePath);
       }
     });
-    return promise;
   }
 
-  function loadMetaFileJson(filePath) {
-    //console.log("loadMetaFileJson: " + filePath);
-    var promise = new Promise(function(resolve, reject) {
+  function loadMetaFileJsonPromise(entry) {
+    return new Promise(function(resolve, reject) {
+      var filePath = entry[TSCORE.fileListFILEPATH];
       var metaFileJson = findMetaFilebyPath(filePath, TSCORE.metaFileExt);
       if (metaFileJson) {
         TSCORE.IO.getFileContentPromise(metaFileJson, "text").then(function(result) {
           var metaData = JSON.parse(result);
-          resolve(metaData);
-        }, function(error) {
-          reject(error);
+          entry[TSCORE.fileListMETA].metaData = metaData;
+          resolve(filePath);
+        }).catch(function(err) {
+          console.warn("Getting meta information failed for: " + filePath);
+          resolve(filePath);
         });
       } else {
-        resolve(null);
+        console.log("No meta information found for: " + filePath);
+        resolve(filePath);
       }
     });
-    return promise;
-  }
-
-  function loadMetaDataFromFile(entry) {
-    var filePath = entry[TSCORE.fileListFILEPATH];
-    var promise = new Promise(function(resolve, reject) {
-      loadMetaFileJson(filePath).then(function(result) {
-        entry[TSCORE.fileListMETA].metaData = result;
-        loadThumbnail(filePath).then(function(result) {
-          entry[TSCORE.fileListMETA].thumbnailPath = result;
-          resolve(entry);
-        });
-      });
-    });
-    return promise;
   }
 
   function getTagsFromMetaFile(filePath) {
@@ -228,11 +221,16 @@ define(function(require, exports, module) {
       metadataPath = 'file://' + path + TSCORE.dirSeparator + TSCORE.metaFolder + TSCORE.dirSeparator + TSCORE.metaFolderFile;
     }
 
+    // TODO use the API
     $.get(metadataPath, function(data) {
         if (data.length > 1) {
-          var metadata = JSON.parse(data);
-          console.log('Location Metadata: ' + JSON.stringify(metadata));
-          resultCb(metadata);
+          try {
+            var metadata = JSON.parse(data);
+            console.log('Location Metadata: ' + JSON.stringify(metadata));
+            resultCb(metadata);
+          } catch (err) {
+            console.warn('Error while parsing json from ' + metadataPath);
+          }
         }
       }).fail(function() {
         resultCb();
@@ -248,8 +246,7 @@ define(function(require, exports, module) {
     TSCORE.IO.createDirectoryPromise(metaDirPath).then(function() {
       console.log("Metafolder created: " + metaDirPath);
     }).catch(function(error) {
-      TSCORE.hideLoadingAnimation();
-      console.error(error);
+      console.log("Creating metafolder failed, it was probably already created " + error);
     });
   }
 
@@ -258,7 +255,8 @@ define(function(require, exports, module) {
   exports.findMetaObjectFromFileList = findMetaObjectFromFileList;
   exports.saveMetaData = saveMetaData;
   exports.updateMetaData = updateTsMetaData;
-  exports.loadMetaDataFromFile = loadMetaDataFromFile;
+  exports.loadMetaFileJsonPromise = loadMetaFileJsonPromise;
+  exports.loadThumbnailPromise = loadThumbnailPromise;
   exports.getTagsFromMetaFile = getTagsFromMetaFile;
   //tag utils
   exports.addMetaTags = addMetaTags;

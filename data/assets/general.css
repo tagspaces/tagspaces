@@ -5,8 +5,8 @@
   font-family: 'Ubuntu';
   font-style: normal;
   font-weight: normal;
-  src: url("../libs/ubuntu-font/Ubuntu-R.woff") format('woff');
-  src: url("../libs/ubuntu-font/Ubuntu-R.ttf") format('truetype');
+  src: url("ubuntu-font/Ubuntu-R.woff") format('woff');
+  src: url("ubuntu-font/Ubuntu-R.ttf") format('truetype');
 }
 
 html, body {
@@ -96,6 +96,7 @@ html, body {
   margin-top: 12px;
   font-size: 14px;
   font-size: 12px;
+  text-align: center;
 }
 
 #iframeViewer {
@@ -179,17 +180,37 @@ li hr {
 	background-color:  transparent;
 }
 
+#tagGroupsContent {
+	min-height: 50px;
+}
+
+#clearFilterButton {
+  padding-left: 8px;
+  padding-right: 10px;
+}
+
+#searchButton {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
 #searchToolbar {
+  border-radius: 4px;
   width: 250px;
-  background-color: #f2f2f2;
+  background-color: #DBDBDB;
   display: none;
+  margin-left: 4px;
+  margin-right: 4px;
+  margin-bottom: 4px;
+  z-index: 1;
+  box-shadow: -20px 0px 28px -7px rgba(244, 244, 244, 1);
 }
 
 #searchBox {
-  margin-top: 8px;
+  margin-top: 4px;
   border: 0;
   background-color: transparent;
-  border-bottom: 2px solid gray;
+  border-bottom: 0;
   font-size: 14px;
   min-width: 30px;
   width: 100%;
@@ -267,7 +288,7 @@ li hr {
 }
 
 .dirButtonActive  {
-  background-color: #FFCC99;
+  background-color: #E2E2E2 !important;
 }
 
 #location .selectedDirectory {
@@ -608,6 +629,12 @@ input a.resetFilter {
   text-overflow: ellipsis;
   overflow: hidden;
   margin-left: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+.altNavFolderTitle:hover {
+  background-color: lightgray;
 }
 
 #closeOpenedFile {

@@ -197,13 +197,14 @@
             <i class="fa fa-arrow-right fa-lg"></i>
           </button>
           <div class="flexMaxWidth">
-            <div id="loadingAnimation">
+            <div class="loadingAnimation">
               <div class="spinner">
                 <div class="bounce1"></div>
                 <div class="bounce2"></div>
                 <div class="bounce3"></div>
               </div>
             </div>
+            <div id="statusBar" class="noWrap"></div>
           </div>
           <div id="mainTopMenu" class="input-group">
             <button type="button" id="perspectiveSwitcherButton" class="btn btn-link dropdown-toggle"
@@ -216,13 +217,13 @@
         <div class="flexLayout">
           <div class="flexMaxWidth flexLayout" style="min-width: 100px;">
             <div class="flexLayout" id="alternativeNavigator" style="min-width: 100px;"></div>
-            <div id="statusBar" class="noWrap flexMaxWidth"></div>
+            <div class="flexMaxWidth"></div>
             <div id="searchToolbar">
               <div class="flexLayout">
                 <button class="btn btn-link" data-i18n="[title]ns.common:clearFilterTooltip" id="clearFilterButton">
                   <i class="fa fa-lg fa-eraser"></i>
                 </button>
-                <input class="flexMaxWidth" id="searchBox" data-i18n="[placeholder]ns.common:searchPlaceholder" type="text" rel="popover">
+                <input class="flexMaxWidth" id="searchBox" data-i18n="[placeholder]ns.common:searchPlaceholder" type="text">
                 <button class="btn btn-link" data-i18n="[title]ns.common:searchPlaceholder" id="searchButton">
                   <i class="fa fa-lg fa-search"></i>
                 </button>
@@ -681,10 +682,17 @@
     <div class="modal-content">
       <div class="modal-header">
         <a class="close" data-dismiss="modal"><i class="fa fa-times"></i></a>
-        <h4><i class="fa fa-circle-o-notch fa-spin"></i><i class="fa fa-fw"></i><span id="waitingHeader"></span></h4>
+        <h4><span id="waitingHeader"></span></h4>
       </div>
       <div class="modal-body">
-        <span id="waitingMessage"></span>
+        <div class="waitingAnimation" style="display: block; text-align: center;">
+          <div class="spinner">
+            <div class="bounce1"></div>
+            <div class="bounce2"></div>
+            <div class="bounce3"></div>
+          </div>
+          <span id="waitingMessage"></span>
+        </div>
       </div>
     </div>
   </div>
@@ -850,15 +858,21 @@
   </ul>
 </div>
 
-<div id="searchOptions">
-  <div>
-    <span class="dropdown-header" data-i18n="ns.common:searchOptions" style="text-align: left;">Search Options</span>
-    <i class="fa fa-exclamation-circle"></i>&nbsp;<span data-i18n="ns.common:includeSubfoldersInSearch"></span><br>
-    <i class="fa fa-exclamation-circle"></i>&nbsp;<span data-i18n="ns.common:excludeTermFromSearch"></span><br>
-    <i class="fa fa-exclamation-circle"></i>&nbsp;<span data-i18n="ns.common:includeTagInSearch"></span><br>
-    <i class="fa fa-exclamation-circle"></i>&nbsp;<span data-i18n="ns.common:excludeTagInSearch"></span><br>
-    <i class="fa fa-exclamation-circle"></i>&nbsp;<span data-i18n="ns.common:andedSearch"></span><br>
-    <i class="fa fa-exclamation-circle"></i>&nbsp;<span data-i18n="ns.common:searchInFilenameOnly"></span><br>
+<div id="searchOptions" class="dropdown clearfix" style="position: absolute; top: 80px; right: 5px; width: 400px;">
+  <div class="dropdown-menu" style="display:block;position:static;">
+    <li class="dropdown-header">
+      <button class="close">&times;</button>
+      <span data-i18n="ns.common:searchOptions">Search Options</span>
+    </li>
+    <div style="padding: 10px;">
+      <i class="fa fa-exclamation-circle"></i>&nbsp;<span data-i18n="ns.common:includeSubfoldersInSearch"></span><br>
+      <i class="fa fa-exclamation-circle"></i>&nbsp;<span data-i18n="ns.common:excludeTermFromSearch"></span><br>
+      <i class="fa fa-exclamation-circle"></i>&nbsp;<span data-i18n="ns.common:includeTagInSearch"></span><br>
+      <i class="fa fa-exclamation-circle"></i>&nbsp;<span data-i18n="ns.common:excludeTagInSearch"></span><br>
+      <i class="fa fa-exclamation-circle"></i>&nbsp;<span data-i18n="ns.common:andedSearch"></span><br>
+      <i class="fa fa-exclamation-circle"></i>&nbsp;<span data-i18n="ns.common:searchInFilenameOnly"></span><br>
+      <!--button class="btn btn-primary" data-dismiss="modal" aria-hidden="true"><i class="fa fa-check fa-lg"></i></button-->
+    </div>
   </div>
 </div>
 
