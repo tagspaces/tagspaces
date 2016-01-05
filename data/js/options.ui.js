@@ -183,6 +183,7 @@ define(function(require, exports, module) {
     if (TSCORE.PRO) {
       $('#enableMetaData').attr('checked', TSCORE.Config.getEnableMetaData());
       $('#useTrashCan').attr('checked', TSCORE.Config.getUseTrashCan());
+      $('#useOCR').attr('checked', TSCORE.Config.getUseOCR());
       enableMetaData();
     }
     
@@ -259,7 +260,8 @@ define(function(require, exports, module) {
     TSCORE.Config.setSelectAllKeyBinding(parseKeyBinding($('#selectAllKeyBinding').val()));
     if (TSCORE.PRO) {
       TSCORE.Config.setEnableMetaData($('#enableMetaData').is(':checked'));
-      TSCORE.Config.setUseTrashCan($('#useTrashCan').is(':checked'));      
+      TSCORE.Config.setUseTrashCan($('#useTrashCan').is(':checked'));   
+      TSCORE.Config.setUseOCR($('#useOCR').is(':checked'));    
     }
     var interfaceLang = $('#languagesList').val();
     TSCORE.Config.setInterfaceLangauge(interfaceLang);
