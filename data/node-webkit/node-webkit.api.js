@@ -202,6 +202,13 @@ define(function(require, exports, module) {
 
   // IOAPI
 
+  /**
+   * Check new version
+   * @name checkNewVersion
+   * @method
+   * @memberof nwjs.ioapi
+   * @param {string} ??? - ???
+   */
   function checkNewVersion() {
     console.log("Checking for new version...");
     var cVer = TSCORE.Config.DefaultSettings.appVersion + "." + TSCORE.Config.DefaultSettings.appBuild;
@@ -217,6 +224,13 @@ define(function(require, exports, module) {
       });
   }
 
+  /**
+   * Create directory tree
+   * @name createDirectoryTree
+   * @method
+   * @memberof nwjs.ioapi
+   * @param {string} dirPath - the full path of the directory tree
+   */
   function createDirectoryTree(dirPath) {
     console.log("Creating directory index for: " + dirPath);
     TSCORE.showWaitingDialog($.i18n.t("ns.common:waitDialogDiectoryIndexing"));
@@ -257,6 +271,15 @@ define(function(require, exports, module) {
     TSPOSTIO.createDirectoryTree(directoyTree);
   }
 
+
+  /**
+   * List directory
+   * @name listDirectoryPromiseAsync
+   * @method
+   * @memberof nwjs.ioapi
+   * @param {string} path - the directory path which is listed
+   * @returns {Promise.<Success, Error>}
+   */
   function listDirectoryPromiseAsync(path) {
     console.time("listDirectoryPromise");
     return new Promise(function(resolve, reject) {
@@ -282,6 +305,14 @@ define(function(require, exports, module) {
     });
   }
 
+  /**
+   * List directory
+   * @name listDirectoryPromise
+   * @method
+   * @memberof nwjs.ioapi
+   * @param {string} path - the directory path which is listed
+   * @returns {Promise.<Success, Error>}
+   */
   function listDirectoryPromise(path) {
     console.time("listDirectoryPromise");
     return new Promise(function(resolve, reject) {
@@ -318,7 +349,14 @@ define(function(require, exports, module) {
     });
   }
 
-
+  /**
+   * Get Properties
+   * @name getPropertiesPromise
+   * @method
+   * @memberof nwjs.ioapi
+   * @param {string} path - full path to the file, which are called properties
+   * @returns {Promise.<Success, Error>}
+   */
   function getPropertiesPromise(path) {
     /**
      * stats for file:
@@ -377,6 +415,15 @@ define(function(require, exports, module) {
     });
   }
 
+  /**
+   * Copy file
+   * @name copyFilePromise
+   * @method
+   * @memberof nwjs.ioapi
+   * @param {string} sourceFilePath - the full path of the file that is copied
+   * @param {string} targetFilePath - the full path of the copied file in the new destination
+   * @returns {Promise.<Success, Error>}
+   */
   function copyFilePromise(sourceFilePath, targetFilePath) {
     return new Promise(function(resolve, reject) {
       getPropertiesPromise(sourceFilePath).then(function(entry) {
@@ -412,6 +459,15 @@ define(function(require, exports, module) {
     });
   }
 
+  /**
+   * Rename file
+   * @name renameFilePromise
+   * @method
+   * @memberof nwjs.ioapi
+   * @param {string} filePath - the full path of the file which will be renamed
+   * @param {string} newFilePath - the desired full path after rename
+   * @returns {Promise.<Success, Error>}
+   */
   function renameFilePromise(filePath, newFilePath) {
     console.log("Renaming file: " + filePath + " to " + newFilePath);
     return new Promise(function(resolve, reject) {
@@ -433,6 +489,15 @@ define(function(require, exports, module) {
     });
   }
 
+  /**
+     * Rename a directory
+     * @name renameDirectoryPromise
+     * @method
+     * @memberof nwjs.ioapi
+     * @param {string} dirPath - the full path of the directory which will be renamed
+     * @param {string} newDirName - the desired full path after rename
+     * @returns {Promise.<Success, Error>}
+     */
   function renameDirectoryPromise(dirPath, newDirName) {
     var newDirPath = TSCORE.TagUtils.extractParentDirectoryPath(dirPath) + TSCORE.dirSeparator + newDirName;
     console.log("Renaming dir: " + dirPath + " to " + newDirPath);
@@ -458,7 +523,15 @@ define(function(require, exports, module) {
     });
   }
 
-
+  /**
+     * Load text file
+     * @name loadTextFilePromise
+     * @method
+     * @memberof nwjs.ioapi
+     * @param {string} filePath - the full path of the file which will be opened
+TO DO     * @param {string} isPreview -
+     * @returns {Promise.<Success, Error>}
+     */
   function loadTextFilePromise(filePath, isPreview) {
     console.log("Loading file: " + filePath);
     return new Promise(function(resolve, reject) {
@@ -488,6 +561,14 @@ define(function(require, exports, module) {
     });
   }
 
+  /**
+     * Load text stream
+     * @name loadTextStreamPromise
+     * @method
+     * @memberof nwjs.ioapi
+     * @param {string} filePath - ??????
+     * @returns {Promise.<Success, Error>}
+     */
   function loadTextStreamPromise(filePath) {
     return new Promise(function(resolve, reject) {
       var stream = fs.createReadStream(filePath, {
@@ -505,6 +586,15 @@ define(function(require, exports, module) {
     });
   }
 
+  /**
+     * Get file content
+     * @name getFileContentPromise
+     * @method
+     * @memberof nwjs.ioapi
+     * @param {string} fullPath - the content path
+     * @param {string} type - ????
+     * @returns {Promise.<Success, Error>}
+     */
   function getFileContentPromise(fullPath, type) {
     return new Promise(function(resolve, reject) {
       var fileURL = fullPath;
@@ -528,7 +618,16 @@ define(function(require, exports, module) {
     });
   }
 
-
+  /**
+     * Save file
+     * @name saveFilePromise
+     * @method
+     * @memberof nwjs.ioapi
+     * @param {string} filePath - the full path of the file which should be saved
+     * @param {string} content - content that will be saved
+     * @param {string} overwrite - the desired full path after saving file
+     * @returns {Promise.<Success, Error>}
+     */
   function saveFilePromise(filePath, content, overwrite) {
     return new Promise(function(resolve, reject) {
       function saveFile(filePath, content, isNewFile) {
@@ -553,6 +652,16 @@ define(function(require, exports, module) {
     });
   }
 
+  /**
+     * Save text file
+     * @name saveTextFilePromise
+     * @method
+     * @memberof nwjs.ioapi
+     * @param {string} filePath - the full path of the file which will be saved
+     * @param {string} content - content that will be saved
+     * @param {string} overwrite - new content that will be saved
+     * @returns {Promise.<Success, Error>}
+     */
   function saveTextFilePromise(filePath, content, overwrite) {
     console.log("Saving file: " + filePath);
 
@@ -568,13 +677,30 @@ define(function(require, exports, module) {
     return saveFilePromise(filePath, content, overwrite);
   }
 
+  /**
+     * Save binary file
+     * @name saveBinaryFilePromise
+     * @method
+     * @memberof nwjs.ioapi
+     * @param {string} filePath - the full path of the file which will be saved
+     * @param {string} content - content that will be saved
+     * @param {string} overwrite - new content that will be saved
+     * @returns {Promise.<Success, Error>}
+     */
   function saveBinaryFilePromise(filePath, content, overwrite) {
     console.log("Saving binary file: " + filePath);
     var buff = TSCORE.Utils.arrayBufferToBuffer(content);
     return saveFilePromise(filePath, buff, overwrite);
   }
 
-
+  /**
+     * Delete file
+     * @name deleteFilePromise
+     * @method
+     * @memberof nwjs.ioapi
+     * @param {string} path - the full path of the file which will be deleted
+     * @returns {Promise.<Success, Error>}
+     */
   function deleteFilePromise(path) {
     
     if (TSCORE.PRO && TSCORE.Config.getUseTrashCan()) {
@@ -592,6 +718,14 @@ define(function(require, exports, module) {
     });
   }
 
+  /**
+     * Delete a directory
+     * @name deleteDirectoryPromise
+     * @method
+     * @memberof nwjs.ioapi
+     * @param {string} path - the full path of the directory which will be deleted
+     * @returns {Promise.<Success, Error>}
+     */
   function deleteDirectoryPromise(path) {
 
     if (TSCORE.PRO && TSCORE.Config.getUseTrashCan()) {
@@ -609,7 +743,12 @@ define(function(require, exports, module) {
     });
   }
 
-
+  /**
+     * Select a directory
+     * @name selectDirectory
+     * @method
+     * @memberof nwjs.ioapi
+     */
   function selectDirectory() {
     if (document.getElementById('folderDialogNodeWebkit') === null) {
       $("body").append('<input style="display:none;" id="folderDialogNodeWebkit" type="file" nwdirectory />');
@@ -623,6 +762,13 @@ define(function(require, exports, module) {
     chooser.trigger('click');
   }
 
+  /**
+     * Select file
+     * @name selectFile
+     * @method
+     * @memberof nwjs.ioapi
+     * @param {string} ??? - ???
+     */
   function selectFile() {
     if (document.getElementById('fileDialog') === null) {
       $("#folderLocation").after('<input style="display:none;" id="fileDialog" type="file" />');
@@ -634,12 +780,26 @@ define(function(require, exports, module) {
     chooser.trigger('click');
   }
 
-
+  /**
+     * Open a directory
+     * @name openDirectory
+     * @method
+     * @memberof nwjs.ioapi
+     * @param {string} dirPath - the full path of the directory which will be opened
+     * @returns {Promise.<Success, Error>}
+     */
   function openDirectory(dirPath) {
     // opens directory
     gui.Shell.openItem(dirPath);
   }
 
+  /**
+     * Open file
+     * @name openFile
+     * @method
+     * @memberof nwjs.ioapi
+     * @param {string} filePath - the full path of the file which will be opened
+     */
   function openFile(filePath) {
     // opens file with the native program
     gui.Shell.openItem(filePath);
