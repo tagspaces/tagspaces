@@ -66,7 +66,7 @@ define(function(require, exports, module) {
         }
       }
       TSPOSTIO.listSubDirectories(anotatedDirList, dirPath);
-    }, function(error) {
+    }).catch(function(error) {
       TSPOSTIO.errorOpeningPath(dirPath);
       TSCORE.hideLoadingAnimation();
       console.error("Error listDirectory " + dirPath + " error: " + error);
