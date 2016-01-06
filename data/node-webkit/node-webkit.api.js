@@ -205,7 +205,12 @@ define(function(require, exports, module) {
 
   // IOAPI
 
-``
+  /**
+   * Checks if new version is available
+   * @name checkNewVersion
+   * @method
+   * @memberof IOAPI.FirefoxAddon
+   */
   function checkNewVersion() {
     console.log("Checking for new version...");
     var cVer = TSCORE.Config.DefaultSettings.appVersion + "." + TSCORE.Config.DefaultSettings.appBuild;
