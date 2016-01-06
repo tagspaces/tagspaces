@@ -430,10 +430,6 @@ define(function(require, exports, module) {
         filePath = normalizePath(filePath);
         //getFileSystemPromise(dir).then(function(fileSystem) {
         var fileProperties = {};
-        // TODO function broken..
-        if (filePath.indexOf("file://") !== 0) {
-          filePath = "file:///" + filePath;
-        }
         fsRoot.getFile(filePath, {
             create: false,
             exclusive: false
