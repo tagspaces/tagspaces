@@ -49,10 +49,12 @@ var isWin = navigator.appVersion.indexOf("Win")!==-1;
   if( isFirefox ) {
     IO_JS = "mozilla/mozilla.api";
     PRO_JS = 'js/pro';
-  } else if ( isChrome ) {
+  } else if ( isChrome && !isNode ) {
+    isNode = false;
     IO_JS = "chromium/chrome.api";
     PRO_JS = 'js/pro';
   } else if (isNode){
+    isChrome = false;
     IO_JS = "node-webkit/node-webkit.api";
   } else if (isCordova){
     IO_JS = "cordova/cordova.api";
