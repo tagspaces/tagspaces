@@ -1,14 +1,17 @@
-/* Copyright (c) 2012-2015 The TagSpaces Authors. All rights reserved.
+/* Copyright (c) 2012-2016 The TagSpaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that
  * can be found in the LICENSE file. */
-/* global define, fs, process, gui, pathUtils  */
-/* undef: true, unused: true */
 
 var fs = require('fs-extra'); // jshint ignore:line
 var pathUtils = require('path'); // jshint ignore:line
 var gui = require('nw.gui'); // jshint ignore:line
 var trash = require('trash'); // jshint ignore:line
 
+/**
+ * A implementation of the IOAPI for the nw.js platform
+ * @class NWJS
+ * @memberof IOAPI
+ */
 define(function(require, exports, module) {
   "use strict";
 
@@ -202,6 +205,12 @@ define(function(require, exports, module) {
 
   // IOAPI
 
+  /**
+   * Checks if new version is available
+   * @name checkNewVersion
+   * @method
+   * @memberof IOAPI.NWJS
+   */
   function checkNewVersion() {
     console.log("Checking for new version...");
     var cVer = TSCORE.Config.DefaultSettings.appVersion + "." + TSCORE.Config.DefaultSettings.appBuild;
@@ -217,6 +226,13 @@ define(function(require, exports, module) {
       });
   }
 
+  /**
+   * Creates recursively a tree structure for a given directory path
+   * @name createDirectoryTree
+   * @method
+   * @memberof IOAPI.NWJS
+   * @param {string} dirPath - the full path of the directory for which the tree will be generated
+   */
   function createDirectoryTree(dirPath) {
     console.log("Creating directory index for: " + dirPath);
     TSCORE.showWaitingDialog($.i18n.t("ns.common:waitDialogDiectoryIndexing"));
@@ -257,6 +273,15 @@ define(function(require, exports, module) {
     TSPOSTIO.createDirectoryTree(directoyTree);
   }
 
+
+  /**
+   * Creates a list with containing the files and the sub directories of a given directory
+   * @name listDirectoryPromiseAsync
+   * @method
+   * @memberof IOAPI.NWJS
+   * @param {string} path - the directory path for which the list will be created
+   * @returns {Promise.<Success, Error>}
+   */
   function listDirectoryPromiseAsync(path) {
     console.time("listDirectoryPromise");
     return new Promise(function(resolve, reject) {
@@ -282,6 +307,16 @@ define(function(require, exports, module) {
     });
   }
 
+  /**
+   * Creates a list with containing the files and the sub directories of a given directory
+   * @name listDirectoryPromise
+   * @method
+   * @memberof IOAPI.NWJS
+   * @param {string} path - the directory path which is listed
+   * @param {boolean} lite - if true the path to a file thumbnails will be not included in the results
+   * This will increase the performance of the function.
+   * @returns {Promise.<Success, Error>}
+   */
   function listDirectoryPromise(path, lite) {
     console.time("listDirectoryPromise");
     return new Promise(function(resolve, reject) {
@@ -338,7 +373,14 @@ define(function(require, exports, module) {
     });
   }
 
-
+  /**
+   * Finds out the properties of a file or directory such last modification date or file size
+   * @name getPropertiesPromise
+   * @method
+   * @memberof IOAPI.NWJS
+   * @param {string} path - full path to the file or the directory, which will be analysed
+   * @returns {Promise.<Success, Error>}
+   */
   function getPropertiesPromise(path) {
     /**
      * stats for file:
@@ -379,11 +421,11 @@ define(function(require, exports, module) {
   }
 
   /**
-   * Create a directory
+   * Creates a directory
    * @name createDirectoryPromise
    * @method
-   * @memberof nwjs.ioapi
-   * @param {string} dirPath - the full path of the folder which should be created
+   * @memberof IOAPI.NWJS
+   * @param {string} dirPath - the full path of the folder which will be created
    * @returns {Promise.<Success, Error>}
    */
   function createDirectoryPromise(dirPath) {
@@ -397,6 +439,15 @@ define(function(require, exports, module) {
     });
   }
 
+  /**
+   * Copies a given file to a specified location
+   * @name copyFilePromise
+   * @method
+   * @memberof IOAPI.NWJS
+   * @param {string} sourceFilePath - the full path of a file which will be copied
+   * @param {string} targetFilePath - the full path destination of the copied file
+   * @returns {Promise.<Success, Error>}
+   */
   function copyFilePromise(sourceFilePath, targetFilePath) {
     return new Promise(function(resolve, reject) {
       getPropertiesPromise(sourceFilePath).then(function(entry) {
@@ -432,6 +483,15 @@ define(function(require, exports, module) {
     });
   }
 
+  /**
+   * Renames a given file
+   * @name renameFilePromise
+   * @method
+   * @memberof IOAPI.NWJS
+   * @param {string} filePath - the full path of the file which will be renamed
+   * @param {string} newFilePath - the desired full path after the file rename
+   * @returns {Promise.<Success, Error>}
+   */
   function renameFilePromise(filePath, newFilePath) {
     console.log("Renaming file: " + filePath + " to " + newFilePath);
     return new Promise(function(resolve, reject) {
@@ -453,6 +513,15 @@ define(function(require, exports, module) {
     });
   }
 
+  /**
+   * Rename a directory
+   * @name renameDirectoryPromise
+   * @method
+   * @memberof IOAPI.NWJS
+   * @param {string} dirPath - the full path of the directory which will be renamed
+   * @param {string} newDirName - the desired full path after the directory rename
+   * @returns {Promise.<Success, Error>}
+   */
   function renameDirectoryPromise(dirPath, newDirName) {
     var newDirPath = TSCORE.TagUtils.extractParentDirectoryPath(dirPath) + TSCORE.dirSeparator + newDirName;
     console.log("Renaming dir: " + dirPath + " to " + newDirPath);
@@ -478,7 +547,15 @@ define(function(require, exports, module) {
     });
   }
 
-
+  /**
+   * Load the content of a text file
+   * @name loadTextFilePromise
+   * @method
+   * @memberof IOAPI.NWJS
+   * @param {string} filePath - the full path of the file which will be loaded
+   * @param {boolean} isPreview - loads only begin of a file (first 10000 bytes) usefull for previewing of the file
+   * @returns {Promise.<Success, Error>}
+   */
   function loadTextFilePromise(filePath, isPreview) {
     console.log("Loading file: " + filePath);
     return new Promise(function(resolve, reject) {
@@ -508,23 +585,15 @@ define(function(require, exports, module) {
     });
   }
 
-  function loadTextStreamPromise(filePath) {
-    return new Promise(function(resolve, reject) {
-      var stream = fs.createReadStream(filePath, {
-        start: 0,
-        end: 10000
-      });
-      stream.on('error', function(err) {
-        reject(err);
-      });
-
-      stream.on('data', function(content) {
-        //console.log("Stream: " + content);
-        resolve(content);
-      });
-    });
-  }
-
+  /**
+   * Gets the content of file, useful for binary files
+   * @name getFileContentPromise
+   * @method
+   * @memberof IOAPI.NWJS
+   * @param {string} fullPath - the full path of the file which will be loaded
+   * @param {string} type - the type of the XHR response, defaul is *arraybuffer*
+   * @returns {Promise.<Success, Error>}
+   */
   function getFileContentPromise(fullPath, type) {
     return new Promise(function(resolve, reject) {
       var fileURL = fullPath;
@@ -548,7 +617,16 @@ define(function(require, exports, module) {
     });
   }
 
-
+  /**
+   * Persists a given content(binary supported) to a specified filepath
+   * @name saveFilePromise
+   * @method
+   * @memberof IOAPI.NWJS
+   * @param {string} filePath - the full path of the file which should be saved
+   * @param {string} content - content that will be saved
+   * @param {boolean} overwrite - if true existing file path will be overwritten
+   * @returns {Promise.<Success, Error>}
+   */
   function saveFilePromise(filePath, content, overwrite) {
     return new Promise(function(resolve, reject) {
       function saveFile(filePath, content, isNewFile) {
@@ -573,6 +651,16 @@ define(function(require, exports, module) {
     });
   }
 
+  /**
+   * Persists a given text content to a specified filepath
+   * @name saveTextFilePromise
+   * @method
+   * @memberof IOAPI.NWJS
+   * @param {string} filePath - the full path of the file which will be saved
+   * @param {string} content - content that will be saved
+   * @param {string} overwrite - if true existing file path will be overwritten
+   * @returns {Promise.<Success, Error>}
+   */
   function saveTextFilePromise(filePath, content, overwrite) {
     console.log("Saving file: " + filePath);
 
@@ -588,13 +676,30 @@ define(function(require, exports, module) {
     return saveFilePromise(filePath, content, overwrite);
   }
 
+  /**
+   * Persists a given binary content to a specified filepath
+   * @name saveBinaryFilePromise
+   * @method
+   * @memberof IOAPI.NWJS
+   * @param {string} filePath - the full path of the file which will be saved
+   * @param {string} content - content that will be saved
+   * @param {string} overwrite - if true existing file path will be overwritten
+   * @returns {Promise.<Success, Error>}
+   */
   function saveBinaryFilePromise(filePath, content, overwrite) {
     console.log("Saving binary file: " + filePath);
     var buff = TSCORE.Utils.arrayBufferToBuffer(content);
     return saveFilePromise(filePath, buff, overwrite);
   }
 
-
+  /**
+   * Delete a specified file
+   * @name deleteFilePromise
+   * @method
+   * @memberof IOAPI.NWJS
+   * @param {string} path - the full path of the file which will be deleted
+   * @returns {Promise.<Success, Error>}
+   */
   function deleteFilePromise(path) {
     //TODO Handling the trash can case
     if (TSCORE.PRO && TSCORE.Config.getUseTrashCan()) {
@@ -618,6 +723,14 @@ define(function(require, exports, module) {
     }
   }
 
+  /**
+   * Delete a specified directory, the directory should be empty, if the trash can functionality is not enabled
+   * @name deleteDirectoryPromise
+   * @method
+   * @memberof IOAPI.NWJS
+   * @param {string} path - the full path of the directory which will be deleted
+   * @returns {Promise.<Success, Error>}
+   */
   function deleteDirectoryPromise(path) {
     if (TSCORE.PRO && TSCORE.Config.getUseTrashCan()) {
       return trash([path]);
@@ -634,7 +747,12 @@ define(function(require, exports, module) {
     }
   }
 
-
+  /**
+   * Selects a directory with the help of a directory chooser
+   * @name selectDirectory
+   * @method
+   * @memberof IOAPI.NWJS
+   */
   function selectDirectory() {
     if (document.getElementById('folderDialogNodeWebkit') === null) {
       $("body").append('<input style="display:none;" id="folderDialogNodeWebkit" type="file" nwdirectory />');
@@ -648,6 +766,12 @@ define(function(require, exports, module) {
     chooser.trigger('click');
   }
 
+  /**
+   * Selects a file with the help of a file chooser
+   * @name selectFile
+   * @method
+   * @memberof IOAPI.NWJS
+   */
   function selectFile() {
     if (document.getElementById('fileDialog') === null) {
       $("#folderLocation").after('<input style="display:none;" id="fileDialog" type="file" />');
@@ -659,12 +783,26 @@ define(function(require, exports, module) {
     chooser.trigger('click');
   }
 
-
+  /**
+   * Opens a directory in the operating system's default file manager
+   * @name openDirectory
+   * @method
+   * @memberof nwjs.ioapi
+   * @param {string} dirPath - the full path of the directory which will be opened
+   * @returns {Promise.<Success, Error>}
+   */
   function openDirectory(dirPath) {
     // opens directory
     gui.Shell.openItem(dirPath);
   }
 
+  /**
+   * Opens a file with the operating system's default program for the type of the file
+   * @name openFile
+   * @method
+   * @memberof IOAPI.NWJS
+   * @param {string} filePath - the full path of the file which will be opened
+   */
   function openFile(filePath) {
     // opens file with the native program
     gui.Shell.openItem(filePath);

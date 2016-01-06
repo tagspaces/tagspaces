@@ -157,5 +157,6 @@
     "importGroupTagsTitle": "Import tags from file",
     "confirmSaveButton": "Save",
     "confirmSaveAndRestartButton": "Save & Restart",
+    "useOCR": "Enable OCR of images",
     "-": "-"
 }

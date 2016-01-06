@@ -4,7 +4,10 @@
     },
     "plugins": ["node_modules/jsdoc/plugins/markdown"],
     "source": {
-        "include": [ "data/js" ],
+        "include": [
+            "data/js",
+            "data/node-webkit"
+        ],
         "exclude": [
             "data/testfiles",
             "data/libs/",

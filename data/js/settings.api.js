@@ -653,6 +653,15 @@ define(function(require, exports, module) {
   var setUseTrashCan = function(value) {
     exports.Settings.useTrashCan = value;
   };
+  var getUseOCR = function() {
+    if (exports.Settings.useOCR === undefined) {
+      exports.Settings.useOCR = exports.DefaultSettings.useOCR;
+    }
+    return exports.Settings.useOCR;
+  };
+  var setUseOCR = function(value) {
+    exports.Settings.useOCR = value;
+  };
   //////////////////// API methods ///////////////////
   var getFileTypeEditor = function(fileTypeExt) {
     for (var i = 0; i < exports.Settings.supportedFileTypes.length; i++) {
@@ -1096,7 +1105,9 @@ define(function(require, exports, module) {
   exports.getEditorExtensions = getEditorExtensions;
   exports.getUseTrashCan = getUseTrashCan;
   exports.setUseTrashCan = setUseTrashCan;
-  
+  exports.getUseOCR = getUseOCR;
+  exports.setUseOCR = setUseOCR;
+
   exports.getNewTextFileContent = getNewTextFileContent;
   exports.getNewHTMLFileContent = getNewHTMLFileContent;
   exports.getNewMDFileContent = getNewMDFileContent;
