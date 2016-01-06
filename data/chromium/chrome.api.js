@@ -3,6 +3,11 @@
  * can be found in the LICENSE file. */
 /* global define, isWin */
 
+/**
+ * A implementation of the IOAPI for the Chrome/Chromium extensions platform
+ * @class ChromeExtension
+ * @memberof IOAPI
+ */
 define(function(require, exports, module) {
   "use strict";
 
@@ -71,7 +76,7 @@ define(function(require, exports, module) {
    * Checks if new version is available
    * @name checkNewVersion
    * @method
-   * @memberof IOAPI.Chrome
+   * @memberof IOAPI.ChromeExtension
    */
   function checkNewVersion() {
     console.log("Checking for new version...");
@@ -92,7 +97,7 @@ define(function(require, exports, module) {
    * Creates recursively a tree structure for a given directory path
    * @name createDirectoryTree
    * @method
-   * @memberof IOAPI.Chrome
+   * @memberof IOAPI.ChromeExtension
    * @param {string} dirPath - the full path of the directory for which the tree will be generated
    */
   function createDirectoryTree(dirPath) {
@@ -106,7 +111,7 @@ define(function(require, exports, module) {
    * Creates a list with containing the files and the sub directories of a given directory
    * @name listDirectoryPromise
    * @method
-   * @memberof IOAPI.Chrome
+   * @memberof IOAPI.ChromeExtension
    * @param {string} dirPath - the full path of the directory for which the tree will be generated
    * @returns {Promise.<Success, Error>}
    */
@@ -166,7 +171,7 @@ define(function(require, exports, module) {
    * Finds out the properties of a file or directory such last modification date or file size
    * @name getPropertiesPromise
    * @method
-   * @memberof IOAPI.Chrome
+   * @memberof IOAPI.ChromeExtension
    * @param {string} filePath - full path to the file or the directory, which will be analysed
    * @returns {Promise.<Success, Error>}
    */
@@ -185,7 +190,7 @@ define(function(require, exports, module) {
    * Load the content of a text file
    * @name loadTextFilePromise
    * @method
-   * @memberof IOAPI.Chrome
+   * @memberof IOAPI.ChromeExtension
    * @param {string} filePath - the full path of the file which will be loaded
    * @returns {Promise.<Success, Error>}
    */
@@ -198,7 +203,7 @@ define(function(require, exports, module) {
    * Gets the content of file, useful for binary files
    * @name getFileContentPromise
    * @method
-   * @memberof IOAPI.Chrome
+   * @memberof IOAPI.ChromeExtension
    * @param {string} fullPath - the full path of the file which will be loaded
    * @param {string} type - the type of the XHR response, defaul is *arraybuffer*
    * @returns {Promise.<Success, Error>}
@@ -231,7 +236,7 @@ define(function(require, exports, module) {
    * Persists a given content(binary supported) to a specified filepath
    * @name saveFilePromise
    * @method
-   * @memberof IOAPI.Chrome
+   * @memberof IOAPI.ChromeExtension
    * @param {string} filePath - the full path of the file which should be saved
    * @param {string} content - content that will be saved
    * @param {boolean} overwrite - if true existing file path will be overwritten
@@ -252,10 +257,10 @@ define(function(require, exports, module) {
   }
 
   /**
-   * Creates a directory
+   * Not supported on this platform
    * @name createDirectoryPromise
    * @method
-   * @memberof IOAPI.Chrome
+   * @memberof IOAPI.ChromeExtension
    * @param {string} dirPath - the full path of the folder which will be created
    * @returns {Promise.<Success, Error>}
    */
@@ -266,10 +271,10 @@ define(function(require, exports, module) {
   }
 
   /**
-   * Rename a directory
+   * Not supported on this platform
    * @name renameDirectoryPromise
    * @method
-   * @memberof IOAPI.Chrome
+   * @memberof IOAPI.ChromeExtension
    * @returns {Promise.<Success, Error>}
    */
   function renameDirectoryPromise() {
@@ -279,10 +284,10 @@ define(function(require, exports, module) {
   }
 
   /**
-   * Renames a given file
+   * Not supported on this platform
    * @name renameFilePromise
    * @method
-   * @memberof IOAPI.Chrome
+   * @memberof IOAPI.ChromeExtension
    * @returns {Promise.<Success, Error>}
    */
   function renameFilePromise() {
@@ -292,10 +297,10 @@ define(function(require, exports, module) {
   }
 
   /**
-   * Copies a given file to a specified location
+   * Not supported on this platform
    * @name copyFilePromise
    * @method
-   * @memberof IOAPI.Chrome
+   * @memberof IOAPI.ChromeExtension
    * @returns {Promise.<Success, Error>}
    */
   function copyFilePromise() {
@@ -305,10 +310,10 @@ define(function(require, exports, module) {
   }
 
   /**
-   * Delete a specified file
+   * Not supported on this platform
    * @name deleteFilePromise
    * @method
-   * @memberof IOAPI.Chrome
+   * @memberof IOAPI.ChromeExtension
    * @returns {Promise.<Success, Error>}
    */
   function deleteFilePromise() {
@@ -318,10 +323,10 @@ define(function(require, exports, module) {
   }
 
   /**
-   * Delete a specified directory, the directory should be empty, if the trash can functionality is not enabled
+   * Not supported on this platform
    * @name deleteDirectoryPromise
    * @method
-   * @memberof IOAPI.Chrome
+   * @memberof IOAPI.ChromeExtension
    * @returns {Promise.<Success, Error>}
    */
   function deleteDirectoryPromise() {
@@ -334,7 +339,7 @@ define(function(require, exports, module) {
    * Selects a directory with the help of a directory chooser
    * @name selectDirectory
    * @method
-   * @memberof IOAPI.Chrome
+   * @memberof IOAPI.ChromeExtension
    */
   function selectDirectory() {
     console.log("Select directory!");
@@ -346,10 +351,10 @@ define(function(require, exports, module) {
   }
 
   /**
-   * Selects a file with the help of a file chooser
+   * Not supported on this platform
    * @name selectFile
    * @method
-   * @memberof IOAPI.Chrome
+   * @memberof IOAPI.ChromeExtension
    */
   function selectFile() {
     // TODO
@@ -357,10 +362,10 @@ define(function(require, exports, module) {
   }
 
   /**
-   * Opens a directory in the operating system's default file manager
+   * Not supported on this platform
    * @name openDirectory
    * @method
-   * @memberof IOAPI.Chrome
+   * @memberof IOAPI.ChromeExtension
    * @param {string} dirPath - the full path of the directory which will be opened
    */
   function openDirectory(dirPath) {
@@ -369,10 +374,10 @@ define(function(require, exports, module) {
   }
 
   /**
-   * Opens a file with the operating system's default program for the type of the file
+   * Not supported on this platform
    * @name openFile
    * @method
-   * @memberof IOAPI.Chrome
+   * @memberof IOAPI.ChromeExtension
    * @param {string} filePath - the full path of the file which will be opened
    */
   function openFile(filePath) {

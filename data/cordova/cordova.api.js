@@ -5,6 +5,11 @@
 //cordova ios handleOpenURL is global
 var handleOpenURL; // jshint ignore:line
 
+/**
+ * A implementation of the IOAPI for the Chrome/Chromium extensions platform
+ * @class Cordova
+ * @memberof IOAPI
+ */
 define(function(require, exports, module) {
   "use strict";
 
