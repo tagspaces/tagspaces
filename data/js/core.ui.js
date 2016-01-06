@@ -577,7 +577,8 @@ define(function(require, exports, module) {
       TSCORE.IO.sendFile(TSCORE.selectedFiles[0]);
     });
     $('#fileMenuOpenDirectory').click(function() {
-      TSCORE.IO.openDirectory(TSCORE.currentPath);
+      var dirPath = TSCORE.Utils.dirName(TSCORE.selectedFiles[0]);
+      TSCORE.IO.openDirectory(dirPath);
     });
     $('#fileMenuRenameFile').click(function() {
       TSCORE.showFileRenameDialog(TSCORE.selectedFiles[0]);
