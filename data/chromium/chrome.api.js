@@ -67,6 +67,12 @@ define(function(require, exports, module) {
     });*/
   }
 
+  /**
+   * Checks if new version is available
+   * @name checkNewVersion
+   * @method
+   * @memberof IOAPI.Chrome
+   */
   function checkNewVersion() {
     console.log("Checking for new version...");
     var cVer = TSCORE.Config.DefaultSettings.appVersion + "." + TSCORE.Config.DefaultSettings.appBuild;
@@ -82,7 +88,13 @@ define(function(require, exports, module) {
       });
   }
 
-
+  /**
+   * Creates recursively a tree structure for a given directory path
+   * @name createDirectoryTree
+   * @method
+   * @memberof IOAPI.Chrome
+   * @param {string} dirPath - the full path of the directory for which the tree will be generated
+   */
   function createDirectoryTree(dirPath) {
     TSCORE.showAlertDialog("Creating directory tree not supported.");
     //var directoyTree = generateDirectoryTree(dirPath);
@@ -90,7 +102,14 @@ define(function(require, exports, module) {
     //TSPOSTIO.createDirectoryTree(directoyTree);
   }
 
-
+  /**
+   * Creates a list with containing the files and the sub directories of a given directory
+   * @name listDirectoryPromise
+   * @method
+   * @memberof IOAPI.Chrome
+   * @param {string} dirPath - the full path of the directory for which the tree will be generated
+   * @returns {Promise.<Success, Error>}
+   */
   function listDirectoryPromise(dirPath) {
     //console.log("Listing directory: " + dirPath);
     return new Promise(function(resolve, reject) {
@@ -143,6 +162,14 @@ define(function(require, exports, module) {
     });
   }
 
+  /**
+   * Finds out the properties of a file or directory such last modification date or file size
+   * @name getPropertiesPromise
+   * @method
+   * @memberof IOAPI.Chrome
+   * @param {string} filePath - full path to the file or the directory, which will be analysed
+   * @returns {Promise.<Success, Error>}
+   */
   function getPropertiesPromise(filePath) {
     return new Promise(function(resolve, reject) {
       // TODO use listDirectory to get size and lmdt
@@ -154,11 +181,28 @@ define(function(require, exports, module) {
     });
   }
 
+  /**
+   * Load the content of a text file
+   * @name loadTextFilePromise
+   * @method
+   * @memberof IOAPI.Chrome
+   * @param {string} filePath - the full path of the file which will be loaded
+   * @returns {Promise.<Success, Error>}
+   */
   function loadTextFilePromise(filePath) {
     //
     return getFileContentPromise(filePath, "text");
   }
 
+  /**
+   * Gets the content of file, useful for binary files
+   * @name getFileContentPromise
+   * @method
+   * @memberof IOAPI.Chrome
+   * @param {string} fullPath - the full path of the file which will be loaded
+   * @param {string} type - the type of the XHR response, defaul is *arraybuffer*
+   * @returns {Promise.<Success, Error>}
+   */
   function getFileContentPromise(fullPath, type) {
     console.log("getFileContentPromise: " + fullPath);
     return new Promise(function(resolve, reject) {
@@ -183,6 +227,16 @@ define(function(require, exports, module) {
     });
   }
 
+  /**
+   * Persists a given content(binary supported) to a specified filepath
+   * @name saveFilePromise
+   * @method
+   * @memberof IOAPI.Chrome
+   * @param {string} filePath - the full path of the file which should be saved
+   * @param {string} content - content that will be saved
+   * @param {boolean} overwrite - if true existing file path will be overwritten
+   * @returns {Promise.<Success, Error>}
+   */
   function saveFilePromise(filePath, content, overwrite) {
     console.log("Saving binary file: " + filePath);
     return new Promise(function(resolve, reject) {
@@ -197,43 +251,91 @@ define(function(require, exports, module) {
     });
   }
 
+  /**
+   * Creates a directory
+   * @name createDirectoryPromise
+   * @method
+   * @memberof IOAPI.Chrome
+   * @param {string} dirPath - the full path of the folder which will be created
+   * @returns {Promise.<Success, Error>}
+   */
   function createDirectoryPromise(dirPath) {
     return new Promise(function(res, rej) {
       rej("Creating directory is not supported in Chrome, please use the desktop version.");
     });
   }
 
+  /**
+   * Rename a directory
+   * @name renameDirectoryPromise
+   * @method
+   * @memberof IOAPI.Chrome
+   * @returns {Promise.<Success, Error>}
+   */
   function renameDirectoryPromise() {
     return new Promise(function(res, rej) {
       rej("Renaming directory is not supported in Chrome, please use the desktop version.");
     });
   }
 
+  /**
+   * Renames a given file
+   * @name renameFilePromise
+   * @method
+   * @memberof IOAPI.Chrome
+   * @returns {Promise.<Success, Error>}
+   */
   function renameFilePromise() {
     return new Promise(function(res, rej) {
       rej("Renaming file is not supported in Chrome, please use the desktop version.");
     });
   }
 
+  /**
+   * Copies a given file to a specified location
+   * @name copyFilePromise
+   * @method
+   * @memberof IOAPI.Chrome
+   * @returns {Promise.<Success, Error>}
+   */
   function copyFilePromise() {
     return new Promise(function(res, rej) {
       rej("Copy file is not supported in Chrome, please use the desktop version.");
     });
   }
 
+  /**
+   * Delete a specified file
+   * @name deleteFilePromise
+   * @method
+   * @memberof IOAPI.Chrome
+   * @returns {Promise.<Success, Error>}
+   */
   function deleteFilePromise() {
     return new Promise(function(res, rej) {
       rej("Creating directory is not supported in Chrome, please use the desktop version.");
     });
   }
 
+  /**
+   * Delete a specified directory, the directory should be empty, if the trash can functionality is not enabled
+   * @name deleteDirectoryPromise
+   * @method
+   * @memberof IOAPI.Chrome
+   * @returns {Promise.<Success, Error>}
+   */
   function deleteDirectoryPromise() {
     return new Promise(function(res, rej) {
       rej("Deleting directory is not supported in Chrome, please use the desktop version.");
     });
   }
 
-
+  /**
+   * Selects a directory with the help of a directory chooser
+   * @name selectDirectory
+   * @method
+   * @memberof IOAPI.Chrome
+   */
   function selectDirectory() {
     console.log("Select directory!");
     var rootPath = "/";
@@ -243,17 +345,36 @@ define(function(require, exports, module) {
     TSCORE.showDirectoryBrowserDialog(rootPath);
   }
 
+  /**
+   * Selects a file with the help of a file chooser
+   * @name selectFile
+   * @method
+   * @memberof IOAPI.Chrome
+   */
   function selectFile() {
     // TODO
     TSCORE.showAlertDialog("Select file not implemented!");
   }
 
-
+  /**
+   * Opens a directory in the operating system's default file manager
+   * @name openDirectory
+   * @method
+   * @memberof IOAPI.Chrome
+   * @param {string} dirPath - the full path of the directory which will be opened
+   */
   function openDirectory(dirPath) {
     // TODO
     TSCORE.showAlertDialog($.i18n.t("ns.dialogs:openContainingDirectoryAlert"));
   }
 
+  /**
+   * Opens a file with the operating system's default program for the type of the file
+   * @name openFile
+   * @method
+   * @memberof IOAPI.Chrome
+   * @param {string} filePath - the full path of the file which will be opened
+   */
   function openFile(filePath) {
     // TODO
     TSCORE.showAlertDialog($.i18n.t("ns.dialogs:openFileNativelyAlert"));
