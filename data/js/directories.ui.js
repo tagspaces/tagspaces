@@ -136,9 +136,9 @@ define(function(require, exports, module) {
       generateFolderTags(historyItem.metaData.tags, element, menuItem);
       loadMetaTagGroups(historyItem.metaData);
     } else {
-      TSCORE.Meta.loadFolderMetaData(path, function(metaData) {
+      TSCORE.Meta.loadFolderMetaDataPromise(path).then(function(metaData) {
         historyItem.metaData = metaData;
-        generateFolderTags(metaData ? metaData.tags : null , element, menuItem);
+        generateFolderTags(metaData.tags, element, menuItem);
         loadMetaTagGroups(historyItem.metaData);
       });
     }
