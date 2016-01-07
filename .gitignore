@@ -342,7 +342,5 @@ data/locales/sr/
 data/locales/zh_HK/
 data/mozilla/install.rdf
 data/node-webkit/node_modules/trash/node_modules/fs-extra/
-data/node-webkit/node_modules/trash/node_modules/globby/
-data/node-webkit/node_modules/trash/node_modules/xdg-trashdir/node_modules/pinkie-promise/
 data/testfiles
 rundevfirefox
