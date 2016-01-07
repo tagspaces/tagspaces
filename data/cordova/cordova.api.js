@@ -492,15 +492,18 @@ define(function(require, exports, module) {
                   resolve(fileProperties);
                 },
                 function() {
-                  reject("Error retrieving file properties of " + filePath);
+                  console.log("getPropertiesPromise: Error retrieving file properties of " + filePath);
+                  resolve(false);
                 }
               );
             } else {
-              reject("Error getting file properties. " + filePath + " is directory");
+              console.log("getPropertiesPromise: Error getting file properties. " + filePath + " is directory");
+              resolve(false);
             }
           },
           function() {
-            reject("error getting file " + filePath);
+            console.log("getPropertiesPromise: Error getting file " + filePath);
+            resolve(false);
           }
         );
       });
