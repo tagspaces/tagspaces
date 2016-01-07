@@ -196,11 +196,13 @@ define(function(require, exports, module) {
     }
   };
 
-  var updateFileBrowserData = function(dirList) {
+  var updateFileBrowserData = function(dirList, isSearchResult) {
     console.log('Updating the file browser data...');
     TSCORE.fileList = [];
     TSCORE.showLoadingAnimation();
-    TSCORE.showWaitingDialog("Loading metadata and generating thumbnails");
+    if(!isSearchResult) { // TODO tmp solution for not hiding the loading dialog on search
+      TSCORE.showWaitingDialog("Loading metadata and thumbnails");
+    }
 
     var metaDataLoadingPromises = [];
     var tags, ext, title, fileSize, fileLMDT, path, filename, entry, thumbPath, metaObj;
@@ -251,7 +253,9 @@ define(function(require, exports, module) {
           ];
           TSCORE.fileList.push(entry);
           metaDataLoadingPromises.push(TSCORE.Meta.loadMetaFileJsonPromise(entry));
-          metaDataLoadingPromises.push(TSCORE.Meta.loadThumbnailPromise(entry));
+          if(!isSearchResult) {
+            metaDataLoadingPromises.push(TSCORE.Meta.loadThumbnailPromise(entry));
+          }
         } else {
           entry = [
             path,
@@ -266,7 +270,7 @@ define(function(require, exports, module) {
       TSCORE.hideLoadingAnimation();
       TSCORE.hideWaitingDialog();
       changePerspective(TSCORE.currentPerspectiveID);
-      if (TSCORE.PRO) { // TODO add check for setting enabling text extraction
+      if (TSCORE.PRO && !isSearchResult) { // TODO add check for setting enabling text extraction
         TSCORE.showLoadingAnimation();
         //TSCORE.showWaitingDialog("Extracting text content");
         TSCORE.PRO.extractTextContentFromFilesPromise(TSCORE.fileList).then(function() {

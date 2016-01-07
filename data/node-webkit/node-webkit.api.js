@@ -787,9 +787,8 @@ define(function(require, exports, module) {
    * Opens a directory in the operating system's default file manager
    * @name openDirectory
    * @method
-   * @memberof nwjs.ioapi
+   * @memberof IOAPI.NWJS
    * @param {string} dirPath - the full path of the directory which will be opened
-   * @returns {Promise.<Success, Error>}
    */
   function openDirectory(dirPath) {
     // opens directory

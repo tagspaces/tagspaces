@@ -6,13 +6,20 @@
     "source": {
         "include": [
             "data/js",
-            "data/node-webkit"
+            "data/node-webkit",
+            "data/chromium",
+            "data/mozilla",
+            "data/cordova",
+            "data/web"
         ],
         "exclude": [
             "data/testfiles",
             "data/libs/",
             "data/ext/",
-            "data/mozilla/",
+            "data/mozilla/ioutils.js",
+            "data/mozilla/listen.js",
+            "data/mozilla/toolbarbutton.js",
+            "data/mozilla/unload+.js",
             "data/node-webkit/node_modules/",
             "data/pro/node_modules/",
             "data/web/webdavlib/",

@@ -5,6 +5,11 @@
 //cordova ios handleOpenURL is global
 var handleOpenURL; // jshint ignore:line
 
+/**
+ * A implementation of the IOAPI for the Chrome/Chromium extensions platform
+ * @class Cordova
+ * @memberof IOAPI
+ */
 define(function(require, exports, module) {
   "use strict";
 
@@ -198,6 +203,13 @@ define(function(require, exports, module) {
     );
   }
 
+  /**
+   * Creates recursively a tree structure for a given directory path
+   * @name generateDirectoryTree
+   * @method
+   * @memberof IOAPI.Cordova
+   * @param {string} entries - //TODO
+   */
   function generateDirectoryTree(entries) {
     var tree = {};
     var i;
@@ -310,6 +322,12 @@ define(function(require, exports, module) {
 
   // Platform API
 
+  /**
+   * Checks if new version is available
+   * @name checkNewVersion
+   * @method
+   * @memberof IOAPI.Cordova
+   */
   function checkNewVersion() {
     console.log("Checking for new version...");
     var cVer = TSCORE.Config.DefaultSettings.appVersion + "." + TSCORE.Config.DefaultSettings.appBuild;
@@ -325,11 +343,17 @@ define(function(require, exports, module) {
       });
   }
 
+  /**
+   *Bring the TagSpaces window on top of the windows
+   *@name focusWindow
+   *mthod
+   *@memberof IOAPI.Cordova
+   */
   function focusWindow() {
     // Bring the TagSpaces window on top of the windows
     console.log("Focusing window is not implemented in cordova.");
   }
-
+  //TODO
   function handleStartParameters() {
     if (urlFromIntent !== undefined && urlFromIntent.length > 0) {
       console.log("Intent URL: " + urlFromIntent);
@@ -338,14 +362,29 @@ define(function(require, exports, module) {
     }
   }
 
-
+  /**
+   * Creates recursively a tree structure for a given directory path
+   * @name createDirectoryTree
+   * @method
+   * @memberof IOAPI.Cordova
+   * @param {string} dirPath - the full path of the directory for which the tree will be generated
+   */
   function createDirectoryTree(dirPath) {
     // TODO
     TSCORE.hideLoadingAnimation();
     TSCORE.showAlertDialog("Creating directory tree is not supported in Cordova yet.");
   }
 
-
+  /**
+   * Creates a list with containing the files and the sub directories of a given directory
+   * @name listDirectoryPromise
+   * @method
+   * @memberof IOAPI.Cordova
+   * @param {string} path - the directory path for which the list will be created
+   * @param {boolean} lite - if true the path to a file thumbnails will be not included in the results
+   * This will increase the performance of the function.
+   * @returns {Promise.<Success, Error>}
+   */
   function listDirectoryPromise(path, lite) {
     console.time("listDirectoryPromise");
     return new Promise(function(resolve, reject) {
@@ -425,6 +464,14 @@ define(function(require, exports, module) {
     });
   }
 
+  /**
+   * Finds out the properties of a file or directory such last modification date or file size
+   * @name getPropertiesPromise
+   * @method
+   * @memberof IOAPI.Cordova
+   * @param {string} filePath - full path to the file or the directory, which will be analysed
+   * @returns {Promise.<Success, Error>}
+   */
   function getPropertiesPromise(filePath) {
     return new Promise(function(resolve, reject) {
         filePath = normalizePath(filePath);
@@ -460,12 +507,28 @@ define(function(require, exports, module) {
     //});
   }
 
-
+  /**
+   * Load the content of a text file
+   * @name loadTextFilePromise
+   * @method
+   * @memberof IOAPI.Cordova
+   * @param {string} filePath - the full path of the file which will be loaded
+   * @returns {Promise.<Success, Error>}
+   */
   function loadTextFilePromise(filePath) {
     //
     return getFileContentPromise(filePath, "text");
   }
 
+  /**
+   * Gets the content of file, useful for binary files
+   * @name getFileContentPromise
+   * @method
+   * @memberof IOAPI.Cordova
+   * @param {string} fullPath - the full path of the file which will be loaded
+   * @param {string} type - the type of the XHR response, defaul is *arraybuffer*
+   * @returns {Promise.<Success, Error>}
+   */
   function getFileContentPromise(filePath, type, resolvePath) {
     // TODO refactor
     var getFilePromise = function(filePath, resolvePath) {
@@ -517,7 +580,16 @@ define(function(require, exports, module) {
     });
   }
 
-
+  /**
+   * Persists a given content(binary supported) to a specified filepath
+   * @name saveFilePromise
+   * @method
+   * @memberof IOAPI.Cordova
+   * @param {string} filePath - the full path of the file which should be saved
+   * @param {string} content - content that will be saved
+   * @param {boolean} overWrite - if true existing file path will be overwritten
+   * @returns {Promise.<Success, Error>}
+   */
   function saveFilePromise(filePath, content, overWrite) {
     console.log("Saving file: " + filePath);
     return new Promise(function(resolve, reject) {
@@ -566,6 +638,16 @@ define(function(require, exports, module) {
     });
   }
 
+  /**
+   * Persists a given text content to a specified filepath
+   * @name saveTextFilePromise
+   * @method
+   * @memberof IOAPI.Cordova
+   * @param {string} filePath - the full path of the file which will be saved
+   * @param {string} content - content that will be saved
+   * @param {string} overWrite - if true existing file path will be overwritten
+   * @returns {Promise.<Success, Error>}
+   */
   function saveTextFilePromise(filePath, content, overWrite) {
     console.log("Saving file: " + filePath);
     // Handling the UTF8 support for text files
@@ -578,13 +660,30 @@ define(function(require, exports, module) {
     return saveFilePromise(filePath, content, overWrite);
   }
 
+  /**
+   * Persists a given binary content to a specified filepath
+   * @name saveBinaryFilePromise
+   * @method
+   * @memberof IOAPI.Cordova
+   * @param {string} filePath - the full path of the file which will be saved
+   * @param {string} content - content that will be saved
+   * @param {string} overWrite - if true existing file path will be overwritten
+   * @returns {Promise.<Success, Error>}
+   */
   function saveBinaryFilePromise(filePath, content, overWrite) {
     console.log("Saveing binary file: " + filePath);
     var dataView = new Int8Array(content);
     return saveFilePromise(filePath, dataView, overWrite);
   }
 
-
+  /**
+   * Creates a directory
+   * @name createDirectoryPromise
+   * @method
+   * @memberof IOAPI.Cordova
+   * @param {string} dirPath - the full path of the folder which will be created
+   * @returns {Promise.<Success, Error>}
+   */
   function createDirectoryPromise(dirPath) {
     console.log("Creating directory: " + dirPath);
     return new Promise(function(resolve, reject) {
@@ -603,7 +702,15 @@ define(function(require, exports, module) {
     });
   }
 
-
+  /**
+   * Copies a given file to a specified location
+   * @name copyFilePromise
+   * @method
+   * @memberof IOAPI.Cordova
+   * @param {string} filePath - the full path of a file which will be copied
+   * @param {string} newFilePath - the full path destination of the copied file
+   * @returns {Promise.<Success, Error>}
+   */
   function copyFilePromise(filePath, newFilePath) {
     return new Promise(function(resolve, reject) {
       filePath = normalizePath(filePath);
@@ -644,6 +751,15 @@ define(function(require, exports, module) {
     });
   }
 
+  /**
+   * Renames a given file
+   * @name renameFilePromise
+   * @method
+   * @memberof IOAPI.Cordova
+   * @param {string} filePath - the full path of the file which will be renamed
+   * @param {string} newFilePath - the desired full path after the file rename
+   * @returns {Promise.<Success, Error>}
+   */
   function renameFilePromise(filePath, newFilePath) {
     return new Promise(function(resolve, reject) {
 
@@ -687,6 +803,15 @@ define(function(require, exports, module) {
     });
   }
 
+  /**
+   * Rename a directory
+   * @name renameDirectoryPromise
+   * @method
+   * @memberof IOAPI.Cordova
+   * @param {string} dirPath - the full path of the directory which will be renamed
+   * @param {string} newDirName - the desired full path after the directory rename
+   * @returns {Promise.<Success, Error>}
+   */
   function renameDirectoryPromise(dirPath, newDirName) {
     return new Promise(function(resolve, reject) {
 
@@ -732,7 +857,14 @@ define(function(require, exports, module) {
     });
   }
 
-
+  /**
+   * Delete a specified file
+   * @name deleteFilePromise
+   * @method
+   * @memberof IOAPI.Cordova
+   * @param {string} filePath - the full path of the file which will be deleted
+   * @returns {Promise.<Success, Error>}
+   */
   function deleteFilePromise(filePath) {
     return new Promise(function(resolve, reject) {
       var path = normalizePath(filePath);
@@ -758,6 +890,14 @@ define(function(require, exports, module) {
     });
   }
 
+  /**
+   * Delete a specified directory, the directory should be empty, if the trash can functionality is not enabled
+   * @name deleteDirectoryPromise
+   * @method
+   * @memberof IOAPI.Cordova
+   * @param {string} dirPath - the full path of the directory which will be deleted
+   * @returns {Promise.<Success, Error>}
+   */
   function deleteDirectoryPromise(dirPath) {
     console.log("Deleting directory: " + dirPath);
     return new Promise(function(resolve, reject) {
@@ -787,23 +927,48 @@ define(function(require, exports, module) {
     });
   }
 
-
+  /**
+   * Selects a directory with the help of a directory chooser
+   * @name selectDirectory
+   * @method
+   * @memberof IOAPI.Cordova
+   */
   function selectDirectory() {
     console.log("Open select directory dialog.");
     TSCORE.showDirectoryBrowserDialog(fsRoot.fullPath);
   }
 
+  /**
+   * Selects a file with the help of a file chooser
+   * @name selectFile
+   * @method
+   * @memberof IOAPI.Cordova
+   */
   function selectFile() {
     //
     console.log("Operation selectFile not supported.");
   }
 
-
+  /**
+   * Opens a directory in the operating system's default file manager
+   * @name openDirectory
+   * @method
+   * @memberof IOAPI.Cordova
+   * @param {string} dirPath - the full path of the directory which will be opened
+   * @returns {Promise.<Success, Error>}
+   */
   function openDirectory(dirPath) {
 
     TSCORE.showAlertDialog($.i18n.t("ns.dialogs:openContainingDirectoryAlert"));
   }
 
+  /**
+   * Opens a file with the operating system's default program for the type of the file
+   * @name openFile
+   * @method
+   * @memberof IOAPI.Cordova
+   * @param {string} filePath - the full path of the file which will be opened
+   */
   function openFile(filePath) {
     console.log("Opening natively: " + filePath);
     window.plugins.fileOpener.open(filePath);

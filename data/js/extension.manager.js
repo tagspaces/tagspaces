@@ -18,6 +18,9 @@ define(function(require, exports, module) {
       //TODO: chrome fail to read resource://
       return chrome.extension.getURL(extPath); 
     }
+    if (isWin) {
+      return location.href.replace(/file:\/\/\//gi, "").replace(/index.html/gi, extPath);
+    }
     return location.href.replace(/file:\/\//gi, "").replace(/index.html/gi, extPath);
   }
 
