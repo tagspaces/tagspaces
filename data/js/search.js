@@ -209,7 +209,7 @@ define(function(require, exports, module) {
           console.timeEnd("walkDirectorySearch");
           console.log("Found " + searchResults.length + " out of " + entries.length + " entries.");
           TSCORE.Search.nextQuery = "";
-          TSCORE.PerspectiveManager.updateFileBrowserData(searchResults);
+          TSCORE.PerspectiveManager.updateFileBrowserData(searchResults, true);
           TSCORE.hideWaitingDialog();
         },
         function(err) {
