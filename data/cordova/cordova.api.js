@@ -73,11 +73,14 @@ define(function(require, exports, module) {
     if (window.plugins.webintent) {
       window.plugins.webintent.getUri(
         function(url) {
-          if ("createTXTFile" === url || url.indexOf("TagSpaces") > 0) {
-            widgetAction = url;
-          } else {
-            urlFromIntent = url;
+          if(url) {
+            if ("createTXTFile" === url || url.indexOf("TagSpaces") > 0) {
+              widgetAction = url;
+            } else {
+              urlFromIntent = url;
+            }
           }
+
         }
         //, function(error) {
         //  TSCORE.showAlertDialog("WebIntent Error: " + error);
