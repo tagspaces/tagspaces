@@ -209,7 +209,7 @@ define(function(require, exports, module) {
    * Checks if new version is available
    * @name checkNewVersion
    * @method
-   * @memberof IOAPI.FirefoxAddon
+   * @memberof IOAPI.NWJS
    */
   function checkNewVersion() {
     console.log("Checking for new version...");
