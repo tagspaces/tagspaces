@@ -91,12 +91,24 @@ define(function(require, exports, module) {
     window.focus();
   }
 
+  /**
+   * Checks if new version is available
+   * @name checkNewVersion
+   * @method
+   * @memberof IOAPI.web
+   */
   function checkNewVersion() {
     //
     console.log("Checking for new version not relevant fot the webdav version");
   }
 
-
+  /**
+   * Creates recursively a tree structure for a given directory path
+   * @name createDirectoryTree
+   * @method
+   * @memberof IOAPI.web
+   * @param {string} dirPath - the full path of the directory for which the tree will be generated
+   */
   function createDirectoryTree(dirPath) {
     console.log("Creating directory index for: " + dirPath);
     TSCORE.showLoadingAnimation();
@@ -106,6 +118,14 @@ define(function(require, exports, module) {
     TSPOSTIO.createDirectoryTree(directoyTree);
   }
 
+  /**
+   * Creates a list with containing the files and the sub directories of a given directory
+   * @name listDirectoryPromise
+   * @method
+   * @memberof IOAPI.web
+   * @param {string} dirPath - the directory path which is listed
+   * @returns {Promise.<Success, Error>}
+   */
   function listDirectoryPromise(dirPath) {
     dirPath = dirPath.split("//").join("/");
     console.log("Listing directory: " + dirPath);
@@ -165,7 +185,14 @@ define(function(require, exports, module) {
     });
   }
 
-
+  /**
+   * Finds out the properties of a file or directory such last modification date or file size
+   * @name getPropertiesPromise
+   * @method
+   * @memberof IOAPI.web
+   * @param {string} filePath - full path to the file or the directory, which will be analysed
+   * @returns {Promise.<Success, Error>}
+   */
   function getPropertiesPromise(filePath) {
     return new Promise(function(resolve, reject) {
       davClient.propfind(encodeURI(filePath), function(status, data) {
@@ -185,11 +212,28 @@ define(function(require, exports, module) {
     });
   }
 
+  /**
+   * Load the content of a text file
+   * @name loadTextFilePromise
+   * @method
+   * @memberof IOAPI.web
+   * @param {string} filePath - the full path of the file which will be loaded
+   * @returns {Promise.<Success, Error>}
+   */
   function loadTextFilePromise(filePath) {
     //
     return getFileContentPromise(filePath, "text");
   }
 
+  /**
+   * Gets the content of file, useful for binary files
+   * @name getFileContentPromise
+   * @method
+   * @memberof IOAPI.web
+   * @param {string} filePath - the full path of the file which will be loaded
+   * @param {string} type - the type of the XHR response, defaul is *arraybuffer*
+   * @returns {Promise.<Success, Error>}
+   */
   function getFileContentPromise(filePath, type) {
     console.log("getFileContent file: " + filePath);
     return new Promise(function(resolve, reject) {
@@ -210,7 +254,17 @@ define(function(require, exports, module) {
     });
   }
 
-
+  /**
+   * Persists a given content(binary supported) to a specified filepath
+   * @name saveFilePromise
+   * @method
+   * @memberof IOAPI.web
+   * @param {string} filePath - the full path of the file which should be saved
+   * @param {string} content - content that will be saved
+   * @param {boolean} overWrite - if true existing file path will be overwritten
+   * @param {boolean} mode - //TODO
+   * @returns {Promise.<Success, Error>}
+   */
   function saveFilePromise(filePath, content, overWrite, mode) {
     return new Promise(function(resolve, reject) {
       var isNewFile = false;
@@ -240,17 +294,44 @@ define(function(require, exports, module) {
     });
   }
 
+  /**
+    * Persists a given text content to a specified filepath
+    * @name saveTextFilePromise
+    * @method
+    * @memberof IOAPI.web
+    * @param {string} filePath - the full path of the file which will be saved
+    * @param {string} content - content that will be saved
+    * @param {string} overWrite - if true existing file path will be overwritten
+    * @returns {Promise.<Success, Error>}
+    */
   function saveTextFilePromise(filePath, content, overWrite) {
     console.log("Saving text file: " + filePath);
     return saveFilePromise(filePath, content, overWrite, "text");
   }
 
+  /**
+   * Persists a given binary content to a specified filepath
+   * @name saveBinaryFilePromise
+   * @method
+   * @memberof IOAPI.web
+   * @param {string} filePath - the full path of the file which will be saved
+   * @param {string} content - content that will be saved
+   * @param {string} overWrite - if true existing file path will be overwritten
+   * @returns {Promise.<Success, Error>}
+   */
   function saveBinaryFilePromise(filePath, content, overWrite) {
     console.log("Saving binary file: " + filePath);
     return saveFilePromise(filePath, content, overWrite);
   }
 
-
+  /**
+   * Creates a directory
+   * @name createDirectoryPromise
+   * @method
+   * @memberof IOAPI.web
+   * @param {string} dirPath - the full path of the folder which will be created
+   * @returns {Promise.<Success, Error>}
+   */
   function createDirectoryPromise(dirPath) {
     console.log("Creating directory: " + dirPath);
     return new Promise(function(resolve, reject) {
@@ -268,7 +349,15 @@ define(function(require, exports, module) {
     });
   }
 
-
+  /**
+   * Copies a given file to a specified location
+   * @name copyFilePromise
+   * @method
+   * @memberof IOAPI.web
+   * @param {string} filePath - the full path of a file which will be copied
+   * @param {string} newFilePath - the full path destination of the copied file
+   * @returns {Promise.<Success, Error>}
+   */
   function copyFilePromise(filePath, newFilePath) {
     console.log("Copying file: " + filePath + " to " + newFilePath);
     return new Promise(function(resolve, reject) {
@@ -294,6 +383,15 @@ define(function(require, exports, module) {
     });
   }
 
+  /**
+   * Renames a given file
+   * @name renameFilePromise
+   * @method
+   * @memberof IOAPI.web
+   * @param {string} filePath - the full path of the file which will be renamed
+   * @param {string} newFilePath - the desired full path after the file rename
+   * @returns {Promise.<Success, Error>}
+   */
   function renameFilePromise(filePath, newFilePath) {
     console.log("Renaming file: " + filePath + " to " + newFilePath);
     return new Promise(function(resolve, reject) {
@@ -319,6 +417,15 @@ define(function(require, exports, module) {
     });
   }
 
+  /**
+   * Rename a directory
+   * @name renameDirectoryPromise
+   * @method
+   * @memberof IOAPI.web
+   * @param {string} dirPath - the full path of the directory which will be renamed
+   * @param {string} newDirPath - the desired full path after the directory rename
+   * @returns {Promise.<Success, Error>}
+   */
   function renameDirectoryPromise(dirPath, newDirPath) {
     console.log("Renaming directory: " + dirPath + " to " + newDirPath);
     return new Promise(function(resolve, reject) {
@@ -344,12 +451,27 @@ define(function(require, exports, module) {
     });
   }
 
-
+  /**
+   * Delete a specified file
+   * @name deleteFilePromise
+   * @method
+   * @memberof IOAPI.web
+   * @param {string} path - the full path of the file which will be deleted
+   * @returns {Promise.<Success, Error>}
+   */
   function deleteFilePromise(path) {
     //
     return deleteDirectoryPromise(path);
   }
 
+  /**
+   * Delete a specified directory, the directory should be empty, if the trash can functionality is not enabled
+   * @name deleteDirectoryPromise
+   * @method
+   * @memberof IOAPI.web
+   * @param {string} path - the full path of the directory which will be deleted
+   * @returns {Promise.<Success, Error>}
+   */
   function deleteDirectoryPromise(path) {
     return new Promise(function(resolve, reject) {
       davClient.remove(
@@ -366,23 +488,47 @@ define(function(require, exports, module) {
     });
   }
 
-
+  /**
+   * Selects a directory with the help of a directory chooser
+   * @name selectDirectory
+   * @method
+   * @memberof IOAPI.web
+   */
   function selectDirectory() {
     //
     TSCORE.showAlertDialog("Select directory is still not implemented in the webdav edition");
   }
 
+  /**
+   * Selects a file with the help of a file chooser
+   * @name selectFile
+   * @method
+   * @memberof IOAPI.web
+   */
   function selectFile() {
     //
     TSCORE.showAlertDialog("selectFile not relevant for webdav");
   }
 
-
+  /**
+   * Opens a directory in the operating system's default file manager
+   * @name openDirectory
+   * @method
+   * @memberof IOAPI.web
+   * @param {string} dirPath - the full path of the directory which will be opened
+   */
   function openDirectory(dirPath) {
     //
     TSCORE.showAlertDialog("openDirectory not relevant for webdav.");
   }
 
+  /**
+   * Opens a file with the operating system's default program for the type of the file
+   * @name openFile
+   * @method
+   * @memberof IOAPI.web
+   * @param {string} filePath - the full path of the file which will be opened
+   */
   function openFile(filePath) {
     //
     TSCORE.showAlertDialog("openFile not relevant for webdav");
