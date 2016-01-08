@@ -200,7 +200,7 @@ define(function(require, exports, module) {
     console.log('Updating the file browser data...');
     TSCORE.fileList = [];
     TSCORE.showLoadingAnimation();
-    if(!isSearchResult) { // TODO tmp solution for not hiding the loading dialog on search
+    if (!isSearchResult) { // TODO tmp solution for not hiding the loading dialog on search
       TSCORE.showWaitingDialog("Loading metadata and thumbnails");
     }
 
@@ -253,7 +253,7 @@ define(function(require, exports, module) {
           ];
           TSCORE.fileList.push(entry);
           metaDataLoadingPromises.push(TSCORE.Meta.loadMetaFileJsonPromise(entry));
-          if(!isSearchResult) {
+          if (!isSearchResult) {
             metaDataLoadingPromises.push(TSCORE.Meta.loadThumbnailPromise(entry));
           }
         } else {

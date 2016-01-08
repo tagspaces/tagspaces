@@ -73,11 +73,14 @@ define(function(require, exports, module) {
     if (window.plugins.webintent) {
       window.plugins.webintent.getUri(
         function(url) {
-          if ("createTXTFile" === url || url.indexOf("TagSpaces") > 0) {
-            widgetAction = url;
-          } else {
-            urlFromIntent = url;
+          if (url) {
+            if ("createTXTFile" === url || url.indexOf("TagSpaces") > 0) {
+              widgetAction = url;
+            } else {
+              urlFromIntent = url;
+            }
           }
+
         }
         //, function(error) {
         //  TSCORE.showAlertDialog("WebIntent Error: " + error);
@@ -492,15 +495,18 @@ define(function(require, exports, module) {
                   resolve(fileProperties);
                 },
                 function() {
-                  reject("Error retrieving file properties of " + filePath);
+                  console.log("getPropertiesPromise: Error retrieving file properties of " + filePath);
+                  resolve(false);
                 }
               );
             } else {
-              reject("Error getting file properties. " + filePath + " is directory");
+              console.log("getPropertiesPromise: Error getting file properties. " + filePath + " is directory");
+              resolve(false);
             }
           },
           function() {
-            reject("error getting file " + filePath);
+            console.log("getPropertiesPromise: Error getting file " + filePath);
+            resolve(false);
           }
         );
       });
