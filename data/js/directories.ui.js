@@ -140,6 +140,8 @@ define(function(require, exports, module) {
         historyItem.metaData = metaData;
         generateFolderTags(metaData.tags, element, menuItem);
         loadMetaTagGroups(historyItem.metaData);
+      }).catch(function(err) {
+        console.log("loadFolderMetaData: " + err);
       });
     }
   }
