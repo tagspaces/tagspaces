@@ -746,12 +746,11 @@ define(function(require, exports, module) {
     TSCORE.IO.listDirectoryPromise(TSCORE.currentPath).then(
       function(entries) {
         TSPOSTIO.listDirectory(entries);
-      },
-      function(err) {
-        TSPOSTIO.errorOpeningPath();
-        console.warn("Error listing directory" + err);
       }
-    );
+    ).catch(function(err) {
+      TSPOSTIO.errorOpeningPath(TSCORE.currentPath);
+      console.warn("Error listing directory" + err);
+    });
   }
 
   function showSearchArea() {
