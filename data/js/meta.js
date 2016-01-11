@@ -213,8 +213,7 @@ define(function(require, exports, module) {
     }
   }
 
- function loadFolderMetaDataPromise(path) {
-
+  function loadFolderMetaDataPromise(path) {
     return new Promise(function(resolve, reject) {
       var metadataPath = 'file://' + path + TSCORE.dirSeparator + TSCORE.metaFolder + TSCORE.dirSeparator + TSCORE.metaFolderFile;
       if (isWeb) {
@@ -222,11 +221,11 @@ define(function(require, exports, module) {
       }
 
       TSCORE.IO.getFileContentPromise(metadataPath, "text").then(function(content) {
-          var metadata = JSON.parse(content);
-          console.log('Location Metadata: ' + JSON.stringify(metadata));
-          resolve(metadata);
+        var metadata = JSON.parse(content);
+        console.log('Location Metadata: ' + JSON.stringify(metadata));
+        resolve(metadata);
       }).catch(function(err) {
-          reject("loadFolderMetaDataPromise: Error reading " + metadataPath);  
+        reject("loadFolderMetaDataPromise: Error reading " + metadataPath);
       });
     });
   }
