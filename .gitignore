@@ -144,7 +144,6 @@ data/libs/hopscotch/Gruntfile.js
 data/libs/hopscotch/README.md
 data/libs/hopscotch/bower.json
 data/libs/hopscotch/demo/
-data/libs/hopscotch/dist/LICENSE
 data/libs/hopscotch/dist/js/hopscotch.js
 data/libs/hopscotch/package.json
 data/libs/hopscotch/src/
@@ -183,7 +182,6 @@ data/libs/jquery/src/
 data/libs/jqueryui/.bower.json
 data/libs/jqueryui/.gitignore
 data/libs/jqueryui/AUTHORS.txt
-data/libs/jqueryui/LICENSE.txt
 data/libs/jqueryui/README.md
 data/libs/jqueryui/bower.json
 data/libs/jqueryui/component.json
@@ -233,7 +231,6 @@ data/libs/noty/js/noty/promise.js
 data/libs/noty/js/noty/themes/
 data/libs/noty/noty.jquery.json
 data/libs/noty/package.json
-data/libs/pdfjs/LICENSE
 data/libs/pdfjs/web/images/treeitem-collapsed-rtl.png
 data/libs/pdfjs/web/images/treeitem-collapsed-rtl@2x.png
 data/libs/pdfjs/web/images/treeitem-collapsed.png
