@@ -489,7 +489,7 @@ define(function(require, exports, module) {
   }
 
   /**
-   * Selects a directory with the help of a directory chooser
+   * Not implemented in the WebDAV version
    * @name selectDirectory
    * @method
    * @memberof IOAPI.web
@@ -500,7 +500,7 @@ define(function(require, exports, module) {
   }
 
   /**
-   * Selects a file with the help of a file chooser
+   * Not implemented in the WebDAV version
    * @name selectFile
    * @method
    * @memberof IOAPI.web
@@ -511,7 +511,7 @@ define(function(require, exports, module) {
   }
 
   /**
-   * Opens a directory in the operating system's default file manager
+   * Not relevant in the WebDAV version
    * @name openDirectory
    * @method
    * @memberof IOAPI.web
@@ -523,7 +523,7 @@ define(function(require, exports, module) {
   }
 
   /**
-   * Opens a file with the operating system's default program for the type of the file
+   * Not relevant in the WebDAV version
    * @name openFile
    * @method
    * @memberof IOAPI.web
