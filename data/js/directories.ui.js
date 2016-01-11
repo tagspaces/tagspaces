@@ -10,6 +10,7 @@ define(function(require, exports, module) {
   var TSCORE = require('tscore');
   var TSPOSTIO = require("tspostioapi");
   var directoryHistory = [];
+  var metaTagGroupsHistory = null;
   var dir4ContextMenu = null;
   var alternativeDirectoryNavigatorTmpl = Handlebars.compile(
     '{{#each dirHistory}}' +
@@ -131,15 +132,34 @@ define(function(require, exports, module) {
 
   function loadFolderMetaData(path, element, menuItem) {
     var historyItem = getDirHistoryItem(path);
-    if (historyItem.metaData !== undefined) {
+    if (historyItem.metaData) {
       generateFolderTags(historyItem.metaData.tags, element, menuItem);
-      return;
+      loadMetaTagGroups(historyItem.metaData);
+    } else {
+      TSCORE.Meta.loadFolderMetaDataPromise(path).then(function(metaData) {
+        historyItem.metaData = metaData;
+        generateFolderTags(metaData.tags, element, menuItem);
+        loadMetaTagGroups(historyItem.metaData);
+      }).catch(function(err) {
+        console.log("loadFolderMetaData: " + err);
+      });
     }
+  }
 
-    TSCORE.Meta.loadFolderMetaData(path, function(metaData) {
-      historyItem.metaData = metaData;
-      generateFolderTags(metaData ? metaData.tags : null , element, menuItem);
-    });
+  function loadMetaTagGroups(metaData) {
+    //Load tagGroups only from location folder
+    if (TSCORE.Config.getLastOpenedLocation().indexOf(TSCORE.currentPath) >= 0) {
+      if (metaTagGroupsHistory) {
+        metaTagGroupsHistory.forEach(function(value) {
+          TSCORE.Config.deleteTagGroup(value);
+        });
+      }
+      metaTagGroupsHistory = metaData.tagGroups;
+      metaData.tagGroups.forEach(function(value) {
+        TSCORE.Config.addTagGroup(value);
+      });
+      TSCORE.generateTagGroups(metaData.tagGroups);
+    }
   }
 
   function generateFolderTags(tags, element, menuItem) {

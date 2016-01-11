@@ -213,30 +213,24 @@ define(function(require, exports, module) {
     }
   }
 
-  function loadFolderMetaData(path , resultCb) {
-    var metadataPath;
-    if (isWeb) {
-      metadataPath = path + TSCORE.dirSeparator + TSCORE.metaFolder + TSCORE.dirSeparator + TSCORE.metaFolderFile;
-    } else {
-      metadataPath = 'file://' + path + TSCORE.dirSeparator + TSCORE.metaFolder + TSCORE.dirSeparator + TSCORE.metaFolderFile;
-    }
+ function loadFolderMetaDataPromise(path) {
 
-    // TODO use the API
-    $.get(metadataPath, function(data) {
-        if (data.length > 1) {
-          try {
-            var metadata = JSON.parse(data);
-            console.log('Location Metadata: ' + JSON.stringify(metadata));
-            resultCb(metadata);
-          } catch (err) {
-            console.warn('Error while parsing json from ' + metadataPath);
-          }
-        }
-      }).fail(function() {
-        resultCb();
+    return new Promise(function(resolve, reject) {
+      var metadataPath = 'file://' + path + TSCORE.dirSeparator + TSCORE.metaFolder + TSCORE.dirSeparator + TSCORE.metaFolderFile;
+      if (isWeb) {
+        metadataPath = path + TSCORE.dirSeparator + TSCORE.metaFolder + TSCORE.dirSeparator + TSCORE.metaFolderFile;
+      }
+
+      TSCORE.IO.getFileContentPromise(metadataPath, "text").then(function(content) {
+          var metadata = JSON.parse(content);
+          console.log('Location Metadata: ' + JSON.stringify(metadata));
+          resolve(metadata);
+      }).catch(function(err) {
+          reject("loadFolderMetaDataPromise: Error reading " + metadataPath);  
       });
+    });
   }
-
+  
   function createMetaFolder(dirPath) {
     if (dirPath.lastIndexOf(TSCORE.metaFolder) >= dirPath.length - TSCORE.metaFolder.length) {
       console.log("Can not create meta folder in a meta folder");
@@ -262,6 +256,6 @@ define(function(require, exports, module) {
   exports.addMetaTags = addMetaTags;
   exports.renameMetaTag = renameMetaTag;
   exports.removeMetaTag = removeMetaTag;
-  exports.loadFolderMetaData = loadFolderMetaData;
+  exports.loadFolderMetaDataPromise = loadFolderMetaDataPromise;
   exports.createMetaFolder = createMetaFolder;
 });
