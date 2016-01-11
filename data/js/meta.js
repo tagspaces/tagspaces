@@ -94,7 +94,7 @@ define(function(require, exports, module) {
     return new Promise(function(resolve, reject) {
       var filePath = entry[TSCORE.fileListFILEPATH];
       if (TSCORE.PRO && TSCORE.Config.getEnableMetaData()) {
-        TSCORE.PRO.getThumbnailURLPromise(filePath).then(function(dataURL) {
+        TSCORE.PRO.getThumbnailURLPromise(entry).then(function(dataURL) {
           entry[TSCORE.fileListMETA].thumbnailPath = dataURL;
           resolve(filePath);
         }).catch(function(err) {
