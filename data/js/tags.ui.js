@@ -167,14 +167,16 @@ define(function(require, exports, module) {
       });
       generateTagGroups();
     });
-    $('#createTagGroupButton').click(function() {
-      TSCORE.Config.createTagGroup(TSCORE.selectedTagData, $('#newTagGroupName').val());
-      generateTagGroups();
-    });
+    $('#createTagGroupButton').on("click", createTagGroup);
     $('#editTagGroupButton').click(function() {
       TSCORE.Config.editTagGroup(TSCORE.selectedTagData, $('#tagGroupName').val());
       generateTagGroups();
     });
+  }
+
+  function createTagGroup() {
+    TSCORE.Config.createTagGroup(TSCORE.selectedTagData, $('#newTagGroupName').val());
+    generateTagGroups();
   }
 
   function generateTagGroups() {
@@ -523,7 +525,8 @@ define(function(require, exports, module) {
   function showDialogTagGroupCreate() {
     $('#newTagGroupName').val('');
     $('#formTagGroupCreate').validator();
-    $('#formTagGroupCreate').submit(function(e) {
+    $('#formTagGroupCreate').off();
+    $('#formTagGroupCreate').on("submit", function(e) {
       e.preventDefault();
       if ($('#createTagGroupButton').prop('disabled') === false) {
         $('#createTagGroupButton').click();
