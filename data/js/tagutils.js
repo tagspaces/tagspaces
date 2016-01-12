@@ -471,6 +471,8 @@ define(function(require, exports, module) {
         renameFile(filePath, containingDirectoryPath + TSCORE.dirSeparator + newFileName);
       }
     }
+
+    collectRecentTags([newTag]);
   }
 
   function changeTitle(filePath, newTitle) {
