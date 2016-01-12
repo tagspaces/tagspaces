@@ -7,11 +7,6 @@ define(function(require, exports, module) {
   // Activating browser specific exports modul
   console.log('Loading postioapi.js ...');
   var TSCORE = require('tscore');
-  exports.createDirectoryIndex = function(directoryIndex) {
-    console.log('Directory index created');
-    TSCORE.PerspectiveManager.updateFileBrowserData(directoryIndex);
-    TSCORE.hideWaitingDialog();
-  };
 
   exports.createDirectoryTree = function(directoryTree) {
     TSCORE.PerspectiveManager.updateTreeData(directoryTree);

@@ -80,7 +80,8 @@ define(function(require, exports, module) {
     TSCORE.IOUtils.walkDirectory(dirPath, {recursive: true}, function(fileEntry) {
       directoryIndex.push(fileEntry);
     }).then(function(entries) {
-      TSPOSTIO.createDirectoryIndex(directoryIndex);
+      TSCORE.hideWaitingDialog();
+      TSCORE.PerspectiveManager.updateFileBrowserData(directoryIndex);
     }).catch(function(err) {
       console.warn("Error creating index: " + err);
       TSCORE.hideWaitingDialog();
