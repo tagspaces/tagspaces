@@ -142,6 +142,7 @@ define(function(require, exports, module) {
         loadMetaTagGroups(historyItem.metaData);
       }).catch(function(err) {
         console.log("loadFolderMetaData: " + err);
+        generateFolderTags(null, element, menuItem);
       });
     }
   }
