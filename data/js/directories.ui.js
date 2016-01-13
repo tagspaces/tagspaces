@@ -156,9 +156,11 @@ define(function(require, exports, module) {
         });
       }
       metaTagGroupsHistory = metaData.tagGroups;
-      metaData.tagGroups.forEach(function(value) {
-        TSCORE.Config.addTagGroup(value);
-      });
+      if (metaTagGroupsHistory) {
+        metaData.tagGroups.forEach(function(value) {
+          TSCORE.Config.addTagGroup(value);
+        });
+      }
       TSCORE.generateTagGroups(metaData.tagGroups);
     }
   }
@@ -204,7 +206,7 @@ define(function(require, exports, module) {
     }
 
     if (TSCORE.PRO && !menuItem) {
-      TSCORE.PRO.setContextMenu($tagsElement, tags);
+      TSCORE.PRO.setContextMenu($tagsElement);
     }
   }
 
