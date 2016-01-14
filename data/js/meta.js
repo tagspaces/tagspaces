@@ -93,8 +93,7 @@ define(function(require, exports, module) {
   function loadThumbnailPromise(entry) {
     return new Promise(function(resolve, reject) {
       var filePath = entry[TSCORE.fileListFILEPATH];
-      if (TSCORE.PRO && TSCORE.Config.getEnableMetaData() 
-          && TSCORE.Config.getUseGenerateThumbnails()) {
+      if (TSCORE.PRO && TSCORE.Config.getEnableMetaData() && TSCORE.Config.getUseGenerateThumbnails()) {
         TSCORE.PRO.getThumbnailURLPromise(entry).then(function(dataURL) {
           entry[TSCORE.fileListMETA].thumbnailPath = dataURL;
           resolve(filePath);
