@@ -28,6 +28,10 @@ define(function(require, exports, module) {
         show: true
       });
     }, 500);
+
+    waitingModal.draggable({
+      handle: ".modal-header"
+    });
   };
 
   var hideWaitingDialog = function(message, title) {
@@ -130,6 +134,9 @@ define(function(require, exports, module) {
     confirmModal.modal({
       backdrop: 'static',
       show: true
+    });
+    confirmModal.draggable({
+      handle: ".modal-header"
     });
   };
 
@@ -731,6 +738,7 @@ define(function(require, exports, module) {
       e.preventDefault();
       openLinkExternally($(this).attr('href'));
     });
+
     // Hide drop downs by click and drag
     $(document).click(function() {
       TSCORE.hideAllDropDownMenus();
@@ -739,7 +747,6 @@ define(function(require, exports, module) {
 
   function cancelSearch() {
     clearSearchFilter();
-    //$('#searchBox').popover('hide');
     $('#searchToolbar').hide();
     $('#showSearchButton').show();
     // Restoring initial dir listing without subdirectories
@@ -754,8 +761,8 @@ define(function(require, exports, module) {
   }
 
   function showSearchArea() {
-    $('#searchToolbar').show();
     $('#showSearchButton').hide();
+    $('#searchToolbar').show();
     $('#searchBox').focus();
   }
 
@@ -866,6 +873,7 @@ define(function(require, exports, module) {
     $('#tagMenu').hide();
     $('#fileMenu').hide();
     $('.dirAltNavMenu').hide();
+    $('#locationTagTreeMenu').hide();
   };
 
   var showLocationsPanel = function() {

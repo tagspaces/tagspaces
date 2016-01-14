@@ -208,6 +208,10 @@ define(function(require, exports, module) {
     if (TSCORE.PRO && !menuItem) {
       TSCORE.PRO.setContextMenu($tagsElement);
     }
+
+    if(!TSCORE.PRO) {
+      $("#locationContent .fa-ellipsis-v").hide();
+    }
   }
 
   // Updates the directory subtree
