@@ -158,5 +158,7 @@
     "confirmSaveButton": "Save",
     "confirmSaveAndRestartButton": "Save & Restart",
     "useOCR": "Enable OCR of images",
+    "useTextExtraction": "Enable text extraction from files",
+    "useGenerateThumbnails":"Enable thumbnails generation",
     "-": "-"
 }

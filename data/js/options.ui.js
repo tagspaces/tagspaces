@@ -194,6 +194,8 @@ define(function(require, exports, module) {
       $('#enableMetaData').attr('checked', TSCORE.Config.getEnableMetaData());
       $('#useTrashCan').attr('checked', TSCORE.Config.getUseTrashCan());
       $('#useOCR').attr('checked', TSCORE.Config.getUseOCR());
+      $('#useTextExtraction').attr('checked', TSCORE.Config.getUseTextExtraction());
+      $('#useGenerateThumbnails').attr('checked', TSCORE.Config.getUseGenerateThumbnails());
       enableMetaData();
     }
     
@@ -271,7 +273,9 @@ define(function(require, exports, module) {
     if (TSCORE.PRO) {
       TSCORE.Config.setEnableMetaData($('#enableMetaData').is(':checked'));
       TSCORE.Config.setUseTrashCan($('#useTrashCan').is(':checked'));   
-      TSCORE.Config.setUseOCR($('#useOCR').is(':checked'));    
+      TSCORE.Config.setUseOCR($('#useOCR').is(':checked'));  
+      TSCORE.Config.setUseTextExtraction($('#useTextExtraction').is(':checked')); 
+      TSCORE.Config.setUseGenerateThumbnails($('#useGenerateThumbnails').is(':checked')); 
     }
     var interfaceLang = $('#languagesList').val();
     TSCORE.Config.setInterfaceLangauge(interfaceLang);

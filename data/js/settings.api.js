@@ -662,6 +662,24 @@ define(function(require, exports, module) {
   var setUseOCR = function(value) {
     exports.Settings.useOCR = value;
   };
+  var getUseTextExtraction = function() {
+    if (exports.Settings.useTextExtraction === undefined) {
+      exports.Settings.useTextExtraction = exports.DefaultSettings.useTextExtraction;
+    }
+    return exports.Settings.useTextExtraction;
+  };
+  var setUseTextExtraction = function(value) {
+    exports.Settings.useTextExtraction = value;
+  };
+  var getUseGenerateThumbnails = function() {
+    if (exports.Settings.useGenerateThumbnails === undefined) {
+      exports.Settings.useGenerateThumbnails = exports.DefaultSettings.useGenerateThumbnails;
+    }
+    return exports.Settings.useGenerateThumbnails;
+  };
+  var setUseGenerateThumbnails = function(value) {
+    exports.Settings.useGenerateThumbnails = value;
+  };
   //////////////////// API methods ///////////////////
   var getFileTypeEditor = function(fileTypeExt) {
     for (var i = 0; i < exports.Settings.supportedFileTypes.length; i++) {
@@ -1107,6 +1125,10 @@ define(function(require, exports, module) {
   exports.setUseTrashCan = setUseTrashCan;
   exports.getUseOCR = getUseOCR;
   exports.setUseOCR = setUseOCR;
+  exports.getUseTextExtraction = getUseTextExtraction;
+  exports.setUseTextExtraction = setUseTextExtraction;
+  exports.getUseGenerateThumbnails = getUseGenerateThumbnails;
+  exports.setUseGenerateThumbnails = setUseGenerateThumbnails;
 
   exports.getNewTextFileContent = getNewTextFileContent;
   exports.getNewHTMLFileContent = getNewHTMLFileContent;
