@@ -19,7 +19,7 @@
     "sendFileToTooltip": "Send current file to another application",
     "sendFileTo": "Send To",
     "fullscreenFileTooltip": "Open the file in fullscreen",
-    "fullscreen": "Fullscreen File",
+    "fullscreen": "Open in Fullscreen",
     "renameFileTooltip": "Rename current file",
     "renameFile": "Rename File",
     "moveCopyFileTooltip": "Move or copy current file",
