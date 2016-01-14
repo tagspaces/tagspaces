@@ -270,7 +270,8 @@ define(function(require, exports, module) {
       TSCORE.hideLoadingAnimation();
       TSCORE.hideWaitingDialog();
       changePerspective(TSCORE.currentPerspectiveID);
-      if (TSCORE.PRO && !isSearchResult) { // TODO add check for setting enabling text extraction
+      if (TSCORE.PRO && !isSearchResult 
+        && TSCORE.Config.getUseTextExtraction()) {
         TSCORE.showLoadingAnimation();
         //TSCORE.showWaitingDialog("Extracting text content");
         TSCORE.PRO.extractTextContentFromFilesPromise(TSCORE.fileList).then(function() {
