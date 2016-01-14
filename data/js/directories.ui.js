@@ -209,7 +209,7 @@ define(function(require, exports, module) {
       TSCORE.PRO.setContextMenu($tagsElement);
     }
 
-    if(!TSCORE.PRO) {
+    if (!TSCORE.PRO) {
       $("#locationContent .fa-ellipsis-v").hide();
     }
   }

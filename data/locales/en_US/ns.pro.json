@@ -3,5 +3,8 @@
 	"trashDirectoryContentConfirm": "Do you want to move the directory '__dirPath__' to the trash bin ?",
 	"trashFilesDeleteContentConfirm": "Do you want to move these files '__selectedFiles__' to the trash bin ?",
   "loadLocationMetadata": "Loads location meta data (currently only tag groups)",
+	"updateFolderThumbnails": "Update thumbnails",
+	"tagDirectory": "Tag Directory",
+	"directoryProperties": "Directory Properties",
 	"-": "-"
 }
