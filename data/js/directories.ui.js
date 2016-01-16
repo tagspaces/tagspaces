@@ -242,43 +242,40 @@ define(function(require, exports, module) {
 
   function generateAlternativeDirPath() {
     console.log('Generating Alternative Directory Path...');
+
     var $alternativeNavigator = $('#alternativeNavigator');
     $alternativeNavigator.children().remove();
+
     $alternativeNavigator.html(alternativeDirectoryNavigatorTmpl({
       'dirHistory': directoryHistory
     }));
-    $alternativeNavigator.find('.reloadCurrentDirectory').each(function() {
-      $(this).on('click', function() {
-        navigateToDirectory($(this).attr('data-path'));
-      });
+
+    $alternativeNavigator.find('.reloadCurrentDirectory').on('click', function() {
+      navigateToDirectory($(this).attr('data-path'));
     });
-    $alternativeNavigator.find('.createSubdirectory').each(function() {
-      $(this).on('click', function() {
-        showCreateDirectoryDialog($(this).attr('data-path'));
-      });
+
+    $alternativeNavigator.find('.createSubdirectory').on('click', function() {
+      showCreateDirectoryDialog($(this).attr('data-path'));
     });
-    $alternativeNavigator.find('.renameDirectory').each(function() {
-      $(this).on('click', function() {
-        showRenameDirectoryDialog($(this).attr('data-path'));
-      });
+
+    $alternativeNavigator.find('.renameDirectory').on('click', function() {
+      showRenameDirectoryDialog($(this).attr('data-path'));
     });
-    $alternativeNavigator.find('.dropdown-toggle').each(function() {
-      $(this).on('contextmenu click', function() {
-        TSCORE.hideAllDropDownMenus();
-        showDropDown('#dirMenu' + $(this).attr('data-menu'), $(this));
-        return false;
-      });
+
+    $alternativeNavigator.find('.dropdown-toggle').on('contextmenu click', function() {
+      TSCORE.hideAllDropDownMenus();
+      showDropDown('#dirMenu' + $(this).attr('data-menu'), $(this));
+      return false;
     });
-    $alternativeNavigator.find('.close').each(function() {
-      $(this).click(function() {
-        TSCORE.hideAllDropDownMenus();
-      });
+
+    $alternativeNavigator.find('.close').on("click", function() {
+      TSCORE.hideAllDropDownMenus();
     });
-    $alternativeNavigator.find('.dirButton').each(function() {
-      $(this).click(function() {
-        navigateToDirectory($(this).attr('data-path'));
-      });
+
+    $alternativeNavigator.find('.dirButton').on("click", function() {
+      navigateToDirectory($(this).attr('data-path'));
     });
+
     if ($alternativeNavigator.i18n) {
       $alternativeNavigator.i18n();
     }
@@ -296,16 +293,9 @@ define(function(require, exports, module) {
       }
       loadFolderMetaData($menu.attr('data-path'), null, $dropItemTags);
     }
-    //var leftPos = 0;
-    //var topPos = -$menu.height();
-    //if (sourceObject.offset().left + 300 > window.innerWidth) {
-    //  leftPos = -200 + sourceObject.width();
-    //}
-    //console.log(leftPos+" "+sourceObject.offset().left+" "+$menu.width()+" "+window.innerWidth);
+
     $menu.css({
       display: 'block',
-      //left: leftPos + 'px',
-      //top: topPos + 'px'
     });
   };
 
