@@ -6,7 +6,7 @@
   "single-instance": false,
   "window": {
     "icon": "assets/icon96w.png",
-    "toolbar": false,
+    "toolbar": true,
     "position": "center",
     "min_width": 320,
     "min_height": 300,    

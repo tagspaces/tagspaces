@@ -48,10 +48,10 @@ define(function(require, exports, module) {
   function loadExtensionData() {
 
     var extFolderPath = getExtFolderPath();
-    if (isChrome) {
-      //TODO: chrome
-      return Promise.resolve();
-    }
+    //if (isChrome) {
+    //  TODO: chrome
+    //  return Promise.resolve();
+    //}
     var promise = new Promise(function(resolve, reject) {
       TSCORE.IO.listDirectoryPromise(extFolderPath).then(function(dirList) {
         var readBowerFileWorkers = [];
@@ -75,6 +75,9 @@ define(function(require, exports, module) {
           TSCORE.hideLoadingAnimation();
           reject(err);
         });
+      }).catch(function(err) {
+        console.log("loadExtensionData failed with error: " + err);
+        resolve();
       });
     });
 

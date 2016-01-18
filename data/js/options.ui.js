@@ -8,7 +8,7 @@ define(function(require, exports, module) {
   var TSCORE = require('tscore');
   var tsExtManager = require('tsextmanager');
   var saveAs = require('libs/filesaver.js/FileSaver.min.js');
-  var extList = [];
+  var extList;
 
   function generateSelectOptions(parent, data, selectedId, helpI18NString) {
     parent.empty();
@@ -40,7 +40,7 @@ define(function(require, exports, module) {
               row4Remove.remove();
             });
           })));
-    if (isChrome || isFirefox) {
+    if (!extList) {
       generateSelectOptions(perspectiveControl.find('select'), TSCORE.Config.getPerspectiveExtensions(), perspectiveId, "ns.dialogs:choosePerspective");
     } else {
       generateSelectOptions(perspectiveControl.find('select'), getExtensionsByType("perspective"), perspectiveId, "ns.dialogs:choosePerspective");
@@ -87,7 +87,7 @@ define(function(require, exports, module) {
         })));
 
     
-    if (isChrome || isFirefox) {
+    if (!extList) {
       generateSelectOptions(fileTypeControl.find('.ftviewer'), TSCORE.Config.getViewerExtensions(), viewerId, "ns.dialogs:chooseFileViewer");
       generateSelectOptions(fileTypeControl.find('.fteditor'), TSCORE.Config.getEditorExtensions(), editorId, "ns.dialogs:chooseFileEditor");   
     } else {
