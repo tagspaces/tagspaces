@@ -34,6 +34,8 @@ define(function(require, exports, module) {
                 '{{else}}' +
                 '<div><span data-i18n="ns.common:noSubfoldersFound"></span></div>' +
                 '{{/if}}' +
+                //'<li class="divider" style="width: 100%"></li>' +
+                '<li class="dropdown-header"><span data-i18n="ns.common:tagsOfDirectory2">Directory Tags</span></li>' +
             '</ul>' +
         '</div>' +
     '</div>' +
@@ -210,7 +212,7 @@ define(function(require, exports, module) {
     }
 
     if (!TSCORE.PRO) {
-      $("#locationContent .fa-ellipsis-v").hide();
+      $("#locationContent .dropDownIcon").hide();
     }
   }
 
@@ -288,7 +290,7 @@ define(function(require, exports, module) {
       var $dropDown = $menu.find('.dropdown-menu');
       var $dropItemTags = $dropDown.find('#tagsAlternativeDirPath');
       if ($dropItemTags.length === 0) {
-        $dropItemTags = $('<li id=\"tagsAlternativeDirPath\">');
+        $dropItemTags = $('<li id="tagsAlternativeDirPath">');
         $dropDown.append($dropItemTags);
       }
       loadFolderMetaData($menu.attr('data-path'), null, $dropItemTags);
