@@ -6,7 +6,7 @@
 generate_thumbnails() {
     dirname="$1"
     thumbdir="$dirname/.ts"
-    echo "-------Current dir: $dirname"
+    echo "Current dir: $dirname"
     mkdir -p "$thumbdir"
 
     for file in "$dirname/"*
@@ -16,14 +16,14 @@ generate_thumbnails() {
       CHECKTYPE=`file --mime-type -b "$file" | awk -F'/' '{print $1}'`
       if [ "x$CHECKTYPE" == "ximage" ]; 
     then
-        CHECKSIZE=`stat -f "%z" "$file"`               # this returns the filesize
+        CHECKSIZE=`stat -f "$file"`               # this returns the filesize
         CHECKWIDTH=`identify -format "%W" "$file"`     # this returns the image width
 
         # next 'if' is true if either filesize >= 200000 bytes  OR  if image width >=201
         if [ $CHECKSIZE -ge  200 ] || [ $CHECKWIDTH -ge 201 ]; then
             thumbfile="$thumbdir/$(basename "$file").png"
             echo "$file -> $thumbfile" 
-            convert -thumbnail 200 "$file" "$thumbfile"
+            convert -thumbnail 400 "$file" "$thumbfile"
         fi
       fi
     done
