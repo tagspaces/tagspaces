@@ -9,19 +9,28 @@ generate_thumbnails() {
     echo "Current dir: $dirname"
     mkdir -p "$thumbdir"
 
-    for file in "$dirname/"*
-    #find "$dirname" -type f -maxdepth 1 | while read file
+    #for file in "$dirname/"*
+    find "$dirname" -type f -maxdepth 1 | while read file
     do
       # next line checks the mime-type of the file
       CHECKTYPE=`file --mime-type -b "$file" | awk -F'/' '{print $1}'`
       if [ "x$CHECKTYPE" == "ximage" ]; 
     then
-        CHECKSIZE=`stat -f "$file"`               # this returns the filesize
+        thumbfile="$thumbdir/$(basename "$file").png"
+        CHECKSIZE=`stat -f "%z" "$file"`               # this returns the filesize
         CHECKWIDTH=`identify -format "%W" "$file"`     # this returns the image width
+        FILEDATE=`stat -f "%c" "$file"`                   # this returns the file timestamp
 
+        if [ -f "$thumbfile" ]; then
+          THUMBFILEDATE=`stat -f "%c" "$thumbfile"`
+          if [ $THUMBFILEDATE -gt $FILEDATE ]; then
+            echo "$file is not changed"
+            continue
+          fi
+        fi
+        
         # next 'if' is true if either filesize >= 200000 bytes  OR  if image width >=201
         if [ $CHECKSIZE -ge  200 ] || [ $CHECKWIDTH -ge 201 ]; then
-            thumbfile="$thumbdir/$(basename "$file").png"
             echo "$file -> $thumbfile" 
             convert -thumbnail 400 "$file" "$thumbfile"
         fi
