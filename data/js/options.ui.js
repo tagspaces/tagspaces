@@ -109,9 +109,15 @@ define(function(require, exports, module) {
     var isMetaEnabled = $('#enableMetaData').is(':checked');
     if (!isMetaEnabled) { 
       $('#writeMetaToSidecarFile').attr('checked', false);
-      TSCORE.Config.setWriteMetaToSidecarFile(false);
+      $('#useOCR').attr('checked', false);
+      $('#useTextExtraction').attr('checked', false);
+      $('#useGenerateThumbnails').attr('checked', false);
+      //TSCORE.Config.setWriteMetaToSidecarFile(false);
     }
     $('#writeMetaToSidecarFile').attr('disabled', !isMetaEnabled);
+    $('#useOCR').attr('disabled', !isMetaEnabled);
+    $('#useTextExtraction').attr('disabled', !isMetaEnabled);
+    $('#useGenerateThumbnails').attr('disabled', !isMetaEnabled);
   }
 
   function initUI() {
@@ -147,6 +153,7 @@ define(function(require, exports, module) {
       return false;
     });
     if (isCordova) {
+      $('#trashCanArea').hide();
       $('#exportTagGroupsButton').hide();
       $('#showMainMenuCheckbox').parent().hide();
     }
