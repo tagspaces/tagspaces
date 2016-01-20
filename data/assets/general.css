@@ -134,6 +134,10 @@ html, body {
   margin-top: 5px;
 }
 
+.editable-inline input {
+  font-size: 16px !important;
+}
+
 .noWrap {
   white-space:nowrap !important;
 }
