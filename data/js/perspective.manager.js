@@ -149,7 +149,7 @@ define(function(require, exports, module) {
   var updateFileUI = function(oldFilePath, newFilePath) {
     console.log('Updating file in perspectives');
 
-    if (TSCORE.FileOpener.getOpenedFilePath() === oldFilePath && !TSCORE.FileOpener.isFileEdited) {
+    if (TSCORE.FileOpener.getOpenedFilePath() === oldFilePath && !TSCORE.FileOpener.isFileEdited()) {
       TSCORE.FileOpener.openFile(newFilePath);
     }
 
