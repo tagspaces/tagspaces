@@ -17,12 +17,19 @@ generate_thumbnails() {
       if [ "x$CHECKTYPE" == "ximage" ]; 
     then
         thumbfile="$thumbdir/$(basename "$file").png"
-        CHECKSIZE=`stat -f "%z" "$file"`               # this returns the filesize
         CHECKWIDTH=`identify -format "%W" "$file"`     # this returns the image width
-        FILEDATE=`stat -f "%c" "$file"`                   # this returns the file timestamp
+
+        #CHECKSIZE=`stat -f "%z" "$file"`               # MAC this returns the filesize
+        CHECKSIZE=`stat -c %s "$file"`               # LINUX this returns the filesize
+
+        #FILEDATE=`stat -f "%c" "$file"`                # MAC this returns the file timestamp
+        FILEDATE=`stat -c %Z "$file"`                # LINUX this returns the file timestamp
+
+        #echo "File - $file - Date: $FILEDATE - Size: $CHECKSIZE"
 
         if [ -f "$thumbfile" ]; then
-          THUMBFILEDATE=`stat -f "%c" "$thumbfile"`
+          #THUMBFILEDATE=`stat -f "%c" "$thumbfile"` # MAC
+          THUMBFILEDATE=`stat -c "%Z" "$thumbfile"`
           if [ $THUMBFILEDATE -gt $FILEDATE ]; then
             echo "$file is not changed"
             continue
@@ -30,7 +37,7 @@ generate_thumbnails() {
         fi
         
         # next 'if' is true if either filesize >= 200000 bytes  OR  if image width >=201
-        if [ $CHECKSIZE -ge  200 ] || [ $CHECKWIDTH -ge 201 ]; then
+        if [ $CHECKSIZE -ge  200000 ] || [ $CHECKWIDTH -ge 201 ]; then
             echo "$file -> $thumbfile" 
             convert -thumbnail 400 "$file" "$thumbfile"
         fi
