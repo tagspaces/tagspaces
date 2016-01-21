@@ -422,6 +422,13 @@ define(function(require, exports, module) {
     }
     var metaTags = TSCORE.Meta.getTagsFromMetaFile(filePath);
     if (metaTags.length > 0) {
+      for (var i = 0; i < metaTags.length; i++) {
+        var tag = metaTags[i];
+        if (!tag.style) {
+          tag.style = generateTagStyle(TSCORE.Config.findTag(tag.tag));
+        }
+      }
+
       context.tags = context.tags.concat(metaTags);
     }
     return tagButtonTmpl(context);
