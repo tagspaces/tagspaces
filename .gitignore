@@ -103,6 +103,7 @@ data/libs/filesaver.js/.bower.json
 data/libs/filesaver.js/Gruntfile.js
 data/libs/filesaver.js/README.md
 data/libs/filesaver.js/bower.json
+data/libs/filesaver.js/FileSaver.js
 data/libs/filesaver.js/demo/
 data/libs/filesaver.js/package.json
 data/libs/filesaver.js/src/
@@ -176,6 +177,8 @@ data/libs/jquery.hammer.js/bower.json
 data/libs/jquery.hammer.js/package.json
 data/libs/jquery/.bower.json
 data/libs/jquery/bower.json
+data/libs/jquery/AUTHORS.txt
+data/libs/jquery/README.md
 data/libs/jquery/dist/jquery.js
 data/libs/jquery/dist/jquery.min.map
 data/libs/jquery/src/
