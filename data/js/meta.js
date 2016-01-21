@@ -169,7 +169,7 @@ define(function(require, exports, module) {
         "type":"sidecar",
         //"description": "",
         //"icon":"",
-        //"style":""
+        "style": TSCORE.generateTagStyle(TSCORE.Config.findTag(element))
       };
       var isNewTag = true;
       metaObj.metaData.tags.forEach(function(oldTag) {
