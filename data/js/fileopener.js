@@ -90,8 +90,8 @@ define(function(require, exports, module) {
       if (_isFileChanged) {
         TSCORE.showAlertDialog($.i18n.t('ns.dialogs:operationNotPermittedInEditModeAlert'));
       } else {
-        TSCORE.PerspectiveManager.clearSelectedFiles();
-        TSCORE.selectedFiles.push(_openedFilePath);
+        //TSCORE.PerspectiveManager.clearSelectedFiles();
+        //TSCORE.selectedFiles.push(_openedFilePath);
         TSCORE.showAddTagsDialog();
       }
     });
@@ -281,8 +281,8 @@ define(function(require, exports, module) {
     }
     initTagSuggestionMenu(filePath);
     // Clearing file selection on file load and adding the current file path to the selection
-    TSCORE.PerspectiveManager.clearSelectedFiles();
-    TSCORE.selectedFiles.push(filePath);
+    //TSCORE.PerspectiveManager.clearSelectedFiles();
+    //TSCORE.selectedFiles.push(filePath);
     _isFileOpened = true;
     TSCORE.openFileViewer();
     // Handling the keybindings
@@ -465,8 +465,8 @@ define(function(require, exports, module) {
       filepath: filePath,
       text: ' ' + $.i18n.t('ns.common:addRemoveTags')
     }).prepend('<i class=\'fa fa-tag\'></i>').click(function() {
-      TSCORE.PerspectiveManager.clearSelectedFiles();
-      TSCORE.selectedFiles.push(filePath);
+      //TSCORE.PerspectiveManager.clearSelectedFiles();
+      //TSCORE.selectedFiles.push(filePath);
       TSCORE.showAddTagsDialog();
     })));
     tsMenu.append($('<li>', {
