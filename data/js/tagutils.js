@@ -369,30 +369,47 @@ define(function(require, exports, module) {
 
   function removeTagsFromFile(filePath, tags) {
     console.log('Remove the tags from: ' + filePath);
-    var fileName = extractFileName(filePath);
-    var containingDirectoryPath = extractContainingDirectoryPath(filePath);
-    var extractedTags = extractTags(filePath);
-    for (var i = 0; i < tags.length; i++) {
-      // check if tag is already in the tag array
-      var tagLoc = extractedTags.indexOf(tags[i].trim());
-      if (tagLoc >= 0) {
-        // Remove the new tag
-        extractedTags.splice(tagLoc, 1);
+
+    if (TSCORE.Config.getWriteMetaToSidecarFile()) {
+      tags.forEach(function(tag) {
+        TSCORE.Meta.removeMetaTag(filePath, tag);
+      });
+      TSCORE.PerspectiveManager.updateFileUI(filePath, filePath);
+    } else {
+      var fileName = extractFileName(filePath);
+      var containingDirectoryPath = extractContainingDirectoryPath(filePath);
+      var extractedTags = extractTags(filePath);
+      for (var i = 0; i < tags.length; i++) {
+        // check if tag is already in the tag array
+        var tagLoc = extractedTags.indexOf(tags[i].trim());
+        if (tagLoc >= 0) {
+          // Remove the new tag
+          extractedTags.splice(tagLoc, 1);
+        }
       }
+      var newFileName = generateFileName(fileName, extractedTags);
+      renameFile(filePath, containingDirectoryPath + TSCORE.dirSeparator + newFileName);
     }
-    var newFileName = generateFileName(fileName, extractedTags);
-    renameFile(filePath, containingDirectoryPath + TSCORE.dirSeparator + newFileName);
   }
 
   function cleanFileFromTags(filePath) {
     console.log('Cleaning file from tags: ' + filePath);
-    var fileTitle = extractTitle(filePath);
-    var fileExt = extractFileExtension(filePath);
-    var containingDirectoryPath = extractContainingDirectoryPath(filePath);
-    if (fileExt.length > 0) {
-      fileExt = '.' + fileExt;
+
+    if (TSCORE.Config.getWriteMetaToSidecarFile()) {
+      var tags = TSCORE.Meta.getTagsFromMetaFile(filePath);
+      tags.forEach(function(tag) {
+        TSCORE.Meta.removeMetaTag(filePath, tag.tag);
+      });
+      TSCORE.PerspectiveManager.updateFileUI(filePath, filePath);
+    } else {
+      var fileTitle = extractTitle(filePath);
+      var fileExt = extractFileExtension(filePath);
+      var containingDirectoryPath = extractContainingDirectoryPath(filePath);
+      if (fileExt.length > 0) {
+        fileExt = '.' + fileExt;
+      }
+      renameFile(filePath, containingDirectoryPath + TSCORE.dirSeparator + fileTitle + fileExt);
     }
-    renameFile(filePath, containingDirectoryPath + TSCORE.dirSeparator + fileTitle + fileExt);
   }
 
   function cleanFilesFromTags(filePathArray) {
