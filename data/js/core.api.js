@@ -384,9 +384,11 @@ define(function(require, exports, module) {
   function showPerspectiveMenu() {
     $(".perspectiveMainMenuButton").show();
   }
-
+  //TODO: save state on file operations
+  var saveOpenCol1 = false;
   function openFileViewer() {
     shouldOpenCol3 = true;
+    saveOpenCol1 = shouldOpenCol1;
     reLayout();
   }
 
@@ -398,6 +400,7 @@ define(function(require, exports, module) {
 
   function toggleFullWidth() {
     isFullWidth = !isFullWidth;
+    shouldOpenCol1 = saveOpenCol1;
     reLayout();
   }
 
