@@ -48,10 +48,6 @@ define(function(require, exports, module) {
   function loadExtensionData() {
 
     var extFolderPath = getExtFolderPath();
-    //if (isChrome) {
-    //  TODO: chrome
-    //  return Promise.resolve();
-    //}
     var promise = new Promise(function(resolve, reject) {
       TSCORE.IO.listDirectoryPromise(extFolderPath).then(function(dirList) {
         var readBowerFileWorkers = [];
@@ -69,6 +65,7 @@ define(function(require, exports, module) {
               result.push(values[val]);
             }
           }
+          updatePerspectiveNames(result);
           TSCORE.hideLoadingAnimation();
           resolve(result);
         }).catch(function(err) {
@@ -82,6 +79,19 @@ define(function(require, exports, module) {
     });
 
     return promise;
+  }
+
+  function updatePerspectiveNames(perspectiveList) {
+    TSCORE.Config.getPerspectives().forEach(function(value) {
+      if(!value.name) {
+        for(var i in perspectiveList) {
+          var element = perspectiveList[i];
+          if(element.id === value.id) {
+            value.name = element.name;
+          }
+        }
+      }
+    });
   }
 
   exports.loadExtensionData = loadExtensionData;
