@@ -1,5 +1,27 @@
 ﻿#Changelog
 
+##Version 2.1.0 / 2016.01.28
+- New perspective for image viewing added (perspectiveImageSwiper)
+- Separating all the extension in separate modules/repositories, so they can be now more easily extended by developers
+- Migration of IO-APIs for all platforms to promises
+- Adding support for search in subfolders for the webdav and chrome versions
+- Improving general stability
+- Script for generation of image thumbnails added
+- Fixed loading of directory tag groups
+- Fixed collect renamed tags issue [#372](https://github.com/uggrock/tagspaces/issues/372)
+- Fixing creating multiple taggroups [#367](https://github.com/uggrock/tagspaces/issues/367)
+- Removing all files from the perspectives on directory change
+- Hosting the current jsdoc of the application on [tagspaces.github.io](http://tagspaces.github.io)
+- Correcting the export of the tag groups
+- Loading thumbnails finding the thumbnail path if available
+- Fixing the opening of the containing folder of a file from the search result [374](https://github.com/uggrock/tagspaces/issues/374)
+- Allow printing of images in the webdav version
+- Load tag groups from last opened location meta data
+- All modal dialogs can now be moved with the mouse
+- Enabling loading of meta data in non PRO version
+- Visually emphasizing the selected files in the grid perspective
+- Correcting the opening of external links
+
 ##Version 2.0.1 / 2015.10.31
 - redesign of the user interface using material paradigms
 - using flexbox for performance optimization of the user interface 
