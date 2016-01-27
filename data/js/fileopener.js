@@ -32,6 +32,7 @@ define(function(require, exports, module) {
   }
 
   function leaveFullScreen() {
+    $("#exitFullScreen").remove();
     if (document.exitFullscreen) {
       document.exitFullscreen();
     } else if (document.msExitFullscreen) {
@@ -41,7 +42,6 @@ define(function(require, exports, module) {
     } else if (document.webkitExitFullscreen) {
       document.webkitExitFullscreen();
     }
-    $("#exitFullScreen").remove();
     return false;
   }
 
