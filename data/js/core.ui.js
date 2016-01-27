@@ -874,6 +874,7 @@ define(function(require, exports, module) {
     $('#fileMenu').hide();
     $('.dirAltNavMenu').hide();
     $('#locationTagTreeMenu').hide();
+    //$('#searchOptions').hide();
   };
 
   var showLocationsPanel = function() {
