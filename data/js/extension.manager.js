@@ -83,10 +83,10 @@ define(function(require, exports, module) {
 
   function updatePerspectiveNames(perspectiveList) {
     TSCORE.Config.getPerspectives().forEach(function(value) {
-      if(!value.name) {
-        for(var i in perspectiveList) {
+      if (!value.name) {
+        for (var i in perspectiveList) {
           var element = perspectiveList[i];
-          if(element.id === value.id) {
+          if (element.id === value.id) {
             value.name = element.name;
           }
         }
