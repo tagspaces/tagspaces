@@ -10,7 +10,7 @@ define(function(require, exports, module) {
   var nextQuery = '';
 
   var searchForTag = function(tagQuery) {
-    if(TSCORE.isOneColumn()) {
+    if (TSCORE.isOneColumn()) {
       TSCORE.closeLeftPanel();
     }
     TSCORE.Search.nextQuery = '+' + tagQuery;
