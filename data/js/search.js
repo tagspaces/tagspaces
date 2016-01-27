@@ -1,6 +1,7 @@
-/* Copyright (c) 2012-2015 The TagSpaces Authors. All rights reserved.
+/* Copyright (c) 2012-2016 The TagSpaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that
  * can be found in the LICENSE file. */
+
 define(function(require, exports, module) {
   'use strict';
   console.log('Loading search.js ...');
@@ -8,7 +9,10 @@ define(function(require, exports, module) {
   var currentQuery = '';
   var nextQuery = '';
 
-  var search4Tag = function(tagQuery) {
+  var searchForTag = function(tagQuery) {
+    if(TSCORE.isOneColumn()) {
+      TSCORE.closeLeftPanel();
+    }
     TSCORE.Search.nextQuery = '+' + tagQuery;
     $('#searchBox').val('+' + tagQuery);
     TSCORE.PerspectiveManager.redrawCurrentPerspective();
@@ -234,7 +238,7 @@ define(function(require, exports, module) {
 
   // Public API definition    
   exports.searchData = searchData;
-  exports.searchForTag = search4Tag;
+  exports.searchForTag = searchForTag;
   exports.searchForString = search4String;
   exports.calculateTags = calculateTags;
 });
