@@ -16,7 +16,9 @@ define(function(require, exports, module) {
     TSCORE.Search.nextQuery = '+' + tagQuery;
     $('#searchBox').val('+' + tagQuery);
     TSCORE.PerspectiveManager.redrawCurrentPerspective();
-    TSCORE.showSearchArea();
+    $('#showSearchButton').hide();
+    $('#searchToolbar').show();
+    //TSCORE.showSearchArea();
   };
 
   var search4String = function(query) {
