@@ -544,9 +544,10 @@ input a.resetFilter {
 /* END Bootstap modals fullscreen on small screen */
 
 /* Tablet optimization */
-.dropdown-menu LI > A {
+.dropdown-menu li > a {
   line-height: 45px !important;
   height: 45px !important;
+  cursor: pointer;
 }
 
 .navbar {
