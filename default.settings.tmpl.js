@@ -17,7 +17,7 @@ define(function (require, exports, module) {
         "checkForUpdates":          true,
         "firstRun":                 true,
         "lastOpenedDirectory":      "",
-        "tagspacesList":            [@@DEFAULTLOCATIONS],
+        "tagspacesList":            [@@DEFAULTLOCATIONS], // [{"name":"Demo","path":"/owncloud/remote.php/webdav/Demo","perspective":"perspectiveList"}],
         "extensionsPath":           "ext",
         "showWarningRecursiveScan": true,
         "prefixTagContainer":       "",
