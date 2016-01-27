@@ -8,6 +8,7 @@ define(function(require, exports, module) {
 
   console.log('Loading directories.ui.js ...');
   var TSCORE = require('tscore');
+  var tsExtManager = require('tsextmanager');
   var TSPOSTIO = require("tspostioapi");
   var directoryHistory = [];
   var metaTagGroupsHistory = null;
@@ -578,12 +579,15 @@ define(function(require, exports, module) {
       var $locationPerspective2 = $('#locationPerspective2');
       var selectedPerspectiveId = TSCORE.Config.getLocation(path).perspective;
       $locationPerspective2.children().remove();
-      TSCORE.Config.getActivatedPerspectiveExtensions().forEach(function(value) {
-        if (selectedPerspectiveId === value.id) {
-          $locationPerspective2.append($('<option>').attr('selected', 'selected').text(value.id).val(value.id));
-        } else {
-          $locationPerspective2.append($('<option>').text(value.id).val(value.id));
-        }
+      tsExtManager.loadExtensionData().then(function() {
+        TSCORE.Config.getActivatedPerspectiveExtensions().forEach(function(value) {
+          var name = value.name ? value.name : value.id;
+          if (selectedPerspectiveId === value.id) {
+            $locationPerspective2.append($('<option>').attr('selected', 'selected').text(name).val(value.id));
+          } else {
+            $locationPerspective2.append($('<option>').text(name).val(value.id));
+          }
+        });
       });
       $connectionName2.val(name);
       $connectionName2.attr('oldName', name);
@@ -639,8 +643,11 @@ define(function(require, exports, module) {
             selectLocalDirectory();
           });
         }
-        TSCORE.Config.getActivatedPerspectiveExtensions().forEach(function(value) {
-          $('#locationPerspective').append($('<option>').text(value.id).val(value.id));
+        tsExtManager.loadExtensionData().then(function() {
+          TSCORE.Config.getActivatedPerspectiveExtensions().forEach(function(value) {
+            var name = value.name ? value.name : value.id;
+            $('#locationPerspective').append($('<option>').text(name).val(value.id));
+          });         
         });
         $('#createFolderConnectionButton').on('click', function() {
           createLocation();
