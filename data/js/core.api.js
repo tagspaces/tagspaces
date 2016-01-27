@@ -301,13 +301,18 @@ define(function(require, exports, module) {
   var shouldOpenCol1 = true;
   var shouldOpenCol2 = true;
   var shouldOpenCol3 = false;
+  var oneColumn = false;
+
+  function isOneColumn() {
+    return oneColumn;
+  }
 
   function reLayout() {
     //console.log("Window w: "+window.innerWidth+" h: "+window.innerHeight+" orient: "+window.orientation+" dpi: "+window.devicePixelRatio);
     var fullWidth = window.innerWidth;
     var halfWidth = Math.round(window.innerWidth / 2);
     var isPortret = fullWidth < window.innerHeight;
-    var oneColumn = fullWidth < 660;
+    oneColumn = fullWidth < 660;
     var twoColumn = fullWidth >= 660 && fullWidth < 1024;
 
     $("#searchOptions").hide();
@@ -458,6 +463,7 @@ define(function(require, exports, module) {
   exports.locationDesktop;
   exports.initApp = initApp;
   exports.reLayout = reLayout;
+  exports.isOneColumn = isOneColumn;
   exports.updateLogger = updateLogger;
   exports.showLoadingAnimation = showLoadingAnimation;
   exports.hideLoadingAnimation = hideLoadingAnimation;
