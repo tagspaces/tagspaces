@@ -86,52 +86,6 @@ define(function(require, exports, module) {
           'editor': 'false'
         });
       }
-      if (oldBuildNumber <= 20140512000000) {
-        addTagGroup({
-          'title': 'Ratings',
-          'key': 'REV',
-          'expanded': true,
-          'children': [{
-            'type': 'plain',
-            'title': '1star',
-            'color': '#FFCC24',
-            'textcolor': '#ffffff',
-            'keyBinding': 't 1'
-          }, {
-            'type': 'plain',
-            'title': '2star',
-            'color': '#FFCC24',
-            'textcolor': '#ffffff',
-            'keyBinding': 't 2'
-          }, {
-            'type': 'plain',
-            'title': '3star',
-            'color': '#FFCC24',
-            'textcolor': '#ffffff',
-            'keyBinding': 't 3'
-          }, {
-            'type': 'plain',
-            'title': '4star',
-            'color': '#FFCC24',
-            'textcolor': '#ffffff',
-            'keyBinding': 't 4'
-          }, {
-            'type': 'plain',
-            'title': '5star',
-            'color': '#FFCC24',
-            'textcolor': '#ffffff',
-            'keyBinding': 't 5'
-          }]
-        });
-      }
-      if (oldBuildNumber <= 20140725131000) {
-        addFileType({
-          'type': 'json',
-          'viewer': 'editorJSON',
-          'editor': 'editorJSON'
-        }); //addToSettingsArray(exports.Settings.ootbViewers,"editorJSON");
-        //addToSettingsArray(exports.Settings.ootbEditors,"editorJSON");
-      }
       if (oldBuildNumber <= 20141002000000) {
         updateFileType({
           'type': 'json',
@@ -150,7 +104,6 @@ define(function(require, exports, module) {
         });
       }
       if (oldBuildNumber <= 20141123000000) {
-        //addToSettingsArray(exports.Settings.ootbViewers,"viewerMHTML");
         updateFileType({
           'type': 'mhtml',
           'viewer': 'viewerMHTML',
@@ -162,7 +115,6 @@ define(function(require, exports, module) {
           'editor': 'false'
         });
       }
-
       if (oldBuildNumber <= 20150727000000) {
         updateFileType({
           'type': 'ogg',
