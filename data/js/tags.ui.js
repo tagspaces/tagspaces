@@ -622,7 +622,13 @@ define(function(require, exports, module) {
         ' '
       ],
       minimumInputLength: 2,
-      selectOnBlur: true
+      selectOnBlur: true,
+      formatSelectionCssClass: function(tag, container) {
+        var style = generateTagStyle(TSCORE.Config.findTag(tag.text));
+        if (style) { 
+          $(container).parent().attr("style", style);
+        }
+      }
     });
     $('#dialogAddTags').on('shown.bs.modal', function() {
       $('.select2-input').focus();
