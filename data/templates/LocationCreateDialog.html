@@ -1,12 +1,12 @@
 <div id="dialogCreateFolderConnection" class="modal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
-                <h4 data-i18n="ns.dialogs:createLocationTitle"></h4>
-            </div>
-            <div class="modal-body form">
-                <form role="form" data-toggle="validator" id="formLocationCreate">
+        <form role="form" data-toggle="validator" id="formLocationCreate">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
+                    <h4 data-i18n="ns.dialogs:createLocationTitle"></h4>
+                </div>
+                <div class="modal-body form">
                     <div class="form-group">
                         <label class="control-label" for="folderLocation" data-i18n="ns.dialogs:createLocationPath"></label>
                         <div class="input-group">
@@ -37,12 +37,12 @@
                             </label>
                         </div>
                     </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button class="btn cancelButton" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times fa-lg"></i></button>
-                <button id="createFolderConnectionButton" class="btn btn-primary" data-dismiss="modal" aria-hidden="true"><i class="fa fa-check fa-lg"></i></button>
-            </div>
-        </div><!-- /.modal-content -->
+                </div>
+                <div class="modal-footer">
+                    <button class="btn cancelButton" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times fa-lg"></i></button>
+                    <button id="createFolderConnectionButton" class="btn btn-primary" data-dismiss="modal" aria-hidden="true" type="submit"><i class="fa fa-check fa-lg"></i></button>
+                </div>
+            </div><!-- /.modal-content -->
+        </form>
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
