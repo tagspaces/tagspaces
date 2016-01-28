@@ -184,6 +184,7 @@ define(function(require, exports, module) {
     _isFileOpened = false;
     _isEditMode = false;
     _isFileChanged = false;
+    _openedFilePath = undefined;
     Mousetrap.unbind(TSCORE.Config.getEditDocumentKeyBinding());
     Mousetrap.unbind(TSCORE.Config.getSaveDocumentKeyBinding());
     Mousetrap.unbind(TSCORE.Config.getCloseViewerKeyBinding());
