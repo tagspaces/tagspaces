@@ -51,7 +51,7 @@ define(function(require, exports, module) {
     if ($('#exitFullScreen').length < 1) {
       $('#viewer').append(exitFullscreenButton);
     }
-    $("#exitFullScreen").show().on("click", leaveFullScreen)
+    $("#exitFullScreen").show().on("click", leaveFullScreen);
 
     var docElm = $('#viewer')[0];
     if (docElm.requestFullscreen) {
@@ -70,7 +70,7 @@ define(function(require, exports, module) {
     $('#closeOpenedFile').on("click", function() { closeFile(); });
     $('#nextFileButton').on("click", function() { TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getNextFile(_openedFilePath)); });
     $('#prevFileButton').on("click", function() { TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getPrevFile(_openedFilePath)); });
-    $('#reloadFile').on("click",function() { TSCORE.FileOpener.openFile(_openedFilePath); });
+    $('#reloadFile').on("click", function() { TSCORE.FileOpener.openFile(_openedFilePath); });
     $('#sendFile').on("click", function() { TSCORE.IO.sendFile(_openedFilePath); });
     $('#suggestTagsFile').on("click", function() { $('tagSuggestionsMenu').dropdown('toggle'); });
     $('#toggleFullWidthButton').on("click", TSCORE.toggleFullWidth);
