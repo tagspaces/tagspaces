@@ -649,8 +649,14 @@ define(function(require, exports, module) {
             $('#locationPerspective').append($('<option>').text(name).val(value.id));
           });         
         });
+        $('#createFolderConnectionButton').off();
         $('#createFolderConnectionButton').on('click', function() {
-          createLocation();
+          $('#formLocationCreate').validator('validate');
+          if ($(this).hasClass('disabled')) {
+            return false;
+          } else {
+            createLocation();
+          }
         });
       }
       $('#connectionName').val('');
@@ -665,21 +671,26 @@ define(function(require, exports, module) {
       $('#defaultLocation').prop('checked', enableDefaultlocation);
       $('#defaultLocation').prop('disabled', enableDefaultlocation);
 
-      $('#formLocationCreate').validator();
       $('#formLocationCreate').submit(function(e) {
         e.preventDefault();
         //if ($('#createFolderConnectionButton').prop('disabled') === false) {
         //  $('#createFolderConnectionButton').click();
         //}
       });
+      $('#formLocationCreate').off();
+
       $('#formLocationCreate').on('invalid.bs.validator', function() {
         $('#createFolderConnectionButton').prop('disabled', true);
       });
       $('#formLocationCreate').on('valid.bs.validator', function() {
         $('#createFolderConnectionButton').prop('disabled', false);
       });
+
+      $('#dialogCreateFolderConnection').off();
       $('#dialogCreateFolderConnection').on('shown.bs.modal', function() {
-        $('#folderLocation').focus();
+        //$('#folderLocation').focus();
+        $('#formLocationCreate').validator('destroy');
+        $('#formLocationCreate').validator();
       });
       $('#dialogCreateFolderConnection').modal({
         backdrop: 'static',
@@ -759,7 +770,6 @@ define(function(require, exports, module) {
           });
         });
       }
-      $('#formDirectoryRename').validator();
       $('#formDirectoryRename').submit(function(e) {
         e.preventDefault();
         if ($('#renameDirectoryButton').prop('disabled') === false) {
@@ -778,6 +788,8 @@ define(function(require, exports, module) {
       $('#dialogDirectoryRename').i18n();
       $('#dialogDirectoryRename').on('shown.bs.modal', function() {
         $('#directoryNewName').focus();
+        $('#formDirectoryRename').validator('destroy');
+        $('#formDirectoryRename').validator();
       });
       $('#dialogDirectoryRename').modal({
         backdrop: 'static',
