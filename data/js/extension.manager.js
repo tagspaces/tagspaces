@@ -48,6 +48,11 @@ define(function(require, exports, module) {
   function loadExtensionData() {
 
     var extFolderPath = getExtFolderPath();
+    //TODO: mozilla loads bower data incorrectly
+    if (isFirefox) {
+      return Promise.resolve();
+    }
+
     var promise = new Promise(function(resolve, reject) {
       TSCORE.IO.listDirectoryPromise(extFolderPath).then(function(dirList) {
         var readBowerFileWorkers = [];
