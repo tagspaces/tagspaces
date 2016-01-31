@@ -427,6 +427,7 @@ define(function(require, exports, module) {
    * @returns {Promise.<Success, Error>}
    */
   function renameDirectoryPromise(dirPath, newDirPath) {
+    var newDirPath = TSCORE.TagUtils.extractParentDirectoryPath(dirPath) + TSCORE.dirSeparator + newDirPath;
     console.log("Renaming directory: " + dirPath + " to " + newDirPath);
     return new Promise(function(resolve, reject) {
       if (dirPath === newDirPath) {
@@ -439,7 +440,7 @@ define(function(require, exports, module) {
           function(status, data, headers) {
             console.log("Rename Directory Status/Content/Headers:  " + status + " / " + data + " / " + headers);
             if (checkStatusCode(status)) {
-              resolve([dirPath, newDirPath]);
+              resolve(newDirPath);
             } else {
               reject("rename: " + dirPath + " failed " + status);
             }

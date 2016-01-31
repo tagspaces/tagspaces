@@ -37,7 +37,7 @@ define(function(require, exports, module) {
       if (isCordova) {
         lastOpenedFile = lastOpenedFile.substring(("file://").length, lastOpenedFile.length);
       }
-      if (TSCORE.FileOpener.isFileOpened() && oldFilePath == lastOpenedFile) {
+      if (TSCORE.FileOpener.isFileOpened() && oldFilePath === lastOpenedFile) {
         TSCORE.FileOpener.openFile(newFilePath);
       }
     }
