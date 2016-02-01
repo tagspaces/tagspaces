@@ -1,9 +1,13 @@
 {
 	"name": "tagspaces",
-	"version": "0.1",
+	"version": "0.1.1",
 	"main": "main.js",
 	"description" : "tagspaces electron",
 	"scripts" : {
 		"start": "electron ."
-	}
+	},
+	"dependencies": {
+    "fs-extra": "~0.24.0",
+    "trash": "~3.4.1"
+  }
 }
