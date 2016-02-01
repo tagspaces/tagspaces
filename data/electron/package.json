@@ -1,0 +1,9 @@
+{
+	"name": "tagspaces",
+	"version": "0.1",
+	"main": "main.js",
+	"description" : "tagspaces electron",
+	"scripts" : {
+		"start": "electron ."
+	}
+}
