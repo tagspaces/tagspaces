@@ -1,5 +1,5 @@
 /* Copyright (c) 2012-2016 The TagSpaces Authors. All rights reserved.
- * Use of this source code is governed by a AGPL3 license that 
+ * Use of this source code is governed by a AGPL3 license that
  * can be found in the LICENSE file. */
 /* global define, requirejs, _  */
 
@@ -133,7 +133,7 @@ var isWin = navigator.appVersion.indexOf("Win")!==-1;
       tsmeta:                 'js/meta',
       tsgettingstarted:       'js/gettingstarted',
       tsextapi:               'js/ext.api',
-      tsextmanager:           'js/extension.manager', 
+      tsextmanager:           'js/extension.manager',
       tsioapi:                 IO_JS,
       tspro:                   PRO_JS
     },
@@ -183,7 +183,7 @@ var isWin = navigator.appVersion.indexOf("Win")!==-1;
   });
 
   define(function (require) {
-    requirejs(['tscore','underscore'], function ( core) {
+    requirejs(['tscore','underscore'], function (core) {
       if(isCordova) {
         require(["cordova.js"]);
       } else {
