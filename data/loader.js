@@ -1,5 +1,5 @@
 /* Copyright (c) 2012-2016 The TagSpaces Authors. All rights reserved.
- * Use of this source code is governed by a AGPL3 license that 
+ * Use of this source code is governed by a AGPL3 license that
  * can be found in the LICENSE file. */
 /* global define, requirejs, _  */
 
@@ -7,6 +7,7 @@ var isFirefox = document.URL.indexOf( 'resource://' ) === 0;
 var isFirefoxOS = document.URL.indexOf( 'app://' ) === 0;
 var isChrome = document.URL.indexOf( 'chrome-extension://' ) === 0;
 var isNode = false;
+var isElectron = false;
 var isCordovaAndroid = document.URL.indexOf( 'file:///android_asset' ) === 0;
 var isCordovaiOS = navigator.isCordovaApp == true;
 var isCordova = isCordovaAndroid  == true || isCordovaiOS == true;
@@ -41,6 +42,16 @@ var isWin = navigator.appVersion.indexOf("Win")!==-1;
     console.log("node-webkit not found!");
   }
 
+  try {
+    if (process.versions['electron']) {
+      isElectron = true;
+      //electron bug
+      //https://github.com/atom/electron/issues/254
+      window.$ = window.jQuery = require('./libs/jquery/dist/jquery.min.js');
+    }
+  } catch(e) {
+    console.log(e.message);
+  }
   var PRO_JS = "pro/js/pro.api";
   if(PRO.indexOf("@@PROVERS") == 0 || PRO == "false") { PRO_JS = 'js/pro'; }
 
@@ -60,9 +71,12 @@ var isWin = navigator.appVersion.indexOf("Win")!==-1;
     IO_JS = "cordova/cordova.api";
   } else if (isWeb){
     IO_JS = "web/web.api";
+  } else if (isElectron) {
+    isChrome = false;
+    IO_JS = "electron/electron.api"
   }
 
-  console.log("Loading Loader - Firefox: "+isFirefox+" | ChromeExt: "+isChrome+" | Node: "+isNode+" | Cordova: "+isCordova+" | Web: "+isWeb+" | isWin: "+isWin);
+  console.log("Loading Loader - Firefox: "+isFirefox+" | ChromeExt: "+isChrome+" | Node: "+isNode+" | Cordova: "+isCordova+" | Web: "+isWeb+" | isWin: "+isWin+" | isElectron: "+isElectron);
 
   requirejs.config({
     map: {
@@ -119,7 +133,7 @@ var isWin = navigator.appVersion.indexOf("Win")!==-1;
       tsmeta:                 'js/meta',
       tsgettingstarted:       'js/gettingstarted',
       tsextapi:               'js/ext.api',
-      tsextmanager:           'js/extension.manager', 
+      tsextmanager:           'js/extension.manager',
       tsioapi:                 IO_JS,
       tspro:                   PRO_JS
     },
