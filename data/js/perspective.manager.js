@@ -62,7 +62,7 @@ define(function(require, exports, module) {
         $("#viewContainers").removeClass("appBackgroundTile");
       }
       $('#loading').hide();
-      if (isNode) {
+      if (isNode || isElectron) {
         TSCORE.IO.showMainWindow();
       }
       return true;

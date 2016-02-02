@@ -72,7 +72,6 @@ var isWin = navigator.appVersion.indexOf("Win")!==-1;
   } else if (isWeb){
     IO_JS = "web/web.api";
   } else if (isElectron) {
-    isChrome = false;
     IO_JS = "electron/electron.api"
   }
 
