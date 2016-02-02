@@ -9,6 +9,12 @@
   src: url("ubuntu-font/Ubuntu-R.ttf") format('truetype');
 }
 
+@font-face {
+  font-family: 'Glyphicons Halflings';
+  src: url('../libs/bootstrap/dist/fonts/glyphicons-halflings-regular.eot');
+  src: url('../libs/bootstrap/dist/fonts/glyphicons-halflings-regular.eot?#iefix') format('embedded-opentype'), url('../libs/bootstrap/dist/fonts/glyphicons-halflings-regular.woff2') format('woff2'), url('../libs/bootstrap/dist/fonts/glyphicons-halflings-regular.woff') format('woff'), url('../libs/bootstrap/dist/fonts/glyphicons-halflings-regular.ttf') format('truetype'), url('../libs/bootstrap/dist/fonts/glyphicons-halflings-regular.svg#glyphicons_halflingsregular') format('svg');
+}
+
 html, body {
 	width: 100%;
 	height: 100%;
