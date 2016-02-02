@@ -741,13 +741,14 @@ define(function(require, exports, module) {
    */
   function selectDirectory() {
     if (document.getElementById('folderDialogNodeWebkit') === null) {
-      $("body").append('<input style="display:none;" id="folderDialogNodeWebkit" type="file" nwdirectory />');
+      $("body").append('<input style="display:none;" id="folderDialogNodeWebkit" type="file" webkitdirectory />');
     }
     var chooser = $('#folderDialogNodeWebkit');
-    chooser.on("change", function() {
-      TSPOSTIO.selectDirectory($(this).val());
+    chooser.on("change", function(ev) {
+      var file = ev.target.files[0];
+      TSPOSTIO.selectDirectory(file.path);
       $(this).off("change");
-      $(this).val("");
+      $(this).val(""); 
     });
     chooser.trigger('click');
   }
