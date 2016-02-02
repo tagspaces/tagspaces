@@ -393,7 +393,7 @@ define(function(require, exports, module) {
       event.preventDefault();
     });
     // Managing droping of files in the perspectives
-    if (isNode) {
+    if (isNode || isElectron) {
       $('#viewContainers').on('dragenter', function(event) {
         event.preventDefault();
         $('#viewContainers').attr('style', 'border:2px dashed #098ddf');
@@ -823,10 +823,10 @@ define(function(require, exports, module) {
     } else if (isFirefox) {
       $('#openNatively').hide();
       $('#fileMenuOpenNatively').parent().hide();
-    } else if (isNode) {
+    } else if (isNode || isElectron) {
       $('#openFileInNewWindow').hide();
       //handling window maximization
-      var nwwin = gui.Window.get();
+      var nwwin = isNode ? gui.Window.get() : remote.getCurrentWindow();
       nwwin.on('maximize', function() {
         TSCORE.Config.setIsWindowMaximized(true);
         TSCORE.Config.saveSettings();

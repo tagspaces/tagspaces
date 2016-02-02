@@ -99,7 +99,7 @@ define(function(require, exports, module) {
       if (tsSettings.Settings.tagspacesList.length < 1) {
         tsCoreUI.startGettingStartedTour();
       }
-      if (isNode || isChrome) {
+      if (isNode || isChrome || isElectron) {
         // Handle command line argument in node-webkit
         tsIOApi.handleStartParameters(); // Handle minimizing to the tray in node-webkit
         //tsIOApi.handleTray();
@@ -124,7 +124,7 @@ define(function(require, exports, module) {
       fallbackLng: 'en_US'
     }, function() {
       $('[data-i18n]').i18n();
-      if (isNode) {
+      if (isNode || isElectron) {
         tsIOApi.initMainMenu();
       }
     });
