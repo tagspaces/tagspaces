@@ -2,10 +2,11 @@
  * Use of this source code is governed by a AGPL3 license that
  * can be found in the LICENSE file. */
 
-var fs = require('fs-extra'); // jshint ignore:line
-var pathUtils = require('path'); // jshint ignore:line
-var trash = require('trash'); // jshint ignore:line
+const fs = require('fs-extra'); // jshint ignore:line
+const pathUtils = require('path'); // jshint ignore:line
+const trash = require('trash'); // jshint ignore:line
 
+const electron = require('electron');
 /**
  * A implementation of the IOAPI for the nw.js platform
  * @class NWJS
@@ -13,6 +14,7 @@ var trash = require('trash'); // jshint ignore:line
  */
 define(function(require, exports, module) {
   "use strict";
+
 
   console.log("Loading electron.api.js..");
 
@@ -22,6 +24,7 @@ define(function(require, exports, module) {
   
   var showMainWindow = function() {
     //win.show();
+    console.log("TODO: showMainWindow");
   };
 
   process.on("uncaughtException", function(err) {
@@ -43,9 +46,9 @@ define(function(require, exports, module) {
 
   function handleTray() {
     // TODO disable in Ubuntu until node-webkit issue in unity fixed
-
+    console.log("TODO: handleTray");
     // Reference to window and tray
-    var win = gui.Window.get();
+    /*var win = gui.Window.get();
     var tray;
 
     // Get the minimize event
@@ -65,12 +68,12 @@ define(function(require, exports, module) {
         this.remove();
         tray = null;
       });
-    });
+    });*/
   }
 
   function handleStartParameters() {
-    
-    var cmdArguments = gui.App.argv;
+    console.log("TODO: handleStartParameters");
+    /*var cmdArguments = gui.App.argv;
     if (cmdArguments && cmdArguments.length > 0) {
       console.log("CMD Arguments: " + cmdArguments[0] + " Process running in " + process.cwd());
       var dataPathIndex;
@@ -89,7 +92,7 @@ define(function(require, exports, module) {
         TSCORE.FileOpener.openFileOnStartup(filePath);
         //TSCORE.IO.listDirectoryPromise(dirPath).then();
       }
-    }
+    }*/
   }
 
   function initMainMenu() {
@@ -176,11 +179,11 @@ define(function(require, exports, module) {
 
   // Brings the TagSpaces window on top of the windows
   function focusWindow() {
-    gui.Window.get().focus();
+    console.log("TODO: focusWindow");
+    //gui.Window.get().focus();
   }
 
   // IOAPI
-
   /**
    * Checks if new version is available
    * @name checkNewVersion
@@ -768,7 +771,7 @@ define(function(require, exports, module) {
    */
   function openDirectory(dirPath) {
     // opens directory
-    gui.Shell.openItem(dirPath);
+    electron.shell.showItemInFolder(dirPath);
   }
 
   /**
@@ -780,7 +783,7 @@ define(function(require, exports, module) {
    */
   function openFile(filePath) {
     // opens file with the native program
-    gui.Shell.openItem(filePath);
+    electron.shell.openItem(filePath);
   }
 
   // Platform specific calls
