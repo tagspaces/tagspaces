@@ -4,9 +4,8 @@
 
 const fs = require('fs-extra'); // jshint ignore:line
 const pathUtils = require('path'); // jshint ignore:line
-const trash = require('trash'); // jshint ignore:line
-
 const electron = require('electron');
+
 /**
  * A implementation of the IOAPI for the nw.js platform
  * @class NWJS
@@ -183,6 +182,14 @@ define(function(require, exports, module) {
     //gui.Window.get().focus();
   }
 
+  function trash(files) {
+    return new Promise(function(resolve, reject){
+      files.forEach(function(fullPath) {
+        electron.shell.moveItemToTrash(fullPath);
+      });
+      resolve(true);
+    });
+  }
   // IOAPI
   /**
    * Checks if new version is available
