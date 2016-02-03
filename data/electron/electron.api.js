@@ -53,9 +53,9 @@ define(function(require, exports, module) {
 
   function initMainMenu() {
 
-    if (!TSCORE.Config.getShowMainMenu()) {
+    /*if (!TSCORE.Config.getShowMainMenu()) {
       return;
-    }
+    }*/
 
     var Menu = remote.Menu;
     var template = [
@@ -101,6 +101,14 @@ define(function(require, exports, module) {
         label: 'View',
         submenu: [
           {
+            label: $.i18n.t("ns.common:reloadApplication"),
+            accelerator: 'CmdOrCtrl+R',
+            click: function(item, focusedWindow) {
+              if (focusedWindow)
+                focusedWindow.reload();
+            }
+          },
+          {
             label: $.i18n.t("ns.common:showTagLibraryTooltip") + " (" + TSCORE.Config.getShowTagLibraryKeyBinding() + ")",
             click: function() {
               TSCORE.UI.showTagsPanel();
@@ -113,7 +121,7 @@ define(function(require, exports, module) {
             }
           },
           {
-            label: $.i18n.t("ns.common:toggleFullScreen") + " (" + TSCORE.Config.getToggleFullScreenKeyBinding().toUpperCase() + ")",
+            label: $.i18n.t("ns.common:toggleFullScreen"),
             accelerator: (function() {
             if (process.platform == 'darwin')
               return 'Ctrl+Command+F';
@@ -125,7 +133,7 @@ define(function(require, exports, module) {
             }
           },
           {
-            label: $.i18n.t("ns.common:showDevTools") + " (" + TSCORE.Config.getOpenDevToolsScreenKeyBinding().toUpperCase() + ")",
+            label: $.i18n.t("ns.common:showDevTools"),
             accelerator: TSCORE.Config.getOpenDevToolsScreenKeyBinding().toUpperCase(),
             click: function() {
               win.toggleDevTools();
