@@ -29,6 +29,7 @@ app.on('ready', function() {
   console.log("mainWindow.loadURL: " + indexPath);
   console.log("App path: " + app.getAppPath());
 
+  mainWindow.setMenu(null);
   mainWindow.loadURL(indexPath);
 
   // Open the DevTools.

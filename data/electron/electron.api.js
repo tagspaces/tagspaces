@@ -52,22 +52,111 @@ define(function(require, exports, module) {
   }
 
   function initMainMenu() {
+
+    if (!TSCORE.Config.getShowMainMenu()) {
+      return;
+    }
+
     var Menu = remote.Menu;
-    var MenuItem = remote.MenuItem;
-    var menu = new Menu();
-    menu.append(new MenuItem({ label: 'MenuItem1', click: function() { console.log('item 1 clicked'); } }));
-    menu.append(new MenuItem({ label: 'MenuItem2', click: function() { console.log('item 2 clicked'); } }));
+    var template = [
+    {
+      label: 'Edit',
+        submenu: [
+          {
+            label: 'Undo',
+            accelerator: 'CmdOrCtrl+Z',
+            role: 'undo'
+          },
+          {
+            label: 'Redo',
+            accelerator: 'Shift+CmdOrCtrl+Z',
+            role: 'redo'
+          },
+          {
+            type: 'separator'
+          },
+          {
+            label: 'Cut',
+            accelerator: 'CmdOrCtrl+X',
+            role: 'cut'
+          },
+          {
+            label: 'Copy',
+            accelerator: 'CmdOrCtrl+C',
+            role: 'copy'
+          },
+          {
+            label: 'Paste',
+            accelerator: 'CmdOrCtrl+V',
+            role: 'paste'
+          },
+          {
+            label: 'Select All',
+            accelerator: 'CmdOrCtrl+A',
+            role: 'selectall'
+          },
+        ]
+      },
+      {
+        label: 'View',
+        submenu: [
+          {
+            label: $.i18n.t("ns.common:showTagLibraryTooltip") + " (" + TSCORE.Config.getShowTagLibraryKeyBinding() + ")",
+            click: function() {
+              TSCORE.UI.showTagsPanel();
+            }
+          },
+          {
+            label: $.i18n.t("ns.common:showLocationNavigatorTooltip") + " (" + TSCORE.Config.getShowFolderNavigatorBinding() + ")",
+            click: function() {
+              TSCORE.UI.showLocationsPanel();
+            }
+          },
+          {
+            label: $.i18n.t("ns.common:toggleFullScreen") + " (" + TSCORE.Config.getToggleFullScreenKeyBinding().toUpperCase() + ")",
+            accelerator: (function() {
+            if (process.platform == 'darwin')
+              return 'Ctrl+Command+F';
+            else
+              return 'F11';
+            })(),
+            click: function(item, focusedWindow) {
+              win.setFullScreen(!win.isFullScreen());
+            }
+          },
+          {
+            label: $.i18n.t("ns.common:showDevTools") + " (" + TSCORE.Config.getOpenDevToolsScreenKeyBinding().toUpperCase() + ")",
+            accelerator: TSCORE.Config.getOpenDevToolsScreenKeyBinding().toUpperCase(),
+            click: function() {
+              win.toggleDevTools();
+            }
+          },
+          {
+            label: $.i18n.t("ns.common:settings"),
+            click: function() {
+              TSCORE.UI.showOptionsDialog();
+            }
+          },
+        ]
+      },
+      {
+        label: 'Help',
+        submenu: [
+          {
+            label: $.i18n.t("ns.common:aboutTagSpaces"),
+            accelerator: "F1",
+            click: function() {
+              TSCORE.UI.showAboutDialog();
+            }
+          }
+        ]
+      },
+    ];
 
-    //menu.append(new MenuItem({ type: 'separator' }));
-    // menu.append(new MenuItem({ label: 'MenuItem2', type: 'checkbox', checked: true }));
-
-    window.addEventListener('contextmenu', function (e) {
-      e.preventDefault();
-      menu.popup(remote.getCurrentWindow());
-    }, false);
+    var menu = Menu.buildFromTemplate(template);
+    Menu.setApplicationMenu(menu); 
   }
   
-
   // Brings the TagSpaces window on top of the windows
   function focusWindow() {
     win.focus();
