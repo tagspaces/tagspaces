@@ -826,7 +826,7 @@ define(function(require, exports, module) {
 
       dirPath = normalizePath(dirPath);
       var newDirParentPath = normalizePath(newDirPath.substring(0, newDirPath.lastIndexOf('/')));
-      console.log("renameDirectoryPromise: " + dirPath + "to: " + newDirPath);
+      console.log("renameDirectoryPromise: " + dirPath + " to: " + newDirPath);
       // TODO check if the newFilePath exist or cause issues by renaming
       fsRoot.getDirectory(newDirParentPath, {
           create: false,

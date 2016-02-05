@@ -2,10 +2,10 @@
  * Use of this source code is governed by a AGPL3 license that
  * can be found in the LICENSE file. */
 
-var fs = require('fs-extra'); // jshint ignore:line
-var pathUtils = require('path'); // jshint ignore:line
-var trash = require('trash'); // jshint ignore:line
-
+const fs = require('fs-extra'); // jshint ignore:line
+const pathUtils = require('path'); // jshint ignore:line
+const electron = require('electron');
+const remote = electron.remote;
 /**
  * A implementation of the IOAPI for the nw.js platform
  * @class NWJS
@@ -19,9 +19,10 @@ define(function(require, exports, module) {
   var TSCORE = require("tscore");
   var TSPOSTIO = require("tspostioapi");
   var fsWatcher;
-  
+  var win = remote.getCurrentWindow();
+
   var showMainWindow = function() {
-    //win.show();
+    win.show();
   };
 
   process.on("uncaughtException", function(err) {
@@ -43,144 +44,141 @@ define(function(require, exports, module) {
 
   function handleTray() {
     // TODO disable in Ubuntu until node-webkit issue in unity fixed
-
-    // Reference to window and tray
-    var win = gui.Window.get();
-    var tray;
-
-    // Get the minimize event
-    win.on('minimize', function() {
-      // Hide window
-      this.hide();
-
-      // Show tray
-      tray = new gui.Tray({
-        title: 'Tray',
-        icon: 'icon128.png'
-      });
-
-      // Show window and remove tray when clicked
-      tray.on('click', function() {
-        win.show();
-        this.remove();
-        tray = null;
-      });
-    });
+    console.log("TODO: handleTray");
   }
 
   function handleStartParameters() {
-    
-    var cmdArguments = gui.App.argv;
-    if (cmdArguments && cmdArguments.length > 0) {
-      console.log("CMD Arguments: " + cmdArguments[0] + " Process running in " + process.cwd());
-      var dataPathIndex;
-      cmdArguments.forEach(function(part, index) {
-        if (part.indexOf("--data-path") === 0) {
-          dataPathIndex = index;
-        }
-      });
-      if (dataPathIndex >= 0 && cmdArguments.length >= dataPathIndex + 1) {
-        cmdArguments.splice(dataPathIndex, 2);
-      }
-      console.log("CMD Arguments cleaned: " + cmdArguments);
-      var filePath = "" + cmdArguments;
-      if (filePath.length > 1) {
-        var dirPath = TSCORE.TagUtils.extractContainingDirectoryPath(filePath);
-        TSCORE.FileOpener.openFileOnStartup(filePath);
-        //TSCORE.IO.listDirectoryPromise(dirPath).then();
-      }
-    }
+    console.log("TODO: handleStartParameters");
   }
 
   function initMainMenu() {
-    if (isOSX) {
-      rootMenu.createMacBuiltin("TagSpaces");
-    }
-    if (TSCORE.Config.getShowMainMenu() && !menuInitialuzed) {
-      aboutMenu.append(new gui.MenuItem({
-        type: 'normal',
-        label: $.i18n.t("ns.common:aboutTagSpaces"),
-        click: function() {
-          TSCORE.UI.showAboutDialog();
-        }
-      }));
 
-      viewMenu.append(new gui.MenuItem({
-        type: 'normal',
-        label: $.i18n.t("ns.common:showTagLibraryTooltip") + " (" + TSCORE.Config.getShowTagLibraryKeyBinding() + ")",
-        click: function() {
-          TSCORE.UI.showTagsPanel();
-        }
-      }));
+    /*if (!TSCORE.Config.getShowMainMenu()) {
+      return;
+    }*/
 
-      viewMenu.append(new gui.MenuItem({
-        type: 'normal',
-        label: $.i18n.t("ns.common:showLocationNavigatorTooltip") + " (" + TSCORE.Config.getShowFolderNavigatorBinding() + ")",
-        click: function() {
-          TSCORE.UI.showLocationsPanel();
-        }
-      }));
+    var Menu = remote.Menu;
+    var template = [
+    {
+      label: 'Edit',
+        submenu: [
+          {
+            label: 'Undo',
+            accelerator: 'CmdOrCtrl+Z',
+            role: 'undo'
+          },
+          {
+            label: 'Redo',
+            accelerator: 'Shift+CmdOrCtrl+Z',
+            role: 'redo'
+          },
+          {
+            type: 'separator'
+          },
+          {
+            label: 'Cut',
+            accelerator: 'CmdOrCtrl+X',
+            role: 'cut'
+          },
+          {
+            label: 'Copy',
+            accelerator: 'CmdOrCtrl+C',
+            role: 'copy'
+          },
+          {
+            label: 'Paste',
+            accelerator: 'CmdOrCtrl+V',
+            role: 'paste'
+          },
+          {
+            label: 'Select All',
+            accelerator: 'CmdOrCtrl+A',
+            role: 'selectall'
+          },
+        ]
+      },
+      {
+        label: 'View',
+        submenu: [
+          {
+            label: $.i18n.t("ns.common:reloadApplication"),
+            accelerator: 'CmdOrCtrl+R',
+            click: function(item, focusedWindow) {
+              if (focusedWindow)
+                focusedWindow.reload();
+            }
+          },
+          {
+            label: $.i18n.t("ns.common:showTagLibraryTooltip") + " (" + TSCORE.Config.getShowTagLibraryKeyBinding() + ")",
+            click: function() {
+              TSCORE.UI.showTagsPanel();
+            }
+          },
+          {
+            label: $.i18n.t("ns.common:showLocationNavigatorTooltip") + " (" + TSCORE.Config.getShowFolderNavigatorBinding() + ")",
+            click: function() {
+              TSCORE.UI.showLocationsPanel();
+            }
+          },
+          {
+            label: $.i18n.t("ns.common:toggleFullScreen"),
+            accelerator: (function() {
+            if (process.platform == 'darwin')
+              return 'Ctrl+Command+F';
+            else
+              return 'F11';
+            })(),
+            click: function(item, focusedWindow) {
+              win.setFullScreen(!win.isFullScreen());
+            }
+          },
+          {
+            label: $.i18n.t("ns.common:showDevTools"),
+            accelerator: TSCORE.Config.getOpenDevToolsScreenKeyBinding().toUpperCase(),
+            click: function() {
+              win.toggleDevTools();
+            }
+          },
+          {
+            label: $.i18n.t("ns.common:settings"),
+            click: function() {
+              TSCORE.UI.showOptionsDialog();
+            }
+          },
+        ]
+      },
+      {
+        label: 'Help',
+        submenu: [
+          {
+            label: $.i18n.t("ns.common:aboutTagSpaces"),
+            accelerator: "F1",
+            click: function() {
+              TSCORE.UI.showAboutDialog();
+            }
+          }
+        ]
+      },
+    ];
 
-      viewMenu.append(new gui.MenuItem({
-        type: 'separator'
-      }));
-
-      viewMenu.append(new gui.MenuItem({
-        type: 'normal',
-        label: $.i18n.t("ns.common:toggleFullScreen") + " (" + TSCORE.Config.getToggleFullScreenKeyBinding().toUpperCase() + ")",
-        click: function() {
-          win.toggleFullscreen();
-        }
-      }));
-
-      viewMenu.append(new gui.MenuItem({
-        type: 'normal',
-        label: $.i18n.t("ns.common:showDevTools") + " (" + TSCORE.Config.getOpenDevToolsScreenKeyBinding().toUpperCase() + ")",
-        click: function() {
-          win.showDevTools();
-        }
-      }));
-
-      viewMenu.append(new gui.MenuItem({
-        type: 'separator'
-      }));
-
-      viewMenu.append(new gui.MenuItem({
-        type: 'normal',
-        label: $.i18n.t("ns.common:settings"),
-        click: function() {
-          TSCORE.UI.showOptionsDialog();
-        }
-      }));
-
-      rootMenu.append(new gui.MenuItem({
-        type: 'normal',
-        label: $.i18n.t("ns.common:view"),
-        submenu: viewMenu
-      }));
-
-      rootMenu.append(new gui.MenuItem({
-        type: 'normal',
-        label: $.i18n.t("ns.common:help"),
-        submenu: aboutMenu
-      }));
-      win.menu = rootMenu;
-
-      menuInitialuzed = true;
-    } else {
-      if (isOSX) {
-        win.menu = rootMenu;
-      }
-    }
+    var menu = Menu.buildFromTemplate(template);
+    Menu.setApplicationMenu(menu); 
   }
-
+  
   // Brings the TagSpaces window on top of the windows
   function focusWindow() {
-    gui.Window.get().focus();
+    win.focus();
   }
 
+  function trash(files) {
+    return new Promise(function(resolve, reject){
+      files.forEach(function(fullPath) {
+        electron.shell.moveItemToTrash(fullPath);
+      });
+      resolve(true);
+    });
+  }
   // IOAPI
-
   /**
    * Checks if new version is available
    * @name checkNewVersion
@@ -731,13 +729,14 @@ define(function(require, exports, module) {
    */
   function selectDirectory() {
     if (document.getElementById('folderDialogNodeWebkit') === null) {
-      $("body").append('<input style="display:none;" id="folderDialogNodeWebkit" type="file" nwdirectory />');
+      $("body").append('<input style="display:none;" id="folderDialogNodeWebkit" type="file" webkitdirectory />');
     }
     var chooser = $('#folderDialogNodeWebkit');
-    chooser.on("change", function() {
-      TSPOSTIO.selectDirectory($(this).val());
+    chooser.on("change", function(ev) {
+      var file = ev.target.files[0];
+      TSPOSTIO.selectDirectory(file.path);
       $(this).off("change");
-      $(this).val("");
+      $(this).val(""); 
     });
     chooser.trigger('click');
   }
@@ -768,7 +767,7 @@ define(function(require, exports, module) {
    */
   function openDirectory(dirPath) {
     // opens directory
-    gui.Shell.openItem(dirPath);
+    electron.shell.showItemInFolder(dirPath);
   }
 
   /**
@@ -780,7 +779,7 @@ define(function(require, exports, module) {
    */
   function openFile(filePath) {
     // opens file with the native program
-    gui.Shell.openItem(filePath);
+    electron.shell.openItem(filePath);
   }
 
   // Platform specific calls

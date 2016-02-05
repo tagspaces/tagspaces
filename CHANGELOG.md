@@ -1,5 +1,10 @@
 ﻿#Changelog
 
+## Version 2.1.1 / 2016.02.03
+- Fixing issue with renaming folder in the WebDAV edition
+- Fixing missing icons
+- Fixing loading extensions in Firefox 
+
 ##Version 2.1.0 / 2016.01.28
 - Added new perspective(ImageSwiper) for browsing of photos and image
 - Separating all the extension in separate modules/repositories, so they can be now easily extended by advanced users
