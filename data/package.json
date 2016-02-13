@@ -13,5 +13,8 @@
     "width": 1280,
     "height": 768
   },
-  "nodejs": true
+  "nodejs": true,
+  "dependencies": {
+    "fs-extra": "~0.24.0"
+  }
 }
