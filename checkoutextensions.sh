@@ -1,24 +1,21 @@
-
 #!/bin/bash
-if [ ! -d "extension" ]; then
-    mkdir extension fi
+if [ ! -d "extensions" ]; then
+    mkdir extensions
+fi
 
 
 # -------------------------
-# perspectveGrid
+# perspectiveGrid
 # -------------------------
 if [ -d "extensions/perspectiveGrid" ]; then
     cd extensions/perspectiveGrid
     git fetch --all
-    cd ../..
 else
     git clone https://github.com/tagspaces/perspectiveGrid.git extensions/perspectiveGrid
+    cd extensions/perspectiveGrid
 fi
-
-#!/bin/bash
-if [ ! -d "extension" ]; then
-    mkdir extension fi
-
+bower link
+cd ../..
 
 # -------------------------
 # perspectiveImageSwiper
@@ -26,15 +23,12 @@ if [ ! -d "extension" ]; then
 if [ -d "extensions/perspectiveImageSwiper" ]; then
     cd extensions/perspectiveImageSwiper
     git fetch --all
-    cd ../..
 else
     git clone https://github.com/tagspaces/perspectiveImageSwiper.git extensions/perspectiveImageSwiper
+    cd extensions/perspectiveImageSwiper
 fi
-
-#!/bin/bash
-if [ ! -d "extension" ]; then
-    mkdir extension fi
-
+bower link
+cd ../..
 
 # -------------------------
 # perspectiveList
@@ -42,14 +36,12 @@ if [ ! -d "extension" ]; then
 if [ -d "extensions/perspectiveList" ]; then
     cd extensions/perspectiveList
     git fetch --all
-    cd ../..
 else
     git clone https://github.com/tagspaces/perspectiveList.git extensions/perspectiveList
+    cd extensions/perspectiveList
 fi
-
-#!/bin/bash
-if [ ! -d "extension" ]; then
-    mkdir extension fi
+bower link
+cd ../..
 
 
 # -------------------------
@@ -58,31 +50,26 @@ if [ ! -d "extension" ]; then
 if [ -d "extensions/perspectiveGraph" ]; then
     cd extensions/perspectiveGraph
     git fetch --all
-    cd ../..
 else
     git clone https://github.com/tagspaces/perspectiveGraph.git extensions/perspectiveGraph
+    cd extensions/perspectiveGraph
 fi
-
-#!/bin/bash
-if [ ! -d "extension" ]; then
-    mkdir extension fi
+bower link
+cd ../..
 
 
 # -------------------------
 # viewerHTML
 # -------------------------
 if [ -d "extensions/viewerHTML" ]; then
-    cd extensions/perspectiveImageSwiper
+    cd extensions/viewerHTML
     git fetch --all
-    cd ../..
 else
     git clone https://github.com/tagspaces/viewerHTML.git extensions/viewerHTML
+    cd extensions/viewerHTML
 fi
-
-#!/bin/bash
-if [ ! -d "extension" ]; then
-    mkdir extension fi
-
+bower link
+cd ../..
 
 # -------------------------
 # viewerImage
@@ -90,15 +77,12 @@ if [ ! -d "extension" ]; then
 if [ -d "extensions/viewerImage" ]; then
     cd extensions/viewerImage
     git fetch --all
-    cd ../..
 else
     git clone https://github.com/tagspaces/viewerImage.git extensions/viewerImage
+    cd extensions/viewerImage
 fi
-
-#!/bin/bash
-if [ ! -d "extension" ]; then
-    mkdir extension fi
-
+bower link
+cd ../..
 
 # -------------------------
 # viewerMD
@@ -106,15 +90,12 @@ if [ ! -d "extension" ]; then
 if [ -d "extensions/viewerMD" ]; then
     cd extensions/viewerMD
     git fetch --all
-    cd ../..
 else
     git clone https://github.com/tagspaces/viewerMD.git extensions/viewerMD
+    cd extensions/viewerMD
 fi
-
-#!/bin/bash
-if [ ! -d "extension" ]; then
-    mkdir extension fi
-
+bower link
+cd ../..
 
 # -------------------------
 # viewerMHTML
@@ -122,15 +103,12 @@ if [ ! -d "extension" ]; then
 if [ -d "extensions/viewerMHTML" ]; then
     cd extensions/viewerMHTML
     git fetch --all
-    cd ../..
 else
     git clone https://github.com/tagspaces/viewerMHTML.git extensions/viewerMHTML
+    cd extensions/viewerMHTML
 fi
-
-#!/bin/bash
-if [ ! -d "extension" ]; then
-    mkdir extension fi
-
+bower link
+cd ../..
 
 # -------------------------
 # viewerURL
@@ -138,15 +116,12 @@ if [ ! -d "extension" ]; then
 if [ -d "extensions/viewerURL" ]; then
     cd extensions/viewerURL
     git fetch --all
-    cd ../..
 else
     git clone https://github.com/tagspaces/viewerURL.git extensions/viewerURL
+    cd extensions/viewerURL
 fi
-
-#!/bin/bash
-if [ ! -d "extension" ]; then
-    mkdir extension fi
-
+bower link
+cd ../..
 
 # -------------------------
 # viewerZIP
@@ -154,15 +129,12 @@ if [ ! -d "extension" ]; then
 if [ -d "extensions/viewerZIP" ]; then
     cd extensions/viewerZIP
     git fetch --all
-    cd ../..
 else
     git clone https://github.com/tagspaces/viewerZIP.git extensions/viewerZIP
+    cd extensions/viewerZIP
 fi
-
-#!/bin/bash
-if [ ! -d "extension" ]; then
-    mkdir extension fi
-
+bower link
+cd ../..
 
 # -------------------------
 # viewerPDF
@@ -170,15 +142,12 @@ if [ ! -d "extension" ]; then
 if [ -d "extensions/viewerPDF" ]; then
     cd extensions/viewerPDF
     git fetch --all
-    cd ../..
 else
     git clone https://github.com/tagspaces/viewerPDF.git extensions/viewerPDF
+    cd extensions/viewerPDF
 fi
-
-#!/bin/bash
-if [ ! -d "extension" ]; then
-    mkdir extension fi
-
+bower link
+cd ../..
 
 # -------------------------
 # viewerText
@@ -186,15 +155,12 @@ if [ ! -d "extension" ]; then
 if [ -d "extensions/viewerText" ]; then
     cd extensions/viewerText
     git fetch --all
-    cd ../..
 else
     git clone https://github.com/tagspaces/viewerText.git extensions/viewerText
+    cd extensions/viewerText
 fi
-
-#!/bin/bash
-if [ ! -d "extension" ]; then
-    mkdir extension fi
-
+bower link
+cd ../..
 
 # -------------------------
 # editorHTML
@@ -202,15 +168,12 @@ if [ ! -d "extension" ]; then
 if [ -d "extensions/editorHTML" ]; then
     cd extensions/editorHTML
     git fetch --all
-    cd ../..
 else
     git clone https://github.com/tagspaces/editorHTML.git extensions/editorHTML
+    cd extensions/editorHTML
 fi
-
-#!/bin/bash
-if [ ! -d "extension" ]; then
-    mkdir extension fi
-
+bower link
+cd ../..
 
 # -------------------------
 # editorJSONv
@@ -218,15 +181,12 @@ if [ ! -d "extension" ]; then
 if [ -d "extensions/editorJSON" ]; then
     cd extensions/editorJSON
     git fetch --all
-    cd ../..
 else
     git clone https://github.com/tagspaces/editorJSON.git extensions/editorJSON
+    cd extensions/editorJSON
 fi
-
-#!/bin/bash
-if [ ! -d "extension" ]; then
-    mkdir extension fi
-
+bower link
+cd ../..
 
 # -------------------------
 # editorODF
@@ -234,15 +194,12 @@ if [ ! -d "extension" ]; then
 if [ -d "extensions/editorODF" ]; then
     cd extensions/editorODF
     git fetch --all
-    cd ../..
 else
     git clone https://github.com/tagspaces/editorODF.git extensions/editorODF
+    cd extensions/editorODF
 fi
-
-#!/bin/bash
-if [ ! -d "extension" ]; then
-    mkdir extension fi
-
+bower link
+cd ../..
 
 # -------------------------
 # editorText
@@ -250,15 +207,12 @@ if [ ! -d "extension" ]; then
 if [ -d "extensions/editorText" ]; then
     cd extensions/editorText
     git fetch --all
-    cd ../..
 else
     git clone https://github.com/tagspaces/editorText.git extensions/editorText
+    cd extensions/editorText
 fi
-
-#!/bin/bash
-if [ ! -d "extension" ]; then
-    mkdir extension fi
-
+bower link
+cd ../..
 
 # -------------------------
 # viewerEPUB
@@ -266,15 +220,12 @@ if [ ! -d "extension" ]; then
 if [ -d "extensions/viewerEPUB" ]; then
     cd extensions/viewerEPUB
     git fetch --all
-    cd ../..
 else
     git clone https://github.com/tagspaces/viewerEPUB.git extensions/viewerEPUB
+    cd extensions/viewerEPUB
 fi
-
-#!/bin/bash
-if [ ! -d "extension" ]; then
-    mkdir extension fi
-
+bower link
+cd ../..
 
 # -------------------------
 # viewerAudioVideo
@@ -282,15 +233,12 @@ if [ ! -d "extension" ]; then
 if [ -d "extensions/viewerAudioVideo" ]; then
     cd extensions/viewerAudioVideo
     git fetch --all
-    cd ../..
 else
     git clone https://github.com/tagspaces/viewerAudioVideo.git extensions/viewerAudioVideo
+    cd extensions/viewerAudioVideo
 fi
-
-#!/bin/bash
-if [ ! -d "extension" ]; then
-    mkdir extension fi
-
+bower link
+cd ../..
 
 # -------------------------
 # viewerBrowser
@@ -298,7 +246,32 @@ if [ ! -d "extension" ]; then
 if [ -d "extensions/viewerBrowser" ]; then
     cd extensions/viewerBrowser
     git fetch --all
-    cd ../..
 else
     git clone https://github.com/tagspaces/viewerBrowser.git extensions/viewerBrowser
+    cd extensions/viewerBrowser
 fi
+bower link
+cd ../..
+
+cd data
+bower link "HTML Editor" editorHTML
+bower link "Simple Viewer" viewerBrowser
+bower link "JSON Editor" editorJSON
+bower link "ODF Editor" editorODF
+bower link "Text Editor" editorText
+bower link "FolderViz" perspectiveGraph
+bower link "Grid" perspectiveGrid
+bower link "ImageSwiper" perspectiveImageSwiper
+bower link "List" perspectiveList
+bower link "Audio Video Player" viewerAudioVideo
+bower link "EPUB Reader" viewerEPUB
+bower link "HTML Reader" viewerHTML
+bower link "Image Viewer" viewerImage
+bower link "Markdown Reader" viewerMD
+bower link "MHTML Reader" viewerMHTML
+bower link "PDF Reader" viewerPDF
+bower link "Text Reader" viewerText
+bower link "Link Opener" viewerURL
+bower link "ZIP Opener" viewerZIP
+cd ..
+
