@@ -3,6 +3,11 @@
 const electron = require('electron');
 const app = electron.app;  // Module to control application life.
 const BrowserWindow = electron.BrowserWindow;  // Module to create native browser window.
+
+//app.setPath('userData','data'); // making the app portable
+
+//console.log("CM Args: " + JSON.stringify(process.argv));
+
 var path = require('path');
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.

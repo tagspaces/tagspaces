@@ -11,6 +11,7 @@ docs
 data/pro
 data/ext
 nwjsdata
+data/electron/data
 data/node-webkit/locales
 data/node-webkit/ffmpegsumo.dll
 data/node-webkit/icudtl.dat

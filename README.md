@@ -67,14 +67,14 @@ Go to the data folder and install the TagSpaces extensions with bower:
     $ bower install
     
 
-#### Run the native Windows, Linux or Mac OS X application with nw.js
+#### Run the native Windows, Linux or Mac OS X application with NW.js
 * Download [nw.js](https://github.com/nwjs/nw.js) prebuilt binaries for your system environment.
     * For Windows: copy `nw.exe, nw.pak, icudt.dll, ffmpegsumo.dll` to `tagspaces\data\node-webkit` directory.
     * For Linux: copy `nw, nw.pak, icudtl.dat, libffmpegsumo.so` to `tagspaces/data/node-webkit` directory. If you experience issue related to libudev.so.0 read the following [article](https://github.com/rogerwang/node-webkit/wiki/The-solution-of-lacking-libudev.so.0).
     * For Mac OS X: copy `node-webkit.app` to `tagspaces/data/node-webkit` directory.
 * Run the `nw` executable file.
 
-#### Run the native Windows, Linux or Mac OS X application with Electron platform
+#### Run the native Windows, Linux or Mac OS X application with Electron
 * Install the `electron-prebuilt` package with this command: `npm install -g electron-prebuilt`
 * Goto the folder: `cd tagspaces/data/electron`
 * Execute the following command the `electron .`
@@ -92,18 +92,18 @@ Go to the data folder and install the TagSpaces extensions with bower:
 * Start the SDK by executing `source bin/activate` in the Addon SDK folder
 * Go to the your local tagspaces folder and run the following command, where the -p argument specifies some local firefox profile:
 
-    `$cfx run -p /tmp/mozprofile`
+    $cfx run -p /tmp/mozprofile
 
 * Start the addon by clicking the TagSpaces icon in the upper right area of Firefox
 
 #### How to setup the WebDAV edition?
 There is a script in root folder of the repository called `webdavserver.js`, which can be started with:
 
-    `node webdavserver.js`
+    node webdavserver.js
     
 This command will start a local node.js based WebDAV server on `http://127.0.0.1:8000`. Open your browser and enter the following URL:
 
-    `http://127.0.0.1:8000/index.html`
+    http://127.0.0.1:8000/index.html
         
 You will be prompted for user credentials, which are username: `demo` and password: `demo` and now you should be able to work with the WebDAV version of TagSpaces.
 
