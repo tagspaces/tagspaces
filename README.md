@@ -18,22 +18,22 @@ To get updates you can:
 
     ./data...............see the next lines
     ./data/assets........contains all the css and images used in the application
-    ./data/ext...........contains the code of tagspaces extensions
-    ./data/js............contains the javascripts which run the application 
+    ./data/js............contains the javascript module of the application 
     ./data/libs..........contains external javascript libraries together with the license they are distributed 
-    ./data/chromium...contains files specific for the current Chrome browser extension
+    ./data/chromium......contains files specific for the current Chrome browser extension
     ./data/cordova ......contains files needed for the building of the Android application which is based on Cordova
+    ./data/electron......contains files needed for the Windows, Linux and Mac OS builds of the application
     ./data/mozilla.......contains files needed for the Firefox extension based on addon sdk
     ./data/web...........contains files needed for the WebDAV/ownCloud based release of TagSpaces
-    ./data/node-webkit...contains files needed for the windows, linux and mac os build of the application
+    ./data/node-webkit...contains files needed for the Windows, Linux and Mac OS builds of the application
     ./data/templates.....contains HTML templates needed for the UI
     ./data/locales.......contains files need for the localisation of the application UI
     ./data/_locales......contains files need for the localisation of the chrome extension UI
 
 ## Downloads 
-You can find the latest release of TagSpace in the [Releases Section](https://github.com/tagspaces/tagspaces/releases/)
+You can find the latest release of TagSpace in the github [release area](https://github.com/tagspaces/tagspaces/releases/) of TagSpaces
 
-The full changelog is available here: [Changelog](CHANGELOG.md)
+A full list of the changes is available in our [changelog](CHANGELOG.md)
 
 ## Features
 
