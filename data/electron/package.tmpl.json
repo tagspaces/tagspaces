@@ -1,0 +1,12 @@
+{
+  "name": "@@APPNAME",
+  "description": "@@APPDESCRIPTION",
+  "version": "@@VERSION.@@BUILD",
+  "main": "main.js",
+  "scripts" : {
+    "start": "electron ."
+  },
+  "dependencies": {
+    "fs-extra": "~0.24.0"
+  }
+}
