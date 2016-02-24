@@ -20,6 +20,7 @@
     "i18next": "~1.10.1",
     "mousetrap": "~1.5.3",
     "noty": "~2.3.7",
+    "pdfjs-dist": "~1.4.83",
     "spinkit": "~1.2.5",
     "require-css": "~0.1.8",
     "requirejs": "~2.1.20",
