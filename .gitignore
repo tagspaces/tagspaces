@@ -5,7 +5,6 @@ CHANGELOG.TXT
 runfirefox
 runfirefoxbeta
 /node_modules
-/data/node_modules
 extensions
 docs
 data/pro
