@@ -8,6 +8,14 @@ const BrowserWindow = electron.BrowserWindow;  // Module to create native browse
 
 //console.log("CM Args: " + JSON.stringify(process.argv));
 
+var debugMode;
+process.argv.forEach(function(arg) {
+    if (arg.indexOf('-d') >= 0) {
+        debugMode = true;
+    }
+});
+
+
 var path = require('path');
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -38,7 +46,9 @@ app.on('ready', function() {
   mainWindow.loadURL(indexPath);
 
   // Open the DevTools.
-  //mainWindow.webContents.openDevTools();
+  if(debugMode) {
+    mainWindow.webContents.openDevTools();
+  }
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function() {
