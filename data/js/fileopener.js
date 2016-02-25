@@ -226,6 +226,8 @@ define(function(require, exports, module) {
     _openedFilePath = filePath;
     //$("#selectedFilePath").val(_openedFilePath.replace("\\\\","\\"));
     if (isWeb) {
+      window.history.pushState("", "TagSpaces", "/index.html?p=" + encodeURIComponent(filePath));
+      console.log("Link to file for sharing: " + window.location.href);
       var downloadLink;
       if (location.port === '') {
         downloadLink = location.protocol + '//' + location.hostname + _openedFilePath;
