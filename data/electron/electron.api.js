@@ -4,8 +4,8 @@
 
 const fs = require('fs-extra'); // jshint ignore:line
 const pathUtils = require('path'); // jshint ignore:line
-const electron = require('electron');
-const remote = electron.remote;
+const electron = require('electron'); // jshint ignore:line
+const remote = electron.remote; // jshint ignore:line
 /**
  * A implementation of the IOAPI for the nw.js platform
  * @class NWJS
@@ -27,14 +27,14 @@ define(function(require, exports, module) {
     win.show();
   };
 
-  process.on("uncaughtException", function(err) {
+  /*process.on("uncaughtException", function(err) {
     //var msg = ' Information | Description \n' +
     //          '-------------|-----------------------------\n' +
     //          ' Date        | '+ new Date +'\n' +
     //          ' Type        | UncaughtException \n' +
     //          ' Stack       | '+ err.stack +'\n\n';
     //fs.appendFile(errorLogFile, '---uncaughtException---\n' + msg);
-  });
+  });*/
 
   // Experimental functionality
   function watchDirecotory(dirPath, listener) {
@@ -61,8 +61,8 @@ define(function(require, exports, module) {
 
     var Menu = remote.Menu;
     var template = [
-    {
-      label: 'Edit',
+      {
+        label: 'Edit',
         submenu: [
           {
             label: 'Undo',
@@ -106,8 +106,9 @@ define(function(require, exports, module) {
             label: $.i18n.t("ns.common:reloadApplication"),
             accelerator: 'CmdOrCtrl+R',
             click: function(item, focusedWindow) {
-              if (focusedWindow)
+              if (focusedWindow) {
                 focusedWindow.reload();
+              }
             }
           },
           {
@@ -125,10 +126,11 @@ define(function(require, exports, module) {
           {
             label: $.i18n.t("ns.common:toggleFullScreen"),
             accelerator: (function() {
-            if (process.platform == 'darwin')
-              return 'Ctrl+Command+F';
-            else
-              return 'F11';
+              if (process.platform == 'darwin') {
+                return 'Ctrl+Command+F';
+              } else {
+                return 'F11';
+              }
             })(),
             click: function(item, focusedWindow) {
               win.setFullScreen(!win.isFullScreen());
@@ -173,7 +175,7 @@ define(function(require, exports, module) {
   }
 
   function trash(files) {
-    return new Promise(function(resolve, reject){
+    return new Promise(function(resolve, reject) {
       files.forEach(function(fullPath) {
         electron.shell.moveItemToTrash(fullPath);
       });

@@ -4,17 +4,16 @@ const electron = require('electron');
 const app = electron.app;  // Module to control application life.
 const BrowserWindow = electron.BrowserWindow;  // Module to create native browser window.
 
-//app.setPath('userData','data'); // making the app portable
-
-//console.log("CM Args: " + JSON.stringify(process.argv));
 
 var debugMode;
 process.argv.forEach(function(arg) {
-    if (arg.indexOf('-d') >= 0) {
-        debugMode = true;
-    }
-});
+  if (arg.indexOf('-d') >= 0) {
+    debugMode = true;
+  }
 
+  //app.setPath('userData','data'); // making the app portable
+
+});
 
 var path = require('path');
 // Keep a global reference of the window object, if you don't, the window will
@@ -30,10 +29,7 @@ app.on('window-all-closed', function() {
   }
 });
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
 app.on('ready', function() {
-  // Create the browser window.
   mainWindow = new BrowserWindow({width: 1280, height: 768});
 
   // and load the index.html of the app.
@@ -45,8 +41,7 @@ app.on('ready', function() {
   mainWindow.setMenu(null);
   mainWindow.loadURL(indexPath);
 
-  // Open the DevTools.
-  if(debugMode) {
+  if (debugMode) {
     mainWindow.webContents.openDevTools();
   }
 
