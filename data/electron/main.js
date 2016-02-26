@@ -4,15 +4,22 @@ const electron = require('electron');
 const app = electron.app;  // Module to control application life.
 const BrowserWindow = electron.BrowserWindow;  // Module to create native browser window.
 
-
 var debugMode;
-process.argv.forEach(function(arg) {
-  if (arg.indexOf('-d') >= 0) {
+var startupFilePath;
+
+//handling start parameter
+//console.log(JSON.stringify(process.argv));
+process.argv.forEach(function(arg, count) {
+  if (arg.toLowerCase() === '-d' || arg.toLowerCase() === '-debug') {
     debugMode = true;
+  } else if (arg.toLowerCase() === '-p' || arg.toLowerCase() === '-portable') {
+    app.setPath('userData', 'tsprofile'); // making the app portable
+  } else if (arg === '.' || count === 0) {
+    //Ignore these argument
+  } else if (arg.length > 2) {
+    console.log("Opening file: " + arg);
+    startupFilePath = arg;
   }
-
-  //app.setPath('userData','data'); // making the app portable
-
 });
 
 var path = require('path');
@@ -32,11 +39,14 @@ app.on('window-all-closed', function() {
 app.on('ready', function() {
   mainWindow = new BrowserWindow({width: 1280, height: 768});
 
-  // and load the index.html of the app.
   //var indexPath = 'file://' + __dirname + '/index.html';
-  var indexPath = 'file://' + path.dirname(__dirname) + '/index.html';
-  console.log("mainWindow.loadURL: " + indexPath);
-  console.log("App path: " + app.getAppPath());
+  var startupParameter = "";
+  if (startupFilePath) {
+    startupParameter = "?open=" + encodeURIComponent(startupFilePath);
+  }
+  var indexPath = 'file://' + path.dirname(__dirname) + '/index.html' + startupParameter;
+  //console.log("mainWindow.loadURL: " + indexPath);
+  //console.log("App path: " + app.getAppPath());
 
   mainWindow.setMenu(null);
   mainWindow.loadURL(indexPath);

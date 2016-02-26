@@ -27,15 +27,6 @@ define(function(require, exports, module) {
     win.show();
   };
 
-  /*process.on("uncaughtException", function(err) {
-    //var msg = ' Information | Description \n' +
-    //          '-------------|-----------------------------\n' +
-    //          ' Date        | '+ new Date +'\n' +
-    //          ' Type        | UncaughtException \n' +
-    //          ' Stack       | '+ err.stack +'\n\n';
-    //fs.appendFile(errorLogFile, '---uncaughtException---\n' + msg);
-  });*/
-
   // Experimental functionality
   function watchDirecotory(dirPath, listener) {
     if (fsWatcher) {
@@ -44,13 +35,13 @@ define(function(require, exports, module) {
     fsWatcher = fs.watch(dirPath, {persistent: true, recursive: false}, listener);
   }
 
-  function handleTray() {
-    // TODO disable in Ubuntu until node-webkit issue in unity fixed
-    console.log("TODO: handleTray");
-  }
-
   function handleStartParameters() {
-    console.log("TODO: handleStartParameters");
+    var filePath = TSCORE.Utils.getURLParameter("open");
+    filePath = decodeURIComponent(filePath);
+    if (filePath && (filePath.length > 0)) {
+      console.log("Opening file in browser: " + openFile);
+      TSCORE.FileOpener.openFileOnStartup(filePath);
+    }
   }
 
   function initMainMenu() {
