@@ -76,8 +76,8 @@ Go to the data folder and install the TagSpaces extensions with bower:
 
 #### Run the native Windows, Linux or Mac OS X application with Electron
 * Install the `electron-prebuilt` package with this command: `npm install -g electron-prebuilt`
-* Goto the folder: `cd tagspaces/data/electron`
-* Execute the following command the `electron .`
+* Goto the folder: `cd tagspaces/data/`
+* Execute one of the following commands `electron .` or `npm start`
 
 #### Run the Chrome/Chromium extension
 * Go to the chrome `Settings` and then to `Extension`
