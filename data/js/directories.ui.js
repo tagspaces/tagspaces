@@ -462,7 +462,7 @@ define(function(require, exports, module) {
     TSCORE.Meta.getDirectoryMetaInformation().then(function(dirList) {
       TSCORE.metaFileList = dirList;
       listDirectory(directoryPath);
-    }).catch( function(error) {
+    }).catch(function(error) {
       console.log(error);
       TSCORE.metaFileList = undefined;
       listDirectory(directoryPath);
