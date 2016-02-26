@@ -39,7 +39,7 @@ define(function(require, exports, module) {
     var filePath = TSCORE.Utils.getURLParameter("open");
     filePath = decodeURIComponent(filePath);
     if (filePath && (filePath.length > 0)) {
-      console.log("Opening file in browser: " + openFile);
+      console.log("Opening file in browser: " + filePath);
       TSCORE.FileOpener.openFileOnStartup(filePath);
     }
   }
