@@ -29,18 +29,6 @@ define(function(require, exports, module) {
   var dataDir = '",1,"';
 
 
-  function getURLParameter(variable) {
-    var query = window.location.search.substring(1);
-    var vars = query.split("&");
-    for (var i = 0; i < vars.length; i++) {
-      var pair = vars[i].split("=");
-      if (pair[0] == variable) {
-        return pair[1];
-      }
-    }
-    return (false);
-  }
-
   function checkAccessFileURLAllowed() {
     chrome.extension.isAllowedFileSchemeAccess(function(isAllowedAccess) {
       if (!isAllowedAccess) {
@@ -50,13 +38,12 @@ define(function(require, exports, module) {
   }
 
   function handleStartParameters() {
-    var openFile = getURLParameter("openFile");
-    if (openFile !== undefined && (openFile.length > 0)) { //  && openFile.indexOf("file://") === 0
+    var filePath = TSCORE.Utils.getURLParameter("open");
+    filePath = decodeURIComponent(filePath);
+    if (filePath && (filePath.length > 0)) {
       console.log("Opening file in browser: " + openFile);
-      openFile = openFile.split("file://")[1];
-      //var dirPath = TSCORE.TagUtils.extractContainingDirectoryPath(filePath);
-      //TSCORE.IO.listDirectory(dirPath);
-      TSCORE.FileOpener.openFileOnStartup(openFile);
+      filePath = filePath.split("file://")[1];
+      TSCORE.FileOpener.openFileOnStartup(filePath);
     }
   }
 
