@@ -46,6 +46,6 @@
   },
   "private": true,
   "scripts": {
-    "webdav": "node webdavserver.js"
+    "start": "cd data && npm start"
   }
 }

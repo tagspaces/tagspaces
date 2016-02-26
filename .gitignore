@@ -8,6 +8,7 @@ runfirefoxbeta
 extensions
 docs
 data/pro
+data/tsprofile
 data/ext
 nwjsdata
 data/electron/data

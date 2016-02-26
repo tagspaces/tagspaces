@@ -25,7 +25,6 @@
   "keywords": [
     "file manager"
   ],
-  "readmeFilename": "Readme.md",
   "dependencies": {},
   "devDependencies": {
     "grunt": "~0.4.2",
@@ -46,6 +45,6 @@
   },
   "private": true,
   "scripts": {
-    "webdav": "node webdavserver.js"
+    "start": "cd data && npm start"
   }
 }
