@@ -87,7 +87,7 @@ define(function(require, exports, module) {
         return pair[1];
       }
     }
-    return (false);
+    return false;
   }
 
   exports.arrayBufferToDataURL = arrayBufferToDataURL;

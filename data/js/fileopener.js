@@ -234,7 +234,11 @@ define(function(require, exports, module) {
     _openedFilePath = filePath;
     //$("#selectedFilePath").val(_openedFilePath.replace("\\\\","\\"));
     if (isWeb) {
-      window.history.pushState("", "TagSpaces", "/index.html?open=" + encodeURIComponent(filePath));
+      var startupParameter = "";
+      if (filePath) {
+        startupParameter = "?open=" + encodeURIComponent(filePath);
+        window.history.pushState("", "TagSpaces", "/index.html" + startupParameter);
+      }
       console.log("Link to file for sharing: " + window.location.href);
       var downloadLink;
       if (location.port === '') {

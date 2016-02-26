@@ -45,8 +45,6 @@ app.on('ready', function() {
     startupParameter = "?open=" + encodeURIComponent(startupFilePath);
   }
   var indexPath = 'file://' + path.dirname(__dirname) + '/index.html' + startupParameter;
-  //console.log("mainWindow.loadURL: " + indexPath);
-  //console.log("App path: " + app.getAppPath());
 
   mainWindow.setMenu(null);
   mainWindow.loadURL(indexPath);

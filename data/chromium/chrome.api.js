@@ -39,8 +39,8 @@ define(function(require, exports, module) {
 
   function handleStartParameters() {
     var filePath = TSCORE.Utils.getURLParameter("open");
-    filePath = decodeURIComponent(filePath);
     if (filePath && (filePath.length > 0)) {
+      filePath = decodeURIComponent(filePath);
       console.log("Opening file in browser: " + filePath);
       if(filePath.indexOf("file://") >= 0) {
         filePath = filePath.split("file://")[1];

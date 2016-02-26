@@ -85,6 +85,14 @@ define(function(require, exports, module) {
     return false;
   }
 
+  function handleStartParameters() {
+    var filePath = TSCORE.Utils.getURLParameter("open");
+    if (filePath && (filePath.length > 0)) {
+      filePath = decodeURIComponent(filePath);
+      console.log("Opening file in browser: " + filePath);
+      TSCORE.FileOpener.openFileOnStartup(filePath);
+    }
+  }
 
   function focusWindow() {
     // Bring the TagSpaces window on top of the windows
@@ -536,6 +544,7 @@ define(function(require, exports, module) {
   }
 
   // Platform API
+  exports.handleStartParameters = handleStartParameters;
   exports.focusWindow = focusWindow;
   exports.checkNewVersion = checkNewVersion;
 
