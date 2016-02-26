@@ -42,7 +42,7 @@ define(function(require, exports, module) {
     if (filePath && (filePath.length > 0)) {
       filePath = decodeURIComponent(filePath);
       console.log("Opening file in browser: " + filePath);
-      if(filePath.indexOf("file://") >= 0) {
+      if (filePath.indexOf("file://") >= 0) {
         filePath = filePath.split("file://")[1];
       }
       TSCORE.FileOpener.openFileOnStartup(filePath);
