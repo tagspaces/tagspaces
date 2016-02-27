@@ -7,6 +7,7 @@
         "include": [
             "data/js",
             "data/node-webkit",
+            "data/electron",
             "data/chromium",
             "data/mozilla",
             "data/cordova",
@@ -33,7 +34,7 @@
         "outputSourcePath"      : true,
         "systemName"            : "TagSpaces API",
         "footer"                : "",
-        "copyright"             : "Copyright © 2012-2015 The contributors to the TagSpaces project.",
+        "copyright"             : "Copyright © 2013-2016 The contributors to the TagSpaces project.",
         "navType"               : "vertical",
         "theme"                 : "united",
         "linenums"              : true,
