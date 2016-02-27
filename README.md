@@ -18,22 +18,22 @@ To get updates you can:
 
     ./data...............see the next lines
     ./data/assets........contains all the css and images used in the application
-    ./data/ext...........contains the code of tagspaces extensions
-    ./data/js............contains the javascripts which run the application 
+    ./data/js............contains the javascript module of the application 
     ./data/libs..........contains external javascript libraries together with the license they are distributed 
-    ./data/chromium...contains files specific for the current Chrome browser extension
+    ./data/chromium......contains files specific for the current Chrome browser extension
     ./data/cordova ......contains files needed for the building of the Android application which is based on Cordova
+    ./data/electron......contains files needed for the Windows, Linux and Mac OS builds of the application
     ./data/mozilla.......contains files needed for the Firefox extension based on addon sdk
     ./data/web...........contains files needed for the WebDAV/ownCloud based release of TagSpaces
-    ./data/node-webkit...contains files needed for the windows, linux and mac os build of the application
+    ./data/node-webkit...contains files needed for the Windows, Linux and Mac OS builds of the application
     ./data/templates.....contains HTML templates needed for the UI
     ./data/locales.......contains files need for the localisation of the application UI
     ./data/_locales......contains files need for the localisation of the chrome extension UI
 
 ## Downloads 
-You can find the latest release of TagSpace in the [Releases Section](https://github.com/tagspaces/tagspaces/releases/)
+You can find the latest release of TagSpace in the github [release area](https://github.com/tagspaces/tagspaces/releases/) of TagSpaces
 
-The full changelog is available here: [Changelog](CHANGELOG.md)
+A full list of the changes is available in our [changelog](CHANGELOG.md)
 
 ## Features
 
@@ -67,12 +67,17 @@ Go to the data folder and install the TagSpaces extensions with bower:
     $ bower install
     
 
-#### Run the native Windows, Linux or Mac OS X application
+#### Run the native Windows, Linux or Mac OS X application with NW.js
 * Download [nw.js](https://github.com/nwjs/nw.js) prebuilt binaries for your system environment.
-    * For Windows: copy `nw.exe, nw.pak, icudt.dll, ffmpegsumo.dll` to `tagspaces/data/node-webkit` directory.
+    * For Windows: copy `nw.exe, nw.pak, icudt.dll, ffmpegsumo.dll` to `tagspaces\data\node-webkit` directory.
     * For Linux: copy `nw, nw.pak, icudtl.dat, libffmpegsumo.so` to `tagspaces/data/node-webkit` directory. If you experience issue related to libudev.so.0 read the following [article](https://github.com/rogerwang/node-webkit/wiki/The-solution-of-lacking-libudev.so.0).
     * For Mac OS X: copy `node-webkit.app` to `tagspaces/data/node-webkit` directory.
 * Run the `nw` executable file.
+
+#### Run the native Windows, Linux or Mac OS X application with Electron
+* Install the `electron-prebuilt` package with this command: `npm install -g electron-prebuilt`
+* Goto the folder: `cd tagspaces/data/`
+* Execute one of the following commands `electron .` or `npm start`
 
 #### Run the Chrome/Chromium extension
 * Go to the chrome `Settings` and then to `Extension`
@@ -87,12 +92,22 @@ Go to the data folder and install the TagSpaces extensions with bower:
 * Start the SDK by executing `source bin/activate` in the Addon SDK folder
 * Go to the your local tagspaces folder and run the following command, where the -p argument specifies some local firefox profile:
 
-    `$cfx run -p /tmp/mozprofile`
+    $cfx run -p /tmp/mozprofile
 
 * Start the addon by clicking the TagSpaces icon in the upper right area of Firefox
 
 #### How to setup the WebDAV edition?
-You can find information on this topic on the [TagSpaces blog](http://www.tagspaces.org/webdav-edition/).
+There is a script in root folder of the repository called `webdavserver.js`, which can be started with:
+
+    node webdavserver.js
+    
+This command will start a local node.js based WebDAV server on `http://127.0.0.1:8000`. Open your browser and enter the following URL:
+
+    http://127.0.0.1:8000/index.html
+        
+You will be prompted for user credentials, which are username: `demo` and password: `demo` and now you should be able to work with the WebDAV version of TagSpaces.
+
+For setting up the WebDAV version on your server, please read [Self-hosted TagSpaces with WebDAV](http://www.tagspaces.org/webdav-edition/) from our blogs.
 
 ## License
 TagSpaces's source code is licensed under the AGPL (GNU Affero General Public License) Version 3, for the license text see [LICENSE](LICENSE) file.

@@ -197,10 +197,18 @@ define(function(require, exports, module) {
 
   function openFileOnStartup(filePath) {
     TSCORE.Config.setLastOpenedLocation(undefined);
+
     // quick and dirty solution, should use flag later
     TSCORE.toggleFullWidth();
     TSCORE.FileOpener.openFile(filePath);
-    TSCORE.openLocation(TSCORE.TagUtils.extractContainingDirectoryPath(filePath));
+
+    /*var parentFolderPath = TSCORE.TagUtils.extractContainingDirectoryPath(filePath);
+    TSCORE.IO.listDirectoryPromise(parentFolderPath).then(function(entries) {
+      TSPOSTIO.listDirectory(entries);
+    }).catch(function(err) {
+      TSPOSTIO.errorOpeningPath();
+    });*/
+
   }
 
   function openFile(filePath, editMode) {
@@ -226,6 +234,12 @@ define(function(require, exports, module) {
     _openedFilePath = filePath;
     //$("#selectedFilePath").val(_openedFilePath.replace("\\\\","\\"));
     if (isWeb) {
+      var startupParameter = "";
+      if (filePath) {
+        startupParameter = "?open=" + encodeURIComponent(filePath);
+        window.history.pushState("", "TagSpaces", "/index.html" + startupParameter);
+      }
+      console.log("Link to file for sharing: " + window.location.href);
       var downloadLink;
       if (location.port === '') {
         downloadLink = location.protocol + '//' + location.hostname + _openedFilePath;

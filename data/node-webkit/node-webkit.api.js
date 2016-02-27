@@ -111,7 +111,6 @@ define(function(require, exports, module) {
       if (filePath.length > 1) {
         var dirPath = TSCORE.TagUtils.extractContainingDirectoryPath(filePath);
         TSCORE.FileOpener.openFileOnStartup(filePath);
-        //TSCORE.IO.listDirectoryPromise(dirPath).then();
       }
     }
   }

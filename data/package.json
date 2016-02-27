@@ -1,17 +1,13 @@
 {
   "name": "TagSpaces",
   "description": "Offline document organizer and browser for your local files, supporting easy file tagging and document editing.",
-  "version": "2.1.1",
-  "main": "index.html",
-  "single-instance": false,
-  "window": {
-    "icon": "assets/icon96w.png",
-    "toolbar": false,
-    "position": "center",
-    "min_width": 320,
-    "min_height": 300,    
-    "width": 1280,
-    "height": 768
+  "version": "2.1.2",
+  "main": "electron/main.js",
+  "dependencies": {
+    "fs-extra": "~0.24.0"
   },
-  "nodejs": true
+  "scripts": {
+    "start": "electron .",
+    "test": "electron . -d"
+  }
 }

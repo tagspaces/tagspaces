@@ -9,6 +9,7 @@ module.exports = function(grunt) {
   }
   grunt.initConfig({
     dev: grunt.file.readJSON('developer.json'),
+
     replace: {
       templates: {
         options: {
@@ -35,7 +36,7 @@ module.exports = function(grunt) {
           src: 'data/mozilla/mozilla.package.tmpl.json',
           dest: 'package.json'
         }, {
-          src: 'data/node-webkit/package.tmpl.json',
+          src: 'data/electron/package.tmpl.json',
           dest: 'data/package.json'
         }, {
           src: 'data/chromium/chrome.manifest.tmpl.json',
@@ -43,6 +44,7 @@ module.exports = function(grunt) {
         }]
       },
     },
+
     jshint: {
       options: {
         jshintrc: true
@@ -54,6 +56,7 @@ module.exports = function(grunt) {
           '!data/js/settings.default.js',
           'data/chromium/*.js',
           'data/cordova/*.js',
+          'data/electron/*.js',
           'data/ext/editorHTML/*.js',
           'data/ext/editorJSON/*.js',
           'data/ext/editorODF/*.js',
@@ -86,6 +89,7 @@ module.exports = function(grunt) {
         ]
       }
     },
+
     jscs: {
       options: {
         config: ".jscs.json",
@@ -98,7 +102,7 @@ module.exports = function(grunt) {
           '!data/js/settings.default.js',
           'data/chromium/**/*.js',
           'data/cordova/*.js',
-          '!data/cordova/cordova.api.3.4.js',
+          'data/electron/*.js',
           'data/ext/editorHTML/*.js',
           'data/ext/editorJSON/*.js',
           'data/ext/editorODF/*.js',
@@ -125,6 +129,7 @@ module.exports = function(grunt) {
         ]
       }
     },
+
     fixmyjs: {
       options: {
         //config: '.jshintrc',
@@ -152,6 +157,7 @@ module.exports = function(grunt) {
         }]
       }
     },
+
     jsbeautifier : {
       files : [
         //'Gruntfile.js',
@@ -198,6 +204,7 @@ module.exports = function(grunt) {
         }
       }
     },
+
     watch: {
       scripts: {
         files: ['Gruntfile.js', '{data/js,data/ext}/**/*.js'],
@@ -207,6 +214,7 @@ module.exports = function(grunt) {
         }
       }
     },
+
     shell: {
       jsdav: {
         command: 'node webdavserver.js',
@@ -223,6 +231,7 @@ module.exports = function(grunt) {
         command: 'tx pull -a',
       },
     },
+
     compress: {
       chrome: {
         options: {
@@ -237,6 +246,7 @@ module.exports = function(grunt) {
         }]
       },
     },
+
   });
   //loading modules
   grunt.loadNpmTasks('grunt-contrib-clean');

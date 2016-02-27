@@ -142,7 +142,7 @@ define(function(require, exports, module) {
     console.log("getFileSystemPromise: " + path);
     if (path.indexOf(cordova.file.applicationDirectory) === 0) {
     } else {
-      path = (isCordovaiOS) ? cordova.file.applicationDirectory + "/" + path : "file:///" + path;
+      path = (isCordovaiOS) ? cordova.file.documentsDirectory + "/" + path : "file:///" + path;
     }
     return new Promise(function(resolve, reject) {
       window.resolveLocalFileSystemURL(path, resolve,
