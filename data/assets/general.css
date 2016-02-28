@@ -675,7 +675,8 @@ input a.resetFilter {
 }
 
 #closeOpenedFile {
-  margin-top: -8px;
+  margin-top: 0px;
+  height: 37px;
   margin-right: -4px;
   background-color: #F2F2F2;
 }
