@@ -10,11 +10,11 @@ var startupFilePath;
 //handling start parameter
 //console.log(JSON.stringify(process.argv));
 process.argv.forEach(function(arg, count) {
-  if (arg.toLowerCase() === '-d' || arg.toLowerCase() === '-debug') {
+  if (arg.toLowerCase() === '-d' || arg.toLowerCase() === '--debug') {
     debugMode = true;
-  } else if (arg.toLowerCase() === '-p' || arg.toLowerCase() === '-portable') {
+  } else if (arg.toLowerCase() === '-p' || arg.toLowerCase() === '--portable') {
     app.setPath('userData', 'tsprofile'); // making the app portable
-  } else if (arg === '.' || count === 0) {
+  } else if (arg === '.' || count === 0) { // ignoring the first argument
     //Ignore these argument
   } else if (arg.length > 2) {
     console.log("Opening file: " + arg);
@@ -52,6 +52,12 @@ app.on('ready', function() {
   if (debugMode) {
     mainWindow.webContents.openDevTools();
   }
+
+  var webContents = mainWindow.webContents;
+
+  webContents.on('crash', function() {
+    console.log("WebContent crashed");
+  })
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function() {
