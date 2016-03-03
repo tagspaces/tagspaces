@@ -804,6 +804,7 @@ define(function(require, exports, module) {
   function openFile(filePath) {
     // opens file with the native program
     gui.Shell.openItem(filePath);
+    // TODO check if filePath begins with mailto: and use gui.Shell.openExternal(url);
   }
 
   // Platform specific calls
