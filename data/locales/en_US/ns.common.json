@@ -181,5 +181,7 @@
     "directoryRenameFailed": "Directory renaming failed!",
     "functionalityNotImplemented" : "This functionality is not implemented yet.",
     "invalidImportFile": "The imported file has invalid format",
+    "welcomeTitle": "Welcome to TagSpaces!",
+    "welcomeContent": "Start using TagSpaces by choosing a location from your locale storage.",
     "-": "-"
 }

@@ -12,15 +12,30 @@ define(function(require, exports, module) {
     "css!libs/hopscotch/dist/css/hopscotch.min.css",
     ], function() {});
 
-  var nextI18N = $.i18n.t('ns.dialogs:titleWaiting'); // not working
-  //console.log("nextI18N "+ nextI18N);
+  function closeTour() {
+    $('#openLeftPanel').click();
+    $("#locationsList").css("display", "");
+    $("#createNewLocation").removeClass("uiEmphasizer");
+    $('#tagGroupsContent').removeClass("uiEmphasizer");
+    $('#contactUsContent').removeClass("uiEmphasizer");
+    $('#closeLeftPanel').removeClass("uiEmphasizer");
+    $('.col1 .row2').removeClass("uiEmphasizer");
+    $('#viewContainers').removeClass("uiEmphasizer");
+    $('#showSearchButton').removeClass("uiEmphasizer");
+    $('#perspectiveSwitcherButton').removeClass("uiEmphasizer");
+    $('#openLeftPanel').removeClass("uiEmphasizer");
+    $('#openOptions').removeClass("uiEmphasizer");
+  }
 
-  var tour = {
+  exports.closeTour = closeTour();
+
+  exports.startTour = function() {
+    var tour = {
     id: "gettingstarted",
     steps: [
       {
-        title: "Welcome to TagSpaces!",
-        content: "Start using TagSpaces by choosing a location from your locale storage.",
+        title: $.i18n.t('ns.common:welcomeTitle'),
+        content: $.i18n.t('ns.common:welcomeContent'),
         target: "locationName",
         placement: "bottom",
         onNext: function() {
@@ -182,28 +197,10 @@ define(function(require, exports, module) {
     showNextButton: true,
     showPrevButton: true, // disable in production
     i18n: {
-      nextBtn: nextI18N,
+      //nextBtn: nextI18N,
     }
   };
 
-  function closeTour() {
-    $('#openLeftPanel').click();
-    $("#locationsList").css("display", "");
-    $("#createNewLocation").removeClass("uiEmphasizer");
-    $('#tagGroupsContent').removeClass("uiEmphasizer");
-    $('#contactUsContent').removeClass("uiEmphasizer");
-    $('#closeLeftPanel').removeClass("uiEmphasizer");
-    $('.col1 .row2').removeClass("uiEmphasizer");
-    $('#viewContainers').removeClass("uiEmphasizer");
-    $('#showSearchButton').removeClass("uiEmphasizer");
-    $('#perspectiveSwitcherButton').removeClass("uiEmphasizer");
-    $('#openLeftPanel').removeClass("uiEmphasizer");
-    $('#openOptions').removeClass("uiEmphasizer");
-  }
-
-  exports.closeTour = closeTour();
-
-  exports.startTour = function() {
     // Start the tour!
     TSCORE.openLeftPanel();
     hopscotch.startTour(tour);
