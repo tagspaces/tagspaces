@@ -768,8 +768,8 @@ define(function(require, exports, module) {
 
   // Handle external links
   function openLinkExternally(url) {
-    if (isNode) {
-      gui.Shell.openExternal(url);
+    if (isNode || isElectron) {
+      TSCORE.IO.openFile(url);
     } else {
       // _system is needed for cordova
       window.open(url, '_system');
@@ -826,7 +826,7 @@ define(function(require, exports, module) {
     } else if (isNode || isElectron) {
       $('#openFileInNewWindow').hide();
       //handling window maximization
-      var nwwin = isNode ? gui.Window.get() : remote.getCurrentWindow();
+      /*var nwwin = isNode ? gui.Window.get() : remote.getCurrentWindow();
       nwwin.on('maximize', function() {
         TSCORE.Config.setIsWindowMaximized(true);
         TSCORE.Config.saveSettings();
@@ -834,7 +834,8 @@ define(function(require, exports, module) {
       nwwin.on('unmaximize', function() {
         TSCORE.Config.setIsWindowMaximized(false);
         TSCORE.Config.saveSettings();
-      }); // Disabling automatic maximazation of the main window
+      }); */
+      // Disabling automatic maximazation of the main window
       //if(TSCORE.Config.getIsWindowMaximized()){
       //    nwwin.maximize();
       //}
