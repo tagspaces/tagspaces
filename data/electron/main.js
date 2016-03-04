@@ -57,7 +57,7 @@ app.on('ready', function() {
 
   webContents.on('crash', function() {
     console.log("WebContent crashed");
-  })
+  });
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function() {
