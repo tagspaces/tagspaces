@@ -45,7 +45,7 @@ define(function(require, exports, module) {
       },
       {
         title: $.i18n.t('ns.common:connectingLocationTitle'),
-        content: $.i18n.t('ns.common:createNewLocationTitle'),
+        content: $.i18n.t('ns.common:createNewLocationContent'),
         target: "createNewLocation",
         placement: "bottom",
         onNext: function() {
@@ -62,7 +62,7 @@ define(function(require, exports, module) {
       },
       {
         title: $.i18n.t('ns.common:folderNavigatorTitle'),
-        content: $.i18n.t('ns.common:showLocationsTitle'),
+        content: $.i18n.t('ns.common:showLocationsContent'),
         target: "showLocations",
         placement: "top",
         onNext: function() {
@@ -80,7 +80,7 @@ define(function(require, exports, module) {
       },
       {
         title: $.i18n.t('ns.common:taglibraryTitle'),
-        content: $.i18n.t('ns.common:tagGroupsTitle'),
+        content: $.i18n.t('ns.common:tagGroupsContent'),
         target: "showTagGroups",
         placement: "top",
         onNext: function() {
@@ -96,7 +96,7 @@ define(function(require, exports, module) {
       },
       {
         title: $.i18n.t('ns.common:aboutTitle'),
-        content: $.i18n.t('ns.common:usefulinformationTitle'),
+        content: $.i18n.t('ns.common:usefulinformationContent'),
         target: "contactUs",
         placement: "top",
         onNext: function() {
@@ -108,7 +108,7 @@ define(function(require, exports, module) {
       },
       {
         title: $.i18n.t('ns.common:settingsTitle'),
-        content: $.i18n.t('ns.common:settingsdialogTitle'),
+        content: $.i18n.t('ns.common:settingsdialogContent'),
         target: "openOptions",
         placement: "top",
         onNext: function() {
@@ -120,7 +120,7 @@ define(function(require, exports, module) {
       },
       {
         title: $.i18n.t('ns.common:closingpanelTitle'),
-        content: $.i18n.t('ns.common:leftpanelTitle'),
+        content: $.i18n.t('ns.common:leftpanelContent'),
         target: "closeLeftPanel",
         placement: "bottom",
         onNext: function() {
@@ -133,7 +133,7 @@ define(function(require, exports, module) {
       },
       {
         title: $.i18n.t('ns.common:perspectiveTitle'),
-        content: $.i18n.t('ns.common:perspectiveviewTitle'),
+        content: $.i18n.t('ns.common:perspectiveviewContent'),
         target: "viewContainers",
         placement: "top",
         onNext: function() {
@@ -146,7 +146,7 @@ define(function(require, exports, module) {
       },
       {
         title: $.i18n.t('ns.common:perspectiveswitchTitle'),
-        content: $.i18n.t('ns.common:supportedperspectivesTitle'),
+        content: $.i18n.t('ns.common:supportedperspectivesContent'),
         target: "perspectiveSwitcherButton",
         placement: "bottom",
         onNext: function() {
@@ -158,7 +158,7 @@ define(function(require, exports, module) {
       },
       {
         title: $.i18n.t('ns.common:searchTitle'),
-        content: $.i18n.t('ns.common:searchareaTitle'),
+        content: $.i18n.t('ns.common:searchareaContent'),
         target: "showSearchButton",
         placement: "bottom",
         onNext: function() {
@@ -169,8 +169,8 @@ define(function(require, exports, module) {
         arrowOffset: 275,
       },
       {
-        title: $.i18n.t('ns.common:openingleftpanelTtile'),
-        content: $.i18n.t('ns.common:openingleftpanelagainTtile'),
+        title: $.i18n.t('ns.common:openingleftpanelTitle'),
+        content: $.i18n.t('ns.common:openingleftpanelagainContent'),
         target: "openLeftPanel",
         placement: "bottom",
         onNext: function() {
@@ -179,8 +179,8 @@ define(function(require, exports, module) {
         },
       },
       {
-        title: $.i18n.t('ns.common:enjoyTtile'),
-        content: $.i18n.t('ns.common:thankyouTtile'),
+        title: $.i18n.t('ns.common:enjoyTitle'),
+        content: $.i18n.t('ns.common:thankyouContent'),
         target: "startNewInstanceBack",
         placement: "bottom",
         onNext: function() {
