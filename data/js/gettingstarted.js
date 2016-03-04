@@ -44,8 +44,8 @@ define(function(require, exports, module) {
         }
       },
       {
-        title: "Connecting location",
-        content: "If you don't have an already connected location, you can create one with this button. You can connect for example folders containing document or photos. And remember TagSpaces is <b>completely offline</b> tool so <b>no data will leave your device</b>.",
+        title: $.i18n.t('ns.common:connectingLocationTitle'),
+        content: $.i18n.t('ns.common:createNewLocationTitle'),
         target: "createNewLocation",
         placement: "bottom",
         onNext: function() {
@@ -61,8 +61,8 @@ define(function(require, exports, module) {
         }
       },
       {
-        title: "Your folder navigator",
-        content: "In the selected area, you will find after opening of a location the subfolders of the opened location folder. Clicking on a folder will open it and list the its subfolder ",
+        title: $.i18n.t('ns.common:folderNavigatorTitle'),
+        content: $.i18n.t('ns.common:showLocationsTitle'),
         target: "showLocations",
         placement: "top",
         onNext: function() {
@@ -79,8 +79,8 @@ define(function(require, exports, module) {
         arrowOffset: 60,
       },
       {
-        title: "Your tag library",
-        content: "Clicking on this button will open your tag library. For your convenience, it is divided in tag groups containing the single tags.",
+        title: $.i18n.t('ns.common:taglibraryTitle'),
+        content: $.i18n.t('ns.common:tagGroupsTitle'),
         target: "showTagGroups",
         placement: "top",
         onNext: function() {
@@ -95,8 +95,8 @@ define(function(require, exports, module) {
         }
       },
       {
-        title: "About the project",
-        content: "Clicking on this button will open a panel, containing useful information and links regarding the TagSpaces project.",
+        title: $.i18n.t('ns.common:aboutTitle'),
+        content: $.i18n.t('ns.common:usefulinformationTitle'),
         target: "contactUs",
         placement: "top",
         onNext: function() {
@@ -107,8 +107,8 @@ define(function(require, exports, module) {
         arrowOffset: 120,
       },
       {
-        title: "Settings",
-        content: "This button will open the settings dialog of the app, where you can <b>change language</b> of the user interface or manage the <b>file associations</b>.",
+        title: $.i18n.t('ns.common:settingsTitle'),
+        content: $.i18n.t('ns.common:settingsdialogTitle'),
         target: "openOptions",
         placement: "top",
         onNext: function() {
@@ -119,8 +119,8 @@ define(function(require, exports, module) {
         arrowOffset: 220,
       },
       {
-        title: "Closing side panel",
-        content: "This button will close the left panel, in order to have more working space for the perspectives.",
+        title: $.i18n.t('ns.common:closingpanelTitle'),
+        content: $.i18n.t('ns.common:leftpanelTitle'),
         target: "closeLeftPanel",
         placement: "bottom",
         onNext: function() {
@@ -132,8 +132,8 @@ define(function(require, exports, module) {
         arrowOffset: 220,
       },
       {
-        title: "Perspectives area",
-        content: "This is the area where you can browse later your files. TagSpaces supports some different views on your files, which are called here perspectives. Every perspective has some emphasis, e.g. the default <b>list perspective</b> is suitable for file management operations.",
+        title: $.i18n.t('ns.common:perspectiveTitle'),
+        content: $.i18n.t('ns.common:perspectiveviewTitle'),
         target: "viewContainers",
         placement: "top",
         onNext: function() {
@@ -145,8 +145,8 @@ define(function(require, exports, module) {
         arrowOffset: 'center',
       },
       {
-        title: "Perspectives switch",
-        content: "This is place where your can switch between the supported perspectives.",
+        title: $.i18n.t('ns.common:perspectiveswitchTitle'),
+        content: $.i18n.t('ns.common:supportedperspectivesTitle'),
         target: "perspectiveSwitcherButton",
         placement: "bottom",
         onNext: function() {
@@ -157,8 +157,8 @@ define(function(require, exports, module) {
         arrowOffset: 220,
       },
       {
-        title: "Search",
-        content: "Here you can activate the search area of the application. Selecting the search field will explain you the search syntax. Please note that currently the search engine is <b>ignoring the content of the files</b>.",
+        title: $.i18n.t('ns.common:searchTitle'),
+        content: $.i18n.t('ns.common:searchareaTitle'),
         target: "showSearchButton",
         placement: "bottom",
         onNext: function() {
@@ -169,8 +169,8 @@ define(function(require, exports, module) {
         arrowOffset: 275,
       },
       {
-        title: "Opening the left panel",
-        content: "Here you can open the left panel again.",
+        title: $.i18n.t('ns.common:openingleftpanelTtile'),
+        content: $.i18n.t('ns.common:openingleftpanelagainTtile'),
         target: "openLeftPanel",
         placement: "bottom",
         onNext: function() {
@@ -179,8 +179,8 @@ define(function(require, exports, module) {
         },
       },
       {
-        title: "Enjoy using TagSpaces!",
-        content: "... and thank you for your attention.",
+        title: $.i18n.t('ns.common:enjoyTtile'),
+        content: $.i18n.t('ns.common:thankyouTtile'),
         target: "startNewInstanceBack",
         placement: "bottom",
         onNext: function() {
