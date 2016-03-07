@@ -7,6 +7,9 @@
   "dependencies": {
     "fs-extra": "~0.24.0"
   },
+  "devDependencies": {
+    "electron-prebuilt": "~0.36.9"
+  },
   "build": {
     "app-bundle-id": "TagSpaces",
     "app-category-type": "your.app.category.type",
