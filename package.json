@@ -47,6 +47,8 @@
   "scripts": {
     "start": "cd data && npm start",
     "debug": "cd data && electron . --debug",
-    "webdav": "cd data && cd web && node webdavserver.js"
+    "webdav": "cd data && cd web && node webdavserver.js",
+    "firefoxdev": "cfx run -b ~/Apps/firefoxdev/firefox -p ../mozprofile",
+    "firefox": "cfx run -p ../mozprofile --static-args='{ \"disableStrict\": true }'"
   }
 }
