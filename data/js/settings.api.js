@@ -483,7 +483,7 @@ define(function(require, exports, module) {
     }
     return exports.Settings.interfaceLanguage;
   };
-  var setInterfaceLangauge = function(value) {
+  var setInterfaceLanguage = function(value) {
     exports.Settings.interfaceLanguage = value;
   };
   var getShowWarningRecursiveScan = function() {
@@ -1034,7 +1034,7 @@ define(function(require, exports, module) {
   exports.setShowWarningRecursiveScan = setShowWarningRecursiveScan;
   exports.getSupportedLanguages = getSupportedLanguages;
   exports.getInterfaceLanguage = getInterfaceLanguage;
-  exports.setInterfaceLangauge = setInterfaceLangauge;
+  exports.setInterfaceLanguage = setInterfaceLanguage;
   exports.getCloseViewerKeyBinding = getCloseViewerKeyBinding;
   exports.setCloseViewerKeyBinding = setCloseViewerKeyBinding;
   exports.getAddRemoveTagsKeyBinding = getAddRemoveTagsKeyBinding;

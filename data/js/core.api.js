@@ -98,11 +98,15 @@ define(function(require, exports, module) {
 
         if(!languageMatched) {
           tsSettings.getSupportedLanguages().forEach(function(value) {
-            if (browserLang.indexOf(value.iso) === 0) {
-              language = browserLang;
+            if (value.iso.indexOf(browserLang) === 0) {
+              language = value.iso;
             }
           });
         }
+
+        tsSettings.setInterfaceLanguage(language);
+        tsSettings.saveSettings();
+
       }
 
       var langURLParam = tsUtils.getURLParameter('locale');
