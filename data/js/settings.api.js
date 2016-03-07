@@ -254,14 +254,13 @@ define(function(require, exports, module) {
     }
     return exports.Settings.extensionsPath;
   };
+
   var setExtensionPath = function(value) {
     exports.Settings.extensionsPath = value;
   };
+
   var isFirstRun = function() {
-    if (exports.Settings.firstRun === undefined) {
-      exports.Settings.firstRun = false;
-    }
-    if (exports.Settings.firstRun) {
+    if (exports.Settings.firstRun === undefined || exports.Settings.firstRun === true) {
       exports.Settings.firstRun = false;
       saveSettings();
       return true;
@@ -269,6 +268,7 @@ define(function(require, exports, module) {
       return false;
     }
   };
+
   var getIsWindowMaximized = function() {
     if (exports.Settings.isWindowMaximized === undefined) {
       exports.Settings.isWindowMaximized = exports.DefaultSettings.isWindowMaximized;
@@ -476,7 +476,7 @@ define(function(require, exports, module) {
   var setSearchKeyBinding = function(value) {
     exports.Settings.keyBindings.openSearch = value;
   };
-  var getInterfaceLangauge = function() {
+  var getInterfaceLanguage = function() {
     if (exports.Settings.interfaceLanguage === undefined) {
       exports.Settings.interfaceLanguage = exports.DefaultSettings.interfaceLanguage;
       saveSettings();
@@ -1033,7 +1033,7 @@ define(function(require, exports, module) {
   exports.getShowWarningRecursiveScan = getShowWarningRecursiveScan;
   exports.setShowWarningRecursiveScan = setShowWarningRecursiveScan;
   exports.getSupportedLanguages = getSupportedLanguages;
-  exports.getInterfaceLangauge = getInterfaceLangauge;
+  exports.getInterfaceLanguage = getInterfaceLanguage;
   exports.setInterfaceLangauge = setInterfaceLangauge;
   exports.getCloseViewerKeyBinding = getCloseViewerKeyBinding;
   exports.setCloseViewerKeyBinding = setCloseViewerKeyBinding;

@@ -82,10 +82,29 @@ define(function(require, exports, module) {
     $(document).ready(function() {
       reLayout();
 
-      var browserLang = navigator.language || navigator.userLanguage;
+      var language = tsSettings.getInterfaceLanguage();
 
-      var language = tsSettings.getInterfaceLangauge();
-      // "de-DE"
+      if (tsSettings.isFirstRun()) {
+        var browserLang = navigator.language || navigator.userLanguage;
+
+        var languageMatched;
+
+        tsSettings.getSupportedLanguages().forEach(function(value) {
+          if (browserLang === value.iso) {
+            language = browserLang;
+            languageMatched = true;
+          }
+        });
+
+        if(!languageMatched) {
+          tsSettings.getSupportedLanguages().forEach(function(value) {
+            if (browserLang.indexOf(value.iso) === 0) {
+              language = browserLang;
+            }
+          });
+        }
+      }
+
       var langURLParam = tsUtils.getURLParameter('locale');
       if (langURLParam && langURLParam.length > 1) {
         language = langURLParam;
@@ -96,10 +115,7 @@ define(function(require, exports, module) {
           tsIOApi.initMainMenu();
         }
 
-        if (tsSettings.isFirstRun()) {
-          // Show welcome dialog of first start
-          tsCoreUI.showWelcomeDialog();
-        } else if (tsSettings.Settings.tagspacesList.length < 1) {
+        if (tsSettings.Settings.tagspacesList.length < 1) {
           // Show getting started guide by no locations
           tsCoreUI.startGettingStartedTour();
         }

@@ -209,7 +209,7 @@ define(function(require, exports, module) {
     var $languagesDropdown = $('#languagesList');
     $languagesDropdown.empty();
     TSCORE.Config.getSupportedLanguages().forEach(function(value) {
-      if (TSCORE.Config.getInterfaceLangauge() === value.iso) {
+      if (TSCORE.Config.getInterfaceLanguage() === value.iso) {
         $languagesDropdown.append($('<option>').attr('selected', 'selected').text(value.title).val(value.iso));
       } else {
         $languagesDropdown.append($('<option>').text(value.title).val(value.iso));
