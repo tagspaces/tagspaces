@@ -25,7 +25,7 @@ module.exports = function(grunt) {
             DEFAULTPERSPECTIVES: "'perspectiveList', 'perspectiveGrid', 'perspectiveGraph', 'perspectiveImageSwiper'",
             ACTIVATEDPERSPECTIVES: "{ 'id': 'perspectiveList', 'name': 'List' }, { 'id': 'perspectiveGrid', 'name': 'Grid' }, { 'id': 'perspectiveGraph', 'name': 'Graph' }, { 'id': 'perspectiveImageSwiper', 'name': 'ImageSwiper' }",
             MHTVIEWER: 'viewerBrowser',
-            PDFVIEWER: 'viewerBrowser'
+            PDFVIEWER: 'viewerPDF'
           },
           prefix: '@@'
         },
