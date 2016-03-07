@@ -1,12 +1,23 @@
 {
   "name": "@@APPNAME",
   "description": "@@APPDESCRIPTION",
+  "author": "TagSpaces UG (haftungsbeschraenkt) <contactus@tagspaces.org>",
   "version": "@@VERSION.@@BUILD",
   "main": "electron/main.js",
   "dependencies": {
     "fs-extra": "~0.24.0"
   },
+  "build": {
+    "app-bundle-id": "TagSpaces",
+    "app-category-type": "your.app.category.type",
+    "platform": "linux",
+    "arch": "all",
+    "icon": "build/icon"
+  },
   "scripts": {
+    "postinstall": "install-app-deps",
+    "pack": "build",
+    "dist": "build",
     "start": "electron .",
     "test": "electron . -d"
   }
