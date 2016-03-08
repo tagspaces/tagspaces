@@ -1,6 +1,6 @@
 {
     "saveAsSelectionLabel": {
-        "message": "Save Selected",
+        "message": "Запази селектирания",
         "description": "Title of label."
     },
     "appLauncher": {
@@ -8,19 +8,19 @@
         "description": "Title of the application launcher in the browser."
     },
     "appDesc": {
-        "message": "File Browser with Web Content Scraping and Chromecast Support.",
+        "message": "Файлов браузър с Web Content Scraping и поддръжка на Chromecast.",
         "description": ""
     },
     "addTagHelp": {
-        "message": "Етикетите трябва да се състоят от минимум 2 знака и не трявба да съдържат специални знаци като шпация, #, /, \\ и др.",
+        "message": "Етикетите трябва да се състоят от минимум 2 знака и не трябва да съдържат специални знаци като разстояние, #, /, \\ и др.",
         "description": "Add tag help message"
     },
     "saveScreenshotTitle": {
-        "message": "Save screenshot of the visible page area as PNG",
+        "message": "Запази екранна снимка на видимата част на страницата като PNG",
         "description": "Title of screenshot button"
     },
     "editTitleLabel": {
-        "message": "Edit Title",
+        "message": "Редактирай заглавието",
         "description": "Title of label."
     },
     "appName": {
@@ -28,11 +28,11 @@
         "description": ""
     },
     "appLauncherLabel": {
-        "message": "Capture Web Content",
+        "message": "Заснемете уеб съдържанието",
         "description": "Title of label."
     },
     "saveScreenshotLabel": {
-        "message": "Screenshot",
+        "message": "Екранна снимка",
         "description": "Title of label."
     },
     "addTagLabel": {
@@ -40,23 +40,23 @@
         "description": "Title of label."
     },
     "saveAsMhtmlTitle": {
-        "message": "Save whole page as MHTML",
+        "message": "Запази страницата като MHTML",
         "description": "Title of save page button"
     },
     "appLauncherTitle": {
-        "message": "Start TagSpaces Browser in a new tab",
+        "message": "Стартирай браузъра TagSpaces в нов таб",
         "description": "Title of the application launcher in the browser."
     },
     "saveSelectionAsHtmlTitle": {
-        "message": "Save selected content as HTML",
+        "message": "Запази селектираното съдържание като HTML",
         "description": "Title of save selection button"
     },
     "saveAsMhtmlLabel": {
-        "message": "Save Whole Page",
+        "message": "Запази страницата",
         "description": "Title of label."
     },
     "saveFileLabel": {
-        "message": "Save as File",
+        "message": "Запиши като файл",
         "description": "Title of label."
     }
 }
