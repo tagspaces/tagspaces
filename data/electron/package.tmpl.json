@@ -1,7 +1,7 @@
 {
   "name": "@@APPNAME",
   "description": "@@DEBDESCRIPTION",
-  "author": "@@BUILDAUTHOR",
+  "author": "@@AUTHOR",
   "version": "@@VERSION.@@BUILD",
   "main": "electron/main.js",
   "dependencies": {
