@@ -1,6 +1,6 @@
 {
   "name": "@@APPNAME",
-  "description": "@@DEBDESCRIPTION",
+  "description": "@@APPDESCRIPTION",
   "author": "@@AUTHOR",
   "version": "@@VERSION.@@BUILD",
   "main": "electron/main.js",
