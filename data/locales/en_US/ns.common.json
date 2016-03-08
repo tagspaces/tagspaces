@@ -179,14 +179,14 @@
     "directoryExists": "Target directory name '__dirName__' already exists.",
     "pathIsNotDirectory": "Path '__dirName__' is not a directory.",
     "directoryRenameFailed": "Directory renaming failed!",
-    "functionalityNotImplemented" : "This functionality is not implemented yet.",
+    "functionalityNotImplemented": "This functionality is not implemented yet.",
     "invalidImportFile": "The imported file has invalid format",
     "welcomeTitle": "Welcome to TagSpaces!",
     "welcomeContent": "Start using TagSpaces by choosing a location from your locale storage.",
     "connectingLocationTitle": "Connecting location",
     "createNewLocationContent": "If you don't have an already connected location, you can create one with this button. You can connect for example folders containing document or photos. And remember TagSpaces is <b>completely offline</b> tool so <b>no data will leave your device</b>.",
     "folderNavigatorTitle": "Your folder navigator",
-    "showLocationsContent": "In the selected area, you will find after opening of a location the subfolders of the opened location folder. Clicking on a folder will open it and list the its subfolder ",
+    "showLocationsContent": "In the selected area, you will find after opening of a location the subfolders of the opened location folder. Clicking on a folder will open it and list the its subfolder",
     "taglibraryTitle": "Your tag library",
     "tagGroupsContent": "Clicking on this button will open your tag library. For your convenience, it is divided in tag groups containing the single tags.",
     "aboutTitle": "About the project",
@@ -205,6 +205,5 @@
     "openingleftpanelagainContent": "Here you can open the left panel again.",
     "enjoyTitle": "Enjoy using TagSpaces!",
     "thankyouContent": "... and thank you for your attention.",
-
-  "-": "-"
+    "-": "-"
 }
