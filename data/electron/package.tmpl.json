@@ -13,7 +13,7 @@
   "build": {
     "app-bundle-id": "@@FULLNAME",
     "app-category-type": "@@APPCATEGORYOSX",
-    "platform": "linux, win32",
+    "platform": "@@PLATFORM",
     "arch": "all",
     "icon": "build/icon"
   },
