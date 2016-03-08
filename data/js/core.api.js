@@ -96,7 +96,7 @@ define(function(require, exports, module) {
           }
         });
 
-        if(!languageMatched) {
+        if (!languageMatched) {
           tsSettings.getSupportedLanguages().forEach(function(value) {
             if (value.iso.indexOf(browserLang) === 0) {
               language = value.iso;
