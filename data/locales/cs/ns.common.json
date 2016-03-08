@@ -186,7 +186,7 @@
     "connectingLocationTitle": "Connecting location",
     "createNewLocationContent": "If you don't have an already connected location, you can create one with this button. You can connect for example folders containing document or photos. And remember TagSpaces is <b>completely offline</b> tool so <b>no data will leave your device</b>.",
     "folderNavigatorTitle": "Your folder navigator",
-    "showLocationsContent": "In the selected area, you will find after opening of a location the subfolders of the opened location folder. Clicking on a folder will open it and list the its subfolder",
+    "showLocationsContent": "After opening a location, in this area you will find all subfolders of the currently opened folder. Clicking on a folder will open it and list its subfolders.",
     "taglibraryTitle": "Tvoje knihovna štítků",
     "tagGroupsContent": "Kliknutím na tohle tlačítko, otevřete svoji knihovnu štítků.  Pro vaše pohodlí jsou štítky rozdělené do skupin, obsahující jednotlivé štítky.",
     "aboutTitle": "O projektu",
