@@ -1,7 +1,7 @@
 {
   "name": "@@APPNAME",
-  "description": "@@APPDESCRIPTION",
-  "author": "TagSpaces UG (haftungsbeschraenkt) <contactus@tagspaces.org>",
+  "description": "@@DEBDESCRIPTION",
+  "author": "@@BUILDAUTHOR",
   "version": "@@VERSION.@@BUILD",
   "main": "electron/main.js",
   "dependencies": {
@@ -11,9 +11,9 @@
     "electron-prebuilt": "~0.36.9"
   },
   "build": {
-    "app-bundle-id": "TagSpaces",
-    "app-category-type": "your.app.category.type",
-    "platform": "linux",
+    "app-bundle-id": "@@FULLNAME",
+    "app-category-type": "@@APPCATEGORYOSX",
+    "platform": "linux, win32",
     "arch": "all",
     "icon": "build/icon"
   },
