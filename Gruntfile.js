@@ -4,9 +4,12 @@
 
 'use strict';
 module.exports = function(grunt) {
+  require('load-grunt-tasks')(grunt);
+
   if (!grunt.file.exists('developer.json')) {
     grunt.file.copy('developer.tmpl.json', 'developer.json');
   }
+
   grunt.initConfig({
     dev: grunt.file.readJSON('developer.json'),
 
@@ -42,6 +45,38 @@ module.exports = function(grunt) {
           src: 'data/chromium/chrome.manifest.tmpl.json',
           dest: 'data/manifest.json'
         }]
+      },
+    },
+
+    myth: {
+      options: {
+        sourcemap: false
+      },
+      dist: {
+        files: {
+          'data/assets/generated.css': 'data/assets/tagspaces.css'
+        }
+      }
+    },
+
+    uglify: {
+      pro: {
+        files: {
+          'data/pro/js/thumbsgenerator-u.js': ['data/pro/js/thumbsgenerator.js']
+        },
+        options: {
+          //compress: false
+        }
+      },
+    },
+
+    watch: {
+      scripts: {
+        files: ['**/*.css'],
+        tasks: ['myth'],
+        options: {
+          spawn: false,
+        },
       },
     },
 
@@ -205,25 +240,7 @@ module.exports = function(grunt) {
       }
     },
 
-    watch: {
-      scripts: {
-        files: ['Gruntfile.js', '{data/js,data/ext}/**/*.js'],
-        tasks: ['default'],
-        options: {
-          spawn: false
-        }
-      }
-    },
-
     shell: {
-      jsdav: {
-        command: 'node webdavserver.js',
-        options: {
-          execOptions: {
-            maxBuffer: 1024 * 1024 * 1024
-          }
-        }
-      },
       jsdoc: {
         command: 'node node_modules/jsdoc/jsdoc.js -c jsdoc.conf.json --verbose',
       },
@@ -256,6 +273,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-replace');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-compress');
+  grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks("grunt-jscs");
   grunt.loadNpmTasks('grunt-shell');
   grunt.loadNpmTasks('grunt-fixmyjs');
