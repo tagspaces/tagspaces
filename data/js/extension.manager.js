@@ -19,7 +19,8 @@ define(function(require, exports, module) {
       return chrome.extension.getURL(extPath); 
     }
     if (isWin) {
-      return location.href.replace(/file:\/\/\//gi, "").replace(/index.html/gi, extPath);
+      var extRealPath = location.href.replace(/file:\/\/\//gi, "").replace(/index.html/gi, extPath);
+      return extRealPath;
     }
     return location.href.replace(/file:\/\//gi, "").replace(/index.html/gi, extPath);
   }
