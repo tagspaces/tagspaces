@@ -200,7 +200,7 @@
     "perspectiveswitchTitle": "Perspectives switch",
     "supportedperspectivesContent": "This is place where your can switch between the supported perspectives.",
     "searchTitle": "Search",
-    "searchareaContent": "Here you can activate the search area of the application. Selecting the search field will explain you the search syntax. Please note that currently the search engine is <b>ignoring the content of the files</b>.",
+    "searchareaContent": "Here you can activate the search area of the application. Selecting the search field will explain to you the search syntax. Please note that currently the search engine is <b>ignoring the content of the files</b>.",
     "openingleftpanelTitle": "Opening the left panel",
     "openingleftpanelagainContent": "Here you can open the left panel again.",
     "enjoyTitle": "Enjoy using TagSpaces!",
