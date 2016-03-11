@@ -97,9 +97,9 @@ Go to the data folder and install the TagSpaces extensions with bower:
 * Start the addon by clicking the TagSpaces icon in the upper right area of Firefox
 
 #### How to setup the WebDAV edition?
-There is a script in root folder of the repository called `webdavserver.js`, which can be started with:
+There is a script called `webdavserver.js` located in the data/web , which can be started with:
 
-    node webdavserver.js
+    node data/web/webdavserver.js
     
 This command will start a local node.js based WebDAV server on `http://127.0.0.1:8000`. Open your browser and enter the following URL:
 
