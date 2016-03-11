@@ -58,6 +58,6 @@
     "webdav": "cd data && cd web && node webdavserver.js",
     "firefoxdev": "cfx run -b ~/Apps/firefoxdev/firefox -p ../mozprofile",
     "firefox": "cfx run -p ../mozprofile --static-args='{ \"disableStrict\": true }'",
-    "test": "make test"
+    "testing": "make test"
   }
 }
