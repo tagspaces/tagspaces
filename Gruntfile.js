@@ -59,17 +59,6 @@ module.exports = function(grunt) {
       }
     },
 
-    uglify: {
-      pro: {
-        files: {
-          'data/pro/js/thumbsgenerator-u.js': ['data/pro/js/thumbsgenerator.js']
-        },
-        options: {
-          //compress: false
-        }
-      },
-    },
-
     watch: {
       scripts: {
         files: ['**/*.css'],
@@ -273,7 +262,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-replace');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-compress');
-  grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks("grunt-jscs");
   grunt.loadNpmTasks('grunt-shell');
   grunt.loadNpmTasks('grunt-fixmyjs');
