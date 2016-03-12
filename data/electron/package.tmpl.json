@@ -15,7 +15,11 @@
     "app-category-type": "@@APPCATEGORYOSX",
     "platform": "@@PLATFORM",
     "arch": "all",
-    "icon": "build/icon"
+    "icon": "build/icon",
+    "win": {
+      "outputDirectory": "@@OUTPUTDIR",
+      "author": "@@AUTHOR"
+    }
   },
   "scripts": {
     "postinstall": "install-app-deps",
