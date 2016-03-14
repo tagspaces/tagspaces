@@ -1,18 +1,26 @@
 {
   "name": "TagSpaces",
   "description": "Offline document organizer and browser for your local files, supporting easy file tagging and document editing.",
-  "author": "TagSpaces UG <contactus@tagspaces.org>",
+  "author": "@@AUTHOR",
   "version": "2.1.3",
   "main": "electron/main.js",
   "dependencies": {
     "fs-extra": "~0.24.0"
   },
+  "devDependencies": {
+    "electron-prebuilt": "~0.36.9"
+  },
   "build": {
-    "app-bundle-id": "TagSpaces",
-    "app-category-type": "your.app.category.type",
-    "platform": "linux",
+    "app-bundle-id": "@@FULLNAME",
+    "app-category-type": "@@APPCATEGORYOSX",
+    "platform": "@@PLATFORM",
     "arch": "all",
-    "icon": "build/icon"
+    "icon": "build/icon",
+    "iconUrl": "https://raw.githubusercontent.com/tagspaces/tagspaces/develop/data/assets/icon.ico",
+    "win": {
+      "outputDirectory": "@@OUTPUTDIR",
+      "author": "@@AUTHOR"
+    }
   },
   "scripts": {
     "postinstall": "install-app-deps",
