@@ -16,6 +16,7 @@
     "platform": "@@PLATFORM",
     "arch": "all",
     "icon": "build/icon",
+    "iconUrl": "https://raw.githubusercontent.com/tagspaces/tagspaces/develop/data/assets/icon.ico",
     "win": {
       "outputDirectory": "@@OUTPUTDIR",
       "author": "@@AUTHOR"
