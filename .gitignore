@@ -340,11 +340,9 @@ data/locales/gl/
 data/locales/hi_IN/
 data/locales/hr_HR/
 data/locales/kk_KZ/
-data/locales/pl/
 data/locales/ro_RO/
 data/locales/sr/
 data/locales/zh_HK/
-data/mozilla/install.rdf
 data/node-webkit/node_modules/trash/node_modules/fs-extra/
 data/testfiles
 rundevfirefox

@@ -1,26 +1,26 @@
 {
     "saveAsSelectionLabel": {
-        "message": "Save Selected",
+        "message": "Zapisz zaznaczenie",
         "description": "Title of label."
     },
     "appLauncher": {
-        "message": "Launch TagSpaces",
+        "message": "Uruchom TagSpaces",
         "description": "Title of the application launcher in the browser."
     },
     "appDesc": {
-        "message": "File Browser with Web Content Scraping and Chromecast Support.",
+        "message": "Przeglądarka plików z funkcją pobierania treści WWW i wsparciem dla Chromecast",
         "description": ""
     },
     "addTagHelp": {
-        "message": "Tags should have a minimum length of 2 characters and should not contain special characters such as spaces, #, / ,\\ and other.",
+        "message": "Tagi powinny mieć minimalną długość 2 znaków i nie mogą zawierać znaków specjalnych takich jak spacja, #, /, \\ i podobnych.",
         "description": "Add tag help message"
     },
     "saveScreenshotTitle": {
-        "message": "Save screenshot of the visible page area as PNG",
+        "message": "Zapisz zrzut ekranu widocznej strony jako PNG",
         "description": "Title of screenshot button"
     },
     "editTitleLabel": {
-        "message": "Edit Title",
+        "message": "Edytuj tytuł",
         "description": "Title of label."
     },
     "appName": {
@@ -28,35 +28,35 @@
         "description": ""
     },
     "appLauncherLabel": {
-        "message": "Capture Web Content",
+        "message": "Pobierz treść WWW",
         "description": "Title of label."
     },
     "saveScreenshotLabel": {
-        "message": "Screenshot",
+        "message": "Zrzut ekranu",
         "description": "Title of label."
     },
     "addTagLabel": {
-        "message": "Add Tags",
+        "message": "Dodaj tagi",
         "description": "Title of label."
     },
     "saveAsMhtmlTitle": {
-        "message": "Save whole page as MHTML",
+        "message": "Zapisz całą stronę jako MHTML",
         "description": "Title of save page button"
     },
     "appLauncherTitle": {
-        "message": "Start TagSpaces Browser in a new tab",
+        "message": "Uruchom przeglądarkę TagSpaces w nowej karcie",
         "description": "Title of the application launcher in the browser."
     },
     "saveSelectionAsHtmlTitle": {
-        "message": "Save selected content as HTML",
+        "message": "Zapisz zaznaczony fragment jako HTML",
         "description": "Title of save selection button"
     },
     "saveAsMhtmlLabel": {
-        "message": "Save Whole Page",
+        "message": "Zapisz całą stronę",
         "description": "Title of label."
     },
     "saveFileLabel": {
-        "message": "Save as File",
+        "message": "Zapisz jako plik",
         "description": "Title of label."
     }
 }
