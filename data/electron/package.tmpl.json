@@ -8,7 +8,7 @@
     "fs-extra": "~0.24.0"
   },
   "devDependencies": {
-    "electron-prebuilt": "~0.36.9"
+    "electron-prebuilt": "~0.37.2"
   },
   "build": {
     "app-bundle-id": "@@FULLNAME",
