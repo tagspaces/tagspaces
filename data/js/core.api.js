@@ -71,10 +71,12 @@ define(function(require, exports, module) {
     tsDirectoriesUI.initUI();
     tsDirectoriesUI.initLocations();
     tsFileOpener.initUI();
-    tsPersManager.initPerspectives().then(function(result) {
-      console.log("initPerspectives: " + result);
-    }).catch(function(err) {
-      alert("initPerspectives: " + err);
+    tsExtManager.loadExtensionData().then(function() {
+      tsPersManager.initPerspectives().then(function(result) {
+        console.log("Perspectives Initialized: " + result);
+      }).catch(function(err) {
+        console.warn("Perspectives initialization failed: " + err);
+      });
     });
 
     hideLoadingAnimation();

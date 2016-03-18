@@ -1,6 +1,7 @@
-/* Copyright (c) 2012-2015 The TagSpaces Authors. All rights reserved.
+/* Copyright (c) 2012-2016 The TagSpaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that
  * can be found in the LICENSE file. */
+
 define(function(require, exports, module) {
   'use strict';
   console.log('Loading perspective.manager.js ...');
@@ -40,7 +41,7 @@ define(function(require, exports, module) {
     $('#viewContainers').empty();
     initWelcomeScreen();
 
-    var extensions = TSCORE.Config.getPerspectives();
+    var extensions = TSCORE.Config.getActivatedPerspectives();
     var promises = [];
     for (var i = 0; i < extensions.length; i++) {
       var extPath = TSCORE.Config.getExtensionPath() + '/' + extensions[i].id + '/extension.js';
@@ -70,20 +71,11 @@ define(function(require, exports, module) {
   }
 
   var initWelcomeScreen = function() {
-    /* require([
-              "text!templates/WelcomeScreen.html",
-            ], function(uiTPL) {
-                // Check if dialog already created
-                if($("#dialogLocationEdit").length < 1) {
-                    var uiTemplate = Handlebars.compile( uiTPL );
-                    $("#viewContainers").append(uiTemplate()); 
-                }
-        }); */
     $('#viewContainers').append('<div id="welcomeScreen"></div>');
   };
 
   var initPerspectiveSwitcher = function() {
-    var extensions = TSCORE.Config.getPerspectives();
+    var extensions = TSCORE.Config.getActivatedPerspectives();
     var $perspectiveSwitcher = $('#perspectiveSwitcher');
     $perspectiveSwitcher.empty();
     $perspectiveSwitcher.append($('<li>', {
@@ -293,22 +285,7 @@ define(function(require, exports, module) {
       loadAllHandler();
     });
 
-    /*executeSequentially(metaDataLoadingPromises).then(function(result) {
-      console.log("MetaData loaded " + result);
-      loadAllHandler();
-    }).catch(function(e) {
-      console.error("MetaData loading failed: " + e);
-      loadAllHandler();
-    });*/
   };
-
-  function executeSequentially(promiseFactories) {
-    var result = Promise.resolve();
-    for (var i = 0; i < promiseFactories.length; i++) {
-      result = result.then(promiseFactories[i]);
-    }
-    return result;
-  }
 
   var refreshFileListContainer = function() {
     // TODO consider search view
@@ -325,7 +302,6 @@ define(function(require, exports, module) {
     for (var i = 0; i < perspectives.length; i++) {
       $('#' + perspectives[i].ID + 'Container').hide();
       $('#' + perspectives[i].ID + 'Toolbar').hide();
-      $('#' + perspectives[i].ID + 'Footer').hide();
     }
   };
 
@@ -387,5 +363,5 @@ define(function(require, exports, module) {
   exports.removeAllFiles = removeAllFiles;
   exports.removeFileUI = removeFileUI;
   exports.updateFileUI = updateFileUI;
-  exports.changePerspective = changePerspective; //exports.generateDesktop              = generateDesktop;
+  exports.changePerspective = changePerspective;
 });

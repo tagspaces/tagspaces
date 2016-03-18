@@ -26,7 +26,6 @@ define(function(require, exports, module) {
   }
 
   function loadBowerData(filePath) {
-
     var resolvePath = (isCordova) ? cordova.file.applicationDirectory : null;
     
     var promise = new Promise(function(resolve, reject) {
@@ -47,7 +46,6 @@ define(function(require, exports, module) {
   }
 
   function loadExtensionData() {
-
     var extFolderPath = getExtFolderPath();
     //TODO: mozilla loads bower data incorrectly
     if (isFirefox) {
@@ -55,6 +53,7 @@ define(function(require, exports, module) {
     }
 
     var promise = new Promise(function(resolve, reject) {
+      var extensions = [];
       TSCORE.IO.listDirectoryPromise(extFolderPath).then(function(dirList) {
         var readBowerFileWorkers = [];
         for (var i in dirList) {
@@ -64,22 +63,20 @@ define(function(require, exports, module) {
             readBowerFileWorkers.push(loadBowerData(filePath));
           }
         }
-        Promise.all(readBowerFileWorkers).then(function(values) {
-          var result = [];
-          for (var val in values) {
-            if (values[val]) {
-              result.push(values[val]);
+        Promise.all(readBowerFileWorkers).then(function(bowerObjects) {
+          bowerObjects.forEach(function(bowerObject) {
+            if (bowerObject) {
+              extensions.push(bowerObject);
             }
-          }
-          updatePerspectiveNames(result);
-          TSCORE.hideLoadingAnimation();
-          resolve(result);
+          });
+          TSCORE.Config.setExtensions(extensions);
+          resolve();
         }).catch(function(err) {
-          TSCORE.hideLoadingAnimation();
-          reject(err);
+          console.warn("reading of at least one bower.json file failed: " + err);
+          resolve();
         });
       }).catch(function(err) {
-        console.log("loadExtensionData failed with error: " + err);
+        console.warn("loadExtensionData failed with error: " + err);
         resolve();
       });
     });
@@ -87,18 +84,15 @@ define(function(require, exports, module) {
     return promise;
   }
 
-  function updatePerspectiveNames(perspectiveList) {
-    TSCORE.Config.getPerspectives().forEach(function(value) {
-      if (!value.name) {
-        for (var i in perspectiveList) {
-          var element = perspectiveList[i];
-          if (element.id === value.id) {
-            value.name = element.name;
-          }
-        }
+  /*function updatePerspectiveData(perspectiveBowerObject) {
+    var perspectives = TSCORE.Config.getActivatedPerspectives();
+    perspectives.forEach(function(perspective) {
+      if (perspective.id === perspectiveBowerObject.id) {
+
       }
     });
-  }
+    TSCORE.Config.setActivatedPerspectives(perspectives);
+  }*/
 
   exports.loadExtensionData = loadExtensionData;
 });

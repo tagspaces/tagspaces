@@ -223,31 +223,95 @@ define(function(require, exports, module) {
       });
     }
   };
-  //////////////////// getter and setter methods ///////////////////    
-  var getPerspectiveExtensions = function() {
-    return exports.DefaultSettings.ootbPerspectives;
-  };
-  var getActivatedPerspectiveExtensions = function() {
-    if (exports.Settings.perspectives === undefined) {
+
+  //////////////////// getter and setter methods ///////////////////
+
+  function getPerspectiveExtensions() {
+    var perspectives = [];
+    if (exports.Settings.extensions && exports.Settings.extensions.length > 1) {
+      exports.Settings.extensions.forEach(function(extension) {
+        if (extension.type === "perspective") {
+          perspectives.push({ 'id': extension.id, 'name': extension.name });
+        }
+      });
+    } else {
+      exports.DefaultSettings.ootbPerspectives.forEach(function(extensionId) {
+        perspectives.push({ 'id': extensionId, 'name': extensionId });
+      });
+    }
+    return perspectives;
+  }
+
+  function getViewerExtensions() {
+    var viewers = [];
+    if (exports.Settings.extensions && exports.Settings.extensions.length > 1) {
+      exports.Settings.extensions.forEach(function(extension) {
+        if (extension.type === "viewer" || extension.type === "editor") {
+          viewers.push({ 'id': extension.id, 'name': extension.name });
+        }
+      });
+    } else {
+      exports.DefaultSettings.ootbPerspectives.forEach(function(extensionId) {
+        viewers.push({ 'id': extensionId, 'name': extensionId });
+      });
+    }
+    return viewers;
+  }
+
+  function getEditorExtensions() {
+    var editors = [];
+    if (exports.Settings.extensions && exports.Settings.extensions.length > 1) {
+      exports.Settings.extensions.forEach(function(extension) {
+        if (extension.type === "editor") {
+          editors.push({ 'id': extension.id, 'name': extension.name });
+        }
+      });
+    } else {
+      exports.DefaultSettings.ootbPerspectives.forEach(function(extensionId) {
+        editors.push({ 'id': extensionId, 'name': extensionId });
+      });
+    }
+    return editors;
+  }
+
+  function getActivatedPerspectives() {
+    if (!exports.Settings.perspectives) {
       exports.Settings.perspectives = exports.DefaultSettings.perspectives;
     }
-    return exports.Settings.perspectives;
-  };
-  var getViewerExtensions = function() {
-    return exports.DefaultSettings.ootbViewers;
-  };
-  var getEditorExtensions = function() {
-    return exports.DefaultSettings.ootbEditors;
-  };
-  var getPerspectives = function() {
-    if (exports.Settings.perspectives === undefined) {
-      exports.Settings.perspectives = exports.DefaultSettings.perspectives;
+
+    var matchedPerspectives = [];
+
+    exports.Settings.perspectives.forEach(function(activatedPerspective) {
+      getPerspectiveExtensions().forEach(function(perspective) {
+        if (activatedPerspective.id === perspective.id) {
+          activatedPerspective.name = perspective.name;
+          matchedPerspectives.push(activatedPerspective);
+        }
+      });
+    });
+
+    if (matchedPerspectives.length > 0) {
+      exports.Settings.perspectives = matchedPerspectives;
+      saveSettings();
     }
     return exports.Settings.perspectives;
-  };
-  var setPerspectives = function(value) {
+  }
+
+  function setActivatedPerspectives(value) {
     exports.Settings.perspectives = value;
-  };
+  }
+
+  function getExtensions() {
+    if (!exports.Settings.extensions) {
+      exports.Settings.extensions = [];
+    }
+    return exports.Settings.extensions;
+  }
+
+  function setExtensions(extensions) {
+    exports.Settings.extensions = extensions;
+  }
+
   var getExtensionPath = function() {
     if (exports.Settings.extensionsPath === undefined) {
       exports.Settings.extensionsPath = exports.DefaultSettings.extensionsPath;
@@ -1001,8 +1065,13 @@ define(function(require, exports, module) {
   };
   // Public API definition
   exports.upgradeSettings = upgradeSettings;
-  exports.getPerspectives = getPerspectives;
-  exports.setPerspectives = setPerspectives;
+  exports.getActivatedPerspectives = getActivatedPerspectives;
+  exports.setActivatedPerspectives = setActivatedPerspectives;
+  exports.getExtensions = getExtensions;
+  exports.setExtensions = setExtensions;
+  exports.getPerspectiveExtensions = getPerspectiveExtensions;
+  exports.getViewerExtensions = getViewerExtensions;
+  exports.getEditorExtensions = getEditorExtensions;
   exports.isFirstRun = isFirstRun;
   exports.getExtensionPath = getExtensionPath;
   exports.setExtensionPath = setExtensionPath;
@@ -1069,10 +1138,6 @@ define(function(require, exports, module) {
   exports.setSearchKeyBinding = setSearchKeyBinding;
   exports.getDefaultLocation = getDefaultLocation;
   exports.setDefaultLocation = setDefaultLocation;
-  exports.getPerspectiveExtensions = getPerspectiveExtensions;
-  exports.getActivatedPerspectiveExtensions = getActivatedPerspectiveExtensions;
-  exports.getViewerExtensions = getViewerExtensions;
-  exports.getEditorExtensions = getEditorExtensions;
   exports.getUseTrashCan = getUseTrashCan;
   exports.setUseTrashCan = setUseTrashCan;
   exports.getUseOCR = getUseOCR;

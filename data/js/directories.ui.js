@@ -104,7 +104,21 @@ define(function(require, exports, module) {
       $('#locationName').text(TSCORE.currentLocationObject.name).attr('title', path);
       // Handle open default perspective for a location
       var defaultPerspective = TSCORE.currentLocationObject.perspective;
-      TSCORE.PerspectiveManager.changePerspective(defaultPerspective);
+      var activatedPerspectives = TSCORE.Config.getActivatedPerspectives();
+
+      // Checking if specified perspective available
+      var perspectiveFound;
+      activatedPerspectives.forEach(function(perspective) {
+        if (perspective.id === defaultPerspective) {
+          perspectiveFound = true;
+        }
+      });
+      if (perspectiveFound) {
+        TSCORE.PerspectiveManager.changePerspective(defaultPerspective);
+      } else if (activatedPerspectives.length > 0) {
+        TSCORE.PerspectiveManager.changePerspective(activatedPerspectives[0].id);
+      }
+
       // Saving the last opened location path in the settings
       TSCORE.Config.setLastOpenedLocation(path);
       
@@ -579,17 +593,17 @@ define(function(require, exports, module) {
       var $folderLocation2 = $('#folderLocation2');
       var $locationPerspective2 = $('#locationPerspective2');
       var selectedPerspectiveId = TSCORE.Config.getLocation(path).perspective;
+
       $locationPerspective2.children().remove();
-      tsExtManager.loadExtensionData().then(function() {
-        TSCORE.Config.getActivatedPerspectiveExtensions().forEach(function(value) {
-          var name = value.name ? value.name : value.id;
-          if (selectedPerspectiveId === value.id) {
-            $locationPerspective2.append($('<option>').attr('selected', 'selected').text(name).val(value.id));
-          } else {
-            $locationPerspective2.append($('<option>').text(name).val(value.id));
-          }
-        });
+      TSCORE.Config.getActivatedPerspectives().forEach(function(value) {
+        var name = value.name ? value.name : value.id;
+        if (selectedPerspectiveId === value.id) {
+          $locationPerspective2.append($('<option>').attr('selected', 'selected').text(name).val(value.id));
+        } else {
+          $locationPerspective2.append($('<option>').text(name).val(value.id));
+        }
       });
+
       $connectionName2.val(name);
       $connectionName2.attr('oldName', name);
       $folderLocation2.val(path);
@@ -636,6 +650,7 @@ define(function(require, exports, module) {
       if ($dialogCreateFolderConnection.length < 1) {
         var uiTemplate = Handlebars.compile(uiTPL);
         $('body').append(uiTemplate());
+
         if (isWeb) {
           $('#selectLocalDirectory').attr('style', 'visibility: hidden');
         } else {
@@ -644,12 +659,7 @@ define(function(require, exports, module) {
             selectLocalDirectory();
           });
         }
-        tsExtManager.loadExtensionData().then(function() {
-          TSCORE.Config.getActivatedPerspectiveExtensions().forEach(function(value) {
-            var name = value.name ? value.name : value.id;
-            $('#locationPerspective').append($('<option>').text(name).val(value.id));
-          });         
-        });
+
         $('#createFolderConnectionButton').off();
         $('#createFolderConnectionButton').on('click', function() {
           $('#formLocationCreate').validator('validate');
@@ -660,6 +670,13 @@ define(function(require, exports, module) {
           }
         });
       }
+
+      $('#locationPerspective').empty();
+      TSCORE.Config.getActivatedPerspectives().forEach(function(value) {
+        var name = value.name ? value.name : value.id;
+        $('#locationPerspective').append($('<option>').text(name).val(value.id));
+      });
+
       $('#connectionName').val('');
       $('#folderLocation').val('');
       $('#dialogCreateFolderConnection').i18n();

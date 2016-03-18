@@ -8,7 +8,6 @@ define(function(require, exports, module) {
   var TSCORE = require('tscore');
   var tsExtManager = require('tsextmanager');
   var saveAs = require('libs/filesaver.js/FileSaver.min.js');
-  var extList;
 
   function generateSelectOptions(parent, data, selectedId, helpI18NString) {
     parent.empty();
@@ -19,12 +18,11 @@ define(function(require, exports, module) {
       .text('')
       .attr("data-i18n", helpI18NString)
       .val('false'));
-    data.forEach(function(value) {
-      var name = getExtensionNameByID(value);
-      if (selectedId === value) {
-        parent.append($('<option>').attr('selected', 'selected').text(name).val(value));
+    data.forEach(function(extension) {
+      if (selectedId === extension.id) {
+        parent.append($('<option>').attr('selected', 'selected').text(extension.name).val(extension.id));
       } else {
-        parent.append($('<option>').text(name).val(value));
+        parent.append($('<option>').text(extension.name).val(extension.id));
       }
     });
   }
@@ -40,36 +38,9 @@ define(function(require, exports, module) {
               row4Remove.remove();
             });
           })));
-    if (!extList) {
-      generateSelectOptions(perspectiveControl.find('select'), TSCORE.Config.getPerspectiveExtensions(), perspectiveId, "ns.dialogs:choosePerspective");
-    } else {
-      generateSelectOptions(perspectiveControl.find('select'), getExtensionsByType("perspective"), perspectiveId, "ns.dialogs:choosePerspective");
-    }
-    
+    generateSelectOptions(perspectiveControl.find('select'), TSCORE.Config.getPerspectiveExtensions(), perspectiveId, "ns.dialogs:choosePerspective");
     perspectiveControl.i18n();
     parent.append(perspectiveControl);
-  }
-
-  function getExtensionNameByID(extId) {
-    for (var i in extList) {
-      if (extList[i].id === extId) {
-        return extList[i].name;
-      }
-    }
-    return extId;
-  }
-
-  function getExtensionsByType(type) {
-    var result = [];
-    if (extList.length === 0) {
-      console.error("error: extList is empty");
-    }
-    for (var i in extList) {
-      if (extList[i].type === type) {
-        result.push(extList[i].id);
-      }
-    }
-    return result;
   }
 
   function addFileType(parent, fileext, viewerId, editorId) {
@@ -86,17 +57,8 @@ define(function(require, exports, module) {
           });
         })));
 
-    
-    if (!extList) {
-      generateSelectOptions(fileTypeControl.find('.ftviewer'), TSCORE.Config.getViewerExtensions(), viewerId, "ns.dialogs:chooseFileViewer");
-      generateSelectOptions(fileTypeControl.find('.fteditor'), TSCORE.Config.getEditorExtensions(), editorId, "ns.dialogs:chooseFileEditor");   
-    } else {
-      var viewers = getExtensionsByType("viewer");
-      var editors = getExtensionsByType("editor");
-      viewers = viewers.concat(editors);
-      generateSelectOptions(fileTypeControl.find('.ftviewer'), viewers, viewerId, "ns.dialogs:chooseFileViewer");
-      generateSelectOptions(fileTypeControl.find('.fteditor'), editors, editorId, "ns.dialogs:chooseFileEditor");
-    }
+    generateSelectOptions(fileTypeControl.find('.ftviewer'), TSCORE.Config.getViewerExtensions(), viewerId, "ns.dialogs:chooseFileViewer");
+    generateSelectOptions(fileTypeControl.find('.fteditor'), TSCORE.Config.getEditorExtensions(), editorId, "ns.dialogs:chooseFileEditor");
 
     fileTypeControl.i18n();
     parent.prepend(fileTypeControl);
@@ -217,27 +179,12 @@ define(function(require, exports, module) {
     });
     $('#fileTypesList').empty();
 
-    tsExtManager.loadExtensionData().then(function(values) {
+    TSCORE.Config.getActivatedPerspectives().forEach(function(value) {
+      addPerspective($('#perspectiveList'), value.id);
+    });
 
-      extList = values;
-      
-      TSCORE.Config.getPerspectives().forEach(function(value) {
-        addPerspective($('#perspectiveList'), value.id);
-      });
-
-      TSCORE.Config.getSupportedFileTypes().sort(function(a, b) {
-        if (a.type > b.type) {
-          return -1;
-        }
-        if (a.type < b.type) {
-          return 1;
-        }
-        return 0;
-      }).forEach(function(value) {
-        addFileType($('#fileTypesList'), value.type, value.viewer, value.editor);
-      });
-    }).catch(function(err) {
-      console.log("loadExtFolder error: " + err);
+    TSCORE.Config.getSupportedFileTypes().sort(stringSorting).forEach(function(value) {
+      addFileType($('#fileTypesList'), value.type, value.viewer, value.editor);
     });
 
     $('#dialogOptions a:first').tab('show');
@@ -245,9 +192,16 @@ define(function(require, exports, module) {
       backdrop: 'static',
       show: true
     });
-    /*$('#dialogOptions').draggable({ // disabling dragging due to issue with option's tabs
-      handle: ".modal-header"
-    });*/
+  }
+
+  function stringSorting(a, b) {
+    if (a.type > b.type) {
+      return -1;
+    }
+    if (a.type < b.type) {
+      return 1;
+    }
+    return 0;
   }
 
   function parseKeyBinding(keybinding) {
@@ -287,7 +241,7 @@ define(function(require, exports, module) {
     var interfaceLang = $('#languagesList').val();
     TSCORE.Config.setInterfaceLanguage(interfaceLang);
     TSCORE.switchInterfaceLanguage(interfaceLang);
-    TSCORE.Config.setPerspectives(collectPerspectivesData());
+    TSCORE.Config.setActivatedPerspectives(collectPerspectivesData());
     TSCORE.Config.setSupportedFileTypes(collectSupportedFileTypesData());
     TSCORE.Config.setWriteMetaToSidecarFile($('#writeMetaToSidecarFile').is(':checked'));
     TSCORE.Config.setUseDefaultLocation($('#useDefaultLocationCheckbox').is(':checked'));
