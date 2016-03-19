@@ -157,19 +157,18 @@ define(function(require, exports, module) {
     ];
 
     if (process.platform == 'darwin') {
-      var name = "TagSpaces";
       template.unshift({
         label: name,
         submenu: [
           {
-            label: 'About ' + name,
+            label: $.i18n.t("ns.common:aboutTagSpaces"),
             role: 'about'
           },
           {
             type: 'separator'
           },
           {
-            label: 'Services',
+            label: $.i18n.t("ns.common:services"),
             role: 'services',
             submenu: []
           },
@@ -177,24 +176,24 @@ define(function(require, exports, module) {
             type: 'separator'
           },
           {
-            label: 'Hide ' + name,
+            label: $.i18n.t("ns.common:hideTagSpaces"),
             accelerator: 'Command+H',
             role: 'hide'
           },
           {
-            label: 'Hide Others',
+            label: $.i18n.t("ns.common:hideOthers"),
             accelerator: 'Command+Alt+H',
             role: 'hideothers'
           },
           {
-            label: 'Show All',
+            label: $.i18n.t("ns.common:showAll"),
             role: 'unhide'
           },
           {
             type: 'separator'
           },
           {
-            label: 'Quit',
+            label: $.i18n.t("ns.common:quit"),
             accelerator: 'Command+Q',
             click: function() { app.quit(); }
           },

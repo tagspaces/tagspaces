@@ -212,5 +212,11 @@
     "openingleftpanelagainContent": "Here you can open the left panel again.",
     "enjoyTitle": "Enjoy using TagSpaces!",
     "thankyouContent": "... and thank you for your attention.",
-    "-": "-"
+    "-": "-",
+    "services": "Services",
+    "hideTagspaces": "Hide TagSpaces",
+    "hideOthers": "Hide Others",
+    "showAll": "Show All",
+    "quit": "Quit"
+
 }
