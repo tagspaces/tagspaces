@@ -21,11 +21,16 @@ define(function(require, exports, module) {
     }
   }
 
-  function openLinkExternally(url) {
-    if (url.indexOf("http://") === 0 || url.indexOf("https://") === 0 || url.indexOf("file://") === 0) {
-      TSCORE.openLinkExternally(url);
+  function openLinkExternally(uri) {
+    uri = decodeURIComponent(uri);
+    if (
+        uri.indexOf("http://") === 0 ||
+        uri.indexOf("https://") === 0 ||
+        uri.indexOf("file://") === 0
+    ) {
+      TSCORE.openLinkExternally(uri);
     } else {
-      console.log("Not supported URL format: " + url);
+      console.log("Not supported URL format: " + uri);
     }
   }
 
