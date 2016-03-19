@@ -1,7 +1,13 @@
+/* Copyright (c) 2013-2016 The TagSpaces Authors.
+ * Use of this source code is governed by the MIT license which can be found in the LICENSE.txt file. */
+
 define(function(require, exports, module) {
   'use strict';
 
   var TSCORE = require("tscore");
+
+  var maxTmbSize = 300;
+  var supportedImageExtensions = ["jpg", "jpeg", "png"];
 
   function makeMetaPathByName(name) {
     return TSCORE.currentPath + TSCORE.dirSeparator + TSCORE.metaFolder + name;
@@ -90,13 +96,11 @@ define(function(require, exports, module) {
     });
   }
 
-  function loadThumbnailPromise(entry) {
+  function loadThumbnailPromise(filePath) {
     return new Promise(function(resolve, reject) {
-      var filePath = entry[TSCORE.fileListFILEPATH];
       if (TSCORE.PRO && TSCORE.Config.getEnableMetaData() && TSCORE.Config.getUseGenerateThumbnails()) {
-        TSCORE.PRO.getThumbnailURLPromise(entry).then(function(dataURL) {
-          entry[TSCORE.fileListMETA].thumbnailPath = dataURL;
-          resolve(filePath);
+        TSCORE.PRO.getThumbnailURLPromise(filePath).then(function(dataURL) {
+          resolve(dataURL);
         }).catch(function(err) {
           console.warn("Thumb generation failed for: " + filePath + " failed with: " + err);
           resolve(filePath);
@@ -106,8 +110,49 @@ define(function(require, exports, module) {
         if (metaFilePath && isChrome) {
           metaFilePath = "file://" + metaFilePath;
         }
-        entry[TSCORE.fileListMETA].thumbnailPath = metaFilePath;
-        resolve(filePath);
+        var fileExt = TSCORE.TagUtils.extractFileExtension(filePath);
+        if (metaFilePath) {
+          resolve(metaFilePath);
+        } else if (supportedImageExtensions.indexOf(fileExt) >= 0) {
+          generateImageThumbnail(filePath).then(function(dataURL) {
+            resolve(dataURL);
+          }).catch(function() {
+            resolve();
+          });
+        }
+      }
+    });
+  }
+
+  function generateImageThumbnail(fileURL) {
+    return new Promise(function(resolve, reject) {
+      var canvas = document.createElement("canvas");
+      var ctx = canvas.getContext("2d");
+      var img = new Image();
+
+      var errorHandler = function(err) {
+        console.warn("Error while generating thumbnail for: " + fileURL + " - " + JSON.stringify(err));
+        resolve("");
+      };
+
+      try {
+        img.crossOrigin = 'anonymous';
+        img.onload = function() {
+          if (img.width >= img.height) {
+            canvas.width = maxTmbSize;
+            canvas.height = (maxTmbSize * img.height) / img.width;
+          } else {
+            canvas.height = maxTmbSize;
+            canvas.width = (maxTmbSize * img.width) / img.height;
+          }
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          resolve(canvas.toDataURL("image/png"));
+          img = null;
+          canvas = null;
+        };
+        img.src = fileURL;
+      } catch (err) {
+        errorHandler(err);
       }
     });
   }
