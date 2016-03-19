@@ -245,9 +245,6 @@ define(function(require, exports, module) {
           ];
           TSCORE.fileList.push(entry);
           metaDataLoadingPromises.push(TSCORE.Meta.loadMetaFileJsonPromise(entry));
-          if (!isSearchResult) {
-            metaDataLoadingPromises.push(TSCORE.Meta.loadThumbnailPromise(entry));
-          }
         } else {
           entry = [
             path,
