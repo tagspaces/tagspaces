@@ -1,6 +1,8 @@
-/* Copyright (c) 2012-2015 The Tagspaces Authors. All rights reserved.
+/* Copyright (c) 2012-2016 The Tagspaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that
  * can be found in the LICENSE file. */
+
+
 /* global define  */
 define(function(require, exports, module) {
   'use strict';
@@ -90,12 +92,16 @@ define(function(require, exports, module) {
     return false;
   }
 
-  /*function getParameterByName(name) {
-    name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
-    var regex = new RegExp('[\\?&]' + name + '=([^&#]*)'),
-      results = regex.exec(location.search);
-    return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
-  }*/
+  function isVisibleOnScreen(element) {
+    var rectangle = element.getBoundingClientRect();
+    var isVisible = (
+      rectangle.top >= 0 &&
+      rectangle.left >= 0 &&
+      rectangle.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+      rectangle.right <= (window.innerWidth || document.documentElement.clientWidth)
+    );
+    return isVisible;
+  }
 
   exports.arrayBufferToDataURL = arrayBufferToDataURL;
   exports.base64ToArrayBuffer = base64ToArrayBuffer;
@@ -107,5 +113,6 @@ define(function(require, exports, module) {
   exports.getFileExt = getFileExt;
   exports.arrayBufferToBuffer = arrayBufferToBuffer;
   exports.getURLParameter = getURLParameter;
+  exports.isVisibleOnScreen = isVisibleOnScreen;
 
 });
