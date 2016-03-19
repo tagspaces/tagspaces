@@ -768,12 +768,7 @@ define(function(require, exports, module) {
 
   // Handle external links
   function openLinkExternally(url) {
-    if (isNode || isElectron) {
-      TSCORE.IO.openFile(url);
-    } else {
-      // _system is needed for cordova
-      window.open(url, '_system');
-    }
+    TSCORE.IO.openFile(url);
   }
 
   function clearSearchFilter() {

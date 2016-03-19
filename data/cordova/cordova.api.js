@@ -978,7 +978,11 @@ define(function(require, exports, module) {
    */
   function openFile(filePath) {
     console.log("Opening natively: " + filePath);
-    window.plugins.fileOpener.open(filePath);
+    if (filePath.indexOf("http://") === 0 || filePath.indexOf("https://") === 0) {
+      window.open(filePath, '_system');
+    } else {
+      window.plugins.fileOpener.open(filePath);
+    }
   }
 
   // Platform specific API calls
