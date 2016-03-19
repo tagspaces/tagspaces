@@ -53,15 +53,15 @@ define(function(require, exports, module) {
     var Menu = remote.Menu;
     var template = [
       {
-        label: 'Edit',
+        label: $.i18n.t("ns.common:edit"),
         submenu: [
           {
-            label: 'Undo',
+            label: $.i18n.t("ns.common:undo") ,
             accelerator: 'CmdOrCtrl+Z',
             role: 'undo'
           },
           {
-            label: 'Redo',
+            label: $.i18n.t("ns.common:redo") ,
             accelerator: 'Shift+CmdOrCtrl+Z',
             role: 'redo'
           },
@@ -69,29 +69,29 @@ define(function(require, exports, module) {
             type: 'separator'
           },
           {
-            label: 'Cut',
+            label: $.i18n.t("ns.common:cut") ,
             accelerator: 'CmdOrCtrl+X',
             role: 'cut'
           },
           {
-            label: 'Copy',
+            label: $.i18n.t("ns.common:copy") ,
             accelerator: 'CmdOrCtrl+C',
             role: 'copy'
           },
           {
-            label: 'Paste',
+            label: $.i18n.t("ns.common:paste") ,
             accelerator: 'CmdOrCtrl+V',
             role: 'paste'
           },
           {
-            label: 'Select All',
+            label: $.i18n.t("ns.common:selectAll") ,
             accelerator: 'CmdOrCtrl+A',
             role: 'selectall'
           },
         ]
       },
       {
-        label: 'View',
+        label:  $.i18n.t("ns.common:view"),
         submenu: [
           {
             label: $.i18n.t("ns.common:reloadApplication"),
@@ -143,7 +143,7 @@ define(function(require, exports, module) {
         ]
       },
       {
-        label: 'Help',
+        label:  $.i18n.t("ns.common:help"),
         submenu: [
           {
             label: $.i18n.t("ns.common:aboutTagSpaces"),
@@ -213,9 +213,9 @@ define(function(require, exports, module) {
     }
 
     var menu = Menu.buildFromTemplate(template);
-    Menu.setApplicationMenu(menu); 
+    Menu.setApplicationMenu(menu);
   }
-  
+
   // Brings the TagSpaces window on top of the windows
   function focusWindow() {
     win.focus();
@@ -551,7 +551,7 @@ define(function(require, exports, module) {
     var newDirPath = TSCORE.TagUtils.extractParentDirectoryPath(dirPath) + TSCORE.dirSeparator + newDirName;
     console.log("Renaming dir: " + dirPath + " to " + newDirPath);
     return new Promise(function(resolve, reject) {
-      if (dirPath === newDirPath) { 
+      if (dirPath === newDirPath) {
         reject($.i18n.t("ns.common:directoryTheSame"), $.i18n.t("ns.common:directoryNotMoved"));
       }
       if (fs.existsSync(newDirPath)) {
@@ -562,7 +562,7 @@ define(function(require, exports, module) {
         fs.rename(dirPath, newDirPath, function(error) {
           if (error) {
             console.error("Renaming directory failed " + error);
-            reject("Renaming " + dirPath + " failed."); 
+            reject("Renaming " + dirPath + " failed.");
           }
           resolve(newDirPath);
         });
@@ -787,7 +787,7 @@ define(function(require, exports, module) {
       var file = ev.target.files[0];
       TSPOSTIO.selectDirectory(file.path);
       $(this).off("change");
-      $(this).val(""); 
+      $(this).val("");
     });
     chooser.trigger('click');
   }
