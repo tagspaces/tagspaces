@@ -539,8 +539,7 @@ define(function(require, exports, module) {
    * @param {string} filePath - the full path of the file which will be opened
    */
   function openFile(filePath) {
-    //
-    TSCORE.showAlertDialog("openFile not relevant for webdav");
+    window.open(filePath, '_blank');
   }
 
   // Platform API
