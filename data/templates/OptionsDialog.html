@@ -22,7 +22,7 @@
       <div class="modal-body form tab-content" id="optionsAccordion">
         <div class="tab-pane active" id="general">
           <div class="form-group">
-            <label for='languagesList'>Interface Language</label>
+            <label for='languagesList' data-i18n="ns.dialogs:interfaceLanguage"></label>
             <select class='form-control' id='languagesList'></select>
 
             <p class="help-block" data-i18n="ns.dialogs:switchLanguageHelp"></p>
@@ -73,12 +73,10 @@
             <div class="col-sm-12 checkbox">
               <label for="loadLocationMetaData">
                 <input type="checkbox" id="loadLocationMetaData"/>
-                <span>Loads location meta data (currently only tag groups)</span>
+                <span data-i18n="ns.dialogs:loadLocationMetaData"></span>
               </label>
 
-              <p class="help-block">Location metadata file "tsm.json" should be placed in the ".ts "subfolder of the
-                current location. The file format should be the same as the exported tag groups file from the tab
-                'general'.</p>
+              <p class="help-block" data-i18n="ns.dialogs:loadLocationMetaDataHelp"></p>
             </div>
           </div>
         </div>

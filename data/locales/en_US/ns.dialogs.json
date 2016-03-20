@@ -160,5 +160,8 @@
     "useOCR": "Enable OCR of images",
     "useTextExtraction": "Enable text extraction from files",
     "useGenerateThumbnails":"Enable thumbnails generation",
-    "-": "-"
+    "-": "-",
+    "interfaceLanguage": "Interface Language",
+    "loadLocationMetaData": "Loads location meta data (currently only tag groups)",
+    "loadLocationMetaDataHelp": "Location metadata file \"tsm.json\" should be placed in the \".ts \"subfolder of the current location. The file format should be the same as the exported tag groups file from the tab 'general'."
 }

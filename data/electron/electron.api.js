@@ -158,7 +158,7 @@ define(function(require, exports, module) {
 
     if (process.platform == 'darwin') {
       template.unshift({
-        label: name,
+        label: $.i18n.t("ns.common:name"),
         submenu: [
           {
             label: $.i18n.t("ns.common:aboutTagSpaces"),
