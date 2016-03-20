@@ -114,6 +114,9 @@ define(function(require, exports, module) {
         if (metaFilePath) {
           resolve(metaFilePath);
         } else if (supportedImageExtensions.indexOf(fileExt) >= 0) {
+          if(isChrome) {
+            filePath = "file://" + filePath;
+          }
           generateImageThumbnail(filePath).then(function(dataURL) {
             resolve(dataURL);
           }).catch(function() {
