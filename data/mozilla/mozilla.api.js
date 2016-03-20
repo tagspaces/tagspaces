@@ -599,16 +599,14 @@ define(function(require, exports, module) {
   }
 
   /**
-    * Opens a file with the operating system's default program for the type of the file
+    * Opens a given file url in a new tab or window
     * @name openFile
     * @method
     * @memberof IOAPI.FirefoxAddon
-    * @param {string} filePath - the full path of the file which will be opened
+    * @param {string} url - the url of file which will be opened in new window or tab
     */
-  function openFile(filePath) {
-    // TODO implement openFile for firefox
-    console.log("Open file functionality not implemented in Firefox yet!");
-    TSCORE.showAlertDialog($.i18n.t("ns.dialogs:openFileNativelyAlert"));
+  function openFile(url) {
+    window.open(url, '_blank');
   }
 
   // mozilla specific
