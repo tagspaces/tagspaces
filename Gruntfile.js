@@ -59,6 +59,18 @@ module.exports = function(grunt) {
       }
     },
 
+    cssmin: {
+      options: {
+        //shorthandCompacting: false,
+        //roundingPrecision: -1
+      },
+      target: {
+        files: {
+          'data/assets/generated.css': ['data/assets/tagspaces.css']
+        }
+      }
+    },
+
     watch: {
       scripts: {
         files: ['**/*.css'],
@@ -263,6 +275,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-compress');
   grunt.loadNpmTasks("grunt-jscs");
+  grunt.loadNpmTasks('grunt-contrib-cssmin');
   grunt.loadNpmTasks('grunt-shell');
   grunt.loadNpmTasks('grunt-fixmyjs');
   grunt.loadNpmTasks('grunt-jsbeautifier');
