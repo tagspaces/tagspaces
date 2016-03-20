@@ -339,11 +339,13 @@ define(function(require, exports, module) {
   var clearSelectedFiles = function() {
     // Clear selected files
     TSCORE.selectedFiles = [];
-    for (var i = 0; i < perspectives.length; i++) {
-      try {
-        perspectives[i].clearSelectedFiles();
-      } catch (e) {
-        console.error('Error while executing \'clearSelectedFiles\' on ' + perspectives[i].ID + ' - ' + e);
+    if(perspectives) {
+      for (var i = 0; i < perspectives.length; i++) {
+        try {
+          perspectives[i].clearSelectedFiles();
+        } catch (e) {
+          console.error('Error while executing \'clearSelectedFiles\' on ' + perspectives[i].ID + ' - ' + e);
+        }
       }
     }
   };

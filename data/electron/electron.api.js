@@ -39,7 +39,7 @@ define(function(require, exports, module) {
     var filePath = TSCORE.Utils.getURLParameter("open");
     if (filePath && (filePath.length > 0)) {
       filePath = decodeURIComponent(filePath);
-      console.log("Opening file in browser: " + filePath);
+      console.log("Opening file from command line: " + filePath);
       TSCORE.FileOpener.openFileOnStartup(filePath);
     }
   }
@@ -726,7 +726,6 @@ define(function(require, exports, module) {
    * @returns {Promise.<Success, Error>}
    */
   function deleteFilePromise(path) {
-    //TODO Handling the trash can case
     if (TSCORE.PRO && TSCORE.Config.getUseTrashCan()) {
       return new Promise(function(resolve, reject) {
         trash([path]).then(function() {

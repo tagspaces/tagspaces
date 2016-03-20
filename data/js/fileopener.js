@@ -196,7 +196,7 @@ define(function(require, exports, module) {
   }
 
   function openFileOnStartup(filePath) {
-    TSCORE.Config.setLastOpenedLocation(undefined);
+    //TSCORE.Config.setLastOpenedLocation(undefined);
 
     // quick and dirty solution, should use flag later
     TSCORE.toggleFullWidth();
