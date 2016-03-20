@@ -1,0 +1,5 @@
+@import '../libs/bootswatch/paper/bootstrap.min.css';
+@import '../libs/fontawesome/css/font-awesome.min.css';
+@import 'general.css';
+@import 'layout.css';
+@import 'components.css';
