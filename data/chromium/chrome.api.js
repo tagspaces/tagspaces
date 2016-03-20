@@ -346,7 +346,7 @@ define(function(require, exports, module) {
    * @memberof IOAPI.ChromeExtension
    */
   function selectFile() {
-    // TODO
+
     TSCORE.showAlertDialog("Select file not implemented!");
   }
 
@@ -358,20 +358,19 @@ define(function(require, exports, module) {
    * @param {string} dirPath - the full path of the directory which will be opened
    */
   function openDirectory(dirPath) {
-    // TODO
+
     TSCORE.showAlertDialog($.i18n.t("ns.dialogs:openContainingDirectoryAlert"));
   }
 
   /**
-   * Not supported on this platform
+   * Opens a given file url in a new tab or window
    * @name openFile
    * @method
    * @memberof IOAPI.ChromeExtension
-   * @param {string} filePath - the full path of the file which will be opened
+   * @param {string} url - the url of file which will be opened in new window or tab
    */
-  function openFile(filePath) {
-    // TODO
-    TSCORE.showAlertDialog($.i18n.t("ns.dialogs:openFileNativelyAlert"));
+  function openFile(url) {
+    window.open(url, '_blank');
   }
 
   // Platform specific calls
