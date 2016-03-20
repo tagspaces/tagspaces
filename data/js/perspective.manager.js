@@ -339,7 +339,7 @@ define(function(require, exports, module) {
   var clearSelectedFiles = function() {
     // Clear selected files
     TSCORE.selectedFiles = [];
-    if(perspectives) {
+    if (perspectives) {
       for (var i = 0; i < perspectives.length; i++) {
         try {
           perspectives[i].clearSelectedFiles();
