@@ -69,11 +69,6 @@ define(function(require, exports, module) {
     TSCORE.hideLoadingAnimation();
   };
 
-  exports.saveBinaryFile = function(filePath) {
-    TSCORE.showSuccessDialog("File saved successfully.");
-    TSCORE.PerspectiveManager.refreshFileListContainer();
-  };
-
   exports.saveTextFile = function(filePath, isNewFile) {
     TSCORE.PerspectiveManager.refreshFileListContainer();
     if (isNewFile) {
