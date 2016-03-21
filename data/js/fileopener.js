@@ -177,6 +177,11 @@ define(function(require, exports, module) {
   function cleanViewer() {
     TSCORE.closeFileViewer();
     TSCORE.PerspectiveManager.clearSelectedFiles();
+
+    if (isWeb) {
+      window.history.pushState("", "TagSpaces", location.pathname);
+    }
+
     // Cleaning the viewer/editor
     $('#viewer').find('*').off().unbind();
     $('#viewer').find('iframe').remove();
@@ -185,6 +190,7 @@ define(function(require, exports, module) {
     _isEditMode = false;
     _isFileChanged = false;
     _openedFilePath = undefined;
+
     Mousetrap.unbind(TSCORE.Config.getEditDocumentKeyBinding());
     Mousetrap.unbind(TSCORE.Config.getSaveDocumentKeyBinding());
     Mousetrap.unbind(TSCORE.Config.getCloseViewerKeyBinding());
@@ -237,7 +243,7 @@ define(function(require, exports, module) {
       var startupParameter = "";
       if (filePath) {
         startupParameter = "?open=" + encodeURIComponent(filePath);
-        window.history.pushState("", "TagSpaces", "/index.html" + startupParameter);
+        window.history.pushState("", "TagSpaces", location.pathname + startupParameter);
       }
       console.log("Link to file for sharing: " + window.location.href);
       var downloadLink;
