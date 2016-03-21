@@ -42,7 +42,7 @@ define(function(require, exports, module) {
 
   // Platform specific functions
   function normalizePath(path) {
-    //we set absoilute path because some extensions didn't recognize cdvfile
+    //we set absolute path because some extensions didn't recognize cdvfile
     //but in cordova.api implementation we didn't need absolute path so we strip nativeURL
     if (path.indexOf(fsRoot.nativeURL) === 0) {
       path = path.replace(fsRoot.nativeURL , "/");
@@ -843,8 +843,8 @@ define(function(require, exports, module) {
                 parentDirEntry,
                 newDirName,
                 function() {
-                  console.log("Directory renamed to: " + newDirPath + " Old name: " + entry.fullPath);
-                  resolve(newDirPath);
+                  console.log("Directory renamed to: " + newDirPath + " from: " + entry.fullPath);
+                  resolve("/" + newDirPath);
                 },
                 function() {
                   reject("error renaming: " + dirPath);
