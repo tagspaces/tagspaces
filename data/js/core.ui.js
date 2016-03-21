@@ -447,6 +447,10 @@ define(function(require, exports, module) {
         addFileInputName = TSCORE.TagUtils.beginTagContainer + TSCORE.TagUtils.formatDateTime4Tag(new Date(), true) + TSCORE.TagUtils.endTagContainer + fileExt;
       }
       var filePath = TSCORE.currentPath + TSCORE.dirSeparator + addFileInputName;
+
+      // TODO event.currentTarget.result is ArrayBuffer
+      // Sample call from PRO version using content = TSCORE.Utils.base64ToArrayBuffer(baseString);
+
       TSCORE.IO.saveBinaryFilePromise(filePath, event.currentTarget.result).then(function() {
         TSCORE.showSuccessDialog("File saved successfully.");
         TSCORE.PerspectiveManager.refreshFileListContainer();
