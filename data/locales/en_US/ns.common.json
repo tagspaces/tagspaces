@@ -160,6 +160,13 @@
     "showDevTools": "Show Developer Tools",
     "toggleFullScreen": "Toggle Fullscreen",
     "reloadApplication": "Reload Application",
+    "edit": "Edit",
+    "undo": "Undo",
+    "redo": "Redo",
+    "cut": "Cut",
+    "copy": "Copy",
+    "paste": "Paste",
+    "selectAll": "Select All",
     "view": "View",
     "help": "Help",
     "settings": "Settings",
@@ -205,5 +212,11 @@
     "openingleftpanelagainContent": "Here you can open the left panel again.",
     "enjoyTitle": "Enjoy using TagSpaces!",
     "thankyouContent": "... and thank you for your attention.",
-    "-": "-"
+    "-": "-",
+    "services": "Services",
+    "hideTagspaces": "Hide TagSpaces",
+    "hideOthers": "Hide Others",
+    "showAll": "Show All",
+    "quit": "Quit"
+
 }
