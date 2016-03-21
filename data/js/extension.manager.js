@@ -51,7 +51,7 @@ define(function(require, exports, module) {
   function loadExtensionData() {
     var extFolderPath = getExtFolderPath();
     //TODO: mozilla loads bower data incorrectly
-    if (isFirefox) {
+    if (isFirefox || isChrome || isWeb) { // web is disabled, because listing of directories is not always possible
       return Promise.resolve();
     }
 

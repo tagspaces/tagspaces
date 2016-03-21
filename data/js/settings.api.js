@@ -228,49 +228,31 @@ define(function(require, exports, module) {
 
   function getPerspectiveExtensions() {
     var perspectives = [];
-    if (exports.Settings.extensions && exports.Settings.extensions.length > 1) {
-      exports.Settings.extensions.forEach(function(extension) {
-        if (extension.type === "perspective") {
-          perspectives.push({ 'id': extension.id, 'name': extension.name });
-        }
-      });
-    } else {
-      exports.DefaultSettings.ootbPerspectives.forEach(function(extensionId) {
-        perspectives.push({ 'id': extensionId, 'name': extensionId });
-      });
-    }
+    getExtensions().forEach(function(extension) {
+      if (extension.type === "perspective") {
+        perspectives.push({ 'id': extension.id, 'name': extension.name });
+      }
+    });
     return perspectives;
   }
 
   function getViewerExtensions() {
     var viewers = [];
-    if (exports.Settings.extensions && exports.Settings.extensions.length > 1) {
-      exports.Settings.extensions.forEach(function(extension) {
-        if (extension.type === "viewer" || extension.type === "editor") {
-          viewers.push({ 'id': extension.id, 'name': extension.name });
-        }
-      });
-    } else {
-      exports.DefaultSettings.ootbPerspectives.forEach(function(extensionId) {
-        viewers.push({ 'id': extensionId, 'name': extensionId });
-      });
-    }
+    getExtensions().forEach(function(extension) {
+      if (extension.type === "viewer" || extension.type === "editor") {
+        viewers.push({ 'id': extension.id, 'name': extension.name });
+      }
+    });
     return viewers;
   }
 
   function getEditorExtensions() {
     var editors = [];
-    if (exports.Settings.extensions && exports.Settings.extensions.length > 1) {
-      exports.Settings.extensions.forEach(function(extension) {
-        if (extension.type === "editor") {
-          editors.push({ 'id': extension.id, 'name': extension.name });
-        }
-      });
-    } else {
-      exports.DefaultSettings.ootbPerspectives.forEach(function(extensionId) {
-        editors.push({ 'id': extensionId, 'name': extensionId });
-      });
-    }
+    getExtensions().forEach(function(extension) {
+      if (extension.type === "editor") {
+        editors.push({ 'id': extension.id, 'name': extension.name });
+      }
+    });
     return editors;
   }
 
@@ -302,8 +284,17 @@ define(function(require, exports, module) {
   }
 
   function getExtensions() {
-    if (!exports.Settings.extensions) {
+    if (!exports.Settings.extensions || exports.Settings.extensions.length < 1) {
       exports.Settings.extensions = [];
+      exports.DefaultSettings.ootbPerspectives.forEach(function(extensionId) {
+        exports.Settings.extensions.push({ 'id': extensionId, 'name': extensionId, 'type': 'perspective' });
+      });
+      exports.DefaultSettings.ootbViewers.forEach(function(extensionId) {
+        exports.Settings.extensions.push({ 'id': extensionId, 'name': extensionId, 'type': 'viewer' });
+      });
+      exports.DefaultSettings.ootbEditors.forEach(function(extensionId) {
+        exports.Settings.extensions.push({ 'id': extensionId, 'name': extensionId, 'type': 'editor' });
+      });
     }
     return exports.Settings.extensions;
   }
