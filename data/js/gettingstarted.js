@@ -197,7 +197,10 @@ define(function(require, exports, module) {
     showNextButton: true,
     showPrevButton: true, // disable in production
     i18n: {
-      //nextBtn: nextI18N,
+      nextBtn: $.i18n.t('ns.common:next'),
+      prevBtn: $.i18n.t('ns.common:prev'),
+      doneBtn: $.i18n.t('ns.common:done'),
+      closeTooltip: $.i18n.t('ns.common:closeTooltip'),
     }
   };
 
