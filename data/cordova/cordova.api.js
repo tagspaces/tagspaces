@@ -677,7 +677,7 @@ define(function(require, exports, module) {
    * @returns {Promise.<Success, Error>}
    */
   function saveBinaryFilePromise(filePath, content, overWrite) {
-    console.log("Saveing binary file: " + filePath);
+    console.log("Saving binary file: " + filePath);
     var dataView = new Int8Array(content);
     return saveFilePromise(filePath, dataView, overWrite);
   }
