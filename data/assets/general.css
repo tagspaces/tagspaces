@@ -435,10 +435,6 @@ input a.resetFilter {
   color: green;
 }
 
-.filterOn {
-  color: #E45C00;
-}
-
 .groupTitle {
   color: #444444;
   font-weight: bold;
