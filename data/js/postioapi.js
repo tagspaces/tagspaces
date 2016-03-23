@@ -1,21 +1,15 @@
-/* Copyright (c) 2012-2015 The TagSpaces Authors. All rights reserved.
+/* Copyright (c) 2012-2016 The TagSpaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that
  * can be found in the LICENSE file. */
+
 define(function(require, exports, module) {
   'use strict';
 
-  // Activating browser specific exports modul
   console.log('Loading postioapi.js ...');
   var TSCORE = require('tscore');
 
   exports.createDirectoryTree = function(directoryTree) {
     TSCORE.PerspectiveManager.updateTreeData(directoryTree);
-    TSCORE.hideWaitingDialog();
-  };
-
-  exports.createDirectory = function(dirPath) {
-    TSCORE.showSuccessDialog("Directory created successfully.");
-    TSCORE.navigateToDirectory(dirPath);
     TSCORE.hideWaitingDialog();
   };
 
@@ -56,12 +50,6 @@ define(function(require, exports, module) {
     }
     TSCORE.Meta.updateMetaData(oldFilePath, newFilePath);
     TSCORE.hideWaitingDialog();
-  };
-
-  exports.renameDirectory = function(dirOldPath, dirNewPath) {
-    TSCORE.showSuccessDialog("Directory renamed successfully.");
-    TSCORE.navigateToDirectory(dirNewPath);
-    TSCORE.hideLoadingAnimation();
   };
 
   exports.loadTextFile = function(content) {
@@ -117,17 +105,6 @@ define(function(require, exports, module) {
     TSCORE.hideLoadingAnimation();
   };
 
-  exports.deleteDirectory = function(dirPath) {
-    TSCORE.showSuccessDialog("Directory deleted successfully.");
-    TSCORE.navigateToDirectory(TSCORE.TagUtils.extractParentDirectoryPath(dirPath));
-    TSCORE.hideLoadingAnimation();
-  };
-
-  exports.deleteDirectoryFailed = function(dirPath) {
-    TSCORE.showAlertDialog($.i18n.t('ns.dialogs:errorDeletingDirectoryAlert'));
-    TSCORE.hideLoadingAnimation();
-  };
-
   exports.checkNewVersion = function(data) {
     TSCORE.updateNewVersionData(data);
   };
@@ -144,14 +121,4 @@ define(function(require, exports, module) {
     $('#moveCopyDirectoryPath').val(dirPath);
   };
 
-  exports.openDirectory = function(dirPath) {};
-
-  exports.selectFile = function() {
-    console.log('File selected: ' + $(this).val());
-  };
-
-  exports.getFileProperties = function(fileProperties) {
-    console.log('File properties: ' + JSON.stringify(fileProperties));
-    TSCORE.FileOpener.setFileProperties(fileProperties);
-  };
 });

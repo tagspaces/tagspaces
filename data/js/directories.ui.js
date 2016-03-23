@@ -526,12 +526,15 @@ define(function(require, exports, module) {
         dirPath: dir4ContextMenu
       }), function() {
         TSCORE.IO.deleteDirectoryPromise(dir4ContextMenu).then(function() {
-            TSPOSTIO.deleteDirectory(dir4ContextMenu);
+            TSCORE.showSuccessDialog("Directory deleted successfully.");
+            TSCORE.navigateToDirectory(TSCORE.TagUtils.extractParentDirectoryPath(dir4ContextMenu));
+            TSCORE.hideLoadingAnimation();
           },
           function(error) {
             TSCORE.hideLoadingAnimation();
             console.error("Deleting directory " + dir4ContextMenu + " failed " + error);
-            TSPOSTIO.deleteDirectoryFailed(dir4ContextMenu);
+            TSCORE.showAlertDialog($.i18n.t('ns.dialogs:errorDeletingDirectoryAlert'));
+            TSCORE.hideLoadingAnimation();
           }
         );
       });
@@ -729,7 +732,9 @@ define(function(require, exports, module) {
           // TODO validate folder name
           var dirPath = $('#createNewDirectoryButton').attr('path') + TSCORE.dirSeparator + $('#newDirectoryName').val();
           TSCORE.IO.createDirectoryPromise(dirPath).then(function() {
-            TSPOSTIO.createDirectory(dirPath);
+            TSCORE.showSuccessDialog("Directory created successfully.");
+            TSCORE.navigateToDirectory(dirPath);
+            TSCORE.hideWaitingDialog();
           }, function(error) {
             TSCORE.hideLoadingAnimation();
             console.error("Creating directory " + dirPath + " failed" + error);
@@ -780,8 +785,9 @@ define(function(require, exports, module) {
           var newDirPath = $('#directoryNewName').val();
           TSCORE.IO.renameDirectoryPromise(dirPath, newDirPath)
           .then(function(newDirName) {
-            TSCORE.hideWaitingDialog();
-            TSPOSTIO.renameDirectory(dirPath, newDirName);
+            TSCORE.showSuccessDialog("Directory renamed successfully.");
+            TSCORE.navigateToDirectory(newDirName);
+            TSCORE.hideLoadingAnimation();
           }, function(err) {
             TSCORE.hideWaitingDialog();
             TSCORE.showAlertDialog(err);
