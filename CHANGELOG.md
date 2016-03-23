@@ -1,7 +1,7 @@
 ﻿#Changelog
 
-## Version 2.2.0 / 2016.03.23 (Android only)
-- Migration to Electron
+## Version 2.2.0 / 2016.03.23
+- migration to desktop app to Electron
 - adding live thumbnails for images in grid and image-swiper perspectives
 - adding language detection on first run
 - adding polish translation thanks to fringoo
