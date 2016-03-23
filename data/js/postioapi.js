@@ -13,16 +13,6 @@ define(function(require, exports, module) {
     TSCORE.hideWaitingDialog();
   };
 
-  exports.copyFile = function(sourceFilePath, targetFilePath) {
-    TSCORE.showSuccessDialog("File copied successfully.");
-    var targetDirectory = TSCORE.TagUtils.extractContainingDirectoryPath(targetFilePath);
-    if (targetDirectory === TSCORE.currentPath) {
-      TSCORE.navigateToDirectory(TSCORE.currentPath);
-      TSCORE.PerspectiveManager.clearSelectedFiles();
-    }
-    TSCORE.hideWaitingDialog();
-  };
-
   exports.renameFile = function(oldFilePath, newFilePath) {
     var lastOpenedFile = TSCORE.FileOpener.getOpenedFilePath();
     if (lastOpenedFile !== undefined) {
