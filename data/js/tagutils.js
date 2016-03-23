@@ -121,6 +121,9 @@ define(function(require, exports, module) {
 
   function formatFileSize(sizeInBytes, siSystem) {
     var threshold = siSystem ? 1000 : 1024;
+    if(!sizeInBytes) {
+      return "";
+    }
     if (sizeInBytes < threshold) {
       return sizeInBytes + ' B';
     }
