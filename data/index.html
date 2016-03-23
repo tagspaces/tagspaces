@@ -222,8 +222,8 @@
             <div class="flexMaxWidth"></div>
             <div id="searchToolbar">
               <div class="flexLayout">
-                <button class="btn btn-link" data-i18n="[title]ns.common:clearFilterTooltip" id="clearFilterButton">
-                  <i class="fa fa-lg fa-eraser"></i>
+                <button class="btn btn-link" data-i18n="[title]ns.common:showSearchOptions" id="showSearchOptionsButton">
+                  <i class="fa fa-lg fa-angle-double-down"></i>
                 </button>
                 <input class="flexMaxWidth" id="searchBox" data-i18n="[placeholder]ns.common:searchPlaceholder" type="text">
                 <button class="btn btn-link" data-i18n="[title]ns.common:searchPlaceholder" id="searchButton">
@@ -857,20 +857,72 @@
   </ul>
 </div>
 
-<div id="searchOptions" class="dropdown clearfix" style="position: absolute; top: 80px; right: 5px; width: 330px;">
+<div id="searchOptions" class="dropdown clearfix" style="position: absolute; top: 45px; right: 0px; width: 400px;">
   <div class="dropdown-menu" style="display:block;position:static;">
     <li class="dropdown-header">
       <button class="close">&times;</button>
-      <span data-i18n="ns.common:searchOptions">Search Options</span>
+      <span data-i18n="ns.common:searchAdvanced">Advanced Search</span>
     </li>
     <div style="padding: 10px;">
-      <i class="fa fa-exclamation-circle"></i>&nbsp;<span data-i18n="ns.common:includeSubfoldersInSearch"></span><br>
-      <i class="fa fa-exclamation-circle"></i>&nbsp;<span data-i18n="ns.common:excludeTermFromSearch"></span><br>
-      <i class="fa fa-exclamation-circle"></i>&nbsp;<span data-i18n="ns.common:includeTagInSearch"></span><br>
-      <i class="fa fa-exclamation-circle"></i>&nbsp;<span data-i18n="ns.common:excludeTagInSearch"></span><br>
-      <i class="fa fa-exclamation-circle"></i>&nbsp;<span data-i18n="ns.common:andedSearch"></span><br>
-      <i class="fa fa-exclamation-circle"></i>&nbsp;<span data-i18n="ns.common:searchInFilenameOnly"></span><br>
-      <!--button class="btn btn-primary" data-dismiss="modal" aria-hidden="true"><i class="fa fa-check fa-lg"></i></button-->
+      <form class="form-horizontal">
+        <div class="form-group">
+          <label for="inputEmail3" class="col-sm-2 control-label">Query</label>
+          <div class="col-sm-10">
+            <input type="email" class="form-control" id="inputEmail3">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="inputEmail3" class="col-sm-2 control-label">Tags</label>
+          <div class="col-sm-10">
+            <input type="email" class="form-control" id="inputEmail3">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="searchFileType" class="col-sm-2 control-label">Type</label>
+          <div id="searchFileType" class="col-sm-10">
+            <select id="searchFileType" class="form-control">
+              <option>Specify file type</option>
+              <option value="type:pictures">Pictures (JPG,PNG,GIF,...)</option>
+              <option value="type:docs">Documents (PDF,ODF,DOCX,EXL,...)</option>
+              <option value="type:audio">Audio (OGG,MP3,...)</option>
+              <option value="type:video">Video files (WEBM,OGV,MP4,...)</option>
+              <option value="type:archive">Archives (ZIP,RAR,TGZ,...)</option>
+            </select>
+          </div>
+        </div>
+        <!-- div class="form-group">
+          <label for="searchFileType" class="col-sm-2 control-label">History</label>
+          <div id="searchFileType" class="col-sm-10">
+            <select id="" class="form-control">
+              <option>of your last 15 searches</option>
+              <option value="t:pictures +topsy">t:pictures +topsy</option>
+              <option value="t:pictures +danny">t:pictures +danny</option>
+              <option value="t:docs +work">t:docs +work</option>
+              <option value="t:archives +client1">t:archives +client1</option>
+              <option value="t:audio u2">t:audio u2</option>
+              <option value="type:pictures +topsy">Clear all</option>
+            </select>
+          </div>
+        </div -->
+        <div class="form-group">
+          <div class="col-sm-offset-2 col-sm-10">
+            <div class="checkbox">
+              <label>
+                <input type="checkbox" checked>&nbsp;<span>Search in subfolders</span>
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="form-group" style="margin-bottom: 0px;">
+          <div class="col-sm-12">
+            <span class="pull-right">
+              <button class="btn btn-default btn-sm" aria-hidden="true"><i class="fa fa-eraser fa-lg"></i>&nbsp;<span>Reset</span></button>
+              <button class="btn btn-primary btn-sm" aria-hidden="true"><i class="fa fa-search fa-lg"></i>&nbsp;<span>Search</span></button>
+            </span>
+          </div>
+        </div>
+      </form>
+
     </div>
   </div>
 </div>

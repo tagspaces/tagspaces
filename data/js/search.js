@@ -32,7 +32,7 @@ define(function(require, exports, module) {
     console.log('Calculating tags from search results');
     var allTags = [];
     data.forEach(function(fileEntry) {
-      fileEntry[TSCORE.fileListTAGS].forEach(function(tag) {
+      fileEntry.tags.forEach(function(tag) {
         allTags.push(tag.toLowerCase());
       });
     });
@@ -195,18 +195,49 @@ define(function(require, exports, module) {
                 var found = false;
                 queryObj.includedTerms.forEach(function(term) {
                   if (content.indexOf(term[0]) >= 0) {
+                    console.log("Term " + term[0] + " found in " + fileEntry.path);
                     found = true;
                   }
-                  if (found) {
-                    console.log("Term " + term[0] + " found in " + fileEntry.path);
+                });
+                if (found) {
+                  var indexOfMetaDirectory = fileEntry.path.indexOf(TSCORE.dirSeparator + TSCORE.metaFolder + TSCORE.dirSeparator);
+                  if (indexOfMetaDirectory > 0) { // file is in the meta folder
+                    var metaExtLocation = fileEntry.path.lastIndexOf(TSCORE.metaFileExt);
+                    var contentExtLocation = fileEntry.path.lastIndexOf(TSCORE.contentFileExt);
+                    var metaFolderLocation = fileEntry.path.lastIndexOf(TSCORE.metaFolderFile);
+
+                    // file is meta file (json) and not tsm.json
+                    if (metaExtLocation > indexOfMetaDirectory && metaFolderLocation < 0) {
+                      // TODO parse file and find tags
+                      fileEntry.name = fileEntry.name.substring(0, fileEntry.name.indexOf(TSCORE.metaFileExt));
+                      fileEntry.path = fileEntry.path.substring(0, indexOfMetaDirectory + 1) + fileEntry.name;
+                    }
+
+                    // file is text file containing extracted contentent (txt)
+                    if (contentExtLocation > indexOfMetaDirectory ) {
+                      fileEntry.name = fileEntry.name.substring(0, fileEntry.name.indexOf(TSCORE.contentFileExt));
+                      fileEntry.path = fileEntry.path.substring(0, indexOfMetaDirectory + 1) + fileEntry.name;
+                    }
+
+                    // file is meta directory file (tsm.json)
+                    if (metaFolderLocation > indexOfMetaDirectory ) {
+                      fileEntry.path = fileEntry.path.substring(0, indexOfMetaDirectory + 1);
+                      fileEntry.name = TSCORE.TagUtils.extractDirectoryName(fileEntry.path) + "." + TSCORE.directoryExt;
+                    }
+
+                    // TODO try to get the properties of the file and update the size and lmdt
+                    fileEntry.size = 0; // evtl lmdt = 0
                     searchResults.push(fileEntry);
                   }
-                });
+                }
+                resolve();
               }, function(err) {
+                resolve();
                 console.log("Failed loading content for: " + fileEntry.path);
               });
+            } else {
+              resolve();
             }
-            resolve();
           });
         }
         //, function(dirEntry) {}

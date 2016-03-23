@@ -260,7 +260,7 @@ define(function(require, exports, module) {
   function removeFileModel(model, filePath) {
     console.log('Removing file from model');
     for (var i = 0; i < model.length; i++) {
-      if (model[i][exports.fileListFILEPATH] === filePath) {
+      if (model[i].path === filePath) {
         model.splice(i, 1);
       }
     }
@@ -272,14 +272,11 @@ define(function(require, exports, module) {
       fileExt = tsTagUtils.extractFileExtension(newPath),
       fileTags = tsTagUtils.extractTags(newPath);
     for (var i = 0; i < model.length; i++) {
-      if (model[i][exports.fileListFILEPATH] == oldPath) {
-        model[i][exports.fileListFILEPATH] = newPath;
-        model[i][exports.fileListTITLE] = title;
-        model[i][exports.fileListTAGS] = fileTags;
-        model[i][exports.fileListFILEEXT] = fileExt; // TODO complete the list
-        //model[i][exports.fileListFILELMDT] = newPath;
-        //model[i][exports.fileListFILENAME] = newPath;
-        //model[i][exports.fileListFILESIZE] = newPath;
+      if (model[i].path == oldPath) {
+        model[i].path = newPath;
+        model[i].title = title;
+        model[i].tags = fileTags;
+        model[i].extension = fileExt; // TODO complete the list
       }
     }
   }
@@ -298,7 +295,7 @@ define(function(require, exports, module) {
     }
     csv += headers.join(',') + '\n';
     for (var i = 0; i < fileList.length; i++) {
-      var row = fileList[i][exports.fileListFILEPATH] + ',' + fileList[i][exports.fileListTITLE] + ',' + fileList[i][exports.fileListFILESIZE] + ',' + fileList[i][exports.fileListTAGS];
+      var row = fileList[i].path + ',' + fileList[i].title + ',' + fileList[i].size + ',' + fileList[i].tags;
       rows.push(row);
     }
     csv += rows.join('\n');
@@ -309,11 +306,10 @@ define(function(require, exports, module) {
     var rows = [];
     for (var i = 0; i < fileList.length; i++) {
       var row = [];
-      row.path = fileList[i][exports.fileListFILEPATH];
-      row.title = fileList[i][exports.fileListTITLE];
-      row.size = fileList[i][exports.fileListFILESIZE];
-      var tags = fileList[i][exports.fileListTAGS];
-      for (var j = 0; j < tags.length; j++) {
+      row.path = fileList[i].path;
+      row.title = fileList[i].title;
+      row.size = fileList[i].size;
+      for (var j = 0; j < fileList[i].tags.length; j++) {
         row['tag' + j] = tags[j];
       }
       rows.push(row);
@@ -485,6 +481,7 @@ define(function(require, exports, module) {
   exports.metaFileExt = ".json";
   exports.thumbFileExt = ".png";
   exports.contentFileExt = ".txt";
+  exports.directoryExt = "DIRECTORY";
   exports.locationDesktop;
   exports.initApp = initApp;
   exports.reLayout = reLayout;
@@ -566,14 +563,7 @@ define(function(require, exports, module) {
   exports.startTime = startTime;
   exports.subfoldersDirBrowser = subfoldersDirBrowser;
   exports.directoryBrowser = directoryBrowser;
-  exports.fileListFILEEXT = 0;
-  exports.fileListTITLE = 1;
-  exports.fileListTAGS = 2;
-  exports.fileListFILESIZE = 3;
-  exports.fileListFILELMDT = 4;
-  exports.fileListFILEPATH = 5;
-  exports.fileListFILENAME = 6;
-  exports.fileListMETA = 7;
+
   //document events
   exports.createDocumentEvent = createDocumentEvent;
   exports.fireDocumentEvent = fireDocumentEvent;

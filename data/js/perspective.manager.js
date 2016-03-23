@@ -204,10 +204,10 @@ define(function(require, exports, module) {
       if (TSCORE.Config.getShowUnixHiddenEntries() || !TSCORE.Config.getShowUnixHiddenEntries() && dirList[i].path.indexOf(TSCORE.dirSeparator + '.') < 0) {
         filename = dirList[i].name.replace(/(<([^>]+)>)/gi, ''); // sanitizing filename
         path = dirList[i].path.replace(/(<([^>]+)>)/gi, ''); // sanitizing filepath
-        title = TSCORE.TagUtils.extractTitle(path);
+        title = TSCORE.TagUtils.extractTitle(filename);
 
         if (dirList[i].isFile) {
-          ext = TSCORE.TagUtils.extractFileExtension(path);
+          ext = TSCORE.TagUtils.extractFileExtension(filename);
           tags = TSCORE.TagUtils.extractTags(path);
 
           if (dirList[i].size) {
@@ -233,16 +233,17 @@ define(function(require, exports, module) {
             metaData: null
           };
 
-          entry = [
-            ext,
-            title,
-            tags,
-            fileSize,
-            fileLMDT,
-            path,
-            filename,
-            metaObj
-          ];
+          entry = {
+            "extension": ext,
+            "title": title,
+            "tags": tags,
+            "size": fileSize,
+            "lmdt": fileLMDT,
+            "path": path,
+            "name": filename,
+            "isDirectoriy": false,
+            "meta": metaObj
+          };
           TSCORE.fileList.push(entry);
           metaDataLoadingPromises.push(TSCORE.Meta.loadMetaFileJsonPromise(entry));
         } else {

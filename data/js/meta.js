@@ -35,8 +35,8 @@ define(function(require, exports, module) {
   function findMetaObjectFromFileList(filePath) {
     var metaObj = null;
     TSCORE.fileList.every(function(element) {
-      if (element[TSCORE.fileListFILEPATH] === filePath) {
-        metaObj = element[TSCORE.fileListMETA];
+      if (element.path === filePath) {
+        metaObj = element.meta;
         return false;
       }
       return true;
@@ -46,6 +46,7 @@ define(function(require, exports, module) {
 
   function saveMetaData(filePath, metaData) {
     var metaFilePath = findMetaFilebyPath(filePath, TSCORE.metaFileExt);
+    var currentVersion = TSCORE.Config.DefaultSettings.appVersion + "." + TSCORE.Config.DefaultSettings.appBuild;
     if (!metaFilePath) {
       var name = TSCORE.Utils.baseName(filePath) + TSCORE.metaFileExt;
       metaFilePath = TSCORE.currentPath + TSCORE.dirSeparator + TSCORE.metaFolder + TSCORE.dirSeparator + name;
@@ -55,7 +56,13 @@ define(function(require, exports, module) {
         "path": metaFilePath,
       };
       TSCORE.metaFileList.push(entry);
+      metaData.appVersionCreated = currentVersion;
     }
+
+    metaData.appName = TSCORE.Config.DefaultSettings.appName;
+    metaData.appVersionUpdated = currentVersion;
+    metaData.lastUpdated = new Date();
+
     var content = JSON.stringify(metaData);
     TSCORE.IO.saveTextFilePromise(metaFilePath, content, true);
   }
@@ -127,6 +134,7 @@ define(function(require, exports, module) {
     });
   }
 
+  // should be in sync with the function from the PRO version
   function generateImageThumbnail(fileURL) {
     return new Promise(function(resolve, reject) {
       var canvas = document.createElement("canvas");
@@ -162,12 +170,12 @@ define(function(require, exports, module) {
 
   function loadMetaFileJsonPromise(entry) {
     return new Promise(function(resolve, reject) {
-      var filePath = entry[TSCORE.fileListFILEPATH];
+      var filePath = entry.path;
       var metaFileJson = findMetaFilebyPath(filePath, TSCORE.metaFileExt);
       if (metaFileJson) {
         TSCORE.IO.getFileContentPromise(metaFileJson, "text").then(function(result) {
           var metaData = JSON.parse(result);
-          entry[TSCORE.fileListMETA].metaData = metaData;
+          entry.meta.metaData = metaData;
           resolve(filePath);
         }).catch(function(err) {
           console.warn("Getting meta information failed for: " + filePath);

@@ -337,6 +337,7 @@ define(function(require, exports, module) {
           Promise.all(fileOperations).then(function(success) {
             // TODO handle copying sidecar files
             TSCORE.hideWaitingDialog();
+            TSCORE.navigateToDirectory(TSCORE.currentPath);
             TSCORE.showSuccessDialog("Files successfully copied");
           }, function(err) {
             TSCORE.hideWaitingDialog();
@@ -643,78 +644,45 @@ define(function(require, exports, module) {
     $('#locationContent').hide();
 
     // Search UI
-    $('#searchToolbar').on('click', '#closeSearchOptionButton', function() {
-      $('#searchOptions').hide();
-    });
-
     $('#searchOptions').on('click', '.close', function() {
       $('#searchOptions').hide();
     });
 
-    $('#searchToolbar').on('click', '#includeSubfoldersOption', function() {
-      var searchQuery = $('#searchBox').val();
-      if (searchQuery.indexOf('?') === 0) {
-        $('#includeSubfoldersOption i').removeClass('fa-toggle-on').addClass('fa-toggle-off');
-        $('#searchBox').val(searchQuery.substring(1, searchQuery.length));
-      } else {
-        $('#includeSubfoldersOption i').removeClass('fa-toggle-off').addClass('fa-toggle-on');
-        $('#searchBox').val('?' + searchQuery);
-      }
-    });
-
-    /*$('#searchBox').on('show.bs.popover', function() {
-      var searchQuery = $('#searchBox').val();
-      if (searchQuery.indexOf('?') === 0) {
-        $('#includeSubfoldersOption i').removeClass('fa-toggle-off').addClass('fa-toggle-on');
-      } else {
-        $('#includeSubfoldersOption i').removeClass('fa-toggle-on').addClass('fa-toggle-off');
-      }
-    });*/
-
-    $('#searchBox').prop('disabled', true)
-      .focus(function() {
-        if (!TSCORE.FileOpener.isFileOpened()) {
-          $("#searchOptions").show();
-        }
-      })
+    $('#searchBox')
       .keyup(function(e) {
-        // On enter fire the search
-        if (e.keyCode === 13) {
-          $('#clearFilterButton').addClass('filterOn');
-          TSCORE.PerspectiveManager.redrawCurrentPerspective();
-          $('#searchOptions').hide();
-          $('#searchButton').focus();
-        } else if (e.keyCode == 27) {
+        if (e.keyCode === 13) { // Start the search on ENTER
+          startSearch();
+          //$('#searchButton').focus();
+        } else if (e.keyCode == 27) { // Hide search on ESC
           cancelSearch();
         } else {
           TSCORE.Search.nextQuery = this.value;
         }
         if (this.value.length === 0) {
           TSCORE.Search.nextQuery = this.value;
-          $('#clearFilterButton').removeClass('filterOn');
           TSCORE.PerspectiveManager.redrawCurrentPerspective();
         }
-      }).blur(function() {
-        if (this.value.length === 0) {
-          $('#clearFilterButton').removeClass('filterOn');
-          TSCORE.PerspectiveManager.redrawCurrentPerspective();
+      })
+      /*.blur(function() {
+        if (this.value.length < 1) {
+          cancelSearch();
         }
-      });
+      })*/;
 
     $('#showSearchButton').on('click', function() {
+      // Showing the expanded search area
       TSCORE.showSearchArea();
     });
 
-    $('#searchButton').prop('disabled', true).click(function(evt) {
-      evt.preventDefault();
-      $('#clearFilterButton').addClass('filterOn');
-      $('#searchOptions').hide();
-      TSCORE.PerspectiveManager.redrawCurrentPerspective();
+    $('#searchButton').on("click", function(e) {
+      e.preventDefault();
+      startSearch();
     });
 
-    $('#clearFilterButton').prop('disabled', true).click(function(e) {
+    $('#showSearchOptionsButton').on("click", function(e) {
       e.preventDefault();
-      cancelSearch();
+      TSCORE.showSearchArea();
+      $("#searchOptions").show();
     });
     // Search UI END
 
@@ -776,10 +744,15 @@ define(function(require, exports, module) {
     });
   };
 
+  function startSearch() {
+    $('#searchOptions').hide();
+    TSCORE.PerspectiveManager.redrawCurrentPerspective();
+  }
+
   function cancelSearch() {
     clearSearchFilter();
-    $('#searchToolbar').hide();
-    $('#showSearchButton').show();
+    //$('#searchToolbar').hide();
+    //$('#showSearchButton').show();
     // Restoring initial dir listing without subdirectories
     TSCORE.IO.listDirectoryPromise(TSCORE.currentPath).then(
       function(entries) {
@@ -803,6 +776,8 @@ define(function(require, exports, module) {
   }
 
   function clearSearchFilter() {
+    $('#searchToolbar').hide();
+    $('#showSearchButton').show();
     $('#searchOptions').hide();
     $('#searchBox').val('');
     $('#clearFilterButton').removeClass('filterOn');
