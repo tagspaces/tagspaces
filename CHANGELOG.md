@@ -1,5 +1,34 @@
 ﻿#Changelog
 
+## Version 2.2.0 / 2016.03.23 (Android only)
+- Migration to Electron
+- adding live thumbnails for images in grid and image-swiper perspectives
+- adding language detection on first run
+- adding polish translation thanks to fringoo
+- fixing refresh issue after dir rename in Android
+- fixing issues with the MD and HTML file viewers
+- showing Exif and IPTC information from JPEGs
+- fixing opening external links
+- adjusting startup parameters
+- correcting the handling of app url while opening files
+- correcting extension loading in webdav
+- correcting opening of files on startup
+- disabling the firefox file browser in the addon
+- fixing drag & drop of tags and files in grid perspective
+- reworking extension initialization
+- adding url of the opened file for the webdav version allowing sharing links to the opened document
+- adding npm command for running a local test webdav server
+- correcting loading documents on startup
+- cordova and webdav folder rename bug fixed
+
+## Version 2.1.4 / 2016.03.22 (Android only)
+- adding live thumbnails for images in grid and image-swiper perspectives
+- adding language detection on first run
+- adding polish translation thanks to fringoo
+- fixing refresh issue after dir rename in Android
+- fixing issues with the MD and HTML file viewers
+- showing Exif and IPTC information from JPEGs
+
 ## Version 2.1.1 / 2016.02.03
 - Fixing issue with renaming folder in the WebDAV edition
 - Fixing missing icons
