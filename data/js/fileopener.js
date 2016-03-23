@@ -274,7 +274,7 @@ define(function(require, exports, module) {
     TSCORE.IO.checkAccessFileURLAllowed ? TSCORE.IO.checkAccessFileURLAllowed() : true;
     TSCORE.IO.getPropertiesPromise(filePath).then(function(fileProperties) {
       if (fileProperties) {
-        TSPOSTIO.getFileProperties(fileProperties);
+        TSCORE.FileOpener.setFileProperties(fileProperties);
       }
     }).catch(function(error) {
       TSCORE.hideLoadingAnimation();
