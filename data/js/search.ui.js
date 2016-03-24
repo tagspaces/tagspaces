@@ -81,34 +81,38 @@ define(function(require, exports, module) {
     });
   };
 
+  function parseQuery() {
+
+  }
+
   function updateQuery() {
     var query = "";
-    if(!$('#searchRecursive').is(':checked')) {
-      query = "| "
+    if (!$('#searchRecursive').is(':checked')) {
+      query = "| ";
     }
 
     var searchTerms = $('#searchTerms').val();
-    if(searchTerms.length > 0 ) {
+    if (searchTerms.length > 0) {
       searchTerms = searchTerms.split(" ");
       searchTerms.forEach(function(term) {
-        if(term.length > 1) {
+        if (term.length > 1) {
           query = query + " " + term;
         }
-      })
+      });
     }
 
     var tags = $('#searchTags').val();
-    if(tags.length > 0 ) {
+    if (tags.length > 0) {
       tags = tags.split(" ");
       tags.forEach(function(tag) {
-        if(tag.length > 1) {
+        if (tag.length > 1) {
           query = query + " +" + tag;
         }
-      })
+      });
     }
 
     var fileType = $('#searchFileType').val();
-    if(fileType.length > 0) {
+    if (fileType.length > 0) {
       query = query + " " + fileType;
     }
 

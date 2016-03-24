@@ -9,16 +9,7 @@ define(function(require, exports, module) {
   var currentQuery = '';
   var nextQuery = '';
 
-
-
-  var search4String = function(query) {
-    TSCORE.Search.nextQuery = '+' + query;
-    $('#searchBox').val('+' + query);
-    TSCORE.PerspectiveManager.redrawCurrentPerspective();
-    TSCORE.showSearchArea();
-  };
-
-  var calculateTags = function(data) {
+  function calculateTags(data) {
     console.log('Calculating tags from search results');
     var allTags = [];
     data.forEach(function(fileEntry) {
@@ -38,12 +29,12 @@ define(function(require, exports, module) {
       });
     });
     TSCORE.generateTagGroups();
-  };
+  }
 
   function prepareQuery(queryText) {
     // cleaning up the query, reducing the spaces
     var queryText = queryText.toLowerCase().replace(/^\s+|\s+$/g, '');
-    var recursive = !(queryText.indexOf('~') === 0);
+    var recursive = queryText.indexOf('~') !== 0;
     if (recursive) {
       queryText = queryText.substring(1, queryText.length);
     }
@@ -147,8 +138,7 @@ define(function(require, exports, module) {
     return result;
   }
 
-  var searchData = function(data, query) {
-
+  function searchData(data, query) {
     //todo make a switch in gui for content search
     var searchInContent = (isChrome || isFirefox || isWeb) ? false : true;
     var queryObj = prepareQuery(query);
@@ -204,13 +194,13 @@ define(function(require, exports, module) {
                     }
 
                     // file is text file containing extracted contentent (txt)
-                    if (contentExtLocation > indexOfMetaDirectory ) {
+                    if (contentExtLocation > indexOfMetaDirectory) {
                       fileEntry.name = fileEntry.name.substring(0, fileEntry.name.indexOf(TSCORE.contentFileExt));
                       fileEntry.path = fileEntry.path.substring(0, indexOfMetaDirectory + 1) + fileEntry.name;
                     }
 
                     // file is meta directory file (tsm.json)
-                    if (metaFolderLocation > indexOfMetaDirectory ) {
+                    if (metaFolderLocation > indexOfMetaDirectory) {
                       fileEntry.path = fileEntry.path.substring(0, indexOfMetaDirectory + 1);
                       fileEntry.name = TSCORE.TagUtils.extractDirectoryName(fileEntry.path) + "." + TSCORE.directoryExt;
                     }
@@ -253,7 +243,7 @@ define(function(require, exports, module) {
       }
       return data;
     }
-  };
+  }
 
   // Public variables definition
   exports.currentQuery = currentQuery;
@@ -262,6 +252,5 @@ define(function(require, exports, module) {
   // Public API definition    
   exports.searchData = searchData;
   exports.searchForTag = searchForTag;
-  exports.searchForString = search4String;
   exports.calculateTags = calculateTags;
 });
