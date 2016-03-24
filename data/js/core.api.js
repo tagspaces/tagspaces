@@ -528,6 +528,7 @@ define(function(require, exports, module) {
   // Proxying functions from tsSearchUI
   exports.clearSearchFilter = tsSearchUI.clearSearchFilter;
   exports.showSearchArea = tsSearchUI.showSearchArea;
+  exports.searchForTag = tsSearchUI.searchForTag;
 
   // Proxying functions from tsTagsUI
   exports.generateTagButtons = tsTagsUI.generateTagButtons;

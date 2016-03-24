@@ -52,7 +52,7 @@ define(function(require, exports, module) {
     $('#extMenuAddTagAsFilter').click(function() {});
     // Context menu for the tags in the file table and the file viewer
     $('#tagMenuAddTagAsFilter').click(function() {
-      TSCORE.Search.searchForTag(TSCORE.selectedTag);
+      TSCORE.searchForTag(TSCORE.selectedTag);
     });
     $('#tagMenuEditTag').click(function() {
       TSCORE.showTagEditDialog();
@@ -74,7 +74,7 @@ define(function(require, exports, module) {
       TSCORE.TagUtils.addTag(TSCORE.selectedFiles, [TSCORE.selectedTag]);
     });
     $('#tagTreeMenuAddTagAsFilter').click(function() {
-      TSCORE.Search.searchForTag(TSCORE.selectedTag);
+      TSCORE.searchForTag(TSCORE.selectedTag);
     });
     $('#tagTreeMenuEditTag').click(function() {
       TSCORE.showTagEditInTreeDialog();

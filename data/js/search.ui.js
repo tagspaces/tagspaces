@@ -161,8 +161,21 @@ define(function(require, exports, module) {
     TSCORE.Search.nextQuery = '';
   }
 
+  function searchForTag(tagQuery) {
+    if (TSCORE.isOneColumn()) {
+      TSCORE.closeLeftPanel();
+    }
+    TSCORE.Search.nextQuery = '+' + tagQuery;
+    $('#searchBox').val('+' + tagQuery);
+    TSCORE.PerspectiveManager.redrawCurrentPerspective();
+    $('#showSearchButton').hide();
+    $('#searchToolbar').show();
+    //TSCORE.showSearchArea();
+  }
+
   // Public API definition
   exports.initUI = initUI;
   exports.clearSearchFilter = clearSearchFilter;
   exports.showSearchArea = showSearchArea;
+  exports.searchForTag = searchForTag;
 });

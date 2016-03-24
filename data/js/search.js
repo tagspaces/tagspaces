@@ -9,17 +9,7 @@ define(function(require, exports, module) {
   var currentQuery = '';
   var nextQuery = '';
 
-  var searchForTag = function(tagQuery) {
-    if (TSCORE.isOneColumn()) {
-      TSCORE.closeLeftPanel();
-    }
-    TSCORE.Search.nextQuery = '+' + tagQuery;
-    $('#searchBox').val('+' + tagQuery);
-    TSCORE.PerspectiveManager.redrawCurrentPerspective();
-    $('#showSearchButton').hide();
-    $('#searchToolbar').show();
-    //TSCORE.showSearchArea();
-  };
+
 
   var search4String = function(query) {
     TSCORE.Search.nextQuery = '+' + query;
