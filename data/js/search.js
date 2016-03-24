@@ -53,7 +53,7 @@ define(function(require, exports, module) {
   function prepareQuery(queryText) {
     // cleaning up the query, reducing the spaces
     var queryText = queryText.toLowerCase().replace(/^\s+|\s+$/g, '');
-    var recursive = queryText.indexOf('?') === 0;
+    var recursive = !(queryText.indexOf('~') === 0);
     if (recursive) {
       queryText = queryText.substring(1, queryText.length);
     }

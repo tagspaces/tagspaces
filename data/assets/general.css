@@ -226,6 +226,10 @@ li hr {
   width: 100%;
 }
 
+.searchFormElements {
+  font-size: 14px !important;
+}
+
 #tagsContainer {
 	width: 100%;
 	min-height: 40px;

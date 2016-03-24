@@ -123,6 +123,7 @@
     "openSettingTooltip": "Open Settings",
     "searchOptions": "Search Options",
     "searchAdvanced": "Advanced Search",
+    "showAdvancedSearch": "Open Advanced Search",
     "searchPlaceholder": "Search",
     "clearFilterTooltip": "Clear Filter",
     "includeSubfoldersInSearch": "Include files from the subfolders (by adding questionmark \" ? \" in front of the query)",
