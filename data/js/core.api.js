@@ -19,6 +19,7 @@ define(function(require, exports, module) {
   var tsDirectoriesUI = require('tsdirectoriesui');
   var tsCoreUI = require('tscoreui');
   var tsSearch = require('tssearch');
+  var tsSearchUI = require('tssearchui');
   var tsPro = require('tspro');
   var tsUtils = require('tsutils');
   var tsIOUtils = require('tsioutils');
@@ -71,6 +72,7 @@ define(function(require, exports, module) {
     tsDirectoriesUI.initUI();
     tsDirectoriesUI.initLocations();
     tsFileOpener.initUI();
+    tsSearchUI.initUI();
     tsExtManager.loadExtensionData().then(function() {
       tsPersManager.initPerspectives().then(function(result) {
         console.log("Perspectives Initialized: " + result);
@@ -474,6 +476,7 @@ define(function(require, exports, module) {
     exports.PRO = tsPro;
   }
   exports.Meta = tsMeta;
+
   // Public API definition
   exports.dirSeparator = isWin && !isWeb ? '\\' : '/';
   exports.metaFolder = ".ts";
@@ -504,8 +507,6 @@ define(function(require, exports, module) {
   exports.switchInterfaceLanguage = switchInterfaceLanguage;
 
   // Proxying functions from tsCoreUI
-  // TODO use TSCORE.UI instead
-  exports.clearSearchFilter = tsCoreUI.clearSearchFilter;
   exports.enableTopToolbar = tsCoreUI.enableTopToolbar;
   exports.disableTopToolbar = tsCoreUI.disableTopToolbar;
   exports.showAlertDialog = tsCoreUI.showAlertDialog;
@@ -523,7 +524,10 @@ define(function(require, exports, module) {
   exports.createHTMLFile = tsCoreUI.createHTMLFile;
   exports.createMDFile = tsCoreUI.createMDFile;
   exports.createTXTFile = tsCoreUI.createTXTFile;
-  exports.showSearchArea = tsCoreUI.showSearchArea;
+
+  // Proxying functions from tsSearchUI
+  exports.clearSearchFilter = tsSearchUI.clearSearchFilter;
+  exports.showSearchArea = tsSearchUI.showSearchArea;
 
   // Proxying functions from tsTagsUI
   exports.generateTagButtons = tsTagsUI.generateTagButtons;
@@ -549,6 +553,7 @@ define(function(require, exports, module) {
   exports.closeCurrentLocation = tsDirectoriesUI.closeCurrentLocation;
   exports.navigateToDirectory = tsDirectoriesUI.navigateToDirectory;
   exports.generateFolderTags = tsDirectoriesUI.generateFolderTags;
+
   // Public variables definition
   exports.currentPath = currentPath;
   exports.currentLanguage = exports.currentLanguage;

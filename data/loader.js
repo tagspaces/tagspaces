@@ -113,6 +113,7 @@ var isWin = navigator.appVersion.indexOf("Win")!==-1;
       tspersmanager:          'js/perspective.manager',
       tstagutils:             'js/tagutils',
       tssearch:               'js/search',
+      tssearchui:             'js/search.ui',
       tsfileopener:           'js/fileopener',
       tstagsui:               'js/tags.ui',
       tsdirectoriesui:        'js/directories.ui',
