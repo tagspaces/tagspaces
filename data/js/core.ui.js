@@ -695,86 +695,12 @@ define(function(require, exports, module) {
       TSCORE.IO.openFile($(this).attr('href'));
     });
 
-    // Search UI
-    $('#searchBox')
-      .keyup(function(e) {
-        if (e.keyCode === 13) { // Start the search on ENTER
-          startSearch();
-        } else if (e.keyCode == 27) { // Hide search on ESC
-          cancelSearch();
-        } else {
-          TSCORE.Search.nextQuery = this.value;
-        }
-        if (this.value.length === 0) {
-          TSCORE.Search.nextQuery = this.value;
-          TSCORE.PerspectiveManager.redrawCurrentPerspective();
-        }
-      })
-      .focus(function(e) {
-        $("#searchOptions").hide();
-      });
-
-    $('#showSearchButton').on('click', function() {
-      // Showing the expanded search area
-      TSCORE.showSearchArea();
-    });
-
-    $('#searchButton').on("click", function(e) {
-      startSearch();
-    });
-
-    $('#startSearchButton').on("click", function(e) {
-      e.preventDefault();
-      startSearch();
-    });
-
-    $('#showSearchOptionsButton').on("click", function() {
-      showSearchOptions();
-    });
-
-    $('#searchOptions').on('click', '.close', function() {
-      $('#searchOptions').hide();
-      cancelSearch();
-    });
-
-    $('#cancelSearchButton').on('click', function(e) {
-      e.preventDefault();
-      $('#searchOptions').hide();
-      cancelSearch();
-    });
-
-    $('#searchRecursive').on('click', function(e) {
-      updateQuery();
-    });
-
-    $('#searchTerms').on('blur', function(e) {
-      updateQuery();
-    });
-
-    $('#searchTags').on('blur', function(e) {
-      updateQuery();
-    });
-
-    $('#searchFileType').on('change', function(e) {
-      updateQuery();
-    });
-
-    // END Search UI
-
     // Hide drop downs by click and drag
     $(document).click(function() {
       TSCORE.hideAllDropDownMenus();
     });
   };
 
-  function clearSearchFilter() {
-    $('#searchToolbar').hide();
-    $('#showSearchButton').show();
-    $('#searchOptions').hide();
-    $('#searchBox').val('');
-    $('#clearFilterButton').removeClass('filterOn');
-    TSCORE.Search.nextQuery = '';
-  }
 
   function disableTopToolbar() {
     $('#perspectiveSwitcherButton').prop('disabled', true);
@@ -929,7 +855,6 @@ define(function(require, exports, module) {
   // Public API definition
   exports.showContextMenu = showContextMenu;
   exports.initUI = initUI;
-  exports.clearSearchFilter = clearSearchFilter;
   exports.enableTopToolbar = enableTopToolbar;
   exports.disableTopToolbar = disableTopToolbar;
   exports.hideWaitingDialog = hideWaitingDialog;
@@ -954,5 +879,4 @@ define(function(require, exports, module) {
   exports.createHTMLFile = createHTMLFile;
   exports.createMDFile = createMDFile;
   exports.createTXTFile = createTXTFile;
-  exports.showSearchArea = showSearchArea;
 });
