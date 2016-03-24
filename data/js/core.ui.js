@@ -648,51 +648,51 @@ define(function(require, exports, module) {
     $contactUsContent.on('click', '#openHints', showWelcomeDialog);
     $contactUsContent.on('click', '#openUservoice', function(e) {
       e.preventDefault();
-      openLinkExternally($(this).attr('href'));
+      TSCORE.IO.openFile($(this).attr('href'));
     });
     $contactUsContent.on('click', '#openGooglePlay', function(e) {
       e.preventDefault();
-      openLinkExternally($(this).attr('href'));
+      TSCORE.IO.openFile($(this).attr('href'));
     });
     $contactUsContent.on('click', '#openAppleAppStore', function(e) {
       e.preventDefault();
-      openLinkExternally($(this).attr('href'));
+      TSCORE.IO.openFile($(this).attr('href'));
     });
     $contactUsContent.on('click', '#openWhatsnew', function(e) {
       e.preventDefault();
-      openLinkExternally($(this).attr('href'));
+      TSCORE.IO.openFile($(this).attr('href'));
     });
     $contactUsContent.on('click', '#openGitHubIssues', function(e) {
       e.preventDefault();
-      openLinkExternally($(this).attr('href'));
+      TSCORE.IO.openFile($(this).attr('href'));
     });
     $contactUsContent.on('click', '#helpUsTranslate', function(e) {
       e.preventDefault();
-      openLinkExternally($(this).attr('href'));
+      TSCORE.IO.openFile($(this).attr('href'));
     });
     $contactUsContent.on('click', '#openTwitter', function(e) {
       e.preventDefault();
-      openLinkExternally($(this).attr('href'));
+      TSCORE.IO.openFile($(this).attr('href'));
     });
     $contactUsContent.on('click', '#openTwitter2', function(e) {
       e.preventDefault();
-      openLinkExternally($(this).attr('href'));
+      TSCORE.IO.openFile($(this).attr('href'));
     });
     $contactUsContent.on('click', '#openGooglePlus', function(e) {
       e.preventDefault();
-      openLinkExternally($(this).attr('href'));
+      TSCORE.IO.openFile($(this).attr('href'));
     });
     $contactUsContent.on('click', '#openFacebook', function(e) {
       e.preventDefault();
-      openLinkExternally($(this).attr('href'));
+      TSCORE.IO.openFile($(this).attr('href'));
     });
     $contactUsContent.on('click', '#openSupportUs', function(e) {
       e.preventDefault();
-      openLinkExternally($(this).attr('href'));
+      TSCORE.IO.openFile($(this).attr('href'));
     });
     $('#newVersionMenu').on('click', '.whatsNewLink', function(e) {
       e.preventDefault();
-      openLinkExternally($(this).attr('href'));
+      TSCORE.IO.openFile($(this).attr('href'));
     });
 
     // Search UI
@@ -766,82 +766,6 @@ define(function(require, exports, module) {
       TSCORE.hideAllDropDownMenus();
     });
   };
-
-  function updateQuery() {
-    var query = "";
-    if(!$('#searchRecursive').is(':checked')) {
-      query = "| "
-    }
-
-    var searchTerms = $('#searchTerms').val();
-    if(searchTerms.length > 0 ) {
-      searchTerms = searchTerms.split(" ");
-      searchTerms.forEach(function(term) {
-        if(term.length > 1) {
-          query = query + " " + term;
-        }
-      })
-    }
-
-    var tags = $('#searchTags').val();
-    if(tags.length > 0 ) {
-      tags = tags.split(" ");
-      tags.forEach(function(tag) {
-        if(tag.length > 1) {
-          query = query + " +" + tag;
-        }
-      })
-    }
-
-    var fileType = $('#searchFileType').val();
-    if(fileType.length > 0) {
-      query = query + " " + fileType;
-    }
-
-    console.log();
-    $('#searchBox').val(query);
-  }
-
-  function showSearchOptions() {
-    $('#searchRecursive').prop('checked', true);
-    $('#searchTerms').val("");
-    $('#searchTags').val("");
-    $('#searchFileType').val("");
-
-    var leftPosition = $(".col2").position().left + $(".col2").width();
-    leftPosition = leftPosition - ($("#searchOptions").width() + 2);
-    $("#searchOptions").css({left: leftPosition});
-    $("#searchOptions").show();
-  }
-
-  function startSearch() {
-    $('#searchOptions').hide();
-    TSCORE.PerspectiveManager.redrawCurrentPerspective();
-  }
-
-  function cancelSearch() {
-    clearSearchFilter();
-    // Restoring initial dir listing without subdirectories
-    TSCORE.IO.listDirectoryPromise(TSCORE.currentPath).then(
-      function(entries) {
-        TSPOSTIO.listDirectory(entries);
-      }
-    ).catch(function(err) {
-      TSPOSTIO.errorOpeningPath(TSCORE.currentPath);
-      console.warn("Error listing directory" + err);
-    });
-  }
-
-  function showSearchArea() {
-    $('#showSearchButton').hide();
-    $('#searchToolbar').show();
-    $('#searchBox').focus();
-  }
-
-  // Handle external links
-  function openLinkExternally(url) {
-    TSCORE.IO.openFile(url);
-  }
 
   function clearSearchFilter() {
     $('#searchToolbar').hide();
@@ -1006,7 +930,6 @@ define(function(require, exports, module) {
   exports.showContextMenu = showContextMenu;
   exports.initUI = initUI;
   exports.clearSearchFilter = clearSearchFilter;
-  exports.openLinkExternally = openLinkExternally;
   exports.enableTopToolbar = enableTopToolbar;
   exports.disableTopToolbar = disableTopToolbar;
   exports.hideWaitingDialog = hideWaitingDialog;

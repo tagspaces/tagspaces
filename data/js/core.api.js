@@ -506,7 +506,6 @@ define(function(require, exports, module) {
   // Proxying functions from tsCoreUI
   // TODO use TSCORE.UI instead
   exports.clearSearchFilter = tsCoreUI.clearSearchFilter;
-  exports.openLinkExternally = tsCoreUI.openLinkExternally;
   exports.enableTopToolbar = tsCoreUI.enableTopToolbar;
   exports.disableTopToolbar = tsCoreUI.disableTopToolbar;
   exports.showAlertDialog = tsCoreUI.showAlertDialog;

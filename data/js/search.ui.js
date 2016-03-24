@@ -152,11 +152,6 @@ define(function(require, exports, module) {
     $('#searchBox').focus();
   }
 
-  // Handle external links
-  function openLinkExternally(url) {
-    TSCORE.IO.openFile(url);
-  }
-
   function clearSearchFilter() {
     $('#searchToolbar').hide();
     $('#showSearchButton').show();
