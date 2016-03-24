@@ -1,33 +1,29 @@
 ﻿#Changelog
 
-## Version 2.2.0 / 2016.03.23
-- migration to desktop app to Electron
-- adding live thumbnails for images in grid and image-swiper perspectives
-- adding language detection on first run
-- adding polish translation thanks to fringoo
-- fixing refresh issue after dir rename in Android
-- fixing issues with the MD and HTML file viewers
-- showing Exif and IPTC information from JPEGs
-- fixing opening external links
-- adjusting startup parameters
-- correcting the handling of app url while opening files
-- correcting extension loading in webdav
-- correcting opening of files on startup
-- disabling the firefox file browser in the addon
-- fixing drag & drop of tags and files in grid perspective
-- reworking extension initialization
-- adding url of the opened file for the webdav version allowing sharing links to the opened document
-- adding npm command for running a local test webdav server
-- correcting loading documents on startup
-- cordova and webdav folder rename bug fixed
+## Version 2.2.0 / 2016.03.24
+- Migration the desktop app to the [Electron](http://electron.atom.io) shell
+- Adding live thumbnails for images in grid and image-swiper perspectives
+- Adding language detection on the first application run
+- Adding polish translation thanks to fringoo
+- Fixing refresh issue after dir rename
+- Fixing issues in MD and HTML file viewer extensions
+- Showing Exif and IPTC information from JPEGs in the image viewer extension
+- Fixing opening external links
+- Fixing drag & drop of tags and files in grid perspective
+- Adding url of the opened file for the webdav version allowing sharing links to the opened document
+- Correcting loading documents on startup
+- Adding startup parameters like -p for portable mode or -d for debugging
+- Adding npm command for running a local test webdav server
+- Correcting opening of files on startup
+- Disabling the firefox file browser in the addon
 
 ## Version 2.1.4 / 2016.03.22 (Android only)
-- adding live thumbnails for images in grid and image-swiper perspectives
-- adding language detection on first run
-- adding polish translation thanks to fringoo
-- fixing refresh issue after dir rename in Android
-- fixing issues with the MD and HTML file viewers
-- showing Exif and IPTC information from JPEGs
+- Adding live thumbnails for images in grid and image-swiper perspectives
+- Adding language detection on first run
+- Adding polish translation thanks to fringoo
+- Fixing refresh issue after dir rename in Android
+- Fixing issues with the MD and HTML file viewers
+- Showing Exif and IPTC information from JPEGs in the image viewer extension
 
 ## Version 2.1.1 / 2016.02.03
 - Fixing issue with renaming folder in the WebDAV edition
