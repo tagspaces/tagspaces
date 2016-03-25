@@ -80,21 +80,24 @@ define(function(require, exports, module) {
   function initPerspectiveSwitcher() {
     var extensions = TSCORE.Config.getActivatedPerspectives();
     var $perspectiveSwitcher = $('#perspectiveSwitcher');
+
     $perspectiveSwitcher.empty();
     $perspectiveSwitcher.append($('<li>', {
       class: 'dropdown-header',
       text: $.i18n.t('ns.common:perspectiveSwitch')
-    }).prepend("<button class='close'>&times;</button>"))
-    .append("<li class='divider'></li>");
+    }).prepend("<button class='close'>&times;</button>")
+    ).append("<li class='divider'></li>");
 
     for (var i = 0; i < extensions.length; i++) {
       var curPers;
+
       // Finding the right perspective 
       perspectives.forEach(function(value) {
         if (value.ID === extensions[i].id) {
           curPers = value;
         }
       }); // jshint ignore:line
+
       $perspectiveSwitcher.append($('<li>', {}).append($('<a>', {
         'viewid': curPers.ID,
         'title': curPers.ID,
@@ -104,6 +107,7 @@ define(function(require, exports, module) {
         'class': curPers.Icon + ' fa-lg',
         'style': 'margin-right: 15px'
       }))));
+
       // Adding event listener & icon to the radio button
       $('#' + curPers.ID + 'Button').click(function() {
         changePerspective($(this).attr('viewid'));
@@ -250,10 +254,11 @@ define(function(require, exports, module) {
           TSCORE.fileList.push(entry);
           metaDataLoadingPromises.push(TSCORE.Meta.loadMetaFileJsonPromise(entry));
         } else {
-          entry = [
-            path,
-            filename
-          ];
+          entry = {
+            "path": path,
+            "name": filename,
+            "isDirectoriy": true,
+          };
           TSCORE.subDirsList.push(entry);
         }
       }
@@ -285,7 +290,6 @@ define(function(require, exports, module) {
       console.warn("MetaData loading / Creating thumbs failed: " + e);
       loadAllHandler();
     });
-
   }
 
   function refreshFileListContainer() {
