@@ -4,7 +4,9 @@
 
 define(function(require, exports, module) {
   'use strict';
+
   console.log('Loading perspective.manager.js ...');
+
   var perspectives;
   var TSCORE = require('tscore');
   var TSPOSTIO = require("tspostioapi");
@@ -70,11 +72,12 @@ define(function(require, exports, module) {
     });
   }
 
-  var initWelcomeScreen = function() {
-    $('#viewContainers').append('<div id="welcomeScreen"></div>');
-  };
+  function initWelcomeScreen() {
 
-  var initPerspectiveSwitcher = function() {
+    $('#viewContainers').append('<div id="welcomeScreen"></div>');
+  }
+
+  function initPerspectiveSwitcher() {
     var extensions = TSCORE.Config.getActivatedPerspectives();
     var $perspectiveSwitcher = $('#perspectiveSwitcher');
     $perspectiveSwitcher.empty();
@@ -106,9 +109,9 @@ define(function(require, exports, module) {
         changePerspective($(this).attr('viewid'));
       }); // jshint ignore:line
     }
-  };
+  }
 
-  var redrawCurrentPerspective = function() {
+  function redrawCurrentPerspective() {
     for (var i = 0; i < perspectives.length; i++) {
       if (perspectives[i].ID === TSCORE.currentPerspectiveID) {
         try {
@@ -119,9 +122,9 @@ define(function(require, exports, module) {
         }
       }
     }
-  };
+  }
 
-  var removeFileUI = function(filePath) {
+  function removeFileUI(filePath) {
     console.log('Removing file from perspectives');
     for (var i = 0; i < perspectives.length; i++) {
       try {
@@ -130,15 +133,15 @@ define(function(require, exports, module) {
         console.warn("Error while executing 'removeFileUI' on " + perspectives[i].ID + ' ' + e);
       }
     }
-  };
+  }
 
-  var removeAllFiles = function(filePath) {
+  function removeAllFiles(filePath) {
     console.log('Removing file from perspectives');
     TSCORE.fileList = [];
     changePerspective(TSCORE.currentPerspectiveID);
-  };
+  }
 
-  var updateFileUI = function(oldFilePath, newFilePath) {
+  function updateFileUI(oldFilePath, newFilePath) {
     console.log('Updating file in perspectives');
 
     if (TSCORE.FileOpener.getOpenedFilePath() === oldFilePath && !TSCORE.FileOpener.isFileEdited()) {
@@ -152,9 +155,9 @@ define(function(require, exports, module) {
         console.warn("Error while executing 'updateFileUI' on " + perspectives[i].ID + ' ' + e);
       }
     }
-  };
+  }
 
-  var getNextFile = function(filePath) {
+  function getNextFile(filePath) {
     for (var i = 0; i < perspectives.length; i++) {
       if (perspectives[i].ID === TSCORE.currentPerspectiveID) {
         try {
@@ -164,9 +167,9 @@ define(function(require, exports, module) {
         }
       }
     }
-  };
+  }
 
-  var getPrevFile = function(filePath) {
+  function getPrevFile(filePath) {
     for (var i = 0; i < perspectives.length; i++) {
       if (perspectives[i].ID === TSCORE.currentPerspectiveID) {
         try {
@@ -176,9 +179,9 @@ define(function(require, exports, module) {
         }
       }
     }
-  };
+  }
 
-  var updateTreeData = function(treeData) {
+  function updateTreeData(treeData) {
     for (var i = 0; i < perspectives.length; i++) {
       try {
         perspectives[i].updateTreeData(treeData);
@@ -186,9 +189,9 @@ define(function(require, exports, module) {
         console.warn("Error while executing 'updateTreeData' on "); // + perspectives[i].ID + ' ' + e);
       }
     }
-  };
+  }
 
-  var updateFileBrowserData = function(dirList, isSearchResult) {
+  function updateFileBrowserData(dirList, isSearchResult) {
     console.log('Updating the file browser data...');
     TSCORE.fileList = [];
     TSCORE.showLoadingAnimation();
@@ -283,9 +286,9 @@ define(function(require, exports, module) {
       loadAllHandler();
     });
 
-  };
+  }
 
-  var refreshFileListContainer = function() {
+  function refreshFileListContainer() {
     // TODO consider search view
     TSCORE.IO.listDirectoryPromise(TSCORE.currentPath).then(function(entries) {
       TSPOSTIO.listDirectory(entries);
@@ -293,17 +296,17 @@ define(function(require, exports, module) {
       TSPOSTIO.errorOpeningPath(TSCORE.currentPath);
       console.warn("Error listing directory" + err);
     });
-  };
+  }
 
-  var hideAllPerspectives = function() {
+  function hideAllPerspectives() {
     $('#welcomeScreen').hide();
     for (var i = 0; i < perspectives.length; i++) {
       $('#' + perspectives[i].ID + 'Container').hide();
       $('#' + perspectives[i].ID + 'Toolbar').hide();
     }
-  };
+  }
 
-  var changePerspective = function(viewType) {
+  function changePerspective(viewType) {
     console.log('Change to ' + viewType + ' perspective.');
     TSCORE.showLoadingAnimation();
     // Loading first perspective by default
@@ -335,9 +338,9 @@ define(function(require, exports, module) {
     clearSelectedFiles();
     // Enabled the main toolbar e.g. search functionality
     TSCORE.enableTopToolbar();
-  };
+  }
 
-  var clearSelectedFiles = function() {
+  function clearSelectedFiles() {
     // Clear selected files
     TSCORE.selectedFiles = [];
     if (perspectives) {
@@ -349,7 +352,7 @@ define(function(require, exports, module) {
         }
       }
     }
-  };
+  }
 
   exports.initPerspectives = initPerspectives;
   exports.hideAllPerspectives = hideAllPerspectives;
