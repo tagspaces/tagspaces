@@ -9,7 +9,10 @@
  */
 define(function(require, exports, module) {
   'use strict';
+
   console.log('Loading core.api.js ...');
+
+  // Importing modules
   var tsSettings = require('tssetting');
   var tsIOApi = require('tsioapi');
   var tsPersManager = require('tspersmanager');
@@ -26,6 +29,8 @@ define(function(require, exports, module) {
   var tsMeta = require('tsmeta');
   var tsExt = require('tsextapi');
   var tsExtManager = require('tsextmanager');
+
+  // Defining variables
   var currentPath;
   var currentLocationObject;
   var currentPerspectiveID;
@@ -43,6 +48,18 @@ define(function(require, exports, module) {
   var startTime;
   var subfoldersDirBrowser;
   var directoryBrowser;
+
+  // Loading animation related vars
+  var $loadingAnimation = $('.loadingAnimation');
+  var $statusBar = $('#statusBar');
+
+  // UI and Layout functionalities
+  var isFullWidth = false;
+  var shouldOpenCol1 = true;
+  var shouldOpenCol2 = true;
+  var shouldOpenCol3 = false;
+  var oneColumn = false;
+  var saveOpenCol1 = false;
 
   /**
    * Initalizes the application
@@ -141,6 +158,10 @@ define(function(require, exports, module) {
       console.log('Document ready finished. Layout initialized');
       checkForNewVersion();
     });
+
+    window.addEventListener('orientationchange', reLayout);
+
+    $(window).on('resize', reLayout);
   }
 
   function switchInterfaceLanguage(language) {
@@ -188,11 +209,10 @@ define(function(require, exports, module) {
       tsTagsUI.showAddTagsDialog();
     });
     Mousetrap.bind(tsSettings.getSearchKeyBinding(), function() {
-      tsCoreUI.showSearchArea();
+      tsSearchUI.showSearchArea();
     });
   }
 
-  // TODO
   function checkForNewVersion() {
     if (tsSettings.getCheckForUpdates()) {
       tsIOApi.checkNewVersion();
@@ -239,13 +259,6 @@ define(function(require, exports, module) {
       });
     }
   }
-
-  function updateLogger() {
-    console.log('Updating logger...');
-  }
-
-  var $loadingAnimation = $('.loadingAnimation');
-  var $statusBar = $('#statusBar');
 
   function showLoadingAnimation() {
     $statusBar.hide();
@@ -319,14 +332,8 @@ define(function(require, exports, module) {
     return rows;
   }
 
-  // UI and Layout functionalities
-  var isFullWidth = false;
-  var shouldOpenCol1 = true;
-  var shouldOpenCol2 = true;
-  var shouldOpenCol3 = false;
-  var oneColumn = false;
-
   function isOneColumn() {
+
     return oneColumn;
   }
 
@@ -406,14 +413,15 @@ define(function(require, exports, module) {
   }
 
   function hidePerspectiveMenu() {
+
     $(".perspectiveMainMenuButton").hide();
   }
 
   function showPerspectiveMenu() {
+
     $(".perspectiveMainMenuButton").show();
   }
-  //TODO: save state on file operations
-  var saveOpenCol1 = false;
+
   function openFileViewer() {
     shouldOpenCol3 = true;
     saveOpenCol1 = shouldOpenCol1;
@@ -443,12 +451,9 @@ define(function(require, exports, module) {
   }
 
   function reloadUI() {
+
     location.reload();
   }
-
-  window.addEventListener('orientationchange', reLayout);
-
-  $(window).on('resize', reLayout);
 
   function createDocumentEvent(type, data) {
     var evt = document.createEvent('Events');
@@ -489,7 +494,6 @@ define(function(require, exports, module) {
   exports.initApp = initApp;
   exports.reLayout = reLayout;
   exports.isOneColumn = isOneColumn;
-  exports.updateLogger = updateLogger;
   exports.showLoadingAnimation = showLoadingAnimation;
   exports.hideLoadingAnimation = hideLoadingAnimation;
   exports.reloadUI = reloadUI;

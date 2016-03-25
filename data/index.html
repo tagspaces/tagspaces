@@ -222,10 +222,13 @@
             <div class="flexMaxWidth"></div>
             <div id="searchToolbar">
               <div class="flexLayout">
+                <button class="btn btn-link" id="clearSearchButton">
+                  <i class="fa fa-lg fa-eraser"></i>
+                </button>
+                <input class="flexMaxWidth" id="searchBox" data-i18n="[placeholder]ns.common:searchPlaceholder" type="text">
                 <button class="btn btn-link" data-i18n="[title]ns.common:showAdvancedSearch" id="showSearchOptionsButton">
                   <i class="fa fa-lg fa-angle-double-down"></i>
                 </button>
-                <input class="flexMaxWidth" id="searchBox" data-i18n="[placeholder]ns.common:searchPlaceholder" type="text">
                 <button class="btn btn-link" data-i18n="[title]ns.common:searchPlaceholder" id="searchButton">
                   <i class="fa fa-lg fa-search"></i>
                 </button>
@@ -902,7 +905,7 @@
           </label>
         </div>
         <div class="form-group" style="margin-bottom: 5px;">
-          <button class="btn btn-default btn-sm" aria-hidden="true" id="cancelSearchButton"><i class="fa fa-eraser fa-lg"></i>&nbsp;<span>Cancel</span></button>
+          <button class="btn btn-default btn-sm" aria-hidden="true" id="resetSearchButton"><i class="fa fa-undo fa-lg"></i>&nbsp;<span>Reset</span></button>
           <button class="btn btn-primary btn-sm pull-right" aria-hidden="true" id="startSearchButton"><i class="fa fa-search fa-lg"></i>&nbsp;<span>Search</span></button>
         </div>
       </form>

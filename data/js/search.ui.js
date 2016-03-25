@@ -1,12 +1,13 @@
-/* Copyright (c) 2016 The TagSpaces Authors. All rights reserved.
+/* Copyright (c) 2015-2016 The TagSpaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that
  * can be found in the LICENSE file. */
 
 /* global define, Handlebars, isNode */
 define(function(require, exports, module) {
   'use strict';
-  console.log('Loading core.ui.js ...');
+  console.log('Loading search.ui.js ...');
   var TSCORE = require('tscore');
+  var TSPOSTIO = require("tspostioapi");
 
   var initUI = function() {
     // Search UI
@@ -51,7 +52,13 @@ define(function(require, exports, module) {
       cancelSearch();
     });
 
-    $('#cancelSearchButton').on('click', function(e) {
+    $('#resetSearchButton').on('click', function(e) {
+      e.preventDefault();
+      resetSearchOptions();
+      $('#searchBox').val("");
+    });
+
+    $('#clearSearchButton').on('click', function(e) {
       e.preventDefault();
       $('#searchOptions').hide();
       cancelSearch();
@@ -72,13 +79,6 @@ define(function(require, exports, module) {
     $('#searchFileType').on('change', function(e) {
       updateQuery();
     });
-
-    // END Search UI
-
-    // Hide drop downs by click and drag
-    $(document).click(function() {
-      TSCORE.hideAllDropDownMenus();
-    });
   };
 
   function parseQuery() {
@@ -88,7 +88,7 @@ define(function(require, exports, module) {
   function updateQuery() {
     var query = "";
     if (!$('#searchRecursive').is(':checked')) {
-      query = "| ";
+      query = "~ ";
     }
 
     var searchTerms = $('#searchTerms').val();
@@ -120,11 +120,15 @@ define(function(require, exports, module) {
     $('#searchBox').val(query);
   }
 
-  function showSearchOptions() {
+  function resetSearchOptions() {
     $('#searchRecursive').prop('checked', true);
     $('#searchTerms').val("");
     $('#searchTags').val("");
     $('#searchFileType').val("");
+  }
+
+  function showSearchOptions() {
+    resetSearchOptions();
 
     var leftPosition = $(".col2").position().left + $(".col2").width();
     leftPosition = leftPosition - ($("#searchOptions").width() + 2);
@@ -169,8 +173,8 @@ define(function(require, exports, module) {
     if (TSCORE.isOneColumn()) {
       TSCORE.closeLeftPanel();
     }
-    TSCORE.Search.nextQuery = '+' + tagQuery;
-    $('#searchBox').val('+' + tagQuery);
+    TSCORE.Search.nextQuery = '~ +' + tagQuery;
+    $('#searchBox').val('~ +' + tagQuery);
     TSCORE.PerspectiveManager.redrawCurrentPerspective();
     $('#showSearchButton').hide();
     $('#searchToolbar').show();

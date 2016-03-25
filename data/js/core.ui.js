@@ -1,17 +1,20 @@
-/* Copyright (c) 2012-2015 The TagSpaces Authors. All rights reserved.
+/* Copyright (c) 2012-2016 The TagSpaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that
  * can be found in the LICENSE file. */
+
 /* global define, Handlebars, isNode, isFirefox  */
 define(function(require, exports, module) {
   'use strict';
+
   console.log('Loading core.ui.js ...');
+
   var TSCORE = require('tscore');
   var TSPOSTIO = require("tspostioapi");
   var fileContent;
   var fileType;
   var waitingDialogTimeoutID;
 
-  var showWaitingDialog = function(message, title) {
+  function showWaitingDialog(message, title) {
     if (!title) {
       title = $.i18n.t('ns.dialogs:titleWaiting');
     }
@@ -32,14 +35,14 @@ define(function(require, exports, module) {
     waitingModal.draggable({
       handle: ".modal-header"
     });
-  };
+  }
 
-  var hideWaitingDialog = function(message, title) {
+  function hideWaitingDialog(message, title) {
     window.clearTimeout(waitingDialogTimeoutID);
     $('#waitingDialog').modal('hide');
-  };
+  }
 
-  var showSuccessDialog = function(message) {
+  function showSuccessDialog(message) {
     if (!message) {
       return;
     }
@@ -59,9 +62,9 @@ define(function(require, exports, module) {
       maxVisible: 1,
       closeWith: ['button', 'click'],
     });
-  };
+  }
 
-  var showAlertDialog = function(message, title) {
+  function showAlertDialog(message, title) {
     if (!title) {
       title = $.i18n.t('ns.dialogs:titleAlert');
     }
@@ -99,9 +102,9 @@ define(function(require, exports, module) {
       backdrop: 'static',
       show: true
     });*/
-  };
+  }
 
-  var showConfirmDialog = function(title, message, okCallback, cancelCallback, confirmShowNextTime) {
+  function showConfirmDialog(title, message, okCallback, cancelCallback, confirmShowNextTime) {
     if (!title) {
       title = $.i18n.t('ns.dialogs:titleConfirm');
     }
@@ -138,9 +141,9 @@ define(function(require, exports, module) {
     confirmModal.draggable({
       handle: ".modal-header"
     });
-  };
+  }
 
-  var showFileCreateDialog = function() {
+  function showFileCreateDialog() {
     fileContent = TSCORE.Config.getNewTextFileContent();
     // Default new file in text file
     fileType = 'txt';
@@ -178,9 +181,9 @@ define(function(require, exports, module) {
     $('#dialogFileCreate').draggable({
       handle: ".modal-header"
     });
-  };
+  }
 
-  var showFileRenameDialog = function(filePath) {
+  function showFileRenameDialog(filePath) {
     $('#renamedFileName').attr('filepath', filePath);
     $('#renamedFileName').val(TSCORE.TagUtils.extractFileName(filePath));
 
@@ -207,9 +210,9 @@ define(function(require, exports, module) {
     $('#dialogFileRename').draggable({
       handle: ".modal-header"
     });
-  };
+  }
 
-  var showFileDeleteDialog = function(filePath) {
+  function showFileDeleteDialog(filePath) {
     console.log('Deleting file...');
     var dlgConfirmMsgId = 'ns.dialogs:fileDeleteContentConfirm';
     if (TSCORE.Config.getUseTrashCan()) {
@@ -228,9 +231,9 @@ define(function(require, exports, module) {
         }
       );
     });
-  };
+  }
 
-  var showTagEditDialog = function() {
+  function showTagEditDialog() {
     $('#newTagName').val(TSCORE.selectedTag);
     $('#formEditTag').validator();
     $('#formEditTag').submit(function(e) {
@@ -255,9 +258,9 @@ define(function(require, exports, module) {
     $('#dialogEditTag').draggable({
       handle: ".modal-header"
     });
-  };
+  }
 
-  var showDirectoryBrowserDialog = function(path) {
+  function showDirectoryBrowserDialog(path) {
     require([
       'text!templates/DirectoryBrowserDialog.html',
       'tsdirectorybrowser'
@@ -271,9 +274,9 @@ define(function(require, exports, module) {
       $('#directoryBrowserDialog').i18n();
       TSCORE.IOUtils.listSubDirectories(path);
     });
-  };
+  }
 
-  var showOptionsDialog = function() {
+  function showOptionsDialog() {
     require([
       'text!templates/OptionsDialog.html',
       'tsoptions'
@@ -287,16 +290,16 @@ define(function(require, exports, module) {
       $('#dialogOptions').i18n();
       controller.reInitUI();
     });
-  };
+  }
 
-  var showWelcomeDialog = function() { startGettingStartedTour(); };
+  function showWelcomeDialog() { startGettingStartedTour(); }
 
-  var startGettingStartedTour = function() {
+  function startGettingStartedTour() {
     var tsGettingStarted = require('tsgettingstarted');
     tsGettingStarted.startTour();
-  };
+  }
 
-  var showMoveCopyFilesDialog = function() {
+  function showMoveCopyFilesDialog() {
     require(['text!templates/MoveCopyFilesDialog.html'], function(uiTPL) {
       if ($('#dialogMoveCopyFiles').length < 1) {
         var uiTemplate = Handlebars.compile(uiTPL);
@@ -369,9 +372,9 @@ define(function(require, exports, module) {
       });
       console.log('Selected files: ' + TSCORE.selectedFiles);
     });
-  };
+  }
 
-  var showAboutDialog = function() {
+  function showAboutDialog() {
     $('#dialogAboutTS').modal({
       backdrop: 'static',
       show: true
@@ -379,9 +382,9 @@ define(function(require, exports, module) {
     $('#dialogAboutTS').draggable({
       handle: ".modal-header"
     });
-  };
+  }
 
-  var initUI = function() {
+  function initUI() {
     if (TSCORE.PRO) {
       //TSCORE.PRO.sayHi();
     }
@@ -699,8 +702,7 @@ define(function(require, exports, module) {
     $(document).click(function() {
       TSCORE.hideAllDropDownMenus();
     });
-  };
-
+  }
 
   function disableTopToolbar() {
     $('#perspectiveSwitcherButton').prop('disabled', true);
@@ -744,20 +746,6 @@ define(function(require, exports, module) {
       $('#fileMenuOpenNatively').parent().hide();
     } else if (isNode || isElectron) {
       $('#openFileInNewWindow').hide();
-      //handling window maximization
-      /*var nwwin = isNode ? gui.Window.get() : remote.getCurrentWindow();
-      nwwin.on('maximize', function() {
-        TSCORE.Config.setIsWindowMaximized(true);
-        TSCORE.Config.saveSettings();
-      });
-      nwwin.on('unmaximize', function() {
-        TSCORE.Config.setIsWindowMaximized(false);
-        TSCORE.Config.saveSettings();
-      }); */
-      // Disabling automatic maximazation of the main window
-      //if(TSCORE.Config.getIsWindowMaximized()){
-      //    nwwin.maximize();
-      //}
     }
     // Disable send to feature on all platforms except android cordova
     if (!isCordova) {
@@ -769,7 +757,7 @@ define(function(require, exports, module) {
     }
   }
 
-  var showContextMenu = function(menuId, sourceObject) {
+  function showContextMenu(menuId, sourceObject) {
     var leftPos = sourceObject.offset().left;
     var topPos = sourceObject.offset().top;
     if (sourceObject.offset().top + sourceObject.height() + $(menuId).height() > window.innerHeight) {
@@ -784,9 +772,9 @@ define(function(require, exports, module) {
       left: leftPos,
       top: topPos
     });
-  };
+  }
 
-  var hideAllDropDownMenus = function() {
+  function hideAllDropDownMenus() {
     $('#tagGroupMenu').hide();
     $('#tagTreeMenu').hide();
     $('#directoryMenu').hide();
@@ -795,9 +783,9 @@ define(function(require, exports, module) {
     $('.dirAltNavMenu').hide();
     $('#locationTagTreeMenu').hide();
     //$('#searchOptions').hide();
-  };
+  }
 
-  var showLocationsPanel = function() {
+  function showLocationsPanel() {
     TSCORE.openLeftPanel();
     $('#tagGroupsContent').hide();
     $('#contactUsContent').hide();
@@ -805,9 +793,9 @@ define(function(require, exports, module) {
     $('#showTagGroups').removeClass('active');
     $('#contactUs').removeClass('active');
     $('#showLocations').addClass('active');
-  };
+  }
 
-  var showTagsPanel = function() {
+  function showTagsPanel() {
     TSCORE.openLeftPanel();
     $('#locationContent').hide();
     $('#contactUsContent').hide();
@@ -815,9 +803,9 @@ define(function(require, exports, module) {
     $('#showLocations').removeClass('active');
     $('#contactUs').removeClass('active');
     $('#showTagGroups').addClass('active');
-  };
+  }
 
-  var showContactUsPanel = function() {
+  function showContactUsPanel() {
     TSCORE.openLeftPanel();
     $('#locationContent').hide();
     $('#tagGroupsContent').hide();
@@ -825,7 +813,7 @@ define(function(require, exports, module) {
     $('#showLocations').removeClass('active');
     $('#showTagGroups').removeClass('active');
     $('#contactUs').addClass('active');
-  };
+  }
 
   function createHTMLFile() {
     var filePath = TSCORE.currentPath + TSCORE.dirSeparator + TSCORE.TagUtils.beginTagContainer + TSCORE.TagUtils.formatDateTime4Tag(new Date(), true) + TSCORE.TagUtils.endTagContainer + '.html';

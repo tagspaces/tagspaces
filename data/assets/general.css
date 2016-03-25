@@ -204,9 +204,19 @@ li hr {
   padding-right: 10px;
 }
 
+#clearSearchButton {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+#showSearchOptionsButton {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
 #searchToolbar {
   border-radius: 4px;
-  width: 250px;
+  width: 300px;
   background-color: #DBDBDB;
   display: none;
   margin-left: 4px;
