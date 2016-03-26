@@ -40,6 +40,7 @@ define(function(require, exports, module) {
 
     $('#startSearchButton').on("click", function(e) {
       e.preventDefault();
+      updateQuery();
       startSearch();
     });
 
@@ -49,7 +50,6 @@ define(function(require, exports, module) {
 
     $('#searchOptions').on('click', '.close', function() {
       $('#searchOptions').hide();
-      cancelSearch();
     });
 
     $('#resetSearchButton').on('click', function(e) {
@@ -81,9 +81,7 @@ define(function(require, exports, module) {
     });
   };
 
-  function parseQuery() {
-
-  }
+  //function parseQuery() {}
 
   function updateQuery() {
     var query = "";
@@ -118,6 +116,7 @@ define(function(require, exports, module) {
 
     console.log();
     $('#searchBox').val(query);
+    TSCORE.Search.nextQuery = query;
   }
 
   function resetSearchOptions() {
@@ -125,6 +124,7 @@ define(function(require, exports, module) {
     $('#searchTerms').val("");
     $('#searchTags').val("");
     $('#searchFileType').val("");
+    $('#searchHistory').val("");
   }
 
   function showSearchOptions() {

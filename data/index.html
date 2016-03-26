@@ -222,7 +222,7 @@
             <div class="flexMaxWidth"></div>
             <div id="searchToolbar">
               <div class="flexLayout">
-                <button class="btn btn-link" id="clearSearchButton">
+                <button class="btn btn-link" id="clearSearchButton" data-i18n="[title]ns.common:cancelSearchTooltip">
                   <i class="fa fa-lg fa-eraser"></i>
                 </button>
                 <input class="flexMaxWidth" id="searchBox" data-i18n="[placeholder]ns.common:searchPlaceholder" type="text">
@@ -877,28 +877,29 @@
           <input type="text" class="form-control searchFormElements" id="searchTags" placeholder="Tags separated by spaces">
         </div>
         <div class="form-group">
-          <label for="searchFileType">Type</label>
+          <label for="searchFileType">File Type (e.g. documents, pictures, ...)</label>
           <select id="searchFileType" class="form-control searchFormElements">
             <option value="">Specify file type</option>
-            <option value="t:pictures">Pictures (JPG,PNG,GIF,...)</option>
-            <option value="t:docs">Documents (PDF,ODF,DOCX,EXL,...)</option>
-            <option value="t:audio">Audio (OGG,MP3,...)</option>
+            <option value="t:picture">Pictures (JPG,PNG,GIF,...)</option>
+            <option value="t:doc">Documents (PDF,ODF,DOCX,EXL,...)</option>
+            <option value="t:note">Notes (MD,TXT,HTML,...)</option>
+            <option value="t:audio">Audio (OGG,MP3,WAV,...)</option>
             <option value="t:video">Video files (WEBM,OGV,MP4,...)</option>
-            <option value="t:archives">Archives (ZIP,RAR,TGZ,...)</option>
+            <option value="t:archive">Archives (ZIP,RAR,TGZ,7Z,...)</option>
           </select>
         </div>
-        <!-- div class="form-group">
-          <label for="searchFileType" class="col-sm-2 control-label">History</label>
-          <select id="" class="form-control">
-            <option>of your last 15 searches</option>
+        <div class="form-group">
+          <label for="searchFileType" class="control-label">History of your last searches</label>
+          <select id="searchHistory" class="form-control searchFormElements" disabled title="TagSpaces PRO feature">
+            <option>Choose one of your last searches</option>
             <option value="t:pictures +topsy">t:pictures +topsy</option>
             <option value="t:pictures +danny">t:pictures +danny</option>
             <option value="t:docs +work">t:docs +work</option>
             <option value="t:archives +client1">t:archives +client1</option>
             <option value="t:audio u2">t:audio u2</option>
-            <option value="type:pictures +topsy">Clear all</option>
+            <option value="clear">Clear search history</option>
           </select>
-        </div -->
+        </div>
         <div class="checkbox">
           <label>
             <input type="checkbox" id="searchRecursive" checked>&nbsp;<span>Search in subfolders</span>
