@@ -219,12 +219,14 @@ define(function(require, exports, module) {
       };
     }
 
+    if (!metaObj.metaData.tags) {
+      metaObj.metaData.tags = [];
+    }
+
     tags.forEach(function(element) {
       var newTag = {
         "title": element,
         "type":"sidecar",
-        //"description": "",
-        //"icon":"",
         "style": TSCORE.generateTagStyle(TSCORE.Config.findTag(element))
       };
       var isNewTag = true;
