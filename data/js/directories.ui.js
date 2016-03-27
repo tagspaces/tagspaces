@@ -1,15 +1,18 @@
-/* Copyright (c) 2012-2015 The TagSpaces Authors. All rights reserved.
+/* Copyright (c) 2012-2016 The TagSpaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that
  * can be found in the LICENSE file. */
+
 /* global define, Handlebars, isCordova  */
 define(function(require, exports, module) {
   'use strict';
-  var homeFolderTitle = 'Home';
 
   console.log('Loading directories.ui.js ...');
+
   var TSCORE = require('tscore');
-  var tsExtManager = require('tsextmanager');
   var TSPOSTIO = require("tspostioapi");
+  var tsExtManager = require('tsextmanager');
+
+  var homeFolderTitle = 'Home';
   var directoryHistory = [];
   var metaTagGroupsHistory = null;
   var dir4ContextMenu = null;
