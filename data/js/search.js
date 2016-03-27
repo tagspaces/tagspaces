@@ -4,11 +4,14 @@
 
 define(function(require, exports, module) {
   'use strict';
+
   console.log('Loading search.js ...');
+
   var TSCORE = require('tscore');
   var currentQuery = '';
   var nextQuery = '';
 
+  // TODO implement case sensitive search
   var caseSensitiveSearch = false;
 
   function prepareQuery(queryText) {
@@ -127,17 +130,6 @@ define(function(require, exports, module) {
       result = result & queryObj.excludedTags[i][1];
     }
     return result;
-  }
-
-  function matchArrays(array1, array2) {
-    //var match = [];
-    for(i in array1) {
-      if(array2.indexOf( array1[i] ) > -1){
-        return true;
-        //match.push( array1[i] );
-      }
-    }
-    return false; //match;
   }
 
   function searchData(data, query) {
