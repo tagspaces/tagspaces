@@ -10,9 +10,350 @@ define(function(require, exports, module) {
 
   var TSCORE = require('tscore');
   var TSPOSTIO = require("tspostioapi");
+
   var fileContent;
   var fileType;
   var waitingDialogTimeoutID;
+  var addFileInputName;
+
+  var fileDropTemplate = Handlebars.compile(
+    '<div id="fileDropArea">' +
+      '<div id="fileDropExplanation"><i class="fa fa-2x fa-mail-forward"></i><br>' +
+      '<span>Drop files here in order to be copied or moved in the current folder</span></div>' +
+    '</div>'
+  );
+
+  function initUI() {
+    $('#appVersion').text(TSCORE.Config.DefaultSettings.appVersion + '.' + TSCORE.Config.DefaultSettings.appBuild);
+    $('#appVersion').attr('title', 'BuildID: ' + TSCORE.Config.DefaultSettings.appVersion + '.' + TSCORE.Config.DefaultSettings.appBuild + '.' + TSCORE.Config.DefaultSettings.appBuildID);
+
+    // prevent default behavior from changing page on dropped file
+    $(document).on('drop dragend dragenter dragover', function(event) { // dragleave
+      //  dragstart drag
+      event.preventDefault();
+    });
+
+    // Managing droping of files in the perspectives
+    if (isNode || isElectron) {
+      $('#viewContainers').on('dragenter', function(event) {
+        event.preventDefault();
+        showFileDropArea();
+      });
+      $('#viewContainers').on('drop', function(event) {
+        //event.preventDefault();
+        if (event.originalEvent.dataTransfer !== undefined) {
+          var files = event.originalEvent.dataTransfer.files;
+          TSCORE.IO.focusWindow();
+          hideFileDropArea();
+          TSCORE.PerspectiveManager.clearSelectedFiles();
+          var filePath;
+          if (files !== undefined && files.length > 0) {
+            for (var i = 0; i < files.length; i++) {
+              // file[i] -> {"webkitRelativePath":"","path":"/home/na/Desktop/Kola2","lastModifiedDate":"2014-07-11T16:40:52.000Z","name":"Kola2","type":"","size":4096}
+              filePath = files[i].path;
+              if (filePath.length > 1) {
+                TSCORE.selectedFiles.push(filePath);
+              }
+            }
+          }
+          if (TSCORE.selectedFiles.length > 0) {
+            showMoveCopyFilesDialog();
+          }
+        }
+      });
+    }
+
+    $('#addFileInput').on('change', function(selection) {
+      //console.log("Selected File: "+$("#addFileInput").val());
+      var file = selection.currentTarget.files[0];
+      //console.log("Selected File: "+JSON.stringify(selection.currentTarget.files[0]));
+      addFileInputName = decodeURIComponent(file.name);
+      var reader = new FileReader();
+      reader.onload = onFileReadComplete;
+      reader.readAsArrayBuffer(file);
+    });
+
+    $('#openLeftPanel').click(function() {
+      TSCORE.openLeftPanel();
+    });
+
+    $('#closeLeftPanel').click(function() {
+      TSCORE.closeLeftPanel();
+    });
+
+    $('#txtFileTypeButton').click(function(e) {
+      // Fixes reloading of the application by click
+      e.preventDefault();
+      fileContent = TSCORE.Config.getNewTextFileContent();
+      fileType = 'txt';
+    });
+
+    $('#htmlFileTypeButton').click(function(e) {
+      // Fixes reloading of the application by click
+      e.preventDefault();
+      fileContent = TSCORE.Config.getNewHTMLFileContent();
+      fileType = 'html';
+    });
+
+    $('#mdFileTypeButton').click(function(e) {
+      // Fixes reloading of the application by click
+      e.preventDefault();
+      fileContent = TSCORE.Config.getNewMDFileContent();
+      fileType = 'md';
+    });
+
+    $('#fileCreateConfirmButton').click(function() {
+      var fileTags = '';
+      var rawTags = $('#newFileNameTags').val().split(',');
+      rawTags.forEach(function(value, index) {
+        if (index === 0) {
+          fileTags = value;
+        } else {
+          fileTags = fileTags + TSCORE.Config.getTagDelimiter() + value;
+        }
+      });
+      if ($('#tagWithCurrentDate').prop('checked')) {
+        if (fileTags.length < 1) {
+          fileTags = TSCORE.TagUtils.formatDateTime4Tag(new Date());
+        } else {
+          fileTags = fileTags + TSCORE.Config.getTagDelimiter() + TSCORE.TagUtils.formatDateTime4Tag(new Date());
+        }
+      }
+      if (fileTags.length > 0) {
+        fileTags = TSCORE.TagUtils.beginTagContainer + fileTags + TSCORE.TagUtils.endTagContainer;
+      }
+      var filePath = TSCORE.currentPath + TSCORE.dirSeparator + $('#newFileName').val() + fileTags + '.' + fileType;
+      TSCORE.IO.saveFilePromise(filePath, fileContent).then(function() {
+        TSPOSTIO.saveTextFile(filePath, isNewFile);
+      }, function(error) {
+        TSCORE.hideLoadingAnimation();
+        TSCORE.showAlertDialog("Saving " + filePath + " failed.");
+        console.error("Save to file " + filePath + " failed " + error);
+      });
+    });
+
+    $('#renameFileButton').click(function() {
+      var initialFilePath = $('#renamedFileName').attr('filepath');
+      var containingDir = TSCORE.TagUtils.extractContainingDirectoryPath(initialFilePath);
+      var newFilePath = containingDir + TSCORE.dirSeparator + $('#renamedFileName').val();
+      TSCORE.IO.renameFilePromise(initialFilePath, newFilePath).then(function(success) {
+        TSCORE.hideWaitingDialog();
+        TSPOSTIO.renameFile(initialFilePath, newFilePath);
+      }, function(err) {
+        TSCORE.hideWaitingDialog();
+        TSCORE.showAlertDialog(err);
+      });
+    });
+
+    // Edit Tag Dialog
+    $('#plainTagTypeButton').click(function(e) {
+      // Fixes reloading of the application by click
+      e.preventDefault();
+      TSCORE.selectedTag, $('#newTagName').datepicker('destroy').val('');
+    });
+
+    $('#dateTagTypeButton').click(function(e) {
+      // Fixes reloading of the application by click
+      e.preventDefault();
+      TSCORE.selectedTag, $('#newTagName').datepicker({
+        showWeek: true,
+        firstDay: 1,
+        dateFormat: 'yymmdd'
+      });
+    });
+
+    $('#currencyTagTypeButton').click(function(e) {
+      // Fixes reloading of the application by click
+      e.preventDefault();
+      TSCORE.selectedTag, $('#newTagName').datepicker('destroy').val('XEUR');
+    });
+
+    $('#editTagButton').click(function() {
+      TSCORE.TagUtils.renameTag(TSCORE.selectedFiles[0], TSCORE.selectedTag, $('#newTagName').val());
+    });
+
+    // End Edit Tag Dialog
+    $('#startNewInstanceBack').click(function() {
+      if (!isCordova) {
+        window.open(window.location.href, '_blank');
+      }
+    });
+
+    $('#aboutDialogBack').click(function() {
+      if (TSCORE.PRO) {
+        $('#aboutIframe').attr('src', 'pro/about.html');
+      } else {
+        $('#aboutIframe').attr('src', 'about.html');
+      }
+    });
+
+    // Open About Dialog
+    $('#openAboutBox').click(function() {
+      $('#dialogAbout').modal({
+        backdrop: 'static',
+        show: true
+      });
+      $('#dialogAbout').draggable({
+        handle: ".modal-header"
+      });
+    });
+
+    // Open Options Dialog
+    $('#openOptions').click(function() {
+      showOptionsDialog();
+    });
+
+    // File Menu
+    $('#fileMenuAddTag').click(function() {
+      TSCORE.showAddTagsDialog();
+    });
+
+    $('#fileMenuOpenFile').click(function() {
+      TSCORE.FileOpener.openFile(TSCORE.selectedFiles[0]);
+    });
+
+    $('#fileMenuOpenNatively').click(function() {
+      TSCORE.IO.openFile(TSCORE.selectedFiles[0]);
+    });
+
+    $('#fileMenuSendTo').click(function() {
+      TSCORE.IO.sendFile(TSCORE.selectedFiles[0]);
+    });
+
+    $('#fileMenuOpenDirectory').click(function() {
+      var dirPath = TSCORE.Utils.dirName(TSCORE.selectedFiles[0]);
+      TSCORE.IO.openDirectory(dirPath);
+    });
+
+    $('#fileMenuRenameFile').click(function() {
+      TSCORE.showFileRenameDialog(TSCORE.selectedFiles[0]);
+    });
+
+    $('#fileMenuMoveCopyFile').click(function() {
+      TSCORE.showMoveCopyFilesDialog();
+    });
+
+    $('#fileMenuDeleteFile').click(function() {
+      TSCORE.showFileDeleteDialog(TSCORE.selectedFiles[0]);
+    });
+
+    $('#fileOpenProperties').click(function() {});
+    // End File Menu
+
+    $('#showLocations').click(function() {
+      showLocationsPanel();
+    });
+
+    $('#showTagGroups').click(function() {
+      showTagsPanel();
+    });
+
+    $('#contactUs').click(function() {
+      showContactUsPanel();
+    });
+
+    // Hide the tagGroupsContent or locationContent by default
+    $('#locationContent').hide();
+
+    $('#perspectiveSwitcherButton').prop('disabled', true);
+    var $contactUsContent = $('#contactUsContent');
+    $contactUsContent.on('click', '#openHints', showWelcomeDialog);
+    $contactUsContent.on('click', '#openUservoice', function(e) {
+      e.preventDefault();
+      TSCORE.IO.openFile($(this).attr('href'));
+    });
+    $contactUsContent.on('click', '#openGooglePlay', function(e) {
+      e.preventDefault();
+      TSCORE.IO.openFile($(this).attr('href'));
+    });
+    $contactUsContent.on('click', '#openAppleAppStore', function(e) {
+      e.preventDefault();
+      TSCORE.IO.openFile($(this).attr('href'));
+    });
+    $contactUsContent.on('click', '#openWhatsnew', function(e) {
+      e.preventDefault();
+      TSCORE.IO.openFile($(this).attr('href'));
+    });
+    $contactUsContent.on('click', '#openGitHubIssues', function(e) {
+      e.preventDefault();
+      TSCORE.IO.openFile($(this).attr('href'));
+    });
+    $contactUsContent.on('click', '#helpUsTranslate', function(e) {
+      e.preventDefault();
+      TSCORE.IO.openFile($(this).attr('href'));
+    });
+    $contactUsContent.on('click', '#openTwitter', function(e) {
+      e.preventDefault();
+      TSCORE.IO.openFile($(this).attr('href'));
+    });
+    $contactUsContent.on('click', '#openTwitter2', function(e) {
+      e.preventDefault();
+      TSCORE.IO.openFile($(this).attr('href'));
+    });
+    $contactUsContent.on('click', '#openGooglePlus', function(e) {
+      e.preventDefault();
+      TSCORE.IO.openFile($(this).attr('href'));
+    });
+    $contactUsContent.on('click', '#openFacebook', function(e) {
+      e.preventDefault();
+      TSCORE.IO.openFile($(this).attr('href'));
+    });
+    $contactUsContent.on('click', '#openSupportUs', function(e) {
+      e.preventDefault();
+      TSCORE.IO.openFile($(this).attr('href'));
+    });
+
+    $('#newVersionMenu').on('click', '.whatsNewLink', function(e) {
+      e.preventDefault();
+      TSCORE.IO.openFile($(this).attr('href'));
+    });
+
+    // Hide drop downs by click and drag
+    $(document).click(function() {
+      TSCORE.hideAllDropDownMenus();
+    });
+
+    platformTuning();
+  }
+
+  function showFileDropArea() {
+    if($('#fileDropArea').length < 1) {
+      $('#viewContainers').append(fileDropTemplate({}));
+      $('#fileDropArea').on('dragleave', function(event) {
+        event.preventDefault();
+        hideFileDropArea();
+      });
+    } else {
+      $('#fileDropArea').show();
+    }
+  }
+
+  function hideFileDropArea() {
+    $('#fileDropArea').hide();
+  }
+
+  function onFileReadComplete(event) {
+    console.log('Content on file read complete: ' + JSON.stringify(event));
+    //change name for ios fakepath
+    if (isCordovaiOS) {
+      var fileExt = TSCORE.TagUtils.extractFileExtension(addFileInputName);
+      addFileInputName = TSCORE.TagUtils.beginTagContainer + TSCORE.TagUtils.formatDateTime4Tag(new Date(), true) + TSCORE.TagUtils.endTagContainer + fileExt;
+    }
+    var filePath = TSCORE.currentPath + TSCORE.dirSeparator + addFileInputName;
+
+    // TODO event.currentTarget.result is ArrayBuffer
+    // Sample call from PRO version using content = TSCORE.Utils.base64ToArrayBuffer(baseString);
+
+    TSCORE.IO.saveBinaryFilePromise(filePath, event.currentTarget.result).then(function() {
+      TSCORE.showSuccessDialog("File saved successfully.");
+      TSCORE.PerspectiveManager.refreshFileListContainer();
+    }, function(error) {
+      TSCORE.hideLoadingAnimation();
+      TSCORE.showAlertDialog("Saving " + filePath + " failed.");
+      console.error("Save to file " + filePath + " failed " + error);
+    });
+    addFileInputName = undefined;
+  }
 
   function showWaitingDialog(message, title) {
     if (!title) {
@@ -381,326 +722,6 @@ define(function(require, exports, module) {
     });
     $('#dialogAboutTS').draggable({
       handle: ".modal-header"
-    });
-  }
-
-  function initUI() {
-    if (TSCORE.PRO) {
-      //TSCORE.PRO.sayHi();
-    }
-
-    $('#appVersion').text(TSCORE.Config.DefaultSettings.appVersion + '.' + TSCORE.Config.DefaultSettings.appBuild);
-    $('#appVersion').attr('title', 'BuildID: ' + TSCORE.Config.DefaultSettings.appVersion + '.' + TSCORE.Config.DefaultSettings.appBuild + '.' + TSCORE.Config.DefaultSettings.appBuildID);
-    // prevent default behavior from changing page on dropped file
-    $(document).on('drop dragend dragenter dragleave dragover', function(event) {
-      //  dragstart drag
-      event.preventDefault();
-    });
-    // Managing droping of files in the perspectives
-    if (isNode || isElectron) {
-      $('#viewContainers').on('dragenter', function(event) {
-        event.preventDefault();
-        $('#viewContainers').attr('style', 'border:2px dashed #098ddf');
-      });
-      $('#viewContainers').on('dragleave', function(event) {
-        event.preventDefault();
-        $('#viewContainers').attr('style', 'border:0px');
-      });
-      $('#viewContainers').on('drop', function(event) {
-        //event.preventDefault();
-        if (event.originalEvent.dataTransfer !== undefined) {
-          var files = event.originalEvent.dataTransfer.files;
-          TSCORE.IO.focusWindow();
-          $('#viewContainers').attr('style', 'border:0px');
-          TSCORE.PerspectiveManager.clearSelectedFiles();
-          var filePath;
-          if (files !== undefined && files.length > 0) {
-            for (var i = 0; i < files.length; i++) {
-              filePath = files[i].path;
-              if (filePath.length > 1) {
-                //console.log("Selecting files: "+JSON.stringify(files[i]));
-                TSCORE.selectedFiles.push(filePath); //{"webkitRelativePath":"","path\":"/home/na/Desktop/Kola2","lastModifiedDate":"2014-07-11T16:40:52.000Z","name":"Kola2","type":"","size":4096}
-              }
-            }
-          }
-          if (TSCORE.selectedFiles.length > 0) {
-            showMoveCopyFilesDialog();
-          }
-        }
-      });
-    }
-
-    platformTuning();
-
-    var addFileInputName;
-    $('#addFileInput').on('change', function(selection) {
-      //console.log("Selected File: "+$("#addFileInput").val());
-      var file = selection.currentTarget.files[0];
-      //console.log("Selected File: "+JSON.stringify(selection.currentTarget.files[0]));
-      addFileInputName = decodeURIComponent(file.name);
-      var reader = new FileReader();
-      reader.onload = onFileReadComplete;
-      reader.readAsArrayBuffer(file);
-    });
-
-    function onFileReadComplete(event) {
-      console.log('Content on file read complete: ' + JSON.stringify(event));
-      //change name for ios fakepath
-      if (isCordovaiOS) {
-        var fileExt = TSCORE.TagUtils.extractFileExtension(addFileInputName);
-        addFileInputName = TSCORE.TagUtils.beginTagContainer + TSCORE.TagUtils.formatDateTime4Tag(new Date(), true) + TSCORE.TagUtils.endTagContainer + fileExt;
-      }
-      var filePath = TSCORE.currentPath + TSCORE.dirSeparator + addFileInputName;
-
-      // TODO event.currentTarget.result is ArrayBuffer
-      // Sample call from PRO version using content = TSCORE.Utils.base64ToArrayBuffer(baseString);
-
-      TSCORE.IO.saveBinaryFilePromise(filePath, event.currentTarget.result).then(function() {
-        TSCORE.showSuccessDialog("File saved successfully.");
-        TSCORE.PerspectiveManager.refreshFileListContainer();
-      }, function(error) {
-        TSCORE.hideLoadingAnimation();
-        TSCORE.showAlertDialog("Saving " + filePath + " failed.");
-        console.error("Save to file " + filePath + " failed " + error);
-      });
-      addFileInputName = undefined;
-    }
-
-    $('#openLeftPanel').click(function() {
-      TSCORE.openLeftPanel();
-    });
-
-    $('#closeLeftPanel').click(function() {
-      TSCORE.closeLeftPanel();
-    });
-
-    $('#txtFileTypeButton').click(function(e) {
-      // Fixes reloading of the application by click
-      e.preventDefault();
-      fileContent = TSCORE.Config.getNewTextFileContent();
-      fileType = 'txt';
-    });
-
-    $('#htmlFileTypeButton').click(function(e) {
-      // Fixes reloading of the application by click
-      e.preventDefault();
-      fileContent = TSCORE.Config.getNewHTMLFileContent();
-      fileType = 'html';
-    });
-    $('#mdFileTypeButton').click(function(e) {
-      // Fixes reloading of the application by click
-      e.preventDefault();
-      fileContent = TSCORE.Config.getNewMDFileContent();
-      fileType = 'md';
-    });
-
-    $('#fileCreateConfirmButton').click(function() {
-      var fileTags = '';
-      var rawTags = $('#newFileNameTags').val().split(',');
-      rawTags.forEach(function(value, index) {
-        if (index === 0) {
-          fileTags = value;
-        } else {
-          fileTags = fileTags + TSCORE.Config.getTagDelimiter() + value;
-        }
-      });
-      if ($('#tagWithCurrentDate').prop('checked')) {
-        if (fileTags.length < 1) {
-          fileTags = TSCORE.TagUtils.formatDateTime4Tag(new Date());
-        } else {
-          fileTags = fileTags + TSCORE.Config.getTagDelimiter() + TSCORE.TagUtils.formatDateTime4Tag(new Date());
-        }
-      }
-      if (fileTags.length > 0) {
-        fileTags = TSCORE.TagUtils.beginTagContainer + fileTags + TSCORE.TagUtils.endTagContainer;
-      }
-      var filePath = TSCORE.currentPath + TSCORE.dirSeparator + $('#newFileName').val() + fileTags + '.' + fileType;
-      TSCORE.IO.saveFilePromise(filePath, fileContent).then(function() {
-        TSPOSTIO.saveTextFile(filePath, isNewFile);
-      }, function(error) {
-        TSCORE.hideLoadingAnimation();
-        TSCORE.showAlertDialog("Saving " + filePath + " failed.");
-        console.error("Save to file " + filePath + " failed " + error);
-      });
-    });
-
-    $('#renameFileButton').click(function() {
-      var initialFilePath = $('#renamedFileName').attr('filepath');
-      var containingDir = TSCORE.TagUtils.extractContainingDirectoryPath(initialFilePath);
-      var newFilePath = containingDir + TSCORE.dirSeparator + $('#renamedFileName').val();
-      TSCORE.IO.renameFilePromise(initialFilePath, newFilePath).then(function(success) {
-        TSCORE.hideWaitingDialog();
-        TSPOSTIO.renameFile(initialFilePath, newFilePath);
-      }, function(err) {
-        TSCORE.hideWaitingDialog();
-        TSCORE.showAlertDialog(err);
-      });
-    });
-
-    // Edit Tag Dialog
-    $('#plainTagTypeButton').click(function(e) {
-      // Fixes reloading of the application by click
-      e.preventDefault();
-      TSCORE.selectedTag, $('#newTagName').datepicker('destroy').val('');
-    });
-
-    $('#dateTagTypeButton').click(function(e) {
-      // Fixes reloading of the application by click
-      e.preventDefault();
-      TSCORE.selectedTag, $('#newTagName').datepicker({
-        showWeek: true,
-        firstDay: 1,
-        dateFormat: 'yymmdd'
-      });
-    });
-
-    $('#currencyTagTypeButton').click(function(e) {
-      // Fixes reloading of the application by click
-      e.preventDefault();
-      TSCORE.selectedTag, $('#newTagName').datepicker('destroy').val('XEUR');
-    });
-
-    $('#editTagButton').click(function() {
-      TSCORE.TagUtils.renameTag(TSCORE.selectedFiles[0], TSCORE.selectedTag, $('#newTagName').val());
-    });
-
-    // End Edit Tag Dialog
-    $('#startNewInstanceBack').click(function() {
-      if (!isCordova) {
-        window.open(window.location.href, '_blank');
-      }
-    });
-
-    $('#aboutDialogBack').click(function() {
-      if (TSCORE.PRO) {
-        $('#aboutIframe').attr('src', 'pro/about.html');
-      } else {
-        $('#aboutIframe').attr('src', 'about.html');
-      }
-    });
-
-    // Open About Dialog
-    $('#openAboutBox').click(function() {
-      $('#dialogAbout').modal({
-        backdrop: 'static',
-        show: true
-      });
-      $('#dialogAbout').draggable({
-        handle: ".modal-header"
-      });
-    });
-
-    // Open Options Dialog
-    $('#openOptions').click(function() {
-      showOptionsDialog();
-    });
-
-    // File Menu
-    $('#fileMenuAddTag').click(function() {
-      TSCORE.showAddTagsDialog();
-    });
-
-    $('#fileMenuOpenFile').click(function() {
-      TSCORE.FileOpener.openFile(TSCORE.selectedFiles[0]);
-    });
-
-    $('#fileMenuOpenNatively').click(function() {
-      TSCORE.IO.openFile(TSCORE.selectedFiles[0]);
-    });
-
-    $('#fileMenuSendTo').click(function() {
-      TSCORE.IO.sendFile(TSCORE.selectedFiles[0]);
-    });
-
-    $('#fileMenuOpenDirectory').click(function() {
-      var dirPath = TSCORE.Utils.dirName(TSCORE.selectedFiles[0]);
-      TSCORE.IO.openDirectory(dirPath);
-    });
-
-    $('#fileMenuRenameFile').click(function() {
-      TSCORE.showFileRenameDialog(TSCORE.selectedFiles[0]);
-    });
-
-    $('#fileMenuMoveCopyFile').click(function() {
-      TSCORE.showMoveCopyFilesDialog();
-    });
-
-    $('#fileMenuDeleteFile').click(function() {
-      TSCORE.showFileDeleteDialog(TSCORE.selectedFiles[0]);
-    });
-
-    $('#fileOpenProperties').click(function() {});
-    // End File Menu
-    $('#showLocations').click(function() {
-      showLocationsPanel();
-    });
-
-    $('#showTagGroups').click(function() {
-      showTagsPanel();
-    });
-
-    $('#contactUs').click(function() {
-      showContactUsPanel();
-    });
-
-    // Hide the tagGroupsContent or locationContent by default
-    $('#locationContent').hide();
-
-    $('#perspectiveSwitcherButton').prop('disabled', true);
-    var $contactUsContent = $('#contactUsContent');
-    $contactUsContent.on('click', '#openHints', showWelcomeDialog);
-    $contactUsContent.on('click', '#openUservoice', function(e) {
-      e.preventDefault();
-      TSCORE.IO.openFile($(this).attr('href'));
-    });
-    $contactUsContent.on('click', '#openGooglePlay', function(e) {
-      e.preventDefault();
-      TSCORE.IO.openFile($(this).attr('href'));
-    });
-    $contactUsContent.on('click', '#openAppleAppStore', function(e) {
-      e.preventDefault();
-      TSCORE.IO.openFile($(this).attr('href'));
-    });
-    $contactUsContent.on('click', '#openWhatsnew', function(e) {
-      e.preventDefault();
-      TSCORE.IO.openFile($(this).attr('href'));
-    });
-    $contactUsContent.on('click', '#openGitHubIssues', function(e) {
-      e.preventDefault();
-      TSCORE.IO.openFile($(this).attr('href'));
-    });
-    $contactUsContent.on('click', '#helpUsTranslate', function(e) {
-      e.preventDefault();
-      TSCORE.IO.openFile($(this).attr('href'));
-    });
-    $contactUsContent.on('click', '#openTwitter', function(e) {
-      e.preventDefault();
-      TSCORE.IO.openFile($(this).attr('href'));
-    });
-    $contactUsContent.on('click', '#openTwitter2', function(e) {
-      e.preventDefault();
-      TSCORE.IO.openFile($(this).attr('href'));
-    });
-    $contactUsContent.on('click', '#openGooglePlus', function(e) {
-      e.preventDefault();
-      TSCORE.IO.openFile($(this).attr('href'));
-    });
-    $contactUsContent.on('click', '#openFacebook', function(e) {
-      e.preventDefault();
-      TSCORE.IO.openFile($(this).attr('href'));
-    });
-    $contactUsContent.on('click', '#openSupportUs', function(e) {
-      e.preventDefault();
-      TSCORE.IO.openFile($(this).attr('href'));
-    });
-    $('#newVersionMenu').on('click', '.whatsNewLink', function(e) {
-      e.preventDefault();
-      TSCORE.IO.openFile($(this).attr('href'));
-    });
-
-    // Hide drop downs by click and drag
-    $(document).click(function() {
-      TSCORE.hideAllDropDownMenus();
     });
   }
 

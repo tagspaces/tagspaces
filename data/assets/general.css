@@ -109,6 +109,25 @@ html, body {
   text-align: center;
 }
 
+#fileDropArea {
+  width: 100%;
+  height: 100%;
+  background-color: rgba(29, 209, 159, 0.72);
+  z-index: 1001;
+  position: absolute;
+  top: 80px;
+  left: 0;
+}
+
+#fileDropExplanation {
+  top:45%;
+  width: 100%;
+  text-align: center;
+  position:absolute;
+  color: white;
+  font-size: 20px;
+}
+
 #iframeViewer {
   width: 100%;
   border-width: 0;
