@@ -243,8 +243,11 @@ define(function(require, exports, module) {
                       searchResults.push(fileEntry);
                       resolve();
                     }
+                  } else { // file is regular text, md, json file
+                    searchResults.push(fileEntry);
+                    resolve();
                   }
-                } else {
+                } else { // file does not match
                   resolve();
                 }
               }, function(err) {
