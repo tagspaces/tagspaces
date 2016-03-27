@@ -79,6 +79,15 @@ define(function(require, exports, module) {
     $('#searchFileType').on('change', function(e) {
       updateQuery();
     });
+
+    if (TSCORE.PRO) {
+      $('#searchFileType').prop('disabled', false);
+      $('#searchHistory').prop('disabled', false);
+      $('#searchFileType').attr('title', '');
+      $('#searchHistory').attr('title', '');
+      $('#searchFileType').removeClass('disabled');
+      $('#searchHistory').removeClass('disabled');
+    }
   };
 
   //function parseQuery() {}
