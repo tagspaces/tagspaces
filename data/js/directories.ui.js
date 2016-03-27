@@ -234,7 +234,6 @@ define(function(require, exports, module) {
     }
   }
 
-  // Updates the directory subtree
   function updateSubDirs(dirList) {
     //console.log("Updating subdirs(TSCORE)..."+JSON.stringify(dirList));
     var hasSubFolders = false;
@@ -301,7 +300,7 @@ define(function(require, exports, module) {
     }
   }
 
-  var showDropDown = function(menuId, sourceObject) {
+  function showDropDown(menuId, sourceObject) {
     var $menu = $(menuId);
 
     if ($menu.attr('data-path')) {
@@ -317,7 +316,7 @@ define(function(require, exports, module) {
     $menu.css({
       display: 'block',
     });
-  };
+  }
 
   function generateDirPath() {
     console.log('Generating Directory Path...');
@@ -570,7 +569,8 @@ define(function(require, exports, module) {
   }
 
   function selectLocalDirectory() {
-    TSCORE.IO.selectDirectory(); //TSCORE.showDirectoryBrowserDialog("/media");               
+
+    TSCORE.IO.selectDirectory();
   }
 
   function showLocationEditDialog(name, path) {
@@ -829,6 +829,7 @@ define(function(require, exports, module) {
   }
 
   function isDefaultLocation(path) {
+
     return (TSCORE.Config.getDefaultLocation() === path);
   }
   
