@@ -380,6 +380,19 @@ define(function(require, exports, module) {
     });
   };
 
+  var showKeysDialog = function() {
+    $('#dialogShortcuts').modal({
+      backdrop: 'static',
+      show: true,
+      open: function() {
+        $('.modal-body').val(TSCORE.Config.getSelectAllKeyBinding());
+      }
+    });
+    $('#dialogShortcuts').draggable({
+      handle: ".modal-header"
+    });
+  };
+
   var initUI = function() {
     if (TSCORE.PRO) {
       //TSCORE.PRO.sayHi();
@@ -979,6 +992,7 @@ define(function(require, exports, module) {
   exports.showTagEditDialog = showTagEditDialog;
   exports.showOptionsDialog = showOptionsDialog;
   exports.showAboutDialog = showAboutDialog;
+  exports.showKeysDialog = showKeysDialog;
   exports.showLocationsPanel = showLocationsPanel;
   exports.showTagsPanel = showTagsPanel;
   exports.showContactUsPanel = showContactUsPanel;
