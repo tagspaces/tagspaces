@@ -140,13 +140,13 @@ define(function(require, exports, module) {
     }
   }
 
-  function removeAllFiles() {
+  /*function removeAllFiles() {
     console.log('Removing file from perspectives');
     if (TSCORE.fileList && TSCORE.fileList.length > 0) {
       TSCORE.fileList = [];
       redrawCurrentPerspective();
     }
-  }
+  }*/
 
   function updateFileUI(oldFilePath, newFilePath) {
     console.log('Updating file in perspectives');
@@ -370,7 +370,7 @@ define(function(require, exports, module) {
   exports.updateFileBrowserData = updateFileBrowserData;
   exports.refreshFileListContainer = refreshFileListContainer;
   exports.clearSelectedFiles = clearSelectedFiles;
-  exports.removeAllFiles = removeAllFiles;
+  //exports.removeAllFiles = removeAllFiles;
   exports.removeFileUI = removeFileUI;
   exports.updateFileUI = updateFileUI;
   exports.changePerspective = changePerspective;

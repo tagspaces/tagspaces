@@ -487,7 +487,7 @@ define(function(require, exports, module) {
 
   function listDirectory(dirPath) {
     TSCORE.showLoadingAnimation();
-    TSCORE.PerspectiveManager.removeAllFiles();
+    //TSCORE.PerspectiveManager.removeAllFiles();
     TSCORE.IO.listDirectoryPromise(dirPath).then(function(entries) {
       TSPOSTIO.listDirectory(entries);
       console.log("Listing: " + dirPath + " done!");
