@@ -317,7 +317,7 @@ define(function(require, exports, module) {
   }
 
   function showFileDropArea() {
-    if($('#fileDropArea').length < 1) {
+    if ($('#fileDropArea').length < 1) {
       $('#viewContainers').append(fileDropTemplate({}));
       $('#fileDropArea').on('dragleave', function(event) {
         event.preventDefault();

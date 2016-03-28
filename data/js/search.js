@@ -31,7 +31,7 @@ define(function(require, exports, module) {
       excludedTags: [],
       recursive: recursive,
       fileTypeFilter: function() {
-        return true
+        return true;
       },
     };
 
@@ -148,8 +148,9 @@ define(function(require, exports, module) {
             var indexOfMetaDirectory = fileEntry.path.indexOf(metaDirPattern);
 
             // Searching in file names while skipping paths containing '/.ts/'
-            if (indexOfMetaDirectory < 1 && filterFileObject(fileEntry, queryObj)
-                && queryObj.fileTypeFilter(fileEntry.name.toLowerCase())) {
+            if (indexOfMetaDirectory < 1 &&
+                filterFileObject(fileEntry, queryObj) &&
+                queryObj.fileTypeFilter(fileEntry.name.toLowerCase())) {
               searchResults.push(fileEntry);
               resolve();
             }
@@ -164,11 +165,11 @@ define(function(require, exports, module) {
                 if (indexOfMetaDirectory > 0 && metaExtLocation > indexOfMetaDirectory) {
                   try {
                     var metaData = JSON.parse(content);
-                    if(metaData.tags && metaData.tags.length > 0 && queryObj.includedTags.length > 0) {
+                    if (metaData.tags && metaData.tags.length > 0 && queryObj.includedTags.length > 0) {
                       // Checking if both tag arrays have same members
                       for (var i = 0; i < metaData.tags.length; i++) {
                         for (var j = 0; j < queryObj.includedTags.length; j++) {
-                          if (queryObj.includedTags[j][0] === (metaData.tags[i].title.toLowerCase())){
+                          if (queryObj.includedTags[j][0] === (metaData.tags[i].title.toLowerCase())) {
                             queryObj.includedTags[j][1] = true;
                             found = true;
                           }
@@ -180,7 +181,7 @@ define(function(require, exports, module) {
                         queryObj.includedTags[j][1] = false;
                       }
                     }
-                  } catch(err) {
+                  } catch (err) {
                     console.log("Error " + err + " parsing JSON from: " + fileEntry.path);
                   }
                 }
@@ -223,8 +224,8 @@ define(function(require, exports, module) {
                     if (!fileEntry.isDirectory) { // TODO check if the main file exists
                     //  TSCORE.IO.getPropertiesPromise(fileEntry.path).then(function(mainFileEntry) {
                     //    searchResults.push(mainFileEntry);
-                        searchResults.push(fileEntry);
-                        resolve();
+                      searchResults.push(fileEntry);
+                      resolve();
                     //  }, function() {
                     //    console.log("main file does not exist anymore " + fileEntry.path);
                     //    resolve();
