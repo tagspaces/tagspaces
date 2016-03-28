@@ -1,15 +1,18 @@
-/* Copyright (c) 2012-2015 The TagSpaces Authors. All rights reserved.
+/* Copyright (c) 2012-2016 The TagSpaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that
  * can be found in the LICENSE file. */
+
 /* global define, Handlebars, isCordova  */
 define(function(require, exports, module) {
   'use strict';
-  var homeFolderTitle = 'Home';
 
   console.log('Loading directories.ui.js ...');
+
   var TSCORE = require('tscore');
-  var tsExtManager = require('tsextmanager');
   var TSPOSTIO = require("tspostioapi");
+  var tsExtManager = require('tsextmanager');
+
+  var homeFolderTitle = 'Home';
   var directoryHistory = [];
   var metaTagGroupsHistory = null;
   var dir4ContextMenu = null;
@@ -231,7 +234,6 @@ define(function(require, exports, module) {
     }
   }
 
-  // Updates the directory subtree
   function updateSubDirs(dirList) {
     //console.log("Updating subdirs(TSCORE)..."+JSON.stringify(dirList));
     var hasSubFolders = false;
@@ -298,7 +300,7 @@ define(function(require, exports, module) {
     }
   }
 
-  var showDropDown = function(menuId, sourceObject) {
+  function showDropDown(menuId, sourceObject) {
     var $menu = $(menuId);
 
     if ($menu.attr('data-path')) {
@@ -314,7 +316,7 @@ define(function(require, exports, module) {
     $menu.css({
       display: 'block',
     });
-  };
+  }
 
   function generateDirPath() {
     console.log('Generating Directory Path...');
@@ -526,12 +528,15 @@ define(function(require, exports, module) {
         dirPath: dir4ContextMenu
       }), function() {
         TSCORE.IO.deleteDirectoryPromise(dir4ContextMenu).then(function() {
-            TSPOSTIO.deleteDirectory(dir4ContextMenu);
+            TSCORE.showSuccessDialog("Directory deleted successfully.");
+            TSCORE.navigateToDirectory(TSCORE.TagUtils.extractParentDirectoryPath(dir4ContextMenu));
+            TSCORE.hideLoadingAnimation();
           },
           function(error) {
             TSCORE.hideLoadingAnimation();
             console.error("Deleting directory " + dir4ContextMenu + " failed " + error);
-            TSPOSTIO.deleteDirectoryFailed(dir4ContextMenu);
+            TSCORE.showAlertDialog($.i18n.t('ns.dialogs:errorDeletingDirectoryAlert'));
+            TSCORE.hideLoadingAnimation();
           }
         );
       });
@@ -564,7 +569,8 @@ define(function(require, exports, module) {
   }
 
   function selectLocalDirectory() {
-    TSCORE.IO.selectDirectory(); //TSCORE.showDirectoryBrowserDialog("/media");               
+
+    TSCORE.IO.selectDirectory();
   }
 
   function showLocationEditDialog(name, path) {
@@ -729,7 +735,9 @@ define(function(require, exports, module) {
           // TODO validate folder name
           var dirPath = $('#createNewDirectoryButton').attr('path') + TSCORE.dirSeparator + $('#newDirectoryName').val();
           TSCORE.IO.createDirectoryPromise(dirPath).then(function() {
-            TSPOSTIO.createDirectory(dirPath);
+            TSCORE.showSuccessDialog("Directory created successfully.");
+            TSCORE.navigateToDirectory(dirPath);
+            TSCORE.hideWaitingDialog();
           }, function(error) {
             TSCORE.hideLoadingAnimation();
             console.error("Creating directory " + dirPath + " failed" + error);
@@ -780,8 +788,9 @@ define(function(require, exports, module) {
           var newDirPath = $('#directoryNewName').val();
           TSCORE.IO.renameDirectoryPromise(dirPath, newDirPath)
           .then(function(newDirName) {
-            TSCORE.hideWaitingDialog();
-            TSPOSTIO.renameDirectory(dirPath, newDirName);
+            TSCORE.showSuccessDialog("Directory renamed successfully.");
+            TSCORE.navigateToDirectory(newDirName);
+            TSCORE.hideLoadingAnimation();
           }, function(err) {
             TSCORE.hideWaitingDialog();
             TSCORE.showAlertDialog(err);
@@ -820,6 +829,7 @@ define(function(require, exports, module) {
   }
 
   function isDefaultLocation(path) {
+
     return (TSCORE.Config.getDefaultLocation() === path);
   }
   

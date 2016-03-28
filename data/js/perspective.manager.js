@@ -4,7 +4,9 @@
 
 define(function(require, exports, module) {
   'use strict';
+
   console.log('Loading perspective.manager.js ...');
+
   var perspectives;
   var TSCORE = require('tscore');
   var TSPOSTIO = require("tspostioapi");
@@ -70,28 +72,32 @@ define(function(require, exports, module) {
     });
   }
 
-  var initWelcomeScreen = function() {
-    $('#viewContainers').append('<div id="welcomeScreen"></div>');
-  };
+  function initWelcomeScreen() {
 
-  var initPerspectiveSwitcher = function() {
+    $('#viewContainers').append('<div id="welcomeScreen"></div>');
+  }
+
+  function initPerspectiveSwitcher() {
     var extensions = TSCORE.Config.getActivatedPerspectives();
     var $perspectiveSwitcher = $('#perspectiveSwitcher');
+
     $perspectiveSwitcher.empty();
     $perspectiveSwitcher.append($('<li>', {
       class: 'dropdown-header',
       text: $.i18n.t('ns.common:perspectiveSwitch')
-    }).prepend("<button class='close'>&times;</button>"))
-    .append("<li class='divider'></li>");
+    }).prepend("<button class='close'>&times;</button>")
+    ).append("<li class='divider'></li>");
 
     for (var i = 0; i < extensions.length; i++) {
       var curPers;
+
       // Finding the right perspective 
       perspectives.forEach(function(value) {
         if (value.ID === extensions[i].id) {
           curPers = value;
         }
       }); // jshint ignore:line
+
       $perspectiveSwitcher.append($('<li>', {}).append($('<a>', {
         'viewid': curPers.ID,
         'title': curPers.ID,
@@ -101,14 +107,16 @@ define(function(require, exports, module) {
         'class': curPers.Icon + ' fa-lg',
         'style': 'margin-right: 15px'
       }))));
+
       // Adding event listener & icon to the radio button
       $('#' + curPers.ID + 'Button').click(function() {
         changePerspective($(this).attr('viewid'));
       }); // jshint ignore:line
     }
-  };
+  }
 
-  var redrawCurrentPerspective = function() {
+  function redrawCurrentPerspective() {
+    clearSelectedFiles();
     for (var i = 0; i < perspectives.length; i++) {
       if (perspectives[i].ID === TSCORE.currentPerspectiveID) {
         try {
@@ -119,9 +127,9 @@ define(function(require, exports, module) {
         }
       }
     }
-  };
+  }
 
-  var removeFileUI = function(filePath) {
+  function removeFileUI(filePath) {
     console.log('Removing file from perspectives');
     for (var i = 0; i < perspectives.length; i++) {
       try {
@@ -130,15 +138,17 @@ define(function(require, exports, module) {
         console.warn("Error while executing 'removeFileUI' on " + perspectives[i].ID + ' ' + e);
       }
     }
-  };
+  }
 
-  var removeAllFiles = function(filePath) {
+  function removeAllFiles() {
     console.log('Removing file from perspectives');
-    TSCORE.fileList = [];
-    changePerspective(TSCORE.currentPerspectiveID);
-  };
+    if (TSCORE.fileList && TSCORE.fileList.length > 0) {
+      TSCORE.fileList = [];
+      redrawCurrentPerspective();
+    }
+  }
 
-  var updateFileUI = function(oldFilePath, newFilePath) {
+  function updateFileUI(oldFilePath, newFilePath) {
     console.log('Updating file in perspectives');
 
     if (TSCORE.FileOpener.getOpenedFilePath() === oldFilePath && !TSCORE.FileOpener.isFileEdited()) {
@@ -152,9 +162,9 @@ define(function(require, exports, module) {
         console.warn("Error while executing 'updateFileUI' on " + perspectives[i].ID + ' ' + e);
       }
     }
-  };
+  }
 
-  var getNextFile = function(filePath) {
+  function getNextFile(filePath) {
     for (var i = 0; i < perspectives.length; i++) {
       if (perspectives[i].ID === TSCORE.currentPerspectiveID) {
         try {
@@ -164,9 +174,9 @@ define(function(require, exports, module) {
         }
       }
     }
-  };
+  }
 
-  var getPrevFile = function(filePath) {
+  function getPrevFile(filePath) {
     for (var i = 0; i < perspectives.length; i++) {
       if (perspectives[i].ID === TSCORE.currentPerspectiveID) {
         try {
@@ -176,9 +186,9 @@ define(function(require, exports, module) {
         }
       }
     }
-  };
+  }
 
-  var updateTreeData = function(treeData) {
+  function updateTreeData(treeData) {
     for (var i = 0; i < perspectives.length; i++) {
       try {
         perspectives[i].updateTreeData(treeData);
@@ -186,9 +196,9 @@ define(function(require, exports, module) {
         console.warn("Error while executing 'updateTreeData' on "); // + perspectives[i].ID + ' ' + e);
       }
     }
-  };
+  }
 
-  var updateFileBrowserData = function(dirList, isSearchResult) {
+  function updateFileBrowserData(dirList, isSearchResult) {
     console.log('Updating the file browser data...');
     TSCORE.fileList = [];
     TSCORE.showLoadingAnimation();
@@ -204,10 +214,10 @@ define(function(require, exports, module) {
       if (TSCORE.Config.getShowUnixHiddenEntries() || !TSCORE.Config.getShowUnixHiddenEntries() && dirList[i].path.indexOf(TSCORE.dirSeparator + '.') < 0) {
         filename = dirList[i].name.replace(/(<([^>]+)>)/gi, ''); // sanitizing filename
         path = dirList[i].path.replace(/(<([^>]+)>)/gi, ''); // sanitizing filepath
-        title = TSCORE.TagUtils.extractTitle(path);
+        title = TSCORE.TagUtils.extractTitle(filename);
 
         if (dirList[i].isFile) {
-          ext = TSCORE.TagUtils.extractFileExtension(path);
+          ext = TSCORE.TagUtils.extractFileExtension(filename);
           tags = TSCORE.TagUtils.extractTags(path);
 
           if (dirList[i].size) {
@@ -233,23 +243,25 @@ define(function(require, exports, module) {
             metaData: null
           };
 
-          entry = [
-            ext,
-            title,
-            tags,
-            fileSize,
-            fileLMDT,
-            path,
-            filename,
-            metaObj
-          ];
+          entry = {
+            "extension": ext,
+            "title": title,
+            "tags": tags,
+            "size": fileSize,
+            "lmdt": fileLMDT,
+            "path": path,
+            "name": filename,
+            "isDirectoriy": false,
+            "meta": metaObj
+          };
           TSCORE.fileList.push(entry);
           metaDataLoadingPromises.push(TSCORE.Meta.loadMetaFileJsonPromise(entry));
         } else {
-          entry = [
-            path,
-            filename
-          ];
+          entry = {
+            "path": path,
+            "name": filename,
+            "isDirectoriy": true,
+          };
           TSCORE.subDirsList.push(entry);
         }
       }
@@ -258,7 +270,7 @@ define(function(require, exports, module) {
     var loadAllHandler = function() {
       TSCORE.hideLoadingAnimation();
       TSCORE.hideWaitingDialog();
-      changePerspective(TSCORE.currentPerspectiveID);
+      redrawCurrentPerspective();
       if (TSCORE.PRO && !isSearchResult && TSCORE.Config.getUseTextExtraction()) {
         TSCORE.showLoadingAnimation();
         //TSCORE.showWaitingDialog("Extracting text content");
@@ -281,10 +293,9 @@ define(function(require, exports, module) {
       console.warn("MetaData loading / Creating thumbs failed: " + e);
       loadAllHandler();
     });
+  }
 
-  };
-
-  var refreshFileListContainer = function() {
+  function refreshFileListContainer() {
     // TODO consider search view
     TSCORE.IO.listDirectoryPromise(TSCORE.currentPath).then(function(entries) {
       TSPOSTIO.listDirectory(entries);
@@ -292,17 +303,17 @@ define(function(require, exports, module) {
       TSPOSTIO.errorOpeningPath(TSCORE.currentPath);
       console.warn("Error listing directory" + err);
     });
-  };
+  }
 
-  var hideAllPerspectives = function() {
+  function hideAllPerspectives() {
     $('#welcomeScreen').hide();
     for (var i = 0; i < perspectives.length; i++) {
       $('#' + perspectives[i].ID + 'Container').hide();
       $('#' + perspectives[i].ID + 'Toolbar').hide();
     }
-  };
+  }
 
-  var changePerspective = function(viewType) {
+  function changePerspective(viewType) {
     console.log('Change to ' + viewType + ' perspective.');
     TSCORE.showLoadingAnimation();
     // Loading first perspective by default
@@ -334,9 +345,9 @@ define(function(require, exports, module) {
     clearSelectedFiles();
     // Enabled the main toolbar e.g. search functionality
     TSCORE.enableTopToolbar();
-  };
+  }
 
-  var clearSelectedFiles = function() {
+  function clearSelectedFiles() {
     // Clear selected files
     TSCORE.selectedFiles = [];
     if (perspectives) {
@@ -348,7 +359,7 @@ define(function(require, exports, module) {
         }
       }
     }
-  };
+  }
 
   exports.initPerspectives = initPerspectives;
   exports.hideAllPerspectives = hideAllPerspectives;

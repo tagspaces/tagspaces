@@ -28,7 +28,7 @@ define(function(require, exports, module) {
         uri.indexOf("https://") === 0 ||
         uri.indexOf("file://") === 0
     ) {
-      TSCORE.openLinkExternally(uri);
+      TSCORE.IO.openFile(uri);
     } else {
       console.log("Not supported URL format: " + uri);
     }

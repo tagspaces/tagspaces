@@ -1,9 +1,11 @@
-/* Copyright (c) 2012-2015 The TagSpaces Authors. All rights reserved.
+/* Copyright (c) 2012-2016 The TagSpaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that
  * can be found in the LICENSE file. */
+
 /* global define, Handlebars  */
 define(function(require, exports, module) {
   'use strict';
+
   console.log('Loading tags.ui.js...');
 
   var locationTagGroupKey = 'LTG';
@@ -13,6 +15,7 @@ define(function(require, exports, module) {
   var defaultTagTextColor = "#ffffff";
 
   var TSCORE = require('tscore');
+
   var tagGroupsTmpl = Handlebars.compile(
     '{{#each tagGroups}}' +
     '<div class="accordion-group disableTextSelection tagGroupContainer">' +
@@ -48,11 +51,14 @@ define(function(require, exports, module) {
     '{{/each}}'
   );
 
+  var tagButtonTmpl = Handlebars.compile('{{#each tags}} <button class="btn btn-sm tagButton" tag="{{tag}}" ' + 'filepath="{{filepath}}" style="{{style}}">{{tag}}&nbsp;&nbsp;<span class="fa fa-ellipsis-v dropDownIcon"></span></button>{{/each}}');
+
+
   function initUI() {
     $('#extMenuAddTagAsFilter').click(function() {});
     // Context menu for the tags in the file table and the file viewer
     $('#tagMenuAddTagAsFilter').click(function() {
-      TSCORE.Search.searchForTag(TSCORE.selectedTag);
+      TSCORE.searchForTag(TSCORE.selectedTag);
     });
     $('#tagMenuEditTag').click(function() {
       TSCORE.showTagEditDialog();
@@ -74,7 +80,7 @@ define(function(require, exports, module) {
       TSCORE.TagUtils.addTag(TSCORE.selectedFiles, [TSCORE.selectedTag]);
     });
     $('#tagTreeMenuAddTagAsFilter').click(function() {
-      TSCORE.Search.searchForTag(TSCORE.selectedTag);
+      TSCORE.searchForTag(TSCORE.selectedTag);
     });
     $('#tagTreeMenuEditTag').click(function() {
       TSCORE.showTagEditInTreeDialog();
@@ -402,7 +408,7 @@ define(function(require, exports, module) {
     TSCORE.selectedFiles.push(filePath);
     TSCORE.selectedTag = tag;
   }
-  var tagButtonTmpl = Handlebars.compile('{{#each tags}} <button class="btn btn-sm tagButton" tag="{{tag}}" ' + 'filepath="{{filepath}}" style="{{style}}">{{tag}}&nbsp;&nbsp;<span class="fa fa-ellipsis-v dropDownIcon"></span></button>{{/each}}');
+
   // Helper function generating tag buttons
   function generateTagButtons(commaSeparatedTags, filePath) {
     //console.log("Creating tags...");
