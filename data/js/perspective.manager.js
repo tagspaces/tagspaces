@@ -116,6 +116,7 @@ define(function(require, exports, module) {
   }
 
   function redrawCurrentPerspective() {
+    clearSelectedFiles();
     for (var i = 0; i < perspectives.length; i++) {
       if (perspectives[i].ID === TSCORE.currentPerspectiveID) {
         try {
@@ -139,10 +140,12 @@ define(function(require, exports, module) {
     }
   }
 
-  function removeAllFiles(filePath) {
+  function removeAllFiles() {
     console.log('Removing file from perspectives');
-    TSCORE.fileList = [];
-    changePerspective(TSCORE.currentPerspectiveID);
+    if (TSCORE.fileList && TSCORE.fileList.length > 0) {
+      TSCORE.fileList = [];
+      redrawCurrentPerspective();
+    }
   }
 
   function updateFileUI(oldFilePath, newFilePath) {
@@ -267,7 +270,7 @@ define(function(require, exports, module) {
     var loadAllHandler = function() {
       TSCORE.hideLoadingAnimation();
       TSCORE.hideWaitingDialog();
-      changePerspective(TSCORE.currentPerspectiveID);
+      redrawCurrentPerspective();
       if (TSCORE.PRO && !isSearchResult && TSCORE.Config.getUseTextExtraction()) {
         TSCORE.showLoadingAnimation();
         //TSCORE.showWaitingDialog("Extracting text content");
