@@ -198,14 +198,6 @@ function detachWorker(worker) {
   workers.splice(index, 1);
 }
 
-var checkForNewVersion = request.Request({
-  url: "http://tagspaces.org/releases/version.json?fVer=" + VERSION,
-  onComplete: function(response) {
-    //    console.log("Result: " + response.text + " " + response.status);
-    return response.text;
-  }
-});
-
 function checkNewVersion(worker) {
   try {
     var content;
