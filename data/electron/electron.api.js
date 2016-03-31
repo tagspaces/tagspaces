@@ -239,7 +239,7 @@ define(function(require, exports, module) {
     console.log("Checking for new version...");
     var cVer = TSCORE.Config.DefaultSettings.appVersion + "." + TSCORE.Config.DefaultSettings.appBuild;
     $.ajax({
-        url: 'http://tagspaces.org/releases/version.json?nVer=' + cVer,
+        url: 'http://tagspaces.org/releases/version.json?eVer=' + cVer,
         type: 'GET'
       })
       .done(function(data) {
