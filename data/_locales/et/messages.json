@@ -1,0 +1,68 @@
+{
+  "appName": {
+    "message": "TagSpaces"
+  },
+  "appDesc": {
+    "message": "Failisirvijat veebi sisu kraapimise ja Chromecast võimalus."
+  },
+  "appLauncher": {
+    "message": "Käivitada TagSpaces",
+    "description": "Title of the application launcher in the browser."
+  },
+  "appLauncherTitle": {
+    "message": "Alustada TagSpaces Failisirvijat uuel kaardil",
+    "description": "Title of the application launcher in the browser."
+  },
+  "appLauncherLabel": {
+    "message": "Püüdmise veebisisu",
+    "description": "Title of label."
+  },
+  "editTitleLabel": {
+    "message": "Muuta pealkiri",
+    "description": "Title of label."
+  },
+  "addTagLabel": {
+    "message": "Lisad sildid",
+    "description": "Title of label."
+  },
+  "addTagHelp": {
+    "message": "Sildid peaks olema minimaalne pikkus 2 märki ja ei tohi sisaldada erimärke nagu ruum, #, / ,\\ ja muud.",
+    "description": "Add tag help message"
+  },
+  "saveFileLabel": {
+    "message": "Salvestada faili",
+    "description": "Title of label."
+  },
+  "saveAsMhtmlTitle": {
+    "message": "Säästa kogu lehe MHTML formatti",
+    "description": "Title of save page button"
+  },
+  "saveAsMhtmlLabel": {
+    "message": "Säästa terve lehekülg",
+    "description": "Title of label."
+  },
+  "saveSelectionAsHtmlTitle": {
+    "message": "Säästa valitud sisu HTML formatti",
+    "description": "Title of save selection button"
+  },
+  "saveAsSelectionLabel": {
+    "message": "Säästa valitud",
+    "description": "Title of label."
+  },
+  "saveScreenshotTitle": {
+    "message": "Säästa pildil nähtava lehekülje ala PNG formatti",
+    "description": "Title of screenshot button"
+  },
+  "saveScreenshotLabel": {
+    "message": "Püüdmise ekraan",
+    "description": "Title of label."
+  },
+  "saveBookmarkTitle": {
+    "message": "Mark lehele",
+    "description": "Title of bookmark button"
+  },
+  "saveBookmarkLabel": {
+    "message": "Mark",
+    "description": "Title of label."
+  }
+}

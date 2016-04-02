@@ -1,0 +1,68 @@
+{
+  "appName": {
+    "message": "TagSpaces"
+  },
+  "appDesc": {
+    "message": "Tiedostoselain kanssa web-sisällön kaavinta ja Chromecast tuki."
+  },
+  "appLauncher": {
+    "message": "Käynnistetään TagSpaces",
+    "description": "Title of the application launcher in the browser."
+  },
+  "appLauncherTitle": {
+    "message": "Aloita TagSpaces Browser uuteen välilehteen",
+    "description": "Title of the application launcher in the browser."
+  },
+  "appLauncherLabel": {
+    "message": "Kaappaaminen verkkosisältöjä",
+    "description": "Title of label."
+  },
+  "editTitleLabel": {
+    "message": "Muokkaa otsikkoa",
+    "description": "Title of label."
+  },
+  "addTagLabel": {
+    "message": "Lisää tageja",
+    "description": "Title of label."
+  },
+  "addTagHelp": {
+    "message": "Tunnisteet on oltava vähintään pituus 2 merkkiä eikä se saa sisältää erikoismerkkejä, kuten välilyöntiä, #, / ,\\ ja muut.",
+    "description": "Add tag help message"
+  },
+  "saveFileLabel": {
+    "message": "Tallenna tiedosto",
+    "description": "Title of label."
+  },
+  "saveAsMhtmlTitle": {
+    "message": "Tallenna koko sivu sisään MHTML tiedostomuoto",
+    "description": "Title of save page button"
+  },
+  "saveAsMhtmlLabel": {
+    "message": "Tallenna Koko sivu",
+    "description": "Title of label."
+  },
+  "saveSelectionAsHtmlTitle": {
+    "message": "Tallenna valitun sisällön sisään HTML tiedostomuoto",
+    "description": "Title of save selection button"
+  },
+  "saveAsSelectionLabel": {
+    "message": "Tallenna valitut",
+    "description": "Title of label."
+  },
+  "saveScreenshotTitle": {
+    "message": "Tallenna kuvakaappaus näkyvän sivun alueen sisään PNG tiedostomuoto",
+    "description": "Title of screenshot button"
+  },
+  "saveScreenshotLabel": {
+    "message": "Kuvakaappaus",
+    "description": "Title of label."
+  },
+  "saveBookmarkTitle": {
+    "message": "Kirjanmerkki sivulle",
+    "description": "Title of bookmark button"
+  },
+  "saveBookmarkLabel": {
+    "message": "Kirjanmerkki",
+    "description": "Title of label."
+  }
+}
