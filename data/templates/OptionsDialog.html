@@ -79,6 +79,20 @@
               <p class="help-block" data-i18n="ns.dialogs:loadLocationMetaDataHelp"></p>
             </div>
           </div>
+          <div class="form-group">
+            <div class="col-sm-12 checkbox">
+              <label for="useSearchInSubfolders">
+                <input type="checkbox" id="useSearchInSubfolders"/>
+                <span data-i18n="ns.pro:useSearchInSubfolders"></span>
+              </label>
+            </div>
+          </div>     
+          <div class="form-group">
+          <div class='form-group col-sm-12'>
+              <label for='extensionsPathInput' data-i18n="ns.pro:maxSearchResultCount"></label>
+              <input type="number" class='form-control' id='maxSearchResultCount' min="0" max="2000"/>
+          </div>          
+          </div>  
         </div>
         {{#if isProVersion}}
         <div class="tab-pane active" id="pro">

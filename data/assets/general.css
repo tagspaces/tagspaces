@@ -317,6 +317,11 @@ li hr {
   text-overflow: ellipsis;
   overflow: hidden;
 }
+.dirButton{
+  max-width: 265px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
 .dirButtonContainer {
   display: flex;

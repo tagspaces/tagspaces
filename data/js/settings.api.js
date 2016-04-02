@@ -699,6 +699,28 @@ define(function(require, exports, module) {
     exports.Settings.loadLocationMeta = value;
   }
 
+  var getUseSearchInSubfolders = function() {
+    if (exports.Settings.useSearchInSubfolders  === undefined) {
+      exports.Settings.useSearchInSubfolders = exports.DefaultSettings.useSearchInSubfolders;
+    }
+    return exports.Settings.useSearchInSubfolders;
+  };
+  var setUseSearchInSubfolders = function(value) {
+    exports.Settings.useSearchInSubfolders = value;
+  };    
+  var getMaxSearchResultCount = function() {
+    if (exports.Settings.maxSearchResultCount  === undefined) {
+      exports.Settings.maxSearchResultCount = exports.DefaultSettings.maxSearchResultCount;
+    }
+    return exports.Settings.maxSearchResultCount;
+  };
+  var setMaxSearchResultCount = function(value) {
+    if (isNaN(value) || value < 0 || value > 2000) {
+      value = 0;
+    }
+    exports.Settings.maxSearchResultCount = value;
+  };
+
   function getEnableMetaData() {
     if (exports.Settings.enableMetaData === undefined) {
       exports.Settings.enableMetaData = exports.DefaultSettings.enableMetaData;
@@ -1198,6 +1220,10 @@ define(function(require, exports, module) {
   exports.setCalculateTags = setCalculateTags;
   exports.getLoadLocationMeta = getLoadLocationMeta;
   exports.setLoadLocationMeta = setLoadLocationMeta;
+  exports.getUseSearchInSubfolders = getUseSearchInSubfolders;
+  exports.setUseSearchInSubfolders = setUseSearchInSubfolders;
+  exports.getMaxSearchResultCount = getMaxSearchResultCount;
+  exports.setMaxSearchResultCount = setMaxSearchResultCount;  
   exports.setEnableMetaData = setEnableMetaData;
   exports.getEnableMetaData = getEnableMetaData;
   exports.getIsWindowMaximized = getIsWindowMaximized;
