@@ -199,14 +199,7 @@
             <i class="fa fa-arrow-right fa-lg"></i>
           </button>
           <div class="flexMaxWidth">
-            <div class="loadingAnimation">
-              <div class="spinner">
-                <div class="bounce1"></div>
-                <div class="bounce2"></div>
-                <div class="bounce3"></div>
-              </div>
-            </div>
-            <div id="statusBar" class="noWrap"></div>
+            <div class="flexLayout" id="alternativeNavigator"></div>
           </div>
           <div id="mainTopMenu" class="input-group">
             <button type="button" id="perspectiveSwitcherButton" class="btn btn-link dropdown-toggle"
@@ -216,10 +209,18 @@
             <ul class="dropdown-menu pull-right" id="perspectiveSwitcher"></ul>
           </div>
         </div>
-        <div class="flexLayout">
+        <div class="flexLayout" style="min-height: 40px;">
           <div class="flexMaxWidth flexLayout" style="min-width: 100px;">
-            <div class="flexLayout" id="alternativeNavigator" style="min-width: 100px;"></div>
-            <div class="flexMaxWidth"></div>
+            <div class="flexMaxWidth">
+              <div id="statusBar" class="noWrap"></div>
+              <div class="loadingAnimation">
+                <div class="spinner">
+                  <div class="bounce1"></div>
+                  <div class="bounce2"></div>
+                  <div class="bounce3"></div>
+                </div>
+              </div>
+            </div>
             <div id="searchToolbar">
               <div class="flexLayout">
                 <button class="btn btn-link" id="clearSearchButton" data-i18n="[title]ns.common:cancelSearchTooltip">
@@ -234,10 +235,10 @@
                 </button>
               </div>
             </div>
+            <button class="btn btn-link" data-i18n="[title]ns.common:searchPlaceholder" id="showSearchButton">
+              <span data-i18n="ns.common:searchPlaceholder" style="font-size: 14px;"></span>&nbsp;&nbsp;&nbsp;<i class="fa fa-lg fa-search"></i>
+            </button>
           </div>
-          <button class="btn btn-link" data-i18n="[title]ns.common:searchPlaceholder" id="showSearchButton">
-            <i class="fa fa-lg fa-search"></i>
-          </button>
         </div>
       </nav>
     </div>
