@@ -704,22 +704,23 @@ define(function(require, exports, module) {
       exports.Settings.useSearchInSubfolders = exports.DefaultSettings.useSearchInSubfolders;
     }
     return exports.Settings.useSearchInSubfolders;
-  };
+  }
   function setUseSearchInSubfolders(value) {
     exports.Settings.useSearchInSubfolders = value;
-  };    
+  }
+    
   function getMaxSearchResultCount() {
     if (exports.Settings.maxSearchResultCount  === undefined) {
       exports.Settings.maxSearchResultCount = exports.DefaultSettings.maxSearchResultCount;
     }
     return exports.Settings.maxSearchResultCount;
-  };
+  }
   function setMaxSearchResultCount(value) {
     if (isNaN(value) || value < 0 || value > 2000) {
       value = 0;
     }
     exports.Settings.maxSearchResultCount = value;
-  };
+  }
 
   function getEnableMetaData() {
     if (exports.Settings.enableMetaData === undefined) {
