@@ -24,6 +24,8 @@ define(function (require, exports, module) {
         "tagDelimiter":             " ",
         "calculateTags":            false,
         "loadLocationMeta":         false,
+        "useSearchInSubfolders":    false,
+        "maxSearchResultCount":         400,
         "warnIncludeSubdirs":       true,
         "isWindowMaximized":        false,
         "showMainMenu":             false,

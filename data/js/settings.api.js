@@ -699,22 +699,22 @@ define(function(require, exports, module) {
     exports.Settings.loadLocationMeta = value;
   }
 
-  var getUseSearchInSubfolders = function() {
+  function getUseSearchInSubfolders() {
     if (exports.Settings.useSearchInSubfolders  === undefined) {
       exports.Settings.useSearchInSubfolders = exports.DefaultSettings.useSearchInSubfolders;
     }
     return exports.Settings.useSearchInSubfolders;
   };
-  var setUseSearchInSubfolders = function(value) {
+  function setUseSearchInSubfolders(value) {
     exports.Settings.useSearchInSubfolders = value;
   };    
-  var getMaxSearchResultCount = function() {
+  function getMaxSearchResultCount() {
     if (exports.Settings.maxSearchResultCount  === undefined) {
       exports.Settings.maxSearchResultCount = exports.DefaultSettings.maxSearchResultCount;
     }
     return exports.Settings.maxSearchResultCount;
   };
-  var setMaxSearchResultCount = function(value) {
+  function setMaxSearchResultCount(value) {
     if (isNaN(value) || value < 0 || value > 2000) {
       value = 0;
     }

@@ -6,7 +6,5 @@
 	"updateFolderThumbnails": "Update thumbnails",
 	"tagDirectory": "Tag Directory",
 	"directoryProperties": "Directory Properties",
-  "useSearchInSubfolders": "Search in sub-folders by default",
-  "maxSearchResultCount": "Limit files found to",
 	"-": "-"
 }

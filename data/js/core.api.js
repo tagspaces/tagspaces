@@ -485,6 +485,7 @@ define(function(require, exports, module) {
   // Public API definition
   exports.dirSeparator = isWin && !isWeb ? '\\' : '/';
   exports.maxSearchResults = 400;
+	//exports.maxSearchResults = tsSettings.Settings.getMaxSearchResultCount();
   exports.metaFolder = ".ts";
   exports.metaFolderFile = "tsm.json";
   exports.metaFileExt = ".json";
