@@ -326,7 +326,7 @@ li hr {
   flex-wrap: wrap;
 }
 
-.dirButton{
+.dirAltNavMenu .dirButton{
   max-width: 265px;
   overflow: hidden;
   text-overflow: ellipsis;
