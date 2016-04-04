@@ -22,10 +22,11 @@
       <div class="modal-body form tab-content" id="optionsAccordion">
         <div class="tab-pane active" id="general">
           <div class="form-group">
-            <label for='languagesList' data-i18n="ns.dialogs:interfaceLanguage"></label>
-            <select class='form-control' id='languagesList'></select>
-
-            <p class="help-block" data-i18n="ns.dialogs:switchLanguageHelp"></p>
+            <label for='languagesList' class="col-sm-6 control-label" data-i18n="ns.dialogs:interfaceLanguage"></label>
+            <div class="col-sm-6">
+              <select class='form-control' id='languagesList'></select>
+            </div>
+            <p class="help-block col-sm-12" data-i18n="ns.dialogs:switchLanguageHelp"></p>
           </div>
           <div class="form-group">
             <div class="col-sm-12 checkbox">
@@ -43,19 +44,43 @@
               </label>
             </div>
           </div>
-          <div class="form-group">
+          <!--div class="form-group">
             <div class="col-sm-12 checkbox">
               <label for="showMainMenuCheckbox">
                 <input type="checkbox" id="showMainMenuCheckbox"/>
                 <span data-i18n="ns.dialogs:showMainMenu"></span>
               </label>
             </div>
-          </div>
+          </div-->
           <div class="form-group">
             <div class="col-sm-12 checkbox">
               <label for="useDefaultLocationCheckbox">
                 <input type="checkbox" id="useDefaultLocationCheckbox"/>
                 <span data-i18n="ns.dialogs:useDefaultLocation"></span>
+              </label>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-12 checkbox">
+              <label for="loadLocationMetaData">
+                <input type="checkbox" id="loadLocationMetaData"/>
+                <span data-i18n="ns.dialogs:loadLocationMetaData"></span>
+              </label>
+
+              <p class="help-block" data-i18n="ns.dialogs:loadLocationMetaDataHelp"></p>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for='maxSearchResultCount' class="col-sm-6 control-label" data-i18n="ns.dialogs:maxSearchResultCount"></label>
+            <div class="col-sm-6">
+              <input type="number" class='form-control' id='maxSearchResultCount' min="0" max="2000"/>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-12 checkbox">
+              <label for="useSearchInSubfolders">
+                <input type="checkbox" id="useSearchInSubfolders"/>
+                <span data-i18n="ns.dialogs:useSearchInSubfolders"></span>
               </label>
             </div>
           </div>
@@ -69,30 +94,6 @@
               <span data-i18n="ns.dialogs:restoreDefaulSettingButton"></span>
             </button>
           </div>
-          <div class="form-group">
-            <div class="col-sm-12 checkbox">
-              <label for="loadLocationMetaData">
-                <input type="checkbox" id="loadLocationMetaData"/>
-                <span data-i18n="ns.dialogs:loadLocationMetaData"></span>
-              </label>
-
-              <p class="help-block" data-i18n="ns.dialogs:loadLocationMetaDataHelp"></p>
-            </div>
-          </div>
-          <div class="form-group">
-            <div class="col-sm-12 checkbox">
-              <label for="useSearchInSubfolders">
-                <input type="checkbox" id="useSearchInSubfolders"/>
-                <span data-i18n="ns.dialogs:useSearchInSubfolders"></span>
-              </label>
-            </div>
-          </div>     
-          <div class="form-group">
-          <div class='form-group col-sm-12'>
-              <label for='extensionsPathInput' data-i18n="ns.dialogs:maxSearchResultCount"></label>
-              <input type="number" class='form-control' id='maxSearchResultCount' min="0" max="2000"/>
-          </div>          
-          </div>  
         </div>
         {{#if isProVersion}}
         <div class="tab-pane active" id="pro">

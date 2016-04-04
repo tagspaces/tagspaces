@@ -801,3 +801,7 @@ input a.resetFilter {
 #perspectiveSwitcherButton {
   background-color: #F2F2F2;
 }
+
+label.control-label {
+  padding-top: 6px !important;
+}

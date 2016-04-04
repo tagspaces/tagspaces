@@ -13,7 +13,6 @@ define(function(require, exports, module) {
 
   var TSCORE = require('tscore');
   var TSPOSTIO = require('tspostioapi');
-  var MAXSEARCHRESULTS = 1000;
   var stopDirectoryWalking = false;
   var searchResultsCounter = 0;
 
@@ -113,8 +112,6 @@ define(function(require, exports, module) {
   }
 
   exports.stopDirectoryWalking = stopDirectoryWalking;
-  exports.MAXSEARCHRESULTS = MAXSEARCHRESULTS;
-
   exports.walkDirectory = walkDirectory;
   exports.listSubDirectories = listSubDirectories;
   exports.createDirectoryIndex = createDirectoryIndex;

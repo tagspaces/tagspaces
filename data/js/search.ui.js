@@ -64,6 +64,8 @@ define(function(require, exports, module) {
       cancelSearch();
     });
 
+    $('#searchRecursive').attr('checked', TSCORE.Config.getUseSearchInSubfolders());
+
     $('#searchRecursive').on('click', function(e) {
       updateQuery();
     });
@@ -129,7 +131,7 @@ define(function(require, exports, module) {
   }
 
   function resetSearchOptions() {
-    $('#searchRecursive').prop('checked', true);
+    $('#searchRecursive').prop('checked', TSCORE.Config.getUseSearchInSubfolders());
     $('#searchTerms').val("");
     $('#searchTags').val("");
     $('#searchFileType').val("");
