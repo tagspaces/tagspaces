@@ -331,6 +331,12 @@ li hr {
   flex-wrap: wrap;
 }
 
+.dirButton{
+  max-width: 265px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .dirButton:hover, .dirButton:active, .dirButton:focus {
   background-color: #ddd;
 }
@@ -675,14 +681,16 @@ input a.resetFilter {
 }
 
 #alternativeNavigator .btn-link {
-  padding-left: 2px;
-  padding-right: 2px;
+  padding-left: 0px;
+  padding-right: 0px;
   color: #404040;
 }
 
 #alternativeNavigator {
-  margin: 5px 5px 5px 0;
+  margin: 0px 5px 5px 0;
   height: 30px;
+  min-width: 100px;
+  max-width: 150px
 }
 
 .dirAltNavMenu ul {
@@ -787,4 +795,14 @@ input a.resetFilter {
   background-color: rgba(173, 173, 173, 0.5);
   display: none;
   z-index: 99999;
+}
+
+#openLeftPanel {
+  padding-left: 12px;
+  padding-right: 12px;
+  padding-top: 2px;
+}
+
+#perspectiveSwitcherButton {
+  background-color: #F2F2F2;
 }

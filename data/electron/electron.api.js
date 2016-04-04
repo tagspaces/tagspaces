@@ -6,6 +6,8 @@ const fs = require('fs-extra'); // jshint ignore:line
 const pathUtils = require('path'); // jshint ignore:line
 const electron = require('electron'); // jshint ignore:line
 const remote = electron.remote; // jshint ignore:line
+const ipcRenderer = require('electron').ipcRenderer; // jshint ignore:line
+
 /**
  * A implementation of the IOAPI for the electron platform
  * @class Electron
@@ -195,7 +197,9 @@ define(function(require, exports, module) {
           {
             label: $.i18n.t("ns.common:quit"),
             accelerator: 'Command+Q',
-            click: function() { app.quit(); }
+            click: function() {
+              ipcRenderer.send('quit-application', 'Bye, bye...');
+            }
           },
         ]
       });

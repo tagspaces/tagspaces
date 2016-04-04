@@ -230,8 +230,8 @@ define(function(require, exports, module) {
   }
 
   function updateNewVersionData(data) {
-    console.log('Version Information: ' + data);
-    var versioningData = JSON.parse(data);
+    console.log('Version Information: ' + JSON.stringify(data));
+    var versioningData = JSON.parse(JSON.stringify(data));
     // Analysing Version Information
     var availableBuild = parseInt(versioningData.appBuild);
     var verA = versioningData.appVersion.split('.');
