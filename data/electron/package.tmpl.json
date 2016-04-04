@@ -15,7 +15,7 @@
     "app-category-type": "@@APPCATEGORYOSX",
     "platform": "@@PLATFORM",
     "arch": "all",
-    "asar": "false",
+    "asar": false,
     "icon": "build/icon",
     "iconUrl": "https://raw.githubusercontent.com/tagspaces/tagspaces/develop/data/assets/icon.ico",
     "win": {
