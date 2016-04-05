@@ -805,3 +805,16 @@ input a.resetFilter {
 label.control-label {
   padding-top: 6px !important;
 }
+
+.modal textarea {
+  border: 1px solid #f4f4f4 !important;
+}
+
+.select2-container {
+  border: 1px solid #f4f4f4 !important;
+}
+
+.form-control {
+  border-radius: 0px;
+}
+
