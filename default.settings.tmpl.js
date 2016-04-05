@@ -39,7 +39,7 @@ define(function (require, exports, module) {
         "perspectives":             [@@ACTIVATEDPERSPECTIVES],
         "interfaceLanguage":        "en_US",
         "writeTagsToFile":          false,
-        "useTrashCan":              false,
+        "useTrashCan":              true,
         "useOCR":                   false, 
         "useTextExtraction":        false, 
         "useGenerateThumbnails":    false,
