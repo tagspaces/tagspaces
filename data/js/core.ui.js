@@ -556,7 +556,7 @@ define(function(require, exports, module) {
   function showFileDeleteDialog(filePath) {
     console.log('Deleting file...');
     var dlgConfirmMsgId = 'ns.dialogs:fileDeleteContentConfirm';
-    if (TSCORE.Config.getUseTrashCan()) {
+    if (TSCORE.PRO && TSCORE.Config.getUseTrashCan()) {
       dlgConfirmMsgId = 'ns.pro:trashDeleteContentConfirm';
     }
     TSCORE.showConfirmDialog($.i18n.t('ns.dialogs:fileDeleteTitleConfirm'), $.i18n.t(dlgConfirmMsgId, {
@@ -572,6 +572,30 @@ define(function(require, exports, module) {
         }
       );
     });
+  }
+
+  function showDeleteFilesDialog() {
+    console.log('Deleting files...');
+    var selFiles = " ";
+
+    TSCORE.selectedFiles.forEach(function(file) {
+      selFiles += " " + TSCORE.Utils.baseName(file) + " ,";
+    });
+
+    selFiles = selFiles.substring(0, selFiles.length - 1);
+    var dlgConfirmMsgId = 'ns.dialogs:selectedFilesDeleteContentConfirm';
+
+    if (TSCORE.PRO && TSCORE.Config.getUseTrashCan()) {
+      dlgConfirmMsgId = 'ns.pro:trashFilesDeleteContentConfirm';
+    }
+
+    TSCORE.showConfirmDialog(
+      $.i18n.t('ns.dialogs:fileDeleteTitleConfirm'),
+      $.i18n.t(dlgConfirmMsgId, {selectedFiles: selFiles}),
+      function() {
+        TSCORE.IOUtils.deleteFiles(TSCORE.selectedFiles);
+      }
+    );
   }
 
   function showTagEditDialog() {
@@ -874,6 +898,7 @@ define(function(require, exports, module) {
   exports.showFileRenameDialog = showFileRenameDialog;
   exports.showFileCreateDialog = showFileCreateDialog;
   exports.showFileDeleteDialog = showFileDeleteDialog;
+  exports.showDeleteFilesDialog = showDeleteFilesDialog;
   exports.showWelcomeDialog = showWelcomeDialog;
   exports.startGettingStartedTour = startGettingStartedTour;
   exports.showTagEditDialog = showTagEditDialog;
