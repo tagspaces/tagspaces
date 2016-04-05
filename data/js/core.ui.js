@@ -578,7 +578,7 @@ define(function(require, exports, module) {
     console.log('Deleting files...');
     var selFiles = " ";
 
-    TSCORE.selectedFiles.forEach(function(file) {
+    TSCORE.Utils.getUniqueSelectedFiles().forEach(function(file) {
       selFiles += " " + TSCORE.Utils.baseName(file) + " ,";
     });
 
@@ -593,7 +593,7 @@ define(function(require, exports, module) {
       $.i18n.t('ns.dialogs:fileDeleteTitleConfirm'),
       $.i18n.t(dlgConfirmMsgId, {selectedFiles: selFiles}),
       function() {
-        TSCORE.IOUtils.deleteFiles(TSCORE.selectedFiles);
+        TSCORE.IOUtils.deleteFiles(TSCORE.Utils.getUniqueSelectedFiles());
       }
     );
   }
