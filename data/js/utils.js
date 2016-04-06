@@ -106,6 +106,11 @@ define(function(require, exports, module) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 
+  // TODO Use set instead of array in the core for selectedFiles
+  function getUniqueSelectedFiles() {
+    return _.uniq(TSCORE.selectedFiles);
+  }
+
   exports.arrayBufferToDataURL = arrayBufferToDataURL;
   exports.base64ToArrayBuffer = base64ToArrayBuffer;
   exports.dataURLtoBlob = dataURLtoBlob;
@@ -118,5 +123,6 @@ define(function(require, exports, module) {
   exports.getURLParameter = getURLParameter;
   exports.isVisibleOnScreen = isVisibleOnScreen;
   exports.getRandomInt = getRandomInt;
+  exports.getUniqueSelectedFiles = getUniqueSelectedFiles;
 
 });

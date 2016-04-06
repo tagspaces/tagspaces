@@ -77,7 +77,7 @@ define(function(require, exports, module) {
     });
     // Context menu for the tags in the tag tree
     $('#tagTreeMenuAddTagToFile').click(function() {
-      TSCORE.TagUtils.addTag(TSCORE.selectedFiles, [TSCORE.selectedTag]);
+      TSCORE.TagUtils.addTag(TSCORE.Utils.getUniqueSelectedFiles(), [TSCORE.selectedTag]);
     });
     $('#tagTreeMenuAddTagAsFilter').click(function() {
       TSCORE.searchForTag(TSCORE.selectedTag);
@@ -155,16 +155,16 @@ define(function(require, exports, module) {
     });
     $('#cleanTagsButton').click(function() {
       TSCORE.showConfirmDialog($.i18n.t('ns.dialogs:cleanFilesTitleConfirm'), $.i18n.t('ns.dialogs:cleanFilesContentConfirm'), function() {
-        TSCORE.TagUtils.cleanFilesFromTags(TSCORE.selectedFiles);
+        TSCORE.TagUtils.cleanFilesFromTags(TSCORE.Utils.getUniqueSelectedFiles());
       });
     });
     $('#addTagsButton').click(function() {
       var tags = $('#tags').val().split(',');
-      TSCORE.TagUtils.addTag(TSCORE.selectedFiles, tags);
+      TSCORE.TagUtils.addTag(TSCORE.Utils.getUniqueSelectedFiles(), tags);
     });
     $('#removeTagsButton').click(function() {
       var tags = $('#tags').val().split(',');
-      TSCORE.TagUtils.removeTags(TSCORE.selectedFiles, tags);
+      TSCORE.TagUtils.removeTags(TSCORE.Utils.getUniqueSelectedFiles(), tags);
     });
     $('#createTagButton').click(function() {
       var tags = $('#newTagTitle').val().split(',');
@@ -250,7 +250,7 @@ define(function(require, exports, module) {
           Mousetrap.unbind(tag.keyBinding);
           Mousetrap.bind(tag.keyBinding, function(innerTag) {
             return function(e) {
-              TSCORE.TagUtils.addTag(TSCORE.selectedFiles, [innerTag]);
+              TSCORE.TagUtils.addTag(TSCORE.Utils.getUniqueSelectedFiles(), [innerTag]);
             };
           }(tag.title)); // jshint ignore:line
         }
@@ -300,7 +300,7 @@ define(function(require, exports, module) {
         TSCORE.hideAllDropDownMenus();
         TSCORE.selectedTagData = TSCORE.Config.getTagData($(this).attr('tag'), $(this).attr('parentKey'));
         TSCORE.selectedTag = generateTagValue(TSCORE.selectedTagData);
-        TSCORE.TagUtils.addTag(TSCORE.selectedFiles, [TSCORE.selectedTag]);
+        TSCORE.TagUtils.addTag(TSCORE.Utils.getUniqueSelectedFiles(), [TSCORE.selectedTag]);
       });
     });
     $tagGroupsContent.find('.tagGroupTitle').each(function() {

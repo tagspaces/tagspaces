@@ -326,7 +326,7 @@ li hr {
   flex-wrap: wrap;
 }
 
-.dirButton{
+.dirAltNavMenu .dirButton{
   max-width: 265px;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -801,3 +801,20 @@ input a.resetFilter {
 #perspectiveSwitcherButton {
   background-color: #F2F2F2;
 }
+
+label.control-label {
+  padding-top: 6px !important;
+}
+
+.modal textarea {
+  border: 1px solid #f4f4f4 !important;
+}
+
+.select2-container {
+  border: 1px solid #f4f4f4 !important;
+}
+
+.form-control {
+  border-radius: 0px;
+}
+

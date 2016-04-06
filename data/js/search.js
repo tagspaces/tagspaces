@@ -10,6 +10,7 @@ define(function(require, exports, module) {
   var TSCORE = require('tscore');
   var currentQuery = '';
   var nextQuery = '';
+  var recursiveSymbol = '~';
 
   // TODO implement case sensitive search
   var caseSensitiveSearch = false;
@@ -18,7 +19,7 @@ define(function(require, exports, module) {
     // cleaning up the query, reducing the spaces
     var queryText = queryText.toLowerCase().replace(/^\s+|\s+$/g, '');
 
-    var recursive = queryText.indexOf('~') !== 0;
+    var recursive = queryText.indexOf(recursiveSymbol) !== 0;
     if (!recursive) {
       queryText = queryText.substring(1, queryText.length);
     }
@@ -304,6 +305,7 @@ define(function(require, exports, module) {
   // Public variables definition
   exports.currentQuery = currentQuery;
   exports.nextQuery = nextQuery;
+  exports.recursiveSymbol = recursiveSymbol;
 
   // Public API definition    
   exports.searchData = searchData;

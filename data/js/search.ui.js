@@ -64,6 +64,8 @@ define(function(require, exports, module) {
       cancelSearch();
     });
 
+    $('#searchRecursive').attr('checked', TSCORE.Config.getUseSearchInSubfolders());
+
     $('#searchRecursive').on('click', function(e) {
       updateQuery();
     });
@@ -95,7 +97,7 @@ define(function(require, exports, module) {
   function updateQuery() {
     var query = "";
     if (!$('#searchRecursive').is(':checked')) {
-      query = "~ ";
+      query = TSCORE.Search.recursiveSymbol + " ";
     }
 
     var searchTerms = $('#searchTerms').val();
@@ -129,7 +131,7 @@ define(function(require, exports, module) {
   }
 
   function resetSearchOptions() {
-    $('#searchRecursive').prop('checked', true);
+    $('#searchRecursive').prop('checked', TSCORE.Config.getUseSearchInSubfolders());
     $('#searchTerms').val("");
     $('#searchTags').val("");
     $('#searchFileType').val("");
@@ -146,6 +148,14 @@ define(function(require, exports, module) {
   }
 
   function startSearch() {
+    if (TSCORE.IO.stopWatchingDirectories) {
+      TSCORE.IO.stopWatchingDirectories();
+    }
+    if (!$('#searchRecursive').prop('checked') && $('#searchBox').val().length > 0) {
+      $('#searchBox').val(TSCORE.Search.recursiveSymbol + " " + $('#searchBox').val());
+      TSCORE.Search.nextQuery = $('#searchBox').val();
+    }
+
     $('#searchOptions').hide();
     TSCORE.PerspectiveManager.redrawCurrentPerspective();
   }
@@ -182,8 +192,8 @@ define(function(require, exports, module) {
     if (TSCORE.isOneColumn()) {
       TSCORE.closeLeftPanel();
     }
-    TSCORE.Search.nextQuery = '~ +' + tagQuery;
-    $('#searchBox').val('~ +' + tagQuery);
+    TSCORE.Search.nextQuery = TSCORE.Search.recursiveSymbol + ' +' + tagQuery;
+    $('#searchBox').val(TSCORE.Search.recursiveSymbol + ' +' + tagQuery);
     TSCORE.PerspectiveManager.redrawCurrentPerspective();
     $('#showSearchButton').hide();
     $('#searchToolbar').show();

@@ -490,7 +490,16 @@ define(function(require, exports, module) {
     //TSCORE.PerspectiveManager.removeAllFiles();
     TSCORE.IO.listDirectoryPromise(dirPath).then(function(entries) {
       TSPOSTIO.listDirectory(entries);
+      TSCORE.hideLoadingAnimation();
       console.log("Listing: " + dirPath + " done!");
+
+      // TODO enable after adding switch in the settings, disabling recursion does not work on windows
+      // Disable watching on file operations with many fiels (copy, delete, rename, move)
+      /*if (TSCORE.IO.watchDirectory) {
+        TSCORE.IO.watchDirectory(dirPath, function() {
+          listDirectory(TSCORE.currentPath);
+        });
+      }*/
     }).catch(function(err) {
       TSPOSTIO.errorOpeningPath();
       console.log("Error listing directory" + err);

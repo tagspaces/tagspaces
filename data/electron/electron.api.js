@@ -30,11 +30,15 @@ define(function(require, exports, module) {
   };
 
   // Experimental functionality
-  function watchDirecotory(dirPath, listener) {
+  function watchDirectory(dirPath, listener) {
+    stopWatchingDirectories();
+    fsWatcher = fs.watch(dirPath, {persistent: true, recursive: false}, listener);
+  }
+
+  function stopWatchingDirectories() {
     if (fsWatcher) {
       fsWatcher.close();
     }
-    fsWatcher = fs.watch(dirPath, {persistent: true, recursive: false}, listener);
   }
 
   function handleStartParameters() {
@@ -838,6 +842,9 @@ define(function(require, exports, module) {
   // Platform specific calls
   exports.initMainMenu = initMainMenu;
   exports.showMainWindow = showMainWindow;
+
+  exports.watchDirectory = watchDirectory; // Platform specific
+  exports.stopWatchingDirectories = stopWatchingDirectories; // Platform specific
 
   // Platform API
   exports.handleStartParameters = handleStartParameters;

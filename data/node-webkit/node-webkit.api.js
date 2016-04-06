@@ -52,7 +52,7 @@ define(function(require, exports, module) {
   });
 
   // Experimental functionality
-  function watchDirecotory(dirPath, listener) {
+  function watchDirectory(dirPath, listener) {
     if (fsWatcher) {
       fsWatcher.close();
     }
