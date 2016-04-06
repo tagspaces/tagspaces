@@ -105,6 +105,7 @@ var isWin = navigator.appVersion.indexOf("Win")!==-1;
       jszip:                  'libs/jszip/dist/jszip.min',
       hopscotch:              'libs/hopscotch/dist/js/hopscotch.min',
       noty:                   'libs/noty/js/noty/packaged/jquery.noty.packaged.min',
+      marked:                 'libs/marked/marked.min',
 
       tscore:                 'js/core.api',
       tssetting:              'js/settings.api',
@@ -113,6 +114,7 @@ var isWin = navigator.appVersion.indexOf("Win")!==-1;
       tspersmanager:          'js/perspective.manager',
       tstagutils:             'js/tagutils',
       tssearch:               'js/search',
+      tssearchui:             'js/search.ui',
       tsfileopener:           'js/fileopener',
       tstagsui:               'js/tags.ui',
       tsdirectoriesui:        'js/directories.ui',

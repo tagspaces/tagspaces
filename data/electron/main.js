@@ -3,6 +3,7 @@
 const electron = require('electron');
 const app = electron.app;  // Module to control application life.
 const BrowserWindow = electron.BrowserWindow;  // Module to create native browser window.
+const ipcMain = require('electron').ipcMain;
 
 var debugMode;
 var startupFilePath;
@@ -20,6 +21,11 @@ process.argv.forEach(function(arg, count) {
     console.log("Opening file: " + arg);
     startupFilePath = arg;
   }
+});
+
+ipcMain.on('quit-application', function(event, arg) {
+  //console.log(arg);
+  app.quit();
 });
 
 var path = require('path');

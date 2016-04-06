@@ -204,8 +204,11 @@ define(function(require, exports, module) {
     }
   };
 
-    // Start the tour!
+    // Preparations
+    TSCORE.clearSearchFilter();
     TSCORE.openLeftPanel();
+
+    // Start the tour!
     hopscotch.startTour(tour);
   };
 

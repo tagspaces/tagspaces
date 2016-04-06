@@ -2,18 +2,16 @@
  * Use of this source code is governed by a AGPL3 license that
  * can be found in the LICENSE file. */
 
-
 /* global define  */
 define(function(require, exports, module) {
   'use strict';
-  var TSCORE = require('tscore');
-  var TSPOSTIO = require('tspostioapi');
 
   console.log('Loading utils.js ...');
 
   var TSCORE = require('tscore');
+  var TSPOSTIO = require('tspostioapi');
 
-  //Conversion utility  
+  //Conversion utility
   function arrayBufferToDataURL(arrayBuffer, mime) {
     var blob = new Blob([arrayBuffer], {type: mime});
     var url = window.URL || window.webkitURL;
@@ -103,6 +101,16 @@ define(function(require, exports, module) {
     return isVisible;
   }
 
+  function getRandomInt(min, max) {
+
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  // TODO Use set instead of array in the core for selectedFiles
+  function getUniqueSelectedFiles() {
+    return _.uniq(TSCORE.selectedFiles);
+  }
+
   exports.arrayBufferToDataURL = arrayBufferToDataURL;
   exports.base64ToArrayBuffer = base64ToArrayBuffer;
   exports.dataURLtoBlob = dataURLtoBlob;
@@ -114,5 +122,7 @@ define(function(require, exports, module) {
   exports.arrayBufferToBuffer = arrayBufferToBuffer;
   exports.getURLParameter = getURLParameter;
   exports.isVisibleOnScreen = isVisibleOnScreen;
+  exports.getRandomInt = getRandomInt;
+  exports.getUniqueSelectedFiles = getUniqueSelectedFiles;
 
 });

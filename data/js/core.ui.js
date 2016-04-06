@@ -1,434 +1,58 @@
-/* Copyright (c) 2012-2015 The TagSpaces Authors. All rights reserved.
+/* Copyright (c) 2012-2016 The TagSpaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that
  * can be found in the LICENSE file. */
+
 /* global define, Handlebars, isNode, isFirefox  */
 define(function(require, exports, module) {
   'use strict';
+
   console.log('Loading core.ui.js ...');
+
   var TSCORE = require('tscore');
   var TSPOSTIO = require("tspostioapi");
+
   var fileContent;
   var fileType;
   var waitingDialogTimeoutID;
+  var addFileInputName;
 
-  var showWaitingDialog = function(message, title) {
-    if (!title) {
-      title = $.i18n.t('ns.dialogs:titleWaiting');
-    }
-    if (!message) {
-      message = 'No Message to Display.';
-    }
-    var waitingModal = $('#waitingDialog');
-    waitingModal.find('#waitingHeader').text(title);
-    waitingModal.find('#waitingMessage').text(message);
+  var fileDropTemplate = Handlebars.compile(
+    '<div id="fileDropArea">' +
+      '<div id="fileDropExplanation"><i class="fa fa-2x fa-mail-forward"></i><br>' +
+      '<span>Drop files here in order to be copied or moved in the current folder</span></div>' +
+    '</div>'
+  );
 
-    waitingDialogTimeoutID = window.setTimeout(function() {
-      waitingModal.modal({
-        backdrop: 'static',
-        show: true
-      });
-    }, 500);
-
-    waitingModal.draggable({
-      handle: ".modal-header"
-    });
-  };
-
-  var hideWaitingDialog = function(message, title) {
-    window.clearTimeout(waitingDialogTimeoutID);
-    $('#waitingDialog').modal('hide');
-  };
-
-  var showSuccessDialog = function(message) {
-    if (!message) {
-      return;
-    }
-    var n = noty({
-      text: message,
-      //dismissQueue: false,
-      layout: 'bottomCenter',
-      theme: 'relax',
-      type: 'success',
-      animation: {
-        open: 'animated fadeIn',
-        close: 'animated fadeOut',
-        easing: 'swing',
-        speed: 500
-      },
-      timeout: 4000,
-      maxVisible: 1,
-      closeWith: ['button', 'click'],
-    });
-  };
-
-  var showAlertDialog = function(message, title) {
-    if (!title) {
-      title = $.i18n.t('ns.dialogs:titleAlert');
-    }
-    if (!message) {
-      message = 'No Message to Display.';
-    }
-    var n = noty({
-      text: "<strong>" + title + "</strong><br>" + message,
-      layout: 'bottomCenter',
-      theme: 'relax',
-      type: 'warning',
-      animation: {
-        open: 'animated fadeIn',
-        close: 'animated fadeOut',
-        easing: 'swing',
-        speed: 500
-      },
-      timeout: 6000,
-      maxVisible: 4,
-      closeWith: ['button', 'click'],
-    });
-    /*var alertModal = $('#alertDialog');
-    alertModal.find('h4').text(title);
-    alertModal.find('.modal-body').empty();
-    alertModal.find('.modal-body').text(message);
-    alertModal.find('#okButton').off('click').click(function() {
-      alertModal.modal('hide');
-    });
-    // Focusing the ok button by default
-    alertModal.off('shown.bs.modal');
-    alertModal.on('shown.bs.modal', function() {
-      alertModal.find('#okButton').focus();
-    });
-    alertModal.modal({
-      backdrop: 'static',
-      show: true
-    });*/
-  };
-
-  var showConfirmDialog = function(title, message, okCallback, cancelCallback, confirmShowNextTime) {
-    if (!title) {
-      title = $.i18n.t('ns.dialogs:titleConfirm');
-    }
-    if (!message) {
-      message = 'No Message to Display.';
-    }
-    var confirmModal = $('#confirmDialog');
-    if (confirmShowNextTime) {
-      confirmModal.find('#showThisDialogAgain').prop('checked', true);
-    } else {
-      confirmModal.find('#showThisDialogAgainContainer').hide();
-    }
-    confirmModal.find('h4').text(title);
-    confirmModal.find('#dialogContent').text(message);
-    confirmModal.find('#confirmButton').off('click').click(function() {
-      okCallback(confirmModal.find('#showThisDialogAgain').prop('checked'));
-      confirmModal.modal('hide');
-    });
-    // Focusing the confirm button by default
-    confirmModal.off('shown.bs.modal');
-    confirmModal.on('shown.bs.modal', function() {
-      confirmModal.find('#confirmButton').focus();
-    });
-    confirmModal.find('#cancelButton').off('click').click(function() {
-      if (cancelCallback !== undefined) {
-        cancelCallback();
-      }
-      confirmModal.modal('hide');
-    });
-    confirmModal.modal({
-      backdrop: 'static',
-      show: true
-    });
-    confirmModal.draggable({
-      handle: ".modal-header"
-    });
-  };
-
-  var showFileCreateDialog = function() {
-    fileContent = TSCORE.Config.getNewTextFileContent();
-    // Default new file in text file
-    fileType = 'txt';
-    $('#newFileNameTags').select2('data', null);
-    $('#newFileNameTags').select2({
-      multiple: true,
-      tags: TSCORE.Config.getAllTags(),
-      tokenSeparators: [
-        ',',
-        ' '
-      ],
-      minimumInputLength: 2,
-      selectOnBlur: true
-    });
-    $('#newFileName').val('');
-    $('#tagWithCurrentDate').prop('checked', false);
-    $('#txtFileTypeButton').button('toggle');
-    $('#formFileCreate').validator();
-    $('#formFileCreate').submit(function(e) {
-      e.preventDefault();
-    });
-    $('#formFileCreate').on('invalid.bs.validator', function() {
-      $('#fileCreateConfirmButton').prop('disabled', true);
-    });
-    $('#formFileCreate').on('valid.bs.validator', function() {
-      $('#fileCreateConfirmButton').prop('disabled', false);
-    });
-    $('#dialogFileCreate').on('shown.bs.modal', function() {
-      $('#newFileName').select2().focus();
-    });
-    $('#dialogFileCreate').modal({
-      backdrop: 'static',
-      show: true
-    });
-    $('#dialogFileCreate').draggable({
-      handle: ".modal-header"
-    });
-  };
-
-  var showFileRenameDialog = function(filePath) {
-    $('#renamedFileName').attr('filepath', filePath);
-    $('#renamedFileName').val(TSCORE.TagUtils.extractFileName(filePath));
-
-    $('#formFileRename').validator();
-    $('#formFileRename').submit(function(e) {
-      e.preventDefault();
-      if ($('#renameFileButton').prop('disabled') === false) {
-        $('#renameFileButton').click();
-      }
-    });
-    $('#formFileRename').on('invalid.bs.validator', function() {
-      $('#renameFileButton').prop('disabled', true);
-    });
-    $('#formFileRename').on('valid.bs.validator', function() {
-      $('#renameFileButton').prop('disabled', false);
-    });
-    $('#dialogFileRename').on('shown.bs.modal', function() {
-      $('#renamedFileName').focus();
-    });
-    $('#dialogFileRename').modal({
-      backdrop: 'static',
-      show: true
-    });
-    $('#dialogFileRename').draggable({
-      handle: ".modal-header"
-    });
-  };
-
-  var showFileDeleteDialog = function(filePath) {
-    console.log('Deleting file...');
-    var dlgConfirmMsgId = 'ns.dialogs:fileDeleteContentConfirm';
-    if (TSCORE.Config.getUseTrashCan()) {
-      dlgConfirmMsgId = 'ns.pro:trashDeleteContentConfirm';
-    }
-    TSCORE.showConfirmDialog($.i18n.t('ns.dialogs:fileDeleteTitleConfirm'), $.i18n.t(dlgConfirmMsgId, {
-      filePath: filePath
-    }), function() {
-      TSCORE.IO.deleteFilePromise(filePath).then(function() {
-          TSPOSTIO.deleteElement(filePath);
-        },
-        function(error) {
-          TSCORE.hideLoadingAnimation();
-          TSCORE.showAlertDialog("Deleting file " + filePath + " failed.");
-          console.error("Deleting file " + filePath + " failed " + error);
-        }
-      );
-    });
-  };
-
-  var showTagEditDialog = function() {
-    $('#newTagName').val(TSCORE.selectedTag);
-    $('#formEditTag').validator();
-    $('#formEditTag').submit(function(e) {
-      e.preventDefault();
-      if ($('#editTagButton').prop('disabled') === false) {
-        $('#editTagButton').click();
-      }
-    });
-    $('#formEditTag').on('invalid.bs.validator', function() {
-      $('#editTagButton').prop('disabled', true);
-    });
-    $('#formEditTag').on('valid.bs.validator', function() {
-      $('#editTagButton').prop('disabled', false);
-    });
-    $('#dialogEditTag').on('shown.bs.modal', function() {
-      $('#newTagName').focus();
-    });
-    $('#dialogEditTag').modal({
-      backdrop: 'static',
-      show: true
-    });
-    $('#dialogEditTag').draggable({
-      handle: ".modal-header"
-    });
-  };
-
-  var showDirectoryBrowserDialog = function(path) {
-    require([
-      'text!templates/DirectoryBrowserDialog.html',
-      'tsdirectorybrowser'
-    ], function(uiTPL, controller) {
-      TSCORE.directoryBrowser = controller;
-      if ($('#directoryBrowserDialog').length < 1) {
-        var uiTemplate = Handlebars.compile(uiTPL);
-        $('body').append(uiTemplate());
-        TSCORE.directoryBrowser.initUI();
-      }
-      $('#directoryBrowserDialog').i18n();
-      TSCORE.IOUtils.listSubDirectories(path);
-    });
-  };
-
-  var showOptionsDialog = function() {
-    require([
-      'text!templates/OptionsDialog.html',
-      'tsoptions'
-    ], function(uiTPL, controller) {
-      if ($('#dialogOptions').length < 1) {
-        var uiTemplate = Handlebars.compile(uiTPL);
-        $('body').append(uiTemplate({isProVersion: TSCORE.PRO ? true : false}));
-
-        controller.initUI();
-      }
-      $('#dialogOptions').i18n();
-      controller.reInitUI();
-    });
-  };
-
-  var showWelcomeDialog = function() { startGettingStartedTour(); };
-
-  var startGettingStartedTour = function() {
-    var tsGettingStarted = require('tsgettingstarted');
-    tsGettingStarted.startTour();
-  };
-
-  var showMoveCopyFilesDialog = function() {
-    require(['text!templates/MoveCopyFilesDialog.html'], function(uiTPL) {
-      if ($('#dialogMoveCopyFiles').length < 1) {
-        var uiTemplate = Handlebars.compile(uiTPL);
-        $('body').append(uiTemplate());
-
-        $('#moveFilesButton').click(function(e) {
-          e.preventDefault();
-          // TODO move to ioutils
-          TSCORE.showWaitingDialog('Please wait, while files are being renamed.');
-          var newFilePath, filePath;
-          var fileOperations = [];
-          for (var i = 0; i < TSCORE.selectedFiles.length; i++) {
-            newFilePath = $('#moveCopyDirectoryPath').val() + TSCORE.dirSeparator + TSCORE.TagUtils.extractFileName(TSCORE.selectedFiles[i]);
-            filePath = TSCORE.selectedFiles[i];
-            fileOperations.push(TSCORE.IO.renameFilePromise(filePath, newFilePath));
-          }
-          Promise.all(fileOperations).then(function(success) {
-            // TODO handle moving sidecar files
-            TSCORE.hideWaitingDialog();
-            TSCORE.navigateToDirectory(TSCORE.currentPath);
-            TSCORE.showSuccessDialog("Files successfully moved");
-          }, function(err) {
-            TSCORE.hideWaitingDialog();
-            TSCORE.showAlertDialog("Renaming files failed");
-          });
-        });
-
-        $('#copyFilesButton').click(function(e) {
-          e.preventDefault();
-          TSCORE.showWaitingDialog('Please wait, while files are being copied.');
-          var newFilePath, filePath;
-          var fileOperations = [];
-          for (var i = 0; i < TSCORE.selectedFiles.length; i++) {
-            var newFilePath = $('#moveCopyDirectoryPath').val() + TSCORE.dirSeparator + TSCORE.TagUtils.extractFileName(TSCORE.selectedFiles[i]);
-            var filePath = TSCORE.selectedFiles[i];
-            fileOperations.push(TSCORE.IO.copyFilePromise(filePath, newFilePath));
-          }
-          Promise.all(fileOperations).then(function(success) {
-            // TODO handle copying sidecar files
-            TSCORE.hideWaitingDialog();
-            TSCORE.showSuccessDialog("Files successfully copied");
-          }, function(err) {
-            TSCORE.hideWaitingDialog();
-            TSCORE.showAlertDialog("Copying files failed");
-          });
-        });
-        $('#selectDirectoryMoveCopyDialog').click(function(e) {
-          e.preventDefault();
-          TSCORE.IO.selectDirectory();
-        });
-      }
-      $('#moveCopyDirectoryPath').val(TSCORE.currentPath);
-      $('#moveCopyFileList').children().remove();
-      for (var i = 0; i < TSCORE.selectedFiles.length; i++) {
-        $('#moveCopyFileList').append($('<p>', {
-          text: TSCORE.selectedFiles[i]
-        }));
-      }
-      $('#dialogMoveCopyFiles').i18n();
-      $('#dialogMoveCopyFiles').draggable({
-        handle: '.modal-header'
-      });
-      $('#dialogMoveCopyFiles').modal({
-        backdrop: 'static',
-        show: true
-      });
-      $('#dialogMoveCopyFiles').draggable({
-        handle: ".modal-header"
-      });
-      console.log('Selected files: ' + TSCORE.selectedFiles);
-    });
-  };
-
-  var showAboutDialog = function() {
-    $('#dialogAboutTS').modal({
-      backdrop: 'static',
-      show: true
-    });
-    $('#dialogAboutTS').draggable({
-      handle: ".modal-header"
-    });
-  };
-
-  var showKeysDialog = function() {
-    $('#dialogShortcuts').modal({
-      backdrop: 'static',
-      show: true,
-      open: function() {
-        $('.modal-body').val(TSCORE.Config.getSelectAllKeyBinding());
-      }
-    });
-    $('#dialogShortcuts').draggable({
-      handle: ".modal-header"
-    });
-  };
-
-  var initUI = function() {
-    if (TSCORE.PRO) {
-      //TSCORE.PRO.sayHi();
-    }
-
+  function initUI() {
     $('#appVersion').text(TSCORE.Config.DefaultSettings.appVersion + '.' + TSCORE.Config.DefaultSettings.appBuild);
     $('#appVersion').attr('title', 'BuildID: ' + TSCORE.Config.DefaultSettings.appVersion + '.' + TSCORE.Config.DefaultSettings.appBuild + '.' + TSCORE.Config.DefaultSettings.appBuildID);
+
     // prevent default behavior from changing page on dropped file
-    $(document).on('drop dragend dragenter dragleave dragover', function(event) {
+    $(document).on('drop dragend dragenter dragover', function(event) { // dragleave
       //  dragstart drag
       event.preventDefault();
     });
+
     // Managing droping of files in the perspectives
     if (isNode || isElectron) {
       $('#viewContainers').on('dragenter', function(event) {
         event.preventDefault();
-        $('#viewContainers').attr('style', 'border:2px dashed #098ddf');
-      });
-      $('#viewContainers').on('dragleave', function(event) {
-        event.preventDefault();
-        $('#viewContainers').attr('style', 'border:0px');
+        showFileDropArea();
       });
       $('#viewContainers').on('drop', function(event) {
         //event.preventDefault();
         if (event.originalEvent.dataTransfer !== undefined) {
           var files = event.originalEvent.dataTransfer.files;
           TSCORE.IO.focusWindow();
-          $('#viewContainers').attr('style', 'border:0px');
+          hideFileDropArea();
           TSCORE.PerspectiveManager.clearSelectedFiles();
           var filePath;
           if (files !== undefined && files.length > 0) {
             for (var i = 0; i < files.length; i++) {
+              // file[i] -> {"webkitRelativePath":"","path":"/home/na/Desktop/Kola2","lastModifiedDate":"2014-07-11T16:40:52.000Z","name":"Kola2","type":"","size":4096}
               filePath = files[i].path;
               if (filePath.length > 1) {
-                //console.log("Selecting files: "+JSON.stringify(files[i]));
-                TSCORE.selectedFiles.push(filePath); //{"webkitRelativePath":"","path\":"/home/na/Desktop/Kola2","lastModifiedDate":"2014-07-11T16:40:52.000Z","name":"Kola2","type":"","size":4096}
+                TSCORE.selectedFiles.push(filePath);
               }
             }
           }
@@ -439,9 +63,6 @@ define(function(require, exports, module) {
       });
     }
 
-    platformTuning();
-
-    var addFileInputName;
     $('#addFileInput').on('change', function(selection) {
       //console.log("Selected File: "+$("#addFileInput").val());
       var file = selection.currentTarget.files[0];
@@ -451,29 +72,6 @@ define(function(require, exports, module) {
       reader.onload = onFileReadComplete;
       reader.readAsArrayBuffer(file);
     });
-
-    function onFileReadComplete(event) {
-      console.log('Content on file read complete: ' + JSON.stringify(event));
-      //change name for ios fakepath
-      if (isCordovaiOS) {
-        var fileExt = TSCORE.TagUtils.extractFileExtension(addFileInputName);
-        addFileInputName = TSCORE.TagUtils.beginTagContainer + TSCORE.TagUtils.formatDateTime4Tag(new Date(), true) + TSCORE.TagUtils.endTagContainer + fileExt;
-      }
-      var filePath = TSCORE.currentPath + TSCORE.dirSeparator + addFileInputName;
-
-      // TODO event.currentTarget.result is ArrayBuffer
-      // Sample call from PRO version using content = TSCORE.Utils.base64ToArrayBuffer(baseString);
-
-      TSCORE.IO.saveBinaryFilePromise(filePath, event.currentTarget.result).then(function() {
-        TSCORE.showSuccessDialog("File saved successfully.");
-        TSCORE.PerspectiveManager.refreshFileListContainer();
-      }, function(error) {
-        TSCORE.hideLoadingAnimation();
-        TSCORE.showAlertDialog("Saving " + filePath + " failed.");
-        console.error("Save to file " + filePath + " failed " + error);
-      });
-      addFileInputName = undefined;
-    }
 
     $('#openLeftPanel').click(function() {
       TSCORE.openLeftPanel();
@@ -496,6 +94,7 @@ define(function(require, exports, module) {
       fileContent = TSCORE.Config.getNewHTMLFileContent();
       fileType = 'html';
     });
+
     $('#mdFileTypeButton').click(function(e) {
       // Fixes reloading of the application by click
       e.preventDefault();
@@ -640,6 +239,7 @@ define(function(require, exports, module) {
 
     $('#fileOpenProperties').click(function() {});
     // End File Menu
+
     $('#showLocations').click(function() {
       showLocationsPanel();
     });
@@ -655,171 +255,511 @@ define(function(require, exports, module) {
     // Hide the tagGroupsContent or locationContent by default
     $('#locationContent').hide();
 
-    // Search UI
-    $('#searchToolbar').on('click', '#closeSearchOptionButton', function() {
-      $('#searchOptions').hide();
-    });
-
-    $('#searchOptions').on('click', '.close', function() {
-      $('#searchOptions').hide();
-    });
-
-    $('#searchToolbar').on('click', '#includeSubfoldersOption', function() {
-      var searchQuery = $('#searchBox').val();
-      if (searchQuery.indexOf('?') === 0) {
-        $('#includeSubfoldersOption i').removeClass('fa-toggle-on').addClass('fa-toggle-off');
-        $('#searchBox').val(searchQuery.substring(1, searchQuery.length));
-      } else {
-        $('#includeSubfoldersOption i').removeClass('fa-toggle-off').addClass('fa-toggle-on');
-        $('#searchBox').val('?' + searchQuery);
-      }
-    });
-
-    /*$('#searchBox').on('show.bs.popover', function() {
-      var searchQuery = $('#searchBox').val();
-      if (searchQuery.indexOf('?') === 0) {
-        $('#includeSubfoldersOption i').removeClass('fa-toggle-off').addClass('fa-toggle-on');
-      } else {
-        $('#includeSubfoldersOption i').removeClass('fa-toggle-on').addClass('fa-toggle-off');
-      }
-    });*/
-
-    $('#searchBox').prop('disabled', true)
-      .focus(function() {
-        if (!TSCORE.FileOpener.isFileOpened()) {
-          $("#searchOptions").show();
-        }
-      })
-      .keyup(function(e) {
-        // On enter fire the search
-        if (e.keyCode === 13) {
-          $('#clearFilterButton').addClass('filterOn');
-          TSCORE.PerspectiveManager.redrawCurrentPerspective();
-          $('#searchOptions').hide();
-          $('#searchButton').focus();
-        } else if (e.keyCode == 27) {
-          cancelSearch();
-        } else {
-          TSCORE.Search.nextQuery = this.value;
-        }
-        if (this.value.length === 0) {
-          TSCORE.Search.nextQuery = this.value;
-          $('#clearFilterButton').removeClass('filterOn');
-          TSCORE.PerspectiveManager.redrawCurrentPerspective();
-        }
-      }).blur(function() {
-        if (this.value.length === 0) {
-          $('#clearFilterButton').removeClass('filterOn');
-          TSCORE.PerspectiveManager.redrawCurrentPerspective();
-        }
-      });
-
-    $('#showSearchButton').on('click', function() {
-      TSCORE.showSearchArea();
-    });
-
-    $('#searchButton').prop('disabled', true).click(function(evt) {
-      evt.preventDefault();
-      $('#clearFilterButton').addClass('filterOn');
-      $('#searchOptions').hide();
-      TSCORE.PerspectiveManager.redrawCurrentPerspective();
-    });
-
-    $('#clearFilterButton').prop('disabled', true).click(function(e) {
-      e.preventDefault();
-      cancelSearch();
-    });
-    // Search UI END
-
     $('#perspectiveSwitcherButton').prop('disabled', true);
     var $contactUsContent = $('#contactUsContent');
     $contactUsContent.on('click', '#openHints', showWelcomeDialog);
     $contactUsContent.on('click', '#openUservoice', function(e) {
       e.preventDefault();
-      openLinkExternally($(this).attr('href'));
+      TSCORE.IO.openFile($(this).attr('href'));
     });
     $contactUsContent.on('click', '#openGooglePlay', function(e) {
       e.preventDefault();
-      openLinkExternally($(this).attr('href'));
+      TSCORE.IO.openFile($(this).attr('href'));
     });
     $contactUsContent.on('click', '#openAppleAppStore', function(e) {
       e.preventDefault();
-      openLinkExternally($(this).attr('href'));
+      TSCORE.IO.openFile($(this).attr('href'));
     });
     $contactUsContent.on('click', '#openWhatsnew', function(e) {
       e.preventDefault();
-      openLinkExternally($(this).attr('href'));
+      TSCORE.IO.openFile($(this).attr('href'));
     });
     $contactUsContent.on('click', '#openGitHubIssues', function(e) {
       e.preventDefault();
-      openLinkExternally($(this).attr('href'));
+      TSCORE.IO.openFile($(this).attr('href'));
     });
     $contactUsContent.on('click', '#helpUsTranslate', function(e) {
       e.preventDefault();
-      openLinkExternally($(this).attr('href'));
+      TSCORE.IO.openFile($(this).attr('href'));
     });
     $contactUsContent.on('click', '#openTwitter', function(e) {
       e.preventDefault();
-      openLinkExternally($(this).attr('href'));
+      TSCORE.IO.openFile($(this).attr('href'));
     });
     $contactUsContent.on('click', '#openTwitter2', function(e) {
       e.preventDefault();
-      openLinkExternally($(this).attr('href'));
+      TSCORE.IO.openFile($(this).attr('href'));
     });
     $contactUsContent.on('click', '#openGooglePlus', function(e) {
       e.preventDefault();
-      openLinkExternally($(this).attr('href'));
+      TSCORE.IO.openFile($(this).attr('href'));
     });
     $contactUsContent.on('click', '#openFacebook', function(e) {
       e.preventDefault();
-      openLinkExternally($(this).attr('href'));
+      TSCORE.IO.openFile($(this).attr('href'));
     });
     $contactUsContent.on('click', '#openSupportUs', function(e) {
       e.preventDefault();
-      openLinkExternally($(this).attr('href'));
+      TSCORE.IO.openFile($(this).attr('href'));
     });
+
     $('#newVersionMenu').on('click', '.whatsNewLink', function(e) {
       e.preventDefault();
-      openLinkExternally($(this).attr('href'));
+      TSCORE.IO.openFile($(this).attr('href'));
     });
 
     // Hide drop downs by click and drag
     $(document).click(function() {
       TSCORE.hideAllDropDownMenus();
     });
-  };
 
-  function cancelSearch() {
-    clearSearchFilter();
-    $('#searchToolbar').hide();
-    $('#showSearchButton').show();
-    // Restoring initial dir listing without subdirectories
-    TSCORE.IO.listDirectoryPromise(TSCORE.currentPath).then(
-      function(entries) {
-        TSPOSTIO.listDirectory(entries);
-      }
-    ).catch(function(err) {
-      TSPOSTIO.errorOpeningPath(TSCORE.currentPath);
-      console.warn("Error listing directory" + err);
+    platformTuning();
+  }
+
+  function showFileDropArea() {
+    if ($('#fileDropArea').length < 1) {
+      $('#viewContainers').append(fileDropTemplate({}));
+      $('#fileDropArea').on('dragleave', function(event) {
+        event.preventDefault();
+        hideFileDropArea();
+      });
+    } else {
+      $('#fileDropArea').show();
+    }
+  }
+
+  function hideFileDropArea() {
+    $('#fileDropArea').hide();
+  }
+
+  function onFileReadComplete(event) {
+    console.log('Content on file read complete: ' + JSON.stringify(event));
+    //change name for ios fakepath
+    if (isCordovaiOS) {
+      var fileExt = TSCORE.TagUtils.extractFileExtension(addFileInputName);
+      addFileInputName = TSCORE.TagUtils.beginTagContainer + TSCORE.TagUtils.formatDateTime4Tag(new Date(), true) + TSCORE.TagUtils.endTagContainer + fileExt;
+    }
+    var filePath = TSCORE.currentPath + TSCORE.dirSeparator + addFileInputName;
+
+    // TODO event.currentTarget.result is ArrayBuffer
+    // Sample call from PRO version using content = TSCORE.Utils.base64ToArrayBuffer(baseString);
+
+    TSCORE.IO.saveBinaryFilePromise(filePath, event.currentTarget.result).then(function() {
+      TSCORE.showSuccessDialog("File saved successfully.");
+      TSCORE.PerspectiveManager.refreshFileListContainer();
+    }, function(error) {
+      TSCORE.hideLoadingAnimation();
+      TSCORE.showAlertDialog("Saving " + filePath + " failed.");
+      console.error("Save to file " + filePath + " failed " + error);
+    });
+    addFileInputName = undefined;
+  }
+
+  function showWaitingDialog(message, title) {
+    if (!title) {
+      title = $.i18n.t('ns.dialogs:titleWaiting');
+    }
+    if (!message) {
+      message = 'No Message to Display.';
+    }
+    var waitingModal = $('#waitingDialog');
+    waitingModal.find('#waitingHeader').text(title);
+    waitingModal.find('#waitingMessage').text(message);
+
+    waitingDialogTimeoutID = window.setTimeout(function() {
+      waitingModal.modal({
+        backdrop: 'static',
+        show: true
+      });
+    }, 500);
+
+    waitingModal.draggable({
+      handle: ".modal-header"
     });
   }
 
-  function showSearchArea() {
-    $('#showSearchButton').hide();
-    $('#searchToolbar').show();
-    $('#searchBox').focus();
+  function hideWaitingDialog(message, title) {
+    window.clearTimeout(waitingDialogTimeoutID);
+    $('#waitingDialog').modal('hide');
   }
 
-  // Handle external links
-  function openLinkExternally(url) {
-    TSCORE.IO.openFile(url);
+  function showSuccessDialog(message) {
+    if (!message) {
+      return;
+    }
+    var n = noty({
+      text: message,
+      //dismissQueue: false,
+      layout: 'bottomCenter',
+      theme: 'relax',
+      type: 'success',
+      animation: {
+        open: 'animated fadeIn',
+        close: 'animated fadeOut',
+        easing: 'swing',
+        speed: 500
+      },
+      timeout: 4000,
+      maxVisible: 1,
+      closeWith: ['button', 'click'],
+    });
   }
 
-  function clearSearchFilter() {
-    $('#searchOptions').hide();
-    $('#searchBox').val('');
-    $('#clearFilterButton').removeClass('filterOn');
-    TSCORE.Search.nextQuery = '';
+  function showAlertDialog(message, title) {
+    if (!title) {
+      title = $.i18n.t('ns.dialogs:titleAlert');
+    }
+    if (!message) {
+      message = 'No Message to Display.';
+    }
+    var n = noty({
+      text: "<strong>" + title + "</strong><br>" + message,
+      layout: 'bottomCenter',
+      theme: 'relax',
+      type: 'warning',
+      animation: {
+        open: 'animated fadeIn',
+        close: 'animated fadeOut',
+        easing: 'swing',
+        speed: 500
+      },
+      timeout: 6000,
+      maxVisible: 4,
+      closeWith: ['button', 'click'],
+    });
+    /*var alertModal = $('#alertDialog');
+    alertModal.find('h4').text(title);
+    alertModal.find('.modal-body').empty();
+    alertModal.find('.modal-body').text(message);
+    alertModal.find('#okButton').off('click').click(function() {
+      alertModal.modal('hide');
+    });
+    // Focusing the ok button by default
+    alertModal.off('shown.bs.modal');
+    alertModal.on('shown.bs.modal', function() {
+      alertModal.find('#okButton').focus();
+    });
+    alertModal.modal({
+      backdrop: 'static',
+      show: true
+    });*/
+  }
+
+  function showConfirmDialog(title, message, okCallback, cancelCallback, confirmShowNextTime) {
+    if (!title) {
+      title = $.i18n.t('ns.dialogs:titleConfirm');
+    }
+    if (!message) {
+      message = 'No Message to Display.';
+    }
+    var confirmModal = $('#confirmDialog');
+    if (confirmShowNextTime) {
+      confirmModal.find('#showThisDialogAgain').prop('checked', true);
+    } else {
+      confirmModal.find('#showThisDialogAgainContainer').hide();
+    }
+    confirmModal.find('h4').text(title);
+    confirmModal.find('#dialogContent').text(message);
+    confirmModal.find('#confirmButton').off('click').click(function() {
+      okCallback(confirmModal.find('#showThisDialogAgain').prop('checked'));
+      confirmModal.modal('hide');
+    });
+    // Focusing the confirm button by default
+    confirmModal.off('shown.bs.modal');
+    confirmModal.on('shown.bs.modal', function() {
+      confirmModal.find('#confirmButton').focus();
+    });
+    confirmModal.find('#cancelButton').off('click').click(function() {
+      if (cancelCallback !== undefined) {
+        cancelCallback();
+      }
+      confirmModal.modal('hide');
+    });
+    confirmModal.modal({
+      backdrop: 'static',
+      show: true
+    });
+    confirmModal.draggable({
+      handle: ".modal-header"
+    });
+  }
+
+  function showFileCreateDialog() {
+    fileContent = TSCORE.Config.getNewTextFileContent();
+    // Default new file in text file
+    fileType = 'txt';
+    $('#newFileNameTags').select2('data', null);
+    $('#newFileNameTags').select2({
+      multiple: true,
+      tags: TSCORE.Config.getAllTags(),
+      tokenSeparators: [
+        ',',
+        ' '
+      ],
+      minimumInputLength: 2,
+      selectOnBlur: true
+    });
+    $('#newFileName').val('');
+    $('#tagWithCurrentDate').prop('checked', false);
+    $('#txtFileTypeButton').button('toggle');
+    $('#formFileCreate').validator();
+    $('#formFileCreate').submit(function(e) {
+      e.preventDefault();
+    });
+    $('#formFileCreate').on('invalid.bs.validator', function() {
+      $('#fileCreateConfirmButton').prop('disabled', true);
+    });
+    $('#formFileCreate').on('valid.bs.validator', function() {
+      $('#fileCreateConfirmButton').prop('disabled', false);
+    });
+    $('#dialogFileCreate').on('shown.bs.modal', function() {
+      $('#newFileName').select2().focus();
+    });
+    $('#dialogFileCreate').modal({
+      backdrop: 'static',
+      show: true
+    });
+    $('#dialogFileCreate').draggable({
+      handle: ".modal-header"
+    });
+  }
+
+  function showFileRenameDialog(filePath) {
+    $('#renamedFileName').attr('filepath', filePath);
+    $('#renamedFileName').val(TSCORE.TagUtils.extractFileName(filePath));
+
+    $('#formFileRename').validator();
+    $('#formFileRename').submit(function(e) {
+      e.preventDefault();
+      if ($('#renameFileButton').prop('disabled') === false) {
+        $('#renameFileButton').click();
+      }
+    });
+    $('#formFileRename').on('invalid.bs.validator', function() {
+      $('#renameFileButton').prop('disabled', true);
+    });
+    $('#formFileRename').on('valid.bs.validator', function() {
+      $('#renameFileButton').prop('disabled', false);
+    });
+    $('#dialogFileRename').on('shown.bs.modal', function() {
+      $('#renamedFileName').focus();
+    });
+    $('#dialogFileRename').modal({
+      backdrop: 'static',
+      show: true
+    });
+    $('#dialogFileRename').draggable({
+      handle: ".modal-header"
+    });
+  }
+
+  function showFileDeleteDialog(filePath) {
+    console.log('Deleting file...');
+    var dlgConfirmMsgId = 'ns.dialogs:fileDeleteContentConfirm';
+    if (TSCORE.PRO && TSCORE.Config.getUseTrashCan()) {
+      dlgConfirmMsgId = 'ns.pro:trashDeleteContentConfirm';
+    }
+    TSCORE.showConfirmDialog($.i18n.t('ns.dialogs:fileDeleteTitleConfirm'), $.i18n.t(dlgConfirmMsgId, {
+      filePath: filePath
+    }), function() {
+      TSCORE.IO.deleteFilePromise(filePath).then(function() {
+          TSPOSTIO.deleteElement(filePath);
+        },
+        function(error) {
+          TSCORE.hideLoadingAnimation();
+          TSCORE.showAlertDialog("Deleting file " + filePath + " failed.");
+          console.error("Deleting file " + filePath + " failed " + error);
+        }
+      );
+    });
+  }
+
+  function showDeleteFilesDialog() {
+    console.log('Deleting files...');
+    var selFiles = " ";
+
+    TSCORE.Utils.getUniqueSelectedFiles().forEach(function(file) {
+      selFiles += " " + TSCORE.Utils.baseName(file) + " ,";
+    });
+
+    selFiles = selFiles.substring(0, selFiles.length - 1);
+    var dlgConfirmMsgId = 'ns.dialogs:selectedFilesDeleteContentConfirm';
+
+    if (TSCORE.PRO && TSCORE.Config.getUseTrashCan()) {
+      dlgConfirmMsgId = 'ns.pro:trashFilesDeleteContentConfirm';
+    }
+
+    TSCORE.showConfirmDialog(
+      $.i18n.t('ns.dialogs:fileDeleteTitleConfirm'),
+      $.i18n.t(dlgConfirmMsgId, {selectedFiles: selFiles}),
+      function() {
+        TSCORE.IOUtils.deleteFiles(TSCORE.Utils.getUniqueSelectedFiles());
+      }
+    );
+  }
+
+  function showTagEditDialog() {
+    $('#newTagName').val(TSCORE.selectedTag);
+    $('#formEditTag').validator();
+    $('#formEditTag').submit(function(e) {
+      e.preventDefault();
+      if ($('#editTagButton').prop('disabled') === false) {
+        $('#editTagButton').click();
+      }
+    });
+    $('#formEditTag').on('invalid.bs.validator', function() {
+      $('#editTagButton').prop('disabled', true);
+    });
+    $('#formEditTag').on('valid.bs.validator', function() {
+      $('#editTagButton').prop('disabled', false);
+    });
+    $('#dialogEditTag').on('shown.bs.modal', function() {
+      $('#newTagName').focus();
+    });
+    $('#dialogEditTag').modal({
+      backdrop: 'static',
+      show: true
+    });
+    $('#dialogEditTag').draggable({
+      handle: ".modal-header"
+    });
+  }
+
+  function showDirectoryBrowserDialog(path) {
+    require([
+      'text!templates/DirectoryBrowserDialog.html',
+      'tsdirectorybrowser'
+    ], function(uiTPL, controller) {
+      TSCORE.directoryBrowser = controller;
+      if ($('#directoryBrowserDialog').length < 1) {
+        var uiTemplate = Handlebars.compile(uiTPL);
+        $('body').append(uiTemplate());
+        TSCORE.directoryBrowser.initUI();
+      }
+      $('#directoryBrowserDialog').i18n();
+      TSCORE.IOUtils.listSubDirectories(path);
+    });
+  }
+
+  function showOptionsDialog() {
+    require([
+      'text!templates/OptionsDialog.html',
+      'tsoptions'
+    ], function(uiTPL, controller) {
+      if ($('#dialogOptions').length < 1) {
+        var uiTemplate = Handlebars.compile(uiTPL);
+        $('body').append(uiTemplate({isProVersion: TSCORE.PRO ? true : false}));
+
+        controller.initUI();
+      }
+      $('#dialogOptions').i18n();
+      controller.reInitUI();
+    });
+  }
+
+  function showWelcomeDialog() { startGettingStartedTour(); }
+
+  function showKeysDialog() {
+    $('#dialogShortcuts').modal({
+      backdrop: 'static',
+      show: true,
+      open: function() {
+        $('.modal-body').val(TSCORE.Config.getSelectAllKeyBinding());
+      }
+    });
+    $('#dialogShortcuts').draggable({
+      handle: ".modal-header"
+    });
+  }
+
+  function startGettingStartedTour() {
+    var tsGettingStarted = require('tsgettingstarted');
+    tsGettingStarted.startTour();
+  }
+
+  function showMoveCopyFilesDialog() {
+    require(['text!templates/MoveCopyFilesDialog.html'], function(uiTPL) {
+      if ($('#dialogMoveCopyFiles').length < 1) {
+        var uiTemplate = Handlebars.compile(uiTPL);
+        $('body').append(uiTemplate());
+
+        $('#moveFilesButton').click(function(e) {
+          e.preventDefault();
+          // TODO move to ioutils
+          TSCORE.showWaitingDialog('Please wait, while files are being renamed.');
+          var newFilePath, filePath;
+          var fileOperations = [];
+          for (var i = 0; i < TSCORE.selectedFiles.length; i++) {
+            newFilePath = $('#moveCopyDirectoryPath').val() + TSCORE.dirSeparator + TSCORE.TagUtils.extractFileName(TSCORE.selectedFiles[i]);
+            filePath = TSCORE.selectedFiles[i];
+            fileOperations.push(TSCORE.IO.renameFilePromise(filePath, newFilePath));
+          }
+          Promise.all(fileOperations).then(function(success) {
+            // TODO handle moving sidecar files
+            TSCORE.hideWaitingDialog();
+            TSCORE.navigateToDirectory(TSCORE.currentPath);
+            TSCORE.showSuccessDialog("Files successfully moved");
+          }, function(err) {
+            TSCORE.hideWaitingDialog();
+            TSCORE.showAlertDialog("Renaming files failed");
+          });
+        });
+
+        $('#copyFilesButton').click(function(e) {
+          e.preventDefault();
+          TSCORE.showWaitingDialog('Please wait, while files are being copied.');
+          var newFilePath, filePath;
+          var fileOperations = [];
+          for (var i = 0; i < TSCORE.selectedFiles.length; i++) {
+            var newFilePath = $('#moveCopyDirectoryPath').val() + TSCORE.dirSeparator + TSCORE.TagUtils.extractFileName(TSCORE.selectedFiles[i]);
+            var filePath = TSCORE.selectedFiles[i];
+            fileOperations.push(TSCORE.IO.copyFilePromise(filePath, newFilePath));
+          }
+          Promise.all(fileOperations).then(function(success) {
+            // TODO handle copying sidecar files
+            TSCORE.hideWaitingDialog();
+            TSCORE.navigateToDirectory(TSCORE.currentPath);
+            TSCORE.showSuccessDialog("Files successfully copied");
+          }, function(err) {
+            TSCORE.hideWaitingDialog();
+            TSCORE.showAlertDialog("Copying files failed");
+          });
+        });
+        $('#selectDirectoryMoveCopyDialog').click(function(e) {
+          e.preventDefault();
+          TSCORE.IO.selectDirectory();
+        });
+      }
+      $('#moveCopyDirectoryPath').val(TSCORE.currentPath);
+      $('#moveCopyFileList').children().remove();
+      for (var i = 0; i < TSCORE.selectedFiles.length; i++) {
+        $('#moveCopyFileList').append($('<p>', {
+          text: TSCORE.selectedFiles[i]
+        }));
+      }
+      $('#dialogMoveCopyFiles').i18n();
+      $('#dialogMoveCopyFiles').draggable({
+        handle: '.modal-header'
+      });
+      $('#dialogMoveCopyFiles').modal({
+        backdrop: 'static',
+        show: true
+      });
+      $('#dialogMoveCopyFiles').draggable({
+        handle: ".modal-header"
+      });
+      console.log('Selected files: ' + TSCORE.selectedFiles);
+    });
+  }
+
+  function showAboutDialog() {
+    $('#dialogAboutTS').modal({
+      backdrop: 'static',
+      show: true
+    });
+    $('#dialogAboutTS').draggable({
+      handle: ".modal-header"
+    });
   }
 
   function disableTopToolbar() {
@@ -864,20 +804,6 @@ define(function(require, exports, module) {
       $('#fileMenuOpenNatively').parent().hide();
     } else if (isNode || isElectron) {
       $('#openFileInNewWindow').hide();
-      //handling window maximization
-      /*var nwwin = isNode ? gui.Window.get() : remote.getCurrentWindow();
-      nwwin.on('maximize', function() {
-        TSCORE.Config.setIsWindowMaximized(true);
-        TSCORE.Config.saveSettings();
-      });
-      nwwin.on('unmaximize', function() {
-        TSCORE.Config.setIsWindowMaximized(false);
-        TSCORE.Config.saveSettings();
-      }); */
-      // Disabling automatic maximazation of the main window
-      //if(TSCORE.Config.getIsWindowMaximized()){
-      //    nwwin.maximize();
-      //}
     }
     // Disable send to feature on all platforms except android cordova
     if (!isCordova) {
@@ -889,7 +815,7 @@ define(function(require, exports, module) {
     }
   }
 
-  var showContextMenu = function(menuId, sourceObject) {
+  function showContextMenu(menuId, sourceObject) {
     var leftPos = sourceObject.offset().left;
     var topPos = sourceObject.offset().top;
     if (sourceObject.offset().top + sourceObject.height() + $(menuId).height() > window.innerHeight) {
@@ -904,9 +830,9 @@ define(function(require, exports, module) {
       left: leftPos,
       top: topPos
     });
-  };
+  }
 
-  var hideAllDropDownMenus = function() {
+  function hideAllDropDownMenus() {
     $('#tagGroupMenu').hide();
     $('#tagTreeMenu').hide();
     $('#directoryMenu').hide();
@@ -915,9 +841,9 @@ define(function(require, exports, module) {
     $('.dirAltNavMenu').hide();
     $('#locationTagTreeMenu').hide();
     //$('#searchOptions').hide();
-  };
+  }
 
-  var showLocationsPanel = function() {
+  function showLocationsPanel() {
     TSCORE.openLeftPanel();
     $('#tagGroupsContent').hide();
     $('#contactUsContent').hide();
@@ -925,9 +851,9 @@ define(function(require, exports, module) {
     $('#showTagGroups').removeClass('active');
     $('#contactUs').removeClass('active');
     $('#showLocations').addClass('active');
-  };
+  }
 
-  var showTagsPanel = function() {
+  function showTagsPanel() {
     TSCORE.openLeftPanel();
     $('#locationContent').hide();
     $('#contactUsContent').hide();
@@ -935,9 +861,9 @@ define(function(require, exports, module) {
     $('#showLocations').removeClass('active');
     $('#contactUs').removeClass('active');
     $('#showTagGroups').addClass('active');
-  };
+  }
 
-  var showContactUsPanel = function() {
+  function showContactUsPanel() {
     TSCORE.openLeftPanel();
     $('#locationContent').hide();
     $('#tagGroupsContent').hide();
@@ -945,7 +871,7 @@ define(function(require, exports, module) {
     $('#showLocations').removeClass('active');
     $('#showTagGroups').removeClass('active');
     $('#contactUs').addClass('active');
-  };
+  }
 
   function createHTMLFile() {
     var filePath = TSCORE.currentPath + TSCORE.dirSeparator + TSCORE.TagUtils.beginTagContainer + TSCORE.TagUtils.formatDateTime4Tag(new Date(), true) + TSCORE.TagUtils.endTagContainer + '.html';
@@ -975,8 +901,6 @@ define(function(require, exports, module) {
   // Public API definition
   exports.showContextMenu = showContextMenu;
   exports.initUI = initUI;
-  exports.clearSearchFilter = clearSearchFilter;
-  exports.openLinkExternally = openLinkExternally;
   exports.enableTopToolbar = enableTopToolbar;
   exports.disableTopToolbar = disableTopToolbar;
   exports.hideWaitingDialog = hideWaitingDialog;
@@ -987,12 +911,13 @@ define(function(require, exports, module) {
   exports.showFileRenameDialog = showFileRenameDialog;
   exports.showFileCreateDialog = showFileCreateDialog;
   exports.showFileDeleteDialog = showFileDeleteDialog;
+  exports.showDeleteFilesDialog = showDeleteFilesDialog;
   exports.showWelcomeDialog = showWelcomeDialog;
+  exports.showKeysDialog = showKeysDialog;
   exports.startGettingStartedTour = startGettingStartedTour;
   exports.showTagEditDialog = showTagEditDialog;
   exports.showOptionsDialog = showOptionsDialog;
   exports.showAboutDialog = showAboutDialog;
-  exports.showKeysDialog = showKeysDialog;
   exports.showLocationsPanel = showLocationsPanel;
   exports.showTagsPanel = showTagsPanel;
   exports.showContactUsPanel = showContactUsPanel;
@@ -1002,5 +927,4 @@ define(function(require, exports, module) {
   exports.createHTMLFile = createHTMLFile;
   exports.createMDFile = createMDFile;
   exports.createTXTFile = createTXTFile;
-  exports.showSearchArea = showSearchArea;
 });

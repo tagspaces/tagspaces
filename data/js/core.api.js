@@ -9,7 +9,10 @@
  */
 define(function(require, exports, module) {
   'use strict';
+
   console.log('Loading core.api.js ...');
+
+  // Importing modules
   var tsSettings = require('tssetting');
   var tsIOApi = require('tsioapi');
   var tsPersManager = require('tspersmanager');
@@ -19,12 +22,15 @@ define(function(require, exports, module) {
   var tsDirectoriesUI = require('tsdirectoriesui');
   var tsCoreUI = require('tscoreui');
   var tsSearch = require('tssearch');
+  var tsSearchUI = require('tssearchui');
   var tsPro = require('tspro');
   var tsUtils = require('tsutils');
   var tsIOUtils = require('tsioutils');
   var tsMeta = require('tsmeta');
   var tsExt = require('tsextapi');
   var tsExtManager = require('tsextmanager');
+
+  // Defining variables
   var currentPath;
   var currentLocationObject;
   var currentPerspectiveID;
@@ -42,6 +48,18 @@ define(function(require, exports, module) {
   var startTime;
   var subfoldersDirBrowser;
   var directoryBrowser;
+
+  // Loading animation related vars
+  var $loadingAnimation = $('.loadingAnimation');
+  var $statusBar = $('#statusBar');
+
+  // UI and Layout functionalities
+  var isFullWidth = false;
+  var shouldOpenCol1 = true;
+  var shouldOpenCol2 = true;
+  var shouldOpenCol3 = false;
+  var oneColumn = false;
+  var saveOpenCol1 = false;
 
   /**
    * Initalizes the application
@@ -71,6 +89,7 @@ define(function(require, exports, module) {
     tsDirectoriesUI.initUI();
     tsDirectoriesUI.initLocations();
     tsFileOpener.initUI();
+    tsSearchUI.initUI();
     tsExtManager.loadExtensionData().then(function() {
       tsPersManager.initPerspectives().then(function(result) {
         console.log("Perspectives Initialized: " + result);
@@ -139,6 +158,10 @@ define(function(require, exports, module) {
       console.log('Document ready finished. Layout initialized');
       checkForNewVersion();
     });
+
+    window.addEventListener('orientationchange', reLayout);
+
+    $(window).on('resize', reLayout);
   }
 
   function switchInterfaceLanguage(language) {
@@ -186,11 +209,10 @@ define(function(require, exports, module) {
       tsTagsUI.showAddTagsDialog();
     });
     Mousetrap.bind(tsSettings.getSearchKeyBinding(), function() {
-      tsCoreUI.showSearchArea();
+      tsSearchUI.showSearchArea();
     });
   }
 
-  // TODO
   function checkForNewVersion() {
     if (tsSettings.getCheckForUpdates()) {
       tsIOApi.checkNewVersion();
@@ -208,8 +230,8 @@ define(function(require, exports, module) {
   }
 
   function updateNewVersionData(data) {
-    console.log('Version Information: ' + data);
-    var versioningData = JSON.parse(data);
+    console.log('Version Information: ' + JSON.stringify(data));
+    var versioningData = JSON.parse(JSON.stringify(data));
     // Analysing Version Information
     var availableBuild = parseInt(versioningData.appBuild);
     var verA = versioningData.appVersion.split('.');
@@ -238,13 +260,6 @@ define(function(require, exports, module) {
     }
   }
 
-  function updateLogger() {
-    console.log('Updating logger...');
-  }
-
-  var $loadingAnimation = $('.loadingAnimation');
-  var $statusBar = $('#statusBar');
-
   function showLoadingAnimation() {
     $statusBar.hide();
     $loadingAnimation.show();
@@ -260,7 +275,7 @@ define(function(require, exports, module) {
   function removeFileModel(model, filePath) {
     console.log('Removing file from model');
     for (var i = 0; i < model.length; i++) {
-      if (model[i][exports.fileListFILEPATH] === filePath) {
+      if (model[i].path === filePath) {
         model.splice(i, 1);
       }
     }
@@ -272,14 +287,11 @@ define(function(require, exports, module) {
       fileExt = tsTagUtils.extractFileExtension(newPath),
       fileTags = tsTagUtils.extractTags(newPath);
     for (var i = 0; i < model.length; i++) {
-      if (model[i][exports.fileListFILEPATH] == oldPath) {
-        model[i][exports.fileListFILEPATH] = newPath;
-        model[i][exports.fileListTITLE] = title;
-        model[i][exports.fileListTAGS] = fileTags;
-        model[i][exports.fileListFILEEXT] = fileExt; // TODO complete the list
-        //model[i][exports.fileListFILELMDT] = newPath;
-        //model[i][exports.fileListFILENAME] = newPath;
-        //model[i][exports.fileListFILESIZE] = newPath;
+      if (model[i].path == oldPath) {
+        model[i].path = newPath;
+        model[i].title = title;
+        model[i].tags = fileTags;
+        model[i].extension = fileExt; // TODO complete the list
       }
     }
   }
@@ -298,7 +310,7 @@ define(function(require, exports, module) {
     }
     csv += headers.join(',') + '\n';
     for (var i = 0; i < fileList.length; i++) {
-      var row = fileList[i][exports.fileListFILEPATH] + ',' + fileList[i][exports.fileListTITLE] + ',' + fileList[i][exports.fileListFILESIZE] + ',' + fileList[i][exports.fileListTAGS];
+      var row = fileList[i].path + ',' + fileList[i].title + ',' + fileList[i].size + ',' + fileList[i].tags;
       rows.push(row);
     }
     csv += rows.join('\n');
@@ -309,11 +321,10 @@ define(function(require, exports, module) {
     var rows = [];
     for (var i = 0; i < fileList.length; i++) {
       var row = [];
-      row.path = fileList[i][exports.fileListFILEPATH];
-      row.title = fileList[i][exports.fileListTITLE];
-      row.size = fileList[i][exports.fileListFILESIZE];
-      var tags = fileList[i][exports.fileListTAGS];
-      for (var j = 0; j < tags.length; j++) {
+      row.path = fileList[i].path;
+      row.title = fileList[i].title;
+      row.size = fileList[i].size;
+      for (var j = 0; j < fileList[i].tags.length; j++) {
         row['tag' + j] = tags[j];
       }
       rows.push(row);
@@ -321,14 +332,8 @@ define(function(require, exports, module) {
     return rows;
   }
 
-  // UI and Layout functionalities
-  var isFullWidth = false;
-  var shouldOpenCol1 = true;
-  var shouldOpenCol2 = true;
-  var shouldOpenCol3 = false;
-  var oneColumn = false;
-
   function isOneColumn() {
+
     return oneColumn;
   }
 
@@ -408,14 +413,15 @@ define(function(require, exports, module) {
   }
 
   function hidePerspectiveMenu() {
+
     $(".perspectiveMainMenuButton").hide();
   }
 
   function showPerspectiveMenu() {
+
     $(".perspectiveMainMenuButton").show();
   }
-  //TODO: save state on file operations
-  var saveOpenCol1 = false;
+
   function openFileViewer() {
     shouldOpenCol3 = true;
     saveOpenCol1 = shouldOpenCol1;
@@ -445,12 +451,9 @@ define(function(require, exports, module) {
   }
 
   function reloadUI() {
+
     location.reload();
   }
-
-  window.addEventListener('orientationchange', reLayout);
-
-  $(window).on('resize', reLayout);
 
   function createDocumentEvent(type, data) {
     var evt = document.createEvent('Events');
@@ -478,6 +481,7 @@ define(function(require, exports, module) {
     exports.PRO = tsPro;
   }
   exports.Meta = tsMeta;
+
   // Public API definition
   exports.dirSeparator = isWin && !isWeb ? '\\' : '/';
   exports.metaFolder = ".ts";
@@ -485,11 +489,11 @@ define(function(require, exports, module) {
   exports.metaFileExt = ".json";
   exports.thumbFileExt = ".png";
   exports.contentFileExt = ".txt";
+  exports.directoryExt = "DIRECTORY";
   exports.locationDesktop;
   exports.initApp = initApp;
   exports.reLayout = reLayout;
   exports.isOneColumn = isOneColumn;
-  exports.updateLogger = updateLogger;
   exports.showLoadingAnimation = showLoadingAnimation;
   exports.hideLoadingAnimation = hideLoadingAnimation;
   exports.reloadUI = reloadUI;
@@ -507,9 +511,6 @@ define(function(require, exports, module) {
   exports.switchInterfaceLanguage = switchInterfaceLanguage;
 
   // Proxying functions from tsCoreUI
-  // TODO use TSCORE.UI instead
-  exports.clearSearchFilter = tsCoreUI.clearSearchFilter;
-  exports.openLinkExternally = tsCoreUI.openLinkExternally;
   exports.enableTopToolbar = tsCoreUI.enableTopToolbar;
   exports.disableTopToolbar = tsCoreUI.disableTopToolbar;
   exports.showAlertDialog = tsCoreUI.showAlertDialog;
@@ -527,7 +528,11 @@ define(function(require, exports, module) {
   exports.createHTMLFile = tsCoreUI.createHTMLFile;
   exports.createMDFile = tsCoreUI.createMDFile;
   exports.createTXTFile = tsCoreUI.createTXTFile;
-  exports.showSearchArea = tsCoreUI.showSearchArea;
+
+  // Proxying functions from tsSearchUI
+  exports.clearSearchFilter = tsSearchUI.clearSearchFilter;
+  exports.showSearchArea = tsSearchUI.showSearchArea;
+  exports.searchForTag = tsSearchUI.searchForTag;
 
   // Proxying functions from tsTagsUI
   exports.generateTagButtons = tsTagsUI.generateTagButtons;
@@ -553,6 +558,7 @@ define(function(require, exports, module) {
   exports.closeCurrentLocation = tsDirectoriesUI.closeCurrentLocation;
   exports.navigateToDirectory = tsDirectoriesUI.navigateToDirectory;
   exports.generateFolderTags = tsDirectoriesUI.generateFolderTags;
+
   // Public variables definition
   exports.currentPath = currentPath;
   exports.currentLanguage = exports.currentLanguage;
@@ -566,14 +572,7 @@ define(function(require, exports, module) {
   exports.startTime = startTime;
   exports.subfoldersDirBrowser = subfoldersDirBrowser;
   exports.directoryBrowser = directoryBrowser;
-  exports.fileListFILEEXT = 0;
-  exports.fileListTITLE = 1;
-  exports.fileListTAGS = 2;
-  exports.fileListFILESIZE = 3;
-  exports.fileListFILELMDT = 4;
-  exports.fileListFILEPATH = 5;
-  exports.fileListFILENAME = 6;
-  exports.fileListMETA = 7;
+
   //document events
   exports.createDocumentEvent = createDocumentEvent;
   exports.fireDocumentEvent = fireDocumentEvent;

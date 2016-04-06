@@ -1,6 +1,6 @@
 @echo off
 
-if not exist extension\ (mkdir extension)
+if not exist extensions\ (mkdir extensions)
 
 REM -------------------------
 REM perspecitveGrid

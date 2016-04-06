@@ -94,7 +94,12 @@ define(function(require, exports, module) {
       var newFilePath = TSCORE.currentPath + TSCORE.dirSeparator + fileNameWithOutExt + '_' + currentDateTime + '.' + fileExt;
       TSCORE.IO.copyFilePromise(_openedFilePath, newFilePath).then(function(success) {
         TSCORE.hideWaitingDialog();
-        TSPOSTIO.copyFile(_openedFilePath, newFilePath);
+        TSCORE.showSuccessDialog("File copied successfully.");
+        var targetDirectory = TSCORE.TagUtils.extractContainingDirectoryPath(newFilePath);
+        if (targetDirectory === TSCORE.currentPath) {
+          TSCORE.navigateToDirectory(TSCORE.currentPath);
+          TSCORE.PerspectiveManager.clearSelectedFiles();
+        }
       }, function(err) {
         TSCORE.hideWaitingDialog();
         TSCORE.showAlertDialog(err);
@@ -274,7 +279,7 @@ define(function(require, exports, module) {
     TSCORE.IO.checkAccessFileURLAllowed ? TSCORE.IO.checkAccessFileURLAllowed() : true;
     TSCORE.IO.getPropertiesPromise(filePath).then(function(fileProperties) {
       if (fileProperties) {
-        TSPOSTIO.getFileProperties(fileProperties);
+        TSCORE.FileOpener.setFileProperties(fileProperties);
       }
     }).catch(function(error) {
       TSCORE.hideLoadingAnimation();

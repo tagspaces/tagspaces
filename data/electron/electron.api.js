@@ -6,6 +6,8 @@ const fs = require('fs-extra'); // jshint ignore:line
 const pathUtils = require('path'); // jshint ignore:line
 const electron = require('electron'); // jshint ignore:line
 const remote = electron.remote; // jshint ignore:line
+const ipcRenderer = require('electron').ipcRenderer; // jshint ignore:line
+
 /**
  * A implementation of the IOAPI for the electron platform
  * @class Electron
@@ -28,11 +30,15 @@ define(function(require, exports, module) {
   };
 
   // Experimental functionality
-  function watchDirecotory(dirPath, listener) {
+  function watchDirectory(dirPath, listener) {
+    stopWatchingDirectories();
+    fsWatcher = fs.watch(dirPath, {persistent: true, recursive: false}, listener);
+  }
+
+  function stopWatchingDirectories() {
     if (fsWatcher) {
       fsWatcher.close();
     }
-    fsWatcher = fs.watch(dirPath, {persistent: true, recursive: false}, listener);
   }
 
   function handleStartParameters() {
@@ -201,7 +207,9 @@ define(function(require, exports, module) {
           {
             label: $.i18n.t("ns.common:quit"),
             accelerator: 'Command+Q',
-            click: function() { app.quit(); }
+            click: function() {
+              ipcRenderer.send('quit-application', 'Bye, bye...');
+            }
           },
         ]
       });
@@ -245,7 +253,7 @@ define(function(require, exports, module) {
     console.log("Checking for new version...");
     var cVer = TSCORE.Config.DefaultSettings.appVersion + "." + TSCORE.Config.DefaultSettings.appBuild;
     $.ajax({
-        url: 'http://tagspaces.org/releases/version.json?nVer=' + cVer,
+        url: 'http://tagspaces.org/releases/version.json?eVer=' + cVer,
         type: 'GET'
       })
       .done(function(data) {
@@ -840,6 +848,9 @@ define(function(require, exports, module) {
   // Platform specific calls
   exports.initMainMenu = initMainMenu;
   exports.showMainWindow = showMainWindow;
+
+  exports.watchDirectory = watchDirectory; // Platform specific
+  exports.stopWatchingDirectories = stopWatchingDirectories; // Platform specific
 
   // Platform API
   exports.handleStartParameters = handleStartParameters;

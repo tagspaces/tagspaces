@@ -1,5 +1,10 @@
 ﻿#Changelog
 
+## Version 2.2.1 / 2016.03.28
+- Fixing embedded images in HTML with data url
+- Fixing search in ImageSwiper perspective
+- Fixing opening of the source link in MHTML viewer
+
 ## Version 2.2.0 / 2016.03.24
 - Migration the desktop app to the [Electron](http://electron.atom.io) shell
 - Adding live thumbnails for images in grid and image-swiper perspectives

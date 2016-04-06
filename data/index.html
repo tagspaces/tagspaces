@@ -199,14 +199,7 @@
             <i class="fa fa-arrow-right fa-lg"></i>
           </button>
           <div class="flexMaxWidth">
-            <div class="loadingAnimation">
-              <div class="spinner">
-                <div class="bounce1"></div>
-                <div class="bounce2"></div>
-                <div class="bounce3"></div>
-              </div>
-            </div>
-            <div id="statusBar" class="noWrap"></div>
+            <div class="flexLayout" id="alternativeNavigator"></div>
           </div>
           <div id="mainTopMenu" class="input-group">
             <button type="button" id="perspectiveSwitcherButton" class="btn btn-link dropdown-toggle"
@@ -216,25 +209,36 @@
             <ul class="dropdown-menu pull-right" id="perspectiveSwitcher"></ul>
           </div>
         </div>
-        <div class="flexLayout">
+        <div class="flexLayout" style="min-height: 40px;">
           <div class="flexMaxWidth flexLayout" style="min-width: 100px;">
-            <div class="flexLayout" id="alternativeNavigator" style="min-width: 100px;"></div>
-            <div class="flexMaxWidth"></div>
+            <div class="flexMaxWidth">
+              <div id="statusBar" class="noWrap"></div>
+              <div class="loadingAnimation">
+                <div class="spinner">
+                  <div class="bounce1"></div>
+                  <div class="bounce2"></div>
+                  <div class="bounce3"></div>
+                </div>
+              </div>
+            </div>
             <div id="searchToolbar">
               <div class="flexLayout">
-                <button class="btn btn-link" data-i18n="[title]ns.common:clearFilterTooltip" id="clearFilterButton">
+                <button class="btn btn-link" id="clearSearchButton" data-i18n="[title]ns.common:cancelSearchTooltip">
                   <i class="fa fa-lg fa-eraser"></i>
                 </button>
                 <input class="flexMaxWidth" id="searchBox" data-i18n="[placeholder]ns.common:searchPlaceholder" type="text">
+                <button class="btn btn-link" data-i18n="[title]ns.common:showAdvancedSearch" id="showSearchOptionsButton">
+                  <i class="fa fa-lg fa-angle-double-down"></i>
+                </button>
                 <button class="btn btn-link" data-i18n="[title]ns.common:searchPlaceholder" id="searchButton">
                   <i class="fa fa-lg fa-search"></i>
                 </button>
               </div>
             </div>
+            <button class="btn btn-link" data-i18n="[title]ns.common:searchPlaceholder" id="showSearchButton">
+              <span data-i18n="ns.common:searchPlaceholder" style="font-size: 14px;"></span>&nbsp;&nbsp;&nbsp;<i class="fa fa-lg fa-search"></i>
+            </button>
           </div>
-          <button class="btn btn-link" data-i18n="[title]ns.common:searchPlaceholder" id="showSearchButton">
-            <i class="fa fa-lg fa-search"></i>
-          </button>
         </div>
       </nav>
     </div>
@@ -945,20 +949,57 @@
   </ul>
 </div>
 
-<div id="searchOptions" class="dropdown clearfix" style="position: absolute; top: 80px; right: 5px; width: 330px;">
-  <div class="dropdown-menu" style="display:block;position:static;">
+<div id="searchOptions" class="dropdown clearfix" style="position: absolute; top: 80px; right: 2px; width: 300px;">
+  <div class="dropdown-menu" style="display:block; position:static; width:100%;">
     <li class="dropdown-header">
       <button class="close">&times;</button>
-      <span data-i18n="ns.common:searchOptions">Search Options</span>
+      <span data-i18n="ns.common:searchAdvanced">Advanced Search</span>
     </li>
     <div style="padding: 10px;">
-      <i class="fa fa-exclamation-circle"></i>&nbsp;<span data-i18n="ns.common:includeSubfoldersInSearch"></span><br>
-      <i class="fa fa-exclamation-circle"></i>&nbsp;<span data-i18n="ns.common:excludeTermFromSearch"></span><br>
-      <i class="fa fa-exclamation-circle"></i>&nbsp;<span data-i18n="ns.common:includeTagInSearch"></span><br>
-      <i class="fa fa-exclamation-circle"></i>&nbsp;<span data-i18n="ns.common:excludeTagInSearch"></span><br>
-      <i class="fa fa-exclamation-circle"></i>&nbsp;<span data-i18n="ns.common:andedSearch"></span><br>
-      <i class="fa fa-exclamation-circle"></i>&nbsp;<span data-i18n="ns.common:searchInFilenameOnly"></span><br>
-      <!--button class="btn btn-primary" data-dismiss="modal" aria-hidden="true"><i class="fa fa-check fa-lg"></i></button-->
+      <form>
+        <div class="form-group">
+          <label for="searchTerms">Search words</label>
+          <input type="text" class="form-control searchFormElements" id="searchTerms" placeholder="Search words separated by space">
+        </div>
+        <div class="form-group">
+          <label for="searchTags">Tags</label>
+          <input type="text" class="form-control searchFormElements" id="searchTags" placeholder="Tags separated by spaces">
+        </div>
+        <div class="form-group">
+          <label for="searchFileType">File Type (e.g. documents, pictures, ...)</label>
+          <select id="searchFileType" class="form-control searchFormElements disabled" disabled title="TagSpaces PRO feature">
+            <option value="">Specify file type</option>
+            <option value="t:picture">Pictures (JPG,PNG,GIF,...)</option>
+            <option value="t:doc">Documents (PDF,ODF,DOCX,EXL,...)</option>
+            <option value="t:note">Notes (MD,TXT,HTML,...)</option>
+            <option value="t:audio">Audio (OGG,MP3,WAV,...)</option>
+            <option value="t:video">Video files (WEBM,OGV,MP4,...)</option>
+            <option value="t:archive">Archives (ZIP,RAR,TGZ,7Z,...)</option>
+          </select>
+        </div>
+        <!--div class="form-group">
+          <label for="searchHistory" class="control-label">History of your last searches</label>
+          <select id="searchHistory" class="form-control searchFormElements disabled" disabled title="TagSpaces PRO feature">
+            <option value="">You can find here your last search queries</option>
+            <option value="t:pictures +topsy">t:pictures +topsy</option>
+            <option value="t:pictures +danny">t:pictures +danny</option>
+            <option value="t:docs +work">t:docs +work</option>
+            <option value="t:archives +client1">t:archives +client1</option>
+            <option value="t:audio u2">t:audio u2</option>
+            <option value="clear">Clear search history</option>
+          </select>
+        </div-->
+        <div class="checkbox">
+          <label>
+            <input type="checkbox" id="searchRecursive" checked>&nbsp;<span>Search in subfolders</span>
+          </label>
+        </div>
+        <div class="form-group" style="margin-bottom: 5px;">
+          <button class="btn btn-default btn-sm" aria-hidden="true" id="resetSearchButton"><i class="fa fa-undo fa-lg"></i>&nbsp;<span>Reset</span></button>
+          <button class="btn btn-primary btn-sm pull-right" aria-hidden="true" id="startSearchButton"><i class="fa fa-search fa-lg"></i>&nbsp;<span>Search</span></button>
+        </div>
+      </form>
+
     </div>
   </div>
 </div>

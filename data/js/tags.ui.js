@@ -1,9 +1,11 @@
-/* Copyright (c) 2012-2015 The TagSpaces Authors. All rights reserved.
+/* Copyright (c) 2012-2016 The TagSpaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that
  * can be found in the LICENSE file. */
+
 /* global define, Handlebars  */
 define(function(require, exports, module) {
   'use strict';
+
   console.log('Loading tags.ui.js...');
 
   var locationTagGroupKey = 'LTG';
@@ -13,6 +15,7 @@ define(function(require, exports, module) {
   var defaultTagTextColor = "#ffffff";
 
   var TSCORE = require('tscore');
+
   var tagGroupsTmpl = Handlebars.compile(
     '{{#each tagGroups}}' +
     '<div class="accordion-group disableTextSelection tagGroupContainer">' +
@@ -48,11 +51,14 @@ define(function(require, exports, module) {
     '{{/each}}'
   );
 
+  var tagButtonTmpl = Handlebars.compile('{{#each tags}} <button class="btn btn-sm tagButton" tag="{{tag}}" ' + 'filepath="{{filepath}}" style="{{style}}">{{tag}}&nbsp;&nbsp;<span class="fa fa-ellipsis-v dropDownIcon"></span></button>{{/each}}');
+
+
   function initUI() {
     $('#extMenuAddTagAsFilter').click(function() {});
     // Context menu for the tags in the file table and the file viewer
     $('#tagMenuAddTagAsFilter').click(function() {
-      TSCORE.Search.searchForTag(TSCORE.selectedTag);
+      TSCORE.searchForTag(TSCORE.selectedTag);
     });
     $('#tagMenuEditTag').click(function() {
       TSCORE.showTagEditDialog();
@@ -71,10 +77,10 @@ define(function(require, exports, module) {
     });
     // Context menu for the tags in the tag tree
     $('#tagTreeMenuAddTagToFile').click(function() {
-      TSCORE.TagUtils.addTag(TSCORE.selectedFiles, [TSCORE.selectedTag]);
+      TSCORE.TagUtils.addTag(TSCORE.Utils.getUniqueSelectedFiles(), [TSCORE.selectedTag]);
     });
     $('#tagTreeMenuAddTagAsFilter').click(function() {
-      TSCORE.Search.searchForTag(TSCORE.selectedTag);
+      TSCORE.searchForTag(TSCORE.selectedTag);
     });
     $('#tagTreeMenuEditTag').click(function() {
       TSCORE.showTagEditInTreeDialog();
@@ -149,16 +155,16 @@ define(function(require, exports, module) {
     });
     $('#cleanTagsButton').click(function() {
       TSCORE.showConfirmDialog($.i18n.t('ns.dialogs:cleanFilesTitleConfirm'), $.i18n.t('ns.dialogs:cleanFilesContentConfirm'), function() {
-        TSCORE.TagUtils.cleanFilesFromTags(TSCORE.selectedFiles);
+        TSCORE.TagUtils.cleanFilesFromTags(TSCORE.Utils.getUniqueSelectedFiles());
       });
     });
     $('#addTagsButton').click(function() {
       var tags = $('#tags').val().split(',');
-      TSCORE.TagUtils.addTag(TSCORE.selectedFiles, tags);
+      TSCORE.TagUtils.addTag(TSCORE.Utils.getUniqueSelectedFiles(), tags);
     });
     $('#removeTagsButton').click(function() {
       var tags = $('#tags').val().split(',');
-      TSCORE.TagUtils.removeTags(TSCORE.selectedFiles, tags);
+      TSCORE.TagUtils.removeTags(TSCORE.Utils.getUniqueSelectedFiles(), tags);
     });
     $('#createTagButton').click(function() {
       var tags = $('#newTagTitle').val().split(',');
@@ -244,7 +250,7 @@ define(function(require, exports, module) {
           Mousetrap.unbind(tag.keyBinding);
           Mousetrap.bind(tag.keyBinding, function(innerTag) {
             return function(e) {
-              TSCORE.TagUtils.addTag(TSCORE.selectedFiles, [innerTag]);
+              TSCORE.TagUtils.addTag(TSCORE.Utils.getUniqueSelectedFiles(), [innerTag]);
             };
           }(tag.title)); // jshint ignore:line
         }
@@ -294,7 +300,7 @@ define(function(require, exports, module) {
         TSCORE.hideAllDropDownMenus();
         TSCORE.selectedTagData = TSCORE.Config.getTagData($(this).attr('tag'), $(this).attr('parentKey'));
         TSCORE.selectedTag = generateTagValue(TSCORE.selectedTagData);
-        TSCORE.TagUtils.addTag(TSCORE.selectedFiles, [TSCORE.selectedTag]);
+        TSCORE.TagUtils.addTag(TSCORE.Utils.getUniqueSelectedFiles(), [TSCORE.selectedTag]);
       });
     });
     $tagGroupsContent.find('.tagGroupTitle').each(function() {
@@ -402,7 +408,7 @@ define(function(require, exports, module) {
     TSCORE.selectedFiles.push(filePath);
     TSCORE.selectedTag = tag;
   }
-  var tagButtonTmpl = Handlebars.compile('{{#each tags}} <button class="btn btn-sm tagButton" tag="{{tag}}" ' + 'filepath="{{filepath}}" style="{{style}}">{{tag}}&nbsp;&nbsp;<span class="fa fa-ellipsis-v dropDownIcon"></span></button>{{/each}}');
+
   // Helper function generating tag buttons
   function generateTagButtons(commaSeparatedTags, filePath) {
     //console.log("Creating tags...");

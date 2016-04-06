@@ -33,5 +33,7 @@
     "moreOperations": "More Operations",
     "includeSubdirsTitleConfirm": "Confirm Include Subdirectories",
     "includeSubdirsContentConfirm": "On directory with many files and/or subdirectories, this operation could be slow! Do you want to continue?",
+    "about": "About",
+    "aboutTitle": "About List Perspective",
     "-": "-"
 }

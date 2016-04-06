@@ -36,7 +36,7 @@
 }
 
 .extMainMenu {
-  z-index: 1040;
+  z-index: 1000;
   position: absolute;
   right: 15px;
   bottom: 15px;
@@ -148,7 +148,7 @@
   height: 100%;
   min-width: 300px;
   box-shadow: 2px 0px 3px -1px rgba(0,0,0,0.2);
-  z-index: 1001;
+  z-index: 1010;
 }
 
 .col1 .row1 {
@@ -259,6 +259,7 @@
 
   max-width: 100%;
   /*min-width: 50%;*/
+  z-index: 1030;
 }
 
 .col3 .row1 {

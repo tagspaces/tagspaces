@@ -66,6 +66,10 @@ html, body {
 
 * { outline:none; }
 
+.disabled {
+  color: lightgray;
+}
+
 #logo {
 	padding: 0;
 	font-size: 1.5em;
@@ -103,6 +107,25 @@ html, body {
   font-size: 14px;
   font-size: 12px;
   text-align: center;
+}
+
+#fileDropArea {
+  width: 100%;
+  height: 100%;
+  background-color: rgba(29, 209, 159, 0.72);
+  z-index: 1001;
+  position: absolute;
+  top: 80px;
+  left: 0;
+}
+
+#fileDropExplanation {
+  top:45%;
+  width: 100%;
+  text-align: center;
+  position:absolute;
+  color: white;
+  font-size: 20px;
 }
 
 #iframeViewer {
@@ -204,9 +227,19 @@ li hr {
   padding-right: 10px;
 }
 
+#clearSearchButton {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+#showSearchOptionsButton {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
 #searchToolbar {
   border-radius: 4px;
-  width: 250px;
+  width: 300px;
   background-color: #DBDBDB;
   display: none;
   margin-left: 4px;
@@ -224,6 +257,10 @@ li hr {
   font-size: 14px;
   min-width: 30px;
   width: 100%;
+}
+
+.searchFormElements {
+  font-size: 14px !important;
 }
 
 #tagsContainer {
@@ -287,6 +324,12 @@ li hr {
   display: -ms-flexbox;
 
   flex-wrap: wrap;
+}
+
+.dirAltNavMenu .dirButton{
+  max-width: 265px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .dirButton:hover, .dirButton:active, .dirButton:focus {
@@ -433,10 +476,6 @@ input a.resetFilter {
 
 .icon-leaf:hover {
   color: green;
-}
-
-.filterOn {
-  color: #E45C00;
 }
 
 .groupTitle {
@@ -637,14 +676,16 @@ input a.resetFilter {
 }
 
 #alternativeNavigator .btn-link {
-  padding-left: 2px;
-  padding-right: 2px;
+  padding-left: 0px;
+  padding-right: 0px;
   color: #404040;
 }
 
 #alternativeNavigator {
-  margin: 5px 5px 5px 0;
+  margin: 0px 5px 5px 0;
   height: 30px;
+  min-width: 100px;
+  max-width: 150px
 }
 
 .dirAltNavMenu ul {
@@ -750,3 +791,30 @@ input a.resetFilter {
   display: none;
   z-index: 99999;
 }
+
+#openLeftPanel {
+  padding-left: 12px;
+  padding-right: 12px;
+  padding-top: 2px;
+}
+
+#perspectiveSwitcherButton {
+  background-color: #F2F2F2;
+}
+
+label.control-label {
+  padding-top: 6px !important;
+}
+
+.modal textarea {
+  border: 1px solid #f4f4f4 !important;
+}
+
+.select2-container {
+  border: 1px solid #f4f4f4 !important;
+}
+
+.form-control {
+  border-radius: 0px;
+}
+
