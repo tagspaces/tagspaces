@@ -147,15 +147,19 @@ define(function(require, exports, module) {
     $("#searchOptions").show();
   }
 
+  //var searchArryQueries = [];
   function startSearch() {
     if (TSCORE.IO.stopWatchingDirectories) {
       TSCORE.IO.stopWatchingDirectories();
     }
     if (!$('#searchRecursive').prop('checked') && $('#searchBox').val().length > 0) {
+      var origSearchVal = $('#searchBox').val(); 
       $('#searchBox').val(TSCORE.Search.recursiveSymbol + " " + $('#searchBox').val());
+      if (TSCORE.PRO && TSCORE.PRO.Search) {
+        TSCORE.PRO.Search.loadProSearchQueries(origSearchVal);
+      }
       TSCORE.Search.nextQuery = $('#searchBox').val();
     }
-
     $('#searchOptions').hide();
     TSCORE.PerspectiveManager.redrawCurrentPerspective();
   }
@@ -177,6 +181,10 @@ define(function(require, exports, module) {
     $('#showSearchButton').hide();
     $('#searchToolbar').show();
     $('#searchBox').focus();
+    if (TSCORE.PRO && TSCORE.PRO.Search) {
+      TSCORE.PRO.Search.setProSearchHistoryOnChange();
+      TSCORE.PRO.Search.loadProSearchQueries("");
+    }
   }
 
   function clearSearchFilter() {
