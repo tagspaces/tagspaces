@@ -147,12 +147,32 @@ define(function(require, exports, module) {
     $("#searchOptions").show();
   }
 
+  //var searchArryQueries = [];
   function startSearch() {
     if (TSCORE.IO.stopWatchingDirectories) {
       TSCORE.IO.stopWatchingDirectories();
     }
     if (!$('#searchRecursive').prop('checked') && $('#searchBox').val().length > 0) {
+      var origSearchVal = $('#searchBox').val(); 
       $('#searchBox').val(TSCORE.Search.recursiveSymbol + " " + $('#searchBox').val());
+      if (!$('#searchHistory').prop('disabled')) {
+        console.warn("add search query : " + $('#searchBox').val());         
+        TSCORE.Config.addSearchQuery(origSearchVal);
+        var sh = document.getElementById("searchHistory");
+        for(var inxo = sh.options.length-1; inxo>0; inxo--){
+          console.warn("opt["+inxo+"] remove:" + sh.options[inxo]);
+          sh.removeChild(sh.options[inxo]);
+        }           
+         //TSCORE.Config.removeAllSearchQueries();
+         var arrSearchQueries =  TSCORE.Config.getSearchQueries();
+         for(var item in arrSearchQueries) {
+              console.warn("search query add: " + item);
+              $('#searchHistory').append($('<option>', { 
+                  value: item,
+                  text : item
+              }));
+         };         
+      }
       TSCORE.Search.nextQuery = $('#searchBox').val();
     }
 
