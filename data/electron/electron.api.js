@@ -536,7 +536,7 @@ define(function(require, exports, module) {
       if (fs.existsSync(newFilePath)) {
         reject($.i18n.t("ns.common:fileExists", {fileName:newFilePath}), $.i18n.t("ns.common:fileRenameFailed"));
       }
-      fs.move(filePath, newFilePath, function(error) {
+      fs.move(filePath, newFilePath, {clobber:true}, function(error) {
         if (error) {
           reject("Renaming: " + filePath + " failed.");
         }
