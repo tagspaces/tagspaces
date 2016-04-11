@@ -1121,15 +1121,35 @@ define(function(require, exports, module) {
   }
 
   function addSearchQuery(query) {
-    if(!exports.Settings.searchQueryList) {
+    if (!exports.Settings.searchQueryList) {
       exports.Settings.searchQueryList = [];
     }
-    exports.Settings.searchQueryList[query] = query;
+    var isfound = false;
+    if (query === "") {
+      isfound = true;
+    }
+    if (!isfound) {
+      for (var inx in exports.Settings.searchQueryList) {
+        if (exports.Settings.searchQueryList[inx] == query) {
+          isfound = true;
+          break;
+        }          
+      }
+    }
+    if (!isfound) {
+      if (exports.Settings.searchQueryList.length >= 15) {
+        exports.Settings.searchQueryList.shift();
+      }
+      exports.Settings.searchQueryList.push(query);
+    }    
     saveSettings();
   } 
   
   function getSearchQueries() {
-    if(!exports.Settings.searchQueryList) {
+    if (!exports.Settings.searchQueryList) {
+      exports.Settings.searchQueryList = [];
+    }
+    if (exports.Settings.searchQueryList.length == 1 && !exports.Settings.searchQueryList[0]) {
       exports.Settings.searchQueryList = [];
     }
     return exports.Settings.searchQueryList;    
@@ -1162,8 +1182,6 @@ define(function(require, exports, module) {
   function loadSettingsLocalStorage() {
     try {
       var tmpSettings = JSON.parse(localStorage.getItem('tagSpacesSettings'));
-      console.warn("tmpSettings: " + tmpSettings.searchQueryList);
-      
       //Cordova try to load saved setting in app storage
       if (isCordova) {
         var appStorageSettings = JSON.parse(TSCORE.IO.loadSettings());
