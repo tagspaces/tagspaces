@@ -146,6 +146,7 @@ define(function(require, exports, module) {
     $('#loadLocationMetaData').attr('checked', TSCORE.Config.getLoadLocationMeta());
     $('#useSearchInSubfolders').attr('checked', TSCORE.Config.getUseSearchInSubfolders());
     $('#maxSearchResultCount').val(TSCORE.Config.getMaxSearchResultCount());        
+    $('#useWatchingCurrentDirectory').attr('checked', TSCORE.Config.getUseWatchingCurrentDirectory());
     $('#tagsDelimiterInput').val(TSCORE.Config.getTagDelimiter());
     $('#prefixTagContainerInput').val(TSCORE.Config.getPrefixTagContainer());
     $('#nextDocumentKeyBinding').val(TSCORE.Config.getNextDocumentKeyBinding());
@@ -225,6 +226,7 @@ define(function(require, exports, module) {
     TSCORE.Config.setLoadLocationMeta($('#loadLocationMetaData').is(':checked'));
     TSCORE.Config.setUseSearchInSubfolders($('#useSearchInSubfolders').is(':checked'));
     TSCORE.Config.setMaxSearchResultCount($('#maxSearchResultCount').val());    
+    TSCORE.Config.setUseWatchingCurrentDirectory($('#useWatchingCurrentDirectory').is(':checked'));
     TSCORE.Config.setNextDocumentKeyBinding(parseKeyBinding($('#nextDocumentKeyBinding').val()));
     TSCORE.Config.setPrevDocumentKeyBinding(parseKeyBinding($('#prevDocumentKeyBinding').val()));
     TSCORE.Config.setCloseViewerKeyBinding(parseKeyBinding($('#closeDocumentKeyBinding').val()));
