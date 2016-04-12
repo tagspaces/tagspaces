@@ -43,6 +43,7 @@ define(function (require, exports, module) {
         "useOCR":                   false, 
         "useTextExtraction":        false, 
         "useGenerateThumbnails":    false,
+        "watchCurrentDirectory":    false,
         "supportedLanguages": [
             { "iso": "en_US", "title": "English" },
             { "iso": "de_DE", "title": "Deutsch (German)" },

@@ -495,7 +495,7 @@ define(function(require, exports, module) {
 
       // TODO enable after adding switch in the settings, disabling recursion does not work on windows
       // Disable watching on file operations with many fiels (copy, delete, rename, move)
-      if (TSCORE.IO.watchDirectory && TSCORE.Config.getUseWatchingCurrentDirectory()) {
+      if (TSCORE.IO.watchDirectory && TSCORE.Config.getWatchCurrentDirectory()) {
         TSCORE.IO.watchDirectory(dirPath, function() {
           listDirectory(TSCORE.currentPath);
         });

@@ -6,5 +6,8 @@
 	"updateFolderThumbnails": "Update thumbnails",
 	"tagDirectory": "Tag Directory",
 	"directoryProperties": "Directory Properties",
+  "searchHistoryInfoOption": "You can find here your last search queries",
+  "searchHistoryRemoveOption": "Remove search history",
+  "confirmDeleteSearchHistoryQuestion": "Do you realy want to delete the search history?"
 	"-": "-"
 }

@@ -165,6 +165,6 @@
     "loadLocationMetaDataHelp": "Location metadata file 'tsm.json' should be placed in the '.ts' subfolder of the current location. The file format should be the same as the exported tag groups file from the tab 'general'.",
 		"useSearchInSubfolders": "Search in sub-folders by default",
 		"maxSearchResultCount": "Limit files found to",
-    "useWatchingCurrentDirectory": "Watching current directory",
+    "watchCurrentDirectory": "Watching current directory",
     "-": "-"
 }

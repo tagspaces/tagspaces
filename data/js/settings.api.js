@@ -722,14 +722,14 @@ define(function(require, exports, module) {
     exports.Settings.maxSearchResultCount = value;
   }
   
-  function getUseWatchingCurrentDirectory() {
-    if (exports.Settings.useWatchingCurrentDirectory  === undefined) {
-      exports.Settings.useWatchingCurrentDirectory = exports.DefaultSettings.useWatchingCurrentDirectory;
+  function getWatchCurrentDirectory() {
+    if (exports.Settings.watchCurrentDirectory  === undefined) {
+      exports.Settings.watchCurrentDirectory = exports.DefaultSettings.watchCurrentDirectory;
     }
-    return exports.Settings.useWatchingCurrentDirectory;
+    return exports.Settings.watchCurrentDirectory;
   }
-  function setUseWatchingCurrentDirectory(value) {
-    exports.Settings.useWatchingCurrentDirectory = value;
+  function setWatchCurrentDirectory(value) {
+    exports.Settings.watchCurrentDirectory = value;
   }
   
   function getEnableMetaData() {
@@ -1235,8 +1235,8 @@ define(function(require, exports, module) {
   exports.setUseSearchInSubfolders = setUseSearchInSubfolders;
   exports.getMaxSearchResultCount = getMaxSearchResultCount;
   exports.setMaxSearchResultCount = setMaxSearchResultCount;
-  exports.getUseWatchingCurrentDirectory = getUseWatchingCurrentDirectory;
-  exports.setUseWatchingCurrentDirectory = setUseWatchingCurrentDirectory;    
+  exports.getWatchCurrentDirectory = getWatchCurrentDirectory;
+  exports.setWatchCurrentDirectory = setWatchCurrentDirectory;    
   exports.setEnableMetaData = setEnableMetaData;
   exports.getEnableMetaData = getEnableMetaData;
   exports.getIsWindowMaximized = getIsWindowMaximized;

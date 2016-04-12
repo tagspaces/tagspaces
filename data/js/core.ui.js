@@ -648,7 +648,7 @@ define(function(require, exports, module) {
     ], function(uiTPL, controller) {
       if ($('#dialogOptions').length < 1) {
         var uiTemplate = Handlebars.compile(uiTPL);
-        $('body').append(uiTemplate({isProVersion: TSCORE.PRO ? true : false}));
+        $('body').append(uiTemplate({isProVersion: TSCORE.PRO ? true : false, isElectron: isElectron ? true : false}));
 
         controller.initUI();
       }
