@@ -154,7 +154,12 @@ define(function(require, exports, module) {
     }
     if (!$('#searchRecursive').prop('checked') && $('#searchBox').val().length > 0) {
       var origSearchVal = $('#searchBox').val(); 
-      $('#searchBox').val(TSCORE.Search.recursiveSymbol + " " + $('#searchBox').val());
+      if (origSearchVal.length > 0 && (origSearchVal[0] === TSCORE.Search.recursiveSymbol ||  origSearchVal[0] === " ")) {
+        while (origSearchVal.length > 0 && (origSearchVal[0] === TSCORE.Search.recursiveSymbol ||  origSearchVal[0] === " ")) {
+          origSearchVal = origSearchVal.substring(1, origSearchVal.length);
+        }
+      }
+      $('#searchBox').val(TSCORE.Search.recursiveSymbol + " " + origSearchVal);
       if (TSCORE.PRO && TSCORE.PRO.Search) {
         TSCORE.PRO.Search.loadProSearchQueries(origSearchVal);
       }
