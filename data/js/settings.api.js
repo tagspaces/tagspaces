@@ -1130,46 +1130,6 @@ define(function(require, exports, module) {
     saveSettings();
   }
 
-  function addSearchQuery(query) {
-    if (!exports.Settings.searchQueryList) {
-      exports.Settings.searchQueryList = [];
-    }
-    var isfound = false;
-    if (query === "") {
-      isfound = true;
-    }
-    if (!isfound) {
-      for (var inx in exports.Settings.searchQueryList) {
-        if (exports.Settings.searchQueryList[inx] == query) {
-          isfound = true;
-          break;
-        }          
-      }
-    }
-    if (!isfound) {
-      if (exports.Settings.searchQueryList.length >= 15) {
-        exports.Settings.searchQueryList.shift();
-      }
-      exports.Settings.searchQueryList.push(query);
-    }    
-    saveSettings();
-  } 
-  
-  function getSearchQueries() {
-    if (!exports.Settings.searchQueryList) {
-      exports.Settings.searchQueryList = [];
-    }
-    if (exports.Settings.searchQueryList.length == 1 && !exports.Settings.searchQueryList[0]) {
-      exports.Settings.searchQueryList = [];
-    }
-    return exports.Settings.searchQueryList;    
-  }
-  
-  function removeAllSearchQueries() {
-    exports.Settings.searchQueryList = [];
-    saveSettings();
-  }
-
   function updateSettingMozillaPreferences(settings) {
     var tmpSettings = JSON.parse(settings);
     if (tmpSettings !== null) {
@@ -1366,8 +1326,4 @@ define(function(require, exports, module) {
   exports.getWriteMetaToSidecarFile = getWriteMetaToSidecarFile;
   exports.getUseDefaultLocation = getUseDefaultLocation;
   exports.setUseDefaultLocation = setUseDefaultLocation;
-  exports.addSearchQuery = addSearchQuery;
-  exports.getSearchQueries = getSearchQueries;
-  exports.removeAllSearchQueries = removeAllSearchQueries;
-  
 });
