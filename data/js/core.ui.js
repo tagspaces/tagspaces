@@ -775,11 +775,33 @@ define(function(require, exports, module) {
     } else if (isCordovaiOS) {
       $('#fullscreenFile').parent().hide();
     } else if (isChrome) {
+      // Directory menu
       $('#directoryMenuOpenDirectory').parent().hide();
+      $('#directoryMenuRenameDirectory').parent().hide();
+      $('#directoryMenuDeleteDirectory').parent().hide();
+      $('#directoryMenuCreateDirectory').parent().hide();
+      // File menu
       $('#fileMenuOpenDirectory').parent().hide();
       $('#fileMenuOpenNatively').parent().hide();
+      $('#fileMenuAddTag').parent().hide();
+      $('#fileMenuMoveCopyFile').parent().hide();
+      $('#fileMenuRenameFile').parent().hide();
+      $('#fileMenuDeleteFile').parent().hide();
+      // Tag menu
+      $('#tagMenuEditTag').parent().hide();
+      $('#tagMenuMoveTagFirst').parent().hide();
+      $('#tagMenuMoveTagLeft').parent().hide();
+      $('#tagMenuMoveTagRight').parent().hide();
+      $('#tagMenuRemoveTag').parent().hide();
       $('#openDirectory').parent().hide();
-      $('#openNatively').hide();
+      // File opener menu
+      $('#tagFile').parent().hide();
+      $('#renameFile').parent().hide();
+      $('#duplicateFile').parent().hide();
+      $('#sendFile').parent().hide();
+      $('#deleteFile').parent().hide();
+      $('#openNatively').parent().hide();
+      $('#addTagFileViewer').hide();
     } else if (isWeb) {
       $('#directoryMenuOpenDirectory').parent().hide();
       $('#fileMenuOpenDirectory').parent().hide();
