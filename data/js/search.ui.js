@@ -140,28 +140,31 @@ define(function(require, exports, module) {
 
   function showSearchOptions() {
     resetSearchOptions();
-
+    if (TSCORE.PRO && TSCORE.PRO.Search) {
+      TSCORE.PRO.Search.loadSearchHistory();
+    }
     var leftPosition = $(".col2").position().left + $(".col2").width();
     leftPosition = leftPosition - ($("#searchOptions").width() + 2);
     $("#searchOptions").css({left: leftPosition});
     $("#searchOptions").show();
   }
 
-  //var searchArryQueries = [];
   function startSearch() {
     if (TSCORE.IO.stopWatchingDirectories) {
       TSCORE.IO.stopWatchingDirectories();
     }
-    if (!$('#searchRecursive').prop('checked') && $('#searchBox').val().length > 0) {
+    if ($('#searchBox').val().length > 0) {
       var origSearchVal = $('#searchBox').val(); 
-      if (origSearchVal.length > 0 && (origSearchVal[0] === TSCORE.Search.recursiveSymbol ||  origSearchVal[0] === " ")) {
-        while (origSearchVal.length > 0 && (origSearchVal[0] === TSCORE.Search.recursiveSymbol ||  origSearchVal[0] === " ")) {
-          origSearchVal = origSearchVal.substring(1, origSearchVal.length);
-        }
+      origSearchVal = origSearchVal.split(TSCORE.Search.recursiveSymbol).join().trim();
+
+      if ($('#searchRecursive').prop('checked')) {
+        $('#searchBox').val(origSearchVal);
+      } else {
+        $('#searchBox').val(TSCORE.Search.recursiveSymbol + " " + origSearchVal);
       }
-      $('#searchBox').val(TSCORE.Search.recursiveSymbol + " " + origSearchVal);
+
       if (TSCORE.PRO && TSCORE.PRO.Search) {
-        TSCORE.PRO.Search.loadProSearchQueries(origSearchVal);
+        TSCORE.PRO.Search.addQueryToHistory(origSearchVal);
       }
       TSCORE.Search.nextQuery = $('#searchBox').val();
     }
@@ -186,10 +189,6 @@ define(function(require, exports, module) {
     $('#showSearchButton').hide();
     $('#searchToolbar').show();
     $('#searchBox').focus();
-    if (TSCORE.PRO && TSCORE.PRO.Search) {
-      TSCORE.PRO.Search.setProSearchHistoryOnChange();
-      TSCORE.PRO.Search.loadProSearchQueries("");
-    }
   }
 
   function clearSearchFilter() {
