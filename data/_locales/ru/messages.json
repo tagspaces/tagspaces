@@ -52,7 +52,7 @@
         "description": "Title of save selection button"
     },
     "saveAsMhtmlLabel": {
-        "message": "Сохранить всю страницу",
+        "message": "Сохранить страницу целиком",
         "description": "Title of label."
     },
     "saveFileLabel": {
