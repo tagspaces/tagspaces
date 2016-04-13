@@ -74,7 +74,7 @@ define(function(require, exports, module) {
   }
 
   function filterFileObject(fileEntry, queryObj) {
-    var parentDir = TSCORE.TagUtils.extractParentDirectoryPath(fileEntry.path).toLowerCase();
+    var parentDir = TSCORE.TagUtils.extractContainingDirectoryName(fileEntry.path).toLowerCase();
     var searchIn = fileEntry.name.toLowerCase();
     var fileNameTags;
 
