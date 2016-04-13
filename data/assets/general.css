@@ -818,3 +818,7 @@ label.control-label {
   border-radius: 0px;
 }
 
+.betaTag {
+  color: red;
+  margin-left: 5px;
+}
