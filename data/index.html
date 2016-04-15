@@ -865,52 +865,43 @@
   <div class="dropdown-menu" style="display:block; position:static; width:100%;">
     <li class="dropdown-header">
       <button class="close">&times;</button>
-      <span data-i18n="ns.common:searchAdvanced">Advanced Search</span>
+      <span data-i18n="ns.common:searchAdvanced"></span>
     </li>
     <div style="padding: 10px;">
       <form>
         <div class="form-group">
-          <label for="searchTerms">Search words</label>
-          <input type="text" class="form-control searchFormElements" id="searchTerms" placeholder="Search words separated by space">
+          <label id="searchWords" for="searchTerms" data-i18n="ns.common:searchMenu.searchWords"></label>
+          <input type="text" class="form-control searchFormElements" id="searchTerms" data-i18n="[placeholder]ns.common:searchMenu.searchWordsWithInterval">
         </div>
         <div class="form-group">
-          <label for="searchTags">Tags</label>
-          <input type="text" class="form-control searchFormElements" id="searchTags" placeholder="Tags separated by spaces">
+          <label for="searchTags" data-i18n="ns.common:searchMenu.searchTags"></label>
+          <input type="text" class="form-control searchFormElements" id="searchTags" data-i18n="[placeholder]ns.common:searchMenu.tagsWithInterval">
         </div>
         <div class="form-group">
-          <label for="searchFileType">File Type (e.g. documents, pictures, ...)</label>
+          <label for="searchFileType" data-i18n="ns.common:searchMenu.searchFileTypes"></label>
           <select id="searchFileType" class="form-control searchFormElements disabled" disabled title="TagSpaces PRO feature">
-            <option value="">Specify file type</option>
-            <option value="t:picture">Pictures (JPG,PNG,GIF,...)</option>
-            <option value="t:doc">Documents (PDF,ODF,DOCX,EXL,...)</option>
-            <option value="t:note">Notes (MD,TXT,HTML,...)</option>
-            <option value="t:audio">Audio (OGG,MP3,WAV,...)</option>
-            <option value="t:video">Video files (WEBM,OGV,MP4,...)</option>
-            <option value="t:archive">Archives (ZIP,RAR,TGZ,7Z,...)</option>
+            <option value="" data-i18n="ns.common:searchMenu.fileType"></option>
+            <option value="t:picture" data-i18n="ns.common:searchMenu.pictures"></option>
+            <option value="t:doc" data-i18n="ns.common:searchMenu.documents"></option>
+            <option value="t:note" data-i18n="ns.common:searchMenu.notes"></option>
+            <option value="t:audio" data-i18n="ns.common:searchMenu.audio"></option>
+            <option value="t:video" data-i18n="ns.common:searchMenu.videoFiles"></option>
+            <option value="t:archive" data-i18n="ns.common:searchMenu.archives"></option>
           </select>
         </div>
         <div class="form-group">
-          <label for="searchHistory" class="control-label">History of your last searches</label>
+          <label for="searchHistory" class="control-label" data-i18n="ns.common:searchMenu.searchHistory"></label>
           <select id="searchHistory" class="form-control searchFormElements disabled" disabled title="TagSpaces PRO feature">
-            <!--
-            <option value="">You can find here your last search queries</option>            
-            <option value="t:pictures +topsy">t:pictures +topsy</option>
-            <option value="t:pictures +danny">t:pictures +danny</option>
-            <option value="t:docs +work">t:docs +work</option>
-            <option value="t:archives +client1">t:archives +client1</option>
-            <option value="t:audio u2">t:audio u2</option>
-            <option value="clear">Clear search history</option>
-            -->
           </select>
         </div>
         <div class="checkbox">
           <label>
-            <input type="checkbox" id="searchRecursive" checked>&nbsp;<span>Search in subfolders</span>
+            <input type="checkbox" id="searchRecursive" checked>&nbsp;<span data-i18n="ns.common:searchMenu.searchSubFolder"></span>
           </label>
         </div>
         <div class="form-group" style="margin-bottom: 5px;">
-          <button class="btn btn-default btn-sm" aria-hidden="true" id="resetSearchButton"><i class="fa fa-undo fa-lg"></i>&nbsp;<span>Reset</span></button>
-          <button class="btn btn-primary btn-sm pull-right" aria-hidden="true" id="startSearchButton"><i class="fa fa-search fa-lg"></i>&nbsp;<span>Search</span></button>
+          <button class="btn btn-default btn-sm" aria-hidden="true" id="resetSearchButton"><i class="fa fa-undo fa-lg"></i>&nbsp;<span data-i18n="ns.common:resetBtn"></span></button>
+          <button class="btn btn-primary btn-sm pull-right" aria-hidden="true" id="startSearchButton"><i class="fa fa-search fa-lg"></i>&nbsp;<span data-i18n="ns.common:searchTitle"></span></button>
         </div>
       </form>
 
