@@ -140,7 +140,9 @@ define(function(require, exports, module) {
 
   function showSearchOptions() {
     resetSearchOptions();
-
+    if (TSCORE.PRO && TSCORE.PRO.Search) {
+      TSCORE.PRO.Search.loadSearchHistory();
+    }
     var leftPosition = $(".col2").position().left + $(".col2").width();
     leftPosition = leftPosition - ($("#searchOptions").width() + 2);
     $("#searchOptions").css({left: leftPosition});
@@ -151,11 +153,21 @@ define(function(require, exports, module) {
     if (TSCORE.IO.stopWatchingDirectories) {
       TSCORE.IO.stopWatchingDirectories();
     }
-    if (!$('#searchRecursive').prop('checked') && $('#searchBox').val().length > 0) {
-      $('#searchBox').val(TSCORE.Search.recursiveSymbol + " " + $('#searchBox').val());
+    if ($('#searchBox').val().length > 0) {
+      var origSearchVal = $('#searchBox').val(); 
+      origSearchVal = origSearchVal.split(TSCORE.Search.recursiveSymbol).join().trim();
+
+      if ($('#searchRecursive').prop('checked')) {
+        $('#searchBox').val(origSearchVal);
+      } else {
+        $('#searchBox').val(TSCORE.Search.recursiveSymbol + " " + origSearchVal);
+      }
+
+      if (TSCORE.PRO && TSCORE.PRO.Search) {
+        TSCORE.PRO.Search.addQueryToHistory(origSearchVal);
+      }
       TSCORE.Search.nextQuery = $('#searchBox').val();
     }
-
     $('#searchOptions').hide();
     TSCORE.PerspectiveManager.redrawCurrentPerspective();
   }

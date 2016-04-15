@@ -114,6 +114,10 @@ define(function(require, exports, module) {
       $('#keyBindingInstructions').toggle();
       return false;
     });
+    
+    if (!isElectron) {    
+      $('#watchCurrentDirectoryControls').hide();
+    }
     if (isCordova) {
       $('#trashCanArea').hide();
       $('#exportTagGroupsButton').hide();
@@ -146,6 +150,7 @@ define(function(require, exports, module) {
     $('#loadLocationMetaData').attr('checked', TSCORE.Config.getLoadLocationMeta());
     $('#useSearchInSubfolders').attr('checked', TSCORE.Config.getUseSearchInSubfolders());
     $('#maxSearchResultCount').val(TSCORE.Config.getMaxSearchResultCount());        
+    $('#watchCurrentDirectory').attr('checked', TSCORE.Config.getWatchCurrentDirectory());
     $('#tagsDelimiterInput').val(TSCORE.Config.getTagDelimiter());
     $('#prefixTagContainerInput').val(TSCORE.Config.getPrefixTagContainer());
     $('#nextDocumentKeyBinding').val(TSCORE.Config.getNextDocumentKeyBinding());
@@ -225,6 +230,7 @@ define(function(require, exports, module) {
     TSCORE.Config.setLoadLocationMeta($('#loadLocationMetaData').is(':checked'));
     TSCORE.Config.setUseSearchInSubfolders($('#useSearchInSubfolders').is(':checked'));
     TSCORE.Config.setMaxSearchResultCount($('#maxSearchResultCount').val());    
+    TSCORE.Config.setWatchCurrentDirectory($('#watchCurrentDirectory').is(':checked'));
     TSCORE.Config.setNextDocumentKeyBinding(parseKeyBinding($('#nextDocumentKeyBinding').val()));
     TSCORE.Config.setPrevDocumentKeyBinding(parseKeyBinding($('#prevDocumentKeyBinding').val()));
     TSCORE.Config.setCloseViewerKeyBinding(parseKeyBinding($('#closeDocumentKeyBinding').val()));

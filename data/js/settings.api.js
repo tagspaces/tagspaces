@@ -721,7 +721,17 @@ define(function(require, exports, module) {
     }
     exports.Settings.maxSearchResultCount = value;
   }
-
+  
+  function getWatchCurrentDirectory() {
+    if (exports.Settings.watchCurrentDirectory  === undefined) {
+      exports.Settings.watchCurrentDirectory = exports.DefaultSettings.watchCurrentDirectory;
+    }
+    return exports.Settings.watchCurrentDirectory;
+  }
+  function setWatchCurrentDirectory(value) {
+    exports.Settings.watchCurrentDirectory = value;
+  }
+  
   function getEnableMetaData() {
     if (exports.Settings.enableMetaData === undefined) {
       exports.Settings.enableMetaData = exports.DefaultSettings.enableMetaData;
@@ -1224,7 +1234,9 @@ define(function(require, exports, module) {
   exports.getUseSearchInSubfolders = getUseSearchInSubfolders;
   exports.setUseSearchInSubfolders = setUseSearchInSubfolders;
   exports.getMaxSearchResultCount = getMaxSearchResultCount;
-  exports.setMaxSearchResultCount = setMaxSearchResultCount;  
+  exports.setMaxSearchResultCount = setMaxSearchResultCount;
+  exports.getWatchCurrentDirectory = getWatchCurrentDirectory;
+  exports.setWatchCurrentDirectory = setWatchCurrentDirectory;    
   exports.setEnableMetaData = setEnableMetaData;
   exports.getEnableMetaData = getEnableMetaData;
   exports.getIsWindowMaximized = getIsWindowMaximized;

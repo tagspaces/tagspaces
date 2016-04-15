@@ -430,15 +430,17 @@ define(function(require, exports, module) {
     var $fileTitle = $('#fileTitle');
     $fileTitle.editable('destroy');
     $fileTitle.text(title);
-    $fileTitle.editable({
-      type: 'text',
-      //placement: 'bottom',
-      title: 'Change Title',
-      mode: 'inline',
-      success: function(response, newValue) {
-        TSCORE.TagUtils.changeTitle(_openedFilePath, newValue);
-      }
-    });
+    if (!isChrome) {
+      $fileTitle.editable({
+        type: 'text',
+        //placement: 'bottom',
+        title: 'Change Title',
+        mode: 'inline',
+        success: function(response, newValue) {
+          TSCORE.TagUtils.changeTitle(_openedFilePath, newValue);
+        }
+      });
+    }
     // Generate tag & ext buttons
     // Appending tag buttons
     var tags = TSCORE.TagUtils.extractTags(_openedFilePath);

@@ -17,7 +17,10 @@ define(function(require, exports, module) {
 
   var TSCORE = require("tscore");
   var TSPOSTIO = require("tspostioapi");
-  var attachFastClick = require('cordova/fastclick/fastclick.min');
+
+  // not needed according to https://github.com/ftlabs/fastclick#when-it-isnt-needed
+  //var attachFastClick = require('cordova/fastclick/fastclick.min');
+
   var fsRoot;
   var urlFromIntent;
   var widgetAction;
@@ -92,7 +95,7 @@ define(function(require, exports, module) {
       });
     }
 
-    attachFastClick(document.body);
+    //attachFastClick(document.body);
     getFileSystem();
 
     if (isCordovaiOS) {
