@@ -71,7 +71,7 @@
         </div>
         <div class="btn-toolbar" id="locationSwitch">
           <button type="button" class="btn btn-default" id="selectLocation" data-toggle="dropdown">
-            <span class="pull-left" id="locationName">Choose Location</span>
+              <span class="pull-left" id="locationName" data-i18n="ns.common:chooseLocation"></span>
             <span class="fa fa-caret-down pull-right" style="padding-top: 5px;"></span>
           </button>
           <ul class="dropdown-menu" id="locationsList"></ul>
@@ -204,7 +204,7 @@
           <div id="mainTopMenu" class="input-group">
             <button type="button" id="perspectiveSwitcherButton" class="btn btn-link dropdown-toggle"
                     data-toggle="dropdown"><i id="currentPerspectitveIcon" class="fa fa-film"></i>&nbsp;
-              <span id="currentPerspectitveName">Perspectives</span>&nbsp;<span class="caret"></span>
+              <span id="currentPerspectitveName" data-i18n="ns.common:perspectivesDropDown"></span>&nbsp;<span class="caret"></span>
             </button>
             <ul class="dropdown-menu pull-right" id="perspectiveSwitcher"></ul>
           </div>
@@ -374,40 +374,39 @@
       <div class="modal-body form">
         <form role="form" data-toggle="validator" id="formFileCreate">
           <div class="form-group">
-            <label class="control-label" for="newFileName" data-i18n="ns.dialogs:newFileTitle">Title</label>
+            <label class="control-label" for="newFileName" data-i18n="ns.dialogs:newFileTitle"></label>
             <input type="text" id="newFileName" class="form-control" placeholder="Title of the file"
                    pattern='^([^#/\\:*?<>|"]){1,}$' data-i18n="[data-error]ns.dialogs:fileNameHelp"/>
 
             <p class="help-block with-errors"></p>
           </div>
           <div class="form-group">
-            <label class="control-label" for="newFileNameTags" data-i18n="ns.dialogs:newFileTags">Tags</label>
+            <label class="control-label" for="newFileNameTags" data-i18n="ns.dialogs:newFileTags"></label>
             <input type="text" id="newFileNameTags" name="newFileNameTags" autocomplete="off" class="form-control"
                    placeholder="List of tags">
 
-            <p class="help-block" data-i18n="ns.dialogs:editTagNamesRestrictionsHelp">Tags should have a minimum length
-              of 2 characters and should not contain special characters such as spaces, #, / ,\ and other.</p>
+            <p class="help-block" data-i18n="ns.dialogs:editTagNamesRestrictionsHelp"></p>
           </div>
           <div class="form-group">
-            <label class="control-label" for="fileTypeChooser" data-i18n="ns.dialogs:newFileType">Type</label><br>
+            <label class="control-label" for="fileTypeChooser" data-i18n="ns.dialogs:newFileType"></label><br>
 
             <div class="btn-group" data-toggle="buttons" id="fileTypeChooser">
               <label class="btn btn-default active" id="txtFileTypeButton" title="Create a TXT File">
-                <input type="radio" name="options"> <strong data-i18n="ns.dialogs:newFileTypePlain">Plain Text</strong>
+                <input type="radio" name="options"> <strong data-i18n="ns.dialogs:newFileTypePlain"></strong>
                 (.txt)
               </label>
               <label class="btn btn-default" id="htmlFileTypeButton" title="Create a HTML File">
-                <input type="radio" name="options"> <strong data-i18n="ns.dialogs:newFileTypeRich">Rich Text</strong>
+                <input type="radio" name="options"> <strong data-i18n="ns.dialogs:newFileTypeRich"></strong>
                 (.html)
               </label>
               <label class="btn btn-default" id="mdFileTypeButton" title="Create a MarkDown File">
-                <input type="radio" name="options"> <strong data-i18n="ns.dialogs:newFileTypeMD">MarkDown</strong> (.md)
+                <input type="radio" name="options"> <strong data-i18n="ns.dialogs:newFileTypeMD"></strong> (.md)
               </label>
             </div>
           </div>
           <div class="checkbox">
             <label>
-              <input type="checkbox" id="tagWithCurrentDate">&nbsp;<span data-i18n="ns.dialogs:tagWithCurrentDate">Tag with current date (e.g. 20131208 for the 8th of December, 2013)</span>
+              <input type="checkbox" id="tagWithCurrentDate">&nbsp;<span data-i18n="ns.dialogs:tagWithCurrentDate"></span>
             </label>
           </div>
         </form>
@@ -870,33 +869,33 @@
     <div style="padding: 10px;">
       <form>
         <div class="form-group">
-          <label id="searchWords" for="searchTerms" data-i18n="ns.common:searchMenu.searchWords"></label>
-          <input type="text" class="form-control searchFormElements" id="searchTerms" data-i18n="[placeholder]ns.common:searchMenu.searchWordsWithInterval">
+          <label id="searchWords" for="searchTerms" data-i18n="ns.common:searchWords"></label>
+          <input type="text" class="form-control searchFormElements" id="searchTerms" data-i18n="[placeholder]ns.common:searchWordsWithInterval">
         </div>
         <div class="form-group">
-          <label for="searchTags" data-i18n="ns.common:searchMenu.searchTags"></label>
-          <input type="text" class="form-control searchFormElements" id="searchTags" data-i18n="[placeholder]ns.common:searchMenu.tagsWithInterval">
+          <label for="searchTags" data-i18n="ns.common:searchTags"></label>
+          <input type="text" class="form-control searchFormElements" id="searchTags" data-i18n="[placeholder]ns.common:tagsWithInterval">
         </div>
         <div class="form-group">
-          <label for="searchFileType" data-i18n="ns.common:searchMenu.searchFileTypes"></label>
+          <label for="searchFileType" data-i18n="ns.common:searchFileTypes"></label>
           <select id="searchFileType" class="form-control searchFormElements disabled" disabled title="TagSpaces PRO feature">
-            <option value="" data-i18n="ns.common:searchMenu.fileType"></option>
-            <option value="t:picture" data-i18n="ns.common:searchMenu.pictures"></option>
-            <option value="t:doc" data-i18n="ns.common:searchMenu.documents"></option>
-            <option value="t:note" data-i18n="ns.common:searchMenu.notes"></option>
-            <option value="t:audio" data-i18n="ns.common:searchMenu.audio"></option>
-            <option value="t:video" data-i18n="ns.common:searchMenu.videoFiles"></option>
-            <option value="t:archive" data-i18n="ns.common:searchMenu.archives"></option>
+            <option value="" data-i18n="ns.common:fileType"></option>
+            <option value="t:picture" data-i18n="ns.common:pictures"></option>
+            <option value="t:doc" data-i18n="ns.common:documents"></option>
+            <option value="t:note" data-i18n="ns.common:notes"></option>
+            <option value="t:audio" data-i18n="ns.common:audio"></option>
+            <option value="t:video" data-i18n="ns.common:videoFiles"></option>
+            <option value="t:archive" data-i18n="ns.common:archives"></option>
           </select>
         </div>
         <div class="form-group">
-          <label for="searchHistory" class="control-label" data-i18n="ns.common:searchMenu.searchHistory"></label>
+          <label for="searchHistory" class="control-label" data-i18n="ns.common:searchHistory"></label>
           <select id="searchHistory" class="form-control searchFormElements disabled" disabled title="TagSpaces PRO feature">
           </select>
         </div>
         <div class="checkbox">
           <label>
-            <input type="checkbox" id="searchRecursive" checked>&nbsp;<span data-i18n="ns.common:searchMenu.searchSubFolder"></span>
+            <input type="checkbox" id="searchRecursive" checked>&nbsp;<span data-i18n="ns.common:searchSubFolder"></span>
           </label>
         </div>
         <div class="form-group" style="margin-bottom: 5px;">
