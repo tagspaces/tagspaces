@@ -70,7 +70,11 @@ define(function(require, exports, module) {
       addFileInputName = decodeURIComponent(file.name);
       var reader = new FileReader();
       reader.onload = onFileReadComplete;
-      reader.readAsArrayBuffer(file);
+      if (isCordova) {
+        reader.readAsDataURL(file);			
+      } else {
+        reader.readAsArrayBuffer(file);
+      }
     });
 
     $('#openLeftPanel').click(function() {

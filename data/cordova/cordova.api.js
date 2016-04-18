@@ -624,11 +624,16 @@ define(function(require, exports, module) {
           function(entry) {
             entry.createWriter(
               function(writer) {
+                var string = content.split(';base64,');
+                var type = string.length > 1 ? string[0].split(':')[1] : '';
+                var newContent = string.length > 1 ? string[1] : string[0];   
+                var data = TSCORE.Utils.b64toBlob(newContent, type, 512);
                 writer.onwriteend = function(evt) {
                   //resolve(fsRoot.fullPath + "/" + filePath);
                   resolve(isFileNew);
                 };
-                writer.write(content);
+                //writer.write(content);
+                writer.write(data);		
               },
               function() {
                 reject("error creating writter file: " + filePath);
@@ -658,7 +663,7 @@ define(function(require, exports, module) {
    * @returns {Promise.<Success, Error>}
    */
   function saveTextFilePromise(filePath, content, overWrite) {
-    console.log("Saving file: " + filePath);
+    console.log("Saving TEXT file: " + filePath);
     // Handling the UTF8 support for text files
     var UTF8_BOM = "\ufeff";
     if (content.indexOf(UTF8_BOM) === 0) {
@@ -681,7 +686,8 @@ define(function(require, exports, module) {
    */
   function saveBinaryFilePromise(filePath, content, overWrite) {
     console.log("Saving binary file: " + filePath);
-    var dataView = new Int8Array(content);
+    //var dataView = new Int8Array(content);
+    var dataView = content;
     return saveFilePromise(filePath, dataView, overWrite);
   }
 
