@@ -111,6 +111,37 @@ define(function(require, exports, module) {
     return _.uniq(TSCORE.selectedFiles);
   }
 
+  /**
+   * Convert 64bit url string to Blob
+   * @name b64toBlob
+   * @method
+   * @memberof TSCORE.Utils
+   * @param {string} b64Data - the 64bit url string which should be converted to Blob
+   * @param {string} contentType - content type of blob
+   * @param {int} sliceSize - optional size of slices if omited 512 is used as default
+   * @returns {Blob}
+  */
+  function b64toBlob(b64Data, contentType, sliceSize) {
+    contentType = contentType || '';
+    sliceSize = sliceSize || 512;
+    
+    var byteCharacters = atob(b64Data);
+    var byteArrays = [];
+    
+    for (var offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+      var slice = byteCharacters.slice(offset, offset + sliceSize);
+      var byteNumbers = new Array(slice.length);
+      for (var i = 0; i < slice.length; i++) {
+        byteNumbers[i] = slice.charCodeAt(i);
+      }
+      var byteArray = new Uint8Array(byteNumbers);
+      byteArrays.push(byteArray);
+    }
+    var blob = new Blob(byteArrays, {type: contentType});
+    return blob;
+  }
+
+
   exports.arrayBufferToDataURL = arrayBufferToDataURL;
   exports.base64ToArrayBuffer = base64ToArrayBuffer;
   exports.dataURLtoBlob = dataURLtoBlob;
@@ -124,5 +155,6 @@ define(function(require, exports, module) {
   exports.isVisibleOnScreen = isVisibleOnScreen;
   exports.getRandomInt = getRandomInt;
   exports.getUniqueSelectedFiles = getUniqueSelectedFiles;
+  exports.b64toBlob = b64toBlob;
 
 });
