@@ -30,9 +30,9 @@ var utils = require('sdk/window/utils');
 //var os = Cc["@mozilla.org/xre/app-info;1"].getService(Ci.nsIXULRuntime).OS;
 var workers = [];
 var toolbarButton;
-if (require("sdk/system").staticArgs.disableStrict) {
+/*if (require("sdk/system").staticArgs.disableStrict) {
   require("sdk/preferences/service").set("javascript.options.strict", false);
-}
+}*/
 exports.main = function(options, callbacks) {
   console.log("Load reason: " + options.loadReason);
   var mainUIMod = require("sdk/page-mod"); // page-mod
