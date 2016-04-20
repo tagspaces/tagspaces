@@ -148,6 +148,10 @@ Licensed under MIT https://github.com/tobiasahlin/SpinKit/blob/master/LICENSE
     font-size: 14px;
 }
 
+.select2-container {
+  border: 1px solid #f4f4f4 !important;
+}
+
 .select2-search-choice-close {
     background-position: right -11px;
 }

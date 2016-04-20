@@ -9,5 +9,6 @@
 @import '../libs/x-editable/dist/bootstrap3-editable/css/bootstrap-editable.css';
 @import '../libs/animate.css/animate.min.css';
 @import 'general.css';
+@import 'core.css';
 @import 'layout.css';
 @import 'components.css';
