@@ -14,14 +14,14 @@ if (PRODUCTION == "true") {
 }
 // Import the needed APIs
 var data = require('sdk/self').data; // self
-var ioutils = require("ioutils");
-var settings = require("settings");
+var ioutils = require("./ioutils");
+var settings = require("./settings");
 var request = require("sdk/request"); // request
 var tabs = require("sdk/tabs");
 var unload = require('sdk/system/unload');
 var Panel = require('sdk/panel').Panel;
 var selection = require("sdk/selection");
-var capture = require("capture");
+var capture = require("./capture");
 //var userstyles = require("userstyles");
 var {
   Cc, Ci, Cu
@@ -64,7 +64,7 @@ exports.main = function(options, callbacks) {
     }
   });
   // Adding menuitem to the tools menu
-  var menuitem = require("menuitems").Menuitem({
+  var menuitem = require("./menuitems").Menuitem({
     id: "TagSpacesMenuItem",
     menuid: "menu_ToolsPopup",
     label: "TagSpaces",
@@ -80,13 +80,11 @@ exports.main = function(options, callbacks) {
 };
 
 function installToolbarButton() {
-//  if (typeof(toolbarButton.moveTo) === 'function') {
-    toolbarButton.moveTo({
-      toolbarID: "nav-bar",
-      insertbefore: "home-button",
-      forceMove: false
-    });    
-//  }
+  toolbarButton.moveTo({
+    toolbarID: "nav-bar",
+    insertbefore: "home-button",
+    forceMove: false
+  });
 }
 
 function openTagSpacesInNewTab() {
@@ -98,23 +96,6 @@ function openTagSpacesInNewTab() {
 }
 
 function initToobarButton() {
-  // Toolbar icon with badge
-  /*toolbarButton = require('toolbarbutton').ToolbarButton({
-      id: "tagspaces",
-      label: "TagSpaces",
-      tooltiptext: "TagSpaces",
-      onClick: openTagSpacesInNewTab
-  });
-  toolbarButton.badge = "1.8.6";
-
-  // Loading style for the toolbar icon with badge
-  userstyles.load(data.url("mozilla/overlay.css"));
-  if (os == "Linux") {
-      userstyles.load(data.url("mozilla/overlay-linux.css"));
-  }
-  else if (os == "Darwin") {
-      userstyles.load(data.url("mozilla/overlay-darwin.css"));
-  }*/
   var tagspacesPanel = new Panel({
     width: 530,
     height: 410,
