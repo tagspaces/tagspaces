@@ -180,6 +180,7 @@ define(function(require, exports, module) {
   }
 
   function cleanViewer() {
+    leaveFullScreen();
     TSCORE.closeFileViewer();
     TSCORE.PerspectiveManager.clearSelectedFiles();
 
