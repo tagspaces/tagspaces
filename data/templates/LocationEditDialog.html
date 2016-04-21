@@ -1,12 +1,12 @@
 <div id="dialogLocationEdit" class="modal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
-                <h4 data-i18n="ns.dialogs:editLocationTitle"></h4>
-            </div>
-            <div class="modal-body form">
-                <!--form role="form" data-toggle="validator" id="formLocationEdit"-->
+        <form role="form" data-toggle="validator" id="formLocationEdit">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
+                    <h4 data-i18n="ns.dialogs:editLocationTitle"></h4>
+                </div>
+                <div class="modal-body form">
                     <div class="form-group">
                         <label class="control-label" for="folderLocation2" data-i18n="ns.dialogs:editLocationPath">Location Path</label>
                         <div class="input-group">
@@ -37,14 +37,14 @@
                             </label>
                         </div>
                     </div>
-                <!--/form-->
-            </div>
-            <div class="modal-footer">
-                <button id="deleteLocationButton" class="btn btn-danger pull-left" aria-hidden="true" data-i18n="ns.dialogs:removeLocation"></button>
-                <button class="btn cancelButton" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times fa-lg"></i></button>
-                <button id="saveLocationButton" class="btn btn-primary" data-dismiss="modal" aria-hidden="true"><i class="fa fa-check fa-lg"></i></button>
-            </div>
-        </div><!-- /.modal-content -->
+                </div>
+                <div class="modal-footer">
+                    <button id="deleteLocationButton" class="btn btn-danger pull-left" aria-hidden="true" data-i18n="ns.dialogs:removeLocation"></button>
+                    <button class="btn cancelButton" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times fa-lg"></i></button>
+                    <button id="saveLocationButton" class="btn btn-primary" data-dismiss="modal" aria-hidden="true"><i class="fa fa-check fa-lg"></i></button>
+                </div>
+            </div><!-- /.modal-content -->
+        </form>
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
  
