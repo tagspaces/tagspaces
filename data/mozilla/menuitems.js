@@ -62,7 +62,7 @@ exports.Menuitem = function Menuitem(options) {
       }*/
 
       // add unloader
-      require("unload+").unload(function() {
+      require("./unload+").unload(function() {
         menuitem.parentNode.removeChild(menuitem);
       }, window);
     }

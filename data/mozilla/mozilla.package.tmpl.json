@@ -11,7 +11,7 @@
   "id": "jid1-FBaMKxTifTSahQ@jetpack",
   "main": "lib/main.js",
   "description": "@@APPDESCRIPTION",
-  "icon": "data/assets/icon64.png",
+  "icon": "resource://jid1-fbamkxtiftsahq-at-jetpack/data/assets/icon48.png",
   "homepage": "http://tagspaces.org",
   "permissions": {
     "private-browsing": false

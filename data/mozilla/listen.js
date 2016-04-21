@@ -37,7 +37,7 @@
 
 "use strict";
 
-var {unload} = require("unload+");
+var {unload} = require("./unload+");
 
 /**
  * Helper that adds event listeners and remembers to remove on unload
