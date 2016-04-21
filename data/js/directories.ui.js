@@ -585,10 +585,16 @@ define(function(require, exports, module) {
   function showLocationEditDialog(name, path) {
     require(['text!templates/LocationEditDialog.html'], function(uiTPL) {
       var $dialogLocationEdit = $('#dialogLocationEdit');
+
       // Check if dialog already created
       if ($dialogLocationEdit.length < 1) {
         var uiTemplate = Handlebars.compile(uiTPL);
         $('body').append(uiTemplate());
+
+        $('#formLocationEdit').submit(function(e) {
+          e.preventDefault();
+        });
+
         if (isWeb) {
           $('#selectLocalDirectory2').attr('style', 'visibility: hidden');
         } else {
@@ -597,13 +603,52 @@ define(function(require, exports, module) {
             selectLocalDirectory();
           });
         }
+
         $('#saveLocationButton').on('click', function() {
-          editLocation();
+          $('#formLocationEdit').validator('validate');
+          if ($(this).hasClass('disabled')) {
+            return false;
+          } else {
+            editLocation();
+          }
         });
+
         $('#deleteLocationButton').on('click', function() {
           showDeleteFolderConnectionDialog();
         });
+
+        $('#formLocationEdit').validator();
+        $('#formLocationEdit').on('invalid.bs.validator', function() {
+          $('#saveLocationButton').prop('disabled', true);
+        });
+        $('#formLocationEdit').on('valid.bs.validator', function() {
+          $('#saveLocationButton').prop('disabled', false);
+        });
+
+        $('#dialogLocationEdit').on('shown.bs.modal', function() {
+          $('#formLocationEdit').validator('destroy');
+          $('#formLocationEdit').validator();
+        });
+
+        $('#dialogLocationEdit').draggable({
+          handle: ".modal-header"
+        });
+
+        $('#connectionName2').change(function() {
+          $('#formLocationEdit').validator('validate');
+        });
+
+        $('#folderLocation2').change(function() {
+          $('#formLocationEdit').validator('validate');
+        });
+
+        if (isCordova) {
+          $('#folderLocation2').attr('placeholder', 'e.g.: DCIM/Camera');
+        } else if (isWeb) {
+          $('#folderLocation2').attr('placeholder', 'e.g.: /owncloud/remote.php/webdav/');
+        }
       }
+
       var $connectionName2 = $('#connectionName2');
       var $folderLocation2 = $('#folderLocation2');
       var $locationPerspective2 = $('#locationPerspective2');
@@ -623,37 +668,13 @@ define(function(require, exports, module) {
       $connectionName2.attr('oldName', name);
       $folderLocation2.val(path);
       $('#dialogLocationEdit').i18n();
-      if (isCordova) {
-        $('#folderLocation2').attr('placeholder', 'e.g.: DCIM/Camera');
-      } else if (isWeb) {
-        $('#folderLocation2').attr('placeholder', 'e.g.: /owncloud/remote.php/webdav/');
-      }
-      $('#formLocationEdit').validator();
-      $('#formLocationEdit').submit(function(e) {
-        e.preventDefault();
-        //if ($('#saveLocationButton').prop('disabled') === false) {
-        //  $('#saveLocationButton').click();
-        //}
-      });
-      $('#formLocationEdit').on('invalid.bs.validator', function() {
-        $('#saveLocationButton').prop('disabled', true);
-      });
-      $('#formLocationEdit').on('valid.bs.validator', function() {
-        $('#saveLocationButton').prop('disabled', false);
-      });
-      // Auto focus disabled due usability issue on mobiles
-      /*$('#dialogLocationEdit').on('shown.bs.modal', function() {
-        $('#folderLocation2').focus();
-      });*/
+
       var isDefault = isDefaultLocation(path);
       $('#defaultLocationEdit').prop('checked', isDefault);
-      //$('#defaultLocationEdit').attr('disabled', isDefault);
+
       $('#dialogLocationEdit').modal({
         backdrop: 'static',
         show: true
-      });
-      $('#dialogLocationEdit').draggable({
-        handle: ".modal-header"
       });
     });
   }
@@ -661,10 +682,15 @@ define(function(require, exports, module) {
   function showLocationCreateDialog() {
     require(['text!templates/LocationCreateDialog.html'], function(uiTPL) {
       var $dialogCreateFolderConnection = $('#dialogCreateFolderConnection');
+
       // Check if dialog already created
       if ($dialogCreateFolderConnection.length < 1) {
         var uiTemplate = Handlebars.compile(uiTPL);
         $('body').append(uiTemplate());
+
+        $('#formLocationCreate').submit(function(e) {
+          e.preventDefault();
+        });
 
         if (isWeb) {
           $('#selectLocalDirectory').attr('style', 'visibility: hidden');
@@ -675,7 +701,6 @@ define(function(require, exports, module) {
           });
         }
 
-        $('#createFolderConnectionButton').off();
         $('#createFolderConnectionButton').on('click', function() {
           $('#formLocationCreate').validator('validate');
           if ($(this).hasClass('disabled')) {
@@ -684,6 +709,36 @@ define(function(require, exports, module) {
             createLocation();
           }
         });
+
+        $('#formLocationCreate').on('invalid.bs.validator', function() {
+          $('#createFolderConnectionButton').prop('disabled', true);
+        });
+        $('#formLocationCreate').on('valid.bs.validator', function() {
+          $('#createFolderConnectionButton').prop('disabled', false);
+        });
+
+        $('#dialogCreateFolderConnection').on('shown.bs.modal', function() {
+          $('#formLocationCreate').validator('destroy');
+          $('#formLocationCreate').validator();
+        });
+
+        $('#dialogCreateFolderConnection').draggable({
+          handle: ".modal-header"
+        });
+
+        $('#folderLocation').change(function() {
+          $('#formLocationCreate').validator('validate');
+        });
+
+        $('#connectionName').change(function() {
+          $('#formLocationCreate').validator('validate');
+        });
+
+        if (isCordova) {
+          $('#folderLocation').attr('placeholder', 'e.g.: DCIM/Camera');
+        } else if (isWeb) {
+          $('#folderLocation').attr('placeholder', 'e.g.: /owncloud/remote.php/webdav/');
+        }
       }
 
       $('#locationPerspective').empty();
@@ -695,42 +750,14 @@ define(function(require, exports, module) {
       $('#connectionName').val('');
       $('#folderLocation').val('');
       $('#dialogCreateFolderConnection').i18n();
-      if (isCordova) {
-        $('#folderLocation').attr('placeholder', 'e.g.: DCIM/Camera');
-      } else if (isWeb) {
-        $('#folderLocation').attr('placeholder', 'e.g.: /owncloud/remote.php/webdav/');
-      }
+
       var enableDefaultlocation = (TSCORE.Config.getDefaultLocation() === "");
       $('#defaultLocation').prop('checked', enableDefaultlocation);
       $('#defaultLocation').prop('disabled', enableDefaultlocation);
 
-      $('#formLocationCreate').submit(function(e) {
-        e.preventDefault();
-        //if ($('#createFolderConnectionButton').prop('disabled') === false) {
-        //  $('#createFolderConnectionButton').click();
-        //}
-      });
-      $('#formLocationCreate').off();
-
-      $('#formLocationCreate').on('invalid.bs.validator', function() {
-        $('#createFolderConnectionButton').prop('disabled', true);
-      });
-      $('#formLocationCreate').on('valid.bs.validator', function() {
-        $('#createFolderConnectionButton').prop('disabled', false);
-      });
-
-      $('#dialogCreateFolderConnection').off();
-      $('#dialogCreateFolderConnection').on('shown.bs.modal', function() {
-        //$('#folderLocation').focus();
-        $('#formLocationCreate').validator('destroy');
-        $('#formLocationCreate').validator();
-      });
       $('#dialogCreateFolderConnection').modal({
         backdrop: 'static',
         show: true
-      });
-      $('#dialogCreateFolderConnection').draggable({
-        handle: ".modal-header"
       });
     });
   }
@@ -747,7 +774,9 @@ define(function(require, exports, module) {
             TSCORE.showSuccessDialog("Directory created successfully.");
             TSCORE.navigateToDirectory(dirPath);
             TSCORE.hideWaitingDialog();
+            TSCORE.hideLoadingAnimation();
           }, function(error) {
+            TSCORE.hideWaitingDialog();
             TSCORE.hideLoadingAnimation();
             console.error("Creating directory " + dirPath + " failed" + error);
             if (error) {
