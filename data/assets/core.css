@@ -540,3 +540,7 @@ input a.resetFilter {
   color: red;
   margin-left: 5px;
 }
+
+.parentDirectoryButton {
+  max-width: 30px !important;
+}

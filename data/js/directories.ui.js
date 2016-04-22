@@ -19,29 +19,32 @@ define(function(require, exports, module) {
   var alternativeDirectoryNavigatorTmpl = Handlebars.compile(
     '{{#each dirHistory}}' +
     '<div class="btn-group">' +
-        '<button class="btn btn-link dropdown-toggle" data-menu="{{@index}}">' +
-            '<div class="altNavFolderTitle">{{name}}&nbsp;&nbsp;<i class="fa fa-angle-right" style="font-size: 16px;"></i></div>'  +
-        '</button>' +
-        '<div class="dropdown clearfix dirAltNavMenu" id="dirMenu{{@index}}" data-path="{{path}}">' +
-            '<ul role="menu" class="dropdown-menu">' +
-                '<li class="dropdown-header"><button class="close">&times;</button><span data-i18n="ns.common:actionsForDirectory2"></span>&nbsp;"{{name}}"</li>' +
-                '<li><a class="btn btn-link reloadCurrentDirectory" data-path="{{path}}" style="text-align: left"><i class="fa fa-refresh fa-fw fa-lg"></i><span data-i18n="ns.common:reloadCurrentDirectory"></span></a></li>' +
-                '<li><a class="btn btn-link createSubdirectory" data-path="{{path}}" style="text-align: left"><i class="fa fa-folder-o fa-fw fa-lg"></i><span data-i18n="ns.common:createSubdirectory"></span></a></li>' +
-                '<li><a class="btn btn-link renameDirectory" data-path="{{path}}" style="text-align: left"><i class="fa fa-paragraph fa-fw fa-lg"></i><span data-i18n="ns.common:renameDirectory"></span></a></li>' +
-                '<li class="divider" style="width: 100%"></li>' +
-                '<li class="dropdown-header"><span data-i18n="ns.common:subfodersOfDirectory2"></span>&nbsp;"{{name}}"</li>' +
-                '{{#if children}}' +
-                '<div class="dirButtonContainer">{{#each children}}' +
-                '<button class="btn dirButton" data-path="{{path}}" title="{{path}}">' +
-                '<i class="fa fa-folder-o"></i>&nbsp;{{name}}</button>' +
-                '{{/each}}</div>' +
-                '{{else}}' +
-                '<div><span data-i18n="ns.common:noSubfoldersFound"></span></div>' +
-                '{{/if}}' +
-                //'<li class="divider" style="width: 100%"></li>' +
-                '<li class="dropdown-header"><span data-i18n="ns.common:tagsOfDirectory2">Directory Tags</span></li>' +
-            '</ul>' +
-        '</div>' +
+      '<button class="btn btn-link dropdown-toggle" data-menu="{{@index}}">' +
+        '<div class="altNavFolderTitle">{{name}}&nbsp;&nbsp;<i class="fa fa-angle-right" style="font-size: 16px;"></i></div>'  +
+      '</button>' +
+      '<div class="dropdown clearfix dirAltNavMenu" id="dirMenu{{@index}}" data-path="{{path}}">' +
+        '<ul role="menu" class="dropdown-menu">' +
+          '<li class="dropdown-header"><button class="close">&times;</button><span data-i18n="ns.common:actionsForDirectory2"></span>&nbsp;"{{name}}"</li>' +
+          '<li><a class="btn btn-link reloadCurrentDirectory" data-path="{{path}}" style="text-align: left"><i class="fa fa-refresh fa-fw fa-lg"></i><span data-i18n="ns.common:reloadCurrentDirectory"></span></a></li>' +
+          '<li><a class="btn btn-link createSubdirectory" data-path="{{path}}" style="text-align: left"><i class="fa fa-folder-o fa-fw fa-lg"></i><span data-i18n="ns.common:createSubdirectory"></span></a></li>' +
+          '<li><a class="btn btn-link renameDirectory" data-path="{{path}}" style="text-align: left"><i class="fa fa-paragraph fa-fw fa-lg"></i><span data-i18n="ns.common:renameDirectory"></span></a></li>' +
+          '<li class="divider" style="width: 100%"></li>' +
+          '<li class="dropdown-header"><span data-i18n="ns.common:subfodersOfDirectory2"></span>&nbsp;"{{name}}"</li>' +
+          '<div class="dirButtonContainer">' +
+          '<button class="btn dirButton parentDirectoryButton" data-path="{{path}}/.." title="Go to parent folder">' +
+          '<i class="fa fa-level-up"></i></button>' +
+          '{{#if children}}' +
+            '{{#each children}}' +
+            '<button class="btn dirButton" data-path="{{path}}" title="{{path}}">' +
+            '<i class="fa fa-folder-o"></i>&nbsp;{{name}}</button>' +
+            '{{/each}}' +
+          '{{else}}' +
+          '<div>&nbsp;&nbsp;&nbsp;<span data-i18n="ns.common:noSubfoldersFound"></span></div>' +
+          '{{/if}}' +
+          '</div>' +
+          '<li class="dropdown-header"><span data-i18n="ns.common:tagsOfDirectory2">Directory Tags</span></li>' +
+        '</ul>' +
+      '</div>' +
     '</div>' +
     '{{/each}}'
   );
@@ -49,27 +52,31 @@ define(function(require, exports, module) {
   var mainDirectoryNavigatorTmpl = Handlebars.compile(
     '<div>{{#each dirHistory}}' +
     '<div class="accordion-group disableTextSelection">' +
-        '<div class="accordion-heading btn-group flexLayout" key="{{path}}">' +
-            '<button class="btn btn-link btn-lg directoryIcon" data-toggle="collapse" data-target="#dirButtons{{@index}}" key="{{path}}" title="{{../toggleDirectory}}">' +
-                '<i class="fa fa-folder fa-fw"></i>' +
-            '</button>' +
-            '<button class="btn btn-link directoryTitle ui-droppable flexMaxWidth" key="{{path}}" title="{{path}}">{{name}}</button>' +
-            '<button class="btn btn-link btn-lg directoryActions" key="{{path}}" title="{{../directoryOperations}}">' +
-                '<b class="fa fa-ellipsis-v"></b>' +
-            '</button>' +
+      '<div class="accordion-heading btn-group flexLayout" key="{{path}}">' +
+        '<button class="btn btn-link btn-lg directoryIcon" data-toggle="collapse" data-target="#dirButtons{{@index}}" key="{{path}}" title="{{../toggleDirectory}}">' +
+          '<i class="fa fa-folder fa-fw"></i>' +
+        '</button>' +
+        '<button class="btn btn-link directoryTitle ui-droppable flexMaxWidth" key="{{path}}" title="{{path}}">{{name}}</button>' +
+        '<button class="btn btn-link btn-lg directoryActions" key="{{path}}" title="{{../directoryOperations}}">' +
+          '<b class="fa fa-ellipsis-v"></b>' +
+        '</button>' +
+      '</div>' +
+      '<div class="accordion-body collapse in" id="dirButtons{{@index}}">' +
+        '<div class="accordion-inner" id="dirButtonsContent{{@index}}" style="padding: 4px;">' +
+          '<div class="dirButtonContainer">' +
+            '<button class="btn btn-sm dirButton parentDirectoryButton" key="{{path}}/.." title="Go to parent folder">' +
+            '<i class="fa fa-level-up"></i></button>' +
+            '{{#if children}}' +
+            '{{#each children}}' +
+              '<button class="btn btn-sm dirButton ui-droppable" key="{{path}}" title="{{path}}">' +
+                '<div><i class="fa fa-folder-o"></i>&nbsp;{{name}}</div></button>' +
+            '{{/each}}' +
+            '{{else}}' +
+              '<div>&nbsp;&nbsp;&nbsp;{{../../noSubfoldersFound}}</div>' +
+            '{{/if}}' +
+          '</div>' +
         '</div>' +
-        '<div class="accordion-body collapse in" id="dirButtons{{@index}}">' +
-            '<div class="accordion-inner" id="dirButtonsContent{{@index}}" style="padding: 4px;">' +
-                '{{#if children}}' +
-                '<div class="dirButtonContainer">{{#each children}}' +
-                    '<button class="btn btn-sm dirButton ui-droppable" key="{{path}}" title="{{path}}">' +
-                        '<div><i class="fa fa-folder-o"></i>&nbsp;{{name}}</div></button>' +
-                '{{/each}}</div>' +
-                '{{else}}' +
-                    '<div>{{../../noSubfoldersFound}}</div>' +
-                '{{/if}}' +
-            '</div>' +
-        '</div>' +
+      '</div>' +
     '</div>' +
     '{{/each}}</div>'
   );
@@ -420,6 +427,15 @@ define(function(require, exports, module) {
 
   function navigateToDirectory(directoryPath) {
     console.log('Navigating to directory: ' + directoryPath);
+    var indexOfDots = directoryPath.indexOf("/..");
+    if (indexOfDots === (directoryPath.length - 3)) {
+      directoryPath = TSCORE.TagUtils.extractParentDirectoryPath(directoryPath.substring(0, indexOfDots));
+    }
+
+//    if (directoryPath.length < 2) {
+//      return;
+//    }
+
     // Clearing search results on directory change
     TSCORE.clearSearchFilter();
     // Cleaning the directory path from \\ \ and / 
