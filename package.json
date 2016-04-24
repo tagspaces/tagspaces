@@ -5,13 +5,13 @@
   "version": "2.2.5",
   "mainversion": "2.2",
   "subversion": "5",
-  "buildid": "20160419222836",
+  "buildid": "20160424104036",
   "title": "TagSpaces",
   "fullName": "TagSpaces",
   "id": "jid1-FBaMKxTifTSahQ@jetpack",
-  "main": "data/mozilla/main.js",
+  "main": "lib/main.js",
   "description": "Offline document organizer and browser for your local files, supporting easy file tagging and document editing.",
-  "icon": "data/assets/icon64.png",
+  "icon": "resource://jid1-fbamkxtiftsahq-at-jetpack/data/assets/icon48.png",
   "homepage": "http://tagspaces.org",
   "permissions": {
     "private-browsing": false
