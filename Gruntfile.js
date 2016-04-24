@@ -278,6 +278,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-cssmin');
   grunt.loadNpmTasks('grunt-fixmyjs');
   grunt.loadNpmTasks('grunt-jsbeautifier');
+  grunt.loadNpmTasks('grunt-shell');
   
   //tasks
   grunt.registerTask('checkStyle', ['jshint', 'jscs']);
