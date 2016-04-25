@@ -836,7 +836,11 @@ define(function(require, exports, module) {
    */
   function openFile(filePath) {
     // opens file with the native program
-    electron.shell.openItem(filePath);
+    if (isElectron && isOSX && (filePath.indexOf("http") === 0)) {
+      electron.shell.openExternal(filePath);
+    } else {
+      electron.shell.openItem(filePath);
+    }
   }
 
   // Platform specific calls
