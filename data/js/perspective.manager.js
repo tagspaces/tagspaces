@@ -251,7 +251,7 @@ define(function(require, exports, module) {
             "lmdt": fileLMDT,
             "path": path,
             "name": filename,
-            "isDirectoriy": false,
+            "isDirectory": false,
             "meta": metaObj
           };
           TSCORE.fileList.push(entry);
@@ -260,7 +260,7 @@ define(function(require, exports, module) {
           entry = {
             "path": path,
             "name": filename,
-            "isDirectoriy": true,
+            "isDirectory": true,
           };
           TSCORE.subDirsList.push(entry);
         }
