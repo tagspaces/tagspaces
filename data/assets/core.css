@@ -408,7 +408,7 @@ input a.resetFilter {
 }
 
 #newVersionAvailable {
-  padding-top: 8px;
+  padding-left: 10px;
   color: #7bd148;
   display: none;
 }

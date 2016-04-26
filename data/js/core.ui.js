@@ -260,6 +260,11 @@ define(function(require, exports, module) {
     $('#locationContent').hide();
 
     $('#perspectiveSwitcherButton').prop('disabled', true);
+
+    $('#newVersionAvailable').on("click", function() {
+       $('#openWhatsnew').click();
+    });
+
     var $contactUsContent = $('#contactUsContent');
     $contactUsContent.on('click', '#openHints', showWelcomeDialog);
     $contactUsContent.on('click', '#openUservoice', function(e) {

@@ -253,10 +253,10 @@ define(function(require, exports, module) {
         currentBuild = 1; */
     if (availableVersion > currentVersion || availableVersion == currentVersion && availableBuild > currentBuild) {
       $('#newVersionAvailable').css('display', 'block');
-      $('#whatsNewModal iframe').attr('src', 'http://tagspaces.org/whatsnew/');
+      /*$('#whatsNewModal iframe').attr('src', 'http://tagspaces.org/whatsnew/');
       $('#whatsNewModal').on('show.bs.modal', function(e) {
         $('#whatsNewModal iframe').attr('src', 'http://tagspaces.org/whatsnew/');
-      });
+      });*/
     }
   }
 
