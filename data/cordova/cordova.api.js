@@ -597,6 +597,7 @@ define(function(require, exports, module) {
    * @param {string} filePath - the full path of the file which should be saved
    * @param {string} content - content that will be saved
    * @param {boolean} overWrite - if true existing file path will be overwritten
+   * @param {boolean} isRaw - if true the content object will be directly persisted
    * @returns {Promise.<Success, Error>}
    */
   function saveFilePromise(filePath, content, overWrite, isRaw) {
