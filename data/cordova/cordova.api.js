@@ -599,7 +599,7 @@ define(function(require, exports, module) {
    * @param {boolean} overWrite - if true existing file path will be overwritten
    * @returns {Promise.<Success, Error>}
    */
-  function saveFilePromise(filePath, content, overWrite, isRawSave) {
+  function saveFilePromise(filePath, content, overWrite, isRaw) {
     console.log("Saving file: " + filePath);
     return new Promise(function(resolve, reject) {
       var isFileNew = true;
@@ -624,17 +624,17 @@ define(function(require, exports, module) {
           function(entry) {
             entry.createWriter(
               function(writer) {
-                if (isRawSave) {
+                writer.onwriteend = function(evt) {
+                  //resolve(fsRoot.fullPath + "/" + filePath);
+                  resolve(isFileNew);
+                };                
+                if (isRaw) {
                   writer.write(content);
                 } else { 
-                  var string = content.split(';base64,');
-                  var type = string.length > 1 ? string[0].split(':')[1] : '';
-                  var newContent = string.length > 1 ? string[1] : string[0];   
+                  var contentArray = content.split(';base64,');
+                  var type = contentArray.length > 1 ? contentArray[0].split(':')[1] : '';
+                  var newContent = contentArray.length > 1 ? contentArray[1] : contentArray[0];   
                   var data = TSCORE.Utils.b64toBlob(newContent, type, 512);
-                  writer.onwriteend = function(evt) {
-                    //resolve(fsRoot.fullPath + "/" + filePath);
-                    resolve(isFileNew);
-                  };
                   writer.write(data);
                 }		
               },
