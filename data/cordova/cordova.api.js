@@ -599,7 +599,7 @@ define(function(require, exports, module) {
    * @param {boolean} overWrite - if true existing file path will be overwritten
    * @returns {Promise.<Success, Error>}
    */
-  function saveFilePromise(filePath, content, overWrite) {
+  function saveFilePromise(filePath, content, overWrite, isRawSave) {
     console.log("Saving file: " + filePath);
     return new Promise(function(resolve, reject) {
       var isFileNew = true;
@@ -624,16 +624,19 @@ define(function(require, exports, module) {
           function(entry) {
             entry.createWriter(
               function(writer) {
-                var string = content.split(';base64,');
-                var type = string.length > 1 ? string[0].split(':')[1] : '';
-                var newContent = string.length > 1 ? string[1] : string[0];   
-                var data = TSCORE.Utils.b64toBlob(newContent, type, 512);
-                writer.onwriteend = function(evt) {
-                  //resolve(fsRoot.fullPath + "/" + filePath);
-                  resolve(isFileNew);
-                };
-                //writer.write(content);
-                writer.write(data);		
+                if (isRawSave) {
+                  writer.write(content);
+                } else { 
+                  var string = content.split(';base64,');
+                  var type = string.length > 1 ? string[0].split(':')[1] : '';
+                  var newContent = string.length > 1 ? string[1] : string[0];   
+                  var data = TSCORE.Utils.b64toBlob(newContent, type, 512);
+                  writer.onwriteend = function(evt) {
+                    //resolve(fsRoot.fullPath + "/" + filePath);
+                    resolve(isFileNew);
+                  };
+                  writer.write(data);
+                }		
               },
               function() {
                 reject("error creating writter file: " + filePath);
@@ -671,7 +674,7 @@ define(function(require, exports, module) {
     } else {
       content = UTF8_BOM + content;
     }
-    return saveFilePromise(filePath, content, overWrite);
+    return saveFilePromise(filePath, content, overWrite, true);
   }
 
   /**
