@@ -262,7 +262,7 @@ define(function(require, exports, module) {
     $('#perspectiveSwitcherButton').prop('disabled', true);
 
     $('#newVersionAvailable').on("click", function() {
-       $('#openWhatsnew').click();
+      $('#openWhatsnew').click();
     });
 
     var $contactUsContent = $('#contactUsContent');
