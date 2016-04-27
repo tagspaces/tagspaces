@@ -375,12 +375,12 @@ define(function(require, exports, module) {
     waitingModal.find('#waitingHeader').text(title);
     waitingModal.find('#waitingMessage').text(message);
 
-    waitingDialogTimeoutID = window.setTimeout(function() {
+    //waitingDialogTimeoutID = window.setTimeout(function() {
       waitingModal.modal({
         backdrop: 'static',
         show: true
       });
-    }, 500);
+    //}, 500);
 
     waitingModal.draggable({
       handle: ".modal-header"
@@ -388,7 +388,7 @@ define(function(require, exports, module) {
   }
 
   function hideWaitingDialog(message, title) {
-    window.clearTimeout(waitingDialogTimeoutID);
+    //window.clearTimeout(waitingDialogTimeoutID);
     $('#waitingDialog').modal('hide');
   }
 
