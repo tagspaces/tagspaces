@@ -15,6 +15,9 @@ define(function(require, exports, module) {
           openLinkExternally(data.link);
         }
         break;
+      case "contentChangedInEditor":
+        TSCORE.FileOpener.setFileChanged(true);
+        break;
       default:
         console.log("Not recognized messaging command: " + msg);
         break;
