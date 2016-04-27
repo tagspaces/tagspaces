@@ -155,7 +155,7 @@ li hr {
     top: 0;
     right: 0;
     left: 0;
-    height: 70px !important;
+    height: 70px;
     padding: 10px;
     border: 0;
   }
@@ -168,12 +168,20 @@ li hr {
 
   .fullScreenMobile .modal-body {
     position: absolute;
-    top: 125px;
+    top: 70px;
     bottom: 60px;
     width: 100%;
     font-weight: 300;
     overflow: auto;
     max-height: 1550px !important;
+  }
+
+  #dialogOptions .modal-body {
+    top: 125px !important;
+  }
+
+  #dialogOptions .modal-header {
+    height: 125px !important;
   }
 
   .fullScreenMobile .modal-footer {
