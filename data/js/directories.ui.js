@@ -31,8 +31,8 @@ define(function(require, exports, module) {
           '<li class="divider" style="width: 100%"></li>' +
           '<li class="dropdown-header"><span data-i18n="ns.common:subfodersOfDirectory2"></span>&nbsp;"{{name}}"</li>' +
           '<div class="dirButtonContainer">' +
-          '<button class="btn dirButton parentDirectoryButton" data-path="{{path}}/.." title="Go to parent folder">' +
-          '<i class="fa fa-level-up"></i></button>' +
+          //'<button class="btn dirButton parentDirectoryButton" data-path="{{path}}/.." title="Go to parent folder">' +
+          //'<i class="fa fa-level-up"></i></button>' +
           '{{#if children}}' +
             '{{#each children}}' +
             '<button class="btn dirButton" data-path="{{path}}" title="{{path}}">' +
