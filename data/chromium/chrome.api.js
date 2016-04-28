@@ -25,8 +25,8 @@ define(function(require, exports, module) {
 
   var dataBegin = "<script>addRow(";
   var dataEnd = ");</script>";
-  var dataFile = '",0,"';
-  var dataDir = '",1,"';
+  var dataFile = '",0,';
+  var dataDir = '",1,';
 
 
   function checkAccessFileURLAllowed() {
@@ -136,9 +136,9 @@ define(function(require, exports, module) {
             lastDateModified = 0;
             if (isFile) {
               fileProp = folders[i].substring(folders[i].indexOf(dataFile) + dataFile.length + 1, folders[i].length - 1);
-              fileProp = fileProp.split('","');
+              fileProp = fileProp.split(',');
               fileSize = fileProp[0];
-              lastDateModified = fileProp[1];
+              lastDateModified = fileProp[3];
             }
             anotatedDirList.push({
               "name": name,
