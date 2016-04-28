@@ -364,7 +364,10 @@ define(function(require, exports, module) {
     addFileInputName = undefined;
   }
 
+  var openWaitingDialog;
+
   function showWaitingDialog(message, title) {
+    openWaitingDialog = true;
     if (!title) {
       title = $.i18n.t('ns.dialogs:titleWaiting');
     }
@@ -375,12 +378,15 @@ define(function(require, exports, module) {
     waitingModal.find('#waitingHeader').text(title);
     waitingModal.find('#waitingMessage').text(message);
 
-    //waitingDialogTimeoutID = window.setTimeout(function() {
-      waitingModal.modal({
-        backdrop: 'static',
-        show: true
-      });
-    //}, 500);
+    waitingDialogTimeoutID = window.setTimeout(function() {
+      if(openWaitingDialog) {
+        waitingModal.modal({
+          backdrop: 'static',
+          show: true
+        });
+        openWaitingDialog = false;
+      }
+    }, 500);
 
     waitingModal.draggable({
       handle: ".modal-header"
@@ -388,7 +394,8 @@ define(function(require, exports, module) {
   }
 
   function hideWaitingDialog(message, title) {
-    //window.clearTimeout(waitingDialogTimeoutID);
+    openWaitingDialog = false;
+    window.clearTimeout(waitingDialogTimeoutID);
     $('#waitingDialog').modal('hide');
   }
 
