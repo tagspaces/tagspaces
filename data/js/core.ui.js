@@ -379,7 +379,7 @@ define(function(require, exports, module) {
     waitingModal.find('#waitingMessage').text(message);
 
     waitingDialogTimeoutID = window.setTimeout(function() {
-      if(openWaitingDialog) {
+      if (openWaitingDialog) {
         waitingModal.modal({
           backdrop: 'static',
           show: true
