@@ -331,12 +331,15 @@ define(function(require, exports, module) {
     for (var i = 0; i < perspectives.length; i++) {
       if (perspectives[i].ID === viewType) {
         var $currentPerspectitveIcon = $('#currentPerspectitveIcon');
-        var $currentPerspectitveName = $('#currentPerspectitveName');
         $currentPerspectitveIcon.removeClass();
         $currentPerspectitveIcon.addClass(perspectives[i].Icon);
         $currentPerspectitveIcon.addClass('fa-lg');
+
+        var $currentPerspectitveName = $('#currentPerspectitveName');
+        $currentPerspectitveName.removeAttr("data-i18n");
         $currentPerspectitveName.text(' ' + perspectives[i].Title);
         $currentPerspectitveName.attr('title', perspectives[i].ID);
+
         perspectives[i].load();
         $('#' + perspectives[i].ID + 'Container').show();
       }
