@@ -609,6 +609,9 @@ define(function(require, exports, module) {
       $.i18n.t('ns.dialogs:fileDeleteTitleConfirm'),
       $.i18n.t(dlgConfirmMsgId, {selectedFiles: selFiles}),
       function() {
+        if (TSCORE.IO.stopWatchingDirectories) {
+          TSCORE.IO.stopWatchingDirectories();
+        }
         TSCORE.IOUtils.deleteFiles(TSCORE.Utils.getUniqueSelectedFiles());
       }
     );
@@ -697,6 +700,9 @@ define(function(require, exports, module) {
             filePath = TSCORE.selectedFiles[i];
             fileOperations.push(TSCORE.IO.renameFilePromise(filePath, newFilePath));
           }
+          if (TSCORE.IO.stopWatchingDirectories) {
+            TSCORE.IO.stopWatchingDirectories();
+          }
           Promise.all(fileOperations).then(function(success) {
             // TODO handle moving sidecar files
             TSCORE.hideWaitingDialog();
@@ -717,6 +723,9 @@ define(function(require, exports, module) {
             var newFilePath = $('#moveCopyDirectoryPath').val() + TSCORE.dirSeparator + TSCORE.TagUtils.extractFileName(TSCORE.selectedFiles[i]);
             var filePath = TSCORE.selectedFiles[i];
             fileOperations.push(TSCORE.IO.copyFilePromise(filePath, newFilePath));
+          }
+          if (TSCORE.IO.stopWatchingDirectories) {
+            TSCORE.IO.stopWatchingDirectories();
           }
           Promise.all(fileOperations).then(function(success) {
             // TODO handle copying sidecar files
