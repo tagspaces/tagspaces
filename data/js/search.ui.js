@@ -155,12 +155,17 @@ define(function(require, exports, module) {
     }
     if ($('#searchBox').val().length > 0) {
       var origSearchVal = $('#searchBox').val(); 
-      origSearchVal = origSearchVal.split(TSCORE.Search.recursiveSymbol).join().trim();
+      origSearchVal = origSearchVal.trim();
 
       if ($('#searchRecursive').prop('checked')) {
         $('#searchBox').val(origSearchVal);
       } else {
-        $('#searchBox').val(TSCORE.Search.recursiveSymbol + " " + origSearchVal);
+        if (origSearchVal.indexOf(TSCORE.Search.recursiveSymbol) === 0) {
+          $('#searchBox').val(origSearchVal);
+        } else {
+          //origSearchVal = origSearchVal.substring(1, origSearchVal.length);
+          $('#searchBox').val(TSCORE.Search.recursiveSymbol + " " + origSearchVal);
+        }
       }
 
       if (TSCORE.PRO && TSCORE.PRO.Search) {
