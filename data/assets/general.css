@@ -239,7 +239,7 @@ li hr {
 .dropdown {
   position: absolute;
   display:none;
-  z-index: 88888;
+  z-index: 1035;
 }
 
 @media
