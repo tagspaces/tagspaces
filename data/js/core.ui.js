@@ -14,7 +14,7 @@ define(function(require, exports, module) {
   var fileContent;
   var fileType;
   var waitingDialogTimeoutID;
-  var addFileInputName;
+  var addFileInputName; 
 
   var fileDropTemplate = Handlebars.compile(
           '<div id="fileDropArea">' +
@@ -658,6 +658,35 @@ define(function(require, exports, module) {
     });
   }
 
+  function showRenameFileDialog(){
+    if(TSCORE.selectedFiles[0]){
+      $('#renamedFileName').val(TSCORE.selectedFiles[0]);
+      $('#formFileRename').validator();
+      $('#formFileRename').submit(function(e) {
+        e.preventDefault();
+        if ($('#renameFileButton').prop('disabled') === false) {
+          $('#renameFileButton').click();
+        }
+      });
+      $('#formFileRename').on('invalid.bs.validator', function() {
+        $('#renameFileButton').prop('disabled', true);
+      });
+      $('#formFileRename').on('valid.bs.validator', function() {
+        $('#renameFileButton').prop('disabled', false);
+      });
+      $('#dialogFileRename').on('shown.bs.modal', function() {
+        $('#renamedFileName').focus();
+      });
+      $('#dialogFileRename').modal({
+        backdrop: 'static',
+        show: true
+      });
+      $('#dialogFileRename').draggable({
+        handle: ".modal-header"
+      });
+    }
+  }
+
   function showDirectoryBrowserDialog(path) {
     require([
       'text!templates/DirectoryBrowserDialog.html',
@@ -986,6 +1015,7 @@ define(function(require, exports, module) {
   exports.showSuccessDialog = showSuccessDialog;
   exports.showConfirmDialog = showConfirmDialog;
   exports.showFileRenameDialog = showFileRenameDialog;
+  exports.showRenameFileDialog = showRenameFileDialog;
   exports.showFileCreateDialog = showFileCreateDialog;
   exports.showFileDeleteDialog = showFileDeleteDialog;
   exports.showDeleteFilesDialog = showDeleteFilesDialog;
