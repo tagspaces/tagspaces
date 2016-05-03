@@ -670,6 +670,8 @@ define(function(require, exports, module) {
       $('#dialogFileRename').draggable({
         handle: ".modal-header"
       });
+    } else {
+      TSCORE.showAlertDialog("Renaming file failed. Please select a file.");
     }
   }
 
