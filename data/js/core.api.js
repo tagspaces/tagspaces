@@ -211,6 +211,9 @@ define(function(require, exports, module) {
     Mousetrap.bind(tsSettings.getSearchKeyBinding(), function() {
       tsSearchUI.showSearchArea();
     });
+    Mousetrap.bind(tsSettings.getRenamingFileKeyBinding(), function() {
+      tsCoreUI.showRenameFileDialog();
+    });
   }
 
   function checkForNewVersion() {
@@ -253,10 +256,10 @@ define(function(require, exports, module) {
         currentBuild = 1; */
     if (availableVersion > currentVersion || availableVersion == currentVersion && availableBuild > currentBuild) {
       $('#newVersionAvailable').css('display', 'block');
-      $('#whatsNewModal iframe').attr('src', 'http://tagspaces.org/whatsnew/');
+      /*$('#whatsNewModal iframe').attr('src', 'http://tagspaces.org/whatsnew/');
       $('#whatsNewModal').on('show.bs.modal', function(e) {
         $('#whatsNewModal iframe').attr('src', 'http://tagspaces.org/whatsnew/');
-      });
+      });*/
     }
   }
 
@@ -528,6 +531,7 @@ define(function(require, exports, module) {
   exports.createHTMLFile = tsCoreUI.createHTMLFile;
   exports.createMDFile = tsCoreUI.createMDFile;
   exports.createTXTFile = tsCoreUI.createTXTFile;
+  exports.showRenameFileDialog = tsCoreUI.showRenameFileDialog;
 
   // Proxying functions from tsSearchUI
   exports.clearSearchFilter = tsSearchUI.clearSearchFilter;

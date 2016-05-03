@@ -14,7 +14,7 @@ define(function(require, exports, module) {
   var fileContent;
   var fileType;
   var waitingDialogTimeoutID;
-  var addFileInputName;
+  var addFileInputName; 
 
   var fileDropTemplate = Handlebars.compile(
     '<div id="fileDropArea">' +
@@ -70,7 +70,11 @@ define(function(require, exports, module) {
       addFileInputName = decodeURIComponent(file.name);
       var reader = new FileReader();
       reader.onload = onFileReadComplete;
-      reader.readAsArrayBuffer(file);
+      if (isCordova) {
+        reader.readAsDataURL(file);
+      } else {
+        reader.readAsArrayBuffer(file);
+      }
     });
 
     $('#openLeftPanel').click(function() {
@@ -256,6 +260,11 @@ define(function(require, exports, module) {
     $('#locationContent').hide();
 
     $('#perspectiveSwitcherButton').prop('disabled', true);
+
+    $('#newVersionAvailable').on("click", function() {
+      $('#openWhatsnew').click();
+    });
+
     var $contactUsContent = $('#contactUsContent');
     $contactUsContent.on('click', '#openHints', showWelcomeDialog);
     $contactUsContent.on('click', '#openUservoice', function(e) {
@@ -355,7 +364,10 @@ define(function(require, exports, module) {
     addFileInputName = undefined;
   }
 
+  var openWaitingDialog;
+
   function showWaitingDialog(message, title) {
+    openWaitingDialog = true;
     if (!title) {
       title = $.i18n.t('ns.dialogs:titleWaiting');
     }
@@ -367,10 +379,13 @@ define(function(require, exports, module) {
     waitingModal.find('#waitingMessage').text(message);
 
     waitingDialogTimeoutID = window.setTimeout(function() {
-      waitingModal.modal({
-        backdrop: 'static',
-        show: true
-      });
+      if (openWaitingDialog) {
+        waitingModal.modal({
+          backdrop: 'static',
+          show: true
+        });
+        openWaitingDialog = false;
+      }
     }, 500);
 
     waitingModal.draggable({
@@ -379,6 +394,7 @@ define(function(require, exports, module) {
   }
 
   function hideWaitingDialog(message, title) {
+    openWaitingDialog = false;
     window.clearTimeout(waitingDialogTimeoutID);
     $('#waitingDialog').modal('hide');
   }
@@ -593,6 +609,9 @@ define(function(require, exports, module) {
       $.i18n.t('ns.dialogs:fileDeleteTitleConfirm'),
       $.i18n.t(dlgConfirmMsgId, {selectedFiles: selFiles}),
       function() {
+        if (TSCORE.IO.stopWatchingDirectories) {
+          TSCORE.IO.stopWatchingDirectories();
+        }
         TSCORE.IOUtils.deleteFiles(TSCORE.Utils.getUniqueSelectedFiles());
       }
     );
@@ -623,6 +642,37 @@ define(function(require, exports, module) {
     $('#dialogEditTag').draggable({
       handle: ".modal-header"
     });
+  }
+
+  function showRenameFileDialog(){
+    if(TSCORE.selectedFiles[0]){
+      $('#renamedFileName').val(TSCORE.selectedFiles[0]);
+      $('#formFileRename').validator();
+      $('#formFileRename').submit(function(e) {
+        e.preventDefault();
+        if ($('#renameFileButton').prop('disabled') === false) {
+          $('#renameFileButton').click();
+        }
+      });
+      $('#formFileRename').on('invalid.bs.validator', function() {
+        $('#renameFileButton').prop('disabled', true);
+      });
+      $('#formFileRename').on('valid.bs.validator', function() {
+        $('#renameFileButton').prop('disabled', false);
+      });
+      $('#dialogFileRename').on('shown.bs.modal', function() {
+        $('#renamedFileName').focus();
+      });
+      $('#dialogFileRename').modal({
+        backdrop: 'static',
+        show: true
+      });
+      $('#dialogFileRename').draggable({
+        handle: ".modal-header"
+      });
+    } else {
+      TSCORE.showAlertDialog("Renaming file failed. Please select a file.");
+    }
   }
 
   function showDirectoryBrowserDialog(path) {
@@ -681,6 +731,9 @@ define(function(require, exports, module) {
             filePath = TSCORE.selectedFiles[i];
             fileOperations.push(TSCORE.IO.renameFilePromise(filePath, newFilePath));
           }
+          if (TSCORE.IO.stopWatchingDirectories) {
+            TSCORE.IO.stopWatchingDirectories();
+          }
           Promise.all(fileOperations).then(function(success) {
             // TODO handle moving sidecar files
             TSCORE.hideWaitingDialog();
@@ -701,6 +754,9 @@ define(function(require, exports, module) {
             var newFilePath = $('#moveCopyDirectoryPath').val() + TSCORE.dirSeparator + TSCORE.TagUtils.extractFileName(TSCORE.selectedFiles[i]);
             var filePath = TSCORE.selectedFiles[i];
             fileOperations.push(TSCORE.IO.copyFilePromise(filePath, newFilePath));
+          }
+          if (TSCORE.IO.stopWatchingDirectories) {
+            TSCORE.IO.stopWatchingDirectories();
           }
           Promise.all(fileOperations).then(function(success) {
             // TODO handle copying sidecar files
@@ -918,6 +974,7 @@ define(function(require, exports, module) {
   exports.showSuccessDialog = showSuccessDialog;
   exports.showConfirmDialog = showConfirmDialog;
   exports.showFileRenameDialog = showFileRenameDialog;
+  exports.showRenameFileDialog = showRenameFileDialog;
   exports.showFileCreateDialog = showFileCreateDialog;
   exports.showFileDeleteDialog = showFileDeleteDialog;
   exports.showDeleteFilesDialog = showDeleteFilesDialog;

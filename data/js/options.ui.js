@@ -166,6 +166,7 @@ define(function(require, exports, module) {
     $('#writeMetaToSidecarFile').attr('checked', TSCORE.Config.getWriteMetaToSidecarFile());
     $('#useDefaultLocationCheckbox').attr('checked', TSCORE.Config.getUseDefaultLocation());
     $('#selectAllKeyBinding').val(TSCORE.Config.getSelectAllKeyBinding());
+    $('#renamingFileKeyBinding').val(TSCORE.Config.getRenamingFileKeyBinding());
     if (TSCORE.PRO) {
       $('#enableMetaData').attr('checked', TSCORE.Config.getEnableMetaData());
       $('#useTrashCan').attr('checked', TSCORE.Config.getUseTrashCan());
@@ -241,6 +242,7 @@ define(function(require, exports, module) {
     TSCORE.Config.setPropertiesDocumentKeyBinding(parseKeyBinding($('#documentPropertiesKeyBinding').val()));
     TSCORE.Config.setSearchKeyBinding(parseKeyBinding($('#showSearchKeyBinding').val()));
     TSCORE.Config.setSelectAllKeyBinding(parseKeyBinding($('#selectAllKeyBinding').val()));
+    TSCORE.Config.setRenamingFileKeyBinding(parseKeyBinding($('#renamingFileKeyBinding').val()));
     if (TSCORE.PRO) {
       TSCORE.Config.setEnableMetaData($('#enableMetaData').is(':checked'));
       TSCORE.Config.setUseTrashCan($('#useTrashCan').is(':checked'));   
