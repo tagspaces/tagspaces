@@ -483,6 +483,18 @@ define(function(require, exports, module) {
     return exports.Settings.keyBindings.selectAll;
   }
 
+  function getRenamingFileKeyBinding() {
+    updateKeyBindingsSetting;
+    if(exports.Settings.keyBindings.renameFile === undefined){
+      exports.Settings.keyBindings.renameFile = exports.DefaultSettings.keyBindings.renameFile;
+      saveSettings();
+    }
+    return exports.Settings.keyBindings.renameFile;
+  }
+  function setRenamingFileKeyBinding(value) {
+    exports.Settings.keyBindings.renameFile = value;
+  }
+
   function getDeleteDocumentKeyBinding() {
     updateKeyBindingsSetting();
     if (exports.Settings.keyBindings.deleteDocument === undefined) {
@@ -1266,6 +1278,8 @@ define(function(require, exports, module) {
   exports.setReloadDocumentKeyBinding = setReloadDocumentKeyBinding;
   exports.getSelectAllKeyBinding = getSelectAllKeyBinding;
   exports.setSelectAllKeyBinding = setSelectAllKeyBinding;
+  exports.getRenamingFileKeyBinding = getRenamingFileKeyBinding;
+  exports.setRenamingFileKeyBinding = setRenamingFileKeyBinding;
   exports.getDeleteDocumentKeyBinding = getDeleteDocumentKeyBinding;
   exports.setDeleteDocumentKeyBinding = setDeleteDocumentKeyBinding;
   exports.getPropertiesDocumentKeyBinding = getPropertiesDocumentKeyBinding;
