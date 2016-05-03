@@ -644,9 +644,11 @@ define(function(require, exports, module) {
     });
   }
 
-  function showRenameFileDialog(){
+  function showRenameFileDialog(filePath){
     if(TSCORE.selectedFiles[0]){
-      $('#renamedFileName').val(TSCORE.selectedFiles[0]);
+      $('#renamedFileName').attr('filepath', filePath);
+      $('#renamedFileName').val(TSCORE.TagUtils.extractFileName(filePath));
+     //$('#renamedFileName').val(TSCORE.selectedFiles[0]);
       $('#formFileRename').validator();
       $('#formFileRename').submit(function(e) {
         e.preventDefault();
@@ -670,8 +672,6 @@ define(function(require, exports, module) {
       $('#dialogFileRename').draggable({
         handle: ".modal-header"
       });
-    } else {
-      TSCORE.showAlertDialog("Renaming file failed. Please select a file.");
     }
   }
 
