@@ -555,10 +555,8 @@ define(function(require, exports, module) {
   }
 
   function showFileRenameDialog(filePath) {
-    console.log("File Rename DIALOG:" + filePath);
     $('#renamedFileName').attr('filepath', filePath);
     $('#renamedFileName').val(TSCORE.TagUtils.extractFileName(filePath));
-    console.log("File EXTRACT Rename DIALOG:" + TSCORE.TagUtils.extractFileName(filePath));
     $('#formFileRename').validator();
     $('#formFileRename').submit(function(e) {
       e.preventDefault();
