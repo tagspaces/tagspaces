@@ -212,7 +212,7 @@ define(function(require, exports, module) {
       tsSearchUI.showSearchArea();
     });
     Mousetrap.bind(tsSettings.getRenamingFileKeyBinding(), function() {
-      tsCoreUI.showRenameFileDialog();
+      tsCoreUI.showFileRenameDialog();
     });
   }
 
