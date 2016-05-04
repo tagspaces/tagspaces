@@ -4,7 +4,7 @@
 
 /* global define, isFirefox  */
 
-define(function(require, exports, module) {
+define(function(require , exports , module) {
   'use strict';
 
   console.log('Loading settings.api.js..');
@@ -14,34 +14,34 @@ define(function(require, exports, module) {
   exports.Settings = undefined;
 
   var tagTemplate = {
-    'title': undefined,
+    'title': undefined ,
     'type': 'plain'
     /*
-    "pattern":"yyyymmddhhmmss-yyyymmddhhmmss",
-    "example":"20120114123456-20120823231235",
-    "regex":"",
-    "maxlength":17,
-    "chainedTags":[
-    "isbn","autor"
-    ],
-    "url": "http://example.com",
-    "action":"showDatePicker",
-    "prefixes":[
-    "EUR", "USD", "BGN"
-    ]
-    */
+     "pattern":"yyyymmddhhmmss-yyyymmddhhmmss",
+     "example":"20120114123456-20120823231235",
+     "regex":"",
+     "maxlength":17,
+     "chainedTags":[
+     "isbn","autor"
+     ],
+     "url": "http://example.com",
+     "action":"showDatePicker",
+     "prefixes":[
+     "EUR", "USD", "BGN"
+     ]
+     */
   };
 
   var locationTemplate = {
-    'name': undefined,
-    'path': undefined,
+    'name': undefined ,
+    'path': undefined ,
     'perspective': undefined
   };
 
   var tagGroupTemplate = {
-    'title': undefined,
-    'key': undefined,
-    'expanded': true,
+    'title': undefined ,
+    'key': undefined ,
+    'expanded': true ,
     'children': []
   };
 
@@ -76,99 +76,99 @@ define(function(require, exports, module) {
       }
       if (oldBuildNumber <= 20140307000000) {
         addFileType({
-          'type': 'odt',
-          'viewer': 'editorODF',
+          'type': 'odt' ,
+          'viewer': 'editorODF' ,
           'editor': 'false'
         });
         addFileType({
-          'type': 'ods',
-          'viewer': 'editorODF',
+          'type': 'ods' ,
+          'viewer': 'editorODF' ,
           'editor': 'false'
         });
         addFileType({
-          'type': 'odp',
-          'viewer': 'editorODF',
+          'type': 'odp' ,
+          'viewer': 'editorODF' ,
           'editor': 'false'
         });
         addFileType({
-          'type': 'odg',
-          'viewer': 'editorODF',
+          'type': 'odg' ,
+          'viewer': 'editorODF' ,
           'editor': 'false'
         });
       }
       if (oldBuildNumber <= 20141002000000) {
         updateFileType({
-          'type': 'json',
-          'viewer': 'editorJSON',
+          'type': 'json' ,
+          'viewer': 'editorJSON' ,
           'editor': 'editorJSON'
         });
         updateFileType({
-          'type': 'html',
-          'viewer': 'viewerHTML',
+          'type': 'html' ,
+          'viewer': 'viewerHTML' ,
           'editor': 'editorHTML'
         });
         updateFileType({
-          'type': 'htm',
-          'viewer': 'viewerHTML',
+          'type': 'htm' ,
+          'viewer': 'viewerHTML' ,
           'editor': 'editorHTML'
         });
       }
       if (oldBuildNumber <= 20141123000000) {
         updateFileType({
-          'type': 'mhtml',
-          'viewer': 'viewerMHTML',
+          'type': 'mhtml' ,
+          'viewer': 'viewerMHTML' ,
           'editor': 'false'
         });
         updateFileType({
-          'type': 'mht',
-          'viewer': 'viewerMHTML',
+          'type': 'mht' ,
+          'viewer': 'viewerMHTML' ,
           'editor': 'false'
         });
       }
       if (oldBuildNumber <= 20150727000000) {
         updateFileType({
-          'type': 'ogg',
-          'viewer': 'viewerAudioVideo',
+          'type': 'ogg' ,
+          'viewer': 'viewerAudioVideo' ,
           'editor': 'false'
         });
         updateFileType({
-          'type': 'oga',
-          'viewer': 'viewerAudioVideo',
+          'type': 'oga' ,
+          'viewer': 'viewerAudioVideo' ,
           'editor': 'false'
         });
         updateFileType({
-          'type': 'ogv',
-          'viewer': 'viewerAudioVideo',
+          'type': 'ogv' ,
+          'viewer': 'viewerAudioVideo' ,
           'editor': 'false'
         });
         updateFileType({
-          'type': 'ogx',
-          'viewer': 'viewerAudioVideo',
+          'type': 'ogx' ,
+          'viewer': 'viewerAudioVideo' ,
           'editor': 'false'
         });
         updateFileType({
-          'type': 'webm',
-          'viewer': 'viewerAudioVideo',
+          'type': 'webm' ,
+          'viewer': 'viewerAudioVideo' ,
           'editor': 'false'
         });
         updateFileType({
-          'type': 'mp3',
-          'viewer': 'viewerAudioVideo',
+          'type': 'mp3' ,
+          'viewer': 'viewerAudioVideo' ,
           'editor': 'false'
         });
         updateFileType({
-          'type': 'mp4',
-          'viewer': 'viewerAudioVideo',
+          'type': 'mp4' ,
+          'viewer': 'viewerAudioVideo' ,
           'editor': 'false'
         });
         addFileType({
-          'type': 'epub',
-          'viewer': 'viewerEPUB',
+          'type': 'epub' ,
+          'viewer': 'viewerEPUB' ,
           'editor': 'false'
         });
         addFileType({
-          'type': 'zip',
-          'viewer': 'viewerZIP',
+          'type': 'zip' ,
+          'viewer': 'viewerZIP' ,
           'editor': 'false'
         });
         if (isCordovaAndroid) {
@@ -215,25 +215,25 @@ define(function(require, exports, module) {
     });
   }
 
-  function addToSettingsArray(arrayLocation, value) {
+  function addToSettingsArray(arrayLocation , value) {
     if (arrayLocation instanceof Array) {
-      if ($.inArray(value, arrayLocation) < 0) {
+      if ($.inArray(value , arrayLocation) < 0) {
         arrayLocation.push(value);
       }
     }
   }
 
-  function removeFromSettingsArray(arrayLocation, value) {
+  function removeFromSettingsArray(arrayLocation , value) {
     if (arrayLocation instanceof Array) {
-      arrayLocation.splice($.inArray(value, arrayLocation), 1);
+      arrayLocation.splice($.inArray(value , arrayLocation) , 1);
     }
   }
 
-  function removeFromSettingsArrayById(arrayLocation, id) {
+  function removeFromSettingsArrayById(arrayLocation , id) {
     if (arrayLocation instanceof Array) {
-      arrayLocation.forEach(function(value, index) {
+      arrayLocation.forEach(function(value , index) {
         if (value.id === id) {
-          arrayLocation.splice(index, 1);
+          arrayLocation.splice(index , 1);
         }
       });
     }
@@ -245,7 +245,7 @@ define(function(require, exports, module) {
     var perspectives = [];
     getExtensions().forEach(function(extension) {
       if (extension.type === "perspective") {
-        perspectives.push({ 'id': extension.id, 'name': extension.name });
+        perspectives.push({'id': extension.id , 'name': extension.name});
       }
     });
     return perspectives;
@@ -255,7 +255,7 @@ define(function(require, exports, module) {
     var viewers = [];
     getExtensions().forEach(function(extension) {
       if (extension.type === "viewer" || extension.type === "editor") {
-        viewers.push({ 'id': extension.id, 'name': extension.name });
+        viewers.push({'id': extension.id , 'name': extension.name});
       }
     });
     return viewers;
@@ -265,7 +265,7 @@ define(function(require, exports, module) {
     var editors = [];
     getExtensions().forEach(function(extension) {
       if (extension.type === "editor") {
-        editors.push({ 'id': extension.id, 'name': extension.name });
+        editors.push({'id': extension.id , 'name': extension.name});
       }
     });
     return editors;
@@ -313,17 +313,18 @@ define(function(require, exports, module) {
     if (!exports.Settings.extensions || exports.Settings.extensions.length < 1) {
       exports.Settings.extensions = [];
       exports.DefaultSettings.ootbPerspectives.forEach(function(extensionId) {
-        exports.Settings.extensions.push({ 'id': extensionId, 'name': extensionId, 'type': 'perspective' });
+        exports.Settings.extensions.push({'id': extensionId , 'name': extensionId , 'type': 'perspective'});
       });
       exports.DefaultSettings.ootbViewers.forEach(function(extensionId) {
-        exports.Settings.extensions.push({ 'id': extensionId, 'name': extensionId, 'type': 'viewer' });
+        exports.Settings.extensions.push({'id': extensionId , 'name': extensionId , 'type': 'viewer'});
       });
       exports.DefaultSettings.ootbEditors.forEach(function(extensionId) {
-        exports.Settings.extensions.push({ 'id': extensionId, 'name': extensionId, 'type': 'editor' });
+        exports.Settings.extensions.push({'id': extensionId , 'name': extensionId , 'type': 'editor'});
       });
     }
     return exports.Settings.extensions;
   }
+
   function setExtensions(extensions) {
 
     exports.Settings.extensions = extensions;
@@ -335,6 +336,7 @@ define(function(require, exports, module) {
     }
     return exports.Settings.extensionsPath;
   }
+
   function setExtensionPath(value) {
 
     exports.Settings.extensionsPath = value;
@@ -346,6 +348,7 @@ define(function(require, exports, module) {
     }
     return exports.Settings.isWindowMaximized;
   }
+
   function setIsWindowMaximized(value) {
 
     exports.Settings.isWindowMaximized = value;
@@ -357,6 +360,7 @@ define(function(require, exports, module) {
     }
     return exports.Settings.lastOpenedLocation;
   }
+
   function setLastOpenedLocation(value) {
 
     exports.Settings.lastOpenedLocation = value;
@@ -366,6 +370,7 @@ define(function(require, exports, module) {
 
     return exports.Settings.defaultLocation || "";
   }
+
   function setDefaultLocation(value) {
 
     exports.Settings.defaultLocation = value;
@@ -384,6 +389,7 @@ define(function(require, exports, module) {
     }
     return exports.Settings.keyBindings.closeViewer;
   }
+
   function setCloseViewerKeyBinding(value) {
 
     exports.Settings.keyBindings.closeViewer = value;
@@ -397,6 +403,7 @@ define(function(require, exports, module) {
     }
     return exports.Settings.keyBindings.editDocument;
   }
+
   function setEditDocumentKeyBinding(value) {
 
     exports.Settings.keyBindings.editDocument = value;
@@ -410,6 +417,7 @@ define(function(require, exports, module) {
     }
     return exports.Settings.keyBindings.saveDocument;
   }
+
   function setSaveDocumentKeyBinding(value) {
 
     exports.Settings.keyBindings.saveDocument = value;
@@ -426,6 +434,7 @@ define(function(require, exports, module) {
     //}
     return exports.DefaultSettings.keyBindings.reloadApplication;
   }
+
   function setReloadApplicationKeyBinding(value) {
 
     consolo.log('Not supported command'); //exports.Settings.keyBindings.reloadApplication = value;
@@ -439,6 +448,7 @@ define(function(require, exports, module) {
     }
     return exports.Settings.keyBindings.toggleFullScreen;
   }
+
   function setToggleFullScreenKeyBinding(value) {
 
     exports.Settings.keyBindings.toggleFullScreen = value;
@@ -452,6 +462,7 @@ define(function(require, exports, module) {
     }
     return exports.Settings.keyBindings.addRemoveTags;
   }
+
   function setAddRemoveTagsKeyBinding(value) {
 
     exports.Settings.keyBindings.addRemoveTags = value;
@@ -465,6 +476,7 @@ define(function(require, exports, module) {
     }
     return exports.Settings.keyBindings.reloadDocument;
   }
+
   function setReloadDocumentKeyBinding(value) {
 
     exports.Settings.keyBindings.reloadDocument = value;
@@ -474,6 +486,7 @@ define(function(require, exports, module) {
 
     exports.Settings.keyBindings.selectAll = value;
   }
+
   function getSelectAllKeyBinding() {
     updateKeyBindingsSetting();
     if (exports.Settings.keyBindings.selectAll === undefined) {
@@ -485,12 +498,13 @@ define(function(require, exports, module) {
 
   function getRenamingFileKeyBinding() {
     updateKeyBindingsSetting;
-    if(exports.Settings.keyBindings.renameFile === undefined){
+    if (exports.Settings.keyBindings.renameFile === undefined) {
       exports.Settings.keyBindings.renameFile = exports.DefaultSettings.keyBindings.renameFile;
       saveSettings();
     }
     return exports.Settings.keyBindings.renameFile;
   }
+
   function setRenamingFileKeyBinding(value) {
     exports.Settings.keyBindings.renameFile = value;
   }
@@ -503,6 +517,7 @@ define(function(require, exports, module) {
     }
     return exports.Settings.keyBindings.deleteDocument;
   }
+
   function setDeleteDocumentKeyBinding(value) {
 
     exports.Settings.keyBindings.deleteDocument = value;
@@ -516,6 +531,7 @@ define(function(require, exports, module) {
     }
     return exports.Settings.keyBindings.propertiesDocument;
   }
+
   function setPropertiesDocumentKeyBinding(value) {
 
     exports.Settings.keyBindings.propertiesDocument = value;
@@ -529,6 +545,7 @@ define(function(require, exports, module) {
     }
     return exports.Settings.keyBindings.nextDocument;
   }
+
   function setNextDocumentKeyBinding(value) {
 
     exports.Settings.keyBindings.nextDocument = value;
@@ -542,6 +559,7 @@ define(function(require, exports, module) {
     }
     return exports.Settings.keyBindings.prevDocument;
   }
+
   function setShowTagLibraryKeyBinding(value) {
 
     exports.Settings.keyBindings.showTagLibrary = value;
@@ -555,6 +573,7 @@ define(function(require, exports, module) {
     }
     return exports.Settings.keyBindings.showTagLibrary;
   }
+
   function setShowFolderNavigatorKeyBinding(value) {
 
     exports.Settings.keyBindings.showFolderNavigator = value;
@@ -568,6 +587,7 @@ define(function(require, exports, module) {
     }
     return exports.Settings.keyBindings.showFolderNavigator;
   }
+
   function setPrevDocumentKeyBinding(value) {
 
     exports.Settings.keyBindings.prevDocument = value;
@@ -581,6 +601,7 @@ define(function(require, exports, module) {
     }
     return exports.Settings.keyBindings.openDevTools;
   }
+
   function setOpenDevToolsScreenKeyBinding(value) {
 
     exports.Settings.keyBindings.openDevTools = value;
@@ -594,6 +615,7 @@ define(function(require, exports, module) {
     }
     return exports.Settings.keyBindings.openSearch;
   }
+
   function setSearchKeyBinding(value) {
 
     exports.Settings.keyBindings.openSearch = value;
@@ -606,6 +628,7 @@ define(function(require, exports, module) {
     }
     return exports.Settings.interfaceLanguage;
   }
+
   function setInterfaceLanguage(value) {
 
     exports.Settings.interfaceLanguage = value;
@@ -618,6 +641,7 @@ define(function(require, exports, module) {
     }
     return exports.Settings.showWarningRecursiveScan;
   }
+
   function setShowWarningRecursiveScan(value) {
     exports.Settings.showWarningRecursiveScan = value;
     saveSettings();
@@ -629,6 +653,7 @@ define(function(require, exports, module) {
     }
     return exports.Settings.showMainMenu;
   }
+
   function setShowMainMenu(value) {
 
     exports.Settings.showMainMenu = value;
@@ -640,6 +665,7 @@ define(function(require, exports, module) {
     }
     return exports.Settings.webDavPath;
   }
+
   function setWebDavPath(value) {
 
     exports.Settings.webDavPath = value;
@@ -651,6 +677,7 @@ define(function(require, exports, module) {
     }
     return exports.Settings.showUnixHiddenEntries;
   }
+
   function setShowUnixHiddenEntries(value) {
 
     exports.Settings.showUnixHiddenEntries = value;
@@ -662,6 +689,7 @@ define(function(require, exports, module) {
     }
     return exports.Settings.checkForUpdates;
   }
+
   function setCheckForUpdates(value) {
 
     exports.Settings.checkForUpdates = value;
@@ -673,6 +701,7 @@ define(function(require, exports, module) {
     }
     return exports.Settings.prefixTagContainer;
   }
+
   function setPrefixTagContainer(value) {
 
     exports.Settings.prefixTagContainer = value;
@@ -684,6 +713,7 @@ define(function(require, exports, module) {
     }
     return exports.Settings.tagDelimiter;
   }
+
   function setTagDelimiter(value) {
 
     exports.Settings.tagDelimiter = value;
@@ -695,6 +725,7 @@ define(function(require, exports, module) {
     }
     return exports.Settings.calculateTags;
   }
+
   function setCalculateTags(value) {
 
     exports.Settings.calculateTags = value;
@@ -706,50 +737,55 @@ define(function(require, exports, module) {
     }
     return exports.Settings.loadLocationMeta;
   }
+
   function setLoadLocationMeta(value) {
 
     exports.Settings.loadLocationMeta = value;
   }
 
   function getUseSearchInSubfolders() {
-    if (exports.Settings.useSearchInSubfolders  === undefined) {
+    if (exports.Settings.useSearchInSubfolders === undefined) {
       exports.Settings.useSearchInSubfolders = exports.DefaultSettings.useSearchInSubfolders;
     }
     return exports.Settings.useSearchInSubfolders;
   }
+
   function setUseSearchInSubfolders(value) {
     exports.Settings.useSearchInSubfolders = value;
   }
-    
+
   function getMaxSearchResultCount() {
-    if (exports.Settings.maxSearchResultCount  === undefined) {
+    if (exports.Settings.maxSearchResultCount === undefined) {
       exports.Settings.maxSearchResultCount = exports.DefaultSettings.maxSearchResultCount;
     }
     return exports.Settings.maxSearchResultCount;
   }
+
   function setMaxSearchResultCount(value) {
     if (isNaN(value) || value < 0 || value > 2000) {
       value = 0;
     }
     exports.Settings.maxSearchResultCount = value;
   }
-  
+
   function getWatchCurrentDirectory() {
-    if (exports.Settings.watchCurrentDirectory  === undefined) {
+    if (exports.Settings.watchCurrentDirectory === undefined) {
       exports.Settings.watchCurrentDirectory = exports.DefaultSettings.watchCurrentDirectory;
     }
     return exports.Settings.watchCurrentDirectory;
   }
+
   function setWatchCurrentDirectory(value) {
     exports.Settings.watchCurrentDirectory = value;
   }
-  
+
   function getEnableMetaData() {
     if (exports.Settings.enableMetaData === undefined) {
       exports.Settings.enableMetaData = exports.DefaultSettings.enableMetaData;
     }
     return exports.Settings.enableMetaData;
   }
+
   function setEnableMetaData(value) {
 
     exports.Settings.enableMetaData = value;
@@ -761,6 +797,7 @@ define(function(require, exports, module) {
     }
     return exports.Settings.supportedFileTypes;
   }
+
   function setSupportedFileTypes(value) {
 
     exports.Settings.supportedFileTypes = value;
@@ -770,10 +807,12 @@ define(function(require, exports, module) {
 
     return exports.DefaultSettings.newTextFileContent;
   }
+
   function getNewHTMLFileContent() {
 
     return exports.DefaultSettings.newHTMLFileContent;
   }
+
   function getNewMDFileContent() {
 
     return exports.DefaultSettings.newMDFileContent;
@@ -785,6 +824,7 @@ define(function(require, exports, module) {
     }
     return exports.Settings.useTrashCan;
   }
+
   function setUseTrashCan(value) {
 
     exports.Settings.useTrashCan = value;
@@ -796,6 +836,7 @@ define(function(require, exports, module) {
     }
     return exports.Settings.useOCR;
   }
+
   function setUseOCR(value) {
 
     exports.Settings.useOCR = value;
@@ -807,6 +848,7 @@ define(function(require, exports, module) {
     }
     return exports.Settings.useTextExtraction;
   }
+
   function setUseTextExtraction(value) {
 
     exports.Settings.useTextExtraction = value;
@@ -818,6 +860,7 @@ define(function(require, exports, module) {
     }
     return exports.Settings.useGenerateThumbnails;
   }
+
   function setUseGenerateThumbnails(value) {
 
     exports.Settings.useGenerateThumbnails = value;
@@ -830,6 +873,7 @@ define(function(require, exports, module) {
     }
     return exports.Settings.writeMetaToSidecarFile;
   }
+
   function setWriteMetaToSidecarFile(value) {
 
     exports.Settings.writeMetaToSidecarFile = value;
@@ -842,6 +886,7 @@ define(function(require, exports, module) {
     }
     return exports.Settings.useDefaultLocation;
   }
+
   function setUseDefaultLocation(value) {
 
     exports.Settings.useDefaultLocation = value;
@@ -893,7 +938,7 @@ define(function(require, exports, module) {
     return allTags;
   }
 
-  function getTagData(tagTitle, tagGroupKey) {
+  function getTagData(tagTitle , tagGroupKey) {
     for (var i = 0; i < exports.Settings.tagGroups.length; i++) {
       if (exports.Settings.tagGroups[i].key === tagGroupKey) {
         for (var j = 0; j < exports.Settings.tagGroups[i].children.length; j++) {
@@ -923,14 +968,14 @@ define(function(require, exports, module) {
     for (var i = 0; i < exports.Settings.tagGroups.length; i++) {
       if (exports.Settings.tagGroups[i].key === tagData.key) {
         console.log('Deleting taggroup ' + exports.Settings.tagGroups[i].key);
-        exports.Settings.tagGroups.splice(i, 1);
+        exports.Settings.tagGroups.splice(i , 1);
         break;
       }
     }
     saveSettings();
   }
 
-  function editTag(tagData, newTagName, newColor, newTextColor, newKeyBinding) {
+  function editTag(tagData , newTagName , newColor , newTextColor , newKeyBinding) {
     for (var i = 0; i < exports.Settings.tagGroups.length; i++) {
       if (exports.Settings.tagGroups[i].key === tagData.parentKey) {
         for (var j = 0; j < exports.Settings.tagGroups[i].children.length; j++) {
@@ -952,7 +997,7 @@ define(function(require, exports, module) {
       if (exports.Settings.tagGroups[i].key === tagData.parentKey) {
         for (var j = 0; j < exports.Settings.tagGroups[i].children.length; j++) {
           if (exports.Settings.tagGroups[i].children[j].title === tagData.title) {
-            exports.Settings.tagGroups[i].children.splice(j, 1);
+            exports.Settings.tagGroups[i].children.splice(j , 1);
             break;
           }
         }
@@ -961,15 +1006,15 @@ define(function(require, exports, module) {
     exports.saveSettings();
   }
 
-  function moveTag(tagData, targetTagGroupKey) {
+  function moveTag(tagData , targetTagGroupKey) {
     var targetTagGroupData = getTagGroupData(targetTagGroupKey);
-    if (createTag(targetTagGroupData, tagData.title, tagData.color, tagData.textcolor)) {
+    if (createTag(targetTagGroupData , tagData.title , tagData.color , tagData.textcolor)) {
       deleteTag(tagData);
       saveSettings();
     }
   }
 
-  function createTag(tagData, newTagName, newTagColor, newTagTextColor) {
+  function createTag(tagData , newTagName , newTagColor , newTagTextColor) {
     exports.Settings.tagGroups.forEach(function(value) {
       if (value.key === tagData.key) {
         //console.log("Creating tag: "+newTagName+" with parent: "+tagData.key);
@@ -996,7 +1041,7 @@ define(function(require, exports, module) {
     return true;
   }
 
-  function editTagGroup(tagData, tagGroupName) {
+  function editTagGroup(tagData , tagGroupName) {
     for (var i = 0; i < exports.Settings.tagGroups.length; i++) {
       if (exports.Settings.tagGroups[i].key === tagData.key) {
         exports.Settings.tagGroups[i].title = tagGroupName;
@@ -1006,7 +1051,7 @@ define(function(require, exports, module) {
     saveSettings();
   }
 
-  function duplicateTagGroup(tagData, tagGroupName, tagGroupKey) {
+  function duplicateTagGroup(tagData , tagGroupName , tagGroupKey) {
     var newTagGroupModel;
     for (var i = 0; i < exports.Settings.tagGroups.length; i++) {
       if (exports.Settings.tagGroups[i].key === tagData.key) {
@@ -1024,7 +1069,7 @@ define(function(require, exports, module) {
   function sortTagGroup(tagData) {
     for (var i = 0; i < exports.Settings.tagGroups.length; i++) {
       if (exports.Settings.tagGroups[i].key === tagData.key) {
-        exports.Settings.tagGroups[i].children.sort(function(a, b) {
+        exports.Settings.tagGroups[i].children.sort(function(a , b) {
           return a.title.localeCompare(b.title);
         });
         break;
@@ -1033,20 +1078,20 @@ define(function(require, exports, module) {
     saveSettings();
   }
 
-  function createTagGroup(tagData, tagGroupName) {
+  function createTagGroup(tagData , tagGroupName) {
     var newTagGroupModel = JSON.parse(JSON.stringify(tagGroupTemplate));
     newTagGroupModel.title = tagGroupName;
     //newTagGroupModel.children = [];
-    newTagGroupModel.key = '' + TSCORE.Utils.getRandomInt(10000, 99999);
+    newTagGroupModel.key = '' + TSCORE.Utils.getRandomInt(10000 , 99999);
     console.log('Creating taggroup: ' + JSON.stringify(newTagGroupModel) + ' with key: ' + newTagGroupModel.key);
     exports.Settings.tagGroups.push(newTagGroupModel);
     saveSettings();
   }
 
-  function moveTagGroup(tagData, direction) {
+  function moveTagGroup(tagData , direction) {
     var targetPosition;
     var currentPosition;
-    exports.Settings.tagGroups.forEach(function(value, index) {
+    exports.Settings.tagGroups.forEach(function(value , index) {
       if (value.key === tagData.key) {
         currentPosition = index;
       }
@@ -1067,22 +1112,22 @@ define(function(require, exports, module) {
     saveSettings();
   }
 
-  function createLocation(name, location, perspectiveId) {
+  function createLocation(name , location , perspectiveId) {
     var newLocationModel = JSON.parse(JSON.stringify(locationTemplate));
-    name = name.replace('\\', '\\\\');
-    name = name.replace('\\\\\\', '\\\\');
-    name = name.replace('\\\\\\\\', '\\\\');
+    name = name.replace('\\' , '\\\\');
+    name = name.replace('\\\\\\' , '\\\\');
+    name = name.replace('\\\\\\\\' , '\\\\');
     newLocationModel.name = name;
     newLocationModel.path = location;
     newLocationModel.perspective = perspectiveId;
     var createLoc = true;
     exports.Settings.tagspacesList.forEach(function(value) {
       if (value.path === newLocationModel.path) {
-        TSCORE.showAlertDialog($.i18n.t('ns.dialogs:selectedPathExistContentAlert'), $.i18n.t('ns.dialogs:selectedPathExistTitleAlert'));
+        TSCORE.showAlertDialog($.i18n.t('ns.dialogs:selectedPathExistContentAlert') , $.i18n.t('ns.dialogs:selectedPathExistTitleAlert'));
         createLoc = false;
       }
       if (value.name === newLocationModel.name) {
-        TSCORE.showAlertDialog($.i18n.t('ns.dialogs:selectedLocationNameExistContentAlert'), $.i18n.t('ns.dialogs:selectedLocationNameExistTitleAlert'));
+        TSCORE.showAlertDialog($.i18n.t('ns.dialogs:selectedLocationNameExistContentAlert') , $.i18n.t('ns.dialogs:selectedLocationNameExistTitleAlert'));
         createLoc = false;
       }
     });
@@ -1092,7 +1137,7 @@ define(function(require, exports, module) {
     }
   }
 
-  function editLocation(oldName, newName, newLocation, perspectiveId) {
+  function editLocation(oldName , newName , newLocation , perspectiveId) {
     //        name = name.replace("\\", "\\\\");
     //        name = name.replace("\\\\\\", "\\\\");
     //        name = name.replace("\\\\\\\\", "\\\\");   
@@ -1100,11 +1145,11 @@ define(function(require, exports, module) {
     var editLoc = true;
     exports.Settings.tagspacesList.forEach(function(value) {
       /* if(value.path == newLocation) {
-                TSCORE.showAlertDialog("Selected path is already used by a location!","Duplicated Location Path");
-                editLocation = false;
-            }  */
+       TSCORE.showAlertDialog("Selected path is already used by a location!","Duplicated Location Path");
+       editLocation = false;
+       }  */
       if (value.name === newName && value.name !== oldName) {
-        TSCORE.showAlertDialog($.i18n.t('ns.dialogs:selectedLocationNameExistContentAlert'), $.i18n.t('ns.dialogs:selectedLocationNameExistTitleAlert'));
+        TSCORE.showAlertDialog($.i18n.t('ns.dialogs:selectedLocationNameExistContentAlert') , $.i18n.t('ns.dialogs:selectedLocationNameExistTitleAlert'));
         editLoc = false;
       }
     });
@@ -1135,7 +1180,7 @@ define(function(require, exports, module) {
       console.log('Traversing connections ' + exports.Settings.tagspacesList[i].name + ' searching for ' + name);
       if (exports.Settings.tagspacesList[i].name === name) {
         console.log('Deleting connections ' + exports.Settings.tagspacesList[i].name);
-        exports.Settings.tagspacesList.splice(i, 1);
+        exports.Settings.tagspacesList.splice(i , 1);
         break;
       }
     }
@@ -1174,7 +1219,7 @@ define(function(require, exports, module) {
         if (appStorageTagGroups) {
           tmpSettings.tagGroups = appStorageTagGroups.tagGroups;
         }
-      } 
+      }
       //console.log("Settings: "+JSON.stringify(tmpSettings));        
       if (tmpSettings !== null) {
         exports.Settings = tmpSettings;
@@ -1193,9 +1238,9 @@ define(function(require, exports, module) {
   function saveSettings() {
     // TODO Make a file based json backup
     // Making a backup of the last settings
-    localStorage.setItem('tagSpacesSettingsBackup1', localStorage.getItem('tagSpacesSettings'));
+    localStorage.setItem('tagSpacesSettingsBackup1' , localStorage.getItem('tagSpacesSettings'));
     // Storing setting in the local storage of mozilla and chorme
-    localStorage.setItem('tagSpacesSettings', JSON.stringify(exports.Settings));
+    localStorage.setItem('tagSpacesSettings' , JSON.stringify(exports.Settings));
     // Storing settings in firefox native preferences
     if (isFirefox || isChrome || isCordova) {
       TSCORE.IO.saveSettings(JSON.stringify(exports.Settings));
@@ -1248,7 +1293,7 @@ define(function(require, exports, module) {
   exports.getMaxSearchResultCount = getMaxSearchResultCount;
   exports.setMaxSearchResultCount = setMaxSearchResultCount;
   exports.getWatchCurrentDirectory = getWatchCurrentDirectory;
-  exports.setWatchCurrentDirectory = setWatchCurrentDirectory;    
+  exports.setWatchCurrentDirectory = setWatchCurrentDirectory;
   exports.setEnableMetaData = setEnableMetaData;
   exports.getEnableMetaData = getEnableMetaData;
   exports.getIsWindowMaximized = getIsWindowMaximized;
