@@ -538,6 +538,7 @@ define(function(require, exports, module) {
   exports.createHTMLFile = tsCoreUI.createHTMLFile;
   exports.createMDFile = tsCoreUI.createMDFile;
   exports.createTXTFile = tsCoreUI.createTXTFile;
+  exports.showRenameFileDialog = tsCoreUI.showRenameFileDialog;
 
   // Proxying functions from tsSearchUI
   exports.clearSearchFilter = tsSearchUI.clearSearchFilter;
