@@ -7,7 +7,7 @@
  * Description
  * @class TSCORE
  */
-define(function(require , exports , module) {
+define(function(require, exports, module) {
   'use strict';
 
   console.log('Loading core.api.js ...');
@@ -73,7 +73,7 @@ define(function(require , exports , module) {
     checkLocalStorageEnabled();
     // In firefox, by empty local storage trying to load the settings from mozilla preferences
     if (tsSettings.Settings === undefined && isFirefox) {
-      window.setTimeout(tsIOApi.loadSettings , 1000);
+      window.setTimeout(tsIOApi.loadSettings, 1000);
       // executes initUI and updateSettingMozillaPreferences by success
       console.log('Loading setting with from mozilla pref executed with delay...');
     }
@@ -160,27 +160,27 @@ define(function(require , exports , module) {
       checkForNewVersion();
     });
 
-    window.addEventListener('orientationchange' , reLayout);
+    window.addEventListener('orientationchange', reLayout);
 
-    $(window).on('resize' , reLayout);
+    $(window).on('resize', reLayout);
   }
 
   function switchInterfaceLanguage(language) {
     exports.currentLanguage = language;
-    return new Promise(function(resolve , reject) {
+    return new Promise(function(resolve, reject) {
       $.i18n.init({
         ns: {
           namespaces: [
-            'ns.common' ,
-            'ns.dialogs' ,
-            'ns.perspectiveList' ,
-            'ns.pro' ,
+            'ns.common',
+            'ns.dialogs',
+            'ns.perspectiveList',
+            'ns.pro',
           ]
-        } ,
-        lng: language ,
-        debug: true ,
+        },
+        lng: language,
+        debug: true,
         fallbackLng: 'en_US'
-      } , function() {
+      }, function() {
         $('[data-i18n]').i18n();
         resolve();
       });
@@ -190,29 +190,29 @@ define(function(require , exports , module) {
   function initKeyBindings() {
     if (isNode) {
       var win = gui.Window.get();
-      Mousetrap.bind(tsSettings.getOpenDevToolsScreenKeyBinding() , function() {
+      Mousetrap.bind(tsSettings.getOpenDevToolsScreenKeyBinding(), function() {
         win.showDevTools();
       });
-      Mousetrap.bind(tsSettings.getReloadApplicationKeyBinding() , function() {
+      Mousetrap.bind(tsSettings.getReloadApplicationKeyBinding(), function() {
         win.reloadIgnoringCache();
       });
-      Mousetrap.bind(tsSettings.getToggleFullScreenKeyBinding() , function() {
+      Mousetrap.bind(tsSettings.getToggleFullScreenKeyBinding(), function() {
         win.toggleFullscreen();
       });
     }
-    Mousetrap.bind(tsSettings.getShowTagLibraryKeyBinding() , function() {
+    Mousetrap.bind(tsSettings.getShowTagLibraryKeyBinding(), function() {
       tsCoreUI.showTagsPanel();
     });
-    Mousetrap.bind(tsSettings.getShowFolderNavigatorBinding() , function() {
+    Mousetrap.bind(tsSettings.getShowFolderNavigatorBinding(), function() {
       tsCoreUI.showLocationsPanel();
     });
-    Mousetrap.bind(tsSettings.getAddRemoveTagsKeyBinding() , function() {
+    Mousetrap.bind(tsSettings.getAddRemoveTagsKeyBinding(), function() {
       tsTagsUI.showAddTagsDialog();
     });
-    Mousetrap.bind(tsSettings.getSearchKeyBinding() , function() {
+    Mousetrap.bind(tsSettings.getSearchKeyBinding(), function() {
       tsSearchUI.showSearchArea();
     });
-    Mousetrap.bind(tsSettings.getRenamingFileKeyBinding() , function() {
+    Mousetrap.bind(tsSettings.getRenamingFileKeyBinding(), function() {
       if (TSCORE.selectedFiles[0]) {
         tsCoreUI.showFileRenameDialog(TSCORE.selectedFiles[0]);
       }
@@ -228,10 +228,10 @@ define(function(require , exports , module) {
   function checkLocalStorageEnabled() {
     var val = 'tagspaces';
     try {
-      localStorage.setItem(val , val);
+      localStorage.setItem(val, val);
       localStorage.removeItem(val);
     } catch (e) {
-      tsCoreUI.showAlertDialog($.i18n.t('ns.dialogs:enableLocalStorageAlert') , 'Error');
+      tsCoreUI.showAlertDialog($.i18n.t('ns.dialogs:enableLocalStorageAlert'), 'Error');
     }
   }
 
@@ -258,7 +258,7 @@ define(function(require , exports , module) {
      availableBuild = 2;
      currentBuild = 1; */
     if (availableVersion > currentVersion || availableVersion == currentVersion && availableBuild > currentBuild) {
-      $('#newVersionAvailable').css('display' , 'block');
+      $('#newVersionAvailable').css('display', 'block');
       /*$('#whatsNewModal iframe').attr('src', 'http://tagspaces.org/whatsnew/');
        $('#whatsNewModal').on('show.bs.modal', function(e) {
        $('#whatsNewModal iframe').attr('src', 'http://tagspaces.org/whatsnew/');
@@ -275,22 +275,22 @@ define(function(require , exports , module) {
     setTimeout(function() {
       $loadingAnimation.hide();
       $statusBar.show();
-    } , 500);
+    }, 500);
   }
 
-  function removeFileModel(model , filePath) {
+  function removeFileModel(model, filePath) {
     console.log('Removing file from model');
     for (var i = 0; i < model.length; i++) {
       if (model[i].path === filePath) {
-        model.splice(i , 1);
+        model.splice(i, 1);
       }
     }
   }
 
-  function updateFileModel(model , oldPath , newPath) {
+  function updateFileModel(model, oldPath, newPath) {
     console.log('Removing file from model');
-    var title = tsTagUtils.extractTitle(newPath) ,
-            fileExt = tsTagUtils.extractFileExtension(newPath) ,
+    var title = tsTagUtils.extractTitle(newPath),
+            fileExt = tsTagUtils.extractFileExtension(newPath),
             fileTags = tsTagUtils.extractTags(newPath);
     for (var i = 0; i < model.length; i++) {
       if (model[i].path == oldPath) {
@@ -461,16 +461,16 @@ define(function(require , exports , module) {
     location.reload();
   }
 
-  function createDocumentEvent(type , data) {
+  function createDocumentEvent(type, data) {
     var evt = document.createEvent('Events');
-    evt.initEvent(type , false , false);
+    evt.initEvent(type, false, false);
     return evt;
   }
 
   function fireDocumentEvent(evt) {
     setTimeout(function() {
       document.dispatchEvent(evt);
-    } , 0);
+    }, 0);
   }
 
   // Proxying applications parts
