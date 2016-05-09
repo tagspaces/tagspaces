@@ -107,6 +107,10 @@ define(function(require, exports, module) {
       var language = tsSettings.getInterfaceLanguage();
 
       if (tsSettings.isFirstRun()) {
+        // Showing license dialog
+        tsCoreUI.showLicenseDialog();
+
+        // Setting the language
         var browserLang = navigator.language || navigator.userLanguage;
 
         var languageMatched;

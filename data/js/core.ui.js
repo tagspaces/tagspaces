@@ -776,14 +776,6 @@ define(function(require, exports, module) {
     });
   }
 
-  $('#eulaDialogBack').click(function() {
-    if (TSCORE.PRO) {
-      $('#aboutIframe').attr('src', 'pro/EULA.txt');
-    } else {
-      $('#aboutIframe').attr('src', 'LICENSE.txt');
-    }
-  });
-
   function showLicenseDialog() {
     $('#aboutLicenseModal').modal({
       backdrop: 'static',
