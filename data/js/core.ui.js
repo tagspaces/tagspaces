@@ -2,7 +2,7 @@
  * Use of this source code is governed by a AGPL3 license that
  * can be found in the LICENSE file. */
 
-/* global define, Handlebars, isNode, isFirefox,WebAudioRecorder */
+/* global define, Handlebars, isNode, isFirefox  */
 define(function(require, exports, module) {
   'use strict';
 
@@ -71,7 +71,7 @@ define(function(require, exports, module) {
       var reader = new FileReader();
       reader.onload = onFileReadComplete;
       if (isCordova) {
-        reader.readAsDataURL(file);
+        //reader.readAsDataURL(file);
       } else {
         reader.readAsArrayBuffer(file);
       }
@@ -183,22 +183,12 @@ define(function(require, exports, module) {
       }
     });
 
-    function eulaVersion() {
+    $('#aboutDialogBack').click(function() {
       if (TSCORE.PRO) {
         $('#aboutIframe').attr('src', 'pro/about.html');
       } else {
         $('#aboutIframe').attr('src', 'about.html');
       }
-    }
-
-    $('#aboutDialogBack').click(function() {
-      eulaVersion();
-    });
-    $('#confirmButtonDialog').click(function() {
-      eulaVersion();
-    });
-    $('#closeDialog').click(function() {
-      eulaVersion();
     });
 
     // Open About Dialog
@@ -554,7 +544,6 @@ define(function(require, exports, module) {
   function showFileRenameDialog(filePath) {
     $('#renamedFileName').attr('filepath', filePath);
     $('#renamedFileName').val(TSCORE.TagUtils.extractFileName(filePath));
-
     $('#formFileRename').validator();
     $('#formFileRename').submit(function(e) {
       e.preventDefault();
@@ -653,37 +642,6 @@ define(function(require, exports, module) {
     $('#dialogEditTag').draggable({
       handle: ".modal-header"
     });
-  }
-
-  function showRenameFileDialog() {
-    if (TSCORE.selectedFiles[0]) {
-      $('#renamedFileName').val(TSCORE.selectedFiles[0]);
-      $('#formFileRename').validator();
-      $('#formFileRename').submit(function(e) {
-        e.preventDefault();
-        if ($('#renameFileButton').prop('disabled') === false) {
-          $('#renameFileButton').click();
-        }
-      });
-      $('#formFileRename').on('invalid.bs.validator', function() {
-        $('#renameFileButton').prop('disabled', true);
-      });
-      $('#formFileRename').on('valid.bs.validator', function() {
-        $('#renameFileButton').prop('disabled', false);
-      });
-      $('#dialogFileRename').on('shown.bs.modal', function() {
-        $('#renamedFileName').focus();
-      });
-      $('#dialogFileRename').modal({
-        backdrop: 'static',
-        show: true
-      });
-      $('#dialogFileRename').draggable({
-        handle: ".modal-header"
-      });
-    } else {
-      TSCORE.showAlertDialog("Renaming file failed. Please select a file.");
-    }
   }
 
   function showDirectoryBrowserDialog(path) {
@@ -818,200 +776,15 @@ define(function(require, exports, module) {
     });
   }
 
-  // Open Audio Recording Dialog
-  function showAudioRecordingDialog() {
-    $('#audioRecordingDialog').modal({
+  function showLicenseDialog() {
+    $('#aboutLicenseModal').modal({
       backdrop: 'static',
       show: true
     });
-    $('#audioRecordingDialog').draggable({
+    $('#aboutLicenseModal').draggable({
       handle: ".modal-header"
     });
   }
-
-// navigator.getUserMedia shim
-  navigator.getUserMedia =
-          navigator.getUserMedia ||
-          navigator.webkitGetUserMedia ||
-          navigator.mozGetUserMedia ||
-          navigator.msGetUserMedia;
-
-// URL shim
-  window.URL = window.URL || window.webkitURL;
-
-// audio context + .createScriptProcessor shim
-  var audioContext = new AudioContext;
-  if (audioContext.createScriptProcessor == null)
-    audioContext.createScriptProcessor = audioContext.createJavaScriptNode;
-
-
-  // elements (jQuery objects)
-  var $testToneLevel = $('#testToneLevel'),
-          $microphone = $('#microphone'),
-          $microphoneLevel = $('#microphoneLevel'),
-          $timeLimit = $('#time-limit'),
-          $encoding = $('input[name="encoding"]'),
-          $encodingOption = $('#encoding-option'),
-          $encodingProcess = $('input[name="encoding-process"]'),
-          $reportInterval = $('#report-interval'),
-          $bufferSize = $('#buffer-size'),
-          $recording = $('#recording'),
-          $timeDisplay = $('#time-display'),
-          $record = $('#record'),
-          $cancel = $('#cancel'),
-          $dateTime = $('#date-time'),
-          $recordingList = $('#recordingList'),
-          $modalLoading = $('#modal-loading'),
-          $modalProgress = $('#modal-progress'),
-          $modalError = $('#modal-error');
-
-  // initialize input element states (required for reloading page on Firefox)
-  //$testToneLevel.attr('disabled', false);
-  //$testToneLevel[0].valueAsNumber = 0;
-  //$microphone.attr('disabled', false);
-  //$microphone[0].checked = false;
-  //$microphoneLevel.attr('disabled', false);
-  //$microphoneLevel[0].valueAsNumber = 0;
-  //$timeLimit.attr('disabled', false);
-  //$timeLimit[0].valueAsNumber = 3;
-  //$encoding.attr('disabled', false);
-  //$encoding[0].checked = true;
-  //$encodingProcess.attr('disabled', false);
-  //$encodingProcess[0].checked = true;
-  //$reportInterval.attr('disabled', false);
-  //$reportInterval[0].valueAsNumber = 1;
-  //$bufferSize.attr('disabled', false);
-
-
-  var testTone = (function() {
-    var osc = audioContext.createOscillator(),
-            lfo = audioContext.createOscillator(),
-            ampMod = audioContext.createGain(),
-            output = audioContext.createGain();
-    lfo.type = 'square';
-    lfo.frequency.value = 2;
-    osc.connect(ampMod);
-    lfo.connect(ampMod.gain);
-    output.gain.value = 0.5;
-    ampMod.connect(output);
-    osc.start();
-    lfo.start();
-    return output;
-  })();
-
-
-  var testToneLevel = audioContext.createGain(),
-          microphone = undefined,     // obtained by user click
-          microphoneLevel = audioContext.createGain(),
-          mixer = audioContext.createGain();
-  testTone.connect(testToneLevel);
-  testToneLevel.gain.value = 0;
-  testToneLevel.connect(mixer);
-  microphoneLevel.gain.value = 0;
-  microphoneLevel.connect(mixer);
-  mixer.connect(audioContext.destination);
-
-// audio recorder object
-  var audioRecorder = new WebAudioRecorder(mixer, {
-    workerDir: require([
-      "js!data/libs/audio-record/",
-    ]),
-    onEncoderLoading: function(recorder, encoding) {
-      $modalLoading.find('.modal-title').html("Loading " + encoding.toUpperCase() + " encoder ...");
-      $modalLoading.modal('show');
-    },
-    onEncoderLoaded: function() {
-      $modalLoading.modal('hide');
-    }
-  });
-
-  // mixer levels
-  $testToneLevel.on('input', function() {
-    var level = $testToneLevel[0].valueAsNumber / 100;
-    testToneLevel.gain.value = level * level;
-  });
-
-  $microphoneLevel.on('input', function() {
-    var level = $microphoneLevel[0].valueAsNumber / 100;
-    microphoneLevel.gain.value = level * level;
-  });
-
-// obtaining microphone input
-  $microphone.click(function() {
-    if (microphone == null)
-      navigator.getUserMedia({ audio: true },
-              function(stream) {
-                microphone = audioContext.createMediaStreamSource(stream);
-                microphone.connect(microphoneLevel);
-                $microphone.attr('disabled', true);
-                $microphoneLevel.removeClass('hidden');
-              },
-              function(error) {
-                $microphone[0].checked = false;
-                audioRecorder.onError(audioRecorder, "Could not get audio input.");
-              });
-  });
-
-  // encoding selector + encoding options
-  var OGG_QUALITY = [-0.1, 0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1],
-          OGG_KBPS = [45, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320, 500],
-          //MP3_BIT_RATE = [64, 80, 96, 112, 128, 160, 192, 224, 256, 320],
-          ENCODING_OPTION = {
-            wav: {
-              label: '',
-              hidden: true,
-              max: 1,
-              text: function(val) { return ''; }
-            },
-            ogg: {
-              label: 'Quality',
-              hidden: false,
-              max: OGG_QUALITY.length - 1,
-              text: function(val) {
-                return OGG_QUALITY[val].toFixed(1) +
-                        " (~" + OGG_KBPS[val] + "kbps)";
-              }
-            },
-            //mp3: {
-            //  label: 'Bit rate',
-            //  hidden: false,
-            //  max: MP3_BIT_RATE.length - 1,
-            //  text: function(val) { return "" + MP3_BIT_RATE[val] + "kbps"; }
-            //}
-          };
-
-  //function startRecording() {
-  //  $recording.removeClass('hidden');
-  //  $record.html('STOP');
-  //  $cancel.removeClass('hidden');
-  //  disableControlsOnRecord(true);
-  //  audioRecorder.setOptions({
-  //    timeLimit: $timeLimit[0].valueAsNumber * 60,
-  //    encodeAfterRecord: encodingProcess === 'separate',
-  //    progressInterval: $reportInterval[0].valueAsNumber * 1000,
-  //    ogg: { quality: OGG_QUALITY[optionValue.ogg] },
-  //    mp3: { bitRate: MP3_BIT_RATE[optionValue.mp3] }
-  //  });
-  //  audioRecorder.startRecording();
-  //  //setProgress(0);
-  //}
-  //
-  //function stopRecording(finish) {
-  //  $recording.addClass('hidden');
-  //  $record.html('RECORD');
-  //  $cancel.addClass('hidden');
-  //  //disableControlsOnRecord(false);
-  //  if (finish) {
-  //    audioRecorder.finishRecording();
-  //    if (audioRecorder.options.encodeAfterRecord) {
-  //      $modalProgress
-  //      .find('.modal-title')
-  //      .html("Encoding " + audioRecorder.encoding.toUpperCase());
-  //      $modalProgress.modal('show');
-  //    }
-  //  } else
-  //    audioRecorder.cancelRecording();
-  //}
 
   function disableTopToolbar() {
     $('#perspectiveSwitcherButton').prop('disabled', true);
@@ -1182,7 +955,6 @@ define(function(require, exports, module) {
   exports.showSuccessDialog = showSuccessDialog;
   exports.showConfirmDialog = showConfirmDialog;
   exports.showFileRenameDialog = showFileRenameDialog;
-  exports.showRenameFileDialog = showRenameFileDialog;
   exports.showFileCreateDialog = showFileCreateDialog;
   exports.showFileDeleteDialog = showFileDeleteDialog;
   exports.showDeleteFilesDialog = showDeleteFilesDialog;
@@ -1191,7 +963,7 @@ define(function(require, exports, module) {
   exports.showTagEditDialog = showTagEditDialog;
   exports.showOptionsDialog = showOptionsDialog;
   exports.showAboutDialog = showAboutDialog;
-  exports.showAudioRecordingDialog = showAudioRecordingDialog;
+  exports.showLicenseDialog = showLicenseDialog;
   exports.showLocationsPanel = showLocationsPanel;
   exports.showTagsPanel = showTagsPanel;
   exports.showContactUsPanel = showContactUsPanel;
