@@ -32,7 +32,9 @@
         "monospaceLinks"        : false,
         "outputSourceFiles"     : true,
         "outputSourcePath"      : true,
+        "applicationName"       : "TagSpaces API",
         "systemName"            : "TagSpaces API",
+        "navigationBackround"   : "#008000", // #1DD19F
         "footer"                : "",
         "copyright"             : "Copyright © 2013-2016 The contributors to the TagSpaces project.",
         "navType"               : "vertical",
@@ -40,14 +42,17 @@
         "linenums"              : true,
         "collapseSymbols"       : false,
         "inverseNav"            : true,
-        "highlightTutorialCode" : true
+        "highlightTutorialCode" : true,
+        "default": {
+            "outputSourceFiles" : true
+        }
     },
     "markdown": {
         "parser"   : "gfm",
         "hardwrap" : true
     },
     "opts": {
-        "template": "node_modules/ink-docstrap/template",
+        "template": "theme", // theme node_modules/ink-docstrap/template,
         "encoding": "utf8",
         "destination": "./docs/",
         "recurse": true,
