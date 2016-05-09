@@ -157,7 +157,14 @@ define(function(require, exports, module) {
             click: function() {
               TSCORE.UI.showAboutDialog();
             }
-          }
+          },
+          {
+            label: $.i18n.t("ns.common:license"),
+            //accelerator: "bind key",
+            click: function() {
+              TSCORE.UI.showLicenseDialog();
+            }
+          },
         ]
       },
     ];

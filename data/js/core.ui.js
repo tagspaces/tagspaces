@@ -776,6 +776,16 @@ define(function(require, exports, module) {
     });
   }
 
+  function showLicenseDialog() {
+    $('#aboutLicenseModal').modal({
+      backdrop: 'static',
+      show: true
+    });
+    $('#aboutLicenseModal').draggable({
+      handle: ".modal-header"
+    });
+  }
+
   function disableTopToolbar() {
     $('#perspectiveSwitcherButton').prop('disabled', true);
     $('#searchBox').prop('disabled', true);
@@ -953,6 +963,7 @@ define(function(require, exports, module) {
   exports.showTagEditDialog = showTagEditDialog;
   exports.showOptionsDialog = showOptionsDialog;
   exports.showAboutDialog = showAboutDialog;
+  exports.showLicenseDialog = showLicenseDialog;
   exports.showLocationsPanel = showLocationsPanel;
   exports.showTagsPanel = showTagsPanel;
   exports.showContactUsPanel = showContactUsPanel;
