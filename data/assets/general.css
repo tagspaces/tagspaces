@@ -65,7 +65,7 @@ html, body {
 }
 
 .forceWrap {
-  word-wrap: break-all;
+  word-break: break-all;
 }
 
 li hr {
