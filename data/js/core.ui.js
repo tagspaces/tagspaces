@@ -71,7 +71,7 @@ define(function(require, exports, module) {
       var reader = new FileReader();
       reader.onload = onFileReadComplete;
       if (isCordova) {
-        //reader.readAsDataURL(file);
+        reader.readAsDataURL(file);
       } else {
         reader.readAsArrayBuffer(file);
       }
@@ -245,8 +245,14 @@ define(function(require, exports, module) {
     });
     // End File Menu
 
-    $('#showLocations').click(function() {
+    $('#showLocations').on('click', function() {
       showLocationsPanel();
+    });
+
+    $('#disagreeLicenseButton').on('click', function() {
+      TSCORE.Config.Settings.firstRun = true;
+      TSCORE.Config.saveSettings();
+      window.close();
     });
 
     $('#showTagGroups').click(function() {
