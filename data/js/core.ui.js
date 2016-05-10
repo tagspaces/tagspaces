@@ -17,10 +17,10 @@ define(function(require, exports, module) {
   var addFileInputName;
 
   var fileDropTemplate = Handlebars.compile(
-    '<div id="fileDropArea">' +
-      '<div id="fileDropExplanation"><i class="fa fa-2x fa-mail-forward"></i><br>' +
-      '<span>Drop files here in order to be copied or moved in the current folder</span></div>' +
-    '</div>'
+          '<div id="fileDropArea">' +
+          '<div id="fileDropExplanation"><i class="fa fa-2x fa-mail-forward"></i><br>' +
+          '<span>Drop files here in order to be copied or moved in the current folder</span></div>' +
+          '</div>'
   );
 
   function initUI() {
@@ -71,7 +71,7 @@ define(function(require, exports, module) {
       var reader = new FileReader();
       reader.onload = onFileReadComplete;
       if (isCordova) {
-        reader.readAsDataURL(file);			
+        reader.readAsDataURL(file);
       } else {
         reader.readAsArrayBuffer(file);
       }
@@ -241,11 +241,18 @@ define(function(require, exports, module) {
       TSCORE.showFileDeleteDialog(TSCORE.selectedFiles[0]);
     });
 
-    $('#fileOpenProperties').click(function() {});
+    $('#fileOpenProperties').click(function() {
+    });
     // End File Menu
 
-    $('#showLocations').click(function() {
+    $('#showLocations').on('click', function() {
       showLocationsPanel();
+    });
+
+    $('#disagreeLicenseButton').on('click', function() {
+      TSCORE.Config.Settings.firstRun = true;
+      TSCORE.Config.saveSettings();
+      window.close();
     });
 
     $('#showTagGroups').click(function() {
@@ -444,21 +451,21 @@ define(function(require, exports, module) {
       closeWith: ['button', 'click'],
     });
     /*var alertModal = $('#alertDialog');
-    alertModal.find('h4').text(title);
-    alertModal.find('.modal-body').empty();
-    alertModal.find('.modal-body').text(message);
-    alertModal.find('#okButton').off('click').click(function() {
-      alertModal.modal('hide');
-    });
-    // Focusing the ok button by default
-    alertModal.off('shown.bs.modal');
-    alertModal.on('shown.bs.modal', function() {
-      alertModal.find('#okButton').focus();
-    });
-    alertModal.modal({
-      backdrop: 'static',
-      show: true
-    });*/
+     alertModal.find('h4').text(title);
+     alertModal.find('.modal-body').empty();
+     alertModal.find('.modal-body').text(message);
+     alertModal.find('#okButton').off('click').click(function() {
+     alertModal.modal('hide');
+     });
+     // Focusing the ok button by default
+     alertModal.off('shown.bs.modal');
+     alertModal.on('shown.bs.modal', function() {
+     alertModal.find('#okButton').focus();
+     });
+     alertModal.modal({
+     backdrop: 'static',
+     show: true
+     });*/
   }
 
   function showConfirmDialog(title, message, okCallback, cancelCallback, confirmShowNextTime) {
@@ -543,7 +550,6 @@ define(function(require, exports, module) {
   function showFileRenameDialog(filePath) {
     $('#renamedFileName').attr('filepath', filePath);
     $('#renamedFileName').val(TSCORE.TagUtils.extractFileName(filePath));
-
     $('#formFileRename').validator();
     $('#formFileRename').submit(function(e) {
       e.preventDefault();
@@ -579,13 +585,13 @@ define(function(require, exports, module) {
       filePath: filePath
     }), function() {
       TSCORE.IO.deleteFilePromise(filePath).then(function() {
-          TSPOSTIO.deleteElement(filePath);
-        },
-        function(error) {
-          TSCORE.hideLoadingAnimation();
-          TSCORE.showAlertDialog("Deleting file " + filePath + " failed.");
-          console.error("Deleting file " + filePath + " failed " + error);
-        }
+                TSPOSTIO.deleteElement(filePath);
+              },
+              function(error) {
+                TSCORE.hideLoadingAnimation();
+                TSCORE.showAlertDialog("Deleting file " + filePath + " failed.");
+                console.error("Deleting file " + filePath + " failed " + error);
+              }
       );
     });
   }
@@ -606,14 +612,14 @@ define(function(require, exports, module) {
     }
 
     TSCORE.showConfirmDialog(
-      $.i18n.t('ns.dialogs:fileDeleteTitleConfirm'),
-      $.i18n.t(dlgConfirmMsgId, {selectedFiles: selFiles}),
-      function() {
-        if (TSCORE.IO.stopWatchingDirectories) {
-          TSCORE.IO.stopWatchingDirectories();
-        }
-        TSCORE.IOUtils.deleteFiles(TSCORE.Utils.getUniqueSelectedFiles());
-      }
+            $.i18n.t('ns.dialogs:fileDeleteTitleConfirm'),
+            $.i18n.t(dlgConfirmMsgId, {selectedFiles: selFiles}),
+            function() {
+              if (TSCORE.IO.stopWatchingDirectories) {
+                TSCORE.IO.stopWatchingDirectories();
+              }
+              TSCORE.IOUtils.deleteFiles(TSCORE.Utils.getUniqueSelectedFiles());
+            }
     );
   }
 
@@ -676,7 +682,9 @@ define(function(require, exports, module) {
     });
   }
 
-  function showWelcomeDialog() { startGettingStartedTour(); }
+  function showWelcomeDialog() {
+    startGettingStartedTour();
+  }
 
   function startGettingStartedTour() {
     var tsGettingStarted = require('tsgettingstarted');
@@ -770,6 +778,16 @@ define(function(require, exports, module) {
       show: true
     });
     $('#dialogAboutTS').draggable({
+      handle: ".modal-header"
+    });
+  }
+
+  function showLicenseDialog() {
+    $('#aboutLicenseModal').modal({
+      backdrop: 'static',
+      show: true
+    });
+    $('#aboutLicenseModal').draggable({
       handle: ".modal-header"
     });
   }
@@ -951,6 +969,7 @@ define(function(require, exports, module) {
   exports.showTagEditDialog = showTagEditDialog;
   exports.showOptionsDialog = showOptionsDialog;
   exports.showAboutDialog = showAboutDialog;
+  exports.showLicenseDialog = showLicenseDialog;
   exports.showLocationsPanel = showLocationsPanel;
   exports.showTagsPanel = showTagsPanel;
   exports.showContactUsPanel = showContactUsPanel;

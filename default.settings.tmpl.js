@@ -1,5 +1,5 @@
 /* Copyright (c) 2012-2015 The TagSpaces Authors. All rights reserved.
- * Use of this source code is governed by a AGPL3 license that 
+ * Use of this source code is governed by a AGPL3 license that
  * can be found in the LICENSE file. */
 define(function (require, exports, module) {
     "use strict";
@@ -41,8 +41,8 @@ define(function (require, exports, module) {
         "interfaceLanguage":        "en_US",
         "writeTagsToFile":          false,
         "useTrashCan":              true,
-        "useOCR":                   false, 
-        "useTextExtraction":        false, 
+        "useOCR":                   false,
+        "useTextExtraction":        false,
         "useGenerateThumbnails":    false,
         "watchCurrentDirectory":    false,
         "supportedLanguages": [
@@ -86,6 +86,7 @@ define(function (require, exports, module) {
             "nextDocument": ['right', 'down'],
             "prevDocument": ['left', 'up'],
             "showHelp": "f1",
+            "renameFile": "f2",
             "reloadApplication": "r a",
             "toggleFullScreen": "f11",
             "openDevTools": "f12",

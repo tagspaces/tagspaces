@@ -86,6 +86,7 @@ define(function (require, exports, module) {
             "nextDocument": ['right', 'down'],
             "prevDocument": ['left', 'up'],
             "showHelp": "f1",
+            "renameFile": "f2",
             "reloadApplication": "r a",
             "toggleFullScreen": "f11",
             "openDevTools": "f12",
