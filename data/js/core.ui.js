@@ -783,6 +783,11 @@ define(function(require, exports, module) {
   }
 
   function showLicenseDialog() {
+    if (TSCORE.PRO) {
+      $('#licenseIframe').attr('src', 'pro/EULA.txt');
+    } else {
+      $('#licenseIframe').attr('src', 'LICENSE.txt');
+    }
     $('#aboutLicenseModal').modal({
       backdrop: 'static',
       show: true
