@@ -17,10 +17,10 @@ define(function(require, exports, module) {
   var addFileInputName;
 
   var fileDropTemplate = Handlebars.compile(
-    '<div id="fileDropArea">' +
-      '<div id="fileDropExplanation"><i class="fa fa-2x fa-mail-forward"></i><br>' +
-      '<span>Drop files here in order to be copied or moved in the current folder</span></div>' +
-    '</div>'
+          '<div id="fileDropArea">' +
+          '<div id="fileDropExplanation"><i class="fa fa-2x fa-mail-forward"></i><br>' +
+          '<span>Drop files here in order to be copied or moved in the current folder</span></div>' +
+          '</div>'
   );
 
   function initUI() {
@@ -71,7 +71,7 @@ define(function(require, exports, module) {
       var reader = new FileReader();
       reader.onload = onFileReadComplete;
       if (isCordova) {
-        reader.readAsDataURL(file);			
+        reader.readAsDataURL(file);
       } else {
         reader.readAsArrayBuffer(file);
       }
@@ -183,12 +183,22 @@ define(function(require, exports, module) {
       }
     });
 
-    $('#aboutDialogBack').click(function() {
+    function eulaVersion() {
       if (TSCORE.PRO) {
         $('#aboutIframe').attr('src', 'pro/about.html');
       } else {
         $('#aboutIframe').attr('src', 'about.html');
       }
+    }
+
+    $('#aboutDialogBack').click(function() {
+      eulaVersion();
+    });
+    $('#confirmButtonDialog').click(function() {
+      eulaVersion();
+    });
+    $('#closeDialog').click(function() {
+      eulaVersion();
     });
 
     // Open About Dialog
@@ -241,7 +251,8 @@ define(function(require, exports, module) {
       TSCORE.showFileDeleteDialog(TSCORE.selectedFiles[0]);
     });
 
-    $('#fileOpenProperties').click(function() {});
+    $('#fileOpenProperties').click(function() {
+    });
     // End File Menu
 
     $('#showLocations').click(function() {
@@ -444,21 +455,21 @@ define(function(require, exports, module) {
       closeWith: ['button', 'click'],
     });
     /*var alertModal = $('#alertDialog');
-    alertModal.find('h4').text(title);
-    alertModal.find('.modal-body').empty();
-    alertModal.find('.modal-body').text(message);
-    alertModal.find('#okButton').off('click').click(function() {
-      alertModal.modal('hide');
-    });
-    // Focusing the ok button by default
-    alertModal.off('shown.bs.modal');
-    alertModal.on('shown.bs.modal', function() {
-      alertModal.find('#okButton').focus();
-    });
-    alertModal.modal({
-      backdrop: 'static',
-      show: true
-    });*/
+     alertModal.find('h4').text(title);
+     alertModal.find('.modal-body').empty();
+     alertModal.find('.modal-body').text(message);
+     alertModal.find('#okButton').off('click').click(function() {
+     alertModal.modal('hide');
+     });
+     // Focusing the ok button by default
+     alertModal.off('shown.bs.modal');
+     alertModal.on('shown.bs.modal', function() {
+     alertModal.find('#okButton').focus();
+     });
+     alertModal.modal({
+     backdrop: 'static',
+     show: true
+     });*/
   }
 
   function showConfirmDialog(title, message, okCallback, cancelCallback, confirmShowNextTime) {
@@ -579,13 +590,13 @@ define(function(require, exports, module) {
       filePath: filePath
     }), function() {
       TSCORE.IO.deleteFilePromise(filePath).then(function() {
-          TSPOSTIO.deleteElement(filePath);
-        },
-        function(error) {
-          TSCORE.hideLoadingAnimation();
-          TSCORE.showAlertDialog("Deleting file " + filePath + " failed.");
-          console.error("Deleting file " + filePath + " failed " + error);
-        }
+                TSPOSTIO.deleteElement(filePath);
+              },
+              function(error) {
+                TSCORE.hideLoadingAnimation();
+                TSCORE.showAlertDialog("Deleting file " + filePath + " failed.");
+                console.error("Deleting file " + filePath + " failed " + error);
+              }
       );
     });
   }
@@ -606,14 +617,14 @@ define(function(require, exports, module) {
     }
 
     TSCORE.showConfirmDialog(
-      $.i18n.t('ns.dialogs:fileDeleteTitleConfirm'),
-      $.i18n.t(dlgConfirmMsgId, {selectedFiles: selFiles}),
-      function() {
-        if (TSCORE.IO.stopWatchingDirectories) {
-          TSCORE.IO.stopWatchingDirectories();
-        }
-        TSCORE.IOUtils.deleteFiles(TSCORE.Utils.getUniqueSelectedFiles());
-      }
+            $.i18n.t('ns.dialogs:fileDeleteTitleConfirm'),
+            $.i18n.t(dlgConfirmMsgId, {selectedFiles: selFiles}),
+            function() {
+              if (TSCORE.IO.stopWatchingDirectories) {
+                TSCORE.IO.stopWatchingDirectories();
+              }
+              TSCORE.IOUtils.deleteFiles(TSCORE.Utils.getUniqueSelectedFiles());
+            }
     );
   }
 
@@ -642,6 +653,37 @@ define(function(require, exports, module) {
     $('#dialogEditTag').draggable({
       handle: ".modal-header"
     });
+  }
+
+  function showRenameFileDialog() {
+    if (TSCORE.selectedFiles[0]) {
+      $('#renamedFileName').val(TSCORE.selectedFiles[0]);
+      $('#formFileRename').validator();
+      $('#formFileRename').submit(function(e) {
+        e.preventDefault();
+        if ($('#renameFileButton').prop('disabled') === false) {
+          $('#renameFileButton').click();
+        }
+      });
+      $('#formFileRename').on('invalid.bs.validator', function() {
+        $('#renameFileButton').prop('disabled', true);
+      });
+      $('#formFileRename').on('valid.bs.validator', function() {
+        $('#renameFileButton').prop('disabled', false);
+      });
+      $('#dialogFileRename').on('shown.bs.modal', function() {
+        $('#renamedFileName').focus();
+      });
+      $('#dialogFileRename').modal({
+        backdrop: 'static',
+        show: true
+      });
+      $('#dialogFileRename').draggable({
+        handle: ".modal-header"
+      });
+    } else {
+      TSCORE.showAlertDialog("Renaming file failed. Please select a file.");
+    }
   }
 
   function showDirectoryBrowserDialog(path) {
@@ -676,7 +718,9 @@ define(function(require, exports, module) {
     });
   }
 
-  function showWelcomeDialog() { startGettingStartedTour(); }
+  function showWelcomeDialog() {
+    startGettingStartedTour();
+  }
 
   function startGettingStartedTour() {
     var tsGettingStarted = require('tsgettingstarted');
@@ -943,6 +987,7 @@ define(function(require, exports, module) {
   exports.showSuccessDialog = showSuccessDialog;
   exports.showConfirmDialog = showConfirmDialog;
   exports.showFileRenameDialog = showFileRenameDialog;
+  exports.showRenameFileDialog = showRenameFileDialog;
   exports.showFileCreateDialog = showFileCreateDialog;
   exports.showFileDeleteDialog = showFileDeleteDialog;
   exports.showDeleteFilesDialog = showDeleteFilesDialog;
