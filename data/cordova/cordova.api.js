@@ -323,7 +323,7 @@ define(function(require, exports, module) {
 
   function sendFile(filePath) {
     console.log("Sending file: " + filePath);
-    if (filePath.indexOf("file://") === 0 ) {
+    if (filePath.indexOf("file://") === 0) {
       window.plugins.fileOpener.send(filePath);
     } else {
       window.plugins.fileOpener.send("file://" + filePath);
@@ -997,7 +997,7 @@ define(function(require, exports, module) {
     console.log("Opening natively: " + filePath);
     if (filePath.indexOf("http://") === 0 || filePath.indexOf("https://") === 0) {
       window.open(filePath, '_system');
-    } else if (filePath.indexOf("file://") === 0 ) {
+    } else if (filePath.indexOf("file://") === 0) {
       window.plugins.fileOpener.open(filePath);
     } else {
       window.plugins.fileOpener.open("file://" + filePath);
