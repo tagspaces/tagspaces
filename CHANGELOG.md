@@ -1,5 +1,33 @@
 ﻿#Changelog
 
+## Version 2.3.0 / 2016.04.30
+
+### Pro
+- Initial release of [TagSpaces Pro](https://www.tagspaces.org/products/pro)
+
+### Community
+- Redesigning the search user interface, addin options
+- Considering the parent directory name by the search algorithm
+- Added an option in the settings for limiting the search results
+- Added an option in the settings for deactivating the default search in subfolders
+- Improving handling of not recursive search
+- Adding a "goto previus folder" button in the folder navigation
+- Adjusting the functionality for showing the availability of new versions
+- Fixing open files natively on OS X
+- Fixing user interface issue caused by too long file names in list perspective
+- Add experimental functionality for watching directories for changes
+- Fixing issue [#358](https://github.com/uggrock/tagspaces/issues/358) which was preventing file renaming on network shares under OS X
+
+### Chrome Extension
+- Fixes needed for the file system API changes in Chrome 49
+
+### Android App
+- Reenabling the add existing file functionality on Android
+
+## Version 2.2.5 / 2016.04.24
+- Firefox only release, with a signed addon
+- Addon migration to JPM
+
 ## Version 2.2.1 / 2016.03.28
 - Fixing embedded images in HTML with data url
 - Fixing search in ImageSwiper perspective

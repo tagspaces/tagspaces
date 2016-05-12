@@ -71,7 +71,7 @@ define(function(require, exports, module) {
       var reader = new FileReader();
       reader.onload = onFileReadComplete;
       if (isCordova) {
-          //reader.readAsDataURL(file);
+        reader.readAsDataURL(file);
       } else {
         reader.readAsArrayBuffer(file);
       }
@@ -791,9 +791,9 @@ define(function(require, exports, module) {
 
   function showLicenseDialog() {
     if (TSCORE.PRO) {
-      $('#eulaIframe').attr('src', 'pro/EULA.txt');
+      $('#licenseIframe').attr('src', 'pro/EULA.txt');
     } else {
-      $('#eulaIframe').attr('src', 'LICENSE.txt');
+      $('#licenseIframe').attr('src', 'LICENSE.txt');
     }
     $('#aboutLicenseModal').modal({
       backdrop: 'static',
@@ -804,16 +804,16 @@ define(function(require, exports, module) {
     });
   }
 
-  function reloadLicenseDialog() {
+  function reloadEulaContent() {
     if (TSCORE.PRO) {
-      $('#eulaIframe').attr('src', 'pro/EULA.txt');
+      $('#licenseIframe').attr('src', 'pro/EULA.txt');
     } else {
-      $('#eulaIframe').attr('src', 'LICENSE.txt');
+      $('#licenseIframe').attr('src', 'LICENSE.txt');
     }
   }
 
   $('#aboutLicenseModal').on('show.bs.modal', function() {
-    reloadLicenseDialog();
+    reloadEulaContent();
   });
 
   function disableTopToolbar() {
