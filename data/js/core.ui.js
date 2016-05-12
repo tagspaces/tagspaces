@@ -195,7 +195,7 @@ define(function(require, exports, module) {
       reloadAboutContent();
     });
     $('#dialogAboutTS').on('show.bs.modal', function() {
-      reloadAboutContent()
+      reloadAboutContent();
     });
 
     // Open About Dialog
