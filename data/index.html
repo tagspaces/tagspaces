@@ -349,7 +349,7 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <a type="button" id="closeDialog" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></a>
+        <a type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></a>
         <h4 class="modal-title" id="myModalLabel1" data-i18n="ns.dialogs:aboutTitle"></h4>
       </div>
       <div class="modal-body">
@@ -357,7 +357,28 @@
       </div>
       <div class="modal-footer">
         <button class="btn pull-left" id="aboutDialogBack" title="Go Back"><i class="fa fa-arrow-left fa-lg"></i></button>
-        <button class="btn btn-primary" id="confirmButtonDialog" data-dismiss="modal" aria-hidden="true"><i class="fa fa-check fa-lg"></i></button>
+        <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true"><i class="fa fa-check fa-lg"></i></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fullScreenMobile" id="aboutLicenseModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" data-i18n="ns.common:license"></h4>
+      </div>
+      <div class="modal-body">
+        <iframe id="eulaIframe" sandbox="allow-same-origin allow-scripts" nwdisable style="width: 100%; height: 100%; min-height: 350px; border: 0;"></iframe>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default pull-left" id="disagreeLicenseButton" aria-hidden="true">
+          <i class="fa fa-close fa-lg"></i>&nbsp;<span data-i18n="ns.common:disagreeLicense"></span>
+        </button>
+        <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">
+          <i class="fa fa-check fa-lg"></i>&nbsp;<span data-i18n="ns.common:agreeLicense"></span>
+        </button>
       </div>
     </div>
   </div>

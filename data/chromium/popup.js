@@ -13,6 +13,8 @@
   var htmlTemplate;
   var tagLibrary;
   var fileExt;
+  var currentTabURL;
+  var currentTabID;
 
   function init() {
     $("#startTagSpaces").on("click", function(e) {
@@ -25,7 +27,9 @@
 
     var tagList = extractAllTags(tagLibrary);
     chrome.tabs.getSelected(null, function(tab) {
-      fileExt = getFileExt(tab.url);
+      currentTabURL = tab.url;
+      currentTabID = tab.id;
+      fileExt = getFileExt(currentTabURL);
       $('#title').val(tab.title.substring(tab.title.lastIndexOf("/") + 1, tab.title.length));
       $("#saveSelectionAsHtml").attr("disabled", (fileExt !== 'mhtml'));
     }); 
@@ -91,18 +95,16 @@
   }
 
   function saveAsBookmark() {
-    chrome.tabs.getSelected(null, function(tab) {
-      var filename;
-      tags = document.getElementById("tags").value;
-      if (tags) {
-        tags = tags.split(",").join(" ");
-        filename = $('#title').val() + ' [' + tags + '].url';
-      } else {
-        filename = $('#title').val() + '.url';
-      }
-      var content = '[InternetShortcut]\r\nURL=' + tab.url;
-      saveAs(content, filename);
-    });
+    var filename;
+    tags = document.getElementById("tags").value;
+    if (tags) {
+      tags = tags.split(",").join(" ");
+      filename = $('#title').val() + ' [' + tags + '].url';
+    } else {
+      filename = $('#title').val() + '.url';
+    }
+    var content = '[InternetShortcut]\r\nURL=' + currentTabURL + '';
+    saveAs(content, filename);
   }  
   
   function saveAsMHTML() {
@@ -115,22 +117,19 @@
       filename = $('#title').val() + '.' + fileExt;
     }
 
-    chrome.tabs.getSelected(null, function(tab) {
-      
-      if (fileExt === 'mhtml') {
-        chrome.pageCapture.saveAsMHTML({
-          tabId: tab.id
-        }, function(mhtml) {
-          saveAs(mhtml, filename);
-        });  
-      } else {
-        chrome.downloads.download({ 
-          url: tab.url, 
-          filename: filename, 
-          saveAs: true 
-        });
-      }
-    });
+    if (fileExt === 'mhtml') {
+      chrome.pageCapture.saveAsMHTML({
+        tabId: currentTabID
+      }, function(mhtml) {
+        saveAs(mhtml, filename);
+      });
+    } else {
+      chrome.downloads.download({
+        url: currentTabURL,
+        filename: filename,
+        saveAs: true
+      });
+    }
   }
 
   function saveScreenshot() {
@@ -205,7 +204,7 @@
     });
     // end saving all images*/
 
-    cleanedHTML = "<body>" + cleanedHTML + "</body>";
+    cleanedHTML = "<body data-sourceUrl='" + currentTabURL + "' data-scrapedOn='" + (new Date()) + "' >" + cleanedHTML + "</body>";
     if (htmlTemplate) {
       cleanedHTML = htmlTemplate.replace(/\<body[^>]*\>([^]*)\<\/body>/m, cleanedHTML); // jshint ignore:line
     }

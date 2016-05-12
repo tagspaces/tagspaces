@@ -183,7 +183,7 @@ define(function(require, exports, module) {
       }
     });
 
-    function eulaVersion() {
+    function reloadAboutContent() {
       if (TSCORE.PRO) {
         $('#aboutIframe').attr('src', 'pro/about.html');
       } else {
@@ -192,13 +192,10 @@ define(function(require, exports, module) {
     }
 
     $('#aboutDialogBack').click(function() {
-      eulaVersion();
+      reloadAboutContent();
     });
-    $('#confirmButtonDialog').click(function() {
-      eulaVersion();
-    });
-    $('#closeDialog').click(function() {
-      eulaVersion();
+    $('#dialogAboutTS').on('show.bs.modal', function() {
+      reloadAboutContent()
     });
 
     // Open About Dialog
@@ -255,8 +252,14 @@ define(function(require, exports, module) {
     });
     // End File Menu
 
-    $('#showLocations').click(function() {
+    $('#showLocations').on('click', function() {
       showLocationsPanel();
+    });
+
+    $('#disagreeLicenseButton').on('click', function() {
+      TSCORE.Config.Settings.firstRun = true;
+      TSCORE.Config.saveSettings();
+      window.close();
     });
 
     $('#showTagGroups').click(function() {
@@ -655,37 +658,6 @@ define(function(require, exports, module) {
     });
   }
 
-  function showRenameFileDialog() {
-    if (TSCORE.selectedFiles[0]) {
-      $('#renamedFileName').val(TSCORE.selectedFiles[0]);
-      $('#formFileRename').validator();
-      $('#formFileRename').submit(function(e) {
-        e.preventDefault();
-        if ($('#renameFileButton').prop('disabled') === false) {
-          $('#renameFileButton').click();
-        }
-      });
-      $('#formFileRename').on('invalid.bs.validator', function() {
-        $('#renameFileButton').prop('disabled', true);
-      });
-      $('#formFileRename').on('valid.bs.validator', function() {
-        $('#renameFileButton').prop('disabled', false);
-      });
-      $('#dialogFileRename').on('shown.bs.modal', function() {
-        $('#renamedFileName').focus();
-      });
-      $('#dialogFileRename').modal({
-        backdrop: 'static',
-        show: true
-      });
-      $('#dialogFileRename').draggable({
-        handle: ".modal-header"
-      });
-    } else {
-      TSCORE.showAlertDialog("Renaming file failed. Please select a file.");
-    }
-  }
-
   function showDirectoryBrowserDialog(path) {
     require([
       'text!templates/DirectoryBrowserDialog.html',
@@ -817,6 +789,33 @@ define(function(require, exports, module) {
       handle: ".modal-header"
     });
   }
+
+  function showLicenseDialog() {
+    if (TSCORE.PRO) {
+      $('#eulaIframe').attr('src', 'pro/EULA.txt');
+    } else {
+      $('#eulaIframe').attr('src', 'LICENSE.txt');
+    }
+    $('#aboutLicenseModal').modal({
+      backdrop: 'static',
+      show: true
+    });
+    $('#aboutLicenseModal').draggable({
+      handle: ".modal-header"
+    });
+  }
+
+  function reloadLicenseDialog() {
+    if (TSCORE.PRO) {
+      $('#eulaIframe').attr('src', 'pro/EULA.txt');
+    } else {
+      $('#eulaIframe').attr('src', 'LICENSE.txt');
+    }
+  }
+
+  $('#aboutLicenseModal').on('show.bs.modal', function() {
+    reloadLicenseDialog();
+  });
 
   function disableTopToolbar() {
     $('#perspectiveSwitcherButton').prop('disabled', true);
@@ -987,7 +986,6 @@ define(function(require, exports, module) {
   exports.showSuccessDialog = showSuccessDialog;
   exports.showConfirmDialog = showConfirmDialog;
   exports.showFileRenameDialog = showFileRenameDialog;
-  exports.showRenameFileDialog = showRenameFileDialog;
   exports.showFileCreateDialog = showFileCreateDialog;
   exports.showFileDeleteDialog = showFileDeleteDialog;
   exports.showDeleteFilesDialog = showDeleteFilesDialog;
@@ -996,6 +994,7 @@ define(function(require, exports, module) {
   exports.showTagEditDialog = showTagEditDialog;
   exports.showOptionsDialog = showOptionsDialog;
   exports.showAboutDialog = showAboutDialog;
+  exports.showLicenseDialog = showLicenseDialog;
   exports.showLocationsPanel = showLocationsPanel;
   exports.showTagsPanel = showTagsPanel;
   exports.showContactUsPanel = showContactUsPanel;

@@ -107,9 +107,10 @@ function initToobarButton() {
       data.url('mozilla/popup.js')
     ],
     onShow: function() {
-      var contextExt = capture.getFileExt(tabs.activeTab.url.toString());
-      tagspacesPanel.port.emit("show", selection.html, 
-          tabs.activeTab.title.toString(), contextExt);
+      var currentURL = tabs.activeTab.url.toString();
+      var contextExt = capture.getFileExt(currentURL);
+      tagspacesPanel.port.emit("show", selection.html,
+          tabs.activeTab.title.toString(), contextExt, currentURL);
     },
     onHide: function() { 
       tagspacesPanel.port.emit("hide");

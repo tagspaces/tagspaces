@@ -9,6 +9,7 @@
   var htmlTemplate;
   var tagLibrary;
   var currentSelection;
+  var currentURL;
   var currentExt;
 
   function init() {
@@ -61,8 +62,7 @@
   function prepareContent(uncleanedHTML) {
     //console.log("uncleaned "+uncleanedHTML);
     var cleanedHTML = DOMPurify.sanitize(uncleanedHTML);
-
-    cleanedHTML = "<body>" + cleanedHTML + "</body>";
+    cleanedHTML = "<body  data-sourceUrl='" + currentURL + "' data-scrapedOn='" + (new Date()) + ">" + cleanedHTML + "</body>";
     cleanedHTML = htmlTemplate.replace(/\<body[^>]*\>([^]*)\<\/body>/m, cleanedHTML); // jshint ignore:line
     return cleanedHTML;
   }
@@ -99,11 +99,12 @@
   //$(document).ready(init);
   init();
 
-  self.port.on("show", function(selection, title, ext) {
+  self.port.on("show", function(selection, title, ext, cURL) {
    
     //self.postMessage('show', "ddd1");
     loadSettingsLocalStorage();
     currentSelection = selection;
+    currentURL = cURL;
     currentExt = ext;
     var tagList = extractAllTags(tagLibrary);
     
