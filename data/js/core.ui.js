@@ -272,6 +272,8 @@ define(function(require, exports, module) {
       $('#openWhatsnew').click();
     });
 
+    $('#dialogShortcuts').on('show.bs.modal', setKeyboardShortcutsHelp);
+
     var $contactUsContent = $('#contactUsContent');
     $contactUsContent.on('click', '#openHints', showWelcomeDialog);
     $contactUsContent.on('click', '#openUservoice', function(e) {
@@ -507,6 +509,30 @@ define(function(require, exports, module) {
     });
   }
 
+  function setKeyboardShortcutsHelp() {
+    $('#nextDocumentKeyBindingHelp').html(formatShortcuts(TSCORE.Config.getNextDocumentKeyBinding()));
+    $('#prevDocumentKeyBindingHelp').html(formatShortcuts(TSCORE.Config.getPrevDocumentKeyBinding()));
+    $('#closeDocumentKeyBindingHelp').html(formatShortcuts(TSCORE.Config.getCloseViewerKeyBinding()));
+    $('#addRemoveTagsKeyBindingHelp').html(formatShortcuts(TSCORE.Config.getAddRemoveTagsKeyBinding()));
+    $('#editDocumentKeyBindingHelp').html(formatShortcuts(TSCORE.Config.getEditDocumentKeyBinding()));
+    $('#reloadDocumentKeyBindingHelp').html(formatShortcuts(TSCORE.Config.getReloadDocumentKeyBinding()));
+    $('#saveDocumentKeyBindingHelp').html(formatShortcuts(TSCORE.Config.getSaveDocumentKeyBinding()));
+    $('#documentPropertiesKeyBindingHelp').html(formatShortcuts(TSCORE.Config.getPropertiesDocumentKeyBinding()));
+    $('#showSearchKeyBindingHelp').html(formatShortcuts(TSCORE.Config.getSearchKeyBinding()));
+    $('#renamingFileKeyBindingHelp').html(formatShortcuts(TSCORE.Config.getRenamingFileKeyBinding()));
+    $('#selectAllKeyBindingHelp').html(formatShortcuts(TSCORE.Config.getSelectAllKeyBinding()));
+  }
+
+  function formatShortcuts(shortcut) {
+    var modkey = "ctrl";
+    if (isOSX) {
+      modkey = '&#8984;'; //"command"; // &#8984;
+    }
+    shortcut = shortcut.toString().split('mod').join(modkey);
+    shortcut = shortcut.toString().split('+').join(' + ');
+    return shortcut;
+  }
+
   function showFileCreateDialog() {
     fileContent = TSCORE.Config.getNewTextFileContent();
     // Default new file in text file
@@ -612,14 +638,14 @@ define(function(require, exports, module) {
     }
 
     TSCORE.showConfirmDialog(
-            $.i18n.t('ns.dialogs:fileDeleteTitleConfirm'),
-            $.i18n.t(dlgConfirmMsgId, {selectedFiles: selFiles}),
-            function() {
-              if (TSCORE.IO.stopWatchingDirectories) {
-                TSCORE.IO.stopWatchingDirectories();
-              }
-              TSCORE.IOUtils.deleteFiles(TSCORE.Utils.getUniqueSelectedFiles());
-            }
+      $.i18n.t('ns.dialogs:fileDeleteTitleConfirm'),
+      $.i18n.t(dlgConfirmMsgId, {selectedFiles: selFiles}),
+      function() {
+        if (TSCORE.IO.stopWatchingDirectories) {
+          TSCORE.IO.stopWatchingDirectories();
+        }
+        TSCORE.IOUtils.deleteFiles(TSCORE.Utils.getUniqueSelectedFiles());
+      }
     );
   }
 
