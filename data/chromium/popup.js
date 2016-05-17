@@ -204,7 +204,7 @@
     });
     // end saving all images*/
 
-    cleanedHTML = "<body data-sourceUrl='" + currentTabURL + "' data-scrapedOn='" + (new Date()) + "' >" + cleanedHTML + "</body>";
+    cleanedHTML = "<body data-sourceUrl='" + currentTabURL + "' data-scrapedOn='" + (new Date()).toISOString() + "' >" + cleanedHTML + "</body>";
     if (htmlTemplate) {
       cleanedHTML = htmlTemplate.replace(/\<body[^>]*\>([^]*)\<\/body>/m, cleanedHTML); // jshint ignore:line
     }

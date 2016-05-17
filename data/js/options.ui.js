@@ -148,12 +148,12 @@ define(function(require, exports, module) {
     $('#reloadDocumentKeyBinding').val(TSCORE.Config.getReloadDocumentKeyBinding());
     $('#saveDocumentKeyBinding').val(TSCORE.Config.getSaveDocumentKeyBinding());
     $('#documentPropertiesKeyBinding').val(TSCORE.Config.getPropertiesDocumentKeyBinding());
+    $('#renamingFileKeyBinding').val(TSCORE.Config.getRenamingFileKeyBinding());
+    $('#selectAllKeyBinding').val(TSCORE.Config.getSelectAllKeyBinding());
     $('#showSearchKeyBinding').val(TSCORE.Config.getSearchKeyBinding());
     $('#perspectiveList').empty();
     $('#writeMetaToSidecarFile').attr('checked', TSCORE.Config.getWriteMetaToSidecarFile());
     $('#useDefaultLocationCheckbox').attr('checked', TSCORE.Config.getUseDefaultLocation());
-    $('#selectAllKeyBinding').val(TSCORE.Config.getSelectAllKeyBinding());
-    $('#renamingFileKeyBinding').val(TSCORE.Config.getRenamingFileKeyBinding());
     if (TSCORE.PRO) {
       $('#enableMetaData').attr('checked', TSCORE.Config.getEnableMetaData());
       $('#useTrashCan').attr('checked', TSCORE.Config.getUseTrashCan());
