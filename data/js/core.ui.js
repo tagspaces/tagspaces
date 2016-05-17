@@ -528,6 +528,7 @@ define(function(require, exports, module) {
     $('#showSearchKeyBindingHelp').html(formatShortcuts(TSCORE.Config.getSearchKeyBinding()));
     $('#renamingFileKeyBindingHelp').html(formatShortcuts(TSCORE.Config.getRenamingFileKeyBinding()));
     $('#selectAllKeyBindingHelp').html(formatShortcuts(TSCORE.Config.getSelectAllKeyBinding()));
+    $('#renamingFileKeyBindingHelp').html(formatShortcuts(TSCORE.Config.getRenamingFileKeyBinding()));
   }
 
   function formatShortcuts(shortcut) {
