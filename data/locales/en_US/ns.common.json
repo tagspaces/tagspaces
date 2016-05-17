@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "name": "TagSpaces",
   "switchToLocationsTooltip": "Show Folder",
   "toggleLeftPanelTooltip": "Toggle Left Panel",
@@ -171,6 +172,7 @@
   "view": "View",
   "help": "Help",
   "license": "License Agreement",
+  "shortcutKeys": "Shortcut keys",
   "disagreeLicense": "Disagree",
   "agreeLicense": "Agree",
   "settings": "Settings",

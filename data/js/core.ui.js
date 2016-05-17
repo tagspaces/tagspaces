@@ -686,6 +686,19 @@ define(function(require, exports, module) {
     startGettingStartedTour();
   }
 
+  function showKeysDialog() {
+    $('#dialogShortcuts').modal({
+      backdrop: 'static',
+      show: true,
+      open: function() {
+        $('.modal-body').val(TSCORE.Config.getSelectAllKeyBinding());
+      }
+    });
+    $('#dialogShortcuts').draggable({
+      handle: ".modal-header"
+    });
+  }
+
   function startGettingStartedTour() {
     var tsGettingStarted = require('tsgettingstarted');
     tsGettingStarted.startTour();
@@ -970,6 +983,7 @@ define(function(require, exports, module) {
   exports.showFileDeleteDialog = showFileDeleteDialog;
   exports.showDeleteFilesDialog = showDeleteFilesDialog;
   exports.showWelcomeDialog = showWelcomeDialog;
+  exports.showKeysDialog = showKeysDialog;
   exports.startGettingStartedTour = startGettingStartedTour;
   exports.showTagEditDialog = showTagEditDialog;
   exports.showOptionsDialog = showOptionsDialog;
