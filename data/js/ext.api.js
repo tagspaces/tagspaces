@@ -10,6 +10,12 @@ define(function(require, exports, module) {
     var command = data.command;
 
     switch (command) {
+      case "endedVideo":
+        if(data){
+          console.log(data);
+          openVideoFileFormat(data);
+        } else {console.log('err')}
+        break;
       case "openLinkExternally":
         if (data.link) {
           openLinkExternally(data.link);
@@ -21,6 +27,13 @@ define(function(require, exports, module) {
       default:
         console.log("Not recognized messaging command: " + msg);
         break;
+    }
+  }
+
+  function openVideoFileFormat(filePath) {
+
+    if(TSCORE.selectedFiles[0]) {
+      TSCORE.FileOpener.getNextFile(filePath);
     }
   }
 
