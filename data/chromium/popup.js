@@ -41,7 +41,7 @@
       multiple: true,
       tags: tagList,
       tokenSeparators: [",", " "],
-      minimumInputLength: 2,
+      minimumInputLength: 1,
       selectOnBlur: true
     });
 

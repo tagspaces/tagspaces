@@ -553,7 +553,7 @@ define(function(require, exports, module) {
         ',',
         ' '
       ],
-      minimumInputLength: 2,
+      minimumInputLength: 1,
       selectOnBlur: true
     });
     $('#newFileName').val('');

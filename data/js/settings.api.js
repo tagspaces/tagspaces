@@ -1026,7 +1026,7 @@ define(function(require, exports, module) {
         });
         // Create tag if it is not existing in the current group
         // And is at least 2 characters long
-        if (!tagExistsInGroup && newTagName.length >= 2) {
+        if (!tagExistsInGroup && newTagName.length >= 1) {
           var newTagModel = JSON.parse(JSON.stringify(tagTemplate));
           newTagModel.title = newTagName;
           newTagModel.color = newTagColor;

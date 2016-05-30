@@ -627,7 +627,7 @@ define(function(require, exports, module) {
         ',',
         ' '
       ],
-      minimumInputLength: 2,
+      minimumInputLength: 1,
       selectOnBlur: true,
       formatSelectionCssClass: function(tag, container) {
         var style = generateTagStyle(TSCORE.Config.findTag(tag.text));
