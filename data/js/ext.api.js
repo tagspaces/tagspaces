@@ -29,9 +29,9 @@ define(function(require, exports, module) {
     }
   }
 
-  function openNextFile(filePath) {
+  function openNextFile() {
     //if(TSCORE.selectedFiles[0]) {
-      TSCORE.FileOpener.getNextFile(filePath);
+    TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getNextFile(TSCORE.FileOpener.getOpenedFilePath()));
     //}
   }
 
