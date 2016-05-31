@@ -452,10 +452,10 @@ define(function(require, exports, module) {
         }
       });
       $fileTitle.on('shown', function(e, editable) {
-          $('#closeOpenedFile').hide();
+        $('#closeOpenedFile').hide();
       });
       $fileTitle.on('hidden', function(e, editable) {
-          $('#closeOpenedFile').show();
+        $('#closeOpenedFile').show();
       });
     }
     // Generate tag & ext buttons

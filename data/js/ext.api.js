@@ -11,8 +11,8 @@ define(function(require, exports, module) {
 
     switch (command) {
       case "playbackEnded":
-        if(data){
-          openNextFile(data);
+        if (data) {
+          openNextFile();
         }
         break;
       case "openLinkExternally":
@@ -30,7 +30,9 @@ define(function(require, exports, module) {
   }
 
   function openNextFile() {
-    //if(TSCORE.selectedFiles[0]) {
+    //if(TSCORE.selectedFiles.length > 0) {
+      // TODO open next selected file
+    //} else {
     TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getNextFile(TSCORE.FileOpener.getOpenedFilePath()));
     //}
   }
