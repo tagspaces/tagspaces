@@ -10,6 +10,11 @@ define(function(require, exports, module) {
     var command = data.command;
 
     switch (command) {
+      case "playbackEnded":
+        if(data){
+          openNextFile(data);
+        }
+        break;
       case "openLinkExternally":
         if (data.link) {
           openLinkExternally(data.link);
@@ -22,6 +27,12 @@ define(function(require, exports, module) {
         console.log("Not recognized messaging command: " + msg);
         break;
     }
+  }
+
+  function openNextFile() {
+    //if(TSCORE.selectedFiles[0]) {
+    TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getNextFile(TSCORE.FileOpener.getOpenedFilePath()));
+    //}
   }
 
   function openLinkExternally(uri) {
