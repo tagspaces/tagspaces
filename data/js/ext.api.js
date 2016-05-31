@@ -10,7 +10,7 @@ define(function(require, exports, module) {
     var command = data.command;
 
     switch (command) {
-      case "playingVideo":
+      case "playbackEnded":
         if(data){
           openNextFile(data);
         }
@@ -30,9 +30,9 @@ define(function(require, exports, module) {
   }
 
   function openNextFile(filePath) {
-    if(TSCORE.selectedFiles[0]) {
+    //if(TSCORE.selectedFiles[0]) {
       TSCORE.FileOpener.getNextFile(filePath);
-    }
+    //}
   }
 
   function openLinkExternally(uri) {
