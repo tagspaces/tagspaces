@@ -437,6 +437,7 @@ define(function(require, exports, module) {
     var $fileTitle = $('#fileTitle');
     $fileTitle.editable('destroy');
     $fileTitle.text(title);
+    $fileTitle.attr("title",title);
     if (!isChrome) {
       $fileTitle.editable({
         type: 'text',
