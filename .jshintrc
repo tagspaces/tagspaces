@@ -34,6 +34,8 @@
 
     // Custom Globals
     "globals": {
+        "$": true,
+        "console": true,
         "define": false,
         "self": false,
         "requirejs": false,

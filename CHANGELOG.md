@@ -1,5 +1,16 @@
 ﻿#Changelog
 
+## Version 2.4.0 / 2016.06.05
+
+### Pro
+-
+### Community
+-
+### Chrome Extension
+-
+### Android App
+- Supporting playing audio in background added
+
 ## Version 2.3.0 / 2016.04.30
 
 ### Pro
