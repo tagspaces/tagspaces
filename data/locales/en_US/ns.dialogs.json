@@ -167,5 +167,16 @@
 		"maxSearchResultCount": "Limit files found to",
     "watchCurrentDirectory": "Watch current directory for changes",
     "renamingFileKeyBinding": "Rename File",
+    "audioRecordingTitle": "Audio Recording File",
+    "audioInput": "Audio Input :",
+    "microphone": "Microphone :",
+    "encoding": "Encoding :",
+    "encodingProcess": "Encoding Process :",
+    "record": "Record",
+    "testTone": "Test tone",
+    "encodeAfterRecording": "Encode after recording",
+    "encodeBackground": "Encode background",
+    "wav": ".wav",
+    "ogg": ".ogg",
     "-": "-"
 }

@@ -212,6 +212,17 @@ define(function(require, exports, module) {
       });
     });
 
+    // Open About Dialog
+    $('#openAudioRecordingDialog').click(function() {
+      $('#audioRecordingDialog').modal({
+        backdrop: 'static',
+        show: true
+      });
+      $('#audioRecordingDialog').draggable({
+        handle: ".modal-header"
+      });
+    });
+
     // Open Options Dialog
     $('#openOptions').click(function() {
       showOptionsDialog();
