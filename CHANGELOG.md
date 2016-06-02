@@ -3,13 +3,19 @@
 ## Version 2.4.0 / 2016.06.05
 
 ### Pro
--
+- Minor bug fixes
 ### Community
--
-### Chrome Extension
--
+- Added initial implementation for searching in the HTML and MD viewers
+- The user interface of the audio/video player was updated
+- Audio/video player will trigger the opening of the next file in the current folder on finishing playback, allowing you for example to listen many audio files one after another like in a regular music player.
+- The minimum length of the tags was reduced to 1 character
+- Added the `F2` keybinding for renaming files
+- Added a help screen showing the key binding on `F1`
+- Fixed directory listing issue with the nginx webdav module #409
+### Chrome Extension and Firefox Addon
+- Added the ability to save the source url and date in the saved HTML web page
 ### Android App
-- Supporting playing audio in background added
+- Supporting playing of audio while the app is not in foreground
 
 ## Version 2.3.0 / 2016.04.30
 
@@ -17,12 +23,12 @@
 - Initial release of [TagSpaces Pro](https://www.tagspaces.org/products/pro)
 
 ### Community
-- Redesigning the search user interface, addin options
+- Redesigning the search user interface, adding new options
 - Considering the parent directory name by the search algorithm
 - Added an option in the settings for limiting the search results
 - Added an option in the settings for deactivating the default search in subfolders
 - Improving handling of not recursive search
-- Adding a "goto previus folder" button in the folder navigation
+- Adding a "goto previous folder" button in the folder navigation
 - Adjusting the functionality for showing the availability of new versions
 - Fixing open files natively on OS X
 - Fixing user interface issue caused by too long file names in list perspective
