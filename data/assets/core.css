@@ -544,3 +544,7 @@ input a.resetFilter {
 .parentDirectoryButton {
   max-width: 30px !important;
 }
+
+.top-align-5 {
+  margin-top: 5px;
+}

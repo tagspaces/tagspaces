@@ -106,6 +106,8 @@ var isWin = navigator.appVersion.indexOf("Win")!==-1;
       hopscotch:              'libs/hopscotch/dist/js/hopscotch.min',
       noty:                   'libs/noty/js/noty/packaged/jquery.noty.packaged.min',
       marked:                 'libs/marked/marked.min',
+      audiorecordingwav:      'libs/audio-record/WavAudioEncoder.min.js',
+      audiorecordingogg:      'libs/audio-record/OggEncoder.min.js',
 
       tscore:                 'js/core.api',
       tssetting:              'js/settings.api',

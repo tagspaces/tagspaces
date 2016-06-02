@@ -382,27 +382,27 @@
           <!-- Start: Only for Development process -->
           <div class="form-group">
             <label class="col-sm-3 control-label" data-i18n="ns.dialogs:audioInput"></label>
-            <div class="col-sm-2" data-i18n="ns.dialogs:testTone"></div>
+            <div class="col-sm-2 top-align-5" data-i18n="ns.dialogs:testTone"></div>
             <div class="col-sm-3">
-              <input id="testToneLevel" type="range" min="0" max="100" value="0">
+              <input class="top-align-5" id="testToneLevel" type="range" min="0" max="100" value="0">
             </div>
           </div>
           <!-- END: Only for Development process -->
           <div class="form-group">
             <label class="col-sm-3 control-label" data-i18n="ns.dialogs:audioInput"></label>
-            <div class="col-sm-9">
+            <div class="col-sm-6 top-align-5">
               <input id="microphone" type="checkbox">
               <span data-i18n="ns.dialogs:microphone"></span>
             </div>
-            <div class="col-sm-3">
+            <div class="col-sm-3 top-align-5">
               <input id="microphoneLevel" type="range" min="0" max="100" value="0" class="hidden">
             </div>
           </div>
           <br>
           <div class="form-group">
             <label class="col-sm-3 control-label" data-i18n="ns.dialogs:encoding"></label>
-            <div class="col-sm-3">
-              <input type="radio" name="encoding" encoding="wav" checked="" ><span data-i18n="ns.dialogs:wav"></span>
+            <div class="col-sm-3 top-align-5">
+              <input type="radio" name="encoding" encoding="wav" checked="" ><span data-i18n="ns.dialogs:wav"></span><br>
               <input type="radio" name="encoding" encoding="ogg"><span data-i18n="ns.dialogs:ogg"></span>
             </div>
             <label id="encoding-option-label" class="col-sm-2 control-label"></label>
@@ -414,14 +414,13 @@
           <br>
           <div class="form-group">
             <label class="col-sm-3 control-label" data-i18n="ns.dialogs:encodingProcess"></label>
-            <div class="col-sm-9">
+            <div class="col-sm-9 top-align-5">
               <input type="radio" name="encoding-process" mode="background" checked="">
               <span data-i18n="ns.dialogs:encodeBackground"></span>
             </div>
           </div>
           <div class="form-group">
-            <div class="col-sm-3"></div>
-            <div class="col-sm-3">
+            <div class="col-sm-offset-3 col-sm-9">
               <input type="radio" name="encoding-process" mode="separate">
               <span data-i18n="ns.dialogs:encodeAfterRecording"></span>
             </div>
