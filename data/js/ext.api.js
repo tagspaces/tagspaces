@@ -10,10 +10,13 @@ define(function(require, exports, module) {
     var command = data.command;
 
     switch (command) {
+      case "hideAllMenus":
+        TSCORE.hideAllDropDownMenus();
+        $('#searchOptions').hide();
+        $('#fileExtensionMenu').hide();
+        break;
       case "playbackEnded":
-        if (data) {
-          openNextFile();
-        }
+        openNextFile();
         break;
       case "openLinkExternally":
         if (data.link) {
