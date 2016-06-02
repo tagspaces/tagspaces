@@ -87,6 +87,21 @@ define(function(require, exports, module) {
     });
   }
 
+  function createDirectoryTree(dirPath) {
+    TSCORE.showWaitingDialog($.i18n.t("ns.common:waitDialogDiectoryIndexing"));
+    // TODO user promiseAll
+    var directoryTree = {};
+    /*TSCORE.IOUtils.walkDirectory(dirPath, {recursive: true}, function(fileEntry) {
+      directoryIndex.push(fileEntry);
+    }).then(function(entries) {
+      TSCORE.hideWaitingDialog();
+      TSCORE.PerspectiveManager.updateFileBrowserData(directoryIndex);
+    }).catch(function(err) {
+      console.warn("Error creating index: " + err);
+      TSCORE.hideWaitingDialog();
+    });*/
+  }
+
   function deleteFiles(filePathList) {
     TSCORE.showLoadingAnimation();
     var fileDeletionPromises = [];
