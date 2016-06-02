@@ -22,6 +22,7 @@ define(function(require, exports, module) {
 
   var TSCORE = require("tscore");
   var TSPOSTIO = require("tspostioapi");
+  var tsDirectoriesUI = require('tsdirectoriesui');
   var fsWatcher;
   var win = remote.getCurrentWindow();
 
@@ -58,6 +59,59 @@ define(function(require, exports, module) {
 
     var Menu = remote.Menu;
     var template = [
+      {
+        label: $.i18n.t("ns.common:file"),
+        submenu: [
+          {
+            label: $.i18n.t("ns.common:createFile") ,
+            accelerator: '',
+            role: 'createFile',
+            click: function() {
+              TSCORE.UI.createTXTFile();
+            }
+          },
+          {
+            label: $.i18n.t("ns.common:createMarkdown") ,
+            accelerator: '',
+            role: 'createMarkdown',
+            click: function() {
+              TSCORE.UI.createMDFile();
+            }
+          },
+          {
+            label: $.i18n.t("ns.common:createRichTextFile") ,
+            accelerator: '',
+            role: 'createRichTextFile',
+            click: function() {
+              TSCORE.UI.createHTMLFile();
+            }
+          },
+          {
+            label: $.i18n.t("ns.common:createAudioFile") ,
+            accelerator: '',
+            role: 'createAudioFile'
+          },
+          {
+            label: $.i18n.t("ns.common:createDirectory") ,
+            accelerator: '',
+            role: 'createDirectory',
+            click: function() {
+              tsDirectoriesUI.showCreateDirectoryDialog();
+            }
+          },
+          {
+            type: 'separator'
+          },
+          {
+            label: $.i18n.t("ns.common:exitApp") ,
+            accelerator: '',
+            role: 'exitApp',
+            click: function() {
+              TSCORE.Settings.isFirstRun();
+            }
+          }
+        ]
+      },
       {
         label: $.i18n.t("ns.common:edit"),
         submenu: [

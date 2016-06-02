@@ -223,7 +223,6 @@
   "next": "Next",
   "prev": "Back",
   "done": "Done",
-  "chooseLocation": "Choose Location",
   "searchWords": "Search Words",
   "searchWordsWithInterval": "Search words separated by space",
   "tagsWithInterval": "Tags separated by spaces",
@@ -238,5 +237,13 @@
   "searchVideoFiles": "Video files (WEBM,OGV,MP4,...)",
   "searchArchives": "Archives (ZIP,RAR,TGZ,7Z,...)",
   "searchSubFolder": "Search in subfolders",
+  "audioRecordingTitle":"Audio Recording",
+  "file":"File",
+  "createFile":"Create file",
+  "createMarkdown":"Create markdown file",
+  "createRichTextFile":"Create rich text file",
+  "createAudioFile":"Record audio file",
+  "createDirectory":"Create directory",
+  "exitApp":"Exit application",
   "-": "-"
 }
