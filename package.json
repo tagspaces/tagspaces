@@ -2,10 +2,10 @@
   "name": "tagspaces",
   "license": "AGPL 3.0",
   "author": "TagSpaces Authors",
-  "version": "2.3.2",
+  "version": "2.3.3",
   "mainversion": "2.3",
-  "subversion": "2",
-  "buildid": "20160512110826",
+  "subversion": "3",
+  "buildid": "20160602151511",
   "title": "TagSpaces",
   "fullName": "TagSpaces",
   "id": "jid1-FBaMKxTifTSahQ@jetpack",
@@ -17,6 +17,7 @@
     "private-browsing": false
   },
   "unpack": true,
+    
   "repository": {
     "type": "git",
     "url": "https://github.com/tagspaces/tagspaces.git"
@@ -28,7 +29,6 @@
   "dependencies": {},
   "devDependencies": {
     "chai": "~3.5.0",
-    "devtron": "^1.1.0",
     "express": "^4.13.3",
     "grunt": "~0.4.2",
     "grunt-contrib-clean": "~0.5.0",
