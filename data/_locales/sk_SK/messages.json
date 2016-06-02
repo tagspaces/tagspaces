@@ -1,14 +1,14 @@
 {
     "saveAsSelectionLabel": {
-        "message": "Save Selected",
+        "message": "Uložiť vybrané",
         "description": "Title of label."
     },
     "appLauncher": {
-        "message": "Launch TagSpaces",
+        "message": "Spustiť TagSpaces",
         "description": "Title of the application launcher in the browser."
     },
     "appDesc": {
-        "message": "File Browser with Web Content Scraping and Chromecast Support.",
+        "message": "Prehliadač súborov so snímaním webového obsahu a podporou Chromecastu.",
         "description": ""
     },
     "addTagHelp": {
@@ -16,11 +16,11 @@
         "description": "Add tag help message"
     },
     "saveScreenshotTitle": {
-        "message": "Save screenshot of the visible page area as PNG",
+        "message": "Uložiť snímku obrazovky viditeľnej časti stránky ako PNG",
         "description": "Title of screenshot button"
     },
     "editTitleLabel": {
-        "message": "Edit Title",
+        "message": "Upraviť názov",
         "description": "Title of label."
     },
     "appName": {
@@ -28,11 +28,11 @@
         "description": ""
     },
     "appLauncherLabel": {
-        "message": "Capture Web Content",
+        "message": "Zachytiť obsah webu",
         "description": "Title of label."
     },
     "saveScreenshotLabel": {
-        "message": "Screenshot",
+        "message": "Snímka obrazovky",
         "description": "Title of label."
     },
     "addTagLabel": {
@@ -40,23 +40,23 @@
         "description": "Title of label."
     },
     "saveAsMhtmlTitle": {
-        "message": "Save whole page as MHTML",
+        "message": "Uložiť celú stránku ako MHTML",
         "description": "Title of save page button"
     },
     "appLauncherTitle": {
-        "message": "Start TagSpaces Browser in a new tab",
+        "message": "Spustiť prehliadač TagSpaces v novej karte",
         "description": "Title of the application launcher in the browser."
     },
     "saveSelectionAsHtmlTitle": {
-        "message": "Save selected content as HTML",
+        "message": "Uložiť označený obsah ako HTML",
         "description": "Title of save selection button"
     },
     "saveAsMhtmlLabel": {
-        "message": "Save Whole Page",
+        "message": "Uložiť celú stránku",
         "description": "Title of label."
     },
     "saveFileLabel": {
-        "message": "Save as File",
+        "message": "Uložiť ako súbor",
         "description": "Title of label."
     }
 }
