@@ -86,11 +86,11 @@ define(function(require, exports, module) {
               TSCORE.UI.createHTMLFile();
             }
           },
-          {
-            label: $.i18n.t("ns.common:createAudioFile") ,
-            accelerator: '',
-            role: 'createAudioFile'
-          },
+          //{
+          //  label: $.i18n.t("ns.common:createAudioFile") ,
+          //  accelerator: '',
+          //  role: 'createAudioFile'
+          //},
           {
             label: $.i18n.t("ns.common:createDirectory") ,
             accelerator: '',
@@ -107,7 +107,7 @@ define(function(require, exports, module) {
             accelerator: '',
             role: 'exitApp',
             click: function() {
-              TSCORE.Settings.isFirstRun();
+              //TSCORE.Settings.isFirstRun();
             }
           }
         ]

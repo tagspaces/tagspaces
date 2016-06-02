@@ -239,11 +239,11 @@
   "searchSubFolder": "Search in subfolders",
   "audioRecordingTitle":"Audio Recording",
   "file":"File",
-  "createFile":"Create file",
-  "createMarkdown":"Create markdown file",
-  "createRichTextFile":"Create rich text file",
-  "createAudioFile":"Record audio file",
-  "createDirectory":"Create directory",
-  "exitApp":"Exit application",
+  "createFile":"Create File",
+  "createMarkdown":"Create Farkdown File",
+  "createRichTextFile":"Create Rich Text File",
+  "createAudioFile":"Record Audio File",
+  "createDirectory":"Create Directory",
+  "exitApp":"Exit",
   "-": "-"
 }
