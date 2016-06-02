@@ -13,7 +13,10 @@ define(function(require, exports, module) {
       case "hideAllMenus":
         TSCORE.hideAllDropDownMenus();
         $('#searchOptions').hide();
-        $('#fileExtensionMenu').hide();
+        $('#fileExtensionMenu').parent().removeClass('open');
+        $('#perspectiveSwitcher').parent().removeClass('open');
+        $('#locationsList').parent().removeClass('open');
+        $('#tagSuggestionsMenu').parent().removeClass('open');
         break;
       case "playbackEnded":
         openNextFile();
