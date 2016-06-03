@@ -89,7 +89,10 @@ define(function(require, exports, module) {
           //{
           //  label: $.i18n.t("ns.common:createAudioFile") ,
           //  accelerator: '',
-          //  role: 'createAudioFile'
+          //  role: 'createAudioFile',
+          //  click: function() {
+          //    TSCORE.UI.openAudioRecordingDialog();
+          //  }
           //},
           {
             label: $.i18n.t("ns.common:createDirectory") ,
@@ -107,7 +110,7 @@ define(function(require, exports, module) {
             accelerator: '',
             role: 'exitApp',
             click: function() {
-              //TSCORE.Settings.isFirstRun();
+                window.close();
             }
           }
         ]
