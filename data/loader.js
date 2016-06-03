@@ -107,7 +107,7 @@ var isWin = navigator.appVersion.indexOf("Win")!==-1;
       noty:                   'libs/noty/js/noty/packaged/jquery.noty.packaged.min',
       marked:                 'libs/marked/marked.min',
       audiorecordingwav:      'libs/audio-record/WavAudioEncoder.min.js',
-      audiorecordingogg:      'libs/audio-record/OggEncoder.min.js',
+      audiorecordingogg:      'libs/audio-record/OggVorbisEncoder.min.js',
 
       tscore:                 'js/core.api',
       tssetting:              'js/settings.api',

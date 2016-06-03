@@ -212,17 +212,6 @@ define(function(require, exports, module) {
       });
     });
 
-    // Open About Dialog
-    $('#openAudioRecordingDialog').click(function() {
-      $('#audioRecordingDialog').modal({
-        backdrop: 'static',
-        show: true
-      });
-      $('#audioRecordingDialog').draggable({
-        handle: ".modal-header"
-      });
-    });
-
     // Open Options Dialog
     $('#openOptions').click(function() {
       showOptionsDialog();
@@ -829,6 +818,17 @@ define(function(require, exports, module) {
     });
   }
 
+  // Open Audio Recording Dialog
+  function showAudioRecordingDialog(){
+    $('#audioRecordingDialog').modal({
+      backdrop: 'static',
+      show: true
+    });
+    $('#audioRecordingDialog').draggable({
+      handle: ".modal-header"
+    });
+  }
+
   function disableTopToolbar() {
     $('#perspectiveSwitcherButton').prop('disabled', true);
     $('#searchBox').prop('disabled', true);
@@ -1007,6 +1007,7 @@ define(function(require, exports, module) {
   exports.showTagEditDialog = showTagEditDialog;
   exports.showOptionsDialog = showOptionsDialog;
   exports.showAboutDialog = showAboutDialog;
+  exports.showAudioRecordingDialog = showAudioRecordingDialog;
   exports.showLocationsPanel = showLocationsPanel;
   exports.showTagsPanel = showTagsPanel;
   exports.showContactUsPanel = showContactUsPanel;

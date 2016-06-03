@@ -86,14 +86,14 @@ define(function(require, exports, module) {
               TSCORE.UI.createHTMLFile();
             }
           },
-          //{
-          //  label: $.i18n.t("ns.common:createAudioFile") ,
-          //  accelerator: '',
-          //  role: 'createAudioFile',
-          //  click: function() {
-          //    TSCORE.UI.openAudioRecordingDialog();
-          //  }
-          //},
+          {
+            label: $.i18n.t("ns.common:createAudioFile") ,
+            accelerator: '',
+            role: 'createAudioFile',
+            click: function() {
+              TSCORE.UI.showAudioRecordingDialog();
+            }
+          },
           {
             label: $.i18n.t("ns.common:createDirectory") ,
             accelerator: '',
