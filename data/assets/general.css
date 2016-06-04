@@ -65,7 +65,7 @@ html, body {
 }
 
 .forceWrap {
-  word-wrap: break-all;
+  word-break: break-all;
 }
 
 li hr {
@@ -253,9 +253,16 @@ li hr {
 }
 
 /* Used in the tours for hapscotch  */
+
 .uiEmphasizer {
   border: 3px dashed #1DD19F;
 }
+
+div.hopscotch-bubble {
+  z-index: 1030 !important;
+}
+/* END Used in the tours for hapscotch  */
+
 
 @media (-webkit-min-device-pixel-ratio: 2),
 (min-resolution: 192dpi) {
@@ -276,4 +283,12 @@ label.control-label {
 
 .form-control {
   border-radius: 0px;
+}
+
+.shortcutKey {
+  background-color: #D6D6D6;
+  font: "Console";
+  font-family: monospace;
+  padding: 5px;
+  border-radius: 5px;
 }

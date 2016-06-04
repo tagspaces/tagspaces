@@ -209,12 +209,24 @@ define(function(require, exports, module) {
         label:  $.i18n.t("ns.common:help"),
         submenu: [
           {
-            label: $.i18n.t("ns.common:aboutTagSpaces"),
+            label: $.i18n.t("ns.common:shortcutKeys"),
             accelerator: "F1",
+            click: function() {
+              TSCORE.UI.showKeysDialog();
+            }
+          },
+          {
+            label: $.i18n.t("ns.common:license"),
+            click: function() {
+              TSCORE.UI.showLicenseDialog();
+            }
+          },
+          {
+            label: $.i18n.t("ns.common:aboutTagSpaces"),
             click: function() {
               TSCORE.UI.showAboutDialog();
             }
-          }
+          },
         ]
       },
     ];

@@ -78,33 +78,23 @@
 }
 
 #fileTitle {
+  margin-top: 5px;
   height: 30px;
-  line-height: 2.2;
-  padding-right: 4px;
+  padding-right: 3px;
+  padding-left: 3px;
   font-size: 16px;
   font-weight: 300;
   border: 0;
   background-color: transparent;
   color: #333333;
-  max-width: 150px;
-  z-index: 2;
-  white-space: nowrap;
+  /*white-space: nowrap;*/
+  overflow: hidden;
 }
 
 #fileTitle:hover {
   text-decoration: none;
-  background-color: rgb(210, 210, 210);
+  background-color: rgba(97, 255, 0, 0.23);
 }
-
-/* bootstrap3xeditable class */
-.editable-inline {
-  margin-top: 5px;
-}
-
-.editable-inline input {
-  font-size: 16px !important;
-}
-/* END bootstrap3xeditable class */
 
 #viewsRadio {
   margin: 3px 3px 3px 0;

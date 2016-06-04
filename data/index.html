@@ -248,13 +248,13 @@
     <div class="row1">
       <nav class="navbar navbar-default" role="navigation">
         <div class="btn-toolbar flexLayout" >
-          <div class="btn-group" style="min-width: 50px;">
+          <div class="btn-group">
             <button id="fileMenuButton" class="btn btn-link dropdown-toggle" data-toggle="dropdown">
               <span class="fileExt" data-i18n="[title]ns.common:fileOperations">
                 <span id="fileExtText"></span><span style="margin-left: 5px;" class="fa fa-ellipsis-v"></span>
               </span>
             </button>
-            <ul class="dropdown-menu">
+            <ul class="dropdown-menu" id="fileExtensionMenu">
               <li class="dropdown-header">
                 <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <span data-i18n="ns.common:fileOperations"></span></li>
@@ -305,8 +305,8 @@
                 <span class="pull-right label label-default keyShortcut">Alt+Enter</span></a></li>
             </ul>
           </div>
-          <div class="flexMaxWidth">
-            <a id="fileTitle"></a>
+          <div class="flexMaxWidth flexLayout">
+            <a id="fileTitle" class="flexMaxWidth"></a>
           </div>
           <button class="btn btn-link" data-i18n="[title]ns.common:closeFileTooltip;" id="closeOpenedFile">
             &nbsp;<i class="fa fa-times fa-lg"></i>&nbsp;
@@ -349,7 +349,7 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <a type="button" id="closeDialog" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></a>
+        <a type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></a>
         <h4 class="modal-title" id="myModalLabel1" data-i18n="ns.dialogs:aboutTitle"></h4>
       </div>
       <div class="modal-body">
@@ -357,7 +357,90 @@
       </div>
       <div class="modal-footer">
         <button class="btn pull-left" id="aboutDialogBack" title="Go Back"><i class="fa fa-arrow-left fa-lg"></i></button>
-        <button class="btn btn-primary" id="confirmButtonDialog" data-dismiss="modal" aria-hidden="true"><i class="fa fa-check fa-lg"></i></button>
+        <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true"><i class="fa fa-check fa-lg"></i></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fullScreenMobile" id="aboutLicenseModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" data-i18n="ns.common:license"></h4>
+      </div>
+      <div class="modal-body">
+        <iframe id="licenseIframe" sandbox="allow-same-origin allow-scripts" nwdisable style="width: 100%; height: 100%; min-height: 350px; border: 0;"></iframe>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default pull-left" id="disagreeLicenseButton" aria-hidden="true">
+          <i class="fa fa-close fa-lg"></i>&nbsp;<span data-i18n="ns.common:disagreeLicense"></span>
+        </button>
+        <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">
+          <i class="fa fa-check fa-lg"></i>&nbsp;<span data-i18n="ns.common:agreeLicense"></span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fullScreenMobile" id="dialogShortcuts" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <a type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></a>
+        <h4 class="modal-title" data-i18n="ns.dialogs:shortcutsTitle"></h4>
+      </div>
+      <div class="modal-body">
+        <form class="form-horizontal" role="form">
+          <div class='form-group'>
+            <label class="col-sm-4 control-label" data-i18n="ns.dialogs:selectAllFiles"></label>
+            <div class="col-sm-7"><span class="shortcutKey" id='selectAllKeyBindingHelp'></span></div>
+          </div>
+          <div class='form-group'>
+            <label class="col-sm-4 control-label" data-i18n="ns.dialogs:reloadDocumentKeyBinding"></label>
+            <div class="col-sm-7"><span class="shortcutKey" id='reloadDocumentKeyBindingHelp'></span></div>
+          </div>
+          <div class='form-group'>
+            <label class="col-sm-4 control-label" data-i18n="ns.dialogs:closeDocumentKeyBinding"></label>
+            <div class="col-sm-7"><span class="shortcutKey" id='closeDocumentKeyBindingHelp'></span></div>
+          </div>
+          <div class='form-group'>
+            <label class="col-sm-4 control-label" data-i18n="ns.dialogs:documentPropertiesKeyBinding"></label>
+            <div class="col-sm-7"><span class="shortcutKey" id='documentPropertiesKeyBindingHelp'></span></div>
+          </div>
+          <div class='form-group'>
+            <label class="col-sm-4 control-label" data-i18n="ns.dialogs:saveDocumentKeyBinding"></label>
+            <div class="col-sm-7"><span class="shortcutKey" id='saveDocumentKeyBindingHelp'></span></div>
+          </div>
+          <div class='form-group'>
+            <label class="col-sm-4 control-label" data-i18n="ns.dialogs:nextDocumentKeyBinding"></label>
+            <div class="col-sm-7"><span class="shortcutKey" id='nextDocumentKeyBindingHelp'></span></div>
+          </div>
+          <div class='form-group'>
+            <label class="col-sm-4 control-label" data-i18n="ns.dialogs:prevDocumentKeyBinding"></label>
+            <div class="col-sm-7"><span class="shortcutKey" id='prevDocumentKeyBindingHelp'></span></div>
+          </div>
+          <div class='form-group'>
+            <label class="col-sm-4 control-label" data-i18n="ns.dialogs:editDocumentKeyBinding"></label>
+            <div class="col-sm-7"><span class="shortcutKey" id='editDocumentKeyBindingHelp'></span></div>
+          </div>
+          <div class='form-group'>
+            <label class="col-sm-4 control-label" data-i18n="ns.dialogs:addRemoveTagsKeyBinding"></label>
+            <div class="col-sm-7"><span class="shortcutKey" id='addRemoveTagsKeyBindingHelp'></span></div>
+          </div>
+          <div class='form-group'>
+            <label class="col-sm-4 control-label" data-i18n="ns.dialogs:showSearchKeyBinding"></label>
+            <div class="col-sm-7"><span class="shortcutKey" id='showSearchKeyBindingHelp'></span></div>
+          </div>
+          <div class='form-group'>
+            <label class="col-sm-4 control-label" data-i18n="ns.dialogs:renamingFileKeyBinding"></label>
+            <div class="col-sm-7"><span class="shortcutKey" id='renamingFileKeyBindingHelp'></span></div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true"><i class="fa fa-check fa-lg"></i></button>
       </div>
     </div>
   </div>
@@ -536,7 +619,7 @@
         <form role="form" data-toggle="validator" id="formEditTag">
           <div class="form-group">
             <label class="control-label" for="newTagName" data-i18n="ns.dialogs:editTagNewName"></label>
-            <input class="form-control" pattern="^([^\ #/\\]){2,}$" type="text" name="newTagName" id="newTagName"
+            <input class="form-control" pattern="^([^\ #/\\]){1,}$" type="text" name="newTagName" id="newTagName"
                    data-i18n="[data-error]ns.dialogs:editTagNamesRestrictionsHelp" required/>
             <p class="help-block with-errors"></p>
           </div>
@@ -594,14 +677,14 @@
         <form role="form" data-toggle="validator" id="formEditInTreeTag">
           <div class="form-group">
             <label class="control-label" for="tagInTreeName" data-i18n="ns.dialogs:editTagMasterName"></label>*
-            <input class="form-control" pattern="^([^\ #/\\]){2,}$" type="text" name="tagInTreeName" id="tagInTreeName"
+            <input class="form-control" pattern="^([^\ #/\\]){1,}$" type="text" name="tagInTreeName" id="tagInTreeName"
                    data-i18n="[data-error]ns.dialogs:editTagNamesRestrictionsHelp" required/>
             <p class="help-block with-errors"></p>
           </div>
           <div class="form-group">
             <label class="control-label" for="tagInTreeKeyBinding"
                    data-i18n="ns.dialogs:editTagInTreeKeyBinding"></label>
-            <input class="form-control" pattern="^([+\ A-z0-9]){2,}$" type="text" name="tagInTreeKeyBinding"
+            <input class="form-control" pattern="^([+\ A-z0-9]){1,}$" type="text" name="tagInTreeKeyBinding"
                    id="tagInTreeKeyBinding"/>
             <p class="help-block with-errors"></p>
             <p class="help-block" data-i18n="ns.dialogs:editTagInTreeKeyBindingHelp"></p>
@@ -670,7 +753,7 @@
         <form role="form" data-toggle="validator" id="formAddTags">
           <div class="form-group">
             <label class="control-label" for="newTagTitle" data-i18n="ns.dialogs:addTagsToGroupTags"></label>
-            <input pattern="^([^#/\\\ ]){2,}$" class="form-control" type="text" name="newTagTitle"
+            <input pattern="^([^#/\\\ ]){1,}$" class="form-control" type="text" name="newTagTitle"
                    id="newTagTitle"
                    data-i18n="[placeholder]ns.dialogs:addTagsToGroupTagsPlaceholder;[data-error]ns.dialogs:editTagNamesRestrictionsHelp"/>
             <p class="help-block with-errors"></p>
@@ -823,7 +906,7 @@
 <div id="fileMenu" class="dropdown clearfix">
   <ul class="dropdown-menu" role="menu" style="display:block;position:static;">
     <li class="dropdown-header">
-      <button class="close">&times;</button>
+        <button class="close" data-i18n="[title]ns.common:closeTooltip">&times;</button>
       <span data-i18n="ns.common:fileOperations"></span>
     </li>
     <li class="divider"></li>
@@ -850,7 +933,7 @@
 <div id="tagMenu" class="dropdown clearfix">
   <ul class="dropdown-menu" role="menu" style="display:block;position:static;">
     <li class="dropdown-header">
-      <button class="close">&times;</button>
+        <button class="close" data-i18n="[title]ns.common:closeTooltip">&times;</button>
       <span data-i18n="ns.common:tagOperations"></span>
     </li>
     <li class="divider"></li>
@@ -872,7 +955,7 @@
 <div id="tagTreeMenu" class="dropdown clearfix">
   <ul class="dropdown-menu" role="menu" style="display:block;position:static;">
     <li class="dropdown-header">
-      <button class="close">&times;</button>
+        <button class="close" data-i18n="[title]ns.common:closeTooltip">&times;</button>
       <span data-i18n="ns.common:tagOperations"></span>
     </li>
     <li class="divider"></li>
@@ -890,7 +973,7 @@
 <div id="tagGroupMenu" class="dropdown clearfix">
   <ul class="dropdown-menu" role="menu" style="display:block;position:static;">
     <li class="dropdown-header">
-      <button class="close">&times;</button>
+        <button class="close" data-i18n="[title]ns.common:closeTooltip">&times;</button>
       <span data-i18n="ns.common:tagGroupOperations"></span>
     </li>
     <li class="divider"></li>
@@ -918,7 +1001,7 @@
 <div id="directoryMenu" class="dropdown clearfix">
   <ul class="dropdown-menu" role="menu" style="display:block;position:static;">
     <li class="dropdown-header">
-      <button class="close">&times;</button>
+        <button class="close" data-i18n="[title]ns.common:closeTooltip">&times;</button>
       <span data-i18n="ns.common:directoryOperations"></span>
     </li>
     <li class="divider"></li>
@@ -938,8 +1021,8 @@
 <div id="searchOptions" class="dropdown clearfix" style="position: absolute; top: 80px; right: 2px; width: 300px;">
   <div class="dropdown-menu" style="display:block; position:static; width:100%;">
     <li class="dropdown-header">
-      <button class="close">&times;</button>
-      <span data-i18n="ns.common:searchAdvanced"></span>
+      <button class="close" data-i18n="[title]ns.common:closeTooltip">&times;</button>
+      <span data-i18n="ns.common:searchAdvanced">Advanced Search</span>
     </li>
     <div style="padding: 10px;">
       <form>
@@ -989,7 +1072,7 @@
 <div id="locationTagTreeMenu" class="dropdown clearfix">
   <ul class="dropdown-menu" role="menu" style="display:block;position:static;">
     <li class="dropdown-header">
-      <button class="close">&times;</button>
+        <button class="close" data-i18n="[title]ns.common:closeTooltip">&times;</button>
       <span data-i18n="ns.common:tagOperations"></span></li>
     <li class="divider"></li>
     <li><a id="locationTagTreeMenuDeleteTag" data-i18n="[title]ns.common:deleteTagFromTagGroupTooltip">

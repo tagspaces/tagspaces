@@ -3,6 +3,7 @@
     "titleAlert": "Alert",
     "titleWaiting": "TagSpaces is busy",
     "aboutTitle": "About TagSpaces",
+    "shortcutsTitle": "Keyboard Shortcuts",
     "advancedSettingTitle": "Advanced Settings",
     "enableLocalStorageAlert": "Please enable the localStorage support in your browser, in order to use TagSpaces!",
     "closingEditedFileConfirm": "Any unsaved changes will be lost! Do you want to continue?",
