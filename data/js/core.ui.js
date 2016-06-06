@@ -1088,4 +1088,5 @@ define(function(require, exports, module) {
   exports.createHTMLFile = createHTMLFile;
   exports.createMDFile = createMDFile;
   exports.createTXTFile = createTXTFile;
+  exports.showCreateDirectoryDialog = showCreateDirectoryDialog;
 });

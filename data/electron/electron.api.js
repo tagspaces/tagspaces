@@ -22,7 +22,6 @@ define(function(require, exports, module) {
 
   var TSCORE = require("tscore");
   var TSPOSTIO = require("tspostioapi");
-  var tsDirectoriesUI = require('tsdirectoriesui');
   var fsWatcher;
   var win = remote.getCurrentWindow();
 
@@ -56,6 +55,7 @@ define(function(require, exports, module) {
     /*if (!TSCORE.Config.getShowMainMenu()) {
      return;
      }*/
+    //
 
     var Menu = remote.Menu;
     var template = [
@@ -67,7 +67,11 @@ define(function(require, exports, module) {
             accelerator: '',
             role: 'createFile',
             click: function() {
-              TSCORE.UI.createTXTFile();
+              if (!TSCORE.currentPath) {
+                TSCORE.showAlertDialog("Not open current directory !");
+              } else {
+                TSCORE.UI.createTXTFile();
+              }
             }
           },
           {
@@ -75,7 +79,11 @@ define(function(require, exports, module) {
             accelerator: '',
             role: 'createMarkdown',
             click: function() {
-              TSCORE.UI.createMDFile();
+              if (!TSCORE.currentPath) {
+                TSCORE.showAlertDialog("Not open current directory !");
+              } else {
+                TSCORE.UI.createMDFile();
+              }
             }
           },
           {
@@ -83,7 +91,11 @@ define(function(require, exports, module) {
             accelerator: '',
             role: 'createRichTextFile',
             click: function() {
-              TSCORE.UI.createHTMLFile();
+              if (!TSCORE.currentPath) {
+                TSCORE.showAlertDialog("Not open current directory !");
+              } else {
+                TSCORE.UI.createHTMLFile();
+              }
             }
           },
           {
@@ -91,7 +103,11 @@ define(function(require, exports, module) {
             accelerator: '',
             role: 'createAudioFile',
             click: function() {
-              TSCORE.UI.showAudioRecordingDialog();
+              if (!TSCORE.currentPath) {
+                TSCORE.showAlertDialog("Not open current directory !");
+              } else {
+                TSCORE.UI.showAudioRecordingDialog();
+              }
             }
           },
           {
@@ -99,7 +115,11 @@ define(function(require, exports, module) {
             accelerator: '',
             role: 'createDirectory',
             click: function() {
-              tsDirectoriesUI.showCreateDirectoryDialog();
+              if (!TSCORE.currentPath) {
+                TSCORE.showAlertDialog("Not open current directory !");
+              } else {
+                TSCORE.showCreateDirectoryDialog();
+              }
             }
           },
           {
@@ -110,9 +130,13 @@ define(function(require, exports, module) {
             accelerator: '',
             role: 'exitApp',
             click: function() {
-              TSCORE.Config.Settings.firstRun = true;
-              TSCORE.Config.saveSettings();
-              window.close();
+              if (!TSCORE.currentPath) {
+                TSCORE.showAlertDialog("Not open current directory !");
+              } else {
+                TSCORE.Config.Settings.firstRun = true;
+                TSCORE.Config.saveSettings();
+                window.close();
+              }
             }
           }
         ]
