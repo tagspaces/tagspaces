@@ -861,7 +861,7 @@ define(function(require, exports, module) {
   }
 
   // Open Audio Recording Dialog
-  function showAudioRecordingDialog(){
+  function showAudioRecordingDialog() {
     $('#audioRecordingDialog').modal({
       backdrop: 'static',
       show: true
@@ -870,6 +870,103 @@ define(function(require, exports, module) {
       handle: ".modal-header"
     });
   }
+
+  // manually rewritten from CoffeeScript output
+// (see dev-coffee branch for original source)
+
+// navigator.getUserMedia shim
+  navigator.getUserMedia =
+          navigator.getUserMedia ||
+          navigator.webkitGetUserMedia ||
+          navigator.mozGetUserMedia ||
+          navigator.msGetUserMedia;
+
+// URL shim
+  window.URL = window.URL || window.webkitURL;
+
+// audio context + .createScriptProcessor shim
+  var audioContext = new AudioContext;
+  if (audioContext.createScriptProcessor == null)
+    audioContext.createScriptProcessor = audioContext.createJavaScriptNode;
+
+// elements (jQuery objects)
+  var $testToneLevel = $('#testToneLevel'),
+          $microphone = $('#microphone'),
+          $microphoneLevel = $('#microphoneLevel'),
+          $timeLimit = $('#time-limit'),
+          $encoding = $('input[name="encoding"]'),
+          $encodingOption = $('#encoding-option'),
+          $encodingProcess = $('input[name="encoding-process"]'),
+          $reportInterval = $('#report-interval'),
+          $bufferSize = $('#buffer-size'),
+          $recording = $('#recording'),
+          $timeDisplay = $('#time-display'),
+          $record = $('#record'),
+          $cancel = $('#cancel'),
+          $dateTime = $('#date-time'),
+          $recordingList = $('#recordingList'),
+          $modalLoading = $('#modal-loading'),
+          $modalProgress = $('#modal-progress'),
+          $modalError = $('#modal-error');
+
+// initialize input element states (required for reloading page on Firefox)
+//  $testToneLevel.attr('disabled', false);
+//  $testToneLevel[0].valueAsNumber = 0;
+//  $microphone.attr('disabled', false);
+//  $microphone[0].checked = false;
+//  $microphoneLevel.attr('disabled', false);
+//  $microphoneLevel[0].valueAsNumber = 0;
+//  $timeLimit.attr('disabled', false);
+//  $timeLimit[0].valueAsNumber = 3;
+//  $encoding.attr('disabled', false);
+//  $encoding[0].checked = true;
+//  $encodingProcess.attr('disabled', false);
+//  $encodingProcess[0].checked = true;
+//  $reportInterval.attr('disabled', false);
+//  $reportInterval[0].valueAsNumber = 1;
+//  $bufferSize.attr('disabled', false);
+
+
+  var testTone = (function() {
+    var osc = audioContext.createOscillator(),
+            lfo = audioContext.createOscillator(),
+            ampMod = audioContext.createGain(),
+            output = audioContext.createGain();
+    lfo.type = 'square';
+    lfo.frequency.value = 2;
+    osc.connect(ampMod);
+    lfo.connect(ampMod.gain);
+    output.gain.value = 0.5;
+    ampMod.connect(output);
+    osc.start();
+    lfo.start();
+    return output;
+  })();
+
+  var testToneLevel = audioContext.createGain(),
+          microphone = undefined,     // obtained by user click
+          microphoneLevel = audioContext.createGain(),
+          mixer = audioContext.createGain();
+  testTone.connect(testToneLevel);
+  testToneLevel.gain.value = 0;
+  testToneLevel.connect(mixer);
+  microphoneLevel.gain.value = 0;
+  microphoneLevel.connect(mixer);
+  mixer.connect(audioContext.destination);
+
+// audio recorder object
+  var audioRecorder = new WebAudioRecorder(mixer, {
+    workerDir: require(['js!data/libs/audio-record']),
+    onEncoderLoading: function(recorder, encoding) {
+      $modalLoading
+      .find('.modal-title')
+      .html("Loading " + encoding.toUpperCase() + " encoder ...");
+      $modalLoading.modal('show');
+    },
+    onEncoderLoaded: function() { $modalLoading.modal('hide'); }
+  });
+
+  //end
 
   function showLicenseDialog() {
     if (TSCORE.PRO) {
