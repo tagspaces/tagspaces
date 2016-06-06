@@ -160,7 +160,9 @@ define(function(require, exports, module) {
             lmdt = undefined;
             //console.log(dirList[entry]._namespaces["DAV:"]);
             if (typeof dirList[entry]._namespaces["DAV:"].getcontentlength === 'undefined' ||
-              dirList[entry]._namespaces["DAV:"].getcontentlength._xmlvalue.length === 0
+                dirList[entry]._namespaces["DAV:"].getcontentlength._xmlvalue.length === 0 ||
+                (dirList[entry]._namespaces["DAV:"].resourcetype._xmlvalue.length === 1 &&
+                 dirList[entry]._namespaces["DAV:"].resourcetype._xmlvalue[0].localName === 'collection')
             ) {
               isDir = true;
             } else {

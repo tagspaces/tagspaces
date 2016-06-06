@@ -10,6 +10,17 @@ define(function(require, exports, module) {
     var command = data.command;
 
     switch (command) {
+      case "hideAllMenus":
+        TSCORE.hideAllDropDownMenus();
+        $('#searchOptions').hide();
+        $('#fileExtensionMenu').parent().removeClass('open');
+        $('#perspectiveSwitcher').parent().removeClass('open');
+        $('#locationsList').parent().removeClass('open');
+        $('#tagSuggestionsMenu').parent().removeClass('open');
+        break;
+      case "playbackEnded":
+        openNextFile();
+        break;
       case "openLinkExternally":
         if (data.link) {
           openLinkExternally(data.link);
@@ -22,6 +33,14 @@ define(function(require, exports, module) {
         console.log("Not recognized messaging command: " + msg);
         break;
     }
+  }
+
+  function openNextFile() {
+    //if(TSCORE.selectedFiles.length > 0) {
+      // TODO open next selected file
+    //} else {
+    TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getNextFile(TSCORE.FileOpener.getOpenedFilePath()));
+    //}
   }
 
   function openLinkExternally(uri) {

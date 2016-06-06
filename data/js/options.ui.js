@@ -14,10 +14,7 @@ define(function(require, exports, module) {
     if (!helpI18NString) {
       helpI18NString = "";
     }
-    parent.append($('<option>')
-      .text('')
-      .attr("data-i18n", helpI18NString)
-      .val('false'));
+    parent.append($('<option>').text('').attr("data-i18n", helpI18NString).val('false'));
     data.forEach(function(extension) {
       if (selectedId === extension.id) {
         parent.append($('<option>').attr('selected', 'selected').text(extension.name).val(extension.id));
@@ -28,34 +25,24 @@ define(function(require, exports, module) {
   }
 
   function addPerspective(parent, perspectiveId) {
-    var perspectiveControl = $('<div class="form-inline">')
-      .append($('<div class="flexLayout">')
-        .append($('<select class="form-control flexMaxWidth"></select>'))
-        .append($('<button class="btn btn-link" style="width: 40px" data-i18n="[title]ns.dialogs:removePerspectiveTooltip"><i class="fa fa-times"></button>')
-          .click(function() {
-            var row4Remove = $(this).parent().parent();
-            TSCORE.showConfirmDialog($.i18n.t('ns.dialogs:titleConfirm'), "Do you really want to remove this perspective?", function() {
-              row4Remove.remove();
-            });
-          })));
+    var perspectiveControl = $('<div class="form-inline">').append($('<div class="flexLayout">').append($('<select class="form-control flexMaxWidth"></select>')).append($('<button class="btn btn-link" style="width: 40px" data-i18n="[title]ns.dialogs:removePerspectiveTooltip"><i class="fa fa-times"></button>').click(function() {
+      var row4Remove = $(this).parent().parent();
+      TSCORE.showConfirmDialog($.i18n.t('ns.dialogs:titleConfirm'), "Do you really want to remove this perspective?", function() {
+        row4Remove.remove();
+      });
+    })));
     generateSelectOptions(perspectiveControl.find('select'), TSCORE.Config.getPerspectiveExtensions(), perspectiveId, "ns.dialogs:choosePerspective");
     perspectiveControl.i18n();
     parent.append(perspectiveControl);
   }
 
   function addFileType(parent, fileext, viewerId, editorId) {
-    var fileTypeControl = $('<div class="form-inline">')
-      .append($('<div class="flexLayout" >')
-        .append($('<input style="width: 80px" type="text" class="form-control" data-i18n="[placeholder]ns.dialogs:fileExtensionPlaceholder">').val(fileext))
-        .append($('<select class="ftviewer form-control flexMaxWidth"></select>'))
-        .append($('<select class="fteditor form-control flexMaxWidth"></select>'))
-        .append($('<button style="width: 30px" class="btn btn-link" data-i18n="[title]ns.dialogs:removeFileTypeTooltip"><i class="fa fa-times"></button>')
-        .click(function() {
-          var row4Remove = $(this).parent().parent();
-          TSCORE.showConfirmDialog($.i18n.t('ns.dialogs:titleConfirm'), "Do you really want to remove this file type?", function() {
-            row4Remove.remove();
-          });
-        })));
+    var fileTypeControl = $('<div class="form-inline">').append($('<div class="flexLayout" >').append($('<input style="width: 80px" type="text" class="form-control" data-i18n="[placeholder]ns.dialogs:fileExtensionPlaceholder">').val(fileext)).append($('<select class="ftviewer form-control flexMaxWidth"></select>')).append($('<select class="fteditor form-control flexMaxWidth"></select>')).append($('<button style="width: 30px" class="btn btn-link" data-i18n="[title]ns.dialogs:removeFileTypeTooltip"><i class="fa fa-times"></button>').click(function() {
+      var row4Remove = $(this).parent().parent();
+      TSCORE.showConfirmDialog($.i18n.t('ns.dialogs:titleConfirm'), "Do you really want to remove this file type?", function() {
+        row4Remove.remove();
+      });
+    })));
 
     generateSelectOptions(fileTypeControl.find('.ftviewer'), TSCORE.Config.getViewerExtensions(), viewerId, "ns.dialogs:chooseFileViewer");
     generateSelectOptions(fileTypeControl.find('.fteditor'), TSCORE.Config.getEditorExtensions(), editorId, "ns.dialogs:chooseFileEditor");
@@ -69,7 +56,7 @@ define(function(require, exports, module) {
       return;
     }
     var isMetaEnabled = $('#enableMetaData').is(':checked');
-    if (!isMetaEnabled) { 
+    if (!isMetaEnabled) {
       $('#writeMetaToSidecarFile').attr('checked', false);
       $('#useOCR').attr('checked', false);
       $('#useTextExtraction').attr('checked', false);
@@ -104,18 +91,18 @@ define(function(require, exports, module) {
     });
     $('#defaultSettingsButton').click(function() {
       TSCORE.showConfirmDialog(
-          $.i18n.t('ns.dialogs:restoreDefaulSettingTitleConfirm'),
-          $.i18n.t('ns.dialogs:restoreDefaulSettingMessageConfirm'), function() {
-        TSCORE.Config.loadDefaultSettings();
-      });
+              $.i18n.t('ns.dialogs:restoreDefaulSettingTitleConfirm'),
+              $.i18n.t('ns.dialogs:restoreDefaulSettingMessageConfirm'), function() {
+                TSCORE.Config.loadDefaultSettings();
+              });
     });
     $('#keyBindingInstructions').toggle();
     $('#keyBindingInstructionsToggle').on('click', function() {
       $('#keyBindingInstructions').toggle();
       return false;
     });
-    
-    if (!isElectron) {    
+
+    if (!isElectron) {
       $('#watchCurrentDirectoryControls').hide();
     }
     if (isCordova) {
@@ -125,10 +112,10 @@ define(function(require, exports, module) {
     }
     $('#exportTagGroupsButton').click(function() {
       var jsonFormat = '{ "appName": "' + TSCORE.Config.DefaultSettings.appName +
-        '", "appVersion": "' + TSCORE.Config.DefaultSettings.appVersion +
-        '", "appBuild": "' + TSCORE.Config.DefaultSettings.appBuild +
-        '", "settingsVersion": ' + TSCORE.Config.DefaultSettings.settingsVersion +
-        ', "tagGroups": ';
+              '", "appVersion": "' + TSCORE.Config.DefaultSettings.appVersion +
+              '", "appBuild": "' + TSCORE.Config.DefaultSettings.appBuild +
+              '", "settingsVersion": ' + TSCORE.Config.DefaultSettings.settingsVersion +
+              ', "tagGroups": ';
       var blob = new Blob([jsonFormat + JSON.stringify(TSCORE.Config.getAllTagGroupData()) + '}'], {
         type: 'application/json'
       });
@@ -149,7 +136,7 @@ define(function(require, exports, module) {
     $('#calculateTagsCheckbox').attr('checked', TSCORE.Config.getCalculateTags());
     $('#loadLocationMetaData').attr('checked', TSCORE.Config.getLoadLocationMeta());
     $('#useSearchInSubfolders').attr('checked', TSCORE.Config.getUseSearchInSubfolders());
-    $('#maxSearchResultCount').val(TSCORE.Config.getMaxSearchResultCount());        
+    $('#maxSearchResultCount').val(TSCORE.Config.getMaxSearchResultCount());
     $('#watchCurrentDirectory').attr('checked', TSCORE.Config.getWatchCurrentDirectory());
     $('#tagsDelimiterInput').val(TSCORE.Config.getTagDelimiter());
     $('#prefixTagContainerInput').val(TSCORE.Config.getPrefixTagContainer());
@@ -161,12 +148,12 @@ define(function(require, exports, module) {
     $('#reloadDocumentKeyBinding').val(TSCORE.Config.getReloadDocumentKeyBinding());
     $('#saveDocumentKeyBinding').val(TSCORE.Config.getSaveDocumentKeyBinding());
     $('#documentPropertiesKeyBinding').val(TSCORE.Config.getPropertiesDocumentKeyBinding());
+    $('#renamingFileKeyBinding').val(TSCORE.Config.getRenamingFileKeyBinding());
+    $('#selectAllKeyBinding').val(TSCORE.Config.getSelectAllKeyBinding());
     $('#showSearchKeyBinding').val(TSCORE.Config.getSearchKeyBinding());
     $('#perspectiveList').empty();
     $('#writeMetaToSidecarFile').attr('checked', TSCORE.Config.getWriteMetaToSidecarFile());
     $('#useDefaultLocationCheckbox').attr('checked', TSCORE.Config.getUseDefaultLocation());
-    $('#selectAllKeyBinding').val(TSCORE.Config.getSelectAllKeyBinding());
-    $('#renamingFileKeyBinding').val(TSCORE.Config.getRenamingFileKeyBinding());
     if (TSCORE.PRO) {
       $('#enableMetaData').attr('checked', TSCORE.Config.getEnableMetaData());
       $('#useTrashCan').attr('checked', TSCORE.Config.getUseTrashCan());
@@ -175,7 +162,7 @@ define(function(require, exports, module) {
       $('#useGenerateThumbnails').attr('checked', TSCORE.Config.getUseGenerateThumbnails());
       enableMetaData();
     }
-    
+
     var $languagesDropdown = $('#languagesList');
     $languagesDropdown.empty();
     TSCORE.Config.getSupportedLanguages().forEach(function(value) {
@@ -230,7 +217,7 @@ define(function(require, exports, module) {
     TSCORE.Config.setPrefixTagContainer($('#prefixTagContainerInput').val());
     TSCORE.Config.setLoadLocationMeta($('#loadLocationMetaData').is(':checked'));
     TSCORE.Config.setUseSearchInSubfolders($('#useSearchInSubfolders').is(':checked'));
-    TSCORE.Config.setMaxSearchResultCount($('#maxSearchResultCount').val());    
+    TSCORE.Config.setMaxSearchResultCount($('#maxSearchResultCount').val());
     TSCORE.Config.setWatchCurrentDirectory($('#watchCurrentDirectory').is(':checked'));
     TSCORE.Config.setNextDocumentKeyBinding(parseKeyBinding($('#nextDocumentKeyBinding').val()));
     TSCORE.Config.setPrevDocumentKeyBinding(parseKeyBinding($('#prevDocumentKeyBinding').val()));
@@ -245,10 +232,10 @@ define(function(require, exports, module) {
     TSCORE.Config.setRenamingFileKeyBinding(parseKeyBinding($('#renamingFileKeyBinding').val()));
     if (TSCORE.PRO) {
       TSCORE.Config.setEnableMetaData($('#enableMetaData').is(':checked'));
-      TSCORE.Config.setUseTrashCan($('#useTrashCan').is(':checked'));   
-      TSCORE.Config.setUseOCR($('#useOCR').is(':checked'));  
-      TSCORE.Config.setUseTextExtraction($('#useTextExtraction').is(':checked')); 
-      TSCORE.Config.setUseGenerateThumbnails($('#useGenerateThumbnails').is(':checked')); 
+      TSCORE.Config.setUseTrashCan($('#useTrashCan').is(':checked'));
+      TSCORE.Config.setUseOCR($('#useOCR').is(':checked'));
+      TSCORE.Config.setUseTextExtraction($('#useTextExtraction').is(':checked'));
+      TSCORE.Config.setUseGenerateThumbnails($('#useGenerateThumbnails').is(':checked'));
     }
     var interfaceLang = $('#languagesList').val();
     TSCORE.Config.setInterfaceLanguage(interfaceLang);

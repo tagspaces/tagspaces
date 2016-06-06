@@ -72,11 +72,11 @@ define(function(require, exports, module) {
 
     $('#searchTerms').on('blur', function(e) {
       updateQuery();
-    });
+    }).keypress(startSearchOnEnter);
 
     $('#searchTags').on('blur', function(e) {
       updateQuery();
-    });
+    }).keypress(startSearchOnEnter);
 
     $('#searchFileType').on('change', function(e) {
       updateQuery();
@@ -91,6 +91,14 @@ define(function(require, exports, module) {
       $('#searchHistory').removeClass('disabled');
     }
   };
+
+  function startSearchOnEnter(e) {
+    if(e.which == 13) {
+      e.preventDefault();
+      updateQuery();
+      startSearch();
+    }
+  }
 
   //function parseQuery() {}
 

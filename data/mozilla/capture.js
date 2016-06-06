@@ -123,7 +123,12 @@ exports.saveURLToFile = function(name, url) {
           persist.ENCODE_FLAGS_ABSOLUTE_LINKS;
 
       purifyContent(window.content.document);
-      persist.saveDocument(window.content.document, localFile, null, null, flags, 0);      
+
+      // Set Metadata
+      window.content.document.body.setAttribute('data-sourceUrl', url);
+      window.content.document.body.setAttribute('data-scrapedOn',(new Date()).toISOString());
+
+      persist.saveDocument(window.content.document, localFile, null, null, flags, 0);
     } else {
       var data = getContentFromURL(url);
       exports.saveContentToBinaryFile(name, data);

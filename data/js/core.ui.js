@@ -183,12 +183,19 @@ define(function(require, exports, module) {
       }
     });
 
-    $('#aboutDialogBack').click(function() {
+    function reloadAboutContent() {
       if (TSCORE.PRO) {
         $('#aboutIframe').attr('src', 'pro/about.html');
       } else {
         $('#aboutIframe').attr('src', 'about.html');
       }
+    }
+
+    $('#aboutDialogBack').click(function() {
+      reloadAboutContent();
+    });
+    $('#dialogAboutTS').on('show.bs.modal', function() {
+      reloadAboutContent();
     });
 
     // Open About Dialog
@@ -245,8 +252,14 @@ define(function(require, exports, module) {
     });
     // End File Menu
 
-    $('#showLocations').click(function() {
+    $('#showLocations').on('click', function() {
       showLocationsPanel();
+    });
+
+    $('#disagreeLicenseButton').on('click', function() {
+      TSCORE.Config.Settings.firstRun = true;
+      TSCORE.Config.saveSettings();
+      window.close();
     });
 
     $('#showTagGroups').click(function() {
@@ -265,6 +278,8 @@ define(function(require, exports, module) {
     $('#newVersionAvailable').on("click", function() {
       $('#openWhatsnew').click();
     });
+
+    $('#dialogShortcuts').on('show.bs.modal', setKeyboardShortcutsHelp);
 
     var $contactUsContent = $('#contactUsContent');
     $contactUsContent.on('click', '#openHints', showWelcomeDialog);
@@ -501,6 +516,31 @@ define(function(require, exports, module) {
     });
   }
 
+  function setKeyboardShortcutsHelp() {
+    $('#nextDocumentKeyBindingHelp').html(formatShortcuts(TSCORE.Config.getNextDocumentKeyBinding()));
+    $('#prevDocumentKeyBindingHelp').html(formatShortcuts(TSCORE.Config.getPrevDocumentKeyBinding()));
+    $('#closeDocumentKeyBindingHelp').html(formatShortcuts(TSCORE.Config.getCloseViewerKeyBinding()));
+    $('#addRemoveTagsKeyBindingHelp').html(formatShortcuts(TSCORE.Config.getAddRemoveTagsKeyBinding()));
+    $('#editDocumentKeyBindingHelp').html(formatShortcuts(TSCORE.Config.getEditDocumentKeyBinding()));
+    $('#reloadDocumentKeyBindingHelp').html(formatShortcuts(TSCORE.Config.getReloadDocumentKeyBinding()));
+    $('#saveDocumentKeyBindingHelp').html(formatShortcuts(TSCORE.Config.getSaveDocumentKeyBinding()));
+    $('#documentPropertiesKeyBindingHelp').html(formatShortcuts(TSCORE.Config.getPropertiesDocumentKeyBinding()));
+    $('#showSearchKeyBindingHelp').html(formatShortcuts(TSCORE.Config.getSearchKeyBinding()));
+    $('#renamingFileKeyBindingHelp').html(formatShortcuts(TSCORE.Config.getRenamingFileKeyBinding()));
+    $('#selectAllKeyBindingHelp').html(formatShortcuts(TSCORE.Config.getSelectAllKeyBinding()));
+    $('#renamingFileKeyBindingHelp').html(formatShortcuts(TSCORE.Config.getRenamingFileKeyBinding()));
+  }
+
+  function formatShortcuts(shortcut) {
+    var modkey = "ctrl";
+    if (isOSX) {
+      modkey = '&#8984;'; //"command"; // &#8984;
+    }
+    shortcut = shortcut.toString().split('mod').join(modkey);
+    shortcut = shortcut.toString().split('+').join(' + ');
+    return shortcut;
+  }
+
   function showFileCreateDialog() {
     fileContent = TSCORE.Config.getNewTextFileContent();
     // Default new file in text file
@@ -513,7 +553,7 @@ define(function(require, exports, module) {
         ',',
         ' '
       ],
-      minimumInputLength: 2,
+      minimumInputLength: 1,
       selectOnBlur: true
     });
     $('#newFileName').val('');
@@ -644,6 +684,37 @@ define(function(require, exports, module) {
     });
   }
 
+  function showRenameFileDialog() {
+    if (TSCORE.selectedFiles[0]) {
+      $('#renamedFileName').val(TSCORE.selectedFiles[0]);
+      $('#formFileRename').validator();
+      $('#formFileRename').submit(function(e) {
+        e.preventDefault();
+        if ($('#renameFileButton').prop('disabled') === false) {
+          $('#renameFileButton').click();
+        }
+      });
+      $('#formFileRename').on('invalid.bs.validator', function() {
+        $('#renameFileButton').prop('disabled', true);
+      });
+      $('#formFileRename').on('valid.bs.validator', function() {
+        $('#renameFileButton').prop('disabled', false);
+      });
+      $('#dialogFileRename').on('shown.bs.modal', function() {
+        $('#renamedFileName').focus();
+      });
+      $('#dialogFileRename').modal({
+        backdrop: 'static',
+        show: true
+      });
+      $('#dialogFileRename').draggable({
+        handle: ".modal-header"
+      });
+    } else {
+      TSCORE.showAlertDialog("Renaming file failed. Please select a file.");
+    }
+  }
+
   function showDirectoryBrowserDialog(path) {
     require([
       'text!templates/DirectoryBrowserDialog.html',
@@ -678,6 +749,19 @@ define(function(require, exports, module) {
 
   function showWelcomeDialog() {
     startGettingStartedTour();
+  }
+
+  function showKeysDialog() {
+    $('#dialogShortcuts').modal({
+      backdrop: 'static',
+      show: true,
+      open: function() {
+        $('.modal-body').val(TSCORE.Config.getSelectAllKeyBinding());
+      }
+    });
+    $('#dialogShortcuts').draggable({
+      handle: ".modal-header"
+    });
   }
 
   function startGettingStartedTour() {
@@ -776,15 +860,23 @@ define(function(require, exports, module) {
     });
   }
 
-  $('#eulaDialogBack').click(function() {
-    if (TSCORE.PRO) {
-      $('#aboutIframe').attr('src', 'pro/EULA.txt');
-    } else {
-      $('#aboutIframe').attr('src', 'LICENSE.txt');
-    }
-  });
+  // Open Audio Recording Dialog
+  function showAudioRecordingDialog(){
+    $('#audioRecordingDialog').modal({
+      backdrop: 'static',
+      show: true
+    });
+    $('#audioRecordingDialog').draggable({
+      handle: ".modal-header"
+    });
+  }
 
   function showLicenseDialog() {
+    if (TSCORE.PRO) {
+      $('#licenseIframe').attr('src', 'pro/EULA.txt');
+    } else {
+      $('#licenseIframe').attr('src', 'LICENSE.txt');
+    }
     $('#aboutLicenseModal').modal({
       backdrop: 'static',
       show: true
@@ -793,6 +885,18 @@ define(function(require, exports, module) {
       handle: ".modal-header"
     });
   }
+
+  function reloadEulaContent() {
+    if (TSCORE.PRO) {
+      $('#licenseIframe').attr('src', 'pro/EULA.txt');
+    } else {
+      $('#licenseIframe').attr('src', 'LICENSE.txt');
+    }
+  }
+
+  $('#aboutLicenseModal').on('show.bs.modal', function() {
+    reloadEulaContent();
+  });
 
   function disableTopToolbar() {
     $('#perspectiveSwitcherButton').prop('disabled', true);
@@ -963,14 +1067,17 @@ define(function(require, exports, module) {
   exports.showSuccessDialog = showSuccessDialog;
   exports.showConfirmDialog = showConfirmDialog;
   exports.showFileRenameDialog = showFileRenameDialog;
+  exports.showRenameFileDialog = showRenameFileDialog;
   exports.showFileCreateDialog = showFileCreateDialog;
   exports.showFileDeleteDialog = showFileDeleteDialog;
   exports.showDeleteFilesDialog = showDeleteFilesDialog;
   exports.showWelcomeDialog = showWelcomeDialog;
+  exports.showKeysDialog = showKeysDialog;
   exports.startGettingStartedTour = startGettingStartedTour;
   exports.showTagEditDialog = showTagEditDialog;
   exports.showOptionsDialog = showOptionsDialog;
   exports.showAboutDialog = showAboutDialog;
+  exports.showAudioRecordingDialog = showAudioRecordingDialog;
   exports.showLicenseDialog = showLicenseDialog;
   exports.showLocationsPanel = showLocationsPanel;
   exports.showTagsPanel = showTagsPanel;

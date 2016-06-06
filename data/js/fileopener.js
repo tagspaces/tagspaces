@@ -17,8 +17,14 @@ define(function(require, exports, module) {
   var _isFileChanged = false;
   var _tsEditor;
   var generatedTagButtons;
-  // Backup cancel button <!--button type="button" class="btn editable-cancel"><i class="fa fa-times fa-lg"></i></button-->
-  $.fn.editableform.buttons = '<button type="submit" class="btn btn-primary editable-submit"><i class="fa fa-check fa-lg"></i></button>';
+  $.fn.editableform.buttons = '<button type="submit" class="btn btn-primary editable-submit"><i class="fa fa-check fa-lg"></i></button><button type="button" class="btn editable-cancel"><i class="fa fa-times fa-lg"></i></button>';
+  $.fn.editableform.template = '' +
+    '<form class="form-inline editableform flexMaxWidth">' +
+      '<div class="control-group flexLayout flexMaxWidth">' +
+         '<div class="flexLayout flexMaxWidth"><div class="editable-input flexMaxWidth"></div><div class="editable-buttons"></div></div>' +
+         '<div class="editable-error-block"></div>' +
+      '</div> ' +
+    '</form>';
   var exitFullscreenButton = '<button id="exitFullScreen" class="btn btn-link" title="Exit fullscreen mode (ESC)"><span class="fa fa-remove"></span></button>';
   var _isEditMode = false; // If a file is currently opened for editing, this var should be true
 
@@ -431,15 +437,26 @@ define(function(require, exports, module) {
     var $fileTitle = $('#fileTitle');
     $fileTitle.editable('destroy');
     $fileTitle.text(title);
+    $fileTitle.attr("title", title);
     if (!isChrome) {
       $fileTitle.editable({
         type: 'text',
-        //placement: 'bottom',
-        title: 'Change Title',
+        title: 'Enter Title',
         mode: 'inline',
+        clear: false,
         success: function(response, newValue) {
+          $('#closeOpenedFile').show();
           TSCORE.TagUtils.changeTitle(_openedFilePath, newValue);
+        },
+        error: function(response, newValue) {
+          $('#closeOpenedFile').show();
         }
+      });
+      $fileTitle.on('shown', function(e, editable) {
+        $('#closeOpenedFile').hide();
+      });
+      $fileTitle.on('hidden', function(e, editable) {
+        $('#closeOpenedFile').show();
       });
     }
     // Generate tag & ext buttons

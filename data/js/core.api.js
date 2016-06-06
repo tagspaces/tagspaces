@@ -29,6 +29,7 @@ define(function(require, exports, module) {
   var tsMeta = require('tsmeta');
   var tsExt = require('tsextapi');
   var tsExtManager = require('tsextmanager');
+  var TSCORE = require('tscore');
 
   // Defining variables
   var currentPath;
@@ -106,6 +107,10 @@ define(function(require, exports, module) {
       var language = tsSettings.getInterfaceLanguage();
 
       if (tsSettings.isFirstRun()) {
+        // Showing license dialog
+        tsCoreUI.showLicenseDialog();
+
+        // Setting the language
         var browserLang = navigator.language || navigator.userLanguage;
 
         var languageMatched;
@@ -212,7 +217,9 @@ define(function(require, exports, module) {
       tsSearchUI.showSearchArea();
     });
     Mousetrap.bind(tsSettings.getRenamingFileKeyBinding(), function() {
-      tsCoreUI.showRenameFileDialog();
+      if (TSCORE.selectedFiles[0]) {
+        tsCoreUI.showFileRenameDialog(TSCORE.selectedFiles[0]);
+      }
     });
   }
 
@@ -250,16 +257,16 @@ define(function(require, exports, module) {
     var currentVersion = parseFloat(verC[0] + '.' + verC[1]);
     /* Testing the new version notifications
 
-        availableVersion = 2;
-        currentVersion = 1;
-        availableBuild = 2;
-        currentBuild = 1; */
+     availableVersion = 2;
+     currentVersion = 1;
+     availableBuild = 2;
+     currentBuild = 1; */
     if (availableVersion > currentVersion || availableVersion == currentVersion && availableBuild > currentBuild) {
       $('#newVersionAvailable').css('display', 'block');
       /*$('#whatsNewModal iframe').attr('src', 'http://tagspaces.org/whatsnew/');
-      $('#whatsNewModal').on('show.bs.modal', function(e) {
-        $('#whatsNewModal iframe').attr('src', 'http://tagspaces.org/whatsnew/');
-      });*/
+       $('#whatsNewModal').on('show.bs.modal', function(e) {
+       $('#whatsNewModal iframe').attr('src', 'http://tagspaces.org/whatsnew/');
+       });*/
     }
   }
 
@@ -287,8 +294,8 @@ define(function(require, exports, module) {
   function updateFileModel(model, oldPath, newPath) {
     console.log('Removing file from model');
     var title = tsTagUtils.extractTitle(newPath),
-      fileExt = tsTagUtils.extractFileExtension(newPath),
-      fileTags = tsTagUtils.extractTags(newPath);
+            fileExt = tsTagUtils.extractFileExtension(newPath),
+            fileTags = tsTagUtils.extractTags(newPath);
     for (var i = 0; i < model.length; i++) {
       if (model[i].path == oldPath) {
         model[i].path = newPath;
