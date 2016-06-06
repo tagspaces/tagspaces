@@ -54,8 +54,8 @@ define(function(require, exports, module) {
   function initMainMenu() {
 
     /*if (!TSCORE.Config.getShowMainMenu()) {
-      return;
-    }*/
+     return;
+     }*/
 
     var Menu = remote.Menu;
     var template = [
@@ -63,7 +63,7 @@ define(function(require, exports, module) {
         label: $.i18n.t("ns.common:file"),
         submenu: [
           {
-            label: $.i18n.t("ns.common:createFile") ,
+            label: $.i18n.t("ns.common:createFile"),
             accelerator: '',
             role: 'createFile',
             click: function() {
@@ -71,7 +71,7 @@ define(function(require, exports, module) {
             }
           },
           {
-            label: $.i18n.t("ns.common:createMarkdown") ,
+            label: $.i18n.t("ns.common:createMarkdown"),
             accelerator: '',
             role: 'createMarkdown',
             click: function() {
@@ -79,7 +79,7 @@ define(function(require, exports, module) {
             }
           },
           {
-            label: $.i18n.t("ns.common:createRichTextFile") ,
+            label: $.i18n.t("ns.common:createRichTextFile"),
             accelerator: '',
             role: 'createRichTextFile',
             click: function() {
@@ -87,7 +87,7 @@ define(function(require, exports, module) {
             }
           },
           {
-            label: $.i18n.t("ns.common:createAudioFile") ,
+            label: $.i18n.t("ns.common:createAudioFile"),
             accelerator: '',
             role: 'createAudioFile',
             click: function() {
@@ -95,7 +95,7 @@ define(function(require, exports, module) {
             }
           },
           {
-            label: $.i18n.t("ns.common:createDirectory") ,
+            label: $.i18n.t("ns.common:createDirectory"),
             accelerator: '',
             role: 'createDirectory',
             click: function() {
@@ -106,11 +106,13 @@ define(function(require, exports, module) {
             type: 'separator'
           },
           {
-            label: $.i18n.t("ns.common:exitApp") ,
+            label: $.i18n.t("ns.common:exitApp"),
             accelerator: '',
             role: 'exitApp',
             click: function() {
-                window.close();
+              TSCORE.Config.Settings.firstRun = true;
+              TSCORE.Config.saveSettings();
+              window.close();
             }
           }
         ]
@@ -119,12 +121,12 @@ define(function(require, exports, module) {
         label: $.i18n.t("ns.common:edit"),
         submenu: [
           {
-            label: $.i18n.t("ns.common:undo") ,
+            label: $.i18n.t("ns.common:undo"),
             accelerator: 'CmdOrCtrl+Z',
             role: 'undo'
           },
           {
-            label: $.i18n.t("ns.common:redo") ,
+            label: $.i18n.t("ns.common:redo"),
             accelerator: 'Shift+CmdOrCtrl+Z',
             role: 'redo'
           },
@@ -132,29 +134,29 @@ define(function(require, exports, module) {
             type: 'separator'
           },
           {
-            label: $.i18n.t("ns.common:cut") ,
+            label: $.i18n.t("ns.common:cut"),
             accelerator: 'CmdOrCtrl+X',
             role: 'cut'
           },
           {
-            label: $.i18n.t("ns.common:copy") ,
+            label: $.i18n.t("ns.common:copy"),
             accelerator: 'CmdOrCtrl+C',
             role: 'copy'
           },
           {
-            label: $.i18n.t("ns.common:paste") ,
+            label: $.i18n.t("ns.common:paste"),
             accelerator: 'CmdOrCtrl+V',
             role: 'paste'
           },
           {
-            label: $.i18n.t("ns.common:selectAll") ,
+            label: $.i18n.t("ns.common:selectAll"),
             accelerator: 'CmdOrCtrl+A',
             role: 'selectall'
           },
         ]
       },
       {
-        label:  $.i18n.t("ns.common:view"),
+        label: $.i18n.t("ns.common:view"),
         submenu: [
           {
             label: $.i18n.t("ns.common:reloadApplication"),
@@ -206,7 +208,7 @@ define(function(require, exports, module) {
         ]
       },
       {
-        label:  $.i18n.t("ns.common:help"),
+        label: $.i18n.t("ns.common:help"),
         submenu: [
           {
             label: $.i18n.t("ns.common:shortcutKeys"),
@@ -278,14 +280,14 @@ define(function(require, exports, module) {
       });
       // Window menu.
       /*template[3].submenu.push(
-        {
-          type: 'separator'
-        },
-        {
-          label: 'Bring All to Front',
-          role: 'front'
-        }
-      );*/
+       {
+       type: 'separator'
+       },
+       {
+       label: 'Bring All to Front',
+       role: 'front'
+       }
+       );*/
     }
 
     var menu = Menu.buildFromTemplate(template);
@@ -305,6 +307,7 @@ define(function(require, exports, module) {
       resolve(true);
     });
   }
+
   // IOAPI
   /**
    * Checks if new version is available
@@ -316,15 +319,13 @@ define(function(require, exports, module) {
     console.log("Checking for new version...");
     var cVer = TSCORE.Config.DefaultSettings.appVersion + "." + TSCORE.Config.DefaultSettings.appBuild;
     $.ajax({
-        url: 'http://tagspaces.org/releases/version.json?eVer=' + cVer,
-        type: 'GET'
-      })
-      .done(function(data) {
-        TSCORE.updateNewVersionData(data);
-      })
-      .fail(function(data) {
-        console.log("AJAX failed " + data);
-      });
+      url: 'http://tagspaces.org/releases/version.json?eVer=' + cVer,
+      type: 'GET'
+    }).done(function(data) {
+      TSCORE.updateNewVersionData(data);
+    }).fail(function(data) {
+      console.log("AJAX failed " + data);
+    });
   }
 
   /**
@@ -553,20 +554,20 @@ define(function(require, exports, module) {
     return new Promise(function(resolve, reject) {
       getPropertiesPromise(sourceFilePath).then(function(entry) {
         if (!entry.isFile) {
-          reject($.i18n.t("ns.common:fileIsDirectory", {fileName:sourceFilePath}));
+          reject($.i18n.t("ns.common:fileIsDirectory", {fileName: sourceFilePath}));
         } else {
           getPropertiesPromise(targetFilePath).then(function(entry2) {
             if (entry2) {
-              reject($.i18n.t("ns.common:fileExists", {fileName:targetFilePath}));
+              reject($.i18n.t("ns.common:fileExists", {fileName: targetFilePath}));
             } else {
 
               var rd = fs.createReadStream(sourceFilePath);
               rd.on("error", function(err) {
-                reject($.i18n.t("ns.common:fileCopyFailed", {fileName:sourceFilePath}));
+                reject($.i18n.t("ns.common:fileCopyFailed", {fileName: sourceFilePath}));
               });
               var wr = fs.createWriteStream(targetFilePath);
               wr.on("error", function(err) {
-                reject($.i18n.t("ns.common:fileCopyFailed", {fileName:sourceFilePath}));
+                reject($.i18n.t("ns.common:fileCopyFailed", {fileName: sourceFilePath}));
               });
               wr.on("close", function(ex) {
                 resolve();
@@ -600,12 +601,12 @@ define(function(require, exports, module) {
         reject($.i18n.t("ns.common:fileTheSame"), $.i18n.t("ns.common:fileNotMoved"));
       }
       if (fs.lstatSync(filePath).isDirectory()) {
-        reject($.i18n.t("ns.common:fileIsDirectory", {fileName:filePath}));
+        reject($.i18n.t("ns.common:fileIsDirectory", {fileName: filePath}));
       }
       if (fs.existsSync(newFilePath)) {
-        reject($.i18n.t("ns.common:fileExists", {fileName:newFilePath}), $.i18n.t("ns.common:fileRenameFailed"));
+        reject($.i18n.t("ns.common:fileExists", {fileName: newFilePath}), $.i18n.t("ns.common:fileRenameFailed"));
       }
-      fs.move(filePath, newFilePath, {clobber:true}, function(error) {
+      fs.move(filePath, newFilePath, {clobber: true}, function(error) {
         if (error) {
           reject("Renaming: " + filePath + " failed.");
         }
@@ -631,7 +632,7 @@ define(function(require, exports, module) {
         reject($.i18n.t("ns.common:directoryTheSame"), $.i18n.t("ns.common:directoryNotMoved"));
       }
       if (fs.existsSync(newDirPath)) {
-        reject($.i18n.t("ns.common:directoryExists", {dirName:newDirPath}), $.i18n.t("ns.common:directoryRenameFailed"));
+        reject($.i18n.t("ns.common:directoryExists", {dirName: newDirPath}), $.i18n.t("ns.common:directoryRenameFailed"));
       }
       var dirStatus = fs.lstatSync(dirPath);
       if (dirStatus.isDirectory) {
@@ -643,7 +644,7 @@ define(function(require, exports, module) {
           resolve(newDirPath);
         });
       } else {
-        reject($.i18n.t("ns.common:pathIsNotDirectory", {dirName:dirPath}), $.i18n.t("ns.common:directoryRenameFailed"));
+        reject($.i18n.t("ns.common:pathIsNotDirectory", {dirName: dirPath}), $.i18n.t("ns.common:directoryRenameFailed"));
       }
     });
   }
