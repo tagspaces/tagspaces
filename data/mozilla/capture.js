@@ -125,8 +125,8 @@ exports.saveURLToFile = function(name, url) {
       purifyContent(window.content.document);
 
       // Set Metadata
-      window.content.document.body.setAttribute('data-sourceUrl', url);
-      window.content.document.body.setAttribute('data-scrapedOn',(new Date()).toISOString());
+      window.content.document.body.setAttribute('data-sourceurl', url);
+      window.content.document.body.setAttribute('data-scrappedon',(new Date()).toISOString());
 
       persist.saveDocument(window.content.document, localFile, null, null, flags, 0);
     } else {
