@@ -93,7 +93,7 @@ define(function(require, exports, module) {
   };
 
   function startSearchOnEnter(e) {
-    if(e.which == 13) {
+    if (e.which == 13) {
       e.preventDefault();
       updateQuery();
       startSearch();
