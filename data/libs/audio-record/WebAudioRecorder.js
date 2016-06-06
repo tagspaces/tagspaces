@@ -17,8 +17,8 @@
 
   var WORKER_FILE = {
     wav: "WebAudioRecorderWav.js",
-    ogg: "WebAudioRecorderOgg.js",
-    mp3: "WebAudioRecorderMp3.js"
+    ogg: "WebAudioRecorderOgg.js"
+    //mp3: "WebAudioRecorderMp3.js"
   };
 
   // default configs

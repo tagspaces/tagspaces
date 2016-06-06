@@ -109,6 +109,7 @@ var isWin = navigator.appVersion.indexOf("Win")!==-1;
       audiorecordingwav:      'libs/audio-record/WavAudioEncoder.min',
       audiorecordingogg:      'libs/audio-record/OggVorbisEncoder.min',
       webaudiorecording:      'libs/audio-record/WebAudioRecorder',
+      audiorecorder:          'libs/audio-record/AudioRecorder',
 
       tscore:                 'js/core.api',
       tssetting:              'js/settings.api',
