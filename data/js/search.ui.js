@@ -218,7 +218,7 @@ define(function(require, exports, module) {
       TSCORE.closeLeftPanel();
     }
     var nxtQuery = ' +' + tagQuery; //TSCORE.Search.recursiveSymbol + ' +' + tagQuery;
-    TSCORE.Search.nextQuery = nxtQuery
+    TSCORE.Search.nextQuery = nxtQuery;
     $('#searchBox').val(nxtQuery);
     TSCORE.PerspectiveManager.redrawCurrentPerspective();
     $('#showSearchButton').hide();
