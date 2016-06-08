@@ -18,12 +18,11 @@
   var WORKER_FILE = {
     wav: "WebAudioRecorderWav.js",
     ogg: "WebAudioRecorderOgg.js"
-    //mp3: "WebAudioRecorderMp3.js"
   };
 
   // default configs
   var CONFIGS = {
-    workerDir: "/",     // worker scripts dir (end with /)
+    workerDir: "libs/audio-record/",     // worker scripts dir (end with /)
     numChannels: 2,     // number of channels
     encoding: "wav",    // encoding (can be changed at runtime)
 

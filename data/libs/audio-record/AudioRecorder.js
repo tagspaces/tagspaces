@@ -1,4 +1,7 @@
-(function(window) {
+define(function(require, exports, module) {
+
+  require("webaudiorecording");
+
 // navigator.getUserMedia shim
   navigator.getUserMedia =
           navigator.getUserMedia ||
@@ -10,21 +13,21 @@
   window.URL = window.URL || window.webkitURL;
 
 // audio context + .createScriptProcessor shim
-var audioContext = new AudioContext;
-if (audioContext.createScriptProcessor == null)
-  audioContext.createScriptProcessor = audioContext.createJavaScriptNode;
-
+  var audioContext = new AudioContext;
+  if (audioContext.createScriptProcessor == null) {
+    audioContext.createScriptProcessor = audioContext.createJavaScriptNode;
+  }
 
 // elements (jQuery objects)
   var $testToneLevel = $('#testToneLevel'),
           $microphone = $('#microphone'),
           $microphoneLevel = $('#microphoneLevel'),
-          $timeLimit = $('#time-limit'),
+          //$timeLimit = $('#time-limit'),
           $encoding = $('input[name="encoding"]'),
           $encodingOption = $('#encoding-option'),
           $encodingProcess = $('input[name="encoding-process"]'),
-          $reportInterval = $('#report-interval'),
-          $bufferSize = $('#buffer-size'),
+          //$reportInterval = $('#report-interval'),
+          //$bufferSize = $('#buffer-size'),
           $recording = $('#recording'),
           $timeDisplay = $('#time-display'),
           $record = $('#record'),
@@ -42,15 +45,15 @@ if (audioContext.createScriptProcessor == null)
   $microphone[0].checked = false;
   $microphoneLevel.attr('disabled', false);
   $microphoneLevel[0].valueAsNumber = 0;
-  $timeLimit.attr('disabled', false);
-  $timeLimit[0].valueAsNumber = 3;
+//  $timeLimit.attr('disabled', false);
+//  $timeLimit[0].valueAsNumber = 3;
   $encoding.attr('disabled', false);
   $encoding[0].checked = true;
   $encodingProcess.attr('disabled', false);
   $encodingProcess[0].checked = true;
-  $reportInterval.attr('disabled', false);
-  $reportInterval[0].valueAsNumber = 1;
-  $bufferSize.attr('disabled', false);
+  //$reportInterval.attr('disabled', false);
+  //$reportInterval[0].valueAsNumber = 1;
+  //$bufferSize.attr('disabled', false);
 
   var testTone = (function() {
     var osc = audioContext.createOscillator(),
@@ -81,7 +84,7 @@ if (audioContext.createScriptProcessor == null)
 
 // audio recorder object
   var audioRecorder = new WebAudioRecorder(mixer, {
-    workerDir: 'js/',
+    workerDir: 'libs/audio-record/',
     onEncoderLoading: function(recorder, encoding) {
       $modalLoading.find('.modal-title').html("Loading " + encoding.toUpperCase() + " encoder ...");
       $modalLoading.modal('show');
@@ -123,10 +126,10 @@ if (audioContext.createScriptProcessor == null)
     return n > 1 ? "s" : "";
   }
 
-  $timeLimit.on('input', function() {
+  /*$timeLimit.on('input', function() {
     var min = $timeLimit[0].valueAsNumber;
     $('#time-limit-text').html("" + min + " minute" + plural(min));
-  });
+  });*/
 
 // encoding selector + encoding options
   var OGG_QUALITY = [-0.1, 0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1],
@@ -189,14 +192,14 @@ if (audioContext.createScriptProcessor == null)
     encodingProcess = $(event.target).attr('mode');
     var hidden = encodingProcess === 'background';
     $('#report-interval-label').toggleClass('hidden', hidden);
-    $reportInterval.toggleClass('hidden', hidden);
+    //$reportInterval.toggleClass('hidden', hidden);
     $('#report-interval-text').toggleClass('hidden', hidden);
   });
 
-  $reportInterval.on('input', function() {
+  /*$reportInterval.on('input', function() {
     var sec = $reportInterval[0].valueAsNumber;
     $('#report-interval-text').html("" + sec + " second" + (plural(sec)));
-  });
+  });*/
 
 // processor buffer size
   var BUFFER_SIZE = [256, 512, 1024, 2048, 4096, 8192, 16384];
@@ -208,11 +211,12 @@ if (audioContext.createScriptProcessor == null)
 
   var iDefBufSz = BUFFER_SIZE.indexOf(defaultBufSz);
 
-  $bufferSize[0].valueAsNumber = iDefBufSz;   // initialize with browser default
+  //$bufferSize[0].valueAsNumber = iDefBufSz;   // initialize with browser default
 
   function updateBufferSizeText() {
-    var iBufSz = $bufferSize[0].valueAsNumber,
-            text = "" + BUFFER_SIZE[iBufSz];
+    //var iBufSz = $bufferSize[0].valueAsNumber, text = "" + BUFFER_SIZE[iBufSz];
+    var iBufSz = iDefBufSz;
+    var text = "" + BUFFER_SIZE[iBufSz];
     if (iBufSz === iDefBufSz)
       text += ' (browser default)';
     $('#buffer-size-text').html(text);
@@ -220,26 +224,26 @@ if (audioContext.createScriptProcessor == null)
 
   updateBufferSizeText();         // initialize text
 
-  $bufferSize.on('input', function() {
+  /*$bufferSize.on('input', function() {
     updateBufferSizeText();
-  });
+  });*/
 
 // save/delete recording
   function saveRecording(blob, encoding) {
     var time = new Date(),
-            url = URL.createObjectURL(blob),
-            html = "<p recording='" + url + "'>" +
-                    "<audio controls src='" + url + "'></audio> " +
-                    " (" + encoding.toUpperCase() + ") " +
-                    time +
-                    " <a class='btn btn-default' href='" + url +
-                    "' download='recording." +
-                    encoding +
-                    "'>Save...</a> " +
-                    "<button class='btn btn-danger' recording='" +
-                    url +
-                    "'>Delete</button>" +
-                    "</p>";
+    url = URL.createObjectURL(blob),
+    html = "<p recording='" + url + "'>" +
+            "<audio controls src='" + url + "'></audio> " +
+            " (" + encoding.toUpperCase() + ") " +
+            time +
+            " <a class='btn btn-default' href='" + url +
+            "' download='recording." +
+            encoding +
+            "'>Save...</a> " +
+            "<button class='btn btn-danger' recording='" +
+            url +
+            "'>Delete</button>" +
+            "</p>";
     $recordingList.prepend($(html));
   }
 
@@ -281,12 +285,12 @@ if (audioContext.createScriptProcessor == null)
   function disableControlsOnRecord(disabled) {
     if (microphone == null)
       $microphone.attr('disabled', disabled);
-    $timeLimit.attr('disabled', disabled);
+    //$timeLimit.attr('disabled', disabled);
     $encoding.attr('disabled', disabled);
     $encodingOption.attr('disabled', disabled);
     $encodingProcess.attr('disabled', disabled);
-    $reportInterval.attr('disabled', disabled);
-    $bufferSize.attr('disabled', disabled);
+    //$reportInterval.attr('disabled', disabled);
+    //$bufferSize.attr('disabled', disabled);
   }
 
   function startRecording() {
@@ -295,11 +299,10 @@ if (audioContext.createScriptProcessor == null)
     $cancel.removeClass('hidden');
     disableControlsOnRecord(true);
     audioRecorder.setOptions({
-      timeLimit: $timeLimit[0].valueAsNumber * 60,
+      //timeLimit: $timeLimit[0].valueAsNumber * 60,
       encodeAfterRecord: encodingProcess === 'separate',
-      progressInterval: $reportInterval[0].valueAsNumber * 1000,
+      //progressInterval: $reportInterval[0].valueAsNumber * 1000,
       ogg: {quality: OGG_QUALITY[optionValue.ogg]},
-      mp3: {bitRate: MP3_BIT_RATE[optionValue.mp3]}
     });
     audioRecorder.startRecording();
     setProgress(0);
@@ -350,4 +353,6 @@ if (audioContext.createScriptProcessor == null)
     $modalError.find('.alert').html(message);
     $modalError.modal('show');
   };
-})(window);
+
+});
+//})(window);

@@ -10,7 +10,6 @@ define(function(require, exports, module) {
 
   var TSCORE = require('tscore');
   var TSPOSTIO = require("tspostioapi");
-  var WebAudioRecorder = require("webaudiorecording");
 
   var fileContent;
   var fileType;
@@ -863,6 +862,7 @@ define(function(require, exports, module) {
 
   // Open Audio Recording Dialog
   function showAudioRecordingDialog() {
+    require("audiorecorder");
     $('#audioRecordingDialog').modal({
       backdrop: 'static',
       show: true
@@ -1091,5 +1091,4 @@ define(function(require, exports, module) {
   exports.createHTMLFile = createHTMLFile;
   exports.createMDFile = createMDFile;
   exports.createTXTFile = createTXTFile;
-  exports.showCreateDirectoryDialog = showCreateDirectoryDialog;
 });
