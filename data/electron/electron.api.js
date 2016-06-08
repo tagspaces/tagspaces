@@ -68,7 +68,7 @@ define(function(require, exports, module) {
             role: 'createFile',
             click: function() {
               if (!TSCORE.currentPath) {
-                TSCORE.showAlertDialog("Not open current directory !");
+                TSCORE.showAlertDialog("ns.common:alertOpenLocatioFirst");
               } else {
                 TSCORE.UI.createTXTFile();
               }
@@ -80,7 +80,7 @@ define(function(require, exports, module) {
             role: 'createMarkdown',
             click: function() {
               if (!TSCORE.currentPath) {
-                TSCORE.showAlertDialog("Not open current directory !");
+                TSCORE.showAlertDialog("ns.common:alertOpenLocatioFirst");
               } else {
                 TSCORE.UI.createMDFile();
               }
@@ -92,7 +92,7 @@ define(function(require, exports, module) {
             role: 'createRichTextFile',
             click: function() {
               if (!TSCORE.currentPath) {
-                TSCORE.showAlertDialog("Not open current directory !");
+                TSCORE.showAlertDialog("ns.common:alertOpenLocatioFirst");
               } else {
                 TSCORE.UI.createHTMLFile();
               }
@@ -104,11 +104,14 @@ define(function(require, exports, module) {
             role: 'createAudioFile',
             click: function() {
               if (!TSCORE.currentPath) {
-                TSCORE.showAlertDialog("Not open current directory !");
+                TSCORE.showAlertDialog("ns.common:alertOpenLocatioFirst");
               } else {
                 TSCORE.UI.showAudioRecordingDialog();
               }
             }
+          },
+          {
+            type: 'separator'
           },
           {
             label: $.i18n.t("ns.common:createDirectory"),
