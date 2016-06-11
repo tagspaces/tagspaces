@@ -8,19 +8,19 @@
         "description": "Title of the application launcher in the browser."
     },
     "appDesc": {
-        "message": "File Browser with Web Content Scraping and Chromecast Support.",
+        "message": "Filsorteringssystem med taggar och möjlighet för webbskrapning and Chromecast funktion.",
         "description": ""
     },
     "addTagHelp": {
-        "message": "Tags should have a minimum length of 2 characters and should not contain special characters such as spaces, #, / ,\\ and other.",
+        "message": "Taggar måste ha minimum längd av 2 tecken och bör inte innehålla specialtecken som: mellanslag, #, / ,\\ och andra.",
         "description": "Add tag help message"
     },
     "saveScreenshotTitle": {
-        "message": "Save screenshot of the visible page area as PNG",
+        "message": "Spara skärmdump av synliga delar av sida som PNG",
         "description": "Title of screenshot button"
     },
     "editTitleLabel": {
-        "message": "Edit Title",
+        "message": "Ändra Titel",
         "description": "Title of label."
     },
     "appName": {
@@ -28,11 +28,11 @@
         "description": ""
     },
     "appLauncherLabel": {
-        "message": "Capture Web Content",
+        "message": "Fånga webbinnehåll",
         "description": "Title of label."
     },
     "saveScreenshotLabel": {
-        "message": "Screenshot",
+        "message": "Skärmdump",
         "description": "Title of label."
     },
     "addTagLabel": {
@@ -40,23 +40,23 @@
         "description": "Title of label."
     },
     "saveAsMhtmlTitle": {
-        "message": "Save whole page as MHTML",
+        "message": "Spara hela sida som MHTML",
         "description": "Title of save page button"
     },
     "appLauncherTitle": {
-        "message": "Start TagSpaces Browser in a new tab",
+        "message": "Starta TagSpaces Browser i en ny flik",
         "description": "Title of the application launcher in the browser."
     },
     "saveSelectionAsHtmlTitle": {
-        "message": "Save selected content as HTML",
+        "message": "Spara vald innehåll som HTML",
         "description": "Title of save selection button"
     },
     "saveAsMhtmlLabel": {
-        "message": "Save Whole Page",
+        "message": "Spara hela sidan",
         "description": "Title of label."
     },
     "saveFileLabel": {
-        "message": "Save as File",
+        "message": "Spara som en fil",
         "description": "Title of label."
     }
 }
