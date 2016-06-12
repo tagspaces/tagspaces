@@ -10,7 +10,7 @@ define(function(require, exports, module) {
     var command = data.command;
 
     switch (command) {
-      case "saveDocument": 
+      case "saveDocument":
         TSCORE.FileOpener.saveFile();
         break;
       case "hideAllMenus":
