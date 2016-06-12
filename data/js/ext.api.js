@@ -2,14 +2,17 @@ define(function(require, exports, module) {
   'use strict';
   var TSCORE = require("tscore");
   console.log("Loading: ext.api.js");
-  
-  window.addEventListener("message", handleMessage , false);
+
+  window.addEventListener("message", handleMessage, false);
 
   function handleMessage(msg) {
     var data = JSON.parse(msg.data);
     var command = data.command;
 
     switch (command) {
+      case "saveDocument": 
+        TSCORE.FileOpener.saveFile();
+        break;
       case "hideAllMenus":
         TSCORE.hideAllDropDownMenus();
         $('#searchOptions').hide();
@@ -37,7 +40,7 @@ define(function(require, exports, module) {
 
   function openNextFile() {
     //if(TSCORE.selectedFiles.length > 0) {
-      // TODO open next selected file
+    // TODO open next selected file
     //} else {
     TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getNextFile(TSCORE.FileOpener.getOpenedFilePath()));
     //}
@@ -46,9 +49,9 @@ define(function(require, exports, module) {
   function openLinkExternally(uri) {
     uri = decodeURIComponent(uri);
     if (
-        uri.indexOf("http://") === 0 ||
-        uri.indexOf("https://") === 0 ||
-        uri.indexOf("file://") === 0
+            uri.indexOf("http://") === 0 ||
+            uri.indexOf("https://") === 0 ||
+            uri.indexOf("file://") === 0
     ) {
       TSCORE.IO.openFile(uri);
     } else {
