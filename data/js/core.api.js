@@ -30,6 +30,7 @@ define(function(require, exports, module) {
   var tsExt = require('tsextapi');
   var tsExtManager = require('tsextmanager');
   var TSCORE = require('tscore');
+  var tsAudioRecorderUI = require('tsaudiorecorderui');
 
   // Defining variables
   var currentPath;
@@ -91,6 +92,7 @@ define(function(require, exports, module) {
     tsDirectoriesUI.initLocations();
     tsFileOpener.initUI();
     tsSearchUI.initUI();
+    tsAudioRecorderUI.initUI();
     tsExtManager.loadExtensionData().then(function() {
       tsPersManager.initPerspectives().then(function(result) {
         console.log("Perspectives Initialized: " + result);
