@@ -7,11 +7,48 @@ define(function(require, exports, module) {
   'use strict';
   console.log('Loading audiorecorder.ui.js ...');
   var TSCORE = require('tscore');
-  var TSAUDIORECORDER = require("webaudiorecording");
+
+  var fileContent;
+  var fileType;
 
   var initUI = function() {
 
+    $('#audioRecordingConfirmButton').click(function() {
+      saveAudioVideoFile();
+    });
+
   };
+
+  function saveAudioVideoFile(event, blob) {
+    var fileTags = '';
+    var rawTags = $('#newFileNameTagsAudioRecorder').val().split(',');
+    rawTags.forEach(function(value, index) {
+      if (index === 0) {
+        fileTags = value;
+      } else {
+        fileTags = fileTags + TSCORE.Config.getTagDelimiter() + value;
+      }
+    });
+    //if ($('#tagWithCurrentDate').prop('checked')) {
+    //  if (fileTags.length < 1) {
+    //    fileTags = TSCORE.TagUtils.formatDateTime4Tag(new Date());
+    //  } else {
+    //    fileTags = fileTags + TSCORE.Config.getTagDelimiter() + TSCORE.TagUtils.formatDateTime4Tag(new Date());
+    //  }
+    //}
+    if (fileTags.length > 0) {
+      fileTags = TSCORE.TagUtils.beginTagContainer + fileTags + TSCORE.TagUtils.endTagContainer;
+    }
+    var filePath = TSCORE.currentPath + TSCORE.dirSeparator + $('#newFileNameAudioRecorder').val() + fileTags + '.' + fileType;
+    TSCORE.IO.saveBinaryFilePromise(filePath, content, false).then(function() {
+      TSCORE.showSuccessDialog("File saved successfully.");
+
+    }, function(error) {
+      TSCORE.hideLoadingAnimation();
+      TSCORE.showAlertDialog("Saving " + filePath + " failed.");
+      console.error("Save to file " + filePath + " failed " + error);
+    });
+  }
 
   // Navigator.getUserMedia shim
   navigator.getUserMedia =
@@ -241,26 +278,61 @@ define(function(require, exports, module) {
 
   // Save/Delete recording
   function saveRecording(blob, encoding) {
-    var time = new Date(),
-            url = URL.createObjectURL(blob),
-            html = "<p recording='" + url + "'>" +
-                    "<audio controls src='" + url + "'></audio> " +
-                      //" (" + encoding.toUpperCase() + ") " +
-                      //time +
-                    " <a class='btn btn-default' style='margin-top:-15px' href='" + url +
-                    "' download='recording." +
-                    encoding +
-                    "'>Save</a> " +
-                    "<button class='btn btn-danger' style='margin-top:-15px' recording='" +
-                    url +
-                    "'>Delete</button>" +
-                    "</p>";
-    if ($recordingList.empty()) {
-      $recordingList.append($(html));
-    } else {
-      $recordingList.removeAttribute(html);
-    }
+    var time = new Date();
+    var url = URL.createObjectURL(blob);
+    //var html = "<p recording='"+url+"'>"+
+    //        "<audio controls src='" + url + "'></audio> " +//" ("+encoding.toUpperCase()+")"+time
+    //        " <a class='btn btn-default' style='margin-top:-15px'>Save</a> " +
+    //        "<button class='btn btn-danger' style='margin-top:-15px' recording='" + url + "'>Delete</button>"+"</p>";
+    //
+    //if ($recordingList.empty()) {
+    //  $recordingList.append($(html));
+    //} else {
+    //  $recordingList.removeAttribute(html);
+    //}
 
+    $('#recordingUrl').prop('recording', url);
+    $('#formFileCreateAudioRecorder').prop('recording', url);
+    $('#audioRecordingUrl').attr('src', url);
+    $('#deleteAudioRecording').prop('recording', url);
+
+    fileContent = TSCORE.Config.getNewTextFileContent();
+    // Default new file in text file
+    fileType = 'wav' || 'ogg';
+    $('#newFileNameTagsAudioRecorder').select2('data', null);
+    $('#newFileNameTagsAudioRecorder').select2({
+      multiple: true,
+      tags: TSCORE.Config.getAllTags(),
+      tokenSeparators: [
+        ',',
+        ' '
+      ],
+      minimumInputLength: 1,
+      selectOnBlur: true
+    });
+    $('#newFileNameAudioRecorder').val('');
+    //$('#tagWithCurrentDate').prop('checked', false);
+    $('#txtFileTypeButtonAudioRecorder').button('toggle');
+    $('#formFileCreateAudioRecorder').validator();
+    $('#formFileCreateAudioRecorder').submit(function(e) {
+      e.preventDefault();
+    });
+    $('#formFileCreateAudioRecorder').on('invalid.bs.validator', function() {
+      $('#audioRecordingConfirmButton').prop('disabled', true);
+    });
+    $('#formFileCreateAudioRecorder').on('valid.bs.validator', function() {
+      $('#audioRecordingConfirmButton').prop('disabled', false);
+    });
+    $('#audioRecordingDialog').on('shown.bs.modal', function() {
+      $('#newFileNameAudioRecorder').select2().focus();
+    });
+    $('#audioRecordingDialog').modal({
+      backdrop: 'static',
+      show: true
+    });
+    $('#audioRecordingDialog').draggable({
+      handle: ".modal-header"
+    });
   }
 
   $recordingList.on('click', 'button', function(event) {

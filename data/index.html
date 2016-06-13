@@ -478,9 +478,30 @@
           </div>
         </div>
         <hr>
-        <div id="recordingList"></div>
+        <div id="recordingList">
+          <form role="form" data-toggle="validator" id="formFileCreateAudioRecorder">
+            <div class="form-group">
+              <p id="recordingUrl" recording=''><audio id="audioRecordingUrl" controls src=''></audio></p>
+            </div>
+            <div class="form-group">
+              <label class="control-label" for="newFileNameAudioRecorder" data-i18n="ns.dialogs:newFileTitle"></label>
+              <input type="text" id="newFileNameAudioRecorder" class="form-control" placeholder="Title of the file"
+                     pattern='^([^#/\\:*?<>|"]){1,}$' data-i18n="[data-error]ns.dialogs:fileNameHelp"/>
+              <p class="help-block with-errors"></p>
+            </div>
+            <div class="form-group">
+              <label class="control-label" for="newFileNameTags" data-i18n="ns.dialogs:newFileTags"></label>
+              <input type="text" id="newFileNameTagsAudioRecorder" name="newFileNameTags" autocomplete="off" class="form-control"
+                     placeholder="List of tags">
+              <p class="help-block" data-i18n="ns.dialogs:editTagNamesRestrictionsHelp"></p>
+            </div>
+          </form>
+          <button id="audioRecordingConfirmButton" class='btn btn-primary' data-i18n="ns.dialogs:save" data-dismiss="modal" aria-hidden="true"></button>
+          <button id="deleteAudioRecording" class='btn btn-default' recording='' data-i18n="ns.dialogs:delete"></button>
+        </div>
       </div>
       <div class="modal-footer">
+        <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true"><i class="fa fa-check fa-lg"></i>
       </div>
     </div>
   </div>

@@ -180,5 +180,7 @@
     "encodeBackground": "Encode background",
     "wav": ".wav",
     "ogg": ".ogg",
+    "save":"Save",
+    "delete":"Delete",
     "-": "-"
 }
