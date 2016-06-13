@@ -363,27 +363,6 @@
   </div>
 </div>
 
-<div class="modal fullScreenMobile" id="aboutLicenseModal" tabindex="-1" role="dialog" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4 class="modal-title" data-i18n="ns.common:license"></h4>
-      </div>
-      <div class="modal-body">
-        <iframe id="licenseIframe" sandbox="allow-same-origin allow-scripts" nwdisable style="width: 100%; height: 100%; min-height: 350px; border: 0;"></iframe>
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-default pull-left" id="disagreeLicenseButton" aria-hidden="true">
-          <i class="fa fa-close fa-lg"></i>&nbsp;<span data-i18n="ns.common:disagreeLicense"></span>
-        </button>
-        <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">
-          <i class="fa fa-check fa-lg"></i>&nbsp;<span data-i18n="ns.common:agreeLicense"></span>
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
-
 <div class="modal fullScreenMobile" id="dialogShortcuts" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -446,14 +425,13 @@
   </div>
 </div>
 
-
 <!-- Audio Recording Dialog -->
 <div class="modal fullScreenMobile" id="audioRecordingDialog" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <a type="button" id="closeAudioDialog" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></a>
-        <h4 class="modal-title" id="myModalLabel2" data-i18n="ns.dialogs:audioRecordingTitle"></h4>
+        <h4 class="modal-title" id="audioRecordingModalLabel" data-i18n="ns.dialogs:audioRecordingTitle"></h4>
       </div>
       <div class="modal-body">
         <div class="form-horizontal">
@@ -468,7 +446,7 @@
           <!-- END: Only for Development process -->
           <div class="form-group">
             <label class="col-sm-3 control-label" data-i18n="ns.dialogs:microphone"></label>
-            <div class="col-sm-6 top-align-5">
+            <div class="col-sm-2 top-align-5">
               <input id="microphone" type="checkbox">
             </div>
             <div class="col-sm-3 top-align-5">
@@ -482,7 +460,7 @@
               <input type="radio" name="encoding" encoding="wav" checked="" ><span data-i18n="ns.dialogs:wav"></span><br>
               <input type="radio" name="encoding" encoding="ogg"><span data-i18n="ns.dialogs:ogg"></span>
             </div>
-            <label id="encoding-option-label" class="col-sm-2 control-label"></label>
+           <label id="encoding-option-label" class="col-sm-2 control-label"></label>
             <div class="col-sm-2">
               <input id="encoding-option" type="range" min="0" max="11" value="6" class="hidden">
             </div>
@@ -490,27 +468,13 @@
           </div>
           <br>
           <div class="form-group">
-            <label class="col-sm-3 control-label" data-i18n="ns.dialogs:encodingProcess"></label>
-            <div class="col-sm-9 top-align-5">
-              <input type="radio" name="encoding-process" mode="background" checked="">
-              <span data-i18n="ns.dialogs:encodeBackground"></span>
-            </div>
-          </div>
-          <div class="form-group">
-            <div class="col-sm-offset-3 col-sm-9">
-              <input type="radio" name="encoding-process" mode="separate">
-              <span data-i18n="ns.dialogs:encodeAfterRecording"></span>
-            </div>
-          </div>
-          <br>
-          <div class="form-group">
             <div class="col-sm-3 control-label"><span id="recording" class="text-danger hidden"><strong
                     data-i18n="ns.dialogs:recording"></strong></span>&nbsp; <span id="time-display"></span></div>
-            <div class="col-sm-3">
+            <div class="col-sm-4">
               <button id="record" class="btn btn-danger" data-i18n="ns.dialogs:record"></button>
               <button id="cancel" class="btn btn-default hidden" data-i18n="ns.dialogs:cancel"></button>
             </div>
-            <div class="col-sm-6"><span id="date-time" class="text-info"></span></div>
+            <div class="col-sm-5"><span id="date-time" class="text-info"></span></div>
           </div>
         </div>
         <hr>

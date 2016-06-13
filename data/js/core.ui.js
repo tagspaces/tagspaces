@@ -860,7 +860,6 @@ define(function(require, exports, module) {
     });
   }
 
-  // Open Audio Recording Dialog
   function showAudioRecordingDialog() {
     require("audiorecorder");
     $('#audioRecordingDialog').modal({
@@ -871,8 +870,6 @@ define(function(require, exports, module) {
       handle: ".modal-header"
     });
   }
-
-  //end
 
   function showLicenseDialog() {
     if (TSCORE.PRO) {

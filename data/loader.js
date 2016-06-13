@@ -130,7 +130,8 @@ var isWin = navigator.appVersion.indexOf("Win")!==-1;
       tsextapi:               'js/ext.api',
       tsextmanager:           'js/extension.manager',
       tsioapi:                 IO_JS,
-      tspro:                   PRO_JS
+      tspro:                   PRO_JS,
+      tsaudiorecorderui:      'js/audiorecorder.ui'
     },
     shim: {
       'underscore':               { exports: '_' },
