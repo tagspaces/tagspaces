@@ -7,20 +7,18 @@ define(function(require, exports, module) {
   'use strict';
   console.log('Loading audiorecorder.ui.js ...');
   var TSCORE = require('tscore');
-  require("webaudiorecording");
   var fileContent;
   var fileType;
 
   var initUI = function() {
 
     $('#audioRecordingConfirmButton').click(function() {
-      saveRecording();
+      saveAudioVideoFile();
     });
 
   };
 
-  function saveAudioVideoFile(blob) {
-    console.debug(blob);
+  function saveAudioVideoFile() {
     var fileTags = '';
     var rawTags = $('#newFileNameTagsAudioRecorder').val().split(',');
     rawTags.forEach(function(value, index) {
@@ -41,8 +39,10 @@ define(function(require, exports, module) {
       fileTags = TSCORE.TagUtils.beginTagContainer + fileTags + TSCORE.TagUtils.endTagContainer;
     }
 
+    console.log(fileContent);
+
     var filePath = TSCORE.currentPath + TSCORE.dirSeparator + $('#newFileNameAudioRecorder').val() + fileTags + '.' + fileType;
-    TSCORE.IO.saveBinaryFilePromise(filePath, blob).then(function() {
+    TSCORE.IO.saveBinaryFilePromise(filePath, fileContent).then(function() {
       TSCORE.showSuccessDialog("File saved successfully.");
 
     }, function(error) {
@@ -298,7 +298,7 @@ define(function(require, exports, module) {
     $('#audioRecordingUrl').attr('src', url);
     $('#deleteAudioRecording').prop('recording', url);
 
-    //fileContent = TSCORE.Config.getNewTextFileContent();
+    fileContent = blob;
     // Default new file in text file
     fileType = 'wav' || 'ogg';
     $('#newFileNameTagsAudioRecorder').select2('data', null);
