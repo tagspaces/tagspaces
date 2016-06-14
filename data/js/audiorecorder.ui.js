@@ -7,19 +7,20 @@ define(function(require, exports, module) {
   'use strict';
   console.log('Loading audiorecorder.ui.js ...');
   var TSCORE = require('tscore');
-
+  require("webaudiorecording");
   var fileContent;
   var fileType;
 
   var initUI = function() {
 
     $('#audioRecordingConfirmButton').click(function() {
-      saveAudioVideoFile();
+      saveRecording();
     });
 
   };
 
-  function saveAudioVideoFile(event, blob) {
+  function saveAudioVideoFile(blob) {
+    console.debug(blob);
     var fileTags = '';
     var rawTags = $('#newFileNameTagsAudioRecorder').val().split(',');
     rawTags.forEach(function(value, index) {
@@ -39,8 +40,9 @@ define(function(require, exports, module) {
     if (fileTags.length > 0) {
       fileTags = TSCORE.TagUtils.beginTagContainer + fileTags + TSCORE.TagUtils.endTagContainer;
     }
+
     var filePath = TSCORE.currentPath + TSCORE.dirSeparator + $('#newFileNameAudioRecorder').val() + fileTags + '.' + fileType;
-    TSCORE.IO.saveBinaryFilePromise(filePath, content, false).then(function() {
+    TSCORE.IO.saveBinaryFilePromise(filePath, blob).then(function() {
       TSCORE.showSuccessDialog("File saved successfully.");
 
     }, function(error) {
@@ -296,7 +298,7 @@ define(function(require, exports, module) {
     $('#audioRecordingUrl').attr('src', url);
     $('#deleteAudioRecording').prop('recording', url);
 
-    fileContent = TSCORE.Config.getNewTextFileContent();
+    //fileContent = TSCORE.Config.getNewTextFileContent();
     // Default new file in text file
     fileType = 'wav' || 'ogg';
     $('#newFileNameTagsAudioRecorder').select2('data', null);
@@ -326,12 +328,35 @@ define(function(require, exports, module) {
     $('#audioRecordingDialog').on('shown.bs.modal', function() {
       $('#newFileNameAudioRecorder').select2().focus();
     });
-    $('#audioRecordingDialog').modal({
-      backdrop: 'static',
-      show: true
+    console.debug(blob);
+    var fileTags = '';
+    var rawTags = $('#newFileNameTagsAudioRecorder').val().split(',');
+    rawTags.forEach(function(value, index) {
+      if (index === 0) {
+        fileTags = value;
+      } else {
+        fileTags = fileTags + TSCORE.Config.getTagDelimiter() + value;
+      }
     });
-    $('#audioRecordingDialog').draggable({
-      handle: ".modal-header"
+    //if ($('#tagWithCurrentDate').prop('checked')) {
+    //  if (fileTags.length < 1) {
+    //    fileTags = TSCORE.TagUtils.formatDateTime4Tag(new Date());
+    //  } else {
+    //    fileTags = fileTags + TSCORE.Config.getTagDelimiter() + TSCORE.TagUtils.formatDateTime4Tag(new Date());
+    //  }
+    //}
+    if (fileTags.length > 0) {
+      fileTags = TSCORE.TagUtils.beginTagContainer + fileTags + TSCORE.TagUtils.endTagContainer;
+    }
+
+    var filePath = TSCORE.currentPath + TSCORE.dirSeparator + $('#newFileNameAudioRecorder').val() + fileTags + '.' + fileType;
+    TSCORE.IO.saveBinaryFilePromise(filePath, blob).then(function() {
+      TSCORE.showSuccessDialog("File saved successfully.");
+
+    }, function(error) {
+      TSCORE.hideLoadingAnimation();
+      TSCORE.showAlertDialog("Saving " + filePath + " failed.");
+      console.error("Save to file " + filePath + " failed " + error);
     });
   }
 

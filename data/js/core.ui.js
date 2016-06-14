@@ -861,7 +861,7 @@ define(function(require, exports, module) {
   }
 
   function showAudioRecordingDialog() {
-    require("audiorecorder");
+    require("webaudiorecording");
     $('#audioRecordingDialog').modal({
       backdrop: 'static',
       show: true
