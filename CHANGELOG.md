@@ -1,6 +1,6 @@
 ﻿#Changelog
 
-## Version 2.4.0 / 2016.06.05
+## Version 2.4.0 / 2016.06.09
 
 ### Pro
 - Minor bug fixes
@@ -9,13 +9,16 @@
 - The user interface of the audio/video player was updated
 - Audio/video player will trigger the opening of the next file in the current folder on finishing playback, allowing you for example to listen many audio files one after another like in a regular music player.
 - The minimum length of the tags was reduced to 1 character
-- Added the `F2` keybinding for renaming files
+- Added the `F2` key binding for renaming files
 - Added a help screen showing the key binding on `F1`
-- Fixed directory listing issue with the nginx webdav module #409
+- Fixed directory listing issue with the nginx webdav module [#409](https://github.com/tagspaces/tagspaces/issues/409)
+- Fixing showing files containing a tag [#441](https://github.com/tagspaces/tagspaces/issues/441)
+- Starting the search in the advanced search dialog on enter now possible
 ### Chrome Extension and Firefox Addon
 - Added the ability to save the source url and date in the saved HTML web page
 ### Android App
 - Supporting playing of audio while the app is not in foreground
+- Fixing issue with opening files from search results on android [#438](https://github.com/tagspaces/tagspaces/issues/438)
 
 ## Version 2.3.0 / 2016.04.30
 
@@ -33,7 +36,7 @@
 - Fixing open files natively on OS X
 - Fixing user interface issue caused by too long file names in list perspective
 - Add experimental functionality for watching directories for changes
-- Fixing issue [#358](https://github.com/uggrock/tagspaces/issues/358) which was preventing file renaming on network shares under OS X
+- Fixing issue [#358](https://github.com/tagspaces/tagspaces/issues/358) which was preventing file renaming on network shares under OS X
 
 ### Chrome Extension
 - Fixes needed for the file system API changes in Chrome 49
@@ -87,9 +90,9 @@
 - Improving general stability, by migration of IO-APIs to promises
 - Script for generation of image thumbnails added
 - Fixed loading of directory tag groups
-- Fixed collect renamed tags issue [#372](https://github.com/uggrock/tagspaces/issues/372)
-- Fixed creating multiple taggroups [#367](https://github.com/uggrock/tagspaces/issues/367)
-- Fixed the opening of the containing folder of a file from the search result [374](https://github.com/uggrock/tagspaces/issues/374)
+- Fixed collect renamed tags issue [#372](https://github.com/tagspaces/tagspaces/issues/372)
+- Fixed creating multiple taggroups [#367](https://github.com/tagspaces/tagspaces/issues/367)
+- Fixed the opening of the containing folder of a file from the search result [374](https://github.com/tagspaces/tagspaces/issues/374)
 - Correcting the export of the tag groups
 - Loading thumbnails finding the thumbnail path if available
 - Allow printing of images in the webdav version
@@ -139,7 +142,7 @@
 - Import tagGroups from settings
 - Added a web clipper for the Firefox
 - Added a an Android widget allowing to take photos and create notes directly from desktop
-- Fixing stopping of the playback of audio and video files after closing them [#251](https://github.com/uggrock/tagspaces/issues/251)
+- Fixing stopping of the playback of audio and video files after closing them [#251](https://github.com/tagspaces/tagspaces/issues/251)
 - The settings of the Android app are now saved in a file in the app folder
 - Fixing issue with not recognizing folder on some webdav servers
 
@@ -159,19 +162,19 @@
 - adding handler for the add file button
 - adding title editing to the web scrapping function
 - correcting binding of fastclick lib
-- disabling the support of AVI files in the default settings [#242](https://github.com/uggrock/tagspaces/issues/242)
+- disabling the support of AVI files in the default settings [#242](https://github.com/tagspaces/tagspaces/issues/242)
 
 ##Version 1.10.3 / 2015.01.29
 - Supporting adding of files on Android and the WebDAV edition
 - Fixing issue in the search
-- Fixing adding existing files in the native version [#187](https://github.com/uggrock/tagspaces/issues/187)
+- Fixing adding existing files in the native version [#187](https://github.com/tagspaces/tagspaces/issues/187)
 - Fixing broken following of symlinks
 - Updating translations
 - Enable setting of the language throught url parameter
-- Fixing doubling the main menu [#193](https://github.com/uggrock/tagspaces/issues/193)
+- Fixing doubling the main menu [#193](https://github.com/tagspaces/tagspaces/issues/193)
 - Fixing not loading of external json with tag groups on windows
 - Enabling strikeout on Android
-- Persisting sort order in list perspective [#165](https://github.com/uggrock/tagspaces/issues/165)
+- Persisting sort order in list perspective [#165](https://github.com/tagspaces/tagspaces/issues/165)
 
 ##Version 1.10.0 / 2015.01.10
 - redesigning the search functionality
@@ -187,12 +190,12 @@
 - adding ico as supported file type
 - updating setting auto update
 - adding dom purify lib to the project
-- fixing [#176](https://github.com/uggrock/tagspaces/issues/149) selecting the same directory twice
-- fixing refresh after deleting [#149](https://github.com/uggrock/tagspaces/issues/149)
+- fixing [#176](https://github.com/tagspaces/tagspaces/issues/149) selecting the same directory twice
+- fixing refresh after deleting [#149](https://github.com/tagspaces/tagspaces/issues/149)
 - fixing broken notification for new versions
 - [native] adding script for running TagSpaces in portable mode
-- [native] fixing handling of broken symlinks links [#182](https://github.com/uggrock/tagspaces/issues/182)
-- [OSX] fixing native menu with edit, copy, paste and window menus [#174](https://github.com/uggrock/tagspaces/issues/174)
+- [native] fixing handling of broken symlinks links [#182](https://github.com/tagspaces/tagspaces/issues/182)
+- [OSX] fixing native menu with edit, copy, paste and window menus [#174](https://github.com/tagspaces/tagspaces/issues/174)
 - [chrome] adding page capturing capabilities to the chrome extension
 - [chrome] disabling opening of the application on first install
 - [chrome] adding internationalization for the chrome store
@@ -220,12 +223,12 @@
 - disallowing space as a character in dialog for adding new tags in a tag group
 - enabling the export to csv button in chrome and Webdav edition
 - adding experimental thumbnail generation to the grid perspective
-- fixing [#119](https://github.com/uggrock/tagspaces/issues/119)
-- fixing the utf8 issues [#131](https://github.com/uggrock/tagspaces/issues/131) and [#134](https://github.com/uggrock/tagspaces/issues/134)
-- fixing issue with using webdav of different port [#137](https://github.com/uggrock/tagspaces/issues/137)
-- fixing issue [#125](https://github.com/uggrock/tagspaces/issues/125) remind the user to enable "Allow access to file URLs"
-- fixing typo in the about box [#133](https://github.com/uggrock/tagspaces/issues/133)
-- fixing the reload of tagspaces on enter in dialogs [#126](https://github.com/uggrock/tagspaces/issues/126)
+- fixing [#119](https://github.com/tagspaces/tagspaces/issues/119)
+- fixing the utf8 issues [#131](https://github.com/tagspaces/tagspaces/issues/131) and [#134](https://github.com/tagspaces/tagspaces/issues/134)
+- fixing issue with using webdav of different port [#137](https://github.com/tagspaces/tagspaces/issues/137)
+- fixing issue [#125](https://github.com/tagspaces/tagspaces/issues/125) remind the user to enable "Allow access to file URLs"
+- fixing typo in the about box [#133](https://github.com/tagspaces/tagspaces/issues/133)
+- fixing the reload of tagspaces on enter in dialogs [#126](https://github.com/tagspaces/tagspaces/issues/126)
 - native versions based on Node-webkit v0.11.1
 
 ##Version 1.8.6 / 2014.10.01
@@ -250,7 +253,7 @@
 - implementing new file save concept
 - adding file move / copy functionality to the file menu
 - focusing the first edit box automatically after opening of a dialog
-- fixing [#107](https://github.com/uggrock/tagspaces/issues/107) enabling the renaming of tags from for example todo in ToDo
+- fixing [#107](https://github.com/tagspaces/tagspaces/issues/107) enabling the renaming of tags from for example todo in ToDo
 
 ##Version 1.8.5 / 2014.07.25
 - adding support for drag & drop of files into tagspaces from your native file manager
@@ -283,8 +286,8 @@
 - extending the directory browser with drive selector in windows
 - adding initial implementation for the minimizing to tray functionality
 - fixing issue with opening the directory select dialog
-- fixing [#101](https://github.com/uggrock/tagspaces/issues/101) duplicated main menu
-- fixing [#102](https://github.com/uggrock/tagspaces/issues/102) unable ti select text in the markdown viewer
+- fixing [#101](https://github.com/tagspaces/tagspaces/issues/101) duplicated main menu
+- fixing [#102](https://github.com/tagspaces/tagspaces/issues/102) unable ti select text in the markdown viewer
 - upgrading requirejs to 2.1.14
 - upgrading jquery ui to 1.10.4
 - upgrading jquery to 2.1.1
@@ -305,7 +308,7 @@
 - adding a export in CSV functionality in the perspectiveList
 - disabling automatic resizing of the main window
 - fixing missing tags in the file viewer
-- fixing saving of UTF8 content in chrome [#14](https://github.com/uggrock/tagspaces/issues/14) , [#64](https://github.com/uggrock/tagspaces/issues/64) , [#80](https://github.com/uggrock/tagspaces/issues/80)
+- fixing saving of UTF8 content in chrome [#14](https://github.com/tagspaces/tagspaces/issues/14) , [#64](https://github.com/tagspaces/tagspaces/issues/64) , [#80](https://github.com/tagspaces/tagspaces/issues/80)
 - [webdav] fixing issue caused by spaces in the directory names
 - [API] ading extractDirectoryName method to the tagutils
 - [debian]adding application new icon
@@ -327,9 +330,9 @@
 - adding tags to the file properties dialog
 - the file types in settings are now sorted alphabetically
 - adding keybinding for showing tag libraries and directory navigator
-- [#65](https://github.com/uggrock/tagspaces/issues/65) implementing clean tags functionality
-- [#68](https://github.com/uggrock/tagspaces/issues/68) showing files from hidden directories fixed
-- [#62](https://github.com/uggrock/tagspaces/issues/62) fixing issue where the UI was not refreshed after delete
+- [#65](https://github.com/tagspaces/tagspaces/issues/65) implementing clean tags functionality
+- [#68](https://github.com/tagspaces/tagspaces/issues/68) showing files from hidden directories fixed
+- [#62](https://github.com/tagspaces/tagspaces/issues/62) fixing issue where the UI was not refreshed after delete
 - opening the tag library and the directory navigator now opens the left panel
 - adding open left panel function to the core api
 - adding setting isFirstRun
@@ -345,10 +348,10 @@
 - adding shortcut for loading the previous and the next document
 - german and italian translations added
 - improvements in the options dialog
-- fixing [#59](https://github.com/uggrock/tagspaces/issues/59) about saving utf8 content
-- fixing opening links in the default browser instead of the application [#53](https://github.com/uggrock/tagspaces/issues/53) in markdown files
-- fixing undo issue [#45](https://github.com/uggrock/tagspaces/issues/45)
-- reenabling the menu on mac [#44](https://github.com/uggrock/tagspaces/issues/44)
+- fixing [#59](https://github.com/tagspaces/tagspaces/issues/59) about saving utf8 content
+- fixing opening links in the default browser instead of the application [#53](https://github.com/tagspaces/tagspaces/issues/53) in markdown files
+- fixing undo issue [#45](https://github.com/tagspaces/tagspaces/issues/45)
+- reenabling the menu on mac [#44](https://github.com/tagspaces/tagspaces/issues/44)
 - [uservoice] adding setting for showing confirmation dialog before recursive scan
 - [firefox] optimizing the start TagSpaces button in the toolbar for support in Firefox 29
 - [android] new icon
@@ -410,7 +413,7 @@
 - [api] extending loadTextFile funcion to support file preview
 
 ##Version 1.7.8 / 2014.03.21
-- enabling opening of the last opened location by the start of the application [#29](https://github.com/uggrock/tagspaces/issues/29)
+- enabling opening of the last opened location by the start of the application [#29](https://github.com/tagspaces/tagspaces/issues/29)
 - adding the following key bindings
     - ctrl+r / command+r - reloads the current document
     - ctrl+s / command+s - saves the current document if opened for editing
@@ -438,7 +441,7 @@
 - adding new version of pdf.js with support of printing, rotating, dragging, document properties and goto first/last page
 
 ##Version 1.7.6 / 2014.02.28
-- remember and open the last state of the application window e.g. maximize or not [#29](https://github.com/uggrock/tagspaces/issues/29)
+- remember and open the last state of the application window e.g. maximize or not [#29](https://github.com/tagspaces/tagspaces/issues/29)
 - adding openLocation to the TSCORE API
 - making the directory to taglibrary switch buttons brighter
 - adding functionality to force closing of opened files for editing
@@ -455,7 +458,7 @@
 - polishing viewerMD
 - fixing margin issue in the alternative directory navigation
 - quoting the filename in the delete file dialog
-- setting the default editor for xhtml files to editorText as proposed in [#31](https://github.com/uggrock/tagspaces/issues/31)
+- setting the default editor for xhtml files to editorText as proposed in [#31](https://github.com/tagspaces/tagspaces/issues/31)
 - making viererBrowser secure in node-webkit
 - making viewerPDF secure
 - fixing security issue with the alert and the confirm dialogs
@@ -478,13 +481,13 @@
 - adding hint in the file create dialog for the format of the tags
 - making the tags from select2 lib to look like tagspaces tags
 - partly fixing #25 by removing script tags from the content, by sanitizing the file paths, by removing script tags from the md content
-- fixing [#23](https://github.com/uggrock/tagspaces/issues/23) css in markdown
-- fixing [#26](https://github.com/uggrock/tagspaces/issues/26)
-- fixing [#27](https://github.com/uggrock/tagspaces/issues/27) - utf8 support in md files and not rendering of #header in the beginning of the file, font sizes in headers h1,h2 ...
-- fixing [#30](https://github.com/uggrock/tagspaces/issues/30)
-- fixing [#31](https://github.com/uggrock/tagspaces/issues/31)
-- fixing [#32](https://github.com/uggrock/tagspaces/issues/32)
-- fixing [#33](https://github.com/uggrock/tagspaces/issues/33)
+- fixing [#23](https://github.com/tagspaces/tagspaces/issues/23) css in markdown
+- fixing [#26](https://github.com/tagspaces/tagspaces/issues/26)
+- fixing [#27](https://github.com/tagspaces/tagspaces/issues/27) - utf8 support in md files and not rendering of #header in the beginning of the file, font sizes in headers h1,h2 ...
+- fixing [#30](https://github.com/tagspaces/tagspaces/issues/30)
+- fixing [#31](https://github.com/tagspaces/tagspaces/issues/31)
+- fixing [#32](https://github.com/tagspaces/tagspaces/issues/32)
+- fixing [#33](https://github.com/tagspaces/tagspaces/issues/33)
 
 
 ##TagSpaces 1.7.4 / 2014.02.17
@@ -554,7 +557,7 @@
 - Fixing edit/save issues in file opener
 - Increasing default font size html editor
 - Adding bootstrap-editable to the project
-- Fixing [#19](https://github.com/uggrock/tagspaces/issues/19) markdown viewer scrollbar
+- Fixing [#19](https://github.com/tagspaces/tagspaces/issues/19) markdown viewer scrollbar
 - Adding summernote as a default html editor library
 - Added HTML templates to the project
 - Zooming with mouse wheel added to the image viewer
@@ -635,7 +638,7 @@
 - A new PDF viewer extension created for the node-webkit platform based on pdf.js
 - [Chrome] Restricting renaming files larger than 5MB in chrome due a missing functionality in the API
 - [Firefox] Added icon to firefox main menu
-- [Firefox OSX] The firefox extension is currently not supporting OSX due a issue in the mozilla's XPCOM api preventing renaming of files. See [#11](https://github.com/uggrock/tagspaces/issues/11) for more details.   
+- [Firefox OSX] The firefox extension is currently not supporting OSX due a issue in the mozilla's XPCOM api preventing renaming of files. See [#11](https://github.com/tagspaces/tagspaces/issues/11) for more details.
 
 ##TagSpaces 1.4.1384 / 2013.06.16
 
@@ -690,7 +693,7 @@
 - Fixed issue with no possible dropping of tags on a file with no tags
 - Enabling drag&drop of files in tag & search views
 - Closing a opened files after it is moved to a other directory
-- Issue [#5](https://github.com/uggrock/tagspaces/issues/5) fixed (Opening of files in file view was broken)
+- Issue [#5](https://github.com/tagspaces/tagspaces/issues/5) fixed (Opening of files in file view was broken)
 - Information shown in the browser title improved
  
 ##TagSpaces 1.3.1235 / 2013.02.16
