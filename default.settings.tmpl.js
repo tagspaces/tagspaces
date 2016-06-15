@@ -29,7 +29,7 @@ define(function (require, exports, module) {
         "maxSearchResultCount":     400,
         "isWindowMaximized":        false,
         "showMainMenu":             false,
-        "lastOpenedLocation":       "", // "/owncloud/remote.php/webdav/Demo"
+        "lastOpenedLocation":       "", // "/owncloud/remote.php/webdav/Demo",
         "useDefaultLocation":       false,
         "writeMetaToSidecarFile":   false,
         "enableMetaData":           false,

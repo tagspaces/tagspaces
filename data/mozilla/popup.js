@@ -62,7 +62,7 @@
   function prepareContent(uncleanedHTML) {
     //console.log("uncleaned "+uncleanedHTML);
     var cleanedHTML = DOMPurify.sanitize(uncleanedHTML);
-    cleanedHTML = "<body  data-sourceUrl='" + currentURL + "' data-scrapedOn='" + (new Date()).toISOString() + "'>" + cleanedHTML + "</body>";
+    cleanedHTML = "<body  data-sourceurl='" + currentURL + "' data-scrappedon='" + (new Date()).toISOString() + "'>" + cleanedHTML + "</body>";
     cleanedHTML = htmlTemplate.replace(/\<body[^>]*\>([^]*)\<\/body>/m, cleanedHTML); // jshint ignore:line
     return cleanedHTML;
   }

@@ -93,7 +93,7 @@ define(function(require, exports, module) {
   };
 
   function startSearchOnEnter(e) {
-    if(e.which == 13) {
+    if (e.which == 13) {
       e.preventDefault();
       updateQuery();
       startSearch();
@@ -217,8 +217,9 @@ define(function(require, exports, module) {
     if (TSCORE.isOneColumn()) {
       TSCORE.closeLeftPanel();
     }
-    TSCORE.Search.nextQuery = TSCORE.Search.recursiveSymbol + ' +' + tagQuery;
-    $('#searchBox').val(TSCORE.Search.recursiveSymbol + ' +' + tagQuery);
+    var nxtQuery = ' +' + tagQuery; //TSCORE.Search.recursiveSymbol + ' +' + tagQuery;
+    TSCORE.Search.nextQuery = nxtQuery;
+    $('#searchBox').val(nxtQuery);
     TSCORE.PerspectiveManager.redrawCurrentPerspective();
     $('#showSearchButton').hide();
     $('#searchToolbar').show();
