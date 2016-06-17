@@ -1,0 +1,50 @@
+#aboutExtensionModal img {
+  max-width: 100%;
+}
+
+#aboutExtensionModal h1 {
+  font-size: 22px;
+}
+
+#aboutExtensionModal h2 {
+  font-size: 20px;
+}
+
+#aboutExtensionModal h3 {
+  font-size: 18px;
+}
+
+#aboutExtensionModal .modal-body {
+  max-height: 500px;
+  overflow: auto;
+}
+
+#searchText span{
+    background-color:#FF9;
+    color:#555;
+}
+
+#searchToolbar {
+    border-radius: 0px;
+    margin-left: 0px;
+    min-width:99.99%;
+    box-shadow: 1px 1px 3px #BBBBBB;
+    border-bottom: 3px solid #F2F2F2;
+    border-top: 0px;
+    border-left: 0px;
+    border-right: 0px;
+}
+
+.highlight {
+    background-color: #FFFF88;
+}
+
+#searchExtButton {
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+#clearSearchExtButton {
+    padding-left: 20px;
+    padding-right: 20px;
+}
