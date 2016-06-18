@@ -63,8 +63,8 @@ define(function(require, exports, module) {
   window.URL = window.URL || window.webkitURL;
 
   // audio context + .createScriptProcessor shim
-  var audioContext = new AudioContext;
-  if (audioContext.createScriptProcessor == null) {
+  var audioContext = new AudioContext();
+  if (audioContext.createScriptProcessor === null) {
     audioContext.createScriptProcessor = audioContext.createJavaScriptNode;
   }
 
@@ -122,7 +122,7 @@ define(function(require, exports, module) {
   })();
 
   var testToneLevel = audioContext.createGain(),
-          microphone = undefined,     // obtained by user click
+          microphone,     // obtained by user click
           microphoneLevel = audioContext.createGain(),
           mixer = audioContext.createGain();
   testTone.connect(testToneLevel);
@@ -157,7 +157,7 @@ define(function(require, exports, module) {
 
   // Obtaining microphone input
   $microphone.click(function() {
-    if (microphone == null)
+    if (microphone === null) {
       navigator.getUserMedia({audio: true},
               function(stream) {
                 microphone = audioContext.createMediaStreamSource(stream);
@@ -169,6 +169,7 @@ define(function(require, exports, module) {
                 $microphone[0].checked = false;
                 audioRecorder.onError(audioRecorder, "Could not get audio input.");
               });
+    }
   });
 
   // Recording time limit
@@ -267,8 +268,9 @@ define(function(require, exports, module) {
     //var iBufSz = $bufferSize[0].valueAsNumber, text = "" + BUFFER_SIZE[iBufSz];
     var iBufSz = iDefBufSz;
     var text = "" + BUFFER_SIZE[iBufSz];
-    if (iBufSz === iDefBufSz)
+    if (iBufSz === iDefBufSz) {
       text += ' (browser default)';
+    }
     $('#buffer-size-text').html(text);
   }
 
@@ -344,7 +346,7 @@ define(function(require, exports, module) {
   function updateDateTime() {
     var sec = audioRecorder.recordingTime() | 0;
     $timeDisplay.html(minSecStr(sec / 60 | 0) + ":" + minSecStr(sec % 60));
-    $dateTime.html((new Date).toString());
+    $dateTime.html((new Date()).toString());
   }
 
   window.setInterval(updateDateTime, 200);
@@ -360,20 +362,22 @@ define(function(require, exports, module) {
   }
 
   $modalProgress.on("hide.bs.modal", function() {
-    if (!progressComplete)
+    if (!progressComplete) {
       audioRecorder.cancelEncoding();
+    }
   });
 
   // record | stop | cancel buttons
   function disableControlsOnRecord(disabled) {
-    if (microphone == null)
+    if (microphone === null) {
       $microphone.attr('disabled', disabled);
-    //$timeLimit.attr('disabled', disabled);
-    $encoding.attr('disabled', disabled);
-    $encodingOption.attr('disabled', disabled);
-    //$encodingProcess.attr('disabled', disabled);
-    //$reportInterval.attr('disabled', disabled);
-    //$bufferSize.attr('disabled', disabled);
+      //$timeLimit.attr('disabled', disabled);
+      $encoding.attr('disabled', disabled);
+      $encodingOption.attr('disabled', disabled);
+      //$encodingProcess.attr('disabled', disabled);
+      //$reportInterval.attr('disabled', disabled);
+      //$bufferSize.attr('disabled', disabled);
+    }
   }
 
   function startRecording() {
@@ -402,15 +406,18 @@ define(function(require, exports, module) {
         $modalProgress.find('.modal-title').html("Encoding " + audioRecorder.encoding.toUpperCase());
         $modalProgress.modal('show');
       }
-    } else
+    } else {
       audioRecorder.cancelRecording();
+    }
   }
 
   $record.click(function() {
-    if (audioRecorder.isRecording())
+    if (audioRecorder.isRecording()) {
       stopRecording(true);
-    else
+    }
+    else {
       startRecording();
+    }
   });
 
   $cancel.click(function() {
@@ -427,8 +434,9 @@ define(function(require, exports, module) {
   };
 
   audioRecorder.onComplete = function(recorder, blob) {
-    if (recorder.options.encodeAfterRecord)
+    if (recorder.options.encodeAfterRecord) {
       $modalProgress.modal('hide');
+    }
     saveRecording(blob, recorder.encoding);
   };
 
