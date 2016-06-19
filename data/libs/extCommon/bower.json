@@ -1,0 +1,19 @@
+{
+  "name": "extCommons",
+  "id": "extCommons",
+  "description": "A TagSpaces helper library with common functionalities in extensions",
+  "version": "0.0.3",
+  "dependencies": {},
+  "devDependencies": {},
+  "authors": [
+    "TagSpaces Authors - http://tagspaces.org",
+    "Ilian Sapundshiev - http://ilian.me"
+  ],
+  "keywords": [
+    "tagspaces"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "Gruntfile.js"
+  ]
+}
