@@ -110,15 +110,84 @@ function initSearch() {
 
   $('#searchBox').keyup(function(e) {
     if (e.keyCode === 13) { // Start the search on ENTER
-      doSearch();
-    } else if (e.keyCode == 27) { // Hide search on ESC
+      doSearch();}
+  });
+
+  $(window).keyup(function(e) {
+    if (e.keyCode == 27) { // Hide search on ESC
       cancelSearch();
     }
   });
+  //
+  //Mousetrap.bind(['command+f', 'ctrl+f'], function(e) {
+  //  showSearchPanel();
+  //  return false;
+  //});
+  window.addEventListener("keyup", function keyup(evt){
 
-  Mousetrap.bind(['command+f', 'ctrl+f'], function(e) {
-    showSearchPanel();
-    return false;
+    var handled = false;
+    var cmd = (evt.ctrlKey ? 1 : 0)  |
+            (evt.altKey ? 2 : 0)   |
+            (evt.shiftKey ? 4 : 0) |
+            (evt.metaKey ? 8 : 0);
+    /*
+     First, handle the key bindings that are independent whether an input
+     control is selected or not.
+     */
+    if(cmd === 1 || cmd === 8 || cmd === 5 || cmd === 12){
+      // either CTRL or META key with optional SHIFT.
+      switch(evt.keyCode){
+        case 70: // f
+          //open custom search/find text
+          handled = true;
+          break;
+        case 71: //g
+          //find next
+          handled = true;
+          break;
+        case 61:  // FF/Mac "="
+        case 107: // FF "+" and "="
+        case 187: // Chrome "+"
+        case 171: // FF with German keyboard
+          //zoom in
+          handled = true;
+          break;
+        case 173: // FF/Mac "-"
+        case 109: // FF "-"
+        case 189: // Chrome "-"
+          //zoom out
+          handled = true;
+          break;
+      }
+    }
+
+    // CTRL or META without shift
+    if(cmd === 1 || cmd === 8){
+      switch(evt.keyCode){
+        case 70: // f
+          showSearchPanel(); //open custom search/find text
+          handled = true;
+          break;
+      }
+    }
+
+    // CTRL+ALT or Option+Command
+    if(cmd === 3 || cmd === 10){
+      switch(evt.keyCode){
+        case 80: //p
+          //presentaion mode
+          handled = true;
+          break;
+        case 71: //g
+          //focus page number dialoge
+          handled = true;
+          break;
+      }
+    }
+    if(handled){
+      evt.preventDefault();
+      return;
+    }
   });
 }
 

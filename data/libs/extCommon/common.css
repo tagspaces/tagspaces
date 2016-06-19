@@ -1,22 +1,22 @@
 #aboutExtensionModal img {
-  max-width: 100%;
+    max-width: 100%;
 }
 
 #aboutExtensionModal h1 {
-  font-size: 22px;
+    font-size: 22px;
 }
 
 #aboutExtensionModal h2 {
-  font-size: 20px;
+    font-size: 20px;
 }
 
 #aboutExtensionModal h3 {
-  font-size: 18px;
+    font-size: 18px;
 }
 
 #aboutExtensionModal .modal-body {
-  max-height: 500px;
-  overflow: auto;
+    max-height: 500px;
+    overflow: auto;
 }
 
 #searchText span{
