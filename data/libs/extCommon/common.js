@@ -62,6 +62,10 @@ $(document).ready(function() {
     $("#aboutExtensionModal").modal({show: true});
   });
 
+  $(".roundButton").on("click", function(e) {
+    fireHideAllMenusEvent();
+  });
+
 // Activating the print functionality
   $("#printButton").on("click", function(e) {
     window.print();
