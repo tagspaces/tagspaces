@@ -429,6 +429,10 @@ input a.resetFilter {
   color: #404040;
 }
 
+#alternativeNavigator .btn-link:hover {
+  background-color: #cacaca;
+}
+
 #alternativeNavigator {
   margin: 0px 5px 5px 0;
   height: 30px;
@@ -453,15 +457,16 @@ input a.resetFilter {
 .altNavFolderTitle {
   max-width: 200px;
   text-overflow: ellipsis;
+  text-transform: none;
   overflow: hidden;
   margin-left: 0;
   padding-left: 4px;
   padding-right: 4px;
 }
 
-.altNavFolderTitle:hover {
+/*.altNavFolderTitle:hover {
   background-color: lightgray;
-}
+}*/
 
 #closeOpenedFile {
   position: fixed;
