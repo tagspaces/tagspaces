@@ -920,7 +920,7 @@ define(function(require, exports, module) {
       $('#downloadFile').parent().hide();
       $('#openFileInNewWindow').hide();
       $('#openGooglePlay').hide();
-      $('.cancelButton').hide();
+      //$('.cancelButton').hide();
     } else if (isCordovaiOS) {
       $('#fullscreenFile').parent().hide();
     } else if (isChrome) {

@@ -56,7 +56,7 @@
       <nav class="navbar navbar-default" role="navigation">
         <div class="btn-toolbar">
           <span id="startNewInstanceBack" data-i18n="[title]ns.common:openNewInstanceTooltip" class="pull-left">
-            <span id="logo">TagSpaces</span>
+            <span id="logo"><img src="assets/text-logo.svg" style="max-height: 30px; margin-top: -6px; margin-left: -5px;"></span>
             <sup id="appVersion"></sup>
           </span>
           <button id="newVersionAvailable" class="btn btn-link" data-i18n="[title]ns.common:newVersionAvailableTooltip">
@@ -202,8 +202,8 @@
           </div>
           <div id="mainTopMenu" class="input-group">
             <button type="button" id="perspectiveSwitcherButton" class="btn btn-link dropdown-toggle"
-                    data-toggle="dropdown"><i id="currentPerspectitveIcon" class="fa fa-film"></i>&nbsp;
-              <span id="currentPerspectitveName" data-i18n="ns.common:perspectivesDropDown"></span>&nbsp;<span class="caret"></span>
+                    data-toggle="dropdown"><i id="currentPerspectitveIcon" class="fa fa-film"></i>
+              <span id="currentPerspectitveName" data-i18n="ns.common:perspectivesDropDown"></span><span class="caret"></span>
             </button>
             <ul class="dropdown-menu pull-right" id="perspectiveSwitcher"></ul>
           </div>
@@ -630,10 +630,10 @@
         </form>
       </div>
       <div class="modal-footer">
-        <button class="btn cancelButton" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times fa-lg"></i>
-        </button>
+        <button class="btn cancelButton pull-left" data-dismiss="modal" aria-hidden="true"><i
+          class="fa fa-times fa-lg"></i><span data-i18n="ns.dialogs:cancel"></span></button>
         <button id="editTagButton" class="btn btn-primary" data-dismiss="modal" aria-hidden="true"><i
-          class="fa fa-check fa-lg"></i></button>
+          class="fa fa-check fa-lg"></i><span data-i18n="ns.dialogs:ok"></span></button>
       </div>
     </div>
   </div>

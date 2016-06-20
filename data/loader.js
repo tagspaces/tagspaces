@@ -137,7 +137,7 @@ var isWin = navigator.appVersion.indexOf("Win")!==-1;
       'bootstrap':                { deps: ['jquery'] },
       'jqueryui':                 { deps: ['jquery'] },
       'jquerysimplecolorpicker':  { deps: ['jquery','bootstrap'] },
-      'bootstrap3xeditable':      { deps: ['jquery','jqueryui','bootstrap'] },
+      'bootstrap3xeditable':      { deps: ['jquery','bootstrap'] },
       'bootstrapvalidator':       { deps: ['jquery','bootstrap'] },
       'i18next':                  { deps: ['jquery'] },
       'select2':                  { deps: ['jquery'] },
