@@ -32,8 +32,6 @@ define(function(require, exports, module) {
       fileTags = TSCORE.TagUtils.beginTagContainer + fileTags + TSCORE.TagUtils.endTagContainer;
     }
 
-    console.log(fileContent);
-
     var filePath = TSCORE.currentPath + TSCORE.dirSeparator + $('#newFileNameAudioRecorder').val() + fileTags + '.' + fileType;
     TSCORE.IO.saveBinaryFilePromise(filePath, fileContent).then(function() {
       TSCORE.showSuccessDialog("File saved successfully.");
