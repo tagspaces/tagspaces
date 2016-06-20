@@ -246,7 +246,7 @@
   "createFile":"New Text File (txt)",
   "createMarkdown":"New Markdown File (md)",
   "createRichTextFile":"New Rich Text File (html)",
-  "createAudioFile":"New Audio Recording (wav/ogg)",
+  "createAudioFile":"New Voice Memo (wav/ogg)",
   "createDirectory":"New Directory",
   "alertOpenLocatioFirst":"Please open a location first!",
   "exitApp":"Exit",
