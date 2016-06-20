@@ -121,7 +121,7 @@ define(function(require, exports, module) {
               if (!TSCORE.currentPath) {
                 TSCORE.showAlertDialog("Not open current directory !");
               } else {
-                TSCORE.showCreateDirectoryDialog();
+                TSCORE.showCreateDirectoryDialog(TSCORE.currentPath);
               }
             }
           },
