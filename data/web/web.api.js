@@ -16,7 +16,20 @@ define(function(require, exports, module) {
   var TSCORE = require("tscore");
   var TSPOSTIO = require("tspostioapi");
 
-  require("webdavlib/webdavlib");
+  require("webdav");
+  require("offlinelib");
+
+  // Offline plugin settings
+
+  Offline.options = {
+    checkOnLoad: false,
+    interceptRequests: true,
+    reconnect: {
+      initialDelay: 3
+    },
+    requests: true,
+    game: false
+  };
 
   var davClient;
   //exact copy of getAjax with timeout added 
@@ -30,7 +43,7 @@ define(function(require, exports, module) {
     ajax.onreadystatechange = function() {
       nl.sara.webdav.Client.ajaxHandler(ajax, callback);
     };
-    
+
     ajax.ontimeout = function() {
       ajax.readyState = 4;
       ajax.ajax.status = -1;
@@ -160,9 +173,9 @@ define(function(require, exports, module) {
             lmdt = undefined;
             //console.log(dirList[entry]._namespaces["DAV:"]);
             if (typeof dirList[entry]._namespaces["DAV:"].getcontentlength === 'undefined' ||
-                dirList[entry]._namespaces["DAV:"].getcontentlength._xmlvalue.length === 0 ||
-                (dirList[entry]._namespaces["DAV:"].resourcetype._xmlvalue.length === 1 &&
-                 dirList[entry]._namespaces["DAV:"].resourcetype._xmlvalue[0].localName === 'collection')
+                    dirList[entry]._namespaces["DAV:"].getcontentlength._xmlvalue.length === 0 ||
+                    (dirList[entry]._namespaces["DAV:"].resourcetype._xmlvalue.length === 1 &&
+                    dirList[entry]._namespaces["DAV:"].resourcetype._xmlvalue[0].localName === 'collection')
             ) {
               isDir = true;
             } else {
@@ -188,9 +201,9 @@ define(function(require, exports, module) {
       dirPath = encodeURI(dirPath);
 
       davClient.propfind(
-        dirPath,
-        davSuccess,
-        1 //1 , davClient.INFINITY
+              dirPath,
+              davSuccess,
+              1 //1 , davClient.INFINITY
       );
     });
   }
@@ -285,17 +298,17 @@ define(function(require, exports, module) {
         }
         if (isNewFile || overWrite === true || mode === "text") {
           davClient.put(
-            encodeURI(filePath),
-            function(status, data, headers) {
-              console.log("Creating File Status/Content/Headers:  " + status + " / " + data + " / " + headers);
-              if (checkStatusCode(status)) {
-                resolve(isNewFile);
-              } else {
-                reject("saveFilePromise: " + filePath + " failed " + status);
-              }
-            },
-            content,
-            'application/octet-stream'
+                  encodeURI(filePath),
+                  function(status, data, headers) {
+                    console.log("Creating File Status/Content/Headers:  " + status + " / " + data + " / " + headers);
+                    if (checkStatusCode(status)) {
+                      resolve(isNewFile);
+                    } else {
+                      reject("saveFilePromise: " + filePath + " failed " + status);
+                    }
+                  },
+                  content,
+                  'application/octet-stream'
           );
         } else {
           reject("File Already Exists.");
@@ -305,15 +318,15 @@ define(function(require, exports, module) {
   }
 
   /**
-    * Persists a given text content to a specified filepath
-    * @name saveTextFilePromise
-    * @method
-    * @memberof IOAPI.web
-    * @param {string} filePath - the full path of the file which will be saved
-    * @param {string} content - content that will be saved
-    * @param {string} overWrite - if true existing file path will be overwritten
-    * @returns {Promise.<Success, Error>}
-    */
+   * Persists a given text content to a specified filepath
+   * @name saveTextFilePromise
+   * @method
+   * @memberof IOAPI.web
+   * @param {string} filePath - the full path of the file which will be saved
+   * @param {string} content - content that will be saved
+   * @param {string} overWrite - if true existing file path will be overwritten
+   * @returns {Promise.<Success, Error>}
+   */
   function saveTextFilePromise(filePath, content, overWrite) {
     console.log("Saving text file: " + filePath);
     return saveFilePromise(filePath, content, overWrite, "text");
@@ -346,15 +359,15 @@ define(function(require, exports, module) {
     console.log("Creating directory: " + dirPath);
     return new Promise(function(resolve, reject) {
       davClient.mkcol(
-        encodeURI(dirPath),
-        function(status, data, headers) {
-          console.log("Directory Creation Status/Content/Headers:  " + status + " / " + data + " / " + headers);
-          if (checkStatusCode(status)) {
-            resolve(dirPath);
-          } else {
-            reject("createDirectory " + dirPath + " failed " + status);
-          }
-        }
+              encodeURI(dirPath),
+              function(status, data, headers) {
+                console.log("Directory Creation Status/Content/Headers:  " + status + " / " + data + " / " + headers);
+                if (checkStatusCode(status)) {
+                  resolve(dirPath);
+                } else {
+                  reject("createDirectory " + dirPath + " failed " + status);
+                }
+              }
       );
     });
   }
@@ -377,17 +390,17 @@ define(function(require, exports, module) {
         reject($.i18n.t("ns.common:fileTheSame"));
       } else {
         davClient.copy(
-          encodeURI(filePath),
-          function(status, data, headers) {
-            console.log("Copy File Status/Content/Headers:  " + status + " / " + data + " / " + headers);
-            if (checkStatusCode(status)) {
-              resolve(filePath, newFilePath);
-            } else {
-              reject("copyFile " + filePath + " failed " + status);
-            }
-          },
-          encodeURI(newFilePath),
-          davClient.FAIL_ON_OVERWRITE
+                encodeURI(filePath),
+                function(status, data, headers) {
+                  console.log("Copy File Status/Content/Headers:  " + status + " / " + data + " / " + headers);
+                  if (checkStatusCode(status)) {
+                    resolve(filePath, newFilePath);
+                  } else {
+                    reject("copyFile " + filePath + " failed " + status);
+                  }
+                },
+                encodeURI(newFilePath),
+                davClient.FAIL_ON_OVERWRITE
         );
       }
     });
@@ -411,17 +424,17 @@ define(function(require, exports, module) {
         reject($.i18n.t("ns.common:fileTheSame"));
       } else {
         davClient.move(
-          encodeURI(filePath),
-          function(status, data, headers) {
-            console.log("Rename File Status/Content/Headers:  " + status + " / " + data + " / " + headers);
-            if (checkStatusCode(status)) {
-              resolve([filePath, newFilePath]);
-            } else {
-              reject("rename: " + filePath + " failed " + status);
-            }
-          },
-          encodeURI(newFilePath),
-          davClient.FAIL_ON_OVERWRITE
+                encodeURI(filePath),
+                function(status, data, headers) {
+                  console.log("Rename File Status/Content/Headers:  " + status + " / " + data + " / " + headers);
+                  if (checkStatusCode(status)) {
+                    resolve([filePath, newFilePath]);
+                  } else {
+                    reject("rename: " + filePath + " failed " + status);
+                  }
+                },
+                encodeURI(newFilePath),
+                davClient.FAIL_ON_OVERWRITE
         );
       }
     });
@@ -446,17 +459,17 @@ define(function(require, exports, module) {
         reject($.i18n.t("ns.common:fileTheSame"));
       } else {
         davClient.move(
-          encodeURI(dirPath),
-          function(status, data, headers) {
-            console.log("Rename Directory Status/Content/Headers:  " + status + " / " + data + " / " + headers);
-            if (checkStatusCode(status)) {
-              resolve(newDirPath);
-            } else {
-              reject("rename: " + dirPath + " failed " + status);
-            }
-          },
-          encodeURI(newDirPath),
-          davClient.FAIL_ON_OVERWRITE
+                encodeURI(dirPath),
+                function(status, data, headers) {
+                  console.log("Rename Directory Status/Content/Headers:  " + status + " / " + data + " / " + headers);
+                  if (checkStatusCode(status)) {
+                    resolve(newDirPath);
+                  } else {
+                    reject("rename: " + dirPath + " failed " + status);
+                  }
+                },
+                encodeURI(newDirPath),
+                davClient.FAIL_ON_OVERWRITE
         );
       }
     });
@@ -486,15 +499,15 @@ define(function(require, exports, module) {
   function deleteDirectoryPromise(path) {
     return new Promise(function(resolve, reject) {
       davClient.remove(
-        encodeURI(path),
-        function(status, data, headers) {
-          console.log("Directory/File Deletion Status/Content/Headers:  " + status + " / " + data + " / " + headers);
-          if (checkStatusCode(status)) { 
-            resolve(path);
-          } else {
-            reject("delete " + path + " failed " + status);
-          }
-        }
+              encodeURI(path),
+              function(status, data, headers) {
+                console.log("Directory/File Deletion Status/Content/Headers:  " + status + " / " + data + " / " + headers);
+                if (checkStatusCode(status)) {
+                  resolve(path);
+                } else {
+                  reject("delete " + path + " failed " + status);
+                }
+              }
       );
     });
   }
