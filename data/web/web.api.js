@@ -35,18 +35,6 @@ define(function(require, exports, module) {
 
   var $online = $('.online'), $offline = $('.offline');
 
-  //Offline.on('confirmed-down', function() {
-  //  $online.fadeOut(function() {
-  //    $offline.fadeIn();
-  //  });
-  //});
-  //
-  //Offline.on('confirmed-up', function() {
-  //  $offline.fadeOut(function() {
-  //    $online.fadeIn();
-  //  });
-  //});
-
   var run = function() {
 
     //var req = new XMLHttpRequest();
@@ -71,26 +59,14 @@ define(function(require, exports, module) {
           $online.fadeIn();
         });
       });
-      console.log("offline state is down");
+      console.log("Server is down");
     }
   };
   setInterval(run, 3000);
 
-  Offline.on('down', function() {
-    //connection went down
-    $offline.fadeOut(function() {
-      $online.fadeIn();
-    });
-  });
-  Offline.on('up', function() {
-    //connection is back!
-    $online.fadeOut(function() {
-      $offline.fadeIn();
-    });
-  });
-  Offline.on('checking', function() {
-    // We are testing the connection
-  });
+  //Offline.on('checking', function() {
+  //  // We are testing the connection
+  //});
 
   var davClient;
   //exact copy of getAjax with timeout added
