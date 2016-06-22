@@ -1,7 +1,7 @@
 /* Copyright (c) 2012-2013 The TagSpaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that
  * can be found in the LICENSE file. */
-
+/* global Offline */
 /**
  * A implementation of the IOAPI for the Chrome/Chromium extensions platform
  * @class WebDAV
@@ -18,11 +18,13 @@ define(function(require, exports, module) {
 
   require("webdav");
   require("offlinelib");
+  require("offlinesimulate");
+
 
   // Offline plugin settings
 
   Offline.options = {
-    checkOnLoad: false,
+    checkOnLoad: true,
     interceptRequests: true,
     reconnect: {
       initialDelay: 3
@@ -31,8 +33,66 @@ define(function(require, exports, module) {
     game: false
   };
 
+  var $online = $('.online'), $offline = $('.offline');
+
+  //Offline.on('confirmed-down', function() {
+  //  $online.fadeOut(function() {
+  //    $offline.fadeIn();
+  //  });
+  //});
+  //
+  //Offline.on('confirmed-up', function() {
+  //  $offline.fadeOut(function() {
+  //    $online.fadeIn();
+  //  });
+  //});
+
+  //var run = function() {
+  //
+  //  //var req = new XMLHttpRequest();
+  //  //req.timeout = 5000;
+  //  //req.open('GET', 'http://localhost:8001', true);
+  //  //req.send();
+  //
+  //  if (Offline.state === 'up') {
+  //    Offline.check();
+  //    Offline.on('up', function() {
+  //      //connection is back!
+  //      $online.fadeOut(function() {
+  //        $offline.fadeIn();
+  //      });
+  //    });
+  //  } else if (Offline.state === 'down') {
+  //    Offline.on('down', function() {
+  //      Offline.getOption("checkOnLoad") ? Offline.check() : void 0;
+  //      //connection went down
+  //      $offline.fadeOut(function() {
+  //        $online.fadeIn();
+  //      });
+  //    });
+  //    console.log("offline state is down");
+  //  }
+  //};
+  //setInterval(run, 3000);
+
+  Offline.on('down', function() {
+    //connection went down
+    $offline.fadeOut(function() {
+      $online.fadeIn();
+    });
+  });
+  Offline.on('up', function() {
+    //connection is back!
+    $online.fadeOut(function() {
+      $offline.fadeIn();
+    });
+  });
+  Offline.on('checking', function() {
+    // We are testing the connection
+  });
+
   var davClient;
-  //exact copy of getAjax with timeout added 
+  //exact copy of getAjax with timeout added
   nl.sara.webdav.Client.prototype.getAjax = function(method, url, callback, headers) {
     var /** @type XMLHttpRequest */ ajax = (((typeof Components !== 'undefined') && (typeof Components.classes !== 'undefined')) ? Components.classes["@mozilla.org/xmlextras/xmlhttprequest;1"].createInstance(Components.interfaces.nsIXMLHttpRequest) : new XMLHttpRequest());
     if (this._username !== null) {
