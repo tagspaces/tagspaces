@@ -24,7 +24,7 @@ define(function(require, exports, module) {
   // Offline plugin settings
 
   Offline.options = {
-    checkOnLoad: true,
+    checkOnLoad: false,
     interceptRequests: true,
     reconnect: {
       initialDelay: 3
@@ -49,10 +49,10 @@ define(function(require, exports, module) {
 
   var run = function() {
 
-    var req = new XMLHttpRequest();
-    req.timeout = 5000;
-    req.open('GET', 'http://localhost:8001', true);
-    req.send();
+    //var req = new XMLHttpRequest();
+    //req.timeout = 5000;
+    //req.open('GET', 'http://localhost:8001', true);
+    //req.send();
 
     if (Offline.state === 'up') {
       Offline.check();
@@ -64,7 +64,8 @@ define(function(require, exports, module) {
       });
     } else if (Offline.state === 'down') {
       Offline.on('down', function() {
-        Offline.getOption("checkOnLoad") ? Offline.check() : void 0;
+        Offline.check();
+        //Offline.getOption("checkOnLoad") ? Offline.check() : void 0;
         //connection went down
         $offline.fadeOut(function() {
           $online.fadeIn();
