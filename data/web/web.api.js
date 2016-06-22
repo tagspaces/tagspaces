@@ -21,8 +21,8 @@ define(function(require, exports, module) {
 
   // Offline plugin settings
   require([
-    "css!web/offlinelib/offline-theme-chrome.css",
-    "css!web/offlinelib/offline-language-english.css",
+    //"css!web/offlinelib/offline-theme-chrome.css",
+    //"css!web/offlinelib/offline-language-english.css",
   ], function() {
   });
 
@@ -37,40 +37,30 @@ define(function(require, exports, module) {
     checks: {xhr: {url: 'assets/icon16.png'}}
   };
 
-  var $online = $('.online'), $offline = $('.offline');
+  function showLostConnectionDialog() {
+    $('#dialogLostConnection').modal({
+      backdrop: 'static',
+      show: true,
+      open: function() {
+        $('.modal-body');
+      }
+    });
+    $('#dialogLostConnection').draggable({
+      handle: ".modal-header"
+    });
+  }
 
   var run = function() {
-
-    //var req = new XMLHttpRequest();
-    //req.timeout = 5000;
-    //req.open('GET', 'http://localhost:8001', true);
-    //req.send();
-
     if (Offline.state === 'up') {
+      $('#dialogLostConnection').modal('hide');
       Offline.check();
-      Offline.on('up', function() {
-        //connection is back!
-        $online.fadeOut(function() {
-          $offline.fadeIn();
-        });
-      });
     } else if (Offline.state === 'down') {
-      Offline.on('down', function() {
-        Offline.check();
-        //Offline.getOption("checkOnLoad") ? Offline.check() : void 0;
-        //connection went down
-        $offline.fadeOut(function() {
-          $online.fadeIn();
-        });
-      });
+      Offline.check();
+      showLostConnectionDialog();
       console.log("Server is down");
     }
   };
-  setInterval(run, 3000);
-
-  //Offline.on('checking', function() {
-  //  // We are testing the connection
-  //});
+  setInterval(run, 5000);
 
   var davClient;
   //exact copy of getAjax with timeout added
