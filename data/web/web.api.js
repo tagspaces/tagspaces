@@ -23,7 +23,8 @@ define(function(require, exports, module) {
   require([
     "css!web/offlinelib/offline-theme-chrome.css",
     "css!web/offlinelib/offline-language-english.css",
-  ], function() {});
+  ], function() {
+  });
 
   Offline.options = {
     checkOnLoad: false,
@@ -32,7 +33,8 @@ define(function(require, exports, module) {
       initialDelay: 3
     },
     requests: true,
-    game: false
+    game: false,
+    checks: {xhr: {url: 'assets/icon16.png'}}
   };
 
   var $online = $('.online'), $offline = $('.offline');
