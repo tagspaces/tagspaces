@@ -18,8 +18,12 @@ define(function(require, exports, module) {
 
   require("webdav");
   require("offlinelib");
-  
+
   // Offline plugin settings
+  require([
+    "css!web/offlinelib/offline-theme-chrome.css",
+    "css!web/offlinelib/offline-language-english.css",
+  ], function() {});
 
   Offline.options = {
     checkOnLoad: false,
