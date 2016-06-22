@@ -109,7 +109,7 @@ var isWin = navigator.appVersion.indexOf("Win")!==-1;
       webaudiorecording:      'libs/audio-record/WebAudioRecorder',
       offlinelib:             'web/offlinelib/offline',
       webdav:                 'web/webdavlib/webdavlib',
-      offlinesimulate:        'libs/offlinejs-simulate-ui/offline-simulate-ui.min',
+
 
       tscore:                 'js/core.api',
       tssetting:              'js/settings.api',

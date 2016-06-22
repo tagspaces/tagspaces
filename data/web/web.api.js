@@ -18,9 +18,7 @@ define(function(require, exports, module) {
 
   require("webdav");
   require("offlinelib");
-  require("offlinesimulate");
-
-
+  
   // Offline plugin settings
 
   Offline.options = {
