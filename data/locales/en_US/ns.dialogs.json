@@ -185,5 +185,7 @@
   "ogg": ".ogg",
   "save":"Save",
   "delete":"Delete",
+  "dateTimeTab": "Date Time",
+  "geoLocationTab": "Geo location",
   "-": "-"
 }

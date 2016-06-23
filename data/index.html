@@ -618,16 +618,35 @@
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
         <h4 data-i18n="ns.dialogs:editTagTitle"></h4>
+        <ul class="nav nav-tabs" style="margin-bottom: 15px; border-bottom: 1px solid lightgray;">
+          <li><a href="#formEditTag" data-toggle="tab" class="optionsTitle" data-i18n="ns.dialogs:generalTab"></a></li>
+          <li><a href="#dateTimeTab" data-toggle="tab" class="optionsTitle" data-i18n="ns.dialogs:dateTimeTab"></a></li>
+          <li><a href="#geoLocationTab" data-toggle="tab" class="optionsTitle" data-i18n="ns.dialogs:geoLocationTab"></a></li>
+        </ul>
       </div>
-      <div class="modal-body form">
-        <form role="form" data-toggle="validator" id="formEditTag">
+      <div class="modal-body form tab-content" >
+        <div class="tab-pane active" id="formEditTag">
+          <form role="form" data-toggle="validator">
+            <div class="form-group">
+              <label class="control-label" for="newTagName" data-i18n="ns.dialogs:editTagNewName"></label>
+              <input class="form-control" pattern="^([^\ #/\\]){1,}$" type="text" name="newTagName" id="newTagName"
+                     data-i18n="[data-error]ns.dialogs:editTagNamesRestrictionsHelp" required/>
+              <p class="help-block with-errors"></p>
+            </div>
+          </form>
+        </div>
+        <div class="tab-pane" id="dateTimeTab">
+          <div class="form-group">
+              <!--new date time input field-->
+            <input class=flatpickr data-mindate=today data-maxdate='2016-8-20'>
+          </div>
+        </div>
+        <div class="tab-pane" id="geoLocationTab">
           <div class="form-group">
             <label class="control-label" for="newTagName" data-i18n="ns.dialogs:editTagNewName"></label>
-            <input class="form-control" pattern="^([^\ #/\\]){1,}$" type="text" name="newTagName" id="newTagName"
-                   data-i18n="[data-error]ns.dialogs:editTagNamesRestrictionsHelp" required/>
-            <p class="help-block with-errors"></p>
+              <!--geo location field-->
           </div>
-        </form>
+        </div>
       </div>
       <div class="modal-footer">
         <button class="btn cancelButton pull-left" data-dismiss="modal" aria-hidden="true"><i
