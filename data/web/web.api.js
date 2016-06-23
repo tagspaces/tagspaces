@@ -44,19 +44,32 @@ define(function(require, exports, module) {
     });
   }
 
-  Offline.on('up', function() {
+  var run = function() {
     if (Offline.state === 'up') {
       $('#dialogLostConnection').modal('hide');
       Offline.check();
-    }
-  });
-  Offline.on('down', function() {
-    if (Offline.state === 'down') {
+      //});
+    } else if (Offline.state === 'down') {
       Offline.check();
       showLostConnectionDialog();
       console.log("Server is down");
     }
-  });
+  };
+  setInterval(run, 5000);
+
+  //Offline.on('up', function() {
+  //  Offline.check();
+  //  $('#dialogLostConnection').modal('hide');
+  //});
+  //Offline.on('down', function() {
+  //  var isOffline = function() {
+  //    Offline.check();
+  //    showLostConnectionDialog();
+  //    console.log("Server is down");
+  //  };
+  //  setInterval(isOffline, 5000);
+  //});
+
 
   var davClient;
   //exact copy of getAjax with timeout added
