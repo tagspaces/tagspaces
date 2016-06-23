@@ -44,17 +44,19 @@ define(function(require, exports, module) {
     });
   }
 
-  var run = function() {
+  Offline.on('up', function() {
     if (Offline.state === 'up') {
       $('#dialogLostConnection').modal('hide');
       Offline.check();
-    } else if (Offline.state === 'down') {
+    }
+  });
+  Offline.on('down', function() {
+    if (Offline.state === 'down') {
       Offline.check();
       showLostConnectionDialog();
       console.log("Server is down");
     }
-  };
-  setInterval(run, 5000);
+  });
 
   var davClient;
   //exact copy of getAjax with timeout added
