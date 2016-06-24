@@ -11,6 +11,8 @@ define(function(require, exports, module) {
   var TSCORE = require('tscore');
   var TSPOSTIO = require("tspostioapi");
 
+  require('pickr');
+
   var fileContent;
   var fileType;
   var waitingDialogTimeoutID;
@@ -657,20 +659,16 @@ define(function(require, exports, module) {
     );
   }
 
-
-
-
-
   function showTagEditDialog() {
-    require('pickr');
+
     flatpickr('#dateTimePickr',{dateFormat:'d-m-Y'});
-    require([
+    /*require([
       //'js!../libs/pickr/flatpickr.min.js',
       //'css!libs/flatpickr-calendar/dist/flatpickr.material_red.min.css',
       //'css!libs/flatpickr-calendar/dist/flatpickrstyle.min.css',
       'pickr'
     ], function() {
-    });
+    });*/
 
     //var check_in = flatpickr("#check_in_date", { minDate: new Date() });
     //var check_out = flatpickr("#check_out_date", { minDate: new Date() });
