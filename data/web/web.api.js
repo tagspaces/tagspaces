@@ -48,6 +48,19 @@ define(function(require, exports, module) {
   });
   Offline.on('confirmed-down', showLostConnectionDialog);
 
+/*  var run = function() {
+    if (Offline.state === 'up') {
+      $('#dialogLostConnection').modal('hide');
+      Offline.check();
+      //});
+    } else if (Offline.state === 'down') {
+      Offline.check();
+      showLostConnectionDialog();
+      console.log("Server is down");
+    }
+  };
+  setInterval(run, 5000);*/
+
   var davClient;
   //exact copy of getAjax with timeout added
   nl.sara.webdav.Client.prototype.getAjax = function(method, url, callback, headers) {
