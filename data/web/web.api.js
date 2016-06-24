@@ -19,10 +19,10 @@ define(function(require, exports, module) {
   require("webdav");
   require("offlinelib");
 
-  // Offline mode
+  // Offline notification
   Offline.options = {
-    checkOnLoad: false,
-    interceptRequests: true,
+    checkOnLoad: true,
+    //interceptRequests: true,
     reconnect: {
       initialDelay: 3
     },
@@ -31,32 +31,22 @@ define(function(require, exports, module) {
     checks: {xhr: {url: 'assets/icon16.png'}}
   };
 
+  Offline.check();
+
   function showLostConnectionDialog() {
     $('#dialogLostConnection').modal({
       backdrop: 'static',
       show: true,
-      open: function() {
-        $('.modal-body');
-      }
     });
     $('#dialogLostConnection').draggable({
       handle: ".modal-header"
     });
   }
 
-  Offline.on('up', function() {
-    if (Offline.state === 'up') {
-      $('#dialogLostConnection').modal('hide');
-      Offline.check();
-    }
+  Offline.on('confirmed-up', function() {
+    $('#dialogLostConnection').modal('hide');
   });
-  Offline.on('down', function() {
-    if (Offline.state === 'down') {
-      Offline.check();
-      showLostConnectionDialog();
-      console.log("Server is down");
-    }
-  });
+  Offline.on('confirmed-down', showLostConnectionDialog);
 
   var davClient;
   //exact copy of getAjax with timeout added
