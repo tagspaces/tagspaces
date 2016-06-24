@@ -543,3 +543,7 @@ input a.resetFilter {
 .top-align-5 {
   margin-top: 5px;
 }
+
+.flatpickr-input{
+  min-width: 40%;
+}

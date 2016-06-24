@@ -620,11 +620,11 @@
         <h4 data-i18n="ns.dialogs:editTagTitle"></h4>
         <ul class="nav nav-tabs" style="margin-bottom: 15px; border-bottom: 1px solid lightgray;">
           <li><a href="#formEditTag" data-toggle="tab" class="optionsTitle" data-i18n="ns.dialogs:generalTab"></a></li>
-          <li><a href="#Tab1" data-toggle="tab" class="optionsTitle" data-i18n="ns.dialogs:Tab1"></a></li>
-          <li><a href="#Tab2" data-toggle="tab" class="optionsTitle" data-i18n="ns.dialogs:Tab2"></a></li>
+          <li><a href="#dateTimeTab" data-toggle="tab" class="optionsTitle" data-i18n="ns.dialogs:dateTimeTab"></a></li>
+          <li><a href="#dateTimeRangeTab" data-toggle="tab" class="optionsTitle" data-i18n="ns.dialogs:geoLocationTab"></a></li>
         </ul>
       </div>
-      <div class="modal-body form tab-content" >
+      <div class="modal-body form tab-content">
         <div class="tab-pane active" id="formEditTag">
           <form role="form" data-toggle="validator">
             <div class="form-group">
@@ -635,14 +635,39 @@
             </div>
           </form>
         </div>
-        <div class="tab-pane" id="Tab1">
-          <div class="form-group">
-            <input class=flatpickr id="dateTimePickr" data-mindate=today>
+        <div class="tab-pane" id="dateTimeTab">
+          <div class="row">
+            <div class="form-group">
+              <div class="col-sm-4">
+                <input class="" id="dateCalendarInput" type="radio" name="dateTimeName" checked>
+                <label class="  active" data-i18n="ns.dialogs:dateCalendar"></label>
+              </div>
+              <div class="col-sm-4">
+                <input type="radio" id="dateTimeInput" name="dateTimeName">
+                <label class="" data-i18n="ns.dialogs:dateTime"></label>
+              </div>
+              <div class="col-sm-4">
+                <input type="radio" id="dateTimeRangeInput" name="dateTimeName">
+                <label class="" data-i18n="ns.dialogs:dateTimeRange"></label>
+              </div>
+            </div>
+            <div class="form-group col-sm-12">
+                <input class='calendar' id="dateCalendar" data-i18n="[placeholder]ns.dialogs:dateCalendar">
+                <input class='flatpickr' id="dateTimeCalendar" data-mindate='today' data-enabletime='true' data-time_24hr='true' data-timeFormat="H:i" data-i18n="[placeholder]ns.dialogs:dateTime">
+                <input class='flatpickr' id="dateTimeRangeCalendar" data-enableTime="true" data-i18n="[placeholder]ns.dialogs:dateTimeRange">
+            </div>
           </div>
         </div>
-        <div class="tab-pane" id="Tab2">
+        <div class="tab-pane" id="dateTimeRangeTab">
           <div class="form-group">
-            
+            <form role="form" data-toggle="validator">
+              <div class="form-group">
+                <label class="control-label" for="newTagName" data-i18n="ns.dialogs:editTagNewName"></label>
+                <input class="form-control" pattern="^([^\ #/\\]){1,}$" type="text" name="newTagName" id="newTagName"
+                       data-i18n="[data-error]ns.dialogs:editTagNamesRestrictionsHelp" required/>
+                <p class="help-block with-errors"></p>
+              </div>
+            </form>
           </div>
         </div>
       </div>
