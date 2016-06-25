@@ -17,9 +17,24 @@ define(function(require, exports, module) {
   var TSPOSTIO = require("tspostioapi");
 
   require("webdav");
-  require("offlinelib");
+  //require("offlinelib");
 
-  // Offline notification
+  window.addEventListener('offline', showLostConnectionDialog);
+  window.addEventListener('online', function() {
+    $('#dialogLostConnection').modal('hide');
+  });
+
+  function showLostConnectionDialog() {
+    $('#dialogLostConnection').modal({
+      backdrop: 'static',
+      show: true,
+    });
+    $('#dialogLostConnection').draggable({
+      handle: ".modal-header"
+    });
+  }
+
+/*  // Offline notification
   Offline.options = {
     checkOnLoad: true,
     //interceptRequests: true,
@@ -33,20 +48,10 @@ define(function(require, exports, module) {
 
   Offline.check();
 
-  function showLostConnectionDialog() {
-    $('#dialogLostConnection').modal({
-      backdrop: 'static',
-      show: true,
-    });
-    $('#dialogLostConnection').draggable({
-      handle: ".modal-header"
-    });
-  }
-
   Offline.on('confirmed-up', function() {
     $('#dialogLostConnection').modal('hide');
   });
-  Offline.on('confirmed-down', showLostConnectionDialog);
+  Offline.on('confirmed-down', showLostConnectionDialog);*/
 
 /*  var run = function() {
     if (Offline.state === 'up') {
