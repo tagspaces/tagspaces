@@ -75,9 +75,20 @@ li hr {
 
 /* Bootstrap Styles */
 
-.btn, .btn:hover, .btn:focus, .btn:active, .btn-link, .btn-link:hover, .btn-link:focus, .btn-link:active {
+.btn, .btn:hover, .btn:focus, .btn:active, {
   outline: none !important;
 /*  background-image: none;
+  border-radius: 0;
+  text-transform: none;
+  -webkit-transition: none;
+  transition: none;
+  -webkit-transform: none;
+  transform: none;*/
+}
+
+.btn-link, .btn-link:hover, .btn-link:focus, .btn-link:active {
+  outline: none !important;
+  background-image: none;
   border-radius: 0;
   text-transform: none;
   -webkit-transition: none;
