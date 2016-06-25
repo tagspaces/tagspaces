@@ -107,7 +107,7 @@ var isWin = navigator.appVersion.indexOf("Win")!==-1;
       noty:                   'libs/noty/js/noty/packaged/jquery.noty.packaged.min',
       marked:                 'libs/marked/marked.min',
       webaudiorecording:      'libs/audio-record/WebAudioRecorder',
-      offlinelib:             'web/offlinelib/offline.min',
+      //offlinelib:             'web/offlinelib/offline.min',
       webdav:                 'web/webdavlib/webdavlib',
 
       tscore:                 'js/core.api',
