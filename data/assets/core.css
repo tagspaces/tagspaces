@@ -71,6 +71,14 @@
   border-width: 0;
 }
 
+.fileExtOpener {
+  background-color: #515151;
+  text-transform: uppercase;
+  font-size: 12px;
+  padding: 4px;
+  color: white;
+}
+
 #fileMenuButton {
   padding-left: 0;
   padding-right: 0;
@@ -363,17 +371,6 @@ input a.resetFilter {
   overflow-x: hidden;
   min-height: 400px;
   max-height: 400px;
-}
-
-/*.white-caret {
-	border-top-color: white;
-	border-bottom-color: white;
-}*/
-
-.fileTitleButton {
-  margin: 1px;
-  padding: 1px;
-  margin-left: 5px;
 }
 
 .optionsTitle {
