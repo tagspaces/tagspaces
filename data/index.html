@@ -6,6 +6,7 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta http-equiv="Content-Security-Policy" content="default-src file: gap: http: https:; frame-src 'self' file: gap: http: https: ; img-src 'self' blob: file: data: http: https: ; media-src 'self' file: data: blob: ; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-eval'">
+  <meta name="geo.position" content="50.167958;-97.133185">
   <title>TagSpaces</title>
   <style type="text/css">
     #loadingLogo {
@@ -620,7 +621,7 @@
         <ul class="nav nav-tabs" style="margin-bottom: 15px; border-bottom: 1px solid lightgray;">
           <li><a href="#formEditTag" data-toggle="tab" class="optionsTitle" data-i18n="ns.dialogs:generalTab"></a></li>
           <li><a href="#dateTimeTab" data-toggle="tab" class="optionsTitle" data-i18n="ns.dialogs:dateTimeTab"></a></li>
-          <li><a href="#dateTimeRangeTab" data-toggle="tab" class="optionsTitle" data-i18n="ns.dialogs:geoLocationTab"></a></li>
+          <li><a href="#geoLocation" data-toggle="tab" class="optionsTitle" data-i18n="ns.dialogs:geoLocationTab"></a></li>
         </ul>
       </div>
       <div class="modal-body form tab-content">
@@ -657,13 +658,9 @@
             </div>
           </div>
         </div>
-        <div class="tab-pane" id="dateTimeRangeTab">
+        <div class="tab-pane" id="geoLocation">
           <div class="form-group">
-            <form role="form" data-toggle="validator">
-              <div class="form-group">
-
-              </div>
-            </form>
+            <div id="mapTag" class="map map-home" style="height: 100%; margin-top: 10px"></div>
           </div>
         </div>
       </div>

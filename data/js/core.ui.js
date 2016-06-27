@@ -12,6 +12,7 @@ define(function(require, exports, module) {
   var TSPOSTIO = require("tspostioapi");
 
   require('pickr');
+  require('leaflet');
 
   var fileContent;
   var fileType;
@@ -660,17 +661,6 @@ define(function(require, exports, module) {
   }
 
   function showDateTimeCalendar() {
-    require([
-      //'js!../libs/pickr/flatpickr.min.js',
-      'css!libs/flatpickr-calendar/dist/flatpickr.material_red.min.css',
-      'css!libs/flatpickr-calendar/dist/flatpickr.min.css'
-      //'pickr'
-    ], function() {
-    });
-
-    flatpickr('#dateTimeCalendar', {dateFormat: 'd-m-Y'});
-    flatpickr('#dateTimeRangeCalendar', {dateFormat: 'd-m-Y'});
-    flatpickr('.calendar');
 
     $('#dateTimeCalendar').hide();
     $('#dateTimeRangeCalendar').hide();
@@ -691,6 +681,26 @@ define(function(require, exports, module) {
       $('#dateTimeRangeCalendar').show();
       $('#dateCalendar').hide();
     });
+
+    flatpickr('#dateTimeCalendar', {dateFormat: 'd-m-Y'});
+    flatpickr('#dateTimeRangeCalendar', {dateFormat: 'd-m-Y'});
+    flatpickr('.calendar');
+
+  }
+
+  function showGeoLocation() {
+
+    var ACCESS_TOKEN = 'pk.eyJ1Ijoia3Jpc3RpeWFuZGQiLCJhIjoiY2lweHVlam5rMDA3Y2k0bTJ4Z3l2ZzFxdyJ9.6pyZff5AHe9xPRX7FcjwCw';
+    var MB_ATTR = 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ';
+    var MB_URL = 'https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=' + ACCESS_TOKEN;
+    var OSM_URL = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+    var OSM_ATTRIB = '';
+
+    var mapContent = L.map('mapTag').setView([51.505, -0.09], 13);
+    L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/streets-v9/tiles/256/{z}/{x}/{y}?access_token=' + ACCESS_TOKEN, {
+      attribution: MB_ATTR,
+      id: 'mapbox.streets'
+    }).addTo(mapContent);
   }
 
   function showTagEditDialog() {
@@ -719,6 +729,7 @@ define(function(require, exports, module) {
       handle: ".modal-header"
     });
     showDateTimeCalendar();
+    showGeoLocation();
   }
 
   function showRenameFileDialog() {
@@ -1112,6 +1123,8 @@ define(function(require, exports, module) {
   exports.showKeysDialog = showKeysDialog;
   exports.startGettingStartedTour = startGettingStartedTour;
   exports.showTagEditDialog = showTagEditDialog;
+  exports.showDateTimeCalendar = showDateTimeCalendar;
+  exports.showGeoLocation = showGeoLocation;
   exports.showOptionsDialog = showOptionsDialog;
   exports.showAboutDialog = showAboutDialog;
   exports.showAudioRecordingDialog = showAudioRecordingDialog;

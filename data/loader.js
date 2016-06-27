@@ -110,6 +110,7 @@ var isWin = navigator.appVersion.indexOf("Win")!==-1;
       pickr:                  'libs/flatpickr-calendar/dist/flatpickr.min',
       offlinelib:             'web/offlinelib/offline.min',
       webdav:                 'web/webdavlib/webdavlib',
+      leaflet:                'libs/leaf/leaflet',
 
       tscore:                 'js/core.api',
       tssetting:              'js/settings.api',
