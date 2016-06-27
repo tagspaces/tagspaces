@@ -17,7 +17,7 @@ define(function(require, exports, module) {
   var TSPOSTIO = require("tspostioapi");
 
   require("webdav");
-  //require("offlinelib");
+  //require("web/offlinelib/offline.min");
 
   window.addEventListener('offline', showLostConnectionDialog);
   window.addEventListener('online', function() {

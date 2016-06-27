@@ -432,6 +432,7 @@ define(function(require, exports, module) {
     // Initialize File Extension
     var fileExtension = TSCORE.TagUtils.extractFileExtension(_openedFilePath);
     $('#fileExtText').text(fileExtension);
+    $('#fileMenuButton').attr('data-ext', fileExtension);
     // Initialize File Title Editor
     var title = TSCORE.TagUtils.extractTitle(_openedFilePath);
     var $fileTitle = $('#fileTitle');

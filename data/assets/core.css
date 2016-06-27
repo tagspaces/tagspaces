@@ -71,18 +71,20 @@
   border-width: 0;
 }
 
-.fileExtOpener {
+#fileMenuButton, #fileMenuButton:active, #fileMenuButton:focus, #fileMenuButton:hover  {
+  margin-right: 4px;
+  margin-top: 4px;
+  height: 28px;
+  color: white;
+  border-radius: 3px;
   background-color: #515151;
   text-transform: uppercase;
   font-size: 12px;
   padding: 4px;
-  color: white;
 }
 
-#fileMenuButton {
-  padding-left: 0;
-  padding-right: 0;
-  margin-right: 4px;
+#fileMenuButton:hover  {
+  opacity: 0.8 !important;
 }
 
 #fileTitle {
