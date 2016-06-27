@@ -691,7 +691,7 @@ define(function(require, exports, module) {
   function showGeoLocation() {
 
     var ACCESS_TOKEN = 'pk.eyJ1Ijoia3Jpc3RpeWFuZGQiLCJhIjoiY2lweHVlam5rMDA3Y2k0bTJ4Z3l2ZzFxdyJ9.6pyZff5AHe9xPRX7FcjwCw';
-    var MB_ATTR = 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ';
+    var MB_ATTR = 'Map data &copy; <a href="http://tagspaces.org">TagSpaces</a> contributors, ';
     var MB_URL = 'https://api.mapbox.com/styles/v1/mapbox/streets-v9/tiles/256/{z}/{x}/{y}?access_token=' + ACCESS_TOKEN;
     var OSM_URL = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
     var OSM_ATTRIB = '';
