@@ -659,27 +659,41 @@ define(function(require, exports, module) {
     );
   }
 
-  function showTagEditDialog() {
-
-    flatpickr('#dateTimePickr',{dateFormat:'d-m-Y'});
-    /*require([
+  function showDateTimeCalendar() {
+    require([
       //'js!../libs/pickr/flatpickr.min.js',
-      //'css!libs/flatpickr-calendar/dist/flatpickr.material_red.min.css',
-      //'css!libs/flatpickr-calendar/dist/flatpickrstyle.min.css',
-      'pickr'
+      'css!libs/flatpickr-calendar/dist/flatpickr.material_red.min.css',
+      'css!libs/flatpickr-calendar/dist/flatpickr.min.css'
+      //'pickr'
     ], function() {
-    });*/
+    });
 
-    //var check_in = flatpickr("#check_in_date", { minDate: new Date() });
-    //var check_out = flatpickr("#check_out_date", { minDate: new Date() });
-    //
-    //check_in.set("onChange", function(d) {
-    //  check_out.set("minDate", d.fp_incr(1)); //increment by one day
-    //});
-    //check_out.set("onChange", function(d) {
-    //  check_in.set("maxDate", d);
-    //});
+    flatpickr('#dateTimeCalendar', {dateFormat: 'd-m-Y'});
+    flatpickr('#dateTimeRangeCalendar', {dateFormat: 'd-m-Y'});
+    flatpickr('.calendar');
 
+    $('#dateTimeCalendar').hide();
+    $('#dateTimeRangeCalendar').hide();
+
+    $('#dateCalendarInput').click(function() {
+      $('#dateTimeCalendar').hide();
+      $('#dateTimeRangeCalendar').hide();
+      $('#dateCalendar').show();
+    });
+
+    $('#dateTimeInput').click(function() {
+      $('#dateTimeCalendar').show();
+      $('#dateTimeRangeCalendar').hide();
+      $('#dateCalendar').hide();
+    });
+    $('#dateTimeRangeInput').click(function() {
+      $('#dateTimeCalendar').hide();
+      $('#dateTimeRangeCalendar').show();
+      $('#dateCalendar').hide();
+    });
+  }
+
+  function showTagEditDialog() {
     $('#newTagName').val(TSCORE.selectedTag);
     $('#formEditTag').validator();
     $('#formEditTag').submit(function(e) {
@@ -704,6 +718,7 @@ define(function(require, exports, module) {
     $('#dialogEditTag').draggable({
       handle: ".modal-header"
     });
+    showDateTimeCalendar();
   }
 
   function showRenameFileDialog() {
