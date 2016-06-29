@@ -722,6 +722,25 @@ define(function(require, exports, module) {
 
   }
 
+  function tagYourself() {
+    tagSpacesMap.locate({setView: true, watch: true}) /* This will return map so you can do chaining */
+    .on('locationfound', function(e){
+      var marker = L.marker([e.latitude, e.longitude]);//.bindPopup('Your are here :)');
+      var circle = L.circle([e.latitude, e.longitude], e.accuracy/2, {
+        weight: 1,
+        color: 'blue',
+        fillColor: '#cacaca',
+        fillOpacity: 0.2
+      });
+      tagSpacesMap.addLayer(marker);
+      tagSpacesMap.addLayer(circle);
+    })
+    .on('locationerror', function(e){
+      console.log(e);
+      alert("Location access denied.");
+    });
+  }
+
   function initMap() {
 
     $('#dialogEditTag').on('show.bs.modal', function() {
@@ -730,29 +749,12 @@ define(function(require, exports, module) {
       }, 10);
     });
 
-    //tagSpacesMap.locate({setView: true, watch: true}) /* This will return map so you can do chaining */
-    //.on('locationfound', function(e){
-    //  var marker = L.marker([e.latitude, e.longitude]).bindPopup('Your are here :)');
-    //  var circle = L.circle([e.latitude, e.longitude], e.accuracy/2, {
-    //    weight: 1,
-    //    color: 'blue',
-    //    fillColor: '#cacaca',
-    //    fillOpacity: 0.2
-    //  });
-    //  tagSpacesMap.addLayer(marker);
-    //  tagSpacesMap.addLayer(circle);
-    //})
-    //.on('locationerror', function(e){
-    //  console.log(e);
-    //  alert("Location access denied.");
-    //});
-
-    L.control.locate({
-      position: 'topright',
-      //strings: {
-      //  title: "TagSpaces!"
-      //}
-    }).addTo(tagSpacesMap);
+    //L.control.locate({
+    //  position: 'topright',
+    //  strings: {
+    //    title: $.i18n.t('ns.dialogs:yourLocation') //
+    //  }
+    //}).addTo(tagSpacesMap);
 
     showGeoLocation();
 
@@ -788,7 +790,6 @@ define(function(require, exports, module) {
     });
     showDateTimeCalendar();
     initMap();
-
   }
 
   function showRenameFileDialog() {
