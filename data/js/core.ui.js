@@ -744,7 +744,7 @@ define(function(require, exports, module) {
   }
 
   function initMap() {
-    
+
     tagSpacesMap.on('resize', function() {
       tagSpacesMap.invalidateSize();
       //L.Util.requestAnimFrame(tagSpacesMap.invalidateSize,tagSpacesMap,!1,tagSpacesMap._container);
@@ -753,10 +753,10 @@ define(function(require, exports, module) {
     $('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
       var target = $(e.target).attr("href"); // activated tab
       if (target === "#geoLocation") {
-        //alert(target);
         tagSpacesMap.invalidateSize();
       }
     });
+    
     //L.control.locate({
     //  position: 'topright',
     //  strings: {
