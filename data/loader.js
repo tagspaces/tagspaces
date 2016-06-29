@@ -111,6 +111,7 @@ var isWin = navigator.appVersion.indexOf("Win")!==-1;
       offlinelib:             'web/offlinelib/offline.min',
       webdav:                 'web/webdavlib/webdavlib',
       leaflet:                'libs/leaf/leaflet',
+      leafletlocate:          'libs/leaflet.locatecontrol/dist/L.Control.Locate.min',
 
       tscore:                 'js/core.api',
       tssetting:              'js/settings.api',

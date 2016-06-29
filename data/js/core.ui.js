@@ -13,18 +13,12 @@ define(function(require, exports, module) {
 
   require('pickr');
   require('leaflet');
+  require('leafletlocate');
 
   var fileContent;
   var fileType;
   var waitingDialogTimeoutID;
   var addFileInputName;
-
-  var fileDropTemplate = Handlebars.compile(
-          '<div id="fileDropArea">' +
-          '<div id="fileDropExplanation"><i class="fa fa-2x fa-mail-forward"></i><br>' +
-          '<span>Drop files here in order to be copied or moved in the current folder</span></div>' +
-          '</div>'
-  );
 
   function initUI() {
     $('#appVersion').text(TSCORE.Config.DefaultSettings.appVersion + '.' + TSCORE.Config.DefaultSettings.appBuild);
@@ -343,6 +337,13 @@ define(function(require, exports, module) {
 
     platformTuning();
   }
+
+  var fileDropTemplate = Handlebars.compile(
+          '<div id="fileDropArea">' +
+          '<div id="fileDropExplanation"><i class="fa fa-2x fa-mail-forward"></i><br>' +
+          '<span>Drop files here in order to be copied or moved in the current folder</span></div>' +
+          '</div>'
+  );
 
   function showFileDropArea() {
     if ($('#fileDropArea').length < 1) {
@@ -685,40 +686,79 @@ define(function(require, exports, module) {
     flatpickr('#dateTimeCalendar', {dateFormat: 'd-m-Y'});
     flatpickr('#dateTimeRangeCalendar', {dateFormat: 'd-m-Y'});
     flatpickr('.calendar');
+  }
+
+
+  // TagSpaces Map
+  var ACCESS_TOKEN = 'pk.eyJ1Ijoia3Jpc3RpeWFuZGQiLCJhIjoiY2lweHVlam5rMDA3Y2k0bTJ4Z3l2ZzFxdyJ9.6pyZff5AHe9xPRX7FcjwCw';
+  var MB_ATTR = 'Map data &copy; <a href="http://tagspaces.org">TagSpaces</a>';
+  var MB_URL = 'https://api.mapbox.com/styles/v1/mapbox/streets-v9/tiles/256/{z}/{x}/{y}?access_token=' + ACCESS_TOKEN;
+  var OSM_URL = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+  var OSM_ATTRIB = '';
+  var tagSpacesMapOption = {
+    //layers: [MB_ATTR],
+    center: [51.505, -0.09],
+    //zoom: 10,
+    zoomControl: true,
+    detectRetina: true
+  };
+  var tagSpacesMap = L.map('mapTag', tagSpacesMapOption).setView([51.505, -0.09], 13);
+
+  function showGeoLocation() {
+    L.tileLayer(MB_URL, {
+      attribution: MB_ATTR,
+      id: 'tagSpacesMap'
+    }).addTo(tagSpacesMap);
+
+    L.marker([51.5, -0.09]).addTo(tagSpacesMap).bindPopup('TagSpaces').openPopup();
+
+    var popup = L.popup();
+
+    function onMapClick(e) {
+      popup.setLatLng(e.latlng).setContent("You clicked the map at " + e.latlng.toString()).openOn(tagSpacesMap);
+    }
+
+    tagSpacesMap.on('click', onMapClick);
 
   }
 
-  function showGeoLocation() {
+  function initMap() {
 
-    var ACCESS_TOKEN = 'pk.eyJ1Ijoia3Jpc3RpeWFuZGQiLCJhIjoiY2lweHVlam5rMDA3Y2k0bTJ4Z3l2ZzFxdyJ9.6pyZff5AHe9xPRX7FcjwCw';
-    var MB_ATTR = 'Map data &copy; <a href="http://tagspaces.org">TagSpaces</a> contributors, ';
-    var MB_URL = 'https://api.mapbox.com/styles/v1/mapbox/streets-v9/tiles/256/{z}/{x}/{y}?access_token=' + ACCESS_TOKEN;
-    var OSM_URL = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-    var OSM_ATTRIB = '';
+    $('#dialogEditTag').on('show.bs.modal', function() {
+      setTimeout(function() {
+        tagSpacesMap.invalidateSize();
+      }, 10);
+    });
 
-    var mapContent = L.map('mapTag').setView([51.505, -0.09], 13);
-    L.tileLayer(MB_URL, {
-      attribution: MB_ATTR,
-      id: 'mapbox.streets'
-    }).addTo(mapContent);
+    //tagSpacesMap.locate({setView: true, watch: true}) /* This will return map so you can do chaining */
+    //.on('locationfound', function(e){
+    //  var marker = L.marker([e.latitude, e.longitude]).bindPopup('Your are here :)');
+    //  var circle = L.circle([e.latitude, e.longitude], e.accuracy/2, {
+    //    weight: 1,
+    //    color: 'blue',
+    //    fillColor: '#cacaca',
+    //    fillOpacity: 0.2
+    //  });
+    //  tagSpacesMap.addLayer(marker);
+    //  tagSpacesMap.addLayer(circle);
+    //})
+    //.on('locationerror', function(e){
+    //  console.log(e);
+    //  alert("Location access denied.");
+    //});
 
-    //var marker;
-    //mapContent.on('click', function(e) {
-    //  if (!marker) {
-    //    marker = L.marker(e.latlng).addTo(mapContent);
-    //  }
-    //});
-    //
-    //$('#dialogEditTag').on('shown', function() {
-    //  L.Util.requestAnimFrame(mapContent.invalidateSize, mapContent, !1, mapContent._container);
-    //});
-    //
-    //$('#dialogEditTag').on('hidden', function() {
-    //  if (marker) {
-    //    mapContent.removeLayer(marker);
-    //    marker = null;
-    //  }
-    //});
+    L.control.locate({
+      position: 'topright',
+      //strings: {
+      //  title: "TagSpaces!"
+      //}
+    }).addTo(tagSpacesMap);
+
+    showGeoLocation();
+
+    //L.mapbox.accessToken = '<your access token here>';
+    //L.mapbox.map('map', 'mapbox.streets')
+    //.addControl(L.mapbox.geocoderControl('mapbox.places'));
   }
 
   function showTagEditDialog() {
@@ -747,7 +787,8 @@ define(function(require, exports, module) {
       handle: ".modal-header"
     });
     showDateTimeCalendar();
-    showGeoLocation();
+    initMap();
+
   }
 
   function showRenameFileDialog() {

@@ -11,6 +11,7 @@
 @import '../libs/flatpickr-calendar/dist/flatpickr.material_red.min.css';
 @import '../libs/flatpickr-calendar/dist/flatpickr.min.css';
 @import '../libs/leaf/leaflet.css';
+@import '../libs/leaflet.locatecontrol/dist/L.Control.Locate.min.css';
 @import 'general.css';
 @import 'core.css';
 @import 'layout.css';
