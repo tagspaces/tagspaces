@@ -253,6 +253,7 @@ define(function(require, exports, module) {
       showLocationsPanel();
     });
 
+
     $('#disagreeLicenseButton').on('click', function() {
       TSCORE.Config.Settings.firstRun = true;
       TSCORE.Config.saveSettings();
@@ -695,14 +696,14 @@ define(function(require, exports, module) {
   var MB_URL = 'https://api.mapbox.com/styles/v1/mapbox/streets-v9/tiles/256/{z}/{x}/{y}?access_token=' + ACCESS_TOKEN;
   var OSM_URL = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
   var OSM_ATTRIB = '';
-  var tagSpacesMapOption = {
+  var tagSpacesMapOptions = {
     //layers: [MB_ATTR],
     center: [51.505, -0.09],
     //zoom: 10,
     zoomControl: true,
     detectRetina: true
   };
-  var tagSpacesMap = L.map('mapTag', tagSpacesMapOption).setView([51.505, -0.09], 13);
+  var tagSpacesMap = L.map('mapTag', tagSpacesMapOptions).setView([51.505, -0.09], 13);
 
   function showGeoLocation() {
     L.tileLayer(MB_URL, {
@@ -723,10 +724,12 @@ define(function(require, exports, module) {
   }
 
   function tagYourself() {
-    tagSpacesMap.locate({setView: true, watch: true}) /* This will return map so you can do chaining */
-    .on('locationfound', function(e){
+    tagSpacesMap.locate({
+      setView: true,
+      watch: true
+    }) /* This will return map so you can do chaining */.on('locationfound', function(e) {
       var marker = L.marker([e.latitude, e.longitude]);//.bindPopup('Your are here :)');
-      var circle = L.circle([e.latitude, e.longitude], e.accuracy/2, {
+      var circle = L.circle([e.latitude, e.longitude], e.accuracy / 2, {
         weight: 1,
         color: 'blue',
         fillColor: '#cacaca',
@@ -734,21 +737,26 @@ define(function(require, exports, module) {
       });
       tagSpacesMap.addLayer(marker);
       tagSpacesMap.addLayer(circle);
-    })
-    .on('locationerror', function(e){
+    }).on('locationerror', function(e) {
       console.log(e);
       alert("Location access denied.");
     });
   }
 
   function initMap() {
-
-    $('#dialogEditTag').on('show.bs.modal', function() {
-      setTimeout(function() {
-        tagSpacesMap.invalidateSize();
-      }, 10);
+    
+    tagSpacesMap.on('resize', function() {
+      tagSpacesMap.invalidateSize();
+      //L.Util.requestAnimFrame(tagSpacesMap.invalidateSize,tagSpacesMap,!1,tagSpacesMap._container);
     });
 
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
+      var target = $(e.target).attr("href"); // activated tab
+      if (target === "#geoLocation") {
+        //alert(target);
+        tagSpacesMap.invalidateSize();
+      }
+    });
     //L.control.locate({
     //  position: 'topright',
     //  strings: {
@@ -772,6 +780,7 @@ define(function(require, exports, module) {
         $('#editTagButton').click();
       }
     });
+
     $('#formEditTag').on('invalid.bs.validator', function() {
       $('#editTagButton').prop('disabled', true);
     });
@@ -788,6 +797,8 @@ define(function(require, exports, module) {
     $('#dialogEditTag').draggable({
       handle: ".modal-header"
     });
+
+
     showDateTimeCalendar();
     initMap();
   }
