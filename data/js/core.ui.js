@@ -730,13 +730,14 @@ define(function(require, exports, module) {
     detectRetina: true
   };
   var tagSpacesMap = L.map('mapTag', tagSpacesMapOptions).setView([51.505, -0.09], 13);
-  L.control.locate({
-    position: 'topright',
-    strings: {
-      title: $.i18n.t('ns.dialogs:yourLocation') //
-    }
-  }).addTo(tagSpacesMap);
+  //L.control.locate({
+  //  position: 'topright',
+  //  strings: {
+  //    title: $.i18n.t('ns.dialogs:yourLocation') //
+  //  }
+  //}).addTo(tagSpacesMap);
   var marker;
+
 
   function showGeoLocation() {
     L.tileLayer(MB_URL, {
@@ -744,17 +745,25 @@ define(function(require, exports, module) {
       id: 'tagSpacesMap'
     }).addTo(tagSpacesMap);
 
-    L.marker([51.5, -0.09]).addTo(tagSpacesMap).bindPopup('TagSpaces');//.openPopup();
+    var regExp = /^([-+]?)([\d]{1,2})(((\.)(\d+)(,)))(\s*)(([-+]?)([\d]{1,3})((\.)(\d+))?)$/g;
+    var coordinate = TSCORE.selectedTag;
+    var currentCoordinate = coordinate.split("-");
 
+    if(!regExp.exec(currentCoordinate)){
+      tagSpacesMap.setView([54.5259614, +15.2551187], 5);
+      L.marker([54.5259614, +15.2551187]).addTo(tagSpacesMap).bindPopup('TagSpaces');//.openPopup();
+    } else {
+      tagSpacesMap.setView(currentCoordinate, 13);
+      L.marker(currentCoordinate).addTo(tagSpacesMap).bindPopup('Tag');//.openPopup();
+    }
+    //L.marker(currentCoordinate).addTo(tagSpacesMap).bindPopup('Tag');//.openPopup();
 
     function addMarker(e) {
       // Add marker to map at click location; add popup window
       //marker = new L.marker(e.latlng).update().addTo(tagSpacesMap);
-
     }
 
     var popup = L.popup();
-
     function onMapClick(e) {
       //popup.setLatLng(e.latlng).setContent(e.latlng.toString()).openOn(tagSpacesMap);
       //addMarker(e);
@@ -802,10 +811,9 @@ define(function(require, exports, module) {
       }
     });
 
-    var regPattern = /^([^\ #/\\]){1,}$/;
-    //console.log("TAG UTILS");
-    //console.log(TSCORE.selectedTag);
-    //console.log("TAG UTILS");
+    console.log("TAG UTILS");
+    console.log(TSCORE.selectedTag);
+    console.log("TAG UTILS");
 
     showGeoLocation();
 
