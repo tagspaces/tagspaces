@@ -730,6 +730,12 @@ define(function(require, exports, module) {
     detectRetina: true
   };
   var tagSpacesMap = L.map('mapTag', tagSpacesMapOptions).setView([51.505, -0.09], 13);
+  L.control.locate({
+    position: 'topright',
+    strings: {
+      title: $.i18n.t('ns.dialogs:yourLocation') //
+    }
+  }).addTo(tagSpacesMap);
   var marker;
 
   function showGeoLocation() {
@@ -757,6 +763,7 @@ define(function(require, exports, module) {
       //}
       marker = new L.marker(e.latlng).update().addTo(tagSpacesMap);
     }
+
     //tagSpacesMap.removeOverlay(marker);
     tagSpacesMap.on('click', onMapClick);
 
@@ -794,13 +801,6 @@ define(function(require, exports, module) {
         tagSpacesMap.invalidateSize();
       }
     });
-
-    //tagSpacesMap.control.locate({
-    //  position: 'topright',
-    //  strings: {
-    //    title: $.i18n.t('ns.dialogs:yourLocation') //
-    //  }
-    //}).addTo(tagSpacesMap);
 
     var regPattern = /^([^\ #/\\]){1,}$/;
     //console.log("TAG UTILS");
