@@ -1057,31 +1057,31 @@ define(function(require, exports, module) {
   }
 
   function openFacebook()  {
-      TSCORE.IO.openFile("https://www.facebook.com/tagspacesapp");
-    }
+    TSCORE.IO.openFile("https://www.facebook.com/tagspacesapp");
+  }
 
   function openTwitter()  {
-      TSCORE.IO.openFile("https://twitter.com/intent/user?screen_name=tagspaces");
+    TSCORE.IO.openFile("https://twitter.com/intent/user?screen_name=tagspaces");
   }
 
   function openGooglePlus()  {
-      TSCORE.IO.openFile("https://plus.google.com/+TagspacesOrg/");
+    TSCORE.IO.openFile("https://plus.google.com/+TagspacesOrg/");
   }
 
   function suggestNewFeatures()  {
-      TSCORE.IO.openFile("https://tagspaces.uservoice.com/forums/213931-general");
+    TSCORE.IO.openFile("https://tagspaces.uservoice.com/forums/213931-general");
   }
 
   function reportIssues()  {
-      TSCORE.IO.openFile("https://github.com/tagspaces/tagspaces/issues/");
+    TSCORE.IO.openFile("https://github.com/tagspaces/tagspaces/issues/");
   }
 
   function whatsNew()  {
-      TSCORE.IO.openFile("http://www.tagspaces.org/whatsnew/");
+    TSCORE.IO.openFile("http://www.tagspaces.org/whatsnew/");
   }
 
   function showDocumentation()  {
-      TSCORE.IO.openFile("https://www.tagspaces.org/documentation/");
+    TSCORE.IO.openFile("https://www.tagspaces.org/documentation/");
   }
 
   // Public API definition

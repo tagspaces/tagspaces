@@ -250,5 +250,6 @@
   "createDirectory":"New Directory",
   "alertOpenLocatioFirst":"Please open a location first!",
   "exitApp":"Exit",
-  "-": "-"
+  "-": "-",
+  "documentation":"Documentation"
 }

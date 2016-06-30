@@ -257,7 +257,7 @@ define(function(require, exports, module) {
             }
           },
           {
-            label: $.i18n.t("Documentation"),
+            label: $.i18n.t("ns.common:documentation"),
             click: function() {
               TSCORE.UI.showDocumentation();
             }
@@ -267,6 +267,9 @@ define(function(require, exports, module) {
             click: function() {
               TSCORE.UI.whatsNew();
             }
+          },
+          {
+            type: 'separator'
           },
           {
             label: $.i18n.t("ns.common:likeUsOnFacebook"),
@@ -285,6 +288,9 @@ define(function(require, exports, module) {
             click: function() {
               TSCORE.UI.openTwitter();
             }
+          },
+          {
+            type: 'separator'
           },
           {
             label: $.i18n.t("ns.common:suggestNewFeatures"),
