@@ -738,7 +738,6 @@ define(function(require, exports, module) {
   //}).addTo(tagSpacesMap);
   var marker;
 
-
   function showGeoLocation() {
     L.tileLayer(MB_URL, {
       attribution: MB_ATTR,
@@ -749,33 +748,33 @@ define(function(require, exports, module) {
     var coordinate = TSCORE.selectedTag;
     var currentCoordinate = coordinate.split("-");
 
-    if(!regExp.exec(currentCoordinate)){
+    if (!regExp.exec(currentCoordinate)) {
       tagSpacesMap.setView([54.5259614, +15.2551187], 5);
       L.marker([54.5259614, +15.2551187]).addTo(tagSpacesMap).bindPopup('TagSpaces');//.openPopup();
     } else {
       tagSpacesMap.setView(currentCoordinate, 13);
-      L.marker(currentCoordinate).addTo(tagSpacesMap).bindPopup('Tag');//.openPopup();
+      L.marker(currentCoordinate).addTo(tagSpacesMap).bindPopup('Tag', {showOnMouseOver: true});//.openPopup();
     }
     //L.marker(currentCoordinate).addTo(tagSpacesMap).bindPopup('Tag');//.openPopup();
 
     function addMarker(e) {
       // Add marker to map at click location; add popup window
       //marker = new L.marker(e.latlng).update().addTo(tagSpacesMap);
+      if (typeof(marker) === 'undefined') {
+        marker = new L.marker(e.latlng, {draggable: true}).update();
+        //marker.valueOf().style.backgroundColor = 'green'; //or any color
+        marker.addTo(tagSpacesMap);
+      } else {
+        marker.setLatLng(e.latlng);
+      }
     }
 
     var popup = L.popup();
     function onMapClick(e) {
+      addMarker(e);
       //popup.setLatLng(e.latlng).setContent(e.latlng.toString()).openOn(tagSpacesMap);
-      //addMarker(e);
-      //if (marker) {
-      //  tagSpacesMap.removeOverlay(marker);
-      //}
-      marker = new L.marker(e.latlng).update().addTo(tagSpacesMap);
     }
-
-    //tagSpacesMap.removeOverlay(marker);
     tagSpacesMap.on('click', onMapClick);
-
   }
 
   function tagYourself() {
@@ -783,7 +782,7 @@ define(function(require, exports, module) {
       setView: true,
       watch: true
     }) /* This will return map so you can do chaining */.on('locationfound', function(e) {
-      var marker = L.marker([e.latitude, e.longitude]).bindPopup('Current position');
+      var marker = L.marker([e.latitude, e.longitude]).bindPopup('Current position', {showOnMouseOver: true});
       var circle = L.circle([e.latitude, e.longitude], e.accuracy / 2, {
         weight: 1,
         color: 'blue',
