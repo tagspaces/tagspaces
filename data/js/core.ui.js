@@ -691,6 +691,33 @@ define(function(require, exports, module) {
 
 
   // TagSpaces Map
+  function getLocation() {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(showPosition, showLocationNotFound);
+    } else {
+      TSCORE.showAlertDialog("Geolocation is not supported by this browser.");
+    }
+  }
+
+  function showPosition(position) {
+    var lat = position.coords.latitude;
+    var long = position.coords.longitude;
+  }
+
+  function showLocationNotFound(error) {
+    switch (error.code) {
+      case error.PERMISSION_DENIED:
+        TSCORE.showAlertDialog("User denied the request for Geolocation.");
+        break;
+      case error.POSITION_UNAVAILABLE:
+        TSCORE.showAlertDialog("Location information is unavailable.");
+        break;
+      case error.TIMEOUT:
+        TSCORE.showAlertDialog("The request to get user location timed out.");
+        break;
+    }
+  }
+
   var ACCESS_TOKEN = 'pk.eyJ1Ijoia3Jpc3RpeWFuZGQiLCJhIjoiY2lweHVlam5rMDA3Y2k0bTJ4Z3l2ZzFxdyJ9.6pyZff5AHe9xPRX7FcjwCw';
   var MB_ATTR = 'Map data &copy; <a href="http://tagspaces.org">TagSpaces</a>';
   var MB_URL = 'https://api.mapbox.com/styles/v1/mapbox/streets-v9/tiles/256/{z}/{x}/{y}?access_token=' + ACCESS_TOKEN;
@@ -699,11 +726,11 @@ define(function(require, exports, module) {
   var tagSpacesMapOptions = {
     //layers: [MB_ATTR],
     center: [51.505, -0.09],
-    //zoom: 10,
     zoomControl: true,
     detectRetina: true
   };
   var tagSpacesMap = L.map('mapTag', tagSpacesMapOptions).setView([51.505, -0.09], 13);
+  var marker;
 
   function showGeoLocation() {
     L.tileLayer(MB_URL, {
@@ -711,14 +738,26 @@ define(function(require, exports, module) {
       id: 'tagSpacesMap'
     }).addTo(tagSpacesMap);
 
-    L.marker([51.5, -0.09]).addTo(tagSpacesMap).bindPopup('TagSpaces').openPopup();
+    L.marker([51.5, -0.09]).addTo(tagSpacesMap).bindPopup('TagSpaces');//.openPopup();
+
+
+    function addMarker(e) {
+      // Add marker to map at click location; add popup window
+      //marker = new L.marker(e.latlng).update().addTo(tagSpacesMap);
+
+    }
 
     var popup = L.popup();
 
     function onMapClick(e) {
-      popup.setLatLng(e.latlng).setContent("You clicked the map at " + e.latlng.toString()).openOn(tagSpacesMap);
+      //popup.setLatLng(e.latlng).setContent(e.latlng.toString()).openOn(tagSpacesMap);
+      //addMarker(e);
+      //if (marker) {
+      //  tagSpacesMap.removeOverlay(marker);
+      //}
+      marker = new L.marker(e.latlng).update().addTo(tagSpacesMap);
     }
-
+    //tagSpacesMap.removeOverlay(marker);
     tagSpacesMap.on('click', onMapClick);
 
   }
@@ -728,7 +767,7 @@ define(function(require, exports, module) {
       setView: true,
       watch: true
     }) /* This will return map so you can do chaining */.on('locationfound', function(e) {
-      var marker = L.marker([e.latitude, e.longitude]);//.bindPopup('Your are here :)');
+      var marker = L.marker([e.latitude, e.longitude]).bindPopup('Current position');
       var circle = L.circle([e.latitude, e.longitude], e.accuracy / 2, {
         weight: 1,
         color: 'blue',
@@ -737,9 +776,8 @@ define(function(require, exports, module) {
       });
       tagSpacesMap.addLayer(marker);
       tagSpacesMap.addLayer(circle);
-    }).on('locationerror', function(e) {
-      console.log(e);
-      alert("Location access denied.");
+    }).on('locationerror', function(error) {
+      showLocationNotFound(error);
     });
   }
 
@@ -756,13 +794,18 @@ define(function(require, exports, module) {
         tagSpacesMap.invalidateSize();
       }
     });
-    
-    //L.control.locate({
+
+    //tagSpacesMap.control.locate({
     //  position: 'topright',
     //  strings: {
     //    title: $.i18n.t('ns.dialogs:yourLocation') //
     //  }
     //}).addTo(tagSpacesMap);
+
+    var regPattern = /^([^\ #/\\]){1,}$/;
+    //console.log("TAG UTILS");
+    //console.log(TSCORE.selectedTag);
+    //console.log("TAG UTILS");
 
     showGeoLocation();
 
