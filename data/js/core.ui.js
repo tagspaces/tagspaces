@@ -12,8 +12,6 @@ define(function(require, exports, module) {
   var TSPOSTIO = require("tspostioapi");
 
   require('pickr');
-  require('leaflet');
-  require('leafletlocate');
 
   var fileContent;
   var fileType;
@@ -689,138 +687,6 @@ define(function(require, exports, module) {
     flatpickr('.calendar');
   }
 
-
-  // TagSpaces Map
-  function getLocation() {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(showPosition, showLocationNotFound);
-    } else {
-      TSCORE.showAlertDialog("Geolocation is not supported by this browser.");
-    }
-  }
-
-  function showPosition(position) {
-    var lat = position.coords.latitude;
-    var long = position.coords.longitude;
-  }
-
-  function showLocationNotFound(error) {
-    switch (error.code) {
-      case error.PERMISSION_DENIED:
-        TSCORE.showAlertDialog("User denied the request for Geolocation.");
-        break;
-      case error.POSITION_UNAVAILABLE:
-        TSCORE.showAlertDialog("Location information is unavailable.");
-        break;
-      case error.TIMEOUT:
-        TSCORE.showAlertDialog("The request to get user location timed out.");
-        break;
-    }
-  }
-
-  var ACCESS_TOKEN = 'pk.eyJ1Ijoia3Jpc3RpeWFuZGQiLCJhIjoiY2lweHVlam5rMDA3Y2k0bTJ4Z3l2ZzFxdyJ9.6pyZff5AHe9xPRX7FcjwCw';
-  var MB_ATTR = 'Map data &copy; <a href="http://tagspaces.org">TagSpaces</a>';
-  var MB_URL = 'https://api.mapbox.com/styles/v1/mapbox/streets-v9/tiles/256/{z}/{x}/{y}?access_token=' + ACCESS_TOKEN;
-  var OSM_URL = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-  var OSM_ATTRIB = '';
-  var tagSpacesMapOptions = {
-    //layers: [MB_ATTR],
-    center: [51.505, -0.09],
-    zoomControl: true,
-    detectRetina: true
-  };
-  var tagSpacesMap = L.map('mapTag', tagSpacesMapOptions).setView([51.505, -0.09], 13);
-  //L.control.locate({
-  //  position: 'topright',
-  //  strings: {
-  //    title: $.i18n.t('ns.dialogs:yourLocation') //
-  //  }
-  //}).addTo(tagSpacesMap);
-  var marker;
-
-  function showGeoLocation() {
-    L.tileLayer(MB_URL, {
-      attribution: MB_ATTR,
-      id: 'tagSpacesMap'
-    }).addTo(tagSpacesMap);
-
-    var regExp = /^([-+]?)([\d]{1,2})(((\.)(\d+)(,)))(\s*)(([-+]?)([\d]{1,3})((\.)(\d+))?)$/g;
-    var coordinate = TSCORE.selectedTag;
-    var currentCoordinate = coordinate.split("-");
-
-    if (!regExp.exec(currentCoordinate)) {
-      tagSpacesMap.setView([54.5259614, +15.2551187], 5);
-      L.marker([54.5259614, +15.2551187]).addTo(tagSpacesMap).bindPopup('TagSpaces');//.openPopup();
-    } else {
-      tagSpacesMap.setView(currentCoordinate, 13);
-      L.marker(currentCoordinate).addTo(tagSpacesMap).bindPopup('Tag', {showOnMouseOver: true});//.openPopup();
-    }
-    //L.marker(currentCoordinate).addTo(tagSpacesMap).bindPopup('Tag');//.openPopup();
-
-    function addMarker(e) {
-      // Add marker to map at click location; add popup window
-      //marker = new L.marker(e.latlng).update().addTo(tagSpacesMap);
-      if (typeof(marker) === 'undefined') {
-        marker = new L.marker(e.latlng, {draggable: true}).update();
-        //marker.valueOf().style.backgroundColor = 'green'; //or any color
-        marker.addTo(tagSpacesMap);
-      } else {
-        marker.setLatLng(e.latlng);
-      }
-    }
-
-    var popup = L.popup();
-    function onMapClick(e) {
-      addMarker(e);
-      //popup.setLatLng(e.latlng).setContent(e.latlng.toString()).openOn(tagSpacesMap);
-    }
-    tagSpacesMap.on('click', onMapClick);
-  }
-
-  function tagYourself() {
-    tagSpacesMap.locate({
-      setView: true,
-      watch: true
-    }) /* This will return map so you can do chaining */.on('locationfound', function(e) {
-      var marker = L.marker([e.latitude, e.longitude]).bindPopup('Current position', {showOnMouseOver: true});
-      var circle = L.circle([e.latitude, e.longitude], e.accuracy / 2, {
-        weight: 1,
-        color: 'blue',
-        fillColor: '#cacaca',
-        fillOpacity: 0.2
-      });
-      tagSpacesMap.addLayer(marker);
-      tagSpacesMap.addLayer(circle);
-    }).on('locationerror', function(error) {
-      showLocationNotFound(error);
-    });
-  }
-
-  function initMap() {
-
-    tagSpacesMap.on('resize', function() {
-      tagSpacesMap.invalidateSize();
-      //L.Util.requestAnimFrame(tagSpacesMap.invalidateSize,tagSpacesMap,!1,tagSpacesMap._container);
-    });
-
-    $('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
-      var target = $(e.target).attr("href"); // activated tab
-      if (target === "#geoLocation") {
-        tagSpacesMap.invalidateSize();
-      }
-    });
-
-    console.log("TAG UTILS");
-    console.log(TSCORE.selectedTag);
-    console.log("TAG UTILS");
-
-    showGeoLocation();
-
-    //L.mapbox.accessToken = '<your access token here>';
-    //L.mapbox.map('map', 'mapbox.streets')
-    //.addControl(L.mapbox.geocoderControl('mapbox.places'));
-  }
-
   function showTagEditDialog() {
     $('#newTagName').val(TSCORE.selectedTag);
     $('#formEditTag').validator();
@@ -848,9 +714,8 @@ define(function(require, exports, module) {
       handle: ".modal-header"
     });
 
-
     showDateTimeCalendar();
-    initMap();
+    TSCORE.MAP.initMap();
   }
 
   function showRenameFileDialog() {
@@ -1245,7 +1110,7 @@ define(function(require, exports, module) {
   exports.startGettingStartedTour = startGettingStartedTour;
   exports.showTagEditDialog = showTagEditDialog;
   exports.showDateTimeCalendar = showDateTimeCalendar;
-  exports.showGeoLocation = showGeoLocation;
+  //exports.showGeoLocation = showGeoLocation;
   exports.showOptionsDialog = showOptionsDialog;
   exports.showAboutDialog = showAboutDialog;
   exports.showAudioRecordingDialog = showAudioRecordingDialog;
