@@ -12,7 +12,7 @@ define(function(require, exports, module) {
 
   require('leaflet');
   require('leafletlocate');
-  
+
   // TagSpaces Map
   function getLocation() {
     if (navigator.geolocation) {
@@ -53,52 +53,53 @@ define(function(require, exports, module) {
     detectRetina: true
   };
   var tagSpacesMap = L.map('mapTag', tagSpacesMapOptions);//.setView([51.505, -0.09], 13);
-  //L.control.locate({
-  //  position: 'topright',
-  //  strings: {
-  //    title: $.i18n.t('ns.dialogs:yourLocation') //
-  //  }
-  //}).addTo(tagSpacesMap);
-  var marker;
+  var tileLayer = L.tileLayer(MB_URL, {
+    attribution: MB_ATTR,
+    id: 'tagSpacesMap'
+  });
+  var marker;// = L.marker([54.5259614, +15.2551187]);//.addTo(tagSpacesMap).bindPopup('TagSpaces');
 
-  function showGeoLocation() {
-    L.tileLayer(MB_URL, {
-      attribution: MB_ATTR,
-      id: 'tagSpacesMap'
-    }).addTo(tagSpacesMap);
+  function showGeoLocation(coordinate) {
+    tileLayer.addTo(tagSpacesMap);
+
+    //
+    //L.control.locate({
+    //  position: 'topright',
+    //  strings: {
+    //    title: $.i18n.t('ns.dialogs:yourLocation') //
+    //  }
+    //}).addTo(tagSpacesMap);
 
     var regExp = /^([-+]?)([\d]{1,2})(((\.)(\d+)(,)))(\s*)(([-+]?)([\d]{1,3})((\.)(\d+))?)$/g;
-    var coordinate = TSCORE.selectedTag;
-    console.log(coordinate);
+    //var coordinate = TSCORE.selectedTag;
     var currentCoordinate = coordinate.split("-");
-
     if (!regExp.exec(currentCoordinate)) {
+
       tagSpacesMap.setView([54.5259614, +15.2551187], 5);
-      L.marker([54.5259614, +15.2551187]).addTo(tagSpacesMap).bindPopup('TagSpaces');//.openPopup();
+      //marker = L.marker([54.5259614, +15.2551187]).addTo(tagSpacesMap).bindPopup('TagSpaces');//.openPopup();
     } else {
+      //tagSpacesMap.removeLayer(marker);
       tagSpacesMap.setView(currentCoordinate, 13);
       L.marker(currentCoordinate).addTo(tagSpacesMap).bindPopup('Tag', {showOnMouseOver: true});//.openPopup();
-      //addMarker(currentCoordinate);
     }
   }
 
-  function addMarker(e) {
+  function addMarker(currentCoord) {
     // Add marker to map at click location; add popup window
     if (typeof(marker) === 'undefined') {
-      marker = new L.marker(e.latlng, {
+      marker = new L.marker(currentCoord.latlng, {
         draggable: true,
         showOnMouseOver: true
       }).update();
-      //marker.valueOf().style.backgroundColor = 'green'; //or any color
       marker.addTo(tagSpacesMap);
     } else {
-      marker.setLatLng(e.latlng);
+      marker.setLatLng(currentCoord.latlng);
     }
   }
 
   function onMapClick(e) {
+    var popup = L.popup();
     addMarker(e);
-    //var popup = L.popup();
     //popup.setLatLng(e.latlng).setContent(e.latlng.toString()).openOn(tagSpacesMap);
   }
 
@@ -126,6 +127,16 @@ define(function(require, exports, module) {
       var target = $(e.target).attr("href"); // activated tab
       if (target === "#geoLocation") {
         tagSpacesMap.invalidateSize();
+
+        $('#editTagButton').click(function() {
+          TSCORE.TagUtils.renameTag(TSCORE.selectedFiles[0], TSCORE.selectedTag, onMapClick());
+        });
+
+        $('#dialogEditTag').on('hidden.bs.modal', function() {
+          tagSpacesMap.removeLayer(marker);
+        }).on('hide.bs.modal', function() {
+          tagSpacesMap.removeLayer(marker);
+        });
       }
     });
 
@@ -136,7 +147,7 @@ define(function(require, exports, module) {
 
     tagSpacesMap.on('click', onMapClick);
 
-    showGeoLocation();
+    showGeoLocation(TSCORE.selectedTag);
 
     //L.mapbox.accessToken = '<your access token here>';
     //L.mapbox.map('map', 'mapbox.streets')
@@ -151,5 +162,4 @@ define(function(require, exports, module) {
   exports.showGeoLocation = showGeoLocation;
   exports.getLocation = getLocation;
   exports.showPosition = showPosition;
-
 });

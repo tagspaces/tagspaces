@@ -1110,7 +1110,6 @@ define(function(require, exports, module) {
   exports.startGettingStartedTour = startGettingStartedTour;
   exports.showTagEditDialog = showTagEditDialog;
   exports.showDateTimeCalendar = showDateTimeCalendar;
-  //exports.showGeoLocation = showGeoLocation;
   exports.showOptionsDialog = showOptionsDialog;
   exports.showAboutDialog = showAboutDialog;
   exports.showAudioRecordingDialog = showAudioRecordingDialog;
