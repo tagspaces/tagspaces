@@ -97,8 +97,11 @@ define(function(require, exports, module) {
 
   var lat, lng;
   var latlng;
+
   function onMapClick(e) {
     addMarker(e);
+    lat = e.latlng.lat;
+    lng = e.latlng.lng;
   }
 
 
@@ -128,8 +131,8 @@ define(function(require, exports, module) {
         tagSpacesMap.invalidateSize();
 
         $('#editTagButton').click(function() {
-          var latlng = lat + '-' + lng;
-          console.log(latlng);
+          var longitude = lng >= 0 ? '+' + lng : lng;
+          latlng = lat + longitude;
           TSCORE.TagUtils.renameTag(TSCORE.selectedFiles[0], TSCORE.selectedTag, latlng);
         });
 
