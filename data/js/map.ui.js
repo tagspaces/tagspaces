@@ -71,16 +71,14 @@ define(function(require, exports, module) {
     //}).addTo(tagSpacesMap);
 
     var regExp = /^([-+]?)([\d]{1,2})(((\.)(\d+)(,)))(\s*)(([-+]?)([\d]{1,3})((\.)(\d+))?)$/g;
-    //var coordinate = TSCORE.selectedTag;
-    var currentCoordinate = coordinate.split("-");
+    var currentCoordinate = coordinate.indexOf("-") !== -1 ? coordinate.split("-") : coordinate.split("+");
     if (!regExp.exec(currentCoordinate)) {
-
       tagSpacesMap.setView([54.5259614, +15.2551187], 5);
       //marker = L.marker([54.5259614, +15.2551187]).addTo(tagSpacesMap).bindPopup('TagSpaces');//.openPopup();
     } else {
       //tagSpacesMap.removeLayer(marker);
       tagSpacesMap.setView(currentCoordinate, 13);
-      L.marker(currentCoordinate).addTo(tagSpacesMap).bindPopup('Tag', {showOnMouseOver: true});//.openPopup();
+      marker = L.marker(currentCoordinate).addTo(tagSpacesMap).bindPopup('Tag', {showOnMouseOver: true});//.openPopup();
     }
   }
 
@@ -97,11 +95,12 @@ define(function(require, exports, module) {
     }
   }
 
+  var lat, lng;
+  var latlng;
   function onMapClick(e) {
-    var popup = L.popup();
     addMarker(e);
-    //popup.setLatLng(e.latlng).setContent(e.latlng.toString()).openOn(tagSpacesMap);
   }
+
 
   function tagYourself() {
     tagSpacesMap.locate({
@@ -129,12 +128,12 @@ define(function(require, exports, module) {
         tagSpacesMap.invalidateSize();
 
         $('#editTagButton').click(function() {
-          TSCORE.TagUtils.renameTag(TSCORE.selectedFiles[0], TSCORE.selectedTag, onMapClick());
+          var latlng = lat + '-' + lng;
+          console.log(latlng);
+          TSCORE.TagUtils.renameTag(TSCORE.selectedFiles[0], TSCORE.selectedTag, latlng);
         });
 
         $('#dialogEditTag').on('hidden.bs.modal', function() {
-          tagSpacesMap.removeLayer(marker);
-        }).on('hide.bs.modal', function() {
           tagSpacesMap.removeLayer(marker);
         });
       }
