@@ -1,8 +1,9 @@
 /* Copyright (c) 2013-2016 The TagSpaces Authors.
  * Use of this source code is governed by the MIT license which can be found in the LICENSE.txt file. */
+importScripts("nanobar/nanobar.min.js");
 
 "use strict";
-/* globals Mousetrap */
+/* globals  */
 
 var isCordova;
 var isWin;
@@ -19,7 +20,7 @@ $(document).ready(function() {
   });
 
 // Hide all menus in TS on click in extension
-  $(document).on('click' , function(event) {
+  $(document).on('click', function(event) {
     fireHideAllMenusEvent();
   });
 
@@ -28,6 +29,29 @@ $(document).ready(function() {
     window.parent.postMessage(JSON.stringify(msg), "*");
   }
 
+  // Nano progressbar
+  $(function() {
+    var options = {
+      bg: '#42BEDB', // (optional) background css property, '#000' by default
+      // leave target blank for global nanobar
+      target: document.getElementById('nanoBar'), //(optional) Where to put the progress bar, nanobar will be fixed to top of document if target is null
+      // id for new nanobar
+      id: 'nanoBar' // (optional) id for nanobar div
+    };
+    var nanobar = new Nanobar(options);
+    var pct = 0;
+    $(document).ajaxSend(function() {
+      pct += 0.1;
+      // move bar
+      nanobar.go(pct);
+      if (pct > 100.0) {
+        pct = 0.0;
+      }
+    }).ajaxComplete(function() {
+      // Finish progress bar
+      nanobar.go(100);
+    });
+  });
 // Init about box functionality
   $('#aboutExtensionModal').on('show.bs.modal', function() {
     $.ajax({
@@ -36,9 +60,9 @@ $(document).ready(function() {
     }).done(function(mdData) {
       //console.log("DATA: " + mdData);
       //if (marked) {
-        var modalBody = $("#aboutExtensionModal .modal-body");
-        modalBody.html(marked(mdData, {sanitize: true}));
-        handleLinks(modalBody);
+      var modalBody = $("#aboutExtensionModal .modal-body");
+      modalBody.html(marked(mdData, {sanitize: true}));
+      handleLinks(modalBody);
       //} else {
       //  console.log("markdown to html transformer not found");
       //}
@@ -114,7 +138,8 @@ function initSearch() {
 
   $('#searchBox').keyup(function(e) {
     if (e.keyCode === 13) { // Start the search on ENTER
-      doSearch();}
+      doSearch();
+    }
   });
 
   $(window).keyup(function(e) {
@@ -127,20 +152,20 @@ function initSearch() {
   //  showSearchPanel();
   //  return false;
   //});
-  window.addEventListener("keyup", function keyup(evt){
+  window.addEventListener("keyup", function keyup(evt) {
 
     var handled = false;
-    var cmd = (evt.ctrlKey ? 1 : 0)  |
-            (evt.altKey ? 2 : 0)   |
+    var cmd = (evt.ctrlKey ? 1 : 0) |
+            (evt.altKey ? 2 : 0) |
             (evt.shiftKey ? 4 : 0) |
             (evt.metaKey ? 8 : 0);
     /*
      First, handle the key bindings that are independent whether an input
      control is selected or not.
      */
-    if(cmd === 1 || cmd === 8 || cmd === 5 || cmd === 12){
+    if (cmd === 1 || cmd === 8 || cmd === 5 || cmd === 12) {
       // either CTRL or META key with optional SHIFT.
-      switch(evt.keyCode){
+      switch (evt.keyCode) {
         case 70: // f
           //open custom search/find text
           handled = true;
@@ -153,21 +178,21 @@ function initSearch() {
         case 107: // FF "+" and "="
         case 187: // Chrome "+"
         case 171: // FF with German keyboard
-          //zoom in
+                  //zoom in
           handled = true;
           break;
         case 173: // FF/Mac "-"
         case 109: // FF "-"
         case 189: // Chrome "-"
-          //zoom out
+                  //zoom out
           handled = true;
           break;
       }
     }
 
     // CTRL or META without shift
-    if(cmd === 1 || cmd === 8){
-      switch(evt.keyCode){
+    if (cmd === 1 || cmd === 8) {
+      switch (evt.keyCode) {
         case 70: // f
           showSearchPanel(); //open custom search/find text
           handled = true;
@@ -176,8 +201,8 @@ function initSearch() {
     }
 
     // CTRL+ALT or Option+Command
-    if(cmd === 3 || cmd === 10){
-      switch(evt.keyCode){
+    if (cmd === 3 || cmd === 10) {
+      switch (evt.keyCode) {
         case 80: //p
           //presentaion mode
           handled = true;
@@ -188,7 +213,7 @@ function initSearch() {
           break;
       }
     }
-    if(handled){
+    if (handled) {
       evt.preventDefault();
       return;
     }

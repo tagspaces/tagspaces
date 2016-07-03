@@ -57,7 +57,7 @@ define(function(require, exports, module) {
     attribution: MB_ATTR,
     id: 'tagSpacesMap'
   });
-  var marker;// = L.marker([54.5259614, +15.2551187]);//.addTo(tagSpacesMap).bindPopup('TagSpaces');
+  var marker;
 
   function showGeoLocation(coordinate) {
     tileLayer.addTo(tagSpacesMap);
@@ -76,7 +76,6 @@ define(function(require, exports, module) {
       tagSpacesMap.setView([54.5259614, +15.2551187], 5);
       //marker = L.marker([54.5259614, +15.2551187]).addTo(tagSpacesMap).bindPopup('TagSpaces');//.openPopup();
     } else {
-      //tagSpacesMap.removeLayer(marker);
       tagSpacesMap.setView(currentCoordinate, 13);
       marker = L.marker(currentCoordinate).addTo(tagSpacesMap).bindPopup('Tag', {showOnMouseOver: true});//.openPopup();
     }
@@ -144,7 +143,6 @@ define(function(require, exports, module) {
 
     tagSpacesMap.on('resize', function() {
       tagSpacesMap.invalidateSize();
-      //L.Util.requestAnimFrame(tagSpacesMap.invalidateSize,tagSpacesMap,!1,tagSpacesMap._container);
     });
 
     tagSpacesMap.on('click', onMapClick);
