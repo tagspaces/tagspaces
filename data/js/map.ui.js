@@ -48,28 +48,26 @@ define(function(require, exports, module) {
   var OSM_ATTRIB = '';
   var tagSpacesMapOptions = {
     //layers: [MB_ATTR],
-    //center: [51.505, -0.09],
     zoomControl: true,
     detectRetina: true
   };
-  var tagSpacesMap = L.map('mapTag', tagSpacesMapOptions);//.setView([51.505, -0.09], 13);
+  var tagSpacesMap = L.map('mapTag', tagSpacesMapOptions);
   var tileLayer = L.tileLayer(MB_URL, {
     attribution: MB_ATTR,
     id: 'tagSpacesMap'
   });
   var marker;
 
+  //
+  //var trackMe = L.control.locate({
+  //  position: 'topright',
+  //  strings: {
+  //    title: $.i18n.t('ns.dialogs:yourLocation') //
+  //  }
+  //}).addTo(tagSpacesMap);
+
   function showGeoLocation(coordinate) {
     tileLayer.addTo(tagSpacesMap);
-
-    //
-    //L.control.locate({
-    //  position: 'topright',
-    //  strings: {
-    //    title: $.i18n.t('ns.dialogs:yourLocation') //
-    //  }
-    //}).addTo(tagSpacesMap);
-
     var regExp = /^([-+]?)([\d]{1,2})(((\.)(\d+)(,)))(\s*)(([-+]?)([\d]{1,3})((\.)(\d+))?)$/g;
     var currentCoordinate = coordinate.indexOf("-") !== -1 ? coordinate.split("-") : coordinate.split("+");
     if (!regExp.exec(currentCoordinate)) {
@@ -102,7 +100,6 @@ define(function(require, exports, module) {
     lat = e.latlng.lat;
     lng = e.latlng.lng;
   }
-
 
   function tagYourself() {
     tagSpacesMap.locate({
