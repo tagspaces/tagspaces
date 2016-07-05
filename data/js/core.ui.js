@@ -329,6 +329,10 @@ define(function(require, exports, module) {
       TSCORE.IO.openFile($(this).attr('href'));
     });
 
+    $('#dialogEditTag').on('shown.bs.modal', function() {
+      parseTag(TSCORE.selectedTag);
+    });
+
     // Hide drop downs by click and drag
     $(document).click(function() {
       TSCORE.hideAllDropDownMenus();
@@ -716,6 +720,27 @@ define(function(require, exports, module) {
 
     showDateTimeCalendar();
     TSCORE.MAP.initMap();
+  }
+
+  function parseTag(dataTag) {
+    var geoLocationRegExp = /^([-+]?)([\d]{1,2})(((\.)(\d+)(,)))(\s*)(([-+]?)([\d]{1,3})((\.)(\d+))?)$/g;
+    var currentCoordinate = dataTag.indexOf("-") !== -1 ? dataTag.split("-") : dataTag.split("+");
+
+    var dataYearRegExp = /^\d\d\d\d-(0?[1-9]|1[0-2])-(0?[1-9]|[12][0-9]|3[01])$/g;
+    var dataTimeRegExp = /^\d\d\d\d-(00|[0-9]|1[0-9]|2[0-3]):([0-9]|[0-5][0-9]):([0-9]|[0-5][0-9])$/g;
+    var currentDateTime = dataTag;
+
+    if (geoLocationRegExp.exec(currentCoordinate)) {
+      $('.nav-tabs a[href="#geoLocation"]').tab('show');
+    } else if (currentDateTime.match(dataTimeRegExp) || currentDateTime.match(dataYearRegExp)) {
+      $('.nav-tabs a[href="#dateTimeTab"]').tab('show');
+    } else if (!geoLocationRegExp.exec(currentCoordinate)
+            && !currentDateTime.match(dataTimeRegExp)
+            && !currentDateTime.match(dataYearRegExp)) {
+      $('.nav-tabs a[href="#formEditTag"]').tab('show');
+    } else {
+      throw new TypeError("Invalid data.");
+    }
   }
 
   function showRenameFileDialog() {

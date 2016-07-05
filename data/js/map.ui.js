@@ -97,8 +97,15 @@ define(function(require, exports, module) {
 
   function onMapClick(e) {
     addMarker(e);
+    parseCoordinateMap(e);
     lat = e.latlng.lat;
     lng = e.latlng.lng;
+  }
+
+  function parseCoordinateMap(e) {
+    var date = $('#coordinateMap')[0];
+    var long = lng >= 0 ? '+' + lng : lng;
+    date.value = e.latlng.lat + long;
   }
 
   function tagYourself() {
@@ -137,9 +144,13 @@ define(function(require, exports, module) {
         });
       }
     });
-
     tagSpacesMap.on('resize', function() {
       tagSpacesMap.invalidateSize();
+    });
+
+    $('#dialogEditTag').on('shown.bs.modal', function() {
+      var date = $('#coordinateMap')[0];
+      date.value = TSCORE.selectedTag;
     });
 
     tagSpacesMap.on('click', onMapClick);
