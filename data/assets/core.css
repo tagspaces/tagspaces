@@ -78,13 +78,14 @@
   color: white;
   border-radius: 3px;
   background-color: #515151;
+  opacity: 0.8 !important;
   text-transform: uppercase;
   font-size: 12px;
   padding: 4px;
 }
 
 #fileMenuButton:hover  {
-  opacity: 0.8 !important;
+  opacity: 1 !important;
 }
 
 #fileTitle {

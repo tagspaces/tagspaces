@@ -14,8 +14,12 @@
 }
 
 .fileExtColor[data-ext^="doc"],
+.fileExtColor[data-ext^="htm"],
+.fileExtColor[data-ext^="md"],
+.fileExtColor[data-ext="txt"],
 .fileExtColor[data-ext="odt"] {
   background-color: #beefed !important;
+  color: gray !important;
 }
 
 .fileExtColor[data-ext^="wav"],
