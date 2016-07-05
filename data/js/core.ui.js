@@ -297,11 +297,11 @@ define(function(require, exports, module) {
     });
     $contactUsContent.on('click', '#openWhatsnew', function(e) {
       e.preventDefault();
-      TSCORE.IO.openFile($(this).attr('href'));
+      TSCORE.IO.openFile("http://www.tagspaces.org/whatsnew/");
     });
     $contactUsContent.on('click', '#openGitHubIssues', function(e) {
       e.preventDefault();
-      TSCORE.IO.openFile($(this).attr('href'));
+      TSCORE.IO.openFile("https://github.com/tagspaces/tagspaces/issues/");
     });
     $contactUsContent.on('click', '#helpUsTranslate', function(e) {
       e.preventDefault();
@@ -309,7 +309,7 @@ define(function(require, exports, module) {
     });
     $contactUsContent.on('click', '#openTwitter', function(e) {
       e.preventDefault();
-      TSCORE.IO.openFile($(this).attr('href'));
+      TSCORE.IO.openFile("https://twitter.com/intent/user?screen_name=tagspaces");
     });
     $contactUsContent.on('click', '#openTwitter2', function(e) {
       e.preventDefault();
@@ -317,11 +317,11 @@ define(function(require, exports, module) {
     });
     $contactUsContent.on('click', '#openGooglePlus', function(e) {
       e.preventDefault();
-      TSCORE.IO.openFile($(this).attr('href'));
+      TSCORE.IO.openFile("https://plus.google.com/+TagspacesOrg/");
     });
     $contactUsContent.on('click', '#openFacebook', function(e) {
       e.preventDefault();
-      TSCORE.IO.openFile($(this).attr('href'));
+      TSCORE.IO.openFile("https://www.facebook.com/tagspacesapp");
     });
     $contactUsContent.on('click', '#openSupportUs', function(e) {
       e.preventDefault();
