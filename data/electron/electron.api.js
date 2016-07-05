@@ -251,6 +251,60 @@ define(function(require, exports, module) {
             }
           },
           {
+            label: $.i18n.t("ns.common:startingHints"),
+            click: function() {
+              TSCORE.UI.startGettingStartedTour();
+            }
+          },
+          {
+            label: $.i18n.t("ns.common:documentation"),
+            click: function() {
+              TSCORE.UI.showDocumentation();
+            }
+          },
+          {
+            label: $.i18n.t("ns.common:whatsNew"),
+            click: function() {
+              TSCORE.UI.whatsNew();
+            }
+          },
+          {
+            type: 'separator'
+          },
+          {
+            label: $.i18n.t("ns.common:likeUsOnFacebook"),
+            click: function() {
+              TSCORE.UI.openFacebook();
+            }
+          },
+          {
+            label: $.i18n.t("ns.common:joinOnGooglePlus"),
+            click: function() {
+              TSCORE.UI.openGooglePlus();
+            }
+          },
+          {
+            label: $.i18n.t("ns.common:followOnTwitter"),
+            click: function() {
+              TSCORE.UI.openTwitter();
+            }
+          },
+          {
+            type: 'separator'
+          },
+          {
+            label: $.i18n.t("ns.common:suggestNewFeatures"),
+            click: function() {
+              TSCORE.UI.suggestNewFeatures();
+            }
+          },
+          {
+            label: $.i18n.t("ns.common:reportIssues"),
+            click: function() {
+              TSCORE.UI.reportIssues();
+            }
+          },
+          {
             label: $.i18n.t("ns.common:aboutTagSpaces"),
             click: function() {
               TSCORE.UI.showAboutDialog();

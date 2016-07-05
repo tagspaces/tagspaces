@@ -297,11 +297,11 @@ define(function(require, exports, module) {
     });
     $contactUsContent.on('click', '#openWhatsnew', function(e) {
       e.preventDefault();
-      TSCORE.IO.openFile($(this).attr('href'));
+      TSCORE.UI.whatsNew();
     });
     $contactUsContent.on('click', '#openGitHubIssues', function(e) {
       e.preventDefault();
-      TSCORE.IO.openFile($(this).attr('href'));
+      TSCORE.UI.reportIssues();
     });
     $contactUsContent.on('click', '#helpUsTranslate', function(e) {
       e.preventDefault();
@@ -309,7 +309,7 @@ define(function(require, exports, module) {
     });
     $contactUsContent.on('click', '#openTwitter', function(e) {
       e.preventDefault();
-      TSCORE.IO.openFile($(this).attr('href'));
+      TSCORE.UI.openTwitter();
     });
     $contactUsContent.on('click', '#openTwitter2', function(e) {
       e.preventDefault();
@@ -317,11 +317,11 @@ define(function(require, exports, module) {
     });
     $contactUsContent.on('click', '#openGooglePlus', function(e) {
       e.preventDefault();
-      TSCORE.IO.openFile($(this).attr('href'));
+      TSCORE.UI.openGooglePlus();
     });
     $contactUsContent.on('click', '#openFacebook', function(e) {
       e.preventDefault();
-      TSCORE.IO.openFile($(this).attr('href'));
+      TSCORE.UI.openFacebook();
     });
     $contactUsContent.on('click', '#openSupportUs', function(e) {
       e.preventDefault();
@@ -1056,6 +1056,34 @@ define(function(require, exports, module) {
     });
   }
 
+  function openFacebook()  {
+    TSCORE.IO.openFile("https://www.facebook.com/tagspacesapp");
+  }
+
+  function openTwitter()  {
+    TSCORE.IO.openFile("https://twitter.com/intent/user?screen_name=tagspaces");
+  }
+
+  function openGooglePlus()  {
+    TSCORE.IO.openFile("https://plus.google.com/+TagspacesOrg/");
+  }
+
+  function suggestNewFeatures()  {
+    TSCORE.IO.openFile("https://tagspaces.uservoice.com/forums/213931-general");
+  }
+
+  function reportIssues()  {
+    TSCORE.IO.openFile("https://github.com/tagspaces/tagspaces/issues/");
+  }
+
+  function whatsNew()  {
+    TSCORE.IO.openFile("http://www.tagspaces.org/whatsnew/");
+  }
+
+  function showDocumentation()  {
+    TSCORE.IO.openFile("https://www.tagspaces.org/documentation/");
+  }
+
   // Public API definition
   exports.showContextMenu = showContextMenu;
   exports.initUI = initUI;
@@ -1088,4 +1116,11 @@ define(function(require, exports, module) {
   exports.createHTMLFile = createHTMLFile;
   exports.createMDFile = createMDFile;
   exports.createTXTFile = createTXTFile;
+  exports.openFacebook = openFacebook;
+  exports.openTwitter = openTwitter;
+  exports.openGooglePlus = openGooglePlus;
+  exports.suggestNewFeatures = suggestNewFeatures;
+  exports.reportIssues = reportIssues;
+  exports.whatsNew = whatsNew;
+  exports.showDocumentation = showDocumentation;
 });
