@@ -68,6 +68,7 @@ define(function(require, exports, module) {
 
   function showGeoLocation(coordinate) {
     tileLayer.addTo(tagSpacesMap);
+
     var regExp = /^([-+]?)([\d]{1,2})(((\.)(\d+)(,)))(\s*)(([-+]?)([\d]{1,3})((\.)(\d+))?)$/g;
     var currentCoordinate = coordinate.indexOf("-") !== -1 ? coordinate.split("-") : coordinate.split("+");
     if (!regExp.exec(currentCoordinate)) {
@@ -98,14 +99,14 @@ define(function(require, exports, module) {
   function onMapClick(e) {
     addMarker(e);
     parseCoordinateMap(e);
-    lat = e.latlng.lat;
-    lng = e.latlng.lng;
+    lat = e.latlng.lat.toFixed(7);
+    lng = e.latlng.lng.toFixed(7);
   }
 
   function parseCoordinateMap(e) {
     var date = $('#coordinateMap')[0];
     var long = lng >= 0 ? '+' + lng : lng;
-    date.value = e.latlng.lat + long;
+    date.value = e.latlng.lat.toFixed(7) + long;
   }
 
   function tagYourself() {
