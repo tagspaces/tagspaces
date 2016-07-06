@@ -687,7 +687,17 @@ define(function(require, exports, module) {
     });
 
     flatpickr('#dateTimeCalendar', {dateFormat: 'd-m-Y'});
-    flatpickr('#dateTimeRangeCalendar', {dateFormat: 'd-m-Y'});
+    flatpickr('#dateTimeRangeCalendar', {
+      disable: [
+        {
+          from: "2016-07-06",
+          to: "2016-07-09"
+        },
+        "2016-07-24"
+      ],
+      minDate: "today",
+      dateFormat: 'd-m-Y',
+    });
     flatpickr('.calendar');
   }
 
@@ -726,17 +736,61 @@ define(function(require, exports, module) {
     var geoLocationRegExp = /^([-+]?)([\d]{1,2})(((\.)(\d+)(,)))(\s*)(([-+]?)([\d]{1,3})((\.)(\d+))?)$/g;
     var currentCoordinate = dataTag.indexOf("-") !== -1 ? dataTag.split("-") : dataTag.split("+");
 
-    var dataYearRegExp = /^\d\d\d\d-(0?[1-9]|1[0-2])-(0?[1-9]|[12][0-9]|3[01])$/g;
-    var dataTimeRegExp = /^\d\d\d\d-(00|[0-9]|1[0-9]|2[0-3]):([0-9]|[0-5][0-9]):([0-9]|[0-5][0-9])$/g;
+    var dateTimeRegExp = /^\d\d\d\d-(00|[0-9]|1[0-9]|2[0-3]):([0-9]|[0-5][0-9]):([0-9]|[0-5][0-9])$/g;
+    var dateTimeWinRegExp = /^(([0-1]?[0-9])|([2][0-3]))!([0-5]?[0-9])(!([0-5]?[0-9]))?$/g;
+    var dateRangeRegExp = /^\d\d\d\d-(0?[1-9]|1[0-2])-(0?[1-9]|[12][0-9]|3[01])$/g;
+
     var currentDateTime = dataTag;
+
+    var year = /^\d{4}$/g;
+    var month = /^\d^[0-9]{1,6}$/g;
+    var date = /^\d^[0-9]{1,8}$/g;
+
+    var yearRange = /^\d{4}-\d{4}$/g;
+    var monthRange = month + "-" + month;
+    var dateRange = date + "-" + date;
+
+    var dateRegExp = currentDateTime.match(dateTimeRegExp)
+            || currentDateTime.match(dateRangeRegExp)
+            || currentDateTime.match(dateTimeWinRegExp)
+            || year || month || date || yearRange || monthRange || dateRange;
 
     if (geoLocationRegExp.exec(currentCoordinate)) {
       $('.nav-tabs a[href="#geoLocation"]').tab('show');
-    } else if (currentDateTime.match(dataTimeRegExp) || currentDateTime.match(dataYearRegExp)) {
+    } else if (dateRegExp) {
       $('.nav-tabs a[href="#dateTimeTab"]').tab('show');
-    } else if (!geoLocationRegExp.exec(currentCoordinate)
-            && !currentDateTime.match(dataTimeRegExp)
-            && !currentDateTime.match(dataYearRegExp)) {
+
+      var dateCheckBox = currentDateTime.match(year) || currentDateTime.match(month)
+              || currentDateTime.match(date);
+      var dateTimeCheckBox = currentDateTime.match(dateTimeRegExp)
+              || currentDateTime.match(dateTimeWinRegExp);
+      var dateRangeCheckBox = currentDateTime.match(dateRangeRegExp) || currentDateTime.match(yearRange)
+              || currentDateTime.match(monthRange) || currentDateTime.match(dateRange);
+
+      if (dateCheckBox) {
+        //$('#dateCalendarInput').prop('checked', true);
+        $('#dateCalendarInput').prop('checked', true);
+        if ($('#dateCalendarInput').prop('checked', true)) {
+          //$('#dateTimeCalendar').show();
+          //$('#dateTimeRangeCalendar').hide();
+          $('#dateCalendar').show();
+        }
+      } else if (dateTimeCheckBox) {
+        $('#dateTimeInput').prop('checked', true);
+        if ($('#dateTimeInput').prop('checked', true)) {
+          $('#dateTimeCalendar').css('display', 'inline-block');
+          $('#dateCalendar').hide();
+          $('#dateTimeRangeCalendar').hide();
+        }
+      } else if (dateRangeCheckBox) {
+        $('#dateTimeRangeInput').prop('checked', true);
+        if ($('#dateTimeRangeInput').prop('checked', true)) {
+          $('#dateTimeRangeCalendar').show();
+          //$('#dateTimeCalendar').hide();
+          //$('#dateCalendar').hide();
+        }
+      }
+    } else if (!(dateRegExp && geoLocationRegExp.exec(currentCoordinate))) {
       $('.nav-tabs a[href="#formEditTag"]').tab('show');
     } else {
       throw new TypeError("Invalid data.");
