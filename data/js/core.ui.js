@@ -750,22 +750,23 @@ define(function(require, exports, module) {
     var monthRange = month + "-" + month;
     var dateRange = date + "-" + date;
 
-    var dateRegExp = currentDateTime.match(dateTimeRegExp)
-            || currentDateTime.match(dateRangeRegExp)
-            || currentDateTime.match(dateTimeWinRegExp)
-            || year || month || date || yearRange || monthRange || dateRange;
+    var dateRegExp = currentDateTime.match(dateTimeRegExp) ||
+            //currentDateTime.match(dateRangeRegExp) ||
+            currentDateTime.match(dateTimeWinRegExp) ||
+            year || month || date ;//|| yearRange || monthRange || dateRange;
 
     if (geoLocationRegExp.exec(currentCoordinate)) {
       $('.nav-tabs a[href="#geoLocation"]').tab('show');
     } else if (dateRegExp) {
       $('.nav-tabs a[href="#dateTimeTab"]').tab('show');
 
-      var dateCheckBox = currentDateTime.match(year) || currentDateTime.match(month)
-              || currentDateTime.match(date);
-      var dateTimeCheckBox = currentDateTime.match(dateTimeRegExp)
-              || currentDateTime.match(dateTimeWinRegExp);
-      var dateRangeCheckBox = currentDateTime.match(dateRangeRegExp) || currentDateTime.match(yearRange)
-              || currentDateTime.match(monthRange) || currentDateTime.match(dateRange);
+      var dateCheckBox = currentDateTime.match(year) || currentDateTime.match(month) ||
+              currentDateTime.match(date);
+      var dateTimeCheckBox = currentDateTime.match(dateTimeRegExp) ||
+              currentDateTime.match(dateTimeWinRegExp);
+      var dateRangeCheckBox = currentDateTime.match(dateRangeRegExp) ||
+              currentDateTime.match(yearRange) ||
+              currentDateTime.match(monthRange) || currentDateTime.match(dateRange);
 
       if (dateCheckBox) {
         //$('#dateCalendarInput').prop('checked', true);

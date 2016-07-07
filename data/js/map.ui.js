@@ -52,12 +52,11 @@ define(function(require, exports, module) {
     detectRetina: true
   };
   var tagSpacesMap = L.map('mapTag', tagSpacesMapOptions);
-  var tileLayer = L.tileLayer(MB_URL, {
+  var tileLayer = L.tileLayer(OSM_URL, {
     attribution: MB_ATTR,
     id: 'tagSpacesMap'
   });
   var marker;
-
   //
   //var trackMe = L.control.locate({
   //  position: 'topright',
@@ -65,24 +64,44 @@ define(function(require, exports, module) {
   //    title: $.i18n.t('ns.dialogs:yourLocation') //
   //  }
   //}).addTo(tagSpacesMap);
+  var currentLat, currentLong;
+
+  function splitValue(value, index) {
+    currentLat = value.substring(0, index);
+    currentLong = value.substring(index);
+
+    return currentLat + "," + currentLong;
+  }
 
   function showGeoLocation(coordinate) {
-    tileLayer.addTo(tagSpacesMap);
 
-    var regExp = /^([-+]?)([\d]{1,2})(((\.)(\d+)(,)))(\s*)(([-+]?)([\d]{1,3})((\.)(\d+))?)$/g;
-    var currentCoordinate = coordinate.indexOf("-") !== -1 ? coordinate.split("-") : coordinate.split("+");
+    tagSpacesMap.setView(new L.LatLng(54.5259614, -15.2551187), 5);
+    //tagSpacesMap.addLayer(tileLayer);
+    tileLayer.addTo(tagSpacesMap);
+    var regExp = /^([-+]?)([\d]{1,2})(((\.)(\d+)(.)))(\s*)(([-+]?)([\d]{1,3})((\.)(\d+))?)$/g;
+
+    var currentCoordinate;
+    if (coordinate.lastIndexOf('+') !== -1) {
+      currentCoordinate = splitValue(coordinate, coordinate.lastIndexOf('+'));
+    } else if (coordinate.lastIndexOf('-') !== -1) {
+      currentCoordinate = splitValue(coordinate, coordinate.lastIndexOf('-'));
+    } else {
+      console.log('Invalid coordinate date.');
+    }
+
     if (!regExp.exec(currentCoordinate)) {
       tagSpacesMap.setView([54.5259614, +15.2551187], 5);
-      //marker = L.marker([54.5259614, +15.2551187]).addTo(tagSpacesMap).bindPopup('TagSpaces');//.openPopup();
     } else {
-      tagSpacesMap.setView(currentCoordinate, 13);
-      marker = L.marker(currentCoordinate).addTo(tagSpacesMap).bindPopup('Tag', {showOnMouseOver: true});//.openPopup();
+      tagSpacesMap.setView([currentLat, currentLong], 13);
+      marker = L.marker([currentLat, currentLong], {
+        draggable: true
+      }).addTo(tagSpacesMap).bindPopup('Tag', {showOnMouseOver: true});
     }
   }
 
   function addMarker(currentCoord) {
     // Add marker to map at click location; add popup window
-    if (typeof(marker) === 'undefined') {
+    if (typeof marker === 'undefined') {
       marker = new L.marker(currentCoord.latlng, {
         draggable: true,
         showOnMouseOver: true
@@ -90,6 +109,13 @@ define(function(require, exports, module) {
       marker.addTo(tagSpacesMap);
     } else {
       marker.setLatLng(currentCoord.latlng);
+    }
+  }
+
+  function removeMarker() {
+    //tagSpacesMap.removeLayer(marker);
+    if (tagSpacesMap.removeLayer(marker)) {
+      console.log("MARKER REMOVED");
     }
   }
 
@@ -106,7 +132,8 @@ define(function(require, exports, module) {
   function parseCoordinateMap(e) {
     var date = $('#coordinateMap')[0];
     var long = lng >= 0 ? '+' + lng : lng;
-    date.value = e.latlng.lat.toFixed(7) + long;
+    var dateValue = e.latlng.lat.toFixed(7) + "" + long;
+    date.value = dateValue.trim();
   }
 
   function tagYourself() {
@@ -136,12 +163,13 @@ define(function(require, exports, module) {
 
         $('#editTagButton').click(function() {
           var longitude = lng >= 0 ? '+' + lng : lng;
-          latlng = lat + longitude;
-          TSCORE.TagUtils.renameTag(TSCORE.selectedFiles[0], TSCORE.selectedTag, latlng);
+          latlng = lat + "" + longitude;
+          console.log(latlng);
+          TSCORE.TagUtils.renameTag(TSCORE.selectedFiles[0], TSCORE.selectedTag, latlng.trim());
         });
 
         $('#dialogEditTag').on('hidden.bs.modal', function() {
-          tagSpacesMap.removeLayer(marker);
+          removeMarker();
         });
       }
     });
@@ -157,10 +185,6 @@ define(function(require, exports, module) {
     tagSpacesMap.on('click', onMapClick);
 
     showGeoLocation(TSCORE.selectedTag);
-
-    //L.mapbox.accessToken = '<your access token here>';
-    //L.mapbox.map('map', 'mapbox.streets')
-    //.addControl(L.mapbox.geocoderControl('mapbox.places'));
   }
 
   // Public API definition
