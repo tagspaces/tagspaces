@@ -330,7 +330,7 @@ define(function(require, exports, module) {
     });
 
     $('#dialogEditTag').on('shown.bs.modal', function() {
-      parseTag(TSCORE.selectedTag);
+      tagRecognition(TSCORE.selectedTag);
     });
 
     // Hide drop downs by click and drag
@@ -732,14 +732,20 @@ define(function(require, exports, module) {
     TSCORE.MAP.initMap();
   }
 
-  function parseTag(dataTag) {
+  function tagRecognition(dataTag) {
     var geoLocationRegExp = /^([-+]?)([\d]{1,2})(((\.)(\d+)(,)))(\s*)(([-+]?)([\d]{1,3})((\.)(\d+))?)$/g;
-    var currentCoordinate = dataTag.indexOf("-") !== -1 ? dataTag.split("-") : dataTag.split("+");
+    var currentCoordinate;// = dataTag.indexOf("-") !== -1 ? dataTag.split("-") : dataTag.split("+");
 
     var dateTimeRegExp = /^\d\d\d\d-(00|[0-9]|1[0-9]|2[0-3]):([0-9]|[0-5][0-9]):([0-9]|[0-5][0-9])$/g;
     var dateTimeWinRegExp = /^(([0-1]?[0-9])|([2][0-3]))!([0-5]?[0-9])(!([0-5]?[0-9]))?$/g;
-    var dateRangeRegExp = /^\d\d\d\d-(0?[1-9]|1[0-2])-(0?[1-9]|[12][0-9]|3[01])$/g;
+    //var dateRangeRegExp = /^\d\d\d\d-(0?[1-9]|1[0-2])-(0?[1-9]|[12][0-9]|3[01])$/g;
 
+
+    if (dataTag.lastIndexOf('+') !== -1) {
+      currentCoordinate = TSCORE.MAP.splitValue(TSCORE.selectedTag, dataTag.lastIndexOf('+'));
+    } else if (dataTag.lastIndexOf('-') !== -1) {
+      currentCoordinate = TSCORE.MAP.splitValue(TSCORE.selectedTag, dataTag.lastIndexOf('-'));
+    }
     var currentDateTime = dataTag;
 
     var year = /^\d{4}$/g;
@@ -752,8 +758,8 @@ define(function(require, exports, module) {
 
     var dateRegExp = currentDateTime.match(dateTimeRegExp) ||
             //currentDateTime.match(dateRangeRegExp) ||
-            currentDateTime.match(dateTimeWinRegExp) ||
-            year || month || date ;//|| yearRange || monthRange || dateRange;
+            currentDateTime.match(dateTimeWinRegExp);// ||
+    // year || month || date ;|| yearRange || monthRange || dateRange;
 
     if (geoLocationRegExp.exec(currentCoordinate)) {
       $('.nav-tabs a[href="#geoLocation"]').tab('show');
@@ -783,14 +789,15 @@ define(function(require, exports, module) {
           $('#dateCalendar').hide();
           $('#dateTimeRangeCalendar').hide();
         }
-      } else if (dateRangeCheckBox) {
-        $('#dateTimeRangeInput').prop('checked', true);
-        if ($('#dateTimeRangeInput').prop('checked', true)) {
-          $('#dateTimeRangeCalendar').show();
-          //$('#dateTimeCalendar').hide();
-          //$('#dateCalendar').hide();
-        }
       }
+      //else if (dateRangeCheckBox) {
+      //  $('#dateTimeRangeInput').prop('checked', true);
+      //  if ($('#dateTimeRangeInput').prop('checked', true)) {
+      //    $('#dateTimeRangeCalendar').show();
+      //    //$('#dateTimeCalendar').hide();
+      //    //$('#dateCalendar').hide();
+      //  }
+      //}
     } else if (!(dateRegExp && geoLocationRegExp.exec(currentCoordinate))) {
       $('.nav-tabs a[href="#formEditTag"]').tab('show');
     } else {

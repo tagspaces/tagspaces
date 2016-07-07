@@ -78,24 +78,22 @@ define(function(require, exports, module) {
     tagSpacesMap.setView(new L.LatLng(54.5259614, -15.2551187), 5);
     //tagSpacesMap.addLayer(tileLayer);
     tileLayer.addTo(tagSpacesMap);
-    var regExp = /^([-+]?)([\d]{1,2})(((\.)(\d+)(.)))(\s*)(([-+]?)([\d]{1,3})((\.)(\d+))?)$/g;
+    var regExp = /^([-+]?)([\d]{1,2})(((\.)(\d+)(,)))(\s*)(([-+]?)([\d]{1,3})((\.)(\d+))?)$/g;
 
     var currentCoordinate;
     if (coordinate.lastIndexOf('+') !== -1) {
       currentCoordinate = splitValue(coordinate, coordinate.lastIndexOf('+'));
     } else if (coordinate.lastIndexOf('-') !== -1) {
       currentCoordinate = splitValue(coordinate, coordinate.lastIndexOf('-'));
-    } else {
-      console.log('Invalid coordinate date.');
     }
 
-    if (!regExp.exec(currentCoordinate)) {
-      tagSpacesMap.setView([54.5259614, +15.2551187], 5);
-    } else {
+    if (regExp.exec(currentCoordinate)) {
       tagSpacesMap.setView([currentLat, currentLong], 13);
       marker = L.marker([currentLat, currentLong], {
         draggable: true
       }).addTo(tagSpacesMap).bindPopup('Tag', {showOnMouseOver: true});
+    } else {
+      tagSpacesMap.setView([54.5259614, +15.2551187], 5);
     }
   }
 
@@ -195,4 +193,5 @@ define(function(require, exports, module) {
   exports.showGeoLocation = showGeoLocation;
   exports.getLocation = getLocation;
   exports.showPosition = showPosition;
+  exports.splitValue = splitValue;
 });
