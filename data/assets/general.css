@@ -75,8 +75,11 @@ li hr {
 
 /* Bootstrap Styles */
 
-.btn, .btn:hover, .btn:focus, .btn:active, .btn-link, .btn-link:hover, .btn-link:focus, .btn-link:active {
+.btn, .btn:hover, .btn:focus, .btn:active {
   outline: none !important;
+  outline-color: initial !important;
+  outline-style: none !important;
+  outline-width: initial !important;
 /*  background-image: none;
   border-radius: 0;
   text-transform: none;
@@ -84,6 +87,17 @@ li hr {
   transition: none;
   -webkit-transform: none;
   transform: none;*/
+}
+
+.btn-link, .btn-link:hover, .btn-link:focus, .btn-link:active {
+  outline: none !important;
+  background-image: none;
+  border-radius: 0;
+  text-transform: none;
+  -webkit-transition: none;
+  transition: none;
+  -webkit-transform: none;
+  transform: none;
 }
 
 .btn span {
@@ -102,30 +116,6 @@ li hr {
   text-transform: uppercase;
   min-width: 70px;
 }
-
-
-
-/*.btn-link, .btn-link:hover, .btn-link:focus, .btn-link:active, .btn-link:active:hover {
-  text-decoration: none;
-  color: #444444;
-  background-color: transparent;
-  background-image: none;
-  text-shadow: none;
-  border-radius: 0;
-  -webkit-transform: none;
-  transform: none;
-  -webkit-transition: none;
-  transition: none;
-  -webkit-box-shadow: none;
-  box-shadow: none;
-}*/
-
-/* Extension #33b5be from logo */
-/*.btn-info, .btn-info:hover, .btn-info:focus, .btn-info:active {
-  background-color: #417200;
-  background-image: none;
-  text-shadow: none;
-}*/
 
 .modal-body {
 	font-size: 14px;

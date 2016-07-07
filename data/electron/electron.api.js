@@ -121,7 +121,7 @@ define(function(require, exports, module) {
               if (!TSCORE.currentPath) {
                 TSCORE.showAlertDialog("Not open current directory !");
               } else {
-                TSCORE.showCreateDirectoryDialog();
+                TSCORE.showCreateDirectoryDialog(TSCORE.currentPath);
               }
             }
           },
@@ -248,6 +248,60 @@ define(function(require, exports, module) {
             label: $.i18n.t("ns.common:license"),
             click: function() {
               TSCORE.UI.showLicenseDialog();
+            }
+          },
+          {
+            label: $.i18n.t("ns.common:startingHints"),
+            click: function() {
+              TSCORE.UI.startGettingStartedTour();
+            }
+          },
+          {
+            label: $.i18n.t("ns.common:documentation"),
+            click: function() {
+              TSCORE.UI.showDocumentation();
+            }
+          },
+          {
+            label: $.i18n.t("ns.common:whatsNew"),
+            click: function() {
+              TSCORE.UI.whatsNew();
+            }
+          },
+          {
+            type: 'separator'
+          },
+          {
+            label: $.i18n.t("ns.common:likeUsOnFacebook"),
+            click: function() {
+              TSCORE.UI.openFacebook();
+            }
+          },
+          {
+            label: $.i18n.t("ns.common:joinOnGooglePlus"),
+            click: function() {
+              TSCORE.UI.openGooglePlus();
+            }
+          },
+          {
+            label: $.i18n.t("ns.common:followOnTwitter"),
+            click: function() {
+              TSCORE.UI.openTwitter();
+            }
+          },
+          {
+            type: 'separator'
+          },
+          {
+            label: $.i18n.t("ns.common:suggestNewFeatures"),
+            click: function() {
+              TSCORE.UI.suggestNewFeatures();
+            }
+          },
+          {
+            label: $.i18n.t("ns.common:reportIssues"),
+            click: function() {
+              TSCORE.UI.reportIssues();
             }
           },
           {

@@ -46,6 +46,9 @@
     });
 
     $("#saveAsMhtml").on('click', saveAsMHTML);
+    $("#closePopup").on('click', function() {
+      window.close();
+    });
     $("#saveAsBookmark").on('click', saveAsBookmark);
 	
     $("#saveSelectionAsHtml").on("click", function() {
