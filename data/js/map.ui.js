@@ -41,9 +41,7 @@ define(function(require, exports, module) {
     }
   }
 
-  var ACCESS_TOKEN = 'pk.eyJ1Ijoia3Jpc3RpeWFuZGQiLCJhIjoiY2lweHVlam5rMDA3Y2k0bTJ4Z3l2ZzFxdyJ9.6pyZff5AHe9xPRX7FcjwCw';
   var MB_ATTR = 'Map data &copy; <a href="http://tagspaces.org">TagSpaces</a>';
-  var MB_URL = 'https://api.mapbox.com/styles/v1/mapbox/streets-v9/tiles/256/{z}/{x}/{y}?access_token=' + ACCESS_TOKEN;
   var OSM_URL = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
   var OSM_ATTRIB = '';
   var tagSpacesMapOptions = {
@@ -70,13 +68,11 @@ define(function(require, exports, module) {
     currentLat = value.substring(0, index);
     currentLong = value.substring(index);
 
-    return currentLat + "," + currentLong;
+    return parseFloat(currentLat) + "," + parseFloat(currentLong);
   }
 
   function showGeoLocation(coordinate) {
-
     tagSpacesMap.setView(new L.LatLng(54.5259614, -15.2551187), 5);
-    //tagSpacesMap.addLayer(tileLayer);
     tileLayer.addTo(tagSpacesMap);
     var regExp = /^([-+]?)([\d]{1,2})(((\.)(\d+)(,)))(\s*)(([-+]?)([\d]{1,3})((\.)(\d+))?)$/g;
 
@@ -112,9 +108,9 @@ define(function(require, exports, module) {
 
   function removeMarker() {
     //tagSpacesMap.removeLayer(marker);
-    if (tagSpacesMap.removeLayer(marker)) {
-      console.log("MARKER REMOVED");
-    }
+    //if (tagSpacesMap.removeLayer(marker)) {
+    //  console.log("MARKER REMOVED");
+    //}
   }
 
   var lat, lng;
@@ -176,8 +172,8 @@ define(function(require, exports, module) {
     });
 
     $('#dialogEditTag').on('shown.bs.modal', function() {
-      var date = $('#coordinateMap')[0];
-      date.value = TSCORE.selectedTag;
+      var data = $('#coordinateMap')[0];
+      data.value = TSCORE.selectedTag;
     });
 
     tagSpacesMap.on('click', onMapClick);

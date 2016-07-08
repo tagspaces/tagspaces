@@ -734,70 +734,78 @@ define(function(require, exports, module) {
 
   function tagRecognition(dataTag) {
     var geoLocationRegExp = /^([-+]?)([\d]{1,2})(((\.)(\d+)(,)))(\s*)(([-+]?)([\d]{1,3})((\.)(\d+))?)$/g;
-    var currentCoordinate;// = dataTag.indexOf("-") !== -1 ? dataTag.split("-") : dataTag.split("+");
 
     var dateTimeRegExp = /^\d\d\d\d-(00|[0-9]|1[0-9]|2[0-3]):([0-9]|[0-5][0-9]):([0-9]|[0-5][0-9])$/g;
     var dateTimeWinRegExp = /^(([0-1]?[0-9])|([2][0-3]))!([0-5]?[0-9])(!([0-5]?[0-9]))?$/g;
-    //var dateRangeRegExp = /^\d\d\d\d-(0?[1-9]|1[0-2])-(0?[1-9]|[12][0-9]|3[01])$/g;
+    var dateRangeRegExp = /^([0]?[1-9]|[1|2][0-9]|[3][0|1])[-]([0]?[1-9]|[1][0-2])$/g;
 
-
-    if (dataTag.lastIndexOf('+') !== -1) {
-      currentCoordinate = TSCORE.MAP.splitValue(TSCORE.selectedTag, dataTag.lastIndexOf('+'));
-    } else if (dataTag.lastIndexOf('-') !== -1) {
-      currentCoordinate = TSCORE.MAP.splitValue(TSCORE.selectedTag, dataTag.lastIndexOf('-'));
-    }
+    var currentCoordinate;
     var currentDateTime = dataTag;
 
-    var year = /^\d{4}$/g;
-    var month = /^\d^[0-9]{1,6}$/g;
-    var date = /^\d^[0-9]{1,8}$/g;
+    var year = parseInt(currentDateTime) && !isNaN(currentDateTime) &&
+            currentDateTime.length === 4;
+    var month = parseInt(currentDateTime) && !isNaN(currentDateTime) &&
+            currentDateTime.length === 6;
+    var date = parseInt(currentDateTime) && !isNaN(currentDateTime) &&
+            currentDateTime.length === 8;
 
-    var yearRange = /^\d{4}-\d{4}$/g;
-    var monthRange = month + "-" + month;
-    var dateRange = date + "-" + date;
+    var yearRange, monthRange, dateRange;
 
-    var dateRegExp = currentDateTime.match(dateTimeRegExp) ||
-            //currentDateTime.match(dateRangeRegExp) ||
-            currentDateTime.match(dateTimeWinRegExp);// ||
-    // year || month || date ;|| yearRange || monthRange || dateRange;
+    if (dataTag.lastIndexOf('+') !== -1) {
+      currentCoordinate = TSCORE.MAP.splitValue(dataTag, dataTag.lastIndexOf('+'));
+    } else if (dataTag.lastIndexOf('-') !== -1) {
+      currentCoordinate = TSCORE.MAP.splitValue(dataTag, dataTag.lastIndexOf('-'));
+
+      var character = currentDateTime.split("-");
+      if (!currentCoordinate.search(".") && character) {
+        var firstInt = parseInt(character[0]);
+        var secondInt = parseInt(character[1]);
+        yearRange = monthRange = dateRange =
+                typeof firstInt === 'number' && !isNaN(firstInt) &&
+                typeof secondInt === 'number' && !isNaN(secondInt);
+      }
+    }
+
+    var dateRegExp = yearRange || monthRange || dateRange ||
+            currentDateTime.match(dateTimeRegExp) ||
+            currentDateTime.match(dateTimeWinRegExp) ||
+            year || month || date;
 
     if (geoLocationRegExp.exec(currentCoordinate)) {
       $('.nav-tabs a[href="#geoLocation"]').tab('show');
     } else if (dateRegExp) {
       $('.nav-tabs a[href="#dateTimeTab"]').tab('show');
 
-      var dateCheckBox = currentDateTime.match(year) || currentDateTime.match(month) ||
-              currentDateTime.match(date);
+      var dateCheckBox = year || month || date;
       var dateTimeCheckBox = currentDateTime.match(dateTimeRegExp) ||
               currentDateTime.match(dateTimeWinRegExp);
       var dateRangeCheckBox = currentDateTime.match(dateRangeRegExp) ||
-              currentDateTime.match(yearRange) ||
-              currentDateTime.match(monthRange) || currentDateTime.match(dateRange);
+              yearRange || monthRange || dateRange;
 
       if (dateCheckBox) {
-        //$('#dateCalendarInput').prop('checked', true);
         $('#dateCalendarInput').prop('checked', true);
-        if ($('#dateCalendarInput').prop('checked', true)) {
-          //$('#dateTimeCalendar').show();
-          //$('#dateTimeRangeCalendar').hide();
-          $('#dateCalendar').show();
-        }
+        //if ($('#dateCalendarInput').prop('checked', true)) {
+        //  //$('#dateTimeCalendar').show();
+        //  //$('#dateTimeRangeCalendar').hide();
+        //  $('#dateCalendar').show();
+        //}
       } else if (dateTimeCheckBox) {
         $('#dateTimeInput').prop('checked', true);
-        if ($('#dateTimeInput').prop('checked', true)) {
-          $('#dateTimeCalendar').css('display', 'inline-block');
-          $('#dateCalendar').hide();
-          $('#dateTimeRangeCalendar').hide();
+        //if ($('#dateTimeInput').prop('checked', true)) {
+        //  $('#dateTimeCalendar').css('display', 'inline-block');
+        //  $('#dateCalendar').hide();
+        //  $('#dateTimeRangeCalendar').hide();
+        //}
+      } else if (dateRangeCheckBox) {
+        $('#dateTimeRangeInput').prop('checked', true);
+        $('#dateTimeRangeCalendar').show();
+
+        if ($('#dateTimeRangeInput').prop('checked', true)) {
+          $('#dateTimeRangeCalendar').show();
+          //$('#dateTimeCalendar').hide();
+          //$('#dateCalendar').hide();
         }
       }
-      //else if (dateRangeCheckBox) {
-      //  $('#dateTimeRangeInput').prop('checked', true);
-      //  if ($('#dateTimeRangeInput').prop('checked', true)) {
-      //    $('#dateTimeRangeCalendar').show();
-      //    //$('#dateTimeCalendar').hide();
-      //    //$('#dateCalendar').hide();
-      //  }
-      //}
     } else if (!(dateRegExp && geoLocationRegExp.exec(currentCoordinate))) {
       $('.nav-tabs a[href="#formEditTag"]').tab('show');
     } else {
@@ -1177,31 +1185,31 @@ define(function(require, exports, module) {
     });
   }
 
-  function openFacebook()  {
+  function openFacebook() {
     TSCORE.IO.openFile("https://www.facebook.com/tagspacesapp");
   }
 
-  function openTwitter()  {
+  function openTwitter() {
     TSCORE.IO.openFile("https://twitter.com/intent/user?screen_name=tagspaces");
   }
 
-  function openGooglePlus()  {
+  function openGooglePlus() {
     TSCORE.IO.openFile("https://plus.google.com/+TagspacesOrg/");
   }
 
-  function suggestNewFeatures()  {
+  function suggestNewFeatures() {
     TSCORE.IO.openFile("https://tagspaces.uservoice.com/forums/213931-general");
   }
 
-  function reportIssues()  {
+  function reportIssues() {
     TSCORE.IO.openFile("https://github.com/tagspaces/tagspaces/issues/");
   }
 
-  function whatsNew()  {
+  function whatsNew() {
     TSCORE.IO.openFile("http://www.tagspaces.org/whatsnew/");
   }
 
-  function showDocumentation()  {
+  function showDocumentation() {
     TSCORE.IO.openFile("https://www.tagspaces.org/documentation/");
   }
 
