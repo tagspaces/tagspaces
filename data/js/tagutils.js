@@ -101,7 +101,7 @@ define(function(require, exports, module) {
         // cases like "asd ] asd ["
         else if (beginTagContainer > endTagContainer) {
         // case: [ not found in the filename
-        else if ( beginTagContainer < 0 ) 
+        else if ( beginTagContainer < 0 )
         else if ( endTagContainer < 0 ) */
     if (beginTagContainer >= 0 && beginTagContainer < endTagContainer) {
       if (beginTagContainer === 0 && endTagContainer === fileName.trim().length) {
@@ -189,6 +189,10 @@ define(function(require, exports, module) {
     return cYear + '.' + cMonth + '.' + cDate + time;
   }
 
+  //function geoTag(dataTag){
+  //  return TSCORE.tagRecognition(dataTag)
+  //}
+
   function formatDateTime4Tag(date, includeTime, includeMS) {
     if (date === undefined || date === '') {
       return '';
@@ -223,13 +227,17 @@ define(function(require, exports, module) {
     }
     var time = '';
     if (includeTime) {
-      time = '-' + cHour + '' + cMinute + '' + cSecond;
+      time = '~' + cHour + '' + cMinute + '' + cSecond;
     }
     var milliseconds = '';
     if (includeMS) {
-      milliseconds = '-' + d.getMilliseconds();
+      milliseconds = '~' + d.getMilliseconds();
     }
     return cYear + '' + cMonth + '' + cDate + time + milliseconds;
+  }
+
+  function formatGeoTag(){
+    TSCORE.showTagEditDialog();
   }
 
   function convertStringToDate(dateString) {
@@ -574,6 +582,7 @@ define(function(require, exports, module) {
   exports.formatFileSize = formatFileSize;
   exports.formatDateTime = formatDateTime;
   exports.formatDateTime4Tag = formatDateTime4Tag;
+  exports.formatGeoTag = formatGeoTag;
   exports.convertStringToDate = convertStringToDate;
   exports.extractTags = extractTags;
   exports.suggestTags = suggestTags;

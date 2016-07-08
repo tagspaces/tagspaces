@@ -71,8 +71,13 @@ define(function(require, exports, module) {
     return parseFloat(currentLat) + "," + parseFloat(currentLong);
   }
 
+  function showViewLocation() {
+    tagSpacesMap.setView(new L.LatLng(54.5259614, +15.2551187), 5);
+  }
+
+
   function showGeoLocation(coordinate) {
-    tagSpacesMap.setView(new L.LatLng(54.5259614, -15.2551187), 5);
+    showViewLocation();
     tileLayer.addTo(tagSpacesMap);
     var regExp = /^([-+]?)([\d]{1,2})(((\.)(\d+)(,)))(\s*)(([-+]?)([\d]{1,3})((\.)(\d+))?)$/g;
 
@@ -82,6 +87,11 @@ define(function(require, exports, module) {
     } else if (coordinate.lastIndexOf('-') !== -1) {
       currentCoordinate = splitValue(coordinate, coordinate.lastIndexOf('-'));
     }
+    var geoTag = TSCORE.selectedTag === 'geoTag';
+
+    if (geoTag) {
+      showViewLocation();
+    }
 
     if (regExp.exec(currentCoordinate)) {
       tagSpacesMap.setView([currentLat, currentLong], 13);
@@ -89,7 +99,8 @@ define(function(require, exports, module) {
         draggable: true
       }).addTo(tagSpacesMap).bindPopup('Tag', {showOnMouseOver: true});
     } else {
-      tagSpacesMap.setView([54.5259614, +15.2551187], 5);
+      showViewLocation();
+      //tagSpacesMap.setView([54.5259614, +15.2551187], 5);
     }
   }
 
@@ -163,7 +174,11 @@ define(function(require, exports, module) {
         });
 
         $('#dialogEditTag').on('hidden.bs.modal', function() {
-          removeMarker();
+          //removeMarker();
+          if (TSCORE.selectedTag === 'geoTag') {
+            TSCORE.TagUtils.removeTag(TSCORE.selectedFiles[0], TSCORE.selectedTag);
+            removeMarker();
+          }
         });
       }
     });

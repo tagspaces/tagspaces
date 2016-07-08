@@ -17,45 +17,46 @@ define(function(require, exports, module) {
   var TSCORE = require('tscore');
 
   var tagGroupsTmpl = Handlebars.compile(
-    '{{#each tagGroups}}' +
-    '<div class="accordion-group disableTextSelection tagGroupContainer">' +
-        '<div class="accordion-heading btn-group ui-droppable tagGroupContainerHeading flexLayout" key="{{key}}">' +
-            '<button class="btn btn-link btn-lg tagGroupIcon" data-toggle="collapse" data-target="#tagButtons{{@index}}" data-i18n="[title]ns.common:toggleTagGroup" title="{{../toggleTagGroup}}">' +
-                '<i class="fa fa-tags fa-fw"></i>' +
-            '</button>' +
-            '<button class="btn btn-link tagGroupTitle flexMaxWidth" data-toggle="collapse" data-target="#tagButtons{{@index}}" key="{{key}}">{{title}}&nbsp;' +
-                '<sup><span class="badge" style="font-size: 9px;" data-i18n="[title]ns.common:tagGroupTagsCount">{{children.length}}</span></sup></button>' +
-            '<button class="btn btn-link btn-lg tagGroupActions" key="{{key}}" data-i18n="[title]ns.common:tagGroupOperations" title="{{../tagGroupOperations}}">' +
-                '<b class="fa fa-ellipsis-v"></b>' +
-            '</button>' +
-        '</div>' +
-        '{{#if collapse}}' +
+          '{{#each tagGroups}}' +
+          '<div class="accordion-group disableTextSelection tagGroupContainer">' +
+          '<div class="accordion-heading btn-group ui-droppable tagGroupContainerHeading flexLayout" key="{{key}}">' +
+          '<button class="btn btn-link btn-lg tagGroupIcon" data-toggle="collapse" data-target="#tagButtons{{@index}}" data-i18n="[title]ns.common:toggleTagGroup" title="{{../toggleTagGroup}}">' +
+          '<i class="fa fa-tags fa-fw"></i>' +
+          '</button>' +
+          '<button class="btn btn-link tagGroupTitle flexMaxWidth" data-toggle="collapse" data-target="#tagButtons{{@index}}" key="{{key}}">{{title}}&nbsp;' +
+          '<sup><span class="badge" style="font-size: 9px;" data-i18n="[title]ns.common:tagGroupTagsCount">{{children.length}}</span></sup></button>' +
+          '<button class="btn btn-link btn-lg tagGroupActions" key="{{key}}" data-i18n="[title]ns.common:tagGroupOperations" title="{{../tagGroupOperations}}">' +
+          '<b class="fa fa-ellipsis-v"></b>' +
+          '</button>' +
+          '</div>' +
+          '{{#if collapse}}' +
           '<div class="accordion-body collapse" id="tagButtons{{@index}}">' +
-        '{{else}}' +
+          '{{else}}' +
           '<div class="accordion-body collapse in" id="tagButtons{{@index}}">' +
-        '{{/if}}' +
-            '<div class="accordion-inner" id="tagButtonsContent{{@index}}" style="padding: 2px;">' +
-                '<div>' +
-                    '{{#each children}}' +
-                    '<a class="btn btn-sm tagButton" tag="{{title}}" parentkey="{{../key}}" style="{{style}}" title="{{description}}" >'  +
-                        '<span class="{{icon}}" /> ' +
-                        '{{title}}' +
-                        '{{#if count}} <span class="badge" style="font-size: 9px; background-color: rgba(187, 187, 187, 0.26);" data-i18n="[title]ns.common:tagGroupTagsCount1">{{count}}</span>{{/if}}' +
-                        '&nbsp;&nbsp;<span class="fa fa-ellipsis-v"></span>' +
-                    '</a>' +
-                    '{{/each}}' +
-                '</div>' +
-            '</div>' +
-        '</div>' +
-    '</div>' +
-    '{{/each}}'
+          '{{/if}}' +
+          '<div class="accordion-inner" id="tagButtonsContent{{@index}}" style="padding: 2px;">' +
+          '<div>' +
+          '{{#each children}}' +
+          '<a class="btn btn-sm tagButton" tag="{{title}}" parentkey="{{../key}}" style="{{style}}" title="{{description}}" >' +
+          '<span class="{{icon}}" /> ' +
+          '{{title}}' +
+          '{{#if count}} <span class="badge" style="font-size: 9px; background-color: rgba(187, 187, 187, 0.26);" data-i18n="[title]ns.common:tagGroupTagsCount1">{{count}}</span>{{/if}}' +
+          '&nbsp;&nbsp;<span class="fa fa-ellipsis-v"></span>' +
+          '</a>' +
+          '{{/each}}' +
+          '</div>' +
+          '</div>' +
+          '</div>' +
+          '</div>' +
+          '{{/each}}'
   );
 
   var tagButtonTmpl = Handlebars.compile('{{#each tags}} <button class="btn btn-sm tagButton" tag="{{tag}}" ' + 'filepath="{{filepath}}" style="{{style}}">{{tag}}&nbsp;&nbsp;<span class="fa fa-ellipsis-v dropDownIcon"></span></button>{{/each}}');
 
 
   function initUI() {
-    $('#extMenuAddTagAsFilter').click(function() {});
+    $('#extMenuAddTagAsFilter').click(function() {
+    });
     // Context menu for the tags in the file table and the file viewer
     $('#tagMenuAddTagAsFilter').click(function() {
       TSCORE.searchForTag(TSCORE.selectedTag);
@@ -100,7 +101,7 @@ define(function(require, exports, module) {
       console.log("tagGroupMenuImportTags");
       $('#jsonImportFileInput').click();
       $('#jsonImportFileInput').on('change', function(selection) {
-      
+
         var file = selection.currentTarget.files[0];
         //addFileInputName = decodeURIComponent(file.name);
         var reader = new FileReader();
@@ -242,6 +243,9 @@ define(function(require, exports, module) {
         tag.icon = '';
         if (tag.type === 'smart') {
           tag.icon = 'fa fa-flask';
+          if (tag.title === 'geoTag') {
+            tag.icon = 'fa fa-map-marker';
+          }
         }
         // Add keybinding to tags
         if (tag.keyBinding && tag.keyBinding.length > 0) {
@@ -348,39 +352,36 @@ define(function(require, exports, module) {
     var d;
     if (tagData.type === 'smart') {
       switch (tagData.functionality) {
-        case 'here': {
-          /* window.onload = function() {
-              if (navigator.geolocation) {
-                  navigator.geolocation.getCurrentPosition(function(position) {
-                      var lat = position.coords.latitude;
-                      var lng = position.coords.longitude;
-                      alert("Current position: " + lat + " " + lng);
-                  }, function(error) {
-                      alert('Error occurred. Error code: ' + error.code);
-                  },{timeout:50000});
-              }else{
-                  alert('no geolocation support');
-              }
-          };*/
+        case 'geoLocation':
+        {
+          $('#viewContainers').on('drop dragend', function(event) {
+            event.preventDefault();
+            //tagValue = TSCORE.showTagEditDialog();
+            tagValue = TSCORE.TagUtils.formatGeoTag();
+          });
           break;
         }
-        case 'today': {
+        case 'today':
+        {
           tagValue = TSCORE.TagUtils.formatDateTime4Tag(new Date(), false);
           break;
         }
-        case 'tomorrow': {
+        case 'tomorrow':
+        {
           d = new Date();
           d.setDate(d.getDate() + 1);
           tagValue = TSCORE.TagUtils.formatDateTime4Tag(d, false);
           break;
         }
-        case 'yesterday': {
+        case 'yesterday':
+        {
           d = new Date();
           d.setDate(d.getDate() - 1);
           tagValue = TSCORE.TagUtils.formatDateTime4Tag(d, false);
           break;
         }
-        case 'currentMonth': {
+        case 'currentMonth':
+        {
           var cMonth = '' + (new Date().getMonth() + 1);
           if (cMonth.length === 1) {
             cMonth = '0' + cMonth;
@@ -388,15 +389,18 @@ define(function(require, exports, module) {
           tagValue = '' + new Date().getFullYear() + cMonth;
           break;
         }
-        case 'currentYear': {
+        case 'currentYear':
+        {
           tagValue = '' + new Date().getFullYear();
           break;
         }
-        case 'now': {
+        case 'now':
+        {
           tagValue = TSCORE.TagUtils.formatDateTime4Tag(new Date(), true);
           break;
         }
-        default: {
+        default:
+        {
           break;
         }
       }
@@ -481,15 +485,15 @@ define(function(require, exports, module) {
   }
 
   function showImportTagsDialog(tagGroups) {
-   
+
     require(['text!templates/ImportTagsDialog.html'], function(uiTPL) {
 
       if ($('#dialogImportTags').length < 1) {
         var uiTemplate = Handlebars.compile(uiTPL);
-        $('body').append(uiTemplate({objects:tagGroups})); 
+        $('body').append(uiTemplate({objects: tagGroups}));
 
         $('#importTagsButton').on('click', function() {
-         
+
           tagGroups.forEach(function(value) {
             TSCORE.Config.addTagGroup(value);
           });
@@ -631,7 +635,7 @@ define(function(require, exports, module) {
       selectOnBlur: true,
       formatSelectionCssClass: function(tag, container) {
         var style = generateTagStyle(TSCORE.Config.findTag(tag.text));
-        if (style) { 
+        if (style) {
           $(container).parent().attr("style", style);
         }
       }

@@ -738,7 +738,7 @@ define(function(require, exports, module) {
     var dateTimeRegExp = /^\d\d\d\d-(00|[0-9]|1[0-9]|2[0-3]):([0-9]|[0-5][0-9]):([0-9]|[0-5][0-9])$/g;
     var dateTimeWinRegExp = /^(([0-1]?[0-9])|([2][0-3]))!([0-5]?[0-9])(!([0-5]?[0-9]))?$/g;
     var dateRangeRegExp = /^([0]?[1-9]|[1|2][0-9]|[3][0|1])[-]([0]?[1-9]|[1][0-2])$/g;
-
+    var geoTag = 'geoTag';
     var currentCoordinate;
     var currentDateTime = dataTag;
 
@@ -771,7 +771,7 @@ define(function(require, exports, module) {
             currentDateTime.match(dateTimeWinRegExp) ||
             year || month || date;
 
-    if (geoLocationRegExp.exec(currentCoordinate)) {
+    if (geoLocationRegExp.exec(currentCoordinate) || geoTag === dataTag) {
       $('.nav-tabs a[href="#geoLocation"]').tab('show');
     } else if (dateRegExp) {
       $('.nav-tabs a[href="#dateTimeTab"]').tab('show');
@@ -1253,4 +1253,5 @@ define(function(require, exports, module) {
   exports.reportIssues = reportIssues;
   exports.whatsNew = whatsNew;
   exports.showDocumentation = showDocumentation;
+  exports.tagRecognition = tagRecognition;
 });
