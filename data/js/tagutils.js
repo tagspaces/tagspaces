@@ -189,10 +189,6 @@ define(function(require, exports, module) {
     return cYear + '.' + cMonth + '.' + cDate + time;
   }
 
-  //function geoTag(dataTag){
-  //  return TSCORE.tagRecognition(dataTag)
-  //}
-
   function formatDateTime4Tag(date, includeTime, includeMS) {
     if (date === undefined || date === '') {
       return '';
