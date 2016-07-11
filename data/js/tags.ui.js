@@ -355,11 +355,7 @@ define(function(require, exports, module) {
         case 'geoLocation':
         {
           $('#viewContainers').on('drop dragend', function(event) {
-            event.preventDefault();
-            //tagValue = TSCORE.showTagEditDialog();
-            if (TSCORE.selectedTag === 'geoTag') {
               tagValue = TSCORE.TagUtils.formatGeoTag();
-            }
           });
           break;
         }
