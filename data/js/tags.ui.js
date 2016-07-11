@@ -357,7 +357,9 @@ define(function(require, exports, module) {
           $('#viewContainers').on('drop dragend', function(event) {
             event.preventDefault();
             //tagValue = TSCORE.showTagEditDialog();
-            tagValue = TSCORE.TagUtils.formatGeoTag();
+            if (TSCORE.selectedTag === 'geoTag') {
+              tagValue = TSCORE.TagUtils.formatGeoTag();
+            }
           });
           break;
         }
