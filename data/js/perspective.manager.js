@@ -364,6 +364,25 @@ define(function(require, exports, module) {
     }
   }
 
+  function setReadOnly(readOnly) {
+    $('#tagMenuEditTag').hide();
+    $('#tagTreeMenuEditTag').hide();
+    $('#tagFile').hide();
+    $('#duplicateFile').hide();
+    $('#renameFile').hide();
+    $('#addTagFileViewer').hide();
+    $('#fileMenuAddTag').hide();
+    $('#fileMenuMoveCopyFile').hide();
+    $('#fileMenuRenameFile').hide();
+    $('#editDocument').hide();
+
+    //$('.flexMaxWidth .editable .editable-click').off('click');
+
+    $(document).off('drop dragend dragenter dragover dragleave', function(event) {
+      event.preventDefault();
+    });
+  }
+
   exports.initPerspectives = initPerspectives;
   exports.hideAllPerspectives = hideAllPerspectives;
   exports.redrawCurrentPerspective = redrawCurrentPerspective;
@@ -377,4 +396,5 @@ define(function(require, exports, module) {
   exports.removeFileUI = removeFileUI;
   exports.updateFileUI = updateFileUI;
   exports.changePerspective = changePerspective;
+  exports.setReadOnly = setReadOnly;
 });
