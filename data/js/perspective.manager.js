@@ -367,23 +367,6 @@ define(function(require, exports, module) {
   function setReadOnly(filePath) {
     for (var i = 0; i < perspectives.length; i++) {
       try {
-        $('#tagMenuEditTag').hide();
-        $('#tagTreeMenuEditTag').hide();
-        $('#tagFile').hide();
-        $('#duplicateFile').hide();
-        $('#renameFile').hide();
-        $('#addTagFileViewer').hide();
-        $('#fileMenuAddTag').hide();
-        $('#fileMenuMoveCopyFile').hide();
-        $('#fileMenuRenameFile').hide();
-        $('#editDocument').hide();
-
-        //$('.flexMaxWidth .editable .editable-click').off('click');
-
-        $(document).off('drop dragend dragenter dragover dragleave', function(event) {
-          event.preventDefault();
-        });
-
         return perspectives[i].setReadOnly(filePath);
       } catch (e) {
         console.warn("Error while executing 'setReadOnly' on " + perspectives[i].ID + ' ' + e);
