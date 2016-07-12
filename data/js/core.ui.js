@@ -686,19 +686,81 @@ define(function(require, exports, module) {
       $('#dateCalendar').hide();
     });
 
-    flatpickr('#dateTimeCalendar', {dateFormat: 'd-m-Y'});
-    flatpickr('#dateTimeRangeCalendar', {
-      disable: [
-        {
-          from: "2016-07-06",
-          to: "2016-07-09"
-        },
-        "2016-07-24"
-      ],
-      minDate: "today",
-      dateFormat: 'd-m-Y',
+    flatpickr('#dateTimeCalendar', {
+      dateFormat: 'Y-m-d',
+      //minDate: "today",
+      onChange: function(dateObj, dateStr) {
+        console.log(dateObj);
+        console.log(dateStr);
+      },
+      onOpen: function(dateObj, dateStr){
+        console.log(dateObj);
+        console.log(dateStr);
+      },
+      onClose: function(dateObj, dateStr){
+        console.log(dateObj);
+        console.log(dateStr);
+      }
     });
-    flatpickr('.calendar');
+    flatpickr('#dateTimeRangeCalendar', {
+      //disable: [
+      //  {
+      //    from: "2016-07-06",
+      //    to: "2016-07-09"
+      //  },
+      //  "2016-07-24"
+      //],
+      minDate: "today",
+      dateFormat: 'Y-m-d',
+
+      onChange: function(dateObj, dateStr) {
+       console.log(dateObj);
+       console.log(dateStr);
+      },
+      onOpen: function(dateObj, dateStr){
+        console.log(dateObj);
+        console.log(dateStr);
+      },
+      onClose: function(dateObj, dateStr){
+        console.log(dateObj);
+        console.log(dateStr);
+      }
+    });
+    flatpickr('.calendar',{
+      dateFormat: 'Y-m-d',
+
+      onChange: function(dateObj, dateStr) {
+        console.log(dateObj);
+        console.log(dateStr);
+      },
+      onOpen: function(dateObj, dateStr){
+        console.log(dateObj);
+        console.log(dateStr);
+      },
+      onClose: function(dateObj, dateStr){
+        console.log(dateObj);
+        console.log(dateStr);
+      },
+    });
+
+
+    //var check_in = flatpickr("#check_in_date", {
+    //  altInput: true,
+    //  altFormat: "\\C\\h\\e\\c\\k \\i\\n\\: l, F j Y",
+    //  minDate: new Date()
+    //});
+    //var check_out = flatpickr("#check_out_date", {
+    //  altInput: true,
+    //  altFormat: "\\C\\h\\e\\c\\k \\o\\u\\t: l, F j Y",
+    //  minDate: new Date()
+    //});
+    //
+    //check_in.set("onChange", function(d) {
+    //  check_out.set("minDate", d.fp_incr(1));
+    //});
+    //check_out.set("onChange", function(d) {
+    //  check_in.set("maxDate", d.fp_incr(-1));
+    //});
   }
 
   function showTagEditDialog() {
