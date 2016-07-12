@@ -141,7 +141,6 @@ define(function(require, exports, module) {
   var latlng;
 
   function onMapClick(e) {
-    console.log(e.latlng);
     addMarker(e);
     parseCoordinateMap(e);
     lat = e.latlng.lat.toFixed(7);
