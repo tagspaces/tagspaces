@@ -62,19 +62,18 @@ define(function(require, exports, module) {
   //    title: $.i18n.t('ns.dialogs:yourLocation') //
   //  }
   //}).addTo(tagSpacesMap);
-  var currentLat, currentLong;
+  var currentLat, currentLng;
 
   function splitValue(value, index) {
     currentLat = value.substring(0, index);
-    currentLong = value.substring(index);
+    currentLng = value.substring(index);
 
-    return parseFloat(currentLat) + "," + parseFloat(currentLong);
+    return parseFloat(currentLat) + "," + parseFloat(currentLng);
   }
 
   function showViewLocation() {
     tagSpacesMap.setView(new L.LatLng(54.5259614, +15.2551187), 5);
   }
-
 
   function showGeoLocation(coordinate) {
     showViewLocation();
@@ -94,10 +93,10 @@ define(function(require, exports, module) {
     }
 
     if (regExp.exec(currentCoordinate)) {
-      tagSpacesMap.setView([currentLat, currentLong], 13);
-      marker = L.marker([currentLat, currentLong], {
-        draggable: true
-      }).addTo(tagSpacesMap).bindPopup('Tag', {showOnMouseOver: true});
+      tagSpacesMap.setView([currentLat, currentLng], 13);
+
+      var getCoord = L.latLng(currentLat, currentLng);
+      addMarker(getCoord);
     } else {
       showViewLocation();
       //tagSpacesMap.setView([54.5259614, +15.2551187], 5);
@@ -105,29 +104,44 @@ define(function(require, exports, module) {
   }
 
   function addMarker(currentCoord) {
+    //var getLatLng = L.latLng(currentLat, currentLng);
+
     // Add marker to map at click location; add popup window
     if (typeof marker === 'undefined') {
-      marker = new L.marker(currentCoord.latlng, {
-        draggable: true,
-        showOnMouseOver: true
-      }).update();
+      if (currentCoord.latlng) {
+        marker = new L.marker(currentCoord.latlng, {
+          draggable: true,
+          showOnMouseOver: true
+        }).update();
+      } else {
+        marker = new L.marker(currentCoord, {
+          draggable: true,
+          showOnMouseOver: true
+        }).update();
+      }
       marker.addTo(tagSpacesMap);
     } else {
-      marker.setLatLng(currentCoord.latlng);
+      if (currentCoord.latlng) {
+        marker.setLatLng(currentCoord.latlng);
+      } else {
+        marker.setLatLng(currentCoord);
+      }
     }
   }
 
-  function removeMarker() {
+  function removeMarker(e) {
     //tagSpacesMap.removeLayer(marker);
     //if (tagSpacesMap.removeLayer(marker)) {
     //  console.log("MARKER REMOVED");
     //}
+    //tagSpacesMap.clearLayers(marker);
   }
 
   var lat, lng;
   var latlng;
 
   function onMapClick(e) {
+    console.log(e.latlng);
     addMarker(e);
     parseCoordinateMap(e);
     lat = e.latlng.lat.toFixed(7);
@@ -193,6 +207,12 @@ define(function(require, exports, module) {
 
     tagSpacesMap.on('click', onMapClick);
 
+    //tagSpacesMap.on('locationfound', onLocationFound);
+
+    tagSpacesMap.on('layeradd', function(e) {
+      //console.log('layeradd', e);
+    });
+    
     showGeoLocation(TSCORE.selectedTag);
   }
 
