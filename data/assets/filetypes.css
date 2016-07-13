@@ -2,6 +2,11 @@
   background-color: #f5897f !important;
 }
 
+.fileExtColor[data-ext="folder"] {
+  background-color: #fb9624 !important;
+  color: white !important;
+}
+
 .fileExtColor[data-ext^="jp"],
 .fileExtColor[data-ext="bmp"],
 .fileExtColor[data-ext="svg"],
