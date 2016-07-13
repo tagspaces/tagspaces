@@ -354,7 +354,7 @@ define(function(require, exports, module) {
       switch (tagData.functionality) {
         case 'geoLocation': {
           $('#viewContainers').on('drop dragend', function(event) {
-            tagValue = TSCORE.TagUtils.formatGeoTag();
+            tagValue = TSCORE.showTagEditDialog();
           });
           break;
         }

@@ -232,10 +232,6 @@ define(function(require, exports, module) {
     return cYear + '' + cMonth + '' + cDate + time + milliseconds;
   }
 
-  function formatGeoTag() {
-    TSCORE.showTagEditDialog();
-  }
-
   function convertStringToDate(dateString) {
     if (dateString === undefined || dateString === '') {
       return false;
@@ -578,7 +574,6 @@ define(function(require, exports, module) {
   exports.formatFileSize = formatFileSize;
   exports.formatDateTime = formatDateTime;
   exports.formatDateTime4Tag = formatDateTime4Tag;
-  exports.formatGeoTag = formatGeoTag;
   exports.convertStringToDate = convertStringToDate;
   exports.extractTags = extractTags;
   exports.suggestTags = suggestTags;
