@@ -152,17 +152,33 @@ define(function(require, exports, module) {
   }
 
   function convertToDateTime(dateTime) {
-    //var dateTimeRegExp = /^\d\d\d\d-(00|[0-9]|1[0-9]|2[0-3]):([0-9]|[0-5][0-9]):([0-9]|[0-5][0-9])$/g;
-    //var dateTimeWinRegExp = /^(([0-1]?[0-9])|([2][0-3]))!([0-5]?[0-9])(!([0-5]?[0-9]))?$/g;
-    //var dateTimeWin1RegExp = /^(([0-1]?[0-9])|([2][0-3]))~([0-5]?[0-9])(!([0-5]?[0-9]))?$/g;
-    //if (dateTime.match(dateTimeRegExp) || dateTime.match(dateTimeWinRegExp) ||
-    //        dateTime.match(dateTimeWin1RegExp) || dateTime.search('!') ||
-    //        dateTime.search(':') || dateTime.search('~')) {
-    //  var range = dateTime.split('-');
-    //  if (parseInt(range[0]) && parseInt(range[1])) {
-    //    return range;
-    //  }
-    //}
+    var dateTimeRegExp = /^\d\d\d\d-(00|[0-9]|1[0-9]|2[0-3]):([0-9]|[0-5][0-9]):([0-9]|[0-5][0-9])$/g;
+    var dateTimeWinRegExp = /^(([0-1]?[0-9])|([2][0-3]))!([0-5]?[0-9])(!([0-5]?[0-9]))?$/g;
+    var dateTimeWin1RegExp = /^(([0-1]?[0-9])|([2][0-3]))~([0-5]?[0-9])(!([0-5]?[0-9]))?$/g;
+    if (dateTime.match(dateTimeRegExp) || dateTime.match(dateTimeWinRegExp) ||
+            dateTime.match(dateTimeWin1RegExp) || dateTime.search('!') ||
+            dateTime.search(':') || dateTime.search('~')) {
+
+      var time;
+      if (dateTime.indexOf('!')) {
+        time = dateTime.split('!');
+        if (parseInt(time[0]) && parseInt(time[1])) {
+          return time;
+        }
+      }
+      if (dateTime.indexOf(':')) {
+        time = dateTime.split(':');
+        if (parseInt(time[0]) && parseInt(time[1])) {
+          return time;
+        }
+      }
+      if (dateTime.indexOf('~')) {
+        time = dateTime.split('~');
+        if (parseInt(time[0]) && parseInt(time[1])) {
+          return time;
+        }
+      }
+    }
   }
 
   function convertToDate(date) {
@@ -219,7 +235,7 @@ define(function(require, exports, module) {
     return [year, month, day].join('-');
   }
 
-  // parse a date in format “YYYYmmdd” to 'Fri Jul 15 2016 00:00:00 GMT+0300 (FLE Summer Time)'
+  // parse “YYYYmmdd” to 'Fri Jul 15 2016 00:00:00 GMT+0300 (FLE Summer Time)'
   function parseFullDate(date) {
     // validate year as 4 digits, month as 01-12, and day as 01-31
     if ((date = date.match(/^(\d{4})(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])$/))) {
