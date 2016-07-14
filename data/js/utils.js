@@ -159,10 +159,17 @@ define(function(require, exports, module) {
             dateTime.match(dateTimeWin1RegExp) || dateTime.search('!') ||
             dateTime.search(':') || dateTime.search('~')) {
 
-      var time;
+      var time, firstTime, secondTime;
       if (dateTime.indexOf('!')) {
         time = dateTime.split('!');
         if (parseInt(time[0]) && parseInt(time[1])) {
+          firstTime = time[0];
+          secondTime = time[1];
+          if (firstTime.length === 2 && secondTime.length === 2) {
+            time = firstTime + ":" + secondTime;
+          } else if (firstTime.length > 2 && firstTime.length <= 8) {
+            time = convertToDate(firstTime) + " " + toHHMMSS(secondTime);
+          }
           return time;
         }
       }
@@ -175,6 +182,13 @@ define(function(require, exports, module) {
       if (dateTime.indexOf('~')) {
         time = dateTime.split('~');
         if (parseInt(time[0]) && parseInt(time[1])) {
+          firstTime = time[0];
+          secondTime = time[1];
+          if (firstTime.length === 2 && secondTime.length === 2) {
+            time = firstTime + ":" + secondTime;
+          } else if (firstTime.length > 2 && firstTime.length <= 8) {
+            time = convertToDate(firstTime) + " " + toHHMMSS(secondTime);
+          }
           return time;
         }
       }
@@ -216,6 +230,13 @@ define(function(require, exports, module) {
       default:
         return false;
     }
+  }
+
+  function toHHMMSS(time) {
+    var timeFormat = time;
+    var match = timeFormat.match(/(\d{2})(\d{2})(\d{2})/);
+    var hhmmss = match[1] + ':' + match[2] + ':' + match[3];
+    return hhmmss;
   }
 
   // Format Sun May 11, 2014 to 2014-05-11
@@ -267,5 +288,6 @@ define(function(require, exports, module) {
   exports.convertToDateRange = convertToDateRange;
   exports.parseFullDate = parseFullDate;
   exports.formatDate = formatDate;
+  exports.toHHMMSS = toHHMMSS;
 
 });
