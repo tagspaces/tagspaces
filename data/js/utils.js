@@ -265,5 +265,7 @@ define(function(require, exports, module) {
   exports.convertToDate = convertToDate;
   exports.convertToDateTime = convertToDateTime;
   exports.convertToDateRange = convertToDateRange;
+  exports.parseFullDate = parseFullDate;
+  exports.formatDate = formatDate;
 
 });

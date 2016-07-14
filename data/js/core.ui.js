@@ -686,19 +686,75 @@ define(function(require, exports, module) {
       $('#dateCalendar').hide();
     });
 
-    flatpickr('#dateTimeCalendar', {dateFormat: 'd-m-Y'});
-    flatpickr('#dateTimeRangeCalendar', {
-      disable: [
-        {
-          from: "2016-07-06",
-          to: "2016-07-09"
-        },
-        "2016-07-24"
-      ],
-      minDate: "today",
-      dateFormat: 'd-m-Y',
+    flatpickr('#dateTimeCalendar', {
+      dateFormat: 'Y-m-d',
+      //minDate: "today",
+      onChange: function(dateObj, dateStr) {
+        console.log(dateObj);
+        console.log(dateStr);
+      },
+      onOpen: function(dateObj, dateStr){
+        console.log(dateObj);
+        console.log(dateStr);
+      },
+      onClose: function(dateObj, dateStr){
+        console.log(dateObj);
+        console.log(dateStr);
+      }
     });
-    flatpickr('.calendar');
+    flatpickr('#dateTimeRangeCalendar', {
+
+      minDate: "today",
+      dateFormat: 'Y-m-d',
+
+      onChange: function(dateObj, dateStr) {
+       console.log(dateObj);
+       console.log(dateStr);
+      },
+      onOpen: function(dateObj, dateStr){
+        console.log(dateObj);
+        console.log(dateStr);
+      },
+      onClose: function(dateObj, dateStr){
+        console.log(dateObj);
+        console.log(dateStr);
+      }
+    });
+    flatpickr('.calendar',{
+      dateFormat: 'Y-m-d',
+
+      onChange: function(dateObj, dateStr) {
+        console.log(dateObj);
+        console.log(dateStr);
+      },
+      onOpen: function(dateObj, dateStr){
+        console.log(dateObj);
+        console.log(dateStr);
+      },
+      onClose: function(dateObj, dateStr){
+        console.log(dateObj);
+        console.log(dateStr);
+      },
+    });
+
+
+    //var check_in = flatpickr("#check_in_date", {
+    //  altInput: true,
+    //  altFormat: "\\C\\h\\e\\c\\k \\i\\n\\: l, F j Y",
+    //  minDate: new Date()
+    //});
+    //var check_out = flatpickr("#check_out_date", {
+    //  altInput: true,
+    //  altFormat: "\\C\\h\\e\\c\\k \\o\\u\\t: l, F j Y",
+    //  minDate: new Date()
+    //});
+    //
+    //check_in.set("onChange", function(d) {
+    //  check_out.set("minDate", d.fp_incr(1));
+    //});
+    //check_out.set("onChange", function(d) {
+    //  check_in.set("maxDate", d.fp_incr(-1));
+    //});
   }
 
   function showTagEditDialog() {
@@ -732,6 +788,7 @@ define(function(require, exports, module) {
     TSCORE.MAP.initMap();
   }
 
+
   function tagRecognition(dataTag) {
     var geoLocationRegExp = /^([-+]?)([\d]{1,2})(((\.)(\d+)(,)))(\s*)(([-+]?)([\d]{1,3})((\.)(\d+))?)$/g;
 
@@ -748,6 +805,8 @@ define(function(require, exports, module) {
             currentDateTime.length === 6;
     var date = parseInt(currentDateTime) && !isNaN(currentDateTime) &&
             currentDateTime.length === 8;
+
+    var convertToDateTime = TSCORE.Utils.convertToDateTime(currentDateTime);
 
     var yearRange, monthRange, dateRange;
 
@@ -769,7 +828,7 @@ define(function(require, exports, module) {
     var dateRegExp = yearRange || monthRange || dateRange ||
             currentDateTime.match(dateTimeRegExp) ||
             currentDateTime.match(dateTimeWinRegExp) ||
-            year || month || date;
+            year || month || date || convertToDateTime;
 
     if (geoLocationRegExp.exec(currentCoordinate) || geoTag === dataTag) {
       $('.nav-tabs a[href="#geoLocation"]').tab('show');
@@ -778,7 +837,7 @@ define(function(require, exports, module) {
 
       var dateCheckBox = year || month || date;
       var dateTimeCheckBox = currentDateTime.match(dateTimeRegExp) ||
-              currentDateTime.match(dateTimeWinRegExp);
+              currentDateTime.match(dateTimeWinRegExp) || convertToDateTime;
       var dateRangeCheckBox = currentDateTime.match(dateRangeRegExp) ||
               yearRange || monthRange || dateRange;
 
