@@ -171,6 +171,23 @@ define(function(require, exports, module) {
       TSCORE.TagUtils.renameTag(TSCORE.selectedFiles[0], TSCORE.selectedTag, $('#newTagName').val());
     });
 
+    $('#dateCalendarInput').click(function() {
+      $('#dateTimeCalendar').hide();
+      $('#dateTimeRange').hide();
+      $('#dateCalendar').show();
+    });
+
+    $('#dateTimeInput').click(function() {
+      $('#dateTimeCalendar').show();
+      $('#dateTimeRange').hide();
+      $('#dateCalendar').hide();
+    });
+    $('#dateTimeRangeInput').click(function() {
+      $('#dateTimeCalendar').hide();
+      $('#dateTimeRange').show();
+      $('#dateCalendar').hide();
+    });
+
     // End Edit Tag Dialog
     $('#startNewInstanceBack').click(function() {
       if (!isCordova) {
@@ -665,28 +682,6 @@ define(function(require, exports, module) {
   }
 
   function showDateTimeCalendar() {
-
-    $('#dateTimeCalendar').hide();
-    $('#dateTimeRange').hide();
-    //$('#dateTimeRangeMaxCalendar').hide();
-
-    $('#dateCalendarInput').click(function() {
-      $('#dateTimeCalendar').hide();
-      $('#dateTimeRange').hide();
-      $('#dateCalendar').show();
-    });
-
-    $('#dateTimeInput').click(function() {
-      $('#dateTimeCalendar').show();
-      $('#dateTimeRange').hide();
-      $('#dateCalendar').hide();
-    });
-    $('#dateTimeRangeInput').click(function() {
-      $('#dateTimeCalendar').hide();
-      $('#dateTimeRange').show();
-      $('#dateCalendar').hide();
-    });
-
     flatpickr('#dateTimeCalendar', {
       enable: [
         {
@@ -831,30 +826,41 @@ define(function(require, exports, module) {
 
       if (dateCheckBox) {
         $('#dateCalendarInput').prop('checked', true);
-        if ($('#dateCalendarInput').prop('checked', true)) {
+        if ($(document.getElementById('dateCalendarInput').checked)) {
+          $('#dateCalendar').show();
+          $('#dateTimeCalendar').hide();
+          $('#dateTimeRange').hide();
+
           $('#dateCalendar').val(TSCORE.Utils.convertToDate(currentDateTime));
-          //$('#dateTimeCalendar').show();
-          //$('#dateTimeRangeCalendar').hide();
-          //$('#dateCalendar').show();
+          $('#dateTimeCalendar').val('');
+          $('#dateTimeRangeCalendar').val('');
+          $('#dateTimeRangeMaxCalendar').val('');
         }
       } else if (dateTimeCheckBox) {
         $('#dateTimeInput').prop('checked', true);
-        if ($('#dateTimeInput').prop('checked', true)) {
+        if (document.getElementById('dateTimeInput').checked) {
+          $('#dateTimeCalendar').show();
+          $('#dateCalendar').hide();
+          $('#dateTimeRange').hide();
           var time = TSCORE.Utils.convertToDateTime(currentDateTime);
           $('#dateTimeCalendar').val(time);
-          //$('#dateTimeCalendar').css('display', 'inline-block');
-          //$('#dateCalendar').hide();
-          //$('#dateTimeRangeCalendar').hide();
+          $('#dateCalendar').val('');
+          $('#dateTimeRangeCalendar').val('');
+          $('#dateTimeRangeMaxCalendar').val('');
+
         }
       } else if (dateRangeCheckBox) {
         $('#dateTimeRangeInput').prop('checked', true);
-        if ($('#dateTimeRangeInput').prop('checked', true)) {
+        if (document.getElementById('dateTimeRangeInput').checked) {
+          $('#dateTimeCalendar').hide();
+          $('#dateCalendar').hide();
+          $('#dateTimeRange').show();
           var range = TSCORE.Utils.convertToDateRange(currentDateTime);
           $('#dateTimeRangeCalendar').val(TSCORE.Utils.convertToDate(range[0]));
           $('#dateTimeRangeMaxCalendar').val(TSCORE.Utils.convertToDate(range[1]));
-          //$('#dateTimeRangeCalendar').show();
-          //$('#dateTimeCalendar').hide();
-          //$('#dateCalendar').hide();
+          $('#dateCalendar').val('');
+          $('#dateTimeCalendar').val('');
+
         }
       }
     } else if (!(dateRegExp && geoLocationRegExp.exec(currentCoordinate))) {
