@@ -179,13 +179,7 @@ define(function(require, exports, module) {
       if (target === "#geoLocation") {
         tagSpacesMap.invalidateSize();
 
-        $('#editTagButton').click(function() {
-          var longitude = lng >= 0 ? '+' + lng : lng;
-          latlng = lat + "" + longitude;
-          console.log(latlng);
-          TSCORE.TagUtils.renameTag(TSCORE.selectedFiles[0], TSCORE.selectedTag, latlng.trim());
-        });
-
+       
         $('#dialogEditTag').on('hidden.bs.modal', function() {
           //removeMarker();
           if (TSCORE.selectedTag === 'geoTag') {
