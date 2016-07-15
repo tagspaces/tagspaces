@@ -826,7 +826,7 @@ define(function(require, exports, module) {
 
       if (dateCheckBox) {
         $('#dateCalendarInput').prop('checked', true);
-        if ($(document.getElementById('dateCalendarInput').checked)) {
+        if (document.getElementById('dateCalendarInput').checked) {
           $('#dateCalendar').show();
           $('#dateTimeCalendar').hide();
           $('#dateTimeRange').hide();
