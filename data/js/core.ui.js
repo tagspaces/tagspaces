@@ -171,11 +171,6 @@ define(function(require, exports, module) {
       TSCORE.TagUtils.renameTag(TSCORE.selectedFiles[0], TSCORE.selectedTag, $('#newTagName').val());
     });
 
-    $('#editTagButton').click(function() {
-      TSCORE.TagUtils.renameTag(TSCORE.selectedFiles[0], TSCORE.selectedTag, $('#coordinateMap').val());
-    });
-
-
     // End Edit Tag Dialog
     $('#startNewInstanceBack').click(function() {
       if (!isCordova) {

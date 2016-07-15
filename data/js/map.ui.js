@@ -179,7 +179,12 @@ define(function(require, exports, module) {
       if (target === "#geoLocation") {
         tagSpacesMap.invalidateSize();
 
-       
+
+        $('#editTagButton').click(function() {
+          TSCORE.TagUtils.renameTag(TSCORE.selectedFiles[0], TSCORE.selectedTag, $('#coordinateMap').val());
+        });
+
+
         $('#dialogEditTag').on('hidden.bs.modal', function() {
           //removeMarker();
           if (TSCORE.selectedTag === 'geoTag') {
