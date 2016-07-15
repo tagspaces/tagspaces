@@ -668,73 +668,109 @@ define(function(require, exports, module) {
 
     $('#dateTimeCalendar').hide();
     $('#dateTimeRangeCalendar').hide();
+    $('#dateTimeRangeMaxCalendar').hide();
 
     $('#dateCalendarInput').click(function() {
       $('#dateTimeCalendar').hide();
       $('#dateTimeRangeCalendar').hide();
+      $('#dateTimeRangeMaxCalendar').hide();
       $('#dateCalendar').show();
     });
 
     $('#dateTimeInput').click(function() {
       $('#dateTimeCalendar').show();
       $('#dateTimeRangeCalendar').hide();
+      $('#dateTimeRangeMaxCalendar').hide();
       $('#dateCalendar').hide();
     });
     $('#dateTimeRangeInput').click(function() {
       $('#dateTimeCalendar').hide();
       $('#dateTimeRangeCalendar').show();
+      $('#dateTimeRangeMaxCalendar').show();
       $('#dateCalendar').hide();
     });
 
     flatpickr('#dateTimeCalendar', {
+      enable: [
+        {
+          from: "1970-00-00",
+          to: "2050-00-00"
+        }
+      ],
       dateFormat: 'Y-m-d',
-      //minDate: "today",
+
       onChange: function(dateObj, dateStr) {
         console.log(dateObj);
         console.log(dateStr);
       },
-      onOpen: function(dateObj, dateStr){
+      onOpen: function(dateObj, dateStr) {
         console.log(dateObj);
         console.log(dateStr);
       },
-      onClose: function(dateObj, dateStr){
+      onClose: function(dateObj, dateStr) {
         console.log(dateObj);
         console.log(dateStr);
       }
     });
     flatpickr('#dateTimeRangeCalendar', {
-
-      minDate: "today",
+      enable: [
+        {
+          from: "1970-00-00",
+          to: "2050-00-00"
+        }
+      ],
       dateFormat: 'Y-m-d',
 
       onChange: function(dateObj, dateStr) {
-       console.log(dateObj);
-       console.log(dateStr);
-      },
-      onOpen: function(dateObj, dateStr){
         console.log(dateObj);
         console.log(dateStr);
       },
-      onClose: function(dateObj, dateStr){
+      onOpen: function(dateObj, dateStr) {
+        console.log(dateObj);
+        console.log(dateStr);
+      },
+      onClose: function(dateObj, dateStr) {
         console.log(dateObj);
         console.log(dateStr);
       }
     });
-    flatpickr('.calendar',{
+    flatpickr('#dateTimeRangeMaxCalendar', {
+      enable: [
+        {
+          from: "1970-00-00",
+          to: "2050-00-00"
+        }
+      ],
       dateFormat: 'Y-m-d',
 
       onChange: function(dateObj, dateStr) {
         console.log(dateObj);
         console.log(dateStr);
       },
-      onOpen: function(dateObj, dateStr){
+      onOpen: function(dateObj, dateStr) {
         console.log(dateObj);
         console.log(dateStr);
       },
-      onClose: function(dateObj, dateStr){
+      onClose: function(dateObj, dateStr) {
+        console.log(dateObj);
+        console.log(dateStr);
+      }
+    });
+    flatpickr('.calendar', {
+      dateFormat: 'Y-m-d',
+
+      onChange: function(dateObj, dateStr) {
         console.log(dateObj);
         console.log(dateStr);
       },
+      onOpen: function(dateObj, dateStr) {
+        console.log(dateObj);
+        console.log(dateStr);
+      },
+      onClose: function(dateObj, dateStr) {
+        console.log(dateObj);
+        console.log(dateStr);
+      }
     });
 
 
@@ -843,6 +879,7 @@ define(function(require, exports, module) {
 
       if (dateCheckBox) {
         $('#dateCalendarInput').prop('checked', true);
+        $('#dateCalendar').val(TSCORE.Utils.convertToDate(currentDateTime));
         //if ($('#dateCalendarInput').prop('checked', true)) {
         //  //$('#dateTimeCalendar').show();
         //  //$('#dateTimeRangeCalendar').hide();
@@ -850,6 +887,10 @@ define(function(require, exports, module) {
         //}
       } else if (dateTimeCheckBox) {
         $('#dateTimeInput').prop('checked', true);
+        var time = TSCORE.Utils.convertToDateTime(currentDateTime);
+        console.log(time);
+        $('#dateTimeCalendar').val(time);
+
         //if ($('#dateTimeInput').prop('checked', true)) {
         //  $('#dateTimeCalendar').css('display', 'inline-block');
         //  $('#dateCalendar').hide();
@@ -857,7 +898,12 @@ define(function(require, exports, module) {
         //}
       } else if (dateRangeCheckBox) {
         $('#dateTimeRangeInput').prop('checked', true);
-        $('#dateTimeRangeCalendar').show();
+        //$('#dateTimeRangeCalendar').show();
+        var dateRange = TSCORE.Utils.convertToDateRange(currentDateTime);
+
+
+        $('#dateTimeRangeCalendar').val(TSCORE.Utils.convertToDate(dateRange[0]));
+        $('#dateTimeRangeMaxCalendar').val(TSCORE.Utils.convertToDate(dateRange[1]));
 
         if ($('#dateTimeRangeInput').prop('checked', true)) {
           $('#dateTimeRangeCalendar').show();

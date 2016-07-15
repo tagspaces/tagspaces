@@ -187,8 +187,7 @@
   "dateCalendar": "Date",
   "dateTime": "Date Time",
   "dateTimeRange": "Date Range",
+  "dateTimeRangeMax": "Date Range Max",
   "yourLocation": "Your Location",
-  "save":"Save",
-  "delete":"Delete",
   "-": "-"
 }
