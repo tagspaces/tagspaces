@@ -72,7 +72,7 @@ define(function(require, exports, module) {
   }
 
   function showViewLocation() {
-    tagSpacesMap.setView(new L.LatLng(54.5259614, +15.2551187), 5);
+    tagSpacesMap.setView(new L.LatLng(51.51, 27.95), 3);
   }
 
   function showGeoLocation(coordinate) {
