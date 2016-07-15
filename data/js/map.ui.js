@@ -154,7 +154,7 @@ define(function(require, exports, module) {
     date.value = dateValue.trim();
   }
 
-  function tagYourself() {
+  function onLocationFound() {
     tagSpacesMap.locate({
       setView: true,
       watch: true
@@ -205,7 +205,7 @@ define(function(require, exports, module) {
 
     tagSpacesMap.on('click', onMapClick);
 
-    //tagSpacesMap.on('locationfound', onLocationFound);
+    tagSpacesMap.on('locationfound', onLocationFound);
 
     tagSpacesMap.on('layeradd', function(e) {
       //console.log('layeradd', e);
@@ -216,7 +216,7 @@ define(function(require, exports, module) {
 
   // Public API definition
   exports.initMap = initMap;
-  exports.tagYourself = tagYourself;
+  exports.onLocationFound = onLocationFound;
   exports.onMapClick = onMapClick;
   exports.addMarker = addMarker;
   exports.showGeoLocation = showGeoLocation;
