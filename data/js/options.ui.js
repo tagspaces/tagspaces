@@ -154,6 +154,7 @@ define(function(require, exports, module) {
     $('#perspectiveList').empty();
     $('#writeMetaToSidecarFile').attr('checked', TSCORE.Config.getWriteMetaToSidecarFile());
     $('#useDefaultLocationCheckbox').attr('checked', TSCORE.Config.getUseDefaultLocation());
+    $('#coloredFileExtensionsEnabledCheckbox').attr('checked', TSCORE.Config.getColoredFileExtensionsEnabled());
     if (TSCORE.PRO) {
       $('#enableMetaData').attr('checked', TSCORE.Config.getEnableMetaData());
       $('#useTrashCan').attr('checked', TSCORE.Config.getUseTrashCan());
@@ -244,6 +245,7 @@ define(function(require, exports, module) {
     TSCORE.Config.setSupportedFileTypes(collectSupportedFileTypesData());
     TSCORE.Config.setWriteMetaToSidecarFile($('#writeMetaToSidecarFile').is(':checked'));
     TSCORE.Config.setUseDefaultLocation($('#useDefaultLocationCheckbox').is(':checked'));
+    TSCORE.Config.setColoredFileExtensionsEnabled($('#coloredFileExtensionsEnabledCheckbox').is(':checked'));
     TSCORE.Config.saveSettings();
   }
 
