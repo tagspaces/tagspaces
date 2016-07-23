@@ -421,11 +421,6 @@ input a.resetFilter {
 #alternativeNavigator .btn-link {
   padding-left: 0px;
   padding-right: 0px;
-  color: #404040;
-}
-
-#alternativeNavigator .btn-link:hover {
-  background-color: #cacaca;
 }
 
 #alternativeNavigator {
