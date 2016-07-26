@@ -12,7 +12,7 @@
         "description": ""
     },
     "addTagHelp": {
-        "message": "Tags should have a minimum length of 2 characters and should not contain special characters such as spaces, #, / ,\\ and other.",
+        "message": "Мітки мусять бути більше 2 літер та не можуть містити в собі спеціальні символи #, / ,\\ та ін. ",
         "description": "Add tag help message"
     },
     "saveScreenshotTitle": {
