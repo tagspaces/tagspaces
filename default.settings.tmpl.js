@@ -71,6 +71,7 @@ define(function (require, exports, module) {
             { "iso": "hu", "title": "Magyar (Hungarian)" },
             { "iso": "id_ID", "title": "bahasa Indonesia (Indonesian)" },
             { "iso": "pl", "title": "Polski (Polish)" },
+            { "iso": "mt", "title": "Maltese (Maltese)" },
         ],
         "keyBindings": {
             "selectAll": "mod+a",
