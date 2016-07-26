@@ -273,6 +273,14 @@ define(function(require, exports, module) {
     var viewerExt = TSCORE.Config.getFileTypeViewer(fileExt);
     var editorExt = TSCORE.Config.getFileTypeEditor(fileExt);
     console.log('File Viewer: ' + viewerExt + ' File Editor: ' + editorExt);
+
+    // Handling colored file extensions in the file opener
+    if(TSCORE.Config.getColoredFileExtensionsEnabled()) {
+      $('#fileMenuButton').addClass('fileExtColor');
+    } else {
+      $('#fileMenuButton').removeClass('fileExtColor');
+    }
+
     // Handling the edit button depending on existense of an editor
     if (editorExt === false || editorExt === 'false' || editorExt === '') {
       $('#editDocument').hide();
