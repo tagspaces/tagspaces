@@ -112,6 +112,9 @@ var isWin = navigator.appVersion.indexOf("Win")!==-1;
       webdav:                 'web/webdavlib/webdavlib',
       leaflet:                'libs/leaf/leaflet',
       leafletlocate:          'libs/leaflet.locatecontrol/dist/L.Control.Locate.min',
+      moment:                 'libs/moment/min/moment.min',
+      momenttimezone:         'libs/moment-timezone/builds/moment-timezone.min',
+      datetimepicker:         'libs/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min',
 
       tscore:                 'js/core.api',
       tssetting:              'js/settings.api',

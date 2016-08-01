@@ -17,7 +17,6 @@
     "private-browsing": false
   },
   "unpack": true,
-    
   "repository": {
     "type": "git",
     "url": "https://github.com/tagspaces/tagspaces.git"

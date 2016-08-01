@@ -12,6 +12,7 @@ define(function(require, exports, module) {
   var TSPOSTIO = require("tspostioapi");
 
   require('pickr');
+  require('datetimepicker');
 
   var fileContent;
   var fileType;
@@ -682,62 +683,73 @@ define(function(require, exports, module) {
   }
 
   function showDateTimeCalendar() {
-    flatpickr('#dateTimeCalendar', {
-      enable: [
-        {
-          from: "1970-00-00",
-          to: "2050-00-00"
-        }
-      ],
-      dateFormat: 'Y-m-d',
 
-      onChange: function(dateObj, dateStr) {
-        console.log(dateObj);
-        console.log(dateStr);
-      }
+    $('#dateCalendar').datetimepicker({
+      format: 'MMMM YYYY',
+      inline: true,
+      sideBySide: true,
+      calendarWeeks: true,
+      dayViewHeaderFormat: false,
+      //minDate: false,
+      //maxDate: true,
     });
-    flatpickr('#dateTimeRangeCalendar', {
-      enable: [
-        {
-          from: "1970-00-00",
-          to: "2050-00-00"
-        }
-      ],
-      //dateFormat: 'Y-m-d',
-      altInput: true,
-      //altFormat: "\\F\\r\\o\\m: Y-m-d",
-      altFormat: "\\F\\r\\o\\m: l, F j Y",
+    //flatpickr('#dateTimeCalendar', {
+    //  enable: [
+    //    {
+    //      from: "1970-00-00",
+    //      to: "2050-00-00"
+    //    }
+    //  ],
+    //  dateFormat: 'Y-m-d',
+    //
+    //  onChange: function(dateObj, dateStr) {
+    //    console.log(dateObj);
+    //    console.log(dateStr);
+    //  }
+    //});
+    //flatpickr('#dateTimeRangeCalendar', {
+    //  enable: [
+    //    {
+    //      from: "1970-00-00",
+    //      to: "2050-00-00"
+    //    }
+    //  ],
+    //  //dateFormat: 'Y-m-d',
+    //  altInput: true,
+    //  //altFormat: "\\F\\r\\o\\m: Y-m-d",
+    //  altFormat: "\\F\\r\\o\\m: l, F j Y",
+    //
+    //  onChange: function(dateObj, dateStr) {
+    //    console.log(dateObj);
+    //    console.log(dateStr);
+    //  }
+    //});
+    //flatpickr('#dateTimeRangeMaxCalendar', {
+    //  enable: [
+    //    {
+    //      from: "1970-00-00",
+    //      to: "2050-00-00"
+    //    }
+    //  ],
+    //  //dateFormat: 'Y-m-d',
+    //  altInput: true,
+    //  altFormat: "\\T\\o: Y-m-d",
+    //  //altFormat: "\\T\\o: l, F j Y",
+    //
+    //  onChange: function(dateObj, dateStr) {
+    //    console.log(dateObj);
+    //    console.log(dateStr);
+    //  }
+    //});
+    //flatpickr('.calendar', {
+    //  dateFormat: 'Y-m-d',
+    //
+    //  onChange: function(dateObj, dateStr) {
+    //    console.log(dateObj);
+    //    console.log(dateStr);
+    //  }
+    //});
 
-      onChange: function(dateObj, dateStr) {
-        console.log(dateObj);
-        console.log(dateStr);
-      }
-    });
-    flatpickr('#dateTimeRangeMaxCalendar', {
-      enable: [
-        {
-          from: "1970-00-00",
-          to: "2050-00-00"
-        }
-      ],
-      //dateFormat: 'Y-m-d',
-      altInput: true,
-      altFormat: "\\T\\o: Y-m-d",
-      //altFormat: "\\T\\o: l, F j Y",
-
-      onChange: function(dateObj, dateStr) {
-        console.log(dateObj);
-        console.log(dateStr);
-      }
-    });
-    flatpickr('.calendar', {
-      dateFormat: 'Y-m-d',
-
-      onChange: function(dateObj, dateStr) {
-        console.log(dateObj);
-        console.log(dateStr);
-      }
-    });
   }
 
   function showTagEditDialog() {

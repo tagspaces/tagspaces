@@ -521,8 +521,7 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true"><i class="fa fa-check fa-lg"></i>
-      </div>
+        <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true"><i class="fa fa-check fa-lg"></i></button></div>
     </div>
   </div>
 </div>
@@ -657,29 +656,34 @@
           </form>
         </div>
         <div class="tab-pane" id="dateTimeTab">
+
           <div class="row">
             <div class="form-group">
-              <div class="col-sm-4">
+              <div class="col-xs-5 col-sm-4">
                 <input class="" id="dateCalendarInput" type="radio" name="dateTimeName" checked>
                 <label class="active" data-i18n="ns.dialogs:dateCalendar"></label>
               </div>
-              <div class="col-sm-4">
+              <div class="col-xs-5 col-sm-4">
                 <input type="radio" id="dateTimeInput" name="dateTimeName">
                 <label class="" data-i18n="ns.dialogs:dateTime"></label>
               </div>
-              <div class="col-sm-4">
+              <div class="col-xs-5 col-sm-4">
                 <input type="radio" id="dateTimeRangeInput" name="dateTimeName">
                 <label class="" data-i18n="ns.dialogs:dateTimeRange"></label>
               </div>
             </div>
-            <div class="form-group col-sm-12">
-                <input class='calendar' id="dateCalendar" data-i18n="[placeholder]ns.dialogs:dateCalendar">
-                <input class='flatpickr' id="dateTimeCalendar"  data-enabletime='true' data-enableseconds='true' data-time_24hr='true'
-                       data-i18n="[placeholder]ns.dialogs:dateTime">
-              <div id="dateTimeRange">
-                <input class='flatpickr' id="dateTimeRangeCalendar" data-i18n="[placeholder]ns.dialogs:dateTimeRange">
-                <input class='flatpickr' id="dateTimeRangeMaxCalendar" data-i18n="[placeholder]ns.dialogs:dateTimeRangeMax">
-              </div>
+          </div>
+
+          <div class="date-time-calendar">
+            <div class="form-group">
+                <!--<input class='calendar' id="dateCalendar" data-i18n="[placeholder]ns.dialogs:dateCalendar">-->
+              <div id="dateCalendar" data-i18n="[placeholder]ns.dialogs:dateCalendar"></div>
+                <!--<input class='flatpickr' id="dateTimeCalendar"  data-enabletime='true' data-enableseconds='true' data-time_24hr='true'-->
+                       <!--data-i18n="[placeholder]ns.dialogs:dateTime">-->
+              <!--<div id="dateTimeRange">-->
+                <!--<input class='flatpickr' id="dateTimeRangeCalendar" data-i18n="[placeholder]ns.dialogs:dateTimeRange">-->
+                <!--<input class='flatpickr' id="dateTimeRangeMaxCalendar" data-i18n="[placeholder]ns.dialogs:dateTimeRangeMax">-->
+              <!--</div>-->
             </div>
           </div>
         </div>
