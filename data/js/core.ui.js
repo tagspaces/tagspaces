@@ -835,6 +835,11 @@ define(function(require, exports, module) {
           $('#dateTimeCalendar').val('');
           $('#dateTimeRangeCalendar').val('');
           $('#dateTimeRangeMaxCalendar').val('');
+
+
+          $('#editTagButton').click(function() {
+            TSCORE.TagUtils.renameTag(TSCORE.selectedFiles[0], TSCORE.selectedTag, $('#dateCalendar').val());
+          });
         }
       } else if (dateTimeCheckBox) {
         $('#dateTimeInput').prop('checked', true);
