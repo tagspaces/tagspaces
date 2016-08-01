@@ -64,11 +64,11 @@ define(function(require, exports, module) {
       '<div class="accordion-body collapse in" id="dirButtons{{@index}}">' +
         '<div class="accordion-inner" id="dirButtonsContent{{@index}}" style="padding: 4px;">' +
           '<div class="dirButtonContainer">' +
-            '<button class="btn btn-sm dirButton parentDirectoryButton" key="{{path}}/.." title="Go to parent folder">' +
+            '<button class="btn btn-sm btn-default dirButton parentDirectoryButton" key="{{path}}/.." title="Go to parent folder">' +
             '<i class="fa fa-level-up"></i></button>' +
             '{{#if children}}' +
             '{{#each children}}' +
-              '<button class="btn btn-sm dirButton ui-droppable" key="{{path}}" title="{{path}}">' +
+              '<button class="btn btn-sm btn-default dirButton ui-droppable" key="{{path}}" title="{{path}}">' +
                 '<div><i class="fa fa-folder-o"></i>&nbsp;{{name}}</div></button>' +
             '{{/each}}' +
             '{{else}}' +

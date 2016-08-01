@@ -1,26 +1,26 @@
 {
     "saveAsSelectionLabel": {
-        "message": "Spara markering",
+        "message": "Aħżen il-kontenut il-Magħżul",
         "description": "Title of label."
     },
     "appLauncher": {
-        "message": "Starta TagSpaces",
+        "message": "Iftaħ TagSpaces",
         "description": "Title of the application launcher in the browser."
     },
     "appDesc": {
-        "message": "Filhanterare med webbinnehållsskrapning och Chromecast support.",
+        "message": "'Browser' tal-Fajls li jinkludi 'Web Content Scraping' u jiflaħ għall-'Chromecast'",
         "description": ""
     },
     "addTagHelp": {
-        "message": "Taggar måste ha en längd på minst 2 tecken och ska inte innehålla specialtecken som mellanslag, #, /, \\ med mera.",
+        "message": "It-tul tat-Tikketti għandu jkun tal-anqas ta' 2 karattri, iżda ma jistax jinkludi karattri speċjali bħal spazji, #, / u \\ fost oħrajn.",
         "description": "Add tag help message"
     },
     "saveScreenshotTitle": {
-        "message": "Spara en skärmbild av sidans synliga del som PNG",
+        "message": "Aħżen stampa ta' kull ma jidher fuq il-paġna bħala PNG",
         "description": "Title of screenshot button"
     },
     "editTitleLabel": {
-        "message": "Redigera titel",
+        "message": "Immodifika t-Titlu",
         "description": "Title of label."
     },
     "appName": {
@@ -28,35 +28,35 @@
         "description": ""
     },
     "appLauncherLabel": {
-        "message": "Fånga webbinnehåll",
+        "message": "Irreġistra l-Kontenut tal-'Web'",
         "description": "Title of label."
     },
     "saveScreenshotLabel": {
-        "message": "Skärmbild",
+        "message": "Ħu stampa tal-iskrijn",
         "description": "Title of label."
     },
     "addTagLabel": {
-        "message": "Lägg till taggar",
+        "message": "Żid Tikketti",
         "description": "Title of label."
     },
     "saveAsMhtmlTitle": {
-        "message": "Spara hela sidan som MHTML",
+        "message": "Aħżen il-paġna kollha bħala MHTML",
         "description": "Title of save page button"
     },
     "appLauncherTitle": {
-        "message": "Starta TagSpaces utforskare i en ny flik",
+        "message": "Iftaħ il-'browser' tat-TagSpaces f'sezzjoni ġdida",
         "description": "Title of the application launcher in the browser."
     },
     "saveSelectionAsHtmlTitle": {
-        "message": "Spara markerat innehåll som HTML",
+        "message": "Aħżen il-kontenut magħżul bħala HTML",
         "description": "Title of save selection button"
     },
     "saveAsMhtmlLabel": {
-        "message": "Spara hela sidan",
+        "message": "Aħżen il-Paġna Kollha",
         "description": "Title of label."
     },
     "saveFileLabel": {
-        "message": "Spara som fil",
+        "message": "Aħżen ġo Fajl",
         "description": "Title of label."
     }
 }

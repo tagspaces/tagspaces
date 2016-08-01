@@ -108,6 +108,8 @@ define(function(require, exports, module) {
     $('#connectionName').val(dirName);
     $('#folderLocation').val(dirPath);
     $('#folderLocation2').val(dirPath);
+    $('#folderLocation').blur();
+    $('#folderLocation2').blur();
     $('#moveCopyDirectoryPath').val(dirPath);
   };
 
