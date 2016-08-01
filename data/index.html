@@ -57,7 +57,7 @@
       <nav class="navbar navbar-default" role="navigation">
         <div class="btn-toolbar">
           <span id="startNewInstanceBack" data-i18n="[title]ns.common:openNewInstanceTooltip" class="pull-left">
-            <span id="logo"><img src="assets/text-logo.svg" style="max-height: 30px; margin-top: -6px; margin-left: -5px;"></span>
+            <span id="logo"><img src="assets/text-logo.svg" id="textlogo" style="max-height: 30px; margin-top: -6px; margin-left: -5px;"></span>
             <sup id="appVersion"></sup>
           </span>
           <button id="newVersionAvailable" class="btn btn-link" data-i18n="[title]ns.common:newVersionAvailableTooltip">
@@ -674,8 +674,12 @@
             </div>
             <div class="form-group col-sm-12">
                 <input class='calendar' id="dateCalendar" data-i18n="[placeholder]ns.dialogs:dateCalendar">
-                <input class='flatpickr' id="dateTimeCalendar" data-mindate='today' data-enabletime='true' data-time_24hr='true' data-timeFormat="H:i" data-i18n="[placeholder]ns.dialogs:dateTime">
-                <input class='flatpickr' id="dateTimeRangeCalendar" data-enableTime="true" data-i18n="[placeholder]ns.dialogs:dateTimeRange">
+                <input class='flatpickr' id="dateTimeCalendar"  data-enabletime='true' data-enableseconds='true' data-time_24hr='true'
+                       data-i18n="[placeholder]ns.dialogs:dateTime">
+              <div id="dateTimeRange">
+                <input class='flatpickr' id="dateTimeRangeCalendar" data-i18n="[placeholder]ns.dialogs:dateTimeRange">
+                <input class='flatpickr' id="dateTimeRangeMaxCalendar" data-i18n="[placeholder]ns.dialogs:dateTimeRangeMax">
+              </div>
             </div>
           </div>
         </div>

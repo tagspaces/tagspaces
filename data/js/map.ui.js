@@ -72,7 +72,7 @@ define(function(require, exports, module) {
   }
 
   function showViewLocation() {
-    tagSpacesMap.setView(new L.LatLng(54.5259614, +15.2551187), 5);
+    tagSpacesMap.setView(new L.LatLng(51.51, 27.95), 3);
   }
 
   function showGeoLocation(coordinate) {
@@ -154,7 +154,7 @@ define(function(require, exports, module) {
     date.value = dateValue.trim();
   }
 
-  function tagYourself() {
+  function onLocationFound() {
     tagSpacesMap.locate({
       setView: true,
       watch: true
@@ -179,12 +179,11 @@ define(function(require, exports, module) {
       if (target === "#geoLocation") {
         tagSpacesMap.invalidateSize();
 
+
         $('#editTagButton').click(function() {
-          var longitude = lng >= 0 ? '+' + lng : lng;
-          latlng = lat + "" + longitude;
-          console.log(latlng);
-          TSCORE.TagUtils.renameTag(TSCORE.selectedFiles[0], TSCORE.selectedTag, latlng.trim());
+          TSCORE.TagUtils.renameTag(TSCORE.selectedFiles[0], TSCORE.selectedTag, $('#coordinateMap').val());
         });
+
 
         $('#dialogEditTag').on('hidden.bs.modal', function() {
           //removeMarker();
@@ -206,7 +205,7 @@ define(function(require, exports, module) {
 
     tagSpacesMap.on('click', onMapClick);
 
-    //tagSpacesMap.on('locationfound', onLocationFound);
+    tagSpacesMap.on('locationfound', onLocationFound);
 
     tagSpacesMap.on('layeradd', function(e) {
       //console.log('layeradd', e);
@@ -217,7 +216,7 @@ define(function(require, exports, module) {
 
   // Public API definition
   exports.initMap = initMap;
-  exports.tagYourself = tagYourself;
+  exports.onLocationFound = onLocationFound;
   exports.onMapClick = onMapClick;
   exports.addMarker = addMarker;
   exports.showGeoLocation = showGeoLocation;

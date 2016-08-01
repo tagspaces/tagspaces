@@ -171,6 +171,23 @@ define(function(require, exports, module) {
       TSCORE.TagUtils.renameTag(TSCORE.selectedFiles[0], TSCORE.selectedTag, $('#newTagName').val());
     });
 
+    $('#dateCalendarInput').click(function() {
+      $('#dateTimeCalendar').hide();
+      $('#dateTimeRange').hide();
+      $('#dateCalendar').show();
+    });
+
+    $('#dateTimeInput').click(function() {
+      $('#dateTimeCalendar').show();
+      $('#dateTimeRange').hide();
+      $('#dateCalendar').hide();
+    });
+    $('#dateTimeRangeInput').click(function() {
+      $('#dateTimeCalendar').hide();
+      $('#dateTimeRange').show();
+      $('#dateCalendar').hide();
+    });
+
     // End Edit Tag Dialog
     $('#startNewInstanceBack').click(function() {
       if (!isCordova) {
@@ -665,102 +682,62 @@ define(function(require, exports, module) {
   }
 
   function showDateTimeCalendar() {
-
-    $('#dateTimeCalendar').hide();
-    $('#dateTimeRangeCalendar').hide();
-
-    $('#dateCalendarInput').click(function() {
-      $('#dateTimeCalendar').hide();
-      $('#dateTimeRangeCalendar').hide();
-      $('#dateCalendar').show();
-    });
-
-    $('#dateTimeInput').click(function() {
-      $('#dateTimeCalendar').show();
-      $('#dateTimeRangeCalendar').hide();
-      $('#dateCalendar').hide();
-    });
-    $('#dateTimeRangeInput').click(function() {
-      $('#dateTimeCalendar').hide();
-      $('#dateTimeRangeCalendar').show();
-      $('#dateCalendar').hide();
-    });
-
     flatpickr('#dateTimeCalendar', {
+      enable: [
+        {
+          from: "1970-00-00",
+          to: "2050-00-00"
+        }
+      ],
       dateFormat: 'Y-m-d',
-      //minDate: "today",
+
       onChange: function(dateObj, dateStr) {
-        console.log(dateObj);
-        console.log(dateStr);
-      },
-      onOpen: function(dateObj, dateStr){
-        console.log(dateObj);
-        console.log(dateStr);
-      },
-      onClose: function(dateObj, dateStr){
         console.log(dateObj);
         console.log(dateStr);
       }
     });
     flatpickr('#dateTimeRangeCalendar', {
-      //disable: [
-      //  {
-      //    from: "2016-07-06",
-      //    to: "2016-07-09"
-      //  },
-      //  "2016-07-24"
-      //],
-      minDate: "today",
-      dateFormat: 'Y-m-d',
+      enable: [
+        {
+          from: "1970-00-00",
+          to: "2050-00-00"
+        }
+      ],
+      //dateFormat: 'Y-m-d',
+      altInput: true,
+      //altFormat: "\\F\\r\\o\\m: Y-m-d",
+      altFormat: "\\F\\r\\o\\m: l, F j Y",
 
       onChange: function(dateObj, dateStr) {
-       console.log(dateObj);
-       console.log(dateStr);
-      },
-      onOpen: function(dateObj, dateStr){
-        console.log(dateObj);
-        console.log(dateStr);
-      },
-      onClose: function(dateObj, dateStr){
         console.log(dateObj);
         console.log(dateStr);
       }
     });
-    flatpickr('.calendar',{
+    flatpickr('#dateTimeRangeMaxCalendar', {
+      enable: [
+        {
+          from: "1970-00-00",
+          to: "2050-00-00"
+        }
+      ],
+      //dateFormat: 'Y-m-d',
+      altInput: true,
+      altFormat: "\\T\\o: Y-m-d",
+      //altFormat: "\\T\\o: l, F j Y",
+
+      onChange: function(dateObj, dateStr) {
+        console.log(dateObj);
+        console.log(dateStr);
+      }
+    });
+    flatpickr('.calendar', {
       dateFormat: 'Y-m-d',
 
       onChange: function(dateObj, dateStr) {
         console.log(dateObj);
         console.log(dateStr);
-      },
-      onOpen: function(dateObj, dateStr){
-        console.log(dateObj);
-        console.log(dateStr);
-      },
-      onClose: function(dateObj, dateStr){
-        console.log(dateObj);
-        console.log(dateStr);
-      },
+      }
     });
-
-
-    //var check_in = flatpickr("#check_in_date", {
-    //  altInput: true,
-    //  altFormat: "\\C\\h\\e\\c\\k \\i\\n\\: l, F j Y",
-    //  minDate: new Date()
-    //});
-    //var check_out = flatpickr("#check_out_date", {
-    //  altInput: true,
-    //  altFormat: "\\C\\h\\e\\c\\k \\o\\u\\t: l, F j Y",
-    //  minDate: new Date()
-    //});
-    //
-    //check_in.set("onChange", function(d) {
-    //  check_out.set("minDate", d.fp_incr(1));
-    //});
-    //check_out.set("onChange", function(d) {
-    //  check_in.set("maxDate", d.fp_incr(-1));
-    //});
   }
 
   function showTagEditDialog() {
@@ -786,13 +763,14 @@ define(function(require, exports, module) {
       backdrop: 'static',
       show: true
     });
-    $('#dialogEditTag').draggable({
-      handle: ".modal-header"
-    });
+    //$('#dialogEditTag').draggable({
+    //  handle: ".modal-header"
+    //});
 
     showDateTimeCalendar();
     TSCORE.MAP.initMap();
   }
+
 
   function tagRecognition(dataTag) {
     var geoLocationRegExp = /^([-+]?)([\d]{1,2})(((\.)(\d+)(,)))(\s*)(([-+]?)([\d]{1,3})((\.)(\d+))?)$/g;
@@ -810,6 +788,8 @@ define(function(require, exports, module) {
             currentDateTime.length === 6;
     var date = parseInt(currentDateTime) && !isNaN(currentDateTime) &&
             currentDateTime.length === 8;
+
+    var convertToDateTime = TSCORE.Utils.convertToDateTime(currentDateTime);
 
     var yearRange, monthRange, dateRange;
 
@@ -831,7 +811,7 @@ define(function(require, exports, module) {
     var dateRegExp = yearRange || monthRange || dateRange ||
             currentDateTime.match(dateTimeRegExp) ||
             currentDateTime.match(dateTimeWinRegExp) ||
-            year || month || date;
+            year || month || date || convertToDateTime;
 
     if (geoLocationRegExp.exec(currentCoordinate) || geoTag === dataTag) {
       $('.nav-tabs a[href="#geoLocation"]').tab('show');
@@ -840,32 +820,47 @@ define(function(require, exports, module) {
 
       var dateCheckBox = year || month || date;
       var dateTimeCheckBox = currentDateTime.match(dateTimeRegExp) ||
-              currentDateTime.match(dateTimeWinRegExp);
+              currentDateTime.match(dateTimeWinRegExp) || convertToDateTime;
       var dateRangeCheckBox = currentDateTime.match(dateRangeRegExp) ||
               yearRange || monthRange || dateRange;
 
       if (dateCheckBox) {
         $('#dateCalendarInput').prop('checked', true);
-        //if ($('#dateCalendarInput').prop('checked', true)) {
-        //  //$('#dateTimeCalendar').show();
-        //  //$('#dateTimeRangeCalendar').hide();
-        //  $('#dateCalendar').show();
-        //}
+        if (document.getElementById('dateCalendarInput').checked) {
+          $('#dateCalendar').show();
+          $('#dateTimeCalendar').hide();
+          $('#dateTimeRange').hide();
+
+          $('#dateCalendar').val(TSCORE.Utils.convertToDate(currentDateTime));
+          $('#dateTimeCalendar').val('');
+          $('#dateTimeRangeCalendar').val('');
+          $('#dateTimeRangeMaxCalendar').val('');
+        }
       } else if (dateTimeCheckBox) {
         $('#dateTimeInput').prop('checked', true);
-        //if ($('#dateTimeInput').prop('checked', true)) {
-        //  $('#dateTimeCalendar').css('display', 'inline-block');
-        //  $('#dateCalendar').hide();
-        //  $('#dateTimeRangeCalendar').hide();
-        //}
+        if (document.getElementById('dateTimeInput').checked) {
+          $('#dateTimeCalendar').show();
+          $('#dateCalendar').hide();
+          $('#dateTimeRange').hide();
+          var time = TSCORE.Utils.convertToDateTime(currentDateTime);
+          $('#dateTimeCalendar').val(time);
+          $('#dateCalendar').val('');
+          $('#dateTimeRangeCalendar').val('');
+          $('#dateTimeRangeMaxCalendar').val('');
+
+        }
       } else if (dateRangeCheckBox) {
         $('#dateTimeRangeInput').prop('checked', true);
-        $('#dateTimeRangeCalendar').show();
+        if (document.getElementById('dateTimeRangeInput').checked) {
+          $('#dateTimeCalendar').hide();
+          $('#dateCalendar').hide();
+          $('#dateTimeRange').show();
+          var range = TSCORE.Utils.convertToDateRange(currentDateTime);
+          $('#dateTimeRangeCalendar').val(TSCORE.Utils.convertToDate(range[0]));
+          $('#dateTimeRangeMaxCalendar').val(TSCORE.Utils.convertToDate(range[1]));
+          $('#dateCalendar').val('');
+          $('#dateTimeCalendar').val('');
 
-        if ($('#dateTimeRangeInput').prop('checked', true)) {
-          $('#dateTimeRangeCalendar').show();
-          //$('#dateTimeCalendar').hide();
-          //$('#dateCalendar').hide();
         }
       }
     } else if (!(dateRegExp && geoLocationRegExp.exec(currentCoordinate))) {
