@@ -352,8 +352,7 @@ define(function(require, exports, module) {
     var d;
     if (tagData.type === 'smart') {
       switch (tagData.functionality) {
-        case 'geoLocation':
-        {
+        case 'geoLocation': {
           $('#viewContainers').on('drop dragend', function(event) {
             if (TSCORE.selectedTag === 'geoTag') {
               tagValue = TSCORE.showTagEditDialog();
@@ -361,27 +360,23 @@ define(function(require, exports, module) {
           });
           break;
         }
-        case 'today':
-        {
+        case 'today': {
           tagValue = TSCORE.TagUtils.formatDateTime4Tag(new Date(), false);
           break;
         }
-        case 'tomorrow':
-        {
+        case 'tomorrow': {
           d = new Date();
           d.setDate(d.getDate() + 1);
           tagValue = TSCORE.TagUtils.formatDateTime4Tag(d, false);
           break;
         }
-        case 'yesterday':
-        {
+        case 'yesterday': {
           d = new Date();
           d.setDate(d.getDate() - 1);
           tagValue = TSCORE.TagUtils.formatDateTime4Tag(d, false);
           break;
         }
-        case 'currentMonth':
-        {
+        case 'currentMonth': {
           var cMonth = '' + (new Date().getMonth() + 1);
           if (cMonth.length === 1) {
             cMonth = '0' + cMonth;
@@ -389,18 +384,15 @@ define(function(require, exports, module) {
           tagValue = '' + new Date().getFullYear() + cMonth;
           break;
         }
-        case 'currentYear':
-        {
+        case 'currentYear': {
           tagValue = '' + new Date().getFullYear();
           break;
         }
-        case 'now':
-        {
+        case 'now': {
           tagValue = TSCORE.TagUtils.formatDateTime4Tag(new Date(), true);
           break;
         }
-        default:
-        {
+        default: {
           break;
         }
       }
