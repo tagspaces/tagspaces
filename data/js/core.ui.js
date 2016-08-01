@@ -683,73 +683,28 @@ define(function(require, exports, module) {
   }
 
   function showDateTimeCalendar() {
-
+    var defaultDate = TSCORE.Utils.convertToDate(TSCORE.selectedTag);
     $('#dateCalendar').datetimepicker({
-      format: 'MMMM YYYY',
+      inline: true,
+      sideBySide: false,
+      calendarWeeks: true,
+      useCurrent: defaultDate
+    });
+    $('#dateTimeCalendar').datetimepicker({
       inline: true,
       sideBySide: true,
-      calendarWeeks: true,
-      dayViewHeaderFormat: false,
-      //minDate: false,
-      //maxDate: true,
+      calendarWeeks: true
     });
-    //flatpickr('#dateTimeCalendar', {
-    //  enable: [
-    //    {
-    //      from: "1970-00-00",
-    //      to: "2050-00-00"
-    //    }
-    //  ],
-    //  dateFormat: 'Y-m-d',
-    //
-    //  onChange: function(dateObj, dateStr) {
-    //    console.log(dateObj);
-    //    console.log(dateStr);
-    //  }
-    //});
-    //flatpickr('#dateTimeRangeCalendar', {
-    //  enable: [
-    //    {
-    //      from: "1970-00-00",
-    //      to: "2050-00-00"
-    //    }
-    //  ],
-    //  //dateFormat: 'Y-m-d',
-    //  altInput: true,
-    //  //altFormat: "\\F\\r\\o\\m: Y-m-d",
-    //  altFormat: "\\F\\r\\o\\m: l, F j Y",
-    //
-    //  onChange: function(dateObj, dateStr) {
-    //    console.log(dateObj);
-    //    console.log(dateStr);
-    //  }
-    //});
-    //flatpickr('#dateTimeRangeMaxCalendar', {
-    //  enable: [
-    //    {
-    //      from: "1970-00-00",
-    //      to: "2050-00-00"
-    //    }
-    //  ],
-    //  //dateFormat: 'Y-m-d',
-    //  altInput: true,
-    //  altFormat: "\\T\\o: Y-m-d",
-    //  //altFormat: "\\T\\o: l, F j Y",
-    //
-    //  onChange: function(dateObj, dateStr) {
-    //    console.log(dateObj);
-    //    console.log(dateStr);
-    //  }
-    //});
-    //flatpickr('.calendar', {
-    //  dateFormat: 'Y-m-d',
-    //
-    //  onChange: function(dateObj, dateStr) {
-    //    console.log(dateObj);
-    //    console.log(dateStr);
-    //  }
-    //});
-
+    $('#dateTimeRangeCalendar').datetimepicker({
+      inline: true,
+      sideBySide: false,
+      calendarWeeks: true
+    });
+    $('#dateTimeRangeMaxCalendar').datetimepicker({
+      inline: true,
+      sideBySide: false,
+      calendarWeeks: true
+    });
   }
 
   function showTagEditDialog() {
@@ -839,11 +794,12 @@ define(function(require, exports, module) {
       if (dateCheckBox) {
         $('#dateCalendarInput').prop('checked', true);
         if (document.getElementById('dateCalendarInput').checked) {
+
           $('#dateCalendar').show();
           $('#dateTimeCalendar').hide();
           $('#dateTimeRange').hide();
 
-          $('#dateCalendar').val(TSCORE.Utils.convertToDate(currentDateTime));
+          //$('#dateCalendar').val(TSCORE.Utils.convertToDate(currentDateTime));
           $('#dateTimeCalendar').val('');
           $('#dateTimeRangeCalendar').val('');
           $('#dateTimeRangeMaxCalendar').val('');
