@@ -19,12 +19,12 @@ define(function(require, exports, module) {
   var generatedTagButtons;
   $.fn.editableform.buttons = '<button type="submit" class="btn btn-primary editable-submit"><i class="fa fa-check fa-lg"></i></button><button type="button" class="btn editable-cancel"><i class="fa fa-times fa-lg"></i></button>';
   $.fn.editableform.template = '' +
-    '<form class="form-inline editableform flexMaxWidth">' +
-      '<div class="control-group flexLayout flexMaxWidth">' +
-         '<div class="flexLayout flexMaxWidth"><div class="editable-input flexMaxWidth"></div><div class="editable-buttons"></div></div>' +
-         '<div class="editable-error-block"></div>' +
-      '</div> ' +
-    '</form>';
+          '<form class="form-inline editableform flexMaxWidth">' +
+          '<div class="control-group flexLayout flexMaxWidth">' +
+          '<div class="flexLayout flexMaxWidth"><div class="editable-input flexMaxWidth"></div><div class="editable-buttons"></div></div>' +
+          '<div class="editable-error-block"></div>' +
+          '</div> ' +
+          '</form>';
   var exitFullscreenButton = '<button id="exitFullScreen" class="btn btn-link" title="Exit fullscreen mode (ESC)"><span class="fa fa-remove"></span></button>';
   var _isEditMode = false; // If a file is currently opened for editing, this var should be true
 
@@ -70,22 +70,48 @@ define(function(require, exports, module) {
   }
 
   function initUI() {
-    $('#editDocument').on("click", function() { editFile(_openedFilePath); });
-    $('#saveDocument').on("click", function() { saveFile(); });
-    $('#closeFile').on("click", function() { closeFile(); });
-    $('#closeOpenedFile').on("click", function() { closeFile(); });
-    $('#nextFileButton').on("click", function() { TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getNextFile(_openedFilePath)); });
-    $('#prevFileButton').on("click", function() { TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getPrevFile(_openedFilePath)); });
-    $('#reloadFile').on("click", function() { TSCORE.FileOpener.openFile(_openedFilePath); });
-    $('#sendFile').on("click", function() { TSCORE.IO.sendFile(_openedFilePath); });
-    $('#suggestTagsFile').on("click", function() { $('tagSuggestionsMenu').dropdown('toggle'); });
+    $('#editDocument').on("click", function() {
+      editFile(_openedFilePath);
+    });
+    $('#saveDocument').on("click", function() {
+      saveFile();
+    });
+    $('#closeFile').on("click", function() {
+      closeFile();
+    });
+    $('#closeOpenedFile').on("click", function() {
+      closeFile();
+    });
+    $('#nextFileButton').on("click", function() {
+      TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getNextFile(_openedFilePath));
+    });
+    $('#prevFileButton').on("click", function() {
+      TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getPrevFile(_openedFilePath));
+    });
+    $('#reloadFile').on("click", function() {
+      TSCORE.FileOpener.openFile(_openedFilePath);
+    });
+    $('#sendFile').on("click", function() {
+      TSCORE.IO.sendFile(_openedFilePath);
+    });
+    $('#suggestTagsFile').on("click", function() {
+      $('tagSuggestionsMenu').dropdown('toggle');
+    });
     $('#toggleFullWidthButton').on("click", TSCORE.toggleFullWidth);
     $('#fullscreenFile').on("click", switchToFullScreen);
     $('#openProperties').on("click", showFilePropertiesDialog);
-    $('#deleteFile').on("click", function() { TSCORE.showFileDeleteDialog(_openedFilePath); });
-    $('#openNatively').on("click", function() { TSCORE.IO.openFile(_openedFilePath); });
-    $('#openDirectory').on("click", function() { TSCORE.IO.openDirectory(TSCORE.TagUtils.extractParentDirectoryPath(_openedFilePath)); });
-    $('#printFile').on("click", function() { $('iframe').get(0).contentWindow.print(); });
+    $('#deleteFile').on("click", function() {
+      TSCORE.showFileDeleteDialog(_openedFilePath);
+    });
+    $('#openNatively').on("click", function() {
+      TSCORE.IO.openFile(_openedFilePath);
+    });
+    $('#openDirectory').on("click", function() {
+      TSCORE.IO.openDirectory(TSCORE.TagUtils.extractParentDirectoryPath(_openedFilePath));
+    });
+    $('#printFile').on("click", function() {
+      $('iframe').get(0).contentWindow.print();
+    });
     $('#renameFile').on("click", function() {
       if (_isFileChanged) {
         TSCORE.showAlertDialog($.i18n.t('ns.dialogs:operationNotPermittedInEditModeAlert'));
@@ -221,11 +247,11 @@ define(function(require, exports, module) {
     TSCORE.FileOpener.openFile(filePath);
 
     /*var parentFolderPath = TSCORE.TagUtils.extractContainingDirectoryPath(filePath);
-    TSCORE.IO.listDirectoryPromise(parentFolderPath).then(function(entries) {
-      TSPOSTIO.listDirectory(entries);
-    }).catch(function(err) {
-      TSPOSTIO.errorOpeningPath();
-    });*/
+     TSCORE.IO.listDirectoryPromise(parentFolderPath).then(function(entries) {
+     TSPOSTIO.listDirectory(entries);
+     }).catch(function(err) {
+     TSPOSTIO.errorOpeningPath();
+     });*/
 
   }
 
@@ -275,7 +301,7 @@ define(function(require, exports, module) {
     console.log('File Viewer: ' + viewerExt + ' File Editor: ' + editorExt);
 
     // Handling colored file extensions in the file opener
-    if(TSCORE.Config.getColoredFileExtensionsEnabled()) {
+    if (TSCORE.Config.getColoredFileExtensionsEnabled()) {
       $('#fileMenuButton').addClass('fileExtColor');
     } else {
       $('#fileMenuButton').removeClass('fileExtColor');
@@ -342,10 +368,10 @@ define(function(require, exports, module) {
       return false;
     });
     /*Mousetrap.unbind(TSCORE.Config.getDeleteDocumentKeyBinding());
-        Mousetrap.bind(TSCORE.Config.getDeleteDocumentKeyBinding(), function() {
-            TSCORE.showFileDeleteDialog(_openedFilePath);
-            return false;
-        });*/
+     Mousetrap.bind(TSCORE.Config.getDeleteDocumentKeyBinding(), function() {
+     TSCORE.showFileDeleteDialog(_openedFilePath);
+     return false;
+     });*/
     Mousetrap.unbind(TSCORE.Config.getPropertiesDocumentKeyBinding());
     Mousetrap.bindGlobal(TSCORE.Config.getPropertiesDocumentKeyBinding(), function() {
       showFilePropertiesDialog();
@@ -420,12 +446,12 @@ define(function(require, exports, module) {
     console.log('Save current file: ' + _openedFilePath);
     var content = _tsEditor.getContent();
     /*var title = TSCORE.TagUtils.extractTitle(_openedFilePath);
-        if(title.length < 1 && content.length > 1) {
-            title = content.substring(0,content.indexOf("\n"));
-            if(title.length > 100) {
-                title = title.substring(0,99);
-            }
-        }*/
+     if(title.length < 1 && content.length > 1) {
+     title = content.substring(0,content.indexOf("\n"));
+     if(title.length > 100) {
+     title = title.substring(0,99);
+     }
+     }*/
     TSCORE.IO.saveTextFilePromise(_openedFilePath, content).then(function(isNewFile) {
       TSPOSTIO.saveTextFile(_openedFilePath, isNewFile);
     }, function(error) {
