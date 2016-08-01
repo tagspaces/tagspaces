@@ -107,7 +107,14 @@ var isWin = navigator.appVersion.indexOf("Win")!==-1;
       noty:                   'libs/noty/js/noty/packaged/jquery.noty.packaged.min',
       marked:                 'libs/marked/marked.min',
       webaudiorecording:      'libs/audio-record/WebAudioRecorder',
+      pickr:                  'libs/flatpickr-calendar/dist/flatpickr.min',
+      offlinelib:             'web/offlinelib/offline.min',
       webdav:                 'web/webdavlib/webdavlib',
+      leaflet:                'libs/leaf/leaflet',
+      leafletlocate:          'libs/leaflet.locatecontrol/dist/L.Control.Locate.min',
+      moment:                 'libs/moment/min/moment.min',
+      momenttimezone:         'libs/moment-timezone/builds/moment-timezone.min',
+      datetimepicker:         'libs/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min',
 
       tscore:                 'js/core.api',
       tssetting:              'js/settings.api',
@@ -131,7 +138,8 @@ var isWin = navigator.appVersion.indexOf("Win")!==-1;
       tsextmanager:           'js/extension.manager',
       tsioapi:                 IO_JS,
       tspro:                   PRO_JS,
-      tsaudiorecorderui:      'js/audiorecorder.ui'
+      tsaudiorecorderui:      'js/audiorecorder.ui',
+      tsmapui:                'js/map.ui'
     },
     shim: {
       'underscore':               { exports: '_' },

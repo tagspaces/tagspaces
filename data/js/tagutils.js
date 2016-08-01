@@ -97,12 +97,12 @@ define(function(require, exports, module) {
     var beginTagContainer = fileName.indexOf(BEGIN_TAG_CONTAINER);
     var endTagContainer = fileName.lastIndexOf(END_TAG_CONTAINER);
     /* cases like "", "t", "[" 
-        if( fileName.length <= 1) {
-        // cases like "asd ] asd ["
-        else if (beginTagContainer > endTagContainer) {
-        // case: [ not found in the filename
-        else if ( beginTagContainer < 0 ) 
-        else if ( endTagContainer < 0 ) */
+     if( fileName.length <= 1) {
+     // cases like "asd ] asd ["
+     else if (beginTagContainer > endTagContainer) {
+     // case: [ not found in the filename
+     else if ( beginTagContainer < 0 )
+     else if ( endTagContainer < 0 ) */
     if (beginTagContainer >= 0 && beginTagContainer < endTagContainer) {
       if (beginTagContainer === 0 && endTagContainer === fileName.trim().length) {
         // case: "[tag1, tag2]"
@@ -223,11 +223,11 @@ define(function(require, exports, module) {
     }
     var time = '';
     if (includeTime) {
-      time = '-' + cHour + '' + cMinute + '' + cSecond;
+      time = '~' + cHour + '' + cMinute + '' + cSecond;
     }
     var milliseconds = '';
     if (includeMS) {
-      milliseconds = '-' + d.getMilliseconds();
+      milliseconds = '~' + d.getMilliseconds();
     }
     return cYear + '' + cMonth + '' + cDate + time + milliseconds;
   }
@@ -535,7 +535,7 @@ define(function(require, exports, module) {
   }
 
   //Collect recent tags in a custom tag-group
-  function collectRecentTags (newTags) {
+  function collectRecentTags(newTags) {
     var collectGroupKey = 'COL';
     var collectGroup = TSCORE.Config.getTagGroupData(collectGroupKey);
     if (!collectGroup) {

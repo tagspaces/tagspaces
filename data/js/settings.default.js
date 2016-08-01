@@ -251,6 +251,14 @@ define(function (require, exports, module) {
                         "desciption":    "Adds the current year as tag",
                         "color":         "#4986e7",
                         "textcolor":     "#ffffff"
+                    },
+                    {
+                        "type":          "smart",
+                        "title":         "geoTag",
+                        "functionality": "geoLocation",
+                        "desciption":    "Adds the current geo location as tag",
+                        "color":         "#4986e7",
+                        "textcolor":     "#ffffff"
                     }
                 ]
             },

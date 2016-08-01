@@ -31,6 +31,7 @@ define(function(require, exports, module) {
   var tsExtManager = require('tsextmanager');
   var TSCORE = require('tscore');
   var tsAudioRecorderUI = require('tsaudiorecorderui');
+  var tsMapUI = require('tsmapui');
 
   // Defining variables
   var currentPath;
@@ -93,6 +94,7 @@ define(function(require, exports, module) {
     tsFileOpener.initUI();
     tsSearchUI.initUI();
     tsAudioRecorderUI.initUI();
+    tsMapUI.initMap();
     tsExtManager.loadExtensionData().then(function() {
       tsPersManager.initPerspectives().then(function(result) {
         console.log("Perspectives Initialized: " + result);
@@ -488,6 +490,7 @@ define(function(require, exports, module) {
   exports.TagUtils = tsTagUtils;
   exports.FileOpener = tsFileOpener;
   exports.Search = tsSearch;
+  exports.MAP = tsMapUI;
   exports.Utils = tsUtils;
   if (tsPro.available) {
     exports.PRO = tsPro;
@@ -529,6 +532,8 @@ define(function(require, exports, module) {
   exports.showSuccessDialog = tsCoreUI.showSuccessDialog;
   exports.showConfirmDialog = tsCoreUI.showConfirmDialog;
   exports.showTagEditDialog = tsCoreUI.showTagEditDialog;
+  exports.showDateTimeCalendar = tsCoreUI.showDateTimeCalendar;
+  exports.showGeoLocation = tsCoreUI.showGeoLocation;
   exports.hideAllDropDownMenus = tsCoreUI.hideAllDropDownMenus;
   exports.showFileCreateDialog = tsCoreUI.showFileCreateDialog;
   exports.showFileRenameDialog = tsCoreUI.showFileRenameDialog;

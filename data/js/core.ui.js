@@ -11,17 +11,13 @@ define(function(require, exports, module) {
   var TSCORE = require('tscore');
   var TSPOSTIO = require("tspostioapi");
 
+  require('pickr');
+  require('datetimepicker');
+
   var fileContent;
   var fileType;
   var waitingDialogTimeoutID;
   var addFileInputName;
-
-  var fileDropTemplate = Handlebars.compile(
-          '<div id="fileDropArea">' +
-          '<div id="fileDropExplanation"><i class="fa fa-2x fa-mail-forward"></i><br>' +
-          '<span>Drop files here in order to be copied or moved in the current folder</span></div>' +
-          '</div>'
-  );
 
   function initUI() {
     $('#appVersion').text(TSCORE.Config.DefaultSettings.appVersion + '.' + TSCORE.Config.DefaultSettings.appBuild);
@@ -176,6 +172,23 @@ define(function(require, exports, module) {
       TSCORE.TagUtils.renameTag(TSCORE.selectedFiles[0], TSCORE.selectedTag, $('#newTagName').val());
     });
 
+    $('#dateCalendarInput').click(function() {
+      $('#dateTimeCalendar').hide();
+      $('#dateTimeRange').hide();
+      $('#dateCalendar').show();
+    });
+
+    $('#dateTimeInput').click(function() {
+      $('#dateTimeCalendar').show();
+      $('#dateTimeRange').hide();
+      $('#dateCalendar').hide();
+    });
+    $('#dateTimeRangeInput').click(function() {
+      $('#dateTimeCalendar').hide();
+      $('#dateTimeRange').show();
+      $('#dateCalendar').hide();
+    });
+
     // End Edit Tag Dialog
     $('#startNewInstanceBack').click(function() {
       if (!isCordova) {
@@ -256,6 +269,7 @@ define(function(require, exports, module) {
       showLocationsPanel();
     });
 
+
     $('#disagreeLicenseButton').on('click', function() {
       TSCORE.Config.Settings.firstRun = true;
       TSCORE.Config.saveSettings();
@@ -333,6 +347,10 @@ define(function(require, exports, module) {
       TSCORE.IO.openFile($(this).attr('href'));
     });
 
+    $('#dialogEditTag').on('shown.bs.modal', function() {
+      tagRecognition(TSCORE.selectedTag);
+    });
+
     // Hide drop downs by click and drag
     $(document).click(function() {
       TSCORE.hideAllDropDownMenus();
@@ -340,6 +358,13 @@ define(function(require, exports, module) {
 
     platformTuning();
   }
+
+  var fileDropTemplate = Handlebars.compile(
+          '<div id="fileDropArea">' +
+          '<div id="fileDropExplanation"><i class="fa fa-2x fa-mail-forward"></i><br>' +
+          '<span>Drop files here in order to be copied or moved in the current folder</span></div>' +
+          '</div>'
+  );
 
   function showFileDropArea() {
     if ($('#fileDropArea').length < 1) {
@@ -657,6 +682,76 @@ define(function(require, exports, module) {
     );
   }
 
+  function showDateTimeCalendar() {
+
+    $('#dateCalendar').datetimepicker({
+      format: 'MMMM YYYY',
+      inline: true,
+      sideBySide: true,
+      calendarWeeks: true,
+      dayViewHeaderFormat: false,
+      //minDate: false,
+      //maxDate: true,
+    });
+    //flatpickr('#dateTimeCalendar', {
+    //  enable: [
+    //    {
+    //      from: "1970-00-00",
+    //      to: "2050-00-00"
+    //    }
+    //  ],
+    //  dateFormat: 'Y-m-d',
+    //
+    //  onChange: function(dateObj, dateStr) {
+    //    console.log(dateObj);
+    //    console.log(dateStr);
+    //  }
+    //});
+    //flatpickr('#dateTimeRangeCalendar', {
+    //  enable: [
+    //    {
+    //      from: "1970-00-00",
+    //      to: "2050-00-00"
+    //    }
+    //  ],
+    //  //dateFormat: 'Y-m-d',
+    //  altInput: true,
+    //  //altFormat: "\\F\\r\\o\\m: Y-m-d",
+    //  altFormat: "\\F\\r\\o\\m: l, F j Y",
+    //
+    //  onChange: function(dateObj, dateStr) {
+    //    console.log(dateObj);
+    //    console.log(dateStr);
+    //  }
+    //});
+    //flatpickr('#dateTimeRangeMaxCalendar', {
+    //  enable: [
+    //    {
+    //      from: "1970-00-00",
+    //      to: "2050-00-00"
+    //    }
+    //  ],
+    //  //dateFormat: 'Y-m-d',
+    //  altInput: true,
+    //  altFormat: "\\T\\o: Y-m-d",
+    //  //altFormat: "\\T\\o: l, F j Y",
+    //
+    //  onChange: function(dateObj, dateStr) {
+    //    console.log(dateObj);
+    //    console.log(dateStr);
+    //  }
+    //});
+    //flatpickr('.calendar', {
+    //  dateFormat: 'Y-m-d',
+    //
+    //  onChange: function(dateObj, dateStr) {
+    //    console.log(dateObj);
+    //    console.log(dateStr);
+    //  }
+    //});
+
+  }
+
   function showTagEditDialog() {
     $('#newTagName').val(TSCORE.selectedTag);
     $('#formEditTag').validator();
@@ -666,6 +761,7 @@ define(function(require, exports, module) {
         $('#editTagButton').click();
       }
     });
+
     $('#formEditTag').on('invalid.bs.validator', function() {
       $('#editTagButton').prop('disabled', true);
     });
@@ -679,9 +775,116 @@ define(function(require, exports, module) {
       backdrop: 'static',
       show: true
     });
-    $('#dialogEditTag').draggable({
-      handle: ".modal-header"
-    });
+    //$('#dialogEditTag').draggable({
+    //  handle: ".modal-header"
+    //});
+
+    showDateTimeCalendar();
+    TSCORE.MAP.initMap();
+  }
+
+
+  function tagRecognition(dataTag) {
+    var geoLocationRegExp = /^([-+]?)([\d]{1,2})(((\.)(\d+)(,)))(\s*)(([-+]?)([\d]{1,3})((\.)(\d+))?)$/g;
+
+    var dateTimeRegExp = /^\d\d\d\d-(00|[0-9]|1[0-9]|2[0-3]):([0-9]|[0-5][0-9]):([0-9]|[0-5][0-9])$/g;
+    var dateTimeWinRegExp = /^(([0-1]?[0-9])|([2][0-3]))!([0-5]?[0-9])(!([0-5]?[0-9]))?$/g;
+    var dateRangeRegExp = /^([0]?[1-9]|[1|2][0-9]|[3][0|1])[-]([0]?[1-9]|[1][0-2])$/g;
+    var geoTag = 'geoTag';
+    var currentCoordinate;
+    var currentDateTime = dataTag;
+
+    var year = parseInt(currentDateTime) && !isNaN(currentDateTime) &&
+            currentDateTime.length === 4;
+    var month = parseInt(currentDateTime) && !isNaN(currentDateTime) &&
+            currentDateTime.length === 6;
+    var date = parseInt(currentDateTime) && !isNaN(currentDateTime) &&
+            currentDateTime.length === 8;
+
+    var convertToDateTime = TSCORE.Utils.convertToDateTime(currentDateTime);
+
+    var yearRange, monthRange, dateRange;
+
+    if (dataTag.lastIndexOf('+') !== -1) {
+      currentCoordinate = TSCORE.MAP.splitValue(dataTag, dataTag.lastIndexOf('+'));
+    } else if (dataTag.lastIndexOf('-') !== -1) {
+      currentCoordinate = TSCORE.MAP.splitValue(dataTag, dataTag.lastIndexOf('-'));
+
+      var character = currentDateTime.split("-");
+      if (!currentCoordinate.search(".") && character) {
+        var firstInt = parseInt(character[0]);
+        var secondInt = parseInt(character[1]);
+        yearRange = monthRange = dateRange =
+                typeof firstInt === 'number' && !isNaN(firstInt) &&
+                typeof secondInt === 'number' && !isNaN(secondInt);
+      }
+    }
+
+    var dateRegExp = yearRange || monthRange || dateRange ||
+            currentDateTime.match(dateTimeRegExp) ||
+            currentDateTime.match(dateTimeWinRegExp) ||
+            year || month || date || convertToDateTime;
+
+    if (geoLocationRegExp.exec(currentCoordinate) || geoTag === dataTag) {
+      $('.nav-tabs a[href="#geoLocation"]').tab('show');
+    } else if (dateRegExp) {
+      $('.nav-tabs a[href="#dateTimeTab"]').tab('show');
+
+      var dateCheckBox = year || month || date;
+      var dateTimeCheckBox = currentDateTime.match(dateTimeRegExp) ||
+              currentDateTime.match(dateTimeWinRegExp) || convertToDateTime;
+      var dateRangeCheckBox = currentDateTime.match(dateRangeRegExp) ||
+              yearRange || monthRange || dateRange;
+
+      if (dateCheckBox) {
+        $('#dateCalendarInput').prop('checked', true);
+        if (document.getElementById('dateCalendarInput').checked) {
+          $('#dateCalendar').show();
+          $('#dateTimeCalendar').hide();
+          $('#dateTimeRange').hide();
+
+          $('#dateCalendar').val(TSCORE.Utils.convertToDate(currentDateTime));
+          $('#dateTimeCalendar').val('');
+          $('#dateTimeRangeCalendar').val('');
+          $('#dateTimeRangeMaxCalendar').val('');
+
+
+          $('#editTagButton').click(function() {
+            TSCORE.TagUtils.renameTag(TSCORE.selectedFiles[0], TSCORE.selectedTag, $('#dateCalendar').val());
+          });
+        }
+      } else if (dateTimeCheckBox) {
+        $('#dateTimeInput').prop('checked', true);
+        if (document.getElementById('dateTimeInput').checked) {
+          $('#dateTimeCalendar').show();
+          $('#dateCalendar').hide();
+          $('#dateTimeRange').hide();
+          var time = TSCORE.Utils.convertToDateTime(currentDateTime);
+          $('#dateTimeCalendar').val(time);
+          $('#dateCalendar').val('');
+          $('#dateTimeRangeCalendar').val('');
+          $('#dateTimeRangeMaxCalendar').val('');
+
+        }
+      } else if (dateRangeCheckBox) {
+        $('#dateTimeRangeInput').prop('checked', true);
+        if (document.getElementById('dateTimeRangeInput').checked) {
+          $('#dateTimeCalendar').hide();
+          $('#dateCalendar').hide();
+          $('#dateTimeRange').show();
+          var range = TSCORE.Utils.convertToDateRange(currentDateTime);
+          $('#dateTimeRangeCalendar').val(TSCORE.Utils.convertToDate(range[0]));
+          $('#dateTimeRangeMaxCalendar').val(TSCORE.Utils.convertToDate(range[1]));
+          $('#dateCalendar').val('');
+          $('#dateTimeCalendar').val('');
+
+        }
+      }
+    } else if (!(dateRegExp && geoLocationRegExp.exec(currentCoordinate))) {
+      $('.nav-tabs a[href="#formEditTag"]').tab('show');
+    } else {
+      throw new TypeError("Invalid data.");
+    }
   }
 
   function showRenameFileDialog() {
@@ -1056,31 +1259,31 @@ define(function(require, exports, module) {
     });
   }
 
-  function openFacebook()  {
+  function openFacebook() {
     TSCORE.IO.openFile("https://www.facebook.com/tagspacesapp");
   }
 
-  function openTwitter()  {
+  function openTwitter() {
     TSCORE.IO.openFile("https://twitter.com/intent/user?screen_name=tagspaces");
   }
 
-  function openGooglePlus()  {
+  function openGooglePlus() {
     TSCORE.IO.openFile("https://plus.google.com/+TagspacesOrg/");
   }
 
-  function suggestNewFeatures()  {
+  function suggestNewFeatures() {
     TSCORE.IO.openFile("https://tagspaces.uservoice.com/forums/213931-general");
   }
 
-  function reportIssues()  {
+  function reportIssues() {
     TSCORE.IO.openFile("https://github.com/tagspaces/tagspaces/issues/");
   }
 
-  function whatsNew()  {
+  function whatsNew() {
     TSCORE.IO.openFile("http://www.tagspaces.org/whatsnew/");
   }
 
-  function showDocumentation()  {
+  function showDocumentation() {
     TSCORE.IO.openFile("https://www.tagspaces.org/documentation/");
   }
 
@@ -1103,6 +1306,7 @@ define(function(require, exports, module) {
   exports.showKeysDialog = showKeysDialog;
   exports.startGettingStartedTour = startGettingStartedTour;
   exports.showTagEditDialog = showTagEditDialog;
+  exports.showDateTimeCalendar = showDateTimeCalendar;
   exports.showOptionsDialog = showOptionsDialog;
   exports.showAboutDialog = showAboutDialog;
   exports.showAudioRecordingDialog = showAudioRecordingDialog;
@@ -1123,4 +1327,5 @@ define(function(require, exports, module) {
   exports.reportIssues = reportIssues;
   exports.whatsNew = whatsNew;
   exports.showDocumentation = showDocumentation;
+  exports.tagRecognition = tagRecognition;
 });
