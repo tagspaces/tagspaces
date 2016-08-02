@@ -12,6 +12,7 @@ define(function(require, exports, module) {
   var TSPOSTIO = require("tspostioapi");
 
   require('datetimepicker');
+  require('moment');
 
   var fileContent;
   var fileType;
@@ -681,14 +682,40 @@ define(function(require, exports, module) {
     );
   }
 
-  function showDateTimeCalendar() {
-    var defaultDate = TSCORE.Utils.convertToDate(TSCORE.selectedTag);
+  function showDateTimeCalendar(dateTime) {
+    var date = TSCORE.Utils.parseToDate(dateTime);
+    var viewMode;
+    if (date.length === 7) {
+      viewMode = 'months';
+    } else if (date.toString().length === 4) {
+      viewMode = 'years'
+    } else {
+      viewMode = 'days'
+    }
+
     $('#dateCalendar').datetimepicker({
+      //viewDate: new Date(date),
+      extraFormats: ['YYYY-MM-DD', 'YYYY-MM', 'YYYY-MM-DDTHH:MM:SS', 'YYYY-MM-DDTHH:MM', 'YYYY-MM-DD HH:mm:ss'],
       inline: true,
       sideBySide: false,
       calendarWeeks: true,
-      useCurrent: defaultDate
+      showTodayButton: true,
+      allowInputToggle: true,
+      useCurrent: false,
+      //viewMode: viewMode
+    }).on('dp.show dp.change', function(e) {
+      console.log(e);
+      console.debug(e);
     });
+
+    $('#dateCalendar').data('DateTimePicker').format('YYYY/MM/DD').defaultDate(date).viewMode(viewMode).show();
+
+
+    $('#dateCalendar').on('dp.show dp.change', function(e) {
+      console.log(e);
+      console.debug(e.date._d);
+    });
+
     $('#dateTimeCalendar').datetimepicker({
       inline: true,
       sideBySide: true,
@@ -729,11 +756,8 @@ define(function(require, exports, module) {
       backdrop: 'static',
       show: true
     });
-    //$('#dialogEditTag').draggable({
-    //  handle: ".modal-header"
-    //});
 
-    showDateTimeCalendar();
+    showDateTimeCalendar(TSCORE.selectedTag);
     TSCORE.MAP.initMap();
   }
 
@@ -799,6 +823,7 @@ define(function(require, exports, module) {
           $('#dateTimeRange').hide();
 
           //$('#dateCalendar').val(TSCORE.Utils.convertToDate(currentDateTime));
+
           $('#dateTimeCalendar').val('');
           $('#dateTimeRangeCalendar').val('');
           $('#dateTimeRangeMaxCalendar').val('');

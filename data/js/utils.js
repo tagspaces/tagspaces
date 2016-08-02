@@ -269,6 +269,19 @@ define(function(require, exports, module) {
     }
   }
 
+  // return array of [years, month] or [years, month, day]
+  function parseToDate(date) {
+    var dateMonth = convertToDate(date);
+    var d;
+    if (dateMonth) {
+      d = dateMonth;
+    } else if (dateMonth.length === 5) {
+      var dateString = dateMonth.split('-');
+      d = new Date(dateString[0], dateString[1]);
+    }
+    return d;
+  }
+
   exports.arrayBufferToDataURL = arrayBufferToDataURL;
   exports.base64ToArrayBuffer = base64ToArrayBuffer;
   exports.dataURLtoBlob = dataURLtoBlob;
@@ -289,5 +302,6 @@ define(function(require, exports, module) {
   exports.parseFullDate = parseFullDate;
   exports.formatDate = formatDate;
   exports.toHHMMSS = toHHMMSS;
+  exports.parseToDate = parseToDate;
 
 });
