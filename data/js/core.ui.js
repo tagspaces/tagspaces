@@ -682,12 +682,6 @@ define(function(require, exports, module) {
     );
   }
 
-
-  function currentDateCalendar(viewMode) {
-
-  }
-
-
   function showDateTimeCalendar(dateTime) {
     var date = TSCORE.Utils.parseToDate(dateTime);
     var viewMode, format;
