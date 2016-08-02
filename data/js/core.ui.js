@@ -11,7 +11,6 @@ define(function(require, exports, module) {
   var TSCORE = require('tscore');
   var TSPOSTIO = require("tspostioapi");
 
-  require('pickr');
   require('datetimepicker');
 
   var fileContent;
