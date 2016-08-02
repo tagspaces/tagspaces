@@ -255,6 +255,17 @@ define(function(require, exports, module) {
 
     return [year, month, day].join('-');
   }
+  // Format Sun May 11, 2014 to 2014-05
+  function formatDateMonth(date) {
+    var d = new Date(date),
+            month = '' + (d.getMonth() + 1),
+            year = d.getFullYear();
+
+    if (month.length < 2) {
+      month = '0' + month;
+    }
+    return [year, month].join('-');
+  }
 
   // parse “YYYYmmdd” to 'Fri Jul 15 2016 00:00:00 GMT+0300 (FLE Summer Time)'
   function parseFullDate(date) {
@@ -301,6 +312,7 @@ define(function(require, exports, module) {
   exports.convertToDateRange = convertToDateRange;
   exports.parseFullDate = parseFullDate;
   exports.formatDate = formatDate;
+  exports.formatDateMonth = formatDateMonth;
   exports.toHHMMSS = toHHMMSS;
   exports.parseToDate = parseToDate;
 
