@@ -682,6 +682,12 @@ define(function(require, exports, module) {
     );
   }
 
+
+  function currentDateCalendar(viewMode) {
+
+  }
+
+
   function showDateTimeCalendar(dateTime) {
     var date = TSCORE.Utils.parseToDate(dateTime);
     var viewMode, format;
@@ -714,10 +720,10 @@ define(function(require, exports, module) {
         currentDate = d.getFullYear();
       } else if (viewMode === 'months') {
         d = e.date._d;
-        currentDate = TSCORE.Utils.formatDateMonth(d);
+        currentDate = TSCORE.Utils.parseDateMonth(d);
       } else if (viewMode === 'default' || viewMode === 'days') {
         d = e.date._d;
-        currentDate = TSCORE.Utils.formatDate(d);
+        currentDate = TSCORE.Utils.parseDate(d);
       }
     });
 
@@ -834,13 +840,9 @@ define(function(require, exports, module) {
           $('#dateTimeCalendar').hide();
           $('#dateTimeRange').hide();
 
+          //showDateCalendar(TSCORE.selectedTag);
           //$('#dateCalendar').val(TSCORE.Utils.convertToDate(currentDateTime));
 
-          $('#dateTimeCalendar').val('');
-          $('#dateTimeRangeCalendar').val('');
-          $('#dateTimeRangeMaxCalendar').val('');
-
-          //
           //$('#editTagButton').click(function() {
           //  TSCORE.TagUtils.renameTag(TSCORE.selectedFiles[0], TSCORE.selectedTag, $('#dateCalendar').val());
           //});

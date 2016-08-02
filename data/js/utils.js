@@ -280,7 +280,7 @@ define(function(require, exports, module) {
     }
   }
 
-  // return array of [years, month] or [years, month, day]
+  // return array of [years, month]
   function parseToDate(date) {
     var dateMonth = convertToDate(date);
     var d;
@@ -291,6 +291,35 @@ define(function(require, exports, module) {
       d = new Date(dateString[0], dateString[1]);
     }
     return d;
+  }
+
+
+  // Format Sun May 11, 2014 to 2014-05-11
+  function parseDate(date) {
+    var d = new Date(date),
+            month = '' + (d.getMonth() + 1),
+            day = '' + d.getDate(),
+            year = d.getFullYear();
+
+    if (month.length < 2) {
+      month = '0' + month;
+    }
+    if (day.length < 2) {
+      day = '0' + day;
+    }
+
+    return [year, month, day].join('');
+  }
+  // Format Sun May 11, 2014 to 2014-05
+  function parseDateMonth(date) {
+    var d = new Date(date),
+            month = '' + (d.getMonth() + 1),
+            year = d.getFullYear();
+
+    if (month.length < 2) {
+      month = '0' + month;
+    }
+    return [year, month].join('');
   }
 
   exports.arrayBufferToDataURL = arrayBufferToDataURL;
@@ -315,5 +344,7 @@ define(function(require, exports, module) {
   exports.formatDateMonth = formatDateMonth;
   exports.toHHMMSS = toHHMMSS;
   exports.parseToDate = parseToDate;
+  exports.parseDate = parseDate;
+  exports.parseDateMonth = parseDateMonth;
 
 });
