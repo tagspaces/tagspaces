@@ -867,10 +867,12 @@ define(function(require, exports) {
           var range = TSCORE.Utils.convertToDateRange(currentDateTime);
 
           var viewMode = '', format = '';
-          if (range[0].toString().length === 7 || range[0].length === 7) {
+          if ((range[0].toString().length === 7 || range[0].length === 7) &&
+                  (range[1].toString().length === 7 || range[1].length === 7)) {
             viewMode = 'months';
             format = 'YYYY-MM';
-          } else if (range[1].toString().length === 4) {
+          } else if (range[0].toString().length === 4 &&
+                  range[1].toString().length === 4) {
             viewMode = 'years';
             format = 'YYYY';
           } else {
