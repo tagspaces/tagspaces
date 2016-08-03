@@ -349,6 +349,8 @@ define(function(require, exports, module) {
 
     $('#dialogEditTag').on('shown.bs.modal', function() {
       tagRecognition(TSCORE.selectedTag);
+      var data = $('#dateInputCalendar')[0];
+      data.value = TSCORE.selectedTag;
     });
 
     // Hide drop downs by click and drag
@@ -684,7 +686,7 @@ define(function(require, exports, module) {
 
   function showDateTimeCalendar(dateTime) {
     var date = TSCORE.Utils.parseToDate(dateTime);
-    var viewMode, format;
+    var viewMode = '', format;
     if (date.length === 7) {
       viewMode = 'months';
       format = 'YYYY-MM';
@@ -695,8 +697,9 @@ define(function(require, exports, module) {
       viewMode = 'days';
       format = 'YYYY-MM-DD';
     }
+    console.log('------Mode-------');
 
-    var currentDate;
+    console.debug(viewMode);
     $('#dateCalendar').datetimepicker({
       //viewDate: new Date(date),
       extraFormats: ['YYYY-MM-DD', 'YYYY-MM', 'YYYY-MM-DDTHH:MM:SS', 'YYYY-MM-DDTHH:MM', 'YYYY-MM-DD HH:mm:ss'],
@@ -707,8 +710,11 @@ define(function(require, exports, module) {
       allowInputToggle: true,
       useCurrent: false,
       viewMode: viewMode
-    }).on('dp.show dp.change', function(e) {
+    });
+
+    $('#dateCalendar').on('dp.change', function(e) {
       var d;
+      var currentDate;
       if (viewMode === 'years') {
         d = e.date._d;
         currentDate = d.getFullYear();
@@ -719,12 +725,14 @@ define(function(require, exports, module) {
         d = e.date._d;
         currentDate = TSCORE.Utils.parseDate(d);
       }
+      $('#dateInputCalendar').val(currentDate);
     });
+
 
     $('#dateCalendar').data('DateTimePicker').format(format).defaultDate(date).viewMode(viewMode).show();
 
     $('#editTagButton').click(function() {
-      TSCORE.TagUtils.renameTag(TSCORE.selectedFiles[0], TSCORE.selectedTag, currentDate);
+      TSCORE.TagUtils.renameTag(TSCORE.selectedFiles[0], TSCORE.selectedTag, $('#dateInputCalendar').val());
     });
 
 
