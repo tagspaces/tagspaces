@@ -728,13 +728,7 @@ define(function(require, exports, module) {
       $('#dateInputCalendar').val(currentDate);
     });
 
-
     $('#dateCalendar').data('DateTimePicker').format(format).defaultDate(date).viewMode(viewMode).show();
-
-    $('#editTagButton').click(function() {
-      TSCORE.TagUtils.renameTag(TSCORE.selectedFiles[0], TSCORE.selectedTag, $('#dateInputCalendar').val());
-    });
-
 
     $('#dateTimeCalendar').datetimepicker({
       inline: true,
@@ -842,12 +836,10 @@ define(function(require, exports, module) {
           $('#dateTimeCalendar').hide();
           $('#dateTimeRange').hide();
 
-          //showDateCalendar(TSCORE.selectedTag);
-          //$('#dateCalendar').val(TSCORE.Utils.convertToDate(currentDateTime));
 
-          //$('#editTagButton').click(function() {
-          //  TSCORE.TagUtils.renameTag(TSCORE.selectedFiles[0], TSCORE.selectedTag, $('#dateCalendar').val());
-          //});
+          $('#editTagButton').click(function() {
+            TSCORE.TagUtils.renameTag(TSCORE.selectedFiles[0], TSCORE.selectedTag, $('#dateInputCalendar').val());
+          });
         }
       } else if (dateTimeCheckBox) {
         $('#dateTimeInput').prop('checked', true);
