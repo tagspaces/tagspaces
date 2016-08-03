@@ -3,7 +3,7 @@
  * can be found in the LICENSE file. */
 
 /* global define, Handlebars, isNode, isFirefox */
-define(function(require, exports, module) {
+define(function(require, exports) {
   'use strict';
 
   console.log('Loading core.ui.js ...');
@@ -685,66 +685,22 @@ define(function(require, exports, module) {
   }
 
   function showDateTimeCalendar(dateTime) {
-    var date = TSCORE.Utils.parseToDate(dateTime);
-    var viewMode = '', format;
-    if (date.length === 7) {
-      viewMode = 'months';
-      format = 'YYYY-MM';
-    } else if (date.toString().length === 4) {
-      viewMode = 'years';
-      format = 'YYYY';
-    } else {
-      viewMode = 'days';
-      format = 'YYYY-MM-DD';
-    }
-    console.log('------Mode-------');
 
-    console.debug(viewMode);
-    $('#dateCalendar').datetimepicker({
-      //viewDate: new Date(date),
-      extraFormats: ['YYYY-MM-DD', 'YYYY-MM', 'YYYY-MM-DDTHH:MM:SS', 'YYYY-MM-DDTHH:MM', 'YYYY-MM-DD HH:mm:ss'],
-      inline: true,
-      sideBySide: false,
-      calendarWeeks: true,
-      showTodayButton: true,
-      allowInputToggle: true,
-      useCurrent: false,
-      viewMode: viewMode
-    });
-
-    $('#dateCalendar').on('dp.change', function(e) {
-      var d;
-      var currentDate;
-      if (viewMode === 'years') {
-        d = e.date._d;
-        currentDate = d.getFullYear();
-      } else if (viewMode === 'months') {
-        d = e.date._d;
-        currentDate = TSCORE.Utils.parseDateMonth(d);
-      } else if (viewMode === 'default' || viewMode === 'days') {
-        d = e.date._d;
-        currentDate = TSCORE.Utils.parseDate(d);
-      }
-      $('#dateInputCalendar').val(currentDate);
-    });
-
-    $('#dateCalendar').data('DateTimePicker').format(format).defaultDate(date).viewMode(viewMode).show();
-
-    $('#dateTimeCalendar').datetimepicker({
-      inline: true,
-      sideBySide: true,
-      calendarWeeks: true
-    });
-    $('#dateTimeRangeCalendar').datetimepicker({
-      inline: true,
-      sideBySide: false,
-      calendarWeeks: true
-    });
-    $('#dateTimeRangeMaxCalendar').datetimepicker({
-      inline: true,
-      sideBySide: false,
-      calendarWeeks: true
-    });
+    //$('#dateTimeCalendar').datetimepicker({
+    //  inline: true,
+    //  sideBySide: true,
+    //  calendarWeeks: true
+    //});
+    //$('#dateTimeRangeCalendar').datetimepicker({
+    //  inline: true,
+    //  sideBySide: false,
+    //  calendarWeeks: true
+    //});
+    //$('#dateTimeRangeMaxCalendar').datetimepicker({
+    //  inline: true,
+    //  sideBySide: false,
+    //  calendarWeeks: true
+    //});
   }
 
   function showTagEditDialog() {
@@ -771,8 +727,8 @@ define(function(require, exports, module) {
       show: true
     });
 
-    showDateTimeCalendar(TSCORE.selectedTag);
     TSCORE.MAP.initMap();
+    showDateTimeCalendar(TSCORE.selectedTag);
   }
 
 
@@ -831,15 +787,55 @@ define(function(require, exports, module) {
       if (dateCheckBox) {
         $('#dateCalendarInput').prop('checked', true);
         if (document.getElementById('dateCalendarInput').checked) {
-
           $('#dateCalendar').show();
           $('#dateTimeCalendar').hide();
           $('#dateTimeRange').hide();
 
+          var defaultDateCalendar = TSCORE.Utils.parseToDate(currentDateTime);
+          var viewMode = '', format = '';
 
-          $('#editTagButton').click(function() {
-            TSCORE.TagUtils.renameTag(TSCORE.selectedFiles[0], TSCORE.selectedTag, $('#dateInputCalendar').val());
+          if (defaultDateCalendar.toString().length === 7 || defaultDateCalendar.length === 7) {
+            viewMode = 'months';
+            format = 'YYYY-MM';
+          } else if (defaultDateCalendar.toString().length === 4) {
+            viewMode = 'years';
+            format = 'YYYY';
+          } else {
+            viewMode = 'days';
+            format = 'YYYY-MM-DD';
+          }
+
+          $('#dateCalendar').datetimepicker({
+            extraFormats: ['YYYY-MM-DD', 'YYYY-MM', 'YYYY-MM-DDTHH:MM:SS', 'YYYY-MM-DDTHH:MM', 'YYYY-MM-DD HH:mm:ss'],
+            inline: true,
+            sideBySide: false,
+            calendarWeeks: true,
+            showTodayButton: true,
+            allowInputToggle: true,
+            useCurrent: false
+            //viewMode: viewMode
           });
+
+          $('#dateCalendar').on('dp.change', function(e) {
+            var d;
+            var currentDate;
+            if (viewMode === 'years') {
+              d = e.date._d;
+              currentDate = d.getFullYear();
+            } else if (viewMode === 'months') {
+              d = e.date._d;
+              currentDate = TSCORE.Utils.parseDateMonth(d);
+            } else if (viewMode === 'default' || viewMode === 'days') {
+              d = e.date._d;
+              currentDate = TSCORE.Utils.parseDate(d);
+            }
+            $('#dateInputCalendar').val(currentDate);
+          });
+
+          $('#dateCalendar').data('DateTimePicker').format(format)
+            .defaultDate(defaultDateCalendar)
+            .viewMode(viewMode).show();
+
         }
       } else if (dateTimeCheckBox) {
         $('#dateTimeInput').prop('checked', true);
@@ -847,12 +843,19 @@ define(function(require, exports, module) {
           $('#dateTimeCalendar').show();
           $('#dateCalendar').hide();
           $('#dateTimeRange').hide();
-          var time = TSCORE.Utils.convertToDateTime(currentDateTime);
-          $('#dateTimeCalendar').val(time);
-          $('#dateCalendar').val('');
-          $('#dateTimeRangeCalendar').val('');
-          $('#dateTimeRangeMaxCalendar').val('');
 
+          var defaultDate = TSCORE.Utils.convertToDateTime(currentDateTime);
+
+          $('#dateTimeCalendar').datetimepicker({
+            inline: true,
+            sideBySide: true,
+            calendarWeeks: true,
+            showTodayButton: true,
+            allowInputToggle: true,
+            useCurrent: false
+          });
+
+          $('#dateTimeCalendar').data('DateTimePicker').format('YYYY-MM-DD HH:mm:ss').defaultDate(defaultDate).show();
         }
       } else if (dateRangeCheckBox) {
         $('#dateTimeRangeInput').prop('checked', true);
@@ -860,14 +863,89 @@ define(function(require, exports, module) {
           $('#dateTimeCalendar').hide();
           $('#dateCalendar').hide();
           $('#dateTimeRange').show();
-          var range = TSCORE.Utils.convertToDateRange(currentDateTime);
-          $('#dateTimeRangeCalendar').val(TSCORE.Utils.convertToDate(range[0]));
-          $('#dateTimeRangeMaxCalendar').val(TSCORE.Utils.convertToDate(range[1]));
-          $('#dateCalendar').val('');
-          $('#dateTimeCalendar').val('');
 
+          var range = TSCORE.Utils.convertToDateRange(currentDateTime);
+
+          var viewMode = '', format = '';
+          if (range[0].toString().length === 7 || range[0].length === 7) {
+            viewMode = 'months';
+            format = 'YYYY-MM';
+          } else if (range[1].toString().length === 4) {
+            viewMode = 'years';
+            format = 'YYYY';
+          } else {
+            viewMode = 'days';
+            format = 'YYYY-MM-DD';
+          }
+
+          $('#dateTimeRangeCalendar').datetimepicker({
+            extraFormats: ['YYYY-MM-DD', 'YYYY-MM', 'YYYY-MM-DDTHH:MM:SS', 'YYYY-MM-DDTHH:MM', 'YYYY-MM-DD HH:mm:ss'],
+            inline: true,
+            sideBySide: false,
+            calendarWeeks: true,
+            showTodayButton: true,
+            allowInputToggle: true,
+            useCurrent: false
+            //viewMode: viewMode
+          });
+
+          $('#dateTimeRangeCalendar').on('dp.change', function(e) {
+            var d;
+            var currentDate;
+            if (viewMode === 'years') {
+              d = e.date._d;
+              currentDate = d.getFullYear();
+            } else if (viewMode === 'months') {
+              d = e.date._d;
+              currentDate = TSCORE.Utils.parseDateMonth(d);
+            } else if (viewMode === 'default' || viewMode === 'days') {
+              d = e.date._d;
+              currentDate = TSCORE.Utils.parseDate(d);
+            }
+            $('#dateInputCalendar').val(currentDate);
+          });
+
+          $('#dateTimeRangeCalendar').data('DateTimePicker')
+            .format(format).defaultDate(TSCORE.Utils.convertToDate(range[0]))
+            .viewMode(viewMode).show();
+
+          $('#dateTimeRangeMaxCalendar').datetimepicker({
+            extraFormats: ['YYYY-MM-DD', 'YYYY-MM', 'YYYY-MM-DDTHH:MM:SS', 'YYYY-MM-DDTHH:MM', 'YYYY-MM-DD HH:mm:ss'],
+            inline: true,
+            sideBySide: false,
+            calendarWeeks: true,
+            showTodayButton: true,
+            allowInputToggle: true,
+            useCurrent: false
+            //viewMode: viewMode
+          });
+
+          $('#dateTimeRangeMaxCalendar').on('dp.change', function(e) {
+            var d;
+            var currentDate;
+            if (viewMode === 'years') {
+              d = e.date._d;
+              currentDate = d.getFullYear();
+            } else if (viewMode === 'months') {
+              d = e.date._d;
+              currentDate = TSCORE.Utils.parseDateMonth(d);
+            } else if (viewMode === 'default' || viewMode === 'days') {
+              d = e.date._d;
+              currentDate = TSCORE.Utils.parseDate(d);
+            }
+            $('#dateInputCalendar').val(currentDate);
+          });
+
+          $('#dateTimeRangeMaxCalendar').data('DateTimePicker')
+            .format(format).defaultDate(TSCORE.Utils.convertToDate(range[1]))
+            .viewMode(viewMode).show();
         }
       }
+
+      $('#editTagButton').click(function() {
+        TSCORE.TagUtils.renameTag(TSCORE.selectedFiles[0], TSCORE.selectedTag, $('#dateInputCalendar').val());
+      });
+
     } else if (!(dateRegExp && geoLocationRegExp.exec(currentCoordinate))) {
       $('.nav-tabs a[href="#formEditTag"]').tab('show');
     } else {
