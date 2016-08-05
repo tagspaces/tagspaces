@@ -353,6 +353,17 @@ define(function(require, exports) {
       data.value = TSCORE.selectedTag;
     });
 
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
+      var target = $(e.target).attr("href"); // activated tab
+      if (target === "#dateCalendarTab" || target === "#dateTimeCalendarTab" ||
+              target === "dateRangeTab" || target === "#geoLocation") {
+        $('#editTagButton').click(function() {
+          TSCORE.TagUtils.renameTag(TSCORE.selectedFiles[0], TSCORE.selectedTag, $('#dateInputCalendar').val());
+        });
+      }
+    });
+
+
     // Hide drop downs by click and drag
     $(document).click(function() {
       TSCORE.hideAllDropDownMenus();
@@ -761,20 +772,20 @@ define(function(require, exports) {
     if (geoLocationRegExp.exec(currentCoordinate) || geoTag === dataTag) {
       $('.nav-tabs a[href="#geoLocation"]').tab('show');
     } else if (dateRegExp) {
-      $('.nav-tabs a[href="#dateTimeTab"]').tab('show');
 
-      var dateCheckBox = year || month || date;
-      var dateTimeCheckBox = currentDateTime.match(dateTimeRegExp) ||
+      var dateTab = year || month || date;
+      var dateTimeTab = currentDateTime.match(dateTimeRegExp) ||
               currentDateTime.match(dateTimeWinRegExp) || convertToDateTime;
-      var dateRangeCheckBox = currentDateTime.match(dateRangeRegExp) ||
+      var dateRangeTab = currentDateTime.match(dateRangeRegExp) ||
               yearRange || monthRange || dateRange;
 
-      if (dateCheckBox) {
-        $('#dateCalendarInput').prop('checked', true);
-        if (document.getElementById('dateCalendarInput').checked) {
-          $('#dateCalendar').show();
-          $('#dateTimeCalendar').hide();
-          $('#dateTimeRange').hide();
+      if (dateTab) {
+        $('.nav-tabs a[href="#dateCalendarTab"]').tab('show');
+        //$('#dateCalendarInput').prop('checked', true);
+        //if (document.getElementById('dateCalendarInput').checked) {
+        //  $('#dateCalendar').show();
+        //  $('#dateTimeCalendar').hide();
+        //  $('#dateTimeRange').hide();
 
           var defaultDateCalendar = TSCORE.Utils.parseToDate(currentDateTime);
           var viewMode = '', format = '';
@@ -815,16 +826,16 @@ define(function(require, exports) {
             }
             $('#dateInputCalendar').val(currentDate);
           });
-
           $('#dateCalendar').data('DateTimePicker').format(format).defaultDate(defaultDateCalendar).viewMode(viewMode).show();
 
-        }
-      } else if (dateTimeCheckBox) {
-        $('#dateTimeInput').prop('checked', true);
-        if (document.getElementById('dateTimeInput').checked) {
-          $('#dateTimeCalendar').show();
-          $('#dateCalendar').hide();
-          $('#dateTimeRange').hide();
+        //}
+      } else if (dateTimeTab) {
+        $('.nav-tabs a[href="#dateTimeCalendarTab"]').tab('show');
+        //$('#dateTimeInput').prop('checked', true);
+        //if (document.getElementById('dateTimeInput').checked) {
+        //  $('#dateTimeCalendar').show();
+        //  $('#dateCalendar').hide();
+        //  $('#dateTimeRange').hide();
 
           var defaultDate = TSCORE.Utils.convertToDateTime(currentDateTime);
 
@@ -859,13 +870,15 @@ define(function(require, exports) {
           });
 
           $('#dateTimeCalendar').data('DateTimePicker').format('YYYY-MM-DD HH:mm:ss').defaultDate(defaultDate).show();
-        }
-      } else if (dateRangeCheckBox) {
-        $('#dateTimeRangeInput').prop('checked', true);
-        if (document.getElementById('dateTimeRangeInput').checked) {
-          $('#dateTimeCalendar').hide();
-          $('#dateCalendar').hide();
-          $('#dateTimeRange').show();
+        //}
+      } else if (dateRangeTab) {
+        $('.nav-tabs a[href="#dateRangeTab"]').tab('show');
+
+        //$('#dateTimeRangeInput').prop('checked', true);
+        //if (document.getElementById('dateTimeRangeInput').checked) {
+        //  $('#dateTimeCalendar').hide();
+        //  $('#dateCalendar').hide();
+        //  $('#dateTimeRange').show();
 
           var range = TSCORE.Utils.convertToDateRange(currentDateTime);
 
@@ -938,12 +951,8 @@ define(function(require, exports) {
           });
 
           $('#dateTimeRangeMaxCalendar').data('DateTimePicker').format(format).defaultDate(TSCORE.Utils.convertToDate(range[1])).viewMode(viewMode).show();
-        }
+        //}
       }
-
-      $('#editTagButton').click(function() {
-        TSCORE.TagUtils.renameTag(TSCORE.selectedFiles[0], TSCORE.selectedTag, $('#dateInputCalendar').val());
-      });
     } else if (!(dateRegExp && geoLocationRegExp.exec(currentCoordinate))) {
       $('.nav-tabs a[href="#formEditTag"]').tab('show');
     } else {

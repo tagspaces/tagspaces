@@ -148,7 +148,7 @@ define(function(require, exports, module) {
   }
 
   function parseCoordinateMap(e) {
-    var date = $('#coordinateMap')[0];
+    var date = $('#dateInputCalendar')[0];
     var long = lng >= 0 ? '+' + lng : lng;
     var dateValue = e.latlng.lat.toFixed(7) + "" + long;
     date.value = dateValue.trim();
@@ -179,12 +179,6 @@ define(function(require, exports, module) {
       if (target === "#geoLocation") {
         tagSpacesMap.invalidateSize();
 
-
-        $('#editTagButton').click(function() {
-          TSCORE.TagUtils.renameTag(TSCORE.selectedFiles[0], TSCORE.selectedTag, $('#coordinateMap').val());
-        });
-
-
         $('#dialogEditTag').on('hidden.bs.modal', function() {
           //removeMarker();
           if (TSCORE.selectedTag === 'geoTag') {
@@ -199,7 +193,7 @@ define(function(require, exports, module) {
     });
 
     $('#dialogEditTag').on('shown.bs.modal', function() {
-      var data = $('#coordinateMap')[0];
+      var data = $('#dateInputCalendar')[0];
       data.value = TSCORE.selectedTag;
     });
 

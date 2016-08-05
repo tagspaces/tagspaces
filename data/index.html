@@ -639,7 +639,9 @@
         <div id="tabsEditTag">
           <ul class="nav nav-tabs" style="margin-bottom: 15px; border-bottom: 1px solid lightgray;">
             <li><a href="#formEditTag" data-toggle="tab" class="optionsTitle" data-i18n="ns.dialogs:generalTab"></a></li>
-            <li><a href="#dateTimeTab" data-toggle="tab" class="optionsTitle" data-i18n="ns.dialogs:dateTimeTab"></a></li>
+            <li><a href="#dateCalendarTab" data-toggle="tab" class="optionsTitle" data-i18n="ns.dialogs:dateCalendarTab"></a></li>
+            <li><a href="#dateTimeCalendarTab" data-toggle="tab" class="optionsTitle" data-i18n="ns.dialogs:dateTimeTab"></a></li>
+            <li><a href="#dateRangeTab" data-toggle="tab" class="optionsTitle" data-i18n="ns.dialogs:dateRangeTab"></a></li>
             <li><a href="#geoLocation" data-toggle="tab" class="optionsTitle" data-i18n="ns.dialogs:geoLocationTab"></a></li>
           </ul>
         </div>
@@ -655,46 +657,44 @@
             </div>
           </form>
         </div>
-        <div class="tab-pane" id="dateTimeTab">
-          <div class="row">
-            <div class="form-group">
-              <div class="col-xs-5 col-sm-4">
-                <input class="" id="dateCalendarInput" type="radio" name="dateTimeName" checked>
-                <label class="active" data-i18n="ns.dialogs:dateCalendar"></label>
-              </div>
-              <div class="col-xs-5 col-sm-4">
-                <input type="radio" id="dateTimeInput" name="dateTimeName">
-                <label class="" data-i18n="ns.dialogs:dateTime"></label>
-              </div>
-              <div class="col-xs-5 col-sm-4">
-                <input type="radio" id="dateTimeRangeInput" name="dateTimeName">
-                <label class="" data-i18n="ns.dialogs:dateTimeRange"></label>
-              </div>
-            </div>
-          </div>
+        <div class="tab-pane" id="dateCalendarTab">
           <div class="date-time-calendar">
             <div class="form-group">
               <div id="dateCalendar" data-i18n="[placeholder]ns.dialogs:dateCalendar"></div>
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane" id="dateTimeCalendarTab">
+          <div class="date-time-calendar">
+            <div class="form-group">
               <div id="dateTimeCalendar" data-i18n="[placeholder]ns.dialogs:dateTime"></div>
-              <div id="dateTimeRange">
-                  <div class="col-sm-6">
-                    <label class="col-xs-offset-5 col-sm-offset-5" data-i18n="ns.dialogs:fromDateTime"></label>
-                    <div id="dateTimeRangeCalendar" data-i18n="[placeholder]ns.dialogs:dateTimeRange"></div>
-                  </div>
-                  <div class="col-sm-6">
-                    <label class="col-xs-offset-5 col-sm-offset-5" data-i18n="ns.dialogs:toDateTime"></label>
-                    <div id="dateTimeRangeMaxCalendar" data-i18n="[placeholder]ns.dialogs:dateTimeRangeMax"></div>
-                  </div>
-              </div>
-              <input type="text" id="dateInputCalendar" style="width: 100%;">
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane" id="dateRangeTab">
+          <div class="date-time-calendar">
+            <div class="form-group">
+              <!--<div id="dateTimeRange">-->
+                <div class="col-sm-6">
+                  <label class="col-xs-offset-5 col-sm-offset-5" data-i18n="ns.dialogs:fromDateTime"></label>
+                  <div id="dateTimeRangeCalendar" data-i18n="[placeholder]ns.dialogs:dateTimeRange"></div>
+                </div>
+                <div class="col-sm-6">
+                  <label class="col-xs-offset-5 col-sm-offset-5" data-i18n="ns.dialogs:toDateTime"></label>
+                  <div id="dateTimeRangeMaxCalendar" data-i18n="[placeholder]ns.dialogs:dateTimeRangeMax"></div>
+                </div>
+              <!--</div>-->
             </div>
           </div>
         </div>
         <div class="tab-pane" id="geoLocation">
           <div class="form-group">
             <div id="mapTag" style="width: 100%; height: 350px;"></div>
-            <input type="text" id="coordinateMap" style="width: 100%;">
+            <!--<input type="text" id="coordinateMap" style="width: 100%;">-->
           </div>
+        </div>
+        <div class="form-group">
+          <input type="text" id="dateInputCalendar" style="width: 100%;">
         </div>
       </div>
       <div class="modal-footer">
