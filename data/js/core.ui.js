@@ -796,7 +796,6 @@ define(function(require, exports) {
             sideBySide: false,
             calendarWeeks: true,
             showTodayButton: true,
-            showClear: true,
             allowInputToggle: true,
             useCurrent: false
           });
@@ -834,7 +833,6 @@ define(function(require, exports) {
             sideBySide: true,
             calendarWeeks: true,
             showTodayButton: true,
-            showClear: true,
             allowInputToggle: true,
             useCurrent: false,
             extraFormats:['YYYY-MM-DD HH:mm:ss', 'HH:mm:ss','HH:mm']
@@ -891,25 +889,24 @@ define(function(require, exports) {
             sideBySide: false,
             calendarWeeks: true,
             showTodayButton: true,
-            showClear: true,
             allowInputToggle: true,
             useCurrent: false
           });
 
+          var d;
+          var currentMinDate;
           $('#dateTimeRangeCalendar').on('dp.change', function(e) {
-            var d;
-            var currentDate;
             if (viewMode === 'years') {
               d = e.date._d;
-              currentDate = d.getFullYear();
+              currentMinDate = d.getFullYear();
             } else if (viewMode === 'months') {
               d = e.date._d;
-              currentDate = TSCORE.Utils.parseDateMonth(d);
+              currentMinDate = TSCORE.Utils.parseDateMonth(d);
             } else if (viewMode === 'default' || viewMode === 'days') {
               d = e.date._d;
-              currentDate = TSCORE.Utils.parseDate(d);
+              currentMinDate = TSCORE.Utils.parseDate(d);
             }
-            $('#dateInputCalendar').val(currentDate);
+            $('#dateInputCalendar').val(currentMinDate);
           });
 
           $('#dateTimeRangeCalendar').data('DateTimePicker').format(format).defaultDate(TSCORE.Utils.convertToDate(range[0])).viewMode(viewMode).show();
@@ -920,25 +917,24 @@ define(function(require, exports) {
             sideBySide: false,
             calendarWeeks: true,
             showTodayButton: true,
-            showClear: true,
             allowInputToggle: true,
             useCurrent: false
           });
 
           $('#dateTimeRangeMaxCalendar').on('dp.change', function(e) {
             var d;
-            var currentDate;
+            var currentMaxDate;
             if (viewMode === 'years') {
               d = e.date._d;
-              currentDate = d.getFullYear();
+              currentMaxDate = d.getFullYear();
             } else if (viewMode === 'months') {
               d = e.date._d;
-              currentDate = TSCORE.Utils.parseDateMonth(d);
+              currentMaxDate = TSCORE.Utils.parseDateMonth(d);
             } else if (viewMode === 'default' || viewMode === 'days') {
               d = e.date._d;
-              currentDate = TSCORE.Utils.parseDate(d);
+              currentMaxDate = TSCORE.Utils.parseDate(d);
             }
-            $('#dateInputCalendar').val(currentDate);
+            $('#dateInputCalendar').val(currentMaxDate);
           });
 
           $('#dateTimeRangeMaxCalendar').data('DateTimePicker').format(format).defaultDate(TSCORE.Utils.convertToDate(range[1])).viewMode(viewMode).show();
