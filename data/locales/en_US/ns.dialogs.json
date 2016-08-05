@@ -189,5 +189,7 @@
   "dateTimeRange": "Date Range",
   "dateTimeRangeMax": "Date Range Max",
   "yourLocation": "Your Location",
+  "fromDateTime": "From:",
+  "toDateTime": "To:",
   "-": "-"
 }
