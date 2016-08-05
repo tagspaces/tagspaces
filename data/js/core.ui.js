@@ -361,6 +361,9 @@ define(function(require, exports) {
           TSCORE.TagUtils.renameTag(TSCORE.selectedFiles[0], TSCORE.selectedTag, $('#dateInputCalendar').val());
         });
       }
+      if(target === "#formEditTag"){
+        $('#dateInputCalendar').hide();
+      }
     });
 
 
@@ -853,10 +856,14 @@ define(function(require, exports) {
           var currentDate;
           var d = e.date._d;
           var getHours = d.getHours();
+          var getMinutes = d.getMinutes();
+          //var getSeconds = d.getSeconds();
           if (getHours < 10) {
             getHours = '0' + getHours;
+          } else if (getMinutes < 10) {
+            getMinutes = '0' + getMinutes;
           }
-          var time = getHours + '' + d.getMinutes() + '' + d.getSeconds();
+          var time = getHours + '' + getMinutes + '' + '00';
 
           currentDate = TSCORE.Utils.parseDate(d);
           var dateDivider;
