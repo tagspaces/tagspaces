@@ -366,7 +366,6 @@ define(function(require, exports) {
       }
     });
 
-
     // Hide drop downs by click and drag
     $(document).click(function() {
       TSCORE.hideAllDropDownMenus();
@@ -855,14 +854,10 @@ define(function(require, exports) {
         $('#dateTimeCalendar').on('dp.change', function(e) {
           var currentDate;
           var d = e.date._d;
-          var getHours = d.getHours();
-          var getMinutes = d.getMinutes();
+          var getHours = d.getHours() < 10 ? '0'+d.getHours() : d.getHours();
+          var getMinutes = d.getMinutes() < 10 ? '0'+d.getMinutes() : d.getMinutes();
           //var getSeconds = d.getSeconds();
-          if (getHours < 10) {
-            getHours = '0' + getHours;
-          } else if (getMinutes < 10) {
-            getMinutes = '0' + getMinutes;
-          }
+          
           var time = getHours + '' + getMinutes + '' + '00';
 
           currentDate = TSCORE.Utils.parseDate(d);
