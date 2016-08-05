@@ -361,7 +361,7 @@ define(function(require, exports) {
           TSCORE.TagUtils.renameTag(TSCORE.selectedFiles[0], TSCORE.selectedTag, $('#dateInputCalendar').val());
         });
       }
-      if(target === "#formEditTag"){
+      if (target === "#formEditTag") {
         $('#dateInputCalendar').hide();
       }
     });
@@ -839,8 +839,6 @@ define(function(require, exports) {
         //  $('#dateCalendar').hide();
         //  $('#dateTimeRange').hide();
 
-        var defaultDate = TSCORE.Utils.convertToDateTime(currentDateTime);
-
         $('#dateTimeCalendar').datetimepicker({
           inline: true,
           sideBySide: true,
@@ -851,27 +849,45 @@ define(function(require, exports) {
           extraFormats: ['YYYY-MM-DD HH:mm:ss', 'HH:mm:ss', 'HH:mm']
         });
 
+        var defaultDate = TSCORE.Utils.convertToDateTime(currentDateTime);
         $('#dateTimeCalendar').on('dp.change', function(e) {
           var currentDate;
           var d = e.date._d;
-          var getHours = d.getHours() < 10 ? '0'+d.getHours() : d.getHours();
-          var getMinutes = d.getMinutes() < 10 ? '0'+d.getMinutes() : d.getMinutes();
+          var getHours = d.getHours() < 10 ? '0' + d.getHours() : d.getHours();
+          var getMinutes = d.getMinutes() < 10 ? '0' + d.getMinutes() : d.getMinutes();
           //var getSeconds = d.getSeconds();
-          
-          var time = getHours + '' + getMinutes + '' + '00';
 
+          var time = getHours + '' + getMinutes + '' + '00';
           currentDate = TSCORE.Utils.parseDate(d);
           var dateDivider;
           var dateTag = TSCORE.selectedTag;
-          if (dateTag.indexOf('~') !== -1) {
-            dateDivider = '~';
-          } else if (dateTag.indexOf(':') !== -1) {
-            dateDivider = ':';
-          } else if (dateTag.indexOf('!') !== -1) {
-            dateDivider = '!';
+          if (dateTag.length !== 5) {
+            if (dateTag.indexOf('~') !== -1) {
+              dateDivider = '~';
+              currentDate = currentDate + dateDivider + time;
+            }
+            if (dateTag.indexOf(':') !== -1 && dateTag.length !== 5) {
+              dateDivider = ':';
+              currentDate = currentDate + dateDivider + time;
+            }
+            if (dateTag.indexOf('!') !== -1 && dateTag.length !== 5) {
+              dateDivider = '!';
+              currentDate = currentDate + dateDivider + time;
+            }
+          } else {
+            if (dateTag.indexOf('~')) {
+              dateDivider = '~';
+              currentDate = getHours + dateDivider + getMinutes;
+            }
+            if (dateTag.indexOf(':')) {
+              dateDivider = ':';
+              currentDate = getHours + dateDivider + getMinutes;
+            }
+            if (dateTag.indexOf('!')) {
+              dateDivider = '!';
+              currentDate = getHours + dateDivider + getMinutes;
+            }
           }
-
-          currentDate = currentDate + dateDivider + time;
           $('#dateInputCalendar').val(currentDate);
         });
 
