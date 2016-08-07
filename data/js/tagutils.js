@@ -206,25 +206,27 @@ define(function(require, exports, module) {
       cMonth = '0' + cMonth;
     }
     var cYear = d.getFullYear();
-    var cHour = d.getHours();
-    cHour = cHour + '';
-    if (cHour.length === 1) {
-      cHour = '0' + cHour;
-    }
-    var cMinute = d.getMinutes();
-    cMinute = cMinute + '';
-    if (cMinute.length === 1) {
-      cMinute = '0' + cMinute;
-    }
-    var cSecond = d.getSeconds();
-    cSecond = cSecond + '';
-    if (cSecond.length === 1) {
-      cSecond = '0' + cSecond;
-    }
+
     var time = '';
     if (includeTime) {
+      var cHour = d.getHours();
+      cHour = cHour + '';
+      if (cHour.length === 1) {
+        cHour = '0' + cHour;
+      }
+      var cMinute = d.getMinutes();
+      cMinute = cMinute + '';
+      if (cMinute.length === 1) {
+        cMinute = '0' + cMinute;
+      }
+      var cSecond = d.getSeconds();
+      cSecond = cSecond + '';
+      if (cSecond.length === 1) {
+        cSecond = '0' + cSecond;
+      }
       time = '-' + cHour + '' + cMinute + '' + cSecond;
     }
+
     var milliseconds = '';
     if (includeMS) {
       milliseconds = '-' + d.getMilliseconds();
