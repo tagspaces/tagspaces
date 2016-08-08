@@ -730,7 +730,7 @@ define(function(require, exports) {
     showDateTimeCalendar(TSCORE.selectedTag);
   }
 
-  function dateCaledarTag(currentDateTime) {
+  function dateCalendarTag(currentDateTime) {
     var defaultDateCalendar = TSCORE.Utils.parseToDate(currentDateTime);
     var viewMode = '', format = '';
 
@@ -835,7 +835,7 @@ define(function(require, exports) {
         //  $('#dateCalendar').show();
         //  $('#dateTimeCalendar').hide();
         //  $('#dateTimeRange').hide();
-        dateCaledarTag(currentDateTime);
+        dateCalendarTag(currentDateTime);
 
       } else if (dateTimeTab) {
         $('.nav-tabs a[href="#dateTimeCalendarTab"]').tab('show');
