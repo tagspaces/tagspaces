@@ -966,7 +966,6 @@ define(function(require, exports) {
         });
 
         $('#dateTimeRangeMaxCalendar').on('dp.change', function(e) {
-          console.log(e);
           var d;
           var currentMaxDate;
           if (viewMode === 'years') {
