@@ -72,6 +72,7 @@ define(function (require, exports, module) {
             { "iso": "id_ID", "title": "bahasa Indonesia (Indonesian)" },
             { "iso": "pl", "title": "Polski (Polish)" },
             { "iso": "mt", "title": "Maltese (Maltese)" },
+            { "iso": "hy", "title": "հայերեն (Armenian)" },
         ],
         "keyBindings": {
             "selectAll": "mod+a",
