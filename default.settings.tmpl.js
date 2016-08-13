@@ -164,7 +164,7 @@ define(function (require, exports, module) {
                 "title":"Common Tags",
                 "isFolder": "true",
                 "key":"OTB",
-                "expand": "true",
+                "expanded": "true",
                 "children":[
                     {
                         "title":"book",
@@ -180,7 +180,7 @@ define(function (require, exports, module) {
                 "title":"Getting Things Done",
                 "isFolder": "true",
                 "key":"GTD",
-                "expand": "true",
+                "expanded": "true",
                 "children":[
                     {
                         "title":"done",
