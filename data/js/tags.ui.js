@@ -528,7 +528,7 @@ define(function(require, exports, module) {
           generateTagGroups();
         });
       }
-
+      $('#dialogImportTags').i18n();
       $('#dialogImportTags').modal({
         backdrop: 'static',
         show: true
