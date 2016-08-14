@@ -90,14 +90,19 @@ li hr {
 }
 
 .btn-link, .btn-link:hover, .btn-link:focus, .btn-link:active {
+  background-color: transparent;
   outline: none !important;
-  background-image: none;
+  background-image: none !important;
   border-radius: 0;
   text-transform: none;
   -webkit-transition: none;
   transition: none;
   -webkit-transform: none;
   transform: none;
+}
+
+.btn-link:hover, .btn-link:active {
+  color: black;
 }
 
 .btn span {

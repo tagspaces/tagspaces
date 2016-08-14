@@ -110,22 +110,26 @@ define(function(require, exports, module) {
       $('#exportTagGroupsButton').hide();
       $('#showMainMenuCheckbox').parent().hide();
     }
-    $('#exportTagGroupsButton').click(function() {
-      var jsonFormat = '{ "appName": "' + TSCORE.Config.DefaultSettings.appName +
-              '", "appVersion": "' + TSCORE.Config.DefaultSettings.appVersion +
-              '", "appBuild": "' + TSCORE.Config.DefaultSettings.appBuild +
-              '", "settingsVersion": ' + TSCORE.Config.DefaultSettings.settingsVersion +
-              ', "tagGroups": ';
-      var blob = new Blob([jsonFormat + JSON.stringify(TSCORE.Config.getAllTagGroupData()) + '}'], {
-        type: 'application/json'
-      });
-      saveAs(blob, 'tsm[' + TSCORE.TagUtils.formatDateTime4Tag(new Date(), true) + '].json');
-      console.log('Group Data Saved...');
-    });
+
+    $('#exportTagGroupsButton').on('click', exportTagGroups);
 
     $('#enableMetaData').change(function() {
       enableMetaData();
     });
+  }
+
+  function exportTagGroups() {
+    var jsonFormat = '{ "appName": "' + TSCORE.Config.DefaultSettings.appName +
+            '", "appVersion": "' + TSCORE.Config.DefaultSettings.appVersion +
+            '", "appBuild": "' + TSCORE.Config.DefaultSettings.appBuild +
+            '", "settingsVersion": ' + TSCORE.Config.DefaultSettings.settingsVersion +
+            ', "tagGroups": ';
+    var blob = new Blob([jsonFormat + JSON.stringify(TSCORE.Config.getAllTagGroupData()) + '}'], {
+      type: 'application/json'
+    });
+    var dateTimeTag = TSCORE.TagUtils.formatDateTime4Tag(new Date(), true);
+    saveAs(blob, 'tsm[' + dateTimeTag + '].json');
+    console.log('TagGroup Data Exported...');
   }
 
   function reInitUI() {
@@ -154,6 +158,7 @@ define(function(require, exports, module) {
     $('#perspectiveList').empty();
     $('#writeMetaToSidecarFile').attr('checked', TSCORE.Config.getWriteMetaToSidecarFile());
     $('#useDefaultLocationCheckbox').attr('checked', TSCORE.Config.getUseDefaultLocation());
+    $('#coloredFileExtensionsEnabledCheckbox').attr('checked', TSCORE.Config.getColoredFileExtensionsEnabled());
     if (TSCORE.PRO) {
       $('#enableMetaData').attr('checked', TSCORE.Config.getEnableMetaData());
       $('#useTrashCan').attr('checked', TSCORE.Config.getUseTrashCan());
@@ -244,6 +249,7 @@ define(function(require, exports, module) {
     TSCORE.Config.setSupportedFileTypes(collectSupportedFileTypesData());
     TSCORE.Config.setWriteMetaToSidecarFile($('#writeMetaToSidecarFile').is(':checked'));
     TSCORE.Config.setUseDefaultLocation($('#useDefaultLocationCheckbox').is(':checked'));
+    TSCORE.Config.setColoredFileExtensionsEnabled($('#coloredFileExtensionsEnabledCheckbox').is(':checked'));
     TSCORE.Config.saveSettings();
   }
 

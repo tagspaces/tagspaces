@@ -31,6 +31,7 @@ define(function (require, exports, module) {
         "showMainMenu":             false,
         "lastOpenedLocation":       "", // "/owncloud/remote.php/webdav/Demo",
         "useDefaultLocation":       false,
+        "coloredFileExtensionsEnabled": true,
         "writeMetaToSidecarFile":   false,
         "enableMetaData":           false,
         "webDavPath"  :             "oc/remote.php/webdav",
@@ -70,6 +71,8 @@ define(function (require, exports, module) {
             { "iso": "hu", "title": "Magyar (Hungarian)" },
             { "iso": "id_ID", "title": "bahasa Indonesia (Indonesian)" },
             { "iso": "pl", "title": "Polski (Polish)" },
+            { "iso": "mt", "title": "Maltese (Maltese)" },
+            { "iso": "hy", "title": "հայերեն (Armenian)" },
         ],
         "keyBindings": {
             "selectAll": "mod+a",
@@ -161,7 +164,7 @@ define(function (require, exports, module) {
                 "title":"Common Tags",
                 "isFolder": "true",
                 "key":"OTB",
-                "expand": "true",
+                "expanded": "true",
                 "children":[
                     {
                         "title":"book",
@@ -177,7 +180,7 @@ define(function (require, exports, module) {
                 "title":"Getting Things Done",
                 "isFolder": "true",
                 "key":"GTD",
-                "expand": "true",
+                "expanded": "true",
                 "children":[
                     {
                         "title":"done",

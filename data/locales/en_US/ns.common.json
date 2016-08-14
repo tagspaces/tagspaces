@@ -251,5 +251,7 @@
   "alertOpenLocatioFirst":"Please open a location first!",
   "exitApp":"Exit",
   "openNewInstance":"New Application Window",
+  "documentation":"Documentation",
   "-": "-"
+
 }

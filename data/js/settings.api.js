@@ -891,6 +891,18 @@ define(function(require, exports, module) {
 
     exports.Settings.useDefaultLocation = value;
   }
+  function getColoredFileExtensionsEnabled() {
+    if (exports.Settings.coloredFileExtensionsEnabled === undefined) {
+      exports.Settings.coloredFileExtensionsEnabled = exports.DefaultSettings.coloredFileExtensionsEnabled;
+      saveSettings();
+    }
+    return exports.Settings.coloredFileExtensionsEnabled;
+  }
+
+  function setColoredFileExtensionsEnabled(value) {
+
+    exports.Settings.coloredFileExtensionsEnabled = value;
+  }
 
   //////////////////// API methods ///////////////////
   function getFileTypeEditor(fileTypeExt) {
@@ -1385,4 +1397,6 @@ define(function(require, exports, module) {
   exports.getWriteMetaToSidecarFile = getWriteMetaToSidecarFile;
   exports.getUseDefaultLocation = getUseDefaultLocation;
   exports.setUseDefaultLocation = setUseDefaultLocation;
+  exports.getColoredFileExtensionsEnabled = getColoredFileExtensionsEnabled;
+  exports.setColoredFileExtensionsEnabled = setColoredFileExtensionsEnabled;
 });

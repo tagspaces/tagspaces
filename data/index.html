@@ -56,7 +56,7 @@
       <nav class="navbar navbar-default" role="navigation">
         <div class="btn-toolbar">
           <span id="startNewInstanceBack" data-i18n="[title]ns.common:openNewInstanceTooltip" class="pull-left">
-            <span id="logo"><img src="assets/text-logo.svg" style="max-height: 30px; margin-top: -6px; margin-left: -5px;"></span>
+            <span id="logo"><img src="assets/text-logo.svg" id="textlogo" style="max-height: 30px; margin-top: -6px; margin-left: -5px;"></span>
             <sup id="appVersion"></sup>
           </span>
           <button id="newVersionAvailable" class="btn btn-link" data-i18n="[title]ns.common:newVersionAvailableTooltip">
@@ -249,10 +249,10 @@
       <nav class="navbar navbar-default" role="navigation">
         <div class="btn-toolbar flexLayout" >
           <div class="btn-group">
-            <button id="fileMenuButton" class="btn btn-link dropdown-toggle" data-toggle="dropdown">
-              <span class="fileExtOpener" data-i18n="[title]ns.common:fileOperations">
-                <span id="fileExtText"></span><span style="margin-left: 5px;" class="fa fa-ellipsis-v"></span>
-              </span>
+            <button id="fileMenuButton" class="btn btn-link dropdown-toggle fileExtColor"
+                    data-i18n="[title]ns.common:fileOperations" data-toggle="dropdown">
+              <span id="fileExtText"></span>
+              <span style="margin-left: 5px;" class="fa fa-ellipsis-v"></span>
             </button>
             <ul class="dropdown-menu" id="fileExtensionMenu">
               <li class="dropdown-header">
@@ -520,7 +520,7 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true"><i class="fa fa-check fa-lg"></i>
+        <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true"><i class="fa fa-check fa-lg"></i></button>
       </div>
     </div>
   </div>
@@ -622,10 +622,12 @@
         </form>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-default pull-left cancelButton" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times fa-lg"></i>
+        <button class="btn btn-default pull-left cancelButton" data-dismiss="modal" aria-hidden="true">
+          <i class="fa fa-times fa-lg"></i><span data-i18n="ns.dialogs:ok"></span>
         </button>
-        <button id="renameFileButton" class="btn btn-primary" data-dismiss="modal" aria-hidden="true"><i
-          class="fa fa-check fa-lg"></i></button>
+        <button id="renameFileButton" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">
+          <i class="fa fa-check fa-lg"></i><span data-i18n="ns.dialogs:cancel"></span>
+        </button>
       </div>
     </div>
   </div>
@@ -1002,12 +1004,12 @@
     <li class="divider"></li>
     <li><a id="tagGroupMenuCreateNewTag" data-i18n="[title]ns.common:addTagsTooltip">
       <i class="fa fa-tag fa-lg fa-fw"></i>&nbsp;<span data-i18n="ns.common:addTags"></span></a></li>
-    <li><a id="tagGroupMenuImportTags" data-i18n="[title]ns.common:importTagsTooltip">
+    <!--li><a id="tagGroupMenuImportTags" data-i18n="[title]ns.common:importTagsTooltip">
       <span class="fa-stack fa-fw">
         <i class="fa fa-tag fa-stack-2x fa-fw"></i><i class="fa fa-arrow-right fa-stack-1x fa-inverse"></i>
-      </span>&nbsp;<span data-i18n="ns.common:importTags"></span></a></li>
-    <li><a id="tagGroupMenuCreateTagGroup" data-i18n="[title]ns.common:createTagGroupTooltip">
-      <i class="fa fa-tags fa-lg fa-fw"></i>&nbsp;<span data-i18n="ns.common:createTagGroup"></span></a></li>
+      </span>&nbsp;<span data-i18n="ns.common:importTags"></span></a></li-->
+    <!--li><a id="tagGroupMenuCreateTagGroup" data-i18n="[title]ns.common:createTagGroupTooltip">
+      <i class="fa fa-tags fa-lg fa-fw"></i>&nbsp;<span data-i18n="ns.common:createTagGroup"></span></a></li-->
     <li><a id="tagGroupMenuMoveUp" data-i18n="[title]ns.common:moveTagGroupUpTooltip">
       <i class="fa fa-arrow-up fa-lg fa-fw"></i>&nbsp;<span data-i18n="ns.common:moveTagGroupUp"></span></a></li>
     <li><a id="tagGroupMenuMoveDown" data-i18n="[title]ns.common:moveTagGroupDownTooltip">

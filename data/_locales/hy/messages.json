@@ -1,0 +1,62 @@
+{
+    "saveAsSelectionLabel": {
+        "message": "Պահպանել ընտրվածը",
+        "description": "Title of label."
+    },
+    "appLauncher": {
+        "message": "Գործարկել TagSpaces-ը։",
+        "description": "Title of the application launcher in the browser."
+    },
+    "appDesc": {
+        "message": "Նիշքային դիտարկիչ՝ կայքային բովանդակության արտածմամբ և  Chromecast-ի օժանդակությամբ",
+        "description": ""
+    },
+    "addTagHelp": {
+        "message": "Պիտակները պիտի կազմված լինեն նվազագույնը 2 նիշից և չպարունակեն բացակներ, #, / ,\\ և այլ այսպիսի նշաններ։",
+        "description": "Add tag help message"
+    },
+    "saveScreenshotTitle": {
+        "message": "Պահպանել էջի տեսանելի հատվածի էկրանանկարը որպես PNG նիշք",
+        "description": "Title of screenshot button"
+    },
+    "editTitleLabel": {
+        "message": "Խմբագրել անունը",
+        "description": "Title of label."
+    },
+    "appName": {
+        "message": "TagSpaces",
+        "description": ""
+    },
+    "appLauncherLabel": {
+        "message": "Տեսակորզել կայքի բովանդակությունը",
+        "description": "Title of label."
+    },
+    "saveScreenshotLabel": {
+        "message": "Էկրանանկար",
+        "description": "Title of label."
+    },
+    "addTagLabel": {
+        "message": "Ավելացնել պիտակներ",
+        "description": "Title of label."
+    },
+    "saveAsMhtmlTitle": {
+        "message": "Ամբողջ էջը պահպանել որպես MHTML",
+        "description": "Title of save page button"
+    },
+    "appLauncherTitle": {
+        "message": "Սկսել TagSpaces դիտարկիչը նոր ներդիրում",
+        "description": "Title of the application launcher in the browser."
+    },
+    "saveSelectionAsHtmlTitle": {
+        "message": "Պահպանել ընտրված մասը որպես HTML",
+        "description": "Title of save selection button"
+    },
+    "saveAsMhtmlLabel": {
+        "message": "Պահպանել ամբողջ էջը",
+        "description": "Title of label."
+    },
+    "saveFileLabel": {
+        "message": "Պահպանել որպես նիշք",
+        "description": "Title of label."
+    }
+}

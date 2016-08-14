@@ -215,48 +215,47 @@ define(function(require, exports, module) {
         filename = dirList[i].name.replace(/(<([^>]+)>)/gi, ''); // sanitizing filename
         path = dirList[i].path.replace(/(<([^>]+)>)/gi, ''); // sanitizing filepath
         title = TSCORE.TagUtils.extractTitle(filename);
+        ext = TSCORE.TagUtils.extractFileExtension(filename);
+        tags = TSCORE.TagUtils.extractTags(path);
 
-        if (dirList[i].isFile) {
-          ext = TSCORE.TagUtils.extractFileExtension(filename);
-          tags = TSCORE.TagUtils.extractTags(path);
-
-          if (dirList[i].size) {
-            fileSize = dirList[i].size;
-          } else {
-            fileSize = "";
-          }
-
-          if (dirList[i].lmdt) {
-            fileLMDT = dirList[i].lmdt;
-          } else {
-            fileLMDT = '';
-          }
-
-          if (dirList[i].thumbPath) {
-            thumbPath = dirList[i].thumbPath;
-          } else {
-            thumbPath = '';
-          }
-
-          metaObj = {
-            thumbnailPath: thumbPath,
-            metaData: null
-          };
-
-          entry = {
-            "extension": ext,
-            "title": title,
-            "tags": tags,
-            "size": fileSize,
-            "lmdt": fileLMDT,
-            "path": path,
-            "name": filename,
-            "isDirectory": false,
-            "meta": metaObj
-          };
-          TSCORE.fileList.push(entry);
-          metaDataLoadingPromises.push(TSCORE.Meta.loadMetaFileJsonPromise(entry));
+        if (dirList[i].size) {
+          fileSize = dirList[i].size;
         } else {
+          fileSize = "";
+        }
+
+        if (dirList[i].lmdt) {
+          fileLMDT = dirList[i].lmdt;
+        } else {
+          fileLMDT = '';
+        }
+
+        if (dirList[i].thumbPath) {
+          thumbPath = dirList[i].thumbPath;
+        } else {
+          thumbPath = '';
+        }
+
+        metaObj = {
+          thumbnailPath: thumbPath,
+          metaData: null
+        };
+
+        entry = {
+          "extension": ext,
+          "title": title,
+          "tags": tags,
+          "size": fileSize,
+          "lmdt": fileLMDT,
+          "path": path,
+          "name": filename,
+          "isDirectory": !dirList[i].isFile,
+          "meta": metaObj
+        };
+        TSCORE.fileList.push(entry);
+        metaDataLoadingPromises.push(TSCORE.Meta.loadMetaFileJsonPromise(entry));
+
+        if (!dirList[i].isFile) {
           entry = {
             "path": path,
             "name": filename,
