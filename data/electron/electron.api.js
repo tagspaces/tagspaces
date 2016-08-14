@@ -62,6 +62,14 @@ define(function(require, exports, module) {
       {
         label: $.i18n.t("ns.common:file"),
         submenu: [
+         {
+            label: $.i18n.t("ns.common:openNewInstance"),
+            accelerator: '',
+            click: TSCORE.UI.openNewInstance
+          },
+          {
+            type: 'separator'
+          },
           {
             label: $.i18n.t("ns.common:createFile"),
             accelerator: '',
