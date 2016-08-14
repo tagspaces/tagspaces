@@ -361,14 +361,14 @@ define(function(require, exports, module) {
 
     $tagGroupsContent.append($('<button>', {
       'class': 'btn btn-link',
-      'style': 'margin-top: 15px; margin-left: -8px; display: block',
+      'style': 'margin-top: 15px; margin-left: -8px; display: block;  color: #1DD19F;',
       'text': $.i18n.t('ns.common:createTagGroup'),
       'data-i18n': 'ns.common:createTagGroup;[title]ns.common:createTagGroupTooltip'
     }).on('click', TSCORE.showDialogTagGroupCreate));
 
     $tagGroupsContent.append($('<button>', {
       'class': 'btn btn-link',
-      'style': 'margin-top: 0px; display: block; margin-left: -8px;',
+      'style': 'margin-top: 0px; display: block; margin-left: -8px; color: #1DD19F;',
       'text': $.i18n.t('ns.common:importTags'),
       'data-i18n': 'ns.common:importTags;[title]ns.common:importTagsTooltip'
     }).on('click', importTagGroups));
