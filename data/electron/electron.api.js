@@ -62,7 +62,7 @@ define(function(require, exports, module) {
       {
         label: $.i18n.t("ns.common:file"),
         submenu: [
-         {
+          {
             label: $.i18n.t("ns.common:openNewInstance"),
             accelerator: '',
             click: TSCORE.UI.openNewInstance
@@ -73,7 +73,6 @@ define(function(require, exports, module) {
           {
             label: $.i18n.t("ns.common:createFile"),
             accelerator: '',
-            role: 'createFile',
             click: function() {
               if (!TSCORE.currentPath) {
                 TSCORE.showAlertDialog("ns.common:alertOpenLocatioFirst");
@@ -85,7 +84,6 @@ define(function(require, exports, module) {
           {
             label: $.i18n.t("ns.common:createMarkdown"),
             accelerator: '',
-            role: 'createMarkdown',
             click: function() {
               if (!TSCORE.currentPath) {
                 TSCORE.showAlertDialog("ns.common:alertOpenLocatioFirst");
@@ -97,7 +95,6 @@ define(function(require, exports, module) {
           {
             label: $.i18n.t("ns.common:createRichTextFile"),
             accelerator: '',
-            role: 'createRichTextFile',
             click: function() {
               if (!TSCORE.currentPath) {
                 TSCORE.showAlertDialog("ns.common:alertOpenLocatioFirst");
@@ -109,7 +106,6 @@ define(function(require, exports, module) {
           {
             label: $.i18n.t("ns.common:createAudioFile"),
             accelerator: '',
-            role: 'createAudioFile',
             click: function() {
               if (!TSCORE.currentPath) {
                 TSCORE.showAlertDialog("ns.common:alertOpenLocatioFirst");
@@ -124,7 +120,6 @@ define(function(require, exports, module) {
           {
             label: $.i18n.t("ns.common:createDirectory"),
             accelerator: '',
-            role: 'createDirectory',
             click: function() {
               if (!TSCORE.currentPath) {
                 TSCORE.showAlertDialog("Not open current directory !");
@@ -139,7 +134,6 @@ define(function(require, exports, module) {
           {
             label: $.i18n.t("ns.common:exitApp"),
             accelerator: '',
-            role: 'exitApp',
             click: function() {
               if (!TSCORE.currentPath) {
                 TSCORE.showAlertDialog("Not open current directory !");

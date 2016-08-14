@@ -250,6 +250,6 @@
   "createDirectory":"New Directory",
   "alertOpenLocatioFirst":"Please open a location first!",
   "exitApp":"Exit",
-  "openNewInstance":"New window",
+  "openNewInstance":"New Application Window",
   "-": "-"
 }
