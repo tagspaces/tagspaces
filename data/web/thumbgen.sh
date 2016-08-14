@@ -14,6 +14,7 @@ generate_thumbnails() {
     do
       # next line checks the mime-type of the file
       CHECKTYPE=`file --mime-type -b "$file" | awk -F'/' '{print $1}'`
+      CHECKFORMAT=`file --mime-type -b "$file" | awk -F'/' '{print $2}'`
       if [ "x$CHECKTYPE" == "ximage" ]; 
     then
         thumbfile="$thumbdir/$(basename "$file").png"
@@ -39,6 +40,10 @@ generate_thumbnails() {
         # next 'if' is true if either filesize >= 200000 bytes  OR  if image width >=201
         if [ $CHECKSIZE -ge  200000 ] || [ $CHECKWIDTH -ge 201 ]; then
             echo "$file -> $thumbfile" 
+            if [ $CHECKFORMAT == "gif" ]; then
+              # if image is animated gif we only want 1st frame
+              file="$file[0]"
+            fi
             convert -thumbnail 400 "$file" "$thumbfile"
         fi
       fi
