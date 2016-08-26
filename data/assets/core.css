@@ -83,6 +83,7 @@
   text-transform: uppercase;
   font-size: 12px;
   padding: 4px;
+  box-shadow: 1px 1px 4px rgba(0,0,0,0.4);
 }
 
 #fileMenuButton:hover  {
@@ -105,7 +106,8 @@
 
 #fileTitle:hover {
   text-decoration: none;
-  background-color: rgba(97, 255, 0, 0.23);
+  background-color: #d6d6d6;
+  border-radius: 5px;
 }
 
 #viewsRadio {
