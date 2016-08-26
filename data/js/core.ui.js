@@ -177,11 +177,7 @@ define(function(require, exports, module) {
     });
 
     // End Edit Tag Dialog
-    $('#startNewInstanceBack').click(function() {
-      if (!isCordova) {
-        window.open(window.location.href, '_blank');
-      }
-    });
+    $('#startNewInstanceBack').on('click', openNewInstance);
 
     function reloadAboutContent() {
       if (TSCORE.PRO) {
@@ -339,6 +335,12 @@ define(function(require, exports, module) {
     });
 
     platformTuning();
+  }
+
+  function openNewInstance() {
+    if (!isCordova) {
+      window.open(window.location.href, '_blank', 'width=1260,height=748');
+    }
   }
 
   function showFileDropArea() {
@@ -1116,6 +1118,7 @@ define(function(require, exports, module) {
   exports.createHTMLFile = createHTMLFile;
   exports.createMDFile = createMDFile;
   exports.createTXTFile = createTXTFile;
+  exports.openNewInstance = openNewInstance;
   exports.openFacebook = openFacebook;
   exports.openTwitter = openTwitter;
   exports.openGooglePlus = openGooglePlus;
