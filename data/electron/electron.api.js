@@ -682,19 +682,18 @@ define(function(require, exports, module) {
     return new Promise(function(resolve, reject) {
       if (filePath === newFilePath) {
         reject($.i18n.t("ns.common:fileTheSame"), $.i18n.t("ns.common:fileNotMoved"));
-      }
-      if (fs.lstatSync(filePath).isDirectory()) {
+      } else if (fs.lstatSync(filePath).isDirectory()) {
         reject($.i18n.t("ns.common:fileIsDirectory", {fileName: filePath}));
-      }
-      if (fs.existsSync(newFilePath)) {
+      } else if (fs.existsSync(newFilePath)) {
         reject($.i18n.t("ns.common:fileExists", {fileName: newFilePath}), $.i18n.t("ns.common:fileRenameFailed"));
+      } else {
+        fs.move(filePath, newFilePath, {clobber: true}, function(error) {
+          if (error) {
+            reject("Renaming: " + filePath + " failed.");
+          }
+          resolve([filePath, newFilePath]);
+        });
       }
-      fs.move(filePath, newFilePath, {clobber: true}, function(error) {
-        if (error) {
-          reject("Renaming: " + filePath + " failed.");
-        }
-        resolve([filePath, newFilePath]);
-      });
     });
   }
 
@@ -713,21 +712,21 @@ define(function(require, exports, module) {
     return new Promise(function(resolve, reject) {
       if (dirPath === newDirPath) {
         reject($.i18n.t("ns.common:directoryTheSame"), $.i18n.t("ns.common:directoryNotMoved"));
-      }
-      if (fs.existsSync(newDirPath)) {
+      } else if (fs.existsSync(newDirPath)) {
         reject($.i18n.t("ns.common:directoryExists", {dirName: newDirPath}), $.i18n.t("ns.common:directoryRenameFailed"));
-      }
-      var dirStatus = fs.lstatSync(dirPath);
-      if (dirStatus.isDirectory) {
-        fs.rename(dirPath, newDirPath, function(error) {
-          if (error) {
-            console.error("Renaming directory failed " + error);
-            reject("Renaming " + dirPath + " failed.");
-          }
-          resolve(newDirPath);
-        });
       } else {
-        reject($.i18n.t("ns.common:pathIsNotDirectory", {dirName: dirPath}), $.i18n.t("ns.common:directoryRenameFailed"));
+        var dirStatus = fs.lstatSync(dirPath);
+        if (dirStatus.isDirectory) {
+          fs.rename(dirPath, newDirPath, function(error) {
+            if (error) {
+              console.error("Renaming directory failed " + error);
+              reject("Renaming " + dirPath + " failed.");
+            }
+            resolve(newDirPath);
+          });
+        } else {
+          reject($.i18n.t("ns.common:pathIsNotDirectory", {dirName: dirPath}), $.i18n.t("ns.common:directoryRenameFailed"));
+        }
       }
     });
   }
