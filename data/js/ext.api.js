@@ -14,12 +14,7 @@ define(function(require, exports, module) {
         TSCORE.FileOpener.saveFile();
         break;
       case "hideAllMenus":
-        TSCORE.hideAllDropDownMenus();
-        $('#searchOptions').hide();
-        $('#fileExtensionMenu').parent().removeClass('open');
-        $('#perspectiveSwitcher').parent().removeClass('open');
-        $('#locationsList').parent().removeClass('open');
-        $('#tagSuggestionsMenu').parent().removeClass('open');
+        hideMenus();
         break;
       case "playbackEnded":
         openNextFile();
@@ -36,6 +31,15 @@ define(function(require, exports, module) {
         console.log("Not recognized messaging command: " + msg);
         break;
     }
+  }
+
+  function hideMenus() {
+    TSCORE.hideAllDropDownMenus();
+    $('#searchOptions').hide();
+    $('#fileExtensionMenu').parent().removeClass('open');
+    $('#perspectiveSwitcher').parent().removeClass('open');
+    $('#locationsList').parent().removeClass('open');
+    $('#tagSuggestionsMenu').parent().removeClass('open');
   }
 
   function openNextFile() {
