@@ -366,7 +366,7 @@ define(function(require, exports, module) {
   function setReadOnly(filePath) {
     for (var i = 0; i < perspectives.length; i++) {
       try {
-        return perspectives[i].setReadOnly(filePath);
+        perspectives[i].setReadOnly(filePath);
       } catch (e) {
         console.warn("Error while executing 'setReadOnly' on " + perspectives[i].ID + ' ' + e);
       }
