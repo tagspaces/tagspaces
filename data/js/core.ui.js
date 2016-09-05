@@ -1033,6 +1033,25 @@ define(function(require, exports, module) {
     $('#contactUs').addClass('active');
   }
 
+   function setReadOnly() {
+     $('#tagMenuEditTag').hide();
+     $('#tagTreeMenuEditTag').hide();
+     $('#tagFile').hide();
+     $('#duplicateFile').hide();
+     $('#renameFile').hide();
+     $('#addTagFileViewer').hide();
+     $('#fileMenuAddTag').hide();
+     $('#fileMenuMoveCopyFile').hide();
+     $('#fileMenuRenameFile').hide();
+     $('#editDocument').hide();
+
+     //$('.flexMaxWidth .editable .editable-click').off('click');
+
+     $(document).off('drop dragend dragenter dragover dragleave', function(event) {
+       event.preventDefault();
+     });
+  }
+
   function createHTMLFile() {
     var filePath = TSCORE.currentPath + TSCORE.dirSeparator + TSCORE.TagUtils.beginTagContainer + TSCORE.TagUtils.formatDateTime4Tag(new Date(), true) + TSCORE.TagUtils.endTagContainer + '.html';
     createNewTextFile(filePath, TSCORE.Config.getNewHTMLFileContent());
@@ -1126,4 +1145,5 @@ define(function(require, exports, module) {
   exports.reportIssues = reportIssues;
   exports.whatsNew = whatsNew;
   exports.showDocumentation = showDocumentation;
+  exports.setReadOnly = setReadOnly;
 });
