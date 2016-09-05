@@ -106,7 +106,6 @@ var isWin = navigator.appVersion.indexOf("Win")!==-1;
       hopscotch:              'libs/hopscotch/dist/js/hopscotch.min',
       noty:                   'libs/noty/js/noty/packaged/jquery.noty.packaged.min',
       marked:                 'libs/marked/marked.min',
-      webaudiorecording:      'libs/audio-record/WebAudioRecorder',
       webdav:                 'web/webdavlib/webdavlib',
 
       tscore:                 'js/core.api',
@@ -131,7 +130,6 @@ var isWin = navigator.appVersion.indexOf("Win")!==-1;
       tsextmanager:           'js/extension.manager',
       tsioapi:                 IO_JS,
       tspro:                   PRO_JS,
-      tsaudiorecorderui:      'js/audiorecorder.ui'
     },
     shim: {
       'underscore':               { exports: '_' },

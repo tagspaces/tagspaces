@@ -863,7 +863,7 @@ define(function(require, exports, module) {
   }
 
   function showAudioRecordingDialog() {
-    require("webaudiorecording");
+    //require("webaudiorecording");
     $('#audioRecordingDialog').modal({
       backdrop: 'static',
       show: true
