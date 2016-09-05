@@ -67,17 +67,18 @@ Go to the data folder and install the TagSpaces extensions with bower:
     $ bower install
     
 
-#### Run the native Windows, Linux or Mac OS X application with NW.js
-* Download [nw.js](https://github.com/nwjs/nw.js) prebuilt binaries for your system environment.
-    * For Windows: copy `nw.exe, nw.pak, icudt.dll, ffmpegsumo.dll` to `tagspaces\data\node-webkit` directory.
-    * For Linux: copy `nw, nw.pak, icudtl.dat, libffmpegsumo.so` to `tagspaces/data/node-webkit` directory. If you experience issue related to libudev.so.0 read the following [article](https://github.com/rogerwang/node-webkit/wiki/The-solution-of-lacking-libudev.so.0).
-    * For Mac OS X: copy `node-webkit.app` to `tagspaces/data/node-webkit` directory.
-* Run the `nw` executable file.
-
 #### Run the native Windows, Linux or Mac OS X application with Electron
 * Install the `electron-prebuilt` package with this command: `npm install -g electron-prebuilt`
 * Goto the folder: `cd tagspaces/data/`
 * Execute one of the following commands `electron .` or `npm start`
+
+#### Run the native Windows, Linux or Mac OS X application with NW.js
+Please note: The nw.js platform is not actively supported anymore.
+* Download [nw.js](https://github.com/nwjs/nw.js) prebuilt binaries for your system environment.
+* For Windows: copy `nw.exe, nw.pak, icudt.dll, ffmpegsumo.dll` to `tagspaces\data\node-webkit` directory.
+* For Linux: copy `nw, nw.pak, icudtl.dat, libffmpegsumo.so` to `tagspaces/data/node-webkit` directory. If you experience issue related to libudev.so.0 read the following [article](https://github.com/rogerwang/node-webkit/wiki/The-solution-of-lacking-libudev.so.0).
+* For Mac OS X: copy `node-webkit.app` to `tagspaces/data/node-webkit` directory.
+* Run the `nw` executable file.
 
 #### Run the Chrome/Chromium extension
 * Go to the chrome `Settings` and then to `Extension`

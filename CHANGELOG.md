@@ -1,9 +1,33 @@
 ﻿#Changelog
 
-## Version 2.4.0 / 2016.06.09
+## Version 2.5.0 / 2016.09.xx
+
+### Community
+- Support for folders in the grid perspective
+- Added Maltese and Armenian translation
+- Added new logo
+- Added text to confirm and cancel buttons in dialogs
+- New file menu items in the top menu
+- Placing the tag import and tag group create functionalities in the tag area
+- Correcting tag default values
+- Added new menu items in electron's help menu
+- Added colored file extensions by default and making them optional in the settings
+- Button animation enabled
+- Support for todos / checkboxes in the rich text (html) editor extension
+- Added online/offline check for the webdav version
+- Added extCommon library as a place to share common code between tagspaces extensions
 
 ### Pro
 - Minor bug fixes
+
+### Chrome Extension and Firefox Addon
+- Added close button for the chrome extension popup
+
+### Android App
+- no specific changes
+
+## Version 2.4.0 / 2016.06.09
+
 ### Community
 - Added initial implementation for searching in the HTML and MD viewers
 - The user interface of the audio/video player was updated
@@ -14,6 +38,8 @@
 - Fixed directory listing issue with the nginx webdav module [#409](https://github.com/tagspaces/tagspaces/issues/409)
 - Fixing showing files containing a tag [#441](https://github.com/tagspaces/tagspaces/issues/441)
 - Starting the search in the advanced search dialog on enter now possible
+### Pro
+- Minor bug fixes
 ### Chrome Extension and Firefox Addon
 - Added the ability to save the source url and date in the saved HTML web page
 ### Android App
