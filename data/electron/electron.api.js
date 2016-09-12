@@ -63,9 +63,16 @@ define(function(require, exports, module) {
         label: $.i18n.t("ns.common:file"),
         submenu: [
           {
+            label: $.i18n.t("ns.common:openNewInstance"),
+            accelerator: '',
+            click: TSCORE.UI.openNewInstance
+          },
+          {
+            type: 'separator'
+          },
+          {
             label: $.i18n.t("ns.common:createFile"),
             accelerator: '',
-            role: 'createFile',
             click: function() {
               if (!TSCORE.currentPath) {
                 TSCORE.showAlertDialog("ns.common:alertOpenLocatioFirst");
@@ -77,7 +84,6 @@ define(function(require, exports, module) {
           {
             label: $.i18n.t("ns.common:createMarkdown"),
             accelerator: '',
-            role: 'createMarkdown',
             click: function() {
               if (!TSCORE.currentPath) {
                 TSCORE.showAlertDialog("ns.common:alertOpenLocatioFirst");
@@ -89,7 +95,6 @@ define(function(require, exports, module) {
           {
             label: $.i18n.t("ns.common:createRichTextFile"),
             accelerator: '',
-            role: 'createRichTextFile',
             click: function() {
               if (!TSCORE.currentPath) {
                 TSCORE.showAlertDialog("ns.common:alertOpenLocatioFirst");
@@ -101,7 +106,6 @@ define(function(require, exports, module) {
           {
             label: $.i18n.t("ns.common:createAudioFile"),
             accelerator: '',
-            role: 'createAudioFile',
             click: function() {
               if (!TSCORE.currentPath) {
                 TSCORE.showAlertDialog("ns.common:alertOpenLocatioFirst");
@@ -116,7 +120,6 @@ define(function(require, exports, module) {
           {
             label: $.i18n.t("ns.common:createDirectory"),
             accelerator: '',
-            role: 'createDirectory',
             click: function() {
               if (!TSCORE.currentPath) {
                 TSCORE.showAlertDialog("Not open current directory !");
@@ -131,7 +134,6 @@ define(function(require, exports, module) {
           {
             label: $.i18n.t("ns.common:exitApp"),
             accelerator: '',
-            role: 'exitApp',
             click: function() {
               if (!TSCORE.currentPath) {
                 TSCORE.showAlertDialog("Not open current directory !");
@@ -680,19 +682,18 @@ define(function(require, exports, module) {
     return new Promise(function(resolve, reject) {
       if (filePath === newFilePath) {
         reject($.i18n.t("ns.common:fileTheSame"), $.i18n.t("ns.common:fileNotMoved"));
-      }
-      if (fs.lstatSync(filePath).isDirectory()) {
+      } else if (fs.lstatSync(filePath).isDirectory()) {
         reject($.i18n.t("ns.common:fileIsDirectory", {fileName: filePath}));
-      }
-      if (fs.existsSync(newFilePath)) {
+      } else if (fs.existsSync(newFilePath)) {
         reject($.i18n.t("ns.common:fileExists", {fileName: newFilePath}), $.i18n.t("ns.common:fileRenameFailed"));
+      } else {
+        fs.move(filePath, newFilePath, {clobber: true}, function(error) {
+          if (error) {
+            reject("Renaming: " + filePath + " failed.");
+          }
+          resolve([filePath, newFilePath]);
+        });
       }
-      fs.move(filePath, newFilePath, {clobber: true}, function(error) {
-        if (error) {
-          reject("Renaming: " + filePath + " failed.");
-        }
-        resolve([filePath, newFilePath]);
-      });
     });
   }
 
@@ -711,21 +712,21 @@ define(function(require, exports, module) {
     return new Promise(function(resolve, reject) {
       if (dirPath === newDirPath) {
         reject($.i18n.t("ns.common:directoryTheSame"), $.i18n.t("ns.common:directoryNotMoved"));
-      }
-      if (fs.existsSync(newDirPath)) {
+      } else if (fs.existsSync(newDirPath)) {
         reject($.i18n.t("ns.common:directoryExists", {dirName: newDirPath}), $.i18n.t("ns.common:directoryRenameFailed"));
-      }
-      var dirStatus = fs.lstatSync(dirPath);
-      if (dirStatus.isDirectory) {
-        fs.rename(dirPath, newDirPath, function(error) {
-          if (error) {
-            console.error("Renaming directory failed " + error);
-            reject("Renaming " + dirPath + " failed.");
-          }
-          resolve(newDirPath);
-        });
       } else {
-        reject($.i18n.t("ns.common:pathIsNotDirectory", {dirName: dirPath}), $.i18n.t("ns.common:directoryRenameFailed"));
+        var dirStatus = fs.lstatSync(dirPath);
+        if (dirStatus.isDirectory) {
+          fs.rename(dirPath, newDirPath, function(error) {
+            if (error) {
+              console.error("Renaming directory failed " + error);
+              reject("Renaming " + dirPath + " failed.");
+            }
+            resolve(newDirPath);
+          });
+        } else {
+          reject($.i18n.t("ns.common:pathIsNotDirectory", {dirName: dirPath}), $.i18n.t("ns.common:directoryRenameFailed"));
+        }
       }
     });
   }

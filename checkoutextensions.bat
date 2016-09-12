@@ -8,6 +8,8 @@ REM -------------------------
 if exist extensions\perspectiveGrid\ (
     cd extensions\perspectiveGrid
     call git fetch --all
+    call git checkout master
+    call git pull
 ) else (
     call git clone https://github.com/tagspaces/perspectiveGrid.git extensions\perspectiveGrid
     cd extensions\perspectiveGrid
@@ -21,6 +23,8 @@ REM -------------------------
 if exist extensions\perspectiveImageSwiper\ (
     cd extensions\perspectiveImageSwiper
     call git fetch --all
+    call git checkout master
+    call git pull
 ) else (
     call git clone https://github.com/tagspaces/perspectiveImageSwiper.git extensions\perspectiveImageSwiper
     cd extensions\perspectiveImageSwiper
@@ -34,6 +38,8 @@ REM -------------------------
 if exist extensions\perspectiveList\ (
     cd extensions\perspectiveList
     call git fetch --all
+    call git checkout master
+    call git pull
 ) else (
     call git clone https://github.com/tagspaces/perspectiveList.git extensions\perspectiveList
     cd extensions\perspectiveList
@@ -47,6 +53,8 @@ REM -------------------------
 if exist extensions\perspectiveGraph\ (
     cd extensions\perspectiveGraph
     call git fetch --all
+    call git checkout master
+    call git pull
 ) else (
     call git clone https://github.com/tagspaces/perspectiveGraph.git extensions\perspectiveGraph
     cd extensions\perspectiveGraph
@@ -60,6 +68,8 @@ REM -------------------------
 if exist extensions\viewerHTML\ (
     cd extensions\viewerHTML
     call git fetch --all
+    call git checkout master
+    call git pull
 ) else (
     call git clone https://github.com/tagspaces/viewerHTML.git extensions\viewerHTML
     cd extensions\viewerHTML
@@ -73,6 +83,8 @@ REM -------------------------
 if exist extensions\viewerImage\ (
     cd extensions\viewerImage
     call git fetch --all
+    call git checkout master
+    call git pull
 ) else (
     call git clone https://github.com/tagspaces/viewerImage.git extensions\viewerImage
     cd extensions\viewerImage
@@ -86,6 +98,8 @@ REM -------------------------
 if exist extensions\viewerMD\ (
     cd extensions\viewerMD
     call git fetch --all
+    call git checkout master
+    call git pull
 ) else (
     call git clone https://github.com/tagspaces/viewerMD.git extensions\viewerMD
     cd extensions\viewerMD
@@ -99,6 +113,8 @@ REM -------------------------
 if exist extensions\viewerMHTML\ (
     cd extensions\viewerMHTML
     call git fetch --all
+    call git checkout master
+    call git pull
 ) else (
     call git clone https://github.com/tagspaces/viewerMHTML.git extensions\viewerMHTML
     cd extensions\viewerMHTML
@@ -112,6 +128,8 @@ REM -------------------------
 if exist extensions\viewerURL\ (
     cd extensions\viewerURL
     call git fetch --all
+    call git checkout master
+    call git pull
 ) else (
     call git clone https://github.com/tagspaces/viewerURL.git extensions\viewerURL
     cd extensions\viewerURL
@@ -125,6 +143,8 @@ REM -------------------------
 if exist extensions\viewerZIP\ (
     cd extensions\viewerZIP
     call git fetch --all
+    call git checkout master
+    call git pull
 ) else (
     call git clone https://github.com/tagspaces/viewerZIP.git extensions\viewerZIP
     cd extensions\viewerZIP
@@ -138,6 +158,8 @@ REM -------------------------
 if exist extensions\viewerPDF\ (
     cd extensions\viewerPDF
     call git fetch --all
+    call git checkout master
+    call git pull
 ) else (
     call git clone https://github.com/tagspaces/viewerPDF.git extensions\viewerPDF
     cd extensions\viewerPDF
@@ -151,6 +173,8 @@ REM -------------------------
 if exist extensions\viewerText\ (
     cd extensions\viewerText
     call git fetch --all
+    call git checkout master
+    call git pull
 ) else (
     call git clone https://github.com/tagspaces/viewerText.git extensions\viewerText
     cd extensions\viewerText
@@ -164,6 +188,8 @@ REM -------------------------
 if exist extensions\editorHTML\ (
     cd extensions\editorHTML
     call git fetch --all
+    call git checkout master
+    call git pull
 ) else (
     call git clone https://github.com/tagspaces/editorHTML.git extensions\editorHTML
     cd extensions\editorHTML
@@ -177,6 +203,8 @@ REM -------------------------
 if exist extensions\editorJSON\ (
     cd extensions\editorJSON
     call git fetch --all
+    call git checkout master
+    call git pull
 ) else (
     call git clone https://github.com/tagspaces/editorJSON.git extensions\editorJSON
     cd extensions\editorJSON
@@ -190,6 +218,8 @@ REM -------------------------
 if exist extensions\editorODF\ (
     cd extensions\editorODF
     call git fetch --all
+    call git checkout master
+    call git pull
 ) else (
     call git clone https://github.com/tagspaces/editorODF.git extensions\editorODF
     cd extensions\editorODF
@@ -203,6 +233,8 @@ REM -------------------------
 if exist extensions\editorText\ (
     cd extensions\editorText
     call git fetch --all
+    call git checkout master
+    call git pull
 ) else (
     call git clone https://github.com/tagspaces/editorText.git extensions\editorText
     cd extensions\editorText
@@ -216,6 +248,8 @@ REM -------------------------
 if exist extensions\viewerEPUB\ (
     cd extensions\viewerEPUB
     call git fetch --all
+    call git checkout master
+    call git pull
 ) else (
     call git clone https://github.com/tagspaces/viewerEPUB.git extensions\viewerEPUB
     cd extensions\viewerEPUB
@@ -229,6 +263,8 @@ REM -------------------------
 if exist extensions\viewerAudioVideo\ (
     cd extensions\viewerAudioVideo
     call git fetch --all
+    call git checkout master
+    call git pull
 ) else (
     call git clone https://github.com/tagspaces/viewerAudioVideo.git extensions\viewerAudioVideo
     cd extensions\viewerAudioVideo
@@ -242,6 +278,8 @@ REM -------------------------
 if exist extensions\viewerBrowser\ (
     cd extensions\viewerBrowser
     call git fetch --all
+    call git checkout master
+    call git pull
 ) else (
     call git clone https://github.com/tagspaces/viewerBrowser.git extensions\viewerBrowser
     cd extensions\viewerBrowser

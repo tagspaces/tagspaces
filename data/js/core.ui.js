@@ -19,6 +19,13 @@ define(function(require, exports) {
   var waitingDialogTimeoutID;
   var addFileInputName;
 
+  var fileDropTemplate = Handlebars.compile(
+          '<div id="fileDropArea">' +
+          '<div id="fileDropExplanation"><i class="fa fa-2x fa-mail-forward"></i><br>' +
+          '<span>Drop files here in order to be copied or moved in the current folder</span></div>' +
+          '</div>'
+  );
+
   function initUI() {
     $('#appVersion').text(TSCORE.Config.DefaultSettings.appVersion + '.' + TSCORE.Config.DefaultSettings.appBuild);
     $('#appVersion').attr('title', 'BuildID: ' + TSCORE.Config.DefaultSettings.appVersion + '.' + TSCORE.Config.DefaultSettings.appBuild + '.' + TSCORE.Config.DefaultSettings.appBuildID);
@@ -190,11 +197,7 @@ define(function(require, exports) {
     });
 
     // End Edit Tag Dialog
-    $('#startNewInstanceBack').click(function() {
-      if (!isCordova) {
-        window.open(window.location.href, '_blank');
-      }
-    });
+    $('#startNewInstanceBack').on('click', openNewInstance);
 
     function reloadAboutContent() {
       if (TSCORE.PRO) {
@@ -268,7 +271,6 @@ define(function(require, exports) {
     $('#showLocations').on('click', function() {
       showLocationsPanel();
     });
-
 
     $('#disagreeLicenseButton').on('click', function() {
       TSCORE.Config.Settings.firstRun = true;
@@ -375,12 +377,11 @@ define(function(require, exports) {
     platformTuning();
   }
 
-  var fileDropTemplate = Handlebars.compile(
-          '<div id="fileDropArea">' +
-          '<div id="fileDropExplanation"><i class="fa fa-2x fa-mail-forward"></i><br>' +
-          '<span>Drop files here in order to be copied or moved in the current folder</span></div>' +
-          '</div>'
-  );
+  function openNewInstance() {
+    if (!isCordova) {
+      window.open(window.location.href, '_blank', 'width=1260,height=748');
+    }
+  }
 
   function showFileDropArea() {
     if ($('#fileDropArea').length < 1) {
@@ -1171,7 +1172,7 @@ define(function(require, exports) {
   }
 
   function showAudioRecordingDialog() {
-    require("webaudiorecording");
+    //require("webaudiorecording");
     $('#audioRecordingDialog').modal({
       backdrop: 'static',
       show: true
@@ -1341,6 +1342,25 @@ define(function(require, exports) {
     $('#contactUs').addClass('active');
   }
 
+   function setReadOnly() {
+     $('#tagMenuEditTag').hide();
+     $('#tagTreeMenuEditTag').hide();
+     $('#tagFile').hide();
+     $('#duplicateFile').hide();
+     $('#renameFile').hide();
+     $('#addTagFileViewer').hide();
+     $('#fileMenuAddTag').hide();
+     $('#fileMenuMoveCopyFile').hide();
+     $('#fileMenuRenameFile').hide();
+     $('#editDocument').hide();
+
+     //$('.flexMaxWidth .editable .editable-click').off('click');
+
+     $(document).off('drop dragend dragenter dragover dragleave', function(event) {
+       event.preventDefault();
+     });
+  }
+
   function createHTMLFile() {
     var filePath = TSCORE.currentPath + TSCORE.dirSeparator + TSCORE.TagUtils.beginTagContainer + TSCORE.TagUtils.formatDateTime4Tag(new Date(), true) + TSCORE.TagUtils.endTagContainer + '.html';
     createNewTextFile(filePath, TSCORE.Config.getNewHTMLFileContent());
@@ -1427,6 +1447,7 @@ define(function(require, exports) {
   exports.createHTMLFile = createHTMLFile;
   exports.createMDFile = createMDFile;
   exports.createTXTFile = createTXTFile;
+  exports.openNewInstance = openNewInstance;
   exports.openFacebook = openFacebook;
   exports.openTwitter = openTwitter;
   exports.openGooglePlus = openGooglePlus;
@@ -1435,4 +1456,5 @@ define(function(require, exports) {
   exports.whatsNew = whatsNew;
   exports.showDocumentation = showDocumentation;
   exports.tagRecognition = tagRecognition;
+  exports.setReadOnly = setReadOnly;
 });

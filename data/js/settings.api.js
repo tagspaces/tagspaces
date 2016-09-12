@@ -1037,7 +1037,6 @@ define(function(require, exports, module) {
           }
         });
         // Create tag if it is not existing in the current group
-        // And is at least 2 characters long
         if (!tagExistsInGroup && newTagName.length >= 1) {
           var newTagModel = JSON.parse(JSON.stringify(tagTemplate));
           newTagModel.title = newTagName;
@@ -1045,7 +1044,7 @@ define(function(require, exports, module) {
           newTagModel.textcolor = newTagTextColor;
           value.children.push(newTagModel);
         } else {
-          console.log('Tag with the same name already exist in this group or tag length >= 2');
+          console.log('Tag with the same name already exist in this group or tag length is not correct');
         }
       }
     });

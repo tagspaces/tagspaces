@@ -97,12 +97,12 @@ define(function(require, exports, module) {
     var beginTagContainer = fileName.indexOf(BEGIN_TAG_CONTAINER);
     var endTagContainer = fileName.lastIndexOf(END_TAG_CONTAINER);
     /* cases like "", "t", "[" 
-     if( fileName.length <= 1) {
-     // cases like "asd ] asd ["
-     else if (beginTagContainer > endTagContainer) {
-     // case: [ not found in the filename
-     else if ( beginTagContainer < 0 )
-     else if ( endTagContainer < 0 ) */
+        if( fileName.length <= 1) {
+        // cases like "asd ] asd ["
+        else if (beginTagContainer > endTagContainer) {
+        // case: [ not found in the filename
+        else if ( beginTagContainer < 0 ) 
+        else if ( endTagContainer < 0 ) */
     if (beginTagContainer >= 0 && beginTagContainer < endTagContainer) {
       if (beginTagContainer === 0 && endTagContainer === fileName.trim().length) {
         // case: "[tag1, tag2]"
@@ -206,25 +206,27 @@ define(function(require, exports, module) {
       cMonth = '0' + cMonth;
     }
     var cYear = d.getFullYear();
-    var cHour = d.getHours();
-    cHour = cHour + '';
-    if (cHour.length === 1) {
-      cHour = '0' + cHour;
-    }
-    var cMinute = d.getMinutes();
-    cMinute = cMinute + '';
-    if (cMinute.length === 1) {
-      cMinute = '0' + cMinute;
-    }
-    var cSecond = d.getSeconds();
-    cSecond = cSecond + '';
-    if (cSecond.length === 1) {
-      cSecond = '0' + cSecond;
-    }
+
     var time = '';
     if (includeTime) {
-      time = '~' + cHour + '' + cMinute + '' + cSecond;
+      var cHour = d.getHours();
+      cHour = cHour + '';
+      if (cHour.length === 1) {
+        cHour = '0' + cHour;
+      }
+      var cMinute = d.getMinutes();
+      cMinute = cMinute + '';
+      if (cMinute.length === 1) {
+        cMinute = '0' + cMinute;
+      }
+      var cSecond = d.getSeconds();
+      cSecond = cSecond + '';
+      if (cSecond.length === 1) {
+        cSecond = '0' + cSecond;
+      }
+      time = '-' + cHour + '' + cMinute + '' + cSecond;
     }
+
     var milliseconds = '';
     if (includeMS) {
       milliseconds = '~' + d.getMilliseconds();

@@ -17,129 +17,121 @@ define(function(require, exports, module) {
   var TSCORE = require('tscore');
 
   var tagGroupsTmpl = Handlebars.compile(
-          '{{#each tagGroups}}' +
-          '<div class="accordion-group disableTextSelection tagGroupContainer">' +
-          '<div class="accordion-heading btn-group ui-droppable tagGroupContainerHeading flexLayout" key="{{key}}">' +
-          '<button class="btn btn-link btn-lg tagGroupIcon" data-toggle="collapse" data-target="#tagButtons{{@index}}" data-i18n="[title]ns.common:toggleTagGroup" title="{{../toggleTagGroup}}">' +
-          '<i class="fa fa-tags fa-fw"></i>' +
-          '</button>' +
-          '<button class="btn btn-link tagGroupTitle flexMaxWidth" data-toggle="collapse" data-target="#tagButtons{{@index}}" key="{{key}}">{{title}}&nbsp;' +
-          '<sup><span class="badge" style="font-size: 9px;" data-i18n="[title]ns.common:tagGroupTagsCount">{{children.length}}</span></sup></button>' +
-          '<button class="btn btn-link btn-lg tagGroupActions" key="{{key}}" data-i18n="[title]ns.common:tagGroupOperations" title="{{../tagGroupOperations}}">' +
-          '<b class="fa fa-ellipsis-v"></b>' +
-          '</button>' +
-          '</div>' +
-          '{{#if collapse}}' +
+    '{{#each tagGroups}}' +
+    '<div class="accordion-group disableTextSelection tagGroupContainer">' +
+        '<div class="accordion-heading btn-group ui-droppable tagGroupContainerHeading flexLayout" key="{{key}}">' +
+            '<button class="btn btn-link btn-lg tagGroupIcon" data-toggle="collapse" data-target="#tagButtons{{@index}}" data-i18n="[title]ns.common:toggleTagGroup" title="{{../toggleTagGroup}}">' +
+                '<i class="fa fa-tags fa-fw"></i>' +
+            '</button>' +
+            '<button class="btn btn-link tagGroupTitle flexMaxWidth" data-toggle="collapse" data-target="#tagButtons{{@index}}" key="{{key}}">{{title}}&nbsp;' +
+                '<sup><span class="badge" style="font-size: 9px;" data-i18n="[title]ns.common:tagGroupTagsCount">{{children.length}}</span></sup></button>' +
+            '<button class="btn btn-link btn-lg tagGroupActions" key="{{key}}" data-i18n="[title]ns.common:tagGroupOperations" title="{{../tagGroupOperations}}">' +
+                '<b class="fa fa-ellipsis-v"></b>' +
+            '</button>' +
+        '</div>' +
+        '{{#if collapse}}' +
           '<div class="accordion-body collapse" id="tagButtons{{@index}}">' +
-          '{{else}}' +
+        '{{else}}' +
           '<div class="accordion-body collapse in" id="tagButtons{{@index}}">' +
-          '{{/if}}' +
-          '<div class="accordion-inner" id="tagButtonsContent{{@index}}" style="padding: 2px;">' +
-          '<div>' +
-          '{{#each children}}' +
-          '<a class="btn btn-sm tagButton" tag="{{title}}" parentkey="{{../key}}" style="{{style}}" title="{{description}}" >' +
-          '<span class="{{icon}}" /> ' +
-          '{{title}}' +
-          '{{#if count}} <span class="badge" style="font-size: 9px; background-color: rgba(187, 187, 187, 0.26);" data-i18n="[title]ns.common:tagGroupTagsCount1">{{count}}</span>{{/if}}' +
-          '&nbsp;&nbsp;<span class="fa fa-ellipsis-v"></span>' +
-          '</a>' +
-          '{{/each}}' +
-          '</div>' +
-          '</div>' +
-          '</div>' +
-          '</div>' +
-          '{{/each}}'
+        '{{/if}}' +
+            '<div class="accordion-inner" id="tagButtonsContent{{@index}}" style="padding: 2px;">' +
+                '<div>' +
+                    '{{#each children}}' +
+                    '<a class="btn btn-sm tagButton" tag="{{title}}" parentkey="{{../key}}" style="{{style}}" title="{{description}}" >'  +
+                        '<span class="{{icon}}" /> ' +
+                        '{{title}}' +
+                        '{{#if count}} <span class="badge" style="font-size: 9px; background-color: rgba(187, 187, 187, 0.26);" data-i18n="[title]ns.common:tagGroupTagsCount1">{{count}}</span>{{/if}}' +
+                        '&nbsp;&nbsp;<span class="fa fa-ellipsis-v"></span>' +
+                    '</a>' +
+                    '{{/each}}' +
+                '</div>' +
+            '</div>' +
+        '</div>' +
+    '</div>' +
+    '{{/each}}'
   );
 
   var tagButtonTmpl = Handlebars.compile('{{#each tags}} <button class="btn btn-sm tagButton" tag="{{tag}}" ' + 'filepath="{{filepath}}" style="{{style}}">{{tag}}&nbsp;&nbsp;<span class="fa fa-ellipsis-v dropDownIcon"></span></button>{{/each}}');
 
 
   function initUI() {
-    $('#extMenuAddTagAsFilter').click(function() {
-    });
+    $('#extMenuAddTagAsFilter').click(function() {});
+
     // Context menu for the tags in the file table and the file viewer
     $('#tagMenuAddTagAsFilter').click(function() {
       TSCORE.searchForTag(TSCORE.selectedTag);
     });
+
     $('#tagMenuEditTag').click(function() {
       TSCORE.showTagEditDialog();
     });
+
     $('#tagMenuRemoveTag').click(function() {
       TSCORE.TagUtils.removeTag(TSCORE.selectedFiles[0], TSCORE.selectedTag);
     });
+
     $('#tagMenuMoveTagFirst').click(function() {
       TSCORE.TagUtils.moveTagLocation(TSCORE.selectedFiles[0], TSCORE.selectedTag, 'first');
     });
+
     $('#tagMenuMoveTagRight').click(function() {
       TSCORE.TagUtils.moveTagLocation(TSCORE.selectedFiles[0], TSCORE.selectedTag, 'next');
     });
+
     $('#tagMenuMoveTagLeft').click(function() {
       TSCORE.TagUtils.moveTagLocation(TSCORE.selectedFiles[0], TSCORE.selectedTag, 'prev');
     });
+
     // Context menu for the tags in the tag tree
     $('#tagTreeMenuAddTagToFile').click(function() {
       TSCORE.TagUtils.addTag(TSCORE.Utils.getUniqueSelectedFiles(), [TSCORE.selectedTag]);
     });
+
     $('#tagTreeMenuAddTagAsFilter').click(function() {
       TSCORE.searchForTag(TSCORE.selectedTag);
     });
+
     $('#tagTreeMenuEditTag').click(function() {
       TSCORE.showTagEditInTreeDialog();
     });
+
     $('#tagTreeMenuDeleteTag').click(function() {
       TSCORE.showConfirmDialog('Delete Tag', 'Do you want to delete this tag from the taggroup?', function() {
         TSCORE.Config.deleteTag(TSCORE.selectedTagData);
         generateTagGroups();
       });
     });
+
     // Context menu for the tags groups
     $('#tagGroupMenuCreateNewTag').click(function() {
       TSCORE.showDialogTagCreate();
     });
-    $('#tagGroupMenuImportTags').click(function() {
-      //var addFileInputName;
-      console.log("tagGroupMenuImportTags");
-      $('#jsonImportFileInput').click();
-      $('#jsonImportFileInput').on('change', function(selection) {
 
-        var file = selection.currentTarget.files[0];
-        //addFileInputName = decodeURIComponent(file.name);
-        var reader = new FileReader();
-        reader.onload = function() {
-          try {
-            var jsonObj = JSON.parse(reader.result);
-            if ($.isArray(jsonObj.tagGroups)) {
-              showImportTagsDialog(jsonObj.tagGroups);
-            } else {
-              TSCORE.showAlertDialog($.i18n.t("ns.dialogs:invalidImportFile"));
-            }
-          } catch (e) {
-            console.log(e);
-            TSCORE.showAlertDialog($.i18n.t("ns.dialogs:invalidImportFile"));
-          }
-        };
-        reader.readAsText(file);
+    $('#tagGroupMenuImportTags').on('click', importTagGroups);
 
-      });
-    });
     $('#tagGroupMenuCreateTagGroup').click(function() {
       TSCORE.showDialogTagGroupCreate();
     });
+
     $('#tagGroupSort').click(function() {
       TSCORE.Config.sortTagGroup(TSCORE.selectedTagData);
       generateTagGroups();
     });
+
     $('#tagGroupMenuMoveUp').click(function() {
       TSCORE.Config.moveTagGroup(TSCORE.selectedTagData, 'up');
       generateTagGroups();
     });
+
     $('#tagGroupMenuMoveDown').click(function() {
       TSCORE.Config.moveTagGroup(TSCORE.selectedTagData, 'down');
       generateTagGroups();
     });
+
     $('#tagGroupMenuEdit').click(function() {
       TSCORE.showDialogEditTagGroup();
     });
+
     $('#tagGroupMenuDelete').click(function() {
       TSCORE.showConfirmDialog($.i18n.t('ns.dialogs:deleteTagGroupTitleConfirm'), $.i18n.t('ns.dialogs:deleteTagGroupContentConfirm', {
         tagGroup: TSCORE.selectedTagData.title
@@ -148,25 +140,30 @@ define(function(require, exports, module) {
         generateTagGroups();
       });
     });
+
     // Dialogs
     $('#editTagInTreeButton').click(function() {
       TSCORE.Config.editTag(TSCORE.selectedTagData, $('#tagInTreeName').val(), $('#tagColor').val(), $('#tagTextColor').val(), $('#tagInTreeKeyBinding').val());
       generateTagGroups();
       TSCORE.PerspectiveManager.refreshFileListContainer();
     });
+
     $('#cleanTagsButton').click(function() {
       TSCORE.showConfirmDialog($.i18n.t('ns.dialogs:cleanFilesTitleConfirm'), $.i18n.t('ns.dialogs:cleanFilesContentConfirm'), function() {
         TSCORE.TagUtils.cleanFilesFromTags(TSCORE.Utils.getUniqueSelectedFiles());
       });
     });
+
     $('#addTagsButton').click(function() {
       var tags = $('#tags').val().split(',');
       TSCORE.TagUtils.addTag(TSCORE.Utils.getUniqueSelectedFiles(), tags);
     });
+
     $('#removeTagsButton').click(function() {
       var tags = $('#tags').val().split(',');
       TSCORE.TagUtils.removeTags(TSCORE.Utils.getUniqueSelectedFiles(), tags);
     });
+
     $('#createTagButton').click(function() {
       var tags = $('#newTagTitle').val().split(',');
       tags.forEach(function(value) {
@@ -174,10 +171,36 @@ define(function(require, exports, module) {
       });
       generateTagGroups();
     });
+
     $('#createTagGroupButton').on("click", createTagGroup);
+
     $('#editTagGroupButton').click(function() {
       TSCORE.Config.editTagGroup(TSCORE.selectedTagData, $('#tagGroupName').val());
       generateTagGroups();
+    });
+  }
+
+  function importTagGroups() {
+    console.log("tagGroupMenuImportTags");
+    $('#jsonImportFileInput').click();
+    $('#jsonImportFileInput').on('change', function(selection) {
+      var file = selection.currentTarget.files[0];
+      //addFileInputName = decodeURIComponent(file.name);
+      var reader = new FileReader();
+      reader.onload = function() {
+        try {
+          var jsonObj = JSON.parse(reader.result);
+          if ($.isArray(jsonObj.tagGroups)) {
+            showImportTagsDialog(jsonObj.tagGroups);
+          } else {
+            TSCORE.showAlertDialog($.i18n.t("ns.dialogs:invalidImportFile"));
+          }
+        } catch (e) {
+          console.log(e);
+          TSCORE.showAlertDialog($.i18n.t("ns.dialogs:invalidImportFile"));
+        }
+      };
+      reader.readAsText(file);
     });
   }
 
@@ -191,18 +214,7 @@ define(function(require, exports, module) {
     var $tagGroupsContent = $('#tagGroupsContent');
     $tagGroupsContent.children().remove();
     $tagGroupsContent.addClass('accordion');
-    // Show TagGroup create button if no taggroup exist
-    if (TSCORE.Config.Settings.tagGroups.length < 1) {
-      $tagGroupsContent.append($('<button>', {
-        'class': 'btn btn-default',
-        'style': 'margin-top: 5px; margin-left: 7px;',
-        'text': $.i18n.t('ns.common:createTagGroup'),
-        'data-i18n': 'ns.common:createTagGroup'
-      }).click(function() {
-        TSCORE.showDialogTagGroupCreate();
-      }));
-      return true; // quit the taggroup generation
-    }
+
     var tagGroups = TSCORE.Config.Settings.tagGroups;
     var tag;
     // Cleaning Special TagGroups
@@ -213,6 +225,7 @@ define(function(require, exports, module) {
         k--;
       }
     }
+
     // Adding tags to the calculated tag group
     if (TSCORE.Config.getCalculateTags() && TSCORE.calculatedTags !== null) {
       tagGroups.push({
@@ -222,6 +235,7 @@ define(function(require, exports, module) {
         'children': TSCORE.calculatedTags
       });
     }
+
     // Adding tag groups from the current location
     if (TSCORE.Config.getLoadLocationMeta() && TSCORE.locationTags !== null) {
       TSCORE.locationTags.forEach(function(data) {
@@ -233,6 +247,7 @@ define(function(require, exports, module) {
         });
       });
     }
+
     // ehnances the taggroups with addition styling information
     for (var i = 0; i < tagGroups.length; i++) {
       for (var j = 0; j < tagGroups[i].children.length; j++) {
@@ -267,17 +282,6 @@ define(function(require, exports, module) {
       'tagGroupOperations': $.i18n.t('ns.common:tagGroupOperations')
     }));
 
-    $tagGroupsContent.find('.tagGroupTitle').each(function() {
-      $(this).on('click', function() {
-        var areaId = $(this).attr('data-target');
-        if (areaId) {
-          var index = areaId.substring(areaId.length - 1);
-          tagGroups[index].collapse = $(areaId).is(':visible');
-          TSCORE.Config.saveSettings();
-        }
-      });
-    });
-
     $tagGroupsContent.find('.tagGroupIcon').each(function() {
       $(this).on('click', function() {
         var areaId = $(this).attr('data-target');
@@ -307,8 +311,18 @@ define(function(require, exports, module) {
         TSCORE.TagUtils.addTag(TSCORE.Utils.getUniqueSelectedFiles(), [TSCORE.selectedTag]);
       });
     });
+
     $tagGroupsContent.find('.tagGroupTitle').each(function() {
-      $(this).droppable({
+      $(this)
+      .on('click', function() {
+        var areaId = $(this).attr('data-target');
+        if (areaId) {
+          var index = areaId.substring(areaId.length - 1);
+          tagGroups[index].collapse = $(areaId).is(':visible');
+          TSCORE.Config.saveSettings();
+        }
+      })
+      .droppable({
         accept: '.tagButton',
         hoverClass: 'dirButtonActive',
         drop: function(event, ui) {
@@ -329,6 +343,7 @@ define(function(require, exports, module) {
         }
       });
     });
+
     $tagGroupsContent.on('contextmenu click', '.tagGroupActions', function() {
       TSCORE.hideAllDropDownMenus();
       TSCORE.selectedTag = $(this).attr('tag');
@@ -337,6 +352,7 @@ define(function(require, exports, module) {
       TSCORE.showContextMenu('#tagGroupMenu', $(this));
       return false;
     });
+
     $tagGroupsContent.on('contextmenu click', '.tagButton', function() {
       TSCORE.hideAllDropDownMenus();
       TSCORE.selectedTagData = TSCORE.Config.getTagData($(this).attr('tag'), $(this).attr('parentKey'));
@@ -345,6 +361,20 @@ define(function(require, exports, module) {
       TSCORE.showContextMenu('#tagTreeMenu', $(this));
       return false;
     });
+
+    $tagGroupsContent.append($('<button>', {
+      'class': 'btn btn-link',
+      'style': 'margin-top: 15px; margin-left: -8px; display: block;  color: #1DD19F;',
+      'text': $.i18n.t('ns.common:createTagGroup'),
+      'data-i18n': 'ns.common:createTagGroup;[title]ns.common:createTagGroupTooltip'
+    }).on('click', TSCORE.showDialogTagGroupCreate));
+
+    $tagGroupsContent.append($('<button>', {
+      'class': 'btn btn-link',
+      'style': 'margin-top: 0px; display: block; margin-left: -8px; color: #1DD19F;',
+      'text': $.i18n.t('ns.common:importTags'),
+      'data-i18n': 'ns.common:importTags;[title]ns.common:importTagsTooltip'
+    }).on('click', importTagGroups));
   }
 
   function generateTagValue(tagData) {
@@ -477,7 +507,7 @@ define(function(require, exports, module) {
   }
 
   function showImportTagsDialog(tagGroups) {
-
+   
     require(['text!templates/ImportTagsDialog.html'], function(uiTPL) {
 
       if ($('#dialogImportTags').length < 1) {
@@ -493,7 +523,7 @@ define(function(require, exports, module) {
           generateTagGroups();
         });
       }
-
+      $('#dialogImportTags').i18n();
       $('#dialogImportTags').modal({
         backdrop: 'static',
         show: true

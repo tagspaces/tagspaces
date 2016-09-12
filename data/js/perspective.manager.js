@@ -15,7 +15,7 @@ define(function(require, exports, module) {
     return new Promise(function(resolve, reject) {
       require([extPath], function(perspective) {
         perspectives.push(perspective);
-       
+
         // Creating perspective's toolbar
         $('#viewToolbars').append($('<div>', {
           id: perspective.ID + 'Toolbar',
@@ -34,7 +34,7 @@ define(function(require, exports, module) {
         perspective.init();
         resolve(true);
       }); // jshint ignore:line
-    }); 
+    });
   }
 
   function initPerspectives() {
@@ -49,11 +49,11 @@ define(function(require, exports, module) {
       var extPath = TSCORE.Config.getExtensionPath() + '/' + extensions[i].id + '/extension.js';
       promises.push(initPerspective(extPath));
     }
-    
+
     return Promise.all(promises).then(function() {
       initPerspectiveSwitcher();
       // Opening last saved location by the start of the application
-      var lastLocation = TSCORE.Config.getLastOpenedLocation(); 
+      var lastLocation = TSCORE.Config.getLastOpenedLocation();
       if (TSCORE.Config.getUseDefaultLocation()) {
         lastLocation = TSCORE.Config.getDefaultLocation();
       }
@@ -83,9 +83,9 @@ define(function(require, exports, module) {
 
     $perspectiveSwitcher.empty();
     $perspectiveSwitcher.append($('<li>', {
-      class: 'dropdown-header',
-      text: $.i18n.t('ns.common:perspectiveSwitch')
-    }).prepend("<button class='close'>&times;</button>")
+              class: 'dropdown-header',
+              text: $.i18n.t('ns.common:perspectiveSwitch')
+            }).prepend("<button class='close'>&times;</button>")
     ).append("<li class='divider'></li>");
 
     for (var i = 0; i < extensions.length; i++) {
@@ -141,12 +141,12 @@ define(function(require, exports, module) {
   }
 
   /*function removeAllFiles() {
-    console.log('Removing file from perspectives');
-    if (TSCORE.fileList && TSCORE.fileList.length > 0) {
-      TSCORE.fileList = [];
-      redrawCurrentPerspective();
-    }
-  }*/
+   console.log('Removing file from perspectives');
+   if (TSCORE.fileList && TSCORE.fileList.length > 0) {
+   TSCORE.fileList = [];
+   redrawCurrentPerspective();
+   }
+   }*/
 
   function updateFileUI(oldFilePath, newFilePath) {
     console.log('Updating file in perspectives');
@@ -363,6 +363,16 @@ define(function(require, exports, module) {
     }
   }
 
+  function setReadOnly(filePath) {
+    for (var i = 0; i < perspectives.length; i++) {
+      try {
+        perspectives[i].setReadOnly(filePath);
+      } catch (e) {
+        console.warn("Error while executing 'setReadOnly' on " + perspectives[i].ID + ' ' + e);
+      }
+    }
+  }
+
   exports.initPerspectives = initPerspectives;
   exports.hideAllPerspectives = hideAllPerspectives;
   exports.redrawCurrentPerspective = redrawCurrentPerspective;
@@ -376,4 +386,5 @@ define(function(require, exports, module) {
   exports.removeFileUI = removeFileUI;
   exports.updateFileUI = updateFileUI;
   exports.changePerspective = changePerspective;
+  exports.setReadOnly = setReadOnly;
 });

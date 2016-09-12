@@ -94,7 +94,6 @@ define(function(require, exports, module) {
     tsFileOpener.initUI();
     tsSearchUI.initUI();
     tsAudioRecorderUI.initUI();
-    tsMapUI.initMap();
     tsExtManager.loadExtensionData().then(function() {
       tsPersManager.initPerspectives().then(function(result) {
         console.log("Perspectives Initialized: " + result);
@@ -532,8 +531,6 @@ define(function(require, exports, module) {
   exports.showSuccessDialog = tsCoreUI.showSuccessDialog;
   exports.showConfirmDialog = tsCoreUI.showConfirmDialog;
   exports.showTagEditDialog = tsCoreUI.showTagEditDialog;
-  exports.showDateTimeCalendar = tsCoreUI.showDateTimeCalendar;
-  exports.showGeoLocation = tsCoreUI.showGeoLocation;
   exports.hideAllDropDownMenus = tsCoreUI.hideAllDropDownMenus;
   exports.showFileCreateDialog = tsCoreUI.showFileCreateDialog;
   exports.showFileRenameDialog = tsCoreUI.showFileRenameDialog;

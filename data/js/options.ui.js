@@ -110,22 +110,26 @@ define(function(require, exports, module) {
       $('#exportTagGroupsButton').hide();
       $('#showMainMenuCheckbox').parent().hide();
     }
-    $('#exportTagGroupsButton').click(function() {
-      var jsonFormat = '{ "appName": "' + TSCORE.Config.DefaultSettings.appName +
-              '", "appVersion": "' + TSCORE.Config.DefaultSettings.appVersion +
-              '", "appBuild": "' + TSCORE.Config.DefaultSettings.appBuild +
-              '", "settingsVersion": ' + TSCORE.Config.DefaultSettings.settingsVersion +
-              ', "tagGroups": ';
-      var blob = new Blob([jsonFormat + JSON.stringify(TSCORE.Config.getAllTagGroupData()) + '}'], {
-        type: 'application/json'
-      });
-      saveAs(blob, 'tsm[' + TSCORE.TagUtils.formatDateTime4Tag(new Date(), true) + '].json');
-      console.log('Group Data Saved...');
-    });
+
+    $('#exportTagGroupsButton').on('click', exportTagGroups);
 
     $('#enableMetaData').change(function() {
       enableMetaData();
     });
+  }
+
+  function exportTagGroups() {
+    var jsonFormat = '{ "appName": "' + TSCORE.Config.DefaultSettings.appName +
+            '", "appVersion": "' + TSCORE.Config.DefaultSettings.appVersion +
+            '", "appBuild": "' + TSCORE.Config.DefaultSettings.appBuild +
+            '", "settingsVersion": ' + TSCORE.Config.DefaultSettings.settingsVersion +
+            ', "tagGroups": ';
+    var blob = new Blob([jsonFormat + JSON.stringify(TSCORE.Config.getAllTagGroupData()) + '}'], {
+      type: 'application/json'
+    });
+    var dateTimeTag = TSCORE.TagUtils.formatDateTime4Tag(new Date(), true);
+    saveAs(blob, 'tsm[' + dateTimeTag + '].json');
+    console.log('TagGroup Data Exported...');
   }
 
   function reInitUI() {
