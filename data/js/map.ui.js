@@ -148,7 +148,7 @@ define(function(require, exports, module) {
 
   function parseCoordinateMap(e) {
     var date = $('#dateInputCalendar')[0];
-    var long = lng >= 0 ? '+' + e.latlng.lng.toFixed(7) : '+' +  e.latlng.lng.toFixed(7);
+    var long = e.latlng.lng.toFixed(7) >= 0 ? '+' + e.latlng.lng.toFixed(7) : e.latlng.lng.toFixed(7);
     var dateValue = e.latlng.lat.toFixed(7) + "" + long;
     date.value = dateValue.trim();
   }
