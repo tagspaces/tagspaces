@@ -144,9 +144,7 @@ define(function(require, exports, module) {
     addMarker(e);
     parseCoordinateMap(e);
     lat = e.latlng.lat.toFixed(7);
-    console.log("ON map click:lng" + lat);
     lng = e.latlng.lng.toFixed(7);
-    console.log("ON map click:lng" + lng);
   }
 
   function parseCoordinateMap(e) {
@@ -154,8 +152,6 @@ define(function(require, exports, module) {
     var long = lng >= 0 ? '+' + lng : lng;
     var dateValue = e.latlng.lat.toFixed(7) + "" + long;
     date.value = dateValue.trim();
-    console.log(date.value);
-    console.log("Date value" + lng);
   }
 
   function onLocationFound() {
