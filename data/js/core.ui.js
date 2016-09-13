@@ -391,7 +391,7 @@ define(function(require, exports) {
       $('#dateCalendar').data('DateTimePicker').format('YYYY/MM/DD').defaultDate(defaultDateCalendar).viewMode('days').show();
     });
 
-    $('.nav-tabs a[href="#dateTimeCalendarTab"]').click(function() {
+    $('.nav-tabs a[href="#dateTimeCalendarTab"]').on('click', function() {
       $('#dateTimeCalendar').datetimepicker({
         viewMode: 'days',
         inline: true,
@@ -472,6 +472,11 @@ define(function(require, exports) {
       });
 
       $('#dateTimeRangeMaxCalendar').data('DateTimePicker').defaultDate(defaultDateCalendar).viewMode('days').show();
+    });
+
+    $('.nav-tabs a[href="#geoLocation"]').on('click', function() {
+      $('#dateInputCalendar').show();
+      //$('#newTagName').show();
     });
 
     // Hide drop downs by click and drag
