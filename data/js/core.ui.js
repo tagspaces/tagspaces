@@ -350,7 +350,7 @@ define(function(require, exports) {
     });
 
     $('#dialogEditTag').on('shown.bs.modal', function() {
-      tagRecognition(TSCORE.selectedTag);
+      TSCORE.Calendar.tagRecognition(TSCORE.selectedTag);
       var data = $('#dateInputCalendar')[0];
       data.value = TSCORE.selectedTag;
     });
@@ -730,80 +730,6 @@ define(function(require, exports) {
 
     TSCORE.MAP.initMap();
     TSCORE.Calendar.showDateTimeCalendar(TSCORE.selectedTag);
-  }
-
-  function tagRecognition(dataTag) {
-    var geoLocationRegExp = /^([-+]?)([\d]{1,2})(((\.)(\d+)(,)))(\s*)(([-+]?)([\d]{1,3})((\.)(\d+))?)$/g;
-
-    var dateTimeRegExp = /^\d\d\d\d-(00|[0-9]|1[0-9]|2[0-3]):([0-9]|[0-5][0-9]):([0-9]|[0-5][0-9])$/g;
-    var dateTimeWinRegExp = /^(([0-1]?[0-9])|([2][0-3]))!([0-5]?[0-9])(!([0-5]?[0-9]))?$/g;
-    var dateRangeRegExp = /^([0]?[1-9]|[1|2][0-9]|[3][0|1])[-]([0]?[1-9]|[1][0-2])$/g;
-    var geoTag = 'geoTag';
-    var currentCoordinate;
-    var currentDateTime = dataTag;
-
-    var year = parseInt(currentDateTime) && !isNaN(currentDateTime) &&
-            currentDateTime.length === 4;
-    var month = parseInt(currentDateTime) && !isNaN(currentDateTime) &&
-            currentDateTime.length === 6;
-    var date = parseInt(currentDateTime) && !isNaN(currentDateTime) &&
-            currentDateTime.length === 8;
-
-    var convertToDateTime = TSCORE.Utils.convertToDateTime(currentDateTime);
-
-    var yearRange, monthRange, dateRange;
-
-    if (dataTag.lastIndexOf('+') !== -1) {
-      currentCoordinate = TSCORE.MAP.splitValue(dataTag, dataTag.lastIndexOf('+'));
-    } else if (dataTag.lastIndexOf('-') !== -1) {
-      currentCoordinate = TSCORE.MAP.splitValue(dataTag, dataTag.lastIndexOf('-'));
-
-      var character = currentDateTime.split("-");
-      if (!currentCoordinate.search(".") && character) {
-        var firstInt = parseInt(character[0]);
-        var secondInt = parseInt(character[1]);
-        yearRange = monthRange = dateRange =
-                typeof firstInt === 'number' && !isNaN(firstInt) &&
-                typeof secondInt === 'number' && !isNaN(secondInt);
-      }
-    }
-
-    var dateRegExp = yearRange || monthRange || dateRange ||
-            currentDateTime.match(dateTimeRegExp) ||
-            currentDateTime.match(dateTimeWinRegExp) ||
-            year || month || date || convertToDateTime;
-
-    if (geoLocationRegExp.exec(currentCoordinate) || geoTag === dataTag) {
-      $('.nav-tabs a[href="#geoLocation"]').tab('show');
-    } else if (dateRegExp) {
-
-      var dateTab = year || month || date;
-      var dateTimeTab = currentDateTime.match(dateTimeRegExp) ||
-              currentDateTime.match(dateTimeWinRegExp) || convertToDateTime;
-      var dateRangeTab = currentDateTime.match(dateRangeRegExp) ||
-              yearRange || monthRange || dateRange;
-
-      if (dateTab) {
-        $('.nav-tabs a[href="#dateCalendarTab"]').tab('show');
-        //$('#dateCalendarInput').prop('checked', true);
-        //if (document.getElementById('dateCalendarInput').checked) {
-        TSCORE.Calendar.dateCalendarTag(currentDateTime);
-      } else if (dateTimeTab) {
-        $('.nav-tabs a[href="#dateTimeCalendarTab"]').tab('show');
-        //$('#dateTimeInput').prop('checked', true);
-        //if (document.getElementById('dateTimeInput').checked) {
-        TSCORE.Calendar.showDateTimeCalendar(currentDateTime);
-      } else if (dateRangeTab) {
-        $('.nav-tabs a[href="#dateRangeTab"]').tab('show');
-        //$('#dateTimeRangeInput').prop('checked', true);
-        //if (document.getElementById('dateTimeRangeInput').checked) {
-        TSCORE.Calendar.dateRangeCalendar(currentDateTime);
-      }
-    } else if (!(dateRegExp && geoLocationRegExp.exec(currentCoordinate))) {
-      $('.nav-tabs a[href="#formEditTag"]').tab('show');
-    } else {
-      throw new TypeError("Invalid data.");
-    }
   }
 
   function showRenameFileDialog() {
@@ -1266,6 +1192,5 @@ define(function(require, exports) {
   exports.reportIssues = reportIssues;
   exports.whatsNew = whatsNew;
   exports.showDocumentation = showDocumentation;
-  exports.tagRecognition = tagRecognition;
   exports.setReadOnly = setReadOnly;
 });
