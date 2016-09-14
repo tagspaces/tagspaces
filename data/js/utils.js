@@ -322,6 +322,13 @@ define(function(require, exports, module) {
     return [year, month].join('');
   }
 
+  function splitValue(value, index) {
+   var currentLat = value.substring(0, index);
+   var currentLng = value.substring(index);
+
+    return parseFloat(currentLat) + "," + parseFloat(currentLng);
+  }
+
   exports.arrayBufferToDataURL = arrayBufferToDataURL;
   exports.base64ToArrayBuffer = base64ToArrayBuffer;
   exports.dataURLtoBlob = dataURLtoBlob;
@@ -346,5 +353,6 @@ define(function(require, exports, module) {
   exports.parseToDate = parseToDate;
   exports.parseDate = parseDate;
   exports.parseDateMonth = parseDateMonth;
+  exports.splitValue = splitValue;
 
 });

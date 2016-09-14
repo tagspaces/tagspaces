@@ -31,7 +31,6 @@ define(function(require, exports, module) {
   var tsExtManager = require('tsextmanager');
   var TSCORE = require('tscore');
   //var tsAudioRecorderUI = require('tsaudiorecorderui');
-  var tsMapUI = require('tsmapui');
   var tsCalendarUI = require('tscalendarui');
 
   // Defining variables
@@ -490,7 +489,6 @@ define(function(require, exports, module) {
   exports.TagUtils = tsTagUtils;
   exports.FileOpener = tsFileOpener;
   exports.Search = tsSearch;
-  exports.MAP = tsMapUI;
   exports.Calendar = tsCalendarUI;
   exports.Utils = tsUtils;
   if (tsPro.available) {

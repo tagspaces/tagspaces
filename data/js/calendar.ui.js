@@ -347,9 +347,9 @@ define(function(require, exports, module) {
     var yearRange, monthRange, dateRange;
 
     if (dataTag.lastIndexOf('+') !== -1) {
-      currentCoordinate = TSCORE.MAP.splitValue(dataTag, dataTag.lastIndexOf('+'));
+      currentCoordinate = TSCORE.Utils.splitValue(dataTag, dataTag.lastIndexOf('+'));
     } else if (dataTag.lastIndexOf('-') !== -1) {
-      currentCoordinate = TSCORE.MAP.splitValue(dataTag, dataTag.lastIndexOf('-'));
+      currentCoordinate = TSCORE.Utils.splitValue(dataTag, dataTag.lastIndexOf('-'));
 
       var character = currentDateTime.split("-");
       if (!currentCoordinate.search(".") && character) {

@@ -710,8 +710,9 @@ define(function(require, exports) {
       backdrop: 'static',
       show: true
     });
-
-    TSCORE.MAP.initMap();
+    if (TSCORE.PRO) {
+      TSCORE.MAP.initMap();
+    }
     TSCORE.Calendar.showDateTimeCalendar(TSCORE.selectedTag);
   }
 
