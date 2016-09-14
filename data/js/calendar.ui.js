@@ -14,6 +14,23 @@ define(function(require, exports, module) {
 
 
   function initCalendarUI(){
+    $('#dateCalendarInput').click(function() {
+      $('#dateTimeCalendar').hide();
+      $('#dateTimeRange').hide();
+      $('#dateCalendar').show();
+    });
+
+    $('#dateTimeInput').click(function() {
+      $('#dateTimeCalendar').show();
+      $('#dateTimeRange').hide();
+      $('#dateCalendar').hide();
+    });
+    $('#dateTimeRangeInput').click(function() {
+      $('#dateTimeCalendar').hide();
+      $('#dateTimeRange').show();
+      $('#dateCalendar').hide();
+    });
+
     $('.nav-tabs a[href="#dateCalendarTab"]').on('click', function() {
       $('#dateCalendar').datetimepicker({
         viewMode: 'days',

@@ -179,23 +179,6 @@ define(function(require, exports) {
       TSCORE.TagUtils.renameTag(TSCORE.selectedFiles[0], TSCORE.selectedTag, $('#newTagName').val());
     });
 
-    $('#dateCalendarInput').click(function() {
-      $('#dateTimeCalendar').hide();
-      $('#dateTimeRange').hide();
-      $('#dateCalendar').show();
-    });
-
-    $('#dateTimeInput').click(function() {
-      $('#dateTimeCalendar').show();
-      $('#dateTimeRange').hide();
-      $('#dateCalendar').hide();
-    });
-    $('#dateTimeRangeInput').click(function() {
-      $('#dateTimeCalendar').hide();
-      $('#dateTimeRange').show();
-      $('#dateCalendar').hide();
-    });
-
     // End Edit Tag Dialog
     $('#startNewInstanceBack').on('click', openNewInstance);
 
