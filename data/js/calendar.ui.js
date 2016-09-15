@@ -367,7 +367,14 @@ define(function(require, exports, module) {
             year || month || date || convertToDateTime;
 
     if (geoLocationRegExp.exec(currentCoordinate) || geoTag === dataTag) {
-      $('.nav-tabs a[href="#geoLocation"]').tab('show');
+      if(TSCORE.PRO) {
+        $('.nav-tabs a[href="#geoLocation"]').tab('show');
+      } else {
+        $('.nav-tabs a[href="#formEditTag"]').tab('show');
+        $('#dateInputCalendar').hide();
+        $("#geoLocation").removeAttribute('');
+        $("#tabsEditTag").tabs( "option", "disabled", 3 );
+      }
     } else if (dateRegExp) {
 
       var dateTab = year || month || date;
