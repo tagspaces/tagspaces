@@ -11,23 +11,21 @@ define(function(require, exports, module) {
 
   var initUI = function() {
     // Search UI
-    $('#searchBox')
-      .keyup(function(e) {
-        if (e.keyCode === 13) { // Start the search on ENTER
-          startSearch();
-        } else if (e.keyCode == 27) { // Hide search on ESC
-          cancelSearch();
-        } else {
-          TSCORE.Search.nextQuery = this.value;
-        }
-        if (this.value.length === 0) {
-          TSCORE.Search.nextQuery = this.value;
-          TSCORE.PerspectiveManager.redrawCurrentPerspective();
-        }
-      })
-      .focus(function(e) {
-        $("#searchOptions").hide();
-      });
+    $('#searchBox').keyup(function(e) {
+      if (e.keyCode === 13) { // Start the search on ENTER
+        startSearch();
+      } else if (e.keyCode == 27) { // Hide search on ESC
+        cancelSearch();
+      } else {
+        TSCORE.Search.nextQuery = this.value;
+      }
+      if (this.value.length === 0) {
+        TSCORE.Search.nextQuery = this.value;
+        TSCORE.PerspectiveManager.redrawCurrentPerspective();
+      }
+    }).focus(function(e) {
+      $("#searchOptions").hide();
+    });
 
     $('#showSearchButton').on('click', function() {
       // Showing the expanded search area
@@ -162,7 +160,7 @@ define(function(require, exports, module) {
       TSCORE.IO.stopWatchingDirectories();
     }
     if ($('#searchBox').val().length > 0) {
-      var origSearchVal = $('#searchBox').val(); 
+      var origSearchVal = $('#searchBox').val();
       origSearchVal = origSearchVal.trim();
 
       if ($('#searchRecursive').prop('checked')) {

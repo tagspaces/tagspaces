@@ -47,7 +47,7 @@ define(function(require, exports, module) {
 
   function arrayBufferToStr(buf) {
     var str = '',
-            bytes = new Uint8Array(buf);
+      bytes = new Uint8Array(buf);
     for (var i = 0; i < bytes.length; i++) {
       str += String.fromCharCode(bytes[i]);
     }
@@ -93,10 +93,10 @@ define(function(require, exports, module) {
   function isVisibleOnScreen(element) {
     var rectangle = element.getBoundingClientRect();
     var isVisible = (
-            rectangle.top >= 0 &&
-            rectangle.left >= 0 &&
-            rectangle.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
-            rectangle.right <= (window.innerWidth || document.documentElement.clientWidth)
+      rectangle.top >= 0 &&
+      rectangle.left >= 0 &&
+      rectangle.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+      rectangle.right <= (window.innerWidth || document.documentElement.clientWidth)
     );
     return isVisible;
   }
@@ -156,8 +156,8 @@ define(function(require, exports, module) {
     var dateTimeWinRegExp = /^(([0-1]?[0-9])|([2][0-3]))!([0-5]?[0-9])(!([0-5]?[0-9]))?$/g;
     var dateTimeWin1RegExp = /^(([0-1]?[0-9])|([2][0-3]))~([0-5]?[0-9])(!([0-5]?[0-9]))?$/g;
     if (dateTime.match(dateTimeRegExp) || dateTime.match(dateTimeWinRegExp) ||
-            dateTime.match(dateTimeWin1RegExp) || dateTime.search('!') ||
-            dateTime.search(':') || dateTime.search('~')) {
+      dateTime.match(dateTimeWin1RegExp) || dateTime.search('!') ||
+      dateTime.search(':') || dateTime.search('~')) {
 
       var time, firstTime, secondTime;
       if (dateTime.indexOf('!')) {
@@ -242,9 +242,9 @@ define(function(require, exports, module) {
   // Format Sun May 11, 2014 to 2014-05-11
   function formatDate(date) {
     var d = new Date(date),
-            month = '' + (d.getMonth() + 1),
-            day = '' + d.getDate(),
-            year = d.getFullYear();
+      month = '' + (d.getMonth() + 1),
+      day = '' + d.getDate(),
+      year = d.getFullYear();
 
     if (month.length < 2) {
       month = '0' + month;
@@ -255,11 +255,12 @@ define(function(require, exports, module) {
 
     return [year, month, day].join('-');
   }
+
   // Format Sun May 11, 2014 to 2014-05
   function formatDateMonth(date) {
     var d = new Date(date),
-            month = '' + (d.getMonth() + 1),
-            year = d.getFullYear();
+      month = '' + (d.getMonth() + 1),
+      year = d.getFullYear();
 
     if (month.length < 2) {
       month = '0' + month;
@@ -297,9 +298,9 @@ define(function(require, exports, module) {
   // Format Sun May 11, 2014 to 2014-05-11
   function parseDate(date) {
     var d = new Date(date),
-            month = '' + (d.getMonth() + 1),
-            day = '' + d.getDate(),
-            year = d.getFullYear();
+      month = '' + (d.getMonth() + 1),
+      day = '' + d.getDate(),
+      year = d.getFullYear();
 
     if (month.length < 2) {
       month = '0' + month;
@@ -310,11 +311,12 @@ define(function(require, exports, module) {
 
     return [year, month, day].join('');
   }
+
   // Format Sun May 11, 2014 to 2014-05
   function parseDateMonth(date) {
     var d = new Date(date),
-            month = '' + (d.getMonth() + 1),
-            year = d.getFullYear();
+      month = '' + (d.getMonth() + 1),
+      year = d.getFullYear();
 
     if (month.length < 2) {
       month = '0' + month;
@@ -323,8 +325,8 @@ define(function(require, exports, module) {
   }
 
   function splitValue(value, index) {
-   var currentLat = value.substring(0, index);
-   var currentLng = value.substring(index);
+    var currentLat = value.substring(0, index);
+    var currentLng = value.substring(index);
 
     return parseFloat(currentLat) + "," + parseFloat(currentLng);
   }

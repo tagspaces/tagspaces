@@ -13,7 +13,7 @@ define(function(require, exports, module) {
   require('moment');
 
 
-  function initCalendarUI(){
+  function initCalendarUI() {
     $('#dateCalendarInput').click(function() {
       $('#dateTimeCalendar').hide();
       $('#dateTimeRange').hide();
@@ -99,8 +99,8 @@ define(function(require, exports, module) {
       });
 
       $('#dateTimeRangeCalendar').on('dp.change', function(e) {
-        var  d = e.date._d;
-        var  currentMinDate = TSCORE.Utils.parseDate(d);
+        var d = e.date._d;
+        var currentMinDate = TSCORE.Utils.parseDate(d);
         var oldValue = $('#newTagName').val();
         oldValue = oldValue.split('-');
         oldValue = oldValue[1];
@@ -246,11 +246,11 @@ define(function(require, exports, module) {
     console.log(range);
     var viewMode = '', format = '';
     if ((range[0].toString().length === 6 || range[0].length === 6) &&
-            (range[1].toString().length === 6 || range[1].length === 6)) {
+      (range[1].toString().length === 6 || range[1].length === 6)) {
       viewMode = 'months';
       format = 'YYYY-MM';
     } else if (range[0].toString().length === 4 &&
-            range[1].toString().length === 4) {
+      range[1].toString().length === 4) {
       viewMode = 'years';
       format = 'YYYY';
     } else {
@@ -332,11 +332,11 @@ define(function(require, exports, module) {
     var currentDateTime = dataTag;
 
     var year = parseInt(currentDateTime) && !isNaN(currentDateTime) &&
-            currentDateTime.length === 4;
+      currentDateTime.length === 4;
     var month = parseInt(currentDateTime) && !isNaN(currentDateTime) &&
-            currentDateTime.length === 6;
+      currentDateTime.length === 6;
     var date = parseInt(currentDateTime) && !isNaN(currentDateTime) &&
-            currentDateTime.length === 8;
+      currentDateTime.length === 8;
 
     var convertToDateTime = TSCORE.Utils.convertToDateTime(currentDateTime);
 
@@ -352,18 +352,18 @@ define(function(require, exports, module) {
         var firstInt = parseInt(character[0]);
         var secondInt = parseInt(character[1]);
         yearRange = monthRange = dateRange =
-                typeof firstInt === 'number' && !isNaN(firstInt) &&
-                typeof secondInt === 'number' && !isNaN(secondInt);
+          typeof firstInt === 'number' && !isNaN(firstInt) &&
+          typeof secondInt === 'number' && !isNaN(secondInt);
       }
     }
 
     var dateRegExp = yearRange || monthRange || dateRange ||
-            currentDateTime.match(dateTimeRegExp) ||
-            currentDateTime.match(dateTimeWinRegExp) ||
-            year || month || date || convertToDateTime;
+      currentDateTime.match(dateTimeRegExp) ||
+      currentDateTime.match(dateTimeWinRegExp) ||
+      year || month || date || convertToDateTime;
 
     if (geoLocationRegExp.exec(currentCoordinate) || geoTag === dataTag) {
-      if(TSCORE.PRO) {
+      if (TSCORE.PRO) {
         $('.nav-tabs a[href="#geoLocation"]').tab('show');
       } else {
         $('.nav-tabs a[href="#formEditTag"]').tab('show');
@@ -372,9 +372,9 @@ define(function(require, exports, module) {
 
       var dateTab = year || month || date;
       var dateTimeTab = currentDateTime.match(dateTimeRegExp) ||
-              currentDateTime.match(dateTimeWinRegExp) || convertToDateTime;
+        currentDateTime.match(dateTimeWinRegExp) || convertToDateTime;
       var dateRangeTab = currentDateTime.match(dateRangeRegExp) ||
-              yearRange || monthRange || dateRange;
+        yearRange || monthRange || dateRange;
 
       if (dateTab) {
         $('.nav-tabs a[href="#dateCalendarTab"]').tab('show');

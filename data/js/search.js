@@ -150,8 +150,8 @@ define(function(require, exports, module) {
 
             // Searching in file names while skipping paths containing '/.ts/'
             if (indexOfMetaDirectory < 1 &&
-                filterFileObject(fileEntry, queryObj) &&
-                queryObj.fileTypeFilter(fileEntry.name.toLowerCase())) {
+              filterFileObject(fileEntry, queryObj) &&
+              queryObj.fileTypeFilter(fileEntry.name.toLowerCase())) {
               searchResults.push(fileEntry);
               resolve();
             }
@@ -223,14 +223,14 @@ define(function(require, exports, module) {
                     }
 
                     if (!fileEntry.isDirectory) { // TODO check if the main file exists
-                    //  TSCORE.IO.getPropertiesPromise(fileEntry.path).then(function(mainFileEntry) {
-                    //    searchResults.push(mainFileEntry);
+                      //  TSCORE.IO.getPropertiesPromise(fileEntry.path).then(function(mainFileEntry) {
+                      //    searchResults.push(mainFileEntry);
                       searchResults.push(fileEntry);
                       resolve();
-                    //  }, function() {
-                    //    console.log("main file does not exist anymore " + fileEntry.path);
-                    //    resolve();
-                    //  })
+                      //  }, function() {
+                      //    console.log("main file does not exist anymore " + fileEntry.path);
+                      //    resolve();
+                      //  })
                     } else { // by tsm.json files
                       fileEntry.size = 0;
                       fileEntry.lmdt = 0;
