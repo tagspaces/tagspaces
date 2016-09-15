@@ -42,14 +42,13 @@ define(function(require, exports, module) {
         allowInputToggle: true,
         useCurrent: false
       });
-      $('#dateInputCalendar').show();
       var defaultDateCalendar = "2016-01-01";
       $('#dateCalendar').on('dp.change', function(e) {
         var d;
         var currentDate;
         d = e.date._d;
         currentDate = TSCORE.Utils.parseDate(d);
-        $('#dateInputCalendar').val(currentDate);
+        $('#newTagName').val(currentDate);
       });
       $('#dateCalendar').data('DateTimePicker').format('YYYY/MM/DD').defaultDate(defaultDateCalendar).viewMode('days').show();
     });
@@ -64,7 +63,6 @@ define(function(require, exports, module) {
         allowInputToggle: true,
         useCurrent: false
       });
-      $('#dateInputCalendar').show();
       var defaultDateCalendar = "1990-01-01";
       $('#dateTimeCalendar').on('dp.change', function(e) {
         var currentDate;
@@ -79,13 +77,12 @@ define(function(require, exports, module) {
         dateDivider = '~';
         currentDate = currentDate + dateDivider + time;
 
-        $('#dateInputCalendar').val(currentDate);
+        $('#newTagName').val(currentDate);
       });
       $('#dateTimeCalendar').data('DateTimePicker').format('YYYY/MM/DD').defaultDate(defaultDateCalendar).viewMode('days').show();
     });
 
     $('.nav-tabs a[href="#dateRangeTab"]').on('click', function() {
-      $('#dateInputCalendar').show();
       var defaultDateCalendarFrom = "2016-01-01";
       var defaultDateCalendarTo = "2016-01-01";
 
@@ -104,11 +101,10 @@ define(function(require, exports, module) {
       $('#dateTimeRangeCalendar').on('dp.change', function(e) {
         var  d = e.date._d;
         var  currentMinDate = TSCORE.Utils.parseDate(d);
-
-        var oldValue = $('#dateInputCalendar').val();
+        var oldValue = $('#newTagName').val();
         oldValue = oldValue.split('-');
         oldValue = oldValue[1];
-        $('#dateInputCalendar').val(currentMinDate + "-" + oldValue);
+        $('#newTagName').val(currentMinDate + "-" + oldValue);
       });
 
       $('#dateTimeRangeCalendar').data('DateTimePicker').defaultDate(defaultDateCalendarFrom).viewMode('days').show();
@@ -129,10 +125,10 @@ define(function(require, exports, module) {
         var d = e.date._d;
         var currentMaxDate = TSCORE.Utils.parseDate(d);
 
-        var oldValue = $('#dateInputCalendar').val();
+        var oldValue = $('#newTagName').val();
         oldValue = oldValue.split('-');
         oldValue = oldValue[0];
-        $('#dateInputCalendar').val(oldValue + "-" + currentMaxDate);
+        $('#newTagName').val(oldValue + "-" + currentMaxDate);
       });
 
       $('#dateTimeRangeMaxCalendar').data('DateTimePicker').defaultDate(defaultDateCalendarTo).viewMode('days').show();
@@ -184,7 +180,7 @@ define(function(require, exports, module) {
         d = e.date._d;
         currentDate = TSCORE.Utils.parseDate(d);
       }
-      $('#dateInputCalendar').val(currentDate);
+      $('#newTagName').val(currentDate);
     });
     $('#dateCalendar').data('DateTimePicker').format(format).defaultDate(defaultDateCalendar).viewMode(viewMode).show();
   }
@@ -239,7 +235,7 @@ define(function(require, exports, module) {
           currentDate = getHours + dateDivider + getMinutes;
         }
       }
-      $('#dateInputCalendar').val(currentDate);
+      $('#newTagName').val(currentDate);
     });
 
     $('#dateTimeCalendar').data('DateTimePicker').format('YYYY-MM-DD HH:mm:ss').defaultDate(defaultDate).show();
@@ -285,10 +281,10 @@ define(function(require, exports, module) {
         d = e.date._d;
         currentMinDate = TSCORE.Utils.parseDate(d);
       }
-      var oldValue = $('#dateInputCalendar').val();
+      var oldValue = $('#newTagName').val();
       oldValue = oldValue.split('-');
       oldValue = oldValue[1];
-      $('#dateInputCalendar').val(currentMinDate + "-" + oldValue);
+      $('#newTagName').val(currentMinDate + "-" + oldValue);
     });
 
     $('#dateTimeRangeCalendar').data('DateTimePicker').format(format).defaultDate(TSCORE.Utils.convertToDate(range[0])).viewMode(viewMode).show();
@@ -316,10 +312,10 @@ define(function(require, exports, module) {
         d = e.date._d;
         currentMaxDate = TSCORE.Utils.parseDate(d);
       }
-      var oldValue = $('#dateInputCalendar').val();
+      var oldValue = $('#newTagName').val();
       oldValue = oldValue.split('-');
       oldValue = oldValue[0];
-      $('#dateInputCalendar').val(oldValue + "-" + currentMaxDate);
+      $('#newTagName').val(oldValue + "-" + currentMaxDate);
     });
 
     $('#dateTimeRangeMaxCalendar').data('DateTimePicker').format(format).defaultDate(TSCORE.Utils.convertToDate(range[1])).viewMode(viewMode).show();
@@ -371,7 +367,6 @@ define(function(require, exports, module) {
         $('.nav-tabs a[href="#geoLocation"]').tab('show');
       } else {
         $('.nav-tabs a[href="#formEditTag"]').tab('show');
-        $('#dateInputCalendar').hide();
       }
     } else if (dateRegExp) {
 

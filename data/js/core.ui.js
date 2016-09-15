@@ -334,7 +334,8 @@ define(function(require, exports) {
 
     $('#dialogEditTag').on('shown.bs.modal', function() {
       TSCORE.Calendar.tagRecognition(TSCORE.selectedTag);
-      var data = $('#dateInputCalendar')[0];
+      //var data = $('#dateInputCalendar')[0];
+      var data = $('#newTagName')[0];
       data.value = TSCORE.selectedTag;
     });
 
@@ -343,11 +344,13 @@ define(function(require, exports) {
       if (target === "#dateCalendarTab" || target === "#dateTimeCalendarTab" ||
               target === "dateRangeTab" || target === "#geoLocation") {
         $('#editTagButton').click(function() {
-          TSCORE.TagUtils.renameTag(TSCORE.selectedFiles[0], TSCORE.selectedTag, $('#dateInputCalendar').val());
+          //$('#newTagName').show();
+          //TSCORE.TagUtils.renameTag(TSCORE.selectedFiles[0], TSCORE.selectedTag, $('#dateInputCalendar').val());
+          TSCORE.TagUtils.renameTag(TSCORE.selectedFiles[0], TSCORE.selectedTag, $('#newTagName').val());
         });
       }
       if (target === "#formEditTag") {
-        $('#dateInputCalendar').hide();
+        //$('#dateInputCalendar').hide();
       }
     });
 
@@ -704,14 +707,14 @@ define(function(require, exports) {
       $('#editTagButton').prop('disabled', false);
     });
     $('#dialogEditTag').on('shown.bs.modal', function() {
-      $('#newTagName').focus();
+      $('#newTagNamenewTagName').focus();
     });
     $('#dialogEditTag').modal({
       backdrop: 'static',
       show: true
     });
     if (TSCORE.PRO) {
-      TSCORE.MAP.initMap();
+      //TSCORE.MAP.initMap();
     }
     TSCORE.Calendar.showDateTimeCalendar(TSCORE.selectedTag);
   }

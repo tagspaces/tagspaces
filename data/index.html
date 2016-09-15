@@ -652,16 +652,7 @@
         </div>
       </div>
       <div class="modal-body form tab-content">
-        <div class="tab-pane active" id="formEditTag">
-          <form role="form" data-toggle="validator">
-            <div class="form-group">
-              <label class="control-label" for="newTagName" data-i18n="ns.dialogs:editTagNewName"></label>
-              <input class="form-control" pattern="^([^\ #/\\]){1,}$" type="text" name="newTagName" id="newTagName"
-                     data-i18n="[data-error]ns.dialogs:editTagNamesRestrictionsHelp" required/>
-              <p class="help-block with-errors"></p>
-            </div>
-          </form>
-        </div>
+        <div class="tab-pane active" id="formEditTag"></div>
         <div class="tab-pane" id="dateCalendarTab">
           <div class="date-time-calendar">
             <div class="form-group">
@@ -696,7 +687,14 @@
           </div>
         </div>
         <div class="form-group">
-          <input type="text" id="dateInputCalendar" style="width: 100%;">
+          <form role="form" data-toggle="validator">
+            <div class="form-group">
+              <label class="control-label" for="newTagName" data-i18n="ns.dialogs:editTagNewName"></label>
+              <input class="form-control" pattern="^([^\ #/\\]){1,}$" type="text" name="newTagName" id="newTagName"
+                     data-i18n="[data-error]ns.dialogs:editTagNamesRestrictionsHelp" required/>
+              <p class="help-block with-errors"></p>
+            </div>
+          </form>
         </div>
       </div>
       <div class="modal-footer">
