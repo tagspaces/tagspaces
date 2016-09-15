@@ -191,5 +191,8 @@
   "yourLocation": "Your Location",
   "fromDateTime": "From:",
   "toDateTime": "To:",
+  "save":"Save",
+  "delete":"Delete",
+  "coloredFileExtensionsEnabled":"Enable colored file type extensions",
   "-": "-"
 }
