@@ -2,7 +2,6 @@
   "name": "ts-commons",
   "id": "extCommon",
   "description": "A TagSpaces helper library with common functionalities in extensions",
-  "version": "0.0.3",
   "dependencies": {},
   "devDependencies": {},
   "authors": [
@@ -15,5 +14,15 @@
   "license": "MIT",
   "ignore": [
     "Gruntfile.js"
-  ]
+  ],
+  "homepage": "https://github.com/tagspaces/extCommons",
+  "_release": "795791fa27",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "795791fa27061e521c0864f7c12c3b6326a3918b"
+  },
+  "_source": "https://github.com/tagspaces/extCommons.git",
+  "_target": "*",
+  "_originalSource": "https://github.com/tagspaces/extCommons.git"
 }

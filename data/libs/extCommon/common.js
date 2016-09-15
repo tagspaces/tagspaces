@@ -35,13 +35,13 @@ $(document).ready(function() {
       type: 'GET'
     }).done(function(mdData) {
       //console.log("DATA: " + mdData);
-      //if (marked) {
+      if (marked) {
         var modalBody = $("#aboutExtensionModal .modal-body");
         modalBody.html(marked(mdData, {sanitize: true}));
         handleLinks(modalBody);
-      //} else {
-      //  console.log("markdown to html transformer not found");
-      //}
+      } else {
+        console.log("markdown to html transformer not found");
+      }
     }).fail(function(data) {
       console.warn("Loading file failed " + data);
     });
@@ -94,7 +94,7 @@ function showSearchPanel(e) {
 
 function cancelSearch() {
   //$('#searchToolbar').slideUp(500);
-  $('#htmlContent').unhighlight();
+  //$('#htmlContent').unhighlight();
   $('#searchToolbar').hide();
   //$('#searchBox').hide();
 }
@@ -196,7 +196,7 @@ function initSearch() {
 }
 
 function doSearch() {
-  $('#htmlContent').unhighlight();
+  //$('#htmlContent').unhighlight();
   $('#searchBox').attr('placeholder', 'Search');
   var givenString = document.getElementById("searchBox").value;
 
@@ -220,7 +220,7 @@ function doSearch() {
     }
     if (!found || (!found && !caseSensitiveString) || !caseSensitiveString) {
       var topOfContent = $(selector).animate({scrollTop: $('#htmlContent').offset().top}, "fast");
-      $('#htmlContent').unhighlight();
+      //$('#htmlContent').unhighlight();
       $('#searchBox').val('');
       $('#searchBox').attr('placeholder', 'Search text not found. Try again.');
       return topOfContent;
