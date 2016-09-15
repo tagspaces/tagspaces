@@ -372,8 +372,6 @@ define(function(require, exports, module) {
       } else {
         $('.nav-tabs a[href="#formEditTag"]').tab('show');
         $('#dateInputCalendar').hide();
-        //$("#geoLocation").removeAttribute('');
-        $("#tabsEditTag").tabs( "option", "disabled", 3 );
       }
     } else if (dateRegExp) {
 
