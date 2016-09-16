@@ -32,6 +32,7 @@ define(function (require, exports, module) {
         "lastOpenedLocation":       "", // "/owncloud/remote.php/webdav/Demo",
         "useDefaultLocation":       false,
         "coloredFileExtensionsEnabled": true,
+        "showTagAreaOnStartup":     false,
         "writeMetaToSidecarFile":   false,
         "enableMetaData":           false,
         "webDavPath"  :             "oc/remote.php/webdav",
