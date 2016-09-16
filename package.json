@@ -2,10 +2,10 @@
   "name": "tagspaces",
   "license": "AGPL 3.0",
   "author": "TagSpaces Authors",
-  "version": "2.5.0",
+  "version": "2.5.1",
   "mainversion": "2.5",
-  "subversion": "0",
-  "buildid": "20160905130746",
+  "subversion": "1",
+  "buildid": "20160915144230",
   "title": "TagSpaces",
   "fullName": "TagSpaces",
   "id": "jid1-FBaMKxTifTSahQ@jetpack",
@@ -17,6 +17,7 @@
     "private-browsing": false
   },
   "unpack": true,
+    
   "repository": {
     "type": "git",
     "url": "https://github.com/tagspaces/tagspaces.git"
