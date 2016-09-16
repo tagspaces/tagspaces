@@ -103,7 +103,7 @@ define(function(require, exports, module) {
               }
             }
           },
-          {
+          /*{
             label: $.i18n.t("ns.common:createAudioFile"),
             accelerator: '',
             click: function() {
@@ -113,7 +113,7 @@ define(function(require, exports, module) {
                 TSCORE.UI.showAudioRecordingDialog();
               }
             }
-          },
+          },*/
           {
             type: 'separator'
           },
