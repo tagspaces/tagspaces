@@ -53,7 +53,7 @@ var isWin = navigator.appVersion.indexOf("Win")!==-1;
     console.log(e.message);
   }
   var PRO_JS = "pro/js/pro.api";
-  //if(PRO.indexOf("@@PROVERS") == 0 || PRO == "false") { PRO_JS = 'js/pro'; }
+  if(PRO.indexOf("@@PROVERS") == 0 || PRO == "false") { PRO_JS = 'js/pro'; }
 
   // Setting up the IO functionality according to the platform
   var IO_JS = "web/web.api";
@@ -106,7 +106,6 @@ var isWin = navigator.appVersion.indexOf("Win")!==-1;
       hopscotch:              'libs/hopscotch/dist/js/hopscotch.min',
       noty:                   'libs/noty/js/noty/packaged/jquery.noty.packaged.min',
       marked:                 'libs/marked/marked.min',
-      webaudiorecording:      'libs/audio-record/WebAudioRecorder',
       offlinelib:             'web/offlinelib/offline.min',
       webdav:                 'web/webdavlib/webdavlib',
       moment:                 'libs/moment/min/moment.min',
