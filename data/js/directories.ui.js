@@ -147,7 +147,11 @@ define(function(require, exports, module) {
     // Clears the directory history
     directoryHistory = [];
     navigateToDirectory(path);
-    TSCORE.showLocationsPanel();
+    if (TSCORE.Config.getShowTagAreaOnStartup()) {
+      TSCORE.showTagsPanel();
+    } else {
+      TSCORE.showLocationsPanel();
+    }
   }
 
   function getDirHistoryItem(path) {

@@ -903,6 +903,18 @@ define(function(require, exports, module) {
 
     exports.Settings.coloredFileExtensionsEnabled = value;
   }
+  function getShowTagAreaOnStartup() {
+    if (exports.Settings.showTagAreaOnStartup === undefined) {
+      exports.Settings.showTagAreaOnStartup = exports.DefaultSettings.showTagAreaOnStartup;
+      saveSettings();
+    }
+    return exports.Settings.showTagAreaOnStartup;
+  }
+
+  function setShowTagAreaOnStartup(value) {
+
+    exports.Settings.showTagAreaOnStartup = value;
+  }
 
   //////////////////// API methods ///////////////////
   function getFileTypeEditor(fileTypeExt) {
@@ -1399,4 +1411,7 @@ define(function(require, exports, module) {
   exports.setUseDefaultLocation = setUseDefaultLocation;
   exports.getColoredFileExtensionsEnabled = getColoredFileExtensionsEnabled;
   exports.setColoredFileExtensionsEnabled = setColoredFileExtensionsEnabled;
+  exports.getShowTagAreaOnStartup = getShowTagAreaOnStartup;
+  exports.setShowTagAreaOnStartup = setShowTagAreaOnStartup;
+
 });
