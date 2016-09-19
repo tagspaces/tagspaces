@@ -110,7 +110,9 @@ define(function(require, exports, module) {
               if (!TSCORE.currentPath) {
                 TSCORE.showAlertDialog("ns.common:alertOpenLocatioFirst");
               } else {
-                TSCORE.UI.showAudioRecordingDialog();
+                if (TSCORE.PRO) {
+                  TSCORE.UI.showAudioRecordingDialog();
+                }
               }
             }
           },
@@ -876,6 +878,12 @@ define(function(require, exports, module) {
     return saveFilePromise(filePath, buff, overwrite);
   }
 
+  function saveAudioFilePromise(filePath, content, overwrite) {
+      console.log("Saving binary file: " + filePath);
+      var buff = TSCORE.Utils.dataURLtoBlob(content);
+      return saveFilePromise(filePath, buff, overwrite);
+  }
+
   /**
    * Delete a specified file
    * @name deleteFilePromise
@@ -1034,4 +1042,6 @@ define(function(require, exports, module) {
 
   exports.openDirectory = openDirectory;
   exports.openFile = openFile;
+
+  exports.saveAudioFilePromise = saveAudioFilePromise;
 });
