@@ -110,7 +110,9 @@ define(function(require, exports, module) {
               if (!TSCORE.currentPath) {
                 TSCORE.showAlertDialog("ns.common:alertOpenLocatioFirst");
               } else {
-                TSCORE.UI.showAudioRecordingDialog();
+                if (TSCORE.PRO) {
+                  TSCORE.UI.showAudioRecordingDialog();
+                }
               }
             }
           },
@@ -1034,4 +1036,5 @@ define(function(require, exports, module) {
 
   exports.openDirectory = openDirectory;
   exports.openFile = openFile;
+
 });
