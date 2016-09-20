@@ -214,7 +214,9 @@ define(function(require, exports, module) {
       tsCoreUI.showLocationsPanel();
     });
     Mousetrap.bind(tsSettings.getAddRemoveTagsKeyBinding(), function() {
-      tsTagsUI.showAddTagsDialog();
+      if (TSCORE.selectedFiles[0]) {
+        tsTagsUI.showAddTagsDialog();
+      }
     });
     Mousetrap.bind(tsSettings.getSearchKeyBinding(), function() {
       tsSearchUI.showSearchArea();
@@ -297,8 +299,8 @@ define(function(require, exports, module) {
   function updateFileModel(model, oldPath, newPath) {
     console.log('Removing file from model');
     var title = tsTagUtils.extractTitle(newPath),
-            fileExt = tsTagUtils.extractFileExtension(newPath),
-            fileTags = tsTagUtils.extractTags(newPath);
+      fileExt = tsTagUtils.extractFileExtension(newPath),
+      fileTags = tsTagUtils.extractTags(newPath);
     for (var i = 0; i < model.length; i++) {
       if (model[i].path == oldPath) {
         model[i].path = newPath;
