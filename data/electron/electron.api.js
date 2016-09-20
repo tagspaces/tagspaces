@@ -878,12 +878,6 @@ define(function(require, exports, module) {
     return saveFilePromise(filePath, buff, overwrite);
   }
 
-  function saveAudioFilePromise(filePath, content, overwrite) {
-      console.log("Saving binary file: " + filePath);
-      var buff = TSCORE.Utils.dataURLtoBlob(content);
-      return saveFilePromise(filePath, buff, overwrite);
-  }
-
   /**
    * Delete a specified file
    * @name deleteFilePromise
@@ -1043,5 +1037,4 @@ define(function(require, exports, module) {
   exports.openDirectory = openDirectory;
   exports.openFile = openFile;
 
-  exports.saveAudioFilePromise = saveAudioFilePromise;
 });
