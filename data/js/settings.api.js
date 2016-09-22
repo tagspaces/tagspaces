@@ -904,6 +904,30 @@ define(function(require, exports, module) {
     exports.Settings.coloredFileExtensionsEnabled = value;
   }
 
+  function getDefaultTagsColor() {
+    if (exports.Settings.defaultTagsColor === undefined) {
+      exports.Settings.defaultTagsColor = exports.DefaultSettings.defaultTagsColor;
+      saveSettings();
+    }
+    return exports.Settings.defaultTagsColor;
+  }
+
+  function setDefaultTagsColor(value){
+    exports.Settings.defaultTagsColor = value;
+  }
+
+  function getDefaultTagsTextColor() {
+    if (exports.Settings.defaultTagsTextColor === undefined) {
+      exports.Settings.defaultTagsTextColor = exports.DefaultSettings.defaultTagsTextColor;
+      saveSettings();
+    }
+    return exports.Settings.defaultTagsTextColor;
+  }
+
+  function setDefaultTagsTextColor(value){
+    exports.Settings.defaultTagsTextColor = value;
+  }
+
   //////////////////// API methods ///////////////////
   function getFileTypeEditor(fileTypeExt) {
     for (var i = 0; i < exports.Settings.supportedFileTypes.length; i++) {
@@ -1398,4 +1422,8 @@ define(function(require, exports, module) {
   exports.setUseDefaultLocation = setUseDefaultLocation;
   exports.getColoredFileExtensionsEnabled = getColoredFileExtensionsEnabled;
   exports.setColoredFileExtensionsEnabled = setColoredFileExtensionsEnabled;
+  exports.getDefaultTagsColor = getDefaultTagsColor;
+  exports.setDefaultTagsColor = setDefaultTagsColor;
+  exports.getDefaultTagsTextColor = getDefaultTagsTextColor;
+  exports.setDefaultTagsTextColor = setDefaultTagsTextColor;
 });

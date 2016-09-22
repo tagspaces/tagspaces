@@ -69,7 +69,38 @@ define(function(require, exports, module) {
     $('#useGenerateThumbnails').attr('disabled', !isMetaEnabled);
   }
 
+
   function initUI() {
+    var defaultTagColor = TSCORE.Config.DefaultSettings.defaultTagsColor; // "#008000";
+    var defaultTagTextColor = TSCORE.Config.DefaultSettings.defaultTagsTextColor; //"#ffffff";
+
+    var $tagsBackgroundColorChooser = $('#tagsBackgroundColorChooser');
+    var $tagsBackgroundColor = $('#tagsBackgroundColor');
+    var $tagForegroundColor = $('#tagsForegroundColor');
+    $tagsBackgroundColorChooser.simplecolorpicker({
+      picker: false
+    });
+    $tagsBackgroundColorChooser.on('change', function() {
+      $tagsBackgroundColor.val($tagsBackgroundColorChooser.val());
+    });
+    //if (TSCORE.selectedTagData.color === undefined || TSCORE.selectedTagData.color.length < 1) {
+    $tagsBackgroundColor.val(defaultTagColor);
+    //} else {
+    //  $tagsBackgroundColor.val(TSCORE.selectedTagData.color);
+    //}
+    var $tagForegroundColorChooser = $('#tagForegroundColorChooser');
+    $tagForegroundColorChooser.simplecolorpicker({
+      picker: false
+    });
+    $tagForegroundColorChooser.on('change', function() {
+      $tagForegroundColor.val($tagForegroundColorChooser.val());
+    });
+    //if (TSCORE.selectedTagData.textcolor === undefined || TSCORE.selectedTagData.textcolor.length < 1) {
+    $tagForegroundColor.val(defaultTagTextColor);
+    //} else {
+    //  tagForegroundColor.val(TSCORE.selectedTagData.textcolor);
+    //}
+
     $('#addFileTypeButton').click(function(e) {
       // Fixes reloading of the application by click
       e.preventDefault();
@@ -91,10 +122,10 @@ define(function(require, exports, module) {
     });
     $('#defaultSettingsButton').click(function() {
       TSCORE.showConfirmDialog(
-              $.i18n.t('ns.dialogs:restoreDefaulSettingTitleConfirm'),
-              $.i18n.t('ns.dialogs:restoreDefaulSettingMessageConfirm'), function() {
-                TSCORE.Config.loadDefaultSettings();
-              });
+        $.i18n.t('ns.dialogs:restoreDefaulSettingTitleConfirm'),
+        $.i18n.t('ns.dialogs:restoreDefaulSettingMessageConfirm'), function() {
+          TSCORE.Config.loadDefaultSettings();
+        });
     });
     $('#keyBindingInstructions').toggle();
     $('#keyBindingInstructionsToggle').on('click', function() {
@@ -120,10 +151,10 @@ define(function(require, exports, module) {
 
   function exportTagGroups() {
     var jsonFormat = '{ "appName": "' + TSCORE.Config.DefaultSettings.appName +
-            '", "appVersion": "' + TSCORE.Config.DefaultSettings.appVersion +
-            '", "appBuild": "' + TSCORE.Config.DefaultSettings.appBuild +
-            '", "settingsVersion": ' + TSCORE.Config.DefaultSettings.settingsVersion +
-            ', "tagGroups": ';
+      '", "appVersion": "' + TSCORE.Config.DefaultSettings.appVersion +
+      '", "appBuild": "' + TSCORE.Config.DefaultSettings.appBuild +
+      '", "settingsVersion": ' + TSCORE.Config.DefaultSettings.settingsVersion +
+      ', "tagGroups": ';
     var blob = new Blob([jsonFormat + JSON.stringify(TSCORE.Config.getAllTagGroupData()) + '}'], {
       type: 'application/json'
     });
@@ -250,6 +281,8 @@ define(function(require, exports, module) {
     TSCORE.Config.setWriteMetaToSidecarFile($('#writeMetaToSidecarFile').is(':checked'));
     TSCORE.Config.setUseDefaultLocation($('#useDefaultLocationCheckbox').is(':checked'));
     TSCORE.Config.setColoredFileExtensionsEnabled($('#coloredFileExtensionsEnabledCheckbox').is(':checked'));
+    TSCORE.Config.setDefaultTagsColor($('#tagsBackgroundColor').val());
+    TSCORE.Config.setDefaultTagsTextColor($('#tagsForegroundColor').val());
     TSCORE.Config.saveSettings();
   }
 
