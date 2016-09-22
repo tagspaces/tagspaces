@@ -74,7 +74,7 @@ define(function(require, exports) {
       var reader = new FileReader();
       reader.onload = onFileReadComplete;
       if (isCordova) {
-        //reader.readAsDataURL(file);
+        reader.readAsDataURL(file);
       } else {
         reader.readAsArrayBuffer(file);
       }
