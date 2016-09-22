@@ -194,8 +194,7 @@
   "save":"Save",
   "delete":"Delete",
   "coloredFileExtensionsEnabled":"Enable colored file type extensions",
-  "fontColorTags":"Color Tags",
-  "backgroundColor":"Background Color Tags",
-  "foregroundColor":"Foreground Color Tags",
+  "backgroundColor":"Default tag background color",
+  "foregroundColor":"Default tag text color",
   "-": "-"
 }

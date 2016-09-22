@@ -46,8 +46,8 @@ define(function (require, exports, module) {
         "useTextExtraction":        false,
         "useGenerateThumbnails":    false,
         "watchCurrentDirectory":    false,
-        "defaultTagsTextColor":     "#ffffff",
-        "defaultTagsColor":         "#008000",
+        "defaultTagTextColor":     "#ffffff",
+        "defaultTagColor":         "#008000",
         "supportedLanguages": [
             { "iso": "en_US", "title": "English" },
             { "iso": "de_DE", "title": "Deutsch (German)" },

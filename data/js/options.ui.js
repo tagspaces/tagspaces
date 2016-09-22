@@ -71,8 +71,8 @@ define(function(require, exports, module) {
 
 
   function initUI() {
-    var defaultTagColor = TSCORE.Config.DefaultSettings.defaultTagsColor; // "#008000";
-    var defaultTagTextColor = TSCORE.Config.DefaultSettings.defaultTagsTextColor; //"#ffffff";
+    var defaultTagColor = TSCORE.Config.getDefaultTagColor();
+    var defaultTagTextColor = TSCORE.Config.getDefaultTagTextColor();
 
     var $tagsBackgroundColorChooser = $('#tagsBackgroundColorChooser');
     var $tagsBackgroundColor = $('#tagsBackgroundColor');
@@ -83,11 +83,8 @@ define(function(require, exports, module) {
     $tagsBackgroundColorChooser.on('change', function() {
       $tagsBackgroundColor.val($tagsBackgroundColorChooser.val());
     });
-    //if (TSCORE.selectedTagData.color === undefined || TSCORE.selectedTagData.color.length < 1) {
     $tagsBackgroundColor.val(defaultTagColor);
-    //} else {
-    //  $tagsBackgroundColor.val(TSCORE.selectedTagData.color);
-    //}
+
     var $tagForegroundColorChooser = $('#tagForegroundColorChooser');
     $tagForegroundColorChooser.simplecolorpicker({
       picker: false
@@ -95,11 +92,8 @@ define(function(require, exports, module) {
     $tagForegroundColorChooser.on('change', function() {
       $tagForegroundColor.val($tagForegroundColorChooser.val());
     });
-    //if (TSCORE.selectedTagData.textcolor === undefined || TSCORE.selectedTagData.textcolor.length < 1) {
     $tagForegroundColor.val(defaultTagTextColor);
-    //} else {
-    //  tagForegroundColor.val(TSCORE.selectedTagData.textcolor);
-    //}
+    
 
     $('#addFileTypeButton').click(function(e) {
       // Fixes reloading of the application by click
@@ -281,8 +275,6 @@ define(function(require, exports, module) {
     TSCORE.Config.setWriteMetaToSidecarFile($('#writeMetaToSidecarFile').is(':checked'));
     TSCORE.Config.setUseDefaultLocation($('#useDefaultLocationCheckbox').is(':checked'));
     TSCORE.Config.setColoredFileExtensionsEnabled($('#coloredFileExtensionsEnabledCheckbox').is(':checked'));
-    TSCORE.Config.setDefaultTagsColor($('#tagsBackgroundColor').val());
-    TSCORE.Config.setDefaultTagsTextColor($('#tagsForegroundColor').val());
     TSCORE.Config.saveSettings();
   }
 

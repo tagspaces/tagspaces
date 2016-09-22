@@ -17,7 +17,6 @@
           <li><a href="#filetypes" data-toggle="tab" class="optionsTitle" data-i18n="ns.dialogs:fileTypeTab"></a></li>
           <li><a href="#keyBindings" data-toggle="tab" class="optionsTitle" data-i18n="ns.dialogs:keyBindingsTab"></a>
           </li>
-          <li><a href="#fontColorTags" data-toggle="tab" class="optionsTitle" data-i18n="ns.dialogs:fontColorTags"></a></li>
         </ul>
       </div>
       <div class="modal-body form tab-content" id="optionsAccordion">
@@ -102,6 +101,47 @@
               <i class="fa fa-rotate-left"></i>&nbsp;
               <span data-i18n="ns.dialogs:restoreDefaulSettingButton"></span>
             </button>
+          </div>
+          <div class="form-group">
+            <label class="control-label" for="tagsBackgroundColor" data-i18n="ns.dialogs:backgroundColor"></label>
+            <input type="color" class="form-control" id="tagsBackgroundColor" style="padding: 0">
+            <select class="form-control" id="tagsBackgroundColorChooser">
+              <option value="#ffffff">#ffffff</option>
+              <option value="#000000">#000000</option>
+              <option value="#ac725e">#ac725e</option>
+              <option value="#d06b64">#d06b64</option>
+              <option value="#f83a22">#f83a22</option>
+              <option value="#fa573c">#fa573c</option>
+              <option value="#ff7537">#ff7537</option>
+              <option value="#ffad46">#ffad46</option>
+              <option value="#42d692">#42d692</option>
+              <option value="#008000">#008000</option>
+              <option value="#7bd148">#7bd148</option>
+              <option value="#fad165">#fad165</option>
+              <option value="#FFCC24">#FFCC24</option>
+              <option value="#92e1c0">#92e1c0</option>
+              <option value="#9fe1e7">#9fe1e7</option>
+              <option value="#9fc6e7">#9fc6e7</option>
+              <option value="#4986e7">#4986e7</option>
+              <option value="#9a9cff">#9a9cff</option>
+              <option value="#b99aff">#b99aff</option>
+              <option value="#c2c2c2">#c2c2c2</option>
+              <option value="#cabdbf">#cabdbf</option>
+              <option value="#cca6ac">#cca6ac</option>
+              <option value="#f691b2">#f691b2</option>
+              <option value="#cd74e6">#cd74e6</option>
+              <option value="#a47ae2">#a47ae2</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="control-label" for="tagsForegroundColor" data-i18n="ns.dialogs:foregroundColor"></label>
+            <input type="color" class="form-control" id="tagsForegroundColor" style="padding: 0">
+            <select class="form-control" id="tagForegroundColorChooser">
+              <option value="#ffffff">#ffffff</option>
+              <option value="#cccccc">#cccccc</option>
+              <option value="#333333">#333333</option>
+              <option value="#000000">#000000</option>
+            </select>
           </div>
           <div style="margin-top: 20px;" class="alert alert-warning col-sm-12" role="alert"><i class="fa fa-flask fa-2x"></i>&nbsp;<span
             data-i18n="ns.dialogs:experimentalHelp"></span></div>
@@ -308,51 +348,6 @@
               <div class="col-sm-7">
                 <input type='text' class='form-control' id='renamingFileKeyBinding' placeholder='f2 | f2'/>
               </div>
-            </div>
-          </form>
-        </div>
-        <div class="tab-pane" id="fontColorTags">
-          <form role="form" data-toggle="validator" id="formDefaultColorTags">
-            <div class="form-group">
-              <label class="control-label" for="tagsBackgroundColor" data-i18n="ns.dialogs:backgroundColor"></label>
-              <input type="color" class="form-control" id="tagsBackgroundColor" style="padding: 0">
-              <select class="form-control" id="tagsBackgroundColorChooser">
-                <option value="#ffffff">#ffffff</option>
-                <option value="#000000">#000000</option>
-                <option value="#ac725e">#ac725e</option>
-                <option value="#d06b64">#d06b64</option>
-                <option value="#f83a22">#f83a22</option>
-                <option value="#fa573c">#fa573c</option>
-                <option value="#ff7537">#ff7537</option>
-                <option value="#ffad46">#ffad46</option>
-                <option value="#42d692">#42d692</option>
-                <option value="#008000">#008000</option>
-                <option value="#7bd148">#7bd148</option>
-                <option value="#fad165">#fad165</option>
-                <option value="#FFCC24">#FFCC24</option>
-                <option value="#92e1c0">#92e1c0</option>
-                <option value="#9fe1e7">#9fe1e7</option>
-                <option value="#9fc6e7">#9fc6e7</option>
-                <option value="#4986e7">#4986e7</option>
-                <option value="#9a9cff">#9a9cff</option>
-                <option value="#b99aff">#b99aff</option>
-                <option value="#c2c2c2">#c2c2c2</option>
-                <option value="#cabdbf">#cabdbf</option>
-                <option value="#cca6ac">#cca6ac</option>
-                <option value="#f691b2">#f691b2</option>
-                <option value="#cd74e6">#cd74e6</option>
-                <option value="#a47ae2">#a47ae2</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label class="control-label" for="tagsForegroundColor" data-i18n="ns.dialogs:foregroundColor"></label>
-              <input type="color" class="form-control" id="tagsForegroundColor" style="padding: 0">
-              <select class="form-control" id="tagForegroundColorChooser">
-                <option value="#ffffff">#ffffff</option>
-                <option value="#cccccc">#cccccc</option>
-                <option value="#333333">#333333</option>
-                <option value="#000000">#000000</option>
-              </select>
             </div>
           </form>
         </div>

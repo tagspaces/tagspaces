@@ -904,7 +904,7 @@ define(function(require, exports, module) {
     exports.Settings.coloredFileExtensionsEnabled = value;
   }
 
-  function getDefaultTagsColor() {
+  function getDefaultTagColor() {
     if (exports.Settings.defaultTagsColor === undefined) {
       exports.Settings.defaultTagsColor = exports.DefaultSettings.defaultTagsColor;
       saveSettings();
@@ -912,11 +912,11 @@ define(function(require, exports, module) {
     return exports.Settings.defaultTagsColor;
   }
 
-  function setDefaultTagsColor(value){
+  function setDefaultTagColor(value){
     exports.Settings.defaultTagsColor = value;
   }
 
-  function getDefaultTagsTextColor() {
+  function getDefaultTagTextColor() {
     if (exports.Settings.defaultTagsTextColor === undefined) {
       exports.Settings.defaultTagsTextColor = exports.DefaultSettings.defaultTagsTextColor;
       saveSettings();
@@ -924,7 +924,7 @@ define(function(require, exports, module) {
     return exports.Settings.defaultTagsTextColor;
   }
 
-  function setDefaultTagsTextColor(value){
+  function setDefaultTagTextColor(value){
     exports.Settings.defaultTagsTextColor = value;
   }
 
@@ -1422,8 +1422,8 @@ define(function(require, exports, module) {
   exports.setUseDefaultLocation = setUseDefaultLocation;
   exports.getColoredFileExtensionsEnabled = getColoredFileExtensionsEnabled;
   exports.setColoredFileExtensionsEnabled = setColoredFileExtensionsEnabled;
-  exports.getDefaultTagsColor = getDefaultTagsColor;
-  exports.setDefaultTagsColor = setDefaultTagsColor;
-  exports.getDefaultTagsTextColor = getDefaultTagsTextColor;
-  exports.setDefaultTagsTextColor = setDefaultTagsTextColor;
+  exports.getDefaultTagColor = getDefaultTagColor;
+  exports.setDefaultTagColor = setDefaultTagColor;
+  exports.getDefaultTagTextColor = getDefaultTagTextColor;
+  exports.setDefaultTagTextColor = setDefaultTagTextColor;
 });
