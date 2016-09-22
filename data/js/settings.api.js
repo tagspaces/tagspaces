@@ -891,6 +891,7 @@ define(function(require, exports, module) {
 
     exports.Settings.useDefaultLocation = value;
   }
+
   function getColoredFileExtensionsEnabled() {
     if (exports.Settings.coloredFileExtensionsEnabled === undefined) {
       exports.Settings.coloredFileExtensionsEnabled = exports.DefaultSettings.coloredFileExtensionsEnabled;
@@ -912,7 +913,7 @@ define(function(require, exports, module) {
     return exports.Settings.defaultTagsColor;
   }
 
-  function setDefaultTagColor(value){
+  function setDefaultTagColor(value) {
     exports.Settings.defaultTagsColor = value;
   }
 
@@ -924,7 +925,7 @@ define(function(require, exports, module) {
     return exports.Settings.defaultTagsTextColor;
   }
 
-  function setDefaultTagTextColor(value){
+  function setDefaultTagTextColor(value) {
     exports.Settings.defaultTagsTextColor = value;
   }
 
@@ -1064,8 +1065,13 @@ define(function(require, exports, module) {
         if (!tagExistsInGroup && newTagName.length >= 1) {
           var newTagModel = JSON.parse(JSON.stringify(tagTemplate));
           newTagModel.title = newTagName;
-          newTagModel.color = newTagColor;
-          newTagModel.textcolor = newTagTextColor;
+          if (newTagColor !== undefined || newTagTextColor !== undefined) {
+            newTagModel.color = newTagColor;
+            newTagModel.textcolor = newTagTextColor;
+          } else {
+            newTagModel.color = getDefaultTagColor();
+            newTagModel.textcolor = getDefaultTagTextColor();
+          }
           value.children.push(newTagModel);
         } else {
           console.log('Tag with the same name already exist in this group or tag length is not correct');

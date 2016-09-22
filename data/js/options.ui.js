@@ -93,7 +93,7 @@ define(function(require, exports, module) {
       $tagForegroundColor.val($tagForegroundColorChooser.val());
     });
     $tagForegroundColor.val(defaultTagTextColor);
-    
+
 
     $('#addFileTypeButton').click(function(e) {
       // Fixes reloading of the application by click
@@ -260,6 +260,8 @@ define(function(require, exports, module) {
     TSCORE.Config.setSearchKeyBinding(parseKeyBinding($('#showSearchKeyBinding').val()));
     TSCORE.Config.setSelectAllKeyBinding(parseKeyBinding($('#selectAllKeyBinding').val()));
     TSCORE.Config.setRenamingFileKeyBinding(parseKeyBinding($('#renamingFileKeyBinding').val()));
+    TSCORE.Config.setDefaultTagColor($('#tagsBackgroundColor').val());
+    TSCORE.Config.setDefaultTagTextColor($('#tagsForegroundColor').val());
     if (TSCORE.PRO) {
       TSCORE.Config.setEnableMetaData($('#enableMetaData').is(':checked'));
       TSCORE.Config.setUseTrashCan($('#useTrashCan').is(':checked'));
