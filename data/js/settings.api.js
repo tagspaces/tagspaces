@@ -1121,11 +1121,11 @@ define(function(require, exports, module) {
     saveSettings();
   }
 
-  function createTagGroup(tagData, tagGroupName) {
+  function createTagGroup(tagData, tagGroupName, tagGroupColor, tagGroupTextColor) {
     var newTagGroupModel = JSON.parse(JSON.stringify(tagGroupTemplate));
     newTagGroupModel.title = tagGroupName;
-    newTagGroupModel.color = exports.Settings.tagGroups.color;
-    newTagGroupModel.textcolor = exports.Settings.tagGroups.textcolor;
+    newTagGroupModel.color = tagGroupColor;
+    newTagGroupModel.textcolor = tagGroupTextColor;
     //newTagGroupModel.children = [];
     newTagGroupModel.key = '' + TSCORE.Utils.getRandomInt(10000, 99999);
     console.log('Creating taggroup: ' + JSON.stringify(newTagGroupModel) + ' with key: ' + newTagGroupModel.key);

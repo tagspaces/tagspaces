@@ -252,8 +252,8 @@
   "exitApp":"Exit",
   "openNewInstance":"New Application Window",
   "documentation":"Documentation",
-  "backgroundColor":"Default tag background color",
-  "foregroundColor":"Default tag text color",
+  "tagGroupBackgroundColor":"Default tag group background color",
+  "tagGroupForegroundColor":"Default tag group text color",
   "-": "-"
 
 }
