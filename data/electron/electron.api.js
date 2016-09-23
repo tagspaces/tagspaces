@@ -112,6 +112,8 @@ define(function(require, exports, module) {
               } else {
                 if (TSCORE.PRO) {
                   TSCORE.UI.showAudioRecordingDialog();
+                } else {
+                  TSCORE.showAlertDialog("You need the PRO version in order to use this functionality.");
                 }
               }
             }
