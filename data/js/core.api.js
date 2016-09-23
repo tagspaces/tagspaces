@@ -214,17 +214,13 @@ define(function(require, exports, module) {
       tsCoreUI.showLocationsPanel();
     });
     Mousetrap.bind(tsSettings.getAddRemoveTagsKeyBinding(), function() {
-      if (TSCORE.selectedFiles[0]) {
-        tsTagsUI.showAddTagsDialog();
-      }
+      tsTagsUI.showAddTagsDialog();
     });
     Mousetrap.bind(tsSettings.getSearchKeyBinding(), function() {
       tsSearchUI.showSearchArea();
     });
     Mousetrap.bind(tsSettings.getRenamingFileKeyBinding(), function() {
-      if (TSCORE.selectedFiles[0]) {
-        tsCoreUI.showFileRenameDialog(TSCORE.selectedFiles[0]);
-      }
+      tsCoreUI.showFileRenameDialog(TSCORE.selectedFiles[0]);
     });
   }
 
