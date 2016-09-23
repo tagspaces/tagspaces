@@ -1070,7 +1070,7 @@ define(function(require, exports, module) {
             newTagModel.textcolor = newTagTextColor;
           } else {
             newTagModel.color = value.color !== undefined ? value.color : getDefaultTagColor();
-            newTagModel.textcolor = value.color !== undefined ? value.color : getDefaultTagTextColor();
+            newTagModel.textcolor = value.textcolor !== undefined ? value.textcolor : getDefaultTagTextColor();
           }
           value.children.push(newTagModel);
         } else {
