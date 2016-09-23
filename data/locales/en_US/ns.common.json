@@ -252,6 +252,8 @@
   "exitApp":"Exit",
   "openNewInstance":"New Application Window",
   "documentation":"Documentation",
+  "backgroundColor":"Default tag background color",
+  "foregroundColor":"Default tag text color",
   "-": "-"
 
 }

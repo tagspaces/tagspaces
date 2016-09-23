@@ -1069,8 +1069,8 @@ define(function(require, exports, module) {
             newTagModel.color = newTagColor;
             newTagModel.textcolor = newTagTextColor;
           } else {
-            newTagModel.color = getDefaultTagColor();
-            newTagModel.textcolor = getDefaultTagTextColor();
+            newTagModel.color = value.color !== undefined ? value.color : getDefaultTagColor();
+            newTagModel.textcolor = value.color !== undefined ? value.color : getDefaultTagTextColor();
           }
           value.children.push(newTagModel);
         } else {
@@ -1082,10 +1082,12 @@ define(function(require, exports, module) {
     return true;
   }
 
-  function editTagGroup(tagData, tagGroupName) {
+  function editTagGroup(tagData, tagGroupName, tagGroupColor, tagGroupTextColor) {
     for (var i = 0; i < exports.Settings.tagGroups.length; i++) {
       if (exports.Settings.tagGroups[i].key === tagData.key) {
         exports.Settings.tagGroups[i].title = tagGroupName;
+        exports.Settings.tagGroups[i].color = tagGroupColor;
+        exports.Settings.tagGroups[i].textcolor = tagGroupTextColor;
         break;
       }
     }
@@ -1122,6 +1124,8 @@ define(function(require, exports, module) {
   function createTagGroup(tagData, tagGroupName) {
     var newTagGroupModel = JSON.parse(JSON.stringify(tagGroupTemplate));
     newTagGroupModel.title = tagGroupName;
+    newTagGroupModel.color = exports.Settings.tagGroups.color;
+    newTagGroupModel.textcolor = exports.Settings.tagGroups.textcolor;
     //newTagGroupModel.children = [];
     newTagGroupModel.key = '' + TSCORE.Utils.getRandomInt(10000, 99999);
     console.log('Creating taggroup: ' + JSON.stringify(newTagGroupModel) + ' with key: ' + newTagGroupModel.key);
