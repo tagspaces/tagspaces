@@ -69,7 +69,32 @@ define(function(require, exports, module) {
     $('#useGenerateThumbnails').attr('disabled', !isMetaEnabled);
   }
 
+
   function initUI() {
+    var defaultTagColor = TSCORE.Config.getDefaultTagColor();
+    var defaultTagTextColor = TSCORE.Config.getDefaultTagTextColor();
+
+    var $tagsBackgroundColorChooser = $('#tagsBackgroundColorChooser');
+    var $tagsBackgroundColor = $('#tagsBackgroundColor');
+    var $tagForegroundColor = $('#tagsForegroundColor');
+    $tagsBackgroundColorChooser.simplecolorpicker({
+      picker: false
+    });
+    $tagsBackgroundColorChooser.on('change', function() {
+      $tagsBackgroundColor.val($tagsBackgroundColorChooser.val());
+    });
+    $tagsBackgroundColor.val(defaultTagColor);
+
+    var $tagForegroundColorChooser = $('#tagForegroundColorChooser');
+    $tagForegroundColorChooser.simplecolorpicker({
+      picker: false
+    });
+    $tagForegroundColorChooser.on('change', function() {
+      $tagForegroundColor.val($tagForegroundColorChooser.val());
+    });
+    $tagForegroundColor.val(defaultTagTextColor);
+
+
     $('#addFileTypeButton').click(function(e) {
       // Fixes reloading of the application by click
       e.preventDefault();
@@ -91,10 +116,10 @@ define(function(require, exports, module) {
     });
     $('#defaultSettingsButton').click(function() {
       TSCORE.showConfirmDialog(
-              $.i18n.t('ns.dialogs:restoreDefaulSettingTitleConfirm'),
-              $.i18n.t('ns.dialogs:restoreDefaulSettingMessageConfirm'), function() {
-                TSCORE.Config.loadDefaultSettings();
-              });
+        $.i18n.t('ns.dialogs:restoreDefaulSettingTitleConfirm'),
+        $.i18n.t('ns.dialogs:restoreDefaulSettingMessageConfirm'), function() {
+          TSCORE.Config.loadDefaultSettings();
+        });
     });
     $('#keyBindingInstructions').toggle();
     $('#keyBindingInstructionsToggle').on('click', function() {
@@ -120,10 +145,10 @@ define(function(require, exports, module) {
 
   function exportTagGroups() {
     var jsonFormat = '{ "appName": "' + TSCORE.Config.DefaultSettings.appName +
-            '", "appVersion": "' + TSCORE.Config.DefaultSettings.appVersion +
-            '", "appBuild": "' + TSCORE.Config.DefaultSettings.appBuild +
-            '", "settingsVersion": ' + TSCORE.Config.DefaultSettings.settingsVersion +
-            ', "tagGroups": ';
+      '", "appVersion": "' + TSCORE.Config.DefaultSettings.appVersion +
+      '", "appBuild": "' + TSCORE.Config.DefaultSettings.appBuild +
+      '", "settingsVersion": ' + TSCORE.Config.DefaultSettings.settingsVersion +
+      ', "tagGroups": ';
     var blob = new Blob([jsonFormat + JSON.stringify(TSCORE.Config.getAllTagGroupData()) + '}'], {
       type: 'application/json'
     });
@@ -236,6 +261,8 @@ define(function(require, exports, module) {
     TSCORE.Config.setSearchKeyBinding(parseKeyBinding($('#showSearchKeyBinding').val()));
     TSCORE.Config.setSelectAllKeyBinding(parseKeyBinding($('#selectAllKeyBinding').val()));
     TSCORE.Config.setRenamingFileKeyBinding(parseKeyBinding($('#renamingFileKeyBinding').val()));
+    TSCORE.Config.setDefaultTagColor($('#tagsBackgroundColor').val());
+    TSCORE.Config.setDefaultTagTextColor($('#tagsForegroundColor').val());
     if (TSCORE.PRO) {
       TSCORE.Config.setEnableMetaData($('#enableMetaData').is(':checked'));
       TSCORE.Config.setUseTrashCan($('#useTrashCan').is(':checked'));

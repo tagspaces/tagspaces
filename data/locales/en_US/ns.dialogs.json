@@ -195,5 +195,7 @@
   "delete":"Delete",
   "coloredFileExtensionsEnabled":"Enable colored file type extensions",
   "showTagAreaOnStartup":"Always show tag area on startup",
+  "tagBackgroundColor":"Default tag background color",
+  "tagForegroundColor":"Default tag text color",
   "-": "-"
 }
