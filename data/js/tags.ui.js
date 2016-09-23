@@ -638,6 +638,10 @@ define(function(require, exports, module) {
   }
 
   function showAddTagsDialog() {
+    if (!TSCORE.selectedFiles[0]) {
+      TSCORE.showAlertDialog("Please select a file first.", "Tagging not possible!");
+      return;
+    }
     console.log('Adding tags...');
     //function split( val ) {
     //    return val.split( /,\s*/ );
