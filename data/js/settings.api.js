@@ -1101,10 +1101,10 @@ define(function(require, exports, module) {
         exports.Settings.tagGroups[i].color = tagGroupColor;
         exports.Settings.tagGroups[i].textcolor = tagGroupTextColor;
         for (var j = 0; j < exports.Settings.tagGroups[i].children.length; j++) {
-          //if (exports.Settings.tagGroups[i].children[j].color !== tagData.color) {
+          if (exports.Settings.tagGroups[i].children[j].color !== tagData.color) {
             exports.Settings.tagGroups[i].children[j].color = tagGroupColor;
             exports.Settings.tagGroups[i].children[j].textcolor = tagGroupTextColor;
-          //}
+          }
         }
         break;
       }
