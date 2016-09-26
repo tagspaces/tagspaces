@@ -568,7 +568,7 @@ define(function(require, exports, module) {
     if (TSCORE.selectedTagData.textcolor === undefined || TSCORE.selectedTagData.textcolor.length < 1) {
       $editTagGroupForegroundColor.val(TSCORE.Config.getDefaultTagTextColor());
     } else {
-      $editTagGroupBackgroundColor.val(TSCORE.selectedTagData.textcolor);
+      $editTagGroupForegroundColor.val(TSCORE.selectedTagData.textcolor);
     }
 
     $('#tagGroupName').val(TSCORE.selectedTagData.title);
