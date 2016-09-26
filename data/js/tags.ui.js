@@ -179,7 +179,7 @@ define(function(require, exports, module) {
     $('#createTagGroupButton').on("click", createTagGroup);
 
     $('#editTagGroupButton').click(function() {
-      TSCORE.Config.editTagGroup(TSCORE.selectedTagData, $('#tagGroupName').val(), $('#editTagGroupBackgroundColorChooser').val(), $('#editTagGroupForegroundColorChooser').val(),checkColorToAllTags);
+      TSCORE.Config.editTagGroup(TSCORE.selectedTagData, $('#tagGroupName').val(), $('#editTagGroupBackgroundColor').val(), $('#editTagGroupForegroundColor').val(),checkColorToAllTags);
       generateTagGroups();
     });
   }
@@ -663,9 +663,9 @@ define(function(require, exports, module) {
     $tagColorChooser.simplecolorpicker({
       picker: false
     });
-    $tagColorChooser.on('change', function() {
-      $tagColor.val($tagColorChooser.val());
-    });
+      $tagColorChooser.on('change', function() {
+        $tagColor.val($tagColorChooser.val());
+      });
     if (TSCORE.selectedTagData.color === undefined || TSCORE.selectedTagData.color.length < 1) {
       $tagColor.val(defaultTagColor);
     } else {
