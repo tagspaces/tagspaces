@@ -15,8 +15,9 @@ define(function(require, exports, module) {
   var defaultTagTextColor = "#ffffff";
 
   var TSCORE = require('tscore');
-  var checkedColorToAllTags;
+  var checkColorToAllTags;
 
+  var tags = {};
 
   var tagGroupsTmpl = Handlebars.compile(
     '{{#each tagGroups}}' +
@@ -177,12 +178,8 @@ define(function(require, exports, module) {
 
     $('#createTagGroupButton').on("click", createTagGroup);
 
-    $('#colorChangesToAllTags').on('change', function(){
-      checkedColorToAllTags = $('#colorChangesToAllTags').prop('checked');
-    });
-
     $('#editTagGroupButton').click(function() {
-      TSCORE.Config.editTagGroup(TSCORE.selectedTagData, $('#tagGroupName').val(), $('#editTagGroupBackgroundColorChooser').val(), $('#editTagGroupForegroundColorChooser').val(), checkedColorToAllTags);
+      TSCORE.Config.editTagGroup(TSCORE.selectedTagData, $('#tagGroupName').val(), $('#editTagGroupBackgroundColorChooser').val(), $('#editTagGroupForegroundColorChooser').val(),checkColorToAllTags);
       generateTagGroups();
     });
   }
@@ -547,6 +544,8 @@ define(function(require, exports, module) {
   }
 
   function showDialogEditTagGroup() {
+    checkColorToAllTags = $('#colorChangesToAllTags').prop('checked', false);
+
     var $editTagGroupBackgroundColorChooser = $('#editTagGroupBackgroundColorChooser');
     var $editTagGroupBackgroundColor = $('#editTagGroupBackgroundColor');
     $editTagGroupBackgroundColorChooser.simplecolorpicker({
@@ -576,6 +575,10 @@ define(function(require, exports, module) {
     } else {
       $editTagGroupForegroundColor.val(TSCORE.selectedTagData.textcolor);
     }
+
+    $('#colorChangesToAllTags').on('change', function(){
+      checkColorToAllTags = $('#colorChangesToAllTags').prop('checked');
+    });
 
     $('#tagGroupName').val(TSCORE.selectedTagData.title);
     $('#formTagGroupEdit').validator();
