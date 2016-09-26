@@ -550,7 +550,11 @@ define(function(require, exports, module) {
       $editTagGroupBackgroundColor.val($editTagGroupBackgroundColorChooser.val());
     });
 
-    $editTagGroupBackgroundColor.val(TSCORE.Config.getDefaultTagColor());
+    if (TSCORE.selectedTagData.color === undefined || TSCORE.selectedTagData.color.length < 1) {
+      $editTagGroupBackgroundColor.val(TSCORE.Config.getDefaultTagColor());
+    } else {
+      $editTagGroupBackgroundColor.val(TSCORE.selectedTagData.color);
+    }
 
     var $editTagGroupForegroundColorChooser = $('#editTagGroupForegroundColorChooser');
     var $editTagGroupForegroundColor = $('#editTagGroupForegroundColor');
@@ -560,7 +564,12 @@ define(function(require, exports, module) {
     $editTagGroupForegroundColorChooser.on('change', function() {
       $editTagGroupForegroundColor.val($editTagGroupForegroundColorChooser.val());
     });
-    $editTagGroupForegroundColor.val(TSCORE.Config.getDefaultTagTextColor());
+
+    if (TSCORE.selectedTagData.textcolor === undefined || TSCORE.selectedTagData.textcolor.length < 1) {
+      $editTagGroupForegroundColor.val(TSCORE.Config.getDefaultTagTextColor());
+    } else {
+      $editTagGroupBackgroundColor.val(TSCORE.selectedTagData.textcolor);
+    }
 
     $('#tagGroupName').val(TSCORE.selectedTagData.title);
     $('#formTagGroupEdit').validator();
