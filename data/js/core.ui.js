@@ -74,7 +74,7 @@ define(function(require, exports) {
       var reader = new FileReader();
       reader.onload = onFileReadComplete;
       if (isCordova) {
-        //reader.readAsDataURL(file);
+        reader.readAsDataURL(file);
       } else {
         reader.readAsArrayBuffer(file);
       }
@@ -615,7 +615,17 @@ define(function(require, exports) {
   }
 
   function showFileRenameDialog(filePath) {
+    if(!filePath) {
+      filePath = TSCORE.selectedFiles[0];
+    }
+    if(!filePath) {
+      TSCORE.showAlertDialog("Please select a file first.", "Renaming not possible!");
+      return false;
+    }
     $('#renamedFileName').attr('filepath', filePath);
+    //$('#renamedFileName').on("keydown", function(e) {
+    //  e.preventDefault();
+    //})
     $('#renamedFileName').val(TSCORE.TagUtils.extractFileName(filePath));
     $('#formFileRename').validator();
     $('#formFileRename').submit(function(e) {

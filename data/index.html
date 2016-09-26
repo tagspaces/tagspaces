@@ -209,6 +209,28 @@
           </div>
         </div>
         <div class="flexLayout" style="min-height: 40px;">
+          <button type="button" class="btn btn-link" id="showNewFileDialog" data-toggle="dropdown" data-i18n="[title]ns.common:toggleLeftPanelTooltip">
+            <i class="fa fa-plus fa-lg"></i>
+          </button>
+          <ul class="dropdown-menu" id="newFileMenu" style="top: 35px; left: 5px">
+            <li class="dropdown-header">
+              <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <span data-i18n="ns.common:fileOperations"></span></li>
+            <li class="divider"></li>
+            <li><a id="createTextFileButton" data-i18n="[title]ns.common:createTextFileButtonTooltip">
+              <i class="fa fa-tag fa-fw"></i>
+              &nbsp;<span data-i18n="ns.common:createTextFileButton"></span></a></li>
+            <li><a id="createHTMLFileButton" data-i18n="[title]ns.common:createHTMLFileButtonTooltip">
+              <i class="fa fa-tag fa-fw"></i>
+              &nbsp;<span data-i18n="ns.common:createHTMLFileButton"></span></a></li>
+            <li><a id="createMarkdownFileButton" data-i18n="[title]ns.common:createMarkdownFileButtonTooltip">
+              <i class="fa fa-tag fa-fw"></i>
+              &nbsp;<span data-i18n="ns.common:createMarkdownFileButton"></span></a></li>
+            <li><a id="createAudioFileButton" data-i18n="[title]ns.common:createAudioFileButtonTooltip">
+              <i class="fa fa-tag fa-fw"></i>
+              &nbsp;<span data-i18n="ns.common:createAudioFileButton"></span></a></li>
+          </ul>
+
           <div class="flexMaxWidth flexLayout" style="min-width: 100px;">
             <div class="flexMaxWidth">
               <div id="statusBar" class="noWrap"></div>
@@ -515,12 +537,12 @@
               <p class="help-block" data-i18n="ns.dialogs:editTagNamesRestrictionsHelp"></p>
             </div>
           </form>
-          <button id="audioRecordingConfirmButton" class='btn btn-primary' data-i18n="ns.dialogs:save" data-dismiss="modal" aria-hidden="true"></button>
-          <button id="deleteAudioRecording" class='btn btn-default' recording='' data-i18n="ns.dialogs:delete"></button>
         </div>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true"><i class="fa fa-check fa-lg"></i></button>
+        <button class="btn btn-default pull-left" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times fa-lg"></i></button>
+        <button id="audioRecordingConfirmButton" class='btn btn-primary pull-right' data-i18n="ns.dialogs:save" data-dismiss="modal" aria-hidden="true"></button>
+        <!--button id="deleteAudioRecording" class='btn btn-default' data-dismiss="modal" recording='' data-i18n="ns.dialogs:delete"></button-->
       </div>
     </div>
   </div>

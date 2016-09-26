@@ -184,6 +184,7 @@ define(function(require, exports, module) {
     $('#writeMetaToSidecarFile').attr('checked', TSCORE.Config.getWriteMetaToSidecarFile());
     $('#useDefaultLocationCheckbox').attr('checked', TSCORE.Config.getUseDefaultLocation());
     $('#coloredFileExtensionsEnabledCheckbox').attr('checked', TSCORE.Config.getColoredFileExtensionsEnabled());
+    $('#showTagAreaOnStartupCheckbox').attr('checked', TSCORE.Config.getShowTagAreaOnStartup());
     if (TSCORE.PRO) {
       $('#enableMetaData').attr('checked', TSCORE.Config.getEnableMetaData());
       $('#useTrashCan').attr('checked', TSCORE.Config.getUseTrashCan());
@@ -277,6 +278,7 @@ define(function(require, exports, module) {
     TSCORE.Config.setWriteMetaToSidecarFile($('#writeMetaToSidecarFile').is(':checked'));
     TSCORE.Config.setUseDefaultLocation($('#useDefaultLocationCheckbox').is(':checked'));
     TSCORE.Config.setColoredFileExtensionsEnabled($('#coloredFileExtensionsEnabledCheckbox').is(':checked'));
+    TSCORE.Config.setShowTagAreaOnStartup($('#showTagAreaOnStartupCheckbox').is(':checked'));
     TSCORE.Config.saveSettings();
   }
 
