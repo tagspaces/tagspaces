@@ -176,7 +176,7 @@ define(function(require, exports, module) {
     $('#createTagGroupButton').on("click", createTagGroup);
 
     $('#editTagGroupButton').click(function() {
-      TSCORE.Config.editTagGroup(TSCORE.selectedTagData, $('#tagGroupName').val());
+      TSCORE.Config.editTagGroup(TSCORE.selectedTagData, $('#tagGroupName').val(), $('#editTagGroupBackgroundColor').val(), $('#editTagGroupForegroundColor').val());
       generateTagGroups();
     });
   }
@@ -514,7 +514,6 @@ define(function(require, exports, module) {
   }
 
   function showImportTagsDialog(tagGroups) {
-
     require(['text!templates/ImportTagsDialog.html'], function(uiTPL) {
 
       if ($('#dialogImportTags').length < 1) {
@@ -542,6 +541,27 @@ define(function(require, exports, module) {
   }
 
   function showDialogEditTagGroup() {
+    var $editTagGroupBackgroundColorChooser = $('#editTagGroupBackgroundColorChooser');
+    var $editTagGroupBackgroundColor = $('#editTagGroupBackgroundColor');
+    $editTagGroupBackgroundColorChooser.simplecolorpicker({
+      picker: false
+    });
+    $editTagGroupBackgroundColorChooser.on('change', function() {
+      $editTagGroupBackgroundColor.val($editTagGroupBackgroundColorChooser.val());
+    });
+
+    $editTagGroupBackgroundColor.val(TSCORE.Config.getDefaultTagColor());
+
+    var $editTagGroupForegroundColorChooser = $('#editTagGroupForegroundColorChooser');
+    var $editTagGroupForegroundColor = $('#editTagGroupForegroundColor');
+    $editTagGroupForegroundColorChooser.simplecolorpicker({
+      picker: false
+    });
+    $editTagGroupForegroundColorChooser.on('change', function() {
+      $editTagGroupForegroundColor.val($editTagGroupForegroundColorChooser.val());
+    });
+    $editTagGroupForegroundColor.val(TSCORE.Config.getDefaultTagTextColor());
+
     $('#tagGroupName').val(TSCORE.selectedTagData.title);
     $('#formTagGroupEdit').validator();
     $('#formTagGroupEdit').submit(function(e) {
@@ -569,7 +589,6 @@ define(function(require, exports, module) {
   }
 
   function showDialogTagGroupCreate() {
-
     var $tagGroupBackgroundColorChooser = $('#tagGroupBackgroundColorChooser');
     var $tagGroupBackgroundColor = $('#tagGroupBackgroundColor');
     $tagGroupBackgroundColorChooser.simplecolorpicker({
