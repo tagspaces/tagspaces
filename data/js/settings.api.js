@@ -1094,17 +1094,18 @@ define(function(require, exports, module) {
     return true;
   }
 
-  function editTagGroup(tagData, tagGroupName, tagGroupColor, tagGroupTextColor) {
+  function editTagGroup(tagData, tagGroupName, tagGroupColor, tagGroupTextColor, checkAllTags) {
     for (var i = 0; i < exports.Settings.tagGroups.length; i++) {
       if (exports.Settings.tagGroups[i].key === tagData.key) {
         exports.Settings.tagGroups[i].title = tagGroupName;
         exports.Settings.tagGroups[i].color = tagGroupColor;
         exports.Settings.tagGroups[i].textcolor = tagGroupTextColor;
         for (var j = 0; j < exports.Settings.tagGroups[i].children.length; j++) {
-          if (exports.Settings.tagGroups[i].children[j].color !== tagData.color) {
+          if (checkAllTags === true && (exports.Settings.tagGroups[i].children[j].color !== tagData.color ||
+            exports.Settings.tagGroups[i].children[j].textcolor !== tagData.textcolor)) {
             exports.Settings.tagGroups[i].children[j].color = tagGroupColor;
             exports.Settings.tagGroups[i].children[j].textcolor = tagGroupTextColor;
-          }
+          } else {break;}
         }
         break;
       }

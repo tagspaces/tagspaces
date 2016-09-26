@@ -197,5 +197,6 @@
   "showTagAreaOnStartup":"Always show tag area on startup",
   "tagBackgroundColor":"Default tag background color",
   "tagForegroundColor":"Default tag text color",
+  "colorChangesToAllTags":"Apply color changes to all tags of the group",
   "-": "-"
 }
