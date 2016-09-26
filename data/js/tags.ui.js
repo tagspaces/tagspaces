@@ -176,7 +176,7 @@ define(function(require, exports, module) {
     $('#createTagGroupButton').on("click", createTagGroup);
 
     $('#editTagGroupButton').click(function() {
-      TSCORE.Config.editTagGroup(TSCORE.selectedTagData, $('#tagGroupName').val(), $('#editTagGroupBackgroundColor').val(), $('#editTagGroupForegroundColor').val());
+      TSCORE.Config.editTagGroup(TSCORE.selectedTagData, $('#tagGroupName').val(), $('#editTagGroupBackgroundColorChooser').val(), $('#editTagGroupForegroundColorChooser').val());
       generateTagGroups();
     });
   }
