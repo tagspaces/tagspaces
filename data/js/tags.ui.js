@@ -177,7 +177,7 @@ define(function(require, exports, module) {
     $('#createTagGroupButton').on("click", createTagGroup);
 
     $('#editTagGroupButton').click(function() {
-      TSCORE.Config.editTagGroup(TSCORE.selectedTagData, $('#tagGroupName').val(), $('#editTagGroupBackgroundColor').val(), $('#editTagGroupForegroundColor').val(),checkColorToAllTags);
+      TSCORE.Config.editTagGroup(TSCORE.selectedTagData, $('#tagGroupName').val(), $('#editTagGroupBackgroundColor').val(), $('#editTagGroupForegroundColor').val(), checkColorToAllTags);
       generateTagGroups();
     });
   }
@@ -207,7 +207,7 @@ define(function(require, exports, module) {
   }
 
   function createTagGroup() {
-    TSCORE.Config.createTagGroup(TSCORE.selectedTagData, $('#newTagGroupName').val(),$('#tagGroupBackgroundColor').val(),$('#tagGroupForegroundColor').val());
+    TSCORE.Config.createTagGroup(TSCORE.selectedTagData, $('#newTagGroupName').val(), $('#tagGroupBackgroundColor').val(), $('#tagGroupForegroundColor').val());
     generateTagGroups();
   }
 
@@ -382,8 +382,7 @@ define(function(require, exports, module) {
     var d;
     if (tagData.type === 'smart') {
       switch (tagData.functionality) {
-        case 'geoLocation':
-        {
+        case 'geoLocation': {
           $('#viewContainers').on('drop dragend', function(event) {
             if (TSCORE.selectedTag === 'geoTag') {
               tagValue = TSCORE.showTagEditDialog();
@@ -391,27 +390,23 @@ define(function(require, exports, module) {
           });
           break;
         }
-        case 'today':
-        {
+        case 'today': {
           tagValue = TSCORE.TagUtils.formatDateTime4Tag(new Date(), false);
           break;
         }
-        case 'tomorrow':
-        {
+        case 'tomorrow': {
           d = new Date();
           d.setDate(d.getDate() + 1);
           tagValue = TSCORE.TagUtils.formatDateTime4Tag(d, false);
           break;
         }
-        case 'yesterday':
-        {
+        case 'yesterday': {
           d = new Date();
           d.setDate(d.getDate() - 1);
           tagValue = TSCORE.TagUtils.formatDateTime4Tag(d, false);
           break;
         }
-        case 'currentMonth':
-        {
+        case 'currentMonth': {
           var cMonth = '' + (new Date().getMonth() + 1);
           if (cMonth.length === 1) {
             cMonth = '0' + cMonth;
@@ -419,18 +414,15 @@ define(function(require, exports, module) {
           tagValue = '' + new Date().getFullYear() + cMonth;
           break;
         }
-        case 'currentYear':
-        {
+        case 'currentYear': {
           tagValue = '' + new Date().getFullYear();
           break;
         }
-        case 'now':
-        {
+        case 'now': {
           tagValue = TSCORE.TagUtils.formatDateTime4Tag(new Date(), true);
           break;
         }
-        default:
-        {
+        default: {
           break;
         }
       }
@@ -574,7 +566,7 @@ define(function(require, exports, module) {
       $editTagGroupForegroundColor.val(TSCORE.selectedTagData.textcolor);
     }
 
-    $('#colorChangesToAllTags').on('change', function(){
+    $('#colorChangesToAllTags').on('change', function() {
       checkColorToAllTags = $('#colorChangesToAllTags').prop('checked');
     });
 
@@ -661,9 +653,9 @@ define(function(require, exports, module) {
     $tagColorChooser.simplecolorpicker({
       picker: false
     });
-      $tagColorChooser.on('change', function() {
-        $tagColor.val($tagColorChooser.val());
-      });
+    $tagColorChooser.on('change', function() {
+      $tagColor.val($tagColorChooser.val());
+    });
     if (TSCORE.selectedTagData.color === undefined || TSCORE.selectedTagData.color.length < 1) {
       $tagColor.val(defaultTagColor);
     } else {
