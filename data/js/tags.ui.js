@@ -17,8 +17,6 @@ define(function(require, exports, module) {
   var TSCORE = require('tscore');
   var checkColorToAllTags;
 
-  var tags = {};
-
   var tagGroupsTmpl = Handlebars.compile(
     '{{#each tagGroups}}' +
     '<div class="accordion-group disableTextSelection tagGroupContainer">' +
