@@ -15,7 +15,6 @@ define(function(require, exports, module) {
   var defaultTagTextColor = "#ffffff";
 
   var TSCORE = require('tscore');
-  var checkColorToAllTags;
 
   var tagGroupsTmpl = Handlebars.compile(
     '{{#each tagGroups}}' +
@@ -177,7 +176,7 @@ define(function(require, exports, module) {
     $('#createTagGroupButton').on("click", createTagGroup);
 
     $('#editTagGroupButton').click(function() {
-      TSCORE.Config.editTagGroup(TSCORE.selectedTagData, $('#tagGroupName').val(), $('#editTagGroupBackgroundColor').val(), $('#editTagGroupForegroundColor').val(), checkColorToAllTags);
+      TSCORE.Config.editTagGroup(TSCORE.selectedTagData, $('#tagGroupName').val(), $('#editTagGroupBackgroundColor').val(), $('#editTagGroupForegroundColor').val(), $('#colorChangesToAllTags').prop('checked'));
       generateTagGroups();
     });
   }
@@ -534,7 +533,7 @@ define(function(require, exports, module) {
   }
 
   function showDialogEditTagGroup() {
-    checkColorToAllTags = $('#colorChangesToAllTags').prop('checked', false);
+    $('#colorChangesToAllTags').prop('checked', false);
 
     var $editTagGroupBackgroundColorChooser = $('#editTagGroupBackgroundColorChooser');
     var $editTagGroupBackgroundColor = $('#editTagGroupBackgroundColor');
