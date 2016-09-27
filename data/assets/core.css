@@ -293,8 +293,8 @@
 
 .tagButton {
     padding: 2px 4px 2px 4px !important;
-    background: #008000;
-    color: white;
+    background: #008000 !important;
+    color: white !important;
     margin: 1px;
     border: 0;
     z-index: 9999;

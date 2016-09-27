@@ -170,14 +170,14 @@ define(function(require, exports, module) {
     window.addEventListener('orientationchange', reLayout);
 
     $(window).on('resize', reLayout);
-    
+
     changeElement();
   }
 
   function changeElement(e) {
     var sheet = document.createElement('style');
     sheet.innerHTML = ".tagButton {color: "+ TSCORE.Config.getDefaultTagTextColor()
-      +"; background: "+ TSCORE.Config.getDefaultTagColor()+";}";
+      +" !important; background: "+ TSCORE.Config.getDefaultTagColor()+" !important;}";
     document.body.appendChild(sheet);
   }
 
