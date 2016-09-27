@@ -1105,7 +1105,7 @@ define(function(require, exports, module) {
             exports.Settings.tagGroups[i].children[j].textcolor !== tagData.textcolor)) {
             exports.Settings.tagGroups[i].children[j].color = tagGroupColor;
             exports.Settings.tagGroups[i].children[j].textcolor = tagGroupTextColor;
-          } else {break;}
+          }
         }
         break;
       }

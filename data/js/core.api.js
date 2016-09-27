@@ -170,7 +170,29 @@ define(function(require, exports, module) {
     window.addEventListener('orientationchange', reLayout);
 
     $(window).on('resize', reLayout);
+
+
+    getStyleSheet('core.css');
+    changeElement();
   }
+
+  function changeElement(e) {
+    $('.tagButton').css({'background':TSCORE.Config.getDefaultTagColor(),'color':TSCORE.Config.getDefaultTagTextColor()});
+  }
+
+  function getStyleSheet(title) {
+    document.querySelector('.tagButton').style.color = TSCORE.Config.getDefaultTagTextColor();
+    document.querySelector('.tagButton').style.background = TSCORE.Config.getDefaultTagColor();
+
+    for(var i=0; i<document.styleSheets.length; i++) {
+      var sheet = document.styleSheets[i];
+      console.debug(sheet);
+      if(sheet.title === title) {
+        return sheet;
+      }
+    }
+  }
+
 
   function switchInterfaceLanguage(language) {
     exports.currentLanguage = language;
