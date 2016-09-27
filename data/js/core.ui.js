@@ -20,10 +20,10 @@ define(function(require, exports) {
   var addFileInputName;
 
   var fileDropTemplate = Handlebars.compile(
-          '<div id="fileDropArea">' +
-          '<div id="fileDropExplanation"><i class="fa fa-2x fa-mail-forward"></i><br>' +
-          '<span>Drop files here in order to be copied or moved in the current folder</span></div>' +
-          '</div>'
+    '<div id="fileDropArea">' +
+    '<div id="fileDropExplanation"><i class="fa fa-2x fa-mail-forward"></i><br>' +
+    '<span>Drop files here in order to be copied or moved in the current folder</span></div>' +
+    '</div>'
   );
 
   function initUI() {
@@ -342,7 +342,7 @@ define(function(require, exports) {
     $('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
       var target = $(e.target).attr("href"); // activated tab
       if (target === "#dateCalendarTab" || target === "#dateTimeCalendarTab" ||
-              target === "dateRangeTab" || target === "#geoLocation") {
+        target === "dateRangeTab" || target === "#geoLocation") {
         $('#editTagButton').click(function() {
           //$('#newTagName').show();
           //TSCORE.TagUtils.renameTag(TSCORE.selectedFiles[0], TSCORE.selectedTag, $('#dateInputCalendar').val());
@@ -615,10 +615,10 @@ define(function(require, exports) {
   }
 
   function showFileRenameDialog(filePath) {
-    if(!filePath) {
+    if (!filePath) {
       filePath = TSCORE.selectedFiles[0];
     }
-    if(!filePath) {
+    if (!filePath) {
       TSCORE.showAlertDialog("Please select a file first.", "Renaming not possible!");
       return false;
     }
@@ -662,13 +662,13 @@ define(function(require, exports) {
       filePath: filePath
     }), function() {
       TSCORE.IO.deleteFilePromise(filePath).then(function() {
-                TSPOSTIO.deleteElement(filePath);
-              },
-              function(error) {
-                TSCORE.hideLoadingAnimation();
-                TSCORE.showAlertDialog("Deleting file " + filePath + " failed.");
-                console.error("Deleting file " + filePath + " failed " + error);
-              }
+          TSPOSTIO.deleteElement(filePath);
+        },
+        function(error) {
+          TSCORE.hideLoadingAnimation();
+          TSCORE.showAlertDialog("Deleting file " + filePath + " failed.");
+          console.error("Deleting file " + filePath + " failed " + error);
+        }
       );
     });
   }
@@ -689,14 +689,14 @@ define(function(require, exports) {
     }
 
     TSCORE.showConfirmDialog(
-            $.i18n.t('ns.dialogs:fileDeleteTitleConfirm'),
-            $.i18n.t(dlgConfirmMsgId, {selectedFiles: selFiles}),
-            function() {
-              if (TSCORE.IO.stopWatchingDirectories) {
-                TSCORE.IO.stopWatchingDirectories();
-              }
-              TSCORE.IOUtils.deleteFiles(TSCORE.Utils.getUniqueSelectedFiles());
-            }
+      $.i18n.t('ns.dialogs:fileDeleteTitleConfirm'),
+      $.i18n.t(dlgConfirmMsgId, {selectedFiles: selFiles}),
+      function() {
+        if (TSCORE.IO.stopWatchingDirectories) {
+          TSCORE.IO.stopWatchingDirectories();
+        }
+        TSCORE.IOUtils.deleteFiles(TSCORE.Utils.getUniqueSelectedFiles());
+      }
     );
   }
 

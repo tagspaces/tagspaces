@@ -171,13 +171,12 @@ define(function(require, exports, module) {
 
     $(window).on('resize', reLayout);
 
-    changeElement();
+    applyCustomStyles();
   }
 
-  function changeElement(e) {
+  function applyCustomStyles() {
     var sheet = document.createElement('style');
-    sheet.innerHTML = ".tagButton {color: "+ TSCORE.Config.getDefaultTagTextColor()
-      +" !important; background: "+ TSCORE.Config.getDefaultTagColor()+" !important;}";
+    sheet.innerHTML = ".tagButton {color: " + TSCORE.Config.getDefaultTagTextColor() + " !important; background: " + TSCORE.Config.getDefaultTagColor() + " !important;}";
     document.body.appendChild(sheet);
   }
 
