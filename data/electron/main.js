@@ -4,9 +4,13 @@ const electron = require('electron');
 const app = electron.app;  // Module to control application life.
 const BrowserWindow = electron.BrowserWindow;  // Module to create native browser window.
 const ipcMain = require('electron').ipcMain;
+const Menu = require('electron').Menu;
+const Tray = require('electron').Tray;
 
 var debugMode;
 var startupFilePath;
+var trayIcon = null;
+
 
 //handling start parameter
 //console.log(JSON.stringify(process.argv));
@@ -72,4 +76,42 @@ app.on('ready', function() {
     // when you should delete the corresponding element.
     mainWindow = null;
   });
+
+  mainWindow.on('minimize',function(event){
+    event.preventDefault();
+    mainWindow.hide();
+  });
+
+  if (process.platform == 'darwin') {
+    trayIcon = new Tray('assets/icon32.png');
+  } else if(process.platform == 'win') {
+    trayIcon = new Tray('assets/icon32.png');
+  } else {
+    trayIcon = new Tray('assets/icon32.png');
+  }
+  var trayMenuTemplate = [
+    {
+      label: 'Show App', click:  function(){
+        mainWindow.show();
+      }
+    },
+    //{
+    //  label: 'Settings',
+    //  click: function () {
+    //    ipcRenderer.send('open-settings-window');
+    //  }
+    //},
+    {
+      label: 'Quit',
+      click: function (event) {
+        app.quit();
+        //event.ipcRenderer.send('remove-tray');
+        //ipcRenderer.send('window-all-closed');
+      }
+    }
+  ];
+
+  var trayMenu = Menu.buildFromTemplate(trayMenuTemplate);
+  trayIcon.setToolTip('TagSpaces App');
+  trayIcon.setContextMenu(trayMenu);
 });
