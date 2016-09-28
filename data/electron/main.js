@@ -92,7 +92,8 @@ app.on('ready', function(event) {
   }
   var trayMenuTemplate = [
     {
-      label: 'Show App', click:  function(){
+      label: 'Show App',
+      click:  function(){
         mainWindow.show();
       }
     },
@@ -133,7 +134,8 @@ app.on('ready', function(event) {
     }
   ];
 
-  trayIcon.on('clicked', function() {
+  trayIcon.on('click', function() {
+    console.log(mainWindow.isVisible());
     mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show();
   });
 
