@@ -46,7 +46,8 @@ app.on('window-all-closed', function() {
   //}
 });
 
-app.on('ready', function() {
+app.on('ready', function(event) {
+  console.log(event);
   mainWindow = new BrowserWindow({width: 1280, height: 768});
 
   //var indexPath = 'file://' + __dirname + '/index.html';
@@ -95,6 +96,26 @@ app.on('ready', function() {
         mainWindow.show();
       }
     },
+    {
+      label: 'New File', click:  function(){
+        mainWindow.show();
+      }
+    },
+    {
+      label: 'Previous File', click:  function(){
+        mainWindow.show();
+      }
+    },
+    {
+      label: 'Stop Playback', click:  function(){
+        mainWindow.show();
+      }
+    },
+    {
+      label: 'Resume Playback', click:  function(){
+        mainWindow.show();
+      }
+    },
     //{
     //  label: 'Settings',
     //  click: function () {
@@ -104,12 +125,17 @@ app.on('ready', function() {
     {
       label: 'Quit',
       click: function (event) {
+        console.log(event);
         app.quit();
         //event.ipcRenderer.send('remove-tray');
         //ipcRenderer.send('window-all-closed');
       }
     }
   ];
+
+  trayIcon.on('clicked', function() {
+    mainWindow.show();
+  });
 
   var trayMenu = Menu.buildFromTemplate(trayMenuTemplate);
   trayIcon.setToolTip('TagSpaces App');
