@@ -134,10 +134,12 @@ app.on('ready', function(event) {
   ];
 
   trayIcon.on('clicked', function() {
-    mainWindow.show();
+    mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show();
   });
 
+  var title = 'TagSpaces App';
   var trayMenu = Menu.buildFromTemplate(trayMenuTemplate);
-  trayIcon.setToolTip('TagSpaces App');
+  trayIcon.setToolTip(title);
+  trayIcon.setTitle(title);
   trayIcon.setContextMenu(trayMenu);
 });
