@@ -141,7 +141,7 @@ app.on('ready', function(event) {
   });
 
   globalShortcut.register('ctrl+Alt+N', function(){
-    mainWindow.webContents.send("info" ,"newFile");
+    mainWindow.webContents.send("newfile" ,"newFile");
   });
 
   globalShortcut.register('CommandOrControl+Alt+K', function () {

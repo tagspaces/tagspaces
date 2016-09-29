@@ -388,15 +388,15 @@ define(function(require, exports, module) {
     var menu = Menu.buildFromTemplate(template);
     Menu.setApplicationMenu(menu);
 
-    ipcRenderer.on("info", function (event, arg) {
+    ipcRenderer.on("newfile", function (event, arg) {
       console.debug(arg);
-      if(arg === 'newFile') {
+      //if(arg === 'newFile') {
         if (!TSCORE.currentPath) {
           TSCORE.showAlertDialog("ns.common:alertOpenLocatioFirst");
         } else {
           TSCORE.UI.createTXTFile();
         }
-      }
+      //}
     });
 
     ipcRenderer.on("ping", function (event, arg) {
