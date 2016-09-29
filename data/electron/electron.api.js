@@ -8,6 +8,7 @@ const electron = require('electron'); // jshint ignore:line
 const remote = electron.remote; // jshint ignore:line
 const ipcRenderer = require('electron').ipcRenderer; // jshint ignore:line
 
+
 /**
  * A implementation of the IOAPI for the electron platform
  * @class Electron
@@ -24,6 +25,13 @@ define(function(require, exports, module) {
   var TSPOSTIO = require("tspostioapi");
   var fsWatcher;
   var win = remote.getCurrentWindow();
+
+
+  console.log(ipcRenderer.sendSync('synchronous-message', 'ping')); // prints "pong"
+  ipcRenderer.on('asynchronous-reply', function(event, arg) {
+    console.log(arg); // prints "pong"
+  });
+  ipcRenderer.send('asynchronous-message', 'ping');
 
   var showMainWindow = function() {
     win.show();
@@ -51,7 +59,7 @@ define(function(require, exports, module) {
   }
 
   function initMainMenu() {
-
+    //testing icpRenderer from icp bind
     /*if (!TSCORE.Config.getShowMainMenu()) {
      return;
      }*/
@@ -144,7 +152,8 @@ define(function(require, exports, module) {
               } else {
                 //TSCORE.Config.Settings.firstRun = true;
                 TSCORE.Config.saveSettings();
-                window.close();
+                ipcRenderer.send('quit-application', 'Bye, bye...');
+                //window.close();
               }
             }
           }
@@ -376,9 +385,24 @@ define(function(require, exports, module) {
        }
        );*/
     }
-
     var menu = Menu.buildFromTemplate(template);
     Menu.setApplicationMenu(menu);
+
+    ipcRenderer.on("info", function (event, arg) {
+      console.debug(arg);
+      if(arg === 'newFile') {
+        if (!TSCORE.currentPath) {
+          TSCORE.showAlertDialog("ns.common:alertOpenLocatioFirst");
+        } else {
+          TSCORE.UI.createTXTFile();
+        }
+      }
+    });
+
+    ipcRenderer.on("ping", function (event, arg) {
+      console.debug(arg);
+
+    });
   }
 
   // Brings the TagSpaces window on top of the windows

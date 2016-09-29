@@ -6,6 +6,8 @@ const BrowserWindow = electron.BrowserWindow;  // Module to create native browse
 const ipcMain = require('electron').ipcMain;
 const Menu = require('electron').Menu;
 const Tray = require('electron').Tray;
+const globalShortcut = electron.globalShortcut;
+const dialog = electron.dialog;
 
 var debugMode;
 var startupFilePath;
@@ -25,6 +27,17 @@ process.argv.forEach(function(arg, count) {
     console.log("Opening file: " + arg);
     startupFilePath = arg;
   }
+});
+
+// In main process.
+ipcMain.on('asynchronous-message', function(event, arg) {
+  console.log(arg);  // prints "ping"
+  event.sender.send('asynchronous-reply', 'pong');
+});
+
+ipcMain.on('synchronous-message', function(event, arg) {
+  console.log(arg);  // prints "ping"
+  event.returnValue = 'pong';
 });
 
 ipcMain.on('quit-application', function(event, arg) {
@@ -47,7 +60,7 @@ app.on('window-all-closed', function() {
 });
 
 app.on('ready', function(event) {
-  console.log(event);
+  console.log(app.getLocale());
   mainWindow = new BrowserWindow({width: 1280, height: 768});
 
   //var indexPath = 'file://' + __dirname + '/index.html';
@@ -78,14 +91,14 @@ app.on('ready', function(event) {
     mainWindow = null;
   });
 
-  mainWindow.on('minimize',function(event){
+  mainWindow.on('minimize', function(event) {
     event.preventDefault();
     mainWindow.hide();
   });
-
+  //
   if (process.platform == 'darwin') {
     trayIcon = new Tray('assets/icon32.png');
-  } else if(process.platform == 'win') {
+  } else if (process.platform == 'win') {
     trayIcon = new Tray('assets/icon32.png');
   } else {
     trayIcon = new Tray('assets/icon32.png');
@@ -93,39 +106,13 @@ app.on('ready', function(event) {
   var trayMenuTemplate = [
     {
       label: 'Show App',
-      click:  function(){
+      click: function() {
         mainWindow.show();
       }
     },
-    {
-      label: 'New File', click:  function(){
-        mainWindow.show();
-      }
-    },
-    {
-      label: 'Previous File', click:  function(){
-        mainWindow.show();
-      }
-    },
-    {
-      label: 'Stop Playback', click:  function(){
-        mainWindow.show();
-      }
-    },
-    {
-      label: 'Resume Playback', click:  function(){
-        mainWindow.show();
-      }
-    },
-    //{
-    //  label: 'Settings',
-    //  click: function () {
-    //    ipcRenderer.send('open-settings-window');
-    //  }
-    //},
     {
       label: 'Quit',
-      click: function (event) {
+      click: function(event) {
         console.log(event);
         app.quit();
         //event.ipcRenderer.send('remove-tray');
@@ -135,7 +122,6 @@ app.on('ready', function(event) {
   ];
 
   trayIcon.on('click', function() {
-    console.log(mainWindow.isVisible());
     mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show();
   });
 
@@ -144,4 +130,26 @@ app.on('ready', function(event) {
   trayIcon.setToolTip(title);
   trayIcon.setTitle(title);
   trayIcon.setContextMenu(trayMenu);
+
+
+  globalShortcut.register('ctrl+Alt+space', function(){
+    mainWindow.webContents.send('play-pause', 'play-pause');
+  });
+
+  globalShortcut.register('ctrl+Alt+P', function(){
+    mainWindow.webContents.send('ping', 'play');
+  });
+
+  globalShortcut.register('ctrl+Alt+N', function(){
+    mainWindow.webContents.send("info" ,"newFile");
+  });
+
+  globalShortcut.register('CommandOrControl+Alt+K', function () {
+    dialog.showMessageBox({
+      type: 'info',
+      message: 'Success!',
+      detail: 'You pressed the registered global shortcut keybinding.',
+      buttons: ['OK']
+    })
+  })
 });
