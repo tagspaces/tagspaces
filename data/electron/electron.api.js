@@ -8,7 +8,6 @@ const electron = require('electron'); // jshint ignore:line
 const remote = electron.remote; // jshint ignore:line
 const ipcRenderer = require('electron').ipcRenderer; // jshint ignore:line
 
-
 /**
  * A implementation of the IOAPI for the electron platform
  * @class Electron
@@ -388,20 +387,40 @@ define(function(require, exports, module) {
     var menu = Menu.buildFromTemplate(template);
     Menu.setApplicationMenu(menu);
 
-    ipcRenderer.on("newfile", function (event, arg) {
-      console.debug(arg);
-      //if(arg === 'newFile') {
-        if (!TSCORE.currentPath) {
-          TSCORE.showAlertDialog("ns.common:alertOpenLocatioFirst");
-        } else {
-          TSCORE.UI.createTXTFile();
-        }
-      //}
+    ipcRenderer.on("new-file", function(event, arg) {
+      if (!TSCORE.currentPath) {
+        TSCORE.showAlertDialog($.i18n.t("ns.common:alertOpenLocatioFirst"));
+      } else {
+        TSCORE.UI.createTXTFile();
+      }
     });
 
-    ipcRenderer.on("ping", function (event, arg) {
-      console.debug(arg);
+    ipcRenderer.on("next-file", function(event, arg) {
+      if(TSCORE.selectedFiles[0]) {
+        TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getNextFile(TSCORE.FileOpener.getOpenedFilePath()));
+      } else {
+        TSCORE.showAlertDialog($.i18n.t("ns.common:selectFile"));
+      }
+    });
 
+    ipcRenderer.on("previous-file", function(event, arg) {
+      if(TSCORE.selectedFiles[0]) {
+        TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getPrevFile(TSCORE.FileOpener.getOpenedFilePath()));
+      } else {
+        TSCORE.showAlertDialog($.i18n.t("ns.common:selectFile"));
+      }
+    });
+
+    ipcRenderer.on("play", function(event, arg) {
+      console.debug(arg);
+    });
+
+    ipcRenderer.on("play-pause", function(event, arg) {
+      console.debug(arg);
+    });
+
+    ipcRenderer.on("showing-tagspaces", function(event, arg) {
+      TSCORE.UI.openNewInstance();
     });
   }
 

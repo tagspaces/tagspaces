@@ -131,25 +131,27 @@ app.on('ready', function(event) {
   trayIcon.setTitle(title);
   trayIcon.setContextMenu(trayMenu);
 
-
   globalShortcut.register('ctrl+Alt+space', function(){
     mainWindow.webContents.send('play-pause', 'play-pause');
   });
 
   globalShortcut.register('ctrl+Alt+P', function(){
-    mainWindow.webContents.send('ping', 'play');
+    mainWindow.webContents.send('play', 'play');
   });
 
   globalShortcut.register('ctrl+Alt+N', function(){
-    mainWindow.webContents.send("newfile" ,"newFile");
+    mainWindow.webContents.send("new-file" ,"new");
   });
 
-  globalShortcut.register('CommandOrControl+Alt+K', function () {
-    dialog.showMessageBox({
-      type: 'info',
-      message: 'Success!',
-      detail: 'You pressed the registered global shortcut keybinding.',
-      buttons: ['OK']
-    })
+  globalShortcut.register('ctrl+Alt+I', function(){
+    mainWindow.webContents.send("next-file" ,"next");
+  });
+
+  globalShortcut.register('ctrl+Alt+O', function(){
+    mainWindow.webContents.send("previous-file" ,"previous");
+  });
+
+  globalShortcut.register('CommandOrControl+Alt+T', function () {
+    mainWindow.webContents.send("showing-tagspaces" ,"tagspaces");
   })
 });
