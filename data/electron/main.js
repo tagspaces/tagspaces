@@ -165,29 +165,17 @@ app.on('ready', function(event) {
   trayIcon.setTitle(title);
   trayIcon.setContextMenu(trayMenu);
 
-  globalShortcut.register('CommandOrControl+Alt+space', function() {
-    stopPlayback();
-  });
+  globalShortcut.register('CommandOrControl+Alt+space',stopPlayback);
 
-  globalShortcut.register('CommandOrControl+Alt+P', function() {
-    resumePlayback();
-  });
+  globalShortcut.register('CommandOrControl+Alt+P', resumePlayback);
 
-  globalShortcut.register('CommandOrControl+Alt+N', function() {
-    newFile();
-  });
+  globalShortcut.register('CommandOrControl+Alt+N', newFile);
 
-  globalShortcut.register('CommandOrControl+Alt+I', function() {
-    getNextFile();
-  });
+  globalShortcut.register('CommandOrControl+Alt+I',getNextFile);
 
-  globalShortcut.register('CommandOrControl+Alt+O', function() {
-    getPreviousFile();
-  });
+  globalShortcut.register('CommandOrControl+Alt+O', getPreviousFile);
 
-  globalShortcut.register('CommandOrControl+Alt+L', function() {
-    showTagSpaces();
-  });
+  globalShortcut.register('CommandOrControl+Alt+T', showTagSpaces);
 
   function showTagSpaces() {
     mainWindow.show();
