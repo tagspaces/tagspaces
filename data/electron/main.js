@@ -13,7 +13,6 @@ var debugMode;
 var startupFilePath;
 var trayIcon = null;
 
-
 //handling start parameter
 //console.log(JSON.stringify(process.argv));
 process.argv.forEach(function(arg, count) {
@@ -58,7 +57,6 @@ app.on('window-all-closed', function() {
   //}
 });
 
-
 app.on('ready', function(event) {
   console.log(app.getLocale());
   console.log(app.getAppPath());
@@ -99,7 +97,7 @@ app.on('ready', function(event) {
       message: 'This process has crashed.',
       buttons: ['Reload', 'Close']
     };
-    dialog.showMessageBox(options, function(index) {
+    dialog.showMessageBox(mainWindow ,options, function(index) {
       mainWindow.hide();
       if (index === 0) {
         mainWindow.reload();
@@ -113,7 +111,7 @@ app.on('ready', function(event) {
   //  event.preventDefault();
   //  mainWindow.hide();
   //});
-  //
+
   if (process.platform === 'darwin') {
     trayIcon = new Tray('assets/icon32.png');
   } else if (process.platform === 'win') {
@@ -123,7 +121,7 @@ app.on('ready', function(event) {
   }
   var trayMenuTemplate = [
     {
-      label: 'Show App',
+      label: 'TagSpaces',
       click: function() {
         mainWindow.show();
       }
@@ -149,18 +147,19 @@ app.on('ready', function(event) {
         mainWindow.webContents.send("previous-file", "previous");
       }
     },
-    //{
-    //  label: 'Stop Playback',
-    //  click: function() {
-    //    mainWindow.show();
-    //  }
-    //},
-    //{
-    //  label: 'Resume Playback',
-    //  click: function() {
-    //    mainWindow.show();
-    //  }
-    //},
+    {
+      label: 'Stop Playback',
+      click: function() {
+        mainWindow.show();
+        mainWindow.webContents.setAudioMuted(true);
+      }
+    },
+    {
+      label: 'Resume Playback',
+      click: function() {
+        //mainWindow.show();
+      }
+    },
     {
       label: 'Quit',
       click: function(event) {
@@ -186,22 +185,27 @@ app.on('ready', function(event) {
   });
 
   globalShortcut.register('CommandOrControl+Alt+P', function() {
+    mainWindow.show();
     mainWindow.webContents.send('play', 'play');
   });
 
   globalShortcut.register('CommandOrControl+Alt+N', function() {
+    mainWindow.show();
     mainWindow.webContents.send("new-file", "new");
   });
 
   globalShortcut.register('CommandOrControl+Alt+I', function() {
+    mainWindow.show();
     mainWindow.webContents.send("next-file", "next");
   });
 
   globalShortcut.register('CommandOrControl+Alt+O', function() {
+    mainWindow.show();
     mainWindow.webContents.send("previous-file", "previous");
   });
 
   globalShortcut.register('CommandOrControl+Alt+L', function() {
+    mainWindow.show();
     mainWindow.webContents.send("showing-tagspaces", "tagspaces");
   });
 });
