@@ -123,39 +123,33 @@ app.on('ready', function(event) {
     {
       label: 'TagSpaces',
       click: function() {
-        showTagSpaces();
+        mainWindow.show();
       }
     },
     {
       label: 'New File',
-      click: function() {
-        newFile();
-      }
+      click: newFile
     },
     {
       label: 'Next File',
-      click: function() {
-        getNextFile();
-      }
+      click: getNextFile
     },
     {
       label: 'Previous File',
-      click: function() {
-        getPreviousFile();
-      }
+      click: getPreviousFile
     },
-    //{
-    //  label: 'Stop Playback',
-    //  click: stopPlayback()
-    //},
-    //{
-    //  label: 'Resume Playback',
-    //  click: resumePlayback()
-    //},
+    {
+      label: 'Stop Playback',
+      click: stopPlayback
+    },
+    {
+      label: 'Resume Playback',
+      click: resumePlayback
+    },
     {
       label: 'Quit',
       click: function() {
-        app.quit()
+        app.quit();
       }
     }
   ];
@@ -172,11 +166,11 @@ app.on('ready', function(event) {
   trayIcon.setContextMenu(trayMenu);
 
   globalShortcut.register('CommandOrControl+Alt+space', function() {
-    //stopPlayback();
+    stopPlayback();
   });
 
   globalShortcut.register('CommandOrControl+Alt+P', function() {
-    //resumePlayback();
+    resumePlayback();
   });
 
   globalShortcut.register('CommandOrControl+Alt+N', function() {
@@ -215,15 +209,15 @@ app.on('ready', function(event) {
     mainWindow.webContents.send("previous-file", "previous");
   }
 
-  //function resumePlayback() {
-  //  mainWindow.show();
-  //  mainWindow.webContents.send('play', 'play');
-  //}
-  //
-  //function stopPlayback() {
-  //  mainWindow.show();
-  //  mainWindow.webContents.send('play-pause', 'play-pause');
-  //}
+  function resumePlayback() {
+    mainWindow.show();
+    mainWindow.webContents.send('play', 'play');
+  }
+
+  function stopPlayback() {
+    mainWindow.show();
+    mainWindow.webContents.send('play-pause', 'play-pause');
+  }
 });
 
 process.on('uncaughtException', function(error) {
