@@ -41,7 +41,6 @@ ipcMain.on('synchronous-message', function(event, arg) {
 });
 
 ipcMain.on('quit-application', function(event, arg) {
-  //console.log(arg);
   app.quit();
 });
 
@@ -58,18 +57,6 @@ app.on('window-all-closed', function() {
   app.quit();
   //}
 });
-
-//app.setUserTasks([
-//  {
-//    program: process.execPath,
-//    arguments: '--new-window',
-//    iconPath: process.execPath,
-//    iconIndex: 0,
-//    title: 'New Window',
-//    description: 'Create a new window'
-//  }
-//]);
-//
 
 
 app.on('ready', function(event) {
@@ -91,26 +78,6 @@ app.on('ready', function(event) {
     mainWindow.webContents.openDevTools();
   }
 
-  process.on('uncaughtException', function(error) {
-    // Handle the error
-    if (error) {
-      const options = {
-        type: 'info',
-        title: 'Renderer Process Crashed',
-        message: 'This process has crashed.',
-        buttons: ['Reload', 'Close']
-      };
-      dialog.showMessageBox(options, function(index) {
-        if (index === 0) {
-          mainWindow.reload();
-        } else {
-          mainWindow.close();
-        }
-      });
-      mainWindow.hide();
-    }
-  });
-
   var webContents = mainWindow.webContents;
 
   webContents.on('crash', function(e) {
@@ -123,6 +90,23 @@ app.on('ready', function(event) {
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
     mainWindow = null;
+  });
+
+  mainWindow.webContents.on('crashed', function(){
+    const options = {
+      type: 'info',
+      title: 'Renderer Process Crashed',
+      message: 'This process has crashed.',
+      buttons: ['Reload', 'Close']
+    };
+    dialog.showMessageBox(options, function(index) {
+      mainWindow.hide();
+      if (index === 0) {
+        mainWindow.reload();
+      } else {
+        mainWindow.close();
+      }
+    });
   });
 
   //mainWindow.on('minimize', function(event) {
@@ -145,12 +129,43 @@ app.on('ready', function(event) {
       }
     },
     {
+      label: 'New File',
+      click: function() {
+        mainWindow.show();
+        mainWindow.webContents.send("new-file", "new");
+      }
+    },
+    {
+      label: 'Next File',
+      click: function() {
+        mainWindow.show();
+        mainWindow.webContents.send("next-file", "next");
+      }
+    },
+    {
+      label: 'Previous File',
+      click: function() {
+        mainWindow.show();
+        mainWindow.webContents.send("previous-file", "previous");
+      }
+    },
+    //{
+    //  label: 'Stop Playback',
+    //  click: function() {
+    //    mainWindow.show();
+    //  }
+    //},
+    //{
+    //  label: 'Resume Playback',
+    //  click: function() {
+    //    mainWindow.show();
+    //  }
+    //},
+    {
       label: 'Quit',
       click: function(event) {
-        console.log(event);
         app.quit();
         //event.ipcRenderer.send('remove-tray');
-        //ipcRenderer.send('window-all-closed');
       }
     }
   ];
@@ -186,7 +201,29 @@ app.on('ready', function(event) {
     mainWindow.webContents.send("previous-file", "previous");
   });
 
-  globalShortcut.register('CommandOrControl+Alt+K', function() {
+  globalShortcut.register('CommandOrControl+Alt+L', function() {
     mainWindow.webContents.send("showing-tagspaces", "tagspaces");
   });
+});
+
+process.on('uncaughtException', function(error) {
+  if (error.stack) {
+    console.error('error:', error.stack);
+  }
+  // Handle the error
+  if (error) {
+    const options = {
+      type: 'info',
+      title: 'Renderer Process Crashed',
+      message: 'This process has crashed.',
+      buttons: ['Reload', 'Close']
+    };
+    dialog.showMessageBox(mainWindow, options, function(index) {
+      if (index === 0) {
+        mainWindow.reload();
+      } else {
+        mainWindow.close();
+      }
+    });
+  }
 });
