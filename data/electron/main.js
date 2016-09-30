@@ -123,48 +123,39 @@ app.on('ready', function(event) {
     {
       label: 'TagSpaces',
       click: function() {
-        mainWindow.show();
+        showTagSpaces();
       }
     },
     {
       label: 'New File',
       click: function() {
-        mainWindow.show();
-        mainWindow.webContents.send("new-file", "new");
+        newFile();
       }
     },
     {
       label: 'Next File',
       click: function() {
-        mainWindow.show();
-        mainWindow.webContents.send("next-file", "next");
+        getNextFile();
       }
     },
     {
       label: 'Previous File',
       click: function() {
-        mainWindow.show();
-        mainWindow.webContents.send("previous-file", "previous");
+        getPreviousFile();
       }
     },
-    {
-      label: 'Stop Playback',
-      click: function() {
-        mainWindow.show();
-        mainWindow.webContents.setAudioMuted(true);
-      }
-    },
-    {
-      label: 'Resume Playback',
-      click: function() {
-        //mainWindow.show();
-      }
-    },
+    //{
+    //  label: 'Stop Playback',
+    //  click: stopPlayback()
+    //},
+    //{
+    //  label: 'Resume Playback',
+    //  click: resumePlayback()
+    //},
     {
       label: 'Quit',
-      click: function(event) {
-        app.quit();
-        //event.ipcRenderer.send('remove-tray');
+      click: function() {
+        app.quit()
       }
     }
   ];
@@ -181,33 +172,58 @@ app.on('ready', function(event) {
   trayIcon.setContextMenu(trayMenu);
 
   globalShortcut.register('CommandOrControl+Alt+space', function() {
-    mainWindow.webContents.send('play-pause', 'play-pause');
+    //stopPlayback();
   });
 
   globalShortcut.register('CommandOrControl+Alt+P', function() {
-    mainWindow.show();
-    mainWindow.webContents.send('play', 'play');
+    //resumePlayback();
   });
 
   globalShortcut.register('CommandOrControl+Alt+N', function() {
-    mainWindow.show();
-    mainWindow.webContents.send("new-file", "new");
+    newFile();
   });
 
   globalShortcut.register('CommandOrControl+Alt+I', function() {
-    mainWindow.show();
-    mainWindow.webContents.send("next-file", "next");
+    getNextFile();
   });
 
   globalShortcut.register('CommandOrControl+Alt+O', function() {
-    mainWindow.show();
-    mainWindow.webContents.send("previous-file", "previous");
+    getPreviousFile();
   });
 
   globalShortcut.register('CommandOrControl+Alt+L', function() {
+    showTagSpaces();
+  });
+
+  function showTagSpaces() {
     mainWindow.show();
     mainWindow.webContents.send("showing-tagspaces", "tagspaces");
-  });
+  }
+
+  function newFile() {
+    mainWindow.show();
+    mainWindow.webContents.send("new-file", "new");
+  }
+
+  function getNextFile() {
+    mainWindow.show();
+    mainWindow.webContents.send("next-file", "next");
+  }
+
+  function getPreviousFile() {
+    mainWindow.show();
+    mainWindow.webContents.send("previous-file", "previous");
+  }
+
+  //function resumePlayback() {
+  //  mainWindow.show();
+  //  mainWindow.webContents.send('play', 'play');
+  //}
+  //
+  //function stopPlayback() {
+  //  mainWindow.show();
+  //  mainWindow.webContents.send('play-pause', 'play-pause');
+  //}
 });
 
 process.on('uncaughtException', function(error) {
