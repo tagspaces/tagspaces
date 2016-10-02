@@ -906,14 +906,21 @@ define(function(require, exports) {
   }
 
   function showAudioRecordingDialog() {
-    //require("webaudiorecording");
-    $('#audioRecordingDialog').modal({
-      backdrop: 'static',
-      show: true
-    });
-    $('#audioRecordingDialog').draggable({
-      handle: ".modal-header"
-    });
+    if (!TSCORE.currentPath) {
+      TSCORE.showAlertDialog($.i18n.t("ns.common:alertOpenLocatioFirst"));
+      return;
+    }
+    if (TSCORE.PRO) {
+      $('#audioRecordingDialog').modal({
+        backdrop: 'static',
+        show: true
+      });
+      $('#audioRecordingDialog').draggable({
+        handle: ".modal-header"
+      });
+    } else {
+      TSCORE.showAlertDialog("You need the PRO version in order to use this functionality.");
+    }
   }
 
   function showLicenseDialog() {
@@ -1096,16 +1103,28 @@ define(function(require, exports) {
   }
 
   function createHTMLFile() {
+    if (!TSCORE.currentPath) {
+      TSCORE.showAlertDialog($.i18n.t("ns.common:alertOpenLocatioFirst"));
+      return;
+    }
     var filePath = TSCORE.currentPath + TSCORE.dirSeparator + TSCORE.TagUtils.beginTagContainer + TSCORE.TagUtils.formatDateTime4Tag(new Date(), true) + TSCORE.TagUtils.endTagContainer + '.html';
     createNewTextFile(filePath, TSCORE.Config.getNewHTMLFileContent());
   }
 
   function createMDFile() {
+    if (!TSCORE.currentPath) {
+      TSCORE.showAlertDialog($.i18n.t("ns.common:alertOpenLocatioFirst"));
+      return;
+    }
     var filePath = TSCORE.currentPath + TSCORE.dirSeparator + TSCORE.TagUtils.beginTagContainer + TSCORE.TagUtils.formatDateTime4Tag(new Date(), true) + TSCORE.TagUtils.endTagContainer + '.md';
     createNewTextFile(filePath, TSCORE.Config.getNewMDFileContent());
   }
 
   function createTXTFile() {
+    if (!TSCORE.currentPath) {
+      TSCORE.showAlertDialog($.i18n.t("ns.common:alertOpenLocatioFirst"));
+      return;
+    }
     var filePath = TSCORE.currentPath + TSCORE.dirSeparator + TSCORE.TagUtils.beginTagContainer + TSCORE.TagUtils.formatDateTime4Tag(new Date(), true) + TSCORE.TagUtils.endTagContainer + '.txt';
     createNewTextFile(filePath, TSCORE.Config.getNewTextFileContent());
   }

@@ -80,50 +80,22 @@ define(function(require, exports, module) {
           {
             label: $.i18n.t("ns.common:createFile"),
             accelerator: '',
-            click: function() {
-              if (!TSCORE.currentPath) {
-                TSCORE.showAlertDialog("ns.common:alertOpenLocatioFirst");
-              } else {
-                TSCORE.UI.createTXTFile();
-              }
-            }
+            click: TSCORE.UI.createTXTFile
           },
           {
             label: $.i18n.t("ns.common:createMarkdown"),
             accelerator: '',
-            click: function() {
-              if (!TSCORE.currentPath) {
-                TSCORE.showAlertDialog("ns.common:alertOpenLocatioFirst");
-              } else {
-                TSCORE.UI.createMDFile();
-              }
-            }
+            click: TSCORE.UI.createMDFile
           },
           {
             label: $.i18n.t("ns.common:createRichTextFile"),
             accelerator: '',
-            click: function() {
-              if (!TSCORE.currentPath) {
-                TSCORE.showAlertDialog("ns.common:alertOpenLocatioFirst");
-              } else {
-                TSCORE.UI.createHTMLFile();
-              }
-            }
+            click: TSCORE.UI.createHTMLFile
           },
           {
             label: $.i18n.t("ns.common:createAudioFile"),
             accelerator: '',
-            click: function() {
-              if (!TSCORE.currentPath) {
-                TSCORE.showAlertDialog("ns.common:alertOpenLocatioFirst");
-              } else {
-                if (TSCORE.PRO) {
-                  TSCORE.UI.showAudioRecordingDialog();
-                } else {
-                  TSCORE.showAlertDialog("You need the PRO version in order to use this functionality.");
-                }
-              }
-            }
+            click: TSCORE.UI.showAudioRecordingDialog
           },
           {
             type: 'separator'
@@ -143,16 +115,26 @@ define(function(require, exports, module) {
             type: 'separator'
           },
           {
+            label: $.i18n.t("ns.common:saveFile"),
+            accelerator: 'CmdOrCtrl+S',
+            click: function() {
+              if (TSCORE.FileOpener.isFileEdited) {
+                TSCORE.FileOpener.saveFile();
+              }
+            }
+          },
+          {
+            type: 'separator'
+          },
+          {
             label: $.i18n.t("ns.common:exitApp"),
             accelerator: '',
             click: function() {
               if (!TSCORE.currentPath) {
                 TSCORE.showAlertDialog("Not open current directory !");
               } else {
-                //TSCORE.Config.Settings.firstRun = true;
                 TSCORE.Config.saveSettings();
                 ipcRenderer.send('quit-application', 'Bye, bye...');
-                //window.close();
               }
             }
           }
@@ -388,10 +370,14 @@ define(function(require, exports, module) {
     Menu.setApplicationMenu(menu);
 
     ipcRenderer.on("new-file", function(event, arg) {
-      if (!TSCORE.currentPath) {
-        TSCORE.showAlertDialog($.i18n.t("ns.common:alertOpenLocatioFirst"));
-      } else {
+      if (arg === "text") {
         TSCORE.UI.createTXTFile();
+      } else if (arg === "html") {
+        TSCORE.UI.createHTMLFile();
+      } else if (arg === "markdown") {
+        TSCORE.UI.createMDFile();
+      } else if (arg === "audio") {
+        TSCORE.UI.showAudioRecordingDialog();
       }
     });
 
@@ -411,16 +397,8 @@ define(function(require, exports, module) {
       }
     });
 
-    ipcRenderer.on("play", function(event, arg) {
-      console.debug(arg);
-    });
-
     ipcRenderer.on("play-pause", function(event, arg) {
       console.debug(arg);
-    });
-
-    ipcRenderer.on("showing-tagspaces", function(event, arg) {
-      TSCORE.UI.openNewInstance();
     });
   }
 
