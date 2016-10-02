@@ -19,7 +19,7 @@ process.argv.forEach(function(arg, count) {
   if (arg.toLowerCase() === '-d' || arg.toLowerCase() === '--debug') {
     debugMode = true;
   } else if (arg.toLowerCase() === '-p' || arg.toLowerCase() === '--portable') {
-    app.setPath('userData', 'tsprofile'); // making the app portable
+    app.setPath('userData', process.cwd() + '/tsprofile'); // making the app portable
   } else if (arg === '.' || count === 0) { // ignoring the first argument
     //Ignore these argument
   } else if (arg.length > 2) {
@@ -30,12 +30,12 @@ process.argv.forEach(function(arg, count) {
 
 // In main process.
 ipcMain.on('asynchronous-message', function(event, arg) {
-  console.log(arg);  // prints "ping"
+  //console.log(arg);  // prints "ping"
   event.sender.send('asynchronous-reply', 'pong');
 });
 
 ipcMain.on('synchronous-message', function(event, arg) {
-  console.log(arg);  // prints "ping"
+  //console.log(arg);  // prints "ping"
   event.returnValue = 'pong';
 });
 
@@ -57,9 +57,15 @@ app.on('window-all-closed', function() {
   //}
 });
 
+app.on('will-quit', () => {
+
+  // Unregister all shortcuts.
+  globalShortcut.unregisterAll()
+})
+
 app.on('ready', function(event) {
-  console.log(app.getLocale());
-  console.log(app.getAppPath());
+  //console.log(app.getLocale());
+  //console.log(app.getAppPath());
   mainWindow = new BrowserWindow({width: 1280, height: 768});
 
   //var indexPath = 'file://' + __dirname + '/index.html';
@@ -75,12 +81,6 @@ app.on('ready', function(event) {
   if (debugMode) {
     mainWindow.webContents.openDevTools();
   }
-
-  var webContents = mainWindow.webContents;
-
-  webContents.on('crash', function(e) {
-    console.log("WebContent crashed");
-  });
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function() {
@@ -113,41 +113,60 @@ app.on('ready', function(event) {
   //});
 
   if (process.platform === 'darwin') {
-    trayIcon = new Tray('assets/icon32.png');
+    trayIcon = new Tray('assets/trayicon.png');
   } else if (process.platform === 'win') {
-    trayIcon = new Tray('assets/icon32.png');
+    trayIcon = new Tray('assets/trayicon.png');
   } else {
-    trayIcon = new Tray('assets/icon32.png');
+    trayIcon = new Tray('assets/trayicon.png');
   }
   var trayMenuTemplate = [
     {
-      label: 'TagSpaces',
-      click: function() {
-        mainWindow.show();
-      }
+      label: 'Show TagSpaces',
+      click: showTagSpaces
     },
     {
-      label: 'New File',
-      click: newFile
+      type: 'separator'
     },
     {
-      label: 'Next File',
+      label: 'New Text File',
+      click: newTextFile
+    },
+    {
+      label: 'New HTML File',
+      click: newHTMLFile
+    },
+    {
+      label: 'New Markdown File',
+      click: newMDFile
+    },
+    {
+      label: 'New Audio File',
+      click: newAudioFile
+    },
+    {
+      type: 'separator'
+    },
+    {
+      label: 'Open Next File',
       click: getNextFile
     },
     {
-      label: 'Previous File',
+      label: 'Open Previous File',
       click: getPreviousFile
     },
     {
-      label: 'Stop Playback',
-      click: stopPlayback
+      type: 'separator'
     },
     {
-      label: 'Resume Playback',
+      label: 'Pause/Resume Playback',
+      sublabel: 'Ctrl+Alt+P',
       click: resumePlayback
     },
     {
-      label: 'Quit',
+      type: 'separator'
+    },
+    {
+      label: 'Quit TagSpaces',
       click: function() {
         app.quit();
       }
@@ -165,26 +184,39 @@ app.on('ready', function(event) {
   trayIcon.setTitle(title);
   trayIcon.setContextMenu(trayMenu);
 
-  globalShortcut.register('CommandOrControl+Alt+space',stopPlayback);
-
   globalShortcut.register('CommandOrControl+Alt+P', resumePlayback);
 
-  globalShortcut.register('CommandOrControl+Alt+N', newFile);
+  globalShortcut.register('CommandOrControl+Alt+N', newTextFile);
 
   globalShortcut.register('CommandOrControl+Alt+I',getNextFile);
 
   globalShortcut.register('CommandOrControl+Alt+O', getPreviousFile);
 
-  globalShortcut.register('CommandOrControl+Alt+T', showTagSpaces);
+  globalShortcut.register('CommandOrControl+Alt+S', showTagSpaces);
 
   function showTagSpaces() {
     mainWindow.show();
-    mainWindow.webContents.send("showing-tagspaces", "tagspaces");
+    //mainWindow.webContents.send("showing-tagspaces", "tagspaces");
   }
 
-  function newFile() {
+  function newTextFile() {
     mainWindow.show();
-    mainWindow.webContents.send("new-file", "new");
+    mainWindow.webContents.send("new-file", "text");
+  }
+
+  function newHTMLFile() {
+    mainWindow.show();
+    mainWindow.webContents.send("new-file", "html");
+  }
+
+  function newMDFile() {
+    mainWindow.show();
+    mainWindow.webContents.send("new-file", "markdown");
+  }
+
+  function newAudioFile() {
+    mainWindow.show();
+    mainWindow.webContents.send("new-file", "audio");
   }
 
   function getNextFile() {
@@ -198,22 +230,19 @@ app.on('ready', function(event) {
   }
 
   function resumePlayback() {
-    mainWindow.show();
-    mainWindow.webContents.send('play', 'play');
+    //mainWindow.show();
+    mainWindow.webContents.send('play-pause', 'test');
   }
 
-  function stopPlayback() {
-    mainWindow.show();
-    mainWindow.webContents.send('play-pause', 'play-pause');
-  }
 });
 
 process.on('uncaughtException', function(error) {
   if (error.stack) {
     console.error('error:', error.stack);
   }
+  mainWindow.reload();
   // Handle the error
-  if (error) {
+  /*if (error) {
     const options = {
       type: 'info',
       title: 'Renderer Process Crashed',
@@ -227,5 +256,5 @@ process.on('uncaughtException', function(error) {
         mainWindow.close();
       }
     });
-  }
+  }*/
 });
