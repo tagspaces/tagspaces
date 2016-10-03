@@ -224,7 +224,7 @@ define(function(require, exports, module) {
       if (cSecond.length === 1) {
         cSecond = '0' + cSecond;
       }
-      time = '-' + cHour + '' + cMinute + '' + cSecond;
+      time = '~' + cHour + '' + cMinute + '' + cSecond;
     }
 
     var milliseconds = '';

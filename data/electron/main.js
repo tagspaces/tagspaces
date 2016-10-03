@@ -57,11 +57,10 @@ app.on('window-all-closed', function() {
   //}
 });
 
-app.on('will-quit', () => {
-
+app.on('will-quit', function() {
   // Unregister all shortcuts.
-  globalShortcut.unregisterAll()
-})
+  globalShortcut.unregisterAll();
+});
 
 app.on('ready', function(event) {
   //console.log(app.getLocale());
@@ -90,14 +89,14 @@ app.on('ready', function(event) {
     mainWindow = null;
   });
 
-  mainWindow.webContents.on('crashed', function(){
+  mainWindow.webContents.on('crashed', function() {
     const options = {
       type: 'info',
       title: 'Renderer Process Crashed',
       message: 'This process has crashed.',
       buttons: ['Reload', 'Close']
     };
-    dialog.showMessageBox(mainWindow ,options, function(index) {
+    dialog.showMessageBox(mainWindow, options, function(index) {
       mainWindow.hide();
       if (index === 0) {
         mainWindow.reload();
@@ -188,7 +187,7 @@ app.on('ready', function(event) {
 
   globalShortcut.register('CommandOrControl+Alt+N', newTextFile);
 
-  globalShortcut.register('CommandOrControl+Alt+I',getNextFile);
+  globalShortcut.register('CommandOrControl+Alt+I', getNextFile);
 
   globalShortcut.register('CommandOrControl+Alt+O', getPreviousFile);
 
@@ -243,18 +242,18 @@ process.on('uncaughtException', function(error) {
   mainWindow.reload();
   // Handle the error
   /*if (error) {
-    const options = {
-      type: 'info',
-      title: 'Renderer Process Crashed',
-      message: 'This process has crashed.',
-      buttons: ['Reload', 'Close']
-    };
-    dialog.showMessageBox(mainWindow, options, function(index) {
-      if (index === 0) {
-        mainWindow.reload();
-      } else {
-        mainWindow.close();
-      }
-    });
-  }*/
+   const options = {
+   type: 'info',
+   title: 'Renderer Process Crashed',
+   message: 'This process has crashed.',
+   buttons: ['Reload', 'Close']
+   };
+   dialog.showMessageBox(mainWindow, options, function(index) {
+   if (index === 0) {
+   mainWindow.reload();
+   } else {
+   mainWindow.close();
+   }
+   });
+   }*/
 });
