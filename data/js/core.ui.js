@@ -198,7 +198,7 @@ define(function(require, exports) {
     });
 
     // Open About Dialog
-    $('#openAboutBox').click(function() {
+    $('#openAboutBox').on('click', function() {
       $('#dialogAbout').modal({
         backdrop: 'static',
         show: true
@@ -209,47 +209,58 @@ define(function(require, exports) {
     });
 
     // Open Options Dialog
-    $('#openOptions').click(function() {
+    $('#openOptions').on('click', function() {
       showOptionsDialog();
     });
 
     // File Menu
-    $('#fileMenuAddTag').click(function() {
+    $('#fileMenuAddTag').on('click', function() {
       TSCORE.showAddTagsDialog();
     });
 
-    $('#fileMenuOpenFile').click(function() {
+    $('#fileMenuOpenFile').on('click', function() {
       TSCORE.FileOpener.openFile(TSCORE.selectedFiles[0]);
     });
 
-    $('#fileMenuOpenNatively').click(function() {
+    $('#fileMenuOpenNatively').on('click', function() {
       TSCORE.IO.openFile(TSCORE.selectedFiles[0]);
     });
 
-    $('#fileMenuSendTo').click(function() {
+    $('#fileMenuSendTo').on('click', function() {
       TSCORE.IO.sendFile(TSCORE.selectedFiles[0]);
     });
 
-    $('#fileMenuOpenDirectory').click(function() {
+    $('#fileMenuOpenDirectory').on('click', function() {
       var dirPath = TSCORE.Utils.dirName(TSCORE.selectedFiles[0]);
       TSCORE.IO.openDirectory(dirPath);
     });
 
-    $('#fileMenuRenameFile').click(function() {
+    $('#fileMenuRenameFile').on('click', function() {
       TSCORE.showFileRenameDialog(TSCORE.selectedFiles[0]);
     });
 
-    $('#fileMenuMoveCopyFile').click(function() {
+    $('#fileMenuMoveCopyFile').on('click', function() {
       TSCORE.showMoveCopyFilesDialog();
     });
 
-    $('#fileMenuDeleteFile').click(function() {
+    $('#fileMenuDeleteFile').on('click', function() {
       TSCORE.showFileDeleteDialog(TSCORE.selectedFiles[0]);
     });
 
-    $('#fileOpenProperties').click(function() {
-    });
     // End File Menu
+
+
+    $('#createTextFileButton').on('click', createTXTFile);
+
+    $('#createHTMLFileButton').on('click', createHTMLFile);
+
+    $('#createMarkdownFileButton').on('click', createMDFile);
+
+    $('#createAudioFileButton').on('click', showAudioRecordingDialog);
+
+    $('#addExistingFileButton').on('click', function() {
+      $("#addFileInput").click();
+    });
 
     $('#showLocations').on('click', function() {
       showLocationsPanel();
