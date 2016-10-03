@@ -47,6 +47,8 @@ define(function (require, exports, module) {
         "useTextExtraction":        false,
         "useGenerateThumbnails":    false,
         "watchCurrentDirectory":    false,
+        "defaultTagTextColor":     "#ffffff",
+        "defaultTagColor":         "#008000",
         "supportedLanguages": [
             { "iso": "en_US", "title": "English" },
             { "iso": "de_DE", "title": "Deutsch (German)" },
@@ -110,6 +112,7 @@ define(function (require, exports, module) {
             { "type": "html", "viewer": "viewerHTML", "editor": "editorHTML" },
             { "type": "htm", "viewer": "viewerHTML", "editor": "editorHTML" },
             { "type": "xhtml", "viewer": "viewerHTML", "editor": "editorText" },
+            { "type": "eml", "viewer": "@@MHTVIEWER", "editor": "false" },
             { "type": "mht", "viewer": "@@MHTVIEWER", "editor": "false" },
             { "type": "mhtml", "viewer": "@@MHTVIEWER", "editor": "false" },
             { "type": "odt", "viewer": "editorODF", "editor": "false" },
