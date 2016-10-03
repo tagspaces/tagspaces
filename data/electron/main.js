@@ -102,6 +102,8 @@ app.on('ready', function(event) {
   } else {
     trayIcon = new Tray('resources/app/assets/trayicon.png');
   }
+  //trayIcon = new Tray('assets/trayicon.png'); // 4 dev
+
   var trayMenuTemplate = [
     {
       label: 'Show TagSpaces',
