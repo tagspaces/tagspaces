@@ -230,7 +230,7 @@ app.on('ready', function(event) {
 
   function resumePlayback() {
     //mainWindow.show();
-    mainWindow.webContents.send('play-pause', 'test');
+    mainWindow.webContents.send('play-pause', true);
   }
 
 });

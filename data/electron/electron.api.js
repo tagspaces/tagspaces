@@ -26,11 +26,11 @@ define(function(require, exports, module) {
   var win = remote.getCurrentWindow();
 
 
-  console.log(ipcRenderer.sendSync('synchronous-message', 'ping')); // prints "pong"
-  ipcRenderer.on('asynchronous-reply', function(event, arg) {
-    console.log(arg); // prints "pong"
-  });
-  ipcRenderer.send('asynchronous-message', 'ping');
+  //console.log(ipcRenderer.sendSync('synchronous-message', 'ping')); // prints "pong"
+  //ipcRenderer.on('asynchronous-reply', function(event, arg) {
+  //  console.log(arg); // prints "pong"
+  //});
+  //ipcRenderer.send('asynchronous-message', 'ping');
 
   var showMainWindow = function() {
     win.show();
@@ -398,7 +398,9 @@ define(function(require, exports, module) {
     });
 
     ipcRenderer.on("play-pause", function(event, arg) {
-      console.debug(arg);
+      // Create the event.
+      var audioEvent = new CustomEvent('resume', { 'detail': arg });
+      window.dispatchEvent(audioEvent);
     });
   }
 
