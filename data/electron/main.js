@@ -28,17 +28,6 @@ process.argv.forEach(function(arg, count) {
   }
 });
 
-// In main process.
-ipcMain.on('asynchronous-message', function(event, arg) {
-  //console.log(arg);  // prints "ping"
-  event.sender.send('asynchronous-reply', 'pong');
-});
-
-ipcMain.on('synchronous-message', function(event, arg) {
-  //console.log(arg);  // prints "ping"
-  event.returnValue = 'pong';
-});
-
 ipcMain.on('quit-application', function(event, arg) {
   app.quit();
 });
@@ -106,17 +95,12 @@ app.on('ready', function(event) {
     });
   });
 
-  //mainWindow.on('minimize', function(event) {
-  //  event.preventDefault();
-  //  mainWindow.hide();
-  //});
-
   if (process.platform === 'darwin') {
-    trayIcon = new Tray('assets/trayicon.png');
+    trayIcon = new Tray('Contents/Resources/app/assets/trayicon.png');
   } else if (process.platform === 'win') {
-    trayIcon = new Tray('assets/trayicon.png');
+    trayIcon = new Tray('resources/app/assets/trayicon.png');
   } else {
-    trayIcon = new Tray('assets/trayicon.png');
+    trayIcon = new Tray('resources/app/assets/trayicon.png');
   }
   var trayMenuTemplate = [
     {
