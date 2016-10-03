@@ -7,7 +7,7 @@ define(function(require, exports, module) {
   var TSCORE = require("tscore");
 
   var maxTmbSize = 300;
-  var supportedImageExtensions = ["jpg", "jpeg", "png"];
+  var supportedImageExtensions = ["jpg", "jpeg", "png", "gif"];
 
   function makeMetaPathByName(name) {
     return TSCORE.currentPath + TSCORE.dirSeparator + TSCORE.metaFolder + name;
