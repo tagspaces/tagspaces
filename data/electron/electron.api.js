@@ -382,7 +382,7 @@ define(function(require, exports, module) {
     });
 
     ipcRenderer.on("next-file", function(event, arg) {
-      if(TSCORE.selectedFiles[0]) {
+      if (TSCORE.selectedFiles[0]) {
         TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getNextFile(TSCORE.FileOpener.getOpenedFilePath()));
       } else {
         TSCORE.showAlertDialog($.i18n.t("ns.common:selectFile"));
@@ -390,7 +390,7 @@ define(function(require, exports, module) {
     });
 
     ipcRenderer.on("previous-file", function(event, arg) {
-      if(TSCORE.selectedFiles[0]) {
+      if (TSCORE.selectedFiles[0]) {
         TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getPrevFile(TSCORE.FileOpener.getOpenedFilePath()));
       } else {
         TSCORE.showAlertDialog($.i18n.t("ns.common:selectFile"));
