@@ -95,12 +95,16 @@ app.on('ready', function(event) {
     });
   });
 
+  console.log(process.platform);
   if (process.platform === 'darwin') {
     trayIcon = new Tray('Contents/Resources/app/assets/trayicon.png');
   } else if (process.platform === 'win') {
-    trayIcon = new Tray('resources/app/assets/trayicon.png');
+    trayIcon = new Tray('assets/trayicon.png'); // 4 dev
+
+    //trayIcon = new Tray('resources/app/assets/trayicon.png');
   } else {
-    trayIcon = new Tray('resources/app/assets/trayicon.png');
+    trayIcon = new Tray('assets/trayicon.png'); // 4 dev
+    //trayIcon = new Tray('resources/app/assets/trayicon.png');
   }
   //trayIcon = new Tray('assets/trayicon.png'); // 4 dev
 
