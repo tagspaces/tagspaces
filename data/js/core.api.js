@@ -176,7 +176,7 @@ define(function(require, exports, module) {
 
   function applyCustomStyles() {
     var sheet = document.createElement('style');
-    sheet.innerHTML = ".tagButton {color: " + TSCORE.Config.getDefaultTagTextColor() + " !important; background: " + TSCORE.Config.getDefaultTagColor() + " !important;}";
+    sheet.innerText = ".tagButton {color: " + TSCORE.Config.getDefaultTagTextColor() + " !important; background: " + TSCORE.Config.getDefaultTagColor() + " !important;}";
     document.body.appendChild(sheet);
   }
 

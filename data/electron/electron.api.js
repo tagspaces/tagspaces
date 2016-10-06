@@ -399,7 +399,7 @@ define(function(require, exports, module) {
 
     ipcRenderer.on("play-pause", function(event, arg) {
       // Create the event.
-      var audioEvent = new CustomEvent('resume', { 'detail': arg });
+      var audioEvent = new CustomEvent('resume', {'detail': arg});
       window.dispatchEvent(audioEvent);
     });
   }
