@@ -34,7 +34,8 @@
     "extCommon": "https://github.com/tagspaces/extCommons.git",
     "eonasdan-bootstrap-datetimepicker": "^4.17.37",
     "moment":"2.15.1",
-    "moment-timezone":"0.5.5"
+    "moment-timezone":"0.5.5",
+    "readability":"git+https://github.com/mozilla/readability.git#master"
   },
   "private": true,
   "resolutions": {
