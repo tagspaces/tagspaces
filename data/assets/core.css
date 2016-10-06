@@ -542,3 +542,7 @@ input a.resetFilter {
     margin-right: 15px;
     margin-top: 15px;
 }
+
+#showNewFileDialog {
+    padding-left: 13px;
+}

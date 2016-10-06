@@ -64,7 +64,7 @@
           </button>
           <div class="btn-group pull-right" id="sideBarButtonGroup">
             <button class="btn btn-link" id="closeLeftPanel">
-              <i class="fa fa-arrow-left fa-lg"></i>
+              <i class="fa fa-angle-left fa-2x"></i>
             </button>
           </div>
         </div>
@@ -195,7 +195,7 @@
       <nav class="navbar navbar-default" role="navigation">
         <div class="flexLayout" style="min-height: 40px;">
           <button type="button" class="btn btn-link" id="openLeftPanel" data-i18n="[title]ns.common:toggleLeftPanelTooltip">
-            <i class="fa fa-arrow-right fa-lg"></i>
+            <i class="fa fa-angle-right fa-2x"></i>
           </button>
           <div class="flexMaxWidth">
             <div class="flexLayout" id="alternativeNavigator"></div>
@@ -210,13 +210,12 @@
         </div>
         <div class="flexLayout" style="min-height: 40px;">
           <button type="button" class="btn btn-link" id="showNewFileDialog" data-toggle="dropdown" data-i18n="[title]ns.common:toggleLeftPanelTooltip">
-            <i class="fa fa-plus fa-lg"></i>&nbsp;&nbsp;New document
+            <i class="fa fa-plus fa-lg"></i>&nbsp;&nbsp;<span data-i18n="ns.common:createNewButton;[title]ns.common:createNewButtonTitle;"></span>
           </button>
           <ul class="dropdown-menu" id="newFileMenu" style="top: 35px; left: 5px">
             <li class="dropdown-header">
               <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-              <span data-i18n="[asd]ns.common:">Create new documents / notes</span></li>
-            <li class="divider"></li>
+              <span data-i18n="ns.common:createNewDocument"></span></li>
             <li><a id="createTextFileButton" data-i18n="[title]ns.common:createTextFileButtonTooltip">
               <i class="fa fa-tag fa-fw"></i>
               &nbsp;<span data-i18n="ns.common:createFile"></span></a></li>
@@ -343,7 +342,7 @@
             <i class="fa fa-plus-square"></i>
           </button>
           <ul class="dropdown-menu" id="tagSuggestionsMenu"></ul>
-          <span id="fileTags" class="flexMaxWidth" style="width: 100%"></span>
+          <span id="fileTags" class="flexMaxWidth" style="max-height: 40px; overflow-y: auto; overflow-x: none;"></span>
           <div id="fileViewerMainToolbar" class="btn-group" style="margin-top: -8px; min-width: 190px;">
             <button class="btn btn-link pull-right" data-i18n="[title]ns.common:openNextFileTooltip" id="nextFileButton">
               <i class="fa fa-chevron-right fa-lg"></i>
@@ -856,7 +855,7 @@
         <form role="form" data-toggle="validator" id="formAddTags">
           <div class="form-group">
             <label class="control-label" for="newTagTitle" data-i18n="ns.dialogs:addTagsToGroupTags"></label>
-            <input pattern="^([^#/\\\ ]){1,}$" class="form-control" type="text" name="newTagTitle"
+            <input pattern="^([^#/\\\ ]){2,}$" class="form-control" type="text" name="newTagTitle"
                    id="newTagTitle"
                    data-i18n="[placeholder]ns.dialogs:addTagsToGroupTagsPlaceholder;[data-error]ns.dialogs:editTagNamesRestrictionsHelp"/>
             <p class="help-block with-errors"></p>
