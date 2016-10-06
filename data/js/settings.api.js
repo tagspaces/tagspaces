@@ -918,27 +918,27 @@ define(function(require, exports, module) {
   }
 
   function getDefaultTagColor() {
-    if (exports.Settings.defaultTagsColor === undefined) {
-      exports.Settings.defaultTagsColor = exports.DefaultSettings.defaultTagsColor;
+    if (exports.Settings.defaultTagColor === undefined) {
+      exports.Settings.defaultTagColor = exports.DefaultSettings.defaultTagColor;
       saveSettings();
     }
-    return exports.Settings.defaultTagsColor;
+    return exports.Settings.defaultTagColor;
   }
 
   function setDefaultTagColor(value) {
-    exports.Settings.defaultTagsColor = value;
+    exports.Settings.defaultTagColor = value;
   }
 
   function getDefaultTagTextColor() {
-    if (exports.Settings.defaultTagsTextColor === undefined) {
-      exports.Settings.defaultTagsTextColor = exports.DefaultSettings.defaultTagsTextColor;
+    if (exports.Settings.defaultTagTextColor === undefined) {
+      exports.Settings.defaultTagTextColor = exports.DefaultSettings.defaultTagTextColor;
       saveSettings();
     }
-    return exports.Settings.defaultTagsTextColor;
+    return exports.Settings.defaultTagTextColor;
   }
 
   function setDefaultTagTextColor(value) {
-    exports.Settings.defaultTagsTextColor = value;
+    exports.Settings.defaultTagTextColor = value;
   }
 
   //////////////////// API methods ///////////////////

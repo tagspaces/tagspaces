@@ -543,10 +543,8 @@ define(function(require, exports, module) {
     $editTagGroupBackgroundColorChooser.on('change', function() {
       $editTagGroupBackgroundColor.val($editTagGroupBackgroundColorChooser.val());
     });
-    console.log("-----------------------");
-    console.log(TSCORE.Config.getDefaultTagColor());
-    if (TSCORE.selectedTagData.color === undefined || TSCORE.selectedTagData.color.length < 1) {
 
+    if (TSCORE.selectedTagData.color === undefined || TSCORE.selectedTagData.color.length < 1) {
       $editTagGroupBackgroundColor.val(TSCORE.Config.getDefaultTagColor());
     } else {
       $editTagGroupBackgroundColor.val(TSCORE.selectedTagData.color);
@@ -617,6 +615,7 @@ define(function(require, exports, module) {
     $tagGroupForegroundColorChooser.on('change', function() {
       $tagGroupForegroundColor.val($tagGroupForegroundColorChooser.val());
     });
+    console.log(TSCORE.Config.getDefaultTagTextColor());
     $tagGroupForegroundColor.val(TSCORE.Config.getDefaultTagTextColor());
 
     $('#newTagGroupName').val('');

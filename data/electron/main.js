@@ -98,14 +98,14 @@ app.on('ready', function(event) {
   var trayIconPath;
   if (process.platform === 'darwin') {
     trayIconPath = 'Contents/Resources/app/assets/trayicon.png';
-  } else if (process.platform === 'win') {
+  } else if (process.platform === 'win32') {
     trayIconPath = 'resources/app/assets/trayicon.png';
   } else {
     trayIconPath = 'resources/app/assets/trayicon.png';
   }
 
-  if(debugMode) {
-    trayIconPath = 'assets/trayicon.png'
+  if (debugMode) {
+    trayIconPath = 'assets/trayicon.png';
   }
 
   trayIcon = new Tray(trayIconPath);
