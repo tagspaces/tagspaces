@@ -99,7 +99,8 @@ app.on('ready', function(event) {
   if (process.platform === 'darwin') {
     trayIconPath = 'Contents/Resources/app/assets/trayicon.png';
   } else if (process.platform === 'win32') {
-    trayIconPath = 'resources/app/assets/trayicon.png';
+    //trayIconPath = 'resources/app/assets/trayicon.png';
+    trayIconPath = 'assets/trayicon.png';
   } else {
     trayIconPath = 'resources/app/assets/trayicon.png';
   }
@@ -134,6 +135,10 @@ app.on('ready', function(event) {
     {
       label: 'New Audio File',
       click: newAudioFile
+    },
+    {
+      label: 'Create Advanced File',
+      click: getAdvancedFile
     },
     {
       type: 'separator'
@@ -221,11 +226,15 @@ app.on('ready', function(event) {
     mainWindow.webContents.send("previous-file", "previous");
   }
 
+  function getAdvancedFile() {
+    mainWindow.show();
+    mainWindow.webContents.send("advanced-file", "advanced");
+  }
+
   function resumePlayback() {
     //mainWindow.show();
     mainWindow.webContents.send('play-pause', true);
   }
-
 });
 
 process.on('uncaughtException', function(error) {

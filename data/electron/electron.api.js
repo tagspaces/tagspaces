@@ -402,6 +402,10 @@ define(function(require, exports, module) {
       var audioEvent = new CustomEvent('resume', {'detail': arg});
       window.dispatchEvent(audioEvent);
     });
+
+    ipcRenderer.on("advanced-file", function(event, arg) {
+      TSCORE.showFileCreateDialog();
+    });
   }
 
   // Brings the TagSpaces window on top of the windows
