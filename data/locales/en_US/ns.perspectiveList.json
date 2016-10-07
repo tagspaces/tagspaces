@@ -30,11 +30,12 @@
     "copyMoveFilesTooltip": "Copy or Move Selected Files",
     "reloadDirectory": "Reload Directory",
     "reloadDirectoryTooltip": "Reload Current Directory",
-    "moreOperations": "More Operations",
+    "fileGrouping": "Group Files",
     "includeSubdirsTitleConfirm": "Confirm Include Subdirectories",
     "includeSubdirsContentConfirm": "On directory with many files and/or subdirectories, this operation could be slow! Do you want to continue?",
     "about": "About",
-    "showFolders": "Show Folders",
+    "showFolders": "Show Subfolders",
+    "hideFolders": "Hide Subfolders",
     "aboutTitle": "About List Perspective",
     "-": "-"
 }

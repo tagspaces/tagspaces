@@ -241,6 +241,10 @@
     flex-wrap: wrap;
 }
 
+.dirAltNavMenu {
+     margin-top: 7px;
+}
+
 .dirAltNavMenu .dirButton {
     max-width: 265px;
     overflow: hidden;
