@@ -98,6 +98,11 @@ define(function(require, exports, module) {
             click: TSCORE.UI.showAudioRecordingDialog
           },
           {
+            label: $.i18n.t("ns.common:createAdvancedFile"),
+            accelerator: '',
+            click: TSCORE.UI.showFileCreateDialog
+          },
+          {
             type: 'separator'
           },
           {
@@ -401,10 +406,6 @@ define(function(require, exports, module) {
       // Create the event.
       var audioEvent = new CustomEvent('resume', {'detail': arg});
       window.dispatchEvent(audioEvent);
-    });
-
-    ipcRenderer.on("advanced-file", function(event, arg) {
-      TSCORE.showFileCreateDialog();
     });
   }
 

@@ -136,10 +136,6 @@ app.on('ready', function(event) {
       click: newAudioFile
     },
     {
-      label: 'Create Advanced File',
-      click: getAdvancedFile
-    },
-    {
       type: 'separator'
     },
     {
@@ -223,11 +219,6 @@ app.on('ready', function(event) {
   function getPreviousFile() {
     mainWindow.show();
     mainWindow.webContents.send("previous-file", "previous");
-  }
-
-  function getAdvancedFile() {
-    mainWindow.show();
-    mainWindow.webContents.send("advanced-file", "advanced");
   }
 
   function resumePlayback() {
