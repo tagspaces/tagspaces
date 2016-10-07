@@ -253,5 +253,8 @@
   "openNewInstance":"New Application Window",
   "documentation":"Documentation",
   "selectFile": "Please select a file first.",
+  "createNewButton": "New",
+  "createNewButtonTitle": "Opens menu for creating new documents",
+  "createNewDocument": "Create new document",
   "-": "-"
 }

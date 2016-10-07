@@ -219,6 +219,14 @@ li hr {
   font-size: x-large;
 }
 
+button.close {
+  margin-top: -5px;
+}
+
+.dropdown-header {
+  margin-top: 6px;
+}
+
 /* END Bootstap modals fullscreen on small screen */
 
 /* Tablet optimization */
