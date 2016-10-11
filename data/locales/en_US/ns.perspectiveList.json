@@ -37,6 +37,8 @@
     "showFolders": "Show Subfolders",
     "hideFolders": "Hide Subfolders",
     "sortingCriteria": "The Sorting Criteria",
+    "ascending": "Ascending",
+    "descending": "Descending",
     "aboutTitle": "About List Perspective",
     "-": "-"
 }
