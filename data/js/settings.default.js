@@ -46,6 +46,9 @@ define(function (require, exports, module) {
         "useOCR":                   false,
         "useTextExtraction":        false,
         "useGenerateThumbnails":    false,
+        "defaultThumbnailSize":     "400",
+        "availableThumbnailSizes":  [ "100", "200", "400", "600", "1000"],
+        "defaultThumbnailFormat":   "png",
         "watchCurrentDirectory":    false,
         "supportedLanguages": [
             { "iso": "en_US", "title": "English" },
