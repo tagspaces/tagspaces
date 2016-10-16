@@ -386,6 +386,11 @@ define(function(require, exports, module) {
     return exports.DefaultSettings.availableThumbnailSizes;
   }
 
+  function getAvailableThumbnailFormat() {
+
+    return exports.DefaultSettings.availableThumbnailFormat;
+  }
+
   function getCloseViewerKeyBinding() {
     updateKeyBindingsSetting();
     if (exports.Settings.keyBindings.closeViewer === undefined) {
@@ -1444,5 +1449,7 @@ define(function(require, exports, module) {
   exports.getDefaultThumbnailFormat = getDefaultThumbnailFormat;
   exports.setDefaultThumbnailFormat = setDefaultThumbnailFormat;
   exports.getAvailableThumbnailSizes = getAvailableThumbnailSizes;
+  exports.getAvailableThumbnailFormat = getAvailableThumbnailFormat;
+
 
 });

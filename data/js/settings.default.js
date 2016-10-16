@@ -49,6 +49,7 @@ define(function (require, exports, module) {
         "defaultThumbnailSize":     "400",
         "availableThumbnailSizes":  [ "100", "200", "400", "600", "1000"],
         "defaultThumbnailFormat":   "png",
+        "availableThumbnailFormat": ["png", "jpg"],
         "watchCurrentDirectory":    false,
         "supportedLanguages": [
             { "iso": "en_US", "title": "English" },

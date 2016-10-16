@@ -191,6 +191,16 @@ define(function(require, exports, module) {
       }
     });
 
+    var $thumbnailformatDropdown = $('#defaultThumbnailFormat');
+    $thumbnailformatDropdown.empty();
+    TSCORE.Config.getAvailableThumbnailFormat().forEach(function(value) {
+      if (TSCORE.Config.getDefaultThumbnailFormat() === value) {
+        $thumbnailformatDropdown.append($('<option>').attr('selected', 'selected').text(value).val(value));
+      } else {
+        $thumbnailformatDropdown.append($('<option>').text(value).val(value));
+      }
+    });
+
     $('#fileTypesList').empty();
 
     TSCORE.Config.getActivatedPerspectives().forEach(function(value) {
