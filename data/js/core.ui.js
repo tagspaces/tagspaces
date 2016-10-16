@@ -979,6 +979,7 @@ define(function(require, exports) {
     if (isCordova) {
       $('#directoryMenuOpenDirectory').parent().hide();
       $('#fileMenuOpenDirectory').parent().hide();
+      $('#createAudioFileButton').parent().hide();
       $('#openDirectory').parent().hide();
       $('#downloadFile').parent().hide();
       $('#openFileInNewWindow').hide();
