@@ -49,7 +49,7 @@ define(function (require, exports, module) {
         "defaultThumbnailSize":     "400",
         "availableThumbnailSizes":  [ "100", "200", "400", "600", "1000"],
         "defaultThumbnailFormat":   "png",
-        "availableThumbnailFormat": ["png", "jpg"],
+        "availableThumbnailFormat": ["png", "jpeg"],
         "watchCurrentDirectory":    false,
         "defaultTagTextColor":     "#ffffff",
         "defaultTagColor":         "#008000",
