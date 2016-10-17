@@ -297,7 +297,7 @@ define(function(require, exports, module) {
       TSCORE.Config.setDefaultThumbnailFormat($('#defaultThumbnailFormat').val());
     }
     var interfaceLang = $('#languagesList').val();
-    TSCORE.Config.setInterfaceLanguage($('#languagesList').val());
+    TSCORE.Config.setInterfaceLanguage(interfaceLang);
     TSCORE.switchInterfaceLanguage(interfaceLang);
     TSCORE.Config.setActivatedPerspectives(collectPerspectivesData());
     TSCORE.Config.setSupportedFileTypes(collectSupportedFileTypesData());
