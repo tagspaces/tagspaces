@@ -923,6 +923,7 @@ define(function(require, exports, module) {
 
     exports.Settings.useDefaultLocation = value;
   }
+
   function getColoredFileExtensionsEnabled() {
     if (exports.Settings.coloredFileExtensionsEnabled === undefined) {
       exports.Settings.coloredFileExtensionsEnabled = exports.DefaultSettings.coloredFileExtensionsEnabled;
@@ -946,6 +947,30 @@ define(function(require, exports, module) {
   function setShowTagAreaOnStartup(value) {
 
     exports.Settings.showTagAreaOnStartup = value;
+  }
+
+  function getDefaultTagColor() {
+    if (exports.Settings.defaultTagColor === undefined) {
+      exports.Settings.defaultTagColor = exports.DefaultSettings.defaultTagColor;
+      saveSettings();
+    }
+    return exports.Settings.defaultTagColor;
+  }
+
+  function setDefaultTagColor(value) {
+    exports.Settings.defaultTagColor = value;
+  }
+
+  function getDefaultTagTextColor() {
+    if (exports.Settings.defaultTagTextColor === undefined) {
+      exports.Settings.defaultTagTextColor = exports.DefaultSettings.defaultTagTextColor;
+      saveSettings();
+    }
+    return exports.Settings.defaultTagTextColor;
+  }
+
+  function setDefaultTagTextColor(value) {
+    exports.Settings.defaultTagTextColor = value;
   }
 
   //////////////////// API methods ///////////////////
@@ -1084,8 +1109,13 @@ define(function(require, exports, module) {
         if (!tagExistsInGroup && newTagName.length >= 1) {
           var newTagModel = JSON.parse(JSON.stringify(tagTemplate));
           newTagModel.title = newTagName;
-          newTagModel.color = newTagColor;
-          newTagModel.textcolor = newTagTextColor;
+          if (newTagColor !== undefined || newTagTextColor !== undefined) {
+            newTagModel.color = newTagColor;
+            newTagModel.textcolor = newTagTextColor;
+          } else {
+            newTagModel.color = value.color !== undefined ? value.color : getDefaultTagColor();
+            newTagModel.textcolor = value.textcolor !== undefined ? value.textcolor : getDefaultTagTextColor();
+          }
           value.children.push(newTagModel);
         } else {
           console.log('Tag with the same name already exist in this group or tag length is not correct');
@@ -1096,10 +1126,18 @@ define(function(require, exports, module) {
     return true;
   }
 
-  function editTagGroup(tagData, tagGroupName) {
+  function editTagGroup(tagData, tagGroupName, tagGroupColor, tagGroupTextColor, propagateColorToTags) {
     for (var i = 0; i < exports.Settings.tagGroups.length; i++) {
       if (exports.Settings.tagGroups[i].key === tagData.key) {
         exports.Settings.tagGroups[i].title = tagGroupName;
+        exports.Settings.tagGroups[i].color = tagGroupColor;
+        exports.Settings.tagGroups[i].textcolor = tagGroupTextColor;
+        if (propagateColorToTags) {
+          for (var j = 0; j < exports.Settings.tagGroups[i].children.length; j++) {
+            exports.Settings.tagGroups[i].children[j].color = tagGroupColor;
+            exports.Settings.tagGroups[i].children[j].textcolor = tagGroupTextColor;
+          }
+        }
         break;
       }
     }
@@ -1133,9 +1171,11 @@ define(function(require, exports, module) {
     saveSettings();
   }
 
-  function createTagGroup(tagData, tagGroupName) {
+  function createTagGroup(tagData, tagGroupName, tagGroupColor, tagGroupTextColor) {
     var newTagGroupModel = JSON.parse(JSON.stringify(tagGroupTemplate));
     newTagGroupModel.title = tagGroupName;
+    newTagGroupModel.color = tagGroupColor;
+    newTagGroupModel.textcolor = tagGroupTextColor;
     //newTagGroupModel.children = [];
     newTagGroupModel.key = '' + TSCORE.Utils.getRandomInt(10000, 99999);
     console.log('Creating taggroup: ' + JSON.stringify(newTagGroupModel) + ' with key: ' + newTagGroupModel.key);
@@ -1450,6 +1490,8 @@ define(function(require, exports, module) {
   exports.setDefaultThumbnailFormat = setDefaultThumbnailFormat;
   exports.getAvailableThumbnailSizes = getAvailableThumbnailSizes;
   exports.getAvailableThumbnailFormat = getAvailableThumbnailFormat;
-
-
+  exports.getDefaultTagColor = getDefaultTagColor;
+  exports.setDefaultTagColor = setDefaultTagColor;
+  exports.getDefaultTagTextColor = getDefaultTagTextColor;
+  exports.setDefaultTagTextColor = setDefaultTagTextColor;
 });

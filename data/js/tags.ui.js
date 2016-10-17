@@ -19,34 +19,34 @@ define(function(require, exports, module) {
   var tagGroupsTmpl = Handlebars.compile(
     '{{#each tagGroups}}' +
     '<div class="accordion-group disableTextSelection tagGroupContainer">' +
-        '<div class="accordion-heading btn-group ui-droppable tagGroupContainerHeading flexLayout" key="{{key}}">' +
-            '<button class="btn btn-link btn-lg tagGroupIcon" data-toggle="collapse" data-target="#tagButtons{{@index}}" data-i18n="[title]ns.common:toggleTagGroup" title="{{../toggleTagGroup}}">' +
-                '<i class="fa fa-tags fa-fw"></i>' +
-            '</button>' +
-            '<button class="btn btn-link tagGroupTitle flexMaxWidth" data-toggle="collapse" data-target="#tagButtons{{@index}}" key="{{key}}">{{title}}&nbsp;' +
-                '<sup><span class="badge" style="font-size: 9px;" data-i18n="[title]ns.common:tagGroupTagsCount">{{children.length}}</span></sup></button>' +
-            '<button class="btn btn-link btn-lg tagGroupActions" key="{{key}}" data-i18n="[title]ns.common:tagGroupOperations" title="{{../tagGroupOperations}}">' +
-                '<b class="fa fa-ellipsis-v"></b>' +
-            '</button>' +
-        '</div>' +
-        '{{#if collapse}}' +
-          '<div class="accordion-body collapse" id="tagButtons{{@index}}">' +
-        '{{else}}' +
-          '<div class="accordion-body collapse in" id="tagButtons{{@index}}">' +
-        '{{/if}}' +
-            '<div class="accordion-inner" id="tagButtonsContent{{@index}}" style="padding: 2px;">' +
-                '<div>' +
-                    '{{#each children}}' +
-                    '<a class="btn btn-sm tagButton" tag="{{title}}" parentkey="{{../key}}" style="{{style}}" title="{{description}}" >'  +
-                        '<span class="{{icon}}" /> ' +
-                        '{{title}}' +
-                        '{{#if count}} <span class="badge" style="font-size: 9px; background-color: rgba(187, 187, 187, 0.26);" data-i18n="[title]ns.common:tagGroupTagsCount1">{{count}}</span>{{/if}}' +
-                        '&nbsp;&nbsp;<span class="fa fa-ellipsis-v"></span>' +
-                    '</a>' +
-                    '{{/each}}' +
-                '</div>' +
-            '</div>' +
-        '</div>' +
+    '<div class="accordion-heading btn-group ui-droppable tagGroupContainerHeading flexLayout" key="{{key}}">' +
+    '<button class="btn btn-link btn-lg tagGroupIcon" data-toggle="collapse" data-target="#tagButtons{{@index}}" data-i18n="[title]ns.common:toggleTagGroup" title="{{../toggleTagGroup}}">' +
+    '<i class="fa fa-tags fa-fw"></i>' +
+    '</button>' +
+    '<button class="btn btn-link tagGroupTitle flexMaxWidth" data-toggle="collapse" data-target="#tagButtons{{@index}}" key="{{key}}">{{title}}&nbsp;' +
+    '<sup><span class="badge" style="font-size: 9px;" data-i18n="[title]ns.common:tagGroupTagsCount">{{children.length}}</span></sup></button>' +
+    '<button class="btn btn-link btn-lg tagGroupActions" key="{{key}}" data-i18n="[title]ns.common:tagGroupOperations" title="{{../tagGroupOperations}}">' +
+    '<b class="fa fa-ellipsis-v"></b>' +
+    '</button>' +
+    '</div>' +
+    '{{#if collapse}}' +
+    '<div class="accordion-body collapse" id="tagButtons{{@index}}">' +
+    '{{else}}' +
+    '<div class="accordion-body collapse in" id="tagButtons{{@index}}">' +
+    '{{/if}}' +
+    '<div class="accordion-inner" id="tagButtonsContent{{@index}}" style="padding: 2px;">' +
+    '<div>' +
+    '{{#each children}}' +
+    '<a class="btn btn-sm tagButton" tag="{{title}}" parentkey="{{../key}}" style="{{style}}" title="{{description}}" >' +
+    '<span class="{{icon}}" /> ' +
+    '{{title}}' +
+    '{{#if count}} <span class="badge" style="font-size: 9px; background-color: rgba(187, 187, 187, 0.26);" data-i18n="[title]ns.common:tagGroupTagsCount1">{{count}}</span>{{/if}}' +
+    '&nbsp;&nbsp;<span class="fa fa-ellipsis-v"></span>' +
+    '</a>' +
+    '{{/each}}' +
+    '</div>' +
+    '</div>' +
+    '</div>' +
     '</div>' +
     '{{/each}}'
   );
@@ -55,7 +55,8 @@ define(function(require, exports, module) {
 
 
   function initUI() {
-    $('#extMenuAddTagAsFilter').click(function() {});
+    $('#extMenuAddTagAsFilter').click(function() {
+    });
 
     // Context menu for the tags in the file table and the file viewer
     $('#tagMenuAddTagAsFilter').click(function() {
@@ -175,7 +176,7 @@ define(function(require, exports, module) {
     $('#createTagGroupButton').on("click", createTagGroup);
 
     $('#editTagGroupButton').click(function() {
-      TSCORE.Config.editTagGroup(TSCORE.selectedTagData, $('#tagGroupName').val());
+      TSCORE.Config.editTagGroup(TSCORE.selectedTagData, $('#tagGroupName').val(), $('#editTagGroupBackgroundColor').val(), $('#editTagGroupForegroundColor').val(), $('#colorChangesToAllTags').prop('checked'));
       generateTagGroups();
     });
   }
@@ -205,7 +206,7 @@ define(function(require, exports, module) {
   }
 
   function createTagGroup() {
-    TSCORE.Config.createTagGroup(TSCORE.selectedTagData, $('#newTagGroupName').val());
+    TSCORE.Config.createTagGroup(TSCORE.selectedTagData, $('#newTagGroupName').val(), $('#tagGroupBackgroundColor').val(), $('#tagGroupForegroundColor').val());
     generateTagGroups();
   }
 
@@ -313,16 +314,14 @@ define(function(require, exports, module) {
     });
 
     $tagGroupsContent.find('.tagGroupTitle').each(function() {
-      $(this)
-      .on('click', function() {
+      $(this).on('click', function() {
         var areaId = $(this).attr('data-target');
         if (areaId) {
           var index = areaId.substring(areaId.length - 1);
           tagGroups[index].collapse = $(areaId).is(':visible');
           TSCORE.Config.saveSettings();
         }
-      })
-      .droppable({
+      }).droppable({
         accept: '.tagButton',
         hoverClass: 'dirButtonActive',
         drop: function(event, ui) {
@@ -507,7 +506,6 @@ define(function(require, exports, module) {
   }
 
   function showImportTagsDialog(tagGroups) {
-   
     require(['text!templates/ImportTagsDialog.html'], function(uiTPL) {
 
       if ($('#dialogImportTags').length < 1) {
@@ -535,6 +533,42 @@ define(function(require, exports, module) {
   }
 
   function showDialogEditTagGroup() {
+    $('#colorChangesToAllTags').prop('checked', false);
+
+    var $editTagGroupBackgroundColorChooser = $('#editTagGroupBackgroundColorChooser');
+    var $editTagGroupBackgroundColor = $('#editTagGroupBackgroundColor');
+    $editTagGroupBackgroundColorChooser.simplecolorpicker({
+      picker: false
+    });
+    $editTagGroupBackgroundColorChooser.on('change', function() {
+      $editTagGroupBackgroundColor.val($editTagGroupBackgroundColorChooser.val());
+    });
+
+    if (TSCORE.selectedTagData.color === undefined || TSCORE.selectedTagData.color.length < 1) {
+      $editTagGroupBackgroundColor.val(TSCORE.Config.getDefaultTagColor());
+    } else {
+      $editTagGroupBackgroundColor.val(TSCORE.selectedTagData.color);
+    }
+
+    var $editTagGroupForegroundColorChooser = $('#editTagGroupForegroundColorChooser');
+    var $editTagGroupForegroundColor = $('#editTagGroupForegroundColor');
+    $editTagGroupForegroundColorChooser.simplecolorpicker({
+      picker: false
+    });
+    $editTagGroupForegroundColorChooser.on('change', function() {
+      $editTagGroupForegroundColor.val($editTagGroupForegroundColorChooser.val());
+    });
+
+    if (TSCORE.selectedTagData.textcolor === undefined || TSCORE.selectedTagData.textcolor.length < 1) {
+      $editTagGroupForegroundColor.val(TSCORE.Config.getDefaultTagTextColor());
+    } else {
+      $editTagGroupForegroundColor.val(TSCORE.selectedTagData.textcolor);
+    }
+
+    $('#colorChangesToAllTags').on('change', function() {
+      $('#colorChangesToAllTags').prop('checked');
+    });
+
     $('#tagGroupName').val(TSCORE.selectedTagData.title);
     $('#formTagGroupEdit').validator();
     $('#formTagGroupEdit').submit(function(e) {
@@ -562,6 +596,28 @@ define(function(require, exports, module) {
   }
 
   function showDialogTagGroupCreate() {
+    var $tagGroupBackgroundColorChooser = $('#tagGroupBackgroundColorChooser');
+    var $tagGroupBackgroundColor = $('#tagGroupBackgroundColor');
+    $tagGroupBackgroundColorChooser.simplecolorpicker({
+      picker: false
+    });
+    $tagGroupBackgroundColorChooser.on('change', function() {
+      $tagGroupBackgroundColor.val($tagGroupBackgroundColorChooser.val());
+    });
+
+    $tagGroupBackgroundColor.val(TSCORE.Config.getDefaultTagColor());
+
+    var $tagGroupForegroundColorChooser = $('#tagGroupForegroundColorChooser');
+    var $tagGroupForegroundColor = $('#tagGroupForegroundColor');
+    $tagGroupForegroundColorChooser.simplecolorpicker({
+      picker: false
+    });
+    $tagGroupForegroundColorChooser.on('change', function() {
+      $tagGroupForegroundColor.val($tagGroupForegroundColorChooser.val());
+    });
+    console.log(TSCORE.Config.getDefaultTagTextColor());
+    $tagGroupForegroundColor.val(TSCORE.Config.getDefaultTagTextColor());
+
     $('#newTagGroupName').val('');
     $('#formTagGroupCreate').validator();
     $('#formTagGroupCreate').off();
@@ -638,6 +694,10 @@ define(function(require, exports, module) {
   }
 
   function showAddTagsDialog() {
+    if (!TSCORE.selectedFiles[0]) {
+      TSCORE.showAlertDialog("Please select a file first.", "Tagging not possible!");
+      return;
+    }
     console.log('Adding tags...');
     //function split( val ) {
     //    return val.split( /,\s*/ );

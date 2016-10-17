@@ -86,7 +86,7 @@ define(function(require, exports, module) {
               class: 'dropdown-header',
               text: $.i18n.t('ns.common:perspectiveSwitch')
             }).prepend("<button class='close'>&times;</button>")
-    ).append("<li class='divider'></li>");
+    );
 
     for (var i = 0; i < extensions.length; i++) {
       var curPers;

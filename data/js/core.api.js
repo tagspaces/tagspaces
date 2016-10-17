@@ -170,6 +170,14 @@ define(function(require, exports, module) {
     window.addEventListener('orientationchange', reLayout);
 
     $(window).on('resize', reLayout);
+
+    applyCustomStyles();
+  }
+
+  function applyCustomStyles() {
+    var sheet = document.createElement('style');
+    sheet.innerText = ".tagButton {color: " + TSCORE.Config.getDefaultTagTextColor() + " !important; background: " + TSCORE.Config.getDefaultTagColor() + " !important;}";
+    document.body.appendChild(sheet);
   }
 
   function switchInterfaceLanguage(language) {
@@ -214,17 +222,13 @@ define(function(require, exports, module) {
       tsCoreUI.showLocationsPanel();
     });
     Mousetrap.bind(tsSettings.getAddRemoveTagsKeyBinding(), function() {
-      if (TSCORE.selectedFiles[0]) {
-        tsTagsUI.showAddTagsDialog();
-      }
+      tsTagsUI.showAddTagsDialog();
     });
     Mousetrap.bind(tsSettings.getSearchKeyBinding(), function() {
       tsSearchUI.showSearchArea();
     });
     Mousetrap.bind(tsSettings.getRenamingFileKeyBinding(), function() {
-      if (TSCORE.selectedFiles[0]) {
-        tsCoreUI.showFileRenameDialog(TSCORE.selectedFiles[0]);
-      }
+      tsCoreUI.showFileRenameDialog(TSCORE.selectedFiles[0]);
     });
   }
 

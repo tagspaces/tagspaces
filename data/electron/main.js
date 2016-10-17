@@ -4,9 +4,14 @@ const electron = require('electron');
 const app = electron.app;  // Module to control application life.
 const BrowserWindow = electron.BrowserWindow;  // Module to create native browser window.
 const ipcMain = require('electron').ipcMain;
+const Menu = require('electron').Menu;
+const Tray = require('electron').Tray;
+const globalShortcut = electron.globalShortcut;
+const dialog = electron.dialog;
 
 var debugMode;
 var startupFilePath;
+var trayIcon = null;
 
 //handling start parameter
 //console.log(JSON.stringify(process.argv));
@@ -14,7 +19,7 @@ process.argv.forEach(function(arg, count) {
   if (arg.toLowerCase() === '-d' || arg.toLowerCase() === '--debug') {
     debugMode = true;
   } else if (arg.toLowerCase() === '-p' || arg.toLowerCase() === '--portable') {
-    app.setPath('userData', 'tsprofile'); // making the app portable
+    app.setPath('userData', process.cwd() + '/tsprofile'); // making the app portable
   } else if (arg === '.' || count === 0) { // ignoring the first argument
     //Ignore these argument
   } else if (arg.length > 2) {
@@ -24,7 +29,6 @@ process.argv.forEach(function(arg, count) {
 });
 
 ipcMain.on('quit-application', function(event, arg) {
-  //console.log(arg);
   app.quit();
 });
 
@@ -42,7 +46,14 @@ app.on('window-all-closed', function() {
   //}
 });
 
-app.on('ready', function() {
+app.on('will-quit', function() {
+  // Unregister all shortcuts.
+  globalShortcut.unregisterAll();
+});
+
+app.on('ready', function(event) {
+  //console.log(app.getLocale());
+  //console.log(app.getAppPath());
   mainWindow = new BrowserWindow({width: 1280, height: 768});
 
   //var indexPath = 'file://' + __dirname + '/index.html';
@@ -59,12 +70,6 @@ app.on('ready', function() {
     mainWindow.webContents.openDevTools();
   }
 
-  var webContents = mainWindow.webContents;
-
-  webContents.on('crash', function() {
-    console.log("WebContent crashed");
-  });
-
   // Emitted when the window is closed.
   mainWindow.on('closed', function() {
     // Dereference the window object, usually you would store windows
@@ -72,4 +77,175 @@ app.on('ready', function() {
     // when you should delete the corresponding element.
     mainWindow = null;
   });
+
+  mainWindow.webContents.on('crashed', function() {
+    const options = {
+      type: 'info',
+      title: 'Renderer Process Crashed',
+      message: 'This process has crashed.',
+      buttons: ['Reload', 'Close']
+    };
+    dialog.showMessageBox(mainWindow, options, function(index) {
+      mainWindow.hide();
+      if (index === 0) {
+        mainWindow.reload();
+      } else {
+        mainWindow.close();
+      }
+    });
+  });
+
+  var trayIconPath;
+  if (process.platform === 'darwin') {
+    trayIconPath = 'Contents/Resources/app/assets/trayicon.png';
+  } else if (process.platform === 'win32') {
+    trayIconPath = 'resources/app/assets/trayicon.png';
+  } else {
+    trayIconPath = 'resources/app/assets/trayicon.png';
+  }
+
+  if (debugMode) {
+    trayIconPath = 'assets/trayicon.png';
+  }
+
+  trayIcon = new Tray(trayIconPath);
+
+
+  var trayMenuTemplate = [
+    {
+      label: 'Show TagSpaces',
+      click: showTagSpaces
+    },
+    {
+      type: 'separator'
+    },
+    {
+      label: 'New Text File',
+      click: newTextFile
+    },
+    {
+      label: 'New HTML File',
+      click: newHTMLFile
+    },
+    {
+      label: 'New Markdown File',
+      click: newMDFile
+    },
+    {
+      label: 'New Audio File',
+      click: newAudioFile
+    },
+    {
+      type: 'separator'
+    },
+    {
+      label: 'Open Next File',
+      click: getNextFile
+    },
+    {
+      label: 'Open Previous File',
+      click: getPreviousFile
+    },
+    {
+      type: 'separator'
+    },
+    {
+      label: 'Pause/Resume Playback',
+      sublabel: 'Ctrl+Alt+P',
+      click: resumePlayback
+    },
+    {
+      type: 'separator'
+    },
+    {
+      label: 'Quit TagSpaces',
+      click: function() {
+        app.quit();
+      }
+    }
+  ];
+
+  trayIcon.on('click', function() {
+    mainWindow.show();
+    //mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show();
+  });
+
+  var title = 'TagSpaces App';
+  var trayMenu = Menu.buildFromTemplate(trayMenuTemplate);
+  trayIcon.setToolTip(title);
+  trayIcon.setTitle(title);
+  trayIcon.setContextMenu(trayMenu);
+
+  globalShortcut.register('CommandOrControl+Alt+P', resumePlayback);
+
+  globalShortcut.register('CommandOrControl+Alt+N', newTextFile);
+
+  globalShortcut.register('CommandOrControl+Alt+I', getNextFile);
+
+  globalShortcut.register('CommandOrControl+Alt+O', getPreviousFile);
+
+  globalShortcut.register('CommandOrControl+Alt+S', showTagSpaces);
+
+  function showTagSpaces() {
+    mainWindow.show();
+    //mainWindow.webContents.send("showing-tagspaces", "tagspaces");
+  }
+
+  function newTextFile() {
+    mainWindow.show();
+    mainWindow.webContents.send("new-file", "text");
+  }
+
+  function newHTMLFile() {
+    mainWindow.show();
+    mainWindow.webContents.send("new-file", "html");
+  }
+
+  function newMDFile() {
+    mainWindow.show();
+    mainWindow.webContents.send("new-file", "markdown");
+  }
+
+  function newAudioFile() {
+    mainWindow.show();
+    mainWindow.webContents.send("new-file", "audio");
+  }
+
+  function getNextFile() {
+    mainWindow.show();
+    mainWindow.webContents.send("next-file", "next");
+  }
+
+  function getPreviousFile() {
+    mainWindow.show();
+    mainWindow.webContents.send("previous-file", "previous");
+  }
+
+  function resumePlayback() {
+    //mainWindow.show();
+    mainWindow.webContents.send('play-pause', true);
+  }
+});
+
+process.on('uncaughtException', function(error) {
+  if (error.stack) {
+    console.error('error:', error.stack);
+  }
+  mainWindow.reload();
+  // Handle the error
+  /*if (error) {
+   const options = {
+   type: 'info',
+   title: 'Renderer Process Crashed',
+   message: 'This process has crashed.',
+   buttons: ['Reload', 'Close']
+   };
+   dialog.showMessageBox(mainWindow, options, function(index) {
+   if (index === 0) {
+   mainWindow.reload();
+   } else {
+   mainWindow.close();
+   }
+   });
+   }*/
 });

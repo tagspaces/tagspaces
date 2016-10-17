@@ -25,6 +25,13 @@ define(function(require, exports, module) {
   var fsWatcher;
   var win = remote.getCurrentWindow();
 
+
+  //console.log(ipcRenderer.sendSync('synchronous-message', 'ping')); // prints "pong"
+  //ipcRenderer.on('asynchronous-reply', function(event, arg) {
+  //  console.log(arg); // prints "pong"
+  //});
+  //ipcRenderer.send('asynchronous-message', 'ping');
+
   var showMainWindow = function() {
     win.show();
   };
@@ -51,7 +58,7 @@ define(function(require, exports, module) {
   }
 
   function initMainMenu() {
-
+    //testing icpRenderer from icp bind
     /*if (!TSCORE.Config.getShowMainMenu()) {
      return;
      }*/
@@ -73,48 +80,27 @@ define(function(require, exports, module) {
           {
             label: $.i18n.t("ns.common:createFile"),
             accelerator: '',
-            click: function() {
-              if (!TSCORE.currentPath) {
-                TSCORE.showAlertDialog("ns.common:alertOpenLocatioFirst");
-              } else {
-                TSCORE.UI.createTXTFile();
-              }
-            }
+            click: TSCORE.UI.createTXTFile
           },
           {
             label: $.i18n.t("ns.common:createMarkdown"),
             accelerator: '',
-            click: function() {
-              if (!TSCORE.currentPath) {
-                TSCORE.showAlertDialog("ns.common:alertOpenLocatioFirst");
-              } else {
-                TSCORE.UI.createMDFile();
-              }
-            }
+            click: TSCORE.UI.createMDFile
           },
           {
             label: $.i18n.t("ns.common:createRichTextFile"),
             accelerator: '',
-            click: function() {
-              if (!TSCORE.currentPath) {
-                TSCORE.showAlertDialog("ns.common:alertOpenLocatioFirst");
-              } else {
-                TSCORE.UI.createHTMLFile();
-              }
-            }
+            click: TSCORE.UI.createHTMLFile
           },
           {
             label: $.i18n.t("ns.common:createAudioFile"),
             accelerator: '',
-            click: function() {
-              if (!TSCORE.currentPath) {
-                TSCORE.showAlertDialog("ns.common:alertOpenLocatioFirst");
-              } else {
-                if (TSCORE.PRO) {
-                  TSCORE.UI.showAudioRecordingDialog();
-                }
-              }
-            }
+            click: TSCORE.UI.showAudioRecordingDialog
+          },
+          {
+            label: $.i18n.t("ns.common:createAdvancedFile"),
+            accelerator: '',
+            click: TSCORE.UI.showFileCreateDialog
           },
           {
             type: 'separator'
@@ -134,15 +120,26 @@ define(function(require, exports, module) {
             type: 'separator'
           },
           {
+            label: $.i18n.t("ns.common:saveFile"),
+            accelerator: 'CmdOrCtrl+S',
+            click: function() {
+              if (TSCORE.FileOpener.isFileEdited) {
+                TSCORE.FileOpener.saveFile();
+              }
+            }
+          },
+          {
+            type: 'separator'
+          },
+          {
             label: $.i18n.t("ns.common:exitApp"),
             accelerator: '',
             click: function() {
               if (!TSCORE.currentPath) {
                 TSCORE.showAlertDialog("Not open current directory !");
               } else {
-                //TSCORE.Config.Settings.firstRun = true;
                 TSCORE.Config.saveSettings();
-                window.close();
+                ipcRenderer.send('quit-application', 'Bye, bye...');
               }
             }
           }
@@ -374,9 +371,42 @@ define(function(require, exports, module) {
        }
        );*/
     }
-
     var menu = Menu.buildFromTemplate(template);
     Menu.setApplicationMenu(menu);
+
+    ipcRenderer.on("new-file", function(event, arg) {
+      if (arg === "text") {
+        TSCORE.UI.createTXTFile();
+      } else if (arg === "html") {
+        TSCORE.UI.createHTMLFile();
+      } else if (arg === "markdown") {
+        TSCORE.UI.createMDFile();
+      } else if (arg === "audio") {
+        TSCORE.UI.showAudioRecordingDialog();
+      }
+    });
+
+    ipcRenderer.on("next-file", function(event, arg) {
+      if (TSCORE.selectedFiles[0]) {
+        TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getNextFile(TSCORE.FileOpener.getOpenedFilePath()));
+      } else {
+        TSCORE.showAlertDialog($.i18n.t("ns.common:selectFile"));
+      }
+    });
+
+    ipcRenderer.on("previous-file", function(event, arg) {
+      if (TSCORE.selectedFiles[0]) {
+        TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getPrevFile(TSCORE.FileOpener.getOpenedFilePath()));
+      } else {
+        TSCORE.showAlertDialog($.i18n.t("ns.common:selectFile"));
+      }
+    });
+
+    ipcRenderer.on("play-pause", function(event, arg) {
+      // Create the event.
+      var audioEvent = new CustomEvent('resume', {'detail': arg});
+      window.dispatchEvent(audioEvent);
+    });
   }
 
   // Brings the TagSpaces window on top of the windows

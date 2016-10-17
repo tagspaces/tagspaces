@@ -41,6 +41,10 @@
     margin: 6px;
 }
 
+#locationName {
+    padding-left: 0;
+}
+
 #statusBar {
     margin-top: 12px;
     font-size: 14px;
@@ -239,6 +243,10 @@
     display: -ms-flexbox;
 
     flex-wrap: wrap;
+}
+
+.dirAltNavMenu {
+     margin-top: 7px;
 }
 
 .dirAltNavMenu .dirButton {
@@ -460,7 +468,7 @@ input a.resetFilter {
 #closeOpenedFile {
     position: fixed;
     top: 1px;
-    right: 0px;
+    right: -3px;
     height: 37px;
     box-shadow: -11px 1px 24px -1px #F2F2F2;
     background-color: #F2F2F2;
@@ -541,4 +549,8 @@ input a.resetFilter {
     margin-left: 15px;
     margin-right: 15px;
     margin-top: 15px;
+}
+
+#showNewFileDialog {
+    padding-left: 13px;
 }

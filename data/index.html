@@ -64,7 +64,7 @@
           </button>
           <div class="btn-group pull-right" id="sideBarButtonGroup">
             <button class="btn btn-link" id="closeLeftPanel">
-              <i class="fa fa-arrow-left fa-lg"></i>
+              <i class="fa fa-angle-left fa-2x"></i>
             </button>
           </div>
         </div>
@@ -195,7 +195,7 @@
       <nav class="navbar navbar-default" role="navigation">
         <div class="flexLayout" style="min-height: 40px;">
           <button type="button" class="btn btn-link" id="openLeftPanel" data-i18n="[title]ns.common:toggleLeftPanelTooltip">
-            <i class="fa fa-arrow-right fa-lg"></i>
+            <i class="fa fa-angle-right fa-2x"></i>
           </button>
           <div class="flexMaxWidth">
             <div class="flexLayout" id="alternativeNavigator"></div>
@@ -209,6 +209,30 @@
           </div>
         </div>
         <div class="flexLayout" style="min-height: 40px;">
+          <button type="button" class="btn btn-link" id="showNewFileDialog" data-toggle="dropdown" data-i18n="[title]ns.common:toggleLeftPanelTooltip">
+            <i class="fa fa-plus fa-lg"></i>&nbsp;&nbsp;<span data-i18n="ns.common:createNewButton;[title]ns.common:createNewButtonTitle;"></span>
+          </button>
+          <ul class="dropdown-menu" id="newFileMenu" style="top: 35px; left: 5px">
+            <li class="dropdown-header">
+              <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <span data-i18n="ns.common:createNewDocument"></span></li>
+            <li><a id="createTextFileButton" data-i18n="[title]ns.common:createTextFileButtonTooltip">
+              <i class="fa fa-tag fa-fw"></i>
+              &nbsp;<span data-i18n="ns.common:createFile"></span></a></li>
+            <li><a id="createHTMLFileButton" data-i18n="[title]ns.common:createHTMLFileButtonTooltip">
+              <i class="fa fa-tag fa-fw"></i>
+              &nbsp;<span data-i18n="ns.common:createRichTextFile"></span></a></li>
+            <li><a id="createMarkdownFileButton" data-i18n="[title]ns.common:createMarkdownFileButtonTooltip">
+              <i class="fa fa-tag fa-fw"></i>
+              &nbsp;<span data-i18n="ns.common:createMarkdown"></span></a></li>
+            <li><a id="createAudioFileButton" data-i18n="[title]ns.common:createAudioFileButtonTooltip">
+              <i class="fa fa-tag fa-fw"></i>
+              &nbsp;<span data-i18n="ns.common:createAudioFile"></span></a></li>
+            <li><a id="addExistingFileButton" data-i18n="[title]">
+              <i class="fa fa-tag fa-fw"></i>
+              &nbsp;<span data-i18n="ns.perspectiveList:showAddFileDialog"></span></a></li>
+          </ul>
+
           <div class="flexMaxWidth flexLayout" style="min-width: 100px;">
             <div class="flexMaxWidth">
               <div id="statusBar" class="noWrap"></div>
@@ -318,7 +342,7 @@
             <i class="fa fa-plus-square"></i>
           </button>
           <ul class="dropdown-menu" id="tagSuggestionsMenu"></ul>
-          <span id="fileTags" class="flexMaxWidth" style="width: 100%"></span>
+          <span id="fileTags" class="flexMaxWidth" style="max-height: 40px; overflow-y: auto; overflow-x: hidden;"></span>
           <div id="fileViewerMainToolbar" class="btn-group" style="margin-top: -8px; min-width: 190px;">
             <button class="btn btn-link pull-right" data-i18n="[title]ns.common:openNextFileTooltip" id="nextFileButton">
               <i class="fa fa-chevron-right fa-lg"></i>
@@ -515,12 +539,12 @@
               <p class="help-block" data-i18n="ns.dialogs:editTagNamesRestrictionsHelp"></p>
             </div>
           </form>
-          <button id="audioRecordingConfirmButton" class='btn btn-primary' data-i18n="ns.dialogs:save" data-dismiss="modal" aria-hidden="true"></button>
-          <button id="deleteAudioRecording" class='btn btn-default' recording='' data-i18n="ns.dialogs:delete"></button>
         </div>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true"><i class="fa fa-check fa-lg"></i></button>
+        <button class="btn btn-default pull-left" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times fa-lg"></i></button>
+        <button id="audioRecordingConfirmButton" class='btn btn-primary pull-right' data-i18n="ns.dialogs:save" data-dismiss="modal" aria-hidden="true"></button>
+        <!--button id="deleteAudioRecording" class='btn btn-default' data-dismiss="modal" recording='' data-i18n="ns.dialogs:delete"></button-->
       </div>
     </div>
   </div>
@@ -831,7 +855,7 @@
         <form role="form" data-toggle="validator" id="formAddTags">
           <div class="form-group">
             <label class="control-label" for="newTagTitle" data-i18n="ns.dialogs:addTagsToGroupTags"></label>
-            <input pattern="^([^#/\\\ ]){1,}$" class="form-control" type="text" name="newTagTitle"
+            <input pattern="^([^#/\\\ ]){2,}$" class="form-control" type="text" name="newTagTitle"
                    id="newTagTitle"
                    data-i18n="[placeholder]ns.dialogs:addTagsToGroupTagsPlaceholder;[data-error]ns.dialogs:editTagNamesRestrictionsHelp"/>
             <p class="help-block with-errors"></p>
@@ -866,6 +890,55 @@
                    pattern='^([^"]){1,}$' data-i18n="[data-error]ns.dialogs:tagGroupNameHelp" required/>
             <p class="help-block with-errors"></p>
           </div>
+          <div class="form-group">
+            <label class="control-label" for="editTagGroupBackgroundColor" data-i18n="ns.dialogs:tagBackgroundColor"></label>
+            <input type="color" class="form-control" id="editTagGroupBackgroundColor" style="padding: 0">
+            <select class="form-control" id="editTagGroupBackgroundColorChooser">
+              <option value="#ffffff">#ffffff</option>
+              <option value="#000000">#000000</option>
+              <option value="#ac725e">#ac725e</option>
+              <option value="#d06b64">#d06b64</option>
+              <option value="#f83a22">#f83a22</option>
+              <option value="#fa573c">#fa573c</option>
+              <option value="#ff7537">#ff7537</option>
+              <option value="#ffad46">#ffad46</option>
+              <option value="#42d692">#42d692</option>
+              <option value="#008000">#008000</option>
+              <option value="#7bd148">#7bd148</option>
+              <option value="#fad165">#fad165</option>
+              <option value="#FFCC24">#FFCC24</option>
+              <option value="#92e1c0">#92e1c0</option>
+              <option value="#9fe1e7">#9fe1e7</option>
+              <option value="#9fc6e7">#9fc6e7</option>
+              <option value="#4986e7">#4986e7</option>
+              <option value="#9a9cff">#9a9cff</option>
+              <option value="#b99aff">#b99aff</option>
+              <option value="#c2c2c2">#c2c2c2</option>
+              <option value="#cabdbf">#cabdbf</option>
+              <option value="#cca6ac">#cca6ac</option>
+              <option value="#f691b2">#f691b2</option>
+              <option value="#cd74e6">#cd74e6</option>
+              <option value="#a47ae2">#a47ae2</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="control-label" for="editTagGroupForegroundColor" data-i18n="ns.dialogs:tagForegroundColor"></label>
+            <input type="color" class="form-control" id="editTagGroupForegroundColor" style="padding: 0">
+            <select class="form-control" id="editTagGroupForegroundColorChooser">
+              <option value="#ffffff">#ffffff</option>
+              <option value="#cccccc">#cccccc</option>
+              <option value="#333333">#333333</option>
+              <option value="#000000">#000000</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <div class="checkbox">
+              <label for="colorChangesToAllTags">
+                <input type="checkbox" id="colorChangesToAllTags">
+                <span data-i18n="ns.dialogs:colorChangesToAllTags"></span>
+              </label>
+            </div>
+          </div>
         </form>
       </div>
       <div class="modal-footer">
@@ -894,6 +967,47 @@
             <input class="form-control" type="text" name="newTagGroupName" id="newTagGroupName"
                    pattern='^([^"]){1,}$' data-i18n="[data-error]ns.dialogs:tagGroupNameHelp" required/>
             <p class="help-block with-errors"></p>
+          </div>
+          <div class="form-group">
+            <label class="control-label" for="tagGroupBackgroundColor" data-i18n="ns.dialogs:tagBackgroundColor"></label>
+            <input type="color" class="form-control" id="tagGroupBackgroundColor" style="padding: 0">
+            <select class="form-control" id="tagGroupBackgroundColorChooser">
+              <option value="#ffffff">#ffffff</option>
+              <option value="#000000">#000000</option>
+              <option value="#ac725e">#ac725e</option>
+              <option value="#d06b64">#d06b64</option>
+              <option value="#f83a22">#f83a22</option>
+              <option value="#fa573c">#fa573c</option>
+              <option value="#ff7537">#ff7537</option>
+              <option value="#ffad46">#ffad46</option>
+              <option value="#42d692">#42d692</option>
+              <option value="#008000">#008000</option>
+              <option value="#7bd148">#7bd148</option>
+              <option value="#fad165">#fad165</option>
+              <option value="#FFCC24">#FFCC24</option>
+              <option value="#92e1c0">#92e1c0</option>
+              <option value="#9fe1e7">#9fe1e7</option>
+              <option value="#9fc6e7">#9fc6e7</option>
+              <option value="#4986e7">#4986e7</option>
+              <option value="#9a9cff">#9a9cff</option>
+              <option value="#b99aff">#b99aff</option>
+              <option value="#c2c2c2">#c2c2c2</option>
+              <option value="#cabdbf">#cabdbf</option>
+              <option value="#cca6ac">#cca6ac</option>
+              <option value="#f691b2">#f691b2</option>
+              <option value="#cd74e6">#cd74e6</option>
+              <option value="#a47ae2">#a47ae2</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="control-label" for="tagGroupForegroundColor" data-i18n="ns.dialogs:tagForegroundColor"></label>
+            <input type="color" class="form-control" id="tagGroupForegroundColor" style="padding: 0">
+            <select class="form-control" id="tagGroupForegroundColorChooser">
+              <option value="#ffffff">#ffffff</option>
+              <option value="#cccccc">#cccccc</option>
+              <option value="#333333">#333333</option>
+              <option value="#000000">#000000</option>
+            </select>
           </div>
         </form>
       </div>
