@@ -41,6 +41,10 @@
     margin: 6px;
 }
 
+#locationName {
+    padding-left: 0;
+}
+
 #statusBar {
     margin-top: 12px;
     font-size: 14px;
@@ -464,7 +468,7 @@ input a.resetFilter {
 #closeOpenedFile {
     position: fixed;
     top: 1px;
-    right: 0px;
+    right: -3px;
     height: 37px;
     box-shadow: -11px 1px 24px -1px #F2F2F2;
     background-color: #F2F2F2;
