@@ -188,7 +188,7 @@ define(function(require, exports, module) {
           namespaces: [
             'ns.common',
             'ns.dialogs',
-            'ns.perspectiveList',
+            'ns.perspectives',
             'ns.pro',
           ]
         },

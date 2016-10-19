@@ -257,13 +257,5 @@
   "createNewButtonTitle": "Opens menu for creating new documents",
   "createNewDocument": "Create new document",
   "createAdvancedFile": "Create Advanced File",
-  "orderByName": "Name",
-  "orderByTagCount": "Tag Count",
-  "orderBySize": "Size",
-  "orderByDate": "Date Modified",
-  "orderByExtension": "Extension",
-  "ascending": "Ascending",
-  "descending": "Descending",
-  "by": "by",
   "-": "-"
 }
