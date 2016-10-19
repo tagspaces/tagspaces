@@ -1,10 +1,10 @@
 {
     "saveAsSelectionLabel": {
-        "message": "Save Selected",
+        "message": "انتخاب شده ها را ذخیره کن",
         "description": "Title of label."
     },
     "appLauncher": {
-        "message": "Launch TagSpaces",
+        "message": "TagSpaces را آغاز کن",
         "description": "Title of the application launcher in the browser."
     },
     "appDesc": {
@@ -12,51 +12,51 @@
         "description": ""
     },
     "addTagHelp": {
-        "message": "Tags should have a minimum length of 2 characters and should not contain special characters such as spaces, #, / ,\\ and other.",
+        "message": "برچسب ها باید حداقل 2 حرفی باشند و نباید شامل نشانه هایی چون /، \\، # ... شوند.",
         "description": "Add tag help message"
     },
     "saveScreenshotTitle": {
-        "message": "Save screenshot of the visible page area as PNG",
+        "message": "تصویر صفحه را در قالب PNG ذخیره کن",
         "description": "Title of screenshot button"
     },
     "editTitleLabel": {
-        "message": "Edit Title",
+        "message": "عنوان را اصلاح کن",
         "description": "Title of label."
     },
     "appName": {
-        "message": "TagSpaces",
+        "message": "TagSpaces ",
         "description": ""
     },
     "appLauncherLabel": {
-        "message": "Capture Web Content",
+        "message": "محتوای وب را بگیر",
         "description": "Title of label."
     },
     "saveScreenshotLabel": {
-        "message": "Screenshot",
+        "message": "تصویر صفحه",
         "description": "Title of label."
     },
     "addTagLabel": {
-        "message": "Add Tags",
+        "message": "برچسب اضافه کن",
         "description": "Title of label."
     },
     "saveAsMhtmlTitle": {
-        "message": "Save whole page as MHTML",
+        "message": "صحفه را کاملا در قالب HTML ذخیره کن",
         "description": "Title of save page button"
     },
     "appLauncherTitle": {
-        "message": "Start TagSpaces Browser in a new tab",
+        "message": "جست و جو گر TagSpaces را در یک برگه ی جدید شروع کن",
         "description": "Title of the application launcher in the browser."
     },
     "saveSelectionAsHtmlTitle": {
-        "message": "Save selected content as HTML",
+        "message": "محتوای انتخاب شده را در قالب HTML ذخیره کن",
         "description": "Title of save selection button"
     },
     "saveAsMhtmlLabel": {
-        "message": "Save Whole Page",
+        "message": "صفحه را کاملا ذخیره کن",
         "description": "Title of label."
     },
     "saveFileLabel": {
-        "message": "Save as File",
+        "message": "در قالب فایل ذخیره کن",
         "description": "Title of label."
     }
 }
