@@ -100,7 +100,8 @@ define(function (require, exports, module) {
             "reloadApplication": "r a",
             "toggleFullScreen": "f11",
             "openDevTools": "f12",
-            "openSearch": "mod+f"
+            "openSearch": "mod+f",
+            "openFile": "enter"
         },
         "supportedFileTypes": [
             { "type": "jpg", "viewer": "viewerImage", "editor": "false" },

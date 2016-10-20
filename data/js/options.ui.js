@@ -180,6 +180,8 @@ define(function(require, exports, module) {
     $('#renamingFileKeyBinding').val(TSCORE.Config.getRenamingFileKeyBinding());
     $('#selectAllKeyBinding').val(TSCORE.Config.getSelectAllKeyBinding());
     $('#showSearchKeyBinding').val(TSCORE.Config.getSearchKeyBinding());
+    $('#deleteDocumentKeyBinding').val(TSCORE.Config.getDeleteDocumentKeyBinding());
+    $('#openFileKeyBinding').val(TSCORE.Config.getOpenFileKeyBinding());
     $('#perspectiveList').empty();
     $('#writeMetaToSidecarFile').attr('checked', TSCORE.Config.getWriteMetaToSidecarFile());
     $('#useDefaultLocationCheckbox').attr('checked', TSCORE.Config.getUseDefaultLocation());
@@ -284,6 +286,8 @@ define(function(require, exports, module) {
     TSCORE.Config.setSearchKeyBinding(parseKeyBinding($('#showSearchKeyBinding').val()));
     TSCORE.Config.setSelectAllKeyBinding(parseKeyBinding($('#selectAllKeyBinding').val()));
     TSCORE.Config.setRenamingFileKeyBinding(parseKeyBinding($('#renamingFileKeyBinding').val()));
+    TSCORE.Config.setDeleteDocumentKeyBinding(parseKeyBinding($('#deleteDocumentKeyBinding').val()));
+    TSCORE.Config.setOpenFileKeyBinding(parseKeyBinding($('#openFileKeyBinding').val()));
     TSCORE.Config.setDefaultTagColor($('#tagsBackgroundColor').val());
     TSCORE.Config.setDefaultTagTextColor($('#tagsForegroundColor').val());
     if (TSCORE.PRO) {
