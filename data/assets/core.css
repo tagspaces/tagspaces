@@ -103,7 +103,7 @@
     border: 0;
     background-color: transparent;
     color: #333333;
-    /*white-space: nowrap;*/
+    word-break: break-all;
     overflow: hidden;
 }
 
