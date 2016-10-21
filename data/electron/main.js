@@ -180,9 +180,9 @@ app.on('ready', function(event) {
 
   globalShortcut.register('CommandOrControl+Alt+N', newTextFile);
 
-  globalShortcut.register('CommandOrControl+Alt+W', getNextFile);
+  globalShortcut.register('CommandOrControl+Alt+D', getNextFile);
 
-  globalShortcut.register('CommandOrControl+Alt+Q', getPreviousFile);
+  globalShortcut.register('CommandOrControl+Alt+A', getPreviousFile);
 
   globalShortcut.register('CommandOrControl+Alt+S', showTagSpaces);
 
