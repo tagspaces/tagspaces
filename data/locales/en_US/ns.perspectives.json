@@ -53,12 +53,11 @@
     "tree": "Tree",
     "bilevelPartition": "Bilevel Partition",
     "newSubdirectory": "New Subdirectory",
-    "perspectiveImageSwiper": "About ImageSwiper Perspective",
-    "perspectiveGraph": "About FolderViz Perspective",
     "showAllFiles": "Show all files",
     "directoryDoesNotContainAnyImages": "Directory does not contain any images or is currently being analysed.",
     "whiteBackgroundColor": "White Background",
     "blackBackgroundColor": "Black Background",
     "sepiaBackgroundColor": "Sepia Background",
+    "moreOperations": "More Operations",
     "-": "-"
 }
