@@ -191,6 +191,8 @@ define(function(require, exports, module) {
       $('#useOCR').attr('checked', TSCORE.Config.getUseOCR());
       $('#useTextExtraction').attr('checked', TSCORE.Config.getUseTextExtraction());
       $('#useGenerateThumbnails').attr('checked', TSCORE.Config.getUseGenerateThumbnails());
+      $('#defaultThumbnailSize').val(TSCORE.Config.getDefaultThumbnailSize());
+      $('#defaultThumbnailFormat').val(TSCORE.Config.getDefaultThumbnailFormat());
       enableMetaData();
     }
 
@@ -203,6 +205,27 @@ define(function(require, exports, module) {
         $languagesDropdown.append($('<option>').text(value.title).val(value.iso));
       }
     });
+
+    var $thumbnailsizeDropdown = $('#defaultThumbnailSize');
+    $thumbnailsizeDropdown.empty();
+    TSCORE.Config.getAvailableThumbnailSizes().forEach(function(value) {
+      if (TSCORE.Config.getDefaultThumbnailSize() === value) {
+        $thumbnailsizeDropdown.append($('<option>').attr('selected', 'selected').text(value + "px").val(value));
+      } else {
+        $thumbnailsizeDropdown.append($('<option>').text(value + "px").val(value));
+      }
+    });
+
+    var $thumbnailformatDropdown = $('#defaultThumbnailFormat');
+    $thumbnailformatDropdown.empty();
+    TSCORE.Config.getAvailableThumbnailFormat().forEach(function(value) {
+      if (TSCORE.Config.getDefaultThumbnailFormat() === value) {
+        $thumbnailformatDropdown.append($('<option>').attr('selected', 'selected').text(value).val(value));
+      } else {
+        $thumbnailformatDropdown.append($('<option>').text(value).val(value));
+      }
+    });
+
     $('#fileTypesList').empty();
 
     TSCORE.Config.getActivatedPerspectives().forEach(function(value) {
@@ -264,11 +287,14 @@ define(function(require, exports, module) {
     TSCORE.Config.setDefaultTagColor($('#tagsBackgroundColor').val());
     TSCORE.Config.setDefaultTagTextColor($('#tagsForegroundColor').val());
     if (TSCORE.PRO) {
+      //var thumbnailSize = $('#defaultThumbnailSize').val();
       TSCORE.Config.setEnableMetaData($('#enableMetaData').is(':checked'));
       TSCORE.Config.setUseTrashCan($('#useTrashCan').is(':checked'));
       TSCORE.Config.setUseOCR($('#useOCR').is(':checked'));
       TSCORE.Config.setUseTextExtraction($('#useTextExtraction').is(':checked'));
       TSCORE.Config.setUseGenerateThumbnails($('#useGenerateThumbnails').is(':checked'));
+      TSCORE.Config.setDefaultThumbnailSize($('#defaultThumbnailSize').val());
+      TSCORE.Config.setDefaultThumbnailFormat($('#defaultThumbnailFormat').val());
     }
     var interfaceLang = $('#languagesList').val();
     TSCORE.Config.setInterfaceLanguage(interfaceLang);

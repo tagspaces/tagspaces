@@ -381,6 +381,16 @@ define(function(require, exports, module) {
     return exports.DefaultSettings.supportedLanguages;
   }
 
+  function getAvailableThumbnailSizes() {
+
+    return exports.DefaultSettings.availableThumbnailSizes;
+  }
+
+  function getAvailableThumbnailFormat() {
+
+    return exports.DefaultSettings.availableThumbnailFormat;
+  }
+
   function getCloseViewerKeyBinding() {
     updateKeyBindingsSetting();
     if (exports.Settings.keyBindings.closeViewer === undefined) {
@@ -766,6 +776,28 @@ define(function(require, exports, module) {
       value = 0;
     }
     exports.Settings.maxSearchResultCount = value;
+  }
+
+  function getDefaultThumbnailSize() {
+    if (exports.Settings.defaultThumbnailSize === undefined) {
+      exports.Settings.defaultThumbnailSize = exports.DefaultSettings.defaultThumbnailSize;
+    }
+    return exports.Settings.defaultThumbnailSize;
+  }
+
+  function setDefaultThumbnailSize(value) {
+    exports.Settings.defaultThumbnailSize = value;
+  }
+
+  function getDefaultThumbnailFormat() {
+    if (exports.Settings.defaultThumbnailFormat === undefined) {
+      exports.Settings.defaultThumbnailFormat = exports.DefaultSettings.defaultThumbnailFormat;
+    }
+    return exports.Settings.defaultThumbnailFormat;
+  }
+
+  function setDefaultThumbnailFormat(value) {
+    exports.Settings.defaultThumbnailFormat = value;
   }
 
   function getWatchCurrentDirectory() {
@@ -1452,6 +1484,12 @@ define(function(require, exports, module) {
   exports.setColoredFileExtensionsEnabled = setColoredFileExtensionsEnabled;
   exports.getShowTagAreaOnStartup = getShowTagAreaOnStartup;
   exports.setShowTagAreaOnStartup = setShowTagAreaOnStartup;
+  exports.getDefaultThumbnailSize = getDefaultThumbnailSize;
+  exports.setDefaultThumbnailSize = setDefaultThumbnailSize;
+  exports.getDefaultThumbnailFormat = getDefaultThumbnailFormat;
+  exports.setDefaultThumbnailFormat = setDefaultThumbnailFormat;
+  exports.getAvailableThumbnailSizes = getAvailableThumbnailSizes;
+  exports.getAvailableThumbnailFormat = getAvailableThumbnailFormat;
   exports.getDefaultTagColor = getDefaultTagColor;
   exports.setDefaultTagColor = setDefaultTagColor;
   exports.getDefaultTagTextColor = getDefaultTagTextColor;

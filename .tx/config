@@ -11,8 +11,8 @@ file_filter = data/locales/<lang>/ns.dialogs.json
 source_lang = en
 type = KEYVALUEJSON
 
-[tagspaces.nsperspectivelistjson]
-file_filter = data/locales/<lang>/ns.perspectiveList.json
+[tagspaces.nsperspectivesjson]
+file_filter = data/locales/<lang>/ns.perspectives.json
 source_lang = en
 type = KEYVALUEJSON
 

@@ -131,7 +131,7 @@
     "excludeTermFromSearch": "Genom att inkludera \" ! \" framför en sökterm (ex. !term) kommer utesluta all filer med denna term i sitt filnamn.",
     "includeTagInSearch": "Genom att inkludera \" + \" framför en term (ex. +tag) kommer inkludera all filer taggade med denna tagg.",
     "excludeTagInSearch": "Genom att inkludera \" - \" framför en term (ex. -tag) kommer utesluta all filer taggade med denna tagg.",
-    "andedSearch": "All terms should be true in order the file to appear in the search results.",
+    "andedSearch": "Alla villkor måste gälla för att filen ska visas i sökresultaten.",
     "searchInFilenameOnly": "Söktermen måste vara en del av filnamnet. Innehållet av filen ignoreras.",
     "perspectivesDropDown": "Vyer",
     "suggestedTags": "Föreslagna taggar",

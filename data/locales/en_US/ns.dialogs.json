@@ -193,6 +193,8 @@
   "toDateTime": "To:",
   "coloredFileExtensionsEnabled":"Enable colored file type extensions",
   "showTagAreaOnStartup":"Always show tag area on startup",
+  "defaultThumbnailSize":"Thumbnail size",
+  "defaultThumbnailFormat":"Thumbnail format",
   "tagBackgroundColor":"Default tag background color",
   "tagForegroundColor":"Default tag text color",
   "colorChangesToAllTags":"Apply color changes to all tags of the group",
