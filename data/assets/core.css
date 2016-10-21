@@ -518,6 +518,10 @@ input a.resetFilter {
     z-index: 99999;
 }
 
+#exitFullScreen span {
+    padding-left: 0;
+}
+
 #openLeftPanel {
     padding-left: 12px;
     padding-right: 12px;
