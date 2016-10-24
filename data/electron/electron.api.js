@@ -72,7 +72,10 @@ define(function(require, exports, module) {
           {
             label: $.i18n.t("ns.common:openNewInstance"),
             accelerator: '',
-            click: TSCORE.UI.openNewInstance
+            //click: TSCORE.UI.openNewInstance
+            click: function() {
+              ipcRenderer.send("new-win", "newWin");
+            }
           },
           {
             type: 'separator'
