@@ -250,6 +250,7 @@
   "createDirectory":"New Directory",
   "alertOpenLocatioFirst":"Please open a location first!",
   "exitApp":"Exit",
+  "closeWin":"Close Window",
   "openNewInstance":"New Application Window",
   "documentation":"Documentation",
   "selectFile": "Please select a file first.",

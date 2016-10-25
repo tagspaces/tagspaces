@@ -135,6 +135,14 @@ define(function(require, exports, module) {
             type: 'separator'
           },
           {
+            label: $.i18n.t("ns.common:closeWin"),
+            accelerator: '',
+            click: function() {
+                TSCORE.Config.saveSettings();
+                win.destroy();
+            }
+          },
+          {
             label: $.i18n.t("ns.common:exitApp"),
             accelerator: '',
             click: function() {
