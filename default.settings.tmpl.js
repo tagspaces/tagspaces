@@ -101,7 +101,8 @@ define(function (require, exports, module) {
             "toggleFullScreen": "f11",
             "openDevTools": "f12",
             "openSearch": "mod+f",
-            "openFile": "enter"
+            "openFile": "enter",
+            "openFileExternally": "ctrl+enter"
         },
         "supportedFileTypes": [
             { "type": "jpg", "viewer": "viewerImage", "editor": "false" },

@@ -182,6 +182,7 @@ define(function(require, exports, module) {
     $('#showSearchKeyBinding').val(TSCORE.Config.getSearchKeyBinding());
     $('#deleteDocumentKeyBinding').val(TSCORE.Config.getDeleteDocumentKeyBinding());
     $('#openFileKeyBinding').val(TSCORE.Config.getOpenFileKeyBinding());
+    $('#openFileExternallyKeyBinding').val(TSCORE.Config.getOpenFileExternallyKeyBinding());
     $('#perspectiveList').empty();
     $('#writeMetaToSidecarFile').attr('checked', TSCORE.Config.getWriteMetaToSidecarFile());
     $('#useDefaultLocationCheckbox').attr('checked', TSCORE.Config.getUseDefaultLocation());
@@ -288,6 +289,7 @@ define(function(require, exports, module) {
     TSCORE.Config.setRenamingFileKeyBinding(parseKeyBinding($('#renamingFileKeyBinding').val()));
     TSCORE.Config.setDeleteDocumentKeyBinding(parseKeyBinding($('#deleteDocumentKeyBinding').val()));
     TSCORE.Config.setOpenFileKeyBinding(parseKeyBinding($('#openFileKeyBinding').val()));
+    TSCORE.Config.setOpenFileExternallyKeyBinding(parseKeyBinding($('#openFileExternallyKeyBinding').val()));
     TSCORE.Config.setDefaultTagColor($('#tagsBackgroundColor').val());
     TSCORE.Config.setDefaultTagTextColor($('#tagsForegroundColor').val());
     if (TSCORE.PRO) {
