@@ -573,6 +573,9 @@ define(function(require, exports) {
     $('#renamingFileKeyBindingHelp').html(formatShortcuts(TSCORE.Config.getRenamingFileKeyBinding()));
     $('#selectAllKeyBindingHelp').html(formatShortcuts(TSCORE.Config.getSelectAllKeyBinding()));
     $('#renamingFileKeyBindingHelp').html(formatShortcuts(TSCORE.Config.getRenamingFileKeyBinding()));
+    $('#openFileKeyBindingHelp').html(formatShortcuts(TSCORE.Config.getOpenFileKeyBinding()));
+    $('#openFileExternallyKeyBindingHelp').html(formatShortcuts(TSCORE.Config.getOpenFileExternallyKeyBinding()));
+    $('#deleteDocumentKeyBindingHelp').html(formatShortcuts(TSCORE.Config.getDeleteDocumentKeyBinding()));
   }
 
   function formatShortcuts(shortcut) {

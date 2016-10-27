@@ -533,6 +533,34 @@ define(function(require, exports, module) {
     exports.Settings.keyBindings.deleteDocument = value;
   }
 
+  function getOpenFileKeyBinding() {
+    updateKeyBindingsSetting();
+    if (exports.Settings.keyBindings.openFile === undefined) {
+      exports.Settings.keyBindings.openFile = exports.DefaultSettings.keyBindings.openFile;
+      saveSettings();
+    }
+    return exports.Settings.keyBindings.openFile;
+  }
+
+  function setOpenFileKeyBinding(value) {
+
+    exports.Settings.keyBindings.openFile = value;
+  }
+
+  function getOpenFileExternallyKeyBinding() {
+    updateKeyBindingsSetting();
+    if (exports.Settings.keyBindings.openFileExternally === undefined) {
+      exports.Settings.keyBindings.openFileExternally = exports.DefaultSettings.keyBindings.openFileExternally;
+      saveSettings();
+    }
+    return exports.Settings.keyBindings.openFileExternally;
+  }
+
+  function setOpenFileExternallyKeyBinding(value) {
+
+    exports.Settings.keyBindings.openFileExternally = value;
+  }
+
   function getPropertiesDocumentKeyBinding() {
     updateKeyBindingsSetting();
     if (exports.Settings.keyBindings.propertiesDocument === undefined) {
@@ -1422,6 +1450,10 @@ define(function(require, exports, module) {
   exports.setRenamingFileKeyBinding = setRenamingFileKeyBinding;
   exports.getDeleteDocumentKeyBinding = getDeleteDocumentKeyBinding;
   exports.setDeleteDocumentKeyBinding = setDeleteDocumentKeyBinding;
+  exports.getOpenFileKeyBinding = getOpenFileKeyBinding;
+  exports.setOpenFileKeyBinding = setOpenFileKeyBinding;
+  exports.getOpenFileExternallyKeyBinding = getOpenFileExternallyKeyBinding;
+  exports.setOpenFileExternallyKeyBinding = setOpenFileExternallyKeyBinding;
   exports.getPropertiesDocumentKeyBinding = getPropertiesDocumentKeyBinding;
   exports.setPropertiesDocumentKeyBinding = setPropertiesDocumentKeyBinding;
   exports.getNextDocumentKeyBinding = getNextDocumentKeyBinding;

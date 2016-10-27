@@ -230,6 +230,15 @@ define(function(require, exports, module) {
     Mousetrap.bind(tsSettings.getRenamingFileKeyBinding(), function() {
       tsCoreUI.showFileRenameDialog(TSCORE.selectedFiles[0]);
     });
+    Mousetrap.bind(tsSettings.getDeleteDocumentKeyBinding(), function() {
+      tsCoreUI.showDeleteFilesDialog(TSCORE.selectedFiles[0]);
+    });
+    Mousetrap.bind(tsSettings.getOpenFileKeyBinding(), function() {
+      tsFileOpener.openFile(TSCORE.selectedFiles[0]);
+    });
+    Mousetrap.bind(tsSettings.getOpenFileExternallyKeyBinding(), function() {
+      TSCORE.IO.openFile(TSCORE.selectedFiles[0]);
+    });
   }
 
   function checkForNewVersion() {
