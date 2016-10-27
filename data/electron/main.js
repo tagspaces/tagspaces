@@ -36,6 +36,7 @@ var path = require('path');
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 var mainWindow = null;
+//var childWindow = null;
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function() {
@@ -49,6 +50,36 @@ app.on('window-all-closed', function() {
 app.on('will-quit', function() {
   // Unregister all shortcuts.
   globalShortcut.unregisterAll();
+});
+
+
+ipcMain.on("new-win", function() {
+  var newWindow = new BrowserWindow({width: 1280, height: 768});
+  //var indexPath = 'file://' + __dirname + '/index.html';
+  var startupParameter = "";
+  if (startupFilePath) {
+    startupParameter = "?open=" + encodeURIComponent(startupFilePath);
+  }
+  var indexPath = 'file://' + path.dirname(__dirname) + '/index.html' + startupParameter;
+
+  newWindow.setMenu(null);
+  newWindow.loadURL(indexPath);
+
+  if (debugMode) {
+    newWindow.webContents.openDevTools();
+  }
+
+  newWindow.once('ready-to-show', function() {
+    newWindow.show()
+  });
+
+  ipcMain.on('win-close', function(e, arg) {
+    newWindow.hide();
+  });
+
+  ipcMain.on('close', function(e, arg) {
+    newWindow.hide();
+  });
 });
 
 app.on('ready', function(event) {
@@ -78,6 +109,10 @@ app.on('ready', function(event) {
     mainWindow = null;
   });
 
+  ipcMain.on('close', function(e, arg) {
+    mainWindow.hide();
+  });
+
   mainWindow.webContents.on('crashed', function() {
     const options = {
       type: 'info',
@@ -95,6 +130,10 @@ app.on('ready', function(event) {
     });
   });
 
+  //ipcMain.on('win-close', function(e, arg) {
+  //  mainWindow.hide();
+  //});
+
   var trayIconPath;
   if (process.platform === 'darwin') {
     trayIconPath = 'Contents/Resources/app/assets/trayicon.png';
@@ -109,7 +148,6 @@ app.on('ready', function(event) {
   }
 
   trayIcon = new Tray(trayIconPath);
-
 
   var trayMenuTemplate = [
     {
