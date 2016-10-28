@@ -35,7 +35,7 @@ ipcMain.on('quit-application', function(event, arg) {
 var path = require('path');
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-var mainWindow = null;
+var mainWindow = null, newWindow = null;
 //var childWindow = null;
 
 // Quit when all windows are closed.
@@ -52,9 +52,8 @@ app.on('will-quit', function() {
   globalShortcut.unregisterAll();
 });
 
-
 ipcMain.on("new-win", function() {
-  var newWindow = new BrowserWindow({width: 1280, height: 768});
+  newWindow = new BrowserWindow({width: 1280, height: 768});
   //var indexPath = 'file://' + __dirname + '/index.html';
   var startupParameter = "";
   if (startupFilePath) {
@@ -130,15 +129,19 @@ app.on('ready', function(event) {
     });
   });
 
-  //ipcMain.on('win-close', function(e, arg) {
-  //  mainWindow.hide();
-  //});
+  ipcMain.on('win-close', function(e, arg) {
+    mainWindow.hide();
+  });
+
+  var focusedWindow = BrowserWindow.getFocusedWindow();
 
   var trayIconPath;
   if (process.platform === 'darwin') {
     trayIconPath = 'Contents/Resources/app/assets/trayicon.png';
   } else if (process.platform === 'win32') {
     trayIconPath = 'resources/app/assets/trayicon.png';
+    trayIconPath = 'assets/trayicon.png';
+
   } else {
     trayIconPath = 'resources/app/assets/trayicon.png';
   }
@@ -204,7 +207,11 @@ app.on('ready', function(event) {
   ];
 
   trayIcon.on('click', function() {
-    mainWindow.show();
+    if (mainWindow) {
+      mainWindow.show();
+    } else {
+      newWindow.show();
+    }
     //mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show();
   });
 
@@ -225,43 +232,80 @@ app.on('ready', function(event) {
   globalShortcut.register('CommandOrControl+Alt+S', showTagSpaces);
 
   function showTagSpaces() {
-    mainWindow.show();
+    if (mainWindow) {
+      mainWindow.show();
+    } else {
+      newWindow.show();
+    }
     //mainWindow.webContents.send("showing-tagspaces", "tagspaces");
   }
 
   function newTextFile() {
-    mainWindow.show();
-    mainWindow.webContents.send("new-file", "text");
+    if (mainWindow) {
+      mainWindow.show();
+      mainWindow.webContents.send("new-file", "text");
+    } else {
+      newWindow.show();
+      newWindow.webContents.send("new-file", "text");
+    }
   }
 
   function newHTMLFile() {
-    mainWindow.show();
-    mainWindow.webContents.send("new-file", "html");
+    if (mainWindow) {
+      mainWindow.show();
+      mainWindow.webContents.send("new-file", "html");
+    } else {
+      newWindow.show();
+      newWindow.webContents.send("new-file", "html");
+    }
   }
 
   function newMDFile() {
-    mainWindow.show();
-    mainWindow.webContents.send("new-file", "markdown");
+    if (mainWindow) {
+      mainWindow.show();
+      mainWindow.webContents.send("new-file", "markdown");
+    } else {
+      newWindow.show();
+      newWindow.webContents.send("new-file", "markdown");
+    }
   }
 
   function newAudioFile() {
-    mainWindow.show();
-    mainWindow.webContents.send("new-file", "audio");
+    if (mainWindow) {
+      mainWindow.show();
+      mainWindow.webContents.send("new-file", "audio");
+    } else {
+      newWindow.show();
+      newWindow.webContents.send("new-file", "audio");
+    }
   }
 
   function getNextFile() {
-    mainWindow.show();
-    mainWindow.webContents.send("next-file", "next");
+    if (mainWindow) {
+      mainWindow.show();
+      mainWindow.webContents.send("new-file", "next");
+    } else {
+      newWindow.show();
+      newWindow.webContents.send("new-file", "next");
+    }
   }
 
   function getPreviousFile() {
-    mainWindow.show();
-    mainWindow.webContents.send("previous-file", "previous");
+    if (mainWindow) {
+      mainWindow.show();
+      mainWindow.webContents.send("new-file", "previous");
+    } else {
+      newWindow.show();
+      newWindow.webContents.send("new-file", "previous");
+    }
   }
 
   function resumePlayback() {
-    //mainWindow.show();
-    mainWindow.webContents.send('play-pause', true);
+    if (mainWindow) {
+      mainWindow.webContents.send("play-pause", true);
+    } else {
+      newWindow.webContents.send("play-pause", true);
+    }
   }
 });
 
@@ -269,7 +313,11 @@ process.on('uncaughtException', function(error) {
   if (error.stack) {
     console.error('error:', error.stack);
   }
-  mainWindow.reload();
+  if (mainWindow) {
+    mainWindow.reload();
+  } else {
+    newWindow.reload();
+  }
   // Handle the error
   /*if (error) {
    const options = {
