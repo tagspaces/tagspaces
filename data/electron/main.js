@@ -140,8 +140,6 @@ app.on('ready', function(event) {
     trayIconPath = 'Contents/Resources/app/assets/trayicon.png';
   } else if (process.platform === 'win32') {
     trayIconPath = 'resources/app/assets/trayicon.png';
-    trayIconPath = 'assets/trayicon.png';
-
   } else {
     trayIconPath = 'resources/app/assets/trayicon.png';
   }
