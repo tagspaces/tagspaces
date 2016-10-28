@@ -227,6 +227,11 @@ button.close {
   margin-top: 6px;
 }
 
+
+.dropdown-menu {
+  min-width: 200px;
+}
+
 /* END Bootstap modals fullscreen on small screen */
 
 /* Tablet optimization */
@@ -234,6 +239,7 @@ button.close {
   line-height: 45px !important;
   height: 45px !important;
   cursor: pointer;
+  overflow: hidden;
 }
 
 .navbar {
