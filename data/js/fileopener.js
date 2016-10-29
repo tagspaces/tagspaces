@@ -35,7 +35,7 @@ define(function(require, exports, module) {
   };
 
   function isFullScreen() {
-
+    // ToDo method eventually unreliable on linux/ubuntu
     return (window.innerHeight === screen.height);
   }
 
@@ -395,9 +395,9 @@ define(function(require, exports, module) {
 
     Mousetrap.bindGlobal("esc", leaveFullScreen);
 
-    if (isFullScreen()) {
+    /*if (isFullScreen()) {
       switchToFullScreen();
-    }
+    }*/
   }
 
   function setFileProperties(fileProperties) {
