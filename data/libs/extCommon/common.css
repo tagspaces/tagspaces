@@ -1,3 +1,9 @@
+@media print {
+  body {
+    height: auto !important;
+  }
+}
+
 #aboutExtensionModal img {
     max-width: 100%;
 }
