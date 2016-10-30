@@ -142,7 +142,7 @@ Licensed under MIT https://github.com/tobiasahlin/SpinKit/blob/master/LICENSE
 }
 /* End TOGGLE SWITCH */
 
-/* SELECT2 */
+/* SELECT2 customizations */
 
 .select2-results {
     font-size: 14px;
@@ -171,9 +171,9 @@ Licensed under MIT https://github.com/tobiasahlin/SpinKit/blob/master/LICENSE
     box-shadow: none;
 }
 
-/* End SELECT2 */
+/* End SELECT2 customizations */
 
-/* bootstrap3xeditable class */
+/* bootstrap3xeditable customizations */
 .editable-inline {
   margin-top: 5px;
   width: 99% !important;
@@ -197,4 +197,12 @@ Licensed under MIT https://github.com/tobiasahlin/SpinKit/blob/master/LICENSE
 .editableform .form-control {
     width: 220px;
 }
-/* END bootstrap3xeditable class */
+/* END bootstrap3xeditable customizations */
+
+/* noty customizations */
+
+#noty_bottomCenter_layout_container {
+  bottom: 70px !important;
+}
+
+/* END noty customizations */
