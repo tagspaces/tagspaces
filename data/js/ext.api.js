@@ -10,8 +10,8 @@ define(function(require, exports, module) {
     var command = data.command;
 
     switch (command) {
-      case "readabilityError":
-        TSCORE.showAlertDialog("This HTML content can't be loaded.");
+      case "showAlertDialog":
+        TSCORE.showAlertDialog("This content can't be loaded.", data.title);
         break;
       case "saveDocument":
         TSCORE.FileOpener.saveFile();
