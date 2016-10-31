@@ -11,7 +11,7 @@ define(function(require, exports, module) {
 
     switch (command) {
       case "showAlertDialog":
-        TSCORE.showAlertDialog("This content can't be loaded.", data.title);
+        TSCORE.showAlertDialog(data.message, data.title);
         break;
       case "saveDocument":
         TSCORE.FileOpener.saveFile();
@@ -56,9 +56,9 @@ define(function(require, exports, module) {
   function openLinkExternally(uri) {
     uri = decodeURIComponent(uri);
     if (
-            uri.indexOf("http://") === 0 ||
-            uri.indexOf("https://") === 0 ||
-            uri.indexOf("file://") === 0
+      uri.indexOf("http://") === 0 ||
+      uri.indexOf("https://") === 0 ||
+      uri.indexOf("file://") === 0
     ) {
       TSCORE.IO.openFile(uri);
     } else {
