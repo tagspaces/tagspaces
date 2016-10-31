@@ -69,7 +69,7 @@ ipcMain.on("new-win", function() {
   }
 
   newWindow.once('ready-to-show', function() {
-    newWindow.show()
+    newWindow.show();
   });
 
   ipcMain.on('win-close', function(e, arg) {
