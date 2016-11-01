@@ -138,8 +138,8 @@ define(function(require, exports, module) {
             label: $.i18n.t("ns.common:closeWin"),
             accelerator: '',
             click: function() {
-                TSCORE.Config.saveSettings();
-                win.destroy();
+              TSCORE.Config.saveSettings();
+              win.destroy();
             }
           },
           {
