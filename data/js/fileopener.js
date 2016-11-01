@@ -377,16 +377,6 @@ define(function(require, exports, module) {
       showFilePropertiesDialog();
       return false;
     });
-    Mousetrap.unbind(TSCORE.Config.getPrevDocumentKeyBinding());
-    Mousetrap.bind(TSCORE.Config.getPrevDocumentKeyBinding(), function() {
-      TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getPrevFile(_openedFilePath));
-      return false;
-    });
-    Mousetrap.unbind(TSCORE.Config.getNextDocumentKeyBinding());
-    Mousetrap.bind(TSCORE.Config.getNextDocumentKeyBinding(), function() {
-      TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getNextFile(_openedFilePath));
-      return false;
-    });
     Mousetrap.unbind(TSCORE.Config.getEditDocumentKeyBinding());
     Mousetrap.bindGlobal(TSCORE.Config.getEditDocumentKeyBinding(), function() {
       editFile(_openedFilePath);
