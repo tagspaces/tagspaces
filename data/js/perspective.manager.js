@@ -188,6 +188,19 @@ define(function(require, exports, module) {
     }
   }
 
+  function selectFile(filePath) {
+    for (var i = 0; i < perspectives.length; i++) {
+      if (perspectives[i].ID === TSCORE.currentPerspectiveID) {
+        try {
+          console.log(perspectives[i]);
+          return perspectives[i].selectFile(filePath);
+        } catch (e) {
+          console.warn("Error while executing 'selectFile' on " + perspectives[i].ID + ' ' + e);
+        }
+      }
+    }
+  }
+
   function updateTreeData(treeData) {
     for (var i = 0; i < perspectives.length; i++) {
       try {
@@ -378,6 +391,7 @@ define(function(require, exports, module) {
   exports.redrawCurrentPerspective = redrawCurrentPerspective;
   exports.getNextFile = getNextFile;
   exports.getPrevFile = getPrevFile;
+  exports.selectFile = selectFile;
   exports.updateTreeData = updateTreeData;
   exports.updateFileBrowserData = updateFileBrowserData;
   exports.refreshFileListContainer = refreshFileListContainer;

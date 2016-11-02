@@ -239,20 +239,6 @@ define(function(require, exports, module) {
     Mousetrap.bind(tsSettings.getOpenFileExternallyKeyBinding(), function() {
       TSCORE.IO.openFile(TSCORE.selectedFiles[0]);
     });
-    Mousetrap.unbind(TSCORE.Config.getPrevDocumentKeyBinding());
-    Mousetrap.bind(TSCORE.Config.getPrevDocumentKeyBinding(), function() {
-      if (TSCORE.selectedFiles[0]) {
-        TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getPrevFile(TSCORE.FileOpener.getOpenedFilePath()));
-      }
-      return false;
-    });
-    Mousetrap.unbind(TSCORE.Config.getNextDocumentKeyBinding());
-    Mousetrap.bind(TSCORE.Config.getNextDocumentKeyBinding(), function() {
-      if (TSCORE.selectedFiles[0]) {
-        TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getNextFile(TSCORE.FileOpener.getOpenedFilePath()));
-      }
-      return false;
-    });
   }
 
   function checkForNewVersion() {

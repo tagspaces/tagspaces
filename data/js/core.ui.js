@@ -2,7 +2,7 @@
  * Use of this source code is governed by a AGPL3 license that
  * can be found in the LICENSE file. */
 
-/* global define, Handlebars, isNode, isFirefox */
+/* global define, Handlebars, isNode, isFirefox, Mousetrap */
 define(function(require, exports) {
   'use strict';
 
@@ -63,6 +63,29 @@ define(function(require, exports) {
             showMoveCopyFilesDialog();
           }
         }
+      });
+
+      Mousetrap.unbind(TSCORE.Config.getPrevDocumentKeyBinding());
+      Mousetrap.bind(TSCORE.Config.getPrevDocumentKeyBinding(), function() {
+        if (TSCORE.selectedFiles[0]) {
+          TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getPrevFile(TSCORE.FileOpener.getOpenedFilePath()));
+          TSCORE.PerspectiveManager.selectFile(TSCORE.FileOpener.getOpenedFilePath());
+        } else {
+          console.log(TSCORE.fileList[0].path);
+          TSCORE.FileOpener.openFile(TSCORE.fileList[0].path);
+        }
+        return false;
+      });
+      Mousetrap.unbind(TSCORE.Config.getNextDocumentKeyBinding());
+      Mousetrap.bind(TSCORE.Config.getNextDocumentKeyBinding(), function() {
+        if (TSCORE.selectedFiles[0]) {
+          TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getNextFile(TSCORE.FileOpener.getOpenedFilePath()));
+          TSCORE.PerspectiveManager.selectFile(TSCORE.FileOpener.getOpenedFilePath());
+        } else {
+          console.log(TSCORE.fileList[0].path);
+          TSCORE.FileOpener.openFile(TSCORE.fileList[0].path);
+        }
+        return false;
       });
     }
 
