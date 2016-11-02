@@ -83,9 +83,9 @@ define(function(require, exports, module) {
 
     $perspectiveSwitcher.empty();
     $perspectiveSwitcher.append($('<li>', {
-              class: 'dropdown-header',
-              text: $.i18n.t('ns.common:perspectiveSwitch')
-            }).prepend("<button class='close'>&times;</button>")
+        class: 'dropdown-header',
+        text: $.i18n.t('ns.common:perspectiveSwitch')
+      }).prepend("<button class='close'>&times;</button>")
     );
 
     for (var i = 0; i < extensions.length; i++) {
@@ -197,6 +197,16 @@ define(function(require, exports, module) {
         } catch (e) {
           console.warn("Error while executing 'selectFile' on " + perspectives[i].ID + ' ' + e);
         }
+      }
+    }
+  }
+
+  function firstUnselectedFile() {
+    for (var obj in TSCORE.fileList) {
+      if (TSCORE.fileList[obj].isDirectory === false) {
+        TSCORE.FileOpener.openFile(TSCORE.fileList[obj].path);
+        TSCORE.PerspectiveManager.selectFile(TSCORE.FileOpener.getOpenedFilePath());
+        break;
       }
     }
   }
@@ -392,6 +402,7 @@ define(function(require, exports, module) {
   exports.getNextFile = getNextFile;
   exports.getPrevFile = getPrevFile;
   exports.selectFile = selectFile;
+  exports.firstUnselectedFile = firstUnselectedFile;
   exports.updateTreeData = updateTreeData;
   exports.updateFileBrowserData = updateFileBrowserData;
   exports.refreshFileListContainer = refreshFileListContainer;

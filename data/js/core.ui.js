@@ -70,11 +70,9 @@ define(function(require, exports) {
         if (TSCORE.selectedFiles[0]) {
           TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getPrevFile(TSCORE.FileOpener.getOpenedFilePath()));
           TSCORE.PerspectiveManager.selectFile(TSCORE.FileOpener.getOpenedFilePath());
+        } else {
+          TSCORE.PerspectiveManager.firstUnselectedFile();
         }
-        //else {
-        //  console.log(TSCORE.fileList);
-        //  TSCORE.FileOpener.openFile(TSCORE.fileList[0].path);
-        //}
         return false;
       });
       Mousetrap.unbind(TSCORE.Config.getNextDocumentKeyBinding());
@@ -82,11 +80,9 @@ define(function(require, exports) {
         if (TSCORE.selectedFiles[0]) {
           TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getNextFile(TSCORE.FileOpener.getOpenedFilePath()));
           TSCORE.PerspectiveManager.selectFile(TSCORE.FileOpener.getOpenedFilePath());
+        } else {
+          TSCORE.PerspectiveManager.firstUnselectedFile();
         }
-        //else {
-        //  console.log(TSCORE.fileList);
-        //  TSCORE.FileOpener.openFile(TSCORE.fileList[0].path);
-        //}
         return false;
       });
     }
