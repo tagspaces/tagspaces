@@ -21,6 +21,7 @@
 ### Pro
 - Added geo tagging with the leaflet library
 - Making thumbnails size and format configurable
+- Correcting the generation of PDF thumbnails
 
 ### Chrome Extension and Firefox Addon
 - Minor bug fixes
