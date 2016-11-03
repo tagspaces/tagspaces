@@ -84,9 +84,12 @@ define(function(require, exports, module) {
     });
     $('#nextFileButton').on("click", function() {
       TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getNextFile(_openedFilePath));
+      TSCORE.PerspectiveManager.selectFile(TSCORE.FileOpener.getOpenedFilePath());
     });
     $('#prevFileButton').on("click", function() {
       TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getPrevFile(_openedFilePath));
+      TSCORE.PerspectiveManager.selectFile(TSCORE.FileOpener.getOpenedFilePath());
+
     });
     $('#reloadFile').on("click", function() {
       TSCORE.FileOpener.openFile(_openedFilePath);
