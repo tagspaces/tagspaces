@@ -68,7 +68,10 @@ define(function(require, exports) {
       Mousetrap.unbind(TSCORE.Config.getPrevDocumentKeyBinding());
       Mousetrap.bind(TSCORE.Config.getPrevDocumentKeyBinding(), function() {
         if (TSCORE.selectedFiles[0]) {
-          //TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getPrevFile(TSCORE.FileOpener.getOpenedFilePath()));
+          TSCORE.PerspectiveManager.selectFile(TSCORE.PerspectiveManager.getPrevFile(TSCORE.selectedFiles[0]));
+        }
+        if (TSCORE.FileOpener.getOpenedFilePath() !== undefined) {
+          TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getPrevFile(TSCORE.FileOpener.getOpenedFilePath()));
           TSCORE.PerspectiveManager.selectFile(TSCORE.FileOpener.getOpenedFilePath());
         }
         return false;
@@ -76,7 +79,10 @@ define(function(require, exports) {
       Mousetrap.unbind(TSCORE.Config.getNextDocumentKeyBinding());
       Mousetrap.bind(TSCORE.Config.getNextDocumentKeyBinding(), function() {
         if (TSCORE.selectedFiles[0]) {
-          //TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getNextFile(TSCORE.FileOpener.getOpenedFilePath()));
+          TSCORE.PerspectiveManager.selectFile(TSCORE.PerspectiveManager.getNextFile(TSCORE.selectedFiles[0]));
+        }
+        if (TSCORE.FileOpener.getOpenedFilePath() !== undefined) {
+          TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getNextFile(TSCORE.FileOpener.getOpenedFilePath()));
           TSCORE.PerspectiveManager.selectFile(TSCORE.FileOpener.getOpenedFilePath());
         }
         return false;
