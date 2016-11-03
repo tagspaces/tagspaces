@@ -843,20 +843,28 @@ define(function(require, exports) {
           for (var i = 0; i < TSCORE.selectedFiles.length; i++) {
             newFilePath = $('#moveCopyDirectoryPath').val() + TSCORE.dirSeparator + TSCORE.TagUtils.extractFileName(TSCORE.selectedFiles[i]);
             filePath = TSCORE.selectedFiles[i];
-            fileOperations.push(TSCORE.IO.renameFilePromise(filePath, newFilePath));
+            TSCORE.IO.renameFilePromise(filePath, newFilePath).then(function(success) {
+              TSCORE.hideWaitingDialog();
+              TSPOSTIO.renameFile(filePath, newFilePath);
+            }, function(err) {
+              TSCORE.hideWaitingDialog();
+              TSCORE.showAlertDialog(err);
+            });
+            //fileOperations.push(TSCORE.IO.renameFilePromise(filePath, newFilePath));
           }
+
           if (TSCORE.IO.stopWatchingDirectories) {
             TSCORE.IO.stopWatchingDirectories();
           }
-          Promise.all(fileOperations).then(function(success) {
-            // TODO handle moving sidecar files
-            TSCORE.hideWaitingDialog();
-            TSCORE.navigateToDirectory(TSCORE.currentPath);
-            TSCORE.showSuccessDialog("Files successfully moved");
-          }, function(err) {
-            TSCORE.hideWaitingDialog();
-            TSCORE.showAlertDialog("Renaming files failed");
-          });
+          //Promise.all(fileOperations).then(function(success) {
+          //  // TODO handle moving sidecar files
+          //  TSCORE.hideWaitingDialog();
+          //  TSCORE.navigateToDirectory(TSCORE.currentPath);
+          //  TSCORE.showSuccessDialog("Files successfully moved");
+          //}, function(err) {
+          //  TSCORE.hideWaitingDialog();
+          //  TSCORE.showAlertDialog("Renaming files failed");
+          //});
         });
 
         $('#copyFilesButton').click(function(e) {
