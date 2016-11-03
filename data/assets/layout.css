@@ -263,13 +263,18 @@
 }
 
 .col3 .row1 {
-  flex: 0 1 80px;
-  -webkit-flex: 0 1 80px;
-  -ms-flex: 0 1 80px;
+  flex: 0 1 auto;
+  -webkit-flex: 0 1 auto;
+  -ms-flex: 0 1 auto;
 
   min-height: 80px;
   box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.1);
   z-index: 1;
+}
+
+.col3 .row1 nav {
+  min-height: 80px;
+  margin-bottom: 0;
 }
 
 .col3 .row2 {
@@ -293,10 +298,24 @@
   min-height: 0px;
 }
 
+#tagsContainer {
+    width: 100%;
+    max-height: 55px;
+    margin: 0;
+}
+
 #fileViewerMainToolbar {
-  flex: 0 1 210px;
-  -webkit-flex: 0 1 210px;
-  -ms-flex: 0 1 210px;
+  margin-top: -8px;
+  padding-left: 0px;
+  /*min-width: 190px;*/
+
+  flex: 0 1 auto;
+  /*-ms-flex: 0 1 190px;*/
+}
+
+#fileTags {
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 /*==== Location Management ====== */
