@@ -65,7 +65,7 @@ define(function(require, exports) {
         }
       });
 
-      Mousetrap.unbind(TSCORE.Config.getPrevDocumentKeyBinding());
+      //Mousetrap.unbind(TSCORE.Config.getPrevDocumentKeyBinding());
       Mousetrap.bind(TSCORE.Config.getPrevDocumentKeyBinding(), function() {
         if (TSCORE.selectedFiles[0]) {
           TSCORE.PerspectiveManager.selectFile(TSCORE.PerspectiveManager.getPrevFile(TSCORE.selectedFiles[0]));
@@ -76,7 +76,7 @@ define(function(require, exports) {
         }
         return false;
       });
-      Mousetrap.unbind(TSCORE.Config.getNextDocumentKeyBinding());
+      //Mousetrap.unbind(TSCORE.Config.getNextDocumentKeyBinding());
       Mousetrap.bind(TSCORE.Config.getNextDocumentKeyBinding(), function() {
         if (TSCORE.selectedFiles[0]) {
           TSCORE.PerspectiveManager.selectFile(TSCORE.PerspectiveManager.getNextFile(TSCORE.selectedFiles[0]));

@@ -237,8 +237,8 @@ define(function(require, exports, module) {
     Mousetrap.unbind(TSCORE.Config.getReloadDocumentKeyBinding());
     Mousetrap.unbind(TSCORE.Config.getDeleteDocumentKeyBinding());
     Mousetrap.unbind(TSCORE.Config.getPropertiesDocumentKeyBinding());
-    Mousetrap.unbind(TSCORE.Config.getPrevDocumentKeyBinding());
-    Mousetrap.unbind(TSCORE.Config.getNextDocumentKeyBinding());
+    //Mousetrap.unbind(TSCORE.Config.getPrevDocumentKeyBinding());
+    //Mousetrap.unbind(TSCORE.Config.getNextDocumentKeyBinding());
   }
 
   function openFileOnStartup(filePath) {
