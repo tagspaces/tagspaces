@@ -192,7 +192,6 @@ define(function(require, exports, module) {
     for (var i = 0; i < perspectives.length; i++) {
       if (perspectives[i].ID === TSCORE.currentPerspectiveID) {
         try {
-          console.log(perspectives[i]);
           return perspectives[i].selectFile(filePath);
         } catch (e) {
           console.warn("Error while executing 'selectFile' on " + perspectives[i].ID + ' ' + e);
@@ -203,6 +202,7 @@ define(function(require, exports, module) {
 
   function firstUnselectedFile() {
     for (var obj in TSCORE.fileList) {
+      console.log(TSCORE.fileList[obj]);
       if (TSCORE.fileList[obj].isDirectory === false) {
         TSCORE.FileOpener.openFile(TSCORE.fileList[obj].path);
         TSCORE.PerspectiveManager.selectFile(TSCORE.FileOpener.getOpenedFilePath());
