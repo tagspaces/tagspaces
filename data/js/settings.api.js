@@ -171,6 +171,13 @@ define(function(require, exports, module) {
           'viewer': 'viewerZIP',
           'editor': 'false'
         });
+      }
+      if (oldBuildNumber <= 20160905130746) {
+        addFileType({
+          'type': 'eml',
+          'viewer': 'viewerMHTML',
+          'editor': 'false'
+        });
         if (isCordovaAndroid) {
           TSCORE.showAlertDialog("Due some major changes in the app, you have to manually reconnect your locations. Please excuse us for this inconvenience.");
         }

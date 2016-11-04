@@ -872,7 +872,9 @@ define(function(require, exports) {
             TSCORE.IO.stopWatchingDirectories();
           }
           Promise.all(fileOperations).then(function(success) {
-            // TODO handle moving sidecar files
+            success.forEach(function(operation) {
+              TSCORE.Meta.updateMetaData(operation[0], operation[1]);
+            });
             TSCORE.hideWaitingDialog();
             TSCORE.navigateToDirectory(TSCORE.currentPath);
             TSCORE.showSuccessDialog("Files successfully moved");
@@ -897,6 +899,9 @@ define(function(require, exports) {
           }
           Promise.all(fileOperations).then(function(success) {
             // TODO handle copying sidecar files
+            /*success.forEach(function(operation) {
+              TSCORE.Meta.updateMetaData(operation[0], operation[1]);
+            });*/
             TSCORE.hideWaitingDialog();
             TSCORE.navigateToDirectory(TSCORE.currentPath);
             TSCORE.showSuccessDialog("Files successfully copied");
@@ -1010,7 +1015,7 @@ define(function(require, exports) {
       $('#downloadFile').parent().hide();
       $('#openFileInNewWindow').hide();
       $('#openGooglePlay').hide();
-      //$('.cancelButton').hide();
+      $('.cancelButton').hide();
     } else if (isCordovaiOS) {
       $('#fullscreenFile').parent().hide();
     } else if (isChrome) {

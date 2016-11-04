@@ -216,19 +216,19 @@
             <li class="dropdown-header">
               <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
               <span data-i18n="ns.common:createNewDocument"></span></li>
-            <li><a id="createTextFileButton" data-i18n="[title]ns.common:createTextFileButtonTooltip" title="New Text File(txt)">
+            <li><a id="createTextFileButton">
               <i class="fa fa-tag fa-fw"></i>
               &nbsp;<span data-i18n="ns.common:createFile"></span></a></li>
-            <li><a id="createHTMLFileButton" data-i18n="[title]ns.common:createHTMLFileButtonTooltip" title="New Rich Text File(html)">
+            <li><a id="createHTMLFileButton">
               <i class="fa fa-tag fa-fw"></i>
               &nbsp;<span data-i18n="ns.common:createRichTextFile"></span></a></li>
-            <li><a id="createMarkdownFileButton" data-i18n="[title]ns.common:createMarkdownFileButtonTooltip" title="New Markdown File(md)">
+            <li><a id="createMarkdownFileButton">
               <i class="fa fa-tag fa-fw"></i>
               &nbsp;<span data-i18n="ns.common:createMarkdown"></span></a></li>
-            <li><a id="createAudioFileButton" data-i18n="[title]ns.common:createAudioFileButtonTooltip" title="New Voice Memo File(wav/ogg)">
+            <li><a id="createAudioFileButton">
               <i class="fa fa-tag fa-fw"></i>
               &nbsp;<span data-i18n="ns.common:createAudioFile"></span></a></li>
-            <li><a id="addExistingFileButton" data-i18n="[title]" title="Add Existing File">
+            <li><a id="addExistingFileButton">
               <i class="fa fa-tag fa-fw"></i>
               &nbsp;<span data-i18n="ns.perspectives:showAddFileDialog"></span></a></li>
           </ul>
@@ -342,8 +342,8 @@
             <i class="fa fa-plus-square"></i>
           </button>
           <ul class="dropdown-menu" id="tagSuggestionsMenu"></ul>
-          <span id="fileTags" class="flexMaxWidth" style="max-height: 40px; overflow-y: auto; overflow-x: hidden;"></span>
-          <div id="fileViewerMainToolbar" class="btn-group" style="margin-top: -8px; min-width: 190px;">
+          <span id="fileTags" class="flexMaxWidth"></span>
+          <div id="fileViewerMainToolbar" class="btn-group">
             <button class="btn btn-link pull-right" data-i18n="[title]ns.common:openNextFileTooltip" id="nextFileButton">
               <i class="fa fa-arrow-right fa-lg"></i>
             </button>
