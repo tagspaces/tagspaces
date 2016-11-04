@@ -9,5 +9,9 @@
   "searchHistoryInfoOption": "Choose a search query",
   "searchHistoryRemoveOption": "Clear search history",
   "confirmDeleteSearchHistoryQuestion": "Do you really want to clear your search history?",
+	"encoding": "Encoding",
+	"record": "Record",
+	"encodeAfterRecording": "Encode after recording",
+	"encodeBackground": "Encode background",
 	"-": "-"
 }

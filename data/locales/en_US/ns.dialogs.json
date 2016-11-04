@@ -177,14 +177,6 @@
   "watchCurrentDirectory": "Watch current directory for changes",
   "renamingFileKeyBinding": "Rename File",
   "audioRecordingTitle": "Audio Recording File",
-  "encoding": "Encoding",
-  "record": "Record",
-  "encodeAfterRecording": "Encode after recording",
-  "encodeBackground": "Encode background",
-  "wav": ".wav",
-  "ogg": ".ogg",
-  "save": "Save",
-  "delete": "Delete",
   "dateTimeTab": "Date Time",
   "geoLocationTab": "Geo Location",
   "dateCalendarTab": "Date",
@@ -201,5 +193,6 @@
   "tagBackgroundColor":"Default tag background color",
   "tagForegroundColor":"Default tag text color",
   "colorChangesToAllTags":"Apply color changes to all tags of the group",
+  "delete": "Delete",
   "-": "-"
 }

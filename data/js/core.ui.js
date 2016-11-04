@@ -2,7 +2,7 @@
  * Use of this source code is governed by a AGPL3 license that
  * can be found in the LICENSE file. */
 
-/* global define, Handlebars, isNode, isFirefox */
+/* global define, Handlebars, isNode, isFirefox, Mousetrap */
 define(function(require, exports) {
   'use strict';
 
@@ -63,6 +63,29 @@ define(function(require, exports) {
             showMoveCopyFilesDialog();
           }
         }
+      });
+
+      //Mousetrap.unbind(TSCORE.Config.getPrevDocumentKeyBinding());
+      Mousetrap.bind(TSCORE.Config.getPrevDocumentKeyBinding(), function() {
+        if (TSCORE.selectedFiles[0]) {
+          TSCORE.PerspectiveManager.selectFile(TSCORE.PerspectiveManager.getPrevFile(TSCORE.selectedFiles[0]));
+        }
+        if (TSCORE.FileOpener.getOpenedFilePath() !== undefined) {
+          TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getPrevFile(TSCORE.FileOpener.getOpenedFilePath()));
+          TSCORE.PerspectiveManager.selectFile(TSCORE.FileOpener.getOpenedFilePath());
+        }
+        return false;
+      });
+      //Mousetrap.unbind(TSCORE.Config.getNextDocumentKeyBinding());
+      Mousetrap.bind(TSCORE.Config.getNextDocumentKeyBinding(), function() {
+        if (TSCORE.selectedFiles[0]) {
+          TSCORE.PerspectiveManager.selectFile(TSCORE.PerspectiveManager.getNextFile(TSCORE.selectedFiles[0]));
+        }
+        if (TSCORE.FileOpener.getOpenedFilePath() !== undefined) {
+          TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getNextFile(TSCORE.FileOpener.getOpenedFilePath()));
+          TSCORE.PerspectiveManager.selectFile(TSCORE.FileOpener.getOpenedFilePath());
+        }
+        return false;
       });
     }
 
@@ -875,10 +898,9 @@ define(function(require, exports) {
             TSCORE.IO.stopWatchingDirectories();
           }
           Promise.all(fileOperations).then(function(success) {
-            // TODO handle copying sidecar files
-            /*success.forEach(function(operation) {
-              TSCORE.Meta.updateMetaData(operation[0], operation[1]);
-            });*/
+            success.forEach(function(operation) {
+              TSCORE.Meta.copyMetaData(operation[0], operation[1]);
+            });
             TSCORE.hideWaitingDialog();
             TSCORE.navigateToDirectory(TSCORE.currentPath);
             TSCORE.showSuccessDialog("Files successfully copied");

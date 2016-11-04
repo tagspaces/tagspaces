@@ -101,11 +101,6 @@ define(function(require, exports, module) {
             click: TSCORE.UI.showAudioRecordingDialog
           },
           {
-            label: $.i18n.t("ns.common:createAdvancedFile"),
-            accelerator: '',
-            click: TSCORE.UI.showFileCreateDialog
-          },
-          {
             type: 'separator'
           },
           {
@@ -677,7 +672,7 @@ define(function(require, exports, module) {
    * @returns {Promise.<Success, Error>}
    */
   function copyFilePromise(sourceFilePath, targetFilePath) {
-    return new Promise(function(resolve, reject) {
+    /*return new Promise(function(resolve, reject) {
       getPropertiesPromise(sourceFilePath).then(function(entry) {
         if (!entry.isFile) {
           reject($.i18n.t("ns.common:fileIsDirectory", {fileName: sourceFilePath}));
@@ -686,7 +681,6 @@ define(function(require, exports, module) {
             if (entry2) {
               reject($.i18n.t("ns.common:fileExists", {fileName: targetFilePath}));
             } else {
-
               var rd = fs.createReadStream(sourceFilePath);
               rd.on("error", function(err) {
                 reject($.i18n.t("ns.common:fileCopyFailed", {fileName: sourceFilePath}));
@@ -698,8 +692,8 @@ define(function(require, exports, module) {
               wr.on("close", function(ex) {
                 resolve();
               });
+              wr.on('finish', resolve([sourceFilePath, targetFilePath]));
               rd.pipe(wr);
-
             }
           }, function(err) {
             reject(err);
@@ -707,6 +701,19 @@ define(function(require, exports, module) {
         }
       }, function(err) {
         reject(err);
+      });
+    });*/
+    return new Promise(function(resolve, reject) {
+      fs.readFile(sourceFilePath, 'utf8', function (err, data) {
+        if (err){
+          reject($.i18n.t("ns.common:fileCopyFailed", {fileName: sourceFilePath}));
+          throw err;
+        }
+        fs.writeFile (targetFilePath, data, function(err) {
+          if (err) throw err;
+          console.log('complete');
+          resolve([sourceFilePath, targetFilePath])
+        });
       });
     });
   }
