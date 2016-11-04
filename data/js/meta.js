@@ -121,19 +121,10 @@ define(function(require, exports, module) {
           }
           var newName = TSCORE.Utils.baseName(newFileName) + "." + element.name.split('.').pop();
           var newFilePath = path + TSCORE.dirSeparator + TSCORE.metaFolder + TSCORE.dirSeparator + newName;
-          TSCORE.IO.copyFilePromise(element.path, newFilePath);
-
-          if (pathOld == TSCORE.currentPath) {
-            element.name = newName;
-            element.path = newFilePath;
-          } else {
-            TSCORE.metaFileList.splice(index, 1);
+          if(newFilePath !== undefined){
+            createMetaFolder(path);
           }
-
-        } else {
-          TSCORE.IO.deleteFilePromise(element.path).then(function() {
-            TSCORE.metaFileList.splice(index, 1);
-          });
+          TSCORE.IO.copyFilePromise(element.path, newFilePath);
         }
       }
     });
