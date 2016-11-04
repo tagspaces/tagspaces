@@ -101,11 +101,6 @@ define(function(require, exports, module) {
             click: TSCORE.UI.showAudioRecordingDialog
           },
           {
-            label: $.i18n.t("ns.common:createAdvancedFile"),
-            accelerator: '',
-            click: TSCORE.UI.showFileCreateDialog
-          },
-          {
             type: 'separator'
           },
           {
