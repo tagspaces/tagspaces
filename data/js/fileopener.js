@@ -216,7 +216,7 @@ define(function(require, exports, module) {
   function cleanViewer() {
     leaveFullScreen();
     TSCORE.closeFileViewer();
-    TSCORE.PerspectiveManager.clearSelectedFiles();
+    //TSCORE.PerspectiveManager.clearSelectedFiles();
 
     if (isWeb) {
       window.history.pushState("", "TagSpaces", location.pathname);
