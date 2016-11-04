@@ -849,7 +849,9 @@ define(function(require, exports) {
             TSCORE.IO.stopWatchingDirectories();
           }
           Promise.all(fileOperations).then(function(success) {
-            // TODO handle moving sidecar files
+            success.forEach(function(operation) {
+              TSCORE.Meta.updateMetaData(operation[0], operation[1]);
+            });
             TSCORE.hideWaitingDialog();
             TSCORE.navigateToDirectory(TSCORE.currentPath);
             TSCORE.showSuccessDialog("Files successfully moved");
@@ -874,6 +876,9 @@ define(function(require, exports) {
           }
           Promise.all(fileOperations).then(function(success) {
             // TODO handle copying sidecar files
+            /*success.forEach(function(operation) {
+              TSCORE.Meta.updateMetaData(operation[0], operation[1]);
+            });*/
             TSCORE.hideWaitingDialog();
             TSCORE.navigateToDirectory(TSCORE.currentPath);
             TSCORE.showSuccessDialog("Files successfully copied");
