@@ -116,15 +116,13 @@ define(function(require, exports, module) {
             pathOld += TSCORE.dirSeparator;
           }
 
-          if (pathOld != pathNew) {
-            path = pathNew;
+          if (pathNew && pathOld != pathNew) {
+            var newName = TSCORE.Utils.baseName(newFileName) + "." + element.name.split('.').pop();
+            var newFilePath = pathNew + TSCORE.dirSeparator + TSCORE.metaFolder + TSCORE.dirSeparator + newName;
+            createMetaFolderPromise(pathNew).then(function() {
+              TSCORE.IO.copyFilePromise(element.path, newFilePath);
+            });
           }
-          var newName = TSCORE.Utils.baseName(newFileName) + "." + element.name.split('.').pop();
-          var newFilePath = path + TSCORE.dirSeparator + TSCORE.metaFolder + TSCORE.dirSeparator + newName;
-          if (path !== undefined) {
-            createMetaFolder(path);
-          }
-          TSCORE.IO.copyFilePromise(element.path, newFilePath);
         }
       }
     });
@@ -315,16 +313,20 @@ define(function(require, exports, module) {
     });
   }
 
-  function createMetaFolder(dirPath) {
-    if (dirPath.lastIndexOf(TSCORE.metaFolder) >= dirPath.length - TSCORE.metaFolder.length) {
-      console.log("Can not create meta folder in a meta folder");
-      return;
-    }
-    var metaDirPath = dirPath + TSCORE.dirSeparator + TSCORE.metaFolder;
-    TSCORE.IO.createDirectoryPromise(metaDirPath).then(function() {
-      console.log("Metafolder created: " + metaDirPath);
-    }).catch(function(error) {
-      console.log("Creating metafolder failed, it was probably already created " + error);
+  function createMetaFolderPromise(dirPath) {
+    return new Promise(function(resolve, reject) {
+      if (dirPath.lastIndexOf(TSCORE.metaFolder) >= dirPath.length - TSCORE.metaFolder.length) {
+        console.log("Can not create meta folder in a meta folder");
+        return;
+      }
+      var metaDirPath = dirPath + TSCORE.dirSeparator + TSCORE.metaFolder;
+      TSCORE.IO.createDirectoryPromise(metaDirPath).then(function() {
+        console.log("Metafolder created: " + metaDirPath);
+        resolve(metaDirPath);
+      }).catch(function(error) {
+        resolve(metaDirPath);
+        //reject("Creating metafolder failed, it was probably already created " + error);
+      });
     });
   }
 
@@ -342,5 +344,5 @@ define(function(require, exports, module) {
   exports.renameMetaTag = renameMetaTag;
   exports.removeMetaTag = removeMetaTag;
   exports.loadFolderMetaDataPromise = loadFolderMetaDataPromise;
-  exports.createMetaFolder = createMetaFolder;
+  exports.createMetaFolderPromise = createMetaFolderPromise;
 });

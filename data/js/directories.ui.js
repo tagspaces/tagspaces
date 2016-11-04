@@ -527,7 +527,7 @@ define(function(require, exports, module) {
     });
 
     if (TSCORE.PRO && TSCORE.Config.getEnableMetaData()) {
-      TSCORE.Meta.createMetaFolder(dirPath);
+      TSCORE.Meta.createMetaFolderPromise(dirPath);
     }
   }
 
