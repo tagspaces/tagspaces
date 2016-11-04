@@ -121,7 +121,7 @@ define(function(require, exports, module) {
           }
           var newName = TSCORE.Utils.baseName(newFileName) + "." + element.name.split('.').pop();
           var newFilePath = path + TSCORE.dirSeparator + TSCORE.metaFolder + TSCORE.dirSeparator + newName;
-          if(newFilePath !== undefined){
+          if (path !== undefined) {
             createMetaFolder(path);
           }
           TSCORE.IO.copyFilePromise(element.path, newFilePath);
