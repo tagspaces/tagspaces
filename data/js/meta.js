@@ -19,9 +19,9 @@ define(function(require, exports, module) {
     return TSCORE.IO.listDirectoryPromise(metaFolderPath, true);
   }
 
-  function findMetaFilebyPath(filePath, extension) {
+  function findMetaFilebyPath(filePath, metaFileExtension) {
     var metaFilePath = null;
-    filePath = filePath + extension;
+    filePath = filePath + metaFileExtension;
     TSCORE.metaFileList.every(function(element) {
       if (filePath.indexOf(element.name) > 0) {
         metaFilePath = TSCORE.currentPath + TSCORE.dirSeparator + TSCORE.metaFolder + TSCORE.dirSeparator + element.name;
@@ -49,7 +49,8 @@ define(function(require, exports, module) {
     var currentVersion = TSCORE.Config.DefaultSettings.appVersion + "." + TSCORE.Config.DefaultSettings.appBuild;
     if (!metaFilePath) {
       var name = TSCORE.Utils.baseName(filePath) + TSCORE.metaFileExt;
-      metaFilePath = TSCORE.currentPath + TSCORE.dirSeparator + TSCORE.metaFolder + TSCORE.dirSeparator + name;
+      var parentFolder = TSCORE.TagUtils.extractParentDirectoryPath(filePath);
+      metaFilePath = parentFolder + TSCORE.dirSeparator + TSCORE.metaFolder + TSCORE.dirSeparator + name;
       var entry = {
         "name": name,
         "isFile": true,
@@ -196,8 +197,19 @@ define(function(require, exports, module) {
   function loadMetaFileJsonPromise(entry) {
     return new Promise(function(resolve, reject) {
       var filePath = entry.path;
+      var parentFolder = TSCORE.TagUtils.extractParentDirectoryPath(filePath);
       var metaFileJson = findMetaFilebyPath(filePath, TSCORE.metaFileExt);
-      if (metaFileJson) {
+      if (metaFileJson) { // file in the current directory
+        TSCORE.IO.getFileContentPromise(metaFileJson, "text").then(function(result) {
+          var metaData = JSON.parse(result);
+          entry.meta.metaData = metaData;
+          resolve(filePath);
+        }).catch(function(err) {
+          console.warn("Getting meta information failed for: " + filePath);
+          resolve(filePath);
+        });
+      } else if (TSCORE.currentPath !== parentFolder) { // file in search results
+        metaFileJson = parentFolder + TSCORE.dirSeparator + TSCORE.metaFolder + TSCORE.dirSeparator + metaFileName;
         TSCORE.IO.getFileContentPromise(metaFileJson, "text").then(function(result) {
           var metaData = JSON.parse(result);
           entry.meta.metaData = metaData;
