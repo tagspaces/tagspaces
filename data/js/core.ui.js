@@ -213,12 +213,8 @@ define(function(require, exports) {
       }
     }
 
-    $('#aboutDialogBack').click(function() {
-      reloadAboutContent();
-    });
-    $('#dialogAboutTS').on('show.bs.modal', function() {
-      reloadAboutContent();
-    });
+    $('#aboutDialogBack').on('click', reloadAboutContent);
+    $('#dialogAboutTS').on('show.bs.modal', reloadAboutContent);
 
     // Open About Dialog
     $('#openAboutBox').on('click', function() {
@@ -965,11 +961,6 @@ define(function(require, exports) {
   }
 
   function showLicenseDialog() {
-    if (TSCORE.PRO) {
-      $('#licenseIframe').attr('src', 'pro/EULA.txt');
-    } else {
-      $('#licenseIframe').attr('src', 'LICENSE.txt');
-    }
     $('#aboutLicenseModal').modal({
       backdrop: 'static',
       show: true
@@ -979,17 +970,15 @@ define(function(require, exports) {
     });
   }
 
+  $('#aboutLicenseModal').on('show.bs.modal', reloadEulaContent);
+
   function reloadEulaContent() {
     if (TSCORE.PRO) {
-      $('#licenseIframe').attr('src', 'pro/EULA.txt');
+      $('#eulaIframe').attr('src', 'pro/EULA.txt');
     } else {
-      $('#licenseIframe').attr('src', 'LICENSE.txt');
+      $('#eulaIframe').attr('src', 'LICENSE.txt');
     }
   }
-
-  $('#aboutLicenseModal').on('show.bs.modal', function() {
-    reloadEulaContent();
-  });
 
   function disableTopToolbar() {
     $('#perspectiveSwitcherButton').prop('disabled', true);
