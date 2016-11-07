@@ -522,8 +522,8 @@ define(function(require, exports, module) {
         });
       }
     }).catch(function(err) {
-      TSPOSTIO.errorOpeningPath();
-      console.log("Error listing directory" + err);
+      TSPOSTIO.errorOpeningPath(dirPath);
+      console.log("Error listing directory " + dirPath + " - " + err);
     });
 
     if (TSCORE.PRO && TSCORE.Config.getEnableMetaData()) {
