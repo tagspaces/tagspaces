@@ -111,7 +111,7 @@ define(function(require, exports, module) {
 
     Promise.all(fileDeletionPromises).then(function(fList) {
       fList.forEach(function(filePath) {
-        TSCORE.Meta.updateMetaData(filePath);
+        TSCORE.Meta.deleteMetaData(filePath);
         TSCORE.PerspectiveManager.removeFileUI(filePath);
         if (filePath === TSCORE.FileOpener.getOpenedFilePath()) {
           TSCORE.FileOpener.closeFile(true);

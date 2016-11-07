@@ -742,6 +742,7 @@ define(function(require, exports, module) {
   function renameDirectoryPromise(dirPath, newDirName) {
     var newDirPath = TSCORE.TagUtils.extractParentDirectoryPath(dirPath) + TSCORE.dirSeparator + newDirName;
     console.log("Renaming dir: " + dirPath + " to " + newDirPath);
+    stopWatchingDirectories();
     return new Promise(function(resolve, reject) {
       if (dirPath === newDirPath) {
         reject($.i18n.t("ns.common:directoryTheSame"), $.i18n.t("ns.common:directoryNotMoved"));
