@@ -659,7 +659,7 @@ define(function(require, exports, module) {
           reject("Error creating folder: " + dirPath);
           return;
         }
-        resolve();
+        resolve(dirPath);
       });
     });
   }
@@ -745,8 +745,10 @@ define(function(require, exports, module) {
     return new Promise(function(resolve, reject) {
       if (dirPath === newDirPath) {
         reject($.i18n.t("ns.common:directoryTheSame"), $.i18n.t("ns.common:directoryNotMoved"));
+        return;
       } else if (fs.existsSync(newDirPath)) {
         reject($.i18n.t("ns.common:directoryExists", {dirName: newDirPath}), $.i18n.t("ns.common:directoryRenameFailed"));
+        return;
       } else {
         var dirStatus = fs.lstatSync(dirPath);
         if (dirStatus.isDirectory) {
@@ -760,6 +762,7 @@ define(function(require, exports, module) {
           });
         } else {
           reject($.i18n.t("ns.common:pathIsNotDirectory", {dirName: dirPath}), $.i18n.t("ns.common:directoryRenameFailed"));
+          return;
         }
       }
     });
