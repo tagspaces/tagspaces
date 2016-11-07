@@ -100,7 +100,6 @@ var isWin = navigator.appVersion.indexOf("Win")!==-1;
       hammerjs:               'libs/hammerjs/hammer.min',
       jqueryhammerjs:         'libs/jquery.hammer.js/jquery.hammer',
       handlebarsjs:           'libs/handlebars/handlebars.min',
-      pdfjs:                  'libs/pdfjs/build/pdf',
       webdavlib:              'web/webdavlib',
       jszip:                  'libs/jszip/dist/jszip.min',
       hopscotch:              'libs/hopscotch/dist/js/hopscotch.min',
