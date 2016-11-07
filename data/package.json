@@ -5,10 +5,7 @@
   "version": "2.5.4",
   "main": "electron/main.js",
   "dependencies": {
-    "fs-extra": "~0.24.0"
-  },
-  "devDependencies": {
-    "electron-prebuilt": "~0.37.2"
+    "fs-extra": "~1.0.0"
   },
   "build": {
     "app-bundle-id": "@@FULLNAME",
