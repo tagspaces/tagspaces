@@ -106,7 +106,7 @@ define(function(require, exports, module) {
 
       }
     });
-    if(!fileInMetaFileList) { // file is probably from a search list
+    if (!fileInMetaFileList) { // file is probably from a search list
       var sourcePathTemplate = TSCORE.Utils.dirName(sourceFileName) + TSCORE.dirSeparator + TSCORE.metaFolder + TSCORE.dirSeparator + TSCORE.Utils.baseName(sourceFileName);
       var targetPathTemplate = TSCORE.Utils.dirName(targetFileName) + TSCORE.dirSeparator + TSCORE.metaFolder + TSCORE.dirSeparator + TSCORE.Utils.baseName(targetFileName);
       TSCORE.IO.renameFilePromise(sourcePathTemplate + TSCORE.metaFileExt, targetPathTemplate + TSCORE.metaFileExt);
@@ -132,7 +132,7 @@ define(function(require, exports, module) {
         });
       }
     });
-    if(!fileInMetaFileList) { // file is probably from a search list
+    if (!fileInMetaFileList) { // file is probably from a search list
       var sourcePathTemplate = TSCORE.Utils.dirName(sourceFileName) + TSCORE.dirSeparator + TSCORE.metaFolder + TSCORE.dirSeparator + TSCORE.Utils.baseName(sourceFileName);
       TSCORE.IO.deleteFilePromise(sourcePathTemplate + TSCORE.metaFileExt);
       TSCORE.IO.deleteFilePromise(sourcePathTemplate + TSCORE.thumbFileExt);
@@ -293,6 +293,15 @@ define(function(require, exports, module) {
     return tags;
   }
 
+  function getDescriptionFromMetaFile(filePath) {
+    var metaObj = findMetaObjectFromFileList(filePath);
+    var description;
+    if (metaObj && metaObj.metaData && metaObj.metaData.description) {
+      description = metaObj.metaData.description;
+      return description;
+    }
+  }
+
   //meta tag utils
   function addMetaTags(filePath, tags) {
     var metaObj = findMetaObjectFromFileList(filePath);
@@ -305,7 +314,8 @@ define(function(require, exports, module) {
 
     if (!metaObj.metaData) {
       metaObj.metaData = {
-        tags: []
+        tags: [],
+        description: ''
       };
     }
 
@@ -405,6 +415,7 @@ define(function(require, exports, module) {
   exports.loadMetaFileJsonPromise = loadMetaFileJsonPromise;
   exports.loadThumbnailPromise = loadThumbnailPromise;
   exports.getTagsFromMetaFile = getTagsFromMetaFile;
+  exports.getDescriptionFromMetaFile = getDescriptionFromMetaFile;
   exports.addMetaTags = addMetaTags;
   exports.renameMetaTag = renameMetaTag;
   exports.removeMetaTag = removeMetaTag;
