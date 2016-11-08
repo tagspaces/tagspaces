@@ -200,17 +200,6 @@ define(function(require, exports, module) {
     }
   }
 
-  function firstUnselectedFile() {
-    for (var obj in TSCORE.fileList) {
-      console.log(TSCORE.fileList[obj]);
-      if (TSCORE.fileList[obj].isDirectory === false) {
-        TSCORE.FileOpener.openFile(TSCORE.fileList[obj].path);
-        TSCORE.PerspectiveManager.selectFile(TSCORE.FileOpener.getOpenedFilePath());
-        break;
-      }
-    }
-  }
-
   function updateTreeData(treeData) {
     for (var i = 0; i < perspectives.length; i++) {
       try {
@@ -402,7 +391,6 @@ define(function(require, exports, module) {
   exports.getNextFile = getNextFile;
   exports.getPrevFile = getPrevFile;
   exports.selectFile = selectFile;
-  exports.firstUnselectedFile = firstUnselectedFile;
   exports.updateTreeData = updateTreeData;
   exports.updateFileBrowserData = updateFileBrowserData;
   exports.refreshFileListContainer = refreshFileListContainer;
