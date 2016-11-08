@@ -83,9 +83,9 @@ define(function(require, exports, module) {
 
     $perspectiveSwitcher.empty();
     $perspectiveSwitcher.append($('<li>', {
-              class: 'dropdown-header',
-              text: $.i18n.t('ns.common:perspectiveSwitch')
-            }).prepend("<button class='close'>&times;</button>")
+        class: 'dropdown-header',
+        text: $.i18n.t('ns.common:perspectiveSwitch')
+      }).prepend("<button class='close'>&times;</button>")
     );
 
     for (var i = 0; i < extensions.length; i++) {
@@ -183,6 +183,18 @@ define(function(require, exports, module) {
           return perspectives[i].getPrevFile(filePath);
         } catch (e) {
           console.warn("Error while executing 'getPrevFile' on " + perspectives[i].ID + ' ' + e);
+        }
+      }
+    }
+  }
+
+  function selectFile(filePath) {
+    for (var i = 0; i < perspectives.length; i++) {
+      if (perspectives[i].ID === TSCORE.currentPerspectiveID) {
+        try {
+          return perspectives[i].selectFile(filePath);
+        } catch (e) {
+          console.warn("Error while executing 'selectFile' on " + perspectives[i].ID + ' ' + e);
         }
       }
     }
@@ -378,6 +390,7 @@ define(function(require, exports, module) {
   exports.redrawCurrentPerspective = redrawCurrentPerspective;
   exports.getNextFile = getNextFile;
   exports.getPrevFile = getPrevFile;
+  exports.selectFile = selectFile;
   exports.updateTreeData = updateTreeData;
   exports.updateFileBrowserData = updateFileBrowserData;
   exports.refreshFileListContainer = refreshFileListContainer;

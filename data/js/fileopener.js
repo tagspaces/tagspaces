@@ -84,9 +84,11 @@ define(function(require, exports, module) {
     });
     $('#nextFileButton').on("click", function() {
       TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getNextFile(_openedFilePath));
+      TSCORE.PerspectiveManager.selectFile(TSCORE.FileOpener.getOpenedFilePath());
     });
     $('#prevFileButton').on("click", function() {
       TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getPrevFile(_openedFilePath));
+      TSCORE.PerspectiveManager.selectFile(TSCORE.FileOpener.getOpenedFilePath());
     });
     $('#reloadFile').on("click", function() {
       TSCORE.FileOpener.openFile(_openedFilePath);
@@ -214,7 +216,7 @@ define(function(require, exports, module) {
   function cleanViewer() {
     leaveFullScreen();
     TSCORE.closeFileViewer();
-    TSCORE.PerspectiveManager.clearSelectedFiles();
+    //TSCORE.PerspectiveManager.clearSelectedFiles();
 
     if (isWeb) {
       window.history.pushState("", "TagSpaces", location.pathname);
@@ -235,8 +237,8 @@ define(function(require, exports, module) {
     Mousetrap.unbind(TSCORE.Config.getReloadDocumentKeyBinding());
     Mousetrap.unbind(TSCORE.Config.getDeleteDocumentKeyBinding());
     Mousetrap.unbind(TSCORE.Config.getPropertiesDocumentKeyBinding());
-    Mousetrap.unbind(TSCORE.Config.getPrevDocumentKeyBinding());
-    Mousetrap.unbind(TSCORE.Config.getNextDocumentKeyBinding());
+    //Mousetrap.unbind(TSCORE.Config.getPrevDocumentKeyBinding());
+    //Mousetrap.unbind(TSCORE.Config.getNextDocumentKeyBinding());
   }
 
   function openFileOnStartup(filePath) {
@@ -375,16 +377,6 @@ define(function(require, exports, module) {
     Mousetrap.unbind(TSCORE.Config.getPropertiesDocumentKeyBinding());
     Mousetrap.bindGlobal(TSCORE.Config.getPropertiesDocumentKeyBinding(), function() {
       showFilePropertiesDialog();
-      return false;
-    });
-    Mousetrap.unbind(TSCORE.Config.getPrevDocumentKeyBinding());
-    Mousetrap.bind(TSCORE.Config.getPrevDocumentKeyBinding(), function() {
-      TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getPrevFile(_openedFilePath));
-      return false;
-    });
-    Mousetrap.unbind(TSCORE.Config.getNextDocumentKeyBinding());
-    Mousetrap.bind(TSCORE.Config.getNextDocumentKeyBinding(), function() {
-      TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getNextFile(_openedFilePath));
       return false;
     });
     Mousetrap.unbind(TSCORE.Config.getEditDocumentKeyBinding());
