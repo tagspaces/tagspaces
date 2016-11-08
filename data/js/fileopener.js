@@ -591,14 +591,10 @@ define(function(require, exports, module) {
         $('body').append(uiTemplate());
       }
 
-      console.debug(_openedFileProperties);
-      console.debug(_openedFileProperties);
-      console.debug(_openedFileProperties);
-
       $('#filePathProperty').val(_openedFileProperties.path);
       $('#fileSizeProperty').val(_openedFileProperties.size);
       $('#fileLMDTProperty').val(new Date(_openedFileProperties.lmdt));
-      var description = TSCORE.Meta.getDescriptionFromMetaFile(TSCORE.fileOpener.getOpenedFilePath());
+      var description = TSCORE.Meta.getDescriptionFromMetaFile(_openedFileProperties.path);
       $('#fileDescriptionProperty').val(description);
 
       var $fileTagsProperty = $('#fileTagsProperty');
