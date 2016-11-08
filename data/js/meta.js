@@ -316,6 +316,7 @@ define(function(require, exports, module) {
         description: description
       };
     }
+    metaObj.metaData.description = description;
     saveMetaData(filePath, metaObj.metaData);
   }
 
@@ -434,7 +435,7 @@ define(function(require, exports, module) {
   exports.getTagsFromMetaFile = getTagsFromMetaFile;
   exports.getDescriptionFromMetaFile = getDescriptionFromMetaFile;
   exports.addMetaTags = addMetaTags;
-  exports.addMetaDescription = addMetaDescriptionToFile;
+  exports.addMetaDescriptionToFile = addMetaDescriptionToFile;
   exports.renameMetaTag = renameMetaTag;
   exports.removeMetaTag = removeMetaTag;
   exports.loadFolderMetaDataPromise = loadFolderMetaDataPromise;

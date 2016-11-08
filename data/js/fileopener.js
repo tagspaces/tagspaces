@@ -19,12 +19,12 @@ define(function(require, exports, module) {
   var generatedTagButtons;
   $.fn.editableform.buttons = '<button type="submit" class="btn btn-primary editable-submit"><i class="fa fa-check fa-lg"></i></button><button type="button" class="btn editable-cancel"><i class="fa fa-times fa-lg"></i></button>';
   $.fn.editableform.template = '' +
-          '<form class="form-inline editableform flexMaxWidth">' +
-          '<div class="control-group flexLayout flexMaxWidth">' +
-          '<div class="flexLayout flexMaxWidth"><div class="editable-input flexMaxWidth"></div><div class="editable-buttons"></div></div>' +
-          '<div class="editable-error-block"></div>' +
-          '</div> ' +
-          '</form>';
+    '<form class="form-inline editableform flexMaxWidth">' +
+    '<div class="control-group flexLayout flexMaxWidth">' +
+    '<div class="flexLayout flexMaxWidth"><div class="editable-input flexMaxWidth"></div><div class="editable-buttons"></div></div>' +
+    '<div class="editable-error-block"></div>' +
+    '</div> ' +
+    '</form>';
   var exitFullscreenButton = '<button id="exitFullScreen" class="btn btn-link" title="Exit fullscreen mode (ESC)"><span class="fa fa-remove"></span></button>';
   var _isEditMode = false; // If a file is currently opened for editing, this var should be true
 
@@ -396,8 +396,8 @@ define(function(require, exports, module) {
     Mousetrap.bindGlobal("esc", leaveFullScreen);
 
     /*if (isFullScreen()) {
-      switchToFullScreen();
-    }*/
+     switchToFullScreen();
+     }*/
   }
 
   function setFileProperties(fileProperties) {
@@ -595,8 +595,14 @@ define(function(require, exports, module) {
       $('#fileSizeProperty').val(_openedFileProperties.size);
       $('#fileLMDTProperty').val(new Date(_openedFileProperties.lmdt));
       var description = TSCORE.Meta.getDescriptionFromMetaFile(_openedFileProperties.path);
-      $('#fileDescriptionProperty').val(description);
+      $('#fileDescriptionProperty').val(description).attr('readonly', 'readonly');
 
+      if (TSCORE.PRO) {
+        $('#fileDescriptionProperty').attr('readonly', false);
+        $('#filePropertiesDialogButton').on("click", function() {
+          TSCORE.Meta.addMetaDescriptionToFile(_openedFileProperties.path, $('#fileDescriptionProperty').val());
+        });
+      }
       var $fileTagsProperty = $('#fileTagsProperty');
       $fileTagsProperty.children().remove();
       $fileTagsProperty.append(generatedTagButtons);
