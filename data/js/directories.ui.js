@@ -124,6 +124,7 @@ define(function(require, exports, module) {
           perspectiveFound = true;
         }
       });
+
       if (perspectiveFound) {
         TSCORE.PerspectiveManager.changePerspective(defaultPerspective);
       } else if (activatedPerspectives.length > 0) {
@@ -172,6 +173,7 @@ define(function(require, exports, module) {
         historyItem.metaData = metaData;
         generateFolderTags(metaData.tags, element, menuItem);
         loadMetaTagGroups(historyItem.metaData);
+        TSCORE.PerspectiveManager.changePerspective(historyItem.metaData.perspectives);
       }).catch(function(err) {
         console.log("loadFolderMetaData: " + err);
         generateFolderTags(null, element, menuItem);
