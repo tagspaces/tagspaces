@@ -302,6 +302,23 @@ define(function(require, exports, module) {
     }
   }
 
+  function addMetaDescriptionToFile(filePath, description) {
+    var metaObj = findMetaObjectFromFileList(filePath);
+    if (!metaObj) {
+      metaObj = {
+        thumbnailPath: "",
+        metaData: null,
+      };
+    }
+
+    if (!metaObj.metaData) {
+      metaObj.metaData = {
+        description: description
+      };
+    }
+    saveMetaData(filePath, metaObj.metaData);
+  }
+
   //meta tag utils
   function addMetaTags(filePath, tags) {
     var metaObj = findMetaObjectFromFileList(filePath);
@@ -417,6 +434,7 @@ define(function(require, exports, module) {
   exports.getTagsFromMetaFile = getTagsFromMetaFile;
   exports.getDescriptionFromMetaFile = getDescriptionFromMetaFile;
   exports.addMetaTags = addMetaTags;
+  exports.addMetaDescription = addMetaDescriptionToFile;
   exports.renameMetaTag = renameMetaTag;
   exports.removeMetaTag = removeMetaTag;
   exports.loadFolderMetaDataPromise = loadFolderMetaDataPromise;

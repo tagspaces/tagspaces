@@ -590,9 +590,17 @@ define(function(require, exports, module) {
         var uiTemplate = Handlebars.compile(uiTPL);
         $('body').append(uiTemplate());
       }
+
+      console.debug(_openedFileProperties);
+      console.debug(_openedFileProperties);
+      console.debug(_openedFileProperties);
+
       $('#filePathProperty').val(_openedFileProperties.path);
       $('#fileSizeProperty').val(_openedFileProperties.size);
       $('#fileLMDTProperty').val(new Date(_openedFileProperties.lmdt));
+      var description = TSCORE.Meta.getDescriptionFromMetaFile(TSCORE.fileOpener.getOpenedFilePath());
+      $('#fileDescriptionProperty').val(description);
+
       var $fileTagsProperty = $('#fileTagsProperty');
       $fileTagsProperty.children().remove();
       $fileTagsProperty.append(generatedTagButtons);
