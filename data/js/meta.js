@@ -106,7 +106,7 @@ define(function(require, exports, module) {
 
       }
     });
-    if(!fileInMetaFileList) { // file is probably from a search list
+    if (!fileInMetaFileList) { // file is probably from a search list
       var sourcePathTemplate = TSCORE.Utils.dirName(sourceFileName) + TSCORE.dirSeparator + TSCORE.metaFolder + TSCORE.dirSeparator + TSCORE.Utils.baseName(sourceFileName);
       var targetPathTemplate = TSCORE.Utils.dirName(targetFileName) + TSCORE.dirSeparator + TSCORE.metaFolder + TSCORE.dirSeparator + TSCORE.Utils.baseName(targetFileName);
       TSCORE.IO.renameFilePromise(sourcePathTemplate + TSCORE.metaFileExt, targetPathTemplate + TSCORE.metaFileExt);
@@ -132,7 +132,7 @@ define(function(require, exports, module) {
         });
       }
     });
-    if(!fileInMetaFileList) { // file is probably from a search list
+    if (!fileInMetaFileList) { // file is probably from a search list
       var sourcePathTemplate = TSCORE.Utils.dirName(sourceFileName) + TSCORE.dirSeparator + TSCORE.metaFolder + TSCORE.dirSeparator + TSCORE.Utils.baseName(sourceFileName);
       TSCORE.IO.deleteFilePromise(sourcePathTemplate + TSCORE.metaFileExt);
       TSCORE.IO.deleteFilePromise(sourcePathTemplate + TSCORE.thumbFileExt);
