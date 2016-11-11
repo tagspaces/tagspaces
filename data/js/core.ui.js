@@ -853,6 +853,11 @@ define(function(require, exports) {
         var uiTemplate = Handlebars.compile(uiTPL);
         $('body').append(uiTemplate());
 
+        $('#dialogMoveCopyFiles').i18n();
+        $('#dialogMoveCopyFiles').draggable({
+          handle: '.modal-header'
+        });
+
         $('#moveFilesButton').click(function(e) {
           e.preventDefault();
           // TODO move to ioutils
@@ -917,16 +922,9 @@ define(function(require, exports) {
           text: TSCORE.selectedFiles[i]
         }));
       }
-      $('#dialogMoveCopyFiles').i18n();
-      $('#dialogMoveCopyFiles').draggable({
-        handle: '.modal-header'
-      });
       $('#dialogMoveCopyFiles').modal({
         backdrop: 'static',
         show: true
-      });
-      $('#dialogMoveCopyFiles').draggable({
-        handle: ".modal-header"
       });
       console.log('Selected files: ' + TSCORE.selectedFiles);
     });

@@ -783,56 +783,56 @@ define(function(require, exports, module) {
     });
   }
 
+ function createDirectory() {
+    var dirPath = $('#createNewDirectoryButton').attr('path') + TSCORE.dirSeparator + $('#newDirectoryName').val();
+    TSCORE.IO.createDirectoryPromise(dirPath).then( function() {
+      TSCORE.showSuccessDialog("Directory created successfully.");
+      TSCORE.navigateToDirectory(dirPath);
+      TSCORE.hideWaitingDialog();
+      TSCORE.hideLoadingAnimation();
+    }, function (error) {
+      TSCORE.hideWaitingDialog();
+      TSCORE.hideLoadingAnimation();
+      console.error("Creating directory: " + dirPath + " failed with: " + error);
+      TSCORE.showAlertDialog("Creating " + dirPath + " failed!");
+    });
+  }
+
   function showCreateDirectoryDialog(dirPath) {
     require(['text!templates/DirectoryCreateDialog.html'], function(uiTPL) {
       if ($('#dialogDirectoryCreate').length < 1) {
         var uiTemplate = Handlebars.compile(uiTPL);
         $('body').append(uiTemplate());
-        $('#createNewDirectoryButton').on('click', function() {
-          // TODO validate folder name
-          var dirPath = $('#createNewDirectoryButton').attr('path') + TSCORE.dirSeparator + $('#newDirectoryName').val();
-          TSCORE.IO.createDirectoryPromise(dirPath).then(function() {
-            TSCORE.showSuccessDialog("Directory created successfully.");
-            TSCORE.navigateToDirectory(dirPath);
-            TSCORE.hideWaitingDialog();
-            TSCORE.hideLoadingAnimation();
-          }, function(error) {
-            TSCORE.hideWaitingDialog();
-            TSCORE.hideLoadingAnimation();
-            console.error("Creating directory " + dirPath + " failed" + error);
-            if (error) {
-              TSCORE.showAlertDialog(error);
-            } else {
-              TSCORE.showAlertDialog("Creating " + dirPath + " failed.");
-            }
-          });
+        //$('#createNewDirectoryButton').off();
+        $('#createNewDirectoryButton').on('click', createDirectory);
+
+        $('#dialogDirectoryCreate').i18n();
+        $('#formDirectoryCreate').validator();
+        $('#formDirectoryCreate').submit(function(e) {
+          e.preventDefault();
+          if ($('#createNewDirectoryButton').prop('disabled') === false) {
+            $('#createNewDirectoryButton').click();
+          }
+        });
+        $('#formDirectoryCreate').on('invalid.bs.validator', function() {
+          $('#createNewDirectoryButton').prop('disabled', true);
+        });
+        $('#formDirectoryCreate').on('valid.bs.validator', function() {
+          $('#createNewDirectoryButton').prop('disabled', false);
+        });
+        $('#dialogDirectoryCreate').on('shown.bs.modal', function() {
+          $('#newDirectoryName').focus();
+        });
+        $('#dialogDirectoryCreate').draggable({
+          handle: ".modal-header"
         });
       }
+
       $('#createNewDirectoryButton').attr('path', dirPath);
       $('#newDirectoryName').val('');
-      $('#dialogDirectoryCreate').i18n();
-      $('#formDirectoryCreate').validator();
-      $('#formDirectoryCreate').submit(function(e) {
-        e.preventDefault();
-        if ($('#createNewDirectoryButton').prop('disabled') === false) {
-          $('#createNewDirectoryButton').click();
-        }
-      });
-      $('#formDirectoryCreate').on('invalid.bs.validator', function() {
-        $('#createNewDirectoryButton').prop('disabled', true);
-      });
-      $('#formDirectoryCreate').on('valid.bs.validator', function() {
-        $('#createNewDirectoryButton').prop('disabled', false);
-      });
-      $('#dialogDirectoryCreate').on('shown.bs.modal', function() {
-        $('#newDirectoryName').focus();
-      });
       $('#dialogDirectoryCreate').modal({
         backdrop: 'static',
         show: true
-      });
-      $('#dialogDirectoryCreate').draggable({
-        handle: ".modal-header"
       });
     });
   }
@@ -854,34 +854,34 @@ define(function(require, exports, module) {
             TSCORE.showAlertDialog(err);
           });
         });
+        $('#formDirectoryRename').submit(function(e) {
+          e.preventDefault();
+          if ($('#renameDirectoryButton').prop('disabled') === false) {
+            $('#renameDirectoryButton').click();
+          }
+        });
+        $('#formDirectoryRename').on('invalid.bs.validator', function() {
+          $('#renameDirectoryButton').prop('disabled', true);
+        });
+        $('#formDirectoryRename').on('valid.bs.validator', function() {
+          $('#renameDirectoryButton').prop('disabled', false);
+        });
+        $('#dialogDirectoryRename').i18n();
+        $('#dialogDirectoryRename').on('shown.bs.modal', function() {
+          $('#directoryNewName').focus();
+          $('#formDirectoryRename').validator('destroy');
+          $('#formDirectoryRename').validator();
+        });
+        $('#dialogDirectoryRename').draggable({
+          handle: ".modal-header"
+        });
       }
-      $('#formDirectoryRename').submit(function(e) {
-        e.preventDefault();
-        if ($('#renameDirectoryButton').prop('disabled') === false) {
-          $('#renameDirectoryButton').click();
-        }
-      });
-      $('#formDirectoryRename').on('invalid.bs.validator', function() {
-        $('#renameDirectoryButton').prop('disabled', true);
-      });
-      $('#formDirectoryRename').on('valid.bs.validator', function() {
-        $('#renameDirectoryButton').prop('disabled', false);
-      });
       $('#renameDirectoryButton').attr('path', dirPath);
       var dirName = TSCORE.TagUtils.extractDirectoryName(dirPath);
       $('#directoryNewName').val(dirName);
-      $('#dialogDirectoryRename').i18n();
-      $('#dialogDirectoryRename').on('shown.bs.modal', function() {
-        $('#directoryNewName').focus();
-        $('#formDirectoryRename').validator('destroy');
-        $('#formDirectoryRename').validator();
-      });
       $('#dialogDirectoryRename').modal({
         backdrop: 'static',
         show: true
-      });
-      $('#dialogDirectoryRename').draggable({
-        handle: ".modal-header"
       });
     });
   }
