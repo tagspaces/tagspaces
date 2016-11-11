@@ -150,16 +150,21 @@ app.on('ready', function(event) {
 
   trayIcon = new Tray(trayIconPath);
 
+  var ctrlName = "Ctrl";
+  if (process.platform == 'darwin') {
+    ctrlName = "Cmd"
+  }
+
   var trayMenuTemplate = [
     {
-      label: 'Show TagSpaces',
+      label: 'Show TagSpaces', // (' + ctrlName + '+Alt+S)',
       click: showTagSpaces
     },
     {
       type: 'separator'
     },
     {
-      label: 'New Text File',
+      label: 'New Text File (' + ctrlName + '+Alt+N)',
       click: newTextFile
     },
     {
@@ -178,19 +183,18 @@ app.on('ready', function(event) {
       type: 'separator'
     },
     {
-      label: 'Open Next File',
+      label: 'Open Next File', // (' + ctrlName + '+Alt+D)',
       click: getNextFile
     },
     {
-      label: 'Open Previous File',
+      label: 'Open Previous File', // (' + ctrlName + '+Alt+A)',
       click: getPreviousFile
     },
     {
       type: 'separator'
     },
     {
-      label: 'Pause/Resume Playback',
-      sublabel: 'Ctrl+Alt+P',
+      label: 'Pause/Resume Playback (' + ctrlName + '+Alt+P)',
       click: resumePlayback
     },
     {
