@@ -152,7 +152,7 @@ app.on('ready', function(event) {
 
   var ctrlName = "Ctrl";
   if (process.platform == 'darwin') {
-    ctrlName = "Cmd"
+    ctrlName = "Cmd";
   }
 
   var trayMenuTemplate = [

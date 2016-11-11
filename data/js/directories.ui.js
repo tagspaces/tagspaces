@@ -783,14 +783,14 @@ define(function(require, exports, module) {
     });
   }
 
- function createDirectory() {
+  function createDirectory() {
     var dirPath = $('#createNewDirectoryButton').attr('path') + TSCORE.dirSeparator + $('#newDirectoryName').val();
-    TSCORE.IO.createDirectoryPromise(dirPath).then( function() {
+    TSCORE.IO.createDirectoryPromise(dirPath).then(function() {
       TSCORE.showSuccessDialog("Directory created successfully.");
       TSCORE.navigateToDirectory(dirPath);
       TSCORE.hideWaitingDialog();
       TSCORE.hideLoadingAnimation();
-    }, function (error) {
+    }, function(error) {
       TSCORE.hideWaitingDialog();
       TSCORE.hideLoadingAnimation();
       console.error("Creating directory: " + dirPath + " failed with: " + error);
