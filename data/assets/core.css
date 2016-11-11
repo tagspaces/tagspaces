@@ -219,7 +219,7 @@
     background-image: none;
     margin: 1px;
     text-align: left;
-    text-transform: none;
+    text-transform: none !important;
     flex: 1 1 auto;
     -webkit-flex: 1 1 auto;
     -ms-flex: 1 1 auto;

@@ -105,10 +105,6 @@ li hr {
   color: black;
 }
 
-.btn span {
-  padding-left: 8px;
-}
-
 .btn .caret {
   padding-left: 0;
 }
@@ -120,6 +116,11 @@ li hr {
 .modal .btn {
   text-transform: uppercase;
   min-width: 70px;
+}
+
+.modal .btn i {
+  padding-right: 8px;
+  padding-left: 8px;
 }
 
 .modal-body {
@@ -195,9 +196,13 @@ li hr {
     right: 0;
     bottom: 0;
     left: 0;
-    height: 60px;
     padding: 10px;
   }
+
+  .modal-footer .btn {
+    margin-bottom: 4px !important;
+  }
+
 
   .fullScreenMobile .modal-content {
     height: 100%;
