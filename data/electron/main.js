@@ -152,7 +152,7 @@ app.on('ready', function(event) {
 
   var ctrlName = "Ctrl";
   if (process.platform == 'darwin') {
-    ctrlName = "Cmd"
+    ctrlName = "Cmd";
   }
 
   var trayMenuTemplate = [
@@ -298,7 +298,7 @@ app.on('ready', function(event) {
       mainWindow.webContents.send("file", "previous-file");
     } else {
       newWindow.show();
-      newWindow.webContents.send("file", "previous-filesss");
+      newWindow.webContents.send("file", "previous-file");
     }
   }
 
