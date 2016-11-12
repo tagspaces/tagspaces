@@ -380,31 +380,38 @@ define(function(require, exports, module) {
     var menu = Menu.buildFromTemplate(template);
     Menu.setApplicationMenu(menu);
 
-    ipcRenderer.on("new-file", function(event, arg) {
-      if (arg === "text") {
-        TSCORE.UI.createTXTFile();
-      } else if (arg === "html") {
-        TSCORE.UI.createHTMLFile();
-      } else if (arg === "markdown") {
-        TSCORE.UI.createMDFile();
-      } else if (arg === "audio") {
-        TSCORE.UI.showAudioRecordingDialog();
-      }
-    });
-
-    ipcRenderer.on("next-file", function(event, arg) {
-      if (TSCORE.selectedFiles[0]) {
-        TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getNextFile(TSCORE.FileOpener.getOpenedFilePath()));
-      } else {
-        TSCORE.showAlertDialog($.i18n.t("ns.common:selectFile"));
-      }
-    });
-
-    ipcRenderer.on("previous-file", function(event, arg) {
-      if (TSCORE.selectedFiles[0]) {
-        TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getPrevFile(TSCORE.FileOpener.getOpenedFilePath()));
-      } else {
-        TSCORE.showAlertDialog($.i18n.t("ns.common:selectFile"));
+    ipcRenderer.on("file", function(event, arg) {
+      switch (arg) {
+        case "text":
+          TSCORE.UI.createTXTFile();
+          break;
+        case "html":
+          TSCORE.UI.createHTMLFile();
+          break;
+        case "markdown":
+          TSCORE.UI.createMDFile();
+          break;
+        case "audio":
+          TSCORE.UI.showAudioRecordingDialog();
+          break;
+        case "next-file":
+          if (TSCORE.selectedFiles[0]) {
+            TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getNextFile(TSCORE.selectedFiles[0]));
+            TSCORE.PerspectiveManager.selectFile(TSCORE.FileOpener.getOpenedFilePath());
+          } else {
+            TSCORE.showAlertDialog($.i18n.t("ns.common:selectFile"));
+          }
+          break;
+        case "previous-file":
+          if (TSCORE.selectedFiles[0]) {
+            TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getPrevFile(TSCORE.selectedFiles[0]));
+            TSCORE.PerspectiveManager.selectFile(TSCORE.FileOpener.getOpenedFilePath());
+          } else {
+            TSCORE.showAlertDialog($.i18n.t("ns.common:selectFile"));
+          }
+          break;
+        default:
+          return false;
       }
     });
 
