@@ -245,60 +245,60 @@ app.on('ready', function(event) {
   function newTextFile() {
     if (mainWindow) {
       mainWindow.show();
-      mainWindow.webContents.send("new-file", "text");
+      mainWindow.webContents.send("file", "text");
     } else {
       newWindow.show();
-      newWindow.webContents.send("new-file", "text");
+      newWindow.webContents.send("file", "text");
     }
   }
 
   function newHTMLFile() {
     if (mainWindow) {
       mainWindow.show();
-      mainWindow.webContents.send("new-file", "html");
+      mainWindow.webContents.send("file", "html");
     } else {
       newWindow.show();
-      newWindow.webContents.send("new-file", "html");
+      newWindow.webContents.send("file", "html");
     }
   }
 
   function newMDFile() {
     if (mainWindow) {
       mainWindow.show();
-      mainWindow.webContents.send("new-file", "markdown");
+      mainWindow.webContents.send("file", "markdown");
     } else {
       newWindow.show();
-      newWindow.webContents.send("new-file", "markdown");
+      newWindow.webContents.send("file", "markdown");
     }
   }
 
   function newAudioFile() {
     if (mainWindow) {
       mainWindow.show();
-      mainWindow.webContents.send("new-file", "audio");
+      mainWindow.webContents.send("file", "audio");
     } else {
       newWindow.show();
-      newWindow.webContents.send("new-file", "audio");
+      newWindow.webContents.send("file", "audio");
     }
   }
 
   function getNextFile() {
     if (mainWindow) {
       mainWindow.show();
-      mainWindow.webContents.send("new-file", "next");
+      mainWindow.webContents.send("file", "next-file");
     } else {
       newWindow.show();
-      newWindow.webContents.send("new-file", "next");
+      newWindow.webContents.send("file", "next-file");
     }
   }
 
   function getPreviousFile() {
     if (mainWindow) {
       mainWindow.show();
-      mainWindow.webContents.send("new-file", "previous");
+      mainWindow.webContents.send("file", "previous-file");
     } else {
       newWindow.show();
-      newWindow.webContents.send("new-file", "previous");
+      newWindow.webContents.send("file", "previous-file");
     }
   }
 
