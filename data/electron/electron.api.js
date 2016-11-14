@@ -95,11 +95,11 @@ define(function(require, exports, module) {
             accelerator: '',
             click: TSCORE.UI.createHTMLFile
           },
-          {
+          /*{
             label: $.i18n.t("ns.common:createAudioFile"),
             accelerator: '',
             click: TSCORE.UI.showAudioRecordingDialog
-          },
+          },*/
           {
             type: 'separator'
           },

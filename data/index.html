@@ -225,9 +225,9 @@
             <li><a id="createMarkdownFileButton">
               <i class="fa fa-tag fa-fw"></i>
               &nbsp;<span data-i18n="ns.common:createMarkdown"></span></a></li>
-            <li><a id="createAudioFileButton">
+            <!--li><a id="createAudioFileButton">
               <i class="fa fa-tag fa-fw"></i>
-              &nbsp;<span data-i18n="ns.common:createAudioFile"></span></a></li>
+              &nbsp;<span data-i18n="ns.common:createAudioFile"></span></a></li-->
             <li><a id="addExistingFileButton">
               <i class="fa fa-tag fa-fw"></i>
               &nbsp;<span data-i18n="ns.perspectives:showAddFileDialog"></span></a></li>
@@ -495,17 +495,15 @@
       </div>
       <div class="modal-body">
         <div class="form-horizontal">
-          <!-- Start: Only for Development process -->
-          <div class="form-group">
+          <!--div class="form-group">
             <label class="col-sm-3 control-label" data-i18n="ns.dialogs:audioInput"></label>
             <div class="col-sm-2 top-align-5" data-i18n="ns.dialogs:testTone"></div>
             <div class="col-sm-3">
               <input class="top-align-5" id="testToneLevel" type="range" min="0" max="100" value="0">
             </div>
-          </div>
-          <!-- END: Only for Development process -->
+          </div-->
           <div class="form-group">
-            <label class="col-sm-3 control-label" data-i18n="ns.dialogs:microphone"></label>
+            <label class="col-sm-3 control-label" data-i18n="ns.dialogs:microphone">Enable microphone</label>
             <div class="col-sm-2 top-align-5">
               <input id="microphone" type="checkbox">
             </div>
@@ -517,7 +515,7 @@
           <div class="form-group">
             <label class="col-sm-3 control-label" data-i18n="ns.dialogs:encoding"></label>
             <div class="col-sm-3 top-align-5">
-              <input type="radio" name="encoding" encoding="wav" checked="" ><span>wav</span><br>
+              <input type="radio" name="encoding" encoding="wav" checked ><span>wav</span><br>
               <input type="radio" name="encoding" encoding="ogg"><span>ogg</span>
             </div>
            <label id="encoding-option-label" class="col-sm-2 control-label"></label>
@@ -531,7 +529,7 @@
             <div class="col-sm-3 control-label"><span id="recording" class="text-danger hidden"><strong
                     data-i18n="ns.dialogs:recording"></strong></span>&nbsp; <span id="time-display"></span></div>
             <div class="col-sm-4">
-              <button id="record" class="btn btn-danger" data-i18n="ns.dialogs:record"></button>
+              <button id="record" class="btn btn-danger" data-i18n="ns.dialogs:record">Record</button>
               <button id="cancel" class="btn btn-default hidden" data-i18n="ns.dialogs:cancel"></button>
             </div>
             <div class="col-sm-5"><span id="date-time" class="text-info"></span></div>
