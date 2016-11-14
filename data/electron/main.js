@@ -157,7 +157,7 @@ app.on('ready', function(event) {
 
   var trayMenuTemplate = [
     {
-      label: 'Show TagSpaces', // (' + ctrlName + '+Alt+S)',
+      label: 'Show TagSpaces (' + ctrlName + '+Alt+T)',
       click: showTagSpaces
     },
     {
@@ -183,11 +183,11 @@ app.on('ready', function(event) {
       type: 'separator'
     },
     {
-      label: 'Open Next File', // (' + ctrlName + '+Alt+D)',
+      label: 'Open Next File (' + ctrlName + '+Alt+S)',
       click: getNextFile
     },
     {
-      label: 'Open Previous File', // (' + ctrlName + '+Alt+A)',
+      label: 'Open Previous File (' + ctrlName + '+Alt+A)',
       click: getPreviousFile
     },
     {
@@ -227,11 +227,11 @@ app.on('ready', function(event) {
 
   globalShortcut.register('CommandOrControl+Alt+N', newTextFile);
 
-  globalShortcut.register('CommandOrControl+Alt+D', getNextFile);
+  globalShortcut.register('CommandOrControl+Alt+S', getNextFile);
 
   globalShortcut.register('CommandOrControl+Alt+A', getPreviousFile);
 
-  globalShortcut.register('CommandOrControl+Alt+S', showTagSpaces);
+  globalShortcut.register('CommandOrControl+Alt+T', showTagSpaces);
 
   function showTagSpaces() {
     if (mainWindow) {
