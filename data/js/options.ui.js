@@ -330,7 +330,7 @@ define(function(require, exports, module) {
     var data = [];
     $('#fileTypesList').children().each(function(index, element) {
       data.push({
-        'type': $(element).find('input').val(),
+        'type': $(element).find('input').val().trim().toLowerCase(),
         'viewer': $(element).find('.ftviewer').val(),
         'editor': $(element).find('.fteditor').val()
       });
