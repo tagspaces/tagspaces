@@ -259,7 +259,7 @@ define(function(require, exports, module) {
         tag.icon = '';
         if (tag.type === 'smart') {
           tag.icon = 'fa fa-flask';
-          if (tag.title === 'geoTag') {
+          if (tag.title === 'geo-tag') {
             tag.icon = 'fa fa-map-marker';
           }
         }
@@ -381,10 +381,10 @@ define(function(require, exports, module) {
     var d;
     if (tagData.type === 'smart') {
       switch (tagData.functionality) {
-        case 'geoLocation': {
+        case 'geoTagging': {
           $('#viewContainers').on('drop dragend', function(event) {
-            if (TSCORE.selectedTag === 'geoTag') {
-              tagValue = TSCORE.showTagEditDialog();
+            if (TSCORE.selectedTag === 'geo-tag') {
+              TSCORE.showTagEditDialog();
             }
           });
           break;

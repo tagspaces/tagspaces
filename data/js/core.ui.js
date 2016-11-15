@@ -735,6 +735,7 @@ define(function(require, exports) {
 
   function showTagEditDialog() {
     $('#newTagName').val(TSCORE.selectedTag);
+    $('#formEditTag').off();
     $('#formEditTag').validator();
     $('#formEditTag').submit(function(e) {
       e.preventDefault();
@@ -749,6 +750,7 @@ define(function(require, exports) {
     $('#formEditTag').on('valid.bs.validator', function() {
       $('#editTagButton').prop('disabled', false);
     });
+    $('#dialogEditTag').off();
     $('#dialogEditTag').on('shown.bs.modal', function() {
       $('#newTagNamenewTagName').focus();
     });
@@ -756,9 +758,6 @@ define(function(require, exports) {
       backdrop: 'static',
       show: true
     });
-    if (TSCORE.PRO) {
-      //TSCORE.MAP.initMap();
-    }
     TSCORE.Calendar.showDateTimeCalendar(TSCORE.selectedTag);
   }
 
