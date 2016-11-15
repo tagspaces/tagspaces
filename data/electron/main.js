@@ -137,15 +137,11 @@ app.on('ready', function(event) {
 
   var trayIconPath;
   if (process.platform === 'darwin') {
-    trayIconPath = 'Contents/Resources/app/assets/trayicon.png';
+    trayIconPath = path.join(__dirname, '/../assets/icon16.png');
   } else if (process.platform === 'win32') {
-    trayIconPath = 'resources/app/assets/trayicon.png';
+    trayIconPath = path.join(__dirname, '/../assets/trayicon.png');
   } else {
-    trayIconPath = 'resources/app/assets/trayicon.png';
-  }
-
-  if (debugMode) {
-    trayIconPath = 'assets/trayicon.png';
+    trayIconPath = path.join(__dirname, '/../assets/trayicon.png');
   }
 
   trayIcon = new Tray(trayIconPath);
