@@ -157,7 +157,7 @@ app.on('ready', function(event) {
 
   var trayMenuTemplate = [
     {
-      label: 'Show TagSpaces (' + ctrlName + '+Alt+T)',
+      label: 'Show TagSpaces (' + ctrlName + '+Alt+W)',
       click: showTagSpaces
     },
     {
@@ -231,12 +231,14 @@ app.on('ready', function(event) {
 
   globalShortcut.register('CommandOrControl+Alt+A', getPreviousFile);
 
-  globalShortcut.register('CommandOrControl+Alt+T', showTagSpaces);
+  globalShortcut.register('CommandOrControl+Alt+W', showTagSpaces);
 
   function showTagSpaces() {
     if (mainWindow) {
+      mainWindow.restore();
       mainWindow.show();
     } else {
+      newWindow.restore();
       newWindow.show();
     }
     //mainWindow.webContents.send("showing-tagspaces", "tagspaces");
