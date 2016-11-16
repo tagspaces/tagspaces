@@ -364,21 +364,6 @@ define(function(require, exports) {
       TSCORE.IO.openFile($(this).attr('href'));
     });
 
-    $('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
-      var target = $(e.target).attr("href"); // activated tab
-      if (target === "#dateCalendarTab" || target === "#dateTimeCalendarTab" ||
-        target === "dateRangeTab" || target === "#geoLocation") {
-        $('#editTagButton').click(function() {
-          //$('#newTagName').show();
-          //TSCORE.TagUtils.renameTag(TSCORE.selectedFiles[0], TSCORE.selectedTag, $('#dateInputCalendar').val());
-          TSCORE.TagUtils.renameTag(TSCORE.selectedFiles[0], TSCORE.selectedTag, $('#newTagName').val());
-        });
-      }
-      if (target === "#formEditTag") {
-        //$('#dateInputCalendar').hide();
-      }
-    });
-
     TSCORE.Calendar.initCalendarUI();
 
     $('.nav-tabs a[href="#geoLocation"]').on('click', function() {
