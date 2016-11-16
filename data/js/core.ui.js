@@ -364,7 +364,14 @@ define(function(require, exports) {
 
     $('#dialogEditTag').on('shown.bs.modal', function() {
       $('#newTagNamenewTagName').focus();
-
+      if (TSCORE.PRO) {
+        $('#tabGeoLocation').removeClass('disabled');
+      } else {
+        $('#tabGeoLocation').addClass('disabled');
+        $('#tabGeoLocation').click(function(e) {
+          e.stopPropagation();
+        });
+      }
       TSCORE.Calendar.tagRecognition(TSCORE.selectedTag);
       //var data = $('#dateInputCalendar')[0];
       var data = $('#newTagName')[0];
@@ -375,6 +382,10 @@ define(function(require, exports) {
       var target = $(e.target).attr("href"); // activated tab
       if (target === "#dateCalendarTab" || target === "#dateTimeCalendarTab" ||
         target === "dateRangeTab" || target === "#geoLocation") {
+        if (target === 'geoLocation') {
+          console.log(target);
+          target.disabled;
+        }
         $('#editTagButton').click(function() {
           //$('#newTagName').show();
           //TSCORE.TagUtils.renameTag(TSCORE.selectedFiles[0], TSCORE.selectedTag, $('#dateInputCalendar').val());
