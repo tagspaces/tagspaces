@@ -364,15 +364,6 @@ define(function(require, exports) {
       TSCORE.IO.openFile($(this).attr('href'));
     });
 
-    $('#dialogEditTag').on('shown.bs.modal', function() {
-      $('#newTagNamenewTagName').focus();
-
-      TSCORE.Calendar.tagRecognition(TSCORE.selectedTag);
-      //var data = $('#dateInputCalendar')[0];
-      var data = $('#newTagName')[0];
-      data.value = TSCORE.selectedTag;
-    });
-
     $('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
       var target = $(e.target).attr("href"); // activated tab
       if (target === "#dateCalendarTab" || target === "#dateTimeCalendarTab" ||
@@ -747,6 +738,9 @@ define(function(require, exports) {
     });
     $('#dialogEditTag').on('shown.bs.modal', function() {
       $('#newTagName').focus();
+      TSCORE.Calendar.tagRecognition(TSCORE.selectedTag);
+      //var data = $('#newTagName')[0];
+      //data.value = TSCORE.selectedTag;
     });
     $('#formEditTag').on('invalid.bs.validator', function() {
       $('#editTagButton').prop('disabled', true);
