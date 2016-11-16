@@ -363,6 +363,8 @@ define(function(require, exports) {
     });
 
     $('#dialogEditTag').on('shown.bs.modal', function() {
+      $('#newTagNamenewTagName').focus();
+
       TSCORE.Calendar.tagRecognition(TSCORE.selectedTag);
       //var data = $('#dateInputCalendar')[0];
       var data = $('#newTagName')[0];
@@ -735,7 +737,7 @@ define(function(require, exports) {
 
   function showTagEditDialog() {
     $('#newTagName').val(TSCORE.selectedTag);
-    $('#formEditTag').off();
+    //$('#formEditTag').off();
     $('#formEditTag').validator();
     $('#formEditTag').submit(function(e) {
       e.preventDefault();
@@ -750,10 +752,10 @@ define(function(require, exports) {
     $('#formEditTag').on('valid.bs.validator', function() {
       $('#editTagButton').prop('disabled', false);
     });
-    $('#dialogEditTag').off();
-    $('#dialogEditTag').on('shown.bs.modal', function() {
-      $('#newTagNamenewTagName').focus();
-    });
+    //$('#dialogEditTag').off();
+    //$('#dialogEditTag').on('shown.bs.modal', function() {
+    //  $('#newTagNamenewTagName').focus();
+    //});
     $('#dialogEditTag').modal({
       backdrop: 'static',
       show: true
