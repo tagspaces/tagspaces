@@ -384,10 +384,6 @@ define(function(require, exports) {
       var target = $(e.target).attr("href"); // activated tab
       if (target === "#dateCalendarTab" || target === "#dateTimeCalendarTab" ||
         target === "dateRangeTab" || target === "#geoLocation") {
-        if (target === 'geoLocation') {
-          console.log(target);
-          target.disabled;
-        }
         $('#editTagButton').click(function() {
           //$('#newTagName').show();
           //TSCORE.TagUtils.renameTag(TSCORE.selectedFiles[0], TSCORE.selectedTag, $('#dateInputCalendar').val());
