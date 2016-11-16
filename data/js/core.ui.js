@@ -365,7 +365,7 @@ define(function(require, exports) {
     });
 
     $('#dialogEditTag').on('shown.bs.modal', function() {
-      $('#newTagNamenewTagName').focus();
+      $('#newTagName').focus();
       if (TSCORE.PRO) {
         $('#tabGeoLocation').removeClass('disabled');
       } else {
