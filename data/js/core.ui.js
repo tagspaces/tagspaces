@@ -202,6 +202,8 @@ define(function(require, exports) {
       TSCORE.TagUtils.renameTag(TSCORE.selectedFiles[0], TSCORE.selectedTag, $('#newTagName').val());
     });
 
+    initTagEditDialog();
+
     // End Edit Tag Dialog
     $('#startNewInstanceBack').on('click', openNewInstance);
 
@@ -735,9 +737,7 @@ define(function(require, exports) {
     );
   }
 
-  function showTagEditDialog() {
-    $('#newTagName').val(TSCORE.selectedTag);
-    //$('#formEditTag').off();
+  function initTagEditDialog() {
     $('#formEditTag').validator();
     $('#formEditTag').submit(function(e) {
       e.preventDefault();
@@ -745,17 +745,19 @@ define(function(require, exports) {
         $('#editTagButton').click();
       }
     });
-
+    $('#dialogEditTag').on('shown.bs.modal', function() {
+      $('#newTagName').focus();
+    });
     $('#formEditTag').on('invalid.bs.validator', function() {
       $('#editTagButton').prop('disabled', true);
     });
     $('#formEditTag').on('valid.bs.validator', function() {
       $('#editTagButton').prop('disabled', false);
     });
-    //$('#dialogEditTag').off();
-    //$('#dialogEditTag').on('shown.bs.modal', function() {
-    //  $('#newTagNamenewTagName').focus();
-    //});
+  }
+
+  function showTagEditDialog() {
+    $('#newTagName').val(TSCORE.selectedTag);
     $('#dialogEditTag').modal({
       backdrop: 'static',
       show: true
