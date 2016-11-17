@@ -736,7 +736,7 @@
           <form role="form" data-toggle="validator">
             <div class="form-group">
               <label class="control-label" for="newTagName" data-i18n="ns.dialogs:editTagNewName"></label>
-              <input class="form-control" pattern="^([^\ #/\\]){1,}$" type="text" name="newTagName" id="newTagName"
+              <input class="form-control" type="text" name="newTagName" id="newTagName"
                      data-i18n="[data-error]ns.dialogs:editTagNamesRestrictionsHelp" required/>
               <p class="help-block with-errors"></p>
             </div>
@@ -747,8 +747,11 @@
         <button class="btn btn-default cancelButton pull-left" data-dismiss="modal" aria-hidden="true">
           <span data-i18n="ns.dialogs:cancel"></span>
         </button>
+        <button id="addTagButton" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">
+          <span data-i18n="ns.dialogs:tagOperationAddTag">Add Tag</span>
+        </button>
         <button id="editTagButton" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">
-          <span data-i18n="ns.dialogs:ok"></span>
+          <span data-i18n="ns.dialogs:confirmSaveButton">Save</span>
         </button>
       </div>
     </div>

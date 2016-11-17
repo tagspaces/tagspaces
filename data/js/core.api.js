@@ -545,7 +545,6 @@ define(function(require, exports, module) {
   exports.showAlertDialog = tsCoreUI.showAlertDialog;
   exports.showSuccessDialog = tsCoreUI.showSuccessDialog;
   exports.showConfirmDialog = tsCoreUI.showConfirmDialog;
-  exports.showTagEditDialog = tsCoreUI.showTagEditDialog;
   exports.hideAllDropDownMenus = tsCoreUI.hideAllDropDownMenus;
   exports.showFileCreateDialog = tsCoreUI.showFileCreateDialog;
   exports.showFileRenameDialog = tsCoreUI.showFileRenameDialog;

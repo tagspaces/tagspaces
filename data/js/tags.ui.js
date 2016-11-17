@@ -64,7 +64,7 @@ define(function(require, exports, module) {
     });
 
     $('#tagMenuEditTag').click(function() {
-      TSCORE.showTagEditDialog();
+      TSCORE.UI.showTagEditDialog();
     });
 
     $('#tagMenuRemoveTag').click(function() {
@@ -85,7 +85,15 @@ define(function(require, exports, module) {
 
     // Context menu for the tags in the tag tree
     $('#tagTreeMenuAddTagToFile').click(function() {
-      TSCORE.TagUtils.addTag(TSCORE.Utils.getUniqueSelectedFiles(), [TSCORE.selectedTag]);
+      if (TSCORE.selectedTag === 'geo-tag') {
+        if (TSCORE.PRO) {
+          TSCORE.UI.showTagEditDialog(true); // true start the dialog in add mode
+        } else {
+          TSCORE.showAlertDialog($.i18n.t("ns.common:needProVersion"), $.i18n.t("ns.common:geoTaggingNotPossible"));
+        }
+      } else {
+        TSCORE.TagUtils.addTag(TSCORE.Utils.getUniqueSelectedFiles(), [TSCORE.selectedTag]);
+      }
     });
 
     $('#tagTreeMenuAddTagAsFilter').click(function() {
@@ -158,15 +166,6 @@ define(function(require, exports, module) {
     $('#addTagsButton').click(function() {
       var tags = $('#tags').val().split(',');
       TSCORE.TagUtils.addTag(TSCORE.Utils.getUniqueSelectedFiles(), tags);
-      if (TSCORE.PRO) {
-        tags.forEach(function(value) {
-          if (value === 'geo-tag') {
-            TSCORE.UI.showAddTagDialog(value);
-          }
-        });
-      } else if (!TSCORE.PRO && $('#tags').val() === 'geo-tag') {
-        TSCORE.showAlertDialog($.i18n.t("ns.common:needProVersion"), $.i18n.t("ns.common:geoTaggingNotPossible"));
-      }
     });
 
     $('#removeTagsButton').click(function() {
@@ -393,7 +392,7 @@ define(function(require, exports, module) {
         case 'geoTagging': {
           $('#viewContainers').on('drop dragend', function(event) {
             if (TSCORE.PRO && TSCORE.selectedTag === 'geo-tag') {
-              TSCORE.showTagEditDialog();
+              TSCORE.UI.showTagEditDialog(true); // true start the dialog in add mode
             } else if (!TSCORE.PRO && TSCORE.selectedTag === 'geo-tag') {
               TSCORE.showAlertDialog($.i18n.t("ns.common:needProVersion"), $.i18n.t("ns.common:geoTaggingNotPossible"));
             }

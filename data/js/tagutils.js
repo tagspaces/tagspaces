@@ -426,6 +426,20 @@ define(function(require, exports, module) {
 
   function addTag(filePathArray, tagArray) {
     console.log('Adding tags to files');
+    tagArray.forEach(function(value, index) {
+      if (value === 'geo-tag') {
+        tagArray.splice(index, 1);
+        if (TSCORE.PRO) {
+          //TSCORE.selectedTag = value;
+          //TSCORE.UI.showTagEditDialog();
+        } else {
+          TSCORE.showAlertDialog($.i18n.t("ns.common:needProVersion"), $.i18n.t("ns.common:geoTaggingNotPossible"));
+        }
+      }
+    });
+    if(tagArray.length < 1) {
+      return;
+    }
     for (var i = 0; i < filePathArray.length; i++) {
       writeTagsToFile(filePathArray[i], tagArray);
     }

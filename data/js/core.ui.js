@@ -198,12 +198,6 @@ define(function(require, exports) {
       TSCORE.selectedTag, $('#newTagName').datepicker('destroy').val('XEUR');
     });
 
-    $('#editTagButton').click(function() {
-      TSCORE.TagUtils.renameTag(TSCORE.selectedFiles[0], TSCORE.selectedTag, $('#newTagName').val());
-    });
-
-    initTagEditDialog();
-
     // End Edit Tag Dialog
     $('#startNewInstanceBack').on('click', openNewInstance);
 
@@ -364,27 +358,9 @@ define(function(require, exports) {
       TSCORE.IO.openFile($(this).attr('href'));
     });
 
-    $('#dialogEditTag').on('shown.bs.modal', function() {
-      $('#newTagName').focus();
-      if (TSCORE.PRO) {
-        $('#tabGeoLocation').removeClass('disabled');
-      } else {
-        $('#tabGeoLocation').addClass('disabled');
-        $('#tabGeoLocation').click(function(e) {
-          e.stopPropagation();
-        });
-      }
-      TSCORE.Calendar.tagRecognition(TSCORE.selectedTag);
-      //var data = $('#dateInputCalendar')[0];
-      var data = $('#newTagName')[0];
-      data.value = TSCORE.selectedTag;
-    });
+    initTagEditDialog();
 
     TSCORE.Calendar.initCalendarUI();
-
-    $('.nav-tabs a[href="#geoLocation"]').on('click', function() {
-      $('#dateInputCalendar').show();
-    });
 
     // Hide drop downs by click and drag
     $(document).click(function() {
@@ -730,40 +706,57 @@ define(function(require, exports) {
   }
 
   function initTagEditDialog() {
-    $('#formEditTag').validator();
+    $('.nav-tabs a[href="#geoLocation"]').on('click', function() {
+      $('#dateInputCalendar').show();
+    });
+
+    $('#editTagButton').on('click', function() {
+      TSCORE.TagUtils.renameTag(TSCORE.selectedFiles[0], TSCORE.selectedTag, $('#newTagName').val());
+    });
+
+    $('#addTagButton').on('click', function() {
+      TSCORE.TagUtils.addTag(TSCORE.selectedFiles, [$('#newTagName').val()]);
+    });
+
+    $('#dialogEditTag').draggable({
+      handle: ".modal-header"
+    });
+
     $('#formEditTag').submit(function(e) {
       e.preventDefault();
-      if ($('#editTagButton').prop('disabled') === false) {
-        $('#editTagButton').click();
-      }
+      $('#editTagButton').click();
     });
     $('#dialogEditTag').on('shown.bs.modal', function() {
       $('#newTagName').focus();
-    });
-    $('#formEditTag').on('invalid.bs.validator', function() {
-      $('#editTagButton').prop('disabled', true);
-    });
-    $('#formEditTag').on('valid.bs.validator', function() {
-      $('#editTagButton').prop('disabled', false);
+      if (TSCORE.PRO) {
+        $('#tabGeoLocation').removeClass('disabled');
+      } else {
+        $('#tabGeoLocation').addClass('disabled');
+        $('#tabGeoLocation').click(function(e) {
+          e.stopPropagation();
+        });
+      }
+      TSCORE.Calendar.tagRecognition(TSCORE.selectedTag);
+      //var data = $('#dateInputCalendar')[0];
+      var data = $('#newTagName')[0];
+      data.value = TSCORE.selectedTag;
     });
   }
 
-  function showTagEditDialog() {
+  function showTagEditDialog(addMode) {
+    if(addMode) {
+      $('#editTagButton').hide();
+      $('#addTagButton').show();
+    } else {
+      $('#editTagButton').show();
+      $('#addTagButton').hide();
+    }
     $('#newTagName').val(TSCORE.selectedTag);
     $('#dialogEditTag').modal({
       backdrop: 'static',
       show: true
     });
     TSCORE.Calendar.showDateTimeCalendar(TSCORE.selectedTag);
-  }
-
-  function showAddTagDialog(tag) {
-    $('#newTagName').val(tag);
-    $('#dialogEditTag').modal({
-      backdrop: 'static',
-      show: true
-    });
-    TSCORE.Calendar.showDateTimeCalendar(tag);
   }
 
   function showRenameFileDialog() {
@@ -1242,5 +1235,4 @@ define(function(require, exports) {
   exports.whatsNew = whatsNew;
   exports.showDocumentation = showDocumentation;
   exports.setReadOnly = setReadOnly;
-  exports.showAddTagDialog = showAddTagDialog;
 });
