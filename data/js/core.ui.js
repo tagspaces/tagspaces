@@ -772,6 +772,15 @@ define(function(require, exports) {
     TSCORE.Calendar.showDateTimeCalendar(TSCORE.selectedTag);
   }
 
+  function showAddTagDialog(tag) {
+    $('#newTagName').val(tag);
+    $('#dialogEditTag').modal({
+      backdrop: 'static',
+      show: true
+    });
+    TSCORE.Calendar.showDateTimeCalendar(tag);
+  }
+
   function showRenameFileDialog() {
     if (TSCORE.selectedFiles[0]) {
       $('#renamedFileName').val(TSCORE.selectedFiles[0]);
@@ -1248,4 +1257,5 @@ define(function(require, exports) {
   exports.whatsNew = whatsNew;
   exports.showDocumentation = showDocumentation;
   exports.setReadOnly = setReadOnly;
+  exports.showAddTagDialog = showAddTagDialog;
 });

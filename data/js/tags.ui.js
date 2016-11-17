@@ -158,6 +158,10 @@ define(function(require, exports, module) {
     $('#addTagsButton').click(function() {
       var tags = $('#tags').val().split(',');
       TSCORE.TagUtils.addTag(TSCORE.Utils.getUniqueSelectedFiles(), tags);
+      if ($('#tags').val() === 'geo-tag') {
+        var tagValue = $('#tags').val();
+        TSCORE.UI.showAddTagDialog(tagValue);
+      }
     });
 
     $('#removeTagsButton').click(function() {
