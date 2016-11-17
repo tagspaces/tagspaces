@@ -178,18 +178,20 @@ define(function(require, exports, module) {
           'viewer': 'viewerMHTML',
           'editor': 'false'
         });
-        /*exports.Settings.tagGroups.forEach(function(value) {
-          if (value.key === 'SMR') {
-            value.children.push({
-                "type":          "smart",
-                "title":         "geo-tag",
-                "functionality": "geoTagging",
-                "desciption":    "Add geo coordinates as a tag",
-                "color":         "#4986e7",
-                "textcolor":     "#ffffff"
-            });
-          }
-        });*/
+        if (TSCORE.PRO) {
+          exports.Settings.tagGroups.forEach(function(value) {
+            if (value.key === 'SMR') {
+              value.children.push({
+                  "type":          "smart",
+                  "title":         "geo-tag",
+                  "functionality": "geoTagging",
+                  "desciption":    "Add geo coordinates as a tag",
+                  "color":         "#4986e7",
+                  "textcolor":     "#ffffff"
+              });
+            }
+          });
+        }
       }
 
       saveSettings();

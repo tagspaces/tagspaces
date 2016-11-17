@@ -2,7 +2,7 @@
   "name": "TagSpaces",
   "description": "Offline document organizer and browser for your local files, supporting easy file tagging and document editing.",
   "author": "@@AUTHOR",
-  "version": "2.5.5",
+  "version": "2.5.6",
   "main": "electron/main.js",
   "dependencies": {
     "fs-extra": "~1.0.0"

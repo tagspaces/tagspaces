@@ -6,8 +6,8 @@
 - Adding a tray icon with a menu
 - Adding global shortcuts for showing the application, opening the previous and next files, pausing the playback
 - Adding new keyboard shortcuts for open, open native and delete
-- Added buttons for changing background color in viewerMHTML, viewerHTML, viewerImage, perspectiveImageSwiper
-- Added editing capabilities for the tag colors in tag groups
+- Added buttons for changing background colour in viewerMHTML, viewerHTML, viewerImage, perspectiveImageSwiper
+- Added editing capabilities for the tag colours in tag groups
 - Correcting printing functionality in some extensions
 - Added a default color for the tags in the settings
 - Add a checkbox in the settings to open the tag library on startup
@@ -15,8 +15,8 @@
 - Add readability mode in viewerMHTML and viewerHTML extensions
 - Adding support for reading emails in eml format
 - Added GIF to the list of supported image extensions for creating thumbnails on the fly.
-- Adding a new plus menu for creating the standart file typesw
-- Adding global shortcur for saving edited text files
+- Adding a new plus menu for creating the standard file types
+- Adding global shortcut for saving edited text files
 
 ### Pro
 - Added geo tagging with the leaflet library
