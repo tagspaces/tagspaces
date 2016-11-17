@@ -164,6 +164,8 @@ define(function(require, exports, module) {
             TSCORE.UI.showAddTagDialog(value);
           }
         });
+      } else if (!TSCORE.PRO && $('#tags').val() === 'geo-tag') {
+        TSCORE.showAlertDialog($.i18n.t("ns.common:needProVersion"), $.i18n.t("ns.common:geoTaggingNotPossible"));
       }
     });
 
@@ -390,8 +392,10 @@ define(function(require, exports, module) {
       switch (tagData.functionality) {
         case 'geoTagging': {
           $('#viewContainers').on('drop dragend', function(event) {
-            if (TSCORE.selectedTag === 'geo-tag') {
+            if (TSCORE.PRO && TSCORE.selectedTag === 'geo-tag') {
               TSCORE.showTagEditDialog();
+            } else if(!TSCORE.PRO && TSCORE.selectedTag === 'geo-tag') {
+              TSCORE.showAlertDialog($.i18n.t("ns.common:needProVersion"), $.i18n.t("ns.common:geoTaggingNotPossible"));
             }
           });
           break;
