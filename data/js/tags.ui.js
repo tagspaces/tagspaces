@@ -394,7 +394,7 @@ define(function(require, exports, module) {
           $('#viewContainers').on('drop dragend', function(event) {
             if (TSCORE.PRO && TSCORE.selectedTag === 'geo-tag') {
               TSCORE.showTagEditDialog();
-            } else if(!TSCORE.PRO && TSCORE.selectedTag === 'geo-tag') {
+            } else if (!TSCORE.PRO && TSCORE.selectedTag === 'geo-tag') {
               TSCORE.showAlertDialog($.i18n.t("ns.common:needProVersion"), $.i18n.t("ns.common:geoTaggingNotPossible"));
             }
           });
