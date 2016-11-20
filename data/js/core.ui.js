@@ -744,7 +744,7 @@ define(function(require, exports) {
   }
 
   function showTagEditDialog(addMode) {
-    if(addMode) {
+    if (addMode) {
       $('#editTagButton').hide();
       $('#addTagButton').show();
     } else {

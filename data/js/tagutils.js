@@ -437,7 +437,7 @@ define(function(require, exports, module) {
         }
       }
     });
-    if(tagArray.length < 1) {
+    if (tagArray.length < 1) {
       return;
     }
     for (var i = 0; i < filePathArray.length; i++) {

@@ -21,11 +21,12 @@ define(function(require, exports, module) {
   }
 
   function findMetaFilebyPath(filePath, metaFileExtension) {
-    var metaFilePath = null;
+    var metaFilePath; // = null;
     filePath = filePath + metaFileExtension;
     TSCORE.metaFileList.every(function(element) {
       if (filePath.indexOf(element.name) > 0) {
-        metaFilePath = TSCORE.currentPath + TSCORE.dirSeparator + TSCORE.metaFolder + TSCORE.dirSeparator + element.name;
+        metaFilePath = element.path;
+        //metaFilePath = TSCORE.currentPath + TSCORE.dirSeparator + TSCORE.metaFolder + TSCORE.dirSeparator + element.name;
         return false;
       }
       return true;
