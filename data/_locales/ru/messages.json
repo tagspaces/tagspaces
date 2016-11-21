@@ -7,6 +7,10 @@
         "message": "Запустить TagSpaces",
         "description": "Title of the application launcher in the browser."
     },
+    "saveBookmarkTitle": {
+        "message": "Добавить в закладки",
+        "description": "Title of bookmark button"
+    },
     "appDesc": {
         "message": "Файловый браузер с функцией извлечения содержимого веб-страниц и поддержкой Chromecast.",
         "description": ""
@@ -26,6 +30,10 @@
     "appName": {
         "message": "TagSpaces",
         "description": ""
+    },
+    "saveBookmarkLabel": {
+        "message": "Панель закладок",
+        "description": "Title of label."
     },
     "appLauncherLabel": {
         "message": "Получить содержимое страницы",

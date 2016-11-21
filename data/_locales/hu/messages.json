@@ -7,6 +7,10 @@
         "message": "TagSpaces indítása",
         "description": "Title of the application launcher in the browser."
     },
+    "saveBookmarkTitle": {
+        "message": "Könyvjelzőbe az oldalt",
+        "description": "Title of bookmark button"
+    },
     "appDesc": {
         "message": "Fájl tallózás webes tartalom elkapással és Chromcast támogatással.",
         "description": ""
@@ -26,6 +30,10 @@
     "appName": {
         "message": "TagSpaces",
         "description": ""
+    },
+    "saveBookmarkLabel": {
+        "message": "Könyvjelző",
+        "description": "Title of label."
     },
     "appLauncherLabel": {
         "message": "Webtartalom elkapása",
