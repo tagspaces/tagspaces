@@ -310,7 +310,7 @@ define(function(require, exports, module) {
   }
 
   function updateFileModel(model, oldPath, newPath) {
-    console.log('Removing file from model');
+    console.log('Updating file from model');
     var title = tsTagUtils.extractTitle(newPath),
       fileExt = tsTagUtils.extractFileExtension(newPath),
       fileTags = tsTagUtils.extractTags(newPath);

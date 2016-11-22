@@ -360,6 +360,8 @@ define(function(require, exports) {
 
     initTagEditDialog();
 
+    initFileRenameDialog();
+
     TSCORE.Calendar.initCalendarUI();
 
     // Hide drop downs by click and drag
@@ -473,6 +475,7 @@ define(function(require, exports) {
   }
 
   function showAlertDialog(message, title) {
+    console.warn(message + ' - ' + title);
     if (!title) {
       title = $.i18n.t('ns.dialogs:titleAlert');
     }
@@ -494,22 +497,6 @@ define(function(require, exports) {
       maxVisible: 4,
       closeWith: ['button', 'click'],
     });
-    /*var alertModal = $('#alertDialog');
-     alertModal.find('h4').text(title);
-     alertModal.find('.modal-body').empty();
-     alertModal.find('.modal-body').text(message);
-     alertModal.find('#okButton').off('click').click(function() {
-     alertModal.modal('hide');
-     });
-     // Focusing the ok button by default
-     alertModal.off('shown.bs.modal');
-     alertModal.on('shown.bs.modal', function() {
-     alertModal.find('#okButton').focus();
-     });
-     alertModal.modal({
-     backdrop: 'static',
-     show: true
-     });*/
   }
 
   function showConfirmDialog(title, message, okCallback, cancelCallback, confirmShowNextTime) {
@@ -619,26 +606,14 @@ define(function(require, exports) {
     });
   }
 
-  function showFileRenameDialog(filePath) {
-    if (!filePath) {
-      filePath = TSCORE.selectedFiles[0];
-    }
-    if (!filePath) {
-      TSCORE.showAlertDialog("Please select a file first.", "Renaming not possible!");
-      return false;
-    }
-    $('#renamedFileName').attr('filepath', filePath);
-    //$('#renamedFileName').on("keydown", function(e) {
-    //  e.preventDefault();
-    //})
-    $('#renamedFileName').val(TSCORE.TagUtils.extractFileName(filePath));
-    $('#formFileRename').validator();
-    $('#formFileRename').submit(function(e) {
+  function initFileRenameDialog() {
+    $('#formFileRename').on('submit', function(e) {
       e.preventDefault();
       if ($('#renameFileButton').prop('disabled') === false) {
         $('#renameFileButton').click();
       }
     });
+    $('#formFileRename').validator();
     $('#formFileRename').on('invalid.bs.validator', function() {
       $('#renameFileButton').prop('disabled', true);
     });
@@ -648,12 +623,24 @@ define(function(require, exports) {
     $('#dialogFileRename').on('shown.bs.modal', function() {
       $('#renamedFileName').focus();
     });
+    $('#dialogFileRename').draggable({
+      handle: ".modal-header"
+    });
+  }
+
+  function showFileRenameDialog(filePath) {
+    if (!filePath) {
+      filePath = TSCORE.selectedFiles[0];
+    }
+    if (!filePath) {
+      TSCORE.showAlertDialog("Please select a file first.", "Renaming not possible!");
+      return false;
+    }
+    $('#renamedFileName').attr('filepath', filePath);
+    $('#renamedFileName').val(TSCORE.TagUtils.extractFileName(filePath));
     $('#dialogFileRename').modal({
       backdrop: 'static',
       show: true
-    });
-    $('#dialogFileRename').draggable({
-      handle: ".modal-header"
     });
   }
 

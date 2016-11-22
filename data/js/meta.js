@@ -70,8 +70,8 @@ define(function(require, exports, module) {
     TSCORE.IO.saveTextFilePromise(metaFilePath, content, true);
   }
 
-  function updateMetaData(sourceFileName, targetFileName) {
-    if (!targetFileName || !sourceFileName) {
+  function updateMetaData(sourceFilePath, targetFilePath) {
+    if (!targetFilePath || !sourceFilePath) {
       return false;
     }
 
@@ -79,41 +79,39 @@ define(function(require, exports, module) {
       TSCORE.IO.stopWatchingDirectories();
     }
 
-    var name = TSCORE.Utils.baseName(sourceFileName);
     var fileInMetaFileList = false;
-    TSCORE.metaFileList.forEach(function(element, index) {
-      if (element.name.indexOf(name) >= 0) {
+    var sourceFileName = TSCORE.Utils.baseName(sourceFilePath);
+    var pathSource = TSCORE.Utils.dirName(sourceFilePath);
+    var pathTarget = TSCORE.Utils.dirName(targetFilePath);
+    TSCORE.metaFileList.forEach(function(metaElement, index) {
+      if (metaElement.name.indexOf(sourceFileName) === 0) {
         fileInMetaFileList = true;
-        var pathSource = TSCORE.Utils.dirName(sourceFileName);
-        var pathTarget = TSCORE.Utils.dirName(targetFileName);
 
-        if (pathTarget.lastIndexOf(TSCORE.dirSeparator) === 0) {
-          pathSource = pathSource + TSCORE.dirSeparator;
+        var targetMetaName = TSCORE.Utils.baseName(targetFilePath) + "." + TSCORE.TagUtils.extractFileExtension(metaElement.name);
+        var targetMetaFolderPath = pathTarget + TSCORE.dirSeparator + TSCORE.metaFolder;
+        var targetMetaFilePath = targetMetaFolderPath + TSCORE.dirSeparator + targetMetaName;
+        var sourceMetaFilePath = pathSource + TSCORE.dirSeparator + TSCORE.metaFolder + TSCORE.dirSeparator + metaElement.name;
+
+        if (pathSource === pathTarget) {
+          metaElement.name = targetMetaName;
+          metaElement.path = targetMetaFilePath;
+        } else {
+          TSCORE.metaFileList.splice(index, 1);
         }
 
-        var targetName = TSCORE.Utils.baseName(targetFileName) + "." + element.name.split('.').pop();
-        var targetFilePath = pathTarget + TSCORE.dirSeparator + TSCORE.metaFolder + TSCORE.dirSeparator + targetName;
-
         createMetaFolderPromise(pathTarget).then(function() {
-          TSCORE.IO.renameFilePromise(element.path, targetFilePath).then(function() {
-            if (pathSource == TSCORE.currentPath) {
-              element.name = targetName;
-              element.path = targetFilePath;
-            } else {
-              TSCORE.metaFileList.splice(index, 1);
-            }
+          TSCORE.IO.renameFilePromise(sourceMetaFilePath, targetMetaFilePath).then(function() {
+            console.log('Meta file moved/renamed successfully to ' + targetMetaFilePath);
           });
         });
-
-
       }
     });
     if (!fileInMetaFileList) { // file is probably from a search list
-      var sourcePathTemplate = TSCORE.Utils.dirName(sourceFileName) + TSCORE.dirSeparator + TSCORE.metaFolder + TSCORE.dirSeparator + TSCORE.Utils.baseName(sourceFileName);
-      var targetPathTemplate = TSCORE.Utils.dirName(targetFileName) + TSCORE.dirSeparator + TSCORE.metaFolder + TSCORE.dirSeparator + TSCORE.Utils.baseName(targetFileName);
-      TSCORE.IO.renameFilePromise(sourcePathTemplate + TSCORE.metaFileExt, targetPathTemplate + TSCORE.metaFileExt);
-      TSCORE.IO.renameFilePromise(sourcePathTemplate + TSCORE.thumbFileExt, targetPathTemplate + TSCORE.thumbFileExt);
-      TSCORE.IO.renameFilePromise(sourcePathTemplate + TSCORE.contentFileExt, targetPathTemplate + TSCORE.contentFileExt);
+      var sourceMetaPathTemplate = pathSource + TSCORE.dirSeparator + TSCORE.metaFolder + TSCORE.dirSeparator + TSCORE.Utils.baseName(sourceFilePath);
+      var targetMetaPathTemplate = pathTarget + TSCORE.dirSeparator + TSCORE.metaFolder + TSCORE.dirSeparator + TSCORE.Utils.baseName(targetFilePath);
+      TSCORE.IO.renameFilePromise(sourceMetaPathTemplate + TSCORE.metaFileExt, targetMetaPathTemplate + TSCORE.metaFileExt);
+      TSCORE.IO.renameFilePromise(sourceMetaPathTemplate + TSCORE.thumbFileExt, targetMetaPathTemplate + TSCORE.thumbFileExt);
+      TSCORE.IO.renameFilePromise(sourceMetaPathTemplate + TSCORE.contentFileExt, targetMetaPathTemplate + TSCORE.contentFileExt);
     }
   }
 
@@ -384,6 +382,7 @@ define(function(require, exports, module) {
     return new Promise(function(resolve, reject) {
       if (dirPath.lastIndexOf(TSCORE.metaFolder) >= dirPath.length - TSCORE.metaFolder.length) {
         console.log("Can not create meta folder in a meta folder");
+        reject();
         return;
       }
       var metaDirPath = dirPath + TSCORE.dirSeparator + TSCORE.metaFolder;
