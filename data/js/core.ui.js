@@ -744,7 +744,7 @@ define(function(require, exports) {
   }
 
   function showTagEditDialog(addMode) {
-    if(addMode) {
+    if (addMode) {
       $('#editTagButton').hide();
       $('#addTagButton').show();
     } else {
@@ -962,6 +962,12 @@ define(function(require, exports) {
     });
     $('#aboutLicenseModal').draggable({
       handle: ".modal-header"
+    });
+    $('#eulaDialogBack').on('click', function() {
+      window.close();
+    });
+    $('.close').on('click', function() {
+      window.close();
     });
   }
 
