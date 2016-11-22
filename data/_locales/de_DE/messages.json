@@ -7,6 +7,10 @@
         "message": "TagSpaces starten",
         "description": "Title of the application launcher in the browser."
     },
+    "saveBookmarkTitle": {
+        "message": "Bookmark the page",
+        "description": "Title of bookmark button"
+    },
     "appDesc": {
         "message": "Datei Browser mit Unterstützung der Speicherung von Web-Inhalten und Projektierung von lokalen Dateien zu Chromecast. ",
         "description": ""
@@ -26,6 +30,10 @@
     "appName": {
         "message": "TagSpaces",
         "description": ""
+    },
+    "saveBookmarkLabel": {
+        "message": "Bookmark",
+        "description": "Title of label."
     },
     "appLauncherLabel": {
         "message": "Erfassen von Web-Inhalten",

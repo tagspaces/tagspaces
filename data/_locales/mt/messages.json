@@ -7,6 +7,10 @@
         "message": "Iftaħ TagSpaces",
         "description": "Title of the application launcher in the browser."
     },
+    "saveBookmarkTitle": {
+        "message": "Bookmark the page",
+        "description": "Title of bookmark button"
+    },
     "appDesc": {
         "message": "'Browser' tal-Fajls li jinkludi 'Web Content Scraping' u jiflaħ għall-'Chromecast'",
         "description": ""
@@ -26,6 +30,10 @@
     "appName": {
         "message": "TagSpaces",
         "description": ""
+    },
+    "saveBookmarkLabel": {
+        "message": "Bookmark",
+        "description": "Title of label."
     },
     "appLauncherLabel": {
         "message": "Irreġistra l-Kontenut tal-'Web'",

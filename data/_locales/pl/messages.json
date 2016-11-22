@@ -7,6 +7,10 @@
         "message": "Uruchom TagSpaces",
         "description": "Title of the application launcher in the browser."
     },
+    "saveBookmarkTitle": {
+        "message": "Bookmark the page",
+        "description": "Title of bookmark button"
+    },
     "appDesc": {
         "message": "Przeglądarka plików z funkcją pobierania treści WWW i wsparciem dla Chromecast",
         "description": ""
@@ -26,6 +30,10 @@
     "appName": {
         "message": "TagSpaces",
         "description": ""
+    },
+    "saveBookmarkLabel": {
+        "message": "Bookmark",
+        "description": "Title of label."
     },
     "appLauncherLabel": {
         "message": "Pobierz treść WWW",

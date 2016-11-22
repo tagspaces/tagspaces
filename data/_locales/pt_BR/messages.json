@@ -7,6 +7,10 @@
         "message": "Abrir TagSpaces",
         "description": "Title of the application launcher in the browser."
     },
+    "saveBookmarkTitle": {
+        "message": "Bookmark the page",
+        "description": "Title of bookmark button"
+    },
     "appDesc": {
         "message": "Navegador de Arquivos com Varredura de Conteúdo Web e Suporte ao Chromecast.",
         "description": ""
@@ -26,6 +30,10 @@
     "appName": {
         "message": "TagSpaces",
         "description": ""
+    },
+    "saveBookmarkLabel": {
+        "message": "Bookmark",
+        "description": "Title of label."
     },
     "appLauncherLabel": {
         "message": "Capturar Conteúdo Web",

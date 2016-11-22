@@ -7,6 +7,10 @@
         "message": "TagSpacesを起動",
         "description": "Title of the application launcher in the browser."
     },
+    "saveBookmarkTitle": {
+        "message": "ページをブックマークする",
+        "description": "Title of bookmark button"
+    },
     "appDesc": {
         "message": "ウェブコンテンツのスクラップとChromecast支援のファイルブラウザ。",
         "description": ""
@@ -26,6 +30,10 @@
     "appName": {
         "message": "TagSpaces",
         "description": ""
+    },
+    "saveBookmarkLabel": {
+        "message": "ブックマーク",
+        "description": "Title of label."
     },
     "appLauncherLabel": {
         "message": "ウェブコンテンツのキャプチャ",
