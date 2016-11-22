@@ -719,12 +719,12 @@ define(function(require, exports) {
     });
 
     $('#dialogEditTag').draggable({
-      handle: ".modal-header"
+      handle: ".modal-header > h4"
     });
 
     $('#formEditTag').submit(function(e) {
       e.preventDefault();
-      $('#editTagButton').click();
+      //$('#editTagButton').click();
     });
     $('#dialogEditTag').on('shown.bs.modal', function() {
       $('#newTagName').focus();

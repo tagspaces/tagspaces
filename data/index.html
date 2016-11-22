@@ -689,7 +689,7 @@
         <h4 data-i18n="ns.dialogs:editTagTitle"></h4>
         <div id="tabsEditTag">
           <ul class="nav nav-tabs" style="margin-bottom: 15px; border-bottom: 1px solid lightgray;">
-            <li id="tabFormEdit"><a href="#formEditTag" data-toggle="tab" class="optionsTitle" data-i18n="ns.dialogs:generalTab"></a></li>
+            <li id="tabFormEdit"><a href="#plainEditorTab" data-toggle="tab" class="optionsTitle" data-i18n="ns.dialogs:generalTab"></a></li>
             <li id="tabDateCalendar"><a href="#dateCalendarTab" data-toggle="tab" class="optionsTitle" data-i18n="ns.dialogs:dateCalendarTab"></a></li>
             <li id="tabDateTimeCalendar"><a href="#dateTimeCalendarTab" data-toggle="tab" class="optionsTitle" data-i18n="ns.dialogs:dateTimeTab"></a></li>
             <li id="tabDateRange"><a href="#dateRangeTab" data-toggle="tab" class="optionsTitle" data-i18n="ns.dialogs:dateRangeTab"></a></li>
@@ -698,7 +698,7 @@
         </div>
       </div>
       <div class="modal-body form tab-content">
-        <div class="tab-pane active" id="formEditTag"></div>
+        <div class="tab-pane active" id="plainEditorTab"></div>
         <div class="tab-pane" id="dateCalendarTab">
           <div class="date-time-calendar">
             <div class="form-group">
@@ -733,7 +733,7 @@
           </div>
         </div>
         <div class="form-group">
-          <form role="form" data-toggle="validator">
+          <form role="form" data-toggle="validator" id="formEditTag">
             <div class="form-group">
               <label class="control-label" for="newTagName" data-i18n="ns.dialogs:editTagNewName"></label>
               <input class="form-control" type="text" name="newTagName" id="newTagName"
