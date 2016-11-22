@@ -963,6 +963,9 @@ define(function(require, exports) {
     $('#aboutLicenseModal').draggable({
       handle: ".modal-header"
     });
+    $('#eulaDialogBack').on('click', function() {
+      window.close();
+    });
   }
 
   $('#aboutLicenseModal').on('show.bs.modal', reloadEulaContent);
