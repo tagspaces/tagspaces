@@ -966,9 +966,6 @@ define(function(require, exports) {
     $('#eulaDialogBack').on('click', function() {
       window.close();
     });
-    $('.close').on('click', function() {
-      window.close();
-    });
   }
 
   $('#aboutLicenseModal').on('show.bs.modal', reloadEulaContent);
