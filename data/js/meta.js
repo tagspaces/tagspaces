@@ -83,6 +83,7 @@ define(function(require, exports, module) {
     var sourceFileName = TSCORE.Utils.baseName(sourceFilePath);
     var pathSource = TSCORE.Utils.dirName(sourceFilePath);
     var pathTarget = TSCORE.Utils.dirName(targetFilePath);
+    var metaIndexForRemove = [];
     TSCORE.metaFileList.forEach(function(metaElement, index) {
       if (metaElement.name.indexOf(sourceFileName) === 0) {
         fileInMetaFileList = true;
@@ -96,7 +97,7 @@ define(function(require, exports, module) {
           metaElement.name = targetMetaName;
           metaElement.path = targetMetaFilePath;
         } else {
-          TSCORE.metaFileList.splice(index, 1);
+          metaIndexForRemove.push(index);
         }
 
         createMetaFolderPromise(pathTarget).then(function() {
@@ -106,12 +107,23 @@ define(function(require, exports, module) {
         });
       }
     });
-    if (!fileInMetaFileList) { // file is probably from a search list
+
+    // file is probably from a search list
+    if (!fileInMetaFileList) {
       var sourceMetaPathTemplate = pathSource + TSCORE.dirSeparator + TSCORE.metaFolder + TSCORE.dirSeparator + TSCORE.Utils.baseName(sourceFilePath);
       var targetMetaPathTemplate = pathTarget + TSCORE.dirSeparator + TSCORE.metaFolder + TSCORE.dirSeparator + TSCORE.Utils.baseName(targetFilePath);
       TSCORE.IO.renameFilePromise(sourceMetaPathTemplate + TSCORE.metaFileExt, targetMetaPathTemplate + TSCORE.metaFileExt);
       TSCORE.IO.renameFilePromise(sourceMetaPathTemplate + TSCORE.thumbFileExt, targetMetaPathTemplate + TSCORE.thumbFileExt);
       TSCORE.IO.renameFilePromise(sourceMetaPathTemplate + TSCORE.contentFileExt, targetMetaPathTemplate + TSCORE.contentFileExt);
+    }
+
+    // Cleaning up meteFileList
+    if (metaIndexForRemove.length > 0) {
+      TSCORE.metaFileList.forEach(function(metaElement, index) {
+        if (index in metaIndexForRemove) {
+          TSCORE.metaFileList.splice(index, 1);
+        }
+      });
     }
   }
 
