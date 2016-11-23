@@ -724,7 +724,7 @@ define(function(require, exports, module) {
         reject($.i18n.t("ns.common:fileIsDirectory", {fileName: filePath}));
         return;
       } else if (!fs.existsSync(filePath)) {
-        reject("Source file does not exists " +filePath, $.i18n.t("ns.common:fileRenameFailed"));
+        reject("Source file does not exists " + filePath, $.i18n.t("ns.common:fileRenameFailed"));
         return;
       } else if (fs.existsSync(newFilePath)) {
         reject($.i18n.t("ns.common:fileExists", {fileName: newFilePath}), $.i18n.t("ns.common:fileRenameFailed"));
