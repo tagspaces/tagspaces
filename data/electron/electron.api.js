@@ -715,12 +715,16 @@ define(function(require, exports, module) {
    */
   function renameFilePromise(filePath, newFilePath) {
     console.log("Renaming file: " + filePath + " to " + newFilePath);
+    stopWatchingDirectories();
     return new Promise(function(resolve, reject) {
       if (filePath === newFilePath) {
         reject($.i18n.t("ns.common:fileTheSame"), $.i18n.t("ns.common:fileNotMoved"));
         return;
       } else if (fs.lstatSync(filePath).isDirectory()) {
         reject($.i18n.t("ns.common:fileIsDirectory", {fileName: filePath}));
+        return;
+      } else if (!fs.existsSync(filePath)) {
+        reject("Source file does not exists " +filePath, $.i18n.t("ns.common:fileRenameFailed"));
         return;
       } else if (fs.existsSync(newFilePath)) {
         reject($.i18n.t("ns.common:fileExists", {fileName: newFilePath}), $.i18n.t("ns.common:fileRenameFailed"));
