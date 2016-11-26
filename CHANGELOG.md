@@ -13,10 +13,17 @@
 - Add a checkbox in the settings to open the tag library on startup
 - Added editor for date and time smart tags
 - Add readability mode in viewerMHTML and viewerHTML extensions
-- Adding support for reading emails in eml format
+- Adding support for reading emails in EML format
 - Added GIF to the list of supported image extensions for creating thumbnails on the fly.
 - Adding a new plus menu for creating the standard file types
 - Adding global shortcut for saving edited text files
+- Added 64bit RPM package
+- Arrow keys are now moving the selection of the current opened files in the grid and list perspectives
+- Tags are displayed now in the image swiper perspective
+- Added sorting and grouping capabilities to the grid perspective
+- Completely reimplementing the viewerImage with the viewer.js library adding many new features
+- Added markdown preview functionality in the editorText
+- Show source url and saved date in viewerHTML
 
 ### Pro
 - Added geo tagging with the leaflet library
