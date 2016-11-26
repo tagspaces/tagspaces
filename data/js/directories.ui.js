@@ -500,8 +500,8 @@ define(function(require, exports, module) {
       TSCORE.metaFileList = dirList;
       listDirectory(directoryPath);
     }).catch(function(error) {
-      console.log(error);
-      TSCORE.metaFileList = undefined;
+      console.log("Error getting meta information " + error);
+      TSCORE.metaFileList = [];
       listDirectory(directoryPath);
     });
   }
