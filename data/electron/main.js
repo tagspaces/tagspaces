@@ -215,8 +215,8 @@ app.on('ready', function(event) {
 
   var title = 'TagSpaces App';
   var trayMenu = Menu.buildFromTemplate(trayMenuTemplate);
-  trayIcon.setToolTip(title);
-  trayIcon.setTitle(title);
+  // trayIcon.setToolTip(title);
+  // trayIcon.setTitle(title);
   trayIcon.setContextMenu(trayMenu);
 
   globalShortcut.register('CommandOrControl+Alt+P', resumePlayback);
