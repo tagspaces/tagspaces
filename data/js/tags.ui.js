@@ -370,6 +370,7 @@ define(function(require, exports, module) {
     });
 
     $tagGroupsContent.append($('<button>', {
+      'id': 'createTagGroupButton',
       'class': 'btn btn-link',
       'style': 'margin-top: 15px; margin-left: -8px; display: block;  color: #1DD19F;',
       'text': $.i18n.t('ns.common:createTagGroup'),
@@ -377,6 +378,7 @@ define(function(require, exports, module) {
     }).on('click', TSCORE.showDialogTagGroupCreate));
 
     $tagGroupsContent.append($('<button>', {
+      'id': 'importTagGroupButton',
       'class': 'btn btn-link',
       'style': 'margin-top: 0px; display: block; margin-left: -8px; color: #1DD19F;',
       'text': $.i18n.t('ns.common:importTags'),
