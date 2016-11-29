@@ -10,6 +10,7 @@ const globalShortcut = electron.globalShortcut;
 const dialog = electron.dialog;
 
 var debugMode;
+var portableMode;
 var startupFilePath;
 var trayIcon = null;
 
@@ -20,6 +21,7 @@ process.argv.forEach(function(arg, count) {
     debugMode = true;
   } else if (arg.toLowerCase() === '-p' || arg.toLowerCase() === '--portable') {
     app.setPath('userData', process.cwd() + '/tsprofile'); // making the app portable
+    portableMode = true;
   } else if (arg === '.' || count === 0) { // ignoring the first argument
     //Ignore these argument
   } else if (arg.length > 2) {
@@ -27,6 +29,10 @@ process.argv.forEach(function(arg, count) {
     startupFilePath = arg;
   }
 });
+
+if (portableMode) {
+  startupFilePath = undefined;
+}
 
 ipcMain.on('quit-application', function(event, arg) {
   app.quit();
