@@ -161,7 +161,7 @@ define(function(require, exports, module) {
       calendarWeeks: true,
       showTodayButton: true,
       allowInputToggle: true,
-      useCurrent: false
+      useCurrent: true
     });
 
     $('#dateCalendar').on('dp.change', function(e) {
@@ -182,7 +182,7 @@ define(function(require, exports, module) {
       }
       $('#newTagName').val(currentDate);
     });
-    $('#dateCalendar').data('DateTimePicker').format(format).defaultDate(defaultDateCalendar).viewMode(viewMode).show();
+    $('#dateCalendar').data('DateTimePicker').format(format).useCurrent(true).defaultDate(defaultDateCalendar).viewMode(viewMode).toggle().show();
   }
 
   function showDateTimeCalendar(currentDateTime) {
@@ -192,7 +192,7 @@ define(function(require, exports, module) {
       calendarWeeks: true,
       showTodayButton: true,
       allowInputToggle: true,
-      useCurrent: false,
+      useCurrent: true,
       extraFormats: ['YYYY-MM-DD HH:mm:ss', 'HH:mm:ss', 'HH:mm']
     });
 
@@ -238,7 +238,7 @@ define(function(require, exports, module) {
       $('#newTagName').val(currentDate);
     });
 
-    $('#dateTimeCalendar').data('DateTimePicker').format('YYYY-MM-DD HH:mm:ss').defaultDate(defaultDate).show();
+    $('#dateTimeCalendar').data('DateTimePicker').format('YYYY-MM-DD HH:mm:ss').useCurrent(true).defaultDate(defaultDate).toggle().show();
   }
 
   function dateRangeCalendar(currentDateTime) {
@@ -265,7 +265,7 @@ define(function(require, exports, module) {
       calendarWeeks: true,
       showTodayButton: true,
       allowInputToggle: true,
-      useCurrent: false
+      useCurrent: true
     });
 
     $('#dateTimeRangeCalendar').on('dp.change', function(e) {
@@ -287,7 +287,7 @@ define(function(require, exports, module) {
       $('#newTagName').val(currentMinDate + "-" + oldValue);
     });
 
-    $('#dateTimeRangeCalendar').data('DateTimePicker').format(format).defaultDate(TSCORE.Utils.convertToDate(range[0])).viewMode(viewMode).show();
+    $('#dateTimeRangeCalendar').data('DateTimePicker').format(format).useCurrent(true).defaultDate(TSCORE.Utils.convertToDate(range[0])).viewMode(viewMode).toggle().show();
 
     $('#dateTimeRangeMaxCalendar').datetimepicker({
       extraFormats: ['YYYY-MM-DD', 'YYYY-MM', 'YYYY-MM-DDTHH:MM:SS', 'YYYY-MM-DDTHH:MM', 'YYYY-MM-DD HH:mm:ss'],
@@ -296,7 +296,7 @@ define(function(require, exports, module) {
       calendarWeeks: true,
       showTodayButton: true,
       allowInputToggle: true,
-      useCurrent: false
+      useCurrent: true
     });
 
     $('#dateTimeRangeMaxCalendar').on('dp.change', function(e) {
@@ -318,7 +318,7 @@ define(function(require, exports, module) {
       $('#newTagName').val(oldValue + "-" + currentMaxDate);
     });
 
-    $('#dateTimeRangeMaxCalendar').data('DateTimePicker').format(format).defaultDate(TSCORE.Utils.convertToDate(range[1])).viewMode(viewMode).show();
+    $('#dateTimeRangeMaxCalendar').data('DateTimePicker').format(format).useCurrent(true).defaultDate(TSCORE.Utils.convertToDate(range[1])).viewMode(viewMode).toggle().show();
   }
 
   function tagRecognition(dataTag) {
