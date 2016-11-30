@@ -369,8 +369,6 @@ define(function(require, exports, module) {
         $('.nav-tabs a[href="#plainEditorTab"]').tab('show');
       }
     } else if (dateRegExp) {
-      console.log("DATAAAAAAAAAAAAAAA")
-
       var dateTab = year || month || date;
       var dateTimeTab = currentDateTime.match(dateTimeRegExp) ||
         currentDateTime.match(dateTimeWinRegExp) || convertToDateTime;
