@@ -40,7 +40,7 @@ define(function(require, exports, module) {
         calendarWeeks: true,
         showTodayButton: true,
         allowInputToggle: true,
-        useCurrent: false
+        useCurrent: true
       });
       var defaultDateCalendar = "2016-01-01";
       $('#dateCalendar').on('dp.change', function(e) {
@@ -50,7 +50,7 @@ define(function(require, exports, module) {
         currentDate = TSCORE.Utils.parseDate(d);
         $('#newTagName').val(currentDate);
       });
-      $('#dateCalendar').data('DateTimePicker').format('YYYY/MM/DD').defaultDate(defaultDateCalendar).viewMode('days').show();
+      $('#dateCalendar').data('DateTimePicker').format('YYYY/MM/DD').defaultDate(defaultDateCalendar).viewMode('days').toggle().show();
     });
 
     $('.nav-tabs a[href="#dateTimeCalendarTab"]').on('click', function() {
@@ -61,7 +61,7 @@ define(function(require, exports, module) {
         calendarWeeks: true,
         showTodayButton: true,
         allowInputToggle: true,
-        useCurrent: false
+        useCurrent: true
       });
       var defaultDateCalendar = "1990-01-01";
       $('#dateTimeCalendar').on('dp.change', function(e) {
@@ -79,7 +79,7 @@ define(function(require, exports, module) {
 
         $('#newTagName').val(currentDate);
       });
-      $('#dateTimeCalendar').data('DateTimePicker').format('YYYY/MM/DD').defaultDate(defaultDateCalendar).viewMode('days').show();
+      $('#dateTimeCalendar').data('DateTimePicker').format('YYYY/MM/DD').defaultDate(defaultDateCalendar).viewMode('days').toggle().show();
     });
 
     $('.nav-tabs a[href="#dateRangeTab"]').on('click', function() {
@@ -95,7 +95,7 @@ define(function(require, exports, module) {
         calendarWeeks: true,
         showTodayButton: true,
         allowInputToggle: true,
-        useCurrent: false
+        useCurrent: true
       });
 
       $('#dateTimeRangeCalendar').on('dp.change', function(e) {
@@ -107,7 +107,7 @@ define(function(require, exports, module) {
         $('#newTagName').val(currentMinDate + "-" + oldValue);
       });
 
-      $('#dateTimeRangeCalendar').data('DateTimePicker').defaultDate(defaultDateCalendarFrom).viewMode('days').show();
+      $('#dateTimeRangeCalendar').data('DateTimePicker').defaultDate(defaultDateCalendarFrom).viewMode('days').toggle().show();
 
       $('#dateTimeRangeMaxCalendar').datetimepicker({
         viewMode: 'days',
@@ -118,7 +118,7 @@ define(function(require, exports, module) {
         calendarWeeks: true,
         showTodayButton: true,
         allowInputToggle: true,
-        useCurrent: false
+        useCurrent: true
       });
 
       $('#dateTimeRangeMaxCalendar').on('dp.change', function(e) {
@@ -131,7 +131,7 @@ define(function(require, exports, module) {
         $('#newTagName').val(oldValue + "-" + currentMaxDate);
       });
 
-      $('#dateTimeRangeMaxCalendar').data('DateTimePicker').defaultDate(defaultDateCalendarTo).viewMode('days').show();
+      $('#dateTimeRangeMaxCalendar').data('DateTimePicker').defaultDate(defaultDateCalendarTo).viewMode('days').toggle().show();
     });
   }
 
@@ -366,10 +366,9 @@ define(function(require, exports, module) {
       if (TSCORE.PRO) {
         $('.nav-tabs a[href="#geoLocation"]').tab('show');
       } else {
-        $('.nav-tabs a[href="#formEditTag"]').tab('show');
+        $('.nav-tabs a[href="#plainEditorTab"]').tab('show');
       }
     } else if (dateRegExp) {
-
       var dateTab = year || month || date;
       var dateTimeTab = currentDateTime.match(dateTimeRegExp) ||
         currentDateTime.match(dateTimeWinRegExp) || convertToDateTime;
@@ -393,7 +392,7 @@ define(function(require, exports, module) {
         TSCORE.Calendar.dateRangeCalendar(currentDateTime);
       }
     } else if (!(dateRegExp && geoLocationRegExp.exec(currentCoordinate))) {
-      $('.nav-tabs a[href="#formEditTag"]').tab('show');
+      $('.nav-tabs a[href="#plainEditorTab"]').tab('show');
     } else {
       throw new TypeError("Invalid data.");
     }
