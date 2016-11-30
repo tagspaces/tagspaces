@@ -370,7 +370,7 @@ define(function(require, exports, module) {
     });
 
     $tagGroupsContent.append($('<button>', {
-      'id': 'createTagGroupButton',
+      'id': 'openTagGroupCreateButton',
       'class': 'btn btn-link',
       'style': 'margin-top: 15px; margin-left: -8px; display: block;  color: #1DD19F;',
       'text': $.i18n.t('ns.common:createTagGroup'),
