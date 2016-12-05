@@ -94,11 +94,11 @@ define(function(require, exports, module) {
     '<li class="flexLayout">' +
     '<button title="{{path}}" path="{{path}}" name="{{name}}" class="btn btn-link openLocation">' +
     '{{#if isDefault}}' +
-    '<i style="color: darkred" class="fa fa-bookmark" data-i18n="[title]ns.dialogs:startupLocation"></i>&nbsp;{{name}}' +
+    '<i style="color: darkred" class="fa fa-bookmark" data-i18n="[title]ns.dialogs:startupLocation"></i>' +
     '{{else}}' +
-    '<i class="fa fa-bookmark"></i>&nbsp;{{name}}' +
+    '<i class="fa fa-bookmark"></i>' +
     '{{/if}}' +
-    '</button>' +
+    '<span class="locationName">{{name}}</span></button>' +
     '<button type="button" data-i18n="[title]ns.common:editLocation" title="{{editLocationTitle}}" location="{{name}}" path="{{path}}" class="btn btn-link pull-right editLocation">' +
     '<i class="fa fa-pencil fa-lg"></i>' +
     '</button>' +

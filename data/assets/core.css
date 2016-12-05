@@ -45,6 +45,10 @@
     padding-left: 0;
 }
 
+.locationName {
+    margin-left: 10px;
+}
+
 #statusBar {
     margin-top: 12px;
     font-size: 14px;
