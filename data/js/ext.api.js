@@ -50,6 +50,7 @@ define(function(require, exports, module) {
     // TODO open next selected file
     //} else {
     TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getNextFile(TSCORE.FileOpener.getOpenedFilePath()));
+    TSCORE.PerspectiveManager.selectFile(TSCORE.FileOpener.getOpenedFilePath());
     //}
   }
 
