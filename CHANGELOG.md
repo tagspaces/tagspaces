@@ -1,6 +1,6 @@
 ﻿#Changelog
 
-## Version 2.6.0 / 2016.11.xx
+## Version 2.6.0 / 2016.11.23
 
 ### Community
 - Adding a tray icon with a menu
