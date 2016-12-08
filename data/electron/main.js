@@ -1,11 +1,11 @@
 'use strict';
 
 const electron = require('electron');
-const app = electron.app;  // Module to control application life.
-const BrowserWindow = electron.BrowserWindow;  // Module to create native browser window.
-const ipcMain = require('electron').ipcMain;
-const Menu = require('electron').Menu;
-const Tray = require('electron').Tray;
+const app = electron.app;
+const BrowserWindow = electron.BrowserWindow;
+const ipcMain = electron.ipcMain;
+const Menu = electron.Menu;
+const Tray = electron.Tray;
 const globalShortcut = electron.globalShortcut;
 const dialog = electron.dialog;
 
