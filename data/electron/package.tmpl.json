@@ -6,6 +6,7 @@
   "version": "@@VERSION.@@BUILD",
   "main": "electron/main.js",
   "dependencies": {
+    "electron-window-state": "^4.0.0",
     "fs-extra": "~1.0.0"
   },
   "devDependencies": {
