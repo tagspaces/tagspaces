@@ -194,7 +194,7 @@ define(function(require, exports, module) {
         submenu: [
           {
             label: $.i18n.t("ns.common:reloadApplication"),
-            accelerator: 'CmdOrCtrl+R',
+            accelerator: 'F5',
             click: function(item, focusedWindow) {
               if (focusedWindow) {
                 focusedWindow.reload();
@@ -223,7 +223,7 @@ define(function(require, exports, module) {
               }
             })(),
             click: function(item, focusedWindow) {
-              win.setFullScreen(!win.isFullScreen());
+              focusedWindow.setFullScreen(!focusedWindow.isFullScreen());
             }
           },
           {
