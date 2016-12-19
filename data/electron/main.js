@@ -1,22 +1,23 @@
 'use strict';
 
 const electron = require('electron');
-const app = electron.app;  // Module to control application life.
-const BrowserWindow = electron.BrowserWindow;  // Module to create native browser window.
-const ipcMain = require('electron').ipcMain;
-const Menu = require('electron').Menu;
-const Tray = require('electron').Tray;
+const app = electron.app;
+const BrowserWindow = electron.BrowserWindow;
+const ipcMain = electron.ipcMain;
+const Menu = electron.Menu;
+const Tray = electron.Tray;
 const globalShortcut = electron.globalShortcut;
 const dialog = electron.dialog;
+const windowStateKeeper = require('electron-window-state');
 
-var debugMode;
-var portableMode;
-var startupFilePath;
-var trayIcon = null;
+let debugMode;
+let portableMode;
+let startupFilePath;
+let trayIcon = null;
 
 //handling start parameter
 //console.log(JSON.stringify(process.argv));
-process.argv.forEach(function(arg, count) {
+process.argv.forEach((arg, count) => {
   if (arg.toLowerCase() === '-d' || arg.toLowerCase() === '--debug') {
     debugMode = true;
   } else if (arg.toLowerCase() === '-p' || arg.toLowerCase() === '--portable') {
@@ -34,18 +35,18 @@ if (portableMode) {
   startupFilePath = undefined;
 }
 
-ipcMain.on('quit-application', function(event, arg) {
+ipcMain.on('quit-application', (event, arg) => {
   app.quit();
 });
 
-var path = require('path');
+let path = require('path');
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-var mainWindow = null, newWindow = null;
-//var childWindow = null;
+let mainWindow = null;
+let newWindow = null;
 
 // Quit when all windows are closed.
-app.on('window-all-closed', function() {
+app.on('window-all-closed', () => {
   // On OS X it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
   //if (process.platform != 'darwin') {
@@ -53,19 +54,19 @@ app.on('window-all-closed', function() {
   //}
 });
 
-app.on('will-quit', function() {
+app.on('will-quit', () => {
   // Unregister all shortcuts.
   globalShortcut.unregisterAll();
 });
 
-ipcMain.on("new-win", function() {
+ipcMain.on("new-win", () => {
   newWindow = new BrowserWindow({width: 1280, height: 768});
-  //var indexPath = 'file://' + __dirname + '/index.html';
-  var startupParameter = "";
+
+  let startupParameter = "";
   if (startupFilePath) {
     startupParameter = "?open=" + encodeURIComponent(startupFilePath);
   }
-  var indexPath = 'file://' + path.dirname(__dirname) + '/index.html' + startupParameter;
+  let indexPath = 'file://' + path.dirname(__dirname) + '/index.html' + startupParameter;
 
   newWindow.setMenu(null);
   newWindow.loadURL(indexPath);
@@ -74,30 +75,47 @@ ipcMain.on("new-win", function() {
     newWindow.webContents.openDevTools();
   }
 
-  newWindow.once('ready-to-show', function() {
+  newWindow.once('ready-to-show', () => {
     newWindow.show();
   });
 
-  ipcMain.on('win-close', function(e, arg) {
+  ipcMain.on('win-close', (e, arg) => {
     newWindow.hide();
   });
 
-  ipcMain.on('close', function(e, arg) {
+  ipcMain.on('close', (e, arg) => {
     newWindow.hide();
   });
 });
 
-app.on('ready', function(event) {
+app.on('ready', (event) => {
   //console.log(app.getLocale());
   //console.log(app.getAppPath());
-  mainWindow = new BrowserWindow({width: 1280, height: 768});
 
-  //var indexPath = 'file://' + __dirname + '/index.html';
-  var startupParameter = "";
+  // Load the previous state with fallback to defaults
+  let mainWindowState = windowStateKeeper({
+    defaultWidth: 1280,
+    defaultHeight: 768
+  });
+
+  // Create the window using the state information
+  mainWindow = new BrowserWindow({
+    'x': mainWindowState.x,
+    'y': mainWindowState.y,
+    'width': mainWindowState.width,
+    'height': mainWindowState.height
+  });
+
+  // Let us register listeners on the window, so we can update the state
+  // automatically (the listeners will be removed when the window is closed)
+  // and restore the maximized or full screen state
+  mainWindowState.manage(mainWindow);
+
+  let startupParameter = "";
   if (startupFilePath) {
     startupParameter = "?open=" + encodeURIComponent(startupFilePath);
   }
-  var indexPath = 'file://' + path.dirname(__dirname) + '/index.html' + startupParameter;
+  let indexPath = 'file://' + path.dirname(__dirname) + '/index.html' + startupParameter;
 
   mainWindow.setMenu(null);
   mainWindow.loadURL(indexPath);
@@ -107,25 +125,25 @@ app.on('ready', function(event) {
   }
 
   // Emitted when the window is closed.
-  mainWindow.on('closed', function() {
+  mainWindow.on('closed', () => {
     // Dereference the window object, usually you would store windows
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
     mainWindow = null;
   });
 
-  ipcMain.on('close', function(e, arg) {
+  ipcMain.on('close', (e, arg) => {
     mainWindow.hide();
   });
 
-  mainWindow.webContents.on('crashed', function() {
+  mainWindow.webContents.on('crashed', () => {
     const options = {
       type: 'info',
       title: 'Renderer Process Crashed',
       message: 'This process has crashed.',
       buttons: ['Reload', 'Close']
     };
-    dialog.showMessageBox(mainWindow, options, function(index) {
+    dialog.showMessageBox(mainWindow, options, (index) => {
       mainWindow.hide();
       if (index === 0) {
         mainWindow.reload();
@@ -135,13 +153,13 @@ app.on('ready', function(event) {
     });
   });
 
-  ipcMain.on('win-close', function(e, arg) {
+  ipcMain.on('win-close', (e, arg) => {
     mainWindow.hide();
   });
 
-  var focusedWindow = BrowserWindow.getFocusedWindow();
+  let focusedWindow = BrowserWindow.getFocusedWindow();
 
-  var trayIconPath;
+  let trayIconPath;
   if (process.platform === 'darwin') {
     trayIconPath = path.join(__dirname, '/../assets/icon16.png');
   } else if (process.platform === 'win32') {
@@ -152,12 +170,12 @@ app.on('ready', function(event) {
 
   trayIcon = new Tray(trayIconPath);
 
-  var ctrlName = "Ctrl";
+  let ctrlName = "Ctrl";
   if (process.platform == 'darwin') {
     ctrlName = "Cmd";
   }
 
-  var trayMenuTemplate = [
+  let trayMenuTemplate = [
     {
       label: 'Show TagSpaces (' + ctrlName + '+Alt+W)',
       click: showTagSpaces
@@ -204,13 +222,13 @@ app.on('ready', function(event) {
     },
     {
       label: 'Quit TagSpaces',
-      click: function() {
+      click: () => {
         app.quit();
       }
     }
   ];
 
-  trayIcon.on('click', function() {
+  trayIcon.on('click', () => {
     if (mainWindow) {
       mainWindow.show();
     } else {
@@ -219,8 +237,8 @@ app.on('ready', function(event) {
     //mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show();
   });
 
-  var title = 'TagSpaces App';
-  var trayMenu = Menu.buildFromTemplate(trayMenuTemplate);
+  let title = 'TagSpaces App';
+  let trayMenu = Menu.buildFromTemplate(trayMenuTemplate);
   // trayIcon.setToolTip(title);
   // trayIcon.setTitle(title);
   trayIcon.setContextMenu(trayMenu);
@@ -315,7 +333,7 @@ app.on('ready', function(event) {
   }
 });
 
-process.on('uncaughtException', function(error) {
+process.on('uncaughtException', (error) => {
   if (error.stack) {
     console.error('error:', error.stack);
   }
