@@ -90,13 +90,16 @@ ipcMain.on("new-win", () => {
 
 let execPath = 'file://' + path.dirname(__dirname) + '/index.html';
 
-ipcMain.on('relaunch-app', (e, arg) => {
+ipcMain.on('relaunch-app', reloadApp);
+
+function reloadApp() {
   if (mainWindow) {
     mainWindow.loadURL(execPath);
-  } else {
+  }
+  if (newWindow) {
     newWindow.loadURL(execPath);
   }
-});
+}
 
 app.on('ready', (event) => {
   //console.log(app.getLocale());
@@ -156,7 +159,7 @@ app.on('ready', (event) => {
     dialog.showMessageBox(mainWindow, options, (index) => {
       mainWindow.hide();
       if (index === 0) {
-        mainWindow.reload();
+        reloadApp();
       } else {
         mainWindow.close();
       }
@@ -347,25 +350,5 @@ process.on('uncaughtException', (error) => {
   if (error.stack) {
     console.error('error:', error.stack);
   }
-  if (mainWindow) {
-    mainWindow.reload();
-  } else {
-    newWindow.reload();
-  }
-  // Handle the error
-  /*if (error) {
-   const options = {
-   type: 'info',
-   title: 'Renderer Process Crashed',
-   message: 'This process has crashed.',
-   buttons: ['Reload', 'Close']
-   };
-   dialog.showMessageBox(mainWindow, options, function(index) {
-   if (index === 0) {
-   mainWindow.reload();
-   } else {
-   mainWindow.close();
-   }
-   });
-   }*/
+  reloadApp();
 });
