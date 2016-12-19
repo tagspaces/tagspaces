@@ -88,6 +88,16 @@ ipcMain.on("new-win", () => {
   });
 });
 
+let execPath = 'file://' + path.dirname(__dirname) + '/index.html';
+
+ipcMain.on('relaunch-app', (e, arg) => {
+  if (mainWindow) {
+    mainWindow.loadURL(execPath);
+  } else {
+    newWindow.loadURL(execPath);
+  }
+});
+
 app.on('ready', (event) => {
   //console.log(app.getLocale());
   //console.log(app.getAppPath());
