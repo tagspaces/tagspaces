@@ -89,6 +89,7 @@ ipcMain.on("new-win", () => {
 });
 
 let execPath = 'file://' + path.dirname(__dirname) + '/index.html';
+
 ipcMain.on('relaunch-app', (e, arg) => {
   if (mainWindow) {
     mainWindow.loadURL(execPath);
