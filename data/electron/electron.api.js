@@ -196,9 +196,7 @@ define(function(require, exports, module) {
             label: $.i18n.t("ns.common:reloadApplication"),
             accelerator: 'F5',
             click: function(item, focusedWindow) {
-              if (focusedWindow) {
-                win.reload();
-              }
+              ipcRenderer.send('relaunch-app', 'relaunch');
             }
           },
           {
