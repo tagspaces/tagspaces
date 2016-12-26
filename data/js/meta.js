@@ -305,6 +305,33 @@ define(function(require, exports, module) {
     return tags;
   }
 
+  function getDescriptionFromMetaFile(filePath) {
+    var metaObj = findMetaObjectFromFileList(filePath);
+    var description;
+    if (metaObj && metaObj.metaData && metaObj.metaData.description) {
+      description = metaObj.metaData.description;
+      return description;
+    }
+  }
+
+  function addMetaDescriptionToFile(filePath, description) {
+    var metaObj = findMetaObjectFromFileList(filePath);
+    if (!metaObj) {
+      metaObj = {
+        thumbnailPath: "",
+        metaData: null,
+      };
+    }
+
+    if (!metaObj.metaData) {
+      metaObj.metaData = {
+        description: description
+      };
+    }
+    metaObj.metaData.description = description;
+    saveMetaData(filePath, metaObj.metaData);
+  }
+
   //meta tag utils
   function addMetaTags(filePath, tags) {
     var metaObj = findMetaObjectFromFileList(filePath);
@@ -317,7 +344,8 @@ define(function(require, exports, module) {
 
     if (!metaObj.metaData) {
       metaObj.metaData = {
-        tags: []
+        tags: [],
+        description: ''
       };
     }
 
@@ -418,7 +446,9 @@ define(function(require, exports, module) {
   exports.loadMetaFileJsonPromise = loadMetaFileJsonPromise;
   exports.loadThumbnailPromise = loadThumbnailPromise;
   exports.getTagsFromMetaFile = getTagsFromMetaFile;
+  exports.getDescriptionFromMetaFile = getDescriptionFromMetaFile;
   exports.addMetaTags = addMetaTags;
+  exports.addMetaDescriptionToFile = addMetaDescriptionToFile;
   exports.renameMetaTag = renameMetaTag;
   exports.removeMetaTag = removeMetaTag;
   exports.loadFolderMetaDataPromise = loadFolderMetaDataPromise;

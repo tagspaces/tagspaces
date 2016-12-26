@@ -24,9 +24,14 @@
                     <label class="control-label" for="fileTagsProperty" data-i18n="ns.dialogs:filePropertiesTags"></label>
                     <span class="form-control"  name="fileTagsProperty" id="fileTagsProperty" />
                 </div>
+                <div class="form-group">
+                    <label class="control-label" for="fileDescriptionProperty" data-i18n="ns.dialogs:fileDescriptionProperty"></label>
+                    <textarea class="form-control uneditable-input" rows="4" type="text" name="fileDescriptionProperty"
+                              id="fileDescriptionProperty"></textarea>
+                </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-default btn-primary" data-dismiss="modal" aria-hidden="true">
+                <button id="filePropertiesDialogButton" class="btn btn-default btn-primary" data-dismiss="modal" aria-hidden="true">
                   <span data-i18n="ns.dialogs:ok"></span>
                 </button>
             </div>
