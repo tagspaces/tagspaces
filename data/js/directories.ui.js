@@ -124,6 +124,7 @@ define(function(require, exports, module) {
           perspectiveFound = true;
         }
       });
+
       if (perspectiveFound) {
         TSCORE.PerspectiveManager.changePerspective(defaultPerspective);
       } else if (activatedPerspectives.length > 0) {
@@ -170,6 +171,7 @@ define(function(require, exports, module) {
     } else {
       TSCORE.Meta.loadFolderMetaDataPromise(path).then(function(metaData) {
         historyItem.metaData = metaData;
+        TSCORE.PerspectiveManager.changePerspective(historyItem.metaData.perspectives);
         generateFolderTags(metaData.tags, element, menuItem);
         loadMetaTagGroups(historyItem.metaData);
       }).catch(function(err) {
