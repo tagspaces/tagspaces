@@ -54,7 +54,7 @@
     "opts": {
         "template": "theme", // theme node_modules/ink-docstrap/template,
         "encoding": "utf8",
-        "destination": "../docu/api/",
+        "destination": "../docu/docs/api/",
         "recurse": true,
         "readme": "README.md"
     }

@@ -11,6 +11,7 @@ var trash = require('trash'); // jshint ignore:line
  * A implementation of the IOAPI for the nw.js platform
  * @class NWJS
  * @memberof IOAPI
+ * @deprecated the nw.js platform is not supported anymore in TagSpaces
  */
 define(function(require, exports, module) {
   "use strict";
