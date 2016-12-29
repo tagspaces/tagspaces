@@ -28,7 +28,6 @@
   ],
   "dependencies": {},
   "devDependencies": {
-    "chai": "~3.5.0",
     "express": "^4.13.3",
     "grunt": "~0.4.2",
     "grunt-contrib-clean": "~0.5.0",
@@ -48,10 +47,7 @@
     "grunt-text-replace": "~0.3.11",
     "jpm": "~1.0.7",
     "jsDAV": "~0.3.2",
-    "load-grunt-tasks": "^3.4.1",
-    "mocha": "^2.3.0",
-    "mocha-generators": "^1.2.0",
-    "nightmare": "~2.2.0"
+    "load-grunt-tasks": "^3.4.1"
   },
   "private": true,
   "scripts": {
@@ -60,7 +56,6 @@
     "portable": "cd data && electron . --portable",
     "webdav": "cd data && cd web && node webdavserver.js",
     "firefoxdev": "cfx run -b ~/Apps/firefoxdev/firefox -p ../mozprofile",
-    "firefox": "cfx run -p ../mozprofile --static-args='{ \"disableStrict\": true }'",
-    "testing": "make test"
+    "firefox": "cfx run -p ../mozprofile --static-args='{ \"disableStrict\": true }'"
   }
 }
