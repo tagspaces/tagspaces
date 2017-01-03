@@ -139,6 +139,7 @@ module.exports = function(grunt) {
           'data/chromium/**/*.js',
           'data/cordova/*.js',
           'data/electron/*.js',
+          '!data/electron/main.js', // ignore until es6 migration
           'data/ext/editorHTML/*.js',
           'data/ext/editorJSON/*.js',
           'data/ext/editorODF/*.js',

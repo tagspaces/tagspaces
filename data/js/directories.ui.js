@@ -171,7 +171,7 @@ define(function(require, exports, module) {
     } else {
       TSCORE.Meta.loadFolderMetaDataPromise(path).then(function(metaData) {
         historyItem.metaData = metaData;
-        if(historyItem.metaData.perspectives) {
+        if (historyItem.metaData.perspectives) {
           TSCORE.PerspectiveManager.changePerspective(historyItem.metaData.perspectives);
         }
         generateFolderTags(metaData.tags, element, menuItem);
