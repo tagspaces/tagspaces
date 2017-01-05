@@ -25,13 +25,6 @@ define(function(require, exports, module) {
   var fsWatcher;
   var win = remote.getCurrentWindow();
 
-
-  //console.log(ipcRenderer.sendSync('synchronous-message', 'ping')); // prints "pong"
-  //ipcRenderer.on('asynchronous-reply', function(event, arg) {
-  //  console.log(arg); // prints "pong"
-  //});
-  //ipcRenderer.send('asynchronous-message', 'ping');
-
   var showMainWindow = function() {
     win.show();
   };
@@ -58,12 +51,6 @@ define(function(require, exports, module) {
   }
 
   function initMainMenu() {
-    //testing icpRenderer from icp bind
-    /*if (!TSCORE.Config.getShowMainMenu()) {
-     return;
-     }*/
-    //
-
     var Menu = remote.Menu;
     var template = [
       {
