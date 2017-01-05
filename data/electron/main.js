@@ -40,6 +40,9 @@ ipcMain.on('quit-application', (event, arg) => {
 });
 
 let path = require('path');
+let applicationPath = path.dirname(__dirname);
+let indexPath = 'file://' + applicationPath + '/index.html';
+
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow = null;
@@ -66,10 +69,9 @@ ipcMain.on("new-win", () => {
   if (startupFilePath) {
     startupParameter = "?open=" + encodeURIComponent(startupFilePath);
   }
-  let indexPath = 'file://' + path.dirname(__dirname) + '/index.html' + startupParameter;
 
   newWindow.setMenu(null);
-  newWindow.loadURL(indexPath);
+  newWindow.loadURL(indexPath + startupParameter);
 
   if (debugMode) {
     newWindow.webContents.openDevTools();
@@ -88,16 +90,14 @@ ipcMain.on("new-win", () => {
   });
 });
 
-let execPath = 'file://' + path.dirname(__dirname) + '/index.html';
-
 ipcMain.on('relaunch-app', reloadApp);
 
 function reloadApp() {
   if (mainWindow) {
-    mainWindow.loadURL(execPath);
+    mainWindow.loadURL(indexPath);
   }
   if (newWindow) {
-    newWindow.loadURL(execPath);
+    newWindow.loadURL(indexPath);
   }
 }
 
@@ -128,10 +128,9 @@ app.on('ready', (event) => {
   if (startupFilePath) {
     startupParameter = "?open=" + encodeURIComponent(startupFilePath);
   }
-  let indexPath = 'file://' + path.dirname(__dirname) + '/index.html' + startupParameter;
 
   mainWindow.setMenu(null);
-  mainWindow.loadURL(indexPath);
+  mainWindow.loadURL(indexPath + startupParameter);
 
   if (debugMode) {
     mainWindow.webContents.openDevTools();
@@ -247,7 +246,6 @@ app.on('ready', (event) => {
     } else {
       newWindow.show();
     }
-    //mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show();
   });
 
   let title = 'TagSpaces App';
