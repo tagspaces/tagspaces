@@ -52,23 +52,23 @@ define(function(require, exports, module) {
   var mainDirectoryNavigatorTmpl = Handlebars.compile(
     '<div>{{#each dirHistory}}' +
     '<div class="accordion-group disableTextSelection">' +
-    '<div class="accordion-heading btn-group flexLayout" key="{{path}}">' +
-    '<button class="btn btn-link btn-lg directoryIcon" data-toggle="collapse" data-target="#dirButtons{{@index}}" key="{{path}}" title="{{../toggleDirectory}}">' +
+    '<div class="accordion-heading btn-group flexLayout" data-path="{{path}}">' +
+    '<button class="btn btn-link btn-lg directoryIcon" data-toggle="collapse" data-target="#dirButtons{{@index}}" data-path="{{path}}" title="{{../toggleDirectory}}">' +
     '<i class="fa fa-folder fa-fw"></i>' +
     '</button>' +
-    '<button class="btn btn-link directoryTitle ui-droppable flexMaxWidth" key="{{path}}" title="{{path}}">{{name}}</button>' +
-    '<button class="btn btn-link btn-lg directoryActions" key="{{path}}" title="{{../directoryOperations}}">' +
+    '<button class="btn btn-link directoryTitle ui-droppable flexMaxWidth" data-path="{{path}}" title="{{path}}">{{name}}</button>' +
+    '<button class="btn btn-link btn-lg directoryActions" data-path="{{path}}" title="{{../directoryOperations}}">' +
     '<b class="fa fa-ellipsis-v"></b>' +
     '</button>' +
     '</div>' +
     '<div class="accordion-body collapse in" id="dirButtons{{@index}}">' +
     '<div class="accordion-inner" id="dirButtonsContent{{@index}}" style="padding: 4px;">' +
     '<div class="dirButtonContainer">' +
-    '<button class="btn btn-sm btn-default dirButton parentDirectoryButton" key="{{path}}/.." title="Go to parent folder">' +
+    '<button class="btn btn-sm btn-default dirButton parentDirectoryButton" data-path="{{path}}/.." title="Go to parent folder">' +
     '<i class="fa fa-level-up"></i></button>' +
     '{{#if children}}' +
     '{{#each children}}' +
-    '<button class="btn btn-sm btn-default dirButton ui-droppable" key="{{path}}" title="{{path}}">' +
+    '<button class="btn btn-sm btn-default dirButton ui-droppable" data-path="{{path}}" title="{{path}}">' +
     '<div><i class="fa fa-folder-o"></i>&nbsp;{{name}}</div></button>' +
     '{{/each}}' +
     '{{else}}' +
@@ -216,7 +216,8 @@ define(function(require, exports, module) {
   function generateFolderTags(tags, element, menuItem) {
     var $tagsElement = null;
     if (element) {
-      var tagId = element.attr('key').split(TSCORE.dirSeparator).pop();
+      var tagId = element.data('path').split(TSCORE.dirSeparator).pop();
+      // Issue windows e:
       $tagsElement = $('#' + tagId);
       if ($tagsElement.length === 0) {
         $tagsElement = $('<div style="padding: 4px;"></div>');
@@ -357,9 +358,9 @@ define(function(require, exports, module) {
       'directoryOperations': $.i18n.t('ns.common:directoryOperations')
     }));
     $locationContent.find('.directoryTitle').each(function() {
-      loadFolderMetaData($(this).attr('key'), $(this).parent());
+      loadFolderMetaData($(this).data('path'), $(this).parent());
       $(this).click(function() {
-        navigateToDirectory($(this).attr('key'));
+        navigateToDirectory($(this).data('path'));
       }).droppable({
         greedy: 'true',
         accept: '.fileTitleButton,.fileTile,.fileTileSelector',
@@ -368,7 +369,7 @@ define(function(require, exports, module) {
           ui.draggable.detach();
           var filePath = ui.draggable.attr('filepath');
           var fileName = TSCORE.TagUtils.extractFileName(filePath);
-          var targetDir = $(this).attr('key');
+          var targetDir = $(this).data('path');
           console.log('Moving file: ' + filePath + ' to ' + targetDir);
           var newFilePath = targetDir + TSCORE.dirSeparator + fileName;
           TSCORE.IO.renameFilePromise(filePath, newFilePath).then(function(success) {
@@ -384,7 +385,7 @@ define(function(require, exports, module) {
     });
     $locationContent.find('.dirButton').each(function() {
       $(this).click(function() {
-        navigateToDirectory($(this).attr('key'));
+        navigateToDirectory($(this).data('path'));
       }).droppable({
         greedy: 'true',
         accept: '.fileTitleButton,.fileTile,.fileTileSelector',
@@ -395,7 +396,7 @@ define(function(require, exports, module) {
           if ($(this).parent().parent().parent().hasClass('in')) {
             var filePath = ui.draggable.attr('filepath');
             var fileName = TSCORE.TagUtils.extractFileName(filePath);
-            var targetDir = $(this).attr('key');
+            var targetDir = $(this).data('path');
             console.log('Moving file: ' + filePath + ' to ' + targetDir);
             var newFilePath = targetDir + TSCORE.dirSeparator + fileName;
             TSCORE.IO.renameFilePromise(filePath, newFilePath).then(function(success) {
@@ -414,7 +415,7 @@ define(function(require, exports, module) {
 
   function handleDirCollapsion() {
     $('#locationContent').find('.accordion-heading').each(function() {
-      var key = $(this).attr('key');
+      var key = $(this).data('path');
       console.log('Entered Header for: ' + key);
       if (getDirectoryCollapsed(key)) {
         $(this).find('i').removeClass('fa-folder-open');
@@ -551,7 +552,7 @@ define(function(require, exports, module) {
     // Context Menus
     $('body').on('contextmenu click', '.directoryActions', function() {
       TSCORE.hideAllDropDownMenus();
-      dir4ContextMenu = $(this).attr('key');
+      dir4ContextMenu = $(this).data('path');
       TSCORE.showContextMenu('#directoryMenu', $(this));
       return false;
     });
