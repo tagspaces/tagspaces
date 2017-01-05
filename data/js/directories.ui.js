@@ -107,8 +107,20 @@ define(function(require, exports, module) {
   );
 
   function openLocation(path) {
+    var originalPath = path;
     console.log('Opening location in : ' + path);
+
     TSCORE.currentLocationObject = TSCORE.Config.getLocation(path);
+
+    // Add current application path to the relative path of the location in portable desktop mode
+    if(isElectron && __dirname && path.indexOf(".") === 0) {
+      if(path.indexOf("..") === 0) {
+        path = pathUtils.normalize(__dirname + TSCORE.dirSeparator + path);
+      } else {
+        path = pathUtils.normalize(__dirname + path.substring(1, path.length));
+      }
+    }
+
     if (TSCORE.currentLocationObject !== undefined) {
       document.title = TSCORE.currentLocationObject.name + ' | ' + TSCORE.Config.DefaultSettings.appName;
       $('#locationName').removeAttr("data-i18n");
@@ -132,10 +144,10 @@ define(function(require, exports, module) {
       }
 
       // Saving the last opened location path in the settings
-      TSCORE.Config.setLastOpenedLocation(path);
+      TSCORE.Config.setLastOpenedLocation(originalPath);
 
       if ($('#defaultLocation').prop('checked') === true || $('#defaultLocationEdit').prop('checked') === true) {
-        console.log("set default path " + path);
+        // console.log("set default path " + path);
         TSCORE.Config.setDefaultLocation(path);
         $('#defaultLocation').prop('checked', false);
         $('#defaultLocationEdit').prop('checked', false);
