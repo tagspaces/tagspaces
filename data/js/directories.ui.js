@@ -113,8 +113,8 @@ define(function(require, exports, module) {
     TSCORE.currentLocationObject = TSCORE.Config.getLocation(path);
 
     // Add current application path to the relative path of the location in portable desktop mode
-    if(isElectron && __dirname && path.indexOf(".") === 0) {
-      if(path.indexOf("..") === 0) {
+    if (isElectron && __dirname && path.indexOf(".") === 0) {
+      if (path.indexOf("..") === 0) {
         path = pathUtils.normalize(pathUtils.dirname(pathUtils.dirname(__dirname)) + TSCORE.dirSeparator + path);
       } else {
         path = pathUtils.normalize(pathUtils.dirname(pathUtils.dirname(__dirname)) + path.substring(1, path.length));
