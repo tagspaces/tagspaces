@@ -115,9 +115,9 @@ define(function(require, exports, module) {
     // Add current application path to the relative path of the location in portable desktop mode
     if(isElectron && __dirname && path.indexOf(".") === 0) {
       if(path.indexOf("..") === 0) {
-        path = pathUtils.normalize(__dirname + TSCORE.dirSeparator + path);
+        path = pathUtils.normalize(pathUtils.dirname(pathUtils.dirname(__dirname)) + TSCORE.dirSeparator + path);
       } else {
-        path = pathUtils.normalize(__dirname + path.substring(1, path.length));
+        path = pathUtils.normalize(pathUtils.dirname(pathUtils.dirname(__dirname)) + path.substring(1, path.length));
       }
     }
 
