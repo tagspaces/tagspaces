@@ -4,7 +4,7 @@
     "animate.css": "~3.4.0",
     "bootstrap": "~3.3.7",
     "bootswatch": "v3.3.7",
-    "bootstrap-validator": "~0.11.5",
+    "bootstrap-validator": "~0.11.9",
     "d3": "~3.3.13",
     "dompurify": "~0.7.1",
     "exif-js": "~2.1.1",
