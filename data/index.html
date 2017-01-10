@@ -801,16 +801,16 @@
       </div>
       <div class="modal-body form">
         <form role="form" data-toggle="validator" id="formEditInTreeTag">
-          <div class="form-group">
+          <div class="form-group"><!-- ^([^\ #/\\]){1,}$ -->
             <label class="control-label" for="tagInTreeName" data-i18n="ns.dialogs:editTagMasterName"></label>*
-            <input class="form-control" pattern="^([^\ #/\\]){1,}$" type="text" name="tagInTreeName" id="tagInTreeName"
+            <input class="form-control" data-minlength="1" type="text" name="tagInTreeName" id="tagInTreeName"
                    data-i18n="[data-error]ns.dialogs:editTagNamesRestrictionsHelp" required/>
             <p class="help-block with-errors"></p>
           </div>
           <div class="form-group">
             <label class="control-label" for="tagInTreeKeyBinding"
-                   data-i18n="ns.dialogs:editTagInTreeKeyBinding"></label>
-            <input class="form-control" pattern="^([+\ A-z0-9]){1,}$" type="text" name="tagInTreeKeyBinding"
+                   data-i18n="ns.dialogs:editTagInTreeKeyBinding"></label><!-- pattern="([+\ A-z0-9]){1,}"  -->
+            <input class="form-control" data-minlength="1" type="text" name="tagInTreeKeyBinding"
                    id="tagInTreeKeyBinding"/>
             <p class="help-block with-errors"></p>
             <p class="help-block" data-i18n="ns.dialogs:editTagInTreeKeyBindingHelp"></p>
