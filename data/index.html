@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <!-- Copyright (c) 2012-2016 The TagSpaces Authors. All rights reserved. Use of this
+  <!-- Copyright (c) 2012-2017 The TagSpaces Authors. All rights reserved. Use of this
   source code is governed by a AGPL3 license that can be found in the LICENSE file. -->
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -319,10 +319,6 @@
               <li class="noWrap"><a id="openDirectory" data-i18n="[title]ns.common:openContainingFolderTooltip">
                 <i class="fa fa-folder-open fa-fw"></i>
                 &nbsp;<span data-i18n="ns.common:openContainingFolder"></span></a></li>
-              <!--li class="noWrap"><a id="closeFile" data-i18n="[title]ns.common:closeFileTooltip">
-                <i class="fa fa-times fa-fw"></i>
-                &nbsp;<span data-i18n="ns.common:closeFile"></span>
-                <span class="pull-right label label-default keyShortcut">Esc</span></a></li-->
               <li class="divider"></li>
               <li class="noWrap"><a id="openProperties" data-i18n="[title]ns.common:filePropertiesTooltip">
                 <i class="fa fa-briefcase fa-fw"></i>
@@ -661,8 +657,7 @@
           <div class="form-group">
             <label class="control-label" for="renamedFileName" data-i18n="ns.dialogs:renameNewFileName"></label>*
             <input class="form-control" pattern='^([^#/\\:*?<>|"]){1,}$' type="text" name="renamedFileName"
-                   id="renamedFileName"
-                   data-i18n="[data-error]ns.dialogs:fileNameHelp" required/>
+                   id="renamedFileName" data-i18n="[data-error]ns.dialogs:fileNameHelp" required/>
             <p class="help-block with-errors"></p>
           </div>
         </form>
@@ -736,7 +731,7 @@
           <form role="form" data-toggle="validator" id="formEditTag">
             <div class="form-group">
               <label class="control-label" for="newTagName" data-i18n="ns.dialogs:editTagNewName"></label>
-              <input class="form-control" type="text" name="newTagName" id="newTagName"
+              <input class="form-control" pattern="^[^#/\\ \[\]]{1,}$" type="text" name="newTagName"  id="newTagName"
                      data-i18n="[data-error]ns.dialogs:editTagNamesRestrictionsHelp" required/>
               <p class="help-block with-errors"></p>
             </div>
@@ -801,16 +796,16 @@
       </div>
       <div class="modal-body form">
         <form role="form" data-toggle="validator" id="formEditInTreeTag">
-          <div class="form-group"><!-- ^([^\ #/\\]){1,}$ -->
+          <div class="form-group">
             <label class="control-label" for="tagInTreeName" data-i18n="ns.dialogs:editTagMasterName"></label>*
-            <input class="form-control" data-minlength="1" type="text" name="tagInTreeName" id="tagInTreeName"
+            <input class="form-control" data-minlength="1" pattern="^[^\\\.#/ \[\]]{1,}$" type="text" name="tagInTreeName" id="tagInTreeName"
                    data-i18n="[data-error]ns.dialogs:editTagNamesRestrictionsHelp" required/>
             <p class="help-block with-errors"></p>
           </div>
           <div class="form-group">
             <label class="control-label" for="tagInTreeKeyBinding"
-                   data-i18n="ns.dialogs:editTagInTreeKeyBinding"></label><!-- pattern="([+\ A-z0-9]){1,}"  -->
-            <input class="form-control" data-minlength="1" type="text" name="tagInTreeKeyBinding"
+                   data-i18n="ns.dialogs:editTagInTreeKeyBinding"></label>
+            <input class="form-control" data-minlength="1" pattern="^[^\\#/]{1,}$" type="text" name="tagInTreeKeyBinding"
                    id="tagInTreeKeyBinding"/>
             <p class="help-block with-errors"></p>
             <p class="help-block" data-i18n="ns.dialogs:editTagInTreeKeyBindingHelp"></p>
@@ -881,7 +876,7 @@
         <form role="form" data-toggle="validator" id="formAddTags">
           <div class="form-group">
             <label class="control-label" for="newTagTitle" data-i18n="ns.dialogs:addTagsToGroupTags"></label>
-            <input pattern="^([^#/\\ ]){1,}$" class="form-control" type="text" name="newTagTitle" id="newTagTitle"
+            <input pattern="^[^#/\\ \[\]]{1,}$" class="form-control" type="text" name="newTagTitle" id="newTagTitle"
                    data-i18n="[placeholder]ns.dialogs:addTagsToGroupTagsPlaceholder;[data-error]ns.dialogs:editTagNamesRestrictionsHelp"/>
             <p class="help-block with-errors"></p>
           </div>
@@ -1210,12 +1205,6 @@
     <li class="divider"></li>
     <li><a id="tagGroupMenuCreateNewTag" data-i18n="[title]ns.common:addTagsTooltip">
       <i class="fa fa-tag fa-lg fa-fw"></i>&nbsp;<span data-i18n="ns.common:addTags"></span></a></li>
-    <!--li><a id="tagGroupMenuImportTags" data-i18n="[title]ns.common:importTagsTooltip">
-      <span class="fa-stack fa-fw">
-        <i class="fa fa-tag fa-stack-2x fa-fw"></i><i class="fa fa-arrow-right fa-stack-1x fa-inverse"></i>
-      </span>&nbsp;<span data-i18n="ns.common:importTags"></span></a></li-->
-    <!--li><a id="tagGroupMenuCreateTagGroup" data-i18n="[title]ns.common:createTagGroupTooltip">
-      <i class="fa fa-tags fa-lg fa-fw"></i>&nbsp;<span data-i18n="ns.common:createTagGroup"></span></a></li-->
     <li><a id="tagGroupMenuMoveUp" data-i18n="[title]ns.common:moveTagGroupUpTooltip">
       <i class="fa fa-arrow-up fa-lg fa-fw"></i>&nbsp;<span data-i18n="ns.common:moveTagGroupUp"></span></a></li>
     <li><a id="tagGroupMenuMoveDown" data-i18n="[title]ns.common:moveTagGroupDownTooltip">
