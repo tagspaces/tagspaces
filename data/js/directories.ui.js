@@ -217,11 +217,10 @@ define(function(require, exports, module) {
     var $tagsElement = null;
     if (element) {
       var tagId = element.data('path').split(TSCORE.dirSeparator).pop();
-      // Issue windows e:
-      $tagsElement = $('#' + tagId);
+      $tagsElement = $('*[data-path="' + tagId + '"]'); // $('#' + tagId);
       if ($tagsElement.length === 0) {
         $tagsElement = $('<div style="padding: 4px;"></div>');
-        $tagsElement.attr('id', tagId);
+        $tagsElement.data('path', tagId);
         var $el = element.parent().find('.accordion-body');
         if ($el.length > 0) {
           $el.prepend($tagsElement);
@@ -229,8 +228,7 @@ define(function(require, exports, module) {
       } else {
         $tagsElement.empty();
       }
-    }
-    else if (menuItem) {
+    } else if (menuItem) {
       menuItem.empty();
       $tagsElement = $('<div id style="padding: 4px;"></div>');
       menuItem.append($tagsElement);
