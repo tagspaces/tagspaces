@@ -711,17 +711,16 @@ define(function(require, exports) {
 
     $('#dialogEditTag').validator();
     $('#dialogEditTag').on('invalid.bs.validator', function() {
-        $('#addTagButton').prop('disabled', true);
-        $('#editTagButton').prop('disabled', true);
+      $('#addTagButton').prop('disabled', true);
+      $('#editTagButton').prop('disabled', true);
     });
     $('#dialogEditTag').on('valid.bs.validator', function() {
-        $('#addTagButton').prop('disabled', false);
-        $('#editTagButton').prop('disabled', false);
+      $('#addTagButton').prop('disabled', false);
+      $('#editTagButton').prop('disabled', false);
     });
 
     $('#formEditTag').submit(function(e) {
       e.preventDefault();
-      //$('#editTagButton').click();
     });
     $('#dialogEditTag').on('shown.bs.modal', function() {
       $('#newTagName').focus();
