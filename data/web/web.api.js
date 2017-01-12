@@ -295,7 +295,7 @@ define(function(require, exports, module) {
   function getFileContentPromise(filePath, type) {
     console.log("getFileContent file: " + filePath);
     return new Promise(function(resolve, reject) {
-      var ajax = davClient.getAjax("GET", filePath);
+      var ajax = davClient.getAjax("GET", encodeURI(filePath));
       ajax.onreadystatechange = null;
       ajax.responseType = type || "arraybuffer";
       ajax.onerror = reject;
