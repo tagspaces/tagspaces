@@ -818,8 +818,10 @@ define(function(require, exports, module) {
   }
 
   function setMaxSearchResultCount(value) {
-    if (isNaN(value) || value < 0 || value > 2000) {
-      value = 0;
+    if (isNaN(value) || value < 0) {
+      value = exports.DefaultSettings.maxSearchResultCount;
+    } else if (value > 2000) {
+      value = 2000;
     }
     exports.Settings.maxSearchResultCount = value;
   }
