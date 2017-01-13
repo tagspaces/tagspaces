@@ -505,6 +505,7 @@ define(function(require, exports, module) {
         if (error) {
           console.log("Error listing directory " + path);
           resolve([]); // returning results even if any promise fails
+          return;
         }
 
         if (entries) {
@@ -514,8 +515,10 @@ define(function(require, exports, module) {
           Promise.all(statEntriesPromises).then(function(enhancedEntries) {
             console.timeEnd("listDirectoryPromise");
             resolve(enhancedEntries);
+            return;
           }, function(err) {
             resolve([]); // returning results even if any promise fails
+            return;
           });
         }
       });
@@ -547,6 +550,7 @@ define(function(require, exports, module) {
         if (error) {
           console.log("Error listing directory " + path);
           resolve(enhancedEntries); // returning results even if any promise fails
+          return;
         }
 
         if (entries) {
@@ -583,6 +587,7 @@ define(function(require, exports, module) {
           });
           console.timeEnd("listDirectoryPromise");
           resolve(enhancedEntries);
+          return;
         }
       });
     });
