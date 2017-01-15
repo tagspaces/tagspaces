@@ -370,7 +370,29 @@ define(function(require, exports) {
     });
 
     platformTuning();
+
+    //initResizableUI();
   }
+
+  /* function initResizableUI() {
+      var dividerStorage = 80;
+      $(".row-divider").draggable({
+          axis: "y",
+          containment: $(".col3"),
+          drag: function(e, ui) {
+            console.log("top offset: " + ui.offset.top + " - " + ui.position.top);
+            //$(".col3 .row1").css("height", (ui.offset.top-15) + "px");
+
+            $(".col3 .row1").css("flex", "0 1 " + (ui.offset.top) + "px");
+
+            $(".col3 .row2").css("flex", "1");
+          },
+          stop: function(e, ui) {
+              console.log("height: " + $(".col3 .row1").css('height'))
+              ui.position.top = $(".col3 .row1").css('height');
+          }
+      });
+  }*/
 
   function openNewInstance() {
     if (!isCordova) {
