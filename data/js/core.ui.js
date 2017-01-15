@@ -1199,7 +1199,7 @@ define(function(require, exports) {
   }
 
   function suggestNewFeatures() {
-    TSCORE.IO.openFile("https://tagspaces.uservoice.com/forums/213931-general");
+    TSCORE.IO.openFile("https://trello.com/b/TGeG5bi9");
   }
 
   function reportIssues() {
