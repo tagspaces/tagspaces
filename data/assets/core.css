@@ -574,3 +574,8 @@ input a.resetFilter {
 #filePropertiesArea {
     padding: 10px;
 }
+
+#filePropertiesArea .control-label {
+    font-size: small;
+    color: #868686;
+}
