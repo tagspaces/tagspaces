@@ -181,7 +181,7 @@
           <input type="radio" name="options">&nbsp;<i class="fa fa-folder"></i>
         </label>
         <label class="btn btn-default" id="contactUs" data-i18n="[title]ns.common:switchToContactUsTooltip">
-          <input type="radio" name="options">&nbsp;<i class="fa fa-info-circle"></i>
+          <input type="radio" name="options">&nbsp;<i class="fa fa-commenting"></i>
         </label>
       </div>
       <button class="btn btn-link" style="margin-left: 20px;" data-i18n="[title]ns.common:openSettingTooltip;" id="openOptions">
@@ -330,7 +330,7 @@
         </div>
         <div id="tagsContainer" class="ui-droppable flexLayout">
           <button class="btn btn-link" data-i18n="[title]ns.common:filePropertiesTooltip" id="toggleFileProperitesButton">
-            <i class="fa fa-list-alt fa-lg"></i>
+            <i class="fa fa-info fa-lg"></i>
           </button>
           <span id="fileTags" class="flexMaxWidth"></span>
           <div id="fileViewerMainToolbar" class="btn-group">
@@ -381,12 +381,14 @@
             </div>
           </div>
           <div class="form-group">
-            <label class="control-label" for="fileDescriptionProperty" data-i18n="ns.dialogs:filePropertiesDescription"></label><button class="btn btn-link" id="editFileDescriptionButton" data-i18n="" style="color: #1DD19F;">Edit</button>
-            <textarea class="form-control uneditable-input input-sm" rows="3" type="text" name="fileDescriptionProperty"
-                      id="fileDescriptionProperty" placeholder="File description can be added here in TagSpaces PRO"></textarea>
+            <label class="control-label" for="fileDescriptionProperty" data-i18n="ns.dialogs:filePropertiesDescription"></label>
+            <button class="btn btn-link" id="editFileDescriptionButton" data-i18n="">Edit</button>
+            <button class="btn btn-link pull-right" id="addTagsFileDescriptionButton" data-i18n="">Tag file</button>
+            <div id="fileDescriptionPropertyRendered"></div>
+            <textarea class="form-control uneditable-input input-sm" rows="3" type="text" name="fileDescriptionProperty" id="fileDescriptionProperty"></textarea>
           </div>
-          <button class="btn btn-default" id="cancelFileDescriptionButton" aria-hidden="true"><span data-i18n="ns.dialogs:cancel"></span></button>
-          <button class="btn btn-primary" id="saveFileDescriptionButton" aria-hidden="true"><span data-i18n="ns.dialogs:confirmSaveButton"></span></button>
+          <button class="btn btn-primary btn-sm" id="saveFileDescriptionButton" aria-hidden="true"><span data-i18n="ns.dialogs:confirmSaveButton"></span></button>
+          <button class="btn btn-default btn-sm" id="cancelEditFileDescriptionButton" aria-hidden="true"><span data-i18n="ns.dialogs:cancel"></span></button>
         </div>
       </nav>
     </div>

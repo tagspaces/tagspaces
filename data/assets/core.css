@@ -579,3 +579,32 @@ input a.resetFilter {
     font-size: small;
     color: #868686;
 }
+
+#fileDescriptionProperty {
+    display: none;
+}
+
+#cancelEditFileDescriptionButton {
+    display: none;
+}
+
+#saveFileDescriptionButton {
+    display: none;
+}
+
+#editFileDescriptionButton {
+    padding-top: 1px;
+    color: #1DD19F;
+}
+
+#addTagsFileDescriptionButton {
+    padding-top: 5px;
+    color: #1DD19F;
+}
+
+#fileDescriptionPropertyRendered {
+    width: 100%;
+    height: 200px;
+    overflow-y: auto;
+    font-size: small;
+}

@@ -375,11 +375,3 @@
   -webkit-flex: 0 1 50px;
   -ms-flex: 0 1 50px;
 }
-
-#cancelFileDescriptionButton {
-  display: none;
-}
-
-#saveFileDescriptionButton {
-  display: none;
-}
