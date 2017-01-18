@@ -80,6 +80,7 @@ define(function (require, exports, module) {
             { "iso": "pl", "title": "Polski (Polish)" },
             { "iso": "mt", "title": "Maltese (Maltese)" },
             { "iso": "hy", "title": "հայերեն (Armenian)" },
+            { "iso": "da_DK", "title": "Dansk (Danish)" },
         ],
         "keyBindings": {
             "selectAll": "mod+a",
