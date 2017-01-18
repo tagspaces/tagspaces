@@ -11,7 +11,6 @@ define(function(require, exports, module) {
 
   var TSCORE = require('tscore');
   var TSPOSTIO = require("tspostioapi");
-  var marked = require("marked");
   var _openedFilePath;
   var _openedFileProperties;
   var _isFileOpened = false;
@@ -76,38 +75,49 @@ define(function(require, exports, module) {
     $('#editDocument').on("click", function() {
       editFile(_openedFilePath);
     });
+
     $('#saveDocument').on("click", saveFile);
+
     $('#closeFile').on("click", closeFile);
+
     $('#closeOpenedFile').on("click", closeFile);
+
     $('#nextFileButton').on("click", function() {
       TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getNextFile(_openedFilePath));
       TSCORE.PerspectiveManager.selectFile(TSCORE.FileOpener.getOpenedFilePath());
     });
+
     $('#prevFileButton').on("click", function() {
       TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getPrevFile(_openedFilePath));
       TSCORE.PerspectiveManager.selectFile(TSCORE.FileOpener.getOpenedFilePath());
     });
+
     $('#reloadFile').on("click", function() {
       TSCORE.FileOpener.openFile(_openedFilePath);
     });
+
     $('#sendFile').on("click", function() {
       TSCORE.IO.sendFile(_openedFilePath);
     });
-    /*$('#suggestTagsFile').on("click", function() {
-      $('tagSuggestionsMenu').dropdown('toggle');
-    });*/
+
     $('#toggleFullWidthButton').on("click", TSCORE.toggleFullWidth);
+
     $('#fullscreenFile').on("click", switchToFullScreen);
+
     //$('#openProperties').on("click", showFilePropertiesDialog);
+
     $('#deleteFile').on("click", function() {
       TSCORE.showFileDeleteDialog(_openedFilePath);
     });
+
     $('#openNatively').on("click", function() {
       TSCORE.IO.openFile(_openedFilePath);
     });
+
     $('#openDirectory').on("click", function() {
       TSCORE.IO.openDirectory(TSCORE.TagUtils.extractParentDirectoryPath(_openedFilePath));
     });
+
     $('#renameFile').on("click", function() {
       if (_isFileChanged) {
         TSCORE.showAlertDialog($.i18n.t('ns.dialogs:operationNotPermittedInEditModeAlert'));
@@ -115,6 +125,7 @@ define(function(require, exports, module) {
         TSCORE.showFileRenameDialog(_openedFilePath);
       }
     });
+
     $('#duplicateFile').on("click", function() {
       var currentDateTime = TSCORE.TagUtils.formatDateTime4Tag(new Date(), true);
       var fileNameWithOutExt = TSCORE.TagUtils.extractFileNameWithoutExt(_openedFilePath);
@@ -133,6 +144,7 @@ define(function(require, exports, module) {
         TSCORE.showAlertDialog(err);
       });
     });
+
     $('#openFileInNewWindow').on("click", function() {
       if (isWeb) {
         if (location.port === '') {
@@ -144,6 +156,7 @@ define(function(require, exports, module) {
         window.open('file:///' + _openedFilePath);
       }
     });
+
     $('#tagFile').on("click", tagFile);
 
     $('#editFileDescriptionButton').on('click', editFileDescription);
@@ -158,12 +171,16 @@ define(function(require, exports, module) {
   }
 
   function editFileDescription() {
-    // TODO Editing of the file description is supported in TagSpaces PRO
-    $('#fileDescriptionProperty').show();
-    $('#fileDescriptionPropertyRendered').hide();
-    $('#editFileDescriptionButton').hide();
-    $('#cancelEditFileDescriptionButton').show();
-    $('#saveFileDescriptionButton').show();
+    if (TSCORE.PRO) {
+      $('#fileDescriptionProperty').show();
+      $('#fileDescriptionProperty').css("height", "200px");
+      $('#fileDescriptionPropertyRendered').hide();
+      $('#editFileDescriptionButton').hide();
+      $('#cancelEditFileDescriptionButton').show();
+      $('#saveFileDescriptionButton').show();
+    } else {
+      TSCORE.UI.showAlertDialog("Editing the file description is possible with the TagSpaces PRO");
+    }
   }
 
   function cancelEditFileDescription() {
@@ -175,14 +192,33 @@ define(function(require, exports, module) {
   }
 
   function saveEditFileDescription() {
-    var fileDescription = $('#fileDescriptionProperty').val()
-    if (marked) {
-      $('#fileDescriptionPropertyRendered').html(marked(fileDescription, {sanitize: true}));
-    } else {
-      $('#fileDescriptionPropertyRendered').html(fileDescription);
-    }
-    TSCORE.Meta.addMetaDescriptionToFile(_openedFileProperties.path, fileDescription );
+    var fileDescription = $('#fileDescriptionProperty').val();
+    TSCORE.Utils.setMarkDownContent($('#fileDescriptionPropertyRendered'), fileDescription);
+    $('#fileDescriptionPropertyRendered').css("height", "200px");
+    TSCORE.Meta.addMetaDescriptionToFile(_openedFileProperties.path, fileDescription);
     cancelEditFileDescription();
+  }
+
+  function setFileProperties(fileProperties) {
+    _openedFileProperties = fileProperties;
+    $('#fileNameProperty').val(TSCORE.TagUtils.extractFileName(_openedFileProperties.path));
+    $('#filePathProperty').val(TSCORE.TagUtils.extractContainingDirectoryPath(_openedFileProperties.path));
+    $('#fileSizeProperty').val(TSCORE.TagUtils.formatFileSize(_openedFileProperties.size, true) + " / " + _openedFileProperties.size + " " + $.i18n.t('ns.common:sizeInBytes'));
+    $('#fileLMDTProperty').val(new Date(_openedFileProperties.lmdt).toISOString().substring(0, 19).split('T').join(' '));
+    $('#fileLMDTProperty').attr("title", new Date(_openedFileProperties.lmdt));
+
+    var fileDescription = TSCORE.Meta.getDescriptionFromMetaFile(_openedFileProperties.path);
+
+    $('#editFileDescriptionButton').show();
+    $('#fileDescriptionPropertyRendered').empty();
+    $('#fileDescriptionProperty').val("");
+    if (fileDescription && fileDescription.length > 0) {
+      $('#fileDescriptionPropertyRendered').css("height", "200px");
+      TSCORE.Utils.setMarkDownContent($('#fileDescriptionPropertyRendered'), fileDescription);
+      $('#fileDescriptionProperty').val(fileDescription);
+    } else {
+      $('#fileDescriptionPropertyRendered').css("height", "0");
+    }
   }
 
   function tagFile() {
@@ -196,7 +232,7 @@ define(function(require, exports, module) {
   }
 
   function toggleFileProperties() {
-    if(filePropertiesOpened) {
+    if (filePropertiesOpened) {
       $('#filePropertiesArea').hide();
       $('#toggleFileProperitesButton').removeClass('buttonToggled');
     } else {
@@ -421,38 +457,8 @@ define(function(require, exports, module) {
     Mousetrap.bindGlobal("esc", leaveFullScreen);
   }
 
-  function setFileProperties(fileProperties) {
-    _openedFileProperties = fileProperties;
-    $('#fileNameProperty').val(TSCORE.TagUtils.extractFileName(_openedFileProperties.path));
-    $('#filePathProperty').val(TSCORE.TagUtils.extractContainingDirectoryPath(_openedFileProperties.path));
-    $('#fileSizeProperty').val(TSCORE.TagUtils.formatFileSize(_openedFileProperties.size, true) + " / " + _openedFileProperties.size + " " + $.i18n.t('ns.common:sizeInBytes'));
-    $('#fileLMDTProperty').val(new Date(_openedFileProperties.lmdt).toISOString().substring(0,19).split('T').join(' '));
-    $('#fileLMDTProperty').attr("title", new Date(_openedFileProperties.lmdt));
-
-    var fileDescription = TSCORE.Meta.getDescriptionFromMetaFile(_openedFileProperties.path);
-
-    $('#fileDescriptionPropertyRendered').empty();
-    if (marked && fileDescription) {
-      $('#fileDescriptionPropertyRendered').css("height", "200px");
-      $('#fileDescriptionPropertyRendered').html(marked(fileDescription, {sanitize: true}));
-    } else if (fileDescription){
-      $('#fileDescriptionPropertyRendered').css("height", "200px");
-      $('#fileDescriptionPropertyRendered').html(fileDescription);
-    } else {
-      $('#fileDescriptionPropertyRendered').css("height", "20px");
-    }
-
-    if (TSCORE.PRO) {
-      $('#editFileDescriptionButton').show();
-      $('#fileDescriptionProperty').val(fileDescription);
-    } else {
-      $('#editFileDescriptionButton').hide();
-    }
-  }
-
   function updateEditorContent(fileContent) {
     console.log('Updating editor');
-    // with data: "+fileContent);
     _tsEditor.setContent(fileContent);
   }
 
@@ -577,6 +583,7 @@ define(function(require, exports, module) {
   }
 
   // TODO refactor or remove, move add / remove tags dialog
+  /*
   function initTagSuggestionMenu(filePath) {
     var tags = TSCORE.TagUtils.extractTags(filePath);
     var suggTags = TSCORE.TagUtils.suggestTags(filePath);
@@ -628,7 +635,7 @@ define(function(require, exports, module) {
         })))); // jshint ignore:line
       }
     }
-  }
+  } */
 
   // Public API definition
   exports.initUI = initUI;

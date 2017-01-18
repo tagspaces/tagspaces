@@ -206,3 +206,32 @@ Licensed under MIT https://github.com/tobiasahlin/SpinKit/blob/master/LICENSE
 }
 
 /* END noty customizations */
+
+.markdown-content img {
+    max-width: 95%;
+    height: auto;
+    box-shadow: 2px 2px 14px 0px rgba(0,0,0,0.75);
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.markdown-content h1 {
+    font-size: 20px;
+}
+
+.markdown-content h2 {
+    font-size: 18px;
+}
+
+.markdown-content h3 {
+    font-size: 16px;
+}
+
+.markdown-content h4 {
+    font-size: 14px;
+}
+
+.markdown-content h5 {
+    font-size: 12px;
+}

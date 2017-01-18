@@ -381,11 +381,11 @@
             </div>
           </div>
           <div class="form-group">
-            <label class="control-label" for="fileDescriptionProperty" data-i18n="ns.dialogs:filePropertiesDescription"></label>
+            <label class="control-label" for="fileDescriptionProperty" data-i18n="ns.dialogs:filePropertiesDescription;[title]ns.dialogs:filePropertiesDescriptionTitle"></label>
             <button class="btn btn-link" id="editFileDescriptionButton" data-i18n="">Edit</button>
             <button class="btn btn-link pull-right" id="addTagsFileDescriptionButton" data-i18n="">Tag file</button>
-            <div id="fileDescriptionPropertyRendered"></div>
-            <textarea class="form-control uneditable-input input-sm" rows="3" type="text" name="fileDescriptionProperty" id="fileDescriptionProperty"></textarea>
+            <div id="fileDescriptionPropertyRendered" class="markdown-content" data-i18n="[title]ns.dialogs:filePropertiesDescriptionTitle"></div>
+            <textarea class="form-control uneditable-input input-sm" rows="3" type="text" name="fileDescriptionProperty" id="fileDescriptionProperty" data-i18n="ns.dialogs:[placeholder]ns.dialogs:filePropertiesDescriptionTitle"></textarea>
           </div>
           <button class="btn btn-primary btn-sm" id="saveFileDescriptionButton" aria-hidden="true"><span data-i18n="ns.dialogs:confirmSaveButton"></span></button>
           <button class="btn btn-default btn-sm" id="cancelEditFileDescriptionButton" aria-hidden="true"><span data-i18n="ns.dialogs:cancel"></span></button>

@@ -88,6 +88,7 @@
   "filePropertiesLMDT": "Modified",
   "filePropertiesTags": "Tags",
   "filePropertiesDescription": "Description",
+  "filePropertiesDescriptionTitle": "File description supports markdown syntayx",
   "directoryPropertiesDescription": "Directory Description",
   "directoryPropertiesTitle": "Directory Properties",
   "createLocationTitle": "Connect a Location",

@@ -582,6 +582,10 @@ input a.resetFilter {
 
 #fileDescriptionProperty {
     display: none;
+    border: 1px solid #e2e2e2;
+    border-radius: 2px;
+    padding: 5px;
+    padding-bottom: 0;
 }
 
 #cancelEditFileDescriptionButton {
