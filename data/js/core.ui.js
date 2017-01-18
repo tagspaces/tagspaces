@@ -14,6 +14,7 @@ define(function(require, exports) {
   require('datetimepicker');
   require('moment');
 
+  var tsGettingStarted;
   var fileContent;
   var fileType;
   var waitingDialogTimeoutID;
@@ -846,8 +847,14 @@ define(function(require, exports) {
   }
 
   function startGettingStartedTour() {
-    var tsGettingStarted = require('tsgettingstarted');
+    tsGettingStarted = require('tsgettingstarted');
     tsGettingStarted.startTour();
+  }
+
+  function stopGettingStartedTour() {
+    if(tsGettingStarted) {
+      tsGettingStarted.stopTour();
+    }
   }
 
   function showMoveCopyFilesDialog() {
@@ -1223,6 +1230,7 @@ define(function(require, exports) {
   exports.showWelcomeDialog = showWelcomeDialog;
   exports.showKeysDialog = showKeysDialog;
   exports.startGettingStartedTour = startGettingStartedTour;
+  exports.stopGettingStartedTour = stopGettingStartedTour;
   exports.showTagEditDialog = showTagEditDialog;
   //exports.showDateTimeCalendar = showDateTimeCalendar;
   exports.showOptionsDialog = showOptionsDialog;

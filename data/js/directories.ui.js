@@ -534,17 +534,20 @@ define(function(require, exports, module) {
       TSCORE.showContextMenu('#directoryMenu', $(this));
       return false;
     });
-    // Context menu for the tags in the file table and the file viewer
-    $('#directoryMenuReloadDirectory').click(function() {
+
+    $('#directoryMenuReloadDirectory').on('click', function() {
       navigateToDirectory(dir4ContextMenu);
     });
-    $('#directoryMenuCreateDirectory').click(function() {
+
+    $('#directoryMenuCreateDirectory').on('click', function() {
       showCreateDirectoryDialog(dir4ContextMenu);
     });
-    $('#directoryMenuRenameDirectory').click(function() {
+
+    $('#directoryMenuRenameDirectory').on('click', function() {
       showRenameDirectoryDialog(dir4ContextMenu);
     });
-    $('#directoryMenuDeleteDirectory').click(function() {
+
+    $('#directoryMenuDeleteDirectory').on('click', function() {
       var dlgConfirmMsgId = 'ns.dialogs:deleteDirectoryContentConfirm';
       if (TSCORE.Config.getUseTrashCan()) {
         dlgConfirmMsgId = 'ns.pro:trashDirectoryContentConfirm';
@@ -566,8 +569,13 @@ define(function(require, exports, module) {
         );
       });
     });
-    $('#directoryMenuOpenDirectory').click(function() {
+
+    $('#directoryMenuOpenDirectory').on('click', function() {
       TSCORE.IO.openDirectory(dir4ContextMenu);
+    });
+
+    $('#locationSwitch').on('click', function() {
+      TSCORE.UI.stopGettingStartedTour();
     });
   }
 
@@ -708,8 +716,6 @@ define(function(require, exports, module) {
           e.preventDefault();
         });
 
-
-
         if (isWeb) {
           $('#selectLocalDirectory').attr('style', 'visibility: hidden');
         } else {
@@ -752,6 +758,8 @@ define(function(require, exports, module) {
           $('#formLocationCreate').validator('validate');
         });
 
+        $('#dialogCreateFolderConnection').i18n();
+
         if (isCordova) {
           $('#folderLocation').attr('placeholder', 'e.g., DCIM/Camera for Photos on Android ');
         } else if (isChrome) {
@@ -769,7 +777,6 @@ define(function(require, exports, module) {
 
       $('#connectionName').val('');
       $('#folderLocation').val('');
-      $('#dialogCreateFolderConnection').i18n();
 
       var enableDefaultlocation = (TSCORE.Config.getDefaultLocation() === "");
       $('#defaultLocation').prop('checked', enableDefaultlocation);
