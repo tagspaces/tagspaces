@@ -114,7 +114,7 @@ This command will start a local node.js based WebDAV server on `http://127.0.0.1
         
 You will be prompted for user credentials, which are username: `demo` and password: `demo` and now you should be able to work with the WebDAV version of TagSpaces.
 
-For setting up the WebDAV version on your server, please read [Self-hosted TagSpaces with WebDAV](http://docs.tagspaces.org/selfhosting.html/) from our blogs.
+For setting up the WebDAV version on your server, please read [Self-hosted TagSpaces with WebDAV](http://docs.tagspaces.org/selfhosting.html) from our blogs.
 
 ## License
 TagSpaces's source code is licensed under the AGPL (GNU Affero General Public License) Version 3, for the license text see [LICENSE](LICENSE) file.
