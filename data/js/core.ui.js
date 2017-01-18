@@ -1030,7 +1030,7 @@ define(function(require, exports) {
       $('#tagMenuMoveTagRight').parent().hide();
       $('#tagMenuRemoveTag').parent().hide();
       $('#openDirectory').parent().hide();
-      // File opener menu
+      // File opener
       $('#tagFile').parent().hide();
       $('#renameFile').parent().hide();
       $('#duplicateFile').parent().hide();
@@ -1038,6 +1038,9 @@ define(function(require, exports) {
       $('#deleteFile').parent().hide();
       $('#openNatively').parent().hide();
       $('#addTagFileViewer').hide();
+      $('#toggleFileProperitesButton').hide();
+      $('#editFileDescriptionButton').remove();
+      $('#addTagsFileDescriptionButton').hide();
     } else if (isWeb) {
       $('#directoryMenuOpenDirectory').parent().hide();
       $('#fileMenuOpenDirectory').parent().hide();
