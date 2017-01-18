@@ -8,6 +8,9 @@ const electron = require('electron'); // jshint ignore:line
 const remote = electron.remote; // jshint ignore:line
 const ipcRenderer = require('electron').ipcRenderer; // jshint ignore:line
 
+// Removing buffer for security reasons
+delete global.Buffer; // jshint ignore:line
+
 /**
  * A implementation of the IOAPI for the electron platform
  * @class Electron
@@ -505,6 +508,7 @@ define(function(require, exports, module) {
         if (error) {
           console.log("Error listing directory " + path);
           resolve([]); // returning results even if any promise fails
+          return;
         }
 
         if (entries) {
@@ -514,8 +518,10 @@ define(function(require, exports, module) {
           Promise.all(statEntriesPromises).then(function(enhancedEntries) {
             console.timeEnd("listDirectoryPromise");
             resolve(enhancedEntries);
+            return;
           }, function(err) {
             resolve([]); // returning results even if any promise fails
+            return;
           });
         }
       });
@@ -547,6 +553,7 @@ define(function(require, exports, module) {
         if (error) {
           console.log("Error listing directory " + path);
           resolve(enhancedEntries); // returning results even if any promise fails
+          return;
         }
 
         if (entries) {
@@ -583,6 +590,7 @@ define(function(require, exports, module) {
           });
           console.timeEnd("listDirectoryPromise");
           resolve(enhancedEntries);
+          return;
         }
       });
     });

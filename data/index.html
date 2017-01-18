@@ -114,7 +114,7 @@
           </a><br>
           <hr class="contactUsSeparator" />
           <a class="btn btn-link" data-i18n="[title]ns.common:suggestNewFeaturesTooltip"
-             href="https://tagspaces.uservoice.com/forums/213931-general" id="openUservoice">
+             href="https://trello.com/b/TGeG5bi9" id="openUservoice">
             <span class="fa-stack"><i style="color: lightgray" class="fa fa-circle fa-stack-base fa-stack-2x"></i>
             <i class="fa fa-bullhorn fa-stack-1x" style=""></i></span>&nbsp;&nbsp;
             <span data-i18n="ns.common:suggestNewFeatures"></span>
@@ -181,7 +181,7 @@
           <input type="radio" name="options">&nbsp;<i class="fa fa-folder"></i>
         </label>
         <label class="btn btn-default" id="contactUs" data-i18n="[title]ns.common:switchToContactUsTooltip">
-          <input type="radio" name="options">&nbsp;<i class="fa fa-info-circle"></i>
+          <input type="radio" name="options">&nbsp;<i class="fa fa-commenting"></i>
         </label>
       </div>
       <button class="btn btn-link" style="margin-left: 20px;" data-i18n="[title]ns.common:openSettingTooltip;" id="openOptions">
@@ -268,7 +268,7 @@
     <div class="row2 appBackgroundTile" id="viewContainers"></div>
   </div>
 
-  <div class="col3" style="display: none;">
+  <div class="col3">
     <div class="row1">
       <nav class="navbar navbar-default" role="navigation">
         <div class="btn-toolbar flexLayout" >
@@ -319,11 +319,6 @@
               <li class="noWrap"><a id="openDirectory" data-i18n="[title]ns.common:openContainingFolderTooltip">
                 <i class="fa fa-folder-open fa-fw"></i>
                 &nbsp;<span data-i18n="ns.common:openContainingFolder"></span></a></li>
-              <li class="divider"></li>
-              <li class="noWrap"><a id="openProperties" data-i18n="[title]ns.common:filePropertiesTooltip">
-                <i class="fa fa-briefcase fa-fw"></i>
-                &nbsp;<span data-i18n="ns.common:fileProperties"></span>
-                <span class="pull-right label label-default keyShortcut">Alt+Enter</span></a></li>
             </ul>
           </div>
           <div class="flexMaxWidth flexLayout">
@@ -334,11 +329,9 @@
           </button>
         </div>
         <div id="tagsContainer" class="ui-droppable flexLayout">
-          <button id="addTagFileViewer" type="button" data-i18n="[title]ns.common:addTags"
-                  class="btn btn-small extTagButton dropdown-toggle" data-toggle="dropdown">
-            <i class="fa fa-plus-square"></i>
+          <button class="btn btn-link" data-i18n="[title]ns.common:filePropertiesTooltip" id="toggleFileProperitesButton">
+            <i class="fa fa-info fa-lg"></i>
           </button>
-          <ul class="dropdown-menu" id="tagSuggestionsMenu"></ul>
           <span id="fileTags" class="flexMaxWidth"></span>
           <div id="fileViewerMainToolbar" class="btn-group">
             <button class="btn btn-link pull-right" data-i18n="[title]ns.common:openNextFileTooltip" id="nextFileButton">
@@ -357,6 +350,45 @@
               <i class="fa fa-pencil fa-lg"></i>
             </button>
           </div>
+        </div>
+        <div class="form" id="filePropertiesArea">
+          <div class="row">
+            <div class="col-xs-7">
+              <div class="form-group">
+                <label class="control-label" for="filePathProperty" data-i18n="ns.dialogs:filePropertiesPath"></label>
+                <input class="form-control uneditable-input input-sm" readonly="true" type="text" name="filePathProperty" id="filePathProperty" />
+              </div>
+            </div>
+            <div class="col-xs-5">
+              <div class="form-group">
+                <label class="control-label" for="fileSizeProperty" data-i18n="ns.dialogs:filePropertiesSize"></label>
+                <input class="form-control uneditable-input input-sm" readonly="true" type="text" name="fileSizeProperty" id="fileSizeProperty" />
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-xs-7">
+              <div class="form-group">
+                <label class="control-label" for="fileNameProperty" data-i18n="ns.dialogs:filePropertiesName"></label>
+                <input class="form-control uneditable-input input-sm" readonly="true" type="text" name="fileNameProperty" id="fileNameProperty" />
+              </div>
+            </div>
+            <div class="col-xs-5">
+              <div class="form-group">
+                <label class="control-label" for="fileLMDTProperty" data-i18n="ns.dialogs:filePropertiesLMDT"></label>
+                <input class="form-control uneditable-input input-sm" readonly="true" type="text" name="fileLMDTProperty" id="fileLMDTProperty" />
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="control-label" for="fileDescriptionProperty" data-i18n="ns.dialogs:filePropertiesDescription;[title]ns.dialogs:filePropertiesDescriptionTitle"></label>
+            <button class="btn btn-link" id="editFileDescriptionButton" data-i18n="">Edit</button>
+            <button class="btn btn-link pull-right" id="addTagsFileDescriptionButton" data-i18n="">Tag file</button>
+            <div id="fileDescriptionPropertyRendered" class="markdown-content" data-i18n="[title]ns.dialogs:filePropertiesDescriptionTitle"></div>
+            <textarea class="form-control uneditable-input input-sm" rows="3" type="text" name="fileDescriptionProperty" id="fileDescriptionProperty" data-i18n="ns.dialogs:[placeholder]ns.dialogs:filePropertiesDescriptionTitle"></textarea>
+          </div>
+          <button class="btn btn-primary btn-sm" id="saveFileDescriptionButton" aria-hidden="true"><span data-i18n="ns.dialogs:confirmSaveButton"></span></button>
+          <button class="btn btn-default btn-sm" id="cancelEditFileDescriptionButton" aria-hidden="true"><span data-i18n="ns.dialogs:cancel"></span></button>
         </div>
       </nav>
     </div>

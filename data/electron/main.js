@@ -15,6 +15,9 @@ let portableMode;
 let startupFilePath;
 let trayIcon = null;
 
+// Removing buffer for security reasons
+delete global.Buffer;
+
 //handling start parameter
 //console.log(JSON.stringify(process.argv));
 process.argv.forEach((arg, count) => {

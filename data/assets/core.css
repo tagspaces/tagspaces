@@ -556,3 +556,59 @@ input a.resetFilter {
 #showNewFileDialog {
     padding-left: 13px;
 }
+
+#toggleFileProperitesButton {
+    padding-top: 0px;
+    padding-bottom: 0px;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-right: 7px;
+    border: 1px solid transparent;
+}
+
+.buttonToggled {
+    border: 1px solid lightgray !important;
+    background-color: #dedede !important;
+}
+
+#filePropertiesArea {
+    padding: 10px;
+}
+
+#filePropertiesArea .control-label {
+    font-size: small;
+    color: #868686;
+}
+
+#fileDescriptionProperty {
+    display: none;
+    border: 1px solid #e2e2e2;
+    border-radius: 2px;
+    padding: 5px;
+    padding-bottom: 0;
+}
+
+#cancelEditFileDescriptionButton {
+    display: none;
+}
+
+#saveFileDescriptionButton {
+    display: none;
+}
+
+#editFileDescriptionButton {
+    padding-top: 1px;
+    color: #1DD19F;
+}
+
+#addTagsFileDescriptionButton {
+    padding-top: 5px;
+    color: #1DD19F;
+}
+
+#fileDescriptionPropertyRendered {
+    width: 100%;
+    height: 200px;
+    overflow-y: auto;
+    font-size: small;
+}

@@ -10,6 +10,7 @@ define(function(require, exports, module) {
 
   var TSCORE = require('tscore');
   var TSPOSTIO = require('tspostioapi');
+  var marked = require("marked");
 
   //Conversion utility
   function arrayBufferToDataURL(arrayBuffer, mime) {
@@ -331,6 +332,27 @@ define(function(require, exports, module) {
     return parseFloat(currentLat) + "," + parseFloat(currentLng);
   }
 
+  function handleLinks($element) {
+    $element.find("a[href]").each(function() {
+      var currentSrc = $(this).attr("href");
+      $(this).off();
+      $(this).on('click', function(e) {
+        e.preventDefault();
+        var msg = {command: "openLinkExternally", link: currentSrc};
+        window.postMessage(JSON.stringify(msg), "*");
+      });
+    });
+  }
+
+  function setMarkDownContent($targetElement, content) {
+    if (marked) {
+      $targetElement.html(marked(content, {sanitize: true}));
+      handleLinks($targetElement);
+    } else {
+      console.log("Marked not loaded...");
+    }
+  }
+
   exports.arrayBufferToDataURL = arrayBufferToDataURL;
   exports.base64ToArrayBuffer = base64ToArrayBuffer;
   exports.dataURLtoBlob = dataURLtoBlob;
@@ -356,5 +378,7 @@ define(function(require, exports, module) {
   exports.parseDate = parseDate;
   exports.parseDateMonth = parseDateMonth;
   exports.splitValue = splitValue;
+  exports.handleLinks = handleLinks;
+  exports.setMarkDownContent = setMarkDownContent;
 
 });

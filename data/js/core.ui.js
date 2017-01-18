@@ -370,7 +370,29 @@ define(function(require, exports) {
     });
 
     platformTuning();
+
+    //initResizableUI();
   }
+
+  /* function initResizableUI() {
+      var dividerStorage = 80;
+      $(".row-divider").draggable({
+          axis: "y",
+          containment: $(".col3"),
+          drag: function(e, ui) {
+            console.log("top offset: " + ui.offset.top + " - " + ui.position.top);
+            //$(".col3 .row1").css("height", (ui.offset.top-15) + "px");
+
+            $(".col3 .row1").css("flex", "0 1 " + (ui.offset.top) + "px");
+
+            $(".col3 .row2").css("flex", "1");
+          },
+          stop: function(e, ui) {
+              console.log("height: " + $(".col3 .row1").css('height'))
+              ui.position.top = $(".col3 .row1").css('height');
+          }
+      });
+  }*/
 
   function openNewInstance() {
     if (!isCordova) {
@@ -421,12 +443,8 @@ define(function(require, exports) {
 
   function showWaitingDialog(message, title) {
     openWaitingDialog = true;
-    if (!title) {
-      title = $.i18n.t('ns.dialogs:titleWaiting');
-    }
-    if (!message) {
-      message = 'No Message to Display.';
-    }
+    title = title || $.i18n.t('ns.dialogs:titleWaiting');
+    message = message || 'No Message to Display.';
     var waitingModal = $('#waitingDialog');
     waitingModal.find('#waitingHeader').text(title);
     waitingModal.find('#waitingMessage').text(message);
@@ -475,13 +493,9 @@ define(function(require, exports) {
   }
 
   function showAlertDialog(message, title) {
+    title = title || $.i18n.t('ns.dialogs:titleAlert');
+    message = message || 'No Message to Display.';
     console.warn(message + ' - ' + title);
-    if (!title) {
-      title = $.i18n.t('ns.dialogs:titleAlert');
-    }
-    if (!message) {
-      message = 'No Message to Display.';
-    }
     var n = noty({
       text: "<strong>" + title + "</strong><br>" + message,
       layout: 'bottomCenter',
@@ -500,12 +514,8 @@ define(function(require, exports) {
   }
 
   function showConfirmDialog(title, message, okCallback, cancelCallback, confirmShowNextTime) {
-    if (!title) {
-      title = $.i18n.t('ns.dialogs:titleConfirm');
-    }
-    if (!message) {
-      message = 'No Message to Display.';
-    }
+    title = title || $.i18n.t('ns.dialogs:titleConfirm');
+    message = message || 'No Message to Display.';
     var confirmModal = $('#confirmDialog');
     if (confirmShowNextTime) {
       confirmModal.find('#showThisDialogAgain').prop('checked', true);
@@ -1177,7 +1187,7 @@ define(function(require, exports) {
   }
 
   function suggestNewFeatures() {
-    TSCORE.IO.openFile("https://tagspaces.uservoice.com/forums/213931-general");
+    TSCORE.IO.openFile("https://trello.com/b/TGeG5bi9");
   }
 
   function reportIssues() {
