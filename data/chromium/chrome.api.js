@@ -32,7 +32,10 @@ define(function(require, exports, module) {
   function checkAccessFileURLAllowed() {
     chrome.extension.isAllowedFileSchemeAccess(function(isAllowedAccess) {
       if (!isAllowedAccess) {
-        TSCORE.showAlertDialog($.i18n.t("ns.dialogs:accessFileURLNotAllowedAlert"));
+        $('#dialogChromeFileAccessInfo').modal({
+          backdrop: 'static',
+          show: true
+        });
       }
     });
   }

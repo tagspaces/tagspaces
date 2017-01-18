@@ -612,3 +612,13 @@ input a.resetFilter {
     overflow-y: auto;
     font-size: small;
 }
+
+#dialogChromeFileAccessInfo img {
+    border: 1px solid lightgray;
+    max-width: 95%;
+    height: auto;
+    display: block;
+    margin: 20px;
+    margin-left: auto;
+    margin-right: auto;
+}
