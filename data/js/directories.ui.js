@@ -708,6 +708,8 @@ define(function(require, exports, module) {
           e.preventDefault();
         });
 
+
+
         if (isWeb) {
           $('#selectLocalDirectory').attr('style', 'visibility: hidden');
         } else {
@@ -751,9 +753,11 @@ define(function(require, exports, module) {
         });
 
         if (isCordova) {
-          $('#folderLocation').attr('placeholder', 'e.g.: DCIM/Camera');
+          $('#folderLocation').attr('placeholder', 'e.g., DCIM/Camera for Photos on Android ');
+        } else if (isChrome) {
+          $('#folderLocation').attr('placeholder', 'e.g., /home/chronos/user/Downloads/ for Chrome OS Downloads');
         } else if (isWeb) {
-          $('#folderLocation').attr('placeholder', 'e.g.: /owncloud/remote.php/webdav/');
+          $('#folderLocation').attr('placeholder', 'e.g., /owncloud/remote.php/webdav/');
         }
       }
 
