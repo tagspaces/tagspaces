@@ -17,7 +17,7 @@ define(function(require, exports, module) {
   // chrome.browserAction.setBadgeText({text: '9999'});
 
   // changing the name of the app
-  $("#logo").text("TagSpaces Lite");
+  //$("#logo").text("TagSpaces Lite");
 
   var TSCORE = require("tscore");
   var TSPOSTIO = require("tspostioapi");
