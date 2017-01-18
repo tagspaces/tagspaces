@@ -443,12 +443,8 @@ define(function(require, exports) {
 
   function showWaitingDialog(message, title) {
     openWaitingDialog = true;
-    if (!title) {
-      title = $.i18n.t('ns.dialogs:titleWaiting');
-    }
-    if (!message) {
-      message = 'No Message to Display.';
-    }
+    title = title || $.i18n.t('ns.dialogs:titleWaiting');
+    message = message || 'No Message to Display.';
     var waitingModal = $('#waitingDialog');
     waitingModal.find('#waitingHeader').text(title);
     waitingModal.find('#waitingMessage').text(message);
@@ -497,13 +493,9 @@ define(function(require, exports) {
   }
 
   function showAlertDialog(message, title) {
+    title = title || $.i18n.t('ns.dialogs:titleAlert');
+    message = message || 'No Message to Display.';
     console.warn(message + ' - ' + title);
-    if (!title) {
-      title = $.i18n.t('ns.dialogs:titleAlert');
-    }
-    if (!message) {
-      message = 'No Message to Display.';
-    }
     var n = noty({
       text: "<strong>" + title + "</strong><br>" + message,
       layout: 'bottomCenter',
@@ -522,12 +514,8 @@ define(function(require, exports) {
   }
 
   function showConfirmDialog(title, message, okCallback, cancelCallback, confirmShowNextTime) {
-    if (!title) {
-      title = $.i18n.t('ns.dialogs:titleConfirm');
-    }
-    if (!message) {
-      message = 'No Message to Display.';
-    }
+    title = title || $.i18n.t('ns.dialogs:titleConfirm');
+    message = message || 'No Message to Display.';
     var confirmModal = $('#confirmDialog');
     if (confirmShowNextTime) {
       confirmModal.find('#showThisDialogAgain').prop('checked', true);
