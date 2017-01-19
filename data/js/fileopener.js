@@ -81,11 +81,9 @@ define(function(require, exports, module) {
     $('#closeOpenedFile').on("click", closeFile);
     $('#nextFileButton').on("click", function() {
       TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getNextFile(_openedFilePath));
-      TSCORE.PerspectiveManager.selectFile(TSCORE.FileOpener.getOpenedFilePath());
     });
     $('#prevFileButton').on("click", function() {
       TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getPrevFile(_openedFilePath));
-      TSCORE.PerspectiveManager.selectFile(TSCORE.FileOpener.getOpenedFilePath());
     });
     $('#reloadFile').on("click", function() {
       TSCORE.FileOpener.openFile(_openedFilePath);
@@ -388,6 +386,8 @@ define(function(require, exports, module) {
 
     // Clearing file selection on file load and adding the current file path to the selection
     TSCORE.PerspectiveManager.clearSelectedFiles();
+    TSCORE.PerspectiveManager.selectFile(TSCORE.FileOpener.getOpenedFilePath());
+
     TSCORE.selectedFiles.push(filePath);
     _isFileOpened = true;
     TSCORE.openFileViewer();

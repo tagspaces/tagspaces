@@ -72,7 +72,6 @@ define(function(require, exports) {
         }
         if (TSCORE.FileOpener.getOpenedFilePath() !== undefined) {
           TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getPrevFile(TSCORE.FileOpener.getOpenedFilePath()));
-          TSCORE.PerspectiveManager.selectFile(TSCORE.FileOpener.getOpenedFilePath());
         }
         return false;
       });
@@ -83,7 +82,6 @@ define(function(require, exports) {
         }
         if (TSCORE.FileOpener.getOpenedFilePath() !== undefined) {
           TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getNextFile(TSCORE.FileOpener.getOpenedFilePath()));
-          TSCORE.PerspectiveManager.selectFile(TSCORE.FileOpener.getOpenedFilePath());
         }
         return false;
       });
