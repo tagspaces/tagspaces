@@ -586,6 +586,7 @@ input a.resetFilter {
     border-radius: 2px;
     padding: 5px;
     padding-bottom: 0;
+    background-color: white;
 }
 
 #cancelEditFileDescriptionButton {
