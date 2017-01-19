@@ -332,12 +332,39 @@ define(function(require, exports, module) {
     return parseFloat(currentLat) + "," + parseFloat(currentLng);
   }
 
+  function hasURLProtocol(url) {
+    return (
+      url.indexOf("http://") === 0 ||
+      url.indexOf("https://") === 0 ||
+      url.indexOf("file://") === 0 ||
+      url.indexOf("data:") === 0
+    );
+  };
+
   function handleLinks($element) {
+    $element.find("img[src]").each(function() {
+      var currentSrc = $(this).attr("src");
+      if (!hasURLProtocol(currentSrc)) {
+        var path = (isWeb ? "" : "file://") + TSCORE.currentPath + "/" + currentSrc;
+        $(this).attr("src", path);
+      }
+    });
+
     $element.find("a[href]").each(function() {
       var currentSrc = $(this).attr("href");
+      var path;
+
+      if (!hasURLProtocol(currentSrc)) {
+        var path = (isWeb ? "" : "file://") + TSCORE.currentPath + "/" + currentSrc;
+        $(this).attr("href", path);
+      }
+
       $(this).off();
       $(this).on('click', function(e) {
         e.preventDefault();
+        if (path) {
+          currentSrc = encodeURIComponent(path);
+        }
         var msg = {command: "openLinkExternally", link: currentSrc};
         window.postMessage(JSON.stringify(msg), "*");
       });
