@@ -385,7 +385,6 @@ define(function(require, exports, module) {
         case "next-file":
           if (TSCORE.selectedFiles[0]) {
             TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getNextFile(TSCORE.selectedFiles[0]));
-            TSCORE.PerspectiveManager.selectFile(TSCORE.FileOpener.getOpenedFilePath());
           } else {
             TSCORE.showAlertDialog($.i18n.t("ns.common:selectFile"));
           }
@@ -393,7 +392,6 @@ define(function(require, exports, module) {
         case "previous-file":
           if (TSCORE.selectedFiles[0]) {
             TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getPrevFile(TSCORE.selectedFiles[0]));
-            TSCORE.PerspectiveManager.selectFile(TSCORE.FileOpener.getOpenedFilePath());
           } else {
             TSCORE.showAlertDialog($.i18n.t("ns.common:selectFile"));
           }
