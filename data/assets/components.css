@@ -55,6 +55,9 @@ Licensed under MIT https://github.com/tobiasahlin/SpinKit/blob/master/LICENSE
 
 .waitingAnimation {
   width: 100%;
+  display: block;
+  text-align: center;
+  padding-bottom: 20px;
 }
 
 .waitingAnimation .spinner {

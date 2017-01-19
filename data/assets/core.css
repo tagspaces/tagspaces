@@ -622,3 +622,7 @@ input a.resetFilter {
     margin-left: auto;
     margin-right: auto;
 }
+
+#waitingDialog {
+    z-index: 99999;
+}
