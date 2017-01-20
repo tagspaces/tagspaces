@@ -16,21 +16,26 @@ define(function(require, exports, module) {
   var directoryHistory = [];
   var metaTagGroupsHistory = null;
   var dir4ContextMenu = null;
+  var folderPropertiesOpened = false;
+
   var alternativeDirectoryNavigatorTmpl = Handlebars.compile(
     '{{#each dirHistory}}' +
     '<div class="btn-group">' +
     '  <button class="btn btn-link dropdown-toggle" data-menu="{{@index}}">' +
-    '    <div class="altNavFolderTitle"><span style="padding-right: 5px; padding-left: 1px;">{{name}}</span><i class="fa fa-caret-right"></i></div>' +
-    '   </button>' +
+    '    <div class="altNavFolderTitle">' +
+    '      <span style="{{#if @last}} padding-right: 0 !important; color: black; {{/if}} padding-right: 5px; padding-left: 1px;">{{name}}</span>' +
+    '      <i {{#if @last}} style="display: none;" {{/if}} class="fa fa-caret-right"></i>' +
+    '    </div>' +
+    '  </button>' +
     '  <div class="dropdown clearfix dirAltNavMenu" id="dirMenu{{@index}}" data-path="{{path}}">' +
     '    <ul role="menu" class="dropdown-menu">' +
     '      <li class="dropdown-header"><button class="close">&times;</button><span data-i18n="ns.common:actionsForDirectory2"></span>&nbsp;"{{name}}"</li>' +
-    '     <li><a class="btn btn-link reloadCurrentDirectory" data-path="{{path}}" style="text-align: left"><i class="fa fa-refresh fa-fw fa-lg"></i><span data-i18n="ns.common:reloadCurrentDirectory"></span></a></li>' +
-    '     <li><a class="btn btn-link createSubdirectory" data-path="{{path}}" style="text-align: left"><i class="fa fa-folder-o fa-fw fa-lg"></i><span data-i18n="ns.common:createSubdirectory"></span></a></li>' +
-    '     <li><a class="btn btn-link renameDirectory" data-path="{{path}}" style="text-align: left"><i class="fa fa-paragraph fa-fw fa-lg"></i><span data-i18n="ns.common:renameDirectory"></span></a></li>' +
-    '     <li class="divider" style="width: 100%"></li>' +
-    '     <li class="dropdown-header"><span data-i18n="ns.common:subfodersOfDirectory2"></span>&nbsp;"{{name}}"</li>' +
-    '     <div class="dirButtonContainer">' +
+    '      <li><a class="btn btn-link reloadCurrentDirectory" data-path="{{path}}" style="text-align: left"><i class="fa fa-refresh fa-fw fa-lg"></i><span data-i18n="ns.common:reloadCurrentDirectory"></span></a></li>' +
+    '      <li><a class="btn btn-link createSubdirectory" data-path="{{path}}" style="text-align: left"><i class="fa fa-folder-o fa-fw fa-lg"></i><span data-i18n="ns.common:createSubdirectory"></span></a></li>' +
+    '      <li><a class="btn btn-link renameDirectory" data-path="{{path}}" style="text-align: left"><i class="fa fa-paragraph fa-fw fa-lg"></i><span data-i18n="ns.common:renameDirectory"></span></a></li>' +
+    '      <li class="divider" style="width: 100%"></li>' +
+    '      <li class="dropdown-header"><span data-i18n="ns.common:subfodersOfDirectory2"></span>&nbsp;"{{name}}"</li>' +
+    '      <div class="dirButtonContainer">' +
     '{{#if children}}' +
     '{{#each children}}' +
     '        <button class="btn dirButton" data-path="{{path}}" title="{{path}}"><i class="fa fa-folder-o"></i>&nbsp;{{name}}</button>' +
@@ -43,7 +48,9 @@ define(function(require, exports, module) {
     '     </ul>' +
     '   </div>' +
     '</div>' +
-    '{{/each}}'
+    '{{/each}}' +
+    '<button class="btn btn-link" data-i18n="[title]ns.common:folderPropertiesTooltip" id="toggleFolderProperitesButton"><i class="fa fa-info fa-lg"></i></button>' +
+    ''
   );
 
   var mainDirectoryNavigatorTmpl = Handlebars.compile(
@@ -309,6 +316,8 @@ define(function(require, exports, module) {
     if ($alternativeNavigator.i18n) {
       $alternativeNavigator.i18n();
     }
+
+    $('#toggleFolderProperitesButton').on('click', toggleFolderProperties);
   }
 
   function showAltNavDropDown(menuId, sourceObject) {
@@ -577,6 +586,17 @@ define(function(require, exports, module) {
     $('#locationSwitch').on('click', function() {
       TSCORE.UI.stopGettingStartedTour();
     });
+  }
+
+  function toggleFolderProperties() {
+    if (folderPropertiesOpened) {
+      $('#folderPropertiesArea').hide();
+      $('#toggleFolderProperitesButton').removeClass('buttonToggled');
+    } else {
+      $('#folderPropertiesArea').show();
+      $('#toggleFolderProperitesButton').addClass('buttonToggled');
+    }
+    folderPropertiesOpened = !folderPropertiesOpened;
   }
 
   function createLocation() {

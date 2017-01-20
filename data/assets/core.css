@@ -557,6 +557,26 @@ input a.resetFilter {
     padding-left: 13px;
 }
 
+#dialogChromeFileAccessInfo img {
+    border: 1px solid lightgray;
+    max-width: 95%;
+    height: auto;
+    display: block;
+    margin: 20px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#waitingDialog {
+    z-index: 99999;
+}
+
+.buttonToggled {
+    border: 1px solid lightgray !important;
+    background-color: #dedede !important;
+}
+
+/* Begin file properties */
 #toggleFileProperitesButton {
     padding-top: 0px;
     padding-bottom: 0px;
@@ -564,11 +584,6 @@ input a.resetFilter {
     padding-right: 10px;
     margin-right: 7px;
     border: 1px solid transparent;
-}
-
-.buttonToggled {
-    border: 1px solid lightgray !important;
-    background-color: #dedede !important;
 }
 
 #filePropertiesArea {
@@ -614,16 +629,63 @@ input a.resetFilter {
     font-size: small;
 }
 
-#dialogChromeFileAccessInfo img {
-    border: 1px solid lightgray;
-    max-width: 95%;
-    height: auto;
-    display: block;
-    margin: 20px;
-    margin-left: auto;
-    margin-right: auto;
+/* End file properties */
+
+/* Begin folder properties */
+
+#toggleFolderProperitesButton {
+    margin-top: 1px;
+    margin-left: 2px;
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+    border: 1px solid transparent;
 }
 
-#waitingDialog {
-    z-index: 99999;
+#toggleFolderProperitesButton i {
+    vertical-align: 0;
 }
+
+#folderPropertiesArea {
+    display: none;
+    padding: 10px;
+}
+
+#folderPropertiesArea .control-label {
+    font-size: small;
+    color: #868686;
+}
+
+#folderDescriptionProperty {
+    display: none;
+    border: 1px solid #e2e2e2;
+    border-radius: 2px;
+    padding: 5px;
+    padding-bottom: 0;
+    background-color: white;
+}
+
+#cancelEditFolderDescriptionButton {
+    display: none;
+}
+
+#saveFolderDescriptionButton {
+    display: none;
+}
+
+#editFolderDescriptionButton {
+    padding-top: 1px;
+    color: #1DD19F;
+}
+
+#addTagsFolderDescriptionButton {
+    padding-top: 5px;
+    color: #1DD19F;
+}
+
+#folderDescriptionPropertyRendered {
+    width: 100%;
+    height: 30px;
+    overflow-y: auto;
+    font-size: small;
+}
+/* End folder properties */

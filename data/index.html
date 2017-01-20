@@ -208,11 +208,49 @@
             <ul class="dropdown-menu pull-right" id="perspectiveSwitcher"></ul>
           </div>
         </div>
+        <div class="form" id="folderPropertiesArea">
+          <div class="row">
+            <div class="col-xs-7">
+              <div class="form-group">
+                <label class="control-label" for="folderPathProperty" data-i18n="ns.dialogs:folderPropertiesPath"></label>
+                <input class="form-control uneditable-input input-sm" readonly="true" type="text" name="folderPathProperty" id="folderPathProperty" />
+              </div>
+            </div>
+            <div class="col-xs-5">
+              <div class="form-group">
+                <label class="control-label" for="folderSizeProperty" data-i18n="ns.dialogs:folderPropertiesSize"></label>
+                <input class="form-control uneditable-input input-sm" readonly="true" type="text" name="folderSizeProperty" id="folderSizeProperty" />
+              </div>
+            </div>
+          </div>
+          <!--div class="row">
+            <div class="col-xs-7">
+              <div class="form-group">
+                <label class="control-label" for="folderNameProperty" data-i18n="ns.dialogs:folderPropertiesName"></label>
+                <input class="form-control uneditable-input input-sm" readonly="true" type="text" name="folderNameProperty" id="folderNameProperty" />
+              </div>
+            </div>
+            <div class="col-xs-5">
+              <div class="form-group">
+                <label class="control-label" for="folderLMDTProperty" data-i18n="ns.dialogs:folderPropertiesLMDT"></label>
+                <input class="form-control uneditable-input input-sm" readonly="true" type="text" name="folderLMDTProperty" id="folderLMDTProperty" />
+              </div>
+            </div>
+          </div-->
+          <div class="form-group">
+            <label class="control-label" for="folderDescriptionProperty" data-i18n="ns.dialogs:directoryPropertiesDescription;[title]ns.dialogs:folderPropertiesDescriptionTitle"></label>
+            <button class="btn btn-link" id="editFolderDescriptionButton" data-i18n="">Edit</button>
+            <div id="folderDescriptionPropertyRendered" class="markdown-content" data-i18n="[title]ns.dialogs:descriptionSupportMarkDown"><span style="color: b7b7b7;">In the PRO version you can add here description for this folder.</span></div>
+            <textarea class="form-control uneditable-input input-sm" rows="3" type="text" name="folderDescriptionProperty" id="folderDescriptionProperty" data-i18n="[placeholder]ns.dialogs:descriptionSupportMarkDown"></textarea>
+          </div>
+          <button class="btn btn-primary btn-sm" id="saveFolderDescriptionButton" aria-hidden="true"><span data-i18n="ns.dialogs:confirmSaveButton"></span></button>
+          <button class="btn btn-default btn-sm" id="cancelEditFolderDescriptionButton" aria-hidden="true"><span data-i18n="ns.dialogs:cancel"></span></button>
+        </div>
         <div class="flexLayout" style="min-height: 40px;">
           <button type="button" class="btn btn-link" id="showNewFileDialog" data-toggle="dropdown" data-i18n="[title]ns.common:toggleLeftPanelTooltip">
             <i class="fa fa-plus fa-lg"></i>&nbsp;&nbsp;<span data-i18n="ns.common:createNewButton;[title]ns.common:createNewButtonTitle;"></span>
           </button>
-          <ul class="dropdown-menu" id="newFileMenu" style="top: 35px; left: 5px">
+          <ul class="dropdown-menu" id="newFileMenu" style="left: 5px">
             <li class="dropdown-header">
               <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
               <span data-i18n="ns.common:createNewDocument"></span></li>
@@ -384,8 +422,8 @@
             <label class="control-label" for="fileDescriptionProperty" data-i18n="ns.dialogs:filePropertiesDescription;[title]ns.dialogs:filePropertiesDescriptionTitle"></label>
             <button class="btn btn-link" id="editFileDescriptionButton" data-i18n="">Edit</button>
             <button class="btn btn-link pull-right" id="addTagsFileDescriptionButton" data-i18n="">Tag file</button>
-            <div id="fileDescriptionPropertyRendered" class="markdown-content" data-i18n="[title]ns.dialogs:filePropertiesDescriptionTitle"></div>
-            <textarea class="form-control uneditable-input input-sm" rows="3" type="text" name="fileDescriptionProperty" id="fileDescriptionProperty" data-i18n="ns.dialogs:[placeholder]ns.dialogs:filePropertiesDescriptionTitle"></textarea>
+            <div id="fileDescriptionPropertyRendered" class="markdown-content" data-i18n="[title]ns.dialogs:descriptionSupportMarkDown"></div>
+            <textarea class="form-control uneditable-input input-sm" rows="3" type="text" name="fileDescriptionProperty" id="fileDescriptionProperty" data-i18n="[placeholder]ns.dialogs:descriptionSupportMarkDown"></textarea>
           </div>
           <button class="btn btn-primary btn-sm" id="saveFileDescriptionButton" aria-hidden="true"><span data-i18n="ns.dialogs:confirmSaveButton"></span></button>
           <button class="btn btn-default btn-sm" id="cancelEditFileDescriptionButton" aria-hidden="true"><span data-i18n="ns.dialogs:cancel"></span></button>
@@ -394,11 +432,10 @@
     </div>
     <div class="row2" id="viewer" allowfullscreen></div>
   </div>
-
 </main>
 
 <!-- Dialogs -->
-<div class="modal fullScreenMobile" id="dialogAboutTS" tabindex="-1" role="dialog" aria-hidden="true">
+<div id="dialogAboutTS" class="modal fullScreenMobile" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -418,7 +455,7 @@
   </div>
 </div>
 
-<div class="modal" id="dialogChromeFileAccessInfo" tabindex="-1" role="dialog" aria-hidden="true">
+<div id="dialogChromeFileAccessInfo" class="modal" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-body">
@@ -432,7 +469,7 @@
   </div>
 </div>
 
-<div class="modal" id="dialogLostConnection" tabindex="-1" role="dialog" aria-hidden="true">
+<div id="dialogLostConnection" class="modal" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -451,7 +488,7 @@
   </div>
 </div>
 
-<div class="modal fullScreenMobile" id="dialogShortcuts" tabindex="-1" role="dialog" aria-hidden="true">
+<div id="dialogShortcuts" class="modal fullScreenMobile" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -527,8 +564,7 @@
   </div>
 </div>
 
-<!-- Audio Recording Dialog -->
-<div class="modal fullScreenMobile" id="audioRecordingDialog" tabindex="-1" role="dialog" aria-hidden="true">
+<div id="audioRecordingDialog" class="modal fullScreenMobile" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -610,7 +646,7 @@
   </div>
 </div>
 
-<div class="modal fullScreenMobile" id="aboutLicenseModal" tabindex="-1" role="dialog" aria-hidden="true">
+<div id="aboutLicenseModal" class="modal fullScreenMobile" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -1155,7 +1191,7 @@
   </div>
 </div>
 
-<div class="modal" id="whatsNewModal" tabindex="-1" role="dialog" aria-hidden="true">
+<div id="whatsNewModal" class="modal" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -1332,9 +1368,6 @@
   </div>
 </div>
 
-<input type="file" id="addFileInput" style="display: none;"/>
-<input type="file" id="jsonImportFileInput" style="display: none;"/>
-
 <div id="locationTagTreeMenu" class="dropdown clearfix">
   <ul class="dropdown-menu" role="menu" style="display:block;position:static;">
     <li class="dropdown-header">
@@ -1345,5 +1378,9 @@
       <i class="fa fa-trash-o fa-fw"></i>&nbsp;<span data-i18n="ns.common:deleteTagFromTagGroup"></span></a></li>
   </ul>
 </div>
+
+<input type="file" id="addFileInput" style="display: none;"/>
+<input type="file" id="jsonImportFileInput" style="display: none;"/>
+
 </body>
 </html>

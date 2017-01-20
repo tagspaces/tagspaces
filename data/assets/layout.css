@@ -210,33 +210,38 @@
 }
 
 .col2 .row1 {
-  flex: 0 1 80px;
-  -webkit-flex: 0 1 80px;
-  -ms-flex: 0 1 80px;
+  flex: 0 1 auto;
+  -webkit-flex: 0 1 auto;
+  -ms-flex: 0 1 auto;
+
+  display: flex;
+  display: -ms-flex;
+  display: -webkit-flex;
 
   min-height: 80px;
   box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.1);
   z-index: 1000;
 }
 
+.col2 .row1 nav {
+  flex:1;
+  margin-bottom: 0;
+}
+
 .col2 .row2 {
-  flex: 1 1 auto;
-  -webkit-flex: 1 1 auto;
-  -ms-flex: 1 1 auto;
+  flex: 1;
+/*  -webkit-flex: 1 1 auto;
+  -ms-flex: 1 1 auto;*/
+
+  display: flex;
+  display: -webkit-flex;
+  display: -ms-flexbox;
 
   overflow-y: auto;
   min-height: 0px;
   border-right: solid 1px #ddd;
 }
 
-.col2 .row3 {
-  flex: 0 1 50px;
-  -webkit-flex: 0 1 50px;
-  -ms-flex: 0 1 50px;
-
-  min-height: 50px;
-  box-shadow: 0px -5px 5px -2px rgba(0,0,0,0.1);
-}
 
 /*==== COL3 ====== */
 
