@@ -301,14 +301,20 @@ define(function(require, exports, module) {
   // Internal
   function generateFileName(fileName, tags) {
     var tagsString = '';
+    var tagDelimiter = TSCORE.Config.getTagDelimiter() || " ";
+    var prefixTagContainer = TSCORE.Config.getPrefixTagContainer() || "";
+
     // Creating the string will all the tags by more that 0 tags
-    if (tags.length > 0) {
+    if (tags && tags.length > 0) {
       tagsString = BEGIN_TAG_CONTAINER;
       for (var i = 0; i < tags.length; i++) {
-        tagsString += tags[i] + TSCORE.Config.getTagDelimiter();
+        if(i === tags.length-1) {
+          tagsString = tagsString + tags[i].trim();
+        } else {
+          tagsString = tagsString + tags[i].trim() + tagDelimiter;
+        }
       }
-      tagsString = tagsString.trim();
-      tagsString += END_TAG_CONTAINER;
+      tagsString = tagsString.trim() + END_TAG_CONTAINER;
     }
     console.log('The tags string: ' + tagsString);
     var fileExt = extractFileExtension(fileName);
@@ -322,18 +328,20 @@ define(function(require, exports, module) {
       // Filename does not contains tags.        
       if (lastDotPosition < 0) {
         // File does not have an extension
-        newFileName = fileName + tagsString;
+        newFileName = fileName.trim() + tagsString;
       } else {
         // File has an extension
-        newFileName = fileName.substring(0, lastDotPosition) + TSCORE.Config.getPrefixTagContainer() + tagsString + '.' + fileExt;
+        newFileName = fileName.substring(0, lastDotPosition).trim() + prefixTagContainer + tagsString + '.' + fileExt;
       }
     } else {
       // File does not have an extension
-      newFileName = fileName.substring(0, beginTagContainer) + tagsString + fileName.substring(endTagContainer + 1, fileName.length);
+      newFileName = fileName.substring(0, beginTagContainer).trim() + prefixTagContainer + tagsString + fileName.substring(endTagContainer + 1, fileName.length).trim();
     }
     if (newFileName.length < 1) {
       throw 'Generated filename is invalid';
     }
+    // Removing double prefix
+    newFileName = newFileName.split(prefixTagContainer + "" + prefixTagContainer).join(prefixTagContainer);
     return newFileName;
   }
 

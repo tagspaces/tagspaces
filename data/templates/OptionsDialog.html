@@ -163,11 +163,19 @@
           </div>
           <div class='form-group col-sm-12'>
             <label for='tagsDelimiterInput' data-i18n="ns.dialogs:tagDelimiter"></label>
-            <input type='text' class='form-control' id='tagsDelimiterInput' />
+            <select class="form-control" id='tagsDelimiterInput'>
+              <option value=' ' selected='selected'>space (&nbsp;&nbsp;) - recommended</option>
+              <option value='_'>underscore ( _ )</option>
+              <option value=','>comma ( , )</option>
+            </select>
           </div>
           <div class='form-group col-sm-12'>
             <label for='prefixTagContainerInput' data-i18n="ns.dialogs:prefixTagContainer"></label>
-            <input type='text' class='form-control' id='prefixTagContainerInput' />
+            <select class="form-control" id='prefixTagContainerInput'>
+              <option value='' selected='selected'>no prefix - recommended</option>
+              <option value=' '>space (&nbsp;&nbsp;)</option>
+              <option value='_'>underdscore ( _ )</option>
+            </select>
           </div>
           <!--div class='form-group col-sm-12'>
               <label for='extensionsPathInput' data-i18n="ns.dialogs:extensionsFolder"></label>
