@@ -159,6 +159,8 @@ define(function(require, exports, module) {
 
     $('#editFileDescriptionButton').on('click', editFileDescription);
 
+    $('#fileDescriptionPropertyRendered').on('click', editFileDescription);
+
     $('#cancelEditFileDescriptionButton').on('click', cancelEditFileDescription);
 
     $('#saveFileDescriptionButton').on('click', saveEditFileDescription);
@@ -168,6 +170,7 @@ define(function(require, exports, module) {
     $('#toggleFileProperitesButton').on('click', toggleFileProperties);
   }
 
+  // TODO handle the case: changing to next file/close while in edit mode
   function editFileDescription() {
     if (TSCORE.PRO) {
       $('#fileDescriptionProperty').show();
@@ -212,10 +215,12 @@ define(function(require, exports, module) {
     $('#fileDescriptionProperty').val("");
     if (fileDescription && fileDescription.length > 0) {
       $('#fileDescriptionPropertyRendered').css("height", "200px");
+      $('#fileDescriptionPropertyRendered').css("padding", "4px");
       TSCORE.Utils.setMarkDownContent($('#fileDescriptionPropertyRendered'), fileDescription);
       $('#fileDescriptionProperty').val(fileDescription);
     } else {
       $('#fileDescriptionPropertyRendered').css("height", "0");
+      $('#fileDescriptionPropertyRendered').css("padding", "0");
     }
   }
 
