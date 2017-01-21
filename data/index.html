@@ -210,33 +210,28 @@
         </div>
         <div class="form" id="folderPropertiesArea">
           <div class="row">
-            <div class="col-xs-7">
+            <div class="col-xs-12">
               <div class="form-group">
                 <label class="control-label" for="folderPathProperty" data-i18n="ns.dialogs:folderPropertiesPath"></label>
                 <input class="form-control uneditable-input input-sm" readonly="true" type="text" name="folderPathProperty" id="folderPathProperty" />
               </div>
             </div>
-            <div class="col-xs-5">
+            <!--div class="col-xs-5">
               <div class="form-group">
-                <label class="control-label" for="folderSizeProperty" data-i18n="ns.dialogs:folderPropertiesSize"></label>
-                <input class="form-control uneditable-input input-sm" readonly="true" type="text" name="folderSizeProperty" id="folderSizeProperty" />
+                <label class="control-label" for="folderPerspective" data-i18n="ns.dialogs:folderPerspective"></label>
+                <select class="form-control" name="folderPerspective" id="folderPerspective" ></select>
+              </div>
+            </div-->
+          </div>
+          <div class="row">
+            <div class="col-xs-12">
+              <div class="form-group">
+                <label class="control-label" for="folderTagsProperty" data-i18n="ns.dialogs:folderPropertiesTags"></label>
+                <input class="form-control" type="text" name="folderTagsProperty" id="folderTagsProperty" value="" autocomplete="off" data-i18n="[placeholder]ns.dialogs:tagOperationTagsPlaceholder"/>
+                <p class="help-block" data-i18n="ns.dialogs:editTagNamesRestrictionsHelp"></p>
               </div>
             </div>
           </div>
-          <!--div class="row">
-            <div class="col-xs-7">
-              <div class="form-group">
-                <label class="control-label" for="folderNameProperty" data-i18n="ns.dialogs:folderPropertiesName"></label>
-                <input class="form-control uneditable-input input-sm" readonly="true" type="text" name="folderNameProperty" id="folderNameProperty" />
-              </div>
-            </div>
-            <div class="col-xs-5">
-              <div class="form-group">
-                <label class="control-label" for="folderLMDTProperty" data-i18n="ns.dialogs:folderPropertiesLMDT"></label>
-                <input class="form-control uneditable-input input-sm" readonly="true" type="text" name="folderLMDTProperty" id="folderLMDTProperty" />
-              </div>
-            </div>
-          </div-->
           <div class="form-group">
             <label class="control-label" for="folderDescriptionProperty" data-i18n="ns.dialogs:directoryPropertiesDescription;[title]ns.dialogs:folderPropertiesDescriptionTitle"></label>
             <button class="btn btn-link" id="editFolderDescriptionButton" data-i18n="">Edit</button>
@@ -455,12 +450,12 @@
   </div>
 </div>
 
-<div id="dialogChromeFileAccessInfo" class="modal" tabindex="-1" role="dialog" aria-hidden="true">
+<div id="dialogChromeFileAccessInfo" class="modal" tabindex="-1" role="dialog" aria-hidden="true" >
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-body">
         <div data-i18n="ns.dialogs:accessFileURLNotAllowedAlert"></div>
-        <img src="chromium/ChromeAllowAccessFileURLs.png">
+        <img src="">
       </div>
       <div class="modal-footer">
         <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true"><span data-i18n="ns.dialogs:ok"></span></button>
