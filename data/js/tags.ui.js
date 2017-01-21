@@ -711,12 +711,6 @@ define(function(require, exports, module) {
       return;
     }
     console.log('Adding tags...');
-    //function split( val ) {
-    //    return val.split( /,\s*/ );
-    //}
-    //function extractLast( term ) {
-    //    return split( term ).pop();
-    //}*/
     $('#tags').select2('data', null);
     $('#tags').select2({
       multiple: true,
