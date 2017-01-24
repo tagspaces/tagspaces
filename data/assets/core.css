@@ -1,4 +1,4 @@
-/* Copyright (c) 2012-2015 The TagSpaces Authors. All rights reserved. Use of this source code
+/* Copyright (c) 2012-2017 The TagSpaces Authors. All rights reserved. Use of this source code
  * is governed by a AGPL3 license that can be found in the LICENSE file. */
 
 .appbody {
@@ -50,7 +50,7 @@
 }
 
 #statusBar {
-    margin-top: 12px;
+    margin-top: 7px;
     font-size: 14px;
     font-size: 12px;
     text-align: center;
@@ -554,7 +554,12 @@ input a.resetFilter {
 }
 
 #showNewFileDialog {
+    padding-top: 0;
     padding-left: 13px;
+}
+
+#showSearchButton {
+    padding-top: 0;
 }
 
 #dialogChromeFileAccessInfo img {
@@ -587,7 +592,11 @@ input a.resetFilter {
 }
 
 #filePropertiesArea {
-    padding: 10px;
+    padding: 5px 9px 8px 5px;
+}
+
+#filePropertiesArea .form-group {
+    margin-bottom: 5px;
 }
 
 #filePropertiesArea .control-label {
@@ -627,6 +636,9 @@ input a.resetFilter {
     height: 200px;
     overflow-y: auto;
     font-size: small;
+    background-color: white;
+    border-radius: 4px;
+    padding: 0px;
 }
 
 /* End file properties */
@@ -647,7 +659,7 @@ input a.resetFilter {
 
 #folderPropertiesArea {
     display: none;
-    padding: 10px;
+    padding: 0 9px 5px 5px;
 }
 
 #folderPropertiesArea .control-label {
@@ -655,11 +667,15 @@ input a.resetFilter {
     color: #868686;
 }
 
+#folderPropertiesArea .form-group {
+    margin-bottom: 0;
+}
+
 #folderDescriptionProperty {
     display: none;
-    border: 1px solid #e2e2e2;
-    border-radius: 2px;
-    padding: 5px;
+    /*border: 1px solid #e2e2e2;*/
+    border-radius: 4px;
+    padding: 4px;
     padding-bottom: 0;
     background-color: white;
 }
@@ -687,5 +703,8 @@ input a.resetFilter {
     height: 30px;
     overflow-y: auto;
     font-size: small;
+    background-color: white;
+    border-radius: 4px;
+    padding: 4px;
 }
 /* End folder properties */
