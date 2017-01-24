@@ -1,4 +1,4 @@
-/* Copyright (c) 2012-2016 The Tagspaces Authors. All rights reserved.
+/* Copyright (c) 2012-2017 The Tagspaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that
  * can be found in the LICENSE file. */
 
@@ -373,10 +373,10 @@ define(function(require, exports, module) {
 
   function setMarkDownContent($targetElement, content) {
     if (marked) {
-      $targetElement.html(marked(content, {sanitize: true}));
+      $targetElement.html(marked(content, {gfm: true, breaks: true, sanitize: true}));
       handleLinks($targetElement);
     } else {
-      console.log("Marked not loaded...");
+      console.log("Marked library not loaded...");
     }
   }
 
