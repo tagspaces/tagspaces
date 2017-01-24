@@ -24,7 +24,7 @@ define(function(require, exports, module) {
     '<i class="fa fa-tags fa-fw"></i>' +
     '</button>' +
     '<button class="btn btn-link tagGroupTitle flexMaxWidth" data-toggle="collapse" data-target="#tagButtons{{@index}}" key="{{key}}">{{title}}' +
-    '<sup><span class="badge" style="margin-left: 5px; font-size: 9px;" data-i18n="[title]ns.common:tagGroupTagsCount">{{children.length}}</span></sup></button>' +
+    '<sup {{#unless collapse}}style="display: none;"{{/unless}}><span class="badge" style="margin-left: 5px; font-size: 9px;" data-i18n="[title]ns.common:tagGroupTagsCount">{{children.length}}</span></sup></button>' +
     '<button class="btn btn-link btn-lg tagGroupActions" key="{{key}}" data-i18n="[title]ns.common:tagGroupOperations" title="{{../tagGroupOperations}}">' +
     '<b class="fa fa-ellipsis-v"></b>' +
     '</button>' +
@@ -297,6 +297,11 @@ define(function(require, exports, module) {
         if (areaId) {
           var index = areaId.substring(areaId.length - 1);
           tagGroups[index].collapse = $(areaId).is(':visible');
+          if(tagGroups[index].collapse) {
+            $(areaId).parent().find('sup').show();
+          } else {
+            $(areaId).parent().find('sup').hide();
+          }
           TSCORE.Config.saveSettings();
         }
       });
