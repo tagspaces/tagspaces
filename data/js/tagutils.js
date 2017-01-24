@@ -308,7 +308,7 @@ define(function(require, exports, module) {
     if (tags && tags.length > 0) {
       tagsString = BEGIN_TAG_CONTAINER;
       for (var i = 0; i < tags.length; i++) {
-        if(i === tags.length-1) {
+        if (i === tags.length - 1) {
           tagsString = tagsString + tags[i].trim();
         } else {
           tagsString = tagsString + tags[i].trim() + tagDelimiter;

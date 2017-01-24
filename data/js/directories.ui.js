@@ -589,7 +589,7 @@ define(function(require, exports, module) {
     $('#folderDescriptionProperty').val("");
     TSCORE.Meta.loadFolderMetaDataPromise(TSCORE.currentPath).then(function(metaData) {
       var tags = '';
-      if(metaData.tags && metaData.tags.length > 0) {
+      if (metaData.tags && metaData.tags.length > 0) {
         metaData.tags.forEach(function(tag) {
           tags = tags + "," + tag.title;
         });
@@ -601,7 +601,7 @@ define(function(require, exports, module) {
       $('#folderTagsProperty').select2({
         multiple: true,
         tags: TSCORE.Config.getAllTags(),
-        tokenSeparators: [ ',', ' ' ],
+        tokenSeparators: [',', ' '],
         minimumInputLength: 1,
         selectOnBlur: true,
         formatSelectionCssClass: function(tag, container) {
@@ -614,14 +614,14 @@ define(function(require, exports, module) {
 
       if (TSCORE.PRO && TSCORE.Config.getEnableMetaData()) { // TSCORE.Config.getWriteMetaToSidecarFile()
         $('#folderTagsProperty').off();
-        $('#folderTagsProperty').on('change', function (evt) {
+        $('#folderTagsProperty').on('change', function(evt) {
           console.log("Tags: " + $(this).val());
           var newTags = $(this).val().split(",");
           metaData.tags = TSCORE.PRO.Directory.generateTags(newTags);
           TSCORE.PRO.Directory.saveMetaData(metaData);
         });
       } else {
-        $('#folderTagsProperty').attr('disabled','disabled');
+        $('#folderTagsProperty').attr('disabled', 'disabled');
         // $('.select2-search-choice').css('padding-left', '4px !important');
       }
 
@@ -639,7 +639,7 @@ define(function(require, exports, module) {
   // TODO handle the case: changing to next file/close while in edit mode
   function editFolderDescription() {
     if (TSCORE.PRO) {
-      if(TSCORE.Config.getEnableMetaData()) {
+      if (TSCORE.Config.getEnableMetaData()) {
         $('#folderDescriptionProperty').show();
         $('#folderDescriptionProperty').css("height", "200px");
         $('#folderDescriptionPropertyRendered').hide();

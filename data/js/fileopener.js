@@ -173,7 +173,7 @@ define(function(require, exports, module) {
   // TODO handle the case: changing to next file/close while in edit mode
   function editFileDescription() {
     if (TSCORE.PRO) {
-      if(TSCORE.Config.getEnableMetaData() && TSCORE.Config.getWriteMetaToSidecarFile()) {
+      if (TSCORE.Config.getEnableMetaData() && TSCORE.Config.getWriteMetaToSidecarFile()) {
         $('#fileDescriptionProperty').show();
         $('#fileDescriptionProperty').css("height", "200px");
         $('#fileDescriptionPropertyRendered').hide();
@@ -200,7 +200,7 @@ define(function(require, exports, module) {
     var fileDescription = $('#fileDescriptionProperty').val();
     TSCORE.Utils.setMarkDownContent($('#fileDescriptionPropertyRendered'), fileDescription);
     $('#fileDescriptionPropertyRendered').css("height", "200px");
-      TSCORE.Meta.addMetaDescriptionToFile(_openedFileProperties.path, fileDescription);
+    TSCORE.Meta.addMetaDescriptionToFile(_openedFileProperties.path, fileDescription);
     cancelEditFileDescription();
   }
 

@@ -850,7 +850,7 @@ define(function(require, exports) {
   }
 
   function stopGettingStartedTour() {
-    if(tsGettingStarted) {
+    if (tsGettingStarted) {
       tsGettingStarted.stopTour();
     }
   }

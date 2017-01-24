@@ -339,7 +339,7 @@ define(function(require, exports, module) {
       url.indexOf("file://") === 0 ||
       url.indexOf("data:") === 0
     );
-  };
+  }
 
   function handleLinks($element) {
     $element.find("img[src]").each(function() {

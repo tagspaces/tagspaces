@@ -209,7 +209,7 @@ define(function(require, exports, module) {
 
     // Start the tour!
     hopscotch.startTour(tour);
-  };
+  }
 
   function stopTour() {
     hopscotch.endTour();
