@@ -173,12 +173,16 @@ define(function(require, exports, module) {
   // TODO handle the case: changing to next file/close while in edit mode
   function editFileDescription() {
     if (TSCORE.PRO) {
-      $('#fileDescriptionProperty').show();
-      $('#fileDescriptionProperty').css("height", "200px");
-      $('#fileDescriptionPropertyRendered').hide();
-      $('#editFileDescriptionButton').hide();
-      $('#cancelEditFileDescriptionButton').show();
-      $('#saveFileDescriptionButton').show();
+      if(TSCORE.Config.getEnableMetaData() && TSCORE.Config.getWriteMetaToSidecarFile()) {
+        $('#fileDescriptionProperty').show();
+        $('#fileDescriptionProperty').css("height", "200px");
+        $('#fileDescriptionPropertyRendered').hide();
+        $('#editFileDescriptionButton').hide();
+        $('#cancelEditFileDescriptionButton').show();
+        $('#saveFileDescriptionButton').show();
+      } else {
+        TSCORE.UI.showAlertDialog("In order to add or edit a description, you have to enable the use of hidden folders in the settings.");
+      }
     } else {
       TSCORE.UI.showAlertDialog("Editing the file description is possible with the TagSpaces PRO");
     }
@@ -196,11 +200,12 @@ define(function(require, exports, module) {
     var fileDescription = $('#fileDescriptionProperty').val();
     TSCORE.Utils.setMarkDownContent($('#fileDescriptionPropertyRendered'), fileDescription);
     $('#fileDescriptionPropertyRendered').css("height", "200px");
-    TSCORE.Meta.addMetaDescriptionToFile(_openedFileProperties.path, fileDescription);
+      TSCORE.Meta.addMetaDescriptionToFile(_openedFileProperties.path, fileDescription);
     cancelEditFileDescription();
   }
 
   function setFileProperties(fileProperties) {
+    cancelEditFileDescription();
     _openedFileProperties = fileProperties;
     $('#fileNameProperty').val(TSCORE.TagUtils.extractFileName(_openedFileProperties.path));
     $('#filePathProperty').val(TSCORE.TagUtils.extractContainingDirectoryPath(_openedFileProperties.path));
@@ -210,7 +215,6 @@ define(function(require, exports, module) {
 
     var fileDescription = TSCORE.Meta.getDescriptionFromMetaFile(_openedFileProperties.path);
 
-    $('#editFileDescriptionButton').show();
     $('#fileDescriptionPropertyRendered').empty();
     $('#fileDescriptionProperty').val("");
     if (fileDescription && fileDescription.length > 0) {

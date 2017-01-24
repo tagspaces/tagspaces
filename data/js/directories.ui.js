@@ -1,4 +1,4 @@
-/* Copyright (c) 2012-2016 The TagSpaces Authors. All rights reserved.
+/* Copyright (c) 2012-2017 The TagSpaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that
  * can be found in the LICENSE file. */
 
@@ -44,7 +44,6 @@ define(function(require, exports, module) {
     '        <div>&nbsp;&nbsp;&nbsp;<span data-i18n="ns.common:noSubfoldersFound"></span></div>' +
     '{{/if}}' +
     '      </div>' +
-    '      <li class="dropdown-header"><span data-i18n="ns.common:tagsOfDirectory2">Directory Tags</span></li>' +
     '     </ul>' +
     '   </div>' +
     '</div>' +
@@ -180,10 +179,10 @@ define(function(require, exports, module) {
     }
   }
 
-  function loadFolderMetaData(path, element, menuItem) {
+  function loadFolderMetaData(path, element) {
     var historyItem = getDirHistoryItem(path);
     if (historyItem.metaData) {
-      generateFolderTags(historyItem.metaData.tags, element, menuItem);
+      generateFolderTags(historyItem.metaData.tags, element);
       loadMetaTagGroups(historyItem.metaData);
     } else {
       TSCORE.Meta.loadFolderMetaDataPromise(path).then(function(metaData) {
@@ -191,11 +190,11 @@ define(function(require, exports, module) {
         if (historyItem.metaData.perspectives) {
           TSCORE.PerspectiveManager.changePerspective(historyItem.metaData.perspectives);
         }
-        generateFolderTags(metaData.tags, element, menuItem);
+        generateFolderTags(metaData.tags, element);
         loadMetaTagGroups(historyItem.metaData);
       }).catch(function(err) {
         console.log("loadFolderMetaData: " + err);
-        generateFolderTags(null, element, menuItem);
+        generateFolderTags(null, element);
       });
     }
   }
@@ -218,13 +217,9 @@ define(function(require, exports, module) {
     }
   }
 
-  function generateFolderTags(tags, $directoryTagsArea, menuItem) {
+  function generateFolderTags(tags, $directoryTagsArea) {
     if ($directoryTagsArea) {
       $directoryTagsArea.empty();
-    } else if (menuItem) {
-      menuItem.empty();
-      $directoryTagsArea = $('<div id style="padding: 4px;"></div>');
-      menuItem.append($directoryTagsArea);
     }
 
     var tagString = '';
@@ -243,11 +238,9 @@ define(function(require, exports, module) {
       }
     }
 
-    if (TSCORE.PRO && !menuItem) {
-      TSCORE.PRO.setContextMenu($directoryTagsArea);
-    }
-
-    if (!TSCORE.PRO) {
+    if (TSCORE.PRO && TSCORE.PRO.Directory) {
+      TSCORE.PRO.Directory.setContextMenu($directoryTagsArea);
+    } else {
       $("#locationContent .dropDownIcon").hide();
     }
   }
@@ -301,7 +294,7 @@ define(function(require, exports, module) {
 
     $alternativeNavigator.find('.dropdown-toggle').on('contextmenu click', function() {
       TSCORE.hideAllDropDownMenus();
-      showAltNavDropDown('#dirMenu' + $(this).attr('data-menu'), $(this));
+      $('#dirMenu' + $(this).attr('data-menu')).css("display", "block");
       return false;
     });
 
@@ -318,24 +311,12 @@ define(function(require, exports, module) {
     }
 
     $('#toggleFolderProperitesButton').on('click', toggleFolderProperties);
-  }
 
-  function showAltNavDropDown(menuId, sourceObject) {
-    var $menu = $(menuId);
-
-    if ($menu.attr('data-path')) {
-      var $dropDown = $menu.find('.dropdown-menu');
-      var $dropItemTags = $dropDown.find('#tagsAlternativeDirPath');
-      if ($dropItemTags.length === 0) {
-        $dropItemTags = $('<li id="tagsAlternativeDirPath">');
-        $dropDown.append($dropItemTags);
-      }
-      loadFolderMetaData($menu.attr('data-path'), null, $dropItemTags);
+    if (folderPropertiesOpened) {
+      $('#toggleFolderProperitesButton').addClass('buttonToggled');
+    } else {
+      $('#toggleFolderProperitesButton').removeClass('buttonToggled');
     }
-
-    $menu.css({
-      display: 'block',
-    });
   }
 
   function generateDirPath() {
@@ -500,6 +481,8 @@ define(function(require, exports, module) {
     console.log('Dir History: ' + JSON.stringify(directoryHistory));
     TSCORE.currentPath = directoryPath;
 
+    initFolderProperties();
+
     TSCORE.Meta.getDirectoryMetaInformation().then(function(dirList) {
       TSCORE.metaFileList = dirList;
       listDirectory(directoryPath);
@@ -586,6 +569,110 @@ define(function(require, exports, module) {
     $('#locationSwitch').on('click', function() {
       TSCORE.UI.stopGettingStartedTour();
     });
+
+    $('#editFolderDescriptionButton').on('click', editFolderDescription);
+
+    $('#folderDescriptionPropertyRendered').on('click', editFolderDescription);
+
+    $('#cancelEditFolderDescriptionButton').on('click', cancelEditFolderDescription);
+
+    $('#saveFolderDescriptionButton').on('click', saveEditFolderDescription);
+  }
+
+  function initFolderProperties() {
+    $('#folderPathProperty').val(TSCORE.currentPath);
+    $("#folderTagsProperty").val("");
+    $('#folderTagsProperty').select2('data', null);
+    $('#folderDescriptionPropertyRendered').empty();
+    $('#folderDescriptionPropertyRendered').css("height", "0");
+    $('#folderDescriptionPropertyRendered').css("padding", "0");
+    $('#folderDescriptionProperty').val("");
+    TSCORE.Meta.loadFolderMetaDataPromise(TSCORE.currentPath).then(function(metaData) {
+      var tags = '';
+      if(metaData.tags && metaData.tags.length > 0) {
+        metaData.tags.forEach(function(tag) {
+          tags = tags + "," + tag.title;
+        });
+        tags = tags.substring(1, tags.length);
+      }
+
+      $("#folderTagsProperty").val(tags);
+      $('#folderTagsProperty').select2('data', null);
+      $('#folderTagsProperty').select2({
+        multiple: true,
+        tags: TSCORE.Config.getAllTags(),
+        tokenSeparators: [ ',', ' ' ],
+        minimumInputLength: 1,
+        selectOnBlur: true,
+        formatSelectionCssClass: function(tag, container) {
+          var style = TSCORE.generateTagStyle(TSCORE.Config.findTag(tag.text));
+          if (style) {
+            $(container).parent().attr("style", style);
+          }
+        }
+      });
+
+      if (TSCORE.PRO && TSCORE.Config.getEnableMetaData()) { // TSCORE.Config.getWriteMetaToSidecarFile()
+        $('#folderTagsProperty').off();
+        $('#folderTagsProperty').on('change', function (evt) {
+          console.log("Tags: " + $(this).val());
+          var newTags = $(this).val().split(",");
+          metaData.tags = TSCORE.PRO.Directory.generateTags(newTags);
+          TSCORE.PRO.Directory.saveMetaData(metaData);
+        });
+      } else {
+        $('#folderTagsProperty').attr('disabled','disabled');
+        // $('.select2-search-choice').css('padding-left', '4px !important');
+      }
+
+      if (metaData.description && metaData.description.length) {
+        $('#folderDescriptionPropertyRendered').css("height", "200px");
+        $('#folderDescriptionPropertyRendered').css("padding", "4px");
+        TSCORE.Utils.setMarkDownContent($('#folderDescriptionPropertyRendered'), metaData.description);
+        $('#folderDescriptionProperty').val(metaData.description);
+      }
+    }).catch(function(err) {
+      console.warn("Error getting folder metadata.");
+    });
+  }
+
+  // TODO handle the case: changing to next file/close while in edit mode
+  function editFolderDescription() {
+    if (TSCORE.PRO) {
+      if(TSCORE.Config.getEnableMetaData()) {
+        $('#folderDescriptionProperty').show();
+        $('#folderDescriptionProperty').css("height", "200px");
+        $('#folderDescriptionPropertyRendered').hide();
+        $('#editFolderDescriptionButton').hide();
+        $('#cancelEditFolderDescriptionButton').show();
+        $('#saveFolderDescriptionButton').show();
+      } else {
+        TSCORE.UI.showAlertDialog("In order to add or edit a description, you have to enable the use of hidden folders in the settings.");
+      }
+    } else {
+      TSCORE.UI.showAlertDialog("Editing the folder description is possible with the TagSpaces PRO");
+    }
+  }
+
+  function cancelEditFolderDescription() {
+    $('#folderDescriptionProperty').hide();
+    $('#folderDescriptionPropertyRendered').show();
+    $('#editFolderDescriptionButton').show();
+    $('#cancelEditFolderDescriptionButton').hide();
+    $('#saveFolderDescriptionButton').hide();
+  }
+
+  function saveEditFolderDescription() {
+    TSCORE.Meta.loadFolderMetaDataPromise(TSCORE.currentPath).then(function(metaData) {
+      var folderDescription = $('#folderDescriptionProperty').val();
+      metaData.description = folderDescription;
+      TSCORE.PRO.Directory.saveMetaData(metaData);
+      TSCORE.Utils.setMarkDownContent($('#folderDescriptionPropertyRendered'), folderDescription);
+      $('#folderDescriptionPropertyRendered').css("height", "200px");
+    }).catch(function(err) {
+      console.warn("Error getting folder metadata.");
+    });
+    cancelEditFolderDescription();
   }
 
   function toggleFolderProperties() {
@@ -622,7 +709,6 @@ define(function(require, exports, module) {
   }
 
   function selectLocalDirectory() {
-
     TSCORE.IO.selectDirectory();
   }
 
