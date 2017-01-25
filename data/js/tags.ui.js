@@ -297,7 +297,7 @@ define(function(require, exports, module) {
         if (areaId) {
           var index = areaId.substring(areaId.length - 1);
           tagGroups[index].collapse = $(areaId).is(':visible');
-          if(tagGroups[index].collapse) {
+          if (tagGroups[index].collapse) {
             $(areaId).parent().find('sup').show();
           } else {
             $(areaId).parent().find('sup').hide();
