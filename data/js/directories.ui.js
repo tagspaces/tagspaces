@@ -642,6 +642,7 @@ define(function(require, exports, module) {
       if (TSCORE.Config.getEnableMetaData()) {
         $('#folderDescriptionProperty').show();
         $('#folderDescriptionProperty').css("height", "200px");
+        $('#folderDescriptionProperty').focus();
         $('#folderDescriptionPropertyRendered').hide();
         $('#editFolderDescriptionButton').hide();
         $('#cancelEditFolderDescriptionButton').show();

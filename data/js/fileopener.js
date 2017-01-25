@@ -176,6 +176,7 @@ define(function(require, exports, module) {
       if (TSCORE.Config.getEnableMetaData() && TSCORE.Config.getWriteMetaToSidecarFile()) {
         $('#fileDescriptionProperty').show();
         $('#fileDescriptionProperty').css("height", "200px");
+        $('#fileDescriptionProperty').focus();
         $('#fileDescriptionPropertyRendered').hide();
         $('#editFileDescriptionButton').hide();
         $('#cancelEditFileDescriptionButton').show();
