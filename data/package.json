@@ -3,7 +3,7 @@
   "description": "Offline document organizer and browser for your local files, supporting easy file tagging and document editing.",
   "homepage": "https://www.tagspaces.org",
   "author": "@@AUTHOR",
-  "version": "2.6.4",
+  "version": "2.6.5",
   "main": "electron/main.js",
   "dependencies": {
     "electron-window-state": "^4.0.0",
