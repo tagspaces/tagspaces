@@ -335,7 +335,7 @@ define(function(require, exports, module) {
         navigateToDirectory($(this).data('path'));
       }).droppable({
         greedy: 'true',
-        accept: '.fileTitleButton,.fileTile,.fileTileSelector',
+        accept: '.fileTitleButton,.fileTile,.fileTileSelector,.fileInfoArea',
         hoverClass: 'dropOnFolder',
         drop: function(event, ui) {
           ui.draggable.detach();
@@ -360,7 +360,7 @@ define(function(require, exports, module) {
         navigateToDirectory($(this).data('path'));
       }).droppable({
         greedy: 'true',
-        accept: '.fileTitleButton,.fileTile,.fileTileSelector',
+        accept: '.fileTitleButton,.fileTile,.fileTileSelector,.fileInfoArea',
         hoverClass: 'dropOnFolder',
         drop: function(event, ui) {
           ui.draggable.detach();
