@@ -47,7 +47,7 @@ module.exports = function (options) {
       if (!sameBounds) {
         if (displayBounds.width < state.displayBounds.width) {
           if (state.x > displayBounds.width) {
-            state.x = null;
+            state.x = 0;
           }
 
           if (state.width > displayBounds.width) {
@@ -57,7 +57,7 @@ module.exports = function (options) {
 
         if (displayBounds.height < state.displayBounds.height) {
           if (state.y > displayBounds.height) {
-            state.y = null;
+            state.y = 0;
           }
 
           if (state.height > displayBounds.height) {
