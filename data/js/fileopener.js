@@ -11,6 +11,7 @@ define(function(require, exports, module) {
 
   var TSCORE = require('tscore');
   var TSPOSTIO = require("tspostioapi");
+  var moment = require('moment');
   var _openedFilePath;
   var _openedFileProperties;
   var _isFileOpened = false;
@@ -211,7 +212,10 @@ define(function(require, exports, module) {
     $('#fileNameProperty').val(TSCORE.TagUtils.extractFileName(_openedFileProperties.path));
     $('#filePathProperty').val(TSCORE.TagUtils.extractContainingDirectoryPath(_openedFileProperties.path));
     $('#fileSizeProperty').val(TSCORE.TagUtils.formatFileSize(_openedFileProperties.size, true) + " / " + _openedFileProperties.size + " " + $.i18n.t('ns.common:sizeInBytes'));
-    $('#fileLMDTProperty').val(new Date(_openedFileProperties.lmdt).toISOString().substring(0, 19).split('T').join(' '));
+
+    $('#timeFileChangedFromNow').text(moment(_openedFileProperties.lmdt).fromNow());
+    $('#fileLMDTProperty').val(moment(_openedFileProperties.lmdt).format('YYYY-MM-DD hh:mm:ss'));
+    //$('#fileLMDTProperty').val(new Date(_openedFileProperties.lmdt).toISOString().substring(0, 19).split('T').join(' '));
     $('#fileLMDTProperty').attr("title", new Date(_openedFileProperties.lmdt));
 
     var fileDescription = TSCORE.Meta.getDescriptionFromMetaFile(_openedFileProperties.path);
