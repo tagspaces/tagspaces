@@ -583,6 +583,8 @@ define(function(require, exports, module) {
     $('#folderPathProperty').val(TSCORE.currentPath);
     $("#folderTagsProperty").val("");
     $('#folderTagsProperty').select2('data', null);
+
+    cancelEditFolderDescription();
     $('#folderDescriptionPropertyRendered').empty();
     $('#folderDescriptionPropertyRendered').css("height", "0");
     $('#folderDescriptionPropertyRendered').css("padding", "0");
@@ -642,6 +644,7 @@ define(function(require, exports, module) {
       if (TSCORE.Config.getEnableMetaData()) {
         $('#folderDescriptionProperty').show();
         $('#folderDescriptionProperty').css("height", "200px");
+        $('#folderDescriptionProperty').focus();
         $('#folderDescriptionPropertyRendered').hide();
         $('#editFolderDescriptionButton').hide();
         $('#cancelEditFolderDescriptionButton').show();
