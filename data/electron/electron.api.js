@@ -8,9 +8,6 @@ const electron = require('electron'); // jshint ignore:line
 const remote = electron.remote; // jshint ignore:line
 const ipcRenderer = require('electron').ipcRenderer; // jshint ignore:line
 
-// Removing buffer for security reasons
-delete global.Buffer; // jshint ignore:line
-
 /**
  * A implementation of the IOAPI for the electron platform
  * @class Electron
