@@ -79,9 +79,13 @@ define(function(require, exports, module) {
 
     $('#saveDocument').on("click", saveFile);
 
-    $('#closeFile').on("click", closeFile);
+    $('#closeFile').on("click", function() {
+      closeFile(false);
+    });
 
-    $('#closeOpenedFile').on("click", closeFile);
+    $('#closeOpenedFile').on("click", function() {
+      closeFile(false);
+    });
 
     $('#nextFileButton').on("click", function() {
       TSCORE.FileOpener.openFile(TSCORE.PerspectiveManager.getNextFile(_openedFilePath));
