@@ -6,11 +6,11 @@
   "version": "2.6.5",
   "main": "electron/main.js",
   "dependencies": {
-    "electron-window-state": "^4.0.0",
+    "electron-window-state": "^4.0.1",
     "fs-extra": "~1.0.0"
   },
   "devDependencies": {
-    "electron": "1.4.7"
+    "electron": "1.4.15"
   },
   "build": {
     "app-bundle-id": "@@FULLNAME",

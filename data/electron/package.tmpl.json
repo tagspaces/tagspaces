@@ -10,7 +10,7 @@
     "fs-extra": "~1.0.0"
   },
   "devDependencies": {
-    "electron": "1.4.7"
+    "electron": "1.4.15"
   },
   "build": {
     "app-bundle-id": "@@FULLNAME",
