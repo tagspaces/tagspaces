@@ -6,7 +6,7 @@
     "editorODF": "git+https://github.com/tagspaces/editorODF.git#master",
     "editorText": "git+https://github.com/tagspaces/editorText.git#master",
     "perspectiveGraph": "git+https://github.com/tagspaces/perspectiveGraph.git#master",
-    "perspectiveGrid": "git+https://github.com/tagspaces/perspectiveGrid.git#master",
+    "perspectiveGrid": "git+https://github.com/tagspaces/perspectiveGrid.git#develop",
     "perspectiveImageSwiper": "git+https://github.com/tagspaces/perspectiveImageSwiper.git#master",
     "perspectiveList": "git+https://github.com/tagspaces/perspectiveList.git#master",
     "viewerAudioVideo": "git+https://github.com/tagspaces/viewerAudioVideo.git#master",
