@@ -413,7 +413,8 @@ define(function(require, exports, module) {
         console.log('Location Metadata: ' + JSON.stringify(metadata));
         resolve(metadata);
       }).catch(function(err) {
-        reject("loadFolderMetaDataPromise: Error reading " + metadataPath);
+        resolve(TSCORE.PRO.Directory.getFolderMetaTemplate());
+        //reject("loadFolderMetaDataPromise: Error reading " + metadataPath);
       });
     });
   }

@@ -581,6 +581,8 @@ define(function(require, exports, module) {
       newTags = newTags.split(",");
       metaData.tags = TSCORE.PRO.Directory.generateTags(newTags);
       TSCORE.PRO.Directory.saveMetaData(metaData);
+    }).catch(function(err) {
+      console.warn("Error getting folder metadata, saving folder tags failed.");
     });
   }
 
