@@ -484,15 +484,17 @@ define(function(require, exports, module) {
 
   // Get the color for a tag
   function generateTagStyle(tagObject) {
-    var tagStyle = '';
-    if (tagObject.color !== undefined) {
-      var textColor = tagObject.textcolor;
-      if (textColor === undefined) {
-        textColor = 'white';
-      }
-      tagStyle = 'color: ' + textColor + ' !important; background-color: ' + tagObject.color + ' !important;';
+    var tagTextColor = TSCORE.Config.getDefaultTagTextColor();
+    var tagColor = TSCORE.Config.getDefaultTagColor();
+
+    if (tagObject.textcolor) {
+      tagTextColor = tagObject.textcolor;
     }
-    return tagStyle;
+    if (tagObject.color) {
+      tagColor = tagObject.color;
+    }
+
+    return 'color: ' + tagTextColor + ' !important; background-color: ' + tagColor + ' !important;';
   }
 
   function showDialogTagCreate() {
