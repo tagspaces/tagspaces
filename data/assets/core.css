@@ -611,6 +611,7 @@ input a.resetFilter {
     padding: 5px;
     padding-bottom: 0;
     background-color: white;
+    font-size: 15px;
 }
 
 #cancelEditFileDescriptionButton {
@@ -659,7 +660,7 @@ input a.resetFilter {
 
 #folderPropertiesArea {
     display: none;
-    padding: 0 9px 5px 5px;
+    padding: 3px 9px 5px 5px;
 }
 
 #folderPropertiesArea .control-label {
@@ -673,11 +674,12 @@ input a.resetFilter {
 
 #folderDescriptionProperty {
     display: none;
-    /*border: 1px solid #e2e2e2;*/
+    border: 1px solid #e2e2e2;
     border-radius: 4px;
     padding: 4px;
     padding-bottom: 0;
     background-color: white;
+    font-size: 15px;
 }
 
 #cancelEditFolderDescriptionButton {

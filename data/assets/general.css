@@ -264,7 +264,7 @@ button.close {
 .dropdown {
   position: absolute;
   display:none;
-  z-index: 1035;
+  z-index: 10000;
 }
 
 @media
