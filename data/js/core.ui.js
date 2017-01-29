@@ -1207,7 +1207,7 @@ define(function(require, exports) {
   }
 
   function showDocumentation() {
-    TSCORE.IO.openFile("https://www.tagspaces.org/documentation/");
+    TSCORE.IO.openFile("http://docs.tagspaces.org");
   }
 
   // Public API definition
