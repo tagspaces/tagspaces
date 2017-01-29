@@ -23,10 +23,13 @@ define(function(require, exports, module) {
   $.fn.editableform.buttons = '<button type="submit" class="btn btn-primary btn-sm editable-submit"><i class="fa fa-check fa-lg"></i></button><button type="button" class="btn btn-sm editable-cancel"><i class="fa fa-times fa-lg"></i></button>';
   $.fn.editableform.template = '' +
     '<form class="form-inline editableform flexMaxWidth">' +
-    '<div class="control-group flexLayout flexMaxWidth">' +
-    '<div class="flexLayout flexMaxWidth"><div class="editable-input flexMaxWidth"></div><div class="editable-buttons"></div></div>' +
-    '<div class="editable-error-block"></div>' +
-    '</div> ' +
+    '  <div class="control-group flexLayout flexMaxWidth">' +
+    '    <div class="flexLayout flexMaxWidth">' +
+    '      <div class="editable-input flexMaxWidth"></div>' +
+    '      <div class="editable-buttons"></div>' +
+    '    </div>' +
+    '    <div class="editable-error-block"></div>' +
+    '  </div> ' +
     '</form>';
   var exitFullscreenButton = '<button id="exitFullScreen" class="btn btn-link" title="Exit fullscreen mode (ESC)"><span class="fa fa-remove"></span></button>';
   var _isEditMode = false; // If a file is currently opened for editing, this var should be true
