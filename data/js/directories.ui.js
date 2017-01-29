@@ -240,9 +240,8 @@ define(function(require, exports, module) {
 
     if (TSCORE.PRO && TSCORE.PRO.Directory) {
       TSCORE.PRO.Directory.setContextMenu($directoryTagsArea);
-    } else {
-      $("#locationContent .dropDownIcon").hide();
     }
+    $("#locationContent .dropDownIcon").hide();
   }
 
   function updateSubDirs(dirList) {
@@ -577,10 +576,23 @@ define(function(require, exports, module) {
     $('#cancelEditFolderDescriptionButton').on('click', cancelEditFolderDescription);
 
     $('#saveFolderDescriptionButton').on('click', saveEditFolderDescription);
+
+  }
+
+  function saveFolderTags(event) {
+    var newTags = $(this).val();
+    console.log("Tags: " + newTags);
+    TSCORE.Meta.loadFolderMetaDataPromise(TSCORE.currentPath).then(function(metaData) {
+      newTags = newTags.split(",");
+      metaData.tags = TSCORE.PRO.Directory.generateTags(newTags);
+      TSCORE.PRO.Directory.saveMetaData(metaData);
+    });
   }
 
   function initFolderProperties() {
     $('#folderPathProperty').val(TSCORE.currentPath);
+
+    $('#folderTagsProperty').off();
     $("#folderTagsProperty").val("");
     $('#folderTagsProperty').select2('data', null);
 
@@ -599,7 +611,6 @@ define(function(require, exports, module) {
       }
 
       $("#folderTagsProperty").val(tags);
-      $('#folderTagsProperty').select2('data', null);
       $('#folderTagsProperty').select2({
         multiple: true,
         tags: TSCORE.Config.getAllTags(),
@@ -615,13 +626,7 @@ define(function(require, exports, module) {
       });
 
       if (TSCORE.PRO && TSCORE.Config.getEnableMetaData()) { // TSCORE.Config.getWriteMetaToSidecarFile()
-        $('#folderTagsProperty').off();
-        $('#folderTagsProperty').on('change', function(evt) {
-          console.log("Tags: " + $(this).val());
-          var newTags = $(this).val().split(",");
-          metaData.tags = TSCORE.PRO.Directory.generateTags(newTags);
-          TSCORE.PRO.Directory.saveMetaData(metaData);
-        });
+        $('#folderTagsProperty').on('change', saveFolderTags);
       } else {
         $('#folderTagsProperty').attr('disabled', 'disabled');
         // $('.select2-search-choice').css('padding-left', '4px !important');
