@@ -639,7 +639,7 @@ input a.resetFilter {
     font-size: small;
     background-color: white;
     border-radius: 4px;
-    padding: 0px;
+    padding: 4px;
 }
 
 /* End file properties */
@@ -708,5 +708,9 @@ input a.resetFilter {
     background-color: white;
     border-radius: 4px;
     padding: 4px;
+}
+
+#folderTagsProperty {
+    font-size: 15px;
 }
 /* End folder properties */
