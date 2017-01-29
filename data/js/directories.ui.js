@@ -181,22 +181,17 @@ define(function(require, exports, module) {
 
   function loadFolderMetaData(path, element) {
     var historyItem = getDirHistoryItem(path);
-    if (historyItem.metaData) {
-      generateFolderTags(historyItem.metaData.tags, element);
+    TSCORE.Meta.loadFolderMetaDataPromise(path).then(function(metaData) {
+      historyItem.metaData = metaData;
+      if (historyItem.metaData.perspectives) {
+        TSCORE.PerspectiveManager.changePerspective(historyItem.metaData.perspectives);
+      }
+      generateFolderTags(metaData.tags, element);
       loadMetaTagGroups(historyItem.metaData);
-    } else {
-      TSCORE.Meta.loadFolderMetaDataPromise(path).then(function(metaData) {
-        historyItem.metaData = metaData;
-        if (historyItem.metaData.perspectives) {
-          TSCORE.PerspectiveManager.changePerspective(historyItem.metaData.perspectives);
-        }
-        generateFolderTags(metaData.tags, element);
-        loadMetaTagGroups(historyItem.metaData);
-      }).catch(function(err) {
-        console.log("loadFolderMetaData: " + err);
-        generateFolderTags(null, element);
-      });
-    }
+    }).catch(function(err) {
+      console.log("loadFolderMetaData: " + err);
+      generateFolderTags(null, element);
+    });
   }
 
   function loadMetaTagGroups(metaData) {
