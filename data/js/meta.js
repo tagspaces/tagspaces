@@ -413,8 +413,11 @@ define(function(require, exports, module) {
         console.log('Location Metadata: ' + JSON.stringify(metadata));
         resolve(metadata);
       }).catch(function(err) {
-        resolve(TSCORE.PRO.Directory.getFolderMetaTemplate());
-        //reject("loadFolderMetaDataPromise: Error reading " + metadataPath);
+        if(TSCORE.PRO && TSCORE.PRO.Directory.getFolderMetaTemplate) {
+          resolve(TSCORE.PRO.Directory.getFolderMetaTemplate());
+        } else {
+          reject("loadFolderMetaDataPromise: Error reading " + metadataPath);
+        }
       });
     });
   }
