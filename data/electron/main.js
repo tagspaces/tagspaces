@@ -18,6 +18,8 @@ let trayIcon = null;
 // Removing buffer for security reasons
 delete global.Buffer;
 
+const isOSX = /^darwin/.test(process.platform);
+
 //handling start parameter
 //console.log(JSON.stringify(process.argv));
 process.argv.forEach((arg, count) => {
@@ -26,6 +28,8 @@ process.argv.forEach((arg, count) => {
   } else if (arg.toLowerCase() === '-p' || arg.toLowerCase() === '--portable') {
     app.setPath('userData', process.cwd() + '/tsprofile'); // making the app portable
     portableMode = true;
+  } else if (isOSX && arg.indexOf('-psn') >= 0) { // ignoring the -psn process serial number paremater on OSX by double click
+    arg = "";
   } else if (arg === '.' || count === 0) { // ignoring the first argument
     //Ignore these argument
   } else if (arg.length > 2) {
