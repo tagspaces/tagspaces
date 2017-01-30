@@ -59,7 +59,6 @@ define(function(require, exports, module) {
           {
             label: $.i18n.t("ns.common:openNewInstance"),
             accelerator: '',
-            //click: TSCORE.UI.openNewInstance
             click: function() {
               ipcRenderer.send("new-win", "newWin");
             }
@@ -128,12 +127,8 @@ define(function(require, exports, module) {
             label: $.i18n.t("ns.common:exitApp"),
             accelerator: '',
             click: function() {
-              if (!TSCORE.currentPath) {
-                TSCORE.showAlertDialog("Not open current directory !");
-              } else {
-                TSCORE.Config.saveSettings();
-                ipcRenderer.send('quit-application', 'Bye, bye...');
-              }
+              //TSCORE.Config.saveSettings();
+              ipcRenderer.send('quit-application', 'Bye, bye...');
             }
           }
         ]
@@ -230,16 +225,10 @@ define(function(require, exports, module) {
         label: $.i18n.t("ns.common:help"),
         submenu: [
           {
-            label: $.i18n.t("ns.common:shortcutKeys"),
             accelerator: "F1",
+            label: $.i18n.t("ns.common:documentation"),
             click: function() {
-              TSCORE.UI.showKeysDialog();
-            }
-          },
-          {
-            label: $.i18n.t("ns.common:license"),
-            click: function() {
-              TSCORE.UI.showLicenseDialog();
+              TSCORE.UI.showDocumentation();
             }
           },
           {
@@ -249,9 +238,9 @@ define(function(require, exports, module) {
             }
           },
           {
-            label: $.i18n.t("ns.common:documentation"),
+            label: $.i18n.t("ns.common:shortcutKeys"),
             click: function() {
-              TSCORE.UI.showDocumentation();
+              TSCORE.UI.showKeysDialog();
             }
           },
           {
@@ -294,6 +283,15 @@ define(function(require, exports, module) {
             label: $.i18n.t("ns.common:reportIssues"),
             click: function() {
               TSCORE.UI.reportIssues();
+            }
+          },
+          {
+            type: 'separator'
+          },
+          {
+            label: $.i18n.t("ns.common:license"),
+            click: function() {
+              TSCORE.UI.showLicenseDialog();
             }
           },
           {
