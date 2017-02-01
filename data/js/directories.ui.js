@@ -570,7 +570,7 @@ define(function(require, exports, module) {
 
     $('#cancelEditFolderDescriptionButton').on('click', cancelEditFolderDescription);
 
-    $('#saveFolderDescriptionButton').on('click', saveEditFolderDescription);
+    $('#saveFolderDescriptionButton').on('click', saveFolderDescription);
 
   }
 
@@ -667,17 +667,17 @@ define(function(require, exports, module) {
     $('#saveFolderDescriptionButton').hide();
   }
 
-  function saveEditFolderDescription() {
+  function saveFolderDescription() {
     TSCORE.Meta.loadFolderMetaDataPromise(TSCORE.currentPath).then(function(metaData) {
       var folderDescription = $('#folderDescriptionProperty').val();
       metaData.description = folderDescription;
       TSCORE.PRO.Directory.saveMetaData(metaData);
+      cancelEditFolderDescription();
       TSCORE.Utils.setMarkDownContent($('#folderDescriptionPropertyRendered'), folderDescription);
       $('#folderDescriptionPropertyRendered').css("height", "200px");
     }).catch(function(err) {
       console.warn("Error getting folder metadata.");
     });
-    cancelEditFolderDescription();
   }
 
   function toggleFolderProperties() {
