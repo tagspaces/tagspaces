@@ -16,7 +16,6 @@ define(function(require, exports, module) {
   console.log("Loading ioapi.cordova.js..");
 
   var TSCORE = require("tscore");
-  var TSPOSTIO = require("tspostioapi");
 
   // not needed according to https://github.com/ftlabs/fastclick#when-it-isnt-needed
   //var attachFastClick = require('cordova/fastclick/fastclick.min');
@@ -216,7 +215,7 @@ define(function(require, exports, module) {
    * @memberof IOAPI.Cordova
    * @param {string} entries - //TODO
    */
-  function generateDirectoryTree(entries) {
+  /* function generateDirectoryTree(entries) {
     var tree = {};
     var i;
     for (i = 0; i < entries.length; i++) {
@@ -243,9 +242,9 @@ define(function(require, exports, module) {
     pendingCallbacks--;
     console.log("Pending recursions: " + pendingCallbacks);
     if (pendingCallbacks <= 0) {
-      TSPOSTIO.createDirectoryTree(anotatedTree);
+      // TSPOSTIO.createDirectoryTree(anotatedTree);
     }
-  }
+  } */
 
   function saveSettingsFile(fileName, data) {
     getAppStorageFileSystem(fileName,
@@ -346,7 +345,7 @@ define(function(require, exports, module) {
         type: 'GET'
       })
       .done(function(data) {
-        TSPOSTIO.checkNewVersion(data);
+        TSCORE.updateNewVersionData(data);
       })
       .fail(function(data) {
         console.log("AJAX failed " + data);
@@ -621,7 +620,7 @@ define(function(require, exports, module) {
           },
           function() {}
       );
-      if (isFileNew || overWrite === true) {
+      if (isFileNew || overWrite) {
         fsRoot.getFile(filePath, {
             create: true,
             exclusive: false
@@ -635,21 +634,25 @@ define(function(require, exports, module) {
                 };                
                 if (isRaw) {
                   writer.write(content);
-                } else { 
-                  var contentArray = content.split(';base64,');
-                  var type = contentArray.length > 1 ? contentArray[0].split(':')[1] : '';
-                  var newContent = contentArray.length > 1 ? contentArray[1] : contentArray[0];   
-                  var data = TSCORE.Utils.b64toBlob(newContent, type, 512);
-                  writer.write(data);
+                } else {
+                  if (content.indexOf(';base64,') > 0) {
+                    var contentArray = content.split(';base64,');
+                    var type = contentArray.length > 1 ? contentArray[0].split(':')[1] : '';
+                    var newContent = contentArray.length > 1 ? contentArray[1] : contentArray[0];
+                    var data = TSCORE.Utils.b64toBlob(newContent, type, 512);
+                    writer.write(data);
+                  } else {
+                    writer.write(content);
+                  }
                 }		
               },
-              function() {
-                reject("error creating writter file: " + filePath);
+              function(err) {
+                reject("Error creating file: " + filePath + " " + err);
               }
             );
           },
-          function() {
-            reject("Error getting file entry: " + filePath);
+          function(error) {
+            reject("Error getting file entry: " + filePath + " " + error);
           }
         );
       } else {
@@ -673,12 +676,12 @@ define(function(require, exports, module) {
   function saveTextFilePromise(filePath, content, overWrite) {
     console.log("Saving TEXT file: " + filePath);
     // Handling the UTF8 support for text files
-    var UTF8_BOM = "\ufeff";
+    /*var UTF8_BOM = "\ufeff";
     if (content.indexOf(UTF8_BOM) === 0) {
       console.log("Content beging with a UTF8 bom");
     } else {
       content = UTF8_BOM + content;
-    }
+    }*/
     return saveFilePromise(filePath, content, overWrite, true);
   }
 
@@ -808,13 +811,13 @@ define(function(require, exports, module) {
                   console.log("File renamed to: " + newFilePath + " Old name: " + entry.fullPath);
                   resolve([filePath, newFilePath]);
                 },
-                function() {
-                  reject("error renaming: " + filePath);
+                function(err) {
+                  reject("error renaming: " + filePath + " " + err);
                 }
               );
             },
-            function() {
-              reject("Error getting file: " + filePath);
+            function(error) {
+              reject("Error getting file: " + filePath + " " + error);
             }
           );
         },
@@ -863,13 +866,13 @@ define(function(require, exports, module) {
                   console.log("Directory renamed to: " + newDirPath + " from: " + entry.fullPath);
                   resolve("/" + newDirPath);
                 },
-                function() {
-                  reject("error renaming: " + dirPath);
+                function(err) {
+                  reject("error renaming directory: " + dirPath + " " + err);
                 }
               );
             },
-            function() {
-              reject("Error getting directory: " + dirPath);
+            function(error) {
+              reject("Error getting directory: " + dirPath + " " + error);
             }
           );
         },
@@ -902,13 +905,13 @@ define(function(require, exports, module) {
               console.log("file deleted: " + path);
               resolve(filePath);
             },
-            function() {
-              reject("error deleting: " + filePath);
+            function(err) {
+              reject("error deleting: " + filePath + " " + err);
             }
           );
         },
-        function() {
-          reject("error getting file");
+        function(error) {
+          reject("error getting file" + path + " " + error);
         }
       );
     });
@@ -937,15 +940,13 @@ define(function(require, exports, module) {
               console.log("file deleted: " + path);
               resolve(dirPath);
             },
-            function() {
-              //TSCORE.hideLoadingAnimation();
-              //TSPOSTIO.deleteDirectoryFailed(path);
-              reject("error deleting dir: " + dirPath);
+            function(err) {
+              reject("error deleting dir: " + dirPath + " " + err);
             }
           );
         },
-        function() {
-          reject("error getting directory " + dirPath);
+        function(error) {
+          reject("error getting directory " + dirPath + " " + error);
         }
       );
     });
