@@ -16,7 +16,7 @@ let startupFilePath;
 let trayIcon = null;
 
 // Removing buffer for security reasons
-delete global.Buffer;
+// delete global.Buffer;
 
 const isOSX = /^darwin/.test(process.platform);
 
