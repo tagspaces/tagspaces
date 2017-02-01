@@ -98,7 +98,7 @@
 }
 
 #fileTitle {
-    margin-top: 5px;
+    margin-top: 4px;
     height: 30px;
     padding-right: 3px;
     padding-left: 3px;
@@ -113,7 +113,8 @@
 
 #fileTitle:hover {
     text-decoration: none;
-    background-color: rgba(97, 255, 0, 0.23);
+    background-color: #DBDBDB;
+    border-radius: 4px;
 }
 
 #viewsRadio {
