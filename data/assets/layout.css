@@ -118,8 +118,13 @@
 	background-color: #F2F2F2 !important;
 }
 
-.col1 .navbar, .col2 .navbar, .col3 .navbar {
+.col1 .navbar {
 	padding-left: 5px;
+}
+
+.col2 .navbar, .col3 .navbar {
+  padding-left: 5px;
+  padding-right: 5px;
 }
 
 #showTagGroups, #showLocations, #contactUs {

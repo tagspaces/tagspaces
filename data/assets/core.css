@@ -579,7 +579,7 @@ input a.resetFilter {
 
 .buttonToggled {
     border: 1px solid lightgray !important;
-    background-color: #dedede !important;
+    background-color: #eaeaea !important;
 }
 
 /* Begin file properties */
@@ -593,10 +593,10 @@ input a.resetFilter {
 }
 
 #filePropertiesArea {
-    padding: 5px 9px 8px 5px;
-}
-
-#filePropertiesArea .form-group {
+    padding: 5px;
+    background-color: #eaeaea;
+    border-radius: 6px;
+    margin-top: 5px;
     margin-bottom: 5px;
 }
 
@@ -661,7 +661,9 @@ input a.resetFilter {
 
 #folderPropertiesArea {
     display: none;
-    padding: 3px 9px 5px 5px;
+    padding: 5px;
+    background-color: #eaeaea;
+    border-radius: 6px;
 }
 
 #folderPropertiesArea .control-label {
