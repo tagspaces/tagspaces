@@ -171,7 +171,7 @@ define(function(require, exports, module) {
 
     $('#cancelEditFileDescriptionButton').on('click', cancelEditFileDescription);
 
-    $('#saveFileDescriptionButton').on('click', saveEditFileDescription);
+    $('#saveFileDescriptionButton').on('click', saveFileDescription);
 
     $('#addTagsFileDescriptionButton').on('click', tagFile);
 
@@ -205,7 +205,7 @@ define(function(require, exports, module) {
     $('#saveFileDescriptionButton').hide();
   }
 
-  function saveEditFileDescription() {
+  function saveFileDescription() {
     var fileDescription = $('#fileDescriptionProperty').val();
     TSCORE.Utils.setMarkDownContent($('#fileDescriptionPropertyRendered'), fileDescription);
     $('#fileDescriptionPropertyRendered').css("height", "200px");
@@ -517,15 +517,10 @@ define(function(require, exports, module) {
   function saveFile() {
     console.log('Save current file: ' + _openedFilePath);
     var content = _tsEditor.getContent();
-    /*var title = TSCORE.TagUtils.extractTitle(_openedFilePath);
-     if(title.length < 1 && content.length > 1) {
-     title = content.substring(0,content.indexOf("\n"));
-     if(title.length > 100) {
-     title = title.substring(0,99);
-     }
-     }*/
-    TSCORE.IO.saveTextFilePromise(_openedFilePath, content).then(function(isNewFile) {
-      TSPOSTIO.saveTextFile(_openedFilePath, isNewFile);
+    TSCORE.IO.saveTextFilePromise(_openedFilePath, content, true).then(function(isNewFile) {
+      //TSCORE.PerspectiveManager.refreshFileListContainer();
+      TSCORE.showSuccessDialog("File saved successfully."); // TODO translate
+      TSCORE.FileOpener.setFileChanged(false);
     }, function(error) {
       TSCORE.hideLoadingAnimation();
       console.error("Save to file " + _openedFilePath + " failed " + error);
