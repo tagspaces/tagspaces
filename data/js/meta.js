@@ -409,11 +409,17 @@ define(function(require, exports, module) {
       }
 
       TSCORE.IO.getFileContentPromise(metadataPath, "text").then(function(content) {
+        console.log('Location Metadata: ' + content);
+
+        // Cleaning up
+        var UTF8_BOM = "\ufeff";
+        if (content.indexOf(UTF8_BOM) === 0) {
+          content = content.substring(1, content.length);
+        }
         var metadata = JSON.parse(content);
-        console.log('Location Metadata: ' + JSON.stringify(metadata));
         resolve(metadata);
       }).catch(function(err) {
-        if(TSCORE.PRO && TSCORE.PRO.Directory.getFolderMetaTemplate) {
+        if (TSCORE.PRO && TSCORE.PRO.Directory.getFolderMetaTemplate) {
           resolve(TSCORE.PRO.Directory.getFolderMetaTemplate());
         } else {
           reject("loadFolderMetaDataPromise: Error reading " + metadataPath);
