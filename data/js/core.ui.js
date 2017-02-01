@@ -153,7 +153,9 @@ define(function(require, exports) {
       }
       var filePath = TSCORE.currentPath + TSCORE.dirSeparator + $('#newFileName').val() + fileTags + '.' + fileType;
       TSCORE.IO.saveFilePromise(filePath, fileContent).then(function() {
-        TSPOSTIO.saveTextFile(filePath, isNewFile);
+        TSCORE.PerspectiveManager.refreshFileListContainer();
+        TSCORE.FileOpener.openFile(filePath, true);
+        TSCORE.showSuccessDialog("File created successfully."); // TODO translate
       }, function(error) {
         TSCORE.hideLoadingAnimation();
         TSCORE.showAlertDialog("Saving " + filePath + " failed.");
@@ -1174,11 +1176,13 @@ define(function(require, exports) {
 
   function createNewTextFile(filePath, content) {
     TSCORE.IO.saveFilePromise(filePath, content).then(function(isNewFile) {
-      TSPOSTIO.saveTextFile(filePath, isNewFile);
+      TSCORE.PerspectiveManager.refreshFileListContainer();
+      TSCORE.FileOpener.openFile(filePath, true);
+      TSCORE.showSuccessDialog("File created successfully."); // TODO translate
     }, function(error) {
       TSCORE.hideLoadingAnimation();
-      console.error("Save to file " + filePath + " failed " + error);
-      TSCORE.showAlertDialog("Saving " + filePath + " failed.");
+      console.log("Creating the " + filePath + " failed " + error);
+      TSCORE.showAlertDialog("Creating " + filePath + " failed.");
     });
   }
 
