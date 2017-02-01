@@ -42,23 +42,6 @@ define(function(require, exports, module) {
     TSCORE.hideWaitingDialog();
   };
 
-  exports.loadTextFile = function(content) {
-    TSCORE.FileOpener.updateEditorContent(content);
-    TSCORE.hideLoadingAnimation();
-  };
-
-  exports.saveTextFile = function(filePath, isNewFile) {
-    TSCORE.PerspectiveManager.refreshFileListContainer();
-    if (isNewFile) {
-      TSCORE.showSuccessDialog("File created successfully.");
-      // If file is new open it in edit mode
-      TSCORE.FileOpener.openFile(filePath, true);
-    } else {
-      TSCORE.showSuccessDialog("File saved successfully.");
-    }
-    TSCORE.FileOpener.setFileChanged(false);
-  };
-
   exports.listDirectory = function(anotatedDirList) {
     TSCORE.PerspectiveManager.updateFileBrowserData(anotatedDirList);
     TSCORE.updateSubDirs(anotatedDirList);
@@ -95,10 +78,6 @@ define(function(require, exports, module) {
     TSCORE.hideLoadingAnimation();
   };
 
-  exports.checkNewVersion = function(data) {
-    TSCORE.updateNewVersionData(data);
-  };
-
   exports.selectDirectory = function(dirPath) {
     // TODO make the use of this function more general
     if (!TSCORE.TagUtils.stringEndsWith(dirPath, TSCORE.dirSeparator)) {
@@ -112,5 +91,4 @@ define(function(require, exports, module) {
     $('#folderLocation2').blur();
     $('#moveCopyDirectoryPath').val(dirPath);
   };
-
 });

@@ -43,7 +43,7 @@ define(function(require, exports, module) {
 
   function handleStartParameters() {
     var filePath = TSCORE.Utils.getURLParameter("open");
-    if (filePath && (filePath.length > 0)) {
+    if (filePath && filePath.length) {
       filePath = decodeURIComponent(filePath);
       console.log("Opening file from command line: " + filePath);
       TSCORE.FileOpener.openFileOnStartup(filePath);
@@ -847,6 +847,8 @@ define(function(require, exports, module) {
    * @returns {Promise.<Success, Error>}
    */
   function saveFilePromise(filePath, content, overwrite) {
+    overwrite = overwrite || true; // TODO check if true should the default value
+
     return new Promise(function(resolve, reject) {
       function saveFile(filePath, content, isNewFile) {
         fs.writeFile(filePath, content, 'utf8', function(error) {
@@ -859,7 +861,6 @@ define(function(require, exports, module) {
       }
 
       getPropertiesPromise(filePath).then(function(entry) {
-        overwrite = overwrite || true;
         if (entry && entry.isFile && overwrite) {
           saveFile(filePath, content, false);
         } else {

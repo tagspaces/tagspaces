@@ -61,7 +61,7 @@ define(function(require, exports, module) {
         break;
       case "checkNewVersion":
         if (message.success) {
-          TSPOSTIO.checkNewVersion(message.content);
+          TSCORE.updateNewVersionData(message.content);
         } else {
           console.error("Checking for new version failed.");
         }

@@ -219,7 +219,7 @@ define(function(require, exports, module) {
         type: 'GET'
       })
       .done(function(data) {
-        TSPOSTIO.checkNewVersion(data);
+        TSCORE.updateNewVersionData(data);
       })
       .fail(function(data) {
         console.log("AJAX failed " + data);

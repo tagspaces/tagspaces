@@ -20,7 +20,6 @@ define(function(require, exports, module) {
   //$("#logo").text("TagSpaces Lite");
 
   var TSCORE = require("tscore");
-  var TSPOSTIO = require("tspostioapi");
   var saveAs = require("libs/filesaver.js/FileSaver.min");
 
   var dataBegin = "<script>addRow(";
@@ -79,7 +78,7 @@ define(function(require, exports, module) {
         type: 'GET'
       })
       .done(function(data) {
-        TSPOSTIO.checkNewVersion(data);
+        TSCORE.updateNewVersionData(data);
       })
       .fail(function(data) {
         console.log("AJAX failed " + data);
