@@ -8,7 +8,7 @@
         "description": "Title of the application launcher in the browser."
     },
     "saveBookmarkTitle": {
-        "message": "Bookmark the page",
+        "message": "Ajouter aux favoris",
         "description": "Title of bookmark button"
     },
     "appDesc": {
@@ -32,7 +32,7 @@
         "description": ""
     },
     "saveBookmarkLabel": {
-        "message": "Bookmark",
+        "message": "Favoris\n",
         "description": "Title of label."
     },
     "appLauncherLabel": {

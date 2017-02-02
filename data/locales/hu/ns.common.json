@@ -257,5 +257,8 @@
     "createNewButton": "Új",
     "createNewButtonTitle": "Nyisd meg a menüt új dokumentum létrehozásához",
     "createNewDocument": "Új dokumentum létrehozása",
+    "geoTaggingNotPossible": "Geo-címkézés nem lehetséges!",
+    "needProVersion": "A funkció használatához szükséges megvásárolni a PRO verziót.",
+    "sizeInBytes": "byte-ok",
     "-": "-"
 }

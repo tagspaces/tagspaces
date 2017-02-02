@@ -12,7 +12,7 @@
         "description": "Title of bookmark button"
     },
     "appDesc": {
-        "message": "Filhanterare med webbinnehållsskrapning och Chromecast support.",
+        "message": "Filhanterare med taggar och möjlighet för webbskrapning and Chromecast funktion.",
         "description": ""
     },
     "addTagHelp": {
