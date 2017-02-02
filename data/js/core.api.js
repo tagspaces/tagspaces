@@ -231,7 +231,7 @@ define(function(require, exports, module) {
       tsCoreUI.showFileRenameDialog(TSCORE.selectedFiles[0]);
     });
     Mousetrap.bind(tsSettings.getDeleteDocumentKeyBinding(), function() {
-      tsCoreUI.showDeleteFilesDialog(TSCORE.selectedFiles[0]);
+      tsCoreUI.showDeleteFilesDialog();
     });
     Mousetrap.bind(tsSettings.getOpenFileKeyBinding(), function() {
       tsFileOpener.openFile(TSCORE.selectedFiles[0]);
