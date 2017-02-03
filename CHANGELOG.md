@@ -1,5 +1,33 @@
 ﻿#Changelog
 
+## Version 2.7.0 / 2017.02.05
+
+### Community
+adjsuting ui for file and folder properties
+fixing psn startup parameter issue #489
+adjustments in the folder and file properties areas
+refactoring directory properties
+new tagspaces documentation
+showing the count of tags in a taggroup only if it collaprsed
+adding editing of the description for folders
+adding support for gfm breaks for the markdown renderer
+fixing undefined in the file name #430
+adding description for directories
+adding white backgroud to the editor
+adjustments in file descriptions
+exchanging the user ideas link
+redesigning file properties functionality
+settings: Cap max result to 2000 instead of setting limit to 0
+fixing #411
+temp fix for the form validation
+fix relative path on portable #498
+adding danish language files
+changing the reload application shortcut key to F5
+adding support for saving the windows state, size and location
+optimizing location management template for testing
+Ignore file/dir names that start with dot, instead of full paths. Fixes #494.
+
+
 ## Version 2.6.0 / 2016.11.23
 
 ### Community
