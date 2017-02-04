@@ -1,31 +1,39 @@
 ﻿#Changelog
 
-## Version 2.7.0 / 2017.02.05
+## Version 2.7.0 / 2017.02.04
 
 ### Community
-adjsuting ui for file and folder properties
-fixing psn startup parameter issue #489
-adjustments in the folder and file properties areas
-refactoring directory properties
-new tagspaces documentation
-showing the count of tags in a taggroup only if it collaprsed
-adding editing of the description for folders
-adding support for gfm breaks for the markdown renderer
-fixing undefined in the file name #430
-adding description for directories
-adding white backgroud to the editor
-adjustments in file descriptions
-exchanging the user ideas link
-redesigning file properties functionality
-settings: Cap max result to 2000 instead of setting limit to 0
-fixing #411
-temp fix for the form validation
-fix relative path on portable #498
-adding danish language files
-changing the reload application shortcut key to F5
-adding support for saving the windows state, size and location
-optimizing location management template for testing
-Ignore file/dir names that start with dot, instead of full paths. Fixes #494.
+- redesigning the user interface for file and directory properties
+- read only support for file and directory description
+- showing the count of tags in a tag group only if it is collapsed
+- adding support for gfm breaks for the markdown transformer
+- updating the user ideas link to point to a [trello board](https://trello.com/b/TGeG5bi9/)
+- fix for the form validation in the dialogs
+- adding danish translations
+- saving the windows state, size and location for the next start of tha app
+- cap max result to 2000 in settings instead of setting the limit to 0
+- redesigning the file properties area
+- changing the reload application shortcut key to F5
+- added link to the new tagspaces documentation website
+- improved performance by search
+- migration to electron 1.4.14
+- [#494](https://github.com/tagspaces/tagspaces/issues/494) fixed - ignore file/directory names that start with dot, instead of full paths
+- [#430](https://github.com/tagspaces/tagspaces/issues/430) fixed - undefined in the file name
+- [#498](https://github.com/tagspaces/tagspaces/issues/498) fixed - support for relative path in portable mode
+- [#489](https://github.com/tagspaces/tagspaces/issues/489) fixed - psn startup parameter issue on mac
+- [#454](https://github.com/tagspaces/tagspaces/issues/454) fixed
+- [#405](https://github.com/tagspaces/tagspaces/issues/405) fixed
+- [#411](https://github.com/tagspaces/tagspaces/issues/411) fixed
+
+### Pro
+- added file description editor in the file properties area
+- added directory description in the directory properties are
+
+### Chrome Extension and Firefox Addon
+- improved onboarding for the chrome extension
+
+### Android App
+- corrected the loading of meta data
 
 
 ## Version 2.6.0 / 2016.11.23
