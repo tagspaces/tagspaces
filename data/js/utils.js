@@ -380,6 +380,13 @@ define(function(require, exports, module) {
     }
   }
 
+  function guid() {
+    function s4() {
+      return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+    }
+    return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+  }
+
   exports.arrayBufferToDataURL = arrayBufferToDataURL;
   exports.base64ToArrayBuffer = base64ToArrayBuffer;
   exports.dataURLtoBlob = dataURLtoBlob;
@@ -406,6 +413,7 @@ define(function(require, exports, module) {
   exports.parseDateMonth = parseDateMonth;
   exports.splitValue = splitValue;
   exports.handleLinks = handleLinks;
+  exports.guid = guid;
   exports.setMarkDownContent = setMarkDownContent;
 
 });
