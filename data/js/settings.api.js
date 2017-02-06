@@ -182,12 +182,12 @@ define(function(require, exports, module) {
           exports.Settings.tagGroups.forEach(function(value) {
             if (value.key === 'SMR') {
               value.children.push({
-                  "type":          "smart",
-                  "title":         "geo-tag",
-                  "functionality": "geoTagging",
-                  "desciption":    "Add geo coordinates as a tag",
-                  "color":         "#4986e7",
-                  "textcolor":     "#ffffff"
+                "type": "smart",
+                "title": "geo-tag",
+                "functionality": "geoTagging",
+                "desciption": "Add geo coordinates as a tag",
+                "color": "#4986e7",
+                "textcolor": "#ffffff"
               });
             }
           });
@@ -984,6 +984,7 @@ define(function(require, exports, module) {
 
     exports.Settings.coloredFileExtensionsEnabled = value;
   }
+
   function getShowTagAreaOnStartup() {
     if (exports.Settings.showTagAreaOnStartup === undefined) {
       exports.Settings.showTagAreaOnStartup = exports.DefaultSettings.showTagAreaOnStartup;
@@ -1349,6 +1350,21 @@ define(function(require, exports, module) {
     console.log('Default settings loaded.');
   }
 
+  function restoreDefaultTagGroups() {
+    exports.Settings.tagGroups.forEach(function(value, index) {
+      if (value.key.length > 3) {
+        value.color = exports.DefaultSettings.defaultTagColor;
+        value.textcolor = exports.DefaultSettings.defaultTagTextColor;
+        //value.key = '' + TSCORE.Utils.getRandomInt(10000, 99999);
+        value.key = TSCORE.Utils.guid();
+      }
+    });
+    setDefaultTagColor(exports.DefaultSettings.defaultTagColor);
+    setDefaultTagTextColor(exports.DefaultSettings.defaultTagTextColor);
+    saveSettings();
+    TSCORE.reloadUI();
+  }
+
   function loadSettingsLocalStorage() {
     try {
       var tmpSettings = JSON.parse(localStorage.getItem('tagSpacesSettings'));
@@ -1526,6 +1542,7 @@ define(function(require, exports, module) {
   exports.updateSettingMozillaPreferences = updateSettingMozillaPreferences;
   exports.loadSettingsLocalStorage = loadSettingsLocalStorage;
   exports.loadDefaultSettings = loadDefaultSettings;
+  exports.restoreDefaultTagGroups = restoreDefaultTagGroups;
   exports.saveSettings = saveSettings;
   exports.addTagGroup = addTagGroup;
   exports.setWriteMetaToSidecarFile = setWriteMetaToSidecarFile;
