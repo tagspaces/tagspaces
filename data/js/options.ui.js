@@ -69,33 +69,6 @@ define(function(require, exports, module) {
     $('#useGenerateThumbnails').attr('disabled', !isMetaEnabled);
   }
 
-  function restoreDefaultTagColor() {
-    var defaultTagColor = TSCORE.Config.getDefaultTagColor();
-    var defaultTagTextColor = TSCORE.Config.getDefaultTagTextColor();
-    console.log(defaultTagColor)
-    console.log(defaultTagTextColor)
-
-    var $tagsBackgroundColorChooser = $('#tagsBackgroundColorChooser');
-    var $tagsBackgroundColor = $('#tagsBackgroundColor');
-    var $tagForegroundColor = $('#tagsForegroundColor');
-    $tagsBackgroundColorChooser.simplecolorpicker({
-      picker: false
-    });
-    $tagsBackgroundColorChooser.on('change', function() {
-      $tagsBackgroundColor.val($tagsBackgroundColorChooser.val());
-    });
-    $tagsBackgroundColor.val(defaultTagColor);
-
-    var $tagForegroundColorChooser = $('#tagForegroundColorChooser');
-    $tagForegroundColorChooser.simplecolorpicker({
-      picker: false
-    });
-    $tagForegroundColorChooser.on('change', function() {
-      $tagForegroundColor.val($tagForegroundColorChooser.val());
-    });
-    $tagForegroundColor.val(defaultTagTextColor);
-  }
-
   function initUI() {
     var defaultTagColor = TSCORE.Config.getDefaultTagColor();
     var defaultTagTextColor = TSCORE.Config.getDefaultTagTextColor();
@@ -151,7 +124,6 @@ define(function(require, exports, module) {
       TSCORE.showConfirmDialog(
         $.i18n.t('ns.dialogs:restoreDefaultTagGroups'),
         $.i18n.t('ns.dialogs:restoreDefaultTagGroupsMessage'), function() {
-          restoreDefaultTagColor();
           TSCORE.Config.restoreDefaultTagGroups();
         });
     });
