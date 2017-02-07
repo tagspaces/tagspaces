@@ -1352,15 +1352,15 @@ define(function(require, exports, module) {
 
   function restoreDefaultTagGroups() {
     exports.DefaultSettings.tagGroups.forEach(function(value, index) {
-      if(exports.DefaultSettings.tagGroups[index].title !== exports.Settings.tagGroups[index].title){
+      if (exports.DefaultSettings.tagGroups[index].title !== exports.Settings.tagGroups[index].title) {
         exports.Settings.tagGroups.splice(index, 1, exports.DefaultSettings.tagGroups[index]);
         exports.Settings.tagGroups[index].key = TSCORE.Utils.guid();
       }
-      if (value.key.length > exports.DefaultSettings.tagGroups[index].key.length) {
-        value.color = exports.DefaultSettings.defaultTagColor;
-        value.textcolor = exports.DefaultSettings.defaultTagTextColor;
-        value.key = TSCORE.Utils.guid();
-      }
+      //if (value.key.length > exports.DefaultSettings.tagGroups[index].key.length) {
+      //  value.color = exports.DefaultSettings.defaultTagColor;
+      //  value.textcolor = exports.DefaultSettings.defaultTagTextColor;
+      //  value.key = TSCORE.Utils.guid();
+      //}
     });
     //exports.Settings.tagGroups.slice(exports.DefaultSettings.tagGroups.length, exports.Settings.tagGroups.length);
     setDefaultTagColor(exports.DefaultSettings.defaultTagColor);
