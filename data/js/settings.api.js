@@ -1357,7 +1357,7 @@ define(function(require, exports, module) {
     });
     TSCORE.generateTagGroups(exports.Settings.tagGroups);
     saveSettings();
-    TSCORE.showSuccessDialog($.i18n.t('ns.dialogs:restoreDefaultSuccessMessage'));
+    TSCORE.showSuccessDialog($.i18n.t('ns.dialogs:recreateDefaultSuccessMessage'));
   }
 
   function loadSettingsLocalStorage() {

@@ -120,10 +120,10 @@ define(function(require, exports, module) {
           TSCORE.Config.loadDefaultSettings();
         });
     });
-    $('#restoreDefaultTagGroups').click(function() {
+    $('#recreateDefaultTagGroups').click(function() {
       TSCORE.showConfirmDialog(
-        $.i18n.t('ns.dialogs:restoreDefaultTagGroups'),
-        $.i18n.t('ns.dialogs:restoreDefaultTagGroupsMessage'), function() {
+        $.i18n.t('ns.dialogs:recreateDefaultTagGroups'),
+        $.i18n.t('ns.dialogs:recreateDefaultTagGroupsMessage'), function() {
           TSCORE.Config.restoreDefaultTagGroups();
         });
     });
