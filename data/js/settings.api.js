@@ -1355,8 +1355,8 @@ define(function(require, exports, module) {
       exports.Settings.tagGroups.push(exports.DefaultSettings.tagGroups[index]);
       exports.Settings.tagGroups[index].key = TSCORE.Utils.guid();
     });
-    TSCORE.generateTagGroups(exports.Settings.tagGroups);
     saveSettings();
+    TSCORE.generateTagGroups();
     TSCORE.showSuccessDialog($.i18n.t('ns.dialogs:recreateDefaultSuccessMessage'));
   }
 
