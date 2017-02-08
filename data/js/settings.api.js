@@ -1413,6 +1413,29 @@ define(function(require, exports, module) {
     }
   }
 
+  var saveAs = require('libs/filesaver.js/FileSaver.min.js');
+
+  function exportTagGroups() {
+    var jsonFormat = '{ "appName": "' + TSCORE.Config.DefaultSettings.appName +
+      '", "appVersion": "' + TSCORE.Config.DefaultSettings.appVersion +
+      '", "appBuild": "' + TSCORE.Config.DefaultSettings.appBuild +
+      '", "settingsVersion": ' + TSCORE.Config.DefaultSettings.settingsVersion +
+      ', "tagGroups": ';
+
+    var getAllTags = [];
+    TSCORE.Config.getAllTagGroupData().forEach(function(value, index) {
+      getAllTags.push(value);
+      getAllTags[index].key = TSCORE.Utils.guid();
+    });
+
+    var blob = new Blob([jsonFormat + JSON.stringify(getAllTags) + '}'], {
+      type: 'application/json'
+    });
+    var dateTimeTag = TSCORE.TagUtils.formatDateTime4Tag(new Date(), true);
+    saveAs(blob, 'tsm[' + dateTimeTag + '].json');
+    console.log('TagGroup Data Exported...');
+  }
+
   // Public API definition
   exports.upgradeSettings = upgradeSettings;
   exports.getActivatedPerspectives = getActivatedPerspectives;
@@ -1520,6 +1543,7 @@ define(function(require, exports, module) {
   exports.getTagGroupData = getTagGroupData;
   exports.getAllTagGroupData = getAllTagGroupData;
 
+  exports.exportTagGroups = exportTagGroups;
   exports.deleteTag = deleteTag;
   exports.deleteTagGroup = deleteTagGroup;
   exports.editTag = editTag;
