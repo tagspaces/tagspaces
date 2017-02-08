@@ -1355,10 +1355,9 @@ define(function(require, exports, module) {
       exports.Settings.tagGroups.push(exports.DefaultSettings.tagGroups[index]);
       exports.Settings.tagGroups[index].key = TSCORE.Utils.guid();
     });
-    setDefaultTagColor(exports.DefaultSettings.defaultTagColor);
-    setDefaultTagTextColor(exports.DefaultSettings.defaultTagTextColor);
+    TSCORE.generateTagGroups(exports.Settings.tagGroups);
     saveSettings();
-    TSCORE.reloadUI();
+    TSCORE.showSuccessDialog($.i18n.t('ns.dialogs:restoreDefaultSuccessMessage'));
   }
 
   function loadSettingsLocalStorage() {
@@ -1423,7 +1422,7 @@ define(function(require, exports, module) {
       ', "tagGroups": ';
 
     var getAllTags = [];
-    TSCORE.Config.getAllTagGroupData().forEach(function(value, index) {
+    getAllTagGroupData().forEach(function(value, index) {
       getAllTags.push(value);
       getAllTags[index].key = TSCORE.Utils.guid();
     });
