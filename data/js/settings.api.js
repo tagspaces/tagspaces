@@ -1352,10 +1352,9 @@ define(function(require, exports, module) {
 
   function restoreDefaultTagGroups() {
     exports.DefaultSettings.tagGroups.forEach(function(value, index) {
-      exports.Settings.tagGroups[index] = exports.DefaultSettings.tagGroups[index];
+      exports.Settings.tagGroups.push(exports.DefaultSettings.tagGroups[index]);
       exports.Settings.tagGroups[index].key = TSCORE.Utils.guid();
     });
-    exports.Settings.tagGroups = exports.Settings.tagGroups.slice(0, exports.DefaultSettings.tagGroups.length);
     setDefaultTagColor(exports.DefaultSettings.defaultTagColor);
     setDefaultTagTextColor(exports.DefaultSettings.defaultTagTextColor);
     saveSettings();
