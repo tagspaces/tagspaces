@@ -135,7 +135,7 @@ define(function(require, exports, module) {
 
   function searchData(data, query) {
     // TODO make a switch in gui for content search
-    var searchContentSupported = (isChrome || isFirefox || isWeb) ? false : true;
+    var searchContentSupported = (isChrome || isFirefox) ? false : true;
     var queryObj = prepareQuery(query);
     var searchResults = [];
     var metaDirPattern = TSCORE.dirSeparator + TSCORE.metaFolder + TSCORE.dirSeparator;
