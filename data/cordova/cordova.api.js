@@ -146,6 +146,7 @@ define(function(require, exports, module) {
     } else {
       path = (isCordovaiOS) ? cordova.file.documentsDirectory + "/" + path : "file:///" + path;
     }
+    path = encodeURI(path);
     return new Promise(function(resolve, reject) {
       window.resolveLocalFileSystemURL(path, resolve,
         function(error) {
@@ -605,6 +606,7 @@ define(function(require, exports, module) {
    */
   function saveFilePromise(filePath, content, overWrite, isRaw) {
     console.log("Saving file: " + filePath);
+    filePath = encodeURI(filePath); // TODO check if really needed, saving files with % in the path still fails
     return new Promise(function(resolve, reject) {
       var isFileNew = true;
       filePath = normalizePath(filePath);
