@@ -237,6 +237,11 @@ button.close {
   min-width: 200px;
 }
 
+.modal-backdrop.in {
+  opacity: 0.15;
+  filter: alpha(opacity=15);
+}
+
 /* END Bootstap modals fullscreen on small screen */
 
 /* Tablet optimization */
