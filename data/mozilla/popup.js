@@ -52,13 +52,24 @@
 
     function saveBookmark() {
         var tags = document.getElementById("tags").value;
-        var content = "<a href='" + currentURL + "'>" + currentURL + "</a>";
+        var content = generateURLFile( $('#title').val());
+//        var content = "<a href='" + currentURL + "'>" + currentURL + "</a>";
         if (tags) {
             tags = tags.split(",").join(" ");
-            self.port.emit('saveSelectionAsHtml', $('#title').val() + ' [' + tags + ' bookmark' + '].html', content);
+            self.port.emit('saveSelectionAsHtml', $('#title').val() + ' [' + tags + ' bookmark' + '].url', content);
         } else {
-            self.port.emit('saveSelectionAsHtml', $('#title').val() + '.html', content);            
+            self.port.emit('saveSelectionAsHtml', $('#title').val() + '.url', content);            
         }
+    }
+
+
+    function generateURLFile(title) {
+        return ["[Desktop Entry]",
+                "Encoding=UTF-8",
+                "Name=" + title,
+                "Type=Link",
+                "URL=" + currentURL
+               ].join('\n');
     }
     
   function saveScreenshot() { 
