@@ -22,6 +22,7 @@
     $("#saveAsMhtml").on('click', saveAsMHTML);
     $("#saveSelectionAsHtml").on("click", saveSelectionAsHtml);
     $("#saveScreenshot").on("click", saveScreenshot);
+    $("#saveBookmark").on("click", saveBookmark);  
   }
 
   function saveSelectionAsHtml() {
@@ -49,6 +50,17 @@
     }
   }
 
+    function saveBookmark() {
+        var tags = document.getElementById("tags").value;
+        var content = "<a href='" + currentURL + "'>" + currentURL + "</a>";
+        if (tags) {
+            tags = tags.split(",").join(" ");
+            self.port.emit('saveSelectionAsHtml', $('#title').val() + ' [' + tags + ' bookmark' + '].html', content);
+        } else {
+            self.port.emit('saveSelectionAsHtml', $('#title').val() + '.html', content);            
+        }
+    }
+    
   function saveScreenshot() { 
     var tags = document.getElementById("tags").value;
     if (tags) {
