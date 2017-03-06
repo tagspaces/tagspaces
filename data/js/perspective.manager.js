@@ -200,16 +200,6 @@ define(function(require, exports, module) {
     }
   }
 
-  function updateTreeData(treeData) {
-    for (var i = 0; i < perspectives.length; i++) {
-      try {
-        perspectives[i].updateTreeData(treeData);
-      } catch (e) {
-        console.warn("Error while executing 'updateTreeData' on "); // + perspectives[i].ID + ' ' + e);
-      }
-    }
-  }
-
   function updateFileBrowserData(dirList, isSearchResult) {
     console.log('Updating the file browser data...');
     TSCORE.fileList = [];
@@ -391,7 +381,6 @@ define(function(require, exports, module) {
   exports.getNextFile = getNextFile;
   exports.getPrevFile = getPrevFile;
   exports.selectFile = selectFile;
-  exports.updateTreeData = updateTreeData;
   exports.updateFileBrowserData = updateFileBrowserData;
   exports.refreshFileListContainer = refreshFileListContainer;
   exports.clearSelectedFiles = clearSelectedFiles;
