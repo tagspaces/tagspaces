@@ -10,7 +10,7 @@ extensions
 docs
 data/pro
 data/tsprofile
-#data/ext
+data/ext
 nwjsdata
 data/electron/data
 data/node-webkit/locales
