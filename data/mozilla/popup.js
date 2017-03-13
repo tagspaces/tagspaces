@@ -22,6 +22,7 @@
     $("#saveAsMhtml").on('click', saveAsMHTML);
     $("#saveSelectionAsHtml").on("click", saveSelectionAsHtml);
     $("#saveScreenshot").on("click", saveScreenshot);
+    $("#saveBookmark").on("click", saveBookmark);  
   }
 
   function saveSelectionAsHtml() {
@@ -49,6 +50,28 @@
     }
   }
 
+    function saveBookmark() {
+        var tags = document.getElementById("tags").value;
+        var content = generateURLFile( $('#title').val());
+//        var content = "<a href='" + currentURL + "'>" + currentURL + "</a>";
+        if (tags) {
+            tags = tags.split(",").join(" ");
+            self.port.emit('saveSelectionAsHtml', $('#title').val() + ' [' + tags + ' bookmark' + '].url', content);
+        } else {
+            self.port.emit('saveSelectionAsHtml', $('#title').val() + '.url', content);            
+        }
+    }
+
+
+    function generateURLFile(title) {
+        return ["[Desktop Entry]",
+                "Encoding=UTF-8",
+                "Name=" + title,
+                "Type=Link",
+                "URL=" + currentURL
+               ].join('\n');
+    }
+    
   function saveScreenshot() { 
     var tags = document.getElementById("tags").value;
     if (tags) {
