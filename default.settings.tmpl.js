@@ -81,6 +81,7 @@ define(function (require, exports, module) {
             { "iso": "mt", "title": "Maltese (Maltese)" },
             { "iso": "hy", "title": "հայերեն (Armenian)" },
             { "iso": "da_DK", "title": "Dansk (Danish)" },
+            { "iso": "vi", "title": "Tiếng Việt (Vietnamese)" },
         ],
         "keyBindings": {
             "selectAll": "mod+a",

@@ -1,30 +1,30 @@
 {
     "saveAsSelectionLabel": {
-        "message": "保存选定内容",
+        "message": "Lưu Những Mục Đã Chọn",
         "description": "Title of label."
     },
     "appLauncher": {
-        "message": "启动TagSpaces",
+        "message": "Chạy TagSpaces",
         "description": "Title of the application launcher in the browser."
     },
     "saveBookmarkTitle": {
-        "message": "将当前页添加到书签",
+        "message": "Đánh dấu trang",
         "description": "Title of bookmark button"
     },
     "appDesc": {
-        "message": "支持Web内容抓取以及Chromecast的文件浏览器",
+        "message": "Trình Duyệt Tập Tin với Thu Thập Nội Dung Web và Hỗ Trợ cho Chromecast.",
         "description": ""
     },
     "addTagHelp": {
-        "message": "标签应该有2个字符的最小长度，不应该包含特殊字符。例：空格、＃、 /、\\等。",
+        "message": "Đuôi phải chứa ít nhất 2 ký tự và không chứa các ký tự đặc biệt như dấu cách, #, / ,\\ và những ký tự khác.",
         "description": "Add tag help message"
     },
     "saveScreenshotTitle": {
-        "message": "将可见区域保存为PNG图片",
+        "message": "Lưu ảnh chụp phần trang thấy được dưới dạng PNG",
         "description": "Title of screenshot button"
     },
     "editTitleLabel": {
-        "message": "编辑标题",
+        "message": "Chỉnh Sửa Tiêu Đề",
         "description": "Title of label."
     },
     "appName": {
@@ -32,39 +32,39 @@
         "description": ""
     },
     "saveBookmarkLabel": {
-        "message": "书签",
+        "message": "Đánh dấu",
         "description": "Title of label."
     },
     "appLauncherLabel": {
-        "message": "抓取Web内容",
+        "message": "Thu Thập Nội Dung Web",
         "description": "Title of label."
     },
     "saveScreenshotLabel": {
-        "message": "截图",
+        "message": "Ảnh chụp màn hình",
         "description": "Title of label."
     },
     "addTagLabel": {
-        "message": "添加标签",
+        "message": "Thêm Đuôi",
         "description": "Title of label."
     },
     "saveAsMhtmlTitle": {
-        "message": "将整个页面保存为MHTML",
+        "message": "Lưu cả trang dưới dạng MHTML",
         "description": "Title of save page button"
     },
     "appLauncherTitle": {
-        "message": "在新标签页中启动TagSpaces浏览器",
+        "message": "Khởi chạy Trình Duyệt TagSpaces trong một thẻ mới",
         "description": "Title of the application launcher in the browser."
     },
     "saveSelectionAsHtmlTitle": {
-        "message": "将选中的内容保存为HTML",
+        "message": "Lưu nội dung được chọn dưới dạng HTML",
         "description": "Title of save selection button"
     },
     "saveAsMhtmlLabel": {
-        "message": "保存整页面",
+        "message": "Lưu Cả Trang",
         "description": "Title of label."
     },
     "saveFileLabel": {
-        "message": "保存为文件",
+        "message": "Lưu Dưới Dạng Tập Tin",
         "description": "Title of label."
     }
 }
