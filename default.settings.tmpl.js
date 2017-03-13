@@ -168,7 +168,8 @@ define(function (require, exports, module) {
             { "type": "desktop", "viewer": "viewerURL", "editor": "false" },
             { "type": "website", "viewer": "viewerURL", "editor": "false" },
             { "type": "url", "viewer": "viewerURL", "editor": "false" },
-            { "type": "zip", "viewer": "viewerZIP", "editor": "false" }
+            { "type": "zip", "viewer": "viewerZIP", "editor": "false" },
+            { "type": "rtf", "viewer": "viewerRTF", "editor": "false" }
         ],
         "tagGroups": [
             {

@@ -193,6 +193,13 @@ define(function(require, exports, module) {
           });
         }
       }
+      if (oldBuildNumber <= 20170203223208) {
+        addFileType({
+          'type': 'rtf',
+          'viewer': 'viewerRTF',
+          'editor': 'false'
+        });
+      }
 
       saveSettings();
     }
