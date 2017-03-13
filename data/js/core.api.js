@@ -159,10 +159,6 @@ define(function(require, exports, module) {
       initKeyBindings();
       tsIOApi.checkAccessFileURLAllowed ? tsIOApi.checkAccessFileURLAllowed() : true;
 
-      if (isNode || isChrome || isElectron || isWeb) {
-        // Handle command line argument in node-webkit
-        tsIOApi.handleStartParameters(); // Handle minimizing to the tray in node-webkit
-      }
       console.log('Document ready finished. Layout initialized');
       checkForNewVersion();
     });

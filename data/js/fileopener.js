@@ -1,4 +1,4 @@
-/* Copyright (c) 2012-2016 The TagSpaces Authors. All rights reserved.
+/* Copyright (c) 2012-2017 The TagSpaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that
  * can be found in the LICENSE file. */
 
@@ -336,19 +336,11 @@ define(function(require, exports, module) {
   }
 
   function openFileOnStartup(filePath) {
-    //TSCORE.Config.setLastOpenedLocation(undefined);
+    console.log("Opening file from command line: " + filePath);
 
     // quick and dirty solution, should use flag later
     TSCORE.toggleFullWidth();
     TSCORE.FileOpener.openFile(filePath);
-
-    /*var parentFolderPath = TSCORE.TagUtils.extractContainingDirectoryPath(filePath);
-     TSCORE.IO.listDirectoryPromise(parentFolderPath).then(function(entries) {
-     TSPOSTIO.listDirectory(entries);
-     }).catch(function(err) {
-     TSPOSTIO.errorOpeningPath();
-     });*/
-
   }
 
   function openFile(filePath, editMode) {

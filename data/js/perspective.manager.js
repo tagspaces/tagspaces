@@ -51,19 +51,30 @@ define(function(require, exports, module) {
     }
 
     return Promise.all(promises).then(function() {
+      TSCORE.IO.checkAccessFileURLAllowed ? TSCORE.IO.checkAccessFileURLAllowed() : true;
+
       initPerspectiveSwitcher();
       // Opening last saved location by the start of the application
       var lastLocation = TSCORE.Config.getLastOpenedLocation();
       if (TSCORE.Config.getUseDefaultLocation()) {
         lastLocation = TSCORE.Config.getDefaultLocation();
       }
-      if (lastLocation && lastLocation.length >= 1) {
+
+      var startupFilePath = TSCORE.Utils.getURLParameter("open");
+      if (startupFilePath && startupFilePath.length) {
+        startupFilePath = decodeURIComponent(startupFilePath);
+
+        /*var parentFolderPath = TSCORE.TagUtils.extractContainingDirectoryPath(startupFilePath);
+        TSCORE.IO.listDirectoryPromise(parentFolderPath).then(function(entries) {
+          TSPOSTIO.listDirectory(entries);
+        })*/
+        TSCORE.FileOpener.openFileOnStartup(startupFilePath);
+      } else if (lastLocation && lastLocation.length >= 1) {
         TSCORE.openLocation(lastLocation);
-        TSCORE.IO.checkAccessFileURLAllowed ? TSCORE.IO.checkAccessFileURLAllowed() : true;
-        var evt = TSCORE.createDocumentEvent("initApp");
-        TSCORE.fireDocumentEvent(evt);
-        $("#viewContainers").removeClass("appBackgroundTile");
       }
+
+      TSCORE.fireDocumentEvent(TSCORE.createDocumentEvent("initApp"));
+      $("#viewContainers").removeClass("appBackgroundTile");
       $('#loading').hide();
       if (isNode || isElectron) {
         TSCORE.IO.showMainWindow();
