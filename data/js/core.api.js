@@ -332,13 +332,14 @@ define(function(require, exports, module) {
     // max. estimated to 40 ca. 5 symbols per tag _[er], max. path length 25x chars
     headers.push('path');
     headers.push('title');
+    headers.push('changed_date');
     headers.push('size');
     for (var i = 0; i < numberOfTagColumns; i++) {
       headers.push('tag' + i);
     }
     csv += headers.join(',') + '\n';
     for (var i = 0; i < fileList.length; i++) {
-      var row = fileList[i].path + ',' + fileList[i].title + ',' + fileList[i].size + ',' + fileList[i].tags;
+      var row = fileList[i].path + ',' + fileList[i].title + ',' + (new Date(fileList[i].lmdt)).toISOString() + ',' + fileList[i].size + ',' + fileList[i].tags;
       rows.push(row);
     }
     csv += rows.join('\n');
