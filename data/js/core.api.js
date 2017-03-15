@@ -1,4 +1,4 @@
-/* Copyright (c) 2012-2015 The TagSpaces Authors. All rights reserved.
+/* Copyright (c) 2012-2017 The TagSpaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that
  * can be found in the LICENSE file. */
 /*global isNode, isWin, isFirefox, Mousetrap, gui */
@@ -422,14 +422,12 @@ define(function(require, exports, module) {
     }
 
     if (shouldOpenCol2) {
-      //$("#openLeftPanel").hide();
       $(".col2").show();
     } else {
       $(".col2").hide();
     }
 
     if (shouldOpenCol3) {
-      //$("#openLeftPanel").hide();
       $(".col3").show();
       hidePerspectiveMenu();
     } else {
@@ -438,7 +436,6 @@ define(function(require, exports, module) {
   }
 
   function hidePerspectiveMenu() {
-
     $(".perspectiveMainMenuButton").hide();
   }
 
@@ -476,7 +473,6 @@ define(function(require, exports, module) {
   }
 
   function reloadUI() {
-
     location.reload();
   }
 
