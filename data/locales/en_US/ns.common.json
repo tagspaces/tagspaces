@@ -261,5 +261,8 @@
   "geoTaggingNotPossible": "Geo Tagging not possible!",
   "needProVersion": "You need the PRO version in order to use this functionality.",
   "sizeInBytes": "bytes",
+  "error": "Error",
+  "warning": "Warning",
+  "info": "Info",
   "-": "-"
 }
