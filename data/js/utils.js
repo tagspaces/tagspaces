@@ -372,11 +372,24 @@ define(function(require, exports, module) {
   }
 
   function setMarkDownContent($targetElement, content) {
+    $targetElement.html(convertMarkdown(content));
+    handleLinks($targetElement);
+  }
+
+  function convertMarkdown(content) {
+    var mdOptions = {
+      gfm: true,
+      tables: true,
+      breaks: true,
+      pedantic: false,
+      sanitize: true,
+      smartLists: true,
+      smartypants: false
+    }
     if (marked) {
-      $targetElement.html(marked(content, {gfm: true, breaks: true, sanitize: true}));
-      handleLinks($targetElement);
+      return marked(content, mdOptions);
     } else {
-      console.log("Marked library not loaded...");
+      console.warn("Marked library not loaded...");
     }
   }
 
@@ -415,5 +428,6 @@ define(function(require, exports, module) {
   exports.handleLinks = handleLinks;
   exports.guid = guid;
   exports.setMarkDownContent = setMarkDownContent;
+  exports.convertMarkdown = convertMarkdown;
 
 });
