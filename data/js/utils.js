@@ -11,6 +11,11 @@ define(function(require, exports, module) {
   var TSCORE = require('tscore');
   var TSPOSTIO = require('tspostioapi');
   var marked = require("marked");
+  var saveAs = require("filesaver");
+
+  function saveAsTextFile(blob, filename) {
+    saveAs(blob, filename);
+  }
 
   //Conversion utility
   function arrayBufferToDataURL(arrayBuffer, mime) {
@@ -429,5 +434,6 @@ define(function(require, exports, module) {
   exports.guid = guid;
   exports.setMarkDownContent = setMarkDownContent;
   exports.convertMarkdown = convertMarkdown;
+  exports.saveAsTextFile = saveAsTextFile;
 
 });

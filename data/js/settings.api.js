@@ -1419,8 +1419,6 @@ define(function(require, exports, module) {
     }
   }
 
-  var saveAs = require('libs/filesaver.js/FileSaver.min.js');
-
   function exportTagGroups() {
     var jsonFormat = '{ "appName": "' + TSCORE.Config.DefaultSettings.appName +
       '", "appVersion": "' + TSCORE.Config.DefaultSettings.appVersion +
@@ -1438,7 +1436,7 @@ define(function(require, exports, module) {
       type: 'application/json'
     });
     var dateTimeTag = TSCORE.TagUtils.formatDateTime4Tag(new Date(), true);
-    saveAs(blob, 'tsm[' + dateTimeTag + '].json');
+    TSCORE.Utils.saveAsTextFile(blob, 'tsm[' + dateTimeTag + '].json');
     console.log('TagGroup Data Exported...');
   }
 
