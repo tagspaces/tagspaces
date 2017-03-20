@@ -11,7 +11,7 @@ define(function(require, exports, module) {
   var TSCORE = require('tscore');
   var TSPOSTIO = require('tspostioapi');
   var marked = require("marked");
-  var saveAs = require("filesaver");
+  var saveAs = require("libs/filesaver.js/FileSaver.min");
 
   function saveAsTextFile(blob, filename) {
     saveAs(blob, filename);

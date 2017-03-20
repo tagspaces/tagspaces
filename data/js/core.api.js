@@ -335,7 +335,13 @@ define(function(require, exports, module) {
     }
     csv += headers.join(',') + '\n';
     for (var i = 0; i < fileList.length; i++) {
-      var row = fileList[i].path + ',' + fileList[i].title + ',' + (new Date(fileList[i].lmdt)).toISOString() + ',' + fileList[i].size + ',' + fileList[i].tags;
+      var lmtd = "";
+      try {
+        lmtd = (new Date(fileList[i].lmdt)).toISOString();
+      } catch (e) {
+        console.log("error parsing lmdt date");
+      }
+      var row = fileList[i].path + ',' + fileList[i].title + ',' + lmtd + ',' + fileList[i].size + ',' + fileList[i].tags;
       rows.push(row);
     }
     csv += rows.join('\n');
