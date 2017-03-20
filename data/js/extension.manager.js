@@ -23,7 +23,7 @@ define(function(require, exports, module) {
     }
     if (isWin) {
       var extRealPath = location.href.replace(/file:\/\/\//gi, "").replace(/index.html/gi, extPath);
-      return extRealPath;
+      return decodeURI(extRealPath);
     }
     return location.href.replace(/file:\/\//gi, "").replace(/index.html/gi, extPath);
   }
