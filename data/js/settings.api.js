@@ -266,6 +266,14 @@ define(function(require, exports, module) {
 
   //////////////////// getter and setter methods ///////////////////
 
+  function getAppFullName() {
+      var appFullName = "TagSpaces"; // TODO extend settings with app full name
+      if (TSCORE.PRO) {
+        appFullName = appFullName + " Pro";
+      }
+      return appFullName;
+  }
+
   function getPerspectiveExtensions() {
     var perspectives = [];
     getExtensions().forEach(function(extension) {
@@ -1442,6 +1450,7 @@ define(function(require, exports, module) {
 
   // Public API definition
   exports.upgradeSettings = upgradeSettings;
+  exports.getAppFullName = getAppFullName;
   exports.getActivatedPerspectives = getActivatedPerspectives;
   exports.setActivatedPerspectives = setActivatedPerspectives;
   exports.getExtensions = getExtensions;

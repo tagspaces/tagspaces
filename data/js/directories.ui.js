@@ -126,7 +126,7 @@ define(function(require, exports, module) {
     }
 
     if (TSCORE.currentLocationObject !== undefined) {
-      document.title = TSCORE.currentLocationObject.name + ' | ' + TSCORE.Config.DefaultSettings.appName;
+      document.title = TSCORE.currentLocationObject.name + ' | ' + TSCORE.Config.getAppFullName();
       $('#locationName').removeAttr("data-i18n");
       $('#locationName').text(TSCORE.currentLocationObject.name).attr('title', path);
       // Handle open default perspective for a location
