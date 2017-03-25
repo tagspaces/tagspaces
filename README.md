@@ -25,7 +25,6 @@ To get updates you can:
     ./data/electron......contains the implementation and API for the Electron platform (Windows, Linux, OS X releases)
     ./data/mozilla.......contains the implementation and API of the Firefox Addon release of the application
     ./data/web...........contains the implementation and API of the WebDAV/ownCloud release of the application
-    ./data/node-webkit...contains the implementation and API for the NW.js platform (deprecated)
     ./data/templates.....contains HTML templates needed for the UI
     ./data/locales.......contains files need for the localisation of the application UI
     ./data/_locales......contains files need for the localisation of the Chrome extension UI
@@ -48,7 +47,7 @@ A full list of the changes is available in our [changelog](CHANGELOG.md)
 
 ## Documentation
 
-The native Windows, Linux and Mac OS X versions of `TagSpaces` are built with [node-webkit](https://github.com/rogerwang/node-webkit). node-webkit is an app runtime based on Chromium and node.js. You can write native apps in HTML and Javascript with node-webkit.
+The native Windows, Linux and Mac OS X versions of `TagSpaces` are built with [Electron](https://electron.atom.io/). Electron is an app runtime based on Chromium and node.js.
 
 ### How to run TagSpaces from the source code?
 Install [node.js, npm](http://nodejs.org/) and [git](http://git-scm.org/) for your platform (e.g. OS X, Windows or Linux).
@@ -71,14 +70,6 @@ Go to the data folder and install the TagSpaces extensions with bower:
 * Install the `electron-prebuilt` package with this command: `npm install -g electron-prebuilt`
 * Goto the folder: `cd tagspaces/data/`
 * Execute one of the following commands `electron .` or `npm start`
-
-#### Run the native Windows, Linux or Mac OS X application with NW.js
-Please note: The nw.js platform is not actively supported anymore.
-* Download [nw.js](https://github.com/nwjs/nw.js) prebuilt binaries for your system environment.
-* For Windows: copy `nw.exe, nw.pak, icudt.dll, ffmpegsumo.dll` to `tagspaces\data\node-webkit` directory.
-* For Linux: copy `nw, nw.pak, icudtl.dat, libffmpegsumo.so` to `tagspaces/data/node-webkit` directory. If you experience issue related to libudev.so.0 read the following [article](https://github.com/rogerwang/node-webkit/wiki/The-solution-of-lacking-libudev.so.0).
-* For Mac OS X: copy `node-webkit.app` to `tagspaces/data/node-webkit` directory.
-* Run the `nw` executable file.
 
 #### Run the Chrome/Chromium extension
 * Go to the chrome `Settings` and then to `Extension`
