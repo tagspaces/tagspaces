@@ -290,7 +290,7 @@ define(function(require, exports, module) {
     var allTags = [];
     data.forEach(function(fileEntry) {
       fileEntry.tags.forEach(function(tag) {
-        allTags.push(tag.toLowerCase());
+        allTags.push(("" + tag).toLowerCase());
       });
     });
     var countData = _.countBy(allTags, function(obj) {
