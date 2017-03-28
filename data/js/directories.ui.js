@@ -65,21 +65,23 @@ define(function(require, exports, module) {
     '      </button>' +
     '    </div>' +
     '    <div class="accordion-body collapse in" id="dirButtons{{@index}}">' +
-    '      <div class="directoryTagsArea" data-path="{{path}}" style="padding: 4px;"></div>' +
-    '      <div class="accordion-inner" id="dirButtonsContent{{@index}}" style="padding: 4px;">' +
+    '      <div class="accordion-inner" id="dirButtonsContent{{@index}}" style="padding: 4px; padding-top: 0;">' +
     '        <div class="dirButtonContainer">' +
     '          <button class="btn btn-sm btn-default dirButton parentDirectoryButton" data-path="{{path}}/.." title="Go to parent folder">' +
-    '            <i class="fa fa-level-up"></i></button>' +
-    '{{#if children}}' +
-    '{{#each children}}' +
-    '         <button class="btn btn-sm btn-default dirButton ui-droppable" data-path="{{path}}" title="{{path}}">' +
-    '           <div><i class="fa fa-folder-o"></i>&nbsp;{{name}}</div></button>' +
-    '{{/each}}' +
-    '{{else}}' +
-    '         <div>&nbsp;&nbsp;&nbsp;{{../../noSubfoldersFound}}</div>' +
-    '{{/if}}' +
-    '       </div>' +
-    '     </div>' +
+    '            <i class="fa fa-level-up"></i>' +
+    '          </button>' +
+    '      {{#if children}}' +
+    '        {{#each children}}' +
+    '          <button class="btn btn-sm btn-default dirButton ui-droppable" data-path="{{path}}" title="{{path}}">' +
+    '            <div><i class="fa fa-folder-o"></i>&nbsp;{{name}}</div>' +
+    '          </button>' +
+    '        {{/each}}' +
+    '      {{else}}' +
+    '          <div>&nbsp;&nbsp;&nbsp;{{../../noSubfoldersFound}}</div>' +
+    '      {{/if}}' +
+    '        </div>' +
+    '        <div class="directoryTagsArea" data-path="{{path}}" style="padding: 4px; padding-left: 0; "></div>' +
+    '      </div>' +
     '    </div>' +
     '  </div>' +
     '{{/each}}</div>'
