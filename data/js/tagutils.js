@@ -401,7 +401,7 @@ define(function(require, exports, module) {
       var fileName = extractFileName(filePath);
       var containingDirectoryPath = extractContainingDirectoryPath(filePath);
       for (var i = 0; i < tags.length; i++) {
-        if (extractedTags.indexOf(tagName) < 0) {
+        if (extractedTags.indexOf(tags[i].trim()) < 0) {
           TSCORE.UI.showAlertDialog("The tag cannot be removed because it is not part of the file name.", $.i18n.t("ns.common:warning"));
         }
         // check if tag is already in the tag array
