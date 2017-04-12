@@ -167,8 +167,6 @@ define(function(require, exports, module) {
 
     $('#editFileDescriptionButton').on('click', editFileDescription);
 
-    $('#fileDescriptionPropertyRendered').on('click', editFileDescription);
-
     $('#cancelEditFileDescriptionButton').on('click', cancelEditFileDescription);
 
     $('#saveFileDescriptionButton').on('click', saveFileDescription);

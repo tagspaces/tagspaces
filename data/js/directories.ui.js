@@ -568,8 +568,6 @@ define(function(require, exports, module) {
 
     $('#editFolderDescriptionButton').on('click', editFolderDescription);
 
-    $('#folderDescriptionPropertyRendered').on('click', editFolderDescription);
-
     $('#cancelEditFolderDescriptionButton').on('click', cancelEditFolderDescription);
 
     $('#saveFolderDescriptionButton').on('click', saveFolderDescription);
