@@ -359,20 +359,24 @@ define(function(require, exports, module) {
       var currentSrc = $(this).attr("href");
       var path;
 
-      if (!hasURLProtocol(currentSrc)) {
-        var path = (isWeb ? "" : "file://") + TSCORE.currentPath + "/" + currentSrc;
-        $(this).attr("href", path);
-      }
-
-      $(this).off();
-      $(this).on('click', function(e) {
-        e.preventDefault();
-        if (path) {
-          currentSrc = encodeURIComponent(path);
+      if(currentSrc.indexOf("#") === 0 ) {
+        // Leave the default link behaviour by internal links
+      } else {
+        if (!hasURLProtocol(currentSrc)) {
+          var path = (isWeb ? "" : "file://") + TSCORE.currentPath + "/" + currentSrc;
+          $(this).attr("href", path);
         }
-        var msg = {command: "openLinkExternally", link: currentSrc};
-        window.postMessage(JSON.stringify(msg), "*");
-      });
+
+        $(this).off();
+        $(this).on('click', function(e) {
+          e.preventDefault();
+          if (path) {
+            currentSrc = encodeURIComponent(path);
+          }
+          var msg = {command: "openLinkExternally", link: currentSrc};
+          window.postMessage(JSON.stringify(msg), "*");
+        });
+      }
     });
   }
 
