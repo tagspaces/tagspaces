@@ -1,5 +1,32 @@
 ﻿#Changelog
 
+## Version 2.8.0 / 2017.04.14
+
+### Community
+- adding support for opening internal links in MD and HTML documents and in file and folder descriptions
+- redesigning the user interface of the [list perspective](https://github.com/tagspaces/perspectiveList), adding support for folders
+- adding a button in the [editorHTML](https://github.com/tagspaces/editorHTML) extension for selecting/deselecting of all checkboxes in the current document
+- adding a [viewer for RTF](https://github.com/tagspaces/viewerRTF) as new extension
+- adding Vietnamese language thanks to [dd721411](https://www.transifex.com/user/profile/dd721411/)
+- disabling editing of the description on click, due to the need to open links
+- moving the tags after the subfolders in the folder navigator
+- fixing issue preventing creating new files
+- fixing CSV export of the filelist in Chrome
+- adding last changed date to the CSV export functionality
+- Firefox webclipper now generates .url files, added bookmark button to Firefox web clipper, thanks to [asciiascetic](https://github.com/asciiascetic)
+- fixing issue with handling paths containing % in the name
+- enable content search in webdav edition
+- export tag groups as json with unique id's, for easy reimporting
+- adding button for restoring the original tag groups
+- fixing issue with loading files on startup
+- fixing issue with removing multiple tags
+- removing deprecated *nwjs* support from the project
+
+### Pro
+- adding thumbnail generation for text based files such as md, text, json, xml, javascript and other
+- fixing the black background of html thumbnails
+
+
 ## Version 2.7.0 / 2017.02.04
 
 ### Community
