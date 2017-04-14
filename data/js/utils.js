@@ -11,6 +11,11 @@ define(function(require, exports, module) {
   var TSCORE = require('tscore');
   var TSPOSTIO = require('tspostioapi');
   var marked = require("marked");
+  var saveAs = require("libs/filesaver.js/FileSaver.min");
+
+  function saveAsTextFile(blob, filename) {
+    saveAs(blob, filename);
+  }
 
   //Conversion utility
   function arrayBufferToDataURL(arrayBuffer, mime) {
@@ -354,30 +359,54 @@ define(function(require, exports, module) {
       var currentSrc = $(this).attr("href");
       var path;
 
-      if (!hasURLProtocol(currentSrc)) {
-        var path = (isWeb ? "" : "file://") + TSCORE.currentPath + "/" + currentSrc;
-        $(this).attr("href", path);
-      }
-
-      $(this).off();
-      $(this).on('click', function(e) {
-        e.preventDefault();
-        if (path) {
-          currentSrc = encodeURIComponent(path);
+      if(currentSrc.indexOf("#") === 0 ) {
+        // Leave the default link behaviour by internal links
+      } else {
+        if (!hasURLProtocol(currentSrc)) {
+          var path = (isWeb ? "" : "file://") + TSCORE.currentPath + "/" + currentSrc;
+          $(this).attr("href", path);
         }
-        var msg = {command: "openLinkExternally", link: currentSrc};
-        window.postMessage(JSON.stringify(msg), "*");
-      });
+
+        $(this).off();
+        $(this).on('click', function(e) {
+          e.preventDefault();
+          if (path) {
+            currentSrc = encodeURIComponent(path);
+          }
+          var msg = {command: "openLinkExternally", link: currentSrc};
+          window.postMessage(JSON.stringify(msg), "*");
+        });
+      }
     });
   }
 
   function setMarkDownContent($targetElement, content) {
-    if (marked) {
-      $targetElement.html(marked(content, {gfm: true, breaks: true, sanitize: true}));
-      handleLinks($targetElement);
-    } else {
-      console.log("Marked library not loaded...");
+    $targetElement.html(convertMarkdown(content));
+    handleLinks($targetElement);
+  }
+
+  function convertMarkdown(content) {
+    var mdOptions = {
+      gfm: true,
+      tables: true,
+      breaks: true,
+      pedantic: false,
+      sanitize: true,
+      smartLists: true,
+      smartypants: false
     }
+    if (marked) {
+      return marked(content, mdOptions);
+    } else {
+      console.warn("Marked library not loaded...");
+    }
+  }
+
+  function guid() {
+    function s4() {
+      return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+    }
+    return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
   }
 
   exports.arrayBufferToDataURL = arrayBufferToDataURL;
@@ -406,6 +435,9 @@ define(function(require, exports, module) {
   exports.parseDateMonth = parseDateMonth;
   exports.splitValue = splitValue;
   exports.handleLinks = handleLinks;
+  exports.guid = guid;
   exports.setMarkDownContent = setMarkDownContent;
+  exports.convertMarkdown = convertMarkdown;
+  exports.saveAsTextFile = saveAsTextFile;
 
 });

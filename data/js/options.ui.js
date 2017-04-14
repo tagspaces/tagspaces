@@ -7,7 +7,6 @@ define(function(require, exports, module) {
   console.log('Loading options.ui.js ...');
   var TSCORE = require('tscore');
   var tsExtManager = require('tsextmanager');
-  var saveAs = require('libs/filesaver.js/FileSaver.min.js');
 
   function generateSelectOptions(parent, data, selectedId, helpI18NString) {
     parent.empty();
@@ -69,7 +68,6 @@ define(function(require, exports, module) {
     $('#useGenerateThumbnails').attr('disabled', !isMetaEnabled);
   }
 
-
   function initUI() {
     var defaultTagColor = TSCORE.Config.getDefaultTagColor();
     var defaultTagTextColor = TSCORE.Config.getDefaultTagTextColor();
@@ -121,6 +119,13 @@ define(function(require, exports, module) {
           TSCORE.Config.loadDefaultSettings();
         });
     });
+    $('#recreateDefaultTagGroups').click(function() {
+      TSCORE.showConfirmDialog(
+        $.i18n.t('ns.dialogs:recreateDefaultTagGroups'),
+        $.i18n.t('ns.dialogs:recreateDefaultTagGroupsMessage'), function() {
+          TSCORE.Config.restoreDefaultTagGroups();
+        });
+    });
     $('#keyBindingInstructions').toggle();
     $('#keyBindingInstructionsToggle').on('click', function() {
       $('#keyBindingInstructions').toggle();
@@ -136,25 +141,11 @@ define(function(require, exports, module) {
       $('#showMainMenuCheckbox').parent().hide();
     }
 
-    $('#exportTagGroupsButton').on('click', exportTagGroups);
+    $('#exportTagGroupsButton').on('click', TSCORE.Config.exportTagGroups);
 
     $('#enableMetaData').change(function() {
       enableMetaData();
     });
-  }
-
-  function exportTagGroups() {
-    var jsonFormat = '{ "appName": "' + TSCORE.Config.DefaultSettings.appName +
-      '", "appVersion": "' + TSCORE.Config.DefaultSettings.appVersion +
-      '", "appBuild": "' + TSCORE.Config.DefaultSettings.appBuild +
-      '", "settingsVersion": ' + TSCORE.Config.DefaultSettings.settingsVersion +
-      ', "tagGroups": ';
-    var blob = new Blob([jsonFormat + JSON.stringify(TSCORE.Config.getAllTagGroupData()) + '}'], {
-      type: 'application/json'
-    });
-    var dateTimeTag = TSCORE.TagUtils.formatDateTime4Tag(new Date(), true);
-    saveAs(blob, 'tsm[' + dateTimeTag + '].json');
-    console.log('TagGroup Data Exported...');
   }
 
   function reInitUI() {

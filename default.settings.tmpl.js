@@ -37,7 +37,7 @@ define(function (require, exports, module) {
         "enableMetaData":           false,
         "webDavPath"  :             "oc/remote.php/webdav",
         "ootbPerspectives":         [@@DEFAULTPERSPECTIVES],
-        "ootbViewers":              [ "viewerBrowser", "viewerMD", "viewerImage", "viewerPDF", "editorText", "viewerText", "editorODF", "viewerURL", "viewerHTML", "viewerMHTML", "editorJSON", "viewerZIP", "viewerEPUB", "viewerAudioVideo" ],
+        "ootbViewers":              [ "viewerBrowser", "viewerMD", "viewerImage", "viewerPDF", "editorText", "viewerText", "editorODF", "viewerURL", "viewerHTML", "viewerMHTML", "editorJSON", "viewerZIP", "viewerEPUB", "viewerAudioVideo", "viewerRTF" ],
         "ootbEditors":              [ "editorHTML", "editorText", "editorODF", "editorJSON", "editorNext" ],
         "perspectives":             [@@ACTIVATEDPERSPECTIVES],
         "interfaceLanguage":        "en_US",
@@ -57,9 +57,9 @@ define(function (require, exports, module) {
             { "iso": "en_US", "title": "English" },
             { "iso": "de_DE", "title": "Deutsch (German)" },
             { "iso": "it", "title": "Italiano (Italian)" },
-            { "iso": "zh_CN", "title": "中国的 (Chinese)" },
+            { "iso": "zh_CN", "title": "中文 (Chinese)" },
             { "iso": "bg", "title": "Български (Bulgarian)" },
-            { "iso": "ja", "title": "日本の (Japanese)" },
+            { "iso": "ja", "title": "日本語 (Japanese)" },
             { "iso": "pt_BR", "title": "Português (Brazil)" },
             { "iso": "pt_PT", "title": "Português (Portugal)" },
             { "iso": "fr", "title": "Français (French)" },
@@ -70,7 +70,7 @@ define(function (require, exports, module) {
             { "iso": "tr", "title": "Türk (Turkish)" },
             { "iso": "cs", "title": "Čeština (Czech)" },
             { "iso": "ca", "title": "Catalan (Català)" },
-            { "iso": "ko", "title": "한국의 (Korean)" },
+            { "iso": "ko", "title": "한국어 (Korean)" },
             { "iso": "el", "title": "ελληνικά (Greek)" },
             { "iso": "sv", "title": "svenska (Swedish)" },
             { "iso": "nl_NL", "title": "Nederlands (Dutch)" },
@@ -81,6 +81,7 @@ define(function (require, exports, module) {
             { "iso": "mt", "title": "Maltese (Maltese)" },
             { "iso": "hy", "title": "հայերեն (Armenian)" },
             { "iso": "da_DK", "title": "Dansk (Danish)" },
+            { "iso": "vi", "title": "Tiếng Việt (Vietnamese)" },
         ],
         "keyBindings": {
             "selectAll": "mod+a",
@@ -168,7 +169,8 @@ define(function (require, exports, module) {
             { "type": "desktop", "viewer": "viewerURL", "editor": "false" },
             { "type": "website", "viewer": "viewerURL", "editor": "false" },
             { "type": "url", "viewer": "viewerURL", "editor": "false" },
-            { "type": "zip", "viewer": "viewerZIP", "editor": "false" }
+            { "type": "zip", "viewer": "viewerZIP", "editor": "false" },
+            { "type": "rtf", "viewer": "viewerRTF", "editor": "false" }
         ],
         "tagGroups": [
             {

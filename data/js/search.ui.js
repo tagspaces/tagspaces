@@ -19,10 +19,6 @@ define(function(require, exports, module) {
       } else {
         TSCORE.Search.nextQuery = this.value;
       }
-      if (this.value.length === 0) {
-        TSCORE.Search.nextQuery = this.value;
-        TSCORE.PerspectiveManager.redrawCurrentPerspective();
-      }
     }).focus(function(e) {
       $("#searchOptions").hide();
     });
@@ -178,6 +174,8 @@ define(function(require, exports, module) {
         TSCORE.PRO.Search.addQueryToHistory(origSearchVal);
       }
       TSCORE.Search.nextQuery = $('#searchBox').val();
+    } else {
+      cancelSearch();
     }
     $('#searchOptions').hide();
     TSCORE.PerspectiveManager.redrawCurrentPerspective();

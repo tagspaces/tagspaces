@@ -24,9 +24,10 @@
 }
 
 #appVersion {
-    font-size: 1.3em;
+    font-size: 1em;
     color: #616577;
     margin-left: -7px;
+    top: -0.8em;
 }
 
 #startNewInstanceBack {

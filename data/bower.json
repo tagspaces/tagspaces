@@ -19,7 +19,8 @@
     "viewerPDF": "git+https://github.com/tagspaces/viewerPDF.git#master",
     "viewerText": "git+https://github.com/tagspaces/viewerText.git#master",
     "viewerURL": "git+https://github.com/tagspaces/viewerURL.git#master",
-    "viewerZIP": "git+https://github.com/tagspaces/viewerZIP.git#master"
+    "viewerZIP": "git+https://github.com/tagspaces/viewerZIP.git#master",
+    "viewerRTF": "git+https://github.com/tagspaces/viewerRTF.git#master"
   },
   "private": true
 }

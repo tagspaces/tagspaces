@@ -1,4 +1,4 @@
-/* Copyright (c) 2012-2015 The TagSpaces Authors. All rights reserved.
+/* Copyright (c) 2012-2017 The TagSpaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that
  * can be found in the LICENSE file. */
 /*global isNode, isWin, isFirefox, Mousetrap, gui */
@@ -159,10 +159,6 @@ define(function(require, exports, module) {
       initKeyBindings();
       tsIOApi.checkAccessFileURLAllowed ? tsIOApi.checkAccessFileURLAllowed() : true;
 
-      if (isNode || isChrome || isElectron || isWeb) {
-        // Handle command line argument in node-webkit
-        tsIOApi.handleStartParameters(); // Handle minimizing to the tray in node-webkit
-      }
       console.log('Document ready finished. Layout initialized');
       checkForNewVersion();
     });
@@ -332,13 +328,20 @@ define(function(require, exports, module) {
     // max. estimated to 40 ca. 5 symbols per tag _[er], max. path length 25x chars
     headers.push('path');
     headers.push('title');
+    headers.push('changed_date');
     headers.push('size');
     for (var i = 0; i < numberOfTagColumns; i++) {
       headers.push('tag' + i);
     }
     csv += headers.join(',') + '\n';
     for (var i = 0; i < fileList.length; i++) {
-      var row = fileList[i].path + ',' + fileList[i].title + ',' + fileList[i].size + ',' + fileList[i].tags;
+      var lmtd = "";
+      try {
+        lmtd = (new Date(fileList[i].lmdt)).toISOString();
+      } catch (e) {
+        console.log("error parsing lmdt date");
+      }
+      var row = fileList[i].path + ',' + fileList[i].title + ',' + lmtd + ',' + fileList[i].size + ',' + fileList[i].tags;
       rows.push(row);
     }
     csv += rows.join('\n');
@@ -425,14 +428,12 @@ define(function(require, exports, module) {
     }
 
     if (shouldOpenCol2) {
-      //$("#openLeftPanel").hide();
       $(".col2").show();
     } else {
       $(".col2").hide();
     }
 
     if (shouldOpenCol3) {
-      //$("#openLeftPanel").hide();
       $(".col3").show();
       hidePerspectiveMenu();
     } else {
@@ -441,7 +442,6 @@ define(function(require, exports, module) {
   }
 
   function hidePerspectiveMenu() {
-
     $(".perspectiveMainMenuButton").hide();
   }
 
@@ -479,7 +479,6 @@ define(function(require, exports, module) {
   }
 
   function reloadUI() {
-
     location.reload();
   }
 

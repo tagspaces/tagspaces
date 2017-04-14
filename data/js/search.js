@@ -135,7 +135,7 @@ define(function(require, exports, module) {
 
   function searchData(data, query) {
     // TODO make a switch in gui for content search
-    var searchContentSupported = (isChrome || isFirefox || isWeb) ? false : true;
+    var searchContentSupported = (isChrome || isFirefox) ? false : true;
     var queryObj = prepareQuery(query);
     var searchResults = [];
     var metaDirPattern = TSCORE.dirSeparator + TSCORE.metaFolder + TSCORE.dirSeparator;
@@ -290,7 +290,7 @@ define(function(require, exports, module) {
     var allTags = [];
     data.forEach(function(fileEntry) {
       fileEntry.tags.forEach(function(tag) {
-        allTags.push(tag.toLowerCase());
+        allTags.push(("" + tag).toLowerCase());
       });
     });
     var countData = _.countBy(allTags, function(obj) {

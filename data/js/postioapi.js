@@ -8,11 +8,6 @@ define(function(require, exports, module) {
   console.log('Loading postioapi.js ...');
   var TSCORE = require('tscore');
 
-  exports.createDirectoryTree = function(directoryTree) {
-    TSCORE.PerspectiveManager.updateTreeData(directoryTree);
-    TSCORE.hideWaitingDialog();
-  };
-
   exports.renameFile = function(oldFilePath, newFilePath) {
     var lastOpenedFile = TSCORE.FileOpener.getOpenedFilePath();
     if (lastOpenedFile !== undefined) {

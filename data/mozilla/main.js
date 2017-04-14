@@ -97,8 +97,9 @@ function openTagSpacesInNewTab() {
 
 function initToobarButton() {
   var tagspacesPanel = new Panel({
-    width: 530,
-    height: 410,
+      width: 530,
+      //    height: 410,
+      height: 450,
     contentURL: data.url('mozilla/popup.html'),
     contentScriptFile: [ 
       data.url('libs/jquery/dist/jquery.min.js'),

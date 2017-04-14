@@ -287,6 +287,21 @@ if exist extensions\viewerBrowser\ (
 call bower link
 cd ..\..
 
+REM -------------------------
+REM viewerRTF
+REM -------------------------
+if exist extensions\viewerRTF\ (
+    cd extensions\viewerRTF
+    call git fetch --all
+    call git checkout master
+    call git pull
+) else (
+    call git clone https://github.com/tagspaces/viewerRTF.git extensions\viewerRTF
+    cd extensions\viewerRTF
+)
+call bower link
+cd ..\..
+
 cd data
 call bower link "HTML Editor" editorHTML
 call bower link "Simple Viewer" viewerBrowser
@@ -307,4 +322,5 @@ call bower link "PDF Reader" viewerPDF
 call bower link "Text Reader" viewerText
 call bower link "Link Opener" viewerURL
 call bower link "ZIP Opener" viewerZIP
+call bower link "rtf-viewer" viewerRTF
 cd ..

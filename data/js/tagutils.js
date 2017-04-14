@@ -359,7 +359,7 @@ define(function(require, exports, module) {
   function writeTagsToFile(filePath, tags) {
     console.log('Add the tags for: ' + filePath);
 
-    if (TSCORE.Config.getWriteMetaToSidecarFile()) {
+    if (TSCORE.PRO && TSCORE.Config.getWriteMetaToSidecarFile()) {
       TSCORE.Meta.addMetaTags(filePath, tags);
       TSCORE.PerspectiveManager.updateFileUI(filePath, filePath);
     } else {
@@ -382,17 +382,28 @@ define(function(require, exports, module) {
 
   function removeTagsFromFile(filePath, tags) {
     console.log('Remove the tags from: ' + filePath);
+    var extractedTags = extractTags(filePath);
 
-    if (TSCORE.Config.getWriteMetaToSidecarFile()) {
+    if (TSCORE.PRO && TSCORE.Config.getWriteMetaToSidecarFile()) {
+      var tagsInFileName;
       tags.forEach(function(tag) {
-        TSCORE.Meta.removeMetaTag(filePath, tag);
+        if (extractedTags.indexOf(tag) >= 0) {
+          tagsInFileName = true;
+        } else {
+          TSCORE.Meta.removeMetaTag(filePath, tag);
+        }
       });
+      if(tagsInFileName) {
+         TSCORE.UI.showAlertDialog("Some of the tags are part from the file name and cannot be removed, try to rename the file manually.", $.i18n.t("ns.common:warning"));
+      }
       TSCORE.PerspectiveManager.updateFileUI(filePath, filePath);
     } else {
       var fileName = extractFileName(filePath);
       var containingDirectoryPath = extractContainingDirectoryPath(filePath);
-      var extractedTags = extractTags(filePath);
       for (var i = 0; i < tags.length; i++) {
+        if (extractedTags.indexOf(tags[i].trim()) < 0) {
+          TSCORE.UI.showAlertDialog("The tag cannot be removed because it is not part of the file name.", $.i18n.t("ns.common:warning"));
+        }
         // check if tag is already in the tag array
         var tagLoc = extractedTags.indexOf(tags[i].trim());
         if (tagLoc >= 0) {
@@ -407,12 +418,15 @@ define(function(require, exports, module) {
 
   function cleanFileFromTags(filePath) {
     console.log('Cleaning file from tags: ' + filePath);
-
-    if (TSCORE.Config.getWriteMetaToSidecarFile()) {
+    var extractedTags = extractTags(filePath);
+    if (TSCORE.PRO && TSCORE.Config.getWriteMetaToSidecarFile()) {
       var tags = TSCORE.Meta.getTagsFromMetaFile(filePath);
       tags.forEach(function(tag) {
         TSCORE.Meta.removeMetaTag(filePath, tag.tag);
       });
+      if(extractedTags.length > 0) {
+         TSCORE.UI.showAlertDialog("Some of the tags are part from the file name and cannot be removed, try to rename the file manually.", $.i18n.t("ns.common:warning"));
+      }
       TSCORE.PerspectiveManager.updateFileUI(filePath, filePath);
     } else {
       var fileTitle = extractTitle(filePath);
@@ -466,6 +480,10 @@ define(function(require, exports, module) {
     var fileName = extractFileName(filePath);
     var containingDirectoryPath = extractContainingDirectoryPath(filePath);
     var extractedTags = extractTags(filePath);
+    if (extractedTags.indexOf(tagName) < 0) {
+      TSCORE.UI.showAlertDialog("The tag you are trying to move is not part of the file name and that's why it cannot be moved.", $.i18n.t("ns.common:warning"));
+      return;
+    }
     var tmpTag;
     for (var i = 0; i < extractedTags.length; i++) {
       // check if tag is already in the tag array
@@ -495,15 +513,21 @@ define(function(require, exports, module) {
   // Replaces a tag with a new one
   function renameTag(filePath, oldTag, newTag) {
     console.log('Rename tag for file: ' + filePath);
-
-    //todo Refine the logic to consider renaming tags from filename in a sidecar mode and vice versa
-    if (TSCORE.Config.getWriteMetaToSidecarFile()) {
-      TSCORE.Meta.renameMetaTag(filePath, oldTag, newTag);
-      TSCORE.PerspectiveManager.updateFileUI(filePath, filePath);
+    var extractedTags = extractTags(filePath);
+    if (TSCORE.PRO && TSCORE.Config.getWriteMetaToSidecarFile()) {
+      if (extractedTags.indexOf(oldTag) >= 0) {
+        TSCORE.UI.showAlertDialog("The tag cannot be renamed because it is part of the file name, try to rename the file manually.", $.i18n.t("ns.common:warning"));
+      } else {
+        TSCORE.Meta.renameMetaTag(filePath, oldTag, newTag);
+        TSCORE.PerspectiveManager.updateFileUI(filePath, filePath);
+      }
     } else {
+      if (extractedTags.indexOf(oldTag) < 0) {
+        TSCORE.UI.showAlertDialog("This tag cannot be renamed because it is not part of the file name.", $.i18n.t("ns.common:warning"));
+        return;
+      }
       var fileName = extractFileName(filePath);
       var containingDirectoryPath = extractContainingDirectoryPath(filePath);
-      var extractedTags = extractTags(filePath);
       for (var i = 0; i < extractedTags.length; i++) {
         // check if tag is already in the tag array
         if (extractedTags[i] === oldTag) {
@@ -536,19 +560,26 @@ define(function(require, exports, module) {
   // Removing a tag from a filename
   function removeTag(filePath, tagName) {
     console.log('Removing tag: ' + tagName + ' from ' + filePath);
-
-    //todo Refine the logic to consider removing tags from filename in a sidecar mode and vice versa
-    if (TSCORE.Config.getWriteMetaToSidecarFile()) {
-      TSCORE.Meta.removeMetaTag(filePath, tagName);
-      TSCORE.PerspectiveManager.updateFileUI(filePath, filePath);
+    var extractedTags = extractTags(filePath);
+    if (TSCORE.PRO && TSCORE.Config.getWriteMetaToSidecarFile()) {
+      if (extractedTags.indexOf(tagName) >= 0) {
+        TSCORE.UI.showAlertDialog("The tag cannot be removed because it is part of the file name, try to rename the file manually.", $.i18n.t("ns.common:warning"));
+      } else {
+        TSCORE.Meta.removeMetaTag(filePath, tagName);
+        TSCORE.PerspectiveManager.updateFileUI(filePath, filePath);
+      }
     } else {
+      if (extractedTags.indexOf(tagName) < 0) {
+        TSCORE.UI.showAlertDialog("This tag cannot be removed because it is not part of the file name.", $.i18n.t("ns.common:warning"));
+        return;
+      }
       var fileName = extractFileName(filePath);
       var containingDirectoryPath = extractContainingDirectoryPath(filePath);
-      var tags = extractTags(filePath);
+
       var newTags = [];
-      for (var i = 0; i < tags.length; i++) {
-        if (tags[i] !== tagName) {
-          newTags.push(tags[i]);
+      for (var i = 0; i < extractedTags.length; i++) {
+        if (extractedTags[i] !== tagName) {
+          newTags.push(extractedTags[i]);
         }
       }
       var newFileName = generateFileName(fileName, newTags);

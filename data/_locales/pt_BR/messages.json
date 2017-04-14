@@ -8,7 +8,7 @@
         "description": "Title of the application launcher in the browser."
     },
     "saveBookmarkTitle": {
-        "message": "Bookmark the page",
+        "message": "Marcar a página",
         "description": "Title of bookmark button"
     },
     "appDesc": {

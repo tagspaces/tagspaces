@@ -146,6 +146,7 @@ define(function(require, exports, module) {
     } else {
       path = (isCordovaiOS) ? cordova.file.documentsDirectory + "/" + path : "file:///" + path;
     }
+    path = encodeURI(path);
     return new Promise(function(resolve, reject) {
       window.resolveLocalFileSystemURL(path, resolve,
         function(error) {

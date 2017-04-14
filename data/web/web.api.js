@@ -170,8 +170,7 @@ define(function(require, exports, module) {
     TSCORE.showLoadingAnimation();
 
     var directoyTree = [];
-    //console.log(JSON.stringify(directoyTree));
-    TSPOSTIO.createDirectoryTree(directoyTree);
+    return directoyTree;
   }
 
   /**

@@ -481,7 +481,7 @@ define(function(require, exports, module) {
     };
     var directoyTree = generateDirectoryTree(dirPath);
     //console.log(JSON.stringify(directoyTree));
-    TSPOSTIO.createDirectoryTree(directoyTree);
+    return directoyTree;
   }
 
 

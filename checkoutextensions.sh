@@ -253,6 +253,19 @@ fi
 bower link
 cd ../..
 
+# -------------------------
+# viewerRTF
+# -------------------------
+if [ -d "extensions/viewerRTF" ]; then
+    cd extensions/viewerRTF
+    git fetch --all
+else
+    git clone https://github.com/tagspaces/viewerRTF.git extensions/viewerRTF
+    cd extensions/viewerRTF
+fi
+bower link
+cd ../..
+
 cd data
 bower link "HTML Editor" editorHTML
 bower link "Simple Viewer" viewerBrowser
@@ -273,5 +286,6 @@ bower link "PDF Reader" viewerPDF
 bower link "Text Reader" viewerText
 bower link "Link Opener" viewerURL
 bower link "ZIP Opener" viewerZIP
+bower link "rtf-viewer" viewerRTF
 cd ..
 

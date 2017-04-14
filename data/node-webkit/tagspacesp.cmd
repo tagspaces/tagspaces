@@ -1,1 +1,0 @@
-start /B tagspaces.exe --data-path=data
