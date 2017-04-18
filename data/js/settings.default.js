@@ -53,6 +53,7 @@ define(function (require, exports, module) {
         "watchCurrentDirectory":    false,
         "defaultTagTextColor":     "#ffffff",
         "defaultTagColor":         "#008000",
+        "enableGlobalKeyboardShortcuts": true,
         "supportedLanguages": [
             { "iso": "en_US", "title": "English" },
             { "iso": "de_DE", "title": "Deutsch (German)" },

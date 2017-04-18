@@ -692,6 +692,19 @@ define(function(require, exports, module) {
     exports.Settings.keyBindings.openSearch = value;
   }
 
+  function getEnableGlobalKeyboardShortcuts() {
+    if (exports.Settings.enableGlobalKeyboardShortcuts === undefined) {
+      exports.Settings.enableGlobalKeyboardShortcuts = exports.DefaultSettings.enableGlobalKeyboardShortcuts;
+      saveSettings();
+    }
+    return exports.Settings.enableGlobalKeyboardShortcuts;
+  }
+
+  function setEnableGlobalKeyboardShortcuts(value) {
+
+    exports.Settings.enableGlobalKeyboardShortcuts = value;
+  }
+
   function getInterfaceLanguage() {
     if (exports.Settings.interfaceLanguage === undefined) {
       exports.Settings.interfaceLanguage = exports.DefaultSettings.interfaceLanguage;
@@ -1596,4 +1609,6 @@ define(function(require, exports, module) {
   exports.setDefaultTagColor = setDefaultTagColor;
   exports.getDefaultTagTextColor = getDefaultTagTextColor;
   exports.setDefaultTagTextColor = setDefaultTagTextColor;
+  exports.getEnableGlobalKeyboardShortcuts = getEnableGlobalKeyboardShortcuts;
+  exports.setEnableGlobalKeyboardShortcuts = setEnableGlobalKeyboardShortcuts;
 });
