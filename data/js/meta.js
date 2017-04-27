@@ -184,25 +184,36 @@ define(function(require, exports, module) {
           resolve(filePath);
         });
       } else {
-        var metaFilePath = findMetaFilebyPath(filePath, TSCORE.thumbFileExt);
-        if (metaFilePath && isChrome) {
-          metaFilePath = "file://" + metaFilePath;
+        var thumbFilePath = getThumbFileLocation(filePath);
+        if (thumbFilePath && isChrome) {
+          thumbFilePath = "file://" + thumbFilePath;
         }
-        var fileExt = TSCORE.TagUtils.extractFileExtension(filePath);
-        if (metaFilePath) {
-          resolve(metaFilePath);
-        } else if (supportedImageExtensions.indexOf(fileExt) >= 0) {
-          if (isChrome) {
-            filePath = "file://" + filePath;
+        TSCORE.IO.getPropertiesPromise(thumbFilePath).then(function(stats) {
+          if (!stats) { // Thumbnails does not exists
+            var fileExt = TSCORE.TagUtils.extractFileExtension(filePath);
+            if (supportedImageExtensions.indexOf(fileExt) >= 0) {
+              if (isChrome) {
+                filePath = "file://" + filePath;
+              }
+              generateImageThumbnail(filePath).then(function(dataURL) {
+                resolve(dataURL);
+              }).catch(function() {
+                resolve();
+              });
+            } else {
+              resolve();
+            }
+          } else { // Thumbnails exists
+            resolve(thumbFilePath);
           }
-          generateImageThumbnail(filePath).then(function(dataURL) {
-            resolve(dataURL);
-          }).catch(function() {
-            resolve();
-          });
-        }
+        });
       }
     });
+  }
+
+  function getThumbFileLocation(filePath) {
+    var metaFolder = TSCORE.TagUtils.extractContainingDirectoryPath(filePath) + TSCORE.dirSeparator + TSCORE.metaFolder;
+    return metaFolder + TSCORE.dirSeparator + TSCORE.TagUtils.extractFileName(filePath) + TSCORE.thumbFileExt;
   }
 
   // should be in sync with the function from the PRO version
