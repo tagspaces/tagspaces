@@ -179,6 +179,7 @@ define(function(require, exports, module) {
     $('#useDefaultLocationCheckbox').attr('checked', TSCORE.Config.getUseDefaultLocation());
     $('#coloredFileExtensionsEnabledCheckbox').attr('checked', TSCORE.Config.getColoredFileExtensionsEnabled());
     $('#showTagAreaOnStartupCheckbox').attr('checked', TSCORE.Config.getShowTagAreaOnStartup());
+    $('#enableGlobalKeyboardShortcutsCheckbox').attr('checked', TSCORE.Config.getEnableGlobalKeyboardShortcuts());
     if (TSCORE.PRO) {
       $('#enableMetaData').attr('checked', TSCORE.Config.getEnableMetaData());
       $('#useTrashCan').attr('checked', TSCORE.Config.getUseTrashCan());
@@ -302,6 +303,7 @@ define(function(require, exports, module) {
     TSCORE.Config.setUseDefaultLocation($('#useDefaultLocationCheckbox').is(':checked'));
     TSCORE.Config.setColoredFileExtensionsEnabled($('#coloredFileExtensionsEnabledCheckbox').is(':checked'));
     TSCORE.Config.setShowTagAreaOnStartup($('#showTagAreaOnStartupCheckbox').is(':checked'));
+    TSCORE.Config.setEnableGlobalKeyboardShortcuts($('#enableGlobalKeyboardShortcutsCheckbox').is(':checked'));
     TSCORE.Config.saveSettings();
   }
 

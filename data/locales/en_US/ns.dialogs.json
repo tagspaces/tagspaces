@@ -203,5 +203,6 @@
   "tagForegroundColor":"Default tag text color",
   "colorChangesToAllTags":"Apply color changes to all tags of the group",
   "delete": "Delete",
+  "enableGlobalKeyboardShortcuts": "Enable global keyboard shortcuts",
   "-": "-"
 }
