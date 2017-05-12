@@ -20,6 +20,15 @@ let trayIcon = null;
 
 const isOSX = /^darwin/.test(process.platform);
 
+let path = require('path');
+let applicationPath = path.dirname(__dirname);
+let indexPath = 'file://' + applicationPath + '/index.html';
+
+// Keep a global reference of the window object, if you don't, the window will
+// be closed automatically when the JavaScript object is garbage collected.
+let mainWindow = null;
+let newWindow = null;
+
 //handling start parameter
 //console.log(JSON.stringify(process.argv));
 process.argv.forEach((arg, count) => {
@@ -36,24 +45,18 @@ process.argv.forEach((arg, count) => {
     console.log("Opening file: " + arg);
     startupFilePath = arg;
   }
+
+  if (portableMode) {
+    startupFilePath = undefined;
+  }
 });
 
-if (portableMode) {
-  startupFilePath = undefined;
-}
-
-ipcMain.on('quit-application', (event, arg) => {
-  app.quit();
+process.on('uncaughtException', (error) => {
+  if (error.stack) {
+    console.error('error:', error.stack);
+  }
+  reloadApp();
 });
-
-let path = require('path');
-let applicationPath = path.dirname(__dirname);
-let indexPath = 'file://' + applicationPath + '/index.html';
-
-// Keep a global reference of the window object, if you don't, the window will
-// be closed automatically when the JavaScript object is garbage collected.
-let mainWindow = null;
-let newWindow = null;
 
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
@@ -69,48 +72,61 @@ app.on('will-quit', () => {
   globalShortcut.unregisterAll();
 });
 
-ipcMain.on("new-win", () => {
-  newWindow = new BrowserWindow({width: 1280, height: 768});
+app.on('ready', (event) => {
 
-  let startupParameter = "";
-  if (startupFilePath) {
-    startupParameter = "?open=" + encodeURIComponent(startupFilePath);
-  }
+  ipcMain.on('global-shortcuts-enabled', (e, arg) => {
+    if(arg) {
+      globalShortcut.register('CommandOrControl+Alt+P', resumePlayback);
+      globalShortcut.register('CommandOrControl+Alt+N', newTextFile);
+      globalShortcut.register('CommandOrControl+Alt+D', getNextFile);
+      globalShortcut.register('CommandOrControl+Alt+A', getPreviousFile);
+      globalShortcut.register('CommandOrControl+Alt+W', showTagSpaces);
+    } else {
+      globalShortcut.unregisterAll();
+    }
+  });
 
-  newWindow.setMenu(null);
-  newWindow.loadURL(indexPath + startupParameter);
+  ipcMain.on("new-win", () => {
+    newWindow = new BrowserWindow({width: 1280, height: 768});
 
-  if (debugMode) {
-    newWindow.webContents.openDevTools();
-  }
+    let startupParameter = "";
+    if (startupFilePath) {
+      startupParameter = "?open=" + encodeURIComponent(startupFilePath);
+    }
 
-  newWindow.once('ready-to-show', () => {
-    newWindow.show();
+    newWindow.setMenu(null);
+    newWindow.loadURL(indexPath + startupParameter);
+
+    if (debugMode) {
+      newWindow.webContents.openDevTools();
+    }
+
+    newWindow.once('ready-to-show', () => {
+      newWindow.show();
+    });
+
+    ipcMain.on('win-close', (e, arg) => {
+      newWindow.hide();
+    });
+
+    ipcMain.on('close', (e, arg) => {
+      newWindow.hide();
+    });
   });
 
   ipcMain.on('win-close', (e, arg) => {
-    newWindow.hide();
+    mainWindow.hide();
   });
 
   ipcMain.on('close', (e, arg) => {
-    newWindow.hide();
+    mainWindow.hide();
   });
-});
 
-ipcMain.on('relaunch-app', reloadApp);
+  ipcMain.on('relaunch-app', reloadApp);
 
-function reloadApp() {
-  if (mainWindow) {
-    mainWindow.loadURL(indexPath);
-  }
-  if (newWindow) {
-    newWindow.loadURL(indexPath);
-  }
-}
-
-app.on('ready', (event) => {
-  //console.log(app.getLocale());
-  //console.log(app.getAppPath());
+  ipcMain.on('quit-application', (event, arg) => {
+    app.quit();
+  });
 
   // Load the previous state with fallback to defaults
   let mainWindowState = windowStateKeeper({
@@ -151,10 +167,6 @@ app.on('ready', (event) => {
     mainWindow = null;
   });
 
-  ipcMain.on('close', (e, arg) => {
-    mainWindow.hide();
-  });
-
   mainWindow.webContents.on('crashed', () => {
     const options = {
       type: 'info',
@@ -170,10 +182,6 @@ app.on('ready', (event) => {
         mainWindow.close();
       }
     });
-  });
-
-  ipcMain.on('win-close', (e, arg) => {
-    mainWindow.hide();
   });
 
   let focusedWindow = BrowserWindow.getFocusedWindow();
@@ -222,7 +230,7 @@ app.on('ready', (event) => {
       type: 'separator'
     },
     {
-      label: 'Open Next File (' + ctrlName + '+Alt+S)',
+      label: 'Open Next File (' + ctrlName + '+Alt+D)',
       click: getNextFile
     },
     {
@@ -257,103 +265,95 @@ app.on('ready', (event) => {
 
   let title = 'TagSpaces App';
   let trayMenu = Menu.buildFromTemplate(trayMenuTemplate);
-  // trayIcon.setToolTip(title);
-  // trayIcon.setTitle(title);
+
   trayIcon.setContextMenu(trayMenu);
 
-  globalShortcut.register('CommandOrControl+Alt+P', resumePlayback);
-
-  globalShortcut.register('CommandOrControl+Alt+N', newTextFile);
-
-  globalShortcut.register('CommandOrControl+Alt+S', getNextFile);
-
-  globalShortcut.register('CommandOrControl+Alt+A', getPreviousFile);
-
-  globalShortcut.register('CommandOrControl+Alt+W', showTagSpaces);
-
-  function showTagSpaces() {
-    if (mainWindow) {
-      mainWindow.restore();
-      mainWindow.show();
-    } else {
-      newWindow.restore();
-      newWindow.show();
-    }
-    //mainWindow.webContents.send("showing-tagspaces", "tagspaces");
-  }
-
-  function newTextFile() {
-    if (mainWindow) {
-      mainWindow.show();
-      mainWindow.webContents.send("file", "text");
-    } else {
-      newWindow.show();
-      newWindow.webContents.send("file", "text");
-    }
-  }
-
-  function newHTMLFile() {
-    if (mainWindow) {
-      mainWindow.show();
-      mainWindow.webContents.send("file", "html");
-    } else {
-      newWindow.show();
-      newWindow.webContents.send("file", "html");
-    }
-  }
-
-  function newMDFile() {
-    if (mainWindow) {
-      mainWindow.show();
-      mainWindow.webContents.send("file", "markdown");
-    } else {
-      newWindow.show();
-      newWindow.webContents.send("file", "markdown");
-    }
-  }
-
-  function newAudioFile() {
-    if (mainWindow) {
-      mainWindow.show();
-      mainWindow.webContents.send("file", "audio");
-    } else {
-      newWindow.show();
-      newWindow.webContents.send("file", "audio");
-    }
-  }
-
-  function getNextFile() {
-    if (mainWindow) {
-      mainWindow.show();
-      mainWindow.webContents.send("file", "next-file");
-    } else {
-      newWindow.show();
-      newWindow.webContents.send("file", "next-file");
-    }
-  }
-
-  function getPreviousFile() {
-    if (mainWindow) {
-      mainWindow.show();
-      mainWindow.webContents.send("file", "previous-file");
-    } else {
-      newWindow.show();
-      newWindow.webContents.send("file", "previous-file");
-    }
-  }
-
-  function resumePlayback() {
-    if (mainWindow) {
-      mainWindow.webContents.send("play-pause", true);
-    } else {
-      newWindow.webContents.send("play-pause", true);
-    }
-  }
 });
 
-process.on('uncaughtException', (error) => {
-  if (error.stack) {
-    console.error('error:', error.stack);
+function reloadApp() {
+  if (mainWindow) {
+    mainWindow.loadURL(indexPath);
   }
-  reloadApp();
-});
+  if (newWindow) {
+    newWindow.loadURL(indexPath);
+  }
+}
+
+function showTagSpaces() {
+  if (mainWindow) {
+    mainWindow.restore();
+    mainWindow.show();
+  } else {
+    newWindow.restore();
+    newWindow.show();
+  }
+  //mainWindow.webContents.send("showing-tagspaces", "tagspaces");
+}
+
+function newTextFile() {
+  if (mainWindow) {
+    mainWindow.show();
+    mainWindow.webContents.send("file", "text");
+  } else {
+    newWindow.show();
+    newWindow.webContents.send("file", "text");
+  }
+}
+
+function newHTMLFile() {
+  if (mainWindow) {
+    mainWindow.show();
+    mainWindow.webContents.send("file", "html");
+  } else {
+    newWindow.show();
+    newWindow.webContents.send("file", "html");
+  }
+}
+
+function newMDFile() {
+  if (mainWindow) {
+    mainWindow.show();
+    mainWindow.webContents.send("file", "markdown");
+  } else {
+    newWindow.show();
+    newWindow.webContents.send("file", "markdown");
+  }
+}
+
+function newAudioFile() {
+  if (mainWindow) {
+    mainWindow.show();
+    mainWindow.webContents.send("file", "audio");
+  } else {
+    newWindow.show();
+    newWindow.webContents.send("file", "audio");
+  }
+}
+
+function getNextFile() {
+  if (mainWindow) {
+    mainWindow.show();
+    mainWindow.webContents.send("file", "next-file");
+  } else {
+    newWindow.show();
+    newWindow.webContents.send("file", "next-file");
+  }
+}
+
+function getPreviousFile() {
+  if (mainWindow) {
+    mainWindow.show();
+    mainWindow.webContents.send("file", "previous-file");
+  } else {
+    newWindow.show();
+    newWindow.webContents.send("file", "previous-file");
+  }
+}
+
+function resumePlayback() {
+  if (mainWindow) {
+    mainWindow.webContents.send("play-pause", true);
+  } else {
+    newWindow.webContents.send("play-pause", true);
+  }
+}

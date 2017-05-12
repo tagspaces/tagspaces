@@ -145,7 +145,7 @@ define(function(require, exports, module) {
 
       switchInterfaceLanguage(language).then(function() {
         if (isNode || isElectron) {
-          tsIOApi.initMainMenu();
+          tsIOApi.initElectronIntegration();
         }
 
         if (tsSettings.Settings.tagspacesList.length < 1) {

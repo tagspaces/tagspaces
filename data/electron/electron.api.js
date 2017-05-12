@@ -50,7 +50,7 @@ define(function(require, exports, module) {
     }
   }
 
-  function initMainMenu() {
+  function initElectronIntegration() {
     var Menu = remote.Menu;
     var template = [
       {
@@ -401,6 +401,9 @@ define(function(require, exports, module) {
       var audioEvent = new CustomEvent('resume', {'detail': arg});
       window.dispatchEvent(audioEvent);
     });
+
+    ipcRenderer.send('global-shortcuts-enabled', TSCORE.Config.getEnableGlobalKeyboardShortcuts());
+
   }
 
   // Brings the TagSpaces window on top of the windows
@@ -1035,7 +1038,7 @@ define(function(require, exports, module) {
   }
 
   // Platform specific calls
-  exports.initMainMenu = initMainMenu;
+  exports.initElectronIntegration = initElectronIntegration;
   exports.showMainWindow = showMainWindow;
 
   exports.watchDirectory = watchDirectory; // Platform specific
