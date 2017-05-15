@@ -1,6 +1,6 @@
 {
     "name": "TagSpaces",
-    "version": "2.8.1",
+    "version": "2.8.2",
     "manifest_version": 2,
     "description": "__MSG_appDesc__",
     "default_locale": "en_US",
