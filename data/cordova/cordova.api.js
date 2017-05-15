@@ -243,7 +243,7 @@ define(function(require, exports, module) {
     pendingCallbacks--;
     console.log("Pending recursions: " + pendingCallbacks);
     if (pendingCallbacks <= 0) {
-      // TSPOSTIO.createDirectoryTree(anotatedTree);
+      // .createDirectoryTree(anotatedTree);
     }
   } */
 

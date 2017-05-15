@@ -9,7 +9,6 @@ define(function(require, exports, module) {
 
   var perspectives;
   var TSCORE = require('tscore');
-  var TSPOSTIO = require("tspostioapi");
 
   function initPerspective(extPath) {
     return new Promise(function(resolve, reject) {
@@ -63,11 +62,6 @@ define(function(require, exports, module) {
       var startupFilePath = TSCORE.Utils.getURLParameter("open");
       if (startupFilePath && startupFilePath.length) {
         startupFilePath = decodeURIComponent(startupFilePath);
-
-        /*var parentFolderPath = TSCORE.TagUtils.extractContainingDirectoryPath(startupFilePath);
-        TSCORE.IO.listDirectoryPromise(parentFolderPath).then(function(entries) {
-          TSPOSTIO.listDirectory(entries);
-        })*/
         TSCORE.FileOpener.openFileOnStartup(startupFilePath);
       } else if (lastLocation && lastLocation.length >= 1) {
         TSCORE.openLocation(lastLocation);
@@ -310,9 +304,19 @@ define(function(require, exports, module) {
   function refreshFileListContainer() {
     // TODO consider search view
     TSCORE.IO.listDirectoryPromise(TSCORE.currentPath).then(function(entries) {
-      TSPOSTIO.listDirectory(entries);
+      TSCORE.PerspectiveManager.updateFileBrowserData(entries);
+      TSCORE.updateSubDirs(entries);      
     }).catch(function(err) {
-      TSPOSTIO.errorOpeningPath(TSCORE.currentPath);
+      // Normalazing the paths
+      var dir1 = TSCORE.TagUtils.cleanTrailingDirSeparator(TSCORE.currentLocationObject.path);
+      var dir2 = TSCORE.TagUtils.cleanTrailingDirSeparator(TSCORE.currentPath);
+      // Close the current location if the its path could not be opened
+      if (dir1 === dir2) {
+        TSCORE.showAlertDialog($.i18n.t('ns.dialogs:errorOpeningLocationAlert'));
+        TSCORE.closeCurrentLocation();
+      } else {
+        TSCORE.showAlertDialog($.i18n.t('ns.dialogs:errorOpeningPathAlert'));
+      }      
       console.warn("Error listing directory" + err);
     });
   }

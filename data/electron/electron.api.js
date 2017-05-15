@@ -21,7 +21,7 @@ define(function(require, exports, module) {
   //console.log("CM Args: " + JSON.stringify(process.argv));
 
   var TSCORE = require("tscore");
-  var TSPOSTIO = require("tspostioapi");
+  
   var fsWatcher;
   var win = remote.getCurrentWindow();
 
@@ -985,7 +985,19 @@ define(function(require, exports, module) {
     var chooser = $('#folderDialogNodeWebkit');
     chooser.on("change", function(ev) {
       var file = ev.target.files[0];
-      TSPOSTIO.selectDirectory(file.path);
+      var dirPath = file.path;
+
+      if (!TSCORE.TagUtils.stringEndsWith(dirPath, TSCORE.dirSeparator)) {
+        dirPath = dirPath + TSCORE.dirSeparator;
+      }
+      var dirName = TSCORE.TagUtils.extractContainingDirectoryName(dirPath);
+      $('#connectionName').val(dirName);
+      $('#folderLocation').val(dirPath);
+      $('#folderLocation2').val(dirPath);
+      $('#folderLocation').blur();
+      $('#folderLocation2').blur();
+      $('#moveCopyDirectoryPath').val(dirPath);
+
       $(this).off("change");
       $(this).val("");
     });

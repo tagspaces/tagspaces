@@ -12,7 +12,7 @@ define(function(require, exports, module) {
   console.log('Loading ioutils.js ...');
 
   var TSCORE = require('tscore');
-  var TSPOSTIO = require('tspostioapi');
+
   var stopDirectoryWalking = false;
   var searchResultsCounter = 0;
 
@@ -64,9 +64,21 @@ define(function(require, exports, module) {
           });
         }
       }
-      TSPOSTIO.listSubDirectories(anotatedDirList, dirPath);
+      TSCORE.subfoldersDirBrowser = anotatedDirList;
+      if (TSCORE.directoryBrowser !== undefined) {
+        TSCORE.directoryBrowser.reInitUI(dirPath);
+      }      
     }).catch(function(error) {
-      TSPOSTIO.errorOpeningPath(dirPath);
+      var dir1 = TSCORE.TagUtils.cleanTrailingDirSeparator(TSCORE.currentLocationObject.path);
+      var dir2 = TSCORE.TagUtils.cleanTrailingDirSeparator(dirPath);
+      // Close the current location if the its path could not be opened
+      if (dir1 === dir2) {
+        TSCORE.showAlertDialog($.i18n.t('ns.dialogs:errorOpeningLocationAlert'));
+        TSCORE.closeCurrentLocation();
+      } else {
+        TSCORE.showAlertDialog($.i18n.t('ns.dialogs:errorOpeningPathAlert'));
+      }
+
       TSCORE.hideLoadingAnimation();
       console.error("Error listDirectory " + dirPath + " error: " + error);
     });
@@ -126,6 +138,36 @@ define(function(require, exports, module) {
     });
   }
 
+  function renameFileSuccess(oldFilePath, newFilePath) {
+    var lastOpenedFile = TSCORE.FileOpener.getOpenedFilePath();
+    if (lastOpenedFile !== undefined) {
+      console.log('Last opened Filename: ' + lastOpenedFile);
+      // TODO handle case in which a file opened for editing and a tag has been added / file renamed
+      if (isCordova) {
+        lastOpenedFile = lastOpenedFile.substring(("file://").length, lastOpenedFile.length);
+      }
+      if (TSCORE.FileOpener.isFileOpened() && oldFilePath === lastOpenedFile) {
+        TSCORE.FileOpener.openFile(newFilePath);
+      }
+    }
+    var oldFileContainingPath = TSCORE.TagUtils.extractContainingDirectoryPath(oldFilePath),
+      newFileConaintingPath = TSCORE.TagUtils.extractContainingDirectoryPath(newFilePath);
+    if (oldFileContainingPath !== newFileConaintingPath) {
+      // File was moved
+      // TODO consider case - file was moved in subdir shown in the recursive search results
+      //TSCORE.removeFileModel(TSCORE.fileList, oldFilePath);
+      //TSCORE.PerspectiveManager.removeFileUI(oldFilePath);
+      TSCORE.navigateToDirectory(TSCORE.currentPath);
+    } else {
+      // File was renamed
+      TSCORE.updateFileModel(TSCORE.fileList, oldFilePath, newFilePath);
+      TSCORE.PerspectiveManager.updateFileUI(oldFilePath, newFilePath);
+    }
+    TSCORE.Meta.updateMetaData(oldFilePath, newFilePath);
+    TSCORE.hideWaitingDialog();
+  };
+
+  exports.renameFileSuccess = renameFileSuccess;
   exports.stopDirectoryWalking = stopDirectoryWalking;
   exports.walkDirectory = walkDirectory;
   exports.listSubDirectories = listSubDirectories;

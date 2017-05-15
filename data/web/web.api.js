@@ -14,7 +14,6 @@ define(function(require, exports, module) {
   console.log("Loading web.js..");
 
   var TSCORE = require("tscore");
-  var TSPOSTIO = require("tspostioapi");
 
   require("webdav");
   //require("web/offlinelib/offline.min");

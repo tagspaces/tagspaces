@@ -10,8 +10,8 @@ define(function(require, exports, module) {
   console.log('Loading fileopener...');
 
   var TSCORE = require('tscore');
-  var TSPOSTIO = require("tspostioapi");
   var moment = require('moment');
+
   var _openedFilePath;
   var _openedFileProperties;
   var _isFileOpened = false;

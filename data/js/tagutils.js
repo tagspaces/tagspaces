@@ -6,7 +6,6 @@ define(function(require, exports, module) {
   'use strict';
   console.log('Loading tagutils.js ...');
   var TSCORE = require('tscore');
-  var TSPOSTIO = require("tspostioapi");
   var BEGIN_TAG_CONTAINER = '[';
   var END_TAG_CONTAINER = ']';
 
@@ -349,7 +348,7 @@ define(function(require, exports, module) {
     console.log("tagutils.renameFile " + filePath);
     TSCORE.IO.renameFilePromise(filePath, newFilePath).then(function(success) {
       TSCORE.hideWaitingDialog();
-      TSPOSTIO.renameFile(filePath, newFilePath);
+      TSCORE.IOUtils.renameFileSuccess(filePath, newFilePath);
     }, function(err) {
       TSCORE.hideWaitingDialog();
       TSCORE.showAlertDialog(err);

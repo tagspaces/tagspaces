@@ -5,7 +5,6 @@ define(function(require, exports, module) {
   'use strict';
   console.log('Loading directorybrowser.js ...');
   var TSCORE = require('tscore');
-  var TSPOSTIO = require('tspostioapi');
 
   function initUI() {
     $('#gotoParentDirButton').click(function() {
@@ -22,7 +21,18 @@ define(function(require, exports, module) {
       });
     }
     $('#selectDirectoryButton').click(function() {
-      TSPOSTIO.selectDirectory($('#directoryPath').val());
+      var dirPath = $('#directoryPath').val();
+      if (!TSCORE.TagUtils.stringEndsWith(dirPath, TSCORE.dirSeparator)) {
+        dirPath = dirPath + TSCORE.dirSeparator;
+      }
+      var dirName = TSCORE.TagUtils.extractContainingDirectoryName(dirPath);
+      $('#connectionName').val(dirName);
+      $('#folderLocation').val(dirPath);
+      $('#folderLocation2').val(dirPath);
+      $('#folderLocation').blur();
+      $('#folderLocation2').blur();
+      $('#moveCopyDirectoryPath').val(dirPath);
+
       $('#driveSelector').prop('selectedIndex', 0);
     });
   }

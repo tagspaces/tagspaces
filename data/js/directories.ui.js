@@ -9,7 +9,6 @@ define(function(require, exports, module) {
   console.log('Loading directories.ui.js ...');
 
   var TSCORE = require('tscore');
-  var TSPOSTIO = require("tspostioapi");
   var tsExtManager = require('tsextmanager');
 
   var homeFolderTitle = 'Home';
@@ -342,7 +341,7 @@ define(function(require, exports, module) {
           var newFilePath = targetDir + TSCORE.dirSeparator + fileName;
           TSCORE.IO.renameFilePromise(filePath, newFilePath).then(function(success) {
             TSCORE.hideWaitingDialog();
-            TSPOSTIO.renameFile(filePath, newFilePath);
+            TSCORE.IOUtils.renameFileSuccess(filePath, newFilePath);
           }, function(err) {
             TSCORE.hideWaitingDialog();
             TSCORE.showAlertDialog(err);
@@ -369,7 +368,7 @@ define(function(require, exports, module) {
             var newFilePath = targetDir + TSCORE.dirSeparator + fileName;
             TSCORE.IO.renameFilePromise(filePath, newFilePath).then(function(success) {
               TSCORE.hideWaitingDialog();
-              TSPOSTIO.renameFile(filePath, newFilePath);
+              TSCORE.IOUtils.renameFileSuccess(filePath, newFilePath);
             }, function(err) {
               TSCORE.hideWaitingDialog();
               TSCORE.showAlertDialog(err);
@@ -493,7 +492,8 @@ define(function(require, exports, module) {
     TSCORE.showLoadingAnimation();
     //TSCORE.PerspectiveManager.removeAllFiles();
     TSCORE.IO.listDirectoryPromise(dirPath).then(function(entries) {
-      TSPOSTIO.listDirectory(entries);
+      TSCORE.PerspectiveManager.updateFileBrowserData(entries);
+      TSCORE.updateSubDirs(entries)
       TSCORE.hideLoadingAnimation();
       console.log("Listing: " + dirPath + " done!");
 
@@ -505,7 +505,16 @@ define(function(require, exports, module) {
         });
       }
     }).catch(function(err) {
-      TSPOSTIO.errorOpeningPath(dirPath);
+      // Normalazing the paths
+      var dir1 = TSCORE.TagUtils.cleanTrailingDirSeparator(TSCORE.currentLocationObject.path);
+      var dir2 = TSCORE.TagUtils.cleanTrailingDirSeparator(dirPath);
+      // Close the current location if the its path could not be opened
+      if (dir1 === dir2) {
+        TSCORE.showAlertDialog($.i18n.t('ns.dialogs:errorOpeningLocationAlert'));
+        TSCORE.closeCurrentLocation();
+      } else {
+        TSCORE.showAlertDialog($.i18n.t('ns.dialogs:errorOpeningPathAlert'));
+      }      
       console.log("Error listing directory " + dirPath + " - " + err);
     });
 

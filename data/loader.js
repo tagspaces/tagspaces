@@ -122,7 +122,6 @@ var isWin = navigator.appVersion.indexOf("Win")!==-1;
       tstagsui:               'js/tags.ui',
       tsdirectoriesui:        'js/directories.ui',
       tscoreui:               'js/core.ui',
-      tspostioapi:            'js/postioapi',
       tsdirectorybrowser:     'js/directorybrowser',
       tsutils:                'js/utils',
       tsioutils:              'js/ioutils',

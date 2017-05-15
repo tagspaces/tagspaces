@@ -14,7 +14,6 @@ define(function(require, exports, module) {
   console.log("Loading mozilla.api.js..");
 
   var TSCORE = require("tscore");
-  var TSPOSTIO = require("tspostioapi");
   var args = [];
   
   document.documentElement.addEventListener("tsMessage", function(event) {
@@ -47,14 +46,14 @@ define(function(require, exports, module) {
       case "createDirectoryTree":
         if (message.success) {
           console.log("Directory tree: " + JSON.stringify(message.content));
-          TSPOSTIO.createDirectoryTree(message.content);
+          //.createDirectoryTree(message.content); // TODO broken
         } else {
           console.error("Indexing directory failed");
         }
         break;
       case "selectDirectory":
         if (message.success) {
-          TSPOSTIO.selectDirectory(message.content);
+          //.selectDirectory(message.content); // TODO broken
         } else {
           console.error("Selecting directory failed.");
         }
@@ -368,7 +367,7 @@ define(function(require, exports, module) {
   function createDirectory(dirPath, silentMode) {
     createDirectoryPromise(dirPath).then(function() {
       if(!silentMode) {
-        TSPOSTIO.createDirectory(dirPath);
+        //.createDirectory(dirPath);
       }
     }, function(error){
       console.log(error);

@@ -9,7 +9,6 @@ define(function(require, exports, module) {
   console.log('Loading utils.js ...');
 
   var TSCORE = require('tscore');
-  var TSPOSTIO = require('tspostioapi');
   var marked = require("marked");
   var saveAs = require("libs/filesaver.js/FileSaver.min");
 

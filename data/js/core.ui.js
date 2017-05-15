@@ -9,7 +9,6 @@ define(function(require, exports) {
   console.log('Loading core.ui.js ...');
 
   var TSCORE = require('tscore');
-  var TSPOSTIO = require("tspostioapi");
 
   require('datetimepicker');
   require('moment');
@@ -169,7 +168,7 @@ define(function(require, exports) {
       var newFilePath = containingDir + TSCORE.dirSeparator + $('#renamedFileName').val();
       TSCORE.IO.renameFilePromise(initialFilePath, newFilePath).then(function(success) {
         TSCORE.hideWaitingDialog();
-        TSPOSTIO.renameFile(initialFilePath, newFilePath);
+        TSCORE.IOUtils.renameFileSuccess(initialFilePath, newFilePath);
       }, function(err) {
         TSCORE.hideWaitingDialog();
         TSCORE.showAlertDialog(err);
@@ -665,7 +664,14 @@ define(function(require, exports) {
       filePath: filePath
     }), function() {
       TSCORE.IO.deleteFilePromise(filePath).then(function() {
-          TSPOSTIO.deleteElement(filePath);
+          TSCORE.showSuccessDialog("File deleted successfully.");
+          TSCORE.removeFileModel(TSCORE.fileList, filePath);
+          TSCORE.Meta.deleteMetaData(filePath);
+          TSCORE.PerspectiveManager.removeFileUI(filePath);
+          if (filePath === TSCORE.FileOpener.getOpenedFilePath()) {
+            TSCORE.FileOpener.closeFile(true);
+          }
+          TSCORE.hideLoadingAnimation();          
         },
         function(error) {
           TSCORE.hideLoadingAnimation();
