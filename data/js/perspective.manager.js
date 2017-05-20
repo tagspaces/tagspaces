@@ -70,7 +70,7 @@ define(function(require, exports, module) {
       TSCORE.fireDocumentEvent(TSCORE.createDocumentEvent("initApp"));
       $("#viewContainers").removeClass("appBackgroundTile");
       $('#loading').hide();
-      if (isNode || isElectron) {
+      if (isElectron) {
         TSCORE.IO.showMainWindow();
       }
       return true;

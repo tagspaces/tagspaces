@@ -2,7 +2,7 @@
  * Use of this source code is governed by a AGPL3 license that
  * can be found in the LICENSE file. */
 
-/* global define, Handlebars, isNode, isFirefox, Mousetrap */
+/* global define, Handlebars, isFirefox, Mousetrap */
 define(function(require, exports) {
   'use strict';
 
@@ -37,7 +37,7 @@ define(function(require, exports) {
     });
 
     // Managing droping of files in the perspectives
-    if (isNode || isElectron) {
+    if (isElectron) {
       $('#viewContainers').on('dragenter', function(event) {
         event.preventDefault();
         showFileDropArea();
@@ -1063,7 +1063,7 @@ define(function(require, exports) {
     } else if (isFirefox) {
       $('#openNatively').hide();
       $('#fileMenuOpenNatively').parent().hide();
-    } else if (isNode || isElectron) {
+    } else if (isElectron) {
       $('#openFileInNewWindow').hide();
     }
     // Disable send to feature on all platforms except android cordova
