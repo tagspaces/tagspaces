@@ -20,7 +20,7 @@ define(function(require, exports, module) {
   var alternativeDirectoryNavigatorTmpl = Handlebars.compile(
     '{{#each dirHistory}}' +
     '<div class="btn-group">' +
-    '  <button class="btn btn-link dropdown-toggle" data-menu="{{@index}}">' +
+    '  <button class="btn btn-link dropdown-toggle" data-path="{{path}}"  data-menu="{{@index}}">' +
     '    <div class="altNavFolderTitle">' +
     '      <span style="{{#if @last}} padding-right: 0 !important; color: black; {{/if}} padding-right: 5px; padding-left: 1px;">{{name}}</span>' +
     '      <i {{#if @last}} style="display: none;" {{/if}} class="fa fa-caret-right"></i>' +
@@ -287,9 +287,15 @@ define(function(require, exports, module) {
       showRenameDirectoryDialog($(this).attr('data-path'));
     });
 
-    $alternativeNavigator.find('.dropdown-toggle').on('contextmenu click', function() {
+    $alternativeNavigator.find('.dropdown-toggle').on('contextmenu', function() {
       TSCORE.hideAllDropDownMenus();
       $('#dirMenu' + $(this).attr('data-menu')).css("display", "block");
+      return false;
+    });
+
+    $alternativeNavigator.find('.dropdown-toggle').on('click', function() {
+      TSCORE.hideAllDropDownMenus();
+      navigateToDirectory($(this).attr('data-path'));
       return false;
     });
 
