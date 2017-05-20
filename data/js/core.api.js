@@ -1,7 +1,7 @@
 /* Copyright (c) 2012-2017 The TagSpaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that
  * can be found in the LICENSE file. */
-/*global isNode, isWin, isFirefox, Mousetrap, gui */
+/*global isWin, isFirefox, Mousetrap, gui */
 
 /**
  * Description
@@ -11,6 +11,22 @@ define(function(require, exports, module) {
   'use strict';
 
   console.log('Loading core.api.js ...');
+
+  require('jquery');
+  require('jqueryui');
+  require('hammerjs');
+  require('jqueryhammerjs');
+  require('bootstrap');
+  require('bootstrap3xeditable');
+  require('bootstrapvalidator');
+  require('jquerysimplecolorpicker');
+  require('mousetrap');
+  require('mousetrapgb');
+  require('select2');
+  require('handlebarsjs');
+  require('tssettingsdefault');
+  require('noty');
+  require('i18next');
 
   // Importing modules
   var tsSettings = require('tssetting');
@@ -144,7 +160,7 @@ define(function(require, exports, module) {
       }
 
       switchInterfaceLanguage(language).then(function() {
-        if (isNode || isElectron) {
+        if (isElectron) {
           tsIOApi.initElectronIntegration();
         }
 
@@ -199,18 +215,6 @@ define(function(require, exports, module) {
   }
 
   function initKeyBindings() {
-    if (isNode) {
-      var win = gui.Window.get();
-      Mousetrap.bind(tsSettings.getOpenDevToolsScreenKeyBinding(), function() {
-        win.showDevTools();
-      });
-      Mousetrap.bind(tsSettings.getReloadApplicationKeyBinding(), function() {
-        win.reloadIgnoringCache();
-      });
-      Mousetrap.bind(tsSettings.getToggleFullScreenKeyBinding(), function() {
-        win.toggleFullscreen();
-      });
-    }
     Mousetrap.bind(tsSettings.getShowTagLibraryKeyBinding(), function() {
       tsCoreUI.showTagsPanel();
     });
