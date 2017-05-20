@@ -166,6 +166,8 @@ define(function (require, exports, module) {
             { "type": "opus", "viewer": "viewerAudioVideo", "editor": "false" },
             { "type": "wav", "viewer": "viewerAudioVideo", "editor": "false" },
             { "type": "wave", "viewer": "viewerAudioVideo", "editor": "false" },
+            { "type": "mp3", "viewer": "viewerAudioVideo", "editor": "false" },
+            { "type": "flac", "viewer": "viewerAudioVideo", "editor": "false" },
             { "type": "webm", "viewer": "viewerAudioVideo", "editor": "false" },
             { "type": "desktop", "viewer": "viewerURL", "editor": "false" },
             { "type": "website", "viewer": "viewerURL", "editor": "false" },

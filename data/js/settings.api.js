@@ -200,6 +200,18 @@ define(function(require, exports, module) {
           'editor': 'false'
         });
       }
+      if (oldBuildNumber <= 20170414113700) {
+        addFileType({
+          'type': 'flac',
+          'viewer': 'viewerAudioVideo',
+          'editor': 'false'
+        });
+        addFileType({
+          'type': 'mp3',
+          'viewer': 'viewerAudioVideo',
+          'editor': 'false'
+        });
+      }
 
       saveSettings();
     }
