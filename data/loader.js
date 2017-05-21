@@ -42,7 +42,7 @@ var isWin = navigator.appVersion.indexOf("Win")!==-1;
     console.log(e.message);
   }
   let PRO_JS = "pro/js/pro.api";
-  //if(PRO.indexOf("@@PROVERS") == 0 || PRO == "false") { PRO_JS = 'js/pro'; }
+  if(PRO.indexOf("@@PROVERS") == 0 || PRO == "false") { PRO_JS = 'js/pro'; }
 
   // Setting up the IO functionality according to the platform
   let IO_JS = "web/web.api";
