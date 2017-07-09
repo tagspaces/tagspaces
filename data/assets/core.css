@@ -154,6 +154,7 @@
 
 #tagGroupsContent {
     min-height: 50px;
+    padding-left: 2px;
 }
 
 #clearFilterButton {
