@@ -37,11 +37,9 @@ define(function(require, exports, module) {
   function findMetaObjectFromFileList(filePath) {
     var metaObj = null;
     TSCORE.fileList.every(function(element) {
-      if (element.path === filePath) {
+      if (element.path === filePath && element.meta) {
         metaObj = element.meta;
-        return false;
       }
-      return true;
     });
     return metaObj;
   }
@@ -252,6 +250,9 @@ define(function(require, exports, module) {
 
   function loadMetaFileJsonPromise(entry) {
     return new Promise(function(resolve, reject) {
+      if(!entry.meta) {
+        entry.meta = {};
+      }
       var filePath = entry.path;
       var parentFolder = TSCORE.TagUtils.extractParentDirectoryPath(filePath);
       var metaFileJson = findMetaFilebyPath(filePath, TSCORE.metaFileExt);
