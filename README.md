@@ -4,9 +4,9 @@
 
 ## Introduction
 
-`TagSpaces` is a open source application for managing of your local files. You can find more information about it on its website [tagspaces.org](http://tagspaces.org/). For a quick TagSpaces introduction please see this [video](https://www.youtube.com/embed/CJ2hYU6U-C8) on youtube.
+`TagSpaces` is a open source application for managing of your local files. You can find more information about it on its website [tagspaces.org](http://tagspaces.org/). For a quick TagSpaces introduction please see this [video](https://www.youtube.com/embed/CJ2hYU6U-C8) on YouTube.
 
-- [TagSpaces blog](http://tagspaces.org/blog/) for any news about tagspaces
+- [TagSpaces blog](http://tagspaces.org/blog/) for any news about TagSpaces
 - [the issues tracker](https://github.com/tagspaces/tagspaces/issues) for developer support requests
 - [the TagSpaces wiki](https://github.com/tagspaces/tagspaces/wiki) for end-users and implementors (currently not really used)
 
@@ -30,15 +30,15 @@ To get updates you can:
     ./data/_locales......contains files need for the localisation of the Chrome extension UI
 
 ## Downloads 
-You can find the latest release of TagSpace in the github [release area](https://github.com/tagspaces/tagspaces/releases/) of TagSpaces
+You can find the latest release of TagSpace in the GitHub [release area](https://github.com/tagspaces/tagspaces/releases/) of TagSpaces
 
 A full list of the changes is available in our [changelog](CHANGELOG.md)
 
 ## Features
 
-* **File managing & tagging:** TagSpaces provides a convenient interface for browsing, viewing and tagging of your local files
+* **File managing & tagging:** TagSpaces provides a convenient interface for browsing, viewing and tagging of your local files.
 * **No-Cloud:** TagSpaces is running completely serverless on your laptop, desktop or tablet and does not request internet connection or any kind of online registration or service provider.
-* **Note Taking:** You can create and edit notes in plain text, markdown and html file formats
+* **Note Taking:** You can create and edit notes in plain text, markdown and html file formats.
 * **Cross-platform:** TagSpaces runs perfectly on Windows, Linux, Mac, Android and as extension in Firefox and Chrome.
 
 ## Screenshots
