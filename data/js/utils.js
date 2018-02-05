@@ -384,15 +384,17 @@ define(function(require, exports, module) {
     handleLinks($targetElement);
   }
 
-  function convertMarkdown(content) {
-    var mdOptions = {
-      gfm: true,
-      tables: true,
-      breaks: true,
-      pedantic: false,
-      sanitize: true,
-      smartLists: true,
-      smartypants: false
+  function convertMarkdown(content, mdOptions) {
+    if (!mdOptions) {
+      mdOptions = {
+        gfm: true,
+        tables: true,
+        breaks: true,
+        pedantic: false,
+        sanitize: true,
+        smartLists: true,
+        smartypants: false
+      }
     }
     if (marked) {
       return marked(content, mdOptions);
