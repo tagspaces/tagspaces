@@ -8,19 +8,19 @@
         "description": "Title of the application launcher in the browser."
     },
     "saveBookmarkTitle": {
-        "message": "Bookmark the page",
+        "message": "Seite zu Lesezeichen hinzufügen",
         "description": "Title of bookmark button"
     },
     "appDesc": {
-        "message": "Datei Browser mit Unterstützung der Speicherung von Web-Inhalten und Projektierung von lokalen Dateien zu Chromecast. ",
+        "message": "Dateimanager mit Unterstützung der Speicherung von Web-Inhalten und Chromecast.",
         "description": ""
     },
     "addTagHelp": {
-        "message": "Tags sollten mindestens 2 Zeichen lang sein und dürfen keine Sonderzeichen, wie Leerzeichen, #, /, \\ und andere enthalten.",
+        "message": "Schlagwörter sollten mindestens 2 Zeichen lang sein und dürfen keine Sonderzeichen, wie Leerzeichen, #, /, \\ und andere enthalten.",
         "description": "Add tag help message"
     },
     "saveScreenshotTitle": {
-        "message": "Screenshot des sichtbaren Seitenbereichs als PNG speichern",
+        "message": "Bildschirmfoto des sichtbaren Seitenbereichs als PNG speichern",
         "description": "Title of screenshot button"
     },
     "editTitleLabel": {
@@ -32,39 +32,39 @@
         "description": ""
     },
     "saveBookmarkLabel": {
-        "message": "Bookmark",
+        "message": "Lesezeichen",
         "description": "Title of label."
     },
     "appLauncherLabel": {
-        "message": "Erfassen von Web-Inhalten",
+        "message": "Web-Inhalte erfassen",
         "description": "Title of label."
     },
     "saveScreenshotLabel": {
-        "message": "Screenshot",
+        "message": "Bildschirmfoto",
         "description": "Title of label."
     },
     "addTagLabel": {
-        "message": "Tags hinzufügen",
+        "message": "Schlagwörter hinzufügen",
         "description": "Title of label."
     },
     "saveAsMhtmlTitle": {
-        "message": "Ganze Seite als MHTML speichern",
+        "message": "Gesamte Seite als MHTML speichern",
         "description": "Title of save page button"
     },
     "appLauncherTitle": {
-        "message": "TagSpaces Browser in einem neuen Tab starten",
+        "message": "TagSpaces-Browser in einem neuen Tab starten",
         "description": "Title of the application launcher in the browser."
     },
     "saveSelectionAsHtmlTitle": {
-        "message": "Ausgewählte Inhalte wie HTML speichern",
+        "message": "Ausgewählten Inhalt als HTML speichern",
         "description": "Title of save selection button"
     },
     "saveAsMhtmlLabel": {
-        "message": "Ganze Seite speichern",
+        "message": "Gesamte Seite speichern",
         "description": "Title of label."
     },
     "saveFileLabel": {
-        "message": "Speichern als Datei",
+        "message": "Als Datei speichern",
         "description": "Title of label."
     }
 }
