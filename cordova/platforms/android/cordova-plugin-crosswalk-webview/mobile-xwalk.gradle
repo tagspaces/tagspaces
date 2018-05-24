@@ -1,0 +1,170 @@
+/*
+       Licensed to the Apache Software Foundation (ASF) under one
+       or more contributor license agreements.  See the NOTICE file
+       distributed with this work for additional information
+       regarding copyright ownership.  The ASF licenses this file
+       to you under the Apache License, Version 2.0 (the
+       "License"); you may not use this file except in compliance
+       with the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+       Unless required by applicable law or agreed to in writing,
+       software distributed under the License is distributed on an
+       "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+       KIND, either express or implied.  See the License for the
+       specific language governing permissions and limitations
+       under the License.
+*/
+
+def EMBEDDED_MODE = "embedded"
+def SHARED_MODE = "shared"
+def LITE_MODE = "lite"
+def DEFAULT_GROUP_ID = "org.xwalk:"
+def SHARED_ARTIFACT_ID = "xwalk_shared_library:"
+def EMBEDD_ARTIFACT_ID = "xwalk_core_library:"
+def CANARY_ARTIFACT_ID = "xwalk_core_library_canary:"
+def BIT_64 = ":64bit@aar"
+def DEFAULT_MIN_SDK_VERSION = 14
+
+def getConfigPreference(name) {
+    name = name.toLowerCase()
+    def xml = file("res/xml/config.xml").getText()
+    // Disable namespace awareness since Cordova doesn't use them properly
+    def root = new XmlParser(false, false).parseText(xml)
+
+    def ret, defaultValue
+    root.preference.each { it ->
+        def attrName = it.attribute("name")
+        if (attrName && attrName.toLowerCase() == name) {
+            if (it.attribute('default') != null) {
+                defaultValue = it.attribute('default');
+            } else {
+                ret = it.attribute("value")
+            }
+        }
+    }
+    return ret ? ret : defaultValue
+}
+
+if (!project.hasProperty('xwalk64bit')) {
+    ext.xwalk64bit = getConfigPreference("xwalk64bit");
+    println xwalk64bit
+}
+if (cdvBuildMultipleApks == null) {
+    ext.xwalkMultipleApk = getConfigPreference("xwalkMultipleApk").toBoolean();
+} else {
+    ext.xwalkMultipleApk = cdvBuildMultipleApks.toBoolean();
+}
+
+def minSdk = getConfigPreference("android-minSdkVersion");
+if (cdvMinSdkVersion == null) {
+    ext.cdvMinSdkVersion = minSdk && Integer.parseInt(minSdk) > DEFAULT_MIN_SDK_VERSION ? minSdk : DEFAULT_MIN_SDK_VERSION;
+} else if (Integer.parseInt('' + cdvMinSdkVersion) < Integer.parseInt(minSdk)) {
+    ext.cdvMinSdkVersion = minSdk;
+}
+
+if (!project.hasProperty('xwalkMode')) {
+    ext.xwalkMode = getConfigPreference("xwalkMode");
+}
+
+
+if (ext.xwalkMode == SHARED_MODE) {
+    // Build one apk at shared mode because the value of
+    // ext.cdvBuildMultipleApks is false by default.
+    xwalk64bit = null;
+} else if (xwalk64bit == null) {
+    // Build embedded 32 bit crosswalk will generate two apks by default.
+    ext.cdvBuildMultipleApks = xwalkMultipleApk;
+}
+
+// Set defaults before project's build-extras.gradle
+if (!project.hasProperty('xwalkVersion')) {
+    ext.xwalkVersion = getConfigPreference("xwalkVersion")
+}
+
+// Set defaults before project's build-extras.gradle
+if (!project.hasProperty('xwalkLiteVersion')) {
+    ext.xwalkLiteVersion = getConfigPreference("xwalkLiteVersion")
+}
+
+if (!project.hasProperty('xwalkCommandLine')) {
+    ext.xwalkCommandLine = getConfigPreference("xwalkCommandLine")
+}
+// Apply values after project's build-extras.gradle
+cdvPluginPostBuildExtras.add({
+    def xwalkMavenRepo = 'https://download.01.org/crosswalk/releases/crosswalk/android/maven2';
+    if (xwalkMode == LITE_MODE) {
+        xwalkMavenRepo = 'https://download.01.org/crosswalk/releases/crosswalk-lite/android/maven2';
+    }
+    repositories {
+      maven {
+        url xwalkMavenRepo
+      }
+    }
+
+    android {
+        if (xwalk64bit != null) {
+            productFlavors {
+                x86_64 {
+                    versionCode defaultConfig.versionCode + 6
+                    ndk {
+                       abiFilters "x86_64", ""
+                    }
+                }
+                arm64 {
+                    versionCode defaultConfig.versionCode + 9
+                    ndk {
+                        abiFilters "arm64-v8a", ""
+                    }
+                }
+            }
+        }
+    }
+
+    def xwalkSpec = xwalkVersion
+    if (ext.xwalkMode == LITE_MODE) {
+        xwalkSpec = xwalkLiteVersion;
+    }
+
+    if ((xwalkSpec =~ /:/).count == 1) {
+        xwalkSpec = DEFAULT_GROUP_ID + xwalkSpec
+    } else if ((xwalkSpec =~ /:/).count == 0) {
+        if (xwalkSpec ==~ /\d+/) {
+            xwalkSpec = "${xwalkSpec}+"
+        }
+
+        def artifactid = EMBEDD_ARTIFACT_ID;
+        if (ext.xwalkMode == SHARED_MODE) {
+            artifactid = SHARED_ARTIFACT_ID;
+        } else if (ext.xwalkMode == LITE_MODE) {
+            artifactid = CANARY_ARTIFACT_ID;
+        }
+        xwalkSpec = DEFAULT_GROUP_ID + artifactid + xwalkSpec
+    }
+    if (xwalk64bit != null) {
+        xwalkSpec = xwalkSpec + BIT_64
+    }
+    println xwalkSpec
+
+    dependencies {
+        compile xwalkSpec
+    }
+
+    if (file('assets/xwalk-command-line').exists()) {
+        println('Not writing assets/xwalk-command-line since file already exists.')
+        return
+    }
+    android.applicationVariants.all { variant ->
+        def variantName = variant.name.capitalize()
+        def mergeTask = tasks["merge${variantName}Assets"]
+        def processTask = tasks["process${variantName}Resources"]
+        def outFile = new File (mergeTask.outputDir, "xwalk-command-line")
+        def newTask = project.task("createXwalkCommandLineFile${variantName}") << {
+            mergeTask.outputDir.mkdirs()
+            outFile.write("xwalk ${xwalkCommandLine}\n")
+        }
+        newTask.dependsOn(mergeTask)
+        processTask.dependsOn(newTask)
+    }
+})

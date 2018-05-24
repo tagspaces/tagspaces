@@ -1,0 +1,47 @@
+{
+  "appId": "org.tagspaces.desktopapp",
+  "asar": true,
+  "files": [
+    "dist/",
+    "node_modules/",
+    "app.html",
+    "splash.html",
+    "splash-worker.js",
+    "main.prod.js",
+    "main.prod.js.map",
+    "THIRD-PARTY.txt",
+    "LICENSE.txt",
+    "version.json",
+    "package.json"
+  ],
+  "copyright": "Copyright © 2018 TagSpaces",
+  "artifactName": "${name}-${os}-${arch}-${version}.${ext}",
+  "win": {
+    "target": [
+      "nsis",
+      "portable"
+    ]
+  },
+  "mac": {
+    "target": [
+      "zip"
+    ]
+  },
+  "linux": {
+    "target": [
+      "deb",
+      // "tar.gz"
+      // "appImage",
+      // "rpm"
+    ],
+    "category": "Office"
+  },
+  "nsis": {
+    "oneClick": true,
+    "license": "app/LICENSE.txt"
+  },
+  "directories": {
+    "buildResources": "resources",
+    "output": "../builds"
+  }
+}

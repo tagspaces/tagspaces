@@ -1,0 +1,10 @@
+{
+  "flow.pathToFlow": './node_modules/.bin/flow',
+  "search.exclude": {
+    "**/.git": true,
+    "**/cordova": true,
+    "**/dll": true,
+    "**/app/dist": true,
+    "**/node_modules": false
+  }
+}

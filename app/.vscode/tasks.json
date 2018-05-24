@@ -1,0 +1,32 @@
+{
+  "version": "2.0.0",
+  "presentation": {
+      "echo": true,
+      "reveal": "always",
+      "focus": false,
+      "panel": "new"
+  },
+  "tasks": [
+      {
+          // Custom prestart task i.e. npm run prestart.
+          "taskName": "prestart",
+          "command": "npm",
+          "args": [
+              "run",
+              "prestart"
+          ],
+          "type": "shell",
+          "group": "build",
+          // Specify tsc problem matcher.
+          "problemMatcher": ["$tsc-watch"]
+      },
+      {
+          // Default compile task from package.json i.e. npm run compile.
+          "type": "npm",
+          "script": "compile",
+          "group": "build",
+          // Specify tsc problem matcher.
+          "problemMatcher": ["$tsc-watch"]
+      }
+  ]
+}

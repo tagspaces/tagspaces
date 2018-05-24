@@ -1,0 +1,57 @@
+{
+  "parser": "babel-eslint",
+  "parserOptions": {
+    "sourceType": "module",
+    "allowImportExportEverywhere": true
+  },
+  "extends": "airbnb",
+  "env": {
+    "browser": true,
+    "node": true
+  },
+  "rules": {
+    "indent": ["warn", 2],
+    "max-len": ["warn", { "code": 150 }],
+    "react/jsx-indent": ["warn", 2],
+    "arrow-parens": ["off"],
+    "compat/compat": "error",
+    "consistent-return": "off",
+    "comma-dangle": "off",
+    "flowtype-errors/show-errors": "error",
+    "generator-star-spacing": "off",
+    "import/no-unresolved": "error",
+    "import/no-extraneous-dependencies": "off",
+    "no-console": "off",
+    "no-use-before-define": "off",
+    "no-multi-assign": "off",
+    "prefer-template": "off",
+    "promise/param-names": "error",
+    "promise/always-return": "error",
+    "promise/catch-or-return": "error",
+    "promise/no-native": "off",
+    "react/sort-comp": ["error", {
+      "order": ["type-annotations", "static-methods", "lifecycle", "everything-else", "render"]
+    }],
+    "react/jsx-no-bind": "off",
+    "react/jsx-filename-extension": ["error", { "extensions": [".js", ".jsx"] }],
+    "react/jsx-indent-props": ["warn", 2],
+    "react/prefer-stateless-function": "off",
+    "react/forbid-prop-types": "warn",
+    "react/jsx-boolean-value": "off"
+  },
+  "plugins": [
+    "flowtype",
+    "flowtype-errors",
+    "import",
+    "promise",
+    "compat",
+    "react"
+  ],
+  "settings": {
+    "import/resolver": {
+      "webpack": {
+        "config": "webpack.config.eslint.js"
+      }
+    }
+  }
+}

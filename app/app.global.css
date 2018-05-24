@@ -1,0 +1,14 @@
+@import "~font-awesome/css/font-awesome.css";
+@import "./assets/loading.css";
+@import "./assets/scrollbars.css";
+@import "./assets/splitpane.css";
+@import "./assets/minireset.css";
+@import "./assets/autosuggest.css";
+@import "./assets/rc-datetime.css";
+@import "~rc-table/assets/index.css";
+
+
+/* Needed to disable border on focused HotKey element */
+div[tabindex="-1"]:focus {
+  outline: 0;
+}
