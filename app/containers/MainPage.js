@@ -137,6 +137,7 @@ type Props = {
   toggleSettingsDialog: () => void, // needed by electron-menus
   toggleKeysDialog: () => void, // needed by electron-menus
   toggleLicenseDialog: () => void, // needed by electron-menus
+  toggleThirdPartyLibsDialog: () => void, // neede by electron-menus
   toggleAboutDialog: () => void, // needed by electron-menus
   openFileNatively: () => void, // needed by electron-menus
   getNextFile: () => void, // needed by electron-menus
@@ -504,6 +505,7 @@ function mapDispatchToProps(dispatch) {
     toggleSettingsDialog: AppActions.toggleSettingsDialog,
     toggleKeysDialog: AppActions.toggleKeysDialog,
     toggleLicenseDialog: AppActions.toggleLicenseDialog,
+    toggleThirdPartyLibsDialog: AppActions.toggleThirdPartyLibsDialog,
     toggleAboutDialog: AppActions.toggleAboutDialog,
     openFileNatively: AppActions.openFileNatively,
     setUpdateAvailable: AppActions.setUpdateAvailable,

@@ -28,6 +28,7 @@ import LogoIcon from '../assets/images/icon100x100.svg';
 import AboutDialog from './dialogs/AboutDialog';
 import KeyboardDialog from './dialogs/KeyboardDialog';
 import LicenseDialog from './dialogs/LicenseDialog';
+import ThirdPartyLibsDialog from './dialogs/ThirdPartyLibsDialog';
 import SettingsDialog from './dialogs/SettingsDialog';
 import CreateDirectoryDialog from './dialogs/CreateDirectoryDialog';
 import CreateFileDialog from './dialogs/CreateFileDialog';
@@ -44,6 +45,7 @@ import {
   isAboutDialogOpened,
   isKeysDialogOpened,
   isLicenseDialogOpened,
+  isThirdPartyLibsDialogOpened,
   isSettingsDialogOpened,
   isCreateFileDialogOpened,
   isCreateDirectoryOpened,
@@ -70,6 +72,8 @@ type Props = {
   toggleKeysDialog: () => void,
   isLicenseDialogOpened: boolean,
   toggleLicenseDialog: () => void,
+  isThirdPartyLibsDialogOpened: boolean,
+  toggleThirdPartyLibsDialog: () => void,
   isSettingsDialogOpened: boolean,
   toggleSettingsDialog: () => void,
   setManagementPanelVisibility: boolean => void,
@@ -218,6 +222,7 @@ class VerticalNavigation extends React.Component<Props, State> {
         <AboutDialog
           open={this.props.isAboutDialogOpened}
           toggleLicenseDialog={this.props.toggleLicenseDialog}
+          toggleThirdPartyLibsDialog={this.props.toggleThirdPartyLibsDialog}
           onClose={this.props.toggleAboutDialog}
         />
         <KeyboardDialog
@@ -227,6 +232,10 @@ class VerticalNavigation extends React.Component<Props, State> {
         <LicenseDialog
           open={this.props.isLicenseDialogOpened}
           onClose={this.props.toggleLicenseDialog}
+        />
+        <ThirdPartyLibsDialog
+          open={this.props.isThirdPartyLibsDialogOpened}
+          onClose={this.props.toggleThirdPartyLibsDialog}
         />
         <SettingsDialog
           open={this.props.isSettingsDialogOpened}
@@ -379,6 +388,7 @@ function mapStateToProps(state) {
     isAboutDialogOpened: isAboutDialogOpened(state),
     isKeysDialogOpened: isKeysDialogOpened(state),
     isLicenseDialogOpened: isLicenseDialogOpened(state),
+    isThirdPartyLibsDialogOpened: isThirdPartyLibsDialogOpened(state),
     isSettingsDialogOpened: isSettingsDialogOpened(state),
     isCreateDirectoryOpened: isCreateDirectoryOpened(state),
     isCreateFileDialogOpened: isCreateFileDialogOpened(state),
@@ -395,6 +405,7 @@ function mapActionCreatorsToProps(dispatch) {
     toggleSettingsDialog: AppActions.toggleSettingsDialog,
     toggleKeysDialog: AppActions.toggleKeysDialog,
     toggleLicenseDialog: AppActions.toggleLicenseDialog,
+    toggleThirdPartyLibsDialog: AppActions.toggleThirdPartyLibsDialog,
     toggleAboutDialog: AppActions.toggleAboutDialog,
   }, dispatch);
 }

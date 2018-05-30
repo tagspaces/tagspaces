@@ -326,6 +326,12 @@ export default function buildDesktopMenu(mainPageProps: Object) {
           }
         },
         {
+          label: '&' + i18n.t('core:thirdPartyLibs'),
+          click: () => {
+            mainPageProps.toggleThirdPartyLibsDialog();
+          }
+        },
+        {
           label: '&' + i18n.t('core:aboutTagSpaces'),
           click: () => {
             mainPageProps.toggleAboutDialog();

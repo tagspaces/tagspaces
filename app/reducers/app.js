@@ -74,6 +74,7 @@ export const types = {
   TOGGLE_ABOUT_DIALOG: 'APP/TOGGLE_ABOUT_DIALOG',
   TOGGLE_KEYBOARD_DIALOG: 'APP/TOGGLE_KEYBOARD_DIALOG',
   TOGGLE_LICENSE_DIALOG: 'APP/TOGGLE_LICENSE_DIALOG',
+  TOGGLE_THIRD_PARTY_LIBS_DIALOG: 'APP/TOGGLE_THIRD_PARTY_LIBS_DIALOG',
   TOGGLE_SETTINGS_DIALOG: 'APP/TOGGLE_SETTINGS_DIALOG',
   TOGGLE_CREATE_DIRECTORY_DIALOG: 'APP/TOGGLE_CREATE_DIRECTORY_DIALOG',
   TOGGLE_CREATE_FILE_DIALOG: 'APP/TOGGLE_CREATE_FILE_DIALOG',
@@ -130,6 +131,7 @@ export const initialState = {
   keysDialogOpened: false,
   createFileDialogOpened: false,
   licenseDialogOpened: false,
+  thirdPartyLibsDialogOpened: false,
   settingsDialogOpened: false,
   createDirectoryDialogOpened: false,
   selectDirectoryDialogOpened: false,
@@ -210,6 +212,9 @@ export default (state: Object = initialState, action: Object) => {
   }
   case types.TOGGLE_LICENSE_DIALOG: {
     return { ...state, licenseDialogOpened: !state.licenseDialogOpened };
+  }
+  case types.TOGGLE_THIRD_PARTY_LIBS_DIALOG: {
+    return { ...state, thirdPartyLibsDialogOpened: !state.thirdPartyLibsDialogOpened };
   }
   case types.TOGGLE_SETTINGS_DIALOG: {
     return { ...state, settingsDialogOpened: !state.settingsDialogOpened };
@@ -582,6 +587,7 @@ export const actions = {
   toggleAboutDialog: () => ({ type: types.TOGGLE_ABOUT_DIALOG }),
   toggleKeysDialog: () => ({ type: types.TOGGLE_KEYBOARD_DIALOG }),
   toggleLicenseDialog: () => ({ type: types.TOGGLE_LICENSE_DIALOG }),
+  toggleThirdPartyLibsDialog: () => ({ type: types.TOGGLE_THIRD_PARTY_LIBS_DIALOG }),
   toggleSettingsDialog: () => ({ type: types.TOGGLE_SETTINGS_DIALOG }),
   toggleCreateDirectoryDialog: () => ({ type: types.TOGGLE_CREATE_DIRECTORY_DIALOG }),
   toggleCreateFileDialog: () => ({ type: types.TOGGLE_CREATE_FILE_DIALOG }),
@@ -1285,6 +1291,7 @@ export const isFileDragged = (state: Object) => state.app.isFileDragged;
 export const isAboutDialogOpened = (state: Object) => state.app.aboutDialogOpened;
 export const isKeysDialogOpened = (state: Object) => state.app.keysDialogOpened;
 export const isLicenseDialogOpened = (state: Object) => state.app.licenseDialogOpened;
+export const isThirdPartyLibsDialogOpened = (state: Object) => state.app.thirdPartyLibsDialogOpened;
 export const isSettingsDialogOpened = (state: Object) => state.app.settingsDialogOpened;
 export const isCreateDirectoryOpened = (state: Object) => state.app.createDirectoryDialogOpened;
 export const isCreateFileDialogOpened = (state: Object) => state.app.createFileDialogOpened;

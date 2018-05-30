@@ -40,6 +40,7 @@ import AppConfig from '../../config';
 type Props = {
   open: boolean,
   toggleLicenseDialog: () => void,
+  toggleThirdPartyLibsDialog: () => void,
   onClose: () => void
 };
 
@@ -161,6 +162,12 @@ class AboutDialog extends React.Component<Props, State> {
           onClick={this.props.toggleLicenseDialog}
         >
           {i18n.t('core:license')}
+        </Button>
+        <Button
+          data-tid="openThirdPartyLibsDialog"
+          onClick={this.props.toggleThirdPartyLibsDialog}
+        >
+          {i18n.t('core:thirdPartyLibs')}
         </Button>
         <Button
           data-tid="closeAboutDialog"
