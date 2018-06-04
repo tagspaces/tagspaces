@@ -28,9 +28,8 @@ import {
 import GenericDialog from './GenericDialog';
 import i18n from '../../services/i18n';
 import { loadFileContentPromise } from '../../services/utils-io';
-import { Pro } from '../../pro';
 
-const thirdpartylibsUrl = Pro ? './node_modules/@tagspaces/pro/EULA.txt' : './third-party.txt';
+const thirdpartylibsUrl = './third-party.txt';
 
 type Props = {
   open: boolean,
