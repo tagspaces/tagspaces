@@ -35,6 +35,7 @@
     "package-pro": "patch-package-json && yarn install-ext && yarn build && yarn package-win-pro && yarn package-linux-pro && yarn package-mac-pro",
     "install-ext": "cd app && yarn install --force --prod --no-lockfile && cd ..",
     "setup-ext": "node scripts/setupextensions.js",
+    "setup-pro": "node scripts/setuppro.js",
     "start-webdav": "node scripts/webdavserver.js",
     "run-web": "yarn build-cordova && yarn webdav-server",
     "run-android": "cd cordova && cordova run android && cd ..",

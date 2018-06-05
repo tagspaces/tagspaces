@@ -63,3 +63,5 @@ test/file-structure
 app/version.json
 app/THIRD-PARTY.html
 app/THIRD-PARTY.txt
+
+scripts/setuppro.js
