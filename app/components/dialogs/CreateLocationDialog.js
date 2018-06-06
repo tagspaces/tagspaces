@@ -41,8 +41,7 @@ import AppConfig from '../../config';
 type Props = {
   open: boolean,
   onClose: () => void,
-  addLocation: (location: Location) => void,
-  showNotification: (text: string, notificationType: string, autohide: boolean) => void
+  addLocation: (location: Location) => void
 };
 
 type State = {
@@ -133,7 +132,6 @@ class CreateLocationDialog extends GenericDialog<Props, State> {
         perspective: this.state.perspective,
         isDefault: this.state.isDefault
       });
-      this.props.showNotification('Location created successfully.');
       this.setState({
         open: false,
         errorTextPath: false,
