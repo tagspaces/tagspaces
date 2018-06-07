@@ -51,7 +51,7 @@ type State = {
   isConfirmDialogOpened?: boolean
 };
 
-class AddRemoveTagsDialog extends Component<Props, State> {
+class AddRemoveTagsDialog extends React.Component<Props, State> {
   state = {
     inputError: false,
     disableConfirmButton: true,

@@ -26,7 +26,7 @@ import {
 } from 'material-ui/Dialog';
 import { withStyles } from 'material-ui/styles';
 import { SketchPicker } from 'react-color';
-import GenericDialog from './GenericDialog';
+import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
 import i18n from '../../services/i18n';
 
 const presetColors = ['#ffffff', '#000000', '#ac725e', '#d06b64', '#f83a22', '#fa573c',
@@ -52,7 +52,7 @@ const styles = {
   }
 };
 
-class ColorPickerDialog extends GenericDialog<Props, State> {
+class ColorPickerDialog extends React.Component<Props, State> {
   state = {
     color: ''
   };
@@ -114,6 +114,19 @@ class ColorPickerDialog extends GenericDialog<Props, State> {
       </Button>
     </DialogActions>
   );
+
+  render() {
+    return (
+      <GenericDialog
+        open={this.props.open}
+        onClose={this.props.onClose}
+        onEnterKey={(event) => onEnterKeyHandler(event, this.onConfirm)}
+        renderTitle={this.renderTitle}
+        renderContent={this.renderContent}
+        renderActions={this.renderActions}
+      />
+    );
+  }
 }
 
 export default withStyles(styles)(ColorPickerDialog);

@@ -114,7 +114,7 @@ if (cn) {
 const defaultCalendarValue = now.clone();
 defaultCalendarValue.add(-1, 'month');
 
-class EditEntryTagDialog extends GenericDialog<Props, State> {
+class EditEntryTagDialog extends React.Component<Props, State> {
   state = {
     disableConfirmButton: true,
     errorTag: true,

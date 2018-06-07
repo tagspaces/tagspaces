@@ -56,7 +56,7 @@ type State = {
   isDefault: boolean
 };
 
-class CreateLocationDialog extends GenericDialog<Props, State> {
+class CreateLocationDialog extends React.Component<Props, State> {
   state = {
     errorTextPath: false,
     errorTextName: false,
