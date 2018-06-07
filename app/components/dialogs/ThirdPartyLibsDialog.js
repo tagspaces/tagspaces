@@ -42,20 +42,22 @@ type State = {
 
 class ThirdPartyLibsDialog extends React.Component<Props, State> {
   state = {
-    thirdpartylibs: ''
+    thirdpartylibs: 'Loading content ...'
   };
 
-  componentWillMount() {
-    loadFileContentPromise(thirdpartylibsUrl, 'text').then(
-      (result) => {
-        this.setState({
-          thirdpartylibs: result
-        });
-        return true;
-      }
-    ).catch((err) => {
-      console.log('Error loading third party libs file ' + err);
-    });
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.open) {
+      loadFileContentPromise(thirdpartylibsUrl, 'text').then(
+        (result) => {
+          this.setState({
+            thirdpartylibs: result
+          });
+          return true;
+        }
+      ).catch((err) => {
+        console.log('Error loading third party libs file ' + err);
+      });
+    }
   }
 
   renderTitle = () => <DialogTitle>{i18n.t('core:thirdPartyLibs')}</DialogTitle>;
