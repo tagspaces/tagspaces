@@ -1,0 +1,1 @@
+start /B tagspaces.exe --portable

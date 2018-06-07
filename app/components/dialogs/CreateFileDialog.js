@@ -69,6 +69,7 @@ const styles = theme => ({
 type Props = {
   open: boolean,
   onClose: () => void,
+  showSelectDirectoryDialog: () => void,
   selectedFilePath: string,
   createDirectory: (directoryPath: string) => void,
   createFileAdvanced: (targetPath: string, fileName: string, content: string, fileType: string) => void,
@@ -339,6 +340,7 @@ class CreateFileDialog extends React.Component<Props, State> {
 function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators({
     createFileAdvanced: AppActions.createFileAdvanced,
+    showSelectDirectoryDialog: AppActions.showSelectDirectoryDialog,
     ...TaggingActions
   }, dispatch);
 }

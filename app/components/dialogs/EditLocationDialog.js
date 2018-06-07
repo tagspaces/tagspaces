@@ -89,19 +89,19 @@ class EditLocationDialog extends GenericDialog {
 
   openDirectory() {
     if (AppConfig.isElectron) {
-    this.setState({ openDirectoryButtonDisabled: true });
-    PlatformIO.selectDirectoryDialog().then((selectedPaths) => {
-      this.setState({
-        openDirectoryButtonDisabled: false,
-        name: extractDirectoryName(selectedPaths[0]),
-        path: selectedPaths[0]
+      this.setState({ openDirectoryButtonDisabled: true });
+      PlatformIO.selectDirectoryDialog().then((selectedPaths) => {
+        this.setState({
+          openDirectoryButtonDisabled: false,
+          name: extractDirectoryName(selectedPaths[0]),
+          path: selectedPaths[0]
+        });
+        this.handleValidation();
+        return true;
+      }).catch((err) => {
+        this.setState({ openDirectoryButtonDisabled: false });
+        console.log('selectDirectoryDialog failed with: ' + err);
       });
-      this.handleValidation();
-      return true;
-    }).catch((err) => {
-      this.setState({ openDirectoryButtonDisabled: false });
-      console.log('selectDirectoryDialog failed with: ' + err);
-    });
     } else {
       this.props.showSelectDirectoryDialog();
     }
