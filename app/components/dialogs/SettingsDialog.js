@@ -31,7 +31,7 @@ import {
 } from 'material-ui/Dialog';
 import uuidv1 from 'uuid';
 import ConfirmDialog from './ConfirmDialog';
-import GenericDialog from './GenericDialog';
+import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
 import SettingsGeneral from '../settings/SettingsGeneral';
 import SettingsKeyBindings from '../settings/SettingsKeyBindings';
 import SettingsFileTypes from '../settings/SettingsFileTypes';
@@ -59,7 +59,7 @@ type State = {
 <Props, State>
 */
 
-class SettingsDialog extends GenericDialog {
+class SettingsDialog extends React.Component {
   state = {
     currentTab: 0,
     items: [],
@@ -269,6 +269,19 @@ class SettingsDialog extends GenericDialog {
       </Button>
     </DialogActions>
   );
+
+  render() {
+    return (
+      <GenericDialog
+        open={this.props.open}
+        onClose={this.props.onClose}
+        onEnterKey={(event) => onEnterKeyHandler(event, this.onConfirm)}
+        renderTitle={this.renderTitle}
+        renderContent={this.renderContent}
+        renderActions={this.renderActions}
+      />
+    );
+  }
 }
 
 const mapStateToProps = (state) => ({

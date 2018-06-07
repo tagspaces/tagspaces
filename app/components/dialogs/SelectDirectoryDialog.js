@@ -32,7 +32,7 @@ import UndoIcon from 'material-ui-icons/Undo';
 import Select from 'material-ui/Select';
 import { FormControl, FormHelperText } from 'material-ui/Form';
 import Input, { InputLabel } from 'material-ui/Input';
-import GenericDialog from './GenericDialog';
+import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
 import i18n from '../../services/i18n';
 import AppConfig from '../../config';
 import PlatformIO from '../../services/platform-io';
@@ -93,7 +93,7 @@ const drives = ['Choose Drive', 'A:', 'B:', 'C:', 'D:', 'F:',
   'G:', 'H:', 'I:', 'J:', 'K:', 'L:', 'M:', 'N:', 'O:', 'P:',
   'Q:', 'R:', 'S:', 'T:', 'U:', 'V:', 'W:', 'X:', 'Y:', 'Z:'];
 
-class SelectDirectoryDialog extends GenericDialog<Props, State> {
+class SelectDirectoryDialog extends React.Component<Props, State> {
   state = {
     errorTextPath: false,
     alertSubFolderText: false,
@@ -274,6 +274,19 @@ class SelectDirectoryDialog extends GenericDialog<Props, State> {
       </Button>
     </DialogActions>
   );
+
+  render() {
+    return (
+      <GenericDialog
+        open={this.props.open}
+        onClose={this.props.onClose}
+        onEnterKey={(event) => onEnterKeyHandler(event, this.onConfirm)}
+        renderTitle={this.renderTitle}
+        renderContent={this.renderContent}
+        renderActions={this.renderActions}
+      />
+    );
+  }
 }
 
 export default withStyles(styles)(SelectDirectoryDialog);
