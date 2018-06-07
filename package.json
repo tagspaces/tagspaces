@@ -224,8 +224,8 @@
     "source-map-support": "^0.4.15"
   },
   "devEngines": {
-    "node": ">=6.x",
-    "npm": ">=3.x",
-    "yarn": ">=0.21.3"
+    "node": ">=8.x",
+    "npm": ">=5.x",
+    "yarn": ">=1.6.0"
   }
 }
