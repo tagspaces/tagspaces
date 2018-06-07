@@ -79,7 +79,6 @@ type Props = {
   setManagementPanelVisibility: boolean => void,
   isSelectDirectoryDialogOpened: boolean,
   toggleSelectDirectoryDialog: () => void,
-  // showSelectDirectoryDialog: () => void,
   shouldTogglePanel: string,
   currentDirectory: string
 };

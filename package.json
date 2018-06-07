@@ -16,6 +16,7 @@
     "build-renderer": "cross-env NODE_ENV=production node --trace-warnings -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.renderer.prod.js --progress --profile --colors",
     "build-worker": "cross-env NODE_ENV=production node --trace-warnings -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.worker.prod.js --progress --profile --colors",
     "start": "cross-env NODE_ENV=production electron ./app/",
+    "start-portable": "cross-env NODE_ENV=production electron ./app/ --portable",
     "prestart_bak": "yarn build",
     "flow": "flow check",
     "flow-typed": "rimraf flow-typed/npm && flow-typed install --overwrite || true",
@@ -89,7 +90,6 @@
     "webpack-sources": "1.0.1"
   },
   "devDependencies": {
-    "activedirectory": ">= 0.7.1",
     "babel-core": "^6.24.1",
     "babel-eslint": "^8.2.2",
     "babel-jest": "^20.0.3",
@@ -118,7 +118,7 @@
     "cross-spawn": "^5.1.0",
     "css-loader": "^0.28.3",
     "devtron": "^1.4.0",
-    "electron": "2.0.0",
+    "electron": "2.0.2",
     "electron-builder": "^20.13.3",
     "electron-devtools-installer": "^2.2.3",
     "enzyme": "^2.8.2",
@@ -224,8 +224,8 @@
     "source-map-support": "^0.4.15"
   },
   "devEngines": {
-    "node": ">=6.x",
-    "npm": ">=3.x",
-    "yarn": ">=0.21.3"
+    "node": ">=8.x",
+    "npm": ">=5.x",
+    "yarn": ">=1.6.0"
   }
 }
