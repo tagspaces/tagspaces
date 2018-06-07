@@ -16,6 +16,7 @@
     "build-renderer": "cross-env NODE_ENV=production node --trace-warnings -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.renderer.prod.js --progress --profile --colors",
     "build-worker": "cross-env NODE_ENV=production node --trace-warnings -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.worker.prod.js --progress --profile --colors",
     "start": "cross-env NODE_ENV=production electron ./app/",
+    "start-portable": "cross-env NODE_ENV=production electron ./app/ --portable",
     "prestart_bak": "yarn build",
     "flow": "flow check",
     "flow-typed": "rimraf flow-typed/npm && flow-typed install --overwrite || true",
