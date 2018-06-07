@@ -89,7 +89,6 @@
     "webpack-sources": "1.0.1"
   },
   "devDependencies": {
-    "activedirectory": ">= 0.7.1",
     "babel-core": "^6.24.1",
     "babel-eslint": "^8.2.2",
     "babel-jest": "^20.0.3",
