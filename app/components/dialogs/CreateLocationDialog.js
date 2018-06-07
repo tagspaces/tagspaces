@@ -31,7 +31,7 @@ import FolderIcon from 'material-ui-icons/Folder';
 import Switch from 'material-ui/Switch';
 import { FormControl, FormControlLabel, FormHelperText } from 'material-ui/Form';
 import Input, { InputLabel, InputAdornment } from 'material-ui/Input';
-import GenericDialog from './GenericDialog';
+import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
 import i18n from '../../services/i18n';
 import PlatformIO from '../../services/platform-io';
 import { extractDirectoryName } from '../../utils/paths';
@@ -241,6 +241,19 @@ class CreateLocationDialog extends React.Component<Props, State> {
       </Button>
     </DialogActions>
   );
+
+  render() {
+    return (
+      <GenericDialog
+        open={this.props.open}
+        onClose={this.props.onClose}
+        onEnterKey={(event) => onEnterKeyHandler(event, this.onConfirm)}
+        renderTitle={this.renderTitle}
+        renderContent={this.renderContent}
+        renderActions={this.renderActions}
+      />
+    );
+  }
 }
 
 export default CreateLocationDialog;

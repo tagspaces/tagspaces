@@ -31,7 +31,7 @@ import {
   FormControlLabel,
 } from 'material-ui/Form';
 import Checkbox from 'material-ui/Checkbox';
-import GenericDialog from './GenericDialog';
+import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
 import TagGroupContainer from '../TagGroupContainer';
 import TagContainer from '../TagContainer';
 import i18n from '../../services/i18n';
@@ -61,7 +61,7 @@ type State = {
   checkedAll: boolean
 };
 
-class ImportExportTagGroupsDialog extends GenericDialog<Props, State> {
+class ImportExportTagGroupsDialog extends React.Component<Props, State> {
   state = {
     errorTextName: false,
     disableConfirmButton: true,
@@ -241,6 +241,19 @@ class ImportExportTagGroupsDialog extends GenericDialog<Props, State> {
       </Button>
     </DialogActions>
   );
+
+  render() {
+    return (
+      <GenericDialog
+        open={this.props.open}
+        onClose={this.props.onClose}
+        onEnterKey={(event) => onEnterKeyHandler(event, this.onConfirm)}
+        renderTitle={this.renderTitle}
+        renderContent={this.renderContent}
+        renderActions={this.renderActions}
+      />
+    );
+  }
 }
 
 export default withStyles(styles)(ImportExportTagGroupsDialog);
