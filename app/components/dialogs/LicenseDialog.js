@@ -25,7 +25,7 @@ import {
   DialogTitle,
   withMobileDialog
 } from 'material-ui/Dialog';
-import GenericDialog from './GenericDialog';
+import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
 import i18n from '../../services/i18n';
 import { loadFileContentPromise } from '../../services/utils-io';
 import { Pro } from '../../pro';
@@ -84,6 +84,7 @@ class LicenseDialog extends React.Component<Props, State> {
       <GenericDialog
         open={this.props.open}
         onClose={this.props.onClose}
+        // onEnterKey={(event) => onEnterKeyHandler(event, this.onConfirm)}
         renderTitle={this.renderTitle}
         renderContent={this.renderContent}
         renderActions={this.renderActions}

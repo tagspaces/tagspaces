@@ -27,7 +27,7 @@ import {
 } from 'material-ui/Dialog';
 import { withStyles } from 'material-ui/styles/index';
 import { FormControl, FormHelperText } from 'material-ui/Form';
-import GenericDialog from './GenericDialog';
+import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
 import i18n from '../../services/i18n';
 import { type Tag } from '../../reducers/taglibrary';
 
@@ -56,7 +56,7 @@ type State = {
   disableConfirmButton: boolean
 };
 
-class EditEntryTagDialog extends GenericDialog<Props, State> {
+class EditEntryTagDialog extends React.Component<Props, State> {
   state = {
     disableConfirmButton: true,
     errorTag: true,
@@ -138,6 +138,19 @@ class EditEntryTagDialog extends GenericDialog<Props, State> {
       </Button>
     </DialogActions>
   );
+
+  render() {
+    return (
+      <GenericDialog
+        open={this.props.open}
+        onClose={this.props.onClose}
+        onEnterKey={(event) => onEnterKeyHandler(event, this.onConfirm)}
+        renderTitle={this.renderTitle}
+        renderContent={this.renderContent}
+        renderActions={this.renderActions}
+      />
+    );
+  }
 }
 
 export default withStyles(styles)(EditEntryTagDialog);

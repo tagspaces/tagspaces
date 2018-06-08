@@ -31,7 +31,7 @@ import {
   DialogTitle
 } from 'material-ui/Dialog';
 import { FormControl, FormHelperText } from 'material-ui/Form';
-import GenericDialog from './GenericDialog';
+import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
 import i18n from '../../services/i18n';
 // import { extractContainingDirectoryPath } from '../../utils/paths';
 import PlatformIO from '../../services/platform-io';
@@ -193,6 +193,7 @@ class MoveCopyFilesDialog extends React.Component<Props, State> {
       <GenericDialog
         open={this.props.open}
         onClose={this.props.onClose}
+        // onEnterKey={(event) => onEnterKeyHandler(event, this.onConfirm)}
         renderTitle={this.renderTitle}
         renderContent={this.renderContent}
         renderActions={this.renderActions}

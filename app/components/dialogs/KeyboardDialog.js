@@ -32,7 +32,7 @@ import {
 } from 'material-ui/List';
 import { FormControl } from 'material-ui/Form';
 import { withStyles } from 'material-ui/styles/index';
-import GenericDialog from './GenericDialog';
+import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
 import i18n from '../../services/i18n';
 import { getKeyBindingObject } from '../../reducers/settings';
 
@@ -101,6 +101,7 @@ class KeyboardDialog extends React.Component<Props> {
       <GenericDialog
         open={this.props.open}
         onClose={this.props.onClose}
+        // onEnterKey={(event) => onEnterKeyHandler(event, this.onConfirm)}
         renderTitle={this.renderTitle}
         renderContent={this.renderContent}
         renderActions={this.renderActions}
