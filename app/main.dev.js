@@ -123,6 +123,7 @@ app.on('ready', async () => {
   const indexPath = `file://${__dirname}/app.html`;
   mainWindow.loadURL(indexPath);
   mainWindow.setAutoHideMenuBar(true);
+  mainWindow.setMenuBarVisibility(false);
 
   ipcMain.on('worker', (event, arg) => {
     // console.log('worker event in main.' + arg.result.length);
