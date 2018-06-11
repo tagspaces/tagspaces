@@ -47,13 +47,13 @@ type Props = {
   editTagForEntry: () => void,
   currentEntryPath: string,
   selectedTag: Tag,
-  open: boolean,
-  selectedFilePath: string
+  open: boolean
 };
 
 type State = {
-  errorTag: string,
-  disableConfirmButton: boolean
+  errorTag?: string,
+  disableConfirmButton?: boolean,
+  title?: string
 };
 
 class EditEntryTagDialog extends React.Component<Props, State> {
