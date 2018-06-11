@@ -9,7 +9,7 @@
     "splash-worker.js",
     "main.prod.js",
     "main.prod.js.map",
-    "THIRD-PARTY.txt",
+    "third-party.txt",
     "LICENSE.txt",
     "version.json",
     "package.json"
