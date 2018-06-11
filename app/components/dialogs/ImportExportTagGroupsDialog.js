@@ -35,7 +35,7 @@ import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
 import TagGroupContainer from '../TagGroupContainer';
 import TagContainer from '../TagContainer';
 import i18n from '../../services/i18n';
-import {isFunc} from '../../utils/misc';
+import { isFunc } from '../../utils/misc';
 
 const styles = {
   root: {
@@ -54,11 +54,11 @@ type Props = {
 };
 
 type State = {
-  errorTextName: boolean,
-  disableConfirmButton: boolean,
-  open: boolean,
-  tagGroupList: null | Array,
-  checkedAll: boolean
+  errorTextName?: boolean,
+  disableConfirmButton?: boolean,
+  open?: boolean,
+  tagGroupList?: null | Array,
+  checkedAll?: boolean
 };
 
 class ImportExportTagGroupsDialog extends React.Component<Props, State> {
