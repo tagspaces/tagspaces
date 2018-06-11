@@ -108,6 +108,7 @@ class Search extends React.Component<Props, State> {
     const searchQuery: SearchQuery = {
       textQuery: this.state.textQuery,
       fileTypes: this.state.fileTypes,
+      tagConjunction: 'OR',
       tags
     };
     console.log('Search object: ' + JSON.stringify(searchQuery));

@@ -21,10 +21,10 @@ import Fuse from 'fuse.js';
 // import ElasticLunr from 'elasticlunr';
 import jmespath from 'jmespath';
 import AppConfig from '../config';
+import { Pro } from '../pro';
 
 let currentQuery = '';
 let nextQuery = '';
-let recursiveSymbol = '~';
 let caseSensitiveSearch = false; // TODO implement case sensitive search
 
 // export type FileTypeGroups = 'images' | 'notes' | 'documents' | 'audio' | 'video' | 'archives';
@@ -43,6 +43,7 @@ export const FileTypeGroups = {
 export type SearchQuery = {
   textQuery?: string,
   fileTypes?: Array<string>,
+  tagConjunction?: 'AND' | 'OR',
   tags?: Array<string>,
   lastChanged?: Date
 };
@@ -101,42 +102,32 @@ const fuseOptions = {
   }]
 };
 
+function constructTagQuery(searchQuery: SearchQuery): string {
+  let tagQuery = '';
+  if (searchQuery.tags && searchQuery.tags.length >= 1) {
+    tagQuery = 'tags[? (';
+    searchQuery.tags.map(tag => {
+      const cleanedTag = tag.trim();
+      if (cleanedTag.length > 0) {
+        tagQuery += 'title==\'' + cleanedTag + '\' || ';
+      }
+      return true;
+    });
+    if (tagQuery.endsWith('|| ')) {
+      tagQuery = tagQuery.substring(0, tagQuery.length - 3) + ') ]';
+    }
+  }
+  return tagQuery;
+}
+
 export default class Search {
   static searchLocationIndex(locationContent: Array<Object>, searchQuery: SearchQuery) {
     // let result = jmespath.search({ index: locationContent }, "index[?contains(name, '" + searchQuery.textQuery + "')]");
     // ?tags[?title=='todo' || title=='high'
     // index[?extension=='png' || extension=='jpg']
-    let extensionQuery = '';
-    if (searchQuery.fileTypes && searchQuery.fileTypes.length >= 1) {
-      if (searchQuery.fileTypes[0] === FileTypeGroups.folders[0]) {
-        extensionQuery = '(!isFile)';
-      } else if (searchQuery.fileTypes[0] === FileTypeGroups.any[0]) {
-        // all results
-      } else {
-        searchQuery.fileTypes.map(ext => {
-          extensionQuery += 'extension==\'' + ext + '\' || ';
-          return true;
-        });
-        if (extensionQuery.endsWith('|| ')) {
-          extensionQuery = extensionQuery.substring(0, extensionQuery.length - 3);
-        }
-      }
-    }
 
-    let tagQuery = '';
-    if (searchQuery.tags && searchQuery.tags.length >= 1) {
-      tagQuery = 'tags[?';
-      searchQuery.tags.map(tag => {
-        const cleanedTag = tag.trim();
-        if (cleanedTag.length > 0) {
-          tagQuery += 'title==\'' + cleanedTag + '\' || '; // and or switch || &&
-        }
-        return true;
-      });
-      if (tagQuery.endsWith('|| ')) {
-        tagQuery = tagQuery.substring(0, tagQuery.length - 3) + ']';
-      }
-    }
+    const extensionQuery = Pro ? Pro.Search.constructFileTypeQuery(searchQuery) : '';
+    const tagQuery = Pro ? Pro.Search.constructTagQuery(searchQuery) : constructTagQuery(searchQuery);
 
     let jmespathResults = locationContent;
     if (extensionQuery.length > 1 && tagQuery.length > 1) {
@@ -152,8 +143,6 @@ export default class Search {
       console.log('jmespathQuery: ' + jmespathQuery);
       jmespathResults = jmespath.search({ index: locationContent }, jmespathQuery);
     }
-
-
 
     // console.log('JMES found: ' + jmespathResults.length);
 
@@ -172,7 +161,7 @@ export default class Search {
     return results;
   }
 
-  static prepareQuery(query) {
+  /* static prepareQuery(query) {
     // cleaning up the query, reducing the spaces
     let queryText = query.toLowerCase().replace(/^\s+|\s+$/g, '');
     const recursive = queryText.indexOf(recursiveSymbol) !== 0;
@@ -220,7 +209,7 @@ export default class Search {
     });
 
     return queryObj;
-  }
+  } */
 
   /* static filterFileObject(fileEntry, queryObj) {
     var parentDir = TagUtils.extractContainingDirectoryName(fileEntry.path).toLowerCase();
