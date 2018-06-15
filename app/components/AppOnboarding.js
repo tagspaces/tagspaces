@@ -21,13 +21,18 @@ import React, { Component } from 'react';
 import Joyride from 'react-joyride';
 import i18n from './../services/i18n';
 
-class AppOnboarding extends React.Component {
+class AppOnboarding extends Component {
   state = {
-    run: true,
+    run: false,
     steps: [
       {
-        target: '.locationName',
+        target: '[data-tid=createNewLocation]',
         content: i18n.t('ns.common:welcomeContent'),
+        placement: 'bottom',
+      },
+      {
+        target: '[data-tid=aboutTagSpaces]',
+        content: 'Hello world',
         placement: 'bottom',
       },
     ]
@@ -36,27 +41,24 @@ class AppOnboarding extends React.Component {
   componentDidMount() {
     setTimeout(() => {
       this.setState({
-        isReady: true,
-        isRunning: true,
+        run: true,
       });
     }, 1000);
   }
 
-  checkForInitialTour() {
-    this.joyride.start(true);
-  }
+  callback = (data) => {
+    const { action, index, type } = data;
+  };
 
   render() {
     const { steps, run } = this.state;
 
     return (
-      <div className="AppOnboarding">
-        <Joyride
-          steps={steps}
-          run={run}
-          callback={this.callback}
-        />
-      </div>
+      <Joyride
+        steps={steps}
+        run={run}
+        callback={this.callback}
+      />
     );
   }
 }
