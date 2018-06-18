@@ -30,6 +30,7 @@ import green from '../assets/tsgreen';
 import '../assets/fonts/roboto/index.css';
 import i18n from '../services/i18n';
 import { getCurrentTheme, getKeyBindingObject } from '../reducers/settings';
+import AppOnBoarding from '../components/AppOnboarding';
 
 // Needed for onTouchTap http://stackoverflow.com/a/34015469/988941
 // injectTapEventPlugin();
@@ -77,6 +78,7 @@ class App extends Component {
           theme={theme}
         >
           <I18nextProvider i18n={i18n}>{this.props.children}</I18nextProvider>
+          <AppOnBoarding />
         </MuiThemeProvider>
       </HotKeys>
     );
