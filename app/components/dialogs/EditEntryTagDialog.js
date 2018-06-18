@@ -51,7 +51,7 @@ type Props = {
 };
 
 type State = {
-  errorTag?: string,
+  errorTag?: boolean,
   disableConfirmButton?: boolean,
   title?: string
 };
