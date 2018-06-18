@@ -193,6 +193,11 @@ class FolderContainer extends React.Component<Props, State> {
         }
         return true;
       });
+    } else { // closing the perspective
+      this.setState({
+        currentLocation: undefined,
+        currentPerspective: undefined
+      });
     }
   };
 
