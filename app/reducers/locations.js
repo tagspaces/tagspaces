@@ -153,7 +153,13 @@ export const actions = {
     type: types.EDIT_LOCATION,
     location
   }),
-  removeLocation: (location: Location) => ({
+  removeLocation: (location: Location) => (
+    dispatch: (actions: Object) => void
+  ) => {
+    dispatch(AppActions.closeLocation(location.uuid));
+    dispatch(actions.deleteLocation(location));
+  },
+  deleteLocation: (location: Location) => ({
     type: types.REMOVE_LOCATION,
     location
   })
