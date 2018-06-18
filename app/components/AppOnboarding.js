@@ -39,11 +39,11 @@ class AppOnboarding extends Component {
   };
 
   componentDidMount() {
-    setTimeout(() => {
+    /* setTimeout(() => {
       this.setState({
         run: true,
       });
-    }, 1000);
+    }, 1000); */
   }
 
   callback = (data) => {
