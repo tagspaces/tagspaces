@@ -41,7 +41,7 @@ import {
 } from '../utils/paths';
 import { sortByCriteria, formatDateTime4Tag } from '../utils/misc';
 import i18n from '../services/i18n';
-// import { Pro } from '../pro';
+import { Pro } from '../pro';
 import { getThumbnailURLPromise } from '../services/thumbsgenerator';
 
 export const types = {
@@ -53,7 +53,9 @@ export const types = {
   LOGOUT: 'APP/LOGOUT',
   LOAD_DIRECTORY_SUCCESS: 'APP/LOAD_DIRECTORY_SUCCESS',
   LOAD_DIRECTORY_FAILURE: 'APP/LOAD_DIRECTORY_FAILURE',
+  CLEAR_DIRECTORY_CONTENT: 'APP/CLEAR_DIRECTORY_CONTENT',
   INDEX_DIRECTORY: 'APP/INDEX_DIRECTORY',
+  INDEX_DIRECTORY_CLEAR: 'APP/INDEX_DIRECTORY_CLEAR',
   INDEX_DIRECTORY_START: 'APP/INDEX_DIRECTORY_START',
   INDEX_DIRECTORY_CANCEL: 'APP/INDEX_DIRECTORY_CANCEL',
   INDEX_DIRECTORY_SUCCESS: 'APP/INDEX_DIRECTORY_SUCCESS',
@@ -161,11 +163,25 @@ export default (state: Object = initialState, action: Object) => {
       currentDirectoryPath: action.directoryPath
     };
   }
+  case types.CLEAR_DIRECTORY_CONTENT: {
+    return {
+      ...state,
+      currentDirectoryEntries: [],
+      currentDirectoryPath: ''
+    };
+  }
   case types.INDEX_DIRECTORY_START: {
     return {
       ...state,
       currentDirectoryIndex: [],
       isIndexing: true
+    };
+  }
+  case types.INDEX_DIRECTORY_CLEAR: {
+    return {
+      ...state,
+      currentDirectoryIndex: [],
+      isIndexing: false
     };
   }
   case types.INDEX_DIRECTORY_CANCEL: {
@@ -364,12 +380,31 @@ export default (state: Object = initialState, action: Object) => {
       lmdt: (new Date()).getTime(),
       path: action.path
     };
+    let currentDirectoryEntries = state.currentDirectoryEntries;
+    // TODO Case changed current directory
+    if (state.currentDirectoryPath === action.path) {
+      // Reindex ??
+    }
+
+    // Workarround for double update caused by the watcher
+    let entryAlreadyAdded = false;
+    state.currentDirectoryEntries.forEach((entry) => {
+      if (entry.path === action.path) {
+        entryAlreadyAdded = true;
+      }
+    });
+    if (
+      !entryAlreadyAdded &&
+      extractParentDirectoryPath(action.path) === state.currentDirectoryPath
+    ) {
+      currentDirectoryEntries = [ // TODO evtl. apply sorting
+        ...state.currentDirectoryEntries,
+        newEntry
+      ];
+    }
     return {
       ...state,
-      currentDirectoryEntries: [ // TODO evtl. apply sorting
-        newEntry,
-        ...state.currentDirectoryEntries
-      ],
+      currentDirectoryEntries,
       currentDirectoryIndex: [
         newEntry,
         ...state.currentDirectoryIndex
@@ -868,7 +903,7 @@ export const actions = {
     type: types.INDEX_DIRECTORY_SEARCH,
     searchQuery
   }),
-  setCurrentLocationId: (locationId: string) => ({
+  setCurrentLocationId: (locationId: string | null) => ({
     type: types.SET_CURRENLOCATIONID,
     locationId
   }),
@@ -884,6 +919,27 @@ export const actions = {
         dispatch(actions.loadDirectoryContent(location.paths[0]));
         if (locationId !== currentLocationId) {
           dispatch(actions.createDirectoryIndex(location.paths[0]));
+        }
+        if (Pro && Pro.Watcher) {
+          Pro.Watcher.watchFolder(location.paths[0], dispatch);
+        }
+      }
+      return true;
+    });
+  },
+  closeLocation: (locationId: string) => (
+    dispatch: (actions: Object) => void,
+    getState: () => Object
+  ) => {
+    const locations: Array<Location> = getState().locations;
+    locations.map(location => {
+      if (location.uuid === locationId) {
+        // location needed evtl. to unwatch many loc. root folders if available
+        dispatch(actions.setCurrentLocationId(null));
+        dispatch(actions.clearDirectoryContent());
+        dispatch(actions.clearDirectoryIndex());
+        if (Pro && Pro.Watcher) {
+          Pro.Watcher.stopWatching();
         }
       }
       return true;
@@ -903,6 +959,12 @@ export const actions = {
         // dispatch(actions.startDirectoryIndexing());
       });
   },
+  clearDirectoryIndex: () => ({
+    type: types.INDEX_DIRECTORY_CLEAR
+  }),
+  clearDirectoryContent: () => ({
+    type: types.CLEAR_DIRECTORY_CONTENT
+  }),
   indexDirectorySuccess: (directoryIndex: Array<Object>) => ({
     type: types.INDEX_DIRECTORY_SUCCESS,
     directoryIndex
