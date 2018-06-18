@@ -79,11 +79,11 @@ type Props = {
 };
 
 type State = {
-  errorTag: string,
-  disableConfirmButton: boolean,
-  tag: string,
-  format: string,
-  viewMode: string
+  errorTag?: string,
+  disableConfirmButton?: boolean,
+  tag?: string,
+  format?: string,
+  viewMode?: string
 };
 
 function TabContainer(props) {
@@ -114,7 +114,7 @@ if (cn) {
 const defaultCalendarValue = now.clone();
 defaultCalendarValue.add(-1, 'month');
 
-class EditEntryTagDialog extends React.Component<Props, State> {
+class DateCalendarDialog extends React.Component<Props, State> {
   state = {
     disableConfirmButton: true,
     errorTag: true,
@@ -507,4 +507,4 @@ class EditEntryTagDialog extends React.Component<Props, State> {
   }
 }
 
-export default withStyles(styles)(EditEntryTagDialog);
+export default withStyles(styles)(DateCalendarDialog);
