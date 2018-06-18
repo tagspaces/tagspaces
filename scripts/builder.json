@@ -14,7 +14,7 @@
     "version.json",
     "package.json"
   ],
-  "copyright": "Copyright © 2018 TagSpaces",
+  "copyright": "Copyright © 2018 TagSpaces UG (haftungsbeschraenkt)",
   "artifactName": "${name}-${os}-${arch}-${version}.${ext}",
   "win": {
     "target": [
