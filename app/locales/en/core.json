@@ -56,6 +56,7 @@
   "editLocationDefaultPerspective": "Default Perspective",
   "startupLocation": "Startup location",
   "removeLocation": "Remove Location",
+  "closeLocation": "Close Location",
   "generalTab": "General",
   "fileTypeTab": "File Types",
   "keyBindingsTab": "Key Bindings",

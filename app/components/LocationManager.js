@@ -33,6 +33,7 @@ import FolderIcon from 'material-ui-icons/Folder';
 import AddIcon from 'material-ui-icons/Add';
 import EditIcon from 'material-ui-icons/Edit';
 import DeleteIcon from 'material-ui-icons/DeleteForever';
+import CloseIcon from 'material-ui-icons/Close';
 import DefaultLocationIcon from 'material-ui-icons/LightbulbOutline';
 import ArrowDownwardIcon from 'material-ui-icons/ArrowDownward';
 import ArrowUpwardIcon from 'material-ui-icons/ArrowUpward';
@@ -69,6 +70,7 @@ type Props = {
   editLocation: () => void,
   moveLocationUp: (locationId: string) => void,
   moveLocationDown: (locationId: string) => void,
+  closeLocation: (locationId: string) => void,
   removeLocation: (location: Location) => void,
   // renameDirectory: (directoryPath: string, newDirectoryName: string) => void,
   reflectCreateEntry: (path: string, isFile: boolean) => void,
@@ -148,6 +150,14 @@ class LocationManager extends React.Component<Props, State> {
       this.props.moveLocationDown(this.state.selectedLocation.uuid);
     }
   };
+
+  closeLocation = () => {
+    this.handleRequestCloseContextMenus();
+    if (this.state.selectedLocation && this.state.selectedLocation.uuid) {
+      this.props.closeLocation(this.state.selectedLocation.uuid);
+    }
+  };
+
 
   showEditLocationDialog = () => {
     this.handleRequestCloseContextMenus();
@@ -390,6 +400,15 @@ class LocationManager extends React.Component<Props, State> {
               </ListItemIcon>
               <ListItemText inset primary={i18n.t('core:removeLocation')} />
             </MenuItem>
+            <MenuItem
+              data-tid="removeLocation"
+              onClick={this.closeLocation}
+            >
+              <ListItemIcon>
+                <CloseIcon />
+              </ListItemIcon>
+              <ListItemText inset primary={i18n.t('core:closeLocation')} />
+            </MenuItem>
           </Menu>
           <List
             className={classes.locationListArea}
@@ -433,6 +452,7 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators({
     ...LocationActions,
     openLocation: AppActions.openLocation,
+    closeLocation: AppActions.closeLocation,
     loadDirectoryContent: AppActions.loadDirectoryContent,
     reflectCreateEntry: AppActions.reflectCreateEntry,
     deleteDirectory: AppActions.deleteDirectory,
