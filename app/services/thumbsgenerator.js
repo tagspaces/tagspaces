@@ -177,16 +177,16 @@ export function generateThumbnailPromise(
   } else if (Pro && ext === 'pdf') {
     return Pro.ThumbsGenerator.generatePDFThumbnail(fileURL, maxSize);
   } else if (Pro && ext === 'html') {
-    // return generateHtmlThumbnail(fileURL);
+    return Pro.ThumbsGenerator.generateHtmlThumb.thumbTypenail(fileURL, maxSize);
   } else if (Pro && ext === 'mp3') {
     if (fileSize && fileSize < maxFileSize) {
-      return Pro.ThumbsGenerator.generateMp3Thumbnail(fileURL, maxSize);
+      // return Pro.ThumbsGenerator.generateMp3Thumbnail(fileURL, maxSize);
     }
   } else if (Pro && supportedText.indexOf(ext) >= 0) {
-    // return Pro.ThumbsGenerator.generateTextThumbnail(fileURL);
+    return Pro.ThumbsGenerator.generateTextThumbnail(fileURL, maxSize);
   } else if (Pro && supportedContainers.indexOf(ext) >= 0) {
     if (fileSize && fileSize < maxFileSize) {
-      // Pro.ThumbsGenerator.return generateZipContainerImageThumbnail(fileURL, maxSize);
+      return Pro.ThumbsGenerator.generateZipContainerImageThumbnail(fileURL, maxSize);
     }
   } else if (Pro && supportedVideos.indexOf(ext) >= 0) {
     return Pro.ThumbsGenerator.generateVideoThumbnail(fileURL, maxSize);
