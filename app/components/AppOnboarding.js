@@ -19,31 +19,19 @@
 
 import React, { Component } from 'react';
 import Joyride from 'react-joyride';
-import i18n from './../services/i18n';
+import i18n from '../services/i18n';
 
 class AppOnboarding extends Component {
   state = {
-    run: false,
-    steps: [
-      {
-        target: '[data-tid=createNewLocation]',
-        content: i18n.t('ns.common:welcomeContent'),
-        placement: 'bottom',
-      },
-      {
-        target: '[data-tid=aboutTagSpaces]',
-        content: 'Hello world',
-        placement: 'bottom',
-      },
-    ]
+    run: false
   };
 
   componentDidMount() {
-    /* setTimeout(() => {
+    setTimeout(() => {
       this.setState({
-        run: true,
+        run: true
       });
-    }, 1000); */
+    }, 1000);
   }
 
   callback = (data) => {
@@ -51,8 +39,19 @@ class AppOnboarding extends Component {
   };
 
   render() {
-    const { steps, run } = this.state;
-
+    const { run } = this.state;
+    const steps = [
+      {
+        target: '[data-tid=createNewLocation]',
+        content: i18n.t('welcomeContent'),
+        placement: 'bottom',
+      },
+      {
+        target: '[data-tid=aboutTagSpaces]',
+        content: 'Hello world',
+        placement: 'bottom',
+      },
+    ];
     return (
       <Joyride
         steps={steps}
