@@ -20,7 +20,7 @@ export default merge.smart(baseConfig, {
   output: {
     filename: 'electron-worker.js',
     path: path.join(__dirname, 'app/dist'),
-    publicPath: '../dist/'
+    publicPath: './dist/'
   },
 
   module: {
