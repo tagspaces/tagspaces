@@ -20,7 +20,7 @@
 import React, { Component } from 'react';
 import Button from 'material-ui/Button';
 import { DialogActions, DialogContent, DialogTitle } from 'material-ui/Dialog';
-import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
+import GenericDialog from './GenericDialog';
 import { type Tag } from '../../reducers/taglibrary';
 import TagAutosuggestion from '../TagAutosuggestion/';
 import i18n from '../../services/i18n';
@@ -37,8 +37,7 @@ type Props = {
   selectedEntries?: Array,
   isSingleFile?: boolean,
   removeTags: (paths: Array<string>, tags: Array<Tag>) => void,
-  removeAllTags: (paths: Array<string>) => void,
-  showNotification: (text: string, notificationType: string, autohide: boolean) => void
+  removeAllTags: (paths: Array<string>) => void
 };
 
 type State = {
@@ -108,7 +107,6 @@ class AddRemoveTagsDialog extends React.Component<Props, State> {
       <GenericDialog
         open={open}
         onClose={onClose}
-        // onEnterKey={(event) => onEnterKeyHandler(event, this.onConfirm)}
         renderTitle={() => (
           <DialogTitle>{i18n.t('core:tagOperationTitle')}</DialogTitle>
         )}
