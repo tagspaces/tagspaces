@@ -58,7 +58,8 @@ type Props = {
     text: string,
     notificationType: string,
     autohide: boolean
-  ) => void
+  ) => void,
+  isReadOnlyMode: boolean
 };
 
 type State = {
@@ -261,24 +262,28 @@ class DirectoryMenu extends React.Component<Props, State> {
               <ListItemText inset primary={i18n.t('core:reloadDirectory')} />
             </MenuItem>
           )}
-          <MenuItem
-            data-tid="renameDirectory"
-            onClick={this.showRenameDirectoryDialog}
-          >
-            <ListItemIcon>
-              <RenameFolderIcon />
-            </ListItemIcon>
-            <ListItemText inset primary={i18n.t('core:renameDirectory')} />
-          </MenuItem>
-          <MenuItem
-            data-tid="deleteDirectory"
-            onClick={this.showDeleteDirectoryDialog}
-          >
-            <ListItemIcon>
-              <DeleteForeverIcon />
-            </ListItemIcon>
-            <ListItemText inset primary={i18n.t('core:deleteDirectory')} />
-          </MenuItem>
+          {!this.props.isReadOnlyMode && (
+            <MenuItem
+              data-tid="renameDirectory"
+              onClick={this.showRenameDirectoryDialog}
+            >
+              <ListItemIcon>
+                <RenameFolderIcon />
+              </ListItemIcon>
+              <ListItemText inset primary={i18n.t('core:renameDirectory')} />
+            </MenuItem>
+          )}
+          {!this.props.isReadOnlyMode && (
+            <MenuItem
+              data-tid="deleteDirectory"
+              onClick={this.showDeleteDirectoryDialog}
+            >
+              <ListItemIcon>
+                <DeleteForeverIcon />
+              </ListItemIcon>
+              <ListItemText inset primary={i18n.t('core:deleteDirectory')} />
+            </MenuItem>
+          )}
           {!this.props.perspectiveMode && (
             <MenuItem
               data-tid="openDirectoryNatively"
@@ -296,7 +301,7 @@ class DirectoryMenu extends React.Component<Props, State> {
           {!this.props.perspectiveMode && (
             <Divider />
           )}
-          {!this.props.perspectiveMode && (
+          {!this.props.isReadOnlyMode && !this.props.perspectiveMode && (
             <MenuItem
               data-tid="newSubDirectory"
               onClick={this.showCreateDirectoryDialog}
@@ -307,8 +312,7 @@ class DirectoryMenu extends React.Component<Props, State> {
               <ListItemText inset primary={i18n.t('core:newSubdirectory')} />
             </MenuItem>
           )}
-
-          {!this.props.perspectiveMode && (
+          {!this.props.isReadOnlyMode && !this.props.perspectiveMode && (
             <MenuItem data-tid="createNewFile" onClick={this.createNewFile}>
               <ListItemIcon>
                 <NewFileIcon />
@@ -316,7 +320,7 @@ class DirectoryMenu extends React.Component<Props, State> {
               <ListItemText inset primary={i18n.t('core:newFileNote')} />
             </MenuItem>
           )}
-          {!this.props.perspectiveMode && (
+          {!this.props.isReadOnlyMode && !this.props.perspectiveMode && (
             <MenuItem data-tid="addExistingFile" onClick={this.addExistingFile}>
               <ListItemIcon>
                 <AddExistingFileIcon />

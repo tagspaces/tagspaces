@@ -36,7 +36,9 @@ export type Location = {
   paths: Array<string>,
   perspective?: string, // id of the perspective
   creationDate?: string,
-  isDefault: boolean
+  isDefault: boolean,
+  isReadOnly?: boolean,
+  persistIndex?: boolean
 };
 
 export const initialState = [];
@@ -48,7 +50,9 @@ Object.keys(devicePaths).forEach(key => {
     uuid: uuidv1(),
     name: key, // TODO use i18n
     paths: [devicePaths[key]],
-    isDefault: false
+    isDefault: false,
+    isReadOnly: false,
+    persistIndex: false
   });
 });
 
@@ -68,7 +72,9 @@ export default (state: Array<Location> = initialState, action: Object) => {
         paths: action.location.paths,
         perspective: action.location.perspective,
         creationDate: new Date().toJSON(),
-        isDefault: action.location.isDefault
+        isDefault: action.location.isDefault,
+        isReadOnly: action.location.isReadOnly,
+        persistIndex: action.location.persistIndex,
       }
     ];
   }
@@ -149,7 +155,13 @@ export const actions = {
   createLocation: (location: Location) => ({ type: types.ADD_LOCATION, location }),
   moveLocationUp: (uuid: string) => ({ type: types.MOVE_UP_LOCATION, uuid }),
   moveLocationDown: (uuid: string) => ({ type: types.MOVE_DOWN_LOCATION, uuid }),
-  editLocation: (location: Location) => ({
+  editLocation: (location: Location) => (
+    dispatch: (actions: Object) => void
+  ) => {
+    dispatch(actions.changeLocation(location));
+    dispatch(AppActions.setReadOnlyMode(location.isReadOnly || false));
+  },
+  changeLocation: (location: Location) => ({
     type: types.EDIT_LOCATION,
     location
   }),
@@ -167,6 +179,16 @@ export const actions = {
 
 // Selectors
 export const getLocations = (state: Object): Array<Location> => state.locations;
+export const getLocation = (state: Object, locationId: string): Location | null => {
+  let foundLocation = null;
+  state.locations.map((location) => {
+    if (location.uuid === locationId) {
+      foundLocation = location;
+    }
+    return true;
+  });
+  return foundLocation;
+};
 export const getDefaultLocationId = (state: Object): ?string => {
   let defaultLocationID;
   state.locations.map((location) => {

@@ -65,6 +65,7 @@ import {
   type OpenedEntry,
   NotificationTypes,
   getOpenedFiles,
+  isReadOnlyMode,
   actions as AppActions
 } from '../reducers/app';
 import { getAllTags } from '../reducers/taglibrary';
@@ -168,6 +169,7 @@ type Props = {
   selectedEntries?: Array,
   deleteFile: (path: string) => void,
   toggleEntryFullWidth: () => void,
+  isReadOnlyMode: boolean,
   setEntryPropertiesSplitSize: (size: number) => void
 };
 
@@ -957,6 +959,7 @@ function mapStateToProps(state) {
   return {
     openedFiles: getOpenedFiles(state),
     settings: state.settings,
+    isReadOnlyMode: isReadOnlyMode(state),
     allTags: getAllTags(state)
   };
 }

@@ -17,7 +17,7 @@
  * @flow
  */
 
-import { type Location } from './locations';
+import { type Location, getLocation } from './locations';
 import PlatformIO from '../services/platform-io';
 import Search, { type SearchQuery } from '../services/search';
 import uuidv1 from 'uuid';
@@ -71,6 +71,7 @@ export const types = {
   SET_CURRENLOCATIONID: 'APP/SET_CURRENLOCATIONID',
   SET_LAST_SELECTED_ENTRY: 'APP/SET_LAST_SELECTED_ENTRY',
   SET_FILEDRAGGED: 'APP/SET_FILEDRAGGED',
+  SET_READONLYMODE: 'APP/SET_READONLYMODE',
   RENAME_FILE: 'APP/RENAME_FILE',
   SORT_BY: 'APP/SORT_BY',
   TOGGLE_ABOUT_DIALOG: 'APP/TOGGLE_ABOUT_DIALOG',
@@ -120,6 +121,7 @@ export const initialState = {
   currentDirectoryEntries: [],
   currentDirectoryIndex: [],
   isIndexing: false,
+  isReadOnlyMode: false,
   searchResults: [],
   notificationStatus: {
     visible: false,
@@ -149,6 +151,9 @@ export default (state: Object = initialState, action: Object) => {
   }
   case types.DEVICE_OFFLINE: {
     return { ...state, isOnline: false, error: null };
+  }
+  case types.SET_READONLYMODE: {
+    return { ...state, isReadOnlyMode: action.isReadOnlyMode };
   }
   case types.SET_NEW_VERSION_AVAILABLE: {
     return {
@@ -915,6 +920,7 @@ export const actions = {
     const currentLocationId = getState().app;
     locations.map(location => {
       if (location.uuid === locationId) {
+        dispatch(actions.setReadOnlyMode(location.isReadOnly || false));
         dispatch(actions.setCurrentLocationId(location.uuid));
         dispatch(actions.loadDirectoryContent(location.paths[0]));
         if (locationId !== currentLocationId) {
@@ -946,12 +952,18 @@ export const actions = {
     });
   },
   createDirectoryIndex: (directoryPath: string) => (
-    dispatch: (actions: Object) => void
+    dispatch: (actions: Object) => void,
+    getState: () => Object
   ) => {
+    const state = getState();
+    const currentLocation: Location = getLocation(state, state.app.currentLocationId);
     dispatch(actions.startDirectoryIndexing());
     createDirectoryIndex(directoryPath)
       .then(directoryIndex => {
         dispatch(actions.indexDirectorySuccess(directoryIndex));
+        if (Pro && currentLocation.persistIndex) {
+          Pro.Indexer.persistIndex(directoryPath, directoryIndex);
+        }
         return true;
       })
       .catch(err => {
@@ -998,6 +1010,10 @@ export const actions = {
   setFileDragged: (isFileDragged: boolean) => ({
     type: types.SET_FILEDRAGGED,
     isFileDragged
+  }),
+  setReadOnlyMode: (isReadOnlyMode: boolean) => ({
+    type: types.SET_READONLYMODE,
+    isReadOnlyMode
   }),
   openFile: (entryPath: string, isFile?: boolean = true) => (
     dispatch: (actions: Object) => void,
@@ -1350,6 +1366,7 @@ export const isOnline = (state: Object) => state.app.isOnline;
 export const getLastSelectedEntry = (state: Object) => state.app.lastSelectedEntry;
 export const isFileOpened = (state: Object) => state.app.openedFiles.length > 0;
 export const isFileDragged = (state: Object) => state.app.isFileDragged;
+export const isReadOnlyMode = (state: Object) => state.app.isReadOnlyMode;
 export const isAboutDialogOpened = (state: Object) => state.app.aboutDialogOpened;
 export const isKeysDialogOpened = (state: Object) => state.app.keysDialogOpened;
 export const isLicenseDialogOpened = (state: Object) => state.app.licenseDialogOpened;

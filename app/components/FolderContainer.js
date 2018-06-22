@@ -42,7 +42,8 @@ import {
   getDirectoryPath,
   getCurrentLocationId,
   getLastSelectedEntry,
-  getSearchResultCount
+  getSearchResultCount,
+  isReadOnlyMode
 } from '../reducers/app';
 import TaggingActions from '../reducers/tagging-actions';
 import { getAllTags, type Tag } from '../reducers/taglibrary';
@@ -152,6 +153,7 @@ type Props = {
   loadDirectoryContent: (path: string) => void,
   loadParentDirectoryContent: () => void,
   setLastSelectedEntry: (entryPath: string | null) => void,
+  isReadOnlyMode: boolean,
   showNotification: () => void
 };
 
@@ -411,6 +413,7 @@ class FolderContainer extends React.Component<Props, State> {
                     toggleCreateFileDialog={this.props.toggleCreateFileDialog}
                     deleteDirectory={this.props.deleteDirectory}
                     showNotification={this.props.showNotification}
+                    isReadOnlyMode={this.props.isReadOnlyMode}
                   />
                 </div>
               )}
@@ -435,6 +438,7 @@ function mapStateToProps(state) {
     directoryContent: getDirectoryContent(state),
     allTags: getAllTags(state),
     searchResultCount: getSearchResultCount(state),
+    isReadOnlyMode: isReadOnlyMode(state),
     settings: state.settings
   };
 }

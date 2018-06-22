@@ -24,6 +24,7 @@ export default {
   tagspacesAppPath: '/tagspaces/',
   metaFolder: '.ts',
   metaFolderFile: 'tsm.json',
+  folderIndexFile: 'tsi.json',
   metaFileExt: '.json',
   thumbFileExt: '.jpg',
   thumbType: 'image/jpeg',

@@ -316,5 +316,7 @@
   "showHideDirectories": "Show / hide directories",
   "sort": "Sort",
   "thirdPartyLibs": "Third Party Libraries",
+  "readonlyModeSwitch": "Open location in readonly mode",
+  "persistIndexSwitch": "Switch to manual index creation with persisted search index",
   "-": "-"
 }

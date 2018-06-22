@@ -28,15 +28,41 @@ import {
 import IconButton from 'material-ui/IconButton';
 import FolderIcon from 'material-ui-icons/Folder';
 import Switch from 'material-ui/Switch';
-import { FormControl, FormControlLabel, FormHelperText } from 'material-ui/Form';
+import { FormControl, FormControlLabel, FormHelperText, FormGroup } from 'material-ui/Form';
 import Input, { InputLabel, InputAdornment } from 'material-ui/Input';
-import GenericDialog from './GenericDialog';
+import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
 import i18n from '../../services/i18n';
 import PlatformIO from '../../services/platform-io';
 import { extractDirectoryName } from '../../utils/paths';
+import { type Location } from '../../reducers/locations';
 import AppConfig from '../../config';
+import { Pro } from '../../pro';
 
-class EditLocationDialog extends GenericDialog {
+type Props = {
+  open?: boolean,
+  onClose: () => void,
+  location?: Location | null,
+  editLocation: (location: Location) => void,
+  createDirectoryIndex: (path: string) => void,
+  perspectives: Array<string>,
+  showSelectDirectoryDialog: () => void,
+  selectedDirectoryPath?: string | null
+};
+
+type State = {
+  errorTextPath?: boolean,
+  errorTextName?: boolean,
+  openDirectoryButtonDisabled?: boolean,
+  uuid?: string,
+  name?: string,
+  path?: string,
+  perspectives?: Array<Object>,
+  isDefault?: boolean,
+  isReadOnly?: boolean,
+  persistIndex?: boolean
+};
+
+class EditLocationDialog extends React.Component<Props, State> {
   state = {
     errorTextPath: false,
     errorTextName: false,
@@ -45,7 +71,9 @@ class EditLocationDialog extends GenericDialog {
     name: '',
     path: '',
     perspectives: '',
-    isDefault: false
+    isDefault: false,
+    isReadOnly: false,
+    persistIndex: false
   };
 
   componentWillReceiveProps = (nextProps: any) => {
@@ -56,7 +84,9 @@ class EditLocationDialog extends GenericDialog {
         name: dir ? extractDirectoryName(dir) : nextProps.location.name,
         path: dir || nextProps.location.paths[0],
         perspective: nextProps.location.perspective,
-        isDefault: nextProps.location.isDefault
+        isDefault: nextProps.location.isDefault,
+        isReadOnly: nextProps.location.isReadOnly,
+        persistIndex: nextProps.location.persistIndex
       });
     }
   };
@@ -74,13 +104,13 @@ class EditLocationDialog extends GenericDialog {
   handleValidation() {
     // const pathRegex = '^((\.\./|[a-zA-Z0-9_/\-\\])*\.[a-zA-Z0-9]+)$';
     // const nameRegex = '^[A-Z][-a-zA-Z]+$';
-    if (this.state.path.length > 0) {
+    if (this.state.path && this.state.path.length > 0) {
       this.setState({ errorTextPath: false });
     } else {
       this.setState({ errorTextPath: true });
     }
 
-    if (this.state.name.length > 0) {
+    if (this.state.name && this.state.name.length > 0) {
       this.setState({ errorTextName: false });
     } else {
       this.setState({ errorTextName: true });
@@ -109,15 +139,25 @@ class EditLocationDialog extends GenericDialog {
 
   onConfirm = () => {
     this.handleValidation();
-    if (this.state.path.length > 0 && this.state.name.length > 0) {
+    if (this.state.path && this.state.path.length > 0 && this.state.name && this.state.name.length > 0) {
       this.props.editLocation({
         uuid: this.state.uuid,
         name: this.state.name,
         paths: [this.state.path],
         perspective: this.state.perspective,
-        isDefault: this.state.isDefault
+        isDefault: this.state.isDefault,
+        isReadOnly: this.state.isReadOnly,
+        persistIndex: this.state.persistIndex
       });
 
+      this.props.onClose();
+    }
+  };
+
+  onIndexLocation = () => {
+    this.handleValidation();
+    if (this.state.path && this.state.path.length > 0 && this.state.name && this.state.name.length > 0) {
+      this.props.createDirectoryIndex(this.state.path);
       this.props.onClose();
     }
   };
@@ -172,17 +212,45 @@ class EditLocationDialog extends GenericDialog {
         />
         {this.state.errorTextName && <FormHelperText>Invalid Name</FormHelperText>}
       </FormControl>
-      <FormControlLabel
-        control={
-          <Switch
-            data-tid="editStartupLocation"
-            name="isDefault"
-            checked={this.state.isDefault}
-            onChange={this.handleInputChange}
+      <FormControl>
+        <FormGroup>
+          <FormControlLabel
+            control={
+              <Switch
+                data-tid="editStartupLocation"
+                name="isDefault"
+                checked={this.state.isDefault}
+                onChange={this.handleInputChange}
+              />
+            }
+            label={i18n.t('core:startupLocation')}
           />
-        }
-        label={i18n.t('core:startupLocation')}
-      />
+          <FormControlLabel
+            control={
+              <Switch
+                disabled={!Pro}
+                data-tid="changeReadOnlyMode"
+                name="isReadOnly"
+                checked={this.state.isReadOnly}
+                onChange={this.handleInputChange}
+              />
+            }
+            label={i18n.t('core:readonlyModeSwitch') + (Pro ? '' : ' - Available in Pro')}
+          />
+          <FormControlLabel
+            control={
+              <Switch
+                disabled={!Pro}
+                data-tid="changePersistIndex"
+                name="persistIndex"
+                checked={this.state.persistIndex}
+                onChange={this.handleInputChange}
+              />
+            }
+            label={i18n.t('core:persistIndexSwitch') + (Pro ? '' : ' - Available in Pro')}
+          />
+        </FormGroup>
+      </FormControl>
     </DialogContent>
   );
 
@@ -210,6 +278,12 @@ class EditLocationDialog extends GenericDialog {
     <DialogActions>
       <Button
         data-tid="closeEditLocationDialog"
+        onClick={this.onIndexLocation}
+      >
+        {i18n.t('core:indexLocation')}
+      </Button>
+      <Button
+        data-tid="closeEditLocationDialog"
         color="primary"
         onClick={this.props.onClose}
       >
@@ -224,6 +298,19 @@ class EditLocationDialog extends GenericDialog {
       </Button>
     </DialogActions>
   );
+
+  render() {
+    return (
+      <GenericDialog
+        open={this.props.open}
+        onClose={this.props.onClose}
+        onEnterKey={(event) => onEnterKeyHandler(event, this.onConfirm)}
+        renderTitle={this.renderTitle}
+        renderContent={this.renderContent}
+        renderActions={this.renderActions}
+      />
+    );
+  }
 }
 
 export default EditLocationDialog;

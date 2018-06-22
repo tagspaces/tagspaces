@@ -29,7 +29,7 @@ import {
 import IconButton from 'material-ui/IconButton';
 import FolderIcon from 'material-ui-icons/Folder';
 import Switch from 'material-ui/Switch';
-import { FormControl, FormControlLabel, FormHelperText } from 'material-ui/Form';
+import { FormControl, FormControlLabel, FormHelperText, FormGroup } from 'material-ui/Form';
 import Input, { InputLabel, InputAdornment } from 'material-ui/Input';
 import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
 import i18n from '../../services/i18n';
@@ -37,11 +37,15 @@ import PlatformIO from '../../services/platform-io';
 import { extractDirectoryName } from '../../utils/paths';
 import { type Location } from '../../reducers/locations';
 import AppConfig from '../../config';
+import { Pro } from '../../pro';
 
 type Props = {
-  open: boolean,
+  open?: boolean,
   onClose: () => void,
-  addLocation: (location: Location) => void
+  addLocation: (location: Location) => void,
+  perspectives: Array<Object>,
+  showSelectDirectoryDialog: () => void,
+  selectedDirectoryPath?: string | null
 };
 
 type State = {
@@ -52,7 +56,9 @@ type State = {
   name?: string,
   path?: string,
   perspective?: string,
-  isDefault?: boolean
+  isDefault?: boolean,
+  isReadOnly?: boolean,
+  persistIndex?: boolean
 };
 
 class CreateLocationDialog extends React.Component<Props, State> {
@@ -64,7 +70,9 @@ class CreateLocationDialog extends React.Component<Props, State> {
     name: '',
     path: '',
     perspective: '',
-    isDefault: false
+    isDefault: false,
+    isReadOnly: false,
+    persistIndex: false
   };
 
   handleInputChange = (event: Object) => {
@@ -96,16 +104,16 @@ class CreateLocationDialog extends React.Component<Props, State> {
 
   openDirectory() {
     if (AppConfig.isElectron) {
-    PlatformIO.selectDirectoryDialog().then((selectedPaths) => {
-      this.setState({
-        name: extractDirectoryName(selectedPaths[0]),
-        path: selectedPaths[0]
+      PlatformIO.selectDirectoryDialog().then((selectedPaths) => {
+        this.setState({
+          name: extractDirectoryName(selectedPaths[0]),
+          path: selectedPaths[0]
+        });
+        this.handleValidation();
+        return true;
+      }).catch((err) => {
+        console.log('selectDirectoryDialog failed with: ' + err);
       });
-      this.handleValidation();
-      return true;
-    }).catch((err) => {
-      console.log('selectDirectoryDialog failed with: ' + err);
-    });
     } else {
       this.props.showSelectDirectoryDialog();
     }
@@ -130,7 +138,9 @@ class CreateLocationDialog extends React.Component<Props, State> {
         name: this.state.name,
         paths: [this.state.path],
         perspective: this.state.perspective,
-        isDefault: this.state.isDefault
+        isDefault: this.state.isDefault,
+        isReadOnly: this.state.isReadOnly,
+        persistIndex: this.state.persistIndex
       });
       this.setState({
         open: false,
@@ -192,17 +202,43 @@ class CreateLocationDialog extends React.Component<Props, State> {
           />
           {this.state.errorTextName && <FormHelperText>Invalid Name</FormHelperText>}
         </FormControl>
-        <FormControlLabel
-          control={
-            <Switch
-              data-tid="locationIsDefault"
-              name="isDefault"
-              checked={this.state.isDefault}
-              onChange={this.handleInputChange}
-            />
-          }
-          label={i18n.t('core:startupLocation')}
-        />
+        <FormGroup>
+          <FormControlLabel
+            control={
+              <Switch
+                data-tid="locationIsDefault"
+                name="isDefault"
+                checked={this.state.isDefault}
+                onChange={this.handleInputChange}
+              />
+            }
+            label={i18n.t('core:startupLocation')}
+          />
+          <FormControlLabel
+            control={
+              <Switch
+                disabled={!Pro}
+                data-tid="changeReadOnlyMode"
+                name="isReadOnly"
+                checked={this.state.isReadOnly}
+                onChange={this.handleInputChange}
+              />
+            }
+            label={i18n.t('core:readonlyModeSwitch') + (Pro ? '' : ' - Available in Pro')}
+          />
+          <FormControlLabel
+            control={
+              <Switch
+                disabled={!Pro}
+                data-tid="changePersistIndex"
+                name="persistIndex"
+                checked={this.state.persistIndex}
+                onChange={this.handleInputChange}
+              />
+            }
+            label={i18n.t('core:persistIndexSwitch') + (Pro ? '' : ' - Available in Pro')}
+          />
+        </FormGroup>
       </DialogContent>
     );
   };

@@ -66,6 +66,7 @@ type Props = {
   openLocation: (path: string) => void,
   openFileNatively: (path: string) => void,
   openDirectory: (path: string) => void,
+  createDirectoryIndex: (path: string) => void,
   addLocation: () => void,
   editLocation: () => void,
   moveLocationUp: (locationId: string) => void,
@@ -318,7 +319,6 @@ class LocationManager extends React.Component<Props, State> {
             onClose={this.handleCloseDialogs}
             addLocation={this.props.addLocation}
             perspectives={this.props.perspectives}
-            showNotification={this.props.showNotification}
             showSelectDirectoryDialog={this.showSelectDirectoryDialog}
             selectedDirectoryPath={this.state.selectedDirectoryPath}
           />
@@ -327,9 +327,8 @@ class LocationManager extends React.Component<Props, State> {
             onClose={this.handleCloseDialogs}
             location={this.state.selectedLocation}
             editLocation={this.props.editLocation}
-            locations={this.props.locations}
+            createDirectoryIndex={this.props.createDirectoryIndex}
             perspectives={this.props.perspectives}
-            showNotification={this.props.showNotification}
             showSelectDirectoryDialog={this.showSelectDirectoryDialog}
             selectedDirectoryPath={this.state.selectedDirectoryPath}
           />
@@ -452,6 +451,7 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators({
     ...LocationActions,
     openLocation: AppActions.openLocation,
+    createDirectoryIndex: AppActions.createDirectoryIndex,
     closeLocation: AppActions.closeLocation,
     loadDirectoryContent: AppActions.loadDirectoryContent,
     reflectCreateEntry: AppActions.reflectCreateEntry,
