@@ -26,13 +26,13 @@ class AppOnboarding extends Component {
     run: false
   };
 
-  componentDidMount() {
+  /* componentDidMount() {
     setTimeout(() => {
       this.setState({
         run: true
       });
     }, 1000);
-  }
+  } */
 
   callback = (data) => {
     const { action, index, type } = data;
