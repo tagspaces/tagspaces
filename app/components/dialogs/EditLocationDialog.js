@@ -43,8 +43,7 @@ type Props = {
   onClose: () => void,
   location?: Location | null,
   editLocation: (location: Location) => void,
-  createDirectoryIndex: (path: string) => void,
-  perspectives: Array<string>,
+  perspectives: Array<Object>,
   showSelectDirectoryDialog: () => void,
   selectedDirectoryPath?: string | null
 };
@@ -150,14 +149,6 @@ class EditLocationDialog extends React.Component<Props, State> {
         persistIndex: this.state.persistIndex
       });
 
-      this.props.onClose();
-    }
-  };
-
-  onIndexLocation = () => {
-    this.handleValidation();
-    if (this.state.path && this.state.path.length > 0 && this.state.name && this.state.name.length > 0) {
-      this.props.createDirectoryIndex(this.state.path);
       this.props.onClose();
     }
   };
@@ -276,12 +267,6 @@ class EditLocationDialog extends React.Component<Props, State> {
 
   renderActions = () => (
     <DialogActions>
-      <Button
-        data-tid="closeEditLocationDialog"
-        onClick={this.onIndexLocation}
-      >
-        {i18n.t('core:indexLocation')}
-      </Button>
       <Button
         data-tid="closeEditLocationDialog"
         color="primary"

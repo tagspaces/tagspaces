@@ -32,6 +32,7 @@ import FolderIcon from 'material-ui-icons/Folder';
 // import StartupFolderIcon from 'material-ui-icons/FolderSpecial';
 import AddIcon from 'material-ui-icons/Add';
 import EditIcon from 'material-ui-icons/Edit';
+import RefreshIcon from 'material-ui-icons/Refresh';
 import DeleteIcon from 'material-ui-icons/DeleteForever';
 import CloseIcon from 'material-ui-icons/Close';
 import DefaultLocationIcon from 'material-ui-icons/LightbulbOutline';
@@ -60,7 +61,7 @@ import { isObj } from '../utils/misc';
 type Props = {
   classes: Object,
   locations: Array<Location>,
-  perspectives: Array<string>,
+  perspectives: Array<Object>,
   currentLocationId: string,
   loadDirectoryContent: (path: string) => void,
   openLocation: (path: string) => void,
@@ -136,6 +137,13 @@ class LocationManager extends React.Component<Props, State> {
       isEditLocationDialogOpened: false,
       selectedDirectoryPath: undefined
     });
+  };
+
+  indexLocation = () => {
+    this.handleRequestCloseContextMenus();
+    if (this.state.selectedLocation && this.state.selectedLocation.uuid) {
+      this.props.createDirectoryIndex(this.state.selectedLocation.paths[0]);
+    }
   };
 
   moveLocationUp = () => {
@@ -327,7 +335,6 @@ class LocationManager extends React.Component<Props, State> {
             onClose={this.handleCloseDialogs}
             location={this.state.selectedLocation}
             editLocation={this.props.editLocation}
-            createDirectoryIndex={this.props.createDirectoryIndex}
             perspectives={this.props.perspectives}
             showSelectDirectoryDialog={this.showSelectDirectoryDialog}
             selectedDirectoryPath={this.state.selectedDirectoryPath}
@@ -375,6 +382,17 @@ class LocationManager extends React.Component<Props, State> {
               </ListItemIcon>
               <ListItemText inset primary={i18n.t('core:editLocationTitle')} />
             </MenuItem>
+            { this.state.selectedLocation && this.props.currentLocationId === this.state.selectedLocation.uuid && (
+              <MenuItem
+                data-tid="indexLocation"
+                onClick={this.indexLocation}
+              >
+                <ListItemIcon>
+                  <RefreshIcon />
+                </ListItemIcon>
+                <ListItemText inset primary={i18n.t('core:indexLocation')} />
+              </MenuItem>
+            )}
             <MenuItem data-tid="moveLocationUp" onClick={this.moveLocationUp}>
               <ListItemIcon>
                 <ArrowUpwardIcon />
