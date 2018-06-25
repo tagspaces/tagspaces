@@ -23,9 +23,9 @@ export default merge.smart(baseConfig, {
     publicPath: './dist/'
   },
 
-  module: {
-
-  },
+  /* externals: {
+    'pdfjs-dist': 'commonjs app/node_modules/@tagspaces/pro/libs/pdfjs-dist/build/pdf.min'
+  }, */
 
   plugins: [
     /**

@@ -11,7 +11,7 @@ import BabiliPlugin from 'babili-webpack-plugin';
 import baseConfig from './webpack.config.base';
 
 export default merge.smart(baseConfig, {
-  devtool: 'source-map',
+  // devtool: 'source-map',
 
   target: 'electron-renderer',
 
@@ -21,6 +21,10 @@ export default merge.smart(baseConfig, {
     path: path.join(__dirname, 'app/dist'),
     publicPath: './dist/'
   },
+
+  /* externals: {
+    'pdfjs-dist': 'commonjs app/node_modules/@tagspaces/pro/libs/pdfjs-dist/build/pdf.min'
+  }, */
 
   module: {
     rules: [

@@ -47,6 +47,10 @@ export default merge.smart(baseConfig, {
     publicPath: `http://localhost:${port}/dist/`
   },
 
+  /* externals: {
+    'pdfjs-dist': 'commonjs app/node_modules/@tagspaces/pro/libs/pdfjs-dist/build/pdf.min'
+  }, */
+
   module: {
     rules: [
       {
@@ -204,13 +208,14 @@ export default merge.smart(baseConfig, {
     contentBase: path.join(__dirname, 'dist'),
     watchOptions: {
       aggregateTimeout: 300,
+      ignored: /node_modules/,
       poll: 100
     },
     historyApiFallback: {
       verbose: true,
       disableDotRule: false,
     },
-    setup() {
+    before() {
       if (process.env.START_HOT) {
         spawn(
           'npm',
