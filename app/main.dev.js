@@ -137,7 +137,7 @@ app.on('ready', async () => {
       throw new Error('"mainWindow" is not defined');
     }
     mainWindow.show();
-    global.splashWorkerWindow.hide(); // Comment for easy dubugging of the worker
+    global.splashWorkerWindow.hide(); // Comment for easy debugging of the worker
     mainWindow.focus();
   });
 
