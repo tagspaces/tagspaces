@@ -976,7 +976,7 @@ class GridPerspective extends React.Component<Props, State> {
           </div>
         </div>
         <AddRemoveTagsDialog
-          selectedItem={this.props.selectedItem}
+          selectedItem={this.state.selectedItem}
           open={this.state.isAddRemoveTagsDialogOpened}
           onClose={this.handleCloseDialogs}
           selectedEntries={this.props.selectedEntries}

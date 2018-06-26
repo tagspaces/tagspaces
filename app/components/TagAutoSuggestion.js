@@ -21,8 +21,7 @@ import React from 'react';
 import Button from 'material-ui/Button';
 import TextField from 'material-ui/TextField';
 import Autosuggest from 'react-autosuggest';
-import match from 'autosuggest-highlight/match';
-import parse from 'autosuggest-highlight/parse';
+// import parse from 'autosuggest-highlight/umd/parse';
 import Paper from 'material-ui/Paper';
 import uuidv1 from 'uuid';
 import { withStyles } from 'material-ui/styles';
@@ -53,8 +52,7 @@ function renderInput(inputProps) {
 }
 
 function renderSuggestion(suggestion, { query, isHighlighted }) {
-  const matches = match(suggestion.title, query);
-  const parts = parse(suggestion.title, matches);
+  const parts = []; // parse(suggestion.title, matches);
   return (
     <MenuItem selected={isHighlighted} component="div">
       <div>
@@ -219,7 +217,7 @@ class TagAutoSuggestion extends React.Component<Props, State> {
     return (
       <div>
         <FormControl fullWidth={true}>
-          <Autosuggest
+          { /*<Autosuggest
             theme={{
               container: this.props.classes.container,
               suggestionsContainerOpen: this.props.classes.suggestionsContainerOpen,
@@ -241,7 +239,7 @@ class TagAutoSuggestion extends React.Component<Props, State> {
               value: this.state.value,
               onChange: this.handleTagSearchChange,
             }}
-          />
+          /> */ }
           <ListItemSecondaryAction className={this.props.classes.alignAddButton}>
             <Button
               data-tid="addTag"
