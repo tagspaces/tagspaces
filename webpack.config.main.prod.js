@@ -4,7 +4,6 @@
 
 import webpack from 'webpack';
 import merge from 'webpack-merge';
-import BabiliPlugin from 'babili-webpack-plugin';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import baseConfig from './webpack.config.base';
 
@@ -22,11 +21,6 @@ export default merge.smart(baseConfig, {
   },
 
   plugins: [
-    /**
-     * Babli is an ES6+ aware minifier based on the Babel toolchain (beta)
-     */
-    new BabiliPlugin(),
-
     new BundleAnalyzerPlugin({
       analyzerMode: process.env.OPEN_ANALYZER === 'true' ? 'server' : 'disabled',
       openAnalyzer: process.env.OPEN_ANALYZER === 'true'

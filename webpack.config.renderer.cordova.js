@@ -6,11 +6,10 @@ import path from 'path';
 import webpack from 'webpack';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import merge from 'webpack-merge';
-import BabiliPlugin from 'babili-webpack-plugin';
 import baseConfig from './webpack.config.base';
 
 export default merge.smart(baseConfig, {
-  // devtool: 'source-map',
+  devtool: 'source-map',
 
   target: 'web',
 
@@ -124,11 +123,6 @@ export default merge.smart(baseConfig, {
     }),
 
     new webpack.IgnorePlugin(/electron-io/),
-
-    /**
-     * Babli is an ES6+ aware minifier based on the Babel toolchain (beta)
-     */
-    new BabiliPlugin(),
 
     new ExtractTextPlugin('style.css'),
 
