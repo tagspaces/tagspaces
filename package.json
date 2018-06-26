@@ -38,7 +38,7 @@
     "setup-ext": "node scripts/setupextensions.js",
     "setup-pro": "node scripts/setuppro.js",
     "start-webdav": "node scripts/webdavserver.js",
-    "run-web": "yarn build-cordova && yarn webdav-server",
+    "run-web": "yarn build-cordova && yarn start-webdav",
     "run-android": "cd cordova && cordova run android && cd ..",
     "cordova-crosswalk": "cd cordova && cordova plugin add cordova-plugin-crosswalk-webview && cd ..",
     "cordova-android": "cd cordova && cordova platform add android && cd ..",
