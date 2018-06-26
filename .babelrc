@@ -4,7 +4,7 @@
       "env",
       {
         "targets": {
-          "node": 6
+          "node": 7
         },
         "useBuiltIns": true
       }
@@ -22,14 +22,13 @@
         "react-optimize"
       ],
       "plugins": [
-        "babel-plugin-dev-expression"
+        "dev-expression"
       ]
     },
     "development": {
       "plugins": [
         "transform-class-properties",
         "transform-es2015-classes",
-        "react-hot-loader/babel",
         [
           "flow-runtime",
           {

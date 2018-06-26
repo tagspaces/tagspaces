@@ -195,6 +195,11 @@ export default merge.smart(baseConfig, {
     }),
   ],
 
+  node: {
+    __dirname: false,
+    __filename: false
+  },
+
   devServer: {
     port,
     publicPath,
@@ -219,7 +224,7 @@ export default merge.smart(baseConfig, {
       if (process.env.START_HOT) {
         spawn(
           'npm',
-          ['run', 'start-hot-renderer'],
+          ['run', 'start-main-dev'],
           { shell: true, env: process.env, stdio: 'inherit' }
         )
         .on('close', code => process.exit(code))

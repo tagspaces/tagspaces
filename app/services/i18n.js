@@ -20,26 +20,29 @@
 import i18n from 'i18next';
 import XHR from 'i18next-xhr-backend';
 import LanguageDetector from 'i18next-browser-languagedetector';
-// import de from '../locales/de/core.json';
-// import en from '../locales/en/core.json';
+import de from '../locales/de/core.json';
+import en from '../locales/en/core.json';
 
 function loadLocales(url, options, callback, data) {
   try {
-    /* switch (url) {
-      case 'locales/de/core.json': {
-        callback(de, { status: '200' });
-      }
-      case 'locales/en/core.json': {
-        callback(en, { status: '200' });
-      }
-      default: {
-        callback(de, { status: '200' });
-      }
-    } */
-    const waitForLocale = require('bundle-loader!../locales/' + url + '/core.json');
+    switch (url) {
+    case 'locales/de/core.json': {
+      callback(de, { status: '200' });
+      break;
+    }
+    case 'locales/en/core.json': {
+      callback(en, { status: '200' });
+      break;
+    }
+    default: {
+      callback(en, { status: '200' });
+      break;
+    }
+    }
+    /* const waitForLocale = require('bundle-loader!/app/locales/' + url + '/core.json');
     waitForLocale((locale) => {
       callback(locale, { status: '200' });
-    });
+    }); */
   } catch (e) {
     callback(null, { status: '404' });
   }
@@ -53,9 +56,9 @@ const options = {
   attributes: ['t', 'i18n'],
   backend: {
     loadPath: '{{lng}}',
-    parse: (data) => data, // comment to have working i18n switch
+    parse: data => data, // comment to have working i18n switch
     ajax: loadLocales // comment to have working i18n switch
-  },
+  }
   // getAsync: true,
   // debug: true,
   /* interpolation: {
@@ -68,12 +71,15 @@ const options = {
   } */
 };
 
-i18n.use(XHR).use(LanguageDetector).init(options, (err, t) => {
-// i18n.use(XHR).init(options, (err, t) => {
-  if (err) {
-    return console.log('something went wrong loading', err);
-  }
-  // console.log('Test i18next: ' + t('core:name')); // -> same as i18next.t
-});
+i18n
+  .use(XHR)
+  .use(LanguageDetector)
+  .init(options, (err, t) => {
+    // i18n.use(XHR).init(options, (err, t) => {
+    if (err) {
+      return console.log('something went wrong loading', err);
+    }
+    // console.log('Test i18next: ' + t('core:name')); // -> same as i18next.t
+  });
 
 export default i18n;
