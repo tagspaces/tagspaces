@@ -20,31 +20,32 @@
 import i18n from 'i18next';
 import XHR from 'i18next-xhr-backend';
 import LanguageDetector from 'i18next-browser-languagedetector';
-import de from '../locales/de/core.json';
 import en from '../locales/en/core.json';
 
 function loadLocales(url, options, callback, data) {
-  try {
-    switch (url) {
-    case 'locales/de/core.json': {
-      callback(de, { status: '200' });
-      break;
-    }
-    case 'locales/en/core.json': {
-      callback(en, { status: '200' });
-      break;
-    }
-    default: {
-      callback(en, { status: '200' });
-      break;
-    }
-    }
-    /* const waitForLocale = require('bundle-loader!/app/locales/' + url + '/core.json');
-    waitForLocale((locale) => {
+  switch (url) {
+  case 'de': {
+    import('../locales/de/core.json').then(locale => {
       callback(locale, { status: '200' });
-    }); */
-  } catch (e) {
-    callback(null, { status: '404' });
+      return true;
+    }).catch(() => {
+      console.log('Error loading de locale.');
+    });
+    break;
+  }
+  case 'en': {
+    import('../locales/en/core.json').then(locale => {
+      callback(locale, { status: '200' });
+      return true;
+    }).catch(() => {
+      console.log('Error loading en locale.');
+    });
+    break;
+  }
+  default: {
+    callback(en, { status: '200' });
+    break;
+  }
   }
 }
 
@@ -79,7 +80,6 @@ i18n
     if (err) {
       return console.log('something went wrong loading', err);
     }
-    // console.log('Test i18next: ' + t('core:name')); // -> same as i18next.t
   });
 
 export default i18n;
