@@ -22,7 +22,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { translate } from 'react-i18next';
 import { history } from '../store/configureStore';
-import Button from 'material-ui/Button';
+import Button from '@material-ui/core/Button';
 import i18n from '../services/i18n';
 // import Backend from '../services/backend';
 

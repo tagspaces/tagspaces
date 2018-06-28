@@ -19,19 +19,19 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import Button from 'material-ui/Button';
+import Button from '@material-ui/core/Button';
 import {
   DialogActions,
   DialogContent,
   DialogTitle,
-} from 'material-ui/Dialog';
+} from '@material-ui/core/Dialog';
 import {
   ListItem,
   ListItemSecondaryAction,
   ListItemText,
-} from 'material-ui/List';
-import { FormControl } from 'material-ui/Form';
-import { withStyles } from 'material-ui/styles/index';
+} from '@material-ui/core/List';
+import { FormControl } from '@material-ui/core/Form';
+import { withStyles } from '@material-ui/core/styles/index';
 import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
 import i18n from '../../services/i18n';
 import { getKeyBindingObject } from '../../reducers/settings';

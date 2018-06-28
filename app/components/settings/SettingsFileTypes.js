@@ -18,13 +18,13 @@
  */
 
 import React, { Component } from 'react';
-import { withStyles } from 'material-ui/styles';
-import { ListItem } from 'material-ui/List';
-import Input, { InputLabel } from 'material-ui/Input';
-import { FormControl } from 'material-ui/Form';
-import IconButton from 'material-ui/IconButton';
-import Button from 'material-ui/Button';
-import Select from 'material-ui/Select';
+import { withStyles } from '@material-ui/core/styles';
+import { ListItem } from '@material-ui/core/List';
+import Input, { InputLabel } from '@material-ui/core/Input';
+import { FormControl } from '@material-ui/core/Form';
+import IconButton from '@material-ui/core/IconButton';
+import Button from '@material-ui/core/Button';
+import Select from '@material-ui/core/Select';
 import ColorPickerDialog from '../dialogs/ColorPickerDialog';
 import { findAvailableExtensions } from '../../reducers/app';
 import { sortBy } from '../../utils/misc';

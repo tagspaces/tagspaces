@@ -21,19 +21,19 @@ import React from 'react';
 // import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { withStyles } from 'material-ui/styles';
+import { withStyles } from '@material-ui/core/styles';
 import List, {
   // ListItemIcon,
   ListItem,
   ListItemSecondaryAction,
   ListItemText
-} from 'material-ui/List';
-import { MenuItem } from 'material-ui/Menu';
-import Switch from 'material-ui/Switch';
-import Input from 'material-ui/Input';
-// import { FormControl } from 'material-ui/Form';
-import Select from 'material-ui/Select';
-import Button from 'material-ui/Button';
+} from '@material-ui/core/List';
+import { MenuItem } from '@material-ui/core/Menu';
+import Switch from '@material-ui/core/Switch';
+import Input from '@material-ui/core/Input';
+// import { FormControl } from '@material-ui/Form';
+import Select from '@material-ui/core/Select';
+import Button from '@material-ui/core/Button';
 import i18n from '../../services/i18n';
 import {
   actions as SettingsActions,

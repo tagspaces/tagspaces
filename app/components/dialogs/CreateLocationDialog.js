@@ -18,19 +18,19 @@
  */
 
 import React from 'react';
-import Button from 'material-ui/Button';
-import TextField from 'material-ui/TextField';
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
 import uuidv1 from 'uuid';
 import {
   DialogActions,
   DialogContent,
   DialogTitle
-} from 'material-ui/Dialog';
-import IconButton from 'material-ui/IconButton';
-import FolderIcon from 'material-ui-icons/Folder';
-import Switch from 'material-ui/Switch';
-import { FormControl, FormControlLabel, FormHelperText, FormGroup } from 'material-ui/Form';
-import Input, { InputLabel, InputAdornment } from 'material-ui/Input';
+} from '@material-ui/core/Dialog';
+import IconButton from '@material-ui/core/IconButton';
+import FolderIcon from '@material-ui/core/Folder';
+import Switch from '@material-ui/core/Switch';
+import { FormControl, FormControlLabel, FormHelperText, FormGroup } from '@material-ui/core/Form';
+import Input, { InputLabel, InputAdornment } from '@material-ui/core/Input';
 import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
 import i18n from '../../services/i18n';
 import PlatformIO from '../../services/platform-io';

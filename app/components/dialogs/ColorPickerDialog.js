@@ -18,13 +18,13 @@
  */
 
 import React from 'react';
-import Button from 'material-ui/Button';
+import Button from '@material-ui/core/Button';
 import {
   DialogActions,
   DialogContent,
   DialogTitle
-} from 'material-ui/Dialog';
-import { withStyles } from 'material-ui/styles';
+} from '@material-ui/core/Dialog';
+import { withStyles } from '@material-ui/core/styles';
 import { SketchPicker } from 'react-color';
 import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
 import i18n from '../../services/i18n';

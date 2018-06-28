@@ -20,11 +20,11 @@
 // export { default as FileManagerPerspective } from './rc-table';
 import React from 'react';
 import Table from 'rc-table';
-import Checkbox from 'material-ui/Checkbox';
-import ArrowDownward from 'material-ui-icons/ArrowDownward';
-import ArrowUpward from 'material-ui-icons/ArrowUpward';
-import Button from 'material-ui/Button';
-import Tooltip from 'material-ui/Tooltip';
+import Checkbox from '@material-ui/Checkbox';
+import ArrowDownward from '@material-ui/core/ArrowDownward';
+import ArrowUpward from '@material-ui/core/ArrowUpward';
+import Button from '@material-ui/core/Button';
+import Tooltip from '@material-ui/core/Tooltip';
 import { formatDateTime, formatFileSize } from '../../utils/misc';
 import TagContainer from '../../components/TagContainer';
 import FileMenu from '../../components/menus/FileMenu';

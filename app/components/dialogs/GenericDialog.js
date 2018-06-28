@@ -18,14 +18,14 @@
  */
 
 import React from 'react';
-import Button from 'material-ui/Button';
+import Button from '@material-ui/core/Button';
 import Dialog, {
   DialogActions,
   DialogContent,
   DialogTitle,
   DialogContentText,
-} from 'material-ui/Dialog';
-import Slide from 'material-ui/transitions/Slide';
+} from '@material-ui/core/Dialog';
+import Slide from '@material-ui/core/transitions/Slide';
 import i18n from '../../services/i18n';
 
 function Transition(props) {

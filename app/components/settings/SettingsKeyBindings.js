@@ -20,15 +20,15 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { withStyles } from 'material-ui/styles';
-import TextField from 'material-ui/TextField';
-import Switch from 'material-ui/Switch';
-import { FormControl } from 'material-ui/Form';
+import { withStyles } from '@material-ui/core/styles';
+import TextField from '@material-ui/core/TextField';
+import Switch from '@material-ui/core/Switch';
+import { FormControl } from '@material-ui/core/Form';
 import {
   ListItem,
   ListItemSecondaryAction,
   ListItemText,
-} from 'material-ui/List';
+} from '@material-ui/core/List';
 import i18n from '../../services/i18n';
 import {
   actions as SettingsActions,

@@ -18,16 +18,16 @@
  */
 
 import React from 'react';
-import Button from 'material-ui/Button';
+import Button from '@material-ui/core/Button';
 import moment from 'moment';
-import TextField from 'material-ui/TextField';
+import TextField from '@material-ui/core/TextField';
 import {
   DialogActions,
   DialogContent,
   DialogTitle
-} from 'material-ui/Dialog';
-import { FormControl, FormHelperText } from 'material-ui/Form';
-import Switch from 'material-ui/Switch';
+} from '@material-ui/core/Dialog';
+import { FormControl, FormHelperText } from '@material-ui/core/Form';
+import Switch from '@material-ui/core/Switch';
 import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
 import ColorPickerDialog from './ColorPickerDialog';
 import { type TagGroup } from '../../reducers/taglibrary';

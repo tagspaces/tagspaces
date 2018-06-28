@@ -18,19 +18,19 @@
  */
 
 import React from 'react';
-import Button from 'material-ui/Button';
-import { withStyles } from 'material-ui/styles';
+import Button from '@material-ui/core/Button';
+import { withStyles } from '@material-ui/core/styles';
 import {
   DialogActions,
   DialogContent,
   DialogTitle
-} from 'material-ui/Dialog';
+} from '@material-ui/core/Dialog';
 import {
   FormControl,
   FormGroup,
   FormControlLabel,
-} from 'material-ui/Form';
-import Checkbox from 'material-ui/Checkbox';
+} from '@material-ui/core/Form';
+import Checkbox from '@material-ui/core/Checkbox';
 import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
 import TagGroupContainer from '../TagGroupContainer';
 import TagContainer from '../TagContainer';

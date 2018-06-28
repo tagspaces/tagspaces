@@ -21,18 +21,18 @@ import React from 'react';
 import {
   ListItemIcon,
   ListItemText
-} from 'material-ui/List';
-import Menu, { MenuItem } from 'material-ui/Menu';
-import Divider from 'material-ui/Divider';
-import OpenFolderIcon from 'material-ui-icons/SubdirectoryArrowLeft';
-import AddExistingFileIcon from 'material-ui-icons/ExitToApp';
-import OpenFolderNativelyIcon from 'material-ui-icons/Launch';
-import AutoRenew from 'material-ui-icons/Autorenew';
-import NewFileIcon from 'material-ui-icons/InsertDriveFile';
-import NewFolderIcon from 'material-ui-icons/CreateNewFolder';
-import RenameFolderIcon from 'material-ui-icons/FormatTextdirectionLToR';
-import DeleteForeverIcon from 'material-ui-icons/DeleteForever';
-import SettingsIcon from 'material-ui-icons/Settings';
+} from '@material-ui/core/List';
+import Menu, { MenuItem } from '@material-ui/core/Menu';
+import Divider from '@material-ui/core/Divider';
+import OpenFolderIcon from '@material-ui/core/SubdirectoryArrowLeft';
+import AddExistingFileIcon from '@material-ui/core/ExitToApp';
+import OpenFolderNativelyIcon from '@material-ui-/core/Launch';
+import AutoRenew from '@material-ui/core/Autorenew';
+import NewFileIcon from '@material-ui/core/InsertDriveFile';
+import NewFolderIcon from '@material-ui/core/CreateNewFolder';
+import RenameFolderIcon from '@material-ui/core/FormatTextdirectionLToR';
+import DeleteForeverIcon from '@material-ui/core/DeleteForever';
+import SettingsIcon from '@material-ui/core/Settings';
 import ConfirmDialog from '../dialogs/ConfirmDialog';
 import CreateDirectoryDialog from '../dialogs/CreateDirectoryDialog';
 import RenameDirectoryDialog from '../dialogs/RenameDirectoryDialog';

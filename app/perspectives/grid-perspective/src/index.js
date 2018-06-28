@@ -19,32 +19,32 @@
 
 import React from 'react';
 import removeMd from 'remove-markdown';
-import { withStyles } from 'material-ui/styles';
+import { withStyles } from '@material-ui/core/styles';
 import classNames from 'classnames';
 import moment from 'moment';
-import Paper from 'material-ui/Paper';
-import Typography from 'material-ui/Typography';
-import Toolbar from 'material-ui/Toolbar';
+import Paper from '@material-ui/core/Paper';
+import Typography from '@material-ui/core/Typography';
+import Toolbar from '@material-ui/core/Toolbar';
 import {
   ListItemIcon,
   ListItemText,
-} from 'material-ui/List';
-import Grid from 'material-ui/Grid';
-import ParentDirIcon from 'material-ui-icons/SubdirectoryArrowLeft';
-import ViewListIcon from 'material-ui-icons/ViewList';
-import SwapVertIcon from 'material-ui-icons/SwapVert';
-import ViewGridIcon from 'material-ui-icons/ViewModule';
-import ArrowUpIcon from 'material-ui-icons/KeyboardArrowUp';
-import ArrowDownIcon from 'material-ui-icons/KeyboardArrowDown';
-import IconButton from 'material-ui/IconButton';
-import Menu, { MenuItem } from 'material-ui/Menu';
-import FolderIcon from 'material-ui-icons/FolderOpen';
-import FolderHiddenIcon from 'material-ui-icons/Folder';
-import TagIcon from 'material-ui-icons/LocalOffer';
-import CopyIcon from 'material-ui-icons/ContentCopy';
-import DeleteIcon from 'material-ui-icons/Delete';
-import SelectAllIcon from 'material-ui-icons/CheckBox';
-import DeSelectAllIcon from 'material-ui-icons/CheckBoxOutlineBlank';
+} from '@material-ui/core/List';
+import Grid from '@material-ui/core/Grid';
+import ParentDirIcon from '@material-ui/core/SubdirectoryArrowLeft';
+import ViewListIcon from '@material-ui/core/ViewList';
+import SwapVertIcon from '@material-ui/core/SwapVert';
+import ViewGridIcon from '@material-ui/core/ViewModule';
+import ArrowUpIcon from '@material-ui/core/KeyboardArrowUp';
+import ArrowDownIcon from '@material-ui/core/KeyboardArrowDown';
+import IconButton from '@material-ui/core/IconButton';
+import Menu, { MenuItem } from '@material-ui/core/Menu';
+import FolderIcon from '@material-ui/core/FolderOpen';
+import FolderHiddenIcon from '@material-ui/core/Folder';
+import TagIcon from '@material-ui/core/LocalOffer';
+import CopyIcon from '@material-ui/core/ContentCopy';
+import DeleteIcon from '@material-ui/core/Delete';
+import SelectAllIcon from '@material-ui/core/CheckBox';
+import DeSelectAllIcon from '@material-ui/core/CheckBoxOutlineBlank';
 import { type FileSystemEntry, findColorForFileEntry } from '../../../services/utils-io';
 import { type Tag } from '../../../reducers/taglibrary';
 import { extractTitle } from '../../../utils/paths';

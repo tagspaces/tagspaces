@@ -18,10 +18,10 @@
  */
 
 import React from 'react';
-import { ListItemText, ListItemIcon } from 'material-ui/List';
-import Menu, { MenuItem } from 'material-ui/Menu';
-import ImportExportIcon from 'material-ui-icons/ImportExport';
-import AddIcon from 'material-ui-icons/Add';
+import { ListItemText, ListItemIcon } from '@material-ui/core/List';
+import Menu, { MenuItem } from '@material-ui/core/Menu';
+import ImportExportIcon from '@material-ui/core/ImportExport';
+import AddIcon from '@material-ui/core/Add';
 import ImportExportTagGroupsDialog from '../dialogs/ImportExportTagGroupsDialog';
 import SelectDirectoryDialog from '../dialogs/SelectDirectoryDialog';
 import i18n from '../../services/i18n';

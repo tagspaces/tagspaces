@@ -18,15 +18,15 @@
  */
 
 import React from 'react';
-import Button from 'material-ui/Button';
-import TextField from 'material-ui/TextField';
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
 import moment from 'moment';
 import {
   DialogActions,
   DialogContent,
   DialogTitle
-} from 'material-ui/Dialog';
-import { FormControl, FormHelperText } from 'material-ui/Form';
+} from '@material-ui/core/Dialog';
+import { FormControl, FormHelperText } from '@material-ui/core/Form';
 import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
 import ColorPickerDialog from './ColorPickerDialog';
 import i18n from '../../services/i18n';

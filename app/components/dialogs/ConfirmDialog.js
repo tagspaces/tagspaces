@@ -18,14 +18,14 @@
  */
 
 import React from 'react';
-import Button from 'material-ui/Button';
+import Button from '@material-ui/core/Button';
 import {
   DialogActions,
   DialogContent,
   DialogTitle,
   DialogContentText
-} from 'material-ui/Dialog';
-import { withStyles } from 'material-ui/styles/index';
+} from '@material-ui/core/Dialog';
+import { withStyles } from '@material-ui/core/styles/index';
 import GenericDialog from './GenericDialog';
 import i18n from '../../services/i18n';
 

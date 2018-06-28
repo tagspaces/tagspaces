@@ -18,16 +18,16 @@
  */
 
 import React from 'react';
-import Button from 'material-ui/Button';
-import TextField from 'material-ui/TextField';
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
 import Autosuggest from 'react-autosuggest';
 // import parse from 'autosuggest-highlight/umd/parse';
-import Paper from 'material-ui/Paper';
+import Paper from '@material-ui/core/Paper';
 import uuidv1 from 'uuid';
-import { withStyles } from 'material-ui/styles';
-import { MenuItem } from 'material-ui/Menu';
-import { FormControl } from 'material-ui/Form';
-import { ListItemSecondaryAction } from 'material-ui/List';
+import { withStyles } from '@material-ui/core/styles';
+import { MenuItem } from '@material-ui/core/Menu';
+import { FormControl } from '@material-ui/core/Form';
+import { ListItemSecondaryAction } from '@material-ui/core/List';
 import { type Tag } from '../reducers/taglibrary';
 import TagContainer from './TagContainer';
 import i18n from '../services/i18n';

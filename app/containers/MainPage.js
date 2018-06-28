@@ -20,18 +20,18 @@
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { withStyles } from 'material-ui/styles';
+import { withStyles } from '@material-ui/core/styles';
 import classNames from 'classnames';
 import { translate } from 'react-i18next';
 import SplitPane from 'react-split-pane';
-import Drawer from 'material-ui/Drawer';
-import Snackbar from 'material-ui/Snackbar';
-import Button from 'material-ui/Button';
-import IconButton from 'material-ui/IconButton';
-import CloseIcon from 'material-ui-icons/Close';
+import Drawer from '@material-ui/core/Drawer';
+import Snackbar from '@material-ui/core/Snackbar';
+import Button from '@material-ui/core/Button';
+import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@material-ui/core/Close';
 import { HotKeys } from 'react-hotkeys';
 import HTML5Backend, { NativeTypes } from 'react-dnd-html5-backend';
-import { LinearProgress } from 'material-ui/Progress';
+import { LinearProgress } from '@material-ui/core/Progress';
 import { DragDropContext } from 'react-dnd';
 import VerticalNavigation, {
   AppVerticalPanels

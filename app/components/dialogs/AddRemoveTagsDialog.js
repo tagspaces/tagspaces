@@ -18,8 +18,8 @@
  */
 
 import React, { Component } from 'react';
-import Button from 'material-ui/Button';
-import { DialogActions, DialogContent, DialogTitle } from 'material-ui/Dialog';
+import Button from '@material-ui/core/Button';
+import { DialogActions, DialogContent, DialogTitle } from '@material-ui/core/Dialog';
 import GenericDialog from './GenericDialog';
 import { type Tag } from '../../reducers/taglibrary';
 import TagAutosuggestion from '../TagAutosuggestion/';

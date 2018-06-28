@@ -20,12 +20,12 @@
 import React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import Launch from 'material-ui-icons/Launch';
-import Edit from 'material-ui-icons/Edit';
-import LocalOffer from 'material-ui-icons/LocalOffer';
-import DeleteIcon from 'material-ui-icons/DeleteForever';
-import { ListItemIcon, ListItemText } from 'material-ui/List';
-import Menu, { MenuItem } from 'material-ui/Menu';
+import Launch from '@material-ui/core/Launch';
+import Edit from '@material-ui/core/Edit';
+import LocalOffer from '@material-ui/core/LocalOffer';
+import DeleteIcon from '@material-ui/core/DeleteForever';
+import { ListItemIcon, ListItemText } from '@material-ui/core/List';
+import Menu, { MenuItem } from '@material-ui/core/Menu';
 import ConfirmDialog from '../dialogs/ConfirmDialog';
 import EditTagDialog from '../dialogs/EditTagDialog';
 import { type Tag, type TagGroup } from '../../reducers/taglibrary';

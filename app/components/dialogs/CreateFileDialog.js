@@ -18,23 +18,23 @@
  */
 
 import React from 'react';
-import Button from 'material-ui/Button';
-import TextField from 'material-ui/TextField';
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import {
   DialogActions,
   DialogContent,
   DialogTitle,
-} from 'material-ui/Dialog';
-import { withStyles } from 'material-ui/styles/index';
-import IconButton from 'material-ui/IconButton';
-import FolderIcon from 'material-ui-icons/FolderOpen';
-import { ListItem } from 'material-ui/List';
-import { FormLabel, FormControl, FormControlLabel, FormHelperText } from 'material-ui/Form';
+} from '@material-ui/core/Dialog';
+import { withStyles } from '@material-ui/core/styles/index';
+import IconButton from '@material-ui/core/IconButton';
+import FolderIcon from '@material-ui/core/FolderOpen';
+import { ListItem } from '@material-ui/core/List';
+import { FormLabel, FormControl, FormControlLabel, FormHelperText } from '@material-ui/core/Form';
 import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
-import Radio, { RadioGroup } from 'material-ui/Radio';
-import Input, { InputLabel, InputAdornment } from 'material-ui/Input';
+import Radio, { RadioGroup } from '@material-ui/core/Radio';
+import Input, { InputLabel, InputAdornment } from '@material-ui/core/Input';
 import i18n from '../../services/i18n';
 import { type Tag } from '../../reducers/taglibrary';
 import TagAutosuggestion from '../TagAutosuggestion/';

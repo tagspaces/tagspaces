@@ -20,14 +20,14 @@
 import React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import Button from 'material-ui/Button';
-import TextField from 'material-ui/TextField';
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
 import {
   DialogActions,
   DialogContent,
   DialogTitle
-} from 'material-ui/Dialog';
-import { FormControl, FormHelperText } from 'material-ui/Form';
+} from '@material-ui/core/Dialog';
+import { FormControl, FormHelperText } from '@material-ui/core/Form';
 import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
 import i18n from '../../services/i18n';
 import { extractDirectoryName } from '../../utils/paths';

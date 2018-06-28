@@ -18,19 +18,19 @@
  */
 
 import React from 'react';
-import Button from 'material-ui/Button';
-import TextField from 'material-ui/TextField';
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
 import {
   DialogActions,
   DialogContent,
   DialogTitle,
-} from 'material-ui/Dialog';
+} from '@material-ui/core/Dialog';
 import moment from 'moment';
-import Tabs, { Tab } from 'material-ui/Tabs';
-import Typography from 'material-ui/Typography';
+import Tabs, { Tab } from '@material-ui/core/Tabs';
+import Typography from '@material-ui/core/Typography';
 import Datetime from 'react-datetime';
-import { withStyles } from 'material-ui/styles/index';
-import { FormControl, FormHelperText } from 'material-ui/Form';
+import { withStyles } from '@material-ui/core/styles/index';
+import { FormControl, FormHelperText } from '@material-ui/core/Form';
 import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
 import i18n from '../../services/i18n';
 import { type Tag } from '../../reducers/taglibrary';

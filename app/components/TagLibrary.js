@@ -20,29 +20,29 @@
 import React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { withStyles } from 'material-ui/styles';
-import Typography from 'material-ui/Typography';
+import { withStyles } from '@material-ui/core/styles';
+import Typography from '@material-ui/core/Typography';
 import List, {
   ListItem,
   ListItemIcon,
   ListItemSecondaryAction,
   ListItemText
-} from 'material-ui/List';
-// import Button from 'material-ui/Button';
-import IconButton from 'material-ui/IconButton';
-import Collapse from 'material-ui/transitions/Collapse';
-import MoreVertIcon from 'material-ui-icons/MoreVert';
-import ArrowDownIcon from 'material-ui-icons/KeyboardArrowDown';
-import ArrowRightIcon from 'material-ui-icons/KeyboardArrowRight';
-import LocalOffer from 'material-ui-icons/LocalOffer';
-// import ImportExportIcon from 'material-ui-icons/ImportExport';
-import ArrowDownward from 'material-ui-icons/ArrowDownward';
-import ArrowUpward from 'material-ui-icons/ArrowUpward';
-import Edit from 'material-ui-icons/Edit';
-import SortByAlpha from 'material-ui-icons/SortByAlpha';
-import DeleteForever from 'material-ui-icons/DeleteForever';
-import Menu, { MenuItem } from 'material-ui/Menu';
-// import { Toolbar } from 'material-ui';
+} from '@material-ui/core/List';
+// import Button from '@material-ui/Button';
+import IconButton from '@material-ui/core/IconButton';
+import Collapse from '@material-ui/core/transitions/Collapse';
+import MoreVertIcon from '@material-ui/core/MoreVert';
+import ArrowDownIcon from '@material-ui/core/KeyboardArrowDown';
+import ArrowRightIcon from '@material-ui/core/KeyboardArrowRight';
+import LocalOffer from '@material-ui/core/LocalOffer';
+// import ImportExportIcon from '@material-ui-icons/ImportExport';
+import ArrowDownward from '@material-ui/core/ArrowDownward';
+import ArrowUpward from '@material-ui/core/ArrowUpward';
+import Edit from '@material-ui/core/Edit';
+import SortByAlpha from '@material-ui/core/SortByAlpha';
+import DeleteForever from '@material-ui/core/DeleteForever';
+import Menu, { MenuItem } from '@material-ui/core/Menu';
+// import { Toolbar } from '@material-ui';
 import TagContainer from './TagContainer';
 import ConfirmDialog from './dialogs/ConfirmDialog';
 import styles from './SidePanels.css';

@@ -18,13 +18,13 @@
  */
 
 import React from 'react';
-import Button from 'material-ui/Button';
+import Button from '@material-ui/core/Button';
 import {
   DialogActions,
   DialogContent,
   DialogTitle,
   withMobileDialog
-} from 'material-ui/Dialog';
+} from '@material-ui/core/Dialog';
 import GenericDialog from './GenericDialog';
 import i18n from '../../services/i18n';
 import { loadFileContentPromise } from '../../services/utils-io';
