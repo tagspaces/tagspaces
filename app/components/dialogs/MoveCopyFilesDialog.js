@@ -24,13 +24,13 @@ import Button from '@material-ui/core/Button';
 import { ListItemText } from '@material-ui/core/List';
 import Input, { InputAdornment } from '@material-ui/core/Input';
 import IconButton from '@material-ui/core/IconButton';
-import FolderIcon from '@material-ui/core/Folder';
+import FolderIcon from '@material-ui/icons/Folder';
 import {
   DialogActions,
   DialogContent,
   DialogTitle
 } from '@material-ui/core/Dialog';
-import { FormControl, FormHelperText } from '@material-ui/core/Form';
+import { FormControl, FormHelperText } from '@material-ui/core/FormControl';
 import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
 import i18n from '../../services/i18n';
 // import { extractContainingDirectoryPath } from '../../utils/paths';

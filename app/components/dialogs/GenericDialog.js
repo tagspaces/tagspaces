@@ -25,7 +25,7 @@ import Dialog, {
   DialogTitle,
   DialogContentText,
 } from '@material-ui/core/Dialog';
-import Slide from '@material-ui/core/transitions/Slide';
+import Slide from '@material-ui/core/Slide';
 import i18n from '../../services/i18n';
 
 function Transition(props) {

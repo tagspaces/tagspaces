@@ -30,7 +30,7 @@ import {
   ListItemSecondaryAction,
   ListItemText,
 } from '@material-ui/core/List';
-import { FormControl } from '@material-ui/core/Form';
+import { FormControl } from '@material-ui/core/FormControl';
 import { withStyles } from '@material-ui/core/styles/index';
 import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
 import i18n from '../../services/i18n';

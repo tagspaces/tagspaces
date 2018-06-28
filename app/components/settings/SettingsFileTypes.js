@@ -21,7 +21,7 @@ import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import { ListItem } from '@material-ui/core/List';
 import Input, { InputLabel } from '@material-ui/core/Input';
-import { FormControl } from '@material-ui/core/Form';
+import { FormControl } from '@material-ui/core/FormControl';
 import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
 import Select from '@material-ui/core/Select';

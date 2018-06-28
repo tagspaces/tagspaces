@@ -24,13 +24,13 @@ import {
 } from '@material-ui/core/List';
 import Menu, { MenuItem } from '@material-ui/core/Menu';
 import Divider from '@material-ui/core/Divider';
-import OpenFile from '@material-ui/core/SubdirectoryArrowLeft';
-import OpenFileNatively from '@material-ui/core/Launch';
-import OpenContainingFolder from '@material-ui/core/FolderOpen';
-import AddRemoveTags from '@material-ui/core/Loyalty';
-import MoveCopy from '@material-ui/core/ContentCopy';
-import RenameFile from '@material-ui/core/FormatTextdirectionLToR';
-import DeleteForever from '@material-ui/core/DeleteForever';
+import OpenFile from '@material-ui/icons/SubdirectoryArrowLeft';
+import OpenFileNatively from '@material-ui/icons/Launch';
+import OpenContainingFolder from '@material-ui/icons/FolderOpen';
+import AddRemoveTags from '@material-ui/icons/Loyalty';
+import MoveCopy from '@material-ui/icons/ContentCopy';
+import RenameFile from '@material-ui/icons/FormatTextdirectionLToR';
+import DeleteForever from '@material-ui/icons/DeleteForever';
 import i18n from '../../services/i18n';
 import { extractContainingDirectoryPath } from '../../utils/paths';
 

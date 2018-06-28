@@ -28,10 +28,10 @@ import Drawer from '@material-ui/core/Drawer';
 import Snackbar from '@material-ui/core/Snackbar';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/core/Close';
+import CloseIcon from '@material-ui/icons/Close';
 import { HotKeys } from 'react-hotkeys';
 import HTML5Backend, { NativeTypes } from 'react-dnd-html5-backend';
-import { LinearProgress } from '@material-ui/core/Progress';
+import { LinearProgress } from '@material-ui/icons/Progress';
 import { DragDropContext } from 'react-dnd';
 import VerticalNavigation, {
   AppVerticalPanels

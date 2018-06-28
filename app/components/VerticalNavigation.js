@@ -21,7 +21,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import IconButton from '@material-ui/core/IconButton';
-import SettingsIcon from '@material-ui/core/Settings';
+import SettingsIcon from '@material-ui/icons/Settings';
 import { withTheme } from '@material-ui/core/styles';
 import SplitPane from 'react-split-pane';
 import LogoIcon from '../assets/images/icon100x100.svg';

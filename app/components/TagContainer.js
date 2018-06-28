@@ -19,8 +19,8 @@
 
 import React from 'react';
 import Button from '@material-ui/core/Button';
-import MoreVertIcon from '@material-ui/core/MoreVert';
-import RemoveTagIcon from '@material-ui/core/Close';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
+import RemoveTagIcon from '@material-ui/icons/Close';
 import { DragSource } from 'react-dnd';
 import DragItemTypes from './DragItemTypes';
 import { type TagGroup, type Tag } from '../reducers/taglibrary';

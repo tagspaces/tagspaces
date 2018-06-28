@@ -26,11 +26,11 @@ import {
   DialogTitle
 } from '@material-ui/core/Dialog';
 import Paper from '@material-ui/core/Paper';
-import FolderIcon from '@material-ui/core/FolderOpen';
-import CreateFolderIcon from '@material-ui/core/CreateNewFolder';
-import UndoIcon from '@material-ui/core/Undo';
+import FolderIcon from '@material-ui/icons/FolderOpen';
+import CreateFolderIcon from '@material-ui/icons/CreateNewFolder';
+import UndoIcon from '@material-ui/icons/Undo';
 import Select from '@material-ui/core/Select';
-import { FormControl, FormHelperText } from '@material-ui/core/Form';
+import { FormControl, FormHelperText } from '@material-ui/core/FormControl';
 import Input, { InputLabel } from '@material-ui/core/Input';
 import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
 import i18n from '../../services/i18n';

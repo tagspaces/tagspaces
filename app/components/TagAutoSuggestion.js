@@ -26,7 +26,7 @@ import Paper from '@material-ui/core/Paper';
 import uuidv1 from 'uuid';
 import { withStyles } from '@material-ui/core/styles';
 import { MenuItem } from '@material-ui/core/Menu';
-import { FormControl } from '@material-ui/core/Form';
+import { FormControl } from '@material-ui/core/FormControl';
 import { ListItemSecondaryAction } from '@material-ui/core/List';
 import { type Tag } from '../reducers/taglibrary';
 import TagContainer from './TagContainer';

@@ -21,7 +21,7 @@ import React, { Component } from 'react';
 import marked from 'marked';
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
-import { FormControl } from '@material-ui/core/Form';
+import { FormControl } from '@material-ui/core/FormControl';
 import Typography from '@material-ui/core/Typography';
 import Input from '@material-ui/core/Input';
 import TextField from '@material-ui/core/TextField';

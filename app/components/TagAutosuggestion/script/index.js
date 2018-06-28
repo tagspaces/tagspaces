@@ -20,11 +20,11 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Button from '@material-ui/core/Button';
-import CloseIcon from '@material-ui/core/Close';
+import CloseIcon from '@material-ui/icons/Close';
 import uuidv1 from 'uuid';
 import Input, { InputLabel } from '@material-ui/core/Input';
 import { withStyles } from '@material-ui/core/styles';
-import { FormControl } from '@material-ui/core/Form';
+import { FormControl } from '@material-ui/core/FormControl';
 import ConfirmDialog from '../../dialogs/ConfirmDialog';
 import { type Tag, getTagGroups } from '../../../reducers/taglibrary';
 import i18n from '../../../services/i18n';

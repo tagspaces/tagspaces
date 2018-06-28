@@ -26,9 +26,9 @@ import {
   DialogTitle
 } from '@material-ui/core/Dialog';
 import IconButton from '@material-ui/core/IconButton';
-import FolderIcon from '@material-ui/core/Folder';
+import FolderIcon from '@material-ui/icons/Folder';
 import Switch from '@material-ui/core/Switch';
-import { FormControl, FormControlLabel, FormHelperText, FormGroup } from '@material-ui/core/Form';
+import { FormControl, FormControlLabel, FormHelperText, FormGroup } from '@material-ui/core/FormControl';
 import Input, { InputLabel, InputAdornment } from '@material-ui/core/Input';
 import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
 import i18n from '../../services/i18n';
