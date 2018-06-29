@@ -29,9 +29,11 @@ import { bindActionCreators } from 'redux';
 // import FolderIcon from '@material-ui-icons/Folder';
 // import MoreVertIcon from '@material-ui-icons/MoreVert';
 import { withStyles } from '@material-ui/core/styles';
-// import Menu, { MenuItem } from '@material-ui/Menu';
-// import { ListItemIcon, ListItemText } from '@material-ui/List';
-// import ListSubheader from '@material-ui/List/ListSubheader';
+// import Menu from '@material-ui/core/Menu';
+// import MenuItem from '@material-ui/core/MenuItem';
+// import ListItemIcon from '@material-ui/core/ListItemCore';
+// import ListItemText  from '@material-ui/core/ListItemtext';
+// import ListSubheader from '@material-ui/core/ListSubheader';
 
 // import i18n from '../services/i18n';
 import { type Location } from '../reducers/locations';

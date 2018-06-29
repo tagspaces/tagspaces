@@ -18,11 +18,10 @@
  */
 
 import React from 'react';
-import {
-  ListItemIcon,
-  ListItemText
-} from '@material-ui/core/List';
-import Menu, { MenuItem } from '@material-ui/core/Menu';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 import Divider from '@material-ui/core/Divider';
 import OpenFolderIcon from '@material-ui/icons/SubdirectoryArrowLeft';
 import AddExistingFileIcon from '@material-ui/icons/ExitToApp';

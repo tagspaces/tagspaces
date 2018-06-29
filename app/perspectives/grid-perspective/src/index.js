@@ -25,10 +25,8 @@ import moment from 'moment';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Toolbar from '@material-ui/core/Toolbar';
-import {
-  ListItemIcon,
-  ListItemText,
-} from '@material-ui/core/List';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/List';
 import Grid from '@material-ui/core/Grid';
 import ParentDirIcon from '@material-ui/icons/SubdirectoryArrowLeft';
 import ViewListIcon from '@material-ui/icons/ViewList';
@@ -37,7 +35,8 @@ import ViewGridIcon from '@material-ui/icons/ViewModule';
 import ArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import ArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import IconButton from '@material-ui/core/IconButton';
-import Menu, { MenuItem } from '@material-ui/core/Menu';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 import FolderIcon from '@material-ui/icons/FolderOpen';
 import FolderHiddenIcon from '@material-ui/icons/Folder';
 import TagIcon from '@material-ui/icons/LocalOffer';

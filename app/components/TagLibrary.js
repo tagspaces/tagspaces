@@ -22,27 +22,27 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import List, {
-  ListItem,
-  ListItemIcon,
-  ListItemSecondaryAction,
-  ListItemText
-} from '@material-ui/core/List';
-// import Button from '@material-ui/Button';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
+import ListItemText from '@material-ui/core/ListItemText';
+// import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import Collapse from '@material-ui/core/transitions/utils';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import ArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import ArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import LocalOffer from '@material-ui/icons/LocalOffer';
-// import ImportExportIcon from '@material-ui-icons/ImportExport';
+// import ImportExportIcon from '@material-ui/icons/ImportExport';
 import ArrowDownward from '@material-ui/icons/ArrowDownward';
 import ArrowUpward from '@material-ui/icons/ArrowUpward';
 import Edit from '@material-ui/icons/Edit';
 import SortByAlpha from '@material-ui/icons/SortByAlpha';
 import DeleteForever from '@material-ui/icons/DeleteForever';
-import Menu, { MenuItem } from '@material-ui/core/Menu';
-// import { Toolbar } from '@material-ui';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+// import { Toolbar } from '@material-ui/core/Toolbar';
 import TagContainer from './TagContainer';
 import ConfirmDialog from './dialogs/ConfirmDialog';
 import styles from './SidePanels.css';

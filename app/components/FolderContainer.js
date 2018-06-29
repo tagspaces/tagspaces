@@ -26,8 +26,10 @@ import Typography from '@material-ui/core/Typography';
 import FolderIcon from '@material-ui/icons/Folder';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { withStyles } from '@material-ui/core/styles';
-import Menu, { MenuItem } from '@material-ui/core/Menu';
-import { ListItemIcon, ListItemText } from '@material-ui/core/List';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
 import ListSubHeader from '@material-ui/core/ListSubheader';
 import { HotKeys } from 'react-hotkeys';
 import Loadable from 'react-loadable';
@@ -45,7 +47,7 @@ import {
   getSearchResultCount,
   isReadOnlyMode
 } from '../reducers/app';
-import TaggingActions from '../reducers/tagging-actions';
+import TaggingActions from '../reducers/;tagging-actions';
 import { getAllTags, type Tag } from '../reducers/taglibrary';
 import { extractDirectoryName } from '../utils/paths';
 

@@ -22,16 +22,15 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withStyles } from '@material-ui/core/styles';
-import List, {
-  // ListItemIcon,
-  ListItem,
-  ListItemSecondaryAction,
-  ListItemText
-} from '@material-ui/core/List';
-import { MenuItem } from '@material-ui/core/Menu';
+import List from '@material-ui/core/List';
+// import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
+import ListItemText from '@material-ui/core/ListItemText';
+import MenuItem from '@material-ui/core/MenuItem';
 import Switch from '@material-ui/core/Switch';
 import Input from '@material-ui/core/Input';
-// import { FormControl } from '@material-ui/Form';
+// import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import Button from '@material-ui/core/Button';
 import i18n from '../../services/i18n';
