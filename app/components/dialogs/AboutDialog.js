@@ -24,8 +24,8 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  withMobileDialog
 } from '@material-ui/core/Dialog';
+import withMobileDialog from '@material-ui/core/withMobileDialog';
 import marked from 'marked';
 import semver from 'semver';
 import GenericDialog from './GenericDialog';

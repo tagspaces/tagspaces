@@ -23,8 +23,8 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  withMobileDialog
 } from '@material-ui/core/Dialog';
+import withMobileDialog from '@material-ui/core/withMobileDialog';
 import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
 import i18n from '../../services/i18n';
 import { loadFileContentPromise } from '../../services/utils-io';

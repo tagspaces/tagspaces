@@ -27,8 +27,8 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  withMobileDialog
 } from '@material-ui/core/Dialog';
+import withMobileDialog from '@material-ui/core/withMobileDialog';
 import uuidv1 from 'uuid';
 import ConfirmDialog from './ConfirmDialog';
 import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
