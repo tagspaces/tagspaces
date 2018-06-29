@@ -47,7 +47,7 @@ import {
   getSearchResultCount,
   isReadOnlyMode
 } from '../reducers/app';
-import TaggingActions from '../reducers/;tagging-actions';
+import TaggingActions from '../reducers/tagging-actions';
 import { getAllTags, type Tag } from '../reducers/taglibrary';
 import { extractDirectoryName } from '../utils/paths';
 
