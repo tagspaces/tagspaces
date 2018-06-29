@@ -20,16 +20,12 @@
 import React from 'react';
 import Button from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core/styles';
-import {
-  DialogActions,
-  DialogContent,
-  DialogTitle
-} from '@material-ui/core/Dialog';
-import {
-  FormControl,
-  FormGroup,
-  FormControlLabel,
-} from '@material-ui/core/FormControl';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import FormControl from '@material-ui/core/FormControl';
+import FormGroup from '@material-ui/core/FormGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
 import TagGroupContainer from '../TagGroupContainer';

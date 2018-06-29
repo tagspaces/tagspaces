@@ -20,17 +20,16 @@
 import React from 'react';
 import Button from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core/styles';
-import {
-  DialogActions,
-  DialogContent,
-  DialogTitle
-} from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogTitle from '@material-ui/core/DialogTitle';
 import Paper from '@material-ui/core/Paper';
 import FolderIcon from '@material-ui/icons/FolderOpen';
 import CreateFolderIcon from '@material-ui/icons/CreateNewFolder';
 import UndoIcon from '@material-ui/icons/Undo';
 import Select from '@material-ui/core/Select';
-import { FormControl, FormHelperText } from '@material-ui/core/FormControl';
+import FormControl from '@material-ui/core/FormControl';
+import FormHelperText from '@material-ui/core/FormHelperText';
 import Input, { InputLabel } from '@material-ui/core/Input';
 import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
 import i18n from '../../services/i18n';

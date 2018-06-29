@@ -22,12 +22,11 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
-import {
-  DialogActions,
-  DialogContent,
-  DialogTitle
-} from '@material-ui/core/Dialog';
-import { FormControl, FormHelperText } from '@material-ui/core/FormControl';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import FormControl from '@material-ui/core/FormControl';
+import FormHelperText from '@material-ui/core/FormHelperText';
 import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
 import i18n from '../../services/i18n';
 import { extractDirectoryName } from '../../utils/paths';

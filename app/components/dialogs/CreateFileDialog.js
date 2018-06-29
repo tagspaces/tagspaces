@@ -22,16 +22,17 @@ import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import {
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-} from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogTitle from '@material-ui/core/DialogTitle';
 import { withStyles } from '@material-ui/core/styles/index';
 import IconButton from '@material-ui/core/IconButton';
 import FolderIcon from '@material-ui/icons/FolderOpen';
 import { ListItem } from '@material-ui/core/List';
-import { FormLabel, FormControl, FormControlLabel, FormHelperText } from '@material-ui/core/FormControl';
+import FormLabel from '@material-ui/core/FormLabel';
+import FormControl from '@material-ui/core/FormControl';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import FormHelperText from '@material-ui/core/FormHelperText';
 import Radio, { RadioGroup } from '@material-ui/core/Radio';
 import Input, { InputLabel, InputAdornment } from '@material-ui/core/Input';
 import GenericDialog, { onEnterKeyHandler } from './GenericDialog';

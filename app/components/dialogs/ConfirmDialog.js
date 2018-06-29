@@ -19,12 +19,10 @@
 
 import React from 'react';
 import Button from '@material-ui/core/Button';
-import {
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  DialogContentText
-} from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import DialogContentText from '@material-ui/core/DialogContentText';
 import { withStyles } from '@material-ui/core/styles/index';
 import GenericDialog from './GenericDialog';
 import i18n from '../../services/i18n';
