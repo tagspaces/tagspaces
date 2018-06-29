@@ -30,7 +30,7 @@ import List, {
 } from '@material-ui/core/List';
 // import Button from '@material-ui/Button';
 import IconButton from '@material-ui/core/IconButton';
-import Collapse from '@material-ui/core/transitions/Collapse';
+import Collapse from '@material-ui/core/transitions/utils';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import ArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import ArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';

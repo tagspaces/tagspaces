@@ -31,7 +31,7 @@ import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import { HotKeys } from 'react-hotkeys';
 import HTML5Backend, { NativeTypes } from 'react-dnd-html5-backend';
-import { LinearProgress } from '@material-ui/icons/Progress';
+import { LinearProgress } from '@material-ui/icons/Opacity';
 import { DragDropContext } from 'react-dnd';
 import VerticalNavigation, {
   AppVerticalPanels
