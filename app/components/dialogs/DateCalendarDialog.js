@@ -30,7 +30,7 @@ import Tabs, { Tab } from '@material-ui/core/Tabs';
 import Typography from '@material-ui/core/Typography';
 import Datetime from 'react-datetime';
 import { withStyles } from '@material-ui/core/styles/index';
-import { FormControl, FormHelperText } from '@material-ui/core/Form';
+import { FormControl, FormHelperText } from '@material-ui/core/FormControl';
 import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
 import i18n from '../../services/i18n';
 import { type Tag } from '../../reducers/taglibrary';

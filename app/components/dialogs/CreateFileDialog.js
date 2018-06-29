@@ -29,12 +29,12 @@ import {
 } from '@material-ui/core/Dialog';
 import { withStyles } from '@material-ui/core/styles/index';
 import IconButton from '@material-ui/core/IconButton';
-import FolderIcon from '@material-ui/core/FolderOpen';
+import FolderIcon from '@material-ui/icons/FolderOpen';
 import { ListItem } from '@material-ui/core/List';
-import { FormLabel, FormControl, FormControlLabel, FormHelperText } from '@material-ui/core/Form';
-import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
+import { FormLabel, FormControl, FormControlLabel, FormHelperText } from '@material-ui/core/FormControl';
 import Radio, { RadioGroup } from '@material-ui/core/Radio';
 import Input, { InputLabel, InputAdornment } from '@material-ui/core/Input';
+import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
 import i18n from '../../services/i18n';
 import { type Tag } from '../../reducers/taglibrary';
 import TagAutosuggestion from '../TagAutosuggestion/';

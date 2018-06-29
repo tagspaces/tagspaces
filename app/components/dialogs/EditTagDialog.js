@@ -26,7 +26,7 @@ import {
   DialogContent,
   DialogTitle
 } from '@material-ui/core/Dialog';
-import { FormControl, FormHelperText } from '@material-ui/core/Form';
+import { FormControl, FormHelperText } from '@material-ui/core/FormControl';
 import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
 import ColorPickerDialog from './ColorPickerDialog';
 import i18n from '../../services/i18n';

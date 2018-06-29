@@ -29,7 +29,7 @@ import {
   FormControl,
   FormGroup,
   FormControlLabel,
-} from '@material-ui/core/Form';
+} from '@material-ui/core/FormControl';
 import Checkbox from '@material-ui/core/Checkbox';
 import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
 import TagGroupContainer from '../TagGroupContainer';
