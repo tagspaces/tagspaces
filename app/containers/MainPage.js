@@ -396,7 +396,7 @@ class MainPage extends Component<Props, State> {
           open={this.props.notificationStatus.visible}
           onClose={this.props.hideNotifications}
           autoHideDuration={this.props.notificationStatus.autohide ? 3000 : undefined}
-          SnackbarContentProps={{
+          ContentProps={{
             'aria-describedby': 'message-id'
           }}
           message={
@@ -417,7 +417,7 @@ class MainPage extends Component<Props, State> {
           anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
           open={this.props.isIndexing}
           autoHideDuration={undefined}
-          SnackbarContentProps={{
+          ContentProps={{
             'aria-describedby': 'message-id'
           }}
           message={
