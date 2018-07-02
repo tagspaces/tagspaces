@@ -52,7 +52,7 @@ type Props = {
   loadDirectoryContent: (path: string) => void,
   currentDirectory: string,
   indexedEntriesCount: number,
-  isIndexing: boolean
+  indexing: boolean
 };
 
 type State = {
@@ -119,7 +119,7 @@ class Search extends React.Component<Props, State> {
   };
 
   render() {
-    const { classes, isIndexing, indexedEntriesCount } = this.props;
+    const { classes, indexing, indexedEntriesCount } = this.props;
     return (
       <div className={classes.panel} style={this.props.style}>
         <div className={classes.toolbar}>
@@ -129,11 +129,11 @@ class Search extends React.Component<Props, State> {
         </div>
         <div className={classes.searchArea}>
           <Typography variant="caption">
-            {isIndexing ? 'indexing...' : 'indexed ' + indexedEntriesCount + ' entries'}
+            {indexing ? 'indexing...' : 'indexed ' + indexedEntriesCount + ' entries'}
           </Typography>
           <FormControl
             className={classes.formControl}
-            disabled={isIndexing}
+            disabled={indexing}
           >
             <InputLabel htmlFor="textQuery">
               {i18n.t('searchPlaceholder')}
@@ -159,7 +159,7 @@ class Search extends React.Component<Props, State> {
           </FormControl>
           <FormControl
             className={classes.formControl}
-            disabled={isIndexing}
+            disabled={indexing}
           >
             <InputLabel htmlFor="searchTags">{i18n.t('core:tagsWithInterval')}</InputLabel>
             <Input
@@ -172,7 +172,7 @@ class Search extends React.Component<Props, State> {
           </FormControl>
           <FormControl
             className={classes.formControl}
-            disabled={isIndexing}
+            disabled={indexing}
             title={i18n.t('core:thisFunctionalityIsAvailableInPro')}
           >
             <InputLabel htmlFor="file-type">{i18n.t('core:fileType')}</InputLabel>
@@ -293,14 +293,14 @@ class Search extends React.Component<Props, State> {
           </FormControl>
           <FormControl className={classes.formControl}>
             <Button
-              disabled={isIndexing}
+              disabled={indexing}
               id="searchButton"
               variant="raised"
               size="small"
               color="primary"
               onClick={this.executeSearch}
             >
-              {isIndexing ? 'Search disabled while indexing' : i18n.t('searchTitle')}
+              {indexing ? 'Search disabled while indexing' : i18n.t('searchTitle')}
             </Button>&nbsp;
             <Button size="small" color="primary" onClick={this.clearSearch} id="resetSearchButton">
               {i18n.t('resetBtn')}
@@ -314,7 +314,7 @@ class Search extends React.Component<Props, State> {
 
 function mapStateToProps(state) {
   return {
-    isIndexing: isIndexing(state),
+    indexing: isIndexing(state),
     currentDirectory: getDirectoryPath(state),
     indexedEntriesCount: getIndexedEntriesCount(state)
   };
