@@ -38,6 +38,7 @@ export type Location = {
   creationDate?: string,
   isDefault: boolean,
   isReadOnly?: boolean,
+  watchForChanges?: boolean,
   persistIndex?: boolean
 };
 
@@ -75,6 +76,7 @@ export default (state: Array<Location> = initialState, action: Object) => {
         isDefault: action.location.isDefault,
         isReadOnly: action.location.isReadOnly,
         persistIndex: action.location.persistIndex,
+        watchForChanges: action.location.watchForChanges,
       }
     ];
   }

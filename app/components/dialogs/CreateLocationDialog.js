@@ -61,6 +61,7 @@ type State = {
   perspective?: string,
   isDefault?: boolean,
   isReadOnly?: boolean,
+  watchForChanges?: boolean,
   persistIndex?: boolean
 };
 
@@ -75,7 +76,23 @@ class CreateLocationDialog extends React.Component<Props, State> {
     perspective: '',
     isDefault: false,
     isReadOnly: false,
+    watchForChanges: false,
     persistIndex: false
+  };
+
+  componentWillReceiveProps = (nextProps: any) => {
+    if (nextProps.open === true) {
+      const dir = nextProps.selectedDirectoryPath;
+      this.setState({
+        name: dir ? extractDirectoryName(dir) : '',
+        path: dir || '',
+        perspective: '',
+        isDefault: false,
+        isReadOnly: false,
+        watchForChanges: Pro ? true : false,
+        persistIndex: false
+      });
+    }
   };
 
   handleInputChange = (event: Object) => {
@@ -92,13 +109,13 @@ class CreateLocationDialog extends React.Component<Props, State> {
     // const pathRegex = this.state.path.match('^((\.\./|[a-zA-Z0-9_/\-\\])*\.[a-zA-Z0-9]+)$');
     // const nameRegex = this.state.name.match('^[A-Z][-a-zA-Z]+$');
 
-    if (this.state.path.length > 0) {
+    if (this.state.path && this.state.path.length > 0) {
       this.setState({ errorTextPath: false, disableConfirmButton: false });
     } else {
       this.setState({ errorTextPath: true, disableConfirmButton: true });
     }
 
-    if (this.state.name.length > 0) {
+    if (this.state.name && this.state.name.length > 0) {
       this.setState({ errorTextName: false, disableConfirmButton: false });
     } else {
       this.setState({ errorTextName: true, disableConfirmButton: true });
@@ -122,18 +139,6 @@ class CreateLocationDialog extends React.Component<Props, State> {
     }
   }
 
-  componentWillReceiveProps = (nextProps: any) => {
-    if (nextProps.open === true) {
-      const dir = nextProps.selectedDirectoryPath;
-      this.setState({
-        name: dir ? extractDirectoryName(dir) : '',
-        path: dir || '',
-        perspective: '',
-        isDefault: false
-      });
-    }
-  };
-
   onConfirm = () => {
     if (!this.state.disableConfirmButton) {
       this.props.addLocation({
@@ -143,7 +148,8 @@ class CreateLocationDialog extends React.Component<Props, State> {
         perspective: this.state.perspective,
         isDefault: this.state.isDefault,
         isReadOnly: this.state.isReadOnly,
-        persistIndex: this.state.persistIndex
+        persistIndex: this.state.persistIndex,
+        watchForChanges: this.state.watchForChanges
       });
       this.setState({
         open: false,
@@ -240,6 +246,18 @@ class CreateLocationDialog extends React.Component<Props, State> {
               />
             }
             label={i18n.t('core:persistIndexSwitch') + (Pro ? '' : ' - Available in Pro')}
+          />
+          <FormControlLabel
+            control={
+              <Switch
+                disabled={!Pro}
+                data-tid="changeWatchForChanges"
+                name="watchForChanges"
+                checked={this.state.watchForChanges}
+                onChange={this.handleInputChange}
+              />
+            }
+            label={i18n.t('core:watchForChangesInLocation') + (Pro ? '' : ' - Available in Pro')}
           />
         </FormGroup>
       </DialogContent>

@@ -58,9 +58,10 @@ type State = {
   uuid?: string,
   name?: string,
   path?: string,
-  perspectives?: Array<Object>,
+  perspective?: '',
   isDefault?: boolean,
   isReadOnly?: boolean,
+  watchForChanges?: boolean,
   persistIndex?: boolean
 };
 
@@ -72,9 +73,10 @@ class EditLocationDialog extends React.Component<Props, State> {
     uuid: '',
     name: '',
     path: '',
-    perspectives: '',
+    perspective: '',
     isDefault: false,
     isReadOnly: false,
+    watchForChanges: false,
     persistIndex: false
   };
 
@@ -88,6 +90,7 @@ class EditLocationDialog extends React.Component<Props, State> {
         perspective: nextProps.location.perspective,
         isDefault: nextProps.location.isDefault,
         isReadOnly: nextProps.location.isReadOnly,
+        watchForChanges: nextProps.location.watchForChanges,
         persistIndex: nextProps.location.persistIndex
       });
     }
@@ -149,6 +152,7 @@ class EditLocationDialog extends React.Component<Props, State> {
         perspective: this.state.perspective,
         isDefault: this.state.isDefault,
         isReadOnly: this.state.isReadOnly,
+        watchForChanges: this.state.watchForChanges,
         persistIndex: this.state.persistIndex
       });
 
@@ -242,6 +246,18 @@ class EditLocationDialog extends React.Component<Props, State> {
               />
             }
             label={i18n.t('core:persistIndexSwitch') + (Pro ? '' : ' - Available in Pro')}
+          />
+          <FormControlLabel
+            control={
+              <Switch
+                disabled={!Pro}
+                data-tid="changeWatchForChanges"
+                name="watchForChanges"
+                checked={this.state.watchForChanges}
+                onChange={this.handleInputChange}
+              />
+            }
+            label={i18n.t('core:watchForChangesInLocation') + (Pro ? '' : ' - Available in Pro')}
           />
         </FormGroup>
       </FormControl>

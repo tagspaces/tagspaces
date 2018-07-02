@@ -918,6 +918,9 @@ export const actions = {
   ) => {
     const locations: Array<Location> = getState().locations;
     const currentLocationId = getState().app;
+    if (Pro && Pro.Watcher) {
+      Pro.Watcher.stopWatching();
+    }
     locations.map(location => {
       if (location.uuid === locationId) {
         dispatch(actions.setReadOnlyMode(location.isReadOnly || false));
@@ -926,7 +929,7 @@ export const actions = {
         if (locationId !== currentLocationId) {
           dispatch(actions.createDirectoryIndex(location.paths[0]));
         }
-        if (Pro && Pro.Watcher) {
+        if (Pro && Pro.Watcher && location.watchForChanges) {
           Pro.Watcher.watchFolder(location.paths[0], dispatch);
         }
       }
@@ -938,18 +941,21 @@ export const actions = {
     getState: () => Object
   ) => {
     const locations: Array<Location> = getState().locations;
-    locations.map(location => {
-      if (location.uuid === locationId) {
-        // location needed evtl. to unwatch many loc. root folders if available
-        dispatch(actions.setCurrentLocationId(null));
-        dispatch(actions.clearDirectoryContent());
-        dispatch(actions.clearDirectoryIndex());
-        if (Pro && Pro.Watcher) {
-          Pro.Watcher.stopWatching();
+    const { currentLocationId } = getState().app;
+    if (currentLocationId === locationId) {
+      locations.map(location => {
+        if (location.uuid === locationId) {
+          // location needed evtl. to unwatch many loc. root folders if available
+          dispatch(actions.setCurrentLocationId(null));
+          dispatch(actions.clearDirectoryContent());
+          dispatch(actions.clearDirectoryIndex());
+          if (Pro && Pro.Watcher) {
+            Pro.Watcher.stopWatching();
+          }
         }
-      }
-      return true;
-    });
+        return true;
+      });
+    }
   },
   createDirectoryIndex: (directoryPath: string) => (
     dispatch: (actions: Object) => void,
