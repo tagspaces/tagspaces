@@ -185,7 +185,7 @@
     "fs-extra": "^4.0.1",
     "fuse.js": "^3.2.0",
     "history": "^4.7.2",
-    "i18next": "^8.4.2",
+    "i18next": "^11.3.3",
     "i18next-browser-languagedetector": "^2.0.0",
     "i18next-xhr-backend": "^1.4.2",
     "jmespath": "^0.15.0",

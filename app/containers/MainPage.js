@@ -31,7 +31,7 @@ import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import { HotKeys } from 'react-hotkeys';
 import HTML5Backend, { NativeTypes } from 'react-dnd-html5-backend';
-import { LinearProgress } from '@material-ui/icons/Opacity';
+import LinearProgress from '@material-ui/core/LinearProgress';
 import { DragDropContext } from 'react-dnd';
 import VerticalNavigation, {
   AppVerticalPanels
@@ -396,7 +396,7 @@ class MainPage extends Component<Props, State> {
           open={this.props.notificationStatus.visible}
           onClose={this.props.hideNotifications}
           autoHideDuration={this.props.notificationStatus.autohide ? 3000 : undefined}
-          SnackbarContentProps={{
+          ContentProps={{
             'aria-describedby': 'message-id'
           }}
           message={
@@ -417,7 +417,7 @@ class MainPage extends Component<Props, State> {
           anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
           open={this.props.isIndexing}
           autoHideDuration={undefined}
-          SnackbarContentProps={{
+          ContentProps={{
             'aria-describedby': 'message-id'
           }}
           message={
@@ -440,7 +440,7 @@ class MainPage extends Component<Props, State> {
           anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
           open={this.props.isUpdateAvailable}
           autoHideDuration={undefined}
-          SnackbarContentProps={{
+          ContentProps={{
             'aria-describedby': 'message-id'
           }}
           message={

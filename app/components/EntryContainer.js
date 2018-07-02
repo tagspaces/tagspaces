@@ -37,7 +37,7 @@ import FolderIcon from '@material-ui/icons/FolderOpen';
 import SplitPane from 'react-split-pane';
 import DeleteIcon from '@material-ui/icons/Delete';
 import CopyContentIcon from '@material-ui/icons/ContentCopy';
-import { withStyles, Typography } from '@material-ui/core/styles';
+import { withStyles } from '@material-ui/core/styles';
 import RefreshIcon from '@material-ui/icons/Refresh';
 import EntryProperties from './EntryProperties';
 import ConfirmDialog from './dialogs/ConfirmDialog';

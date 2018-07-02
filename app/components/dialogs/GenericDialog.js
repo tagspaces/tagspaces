@@ -76,7 +76,7 @@ class GenericDialog extends React.Component<Props> {
     return (
       <Dialog
         open={this.props.open ? this.props.open : false}
-        transition={Transition}
+        TransitionComponent={Transition}
         keepMounted
         fullScreen={this.props.fullScreen ? this.props.fullScreen : false}
         onClose={this.props.onClose}
