@@ -171,6 +171,8 @@
     "webpack-merge": "^4.1.2"
   },
   "dependencies": {
+    "@material-ui/core": "^1.3.0",
+    "@material-ui/icons": "^1.1.0",
     "aws-sdk": "^2.263.1",
     "chokidar": "^2.0.3",
     "classnames": "^2.2.5",
@@ -190,8 +192,11 @@
     "js-webdav-client": "https://github.com/sara-nl/js-webdav-client",
     "jszip": "^3.1.5",
     "marked": "^0.3.12",
+<<<<<<< HEAD
     "material-ui": "1.0.0-beta.47",
     "material-ui-icons": "^1.0.0-beta.36",
+=======
+>>>>>>> TSN190-material-ui
     "moment": "^2.22.1",
     "path": "^0.12.7",
     "pdfjs-dist": "^2.0.271",

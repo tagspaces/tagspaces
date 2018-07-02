@@ -22,10 +22,10 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 // import injectTapEventPlugin from 'react-tap-event-plugin';
 import { I18nextProvider } from 'react-i18next'; // as we build ourself via webpack
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import createMuiTheme from 'material-ui/styles/createMuiTheme';
-import purple from '../assets/tspurple';
+import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider';
+import createMuiTheme from '@material-ui/core/styles/createMuiTheme';
 import { HotKeys } from 'react-hotkeys';
+import purple from '../assets/tspurple';
 import green from '../assets/tsgreen';
 import '../assets/fonts/roboto/index.css';
 import i18n from '../services/i18n';

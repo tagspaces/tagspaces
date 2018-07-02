@@ -18,9 +18,9 @@
  */
 
 import React from 'react';
-import { withStyles } from 'material-ui/styles';
-import Typography from 'material-ui/Typography';
-// import Button from 'material-ui/Button';
+import { withStyles } from '@material-ui/core/styles';
+import Typography from '@material-ui/core/Typography';
+// import Button from '@material-ui/Button';
 // import { history } from '../store/configureStore';
 import styles from './SidePanels.css';
 

@@ -20,17 +20,18 @@
 import React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import Button from 'material-ui/Button';
-import { ListItemText } from 'material-ui/List';
-import Input, { InputAdornment } from 'material-ui/Input';
-import IconButton from 'material-ui/IconButton';
-import FolderIcon from 'material-ui-icons/Folder';
-import {
-  DialogActions,
-  DialogContent,
-  DialogTitle
-} from 'material-ui/Dialog';
-import { FormControl, FormHelperText } from 'material-ui/Form';
+import Button from '@material-ui/core/Button';
+import ListItemText from '@material-ui/core/ListItemText';
+import Input from '@material-ui/core/Input';
+import InputLabel from '@material-ui/core/InputLabel';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import IconButton from '@material-ui/core/IconButton';
+import FolderIcon from '@material-ui/icons/Folder';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import FormControl from '@material-ui/core/FormControl';
+import FormHelperText from '@material-ui/core/FormHelperText';
 import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
 import i18n from '../../services/i18n';
 // import { extractContainingDirectoryPath } from '../../utils/paths';

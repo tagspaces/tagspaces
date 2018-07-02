@@ -19,16 +19,15 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import Button from 'material-ui/Button';
-import { withStyles } from 'material-ui/styles';
-import AppBar from 'material-ui/AppBar';
-import Tabs, { Tab } from 'material-ui/Tabs';
-import {
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  withMobileDialog
-} from 'material-ui/Dialog';
+import Button from '@material-ui/core/Button';
+import { withStyles } from '@material-ui/core/styles';
+import AppBar from '@material-ui/core/AppBar';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import withMobileDialog from '@material-ui/core/withMobileDialog';
 import uuidv1 from 'uuid';
 import ConfirmDialog from './ConfirmDialog';
 import GenericDialog, { onEnterKeyHandler } from './GenericDialog';

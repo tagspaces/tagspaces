@@ -18,14 +18,12 @@
  */
 
 import React from 'react';
-import Button from 'material-ui/Button';
-import Typography from 'material-ui/Typography';
-import {
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  withMobileDialog
-} from 'material-ui/Dialog';
+import Button from '@material-ui/core/Button';
+import Typography from '@material-ui/core/Typography';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import withMobileDialog from '@material-ui/core/withMobileDialog';
 import marked from 'marked';
 import semver from 'semver';
 import GenericDialog from './GenericDialog';

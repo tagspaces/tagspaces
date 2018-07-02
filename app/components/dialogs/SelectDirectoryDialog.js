@@ -18,20 +18,20 @@
  */
 
 import React from 'react';
-import Button from 'material-ui/Button';
-import { withStyles } from 'material-ui/styles';
-import {
-  DialogActions,
-  DialogContent,
-  DialogTitle
-} from 'material-ui/Dialog';
-import Paper from 'material-ui/Paper';
-import FolderIcon from 'material-ui-icons/FolderOpen';
-import CreateFolderIcon from 'material-ui-icons/CreateNewFolder';
-import UndoIcon from 'material-ui-icons/Undo';
-import Select from 'material-ui/Select';
-import { FormControl, FormHelperText } from 'material-ui/Form';
-import Input, { InputLabel } from 'material-ui/Input';
+import Button from '@material-ui/core/Button';
+import { withStyles } from '@material-ui/core/styles';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import Paper from '@material-ui/core/Paper';
+import FolderIcon from '@material-ui/icons/FolderOpen';
+import CreateFolderIcon from '@material-ui/icons/CreateNewFolder';
+import UndoIcon from '@material-ui/icons/Undo';
+import Select from '@material-ui/core/Select';
+import FormControl from '@material-ui/core/FormControl';
+import FormHelperText from '@material-ui/core/FormHelperText';
+import Input from '@material-ui/core/Input';
+import InputLabel from '@material-ui/core/InputLabel';
 import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
 import i18n from '../../services/i18n';
 import AppConfig from '../../config';

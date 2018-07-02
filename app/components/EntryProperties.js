@@ -19,14 +19,14 @@
 
 import React, { Component } from 'react';
 import marked from 'marked';
-import { withStyles } from 'material-ui/styles';
-import Grid from 'material-ui/Grid';
-import { FormControl } from 'material-ui/Form';
-import Typography from 'material-ui/Typography';
-import Input from 'material-ui/Input';
-import TextField from 'material-ui/TextField';
-import Paper from 'material-ui/Paper';
-import Button from 'material-ui/Button';
+import { withStyles } from '@material-ui/core/styles';
+import Grid from '@material-ui/core/Grid';
+import FormControl from '@material-ui/core/FormControl';
+import Typography from '@material-ui/core/Typography';
+import Input from '@material-ui/core/Input';
+import TextField from '@material-ui/core/TextField';
+import Paper from '@material-ui/core/Paper';
+import Button from '@material-ui/core/Button';
 import TagContainer from './TagContainer';
 import TagDropContainer from './TagDropContainer';
 import EntryTagMenu from './menus/EntryTagMenu';

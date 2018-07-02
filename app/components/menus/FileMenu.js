@@ -18,19 +18,18 @@
  */
 
 import React from 'react';
-import {
-  ListItemIcon,
-  ListItemText
-} from 'material-ui/List';
-import Menu, { MenuItem } from 'material-ui/Menu';
-import Divider from 'material-ui/Divider';
-import OpenFile from 'material-ui-icons/SubdirectoryArrowLeft';
-import OpenFileNatively from 'material-ui-icons/Launch';
-import OpenContainingFolder from 'material-ui-icons/FolderOpen';
-import AddRemoveTags from 'material-ui-icons/Loyalty';
-import MoveCopy from 'material-ui-icons/ContentCopy';
-import RenameFile from 'material-ui-icons/FormatTextdirectionLToR';
-import DeleteForever from 'material-ui-icons/DeleteForever';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import Divider from '@material-ui/core/Divider';
+import OpenFile from '@material-ui/icons/SubdirectoryArrowLeft';
+import OpenFileNatively from '@material-ui/icons/Launch';
+import OpenContainingFolder from '@material-ui/icons/FolderOpen';
+import AddRemoveTags from '@material-ui/icons/Loyalty';
+import MoveCopy from '@material-ui/icons/ContentCopy';
+import RenameFile from '@material-ui/icons/FormatTextdirectionLToR';
+import DeleteForever from '@material-ui/icons/DeleteForever';
 import i18n from '../../services/i18n';
 import { extractContainingDirectoryPath } from '../../utils/paths';
 

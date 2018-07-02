@@ -18,10 +18,12 @@
  */
 
 import React from 'react';
-import EditIcon from 'material-ui-icons/Edit';
-import DeleteIcon from 'material-ui-icons/DeleteForever';
-import { ListItemIcon, ListItemText } from 'material-ui/List';
-import Menu, { MenuItem } from 'material-ui/Menu';
+import EditIcon from '@material-ui/icons/Edit';
+import DeleteIcon from '@material-ui/icons/DeleteForever';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/List';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 import ConfirmDialog from '../dialogs/ConfirmDialog';
 import EditEntryTagDialog from '../dialogs/EditEntryTagDialog';
 import DateCalendarDialog from '../dialogs/DateCalendarDialog';
