@@ -233,7 +233,7 @@ class CreateLocationDialog extends React.Component<Props, State> {
                 onChange={this.handleInputChange}
               />
             }
-            label={i18n.t('core:readonlyModeSwitch') + (Pro ? '' : ' - Available in Pro')}
+            label={i18n.t('core:readonlyModeSwitch') + (Pro ? '' : ' - ' + i18n.t('core:proFeature'))}
           />
           <FormControlLabel
             control={
@@ -245,7 +245,7 @@ class CreateLocationDialog extends React.Component<Props, State> {
                 onChange={this.handleInputChange}
               />
             }
-            label={i18n.t('core:persistIndexSwitch') + (Pro ? '' : ' - Available in Pro')}
+            label={i18n.t('core:persistIndexSwitch') + (Pro ? '' : ' - ' + i18n.t('core:proFeature'))}
           />
           <FormControlLabel
             control={
@@ -257,7 +257,7 @@ class CreateLocationDialog extends React.Component<Props, State> {
                 onChange={this.handleInputChange}
               />
             }
-            label={i18n.t('core:watchForChangesInLocation') + (Pro ? '' : ' - Available in Pro')}
+            label={i18n.t('core:watchForChangesInLocation') + (Pro ? '' : ' - ' + i18n.t('core:proFeature'))}
           />
         </FormGroup>
       </DialogContent>
