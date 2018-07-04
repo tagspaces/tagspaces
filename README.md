@@ -63,9 +63,15 @@ Get the TagSpaces source code by cloning its repository:
 
 Go to the folder where the code was cloned and select the branch you want to test. Use the the **master** branch for the last officially released version or the branch **develop** for a kind of a nightly build, containing the changed we are preparing for the next release of the application.
 
+Switch to folder where you have cloned the repository:
+
     $ cd tagspaces
 
-and install the project dependencies
+Change to the branch with the name **develop**:
+
+	$ git checkout develop
+
+and install the project dependencies:
 
     $ yarn install
 
