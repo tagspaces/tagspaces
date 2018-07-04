@@ -82,6 +82,18 @@ If you want to try the development mode, you can start it by:
 
 This will start a development server in background, which watches for changes in background and refreshes the application automatically once you have done some changes in the source code.
 
+### How to create the packages for Windows, Linux and Mac OS?
+
+Building of the packages can be accomplished with the integrated yarn scripts:
+
+	$ yarn package-win
+
+	$ yarn package-linux
+
+	$ yarn package-osx
+
+For creating the packages for Windows, Linux and Mac OS respectively.
+
 ### Developing extensions for TagSpaces
 TagSpaces can be easily extended with the help of extensions. Currently we use the extensions for supporting the opening and editing of different file types in the application.
 
