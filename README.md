@@ -65,12 +65,13 @@ Go to the folder where the code was cloned and select the branch you want to tes
 
     $ cd tagspaces
 
-	and install the project dependencies
+and install the project dependencies
+
     $ yarn install
 
 The last command will automatically build the application with webpack. Now it is time to install all the TagSpaces extensions:
 
-	$ yarn setup-ext
+	$ yarn install-ext
 
 Now you are ready and can start the application with:
 
