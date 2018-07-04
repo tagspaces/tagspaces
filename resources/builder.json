@@ -30,8 +30,8 @@
   "linux": {
     "target": [
       "deb",
-      // "tar.gz"
-      // "appImage",
+      "tar.gz",
+      "appImage"
       // "rpm"
     ],
     "category": "Office"
