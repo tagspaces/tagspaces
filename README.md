@@ -102,7 +102,7 @@ Building of the packages can be accomplished with the integrated yarn scripts:
 For creating the packages for Windows, Linux and Mac OS respectively.
 
 ### Developing extensions for TagSpaces
-TagSpaces can be easily extended with the help of extensions. Currently we use the extensions for supporting the opening and editing of different file types in the application.
+TagSpaces can be easily extended with the help of extensions. Currently we use the extensions for supporting the opening and editing of different file types in the application. More information about this topic can be found on the [extension page](https://www.tagspaces.org/extensions/) of our website.
 
 ### How to start the WebDAV edition for testing?
 The webdav version of the app can be started with the following yarn command:
