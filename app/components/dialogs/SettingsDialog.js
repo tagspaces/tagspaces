@@ -199,8 +199,8 @@ class SettingsDialog extends React.Component {
             this.removeItem(selectedItem);
           }
         }}
-        cancelDialogActionId={'cancelDeleteFileTypeDialog'}
-        confirmDialogActionId={'confirmDeleteFileTypeDialog'}
+        cancelDialogTID={'cancelDeleteFileTypeDialog'}
+        confirmDialogTID={'confirmDeleteFileTypeDialog'}
         confirmDialogContent={'confirmDeleteFileTypeDialogContent'}
       />
 

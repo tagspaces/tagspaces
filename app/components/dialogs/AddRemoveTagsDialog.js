@@ -145,8 +145,8 @@ class AddRemoveTagsDialog extends React.Component<Props, State> {
                   onClose();
                 }
               }}
-              cancelDialogActionId={'cancelAllTagsDeletionDialog'}
-              confirmDialogActionId={'confirmAllTagsDeletionDialog'}
+              cancelDialogTID={'cancelAllTagsDeletionDialog'}
+              confirmDialogTID={'confirmAllTagsDeletionDialog'}
               confirmDialogContent={'confirmAllTagsDeletionDialogContent'}
             />
 
