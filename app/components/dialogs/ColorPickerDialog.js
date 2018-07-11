@@ -75,7 +75,9 @@ class ColorPickerDialog extends React.Component<Props, State> {
   };
 
   renderTitle = () => (
-    <DialogTitle>{i18n.t('core:colorPickerDialogTitle')}</DialogTitle>
+    <DialogTitle data-tid="colorPickerDialogTitle" >
+      {i18n.t('core:colorPickerDialogTitle')}
+    </DialogTitle>
   );
 
   renderContent = () => (
