@@ -24,6 +24,7 @@
     "postinstall": "concurrently \"yarn flow-typed\" \"yarn build\" \"yarn build-dll\" \"install-app-deps\" \"node node_modules/fbjs-scripts/node/check-dev-engines.js package.json\"",
     "dev": "cross-env START_HOT=1 yarn start-renderer-dev",
     "bump-version": "yarn third-party && cd app && yarn version && cd ..",
+    "update-i18n": "tx pull -a -d",
     "version-meta": "node scripts/versionmeta.js",
     "third-party": "yarn licenses generate-disclaimer --silent > app/third-party.txt",
     "package": "yarn bump-version && yarn build && yarn package-win && yarn package-linux && yarn package-mac",
