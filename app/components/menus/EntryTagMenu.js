@@ -120,8 +120,8 @@ class EntryTagMenu extends React.Component<Props, State> {
             this.confirmRemoveTag();
           }
         }}
-        cancelDialogActionId={'cancelDeleteTagDialogTagMenu'}
-        confirmDialogActionId={'confirmDeleteTagDialogTagMenu'}
+        cancelDialogTID={'cancelDeleteTagDialogTagMenu'}
+        confirmDialogTID={'confirmRemoveTagFromFile'}
         confirmDialogContent={'confirmDialogContent'}
       />
       <EditEntryTagDialog
