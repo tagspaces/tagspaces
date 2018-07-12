@@ -1,7 +1,7 @@
 [main]
 host = https://www.transifex.com
 
-[tagspaces.nscommonjson]
+[tagspaces.corejson]
 file_filter = app/locales/<lang>/core.json
 source_lang = en
 type = KEYVALUEJSON
