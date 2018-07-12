@@ -76,7 +76,7 @@ export default {
       title: 'English'
     },
     {
-      iso: 'de',
+      iso: 'de_DE',
       title: 'Deutsch (German)'
     },
     {
@@ -162,6 +162,10 @@ export default {
     {
       iso: 'id_ID',
       title: 'bahasa Indonesia (Indonesian)'
+    },
+    {
+      iso: 'hy',
+      title: 'հայերեն (Armenian)'
     }
   ],
   keyBindings: [
