@@ -187,8 +187,8 @@ class TagAutoSuggestion extends Component<Props, State> {
               this.onRemoveTag(tagForDeletion);
             }
           }}
-          cancelDialogActionId={'cancelTagDeletionDialog'}
-          confirmDialogActionId={'confirmTagDeletionDialog'}
+          cancelDialogTID={'cancelTagDeletionDialog'}
+          confirmDialogTID={'confirmTagDeletionDialog'}
           confirmDialogContent={'confirmTagDeletionDialogContent'}
         />
 

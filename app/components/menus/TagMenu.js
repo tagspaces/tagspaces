@@ -155,8 +155,8 @@ class TagLibraryMenu extends React.Component<Props, State> {
             this.confirmDeleteTag();
           }
         }}
-        cancelDialogActionId={'cancelDeleteTagDialogTagMenu'}
-        confirmDialogActionId={'confirmDeleteTagDialogTagMenu'}
+        cancelDialogTID={'cancelDeleteTagDialogTagMenu'}
+        confirmDialogTID={'confirmDeleteTagDialogTagMenu'}
       />
     </div>
   );

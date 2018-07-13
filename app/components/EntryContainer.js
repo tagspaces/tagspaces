@@ -786,8 +786,8 @@ class EntryContainer extends React.Component<Props, State> {
               this.setState({ isSaveBeforeCloseConfirmDialogOpened: false });
             }
           }}
-          cancelDialogActionId={'cancelSaveBeforeCloseDialog'}
-          confirmDialogActionId={'confirmSaveBeforeCloseDialog'}
+          cancelDialogTID={'cancelSaveBeforeCloseDialog'}
+          confirmDialogTID={'confirmSaveBeforeCloseDialog'}
           confirmDialogContent={'confirmDialogContent'}
         />
         <ConfirmDialog
@@ -802,8 +802,8 @@ class EntryContainer extends React.Component<Props, State> {
               this.props.deleteFile(currentEntry.path);
             }
           }}
-          cancelDialogActionId={'cancelSaveBeforeCloseDialog'}
-          confirmDialogActionId={'confirmSaveBeforeCloseDialog'}
+          cancelDialogTID={'cancelSaveBeforeCloseDialog'}
+          confirmDialogTID={'confirmSaveBeforeCloseDialog'}
           confirmDialogContent={'confirmDialogContent'}
         />
         <AddRemoveTagsDialog

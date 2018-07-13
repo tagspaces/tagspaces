@@ -357,8 +357,8 @@ class LocationManager extends React.Component<Props, State> {
                 this.props.removeLocation(this.state.selectedLocation);
               }
             }}
-            cancelDialogActionId={'cancelDeleteLocationDialog'}
-            confirmDialogActionId={'confirmDeleteLocationDialog'}
+            cancelDialogTID={'cancelDeleteLocationDialog'}
+            confirmDialogTID={'confirmDeleteLocationDialog'}
           />
           <SelectDirectoryDialog
             open={this.state.isSelectDirectoryDialogOpened}

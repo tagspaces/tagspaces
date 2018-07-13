@@ -223,8 +223,8 @@ class DirectoryMenu extends React.Component<Props, State> {
             }
           }}
           confirmDialogContent={'confirmDialogContent'}
-          cancelDialogActionId={'cancelDeleteDirectoryDialog'}
-          confirmDialogActionId={'confirmDeleteDirectoryDialog'}
+          cancelDialogTID={'cancelDeleteDirectoryDialog'}
+          confirmDialogTID={'confirmDeleteDirectoryDialog'}
         />
         <Menu
           anchorEl={this.props.anchorEl}
