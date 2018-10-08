@@ -39,7 +39,7 @@ import EditIcon from '@material-ui/icons/Edit';
 import RefreshIcon from '@material-ui/icons/Refresh';
 import DeleteIcon from '@material-ui/icons/DeleteForever';
 import CloseIcon from '@material-ui/icons/Close';
-import DefaultLocationIcon from '@material-ui/icons/LightbulbOutline';
+import DefaultLocationIcon from '@material-ui/icons/Highlight';
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 // import Button from '@material-ui/Button';

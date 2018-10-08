@@ -27,7 +27,7 @@ import OpenFile from '@material-ui/icons/SubdirectoryArrowLeft';
 import OpenFileNatively from '@material-ui/icons/Launch';
 import OpenContainingFolder from '@material-ui/icons/FolderOpen';
 import AddRemoveTags from '@material-ui/icons/Loyalty';
-import MoveCopy from '@material-ui/icons/ContentCopy';
+import MoveCopy from '@material-ui/icons/FileCopy';
 import RenameFile from '@material-ui/icons/FormatTextdirectionLToR';
 import DeleteForever from '@material-ui/icons/DeleteForever';
 import i18n from '../../services/i18n';

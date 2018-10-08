@@ -40,7 +40,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FolderIcon from '@material-ui/icons/FolderOpen';
 import FolderHiddenIcon from '@material-ui/icons/Folder';
 import TagIcon from '@material-ui/icons/LocalOffer';
-import CopyIcon from '@material-ui/icons/ContentCopy';
+import CopyIcon from '@material-ui/icons/FileCopy';
 import DeleteIcon from '@material-ui/icons/Delete';
 import SelectAllIcon from '@material-ui/icons/CheckBox';
 import DeSelectAllIcon from '@material-ui/icons/CheckBoxOutlineBlank';
