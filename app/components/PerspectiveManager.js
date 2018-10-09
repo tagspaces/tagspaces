@@ -37,7 +37,7 @@ class PerspectiveManager extends React.Component<Props, State> {
 
     return (
       <div className={classes.panel} style={this.props.style}>
-        <Typography className={classes.panelTitle} type="subheading">Perspectives</Typography>
+        <Typography className={classes.panelTitle} type="subtitle1">Perspectives</Typography>
       </div>
     );
   }

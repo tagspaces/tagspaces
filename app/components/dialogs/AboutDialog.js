@@ -126,11 +126,11 @@ class AboutDialog extends React.Component<Props, State> {
         src={LogoIcon}
         style={{ float: 'left', marginRight: 10, width: 120, height: 120 }}
       />
-      <Typography variant="subheading" title={'Build on: ' + versionMeta.buildTime}>Version: {versionMeta.version} / BuildID: {buildID}</Typography>
+      <Typography variant="subtitle1" title={'Build on: ' + versionMeta.buildTime}>Version: {versionMeta.version} / BuildID: {buildID}</Typography>
       <br />
       <Typography
         id="aboutContent"
-        variant="body2"
+        variant="body1"
         dangerouslySetInnerHTML={{ __html: marked(aboutMDContent) }}
       />
     </DialogContent>

@@ -310,7 +310,7 @@ class LocationManager extends React.Component<Props, State> {
     return (
       <div className={classes.panel} style={this.props.style}>
         <div className={classes.toolbar}>
-          <Typography className={classes.panelTitle} type="subheading">
+          <Typography className={classes.panelTitle} type="subtitle1">
             {i18n.t('core:locationManager')}
           </Typography>
         </div>
