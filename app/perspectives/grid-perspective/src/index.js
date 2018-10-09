@@ -44,10 +44,18 @@ import CopyIcon from '@material-ui/icons/FileCopy';
 import DeleteIcon from '@material-ui/icons/Delete';
 import SelectAllIcon from '@material-ui/icons/CheckBox';
 import DeSelectAllIcon from '@material-ui/icons/CheckBoxOutlineBlank';
-import { type FileSystemEntry, findColorForFileEntry } from '../../../services/utils-io';
+import {
+  type FileSystemEntry,
+  findColorForFileEntry
+} from '../../../services/utils-io';
 import { type Tag } from '../../../reducers/taglibrary';
 import { extractTitle } from '../../../utils/paths';
-import { formatFileSize, formatDateTime, isObj, isVisibleOnScreen } from '../../../utils/misc';
+import {
+  formatFileSize,
+  formatDateTime,
+  isObj,
+  isVisibleOnScreen
+} from '../../../utils/misc';
 import FileMenu from '../../../components/menus/FileMenu';
 import DirectoryMenu from '../../../components/menus/DirectoryMenu';
 import EntryTagMenu from '../../../components/menus/EntryTagMenu';
@@ -105,7 +113,7 @@ const styles = theme => ({
   gridCellThumb: {
     backgroundRepeat: 'no-repeat',
     backgroundSize: 'cover',
-    backgroundPosition: 'center',
+    backgroundPosition: 'center'
   },
   gridCellTitle: {
     padding: 5,
@@ -184,7 +192,7 @@ const styles = theme => ({
     marginRight: 5,
     // marginBottom: 5,
     minHeight: 10,
-    height: 20,
+    height: 20
     // borderRadius: 5
   },
   topToolbar: {
@@ -284,7 +292,7 @@ class GridPerspective extends React.Component<Props, State> {
     if (settings) {
       this.setState({
         showDirectories: settings.showDirectories,
-        layoutType: settings.layoutType ? settings.layoutType : 'grid',
+        layoutType: settings.layoutType ? settings.layoutType : 'grid'
         // orderBy: settings.orderBy ? settings.orderBy : '',
       });
     }
@@ -293,18 +301,35 @@ class GridPerspective extends React.Component<Props, State> {
   componentWillReceiveProps = (nextProps: Props) => {
     const cmd = nextProps.perspectiveCommand;
     const { directoryContent } = nextProps;
-    if (cmd && cmd.key && cmd.key === 'SELECT_FILE' && cmd.value.length > 0 && directoryContent && directoryContent.length > 0) {
-      this.setState({
-        selectedEntries: nextProps.directoryContent.filter(fsEntry => fsEntry.path === cmd.value)
-      }, () => {
-        this.computeFileOperationsEnabled();
-        // this.makeFirstSelectedEntryVisible(); // disable due to wrong scrolling
-      });
+    if (
+      cmd &&
+      cmd.key &&
+      cmd.key === 'SELECT_FILE' &&
+      cmd.value.length > 0 &&
+      directoryContent &&
+      directoryContent.length > 0
+    ) {
+      this.setState(
+        {
+          selectedEntries: nextProps.directoryContent.filter(
+            fsEntry => fsEntry.path === cmd.value
+          )
+        },
+        () => {
+          this.computeFileOperationsEnabled();
+          // this.makeFirstSelectedEntryVisible(); // disable due to wrong scrolling
+        }
+      );
     }
 
     // Directory changed
-    if (nextProps.currentDirectoryPath !== this.props.currentDirectoryPath && this.mainGrid) {
-      const grid = document.querySelector('[data-tid="perspectiveGridFileTable"]');
+    if (
+      nextProps.currentDirectoryPath !== this.props.currentDirectoryPath &&
+      this.mainGrid
+    ) {
+      const grid = document.querySelector(
+        '[data-tid="perspectiveGridFileTable"]'
+      );
       const firstGridItem = grid.querySelector('div');
 
       if (isObj(firstGridItem)) {
@@ -319,17 +344,22 @@ class GridPerspective extends React.Component<Props, State> {
   makeFirstSelectedEntryVisible = () => {
     const { selectedEntries } = this.state;
     if (selectedEntries && selectedEntries.length > 0) {
-      const firstSelectedElement = document.querySelector('[data-entry-id="' + selectedEntries[0].uuid + '"]');
-      if (isObj(firstSelectedElement) && !isVisibleOnScreen(firstSelectedElement)) {
+      const firstSelectedElement = document.querySelector(
+        '[data-entry-id="' + selectedEntries[0].uuid + '"]'
+      );
+      if (
+        isObj(firstSelectedElement) &&
+        !isVisibleOnScreen(firstSelectedElement)
+      ) {
         firstSelectedElement.scrollIntoView(false);
       }
     }
-  }
+  };
 
   loadSettings = () => {
     const extSettings = JSON.parse(localStorage.getItem('tsPerspectiveGrid'));
     return extSettings;
-  }
+  };
 
   saveSettings() {
     const settings = {
@@ -367,135 +397,149 @@ class GridPerspective extends React.Component<Props, State> {
 
   handleSortMenuIconClick = sort => {
     switch (sort) {
-    case 'byName':
-      if (this.state.orderByName === null) {
-        this.setState({
-          orderBySize: null,
-          orderByTags: null,
-          orderByExt: null,
-          orderByDate: null,
-          orderByName: true
-        });
-      } else {
-        this.setState({
-          orderBySize: null,
-          orderByTags: null,
-          orderByExt: null,
-          orderByDate: null,
-          orderByName: false
-        });
-      }
-      break;
-    case 'byFileSize':
-      if (this.state.orderBySize === null) {
-        this.setState({
-          orderByName: null,
-          orderByTags: null,
-          orderByExt: null,
-          orderByDate: null,
-          orderBySize: true
-        });
-      } else {
-        this.setState({
-          orderByName: null,
-          orderByTags: null,
-          orderByExt: null,
-          orderByDate: null,
-          orderBySize: false
-        });
-      }
-      break;
-    case 'byTags':
-      if (this.state.orderByTags === null) {
-        this.setState({
-          orderByName: null,
-          orderBySize: null,
-          orderByExt: null,
-          orderByDate: null,
-          orderByTags: true
-        });
-      } else {
-        this.setState({
-          orderByName: null,
-          orderBySize: null,
-          orderByExt: null,
-          orderByDate: null,
-          orderByTags: false
-        });
-      }
-      break;
-    case 'byExtension':
-      if (this.state.orderByExt === null) {
-        this.setState({
-          orderByName: null,
-          orderBySize: null,
-          orderByTags: null,
-          orderByDate: null,
-          orderByExt: true
-        });
-      } else {
-        this.setState({
-          orderByName: null,
-          orderBySize: null,
-          orderByTags: null,
-          orderByDate: null,
-          orderByExt: false
-        });
-      }
-      break;
-    case 'byDateModified':
-      if (this.state.orderByDate === null) {
-        this.setState({
-          orderByName: null,
-          orderBySize: null,
-          orderByTags: null,
-          orderByExt: null,
-          orderByDate: true
-        });
-      } else {
-        this.setState({
-          orderByName: null,
-          orderBySize: null,
-          orderByTags: null,
-          orderByExt: null,
-          orderByDate: false
-        });
-      }
-      break;
-    default:
-      break;
+      case 'byName':
+        if (this.state.orderByName === null) {
+          this.setState({
+            orderBySize: null,
+            orderByTags: null,
+            orderByExt: null,
+            orderByDate: null,
+            orderByName: true
+          });
+        } else {
+          this.setState({
+            orderBySize: null,
+            orderByTags: null,
+            orderByExt: null,
+            orderByDate: null,
+            orderByName: false
+          });
+        }
+        break;
+      case 'byFileSize':
+        if (this.state.orderBySize === null) {
+          this.setState({
+            orderByName: null,
+            orderByTags: null,
+            orderByExt: null,
+            orderByDate: null,
+            orderBySize: true
+          });
+        } else {
+          this.setState({
+            orderByName: null,
+            orderByTags: null,
+            orderByExt: null,
+            orderByDate: null,
+            orderBySize: false
+          });
+        }
+        break;
+      case 'byTags':
+        if (this.state.orderByTags === null) {
+          this.setState({
+            orderByName: null,
+            orderBySize: null,
+            orderByExt: null,
+            orderByDate: null,
+            orderByTags: true
+          });
+        } else {
+          this.setState({
+            orderByName: null,
+            orderBySize: null,
+            orderByExt: null,
+            orderByDate: null,
+            orderByTags: false
+          });
+        }
+        break;
+      case 'byExtension':
+        if (this.state.orderByExt === null) {
+          this.setState({
+            orderByName: null,
+            orderBySize: null,
+            orderByTags: null,
+            orderByDate: null,
+            orderByExt: true
+          });
+        } else {
+          this.setState({
+            orderByName: null,
+            orderBySize: null,
+            orderByTags: null,
+            orderByDate: null,
+            orderByExt: false
+          });
+        }
+        break;
+      case 'byDateModified':
+        if (this.state.orderByDate === null) {
+          this.setState({
+            orderByName: null,
+            orderBySize: null,
+            orderByTags: null,
+            orderByExt: null,
+            orderByDate: true
+          });
+        } else {
+          this.setState({
+            orderByName: null,
+            orderBySize: null,
+            orderByTags: null,
+            orderByExt: null,
+            orderByDate: false
+          });
+        }
+        break;
+      default:
+        break;
     }
   };
 
   getLayoutClass = () => {
     switch (this.state.layoutType) {
-    case 'grid':
-      return this.props.classes.gridContainer;
-    case 'row':
-      return this.props.classes.rowContainer;
-    default:
-      return this.props.classes.gridContainer;
+      case 'grid':
+        return this.props.classes.gridContainer;
+      case 'row':
+        return this.props.classes.rowContainer;
+      default:
+        return this.props.classes.gridContainer;
     }
   };
 
   handleGridCellClick = (event, fsEntry: FileSystemEntry) => {
     const { selectedEntries } = this.state;
     if (event.ctrlKey) {
-      if (selectedEntries && selectedEntries.some(entry => entry.path === fsEntry.path)) {
-        this.setState({
-          selectedEntries: selectedEntries.filter(entry => entry.path !== fsEntry.path) // deselect selected entry
-        }, this.computeFileOperationsEnabled);
+      if (
+        selectedEntries &&
+        selectedEntries.some(entry => entry.path === fsEntry.path)
+      ) {
+        this.setState(
+          {
+            selectedEntries: selectedEntries.filter(
+              entry => entry.path !== fsEntry.path
+            ) // deselect selected entry
+          },
+          this.computeFileOperationsEnabled
+        );
         this.props.setLastSelectedEntry(null);
       } else {
-        this.setState({
-          selectedEntries: [...selectedEntries, fsEntry]
-        }, this.computeFileOperationsEnabled);
+        this.setState(
+          {
+            selectedEntries: [...selectedEntries, fsEntry]
+          },
+          this.computeFileOperationsEnabled
+        );
         this.props.setLastSelectedEntry(fsEntry.path);
       }
     } else {
-      this.setState({
-        selectedEntries: [fsEntry]
-      }, this.computeFileOperationsEnabled);
+      this.setState(
+        {
+          selectedEntries: [fsEntry]
+        },
+        this.computeFileOperationsEnabled
+      );
       this.props.setLastSelectedEntry(fsEntry.path);
       if (fsEntry.isFile) {
         this.props.openFile(fsEntry.path, fsEntry.isFile);
@@ -512,7 +556,7 @@ class GridPerspective extends React.Component<Props, State> {
       this.computeFileOperationsEnabled
     );
     this.props.setLastSelectedEntry(null);
-  }
+  };
 
   toggleSelectAllFiles = () => {
     if (this.state.allFilesSelected) {
@@ -539,9 +583,12 @@ class GridPerspective extends React.Component<Props, State> {
   };
 
   toggleShowDirectories = () => {
-    this.setState({
-      showDirectories: !this.state.showDirectories
-    }, this.saveSettings);
+    this.setState(
+      {
+        showDirectories: !this.state.showDirectories
+      },
+      this.saveSettings
+    );
   };
 
   handleGridCellDblClick = (event, fsEntry: FileSystemEntry) => {
@@ -573,7 +620,9 @@ class GridPerspective extends React.Component<Props, State> {
         fileContextMenuOpened: true,
         fileContextMenuAnchorEl: event.currentTarget,
         selectedEntryPath: fsEntry.path,
-        selectedEntries: event.ctrlKey ? [...selectedEntries, fsEntry] : [fsEntry],
+        selectedEntries: event.ctrlKey
+          ? [...selectedEntries, fsEntry]
+          : [fsEntry],
         selectedItem: fsEntry
       });
     } else {
@@ -683,7 +732,10 @@ class GridPerspective extends React.Component<Props, State> {
     }
     const classes = this.props.classes;
     let selected = false;
-    if (this.state.selectedEntries && this.state.selectedEntries.some(entry => entry.path === fsEntry.path)) {
+    if (
+      this.state.selectedEntries &&
+      this.state.selectedEntries.some(entry => entry.path === fsEntry.path)
+    ) {
       selected = true;
     }
     const { layoutType } = this.state;
@@ -695,8 +747,8 @@ class GridPerspective extends React.Component<Props, State> {
           className={classNames(
             layoutType === 'grid' && classes.gridCell,
             layoutType === 'row' && classes.rowCell,
-            selected && (layoutType === 'grid') && classes.selectedGridCell,
-            selected && (layoutType === 'row') && classes.selectedRowCell
+            selected && layoutType === 'grid' && classes.selectedGridCell,
+            selected && layoutType === 'row' && classes.selectedRowCell
           )}
           onContextMenu={event => this.handleGridContextMenu(event, fsEntry)}
           onDoubleClick={event => this.handleGridCellDblClick(event, fsEntry)}
@@ -731,7 +783,9 @@ class GridPerspective extends React.Component<Props, State> {
       fsEntry.isFile,
       this.props.settings.supportedFileTypes
     );
-    let thumbPathUrl = fsEntry.thumbPath ? 'url("' + fsEntry.thumbPath + '")' : '';
+    let thumbPathUrl = fsEntry.thumbPath
+      ? 'url("' + fsEntry.thumbPath + '")'
+      : '';
     if (AppConfig.isWin) {
       thumbPathUrl = thumbPathUrl.split('\\').join('\\\\');
     }
@@ -748,14 +802,16 @@ class GridPerspective extends React.Component<Props, State> {
             <div className={classes.gridCellTags}>
               {fsEntry.tags.map(tag => this.renderTag(tag, fsEntry))}
             </div>
-            {description.length > 0 && <Typography
-              className={classes.gridCellDescription}
-              noWrap={true}
-              title={i18n.t('core:filePropertiesDescription')}
-              variant="caption"
-            >
-              {description}
-            </Typography>}
+            {description.length > 0 && (
+              <Typography
+                className={classes.gridCellDescription}
+                noWrap={true}
+                title={i18n.t('core:filePropertiesDescription')}
+                variant="caption"
+              >
+                {description}
+              </Typography>
+            )}
           </div>
           <Typography
             className={classes.gridCellTitle}
@@ -777,12 +833,19 @@ class GridPerspective extends React.Component<Props, State> {
               >
                 {fsEntry.extension}
               </Typography>
-              <Typography
-                className={classes.gridSizeDate}
-                variant="caption"
-              >
-                <span title={i18n.t('core:modifiedDate') + ': ' + formatDateTime(fsEntry.lmdt, true)}>{fsEntry.lmdt && '⏲️ ' + moment(fsEntry.lmdt).fromNow()}</span>
-                <span title={fsEntry.size + ' ' + i18n.t('core:sizeInBytes')}>{' ' + formatFileSize(fsEntry.size) }</span>
+              <Typography className={classes.gridSizeDate} variant="caption">
+                <span
+                  title={
+                    i18n.t('core:modifiedDate') +
+                    ': ' +
+                    formatDateTime(fsEntry.lmdt, true)
+                  }
+                >
+                  {fsEntry.lmdt && '⏲️ ' + moment(fsEntry.lmdt).fromNow()}
+                </span>
+                <span title={fsEntry.size + ' ' + i18n.t('core:sizeInBytes')}>
+                  {' ' + formatFileSize(fsEntry.size)}
+                </span>
               </Typography>
             </div>
           ) : (
@@ -792,12 +855,11 @@ class GridPerspective extends React.Component<Props, State> {
                 style={{ backgroundColor: fsEntryColor }}
                 title={fsEntry.path}
               />
-              { /* <Typography className={classes.gridSizeDate} variant="caption">
+              {/* <Typography className={classes.gridSizeDate} variant="caption">
                 {' ' + formatDateTime4Tag(fsEntry.lmdt) }
-              </Typography> */ }
+              </Typography> */}
             </div>
-          ) }
-
+          )}
         </div>
       );
     } else if (this.state.layoutType === 'row') {
@@ -818,10 +880,7 @@ class GridPerspective extends React.Component<Props, State> {
                 {fsEntry.extension}
               </div>
             ) : (
-              <span
-                className={classes.gridFolder}
-                title={fsEntry.path}
-              >
+              <span className={classes.gridFolder} title={fsEntry.path}>
                 <FolderIcon
                   className={classes.rowFolder}
                   style={{ backgroundColor: fsEntryColor }}
@@ -835,7 +894,9 @@ class GridPerspective extends React.Component<Props, State> {
               style={{
                 padding: 5
               }}
-            >{extractTitle(fsEntry.name, !fsEntry.isFile)}</Typography>
+            >
+              {extractTitle(fsEntry.name, !fsEntry.isFile)}
+            </Typography>
             {fsEntry.tags.map(tag => this.renderTag(tag, fsEntry))}
             <Typography
               noWrap
@@ -844,17 +905,31 @@ class GridPerspective extends React.Component<Props, State> {
                 padding: 5
               }}
             >
-              <span title={fsEntry.size + ' ' + i18n.t('core:sizeInBytes')}>{fsEntry.isFile && formatFileSize(fsEntry.size) + ' - '}</span>
-              <span title={i18n.t('core:modifiedDate') + ': ' + formatDateTime(fsEntry.lmdt, true)}>{fsEntry.lmdt && '⏲️ ' + moment(fsEntry.lmdt).fromNow()}</span>
-              <span title={i18n.t('core:entryDescription')}>{description && ' - ' + description}</span>
+              <span title={fsEntry.size + ' ' + i18n.t('core:sizeInBytes')}>
+                {fsEntry.isFile && formatFileSize(fsEntry.size) + ' - '}
+              </span>
+              <span
+                title={
+                  i18n.t('core:modifiedDate') +
+                  ': ' +
+                  formatDateTime(fsEntry.lmdt, true)
+                }
+              >
+                {fsEntry.lmdt && '⏲️ ' + moment(fsEntry.lmdt).fromNow()}
+              </span>
+              <span title={i18n.t('core:entryDescription')}>
+                {description && ' - ' + description}
+              </span>
             </Typography>
           </Grid>
           {fsEntry.thumbPath && (
             <Grid
               item
-              style={{
-                // margin: 5,
-              }}
+              style={
+                {
+                  // margin: 5,
+                }
+              }
             >
               <div
                 className={classes.gridCellThumb}
@@ -862,7 +937,7 @@ class GridPerspective extends React.Component<Props, State> {
                   backgroundImage: thumbPathUrl,
                   margin: 5,
                   height: 85,
-                  width: 85,
+                  width: 85
                 }}
               />
             </Grid>
@@ -874,11 +949,16 @@ class GridPerspective extends React.Component<Props, State> {
 
   render() {
     const classes = this.props.classes;
-    const selectedFilePaths = this.state.selectedEntries.filter(fsEntry => fsEntry.isFile).map(fsentry => fsentry.path);
+    const selectedFilePaths = this.state.selectedEntries
+      .filter(fsEntry => fsEntry.isFile)
+      .map(fsentry => fsentry.path);
 
     return (
       <div style={{ height: '100%' }}>
-        <Toolbar className={classes.topToolbar} data-tid="perspectiveGridToolbar">
+        <Toolbar
+          className={classes.topToolbar}
+          data-tid="perspectiveGridToolbar"
+        >
           <IconButton
             title={i18n.t('core:toggleSelectAllFiles')}
             data-tid="gridPerspectiveSelectAllFiles"
@@ -954,7 +1034,7 @@ class GridPerspective extends React.Component<Props, State> {
             data-tid="gridPerspectiveToggleShowDirectories"
             onClick={this.toggleShowDirectories}
           >
-            { this.state.showDirectories ? <FolderIcon /> : <FolderHiddenIcon /> }
+            {this.state.showDirectories ? <FolderIcon /> : <FolderHiddenIcon />}
           </IconButton>
           <IconButton
             title={i18n.t('core:sort')}
@@ -968,10 +1048,20 @@ class GridPerspective extends React.Component<Props, State> {
           </IconButton>
         </Toolbar>
         <div style={{ height: '100%', overflowY: 'overlay' }}>
-          <div className={this.getLayoutClass()} ref={ref => { this.mainGrid = ref; }} data-tid="perspectiveGridFileTable">
-            { (this.props.directoryContent.length > 0) ?
+          <div
+            className={this.getLayoutClass()}
+            ref={ref => {
+              this.mainGrid = ref;
+            }}
+            data-tid="perspectiveGridFileTable"
+          >
+            {this.props.directoryContent.length > 0 ? (
               this.props.directoryContent.map(entry => this.renderCell(entry))
-              : (<span style={{ padding: 15 }}>{i18n.t('core:noFileFolderFound')}</span>)}
+            ) : (
+              <span style={{ padding: 15 }}>
+                {i18n.t('core:noFileFolderFound')}
+              </span>
+            )}
           </div>
         </div>
         <AddRemoveTagsDialog
@@ -1001,7 +1091,7 @@ class GridPerspective extends React.Component<Props, State> {
           title={i18n.t('core:deleteConfirmationTitle')}
           content={i18n.t('core:deleteConfirmationContent')}
           list={selectedFilePaths}
-          confirmCallback={(result) => {
+          confirmCallback={result => {
             if (result && this.state.selectedEntries) {
               this.state.selectedEntries.map(fsentry => {
                 if (fsentry.isFile) {
@@ -1097,17 +1187,17 @@ class GridPerspective extends React.Component<Props, State> {
             </ListItemIcon>
             <ListItemText inset primary={i18n.t('core:fileExtension')} />
           </MenuItem>
-          { /* <MenuItem
-            data-tid="gridPerspectiveSortByTags"
-            onClick={() => {
-              this.handleSortBy('byTags');
-            }}
-          >
-            <ListItemIcon>
-              {this.renderSortMenuIcon(this.state.orderByTags)}
-            </ListItemIcon>
-            <ListItemText inset primary={i18n.t('core:fileTags')} />
-          </MenuItem> */ }
+          {/* <MenuItem
+              data-tid="gridPerspectiveSortByTags"
+              onClick={() => {
+                this.handleSortBy('byTags');
+              }}
+            >
+              <ListItemIcon>
+                {this.renderSortMenuIcon(this.state.orderByTags)}
+              </ListItemIcon>
+              <ListItemText inset primary={i18n.t('core:fileTags')} />
+            </MenuItem> */}
         </Menu>
       </div>
     );
