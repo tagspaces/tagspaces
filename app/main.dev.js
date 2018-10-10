@@ -76,6 +76,8 @@ const installExtensions = async () => {
     .catch(console.log);
 };
 
+app.commandLine.appendSwitch('autoplay-policy', 'no-user-gesture-required');
+
 app.on('window-all-closed', () => {
   // Respect the OSX convention of having the application in memory even
   // after all windows have been closed
