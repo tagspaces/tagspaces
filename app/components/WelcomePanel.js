@@ -20,6 +20,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import WelcomeLogo from '../assets/images/welcome-logo.png';
+import WelcomeBackground from '../assets/images/background.png';
 // import AppBar from '@material-ui/AppBar';
 // import Toolbar from '@material-ui/Toolbar';
 // import Typography from '@material-ui/Typography';
@@ -46,7 +48,7 @@ const styles = theme => ({
     height: '100%',
     overflowY: 'hidden',
     backgroundColor: theme.palette.background.default,
-    backgroundImage: 'url(assets/images/background.png)',
+    backgroundImage: 'url(' + WelcomeBackground + ')',
     backgroundRepeat: 'repeat',
     opacity: '0.4'
   },
@@ -77,7 +79,7 @@ class WelcomePanel extends React.Component<Props, State> {
     return (
       <div className={classes.mainPanel}>
         <div className={classes.slogan}>
-          <img src="assets/images/welcome-logo.png" alt="Organize your files" />
+          <img src={WelcomeLogo} alt="Organize your files" />
         </div>
       </div>
     );
