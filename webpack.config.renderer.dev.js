@@ -148,7 +148,12 @@ export default merge.smart(baseConfig, {
       // Common Image Formats
       {
         test: /\.(?:ico|gif|png|jpg|jpeg|webp|svg)$/,
-        use: 'url-loader',
+        use: {
+          loader: 'url-loader',
+          /* options: {
+            limit: 15000
+          } */
+        }
       }
     ]
   },
