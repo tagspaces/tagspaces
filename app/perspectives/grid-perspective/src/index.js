@@ -222,7 +222,6 @@ type Props = {
   removeTags: () => void,
   removeAllTags: () => void,
   editTagForEntry: () => void,
-  allTags: Array<Tag>,
   perspectiveCommand: Object,
   settings: Object,
   directoryContent: Array<FileSystemEntry>
@@ -1073,7 +1072,6 @@ class GridPerspective extends React.Component<Props, State> {
           addTags={this.props.addTags}
           removeTags={this.props.removeTags}
           removeAllTags={this.props.removeAllTags}
-          allTags={this.props.allTags}
         />
         <MoveCopyFilesDialog
           open={this.state.isMoveCopyFilesDialogOpened}

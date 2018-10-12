@@ -18,12 +18,13 @@
  */
 
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import Button from '@material-ui/core/Button';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import GenericDialog from './GenericDialog';
-import { type Tag } from '../../reducers/taglibrary';
+import { type Tag, getAllTags } from '../../reducers/taglibrary';
 import TagAutosuggestion from '../TagAutosuggestion/';
 import i18n from '../../services/i18n';
 import ConfirmDialog from '../dialogs/ConfirmDialog';
@@ -220,4 +221,10 @@ class AddRemoveTagsDialog extends React.Component<Props, State> {
   }
 }
 
-export default AddRemoveTagsDialog;
+function mapStateToProps(state) {
+  return {
+    allTags: getAllTags(state),
+  };
+}
+
+export default connect(mapStateToProps)(AddRemoveTagsDialog);

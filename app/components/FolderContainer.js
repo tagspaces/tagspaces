@@ -48,7 +48,7 @@ import {
   isReadOnlyMode
 } from '../reducers/app';
 import TaggingActions from '../reducers/tagging-actions';
-import { getAllTags, type Tag } from '../reducers/taglibrary';
+import { type Tag } from '../reducers/taglibrary';
 import { extractDirectoryName } from '../utils/paths';
 
 // https://reactjs.org/blog/2017/05/18/whats-new-in-create-react-app.html#code-splitting-with-dynamic-import
@@ -134,7 +134,6 @@ type Props = {
   currentDirectoryPath: string | null,
   searchResultCount: number,
   lastSelectedEntry: string | null,
-  allTags: Array<Tag>,
   settings: Object,
   addTags: () => void,
   removeTags: () => void,
@@ -301,7 +300,6 @@ class FolderContainer extends React.Component<Props, State> {
           addTags={this.props.addTags}
           editTagForEntry={this.props.editTagForEntry}
           deleteDirectory={this.props.deleteDirectory}
-          allTags={this.props.allTags}
           settings={this.props.settings}
           removeTags={this.props.removeTags}
           removeAllTags={this.props.removeAllTags}
@@ -324,7 +322,6 @@ class FolderContainer extends React.Component<Props, State> {
           setLastSelectedEntry={this.props.setLastSelectedEntry}
           perspectiveCommand={this.state.perspectiveCommand}
           deleteDirectory={this.props.deleteDirectory}
-          tags={this.props.allTags}
           settings={this.props.settings}
           addTags={this.props.addTags}
           removeTags={this.props.removeTags}
@@ -438,7 +435,6 @@ function mapStateToProps(state) {
     currentLocationId: getCurrentLocationId(state),
     perspectives: getPerspectives(state),
     directoryContent: getDirectoryContent(state),
-    allTags: getAllTags(state),
     searchResultCount: getSearchResultCount(state),
     isReadOnlyMode: isReadOnlyMode(state),
     settings: state.settings
