@@ -18,6 +18,7 @@
  */
 
 import React from 'react';
+import { connect } from 'react-redux';
 import removeMd from 'remove-markdown';
 import { withStyles } from '@material-ui/core/styles';
 import classNames from 'classnames';
@@ -49,6 +50,11 @@ import {
   findColorForFileEntry
 } from '../../../services/utils-io';
 import { type Tag } from '../../../reducers/taglibrary';
+import {
+  getTagTextColor,
+  getTagColor,
+  getSupportedFileTypes
+} from '../../../reducers/settings';
 import { extractTitle } from '../../../utils/paths';
 import {
   formatFileSize,
@@ -223,7 +229,6 @@ type Props = {
   removeAllTags: () => void,
   editTagForEntry: () => void,
   perspectiveCommand: Object,
-  settings: Object,
   directoryContent: Array<FileSystemEntry>
 };
 
@@ -762,8 +767,8 @@ class GridPerspective extends React.Component<Props, State> {
   renderTag = (tag: Object, fsEntry) => {
     return (
       <TagContainer
-        defaultTextColor={this.props.settings.tagTextColor}
-        defaultBackgroundColor={this.props.settings.tagBackgroundColor}
+        defaultTextColor={this.props.tagTextColor}
+        defaultBackgroundColor={this.props.tagBackgroundColor}
         tag={tag}
         entryPath={fsEntry.path}
         handleTagMenu={this.handleTagMenu}
@@ -780,7 +785,7 @@ class GridPerspective extends React.Component<Props, State> {
     const fsEntryColor = findColorForFileEntry(
       fsEntry.extension,
       fsEntry.isFile,
-      this.props.settings.supportedFileTypes
+      this.props.supportedFileTypes
     );
     let thumbPathUrl = fsEntry.thumbPath
       ? 'url("' + fsEntry.thumbPath + '")'
@@ -1202,4 +1207,14 @@ class GridPerspective extends React.Component<Props, State> {
   }
 }
 
-export default withStyles(styles)(GridPerspective);
+function mapStateToProps(state) {
+  return {
+    tagTextColor: getTagTextColor(state),
+    tagBackgroundColor: getTagColor(state),
+    supportedFileTypes: getSupportedFileTypes(state)
+  };
+}
+
+export default connect(mapStateToProps)(
+  withStyles(styles)(GridPerspective)
+);

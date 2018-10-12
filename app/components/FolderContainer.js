@@ -134,7 +134,6 @@ type Props = {
   currentDirectoryPath: string | null,
   searchResultCount: number,
   lastSelectedEntry: string | null,
-  settings: Object,
   addTags: () => void,
   removeTags: () => void,
   removeAllTags: () => void,
@@ -300,7 +299,6 @@ class FolderContainer extends React.Component<Props, State> {
           addTags={this.props.addTags}
           editTagForEntry={this.props.editTagForEntry}
           deleteDirectory={this.props.deleteDirectory}
-          settings={this.props.settings}
           removeTags={this.props.removeTags}
           removeAllTags={this.props.removeAllTags}
           windowWidth={this.props.windowWidth}
@@ -322,7 +320,6 @@ class FolderContainer extends React.Component<Props, State> {
           setLastSelectedEntry={this.props.setLastSelectedEntry}
           perspectiveCommand={this.state.perspectiveCommand}
           deleteDirectory={this.props.deleteDirectory}
-          settings={this.props.settings}
           addTags={this.props.addTags}
           removeTags={this.props.removeTags}
           removeAllTags={this.props.removeAllTags}
@@ -436,8 +433,7 @@ function mapStateToProps(state) {
     perspectives: getPerspectives(state),
     directoryContent: getDirectoryContent(state),
     searchResultCount: getSearchResultCount(state),
-    isReadOnlyMode: isReadOnlyMode(state),
-    settings: state.settings
+    isReadOnlyMode: isReadOnlyMode(state)
   };
 }
 
