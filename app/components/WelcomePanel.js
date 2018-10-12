@@ -18,7 +18,7 @@
  */
 
 import React from 'react';
-// import { connect } from 'react-redux';
+import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 // import AppBar from '@material-ui/AppBar';
 // import Toolbar from '@material-ui/Toolbar';
@@ -36,7 +36,7 @@ import { withStyles } from '@material-ui/core/styles';
 // import ListSubheader from '@material-ui/core/ListSubheader';
 
 // import i18n from '../services/i18n';
-import { type Location } from '../reducers/locations';
+import { getLocations, type Location } from '../reducers/locations';
 // import { extractDirectoryName } from '../utils/paths';
 
 const styles = theme => ({
@@ -84,4 +84,12 @@ class WelcomePanel extends React.Component<Props, State> {
   }
 }
 
-export default withStyles(styles)(WelcomePanel);
+function mapStateToProps(state) {
+  return {
+    locations: getLocations(state),
+  };
+}
+
+export default connect(mapStateToProps)(
+  withStyles(styles)(WelcomePanel)
+);
