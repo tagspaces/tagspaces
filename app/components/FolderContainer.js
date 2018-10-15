@@ -34,6 +34,7 @@ import ListSubHeader from '@material-ui/core/ListSubheader';
 import { HotKeys } from 'react-hotkeys';
 import Loadable from 'react-loadable';
 import WelcomePanel from './WelcomePanel';
+import LocationMenu from './LocationMenu';
 import DirectoryMenu from './menus/DirectoryMenu';
 import i18n from '../services/i18n';
 import { getPerspectives } from '../reducers/settings';
@@ -45,7 +46,8 @@ import {
   getCurrentLocationId,
   getLastSelectedEntry,
   getSearchResultCount,
-  isReadOnlyMode
+  isReadOnlyMode,
+  isLocationMenuOpened
 } from '../reducers/app';
 import TaggingActions from '../reducers/tagging-actions';
 import { type Tag } from '../reducers/taglibrary';
@@ -154,7 +156,9 @@ type Props = {
   loadParentDirectoryContent: () => void,
   setLastSelectedEntry: (entryPath: string | null) => void,
   isReadOnlyMode: boolean,
-  showNotification: () => void
+  showNotification: () => void,
+  isLocationMenuOpened: boolean,
+  toggleLocationMenu: () => void
 };
 
 type State = {
@@ -246,10 +250,18 @@ class FolderContainer extends React.Component<Props, State> {
     }
   };
 
-  toggleLocationChooserClose = (event?: Object) => {
+  /* toggleLocationChooserClose = (event?: Object) => {
     this.setState({
       locationChooserMenuOpened: !this.state.locationChooserMenuOpened,
       locationChooserMenuAnchorEl: event ? event.currentTarget : null
+    });
+  };
+  */
+
+  handleLocationMenu = (event: Object) => {
+    this.setState({
+      locationChooserMenuOpened: true,
+      locationChooserMenuAnchorEl: event.currentTarget
     });
   };
 
@@ -345,40 +357,13 @@ class FolderContainer extends React.Component<Props, State> {
               <Button
                 data-tid="folderContainerLocationChooser"
                 className={classes.locationSelectorButton}
-                onClick={this.toggleLocationChooserClose}
+                onClick={this.handleLocationMenu}
               >
                 {this.state.currentLocation
                   ? this.state.currentLocation.name
                   : i18n.t('core:pleaseOpenLocation')}
                 <ArrowDropDownIcon />
               </Button>
-              <Menu
-                id="simple-menu"
-                anchorEl={this.state.locationChooserMenuAnchorEl}
-                open={this.state.locationChooserMenuOpened}
-                onClose={this.toggleLocationChooserClose}
-                PaperProps={{
-                  style: {
-                    maxHeight: 48 * 6.5,
-                    width: 300
-                  }
-                }}
-              >
-                <div style={{ display: 'none' }} />
-                <ListSubHeader>{i18n.t('core:chooseLocation')}</ListSubHeader>
-                {this.props.locations.map((location: Location) => (
-                  <MenuItem
-                    data-tid="folderContainerMenuOpenLocation"
-                    key={location.uuid}
-                    onClick={() => this.openLocation(location.uuid)}
-                  >
-                    <ListItemIcon>
-                      <FolderIcon />
-                    </ListItemIcon>
-                    <ListItemText inset primary={location.name} />
-                  </MenuItem>
-                ))}
-              </Menu>
               <div className={classes.flexMiddle} data-tid="entriesFound">
                 {(this.props.searchResultCount > 0) && (
                   <Typography className={classes.entriesFound}>{this.props.searchResultCount} {i18n.t('entries')}</Typography>
@@ -458,7 +443,8 @@ function mapActionCreatorsToProps(dispatch) {
     loadDirectoryContent: AppActions.loadDirectoryContent,
     loadParentDirectoryContent: AppActions.loadParentDirectoryContent,
     setLastSelectedEntry: AppActions.setLastSelectedEntry,
-    showNotification: AppActions.showNotification
+    showNotification: AppActions.showNotification,
+    toggleLocationMenu: AppActions.toggleLocationMenu
   }, dispatch);
 }
 
