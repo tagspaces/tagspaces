@@ -800,7 +800,7 @@ class GridPerspective extends React.Component<Props, State> {
             className={classes.gridCellThumb}
             style={{
               backgroundImage: thumbPathUrl,
-              height: fsEntry.isFile ? 150 : 70
+              height: 150 // fsEntry.isFile ? 150 : 70
             }}
           >
             <div className={classes.gridCellTags}>
