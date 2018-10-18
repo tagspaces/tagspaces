@@ -796,7 +796,7 @@ class EntryContainer extends React.Component<Props, State> {
             this.setState({ isDeleteEntryModalOpened: false });
           }}
           title={currentEntry && currentEntry.isFile ? i18n.t('core:fileDeleteTitleConfirm') : i18n.t('core:deleteDirectory')}
-          content={`${(currentEntry && currentEntry.isFile) ? i18n.t('core:doYouWantToDeleteFile') : i18n.t('core:deleteDirectoryContentConfirm')}: ${currentEntry ? extractDirectoryName(currentEntry.path) : ''} ?`}
+          content={(currentEntry && currentEntry.isFile) ? i18n.t('core:doYouWantToDeleteFile') : i18n.t('core:deleteDirectoryContentConfirm', { dirPath: currentEntry ? extractDirectoryName(currentEntry.path) : '' })}
           confirmCallback={result => {
             if (result && currentEntry) {
               this.props.deleteFile(currentEntry.path);
