@@ -158,7 +158,8 @@ type Props = {
   isReadOnlyMode: boolean,
   showNotification: () => void,
   isLocationMenuOpened: boolean,
-  toggleLocationMenu: () => void
+  locationMenu: () => void
+  // toggleLocationMenu: () => void
 };
 
 type State = {
@@ -171,7 +172,8 @@ type State = {
   directoryMenuAnchorEl?: null | Object,
   perspectiveChooserMenuOpened?: boolean,
   perspectiveChooserMenuAnchorEl?: null | Object,
-  perspectiveCommand?: null | Object
+  perspectiveCommand?: null | Object,
+  isLocationMenuVisible?: boolean
 };
 
 class FolderContainer extends React.Component<Props, State> {
@@ -179,8 +181,9 @@ class FolderContainer extends React.Component<Props, State> {
     currentPerspective: '',
     isPropertiesPanelVisible: false,
     isDirectoryMenuOpened: false,
-    locationChooserMenuOpened: false,
-    locationChooserMenuAnchorEl: null,
+    // locationChooserMenuOpened: false,
+    isLocationMenuVisible: false,
+    // locationChooserMenuAnchorEl: null,
     directoryContextMenuOpened: false,
     directoryContextMenuAnchorEl: null,
     perspectiveChooserMenuOpened: false,
@@ -260,7 +263,7 @@ class FolderContainer extends React.Component<Props, State> {
 
   handleLocationMenu = (event: Object) => {
     this.setState({
-      locationChooserMenuOpened: true,
+      locationMenu: true,
       locationChooserMenuAnchorEl: event.currentTarget
     });
   };
@@ -357,7 +360,7 @@ class FolderContainer extends React.Component<Props, State> {
               <Button
                 data-tid="folderContainerLocationChooser"
                 className={classes.locationSelectorButton}
-                onClick={this.handleLocationMenu}
+                onClick={this.props.locationMenu}
               >
                 {this.state.currentLocation
                   ? this.state.currentLocation.name
@@ -444,7 +447,7 @@ function mapActionCreatorsToProps(dispatch) {
     loadParentDirectoryContent: AppActions.loadParentDirectoryContent,
     setLastSelectedEntry: AppActions.setLastSelectedEntry,
     showNotification: AppActions.showNotification,
-    toggleLocationMenu: AppActions.toggleLocationMenu
+    // toggleLocationMenu: AppActions.toggleLocationMenu
   }, dispatch);
 }
 

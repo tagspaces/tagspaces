@@ -19,32 +19,27 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import Button from '@material-ui/core/Button';
-import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
-import Typography from '@material-ui/core/Typography';
+// import { bindActionCreators } from 'redux';
 import FolderIcon from '@material-ui/icons/Folder';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { withStyles } from '@material-ui/core/styles';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListSubHeader from '@material-ui/core/ListSubheader';
-import { HotKeys } from 'react-hotkeys';
-import DirectoryMenu from './menus/DirectoryMenu';
+// import DirectoryMenu from './menus/DirectoryMenu';
 import i18n from '../services/i18n';
 import { getLocations, type Location } from '../reducers/locations';
-import {
-  actions as AppActions,
-  getDirectoryContent,
-  getDirectoryPath,
-  getCurrentLocationId,
-  getLastSelectedEntry,
-  getSearchResultCount,
-  isReadOnlyMode
-} from '../reducers/app';
-import { extractDirectoryName } from '../utils/paths';
+/* import {
+   actions as AppActions,
+   getDirectoryContent,
+   getDirectoryPath,
+   getCurrentLocationId,
+   getLastSelectedEntry,
+   getSearchResultCount,
+   isReadOnlyMode
+} from '../reducers/app'; */
+// import { extractDirectoryName } from '../utils/paths';
 
 class LocationMenu extends React.Component<Props, State> {
   state = {
@@ -57,7 +52,7 @@ class LocationMenu extends React.Component<Props, State> {
     perspectiveCommand: {}
   };
 
-  componentWillReceiveProps = (nextProps: Props) => {
+  /* componentWillReceiveProps = (nextProps: Props) => {
     if (nextProps.currentLocationId != null) {
       this.props.locations.map((location: Location) => {
         if (location.uuid === nextProps.currentLocationId) {
@@ -75,6 +70,7 @@ class LocationMenu extends React.Component<Props, State> {
       });
     }
   };
+  */
 
   toggleLocationChooserClose = (event?: Object) => {
     this.setState({
@@ -89,41 +85,34 @@ class LocationMenu extends React.Component<Props, State> {
   };
 
   render() {
-    const { classes } = this.props;
     return (
-      <div className={classes.mainPanel}>
-        <div className={classes.topPanel}>
-          <div className={classes.toolbar}>
-            <Menu
-              id="simple-menu"
-              anchorEl={this.state.locationChooserMenuAnchorEl}
-              open={this.state.locationChooserMenuOpened}
-              onClose={this.toggleLocationChooserClose}
-              PaperProps={{
-                style: {
-                  maxHeight: 48 * 6.5,
-                  width: 300
-                }
-              }}
-            >
-              <div style={{ display: 'none' }} />
-              <ListSubHeader>{i18n.t('core:chooseLocation')}</ListSubHeader>
-              {this.props.locations.map((location: Location) => (
-                <MenuItem
-                  data-tid="folderContainerMenuOpenLocation"
-                  key={location.uuid}
-                  onClick={() => this.openLocation(location.uuid)}
-                >
-                  <ListItemIcon>
-                    <FolderIcon />
-                  </ListItemIcon>
-                  <ListItemText inset primary={location.name} />
-                </MenuItem>
-              ))}
-            </Menu>
-          </div>
-        </div>
-      </div>
+      <Menu
+        id="simple-menu"
+        anchorEl={this.state.locationChooserMenuAnchorEl}
+        open={this.state.locationChooserMenuOpened}
+        onClose={this.toggleLocationChooserClose}
+        PaperProps={{
+          style: {
+            maxHeight: 48 * 6.5,
+            width: 300
+          }
+        }}
+      >
+        <div style={{ display: 'none' }} />
+        <ListSubHeader>{i18n.t('core:chooseLocation')}</ListSubHeader>
+        {this.props.locations.map((location: Location) => (
+          <MenuItem
+            data-tid="folderContainerMenuOpenLocation"
+            key={location.uuid}
+            onClick={() => this.openLocation(location.uuid)}
+          >
+            <ListItemIcon>
+              <FolderIcon />
+            </ListItemIcon>
+            <ListItemText inset primary={location.name} />
+          </MenuItem>
+        ))}
+      </Menu>
     );
   }
 }
