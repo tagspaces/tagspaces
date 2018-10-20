@@ -60,6 +60,7 @@ if (process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true')
   require('electron-debug')({ showDevTools: false });
   const p = path.join(__dirname, '..', 'app', 'node_modules');
   require('module').globalPaths.push(p);
+  app.commandLine.appendSwitch('disable-gpu'); // Fix the freezing the app with a black box on dnd https://github.com/electron/electron/issues/12820
 }
 
 const installExtensions = async () => {
@@ -76,7 +77,7 @@ const installExtensions = async () => {
     .catch(console.log);
 };
 
-app.commandLine.appendSwitch('autoplay-policy', 'no-user-gesture-required');
+app.commandLine.appendSwitch('autoplay-policy', 'no-user-gesture-required'); // Fix broken autoplay functionality in the av player
 
 app.on('window-all-closed', () => {
   // Respect the OSX convention of having the application in memory even
