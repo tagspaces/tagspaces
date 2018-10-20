@@ -10,7 +10,7 @@
 <PROJECT_ROOT>/git/.*
 
 [include]
-<PROJECT_ROOT>/app/node_modules/@tagspaces/pro/*.js
+<PROJECT_ROOT>/app/node_modules/@tagspaces/pro/.*
 
 [libs]
 
