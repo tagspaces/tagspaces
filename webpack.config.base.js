@@ -4,18 +4,16 @@
 
 import path from 'path';
 import webpack from 'webpack';
-import { dependencies as externals } from './app/package.json';
+// import { dependencies as externals } from './app/package.json';
 
 export default {
-  externals: Object.keys(externals || {}),
+  // externals: Object.keys(externals || {}),
 
   module: {
     rules: [{
       test: /\.jsx?$/,
-      exclude: /node_modules/,
-      // exclude: [
-      //  '/node_modules/'
-      // ],
+      exclude: path.resolve(__dirname, '/node_modules'),
+      // exclude: /node_modules/,
       use: {
         loader: 'babel-loader',
         options: {
@@ -46,7 +44,7 @@ export default {
     /* alias: {
       "react": "preact-compat",
       "react-dom": "preact-compat"
-    }*/
+    } */
   },
 
   plugins: [
