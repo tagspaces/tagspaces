@@ -24,7 +24,6 @@ export default class WebDAVIO {
   davClient: any;
 
   constructor() {
-    console.log('Loading web.js..');
     console.log('Loading web.js..' + nl);
     // exact copy of getAjax with timeout added
     nl.sara.webdav.Client.prototype.getAjax = (
