@@ -41,41 +41,18 @@ import { getLocations, type Location } from '../reducers/locations';
 } from '../reducers/app'; */
 // import { extractDirectoryName } from '../utils/paths';
 
-class LocationMenu extends React.Component<Props, State> {
-  state = {
-    // locationChooserMenuOpened: false,
-  };
-
-  /* componentWillReceiveProps = (nextProps: Props) => {
-    if (nextProps.currentLocationId != null) {
-      this.props.locations.map((location: Location) => {
-        if (location.uuid === nextProps.currentLocationId) {
-          this.setState({
-            currentLocation: location,
-            currentPerspective: 'grid' // TODO for removing
-          });
-        }
-        return true;
-      });
-    } else { // closing the perspective
-      this.setState({
-        currentLocation: undefined,
-        currentPerspective: undefined
-      });
-    }
-  };
-  */
-
+class LocationMenu extends React.Component { // <Props, State> {
   openLocation = locationId => {
-    this.props.openLocation(locationId);
-    this.props.toggleLocationChooser();
+    // this.props.openLocation(locationId);
+    // this.props.toggleLocationChooser();
   };
+
+  // anchorEl={this.state.locationChooserMenuAnchorEl}
 
   render() {
     return (
       <Menu
         id="simple-menu"
-        anchorEl={this.state.locationChooserMenuAnchorEl}
         open={this.props.locationChooserMenuOpened}
         onClose={this.props.toggleLocationChooser}
         PaperProps={{
