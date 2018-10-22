@@ -38,7 +38,12 @@ export function extractFileExtension(filePath: string) {
     // case: "[20120125 89.4kg 19.5% 60.5% 39.8% 2.6kg]"
     return '';
   }
-  return filePath.substring(lastindexDot + 1, filePath.length).toLowerCase().trim();
+  let extension = filePath.substring(lastindexDot + 1, filePath.length).toLowerCase().trim();
+  const lastindexQuestionMark = extension.lastIndexOf('?');
+  if (lastindexQuestionMark > 0) { // Removing everything after ? in URLs .png?queryParam1=2342
+    extension = extension.substring(0, lastindexQuestionMark);
+  }
+  return extension;
 
   /* alternative implementation
     const ext = fileURL.split('.').pop();
@@ -68,8 +73,8 @@ export function getMetaFileLocationForDir(entryPath: string) {
 }
 
 
-export function extractFileName(filePath: string): string {
-  return filePath.substring(filePath.lastIndexOf(AppConfig.dirSeparator) + 1, filePath.length);
+export function extractFileName(filePath: string, dirSeparator: string = AppConfig.dirSeparator): string {
+  return filePath.substring(filePath.lastIndexOf(dirSeparator) + 1, filePath.length);
 }
 
 export function cleanTrailingDirSeparator(dirPath: string): string {
@@ -156,7 +161,7 @@ export function extractTitle(entryPath: string, isDirectory?: boolean = false) {
     // case: "title1 [tag1 tag2] title2"
     return title.slice(0, beginTagContainer) + title.slice(endTagContainer + 1, title.length);
   }
-  return title;
+  return decodeURIComponent(title);
 }
 
 export function extractTagsAsObjects(filePath: string): Array<Tag> {

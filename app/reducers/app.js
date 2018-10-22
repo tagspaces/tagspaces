@@ -95,6 +95,7 @@ export const NotificationTypes = {
 
 export type OpenedEntry = {
   path: string,
+  url?: string,
   viewingExtensionPath: string,
   viewingExtensionId: string,
   editingExtensionPath?: string,
@@ -921,8 +922,14 @@ export const actions = {
     if (Pro && Pro.Watcher) {
       Pro.Watcher.stopWatching();
     }
+
+    // if (Pro) { // && s3location
+    //   PlatformIO.enableObjectStoreSupport({});
+    // }
+
     locations.map(location => {
       if (location.uuid === locationId) {
+        // location.paths = ['test/']; // TODO remove
         dispatch(actions.setReadOnlyMode(location.isReadOnly || false));
         dispatch(actions.setCurrentLocationId(location.uuid));
         dispatch(actions.loadDirectoryContent(location.paths[0]));
@@ -1032,6 +1039,7 @@ export const actions = {
       entryPath,
       isFile
     );
+    entryForOpening.url = PlatformIO.getURLforPath(entryPath); // Needed for the s3 support
     dispatch(actions.addToEntryContainer(entryForOpening));
   },
   toggleEntryFullWidth: () => ({

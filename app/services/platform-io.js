@@ -18,6 +18,7 @@
  */
 
 import AppConfig from '../config';
+import { Pro } from '../pro';
 
 let nativeAPI = {};
 if (AppConfig.isElectron) {
@@ -31,7 +32,22 @@ if (AppConfig.isElectron) {
   nativeAPI = new CordovaIO();
 }
 
+let objectStoreAPI;
+
 export default class PlatformIO {
+  static enableObjectStoreSupport = (objectStoreConfig: Object): void => {
+    if (Pro && Pro.ObjectStoreIO) {
+      objectStoreAPI = new Pro.ObjectStoreIO();
+      objectStoreAPI.configure(objectStoreConfig);
+    } else {
+      console.log('ObjectStore support available in the PRO version');
+    }
+  }
+
+  static disableObjectStoreSupport = (): void => {
+    objectStoreAPI = undefined;
+  }
+
   static initMainMenu = (menuConfig: Array<Object>): void => {
     if (nativeAPI.initMainMenu) {
       nativeAPI.initMainMenu(menuConfig);
@@ -73,6 +89,13 @@ export default class PlatformIO {
 
   static getUserHomePath = (): string => nativeAPI.getUserHomePath();
 
+  static getURLforPath = (path: string): string => {
+    if (objectStoreAPI) {
+      return objectStoreAPI.getURLforPath(path);
+    }
+    // console.log('getURLforPath not supported');
+  }
+
   static createDirectoryTree = (directoryPath: string): Object =>
     nativeAPI.createDirectoryTree(directoryPath);
 
@@ -86,10 +109,19 @@ export default class PlatformIO {
   static listDirectoryPromise = (
     path: string,
     lite: boolean = true
-  ): Promise<Array<any>> => nativeAPI.listDirectoryPromise(path, lite);
+  ): Promise<Array<any>> => {
+    if (objectStoreAPI) {
+      return objectStoreAPI.listDirectoryPromise(path, lite);
+    }
+    return nativeAPI.listDirectoryPromise(path, lite);
+  };
 
-  static getPropertiesPromise = (path: string): Promise<any> =>
-    nativeAPI.getPropertiesPromise(path);
+  static getPropertiesPromise = (path: string): Promise<any> => {
+    if (objectStoreAPI) {
+      return objectStoreAPI.getPropertiesPromise(path);
+    }
+    return nativeAPI.getPropertiesPromise(path);
+  }
 
   static createDirectoryPromise = (dirPath: string): Promise<any> =>
     nativeAPI.createDirectoryPromise(dirPath);
@@ -112,12 +144,22 @@ export default class PlatformIO {
   static loadTextFilePromise = (
     filePath: string,
     isPreview?: boolean
-  ): Promise<any> => nativeAPI.loadTextFilePromise(filePath, isPreview);
+  ): Promise<any> => {
+    if (objectStoreAPI) {
+      return objectStoreAPI.loadTextFilePromise(filePath, isPreview);
+    }
+    return nativeAPI.loadTextFilePromise(filePath, isPreview);
+  }
 
   static getFileContentPromise = (
-    fullPath: string,
+    filePath: string,
     type: string
-  ): Promise<Object> => nativeAPI.getFileContentPromise(fullPath, type);
+  ): Promise<Object> => {
+    if (objectStoreAPI) {
+      return objectStoreAPI.getFileContentPromise(filePath, type);
+    }
+    return nativeAPI.getFileContentPromise(filePath, type);
+  }
 
   static saveFilePromise = (
     filePath: string,
