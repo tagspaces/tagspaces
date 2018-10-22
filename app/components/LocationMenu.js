@@ -43,13 +43,7 @@ import { getLocations, type Location } from '../reducers/locations';
 
 class LocationMenu extends React.Component<Props, State> {
   state = {
-    locationChooserMenuOpened: false,
-    locationChooserMenuAnchorEl: null,
-    directoryContextMenuOpened: false,
-    directoryContextMenuAnchorEl: null,
-    perspectiveChooserMenuOpened: false,
-    perspectiveChooserMenuAnchorEl: null,
-    perspectiveCommand: {}
+    // locationChooserMenuOpened: false,
   };
 
   /* componentWillReceiveProps = (nextProps: Props) => {
@@ -72,16 +66,9 @@ class LocationMenu extends React.Component<Props, State> {
   };
   */
 
-  toggleLocationChooserClose = (event?: Object) => {
-    this.setState({
-      locationChooserMenuOpened: !this.state.locationChooserMenuOpened,
-      locationChooserMenuAnchorEl: event ? event.currentTarget : null
-    });
-  };
-
   openLocation = locationId => {
     this.props.openLocation(locationId);
-    this.toggleLocationChooserClose();
+    this.props.toggleLocationChooser();
   };
 
   render() {
@@ -89,8 +76,8 @@ class LocationMenu extends React.Component<Props, State> {
       <Menu
         id="simple-menu"
         anchorEl={this.state.locationChooserMenuAnchorEl}
-        open={this.state.locationChooserMenuOpened}
-        onClose={this.toggleLocationChooserClose}
+        open={this.props.locationChooserMenuOpened}
+        onClose={this.props.toggleLocationChooser}
         PaperProps={{
           style: {
             maxHeight: 48 * 6.5,

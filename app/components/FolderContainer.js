@@ -88,7 +88,7 @@ const styles = theme => ({
   flexMiddle: {
     flex: '1 1 50%',
     display: 'flex',
-    flexDirection: 'column',
+    flexDirection: 'column'
   },
   entriesFound: {
     alignSelf: 'center',
@@ -158,8 +158,8 @@ type Props = {
   isReadOnlyMode: boolean,
   showNotification: () => void,
   isLocationMenuOpened: boolean,
-  locationMenu: () => void
-  // toggleLocationMenu: () => void
+  locationMenu: () => void,
+  toggleLocationMenu: () => void
 };
 
 type State = {
@@ -181,7 +181,7 @@ class FolderContainer extends React.Component<Props, State> {
     currentPerspective: '',
     isPropertiesPanelVisible: false,
     isDirectoryMenuOpened: false,
-    // locationChooserMenuOpened: false,
+    locationChooserMenuOpened: false,
     isLocationMenuVisible: false,
     // locationChooserMenuAnchorEl: null,
     directoryContextMenuOpened: false,
@@ -202,7 +202,8 @@ class FolderContainer extends React.Component<Props, State> {
         }
         return true;
       });
-    } else { // closing the perspective
+    } else {
+      // closing the perspective
       this.setState({
         currentLocation: undefined,
         currentPerspective: undefined
@@ -215,30 +216,47 @@ class FolderContainer extends React.Component<Props, State> {
     nextDocument: () => {
       const nextFilePath = this.props.getNextFile();
       if (nextFilePath) {
-        this.setState({
-          perspectiveCommand: { key: 'SELECT_FILE', value: nextFilePath }
-        }, () => { this.setState({ perspectiveCommand: {} }); });
+        this.setState(
+          {
+            perspectiveCommand: { key: 'SELECT_FILE', value: nextFilePath }
+          },
+          () => {
+            this.setState({ perspectiveCommand: {} });
+          }
+        );
         this.props.setLastSelectedEntry(nextFilePath);
       }
     },
     prevDocument: () => {
       const prevFilePath = this.props.getPrevFile();
       if (prevFilePath) {
-        this.setState({
-          perspectiveCommand: { key: 'SELECT_FILE', value: prevFilePath }
-        }, () => { this.setState({ perspectiveCommand: {} }); });
+        this.setState(
+          {
+            perspectiveCommand: { key: 'SELECT_FILE', value: prevFilePath }
+          },
+          () => {
+            this.setState({ perspectiveCommand: {} });
+          }
+        );
         this.props.setLastSelectedEntry(prevFilePath);
       }
     },
     selectAll: () => {
-      this.setState({
-        perspectiveCommand: { key: 'TOGGLE_SELECT_ALL' }
-      }, () => { this.setState({ perspectiveCommand: {} }); });
+      this.setState(
+        {
+          perspectiveCommand: { key: 'TOGGLE_SELECT_ALL' }
+        },
+        () => {
+          this.setState({ perspectiveCommand: {} });
+        }
+      );
     },
     openEntry: () => {
       const { lastSelectedEntry } = this.props;
       if (lastSelectedEntry) {
-        const isLastSelectedEntryFile = this.props.directoryContent.some(fsEntry => (fsEntry.isFile && fsEntry.path === lastSelectedEntry));
+        const isLastSelectedEntryFile = this.props.directoryContent.some(
+          fsEntry => fsEntry.isFile && fsEntry.path === lastSelectedEntry
+        );
         if (isLastSelectedEntryFile) {
           this.props.openFile(lastSelectedEntry);
         } else {
@@ -253,13 +271,12 @@ class FolderContainer extends React.Component<Props, State> {
     }
   };
 
-  /* toggleLocationChooserClose = (event?: Object) => {
+  toggleLocationChooser = (event?: Object) => {
     this.setState({
       locationChooserMenuOpened: !this.state.locationChooserMenuOpened,
       locationChooserMenuAnchorEl: event ? event.currentTarget : null
     });
   };
-  */
 
   handleLocationMenu = (event: Object) => {
     this.setState({
@@ -291,7 +308,7 @@ class FolderContainer extends React.Component<Props, State> {
 
   openLocation = locationId => {
     this.props.openLocation(locationId);
-    this.toggleLocationChooserClose();
+    this.toggleLocationChooser();
   };
 
   renderPerspective() {
@@ -320,7 +337,7 @@ class FolderContainer extends React.Component<Props, State> {
         />
       );
     } else if (this.state.currentPerspective === 'filemanager') {
-      return (<div>Place for another perspective</div>);
+      return <div>Place for another perspective</div>;
       /*
         <FileManagerPerspective
           directoryContent={this.props.directoryContent}
@@ -360,50 +377,59 @@ class FolderContainer extends React.Component<Props, State> {
               <Button
                 data-tid="folderContainerLocationChooser"
                 className={classes.locationSelectorButton}
-                onClick={this.props.locationMenu}
+                onClick={this.toggleLocationChooser}
               >
                 {this.state.currentLocation
                   ? this.state.currentLocation.name
                   : i18n.t('core:pleaseOpenLocation')}
                 <ArrowDropDownIcon />
               </Button>
+              <LocationMenu
+                open={this.state.locationChooserMenuOpened}
+                toggleLocationChooser={this.toggleLocationChooser}
+              />
               <div className={classes.flexMiddle} data-tid="entriesFound">
-                {(this.props.searchResultCount > 0) && (
-                  <Typography className={classes.entriesFound}>{this.props.searchResultCount} {i18n.t('entries')}</Typography>
+                {this.props.searchResultCount > 0 && (
+                  <Typography className={classes.entriesFound}>
+                    {this.props.searchResultCount} {i18n.t('entries')}
+                  </Typography>
                 )}
               </div>
               {this.state.currentLocation &&
                 this.props.currentDirectoryPath && (
-                <div>
-                  <Button
-                    data-tid="folderContainerOpenDirMenu"
-                    title={i18n.t('core:openDirectoryMenu')}
-                    className={classes.folderButton}
-                    onClick={this.openDirectoryMenu}
-                  >
-                    {extractDirectoryName(this.props.currentDirectoryPath)}
-                    <MoreVertIcon />
-                  </Button>
-                  <DirectoryMenu
-                    open={this.state.directoryContextMenuOpened}
-                    onClose={this.closeDirectoryMenu}
-                    anchorEl={this.state.directoryContextMenuAnchorEl}
-                    directoryPath={this.props.currentDirectoryPath}
-                    loadDirectoryContent={this.props.loadDirectoryContent}
-                    openFileNatively={this.props.openFileNatively}
-                    openDirectory={this.props.openDirectory}
-                    reflectCreateEntry={this.props.reflectCreateEntry}
-                    openFile={this.props.openFile}
-                    toggleCreateFileDialog={this.props.toggleCreateFileDialog}
-                    deleteDirectory={this.props.deleteDirectory}
-                    showNotification={this.props.showNotification}
-                    isReadOnlyMode={this.props.isReadOnlyMode}
-                  />
-                </div>
-              )}
+                  <div>
+                    <Button
+                      data-tid="folderContainerOpenDirMenu"
+                      title={i18n.t('core:openDirectoryMenu')}
+                      className={classes.folderButton}
+                      onClick={this.openDirectoryMenu}
+                    >
+                      {extractDirectoryName(this.props.currentDirectoryPath)}
+                      <MoreVertIcon />
+                    </Button>
+                    <DirectoryMenu
+                      open={this.state.directoryContextMenuOpened}
+                      onClose={this.closeDirectoryMenu}
+                      anchorEl={this.state.directoryContextMenuAnchorEl}
+                      directoryPath={this.props.currentDirectoryPath}
+                      loadDirectoryContent={this.props.loadDirectoryContent}
+                      openFileNatively={this.props.openFileNatively}
+                      openDirectory={this.props.openDirectory}
+                      reflectCreateEntry={this.props.reflectCreateEntry}
+                      openFile={this.props.openFile}
+                      toggleCreateFileDialog={this.props.toggleCreateFileDialog}
+                      deleteDirectory={this.props.deleteDirectory}
+                      showNotification={this.props.showNotification}
+                      isReadOnlyMode={this.props.isReadOnlyMode}
+                    />
+                  </div>
+                )}
             </div>
           </div>
-          <div className={classes.centerPanel} style={{ height: this.props.windowHeight }}>
+          <div
+            className={classes.centerPanel}
+            style={{ height: this.props.windowHeight }}
+          >
             {this.renderPerspective()}
           </div>
         </div>
@@ -426,31 +452,35 @@ function mapStateToProps(state) {
 }
 
 function mapActionCreatorsToProps(dispatch) {
-  return bindActionCreators({
-    addTags: TaggingActions.addTags,
-    removeTags: TaggingActions.removeTags,
-    removeAllTags: TaggingActions.removeAllTags,
-    editTagForEntry: TaggingActions.editTagForEntry,
-    openFileNatively: AppActions.openFileNatively,
-    toggleCreateFileDialog: AppActions.toggleCreateFileDialog,
-    deleteFile: AppActions.deleteFile,
-    renameFile: AppActions.renameFile,
-    getNextFile: AppActions.getNextFile,
-    getPrevFile: AppActions.getPrevFile,
-    openDirectory: AppActions.openDirectory,
-    sortByCriteria: AppActions.sortByCriteria,
-    openLocation: AppActions.openLocation,
-    openFile: AppActions.openFile,
-    deleteDirectory: AppActions.deleteDirectory,
-    reflectCreateEntry: AppActions.reflectCreateEntry,
-    loadDirectoryContent: AppActions.loadDirectoryContent,
-    loadParentDirectoryContent: AppActions.loadParentDirectoryContent,
-    setLastSelectedEntry: AppActions.setLastSelectedEntry,
-    showNotification: AppActions.showNotification,
-    // toggleLocationMenu: AppActions.toggleLocationMenu
-  }, dispatch);
+  return bindActionCreators(
+    {
+      addTags: TaggingActions.addTags,
+      removeTags: TaggingActions.removeTags,
+      removeAllTags: TaggingActions.removeAllTags,
+      editTagForEntry: TaggingActions.editTagForEntry,
+      openFileNatively: AppActions.openFileNatively,
+      toggleCreateFileDialog: AppActions.toggleCreateFileDialog,
+      deleteFile: AppActions.deleteFile,
+      renameFile: AppActions.renameFile,
+      getNextFile: AppActions.getNextFile,
+      getPrevFile: AppActions.getPrevFile,
+      openDirectory: AppActions.openDirectory,
+      sortByCriteria: AppActions.sortByCriteria,
+      openLocation: AppActions.openLocation,
+      openFile: AppActions.openFile,
+      deleteDirectory: AppActions.deleteDirectory,
+      reflectCreateEntry: AppActions.reflectCreateEntry,
+      loadDirectoryContent: AppActions.loadDirectoryContent,
+      loadParentDirectoryContent: AppActions.loadParentDirectoryContent,
+      setLastSelectedEntry: AppActions.setLastSelectedEntry,
+      showNotification: AppActions.showNotification
+      // toggleLocationMenu: AppActions.toggleLocationMenu
+    },
+    dispatch
+  );
 }
 
-export default connect(mapStateToProps, mapActionCreatorsToProps)(
-  withStyles(styles)(FolderContainer)
-);
+export default connect(
+  mapStateToProps,
+  mapActionCreatorsToProps
+)(withStyles(styles)(FolderContainer));
