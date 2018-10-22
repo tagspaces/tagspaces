@@ -34,6 +34,7 @@
     "package-win-pro": "build --win --x64 --config app/node_modules/@tagspaces/pro/resources/builder-pro.json",
     "package-linux": "build --linux --config resources/builder.json",
     "package-linux-pro": "build --linux --config app/node_modules/@tagspaces/pro/resources/builder-pro.json",
+    "package-pro-temp": "yarn package-win-pro && yarn package-linux-pro && yarn package-mac-pro",
     "package-pro": "patch-package-json && yarn install-ext && yarn build && yarn package-win-pro && yarn package-linux-pro && yarn package-mac-pro",
     "install-ext": "cd app && yarn install --force --prod --no-lockfile && cd ..",
     "setup-ext": "node scripts/setupextensions.js",
