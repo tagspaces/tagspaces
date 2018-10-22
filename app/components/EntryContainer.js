@@ -599,15 +599,21 @@ class EntryContainer extends React.Component<Props, State> {
             const fileName = extractFileNameWithoutExt(entryName);
             const modifiedEntryName = `${fileName}_${moment(date).format('YYYYMMDD')}~${moment(date).format('hhmmss')}.${fileExtension}`;
 
-            if (!AppConfig.isWeb) {
-              downloadLink.setAttribute('href', `file:///${currentEntry.path}`);
-            } else {
-              const link = `${location.protocol}//${location.hostname}${location.port !== '' ? `:${location.port}` : ''}${modifiedEntryName}`;
-              downloadLink.setAttribute('href', link);
-            }
+            if (downloadLink) {
+              if (AppConfig.isWeb) {
+                const link = `${location.protocol}//${location.hostname}${location.port !== '' ? `:${location.port}` : ''}${modifiedEntryName}`;
+                downloadLink.setAttribute('href', link);
+              } else {
+                downloadLink.setAttribute('href', `file:///${currentEntry.path}`);
+              }
 
-            downloadLink.setAttribute('download', modifiedEntryName);
-            downloadLink.click();
+              if (currentEntry.url) {
+                downloadLink.setAttribute('href', currentEntry.url);
+              }
+
+              downloadLink.setAttribute('download', fileName); //
+              downloadLink.click();
+            }
           }}
         >
           <FileDownloadIcon />
@@ -753,7 +759,7 @@ class EntryContainer extends React.Component<Props, State> {
         fileOpenerURL =
           currentEntry.editingExtensionPath +
           '/index.html?file=' +
-          encodeURIComponent(currentEntry.path) +
+          encodeURIComponent(currentEntry.url ? currentEntry.url : currentEntry.path) +
           '&locale=' +
           i18n.language +
           '&edit=true';
@@ -761,7 +767,7 @@ class EntryContainer extends React.Component<Props, State> {
         fileOpenerURL =
           currentEntry.viewingExtensionPath +
           '/index.html?file=' +
-          encodeURIComponent(currentEntry.path) +
+          encodeURIComponent(currentEntry.url ? currentEntry.url : currentEntry.path) +
           '&locale=' +
           i18n.language;
       }
