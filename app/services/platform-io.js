@@ -116,8 +116,12 @@ export default class PlatformIO {
     return nativeAPI.listDirectoryPromise(path, lite);
   };
 
-  static getPropertiesPromise = (path: string): Promise<any> =>
-    nativeAPI.getPropertiesPromise(path);
+  static getPropertiesPromise = (path: string): Promise<any> => {
+    if (objectStoreAPI) {
+      return objectStoreAPI.getPropertiesPromise(path);
+    }
+    return nativeAPI.getPropertiesPromise(path);
+  }
 
   static createDirectoryPromise = (dirPath: string): Promise<any> =>
     nativeAPI.createDirectoryPromise(dirPath);
@@ -140,12 +144,22 @@ export default class PlatformIO {
   static loadTextFilePromise = (
     filePath: string,
     isPreview?: boolean
-  ): Promise<any> => nativeAPI.loadTextFilePromise(filePath, isPreview);
+  ): Promise<any> => {
+    if (objectStoreAPI) {
+      return objectStoreAPI.loadTextFilePromise(filePath, isPreview);
+    }
+    return nativeAPI.loadTextFilePromise(filePath, isPreview);
+  }
 
   static getFileContentPromise = (
-    fullPath: string,
+    filePath: string,
     type: string
-  ): Promise<Object> => nativeAPI.getFileContentPromise(fullPath, type);
+  ): Promise<Object> => {
+    if (objectStoreAPI) {
+      return objectStoreAPI.getFileContentPromise(filePath, type);
+    }
+    return nativeAPI.getFileContentPromise(filePath, type);
+  }
 
   static saveFilePromise = (
     filePath: string,
