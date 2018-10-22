@@ -47,13 +47,13 @@ class LocationMenu extends React.Component { // <Props, State> {
     // this.props.toggleLocationChooser();
   };
 
-  // anchorEl={this.state.locationChooserMenuAnchorEl}
 
   render() {
     return (
       <Menu
         id="simple-menu"
         open={this.props.locationChooserMenuOpened}
+        anchorEl={this.props.menuAnchorEl}
         onClose={this.props.toggleLocationChooser}
         PaperProps={{
           style: {

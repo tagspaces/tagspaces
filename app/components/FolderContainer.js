@@ -47,7 +47,6 @@ import {
   getLastSelectedEntry,
   getSearchResultCount,
   isReadOnlyMode,
-  isLocationMenuOpened
 } from '../reducers/app';
 import TaggingActions from '../reducers/tagging-actions';
 import { type Tag } from '../reducers/taglibrary';
@@ -159,7 +158,7 @@ type Props = {
   showNotification: () => void,
   isLocationMenuOpened: boolean,
   locationMenu: () => void,
-  toggleLocationMenu: () => void
+  // toggleLocationMenu: () => void
 };
 
 type State = {
@@ -278,13 +277,6 @@ class FolderContainer extends React.Component<Props, State> {
     });
   };
 
-  handleLocationMenu = (event: Object) => {
-    this.setState({
-      locationMenu: true,
-      locationChooserMenuAnchorEl: event.currentTarget
-    });
-  };
-
   openDirectoryMenu = (event: Object) => {
     this.setState({
       directoryContextMenuOpened: true,
@@ -387,6 +379,8 @@ class FolderContainer extends React.Component<Props, State> {
               <LocationMenu
                 open={this.state.locationChooserMenuOpened}
                 toggleLocationChooser={this.toggleLocationChooser}
+                menuAnchorEl={this.state.locationChooserMenuAnchorEl}
+
               />
               <div className={classes.flexMiddle} data-tid="entriesFound">
                 {this.props.searchResultCount > 0 && (
