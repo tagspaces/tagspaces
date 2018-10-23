@@ -375,6 +375,7 @@ class FolderContainer extends React.Component<Props, State> {
               </Button>
               <LocationMenu
                 open={this.state.locationChooserMenuOpened}
+                openLocation={this.props.openLocation}
                 toggleLocationChooser={this.toggleLocationChooser}
                 menuAnchorEl={this.state.locationChooserMenuAnchorEl}
               />

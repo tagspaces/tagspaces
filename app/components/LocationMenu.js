@@ -43,16 +43,15 @@ import { getLocations, type Location } from '../reducers/locations';
 
 class LocationMenu extends React.Component { // <Props, State> {
   openLocation = locationId => {
-    // this.props.openLocation(locationId);
-    // this.props.toggleLocationChooser();
+    this.props.openLocation(locationId);
+    this.props.toggleLocationChooser();
   };
-
 
   render() {
     return (
       <Menu
         id="simple-menu"
-        open={this.props.locationChooserMenuOpened}
+        open={this.props.open}
         anchorEl={this.props.menuAnchorEl}
         onClose={this.props.toggleLocationChooser}
         PaperProps={{
@@ -87,6 +86,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps)(
-  withStyles(LocationMenu)
-);
+export default connect(mapStateToProps)(LocationMenu);
