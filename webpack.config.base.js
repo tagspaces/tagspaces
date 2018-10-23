@@ -12,8 +12,11 @@ export default {
   module: {
     rules: [{
       test: /\.jsx?$/,
-      exclude: path.resolve(__dirname, '/node_modules'),
+      // exclude: path.resolve(__dirname, '/node_modules/'),
       // exclude: /node_modules/,
+      include: [
+        /app/
+      ],
       use: {
         loader: 'babel-loader',
         options: {
