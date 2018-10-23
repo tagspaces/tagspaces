@@ -27,7 +27,7 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Toolbar from '@material-ui/core/Toolbar';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/List';
+import ListItemText from '@material-ui/core/ListItemText';
 import Grid from '@material-ui/core/Grid';
 import ParentDirIcon from '@material-ui/icons/SubdirectoryArrowLeft';
 import ViewListIcon from '@material-ui/icons/ViewList';

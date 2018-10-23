@@ -21,7 +21,7 @@ import React from 'react';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/DeleteForever';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/List';
+import ListItemText from '@material-ui/core/ListItemText';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import ConfirmDialog from '../dialogs/ConfirmDialog';
@@ -95,19 +95,13 @@ class EntryTagMenu extends React.Component<Props, State> {
           <ListItemIcon>
             <EditIcon />
           </ListItemIcon>
-          <ListItemText
-            inset
-            primary={i18n.t('core:editTag')}
-          />
+          <ListItemText inset primary={i18n.t('core:editTag')} />
         </MenuItem>
         <MenuItem data-tid="deleteTagMenu" onClick={this.showDeleteTagDialog}>
           <ListItemIcon>
             <DeleteIcon />
           </ListItemIcon>
-          <ListItemText
-            inset
-            primary={i18n.t('core:removeTag')}
-          />
+          <ListItemText inset primary={i18n.t('core:removeTag')} />
         </MenuItem>
       </Menu>
       <ConfirmDialog
