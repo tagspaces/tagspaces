@@ -156,9 +156,6 @@ type Props = {
   setLastSelectedEntry: (entryPath: string | null) => void,
   isReadOnlyMode: boolean,
   showNotification: () => void,
-  isLocationMenuOpened: boolean,
-  locationMenu: () => void,
-  // toggleLocationMenu: () => void
 };
 
 type State = {
@@ -182,7 +179,7 @@ class FolderContainer extends React.Component<Props, State> {
     isDirectoryMenuOpened: false,
     locationChooserMenuOpened: false,
     isLocationMenuVisible: false,
-    // locationChooserMenuAnchorEl: null,
+    locationChooserMenuAnchorEl: null,
     directoryContextMenuOpened: false,
     directoryContextMenuAnchorEl: null,
     perspectiveChooserMenuOpened: false,
@@ -380,7 +377,6 @@ class FolderContainer extends React.Component<Props, State> {
                 open={this.state.locationChooserMenuOpened}
                 toggleLocationChooser={this.toggleLocationChooser}
                 menuAnchorEl={this.state.locationChooserMenuAnchorEl}
-
               />
               <div className={classes.flexMiddle} data-tid="entriesFound">
                 {this.props.searchResultCount > 0 && (
@@ -468,7 +464,6 @@ function mapActionCreatorsToProps(dispatch) {
       loadParentDirectoryContent: AppActions.loadParentDirectoryContent,
       setLastSelectedEntry: AppActions.setLastSelectedEntry,
       showNotification: AppActions.showNotification
-      // toggleLocationMenu: AppActions.toggleLocationMenu
     },
     dispatch
   );
