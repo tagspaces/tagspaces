@@ -396,12 +396,7 @@ class MainPage extends Component<Props, State> {
           open={this.props.notificationStatus.visible}
           onClose={this.props.hideNotifications}
           autoHideDuration={this.props.notificationStatus.autohide ? 3000 : undefined}
-          ContentProps={{
-            'aria-describedby': 'message-id'
-          }}
-          message={
-            <span id="message-id">{this.props.notificationStatus.text}</span>
-          }
+          message={this.props.notificationStatus.text}
           action={[
             <IconButton
               key="close"
@@ -417,15 +412,7 @@ class MainPage extends Component<Props, State> {
           anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
           open={this.props.isIndexing}
           autoHideDuration={undefined}
-          ContentProps={{
-            'aria-describedby': 'message-id'
-          }}
-          message={
-            <div style={{ width: '100%' }}>
-              <LinearProgress />
-              <span id="message-id">Indexing</span>
-            </div>
-          }
+          message={'Indexing'}
           action={[
             <Button
               color="secondary"
@@ -440,12 +427,7 @@ class MainPage extends Component<Props, State> {
           anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
           open={this.props.isUpdateAvailable}
           autoHideDuration={undefined}
-          ContentProps={{
-            'aria-describedby': 'message-id'
-          }}
-          message={
-            <span id="message-id">Version {this.props.lastPublishedVersion} available.</span>
-          }
+          message={'Version ' + this.props.lastPublishedVersion + ' available.'}
           action={[
             <Button
               color="secondary"
