@@ -27,7 +27,7 @@
     "update-i18n": "tx pull -a -d",
     "version-meta": "node scripts/versionmeta.js",
     "third-party": "yarn licenses generate-disclaimer --silent > app/third-party.txt",
-    "package": "yarn bump-version && yarn build && yarn package-win && yarn package-linux && yarn package-mac",
+    "package": "yarn build && yarn package-win && yarn package-linux && yarn package-mac",
     "package-mac": "build --mac --x64 --config resources/builder.json",
     "package-mac-pro": "build --mac --x64 --config app/node_modules/@tagspaces/pro/resources/builder-pro.json",
     "package-win": "build --win --x64 --config resources/builder.json",
