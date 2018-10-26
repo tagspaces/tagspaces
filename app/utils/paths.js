@@ -161,7 +161,12 @@ export function extractTitle(entryPath: string, isDirectory?: boolean = false) {
     // case: "title1 [tag1 tag2] title2"
     return title.slice(0, beginTagContainer) + title.slice(endTagContainer + 1, title.length);
   }
-  return decodeURIComponent(title);
+  try {
+    title = decodeURIComponent(title);
+  } catch (e) {
+    console.warn('Decoding URI failed on: ' + title + ' with ' + e);
+  }
+  return title;
 }
 
 export function extractTagsAsObjects(filePath: string): Array<Tag> {
