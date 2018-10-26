@@ -21,7 +21,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import FolderIcon from '@material-ui/icons/Folder';
-// import { withStyles } from '@material-ui/core/styles';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -36,21 +35,19 @@ import {
   getCurrentLocationId } from '../reducers/app';
 
 type Props = {
-  classes: Object,
   currentLocationId: string | null,
   locations: Array<Location>,
-  openLocation: (path: string) => void,
-  toggleLocationChooser: (event?: Object) => void,
-  menuAnchorEl: null | Object
+  menuAnchorEl: null | Object,
+  openLocation: (locationId: string) => void
 };
 
 type State = {
-  currentLocation?: Location,
+  currentLocation?: Location | null,
   locationChooserMenuOpened: boolean,
   locationChooserMenuAnchorEl: null | Object
 };
 
-class LocationMenu extends React.Component <Props, State> {
+class LocationMenu extends React.Component { //  <Props, State>
   state = {
     locationChooserMenuOpened: false,
     locationChooserMenuAnchorEl: null,
@@ -76,7 +73,7 @@ class LocationMenu extends React.Component <Props, State> {
 
   openLocation = locationId => {
     this.props.openLocation(locationId);
-    this.props.toggleLocationChooser();
+    this.toggleLocationChooser();
   };
 
   toggleLocationChooser = (event?: Object) => {

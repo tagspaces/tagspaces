@@ -38,12 +38,10 @@ import LocationMenu from './LocationMenu';
 import DirectoryMenu from './menus/DirectoryMenu';
 import i18n from '../services/i18n';
 import { getPerspectives } from '../reducers/settings';
-import { getLocations, type Location } from '../reducers/locations';
 import {
   actions as AppActions,
   getDirectoryContent,
   getDirectoryPath,
-  getCurrentLocationId,
   getLastSelectedEntry,
   getSearchResultCount,
   isReadOnlyMode,
@@ -130,7 +128,6 @@ type Props = {
   windowHeight: number,
   windowWidth: number,
   directoryContent: Array<Object>,
-  currentLocationId: string | null,
   currentDirectoryPath: string | null,
   searchResultCount: number,
   lastSelectedEntry: string | null,
@@ -146,7 +143,6 @@ type Props = {
   getPrevFile: () => string,
   openDirectory: () => void,
   sortByCriteria: () => void,
-  openLocation: (path: string) => void,
   openFile: (path: string) => void,
   deleteDirectory: (path: string) => void,
   reflectCreateEntry: (path: string, isFile: boolean) => void,
@@ -158,7 +154,6 @@ type Props = {
 };
 
 type State = {
-  currentLocation?: Location,
   currentPerspective?: string,
   isPropertiesPanelVisible?: boolean,
   locationChooserMenuOpened?: boolean,
@@ -167,8 +162,7 @@ type State = {
   directoryMenuAnchorEl?: null | Object,
   perspectiveChooserMenuOpened?: boolean,
   perspectiveChooserMenuAnchorEl?: null | Object,
-  perspectiveCommand?: null | Object,
-  isLocationMenuVisible?: boolean
+  perspectiveCommand?: null | Object
 };
 
 class FolderContainer extends React.Component<Props, State> {
@@ -176,9 +170,6 @@ class FolderContainer extends React.Component<Props, State> {
     currentPerspective: 'grid',
     isPropertiesPanelVisible: false,
     isDirectoryMenuOpened: false,
-    locationChooserMenuOpened: false,
-    isLocationMenuVisible: false,
-    locationChooserMenuAnchorEl: null,
     directoryContextMenuOpened: false,
     directoryContextMenuAnchorEl: null,
     perspectiveChooserMenuOpened: false,
@@ -246,13 +237,6 @@ class FolderContainer extends React.Component<Props, State> {
     }
   };
 
-  toggleLocationChooser = (event?: Object) => {
-    this.setState({
-      locationChooserMenuOpened: !this.state.locationChooserMenuOpened,
-      locationChooserMenuAnchorEl: event ? event.currentTarget : null
-    });
-  };
-
   openDirectoryMenu = (event: Object) => {
     this.setState({
       directoryContextMenuOpened: true,
@@ -272,11 +256,6 @@ class FolderContainer extends React.Component<Props, State> {
       perspectiveChooserMenuOpened: !this.state.perspectiveChooserMenuOpened,
       perspectiveChooserMenuAnchorEl: event ? event.currentTarget : null
     });
-  };
-
-  openLocation = locationId => {
-    this.props.openLocation(locationId);
-    this.toggleLocationChooser();
   };
 
   renderPerspective() {
@@ -327,9 +306,7 @@ class FolderContainer extends React.Component<Props, State> {
       */
     }
     return (
-      <WelcomePanel
-        openLocation={this.props.openLocation}
-      />
+      <WelcomePanel />
     );
   }
 
@@ -341,12 +318,7 @@ class FolderContainer extends React.Component<Props, State> {
         <div className={classes.mainPanel}>
           <div className={classes.topPanel}>
             <div className={classes.toolbar}>
-              <LocationMenu
-                open={this.state.locationChooserMenuOpened}
-                openLocation={this.props.openLocation}
-                toggleLocationChooser={this.toggleLocationChooser}
-                menuAnchorEl={this.state.locationChooserMenuAnchorEl}
-              />
+              <LocationMenu />
               <div className={classes.flexMiddle} data-tid="entriesFound">
                 {this.props.searchResultCount > 0 && (
                   <Typography className={classes.entriesFound}>
@@ -354,8 +326,7 @@ class FolderContainer extends React.Component<Props, State> {
                   </Typography>
                 )}
               </div>
-              {this.state.currentLocation &&
-                this.props.currentDirectoryPath && (
+              {this.props.currentDirectoryPath && (
                   <div>
                     <Button
                       data-tid="folderContainerOpenDirMenu"
@@ -399,10 +370,8 @@ class FolderContainer extends React.Component<Props, State> {
 
 function mapStateToProps(state) {
   return {
-    locations: getLocations(state),
     currentDirectoryPath: getDirectoryPath(state),
     lastSelectedEntry: getLastSelectedEntry(state),
-    currentLocationId: getCurrentLocationId(state),
     perspectives: getPerspectives(state),
     directoryContent: getDirectoryContent(state),
     searchResultCount: getSearchResultCount(state),
@@ -425,7 +394,6 @@ function mapActionCreatorsToProps(dispatch) {
       getPrevFile: AppActions.getPrevFile,
       openDirectory: AppActions.openDirectory,
       sortByCriteria: AppActions.sortByCriteria,
-      openLocation: AppActions.openLocation,
       openFile: AppActions.openFile,
       deleteDirectory: AppActions.deleteDirectory,
       reflectCreateEntry: AppActions.reflectCreateEntry,
