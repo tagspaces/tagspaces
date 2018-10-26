@@ -65,5 +65,7 @@ app/THIRD-PARTY.html
 app/THIRD-PARTY.txt
 
 scripts/setuppro.js
+scripts/enablepro.js
 
 tsprofile
+CHANGELOG.TXT
