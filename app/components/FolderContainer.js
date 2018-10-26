@@ -129,7 +129,6 @@ type Props = {
   classes: Object,
   windowHeight: number,
   windowWidth: number,
-  locations: Array<Location>,
   directoryContent: Array<Object>,
   currentLocationId: string | null,
   currentDirectoryPath: string | null,
@@ -174,7 +173,7 @@ type State = {
 
 class FolderContainer extends React.Component<Props, State> {
   state = {
-    currentPerspective: '',
+    currentPerspective: 'grid',
     isPropertiesPanelVisible: false,
     isDirectoryMenuOpened: false,
     locationChooserMenuOpened: false,
@@ -185,26 +184,6 @@ class FolderContainer extends React.Component<Props, State> {
     perspectiveChooserMenuOpened: false,
     perspectiveChooserMenuAnchorEl: null,
     perspectiveCommand: {}
-  };
-
-  componentWillReceiveProps = (nextProps: Props) => {
-    if (nextProps.currentLocationId != null) {
-      this.props.locations.map((location: Location) => {
-        if (location.uuid === nextProps.currentLocationId) {
-          this.setState({
-            currentLocation: location,
-            currentPerspective: 'grid' // TODO for removing
-          });
-        }
-        return true;
-      });
-    } else {
-      // closing the perspective
-      this.setState({
-        currentLocation: undefined,
-        currentPerspective: undefined
-      });
-    }
   };
 
   keyBindingHandlers = {
@@ -349,7 +328,6 @@ class FolderContainer extends React.Component<Props, State> {
     }
     return (
       <WelcomePanel
-        locations={this.props.locations}
         openLocation={this.props.openLocation}
       />
     );
@@ -368,6 +346,7 @@ class FolderContainer extends React.Component<Props, State> {
                 openLocation={this.props.openLocation}
                 toggleLocationChooser={this.toggleLocationChooser}
                 menuAnchorEl={this.state.locationChooserMenuAnchorEl}
+                currentLocationId={this.props.currentLocationId}
               />
               <div className={classes.flexMiddle} data-tid="entriesFound">
                 {this.props.searchResultCount > 0 && (

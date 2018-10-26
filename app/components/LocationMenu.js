@@ -37,21 +37,31 @@ import {
 
 type Props = {
   classes: Object,
-  currentLocationId: string | null
+  currentLocationId: string | null,
+  locations: Array<Location>,
+  openLocation: (path: string) => void,
+  toggleLocationChooser: (event?: Object) => void,
+  menuAnchorEl: null | Object
 };
 
 type State = {
-  currentLocation?: Location
+  currentLocation?: Location,
+  locationChooserMenuOpened: boolean,
+  locationChooserMenuAnchorEl: null | Object
 };
 
-class LocationMenu extends React.Component { // <Props, State> {
+class LocationMenu extends React.Component <Props, State> {
+  state = {
+    locationChooserMenuOpened: false,
+    locationChooserMenuAnchorEl: null,
+  }
+
   componentWillReceiveProps = (nextProps: Props) => {
     if (nextProps.currentLocationId != null) {
       this.props.locations.map((location: Location) => {
         if (location.uuid === nextProps.currentLocationId) {
           this.setState({
             currentLocation: location,
-            currentPerspective: 'grid' // TODO for removing
           });
         }
         return true;
@@ -60,7 +70,6 @@ class LocationMenu extends React.Component { // <Props, State> {
       // closing the perspective
       this.setState({
         currentLocation: undefined,
-        currentPerspective: undefined
       });
     }
   };
