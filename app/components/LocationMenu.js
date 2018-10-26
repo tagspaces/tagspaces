@@ -19,9 +19,9 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-// import { bindActionCreators } from 'redux';
+import { bindActionCreators } from 'redux';
 import FolderIcon from '@material-ui/icons/Folder';
-import { withStyles } from '@material-ui/core/styles';
+// import { withStyles } from '@material-ui/core/styles';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -29,25 +29,42 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ListSubHeader from '@material-ui/core/ListSubheader';
 import Button from '@material-ui/core/Button';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
-// import DirectoryMenu from './menus/DirectoryMenu';
 import i18n from '../services/i18n';
 import { getLocations, type Location } from '../reducers/locations';
-/* import {
-   actions as AppActions,
-   getDirectoryContent,
-   getDirectoryPath,
-   getCurrentLocationId,
-   getLastSelectedEntry,
-   getSearchResultCount,
-   isReadOnlyMode
-} from '../reducers/app'; */
-// import { extractDirectoryName } from '../utils/paths';
+import {
+  actions as AppActions,
+  getCurrentLocationId } from '../reducers/app';
 
 type Props = {
-  classes: Object
+  classes: Object,
+  currentLocationId: string | null
+};
+
+type State = {
+  currentLocation?: Location
 };
 
 class LocationMenu extends React.Component { // <Props, State> {
+  componentWillReceiveProps = (nextProps: Props) => {
+    if (nextProps.currentLocationId != null) {
+      this.props.locations.map((location: Location) => {
+        if (location.uuid === nextProps.currentLocationId) {
+          this.setState({
+            currentLocation: location,
+            currentPerspective: 'grid' // TODO for removing
+          });
+        }
+        return true;
+      });
+    } else {
+      // closing the perspective
+      this.setState({
+        currentLocation: undefined,
+        currentPerspective: undefined
+      });
+    }
+  };
+
   openLocation = locationId => {
     this.props.openLocation(locationId);
     this.props.toggleLocationChooser();
@@ -61,12 +78,10 @@ class LocationMenu extends React.Component { // <Props, State> {
   };
 
   render() {
-    const { classes } = this.props;
     return (
       <div>
         <Button
           data-tid="folderContainerLocationChooser"
-          className={classes.locationSelectorButton}
           onClick={this.toggleLocationChooser}
         >
           {this.state.currentLocation
@@ -109,7 +124,20 @@ class LocationMenu extends React.Component { // <Props, State> {
 function mapStateToProps(state) {
   return {
     locations: getLocations(state),
+    currentLocationId: getCurrentLocationId(state)
   };
 }
 
-export default connect(mapStateToProps)(LocationMenu);
+function mapActionCreatorsToProps(dispatch) {
+  return bindActionCreators(
+    {
+      openLocation: AppActions.openLocation,
+    },
+    dispatch
+  );
+}
+
+export default connect(
+  mapStateToProps,
+  mapActionCreatorsToProps
+)(LocationMenu);

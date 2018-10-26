@@ -155,7 +155,7 @@ type Props = {
   loadParentDirectoryContent: () => void,
   setLastSelectedEntry: (entryPath: string | null) => void,
   isReadOnlyMode: boolean,
-  showNotification: () => void,
+  showNotification: () => void
 };
 
 type State = {
@@ -363,16 +363,6 @@ class FolderContainer extends React.Component<Props, State> {
         <div className={classes.mainPanel}>
           <div className={classes.topPanel}>
             <div className={classes.toolbar}>
-              <Button
-                data-tid="folderContainerLocationChooser"
-                className={classes.locationSelectorButton}
-                onClick={this.toggleLocationChooser}
-              >
-                {this.state.currentLocation
-                  ? this.state.currentLocation.name
-                  : i18n.t('core:pleaseOpenLocation')}
-                <ArrowDropDownIcon />
-              </Button>
               <LocationMenu
                 open={this.state.locationChooserMenuOpened}
                 openLocation={this.props.openLocation}
