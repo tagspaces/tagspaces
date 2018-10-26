@@ -100,9 +100,9 @@ class LocationMenu extends React.Component <Props, State> {
         </Button>
         <Menu
           id="simple-menu"
-          open={this.props.open}
-          anchorEl={this.props.menuAnchorEl}
-          onClose={this.props.toggleLocationChooser}
+          open={this.state.locationChooserMenuOpened}
+          anchorEl={this.state.locationChooserMenuAnchorEl}
+          onClose={this.toggleLocationChooser}
           PaperProps={{
             style: {
               maxHeight: 48 * 6.5,

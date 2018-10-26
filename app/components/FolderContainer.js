@@ -346,7 +346,6 @@ class FolderContainer extends React.Component<Props, State> {
                 openLocation={this.props.openLocation}
                 toggleLocationChooser={this.toggleLocationChooser}
                 menuAnchorEl={this.state.locationChooserMenuAnchorEl}
-                currentLocationId={this.props.currentLocationId}
               />
               <div className={classes.flexMiddle} data-tid="entriesFound">
                 {this.props.searchResultCount > 0 && (
