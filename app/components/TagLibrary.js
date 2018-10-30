@@ -235,10 +235,10 @@ class TagLibrary extends React.Component<Props, State> {
         className={this.props.classes.listItem}
         onClick={event => this.handleTagGroupTitleClick(event, tagGroup)}
       >
-        <ListItemIcon>
+        <ListItemIcon style={{ marginRight: 0 }}>
           {tagGroup.expanded ? <ArrowDownIcon /> : <ArrowRightIcon />}
         </ListItemIcon>
-        <ListItemText inset primary={tagGroup.title} />
+        <ListItemText style={{ paddingLeft: 0 }} inset primary={tagGroup.title} />
         <ListItemSecondaryAction>
           <IconButton
             aria-label={i18n.t('core:options')}
