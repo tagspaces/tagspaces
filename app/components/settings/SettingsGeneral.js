@@ -117,17 +117,14 @@ class SettingsGeneral extends React.Component<Props, State> {
           <ListItemText primary={i18n.t('core:interfaceLanguage')} />
           <Select
             data-tid="settingsSetLanguage"
-            native
             value={this.props.settings.interfaceLanguage}
-            onChange={event => {
-              this.props.setLanguage(event.target.value);
-            }}
+            onChange={event => this.props.setLanguage(event.target.value)}
             input={<Input id="languageSelector" />}
           >
             {this.props.settings.supportedLanguages.map(language => (
-              <option key={language.iso} value={language.iso}>
+              <MenuItem key={language.iso} value={language.iso}>
                 {language.title}
-              </option>
+              </MenuItem>
             ))}
           </Select>
         </ListItem>
