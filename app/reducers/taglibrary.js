@@ -364,10 +364,12 @@ export default (state: Array<TagGroup> = defaultTagLibrary, action: Object) => {
       });
     } else {
       action.entry.forEach((tagGroup, index) => {
-        if (tagGroup.uuid === state.uuid) {
+        const stateTagGroup = state.find(obj => obj.uuid === tagGroup.uuid);
+        if (stateTagGroup !== undefined) {
           tagGroup.children.forEach((tag) => {
-            if (tag.id !== action.id) {
-              arr.push(tagGroup[index].children.push(tag))
+            const stateTag = stateTagGroup.children.find(obj => obj.id === tag.id);
+            if (stateTag === undefined) {
+              arr.push(tagGroup[index].children.push(tag));
             }
           });
         } else {
