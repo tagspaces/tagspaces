@@ -105,9 +105,9 @@ class TagContainer extends React.Component<Props> {
       <div
         data-tid={'tagContainer_' + tag.title.replace(/ /g, '_')}
         key={this.props.key}
-        onClick={event => this.props.handleTagMenu(event, tag, entryPath ? entryPath: tagGroup)}
-        onContextMenu={event => this.props.handleTagMenu(event, tag, entryPath ? entryPath: tagGroup)}
-        onDoubleClick={event => this.props.handleTagMenu(event, tag, entryPath ? entryPath: tagGroup)}
+        onClick={event => this.props.handleTagMenu(event, tag, entryPath || tagGroup)}
+        onContextMenu={event => this.props.handleTagMenu(event, tag, entryPath || tagGroup)}
+        onDoubleClick={event => this.props.handleTagMenu(event, tag, entryPath || tagGroup)}
         style={{
           backgroundColor: 'transparent',
           marginLeft: 4,
