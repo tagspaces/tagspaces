@@ -376,7 +376,7 @@ class TagLibrary extends React.Component<Props, State> {
           anchorEl={this.state.importExportMenuAnchorEl}
           open={this.state.importExportMenuOpened}
           onClose={this.handleCloseImportExportMenu}
-          tagGroups={this.props.tagGroups}
+          tagGroups={tagGroups}
           importTagGroups={this.props.importTagGroups}
           exportTagGroups={this.props.exportTagGroups}
           showCreateTagGroupDialog={this.showCreateTagGroupDialog}
@@ -392,7 +392,7 @@ class TagLibrary extends React.Component<Props, State> {
           deleteTag={this.props.deleteTag}
         />
         <div className={classes.taggroupsArea} data-tid="tagLibraryTagGroupList">
-          <List style={{ paddingTop: 0 }}>{this.props.tagGroups.map(this.renderTagGroup)}</List>
+          <List style={{ paddingTop: 0 }}>{tagGroups.map(this.renderTagGroup)}</List>
         </div>
       </div>
     );
