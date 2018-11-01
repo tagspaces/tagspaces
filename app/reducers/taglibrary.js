@@ -364,13 +364,12 @@ export default (state: Array<TagGroup> = defaultTagLibrary, action: Object) => {
       });
     } else {
       action.entry.forEach((tagGroup) => {
-        const stateTagGroup = state.find(obj => obj.uuid === tagGroup.uuid);
-        if (stateTagGroup !== undefined) {
+        const index = state.findIndex(obj => obj.uuid === tagGroup.uuid);
+        if (index > -1) {
           tagGroup.children.forEach((tag) => {
-            const stateTag = stateTagGroup.children.find(obj => obj.id === tag.id);
+            const stateTag = state[index].children.find(obj => obj.id === tag.id);
             if (stateTag === undefined) {
-              const findIndex = state.findIndex(obj => obj.uuid === tagGroup.uuid);
-              arr[findIndex].children.push(tag);
+              arr[index].children.push(tag);
             }
           });
         } else {
