@@ -46,7 +46,7 @@
     "cordova-create": "cordova create ./cordova org.tagspaces.mobile TagSpaces",
     "start-android": "yarn build-cordova && yarn run-android",
     "update-changelog": "git log v3.0.0-beta.16..HEAD --no-merges --format=%B > CHANGELOG.TXT",
-    "clean": "find . -name 'node_modules' -type d -exec rm -rf {} +"
+    "clean": "rm -Rf app/dist && find . -name 'node_modules' -type d -exec rm -rf {} +"
   },
   "browserslist": "electron 2.0",
   "repository": {
