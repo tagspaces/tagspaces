@@ -329,7 +329,7 @@ export default (state: Array<TagGroup> = defaultTagLibrary, action: Object) => {
     return state;
   }
   case types.IMPORT_TAGGROUP: {
-    const arr = state;
+    const arr = [...state];
     console.log(arr);
     if (action.entry[0].key) {
       action.entry.forEach((tagGroup, index) => {
@@ -363,13 +363,14 @@ export default (state: Array<TagGroup> = defaultTagLibrary, action: Object) => {
         }
       });
     } else {
-      action.entry.forEach((tagGroup, index) => {
+      action.entry.forEach((tagGroup) => {
         const stateTagGroup = state.find(obj => obj.uuid === tagGroup.uuid);
         if (stateTagGroup !== undefined) {
           tagGroup.children.forEach((tag) => {
             const stateTag = stateTagGroup.children.find(obj => obj.id === tag.id);
             if (stateTag === undefined) {
-              arr.push(tagGroup[index].children.push(tag));
+              const findIndex = state.findIndex(obj => obj.uuid === tagGroup.uuid);
+              arr[findIndex].children.push(tag);
             }
           });
         } else {
@@ -378,10 +379,7 @@ export default (state: Array<TagGroup> = defaultTagLibrary, action: Object) => {
       });
     }
 
-    if (arr.length > 0) {
-      return arr;
-    }
-    return state;
+    return arr;
   }
   default: {
     return state;

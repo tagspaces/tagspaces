@@ -43,6 +43,11 @@ export default merge.smart(baseConfig, {
     path.join(__dirname, 'app/index.js'),
   ],
 
+  optimization: {
+    // We no not want to minimize our code.
+    minimize: false
+  },
+
   output: {
     publicPath: `http://localhost:${port}/dist/`
   },
@@ -232,8 +237,8 @@ export default merge.smart(baseConfig, {
           ['run', 'start-main-dev'],
           { shell: true, env: process.env, stdio: 'inherit' }
         )
-        .on('close', code => process.exit(code))
-        .on('error', spawnError => console.error(spawnError));
+          .on('close', code => process.exit(code))
+          .on('error', spawnError => console.error(spawnError));
       }
     }
   },
