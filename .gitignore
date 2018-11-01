@@ -69,3 +69,7 @@ scripts/enablepro.js
 
 tsprofile
 CHANGELOG.TXT
+
+web/dist
+web/node_modules
+web/test
