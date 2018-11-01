@@ -126,7 +126,7 @@ Contributor License Agreement
 
 The CLA is an agreement commonly used in major open source project, which aims at protecting all parties implied by a contribution: the contributor, the main code author, and above all, the community. The CLA model we have chosen basically tells the following: the contribution’s copyright is shared between the contributor and the main author. This means each party can do whatever she want in term of relicensing with this contributed piece of code. This is important, because, if in the future, the author wants to change the license in something more in favor of the community, a singular contributor cannot block the process.
 
-The Contributor License Agreement can be signed online on the following [CLA form](http://tagspaces.org/contribute).
+The Contributor License Agreement can be signed online on the following [CLA form](http://tagspaces.org/contribute/).
 
 ## Translations
 You can help the translation of this application in your favorite languages by joining the translations teams on [Transifex](https://www.transifex.com/tagspaces/tagspaces/).
