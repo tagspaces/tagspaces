@@ -46,6 +46,7 @@ export const types = {
   SET_CALCULATETAGS: 'SETTINGS/SET_CALCULATETAGS',
   SET_USETRASHCAN: 'SETTINGS/SET_USETRASHCAN',
   SET_PERSISTTAGSINSIDECARFILE: 'SETTINGS/SET_PERSISTTAGSINSIDECARFILE',
+  SET_ADDTAGSTOLIBRARY: 'SETTINGS/SET_ADDTAGSTOLIBRARY',
   SET_USEGENERATETHUMBNAILS: 'SETTINGS/SET_USEGENERATETHUMBNAILS',
   SET_USETEXTEXTRACTION: 'SETTINGS/SET_USETEXTEXTRACTION',
   SET_TAGCOLOR: 'SETTINGS/SET_TAGCOLOR',
@@ -133,6 +134,9 @@ export default (state = defaultSettings, action) => {
   }
   case types.SET_PERSISTTAGSINSIDECARFILE: {
     return { ...state, persistTagsInSidecarFile: action.persistTagsInSidecarFile };
+  }
+  case types.SET_ADDTAGSTOLIBRARY: {
+    return { ...state, addTagsToLibrary: action.addTagsToLibrary };
   }
   case types.SET_USEGENERATETHUMBNAILS: {
     return { ...state, useGenerateThumbnails: action.useGenerateThumbnails };
@@ -272,6 +276,10 @@ export const actions = {
   setPersistTagsInSidecarFile: (persistTagsInSidecarFile: boolean) => ({
     type: types.SET_PERSISTTAGSINSIDECARFILE,
     persistTagsInSidecarFile
+  }),
+  setAddTagsToLibrary: (addTagsToLibrary: boolean) => ({
+    type: types.SET_ADDTAGSTOLIBRARY,
+    addTagsToLibrary
   }),
   setUseGenerateThumbnails: (useGenerateThumbnails: boolean) => ({
     type: types.SET_USEGENERATETHUMBNAILS,
