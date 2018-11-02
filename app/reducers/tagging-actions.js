@@ -17,6 +17,7 @@
  * @flow
  */
 
+import i18n from '../services/i18n';
 import { actions as AppActions } from './app';
 import { actions as TagLibraryActions, type Tag } from './taglibrary';
 import {
@@ -47,7 +48,7 @@ const actions = {
     dispatch: (actions: Object) => void,
     getState: () => Object
   ) => {
-    const { settings } = getState();
+    const { settings, taglibrary } = getState();
     const processedTags = [];
     tags.map((pTag) => {
       const tag = { ...pTag };
@@ -60,17 +61,27 @@ const actions = {
     });
 
     if (settings.addTagsToLibrary) {
-      const tagGroup = {
-        uuid: 'custom_tag_group_id', // uuid needs to be constant here (see mergeTagGroup)
-        title: 'Custom',
-        expanded: true,
-        color: '#00ff00',
-        textcolor: '#000',
-        children: processedTags,
-        created_date: new Date(),
-        modified_date: new Date()
-      };
-      dispatch(TagLibraryActions.mergeTagGroup(tagGroup));
+      // filter existed in tagLibrary
+      const uniqueTags = [];
+      processedTags.map((tag) => {
+        if (taglibrary.findIndex(tagGroup => tagGroup.children.findIndex(obj => obj.id === tag.id) !== -1) === -1) {
+          uniqueTags.push(tag);
+        }
+        return true;
+      });
+      if (uniqueTags.length > 0) {
+        const tagGroup = {
+          uuid: 'collected_tag_group_id', // uuid needs to be constant here (see mergeTagGroup)
+          title: i18n.t('core:collectedTags'),
+          expanded: true,
+          color: '#00ff00',
+          textcolor: '#000',
+          children: uniqueTags,
+          created_date: new Date(),
+          modified_date: new Date()
+        };
+        dispatch(TagLibraryActions.mergeTagGroup(tagGroup));
+      }
     }
 
     // TODO: Handle adding already added tags
