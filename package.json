@@ -39,7 +39,7 @@
     "install-ext": "cd app && yarn install --force --prod --no-lockfile && cd ..",
     "setup-ext": "node scripts/setupextensions.js",
     "setup-pro": "node scripts/setuppro.js",
-    "prepare-web": "rm -Rf web/dist && rm -Rf web/node_modules && cp -r app/node_modules web && yarn build-web",
+    "prepare-web": "rm -Rf web/dist && rm -Rf web/node_modules && cp -r app/node_modules web && cp LICENSE.txt web && yarn build-web",
     "package-web": "yarn prepare-web && zip -r ../builds/tagspaces-web.zip web",
     "run-web": "yarn prepare-web && node scripts/webdavserver.js",
     "run-android": "cd cordova && cordova run android && cd ..",
