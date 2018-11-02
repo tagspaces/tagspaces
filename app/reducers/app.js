@@ -923,9 +923,9 @@ export const actions = {
       Pro.Watcher.stopWatching();
     }
 
-    // if (Pro) { // && s3location
-    //   PlatformIO.enableObjectStoreSupport({});
-    // }
+    /* if (Pro) { // && s3location
+       PlatformIO.enableObjectStoreSupport({});
+    } */
 
     locations.map(location => {
       if (location.uuid === locationId) {
@@ -937,7 +937,7 @@ export const actions = {
           dispatch(actions.createDirectoryIndex(location.paths[0]));
         }
         if (Pro && Pro.Watcher && location.watchForChanges) {
-          Pro.Watcher.watchFolder(location.paths[0], dispatch);
+          Pro.Watcher.watchFolder(location.paths[0], dispatch, actions);
         }
       }
       return true;
