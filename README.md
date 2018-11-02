@@ -105,7 +105,10 @@ For creating the packages for Windows, Linux and Mac OS respectively.
 TagSpaces can be easily extended with the help of extensions. Currently we use the extensions for supporting the opening and editing of different file types in the application. More information about this topic can be found on the [extension page](https://www.tagspaces.org/extensions/) of our website.
 
 ### How to start the WebDAV edition for testing?
-The webdav version of the app can be started with the following yarn command:
+
+#### Development Server
+
+For developing purposes and local tests, the WebDAV version of the app can be started with the following yarn command:
 
     $ yarn run-web
 
@@ -115,7 +118,41 @@ This command will start a local node.js-WebDAV server on `http://127.0.0.1:8000`
 
 You will be prompted for user credentials, which are username: `demo` and password: `demo` and now you should be able to work with the WebDAV version of TagSpaces.
 
-For setting up the WebDAV version on your server, please read [Self-hosted TagSpaces with WebDAV](https://docs.tagspaces.org/selfhosting.html) from our blogs.
+#### Apache server with WedDAV module
+
+In order to install TagSpaces on a Apache webserver you to enable the **mod_dav** module, which comes with the Apache Server. More information about the installation and configuration can be found on [apache.org](https://httpd.apache.org/docs/current/mod/mod_dav.html). Please make sure that you have read and understood the potential security issues by running a WebDAV server on internet.
+
+Here is a sample config file for Apache on Linux:
+
+	<VirtualHost *:80>
+		ServerAdmin admin@somedomain.com
+		ServerName somedomain.com
+		DocumentRoot /var/www/somedomain.com/public_html
+		ErrorLog ${APACHE_LOG_DIR}/error-somedomain.log
+		CustomLog ${APACHE_LOG_DIR}/access-somedomain.log combined
+	</VirtualHost>
+
+	<Directory /var/www/somedomain.com/public_html>
+		Options FollowSymLinks MultiViews
+		AllowOverride None
+		Order allow,deny
+		allow from all
+	</Directory>
+
+	Alias /files /var/yourFilesForWebDAV # this alias is useful if you do not want to store your files in the apache folder
+
+	<Location /files>
+		Options Indexes
+		DAV On
+		AuthType Basic # this way you can enable simple auth mechanism for protecting your files (basic auth should be used only over https with SSL/TSL)
+		AuthName "webdav"
+		AuthUserFile /somepath/webdav.password
+		Require valid-user
+	</Location>
+
+With some modification it can be used also for Apache on Windows, for a detailed manual refer to this article: [How to enable WebDAV in Apache Server 2.2.x – Windows](http://www.mkyong.com/apache/how-to-enable-webdav-in-apache-server-2-2-x-windows/)
+
+You can find more details about the Nextcloud integration here: [Self-hosted TagSpaces with WebDAV](https://docs.tagspaces.org/selfhosting.html).
 
 ## License
 TagSpaces's source code is licensed under the AGPL (GNU Affero General Public License) Version 3, for the license text see [LICENSE](LICENSE) file.
