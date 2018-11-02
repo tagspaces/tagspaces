@@ -121,15 +121,11 @@ class EditTagGroupDialog extends React.Component<Props, State> {
   };
 
   toggleDefaultTagBackgroundColorPicker = () => {
-    this.setState((prevState) => ({
-      displayColorPicker: !prevState.displayColorPicker
-    }));
+    this.setState({ displayColorPicker: !this.state.displayColorPicker });
   };
 
   toggleDefaultTagTextColorPicker = () => {
-    this.setState((prevState) => ({
-      displayTextColorPicker: !prevState.displayTextColorPicker
-    }));
+    this.setState({ displayTextColorPicker: !this.state.displayTextColorPicker });
   };
 
   handleChangeColor = (color: string) => {
@@ -210,7 +206,6 @@ class EditTagGroupDialog extends React.Component<Props, State> {
             onClick={this.toggleDefaultTagBackgroundColorPicker}
             data-tid="editTagGroupBackgroundColor"
             style={styles.color}
-            role="presentation"
           >&nbsp;
           </Button>
           <ColorPickerDialog
