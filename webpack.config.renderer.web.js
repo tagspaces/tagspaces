@@ -21,6 +21,10 @@ export default merge.smart(baseConfig, {
     publicPath: './dist/'
   },
 
+  node: {
+    fs: 'empty'
+  },
+
   module: {
     rules: [
       // Extract all .global.css to style.css as is
