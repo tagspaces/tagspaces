@@ -1062,9 +1062,9 @@ class GridPerspective extends React.Component<Props, State> {
             {this.props.directoryContent.length > 0 ? (
               this.props.directoryContent.map(entry => this.renderCell(entry))
             ) : (
-              <span style={{ padding: 15 }}>
+              <Typography style={{ padding: 15 }}>
                 {i18n.t('core:noFileFolderFound')}
-              </span>
+              </Typography>
             )}
           </div>
         </div>
