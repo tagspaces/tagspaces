@@ -72,7 +72,7 @@ export default (theme) => ({
     paddingBottom: 2,
     borderRadius: 5,
     // border: '2px solid ' + theme.palette.primary['200'],
-    backgroundColor: theme.palette.grey[300]
+    backgroundColor: theme.palette.secondary.main
   },
   panelTitle: {
     textTransform: 'uppercase',

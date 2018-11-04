@@ -296,7 +296,7 @@ class MainPage extends Component<Props, State> {
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, theme } = this.props;
     const { FILE } = NativeTypes;
 
     /* if (this.state.width < 400) {
@@ -314,7 +314,7 @@ class MainPage extends Component<Props, State> {
             split="vertical"
             minSize={200}
             maxSize={450}
-            resizerStyle={{ backgroundColor: 'gray' }}
+            resizerStyle={{ backgroundColor: theme.palette.secondary['200'] }}
             defaultSize={this.props.leftSplitSize}
             size={
               this.state.isManagementPanelVisible
@@ -335,6 +335,7 @@ class MainPage extends Component<Props, State> {
             <SplitPane
               split="vertical"
               minSize="200"
+              resizerStyle={{ backgroundColor: theme.palette.secondary['200'] }}
               size={this.state.mainSplitSize}
               onChange={size => {
                 if (size > 0 && this.state.width) {
@@ -376,6 +377,7 @@ class MainPage extends Component<Props, State> {
               )}
               split="vertical"
               minSize={150}
+              resizerStyle={{ backgroundColor: theme.palette.secondary['200'] }}
               defaultSize={this.state.isViewerPanelVisible ? '50%' : '100%'}
             >
               <FolderContainer
@@ -500,6 +502,6 @@ function mapDispatchToProps(dispatch) {
 
 export default DragDropContext(HTML5Backend)(
   connect(mapStateToProps, mapDispatchToProps)(
-    translate(['core'], { wait: true })(withStyles(styles)(MainPage))
+    translate(['core'], { wait: true })(withStyles(styles, { withTheme: true })(MainPage))
   )
 );
