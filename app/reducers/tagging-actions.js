@@ -20,6 +20,7 @@
 import i18n from '../services/i18n';
 import { actions as AppActions } from './app';
 import { actions as TagLibraryActions, type Tag } from './taglibrary';
+import uuidv1 from 'uuid';
 import {
   extractFileExtension,
   extractFileName,
@@ -54,6 +55,7 @@ const actions = {
       const tag = { ...pTag };
       if (tag.functionality && tag.functionality.length > 0) {
         tag.title = generateTagValue(tag.functionality);
+        tag.id = uuidv1();
       }
       tag.type = settings.persistTagsInSidecarFile ? 'sidecar' : 'plain';
       processedTags.push(tag);
