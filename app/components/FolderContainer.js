@@ -47,7 +47,6 @@ import {
   isReadOnlyMode,
 } from '../reducers/app';
 import TaggingActions from '../reducers/tagging-actions';
-import { type Tag } from '../reducers/taglibrary';
 import { extractDirectoryName } from '../utils/paths';
 
 // https://reactjs.org/blog/2017/05/18/whats-new-in-create-react-app.html#code-splitting-with-dynamic-import
@@ -105,7 +104,7 @@ const styles = theme => ({
 });
 
 function Loading() {
-  return <div style={{ padding: 10 }}>Loading...</div>;
+  return <Typography style={{ padding: 10 }}>Loading...</Typography>;
 }
 
 const GridPerspective = Loadable({
