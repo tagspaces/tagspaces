@@ -66,7 +66,7 @@ const actions = {
       // filter existed in tagLibrary
       const uniqueTags = [];
       processedTags.map((tag) => {
-        if (taglibrary.findIndex(tagGroup => tagGroup.children.findIndex(obj => obj.id === tag.id) !== -1) === -1) {
+        if (taglibrary.findIndex(tagGroup => tagGroup.children.findIndex(obj => obj.id === tag.id) !== -1) === -1 && !/^(?:\d+~\d+|\d+)$/.test(tag.title)) {
           uniqueTags.push(tag);
         }
         return true;
