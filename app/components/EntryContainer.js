@@ -95,9 +95,6 @@ const styles = theme => ({
     flex: '1 1 100%',
     padding: '0 0 60px 0'
   },
-  iconButton: {
-    paddingTop: 0
-  },
   fileOpener: {
     width: '100%',
     border: 0
@@ -565,7 +562,6 @@ class EntryContainer extends React.Component<Props, State> {
           title={i18n.t('core:switchToFullscreen')}
           aria-label={i18n.t('core:switchToFullscreen')}
           data-tid="fileContainerSwitchToFullScreen"
-          className={classes.iconButton}
           onClick={this.switchToFullScreen}
         >
           <FullScreenIcon />
@@ -573,7 +569,6 @@ class EntryContainer extends React.Component<Props, State> {
         <IconButton
           title={i18n.t('core:openInFullWidth')}
           aria-label={i18n.t('core:openInFullWidth')}
-          className={classes.iconButton}
           onClick={this.props.toggleEntryFullWidth}
         >
           <ExpandIcon />
@@ -581,7 +576,6 @@ class EntryContainer extends React.Component<Props, State> {
         <IconButton
           title={i18n.t('core:openFileExternally')}
           aria-label={i18n.t('core:openFileExternally')}
-          className={this.props.classes.iconButton}
           onClick={this.openNatively}
         >
           <OpenNativelyIcon />
@@ -589,7 +583,6 @@ class EntryContainer extends React.Component<Props, State> {
         <IconButton
           title={i18n.t('core:downloadFile')}
           aria-label={i18n.t('core:downloadFile')}
-          className={this.props.classes.iconButton}
           onClick={() => {
             const { currentEntry } = this.state;
             const date = new Date();
@@ -621,7 +614,6 @@ class EntryContainer extends React.Component<Props, State> {
         <IconButton
           title={i18n.t('core:reloadFile')}
           aria-label={i18n.t('core:reloadFile')}
-          className={this.props.classes.iconButton}
           onClick={() => {
             const { currentEntry } = this.state;
             this.setState({
@@ -637,7 +629,6 @@ class EntryContainer extends React.Component<Props, State> {
         <IconButton
           aria-label={i18n.t('core:duplicateFile')}
           title={i18n.t('core:duplicateFile')}
-          className={this.props.classes.iconButton}
           onClick={() => {
             this.setState({ shouldCopyFile: true });
           }}
@@ -647,7 +638,6 @@ class EntryContainer extends React.Component<Props, State> {
         <IconButton
           title={i18n.t('core:deleteEntry')}
           aria-label={i18n.t('core:deleteEntry')}
-          className={this.props.classes.iconButton}
           onClick={() => this.setState({ isDeleteEntryModalOpened: true })}
         >
           <DeleteIcon />
@@ -657,7 +647,6 @@ class EntryContainer extends React.Component<Props, State> {
         title={i18n.t('core:openPrevFileTooltip')}
         aria-label={i18n.t('core:openPrevFileTooltip')}
         data-tid="fileContainerPrevFile"
-        className={classes.iconButton}
         onClick={this.openPrevFile}
       >
         <ArrowLeftIcon />
@@ -666,7 +655,6 @@ class EntryContainer extends React.Component<Props, State> {
         title={i18n.t('core:openNextFileTooltip')}
         aria-label={i18n.t('core:openNextFileTooltip')}
         data-tid="fileContainerNextFile"
-        className={classes.iconButton}
         onClick={this.openNextFile}
       >
         <ArrowRightIcon />
@@ -680,7 +668,6 @@ class EntryContainer extends React.Component<Props, State> {
         <IconButton
           title={i18n.t('core:openDirectoryExternally')}
           aria-label={i18n.t('core:openDirectoryExternally')}
-          className={this.props.classes.iconButton}
           onClick={this.openNatively}
         >
           <OpenNativelyIcon />
@@ -688,7 +675,6 @@ class EntryContainer extends React.Component<Props, State> {
         <IconButton
           title={i18n.t('core:reloadDirectory')}
           aria-label={i18n.t('core:reloadDirectory')}
-          className={this.props.classes.iconButton}
           onClick={() => {
             const { currentEntry } = this.state;
             this.setState({
@@ -704,7 +690,6 @@ class EntryContainer extends React.Component<Props, State> {
         <IconButton
           title={i18n.t('core:deleteDirectory')}
           aria-label={i18n.t('core:deleteDirectory')}
-          className={this.props.classes.iconButton}
           onClick={() => this.setState({ isDeleteEntryModalOpened: true })}
         >
           <DeleteIcon />
@@ -883,7 +868,6 @@ class EntryContainer extends React.Component<Props, State> {
                   <IconButton
                     disabled={false}
                     onClick={this.startSavingFile}
-                    className={classes.iconButton}
                     title={i18n.t('core:saveFile')}
                     aria-label={i18n.t('core:saveFile')}
                     data-tid="fileContainerSaveFile"
@@ -895,7 +879,6 @@ class EntryContainer extends React.Component<Props, State> {
                   <IconButton
                     disabled={false}
                     onClick={this.editFile}
-                    className={classes.iconButton}
                     title={i18n.t('core:editFile')}
                     aria-label={i18n.t('core:editFile')}
                     data-tid="fileContainerEditFile"
@@ -905,7 +888,6 @@ class EntryContainer extends React.Component<Props, State> {
                 )}
                 <IconButton
                   onClick={this.startClosingFile}
-                  className={classes.iconButton}
                   title={i18n.t('core:closeEntry')}
                   aria-label={i18n.t('core:closeEntry')}
                   data-tid="fileContainerCloseOpenedFile"
