@@ -1,6 +1,6 @@
 .Resizer {
   background: #000;
-  opacity: .2;
+  opacity: 1;
   z-index: 1;
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
