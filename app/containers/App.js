@@ -39,7 +39,7 @@ const lightTheme = createMuiTheme({
   palette: {
     type: 'light', // Switching the dark mode on is a single property value change.
     primary: green,
-    secondary: { main: '#cccccc', 200: '#555' }
+    secondary: { main: '#cccccc', 200: '#ddd' }
   },
   typography: {
     useNextVariants: true,
@@ -50,7 +50,7 @@ const darkTheme = createMuiTheme({
   palette: {
     type: 'dark',
     primary: purple,
-    secondary: { main: '#555', 200: '#222' }
+    secondary: { main: '#555', 200: '#777' }
   },
   typography: {
     useNextVariants: true,

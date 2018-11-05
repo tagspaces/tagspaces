@@ -207,7 +207,7 @@ const styles = theme => ({
     minHeight: 40,
     height: 53,
     backgroundColor: theme.palette.background.default,
-    borderBottom: '1px solid lightgray',
+    borderBottom: '1px solid ' + theme.palette.secondary['200'],
     width: '100%'
   }
 });

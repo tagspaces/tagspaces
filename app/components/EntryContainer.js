@@ -116,7 +116,7 @@ const styles = theme => ({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'flex-start',
-    borderBottom: '1px solid lightgray'
+    borderBottom: '1px solid ' + theme.palette.secondary['200']
   },
   flexLeft: {
     flexDirection: 'row',
@@ -814,6 +814,7 @@ class EntryContainer extends React.Component<Props, State> {
         </a>
         <SplitPane
           split="horizontal"
+          resizerStyle={{ backgroundColor: this.props.theme.palette.secondary['200'] }}
           size={(currentEntry && currentEntry.isFile) ? this.state.entryPropertiesSplitSize : '100%'}
           minSize={(currentEntry && currentEntry.isFile) ? defaultSplitSize : '100%'}
           maxSize={(currentEntry && currentEntry.isFile) ? fullSplitSize : '100%'}
@@ -973,5 +974,5 @@ function mapActionCreatorsToProps(dispatch) {
 }
 
 export default connect(mapStateToProps, mapActionCreatorsToProps)(
-  withStyles(styles)(EntryContainer)
+  withStyles(styles, { withTheme: true })(EntryContainer)
 );

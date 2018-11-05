@@ -251,7 +251,13 @@ class VerticalNavigation extends React.Component<Props, State> {
           chooseDirectoryPath={this.chooseDirectoryPath}
           selectedDirectoryPath={this.state.selectedDirectoryPath || this.props.currentDirectory}
         />
-        <SplitPane split="vertical" minSize={44} maxSize={44} defaultSize={44}>
+        <SplitPane
+          split="vertical"
+          minSize={44}
+          maxSize={44}
+          defaultSize={44}
+          resizerStyle={{ backgroundColor: this.props.theme.palette.secondary['200'] }}
+        >
           <div style={this.styles.panel}>
             <IconButton
               className={style.verticalNavButton}
