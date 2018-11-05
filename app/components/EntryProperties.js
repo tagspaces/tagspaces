@@ -517,16 +517,14 @@ class EntryProperties extends Component<Props, State> {
                   onChange={e => this.handleInputChange(e)}
                 />
               ) : (
-                <div
+                <Typography
                   role="button"
                   id="descriptionArea"
                   dangerouslySetInnerHTML={{
                     __html:
                       description !== ''
                         ? marked(description)
-                        : `<span style="color: rgba(0, 0, 0, 0.38)">${i18n.t(
-                            'core:addDescription'
-                          )}</span>`
+                        : i18n.t('core:addDescription')
                   }}
                   onClick={() => {
                     if (!isEditDescription) {
@@ -535,7 +533,7 @@ class EntryProperties extends Component<Props, State> {
                   }}
                 >
                   {/* set dynamically HTML */}
-                </div>
+                </Typography>
               )}
             </FormControl>
           </div>
