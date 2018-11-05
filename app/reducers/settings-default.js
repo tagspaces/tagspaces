@@ -48,6 +48,7 @@ export default {
   lastOpenedLocation: '',
   useDefaultLocation: false, // TODO for remove
   persistTagsInSidecarFile: false, // old name writeMetaToSidecarFile -> persistTagsInSidecarFile
+  addTagsToLibrary: false,
   webDavPath: 'oc/remote.php/webdav',
   interfaceLanguage: 'en',
   useTrashCan: true,

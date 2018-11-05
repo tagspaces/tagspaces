@@ -30,6 +30,7 @@ export const types = {
   IMPORT_TAGGROUP: 'IMPORT_TAGGROUP',
   IMPORT_OLD_TAGGROUP: 'IMPORT_OLD_TAGGROUP',
   ADD_TAGGROUP: 'ADD_TAGGROUP',
+  MERGE_TAGGROUP: 'MERGE_TAGGROUP',
   REMOVE_TAGGROUP: 'REMOVE_TAGGROUP',
   UPDATE_TAGGROUP: 'UPDATE_TAGGROUP',
   TOGGLE_TAGGROUP: 'TOGGLE_TAGGROUP',
@@ -106,6 +107,34 @@ export default (state: Array<TagGroup> = defaultTagLibrary, action: Object) => {
       ];
     }
     return state;
+  }
+  case types.MERGE_TAGGROUP: {
+    const indexForEditing = state.findIndex(obj => obj.uuid === action.entry.uuid);
+    if (indexForEditing >= 0) {
+      return [
+        ...state.slice(0, indexForEditing),
+        {
+          uuid: action.entry.uuid,
+          title: action.entry.title,
+          expanded: action.entry.expanded,
+          children: [...state[indexForEditing].children, ...action.entry.children],
+          created_date: new Date(),
+          modified_date: new Date()
+        },
+        ...state.slice(indexForEditing + 1)
+      ];
+    }
+    return [...state, {
+      uuid: action.entry.uuid || uuidv1(),
+      title: action.entry.title,
+      expanded: action.entry.expanded,
+      color: action.entry.color,
+      textcolor: action.entry.textcolor,
+      children: action.entry.children,
+      created_date: new Date(),
+      modified_date: new Date()
+    }
+    ];
   }
   case types.UPDATE_TAGGROUP: {
     let indexForEditing = -1;
@@ -392,6 +421,7 @@ export const actions = {
   removeTagGroup: (parentTagGroupUuid: Uuid) => ({ type: types.REMOVE_TAGGROUP, uuid: parentTagGroupUuid }),
   toggleTagGroup: (expanded: boolean, parentTagGroupUuid: Uuid) => ({ type: types.TOGGLE_TAGGROUP, expanded, uuid: parentTagGroupUuid }),
   addTagGroup: (entry: TagGroup) => ({ type: types.ADD_TAGGROUP, entry }),
+  mergeTagGroup: (entry: TagGroup) => ({ type: types.MERGE_TAGGROUP, entry }),
   addTag: (tag: string, parentTagGroupUuid: Uuid) => {
     console.log('INSIDE ADD TAG');
     console.log(tag, parentTagGroupUuid);

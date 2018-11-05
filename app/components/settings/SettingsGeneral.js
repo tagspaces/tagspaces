@@ -72,6 +72,7 @@ type Props = {
   setCalculateTags: () => void,
   setUseTrashCan: () => void,
   setPersistTagsInSidecarFile: () => void,
+  setAddTagsToLibrary: () => void,
   setUseGenerateThumbnails: () => void
 };
 
@@ -265,6 +266,20 @@ class SettingsGeneral extends React.Component<Props, State> {
                 )
               }
               checked={this.props.settings.persistTagsInSidecarFile}
+            />
+          </ListItemSecondaryAction>
+        </ListItem>
+        <ListItem>
+          <ListItemText primary={i18n.t('core:addTagsToLibrary')} />
+          <ListItemSecondaryAction>
+            <Switch
+              data-tid="settingsSetAddTagsToLibrary"
+              onClick={() =>
+                this.props.setAddTagsToLibrary(
+                  !this.props.settings.addTagsToLibrary
+                )
+              }
+              checked={this.props.settings.addTagsToLibrary}
             />
           </ListItemSecondaryAction>
         </ListItem>

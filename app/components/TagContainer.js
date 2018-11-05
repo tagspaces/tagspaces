@@ -133,7 +133,7 @@ class TagContainer extends React.Component<Props> {
           }}
         >
           <span>
-            {tag.icon && tag.icon.length > 0 && tag.icon + ' '}
+            {/* {tag.icon && tag.icon.length > 0 && tag.icon + ' '} TODO icon impl */}
             {tag.title}
           </span>
           {mode}

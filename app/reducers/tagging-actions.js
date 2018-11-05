@@ -17,8 +17,10 @@
  * @flow
  */
 
+import i18n from '../services/i18n';
 import { actions as AppActions } from './app';
-import { type Tag } from './taglibrary';
+import { actions as TagLibraryActions, type Tag } from './taglibrary';
+import uuidv1 from 'uuid';
 import {
   extractFileExtension,
   extractFileName,
@@ -41,23 +43,49 @@ const actions = {
     paths.map((path) => {
       dispatch(actions.addTagsToEntry(path, tags));
       return true;
-     });
+    });
   },
   addTagsToEntry: (path: string, tags: Array<Tag>) => (
     dispatch: (actions: Object) => void,
     getState: () => Object
   ) => {
-    const { settings } = getState();
+    const { settings, taglibrary } = getState();
     const processedTags = [];
     tags.map((pTag) => {
       const tag = { ...pTag };
       if (tag.functionality && tag.functionality.length > 0) {
         tag.title = generateTagValue(tag.functionality);
+        tag.id = uuidv1();
       }
       tag.type = settings.persistTagsInSidecarFile ? 'sidecar' : 'plain';
       processedTags.push(tag);
       return true;
     });
+
+    if (settings.addTagsToLibrary) {
+      // filter existed in tagLibrary
+      const uniqueTags = [];
+      processedTags.map((tag) => {
+        if (taglibrary.findIndex(tagGroup => tagGroup.children.findIndex(obj => obj.id === tag.id) !== -1) === -1 && !/^(?:\d+~\d+|\d+)$/.test(tag.title)) {
+          uniqueTags.push(tag);
+        }
+        return true;
+      });
+      if (uniqueTags.length > 0) {
+        const tagGroup = {
+          uuid: 'collected_tag_group_id', // uuid needs to be constant here (see mergeTagGroup)
+          title: i18n.t('core:collectedTags'),
+          expanded: true,
+          color: '#00ff00',
+          textcolor: '#000',
+          children: uniqueTags,
+          created_date: new Date(),
+          modified_date: new Date()
+        };
+        dispatch(TagLibraryActions.mergeTagGroup(tagGroup));
+      }
+    }
+
     // TODO: Handle adding already added tags
     if (settings.persistTagsInSidecarFile) {
       // Handling adding tags in sidecar
@@ -331,23 +359,23 @@ const actions = {
 
 function handleSmartTag(smarttagFunction: string) {
   switch (smarttagFunction) {
-    case 'today':
-      message = data.title ? data.title : '';
-      if (data.message) {
-        message = message + ': ' + data.message;
-      }
-      this.props.showNotification(message, NotificationTypes.default);
-      break;
-    default:
-      console.log('Not recognized messaging command: ' + msg);
-      break;
+  case 'today':
+    message = data.title ? data.title : '';
+    if (data.message) {
+      message = message + ': ' + data.message;
+    }
+    this.props.showNotification(message, NotificationTypes.default);
+    break;
+  default:
+    console.log('Not recognized messaging command: ' + msg);
+    break;
   }
 }
 
 function generateTagValue(smarttagFunction: string) {
   let tagTitle = smarttagFunction;
   switch (smarttagFunction) {
-    /* case 'geoTagging': {
+  /* case 'geoTagging': {
       $('#viewContainers').on('drop dragend', function(event) {
         if (TSCORE.PRO && TSCORE.selectedTag === 'geo-tag') {
           TSCORE.UI.showTagEditDialog(true); // true start the dialog in add mode
@@ -357,41 +385,41 @@ function generateTagValue(smarttagFunction: string) {
       });
       break;
     } */
-    case 'today': {
-      tagTitle = formatDateTime4Tag(new Date(), false);
-      break;
+  case 'today': {
+    tagTitle = formatDateTime4Tag(new Date(), false);
+    break;
+  }
+  case 'tomorrow': {
+    const d = new Date();
+    d.setDate(d.getDate() + 1);
+    tagTitle = formatDateTime4Tag(d, false);
+    break;
+  }
+  case 'yesterday': {
+    const d = new Date();
+    d.setDate(d.getDate() - 1);
+    tagTitle = formatDateTime4Tag(d, false);
+    break;
+  }
+  case 'currentMonth': {
+    let cMonth = '' + (new Date().getMonth() + 1);
+    if (cMonth.length === 1) {
+      cMonth = '0' + cMonth;
     }
-    case 'tomorrow': {
-      const d = new Date();
-      d.setDate(d.getDate() + 1);
-      tagTitle = formatDateTime4Tag(d, false);
-      break;
-    }
-    case 'yesterday': {
-      const d = new Date();
-      d.setDate(d.getDate() - 1);
-      tagTitle = formatDateTime4Tag(d, false);
-      break;
-    }
-    case 'currentMonth': {
-      let cMonth = '' + (new Date().getMonth() + 1);
-      if (cMonth.length === 1) {
-        cMonth = '0' + cMonth;
-      }
-      tagTitle = '' + new Date().getFullYear() + cMonth;
-      break;
-    }
-    case 'currentYear': {
-      tagTitle = '' + new Date().getFullYear();
-      break;
-    }
-    case 'now': {
-      tagTitle = formatDateTime4Tag(new Date(), true);
-      break;
-    }
-    default: {
-      break;
-    }
+    tagTitle = '' + new Date().getFullYear() + cMonth;
+    break;
+  }
+  case 'currentYear': {
+    tagTitle = '' + new Date().getFullYear();
+    break;
+  }
+  case 'now': {
+    tagTitle = formatDateTime4Tag(new Date(), true);
+    break;
+  }
+  default: {
+    break;
+  }
   }
   return tagTitle;
 }
