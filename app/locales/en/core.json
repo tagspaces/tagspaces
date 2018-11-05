@@ -93,7 +93,7 @@
   "useDefaultLocation": "Use default location as a startup location",
   "enablingUsingMetaFolder": "Enable the use of a hidden folder(.ts) for storing meta data and thumbnails",
   "persistTagsInSidecarFile": "Use sidecar files for saving the tags",
-  "addTagsToLibrary": "Add tags to library",
+  "addTagsToLibrary": "Collect new tags in the tag library",
   "useTrashCan": "Move deleted files or folders to trash bin",
   "invalidImportFile": "The imported file has invalid format",
   "invalidPath": "Invalid Path",
@@ -323,6 +323,6 @@
   "persistIndexSwitch": "Switch to manual index creation with persisted search index",
   "watchForChangesInLocation": "Watch for external changes in this location",
   "proFeature": "feature available in the PRO version",
-  "-": "-",
-  "collectedTags": "Collected Tags"
+  "collectedTags": "Collected Tags",
+  "-": "-"
 }
