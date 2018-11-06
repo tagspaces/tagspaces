@@ -44,6 +44,7 @@ import {
   getLeftVerticalSplitSize,
   getMainVerticalSplitSize,
   getLastPublishedVersion,
+  isGlobalKeyBindingEnabled,
   actions as SettingsActions
 } from '../reducers/settings';
 import {
@@ -139,6 +140,8 @@ type Props = {
   toggleLicenseDialog: () => void, // needed by electron-menus
   toggleThirdPartyLibsDialog: () => void, // neede by electron-menus
   toggleAboutDialog: () => void, // needed by electron-menus
+  setLastSelectedEntry: (path: string) => void, // needed by electron-menus
+  openFile: (path: string) => void, // needed by electron-menus
   openFileNatively: () => void, // needed by electron-menus
   getNextFile: () => void, // needed by electron-menus
   getPrevFile: () => void, // needed by electron-menus
@@ -314,7 +317,7 @@ class MainPage extends Component<Props, State> {
             split="vertical"
             minSize={200}
             maxSize={450}
-            resizerStyle={{ backgroundColor: theme.palette.secondary['200'] }}
+            resizerStyle={{ backgroundColor: theme.palette.divider }}
             defaultSize={this.props.leftSplitSize}
             size={
               this.state.isManagementPanelVisible
@@ -335,7 +338,7 @@ class MainPage extends Component<Props, State> {
             <SplitPane
               split="vertical"
               minSize="200"
-              resizerStyle={{ backgroundColor: theme.palette.secondary['200'] }}
+              resizerStyle={{ backgroundColor: theme.palette.divider }}
               size={this.state.mainSplitSize}
               onChange={size => {
                 if (size > 0 && this.state.width) {
@@ -377,7 +380,7 @@ class MainPage extends Component<Props, State> {
               )}
               split="vertical"
               minSize={150}
-              resizerStyle={{ backgroundColor: theme.palette.secondary['200'] }}
+              resizerStyle={{ backgroundColor: theme.palette.divider }}
               defaultSize={this.state.isViewerPanelVisible ? '50%' : '100%'}
             >
               <FolderContainer
@@ -471,6 +474,7 @@ function mapStateToProps(state) {
     mainSplitSize: getMainVerticalSplitSize(state),
     isUpdateAvailable: isUpdateAvailable(state),
     lastPublishedVersion: getLastPublishedVersion(state),
+    isGlobalKeyBindingEnabled: isGlobalKeyBindingEnabled(state),
     notificationStatus: getNotificationStatus(state)
   };
 }
@@ -491,6 +495,8 @@ function mapDispatchToProps(dispatch) {
     toggleLicenseDialog: AppActions.toggleLicenseDialog,
     toggleThirdPartyLibsDialog: AppActions.toggleThirdPartyLibsDialog,
     toggleAboutDialog: AppActions.toggleAboutDialog,
+    setLastSelectedEntry: AppActions.setLastSelectedEntry,
+    openFile: AppActions.openFile,
     openFileNatively: AppActions.openFileNatively,
     setUpdateAvailable: AppActions.setUpdateAvailable,
     getNextFile: AppActions.getNextFile,
