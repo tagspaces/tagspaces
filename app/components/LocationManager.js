@@ -139,11 +139,13 @@ class LocationManager extends React.Component<Props, State> {
       .then(dirEntries => {
         const directoryContent = [];
         dirEntries.map(entry => {
-          /* if (!settings.showUnixHiddenEntries && entry.name === AppConfig.metaFolder) {
+          if (entry.name === AppConfig.metaFolder) { // TODO !settings.showUnixHiddenEntries &&
             return true;
-          } TODO */
+          }
           // const enhancedEntry = enhanceEntry(entry);
           if (!entry.isFile) {
+            // eslint-disable-next-line no-param-reassign
+            entry.uuid = subFolder.uuid;
             directoryContent.push(entry);
           }
           return true;
@@ -168,19 +170,28 @@ class LocationManager extends React.Component<Props, State> {
     const subFolder = {
       uuid: location.uuid,
       name: location.name,
-      path: location.paths[0],
+      path: location.path || location.paths[0],
     };
     this.getDirectoriesTree(subFolder, deepLevel).then(children => {
-      /* if (folder.uuid !== children.uuid) {
-      // eslint-disable-next-line no-param-reassign
-        folder.children = children;
+      /* const elem = this.iterateTree(subFolder.path);
+      if (elem) {
+        console.log(elem);
+      } */
+      if (children instanceof Array) {
+        if (location.uuid) {
+          const dirsTree = this.state.dirs;
+          if (location.path === undefined) { // location
+            dirsTree[location.uuid] = children;
+          } else {
+            // eslint-disable-next-line no-param-reassign
+            location.children = children;
+            dirsTree[location.uuid] = [location];
+          }
+          this.setState({
+            dirs: dirsTree
+          });
+        }
       }
-      this.mergeDirs(folder); */
-      const dirsTree = this.state.dirs;
-      dirsTree[location.uuid] = children;
-      this.setState({
-        dirs: dirsTree
-      });
       /* [
         ...this.state.dirs,
         { [location.uuid]: children }
@@ -191,6 +202,71 @@ class LocationManager extends React.Component<Props, State> {
         console.log('loadSubDirectories', error);
       });
   };
+
+  // https://codereview.stackexchange.com/questions/47932/recursion-vs-iteration-of-tree-structure
+  /* searchPath = (path: string, current, depth) => {
+    const children = current.children;
+    if (children !== undefined) {
+      for (let i = 0, len = children.length; i < len; i += 1) {
+        if (path === children[i].path) {
+          return children[i];
+        }
+        this.searchPath(path, children[i], depth + 1);
+      }
+    }
+  }; */
+
+  iterateTree = (path: string) => {
+    // const arrLocations = Object.entries(this.state.dirs);
+    for (const uuid in this.state.dirs) {
+      this.state.dirs[uuid].forEach((dir) => {
+        console.log(dir);
+      });
+    }
+    /* if (arrLocations.length > 0) {
+      arrLocations.forEach((location) => {
+        const stack = [{
+          depth: 0,
+          element: location
+        }];
+        let stackItem = 0;
+        let current;
+        let children,
+          i,
+          len;
+        let depth;
+
+        while (current = stack[stackItem++]) {
+          // get the arguments
+          depth = current.depth;
+          current = current.element;
+          children = current.element.children;
+          for (i = 0, len = children.length; i < len; i++) {
+            stack.push({ // pass args via object or array
+              element: children[i],
+              depth: depth + 1
+            });
+          }
+        }
+      });
+    } */
+  };
+  /* getDir = (path: string) => {
+    const arrLocations = Object.values(this.state.dirs);
+    if(arrLocations.length > 0) {
+      arrLocations.forEach((location) => {
+        if(location.paths[0] === path)
+if(dir.children !== undefined){
+
+}
+      });
+    }
+    return undefined;
+  };
+
+  findDir = (arrDirs: Array<Object>, path) => {
+      return arrDirs.find(obj => obj.path === path);
+  }; */
   /* componentWillReceiveProps(nextProps) {
     if (this.props.locations !== nextProps.locations) {
       nextProps.locations.map(entry => {
@@ -364,7 +440,7 @@ class LocationManager extends React.Component<Props, State> {
       <span>
         <FolderIcon style={{ marginTop: 0, marginBottom: -8 }} className={this.props.classes.icon} />
         <span style={{ fontSize: 15 }}>{field}</span>
-        <IconButton
+        {/* <IconButton
           style={{ float: 'right', paddingTop: 0, paddingBottom: 0, paddingLeft: 0, paddingRight: 0 }}
           aria-label={i18n.t('core:options')}
           aria-haspopup="true"
@@ -372,7 +448,7 @@ class LocationManager extends React.Component<Props, State> {
           onClick={event => this.handleLocationContextMenuClick(event, location)}
         >
           <MoreVertIcon />
-        </IconButton>
+        </IconButton> */}
       </span>
     );
     return {
@@ -380,6 +456,52 @@ class LocationManager extends React.Component<Props, State> {
       props: {},
     }; // (<span>{ name }</span>);
   };
+
+  handleCellClick = (record, index) => ({
+    /* onContextMenu: (e) => {
+      this.handleFileContextMenu(e, record.path);
+    }, */
+    onClick: () => {
+      this.onRowClick(record);
+    },
+    /* onDoubleClick: (e) => {
+      this.onRowClick(record, index, e);
+    } */
+  });
+
+  onExpand = (expanded, record) => {
+    // console.log('onExpand', expanded + JSON.stringify(record));
+    if (expanded) {
+      this.onRowClick(record);
+    }
+  };
+
+  onRowClick = (subDir) => {
+    this.loadSubDirectories(subDir, 1);
+    this.props.loadDirectoryContent(subDir.path);
+  };
+
+  renderHeaderRow = col =>
+    /* const { children, ...rest } = col;
+    const isSelectionBox = col.className.includes('selection-column');
+
+    return (
+      <th {...rest}>
+        {isSelectionBox ? (
+          children
+        ) : (
+          <span>
+            <span xs={4}>{children}</span>
+            <span xs={2}>Age</span>
+            <span xs>Bar</span>
+          </span>
+        )}
+      </th>
+    ); */
+    (<span />)
+  ;
+  // expandedRowRender = (record, index, indent, expanded) => (<p>extra: {record.name}</p>);
+
   // <Tooltip id="tooltip-icon" title={i18n.t('core:moreOperations')} placement="bottom"></Tooltip>
   renderLocation = (location: Location) => {
     let table;
@@ -397,8 +519,11 @@ class LocationManager extends React.Component<Props, State> {
       table = (<Table
         // defaultExpandAllRows
         // className={classes.locationListArea}
+        components={{
+          header: { cell: this.renderHeaderRow },
+        }}
         className="table"
-        rowKey="uuid"
+        rowKey="path"
         data={this.state.dirs[location.uuid]}
         columns={columns}
         // expandedRowRender={this.expandedRowRender}
