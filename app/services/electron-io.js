@@ -21,6 +21,7 @@ import fsextra from 'fs-extra';
 import { extractParentDirectoryPath, getMetaDirectoryPath } from '../utils/paths';
 import { arrayBufferToBuffer } from '../utils/misc';
 import AppConfig from '../config';
+import TrayIcon from '../assets/icons/64x64.png';
 
 export default class ElectronIO {
   electron: Object;
@@ -43,7 +44,6 @@ export default class ElectronIO {
       this.workerWindow = this.remote.getGlobal('splashWorkerWindow');
       this.win = this.remote.getCurrentWindow();
       this.app = this.remote.app;
-      // this.fs = window.require('fs');
       this.fs = fsextra; // window.require('fs-extra');
       this.pathUtils = window.require('path');
     }
@@ -60,19 +60,19 @@ export default class ElectronIO {
     const Menu = this.remote.Menu;
     const Tray = this.remote.Tray;
     const nativeImage = this.remote.nativeImage;
-    let trayIconPath;
 
-    if (process.platform === 'darwin') {
-      trayIconPath = this.pathUtils.join(__dirname, '/assets/icons/64x64.png');
-    } else if (process.platform === 'win32') {
-      trayIconPath = this.pathUtils.join(__dirname, 'assets/icons/128x128.png');
-    } else {
-      trayIconPath = this.pathUtils.join(__dirname, '/assets/icons/64x64.png');
-    }
+    // let trayIconPath;
+    // if (process.platform === 'darwin') {
+    //   trayIconPath = this.pathUtils.join(__dirname, '/assets/icons/64x64.png');
+    // } else if (process.platform === 'win32') {
+    //   trayIconPath = this.pathUtils.join(__dirname, '/assets/icons/128x128.png');
+    // } else {
+    //   trayIconPath = this.pathUtils.join(__dirname, '/assets/icons/64x64.png');
+    // }
+    // const appPath = this.getAppPath();
+    // const nImage = nativeImage.createFromPath(appPath + trayIconPath);
 
-    const appPath = this.getAppPath();
-    // const nImage = nativeImage.createFromDataURL(trayIconPath);
-    const nImage = nativeImage.createFromPath(appPath + trayIconPath);
+    const nImage = nativeImage.createFromDataURL(TrayIcon);
     const tsTray = new Tray(nImage);
 
     tsTray.on('click', () => {
@@ -140,6 +140,10 @@ export default class ElectronIO {
   );
 
   setZoomFactorElectron = (zoomLevel: number) => this.webFrame.setZoomFactor(zoomLevel);
+
+  setGlobalShortcuts = (globalShortcutsEnabled: boolean) => {
+    this.ipcRenderer.send('global-shortcuts-enabled', globalShortcutsEnabled);
+  }
 
   getAppPath = (): string => this.ipcRenderer.sendSync(
     'app-dir-path-request',

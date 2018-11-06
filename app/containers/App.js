@@ -25,8 +25,8 @@ import { I18nextProvider } from 'react-i18next'; // as we build ourself via webp
 import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider';
 import createMuiTheme from '@material-ui/core/styles/createMuiTheme';
 import { HotKeys } from 'react-hotkeys';
-import purple from '../assets/tspurple';
-import green from '../assets/tsgreen';
+// import lightTheme from '../assets/tspurple';
+// import darkTheme from '../assets/tsgreen';
 import '../assets/fonts/roboto/index.css';
 import i18n from '../services/i18n';
 import { getCurrentTheme, getKeyBindingObject } from '../reducers/settings';
@@ -38,8 +38,17 @@ import AppOnBoarding from '../components/AppOnboarding';
 const lightTheme = createMuiTheme({
   palette: {
     type: 'light', // Switching the dark mode on is a single property value change.
-    primary: green,
-    secondary: { main: '#cccccc', 200: '#ddd' }
+    primary: {
+      light: '#dcf3ec',
+      main: '#1DD19F',
+      dark: '#1DD19F',
+      contrastText: '#1DD19F',
+    },
+    secondary: {
+      main: '#1DD19F',
+    },
+    divider: '#ddd'
+    // secondary: { main: '#cccccc', 200: '#ddd' }
   },
   typography: {
     useNextVariants: true,
@@ -49,8 +58,17 @@ const lightTheme = createMuiTheme({
 const darkTheme = createMuiTheme({
   palette: {
     type: 'dark',
-    primary: purple,
-    secondary: { main: '#555', 200: '#777' }
+    primary: {
+      light: '#56454e',
+      main: '#a21547',
+      dark: '#a21547',
+      contrastText: '#a21547',
+    },
+    secondary: {
+      main: '#a21547',
+    },
+    divider: '#555'
+    // secondary: { main: '#555', 200: '#777' }
   },
   typography: {
     useNextVariants: true,

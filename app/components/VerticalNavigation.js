@@ -256,7 +256,7 @@ class VerticalNavigation extends React.Component<Props, State> {
           minSize={44}
           maxSize={44}
           defaultSize={44}
-          resizerStyle={{ backgroundColor: this.props.theme.palette.secondary['200'] }}
+          resizerStyle={{ backgroundColor: this.props.theme.palette.divider }}
         >
           <div style={this.styles.panel}>
             <IconButton

@@ -74,6 +74,14 @@ export default class PlatformIO {
     }
   }
 
+  static setGlobalShortcuts = globalShortcutsEnabled => {
+    if (nativeAPI.setGlobalShortcuts) {
+      nativeAPI.setGlobalShortcuts(globalShortcutsEnabled);
+    } else {
+      console.log('setGlobalShortcuts not supported');
+    }
+  }
+
   static showMainWindow = (): void => nativeAPI.showMainWindow();
 
   static quitApp = (): void => nativeAPI.quitApp();

@@ -26,7 +26,8 @@ import { configureStore, history } from './store/configureStore';
 import './app.global.css';
 import { actions as AppActions } from './reducers/app';
 import { getDefaultLocationId } from './reducers/locations';
-import { actions as SettingsActions, getCheckForUpdateOnStartup } from './reducers/settings';
+import { actions as SettingsActions, getCheckForUpdateOnStartup, isGlobalKeyBindingEnabled } from './reducers/settings';
+import PlatformIO from './services/platform-io';
 
 const store = configureStore();
 
@@ -74,6 +75,7 @@ document.addEventListener('storeLoaded', () => {
   if (getCheckForUpdateOnStartup(state)) {
     store.dispatch(SettingsActions.checkForUpdate());
   }
+  PlatformIO.setGlobalShortcuts(isGlobalKeyBindingEnabled(state));
 });
 
 function checkIsFirstRun() {

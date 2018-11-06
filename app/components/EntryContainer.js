@@ -116,7 +116,7 @@ const styles = theme => ({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'flex-start',
-    borderBottom: '1px solid ' + theme.palette.secondary['200']
+    borderBottom: '1px solid ' + theme.palette.divider
   },
   flexLeft: {
     flexDirection: 'row',
@@ -202,12 +202,17 @@ class EntryContainer extends React.Component<Props, State> {
   };
 
   componentDidMount() {
-    if (this.fileViewer) {
-      window.addEventListener('toggle-resume', e => {
-        const audioEvent = new CustomEvent('resume', { detail: e.detail });
-        this.fileViewer.dispatchEvent(audioEvent);
-      });
-    }
+    window.addEventListener('toggle-resume', () => {
+      // console.log('Play pause');
+      if (AppConfig.isElectron && this.fileViewer) {
+        // this.fileViewer.dispatchEvent(audioEvent);
+        this.fileViewer.executeJavaScript(
+          'window.dispatchEvent(new Event("resume"));',
+        );
+      } else if (this.fileViewer) {
+        this.fileViewer.dispatchEvent(new Event('resume'));
+      }
+    });
     if (AppConfig.isElectron) {
       if (this.fileViewer) {
         this.fileViewer.addEventListener('console-message', e => {
@@ -814,7 +819,7 @@ class EntryContainer extends React.Component<Props, State> {
         </a>
         <SplitPane
           split="horizontal"
-          resizerStyle={{ backgroundColor: this.props.theme.palette.secondary['200'] }}
+          resizerStyle={{ backgroundColor: this.props.theme.palette.divider }}
           size={(currentEntry && currentEntry.isFile) ? this.state.entryPropertiesSplitSize : '100%'}
           minSize={(currentEntry && currentEntry.isFile) ? defaultSplitSize : '100%'}
           maxSize={(currentEntry && currentEntry.isFile) ? fullSplitSize : '100%'}

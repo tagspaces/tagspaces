@@ -207,7 +207,7 @@ const styles = theme => ({
     minHeight: 40,
     height: 53,
     backgroundColor: theme.palette.background.default,
-    borderBottom: '1px solid ' + theme.palette.secondary['200'],
+    borderBottom: '1px solid ' + theme.palette.divider,
     width: '100%'
   }
 });
@@ -845,7 +845,7 @@ class GridPerspective extends React.Component<Props, State> {
                     formatDateTime(fsEntry.lmdt, true)
                   }
                 >
-                  {fsEntry.lmdt && '⏲️ ' + moment(fsEntry.lmdt).fromNow()}
+                  {fsEntry.lmdt && ' ' + moment(fsEntry.lmdt).fromNow() /* ⏲ */}
                 </span>
                 <span title={fsEntry.size + ' ' + i18n.t('core:sizeInBytes')}>
                   {' ' + formatFileSize(fsEntry.size)}
@@ -919,7 +919,7 @@ class GridPerspective extends React.Component<Props, State> {
                   formatDateTime(fsEntry.lmdt, true)
                 }
               >
-                {fsEntry.lmdt && '⏲️ ' + moment(fsEntry.lmdt).fromNow()}
+                {fsEntry.lmdt && '️ ' + moment(fsEntry.lmdt).fromNow() /* ⏲ */}
               </span>
               <span title={i18n.t('core:entryDescription')}>
                 {description && ' - ' + description}

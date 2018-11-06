@@ -166,7 +166,7 @@ type State = {
 
 class FolderContainer extends React.Component<Props, State> {
   state = {
-    currentPerspective: 'grid',
+    currentPerspective: undefined,
     isPropertiesPanelVisible: false,
     isDirectoryMenuOpened: false,
     directoryContextMenuOpened: false,
@@ -259,7 +259,7 @@ class FolderContainer extends React.Component<Props, State> {
 
   renderPerspective() {
     // console.log('renderPerspective: ', this.props);
-    if (this.state.currentPerspective === 'grid') {
+    if (this.props.currentDirectoryPath && this.props.currentDirectoryPath.length >= 2) { // TODO handle location perspectives  === 'grid'
       return (
         <GridPerspective
           directoryContent={this.props.directoryContent}

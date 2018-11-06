@@ -42,12 +42,18 @@ export default function buildDesktopMenu(mainPageProps: Object) {
     case 'audio':
       // console.log('showAudioRecordingDialog');
       break;
-    case 'next-file':
-      mainPageProps.getNextFile();
+    case 'next-file': {
+      const path = mainPageProps.getNextFile();
+      mainPageProps.openFile(path);
+      mainPageProps.setLastSelectedEntry(path);
       break;
-    case 'previous-file':
-      mainPageProps.getPrevFile();
+    }
+    case 'previous-file': {
+      const path = mainPageProps.getPrevFile();
+      mainPageProps.openFile(path);
+      mainPageProps.setLastSelectedEntry(path);
       break;
+    }
     default:
       return false;
     }
@@ -55,12 +61,9 @@ export default function buildDesktopMenu(mainPageProps: Object) {
 
   ipcRenderer.on('play-pause', (event, arg) => {
     // Create the event.
-    const audioEvent = new CustomEvent('toggle-resume', { detail: arg });
+    const audioEvent = new CustomEvent('toggle-resume', { detail: '' });
     window.dispatchEvent(audioEvent);
   });
-
-  ipcRenderer.send('global-shortcuts-enabled', true); // settings.enableGlobalKeyboardShortcuts
-
 
   const templateDefault = [
     {
