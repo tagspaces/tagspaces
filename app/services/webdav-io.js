@@ -84,7 +84,7 @@ export default class WebDAVIO {
 
   getDevicePaths = (): Object => {
     const paths = {
-      Home: '/',
+      Home: '/files/',
     };
     return paths;
   };
