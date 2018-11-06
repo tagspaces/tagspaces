@@ -171,6 +171,7 @@ app.on('ready', async () => {
         reloadApp();
       } else {
         mainWindow.close();
+        globalShortcut.unregisterAll();
       }
     });
   });
@@ -205,6 +206,7 @@ app.on('ready', async () => {
   ipcMain.on('relaunch-app', reloadApp);
 
   ipcMain.on('quit-application', () => {
+    globalShortcut.unregisterAll();
     app.quit();
   });
 
