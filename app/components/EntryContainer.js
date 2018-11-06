@@ -202,12 +202,17 @@ class EntryContainer extends React.Component<Props, State> {
   };
 
   componentDidMount() {
-    if (this.fileViewer) {
-      window.addEventListener('toggle-resume', e => {
-        const audioEvent = new CustomEvent('resume', { detail: e.detail });
-        this.fileViewer.dispatchEvent(audioEvent);
-      });
-    }
+    window.addEventListener('toggle-resume', () => {
+      // console.log('Play pause');
+      if (AppConfig.isElectron && this.fileViewer) {
+        // this.fileViewer.dispatchEvent(audioEvent);
+        this.fileViewer.executeJavaScript(
+          'window.dispatchEvent(new Event("resume"));',
+        );
+      } else if (this.fileViewer) {
+        this.fileViewer.dispatchEvent(new Event('resume'));
+      }
+    });
     if (AppConfig.isElectron) {
       if (this.fileViewer) {
         this.fileViewer.addEventListener('console-message', e => {
