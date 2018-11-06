@@ -39,13 +39,13 @@ const lightTheme = createMuiTheme({
   palette: {
     type: 'light', // Switching the dark mode on is a single property value change.
     primary: {
-      light: '#1DD19F',
+      light: '#dcf3ec',
       main: '#1DD19F',
       dark: '#1DD19F',
       contrastText: '#1DD19F',
     },
     secondary: {
-      main: '#dcf3ec',
+      main: '#1DD19F',
     },
     divider: '#ddd'
     // secondary: { main: '#cccccc', 200: '#ddd' }
@@ -59,13 +59,13 @@ const darkTheme = createMuiTheme({
   palette: {
     type: 'dark',
     primary: {
-      light: '#a21547',
+      light: '#56454e',
       main: '#a21547',
       dark: '#a21547',
       contrastText: '#a21547',
     },
     secondary: {
-      main: '#56454e',
+      main: '#a21547',
     },
     divider: '#555'
     // secondary: { main: '#555', 200: '#777' }

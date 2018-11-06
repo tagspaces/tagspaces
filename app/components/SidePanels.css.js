@@ -71,7 +71,7 @@ export default (theme) => ({
     paddingTop: 2,
     paddingBottom: 2,
     borderRadius: 5,
-    backgroundColor: theme.palette.secondary.main
+    backgroundColor: theme.palette.primary.light
   },
   panelTitle: {
     textTransform: 'uppercase',
