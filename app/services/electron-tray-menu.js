@@ -76,10 +76,10 @@ export default function buildTrayIconMenu(mainPageProps: Object) {
     },
     {
       label: i18n.t('core:quitTagSpaces'),
-      role: 'quit',
-      /* click: () => {
+      // role: 'quit',
+      click: () => {
         PlatformIO.quitApp();
-      } */
+      }
     }
   ];
   PlatformIO.initTrayMenu(trayMenuTemplate);
