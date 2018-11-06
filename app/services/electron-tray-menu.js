@@ -28,8 +28,7 @@ export default function buildTrayIconMenu(mainPageProps: Object) {
   }
   const trayMenuTemplate = [
     {
-      label: 'TagSpaces', // (' + ctrlName + '+Alt+W)',
-      accelerator: 'CmdOrCtrl+Alt+W',
+      label: i18n.t('core:showTagSpaces'),
       click: () => {
         PlatformIO.showMainWindow();
       }
@@ -39,7 +38,6 @@ export default function buildTrayIconMenu(mainPageProps: Object) {
     },
     {
       label: i18n.t('core:newFileNote'), //  (' + ctrlName + '+Alt+N)',
-      // accelerator: '',
       click: () => {
         mainPageProps.toggleCreateFileDialog();
       }
@@ -48,27 +46,28 @@ export default function buildTrayIconMenu(mainPageProps: Object) {
       type: 'separator'
     },
     {
-      label: 'Open Next File',
-      accelerator: 'CmdOrCtrl+Alt+D',
+      label: i18n.t('core:openNextFileTooltip'),
       click: () => {
-        mainPageProps.getNextFile();
+        const path = mainPageProps.getNextFile();
+        mainPageProps.openFile(path);
+        mainPageProps.setLastSelectedEntry(path);
       }
     },
     {
-      label: 'Open Previous File',
-      accelerator: 'CmdOrCtrl+Alt+A',
+      label: i18n.t('core:openPrevFileTooltip'),
       click: () => {
-        mainPageProps.getPrevFile();
+        const path = mainPageProps.getPrevFile();
+        mainPageProps.openFile(path);
+        mainPageProps.setLastSelectedEntry(path);
       }
     },
     {
       type: 'separator'
     },
     {
-      label: 'Pause/Resume Playback',
-      accelerator: 'CmdOrCtrl+Alt+P',
+      label: i18n.t('core:pauseResumePlayback'),
       click: () => {
-        const audioEvent = new CustomEvent('toggle-resume', { detail: 'audioevent' });
+        const audioEvent = new CustomEvent('toggle-resume', { detail: '' });
         window.dispatchEvent(audioEvent);
       }
     },
@@ -76,10 +75,11 @@ export default function buildTrayIconMenu(mainPageProps: Object) {
       type: 'separator'
     },
     {
-      label: 'Quit TagSpaces',
-      click: () => {
+      label: i18n.t('core:quitTagSpaces'),
+      role: 'quit',
+      /* click: () => {
         PlatformIO.quitApp();
-      }
+      } */
     }
   ];
   PlatformIO.initTrayMenu(trayMenuTemplate);

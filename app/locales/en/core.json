@@ -324,5 +324,8 @@
   "watchForChangesInLocation": "Watch for external changes in this location",
   "proFeature": "feature available in the PRO version",
   "collectedTags": "Collected Tags",
+  "pauseResumePlayback": "Pause/Resume Playback",
+  "showTagSpaces": "Show TagSpaces",
+  "quitTagSpaces": "Quit TagSpaces",
   "-": "-"
 }
