@@ -190,14 +190,14 @@ app.on('ready', async () => {
 
   ipcMain.on('global-shortcuts-enabled', (e, arg) => {
     if (arg) {
-      globalShortcut.register('CommandOrControl+Alt+P', resumePlayback);
+      globalShortcut.register('CommandOrControl+Shift+P', resumePlayback);
       globalShortcut.register('MediaPlayPause', resumePlayback);
-      globalShortcut.register('CommandOrControl+Alt+N', newTextFile);
-      globalShortcut.register('CommandOrControl+Alt+D', getNextFile);
+      globalShortcut.register('CommandOrControl+Shift+N', newTextFile);
+      globalShortcut.register('CommandOrControl+Shift+D', getNextFile);
       globalShortcut.register('MediaNextTrack', getNextFile);
-      globalShortcut.register('CommandOrControl+Alt+A', getPreviousFile);
+      globalShortcut.register('CommandOrControl+Shift+A', getPreviousFile);
       globalShortcut.register('MediaPreviousTrack', getPreviousFile);
-      globalShortcut.register('CommandOrControl+Alt+W', showTagSpaces);
+      globalShortcut.register('CommandOrControl+Shift+W', showTagSpaces);
     } else {
       globalShortcut.unregisterAll();
     }
