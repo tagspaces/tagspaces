@@ -188,8 +188,8 @@ app.on('ready', async () => {
     event.returnValue = path.join(__dirname, '');
   });
 
-  ipcMain.on('global-shortcuts-enabled', (e, arg) => {
-    if (arg) {
+  ipcMain.on('global-shortcuts-enabled', (e, globalShortcutsEnabled) => {
+    if (globalShortcutsEnabled) {
       globalShortcut.register('CommandOrControl+Shift+P', resumePlayback);
       globalShortcut.register('MediaPlayPause', resumePlayback);
       globalShortcut.register('CommandOrControl+Shift+N', newTextFile);

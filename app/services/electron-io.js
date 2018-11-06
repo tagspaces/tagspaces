@@ -141,6 +141,10 @@ export default class ElectronIO {
 
   setZoomFactorElectron = (zoomLevel: number) => this.webFrame.setZoomFactor(zoomLevel);
 
+  setGlobalShortcuts = (globalShortcutsEnabled: boolean) => {
+    this.ipcRenderer.send('global-shortcuts-enabled', globalShortcutsEnabled);
+  }
+
   getAppPath = (): string => this.ipcRenderer.sendSync(
     'app-dir-path-request',
     'notNeededArgument'

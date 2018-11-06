@@ -65,12 +65,6 @@ export default function buildDesktopMenu(mainPageProps: Object) {
     window.dispatchEvent(audioEvent);
   });
 
-  document.addEventListener('storeLoaded', () => {
-    if (mainPageProps.isGlobalKeyBindingEnabled) {
-      ipcRenderer.send('global-shortcuts-enabled', true);
-    }
-  });
-
   const templateDefault = [
     {
       label: i18n.t('core:file'),

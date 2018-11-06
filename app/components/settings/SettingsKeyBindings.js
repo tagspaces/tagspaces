@@ -27,6 +27,7 @@ import FormControl from '@material-ui/core/FormControl';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListItemText from '@material-ui/core/ListItemText';
+import PlatformIO from '../../services/platform-io';
 import i18n from '../../services/i18n';
 import {
   actions as SettingsActions,
@@ -74,7 +75,10 @@ class SettingsKeyBindings extends React.Component<Props> {
             <ListItemText primary={i18n.t('core:enableGlobalKeyboardShortcuts')} />
             <ListItemSecondaryAction>
               <Switch
-                onClick={() => setGlobalKeyBinding(!globalKeyBindingEnabled)}
+                onClick={() => {
+                  setGlobalKeyBinding(!globalKeyBindingEnabled);
+                  PlatformIO.setGlobalShortcuts(!globalKeyBindingEnabled);
+                }}
                 checked={globalKeyBindingEnabled}
               />
             </ListItemSecondaryAction>

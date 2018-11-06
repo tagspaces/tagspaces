@@ -44,7 +44,6 @@ import {
   getLeftVerticalSplitSize,
   getMainVerticalSplitSize,
   getLastPublishedVersion,
-  isGlobalKeyBindingEnabled,
   actions as SettingsActions
 } from '../reducers/settings';
 import {
@@ -474,7 +473,6 @@ function mapStateToProps(state) {
     mainSplitSize: getMainVerticalSplitSize(state),
     isUpdateAvailable: isUpdateAvailable(state),
     lastPublishedVersion: getLastPublishedVersion(state),
-    isGlobalKeyBindingEnabled: isGlobalKeyBindingEnabled(state),
     notificationStatus: getNotificationStatus(state)
   };
 }
