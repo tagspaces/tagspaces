@@ -33,6 +33,10 @@ import FolderIcon from '@material-ui/icons/Folder';
 import ClearSearchIcon from '@material-ui/icons/Clear';
 import Button from '@material-ui/core/Button';
 import Input from '@material-ui/core/Input';
+import FormLabel from '@material-ui/core/FormLabel';
+import Radio from '@material-ui/core/Radio';
+import RadioGroup from '@material-ui/core/RadioGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 import InputLabel from '@material-ui/core/InputLabel';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import IconButton from '@material-ui/core/IconButton';
@@ -145,9 +149,8 @@ class Search extends React.Component<Props, State> {
               value={this.state.textQuery}
               onChange={this.handleInputChange}
               onKeyDown={this.startSearch}
-              autoFocus
               endAdornment={
-                (this.state.textQuery && this.state.textQuery.length > 0) &&
+                /* (this.state.textQuery && this.state.textQuery.length > 0) && */
                 <InputAdornment position="end">
                   <IconButton onClick={this.clearSearch}>
                     <ClearSearchIcon />
@@ -171,6 +174,20 @@ class Search extends React.Component<Props, State> {
               onKeyDown={this.startSearch}
               onChange={this.handleInputChange}
             />
+          </FormControl>
+          <FormControl component="fieldset" className={classes.formControl}>
+            <InputLabel>Tag Search Type</InputLabel>
+            <RadioGroup
+              aria-label="Gender"
+              name="gender1"
+              style={{ marginLeft: 150, paddingTop: 10 }}
+              value={this.state.value}
+              onChange={this.handleChange}
+              row
+            >
+              <FormControlLabel value="OR" control={<Radio />} label="OR" />
+              <FormControlLabel value="AND" control={<Radio />} label="AND" />
+            </RadioGroup>
           </FormControl>
           <FormControl
             className={classes.formControl}
