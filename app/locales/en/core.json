@@ -219,6 +219,8 @@
   "searchVideoFiles": "Videos",
   "searchArchives": "Archives",
   "searchFolders": "Folders",
+  "searchFiles": "Files",
+  "searchUntaggedEntries": "Untagged files or folders",
   "searchSubFolder": "Search in subfolders",
   "file": "File",
   "newFileNote": "New File / Note",

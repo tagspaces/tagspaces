@@ -44,6 +44,7 @@ import { actions as AppActions, getIndexedEntriesCount, isIndexing, getDirectory
 import styles from './SidePanels.css';
 import i18n from '../services/i18n';
 import { FileTypeGroups, type SearchQuery } from '../services/search';
+import { Pro } from '../pro';
 
 type Props = {
   classes: Object,
@@ -144,6 +145,7 @@ class Search extends React.Component<Props, State> {
               value={this.state.textQuery}
               onChange={this.handleInputChange}
               onKeyDown={this.startSearch}
+              autoFocus
               endAdornment={
                 (this.state.textQuery && this.state.textQuery.length > 0) &&
                 <InputAdornment position="end">
@@ -172,7 +174,7 @@ class Search extends React.Component<Props, State> {
           </FormControl>
           <FormControl
             className={classes.formControl}
-            disabled={indexing}
+            disabled={indexing || !Pro}
             title={i18n.t('core:thisFunctionalityIsAvailableInPro')}
           >
             <InputLabel htmlFor="file-type">{i18n.t('core:fileType')}</InputLabel>
@@ -189,6 +191,18 @@ class Search extends React.Component<Props, State> {
                   <FolderIcon />
                 </IconButton>
                 {i18n.t('core:searchFolders')}
+              </MenuItem>
+              <MenuItem value={FileTypeGroups.files}>
+                <IconButton>
+                  <FolderIcon />
+                </IconButton>
+                {i18n.t('core:searchFiles')}
+              </MenuItem>
+              <MenuItem value={FileTypeGroups.untagged}>
+                <IconButton>
+                  <FolderIcon />
+                </IconButton>
+                {i18n.t('core:searchUntaggedEntries')}
               </MenuItem>
               <MenuItem
                 value={FileTypeGroups.images}
@@ -247,7 +261,7 @@ class Search extends React.Component<Props, State> {
             </Select>
             {/* <FormHelperText>{i18n.t('core:searchFileTypes')}</FormHelperText> */}
           </FormControl>
-          <FormControl
+          {/*  <FormControl
             className={classes.formControl}
             disabled={true}
             title={i18n.t('core:thisFunctionalityIsAvailableInPro')}
@@ -280,17 +294,17 @@ class Search extends React.Component<Props, State> {
                 {i18n.t('core:anYearAgo')}
               </MenuItem>
             </Select>
-            {/* <FormHelperText>{i18n.t('')}</FormHelperText> */}
-          </FormControl>
-          <FormControl
+            <FormHelperText>{i18n.t('')}</FormHelperText>
+          </FormControl> */ }
+          { /* <FormControl
             className={classes.formControl}
             disabled={true}
             title={i18n.t('core:thisFunctionalityIsAvailableInPro')}
           >
             <InputLabel htmlFor="searchHistory">{i18n.t('core:searchHistory')}</InputLabel>
             <Input id="searchHistory" />
-            {/* <FormHelperText>{i18n.t('core:chooseSearchQuery')}</FormHelperText> */}
-          </FormControl>
+            <FormHelperText>{i18n.t('core:chooseSearchQuery')}</FormHelperText>
+          </FormControl> */}
           <FormControl className={classes.formControl}>
             <Button
               disabled={indexing}

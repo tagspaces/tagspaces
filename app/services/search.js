@@ -38,6 +38,8 @@ export const FileTypeGroups = {
   video: ['ogv', 'mp4', 'avi', 'webm', 'mkv'],
   archives: ['zip', 'rar', 'gz', 'tgz', 'arc', '7z'],
   folders: ['folders'],
+  files: ['files'],
+  untagged: ['untagged'],
 };
 
 export type SearchQuery = {
@@ -99,6 +101,9 @@ const fuseOptions = {
   }, {
     name: 'tags',
     weight: 0.3
+  }, {
+    name: 'path', // TODO ignore .ts folder, should not be in the index
+    weight: 0.1
   }]
 };
 
@@ -107,7 +112,7 @@ function constructTagQuery(searchQuery: SearchQuery): string {
   if (searchQuery.tags && searchQuery.tags.length >= 1) {
     tagQuery = 'tags[? (';
     searchQuery.tags.map(tag => {
-      const cleanedTag = tag.trim();
+      const cleanedTag = tag.trim(); // .toLowerCase();
       if (cleanedTag.length > 0) {
         tagQuery += 'title==\'' + cleanedTag + '\' || ';
       }
@@ -120,41 +125,54 @@ function constructTagQuery(searchQuery: SearchQuery): string {
   return tagQuery;
 }
 
+function constructFuseQuery(searchQuery: SearchQuery): string {
+  if (!searchQuery) return '';
+  let fuseQuery = (searchQuery.textQuery) ? searchQuery.textQuery : '';
+  if (searchQuery.tags && searchQuery.tags.length >= 1) {
+    searchQuery.tags.map(tag => {
+      const cleanedTag = tag.trim().toLowerCase();
+      fuseQuery = fuseQuery + ' ' + cleanedTag;
+      return true;
+    });
+  }
+  return fuseQuery;
+}
+
 export default class Search {
   static searchLocationIndex(locationContent: Array<Object>, searchQuery: SearchQuery) {
     // let result = jmespath.search({ index: locationContent }, "index[?contains(name, '" + searchQuery.textQuery + "')]");
     // ?tags[?title=='todo' || title=='high'
     // index[?extension=='png' || extension=='jpg']
 
+    let results;
+
     const extensionQuery = Pro ? Pro.Search.constructFileTypeQuery(searchQuery) : '';
     const tagQuery = Pro ? Pro.Search.constructTagQuery(searchQuery) : constructTagQuery(searchQuery);
+    let jmespathQuery;
 
-    let jmespathResults = locationContent;
-    if (extensionQuery.length > 1 && tagQuery.length > 1) {
-      const jmespathQuery = 'index[? ' + extensionQuery + ' && ' + tagQuery + ']';
-      console.log('jmespathQuery: ' + jmespathQuery);
-      jmespathResults = jmespath.search({ index: locationContent }, jmespathQuery);
-    } else if (extensionQuery.length <= 1 && tagQuery.length > 1) {
-      const jmespathQuery = 'index[? ' + tagQuery + ']';
-      console.log('jmespathQuery: ' + jmespathQuery);
-      jmespathResults = jmespath.search({ index: locationContent }, jmespathQuery);
-    } else if (extensionQuery.length > 1 && tagQuery.length <= 1) {
-      const jmespathQuery = 'index[? ' + extensionQuery + ']';
-      console.log('jmespathQuery: ' + jmespathQuery);
-      jmespathResults = jmespath.search({ index: locationContent }, jmespathQuery);
+    if (extensionQuery.length > 1 && tagQuery.length > 1) { // extension query and tags available
+      jmespathQuery = 'index[? ' + extensionQuery + ' && ' + tagQuery + ']';
+    } else if (extensionQuery.length <= 1 && tagQuery.length > 1) { // only tags
+      jmespathQuery = 'index[? ' + tagQuery + ']';
+    } else if (extensionQuery.length > 1 && tagQuery.length <= 1) { // only extension query
+      jmespathQuery = 'index[? ' + extensionQuery + ']';
+    }
+    if (jmespathQuery) {
+      console.log('jmespath query: ' + jmespathQuery);
+      console.time('jmespath');
+      results = jmespath.search({ index: results || locationContent }, jmespathQuery);
+      console.timeEnd('jmespath');
     }
 
-    // console.log('JMES found: ' + jmespathResults.length);
+    const fuseQuery = constructFuseQuery(searchQuery);
+    console.log('fuse query: ' + fuseQuery);
+    console.time('fuse');
+    const fuse = new Fuse(results || locationContent, fuseOptions);
+    results = fuse.search(fuseQuery);
+    console.timeEnd('fuse');
 
-    let results;
-    if (searchQuery.textQuery && searchQuery.textQuery.length > 0) { // and fuse enabled
-      const fuse = new Fuse(jmespathResults, fuseOptions);
-      results = fuse.search(searchQuery.textQuery);
-    } else {
-      results = jmespathResults;
-    }
 
-    // console.log('Fuse found: ' + results.length);
+    console.log('Results found: ' + results.length);
     if (results.length >= AppConfig.maxSearchResult) {
       results = results.slice(0, AppConfig.maxSearchResult);
     }
