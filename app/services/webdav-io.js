@@ -514,27 +514,27 @@ export default class WebDAVIO {
    * Choosing directory
    */
   selectDirectoryDialog = () => {
-    console.log('Select directory is not implemented in the webdav edition');
+    console.log('Selecting directory is not implemented in the web version');
   };
 
   /**
    * Choosing file
    */
   selectFileDialog = () => {
-    console.log('selectFile not relevant for the web version');
+    console.log('Selecting file not relevant for the web version');
   };
 
   /**
-   * Not possible in the WebDAV version
+   * Opens directory in new tab / window
    */
   openDirectory = (dirPath: string) => {
     console.log(
-      'openDirectory ' + dirPath + ' not possible for the web version.'
+      'Opening directory ' + dirPath + ' not possible for the web version.'
     );
   };
 
   /**
-   * Open the file url in a new tab
+   * Open the file url in a new tab / window
    */
   openFile = (filePath: string): void => {
     window.open(filePath, '_blank');
