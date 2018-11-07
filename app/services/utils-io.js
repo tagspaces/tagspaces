@@ -311,7 +311,7 @@ export function generateFileName(fileName: string, tags: Array<string>) {
     throw 'Generated filename is invalid';
   }
   // Removing double prefix
-  newFileName = newFileName.split(prefixTagContainer + "" + prefixTagContainer).join(prefixTagContainer);
+  newFileName = newFileName.split(prefixTagContainer + '' + prefixTagContainer).join(prefixTagContainer);
   return newFileName;
 }
 
