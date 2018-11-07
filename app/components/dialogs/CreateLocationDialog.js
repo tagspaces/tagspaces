@@ -122,11 +122,12 @@ class CreateLocationDialog extends React.Component<Props, State> {
     }
   }
 
-  openDirectory() {
+  openDirectory = () => {
     if (AppConfig.isElectron) {
       PlatformIO.selectDirectoryDialog().then((selectedPaths) => {
+        const newName = (this.state.name.length < 1) ? extractDirectoryName(selectedPaths[0]) : this.state.name;
         this.setState({
-          name: extractDirectoryName(selectedPaths[0]),
+          name: newName,
           path: selectedPaths[0]
         });
         this.handleValidation();
@@ -137,7 +138,7 @@ class CreateLocationDialog extends React.Component<Props, State> {
     } else {
       this.props.showSelectDirectoryDialog();
     }
-  }
+  };
 
   onConfirm = () => {
     if (!this.state.disableConfirmButton) {
@@ -172,6 +173,23 @@ class CreateLocationDialog extends React.Component<Props, State> {
           fullWidth={true}
           error={this.state.errorTextPath}
         >
+          <TextField
+            error={this.state.errorTextPath}
+            required
+            margin="dense"
+            name="name"
+            label={i18n.t('core:createLocationName')}
+            onChange={this.handleInputChange}
+            value={this.state.name}
+            data-tid="locationName"
+            fullWidth={true}
+          />
+          {this.state.errorTextName && <FormHelperText>Invalid Name</FormHelperText>}
+        </FormControl>
+        <FormControl
+          fullWidth={true}
+          error={this.state.errorTextPath}
+        >
           <InputLabel htmlFor="name">{i18n.t('core:createLocationPath')}</InputLabel>
           <Input
             required
@@ -185,7 +203,7 @@ class CreateLocationDialog extends React.Component<Props, State> {
             endAdornment={
               <InputAdornment position="end" style={{ height: 32 }}>
                 <IconButton
-                  onClick={this.openDirectory.bind(this)}
+                  onClick={this.openDirectory}
                 >
                   <FolderIcon />
                 </IconButton>
@@ -193,23 +211,6 @@ class CreateLocationDialog extends React.Component<Props, State> {
             }
           />
           {this.state.errorTextPath && <FormHelperText>{i18n.t('core:invalidPath')}</FormHelperText>}
-        </FormControl>
-        <FormControl
-          fullWidth={true}
-          error={this.state.errorTextPath}
-        >
-          <TextField
-            error={this.state.errorTextPath}
-            required
-            margin="dense"
-            name="name"
-            label={i18n.t('core:createLocationName')}
-            onChange={this.handleInputChange}
-            value={this.state.name}
-            data-tid="locationName"
-            fullWidth={true}
-          />
-          {this.state.errorTextName && <FormHelperText>Invalid Name</FormHelperText>}
         </FormControl>
         <FormGroup>
           <FormControlLabel

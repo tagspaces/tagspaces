@@ -122,13 +122,14 @@ class EditLocationDialog extends React.Component<Props, State> {
     }
   }
 
-  openDirectory() {
+  openDirectory = () => {
     if (AppConfig.isElectron) {
       this.setState({ openDirectoryButtonDisabled: true });
       PlatformIO.selectDirectoryDialog().then((selectedPaths) => {
+        const newName = (this.state.name.length < 1) ? extractDirectoryName(selectedPaths[0]) : this.state.name;
         this.setState({
           openDirectoryButtonDisabled: false,
-          name: extractDirectoryName(selectedPaths[0]),
+          name: newName,
           path: selectedPaths[0]
         });
         this.handleValidation();
@@ -170,6 +171,22 @@ class EditLocationDialog extends React.Component<Props, State> {
         fullWidth={true}
         error={this.state.errorTextPath}
       >
+        <TextField
+          error={this.state.errorTextPath}
+          margin="dense"
+          name="name"
+          label={i18n.t('core:createLocationName')}
+          onChange={this.handleInputChange}
+          value={this.state.name}
+          data-tid="editLocationName"
+          fullWidth={true}
+        />
+        {this.state.errorTextName && <FormHelperText>Invalid Name</FormHelperText>}
+      </FormControl>
+      <FormControl
+        fullWidth={true}
+        error={this.state.errorTextPath}
+      >
         <InputLabel htmlFor="name">{i18n.t('core:editLocationPath')}</InputLabel>
         <Input
           autoFocus
@@ -185,7 +202,7 @@ class EditLocationDialog extends React.Component<Props, State> {
             <InputAdornment position="end" style={{ height: 32 }}>
               <IconButton
                 disabled={this.state.openDirectoryButtonDisabled}
-                onClick={this.openDirectory.bind(this)}
+                onClick={this.openDirectory}
               >
                 <FolderIcon />
               </IconButton>
@@ -193,22 +210,6 @@ class EditLocationDialog extends React.Component<Props, State> {
           }
         />
         {this.state.errorTextPath && <FormHelperText>{i18n.t('core:invalidPath')}</FormHelperText>}
-      </FormControl>
-      <FormControl
-        fullWidth={true}
-        error={this.state.errorTextPath}
-      >
-        <TextField
-          error={this.state.errorTextPath}
-          margin="dense"
-          name="name"
-          label={i18n.t('core:createLocationName')}
-          onChange={this.handleInputChange}
-          value={this.state.name}
-          data-tid="editLocationName"
-          fullWidth={true}
-        />
-        {this.state.errorTextName && <FormHelperText>Invalid Name</FormHelperText>}
       </FormControl>
       <FormControl>
         <FormGroup>
