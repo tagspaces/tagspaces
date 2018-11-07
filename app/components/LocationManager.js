@@ -105,7 +105,7 @@ type State = {
   isDeleteLocationDialogOpened?: boolean,
   isSelectDirectoryDialogOpened?: boolean,
   isCreateDirectoryDialogOpened?: boolean,
-  dirs?: Array<Object>
+  dirs?: Object
 };
 
 type SubFolder = {
@@ -130,7 +130,7 @@ class LocationManager extends React.Component<Props, State> {
     isDeleteLocationDialogOpened: false,
     isCreateDirectoryDialogOpened: false,
     isSelectDirectoryDialogOpened: false,
-    dirs: []
+    dirs: {}
   };
 
   getDirectoriesTree = (subFolder: SubFolder, deepLevel: number) =>
@@ -183,9 +183,15 @@ class LocationManager extends React.Component<Props, State> {
           if (location.path === undefined) { // location
             dirsTree[location.uuid] = children;
           } else {
-            // eslint-disable-next-line no-param-reassign
-            location.children = children;
-            dirsTree[location.uuid] = [location];
+            const dirsCopy = this.getFirstLevelDirs(location.path, children);
+            if (dirsCopy) {
+              // console.log(dirsCopy);
+              dirsTree[location.uuid] = dirsCopy;
+            } else {
+              // eslint-disable-next-line no-param-reassign
+              location.children = children;
+              dirsTree[location.uuid] = [location];
+            }
           }
           this.setState({
             dirs: dirsTree
@@ -215,6 +221,109 @@ class LocationManager extends React.Component<Props, State> {
       }
     }
   }; */
+
+  /* set = (path: string, arrChildren: Array<SubFolder>) => {
+    for (const [uuid, arrSubDirs] of Object.entries(this.state.dirs)) {
+      const arr = arrSubDirs.length;
+      let a;
+      for (a = 0; a < arr; a += 1) {
+        if (path === arrSubDirs[a].path) {
+          const copyObj = [...this.state.dirs[uuid]];
+          copyObj[a].children = arrChildren;
+          return copyObj;
+        }
+        if (arrSubDirs[a].children !== undefined) {
+          let schema = arrSubDirs[a]; // a moving reference to internal objects within obj
+          const pList = path.split('/');
+          const len = pList.length;
+          for (let i = 0; i < len - 1; i++) {
+            const elem = pList[i];
+            if (!schema[elem]) schema[elem] = {};
+            schema = schema[elem];
+          }
+
+          schema[pList[len - 1]] = arrChildren;
+          return schema;
+        }
+      }
+    }
+  }; */
+
+  getFirstLevelDirs = (path: string, arrChildren: Array<SubFolder>) => {
+    // const arrLocations = Object.entries(this.state.dirs);
+    /* for (const uuid in this.state.dirs) {
+      this.state.dirs[uuid].forEach((dir) => {
+        if (path.indexOf(dir.path) === 0) {
+          return [...this.state.dirs[uuid]];
+        }
+        // console.log(dir);
+      });
+    } */
+    /* function getLevel(obj, depth) {
+      let b;
+      for (b = 0; b < depth; b += 1) {
+        obj.children = arrChildren;
+      }
+    } */
+    for (const [uuid, arrSubDirs] of Object.entries(this.state.dirs)) {
+      const arr = arrSubDirs.length;
+      let a;
+      for (a = 0; a < arr; a += 1) {
+        if (path === arrSubDirs[a].path) {
+          const copyObj = [...this.state.dirs[uuid]];
+          copyObj[a].children = arrChildren;
+          return copyObj;
+        }
+        if (arrSubDirs[a].children !== undefined) {
+          const stack = [{
+            depth: 0,
+            element: arrSubDirs[a],
+            propPath: ''
+          }];
+          let stackItem = 0;
+          let current;
+          let children;
+          let depth;
+          let stackPath;
+          let propPath = a + '.children';
+
+          while (current = stack[stackItem++]) {
+            // get the arguments
+            stackPath = current.propPath;
+            depth = current.depth;
+            current = current.element;
+            children = current.children;
+            if (children !== undefined) {
+              const len = children.length;
+              for (let i = 0; i < len; i++) {
+                if (path === children[i].path) {
+                  propPath = propPath + stackPath + '.' + i + '.children';
+                  const copyObj = [...this.state.dirs[uuid]];
+
+                  let schema = copyObj; // a moving reference to internal objects within obj
+                  const pList = propPath.split('.');
+                  const leng = pList.length;
+                  for (let c = 0; c < leng - 1; c++) {
+                    const elem = pList[c];
+                    if (!schema[elem]) schema[elem] = {};
+                    schema = schema[elem];
+                  }
+                  schema[pList[leng - 1]] = arrChildren;
+                  return copyObj;
+                }
+
+                stack.push({ // pass args via object or array
+                  element: children[i],
+                  depth: depth + 1,
+                  propPath: '.' + i + '.children'
+                });
+              }
+            }
+          }
+        }
+      }
+    }
+  };
 
   iterateTree = (path: string) => {
     // const arrLocations = Object.entries(this.state.dirs);
