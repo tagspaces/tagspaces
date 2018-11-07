@@ -63,6 +63,7 @@ type Props = {
 type State = {
   textQuery?: string,
   tagQuery?: string,
+  tagConjunction?: string,
   fileTypes?: Array<string>,
   tags?: Array<string>,
   lastModified?: Date | string
@@ -72,6 +73,7 @@ class Search extends React.Component<Props, State> {
   state = {
     textQuery: '',
     tagQuery: '',
+    tagConjunction: 'OR',
     fileTypes: FileTypeGroups.any,
     lastModified: ''
   };
@@ -97,9 +99,9 @@ class Search extends React.Component<Props, State> {
       {
         textQuery: '',
         tagQuery: '',
+        tagConjunction: 'OR',
         fileTypes: FileTypeGroups.any
       },
-      // this.executeSearch
       () => this.props.loadDirectoryContent(this.props.currentDirectory)
     );
   };
@@ -116,7 +118,7 @@ class Search extends React.Component<Props, State> {
     const searchQuery: SearchQuery = {
       textQuery: this.state.textQuery,
       fileTypes: this.state.fileTypes,
-      tagConjunction: 'OR',
+      tagConjunction: this.state.tagConjunction,
       tags
     };
     console.log('Search object: ' + JSON.stringify(searchQuery));
@@ -175,20 +177,25 @@ class Search extends React.Component<Props, State> {
               onChange={this.handleInputChange}
             />
           </FormControl>
-          <FormControl component="fieldset" className={classes.formControl}>
-            <InputLabel>Tag Search Type</InputLabel>
+          { /* <FormControl
+            component="fieldset"
+            className={classes.formControl}
+            disabled={indexing || !Pro}
+          >
+            <FormHelperText>
+              {i18n.t('core:tagSearchType')}
+            </FormHelperText>
             <RadioGroup
-              aria-label="Gender"
-              name="gender1"
-              style={{ marginLeft: 150, paddingTop: 10 }}
-              value={this.state.value}
-              onChange={this.handleChange}
+              aria-label="Tag Search Type"
+              name="tagConjunction"
+              value={this.state.tagConjunction}
+              onChange={this.handleInputChange}
               row
             >
-              <FormControlLabel value="OR" control={<Radio />} label="OR" />
-              <FormControlLabel value="AND" control={<Radio />} label="AND" />
+              <FormControlLabel value="OR" control={<Radio />} label="or" />
+              <FormControlLabel value="AND" control={<Radio />} label="and" />
             </RadioGroup>
-          </FormControl>
+          </FormControl> */ }
           <FormControl
             className={classes.formControl}
             disabled={indexing || !Pro}
