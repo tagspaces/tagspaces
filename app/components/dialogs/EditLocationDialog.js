@@ -170,7 +170,7 @@ class EditLocationDialog extends React.Component<Props, State> {
         fullWidth={true}
         error={this.state.errorTextPath}
       >
-        <InputLabel htmlFor="name">{i18n.t('core:editLocationTitle')}</InputLabel>
+        <InputLabel htmlFor="name">{i18n.t('core:editLocationPath')}</InputLabel>
         <Input
           autoFocus
           required
