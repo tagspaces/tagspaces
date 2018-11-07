@@ -315,7 +315,7 @@ class LocationManager extends React.Component<Props, State> {
                 stack.push({ // pass args via object or array
                   element: children[i],
                   depth: depth + 1,
-                  propPath: '.' + i + '.children'
+                  propPath: (stackPath ? '.' + stackPath : '') + '.' + i + '.children'
                 });
               }
             }
