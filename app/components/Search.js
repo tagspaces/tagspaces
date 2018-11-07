@@ -302,7 +302,12 @@ class Search extends React.Component<Props, State> {
             >
               {indexing ? 'Search disabled while indexing' : i18n.t('searchTitle')}
             </Button>&nbsp;
-            <Button size="small" color="primary" onClick={this.clearSearch} id="resetSearchButton">
+            <Button
+              size="small"
+              color="primary"
+              onClick={this.clearSearch}
+              id="resetSearchButton"
+            >
               {i18n.t('resetBtn')}
             </Button>
           </FormControl>
