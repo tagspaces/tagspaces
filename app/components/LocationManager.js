@@ -297,7 +297,7 @@ class LocationManager extends React.Component<Props, State> {
               const len = children.length;
               for (let i = 0; i < len; i++) {
                 if (path === children[i].path) {
-                  propPath = propPath + stackPath + '.' + i + '.children';
+                  propPath = propPath + '.' + (stackPath ? stackPath + '.' : '') + i + '.children';
                   const copyObj = [...this.state.dirs[uuid]];
 
                   let schema = copyObj; // a moving reference to internal objects within obj
@@ -315,7 +315,7 @@ class LocationManager extends React.Component<Props, State> {
                 stack.push({ // pass args via object or array
                   element: children[i],
                   depth: depth + 1,
-                  propPath: (stackPath ? '.' + stackPath : '') + '.' + i + '.children'
+                  propPath: (stackPath ? stackPath + '.' : '') + i + '.children'
                 });
               }
             }
