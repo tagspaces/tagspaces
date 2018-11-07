@@ -369,34 +369,6 @@ export default class CordovaIO {
     // return appDataPath;
   };
 
-  /**
-   * Checks if new version is available
-   */
-  checkNewVersion = () => {
-    console.log('Checking for new version...');
-    /* const cVer =
-      Config.DefaultSettings.appVersion +
-      '.' +
-      Config.DefaultSettings.appBuild;
-    $.ajax({
-      url: 'http://tagspaces.org/releases/version.json?pVer=' + cVer,
-      type: 'GET'
-    })
-      .done(data => {
-        updateNewVersionData(data);
-      })
-      .fail(data => {
-        console.log('AJAX failed ' + data);
-      }); */
-  };
-
-  /**
-   * places the TagSpaces window on top of the windows
-   */
-  focusWindow = () => {
-    console.log('Focusing window is not implemented in cordova.');
-  };
-
   handleStartParameters = () => {
     if (this.urlFromIntent !== undefined && this.urlFromIntent.length > 0) {
       console.log('Intent URL: ' + this.urlFromIntent);
@@ -1057,5 +1029,12 @@ export default class CordovaIO {
     } else {
       window.plugins.fileOpener.open('file://' + filePath);
     }
+  };
+
+  /**
+   * Places the application window on top of the other windows
+   */
+  focusWindow = () => {
+    console.log('Focusing window is not implemented in cordova.');
   };
 }

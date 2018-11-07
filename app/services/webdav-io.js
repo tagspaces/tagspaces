@@ -131,21 +131,6 @@ export default class WebDAVIO {
   };
 
   /**
-   * Bring the TagSpaces window on top of the windows
-   */
-  focusWindow = (): void => {
-    window.focus();
-  };
-
-  /**
-   * Checks if new version is available
-   */
-  checkNewVersion = () => {
-    // TODO
-    console.log('Checking for new version not implemented');
-  };
-
-  /**
    * Creates recursively a tree structure for a given directory path
    * @param {string} dirPath - the full path of the directory for which the tree will be generated
    */
@@ -538,5 +523,12 @@ export default class WebDAVIO {
    */
   openFile = (filePath: string): void => {
     window.open(filePath, '_blank');
+  };
+
+  /**
+   * Places the application window on top of the other windows
+   */
+  focusWindow = (): void => {
+    window.focus();
   };
 }
