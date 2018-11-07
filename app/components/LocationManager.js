@@ -70,7 +70,6 @@ type Props = {
   locations: Array<Location>,
   perspectives: Array<Object>,
   currentLocationId: string,
-  // getDirectoriesTree: (path: string, deepLevel: number) => void,
   loadDirectoryContent: (path: string) => void,
   openLocation: (path: string) => void,
   openFileNatively: (path: string) => void,
@@ -133,6 +132,40 @@ class LocationManager extends React.Component<Props, State> {
     dirs: {}
   };
 
+  loadSubDirectories = (location: Location, deepLevel: number) => {
+    const subFolder = {
+      uuid: location.uuid,
+      name: location.name,
+      path: location.path || location.paths[0],
+    };
+    this.getDirectoriesTree(subFolder, deepLevel).then(children => {
+      if (children instanceof Array) {
+        if (location.uuid) {
+          const dirsTree = {}; // this.state.dirs; (uncomment to allow open multiple Locations folders) //TODO set settings for this
+          if (location.path === undefined) { // location
+            dirsTree[location.uuid] = children;
+          } else {
+            const dirsCopy = this.getMergedDirsCopy(location.path, children);
+            if (dirsCopy) {
+              dirsTree[location.uuid] = dirsCopy;
+            } else {
+              // eslint-disable-next-line no-param-reassign
+              location.children = children;
+              dirsTree[location.uuid] = [location];
+            }
+          }
+          this.setState({
+            dirs: dirsTree
+          });
+        }
+      }
+      return true;
+    })
+      .catch(error => {
+        console.log('loadSubDirectories', error);
+      });
+  };
+
   getDirectoriesTree = (subFolder: SubFolder, deepLevel: number) =>
     // const { settings } = getState();
     PlatformIO.listDirectoryPromise(subFolder.path, false)
@@ -166,106 +199,13 @@ class LocationManager extends React.Component<Props, State> {
       })
   ;
 
-  loadSubDirectories = (location: Location, deepLevel: number) => {
-    const subFolder = {
-      uuid: location.uuid,
-      name: location.name,
-      path: location.path || location.paths[0],
-    };
-    this.getDirectoriesTree(subFolder, deepLevel).then(children => {
-      /* const elem = this.iterateTree(subFolder.path);
-      if (elem) {
-        console.log(elem);
-      } */
-      if (children instanceof Array) {
-        if (location.uuid) {
-          const dirsTree = this.state.dirs;
-          if (location.path === undefined) { // location
-            dirsTree[location.uuid] = children;
-          } else {
-            const dirsCopy = this.getFirstLevelDirs(location.path, children);
-            if (dirsCopy) {
-              // console.log(dirsCopy);
-              dirsTree[location.uuid] = dirsCopy;
-            } else {
-              // eslint-disable-next-line no-param-reassign
-              location.children = children;
-              dirsTree[location.uuid] = [location];
-            }
-          }
-          this.setState({
-            dirs: dirsTree
-          });
-        }
-      }
-      /* [
-        ...this.state.dirs,
-        { [location.uuid]: children }
-      ] */
-      return true;
-    })
-      .catch(error => {
-        console.log('loadSubDirectories', error);
-      });
-  };
-
-  // https://codereview.stackexchange.com/questions/47932/recursion-vs-iteration-of-tree-structure
-  /* searchPath = (path: string, current, depth) => {
-    const children = current.children;
-    if (children !== undefined) {
-      for (let i = 0, len = children.length; i < len; i += 1) {
-        if (path === children[i].path) {
-          return children[i];
-        }
-        this.searchPath(path, children[i], depth + 1);
-      }
-    }
-  }; */
-
-  /* set = (path: string, arrChildren: Array<SubFolder>) => {
-    for (const [uuid, arrSubDirs] of Object.entries(this.state.dirs)) {
-      const arr = arrSubDirs.length;
-      let a;
-      for (a = 0; a < arr; a += 1) {
-        if (path === arrSubDirs[a].path) {
-          const copyObj = [...this.state.dirs[uuid]];
-          copyObj[a].children = arrChildren;
-          return copyObj;
-        }
-        if (arrSubDirs[a].children !== undefined) {
-          let schema = arrSubDirs[a]; // a moving reference to internal objects within obj
-          const pList = path.split('/');
-          const len = pList.length;
-          for (let i = 0; i < len - 1; i++) {
-            const elem = pList[i];
-            if (!schema[elem]) schema[elem] = {};
-            schema = schema[elem];
-          }
-
-          schema[pList[len - 1]] = arrChildren;
-          return schema;
-        }
-      }
-    }
-  }; */
-
-  getFirstLevelDirs = (path: string, arrChildren: Array<SubFolder>) => {
-    // const arrLocations = Object.entries(this.state.dirs);
-    /* for (const uuid in this.state.dirs) {
-      this.state.dirs[uuid].forEach((dir) => {
-        if (path.indexOf(dir.path) === 0) {
-          return [...this.state.dirs[uuid]];
-        }
-        // console.log(dir);
-      });
-    } */
-    /* function getLevel(obj, depth) {
-      let b;
-      for (b = 0; b < depth; b += 1) {
-        obj.children = arrChildren;
-      }
-    } */
-    for (const [uuid, arrSubDirs] of Object.entries(this.state.dirs)) {
+  /**
+   * https://codereview.stackexchange.com/questions/47932/recursion-vs-iteration-of-tree-structure
+   * Dynamically set property of nested object
+   * */
+  getMergedDirsCopy = (path: string, arrChildren: Array<SubFolder>) => {
+    const entries = Object.entries(this.state.dirs);
+    for (const [uuid, arrSubDirs] of entries) {
       const arr = arrSubDirs.length;
       let a;
       for (a = 0; a < arr; a += 1) {
@@ -324,68 +264,6 @@ class LocationManager extends React.Component<Props, State> {
       }
     }
   };
-
-  iterateTree = (path: string) => {
-    // const arrLocations = Object.entries(this.state.dirs);
-    for (const uuid in this.state.dirs) {
-      this.state.dirs[uuid].forEach((dir) => {
-        console.log(dir);
-      });
-    }
-    /* if (arrLocations.length > 0) {
-      arrLocations.forEach((location) => {
-        const stack = [{
-          depth: 0,
-          element: location
-        }];
-        let stackItem = 0;
-        let current;
-        let children,
-          i,
-          len;
-        let depth;
-
-        while (current = stack[stackItem++]) {
-          // get the arguments
-          depth = current.depth;
-          current = current.element;
-          children = current.element.children;
-          for (i = 0, len = children.length; i < len; i++) {
-            stack.push({ // pass args via object or array
-              element: children[i],
-              depth: depth + 1
-            });
-          }
-        }
-      });
-    } */
-  };
-  /* getDir = (path: string) => {
-    const arrLocations = Object.values(this.state.dirs);
-    if(arrLocations.length > 0) {
-      arrLocations.forEach((location) => {
-        if(location.paths[0] === path)
-if(dir.children !== undefined){
-
-}
-      });
-    }
-    return undefined;
-  };
-
-  findDir = (arrDirs: Array<Object>, path) => {
-      return arrDirs.find(obj => obj.path === path);
-  }; */
-  /* componentWillReceiveProps(nextProps) {
-    if (this.props.locations !== nextProps.locations) {
-      nextProps.locations.map(entry => {
-        if (this.state.locationRootPath === entry.path || this.state.locationRootPath === entry.paths[0]) {
-          console.log('componentWillReceiveProps');
-          this.props.loadSubDirectories(entry);
-        }
-      });
-    }
-  } */
 
   handleCloseDialogs = () => {
     this.setState({
