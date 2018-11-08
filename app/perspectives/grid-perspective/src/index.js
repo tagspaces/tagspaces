@@ -110,11 +110,11 @@ const styles = theme => ({
     borderRadius: 0
   },
   selectedGridCell: {
-    backgroundColor: theme.palette.primary['200'],
-    boxShadow: '0 0 1pt 1pt ' + theme.palette.primary['200']
+    backgroundColor: theme.palette.primary.light,
+    boxShadow: '0 0 1pt 1pt ' + theme.palette.primary.light
   },
   selectedRowCell: {
-    backgroundColor: theme.palette.primary['200']
+    backgroundColor: theme.palette.primary.light
   },
   gridCellThumb: {
     backgroundRepeat: 'no-repeat',
