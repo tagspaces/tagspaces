@@ -471,7 +471,8 @@ class LocationManager extends React.Component<Props, State> {
   onExpand = (expanded, record) => {
     // console.log('onExpand', expanded + JSON.stringify(record));
     if (expanded) {
-      this.onRowClick(record);
+      // this.onRowClick(record);
+      this.loadSubDirectories(record, 1);
     }
   };
 
