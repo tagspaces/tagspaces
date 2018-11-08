@@ -108,7 +108,7 @@ const actions = {
         return true;
       }).catch(() => {
         const newFsEntryMeta = {
-          processedTags
+          tags: processedTags
         };
         saveMetaDataPromise(path, newFsEntryMeta).then(() => {
           dispatch(AppActions.reflectUpdateSidecarTags(path, processedTags));

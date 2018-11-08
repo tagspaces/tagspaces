@@ -25,6 +25,7 @@ import {
   extractTagsAsObjects,
   extractFileExtension,
   cleanTrailingDirSeparator,
+  getMetaDirectoryPath,
   getMetaFileLocationForFile,
   getMetaFileLocationForDir
 } from '../utils/paths';
@@ -357,6 +358,11 @@ export async function saveMetaDataPromise(path: string, metaData: Object): Promi
       lastUpdated: (new Date()).toJSON()
     };
   } else {
+    const metaDirectoryPath = getMetaDirectoryPath(path);
+    const metaDirectoryProperties = await PlatformIO.getPropertiesPromise(metaDirectoryPath);
+    if (!metaDirectoryProperties) {
+      await PlatformIO.createDirectoryPromise(metaDirectoryPath);
+    }
     metaFilePath = getMetaFileLocationForDir(path);
     newFsEntryMeta = {
       ...metaData,
