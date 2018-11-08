@@ -8465,13 +8465,14 @@ min-document@^2.19.0:
   dependencies:
     dom-walk "^0.1.0"
 
-mini-store@^1.0.2:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/mini-store/-/mini-store-1.1.0.tgz#4d6b3fb5c89aa0303d9b39475efb3439cd42f04f"
-  integrity sha512-/Ou2jdD7/CDyJBjHnpRuc8aehh2WHxBpUpVvVHn0XhvLHk35YOiUlOYhX55NX00/e4phr1F3aNnhWKkGMqLUfQ==
+mini-store@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/mini-store/-/mini-store-2.0.0.tgz#0843c048d6942ce55e3e78b1b67fc063022b5488"
+  integrity sha512-EG0CuwpQmX+XL4QVS0kxNwHW5ftSbhygu1qxQH0pipugjnPkbvkalCdQbEihMwtQY6d3MTN+MS0q+aurs+RfLQ==
   dependencies:
     hoist-non-react-statics "^2.3.1"
     prop-types "^15.6.0"
+    react-lifecycles-compat "^3.0.4"
     shallowequal "^1.0.2"
 
 minimalistic-assert@^1.0.0:
@@ -10309,16 +10310,16 @@ rc-animate@2.x:
     css-animation "^1.3.2"
     prop-types "15.x"
 
-rc-table@^6.1.0:
-  version "6.2.2"
-  resolved "https://registry.yarnpkg.com/rc-table/-/rc-table-6.2.2.tgz#829cd47f8b656edbb0418bd4da632b6cf10c073b"
-  integrity sha512-ZlWiU3J9JZ2bmuVLdqG+5YRntAaWQDRwRR5Pt/fv0sNpyoyg59VnHeZ2SPlmr7EoIdErDzWHk0XxLjd/g43AVA==
+rc-table@^6.4.0:
+  version "6.4.0"
+  resolved "https://registry.yarnpkg.com/rc-table/-/rc-table-6.4.0.tgz#ea26a4002a3fde9a26f7d7889bb016e7b8e5a598"
+  integrity sha512-dd1vcomCZtV8NIVLz6i0aK8019rRojrmVktTruHmFRc7LiFKm6M+Ij3aHp5jUAs0t5dUeToFu9AoYzA0JknBTg==
   dependencies:
     babel-runtime "6.x"
     classnames "^2.2.5"
     component-classes "^1.2.6"
     lodash "^4.17.5"
-    mini-store "^1.0.2"
+    mini-store "^2.0.0"
     prop-types "^15.5.8"
     rc-util "^4.0.4"
     react-lifecycles-compat "^3.0.2"
