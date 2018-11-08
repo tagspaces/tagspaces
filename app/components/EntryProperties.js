@@ -282,9 +282,27 @@ class EntryProperties extends Component<Props, State> {
       this.props.showNotification(i18n.t('core:thisFunctionalityIsAvailableInPro'));
       return;
     }
-    this.setState(prevState => ({
-      isEditDescription: !prevState.isEditDescription
-    }));
+    if (!Pro.MetaOperations) {
+      this.props.showNotification(i18n.t('Saving description not supported'));
+      return;
+    }
+    if (this.state.isEditDescription) {
+      Pro.MetaOperations.saveDescription(this.props.entryPath, this.state.description).then(() => {
+        this.setState({
+          isEditDescription: false
+        });
+        return true;
+      }).catch((error) => {
+        this.setState({
+          isEditDescription: false
+        });
+        this.props.showNotification(i18n.t('Error saving description'));
+      });
+    } else {
+      this.setState({
+        isEditDescription: true
+      });
+    }
   };
 
   toggleMoveCopyFilesDialog = () => {
