@@ -62,6 +62,8 @@ import i18n from '../services/i18n';
 import { isObj } from '../utils/misc';
 // import AppConfig from '../config';
 
+const { app } = require('electron').remote;
+
 type Props = {
   classes: Object,
   locations: Array<Location>,
@@ -121,6 +123,7 @@ class LocationManager extends React.Component<Props, State> {
   };
 
   handleCloseDialogs = () => {
+    app.showExitPrompt = false;
     this.setState({
       isCreateLocationDialogOpened: false,
       isEditLocationDialogOpened: false,
@@ -130,6 +133,7 @@ class LocationManager extends React.Component<Props, State> {
   };
 
   showCreateLocationDialog = () => {
+    app.showExitPrompt = true;
     this.handleRequestCloseContextMenus();
     this.setState({ isCreateLocationDialogOpened: true });
   };
@@ -173,6 +177,7 @@ class LocationManager extends React.Component<Props, State> {
 
 
   showEditLocationDialog = () => {
+    app.showExitPrompt = true;
     this.handleRequestCloseContextMenus();
     this.setState({ isEditLocationDialogOpened: true });
   };

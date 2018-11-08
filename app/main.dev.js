@@ -158,6 +158,24 @@ app.on('ready', async () => {
     }
   });
 
+  app.showExitPrompt = false;
+  mainWindow.on('close', (e) => {
+    if (app.showExitPrompt) {
+      e.preventDefault(); // Prevents the window from closing
+      dialog.showMessageBox({
+        type: 'question',
+        buttons: ['Yes', 'No'],
+        title: 'Confirm',
+        message: 'Unsaved data will be lost. Are you sure you want to quit?'
+      }, (response) => {
+        if (response === 0) { // Runs the following if 'Yes' is clicked
+          app.showExitPrompt = false;
+          mainWindow.close();
+        }
+      });
+    }
+  });
+
   mainWindow.webContents.on('crashed', () => {
     const options = {
       type: 'info',
