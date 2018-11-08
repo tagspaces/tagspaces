@@ -34,7 +34,8 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
-import FolderIcon from '@material-ui/icons/Folder';
+import FolderIcon from '@material-ui/icons/FolderOpen';
+import LocationIcon from '@material-ui/icons/WorkOutline';
 // import StartupFolderIcon from '@material-ui-icons/FolderSpecial';
 import AddIcon from '@material-ui/icons/Add';
 import EditIcon from '@material-ui/icons/Edit';
@@ -437,7 +438,7 @@ class LocationManager extends React.Component<Props, State> {
   renderNameColumnAction = (field, location, key) => {
     const children = (
       <span>
-        {/* <FolderIcon style={{ marginTop: 0, marginBottom: -8 }} className={this.props.classes.icon} /> */}
+        <FolderIcon style={{ marginTop: 0, marginBottom: -8 }} className={this.props.classes.icon} />
         <span style={{ fontSize: 15, marginLeft: 5 }}>{field}</span>
         {/* <IconButton
           style={{ float: 'right', paddingTop: 0, paddingBottom: 0, paddingLeft: 0, paddingRight: 0 }}
@@ -564,8 +565,8 @@ class LocationManager extends React.Component<Props, State> {
           button
           onClick={() => this.handleLocationClick(location)}
         >
-          <ListItemIcon>
-            <FolderIcon className={this.props.classes.icon} />
+          <ListItemIcon style={{ marginRight: 0 }}>
+            <LocationIcon className={this.props.classes.icon} />
           </ListItemIcon>
           <ListItemText
             style={{ paddingLeft: 5, paddingRight: 5 }}
