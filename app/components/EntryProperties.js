@@ -214,7 +214,6 @@ class EntryProperties extends Component<Props, State> {
     }
   }
 
-
   loadEntryProperties = (entryPath) => {
     getAllPropertiesPromise(entryPath).then(entryProps => {
       this.setState({
@@ -427,13 +426,10 @@ class EntryProperties extends Component<Props, State> {
             </div>
             <FormControl fullWidth={true} className={classes.formControl}>
               <div className={classes.ellipsisText}>
-                <Input
+                <TextField
                   disabled={!isEditName}
-                  autoFocus
-                  required
                   margin="dense"
                   name="name"
-                  label={i18n.t('core:fileName')}
                   fullWidth={true}
                   data-tid="fileNameProperties"
                   value={name}
@@ -454,7 +450,6 @@ class EntryProperties extends Component<Props, State> {
             </FormControl>
           </div>
 
-          {/* edit tags */}
           <div className={classes.entryItem}>
             <div className={classes.fluidGrid}>
               <div className="grid-item">
@@ -486,7 +481,6 @@ class EntryProperties extends Component<Props, State> {
             </Paper>
           </div>
 
-          {/* edit description */}
           <div className={classes.entryItem}>
             <div className={classes.fluidGrid}>
               <div className="grid-item">
@@ -519,7 +513,6 @@ class EntryProperties extends Component<Props, State> {
             <FormControl fullWidth={true} className={classes.formControl}>
               {isEditDescription ? (
                 <TextField
-                  autoFocus
                   multiline
                   disabled={!isEditDescription}
                   id="textarea"
@@ -556,41 +549,30 @@ class EntryProperties extends Component<Props, State> {
             </FormControl>
           </div>
 
-          {/* edit path */}
           <div className={classes.entryItem}>
             <div className={classes.fluidGrid}>
-              <div className="grid-item">
-                <Typography variant="caption" className={classes.entryLabel}>
-                  {i18n.t('core:filePath')}
-                </Typography>
-              </div>
-              <div className="grid-item">
-                <Button
-                  color="primary"
-                  disabled={isEditDescription || isEditName}
-                  className={classes.button}
-                  onClick={this.toggleMoveCopyFilesDialog}
-                >
-                  {i18n.t('core:move')}
-                </Button>
-              </div>
+              <Typography variant="caption" className={classes.entryLabel}>
+                {i18n.t('core:filePath')}
+              </Typography>
+              <Button
+                color="primary"
+                styles={{ paddingBottom: 0 }}
+                disabled={isEditDescription || isEditName}
+                className={classes.button}
+                onClick={this.toggleMoveCopyFilesDialog}
+              >
+                {i18n.t('core:move')}
+              </Button>
             </div>
             <FormControl fullWidth={true} className={classes.formControl}>
-              <div className={classes.ellipsisText}>
-                <Input
-                  disabled={true}
-                  autoFocus
-                  required
-                  margin="dense"
-                  name="path"
-                  label={i18n.t('core:filePath')}
-                  fullWidth={true}
-                  data-tid="filePathProperties"
-                  className={classes.field}
-                  value={entryPath || ''}
-                  onChange={e => this.handleInputChange(e)}
-                />
-              </div>
+              <TextField
+                margin="dense"
+                name="path"
+                fullWidth={true}
+                data-tid="filePathProperties"
+                className={classes.field}
+                value={entryPath || ''}
+              />
             </FormControl>
           </div>
 
@@ -598,26 +580,20 @@ class EntryProperties extends Component<Props, State> {
             <div
               className={[classes.fluidGrid, classes.ellipsisText].join(' ')}
             >
-              {/* date modified */}
               <div className="grid-item" style={{ width: '50%' }}>
                 <div className={classes.fluidGrid}>
-                  <div className="grid-item">
-                    <Typography
-                      variant="caption"
-                      className={classes.entryLabel}
-                    >
-                      {i18n.t('core:fileLDTM')}
-                    </Typography>
-                  </div>
+                  <Typography
+                    variant="caption"
+                    className={classes.entryLabel}
+                  >
+                    {i18n.t('core:fileLDTM')}
+                  </Typography>
                 </div>
                 <FormControl fullWidth={true} className={classes.formControl}>
-                  <Input
-                    disabled={true}
-                    autoFocus
+                  <TextField
                     required
                     margin="dense"
                     name="ldtm"
-                    label={i18n.t('core:fileLDTM')}
                     fullWidth={true}
                     data-tid="fileLdtmProperties"
                     value={ldtm}
@@ -626,31 +602,24 @@ class EntryProperties extends Component<Props, State> {
                 </FormControl>
               </div>
 
-              {/* size */}
-              { isFile && (
+              { isFile ? (
                 <div className="grid-item" style={{ width: '50%' }}>
                   <div className={classes.fluidGrid}>
-                    <div className="grid-item">
-                      <Typography
-                        variant="caption"
-                        className={classes.entryLabel}
-                      >
-                        {i18n.t('core:fileSize')}
-                      </Typography>
-                    </div>
+                    <Typography
+                      variant="caption"
+                      className={classes.entryLabel}
+                    >
+                      {i18n.t('core:fileSize')}
+                    </Typography>
                   </div>
                   <FormControl
                     fullWidth={true}
                     className={classes.formControl}
                     title={size + ' bytes'}
                   >
-                    <Input
-                      disabled={true}
-                      autoFocus
-                      required
+                    <TextField
                       margin="dense"
                       name="size"
-                      label={i18n.t('core:fileSize')}
                       fullWidth={true}
                       data-tid="fileSizeProperties"
                       className={classes.field}
@@ -658,44 +627,43 @@ class EntryProperties extends Component<Props, State> {
                     />
                   </FormControl>
                 </div>
+              ) : false && (
+                <div className="grid-item" style={{ width: '50%' }}>
+                  <div className={classes.fluidGrid}>
+                    <Typography
+                      variant="caption"
+                      className={classes.entryLabel}
+                    >
+                      {i18n.t('core:changeBackgroundColor')}
+                    </Typography>
+                    <div className="grid-item" style={{ padding: 2 }}>
+                      <Button
+                        className={[
+                          classes.colorChooserButton,
+                          classes.button
+                        ].join(' ')}
+                        style={{
+                          backgroundColor: color || '#3498db',
+                          width: 100,
+                          margin: '0 8px 0 0'
+                        }}
+                        onClick={this.toggleBackgroundColorPicker}
+                      >
+                        &nbsp;
+                      </Button>
+                      <div style={classes.color} />
+                      <ColorPickerDialog
+                        color={color}
+                        open={displayColorPicker}
+                        setColor={this.handleChangeColor}
+                        onClose={this.toggleBackgroundColorPicker}
+                      />
+                    </div>
+                  </div>
+                </div>
               )}
             </div>
           </div>
-
-          {false && (/* background color only for folders */
-            <div className={classes.entryItem}>
-              <div className={classes.fluidGrid}>
-                <div className="grid-item">
-                  <Typography variant="caption" className={classes.entryLabel}>
-                    {i18n.t('core:changeBackgroundColor')}
-                  </Typography>
-                </div>
-                <div className="grid-item" style={{ padding: 2 }}>
-                  <Button
-                    className={[
-                      classes.colorChooserButton,
-                      classes.button
-                    ].join(' ')}
-                    style={{
-                      backgroundColor: color || '#3498db',
-                      width: 100,
-                      margin: '0 8px 0 0'
-                    }}
-                    onClick={this.toggleBackgroundColorPicker}
-                  >
-                    &nbsp;
-                  </Button>
-                  <div style={classes.color} />
-                  <ColorPickerDialog
-                    color={color}
-                    open={displayColorPicker}
-                    setColor={this.handleChangeColor}
-                    onClose={this.toggleBackgroundColorPicker}
-                  />
-                </div>
-              </div>
-            </div>
-          )}
         </Grid>
 
         <EntryTagMenu
