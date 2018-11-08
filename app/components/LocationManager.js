@@ -18,6 +18,8 @@
  */
 
 import React from 'react';
+import Table from 'rc-table';
+// import 'rc-table/assets/index.css';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
@@ -60,7 +62,8 @@ import { actions as AppActions, getCurrentLocationId } from '../reducers/app';
 import { getPerspectives } from '../reducers/settings';
 import i18n from '../services/i18n';
 import { isObj } from '../utils/misc';
-// import AppConfig from '../config';
+import AppConfig from '../config';
+import PlatformIO from '../services/platform-io';
 
 type Props = {
   classes: Object,
@@ -100,7 +103,15 @@ type State = {
   isEditLocationDialogOpened?: boolean,
   isDeleteLocationDialogOpened?: boolean,
   isSelectDirectoryDialogOpened?: boolean,
-  isCreateDirectoryDialogOpened?: boolean
+  isCreateDirectoryDialogOpened?: boolean,
+  dirs?: Object
+};
+
+type SubFolder = {
+  uuid: string,
+  name: string,
+  path: string,
+  children?: Array<SubFolder>
 };
 
 class LocationManager extends React.Component<Props, State> {
@@ -117,7 +128,151 @@ class LocationManager extends React.Component<Props, State> {
     isEditLocationDialogOpened: false,
     isDeleteLocationDialogOpened: false,
     isCreateDirectoryDialogOpened: false,
-    isSelectDirectoryDialogOpened: false
+    isSelectDirectoryDialogOpened: false,
+    dirs: {}
+  };
+
+  componentWillReceiveProps = (nextProps: any) => {
+    if (this.props.locations !== nextProps.locations) {
+      nextProps.locations.forEach((location) => {
+        if (location.isDefault) {
+          this.loadSubDirectories(location, 1);
+        }
+      });
+    }
+  };
+
+  loadSubDirectories = (location: Location, deepLevel: number) => {
+    const subFolder = {
+      uuid: location.uuid,
+      name: location.name,
+      path: location.path || location.paths[0],
+    };
+    this.getDirectoriesTree(subFolder, deepLevel).then(children => {
+      if (children instanceof Array) {
+        if (location.uuid) {
+          const dirsTree = {}; // this.state.dirs; (uncomment to allow open multiple Locations folders) //TODO set settings for this
+          if (location.path === undefined) { // location
+            dirsTree[location.uuid] = children;
+          } else {
+            const dirsCopy = this.getMergedDirsCopy(location.path, children);
+            if (dirsCopy) {
+              dirsTree[location.uuid] = dirsCopy;
+            } else {
+              // eslint-disable-next-line no-param-reassign
+              location.children = children;
+              dirsTree[location.uuid] = [location];
+            }
+          }
+          this.setState({
+            dirs: dirsTree
+          });
+        }
+      }
+      return true;
+    })
+      .catch(error => {
+        console.log('loadSubDirectories', error);
+      });
+  };
+
+  getDirectoriesTree = (subFolder: SubFolder, deepLevel: number) =>
+    // const { settings } = getState();
+    PlatformIO.listDirectoryPromise(subFolder.path, false)
+      .then(dirEntries => {
+        const directoryContent = [];
+        dirEntries.map(entry => {
+          if (entry.name === AppConfig.metaFolder) { // TODO !settings.showUnixHiddenEntries &&
+            return true;
+          }
+          // const enhancedEntry = enhanceEntry(entry);
+          if (!entry.isFile) {
+            // eslint-disable-next-line no-param-reassign
+            entry.uuid = subFolder.uuid;
+            directoryContent.push(entry);
+          }
+          return true;
+        });
+        if (directoryContent.length > 0) {
+          // eslint-disable-next-line no-param-reassign
+          subFolder.children = directoryContent;
+          if (deepLevel > 0) {
+            const promisesArr = [];
+            directoryContent.map(directory => promisesArr.push(this.getDirectoriesTree(directory, deepLevel - 1)));
+            return Promise.all(promisesArr);
+          }
+        }
+        return subFolder;
+      })
+      .catch(error => {
+        console.log('getDirectoriesTree', error);
+      })
+  ;
+
+  /**
+   * https://codereview.stackexchange.com/questions/47932/recursion-vs-iteration-of-tree-structure
+   * Dynamically set property of nested object
+   * */
+  getMergedDirsCopy = (path: string, arrChildren: Array<SubFolder>) => {
+    const entries = Object.entries(this.state.dirs);
+    for (const [uuid, arrSubDirs] of entries) {
+      const arr = arrSubDirs.length;
+      let a;
+      for (a = 0; a < arr; a += 1) {
+        if (path === arrSubDirs[a].path) {
+          const copyObj = [...this.state.dirs[uuid]];
+          copyObj[a].children = arrChildren;
+          return copyObj;
+        }
+        if (arrSubDirs[a].children !== undefined) {
+          const stack = [{
+            depth: 0,
+            element: arrSubDirs[a],
+            propPath: ''
+          }];
+          let stackItem = 0;
+          let current;
+          let children;
+          let depth;
+          let stackPath;
+          let propPath = a + '.children';
+
+          while (current = stack[stackItem++]) {
+            // get the arguments
+            stackPath = current.propPath;
+            depth = current.depth;
+            current = current.element;
+            children = current.children;
+            if (children !== undefined) {
+              const len = children.length;
+              for (let i = 0; i < len; i++) {
+                if (path === children[i].path) {
+                  propPath = propPath + '.' + (stackPath ? stackPath + '.' : '') + i + '.children';
+                  const copyObj = [...this.state.dirs[uuid]];
+
+                  let schema = copyObj; // a moving reference to internal objects within obj
+                  const pList = propPath.split('.');
+                  const leng = pList.length;
+                  for (let c = 0; c < leng - 1; c++) {
+                    const elem = pList[c];
+                    if (!schema[elem]) schema[elem] = {};
+                    schema = schema[elem];
+                  }
+                  schema[pList[leng - 1]] = arrChildren;
+                  return copyObj;
+                }
+
+                stack.push({ // pass args via object or array
+                  element: children[i],
+                  depth: depth + 1,
+                  propPath: (stackPath ? stackPath + '.' : '') + i + '.children'
+                });
+              }
+            }
+          }
+        }
+      }
+    }
   };
 
   handleCloseDialogs = () => {
@@ -249,8 +404,18 @@ class LocationManager extends React.Component<Props, State> {
 
   handleLocationClick = (location: Location) => {
     if (location.uuid === this.props.currentLocationId) {
+      if (this.state.dirs[location.uuid] !== undefined) {
+        const dirsTree = this.state.dirs;
+        dirsTree[location.uuid] = undefined;
+        this.setState({
+          dirs: dirsTree
+        });
+      } else {
+        this.loadSubDirectories(location, 1);
+      }
       this.props.loadDirectoryContent(location.paths[0]);
     } else {
+      this.loadSubDirectories(location, 1);
       this.props.openLocation(location.uuid);
       this.state.locationRootPath = location.paths[0];
     }
@@ -269,41 +434,164 @@ class LocationManager extends React.Component<Props, State> {
     }
   };
 
+  renderNameColumnAction = (field, location, key) => {
+    const children = (
+      <span>
+        {/* <FolderIcon style={{ marginTop: 0, marginBottom: -8 }} className={this.props.classes.icon} /> */}
+        <span style={{ fontSize: 15, marginLeft: 5 }}>{field}</span>
+        {/* <IconButton
+          style={{ float: 'right', paddingTop: 0, paddingBottom: 0, paddingLeft: 0, paddingRight: 0 }}
+          aria-label={i18n.t('core:options')}
+          aria-haspopup="true"
+          data-tid={'locationMoreButton_' + field.name}
+          onClick={event => this.handleLocationContextMenuClick(event, location)}
+        >
+          <MoreVertIcon />
+        </IconButton> */}
+      </span>
+    );
+    return {
+      children,
+      props: {},
+    }; // (<span>{ name }</span>);
+  };
+
+  handleCellClick = (record, index) => ({
+    /* onContextMenu: (e) => {
+      this.handleFileContextMenu(e, record.path);
+    }, */
+    onClick: () => {
+      this.onRowClick(record);
+    },
+    /* onDoubleClick: (e) => {
+      this.onRowClick(record, index, e);
+    } */
+  });
+
+  onExpand = (expanded, record) => {
+    // console.log('onExpand', expanded + JSON.stringify(record));
+    if (expanded) {
+      // this.onRowClick(record);
+      this.loadSubDirectories(record, 1);
+    }
+  };
+
+  onRowClick = (subDir) => {
+    this.loadSubDirectories(subDir, 1);
+    this.props.loadDirectoryContent(subDir.path);
+  };
+
+  renderHeaderRow = col =>
+    /* const { children, ...rest } = col;
+    const isSelectionBox = col.className.includes('selection-column');
+
+    return (
+      <th {...rest}>
+        {isSelectionBox ? (
+          children
+        ) : (
+          <span>
+            <span xs={4}>{children}</span>
+            <span xs={2}>Age</span>
+            <span xs>Bar</span>
+          </span>
+        )}
+      </th>
+    ); */
+    (<span />)
+  ;
+  // expandedRowRender = (record, index, indent, expanded) => (<p>extra: {record.name}</p>);
+  /* CustomExpandIcon = (props) => {
+    let text;
+    if (props.expanded) {
+      text = '&#8679; collapse';
+    } else {
+      text = '&#8681; expand';
+    }
+    return (
+      <a
+        className="expand-row-icon"
+        onClick={e => props.onExpand(props.record, e)}
+        dangerouslySetInnerHTML={{ __html: text }}
+        style={{ color: 'blue', cursor: 'pointer' }}
+      />
+    );
+  }; */
   // <Tooltip id="tooltip-icon" title={i18n.t('core:moreOperations')} placement="bottom"></Tooltip>
-  renderLocation = (location: Location) => (
-    <ListItem
-      data-tid={'location_' + location.name.replace(/ /g,'_')}
-      className={
-        this.props.currentLocationId === location.uuid
-          ? this.props.classes.listItemSelected
-          : this.props.classes.listItem
-      }
-      key={location.uuid}
-      title={location.paths[0]}
-      button
-      onClick={() => this.handleLocationClick(location)}
-    >
-      <ListItemIcon>
-        <FolderIcon className={this.props.classes.icon} />
-      </ListItemIcon>
-      <ListItemText style={{ paddingLeft: 5, paddingRight: 5 }} data-tid="locationTitleElement" primary={location.name} />
-      {location.isDefault && (
-        <DefaultLocationIcon
-          title={i18n.t('core: thisIsStartupLocation')}
-          data-tid="startupIndication"
-          className={this.props.classes.icon}
-        />
-      )}
-      <IconButton
-        aria-label={i18n.t('core:options')}
-        aria-haspopup="true"
-        data-tid={'locationMoreButton_' + location.name}
-        onClick={event => this.handleLocationContextMenuClick(event, location)}
-      >
-        <MoreVertIcon />
-      </IconButton>
-    </ListItem>
-  );
+  renderLocation = (location: Location) => {
+    let table;
+    if (this.state.dirs[location.uuid] !== undefined) {
+      const columns = [
+        {
+          title: undefined,
+          dataIndex: 'name',
+          key: 'name',
+          width: '80%',
+          render: this.renderNameColumnAction,
+          onCell: this.handleCellClick,
+        }
+      ];
+      table = (<Table
+        // defaultExpandAllRows
+        // className={classes.locationListArea}
+        components={{
+          header: { cell: this.renderHeaderRow },
+        }}
+        // className="table"
+        rowKey="path"
+        data={this.state.dirs[location.uuid]}
+        columns={columns}
+        // expandedRowRender={this.expandedRowRender}
+        onExpand={this.onExpand}
+        // expandIcon={this.CustomExpandIcon}
+        // expandIconAsCell
+        /* onRow={(record, index) => ({
+          onClick: this.onRowClick.bind(null, record, index),
+        })} */
+      />);
+    }
+    return (
+      <div>
+        <ListItem
+          data-tid={'location_' + location.name.replace(/ /g, '_')}
+          className={
+            this.props.currentLocationId === location.uuid
+              ? this.props.classes.listItemSelected
+              : this.props.classes.listItem
+          }
+          key={location.uuid}
+          title={location.paths[0]}
+          button
+          onClick={() => this.handleLocationClick(location)}
+        >
+          <ListItemIcon>
+            <FolderIcon className={this.props.classes.icon} />
+          </ListItemIcon>
+          <ListItemText
+            style={{ paddingLeft: 5, paddingRight: 5 }}
+            data-tid="locationTitleElement"
+            primary={location.name}
+          />
+          {location.isDefault && (
+            <DefaultLocationIcon
+              title={i18n.t('core: thisIsStartupLocation')}
+              data-tid="startupIndication"
+              className={this.props.classes.icon}
+            />
+          )}
+          <IconButton
+            aria-label={i18n.t('core:options')}
+            aria-haspopup="true"
+            data-tid={'locationMoreButton_' + location.name}
+            onClick={event => this.handleLocationContextMenuClick(event, location)}
+          >
+            <MoreVertIcon />
+          </IconButton>
+        </ListItem>
+        {table}
+      </div>
+    );
+  };
 
   render() {
     const classes = this.props.classes;
