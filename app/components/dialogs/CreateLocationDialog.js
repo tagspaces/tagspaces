@@ -21,6 +21,7 @@ import React from 'react';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import uuidv1 from 'uuid';
+import { withStyles } from '@material-ui/core/styles';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
@@ -34,6 +35,9 @@ import FormGroup from '@material-ui/core/FormGroup';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import InputAdornment from '@material-ui/core/InputAdornment';
+import Radio from '@material-ui/core/Radio';
+import RadioGroup from '@material-ui/core/RadioGroup';
+import FormLabel from '@material-ui/core/FormLabel';
 import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
 import i18n from '../../services/i18n';
 import PlatformIO from '../../services/platform-io';
@@ -41,8 +45,24 @@ import { extractDirectoryName } from '../../utils/paths';
 import { type Location } from '../../reducers/locations';
 import AppConfig from '../../config';
 import { Pro } from '../../pro';
+import S3Form from '../S3Form';
+
+const styles = theme => ({
+  root: {
+    display: 'flex',
+  },
+  formControl: {
+    margin: theme.spacing.unit * 3,
+  },
+  group: {
+    margin: `${theme.spacing.unit}px 0`,
+    display: 'flex',
+    flexDirection: 'row'
+  },
+});
 
 type Props = {
+  classes: Object,
   open?: boolean,
   onClose: () => void,
   addLocation: (location: Location) => void,
@@ -62,7 +82,8 @@ type State = {
   isDefault?: boolean,
   isReadOnly?: boolean,
   watchForChanges?: boolean,
-  persistIndex?: boolean
+  persistIndex?: boolean,
+  type: string
 };
 
 class CreateLocationDialog extends React.Component<Props, State> {
@@ -77,7 +98,8 @@ class CreateLocationDialog extends React.Component<Props, State> {
     isDefault: false,
     isReadOnly: false,
     watchForChanges: false,
-    persistIndex: false
+    persistIndex: false,
+    type: 'local'
   };
 
   componentWillReceiveProps = (nextProps: any) => {
@@ -89,7 +111,7 @@ class CreateLocationDialog extends React.Component<Props, State> {
         perspective: '',
         isDefault: false,
         isReadOnly: false,
-        watchForChanges: Pro ? true : false,
+        watchForChanges: !!Pro,
         persistIndex: false
       });
     }
@@ -166,106 +188,136 @@ class CreateLocationDialog extends React.Component<Props, State> {
     <DialogTitle>{i18n.t('core:createLocationTitle')}</DialogTitle>
   );
 
+  handleTypeChange = event => {
+    this.setState({ type: event.target.value });
+  };
+
   renderContent = () => {
+    const { classes } = this.props;
+    let content;
+    if (this.state.type === 'cloud') {
+      content = (<S3Form />);
+    } else {
+      content = (
+        <div>
+          <FormControl
+            fullWidth={true}
+            error={this.state.errorTextPath}
+          >
+            <TextField
+              error={this.state.errorTextPath}
+              required
+              margin="dense"
+              name="name"
+              label={i18n.t('core:createLocationName')}
+              onChange={this.handleInputChange}
+              value={this.state.name}
+              data-tid="locationName"
+              fullWidth={true}
+            />
+            {this.state.errorTextName && <FormHelperText>Invalid Name</FormHelperText>}
+          </FormControl>
+          <FormControl
+            fullWidth={true}
+            error={this.state.errorTextPath}
+          >
+            <InputLabel htmlFor="path">{i18n.t('core:createLocationPath')}</InputLabel>
+            <Input
+              required
+              margin="dense"
+              name="path"
+              label={i18n.t('core:createLocationPath')}
+              fullWidth={true}
+              data-tid="locationPath"
+              onChange={this.handleInputChange}
+              value={this.state.path}
+              endAdornment={
+                <InputAdornment position="end" style={{ height: 32 }}>
+                  <IconButton
+                    onClick={this.openDirectory}
+                  >
+                    <FolderIcon />
+                  </IconButton>
+                </InputAdornment>
+              }
+            />
+            {this.state.errorTextPath && <FormHelperText>{i18n.t('core:invalidPath')}</FormHelperText>}
+          </FormControl>
+          <FormGroup>
+            <FormControlLabel
+              control={
+                <Switch
+                  data-tid="locationIsDefault"
+                  name="isDefault"
+                  checked={this.state.isDefault}
+                  onChange={this.handleInputChange}
+                />
+              }
+              label={i18n.t('core:startupLocation')}
+            />
+            <FormControlLabel
+              control={
+                <Switch
+                  disabled={!Pro}
+                  data-tid="changeReadOnlyMode"
+                  name="isReadOnly"
+                  checked={this.state.isReadOnly}
+                  onChange={this.handleInputChange}
+                />
+              }
+              label={i18n.t('core:readonlyModeSwitch') + (Pro ? '' : ' - ' + i18n.t('core:proFeature'))}
+            />
+            <FormControlLabel
+              control={
+                <Switch
+                  disabled={!Pro}
+                  data-tid="changePersistIndex"
+                  name="persistIndex"
+                  checked={this.state.persistIndex}
+                  onChange={this.handleInputChange}
+                />
+              }
+              label={i18n.t('core:persistIndexSwitch') + (Pro ? '' : ' - ' + i18n.t('core:proFeature'))}
+            />
+            <FormControlLabel
+              control={
+                <Switch
+                  disabled={!Pro}
+                  data-tid="changeWatchForChanges"
+                  name="watchForChanges"
+                  checked={this.state.watchForChanges}
+                  onChange={this.handleInputChange}
+                />
+              }
+              label={i18n.t('core:watchForChangesInLocation') + (Pro ? '' : ' - ' + i18n.t('core:proFeature'))}
+            />
+          </FormGroup>
+        </div>
+      );
+    }
     return (
       <DialogContent>
-        <FormControl
-          fullWidth={true}
-          error={this.state.errorTextPath}
-        >
-          <TextField
-            error={this.state.errorTextPath}
-            required
-            margin="dense"
-            name="name"
-            label={i18n.t('core:createLocationName')}
-            onChange={this.handleInputChange}
-            value={this.state.name}
-            data-tid="locationName"
-            fullWidth={true}
-          />
-          {this.state.errorTextName && <FormHelperText>Invalid Name</FormHelperText>}
+        <FormControl className={classes.formControl} component="fieldset" fullWidth={true}>
+          <span>Type</span>
+          <RadioGroup
+            for="local"
+            component="label"
+            aria-label="Type"
+            name="Type"
+            value={this.state.type}
+            onChange={this.handleTypeChange}
+            row
+          >
+            <FormControlLabel value="local" control={<Radio />} label="Local" />
+            <FormControlLabel value="cloud" control={<Radio />} label="Cloud (S3 AWS)" />
+          </RadioGroup>
         </FormControl>
-        <FormControl
-          fullWidth={true}
-          error={this.state.errorTextPath}
-        >
-          <InputLabel htmlFor="name">{i18n.t('core:createLocationPath')}</InputLabel>
-          <Input
-            required
-            margin="dense"
-            name="path"
-            label={i18n.t('core:createLocationPath')}
-            fullWidth={true}
-            data-tid="locationPath"
-            onChange={this.handleInputChange}
-            value={this.state.path}
-            endAdornment={
-              <InputAdornment position="end" style={{ height: 32 }}>
-                <IconButton
-                  onClick={this.openDirectory}
-                >
-                  <FolderIcon />
-                </IconButton>
-              </InputAdornment>
-            }
-          />
-          {this.state.errorTextPath && <FormHelperText>{i18n.t('core:invalidPath')}</FormHelperText>}
-        </FormControl>
-        <FormGroup>
-          <FormControlLabel
-            control={
-              <Switch
-                data-tid="locationIsDefault"
-                name="isDefault"
-                checked={this.state.isDefault}
-                onChange={this.handleInputChange}
-              />
-            }
-            label={i18n.t('core:startupLocation')}
-          />
-          <FormControlLabel
-            control={
-              <Switch
-                disabled={!Pro}
-                data-tid="changeReadOnlyMode"
-                name="isReadOnly"
-                checked={this.state.isReadOnly}
-                onChange={this.handleInputChange}
-              />
-            }
-            label={i18n.t('core:readonlyModeSwitch') + (Pro ? '' : ' - ' + i18n.t('core:proFeature'))}
-          />
-          <FormControlLabel
-            control={
-              <Switch
-                disabled={!Pro}
-                data-tid="changePersistIndex"
-                name="persistIndex"
-                checked={this.state.persistIndex}
-                onChange={this.handleInputChange}
-              />
-            }
-            label={i18n.t('core:persistIndexSwitch') + (Pro ? '' : ' - ' + i18n.t('core:proFeature'))}
-          />
-          <FormControlLabel
-            control={
-              <Switch
-                disabled={!Pro}
-                data-tid="changeWatchForChanges"
-                name="watchForChanges"
-                checked={this.state.watchForChanges}
-                onChange={this.handleInputChange}
-              />
-            }
-            label={i18n.t('core:watchForChangesInLocation') + (Pro ? '' : ' - ' + i18n.t('core:proFeature'))}
-          />
-        </FormGroup>
+        {content}
       </DialogContent>
     );
   };
 
-/*
+  /*
         <FormControl
           fullWidth={true}
         >
@@ -314,4 +366,4 @@ class CreateLocationDialog extends React.Component<Props, State> {
   }
 }
 
-export default CreateLocationDialog;
+export default withStyles(styles)(CreateLocationDialog);
