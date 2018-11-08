@@ -19,7 +19,7 @@
 
 import React from 'react';
 import Table from 'rc-table';
-import 'rc-table/assets/index.css';
+// import 'rc-table/assets/index.css';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
@@ -130,6 +130,16 @@ class LocationManager extends React.Component<Props, State> {
     isCreateDirectoryDialogOpened: false,
     isSelectDirectoryDialogOpened: false,
     dirs: {}
+  };
+
+  componentWillReceiveProps = (nextProps: any) => {
+    if (this.props.locations !== nextProps.locations) {
+      nextProps.locations.forEach((location) => {
+        if (location.isDefault) {
+          this.loadSubDirectories(location, 1);
+        }
+      });
+    }
   };
 
   loadSubDirectories = (location: Location, deepLevel: number) => {
@@ -400,6 +410,8 @@ class LocationManager extends React.Component<Props, State> {
         this.setState({
           dirs: dirsTree
         });
+      } else {
+        this.loadSubDirectories(location, 1);
       }
       this.props.loadDirectoryContent(location.paths[0]);
     } else {
@@ -425,8 +437,8 @@ class LocationManager extends React.Component<Props, State> {
   renderNameColumnAction = (field, location, key) => {
     const children = (
       <span>
-        <FolderIcon style={{ marginTop: 0, marginBottom: -8 }} className={this.props.classes.icon} />
-        <span style={{ fontSize: 15 }}>{field}</span>
+        {/* <FolderIcon style={{ marginTop: 0, marginBottom: -8 }} className={this.props.classes.icon} /> */}
+        <span style={{ fontSize: 15, marginLeft: 5 }}>{field}</span>
         {/* <IconButton
           style={{ float: 'right', paddingTop: 0, paddingBottom: 0, paddingLeft: 0, paddingRight: 0 }}
           aria-label={i18n.t('core:options')}
@@ -488,7 +500,22 @@ class LocationManager extends React.Component<Props, State> {
     (<span />)
   ;
   // expandedRowRender = (record, index, indent, expanded) => (<p>extra: {record.name}</p>);
-
+  /* CustomExpandIcon = (props) => {
+    let text;
+    if (props.expanded) {
+      text = '&#8679; collapse';
+    } else {
+      text = '&#8681; expand';
+    }
+    return (
+      <a
+        className="expand-row-icon"
+        onClick={e => props.onExpand(props.record, e)}
+        dangerouslySetInnerHTML={{ __html: text }}
+        style={{ color: 'blue', cursor: 'pointer' }}
+      />
+    );
+  }; */
   // <Tooltip id="tooltip-icon" title={i18n.t('core:moreOperations')} placement="bottom"></Tooltip>
   renderLocation = (location: Location) => {
     let table;
@@ -509,13 +536,13 @@ class LocationManager extends React.Component<Props, State> {
         components={{
           header: { cell: this.renderHeaderRow },
         }}
-        className="table"
+        // className="table"
         rowKey="path"
         data={this.state.dirs[location.uuid]}
         columns={columns}
         // expandedRowRender={this.expandedRowRender}
         onExpand={this.onExpand}
-        // expandIcon={CustomExpandIcon}
+        // expandIcon={this.CustomExpandIcon}
         // expandIconAsCell
         /* onRow={(record, index) => ({
           onClick: this.onRowClick.bind(null, record, index),
