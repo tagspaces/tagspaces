@@ -351,7 +351,7 @@ class VerticalNavigation extends React.Component<Props, State> {
               <PerspectivesIcon style={this.styles.buttonIcon} />
             </IconButton> */ }
             <IconButton
-              title={i18n.t('core:theming')}
+              title={i18n.t('core:switchTheme')}
               data-tid="switchTheme"
               className={style.verticalNavButton}
               onClick={this.props.switchTheme}
