@@ -55,42 +55,10 @@ if (buildID && buildID.length >= 11) {
 const productName = versionMeta.name + (Pro ? ' Pro' : '');
 document.title = productName + ' ' + versionMeta.version;
 
-const aboutMDContent = `
-Copyright &copy; 2015-2018 TagSpaces UG (haftungsbeschraenkt). All rights reserved.
-
-${productName} is made possible by the [TagSpaces](https://github.com/tagspaces/tagspaces) open source project
-and other [open source software](THIRD-PARTY.txt).
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU Affero General Public License (version 3) as
-published by the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Affero General Public License for more details.
-
-[Imprint](https://www.tagspaces.org/about/imprint/)&nbsp;&nbsp;&nbsp;&nbsp;[Privacy Policy](https://www.tagspaces.org/about/privacy/)&nbsp;&nbsp;&nbsp;&nbsp;[Changelog](https://www.tagspaces.org/whatsnew/)
-`;
-
 class AboutDialog extends React.Component<Props, State> {
   state = {
     updateAvailable: false,
     newVersion: ''
-  }
-
-  componentDidMount() {
-    const links = document.querySelectorAll('#aboutContent a');
-    links.forEach((link) => {
-      link.addEventListener('click', (event) => {
-        event.preventDefault();
-        event.stopPropagation();
-        console.log(event.currentTarget.href);
-
-        // TODO evtl. use openFileNatively from app.js
-        PlatformIO.openUrl(event.currentTarget.href);
-      }, false);
-    });
   }
 
   checkForUpdates = () => {
@@ -131,8 +99,41 @@ class AboutDialog extends React.Component<Props, State> {
       <Typography
         id="aboutContent"
         variant="body1"
-        dangerouslySetInnerHTML={{ __html: marked(aboutMDContent) }}
-      />
+      >
+        <strong>{productName}</strong> is made possible by the TagSpaces(github.com/tagspaces) open source project
+        and other <Button onClick={this.props.toggleThirdPartyLibsDialog}>open source software</Button>.
+        <br />
+        {!Pro && (<span>This program is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Affero General Public License (version 3) as
+        published by the Free Software Foundation.</span>)}
+        <br />
+        This program is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        License for more details.
+        <br /><br />
+        <Button
+          onClick={() => { PlatformIO.openUrl('https://www.tagspaces.org/about/imprint/'); }}
+        >
+          Imprint
+        </Button>
+        <Button
+          onClick={() => { PlatformIO.openUrl('https://www.tagspaces.org/about/privacy/'); }}
+        >
+          Privacy Policy
+        </Button>
+        <Button
+          onClick={() => { PlatformIO.openUrl('https://www.tagspaces.org/whatsnew/'); }}
+        >
+          Changelog
+        </Button>
+        <Button
+          data-tid="openLicenseDialog"
+          onClick={this.props.toggleLicenseDialog}
+        >
+          License Agreement
+        </Button>
+      </Typography>
     </DialogContent>
   );
 
@@ -155,7 +156,7 @@ class AboutDialog extends React.Component<Props, State> {
         >
           {versionInfo}
         </Button>
-        <Button
+        { /*<Button
           data-tid="openLicenseDialog"
           onClick={this.props.toggleLicenseDialog}
         >
@@ -166,7 +167,7 @@ class AboutDialog extends React.Component<Props, State> {
           onClick={this.props.toggleThirdPartyLibsDialog}
         >
           {i18n.t('core:thirdPartyLibs')}
-        </Button>
+        </Button> */ }
         <Button
           data-tid="closeAboutDialog"
           onClick={this.props.onClose}
