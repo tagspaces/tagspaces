@@ -169,6 +169,10 @@ class LocationManager extends React.Component<Props, State> {
             dirs: dirsTree
           });
         }
+      } else {
+        this.setState({
+          dirs: {}
+        });
       }
       return true;
     })
