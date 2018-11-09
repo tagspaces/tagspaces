@@ -5,6 +5,7 @@
     "cordova": true,
     "dll": true,
     "app/dist": true,
+    "web": true,
     "node_modules": false
   }
 }
