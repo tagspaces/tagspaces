@@ -33,6 +33,8 @@ export const types = {
 export type Location = {
   uuid: string,
   name: string,
+  type: number,
+  awsKey: string, // TODO
   paths: Array<string>,
   perspective?: string, // id of the perspective
   creationDate?: string,

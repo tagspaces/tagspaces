@@ -35,6 +35,7 @@ import FormGroup from '@material-ui/core/FormGroup';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import InputAdornment from '@material-ui/core/InputAdornment';
+import Grid from '@material-ui/core/Grid';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import FormLabel from '@material-ui/core/FormLabel';
@@ -45,7 +46,7 @@ import { extractDirectoryName } from '../../utils/paths';
 import { type Location } from '../../reducers/locations';
 import AppConfig from '../../config';
 import { Pro } from '../../pro';
-import S3Form from '../S3Form';
+import ObjectStoreForm from './ObjectStoreForm';
 
 const styles = theme => ({
   root: {
@@ -122,6 +123,10 @@ class CreateLocationDialog extends React.Component<Props, State> {
     const value = target.type === 'checkbox' ? target.checked : target.value;
     const name = target.name;
 
+    this.handleChange(name, value);
+  };
+
+  handleChange = (name, value) => {
     this.setState({
       [name]: value
     }, this.handleValidation);
@@ -130,17 +135,24 @@ class CreateLocationDialog extends React.Component<Props, State> {
   handleValidation() {
     // const pathRegex = this.state.path.match('^((\.\./|[a-zA-Z0-9_/\-\\])*\.[a-zA-Z0-9]+)$');
     // const nameRegex = this.state.name.match('^[A-Z][-a-zA-Z]+$');
+    if (this.state.type === 'local') {
+      if (this.state.path && this.state.path.length > 0) {
+        this.setState({ errorTextPath: false, disableConfirmButton: false });
+      } else {
+        this.setState({ errorTextPath: true, disableConfirmButton: true });
+      }
 
-    if (this.state.path && this.state.path.length > 0) {
-      this.setState({ errorTextPath: false, disableConfirmButton: false });
-    } else {
-      this.setState({ errorTextPath: true, disableConfirmButton: true });
-    }
-
-    if (this.state.name && this.state.name.length > 0) {
-      this.setState({ errorTextName: false, disableConfirmButton: false });
-    } else {
-      this.setState({ errorTextName: true, disableConfirmButton: true });
+      if (this.state.name && this.state.name.length > 0) {
+        this.setState({ errorTextName: false, disableConfirmButton: false });
+      } else {
+        this.setState({ errorTextName: true, disableConfirmButton: true });
+      }
+    } else if (this.state.type === 'cloud') {
+      if (this.state.name && this.state.name.length > 0) {
+        this.setState({ errorTextName: false, disableConfirmButton: false });
+      } else {
+        this.setState({ errorTextName: true, disableConfirmButton: true });
+      }
     }
   }
 
@@ -188,15 +200,11 @@ class CreateLocationDialog extends React.Component<Props, State> {
     <DialogTitle>{i18n.t('core:createLocationTitle')}</DialogTitle>
   );
 
-  handleTypeChange = event => {
-    this.setState({ type: event.target.value });
-  };
-
   renderContent = () => {
     const { classes } = this.props;
     let content;
     if (this.state.type === 'cloud') {
-      content = (<S3Form />);
+      content = (<ObjectStoreForm handleInputChange={this.handleInputChange} handleChange={this.handleChange} state={this.state} />);
     } else {
       content = (
         <div>
@@ -243,76 +251,79 @@ class CreateLocationDialog extends React.Component<Props, State> {
             />
             {this.state.errorTextPath && <FormHelperText>{i18n.t('core:invalidPath')}</FormHelperText>}
           </FormControl>
-          <FormGroup>
-            <FormControlLabel
-              control={
-                <Switch
-                  data-tid="locationIsDefault"
-                  name="isDefault"
-                  checked={this.state.isDefault}
-                  onChange={this.handleInputChange}
-                />
-              }
-              label={i18n.t('core:startupLocation')}
-            />
-            <FormControlLabel
-              control={
-                <Switch
-                  disabled={!Pro}
-                  data-tid="changeReadOnlyMode"
-                  name="isReadOnly"
-                  checked={this.state.isReadOnly}
-                  onChange={this.handleInputChange}
-                />
-              }
-              label={i18n.t('core:readonlyModeSwitch') + (Pro ? '' : ' - ' + i18n.t('core:proFeature'))}
-            />
-            <FormControlLabel
-              control={
-                <Switch
-                  disabled={!Pro}
-                  data-tid="changePersistIndex"
-                  name="persistIndex"
-                  checked={this.state.persistIndex}
-                  onChange={this.handleInputChange}
-                />
-              }
-              label={i18n.t('core:persistIndexSwitch') + (Pro ? '' : ' - ' + i18n.t('core:proFeature'))}
-            />
-            <FormControlLabel
-              control={
-                <Switch
-                  disabled={!Pro}
-                  data-tid="changeWatchForChanges"
-                  name="watchForChanges"
-                  checked={this.state.watchForChanges}
-                  onChange={this.handleInputChange}
-                />
-              }
-              label={i18n.t('core:watchForChangesInLocation') + (Pro ? '' : ' - ' + i18n.t('core:proFeature'))}
-            />
-          </FormGroup>
         </div>
       );
     }
     return (
       <DialogContent>
-        <FormControl className={classes.formControl} component="fieldset" fullWidth={true}>
-          <span>Type</span>
-          <RadioGroup
-            for="local"
-            component="label"
-            aria-label="Type"
-            name="Type"
-            value={this.state.type}
-            onChange={this.handleTypeChange}
-            row
-          >
-            <FormControlLabel value="local" control={<Radio />} label="Local" />
-            <FormControlLabel value="cloud" control={<Radio />} label="Cloud (S3 AWS)" />
-          </RadioGroup>
-        </FormControl>
+        <Grid container spacing={24}>
+          <Grid item xs={2} style={{ lineHeight: 3, textAlign: 'right' }}>
+          Type
+          </Grid>
+          <Grid item xs={10}>
+            <RadioGroup
+              component="label"
+              aria-label="Type"
+              name="type"
+              value={this.state.type}
+              onChange={this.handleInputChange}
+              row
+            >
+              <FormControlLabel value="local" control={<Radio />} label="Local" />
+              <FormControlLabel value="cloud" control={<Radio />} label="Cloud (S3 AWS)" />
+            </RadioGroup>
+          </Grid>
+        </Grid>
         {content}
+        <FormGroup>
+          <FormControlLabel
+            control={
+              <Switch
+                data-tid="locationIsDefault"
+                name="isDefault"
+                checked={this.state.isDefault}
+                onChange={this.handleInputChange}
+              />
+            }
+            label={i18n.t('core:startupLocation')}
+          />
+          <FormControlLabel
+            control={
+              <Switch
+                disabled={!Pro}
+                data-tid="changeReadOnlyMode"
+                name="isReadOnly"
+                checked={this.state.isReadOnly}
+                onChange={this.handleInputChange}
+              />
+            }
+            label={i18n.t('core:readonlyModeSwitch') + (Pro ? '' : ' - ' + i18n.t('core:proFeature'))}
+          />
+          <FormControlLabel
+            control={
+              <Switch
+                disabled={!Pro}
+                data-tid="changePersistIndex"
+                name="persistIndex"
+                checked={this.state.persistIndex}
+                onChange={this.handleInputChange}
+              />
+            }
+            label={i18n.t('core:persistIndexSwitch') + (Pro ? '' : ' - ' + i18n.t('core:proFeature'))}
+          />
+          <FormControlLabel
+            control={
+              <Switch
+                disabled={!Pro}
+                data-tid="changeWatchForChanges"
+                name="watchForChanges"
+                checked={this.state.watchForChanges}
+                onChange={this.handleInputChange}
+              />
+            }
+            label={i18n.t('core:watchForChangesInLocation') + (Pro ? '' : ' - ' + i18n.t('core:proFeature'))}
+          />
+        </FormGroup>
       </DialogContent>
     );
   };

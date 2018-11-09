@@ -36,16 +36,16 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 // import styles from './SidePanels.css';
-import i18n from '../services/i18n';
-import { Pro } from '../pro';
+import i18n from '../../services/i18n';
+import { Pro } from '../../pro';
 
 type Props = {
-  classes: Object
+  state: Object,
+  handleChange: () => void,
+  handleInputChange: () => void
 };
 
 type State = {
-  locationName?: string,
-  accessKey?: string
 };
 
 const styles = {
@@ -56,6 +56,7 @@ const styles = {
   input: {
     display: 'flex',
     padding: 0,
+    marginTop: 10
   },
   valueContainer: {
     display: 'flex',
@@ -93,12 +94,7 @@ const styles = {
   }
 };
 
-class S3Form extends React.Component<Props, State> {
-  state = {
-    locationName: undefined,
-    accessKey: undefined
-  };
-
+class ObjectStoreFormOld extends React.Component<Props, State> {
   suggestions = [
     { label: 'US East (Ohio)', value: 'us-east-2' },
     { label: 'US East (N. Virginia)', value: 'us-east-1' },
@@ -122,12 +118,6 @@ class S3Form extends React.Component<Props, State> {
     value: suggestion.value,
     label: suggestion.label,
   }));
-
-  handleChange = name => value => {
-    this.setState({
-      [name]: value,
-    });
-  };
 
   NoOptionsMessage = (props) => (
     <Typography
@@ -218,8 +208,12 @@ class S3Form extends React.Component<Props, State> {
     ValueContainer: this.ValueContainer,
   };
 
+  handleChange = name => value => {
+    this.props.handleChange(name, value.value);
+  };
+
   render() {
-    // const { classes, theme } = this.props;
+    const { handleInputChange, state } = this.props;
     const selectStyles = {
       input: base => ({
         ...base,
@@ -230,31 +224,51 @@ class S3Form extends React.Component<Props, State> {
         },
       }),
     };
+
     return (
       <Grid container spacing={24}>
         <Grid item xs={12}>
           <FormControl
             fullWidth={true}
-            error={this.state.errorTextPath}
+            error={state.errorTextPath}
           >
-            <InputLabel htmlFor="name">{i18n.t('core:createLocationName')}</InputLabel>
+            <InputLabel htmlFor="storeName">{i18n.t('core:createLocationName')}</InputLabel>
             <Input
               required
               margin="dense"
-              name="name"
+              name="storeName"
               label={i18n.t('core:createLocationName')}
               fullWidth={true}
               data-tid="locationName"
-              onChange={this.handleInputChange}
-              value={this.state.locationName}
+              onChange={handleInputChange}
+              value={state.storeName}
             />
-            {this.state.errorTextPath && <FormHelperText>{i18n.t('core:invalidPath')}</FormHelperText>}
+            {state.errorTextPath && <FormHelperText>{i18n.t('core:invalidPath')}</FormHelperText>}
           </FormControl>
         </Grid>
         <Grid item xs={12}>
           <FormControl
             fullWidth={true}
-            error={this.state.errorTextPath}
+            error={state.errorTextPath}
+          >
+            <InputLabel htmlFor="path">{i18n.t('core:createLocationPath')}</InputLabel>
+            <Input
+              required
+              margin="dense"
+              name="storePath"
+              label={i18n.t('core:createLocationPath')}
+              fullWidth={true}
+              data-tid="locationPath"
+              onChange={handleInputChange}
+              value={state.storePath}
+            />
+            {state.errorTextPath && <FormHelperText>{i18n.t('core:invalidPath')}</FormHelperText>}
+          </FormControl>
+        </Grid>
+        <Grid item xs={12}>
+          <FormControl
+            fullWidth={true}
+            error={state.errorTextPath}
           >
             <InputLabel htmlFor="accessKey">{i18n.t('core:accessKeyId')}</InputLabel>
             <Input
@@ -264,16 +278,16 @@ class S3Form extends React.Component<Props, State> {
               label={i18n.t('core:accessKeyId')}
               fullWidth={true}
               data-tid="accessKeyId"
-              onChange={this.handleInputChange}
-              value={this.state.accessKey}
+              onChange={handleInputChange}
+              value={state.accessKey}
             />
-            {this.state.errorTextPath && <FormHelperText>{i18n.t('core:invalidPath')}</FormHelperText>}
+            {state.errorTextPath && <FormHelperText>{i18n.t('core:invalidPath')}</FormHelperText>}
           </FormControl>
         </Grid>
         <Grid item xs={12}>
           <FormControl
             fullWidth={true}
-            error={this.state.errorTextPath}
+            error={state.errorTextPath}
           >
             <InputLabel htmlFor="secretAccessKey">{i18n.t('core:secretAccessKey')}</InputLabel>
             <Input
@@ -283,15 +297,15 @@ class S3Form extends React.Component<Props, State> {
               label={i18n.t('core:secretAccessKey')}
               fullWidth={true}
               data-tid="secretAccessKey"
-              onChange={this.handleInputChange}
-              value={this.state.accessKey}
+              onChange={handleInputChange}
+              value={state.secretAccessKey}
             />
-            {this.state.errorTextPath && <FormHelperText>{i18n.t('core:invalidPath')}</FormHelperText>}
+            {state.errorTextPath && <FormHelperText>{i18n.t('core:invalidPath')}</FormHelperText>}
           </FormControl>
         </Grid>
         <Grid item xs={6}>
           <FormControl
-            error={this.state.errorTextPath}
+            error={state.errorTextPath}
           >
             <InputLabel htmlFor="bucketName">{i18n.t('core:bucketName')}</InputLabel>
             <Input
@@ -301,10 +315,10 @@ class S3Form extends React.Component<Props, State> {
               label={i18n.t('core:bucketName')}
               fullWidth={true}
               data-tid="bucketName"
-              onChange={this.handleInputChange}
-              value={this.state.accessKey}
+              onChange={handleInputChange}
+              value={state.bucketName}
             />
-            {this.state.errorTextPath && <FormHelperText>{i18n.t('core:invalidPath')}</FormHelperText>}
+            {state.errorTextPath && <FormHelperText>{i18n.t('core:invalidPath')}</FormHelperText>}
           </FormControl>
         </Grid>
         <Grid item xs={6}>
@@ -314,11 +328,11 @@ class S3Form extends React.Component<Props, State> {
               styles={selectStyles}
               fullWidth={true}
               components={this.components}
-              value={this.state.region}
+              value={state.region}
               onChange={this.handleChange('region')}
-              placeholder="Search a region"
+              // placeholder="Search a region"
             />
-            {this.state.errorTextPath && <FormHelperText>{i18n.t('core:invalidPath')}</FormHelperText>}
+            {state.errorTextPath && <FormHelperText>{i18n.t('core:invalidPath')}</FormHelperText>}
           </NoSsr>
         </Grid>
       </Grid>
@@ -338,8 +352,8 @@ class S3Form extends React.Component<Props, State> {
   }, dispatch);
 } */
 
-export default S3Form;
-/*export default withStyles(styles)(
+export default ObjectStoreFormOld;
+/* export default withStyles(styles)(
   S3Form
   // connect(mapStateToProps, mapDispatchToProps)(Search)
-);*/
+); */
