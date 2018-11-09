@@ -168,7 +168,7 @@ class LocationManager extends React.Component<Props, State> {
             dirs: dirsTree
           });
         }
-      } else {
+      } else if (location.path === undefined) { // if is Location
         this.setState({
           dirs: {}
         });
