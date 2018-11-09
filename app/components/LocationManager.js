@@ -19,7 +19,6 @@
 
 import React from 'react';
 import Table from 'rc-table';
-// import 'rc-table/assets/index.css';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
@@ -45,10 +44,8 @@ import CloseIcon from '@material-ui/icons/Close';
 import DefaultLocationIcon from '@material-ui/icons/Highlight';
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
-// import Button from '@material-ui/Button';
 import styles from './SidePanels.css';
 import DirectoryMenu from './menus/DirectoryMenu';
-// import TreeNav from './TreeNav/TreeNav';
 import EditLocationDialog from './dialogs/EditLocationDialog';
 import CreateLocationDialog from './dialogs/CreateLocationDialog';
 import ConfirmDialog from './dialogs/ConfirmDialog';
@@ -581,7 +578,6 @@ class LocationManager extends React.Component<Props, State> {
             <DefaultLocationIcon
               title={i18n.t('core: thisIsStartupLocation')}
               data-tid="startupIndication"
-              className={this.props.classes.icon}
             />
           )}
           <IconButton
