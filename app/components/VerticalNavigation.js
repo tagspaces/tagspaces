@@ -21,7 +21,12 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import IconButton from '@material-ui/core/IconButton';
+import LocationsIcon from '@material-ui/icons/WorkOutline';
+import TagLibraryIcon from '@material-ui/icons/LocalOfferOutlined';
+import SearchIcon from '@material-ui/icons/SearchOutlined';
+import PerspectivesIcon from '@material-ui/icons/MapOutlined';
 import SettingsIcon from '@material-ui/icons/Settings';
+import ThemingIcon from '@material-ui/icons/InvertColors'; // Palette
 import { withTheme } from '@material-ui/core/styles';
 import SplitPane from 'react-split-pane';
 import LogoIcon from '../assets/images/icon100x100.svg';
@@ -51,6 +56,9 @@ import {
   isCreateDirectoryOpened,
   isSelectDirectoryDialogOpened,
 } from '../reducers/app';
+import {
+  actions as SettingActions,
+} from '../reducers/settings';
 
 
 export const AppVerticalPanels = {
@@ -79,6 +87,7 @@ type Props = {
   setManagementPanelVisibility: boolean => void,
   isSelectDirectoryDialogOpened: boolean,
   toggleSelectDirectoryDialog: () => void,
+  switchTheme: () => void,
   shouldTogglePanel: string,
   currentDirectory: string
 };
@@ -132,6 +141,11 @@ class VerticalNavigation extends React.Component<Props, State> {
     settingsButton: {
       position: 'absolute',
       bottom: 0,
+      left: 0
+    },
+    themingButton: {
+      position: 'absolute',
+      bottom: 45,
       left: 0
     }
   };
@@ -261,7 +275,6 @@ class VerticalNavigation extends React.Component<Props, State> {
           <div style={this.styles.panel}>
             <IconButton
               className={style.verticalNavButton}
-              disabled={false}
               onClick={this.props.toggleAboutDialog}
               style={{ ...this.styles.button, marginBottom: 20 }}
               title={i18n.t('core:aboutTitle')}
@@ -281,7 +294,6 @@ class VerticalNavigation extends React.Component<Props, State> {
               onClick={() => {
                 this.togglePanel(AppVerticalPanels.locationManager);
               }}
-              disabled={false}
               style={
                 this.state.isLocationManagerVisible
                   ? { ...this.styles.button, ...this.styles.selectedButton }
@@ -290,7 +302,7 @@ class VerticalNavigation extends React.Component<Props, State> {
               title={i18n.t('core:locationManager')}
               data-tid="locationManager"
             >
-              <i style={this.styles.buttonIcon} className="fa fa-folder-open" />
+              <LocationsIcon style={this.styles.buttonIcon} />
             </IconButton>
             <IconButton
               title={i18n.t('core:tagGroupOperations')}
@@ -299,17 +311,13 @@ class VerticalNavigation extends React.Component<Props, State> {
               onClick={() => {
                 this.togglePanel(AppVerticalPanels.tagLibrary);
               }}
-              disabled={false}
               style={
                 this.state.isTagLibraryVisible
                   ? { ...this.styles.button, ...this.styles.selectedButton }
                   : this.styles.button
               }
             >
-              <i
-                style={this.styles.buttonIcon}
-                className="fa fa-tags fa-flip-horizontal"
-              />
+              <TagLibraryIcon style={this.styles.buttonIcon} />
             </IconButton>
             <IconButton
               title={i18n.t('core:searchTitle')}
@@ -318,16 +326,15 @@ class VerticalNavigation extends React.Component<Props, State> {
               onClick={() => {
                 this.togglePanel(AppVerticalPanels.search);
               }}
-              disabled={false}
               style={
                 this.state.isSearchVisible
                   ? { ...this.styles.button, ...this.styles.selectedButton }
                   : this.styles.button
               }
             >
-              <i style={this.styles.buttonIcon} className="fa fa-search" />
+              <SearchIcon style={this.styles.buttonIcon} />
             </IconButton>
-            <IconButton
+            { /* <IconButton
               title={i18n.t('core:perspectiveManager')}
               data-tid="perspectiveManager"
               className={style.verticalNavButton}
@@ -341,14 +348,22 @@ class VerticalNavigation extends React.Component<Props, State> {
                   : this.styles.button
               }
             >
-              <i style={this.styles.buttonIcon} className="fa fa-map" />
+              <PerspectivesIcon style={this.styles.buttonIcon} />
+            </IconButton> */ }
+            <IconButton
+              title={i18n.t('core:theming')}
+              data-tid="switchTheme"
+              className={style.verticalNavButton}
+              onClick={this.props.switchTheme}
+              style={this.state.isSettingsDialogOpened ? { ...this.styles.button, ...this.styles.themingButton, ...this.styles.selectedButton } : { ...this.styles.button, ...this.styles.themingButton }}
+            >
+              <ThemingIcon style={this.styles.buttonIcon} />
             </IconButton>
             <IconButton
               title={i18n.t('core:settings')}
               data-tid="settings"
               className={style.verticalNavButton}
               onClick={this.props.toggleSettingsDialog}
-              disabled={false}
               style={this.state.isSettingsDialogOpened ? { ...this.styles.button, ...this.styles.settingsButton, ...this.styles.selectedButton } : { ...this.styles.button, ...this.styles.settingsButton }}
             >
               <SettingsIcon style={this.styles.buttonIcon} />
@@ -412,6 +427,7 @@ function mapActionCreatorsToProps(dispatch) {
     toggleLicenseDialog: AppActions.toggleLicenseDialog,
     toggleThirdPartyLibsDialog: AppActions.toggleThirdPartyLibsDialog,
     toggleAboutDialog: AppActions.toggleAboutDialog,
+    switchTheme: SettingActions.switchTheme,
   }, dispatch);
 }
 
