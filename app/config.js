@@ -37,7 +37,7 @@ export default {
   indexerLimit: 200000,
   maxSearchResult: 1000,
   defaultFileColor: '#808080',
-  defaultFolderColor: '#880e4f', // transparent #FDEEBD #ff791b #2c001e #880e4f
+  defaultFolderColor: '#555', // transparent #FDEEBD #ff791b #2c001e #880e4f
   isElectron: (navigator.userAgent.toLowerCase().indexOf(' electron/') > -1),
   isWin: navigator.appVersion.includes('Win'),
   isMacLike: navigator.platform.match(/(Mac|iPhone|iPod|iPad)/i),
