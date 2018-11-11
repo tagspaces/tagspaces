@@ -583,6 +583,7 @@ class EntryProperties extends Component<Props, State> {
             <FormControl fullWidth={true} className={classes.formControl}>
               <TextField
                 margin="dense"
+                disabled
                 name="path"
                 fullWidth={true}
                 data-tid="filePathProperties"
@@ -607,7 +608,7 @@ class EntryProperties extends Component<Props, State> {
                 </div>
                 <FormControl fullWidth={true} className={classes.formControl}>
                   <TextField
-                    required
+                    disabled
                     margin="dense"
                     name="ldtm"
                     fullWidth={true}
@@ -636,6 +637,7 @@ class EntryProperties extends Component<Props, State> {
                     <TextField
                       margin="dense"
                       name="size"
+                      disabled
                       fullWidth={true}
                       data-tid="fileSizeProperties"
                       className={classes.field}
