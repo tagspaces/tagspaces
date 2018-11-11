@@ -272,7 +272,7 @@ class LocationManager extends React.Component<Props, State> {
   // <Tooltip id="tooltip-icon" title={i18n.t('core:moreOperations')} placement="bottom"></Tooltip>
   renderLocation = (location: Location) => (
     <ListItem
-      data-tid={'location_' + location.name.replace(/ /g,'_')}
+      data-tid={'location_' + location.name.replace(/ /g, '_')}
       className={
         this.props.currentLocationId === location.uuid
           ? this.props.classes.listItemSelected

@@ -43,7 +43,7 @@ import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
 import i18n from '../../services/i18n';
 import PlatformIO from '../../services/platform-io';
 import { extractDirectoryName } from '../../utils/paths';
-import { type Location } from '../../reducers/locations';
+import { type Location, locationType } from '../../reducers/locations';
 import AppConfig from '../../config';
 import { Pro } from '../../pro';
 import ObjectStoreForm from './ObjectStoreForm';
@@ -100,7 +100,7 @@ class CreateLocationDialog extends React.Component<Props, State> {
     isReadOnly: false,
     watchForChanges: false,
     persistIndex: false,
-    type: 'local'
+    type: locationType.TYPE_LOCAL
   };
 
   componentWillReceiveProps = (nextProps: any) => {
@@ -122,8 +122,13 @@ class CreateLocationDialog extends React.Component<Props, State> {
     const target = event.target;
     const value = target.type === 'checkbox' ? target.checked : target.value;
     const name = target.name;
-
-    this.handleChange(name, value);
+    if (target.type === 'radio') { // type is changed (skip validation)
+      this.setState({
+        [name]: value
+      });
+    } else {
+      this.handleChange(name, value);
+    }
   };
 
   handleChange = (name, value) => {
@@ -135,24 +140,48 @@ class CreateLocationDialog extends React.Component<Props, State> {
   handleValidation() {
     // const pathRegex = this.state.path.match('^((\.\./|[a-zA-Z0-9_/\-\\])*\.[a-zA-Z0-9]+)$');
     // const nameRegex = this.state.name.match('^[A-Z][-a-zA-Z]+$');
-    if (this.state.type === 'local') {
-      if (this.state.path && this.state.path.length > 0) {
-        this.setState({ errorTextPath: false, disableConfirmButton: false });
-      } else {
-        this.setState({ errorTextPath: true, disableConfirmButton: true });
+    if (this.state.type === locationType.TYPE_LOCAL) {
+      let errorTextName = false;
+      let errorTextPath = false;
+      let disableConfirmButton = false;
+      if (!this.state.name || this.state.name.length === 0) {
+        errorTextName = true;
+        disableConfirmButton = true;
       }
 
-      if (this.state.name && this.state.name.length > 0) {
-        this.setState({ errorTextName: false, disableConfirmButton: false });
-      } else {
-        this.setState({ errorTextName: true, disableConfirmButton: true });
+      if (!this.state.path || this.state.path.length === 0) {
+        errorTextPath = true;
+        disableConfirmButton = true;
       }
-    } else if (this.state.type === 'cloud') {
-      if (this.state.name && this.state.name.length > 0) {
-        this.setState({ errorTextName: false, disableConfirmButton: false });
-      } else {
-        this.setState({ errorTextName: true, disableConfirmButton: true });
+
+      this.setState({ errorTextName, errorTextPath, disableConfirmButton });
+    } else if (this.state.type === locationType.TYPE_CLOUD) {
+      let cloudErrorTextName = false;
+      let cloudErrorTextPath = false;
+      let cloudErrorAccessKey = false;
+      let cloudErrorSecretAccessKey = false;
+      let disableConfirmButton = false;
+      if (!this.state.storeName || this.state.storeName.length === 0) {
+        cloudErrorTextName = true;
+        disableConfirmButton = true;
       }
+
+      if (!this.state.storePath || this.state.storePath.length === 0) {
+        cloudErrorTextPath = true;
+        disableConfirmButton = true;
+      }
+
+      if (!this.state.accessKeyId || this.state.accessKeyId.length === 0) {
+        cloudErrorAccessKey = true;
+        disableConfirmButton = true;
+      }
+
+      if (!this.state.secretAccessKey || this.state.secretAccessKey.length === 0) {
+        cloudErrorSecretAccessKey = true;
+        disableConfirmButton = true;
+      }
+
+      this.setState({ cloudErrorTextName, cloudErrorTextPath, cloudErrorAccessKey, cloudErrorSecretAccessKey, disableConfirmButton });
     }
   }
 
@@ -176,22 +205,52 @@ class CreateLocationDialog extends React.Component<Props, State> {
 
   onConfirm = () => {
     if (!this.state.disableConfirmButton) {
-      this.props.addLocation({
-        uuid: uuidv1(),
-        name: this.state.name,
-        paths: [this.state.path],
-        perspective: this.state.perspective,
-        isDefault: this.state.isDefault,
-        isReadOnly: this.state.isReadOnly,
-        persistIndex: this.state.persistIndex,
-        watchForChanges: this.state.watchForChanges
-      });
-      this.setState({
-        open: false,
-        errorTextPath: false,
-        errorTextName: false,
-        disableConfirmButton: true
-      });
+      if (this.state.type === locationType.TYPE_LOCAL) {
+        this.props.addLocation({
+          uuid: uuidv1(),
+          type: locationType.TYPE_LOCAL,
+          name: this.state.name,
+          paths: [this.state.path],
+          perspective: this.state.perspective,
+          isDefault: this.state.isDefault,
+          isReadOnly: this.state.isReadOnly,
+          persistIndex: this.state.persistIndex,
+          watchForChanges: this.state.watchForChanges
+        });
+        this.setState({
+          open: false,
+          errorTextPath: false,
+          errorTextName: false,
+          disableConfirmButton: true
+        });
+      } else if (this.state.type === locationType.TYPE_CLOUD) {
+        this.props.addLocation({
+          uuid: uuidv1(),
+          type: locationType.TYPE_CLOUD,
+          name: this.state.storeName,
+          paths: [this.state.storePath],
+          accessKeyId: this.state.accessKeyId,
+          secretAccessKey: this.state.secretAccessKey,
+          bucketName: this.state.bucketName,
+          region: this.state.region.value,
+          perspective: this.state.perspective,
+          isDefault: this.state.isDefault,
+          isReadOnly: this.state.isReadOnly,
+          persistIndex: this.state.persistIndex,
+          watchForChanges: this.state.watchForChanges
+        });
+        /* this.setState({
+          open: false,
+          errorTextPath: false,
+          errorTextName: false,
+          cloudErrorTextName: false,
+          cloudErrorTextPath: false,
+          cloudErrorAccessKey: false,
+          cloudErrorSecretAccessKey: false,
+          disableConfirmButton: true
+        }); */
+        this.setState({});
+      }
       this.props.onClose();
     }
   };
@@ -203,17 +262,17 @@ class CreateLocationDialog extends React.Component<Props, State> {
   renderContent = () => {
     const { classes } = this.props;
     let content;
-    if (this.state.type === 'cloud') {
+    if (this.state.type === locationType.TYPE_CLOUD) {
       content = (<ObjectStoreForm handleInputChange={this.handleInputChange} handleChange={this.handleChange} state={this.state} />);
     } else {
       content = (
         <div>
           <FormControl
             fullWidth={true}
-            error={this.state.errorTextPath}
+            error={this.state.errorTextName}
           >
             <TextField
-              error={this.state.errorTextPath}
+              error={this.state.errorTextName}
               required
               margin="dense"
               name="name"
@@ -223,7 +282,7 @@ class CreateLocationDialog extends React.Component<Props, State> {
               data-tid="locationName"
               fullWidth={true}
             />
-            {this.state.errorTextName && <FormHelperText>Invalid Name</FormHelperText>}
+            {this.state.errorTextName && <FormHelperText>{i18n.t('core:invalidName')}</FormHelperText>}
           </FormControl>
           <FormControl
             fullWidth={true}
@@ -269,8 +328,8 @@ class CreateLocationDialog extends React.Component<Props, State> {
               onChange={this.handleInputChange}
               row
             >
-              <FormControlLabel value="local" control={<Radio />} label="Local" />
-              <FormControlLabel value="cloud" control={<Radio />} label="Cloud (S3 AWS)" />
+              <FormControlLabel value={locationType.TYPE_LOCAL} control={<Radio />} label="Local" />
+              <FormControlLabel value={locationType.TYPE_CLOUD} control={<Radio />} label="Cloud (S3 AWS)" />
             </RadioGroup>
           </Grid>
         </Grid>

@@ -30,11 +30,19 @@ export const types = {
   REMOVE_LOCATION: 'APP/REMOVE_LOCATION'
 };
 
+export const locationType = {
+  TYPE_LOCAL: '0',
+  TYPE_CLOUD: '1',
+};
+
 export type Location = {
   uuid: string,
   name: string,
-  type: number,
-  awsKey: string, // TODO
+  type: string,
+  accessKeyId: string,
+  secretAccessKey: string,
+  bucketName: string,
+  region: string,
   paths: Array<string>,
   perspective?: string, // id of the perspective
   creationDate?: string,
@@ -51,6 +59,7 @@ const devicePaths = PlatformIO.getDevicePaths();
 Object.keys(devicePaths).forEach(key => {
   initialState.push({
     uuid: uuidv1(),
+    type: locationType.TYPE_LOCAL,
     name: key, // TODO use i18n
     paths: [devicePaths[key]],
     isDefault: false,
@@ -71,8 +80,13 @@ export default (state: Array<Location> = initialState, action: Object) => {
       ...state,
       {
         uuid: action.location.uuid || uuidv1(),
+        type: action.location.type,
         name: action.location.name,
         paths: action.location.paths,
+        accessKeyId: action.location.accessKeyId,
+        secretAccessKey: action.location.secretAccessKey,
+        bucketName: action.location.bucketName,
+        region: action.location.region,
         perspective: action.location.perspective,
         creationDate: new Date().toJSON(),
         isDefault: action.location.isDefault,

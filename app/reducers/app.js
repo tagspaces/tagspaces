@@ -17,10 +17,10 @@
  * @flow
  */
 
-import { type Location, getLocation } from './locations';
+import uuidv1 from 'uuid';
+import { type Location, getLocation, locationType } from './locations';
 import PlatformIO from '../services/platform-io';
 import Search, { type SearchQuery } from '../services/search';
-import uuidv1 from 'uuid';
 import AppConfig from '../config';
 import {
   type FileSystemEntry,
@@ -313,8 +313,8 @@ export default (state: Object = initialState, action: Object) => {
   }
   case types.UPDATE_THUMB_URLS: {
     const dirEntries = [...state.currentDirectoryEntries];
-    for (let entry of dirEntries) {
-      for (let tmbUrl of action.tmbURLs) {
+    for (const entry of dirEntries) {
+      for (const tmbUrl of action.tmbURLs) {
         if (entry.path === tmbUrl.filePath) {
           entry.thumbPath = tmbUrl.tmbPath;
           break;
@@ -622,7 +622,7 @@ export const actions = {
     //     actions.showNotification('Please first open a folder!', 'warning', true)
     //   );
     // } else {
-      dispatch(actions.toggleSelectDirectoryDialog());
+    dispatch(actions.toggleSelectDirectoryDialog());
     // }
   },
   toggleAboutDialog: () => ({ type: types.TOGGLE_ABOUT_DIALOG }),
@@ -929,6 +929,11 @@ export const actions = {
 
     locations.map(location => {
       if (location.uuid === locationId) {
+        if (location.type === locationType.TYPE_CLOUD) {
+          PlatformIO.enableObjectStoreSupport(location);
+        } else if (location.type === locationType.TYPE_LOCAL) {
+          PlatformIO.disableObjectStoreSupport();
+        }
         // location.paths = ['test/']; // TODO remove
         dispatch(actions.setReadOnlyMode(location.isReadOnly || false));
         dispatch(actions.setCurrentLocationId(location.uuid));

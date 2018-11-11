@@ -231,7 +231,7 @@ class IntegrationReactSelect extends React.Component<Props> {
         <Grid item xs={12}>
           <FormControl
             fullWidth={true}
-            error={state.errorTextPath}
+            error={state.cloudErrorTextName}
           >
             <InputLabel htmlFor="storeName">{i18n.t('core:createLocationName')}</InputLabel>
             <Input
@@ -244,13 +244,13 @@ class IntegrationReactSelect extends React.Component<Props> {
               onChange={handleInputChange}
               value={state.storeName}
             />
-            {state.errorTextPath && <FormHelperText>{i18n.t('core:invalidPath')}</FormHelperText>}
+            {state.cloudErrorTextName && <FormHelperText>{i18n.t('core:invalidName')}</FormHelperText>}
           </FormControl>
         </Grid>
         <Grid item xs={12}>
           <FormControl
             fullWidth={true}
-            error={state.errorTextPath}
+            error={state.cloudErrorTextPath}
           >
             <InputLabel htmlFor="path">{i18n.t('core:createLocationPath')}</InputLabel>
             <Input
@@ -263,32 +263,32 @@ class IntegrationReactSelect extends React.Component<Props> {
               onChange={handleInputChange}
               value={state.storePath}
             />
-            {state.errorTextPath && <FormHelperText>{i18n.t('core:invalidPath')}</FormHelperText>}
+            {state.cloudErrorTextPath && <FormHelperText>{i18n.t('core:invalidPath')}</FormHelperText>}
           </FormControl>
         </Grid>
         <Grid item xs={12}>
           <FormControl
             fullWidth={true}
-            error={state.errorTextPath}
+            error={state.cloudErrorAccessKey}
           >
-            <InputLabel htmlFor="accessKey">{i18n.t('core:accessKeyId')}</InputLabel>
+            <InputLabel htmlFor="accessKeyId">{i18n.t('core:accessKeyId')}</InputLabel>
             <Input
               required
               margin="dense"
-              name="accessKey"
+              name="accessKeyId"
               label={i18n.t('core:accessKeyId')}
               fullWidth={true}
               data-tid="accessKeyId"
               onChange={handleInputChange}
-              value={state.accessKey}
+              value={state.accessKeyId}
             />
-            {state.errorTextPath && <FormHelperText>{i18n.t('core:invalidPath')}</FormHelperText>}
+            {state.cloudErrorAccessKey && <FormHelperText>{i18n.t('core:invalidAccessKey')}</FormHelperText>}
           </FormControl>
         </Grid>
         <Grid item xs={12}>
           <FormControl
             fullWidth={true}
-            error={state.errorTextPath}
+            error={state.cloudErrorSecretAccessKey}
           >
             <InputLabel htmlFor="secretAccessKey">{i18n.t('core:secretAccessKey')}</InputLabel>
             <Input
@@ -301,13 +301,11 @@ class IntegrationReactSelect extends React.Component<Props> {
               onChange={handleInputChange}
               value={state.secretAccessKey}
             />
-            {state.errorTextPath && <FormHelperText>{i18n.t('core:invalidPath')}</FormHelperText>}
+            {state.cloudErrorSecretAccessKey && <FormHelperText>{i18n.t('core:invalidSecretAccessKey')}</FormHelperText>}
           </FormControl>
         </Grid>
         <Grid item xs={6}>
-          <FormControl
-            error={state.errorTextPath}
-          >
+          <FormControl>
             <InputLabel htmlFor="bucketName">{i18n.t('core:bucketName')}</InputLabel>
             <Input
               required
@@ -319,7 +317,6 @@ class IntegrationReactSelect extends React.Component<Props> {
               onChange={handleInputChange}
               value={state.bucketName}
             />
-            {state.errorTextPath && <FormHelperText>{i18n.t('core:invalidPath')}</FormHelperText>}
           </FormControl>
         </Grid>
         <Grid item xs={6}>
@@ -334,7 +331,6 @@ class IntegrationReactSelect extends React.Component<Props> {
               onChange={this.handleChange('region')}
               placeholder="Search a region"
             />
-            {state.errorTextPath && <FormHelperText>{i18n.t('core:invalidPath')}</FormHelperText>}
           </NoSsr>
         </Grid>
       </Grid>
