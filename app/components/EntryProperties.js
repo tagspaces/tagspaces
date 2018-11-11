@@ -23,7 +23,6 @@ import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import FormControl from '@material-ui/core/FormControl';
 import Typography from '@material-ui/core/Typography';
-import Input from '@material-ui/core/Input';
 import TextField from '@material-ui/core/TextField';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
@@ -121,6 +120,22 @@ const styles = theme => ({
   }
 });
 
+const customRenderer = new marked.Renderer();
+// customRenderer.link = (href, title, text) => `<a href="javascript:window.open('${href}', '_blank', 'nodeIntegration=no')" target="_blank">${text}</a>`;
+customRenderer.link = (href, title, text) => `<a href="#" onClick="event.preventDefault();event.stopPropagation(); window.open('${href}', '_blank', 'nodeIntegration=no');return false;">${text}</a>`;
+
+marked.setOptions({
+  renderer: customRenderer,
+  pedantic: false,
+  gfm: true,
+  tables: true,
+  breaks: false,
+  sanitize: true,
+  smartLists: true,
+  smartypants: false,
+  xhtml: true
+});
+
 function handleExternalLinks(event) { // TODO move to misc
   event.preventDefault();
   event.stopPropagation();
@@ -191,12 +206,16 @@ class EntryProperties extends Component<Props, State> {
       this.loadEntryProperties(nextProps.entryPath);
     }
 
+    if (nextProps.entryPath && this.state.path !== nextProps.entryPath) {
+      this.setState({ isEditDescription: false });
+    }
+
     if (nextProps.shouldCopyFile) {
       this.setState({ isMoveCopyFilesDialogOpened: true });
     }
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  /* componentDidUpdate(prevProps, prevState) {
     if (this.state.description == null || this.state.description !== prevState.description) {
       const links = document.querySelectorAll('#descriptionArea a');
       links.forEach((link) => {
@@ -212,7 +231,7 @@ class EntryProperties extends Component<Props, State> {
         link.removeEventListener('click', handleExternalLinks);
       });
     }
-  }
+  } */
 
   loadEntryProperties = (entryPath) => {
     getAllPropertiesPromise(entryPath).then(entryProps => {
@@ -516,14 +535,10 @@ class EntryProperties extends Component<Props, State> {
                   multiline
                   disabled={!isEditDescription}
                   id="textarea"
-                  placeholder={i18n.t('core:addDescription')}
+                  placeholder=""
                   name="description"
                   className={styles.textField}
-                  value={
-                    !isEditDescription
-                      ? marked.inlineLexer(description, [])
-                      : description
-                  }
+                  value={description}
                   fullWidth={true}
                   onChange={e => this.handleInputChange(e)}
                 />
@@ -531,11 +546,12 @@ class EntryProperties extends Component<Props, State> {
                 <Typography
                   role="button"
                   id="descriptionArea"
+                  placeholder={Pro ? 'Click to add description' : i18n.t('core:addDescription')}
                   dangerouslySetInnerHTML={{
                     __html:
                       description !== ''
                         ? marked(description)
-                        : i18n.t('core:addDescription')
+                        : Pro ? 'Click to add description' : i18n.t('core:addDescription')
                   }}
                   onClick={() => {
                     if (!isEditDescription) {
@@ -643,7 +659,7 @@ class EntryProperties extends Component<Props, State> {
                           classes.button
                         ].join(' ')}
                         style={{
-                          backgroundColor: color || '#3498db',
+                          backgroundColor: color,
                           width: 100,
                           margin: '0 8px 0 0'
                         }}
