@@ -170,7 +170,6 @@ class AboutDialog extends React.Component<Props, State> {
         <Button
           data-tid="closeAboutDialog"
           onClick={this.props.onClose}
-          color="primary"
         >
           {i18n.t('core:ok')}
         </Button>

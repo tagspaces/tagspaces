@@ -21,22 +21,28 @@ import React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import Button from '@material-ui/core/Button';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Input from '@material-ui/core/Input';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import IconButton from '@material-ui/core/IconButton';
 import FolderIcon from '@material-ui/icons/Folder';
+import FileIcon from '@material-ui/icons/InsertDriveFileOutlined';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
+import { Typography } from '@material-ui/core';
 import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
 import i18n from '../../services/i18n';
 // import { extractContainingDirectoryPath } from '../../utils/paths';
 import PlatformIO from '../../services/platform-io';
 import AppConfig from '../../config';
 import IOActions from '../../reducers/io-actions';
+import { extractFileName } from '../../utils/paths';
 
 type Props = {
   open?: boolean,
@@ -124,22 +130,23 @@ class MoveCopyFilesDialog extends React.Component<Props, State> {
 
   renderContent = () => (
     <DialogContent>
-      <FormControl fullWidth={true} error={this.state.inputError}>
-        <ListItemText primary="Selected files:" />
-        <div>
-          {this.props.selectedFiles && this.props.selectedFiles.length > 0 && this.props.selectedFiles.map(path => (
-            <li key={path}>{path}</li>
-          ))}
-        </div>
-      </FormControl>
+      <List dense style={{ width: 550 }}>
+        {this.props.selectedFiles && this.props.selectedFiles.length > 0 && this.props.selectedFiles.map(path => (
+          <ListItem title={path}>
+            <ListItemIcon>
+              <FileIcon />
+            </ListItemIcon>
+            <Typography variant="inherit" noWrap>{extractFileName(path)}</Typography>
+          </ListItem>
+        ))}
+      </List>
       <FormControl fullWidth={true}>
-        <ListItemText primary={i18n.t('core:moveCopyToPath')} />
         <Input
           autoFocus
           required
           margin="dense"
           name="targetPath"
-          label={i18n.t('core:moveCopyToPath')}
+          placeholder={i18n.t('core:moveCopyToPath')}
           fullWidth={true}
           data-tid="targetPathInput"
           onChange={e => this.handleInputChange(e)}
@@ -164,14 +171,12 @@ class MoveCopyFilesDialog extends React.Component<Props, State> {
     <DialogActions>
       <Button
         data-tid="closeMoveCopyDialog"
-        color="primary"
         onClick={this.props.onClose}
       >
         {i18n.t('core:cancel')}
       </Button>
       <Button
         data-tid="confirmMoveFiles"
-        color="primary"
         disabled={this.state.disableConfirmButton}
         onClick={this.handleMoveFiles}
       >
@@ -181,7 +186,6 @@ class MoveCopyFilesDialog extends React.Component<Props, State> {
         onClick={this.handleCopyFiles}
         data-tid="confirmCopyFiles"
         disabled={this.state.disableConfirmButton}
-        color="primary"
       >
         {i18n.t('core:copyFilesButton')}
       </Button>
