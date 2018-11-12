@@ -19,6 +19,7 @@
 
 import React from 'react';
 import { bindActionCreators } from 'redux';
+import uuidv1 from 'uuid';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import classNames from 'classnames';
@@ -100,7 +101,8 @@ type State = {
   isEditLocationDialogOpened?: boolean,
   isDeleteLocationDialogOpened?: boolean,
   isSelectDirectoryDialogOpened?: boolean,
-  isCreateDirectoryDialogOpened?: boolean
+  isCreateDirectoryDialogOpened?: boolean,
+  createLocationDialogKey: string
 };
 
 class LocationManager extends React.Component<Props, State> {
@@ -117,7 +119,8 @@ class LocationManager extends React.Component<Props, State> {
     isEditLocationDialogOpened: false,
     isDeleteLocationDialogOpened: false,
     isCreateDirectoryDialogOpened: false,
-    isSelectDirectoryDialogOpened: false
+    isSelectDirectoryDialogOpened: false,
+    createLocationDialogKey: uuidv1()
   };
 
   handleCloseDialogs = () => {
@@ -269,6 +272,12 @@ class LocationManager extends React.Component<Props, State> {
     }
   };
 
+  resetState = (dialogKey) => {
+    this.setState({
+      [dialogKey]: uuidv1()
+    });
+  };
+
   // <Tooltip id="tooltip-icon" title={i18n.t('core:moreOperations')} placement="bottom"></Tooltip>
   renderLocation = (location: Location) => (
     <ListItem
@@ -327,6 +336,8 @@ class LocationManager extends React.Component<Props, State> {
         </Button>
         <div>
           <CreateLocationDialog
+            key={this.state.createLocationDialogKey}
+            resetState={this.resetState}
             open={this.state.isCreateLocationDialogOpened}
             onClose={this.handleCloseDialogs}
             addLocation={this.props.addLocation}

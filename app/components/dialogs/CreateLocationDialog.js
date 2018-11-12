@@ -19,34 +19,24 @@
 
 import React from 'react';
 import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
 import uuidv1 from 'uuid';
 import { withStyles } from '@material-ui/core/styles';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import IconButton from '@material-ui/core/IconButton';
-import FolderIcon from '@material-ui/icons/Folder';
 import Switch from '@material-ui/core/Switch';
-import FormControl from '@material-ui/core/FormControl';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormHelperText from '@material-ui/core/FormHelperText';
 import FormGroup from '@material-ui/core/FormGroup';
-import Input from '@material-ui/core/Input';
-import InputLabel from '@material-ui/core/InputLabel';
-import InputAdornment from '@material-ui/core/InputAdornment';
 import Grid from '@material-ui/core/Grid';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
-import FormLabel from '@material-ui/core/FormLabel';
 import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
 import i18n from '../../services/i18n';
-import PlatformIO from '../../services/platform-io';
 import { extractDirectoryName } from '../../utils/paths';
 import { type Location, locationType } from '../../reducers/locations';
-import AppConfig from '../../config';
 import { Pro } from '../../pro';
 import ObjectStoreForm from './ObjectStoreForm';
+import LocalForm from './LocalForm';
 
 const styles = theme => ({
   root: {
@@ -69,6 +59,7 @@ type Props = {
   addLocation: (location: Location) => void,
   perspectives: Array<Object>,
   showSelectDirectoryDialog: () => void,
+  resetState: () => void,
   selectedDirectoryPath?: string | null
 };
 
@@ -76,7 +67,7 @@ type State = {
   errorTextPath?: boolean,
   errorTextName?: boolean,
   disableConfirmButton?: boolean,
-  open?: boolean,
+  // open?: boolean,
   name?: string,
   path?: string,
   perspective?: string,
@@ -92,18 +83,18 @@ class CreateLocationDialog extends React.Component<Props, State> {
     errorTextPath: false,
     errorTextName: false,
     disableConfirmButton: true,
-    open: false,
+    // open: false,
     name: '',
     path: '',
     perspective: '',
     isDefault: false,
     isReadOnly: false,
-    watchForChanges: false,
+    watchForChanges: !!Pro,
     persistIndex: false,
     type: locationType.TYPE_LOCAL
   };
 
-  componentWillReceiveProps = (nextProps: any) => {
+  /* componentWillReceiveProps = (nextProps: any) => {
     if (nextProps.open === true) {
       const dir = nextProps.selectedDirectoryPath;
       this.setState({
@@ -116,6 +107,10 @@ class CreateLocationDialog extends React.Component<Props, State> {
         persistIndex: false
       });
     }
+  }; */
+
+  componentWillUnmount = () => {
+    console.log('CreateLocationDialog componentWillUnmount');
   };
 
   handleInputChange = (event: Object) => {
@@ -185,24 +180,6 @@ class CreateLocationDialog extends React.Component<Props, State> {
     }
   }
 
-  openDirectory = () => {
-    if (AppConfig.isElectron) {
-      PlatformIO.selectDirectoryDialog().then((selectedPaths) => {
-        const newName = (this.state.name.length < 1) ? extractDirectoryName(selectedPaths[0]) : this.state.name;
-        this.setState({
-          name: newName,
-          path: selectedPaths[0]
-        });
-        this.handleValidation();
-        return true;
-      }).catch((err) => {
-        console.log('selectDirectoryDialog failed with: ' + err);
-      });
-    } else {
-      this.props.showSelectDirectoryDialog();
-    }
-  };
-
   onConfirm = () => {
     if (!this.state.disableConfirmButton) {
       if (this.state.type === locationType.TYPE_LOCAL) {
@@ -217,12 +194,12 @@ class CreateLocationDialog extends React.Component<Props, State> {
           persistIndex: this.state.persistIndex,
           watchForChanges: this.state.watchForChanges
         });
-        this.setState({
-          open: false,
+        /* this.setState({
+          // open: false,
           errorTextPath: false,
           errorTextName: false,
           disableConfirmButton: true
-        });
+        }); */
       } else if (this.state.type === locationType.TYPE_CLOUD) {
         this.props.addLocation({
           uuid: uuidv1(),
@@ -249,9 +226,9 @@ class CreateLocationDialog extends React.Component<Props, State> {
           cloudErrorSecretAccessKey: false,
           disableConfirmButton: true
         }); */
-        this.setState({});
       }
       this.props.onClose();
+      this.props.resetState('createLocationDialogKey');
     }
   };
 
@@ -260,58 +237,12 @@ class CreateLocationDialog extends React.Component<Props, State> {
   );
 
   renderContent = () => {
-    const { classes } = this.props;
+    // const { classes } = this.props;
     let content;
     if (this.state.type === locationType.TYPE_CLOUD) {
       content = (<ObjectStoreForm handleInputChange={this.handleInputChange} handleChange={this.handleChange} state={this.state} />);
     } else {
-      content = (
-        <div>
-          <FormControl
-            fullWidth={true}
-            error={this.state.errorTextName}
-          >
-            <TextField
-              error={this.state.errorTextName}
-              required
-              margin="dense"
-              name="name"
-              label={i18n.t('core:createLocationName')}
-              onChange={this.handleInputChange}
-              value={this.state.name}
-              data-tid="locationName"
-              fullWidth={true}
-            />
-            {this.state.errorTextName && <FormHelperText>{i18n.t('core:invalidName')}</FormHelperText>}
-          </FormControl>
-          <FormControl
-            fullWidth={true}
-            error={this.state.errorTextPath}
-          >
-            <InputLabel htmlFor="path">{i18n.t('core:createLocationPath')}</InputLabel>
-            <Input
-              required
-              margin="dense"
-              name="path"
-              label={i18n.t('core:createLocationPath')}
-              fullWidth={true}
-              data-tid="locationPath"
-              onChange={this.handleInputChange}
-              value={this.state.path}
-              endAdornment={
-                <InputAdornment position="end" style={{ height: 32 }}>
-                  <IconButton
-                    onClick={this.openDirectory}
-                  >
-                    <FolderIcon />
-                  </IconButton>
-                </InputAdornment>
-              }
-            />
-            {this.state.errorTextPath && <FormHelperText>{i18n.t('core:invalidPath')}</FormHelperText>}
-          </FormControl>
-        </div>
-      );
+      content = (<LocalForm showSelectDirectoryDialog={this.props.showSelectDirectoryDialog} handleInputChange={this.handleInputChange} handleChange={this.handleChange} state={this.state} />);
     }
     return (
       <DialogContent>

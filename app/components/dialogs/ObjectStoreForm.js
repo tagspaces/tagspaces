@@ -40,10 +40,7 @@ const suggestions = [
   { label: 'eu-west-2 (EU London)', value: 'eu-west-2' },
   { label: 'eu-west-3 (EU Paris)', value: 'eu-west-3' },
   { label: 'sa-east-1 (South America São Paulo)', value: 'sa-east-1' },
-].map(suggestion => ({
-  value: suggestion.value,
-  label: suggestion.label,
-}));
+];
 
 const styles = theme => ({
   root: {
@@ -209,7 +206,7 @@ type Props = {
   theme: Object
 };
 
-class IntegrationReactSelect extends React.Component<Props> {
+class ObjectStoreForm extends React.Component<Props> {
   handleChange = name => value => {
     this.props.handleChange(name, value);
   };
@@ -386,4 +383,4 @@ class IntegrationReactSelect extends React.Component<Props> {
   }
 }
 
-export default withStyles(styles, { withTheme: true })(IntegrationReactSelect);
+export default withStyles(styles, { withTheme: true })(ObjectStoreForm);
