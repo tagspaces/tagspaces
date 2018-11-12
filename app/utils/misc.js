@@ -70,7 +70,7 @@ export function b64toBlob(b64Data, contentType, sliceSize) {
   for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
     const slice = byteCharacters.slice(offset, offset + sliceSize);
     const byteNumbers = new Array(slice.length);
-    for (let i = 0; i < slice.length; i++) {
+    for (let i = 0; i < slice.length; i += 1) {
       byteNumbers[i] = slice.charCodeAt(i);
     }
     const byteArray = new Uint8Array(byteNumbers);
@@ -98,7 +98,7 @@ export function isVisibleOnScreen(element) {
 export function getURLParameter(variable) {
   const query = window.location.search.substring(1);
   const vars = query.split('&');
-  for (let i = 0; i < vars.length; i++) {
+  for (let i = 0; i < vars.length; i += 1) {
     const pair = vars[i].split('=');
     if (pair[0] === variable) {
       return pair[1];
@@ -314,7 +314,7 @@ export function sortAlphaNum(a, b) {
     (isDigitPart = reDigit.test(aParts[0])) === reDigit.test(bParts[0])) {
     // Loop through each substring part to compare the overall strings.
     const len = Math.min(aParts.length, bParts.length);
-    for (let i = 0; i < len; i++) {
+    for (let i = 0; i < len; i += 1) {
       let aPart = aParts[i];
       let bPart = bParts[i];
 

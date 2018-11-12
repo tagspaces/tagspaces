@@ -28,6 +28,7 @@ import { actions as AppActions } from './reducers/app';
 import { getDefaultLocationId } from './reducers/locations';
 import { actions as SettingsActions, getCheckForUpdateOnStartup, isGlobalKeyBindingEnabled } from './reducers/settings';
 import PlatformIO from './services/platform-io';
+import { getURLParameter } from './utils/misc';
 
 const store = configureStore();
 
@@ -76,6 +77,11 @@ document.addEventListener('storeLoaded', () => {
     store.dispatch(SettingsActions.checkForUpdate());
   }
   PlatformIO.setGlobalShortcuts(isGlobalKeyBindingEnabled(state));
+
+  const langURLParam = getURLParameter('locale');
+  if (langURLParam && langURLParam.length > 1 && /^[a-zA-Z\-_]+$/.test('langURLParam')) {
+    store.dispatch(SettingsActions.setLanguage(langURLParam));
+  }
 });
 
 function checkIsFirstRun() {

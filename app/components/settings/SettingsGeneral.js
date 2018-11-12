@@ -145,20 +145,6 @@ class SettingsGeneral extends React.Component<Props, State> {
           </Select>
         </ListItem>
         <ListItem>
-          <ListItemText primary={i18n.t('core:showUnixHiddenFiles')} />
-          <ListItemSecondaryAction>
-            <Switch
-              data-tid="settingsSetShowUnixHiddenEntries"
-              onClick={() =>
-                this.props.setShowUnixHiddenEntries(
-                  !this.props.settings.showUnixHiddenEntries
-                )
-              }
-              checked={this.props.settings.showUnixHiddenEntries}
-            />
-          </ListItemSecondaryAction>
-        </ListItem>
-        <ListItem>
           <ListItemText primary={i18n.t('core:checkForNewVersionOnStartup')} />
           <ListItemSecondaryAction>
             <Switch
@@ -173,30 +159,44 @@ class SettingsGeneral extends React.Component<Props, State> {
           </ListItemSecondaryAction>
         </ListItem>
         <ListItem>
-          <ListItemText primary={i18n.t('core:coloredFileExtensionsEnabled')} />
+          <ListItemText primary={i18n.t('core:persistTagsInSidecarFile')} />
           <ListItemSecondaryAction>
             <Switch
-              data-tid="settingsSetColoredFileExtension"
+              data-tid="settingsSetPersistTagsInSidecarFile"
               onClick={() =>
-                this.props.setColoredFileExtension(
-                  !this.props.settings.coloredFileExtension
+                this.props.setPersistTagsInSidecarFile(
+                  !this.props.settings.persistTagsInSidecarFile
                 )
               }
-              checked={this.props.settings.coloredFileExtension}
+              checked={this.props.settings.persistTagsInSidecarFile}
             />
           </ListItemSecondaryAction>
         </ListItem>
         <ListItem>
-          <ListItemText primary={i18n.t('core:loadLocationMetaData')} />
+          <ListItemText primary={i18n.t('core:addTagsToLibrary')} />
           <ListItemSecondaryAction>
             <Switch
-              data-tid="settingsSetLoadsLocationMetaData"
+              data-tid="settingsSetAddTagsToLibrary"
               onClick={() =>
-                this.props.setLoadsLocationMetaData(
-                  !this.props.settings.loadsLocationMetaData
+                this.props.setAddTagsToLibrary(
+                  !this.props.settings.addTagsToLibrary
                 )
               }
-              checked={this.props.settings.loadsLocationMetaData}
+              checked={this.props.settings.addTagsToLibrary}
+            />
+          </ListItemSecondaryAction>
+        </ListItem>
+        <ListItem>
+          <ListItemText primary={i18n.t('core:useGenerateThumbnails')} />
+          <ListItemSecondaryAction>
+            <Switch
+              data-tid="settingsUseGenerateThumbnails"
+              onClick={() =>
+                this.props.setUseGenerateThumbnails(
+                  !this.props.settings.useGenerateThumbnails
+                )
+              }
+              checked={this.props.settings.useGenerateThumbnails}
             />
           </ListItemSecondaryAction>
         </ListItem>
@@ -256,47 +256,47 @@ class SettingsGeneral extends React.Component<Props, State> {
           </ListItemSecondaryAction>
         </ListItem>
         <ListItem>
-          <ListItemText primary={i18n.t('core:persistTagsInSidecarFile')} />
+          <ListItemText primary={i18n.t('core:showUnixHiddenFiles')} />
           <ListItemSecondaryAction>
             <Switch
-              data-tid="settingsSetPersistTagsInSidecarFile"
+              data-tid="settingsSetShowUnixHiddenEntries"
               onClick={() =>
-                this.props.setPersistTagsInSidecarFile(
-                  !this.props.settings.persistTagsInSidecarFile
+                this.props.setShowUnixHiddenEntries(
+                  !this.props.settings.showUnixHiddenEntries
                 )
               }
-              checked={this.props.settings.persistTagsInSidecarFile}
+              checked={this.props.settings.showUnixHiddenEntries}
             />
           </ListItemSecondaryAction>
         </ListItem>
-        <ListItem>
-          <ListItemText primary={i18n.t('core:addTagsToLibrary')} />
+        { /* <ListItem>
+          <ListItemText primary={i18n.t('core:coloredFileExtensionsEnabled')} />
           <ListItemSecondaryAction>
             <Switch
-              data-tid="settingsSetAddTagsToLibrary"
+              data-tid="settingsSetColoredFileExtension"
               onClick={() =>
-                this.props.setAddTagsToLibrary(
-                  !this.props.settings.addTagsToLibrary
+                this.props.setColoredFileExtension(
+                  !this.props.settings.coloredFileExtension
                 )
               }
-              checked={this.props.settings.addTagsToLibrary}
+              checked={this.props.settings.coloredFileExtension}
             />
           </ListItemSecondaryAction>
-        </ListItem>
-        <ListItem>
-          <ListItemText primary={i18n.t('core:useGenerateThumbnails')} />
+        </ListItem> */ }
+        { /* <ListItem>
+          <ListItemText primary={i18n.t('core:loadLocationMetaData')} />
           <ListItemSecondaryAction>
             <Switch
-              data-tid="settingsUseGenerateThumbnails"
+              data-tid="settingsSetLoadsLocationMetaData"
               onClick={() =>
-                this.props.setUseGenerateThumbnails(
-                  !this.props.settings.useGenerateThumbnails
+                this.props.setLoadsLocationMetaData(
+                  !this.props.settings.loadsLocationMetaData
                 )
               }
-              checked={this.props.settings.useGenerateThumbnails}
+              checked={this.props.settings.loadsLocationMetaData}
             />
           </ListItemSecondaryAction>
-        </ListItem>
+        </ListItem> */ }
       </List>
     );
   }

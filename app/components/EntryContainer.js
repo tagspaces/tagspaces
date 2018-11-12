@@ -172,6 +172,7 @@ type Props = {
 
 type State = {
   isPropertiesPanelVisible?: boolean,
+  isFullscreen: boolean,
   currentEntry?: OpenedEntry | null,
   entryProps?: Object | null,
   editingSupported?: boolean,
@@ -189,6 +190,7 @@ type State = {
 class EntryContainer extends React.Component<Props, State> {
   state = {
     isPropertiesPanelVisible: false,
+    isFullscreen: false,
     editingSupported: false,
     isSaveBeforeCloseConfirmDialogOpened: false,
     openedSplitSize,
@@ -486,13 +488,36 @@ class EntryContainer extends React.Component<Props, State> {
     });
   };
 
-  switchToFullScreen = () => {
-    if (this.fileViewerContainer && this.fileViewerContainer.webkitRequestFullscreen) {
-      this.fileViewerContainer.webkitRequestFullscreen();
-    } else if (this.fileViewerContainer && this.fileViewerContainer.requestFullscreen) {
-      this.fileViewerContainer.requestFullscreen();
-    } else if (this.fileViewerContainer && this.fileViewerContainer.mozRequestFullScreen) {
-      this.fileViewerContainer.mozRequestFullScreen();
+  toggleFullScreen = () => {
+    if (this.state.isFullscreen && document.webkitExitFullscreen) {
+      document.webkitExitFullscreen();
+      this.setState({ isFullscreen: false });
+      return;
+    } else if (this.state.isFullscreen && document.exitFullscreen) { // TODO exit fullscreen firefox does not work
+      document.exitFullscreen().then(() => {
+        console.log('Fullscreen exit successful');
+        return true;
+      }).catch((e) => {
+        console.log('Error exiting fullscreen');
+      });
+      this.setState({ isFullscreen: false });
+      return;
+    } /* else if (this.state.isFullscreen && document.mozExitFullscreen) {
+      document.mozExitFullscreen();
+      this.setState({ isFullscreen: false });
+      return;
+    } */
+    if (!this.state.isFullscreen && this.fileViewerContainer) {
+      if (this.fileViewerContainer && this.fileViewerContainer.webkitRequestFullscreen) {
+        this.fileViewerContainer.webkitRequestFullscreen();
+        this.setState({ isFullscreen: true });
+      } else if (this.fileViewerContainer && this.fileViewerContainer.requestFullscreen) {
+        this.fileViewerContainer.requestFullscreen();
+        this.setState({ isFullscreen: true });
+      } else if (this.fileViewerContainer && this.fileViewerContainer.mozRequestFullScreen) {
+        this.fileViewerContainer.mozRequestFullScreen();
+        this.setState({ isFullscreen: true });
+      }
     }
   };
 
@@ -567,7 +592,7 @@ class EntryContainer extends React.Component<Props, State> {
           title={i18n.t('core:switchToFullscreen')}
           aria-label={i18n.t('core:switchToFullscreen')}
           data-tid="fileContainerSwitchToFullScreen"
-          onClick={this.switchToFullScreen}
+          onClick={this.toggleFullScreen}
         >
           <FullScreenIcon />
         </IconButton>
@@ -735,7 +760,7 @@ class EntryContainer extends React.Component<Props, State> {
 
   render() {
     const { classes } = this.props;
-    const { isEditTagsModalOpened, currentEntry } = this.state;
+    const { isEditTagsModalOpened, currentEntry, isFullscreen } = this.state;
     let fileOpenerURL: string;
     let fileTitle: string = '';
 
@@ -941,6 +966,21 @@ class EntryContainer extends React.Component<Props, State> {
             }}
             className={classes.fileContent}
           >
+            {isFullscreen && (
+              <IconButton
+                variant="fab"
+                color="primary"
+                style={{
+                  position: 'absolute',
+                  top: 20,
+                  right: 20,
+                  zIndex: 10000
+                }}
+                onClick={this.toggleFullScreen}
+              >
+                <CloseIcon />
+              </IconButton>
+            )}
             {this.renderFileView(fileOpenerURL)}
           </div>
         </SplitPane>

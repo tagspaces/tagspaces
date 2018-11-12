@@ -35,21 +35,15 @@ import {
 } from '../services/utils-io';
 import { formatDateTime4Tag } from '../utils/misc';
 import AppConfig from '../config';
+import PlatformIO from '../services/platform-io';
 
 const actions = {
   addTags: (paths: Array<string>, tags: Array<Tag>) => (
     dispatch: (actions: Object) => void,
-  ) => {
-    paths.map((path) => {
-      dispatch(actions.addTagsToEntry(path, tags));
-      return true;
-    });
-  },
-  addTagsToEntry: (path: string, tags: Array<Tag>) => (
-    dispatch: (actions: Object) => void,
     getState: () => Object
   ) => {
     const { settings, taglibrary } = getState();
+
     const processedTags = [];
     tags.map((pTag) => {
       const tag = { ...pTag };
@@ -57,12 +51,12 @@ const actions = {
         tag.title = generateTagValue(tag.functionality);
         tag.id = uuidv1();
       }
-      tag.type = settings.persistTagsInSidecarFile ? 'sidecar' : 'plain';
+      tag.type = 'sidecar';
       processedTags.push(tag);
       return true;
     });
 
-    if (settings.addTagsToLibrary) {
+    if (settings.addTagsToLibrary) { // collecting tags
       // filter existed in tagLibrary
       const uniqueTags = [];
       processedTags.map((tag) => {
@@ -76,23 +70,36 @@ const actions = {
           uuid: 'collected_tag_group_id', // uuid needs to be constant here (see mergeTagGroup)
           title: i18n.t('core:collectedTags'),
           expanded: true,
-          color: '#00ff00',
-          textcolor: '#000',
+          color: settings.tagBackgroundColor,
+          textcolor: settings.tagTextColor,
           children: uniqueTags,
           created_date: new Date(),
           modified_date: new Date()
         };
         dispatch(TagLibraryActions.mergeTagGroup(tagGroup));
       }
+
+      paths.map((path) => {
+        dispatch(actions.addTagsToEntry(path, processedTags));
+        return true;
+      });
     }
+  },
+  addTagsToEntry: (path: string, tags: Array<Tag>) => async (
+    dispatch: (actions: Object) => void,
+    getState: () => Object
+  ) => {
+    const { settings } = getState();
+
+    const entryProperties = await PlatformIO.getPropertiesPromise(path);
 
     // TODO: Handle adding already added tags
-    if (settings.persistTagsInSidecarFile) {
+    if (!entryProperties.isFile || settings.persistTagsInSidecarFile) {
       // Handling adding tags in sidecar
       loadMetaDataPromise(path).then(fsEntryMeta => {
         const newTags = [
           ...fsEntryMeta.tags,
-          ...processedTags
+          ...tags
         ];
         const updatedFsEntryMeta = {
           ...fsEntryMeta,
@@ -108,10 +115,10 @@ const actions = {
         return true;
       }).catch(() => {
         const newFsEntryMeta = {
-          processedTags
+          tags
         };
         saveMetaDataPromise(path, newFsEntryMeta).then(() => {
-          dispatch(AppActions.reflectUpdateSidecarTags(path, processedTags));
+          dispatch(AppActions.reflectUpdateSidecarTags(path, tags));
           return true;
         }).catch(error => {
           console.warn('Error adding tags for ' + path + ' with ' + error);
@@ -122,11 +129,11 @@ const actions = {
       const fileName = extractFileName(path);
       const containingDirectoryPath = extractContainingDirectoryPath(path);
       const extractedTags = extractTags(path);
-      for (let i = 0; i < processedTags.length; i += 1) {
+      for (let i = 0; i < tags.length; i += 1) {
         // check if tag is already in the tag array
-        if (extractedTags.indexOf(processedTags[i].title) < 0) {
+        if (extractedTags.indexOf(tags[i].title) < 0) {
           // Adding the new tag
-          extractedTags.push(processedTags[i].title);
+          extractedTags.push(tags[i].title);
         }
       }
       const newFilePath = containingDirectoryPath + AppConfig.dirSeparator + generateFileName(fileName, extractedTags);

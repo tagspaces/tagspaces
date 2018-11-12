@@ -23,6 +23,9 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContentText from '@material-ui/core/DialogContentText';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import GenericDialog from './GenericDialog';
 import i18n from '../../services/i18n';
@@ -55,7 +58,11 @@ class ConfirmDialog extends React.Component<Props> {
     <DialogContent>
       <DialogContentText data-tid={this.props.confirmDialogContentTID}>
         {this.props.content}
-        {this.props.list && this.props.list.map((listItem) => <li key={listItem}>{listItem}</li>)}
+        {this.props.list && this.props.list.map((listItem) => (
+          <ListItem title={listItem}>
+            <Typography variant="inherit" noWrap>{listItem}</Typography>
+          </ListItem>
+        ))}
       </DialogContentText>
     </DialogContent>
   );

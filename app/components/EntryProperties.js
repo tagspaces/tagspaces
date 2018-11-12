@@ -23,7 +23,6 @@ import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import FormControl from '@material-ui/core/FormControl';
 import Typography from '@material-ui/core/Typography';
-import Input from '@material-ui/core/Input';
 import TextField from '@material-ui/core/TextField';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
@@ -121,6 +120,22 @@ const styles = theme => ({
   }
 });
 
+const customRenderer = new marked.Renderer();
+// customRenderer.link = (href, title, text) => `<a href="javascript:window.open('${href}', '_blank', 'nodeIntegration=no')" target="_blank">${text}</a>`;
+customRenderer.link = (href, title, text) => `<a href="#" onClick="event.preventDefault();event.stopPropagation(); window.open('${href}', '_blank', 'nodeIntegration=no');return false;">${text}</a>`;
+
+marked.setOptions({
+  renderer: customRenderer,
+  pedantic: false,
+  gfm: true,
+  tables: true,
+  breaks: false,
+  sanitize: true,
+  smartLists: true,
+  smartypants: false,
+  xhtml: true
+});
+
 function handleExternalLinks(event) { // TODO move to misc
   event.preventDefault();
   event.stopPropagation();
@@ -191,12 +206,16 @@ class EntryProperties extends Component<Props, State> {
       this.loadEntryProperties(nextProps.entryPath);
     }
 
+    if (nextProps.entryPath && this.state.path !== nextProps.entryPath) {
+      this.setState({ isEditDescription: false });
+    }
+
     if (nextProps.shouldCopyFile) {
       this.setState({ isMoveCopyFilesDialogOpened: true });
     }
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  /* componentDidUpdate(prevProps, prevState) {
     if (this.state.description == null || this.state.description !== prevState.description) {
       const links = document.querySelectorAll('#descriptionArea a');
       links.forEach((link) => {
@@ -212,8 +231,7 @@ class EntryProperties extends Component<Props, State> {
         link.removeEventListener('click', handleExternalLinks);
       });
     }
-  }
-
+  } */
 
   loadEntryProperties = (entryPath) => {
     getAllPropertiesPromise(entryPath).then(entryProps => {
@@ -282,9 +300,27 @@ class EntryProperties extends Component<Props, State> {
       this.props.showNotification(i18n.t('core:thisFunctionalityIsAvailableInPro'));
       return;
     }
-    this.setState(prevState => ({
-      isEditDescription: !prevState.isEditDescription
-    }));
+    if (!Pro.MetaOperations) {
+      this.props.showNotification(i18n.t('Saving description not supported'));
+      return;
+    }
+    if (this.state.isEditDescription) {
+      Pro.MetaOperations.saveDescription(this.props.entryPath, this.state.description).then(() => {
+        this.setState({
+          isEditDescription: false
+        });
+        return true;
+      }).catch((error) => {
+        this.setState({
+          isEditDescription: false
+        });
+        this.props.showNotification(i18n.t('Error saving description'));
+      });
+    } else {
+      this.setState({
+        isEditDescription: true
+      });
+    }
   };
 
   toggleMoveCopyFilesDialog = () => {
@@ -409,13 +445,10 @@ class EntryProperties extends Component<Props, State> {
             </div>
             <FormControl fullWidth={true} className={classes.formControl}>
               <div className={classes.ellipsisText}>
-                <Input
+                <TextField
                   disabled={!isEditName}
-                  autoFocus
-                  required
                   margin="dense"
                   name="name"
-                  label={i18n.t('core:fileName')}
                   fullWidth={true}
                   data-tid="fileNameProperties"
                   value={name}
@@ -436,7 +469,6 @@ class EntryProperties extends Component<Props, State> {
             </FormControl>
           </div>
 
-          {/* edit tags */}
           <div className={classes.entryItem}>
             <div className={classes.fluidGrid}>
               <div className="grid-item">
@@ -468,7 +500,6 @@ class EntryProperties extends Component<Props, State> {
             </Paper>
           </div>
 
-          {/* edit description */}
           <div className={classes.entryItem}>
             <div className={classes.fluidGrid}>
               <div className="grid-item">
@@ -501,18 +532,13 @@ class EntryProperties extends Component<Props, State> {
             <FormControl fullWidth={true} className={classes.formControl}>
               {isEditDescription ? (
                 <TextField
-                  autoFocus
                   multiline
                   disabled={!isEditDescription}
                   id="textarea"
-                  placeholder={i18n.t('core:addDescription')}
+                  placeholder=""
                   name="description"
                   className={styles.textField}
-                  value={
-                    !isEditDescription
-                      ? marked.inlineLexer(description, [])
-                      : description
-                  }
+                  value={description}
                   fullWidth={true}
                   onChange={e => this.handleInputChange(e)}
                 />
@@ -520,11 +546,12 @@ class EntryProperties extends Component<Props, State> {
                 <Typography
                   role="button"
                   id="descriptionArea"
+                  placeholder={Pro ? 'Click to add description' : i18n.t('core:addDescription')}
                   dangerouslySetInnerHTML={{
                     __html:
                       description !== ''
                         ? marked(description)
-                        : i18n.t('core:addDescription')
+                        : Pro ? 'Click to add description' : i18n.t('core:addDescription')
                   }}
                   onClick={() => {
                     if (!isEditDescription) {
@@ -538,41 +565,31 @@ class EntryProperties extends Component<Props, State> {
             </FormControl>
           </div>
 
-          {/* edit path */}
           <div className={classes.entryItem}>
             <div className={classes.fluidGrid}>
-              <div className="grid-item">
-                <Typography variant="caption" className={classes.entryLabel}>
-                  {i18n.t('core:filePath')}
-                </Typography>
-              </div>
-              <div className="grid-item">
-                <Button
-                  color="primary"
-                  disabled={isEditDescription || isEditName}
-                  className={classes.button}
-                  onClick={this.toggleMoveCopyFilesDialog}
-                >
-                  {i18n.t('core:move')}
-                </Button>
-              </div>
+              <Typography variant="caption" className={classes.entryLabel}>
+                {i18n.t('core:filePath')}
+              </Typography>
+              <Button
+                color="primary"
+                styles={{ paddingBottom: 0 }}
+                disabled={isEditDescription || isEditName}
+                className={classes.button}
+                onClick={this.toggleMoveCopyFilesDialog}
+              >
+                {i18n.t('core:move')}
+              </Button>
             </div>
             <FormControl fullWidth={true} className={classes.formControl}>
-              <div className={classes.ellipsisText}>
-                <Input
-                  disabled={true}
-                  autoFocus
-                  required
-                  margin="dense"
-                  name="path"
-                  label={i18n.t('core:filePath')}
-                  fullWidth={true}
-                  data-tid="filePathProperties"
-                  className={classes.field}
-                  value={entryPath || ''}
-                  onChange={e => this.handleInputChange(e)}
-                />
-              </div>
+              <TextField
+                margin="dense"
+                disabled
+                name="path"
+                fullWidth={true}
+                data-tid="filePathProperties"
+                className={classes.field}
+                value={entryPath || ''}
+              />
             </FormControl>
           </div>
 
@@ -580,26 +597,20 @@ class EntryProperties extends Component<Props, State> {
             <div
               className={[classes.fluidGrid, classes.ellipsisText].join(' ')}
             >
-              {/* date modified */}
               <div className="grid-item" style={{ width: '50%' }}>
                 <div className={classes.fluidGrid}>
-                  <div className="grid-item">
-                    <Typography
-                      variant="caption"
-                      className={classes.entryLabel}
-                    >
-                      {i18n.t('core:fileLDTM')}
-                    </Typography>
-                  </div>
+                  <Typography
+                    variant="caption"
+                    className={classes.entryLabel}
+                  >
+                    {i18n.t('core:fileLDTM')}
+                  </Typography>
                 </div>
                 <FormControl fullWidth={true} className={classes.formControl}>
-                  <Input
-                    disabled={true}
-                    autoFocus
-                    required
+                  <TextField
+                    disabled
                     margin="dense"
                     name="ldtm"
-                    label={i18n.t('core:fileLDTM')}
                     fullWidth={true}
                     data-tid="fileLdtmProperties"
                     value={ldtm}
@@ -608,31 +619,25 @@ class EntryProperties extends Component<Props, State> {
                 </FormControl>
               </div>
 
-              {/* size */}
-              { isFile && (
+              { isFile ? (
                 <div className="grid-item" style={{ width: '50%' }}>
                   <div className={classes.fluidGrid}>
-                    <div className="grid-item">
-                      <Typography
-                        variant="caption"
-                        className={classes.entryLabel}
-                      >
-                        {i18n.t('core:fileSize')}
-                      </Typography>
-                    </div>
+                    <Typography
+                      variant="caption"
+                      className={classes.entryLabel}
+                    >
+                      {i18n.t('core:fileSize')}
+                    </Typography>
                   </div>
                   <FormControl
                     fullWidth={true}
                     className={classes.formControl}
                     title={size + ' bytes'}
                   >
-                    <Input
-                      disabled={true}
-                      autoFocus
-                      required
+                    <TextField
                       margin="dense"
                       name="size"
-                      label={i18n.t('core:fileSize')}
+                      disabled
                       fullWidth={true}
                       data-tid="fileSizeProperties"
                       className={classes.field}
@@ -640,44 +645,43 @@ class EntryProperties extends Component<Props, State> {
                     />
                   </FormControl>
                 </div>
+              ) : false && (
+                <div className="grid-item" style={{ width: '50%' }}>
+                  <div className={classes.fluidGrid}>
+                    <Typography
+                      variant="caption"
+                      className={classes.entryLabel}
+                    >
+                      {i18n.t('core:changeBackgroundColor')}
+                    </Typography>
+                    <div className="grid-item" style={{ padding: 2 }}>
+                      <Button
+                        className={[
+                          classes.colorChooserButton,
+                          classes.button
+                        ].join(' ')}
+                        style={{
+                          backgroundColor: color,
+                          width: 100,
+                          margin: '0 8px 0 0'
+                        }}
+                        onClick={this.toggleBackgroundColorPicker}
+                      >
+                        &nbsp;
+                      </Button>
+                      <div style={classes.color} />
+                      <ColorPickerDialog
+                        color={color}
+                        open={displayColorPicker}
+                        setColor={this.handleChangeColor}
+                        onClose={this.toggleBackgroundColorPicker}
+                      />
+                    </div>
+                  </div>
+                </div>
               )}
             </div>
           </div>
-
-          {false && (/* background color only for folders */
-            <div className={classes.entryItem}>
-              <div className={classes.fluidGrid}>
-                <div className="grid-item">
-                  <Typography variant="caption" className={classes.entryLabel}>
-                    {i18n.t('core:changeBackgroundColor')}
-                  </Typography>
-                </div>
-                <div className="grid-item" style={{ padding: 2 }}>
-                  <Button
-                    className={[
-                      classes.colorChooserButton,
-                      classes.button
-                    ].join(' ')}
-                    style={{
-                      backgroundColor: color || '#3498db',
-                      width: 100,
-                      margin: '0 8px 0 0'
-                    }}
-                    onClick={this.toggleBackgroundColorPicker}
-                  >
-                    &nbsp;
-                  </Button>
-                  <div style={classes.color} />
-                  <ColorPickerDialog
-                    color={color}
-                    open={displayColorPicker}
-                    setColor={this.handleChangeColor}
-                    onClose={this.toggleBackgroundColorPicker}
-                  />
-                </div>
-              </div>
-            </div>
-          )}
         </Grid>
 
         <EntryTagMenu

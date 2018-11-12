@@ -52,6 +52,7 @@ export const types = {
   SET_TAGCOLOR: 'SETTINGS/SET_TAGCOLOR',
   SET_TAGTEXTCOLOR: 'SETTINGS/SET_TAGTEXTCOLOR',
   SET_CURRENTTHEME: 'SETTINGS/SET_CURRENTTHEME',
+  SWITCH_THEME: 'SETTINGS/SWITCH_THEME',
   SET_KEYBINDING: 'SETTINGS/SET_KEYBINDING',
   SET_GLOBAL_KEYBINDING: 'SETTINGS/SET_GLOBAL_KEYBINDING',
   SET_ZOOM_RESET: 'SETTINGS/SET_ZOOM_RESET',
@@ -159,6 +160,13 @@ export default (state = defaultSettings, action) => {
   }
   case types.SET_CURRENTTHEME: {
     return { ...state, currentTheme: action.currentTheme };
+  }
+  case types.SWITCH_THEME: {
+    let currentTheme = 'dark';
+    if (state.currentTheme === 'dark') {
+      currentTheme = 'light';
+    }
+    return { ...state, currentTheme };
   }
   case types.SET_KEYBINDING: {
     let indexForEditing = -1;
@@ -296,6 +304,7 @@ export const actions = {
   setTagColor: (tagColor: string) => ({ type: types.SET_TAGCOLOR, tagColor }),
   setTagTextColor: (tagTextColor: string) => ({ type: types.SET_TAGTEXTCOLOR, tagTextColor }),
   setCurrentTheme: (currentTheme: string) => ({ type: types.SET_CURRENTTHEME, currentTheme }),
+  switchTheme: () => ({ type: types.SWITCH_THEME }),
   setKeyBinding: (keyBindingName: string, keyBindingCommand: string) => ({
     type: types.SET_KEYBINDING,
     keyBindingName,
