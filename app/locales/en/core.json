@@ -177,6 +177,10 @@
   "joinOnGooglePlus": "Join us in Google+",
   "likeUsOnFacebook": "Like us on Facebook",
   "searchPlaceholder": "Search current location",
+  "tagSearchOR": "At least one tag",
+  "tagSearchORTitle": "Entry should contain at least one of the tags (OR search)",
+  "tagSearchAND": "All tags",
+  "tagSearchANDTitle": "Entry should contain all of the tags (AND search)",
   "perspectiveSwitch": "Perspective Switch",
   "perspectiveManager": "Perspective Manager",
   "noSubfoldersFound": "No subfolders found",
@@ -330,5 +334,6 @@
   "showTagSpaces": "Show TagSpaces",
   "quitTagSpaces": "Quit TagSpaces",
   "switchTheme": "Switch theme",
+  "tagSearchType": "Tag search type",
   "-": "-"
 }

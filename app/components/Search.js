@@ -151,6 +151,7 @@ class Search extends React.Component<Props, State> {
               value={this.state.textQuery}
               onChange={this.handleInputChange}
               onKeyDown={this.startSearch}
+              placeholder={i18n.t('core:searchWordsWithInterval')}
               endAdornment={
                 /* (this.state.textQuery && this.state.textQuery.length > 0) && */
                 <InputAdornment position="end">
@@ -160,18 +161,16 @@ class Search extends React.Component<Props, State> {
                 </InputAdornment>
               }
             />
-            <FormHelperText>
-              {i18n.t('core:searchWordsWithInterval')}
-            </FormHelperText>
           </FormControl>
           <FormControl
             className={classes.formControl}
             disabled={indexing}
           >
-            <InputLabel htmlFor="searchTags">{i18n.t('core:tagsWithInterval')}</InputLabel>
+            <InputLabel htmlFor="searchTags">{i18n.t('core:searchTags')}</InputLabel>
             <Input
               id="tagQuery"
               name="tagQuery"
+              placeholder={i18n.t('core:tagsWithInterval')}
               value={this.state.tagQuery}
               onKeyDown={this.startSearch}
               onChange={this.handleInputChange}
@@ -195,15 +194,15 @@ class Search extends React.Component<Props, State> {
               <FormControlLabel
                 value="OR"
                 control={<Radio />}
-                label="OR"
-                title="Entry should contain at least one of the tags"
-                style={{ paddingRight: 30 }}
+                label={i18n.t('core:tagSearchOR')}
+                title={i18n.t('core:tagSearchORTitle')}
+                style={{ paddingRight: 20 }}
               />
               <FormControlLabel
                 value="AND"
                 control={<Radio />}
-                label="AND"
-                title="Entry should contain all of the tags"
+                label={i18n.t('core:tagSearchAND')}
+                title={i18n.t('core:tagSearchANDTitle')}
               />
             </RadioGroup>
           </FormControl>
