@@ -3,7 +3,8 @@
 import React from 'react';
 // import PropTypes from 'prop-types';
 // import classNames from 'classnames';
-import Select from 'react-select';
+// import Select from 'react-select';
+import CreatableSelect from 'react-select/lib/Creatable';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import NoSsr from '@material-ui/core/NoSsr';
@@ -21,24 +22,24 @@ import InputLabel from '@material-ui/core/InputLabel';
 import i18n from '../../services/i18n';
 
 const suggestions = [
-  { label: 'US East (Ohio)', value: 'us-east-2' },
-  { label: 'US East (N. Virginia)', value: 'us-east-1' },
-  { label: 'US West (N. California)', value: 'us-west-1' },
-  { label: 'US West (Oregon)', value: 'us-west-2' },
-  { label: 'Asia Pacific (Mumbai)', value: 'ap-south-1' },
-  { label: 'Asia Pacific (Osaka-Local)', value: 'ap-northeast-3' },
-  { label: 'Asia Pacific (Seoul)', value: 'ap-northeast-2' },
-  { label: 'Asia Pacific (Singapore)', value: 'ap-southeast-1' },
-  { label: 'Asia Pacific (Sydney)', value: 'ap-southeast-2' },
-  { label: 'Asia Pacific (Tokyo)', value: 'ap-northeast-1' },
-  { label: 'Canada (Central)', value: 'ca-central-1' },
-  { label: 'China (Beijing)', value: 'cn-north-1' },
-  { label: 'China (Ningxia)', value: 'cn-northwest-1' },
-  { label: 'EU (Frankfurt)', value: 'eu-central-1' },
-  { label: 'EU (Ireland)', value: 'eu-west-1' },
-  { label: 'EU (London)', value: 'eu-west-2' },
-  { label: 'EU (Paris)', value: 'eu-west-3' },
-  { label: 'South America (São Paulo)', value: 'sa-east-1' },
+  { label: 'us-east-2 (US East Ohio)', value: 'us-east-2' },
+  { label: 'us-east-1 (US East N. Virginia)', value: 'us-east-1' },
+  { label: 'us-west-1 (US West N. California)', value: 'us-west-1' },
+  { label: 'us-west-2 (US West Oregon)', value: 'us-west-2' },
+  { label: 'ap-south-1 (Asia Pacific Mumbai)', value: 'ap-south-1' },
+  { label: 'ap-northeast-3 (Asia Pacific Osaka-Local)', value: 'ap-northeast-3' },
+  { label: 'ap-northeast-2 (Asia Pacific Seoul)', value: 'ap-northeast-2' },
+  { label: 'ap-southeast-1 (Asia Pacific Singapore)', value: 'ap-southeast-1' },
+  { label: 'ap-southeast-2 (Asia Pacific Sydney)', value: 'ap-southeast-2' },
+  { label: 'ap-northeast-1 (Asia Pacific Tokyo)', value: 'ap-northeast-1' },
+  { label: 'ca-central-1 (Canada Central)', value: 'ca-central-1' },
+  { label: 'cn-north-1 (China Beijing)', value: 'cn-north-1' },
+  { label: 'cn-northwest-1 (China Ningxia)', value: 'cn-northwest-1' },
+  { label: 'eu-central-1 (EU Frankfurt)', value: 'eu-central-1' },
+  { label: 'eu-west-1 (EU Ireland)', value: 'eu-west-1' },
+  { label: 'eu-west-2 (EU London)', value: 'eu-west-2' },
+  { label: 'eu-west-3 (EU Paris)', value: 'eu-west-3' },
+  { label: 'sa-east-1 (South America São Paulo)', value: 'sa-east-1' },
 ].map(suggestion => ({
   value: suggestion.value,
   label: suggestion.label,
@@ -213,6 +214,18 @@ class IntegrationReactSelect extends React.Component<Props> {
     this.props.handleChange(name, value);
   };
 
+  handleInputSelectChange = (inputValue: any, actionMeta: any) => {
+    /* console.group('Input Changed');
+    console.log(inputValue);
+    console.log(`action: ${actionMeta.action}`);
+    console.groupEnd(); */
+    if (actionMeta.action === 'set-value') {
+      suggestions.push({ label: this.props.state.region, value: this.props.state.region });
+    } else if (actionMeta.action === 'input-change') {
+      this.props.handleChange('region', inputValue);
+    }
+  };
+
   render() {
     const { classes, theme, handleInputChange, state } = this.props;
 
@@ -321,7 +334,8 @@ class IntegrationReactSelect extends React.Component<Props> {
         </Grid>
         <Grid item xs={6}>
           <NoSsr>
-            <Select
+            <CreatableSelect
+              isClearable
               classes={classes}
               options={suggestions}
               styles={selectStyles}
@@ -329,6 +343,7 @@ class IntegrationReactSelect extends React.Component<Props> {
               components={components}
               value={state.region}
               onChange={this.handleChange('region')}
+              onInputChange={this.handleInputSelectChange}
               placeholder="Search a region"
             />
           </NoSsr>
