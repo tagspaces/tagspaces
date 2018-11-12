@@ -180,6 +180,7 @@ class Search extends React.Component<Props, State> {
             component="fieldset"
             className={classes.formControl}
             disabled={indexing || !Pro}
+            title={i18n.t('core:thisFunctionalityIsAvailableInPro')}
           >
             <FormHelperText>
               {i18n.t('core:tagSearchType')}
