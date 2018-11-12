@@ -19,30 +19,27 @@
 
 import React from 'react';
 import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import IconButton from '@material-ui/core/IconButton';
-import FolderIcon from '@material-ui/icons/Folder';
 import Switch from '@material-ui/core/Switch';
 import FormControl from '@material-ui/core/FormControl';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormHelperText from '@material-ui/core/FormHelperText';
 import FormGroup from '@material-ui/core/FormGroup';
-import Input from '@material-ui/core/Input';
-import InputLabel from '@material-ui/core/InputLabel';
-import InputAdornment from '@material-ui/core/InputAdornment';
+import Grid from '@material-ui/core/Grid';
+import Radio from '@material-ui/core/Radio';
+import RadioGroup from '@material-ui/core/RadioGroup';
 import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
 import i18n from '../../services/i18n';
-import PlatformIO from '../../services/platform-io';
 import { extractDirectoryName } from '../../utils/paths';
-import { type Location } from '../../reducers/locations';
-import AppConfig from '../../config';
+import { type Location, locationType } from '../../reducers/locations';
+import ObjectStoreForm, { suggestions } from './ObjectStoreForm';
+import LocalForm from './LocalForm';
 import { Pro } from '../../pro';
 
 type Props = {
   open?: boolean,
+  resetState: () => void,
   onClose: () => void,
   location?: Location | null,
   editLocation: (location: Location) => void,
@@ -77,33 +74,59 @@ class EditLocationDialog extends React.Component<Props, State> {
     isDefault: false,
     isReadOnly: false,
     watchForChanges: false,
-    persistIndex: false
+    persistIndex: false,
+    type: locationType.TYPE_LOCAL
   };
 
-  componentWillReceiveProps = (nextProps: any) => {
-    if (nextProps.open === true && nextProps.location) {
-      const dir = nextProps.selectedDirectoryPath;
-      this.setState({
-        uuid: nextProps.location.uuid,
-        name: dir ? extractDirectoryName(dir) : nextProps.location.name,
-        path: dir || nextProps.location.paths[0],
-        perspective: nextProps.location.perspective,
-        isDefault: nextProps.location.isDefault,
-        isReadOnly: nextProps.location.isReadOnly,
-        watchForChanges: nextProps.location.watchForChanges,
-        persistIndex: nextProps.location.persistIndex
-      });
-    }
-  };
+   componentWillReceiveProps = (nextProps: any) => {
+     if (nextProps.open === true && nextProps.location) {
+       const dir = nextProps.selectedDirectoryPath;
+       let properties;
+       if (nextProps.location.type === locationType.TYPE_LOCAL) {
+         properties = {
+           name: dir ? extractDirectoryName(dir) : nextProps.location.name,
+           path: dir || nextProps.location.paths[0],
+         };
+       } else if (nextProps.location.type === locationType.TYPE_CLOUD) {
+         properties = {
+           storeName: dir ? extractDirectoryName(dir) : nextProps.location.name,
+           storePath: dir || nextProps.location.paths[0],
+         };
+       }
+       this.setState({
+         ...properties,
+         uuid: nextProps.location.uuid,
+         perspective: nextProps.location.perspective,
+         isDefault: nextProps.location.isDefault,
+         isReadOnly: nextProps.location.isReadOnly,
+         watchForChanges: nextProps.location.watchForChanges,
+         persistIndex: nextProps.location.persistIndex,
+         type: nextProps.location.type,
+         accessKeyId: nextProps.location.accessKeyId,
+         secretAccessKey: nextProps.location.secretAccessKey,
+         bucketName: nextProps.location.bucketName,
+         region: suggestions.find(obj => obj.value === nextProps.location.region)
+       });
+     }
+   };
 
   handleInputChange = (event: Object) => {
     const target = event.target;
     const value = target.type === 'checkbox' ? target.checked : target.value;
     const name = target.name;
+    if (target.type === 'radio') { // type is changed (skip validation)
+      this.setState({
+        [name]: value
+      });
+    } else {
+      this.handleChange(name, value);
+    }
+  };
 
+  handleChange = (name, value) => {
     this.setState({
       [name]: value
-    });
+    }, this.handleValidation);
   };
 
   handleValidation() {
@@ -122,7 +145,7 @@ class EditLocationDialog extends React.Component<Props, State> {
     }
   }
 
-  openDirectory = () => {
+  /* openDirectory = () => {
     if (AppConfig.isElectron) {
       this.setState({ openDirectoryButtonDisabled: true });
       PlatformIO.selectDirectoryDialog().then((selectedPaths) => {
@@ -141,7 +164,7 @@ class EditLocationDialog extends React.Component<Props, State> {
     } else {
       this.props.showSelectDirectoryDialog();
     }
-  }
+  } */
 
   onConfirm = () => {
     this.handleValidation();
@@ -158,6 +181,7 @@ class EditLocationDialog extends React.Component<Props, State> {
       });
 
       this.props.onClose();
+      this.props.resetState('editLocationDialogKey');
     }
   };
 
@@ -165,107 +189,99 @@ class EditLocationDialog extends React.Component<Props, State> {
     <DialogTitle>{i18n.t('core:editLocationTitle')}</DialogTitle>
   );
 
-  renderContent = () => (
-    <DialogContent>
-      <FormControl
-        fullWidth={true}
-        error={this.state.errorTextPath}
-      >
-        <TextField
-          error={this.state.errorTextPath}
-          margin="dense"
-          name="name"
-          label={i18n.t('core:createLocationName')}
-          onChange={this.handleInputChange}
-          value={this.state.name}
-          data-tid="editLocationName"
-          fullWidth={true}
-        />
-        {this.state.errorTextName && <FormHelperText>Invalid Name</FormHelperText>}
-      </FormControl>
-      <FormControl
-        fullWidth={true}
-        error={this.state.errorTextPath}
-      >
-        <InputLabel htmlFor="name">{i18n.t('core:editLocationPath')}</InputLabel>
-        <Input
-          autoFocus
-          required
-          margin="dense"
-          name="path"
-          label={i18n.t('core:createLocationPath')}
-          fullWidth={true}
-          data-tid="editLocationPath"
-          onChange={this.handleInputChange}
-          value={this.state.path}
-          endAdornment={
-            <InputAdornment position="end" style={{ height: 32 }}>
-              <IconButton
-                disabled={this.state.openDirectoryButtonDisabled}
-                onClick={this.openDirectory}
-              >
-                <FolderIcon />
-              </IconButton>
-            </InputAdornment>
-          }
-        />
-        {this.state.errorTextPath && <FormHelperText>{i18n.t('core:invalidPath')}</FormHelperText>}
-      </FormControl>
-      <FormControl>
-        <FormGroup>
-          <FormControlLabel
-            control={
-              <Switch
-                data-tid="editStartupLocation"
-                name="isDefault"
-                checked={this.state.isDefault}
-                onChange={this.handleInputChange}
-              />
-            }
-            label={i18n.t('core:startupLocation')}
-          />
-          <FormControlLabel
-            control={
-              <Switch
-                disabled={!Pro}
-                data-tid="changeReadOnlyMode"
-                name="isReadOnly"
-                checked={this.state.isReadOnly}
-                onChange={this.handleInputChange}
-              />
-            }
-            label={i18n.t('core:readonlyModeSwitch') + (Pro ? '' : ' - ' + i18n.t('core:proFeature'))}
-          />
-          <FormControlLabel
-            control={
-              <Switch
-                disabled={!Pro}
-                data-tid="changePersistIndex"
-                name="persistIndex"
-                checked={this.state.persistIndex}
-                onChange={this.handleInputChange}
-              />
-            }
-            label={i18n.t('core:persistIndexSwitch') + (Pro ? '' : ' - ' + i18n.t('core:proFeature'))}
-          />
-          <FormControlLabel
-            control={
-              <Switch
-                disabled={!Pro}
-                data-tid="changeWatchForChanges"
-                name="watchForChanges"
-                checked={this.state.watchForChanges}
-                onChange={this.handleInputChange}
-              />
-            }
-            label={i18n.t('core:watchForChangesInLocation') + (Pro ? '' : ' - ' + i18n.t('core:proFeature'))}
-          />
-        </FormGroup>
-      </FormControl>
-    </DialogContent>
-  );
+  renderContent = () => {
+    let content;
+    if (this.state.type === locationType.TYPE_CLOUD) {
+      content = (<ObjectStoreForm
+        handleInputChange={this.handleInputChange}
+        handleChange={this.handleChange}
+        state={this.state}
+      />);
+    } else {
+      content = (<LocalForm
+        showSelectDirectoryDialog={this.props.showSelectDirectoryDialog}
+        handleInputChange={this.handleInputChange}
+        handleChange={this.handleChange}
+        state={this.state}
+      />);
+    }
+    return (
+      <DialogContent>
+        <Grid container spacing={24}>
+          <Grid item xs={2} style={{ lineHeight: 3, textAlign: 'right' }}>
+            Type
+          </Grid>
+          <Grid item xs={10}>
+            <RadioGroup
+              component="label"
+              aria-label="Type"
+              name="type"
+              value={this.state.type}
+              onChange={this.handleInputChange}
+              row
+            >
+              <FormControlLabel value={locationType.TYPE_LOCAL} control={<Radio />} label="Local" />
+              <FormControlLabel value={locationType.TYPE_CLOUD} control={<Radio />} label="Cloud (S3 AWS)" />
+            </RadioGroup>
+          </Grid>
+        </Grid>
+        {content}
+        <FormControl>
+          <FormGroup>
+            <FormControlLabel
+              control={
+                <Switch
+                  data-tid="editStartupLocation"
+                  name="isDefault"
+                  checked={this.state.isDefault}
+                  onChange={this.handleInputChange}
+                />
+              }
+              label={i18n.t('core:startupLocation')}
+            />
+            <FormControlLabel
+              control={
+                <Switch
+                  disabled={!Pro}
+                  data-tid="changeReadOnlyMode"
+                  name="isReadOnly"
+                  checked={this.state.isReadOnly}
+                  onChange={this.handleInputChange}
+                />
+              }
+              label={i18n.t('core:readonlyModeSwitch') + (Pro ? '' : ' - ' + i18n.t('core:proFeature'))}
+            />
+            <FormControlLabel
+              control={
+                <Switch
+                  disabled={!Pro}
+                  data-tid="changePersistIndex"
+                  name="persistIndex"
+                  checked={this.state.persistIndex}
+                  onChange={this.handleInputChange}
+                />
+              }
+              label={i18n.t('core:persistIndexSwitch') + (Pro ? '' : ' - ' + i18n.t('core:proFeature'))}
+            />
+            <FormControlLabel
+              control={
+                <Switch
+                  disabled={!Pro}
+                  data-tid="changeWatchForChanges"
+                  name="watchForChanges"
+                  checked={this.state.watchForChanges}
+                  onChange={this.handleInputChange}
+                />
+              }
+              label={i18n.t('core:watchForChangesInLocation') + (Pro ? '' : ' - ' + i18n.t('core:proFeature'))}
+            />
+          </FormGroup>
+        </FormControl>
+      </DialogContent>
+    );
+  };
 
-/*
+  /*
       <FormControl
         fullWidth={true}
       >
@@ -290,7 +306,7 @@ class EditLocationDialog extends React.Component<Props, State> {
       <Button
         data-tid="closeEditLocationDialog"
         color="primary"
-        onClick={this.props.onClose}
+        onClick={() => { this.props.onClose(); this.props.resetState('editLocationDialogKey'); }}
       >
         {i18n.t('core:cancel')}
       </Button>
@@ -308,7 +324,7 @@ class EditLocationDialog extends React.Component<Props, State> {
     return (
       <GenericDialog
         open={this.props.open}
-        onClose={this.props.onClose}
+        onClose={() => { this.props.onClose(); this.props.resetState('editLocationDialogKey'); }}
         onEnterKey={(event) => onEnterKeyHandler(event, this.onConfirm)}
         renderTitle={this.renderTitle}
         renderContent={this.renderContent}

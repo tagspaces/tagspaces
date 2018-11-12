@@ -21,7 +21,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 // import { emphasize } from '@material-ui/core/styles/colorManipulator';
 import i18n from '../../services/i18n';
 
-const suggestions = [
+export const suggestions = [
   { label: 'us-east-2 (US East Ohio)', value: 'us-east-2' },
   { label: 'us-east-1 (US East N. Virginia)', value: 'us-east-1' },
   { label: 'us-west-1 (US West N. California)', value: 'us-west-1' },

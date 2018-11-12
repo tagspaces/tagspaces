@@ -120,7 +120,8 @@ class LocationManager extends React.Component<Props, State> {
     isDeleteLocationDialogOpened: false,
     isCreateDirectoryDialogOpened: false,
     isSelectDirectoryDialogOpened: false,
-    createLocationDialogKey: uuidv1()
+    createLocationDialogKey: uuidv1(),
+    editLocationDialogKey: uuidv1()
   };
 
   handleCloseDialogs = () => {
@@ -346,6 +347,8 @@ class LocationManager extends React.Component<Props, State> {
             selectedDirectoryPath={this.state.selectedDirectoryPath}
           />
           <EditLocationDialog
+            key={this.state.editLocationDialogKey}
+            resetState={this.resetState}
             open={this.state.isEditLocationDialogOpened}
             onClose={this.handleCloseDialogs}
             location={this.state.selectedLocation}

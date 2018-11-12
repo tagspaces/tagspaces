@@ -32,7 +32,6 @@ import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
 import i18n from '../../services/i18n';
-import { extractDirectoryName } from '../../utils/paths';
 import { type Location, locationType } from '../../reducers/locations';
 import { Pro } from '../../pro';
 import ObjectStoreForm from './ObjectStoreForm';
