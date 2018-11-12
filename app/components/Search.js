@@ -177,7 +177,7 @@ class Search extends React.Component<Props, State> {
               onChange={this.handleInputChange}
             />
           </FormControl>
-          { /* <FormControl
+          <FormControl
             component="fieldset"
             className={classes.formControl}
             disabled={indexing || !Pro}
@@ -192,10 +192,21 @@ class Search extends React.Component<Props, State> {
               onChange={this.handleInputChange}
               row
             >
-              <FormControlLabel value="OR" control={<Radio />} label="or" />
-              <FormControlLabel value="AND" control={<Radio />} label="and" />
+              <FormControlLabel
+                value="OR"
+                control={<Radio />}
+                label="OR"
+                title="Entry should contain at least one of the tags"
+                style={{ paddingRight: 30 }}
+              />
+              <FormControlLabel
+                value="AND"
+                control={<Radio />}
+                label="AND"
+                title="Entry should contain all of the tags"
+              />
             </RadioGroup>
-          </FormControl> */ }
+          </FormControl>
           <FormControl
             className={classes.formControl}
             disabled={indexing || !Pro}
