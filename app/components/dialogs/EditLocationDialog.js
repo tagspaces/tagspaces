@@ -51,7 +51,8 @@ type Props = {
 type State = {
   errorTextPath?: boolean,
   errorTextName?: boolean,
-  openDirectoryButtonDisabled?: boolean,
+  disableConfirmButton?: boolean,
+  // openDirectoryButtonDisabled?: boolean,
   uuid?: string,
   name?: string,
   path?: string,
@@ -66,7 +67,8 @@ class EditLocationDialog extends React.Component<Props, State> {
   state = {
     errorTextPath: false,
     errorTextName: false,
-    openDirectoryButtonDisabled: false,
+    disableConfirmButton: true,
+    // openDirectoryButtonDisabled: false,
     uuid: '',
     name: '',
     path: '',
@@ -82,7 +84,7 @@ class EditLocationDialog extends React.Component<Props, State> {
      if (nextProps.open === true && nextProps.location) {
        const dir = nextProps.selectedDirectoryPath;
        let properties;
-       if (nextProps.location.type === locationType.TYPE_LOCAL) {
+       if (nextProps.location.type === locationType.TYPE_LOCAL) { // TODO maybe its better to separate name/path keys for different locationTypes ??
          properties = {
            name: dir ? extractDirectoryName(dir) : nextProps.location.name,
            path: dir || nextProps.location.paths[0],
@@ -130,18 +132,50 @@ class EditLocationDialog extends React.Component<Props, State> {
   };
 
   handleValidation() {
-    // const pathRegex = '^((\.\./|[a-zA-Z0-9_/\-\\])*\.[a-zA-Z0-9]+)$';
-    // const nameRegex = '^[A-Z][-a-zA-Z]+$';
-    if (this.state.path && this.state.path.length > 0) {
-      this.setState({ errorTextPath: false });
-    } else {
-      this.setState({ errorTextPath: true });
-    }
+    // const pathRegex = this.state.path.match('^((\.\./|[a-zA-Z0-9_/\-\\])*\.[a-zA-Z0-9]+)$');
+    // const nameRegex = this.state.name.match('^[A-Z][-a-zA-Z]+$');
+    if (this.state.type === locationType.TYPE_LOCAL) {
+      let errorTextName = false;
+      let errorTextPath = false;
+      let disableConfirmButton = false;
+      if (!this.state.name || this.state.name.length === 0) {
+        errorTextName = true;
+        disableConfirmButton = true;
+      }
 
-    if (this.state.name && this.state.name.length > 0) {
-      this.setState({ errorTextName: false });
-    } else {
-      this.setState({ errorTextName: true });
+      if (!this.state.path || this.state.path.length === 0) {
+        errorTextPath = true;
+        disableConfirmButton = true;
+      }
+
+      this.setState({ errorTextName, errorTextPath, disableConfirmButton });
+    } else if (this.state.type === locationType.TYPE_CLOUD) {
+      let cloudErrorTextName = false;
+      let cloudErrorTextPath = false;
+      let cloudErrorAccessKey = false;
+      let cloudErrorSecretAccessKey = false;
+      let disableConfirmButton = false;
+      if (!this.state.storeName || this.state.storeName.length === 0) {
+        cloudErrorTextName = true;
+        disableConfirmButton = true;
+      }
+
+      if (!this.state.storePath || this.state.storePath.length === 0) {
+        cloudErrorTextPath = true;
+        disableConfirmButton = true;
+      }
+
+      if (!this.state.accessKeyId || this.state.accessKeyId.length === 0) {
+        cloudErrorAccessKey = true;
+        disableConfirmButton = true;
+      }
+
+      if (!this.state.secretAccessKey || this.state.secretAccessKey.length === 0) {
+        cloudErrorSecretAccessKey = true;
+        disableConfirmButton = true;
+      }
+
+      this.setState({ cloudErrorTextName, cloudErrorTextPath, cloudErrorAccessKey, cloudErrorSecretAccessKey, disableConfirmButton });
     }
   }
 
@@ -167,19 +201,36 @@ class EditLocationDialog extends React.Component<Props, State> {
   } */
 
   onConfirm = () => {
-    this.handleValidation();
-    if (this.state.path && this.state.path.length > 0 && this.state.name && this.state.name.length > 0) {
-      this.props.editLocation({
-        uuid: this.state.uuid,
-        name: this.state.name,
-        paths: [this.state.path],
-        perspective: this.state.perspective,
-        isDefault: this.state.isDefault,
-        isReadOnly: this.state.isReadOnly,
-        watchForChanges: this.state.watchForChanges,
-        persistIndex: this.state.persistIndex
-      });
-
+    if (!this.state.disableConfirmButton) {
+      if (this.state.type === locationType.TYPE_LOCAL) {
+        this.props.editLocation({
+          uuid: this.state.uuid,
+          type: locationType.TYPE_LOCAL,
+          name: this.state.name,
+          paths: [this.state.path],
+          perspective: this.state.perspective,
+          isDefault: this.state.isDefault,
+          isReadOnly: this.state.isReadOnly,
+          persistIndex: this.state.persistIndex,
+          watchForChanges: this.state.watchForChanges
+        });
+      } else if (this.state.type === locationType.TYPE_CLOUD) {
+        this.props.editLocation({
+          uuid: this.state.uuid,
+          type: locationType.TYPE_CLOUD,
+          name: this.state.storeName,
+          paths: [this.state.storePath],
+          accessKeyId: this.state.accessKeyId,
+          secretAccessKey: this.state.secretAccessKey,
+          bucketName: this.state.bucketName,
+          region: this.state.region.value,
+          perspective: this.state.perspective,
+          isDefault: this.state.isDefault,
+          isReadOnly: this.state.isReadOnly,
+          persistIndex: this.state.persistIndex,
+          watchForChanges: this.state.watchForChanges
+        });
+      }
       this.props.onClose();
       this.props.resetState('editLocationDialogKey');
     }
@@ -311,6 +362,7 @@ class EditLocationDialog extends React.Component<Props, State> {
         {i18n.t('core:cancel')}
       </Button>
       <Button
+        disabled={this.state.disableConfirmButton}
         onClick={this.onConfirm}
         data-tid="confirmEditLocationDialog"
         color="primary"
