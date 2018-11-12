@@ -86,7 +86,7 @@ export type SearchQuery = {
 
 const fuseOptions = {
   shouldSort: true,
-  threshold: 0.1,
+  threshold: 0.3,
   location: 0,
   distance: 100,
   tokenize: true,
@@ -162,20 +162,25 @@ export default class Search {
       console.time('jmespath');
       results = jmespath.search({ index: results || locationContent }, jmespathQuery);
       console.timeEnd('jmespath');
+      console.log('jmespath results: ' + results.length);
     }
 
-    const fuseQuery = constructFuseQuery(searchQuery);
-    console.log('fuse query: ' + fuseQuery);
-    console.time('fuse');
-    const fuse = new Fuse(results || locationContent, fuseOptions);
-    results = fuse.search(fuseQuery);
-    console.timeEnd('fuse');
-
-
-    console.log('Results found: ' + results.length);
-    if (results.length >= AppConfig.maxSearchResult) {
-      results = results.slice(0, AppConfig.maxSearchResult);
+    if (searchQuery.textQuery && searchQuery.textQuery.length > 1) {
+      const fuseQuery = constructFuseQuery(searchQuery);
+      console.log('fuse query: ' + fuseQuery);
+      console.time('fuse');
+      const fuse = new Fuse(results || locationContent, fuseOptions);
+      results = fuse.search(fuseQuery);
+      console.timeEnd('fuse');
     }
-    return results;
+
+    if (results) {
+      console.log('Results found: ' + results.length);
+      if (results.length >= AppConfig.maxSearchResult) {
+        results = results.slice(0, AppConfig.maxSearchResult);
+      }
+      return results;
+    }
+    return [];
   }
 }
