@@ -314,7 +314,7 @@ class ObjectStoreForm extends React.Component<Props> {
             {state.cloudErrorSecretAccessKey && <FormHelperText>{i18n.t('core:invalidSecretAccessKey')}</FormHelperText>}
           </FormControl>
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={5}>
           <FormControl>
             <InputLabel htmlFor="bucketName">{i18n.t('core:bucketName')}</InputLabel>
             <Input
@@ -329,7 +329,7 @@ class ObjectStoreForm extends React.Component<Props> {
             />
           </FormControl>
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={7}>
           <NoSsr>
             <CreatableSelect
               isClearable

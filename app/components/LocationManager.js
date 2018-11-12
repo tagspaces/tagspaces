@@ -103,7 +103,7 @@ type State = {
   isDeleteLocationDialogOpened?: boolean,
   isSelectDirectoryDialogOpened?: boolean,
   isCreateDirectoryDialogOpened?: boolean,
-  createLocationDialogKey: string
+  createLocationDialogKey: string,
   isCreateDirectoryDialogOpened?: boolean,
   dirs?: Object
 };
@@ -131,8 +131,7 @@ class LocationManager extends React.Component<Props, State> {
     isCreateDirectoryDialogOpened: false,
     isSelectDirectoryDialogOpened: false,
     createLocationDialogKey: uuidv1(),
-    editLocationDialogKey: uuidv1()
-    isSelectDirectoryDialogOpened: false,
+    editLocationDialogKey: uuidv1(),
     dirs: {}
   };
 
