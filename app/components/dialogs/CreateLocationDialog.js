@@ -88,7 +88,7 @@ class CreateLocationDialog extends React.Component<Props, State> {
     perspective: '',
     isDefault: false,
     isReadOnly: false,
-    watchForChanges: !!Pro,
+    watchForChanges: Pro,
     persistIndex: false,
     type: locationType.TYPE_LOCAL
   };
