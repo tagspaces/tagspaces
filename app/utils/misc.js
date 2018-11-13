@@ -372,54 +372,42 @@ export function sortByCriteria(criteria, data, order) {
       if (order) {
         return data.sort(sortByName);
       } else {
-        return data.sort((a, b) => {
-          return (a.isFile - b.isFile) || sortAlphaNum(b, a);
-        });
+        return data.sort((a, b) => -1 * sortByName(a, b));
       }
       break;
     case 'byFileSize':
       if (order) {
         return data.sort(sortBySize);
       } else {
-        return data.sort((b, a) => {
-          return (!a.isFile - !b.isFile) || (a.size - b.size);
-        });
+        return data.sort((a, b) => -1 * sortBySize(a, b));
       }
       break;
     case 'byDateModified':
       if (order) {
         return data.sort(sortByDateModified);
       } else {
-        return data.sort((a, b) => {
-          return (a.isFile - b.isFile) || (a.lmdt - b.lmdt);
-        });
+        return data.sort((a, b) => -1 * sortByDateModified(a, b));
       }
       break;
     case 'byExtension':
       if (order) {
         return data.sort(sortByExtension);
       } else {
-        return data.sort((a, b) => {
-          return (a.isFile - b.isFile) || (b.extension.toString().localeCompare(a.extension));
-        });
+        return data.sort((a, b) => -1 * sortByExtension(a, b));
       }
       break;
     case 'byTags':
       if (order) {
         return data.sort(sortByTags);
       } else {
-        return data.sort((a, b) => {
-          return (a.isFile - b.isFile) || (a.tags.toString().localeCompare(b.tags));
-        });
+        return data.sort((a, b) => -1 * sortByTags(a, b));
       }
       break;
     case 'byDirectory':
       if (order) {
         return data.sort(sortByIsDirectory);
       } else {
-        return data.sort((a, b) => {
-          return (a.isFile - b.isFile) || sortByIsDirectory(a, b)
-        });
+        return data.sort((a, b) => -1 * sortByIsDirectory(a, b));
       }
       break;
     default:
