@@ -923,10 +923,6 @@ export const actions = {
       Pro.Watcher.stopWatching();
     }
 
-    /* if (Pro) { // && s3location
-       PlatformIO.enableObjectStoreSupport({});
-    } */
-
     locations.map(location => {
       if (location.uuid === locationId) {
         if (location.type === locationType.TYPE_CLOUD) {
@@ -934,7 +930,6 @@ export const actions = {
         } else if (location.type === locationType.TYPE_LOCAL) {
           PlatformIO.disableObjectStoreSupport();
         }
-        // location.paths = ['test/']; // TODO remove
         dispatch(actions.setReadOnlyMode(location.isReadOnly || false));
         dispatch(actions.setCurrentLocationId(location.uuid));
         dispatch(actions.loadDirectoryContent(location.paths[0]));
