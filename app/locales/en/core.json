@@ -335,5 +335,14 @@
   "quitTagSpaces": "Quit TagSpaces",
   "switchTheme": "Switch theme",
   "tagSearchType": "Tag search type",
+  "bucketName": "Bucket Name",
+  "regionSearch": "Search a region",
+  "secretAccessKey": "Secret Access Key",
+  "accessKeyId": "Access Key",
+  "invalidName": "Name is empty",
+  "invalidSecretAccessKey": "Secret Access Key is empty",
+  "invalidAccessKey": "Access Key is empty",
+  "invalidBucketName": "Bucket Name is empty",
+  "invalidRegion": "Region is empty",
   "-": "-"
 }

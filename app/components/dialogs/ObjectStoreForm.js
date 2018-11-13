@@ -315,7 +315,7 @@ class ObjectStoreForm extends React.Component<Props> {
           </FormControl>
         </Grid>
         <Grid item xs={5}>
-          <FormControl>
+          <FormControl error={state.cloudErrorBucketName}>
             <InputLabel htmlFor="bucketName">{i18n.t('core:bucketName')}</InputLabel>
             <Input
               required
@@ -327,23 +327,27 @@ class ObjectStoreForm extends React.Component<Props> {
               onChange={handleInputChange}
               value={state.bucketName}
             />
+            {state.cloudErrorBucketName && <FormHelperText>{i18n.t('core:invalidBucketName')}</FormHelperText>}
           </FormControl>
         </Grid>
         <Grid item xs={7}>
-          <NoSsr>
-            <CreatableSelect
-              isClearable
-              classes={classes}
-              options={suggestions}
-              styles={selectStyles}
-              fullWidth={true}
-              components={components}
-              value={state.region}
-              onChange={this.handleChange('region')}
-              onInputChange={this.handleInputSelectChange}
-              placeholder="Search a region"
-            />
-          </NoSsr>
+          <FormControl fullWidth={true} error={state.cloudErrorRegion}>
+            <NoSsr>
+              <CreatableSelect
+                isClearable
+                classes={classes}
+                options={suggestions}
+                styles={selectStyles}
+                fullWidth={true}
+                components={components}
+                value={state.region}
+                onChange={this.handleChange('region')}
+                onInputChange={this.handleInputSelectChange}
+                placeholder={i18n.t('core:regionSearch')}
+              />
+            </NoSsr>
+            {state.cloudErrorRegion && <FormHelperText>{i18n.t('core:invalidRegion')}</FormHelperText>}
+          </FormControl>
         </Grid>
       </Grid>
     );

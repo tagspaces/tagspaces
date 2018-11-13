@@ -154,6 +154,8 @@ class EditLocationDialog extends React.Component<Props, State> {
       let cloudErrorTextPath = false;
       let cloudErrorAccessKey = false;
       let cloudErrorSecretAccessKey = false;
+      let cloudErrorBucketName = false;
+      let cloudErrorRegion = false;
       let disableConfirmButton = false;
       if (!this.state.storeName || this.state.storeName.length === 0) {
         cloudErrorTextName = true;
@@ -175,7 +177,17 @@ class EditLocationDialog extends React.Component<Props, State> {
         disableConfirmButton = true;
       }
 
-      this.setState({ cloudErrorTextName, cloudErrorTextPath, cloudErrorAccessKey, cloudErrorSecretAccessKey, disableConfirmButton });
+      if (!this.state.bucketName || this.state.bucketName.length === 0) {
+        cloudErrorBucketName = true;
+        disableConfirmButton = true;
+      }
+
+      if (!this.state.region) {
+        cloudErrorRegion = true;
+        disableConfirmButton = true;
+      }
+
+      this.setState({ cloudErrorTextName, cloudErrorTextPath, cloudErrorAccessKey, cloudErrorSecretAccessKey, cloudErrorBucketName, disableConfirmButton, cloudErrorRegion });
     }
   }
 
