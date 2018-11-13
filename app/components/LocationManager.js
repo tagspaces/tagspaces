@@ -36,6 +36,7 @@ import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
 import FolderIcon from '@material-ui/icons/FolderOpen';
 import LocationIcon from '@material-ui/icons/WorkOutline';
+import CloudLocationIcon from '@material-ui/icons/CloudQueue';
 // import StartupFolderIcon from '@material-ui-icons/FolderSpecial';
 import AddIcon from '@material-ui/icons/Add';
 import EditIcon from '@material-ui/icons/Edit';
@@ -55,6 +56,7 @@ import CreateDirectoryDialog from './dialogs/CreateDirectoryDialog';
 import {
   actions as LocationActions,
   getLocations,
+  locationType,
   type Location
 } from '../reducers/locations';
 import { actions as AppActions, getCurrentLocationId } from '../reducers/app';
@@ -573,12 +575,15 @@ class LocationManager extends React.Component<Props, State> {
               : this.props.classes.listItem
           }
           key={location.uuid}
-          title={location.paths[0]}
+          title={location.isDefault ? i18n.t('core: thisIsStartupLocation') + ' : ' + location.paths[0] : location.paths[0]}
           button
           onClick={() => this.handleLocationClick(location)}
         >
           <ListItemIcon style={{ marginRight: 0 }}>
-            <LocationIcon className={this.props.classes.icon} />
+            { location.type === locationType.TYPE_CLOUD ?
+              (<CloudLocationIcon className={this.props.classes.icon} />) :
+              (<LocationIcon className={this.props.classes.icon} />)
+            }
           </ListItemIcon>
           <ListItemText
             style={{ paddingLeft: 5, paddingRight: 5 }}
@@ -586,10 +591,7 @@ class LocationManager extends React.Component<Props, State> {
             primary={location.name}
           />
           {location.isDefault && (
-            <DefaultLocationIcon
-              title={i18n.t('core: thisIsStartupLocation')}
-              data-tid="startupIndication"
-            />
+            <DefaultLocationIcon data-tid="startupIndication" />
           )}
           <IconButton
             aria-label={i18n.t('core:options')}

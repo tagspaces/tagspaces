@@ -264,7 +264,6 @@ class ObjectStoreForm extends React.Component<Props> {
           >
             <InputLabel htmlFor="path">{i18n.t('core:createLocationPath')}</InputLabel>
             <Input
-              required
               margin="dense"
               name="storePath"
               label={i18n.t('core:createLocationPath')}
