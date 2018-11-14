@@ -26,6 +26,7 @@ import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
+import DOMPurify from 'dompurify';
 import TagContainer from './TagContainer';
 import TagDropContainer from './TagDropContainer';
 import EntryTagMenu from './menus/EntryTagMenu';
@@ -550,7 +551,7 @@ class EntryProperties extends Component<Props, State> {
                   dangerouslySetInnerHTML={{
                     __html:
                       description !== ''
-                        ? marked(description)
+                        ? marked(DOMPurify.sanitize(description))
                         : Pro ? 'Click to add description' : i18n.t('core:addDescription')
                   }}
                   onClick={() => {
