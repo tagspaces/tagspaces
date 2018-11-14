@@ -949,9 +949,8 @@ class GridPerspective extends React.Component<Props, State> {
 
   render() {
     const classes = this.props.classes;
-    const selectedFilePaths = this.state.selectedEntries
-      .filter(fsEntry => fsEntry.isFile)
-      .map(fsentry => fsentry.path);
+    const { selectedEntries = [] } = this.state;
+    const selectedFilePaths = selectedEntries.filter(fsEntry => fsEntry.isFile).map(fsentry => fsentry.path);
 
     return (
       <div style={{ height: '100%' }}>
@@ -1005,7 +1004,7 @@ class GridPerspective extends React.Component<Props, State> {
             title={i18n.t('core:tagSelectedEntries')}
             aria-label={i18n.t('core:tagSelectedEntries')}
             data-tid="gridPerspectiveAddRemoveTags"
-            disabled={!this.state.fileOperationsEnabled}
+            disabled={selectedEntries.length < 1}
             onClick={this.openAddRemoveTagsDialog}
           >
             <TagIcon />
