@@ -17,248 +17,317 @@
  * @flow
  */
 
-import React from 'react';
-import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
-import Autosuggest from 'react-autosuggest';
-// import parse from 'autosuggest-highlight/umd/parse';
-import Paper from '@material-ui/core/Paper';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import uuidv1 from 'uuid';
+import Button from '@material-ui/core/Button';
+import CloseIcon from '@material-ui/icons/Close';
+import Input from '@material-ui/core/Input';
+import InputLabel from '@material-ui/core/InputLabel';
 import { withStyles } from '@material-ui/core/styles';
-import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import { type Tag } from '../reducers/taglibrary';
-import TagContainer from './TagContainer';
+import { type Tag, getAllTags } from '../reducers/taglibrary';
 import i18n from '../services/i18n';
-// import { extractFileName } from '../utils/paths';
-
-function renderInput(inputProps) {
-  const { classes, autoFocus, value, ref, ...other } = inputProps;
-  return (
-    <TextField
-      autoFocus={autoFocus}
-      className={classes.textField}
-      value={value}
-      inputRef={ref}
-      InputProps={{
-        classes: {
-          input: classes.input,
-        },
-        ...other,
-      }}
-    />
-  );
-}
-
-function renderSuggestion(suggestion, { query, isHighlighted }) {
-  const parts = []; // parse(suggestion.title, matches);
-  return (
-    <MenuItem selected={isHighlighted} component="div">
-      <div>
-        {parts.map((part, index) => {
-          return part.highlight ? (
-            <span key={String(index)} style={{ fontWeight: 300 }}>
-              {part.text}
-            </span>
-          ) : (
-            <strong key={String(index)} style={{ fontWeight: 400 }}>
-              {part.text}
-            </strong>
-          );
-        })}
-      </div>
-    </MenuItem>
-  );
-}
-
-function renderSuggestionsContainer(options) {
-  return (
-    <Paper {...options.containerProps} square>
-      {options.children}
-    </Paper>
-  );
-}
-
-const styles = theme => ({
-  container: {
-    flexGrow: 1,
-    position: 'relative',
-    height: 120
-  },
-  suggestionsContainerOpen: {
-    marginTop: theme.spacing.unit,
-    marginBottom: theme.spacing.unit * 2,
-    position: 'absolute',
-    display: 'block',
-    top: '31px',
-    border: '1px solid #aaa',
-    backgroundColor: '#fff',
-    fontFamily: 'Open Sans,sans-serif',
-    fontWeight: 300,
-    fontSize: '16px',
-    borderBottomLeftRadius: '4px',
-    borderBottomRightRadius: '4px',
-    zIndex: 7777,
-    left: 0,
-    right: 0
-  },
-  suggestion: {
-    display: 'block'
-  },
-  suggestionsList: {
-    margin: 0,
-    padding: 0,
-    listStyleType: 'none'
-  },
-  textField: {
-    width: '85%'
-  },
-  root: {
-    marginTop: '15px',
-    display: 'flex',
-    justifyContent: 'center',
-    flexWrap: 'wrap',
-    padding: theme.spacing.unit / 3,
-  },
-  alignAddButton: {
-    top: '20%'
-  }
-});
+import { isStr, isArr, isNum, shape } from '../utils/misc';
 
 type Props = {
-  allTags: Array<Tag>,
-  classes: Object,
-  updateSelectedTags: (tags: Array<Tag>) => void
+  classes: Array<string>,
+  allTags?: Array<Tag>,
+  onAddTag: () => void,
+  onRemoveTag: () => void,
+  selectedEntries?: Array,
+  newlyAddedTags?: Array
 };
 
 type State = {
-  value?: string,
+  query?: string,
+  tags?: Array<Object>,
   suggestions?: Array<Object>,
-  tagContainerSuggestions?: Array<Object>
+  isValidQuery?: boolean,
+  targetTagGroupColor?: string
 };
 
-class TagAutoSuggestion extends React.Component<Props, State> {
-  state = {
-    value: '',
-    suggestions: [],
-    tagContainerSuggestions: []
-  };
-
-  handleTagSearchChange = (event) => {
-    this.setState({
-      value: event.target.value
-    });
-  };
-
-  handleRemoveTag = (event, tag) => {
-    const tagsData = [...this.state.tagContainerSuggestions];
-    const tagToDelete = tagsData.indexOf(tag);
-    tagsData.splice(tagToDelete, 1);
-    this.setState({ tagContainerSuggestions: tagsData });
-    this.props.updateSelectedTags(tagsData);
-  };
-
-  handleSuggestionsFetchRequested = ({ value }) => {
-    this.setState({
-      suggestions: this.getSuggestions(value)
-    });
-  };
-
-  handleSuggestionsClearRequested = () => {
-    this.setState({
-      suggestions: []
-    });
-  };
-
-  handleAddTag = () => {
-    const tagContainerSuggestions = this.state.tagContainerSuggestions;
-    const value = this.state.value;
-    // find by value/title
-    tagContainerSuggestions.push({
-      uuid: uuidv1(),
-      title: value,
-      value
-    });
-    this.setState({
-      value: '',
-      tagContainerSuggestions
-    });
-    this.props.updateSelectedTags(tagContainerSuggestions);
-  };
-
-  getSuggestions = (value) => {
-    const queryValue = value.trim().toLowerCase();
-    const queryLength = queryValue.length;
-    let count = 0;
-
-    return queryLength === 0
-      ? []
-      : this.props.allTags.filter(suggestion => {
-        const keep =
-          count < 5 && suggestion.title.toLowerCase().slice(0, queryLength) === queryValue;
-        if (keep) {
-          count += 1;
-        }
-        return keep;
-      });
+const styles = {
+  component: {
+    position: 'relative',
+    width: '640px',
+    height: '260px',
+    maxWidth: '100%',
+    overflow: 'visible'
+  },
+  componentTip: {
+    display: 'none',
+    padding: '10px 0 0 0',
+    fontSize: '12px',
+    color: '#f44336',
+    '&.active': {
+      display: 'block'
+    }
+  },
+  fieldContainer: {
+    position: 'relative',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  },
+  fieldBox: {
+    width: '100%',
+    position: 'relative',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  },
+  tagField: {
+    width: '100%'
+  },
+  addTagButton: {
+    width: '120px',
+    margin: '16px 0 0 16px'
+  },
+  suggestions: {
+    position: 'absolute',
+    top: 52,
+    left: 0,
+    right: 0,
+    margin: '0 auto',
+    width: 'calc(100% - 2px)',
+    maxHeight: '200px',
+    overflowY: 'overlay',
+    overflowX: 'hidden',
+    display: 'none',
+    backgroundColor: '#fff',
+    zIndex: 100,
+    boxShadow: '0 1px 1px 0 rgba(0, 0, 0, 0.16),0 1px 1px 0 rgba(239, 239, 239, 0.12)',
+    '&.active': {
+      display: 'block'
+    }
+  },
+  addSuggestion: {
+    width: '100%',
+    border: 'none',
+    backgroundColor: 'transparent',
+    textAlign: 'left',
+    transition: 'all 0.15s ease-in-out',
+    padding: '12px',
+    '&:not(:last-child)': {
+      borderBottom: '1px solid rgba(0, 0, 0, 0.16)'
+    },
+    '&:hover, &:active, &:focus': {
+      border: 'none',
+      outline: 'none',
+      cursor: 'pointer',
+      backgroundColor: '#1dd19f',
+      color: '#fff',
+      transition: 'all 0.15s ease-in-out'
+    }
+  },
+  tags: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
+    flexWrap: 'wrap',
+    padding: '10px 0 0 0',
+    margin: 0,
+    backgroundColor: '#f9f7f7',
+    borderRadius: 4,
+    '&.active': {
+      margin: '20px 0 0 0'
+    }
+  },
+  tag: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderRadius: '4px',
+    backgroundColor: '#008000',
+    color: 'white',
+    padding: '2px 6px',
+    boxShadow: '0 1px 1px 0 rgba(0, 0, 0, 0.16),0 1px 1px 0 rgba(239, 239, 239, 0.12)',
+    margin: '0 0 10px 10px'
+  },
+  removeTagButton: {
+    border: 'none',
+    backgroundColor: '#008000',
+    padding: 0,
+    position: 'relative',
+    left: 4,
+    top: 1,
+    '&:hover, &:active, &:focus': {
+      cursor: 'pointer',
+      outline: 'none'
+    }
   }
+}
 
-  renderTagSuggestions = tag => (
-    <TagContainer
-      key={tag.uuid}
-      tag={tag}
-      handleRemoveTag={this.handleRemoveTag}
-      tagMode={'remove'}
-    />
-  );
+class TagAutoSuggestion extends Component<Props, State> {
+  state = {
+    query: '',
+    tags: [],
+    suggestions: [],
+    isValidQuery: true,
+    targetTagGroupColor: '#008000'
+  };
+
+  componentWillReceiveProps = ({ selectedItem = {} }) => {
+    const { tags = [] } = selectedItem;
+    this.setState({ tags });
+    this.setState({ query: '' });
+  };
+
+  sanitizeQuery = query => query.trim();
+
+  validateQuery = query => {
+    const isMatchingLength = query.length > 1;
+    const hasSpecialCharacters = /[[\]{}()*+?.,\\^$|#%&\s]/.test(query);
+    return isMatchingLength && !hasSpecialCharacters;
+  };
+
+  onGetSuggestions = query => {
+    const { allTags = [] } = this.props;
+    const suggestions = allTags.filter(tag => tag.title.indexOf(query) > -1);
+    this.setState({ query, suggestions });
+  };
+
+  onChangeQuery = query => {
+    const sanitizedQuery = this.sanitizeQuery(query);
+    const isValidQuery = this.validateQuery(sanitizedQuery);
+    this.setState({
+      isValidQuery,
+      query: sanitizedQuery
+    });
+  };
+
+  onAddTag = (tag = {}) => {
+    const { query, targetTagGroupColor } = this.state;
+
+    const addedTag = isStr(tag.title) ? tag : {
+      id: uuidv1(),
+      color: targetTagGroupColor,
+      description: query,
+      title: query,
+      type: 'plain'
+    };
+
+    this.props.onAddTag(addedTag);
+    this.setState({ query: '' });
+  };
+
+  onRemoveTag = (tag = {}) => {
+    this.props.onRemoveTag(tag);
+  };
 
   render() {
+    const { classes, selectedItem = {}, selectedEntries, newlyAddedTags } = this.props;
+    const { query, isValidQuery, suggestions = [] } = this.state;
+    const suggestionsLength = suggestions.length;
+    let { tags = [] } = selectedItem;
+
+    /* if (isArr(selectedEntries)) {
+      const uniqueEntries = shape(selectedEntries).filterByUnique('uuid').fetch();
+      const tagsOnly = shape(uniqueEntries).reduceTo('tags').fetch();
+
+      tags = shape(tagsOnly)
+        .filterByDuplicate('title', uniqueEntries.length)
+        .filterByUnique('title')
+        .fetch();
+    } */
+
     return (
-      <div>
-        <FormControl fullWidth={true}>
-          { /*<Autosuggest
-            theme={{
-              container: this.props.classes.container,
-              suggestionsContainerOpen: this.props.classes.suggestionsContainerOpen,
-              suggestionsList: this.props.classes.suggestionsList,
-              suggestion: this.props.classes.suggestion,
-              textField: this.props.classes.textField
-            }}
-            renderInputComponent={renderInput}
-            suggestions={this.state.suggestions}
-            onSuggestionsFetchRequested={this.handleSuggestionsFetchRequested}
-            onSuggestionsClearRequested={this.handleSuggestionsClearRequested}
-            renderSuggestionsContainer={renderSuggestionsContainer}
-            getSuggestionValue={suggestion => suggestion.title}
-            renderSuggestion={renderSuggestion}
-            inputProps={{
-              autoFocus: true,
-              classes: this.props.classes,
-              placeholder: i18n.t('core:tagOperationTagsPlaceholder'),
-              value: this.state.value,
-              onChange: this.handleTagSearchChange,
-            }}
-          /> */ }
-          <ListItemSecondaryAction className={this.props.classes.alignAddButton}>
-            <Button
-              data-tid="addTag"
-              color="primary"
-              onClick={this.handleAddTag}
+      <div
+        className={`component ${classes.component}`}
+        data-component="tag-autosuggestion"
+        style={{
+          height: 260
+        }}
+      >
+        <FormControl fullWidth={true} className={classes.fieldContainer}>
+          <div className={classes.fieldBox}>
+            <InputLabel
+              htmlFor="name-disabled"
+              shrink={query !== ''}
+              focused={query !== ''}
+              error={!isValidQuery && query !== ''}
             >
-              {i18n.t('core:addTags')}
-            </Button>
-          </ListItemSecondaryAction>
+              {i18n.t('core:tagOperationTagsPlaceholder')}
+            </InputLabel>
+            <Input
+              className={classes.tagField}
+              value={query}
+              error={!isValidQuery && query !== ''}
+              onChange={event => this.onChangeQuery(event.target.value)}
+              onKeyUp={event => {
+                if (event.key === 'Enter') {
+                  return false;
+                }
+                this.onGetSuggestions(event.target.value);
+              }}
+              onKeyDown={event => {
+                if (event.key !== 'Enter') {
+                  return false;
+                }
+                this.onAddTag();
+              }}
+            />
+          </div>
+          <Button
+            disabled={!isValidQuery || query === ''}
+            className={classes.addTagButton}
+            data-tid="addTag"
+            color="primary"
+            onClick={this.onAddTag}
+          >{i18n.t('core:addTag')}</Button>
         </FormControl>
-        <FormControl fullWidth={true}>
-          <Paper className={this.props.classes.root}>
-            {this.state.tagContainerSuggestions && this.state.tagContainerSuggestions.map(this.renderTagSuggestions)}
-          </Paper>
-          {i18n.t('core:editTagNamesRestrictionsHelp')}
-        </FormControl>
+        {query !== '' && (
+          <div
+            className={`suggestions ${classes.suggestions} ${isValidQuery && suggestionsLength > 0 ? 'active' : ''}`}
+            title={i18n.t('core:existingTags')}
+          >
+            {suggestions.map(suggestion => (
+              <button
+                className={`trigger add-suggestion ${classes.addSuggestion}`}
+                key={suggestion.title}
+                title={`${i18n.t('core:addTag')} '${suggestion.title}'`}
+                onClick={() => this.onAddTag(suggestion)}
+              >
+                {suggestion.title}
+              </button>
+            ))}
+          </div>
+        )}
+        {newlyAddedTags && newlyAddedTags.length > 0 && (
+          <div className={`tags ${classes.tags} ${tags.length > 0 ? 'active' : ''}`}>
+            {newlyAddedTags.map(tag => (
+              <div key={tag.title} className={`tag ${classes.tag}`}>
+                <span className="text">{tag.title}</span>
+                <button
+                  className={`trigger remove-tag ${classes.removeTagButton}`}
+                  title={`${i18n.t('core:removeTag')} '${tag.title}'`}
+                  onClick={() => {
+                    this.onRemoveTag(tag);
+                  }}
+                >
+                  <CloseIcon style={{ fill: '#fff', pointerEvents: 'none' }} />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+        <div className={`component-tip ${classes.componentTip} ${!isValidQuery && query !== '' ? 'active' : ''}`}>
+          <span className="text">
+            {i18n.t('core:editTagNamesRestrictionsHelp')}
+          </span>
+        </div>
       </div>
     );
   }
 }
 
-export default withStyles(styles)(TagAutoSuggestion);
+const mapStateToProps = state => ({
+  allTags: getAllTags(state),
+});
+
+export default connect(mapStateToProps)(withStyles(styles)(TagAutoSuggestion));

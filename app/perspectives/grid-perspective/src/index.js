@@ -233,7 +233,6 @@ type Props = {
 };
 
 type State = {
-  selectedItem?: Object,
   fileContextMenuAnchorEl?: Object | null,
   fileContextMenuOpened?: boolean,
   dirContextMenuAnchorEl?: Object | null,
@@ -258,12 +257,11 @@ type State = {
   isFileRenameDialogOpened?: boolean,
   selectedEntryPath?: string,
   selectedTag?: Tag | null,
-  selectedEntries?: Array
+  selectedEntries?: Array<Object>
 };
 
 class GridPerspective extends React.Component<Props, State> {
   state = {
-    selectedItem: {},
     fileContextMenuOpened: false,
     fileContextMenuAnchorEl: null,
     dirContextMenuOpened: false,
@@ -626,16 +624,14 @@ class GridPerspective extends React.Component<Props, State> {
         selectedEntryPath: fsEntry.path,
         selectedEntries: event.ctrlKey
           ? [...selectedEntries, fsEntry]
-          : [fsEntry],
-        selectedItem: fsEntry
+          : [fsEntry]
       });
     } else {
       this.setState({
         dirContextMenuOpened: true,
         dirContextMenuAnchorEl: event.currentTarget,
         selectedEntryPath: fsEntry.path,
-        selectedEntries: [fsEntry],
-        selectedItem: fsEntry
+        selectedEntries: [fsEntry]
       });
     }
   };
@@ -1069,14 +1065,12 @@ class GridPerspective extends React.Component<Props, State> {
           </div>
         </div>
         <AddRemoveTagsDialog
-          selectedItem={this.state.selectedItem}
           open={this.state.isAddRemoveTagsDialogOpened}
           onClose={this.handleCloseDialogs}
-          selectedEntries={this.props.selectedEntries}
-          selectedItems={[this.state.selectedEntryPath]}
           addTags={this.props.addTags}
           removeTags={this.props.removeTags}
           removeAllTags={this.props.removeAllTags}
+          selectedEntries={this.state.selectedEntries}
         />
         <MoveCopyFilesDialog
           open={this.state.isMoveCopyFilesDialogOpened}

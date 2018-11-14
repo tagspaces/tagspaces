@@ -41,7 +41,7 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
 import i18n from '../../services/i18n';
 import { type Tag } from '../../reducers/taglibrary';
-import TagAutosuggestion from '../TagAutosuggestion/';
+import TagAutoSuggestion from '../TagAutoSuggestion';
 import { formatDateTime4Tag } from '../../utils/misc';
 import AppConfig from '../../config';
 import TaggingActions from '../../reducers/tagging-actions';
@@ -268,7 +268,7 @@ class CreateFileDialog extends React.Component<Props, State> {
       </ListItem>
       {/* <FormControl fullWidth={true} style={{ overflow: 'visible', margin: '0 0 10px 0' }}>
         <FormHelperText>{i18n.t('core:fileTags')}</FormHelperText>
-        <TagAutosuggestion
+        <TagAutoSuggestion
           height={120}
           isModalOpened={open}
           selectedItem={{}}
