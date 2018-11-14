@@ -129,7 +129,7 @@ export default function buildDesktopMenu(mainPageProps: Object) {
         }, */
         {
           label: i18n.t('core:exitApp'),
-          accelerator: '',
+          accelerator: (process.platform === 'darwin') ? 'Cmd+Q' : '',
           click: () => {
             ipcRenderer.send('quit-application', 'Bye, bye...');
           }
