@@ -927,7 +927,7 @@ export const actions = {
       if (location.uuid === locationId) {
         if (location.type === locationType.TYPE_CLOUD) {
           PlatformIO.enableObjectStoreSupport(location);
-        } else if (location.type === locationType.TYPE_LOCAL) {
+        } else { // if (location.type === locationType.TYPE_LOCAL) {
           PlatformIO.disableObjectStoreSupport();
         }
         dispatch(actions.setReadOnlyMode(location.isReadOnly || false));
