@@ -273,14 +273,14 @@ class EditLocationDialog extends React.Component<Props, State> {
     }
     return (
       <DialogContent>
-        <Grid container spacing={30}>
+        <Grid container spacing={32}>
           <Grid item xs={2} style={{ lineHeight: 3, textAlign: 'left' }}>
             Type
           </Grid>
           <Grid item xs={10}>
             <FormControl disabled={!Pro}>
               <RadioGroup
-                title={!Pro && i18n.t('core:thisFunctionalityIsAvailableInPro')}
+                title={Pro ? '' : i18n.t('core:thisFunctionalityIsAvailableInPro')}
                 component="label"
                 aria-label="Type"
                 name="type"
