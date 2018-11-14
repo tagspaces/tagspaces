@@ -312,7 +312,6 @@ class CreateFileDialog extends React.Component<Props, State> {
           this.setState({ newlyAddedTags: [] });
           this.props.onClose();
         }}
-        color="primary"
       >
         {i18n.t('core:cancel')}
       </Button>
@@ -320,7 +319,6 @@ class CreateFileDialog extends React.Component<Props, State> {
         disabled={this.state.disableConfirmButton}
         onClick={this.onConfirm}
         data-tid="confirmCreateFileDialog"
-        color="primary"
       >
         {i18n.t('core:ok')}
       </Button>
