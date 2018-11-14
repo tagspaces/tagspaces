@@ -21,6 +21,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import IconButton from '@material-ui/core/IconButton';
+import NewFileIcon from '@material-ui/icons/Add';
 import LocationsIcon from '@material-ui/icons/WorkOutline';
 import TagLibraryIcon from '@material-ui/icons/LocalOfferOutlined';
 import SearchIcon from '@material-ui/icons/SearchOutlined';
@@ -288,6 +289,15 @@ class VerticalNavigation extends React.Component<Props, State> {
                 src={LogoIcon}
                 alt="TagSpaces Logo"
               />
+            </IconButton>
+            <IconButton
+              className={style.verticalNavButton}
+              onClick={this.props.toggleCreateFileDialog}
+              style={{ ...this.styles.button, marginBottom: 20 }}
+              title={i18n.t('core:createFileTitle')}
+              data-tid="locationManager"
+            >
+              <NewFileIcon style={this.styles.buttonIcon} />
             </IconButton>
             <IconButton
               className={style.verticalNavButton}
