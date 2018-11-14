@@ -366,7 +366,7 @@ class EntryProperties extends Component<Props, State> {
 
   renderTags = (tag: Object) => (
     <TagContainer
-      key={tag.title}
+      key={tag.id ? tag.id : tag.title}
       defaultTextColor={this.props.settings.tagTextColor}
       defaultBackgroundColor={this.props.settings.tagBackgroundColor}
       tag={tag}
