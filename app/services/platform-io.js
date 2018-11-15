@@ -42,11 +42,13 @@ export default class PlatformIO {
     } else {
       console.log('ObjectStore support available in the PRO version');
     }
-  }
+  };
 
   static disableObjectStoreSupport = (): void => {
     objectStoreAPI = undefined;
-  }
+  };
+
+  static haveObjectStoreSupport = (): boolean => objectStoreAPI !== undefined;
 
   static initMainMenu = (menuConfig: Array<Object>): void => {
     if (nativeAPI.initMainMenu) {
@@ -54,7 +56,7 @@ export default class PlatformIO {
     } else {
       console.log('initMainMenu not supported');
     }
-  }
+  };
 
   static initTrayMenu = (menuConfig: Array<Object>): void => {
     if (nativeAPI.initTrayMenu) {
