@@ -75,9 +75,13 @@ class RenameFileDialog extends React.Component<Props, State> {
         open: true,
         fileName: extractFileName(nextProps.selectedFilePath),
         filePath: nextProps.selectedFilePath
+      }, () => {
+        this.fileName.select();
       });
     }
   };
+
+  fileName;
 
   handleInputChange = (event: Object) => {
     const target = event.target;
@@ -124,6 +128,7 @@ class RenameFileDialog extends React.Component<Props, State> {
             error={this.state.inputError}
             margin="dense"
             name="fileName"
+            inputRef={(ref) => { this.fileName = ref; }}
             label={i18n.t('core:renameNewFileName')}
             onChange={this.handleInputChange}
             value={this.state.fileName}
