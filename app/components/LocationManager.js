@@ -191,7 +191,7 @@ class LocationManager extends React.Component<Props, State> {
       .then(dirEntries => {
         const directoryContent = [];
         dirEntries.map(entry => {
-          if (entry.name === AppConfig.metaFolder) { // TODO !settings.showUnixHiddenEntries &&
+          if (entry.name === AppConfig.metaFolder || entry.name.endsWith('/' + AppConfig.metaFolder)) { // TODO !settings.showUnixHiddenEntries &&
             return true;
           }
           // const enhancedEntry = enhanceEntry(entry);

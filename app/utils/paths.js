@@ -90,6 +90,15 @@ export function cleanTrailingDirSeparator(dirPath: string): string {
   return '';
 }
 
+/**
+ *
+ * @param path -> root//subFolder/
+ * @returns {string} -> root/subFolder
+ */
+export function normalizePath(path: string): string {
+  return cleanTrailingDirSeparator(path.replace(/\/\//g, '/'));
+}
+
 export function extractFileNameWithoutExt(filePath: string): string {
   const fileName = extractFileName(filePath);
   const indexOfDot = fileName.lastIndexOf('.');
