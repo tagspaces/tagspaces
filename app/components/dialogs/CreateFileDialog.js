@@ -46,6 +46,7 @@ import { formatDateTime4Tag } from '../../utils/misc';
 import AppConfig from '../../config';
 import TaggingActions from '../../reducers/tagging-actions';
 import { actions as AppActions } from '../../reducers/app';
+import PlatformIO from '../../services/platform-io';
 
 const styles = theme => ({
   root: {
@@ -292,11 +293,12 @@ class CreateFileDialog extends React.Component<Props, State> {
           value={this.state.selectedDirectoryPath}
           onChange={this.handleInputChange}
           endAdornment={
-            <InputAdornment position="end" style={{ height: 32 }}>
-              <IconButton onClick={this.openFolderChooser}>
-                <FolderIcon className={this.props.classes.folderIcon} />
-              </IconButton>
-            </InputAdornment>
+            PlatformIO.haveObjectStoreSupport() ? undefined :
+              (<InputAdornment position="end" style={{ height: 32 }}>
+                <IconButton onClick={this.openFolderChooser}>
+                  <FolderIcon className={this.props.classes.folderIcon} />
+                </IconButton>
+              </InputAdornment>)
           }
         />
         {this.state.errorTextPath && <FormHelperText>{i18n.t('core:invalidPath')}</FormHelperText>}
