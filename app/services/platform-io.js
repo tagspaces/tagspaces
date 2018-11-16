@@ -164,9 +164,9 @@ export default class PlatformIO {
     dirPath: string,
     newDirName: string
   ): Promise<any> => {
-    if (objectStoreAPI) {
+    /* if (objectStoreAPI) {
       return objectStoreAPI.renameDirectoryPromise(dirPath, newDirName);
-    }
+    } */
     nativeAPI.renameDirectoryPromise(dirPath, newDirName);
   };
 
@@ -234,9 +234,9 @@ export default class PlatformIO {
     path: string,
     useTrash?: boolean
   ): Promise<any> => {
-    if (objectStoreAPI) {
+    /* if (objectStoreAPI) {
       return objectStoreAPI.deleteDirectoryPromise(path, useTrash);
-    }
+    } */
     nativeAPI.deleteDirectoryPromise(path, useTrash);
   };
 
