@@ -84,15 +84,15 @@ class EditLocationDialog extends React.Component<Props, State> {
      if (nextProps.open === true && nextProps.location) {
        const dir = nextProps.selectedDirectoryPath;
        let properties;
-       if (nextProps.location.type === locationType.TYPE_LOCAL) { // TODO maybe its better to separate name/path keys for different locationTypes ??
-         properties = {
-           name: dir ? extractDirectoryName(dir) : nextProps.location.name,
-           path: dir || nextProps.location.paths[0],
-         };
-       } else if (nextProps.location.type === locationType.TYPE_CLOUD) {
+       if (nextProps.location.type === locationType.TYPE_CLOUD) {
          properties = {
            storeName: dir ? extractDirectoryName(dir) : nextProps.location.name,
            storePath: dir || nextProps.location.paths[0],
+         };
+       } else {
+         properties = { // TODO maybe its better to separate name/path keys for different locationTypes ??
+           name: dir ? extractDirectoryName(dir) : nextProps.location.name,
+           path: dir || nextProps.location.paths[0],
          };
        }
        this.setState({
@@ -103,7 +103,7 @@ class EditLocationDialog extends React.Component<Props, State> {
          isReadOnly: nextProps.location.isReadOnly,
          watchForChanges: nextProps.location.watchForChanges,
          persistIndex: nextProps.location.persistIndex,
-         type: nextProps.location.type,
+         type: nextProps.location.type || locationType.TYPE_LOCAL,
          accessKeyId: nextProps.location.accessKeyId,
          secretAccessKey: nextProps.location.secretAccessKey,
          bucketName: nextProps.location.bucketName,
@@ -134,20 +134,7 @@ class EditLocationDialog extends React.Component<Props, State> {
   handleValidation() {
     // const pathRegex = this.state.path.match('^((\.\./|[a-zA-Z0-9_/\-\\])*\.[a-zA-Z0-9]+)$');
     // const nameRegex = this.state.name.match('^[A-Z][-a-zA-Z]+$');
-    if (this.state.type === locationType.TYPE_LOCAL) {
-      let errorTextName = false;
-      let errorTextPath = false;
-      let disableConfirmButton = false;
-      if (!this.state.name || this.state.name.length === 0) {
-        errorTextName = true;
-        disableConfirmButton = true;
-      }
-      if (!this.state.path || this.state.path.length === 0) {
-        errorTextPath = true; // make in optional in cloud mode
-        disableConfirmButton = true;
-      }
-      this.setState({ errorTextName, errorTextPath, disableConfirmButton });
-    } else if (this.state.type === locationType.TYPE_CLOUD) {
+    if (this.state.type === locationType.TYPE_CLOUD) {
       let cloudErrorTextName = false;
       let cloudErrorTextPath = false;
       let cloudErrorAccessKey = false;
@@ -185,7 +172,28 @@ class EditLocationDialog extends React.Component<Props, State> {
         disableConfirmButton = true;
       }
 
-      this.setState({ cloudErrorTextName, cloudErrorTextPath, cloudErrorAccessKey, cloudErrorSecretAccessKey, cloudErrorBucketName, disableConfirmButton, cloudErrorRegion });
+      this.setState({
+        cloudErrorTextName,
+        cloudErrorTextPath,
+        cloudErrorAccessKey,
+        cloudErrorSecretAccessKey,
+        cloudErrorBucketName,
+        disableConfirmButton,
+        cloudErrorRegion
+      });
+    } else {
+      let errorTextName = false;
+      let errorTextPath = false;
+      let disableConfirmButton = false;
+      if (!this.state.name || this.state.name.length === 0) {
+        errorTextName = true;
+        disableConfirmButton = true;
+      }
+      if (!this.state.path || this.state.path.length === 0) {
+        errorTextPath = true; // make in optional in cloud mode
+        disableConfirmButton = true;
+      }
+      this.setState({ errorTextName, errorTextPath, disableConfirmButton });
     }
   }
 
