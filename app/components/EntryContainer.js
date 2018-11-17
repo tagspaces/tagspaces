@@ -68,7 +68,6 @@ import {
   isReadOnlyMode,
   actions as AppActions
 } from '../reducers/app';
-import { getAllTags } from '../reducers/taglibrary';
 
 const defaultSplitSize = 103;
 const openedSplitSize = 360;
@@ -162,8 +161,6 @@ type Props = {
     autohide?: boolean
   ) => void,
   removeAllTags: () => void,
-  allTags?: Array,
-  selectedEntries?: Array,
   deleteFile: (path: string) => void,
   toggleEntryFullWidth: () => void,
   isReadOnlyMode: boolean,
@@ -180,8 +177,6 @@ type State = {
   openedSplitSize?: number,
   isEditTagsModalOpened?: boolean,
   selectedItem?: Object,
-  selectedItems?: Array,
-  selectedEntries?: Array,
   isDeleteEntryModalOpened?: boolean,
   shouldCopyFile?: boolean,
   entryPropertiesSplitSize?: number
@@ -198,7 +193,6 @@ class EntryContainer extends React.Component<Props, State> {
     isDeleteEntryModalOpened: false,
     currentEntry: null,
     selectedItem: {},
-    selectedItems: [],
     shouldCopyFile: false,
     entryPropertiesSplitSize: 0
   };
@@ -261,8 +255,7 @@ class EntryContainer extends React.Component<Props, State> {
         selectedItem: {
           ...currentEntry,
           tags
-        },
-        selectedItems: [currentEntry.path]
+        }
       });
 
       const { settings } = nextProps;
@@ -603,13 +596,15 @@ class EntryContainer extends React.Component<Props, State> {
         >
           <ExpandIcon />
         </IconButton>
-        <IconButton
-          title={i18n.t('core:openFileExternally')}
-          aria-label={i18n.t('core:openFileExternally')}
-          onClick={this.openNatively}
-        >
-          <OpenNativelyIcon />
-        </IconButton>
+        {!PlatformIO.haveObjectStoreSupport() && (
+          <IconButton
+            title={i18n.t('core:openFileExternally')}
+            aria-label={i18n.t('core:openFileExternally')}
+            onClick={this.openNatively}
+          >
+            <OpenNativelyIcon />
+          </IconButton>
+        )}
         <IconButton
           title={i18n.t('core:downloadFile')}
           aria-label={i18n.t('core:downloadFile')}
@@ -695,13 +690,15 @@ class EntryContainer extends React.Component<Props, State> {
   renderFolderToolbar = () => (
     <div className={this.props.classes.toolbar2}>
       <div className={this.props.classes.flexLeft}>
-        <IconButton
-          title={i18n.t('core:openDirectoryExternally')}
-          aria-label={i18n.t('core:openDirectoryExternally')}
-          onClick={this.openNatively}
-        >
-          <OpenNativelyIcon />
-        </IconButton>
+        {!PlatformIO.haveObjectStoreSupport() && (
+          <IconButton
+            title={i18n.t('core:openDirectoryExternally')}
+            aria-label={i18n.t('core:openDirectoryExternally')}
+            onClick={this.openNatively}
+          >
+            <OpenNativelyIcon />
+          </IconButton>
+        )}
         <IconButton
           title={i18n.t('core:reloadDirectory')}
           aria-label={i18n.t('core:reloadDirectory')}
@@ -828,16 +825,12 @@ class EntryContainer extends React.Component<Props, State> {
           confirmDialogContent={'confirmDialogContent'}
         />
         <AddRemoveTagsDialog
-          isSingleFile={true}
           open={isEditTagsModalOpened}
           onClose={() => this.setState({ isEditTagsModalOpened: false })}
-          selectedItem={this.state.selectedItem}
-          selectedItems={this.state.selectedItems}
-          allTags={this.props.allTags}
           addTags={this.props.addTags}
           removeTags={this.props.removeTags}
           removeAllTags={this.props.removeAllTags}
-          selectedEntries={this.props.selectedEntries}
+          selectedEntries={[this.state.selectedItem]}
         />
         <a href="#" id="downloadFile">
           {/* Download link */}
@@ -951,7 +944,6 @@ class EntryContainer extends React.Component<Props, State> {
                           ...currentEntry,
                           tags
                         },
-                        selectedItems: [currentEntry.path],
                         isEditTagsModalOpened: true
                       });
                     }}
@@ -994,7 +986,6 @@ function mapStateToProps(state) {
     openedFiles: getOpenedFiles(state),
     settings: state.settings,
     isReadOnlyMode: isReadOnlyMode(state),
-    allTags: getAllTags(state)
   };
 }
 

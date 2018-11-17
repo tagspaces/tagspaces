@@ -56,6 +56,11 @@ const actions = {
       return true;
     });
 
+    paths.map((path) => {
+      dispatch(actions.addTagsToEntry(path, processedTags));
+      return true;
+    });
+
     if (settings.addTagsToLibrary) { // collecting tags
       // filter existed in tagLibrary
       const uniqueTags = [];
@@ -78,11 +83,6 @@ const actions = {
         };
         dispatch(TagLibraryActions.mergeTagGroup(tagGroup));
       }
-
-      paths.map((path) => {
-        dispatch(actions.addTagsToEntry(path, processedTags));
-        return true;
-      });
     }
   },
   addTagsToEntry: (path: string, tags: Array<Tag>) => async (

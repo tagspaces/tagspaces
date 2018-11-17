@@ -60,6 +60,9 @@ if (process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true')
   require('electron-debug')({ showDevTools: false, devToolsMode: 'right' });
   const p = path.join(__dirname, '..', 'app', 'node_modules');
   require('module').globalPaths.push(p);
+}
+
+if (process.platform === 'linux') {
   app.commandLine.appendSwitch('disable-gpu'); // Fix the freezing the app with a black box on dnd https://github.com/electron/electron/issues/12820
 }
 

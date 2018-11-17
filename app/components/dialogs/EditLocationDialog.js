@@ -142,12 +142,10 @@ class EditLocationDialog extends React.Component<Props, State> {
         errorTextName = true;
         disableConfirmButton = true;
       }
-
       if (!this.state.path || this.state.path.length === 0) {
-        errorTextPath = true;
+        errorTextPath = true; // make in optional in cloud mode
         disableConfirmButton = true;
       }
-
       this.setState({ errorTextName, errorTextPath, disableConfirmButton });
     } else if (this.state.type === locationType.TYPE_CLOUD) {
       let cloudErrorTextName = false;
@@ -240,13 +238,18 @@ class EditLocationDialog extends React.Component<Props, State> {
           isDefault: this.state.isDefault,
           isReadOnly: this.state.isReadOnly,
           persistIndex: this.state.persistIndex,
-          watchForChanges: this.state.watchForChanges
+          watchForChanges: false
         });
       }
       this.props.onClose();
       this.props.resetState('editLocationDialogKey');
     }
   };
+
+  onCancel = () => {
+    this.props.onClose();
+    this.props.resetState('editLocationDialogKey');
+  }
 
   renderTitle = () => (
     <DialogTitle>{i18n.t('core:editLocationTitle')}</DialogTitle>
@@ -270,22 +273,25 @@ class EditLocationDialog extends React.Component<Props, State> {
     }
     return (
       <DialogContent>
-        <Grid container spacing={24}>
-          <Grid item xs={2} style={{ lineHeight: 3, textAlign: 'right' }}>
+        <Grid container spacing={32}>
+          <Grid item xs={2} style={{ lineHeight: 3, textAlign: 'left' }}>
             Type
           </Grid>
           <Grid item xs={10}>
-            <RadioGroup
-              component="label"
-              aria-label="Type"
-              name="type"
-              value={this.state.type}
-              onChange={this.handleInputChange}
-              row
-            >
-              <FormControlLabel value={locationType.TYPE_LOCAL} control={<Radio />} label="Local" />
-              <FormControlLabel value={locationType.TYPE_CLOUD} control={<Radio />} label="Cloud (S3 AWS)" />
-            </RadioGroup>
+            <FormControl disabled={!Pro}>
+              <RadioGroup
+                title={Pro ? '' : i18n.t('core:thisFunctionalityIsAvailableInPro')}
+                component="label"
+                aria-label="Type"
+                name="type"
+                value={this.state.type}
+                onChange={this.handleInputChange}
+                row
+              >
+                <FormControlLabel value={locationType.TYPE_LOCAL} control={<Radio />} label="Local" />
+                <FormControlLabel value={locationType.TYPE_CLOUD} control={<Radio />} label="Cloud (S3 AWS)" />
+              </RadioGroup>
+            </FormControl>
           </Grid>
         </Grid>
         {content}
@@ -329,7 +335,7 @@ class EditLocationDialog extends React.Component<Props, State> {
             <FormControlLabel
               control={
                 <Switch
-                  disabled={!Pro}
+                  disabled={!Pro || this.state.type === locationType.TYPE_CLOUD}
                   data-tid="changeWatchForChanges"
                   name="watchForChanges"
                   checked={this.state.watchForChanges}
@@ -343,26 +349,6 @@ class EditLocationDialog extends React.Component<Props, State> {
       </DialogContent>
     );
   };
-
-  /*
-      <FormControl
-        fullWidth={true}
-      >
-        <InputLabel htmlFor="perspective">{i18n.t('core:createLocationDefaultPerspective')}</InputLabel>
-        <Select
-          data-tid="editLocationDefaultPerspective"
-          native
-          autoWidth
-          label={i18n.t('core:createLocationDefaultPerspective')}
-          name="perspective"
-          value={this.state.perspective}
-          onChange={this.handleInputChange}
-          input={<Input id="perspective" />}
-        >
-          {this.props.perspectives.map((persp) => (<option key={persp.id} value={persp.id}>{persp.name}</option>))}
-        </Select>
-      </FormControl>
-*/
 
   renderActions = () => (
     <DialogActions>
@@ -388,7 +374,7 @@ class EditLocationDialog extends React.Component<Props, State> {
     return (
       <GenericDialog
         open={this.props.open}
-        onClose={() => { this.props.onClose(); this.props.resetState('editLocationDialogKey'); }}
+        onClose={this.onCancel}
         onEnterKey={(event) => onEnterKeyHandler(event, this.onConfirm)}
         renderTitle={this.renderTitle}
         renderContent={this.renderContent}

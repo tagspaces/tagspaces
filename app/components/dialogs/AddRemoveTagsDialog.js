@@ -17,62 +17,38 @@
  * @flow
  */
 
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import React from 'react';
 import Button from '@material-ui/core/Button';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import GenericDialog from './GenericDialog';
-import { type Tag, getAllTags } from '../../reducers/taglibrary';
-import TagAutosuggestion from '../TagAutosuggestion/';
+import { type Tag } from '../../reducers/taglibrary';
+import TagAutoSuggestion from '../TagAutoSuggestion';
 import i18n from '../../services/i18n';
-import ConfirmDialog from '../dialogs/ConfirmDialog';
-import { isArr, isObj, shape } from '../../utils/misc';
 
 type Props = {
   open: boolean,
+  selectedEntries?: Array<Object>,
   onClose: () => void,
-  selectedItems?: Array<Object>,
-  selectedItem?: Object,
   addTags: (paths: Array<string>, tags: Array<Tag>) => void,
-  allTags?: Array<Tag>,
-  selectedEntries?: Array,
-  isSingleFile?: boolean,
   removeTags: (paths: Array<string>, tags: Array<Tag>) => void,
   removeAllTags: (paths: Array<string>) => void
 };
 
 type State = {
-  inputError?: boolean,
   disableConfirmButton?: boolean,
   open?: boolean,
-  tags?: Array<Tag>,
-  selectedTags?: Array<Tag>,
-  selectedItem?: Object,
+  newlyAddedTags?: Array<Tag>,
   isConfirmDialogOpened?: boolean
 };
 
 class AddRemoveTagsDialog extends React.Component<Props, State> {
   state = {
-    inputError: false,
     disableConfirmButton: true,
     newlyAddedTags: [],
     open: false,
-    tags: [],
-    selectedTags: [],
-    selectedItem: {},
-    isConfirmDialogOpened: false,
-    isRemoveAllTags: true
-  };
-
-  onRemoveAllTags = () => {
-    const { selectedItem, removeAllTags } = this.props;
-    removeAllTags([selectedItem.path]);
-  };
-
-  onRemoveNewlyAddedTags = () => {
-    this.setState({ newlyAddedTags: [] });
+    isConfirmDialogOpened: false
   };
 
   onAddTag = (tag) => {
@@ -87,24 +63,21 @@ class AddRemoveTagsDialog extends React.Component<Props, State> {
     this.setState({ newlyAddedTags: modifiedTags });
   };
 
+  onClose = () => {
+    this.setState({newlyAddedTags: []});
+    this.props.onClose();
+  }
+
   render() {
     const {
       open,
-      allTags,
-      selectedItems,
-      selectedItem,
-      selectedEntries,
-      isSingleFile = false,
+      selectedEntries = [],
       addTags,
       removeTags,
       removeAllTags,
       onClose
     } = this.props;
-    const { newlyAddedTags, isRemoveAllTags } = this.state;
-
-    const selectedEntriesTagCount = !isSingleFile
-      ? isArr(selectedEntries) && isObj(selectedEntries[0]) ? shape(selectedEntries).reduceTo('tags').fetch().length : 0
-      : isObj(selectedItem) && isArr(selectedItem.tags) ? selectedItem.tags.length : 0;
+    const { newlyAddedTags = [] } = this.state;
 
     return (
       <GenericDialog
@@ -115,52 +88,11 @@ class AddRemoveTagsDialog extends React.Component<Props, State> {
         )}
         renderContent={() => (
           <DialogContent>
-
-            <ConfirmDialog
-              open={this.state.isConfirmDialogOpened}
-              onClose={() => {
-                this.setState({
-                  isConfirmDialogOpened: false
-                });
-              }}
-              title={i18n.t('core:confirm')}
-              content={i18n.t(`core:${isRemoveAllTags ? 'confirmAllTagsDeletion' : 'confirmSelectedTagsDeletion'}`)}
-              confirmCallback={result => {
-                if (result) {
-                  if (isRemoveAllTags) {
-                    this.onRemoveAllTags();
-                  } else {
-                    if (!isArr(selectedEntries)) {
-                      removeTags([selectedItem.path], newlyAddedTags);
-                    } else {
-                      const paths = shape(selectedEntries)
-                        .filterByUnique('uuid')
-                        .reduceTo('path')
-                        .fetch();
-                      removeTags(paths, newlyAddedTags);
-                    }
-                    this.onRemoveNewlyAddedTags();
-                    onClose();
-                  }
-                  this.onRemoveNewlyAddedTags();
-                  onClose();
-                }
-              }}
-              cancelDialogTID={'cancelAllTagsDeletionDialog'}
-              confirmDialogTID={'confirmAllTagsDeletionDialog'}
-              confirmDialogContent={'confirmAllTagsDeletionDialogContent'}
-            />
-
-            <TagAutosuggestion
-              isModalOpened={open}
-              selectedItem={selectedItem}
-              selectedItems={selectedItems}
+            <TagAutoSuggestion
               selectedEntries={selectedEntries}
               newlyAddedTags={newlyAddedTags}
-              allTags={allTags}
-              addTags={this.onAddTag}
-              removeTags={this.onRemoveTag}
-              removeAllTags={removeAllTags}
+              onAddTag={this.onAddTag}
+              onRemoveTag={this.onRemoveTag}
             />
           </DialogContent>
         )}
@@ -168,48 +100,57 @@ class AddRemoveTagsDialog extends React.Component<Props, State> {
           <DialogActions>
             <Button
               data-tid="cancel"
-              onClick={() => {
-                this.onRemoveNewlyAddedTags();
-                onClose();
-              }}
+              onClick={this.onClose}
             >
               {i18n.t('core:cancel')}
             </Button>
             <Button
-              data-tid="cleanTags"
-              disabled={selectedEntriesTagCount === 0}
-              onClick={() => this.setState({ isConfirmDialogOpened: true })}
+              data-tid="cleanTagsMultipleEntries"
+              disabled={selectedEntries.length < 1}
+              onClick={() => {
+                if (selectedEntries && selectedEntries.length > 0) {
+                  const paths = [];
+                  selectedEntries.map((entry) => {
+                    paths.push(entry.path);
+                    return true;
+                  });
+                  removeAllTags(paths);
+                }
+                this.onClose();
+              }}
             >
               {i18n.t('core:tagOperationCleanTags')}
             </Button>
             <Button
-              data-tid="ok"
-              disabled={newlyAddedTags.length === 0}
+              data-tid="removeTagsMultipleEntries"
+              disabled={newlyAddedTags.length === 0 || selectedEntries.length < 1}
               onClick={() => {
-                this.setState({
-                  isConfirmDialogOpened: true,
-                  isRemoveAllTags: false
-                });
+                if (selectedEntries && selectedEntries.length > 0) {
+                  const paths = [];
+                  selectedEntries.map((entry) => {
+                    paths.push(entry.path);
+                    return true;
+                  });
+                  removeTags(paths, newlyAddedTags);
+                }
+                this.onClose();
               }}
             >
               {i18n.t('core:tagOperationRemoveTag')}
             </Button>
             <Button
-              data-tid="ok"
-              color="primary"
-              disabled={newlyAddedTags.length === 0}
+              data-tid="addTagsMultipleEntries"
+              disabled={newlyAddedTags.length < 1 || selectedEntries.length < 1}
               onClick={() => {
-                if (!isArr(selectedEntries)) {
-                  addTags([selectedItem.path], newlyAddedTags);
-                } else {
-                  const paths = shape(selectedEntries)
-                    .filterByUnique('uuid')
-                    .reduceTo('path')
-                    .fetch();
+                if (selectedEntries && selectedEntries.length > 0) {
+                  const paths = [];
+                  selectedEntries.map((entry) => {
+                    paths.push(entry.path);
+                    return true;
+                  });
                   addTags(paths, newlyAddedTags);
                 }
-                this.onRemoveNewlyAddedTags();
-                onClose();
+                this.onClose();
               }}
             >
               {i18n.t('core:tagOperationAddTag')}
@@ -221,10 +162,4 @@ class AddRemoveTagsDialog extends React.Component<Props, State> {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    allTags: getAllTags(state),
-  };
-}
-
-export default connect(mapStateToProps)(AddRemoveTagsDialog);
+export default AddRemoveTagsDialog;

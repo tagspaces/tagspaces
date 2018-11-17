@@ -566,7 +566,7 @@ class LocationManager extends React.Component<Props, State> {
       />);
     }
     return (
-      <div>
+      <div key={location.uuid}>
         <ListItem
           data-tid={'location_' + location.name.replace(/ /g, '_')}
           className={
@@ -574,7 +574,6 @@ class LocationManager extends React.Component<Props, State> {
               ? this.props.classes.listItemSelected
               : this.props.classes.listItem
           }
-          key={location.uuid}
           title={location.isDefault ? i18n.t('core: thisIsStartupLocation') + ' : ' + location.paths[0] : location.paths[0]}
           button
           onClick={() => this.handleLocationClick(location)}

@@ -25,6 +25,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Switch from '@material-ui/core/Switch';
+import FormControl from '@material-ui/core/FormControl';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormGroup from '@material-ui/core/FormGroup';
 import Grid from '@material-ui/core/Grid';
@@ -108,9 +109,9 @@ class CreateLocationDialog extends React.Component<Props, State> {
     }
   }; */
 
-  componentWillUnmount = () => {
+  /* componentWillUnmount = () => {
     console.log('CreateLocationDialog componentWillUnmount');
-  };
+  }; */
 
   handleInputChange = (event: Object) => {
     const target = event.target;
@@ -155,12 +156,10 @@ class CreateLocationDialog extends React.Component<Props, State> {
           resolve(true);
         }));
       }
-
       if (!this.state.path || this.state.path.length === 0) {
-        errorTextPath = true;
+        errorTextPath = true; // make it optinal in cloud mode
         disableConfirmButton = true;
       }
-
       return new Promise(resolve => this.setState({ errorTextName, errorTextPath, disableConfirmButton }, resolve(!disableConfirmButton)));
     } else if (this.state.type === locationType.TYPE_CLOUD) {
       let cloudErrorTextName = false;
@@ -298,7 +297,7 @@ class CreateLocationDialog extends React.Component<Props, State> {
             isDefault: this.state.isDefault,
             isReadOnly: this.state.isReadOnly,
             persistIndex: this.state.persistIndex,
-            watchForChanges: this.state.watchForChanges
+            watchForChanges: false
           });
         }
         this.props.onClose();
@@ -309,6 +308,11 @@ class CreateLocationDialog extends React.Component<Props, State> {
       console.debug('Failed validation', error);
     });
   };
+
+  onCancel = () => {
+    this.props.onClose();
+    this.props.resetState('createLocationDialogKey');
+  }
 
   renderTitle = () => (
     <DialogTitle>{i18n.t('core:createLocationTitle')}</DialogTitle>
@@ -324,22 +328,25 @@ class CreateLocationDialog extends React.Component<Props, State> {
     }
     return (
       <DialogContent>
-        <Grid container spacing={24}>
-          <Grid item xs={2} style={{ lineHeight: 3, textAlign: 'right' }}>
+        <Grid container spacing={32}>
+          <Grid item xs={2} style={{ lineHeight: 3, textAlign: 'left' }}>
           Type
           </Grid>
           <Grid item xs={10}>
-            <RadioGroup
-              component="label"
-              aria-label="Type"
-              name="type"
-              value={this.state.type}
-              onChange={this.handleInputChange}
-              row
-            >
-              <FormControlLabel value={locationType.TYPE_LOCAL} control={<Radio />} label="Local" />
-              <FormControlLabel value={locationType.TYPE_CLOUD} control={<Radio />} label="Cloud (S3 AWS)" />
-            </RadioGroup>
+            <FormControl disabled={!Pro}>
+              <RadioGroup
+                title={Pro ? '' : i18n.t('core:thisFunctionalityIsAvailableInPro')}
+                component="label"
+                aria-label="Type"
+                name="type"
+                value={this.state.type}
+                onChange={this.handleInputChange}
+                row
+              >
+                <FormControlLabel value={locationType.TYPE_LOCAL} control={<Radio />} label="Local" />
+                <FormControlLabel value={locationType.TYPE_CLOUD} control={<Radio />} label="Cloud (S3 AWS)" />
+              </RadioGroup>
+            </FormControl>
           </Grid>
         </Grid>
         {content}
@@ -382,7 +389,7 @@ class CreateLocationDialog extends React.Component<Props, State> {
           <FormControlLabel
             control={
               <Switch
-                disabled={!Pro}
+                disabled={!Pro || this.state.type === locationType.TYPE_CLOUD}
                 data-tid="changeWatchForChanges"
                 name="watchForChanges"
                 checked={this.state.watchForChanges}
@@ -396,28 +403,9 @@ class CreateLocationDialog extends React.Component<Props, State> {
     );
   };
 
-  /*
-        <FormControl
-          fullWidth={true}
-        >
-          <InputLabel htmlFor="perspective">{i18n.t('core:createLocationDefaultPerspective')}</InputLabel>
-          <Select
-            native
-            autoWidth
-            label={i18n.t('core:createLocationDefaultPerspective')}
-            name="perspective"
-            value={this.state.perspective}
-            onChange={this.handleInputChange}
-            input={<Input id="perspective" />}
-          >
-            {this.props.perspectives.map((persp) => (<option key={persp.id} value={persp.id}>{persp.name}</option>))}
-          </Select>
-        </FormControl>
-*/
-
   renderActions = () => (
     <DialogActions>
-      <Button onClick={this.props.onClose} >
+      <Button onClick={this.onCancel} >
         {i18n.t('core:cancel')}
       </Button>
       <Button
