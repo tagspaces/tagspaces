@@ -51,8 +51,7 @@ export function extractFileExtension(filePath: string) {
 }
 
 export function getMetaDirectoryPath(directoryPath: string) {
-  const metaFolder = directoryPath + AppConfig.dirSeparator + AppConfig.metaFolder;
-  return metaFolder;
+  return normalizePath(directoryPath) + AppConfig.dirSeparator + AppConfig.metaFolder;
 }
 
 export function getMetaFileLocationForFile(entryPath: string) {
