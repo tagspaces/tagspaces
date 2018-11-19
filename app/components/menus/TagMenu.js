@@ -34,6 +34,7 @@ import { type Tag, type TagGroup } from '../../reducers/taglibrary';
 import { actions as AppActions } from '../../reducers/app';
 import i18n from '../../services/i18n';
 import { type SearchQuery } from '../../services/search';
+import { getMaxSearchResults } from '../../reducers/settings';
 
 type Props = {
   anchorEl?: Object,
@@ -43,7 +44,8 @@ type Props = {
   selectedTagGroupEntry?: TagGroup,
   deleteTag: (uuid: string, tagGroupUuid: string) => void,
   searchLocationIndex: (searchQuery: SearchQuery) => void,
-  editTag: () => void
+  editTag: () => void,
+  maxSearchResults: number
 };
 
 type State = {
@@ -64,7 +66,10 @@ class TagLibraryMenu extends React.Component<Props, State> {
 
   showFilesWithThisTag = () => {
     if (this.props.selectedTag) {
-      this.props.searchLocationIndex({ tags: [this.props.selectedTag.title] });
+      this.props.searchLocationIndex({
+        tags: [this.props.selectedTag.title],
+        maxSearchResults: this.props.maxSearchResults
+      });
     }
     this.props.onClose();
   };
@@ -95,7 +100,7 @@ class TagLibraryMenu extends React.Component<Props, State> {
     }
   };
 
-/*
+  /*
   <MenuItem data-tid="tagSelectedFiles" onClick={this.tagSelectedFiles}>
     <ListItemIcon>
       <LocalOffer />
@@ -162,10 +167,16 @@ class TagLibraryMenu extends React.Component<Props, State> {
   );
 }
 
+function mapStateToProps(state) {
+  return {
+    maxSearchResults: getMaxSearchResults(state)
+  };
+}
+
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
     searchLocationIndex: AppActions.searchLocationIndex,
   }, dispatch);
 }
 
-export default connect(undefined, mapDispatchToProps)(TagLibraryMenu);
+export default connect(mapStateToProps, mapDispatchToProps)(TagLibraryMenu);
