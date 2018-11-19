@@ -427,6 +427,7 @@ export const isGlobalKeyBindingEnabled = (state: Object) => state.settings.enabl
 export const getLeftVerticalSplitSize = (state: Object) => state.settings.leftVerticalSplitSize;
 export const getMainVerticalSplitSize = (state: Object) => state.settings.mainVerticalSplitSize;
 export const getTagDelimiter = (state: Object) => state.settings.tagDelimiter;
+export const getMaxSearchResults = (state: Object) => state.settings.maxSearchResult;
 
 function generateKeyBindingObject(keyBindings: Array<Object>) {
   const kbObject = {};
