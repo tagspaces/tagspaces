@@ -35,7 +35,7 @@ export default {
   prefixTagContainer: '',
   maxThumbSize: 400,
   indexerLimit: 200000,
-  maxSearchResult: 1000,
+  // maxSearchResult: 1000,
   defaultFileColor: '#808080',
   defaultFolderColor: '#555', // transparent #FDEEBD #ff791b #2c001e #880e4f
   isElectron: (navigator.userAgent.toLowerCase().indexOf(' electron/') > -1),
