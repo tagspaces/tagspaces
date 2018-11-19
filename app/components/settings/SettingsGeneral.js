@@ -280,7 +280,19 @@ class SettingsGeneral extends React.Component<Props, State> {
             />
           </ListItemSecondaryAction>
         </ListItem>
-        <ListItem>
+        {/* <ListItem>
+          <ListItemText primary={i18n.t('core:desktopMode')} />
+          <ListItemSecondaryAction>
+            <Switch
+              data-tid="settingsSetDesktopMode"
+              onClick={() =>
+                this.props.setDesktopMode(!this.props.settings.desktopMode)
+              }
+              checked={this.props.settings.desktopMode}
+            />
+          </ListItemSecondaryAction>
+        </ListItem> */}
+        {/* <ListItem>
           <ListItemText style={{ maxWidth: '300px' }} primary={i18n.t('core:tagDelimiterChoose')} />
           <ListItemSecondaryAction>
             <Select
@@ -298,7 +310,7 @@ class SettingsGeneral extends React.Component<Props, State> {
               <MenuItem value=",">{i18n.t('core:tagDelimiterComma')}</MenuItem>
             </Select>
           </ListItemSecondaryAction>
-        </ListItem>
+        </ListItem> */}
         <ListItem>
           <ListItemText primary={i18n.t('core:maxSearchResultChoose')} />
           <ListItemSecondaryAction>
@@ -347,18 +359,6 @@ class SettingsGeneral extends React.Component<Props, State> {
 }
 
 /*
-        <ListItem>
-          <ListItemText primary={i18n.t('core:desktopMode')} />
-          <ListItemSecondaryAction>
-            <Switch
-              data-tid="settingsSetDesktopMode"
-              onClick={() =>
-                this.props.setDesktopMode(!this.props.settings.desktopMode)
-              }
-              checked={this.props.settings.desktopMode}
-            />
-          </ListItemSecondaryAction>
-        </ListItem>
         <ListItem>
           <span className={this.props.classes.pro}>pro</span>
           <ListItemText primary={i18n.t('core:calculateTag')} />
