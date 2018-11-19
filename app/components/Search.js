@@ -45,6 +45,7 @@ import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
 // import Switch from '@material-ui/core/Switch';
 import { actions as AppActions, getIndexedEntriesCount, isIndexing, getDirectoryPath } from '../reducers/app';
+import { getMaxSearchResults } from '../reducers/settings';
 import styles from './SidePanels.css';
 import i18n from '../services/i18n';
 import { FileTypeGroups, type SearchQuery } from '../services/search';
@@ -57,6 +58,7 @@ type Props = {
   loadDirectoryContent: (path: string) => void,
   currentDirectory: string,
   indexedEntriesCount: number,
+  maxSearchResults: number,
   indexing: boolean
 };
 
@@ -119,7 +121,8 @@ class Search extends React.Component<Props, State> {
       textQuery: this.state.textQuery,
       fileTypes: this.state.fileTypes,
       tagConjunction: this.state.tagConjunction,
-      tags
+      tags,
+      maxSearchResults: this.props.maxSearchResults
     };
     console.log('Search object: ' + JSON.stringify(searchQuery));
     this.props.searchLocationIndex(searchQuery);
@@ -370,7 +373,8 @@ function mapStateToProps(state) {
   return {
     indexing: isIndexing(state),
     currentDirectory: getDirectoryPath(state),
-    indexedEntriesCount: getIndexedEntriesCount(state)
+    indexedEntriesCount: getIndexedEntriesCount(state),
+    maxSearchResults: getMaxSearchResults(state)
   };
 }
 

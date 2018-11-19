@@ -249,8 +249,10 @@ class EntryContainer extends React.Component<Props, State> {
         this.setState({ editingSupported: false });
       }
 
+      const { settings } = nextProps;
+
       const currentEntry = nextProps.openedFiles[0];
-      const tags = extractTagsAsObjects(currentEntry.path);
+      const tags = extractTagsAsObjects(currentEntry.path, settings.tagDelimiter);
       this.setState({
         selectedItem: {
           ...currentEntry,
@@ -258,9 +260,8 @@ class EntryContainer extends React.Component<Props, State> {
         }
       });
 
-      const { settings } = nextProps;
       this.setState({
-        entryPropertiesSplitSize: nextProps.settings.entryPropertiesSplitSize,
+        entryPropertiesSplitSize: settings.entryPropertiesSplitSize,
         isPropertiesPanelVisible: settings.entryPropertiesSplitSize > defaultSplitSize
       });
     } else {
@@ -938,7 +939,7 @@ class EntryContainer extends React.Component<Props, State> {
                     shouldCopyFile={this.state.shouldCopyFile}
                     normalizeShouldCopyFile={() => this.setState({ shouldCopyFile: false })}
                     onEditTags={() => {
-                      const tags = extractTagsAsObjects(currentEntry.path);
+                      const tags = extractTagsAsObjects(currentEntry.path, this.props.settings.tagDelimiter);
                       this.setState({
                         selectedItem: {
                           ...currentEntry,

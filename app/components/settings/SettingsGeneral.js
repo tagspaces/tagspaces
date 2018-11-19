@@ -73,7 +73,9 @@ type Props = {
   setUseTrashCan: () => void,
   setPersistTagsInSidecarFile: () => void,
   setAddTagsToLibrary: () => void,
-  setUseGenerateThumbnails: () => void
+  setUseGenerateThumbnails: () => void,
+  setTagDelimiter: () => void,
+  setMaxSearchResult: () => void
 };
 
 type State = {
@@ -109,7 +111,16 @@ class SettingsGeneral extends React.Component<Props, State> {
     this.setState({ currentTheme: event.target.value });
   };
 
+  handleTagDelimiterChange = event => {
+    this.props.setTagDelimiter(event.target.value);
+  };
+
+  handleMaxSearchResult = event => {
+    this.props.setMaxSearchResult(event.target.value);
+  };
+
   render() {
+    console.log('render settings');
     const classes = this.props.classes;
 
     return (
@@ -256,7 +267,7 @@ class SettingsGeneral extends React.Component<Props, State> {
           </ListItemSecondaryAction>
         </ListItem>
         <ListItem>
-          <ListItemText primary={i18n.t('core:showUnixHiddenFiles')} />
+          <ListItemText style={{ maxWidth: '350px' }} primary={i18n.t('core:showUnixHiddenFiles')} />
           <ListItemSecondaryAction>
             <Switch
               data-tid="settingsSetShowUnixHiddenEntries"
@@ -266,6 +277,39 @@ class SettingsGeneral extends React.Component<Props, State> {
                 )
               }
               checked={this.props.settings.showUnixHiddenEntries}
+            />
+          </ListItemSecondaryAction>
+        </ListItem>
+        <ListItem>
+          <ListItemText style={{ maxWidth: '300px' }} primary={i18n.t('core:tagDelimiterChoose')} />
+          <ListItemSecondaryAction>
+            <Select
+              style={{ minWidth: '170px' }}
+              data-tid="settingsTagDelimiterChoose"
+              value={this.props.settings.tagDelimiter}
+              onChange={this.handleTagDelimiterChange}
+              inputProps={{
+                name: 'tagDelimiter',
+                id: 'tag-delimiter',
+              }}
+            >
+              <MenuItem value=" ">{i18n.t('core:tagDelimiterSpace')}</MenuItem>
+              <MenuItem value="_">{i18n.t('core:tagDelimiterUnderscore')}</MenuItem>
+              <MenuItem value=",">{i18n.t('core:tagDelimiterComma')}</MenuItem>
+            </Select>
+          </ListItemSecondaryAction>
+        </ListItem>
+        <ListItem>
+          <ListItemText primary={i18n.t('core:maxSearchResultChoose')} />
+          <ListItemSecondaryAction>
+            <Input
+              style={{ maxWidth: '170px' }}
+              type="number"
+              data-tid="settingsMaxSearchResult"
+              label={i18n.t('core:maxSearchResult')}
+              value={this.props.settings.maxSearchResult}
+              onChange={this.handleMaxSearchResult}
+              // onBlur={this.handleMaxSearchResult}
             />
           </ListItemSecondaryAction>
         </ListItem>

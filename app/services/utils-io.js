@@ -272,7 +272,7 @@ export async function loadSubFolders(path: string, loadHidden: boolean = false) 
   return subfolders;
 }
 
-export function generateFileName(fileName: string, tags: Array<string>) {
+export function generateFileName(fileName: string, tags: Array<string>, tagDelimiter: string) {
   let tagsString = '';
   const prefixTagContainer = AppConfig.prefixTagContainer;
   // Creating the string will all the tags by more that 0 tags
@@ -282,7 +282,7 @@ export function generateFileName(fileName: string, tags: Array<string>) {
       if (i === tags.length - 1) {
         tagsString += tags[i].trim();
       } else {
-        tagsString += tags[i].trim() + AppConfig.tagDelimiter;
+        tagsString += tags[i].trim() + tagDelimiter;
       }
     }
     tagsString = tagsString.trim() + AppConfig.endTagContainer;
