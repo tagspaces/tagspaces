@@ -90,7 +90,6 @@ export default (state = defaultSettings, action) => {
     return { ...state, showUnixHiddenEntries: action.showUnixHiddenEntries };
   }
   case types.SET_TAG_DELIMITER: {
-    AppConfig.tagDelimiter = action.delimiter;
     return { ...state, tagDelimiter: action.delimiter };
   }
   case types.SET_MAX_SEARCH_RESULT: {

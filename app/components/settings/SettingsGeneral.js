@@ -267,7 +267,7 @@ class SettingsGeneral extends React.Component<Props, State> {
           </ListItemSecondaryAction>
         </ListItem>
         <ListItem>
-          <ListItemText primary={i18n.t('core:showUnixHiddenFiles')} />
+          <ListItemText style={{ maxWidth: '350px' }} primary={i18n.t('core:showUnixHiddenFiles')} />
           <ListItemSecondaryAction>
             <Switch
               data-tid="settingsSetShowUnixHiddenEntries"
@@ -281,9 +281,10 @@ class SettingsGeneral extends React.Component<Props, State> {
           </ListItemSecondaryAction>
         </ListItem>
         <ListItem>
-          <ListItemText primary={i18n.t('core:tagDelimiterChoose')} />
+          <ListItemText style={{ maxWidth: '300px' }} primary={i18n.t('core:tagDelimiterChoose')} />
           <ListItemSecondaryAction>
             <Select
+              style={{ minWidth: '170px' }}
               data-tid="settingsTagDelimiterChoose"
               value={this.props.settings.tagDelimiter}
               onChange={this.handleTagDelimiterChange}
@@ -302,13 +303,13 @@ class SettingsGeneral extends React.Component<Props, State> {
           <ListItemText primary={i18n.t('core:maxSearchResultChoose')} />
           <ListItemSecondaryAction>
             <Input
-              style={{ width: '162px' }}
+              style={{ maxWidth: '170px' }}
+              type="number"
               data-tid="settingsMaxSearchResult"
-              name="maxSearchResult"
               label={i18n.t('core:maxSearchResult')}
-              defaultValue={this.props.settings.maxSearchResult}
-              // value={this.props.settings.maxSearchResult}
-              onBlur={this.handleMaxSearchResult}
+              value={this.props.settings.maxSearchResult}
+              onChange={this.handleMaxSearchResult}
+              // onBlur={this.handleMaxSearchResult}
             />
           </ListItemSecondaryAction>
         </ListItem>
