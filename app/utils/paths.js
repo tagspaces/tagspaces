@@ -22,7 +22,7 @@ import { type Tag } from '../reducers/taglibrary';
 
 export function baseName(dirPath: string) {
   const fileName = dirPath.substring(dirPath.lastIndexOf(AppConfig.dirSeparator) + 1, dirPath.length);
-  return fileName ? fileName : dirPath;
+  return fileName || dirPath;
 }
 
 export function extractFileExtension(filePath: string) {
@@ -169,8 +169,8 @@ export function extractTitle(entryPath: string, isDirectory?: boolean = false) {
   return title;
 }
 
-export function extractTagsAsObjects(filePath: string): Array<Tag> {
-  const tagsInFileName = extractTags(filePath);
+export function extractTagsAsObjects(filePath: string, tagDelimiter: string): Array<Tag> {
+  const tagsInFileName = extractTags(filePath, tagDelimiter);
   const tagArray = [];
   tagsInFileName.map((tag) => {
     tagArray.push({
@@ -182,7 +182,11 @@ export function extractTagsAsObjects(filePath: string): Array<Tag> {
   return tagArray;
 }
 
-export function extractTags(filePath: string) {
+export function extractTags(filePath: string, tagDelimiter: string) {
+  if (tagDelimiter === undefined) { // TODO get tagDelimiter from settings reducer only
+    // eslint-disable-next-line no-param-reassign
+    tagDelimiter = AppConfig.tagDelimiter;
+  }
   // console.log('Extracting tags from: ' + filePath);
   const fileName = extractFileName(filePath);
   // WithoutExt
@@ -195,7 +199,7 @@ export function extractTags(filePath: string) {
   }
   const cleanedTags = [];
   const tagContainer = fileName.slice(beginTagContainer + 1, endTagContainer).trim();
-  tags = tagContainer.split(AppConfig.tagDelimiter);
+  tags = tagContainer.split(tagDelimiter);
   for (let i = 0; i < tags.length; i += 1) {
     // Min tag length set to 1 character
     if (tags[i].trim().length > 0) {

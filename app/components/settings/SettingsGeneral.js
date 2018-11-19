@@ -73,7 +73,9 @@ type Props = {
   setUseTrashCan: () => void,
   setPersistTagsInSidecarFile: () => void,
   setAddTagsToLibrary: () => void,
-  setUseGenerateThumbnails: () => void
+  setUseGenerateThumbnails: () => void,
+  setTagDelimiter: () => void,
+  setMaxSearchResult: () => void
 };
 
 type State = {
@@ -109,7 +111,16 @@ class SettingsGeneral extends React.Component<Props, State> {
     this.setState({ currentTheme: event.target.value });
   };
 
+  handleTagDelimiterChange = event => {
+    this.props.setTagDelimiter(event.target.value);
+  };
+
+  handleMaxSearchResult = event => {
+    this.props.setMaxSearchResult(event.target.value);
+  };
+
   render() {
+    console.log('render settings');
     const classes = this.props.classes;
 
     return (
@@ -266,6 +277,38 @@ class SettingsGeneral extends React.Component<Props, State> {
                 )
               }
               checked={this.props.settings.showUnixHiddenEntries}
+            />
+          </ListItemSecondaryAction>
+        </ListItem>
+        <ListItem>
+          <ListItemText primary={i18n.t('core:tagDelimiterChoose')} />
+          <ListItemSecondaryAction>
+            <Select
+              data-tid="settingsTagDelimiterChoose"
+              value={this.props.settings.tagDelimiter}
+              onChange={this.handleTagDelimiterChange}
+              inputProps={{
+                name: 'tagDelimiter',
+                id: 'tag-delimiter',
+              }}
+            >
+              <MenuItem value=" ">{i18n.t('core:tagDelimiterSpace')}</MenuItem>
+              <MenuItem value="_">{i18n.t('core:tagDelimiterUnderscore')}</MenuItem>
+              <MenuItem value=",">{i18n.t('core:tagDelimiterComma')}</MenuItem>
+            </Select>
+          </ListItemSecondaryAction>
+        </ListItem>
+        <ListItem>
+          <ListItemText primary={i18n.t('core:maxSearchResultChoose')} />
+          <ListItemSecondaryAction>
+            <Input
+              style={{ width: '162px' }}
+              data-tid="settingsMaxSearchResult"
+              name="maxSearchResult"
+              label={i18n.t('core:maxSearchResult')}
+              defaultValue={this.props.settings.maxSearchResult}
+              // value={this.props.settings.maxSearchResult}
+              onBlur={this.handleMaxSearchResult}
             />
           </ListItemSecondaryAction>
         </ListItem>

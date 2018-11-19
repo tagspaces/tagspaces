@@ -31,6 +31,8 @@ export const types = {
   SET_LANGUAGE: 'SETTINGS/SET_LANGUAGE',
   SET_SHOWUNIXHIDDENENTRIES: 'SETTINGS/SET_SHOWUNIXHIDDENENTRIES',
   SET_DESKTOPMODE: 'SETTINGS/SET_DESKTOPMODE',
+  SET_TAG_DELIMITER: 'SETTINGS/SET_TAG_DELIMITER',
+  SET_MAX_SEARCH_RESULT: 'SETTINGS/SET_MAX_SEARCH_RESULT',
   SET_CHECKFORUPDATES: 'SETTINGS/SET_CHECKFORUPDATES',
   SET_USEDEFAULTLOCATION: 'SETTINGS/SET_USEDEFAULTLOCATION',
   SET_COLOREDFILEEXTENSION: 'SETTINGS/SET_COLOREDFILEEXTENSION',
@@ -86,6 +88,13 @@ export default (state = defaultSettings, action) => {
   }
   case types.SET_SHOWUNIXHIDDENENTRIES: {
     return { ...state, showUnixHiddenEntries: action.showUnixHiddenEntries };
+  }
+  case types.SET_TAG_DELIMITER: {
+    AppConfig.tagDelimiter = action.delimiter;
+    return { ...state, tagDelimiter: action.delimiter };
+  }
+  case types.SET_MAX_SEARCH_RESULT: {
+    return { ...state, maxSearchResult: action.maxSearchResult };
   }
   case types.SET_DESKTOPMODE: {
     return { ...state, desktopMode: action.desktopMode };
@@ -254,6 +263,8 @@ export default (state = defaultSettings, action) => {
 };
 
 export const actions = {
+  setTagDelimiter: (delimiter: string) => ({ type: types.SET_TAG_DELIMITER, delimiter }),
+  setMaxSearchResult: (maxSearchResult: number) => ({ type: types.SET_MAX_SEARCH_RESULT, maxSearchResult }),
   setDesktopMode: (desktopMode: boolean) => ({ type: types.SET_DESKTOPMODE, desktopMode }),
   setShowUnixHiddenEntries: (showUnixHiddenEntries: boolean) => ({
     type: types.SET_SHOWUNIXHIDDENENTRIES,
@@ -416,6 +427,7 @@ export const getCurrentTheme = (state: Object) => state.settings.currentTheme;
 export const isGlobalKeyBindingEnabled = (state: Object) => state.settings.enableGlobalKeyboardShortcuts;
 export const getLeftVerticalSplitSize = (state: Object) => state.settings.leftVerticalSplitSize;
 export const getMainVerticalSplitSize = (state: Object) => state.settings.mainVerticalSplitSize;
+export const getTagDelimiter = (state: Object) => state.settings.tagDelimiter;
 
 function generateKeyBindingObject(keyBindings: Array<Object>) {
   const kbObject = {};
