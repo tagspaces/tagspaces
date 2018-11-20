@@ -128,7 +128,7 @@ const actions = {
     } else {
       const fileName = extractFileName(path);
       const containingDirectoryPath = extractContainingDirectoryPath(path);
-      const extractedTags = extractTags(path);
+      const extractedTags = extractTags(path, settings.tagDelimiter);
       for (let i = 0; i < tags.length; i += 1) {
         // check if tag is already in the tag array
         if (extractedTags.indexOf(tags[i].title) < 0) {
@@ -136,26 +136,28 @@ const actions = {
           extractedTags.push(tags[i].title);
         }
       }
-      const newFilePath = containingDirectoryPath + AppConfig.dirSeparator + generateFileName(fileName, extractedTags);
+      const newFilePath = containingDirectoryPath + AppConfig.dirSeparator + generateFileName(fileName, extractedTags, settings.tagDelimiter);
       dispatch(AppActions.renameFile(path, newFilePath));
     }
     // dispatch collectRecentTags(tags);
   },
   editTagForEntry: (path: string, tag: Tag, newTagTitle: string) => (
-    dispatch: (actions: Object) => void
+    dispatch: (actions: Object) => void,
+    getState: () => Object
   ) => {
+    const { settings } = getState();
     // TODO: Handle adding already added tags
     if (tag.type === 'plain') {
       const fileName = extractFileName(path);
       const containingDirectoryPath = extractContainingDirectoryPath(path);
-      const extractedTags = extractTags(path);
+      const extractedTags = extractTags(path, settings.tagDelimiter);
       for (let i = 0; i < extractedTags.length; i += 1) {
         // check if tag is already in the tag array
         if (extractedTags[i] === tag.title) {
           extractedTags[i] = newTagTitle.trim();
         }
       }
-      const newFileName = generateFileName(fileName, extractedTags);
+      const newFileName = generateFileName(fileName, extractedTags, settings.tagDelimiter);
       if (newFileName !== fileName) {
         dispatch(AppActions.renameFile(path, containingDirectoryPath + AppConfig.dirSeparator + newFileName));
       }
@@ -197,7 +199,9 @@ const actions = {
   },
   removeTagsFromEntry: (path: string, tags: Array<Tag>) => (
     dispatch: (actions: Object) => void,
+    getState: () => Object
   ) => {
+    const { settings } = getState();
     const sidecarTags = [];
     let tagsInFilenameAvailable = false;
     tags.map(tag => {
@@ -240,7 +244,7 @@ const actions = {
       if (!tagsInFilenameAvailable) {
         return;
       }
-      const extractedTags = extractTags(path);
+      const extractedTags = extractTags(path, settings.tagDelimiter);
       if (extractedTags.length > 0) {
         const fileName = extractFileName(path);
         const containingDirectoryPath = extractContainingDirectoryPath(path);
@@ -252,7 +256,7 @@ const actions = {
             extractedTags.splice(tagLoc, 1);
           }
         }
-        const newFilePath = containingDirectoryPath + AppConfig.dirSeparator + generateFileName(fileName, extractedTags);
+        const newFilePath = containingDirectoryPath + AppConfig.dirSeparator + generateFileName(fileName, extractedTags, settings.tagDelimiter);
         dispatch(AppActions.renameFile(path, newFilePath));
       }
     }
@@ -267,7 +271,9 @@ const actions = {
   },
   removeAllTagsFromEntry: (path: string) => (
     dispatch: (actions: Object) => void,
+    getState: () => Object
   ) => {
+    const { settings } = getState();
     loadMetaDataPromise(path).then(fsEntryMeta => {
       const updatedFsEntryMeta = {
         ...fsEntryMeta,
@@ -291,7 +297,7 @@ const actions = {
 
     function removeAllTagsFromFilename() {
       // Tags in file name case, check is file
-      const extractedTags = extractTags(path);
+      const extractedTags = extractTags(path, settings.tagDelimiter);
       if (extractedTags.length > 0) {
         const fileTitle = extractTitle(path);
         let fileExt = extractFileExtension(path);

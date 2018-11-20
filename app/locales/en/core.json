@@ -344,5 +344,10 @@
   "invalidAccessKey": "Access Key is empty",
   "invalidBucketName": "Bucket Name is empty",
   "invalidRegion": "Region is empty",
+  "tagDelimiterChoose": "Tag delimiter (e.g. Filename [TAG1_TAG2], _ is the delimiter)",
+  "tagDelimiterSpace": "space ( ) -recommended",
+  "tagDelimiterUnderscore": "underscore (_)",
+  "tagDelimiterComma": "comma (,)",
+  "maxSearchResultChoose": "Max Search Results",
   "-": "-"
 }

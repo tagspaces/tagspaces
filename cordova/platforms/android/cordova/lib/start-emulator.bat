@@ -18,7 +18,7 @@
 @ECHO OFF
 SET script_path="%~dp0start-emulator"
 IF EXIST %script_path% (
-        node "%script_path%" %*
+        node %script_path% %*
 ) ELSE (
     ECHO.
     ECHO ERROR: Could not find 'start-emulator' script in 'cordova\lib' folder, aborting...>&2

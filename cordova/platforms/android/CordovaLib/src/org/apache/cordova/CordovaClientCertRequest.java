@@ -22,10 +22,12 @@ import java.security.Principal;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
 
+import android.annotation.SuppressLint;
 import android.webkit.ClientCertRequest;
 
 /**
  * Implementation of the ICordovaClientCertRequest for Android WebView.
+ *
  */
 public class CordovaClientCertRequest implements ICordovaClientCertRequest {
 
@@ -38,6 +40,7 @@ public class CordovaClientCertRequest implements ICordovaClientCertRequest {
     /**
      * Cancel this request
      */
+    @SuppressLint("NewApi")
     public void cancel()
     {
         request.cancel();
@@ -46,6 +49,7 @@ public class CordovaClientCertRequest implements ICordovaClientCertRequest {
     /*
      * Returns the host name of the server requesting the certificate.
      */
+    @SuppressLint("NewApi")
     public String getHost()
     {
         return request.getHost();
@@ -54,6 +58,7 @@ public class CordovaClientCertRequest implements ICordovaClientCertRequest {
     /*
      * Returns the acceptable types of asymmetric keys (can be null).
      */
+    @SuppressLint("NewApi")
     public String[] getKeyTypes()
     {
         return request.getKeyTypes();
@@ -62,6 +67,7 @@ public class CordovaClientCertRequest implements ICordovaClientCertRequest {
     /*
      * Returns the port number of the server requesting the certificate.
      */
+    @SuppressLint("NewApi")
     public int getPort()
     {
         return request.getPort();
@@ -70,6 +76,7 @@ public class CordovaClientCertRequest implements ICordovaClientCertRequest {
     /*
      * Returns the acceptable certificate issuers for the certificate matching the private key (can be null).
      */
+    @SuppressLint("NewApi")
     public Principal[] getPrincipals()
     {
         return request.getPrincipals();
@@ -78,6 +85,7 @@ public class CordovaClientCertRequest implements ICordovaClientCertRequest {
     /*
      * Ignore the request for now. Do not remember user's choice.
      */
+    @SuppressLint("NewApi")
     public void ignore()
     {
         request.ignore();
@@ -89,6 +97,7 @@ public class CordovaClientCertRequest implements ICordovaClientCertRequest {
      * @param privateKey The privateKey
      * @param chain The certificate chain 
      */
+    @SuppressLint("NewApi")
     public void proceed(PrivateKey privateKey, X509Certificate[] chain)
     {
         request.proceed(privateKey, chain);

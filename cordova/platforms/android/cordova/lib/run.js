@@ -21,14 +21,14 @@
 
 /* jshint loopfunc:true */
 
-var path  = require('path'),
-    build = require('./build'),
-    emulator = require('./emulator'),
-    device   = require('./device'),
-    Q = require('q'),
-    events = require('cordova-common').events;
+var path = require('path');
+var build = require('./build');
+var emulator = require('./emulator');
+var device = require('./device');
+var Q = require('q');
+var events = require('cordova-common').events;
 
-function getInstallTarget(runOptions) {
+function getInstallTarget (runOptions) {
     var install_target;
     if (runOptions.target) {
         install_target = runOptions.target;
@@ -51,17 +51,15 @@ function getInstallTarget(runOptions) {
  *
  * @return  {Promise}
  */
- module.exports.run = function(runOptions) {
+module.exports.run = function (runOptions) {
 
     var self = this;
     var install_target = getInstallTarget(runOptions);
 
-    return Q()
-    .then(function() {
+    return Q().then(function () {
         if (!install_target) {
             // no target given, deploy to device if available, otherwise use the emulator.
-            return device.list()
-            .then(function(device_list) {
+            return device.list().then(function (device_list) {
                 if (device_list.length > 0) {
                     events.emit('warn', 'No target specified, deploying to device \'' + device_list[0] + '\'.');
                     install_target = device_list[0];
@@ -71,36 +69,31 @@ function getInstallTarget(runOptions) {
                 }
             });
         }
-    }).then(function() {
-        if (install_target == '--device') {
+    }).then(function () {
+        if (install_target === '--device') {
             return device.resolveTarget(null);
-        } else if (install_target == '--emulator') {
+        } else if (install_target === '--emulator') {
             // Give preference to any already started emulators. Else, start one.
-            return emulator.list_started()
-            .then(function(started) {
+            return emulator.list_started().then(function (started) {
                 return started && started.length > 0 ? started[0] : emulator.start();
-            }).then(function(emulatorId) {
+            }).then(function (emulatorId) {
                 return emulator.resolveTarget(emulatorId);
             });
         }
         // They specified a specific device/emulator ID.
-        return device.list()
-        .then(function(devices) {
+        return device.list().then(function (devices) {
             if (devices.indexOf(install_target) > -1) {
                 return device.resolveTarget(install_target);
             }
-            return emulator.list_started()
-            .then(function(started_emulators) {
+            return emulator.list_started().then(function (started_emulators) {
                 if (started_emulators.indexOf(install_target) > -1) {
                     return emulator.resolveTarget(install_target);
                 }
-                return emulator.list_images()
-                .then(function(avds) {
+                return emulator.list_images().then(function (avds) {
                     // if target emulator isn't started, then start it.
                     for (var avd in avds) {
-                        if (avds[avd].name == install_target) {
-                            return emulator.start(install_target)
-                            .then(function(emulatorId) {
+                        if (avds[avd].name === install_target) {
+                            return emulator.start(install_target).then(function (emulatorId) {
                                 return emulator.resolveTarget(emulatorId);
                             });
                         }
@@ -109,16 +102,14 @@ function getInstallTarget(runOptions) {
                 });
             });
         });
-    }).then(function(resolvedTarget) {
+    }).then(function (resolvedTarget) {
         // Better just call self.build, but we're doing some processing of
         // build results (according to platformApi spec) so they are in different
         // format than emulator.install expects.
         // TODO: Update emulator/device.install to handle this change
-        return build.run.call(self, runOptions, resolvedTarget)
-        .then(function(buildResults) {
-            if (resolvedTarget.isEmulator) {
-                return emulator.wait_for_boot(resolvedTarget.target)
-                .then(function () {
+        return build.run.call(self, runOptions, resolvedTarget).then(function (buildResults) {
+            if (resolvedTarget && resolvedTarget.isEmulator) {
+                return emulator.wait_for_boot(resolvedTarget.target).then(function () {
                     return emulator.install(resolvedTarget, buildResults);
                 });
             }
@@ -127,7 +118,7 @@ function getInstallTarget(runOptions) {
     });
 };
 
-module.exports.help = function() {
+module.exports.help = function () {
     console.log('Usage: ' + path.relative(process.cwd(), process.argv[1]) + ' [options]');
     console.log('Build options :');
     console.log('    --debug : Builds project in debug mode');

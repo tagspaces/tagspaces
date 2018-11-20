@@ -1,0 +1,32 @@
+# Logs
+logs
+*.log
+
+# Runtime data
+pids
+*.pid
+*.seed
+
+# node-waf configuration
+.lock-wscript
+
+build/Release
+.eslintcache
+
+# Dependency directory
+node_modules
+
+# OSX
+.DS_Store
+
+node_modules/*
+www/*
+!cordova/www/index.html
+
+platforms/android/.gradle/*
+platforms/android/app/build/*
+platforms/android/build/*
+platforms/android/CordovaLib/build/*
+platforms/android/assets/www/*
+plugins/**/*
+

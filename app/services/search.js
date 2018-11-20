@@ -47,7 +47,8 @@ export type SearchQuery = {
   fileTypes?: Array<string>,
   tagConjunction?: 'AND' | 'OR',
   tags?: Array<string>, // TODO Array<Tag>
-  lastChanged?: Date
+  lastChanged?: Date,
+  maxSearchResults?: number
 };
 
 
@@ -176,8 +177,8 @@ export default class Search {
 
     if (results) {
       console.log('Results found: ' + results.length);
-      if (results.length >= AppConfig.maxSearchResult) {
-        results = results.slice(0, AppConfig.maxSearchResult);
+      if (searchQuery.maxSearchResults && results.length >= searchQuery.maxSearchResults) {
+        results = results.slice(0, searchQuery.maxSearchResults);
       }
       return results;
     }

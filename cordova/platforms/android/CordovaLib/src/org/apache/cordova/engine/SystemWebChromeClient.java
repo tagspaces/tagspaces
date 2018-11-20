@@ -149,21 +149,6 @@ public class SystemWebChromeClient extends WebChromeClient {
         quotaUpdater.updateQuota(MAX_QUOTA);
     }
 
-    // console.log in api level 7: http://developer.android.com/guide/developing/debug-tasks.html
-    // Expect this to not compile in a future Android release!
-    @SuppressWarnings("deprecation")
-    @Override
-    public void onConsoleMessage(String message, int lineNumber, String sourceID)
-    {
-        //This is only for Android 2.1
-        if(android.os.Build.VERSION.SDK_INT == android.os.Build.VERSION_CODES.ECLAIR_MR1)
-        {
-            LOG.d(LOG_TAG, "%s: Line %d : %s", sourceID, lineNumber, message);
-            super.onConsoleMessage(message, lineNumber, sourceID);
-        }
-    }
-
-    @TargetApi(8)
     @Override
     public boolean onConsoleMessage(ConsoleMessage consoleMessage)
     {

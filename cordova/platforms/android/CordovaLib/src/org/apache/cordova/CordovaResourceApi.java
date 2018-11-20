@@ -263,6 +263,7 @@ public class CordovaResourceApi {
                 } catch (FileNotFoundException e) {
                     // Will occur if the file is compressed.
                     inputStream = assetManager.open(assetPath);
+                    length = inputStream.available();
                 }
                 String mimeType = getMimeTypeFromPath(assetPath);
                 return new OpenForReadResult(uri, inputStream, mimeType, length, assetFd);

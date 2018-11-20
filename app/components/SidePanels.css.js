@@ -22,6 +22,7 @@ export default (theme) => ({
     height: '100%',
     maxHeight: '100%',
     padding: 5,
+    paddingBottom: 50,
     overflowY: 'hidden',
     backgroundColor: theme.palette.background.default
   },
@@ -42,7 +43,8 @@ export default (theme) => ({
   taggroupsArea: {
     paddingTop: 0,
     marginTop: 0,
-    maxHeight: '100%',
+    height: 'calc(100% - 50px)',
+    maxHeight: 'calc(100% - 50px)',
     overflowY: 'overlay'
   },
   searchArea: {

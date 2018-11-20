@@ -351,7 +351,6 @@ class MainPage extends Component<Props, State> {
               }}
             >
               <FolderContainer
-                isDesktopMode={this.props.isDesktopMode}
                 windowHeight={this.state.height}
                 windowWidth={this.state.width}
               />
@@ -383,7 +382,6 @@ class MainPage extends Component<Props, State> {
               defaultSize={this.state.isViewerPanelVisible ? '50%' : '100%'}
             >
               <FolderContainer
-                isDesktopMode={this.props.isDesktopMode}
                 toggleDrawer={this.toggleDrawer}
                 windowHeight={this.state.height}
               />

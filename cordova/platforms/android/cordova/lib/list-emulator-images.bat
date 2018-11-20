@@ -18,7 +18,7 @@
 @ECHO OFF
 SET script_path="%~dp0list-emulator-images"
 IF EXIST %script_path% (
-        node "%script_path%" %*
+        node %script_path% %*
 ) ELSE (
     ECHO. 
     ECHO ERROR: Could not find 'list-emulator-images' script in 'cordova\lib' folder, aborting...>&2

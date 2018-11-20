@@ -20,8 +20,8 @@
 var CordovaError = require('cordova-common').CordovaError;
 
 var knownBuilders = {
-    ant: 'AntBuilder',
     gradle: 'GradleBuilder',
+    studio: 'StudioBuilder',
     none: 'GenericBuilder'
 };
 
@@ -35,8 +35,7 @@ var knownBuilders = {
  * @return  {Builder}               A builder instance for specified build type.
  */
 module.exports.getBuilder = function (builderType, projectRoot) {
-    if (!knownBuilders[builderType])
-        throw new CordovaError('Builder ' + builderType + ' is not supported.');
+    if (!knownBuilders[builderType]) { throw new CordovaError('Builder ' + builderType + ' is not supported.'); }
 
     try {
         var Builder = require('./' + knownBuilders[builderType]);
