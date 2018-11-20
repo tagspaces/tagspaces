@@ -46,7 +46,7 @@ export type SearchQuery = {
   textQuery?: string,
   fileTypes?: Array<string>,
   tagConjunction?: 'AND' | 'OR',
-  tags?: Array<string>,
+  tags?: Array<string>, // TODO Array<Tag>
   lastChanged?: Date
 };
 
