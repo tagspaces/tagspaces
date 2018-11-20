@@ -51,8 +51,7 @@ export function extractFileExtension(filePath: string) {
 }
 
 export function getMetaDirectoryPath(directoryPath: string) {
-  const metaFolder = directoryPath + AppConfig.dirSeparator + AppConfig.metaFolder;
-  return metaFolder;
+  return normalizePath(directoryPath) + AppConfig.dirSeparator + AppConfig.metaFolder;
 }
 
 export function getMetaFileLocationForFile(entryPath: string) {
@@ -88,6 +87,15 @@ export function cleanTrailingDirSeparator(dirPath: string): string {
   }
   console.error('Directory Path ' + dirPath + ' undefined');
   return '';
+}
+
+/**
+ *
+ * @param path -> root//subFolder/
+ * @returns {string} -> root/subFolder
+ */
+export function normalizePath(path: string): string {
+  return cleanTrailingDirSeparator(path.replace(/\/\//g, '/'));
 }
 
 export function extractFileNameWithoutExt(filePath: string): string {

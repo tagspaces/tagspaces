@@ -597,13 +597,15 @@ class EntryContainer extends React.Component<Props, State> {
         >
           <ExpandIcon />
         </IconButton>
-        <IconButton
-          title={i18n.t('core:openFileExternally')}
-          aria-label={i18n.t('core:openFileExternally')}
-          onClick={this.openNatively}
-        >
-          <OpenNativelyIcon />
-        </IconButton>
+        {!PlatformIO.haveObjectStoreSupport() && (
+          <IconButton
+            title={i18n.t('core:openFileExternally')}
+            aria-label={i18n.t('core:openFileExternally')}
+            onClick={this.openNatively}
+          >
+            <OpenNativelyIcon />
+          </IconButton>
+        )}
         <IconButton
           title={i18n.t('core:downloadFile')}
           aria-label={i18n.t('core:downloadFile')}
@@ -689,13 +691,15 @@ class EntryContainer extends React.Component<Props, State> {
   renderFolderToolbar = () => (
     <div className={this.props.classes.toolbar2}>
       <div className={this.props.classes.flexLeft}>
-        <IconButton
-          title={i18n.t('core:openDirectoryExternally')}
-          aria-label={i18n.t('core:openDirectoryExternally')}
-          onClick={this.openNatively}
-        >
-          <OpenNativelyIcon />
-        </IconButton>
+        {!PlatformIO.haveObjectStoreSupport() && (
+          <IconButton
+            title={i18n.t('core:openDirectoryExternally')}
+            aria-label={i18n.t('core:openDirectoryExternally')}
+            onClick={this.openNatively}
+          >
+            <OpenNativelyIcon />
+          </IconButton>
+        )}
         <IconButton
           title={i18n.t('core:reloadDirectory')}
           aria-label={i18n.t('core:reloadDirectory')}

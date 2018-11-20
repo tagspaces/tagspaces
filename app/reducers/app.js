@@ -37,7 +37,7 @@ import {
   getMetaFileLocationForFile,
   getThumbFileLocationForFile,
   extractParentDirectoryPath,
-  extractTagsAsObjects
+  extractTagsAsObjects, normalizePath
 } from '../utils/paths';
 import { sortByCriteria, formatDateTime4Tag } from '../utils/misc';
 import i18n from '../services/i18n';
@@ -875,7 +875,7 @@ export const actions = {
     getState: () => Object
   ) => {
     const fileNameAndExt = fileName + '.' + fileType;
-    const filePath = targetPath + AppConfig.dirSeparator + fileNameAndExt;
+    const filePath = normalizePath(targetPath) + AppConfig.dirSeparator + fileNameAndExt;
     let fileContent = content;
     if (fileType === 'html') {
       const newHTMLFileContent = getState().settings.newHTMLFileContent;

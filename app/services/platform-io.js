@@ -42,11 +42,13 @@ export default class PlatformIO {
     } else {
       console.log('ObjectStore support available in the PRO version');
     }
-  }
+  };
 
   static disableObjectStoreSupport = (): void => {
     objectStoreAPI = undefined;
-  }
+  };
+
+  static haveObjectStoreSupport = (): boolean => objectStoreAPI !== undefined;
 
   static initMainMenu = (menuConfig: Array<Object>): void => {
     if (nativeAPI.initMainMenu) {
@@ -54,7 +56,7 @@ export default class PlatformIO {
     } else {
       console.log('initMainMenu not supported');
     }
-  }
+  };
 
   static initTrayMenu = (menuConfig: Array<Object>): void => {
     if (nativeAPI.initTrayMenu) {
@@ -102,7 +104,7 @@ export default class PlatformIO {
       return objectStoreAPI.getURLforPath(path);
     }
     // console.log('getURLforPath not supported');
-  }
+  };
 
   static createDirectoryTree = (directoryPath: string): Object =>
     nativeAPI.createDirectoryTree(directoryPath);
@@ -129,25 +131,45 @@ export default class PlatformIO {
       return objectStoreAPI.getPropertiesPromise(path);
     }
     return nativeAPI.getPropertiesPromise(path);
-  }
+  };
 
-  static createDirectoryPromise = (dirPath: string): Promise<any> =>
-    nativeAPI.createDirectoryPromise(dirPath);
+  static createDirectoryPromise = (dirPath: string): Promise<any> => {
+    if (objectStoreAPI) {
+      return objectStoreAPI.createDirectoryPromise(dirPath);
+    }
+    return nativeAPI.createDirectoryPromise(dirPath);
+  };
 
   static copyFilePromise = (
     sourceFilePath: string,
     targetFilePath: string
-  ): Promise<any> => nativeAPI.copyFilePromise(sourceFilePath, targetFilePath);
+  ): Promise<any> => {
+    if (objectStoreAPI) {
+      return objectStoreAPI.copyFilePromise(sourceFilePath, targetFilePath);
+    }
+    return nativeAPI.copyFilePromise(sourceFilePath, targetFilePath);
+  };
 
   static renameFilePromise = (
     filePath: string,
     newFilePath: string
-  ): Promise<any> => nativeAPI.renameFilePromise(filePath, newFilePath);
+  ): Promise<any> => {
+    if (objectStoreAPI) {
+      return objectStoreAPI.renameFilePromise(filePath, newFilePath);
+    }
+    return nativeAPI.renameFilePromise(filePath, newFilePath);
+  };
 
   static renameDirectoryPromise = (
     dirPath: string,
     newDirName: string
-  ): Promise<any> => nativeAPI.renameDirectoryPromise(dirPath, newDirName);
+  ): Promise<any> => {
+    if (objectStoreAPI) {
+      // return objectStoreAPI.renameDirectoryPromise(dirPath, newDirName);
+      return Promise.reject('Renaming directories not supported on this platform');
+    }
+    return nativeAPI.renameDirectoryPromise(dirPath, newDirName);
+  };
 
   static loadTextFilePromise = (
     filePath: string,
@@ -157,7 +179,7 @@ export default class PlatformIO {
       return objectStoreAPI.loadTextFilePromise(filePath, isPreview);
     }
     return nativeAPI.loadTextFilePromise(filePath, isPreview);
-  }
+  };
 
   static getFileContentPromise = (
     filePath: string,
@@ -167,35 +189,58 @@ export default class PlatformIO {
       return objectStoreAPI.getFileContentPromise(filePath, type);
     }
     return nativeAPI.getFileContentPromise(filePath, type);
-  }
+  };
 
   static saveFilePromise = (
     filePath: string,
     content: any,
     overwrite: boolean
-  ): Promise<any> => nativeAPI.saveFilePromise(filePath, content, overwrite);
+  ): Promise<any> => {
+    if (objectStoreAPI) {
+      return objectStoreAPI.saveFilePromise(filePath, content, overwrite);
+    }
+    return nativeAPI.saveFilePromise(filePath, content, overwrite);
+  };
 
   static saveTextFilePromise = (
     filePath: string,
     content: string,
     overwrite: boolean
-  ): Promise<any> =>
-    nativeAPI.saveTextFilePromise(filePath, content, overwrite);
+  ): Promise<any> => {
+    if (objectStoreAPI) {
+      return objectStoreAPI.saveTextFilePromise(filePath, content, overwrite);
+    }
+    return nativeAPI.saveTextFilePromise(filePath, content, overwrite);
+  };
 
   static saveBinaryFilePromise = (
     filePath: string,
     content: any,
     overwrite: boolean
-  ): Promise<any> =>
-    nativeAPI.saveBinaryFilePromise(filePath, content, overwrite);
+  ): Promise<any> => {
+    if (objectStoreAPI) {
+      return objectStoreAPI.saveBinaryFilePromise(filePath, content, overwrite);
+    }
+    return nativeAPI.saveBinaryFilePromise(filePath, content, overwrite);
+  };
 
-  static deleteFilePromise = (path: string, useTrash?: boolean): Promise<any> =>
-    nativeAPI.deleteFilePromise(path, useTrash);
+  static deleteFilePromise = (path: string, useTrash?: boolean): Promise<any> => {
+    if (objectStoreAPI) {
+      return objectStoreAPI.deleteFilePromise(path, useTrash);
+    }
+    return nativeAPI.deleteFilePromise(path, useTrash);
+  };
 
   static deleteDirectoryPromise = (
     path: string,
     useTrash?: boolean
-  ): Promise<any> => nativeAPI.deleteDirectoryPromise(path, useTrash);
+  ): Promise<any> => {
+    if (objectStoreAPI) {
+      // return objectStoreAPI.deleteDirectoryPromise(path, useTrash);
+      return Promise.reject('Deleting directories not supported on this platform');
+    }
+    return nativeAPI.deleteDirectoryPromise(path, useTrash);
+  };
 
   static openDirectory = (dirPath: string): void =>
     nativeAPI.openDirectory(dirPath);
