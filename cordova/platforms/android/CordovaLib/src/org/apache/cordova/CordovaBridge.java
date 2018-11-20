@@ -18,6 +18,8 @@
 */
 package org.apache.cordova;
 
+import android.annotation.SuppressLint;
+
 import java.security.SecureRandom;
 
 import org.json.JSONArray;
@@ -110,6 +112,9 @@ public class CordovaBridge {
     }
 
     /** Called by cordova.js to initialize the bridge. */
+    //On old Androids SecureRandom isn't really secure, this is the least of your problems if
+    //you're running Android 4.3 and below in 2017
+    @SuppressLint("TrulyRandom")
     int generateBridgeSecret() {
         SecureRandom randGen = new SecureRandom();
         expectedBridgeSecret = randGen.nextInt(Integer.MAX_VALUE);

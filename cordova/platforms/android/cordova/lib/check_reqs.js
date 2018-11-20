@@ -21,19 +21,19 @@
 
 /* jshint sub:true */
 
-var shelljs = require('shelljs'),
-    child_process = require('child_process'),
-    Q     = require('q'),
-    path  = require('path'),
-    fs    = require('fs'),
-    os    = require('os'),
-    REPO_ROOT  = path.join(__dirname, '..', '..', '..', '..'),
-    PROJECT_ROOT = path.join(__dirname, '..', '..');
+var shelljs = require('shelljs');
+var child_process = require('child_process');
+var Q = require('q');
+var path = require('path');
+var fs = require('fs');
+var os = require('os');
+var REPO_ROOT = path.join(__dirname, '..', '..', '..', '..');
+var PROJECT_ROOT = path.join(__dirname, '..', '..');
 var CordovaError = require('cordova-common').CordovaError;
 var superspawn = require('cordova-common').superspawn;
 var android_sdk = require('./android_sdk');
 
-function forgivingWhichSync(cmd) {
+function forgivingWhichSync (cmd) {
     try {
         return fs.realpathSync(shelljs.which(cmd));
     } catch (e) {
@@ -41,29 +41,18 @@ function forgivingWhichSync(cmd) {
     }
 }
 
-function tryCommand(cmd, errMsg, catchStderr) {
-    var d = Q.defer();
-    child_process.exec(cmd, function(err, stdout, stderr) {
-        if (err) d.reject(new CordovaError(errMsg));
-        // Sometimes it is necessary to return an stderr instead of stdout in case of success, since
-        // some commands prints theirs output to stderr instead of stdout. 'javac' is the example
-        else d.resolve((catchStderr ? stderr : stdout).trim());
-    });
-    return d.promise;
-}
-
-module.exports.isWindows = function() {
-    return (os.platform() == 'win32');
+module.exports.isWindows = function () {
+    return (os.platform() === 'win32');
 };
 
-module.exports.isDarwin = function() {
-    return (os.platform() == 'darwin');
+module.exports.isDarwin = function () {
+    return (os.platform() === 'darwin');
 };
 
 // Get valid target from framework/project.properties if run from this repo
 // Otherwise get target from project.properties file within a generated cordova-android project
-module.exports.get_target = function() {
-    function extractFromFile(filePath) {
+module.exports.get_target = function () {
+    function extractFromFile (filePath) {
         var target = shelljs.grep(/\btarget=/, filePath);
         if (!target) {
             throw new Error('Could not find android target within: ' + filePath);
@@ -83,77 +72,82 @@ module.exports.get_target = function() {
 };
 
 // Returns a promise. Called only by build and clean commands.
-module.exports.check_ant = function() {
-    return superspawn.spawn('ant', ['-version'])
-    .then(function(output) {
+module.exports.check_ant = function () {
+    return superspawn.spawn('ant', ['-version']).then(function (output) {
         // Parse Ant version from command output
         return /version ((?:\d+\.)+(?:\d+))/i.exec(output)[1];
-    }).catch(function(err) {
-        throw new CordovaError('Failed to run `ant -version`. Make sure you have `ant` on your $PATH.');
+    }).catch(function (err) {
+        if (err) {
+            throw new CordovaError('Failed to run `ant -version`. Make sure you have `ant` on your $PATH.');
+        }
     });
 };
 
-module.exports.get_gradle_wrapper = function() {
+module.exports.get_gradle_wrapper = function () {
     var androidStudioPath;
     var i = 0;
     var foundStudio = false;
     var program_dir;
-    if (module.exports.isDarwin()) {
-        program_dir = fs.readdirSync('/Applications');
-        while (i < program_dir.length && !foundStudio) {
-            if (program_dir[i].startsWith('Android Studio')) {
-                //TODO: Check for a specific Android Studio version, make sure it's not Canary
-                androidStudioPath = path.join('/Applications', program_dir[i], 'Contents', 'gradle');
-                foundStudio = true;
-            } else { ++i; }
-        }
-    } else if (module.exports.isWindows()) {
-        var androidPath = path.join(process.env['ProgramFiles'], 'Android') + '/';
-        if (fs.existsSync(androidPath)) {
-            program_dir = fs.readdirSync(androidPath);
-            while (i < program_dir.length && !foundStudio) {
-                if (program_dir[i].startsWith('Android Studio')) {
-                    foundStudio = true;
-                    androidStudioPath = path.join(process.env['ProgramFiles'], 'Android', program_dir[i], 'gradle');
-                } else { ++i; }
+    // OK, This hack only works on Windows, not on Mac OS or Linux.  We will be deleting this eventually!
+    if (module.exports.isWindows()) {
+
+        var result = child_process.spawnSync(path.join(__dirname, 'getASPath.bat'));
+        // console.log('result.stdout =' + result.stdout.toString());
+        // console.log('result.stderr =' + result.stderr.toString());
+
+        if (result.stderr.toString().length > 0) {
+            var androidPath = path.join(process.env['ProgramFiles'], 'Android') + '/';
+            if (fs.existsSync(androidPath)) {
+                program_dir = fs.readdirSync(androidPath);
+                while (i < program_dir.length && !foundStudio) {
+                    if (program_dir[i].startsWith('Android Studio')) {
+                        foundStudio = true;
+                        androidStudioPath = path.join(process.env['ProgramFiles'], 'Android', program_dir[i], 'gradle');
+                    } else { ++i; }
+                }
             }
+        } else {
+            // console.log('got android studio path from registry');
+            // remove the (os independent) new line char at the end of stdout
+            // add gradle to match the above.
+            androidStudioPath = path.join(result.stdout.toString().split('\r\n')[0], 'gradle');
         }
     }
 
     if (androidStudioPath !== null && fs.existsSync(androidStudioPath)) {
         var dirs = fs.readdirSync(androidStudioPath);
-        if(dirs[0].split('-')[0] == 'gradle') {
+        if (dirs[0].split('-')[0] === 'gradle') {
             return path.join(androidStudioPath, dirs[0], 'bin', 'gradle');
         }
     } else {
-        //OK, let's try to check for Gradle!
+        // OK, let's try to check for Gradle!
         return forgivingWhichSync('gradle');
     }
 };
 
 // Returns a promise. Called only by build and clean commands.
-module.exports.check_gradle = function() {
+module.exports.check_gradle = function () {
     var sdkDir = process.env['ANDROID_HOME'];
     var d = Q.defer();
-    if (!sdkDir)
+    if (!sdkDir) {
         return Q.reject(new CordovaError('Could not find gradle wrapper within Android SDK. Could not find Android SDK directory.\n' +
             'Might need to install Android SDK or set up \'ANDROID_HOME\' env variable.'));
+    }
 
     var gradlePath = module.exports.get_gradle_wrapper();
-    if (gradlePath.length !== 0)
-        d.resolve(gradlePath);
-    else
+    if (gradlePath.length !== 0) { d.resolve(gradlePath); } else {
         d.reject(new CordovaError('Could not find an installed version of Gradle either in Android Studio,\n' +
                                 'or on your system to install the gradle wrapper. Please include gradle \n' +
                                 'in your path, or install Android Studio'));
+    }
     return d.promise;
 };
 
 // Returns a promise.
-module.exports.check_java = function() {
+module.exports.check_java = function () {
     var javacPath = forgivingWhichSync('javac');
     var hasJavaHome = !!process.env['JAVA_HOME'];
-    return Q().then(function() {
+    return Q().then(function () {
         if (hasJavaHome) {
             // Windows java installer doesn't add javac to PATH, nor set JAVA_HOME (ugh).
             if (!javacPath) {
@@ -163,13 +157,14 @@ module.exports.check_java = function() {
             if (javacPath) {
                 // OS X has a command for finding JAVA_HOME.
                 var find_java = '/usr/libexec/java_home';
-                var default_java_error_msg = 'Failed to find \'JAVA_HOME\' environment variable. Try setting setting it manually.';
+                var default_java_error_msg = 'Failed to find \'JAVA_HOME\' environment variable. Try setting it manually.';
                 if (fs.existsSync(find_java)) {
-                    return superspawn.spawn(find_java)
-                    .then(function(stdout) {
+                    return superspawn.spawn(find_java).then(function (stdout) {
                         process.env['JAVA_HOME'] = stdout.trim();
-                    }).catch(function(err) {
-                        throw new CordovaError(default_java_error_msg);
+                    }).catch(function (err) {
+                        if (err) {
+                            throw new CordovaError(default_java_error_msg);
+                        }
                     });
                 } else {
                     // See if we can derive it from javac's location.
@@ -200,32 +195,34 @@ module.exports.check_java = function() {
                 }
             }
         }
-    }).then(function() {
-        var msg =
-            'Failed to run "javac -version", make sure that you have a JDK installed.\n' +
-            'You can get it from: http://www.oracle.com/technetwork/java/javase/downloads.\n';
-        if (process.env['JAVA_HOME']) {
-            msg += 'Your JAVA_HOME is invalid: ' + process.env['JAVA_HOME'] + '\n';
-        }
-        // We use tryCommand with catchStderr = true, because
-        // javac writes version info to stderr instead of stdout
-        return tryCommand('javac -version', msg, true)
-        .then(function (output) {
-            //Let's check for at least Java 8, and keep it future proof so we can support Java 10
-            var match = /javac ((?:1\.)(?:[8-9]\.)(?:\d+))|((?:1\.)(?:[1-9]\d+\.)(?:\d+))/i.exec(output);
-            return match && match[1];
-        });
+    }).then(function () {
+        return Q.denodeify(child_process.exec)('javac -version')
+            .then(outputs => {
+                // outputs contains two entries: stdout and stderr
+                // Java <= 8 writes version info to stderr, Java >= 9 to stdout
+                const output = outputs.join('').trim();
+                const match = /javac\s+([\d.]+)/i.exec(output);
+                return match && match[1];
+            }, () => {
+                var msg =
+                'Failed to run "javac -version", make sure that you have a JDK installed.\n' +
+                'You can get it from: http://www.oracle.com/technetwork/java/javase/downloads.\n';
+                if (process.env['JAVA_HOME']) {
+                    msg += 'Your JAVA_HOME is invalid: ' + process.env['JAVA_HOME'] + '\n';
+                }
+                throw new CordovaError(msg);
+            });
     });
 };
 
 // Returns a promise.
-module.exports.check_android = function() {
-    return Q().then(function() {
+module.exports.check_android = function () {
+    return Q().then(function () {
         var androidCmdPath = forgivingWhichSync('android');
         var adbInPath = forgivingWhichSync('adb');
         var avdmanagerInPath = forgivingWhichSync('avdmanager');
         var hasAndroidHome = !!process.env['ANDROID_HOME'] && fs.existsSync(process.env['ANDROID_HOME']);
-        function maybeSetAndroidHome(value) {
+        function maybeSetAndroidHome (value) {
             if (!hasAndroidHome && fs.existsSync(value)) {
                 hasAndroidHome = true;
                 process.env['ANDROID_HOME'] = value;
@@ -265,10 +262,10 @@ module.exports.check_android = function() {
             if (androidCmdPath) {
                 parentDir = path.dirname(androidCmdPath);
                 grandParentDir = path.dirname(parentDir);
-                if (path.basename(parentDir) == 'tools' || fs.existsSync(path.join(grandParentDir, 'tools', 'android'))) {
+                if (path.basename(parentDir) === 'tools' || fs.existsSync(path.join(grandParentDir, 'tools', 'android'))) {
                     maybeSetAndroidHome(grandParentDir);
                 } else {
-                    throw new CordovaError('Failed to find \'ANDROID_HOME\' environment variable. Try setting setting it manually.\n' +
+                    throw new CordovaError('Failed to find \'ANDROID_HOME\' environment variable. Try setting it manually.\n' +
                         'Detected \'android\' command at ' + parentDir + ' but no \'tools\' directory found near.\n' +
                         'Try reinstall Android SDK or update your PATH to include valid path to SDK' + path.sep + 'tools directory.');
                 }
@@ -276,10 +273,10 @@ module.exports.check_android = function() {
             if (adbInPath) {
                 parentDir = path.dirname(adbInPath);
                 grandParentDir = path.dirname(parentDir);
-                if (path.basename(parentDir) == 'platform-tools') {
+                if (path.basename(parentDir) === 'platform-tools') {
                     maybeSetAndroidHome(grandParentDir);
                 } else {
-                    throw new CordovaError('Failed to find \'ANDROID_HOME\' environment variable. Try setting setting it manually.\n' +
+                    throw new CordovaError('Failed to find \'ANDROID_HOME\' environment variable. Try setting it manually.\n' +
                         'Detected \'adb\' command at ' + parentDir + ' but no \'platform-tools\' directory found near.\n' +
                         'Try reinstall Android SDK or update your PATH to include valid path to SDK' + path.sep + 'platform-tools directory.');
                 }
@@ -287,17 +284,17 @@ module.exports.check_android = function() {
             if (avdmanagerInPath) {
                 parentDir = path.dirname(avdmanagerInPath);
                 grandParentDir = path.dirname(parentDir);
-                if (path.basename(parentDir) == 'bin' && path.basename(grandParentDir) == 'tools') {
+                if (path.basename(parentDir) === 'bin' && path.basename(grandParentDir) === 'tools') {
                     maybeSetAndroidHome(path.dirname(grandParentDir));
                 } else {
-                    throw new CordovaError('Failed to find \'ANDROID_HOME\' environment variable. Try setting setting it manually.\n' +
+                    throw new CordovaError('Failed to find \'ANDROID_HOME\' environment variable. Try setting it manually.\n' +
                         'Detected \'avdmanager\' command at ' + parentDir + ' but no \'tools' + path.sep + 'bin\' directory found near.\n' +
                         'Try reinstall Android SDK or update your PATH to include valid path to SDK' + path.sep + 'tools' + path.sep + 'bin directory.');
                 }
             }
         }
         if (!process.env['ANDROID_HOME']) {
-            throw new CordovaError('Failed to find \'ANDROID_HOME\' environment variable. Try setting setting it manually.\n' +
+            throw new CordovaError('Failed to find \'ANDROID_HOME\' environment variable. Try setting it manually.\n' +
                 'Failed to find \'android\' command in your \'PATH\'. Try update your \'PATH\' to include path to valid SDK directory.');
         }
         if (!fs.existsSync(process.env['ANDROID_HOME'])) {
@@ -330,20 +327,19 @@ module.exports.getAbsoluteAndroidCmd = function () {
     return cmd.replace(/(\s)/g, '\\$1');
 };
 
-module.exports.check_android_target = function(originalError) {
+module.exports.check_android_target = function (originalError) {
     // valid_target can look like:
     //   android-19
     //   android-L
     //   Google Inc.:Google APIs:20
     //   Google Inc.:Glass Development Kit Preview:20
     var desired_api_level = module.exports.get_target();
-    return android_sdk.list_targets()
-    .then(function(targets) {
+    return android_sdk.list_targets().then(function (targets) {
         if (targets.indexOf(desired_api_level) >= 0) {
             return targets;
         }
         var androidCmd = module.exports.getAbsoluteAndroidCmd();
-        var msg = 'Please install Android target / API level: "' + desired_api_level  + '".\n\n' +
+        var msg = 'Please install Android target / API level: "' + desired_api_level + '".\n\n' +
             'Hint: Open the SDK manager by running: ' + androidCmd + '\n' +
             'You will require:\n' +
             '1. "SDK Platform" for API level ' + desired_api_level + '\n' +
@@ -357,22 +353,20 @@ module.exports.check_android_target = function(originalError) {
 };
 
 // Returns a promise.
-module.exports.run = function() {
-     return Q.all([this.check_java(), this.check_android()])
-     .then(function(values) {
-         console.log('ANDROID_HOME=' + process.env['ANDROID_HOME']);
-         console.log('JAVA_HOME=' + process.env['JAVA_HOME']);
+module.exports.run = function () {
+    return Q.all([this.check_java(), this.check_android()]).then(function (values) {
+        console.log('ANDROID_HOME=' + process.env['ANDROID_HOME']);
+        console.log('JAVA_HOME=' + process.env['JAVA_HOME']);
 
-         if (!values[0]) {
-            throw new CordovaError('Requirements check failed for JDK 1.8 or greater');
-         }
+        if (!String(values[0]).startsWith('1.8.')) {
+            throw new CordovaError('Requirements check failed for JDK 1.8');
+        }
 
-         if (!values[1]) {
+        if (!values[1]) {
             throw new CordovaError('Requirements check failed for Android SDK');
-         }
-     });
+        }
+    });
 };
-
 
 /**
  * Object thar represents one of requirements for current platform.
@@ -387,7 +381,7 @@ var Requirement = function (id, name, version, installed) {
     this.name = name;
     this.installed = installed || false;
     this.metadata = {
-        version: version,
+        version: version
     };
 };
 
@@ -397,7 +391,7 @@ var Requirement = function (id, name, version, installed) {
  *
  * @return Promise<Requirement[]> Array of requirements. Due to implementation, promise is always fulfilled.
  */
-module.exports.check_all = function() {
+module.exports.check_all = function () {
 
     var requirements = [
         new Requirement('java', 'Java JDK'),
@@ -417,15 +411,13 @@ module.exports.check_all = function() {
     return checkFns.reduce(function (promise, checkFn, idx) {
         // Update each requirement with results
         var requirement = requirements[idx];
-        return promise.then(checkFn)
-        .then(function (version) {
+        return promise.then(checkFn).then(function (version) {
             requirement.installed = true;
             requirement.metadata.version = version;
         }, function (err) {
             requirement.metadata.reason = err instanceof Error ? err.message : err;
         });
-    }, Q())
-    .then(function () {
+    }, Q()).then(function () {
         // When chain is completed, return requirements array to upstream API
         return requirements;
     });

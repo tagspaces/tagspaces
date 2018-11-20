@@ -18,6 +18,7 @@
 */
 package org.apache.cordova;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -91,6 +92,7 @@ public class CordovaWebViewImpl implements CordovaWebView {
         init(cordova, new ArrayList<PluginEntry>(), new CordovaPreferences());
     }
 
+    @SuppressLint("Assert")
     @Override
     public void init(CordovaInterface cordova, List<PluginEntry> pluginEntries, CordovaPreferences preferences) {
         if (this.cordova != null) {

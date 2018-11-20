@@ -18,7 +18,7 @@
 @ECHO OFF
 SET script_path="%~dp0check_reqs"
 IF EXIST %script_path% (
-        node "%script_path%" %*
+        node %script_path% %*
 ) ELSE (
     ECHO.
     ECHO ERROR: Could not find 'check_reqs' script in 'bin' folder, aborting...>&2

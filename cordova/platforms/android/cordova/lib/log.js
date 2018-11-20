@@ -19,28 +19,28 @@
        under the License.
 */
 
-var path  = require('path'),
-    os  = require('os'),
-    Q     = require('q'),
-    child_process = require('child_process'),
-    ROOT  = path.join(__dirname, '..', '..');
+var path = require('path');
+var os = require('os');
+var Q = require('q');
+var child_process = require('child_process');
+var ROOT = path.join(__dirname, '..', '..');
 
 /*
  * Starts running logcat in the shell.
  * Returns a promise.
  */
-module.exports.run = function() {
+module.exports.run = function () {
     var d = Q.defer();
     var adb = child_process.spawn('adb', ['logcat'], {cwd: os.tmpdir()});
 
-    adb.stdout.on('data', function(data) {
+    adb.stdout.on('data', function (data) {
         var lines = data ? data.toString().split('\n') : [];
-        var out = lines.filter(function(x) { return x.indexOf('nativeGetEnabledTags') < 0; });
+        var out = lines.filter(function (x) { return x.indexOf('nativeGetEnabledTags') < 0; });
         console.log(out.join('\n'));
     });
 
     adb.stderr.on('data', console.error);
-    adb.on('close', function(code) {
+    adb.on('close', function (code) {
         if (code > 0) {
             d.reject('Failed to run logcat command.');
         } else d.resolve();
@@ -49,7 +49,7 @@ module.exports.run = function() {
     return d.promise;
 };
 
-module.exports.help = function() {
+module.exports.help = function () {
     console.log('Usage: ' + path.relative(process.cwd(), path.join(ROOT, 'cordova', 'log')));
     console.log('Gives the logcat output on the command line.');
     process.exit(0);

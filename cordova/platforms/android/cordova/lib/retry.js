@@ -45,12 +45,12 @@ module.exports.retryPromise = function (attemts_left, promiseFunction) {
     return promiseFunction.apply(undefined, promiseFunctionArguments).then(
 
         // on success pass results through
-        function onFulfilled(value) {
+        function onFulfilled (value) {
             return value;
         },
 
         // on rejection either retry, or throw the error
-        function onRejected(error) {
+        function onRejected (error) {
 
             attemts_left -= 1;
 

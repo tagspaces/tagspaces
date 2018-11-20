@@ -18,7 +18,7 @@
 @ECHO OFF
 SET script_path="%~dp0install-device"
 IF EXIST %script_path% (
-        node "%script_path%" %*
+        node %script_path% %*
 ) ELSE (
     ECHO.
     ECHO ERROR: Could not find 'install-device' script in 'cordova\lib' folder, aborting...>&2
