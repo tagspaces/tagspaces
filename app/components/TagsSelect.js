@@ -24,6 +24,7 @@ import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import CancelIcon from '@material-ui/icons/Cancel';
+import CloseIcon from '@material-ui/icons/Close';
 import MenuItem from '@material-ui/core/MenuItem';
 import Chip from '@material-ui/core/Chip';
 import CreatableSelect from 'react-select/lib/Creatable';
@@ -36,7 +37,10 @@ import { type Tag, getAllTags } from '../reducers/taglibrary';
 const styles = theme => ({
   root: {
     flexGrow: 1,
-    height: 250,
+    // height: 250,
+    /* '& div': { //https://github.com/JedWatson/react-select/issues/1085
+      zIndex: 1
+    } */
   },
   input: {
     display: 'flex',
@@ -76,9 +80,21 @@ const styles = theme => ({
     left: 0,
     right: 0,
   },
-  divider: {
+  /* divider: {
     height: theme.spacing.unit * 2,
-  },
+  }, */
+  tag: {
+    // display: 'flex',
+    // flexDirection: 'row',
+    // justifyContent: 'space-between',
+    alignItems: 'center',
+    borderRadius: '4px',
+    backgroundColor: '#008000',
+    color: 'white',
+    padding: '2px 6px',
+    boxShadow: '0 1px 1px 0 rgba(0, 0, 0, 0.16),0 1px 1px 0 rgba(239, 239, 239, 0.12)',
+    margin: '0 0 10px 10px'
+  }
 });
 
 function NoOptionsMessage(props) {
@@ -160,10 +176,12 @@ function MultiValue(props) {
     <Chip
       tabIndex={-1}
       label={props.children}
-      className={classNames(props.selectProps.classes.chip, {
-        [props.selectProps.classes.chipFocused]: props.isFocused,
+      style={{ fontSize: 16 }}
+      className={classNames(props.selectProps.classes.chip, props.selectProps.classes.tag, {
+        [props.selectProps.classes.chipFocused]: props.isFocused
       })}
       onDelete={props.removeProps.onClick}
+      // deleteIcon={<CloseIcon style={{ fill: '#fff' }} {...props.removeProps} />}
       deleteIcon={<CancelIcon {...props.removeProps} />}
     />
   );
@@ -235,36 +253,38 @@ class TagsSelect extends React.Component<Props> {
     };
 
     return (
-      <NoSsr>
-        <CreatableSelect
-          isClearable
-          classes={classes}
-          options={allTags}
-          getOptionLabel={(option) => option.title}
-          getOptionValue={(option) => option.id}
-          isValidNewOption={this.isValidNewOption}
-          getNewOptionData={(inputValue, optionLabel) => ({
-            id: inputValue,
-            title: optionLabel,
-          })}
-          styles={selectStyles}
-          fullWidth={true}
-          components={components}
-          /* textFieldProps={{
+      <div className={classes.root}>
+        <NoSsr>
+          <CreatableSelect
+            isClearable
+            classes={classes}
+            options={allTags}
+            getOptionLabel={(option) => option.title}
+            getOptionValue={(option) => option.id}
+            isValidNewOption={this.isValidNewOption}
+            getNewOptionData={(inputValue, optionLabel) => ({
+              id: inputValue,
+              title: optionLabel,
+            })}
+            styles={selectStyles}
+            fullWidth={true}
+            components={components}
+            /* textFieldProps={{
             label: 'title',
             InputLabelProps: {
               shrink: true,
             },
           }} */
-          value={tagQuery}
-          onChange={this.handleChange}
-          // onInputChange={this.handleInputSelectChange}
-          // onCreateOption={this.handleCreate}
-          placeholder={i18n.t('core:searchTags')}
-          isMulti
+            value={tagQuery}
+            onChange={this.handleChange}
+            // onInputChange={this.handleInputSelectChange}
+            // onCreateOption={this.handleCreate}
+            placeholder={i18n.t('core:searchTags')}
+            isMulti
           // isSearchable
-        />
-      </NoSsr>
+          />
+        </NoSsr>
+      </div>
     );
   }
 }
