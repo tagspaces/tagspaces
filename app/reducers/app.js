@@ -43,7 +43,7 @@ import { sortByCriteria, formatDateTime4Tag } from '../utils/misc';
 import i18n from '../services/i18n';
 import { Pro } from '../pro';
 import { getThumbnailURLPromise } from '../services/thumbsgenerator';
-import { getTagDelimiter } from './settings';
+// import { getTagDelimiter } from './settings';
 
 export const types = {
   DEVICE_ONLINE: 'APP/DEVICE_ONLINE',
@@ -450,7 +450,7 @@ export default (state: Object = initialState, action: Object) => {
         extension: extractFileExtension(action.newPath),
         tags: [
           ...state.currentDirectoryEntries[indexForRenaming].tags.filter(tag => tag.type === 'sidecar'), // add only sidecar tags
-          ...extractTagsAsObjects(action.newPath, getTagDelimiter(state))
+          ...extractTagsAsObjects(action.newPath) // , getTagDelimiter(state))  TODO https://itnext.io/passing-state-between-reducers-in-redux-318de6db06cd
         ]
       };
       directoryEntries = [
@@ -468,7 +468,7 @@ export default (state: Object = initialState, action: Object) => {
         extension: extractFileExtension(action.newPath),
         tags: [
           ...state.currentDirectoryEntries[indexForRenaming].tags.filter(tag => tag.type === 'sidecar'), // add only sidecar tags
-          ...extractTagsAsObjects(action.newPath, getTagDelimiter(state))
+          ...extractTagsAsObjects(action.newPath) // , getTagDelimiter(state))
         ]
       };
       directoryIndex = [
