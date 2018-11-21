@@ -74,21 +74,21 @@ const styles = theme => ({
     left: 2,
     fontSize: 16,
   },
-  /* paper: {
+  paper: {
     // position: 'absolute',
     zIndex: 1,
     marginTop: theme.spacing.unit,
     left: 0,
     right: 0,
-  }, */
-  paper: {
+  },
+  /* paper: {
     position: 'fixed', // 'absolute',
     marginTop: theme.spacing.unit,
     left: 45,
     right: 0,
     maxWidth: 350,
     zIndex: 1
-  },
+  }, */
   /* divider: {
     height: theme.spacing.unit * 2,
   }, */
