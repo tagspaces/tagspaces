@@ -50,27 +50,26 @@ export function extractFileExtension(filePath: string) {
     return (ext === fileURL) ? '' : ext; */
 }
 
-export function getMetaDirectoryPath(directoryPath: string) {
-  return normalizePath(directoryPath) + AppConfig.dirSeparator + AppConfig.metaFolder;
+export function getMetaDirectoryPath(directoryPath: string, dirSeparator: string = AppConfig.dirSeparator) {
+  return normalizePath(directoryPath) + dirSeparator + AppConfig.metaFolder;
 }
 
-export function getMetaFileLocationForFile(entryPath: string) {
-  const containingFolder = extractContainingDirectoryPath(entryPath);
-  const metaFolder = getMetaDirectoryPath(containingFolder);
-  return metaFolder + AppConfig.dirSeparator + extractFileName(entryPath) + AppConfig.metaFileExt;
+export function getMetaFileLocationForFile(entryPath: string, dirSeparator: string = AppConfig.dirSeparator) {
+  const containingFolder = extractContainingDirectoryPath(entryPath, dirSeparator);
+  const metaFolder = getMetaDirectoryPath(containingFolder, dirSeparator);
+  return metaFolder + dirSeparator + extractFileName(entryPath, dirSeparator) + AppConfig.metaFileExt;
 }
 
-export function getThumbFileLocationForFile(entryPath: string) {
-  const containingFolder = extractContainingDirectoryPath(entryPath);
-  const metaFolder = getMetaDirectoryPath(containingFolder);
-  return metaFolder + AppConfig.dirSeparator + extractFileName(entryPath) + AppConfig.thumbFileExt;
+export function getThumbFileLocationForFile(entryPath: string, dirSeparator: string = AppConfig.dirSeparator) {
+  const containingFolder = extractContainingDirectoryPath(entryPath, dirSeparator);
+  const metaFolder = getMetaDirectoryPath(containingFolder, dirSeparator);
+  return metaFolder + dirSeparator + extractFileName(entryPath, dirSeparator) + AppConfig.thumbFileExt;
 }
 
 export function getMetaFileLocationForDir(entryPath: string) {
   const metaFolder = getMetaDirectoryPath(entryPath);
   return metaFolder + AppConfig.dirSeparator + AppConfig.metaFolderFile;
 }
-
 
 export function extractFileName(filePath: string, dirSeparator: string = AppConfig.dirSeparator): string {
   return filePath.substring(filePath.lastIndexOf(dirSeparator) + 1, filePath.length);
@@ -116,15 +115,15 @@ export function extractFileNameWithoutExt(filePath: string): string {
   return fileName;
 }
 
-export function extractContainingDirectoryPath(filePath: string) {
-  return filePath.substring(0, filePath.lastIndexOf(AppConfig.dirSeparator));
+export function extractContainingDirectoryPath(filePath: string, dirSeparator: string = AppConfig.dirSeparator) {
+  return filePath.substring(0, filePath.lastIndexOf(dirSeparator));
 }
 
-export function extractParentDirectoryPath(dirPath: string) {
-  if (dirPath.endsWith(AppConfig.dirSeparator)) {
-    dirPath = dirPath.substring(0, dirPath.lastIndexOf(AppConfig.dirSeparator));
+export function extractParentDirectoryPath(dirPath: string, dirSeparator: string = AppConfig.dirSeparator) {
+  if (dirPath.endsWith(dirSeparator)) {
+    dirPath = dirPath.substring(0, dirPath.lastIndexOf(dirSeparator));
   }
-  return dirPath.substring(0, dirPath.lastIndexOf(AppConfig.dirSeparator));
+  return dirPath.substring(0, dirPath.lastIndexOf(dirSeparator));
 }
 
 export function extractDirectoryName(dirPath: string) {
