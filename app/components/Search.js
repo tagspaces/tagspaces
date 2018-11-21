@@ -33,7 +33,6 @@ import FolderIcon from '@material-ui/icons/Folder';
 import ClearSearchIcon from '@material-ui/icons/Clear';
 import Button from '@material-ui/core/Button';
 import Input from '@material-ui/core/Input';
-import FormLabel from '@material-ui/core/FormLabel';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
@@ -43,13 +42,14 @@ import IconButton from '@material-ui/core/IconButton';
 import Select from '@material-ui/core/Select';
 import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
-// import Switch from '@material-ui/core/Switch';
+import TagSelect from './TagsSelect';
 import { actions as AppActions, getIndexedEntriesCount, isIndexing, getDirectoryPath } from '../reducers/app';
 import { getMaxSearchResults } from '../reducers/settings';
 import styles from './SidePanels.css';
 import i18n from '../services/i18n';
 import { FileTypeGroups, type SearchQuery } from '../services/search';
 import { Pro } from '../pro';
+import type { Tag } from '../reducers/taglibrary';
 
 type Props = {
   classes: Object,
@@ -64,7 +64,7 @@ type Props = {
 
 type State = {
   textQuery?: string,
-  tagQuery?: string,
+  tagQuery?: Array<Tag>,
   tagConjunction?: string,
   fileTypes?: Array<string>,
   tags?: Array<string>,
@@ -74,7 +74,7 @@ type State = {
 class Search extends React.Component<Props, State> {
   state = {
     textQuery: '',
-    tagQuery: '',
+    tagQuery: [],
     tagConjunction: 'OR',
     fileTypes: FileTypeGroups.any,
     lastModified: ''
@@ -100,7 +100,7 @@ class Search extends React.Component<Props, State> {
     this.setState(
       {
         textQuery: '',
-        tagQuery: '',
+        tagQuery: [],
         tagConjunction: 'OR',
         fileTypes: FileTypeGroups.any
       },
@@ -109,23 +109,30 @@ class Search extends React.Component<Props, State> {
   };
 
   executeSearch = () => {
-    let tags = [];
-    let cleanedTagQuery;
+    const tags = [];
+
     if (this.state.tagQuery) {
-      cleanedTagQuery = this.state.tagQuery.split(',').join(' ');
-    }
-    if (cleanedTagQuery && cleanedTagQuery.length) {
-      tags = cleanedTagQuery.split(' ');
+      this.state.tagQuery.map((tag) => {
+        Object.entries(tag).map(([key, value]) => {
+          if (key === 'title') tags.push(value);
+        });
+      });
     }
     const searchQuery: SearchQuery = {
       textQuery: this.state.textQuery,
       fileTypes: this.state.fileTypes,
       tagConjunction: this.state.tagConjunction,
-      tags,
+      tags, // TODO put this.state.tagQuery Array<Tag> instead
       maxSearchResults: this.props.maxSearchResults
     };
     console.log('Search object: ' + JSON.stringify(searchQuery));
     this.props.searchLocationIndex(searchQuery);
+  };
+
+  handleChange = (name, value) => {
+    this.setState({
+      [name]: value
+    });
   };
 
   render() {
@@ -169,15 +176,16 @@ class Search extends React.Component<Props, State> {
             className={classes.formControl}
             disabled={indexing}
           >
-            <InputLabel htmlFor="searchTags">{i18n.t('core:searchTags')}</InputLabel>
-            <Input
+            {/* <InputLabel htmlFor="searchTags">{i18n.t('core:searchTags')}</InputLabel> */}
+            <TagSelect tagQuery={this.state.tagQuery} handleChange={this.handleChange} />
+            {/* <Input
               id="tagQuery"
               name="tagQuery"
               placeholder={i18n.t('core:tagsWithInterval')}
               value={this.state.tagQuery}
               onKeyDown={this.startSearch}
               onChange={this.handleInputChange}
-            />
+            /> */}
           </FormControl>
           <FormControl
             component="fieldset"
