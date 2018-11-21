@@ -188,7 +188,6 @@ class ImportExportTagGroupsDialog extends React.Component<Props, State> {
             <TagContainer
               tag={tag}
               tagMode="display"
-              key={tag.id}
             />
           ))}
         </TagGroupContainer>

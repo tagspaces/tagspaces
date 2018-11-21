@@ -33,6 +33,7 @@ import TextField from '@material-ui/core/TextField';
 import { emphasize } from '@material-ui/core/styles/colorManipulator';
 import i18n from '../services/i18n';
 import { type Tag, getAllTags } from '../reducers/taglibrary';
+import TagContainer from './TagContainer';
 
 const styles = theme => ({
   root: {
@@ -173,7 +174,18 @@ function ValueContainer(props) {
 
 function MultiValue(props) {
   return (
-    <Chip
+    <TagContainer
+      key={props.data.id}
+      defaultTextColor={props.data.textcolor}
+      defaultBackgroundColor={props.data.color}
+      tag={props.data}
+      tagMode={'remove'}
+      // tagGroup={tagGroup}
+      // handleTagMenu={this.handleTagMenu}
+      // addTags={this.props.addTags}
+      deleteIcon={<CloseIcon {...props.removeProps} />}
+    />
+    /* <Chip
       tabIndex={-1}
       label={props.children}
       style={{ fontSize: 16 }}
@@ -183,7 +195,7 @@ function MultiValue(props) {
       onDelete={props.removeProps.onClick}
       // deleteIcon={<CloseIcon style={{ fill: '#fff' }} {...props.removeProps} />}
       deleteIcon={<CancelIcon {...props.removeProps} />}
-    />
+    /> */
   );
 }
 
@@ -216,10 +228,10 @@ type Props = {
 
 class TagsSelect extends React.Component<Props> {
   handleChange = (newValue: any, actionMeta: any) => {
-    console.group('Value Changed');
+    /* console.group('Value Changed');
     console.log(newValue);
     console.log(`action: ${actionMeta.action}`);
-    console.groupEnd();
+    console.groupEnd(); */
 
     if (actionMeta.action === 'select-option') {
       this.props.handleChange('tagQuery', newValue);
