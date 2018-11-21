@@ -74,28 +74,24 @@ const styles = theme => ({
     left: 2,
     fontSize: 16,
   },
-  paper: {
+  /* paper: {
     // position: 'absolute',
     zIndex: 1,
     marginTop: theme.spacing.unit,
     left: 0,
     right: 0,
+  }, */
+  paper: {
+    position: 'fixed', // 'absolute',
+    marginTop: theme.spacing.unit,
+    left: 45,
+    right: 0,
+    maxWidth: 350,
+    zIndex: 1
   },
   /* divider: {
     height: theme.spacing.unit * 2,
   }, */
-  tag: {
-    // display: 'flex',
-    // flexDirection: 'row',
-    // justifyContent: 'space-between',
-    alignItems: 'center',
-    borderRadius: '4px',
-    backgroundColor: '#008000',
-    color: 'white',
-    padding: '2px 6px',
-    boxShadow: '0 1px 1px 0 rgba(0, 0, 0, 0.16),0 1px 1px 0 rgba(239, 239, 239, 0.12)',
-    margin: '0 0 10px 10px'
-  }
 });
 
 function NoOptionsMessage(props) {
@@ -189,7 +185,7 @@ function MultiValue(props) {
       tabIndex={-1}
       label={props.children}
       style={{ fontSize: 16 }}
-      className={classNames(props.selectProps.classes.chip, props.selectProps.classes.tag, {
+      className={classNames(props.selectProps.classes.chip, {
         [props.selectProps.classes.chipFocused]: props.isFocused
       })}
       onDelete={props.removeProps.onClick}
