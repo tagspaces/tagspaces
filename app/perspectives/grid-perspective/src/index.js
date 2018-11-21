@@ -129,7 +129,7 @@ const styles = theme => ({
     padding: 0,
     paddingTop: 5,
     zIndex: 100,
-    overflowY: 'overlay',
+    overflowY: 'auto',
     overflowX: 'hidden',
     opacity: 0.6
   },
@@ -1046,7 +1046,7 @@ class GridPerspective extends React.Component<Props, State> {
             <SwapVertIcon />
           </IconButton>
         </Toolbar>
-        <div style={{ height: '100%', overflowY: 'overlay' }}>
+        <div style={{ height: '100%', overflowY: AppConfig.isFirefox ? 'auto' : 'overlay' }}>
           <div
             className={this.getLayoutClass()}
             ref={ref => {

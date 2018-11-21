@@ -84,7 +84,7 @@ const styles = () => ({
     color: '#ff9800'
   },
   contentFolder: {
-    overflowY: 'overlay',
+    overflowY: 'auto',
     maxHeight: '40vh'
   }
 });

@@ -924,7 +924,7 @@ class EntryContainer extends React.Component<Props, State> {
                 { currentEntry.isFile ?
                   this.renderFileToolbar(classes) : this.renderFolderToolbar()
                 }
-                <div style={{ overflowY: 'overlay', maxHeight: '100%' }}>
+                <div style={{ overflowY: AppConfig.isFirefox ? 'auto' : 'overlay', maxHeight: '100%' }}>
                   <EntryProperties
                     entryPath={currentEntry.path}
                     shouldReload={currentEntry.shouldReload}

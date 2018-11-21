@@ -87,7 +87,7 @@ class AboutDialog extends React.Component<Props, State> {
   renderTitle = () => <DialogTitle>{productName}</DialogTitle>;
 
   renderContent = () => (
-    <DialogContent style={{ overflowY: 'overlay' }}>
+    <DialogContent>
       <img
         alt="TagSpaces logo"
         src={LogoIcon}

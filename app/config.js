@@ -39,6 +39,7 @@ export default {
   defaultFileColor: '#808080',
   defaultFolderColor: '#555', // transparent #FDEEBD #ff791b #2c001e #880e4f
   isElectron: (navigator.userAgent.toLowerCase().indexOf(' electron/') > -1),
+  isFirefox: (navigator.userAgent.toLowerCase().includes('firefox')), // typeof InstallTrigger !== 'undefined';
   isWin: navigator.appVersion.includes('Win'),
   isMacLike: navigator.platform.match(/(Mac|iPhone|iPod|iPad)/i),
   isWeb: (document.URL.startsWith('http') && !document.URL.startsWith('http://localhost:1212/')),

@@ -42,7 +42,7 @@ import PlatformIO from '../services/platform-io';
 
 const styles = theme => ({
   entryProperties: {
-    overflowY: 'overlay',
+    overflowY: AppConfig.isFirefox ? 'auto' : 'overlay',
     padding: 10
   },
   tags: {

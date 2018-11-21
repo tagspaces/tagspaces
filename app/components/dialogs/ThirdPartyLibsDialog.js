@@ -61,7 +61,7 @@ class ThirdPartyLibsDialog extends React.Component<Props, State> {
   renderTitle = () => <DialogTitle>{i18n.t('core:thirdPartyLibs')}</DialogTitle>;
 
   renderContent = () => (
-    <DialogContent style={{ overflowY: 'overlay', overflowX: 'auto' }}>
+    <DialogContent style={{ overflowX: 'auto' }}>
       <pre>{ this.state.thirdpartylibs }</pre>
     </DialogContent>
   );

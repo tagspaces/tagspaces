@@ -39,11 +39,12 @@ import {
   getSettings
 } from '../../reducers/settings';
 import ColorPickerDialog from '../dialogs/ColorPickerDialog';
+import AppConfig from '../../config';
 
 const styles = theme => ({
   root: {
     maxHeight: 500,
-    overflowY: 'overlay'
+    overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
   },
   pro: {
     backgroundColor: '#1DD19F'

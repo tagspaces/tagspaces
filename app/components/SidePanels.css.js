@@ -16,6 +16,7 @@
  *
  * @flow
  */
+import AppConfig from '../config';
 
 export default (theme) => ({
   panel: {
@@ -38,21 +39,21 @@ export default (theme) => ({
     marginTop: 0,
     marginBottom: 10,
     maxHeight: '100%',
-    overflowY: 'overlay'
+    overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
   },
   taggroupsArea: {
     paddingTop: 0,
     marginTop: 0,
     height: 'calc(100% - 50px)',
     maxHeight: 'calc(100% - 50px)',
-    overflowY: 'overlay'
+    overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
   },
   searchArea: {
     paddingTop: 0,
     paddingLeft: 5,
     marginTop: 0,
     maxHeight: '100%',
-    overflowY: 'overlay'
+    overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
   },
   topShadow: {
     borderTop: '1px solid lightgray',

@@ -32,12 +32,13 @@ import TagGroupContainer from '../TagGroupContainer';
 import TagContainer from '../TagContainer';
 import i18n from '../../services/i18n';
 import { isFunc } from '../../utils/misc';
+import AppConfig from '../../config';
 
 const styles = {
   root: {
     width: 400,
     height: '100%',
-    overflowY: 'overlay',
+    overflowY: AppConfig.isFirefox ? 'auto' : 'overlay',
     marginBottom: 30
   },
 };
@@ -163,7 +164,7 @@ class ImportExportTagGroupsDialog extends React.Component<Props, State> {
     }
   };
 
-  renderTagGroups = (tagGroup, index) =>  {
+  renderTagGroups = (tagGroup, index) => {
     return (
       <div key={tagGroup.uuid || tagGroup.key}>
         <FormControl component="fieldset">
@@ -199,25 +200,22 @@ class ImportExportTagGroupsDialog extends React.Component<Props, State> {
   renderTitle = () => {
     if (this.props.dialogModeImport) {
       return (<DialogTitle>{i18n.t('core:importGroupTagsTitle')}</DialogTitle>);
-    } else {
-      return (<DialogTitle>{i18n.t('core:exportGroupTagsTitle')}</DialogTitle>);
     }
+    return (<DialogTitle>{i18n.t('core:exportGroupTagsTitle')}</DialogTitle>);
   };
 
   renderContent = () => {
     return (
-      <DialogContent style={{ overflowY: 'overlay' }}>
-        <div className={this.props.classes.root}>
-          <Button
-            color="primary"
-            onClick={this.handleToggleSelectAll}
-          >
-            {i18n.t('core:selectAllTagGroups')}
-          </Button>
-          <FormControl fullWidth={true}>
-            {this.state.tagGroupList.map(this.renderTagGroups)}
-          </FormControl>
-        </div>
+      <DialogContent className={this.props.classes.root}>
+        <Button
+          color="primary"
+          onClick={this.handleToggleSelectAll}
+        >
+          {i18n.t('core:selectAllTagGroups')}
+        </Button>
+        <FormControl fullWidth={true}>
+          {this.state.tagGroupList.map(this.renderTagGroups)}
+        </FormControl>
       </DialogContent>
     );
   };
@@ -231,7 +229,6 @@ class ImportExportTagGroupsDialog extends React.Component<Props, State> {
         disabled={this.state.disableConfirmButton}
         onClick={this.onConfirm}
         data-tid="confirmImportExport"
-        color="primary"
       >
         { this.props.dialogModeImport ? 'Import' : 'Export' }
       </Button>

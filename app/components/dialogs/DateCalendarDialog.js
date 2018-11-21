@@ -40,7 +40,6 @@ const styles = theme => ({
   root: {
     width: 550,
     height: '100%',
-    overflowY: 'overlay',
     marginBottom: 30,
     // background: theme.palette.background.paper
   },
