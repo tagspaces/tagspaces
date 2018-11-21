@@ -143,75 +143,74 @@ export default class WebDAVIO {
   /**
    * Creates a list with containing the files and the sub directories of a given directory
    */
-  listDirectoryPromise = (directoryPath: string) => {
+  listDirectoryPromise = (directoryPath: string): Promise<Array<Object>> => new Promise((resolve, reject) => {
+    let anotatedDirList;
     let dirPath = directoryPath.split('//').join('/');
-    console.log('Listing directory: ' + dirPath);
-    return new Promise((resolve, reject) => {
-      let anotatedDirList;
-
-      const davSuccess = (status, data) => {
-        console.log('Dirlist Status:  ' + status);
-        if (!this.checkStatusCode(status)) {
-          console.warn('Listing directory ' + dirPath + ' failed ' + status);
-          reject('Listing directory ' + dirPath + ' failed ' + status);
-        }
-        let dirList = data._responses;
-        let fileName, isDir, filesize, lmdt, path;
-
-        anotatedDirList = [];
-        for (let entry in dirList) {
-          path = dirList[entry].href;
-          if (dirPath.toLowerCase() === path.toLowerCase()) {
-            console.log('Skipping current folder');
-          } else {
-            isDir = false;
-            filesize = undefined;
-            lmdt = undefined;
-            // console.log(dirList[entry]._namespaces['DAV:']);
-            if (
-              typeof dirList[entry]._namespaces['DAV:'].getcontentlength ===
-                'undefined' ||
-              dirList[entry]._namespaces['DAV:'].getcontentlength._xmlvalue
-                .length === 0 ||
-              (dirList[entry]._namespaces['DAV:'].resourcetype._xmlvalue
-                .length === 1 &&
-                dirList[entry]._namespaces['DAV:'].resourcetype._xmlvalue[0]
-                  .localName === 'collection')
-            ) {
-              isDir = true;
-            } else {
-              filesize =
-                dirList[entry]._namespaces['DAV:'].getcontentlength._xmlvalue[0]
-                  .data;
-              lmdt =
-                data._responses[entry]._namespaces['DAV:'].getlastmodified
-                  ._xmlvalue[0].data;
-            }
-            fileName = this.getNameForPath(path);
-            anotatedDirList.push({
-              name: fileName,
-              isFile: !isDir,
-              size: filesize,
-              lmdt: lmdt,
-              path: decodeURI(path)
-            });
-          }
-        }
-        resolve(anotatedDirList);
-      };
-
-      if (dirPath.substring(dirPath.length - 1) !== '/') {
-        dirPath = dirPath + '/';
+    const davSuccess = (status, data) => {
+      console.log('Dirlist Status:  ' + status);
+      if (!this.checkStatusCode(status)) {
+        console.warn('Listing directory ' + dirPath + ' failed ' + status);
+        reject('Listing directory ' + dirPath + ' failed ' + status);
       }
-      dirPath = encodeURI(dirPath);
+      const dirList = data._responses;
+      let fileName;
+      let isDir;
+      let filesize;
+      let lmdt;
+      let path;
 
-      this.davClient.propfind(
-        dirPath,
-        davSuccess,
-        1 // 1 , davClient.INFINITY
-      );
-    });
-  };
+      anotatedDirList = [];
+      for (let entry in dirList) {
+        path = dirList[entry].href;
+        if (dirPath.toLowerCase() === path.toLowerCase()) {
+          console.log('Skipping current folder');
+        } else {
+          isDir = false;
+          filesize = undefined;
+          lmdt = undefined;
+          // console.log(dirList[entry]._namespaces['DAV:']);
+          if (
+            typeof dirList[entry]._namespaces['DAV:'].getcontentlength ===
+              'undefined' ||
+            dirList[entry]._namespaces['DAV:'].getcontentlength._xmlvalue
+              .length === 0 ||
+            (dirList[entry]._namespaces['DAV:'].resourcetype._xmlvalue
+              .length === 1 &&
+              dirList[entry]._namespaces['DAV:'].resourcetype._xmlvalue[0]
+                .localName === 'collection')
+          ) {
+            isDir = true;
+          } else {
+            filesize =
+              dirList[entry]._namespaces['DAV:'].getcontentlength._xmlvalue[0]
+                .data;
+            lmdt =
+              data._responses[entry]._namespaces['DAV:'].getlastmodified
+                ._xmlvalue[0].data;
+          }
+          fileName = this.getNameForPath(path);
+          anotatedDirList.push({
+            name: fileName,
+            isFile: !isDir,
+            size: filesize,
+            lmdt: lmdt,
+            path: decodeURI(path)
+          });
+        }
+      }
+      resolve(anotatedDirList);
+    };
+    if (dirPath.substring(dirPath.length - 1) !== '/') {
+      dirPath += '/';
+    }
+    dirPath = encodeURI(dirPath);
+
+    this.davClient.propfind(
+      dirPath,
+      davSuccess,
+      1 // 1 , davClient.INFINITY
+    );
+  });
 
   /**
    * Finds out the properties of a file or directory such last modification date or file size
