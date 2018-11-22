@@ -110,7 +110,7 @@ export default function buildDesktopMenu(mainPageProps: Object) {
         {
           type: 'separator'
         },
-        {
+        /* {
           label: i18n.t('core:saveFile'),
           accelerator: mainPageProps.keyBindings.saveDocument,
           click: () => {
@@ -119,7 +119,7 @@ export default function buildDesktopMenu(mainPageProps: Object) {
         },
         {
           type: 'separator'
-        },
+        }, */
         /* {
           label: i18n.t('core:closeWin'),
           accelerator: '',
