@@ -20,6 +20,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { HotKeys } from 'react-hotkeys';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import EditIcon from '@material-ui/icons/Edit';
@@ -401,9 +402,21 @@ class EntryContainer extends React.Component<Props, State> {
     }
   };
 
+  reloadDocument = () => {
+    const { currentEntry } = this.state;
+    this.setState({
+      currentEntry: {
+        ...currentEntry,
+        shouldReload: true
+      }
+    });
+  }
+
   startClosingFile = (event) => {
-    event.preventDefault(); // Let's stop this event.
-    event.stopPropagation();
+    if (event) {
+      event.preventDefault(); // Let's stop this event.
+      event.stopPropagation();
+    }
     if (this.state.currentEntry && this.state.currentEntry.changed) {
       this.setState({ isSaveBeforeCloseConfirmDialogOpened: true });
     } else {
@@ -640,15 +653,7 @@ class EntryContainer extends React.Component<Props, State> {
         <IconButton
           title={i18n.t('core:reloadFile')}
           aria-label={i18n.t('core:reloadFile')}
-          onClick={() => {
-            const { currentEntry } = this.state;
-            this.setState({
-              currentEntry: {
-                ...currentEntry,
-                shouldReload: true
-              }
-            });
-          }}
+          onClick={this.reloadDocument}
         >
           <RefreshIcon />
         </IconButton>
@@ -703,15 +708,7 @@ class EntryContainer extends React.Component<Props, State> {
         <IconButton
           title={i18n.t('core:reloadDirectory')}
           aria-label={i18n.t('core:reloadDirectory')}
-          onClick={() => {
-            const { currentEntry } = this.state;
-            this.setState({
-              currentEntry: {
-                ...currentEntry,
-                shouldReload: true
-              }
-            });
-          }}
+          onClick={this.reloadDocument}
         >
           <RefreshIcon />
         </IconButton>
@@ -756,6 +753,13 @@ class EntryContainer extends React.Component<Props, State> {
     );
   };
 
+  keyBindingHandlers = {
+    closeViewer: this.startClosingFile,
+    saveDocument: this.startSavingFile,
+    editDocument: this.editFile,
+    reloadDocument: this.reloadDocument,
+  };
+
   render() {
     const { classes } = this.props;
     const { isEditTagsModalOpened, currentEntry, isFullscreen } = this.state;
@@ -789,7 +793,7 @@ class EntryContainer extends React.Component<Props, State> {
     }
 
     return (
-      <div>
+      <HotKeys handlers={this.keyBindingHandlers}>
         <ConfirmDialog
           open={this.state.isSaveBeforeCloseConfirmDialogOpened}
           onClose={() => {
@@ -977,7 +981,7 @@ class EntryContainer extends React.Component<Props, State> {
             {this.renderFileView(fileOpenerURL)}
           </div>
         </SplitPane>
-      </div>
+      </HotKeys>
     );
   }
 }

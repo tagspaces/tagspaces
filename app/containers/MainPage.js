@@ -146,6 +146,7 @@ type Props = {
   getPrevFile: () => void, // needed by electron-menus
   leftSplitSize: number,
   mainSplitSize: any,
+  toggleShowUnixHiddenEntries: () => void,
   setLeftVerticalSplitSize: (splitSize: number) => void,
   setMainVerticalSplitSize: (splitSize: string) => void
 };
@@ -289,6 +290,7 @@ class MainPage extends Component<Props, State> {
   };
 
   keyBindingHandlers = {
+    toggleShowHiddenEntries: this.props.toggleShowUnixHiddenEntries,
     showFolderNavigator: this.toggleLocationManager,
     showTagLibrary: this.toggleTagLibrary,
     openSearch: this.toggleSearch,
@@ -497,6 +499,7 @@ function mapDispatchToProps(dispatch) {
     setUpdateAvailable: AppActions.setUpdateAvailable,
     getNextFile: AppActions.getNextFile,
     getPrevFile: AppActions.getPrevFile,
+    toggleShowUnixHiddenEntries: SettingsActions.toggleShowUnixHiddenEntries,
     setLeftVerticalSplitSize: SettingsActions.setLeftVerticalSplitSize,
     setMainVerticalSplitSize: SettingsActions.setMainVerticalSplitSize
   }, dispatch);

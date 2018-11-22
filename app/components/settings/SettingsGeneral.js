@@ -59,7 +59,7 @@ type Props = {
   setTagTextColor: string,
   classes: Object,
   settings: Object,
-  setShowUnixHiddenEntries: () => void,
+  toggleShowUnixHiddenEntries: () => void,
   setCurrentTheme: () => void,
   setLanguage: () => void,
   setDesktopMode: () => void,
@@ -271,11 +271,7 @@ class SettingsGeneral extends React.Component<Props, State> {
           <ListItemSecondaryAction>
             <Switch
               data-tid="settingsSetShowUnixHiddenEntries"
-              onClick={() =>
-                this.props.setShowUnixHiddenEntries(
-                  !this.props.settings.showUnixHiddenEntries
-                )
-              }
+              onClick={this.props.toggleShowUnixHiddenEntries}
               checked={this.props.settings.showUnixHiddenEntries}
             />
           </ListItemSecondaryAction>

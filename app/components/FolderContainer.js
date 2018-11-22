@@ -216,6 +216,36 @@ class FolderContainer extends React.Component<Props, State> {
         }
       );
     },
+    deleteDocument: () => {
+      this.setState(
+        {
+          perspectiveCommand: { key: 'DELETE_SELECTED_ENTRIES' }
+        },
+        () => {
+          this.setState({ perspectiveCommand: {} });
+        }
+      );
+    },
+    addRemoveTags: () => {
+      this.setState(
+        {
+          perspectiveCommand: { key: 'ADD_REMOVE_TAGS' }
+        },
+        () => {
+          this.setState({ perspectiveCommand: {} });
+        }
+      );
+    },
+    renameFile: () => {
+      this.setState(
+        {
+          perspectiveCommand: { key: 'RENAME_ENTRY' }
+        },
+        () => {
+          this.setState({ perspectiveCommand: {} });
+        }
+      );
+    },
     openEntry: () => {
       const { lastSelectedEntry } = this.props;
       if (lastSelectedEntry) {

@@ -29,7 +29,7 @@ import { actions as AppActions } from './app';
 export const types = {
   UPGRADE_SETTINGS: 'SETTINGS/UPGRADE_SETTINGS',
   SET_LANGUAGE: 'SETTINGS/SET_LANGUAGE',
-  SET_SHOWUNIXHIDDENENTRIES: 'SETTINGS/SET_SHOWUNIXHIDDENENTRIES',
+  TOGGLE_SHOWUNIXHIDDENENTRIES: 'SETTINGS/TOGGLE_SHOWUNIXHIDDENENTRIES',
   SET_DESKTOPMODE: 'SETTINGS/SET_DESKTOPMODE',
   SET_TAG_DELIMITER: 'SETTINGS/SET_TAG_DELIMITER',
   SET_MAX_SEARCH_RESULT: 'SETTINGS/SET_MAX_SEARCH_RESULT',
@@ -86,8 +86,8 @@ export default (state = defaultSettings, action) => {
       ] */
     };
   }
-  case types.SET_SHOWUNIXHIDDENENTRIES: {
-    return { ...state, showUnixHiddenEntries: action.showUnixHiddenEntries };
+  case types.TOGGLE_SHOWUNIXHIDDENENTRIES: {
+    return { ...state, showUnixHiddenEntries: !state.showUnixHiddenEntries };
   }
   case types.SET_TAG_DELIMITER: {
     return { ...state, tagDelimiter: action.delimiter };
@@ -265,10 +265,7 @@ export const actions = {
   setTagDelimiter: (delimiter: string) => ({ type: types.SET_TAG_DELIMITER, delimiter }),
   setMaxSearchResult: (maxSearchResult: number) => ({ type: types.SET_MAX_SEARCH_RESULT, maxSearchResult }),
   setDesktopMode: (desktopMode: boolean) => ({ type: types.SET_DESKTOPMODE, desktopMode }),
-  setShowUnixHiddenEntries: (showUnixHiddenEntries: boolean) => ({
-    type: types.SET_SHOWUNIXHIDDENENTRIES,
-    showUnixHiddenEntries
-  }),
+  toggleShowUnixHiddenEntries: () => ({ type: types.TOGGLE_SHOWUNIXHIDDENENTRIES }),
   setCheckForUpdates: (checkForUpdates: boolean) => ({ type: types.SET_CHECKFORUPDATES, checkForUpdates }),
   setLanguage: (language: string) => ({ type: types.SET_LANGUAGE, language }),
   setUseDefaultLocation: (useDefaultLocation: boolean) => ({ type: types.SET_USEDEFAULTLOCATION, useDefaultLocation }),
