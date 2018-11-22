@@ -93,7 +93,7 @@ class SettingsKeyBindings extends React.Component<Props> {
             InputLabelProps={{ shrink: true }}
             fullWidth
             onBlur={event => setKeyBinding(keyBinding.name, event.target.value)}
-            label={i18n.t(`core: ${keyBinding.name}`)}
+            label={i18n.t('core:' + keyBinding.name)}
             placeholder={`suggested binding: ${DefaultSettings.keyBindings.filter(kb => kb.name === keyBinding.name)[0].command}`}
             defaultValue={(isStr(keyBinding.command) ? keyBinding.command : '')}
           />
