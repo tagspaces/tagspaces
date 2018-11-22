@@ -121,7 +121,6 @@ class SettingsGeneral extends React.Component<Props, State> {
   };
 
   render() {
-    console.log('render settings');
     const classes = this.props.classes;
 
     return (
