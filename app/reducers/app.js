@@ -1251,7 +1251,12 @@ function prepareDirectoryContent(
     }
     const enhancedEntry = enhanceEntry(entry);
     directoryContent.push(enhancedEntry);
-    if (enhancedEntry.isFile && settings.useGenerateThumbnails) {
+    if ( // Enable thumb generation by
+      !AppConfig.isWeb && // not in webdav mode
+      !PlatformIO.haveObjectStoreSupport() && // not in object store mode
+      enhancedEntry.isFile && // only for files
+      settings.useGenerateThumbnails // enabled in the settings
+    ) {
       if (isWorkerAvailable) {
         tmbGenerationList.push(enhancedEntry.path);
       } else {
