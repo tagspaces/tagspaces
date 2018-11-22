@@ -171,7 +171,7 @@ function ValueContainer(props) {
 function MultiValue(props) {
   return (
     <TagContainer
-      key={props.data.id}
+      key={props.data.id || props.data.title}
       defaultTextColor={props.data.textcolor}
       defaultBackgroundColor={props.data.color}
       tag={props.data}
@@ -211,7 +211,7 @@ const components = {
   Option,
   Placeholder,
   SingleValue,
-  ValueContainer,
+  ValueContainer
 };
 
 type Props = {
@@ -268,7 +268,7 @@ class TagsSelect extends React.Component<Props> {
             classes={classes}
             options={allTags}
             getOptionLabel={(option) => option.title}
-            getOptionValue={(option) => option.id}
+            getOptionValue={(option) => option.id || option.title}
             isValidNewOption={this.isValidNewOption}
             getNewOptionData={(inputValue, optionLabel) => ({
               id: inputValue,
@@ -289,6 +289,7 @@ class TagsSelect extends React.Component<Props> {
             // onCreateOption={this.handleCreate}
             placeholder={i18n.t('core:searchTags')}
             isMulti
+            formatCreateLabel={(label) => label}
           // isSearchable
           />
         </NoSsr>

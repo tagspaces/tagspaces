@@ -19,6 +19,8 @@
 
 import React, { Component } from 'react';
 import marked from 'marked';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import FormControl from '@material-ui/core/FormControl';
@@ -27,7 +29,6 @@ import TextField from '@material-ui/core/TextField';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
 import DOMPurify from 'dompurify';
-import TagContainer from './TagContainer';
 import TagDropContainer from './TagDropContainer';
 import EntryTagMenu from './menus/EntryTagMenu';
 import ColorPickerDialog from './dialogs/ColorPickerDialog';
@@ -39,6 +40,8 @@ import { extractContainingDirectoryPath } from '../utils/paths';
 import AppConfig from '../config';
 import { Pro } from '../pro';
 import PlatformIO from '../services/platform-io';
+import TagsSelect from './TagsSelect';
+import TaggingActions from '../reducers/tagging-actions';
 
 const styles = theme => ({
   entryProperties: {
@@ -158,7 +161,8 @@ type Props = {
   renameFile: () => void,
   renameDirectory: () => void,
   normalizeShouldCopyFile: () => void,
-  showNotification: () => void
+  showNotification: () => void,
+  addTags: () => void
 };
 
 type State = {
@@ -364,7 +368,14 @@ class EntryProperties extends Component<Props, State> {
     this.setState({ [name]: value });
   };
 
-  renderTags = (tag: Object) => (
+  handleChange = (name, value) => {
+    this.setState({
+      tags: value
+    });
+    this.props.addTags([this.state.path], value); // TODO old path -> debug tagging-action
+  };
+
+  /* renderTags = (tag: Object) => (
     <TagContainer
       key={tag.id ? tag.id : tag.title}
       defaultTextColor={this.props.settings.tagTextColor}
@@ -372,7 +383,7 @@ class EntryProperties extends Component<Props, State> {
       tag={tag}
       handleTagMenu={this.handleTagMenu}
     />
-  );
+  ); */
 
   render() {
     const {
@@ -401,7 +412,9 @@ class EntryProperties extends Component<Props, State> {
       selectedTag,
       isMoveCopyFilesDialogOpened
     } = this.state;
-
+    if (!path || path === '') {
+      return <div />;
+    }
     return (
       <div className={classes.entryProperties}>
         <Grid container spacing={8}>
@@ -490,13 +503,7 @@ class EntryProperties extends Component<Props, State> {
             </div>
             <Paper className={classes.tags}>
               <TagDropContainer entryPath={path}>
-                {tags && tags.length > 0 ? (
-                  tags.map(this.renderTags)
-                ) : (
-                  <div className={classes.dropText}>
-                    {i18n.t('core:dropHere')}
-                  </div>
-                )}
+                <TagsSelect tagQuery={tags} handleChange={this.handleChange} />
               </TagDropContainer>
             </Paper>
           </div>
@@ -704,4 +711,9 @@ class EntryProperties extends Component<Props, State> {
   }
 }
 
-export default withStyles(styles)(EntryProperties);
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators({ addTags: TaggingActions.addTags }, dispatch);
+}
+export default withStyles(styles)(
+  connect(undefined, mapDispatchToProps)(EntryProperties)
+);

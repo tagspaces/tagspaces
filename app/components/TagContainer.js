@@ -18,16 +18,21 @@
  */
 
 import React from 'react';
+import uuidv1 from 'uuid';
+import { connect } from 'react-redux';
 import Button from '@material-ui/core/Button';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import RemoveTagIcon from '@material-ui/icons/Close';
 import { type TagGroup, type Tag } from '../reducers/taglibrary';
+import { getTagColor, getTagTextColor } from '../reducers/settings';
 
 type Props = {
   tag: Tag,
   key?: string,
   defaultTextColor?: string,
+  tagTextColor: string,
   defaultBackgroundColor?: string,
+  tagBackgroundColor: string,
   tagGroup?: TagGroup,
   handleTagMenu: (event: Object, tag: Tag, tagGroup: TagGroup) => void, // TODO refactor
   handleTagMenu: (event: Object, tag: Tag, entryPath: string) => void,
@@ -52,11 +57,14 @@ class TagContainer extends React.Component<Props> {
 
   render() {
     const {
+      key,
       tag,
       deleteIcon,
       isDragging,
       defaultTextColor,
+      tagTextColor,
       defaultBackgroundColor,
+      tagBackgroundColor,
       tagGroup,
       entryPath
     } = this.props;
@@ -89,10 +97,10 @@ class TagContainer extends React.Component<Props> {
     return (
       <div
         data-tid={'tagContainer_' + tag.title.replace(/ /g, '_')}
-        key={this.props.key || tag.id}
-        onClick={event => this.props.handleTagMenu(event, tag, entryPath || tagGroup)}
-        onContextMenu={event => this.props.handleTagMenu(event, tag, entryPath || tagGroup)}
-        onDoubleClick={event => this.props.handleTagMenu(event, tag, entryPath || tagGroup)}
+        key={key || tag.id || uuidv1()}
+        onClick={event => { if (this.props.handleTagMenu) { this.props.handleTagMenu(event, tag, entryPath || tagGroup); } }}
+        onContextMenu={event => { if (this.props.handleTagMenu) { this.props.handleTagMenu(event, tag, entryPath || tagGroup); } }}
+        onDoubleClick={event => { if (this.props.handleTagMenu) { this.props.handleTagMenu(event, tag, entryPath || tagGroup); } }}
         style={{
           backgroundColor: 'transparent',
           marginLeft: 4,
@@ -107,8 +115,8 @@ class TagContainer extends React.Component<Props> {
             opacity: isDragging ? 0.5 : 1,
             fontSize: 13,
             textTransform: 'none',
-            color: tag.textcolor || defaultTextColor,
-            backgroundColor: tag.color || defaultBackgroundColor,
+            color: tag.textcolor || defaultTextColor || tagTextColor,
+            backgroundColor: tag.color || defaultBackgroundColor || tagBackgroundColor,
             minHeight: 25,
             margin: 0,
             paddingTop: 0,
@@ -127,4 +135,10 @@ class TagContainer extends React.Component<Props> {
   }
 }
 
-export default TagContainer;
+function mapStateToProps(state) {
+  return {
+    tagBackgroundColor: getTagColor(state),
+    tagTextColor: getTagTextColor(state)
+  };
+}
+export default connect(mapStateToProps)(TagContainer);
