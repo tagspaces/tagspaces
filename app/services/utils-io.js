@@ -87,36 +87,40 @@ export function enhanceEntry(entry: any): FileSystemEntry {
 
 export function createDirectoryIndex(directoryPath: string): Promise<Array<Object>> {
   const dirPath = cleanTrailingDirSeparator(directoryPath);
-  if (PlatformIO.isWorkerAvailable()) {
+  if (PlatformIO.isWorkerAvailable() && !PlatformIO.haveObjectStoreSupport()) { // Start indexing in worker if not in the object store mode
     return PlatformIO.createDirectoryIndexInWorker(dirPath);
   }
 
   return new Promise((resolve, reject) => {
-    const directoryIndex = [];
-    let counter = 0;
-    console.time('createDirectoryIndex');
-    walkDirectory(dirPath, { recursive: true, skipMetaFolder: true }, (fileEntry) => {
-      counter += 1;
-      if (counter > AppConfig.indexerLimit) {
-        console.warn('Walk canceled by ' + AppConfig.indexerLimit);
-        window.walkCanceled = true;
-      }
-      directoryIndex.push(enhanceEntry(fileEntry));
-    }, (directoryEntry) => {
-      counter += 1;
-      directoryIndex.push(enhanceEntry(directoryEntry));
-    }).then(() => { // entries - can be used for further processing
-      window.walkCanceled = false;
-      console.log('Directory index created ' + dirPath + ' containing ' + directoryIndex.length);
-      console.timeEnd('createDirectoryIndex');
-      resolve(directoryIndex);
-      return true;
-    }).catch((err) => {
-      window.walkCanceled = false;
-      console.timeEnd('createDirectoryIndex');
-      console.warn('Error creating index: ' + err);
-      reject(err);
-    });
+    setTimeout(() => {
+      const directoryIndex = [];
+      let counter = 0;
+      console.time('createDirectoryIndex');
+      walkDirectory(dirPath, { recursive: true, skipMetaFolder: true }, (fileEntry) => {
+        counter += 1;
+        if (counter > AppConfig.indexerLimit) {
+          console.warn('Walk canceled by ' + AppConfig.indexerLimit);
+          window.walkCanceled = true;
+        }
+        directoryIndex.push(enhanceEntry(fileEntry));
+      }, (directoryEntry) => {
+        if (directoryEntry.name !== AppConfig.metaFolder) {
+          counter += 1;
+          directoryIndex.push(enhanceEntry(directoryEntry));
+        }
+      }).then(() => { // entries - can be used for further processing
+        window.walkCanceled = false;
+        console.log('Directory index created ' + dirPath + ' containing ' + directoryIndex.length);
+        console.timeEnd('createDirectoryIndex');
+        resolve(directoryIndex);
+        return true;
+      }).catch((err) => {
+        window.walkCanceled = false;
+        console.timeEnd('createDirectoryIndex');
+        console.warn('Error creating index: ' + err);
+        reject(err);
+      });
+    }, 2000);
   });
 }
 
