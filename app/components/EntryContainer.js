@@ -317,6 +317,7 @@ class EntryContainer extends React.Component<Props, State> {
   handleMessage = (msg: Object | string) => {
     let data;
     let message;
+    let textFilePath;
     if (msg.data) {
       data = JSON.parse(msg.data);
     } else {
@@ -348,13 +349,18 @@ class EntryContainer extends React.Component<Props, State> {
       if (!this.state.currentEntry || !this.state.currentEntry.path) {
         break;
       }
+      textFilePath = this.state.currentEntry.path;
+      // TODO make loading index.html for folders configurable
+      // if (!this.state.currentEntry.isFile) {
+      //   textFilePath += '/index.html';
+      // }
       PlatformIO.loadTextFilePromise(
-        this.state.currentEntry.path,
+        textFilePath,
         data.preview ? data.preview : false
       )
         .then(content => {
           let fileDirectory = extractContainingDirectoryPath(
-            this.state.currentEntry.path
+            textFilePath
           );
           if (AppConfig.isWeb) {
             fileDirectory =
@@ -780,6 +786,8 @@ class EntryContainer extends React.Component<Props, State> {
           '&locale=' +
           i18n.language +
           '&edit=true';
+      } else if (!currentEntry.isFile) {
+        fileOpenerURL = 'node_modules/@tagspaces/html-viewer/index.html?locale=' + i18n.language;
       } else {
         fileOpenerURL =
           currentEntry.viewingExtensionPath +
@@ -788,6 +796,20 @@ class EntryContainer extends React.Component<Props, State> {
           '&locale=' +
           i18n.language;
       }
+
+      // if (!currentEntry.isFile) {
+      //   fileOpenerURL = currentEntry.path + '/index.html';
+      // }
+
+      // // Idea for using mhtml native browser in chrome
+      // if (
+      //   !AppConfig.isFirefox && (
+      //     currentEntry.path.endsWith('mht') ||
+      //     currentEntry.path.endsWith('mhtml')
+      //   )
+      // ) {
+      //   fileOpenerURL = currentEntry.path;
+      // }
     } else {
       fileOpenerURL = 'about:blank';
     }
@@ -843,10 +865,14 @@ class EntryContainer extends React.Component<Props, State> {
         <SplitPane
           split="horizontal"
           resizerStyle={{ backgroundColor: this.props.theme.palette.divider }}
-          size={(currentEntry && currentEntry.isFile) ? this.state.entryPropertiesSplitSize : '100%'}
-          minSize={(currentEntry && currentEntry.isFile) ? defaultSplitSize : '100%'}
-          maxSize={(currentEntry && currentEntry.isFile) ? fullSplitSize : '100%'}
-          defaultSize={(currentEntry && currentEntry.isFile) ? this.state.entryPropertiesSplitSize : '100%'}
+          size={this.state.entryPropertiesSplitSize}
+          minSize={defaultSplitSize}
+          maxSize={fullSplitSize}
+          defaultSize={this.state.entryPropertiesSplitSize}
+          // size={(currentEntry && currentEntry.isFile) ? this.state.entryPropertiesSplitSize : '100%'}
+          // minSize={(currentEntry && currentEntry.isFile) ? defaultSplitSize : '100%'}
+          // maxSize={(currentEntry && currentEntry.isFile) ? fullSplitSize : '100%'}
+          // defaultSize={(currentEntry && currentEntry.isFile) ? this.state.entryPropertiesSplitSize : '100%'}
           onChange={size => {
             this.setState({
               isPropertiesPanelVisible: size > defaultSplitSize,
