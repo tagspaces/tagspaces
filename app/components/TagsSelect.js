@@ -230,14 +230,14 @@ class TagsSelect extends React.Component<Props> {
     console.groupEnd(); */
 
     if (actionMeta.action === 'select-option') {
-      this.props.handleChange('tagQuery', newValue);
+      this.props.handleChange('tagQuery', newValue, actionMeta.action);
     } else if (actionMeta.action === 'create-option') {
       this.props.allTags.push(newValue);
-      this.props.handleChange('tagQuery', newValue);
+      this.props.handleChange('tagQuery', newValue, actionMeta.action);
     } else if (actionMeta.action === 'remove-value') {
-      this.props.handleChange('tagQuery', newValue);
+      this.props.handleChange('tagQuery', newValue, actionMeta.action);
     } else if (actionMeta.action === 'clear') {
-      this.props.handleChange('tagQuery', []);
+      this.props.handleChange('tagQuery', [], actionMeta.action);
     }
   };
 

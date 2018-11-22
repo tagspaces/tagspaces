@@ -155,14 +155,15 @@ type Props = {
   shouldReload?: boolean | null,
   settings: Object,
   shouldCopyFile?: boolean,
-  removeTags: () => void,
   editTagForEntry: () => void,
   onEditTags: () => void,
   renameFile: () => void,
   renameDirectory: () => void,
   normalizeShouldCopyFile: () => void,
   showNotification: () => void,
-  addTags: () => void
+  addTags: () => void,
+  removeTags: () => void,
+  removeAllTags: () => void
 };
 
 type State = {
@@ -368,11 +369,28 @@ class EntryProperties extends Component<Props, State> {
     this.setState({ [name]: value });
   };
 
-  handleChange = (name, value) => {
+  handleChange = (name, value, action) => {
+    if (action === 'remove-value') {
+      this.state.tags.map((tag) => {
+        if (value.findIndex(obj => obj.title === tag.title) === -1) {
+          this.props.removeTags([this.state.path], [tag]);
+        }
+        return tag;
+      });
+    } else if (action === 'clear') {
+      this.props.removeAllTags([this.state.path]);
+    } else { // create-option or select-option
+      value.map((tag) => {
+        if (this.state.tags.findIndex(obj => obj.title === tag.title) === -1) {
+          this.props.addTags([this.state.path], [tag]);
+        }
+        return tag;
+      });
+    }
+
     this.setState({
       tags: value
     });
-    this.props.addTags([this.state.path], value); // TODO old path -> debug tagging-action
   };
 
   /* renderTags = (tag: Object) => (
@@ -712,7 +730,7 @@ class EntryProperties extends Component<Props, State> {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ addTags: TaggingActions.addTags }, dispatch);
+  return bindActionCreators({ addTags: TaggingActions.addTags, removeTags: TaggingActions.removeTags, removeAllTags: TaggingActions.removeAllTags }, dispatch);
 }
 export default withStyles(styles)(
   connect(undefined, mapDispatchToProps)(EntryProperties)
