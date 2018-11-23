@@ -90,12 +90,17 @@ const actions = {
     getState: () => Object
   ) => {
     const { settings } = getState();
-
     const entryProperties = await PlatformIO.getPropertiesPromise(path);
+    let fsEntryMeta;
+    try {
+      fsEntryMeta = await loadMetaDataPromise(path);
+    } catch (error) {
+      console.log('No sidecar found ' + error);
+    }
 
     if (!entryProperties.isFile || settings.persistTagsInSidecarFile) {
       // Handling adding tags in sidecar
-      loadMetaDataPromise(path).then(fsEntryMeta => {
+      if (fsEntryMeta) {
         const uniqueTags = getNonExistingTags(tags, extractTags(path, settings.tagDelimiter), fsEntryMeta.tags);
         if (uniqueTags.length > 0) {
           const newTags = [
@@ -114,11 +119,8 @@ const actions = {
             dispatch(AppActions.showNotification('Adding tags failed', 'error', true));
           });
         }
-        return true;
-      }).catch(() => {
-        const newFsEntryMeta = {
-          tags
-        };
+      } else {
+        const newFsEntryMeta = { tags };
         saveMetaDataPromise(path, newFsEntryMeta).then(() => {
           dispatch(AppActions.reflectUpdateSidecarTags(path, tags));
           return true;
@@ -126,27 +128,36 @@ const actions = {
           console.warn('Error adding tags for ' + path + ' with ' + error);
           dispatch(AppActions.showNotification('Adding tags failed', 'error', true));
         });
-      });
-    } else {
-      loadMetaDataPromise(path).then(fsEntryMeta => {
-        const extractedTags = extractTags(path, settings.tagDelimiter);
-        const uniqueTags = getNonExistingTags(tags, extractedTags, fsEntryMeta.tags);
-        if (uniqueTags.length > 0) {
-          const fileName = extractFileName(path);
-          const containingDirectoryPath = extractContainingDirectoryPath(path);
+      }
+    } else if (fsEntryMeta) { // Handling tags in filename by existing sidecar
+      const extractedTags = extractTags(path, settings.tagDelimiter);
+      const uniqueTags = getNonExistingTags(tags, extractedTags, fsEntryMeta.tags);
+      if (uniqueTags.length > 0) {
+        const fileName = extractFileName(path);
+        const containingDirectoryPath = extractContainingDirectoryPath(path);
 
-          for (let i = 0; i < uniqueTags.length; i += 1) {
-            extractedTags.push(uniqueTags[i].title);
-          }
-          const newFilePath = containingDirectoryPath + AppConfig.dirSeparator + generateFileName(fileName, extractedTags, settings.tagDelimiter);
-          dispatch(AppActions.renameFile(path, newFilePath));
+        for (let i = 0; i < uniqueTags.length; i += 1) {
+          extractedTags.push(uniqueTags[i].title);
         }
-        return true;
-      }).catch(error => {
-        console.warn('Error check tag exist in SideCar for ' + path + ' with ' + error);
-      });
+        const newFilePath = containingDirectoryPath + AppConfig.dirSeparator + generateFileName(fileName, extractedTags, settings.tagDelimiter);
+        dispatch(AppActions.renameFile(path, newFilePath));
+      }
+    } else { // Handling tags in filename by no sidecar
+      const fileName = extractFileName(path);
+      const containingDirectoryPath = extractContainingDirectoryPath(path);
+      const extractedTags = extractTags(path);
+      for (let i = 0; i < tags.length; i += 1) {
+        // check if tag is already in the tag array
+        if (extractedTags.indexOf(tags[i].title) < 0) {
+          // Adding the new tag
+          extractedTags.push(tags[i].title);
+        }
+      }
+      const newFilePath = containingDirectoryPath + AppConfig.dirSeparator + generateFileName(fileName, extractedTags, settings.tagDelimiter);
+      if (path !== newFilePath) {
+        dispatch(AppActions.renameFile(path, newFilePath));
+      }
     }
-    // dispatch collectRecentTags(tags);
 
     function getNonExistingTags(newTagsArray: Array<Tag>, fileTagsArray: Array<string>, sideCarTagsArray: Array<Tag>) {
       const newTags = [];
