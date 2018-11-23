@@ -129,7 +129,7 @@ const styles = theme => ({
     padding: 0,
     paddingTop: 5,
     zIndex: 100,
-    overflowY: 'overlay',
+    overflowY: 'auto',
     overflowX: 'hidden',
     opacity: 0.6
   },
@@ -303,25 +303,53 @@ class GridPerspective extends React.Component<Props, State> {
   componentWillReceiveProps = (nextProps: Props) => {
     const cmd = nextProps.perspectiveCommand;
     const { directoryContent } = nextProps;
-    if (
-      cmd &&
-      cmd.key &&
-      cmd.key === 'SELECT_FILE' &&
-      cmd.value.length > 0 &&
-      directoryContent &&
-      directoryContent.length > 0
-    ) {
-      this.setState(
-        {
-          selectedEntries: nextProps.directoryContent.filter(
-            fsEntry => fsEntry.path === cmd.value
-          )
-        },
-        () => {
-          this.computeFileOperationsEnabled();
-          // this.makeFirstSelectedEntryVisible(); // disable due to wrong scrolling
+    if (cmd && cmd.key) {
+      if (
+        cmd.key === 'SELECT_FILE' &&
+        cmd.value.length > 0 &&
+        directoryContent &&
+        directoryContent.length > 0
+      ) {
+        this.setState(
+          {
+            selectedEntries: nextProps.directoryContent.filter(
+              fsEntry => fsEntry.path === cmd.value
+            )
+          },
+          () => {
+            this.computeFileOperationsEnabled();
+            // this.makeFirstSelectedEntryVisible(); // disable due to wrong scrolling
+          }
+        );
+      }
+
+      if (cmd.key === 'TOGGLE_SELECT_ALL') {
+        this.toggleSelectAllFiles();
+      }
+
+      if (
+        cmd.key === 'ADD_REMOVE_TAGS' &&
+        this.state.selectedEntries &&
+        this.state.selectedEntries.length > 0
+      ) {
+        this.openAddRemoveTagsDialog();
+      }
+
+      if (
+        cmd.key === 'RENAME_ENTRY' &&
+        this.state.selectedEntries &&
+        this.state.selectedEntries.length === 1
+      ) {
+        if (this.state.selectedEntries[0].isFile) {
+          this.setState({ selectedEntryPath: this.state.selectedEntries[0].path }, () => {
+            this.openFileRenameDialog();
+          });
         }
-      );
+      }
+
+      if (cmd.key === 'DELETE_SELECTED_ENTRIES' && this.state.fileOperationsEnabled) {
+        this.openDeleteFileDialog();
+      }
     }
 
     // Directory changed
@@ -1047,7 +1075,7 @@ class GridPerspective extends React.Component<Props, State> {
             <SwapVertIcon />
           </IconButton>
         </Toolbar>
-        <div style={{ height: '100%', overflowY: 'overlay' }}>
+        <div style={{ height: '100%', overflowY: AppConfig.isFirefox ? 'auto' : 'overlay' }}>
           <div
             className={this.getLayoutClass()}
             ref={ref => {

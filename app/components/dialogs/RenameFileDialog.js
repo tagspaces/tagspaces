@@ -54,7 +54,6 @@ const styles = theme => ({
   root: {
     width: 550,
     height: '100%',
-    overflowY: 'overlay',
     marginBottom: 30,
     background: theme.palette.background.paper
   }
@@ -76,7 +75,10 @@ class RenameFileDialog extends React.Component<Props, State> {
         fileName: extractFileName(nextProps.selectedFilePath),
         filePath: nextProps.selectedFilePath
       }, () => {
-        this.fileName.select();
+        this.fileName.focus();
+        if (this.state.fileName) {
+          this.fileName.setSelectionRange(0, this.state.fileName.indexOf('.'));
+        }
       });
     }
   };

@@ -39,11 +39,12 @@ import {
   getSettings
 } from '../../reducers/settings';
 import ColorPickerDialog from '../dialogs/ColorPickerDialog';
+import AppConfig from '../../config';
 
 const styles = theme => ({
   root: {
     maxHeight: 500,
-    overflowY: 'overlay'
+    overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
   },
   pro: {
     backgroundColor: '#1DD19F'
@@ -58,7 +59,7 @@ type Props = {
   setTagTextColor: string,
   classes: Object,
   settings: Object,
-  setShowUnixHiddenEntries: () => void,
+  toggleShowUnixHiddenEntries: () => void,
   setCurrentTheme: () => void,
   setLanguage: () => void,
   setDesktopMode: () => void,
@@ -120,7 +121,6 @@ class SettingsGeneral extends React.Component<Props, State> {
   };
 
   render() {
-    console.log('render settings');
     const classes = this.props.classes;
 
     return (
@@ -271,11 +271,7 @@ class SettingsGeneral extends React.Component<Props, State> {
           <ListItemSecondaryAction>
             <Switch
               data-tid="settingsSetShowUnixHiddenEntries"
-              onClick={() =>
-                this.props.setShowUnixHiddenEntries(
-                  !this.props.settings.showUnixHiddenEntries
-                )
-              }
+              onClick={this.props.toggleShowUnixHiddenEntries}
               checked={this.props.settings.showUnixHiddenEntries}
             />
           </ListItemSecondaryAction>

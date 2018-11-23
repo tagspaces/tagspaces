@@ -20,6 +20,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { HotKeys } from 'react-hotkeys';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import EditIcon from '@material-ui/icons/Edit';
@@ -316,6 +317,7 @@ class EntryContainer extends React.Component<Props, State> {
   handleMessage = (msg: Object | string) => {
     let data;
     let message;
+    let textFilePath;
     if (msg.data) {
       data = JSON.parse(msg.data);
     } else {
@@ -347,13 +349,18 @@ class EntryContainer extends React.Component<Props, State> {
       if (!this.state.currentEntry || !this.state.currentEntry.path) {
         break;
       }
+      textFilePath = this.state.currentEntry.path;
+      // TODO make loading index.html for folders configurable
+      // if (!this.state.currentEntry.isFile) {
+      //   textFilePath += '/index.html';
+      // }
       PlatformIO.loadTextFilePromise(
-        this.state.currentEntry.path,
+        textFilePath,
         data.preview ? data.preview : false
       )
         .then(content => {
           let fileDirectory = extractContainingDirectoryPath(
-            this.state.currentEntry.path
+            textFilePath
           );
           if (AppConfig.isWeb) {
             fileDirectory =
@@ -401,9 +408,21 @@ class EntryContainer extends React.Component<Props, State> {
     }
   };
 
+  reloadDocument = () => {
+    const { currentEntry } = this.state;
+    this.setState({
+      currentEntry: {
+        ...currentEntry,
+        shouldReload: true
+      }
+    });
+  }
+
   startClosingFile = (event) => {
-    event.preventDefault(); // Let's stop this event.
-    event.stopPropagation();
+    if (event) {
+      event.preventDefault(); // Let's stop this event.
+      event.stopPropagation();
+    }
     if (this.state.currentEntry && this.state.currentEntry.changed) {
       this.setState({ isSaveBeforeCloseConfirmDialogOpened: true });
     } else {
@@ -640,15 +659,7 @@ class EntryContainer extends React.Component<Props, State> {
         <IconButton
           title={i18n.t('core:reloadFile')}
           aria-label={i18n.t('core:reloadFile')}
-          onClick={() => {
-            const { currentEntry } = this.state;
-            this.setState({
-              currentEntry: {
-                ...currentEntry,
-                shouldReload: true
-              }
-            });
-          }}
+          onClick={this.reloadDocument}
         >
           <RefreshIcon />
         </IconButton>
@@ -703,15 +714,7 @@ class EntryContainer extends React.Component<Props, State> {
         <IconButton
           title={i18n.t('core:reloadDirectory')}
           aria-label={i18n.t('core:reloadDirectory')}
-          onClick={() => {
-            const { currentEntry } = this.state;
-            this.setState({
-              currentEntry: {
-                ...currentEntry,
-                shouldReload: true
-              }
-            });
-          }}
+          onClick={this.reloadDocument}
         >
           <RefreshIcon />
         </IconButton>
@@ -756,6 +759,13 @@ class EntryContainer extends React.Component<Props, State> {
     );
   };
 
+  keyBindingHandlers = {
+    closeViewer: this.startClosingFile,
+    saveDocument: this.startSavingFile,
+    editDocument: this.editFile,
+    reloadDocument: this.reloadDocument,
+  };
+
   render() {
     const { classes } = this.props;
     const { isEditTagsModalOpened, currentEntry, isFullscreen } = this.state;
@@ -776,6 +786,8 @@ class EntryContainer extends React.Component<Props, State> {
           '&locale=' +
           i18n.language +
           '&edit=true';
+      } else if (!currentEntry.isFile) {
+        fileOpenerURL = 'node_modules/@tagspaces/html-viewer/index.html?locale=' + i18n.language;
       } else {
         fileOpenerURL =
           currentEntry.viewingExtensionPath +
@@ -784,12 +796,26 @@ class EntryContainer extends React.Component<Props, State> {
           '&locale=' +
           i18n.language;
       }
+
+      // if (!currentEntry.isFile) {
+      //   fileOpenerURL = currentEntry.path + '/index.html';
+      // }
+
+      // // Idea for using mhtml native browser in chrome
+      // if (
+      //   !AppConfig.isFirefox && (
+      //     currentEntry.path.endsWith('mht') ||
+      //     currentEntry.path.endsWith('mhtml')
+      //   )
+      // ) {
+      //   fileOpenerURL = currentEntry.path;
+      // }
     } else {
       fileOpenerURL = 'about:blank';
     }
 
     return (
-      <div>
+      <HotKeys handlers={this.keyBindingHandlers}>
         <ConfirmDialog
           open={this.state.isSaveBeforeCloseConfirmDialogOpened}
           onClose={() => {
@@ -839,10 +865,14 @@ class EntryContainer extends React.Component<Props, State> {
         <SplitPane
           split="horizontal"
           resizerStyle={{ backgroundColor: this.props.theme.palette.divider }}
-          size={(currentEntry && currentEntry.isFile) ? this.state.entryPropertiesSplitSize : '100%'}
-          minSize={(currentEntry && currentEntry.isFile) ? defaultSplitSize : '100%'}
-          maxSize={(currentEntry && currentEntry.isFile) ? fullSplitSize : '100%'}
-          defaultSize={(currentEntry && currentEntry.isFile) ? this.state.entryPropertiesSplitSize : '100%'}
+          size={this.state.entryPropertiesSplitSize}
+          minSize={defaultSplitSize}
+          maxSize={fullSplitSize}
+          defaultSize={this.state.entryPropertiesSplitSize}
+          // size={(currentEntry && currentEntry.isFile) ? this.state.entryPropertiesSplitSize : '100%'}
+          // minSize={(currentEntry && currentEntry.isFile) ? defaultSplitSize : '100%'}
+          // maxSize={(currentEntry && currentEntry.isFile) ? fullSplitSize : '100%'}
+          // defaultSize={(currentEntry && currentEntry.isFile) ? this.state.entryPropertiesSplitSize : '100%'}
           onChange={size => {
             this.setState({
               isPropertiesPanelVisible: size > defaultSplitSize,
@@ -924,7 +954,7 @@ class EntryContainer extends React.Component<Props, State> {
                 { currentEntry.isFile ?
                   this.renderFileToolbar(classes) : this.renderFolderToolbar()
                 }
-                <div style={{ overflowY: 'overlay', maxHeight: '100%' }}>
+                <div style={{ overflowY: AppConfig.isFirefox ? 'auto' : 'overlay', maxHeight: '100%' }}>
                   <EntryProperties
                     entryPath={currentEntry.path}
                     shouldReload={currentEntry.shouldReload}
@@ -977,7 +1007,7 @@ class EntryContainer extends React.Component<Props, State> {
             {this.renderFileView(fileOpenerURL)}
           </div>
         </SplitPane>
-      </div>
+      </HotKeys>
     );
   }
 }

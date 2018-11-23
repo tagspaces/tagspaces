@@ -30,13 +30,14 @@ import ColorPickerDialog from '../dialogs/ColorPickerDialog';
 import { findAvailableExtensions } from '../../reducers/app';
 import { sortBy } from '../../utils/misc';
 import i18n from '../../services/i18n';
+import AppConfig from '../../config';
 
 const styles = theme => ({
   root: {
     width: '100%',
     height: '100%',
     maxHeight: 520,
-    overflowY: 'overlay',
+    overflowY: AppConfig.isFirefox ? 'auto' : 'overlay',
     background: theme.palette.background.paper
   },
   fileExtension: {

@@ -40,8 +40,10 @@ function init() {
         }
         directoryIndex.push(enhanceEntry(fileEntry));
       }, (directoryEntry) => {
-        counter += 1;
-        directoryIndex.push(enhanceEntry(directoryEntry));
+        if (directoryEntry.name !== AppConfig.metaFolder) {
+          counter += 1;
+          directoryIndex.push(enhanceEntry(directoryEntry));
+        }
       }).then(() => { // entries - can be used for further processing
         window.walkCanceled = false;
         console.log('Directory index created ' + arg.path + ' containing ' + directoryIndex.length);

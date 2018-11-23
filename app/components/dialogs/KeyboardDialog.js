@@ -36,7 +36,6 @@ const styles = theme => ({
   root: {
     width: 550,
     height: '100%',
-    overflowY: 'overlay',
     marginBottom: 30,
     background: theme.palette.background.paper
   },
@@ -64,7 +63,7 @@ class KeyboardDialog extends React.Component<Props> {
   renderTitle = () => <DialogTitle>{i18n.t('core:shortcutKeys')}</DialogTitle>;
 
   renderContent = () => (
-    <DialogContent style={{ overflowY: 'overlay' }}>
+    <DialogContent>
       <div className={this.props.classes.root} data-tid="keyboardShortCutsDialog">
         {this.props.keyBindings && Object.keys(this.props.keyBindings).map((shortcutKey) => (
           <ListItem key={shortcutKey}>

@@ -216,6 +216,36 @@ class FolderContainer extends React.Component<Props, State> {
         }
       );
     },
+    deleteDocument: () => {
+      this.setState(
+        {
+          perspectiveCommand: { key: 'DELETE_SELECTED_ENTRIES' }
+        },
+        () => {
+          this.setState({ perspectiveCommand: {} });
+        }
+      );
+    },
+    addRemoveTags: () => {
+      this.setState(
+        {
+          perspectiveCommand: { key: 'ADD_REMOVE_TAGS' }
+        },
+        () => {
+          this.setState({ perspectiveCommand: {} });
+        }
+      );
+    },
+    renameFile: () => {
+      this.setState(
+        {
+          perspectiveCommand: { key: 'RENAME_ENTRY' }
+        },
+        () => {
+          this.setState({ perspectiveCommand: {} });
+        }
+      );
+    },
     openEntry: () => {
       const { lastSelectedEntry } = this.props;
       if (lastSelectedEntry) {
@@ -310,7 +340,10 @@ class FolderContainer extends React.Component<Props, State> {
   }
 
   render() {
-    const { classes } = this.props;
+    const {
+      classes,
+      currentDirectoryPath
+    } = this.props;
     // console.log(this.props.windowHeight);
     return (
       <HotKeys handlers={this.keyBindingHandlers}>
@@ -326,33 +359,33 @@ class FolderContainer extends React.Component<Props, State> {
                 )}
               </div>
               {this.props.currentDirectoryPath && (
-                  <div>
-                    <Button
-                      data-tid="folderContainerOpenDirMenu"
-                      title={i18n.t('core:openDirectoryMenu')}
-                      className={classes.folderButton}
-                      onClick={this.openDirectoryMenu}
-                    >
-                      {extractDirectoryName(this.props.currentDirectoryPath)}
-                      <MoreVertIcon />
-                    </Button>
-                    <DirectoryMenu
-                      open={this.state.directoryContextMenuOpened}
-                      onClose={this.closeDirectoryMenu}
-                      anchorEl={this.state.directoryContextMenuAnchorEl}
-                      directoryPath={this.props.currentDirectoryPath}
-                      loadDirectoryContent={this.props.loadDirectoryContent}
-                      openFileNatively={this.props.openFileNatively}
-                      openDirectory={this.props.openDirectory}
-                      reflectCreateEntry={this.props.reflectCreateEntry}
-                      openFile={this.props.openFile}
-                      toggleCreateFileDialog={this.props.toggleCreateFileDialog}
-                      deleteDirectory={this.props.deleteDirectory}
-                      showNotification={this.props.showNotification}
-                      isReadOnlyMode={this.props.isReadOnlyMode}
-                    />
-                  </div>
-                )}
+                <div>
+                  <Button
+                    data-tid="folderContainerOpenDirMenu"
+                    title={i18n.t('core:openDirectoryMenu') + ' - ' + currentDirectoryPath || ''}
+                    className={classes.folderButton}
+                    onClick={this.openDirectoryMenu}
+                  >
+                    {extractDirectoryName(this.props.currentDirectoryPath)}
+                    <MoreVertIcon />
+                  </Button>
+                  <DirectoryMenu
+                    open={this.state.directoryContextMenuOpened}
+                    onClose={this.closeDirectoryMenu}
+                    anchorEl={this.state.directoryContextMenuAnchorEl}
+                    directoryPath={currentDirectoryPath}
+                    loadDirectoryContent={this.props.loadDirectoryContent}
+                    openFileNatively={this.props.openFileNatively}
+                    openDirectory={this.props.openDirectory}
+                    reflectCreateEntry={this.props.reflectCreateEntry}
+                    openFile={this.props.openFile}
+                    toggleCreateFileDialog={this.props.toggleCreateFileDialog}
+                    deleteDirectory={this.props.deleteDirectory}
+                    showNotification={this.props.showNotification}
+                    isReadOnlyMode={this.props.isReadOnlyMode}
+                  />
+                </div>
+              )}
             </div>
           </div>
           <div

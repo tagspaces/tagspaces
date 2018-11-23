@@ -60,7 +60,7 @@ class LicenseDialog extends React.Component<Props, State> {
   renderTitle = () => <DialogTitle>{i18n.t('core:license')}</DialogTitle>;
 
   renderContent = () => (
-    <DialogContent style={{ overflowY: 'overlay', overflowX: 'auto' }}>
+    <DialogContent style={{ overflowY: 'visible', overflowX: 'auto' }}>
       <pre>{ this.state.license }</pre>
     </DialogContent>
   );

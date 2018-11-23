@@ -124,7 +124,7 @@
     "cross-spawn": "^5.1.0",
     "css-loader": "^0.28.3",
     "devtron": "^1.4.0",
-    "electron": "3.0.6",
+    "electron": "3.0.10",
     "electron-builder": "^20.28.4",
     "electron-devtools-installer": "^2.2.4",
     "enzyme": "^2.8.2",
@@ -165,7 +165,7 @@
     "sass-loader": "^6.0.5",
     "shelljs": "^0.7.8",
     "sinon": "^2.3.1",
-    "spectron": "^3.7.0",
+    "spectron": "^5.0.0",
     "style-loader": "^0.18.1",
     "stylefmt": "^5.3.2",
     "stylelint": "^7.10.1",
@@ -178,7 +178,7 @@
     "webpack-merge": "^4.1.4"
   },
   "dependencies": {
-    "@material-ui/core": "^3.3.2",
+    "@material-ui/core": "^3.5.1",
     "@material-ui/icons": "^3.0.1",
     "aws-sdk": "^2.263.1",
     "chokidar": "^2.0.4",

@@ -216,10 +216,10 @@ export default {
       name: 'addRemoveTags',
       command: (AppConfig.isMacLike ? 'command' : 'ctrl') + '+t',
     },
-    {
+    /* {
       name: 'propertiesDocument',
       command: 'alt+enter',
-    },
+    }, */
     {
       name: 'nextDocument',
       command: [

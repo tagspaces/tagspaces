@@ -45,7 +45,7 @@ import TaggingActions from '../reducers/tagging-actions';
 
 const styles = theme => ({
   entryProperties: {
-    overflowY: 'overlay',
+    overflowY: AppConfig.isFirefox ? 'auto' : 'overlay',
     padding: 10
   },
   tags: {
