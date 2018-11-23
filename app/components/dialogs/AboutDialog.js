@@ -152,6 +152,7 @@ class AboutDialog extends React.Component<Props, State> {
           data-tid="checkForUpdates"
           title={i18n.t('core:checkForNewVersion')}
           onClick={this.checkForUpdates}
+          color="primary"
         >
           {versionInfo}
         </Button>
@@ -170,6 +171,7 @@ class AboutDialog extends React.Component<Props, State> {
         <Button
           data-tid="closeAboutDialog"
           onClick={this.props.onClose}
+          color="primary"
         >
           {i18n.t('core:ok')}
         </Button>

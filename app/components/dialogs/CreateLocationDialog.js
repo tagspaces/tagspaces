@@ -405,7 +405,10 @@ class CreateLocationDialog extends React.Component<Props, State> {
 
   renderActions = () => (
     <DialogActions>
-      <Button onClick={this.onCancel} >
+      <Button
+        onClick={this.onCancel}
+        color="primary"
+      >
         {i18n.t('core:cancel')}
       </Button>
       <Button

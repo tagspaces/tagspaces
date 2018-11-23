@@ -123,6 +123,7 @@ class EditEntryTagDialog extends React.Component<Props, State> {
       <Button
         data-tid="closeEditTagEntryDialog"
         onClick={this.props.onClose}
+        color="primary"
       >
         {i18n.t('core:cancel')}
       </Button>

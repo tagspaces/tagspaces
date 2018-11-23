@@ -125,6 +125,7 @@ class CreateDirectoryDialog extends React.Component<Props, State> {
       <Button
         data-tid="closeCreateNewDirectory"
         onClick={this.onCancel}
+        color="primary"
       >
         {i18n.t('core:cancel')}
       </Button>

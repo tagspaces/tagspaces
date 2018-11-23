@@ -478,6 +478,7 @@ class DateCalendarDialog extends React.Component<Props, State> {
       <Button
         data-tid="closeDateCalendarDialog"
         onClick={this.props.onClose}
+        color="primary"
       >
         {i18n.t('core:cancel')}
       </Button>

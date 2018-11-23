@@ -102,6 +102,7 @@ class ColorPickerDialog extends React.Component<Props, State> {
       <Button
         data-tid="colorPickerCloseDialog"
         onClick={this.props.onClose}
+        color="primary"
       >
         {i18n.t('core:cancel')}
       </Button>

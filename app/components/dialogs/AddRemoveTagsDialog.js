@@ -108,12 +108,14 @@ class AddRemoveTagsDialog extends React.Component<Props, State> {
             <Button
               data-tid="cancel"
               onClick={this.onClose}
+              color="primary"
             >
               {i18n.t('core:cancel')}
             </Button>
             <Button
               data-tid="cleanTagsMultipleEntries"
               disabled={selectedEntries.length < 1}
+              color="primary"
               onClick={() => {
                 if (selectedEntries && selectedEntries.length > 0) {
                   const paths = [];
@@ -131,6 +133,7 @@ class AddRemoveTagsDialog extends React.Component<Props, State> {
             <Button
               data-tid="removeTagsMultipleEntries"
               disabled={newlyAddedTags.length === 0 || selectedEntries.length < 1}
+              color="primary"
               onClick={() => {
                 if (selectedEntries && selectedEntries.length > 0) {
                   const paths = [];
@@ -148,6 +151,7 @@ class AddRemoveTagsDialog extends React.Component<Props, State> {
             <Button
               data-tid="addTagsMultipleEntries"
               disabled={newlyAddedTags.length < 1 || selectedEntries.length < 1}
+              color="primary"
               onClick={() => {
                 if (selectedEntries && selectedEntries.length > 0) {
                   const paths = [];

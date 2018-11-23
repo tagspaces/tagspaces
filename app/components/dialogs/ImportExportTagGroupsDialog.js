@@ -221,13 +221,17 @@ class ImportExportTagGroupsDialog extends React.Component<Props, State> {
 
   renderActions = () => (
     <DialogActions>
-      <Button onClick={this.props.onClose} >
+      <Button
+        onClick={this.props.onClose}
+        color="primary"
+      >
         {i18n.t('core:cancel')}
       </Button>
       <Button
         disabled={this.state.disableConfirmButton}
         onClick={this.onConfirm}
         data-tid="confirmImportExport"
+        color="primary"
       >
         { this.props.dialogModeImport ? 'Import' : 'Export' }
       </Button>

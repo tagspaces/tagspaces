@@ -262,7 +262,10 @@ class SelectDirectoryDialog extends React.Component<Props, State> {
 
   renderActions = () => (
     <DialogActions>
-      <Button onClick={this.props.onClose} >
+      <Button
+        onClick={this.props.onClose}
+        color="primary"
+      >
         {i18n.t('core:cancel')}
       </Button>
       <Button

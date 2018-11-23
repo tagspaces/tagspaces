@@ -180,6 +180,7 @@ class MoveCopyFilesDialog extends React.Component<Props, State> {
         data-tid="confirmMoveFiles"
         disabled={this.state.disableConfirmButton}
         onClick={this.handleMoveFiles}
+        color="primary"
       >
         {i18n.t('core:moveFilesButton')}
       </Button>
@@ -187,6 +188,7 @@ class MoveCopyFilesDialog extends React.Component<Props, State> {
         onClick={this.handleCopyFiles}
         data-tid="confirmCopyFiles"
         disabled={this.state.disableConfirmButton}
+        color="primary"
       >
         {i18n.t('core:copyFilesButton')}
       </Button>

@@ -230,7 +230,11 @@ class EditTagDialog extends React.Component<Props, State> {
 
   renderActions = () => (
     <DialogActions>
-      <Button onClick={this.props.onClose} data-tid="closeEditTagDialog">
+      <Button
+        onClick={this.props.onClose}
+        data-tid="closeEditTagDialog"
+        color="primary"
+      >
         {i18n.t('core:cancel')}
       </Button>
       <Button
