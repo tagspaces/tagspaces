@@ -388,9 +388,9 @@ class EntryProperties extends Component<Props, State> {
       });
     }
 
-    this.setState({
+    /* this.setState({ //not needed addTags/removeTags/removeAllTags => reflectUpdateSidecarTags -> state is updated -> loadEntryProperties
       tags: value
-    });
+    }); */
   };
 
   /* renderTags = (tag: Object) => (
