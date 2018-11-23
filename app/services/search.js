@@ -140,7 +140,7 @@ function constructFuseQuery(searchQuery: SearchQuery): string {
 }
 
 export default class Search {
-  static searchLocationIndex(locationContent: Array<Object>, searchQuery: SearchQuery) {
+  static searchLocationIndex(locationContent: Array<Object>, searchQuery: SearchQuery): Array<Object> | [] {
     // let result = jmespath.search({ index: locationContent }, "index[?contains(name, '" + searchQuery.textQuery + "')]");
     // ?tags[?title=='todo' || title=='high'
     // index[?extension=='png' || extension=='jpg']

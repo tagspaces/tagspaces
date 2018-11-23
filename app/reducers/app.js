@@ -264,13 +264,9 @@ export default (state: Object = initialState, action: Object) => {
     return { ...state, isFileDragged: action.isFileDragged };
   }
   case types.INDEX_DIRECTORY_SEARCH: {
-    const searchResults = Search.searchLocationIndex(
-      state.currentDirectoryIndex,
-      action.searchQuery
-    );
     return {
       ...state,
-      currentDirectoryEntries: searchResults,
+      currentDirectoryEntries: action.searchResults,
       isLoading: false
     };
   }
@@ -906,10 +902,22 @@ export const actions = {
   },
   startDirectoryIndexing: () => ({ type: types.INDEX_DIRECTORY_START }),
   cancelDirectoryIndexing: () => ({ type: types.INDEX_DIRECTORY_CANCEL }),
-  searchLocationIndex: (searchQuery: SearchQuery) => ({
+  searchLocationIndexFinished: (searchResults: Array<Object> | []) => ({
     type: types.INDEX_DIRECTORY_SEARCH,
-    searchQuery
+    searchResults
   }),
+  searchLocationIndex: (searchQuery: SearchQuery) => (
+    dispatch: (actions: Object) => void,
+    getState: () => Object
+  ) => {
+    dispatch(actions.showNotification('Searching...!', 'default', false));
+    const searchResults = Search.searchLocationIndex(
+      getState().app.currentDirectoryIndex,
+      searchQuery
+    );
+    dispatch(actions.searchLocationIndexFinished(searchResults));
+    dispatch(actions.hideNotifications());
+  },
   setCurrentLocationId: (locationId: string | null) => ({
     type: types.SET_CURRENLOCATIONID,
     locationId
