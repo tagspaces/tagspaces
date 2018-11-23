@@ -910,13 +910,21 @@ export const actions = {
     dispatch: (actions: Object) => void,
     getState: () => Object
   ) => {
-    dispatch(actions.showNotification('Searching...!', 'default', false));
-    const searchResults = Search.searchLocationIndex(
-      getState().app.currentDirectoryIndex,
-      searchQuery
-    );
-    dispatch(actions.searchLocationIndexFinished(searchResults));
-    dispatch(actions.hideNotifications());
+    dispatch(actions.showNotification('Searching...', 'default', false));
+    setTimeout(() => { // Workarround used to show the start search notication
+      Search.searchLocationIndex(
+        getState().app.currentDirectoryIndex,
+        searchQuery
+      ).then((searchResults) => {
+        dispatch(actions.searchLocationIndexFinished(searchResults));
+        dispatch(actions.hideNotifications());
+        return true;
+      }).catch(() => {
+        dispatch(actions.searchLocationIndexFinished([]));
+        dispatch(actions.hideNotifications());
+        dispatch(actions.showNotification('Search failed.', 'warning', true));
+      });
+    }, 50);
   },
   setCurrentLocationId: (locationId: string | null) => ({
     type: types.SET_CURRENLOCATIONID,

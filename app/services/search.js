@@ -140,7 +140,7 @@ function constructFuseQuery(searchQuery: SearchQuery): string {
 }
 
 export default class Search {
-  static searchLocationIndex(locationContent: Array<Object>, searchQuery: SearchQuery): Array<Object> | [] {
+  static searchLocationIndex = (locationContent: Array<Object>, searchQuery: SearchQuery): Promise<Array<Object> | []> => new Promise((resolve) => {
     // let result = jmespath.search({ index: locationContent }, "index[?contains(name, '" + searchQuery.textQuery + "')]");
     // ?tags[?title=='todo' || title=='high'
     // index[?extension=='png' || extension=='jpg']
@@ -180,8 +180,11 @@ export default class Search {
       if (searchQuery.maxSearchResults && results.length >= searchQuery.maxSearchResults) {
         results = results.slice(0, searchQuery.maxSearchResults);
       }
-      return results;
+      console.log('Results send: ' + results.length);
+      resolve(results);
+      return true;
     }
-    return [];
-  }
+    results = [];
+    resolve(results);
+  });
 }
