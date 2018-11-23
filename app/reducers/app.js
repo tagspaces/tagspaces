@@ -927,18 +927,30 @@ export const actions = {
     locations.map(location => {
       if (location.uuid === locationId) {
         if (location.type === locationType.TYPE_CLOUD) {
-          PlatformIO.enableObjectStoreSupport(location);
+          PlatformIO.enableObjectStoreSupport(location).then(() => {
+            dispatch(actions.showNotification('Connected to object store', 'default', true));
+            dispatch(actions.setReadOnlyMode(location.isReadOnly || false));
+            dispatch(actions.setCurrentLocationId(location.uuid));
+            dispatch(actions.loadDirectoryContent(location.paths[0]));
+            if (locationId !== currentLocationId) {
+              dispatch(actions.createDirectoryIndex(location.paths[0]));
+            }
+            return true;
+          }).catch(() => {
+            dispatch(actions.showNotification('Connection to object store failed!', 'warning', true));
+            PlatformIO.disableObjectStoreSupport();
+          });
         } else { // if (location.type === locationType.TYPE_LOCAL) {
           PlatformIO.disableObjectStoreSupport();
-        }
-        dispatch(actions.setReadOnlyMode(location.isReadOnly || false));
-        dispatch(actions.setCurrentLocationId(location.uuid));
-        dispatch(actions.loadDirectoryContent(location.paths[0]));
-        if (locationId !== currentLocationId) {
-          dispatch(actions.createDirectoryIndex(location.paths[0]));
-        }
-        if (Pro && Pro.Watcher && location.watchForChanges) {
-          Pro.Watcher.watchFolder(location.paths[0], dispatch, actions);
+          dispatch(actions.setReadOnlyMode(location.isReadOnly || false));
+          dispatch(actions.setCurrentLocationId(location.uuid));
+          dispatch(actions.loadDirectoryContent(location.paths[0]));
+          if (locationId !== currentLocationId) {
+            dispatch(actions.createDirectoryIndex(location.paths[0]));
+          }
+          if (Pro && Pro.Watcher && location.watchForChanges) {
+            Pro.Watcher.watchFolder(location.paths[0], dispatch, actions);
+          }
         }
       }
       return true;

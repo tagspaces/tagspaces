@@ -35,14 +35,19 @@ if (AppConfig.isElectron) {
 let objectStoreAPI;
 
 export default class PlatformIO {
-  static enableObjectStoreSupport = (objectStoreConfig: Object): void => {
+  static enableObjectStoreSupport = (objectStoreConfig: Object): Promise<any> => new Promise((resolve, reject) => {
     if (Pro && Pro.ObjectStoreIO) {
       objectStoreAPI = new Pro.ObjectStoreIO();
-      objectStoreAPI.configure(objectStoreConfig);
+      objectStoreAPI.configure(objectStoreConfig).then(() => {
+        resolve();
+        return true;
+      }).catch((e) => {
+        reject(e);
+      });
     } else {
-      console.log('ObjectStore support available in the PRO version');
+      reject('ObjectStore support available in the PRO version');
     }
-  };
+  });
 
   static disableObjectStoreSupport = (): void => {
     objectStoreAPI = undefined;
