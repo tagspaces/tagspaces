@@ -264,7 +264,7 @@ class TagsSelect extends React.Component<Props> {
       <div className={classes.root}>
         <NoSsr>
           <CreatableSelect
-            isClearable
+            isClearable={false}
             classes={classes}
             options={allTags}
             getOptionLabel={(option) => option.title}
