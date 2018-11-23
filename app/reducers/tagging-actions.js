@@ -93,25 +93,27 @@ const actions = {
 
     const entryProperties = await PlatformIO.getPropertiesPromise(path);
 
-    // TODO: Handle adding already added tags
     if (!entryProperties.isFile || settings.persistTagsInSidecarFile) {
       // Handling adding tags in sidecar
       loadMetaDataPromise(path).then(fsEntryMeta => {
-        const newTags = [
-          ...fsEntryMeta.tags,
-          ...tags
-        ];
-        const updatedFsEntryMeta = {
-          ...fsEntryMeta,
-          tags: newTags,
-        };
-        saveMetaDataPromise(path, updatedFsEntryMeta).then(() => {
-          dispatch(AppActions.reflectUpdateSidecarTags(path, newTags));
-          return true;
-        }).catch((err) => {
-          console.warn('Error adding tags for ' + path + ' with ' + err);
-          dispatch(AppActions.showNotification('Adding tags failed', 'error', true));
-        });
+        const sideCarTagIndex = fsEntryMeta.tags.findIndex(sidecarTag => tags.findIndex(tag => tag.title === sidecarTag.title) !== -1);
+        if (sideCarTagIndex === -1 && !existTagsInFilename(path, tags)) { // check if tag is already in the sidecar/filename
+          const newTags = [
+            ...fsEntryMeta.tags,
+            ...tags
+          ];
+          const updatedFsEntryMeta = {
+            ...fsEntryMeta,
+            tags: newTags,
+          };
+          saveMetaDataPromise(path, updatedFsEntryMeta).then(() => {
+            dispatch(AppActions.reflectUpdateSidecarTags(path, newTags));
+            return true;
+          }).catch((err) => {
+            console.warn('Error adding tags for ' + path + ' with ' + err);
+            dispatch(AppActions.showNotification('Adding tags failed', 'error', true));
+          });
+        }
         return true;
       }).catch(() => {
         const newFsEntryMeta = {
@@ -126,20 +128,39 @@ const actions = {
         });
       });
     } else {
-      const fileName = extractFileName(path);
-      const containingDirectoryPath = extractContainingDirectoryPath(path);
-      const extractedTags = extractTags(path, settings.tagDelimiter);
-      for (let i = 0; i < tags.length; i += 1) {
-        // check if tag is already in the tag array
-        if (extractedTags.indexOf(tags[i].title) < 0) {
-          // Adding the new tag
-          extractedTags.push(tags[i].title);
+      loadMetaDataPromise(path).then(fsEntryMeta => {
+        const sideCarTagIndex = fsEntryMeta.tags.findIndex(sidecarTag => tags.findIndex(tag => tag.title === sidecarTag.title) !== -1);
+        if (sideCarTagIndex === -1) { // check if tag is already in the sidecar
+          const fileName = extractFileName(path);
+          const containingDirectoryPath = extractContainingDirectoryPath(path);
+          const extractedTags = extractTags(path, settings.tagDelimiter);
+          for (let i = 0; i < tags.length; i += 1) {
+            // check if tag is already in the tag array
+            if (extractedTags.indexOf(tags[i].title) < 0) {
+              // Adding the new tag
+              extractedTags.push(tags[i].title);
+            }
+          }
+          const newFilePath = containingDirectoryPath + AppConfig.dirSeparator + generateFileName(fileName, extractedTags, settings.tagDelimiter);
+          dispatch(AppActions.renameFile(path, newFilePath));
         }
-      }
-      const newFilePath = containingDirectoryPath + AppConfig.dirSeparator + generateFileName(fileName, extractedTags, settings.tagDelimiter);
-      dispatch(AppActions.renameFile(path, newFilePath));
+        return true;
+      }).catch(error => {
+        console.warn('Error check tag exist in SideCar for ' + path + ' with ' + error);
+      });
     }
     // dispatch collectRecentTags(tags);
+
+    function existTagsInFilename(filePath: string, tagsArray: Array<Tag>) {
+      const extractedTags = extractTags(filePath, settings.tagDelimiter);
+      for (let i = 0; i < tagsArray.length; i += 1) {
+        // check if tag is already in the tag array
+        if (extractedTags.indexOf(tagsArray[i].title) !== -1) {
+          return true;
+        }
+      }
+      return false;
+    }
   },
   editTagForEntry: (path: string, tag: Tag, newTagTitle: string) => (
     dispatch: (actions: Object) => void,
