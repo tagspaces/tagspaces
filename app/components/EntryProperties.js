@@ -509,14 +509,14 @@ class EntryProperties extends Component<Props, State> {
                 </Typography>
               </div>
               <div className="grid-item">
-                <Button
+                {/* <Button
                   color="primary"
                   data-tid="ok"
                   className={classes.button}
                   onClick={onEditTags}
                 >
                   {i18n.t('core:addEntryTags')}
-                </Button>
+                </Button> */}
               </div>
             </div>
             <Paper className={classes.tags}>
