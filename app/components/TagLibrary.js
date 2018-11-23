@@ -51,6 +51,7 @@ import CreateTagsDialog from './dialogs/CreateTagsDialog';
 import EditTagGroupDialog from './dialogs/EditTagGroupDialog';
 import TagGroupContainer from './TagGroupContainer';
 import TagMenu from './menus/TagMenu';
+import CustomLogo from './CustomLogo';
 import TagLibraryMenu from './menus/TagLibraryMenu';
 import {
   type TagGroup,
@@ -277,6 +278,7 @@ class TagLibrary extends React.Component<Props, State> {
 
     return (
       <div className={classes.panel} style={this.props.style}>
+        <CustomLogo />
         <div className={classes.toolbar}>
           <Typography className={classes.panelTitle} type="subtitle1">
             {i18n.t('core:tagLibrary')}

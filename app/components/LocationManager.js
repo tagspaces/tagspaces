@@ -53,6 +53,7 @@ import CreateLocationDialog from './dialogs/CreateLocationDialog';
 import ConfirmDialog from './dialogs/ConfirmDialog';
 import SelectDirectoryDialog from './dialogs/SelectDirectoryDialog';
 import CreateDirectoryDialog from './dialogs/CreateDirectoryDialog';
+import CustomLogo from './CustomLogo';
 import {
   actions as LocationActions,
   getLocations,
@@ -610,6 +611,7 @@ class LocationManager extends React.Component<Props, State> {
     const classes = this.props.classes;
     return (
       <div className={classes.panel} style={this.props.style}>
+        <CustomLogo />
         <div className={classes.toolbar}>
           <Typography className={classes.panelTitle} type="subtitle1">
             {i18n.t('core:locationManager')}

@@ -43,6 +43,7 @@ import Select from '@material-ui/core/Select';
 import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import TagsSelect from './TagsSelect';
+import CustomLogo from './CustomLogo';
 import { actions as AppActions, getIndexedEntriesCount, isIndexing, getDirectoryPath } from '../reducers/app';
 import { getMaxSearchResults } from '../reducers/settings';
 import styles from './SidePanels.css';
@@ -139,6 +140,7 @@ class Search extends React.Component<Props, State> {
     const { classes, indexing, indexedEntriesCount } = this.props;
     return (
       <div className={classes.panel} style={this.props.style}>
+        <CustomLogo />
         <div className={classes.toolbar}>
           <Typography className={classes.panelTitle}>
             {i18n.t('searchTitle')}
