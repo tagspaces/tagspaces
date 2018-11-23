@@ -96,11 +96,11 @@ const actions = {
     if (!entryProperties.isFile || settings.persistTagsInSidecarFile) {
       // Handling adding tags in sidecar
       loadMetaDataPromise(path).then(fsEntryMeta => {
-        const sideCarTagIndex = fsEntryMeta.tags.findIndex(sidecarTag => tags.findIndex(tag => tag.title === sidecarTag.title) !== -1);
-        if (sideCarTagIndex === -1 && !existTagsInFilename(path, tags)) { // check if tag is already in the sidecar/filename
+        const uniqueTags = getNonExistingTags(tags, extractTags(path, settings.tagDelimiter), fsEntryMeta.tags);
+        if (uniqueTags.length > 0) {
           const newTags = [
             ...fsEntryMeta.tags,
-            ...tags
+            ...uniqueTags
           ];
           const updatedFsEntryMeta = {
             ...fsEntryMeta,
@@ -129,17 +129,14 @@ const actions = {
       });
     } else {
       loadMetaDataPromise(path).then(fsEntryMeta => {
-        const sideCarTagIndex = fsEntryMeta.tags.findIndex(sidecarTag => tags.findIndex(tag => tag.title === sidecarTag.title) !== -1);
-        if (sideCarTagIndex === -1) { // check if tag is already in the sidecar
+        const extractedTags = extractTags(path, settings.tagDelimiter);
+        const uniqueTags = getNonExistingTags(tags, extractedTags, fsEntryMeta.tags);
+        if (uniqueTags.length > 0) {
           const fileName = extractFileName(path);
           const containingDirectoryPath = extractContainingDirectoryPath(path);
-          const extractedTags = extractTags(path, settings.tagDelimiter);
-          for (let i = 0; i < tags.length; i += 1) {
-            // check if tag is already in the tag array
-            if (extractedTags.indexOf(tags[i].title) < 0) {
-              // Adding the new tag
-              extractedTags.push(tags[i].title);
-            }
+
+          for (let i = 0; i < uniqueTags.length; i += 1) {
+            extractedTags.push(uniqueTags[i].title);
           }
           const newFilePath = containingDirectoryPath + AppConfig.dirSeparator + generateFileName(fileName, extractedTags, settings.tagDelimiter);
           dispatch(AppActions.renameFile(path, newFilePath));
@@ -151,15 +148,18 @@ const actions = {
     }
     // dispatch collectRecentTags(tags);
 
-    function existTagsInFilename(filePath: string, tagsArray: Array<Tag>) {
-      const extractedTags = extractTags(filePath, settings.tagDelimiter);
-      for (let i = 0; i < tagsArray.length; i += 1) {
-        // check if tag is already in the tag array
-        if (extractedTags.indexOf(tagsArray[i].title) !== -1) {
-          return true;
+    function getNonExistingTags(newTagsArray: Array<Tag>, fileTagsArray: Array<string>, sideCarTagsArray: Array<Tag>) {
+      const newTags = [];
+      for (let i = 0; i < newTagsArray.length; i += 1) {
+        // check if tag is already in the fileTagsArray
+        if (fileTagsArray.indexOf(newTagsArray[i].title) === -1) {
+          // check if tag is already in the sideCarTagsArray
+          if (sideCarTagsArray.findIndex(sideCarTag => sideCarTag.title === newTagsArray[i].title) === -1) {
+            newTags.push(newTagsArray[i]);
+          }
         }
       }
-      return false;
+      return newTags;
     }
   },
   editTagForEntry: (path: string, tag: Tag, newTagTitle: string) => (
