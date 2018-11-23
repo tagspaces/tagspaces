@@ -65,7 +65,7 @@ const darkTheme = createMuiTheme({
       contrastText: '#ffffff',
     },
     secondary: {
-      main: '#a21547',
+      main: '#ff9abe',
     },
     divider: '#555'
     // secondary: { main: '#555', 200: '#777' }
