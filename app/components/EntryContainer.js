@@ -702,6 +702,16 @@ class EntryContainer extends React.Component<Props, State> {
   renderFolderToolbar = () => (
     <div className={this.props.classes.toolbar2}>
       <div className={this.props.classes.flexLeft}>
+        <IconButton
+          title={i18n.t('core:toggleProperties')}
+          aria-label={i18n.t('core:toggleProperties')}
+          onClick={this.togglePanel}
+          data-tid="fileContainerToggleProperties"
+        >
+          <DetailsIcon
+            color={this.state.isPropertiesPanelVisible ? 'primary' : 'action'}
+          />
+        </IconButton>
         {!PlatformIO.haveObjectStoreSupport() && (
           <IconButton
             title={i18n.t('core:openDirectoryExternally')}
