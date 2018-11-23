@@ -86,18 +86,21 @@ class SettingsKeyBindings extends React.Component<Props> {
           </FormControl>
         </ListItem>
 
-        {keyBindings.map((keyBinding) => (
-          <TextField
-            className={classes.keyBinding}
-            key={keyBinding.name}
-            InputLabelProps={{ shrink: true }}
-            fullWidth
-            onBlur={event => setKeyBinding(keyBinding.name, event.target.value)}
-            label={i18n.t('core:' + keyBinding.name)}
-            placeholder={`suggested binding: ${DefaultSettings.keyBindings.filter(kb => kb.name === keyBinding.name)[0].command}`}
-            defaultValue={(isStr(keyBinding.command) ? keyBinding.command : '')}
-          />
-        ))}
+        {keyBindings.map((keyBinding) => {
+          const defaultBinding = DefaultSettings.keyBindings.filter(kb => kb.name === keyBinding.name)[0];
+          return (
+            <TextField
+              className={classes.keyBinding}
+              key={keyBinding.name}
+              InputLabelProps={{ shrink: true }}
+              fullWidth
+              onBlur={event => setKeyBinding(keyBinding.name, event.target.value)}
+              label={i18n.t('core:' + keyBinding.name)}
+              placeholder={'suggested binding: ' + (defaultBinding ? defaultBinding.command : '')}
+              defaultValue={(isStr(keyBinding.command) ? keyBinding.command : '')}
+            />
+          );
+        })}
       </form>
     );
   }
