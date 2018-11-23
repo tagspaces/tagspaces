@@ -18,68 +18,61 @@
  */
 
 import React from 'react';
+import uuidv1 from 'uuid';
+import { connect } from 'react-redux';
 import Button from '@material-ui/core/Button';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import RemoveTagIcon from '@material-ui/icons/Close';
-import { DragSource } from 'react-dnd';
-import DragItemTypes from './DragItemTypes';
 import { type TagGroup, type Tag } from '../reducers/taglibrary';
+import { getTagColor, getTagTextColor } from '../reducers/settings';
 
 type Props = {
   tag: Tag,
-  key: string,
-  defaultTextColor: string,
-  defaultBackgroundColor: string,
-  tagGroup: TagGroup,
+  key?: string,
+  defaultTextColor?: string,
+  tagTextColor: string,
+  defaultBackgroundColor?: string,
+  tagBackgroundColor: string,
+  tagGroup?: TagGroup,
   handleTagMenu: (event: Object, tag: Tag, tagGroup: TagGroup) => void, // TODO refactor
   handleTagMenu: (event: Object, tag: Tag, entryPath: string) => void,
   handleRemoveTag: (event: Object, tag: Tag) => void,
-  isDragging: boolean,
+  isDragging?: boolean,
   tagMode?: 'default' | 'display' | 'remove',
   entryPath?: string,
-  connectDragSource: (param: Object) => void
-};
-
-const boxSource = {
-  beginDrag(props) {
-    // console.log('beginDrag', props);
-    return {
-      tagId: props.tag.id,
-      tag: props.tag,
-      sourceTagGroupId: props.tagGroup.uuid
-    };
-  },
-
-  endDrag(props, monitor) {
-    const item = monitor.getItem();
-    const dropResult = monitor.getDropResult();
-
-    // console.log('DropRESULT: ', dropResult);
-    // console.log('item: ', item);
-    if (dropResult && dropResult.tagGroupId && dropResult.tagGroupId !== item.sourceTagGroupId) {
-      // console.log(`Dropped ${item.tagId} from ${item.sourceTagGroupId} into ${dropResult.tagGroupId}!`);
-      props.moveTag(item.tagId, item.sourceTagGroupId, dropResult.tagGroupId);
-    } else if (dropResult && dropResult.entryPath) {
-      // console.log(`Dropped item: ${item.tag.title} onto file: ${dropResult.entryPath}!`);
-      props.addTags([dropResult.entryPath], [item.tag]);
-    }
-  }
+  deleteIcon?: Object
 };
 
 class TagContainer extends React.Component<Props> {
+  static defaultProps = {
+    isDragging: false,
+    tagMode: 'default',
+    key: undefined,
+    tagGroup: undefined,
+    entryPath: undefined,
+    deleteIcon: undefined,
+    defaultTextColor: undefined,
+    defaultBackgroundColor: undefined
+  };
+
   render() {
     const {
+      key,
       tag,
+      deleteIcon,
+      isDragging,
       defaultTextColor,
+      tagTextColor,
       defaultBackgroundColor,
+      tagBackgroundColor,
       tagGroup,
       entryPath
     } = this.props;
-    const { isDragging, connectDragSource, tagMode } = this.props;
+    const { tagMode } = this.props;
     let mode = '';
 
     if (tagMode === 'remove') {
-      mode = (
+      mode = deleteIcon || (
         <RemoveTagIcon
           data-tid={'tagRemoveButton_' + tag.title.replace(/ /g, '_')}
           style={{
@@ -101,13 +94,13 @@ class TagContainer extends React.Component<Props> {
       );
     }
 
-    return connectDragSource(
+    return (
       <div
         data-tid={'tagContainer_' + tag.title.replace(/ /g, '_')}
-        key={this.props.key}
-        onClick={event => this.props.handleTagMenu(event, tag, entryPath || tagGroup)}
-        onContextMenu={event => this.props.handleTagMenu(event, tag, entryPath || tagGroup)}
-        onDoubleClick={event => this.props.handleTagMenu(event, tag, entryPath || tagGroup)}
+        key={key || tag.id || uuidv1()}
+        onClick={event => { if (this.props.handleTagMenu) { this.props.handleTagMenu(event, tag, entryPath || tagGroup); } }}
+        onContextMenu={event => { if (this.props.handleTagMenu) { this.props.handleTagMenu(event, tag, entryPath || tagGroup); } }}
+        onDoubleClick={event => { if (this.props.handleTagMenu) { this.props.handleTagMenu(event, tag, entryPath || tagGroup); } }}
         style={{
           backgroundColor: 'transparent',
           marginLeft: 4,
@@ -122,8 +115,8 @@ class TagContainer extends React.Component<Props> {
             opacity: isDragging ? 0.5 : 1,
             fontSize: 13,
             textTransform: 'none',
-            color: tag.textcolor ? tag.textcolor : defaultTextColor,
-            backgroundColor: tag.color ? tag.color : defaultBackgroundColor,
+            color: tag.textcolor || defaultTextColor || tagTextColor,
+            backgroundColor: tag.color || defaultBackgroundColor || tagBackgroundColor,
             minHeight: 25,
             margin: 0,
             paddingTop: 0,
@@ -133,7 +126,6 @@ class TagContainer extends React.Component<Props> {
           }}
         >
           <span>
-            {/* {tag.icon && tag.icon.length > 0 && tag.icon + ' '} TODO icon impl */}
             {tag.title}
           </span>
           {mode}
@@ -143,7 +135,10 @@ class TagContainer extends React.Component<Props> {
   }
 }
 
-export default DragSource(DragItemTypes.TAG, boxSource, (connect, monitor) => ({
-  connectDragSource: connect.dragSource(),
-  isDragging: monitor.isDragging()
-}))(TagContainer);
+function mapStateToProps(state) {
+  return {
+    tagBackgroundColor: getTagColor(state),
+    tagTextColor: getTagTextColor(state)
+  };
+}
+export default connect(mapStateToProps)(TagContainer);

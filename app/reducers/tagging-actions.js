@@ -93,25 +93,27 @@ const actions = {
 
     const entryProperties = await PlatformIO.getPropertiesPromise(path);
 
-    // TODO: Handle adding already added tags
     if (!entryProperties.isFile || settings.persistTagsInSidecarFile) {
       // Handling adding tags in sidecar
       loadMetaDataPromise(path).then(fsEntryMeta => {
-        const newTags = [
-          ...fsEntryMeta.tags,
-          ...tags
-        ];
-        const updatedFsEntryMeta = {
-          ...fsEntryMeta,
-          tags: newTags,
-        };
-        saveMetaDataPromise(path, updatedFsEntryMeta).then(() => {
-          dispatch(AppActions.reflectUpdateSidecarTags(path, newTags));
-          return true;
-        }).catch((err) => {
-          console.warn('Error adding tags for ' + path + ' with ' + err);
-          dispatch(AppActions.showNotification('Adding tags failed', 'error', true));
-        });
+        const uniqueTags = getNonExistingTags(tags, extractTags(path, settings.tagDelimiter), fsEntryMeta.tags);
+        if (uniqueTags.length > 0) {
+          const newTags = [
+            ...fsEntryMeta.tags,
+            ...uniqueTags
+          ];
+          const updatedFsEntryMeta = {
+            ...fsEntryMeta,
+            tags: newTags,
+          };
+          saveMetaDataPromise(path, updatedFsEntryMeta).then(() => {
+            dispatch(AppActions.reflectUpdateSidecarTags(path, newTags));
+            return true;
+          }).catch((err) => {
+            console.warn('Error adding tags for ' + path + ' with ' + err);
+            dispatch(AppActions.showNotification('Adding tags failed', 'error', true));
+          });
+        }
         return true;
       }).catch(() => {
         const newFsEntryMeta = {
@@ -126,20 +128,39 @@ const actions = {
         });
       });
     } else {
-      const fileName = extractFileName(path);
-      const containingDirectoryPath = extractContainingDirectoryPath(path);
-      const extractedTags = extractTags(path, settings.tagDelimiter);
-      for (let i = 0; i < tags.length; i += 1) {
-        // check if tag is already in the tag array
-        if (extractedTags.indexOf(tags[i].title) < 0) {
-          // Adding the new tag
-          extractedTags.push(tags[i].title);
+      loadMetaDataPromise(path).then(fsEntryMeta => {
+        const extractedTags = extractTags(path, settings.tagDelimiter);
+        const uniqueTags = getNonExistingTags(tags, extractedTags, fsEntryMeta.tags);
+        if (uniqueTags.length > 0) {
+          const fileName = extractFileName(path);
+          const containingDirectoryPath = extractContainingDirectoryPath(path);
+
+          for (let i = 0; i < uniqueTags.length; i += 1) {
+            extractedTags.push(uniqueTags[i].title);
+          }
+          const newFilePath = containingDirectoryPath + AppConfig.dirSeparator + generateFileName(fileName, extractedTags, settings.tagDelimiter);
+          dispatch(AppActions.renameFile(path, newFilePath));
         }
-      }
-      const newFilePath = containingDirectoryPath + AppConfig.dirSeparator + generateFileName(fileName, extractedTags, settings.tagDelimiter);
-      dispatch(AppActions.renameFile(path, newFilePath));
+        return true;
+      }).catch(error => {
+        console.warn('Error check tag exist in SideCar for ' + path + ' with ' + error);
+      });
     }
     // dispatch collectRecentTags(tags);
+
+    function getNonExistingTags(newTagsArray: Array<Tag>, fileTagsArray: Array<string>, sideCarTagsArray: Array<Tag>) {
+      const newTags = [];
+      for (let i = 0; i < newTagsArray.length; i += 1) {
+        // check if tag is already in the fileTagsArray
+        if (fileTagsArray.indexOf(newTagsArray[i].title) === -1) {
+          // check if tag is already in the sideCarTagsArray
+          if (sideCarTagsArray.findIndex(sideCarTag => sideCarTag.title === newTagsArray[i].title) === -1) {
+            newTags.push(newTagsArray[i]);
+          }
+        }
+      }
+      return newTags;
+    }
   },
   editTagForEntry: (path: string, tag: Tag, newTagTitle: string) => (
     dispatch: (actions: Object) => void,

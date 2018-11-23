@@ -24,7 +24,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import GenericDialog from './GenericDialog';
 import { type Tag } from '../../reducers/taglibrary';
-import TagAutoSuggestion from '../TagAutoSuggestion';
+import TagsSelect from '../TagsSelect';
 import i18n from '../../services/i18n';
 
 type Props = {
@@ -51,7 +51,13 @@ class AddRemoveTagsDialog extends React.Component<Props, State> {
     isConfirmDialogOpened: false
   };
 
-  onAddTag = (tag) => {
+  handleChange = (name, value) => {
+    this.setState({
+      newlyAddedTags: value
+    });
+  };
+
+  /* onAddTag = (tag) => {
     const { newlyAddedTags } = this.state;
     newlyAddedTags.push(tag);
     this.setState({ newlyAddedTags });
@@ -61,12 +67,12 @@ class AddRemoveTagsDialog extends React.Component<Props, State> {
     const { newlyAddedTags } = this.state;
     const modifiedTags = newlyAddedTags.filter(addedTag => addedTag.title !== tag.title);
     this.setState({ newlyAddedTags: modifiedTags });
-  };
+  }; */
 
   onClose = () => {
-    this.setState({newlyAddedTags: []});
+    this.setState({ newlyAddedTags: [] });
     this.props.onClose();
-  }
+  };
 
   render() {
     const {
@@ -88,12 +94,13 @@ class AddRemoveTagsDialog extends React.Component<Props, State> {
         )}
         renderContent={() => (
           <DialogContent>
-            <TagAutoSuggestion
+            <TagsSelect tagQuery={newlyAddedTags} handleChange={this.handleChange} />
+            {/* <TagAutoSuggestion
               selectedEntries={selectedEntries}
               newlyAddedTags={newlyAddedTags}
               onAddTag={this.onAddTag}
               onRemoveTag={this.onRemoveTag}
-            />
+            /> */}
           </DialogContent>
         )}
         renderActions={() => (

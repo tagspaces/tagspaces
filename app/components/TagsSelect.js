@@ -33,6 +33,7 @@ import TextField from '@material-ui/core/TextField';
 import { emphasize } from '@material-ui/core/styles/colorManipulator';
 import i18n from '../services/i18n';
 import { type Tag, getAllTags } from '../reducers/taglibrary';
+import TagContainer from './TagContainer';
 
 const styles = theme => ({
   root: {
@@ -80,21 +81,17 @@ const styles = theme => ({
     left: 0,
     right: 0,
   },
+  /* paper: {
+    position: 'fixed', // 'absolute',
+    marginTop: theme.spacing.unit,
+    left: 45,
+    right: 0,
+    maxWidth: 350,
+    zIndex: 1
+  }, */
   /* divider: {
     height: theme.spacing.unit * 2,
   }, */
-  tag: {
-    // display: 'flex',
-    // flexDirection: 'row',
-    // justifyContent: 'space-between',
-    alignItems: 'center',
-    borderRadius: '4px',
-    backgroundColor: '#008000',
-    color: 'white',
-    padding: '2px 6px',
-    boxShadow: '0 1px 1px 0 rgba(0, 0, 0, 0.16),0 1px 1px 0 rgba(239, 239, 239, 0.12)',
-    margin: '0 0 10px 10px'
-  }
 });
 
 function NoOptionsMessage(props) {
@@ -173,17 +170,28 @@ function ValueContainer(props) {
 
 function MultiValue(props) {
   return (
-    <Chip
+    <TagContainer
+      key={props.data.id || props.data.title}
+      defaultTextColor={props.data.textcolor}
+      defaultBackgroundColor={props.data.color}
+      tag={props.data}
+      tagMode={'remove'}
+      // tagGroup={tagGroup}
+      // handleTagMenu={this.handleTagMenu}
+      // addTags={this.props.addTags}
+      deleteIcon={<CloseIcon {...props.removeProps} />}
+    />
+    /* <Chip
       tabIndex={-1}
       label={props.children}
       style={{ fontSize: 16 }}
-      className={classNames(props.selectProps.classes.chip, props.selectProps.classes.tag, {
+      className={classNames(props.selectProps.classes.chip, {
         [props.selectProps.classes.chipFocused]: props.isFocused
       })}
       onDelete={props.removeProps.onClick}
       // deleteIcon={<CloseIcon style={{ fill: '#fff' }} {...props.removeProps} />}
       deleteIcon={<CancelIcon {...props.removeProps} />}
-    />
+    /> */
   );
 }
 
@@ -203,7 +211,7 @@ const components = {
   Option,
   Placeholder,
   SingleValue,
-  ValueContainer,
+  ValueContainer
 };
 
 type Props = {
@@ -216,20 +224,20 @@ type Props = {
 
 class TagsSelect extends React.Component<Props> {
   handleChange = (newValue: any, actionMeta: any) => {
-    console.group('Value Changed');
+    /* console.group('Value Changed');
     console.log(newValue);
     console.log(`action: ${actionMeta.action}`);
-    console.groupEnd();
+    console.groupEnd(); */
 
     if (actionMeta.action === 'select-option') {
-      this.props.handleChange('tagQuery', newValue);
+      this.props.handleChange('tagQuery', newValue, actionMeta.action);
     } else if (actionMeta.action === 'create-option') {
       this.props.allTags.push(newValue);
-      this.props.handleChange('tagQuery', newValue);
+      this.props.handleChange('tagQuery', newValue, actionMeta.action);
     } else if (actionMeta.action === 'remove-value') {
-      this.props.handleChange('tagQuery', newValue);
+      this.props.handleChange('tagQuery', newValue, actionMeta.action);
     } else if (actionMeta.action === 'clear') {
-      this.props.handleChange('tagQuery', []);
+      this.props.handleChange('tagQuery', [], actionMeta.action);
     }
   };
 
@@ -256,11 +264,11 @@ class TagsSelect extends React.Component<Props> {
       <div className={classes.root}>
         <NoSsr>
           <CreatableSelect
-            isClearable
+            isClearable={false}
             classes={classes}
             options={allTags}
             getOptionLabel={(option) => option.title}
-            getOptionValue={(option) => option.id}
+            getOptionValue={(option) => option.id || option.title}
             isValidNewOption={this.isValidNewOption}
             getNewOptionData={(inputValue, optionLabel) => ({
               id: inputValue,
@@ -281,6 +289,7 @@ class TagsSelect extends React.Component<Props> {
             // onCreateOption={this.handleCreate}
             placeholder={i18n.t('core:searchTags')}
             isMulti
+            formatCreateLabel={(label) => label}
           // isSearchable
           />
         </NoSsr>

@@ -43,7 +43,7 @@ import DeleteForever from '@material-ui/icons/DeleteForever';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 // import { Toolbar } from '@material-ui/core/Toolbar';
-import TagContainer from './TagContainer';
+import TagContainerDnd from './TagContainerDnd';
 import ConfirmDialog from './dialogs/ConfirmDialog';
 import styles from './SidePanels.css';
 import CreateTagGroupDialog from './dialogs/CreateTagGroupDialog';
@@ -254,7 +254,7 @@ class TagLibrary extends React.Component<Props, State> {
       <Collapse in={tagGroup.expanded} unmountOnExit>
         <TagGroupContainer taggroup={tagGroup} data-tid={'tagGroupContainer_' + tagGroup.title}>
           {tagGroup.children && tagGroup.children.map((tag: Tag) => (
-            <TagContainer
+            <TagContainerDnd
               key={tag.id}
               defaultTextColor={this.props.tagTextColor}
               defaultBackgroundColor={this.props.tagBackgroundColor}

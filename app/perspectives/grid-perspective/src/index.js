@@ -794,6 +794,7 @@ class GridPerspective extends React.Component<Props, State> {
         defaultTextColor={this.props.tagTextColor}
         defaultBackgroundColor={this.props.tagBackgroundColor}
         tag={tag}
+        key={tag.id}
         entryPath={fsEntry.path}
         handleTagMenu={this.handleTagMenu}
       />

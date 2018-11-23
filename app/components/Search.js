@@ -42,7 +42,7 @@ import IconButton from '@material-ui/core/IconButton';
 import Select from '@material-ui/core/Select';
 import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
-import TagSelect from './TagsSelect';
+import TagsSelect from './TagsSelect';
 import { actions as AppActions, getIndexedEntriesCount, isIndexing, getDirectoryPath } from '../reducers/app';
 import { getMaxSearchResults } from '../reducers/settings';
 import styles from './SidePanels.css';
@@ -177,7 +177,7 @@ class Search extends React.Component<Props, State> {
             disabled={indexing}
           >
             {/* <InputLabel htmlFor="searchTags">{i18n.t('core:searchTags')}</InputLabel> */}
-            <TagSelect tagQuery={this.state.tagQuery} handleChange={this.handleChange} />
+            <TagsSelect tagQuery={this.state.tagQuery} handleChange={this.handleChange} />
             {/* <Input
               id="tagQuery"
               name="tagQuery"
