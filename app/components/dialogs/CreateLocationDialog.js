@@ -31,6 +31,7 @@ import FormGroup from '@material-ui/core/FormGroup';
 import Grid from '@material-ui/core/Grid';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
+import { Typography } from '@material-ui/core';
 import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
 import i18n from '../../services/i18n';
 import { type Location, locationType } from '../../reducers/locations';
@@ -329,8 +330,8 @@ class CreateLocationDialog extends React.Component<Props, State> {
     return (
       <DialogContent>
         <Grid container spacing={32}>
-          <Grid item xs={2} style={{ lineHeight: 3, textAlign: 'left' }}>
-          Type
+          <Grid item xs={2} style={{ marginTop: 13, textAlign: 'left' }}>
+            <Typography>Type</Typography>
           </Grid>
           <Grid item xs={10}>
             <FormControl disabled={!Pro}>
