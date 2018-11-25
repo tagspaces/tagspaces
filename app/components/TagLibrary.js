@@ -284,6 +284,7 @@ class TagLibrary extends React.Component<Props, State> {
             {i18n.t('core:tagLibrary')}
           </Typography>
           <IconButton
+            style={{ paddingTop: 0 }}
             data-tid="tagLibraryMenu"
             onClick={this.handleTagLibraryMenu}
           >
