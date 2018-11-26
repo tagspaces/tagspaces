@@ -184,6 +184,7 @@
     "chokidar": "^2.0.4",
     "classnames": "^2.2.5",
     "dompurify": "^1.0.8",
+    "dropbox": "^4.0.13",
     "electron-debug": "^2.0.0",
     "electron-window-state": "^5.0.2",
     "exif-js": "^2.3.0",

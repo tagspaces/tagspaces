@@ -33,6 +33,7 @@ if (AppConfig.isElectron) {
 }
 
 let objectStoreAPI;
+let dbxAPI;
 
 export default class PlatformIO {
   static enableObjectStoreSupport = (objectStoreConfig: Object): Promise<any> => new Promise((resolve, reject) => {
@@ -54,6 +55,26 @@ export default class PlatformIO {
   };
 
   static haveObjectStoreSupport = (): boolean => objectStoreAPI !== undefined;
+
+  static enableDbxSupport = (dbxConfig: Object): Promise<any> => new Promise((resolve, reject) => {
+    if (Pro && Pro.DropBoxIO) {
+      dbxAPI = new Pro.DropBoxIO();
+      dbxAPI.configure(dbxConfig).then(() => {
+        resolve();
+        return true;
+      }).catch((e) => {
+        reject(e);
+      });
+    } else {
+      reject('dbxConfig support available in the PRO version');
+    }
+  });
+
+  static disableDbxSupport = (): void => {
+    dbxAPI = undefined;
+  };
+
+  static haveDbxSupport = (): boolean => dbxAPI !== undefined;
 
   static initMainMenu = (menuConfig: Array<Object>): void => {
     if (nativeAPI.initMainMenu) {
@@ -127,6 +148,8 @@ export default class PlatformIO {
   ): Promise<Array<any>> => {
     if (objectStoreAPI) {
       return objectStoreAPI.listDirectoryPromise(path, lite);
+    } else if (dbxAPI) {
+      return dbxAPI.listDirectoryPromise(path, lite);
     }
     return nativeAPI.listDirectoryPromise(path, lite);
   };

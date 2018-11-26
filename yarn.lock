@@ -2609,7 +2609,7 @@ buffer@4.9.1, buffer@^4.3.0:
     ieee754 "^1.1.4"
     isarray "^1.0.0"
 
-buffer@^5.1.0:
+buffer@^5.0.8, buffer@^5.1.0:
   version "5.2.1"
   resolved "https://registry.yarnpkg.com/buffer/-/buffer-5.2.1.tgz#dd57fa0f109ac59c602479044dca7b8b3d0b71d6"
   integrity sha512-c+Ko0loDaFfuPWiL02ls9Xd3GO3cPVmUobQ6t3rXNUk304u6hGq+8N/kFi+QEIKhzK3uwolVhLzszmfLmMLnqg==
@@ -4239,6 +4239,14 @@ double-ended-queue@^2.1.0-0:
   version "2.1.0-0"
   resolved "https://registry.yarnpkg.com/double-ended-queue/-/double-ended-queue-2.1.0-0.tgz#103d3527fd31528f40188130c841efdd78264e5c"
   integrity sha1-ED01J/0xUo9AGIEwyEHv3XgmTlw=
+
+dropbox@^4.0.13:
+  version "4.0.13"
+  resolved "https://registry.yarnpkg.com/dropbox/-/dropbox-4.0.13.tgz#159048107d694bb820f31e957c568fd57f7acbb7"
+  integrity sha512-fWzlNdfMFonFlzhFz/eI+e0A3tarDlsEaaXl7cQK0nx35R+AUxYblOthSp40jgaNcRkXCzD6mSYIFGiiNtN+lQ==
+  dependencies:
+    buffer "^5.0.8"
+    moment "^2.19.3"
 
 duplexer2@0.0.2:
   version "0.0.2"
@@ -8544,7 +8552,7 @@ moment@2.11.1:
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.11.1.tgz#bf4026413640d1b802467cf353607f8464d6af47"
   integrity sha1-v0AmQTZA0bgCRnzzU2B/hGTWr0c=
 
-moment@^2.22.1:
+moment@^2.19.3, moment@^2.22.1:
   version "2.22.2"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.22.2.tgz#3c257f9839fc0e93ff53149632239eb90783ff66"
   integrity sha1-PCV/mDn8DpP/UxSWMiOeuQeD/2Y=

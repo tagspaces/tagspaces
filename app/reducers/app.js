@@ -943,7 +943,7 @@ export const actions = {
     locations.map(location => {
       if (location.uuid === locationId) {
         if (location.type === locationType.TYPE_CLOUD) {
-          PlatformIO.enableObjectStoreSupport(location).then(() => {
+          PlatformIO.enableDbxSupport(location).then(() => { // enableObjectStoreSupport(location).then(() => {
             dispatch(actions.showNotification('Connected to object store', 'default', true));
             dispatch(actions.setReadOnlyMode(location.isReadOnly || false));
             dispatch(actions.setCurrentLocationId(location.uuid));
@@ -952,7 +952,8 @@ export const actions = {
               dispatch(actions.createDirectoryIndex(location.paths[0]));
             }
             return true;
-          }).catch(() => {
+          }).catch((e) => {
+            console.log(e);
             dispatch(actions.showNotification('Connection to object store failed!', 'warning', true));
             PlatformIO.disableObjectStoreSupport();
           });
