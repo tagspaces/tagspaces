@@ -19,6 +19,8 @@
 
 import React from 'react';
 import { DragSource } from 'react-dnd';
+import type { ConnectDragPreview, ConnectDragSource } from 'react-dnd';
+// import { getEmptyImage } from 'react-dnd-html5-backend';
 import DragItemTypes from './DragItemTypes';
 import TagContainer from './TagContainer';
 import { type TagGroup, type Tag } from '../reducers/taglibrary';
@@ -35,7 +37,8 @@ type Props = {
   isDragging: boolean,
   tagMode?: 'default' | 'display' | 'remove',
   entryPath?: string,
-  connectDragSource: (param: Object) => void,
+  connectDragSource: ConnectDragSource,
+  connectDragPreview: ConnectDragPreview,
   deleteIcon: Object
 };
 
@@ -66,6 +69,19 @@ const boxSource = {
 };
 
 class TagContainerDnd extends React.Component<Props> {
+  componentDidMount() {
+    const xml = '<svg version="1.1" height="25" width="100" xmlns="http://www.w3.org/2000/svg">' +
+      '<g>' +
+      '<rect x="0" y="0" rx="5" ry="5" width="100%" height="100%" style="fill:' + this.props.tag.color + ';opacity:0.5" />' +
+      '<text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" fill="' + this.props.tag.textcolor + '">' + this.props.tag.title + '</text>' +
+      '</g>' +
+      '</svg>';
+    const img = new Image();
+    img.src = `data:image/svg+xml;charset=utf-8,${xml.replace(/(\r\n|\n|\r)/gm, '')}`;
+    img.onload = () => this.props.connectDragPreview(img, { anchorX: 1, anchorY: 0 });
+    // this.props.connectDragPreview(getEmptyImage(), { captureDraggingState: true });
+  }
+
   render() {
     const {
       key,
@@ -79,6 +95,7 @@ class TagContainerDnd extends React.Component<Props> {
     } = this.props;
     const { isDragging, connectDragSource, tagMode } = this.props;
 
+    // return connectDragPreview(<span>{
     return connectDragSource(
       <span>
         <TagContainer
@@ -93,12 +110,14 @@ class TagContainerDnd extends React.Component<Props> {
           entryPath={entryPath}
           isDragging={isDragging}
         />
-      </span>
-    );
+      </span>);
+    // , { dropEffect: 'copy' });
+    // }</span>, { anchorX: 0, anchorY: 0 });
   }
 }
 
 export default DragSource(DragItemTypes.TAG, boxSource, (connect, monitor) => ({
   connectDragSource: connect.dragSource(),
+  connectDragPreview: connect.dragPreview(),
   isDragging: monitor.isDragging()
 }))(TagContainerDnd);
