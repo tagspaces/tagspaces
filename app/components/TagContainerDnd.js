@@ -70,10 +70,10 @@ const boxSource = {
 
 class TagContainerDnd extends React.Component<Props> {
   componentDidMount() {
-    const xml = '<svg version="1.1" height="26" width="100" xmlns="http://www.w3.org/2000/svg">' +
+    const xml = '<svg version="1.1" height="25" width="100" xmlns="http://www.w3.org/2000/svg">' +
       '<g>' +
-      '<rect x="0" y="0" rx="5" ry="5" width="100" height="26" style="fill:' + this.props.tag.color + ';stroke-width:5;opacity:0.5" />' +
-      '<text x="50%" y="60%" dominant-baseline="middle" text-anchor="middle" fill="' + this.props.tag.textcolor + '">' + this.props.tag.title + '</text>' +
+      '<rect x="0" y="0" rx="5" ry="5" width="100%" height="100%" style="fill:' + this.props.tag.color + ';opacity:0.5" />' +
+      '<text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" fill="' + this.props.tag.textcolor + '">' + this.props.tag.title + '</text>' +
       '</g>' +
       '</svg>';
     const img = new Image();
