@@ -93,7 +93,7 @@ class AddRemoveTagsDialog extends React.Component<Props, State> {
           <DialogTitle>{i18n.t('core:tagOperationTitle')}</DialogTitle>
         )}
         renderContent={() => (
-          <DialogContent>
+          <DialogContent style={{ minHeight: '330px' }}>
             <TagsSelect tagQuery={newlyAddedTags} handleChange={this.handleChange} />
             {/* <TagAutoSuggestion
               selectedEntries={selectedEntries}

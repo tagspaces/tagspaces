@@ -75,11 +75,11 @@ const styles = theme => ({
     fontSize: 16,
   },
   paper: {
-    // position: 'absolute',
+    position: 'absolute',
     zIndex: 1,
     marginTop: theme.spacing.unit,
     left: 0,
-    right: 0,
+    right: 0
   },
   /* paper: {
     position: 'fixed', // 'absolute',
