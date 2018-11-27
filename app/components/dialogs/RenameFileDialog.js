@@ -76,8 +76,17 @@ class RenameFileDialog extends React.Component<Props, State> {
         filePath: nextProps.selectedFilePath
       }, () => {
         this.fileName.focus();
-        if (this.state.fileName) {
-          this.fileName.setSelectionRange(0, this.state.fileName.indexOf('.'));
+        const { fileName } = this.state;
+        if (fileName) {
+          const indexOfBracket = fileName.indexOf(AppConfig.beginTagContainer);
+          const indexOfDot = fileName.indexOf('.');
+          let endRange = fileName.length;
+          if (indexOfBracket > 0) {
+            endRange = indexOfBracket;
+          } else if (indexOfDot > 0) {
+            endRange = indexOfDot;
+          }
+          this.fileName.setSelectionRange(0, endRange);
         }
       });
     }
