@@ -37,7 +37,8 @@
     "category": "Office"
   },
   "nsis": {
-    "oneClick": true,
+    "oneClick": false,
+    "allowToChangeInstallationDirectory": true,
     "license": "app/LICENSE.txt"
   },
   "directories": {
