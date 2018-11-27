@@ -38,7 +38,7 @@ import FolderIcon from '@material-ui/icons/FolderOpen';
 import LocationIcon from '@material-ui/icons/WorkOutline';
 import CloudLocationIcon from '@material-ui/icons/CloudQueue';
 // import StartupFolderIcon from '@material-ui-icons/FolderSpecial';
-import AddIcon from '@material-ui/icons/Add';
+import CreateLocationIcon from '@material-ui/icons/Work';
 import EditIcon from '@material-ui/icons/Edit';
 import RefreshIcon from '@material-ui/icons/Refresh';
 import DeleteIcon from '@material-ui/icons/DeleteForever';
@@ -625,7 +625,7 @@ class LocationManager extends React.Component<Props, State> {
           size="small"
           color="primary"
         >
-          <AddIcon className={classNames(classes.leftIcon)} />
+          <CreateLocationIcon className={classNames(classes.leftIcon)} />
           {i18n.t('core:createLocationTitle')}
         </Button>
         <div>
