@@ -73,11 +73,7 @@ class TagContainerDnd extends React.Component<Props> {
     const xml = '<svg version="1.1" height="25" width="100" xmlns="http://www.w3.org/2000/svg">' +
       '<g>' +
       '<rect x="0" y="0" rx="5" ry="5" width="100%" height="100%" style="fill:' + this.props.tag.color + ';opacity:0.5" />' +
-<<<<<<< HEAD
       '<text x="50%" y="55%" font-family="Roboto,Arial,Helvetica,Sans" font-size="13" dominant-baseline="middle" text-anchor="middle" fill="' + this.props.tag.textcolor + '">' + this.props.tag.title + '</text>' +
-=======
-      '<text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" fill="' + this.props.tag.textcolor + '">' + this.props.tag.title + '</text>' +
->>>>>>> 76750da2d9193f7becbda45bd88c331e0af3e00f
       '</g>' +
       '</svg>';
     const img = new Image();
