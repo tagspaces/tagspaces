@@ -37,11 +37,10 @@ import InputLabel from '@material-ui/core/InputLabel';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
 import i18n from '../../services/i18n';
-import { type Tag } from '../../reducers/taglibrary';
 import { formatDateTime4Tag } from '../../utils/misc';
 import AppConfig from '../../config';
 import TaggingActions from '../../reducers/tagging-actions';
-import { actions as AppActions, getDirectoryPath } from '../../reducers/app';
+import { actions as AppActions } from '../../reducers/app';
 import PlatformIO from '../../services/platform-io';
 
 const styles = theme => ({
@@ -71,9 +70,11 @@ type Props = {
   onClose: () => void,
   showSelectDirectoryDialog: () => void,
   selectedDirectoryPath?: string,
-  createDirectory: (directoryPath: string) => void,
+  // createDirectory: (directoryPath: string) => void,
+  chooseDirectoryPath: (directoryPath: string) => void,
   createFileAdvanced: (targetPath: string, fileName: string, content: string, fileType: string) => void,
-  allTags: Array<Tag>
+  // allTags: Array<Tag>,
+  resetState: () => void
 };
 
 type State = {
@@ -82,9 +83,9 @@ type State = {
   fileName?: string,
   fileContent?: string,
   fileType?: string,
-  suggestionTags?: Array<Tag>,
-  newlyAddedTags?: Array,
-  allTags?: Array
+  // suggestionTags?: Array<Tag>,
+  // newlyAddedTags?: Array
+  // allTags?: Array
 };
 
 class CreateFileDialog extends React.Component<Props, State> {
@@ -97,9 +98,9 @@ class CreateFileDialog extends React.Component<Props, State> {
     fileName: 'new note ' + AppConfig.beginTagContainer + formatDateTime4Tag(new Date(), true) + AppConfig.endTagContainer,
     fileContent: '',
     fileType: 'txt',
-    suggestionTags: [],
-    newlyAddedTags: [],
-    allTags: []
+    // suggestionTags: [],
+    // newlyAddedTags: [],
+    // allTags: []
   };
 
   /* componentWillReceiveProps = (nextProps: any) => {
@@ -151,7 +152,17 @@ class CreateFileDialog extends React.Component<Props, State> {
   }
 
   openFolderChooser = () => {
-    this.props.showSelectDirectoryDialog();
+    if (AppConfig.isElectron) {
+      PlatformIO.selectDirectoryDialog().then(selectedPaths => {
+        this.props.chooseDirectoryPath(selectedPaths[0]);
+        this.handleValidation();
+        return true;
+      }).catch((err) => {
+        console.log('selectDirectoryDialog failed with: ' + err);
+      });
+    } else {
+      this.props.showSelectDirectoryDialog();
+    }
   };
 
   showSelectDirectoryDialog = () => {
@@ -160,7 +171,7 @@ class CreateFileDialog extends React.Component<Props, State> {
     });
   };
 
-  onAddTag = (tag) => {
+  /* onAddTag = (tag) => {
     const { newlyAddedTags } = this.state;
     newlyAddedTags.push(tag);
     this.setState({ newlyAddedTags });
@@ -170,21 +181,23 @@ class CreateFileDialog extends React.Component<Props, State> {
     const { newlyAddedTags } = this.state;
     const modifiedTags = newlyAddedTags.filter(addedTag => addedTag.title !== tag.title);
     this.setState({ newlyAddedTags: modifiedTags });
-  };
+  }; */
 
   onConfirm = () => {
     if (!this.state.disableConfirmButton) {
       const { fileName, fileContent, fileType } = this.state;
       this.props.createFileAdvanced(this.props.selectedDirectoryPath, fileName, fileContent, fileType);
       this.props.onClose();
+      this.props.chooseDirectoryPath(undefined);
+      this.props.resetState('CreateFileDialogKey');
     }
   };
 
-  addedTags = (tags) => {
+  /* addedTags = (tags) => {
     this.setState({
       suggestionTags: tags,
     });
-  };
+  }; */
 
   handleKeyPress = (event: any) => {
     if (event.key === 'Enter' || event.keyCode === 13) {
@@ -303,6 +316,8 @@ class CreateFileDialog extends React.Component<Props, State> {
         onClick={() => {
           // this.setState({ newlyAddedTags: [] });
           this.props.onClose();
+          this.props.chooseDirectoryPath(undefined);
+          this.props.resetState('CreateFileDialogKey');
         }}
         color="primary"
       >
@@ -323,7 +338,11 @@ class CreateFileDialog extends React.Component<Props, State> {
     return (
       <GenericDialog
         open={this.props.open}
-        onClose={this.props.onClose}
+        onClose={() => {
+          this.props.chooseDirectoryPath(undefined);
+          this.props.resetState('CreateFileDialogKey');
+          this.props.onClose();
+        }}
         onEnterKey={(event) => onEnterKeyHandler(event, this.onConfirm)}
         renderTitle={this.renderTitle}
         renderContent={this.renderContent}
@@ -331,12 +350,6 @@ class CreateFileDialog extends React.Component<Props, State> {
       />
     );
   }
-}
-
-function mapStateToProps(state) {
-  return {
-    selectedDirectoryPath: getDirectoryPath(state),
-  };
 }
 
 function mapActionCreatorsToProps(dispatch) {
@@ -347,4 +360,4 @@ function mapActionCreatorsToProps(dispatch) {
   }, dispatch);
 }
 
-export default connect(mapStateToProps, mapActionCreatorsToProps)(withStyles(styles)(CreateFileDialog));
+export default connect(undefined, mapActionCreatorsToProps)(withStyles(styles)(CreateFileDialog));

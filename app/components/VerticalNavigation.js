@@ -20,6 +20,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import uuidv1 from 'uuid';
 import IconButton from '@material-ui/core/IconButton';
 import NewFileIcon from '@material-ui/icons/Add';
 import LocationsIcon from '@material-ui/icons/WorkOutline';
@@ -99,7 +100,8 @@ type State = {
   isTagLibraryVisible?: boolean,
   isSearchVisible?: boolean,
   isPerspectiveManagerVisible?: boolean,
-  isManagementPanelVisible?: boolean // evtl. redux migration
+  isManagementPanelVisible?: boolean, // evtl. redux migration
+  CreateFileDialogKey: string
 };
 
 class VerticalNavigation extends React.Component<Props, State> {
@@ -109,6 +111,7 @@ class VerticalNavigation extends React.Component<Props, State> {
     isSearchVisible: false,
     isPerspectiveManagerVisible: false,
     isManagementPanelVisible: true,
+    CreateFileDialogKey: uuidv1(),
   };
 
   componentWillReceiveProps(nextProps: Props) {
@@ -225,6 +228,12 @@ class VerticalNavigation extends React.Component<Props, State> {
     });
   };
 
+  resetState = (dialogKey) => {
+    this.setState({
+      [dialogKey]: uuidv1()
+    });
+  };
+
   render() {
     return (
       <div>
@@ -256,8 +265,11 @@ class VerticalNavigation extends React.Component<Props, State> {
           onClose={this.props.toggleSettingsDialog}
         />
         <CreateFileDialog
+          key={this.state.CreateFileDialogKey}
+          resetState={this.resetState}
           open={this.props.isCreateFileDialogOpened}
           selectedDirectoryPath={this.state.selectedDirectoryPath || this.props.currentDirectory}
+          chooseDirectoryPath={this.chooseDirectoryPath}
           onClose={this.props.toggleCreateFileDialog}
         />
         <SelectDirectoryDialog
