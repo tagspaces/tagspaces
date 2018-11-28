@@ -1216,7 +1216,7 @@ export const actions = {
           [getMetaFileLocationForFile(filePath), getMetaFileLocationForFile(newFilePath)],
           [getThumbFileLocationForFile(filePath), getThumbFileLocationForFile(newFilePath)]
         ]).then(() => {
-          console.log('Renaming meta file and thumb successfull for ' + filePath);
+          console.log('Renaming meta file and thumb successful for ' + filePath);
           return true;
         }).catch((err) => {
           console.warn('Renaming meta file and thumb failed with ' + err);
