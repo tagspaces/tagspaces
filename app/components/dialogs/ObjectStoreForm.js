@@ -304,6 +304,7 @@ class ObjectStoreForm extends React.Component<Props> {
               required
               margin="dense"
               name="secretAccessKey"
+              type="password"
               label={i18n.t('core:secretAccessKey')}
               fullWidth={true}
               data-tid="secretAccessKey"
