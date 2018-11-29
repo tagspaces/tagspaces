@@ -56,6 +56,7 @@ import {
   isIndexing, getDirectoryPath
 } from '../reducers/app';
 import { buffer } from '../utils/misc';
+import { normalizePath } from '../utils/paths';
 import TargetFileBox from '../components/TargetFileBox';
 import PlatformIO from '../services/platform-io';
 import AppConfig from '../config';
@@ -286,8 +287,10 @@ class MainPage extends Component<Props, State> {
       } else {
         files.map(file => { // TODO move this in reducer -> look at DirectoryMenu handleFileInputChange
           let filePath;
+          let fileName = '';
           try {
-            filePath = this.props.directoryPath + AppConfig.dirSeparator + decodeURIComponent(file.name);
+            fileName = decodeURIComponent(file.name);
+            filePath = normalizePath(this.props.directoryPath) + AppConfig.dirSeparator + fileName;
           } catch (err) {
             console.warn('Error decoding filename: ' + file.name + ' , skipping this file.');
           }
@@ -312,18 +315,16 @@ class MainPage extends Component<Props, State> {
             )
               .then(() => {
                 this.props.showNotification(
-                  'File ' + filePath + ' successfully imported.',
+                  'File ' + fileName + '  imported as ' + filePath,
                   'default',
                   true
                 );
                 this.props.reflectCreateEntry(filePath, true);
                 return true;
               })
-              .catch(error => {
-              // TODO showAlertDialog("Saving " + filePath + " failed.");
-                console.error('Save to file ' + filePath + ' failed ' + error);
+              .catch(() => {
                 this.props.showNotification(
-                  'Importing file ' + filePath + ' failed.',
+                  'Importing file ' + fileName + ' failed.',
                   'error',
                   true
                 );
