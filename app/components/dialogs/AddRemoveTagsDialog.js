@@ -22,10 +22,16 @@ import Button from '@material-ui/core/Button';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import FileIcon from '@material-ui/icons/InsertDriveFileOutlined';
+import Typography from '@material-ui/core/Typography';
 import GenericDialog from './GenericDialog';
 import { type Tag } from '../../reducers/taglibrary';
 import TagsSelect from '../TagsSelect';
 import i18n from '../../services/i18n';
+import { extractFileName } from '../../utils/paths';
 
 type Props = {
   open: boolean,
@@ -93,14 +99,18 @@ class AddRemoveTagsDialog extends React.Component<Props, State> {
           <DialogTitle>{i18n.t('core:tagOperationTitle')}</DialogTitle>
         )}
         renderContent={() => (
-          <DialogContent>
+          <DialogContent style={{ minHeight: 330 }}>
             <TagsSelect tagQuery={newlyAddedTags} handleChange={this.handleChange} />
-            {/* <TagAutoSuggestion
-              selectedEntries={selectedEntries}
-              newlyAddedTags={newlyAddedTags}
-              onAddTag={this.onAddTag}
-              onRemoveTag={this.onRemoveTag}
-            /> */}
+            <List dense style={{ width: 550 }}>
+              {selectedEntries.length > 0 && selectedEntries.map((entry) => (
+                <ListItem title={entry.path}>
+                  <ListItemIcon>
+                    <FileIcon />
+                  </ListItemIcon>
+                  <Typography variant="inherit" noWrap>{extractFileName(entry.path || '')}</Typography>
+                </ListItem>
+              ))}
+            </List>
           </DialogContent>
         )}
         renderActions={() => (

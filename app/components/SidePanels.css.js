@@ -52,7 +52,8 @@ export default (theme) => ({
     paddingTop: 0,
     paddingLeft: 5,
     marginTop: 0,
-    maxHeight: '100%',
+    height: 'calc(100% - 80px)',
+    maxHeight: 'calc(100% - 80px)',
     overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
   },
   topShadow: {
