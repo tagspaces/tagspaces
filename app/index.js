@@ -30,7 +30,7 @@ import { actions as SettingsActions, getCheckForUpdateOnStartup, isGlobalKeyBind
 import PlatformIO from './services/platform-io';
 import { getURLParameter } from './utils/misc';
 
-const store = configureStore();
+const { store, persistor } = configureStore();
 
 document.addEventListener('contextmenu', event => event.preventDefault());
 
@@ -90,7 +90,7 @@ function checkIsFirstRun() {
 
 render(
   <AppContainer>
-    <Root store={store} history={history} />
+    <Root store={store} persistor={persistor} history={history} />
   </AppContainer>,
   document.getElementById('root')
 );
@@ -100,7 +100,7 @@ if (module.hot) {
     const NextRoot = require('./containers/Root'); // eslint-disable-line global-require
     render(
       <AppContainer>
-        <NextRoot store={store} history={history} />
+        <NextRoot store={store} persistor={persistor} history={history} />
       </AppContainer>,
       document.getElementById('root')
     );

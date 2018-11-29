@@ -19,20 +19,43 @@
 
 import React from 'react';
 import { Provider } from 'react-redux';
+import { PersistGate } from 'redux-persist/integration/react';
 import { ConnectedRouter } from 'react-router-redux';
 import Routes from '../routes';
+import LoadingScreen from '../components/LoadingScreen';
 
 type RootType = {
   store: {},
+  persistor: {},
   history: {}
 };
 
-export default function Root({ store, history }: RootType) {
+export default function Root({ store, persistor, history }: RootType) {
   return (
     <Provider store={store}>
-      <ConnectedRouter history={history}>
-        <Routes />
-      </ConnectedRouter>
+      {/**
+       * PersistGate delays the rendering of the app's UI until the persisted state has been retrieved
+       * and saved to redux.
+       * The `loading` prop can be `null` or any react instance to show during loading (e.g. a splash screen),
+       * for example `loading={<SplashScreen />}`.
+       * @see https://github.com/rt2zz/redux-persist/blob/master/docs/PersistGate.md
+       */}
+      <PersistGate
+        // loading={<SplashScreen />}
+        persistor={persistor}
+      >
+        {(bootstrapped) => {
+          if (bootstrapped) {
+            return (
+              <ConnectedRouter history={history}>
+                <Routes />
+              </ConnectedRouter>
+            );
+          }
+
+          return (<LoadingScreen />);
+        }}
+      </PersistGate>
     </Provider>
   );
 }
