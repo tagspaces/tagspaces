@@ -50,10 +50,10 @@ import {
   actions as AppActions,
   getNotificationStatus,
   isFileOpened,
-  isFileDragged,
+  // isFileDragged,
   isEntryInFullWidth,
   isUpdateAvailable,
-  isIndexing
+  isIndexing, getDirectoryPath
 } from '../reducers/app';
 import { buffer } from '../utils/misc';
 import TargetFileBox from '../components/TargetFileBox';
@@ -97,27 +97,13 @@ const styles = theme => ({
   drawerPaper: {
     height: '100%',
     width: drawerWidth
-  },
-  dropTarget: {
-    margin: 5,
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(198, 198, 198, 0.67);',
-    zIndex: 100,
-    border: '4px dashed white',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center'
   }
 });
 
 type Props = {
   isDesktopMode: boolean,
   isFileOpened: boolean,
-  isFileDragged: boolean,
+  // isFileDragged: boolean,
   isIndexing: boolean,
   isEntryInFullWidth: boolean,
   classes: Object,
@@ -127,7 +113,7 @@ type Props = {
   hideNotifications: () => void,
   cancelDirectoryIndexing: () => void,
   setUpdateAvailable: (isUpdateAvailable: boolean) => void,
-  setFileDragged: (isFileDragged: boolean) => void,
+  // setFileDragged: (isFileDragged: boolean) => void,
   saveFile: () => void, // needed by electron-menus
   setZoomResetApp: () => void, // needed by electron-menus
   setZoomInApp: () => void, // needed by electron-menus
@@ -148,7 +134,14 @@ type Props = {
   mainSplitSize: any,
   toggleShowUnixHiddenEntries: () => void,
   setLeftVerticalSplitSize: (splitSize: number) => void,
-  setMainVerticalSplitSize: (splitSize: string) => void
+  setMainVerticalSplitSize: (splitSize: string) => void,
+  directoryPath?: string,
+  showNotification?: (
+    text: string,
+    notificationType: string,
+    autohide: boolean
+  ) => void,
+  reflectCreateEntry?: (path: string, isFile: boolean) => void
 };
 
 type State = {
@@ -282,10 +275,70 @@ class MainPage extends Component<Props, State> {
 
   handleFileDrop = (item, monitor) => {
     if (monitor) {
-      const droppedFiles = monitor.getItem().files;
-      console.log('Dropped files: ' + droppedFiles);
-      this.props.setFileDragged(false);
-      // this.setState({ droppedFiles });
+      const { files } = monitor.getItem();
+      console.log('Dropped files: ' + JSON.stringify(files));
+      if (!this.props.directoryPath) {
+        this.props.showNotification(
+          'Importing files failed. Please select Directory first!',
+          'error',
+          true
+        );
+      } else {
+        files.map(file => { // TODO move this in reducer -> look at DirectoryMenu handleFileInputChange
+          let filePath;
+          try {
+            filePath = this.props.directoryPath + AppConfig.dirSeparator + decodeURIComponent(file.name);
+          } catch (err) {
+            console.warn('Error decoding filename: ' + file.name + ' , skipping this file.');
+          }
+          if (!filePath) {
+            return true;
+          }
+
+          const reader = new FileReader();
+          reader.onload = event => {
+          // console.log('Content on file read complete: ' + JSON.stringify(event));
+          // change name for ios fakepath
+          // if (AppConfig.isCordovaiOS) {
+          //   const fileExt = extractFileExtension(addFileInputName);
+          //   addFileInputName = AppConfig.beginTagContainer + formatDateTime4Tag(new Date(), true) + AppConfig.endTagContainer + fileExt;
+          // }
+          // TODO event.currentTarget.result is ArrayBuffer
+          // Sample call from PRO version using content = Utils.base64ToArrayBuffer(baseString);
+            PlatformIO.saveBinaryFilePromise(
+              filePath,
+              event.currentTarget.result,
+              true
+            )
+              .then(() => {
+                this.props.showNotification(
+                  'File ' + filePath + ' successfully imported.',
+                  'default',
+                  true
+                );
+                this.props.reflectCreateEntry(filePath, true);
+                return true;
+              })
+              .catch(error => {
+              // TODO showAlertDialog("Saving " + filePath + " failed.");
+                console.error('Save to file ' + filePath + ' failed ' + error);
+                this.props.showNotification(
+                  'Importing file ' + filePath + ' failed.',
+                  'error',
+                  true
+                );
+                return true;
+              });
+          };
+
+          if (AppConfig.isCordova) {
+            reader.readAsDataURL(file);
+          } else {
+            reader.readAsArrayBuffer(file);
+          }
+          return file;
+        });
+      }
     }
   };
 
@@ -308,154 +361,156 @@ class MainPage extends Component<Props, State> {
     } */
     return (
       <HotKeys handlers={this.keyBindingHandlers}>
-        {this.props.isFileDragged && (
+        <TargetFileBox accepts={[FILE]} onDrop={this.handleFileDrop}>
+          {/* {this.props.isFileDragged && (
           <div className={classes.dropTarget}>
             <TargetFileBox accepts={[FILE]} onDrop={this.handleFileDrop} />
           </div>
-        )}
-        {this.props.isDesktopMode ? (
-          <SplitPane
-            split="vertical"
-            minSize={200}
-            maxSize={450}
-            resizerStyle={{ backgroundColor: theme.palette.divider }}
-            defaultSize={this.props.leftSplitSize}
-            size={
-              this.state.isManagementPanelVisible
-                ? this.props.leftSplitSize
-                : initialSplitSize
-            }
-            onChange={size => {
-              this.setState({
-                isManagementPanelVisible: size > initialSplitSize,
-              });
-              bufferedLeftSplitResize(() => this.props.setLeftVerticalSplitSize(size));
-            }}
-          >
-            <VerticalNavigation
-              setManagementPanelVisibility={this.setManagementPanelVisibility}
-              shouldTogglePanel={this.state.shouldTogglePanel}
-            />
+        )} */}
+          {this.props.isDesktopMode ? (
             <SplitPane
               split="vertical"
-              minSize="200"
+              minSize={200}
+              maxSize={450}
               resizerStyle={{ backgroundColor: theme.palette.divider }}
-              size={this.state.mainSplitSize}
+              defaultSize={this.props.leftSplitSize}
+              size={
+                this.state.isManagementPanelVisible
+                  ? this.props.leftSplitSize
+                  : initialSplitSize
+              }
               onChange={size => {
-                if (size > 0 && this.state.width) {
-                  const sizeInPercent = parseInt(((size * 100) / this.state.width), 10) + '%';
-                  this.setState({
-                    mainSplitSize: sizeInPercent
-                  });
-                  // bufferedMainSplitResize(() => this.props.setMainVerticalSplitSize(sizeInPercent));
-                  this.props.setMainVerticalSplitSize(sizeInPercent);
-                }
-              }}
-            >
-              <FolderContainer
-                windowHeight={this.state.height}
-                windowWidth={this.state.width}
-              />
-              <EntryContainer />
-            </SplitPane>
-          </SplitPane>
-        ) : (
-          <div>
-            <Drawer
-              open={this.state.isDrawerOpened}
-              type="persistent"
-              classes={{
-                paper: classes.drawerPaper
+                this.setState({
+                  isManagementPanelVisible: size > initialSplitSize,
+                });
+                bufferedLeftSplitResize(() => this.props.setLeftVerticalSplitSize(size));
               }}
             >
               <VerticalNavigation
                 setManagementPanelVisibility={this.setManagementPanelVisibility}
                 shouldTogglePanel={this.state.shouldTogglePanel}
               />
-            </Drawer>
-            <SplitPane
-              className={classNames(
-                classes.content,
-                this.state.isDrawerOpened && classes.contentShift
-              )}
-              split="vertical"
-              minSize={150}
-              resizerStyle={{ backgroundColor: theme.palette.divider }}
-              defaultSize={this.state.isViewerPanelVisible ? '50%' : '100%'}
-            >
-              <FolderContainer
-                toggleDrawer={this.toggleDrawer}
-                windowHeight={this.state.height}
-              />
-              {this.props.isFileOpened && (
-                <div style={{ backgroundColor: 'lightgray', height: '100%' }}>
-                  FileViewer/Editor
-                </div>
-              )}
+              <SplitPane
+                split="vertical"
+                minSize="200"
+                resizerStyle={{ backgroundColor: theme.palette.divider }}
+                size={this.state.mainSplitSize}
+                onChange={size => {
+                  if (size > 0 && this.state.width) {
+                    const sizeInPercent = parseInt(((size * 100) / this.state.width), 10) + '%';
+                    this.setState({
+                      mainSplitSize: sizeInPercent
+                    });
+                    // bufferedMainSplitResize(() => this.props.setMainVerticalSplitSize(sizeInPercent));
+                    this.props.setMainVerticalSplitSize(sizeInPercent);
+                  }
+                }}
+              >
+                <FolderContainer
+                  windowHeight={this.state.height}
+                  windowWidth={this.state.width}
+                />
+                <EntryContainer />
+              </SplitPane>
             </SplitPane>
-          </div>
-        )}
-        <Snackbar
-          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-          open={this.props.notificationStatus.visible}
-          onClose={this.props.hideNotifications}
-          autoHideDuration={this.props.notificationStatus.autohide ? 3000 : undefined}
-          message={this.props.notificationStatus.text}
-          action={[
-            <IconButton
-              key="close"
-              aria-label="Close"
-              color="inherit"
-              onClick={this.props.hideNotifications}
-            >
-              <CloseIcon />
-            </IconButton>,
-          ]}
-        />
-        <Snackbar
-          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-          open={this.props.isIndexing}
-          autoHideDuration={undefined}
-          message={'Indexing'}
-          action={[
-            <Button
-              color="secondary"
-              size="small"
-              onClick={this.props.cancelDirectoryIndexing}
-            >
+          ) : (
+            <div>
+              <Drawer
+                open={this.state.isDrawerOpened}
+                type="persistent"
+                classes={{
+                  paper: classes.drawerPaper
+                }}
+              >
+                <VerticalNavigation
+                  setManagementPanelVisibility={this.setManagementPanelVisibility}
+                  shouldTogglePanel={this.state.shouldTogglePanel}
+                />
+              </Drawer>
+              <SplitPane
+                className={classNames(
+                  classes.content,
+                  this.state.isDrawerOpened && classes.contentShift
+                )}
+                split="vertical"
+                minSize={150}
+                resizerStyle={{ backgroundColor: theme.palette.divider }}
+                defaultSize={this.state.isViewerPanelVisible ? '50%' : '100%'}
+              >
+                <FolderContainer
+                  toggleDrawer={this.toggleDrawer}
+                  windowHeight={this.state.height}
+                />
+                {this.props.isFileOpened && (
+                  <div style={{ backgroundColor: 'lightgray', height: '100%' }}>
+                  FileViewer/Editor
+                  </div>
+                )}
+              </SplitPane>
+            </div>
+          )}
+          <Snackbar
+            anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+            open={this.props.notificationStatus.visible}
+            onClose={this.props.hideNotifications}
+            autoHideDuration={this.props.notificationStatus.autohide ? 3000 : undefined}
+            message={this.props.notificationStatus.text}
+            action={[
+              <IconButton
+                key="close"
+                aria-label="Close"
+                color="inherit"
+                onClick={this.props.hideNotifications}
+              >
+                <CloseIcon />
+              </IconButton>,
+            ]}
+          />
+          <Snackbar
+            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+            open={this.props.isIndexing}
+            autoHideDuration={undefined}
+            message={'Indexing'}
+            action={[
+              <Button
+                color="secondary"
+                size="small"
+                onClick={this.props.cancelDirectoryIndexing}
+              >
               Cancel indexing
-            </Button>
-          ]}
-        />
-        <Snackbar
-          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-          open={this.props.isUpdateAvailable}
-          autoHideDuration={undefined}
-          message={'Version ' + this.props.lastPublishedVersion + ' available.'}
-          action={[
-            <Button
-              color="secondary"
-              size="small"
-              onClick={this.skipRelease}
-            >
+              </Button>
+            ]}
+          />
+          <Snackbar
+            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+            open={this.props.isUpdateAvailable}
+            autoHideDuration={undefined}
+            message={'Version ' + this.props.lastPublishedVersion + ' available.'}
+            action={[
+              <Button
+                color="secondary"
+                size="small"
+                onClick={this.skipRelease}
+              >
               Later
-            </Button>,
-            <Button
-              color="secondary"
-              size="small"
-              onClick={this.openChangelogPage}
-            >
+              </Button>,
+              <Button
+                color="secondary"
+                size="small"
+                onClick={this.openChangelogPage}
+              >
               Release Notes
-            </Button>,
-            <Button
-              color="primary"
-              size="small"
-              onClick={this.openDownloadPage}
-            >
+              </Button>,
+              <Button
+                color="primary"
+                size="small"
+                onClick={this.openDownloadPage}
+              >
               Get Now
-            </Button>,
-          ]}
-        />
+              </Button>,
+            ]}
+          />
+        </TargetFileBox>
       </HotKeys>
     );
   }
@@ -465,7 +520,7 @@ function mapStateToProps(state) {
   return {
     isIndexing: isIndexing(state),
     isFileOpened: isFileOpened(state),
-    isFileDragged: isFileDragged(state),
+    // isFileDragged: isFileDragged(state),
     isEntryInFullWidth: isEntryInFullWidth(state),
     isDesktopMode: getDesktopMode(state),
     keyBindings: getKeyBindingObject(state),
@@ -473,13 +528,14 @@ function mapStateToProps(state) {
     mainSplitSize: getMainVerticalSplitSize(state),
     isUpdateAvailable: isUpdateAvailable(state),
     lastPublishedVersion: getLastPublishedVersion(state),
-    notificationStatus: getNotificationStatus(state)
+    notificationStatus: getNotificationStatus(state),
+    directoryPath: getDirectoryPath(state),
   };
 }
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
-    setFileDragged: AppActions.setFileDragged,
+    // setFileDragged: AppActions.setFileDragged,
     hideNotifications: AppActions.hideNotifications,
     cancelDirectoryIndexing: AppActions.cancelDirectoryIndexing,
     saveFile: AppActions.saveFile,
@@ -501,7 +557,9 @@ function mapDispatchToProps(dispatch) {
     getPrevFile: AppActions.getPrevFile,
     toggleShowUnixHiddenEntries: SettingsActions.toggleShowUnixHiddenEntries,
     setLeftVerticalSplitSize: SettingsActions.setLeftVerticalSplitSize,
-    setMainVerticalSplitSize: SettingsActions.setMainVerticalSplitSize
+    setMainVerticalSplitSize: SettingsActions.setMainVerticalSplitSize,
+    showNotification: AppActions.showNotification,
+    reflectCreateEntry: AppActions.reflectCreateEntry
   }, dispatch);
 }
 
