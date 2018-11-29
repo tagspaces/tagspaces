@@ -349,6 +349,6 @@
   "tagDelimiterUnderscore": "underscore (_)",
   "tagDelimiterComma": "comma (,)",
   "maxSearchResultChoose": "Max Search Results",
-  "releaseToDrop": "Release to drop!",
+  "releaseToDrop": "Drop files to import them...",
   "-": "-"
 }

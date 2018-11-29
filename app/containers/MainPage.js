@@ -276,7 +276,7 @@ class MainPage extends Component<Props, State> {
   handleFileDrop = (item, monitor) => {
     if (monitor) {
       const { files } = monitor.getItem();
-      console.log('Dropped files: ' + files);
+      console.log('Dropped files: ' + JSON.stringify(files));
       if (!this.props.directoryPath) {
         this.props.showNotification(
           'Importing files failed. Please select Directory first!',
@@ -285,7 +285,15 @@ class MainPage extends Component<Props, State> {
         );
       } else {
         files.map(file => { // TODO move this in reducer -> look at DirectoryMenu handleFileInputChange
-          const filePath = this.props.directoryPath + AppConfig.dirSeparator + decodeURIComponent(file.name);
+          let filePath;
+          try {
+            filePath = this.props.directoryPath + AppConfig.dirSeparator + decodeURIComponent(file.name);
+          } catch (err) {
+            console.warn('Error decoding filename: ' + file.name + ' , skipping this file.');
+          }
+          if (!filePath) {
+            return true;
+          }
 
           const reader = new FileReader();
           reader.onload = event => {

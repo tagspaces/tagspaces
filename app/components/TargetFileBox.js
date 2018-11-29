@@ -22,13 +22,6 @@ import { DropTarget } from 'react-dnd';
 import { withStyles } from '@material-ui/core/styles/index';
 import i18n from '../services/i18n';
 
-/* const style = {
-  border: '1px solid gray',
-  height: '15rem',
-  width: '15rem',
-  padding: '2rem',
-  textAlign: 'center',
-}; */
 const styles = theme => ({
   dropzone: {
     margin: 5,
@@ -37,14 +30,14 @@ const styles = theme => ({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgba(198, 198, 198, 0.67);',
-    zIndex: 100,
-    border: '4px dashed white',
+    backgroundColor: '#1dd19f40',
+    zIndex: 1000,
+    border: '3px dashed white',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
     textAlign: 'center',
-    fontSize: '48px',
+    fontSize: '40px',
     fontWeight: 'bold',
     color: 'white',
   }
