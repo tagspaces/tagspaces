@@ -70,7 +70,7 @@ const configureStore = (initialState) => {
   const persistConfig = {
     key: 'dev',
     storage,
-    blacklist: ['app', 'directory-index']
+    blacklist: ['app']
   };
 
   const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -80,11 +80,11 @@ const configureStore = (initialState) => {
 
   onlineListener(store.dispatch);
 
-  const persistor = persistStore(store, null, () => {
+  const persistor = persistStore(store);/* , null, () => {
     document.dispatchEvent(new Event('storeLoaded'));
     // store.dispatch(push('/main'));
     console.log('Store rehydrated.');
-  });
+  }); */
 
   if (module.hot) {
     module.hot.accept('../reducers', () =>

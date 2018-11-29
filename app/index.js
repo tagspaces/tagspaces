@@ -24,11 +24,6 @@ import { AppContainer } from 'react-hot-loader';
 import Root from './containers/Root';
 import { configureStore, history } from './store/configureStore';
 import './app.global.css';
-import { actions as AppActions } from './reducers/app';
-import { getDefaultLocationId } from './reducers/locations';
-import { actions as SettingsActions, getCheckForUpdateOnStartup, isGlobalKeyBindingEnabled } from './reducers/settings';
-import PlatformIO from './services/platform-io';
-import { getURLParameter } from './utils/misc';
 
 const { store, persistor } = configureStore();
 
@@ -64,7 +59,7 @@ document.addEventListener('dragleave', (event) => {
   // event.preventDefault();
 }); */
 
-document.addEventListener('storeLoaded', () => {
+/* document.addEventListener('storeLoaded', () => {
   checkIsFirstRun();
   store.dispatch(SettingsActions.setZoomRestoreApp());
   store.dispatch(SettingsActions.upgradeSettings()); // TODO call this only on app version update
@@ -86,7 +81,8 @@ document.addEventListener('storeLoaded', () => {
 
 function checkIsFirstRun() {
   // history.push('/login');
-}
+  console.log('');
+} */
 
 render(
   <AppContainer>
@@ -95,7 +91,7 @@ render(
   document.getElementById('root')
 );
 
-if (module.hot) {
+/* if (module.hot) {
   module.hot.accept('./containers/Root', () => {
     const NextRoot = require('./containers/Root'); // eslint-disable-line global-require
     render(
@@ -105,4 +101,4 @@ if (module.hot) {
       document.getElementById('root')
     );
   });
-}
+} */

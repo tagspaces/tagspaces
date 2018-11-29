@@ -23,6 +23,11 @@ import { PersistGate } from 'redux-persist/integration/react';
 import { ConnectedRouter } from 'react-router-redux';
 import Routes from '../routes';
 import LoadingScreen from '../components/LoadingScreen';
+import { actions as AppActions } from '../reducers/app';
+import { actions as SettingsActions, getCheckForUpdateOnStartup, isGlobalKeyBindingEnabled } from '../reducers/settings';
+import { getDefaultLocationId } from '../reducers/locations';
+import PlatformIO from '../services/platform-io';
+import { getURLParameter } from '../utils/misc';
 
 type RootType = {
   store: {},
@@ -41,11 +46,28 @@ export default function Root({ store, persistor, history }: RootType) {
        * @see https://github.com/rt2zz/redux-persist/blob/master/docs/PersistGate.md
        */}
       <PersistGate
-        // loading={<SplashScreen />}
+        loading={null}
         persistor={persistor}
       >
         {(bootstrapped) => {
-          if (bootstrapped) {
+          if (bootstrapped) { // storeLoaded
+            // checkIsFirstRun();
+            store.dispatch(SettingsActions.setZoomRestoreApp());
+            store.dispatch(SettingsActions.upgradeSettings()); // TODO call this only on app version update
+            const state = store.getState();
+            const defaultLocationId = getDefaultLocationId(state);
+            if (defaultLocationId && defaultLocationId.length > 0) {
+              store.dispatch(AppActions.openLocation(defaultLocationId));
+            }
+            if (getCheckForUpdateOnStartup(state)) {
+              store.dispatch(SettingsActions.checkForUpdate());
+            }
+            PlatformIO.setGlobalShortcuts(isGlobalKeyBindingEnabled(state));
+
+            const langURLParam = getURLParameter('locale');
+            if (langURLParam && langURLParam.length > 1 && /^[a-zA-Z\-_]+$/.test('langURLParam')) {
+              store.dispatch(SettingsActions.setLanguage(langURLParam));
+            }
             return (
               <ConnectedRouter history={history}>
                 <Routes />

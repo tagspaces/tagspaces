@@ -37,15 +37,15 @@ function configureStore(initialState) {
   const persistConfig = {
     key: 'root',
     storage,
-    blacklist: ['app', 'directory-index']
+    blacklist: ['app']
   };
 
   const persistedReducer = persistReducer(persistConfig, rootReducer);
   const store = createStore(persistedReducer, initialState, enhancer);
   onlineListener(store.dispatch);
-  const persistor = persistStore(store, null, () => {
+  const persistor = persistStore(store); /* , null, () => {
     document.dispatchEvent(new Event('storeLoaded'));
-  });
+  }); */
   return { store, persistor };
 }
 
