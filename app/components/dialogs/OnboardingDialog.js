@@ -51,6 +51,7 @@ class OnboardingDialog extends React.Component<Props, State> {
   slideSettings = {
     className: '',
     dots: true,
+    arrows: false,
     infinite: true,
     slidesToShow: 1,
     slidesToScroll: 1,
@@ -67,7 +68,11 @@ class OnboardingDialog extends React.Component<Props, State> {
     this.slider.slickPrev();
   }
 
-  renderTitle = () => <DialogTitle>Welcome to TagSpaces</DialogTitle>;
+  renderTitle = () => (
+    <DialogTitle style={{ justifyContent: 'center', textAlign: 'center' }}>
+      Welcome to TagSpaces
+    </DialogTitle>
+  );
 
   renderContent = () => (
     <DialogContent style={{ height: 500, overflowX: 'hidden' }}>
@@ -75,10 +80,10 @@ class OnboardingDialog extends React.Component<Props, State> {
         <div style={{ height: 400, padding: 5 }}>
           <Paper elevation={1}>
             <Typography variant="h5" component="h3">
-              This is a sheet of paper.
+              Welcome
             </Typography>
             <Typography component="p">
-              Paper can be used to build surface or other elements for your application.
+              Your favorite file organizer has a fresh new look
             </Typography>
           </Paper>
         </div>
@@ -122,7 +127,7 @@ class OnboardingDialog extends React.Component<Props, State> {
   );
 
   renderActions = () => (
-    <DialogActions>
+    <DialogActions style={{ justifyContent: 'center' }}>
       <Button
         data-tid="confirmLicenseDialog"
         onClick={this.showPrev}
@@ -137,13 +142,13 @@ class OnboardingDialog extends React.Component<Props, State> {
       >
         Next
       </Button>
-      <Button
+      {/* <Button
         data-tid="confirmLicenseDialog"
         onClick={this.props.onClose}
         color="primary"
       >
         {i18n.t('core:closeButton')}
-      </Button>
+      </Button> */}
     </DialogActions>
   );
 
