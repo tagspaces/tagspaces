@@ -5,6 +5,8 @@
 @import "./assets/minireset.css";
 @import "./assets/rc-datetime.css";
 @import "~rc-table/assets/index.css";
+@import "~slick-carousel/slick/slick.css";
+@import "~slick-carousel/slick/slick-theme.css";
 
 
 /* Needed to disable border on focused HotKey element */

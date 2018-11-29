@@ -223,12 +223,14 @@
     "react-router-dom": "^4.3.1",
     "react-router-redux": "^5.0.0-alpha.6",
     "react-select": "^2.1.1",
+    "react-slick": "^0.23.2",
     "react-split-pane": "^0.1.84",
     "redux": "^3.7.2",
     "redux-persist": "^4.8.2",
     "redux-thunk": "^2.2.0",
     "remove-markdown": "^0.2.2",
     "semver": "^5.5.0",
+    "slick-carousel": "^1.8.1",
     "source-map-support": "^0.5.6"
   },
   "devEngines": {
