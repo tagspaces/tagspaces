@@ -17,40 +17,61 @@
  * @flow
  */
 
-import React, { Component } from 'react';
+import React from 'react';
 import { DropTarget } from 'react-dnd';
+import { withStyles } from '@material-ui/core/styles/index';
+import i18n from '../services/i18n';
 
-const style = {
-  border: '1px solid gray',
-  height: '15rem',
-  width: '15rem',
-  padding: '2rem',
-  textAlign: 'center',
-};
+const styles = theme => ({
+  dropzone: {
+    margin: 5,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: '#1dd19f40',
+    zIndex: 1000,
+    border: '3px dashed white',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    textAlign: 'center',
+    fontSize: '40px',
+    fontWeight: 'bold',
+    color: 'white',
+  }
+});
 
 const boxTarget = {
-  drop(props, monitor) {
-    if (props.onDrop) {
-      props.onDrop(props, monitor);
-    }
+  drop(props, monitor, component) {
+    return component.props.onDrop(props, monitor);
   },
 };
 
-class TargetFileBox extends Component {
-  render() {
-    const { canDrop, isOver, connectDropTarget } = this.props;
-    const isActive = canDrop && isOver;
+type Props = {
+  classes: Object,
+  canDrop: boolean,
+  isOver: boolean,
+  connectDropTarget: Object,
+  children: Object
+};
 
+class TargetFileBox extends React.Component<Props> {
+  render() {
+    const { classes, canDrop, isOver, connectDropTarget, children } = this.props;
+    const dragContent = canDrop && isOver ? (<div className={classes.dropzone}>{i18n.t('core:releaseToDrop')}</div>) : undefined;
     return connectDropTarget(
-      <div style={style}>
-        {isActive ? 'Release to drop' : 'Drag file here'}
+      <div>
+        {dragContent}
+        {children}
       </div>
     );
   }
 }
 
-export default DropTarget(props => props.accepts, boxTarget, (connect, monitor) => ({
+export default withStyles(styles, { withTheme: true })(DropTarget(props => props.accepts, boxTarget, (connect, monitor) => ({
   connectDropTarget: connect.dropTarget(),
   isOver: monitor.isOver(),
   canDrop: monitor.canDrop(),
-}))(TargetFileBox);
+}))(TargetFileBox));

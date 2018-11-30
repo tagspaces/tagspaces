@@ -123,7 +123,7 @@ export const initialState = {
     autohide: false
   },
   openedFiles: [],
-  isFileDragged: false,
+  // isFileDragged: false,
   aboutDialogOpened: false,
   keysDialogOpened: false,
   createFileDialogOpened: false,
@@ -217,9 +217,9 @@ export default (state: Object = initialState, action: Object) => {
       isLoading: false
     };
   }
-  case types.SET_FILEDRAGGED: {
+  /* case types.SET_FILEDRAGGED: {
     return { ...state, isFileDragged: action.isFileDragged };
-  }
+  } */
   case types.INDEX_DIRECTORY_SEARCH: {
     return {
       ...state,
@@ -901,10 +901,10 @@ export const actions = {
     type: types.OPEN_FILE,
     file: fsEntry
   }),
-  setFileDragged: (isFileDragged: boolean) => ({
+  /* setFileDragged: (isFileDragged: boolean) => ({
     type: types.SET_FILEDRAGGED,
     isFileDragged
-  }),
+  }), */
   setReadOnlyMode: (isReadOnlyMode: boolean) => ({
     type: types.SET_READONLYMODE,
     isReadOnlyMode
@@ -1299,7 +1299,7 @@ export const isUpdateInProgress = (state: Object) =>
 export const isOnline = (state: Object) => state.app.isOnline;
 export const getLastSelectedEntry = (state: Object) => state.app.lastSelectedEntry;
 export const isFileOpened = (state: Object) => state.app.openedFiles.length > 0;
-export const isFileDragged = (state: Object) => state.app.isFileDragged;
+// export const isFileDragged = (state: Object) => state.app.isFileDragged;
 export const isReadOnlyMode = (state: Object) => state.app.isReadOnlyMode;
 export const isAboutDialogOpened = (state: Object) => state.app.aboutDialogOpened;
 export const isKeysDialogOpened = (state: Object) => state.app.keysDialogOpened;

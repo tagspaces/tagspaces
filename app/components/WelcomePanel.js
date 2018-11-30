@@ -36,6 +36,7 @@ import { withStyles } from '@material-ui/core/styles';
 // import ListItemIcon from '@material-ui/core/ListItemCore';
 // import ListItemText  from '@material-ui/core/ListItemtext';
 // import ListSubheader from '@material-ui/core/ListSubheader';
+import OnboardingDialog from './dialogs/OnboardingDialog'
 
 // import i18n from '../services/i18n';
 import { getLocations, type Location } from '../reducers/locations';
@@ -66,20 +67,32 @@ type Props = {
 };
 
 type State = {
-  currentLocation?: Location
+  currentLocation?: Location,
+  isOboardingDialogVisible: boolean
 };
 
 class WelcomePanel extends React.Component<Props, State> {
   state = {
     currentLocation: null,
+    isOboardingDialogVisible: false
   };
+
+  toggleOnboarding = () => {
+    this.setState({
+      isOboardingDialogVisible: !this.state.isOboardingDialogVisible
+    });
+  }
 
   render() {
     const { classes } = this.props;
     return (
       <div className={classes.mainPanel}>
         <div className={classes.slogan}>
-          <img src={WelcomeLogo} alt="Organize your files" />
+          <img src={WelcomeLogo} alt="Organize your files" onClick={this.toggleOnboarding} />
+          <OnboardingDialog
+            open={this.state.isOboardingDialogVisible}
+            onClose={this.toggleOnboarding}
+          />
         </div>
       </div>
     );
