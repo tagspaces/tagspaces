@@ -46,19 +46,22 @@ const styles = theme => ({
   }
 });
 
-/*
 type Props = {
+  open: boolean,
+  fullScreen: boolean,
   classes: Object,
-  onClose: () => void,
+  onClose: () => void
 };
 
 type State = {
-  currentTab?: number
+  currentTab?: number,
+  items: Array<Object>,
+  selectedItem: Object,
+  isValidationInProgress: boolean,
+  isConfirmDialogOpened: boolean
 };
-<Props, State>
-*/
 
-class SettingsDialog extends React.Component {
+class SettingsDialog extends React.Component<Props, State> {
   state = {
     currentTab: 0,
     items: [],
@@ -270,11 +273,16 @@ class SettingsDialog extends React.Component {
   );
 
   render() {
+    const {
+      fullScreen,
+      open,
+      onClose
+    } = this.props;
     return (
       <GenericDialog
-        open={this.props.open}
-        onClose={this.props.onClose}
-        onEnterKey={(event) => onEnterKeyHandler(event, this.onConfirm)}
+        open={open}
+        onClose={onClose}
+        fullScreen={fullScreen}
         renderTitle={this.renderTitle}
         renderContent={this.renderContent}
         renderActions={this.renderActions}

@@ -35,6 +35,7 @@ import Radio from '@material-ui/core/Radio';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import InputAdornment from '@material-ui/core/InputAdornment';
+import withMobileDialog from '@material-ui/core/withMobileDialog';
 import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
 import i18n from '../../services/i18n';
 import { formatDateTime4Tag } from '../../utils/misc';
@@ -67,6 +68,7 @@ const styles = theme => ({
 
 type Props = {
   open: boolean,
+  fullScreen: boolean,
   onClose: () => void,
   showSelectDirectoryDialog: () => void,
   selectedDirectoryPath?: string,
@@ -335,13 +337,21 @@ class CreateFileDialog extends React.Component<Props, State> {
   );
 
   render() {
+    const {
+      fullScreen,
+      chooseDirectoryPath,
+      resetState,
+      open,
+      onClose
+    } = this.props;
     return (
       <GenericDialog
-        open={this.props.open}
+        fullScreen={fullScreen}
+        open={open}
         onClose={() => {
-          this.props.chooseDirectoryPath(undefined);
-          this.props.resetState('CreateFileDialogKey');
-          this.props.onClose();
+          chooseDirectoryPath(undefined);
+          resetState('CreateFileDialogKey');
+          onClose();
         }}
         onEnterKey={(event) => onEnterKeyHandler(event, this.onConfirm)}
         renderTitle={this.renderTitle}
@@ -360,4 +370,4 @@ function mapActionCreatorsToProps(dispatch) {
   }, dispatch);
 }
 
-export default connect(undefined, mapActionCreatorsToProps)(withStyles(styles)(CreateFileDialog));
+export default connect(undefined, mapActionCreatorsToProps)(withMobileDialog()(withStyles(styles)(CreateFileDialog)));

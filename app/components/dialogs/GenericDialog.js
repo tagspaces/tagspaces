@@ -73,18 +73,27 @@ class GenericDialog extends React.Component<Props> {
   );
 
   render() {
+    const {
+      fullScreen,
+      open,
+      onEnterKey,
+      onClose,
+      renderTitle,
+      renderContent,
+      renderActions
+    } = this.props;
     return (
       <Dialog
-        open={this.props.open ? this.props.open : false}
+        fullScreen={fullScreen}
+        open={open}
         TransitionComponent={Transition}
         keepMounted
-        fullScreen={this.props.fullScreen ? this.props.fullScreen : false}
         onClose={this.props.onClose}
-        onKeyDown={this.props.onEnterKey ? this.props.onEnterKey : (event) => onEnterKeyHandler(event, this.props.onClose)}
+        onKeyDown={onEnterKey || ((event) => onEnterKeyHandler(event, onClose))}
       >
-        {this.props.renderTitle ? this.props.renderTitle() : this.renderTitle()}
-        {this.props.renderContent ? this.props.renderContent() : this.renderContent()}
-        {this.props.renderActions ? this.props.renderActions() : this.renderActions()}
+        {renderTitle ? renderTitle() : this.renderTitle()}
+        {renderContent ? renderContent() : this.renderContent()}
+        {renderActions ? renderActions() : this.renderActions()}
       </Dialog>
     );
   }
