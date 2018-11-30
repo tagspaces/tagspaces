@@ -53,7 +53,6 @@ import {
   // isFileDragged,
   isEntryInFullWidth,
   isUpdateAvailable,
-  isUpdateAvailable,
   getDirectoryPath
 } from '../reducers/app';
 import { actions as LocationIndexActions, isIndexing } from '../reducers/location-index';
