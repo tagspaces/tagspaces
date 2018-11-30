@@ -297,6 +297,20 @@ class EntryProperties extends Component<Props, State> {
       this.setState({
         isEditName: true,
         originalName: this.state.name
+      }, () => {
+        this.fileName.focus();
+        const { originalName } = this.state;
+        if (originalName) {
+          const indexOfBracket = originalName.indexOf(AppConfig.beginTagContainer);
+          const indexOfDot = originalName.indexOf('.');
+          let endRange = originalName.length;
+          if (indexOfBracket > 0) {
+            endRange = indexOfBracket;
+          } else if (indexOfDot > 0) {
+            endRange = indexOfDot;
+          }
+          this.fileName.setSelectionRange(0, endRange);
+        }
       });
     }
   };
@@ -484,6 +498,7 @@ class EntryProperties extends Component<Props, State> {
                   fullWidth={true}
                   data-tid="fileNameProperties"
                   value={name}
+                  inputRef={(ref) => { this.fileName = ref; }}
                   className={classes.field}
                   onClick={() => {
                     if (!isEditName) {
