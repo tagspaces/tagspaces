@@ -36,6 +36,7 @@ import AppConfig from '../../config';
 
 type Props = {
   open: boolean,
+  fullScreen: boolean,
   toggleLicenseDialog: () => void,
   toggleThirdPartyLibsDialog: () => void,
   onClose: () => void
@@ -156,7 +157,7 @@ class AboutDialog extends React.Component<Props, State> {
         >
           {versionInfo}
         </Button>
-        { /*<Button
+        { /* <Button
           data-tid="openLicenseDialog"
           onClick={this.props.toggleLicenseDialog}
         >
@@ -180,10 +181,16 @@ class AboutDialog extends React.Component<Props, State> {
   };
 
   render() {
+    const {
+      fullScreen,
+      open,
+      onClose
+    } = this.props;
     return (
       <GenericDialog
-        open={this.props.open}
-        onClose={this.props.onClose}
+        fullScreen={fullScreen}
+        open={open}
+        onClose={onClose}
         renderTitle={this.renderTitle}
         renderContent={this.renderContent}
         renderActions={this.renderActions}
