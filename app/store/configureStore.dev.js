@@ -71,7 +71,7 @@ const configureStore = (initialState) => {
 
   onlineListener(store.dispatch);
 
-  persistStore(store, { blacklist: ['app'] }, () => {
+  persistStore(store, { blacklist: ['app', 'locationIndex'] }, () => {
     document.dispatchEvent(new Event('storeLoaded'));
     // store.dispatch(push('/main'));
     console.log('Store rehydrated.');

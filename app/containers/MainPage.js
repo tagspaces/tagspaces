@@ -53,8 +53,9 @@ import {
   // isFileDragged,
   isEntryInFullWidth,
   isUpdateAvailable,
-  isIndexing, getDirectoryPath
+  getDirectoryPath
 } from '../reducers/app';
+import { actions as LocationIndexActions, isIndexing } from '../reducers/location-index';
 import { buffer } from '../utils/misc';
 import { normalizePath } from '../utils/paths';
 import TargetFileBox from '../components/TargetFileBox';
@@ -538,7 +539,7 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators({
     // setFileDragged: AppActions.setFileDragged,
     hideNotifications: AppActions.hideNotifications,
-    cancelDirectoryIndexing: AppActions.cancelDirectoryIndexing,
+    cancelDirectoryIndexing: LocationIndexActions.cancelDirectoryIndexing,
     saveFile: AppActions.saveFile,
     setZoomResetApp: SettingsActions.setZoomResetApp,
     setZoomInApp: SettingsActions.setZoomInApp,
