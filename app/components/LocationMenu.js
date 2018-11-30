@@ -38,7 +38,7 @@ type Props = {
   currentLocationId: string | null,
   locations: Array<Location>,
   menuAnchorEl: null | Object,
-  openLocation: (locationId: string) => void
+  openLocation: (location: Location) => void
 };
 
 type State = {
@@ -71,8 +71,8 @@ class LocationMenu extends React.Component { //  <Props, State>
     }
   };
 
-  openLocation = locationId => {
-    this.props.openLocation(locationId);
+  openLocation = location => {
+    this.props.openLocation(location);
     this.toggleLocationChooser();
   };
 
@@ -113,7 +113,7 @@ class LocationMenu extends React.Component { //  <Props, State>
             <MenuItem
               data-tid="folderContainerMenuOpenLocation"
               key={location.uuid}
-              onClick={() => this.openLocation(location.uuid)}
+              onClick={() => this.openLocation(location)}
             >
               <ListItemIcon>
                 <FolderIcon />

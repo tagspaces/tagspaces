@@ -61,6 +61,7 @@ import {
   type Location
 } from '../reducers/locations';
 import { actions as AppActions, getCurrentLocationId } from '../reducers/app';
+import { actions as LocationIndexActions } from '../reducers/location-index';
 import { getPerspectives } from '../reducers/settings';
 import i18n from '../services/i18n';
 import { isObj } from '../utils/misc';
@@ -73,7 +74,7 @@ type Props = {
   perspectives: Array<Object>,
   currentLocationId: string,
   loadDirectoryContent: (path: string) => void,
-  openLocation: (path: string) => void,
+  openLocation: (location: Location) => void,
   openFileNatively: (path: string) => void,
   openDirectory: (path: string) => void,
   createDirectoryIndex: (path: string) => void,
@@ -426,7 +427,7 @@ class LocationManager extends React.Component<Props, State> {
       this.props.loadDirectoryContent(location.paths[0]);
     } else {
       this.loadSubDirectories(location, 1);
-      this.props.openLocation(location.uuid);
+      this.props.openLocation(location);
       this.state.locationRootPath = location.paths[0];
     }
     const grid = document.querySelector('[data-tid="perspectiveGridFileTable"]');
@@ -780,7 +781,7 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators({
     ...LocationActions,
     openLocation: AppActions.openLocation,
-    createDirectoryIndex: AppActions.createDirectoryIndex,
+    createDirectoryIndex: LocationIndexActions.createDirectoryIndex,
     closeLocation: AppActions.closeLocation,
     loadDirectoryContent: AppActions.loadDirectoryContent,
     reflectCreateEntry: AppActions.reflectCreateEntry,
