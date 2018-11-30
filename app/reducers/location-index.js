@@ -26,6 +26,9 @@ import {
   extractTagsAsObjects,
   getThumbFileLocationForFile
 } from '../utils/paths';
+import type { SearchQuery } from '../services/search';
+import Search from '../services/search';
+import { actions as AppActions } from './app';
 
 export const types = {
   INDEX_DIRECTORY: 'INDEX_DIRECTORY',
@@ -47,7 +50,6 @@ export const initialState = {
   isIndexing: false
 };
 
-// The state described here will not be persisted
 export default (state: Object = initialState, action: Object) => {
   switch (action.type) {
   case types.INDEX_DIRECTORY_START: {
@@ -211,6 +213,26 @@ export const actions = {
   clearDirectoryIndex: () => ({
     type: types.INDEX_DIRECTORY_CLEAR
   }),
+  searchLocationIndex: (searchQuery: SearchQuery) => (
+    dispatch: (actions: Object) => void,
+    getState: () => Object
+  ) => {
+    dispatch(AppActions.showNotification('Searching...', 'default', false));
+    setTimeout(() => { // Workarround used to show the start search notication
+      Search.searchLocationIndex(
+        getState().locationIndex.currentDirectoryIndex,
+        searchQuery
+      ).then((searchResults) => {
+        dispatch(AppActions.updateSearchResults(searchResults));
+        dispatch(AppActions.hideNotifications());
+        return true;
+      }).catch(() => {
+        dispatch(AppActions.updateSearchResults([]));
+        dispatch(AppActions.hideNotifications());
+        dispatch(AppActions.showNotification('Search failed.', 'warning', true));
+      });
+    }, 50);
+  },
   indexDirectorySuccess: (directoryIndex: Array<Object>) => ({
     type: types.INDEX_DIRECTORY_SUCCESS,
     directoryIndex

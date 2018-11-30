@@ -20,7 +20,6 @@
 import uuidv1 from 'uuid';
 import { type Location, locationType } from './locations';
 import PlatformIO from '../services/platform-io';
-import Search, { type SearchQuery } from '../services/search';
 import AppConfig from '../config';
 import {
   enhanceEntry,
@@ -42,7 +41,6 @@ import i18n from '../services/i18n';
 import { Pro } from '../pro';
 import { getThumbnailURLPromise } from '../services/thumbsgenerator';
 import { actions as LocationIndexActions } from './location-index';
-// import { getTagDelimiter } from './settings';
 
 export const types = {
   DEVICE_ONLINE: 'APP/DEVICE_ONLINE',
@@ -780,30 +778,10 @@ export const actions = {
         );
       });
   },
-  searchLocationIndexFinished: (searchResults: Array<Object> | []) => ({
+  updateSearchResults: (searchResults: Array<Object> | []) => ({
     type: types.INDEX_DIRECTORY_SEARCH,
     searchResults
   }),
-  searchLocationIndex: (searchQuery: SearchQuery) => (
-    dispatch: (actions: Object) => void,
-    getState: () => Object
-  ) => {
-    dispatch(actions.showNotification('Searching...', 'default', false));
-    setTimeout(() => { // Workarround used to show the start search notication
-      Search.searchLocationIndex(
-        getState().locationIndex.currentDirectoryIndex,
-        searchQuery
-      ).then((searchResults) => {
-        dispatch(actions.searchLocationIndexFinished(searchResults));
-        dispatch(actions.hideNotifications());
-        return true;
-      }).catch(() => {
-        dispatch(actions.searchLocationIndexFinished([]));
-        dispatch(actions.hideNotifications());
-        dispatch(actions.showNotification('Search failed.', 'warning', true));
-      });
-    }, 50);
-  },
   setCurrentLocationId: (locationId: string | null) => ({
     type: types.SET_CURRENLOCATIONID,
     locationId
