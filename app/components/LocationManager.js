@@ -453,9 +453,9 @@ class LocationManager extends React.Component<Props, State> {
 
   renderNameColumnAction = (field, location, key) => {
     const children = (
-      <span>
+      <span style={{ fontSize: 15, marginLeft: 5 }} title={field}>
         <FolderIcon style={{ marginTop: 0, marginBottom: -8 }} className={this.props.classes.icon} />
-        <span style={{ fontSize: 15, marginLeft: 5 }}>{field}</span>
+        {field && field.length > 25 ? field.substr(0, 25) + '...' : field}
         {/* <IconButton
           style={{ float: 'right', paddingTop: 0, paddingBottom: 0, paddingLeft: 0, paddingRight: 0 }}
           aria-label={i18n.t('core:options')}
