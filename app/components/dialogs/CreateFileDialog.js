@@ -272,20 +272,6 @@ class CreateFileDialog extends React.Component<Props, State> {
         />
         <FormHelperText>{i18n.t('core:createRichTextFile')}</FormHelperText>
       </ListItem>
-      {/* <FormControl fullWidth={true} style={{ overflow: 'visible', margin: '0 0 10px 0' }}>
-        <FormHelperText>{i18n.t('core:fileTags')}</FormHelperText>
-        <TagAutoSuggestion
-          height={120}
-          isModalOpened={open}
-          selectedItem={{}}
-          selectedItems={[]}
-          selectedEntries={[]}
-          newlyAddedTags={this.state.newlyAddedTags}
-          allTags={this.props.allTags}
-          addTags={this.onAddTag}
-          removeTags={this.onRemoveTag}
-        />
-      </FormControl> */}
       <FormControl fullWidth={true}>
         <InputLabel htmlFor="name">{i18n.t('core:filePath')}</InputLabel>
         <Input
