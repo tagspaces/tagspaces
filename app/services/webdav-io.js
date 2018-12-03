@@ -139,13 +139,51 @@ export default class WebDAVIO {
     return directoyTree;
   };
 
+
+  listMetaDirectoryPromise = async (path: string): Promise<Array<Object>> => {
+    const promise = new Promise((resolve) => {
+      const entries = [];
+      const metaDirPath = normalizePath(path) + AppConfig.dirSeparator + AppConfig.metaFolder + AppConfig.dirSeparator;
+      const davSuccess = (status, data) => {
+        const dirList = data._responses;
+        for (const dir in dirList) {
+          const entryPath = dirList[dir].href;
+          if (entryPath.toLowerCase() === metaDirPath.toLowerCase()) {
+            console.log('Skipping current folder');
+          } else {
+            const fileName = this.getNameForPath(entryPath);
+
+            const entry = {};
+            entry.name = fileName;
+            entry.path = entryPath;
+            entry.isFile = true;
+            entries.push(entry);
+          }
+        }
+        return resolve(entries);
+      };
+
+      this.davClient.propfind(
+        metaDirPath,
+        davSuccess,
+        1 // 1 , davClient.INFINITY
+      );
+      return resolve(entries);
+    });
+    const result = await promise; // this.listDirectoryPromise(normalizePath(path) + AppConfig.dirSeparator + AppConfig.metaFolder + AppConfig.dirSeparator, true);
+    return result;
+  };
+
   /**
    * Creates a list with containing the files and the sub directories of a given directory
    */
-  listDirectoryPromise = (directoryPath: string, lite: boolean = true): Promise<Array<Object>> => new Promise((resolve, reject) => {
+  listDirectoryPromise = (directoryPath: string, lite: boolean = false): Promise<Array<Object>> => new Promise(async (resolve, reject) => {
     let enhancedEntries;
     let dirPath = directoryPath.split('//').join('/');
-    let containsMetaFolder = false;
+
+    const metaContent = !lite ? await this.listMetaDirectoryPromise(directoryPath) : [];
+
+    // let containsMetaFolder = false;
     const davSuccess = (status, data) => {
       console.log('Dirlist Status:  ' + status);
       if (!this.checkStatusCode(status)) {
@@ -202,15 +240,18 @@ export default class WebDAVIO {
           eentry.isFile = !isDir;
           eentry.size = filesize;
           eentry.lmdt = 0;
-          if (isDir && fileName.endsWith(AppConfig.metaFolder)) {
-            containsMetaFolder = true;
-            // Read tsm.json from subfolders
-            if (!lite) {
-              try {
-                metaPromises.push(this.getEntryMeta(eentry));
-                console.log('Success reading meta folder file ' + path);
-              } catch (err) {
-                console.log('Failed reading meta folder file ' + path);
+          // const x = getMetaFileLocationForFile(eentry.path);
+
+          if (!lite) {
+            if (isDir) { // Read tsm.json from subfolders
+              const metaDirAvailable = metaContent.find(obj => obj.name === AppConfig.metaFolder);
+              if (metaDirAvailable) {
+                metaPromises.push(this.getEntryMeta(eentry, metaDirAvailable.path));
+              }
+            } else {
+              const metaFileAvailable = metaContent.find(obj => obj.path === path);
+              if (metaFileAvailable) {
+                metaPromises.push(this.getEntryMeta(eentry, metaFileAvailable.path));
               }
             }
           }
@@ -223,6 +264,7 @@ export default class WebDAVIO {
         /* entriesMeta.forEach((entryMeta) => {
           enhancedEntries.some((enhancedEntry) => {
             if (enhancedEntry.path === entryMeta.path) {
+              // eslint-disable-next-line no-param-reassign
               enhancedEntry = entryMeta;
               return true;
             }
@@ -247,12 +289,26 @@ export default class WebDAVIO {
     );
   });
 
-  getEntryMeta = (eentry: Object): Promise<Object> => {
-    const folderMetaPath = normalizePath(eentry.path) + AppConfig.dirSeparator + AppConfig.metaFolderFile;
-    return this.loadTextFilePromise(folderMetaPath).then(result => {
-      // eslint-disable-next-line no-param-reassign
-      eentry.meta = JSON.parse(result.trim());
-      return eentry;
+  getEntryMeta = (eentry: Object, metaPath): Promise<Object> => {
+    if (eentry.isFile) {
+      // const metaFilePath = getMetaFileLocationForFile(eentry.path);
+      return this.loadTextFilePromise(metaPath).then(result => {
+        // eslint-disable-next-line no-param-reassign
+        eentry.meta = JSON.parse(result.trim());
+        return eentry;
+      });
+    }
+    const folderMetaPath = normalizePath(eentry.path) + AppConfig.dirSeparator + AppConfig.metaFolderFile; // getMetaFileLocationForDir(eentry.path);
+    if (!eentry.path.endsWith(AppConfig.metaFolder + '/')) { // Skip the /.ts folder
+      return this.loadTextFilePromise(folderMetaPath).then(result => {
+        // eslint-disable-next-line no-param-reassign
+        eentry.meta = JSON.parse(result.trim());
+        return eentry;
+      });
+    }
+
+    return new Promise((resolve) => {
+      resolve(eentry);
     });
   };
   /**
