@@ -32,6 +32,7 @@ const licenseUrl = Pro ? './node_modules/@tagspaces/pro/EULA.txt' : './LICENSE.t
 
 type Props = {
   open: boolean,
+  fullScreen: boolean,
   onClose: () => void
 };
 
@@ -78,11 +79,16 @@ class LicenseDialog extends React.Component<Props, State> {
   );
 
   render() {
+    const {
+      fullScreen,
+      open,
+      onClose
+    } = this.props;
     return (
       <GenericDialog
-        open={this.props.open}
-        onClose={this.props.onClose}
-        // onEnterKey={(event) => onEnterKeyHandler(event, this.onConfirm)}
+        open={open}
+        onClose={onClose}
+        fullScreen={fullScreen}
         renderTitle={this.renderTitle}
         renderContent={this.renderContent}
         renderActions={this.renderActions}

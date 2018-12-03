@@ -35,7 +35,7 @@ const enhancer = compose(
 function configureStore(initialState) {
   const store = createStore(rootReducer, initialState, enhancer);
   onlineListener(store.dispatch);
-  persistStore(store, { blacklist: ['app'] }, () => {
+  persistStore(store, { blacklist: ['app', 'locationIndex'] }, () => {
     document.dispatchEvent(new Event('storeLoaded'));
   });
   return store;

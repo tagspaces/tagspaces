@@ -31,7 +31,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import ConfirmDialog from '../dialogs/ConfirmDialog';
 import EditTagDialog from '../dialogs/EditTagDialog';
 import { type Tag, type TagGroup } from '../../reducers/taglibrary';
-import { actions as AppActions } from '../../reducers/app';
+import { actions as LocationIndexActions } from '../../reducers/location-index';
 import i18n from '../../services/i18n';
 import { type SearchQuery } from '../../services/search';
 import { getMaxSearchResults } from '../../reducers/settings';
@@ -175,7 +175,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
-    searchLocationIndex: AppActions.searchLocationIndex,
+    searchLocationIndex: LocationIndexActions.searchLocationIndex,
   }, dispatch);
 }
 

@@ -18,6 +18,7 @@
  */
 
 import React from 'react';
+import withMobileDialog from '@material-ui/core/withMobileDialog';
 import Button from '@material-ui/core/Button';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -40,6 +41,7 @@ import { Pro } from '../../pro';
 
 type Props = {
   open?: boolean,
+  fullScreen: boolean,
   resetState: () => void,
   onClose: () => void,
   location?: Location | null,
@@ -380,10 +382,15 @@ class EditLocationDialog extends React.Component<Props, State> {
   );
 
   render() {
+    const {
+      fullScreen,
+      open,
+    } = this.props;
     return (
       <GenericDialog
-        open={this.props.open}
+        open={open}
         onClose={this.onCancel}
+        fullScreen={fullScreen}
         onEnterKey={(event) => onEnterKeyHandler(event, this.onConfirm)}
         renderTitle={this.renderTitle}
         renderContent={this.renderContent}
@@ -393,5 +400,5 @@ class EditLocationDialog extends React.Component<Props, State> {
   }
 }
 
-export default EditLocationDialog;
+export default withMobileDialog()(EditLocationDialog);
 

@@ -44,7 +44,8 @@ import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import TagsSelect from './TagsSelect';
 import CustomLogo from './CustomLogo';
-import { actions as AppActions, getIndexedEntriesCount, isIndexing, getDirectoryPath } from '../reducers/app';
+import { actions as AppActions, getDirectoryPath } from '../reducers/app';
+import { actions as LocationIndexActions, getIndexedEntriesCount, isIndexing } from '../reducers/location-index';
 import { getMaxSearchResults } from '../reducers/settings';
 import styles from './SidePanels.css';
 import i18n from '../services/i18n';
@@ -390,7 +391,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
-    searchLocationIndex: AppActions.searchLocationIndex,
+    searchLocationIndex: LocationIndexActions.searchLocationIndex,
     loadDirectoryContent: AppActions.loadDirectoryContent
   }, dispatch);
 }

@@ -27,15 +27,19 @@ import Typography from '@material-ui/core/Typography';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
-import Slider from "react-slick";
 import withMobileDialog from '@material-ui/core/withMobileDialog';
 import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
+import MobileStepper from '@material-ui/core/MobileStepper';
+import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
+import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
+import SwipeableViews from 'react-swipeable-views';
 import i18n from '../../services/i18n';
 import { loadFileContentPromise } from '../../services/utils-io';
 import { Pro } from '../../pro';
 
 type Props = {
   open: boolean,
+  fullScreen: boolean,
   onClose: () => void
 };
 
@@ -45,28 +49,25 @@ type State = {
 
 class OnboardingDialog extends React.Component<Props, State> {
   state = {
-    license: ''
+    activeStep: 0,
   };
 
-  slideSettings = {
-    className: '',
-    dots: true,
-    arrows: false,
-    infinite: true,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    adaptiveHeight: true
+  handleNext = () => {
+    this.setState(prevState => ({
+      activeStep: prevState.activeStep + 1,
+    }));
   };
 
-  slider;
+  handleBack = () => {
+    this.setState(prevState => ({
+      activeStep: prevState.activeStep - 1,
+    }));
+  };
 
-  showNext = () => {
-    this.slider.slickNext();
-  }
+  handleStepChange = activeStep => {
+    this.setState({ activeStep });
+  };
 
-  showPrev = () => {
-    this.slider.slickPrev();
-  }
 
   renderTitle = () => (
     <DialogTitle style={{ justifyContent: 'center', textAlign: 'center' }}>
@@ -74,89 +75,104 @@ class OnboardingDialog extends React.Component<Props, State> {
     </DialogTitle>
   );
 
-  renderContent = () => (
-    <DialogContent style={{ height: 500, overflowX: 'hidden' }}>
-      <Slider ref={slider => (this.slider = slider)} {...this.slideSettings}>
-        <div style={{ height: 400, padding: 5 }}>
-          <Paper elevation={1}>
-            <Typography variant="h5" component="h3">
-              Welcome
-            </Typography>
-            <Typography component="p">
-              Your favorite file organizer has a fresh new look
-            </Typography>
-          </Paper>
-        </div>
-        <div style={{ height: 400 }}>
-          <Card>
-            <CardContent>
-              <Typography color="textSecondary" gutterBottom>
-                Word of the Day
-              </Typography>
-              <Typography variant="h5" component="h2">
-                be
-                asda
-                nev
-                aasdasd
-                lent
-              </Typography>
-              <Typography  color="textSecondary">
-                adjective
+  renderContent = () => {
+    const { activeStep } = this.state;
+    const maxSteps = 4;
+
+    return (
+      <DialogContent style={{ height: 500, overflowX: 'hidden' }}>
+        <SwipeableViews
+          index={activeStep}
+          onChangeIndex={this.handleStepChange}
+          enableMouseEvents
+        >
+          <div style={{ height: 400, padding: 5 }}>
+            <Paper elevation={1}>
+              <Typography variant="h5" component="h3">
+                Welcome
               </Typography>
               <Typography component="p">
-                well meaning and kindly.
-                <br />
-                {'"a benevolent smile"'}
+                Your favorite file organizer has a fresh new look
               </Typography>
-            </CardContent>
-            <CardActions>
-              <Button size="small">Learn More</Button>
-            </CardActions>
-          </Card>
-        </div>
-        <div style={{ height: 400 }}>
-          <h3>3</h3>
-          <p>See ....</p>
-          <p>Height is adaptive</p>
-        </div>
-        <div style={{ height: 400 }}>
-          <h3>4</h3>
-        </div>
-      </Slider>
-    </DialogContent>
-  );
-
+            </Paper>
+          </div>
+          <div style={{ height: 400 }}>
+            <Card>
+              <CardContent>
+                <Typography color="textSecondary" gutterBottom>
+                  Word of the Day
+                </Typography>
+                <Typography variant="h5" component="h2">
+                  be
+                  asda
+                  nev
+                  aasdasd
+                  lent
+                </Typography>
+                <Typography  color="textSecondary">
+                  adjective
+                </Typography>
+                <Typography component="p">
+                  well meaning and kindly.
+                  <br />
+                  {'"a benevolent smile"'}
+                </Typography>
+              </CardContent>
+              <CardActions>
+                <Button size="small">Learn More</Button>
+              </CardActions>
+            </Card>
+          </div>
+          <div style={{ height: 400 }}>
+            <h3>3</h3>
+            <p>See ....</p>
+            <p>Height is adaptive</p>
+          </div>
+          <div style={{ height: 400 }}>
+            <h3>4</h3>
+          </div>
+        </SwipeableViews>
+        <MobileStepper
+          steps={maxSteps}
+          position="static"
+          activeStep={activeStep}
+          nextButton={
+            <Button size="small" onClick={this.handleNext} disabled={activeStep === maxSteps - 1}>
+              Next
+            </Button>
+          }
+          backButton={
+            <Button size="small" onClick={this.handleBack} disabled={activeStep === 0}>
+              Back
+            </Button>
+          }
+        />
+      </DialogContent>
+    );
+  }
   renderActions = () => (
     <DialogActions style={{ justifyContent: 'center' }}>
       <Button
-        data-tid="confirmLicenseDialog"
-        onClick={this.showPrev}
-        color="primary"
-      >
-        Previous
-      </Button>
-      <Button
-        data-tid="confirmLicenseDialog"
-        onClick={this.showNext}
-        color="primary"
-      >
-        Next
-      </Button>
-      {/* <Button
         data-tid="confirmLicenseDialog"
         onClick={this.props.onClose}
         color="primary"
       >
         {i18n.t('core:closeButton')}
-      </Button> */}
+      </Button>
     </DialogActions>
   );
 
   render() {
+    const {
+      fullScreen,
+      open,
+      onClose
+    } = this.props;
     return (
       <GenericDialog
-        open={this.props.open}
-        onClose={this.props.onClose}
+        fullScreen={fullScreen}
+        open={open}
+        onClose={onClose}
         // onEnterKey={(event) => onEnterKeyHandler(event, this.onConfirm)}
         renderTitle={this.renderTitle}
         renderContent={this.renderContent}

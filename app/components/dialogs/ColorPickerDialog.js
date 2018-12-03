@@ -117,11 +117,14 @@ class ColorPickerDialog extends React.Component<Props, State> {
   );
 
   render() {
+    const {
+      open = false,
+      onClose
+    } = this.props;
     return (
       <GenericDialog
-        open={this.props.open}
-        onClose={this.props.onClose}
-        onEnterKey={(event) => onEnterKeyHandler(event, this.onConfirm)}
+        open={open}
+        onClose={onClose}
         renderTitle={this.renderTitle}
         renderContent={this.renderContent}
         renderActions={this.renderActions}

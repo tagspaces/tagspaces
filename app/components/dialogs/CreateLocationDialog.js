@@ -21,6 +21,7 @@ import React from 'react';
 import Button from '@material-ui/core/Button';
 import uuidv1 from 'uuid';
 import { withStyles } from '@material-ui/core/styles';
+import withMobileDialog from '@material-ui/core/withMobileDialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
@@ -55,7 +56,9 @@ const styles = theme => ({
 
 type Props = {
   classes: Object,
-  open?: boolean,
+  open: boolean,
+  onClose: () => void,
+  fullScreen: boolean,
   onClose: () => void,
   addLocation: (location: Location) => void,
   perspectives: Array<Object>,
@@ -424,10 +427,16 @@ class CreateLocationDialog extends React.Component<Props, State> {
   );
 
   render() {
+    const {
+      fullScreen,
+      open,
+      onClose
+    } = this.props;
     return (
       <GenericDialog
-        open={this.props.open}
-        onClose={this.props.onClose}
+        open={open}
+        onClose={onClose}
+        fullScreen={fullScreen}
         onEnterKey={(event) => onEnterKeyHandler(event, this.onConfirm)}
         renderTitle={this.renderTitle}
         renderContent={this.renderContent}
@@ -437,4 +446,4 @@ class CreateLocationDialog extends React.Component<Props, State> {
   }
 }
 
-export default withStyles(styles)(CreateLocationDialog);
+export default withStyles(styles)(withMobileDialog()(CreateLocationDialog));
