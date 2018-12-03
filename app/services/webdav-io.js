@@ -155,7 +155,7 @@ export default class WebDAVIO {
 
             const entry = {};
             entry.name = fileName;
-            entry.path = entryPath;
+            entry.path = decodeURI(entryPath);
             entry.isFile = true;
             entries.push(entry);
           }
@@ -209,25 +209,12 @@ export default class WebDAVIO {
           filesize = undefined;
           lmdt = undefined;
           // console.log(dirList[entry]._namespaces['DAV:']);
-          if (
-            typeof dirList[entry]._namespaces['DAV:'].getcontentlength ===
-              'undefined' ||
-            dirList[entry]._namespaces['DAV:'].getcontentlength._xmlvalue
-              .length === 0 ||
-            (dirList[entry]._namespaces['DAV:'].resourcetype._xmlvalue
-              .length === 1 &&
-              dirList[entry]._namespaces['DAV:'].resourcetype._xmlvalue[0]
-                .localName === 'collection')
-          ) {
+          if (this.isFile(dirList[entry]._namespaces['DAV:'])) {
+            filesize = dirList[entry]._namespaces['DAV:'].getcontentlength._xmlvalue[0].data;
+            lmdt = data._responses[entry]._namespaces['DAV:'].getlastmodified._xmlvalue[0].data;
+          } else {
             isDir = true;
             // const metaFilePath = getMetaFileLocationForFile(path, '/');
-          } else {
-            filesize =
-              dirList[entry]._namespaces['DAV:'].getcontentlength._xmlvalue[0]
-                .data;
-            lmdt =
-              data._responses[entry]._namespaces['DAV:'].getlastmodified
-                ._xmlvalue[0].data;
           }
           fileName = this.getNameForPath(path);
 
@@ -239,7 +226,7 @@ export default class WebDAVIO {
           // eentry.meta = {};
           eentry.isFile = !isDir;
           eentry.size = filesize;
-          eentry.lmdt = 0;
+          eentry.lmdt = Date.parse(lmdt);
           // const x = getMetaFileLocationForFile(eentry.path);
 
           if (!lite) {
@@ -249,7 +236,7 @@ export default class WebDAVIO {
                 metaPromises.push(this.getEntryMeta(eentry, metaDirAvailable.path));
               }
             } else {
-              const metaFileAvailable = metaContent.find(obj => obj.path === path);
+              const metaFileAvailable = metaContent.find(obj => obj.name === fileName + AppConfig.metaFileExt);
               if (metaFileAvailable) {
                 metaPromises.push(this.getEntryMeta(eentry, metaFileAvailable.path));
               }
@@ -289,7 +276,13 @@ export default class WebDAVIO {
     );
   });
 
-  getEntryMeta = (eentry: Object, metaPath): Promise<Object> => {
+  isFile = (dav: Object): boolean => !(
+    typeof dav.getcontentlength === 'undefined' ||
+    dav.getcontentlength._xmlvalue.length === 0 ||
+    (dav.resourcetype._xmlvalue.length === 1 && dav.resourcetype._xmlvalue[0].localName === 'collection')
+  );
+
+  getEntryMeta = (eentry: Object, metaPath: string): Promise<Object> => {
     if (eentry.isFile) {
       // const metaFilePath = getMetaFileLocationForFile(eentry.path);
       return this.loadTextFilePromise(metaPath).then(result => {
@@ -298,9 +291,9 @@ export default class WebDAVIO {
         return eentry;
       });
     }
-    const folderMetaPath = normalizePath(eentry.path) + AppConfig.dirSeparator + AppConfig.metaFolderFile; // getMetaFileLocationForDir(eentry.path);
+    // const folderMetaPath = normalizePath(eentry.path) + AppConfig.dirSeparator + AppConfig.metaFolderFile; // getMetaFileLocationForDir(eentry.path);
     if (!eentry.path.endsWith(AppConfig.metaFolder + '/')) { // Skip the /.ts folder
-      return this.loadTextFilePromise(folderMetaPath).then(result => {
+      return this.loadTextFilePromise(metaPath).then(result => {
         // eslint-disable-next-line no-param-reassign
         eentry.meta = JSON.parse(result.trim());
         return eentry;
@@ -328,12 +321,14 @@ export default class WebDAVIO {
         if (this.checkStatusCode(status)) {
           for (const entry in data._responses) {
             fileProperties.path = filePath;
-            fileProperties.size =
-                data._responses[entry]._namespaces['DAV:'].getcontentlength;
-            fileProperties.lmdt =
-                data._responses[entry]._namespaces[
-                  'DAV:'
-                ].getlastmodified._xmlvalue[0].data;
+            fileProperties.name = this.getNameForPath(filePath);
+            const isFile = this.isFile(data._responses[entry]._namespaces['DAV:']);
+            fileProperties.isFile = isFile;
+            if (isFile) {
+              fileProperties.size =
+                data._responses[entry]._namespaces['DAV:'].getcontentlength._xmlvalue[0].data;
+              fileProperties.lmdt = Date.parse(data._responses[entry]._namespaces['DAV:'].getlastmodified._xmlvalue[0].data);
+            }
           }
           resolve(fileProperties);
         } else {
