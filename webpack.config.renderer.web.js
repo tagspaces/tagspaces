@@ -21,6 +21,11 @@ export default merge.smart(baseConfig, {
     publicPath: './dist/'
   },
 
+  optimization: {
+    // We no not want to minimize our code. TODO remove this for production
+    minimize: false
+  },
+
   node: {
     fs: 'empty'
   },

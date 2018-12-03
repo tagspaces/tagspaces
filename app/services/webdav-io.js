@@ -18,7 +18,8 @@
  */
 
 import nl from 'js-webdav-client';
-import { extractParentDirectoryPath } from '../utils/paths';
+import { extractParentDirectoryPath, getMetaFileLocationForFile, normalizePath } from '../utils/paths';
+import AppConfig from '../config';
 
 export default class WebDAVIO {
   davClient: any;
@@ -32,12 +33,12 @@ export default class WebDAVIO {
       callback,
       headers
     ) => {
-      let /** @type XMLHttpRequest */ ajax =
+      const /** @type XMLHttpRequest */ ajax =
         typeof Components !== 'undefined' &&
         typeof Components.classes !== 'undefined'
           ? Components.classes[
-              '@mozilla.org/xmlextras/xmlhttprequest;1'
-            ].createInstance(Components.interfaces.nsIXMLHttpRequest)
+            '@mozilla.org/xmlextras/xmlhttprequest;1'
+          ].createInstance(Components.interfaces.nsIXMLHttpRequest)
           : new XMLHttpRequest();
       if (this._username !== null) {
         ajax.open(method, url, true, this._username, this._password);
@@ -57,12 +58,12 @@ export default class WebDAVIO {
       if (headers === undefined) {
         headers = {};
       }
-      for (let header in this._headers) {
+      for (const header in this._headers) {
         if (headers[header] === undefined) {
           ajax.setRequestHeader(header, this._headers[header]);
         }
       }
-      for (let header in headers) {
+      for (const header in headers) {
         ajax.setRequestHeader(header, headers[header]);
       }
       return ajax;
@@ -89,14 +90,12 @@ export default class WebDAVIO {
     return paths;
   };
 
-  getAppDataPath = (): string => {
+  getAppDataPath = (): string =>
     // TODO
-    return 'SOMEPATH_FIX_ME';
-  };
+    'SOMEPATH_FIX_ME'
+  ;
 
-  getUserHomePath = (): string => {
-    return '/';
-  };
+  getUserHomePath = (): string => '/';
 
   getNameForPath = (entrypath: string, separator = '/') => {
     let path = entrypath;
@@ -107,10 +106,10 @@ export default class WebDAVIO {
     return decodeURI(encodedName);
   };
 
-  isDirectory = (path: string): boolean => {
+  isDirectory = (path: string): boolean =>
     // TODO find a better solution
-    return path.lastIndexOf('/') === path.length - 1;
-  };
+    path.lastIndexOf('/') === path.length - 1
+  ;
 
   checkStatusCode = (code: number): boolean => {
     const status = parseInt(code / 100);
@@ -143,9 +142,10 @@ export default class WebDAVIO {
   /**
    * Creates a list with containing the files and the sub directories of a given directory
    */
-  listDirectoryPromise = (directoryPath: string): Promise<Array<Object>> => new Promise((resolve, reject) => {
-    let anotatedDirList;
+  listDirectoryPromise = (directoryPath: string, lite: boolean = true): Promise<Array<Object>> => new Promise((resolve, reject) => {
+    let enhancedEntries;
     let dirPath = directoryPath.split('//').join('/');
+    let containsMetaFolder = false;
     const davSuccess = (status, data) => {
       console.log('Dirlist Status:  ' + status);
       if (!this.checkStatusCode(status)) {
@@ -158,9 +158,11 @@ export default class WebDAVIO {
       let filesize;
       let lmdt;
       let path;
+      let eentry;
 
-      anotatedDirList = [];
-      for (let entry in dirList) {
+      enhancedEntries = [];
+      const metaPromises = [];
+      for (const entry in dirList) {
         path = dirList[entry].href;
         if (dirPath.toLowerCase() === path.toLowerCase()) {
           console.log('Skipping current folder');
@@ -180,6 +182,7 @@ export default class WebDAVIO {
                 .localName === 'collection')
           ) {
             isDir = true;
+            // const metaFilePath = getMetaFileLocationForFile(path, '/');
           } else {
             filesize =
               dirList[entry]._namespaces['DAV:'].getcontentlength._xmlvalue[0]
@@ -189,16 +192,48 @@ export default class WebDAVIO {
                 ._xmlvalue[0].data;
           }
           fileName = this.getNameForPath(path);
-          anotatedDirList.push({
-            name: fileName,
-            isFile: !isDir,
-            size: filesize,
-            lmdt: lmdt,
-            path: decodeURI(path)
-          });
+
+          eentry = {};
+          eentry.name = fileName;
+          eentry.path = decodeURI(path);
+          eentry.tags = [];
+          eentry.thumbPath = '';
+          // eentry.meta = {};
+          eentry.isFile = !isDir;
+          eentry.size = filesize;
+          eentry.lmdt = 0;
+          if (isDir && fileName.endsWith(AppConfig.metaFolder)) {
+            containsMetaFolder = true;
+            // Read tsm.json from subfolders
+            if (!lite) {
+              try {
+                metaPromises.push(this.getEntryMeta(eentry));
+                console.log('Success reading meta folder file ' + path);
+              } catch (err) {
+                console.log('Failed reading meta folder file ' + path);
+              }
+            }
+          }
+
+          enhancedEntries.push(eentry);
         }
       }
-      resolve(anotatedDirList);
+
+      Promise.all(metaPromises).then((entriesMeta) => {
+        /* entriesMeta.forEach((entryMeta) => {
+          enhancedEntries.some((enhancedEntry) => {
+            if (enhancedEntry.path === entryMeta.path) {
+              enhancedEntry = entryMeta;
+              return true;
+            }
+            return false;
+          });
+        }); */
+        resolve(enhancedEntries);
+        return true;
+      }).catch(() => {
+        resolve(enhancedEntries);
+      });
     };
     if (dirPath.substring(dirPath.length - 1) !== '/') {
       dirPath += '/';
@@ -212,40 +247,46 @@ export default class WebDAVIO {
     );
   });
 
+  getEntryMeta = (eentry: Object): Promise<Object> => {
+    const folderMetaPath = normalizePath(eentry.path) + AppConfig.dirSeparator + AppConfig.metaFolderFile;
+    return this.loadTextFilePromise(folderMetaPath).then(result => {
+      // eslint-disable-next-line no-param-reassign
+      eentry.meta = JSON.parse(result.trim());
+      return eentry;
+    });
+  };
   /**
    * Finds out the properties of a file or directory such last modification date or file size
    */
-  getPropertiesPromise = (filePath: string): Promise<Object> => {
-    return new Promise((resolve, reject) => {
-      this.davClient.propfind(
-        encodeURI(filePath),
-        (status, data) => {
-          console.log(
-            'Properties Status / Content: ' +
+  getPropertiesPromise = (filePath: string): Promise<Object> => new Promise((resolve, reject) => {
+    this.davClient.propfind(
+      encodeURI(filePath),
+      (status, data) => {
+        console.log(
+          'Properties Status / Content: ' +
               status +
               ' / ' +
               JSON.stringify(data._responses)
-          );
-          const fileProperties = {};
-          if (this.checkStatusCode(status)) {
-            for (let entry in data._responses) {
-              fileProperties.path = filePath;
-              fileProperties.size =
+        );
+        const fileProperties = {};
+        if (this.checkStatusCode(status)) {
+          for (const entry in data._responses) {
+            fileProperties.path = filePath;
+            fileProperties.size =
                 data._responses[entry]._namespaces['DAV:'].getcontentlength;
-              fileProperties.lmdt =
+            fileProperties.lmdt =
                 data._responses[entry]._namespaces[
                   'DAV:'
                 ].getlastmodified._xmlvalue[0].data;
-            }
-            resolve(fileProperties);
-          } else {
-            reject('getFileProperties ' + filePath + ' failed ' + status);
           }
-        },
-        1
-      );
-    });
-  };
+          resolve(fileProperties);
+        } else {
+          reject('getFileProperties ' + filePath + ' failed ' + status);
+        }
+      },
+      1
+    );
+  });
 
   /**
    * Load the content of a text file
@@ -284,47 +325,45 @@ export default class WebDAVIO {
     content: string,
     overWrite: boolean,
     mode: string
-  ): Promise<Object> => {
-    return new Promise((resolve, reject) => {
-      let isNewFile = false;
-      this.davClient.propfind(
-        encodeURI(filePath),
-        (status, data) => {
-          console.log(
-            'Check file exists: Status / Content: ' + status + ' / ' + data
-          );
-          if (parseInt(status) === 404) {
-            isNewFile = true;
-          }
-          if (isNewFile || overWrite === true || mode === 'text') {
-            this.davClient.put(
-              encodeURI(filePath),
-              (status, data, headers) => {
-                console.log(
-                  'Creating File Status/Content/Headers:  ' +
+  ): Promise<Object> => new Promise((resolve, reject) => {
+    let isNewFile = false;
+    this.davClient.propfind(
+      encodeURI(filePath),
+      (status, data) => {
+        console.log(
+          'Check file exists: Status / Content: ' + status + ' / ' + data
+        );
+        if (parseInt(status) === 404) {
+          isNewFile = true;
+        }
+        if (isNewFile || overWrite === true || mode === 'text') {
+          this.davClient.put(
+            encodeURI(filePath),
+            (status, data, headers) => {
+              console.log(
+                'Creating File Status/Content/Headers:  ' +
                     status +
                     ' / ' +
                     data +
                     ' / ' +
                     headers
-                );
-                if (this.checkStatusCode(status)) {
-                  resolve(isNewFile);
-                } else {
-                  reject('saveFilePromise: ' + filePath + ' failed ' + status);
-                }
-              },
-              content,
-              'application/octet-stream'
-            );
-          } else {
-            reject('File Already Exists.');
-          }
-        },
-        1
-      );
-    });
-  };
+              );
+              if (this.checkStatusCode(status)) {
+                resolve(isNewFile);
+              } else {
+                reject('saveFilePromise: ' + filePath + ' failed ' + status);
+              }
+            },
+            content,
+            'application/octet-stream'
+          );
+        } else {
+          reject('File Already Exists.');
+        }
+      },
+      1
+    );
+  });
 
   /**
    * Persists a given text content to a specified filepath
