@@ -217,11 +217,11 @@ type Props = {
   currentDirectoryPath?: string,
   sortByCriteria: () => void,
   openFile: (path: string, isFile?: boolean) => void,
-  openFileNatively: (path: string) => void,
   deleteFile: (path: string) => void,
   deleteDirectory: (path: string) => void,
   loadDirectoryContent: (path: string) => void,
   openDirectory: (path: string) => void,
+  openFileNatively: (path: string) => void,
   loadParentDirectoryContent: () => void,
   setLastSelectedEntry: (entryPath: string | null) => void,
   addTags: () => void,
@@ -1150,6 +1150,7 @@ class GridPerspective extends React.Component<Props, State> {
           directoryPath={this.state.selectedEntryPath}
           loadDirectoryContent={this.props.loadDirectoryContent}
           openDirectory={this.props.openDirectory}
+          openFileNatively={this.props.openFileNatively}
           openFile={this.props.openFile}
           deleteDirectory={this.props.deleteDirectory}
           perspectiveMode={true}
