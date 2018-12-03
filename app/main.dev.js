@@ -106,16 +106,20 @@ app.on('ready', async () => {
     defaultHeight: 800
   });
 
-  // console.log('Dev ' + process.env.NODE_ENV + ' worker ' + showWorkerWindow);
-  global.splashWorkerWindow = new BrowserWindow({
-    show: showWorkerWindow,
-    width: 800,
-    height: 600,
-    frame: false,
-    // transparent: true,
-  });
+  function createSplashWorker() {
+    // console.log('Dev ' + process.env.NODE_ENV + ' worker ' + showWorkerWindow);
+    global.splashWorkerWindow = new BrowserWindow({
+      show: showWorkerWindow,
+      width: 800,
+      height: 600,
+      frame: false,
+      // transparent: true,
+    });
 
-  global.splashWorkerWindow.loadURL(`file://${__dirname}/splash.html`);
+    global.splashWorkerWindow.loadURL(`file://${__dirname}/splash.html`);
+  }
+
+  createSplashWorker();
 
   mainWindow = new BrowserWindow({
     show: false,
@@ -143,7 +147,7 @@ app.on('ready', async () => {
       throw new Error('"mainWindow" is not defined');
     }
     mainWindow.show();
-    global.splashWorkerWindow.hide(); // Comment for easy debugging of the worker
+    // global.splashWorkerWindow.hide(); // Comment for easy debugging of the worker
     mainWindow.focus();
   });
 
@@ -177,6 +181,16 @@ app.on('ready', async () => {
         globalShortcut.unregisterAll();
       }
     });
+  });
+
+  global.splashWorkerWindow.webContents.on('crashed', () => {
+    try {
+      global.splashWorkerWindow.close();
+      global.splashWorkerWindow = null;
+    } catch (err) {
+      console.warn('Error closing the splash window. ' + err);
+    }
+    createSplashWorker();
   });
 
   ipcMain.on('app-data-path-request', (event) => {
