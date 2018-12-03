@@ -201,7 +201,7 @@
     "marked": "^0.5.1",
     "moment": "^2.22.1",
     "path": "^0.12.7",
-    "pdfjs-dist": "^2.0.271",
+    "pdfjs-dist": "^2.0.943",
     "rasterizehtml": "^1.3.0",
     "rc-table": "^6.4.0",
     "rc-tree": "^1.7.8",
