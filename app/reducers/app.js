@@ -1188,7 +1188,7 @@ function prepareDirectoryContent(
   }
 
   if (tmbGenerationList.length > 0) {
-    dispatch(actions.showNotification('Checking thumbnails', 'info', false));
+    dispatch(actions.showNotification('Loading or generating thumbnails...', 'info', false));
     PlatformIO.createThumbnailsInWorker(tmbGenerationList)
       .then(handleTmbGenerationResults)
       .catch(handleTmbGenerationFailed);
@@ -1271,6 +1271,16 @@ export const getDirectoryContent = (state: Object) =>
   state.app.currentDirectoryEntries;
 export const getDirectoryPath = (state: Object) =>
   state.app.currentDirectoryPath;
+export const getPathCurrentLocation = (state: Object) => {
+  let pathCurrentLocation;
+  state.locations.map((location) => {
+    if (state.app.currentLocationId && location.uuid === state.app.currentLocationId) {
+      pathCurrentLocation = location.path[0];
+    }
+    return true;
+  });
+  return pathCurrentLocation;
+};
 export const isUpdateAvailable = (state: Object) => state.app.isUpdateAvailable;
 export const isUpdateInProgress = (state: Object) =>
   state.app.isUpdateInProgress;
