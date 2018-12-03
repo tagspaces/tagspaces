@@ -23,9 +23,11 @@ import { bindActionCreators } from 'redux';
 import FolderIcon from '@material-ui/icons/Folder';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
+import LocationIcon from '@material-ui/icons/WorkOutline';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListSubHeader from '@material-ui/core/ListSubheader';
+import { withTheme } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import i18n from '../services/i18n';
@@ -36,6 +38,7 @@ import {
 
 type Props = {
   currentLocationId: string | null,
+  theme: Object,
   locations: Array<Location>,
   menuAnchorEl: null | Object,
   openLocation: (location: Location) => void
@@ -84,14 +87,17 @@ class LocationMenu extends React.Component { //  <Props, State>
   };
 
   render() {
+    const { theme } = this.props;
     return (
       <div>
         <Button
           data-tid="folderContainerLocationChooser"
           onClick={this.toggleLocationChooser}
+          title={this.state.currentLocation && this.state.currentLocation.name}
+          style={{ marginLeft: -4 }}
         >
           {this.state.currentLocation
-            ? this.state.currentLocation.name
+            ? <LocationIcon /> // this.state.currentLocation.name
             : i18n.t('core:pleaseOpenLocation')}
           <ArrowDropDownIcon />
         </Button>
@@ -114,6 +120,7 @@ class LocationMenu extends React.Component { //  <Props, State>
               data-tid="folderContainerMenuOpenLocation"
               key={location.uuid}
               onClick={() => this.openLocation(location)}
+              style={ (this.state.currentLocation &&  this.state.currentLocation.uuid === location.uuid) ? { backgroundColor: theme.palette.primary.light } : {}}
             >
               <ListItemIcon>
                 <FolderIcon />
@@ -146,4 +153,4 @@ function mapActionCreatorsToProps(dispatch) {
 export default connect(
   mapStateToProps,
   mapActionCreatorsToProps
-)(LocationMenu);
+)(withTheme()(LocationMenu));
