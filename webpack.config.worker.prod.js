@@ -14,7 +14,7 @@ export default merge.smart(baseConfig, {
 
   target: 'electron-renderer',
 
-  entry: ['babel-polyfill', './app/splash-worker.js'],
+  entry: ['./app/splash-worker.js'],
 
   output: {
     filename: 'electron-worker.js',
