@@ -91,14 +91,14 @@ app.on('window-all-closed', () => {
 });
 
 app.on('ready', async () => {
-  let showWorkerWindow = false;
+  let workerDevMode = false;
 
   if (process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true') {
     await installExtensions();
   }
 
   if (process.env.NODE_ENV === 'development') {
-    showWorkerWindow = true;
+    workerDevMode = true;
   }
 
   const mainWindowState = windowStateKeeper({
@@ -109,9 +109,9 @@ app.on('ready', async () => {
   function createSplashWorker() {
     // console.log('Dev ' + process.env.NODE_ENV + ' worker ' + showWorkerWindow);
     global.splashWorkerWindow = new BrowserWindow({
-      show: showWorkerWindow,
-      width: 800,
-      height: 600,
+      show: workerDevMode,
+      width: workerDevMode ? 800 : 1,
+      height: workerDevMode ? 600 : 1,
       frame: false,
       // transparent: true,
     });
@@ -139,6 +139,13 @@ app.on('ready', async () => {
     // console.log('worker event in main.' + arg.result.length);
     if (mainWindow) {
       mainWindow.webContents.send(arg.id, arg);
+    }
+  });
+
+  ipcMain.on('setSplashVisibility', (event, arg) => { // worker window needed to be visible for the PDF tmb generation
+    // console.log('worker event in main.' + arg.result.length);
+    if (global.splashWorkerWindow) {
+      arg.visibility ? global.splashWorkerWindow.show() : global.splashWorkerWindow.hide();
     }
   });
 

@@ -84,8 +84,14 @@ function init() {
       isGeneratingThumbs = true;
       const tmbGenerationPromises = [];
       arg.tmbGenerationList.map(entry => tmbGenerationPromises.push(getThumbnailURLPromise(entry)));
+      ipcRenderer.send('setSplashVisibility', {
+        visibility: true,
+      });
       Promise.all(tmbGenerationPromises).then(tmbResult => {
         console.log('tmb results' + JSON.stringify(tmbResult));
+        ipcRenderer.send('setSplashVisibility', {
+          visibility: false,
+        });
         ipcRenderer.send('worker', {
           id: arg.id,
           action: arg.action,
@@ -95,12 +101,15 @@ function init() {
         isGeneratingThumbs = false;
         return true;
       }).catch(error => {
-        console.warn('Tmb gener: ' + error);
+        console.warn('Tmb generation failed: ' + error);
         ipcRenderer.send('worker', {
           id: arg.id,
           action: arg.action,
           result: [],
           error: 'Error generating tmbs: ' + error
+        });
+        ipcRenderer.send('setSplashVisibility', {
+          visibility: false,
         });
         isGeneratingThumbs = false;
       });
