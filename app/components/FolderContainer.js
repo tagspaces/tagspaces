@@ -23,7 +23,8 @@ import { bindActionCreators } from 'redux';
 import Button from '@material-ui/core/Button';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import Typography from '@material-ui/core/Typography';
-import FolderIcon from '@material-ui/icons/Folder';
+import FolderIcon from '@material-ui/icons/FolderOutlined';
+import FolderSeparatorIcon from '@material-ui/icons/KeyboardArrowRight';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { withStyles } from '@material-ui/core/styles';
 import Menu from '@material-ui/core/Menu';
@@ -47,7 +48,7 @@ import {
   isReadOnlyMode,
 } from '../reducers/app';
 import TaggingActions from '../reducers/tagging-actions';
-import { extractDirectoryName } from '../utils/paths';
+import { extractDirectoryName, normalizePath, extractShortDirectoryName } from '../utils/paths';
 
 // https://reactjs.org/blog/2017/05/18/whats-new-in-create-react-app.html#code-splitting-with-dynamic-import
 // https://medium.com/@magbicaleman/intro-to-dynamic-import-in-create-react-app-6305bb397c46
@@ -82,7 +83,7 @@ const styles = theme => ({
     backgroundColor: theme.palette.background.default
   },
   flexMiddle: {
-    flex: '1 1 50%',
+    flex: '1 1 10%',
     display: 'flex',
     flexDirection: 'column'
   },
@@ -93,6 +94,7 @@ const styles = theme => ({
   folderButton: {
     minWidth: 30,
     whiteSpace: 'nowrap',
+    paddingLeft: 0,
     margin: '0 auto'
   },
   locationSelectorButton: {
@@ -339,10 +341,73 @@ class FolderContainer extends React.Component<Props, State> {
     );
   }
 
+  renderPath() {
+    const {
+      currentDirectoryPath = '',
+      classes,
+      loadDirectoryContent
+    } = this.props;
+    // Make the path unix like ending always with /
+    let normalizedPath = normalizePath(currentDirectoryPath.split('\\').join('/')) + '/';
+    let pathParts = [];
+    while (normalizedPath.lastIndexOf('/') > 0) {
+      pathParts.push(normalizedPath);
+      normalizedPath = normalizedPath.substring(0, normalizedPath.lastIndexOf('/'));
+    }
+    pathParts = pathParts.reverse();
+    // let pathParts = normalizedPath.split('/');
+    if (pathParts.length > 1) {
+      pathParts = pathParts.slice(0, pathParts.length - 2); // remove current directory
+    }
+    if (pathParts.length > 2) {
+      pathParts = pathParts.slice(pathParts.length - 2, pathParts.length); // leave only the last 2 dirs in the path
+    }
+
+    return (
+      <div>
+        { pathParts.map((pathPart) => (
+          <span key={pathPart}>
+            <Button
+              onClick={() => loadDirectoryContent(pathPart)}
+              title={'Navigate to: ' + pathPart}
+              style={{ paddingLeft: 0, paddingRight: 0 }}
+            >
+              {extractShortDirectoryName(pathPart, '/')}
+              <FolderSeparatorIcon />
+            </Button>
+          </span>
+        ))}
+        <Button
+          data-tid="folderContainerOpenDirMenu"
+          title={i18n.t('core:openDirectoryMenu') + ' - ' + (currentDirectoryPath || '')}
+          className={classes.folderButton}
+          onClick={this.openDirectoryMenu}
+        >
+          { extractShortDirectoryName(currentDirectoryPath, '/') }
+          <MoreVertIcon />
+        </Button>
+        <DirectoryMenu
+          open={this.state.directoryContextMenuOpened}
+          onClose={this.closeDirectoryMenu}
+          anchorEl={this.state.directoryContextMenuAnchorEl}
+          directoryPath={currentDirectoryPath}
+          loadDirectoryContent={this.props.loadDirectoryContent}
+          openFileNatively={this.props.openFileNatively}
+          openDirectory={this.props.openDirectory}
+          reflectCreateEntry={this.props.reflectCreateEntry}
+          openFile={this.props.openFile}
+          toggleCreateFileDialog={this.props.toggleCreateFileDialog}
+          deleteDirectory={this.props.deleteDirectory}
+          showNotification={this.props.showNotification}
+          isReadOnlyMode={this.props.isReadOnlyMode}
+        />
+      </div>
+    );
+  }
+
   render() {
     const {
       classes,
-      currentDirectoryPath
     } = this.props;
     // console.log(this.props.windowHeight);
     return (
@@ -352,40 +417,13 @@ class FolderContainer extends React.Component<Props, State> {
             <div className={classes.toolbar}>
               <LocationMenu />
               <div className={classes.flexMiddle} data-tid="entriesFound">
-                {this.props.searchResultCount > 0 && (
+                { this.props.searchResultCount > 0 && (
                   <Typography className={classes.entriesFound}>
                     {this.props.searchResultCount} {i18n.t('entries')}
                   </Typography>
-                )}
+                ) }
               </div>
-              {this.props.currentDirectoryPath && (
-                <div>
-                  <Button
-                    data-tid="folderContainerOpenDirMenu"
-                    title={i18n.t('core:openDirectoryMenu') + ' - ' + currentDirectoryPath || ''}
-                    className={classes.folderButton}
-                    onClick={this.openDirectoryMenu}
-                  >
-                    {extractDirectoryName(this.props.currentDirectoryPath)}
-                    <MoreVertIcon />
-                  </Button>
-                  <DirectoryMenu
-                    open={this.state.directoryContextMenuOpened}
-                    onClose={this.closeDirectoryMenu}
-                    anchorEl={this.state.directoryContextMenuAnchorEl}
-                    directoryPath={currentDirectoryPath}
-                    loadDirectoryContent={this.props.loadDirectoryContent}
-                    openFileNatively={this.props.openFileNatively}
-                    openDirectory={this.props.openDirectory}
-                    reflectCreateEntry={this.props.reflectCreateEntry}
-                    openFile={this.props.openFile}
-                    toggleCreateFileDialog={this.props.toggleCreateFileDialog}
-                    deleteDirectory={this.props.deleteDirectory}
-                    showNotification={this.props.showNotification}
-                    isReadOnlyMode={this.props.isReadOnlyMode}
-                  />
-                </div>
-              )}
+              {this.props.currentDirectoryPath && this.renderPath()}
             </div>
           </div>
           <div
@@ -407,7 +445,7 @@ function mapStateToProps(state) {
     perspectives: getPerspectives(state),
     directoryContent: getDirectoryContent(state),
     searchResultCount: getSearchResultCount(state),
-    isReadOnlyMode: isReadOnlyMode(state)
+    isReadOnlyMode: isReadOnlyMode(state),
   };
 }
 
