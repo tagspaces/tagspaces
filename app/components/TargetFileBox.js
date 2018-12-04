@@ -44,8 +44,14 @@ const styles = theme => ({
 });
 
 const boxTarget = {
-  drop(props, monitor, component) {
-    return component.props.onDrop(props, monitor);
+  /**
+   * http://react-dnd.github.io/react-dnd/docs/api/drop-target
+   */
+  drop(props, monitor) { // component) {
+    /*
+      return component.props.onDrop(props, monitor);
+    */
+    return props.onDrop(props, monitor);
   },
 };
 
