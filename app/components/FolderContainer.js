@@ -156,6 +156,8 @@ type Props = {
 
 type State = {
   currentPerspective?: string,
+  currentPath?: string,
+  pathParts?: Array<string>,
   isPropertiesPanelVisible?: boolean,
   locationChooserMenuOpened?: boolean,
   locationChooserMenuAnchorEl?: null | Object,
@@ -169,6 +171,8 @@ type State = {
 class FolderContainer extends React.Component<Props, State> {
   state = {
     currentPerspective: undefined,
+    currentPath: '',
+    pathParts: [],
     isPropertiesPanelVisible: false,
     isDirectoryMenuOpened: false,
     directoryContextMenuOpened: false,
@@ -177,6 +181,31 @@ class FolderContainer extends React.Component<Props, State> {
     perspectiveChooserMenuAnchorEl: null,
     perspectiveCommand: {}
   };
+
+  static getDerivedStateFromProps(nextProps, prevState) {
+    if (prevState.currentPath !== nextProps.currentDirectoryPath) {
+      // Make the path unix like ending always with /
+      let normalizedPath = normalizePath(nextProps.currentDirectoryPath.split('\\').join('/')) + '/';
+      let pathParts = [];
+      while (normalizedPath.lastIndexOf('/') > 0) {
+        pathParts.push(normalizedPath);
+        normalizedPath = normalizedPath.substring(0, normalizedPath.lastIndexOf('/'));
+      }
+      pathParts = pathParts.reverse();
+      // let pathParts = normalizedPath.split('/');
+      if (pathParts.length > 1) {
+        pathParts = pathParts.slice(0, pathParts.length - 2); // remove current directory
+      }
+      if (pathParts.length > 2) {
+        pathParts = pathParts.slice(pathParts.length - 2, pathParts.length); // leave only the last 2 dirs in the path
+      }
+      return {
+        ...prevState,
+        currentPath: nextProps.currentDirectoryPath,
+        pathParts
+      };
+    }
+  }
 
   keyBindingHandlers = {
     openParentDirectory: this.props.loadParentDirectoryContent,
@@ -347,25 +376,10 @@ class FolderContainer extends React.Component<Props, State> {
       classes,
       loadDirectoryContent
     } = this.props;
-    // Make the path unix like ending always with /
-    let normalizedPath = normalizePath(currentDirectoryPath.split('\\').join('/')) + '/';
-    let pathParts = [];
-    while (normalizedPath.lastIndexOf('/') > 0) {
-      pathParts.push(normalizedPath);
-      normalizedPath = normalizedPath.substring(0, normalizedPath.lastIndexOf('/'));
-    }
-    pathParts = pathParts.reverse();
-    // let pathParts = normalizedPath.split('/');
-    if (pathParts.length > 1) {
-      pathParts = pathParts.slice(0, pathParts.length - 2); // remove current directory
-    }
-    if (pathParts.length > 2) {
-      pathParts = pathParts.slice(pathParts.length - 2, pathParts.length); // leave only the last 2 dirs in the path
-    }
 
     return (
       <div>
-        { pathParts.map((pathPart) => (
+        { this.state.pathParts.map((pathPart) => (
           <span key={pathPart}>
             <Button
               onClick={() => loadDirectoryContent(pathPart)}
