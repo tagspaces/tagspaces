@@ -152,7 +152,7 @@ class MoveCopyFilesDialog extends React.Component<Props, State> {
           onChange={e => this.handleInputChange(e)}
           value={this.state.targetPath}
           endAdornment={
-            PlatformIO.haveObjectStoreSupport() ? undefined :
+            PlatformIO.haveObjectStoreSupport() || AppConfig.isWeb ? undefined :
               (<InputAdornment position="end" style={{ height: 33 }}>
                 <IconButton
                   data-tid="openDirectoryMoveCopyDialog"

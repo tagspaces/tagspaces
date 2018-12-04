@@ -18,7 +18,7 @@
  */
 
 import nl from 'js-webdav-client';
-import { extractParentDirectoryPath, getMetaFileLocationForFile, normalizePath } from '../utils/paths';
+import { extractParentDirectoryPath, normalizePath } from '../utils/paths';
 import AppConfig from '../config';
 
 export default class WebDAVIO {
@@ -240,6 +240,12 @@ export default class WebDAVIO {
               if (metaFileAvailable) {
                 metaPromises.push(this.getEntryMeta(eentry, metaFileAvailable.path));
               }
+
+              // Finding if thumbnail available
+              const metaThumbAvailable = metaContent.find(obj => obj.name === fileName + AppConfig.thumbFileExt);
+              if (metaThumbAvailable) {
+                eentry.thumbPath = metaThumbAvailable.path;
+              }
             }
           }
 
@@ -332,7 +338,8 @@ export default class WebDAVIO {
           }
           resolve(fileProperties);
         } else {
-          reject('getFileProperties ' + filePath + ' failed ' + status);
+          resolve(false);
+          // reject('getFileProperties ' + filePath + ' failed ' + status);
         }
       },
       1

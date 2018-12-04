@@ -163,7 +163,8 @@ type Props = {
   showNotification: () => void,
   addTags: () => void,
   removeTags: () => void,
-  removeAllTags: () => void
+  removeAllTags: () => void,
+  resetState: () => void
 };
 
 type State = {
@@ -209,12 +210,13 @@ class EntryProperties extends Component<Props, State> {
       (nextProps.entryPath && nextProps.shouldReload) ||
       (nextProps.entryPath && this.state.path !== nextProps.entryPath)
     ) {
+      this.props.resetState('EntryPropertiesKey');
       this.loadEntryProperties(nextProps.entryPath);
     }
 
-    if (nextProps.entryPath && this.state.path !== nextProps.entryPath) {
-      this.setState({ isEditDescription: false });
-    }
+    /* if (nextProps.entryPath && this.state.path !== nextProps.entryPath) {
+      this.setState({ isEditDescription: false }); // state is reset isEditDescription default value is false
+    } */
 
     if (nextProps.shouldCopyFile) {
       this.setState({ isMoveCopyFilesDialogOpened: true });

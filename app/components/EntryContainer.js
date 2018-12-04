@@ -25,6 +25,7 @@ import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import EditIcon from '@material-ui/icons/Edit';
 import moment from 'moment';
+import uuidv1 from 'uuid';
 import SaveIcon from '@material-ui/icons/Save';
 import CloseIcon from '@material-ui/icons/Close';
 import FullScreenIcon from '@material-ui/icons/ZoomOutMap';
@@ -180,7 +181,8 @@ type State = {
   selectedItem?: Object,
   isDeleteEntryModalOpened?: boolean,
   shouldCopyFile?: boolean,
-  entryPropertiesSplitSize?: number
+  entryPropertiesSplitSize?: number,
+  EntryPropertiesKey: string
 };
 
 class EntryContainer extends React.Component<Props, State> {
@@ -195,7 +197,8 @@ class EntryContainer extends React.Component<Props, State> {
     currentEntry: null,
     selectedItem: {},
     shouldCopyFile: false,
-    entryPropertiesSplitSize: 0
+    entryPropertiesSplitSize: 0,
+    EntryPropertiesKey: uuidv1()
   };
 
   componentDidMount() {
@@ -776,6 +779,12 @@ class EntryContainer extends React.Component<Props, State> {
     reloadDocument: this.reloadDocument,
   };
 
+  resetState = (key) => {
+    this.setState({
+      [key]: uuidv1()
+    });
+  };
+
   render() {
     const { classes } = this.props;
     const { isEditTagsModalOpened, currentEntry, isFullscreen } = this.state;
@@ -966,6 +975,8 @@ class EntryContainer extends React.Component<Props, State> {
                 }
                 <div style={{ overflowY: AppConfig.isFirefox ? 'auto' : 'overlay', maxHeight: '100%' }}>
                   <EntryProperties
+                    key={this.state.EntryPropertiesKey}
+                    resetState={this.resetState}
                     entryPath={currentEntry.path}
                     shouldReload={currentEntry.shouldReload}
                     addTags={this.props.addTags}
