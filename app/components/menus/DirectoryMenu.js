@@ -129,7 +129,7 @@ class DirectoryMenu extends React.Component<Props, State> {
 
   showInFileManager = () => {
     this.props.onClose();
-    this.props.openFileNatively(this.props.directoryPath);
+    this.props.openFileNatively(this.props.directoryPath); // TODO use openDirectory
   };
 
   showContainingFolderInFileManager = () => {
