@@ -205,6 +205,7 @@ class FolderContainer extends React.Component<Props, State> {
         pathParts
       };
     }
+    return null;
   }
 
   keyBindingHandlers = {
@@ -410,7 +411,7 @@ class FolderContainer extends React.Component<Props, State> {
                     className={classes.folderButton}
                     onClick={this.openDirectoryMenu}
                   >
-                    { extractShortDirectoryName(currentDirectoryPath, '/') }
+                    { extractShortDirectoryName(normalizePath(currentDirectoryPath)) }
                     <MoreVertIcon />
                   </Button>
                   <DirectoryMenu
