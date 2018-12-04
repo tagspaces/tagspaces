@@ -321,6 +321,7 @@ class MainPage extends Component<Props, State> {
                   true
                 );
                 this.props.reflectCreateEntry(filePath, true);
+                this.props.openFile(filePath);
                 return true;
               })
               .catch(() => {

@@ -328,7 +328,7 @@ export default (state: Object = initialState, action: Object) => {
     });
     if (
       !entryAlreadyAdded &&
-      extractParentDirectoryPath(action.newEntry.path) === state.currentDirectoryPath
+      extractParentDirectoryPath(action.newEntry.path).replace(/(^\/)|(\/$)/g, '') === state.currentDirectoryPath.replace(/(^\/)|(\/$)/g, '')
     ) {
       currentDirectoryEntries = [ // TODO evtl. apply sorting
         ...state.currentDirectoryEntries,
