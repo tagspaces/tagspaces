@@ -370,58 +370,11 @@ class FolderContainer extends React.Component<Props, State> {
     );
   }
 
-  renderPath() {
-    const {
-      currentDirectoryPath = '',
-      classes,
-      loadDirectoryContent
-    } = this.props;
-
-    return (
-      <div>
-        { this.state.pathParts.map((pathPart) => (
-          <span key={pathPart}>
-            <Button
-              onClick={() => loadDirectoryContent(pathPart)}
-              title={'Navigate to: ' + pathPart}
-              style={{ paddingLeft: 0, paddingRight: 0 }}
-            >
-              {extractShortDirectoryName(pathPart, '/')}
-              <FolderSeparatorIcon />
-            </Button>
-          </span>
-        ))}
-        <Button
-          data-tid="folderContainerOpenDirMenu"
-          title={i18n.t('core:openDirectoryMenu') + ' - ' + (currentDirectoryPath || '')}
-          className={classes.folderButton}
-          onClick={this.openDirectoryMenu}
-        >
-          { extractShortDirectoryName(currentDirectoryPath, '/') }
-          <MoreVertIcon />
-        </Button>
-        <DirectoryMenu
-          open={this.state.directoryContextMenuOpened}
-          onClose={this.closeDirectoryMenu}
-          anchorEl={this.state.directoryContextMenuAnchorEl}
-          directoryPath={currentDirectoryPath}
-          loadDirectoryContent={this.props.loadDirectoryContent}
-          openFileNatively={this.props.openFileNatively}
-          openDirectory={this.props.openDirectory}
-          reflectCreateEntry={this.props.reflectCreateEntry}
-          openFile={this.props.openFile}
-          toggleCreateFileDialog={this.props.toggleCreateFileDialog}
-          deleteDirectory={this.props.deleteDirectory}
-          showNotification={this.props.showNotification}
-          isReadOnlyMode={this.props.isReadOnlyMode}
-        />
-      </div>
-    );
-  }
-
   render() {
     const {
-      classes,
+      currentDirectoryPath = '',
+      loadDirectoryContent,
+      classes
     } = this.props;
     // console.log(this.props.windowHeight);
     return (
@@ -437,7 +390,46 @@ class FolderContainer extends React.Component<Props, State> {
                   </Typography>
                 ) }
               </div>
-              {this.props.currentDirectoryPath && this.renderPath()}
+              {this.props.currentDirectoryPath && (
+                <div>
+                  { this.state.pathParts && this.state.pathParts.map((pathPart) => (
+                    <span key={pathPart}>
+                      <Button
+                        onClick={() => loadDirectoryContent(pathPart)}
+                        title={'Navigate to: ' + pathPart}
+                        style={{ paddingLeft: 0, paddingRight: 0 }}
+                      >
+                        {extractShortDirectoryName(pathPart, '/')}
+                        <FolderSeparatorIcon />
+                      </Button>
+                    </span>
+                  ))}
+                  <Button
+                    data-tid="folderContainerOpenDirMenu"
+                    title={i18n.t('core:openDirectoryMenu') + ' - ' + (currentDirectoryPath || '')}
+                    className={classes.folderButton}
+                    onClick={this.openDirectoryMenu}
+                  >
+                    { extractShortDirectoryName(currentDirectoryPath, '/') }
+                    <MoreVertIcon />
+                  </Button>
+                  <DirectoryMenu
+                    open={this.state.directoryContextMenuOpened}
+                    onClose={this.closeDirectoryMenu}
+                    anchorEl={this.state.directoryContextMenuAnchorEl}
+                    directoryPath={currentDirectoryPath}
+                    loadDirectoryContent={this.props.loadDirectoryContent}
+                    openFileNatively={this.props.openFileNatively}
+                    openDirectory={this.props.openDirectory}
+                    reflectCreateEntry={this.props.reflectCreateEntry}
+                    openFile={this.props.openFile}
+                    toggleCreateFileDialog={this.props.toggleCreateFileDialog}
+                    deleteDirectory={this.props.deleteDirectory}
+                    showNotification={this.props.showNotification}
+                    isReadOnlyMode={this.props.isReadOnlyMode}
+                  />
+                </div>
+              )}
             </div>
           </div>
           <div
