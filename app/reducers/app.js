@@ -813,7 +813,11 @@ export const actions = {
         dispatch(actions.setCurrentLocationId(location.uuid));
         dispatch(actions.loadDirectoryContent(location.paths[0]));
         if (location.uuid !== currentLocationId) {
-          dispatch(LocationIndexActions.createDirectoryIndex(location.paths[0]));
+          if (location.persistIndex) {
+            dispatch(LocationIndexActions.loadDirectoryIndex(location.paths[0]));
+          } else {
+            dispatch(LocationIndexActions.createDirectoryIndex(location.paths[0]));
+          }
         }
         return true;
       }).catch(() => {
@@ -826,7 +830,11 @@ export const actions = {
       dispatch(actions.setCurrentLocationId(location.uuid));
       dispatch(actions.loadDirectoryContent(location.paths[0]));
       if (location.uuid !== currentLocationId) {
-        dispatch(LocationIndexActions.createDirectoryIndex(location.paths[0]));
+        if (location.persistIndex) {
+          dispatch(LocationIndexActions.loadDirectoryIndex(location.paths[0]));
+        } else {
+          dispatch(LocationIndexActions.createDirectoryIndex(location.paths[0]));
+        }
       }
       if (Pro && Pro.Watcher && location.watchForChanges) {
         Pro.Watcher.watchFolder(location.paths[0], dispatch, actions);

@@ -17,7 +17,7 @@
  * @flow
  */
 
-import { type Location, getLocation } from './locations';
+import { type Location, getLocation, locationType } from './locations';
 import { createDirectoryIndex } from '../services/utils-io';
 import { Pro } from '../pro';
 import {
@@ -29,6 +29,7 @@ import {
 import type { SearchQuery } from '../services/search';
 import Search from '../services/search';
 import { actions as AppActions } from './app';
+import AppConfig from '../config';
 
 export const types = {
   INDEX_DIRECTORY: 'INDEX_DIRECTORY',
@@ -201,7 +202,7 @@ export const actions = {
       .then(directoryIndex => {
         dispatch(actions.indexDirectorySuccess(directoryIndex));
         if (Pro && currentLocation.persistIndex) {
-          Pro.Indexer.persistIndex(directoryPath, directoryIndex);
+          Pro.Indexer.persistIndex(directoryPath, directoryIndex, (currentLocation.type === locationType.TYPE_CLOUD) ? '/' : AppConfig.dirSeparator);
         }
         return true;
       })
@@ -209,6 +210,24 @@ export const actions = {
         dispatch(actions.indexDirectoryFailure(err));
         // dispatch(actions.startDirectoryIndexing());
       });
+  },
+  loadDirectoryIndex: (directoryPath: string) => (
+    dispatch: (actions: Object) => void,
+    getState: () => Object
+  ) => {
+    const state = getState();
+    const currentLocation: Location = getLocation(state, state.app.currentLocationId);
+    dispatch(actions.startDirectoryIndexing());
+    dispatch(AppActions.showNotification('Loading index ...', 'default', true));
+    if (Pro && Pro.Indexer.loadIndex) {
+      Pro.Indexer.loadIndex(directoryPath, (currentLocation.type === locationType.TYPE_CLOUD) ? '/' : AppConfig.dirSeparator).then((directoryIndex) => {
+        dispatch(actions.indexDirectorySuccess(directoryIndex));
+        return true;
+      }).catch(err => {
+        dispatch(actions.indexDirectoryFailure(err));
+        dispatch(AppActions.showNotification('Loading index failed', 'warning', true));
+      });
+    }
   },
   clearDirectoryIndex: () => ({
     type: types.INDEX_DIRECTORY_CLEAR
