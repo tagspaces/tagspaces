@@ -23,7 +23,7 @@ export default merge.smart(baseConfig, {
 
   optimization: {
     // We no not want to minimize our code. TODO remove this for production
-    minimize: false
+    minimize: true
   },
 
   node: {
