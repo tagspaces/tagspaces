@@ -21,7 +21,10 @@ import fsextra from 'fs-extra';
 import { extractParentDirectoryPath, getMetaDirectoryPath } from '../utils/paths';
 import { arrayBufferToBuffer } from '../utils/misc';
 import AppConfig from '../config';
-import TrayIcon from '../assets/icons/64x64.png';
+import TrayIcon from '../assets/icons/trayIcon.png';
+// import TrayIconWin from '../assets/icons/trayIcon.ico';
+import TrayIcon2x from '../assets/icons/trayIcon@2x.png';
+import TrayIcon3x from '../assets/icons/trayIcon@3x.png';
 
 export default class ElectronIO {
   electron: Object;
@@ -72,7 +75,19 @@ export default class ElectronIO {
     // const appPath = this.getAppPath();
     // const nImage = nativeImage.createFromPath(appPath + trayIconPath);
 
-    const nImage = nativeImage.createFromDataURL(TrayIcon);
+    let nImage;
+    // if (process.platform === 'darwin') {
+    //   nImage = nativeImage.createFromDataURL(TrayIcon);
+    //   nImage.addRepresentation(2, TrayIcon2x);
+    // } else
+    if (process.platform === 'win32') {
+      nImage = nativeImage.createFromDataURL(TrayIcon2x);
+    } else {
+      nImage = nativeImage.createFromDataURL(TrayIcon);
+      nImage.addRepresentation({ scaleFactor: 2.0, dataURL: TrayIcon2x });
+      nImage.addRepresentation({ scaleFactor: 3.0, dataURL: TrayIcon3x });
+    }
+
     const tsTray = new Tray(nImage);
 
     tsTray.on('click', () => {
