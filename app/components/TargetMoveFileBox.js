@@ -37,7 +37,7 @@ const styles = theme => ({
     justifyContent: 'center',
     alignItems: 'center',
     textAlign: 'center',
-    fontSize: '40px',
+    fontSize: '30px',
     fontWeight: 'bold',
     color: 'white',
   }
