@@ -633,16 +633,13 @@ class EntryContainer extends React.Component<Props, State> {
           aria-label={i18n.t('core:downloadFile')}
           onClick={() => {
             const { currentEntry } = this.state;
-            const date = new Date();
             const downloadLink = document.getElementById('downloadFile');
             const entryName = `${baseName(currentEntry.path)}`;
-            const fileExtension = extractFileExtension(entryName);
             const fileName = extractFileNameWithoutExt(entryName);
-            const modifiedEntryName = `${fileName}_${moment(date).format('YYYYMMDD')}~${moment(date).format('hhmmss')}.${fileExtension}`;
 
             if (downloadLink) {
               if (AppConfig.isWeb) {
-                const link = `${location.protocol}//${location.hostname}${location.port !== '' ? `:${location.port}` : ''}${modifiedEntryName}`;
+                const link = `${location.protocol}//${location.hostname}${location.port !== '' ? `:${location.port}` : ''}/${currentEntry.path}`;
                 downloadLink.setAttribute('href', link);
               } else {
                 downloadLink.setAttribute('href', `file:///${currentEntry.path}`);
