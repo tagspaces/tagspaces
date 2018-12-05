@@ -25,6 +25,7 @@ import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import EditIcon from '@material-ui/icons/Edit';
 import moment from 'moment';
+import uuidv1 from 'uuid';
 import SaveIcon from '@material-ui/icons/Save';
 import CloseIcon from '@material-ui/icons/Close';
 import FullScreenIcon from '@material-ui/icons/ZoomOutMap';
@@ -180,7 +181,8 @@ type State = {
   selectedItem?: Object,
   isDeleteEntryModalOpened?: boolean,
   shouldCopyFile?: boolean,
-  entryPropertiesSplitSize?: number
+  entryPropertiesSplitSize?: number,
+  EntryPropertiesKey: string
 };
 
 class EntryContainer extends React.Component<Props, State> {
@@ -195,7 +197,8 @@ class EntryContainer extends React.Component<Props, State> {
     currentEntry: null,
     selectedItem: {},
     shouldCopyFile: false,
-    entryPropertiesSplitSize: 0
+    entryPropertiesSplitSize: 0,
+    EntryPropertiesKey: uuidv1()
   };
 
   componentDidMount() {
@@ -630,16 +633,13 @@ class EntryContainer extends React.Component<Props, State> {
           aria-label={i18n.t('core:downloadFile')}
           onClick={() => {
             const { currentEntry } = this.state;
-            const date = new Date();
             const downloadLink = document.getElementById('downloadFile');
             const entryName = `${baseName(currentEntry.path)}`;
-            const fileExtension = extractFileExtension(entryName);
             const fileName = extractFileNameWithoutExt(entryName);
-            const modifiedEntryName = `${fileName}_${moment(date).format('YYYYMMDD')}~${moment(date).format('hhmmss')}.${fileExtension}`;
 
             if (downloadLink) {
               if (AppConfig.isWeb) {
-                const link = `${location.protocol}//${location.hostname}${location.port !== '' ? `:${location.port}` : ''}${modifiedEntryName}`;
+                const link = `${location.protocol}//${location.hostname}${location.port !== '' ? `:${location.port}` : ''}/${currentEntry.path}`;
                 downloadLink.setAttribute('href', link);
               } else {
                 downloadLink.setAttribute('href', `file:///${currentEntry.path}`);
@@ -774,6 +774,12 @@ class EntryContainer extends React.Component<Props, State> {
     saveDocument: this.startSavingFile,
     editDocument: this.editFile,
     reloadDocument: this.reloadDocument,
+  };
+
+  resetState = (key) => {
+    this.setState({
+      [key]: uuidv1()
+    });
   };
 
   render() {
@@ -966,6 +972,8 @@ class EntryContainer extends React.Component<Props, State> {
                 }
                 <div style={{ overflowY: AppConfig.isFirefox ? 'auto' : 'overlay', maxHeight: '100%' }}>
                   <EntryProperties
+                    key={this.state.EntryPropertiesKey}
+                    resetState={this.resetState}
                     entryPath={currentEntry.path}
                     shouldReload={currentEntry.shouldReload}
                     addTags={this.props.addTags}
