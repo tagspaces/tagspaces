@@ -96,7 +96,7 @@ export default class ElectronIO {
       }
     });
     const trayMenu = Menu.buildFromTemplate(menuConfig);
-    tsTray.setToolTip('TagSpaces App');
+    tsTray.setToolTip('TagSpaces');
     tsTray.setContextMenu(trayMenu);
   };
 
