@@ -855,7 +855,7 @@ class GridPerspective extends React.Component<Props, State> {
               height: 150 // fsEntry.isFile ? 150 : 70
             }}
           >
-            <div className={classes.gridCellTags}>
+            <div id="gridCellTags" className={classes.gridCellTags}>
               {fsEntry.tags.map(tag => this.renderTag(tag, fsEntry))}
             </div>
             {description.length > 0 && (
@@ -1010,6 +1010,13 @@ class GridPerspective extends React.Component<Props, State> {
 
     return (
       <div style={{ height: '100%' }}>
+        <style>
+          {`
+            #gridCellTags:hover {
+              opacity: 1
+            }
+          `}
+        </style>
         <Toolbar
           className={classes.topToolbar}
           data-tid="perspectiveGridToolbar"
