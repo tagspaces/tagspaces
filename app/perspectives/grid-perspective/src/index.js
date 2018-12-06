@@ -110,8 +110,12 @@ const styles = theme => ({
   },
   rowCell: {
     backgroundColor: theme.palette.background.paper,
+    boxShadow: 'none',
+    borderTop: '1px solid transparent',
+    borderBottom: '1px solid ' + theme.palette.divider,
     margin: 0,
-    marginBottom: 1,
+    marginTop: 0,
+    marginBottom: 0,
     borderRadius: 0
   },
   selectedGridCell: {
