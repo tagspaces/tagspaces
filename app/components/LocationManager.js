@@ -502,26 +502,6 @@ class LocationManager extends React.Component<Props, State> {
     this.props.loadDirectoryContent(subDir.path);
   };
 
-  renderHeaderRow = col =>
-    /* const { children, ...rest } = col;
-    const isSelectionBox = col.className.includes('selection-column');
-
-    return (
-      <th {...rest}>
-        {isSelectionBox ? (
-          children
-        ) : (
-          <span>
-            <span xs={4}>{children}</span>
-            <span xs={2}>Age</span>
-            <span xs>Bar</span>
-          </span>
-        )}
-      </th>
-    ); */
-    (<span />)
-  ;
-
   /**
    * https://github.com/react-component/table/blob/master/examples/react-dnd.js
    * @param item
@@ -531,20 +511,17 @@ class LocationManager extends React.Component<Props, State> {
     if (monitor) { // TODO handle monitor -> isOver and change folder icon
       const { path } = monitor.getItem();
       console.log('Dropped files: ' + path);
-      this.props.moveFiles([path], item.children[0].props.record.path);
+      this.props.moveFiles([path], item.children[1].props.record.path);
     }
   };
 
-  renderBodyRow = (row) => {
-    const { children } = row;
-    return (
-      <div style={{ position: 'relative' }}>
-        <TargetMoveFileBox accepts={[DragItemTypes.FILE]} onDrop={this.handleFileMoveDrop}>
-          {children}
-        </TargetMoveFileBox>
-      </div>
-    );
-  };
+  renderBodyCell = (props) =>
+    (
+      <td {...props} style={{ position: 'relative' }} >
+        <TargetMoveFileBox accepts={[DragItemTypes.FILE]} onDrop={this.handleFileMoveDrop} >{props.children}</TargetMoveFileBox>
+      </td>
+    )
+  ;
   // expandedRowRender = (record, index, indent, expanded) => (<p>extra: {record.name}</p>);
   /* CustomExpandIcon = (props) => {
     let text;
@@ -580,9 +557,10 @@ class LocationManager extends React.Component<Props, State> {
         // defaultExpandAllRows
         // className={classes.locationListArea}
         components={{
-          header: { cell: this.renderHeaderRow },
-          body: { row: this.renderBodyRow }
+          // header: { cell: this.renderHeaderRow },
+          body: { cell: this.renderBodyCell }
         }}
+        showHeader={false}
         // className="table"
         rowKey="path"
         data={this.state.dirs[location.uuid]}
