@@ -44,8 +44,8 @@ const styles = theme => ({
 });
 
 const boxTarget = {
-  drop(props, monitor, component) {
-    return component.props.onDrop(props, monitor);
+  drop(props, monitor) {
+    return props.onDrop(props, monitor);
   },
 };
 
