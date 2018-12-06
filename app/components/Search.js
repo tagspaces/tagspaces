@@ -358,7 +358,7 @@ class Search extends React.Component<Props, State> {
             <Button
               disabled={indexing}
               id="searchButton"
-              variant="contained"
+              variant="outlined"
               size="small"
               color="primary"
               onClick={this.executeSearch}

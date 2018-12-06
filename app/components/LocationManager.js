@@ -618,17 +618,21 @@ class LocationManager extends React.Component<Props, State> {
             {i18n.t('core:locationManager')}
           </Typography>
         </div>
-        <Button
-          data-tid="createNewLocation"
-          onClick={this.showCreateLocationDialog}
-          title={i18n.t('core:createLocationTitle')}
-          className={classes.mainActionButton}
-          size="small"
-          color="primary"
-        >
-          <CreateLocationIcon className={classNames(classes.leftIcon)} />
-          {i18n.t('core:createLocationTitle')}
-        </Button>
+        <div style={{ width: '100%', textAlign: 'center' }}>
+          <Button
+            data-tid="createNewLocation"
+            onClick={this.showCreateLocationDialog}
+            title={i18n.t('core:createLocationTitle')}
+            className={classes.mainActionButton}
+            size="small"
+            variant="outlined"
+            color="primary"
+            style={{ width: '95%' }}
+          >
+            {/* <CreateLocationIcon className={classNames(classes.leftIcon)} /> */}
+            {i18n.t('core:createLocationTitle')}
+          </Button>
+        </div>
         <div>
           <CreateLocationDialog
             key={this.state.createLocationDialogKey}
