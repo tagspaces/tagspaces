@@ -721,6 +721,7 @@ class GridPerspective extends React.Component<Props, State> {
       isAddRemoveTagsDialogOpened: false,
       isMoveCopyFilesDialogOpened: false
     });
+    this.clearSelection();
   };
 
   openFileRenameDialog = () => {
