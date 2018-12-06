@@ -625,7 +625,7 @@ class LocationManager extends React.Component<Props, State> {
             {i18n.t('core:locationManager')}
           </Typography>
         </div>
-        <div style={{ width: '100%', textAlign: 'center' }}>
+        <div style={{ width: '100%', textAlign: 'center', marginBottom: 10 }}>
           <Button
             data-tid="createNewLocation"
             onClick={this.showCreateLocationDialog}
