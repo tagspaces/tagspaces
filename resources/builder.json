@@ -20,12 +20,14 @@
     "target": [
       "nsis",
       "portable"
-    ]
+    ],
+    "icon": "resources/icon.ico"
   },
   "mac": {
     "target": [
       "zip"
-    ]
+    ],
+    "icon": "resources/icon.icns"
   },
   "linux": {
     "target": [
@@ -34,7 +36,8 @@
       "appImage"
       // "rpm"
     ],
-    "category": "Office"
+    "category": "Office",
+    "icon": "resources/icon.icns"
   },
   "nsis": {
     "oneClick": false,
