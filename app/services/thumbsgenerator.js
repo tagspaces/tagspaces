@@ -177,7 +177,7 @@ export function generateThumbnailPromise(
   } else if (Pro && ext === 'pdf') {
     return Pro.ThumbsGenerator.generatePDFThumbnail(fileURL, maxSize);
   } else if (Pro && ext === 'html') {
-    return Pro.ThumbsGenerator.generateHtmlThumb.thumbTypenail(fileURL, maxSize);
+    return Pro.ThumbsGenerator.generateHtmlThumbnail(fileURL, maxSize);
   } else if (Pro && ext === 'mp3') {
     if (fileSize && fileSize < maxFileSize) {
       // return Pro.ThumbsGenerator.generateMp3Thumbnail(fileURL, maxSize);
