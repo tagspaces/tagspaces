@@ -62,7 +62,7 @@ class ThirdPartyLibsDialog extends React.Component<Props, State> {
 
   renderContent = () => (
     <DialogContent style={{ overflowX: 'auto' }}>
-      <pre>{ this.state.thirdpartylibs }</pre>
+      <pre style={{ whiteSpace: 'pre-wrap' }}>{ this.state.thirdpartylibs }</pre>
     </DialogContent>
   );
 
