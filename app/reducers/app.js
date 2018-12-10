@@ -618,7 +618,7 @@ export const actions = {
   ) => (
     dispatch: (actions: Object) => void
   ) => {
-    // dispatch(actions.hideNotifications());
+    // dispatch(actions.hideNotifications()); // relaying on the tmb generation hiding
     dispatch(actions.loadDirectorySuccessInt(directoryPath, directoryContent));
   },
   loadDirectorySuccessInt: (
