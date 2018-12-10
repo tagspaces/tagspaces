@@ -115,6 +115,9 @@ export default class ElectronIO {
   };
 
   showMainWindow = (): void => {
+    if (this.win.isMinimized()) {
+      this.win.restore();
+    }
     this.win.show();
   };
 
