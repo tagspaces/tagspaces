@@ -178,6 +178,8 @@ export function generateThumbnailPromise(
     return Pro.ThumbsGenerator.generatePDFThumbnail(fileURL, maxSize);
   } else if (Pro && ext === 'html') {
     return Pro.ThumbsGenerator.generateHtmlThumbnail(fileURL, maxSize);
+  } else if (Pro && ext === 'url') {
+    return Pro.ThumbsGenerator.generateUrlThumbnail(fileURL, maxSize);
   } else if (Pro && ext === 'mp3') {
     if (fileSize && fileSize < maxFileSize) {
       // return Pro.ThumbsGenerator.generateMp3Thumbnail(fileURL, maxSize);
