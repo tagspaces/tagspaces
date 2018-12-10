@@ -618,7 +618,7 @@ export const actions = {
   ) => (
     dispatch: (actions: Object) => void
   ) => {
-    dispatch(actions.hideNotifications());
+    // dispatch(actions.hideNotifications());
     dispatch(actions.loadDirectorySuccessInt(directoryPath, directoryContent));
   },
   loadDirectorySuccessInt: (
