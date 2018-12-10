@@ -341,6 +341,10 @@ class EntryProperties extends Component<Props, State> {
     } else {
       this.setState({
         isEditDescription: true
+      }, () => {
+        if (this.fileDescription) {
+          this.fileDescription.focus();
+        }
       });
     }
   };
@@ -576,6 +580,7 @@ class EntryProperties extends Component<Props, State> {
               {isEditDescription ? (
                 <TextField
                   multiline
+                  inputRef={(ref) => { this.fileDescription = ref; }}
                   disabled={!isEditDescription}
                   id="textarea"
                   placeholder=""
@@ -586,24 +591,24 @@ class EntryProperties extends Component<Props, State> {
                   onChange={e => this.handleInputChange(e)}
                 />
               ) : (
-                <Typography
-                  role="button"
-                  id="descriptionArea"
-                  placeholder={Pro ? 'Click to add description' : i18n.t('core:addDescription')}
-                  dangerouslySetInnerHTML={{
-                    __html:
-                      description !== ''
-                        ? marked(DOMPurify.sanitize(description))
-                        : Pro ? 'Click to add description' : i18n.t('core:addDescription')
-                  }}
-                  onClick={() => {
-                    if (!isEditDescription) {
-                      this.toggleEditDescriptionField();
-                    }
-                  }}
-                >
-                  {/* set dynamically HTML */}
-                </Typography>
+                <Paper style={{ padding: 5 }}>
+                  <Typography
+                    role="button"
+                    id="descriptionArea"
+                    placeholder={Pro ? 'Click to add description' : i18n.t('core:addDescription')}
+                    dangerouslySetInnerHTML={{
+                      __html:
+                        description !== ''
+                          ? marked(DOMPurify.sanitize(description))
+                          : Pro ? 'Click to add description' : i18n.t('core:addDescription')
+                    }}
+                    onClick={() => {
+                      if (!isEditDescription) {
+                        this.toggleEditDescriptionField();
+                      }
+                    }}
+                  />
+                </Paper>
               )}
             </FormControl>
           </div>

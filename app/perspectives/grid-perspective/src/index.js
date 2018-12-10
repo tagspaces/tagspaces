@@ -110,8 +110,12 @@ const styles = theme => ({
   },
   rowCell: {
     backgroundColor: theme.palette.background.paper,
+    boxShadow: 'none',
+    borderTop: '1px solid transparent',
+    borderBottom: '1px solid ' + theme.palette.divider,
     margin: 0,
-    marginBottom: 1,
+    marginTop: 0,
+    marginBottom: 0,
     borderRadius: 0
   },
   selectedGridCell: {
@@ -363,6 +367,9 @@ class GridPerspective extends React.Component<Props, State> {
       nextProps.currentDirectoryPath !== this.props.currentDirectoryPath &&
       this.mainGrid
     ) {
+      // Clear selection on directory change
+      this.clearSelection();
+
       const grid = document.querySelector(
         '[data-tid="perspectiveGridFileTable"]'
       );
@@ -371,9 +378,6 @@ class GridPerspective extends React.Component<Props, State> {
       if (isObj(firstGridItem)) {
         firstGridItem.scrollIntoView({ top: 0 });
       }
-
-      // Clear selection on directory change
-      this.clearSelection();
     }
   };
 
@@ -717,6 +721,7 @@ class GridPerspective extends React.Component<Props, State> {
       isAddRemoveTagsDialogOpened: false,
       isMoveCopyFilesDialogOpened: false
     });
+    this.clearSelection();
   };
 
   openFileRenameDialog = () => {
@@ -855,7 +860,7 @@ class GridPerspective extends React.Component<Props, State> {
               height: 150 // fsEntry.isFile ? 150 : 70
             }}
           >
-            <div className={classes.gridCellTags}>
+            <div id="gridCellTags" className={classes.gridCellTags}>
               {fsEntry.tags.map(tag => this.renderTag(tag, fsEntry))}
             </div>
             {description.length > 0 && (
@@ -1010,6 +1015,13 @@ class GridPerspective extends React.Component<Props, State> {
 
     return (
       <div style={{ height: '100%' }}>
+        <style>
+          {`
+            #gridCellTags:hover {
+              opacity: 1
+            }
+          `}
+        </style>
         <Toolbar
           className={classes.topToolbar}
           data-tid="perspectiveGridToolbar"

@@ -67,6 +67,9 @@ import i18n from '../services/i18n';
 import { isObj } from '../utils/misc';
 import AppConfig from '../config';
 import PlatformIO from '../services/platform-io';
+import TargetMoveFileBox from './TargetMoveFileBox';
+import DragItemTypes from './DragItemTypes';
+import IOActions from '../reducers/io-actions';
 
 type Props = {
   classes: Object,
@@ -91,7 +94,8 @@ type Props = {
     text: string,
     notificationType: string,
     autohide: boolean
-  ) => void
+  ) => void,
+  moveFiles: (files: Array<string>, destination: string) => void
 };
 
 type State = {
@@ -498,24 +502,25 @@ class LocationManager extends React.Component<Props, State> {
     this.props.loadDirectoryContent(subDir.path);
   };
 
-  renderHeaderRow = col =>
-    /* const { children, ...rest } = col;
-    const isSelectionBox = col.className.includes('selection-column');
+  /**
+   * https://github.com/react-component/table/blob/master/examples/react-dnd.js
+   * @param item
+   * @param monitor
+   */
+  handleFileMoveDrop = (item, monitor) => {
+    if (monitor) { // TODO handle monitor -> isOver and change folder icon
+      const { path } = monitor.getItem();
+      console.log('Dropped files: ' + path);
+      this.props.moveFiles([path], item.children[1].props.record.path);
+    }
+  };
 
-    return (
-      <th {...rest}>
-        {isSelectionBox ? (
-          children
-        ) : (
-          <span>
-            <span xs={4}>{children}</span>
-            <span xs={2}>Age</span>
-            <span xs>Bar</span>
-          </span>
-        )}
-      </th>
-    ); */
-    (<span />)
+  renderBodyCell = (props) =>
+    (
+      <td {...props} style={{ position: 'relative' }} >
+        <TargetMoveFileBox accepts={[DragItemTypes.FILE]} onDrop={this.handleFileMoveDrop} >{props.children}</TargetMoveFileBox>
+      </td>
+    )
   ;
   // expandedRowRender = (record, index, indent, expanded) => (<p>extra: {record.name}</p>);
   /* CustomExpandIcon = (props) => {
@@ -552,8 +557,10 @@ class LocationManager extends React.Component<Props, State> {
         // defaultExpandAllRows
         // className={classes.locationListArea}
         components={{
-          header: { cell: this.renderHeaderRow },
+          // header: { cell: this.renderHeaderRow },
+          body: { cell: this.renderBodyCell }
         }}
+        showHeader={false}
         // className="table"
         rowKey="path"
         data={this.state.dirs[location.uuid]}
@@ -618,17 +625,21 @@ class LocationManager extends React.Component<Props, State> {
             {i18n.t('core:locationManager')}
           </Typography>
         </div>
-        <Button
-          data-tid="createNewLocation"
-          onClick={this.showCreateLocationDialog}
-          title={i18n.t('core:createLocationTitle')}
-          className={classes.mainActionButton}
-          size="small"
-          color="primary"
-        >
-          <CreateLocationIcon className={classNames(classes.leftIcon)} />
-          {i18n.t('core:createLocationTitle')}
-        </Button>
+        <div style={{ width: '100%', textAlign: 'center', marginBottom: 10 }}>
+          <Button
+            data-tid="createNewLocation"
+            onClick={this.showCreateLocationDialog}
+            title={i18n.t('core:createLocationTitle')}
+            className={classes.mainActionButton}
+            size="small"
+            variant="outlined"
+            color="primary"
+            style={{ width: '95%' }}
+          >
+            {/* <CreateLocationIcon className={classNames(classes.leftIcon)} /> */}
+            {i18n.t('core:createLocationTitle')}
+          </Button>
+        </div>
         <div>
           <CreateLocationDialog
             key={this.state.createLocationDialogKey}
@@ -788,6 +799,7 @@ function mapDispatchToProps(dispatch) {
     deleteDirectory: AppActions.deleteDirectory,
     openDirectory: AppActions.openDirectory,
     openFileNatively: AppActions.openFileNatively,
+    moveFiles: IOActions.moveFiles
   }, dispatch);
 }
 
