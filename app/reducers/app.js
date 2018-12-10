@@ -527,6 +527,7 @@ export const actions = {
     console.time('listDirectoryPromise');
     const { settings } = getState();
     window.walkCanceled = false;
+    dispatch(actions.showNotification(i18n.t('core:loading'), 'info', false));
     PlatformIO.listDirectoryPromise(directoryPath, false)
       .then(results => {
         const metaDirectory = getMetaDirectoryPath(directoryPath);
@@ -604,6 +605,15 @@ export const actions = {
   loadDirectorySuccess: (
     directoryPath: string,
     directoryContent: Array<Object>
+  ) => (
+    dispatch: (actions: Object) => void
+  ) => {
+    dispatch(actions.hideNotifications());
+    dispatch(actions.loadDirectorySuccessInt(directoryPath, directoryContent));
+  },
+  loadDirectorySuccessInt: (
+    directoryPath: string,
+    directoryContent: Array<Object>
   ) => ({
     type: types.LOAD_DIRECTORY_SUCCESS,
     directoryPath,
@@ -613,6 +623,7 @@ export const actions = {
     dispatch: (actions: Object) => void
   ) => {
     console.warn('Error loading directory: ' + error);
+    dispatch(actions.hideNotifications());
     dispatch(
       actions.showNotification('Error loading directory', 'warning', true)
     );

@@ -106,7 +106,7 @@ const styles = theme => ({
 });
 
 function Loading() {
-  return <Typography style={{ padding: 10 }}>Loading...</Typography>;
+  return <Typography style={{ padding: 10 }}>{i18n.t('core:loading')}</Typography>;
 }
 
 const GridPerspective = Loadable({
