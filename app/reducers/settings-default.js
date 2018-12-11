@@ -41,7 +41,7 @@ export default {
   loadsLocationMetaData: false,
   searchInSubfolders: true,
   watchCurrentDirectory: false,
-  firstRun: false,
+  firstRun: true,
   lastOpenedDirectory: '',
   showWarningRecursiveScan: true,
   calculateTags: false,
@@ -51,7 +51,6 @@ export default {
   useDefaultLocation: false, // TODO for remove
   persistTagsInSidecarFile: false, // old name writeMetaToSidecarFile -> persistTagsInSidecarFile
   addTagsToLibrary: false,
-  webDavPath: 'oc/remote.php/webdav',
   interfaceLanguage: 'en',
   useTrashCan: true,
   useOCR: false,
