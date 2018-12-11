@@ -338,6 +338,9 @@ class LocationManager extends React.Component<Props, State> {
     this.handleRequestCloseContextMenus();
     if (this.state.selectedLocation && this.state.selectedLocation.uuid) {
       this.props.closeLocation(this.state.selectedLocation.uuid);
+      this.setState({
+        dirs: {}
+      });
     }
   };
 
