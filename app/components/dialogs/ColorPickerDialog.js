@@ -46,7 +46,8 @@ type State = {
 const styles = {
   noBorder: {
     padding: '0 !important',
-    boxShadow: 'none !important'
+    boxShadow: 'none !important',
+    backgroundColor: 'transparent !important'
   }
 };
 
