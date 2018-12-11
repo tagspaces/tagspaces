@@ -105,7 +105,7 @@ class TagContainer extends React.Component<Props> {
           backgroundColor: 'transparent',
           marginLeft: 4,
           marginTop: 0,
-          marginBottom: 0,
+          marginBottom: 4,
           display: 'inline-block'
         }}
       >

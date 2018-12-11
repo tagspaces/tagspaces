@@ -19,6 +19,7 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import removeMd from 'remove-markdown';
 import { withStyles } from '@material-ui/core/styles';
 import classNames from 'classnames';
@@ -72,7 +73,11 @@ import AddRemoveTagsDialog from '../../../components/dialogs/AddRemoveTagsDialog
 import MoveCopyFilesDialog from '../../../components/dialogs/MoveCopyFilesDialog';
 import RenameFileDialog from '../../../components/dialogs/RenameFileDialog';
 import TagDropContainer from '../../../components/TagDropContainer';
+import TargetMoveFileBox from '../../../components/TargetMoveFileBox';
+import FileSourceDnd from '../../../components/FileSourceDnd';
 import AppConfig from '../../../config';
+import DragItemTypes from '../../../components/DragItemTypes';
+import IOActions from '../../../reducers/io-actions';
 
 const maxDescriptionPreviewLength = 90;
 
@@ -105,8 +110,13 @@ const styles = theme => ({
   },
   rowCell: {
     backgroundColor: theme.palette.background.paper,
+    boxShadow: 'none',
+    borderTop: '1px solid transparent',
+    borderBottom: '1px solid ' + theme.palette.divider,
+    minHeight: 100,
     margin: 0,
-    marginBottom: 1,
+    marginTop: 0,
+    marginBottom: 0,
     borderRadius: 0
   },
   selectedGridCell: {
@@ -217,11 +227,11 @@ type Props = {
   currentDirectoryPath?: string,
   sortByCriteria: () => void,
   openFile: (path: string, isFile?: boolean) => void,
-  openFileNatively: (path: string) => void,
   deleteFile: (path: string) => void,
   deleteDirectory: (path: string) => void,
   loadDirectoryContent: (path: string) => void,
   openDirectory: (path: string) => void,
+  openFileNatively: (path: string) => void,
   loadParentDirectoryContent: () => void,
   setLastSelectedEntry: (entryPath: string | null) => void,
   addTags: () => void,
@@ -229,7 +239,8 @@ type Props = {
   removeAllTags: () => void,
   editTagForEntry: () => void,
   perspectiveCommand: Object,
-  directoryContent: Array<FileSystemEntry>
+  directoryContent: Array<FileSystemEntry>,
+  moveFiles: (files: Array<string>, destination: string) => void
 };
 
 type State = {
@@ -357,6 +368,9 @@ class GridPerspective extends React.Component<Props, State> {
       nextProps.currentDirectoryPath !== this.props.currentDirectoryPath &&
       this.mainGrid
     ) {
+      // Clear selection on directory change
+      this.clearSelection();
+
       const grid = document.querySelector(
         '[data-tid="perspectiveGridFileTable"]'
       );
@@ -365,9 +379,6 @@ class GridPerspective extends React.Component<Props, State> {
       if (isObj(firstGridItem)) {
         firstGridItem.scrollIntoView({ top: 0 });
       }
-
-      // Clear selection on directory change
-      this.clearSelection();
     }
   };
 
@@ -427,114 +438,114 @@ class GridPerspective extends React.Component<Props, State> {
 
   handleSortMenuIconClick = sort => {
     switch (sort) {
-      case 'byName':
-        if (this.state.orderByName === null) {
-          this.setState({
-            orderBySize: null,
-            orderByTags: null,
-            orderByExt: null,
-            orderByDate: null,
-            orderByName: true
-          });
-        } else {
-          this.setState({
-            orderBySize: null,
-            orderByTags: null,
-            orderByExt: null,
-            orderByDate: null,
-            orderByName: false
-          });
-        }
-        break;
-      case 'byFileSize':
-        if (this.state.orderBySize === null) {
-          this.setState({
-            orderByName: null,
-            orderByTags: null,
-            orderByExt: null,
-            orderByDate: null,
-            orderBySize: true
-          });
-        } else {
-          this.setState({
-            orderByName: null,
-            orderByTags: null,
-            orderByExt: null,
-            orderByDate: null,
-            orderBySize: false
-          });
-        }
-        break;
-      case 'byTags':
-        if (this.state.orderByTags === null) {
-          this.setState({
-            orderByName: null,
-            orderBySize: null,
-            orderByExt: null,
-            orderByDate: null,
-            orderByTags: true
-          });
-        } else {
-          this.setState({
-            orderByName: null,
-            orderBySize: null,
-            orderByExt: null,
-            orderByDate: null,
-            orderByTags: false
-          });
-        }
-        break;
-      case 'byExtension':
-        if (this.state.orderByExt === null) {
-          this.setState({
-            orderByName: null,
-            orderBySize: null,
-            orderByTags: null,
-            orderByDate: null,
-            orderByExt: true
-          });
-        } else {
-          this.setState({
-            orderByName: null,
-            orderBySize: null,
-            orderByTags: null,
-            orderByDate: null,
-            orderByExt: false
-          });
-        }
-        break;
-      case 'byDateModified':
-        if (this.state.orderByDate === null) {
-          this.setState({
-            orderByName: null,
-            orderBySize: null,
-            orderByTags: null,
-            orderByExt: null,
-            orderByDate: true
-          });
-        } else {
-          this.setState({
-            orderByName: null,
-            orderBySize: null,
-            orderByTags: null,
-            orderByExt: null,
-            orderByDate: false
-          });
-        }
-        break;
-      default:
-        break;
+    case 'byName':
+      if (this.state.orderByName === null) {
+        this.setState({
+          orderBySize: null,
+          orderByTags: null,
+          orderByExt: null,
+          orderByDate: null,
+          orderByName: true
+        });
+      } else {
+        this.setState({
+          orderBySize: null,
+          orderByTags: null,
+          orderByExt: null,
+          orderByDate: null,
+          orderByName: false
+        });
+      }
+      break;
+    case 'byFileSize':
+      if (this.state.orderBySize === null) {
+        this.setState({
+          orderByName: null,
+          orderByTags: null,
+          orderByExt: null,
+          orderByDate: null,
+          orderBySize: true
+        });
+      } else {
+        this.setState({
+          orderByName: null,
+          orderByTags: null,
+          orderByExt: null,
+          orderByDate: null,
+          orderBySize: false
+        });
+      }
+      break;
+    case 'byTags':
+      if (this.state.orderByTags === null) {
+        this.setState({
+          orderByName: null,
+          orderBySize: null,
+          orderByExt: null,
+          orderByDate: null,
+          orderByTags: true
+        });
+      } else {
+        this.setState({
+          orderByName: null,
+          orderBySize: null,
+          orderByExt: null,
+          orderByDate: null,
+          orderByTags: false
+        });
+      }
+      break;
+    case 'byExtension':
+      if (this.state.orderByExt === null) {
+        this.setState({
+          orderByName: null,
+          orderBySize: null,
+          orderByTags: null,
+          orderByDate: null,
+          orderByExt: true
+        });
+      } else {
+        this.setState({
+          orderByName: null,
+          orderBySize: null,
+          orderByTags: null,
+          orderByDate: null,
+          orderByExt: false
+        });
+      }
+      break;
+    case 'byDateModified':
+      if (this.state.orderByDate === null) {
+        this.setState({
+          orderByName: null,
+          orderBySize: null,
+          orderByTags: null,
+          orderByExt: null,
+          orderByDate: true
+        });
+      } else {
+        this.setState({
+          orderByName: null,
+          orderBySize: null,
+          orderByTags: null,
+          orderByExt: null,
+          orderByDate: false
+        });
+      }
+      break;
+    default:
+      break;
     }
   };
 
   getLayoutClass = () => {
     switch (this.state.layoutType) {
-      case 'grid':
-        return this.props.classes.gridContainer;
-      case 'row':
-        return this.props.classes.rowContainer;
-      default:
-        return this.props.classes.gridContainer;
+    case 'grid':
+      return this.props.classes.gridContainer;
+    case 'row':
+      return this.props.classes.rowContainer;
+    default:
+      return this.props.classes.gridContainer;
     }
   };
 
@@ -711,6 +722,7 @@ class GridPerspective extends React.Component<Props, State> {
       isAddRemoveTagsDialogOpened: false,
       isMoveCopyFilesDialogOpened: false
     });
+    this.clearSelection();
   };
 
   openFileRenameDialog = () => {
@@ -754,6 +766,14 @@ class GridPerspective extends React.Component<Props, State> {
     return <ArrowDownIcon />;
   };
 
+  handleFileMoveDrop = (item, monitor) => {
+    if (monitor) {
+      const { path } = monitor.getItem();
+      console.log('Dropped files: ' + path);
+      this.props.moveFiles([path], item.children.props.entryPath);
+    }
+  };
+
   renderCell = (fsEntry: FileSystemEntry) => {
     if (!fsEntry.isFile && !this.state.showDirectories) {
       return;
@@ -768,7 +788,7 @@ class GridPerspective extends React.Component<Props, State> {
     }
     const { layoutType } = this.state;
     //  key={fsEntry.uuid}
-    return (
+    const cellContent = (
       <TagDropContainer entryPath={fsEntry.path}>
         <Paper
           data-entry-id={fsEntry.uuid}
@@ -786,20 +806,33 @@ class GridPerspective extends React.Component<Props, State> {
         </Paper>
       </TagDropContainer>
     );
-  };
+    if (fsEntry.isFile) {
+      return (
+        <FileSourceDnd>
+          {cellContent}
+        </FileSourceDnd>
+      );
+    }
 
-  renderTag = (tag: Object, fsEntry) => {
     return (
-      <TagContainer
-        defaultTextColor={this.props.tagTextColor}
-        defaultBackgroundColor={this.props.tagBackgroundColor}
-        tag={tag}
-        key={tag.id}
-        entryPath={fsEntry.path}
-        handleTagMenu={this.handleTagMenu}
-      />
+      <div style={{ position: 'relative' }}>
+        <TargetMoveFileBox accepts={[DragItemTypes.FILE]} onDrop={this.handleFileMoveDrop}>
+          {cellContent}
+        </TargetMoveFileBox>
+      </div>
     );
   };
+
+  renderTag = (tag: Object, fsEntry) => (
+    <TagContainer
+      defaultTextColor={this.props.tagTextColor}
+      defaultBackgroundColor={this.props.tagBackgroundColor}
+      tag={tag}
+      key={tag.id}
+      entryPath={fsEntry.path}
+      handleTagMenu={this.handleTagMenu}
+    />
+  );
 
   renderCellContent = (fsEntry: FileSystemEntry) => {
     const classes = this.props.classes;
@@ -828,7 +861,7 @@ class GridPerspective extends React.Component<Props, State> {
               height: 150 // fsEntry.isFile ? 150 : 70
             }}
           >
-            <div className={classes.gridCellTags}>
+            <div id="gridCellTags" className={classes.gridCellTags}>
               {fsEntry.tags.map(tag => this.renderTag(tag, fsEntry))}
             </div>
             {description.length > 0 && (
@@ -944,7 +977,7 @@ class GridPerspective extends React.Component<Props, State> {
                   formatDateTime(fsEntry.lmdt, true)
                 }
               >
-                {fsEntry.lmdt && '️ ' + moment(fsEntry.lmdt).fromNow() /* ⏲ */}
+                {fsEntry.isFile && fsEntry.lmdt && '️ ' + moment(fsEntry.lmdt).fromNow() /* ⏲ */}
               </span>
               <span title={i18n.t('core:entryDescription')}>
                 {description && ' - ' + description}
@@ -983,6 +1016,13 @@ class GridPerspective extends React.Component<Props, State> {
 
     return (
       <div style={{ height: '100%' }}>
+        <style>
+          {`
+            #gridCellTags:hover {
+              opacity: 1
+            }
+          `}
+        </style>
         <Toolbar
           className={classes.topToolbar}
           data-tid="perspectiveGridToolbar"
@@ -1150,6 +1190,7 @@ class GridPerspective extends React.Component<Props, State> {
           directoryPath={this.state.selectedEntryPath}
           loadDirectoryContent={this.props.loadDirectoryContent}
           openDirectory={this.props.openDirectory}
+          openFileNatively={this.props.openFileNatively}
           openFile={this.props.openFile}
           deleteDirectory={this.props.deleteDirectory}
           perspectiveMode={true}
@@ -1229,6 +1270,12 @@ class GridPerspective extends React.Component<Props, State> {
   }
 }
 
+function mapActionCreatorsToProps(dispatch) {
+  return bindActionCreators({
+    moveFiles: IOActions.moveFiles
+  }, dispatch);
+}
+
 function mapStateToProps(state) {
   return {
     tagTextColor: getTagTextColor(state),
@@ -1237,6 +1284,6 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps)(
+export default connect(mapStateToProps, mapActionCreatorsToProps)(
   withStyles(styles)(GridPerspective)
 );

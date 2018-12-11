@@ -163,7 +163,8 @@ type Props = {
   showNotification: () => void,
   addTags: () => void,
   removeTags: () => void,
-  removeAllTags: () => void
+  removeAllTags: () => void,
+  resetState: () => void
 };
 
 type State = {
@@ -209,12 +210,13 @@ class EntryProperties extends Component<Props, State> {
       (nextProps.entryPath && nextProps.shouldReload) ||
       (nextProps.entryPath && this.state.path !== nextProps.entryPath)
     ) {
+      this.props.resetState('EntryPropertiesKey');
       this.loadEntryProperties(nextProps.entryPath);
     }
 
-    if (nextProps.entryPath && this.state.path !== nextProps.entryPath) {
-      this.setState({ isEditDescription: false });
-    }
+    /* if (nextProps.entryPath && this.state.path !== nextProps.entryPath) {
+      this.setState({ isEditDescription: false }); // state is reset isEditDescription default value is false
+    } */
 
     if (nextProps.shouldCopyFile) {
       this.setState({ isMoveCopyFilesDialogOpened: true });
@@ -297,6 +299,20 @@ class EntryProperties extends Component<Props, State> {
       this.setState({
         isEditName: true,
         originalName: this.state.name
+      }, () => {
+        this.fileName.focus();
+        const { originalName } = this.state;
+        if (originalName) {
+          const indexOfBracket = originalName.indexOf(AppConfig.beginTagContainer);
+          const indexOfDot = originalName.indexOf('.');
+          let endRange = originalName.length;
+          if (indexOfBracket > 0) {
+            endRange = indexOfBracket;
+          } else if (indexOfDot > 0) {
+            endRange = indexOfDot;
+          }
+          this.fileName.setSelectionRange(0, endRange);
+        }
       });
     }
   };
@@ -325,6 +341,10 @@ class EntryProperties extends Component<Props, State> {
     } else {
       this.setState({
         isEditDescription: true
+      }, () => {
+        if (this.fileDescription) {
+          this.fileDescription.focus();
+        }
       });
     }
   };
@@ -484,6 +504,7 @@ class EntryProperties extends Component<Props, State> {
                   fullWidth={true}
                   data-tid="fileNameProperties"
                   value={name}
+                  inputRef={(ref) => { this.fileName = ref; }}
                   className={classes.field}
                   onClick={() => {
                     if (!isEditName) {
@@ -559,6 +580,7 @@ class EntryProperties extends Component<Props, State> {
               {isEditDescription ? (
                 <TextField
                   multiline
+                  inputRef={(ref) => { this.fileDescription = ref; }}
                   disabled={!isEditDescription}
                   id="textarea"
                   placeholder=""
@@ -569,24 +591,24 @@ class EntryProperties extends Component<Props, State> {
                   onChange={e => this.handleInputChange(e)}
                 />
               ) : (
-                <Typography
-                  role="button"
-                  id="descriptionArea"
-                  placeholder={Pro ? 'Click to add description' : i18n.t('core:addDescription')}
-                  dangerouslySetInnerHTML={{
-                    __html:
-                      description !== ''
-                        ? marked(DOMPurify.sanitize(description))
-                        : Pro ? 'Click to add description' : i18n.t('core:addDescription')
-                  }}
-                  onClick={() => {
-                    if (!isEditDescription) {
-                      this.toggleEditDescriptionField();
-                    }
-                  }}
-                >
-                  {/* set dynamically HTML */}
-                </Typography>
+                <Paper style={{ padding: 5 }}>
+                  <Typography
+                    role="button"
+                    id="descriptionArea"
+                    placeholder={Pro ? 'Click to add description' : i18n.t('core:addDescription')}
+                    dangerouslySetInnerHTML={{
+                      __html:
+                        description !== ''
+                          ? marked(DOMPurify.sanitize(description))
+                          : Pro ? 'Click to add description' : i18n.t('core:addDescription')
+                    }}
+                    onClick={() => {
+                      if (!isEditDescription) {
+                        this.toggleEditDescriptionField();
+                      }
+                    }}
+                  />
+                </Paper>
               )}
             </FormControl>
           </div>

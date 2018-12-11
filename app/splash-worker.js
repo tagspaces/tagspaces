@@ -22,6 +22,8 @@ import { walkDirectory, enhanceEntry } from './services/utils-io';
 import AppConfig from './config';
 import { getThumbnailURLPromise } from './services/thumbsgenerator';
 
+let isGeneratingThumbs = false;
+
 function init() {
   console.log('Init worker');
   ipcRenderer.on('worker', (event, arg) => {
@@ -70,34 +72,46 @@ function init() {
     }
     case 'createThumbnails': {
       console.log('createThumbnails started in worker window');
-      if (!arg.tmbGenerationList || arg.tmbGenerationList.length < 1) {
+      if (!arg.tmbGenerationList || arg.tmbGenerationList.length < 1 || isGeneratingThumbs) {
         ipcRenderer.send('worker', {
           id: arg.id,
           action: arg.action,
           result: [],
-          error: 'Empty or not available tmb list'
+          error: 'Empty or not available tmb list or busy worker'
         });
         break;
       }
+      isGeneratingThumbs = true;
       const tmbGenerationPromises = [];
       arg.tmbGenerationList.map(entry => tmbGenerationPromises.push(getThumbnailURLPromise(entry)));
+      ipcRenderer.send('setSplashVisibility', {
+        visibility: true,
+      });
       Promise.all(tmbGenerationPromises).then(tmbResult => {
         console.log('tmb results' + JSON.stringify(tmbResult));
+        ipcRenderer.send('setSplashVisibility', {
+          visibility: false,
+        });
         ipcRenderer.send('worker', {
           id: arg.id,
           action: arg.action,
           result: tmbResult,
           error: ''
         });
+        isGeneratingThumbs = false;
         return true;
       }).catch(error => {
-        console.warn('Tmb gener: ' + error);
+        console.warn('Tmb generation failed: ' + error);
         ipcRenderer.send('worker', {
           id: arg.id,
           action: arg.action,
           result: [],
           error: 'Error generating tmbs: ' + error
         });
+        ipcRenderer.send('setSplashVisibility', {
+          visibility: false,
+        });
+        isGeneratingThumbs = false;
       });
       break;
     }

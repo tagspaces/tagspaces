@@ -3,7 +3,6 @@
 @import "./assets/scrollbars.css";
 @import "./assets/splitpane.css";
 @import "./assets/minireset.css";
-@import "./assets/autosuggest.css";
 @import "./assets/rc-datetime.css";
 @import "~rc-table/assets/index.css";
 
@@ -11,4 +10,8 @@
 /* Needed to disable border on focused HotKey element */
 div[tabindex="-1"]:focus {
   outline: 0;
+}
+
+.rc-table td {
+  border-bottom: 1px solid #e9e9e91a;
 }

@@ -37,7 +37,7 @@ function configureStore(initialState) {
   const persistConfig = {
     key: 'root',
     storage,
-    blacklist: ['app']
+    blacklist: ['app', 'locationIndex']
   };
 
   const persistedReducer = persistReducer(persistConfig, rootReducer);

@@ -23,6 +23,7 @@ import settings from './settings';
 import app from './app';
 import locations from './locations';
 import taglibrary from './taglibrary';
+import locationIndex from './location-index';
 
 const rootReducer = combineReducers({
   settings,
@@ -30,6 +31,7 @@ const rootReducer = combineReducers({
   locations,
   taglibrary,
   router,
+  locationIndex
 });
 
 export default rootReducer;

@@ -35,7 +35,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
-import { Typography } from '@material-ui/core';
+import Typography from '@material-ui/core/Typography';
 import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
 import i18n from '../../services/i18n';
 // import { extractContainingDirectoryPath } from '../../utils/paths';
@@ -152,7 +152,7 @@ class MoveCopyFilesDialog extends React.Component<Props, State> {
           onChange={e => this.handleInputChange(e)}
           value={this.state.targetPath}
           endAdornment={
-            PlatformIO.haveObjectStoreSupport() ? undefined :
+            PlatformIO.haveObjectStoreSupport() || AppConfig.isWeb ? undefined :
               (<InputAdornment position="end" style={{ height: 33 }}>
                 <IconButton
                   data-tid="openDirectoryMoveCopyDialog"

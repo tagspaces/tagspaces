@@ -24,9 +24,10 @@ import { HotKeys } from 'react-hotkeys';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import EditIcon from '@material-ui/icons/Edit';
-import moment from 'moment';
+import uuidv1 from 'uuid';
 import SaveIcon from '@material-ui/icons/Save';
 import CloseIcon from '@material-ui/icons/Close';
+import BackIcon from '@material-ui/icons/RemoveRedEye';
 import FullScreenIcon from '@material-ui/icons/ZoomOutMap';
 import OpenNativelyIcon from '@material-ui/icons/Launch';
 import ArrowLeftIcon from '@material-ui/icons/KeyboardArrowLeft';
@@ -175,12 +176,14 @@ type State = {
   entryProps?: Object | null,
   editingSupported?: boolean,
   isSaveBeforeCloseConfirmDialogOpened?: boolean,
+  isSaveBeforeReloadConfirmDialogOpened?: boolean,
   openedSplitSize?: number,
   isEditTagsModalOpened?: boolean,
   selectedItem?: Object,
   isDeleteEntryModalOpened?: boolean,
   shouldCopyFile?: boolean,
-  entryPropertiesSplitSize?: number
+  entryPropertiesSplitSize?: number,
+  EntryPropertiesKey: string
 };
 
 class EntryContainer extends React.Component<Props, State> {
@@ -189,13 +192,15 @@ class EntryContainer extends React.Component<Props, State> {
     isFullscreen: false,
     editingSupported: false,
     isSaveBeforeCloseConfirmDialogOpened: false,
+    isSaveBeforeReloadConfirmDialogOpened: false,
     openedSplitSize,
     isEditTagsModalOpened: false,
     isDeleteEntryModalOpened: false,
     currentEntry: null,
     selectedItem: {},
     shouldCopyFile: false,
-    entryPropertiesSplitSize: 0
+    entryPropertiesSplitSize: 0,
+    EntryPropertiesKey: uuidv1()
   };
 
   componentDidMount() {
@@ -334,6 +339,9 @@ class EntryContainer extends React.Component<Props, State> {
     case 'saveDocument':
       this.startSavingFile();
       break;
+    case 'editDocument':
+      this.editFile();
+      break;
     case 'playbackEnded':
       this.props.openFile(this.props.getNextFile(this.state.currentEntry.path));
       break;
@@ -409,11 +417,35 @@ class EntryContainer extends React.Component<Props, State> {
   };
 
   reloadDocument = () => {
-    const { currentEntry } = this.state;
+    if (
+      this.state.currentEntry &&
+      this.state.currentEntry.changed
+    ) {
+      this.setState({ isSaveBeforeReloadConfirmDialogOpened: true });
+      return true;
+    }
     this.setState({
       currentEntry: {
-        ...currentEntry,
-        shouldReload: true
+        ...this.state.currentEntry,
+        shouldReload: true,
+        editMode: false
+      }
+    });
+  }
+
+  cancelEditing = () => {
+    if (
+      this.state.currentEntry &&
+      this.state.currentEntry.changed
+    ) {
+      this.props.showNotification(i18n.t('core:currentlyFileChangedSaveOrClose'));
+      return true;
+    }
+    this.setState({
+      currentEntry: {
+        ...this.state.currentEntry,
+        shouldReload: true,
+        editMode: false
       }
     });
   }
@@ -630,16 +662,13 @@ class EntryContainer extends React.Component<Props, State> {
           aria-label={i18n.t('core:downloadFile')}
           onClick={() => {
             const { currentEntry } = this.state;
-            const date = new Date();
             const downloadLink = document.getElementById('downloadFile');
             const entryName = `${baseName(currentEntry.path)}`;
-            const fileExtension = extractFileExtension(entryName);
             const fileName = extractFileNameWithoutExt(entryName);
-            const modifiedEntryName = `${fileName}_${moment(date).format('YYYYMMDD')}~${moment(date).format('hhmmss')}.${fileExtension}`;
 
             if (downloadLink) {
               if (AppConfig.isWeb) {
-                const link = `${location.protocol}//${location.hostname}${location.port !== '' ? `:${location.port}` : ''}${modifiedEntryName}`;
+                const link = `${location.protocol}//${location.hostname}${location.port !== '' ? `:${location.port}` : ''}/${currentEntry.path}`;
                 downloadLink.setAttribute('href', link);
               } else {
                 downloadLink.setAttribute('href', `file:///${currentEntry.path}`);
@@ -776,6 +805,12 @@ class EntryContainer extends React.Component<Props, State> {
     reloadDocument: this.reloadDocument,
   };
 
+  resetState = (key) => {
+    this.setState({
+      [key]: uuidv1()
+    });
+  };
+
   render() {
     const { classes } = this.props;
     const { isEditTagsModalOpened, currentEntry, isFullscreen } = this.state;
@@ -840,6 +875,31 @@ class EntryContainer extends React.Component<Props, State> {
               this.closeFile();
               this.setState({ isSaveBeforeCloseConfirmDialogOpened: false });
             }
+          }}
+          cancelDialogTID={'cancelSaveBeforeCloseDialog'}
+          confirmDialogTID={'confirmSaveBeforeCloseDialog'}
+          confirmDialogContent={'confirmDialogContent'}
+        />
+        <ConfirmDialog
+          open={this.state.isSaveBeforeReloadConfirmDialogOpened}
+          onClose={() => {
+            this.setState({ isSaveBeforeReloadConfirmDialogOpened: false });
+          }}
+          title={i18n.t('core:confirm')}
+          content={'File was modified, do you want to save the changes?'}
+          confirmCallback={result => {
+            if (result) {
+              this.startSavingFile();
+            }
+            this.setState({
+              isSaveBeforeReloadConfirmDialogOpened: false,
+              currentEntry: {
+                ...this.state.currentEntry,
+                shouldReload: true,
+                editMode: false,
+                changed: false
+              }
+            });
           }}
           cancelDialogTID={'cancelSaveBeforeCloseDialog'}
           confirmDialogTID={'confirmSaveBeforeCloseDialog'}
@@ -930,35 +990,64 @@ class EntryContainer extends React.Component<Props, State> {
                   )}
                 </div>
                 {(this.state.editingSupported && currentEntry.editMode) && (
-                  <IconButton
-                    disabled={false}
-                    onClick={this.startSavingFile}
-                    title={i18n.t('core:saveFile')}
-                    aria-label={i18n.t('core:saveFile')}
-                    data-tid="fileContainerSaveFile"
-                  >
-                    <SaveIcon />
-                  </IconButton>
+                  <div>
+                    <IconButton
+                      disabled={false}
+                      onClick={this.startSavingFile}
+                      title={i18n.t('core:saveFile')}
+                      aria-label={i18n.t('core:saveFile')}
+                      data-tid="fileContainerSaveFile"
+                    >
+                      <SaveIcon />
+                    </IconButton>
+                    <IconButton
+                      onClick={this.reloadDocument}
+                      title="Preview"
+                      aria-label={i18n.t('core:cancelEditing')}
+                    >
+                      <BackIcon />
+                    </IconButton>
+                    <IconButton
+                      onClick={this.startClosingFile}
+                      title={i18n.t('core:closeEntry')}
+                      aria-label={i18n.t('core:closeEntry')}
+                      data-tid="fileContainerCloseOpenedFile"
+                    >
+                      <CloseIcon />
+                    </IconButton>
+                  </div>
                 )}
                 {(this.state.editingSupported && !currentEntry.editMode) && (
+                  <div>
+                    <IconButton
+                      disabled={false}
+                      onClick={this.editFile}
+                      title={i18n.t('core:editFile')}
+                      aria-label={i18n.t('core:editFile')}
+                      data-tid="fileContainerEditFile"
+                    >
+                      <EditIcon />
+                    </IconButton>
+                    <IconButton
+                      onClick={this.startClosingFile}
+                      title={i18n.t('core:closeEntry')}
+                      aria-label={i18n.t('core:closeEntry')}
+                      data-tid="fileContainerCloseOpenedFile"
+                    >
+                      <CloseIcon />
+                    </IconButton>
+                  </div>
+                )}
+                {(!this.state.editingSupported) && (
                   <IconButton
-                    disabled={false}
-                    onClick={this.editFile}
-                    title={i18n.t('core:editFile')}
-                    aria-label={i18n.t('core:editFile')}
-                    data-tid="fileContainerEditFile"
+                    onClick={this.startClosingFile}
+                    title={i18n.t('core:closeEntry')}
+                    aria-label={i18n.t('core:closeEntry')}
+                    data-tid="fileContainerCloseOpenedFile"
                   >
-                    <EditIcon />
+                    <CloseIcon />
                   </IconButton>
                 )}
-                <IconButton
-                  onClick={this.startClosingFile}
-                  title={i18n.t('core:closeEntry')}
-                  aria-label={i18n.t('core:closeEntry')}
-                  data-tid="fileContainerCloseOpenedFile"
-                >
-                  <CloseIcon />
-                </IconButton>
               </div>
               <div className={classes.entryProperties}>
                 { currentEntry.isFile ?
@@ -966,6 +1055,8 @@ class EntryContainer extends React.Component<Props, State> {
                 }
                 <div style={{ overflowY: AppConfig.isFirefox ? 'auto' : 'overlay', maxHeight: '100%' }}>
                   <EntryProperties
+                    key={this.state.EntryPropertiesKey}
+                    resetState={this.resetState}
                     entryPath={currentEntry.path}
                     shouldReload={currentEntry.shouldReload}
                     addTags={this.props.addTags}

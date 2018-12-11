@@ -49,13 +49,16 @@ import {
 import {
   actions as AppActions,
   getNotificationStatus,
+  isGeneratingThumbs,
   isFileOpened,
   // isFileDragged,
   isEntryInFullWidth,
   isUpdateAvailable,
-  isIndexing, getDirectoryPath
+  getDirectoryPath
 } from '../reducers/app';
+import { actions as LocationIndexActions, isIndexing } from '../reducers/location-index';
 import { buffer } from '../utils/misc';
+import { normalizePath } from '../utils/paths';
 import TargetFileBox from '../components/TargetFileBox';
 import PlatformIO from '../services/platform-io';
 import AppConfig from '../config';
@@ -105,6 +108,7 @@ type Props = {
   isFileOpened: boolean,
   // isFileDragged: boolean,
   isIndexing: boolean,
+  isGeneratingThumbs: boolean,
   isEntryInFullWidth: boolean,
   classes: Object,
   notificationStatus: Object,
@@ -286,8 +290,10 @@ class MainPage extends Component<Props, State> {
       } else {
         files.map(file => { // TODO move this in reducer -> look at DirectoryMenu handleFileInputChange
           let filePath;
+          let fileName = '';
           try {
-            filePath = this.props.directoryPath + AppConfig.dirSeparator + decodeURIComponent(file.name);
+            fileName = decodeURIComponent(file.name);
+            filePath = normalizePath(this.props.directoryPath) + AppConfig.dirSeparator + fileName;
           } catch (err) {
             console.warn('Error decoding filename: ' + file.name + ' , skipping this file.');
           }
@@ -312,18 +318,17 @@ class MainPage extends Component<Props, State> {
             )
               .then(() => {
                 this.props.showNotification(
-                  'File ' + filePath + ' successfully imported.',
+                  'File ' + fileName + '  imported as ' + filePath,
                   'default',
                   true
                 );
                 this.props.reflectCreateEntry(filePath, true);
+                // this.props.openFile(filePath);
                 return true;
               })
-              .catch(error => {
-              // TODO showAlertDialog("Saving " + filePath + " failed.");
-                console.error('Save to file ' + filePath + ' failed ' + error);
+              .catch(() => {
                 this.props.showNotification(
-                  'Importing file ' + filePath + ' failed.',
+                  'Importing file ' + fileName + ' failed.',
                   'error',
                   true
                 );
@@ -468,6 +473,21 @@ class MainPage extends Component<Props, State> {
           />
           <Snackbar
             anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+            open={this.props.isGeneratingThumbs}
+            autoHideDuration={undefined}
+            message={'Loading or generating thumbnails...'}
+            action={[
+              // <Button
+              //   color="secondary"
+              //   size="small"
+              //   onClick={this.props.cancelDirectoryIndexing}
+              // >
+              // Cancel indexing
+              // </Button>
+            ]}
+          />
+          <Snackbar
+            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
             open={this.props.isIndexing}
             autoHideDuration={undefined}
             message={'Indexing'}
@@ -519,6 +539,7 @@ class MainPage extends Component<Props, State> {
 function mapStateToProps(state) {
   return {
     isIndexing: isIndexing(state),
+    isGeneratingThumbs: isGeneratingThumbs(state),
     isFileOpened: isFileOpened(state),
     // isFileDragged: isFileDragged(state),
     isEntryInFullWidth: isEntryInFullWidth(state),
@@ -537,7 +558,7 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators({
     // setFileDragged: AppActions.setFileDragged,
     hideNotifications: AppActions.hideNotifications,
-    cancelDirectoryIndexing: AppActions.cancelDirectoryIndexing,
+    cancelDirectoryIndexing: LocationIndexActions.cancelDirectoryIndexing,
     saveFile: AppActions.saveFile,
     setZoomResetApp: SettingsActions.setZoomResetApp,
     setZoomInApp: SettingsActions.setZoomInApp,

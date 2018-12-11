@@ -25,7 +25,8 @@ import {
   extractTitle,
   extractContainingDirectoryPath,
   getMetaFileLocationForFile,
-  getThumbFileLocationForFile
+  getThumbFileLocationForFile,
+  normalizePath
 } from '../utils/paths';
 import {
 
@@ -52,7 +53,7 @@ const actions = {
     }); */
     const moveJobs = [];
     paths.map((path) => {
-      moveJobs.push([path, targetPath + AppConfig.dirSeparator + extractFileName(path)]);
+      moveJobs.push([path, normalizePath(targetPath) + AppConfig.dirSeparator + extractFileName(path)]);
       return true;
     });
     renameFilesPromise(moveJobs).then(() => {
@@ -81,7 +82,7 @@ const actions = {
   ) => {
     const copyJobs = [];
     paths.map((path) => {
-      copyJobs.push([path, targetPath + AppConfig.dirSeparator + extractFileName(path)]);
+      copyJobs.push([path, normalizePath(targetPath) + AppConfig.dirSeparator + extractFileName(path)]);
       return true;
     });
     copyFilesPromise(copyJobs).then(() => {

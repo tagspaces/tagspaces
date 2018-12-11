@@ -129,7 +129,7 @@ class DirectoryMenu extends React.Component<Props, State> {
 
   showInFileManager = () => {
     this.props.onClose();
-    this.props.openFileNatively(this.props.directoryPath);
+    this.props.openFileNatively(this.props.directoryPath); // TODO use openDirectory
   };
 
   showContainingFolderInFileManager = () => {
@@ -283,20 +283,18 @@ class DirectoryMenu extends React.Component<Props, State> {
               <ListItemText inset primary={i18n.t('core:deleteDirectory')} />
             </MenuItem>
           )}
-          {!this.props.perspectiveMode && (
-            <MenuItem
-              data-tid="openDirectoryNatively"
-              onClick={this.showInFileManager}
-            >
-              <ListItemIcon>
-                <OpenFolderNativelyIcon />
-              </ListItemIcon>
-              <ListItemText
-                inset
-                primary={i18n.t('core:openDirectoryNatively')}
-              />
-            </MenuItem>
-          )}
+          <MenuItem
+            data-tid="openDirectoryNatively"
+            onClick={this.showInFileManager}
+          >
+            <ListItemIcon>
+              <OpenFolderNativelyIcon />
+            </ListItemIcon>
+            <ListItemText
+              inset
+              primary={i18n.t('core:openDirectoryNatively')}
+            />
+          </MenuItem>
           {!this.props.perspectiveMode && (
             <Divider />
           )}

@@ -126,13 +126,21 @@ export function extractParentDirectoryPath(dirPath: string, dirSeparator: string
   return dirPath.substring(0, dirPath.lastIndexOf(dirSeparator));
 }
 
-export function extractDirectoryName(dirPath: string) {
+export function extractDirectoryName(dirPath: string, dirSeparator: string = AppConfig.dirSeparator) {
   let directoryName;
-  if (dirPath.endsWith(AppConfig.dirSeparator)) {
-    directoryName = dirPath.substring(0, dirPath.lastIndexOf(AppConfig.dirSeparator));
+  if (dirPath.endsWith(dirSeparator)) {
+    directoryName = dirPath.substring(0, dirPath.lastIndexOf(dirSeparator));
   }
-  directoryName = dirPath.substring(dirPath.lastIndexOf(AppConfig.dirSeparator) + 1, dirPath.length);
+  directoryName = dirPath.substring(dirPath.lastIndexOf(dirSeparator) + 1, dirPath.length);
   return directoryName;
+}
+
+export function extractShortDirectoryName(dirPath: string, dirSeparator: string = AppConfig.dirSeparator) {
+  let shortDirName = extractDirectoryName(dirPath, dirSeparator);
+  if (shortDirName.length > 20) {
+    shortDirName = shortDirName.substr(0, 20) + '...';
+  }
+  return shortDirName;
 }
 
 export function extractContainingDirectoryName(filePath: string) {

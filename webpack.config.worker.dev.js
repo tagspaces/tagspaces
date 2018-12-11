@@ -16,6 +16,11 @@ export default merge.smart(baseConfig, {
 
   entry: ['./app/splash-worker.js'],
 
+  optimization: {
+    // We no not want to minimize our code.
+    minimize: false
+  },
+
   output: {
     filename: 'electron-worker.js',
     path: path.join(__dirname, 'app/dist'),

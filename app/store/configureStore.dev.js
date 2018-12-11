@@ -70,7 +70,7 @@ const configureStore = (initialState) => {
   const persistConfig = {
     key: 'dev',
     storage,
-    blacklist: ['app']
+    blacklist: ['app', 'locationIndex']
   };
 
   const persistedReducer = persistReducer(persistConfig, rootReducer);

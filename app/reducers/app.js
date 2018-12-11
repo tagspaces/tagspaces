@@ -18,13 +18,10 @@
  */
 
 import uuidv1 from 'uuid';
-import { type Location, getLocation, locationType } from './locations';
+import { type Location, locationType } from './locations';
 import PlatformIO from '../services/platform-io';
-import Search, { type SearchQuery } from '../services/search';
 import AppConfig from '../config';
 import {
-  type FileSystemEntry,
-  createDirectoryIndex,
   enhanceEntry,
   deleteFilesPromise,
   renameFilesPromise
@@ -43,7 +40,7 @@ import { sortByCriteria, formatDateTime4Tag } from '../utils/misc';
 import i18n from '../services/i18n';
 import { Pro } from '../pro';
 import { getThumbnailURLPromise } from '../services/thumbsgenerator';
-// import { getTagDelimiter } from './settings';
+import { actions as LocationIndexActions } from './location-index';
 
 export const types = {
   DEVICE_ONLINE: 'APP/DEVICE_ONLINE',
@@ -55,12 +52,6 @@ export const types = {
   LOAD_DIRECTORY_SUCCESS: 'APP/LOAD_DIRECTORY_SUCCESS',
   LOAD_DIRECTORY_FAILURE: 'APP/LOAD_DIRECTORY_FAILURE',
   CLEAR_DIRECTORY_CONTENT: 'APP/CLEAR_DIRECTORY_CONTENT',
-  INDEX_DIRECTORY: 'APP/INDEX_DIRECTORY',
-  INDEX_DIRECTORY_CLEAR: 'APP/INDEX_DIRECTORY_CLEAR',
-  INDEX_DIRECTORY_START: 'APP/INDEX_DIRECTORY_START',
-  INDEX_DIRECTORY_CANCEL: 'APP/INDEX_DIRECTORY_CANCEL',
-  INDEX_DIRECTORY_SUCCESS: 'APP/INDEX_DIRECTORY_SUCCESS',
-  INDEX_DIRECTORY_FAILURE: 'APP/INDEX_DIRECTORY_FAILURE',
   INDEX_DIRECTORY_SEARCH: 'APP/INDEX_DIRECTORY_SEARCH',
   OPEN_FILE: 'APP/OPEN_FILE',
   TOGGLE_ENTRY_FULLWIDTH: 'APP/TOGGLE_ENTRY_FULLWIDTH',
@@ -68,6 +59,7 @@ export const types = {
   UPDATE_THUMB_URL: 'APP/UPDATE_THUMB_URL',
   UPDATE_THUMB_URLS: 'APP/UPDATE_THUMB_URLS',
   SET_NOTIFICATION: 'APP/SET_NOTIFICATION',
+  SET_GENERATING_THUMBNAILS: 'APP/SET_GENERATING_THUMBNAILS',
   SET_NEW_VERSION_AVAILABLE: 'APP/SET_NEW_VERSION_AVAILABLE',
   SET_CURRENLOCATIONID: 'APP/SET_CURRENLOCATIONID',
   SET_LAST_SELECTED_ENTRY: 'APP/SET_LAST_SELECTED_ENTRY',
@@ -121,8 +113,6 @@ export const initialState = {
   currentLocationId: null,
   currentDirectoryPath: '',
   currentDirectoryEntries: [],
-  currentDirectoryIndex: [],
-  isIndexing: false,
   isReadOnlyMode: false,
   searchResults: [],
   notificationStatus: {
@@ -142,7 +132,8 @@ export const initialState = {
   createDirectoryDialogOpened: false,
   selectDirectoryDialogOpened: false,
   lastSelectedEntry: null,
-  isEntryInFullWidth: false
+  isEntryInFullWidth: false,
+  isGeneratingThumbs: false
 };
 
 // The state described here will not be persisted
@@ -177,24 +168,6 @@ export default (state: Object = initialState, action: Object) => {
       currentDirectoryPath: ''
     };
   }
-  case types.INDEX_DIRECTORY_START: {
-    return {
-      ...state,
-      currentDirectoryIndex: [],
-      isIndexing: true
-    };
-  }
-  case types.INDEX_DIRECTORY_CLEAR: {
-    return {
-      ...state,
-      currentDirectoryIndex: [],
-      isIndexing: false
-    };
-  }
-  case types.INDEX_DIRECTORY_CANCEL: {
-    window.walkCanceled = true;
-    return { ...state, isIndexing: false };
-  }
   case types.SET_CURRENLOCATIONID: {
     return {
       ...state,
@@ -207,22 +180,6 @@ export default (state: Object = initialState, action: Object) => {
     console.timeEnd('SET_LAST_SELECTED_ENTRY');
     return result; */
     return { ...state, lastSelectedEntry: action.entryPath };
-  }
-  case types.INDEX_DIRECTORY_SUCCESS: {
-    // return state; // uncomment to disable index in redux
-    return {
-      ...state,
-      currentDirectoryIndex: action.directoryIndex,
-      isIndexing: false
-    };
-  }
-  case types.INDEX_DIRECTORY_FAILURE: {
-    return {
-      ...state,
-      lastError: action.error,
-      currentDirectoryIndex: [],
-      isIndexing: false
-    };
   }
   case types.TOGGLE_ABOUT_DIALOG: {
     return { ...state, aboutDialogOpened: !state.aboutDialogOpened };
@@ -281,6 +238,12 @@ export default (state: Object = initialState, action: Object) => {
       }
     };
   }
+  case types.SET_GENERATING_THUMBNAILS: {
+    return {
+      ...state,
+      isGeneratingThumbs: action.isGeneratingThumbs
+    };
+  }
   case types.OPEN_FILE: {
     return {
       ...state,
@@ -327,7 +290,6 @@ export default (state: Object = initialState, action: Object) => {
   }
   case types.REFLECT_DELETE_ENTRY: {
     let indexForRemoving = -1;
-    let indexForRemovingInIndex = -1;
     let indexForRenamingInOpenedFiles = -1;
     // Updating entries in the current directory
     let openedFiles = state.openedFiles;
@@ -337,86 +299,57 @@ export default (state: Object = initialState, action: Object) => {
         openedFiles = []; // TODO extend for multiple files
       }
     });
-    state.currentDirectoryIndex.forEach((entry, index) => {
-      if (entry.path === action.path) { // TODO handle directory case, delete contained files and dirs
-        indexForRemovingInIndex = index;
-      }
-    });
     state.openedFiles.forEach((entry, index) => {
       if (entry.path === action.path) { // TODO handle directory case, update contained files and dirs too
         indexForRenamingInOpenedFiles = index;
       }
     });
     let directoryEntries = state.currentDirectoryEntries;
-    let directoryIndex = state.currentDirectoryIndex;
     if (indexForRemoving >= 0) {
       directoryEntries = [
         ...state.currentDirectoryEntries.slice(0, indexForRemoving),
         ...state.currentDirectoryEntries.slice(indexForRemoving + 1)
       ];
     }
-    if (indexForRemovingInIndex >= 0) {
-      directoryIndex = [
-        ...state.currentDirectoryIndex.slice(0, indexForRemovingInIndex),
-        ...state.currentDirectoryIndex.slice(indexForRemovingInIndex + 1)
-      ];
-    }
-    if (indexForRemovingInIndex >= 0 || indexForRemoving >= 0 || indexForRenamingInOpenedFiles >= 0) {
+    if (indexForRemoving >= 0 || indexForRenamingInOpenedFiles >= 0) {
       return {
         ...state,
         currentDirectoryEntries: directoryEntries,
-        currentDirectoryIndex: directoryIndex,
         openedFiles
       };
     }
     return state;
   }
   case types.REFLECT_CREATE_ENTRY: {
-    const newEntry: FileSystemEntry = {
-      uuid: uuidv1(),
-      name: extractFileName(action.path),
-      isFile: action.isFile,
-      extension: extractFileExtension(action.path),
-      description: '',
-      tags: [],
-      size: 0,
-      lmdt: (new Date()).getTime(),
-      path: action.path
-    };
     let currentDirectoryEntries = state.currentDirectoryEntries;
     // TODO Case changed current directory
-    if (state.currentDirectoryPath === action.path) {
+    if (state.currentDirectoryPath === action.newEntry.path) {
       // Reindex ??
     }
 
     // Workarround for double update caused by the watcher
     let entryAlreadyAdded = false;
     state.currentDirectoryEntries.forEach((entry) => {
-      if (entry.path === action.path) {
+      if (entry.path === action.newEntry.path) {
         entryAlreadyAdded = true;
       }
     });
     if (
       !entryAlreadyAdded &&
-      extractParentDirectoryPath(action.path) === state.currentDirectoryPath
+      extractParentDirectoryPath(action.newEntry.path).replace(/(^\/)|(\/$)/g, '') === state.currentDirectoryPath.replace(/(^\/)|(\/$)/g, '')
     ) {
       currentDirectoryEntries = [ // TODO evtl. apply sorting
         ...state.currentDirectoryEntries,
-        newEntry
+        action.newEntry
       ];
     }
     return {
       ...state,
-      currentDirectoryEntries,
-      currentDirectoryIndex: [
-        newEntry,
-        ...state.currentDirectoryIndex
-      ],
+      currentDirectoryEntries
     };
   }
   case types.REFLECT_RENAME_ENTRY: {
     let indexForRenaming = -1;
-    let indexForRenamingInIndex = -1;
     let indexForRenamingInOpenedFiles = -1;
     // Updating entries in the current directory
     state.currentDirectoryEntries.forEach((entry, index) => {
@@ -424,18 +357,12 @@ export default (state: Object = initialState, action: Object) => {
         indexForRenaming = index;
       }
     });
-    state.currentDirectoryIndex.forEach((entry, index) => {
-      if (entry.path === action.path) { // TODO handle directory case, update contained files and dirs too
-        indexForRenamingInIndex = index;
-      }
-    });
     state.openedFiles.forEach((entry, index) => {
       if (entry.path === action.path) { // TODO handle directory case, update contained files and dirs too
         indexForRenamingInOpenedFiles = index;
       }
     });
     let directoryEntries = state.currentDirectoryEntries;
-    let directoryIndex = state.currentDirectoryIndex;
     let openedFiles = state.openedFiles;
     if (indexForRenaming >= 0) {
       const updateEntry = {
@@ -455,24 +382,6 @@ export default (state: Object = initialState, action: Object) => {
         ...state.currentDirectoryEntries.slice(indexForRenaming + 1)
       ];
     }
-    if (indexForRenamingInIndex >= 0) {
-      const updateEntry = {
-        ...state.currentDirectoryIndex[indexForRenamingInIndex],
-        path: action.newPath, // TODO handle thumbPath
-        thumbPath: getThumbFileLocationForFile(action.newPath),
-        name: extractFileName(action.newPath),
-        extension: extractFileExtension(action.newPath),
-        tags: [
-          ...state.currentDirectoryEntries[indexForRenaming].tags.filter(tag => tag.type === 'sidecar'), // add only sidecar tags
-          ...extractTagsAsObjects(action.newPath) // , getTagDelimiter(state))
-        ]
-      };
-      directoryIndex = [
-        ...state.currentDirectoryIndex.slice(0, indexForRenamingInIndex),
-        updateEntry,
-        ...state.currentDirectoryIndex.slice(indexForRenamingInIndex + 1)
-      ];
-    }
     if (indexForRenamingInOpenedFiles >= 0) {
       const updateEntry = {
         ...state.openedFiles[indexForRenamingInOpenedFiles],
@@ -484,11 +393,10 @@ export default (state: Object = initialState, action: Object) => {
         ...state.openedFiles.slice(indexForRenamingInOpenedFiles + 1)
       ];
     }
-    if (indexForRenamingInIndex >= 0 || indexForRenaming >= 0 || indexForRenamingInOpenedFiles >= 0) {
+    if (indexForRenaming >= 0 || indexForRenamingInOpenedFiles >= 0) {
       return {
         ...state,
         currentDirectoryEntries: directoryEntries,
-        currentDirectoryIndex: directoryIndex,
         openedFiles
       };
     }
@@ -496,17 +404,11 @@ export default (state: Object = initialState, action: Object) => {
   }
   case types.REFLECT_UPDATE_SIDECARTAGS: {
     let indexForUpdating = -1;
-    let indexForUpdatingInIndex = -1;
     let indexForUpdatingInOpenedFiles = -1;
     // Updating entries in the current directory
     state.currentDirectoryEntries.forEach((entry, index) => {
       if (entry.path === action.path) {
         indexForUpdating = index;
-      }
-    });
-    state.currentDirectoryIndex.forEach((entry, index) => {
-      if (entry.path === action.path) {
-        indexForUpdatingInIndex = index;
       }
     });
     state.openedFiles.forEach((entry, index) => {
@@ -515,7 +417,6 @@ export default (state: Object = initialState, action: Object) => {
       }
     });
     let directoryEntries = state.currentDirectoryEntries;
-    let directoryIndex = state.currentDirectoryIndex;
     let openedFiles = state.openedFiles;
     if (indexForUpdating >= 0) {
       const updateEntry = {
@@ -531,20 +432,6 @@ export default (state: Object = initialState, action: Object) => {
         ...state.currentDirectoryEntries.slice(indexForUpdating + 1)
       ];
     }
-    if (indexForUpdatingInIndex >= 0) {
-      const updateEntry = {
-        ...state.currentDirectoryIndex[indexForUpdatingInIndex],
-        tags: [
-          ...state.currentDirectoryIndex[indexForUpdatingInIndex].tags.filter(tag => tag.type === 'plain'),
-          ...action.tags
-        ]
-      };
-      directoryIndex = [
-        ...state.currentDirectoryIndex.slice(0, indexForUpdatingInIndex),
-        updateEntry,
-        ...state.currentDirectoryIndex.slice(indexForUpdatingInIndex + 1)
-      ];
-    }
     if (indexForUpdatingInOpenedFiles >= 0) {
       const updateEntry = {
         ...state.openedFiles[indexForUpdatingInOpenedFiles],
@@ -556,11 +443,10 @@ export default (state: Object = initialState, action: Object) => {
         ...state.openedFiles.slice(indexForUpdatingInOpenedFiles + 1)
       ];
     }
-    if (indexForUpdatingInIndex >= 0 || indexForUpdating >= 0 || indexForUpdatingInOpenedFiles >= 0) {
+    if (indexForUpdating >= 0 || indexForUpdatingInOpenedFiles >= 0) {
       return {
         ...state,
         currentDirectoryEntries: directoryEntries,
-        currentDirectoryIndex: directoryIndex,
         openedFiles
       };
     }
@@ -649,9 +535,20 @@ export const actions = {
     console.time('listDirectoryPromise');
     const { settings } = getState();
     window.walkCanceled = false;
+    dispatch(actions.showNotification(i18n.t('core:loading'), 'info', false));
     PlatformIO.listDirectoryPromise(directoryPath, false)
       .then(results => {
         const metaDirectory = getMetaDirectoryPath(directoryPath);
+        // Case where current folder is a .ts folder
+        if (normalizePath(directoryPath).endsWith(AppConfig.metaFolder)) {
+          prepareDirectoryContent(
+            results,
+            directoryPath,
+            settings,
+            dispatch
+          );
+          return true;
+        }
         PlatformIO.getPropertiesPromise(metaDirectory)
           .then(stats => {
             if (stats && !stats.isFile) {
@@ -726,6 +623,15 @@ export const actions = {
   loadDirectorySuccess: (
     directoryPath: string,
     directoryContent: Array<Object>
+  ) => (
+    dispatch: (actions: Object) => void
+  ) => {
+    dispatch(actions.hideNotifications());
+    dispatch(actions.loadDirectorySuccessInt(directoryPath, directoryContent));
+  },
+  loadDirectorySuccessInt: (
+    directoryPath: string,
+    directoryContent: Array<Object>
   ) => ({
     type: types.LOAD_DIRECTORY_SUCCESS,
     directoryPath,
@@ -735,6 +641,7 @@ export const actions = {
     dispatch: (actions: Object) => void
   ) => {
     console.warn('Error loading directory: ' + error);
+    dispatch(actions.hideNotifications());
     dispatch(
       actions.showNotification('Error loading directory', 'warning', true)
     );
@@ -748,6 +655,10 @@ export const actions = {
   updateThumbnailUrls: (tmbURLs: Array<any>) => ({
     type: types.UPDATE_THUMB_URLS,
     tmbURLs
+  }),
+  setGeneratingThumbnails: (isGeneratingThumbs: boolean) => ({
+    type: types.SET_GENERATING_THUMBNAILS,
+    isGeneratingThumbs
   }),
   setLastSelectedEntry: (entryPath: string | null) => ({
     type: types.SET_LAST_SELECTED_ENTRY,
@@ -900,77 +811,68 @@ export const actions = {
         );
       });
   },
-  startDirectoryIndexing: () => ({ type: types.INDEX_DIRECTORY_START }),
-  cancelDirectoryIndexing: () => ({ type: types.INDEX_DIRECTORY_CANCEL }),
-  searchLocationIndexFinished: (searchResults: Array<Object> | []) => ({
+  updateSearchResults: (searchResults: Array<Object> | []) => ({
     type: types.INDEX_DIRECTORY_SEARCH,
     searchResults
   }),
-  searchLocationIndex: (searchQuery: SearchQuery) => (
-    dispatch: (actions: Object) => void,
-    getState: () => Object
-  ) => {
-    dispatch(actions.showNotification('Searching...', 'default', false));
-    setTimeout(() => { // Workarround used to show the start search notication
-      Search.searchLocationIndex(
-        getState().app.currentDirectoryIndex,
-        searchQuery
-      ).then((searchResults) => {
-        dispatch(actions.searchLocationIndexFinished(searchResults));
-        dispatch(actions.hideNotifications());
-        return true;
-      }).catch(() => {
-        dispatch(actions.searchLocationIndexFinished([]));
-        dispatch(actions.hideNotifications());
-        dispatch(actions.showNotification('Search failed.', 'warning', true));
-      });
-    }, 50);
-  },
   setCurrentLocationId: (locationId: string | null) => ({
     type: types.SET_CURRENLOCATIONID,
     locationId
   }),
-  openLocation: (locationId: string) => (
+  openLocationById: (locationId: string) => (
     dispatch: (actions: Object) => void,
     getState: () => Object
   ) => {
     const locations: Array<Location> = getState().locations;
-    const currentLocationId = getState().app;
-    if (Pro && Pro.Watcher) {
-      Pro.Watcher.stopWatching();
-    }
-
     locations.map(location => {
       if (location.uuid === locationId) {
-        if (location.type === locationType.TYPE_CLOUD) {
-          PlatformIO.enableObjectStoreSupport(location).then(() => {
-            dispatch(actions.showNotification('Connected to object store', 'default', true));
-            dispatch(actions.setReadOnlyMode(location.isReadOnly || false));
-            dispatch(actions.setCurrentLocationId(location.uuid));
-            dispatch(actions.loadDirectoryContent(location.paths[0]));
-            if (locationId !== currentLocationId) {
-              dispatch(actions.createDirectoryIndex(location.paths[0]));
-            }
-            return true;
-          }).catch(() => {
-            dispatch(actions.showNotification('Connection to object store failed!', 'warning', true));
-            PlatformIO.disableObjectStoreSupport();
-          });
-        } else { // if (location.type === locationType.TYPE_LOCAL) {
-          PlatformIO.disableObjectStoreSupport();
-          dispatch(actions.setReadOnlyMode(location.isReadOnly || false));
-          dispatch(actions.setCurrentLocationId(location.uuid));
-          dispatch(actions.loadDirectoryContent(location.paths[0]));
-          if (locationId !== currentLocationId) {
-            dispatch(actions.createDirectoryIndex(location.paths[0]));
-          }
-          if (Pro && Pro.Watcher && location.watchForChanges) {
-            Pro.Watcher.watchFolder(location.paths[0], dispatch, actions);
-          }
-        }
+        dispatch(actions.openLocation(location));
       }
       return true;
     });
+  },
+  openLocation: (location: Location) => (
+    dispatch: (actions: Object) => void,
+    getState: () => Object
+  ) => {
+    if (Pro && Pro.Watcher) {
+      Pro.Watcher.stopWatching();
+    }
+    const currentLocationId = getState().app;
+    if (location.type === locationType.TYPE_CLOUD) {
+      PlatformIO.enableObjectStoreSupport(location).then(() => {
+        dispatch(actions.showNotification('Connected to object store', 'default', true));
+        dispatch(actions.setReadOnlyMode(location.isReadOnly || false));
+        dispatch(actions.setCurrentLocationId(location.uuid));
+        dispatch(actions.loadDirectoryContent(location.paths[0]));
+        if (location.uuid !== currentLocationId) {
+          if (location.persistIndex) {
+            dispatch(LocationIndexActions.loadDirectoryIndex(location.paths[0]));
+          } else {
+            dispatch(LocationIndexActions.createDirectoryIndex(location.paths[0]));
+          }
+        }
+        return true;
+      }).catch(() => {
+        dispatch(actions.showNotification('Connection to object store failed!', 'warning', true));
+        PlatformIO.disableObjectStoreSupport();
+      });
+    } else { // if (location.type === locationType.TYPE_LOCAL) {
+      PlatformIO.disableObjectStoreSupport();
+      dispatch(actions.setReadOnlyMode(location.isReadOnly || false));
+      dispatch(actions.setCurrentLocationId(location.uuid));
+      dispatch(actions.loadDirectoryContent(location.paths[0]));
+      if (location.uuid !== currentLocationId) {
+        if (location.persistIndex) {
+          dispatch(LocationIndexActions.loadDirectoryIndex(location.paths[0]));
+        } else {
+          dispatch(LocationIndexActions.createDirectoryIndex(location.paths[0]));
+        }
+      }
+      if (Pro && Pro.Watcher && location.watchForChanges) {
+        Pro.Watcher.watchFolder(location.paths[0], dispatch, actions);
+      }
+    }
   },
   closeLocation: (locationId: string) => (
     dispatch: (actions: Object) => void,
@@ -984,7 +886,7 @@ export const actions = {
           // location needed evtl. to unwatch many loc. root folders if available
           dispatch(actions.setCurrentLocationId(null));
           dispatch(actions.clearDirectoryContent());
-          dispatch(actions.clearDirectoryIndex());
+          dispatch(LocationIndexActions.clearDirectoryIndex());
           if (Pro && Pro.Watcher) {
             Pro.Watcher.stopWatching();
           }
@@ -993,39 +895,8 @@ export const actions = {
       });
     }
   },
-  createDirectoryIndex: (directoryPath: string) => (
-    dispatch: (actions: Object) => void,
-    getState: () => Object
-  ) => {
-    const state = getState();
-    const currentLocation: Location = getLocation(state, state.app.currentLocationId);
-    dispatch(actions.startDirectoryIndexing());
-    createDirectoryIndex(directoryPath)
-      .then(directoryIndex => {
-        dispatch(actions.indexDirectorySuccess(directoryIndex));
-        if (Pro && currentLocation.persistIndex) {
-          Pro.Indexer.persistIndex(directoryPath, directoryIndex);
-        }
-        return true;
-      })
-      .catch(err => {
-        dispatch(actions.indexDirectoryFailure(err));
-        // dispatch(actions.startDirectoryIndexing());
-      });
-  },
-  clearDirectoryIndex: () => ({
-    type: types.INDEX_DIRECTORY_CLEAR
-  }),
   clearDirectoryContent: () => ({
     type: types.CLEAR_DIRECTORY_CONTENT
-  }),
-  indexDirectorySuccess: (directoryIndex: Array<Object>) => ({
-    type: types.INDEX_DIRECTORY_SUCCESS,
-    directoryIndex
-  }),
-  indexDirectoryFailure: (error: string) => ({
-    type: types.INDEX_DIRECTORY_FAILURE,
-    error
   }),
   showNotification: (
     text: string,
@@ -1138,25 +1009,59 @@ export const actions = {
     order
   }),
   closeAllFiles: () => ({ type: types.CLOSE_ALL_FILES }),
-  reflectDeleteEntry: (path: string) => ({
+  reflectDeleteEntryInt: (path: string) => ({
     type: types.REFLECT_DELETE_ENTRY,
     path
   }),
-  reflectCreateEntry: (path: string, isFile: boolean) => ({
+  reflectDeleteEntry: (path: string) => (
+    dispatch: (actions: Object) => void
+  ) => {
+    dispatch(actions.reflectDeleteEntryInt(path));
+    dispatch(LocationIndexActions.reflectDeleteEntry(path));
+  },
+  reflectCreateEntryInt: (newEntry) => ({
     type: types.REFLECT_CREATE_ENTRY,
-    path,
-    isFile
+    newEntry
   }),
-  reflectRenameEntry: (path: string, newPath: string) => ({
+  reflectCreateEntry: (path: string, isFile: boolean) => (
+    dispatch: (actions: Object) => void
+  ) => {
+    const newEntry = {
+      uuid: uuidv1(),
+      name: extractFileName(path),
+      isFile,
+      extension: extractFileExtension(path),
+      description: '',
+      tags: [],
+      size: 0,
+      lmdt: (new Date()).getTime(),
+      path
+    };
+    dispatch(actions.reflectCreateEntryInt(newEntry));
+    dispatch(LocationIndexActions.reflectCreateEntry(newEntry));
+  },
+  reflectRenameEntryInt: (path: string, newPath: string) => ({
     type: types.REFLECT_RENAME_ENTRY,
     path,
     newPath
   }),
-  reflectUpdateSidecarTags: (path: string, tags: Array<Tags>) => ({
+  reflectRenameEntry: (path: string, newPath: string) => (
+    dispatch: (actions: Object) => void
+  ) => {
+    dispatch(actions.reflectRenameEntryInt(path, newPath));
+    dispatch(LocationIndexActions.reflectRenameEntry(path, newPath));
+  },
+  reflectUpdateSidecarTagsInt: (path: string, tags: Array<Tags>) => ({
     type: types.REFLECT_UPDATE_SIDECARTAGS,
     path,
     tags
   }),
+  reflectUpdateSidecarTags: (path: string, tags: Array<Tags>) => (
+    dispatch: (actions: Object) => void
+  ) => {
+    dispatch(actions.reflectUpdateSidecarTagsInt(path, tags));
+    dispatch(LocationIndexActions.reflectUpdateSidecarTags(path, tags));
+  },
   deleteFile: (filePath: string) => (
     dispatch: (actions: Object) => void,
     getState: () => Object
@@ -1304,7 +1209,8 @@ function prepareDirectoryContent(
       }
       return true;
     });
-    dispatch(actions.hideNotifications());
+    dispatch(actions.setGeneratingThumbnails(false));
+    // dispatch(actions.hideNotifications());
     if (tmbURLs.length > 0) {
       dispatch(actions.updateThumbnailUrls(tmbURLs));
     }
@@ -1313,18 +1219,21 @@ function prepareDirectoryContent(
 
   function handleTmbGenerationFailed(error) {
     console.warn('Thumb generation failed: ' + error);
+    dispatch(actions.setGeneratingThumbnails(false));
     dispatch(actions.showNotification('Generating thumbnails failed', 'warning', true));
   }
 
   if (tmbGenerationPromises.length > 0) {
-    dispatch(actions.showNotification('Checking thumbnails', 'info', false));
+    dispatch(actions.setGeneratingThumbnails(true));
+    // dispatch(actions.showNotification('Checking thumbnails', 'info', false));
     Promise.all(tmbGenerationPromises)
       .then(handleTmbGenerationResults)
       .catch(handleTmbGenerationFailed);
   }
 
   if (tmbGenerationList.length > 0) {
-    dispatch(actions.showNotification('Checking thumbnails', 'info', false));
+    dispatch(actions.setGeneratingThumbnails(true));
+    // dispatch(actions.showNotification('Loading or generating thumbnails...', 'info', false));
     PlatformIO.createThumbnailsInWorker(tmbGenerationList)
       .then(handleTmbGenerationResults)
       .catch(handleTmbGenerationFailed);
@@ -1407,12 +1316,23 @@ export const getDirectoryContent = (state: Object) =>
   state.app.currentDirectoryEntries;
 export const getDirectoryPath = (state: Object) =>
   state.app.currentDirectoryPath;
+/* export const getPathCurrentLocation = (state: Object) => {
+  let pathCurrentLocation;
+  state.locations.map((location) => {
+    if (state.app.currentLocationId && location.uuid === state.app.currentLocationId) {
+      pathCurrentLocation = location.path[0];
+    }
+    return true;
+  });
+  return pathCurrentLocation;
+}; */
 export const isUpdateAvailable = (state: Object) => state.app.isUpdateAvailable;
 export const isUpdateInProgress = (state: Object) =>
   state.app.isUpdateInProgress;
 export const isOnline = (state: Object) => state.app.isOnline;
 export const getLastSelectedEntry = (state: Object) => state.app.lastSelectedEntry;
 export const isFileOpened = (state: Object) => state.app.openedFiles.length > 0;
+export const isGeneratingThumbs = (state: Object) => state.app.isGeneratingThumbs;
 // export const isFileDragged = (state: Object) => state.app.isFileDragged;
 export const isReadOnlyMode = (state: Object) => state.app.isReadOnlyMode;
 export const isAboutDialogOpened = (state: Object) => state.app.aboutDialogOpened;
@@ -1428,6 +1348,4 @@ export const getNotificationStatus = (state: Object) => state.app.notificationSt
 export const getSearchResults = (state: Object) => state.app.currentDirectoryEntries;
 export const getSearchResultCount = (state: Object) => state.app.currentDirectoryEntries.length;
 export const getCurrentLocationId = (state: Object) => state.app.currentLocationId;
-export const getIndexedEntriesCount = (state: Object) => state.app.currentDirectoryIndex.length;
 export const isEntryInFullWidth = (state: Object) => state.app.isEntryInFullWidth;
-export const isIndexing = (state: Object) => state.app.isIndexing;

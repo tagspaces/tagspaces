@@ -32,12 +32,26 @@ const licenseUrl = Pro ? './node_modules/@tagspaces/pro/EULA.txt' : './LICENSE.t
 
 type Props = {
   open: boolean,
+  fullScreen: boolean,
   onClose: () => void
 };
 
 type State = {
   license?: string
 };
+
+function printElem(elem) {
+  const printWin = window.open('', 'PRINT', 'height=400,width=600');
+  printWin.document.write('<html><head><title>License Agreement</title>');
+  printWin.document.write('</head><body >');
+  printWin.document.write(document.getElementById(elem).innerHTML);
+  printWin.document.write('</body></html>');
+  printWin.document.close(); // necessary for IE >= 10
+  printWin.focus(); // necessary for IE >= 10*/
+  printWin.print();
+  printWin.close();
+  return true;
+}
 
 class LicenseDialog extends React.Component<Props, State> {
   state = {
@@ -57,16 +71,33 @@ class LicenseDialog extends React.Component<Props, State> {
     });
   }
 
+  licenseElement;
+
+  printLicense = () => {
+    printElem(this.licenseElement);
+  }
+
   renderTitle = () => <DialogTitle>{i18n.t('core:license')}</DialogTitle>;
 
   renderContent = () => (
     <DialogContent style={{ overflowY: 'visible', overflowX: 'auto' }}>
-      <pre>{ this.state.license }</pre>
+      <pre
+        inputRef={(ref) => { this.licenseElement = ref; }}
+        style={{ whiteSpace: 'pre-wrap' }}
+      >
+        { this.state.license }
+      </pre>
     </DialogContent>
   );
 
   renderActions = () => (
     <DialogActions>
+      {/* <Button
+        onClick={this.printLicense}
+        color="primary"
+      >
+        {i18n.t('core:print')}
+      </Button> */}
       <Button
         data-tid="confirmLicenseDialog"
         onClick={this.props.onClose}
@@ -78,11 +109,16 @@ class LicenseDialog extends React.Component<Props, State> {
   );
 
   render() {
+    const {
+      fullScreen,
+      open,
+      onClose
+    } = this.props;
     return (
       <GenericDialog
-        open={this.props.open}
-        onClose={this.props.onClose}
-        // onEnterKey={(event) => onEnterKeyHandler(event, this.onConfirm)}
+        open={open}
+        onClose={onClose}
+        fullScreen={fullScreen}
         renderTitle={this.renderTitle}
         renderContent={this.renderContent}
         renderActions={this.renderActions}
