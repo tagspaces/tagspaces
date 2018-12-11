@@ -188,7 +188,7 @@ export function generateThumbnailPromise(
     return Pro.ThumbsGenerator.generateTextThumbnail(fileURL, maxSize);
   } else if (Pro && supportedContainers.indexOf(ext) >= 0) {
     if (fileSize && fileSize < maxFileSize) {
-      return Pro.ThumbsGenerator.generateZipContainerImageThumbnail(fileURL, maxSize);
+      return Pro.ThumbsGenerator.generateZipContainerImageThumbnail(fileURL, maxSize, supportedImgs);
     }
   } else if (Pro && supportedVideos.indexOf(ext) >= 0) {
     return Pro.ThumbsGenerator.generateVideoThumbnail(fileURL, maxSize);
