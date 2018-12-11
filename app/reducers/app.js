@@ -59,6 +59,7 @@ export const types = {
   UPDATE_THUMB_URL: 'APP/UPDATE_THUMB_URL',
   UPDATE_THUMB_URLS: 'APP/UPDATE_THUMB_URLS',
   SET_NOTIFICATION: 'APP/SET_NOTIFICATION',
+  SET_GENERATING_THUMBNAILS: 'APP/SET_GENERATING_THUMBNAILS',
   SET_NEW_VERSION_AVAILABLE: 'APP/SET_NEW_VERSION_AVAILABLE',
   SET_CURRENLOCATIONID: 'APP/SET_CURRENLOCATIONID',
   SET_LAST_SELECTED_ENTRY: 'APP/SET_LAST_SELECTED_ENTRY',
@@ -131,7 +132,8 @@ export const initialState = {
   createDirectoryDialogOpened: false,
   selectDirectoryDialogOpened: false,
   lastSelectedEntry: null,
-  isEntryInFullWidth: false
+  isEntryInFullWidth: false,
+  isGeneratingThumbs: false
 };
 
 // The state described here will not be persisted
@@ -234,6 +236,12 @@ export default (state: Object = initialState, action: Object) => {
         notificationType: action.notificationType,
         autohide: action.autohide
       }
+    };
+  }
+  case types.SET_GENERATING_THUMBNAILS: {
+    return {
+      ...state,
+      isGeneratingThumbs: action.isGeneratingThumbs
     };
   }
   case types.OPEN_FILE: {
@@ -618,7 +626,7 @@ export const actions = {
   ) => (
     dispatch: (actions: Object) => void
   ) => {
-    // dispatch(actions.hideNotifications()); // relaying on the tmb generation hiding
+    dispatch(actions.hideNotifications());
     dispatch(actions.loadDirectorySuccessInt(directoryPath, directoryContent));
   },
   loadDirectorySuccessInt: (
@@ -647,6 +655,10 @@ export const actions = {
   updateThumbnailUrls: (tmbURLs: Array<any>) => ({
     type: types.UPDATE_THUMB_URLS,
     tmbURLs
+  }),
+  setGeneratingThumbnails: (isGeneratingThumbs: boolean) => ({
+    type: types.SET_GENERATING_THUMBNAILS,
+    isGeneratingThumbs
   }),
   setLastSelectedEntry: (entryPath: string | null) => ({
     type: types.SET_LAST_SELECTED_ENTRY,
@@ -1197,7 +1209,8 @@ function prepareDirectoryContent(
       }
       return true;
     });
-    dispatch(actions.hideNotifications());
+    dispatch(actions.setGeneratingThumbnails(false));
+    // dispatch(actions.hideNotifications());
     if (tmbURLs.length > 0) {
       dispatch(actions.updateThumbnailUrls(tmbURLs));
     }
@@ -1206,18 +1219,21 @@ function prepareDirectoryContent(
 
   function handleTmbGenerationFailed(error) {
     console.warn('Thumb generation failed: ' + error);
+    dispatch(actions.setGeneratingThumbnails(false));
     dispatch(actions.showNotification('Generating thumbnails failed', 'warning', true));
   }
 
   if (tmbGenerationPromises.length > 0) {
-    dispatch(actions.showNotification('Checking thumbnails', 'info', false));
+    dispatch(actions.setGeneratingThumbnails(true));
+    // dispatch(actions.showNotification('Checking thumbnails', 'info', false));
     Promise.all(tmbGenerationPromises)
       .then(handleTmbGenerationResults)
       .catch(handleTmbGenerationFailed);
   }
 
   if (tmbGenerationList.length > 0) {
-    dispatch(actions.showNotification('Loading or generating thumbnails...', 'info', false));
+    dispatch(actions.setGeneratingThumbnails(true));
+    // dispatch(actions.showNotification('Loading or generating thumbnails...', 'info', false));
     PlatformIO.createThumbnailsInWorker(tmbGenerationList)
       .then(handleTmbGenerationResults)
       .catch(handleTmbGenerationFailed);
@@ -1316,6 +1332,7 @@ export const isUpdateInProgress = (state: Object) =>
 export const isOnline = (state: Object) => state.app.isOnline;
 export const getLastSelectedEntry = (state: Object) => state.app.lastSelectedEntry;
 export const isFileOpened = (state: Object) => state.app.openedFiles.length > 0;
+export const isGeneratingThumbs = (state: Object) => state.app.isGeneratingThumbs;
 // export const isFileDragged = (state: Object) => state.app.isFileDragged;
 export const isReadOnlyMode = (state: Object) => state.app.isReadOnlyMode;
 export const isAboutDialogOpened = (state: Object) => state.app.aboutDialogOpened;
