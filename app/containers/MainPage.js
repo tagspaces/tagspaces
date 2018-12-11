@@ -49,6 +49,7 @@ import {
 import {
   actions as AppActions,
   getNotificationStatus,
+  isGeneratingThumbs,
   isFileOpened,
   // isFileDragged,
   isEntryInFullWidth,
@@ -107,6 +108,7 @@ type Props = {
   isFileOpened: boolean,
   // isFileDragged: boolean,
   isIndexing: boolean,
+  isGeneratingThumbs: boolean,
   isEntryInFullWidth: boolean,
   classes: Object,
   notificationStatus: Object,
@@ -471,6 +473,21 @@ class MainPage extends Component<Props, State> {
           />
           <Snackbar
             anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+            open={this.props.isGeneratingThumbs}
+            autoHideDuration={undefined}
+            message={'Loading or generating thumbnails...'}
+            action={[
+              // <Button
+              //   color="secondary"
+              //   size="small"
+              //   onClick={this.props.cancelDirectoryIndexing}
+              // >
+              // Cancel indexing
+              // </Button>
+            ]}
+          />
+          <Snackbar
+            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
             open={this.props.isIndexing}
             autoHideDuration={undefined}
             message={'Indexing'}
@@ -522,6 +539,7 @@ class MainPage extends Component<Props, State> {
 function mapStateToProps(state) {
   return {
     isIndexing: isIndexing(state),
+    isGeneratingThumbs: isGeneratingThumbs(state),
     isFileOpened: isFileOpened(state),
     // isFileDragged: isFileDragged(state),
     isEntryInFullWidth: isEntryInFullWidth(state),

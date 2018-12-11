@@ -5,6 +5,12 @@ html, body, div, form, fieldset, legend, label
  padding: 0;
 }
 
+body
+{
+  overflow: hidden;
+  margin-top: 0;
+}
+
 table
 {
  border-collapse: collapse;

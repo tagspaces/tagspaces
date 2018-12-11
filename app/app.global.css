@@ -11,3 +11,7 @@
 div[tabindex="-1"]:focus {
   outline: 0;
 }
+
+.rc-table td {
+  border-bottom: 1px solid #e9e9e91a;
+}

@@ -59,31 +59,35 @@ class AboutDialog extends React.Component<Props, State> {
   state = {
     updateAvailable: false,
     newVersion: ''
-  }
+  };
 
   checkForUpdates = () => {
     if (this.state.updateAvailable) {
       PlatformIO.openUrl(AppConfig.downloadURL);
     } else {
-      getLastVersionPromise().then((lastVersion) => {
-        console.log('Last version on server: ' + lastVersion);
-        const cleanedLastVersion = semver.coerce(lastVersion);
-        // const cleanedCurrentVersion = '3.0.2'
-        const cleanedCurrentVersion = semver.coerce(versionMeta.version);
-        if (semver.valid(cleanedLastVersion) && semver.gt(cleanedLastVersion, cleanedCurrentVersion)) {
-          this.setState({
-            updateAvailable: true,
-            newVersion: cleanedLastVersion.version
-          });
-        }
-        // this.setState({ newVersion: '3.0.1' });
-        return true;
-      })
+      getLastVersionPromise()
+        .then(lastVersion => {
+          console.log('Last version on server: ' + lastVersion);
+          const cleanedLastVersion = semver.coerce(lastVersion);
+          // const cleanedCurrentVersion = '3.0.2'
+          const cleanedCurrentVersion = semver.coerce(versionMeta.version);
+          if (
+            semver.valid(cleanedLastVersion) &&
+            semver.gt(cleanedLastVersion, cleanedCurrentVersion)
+          ) {
+            this.setState({
+              updateAvailable: true,
+              newVersion: cleanedLastVersion.version
+            });
+          }
+          // this.setState({ newVersion: '3.0.1' });
+          return true;
+        })
         .catch(error => {
           console.warn('Error while checking for update: ' + error);
         });
     }
-  }
+  };
 
   renderTitle = () => <DialogTitle>{productName}</DialogTitle>;
 
@@ -94,36 +98,53 @@ class AboutDialog extends React.Component<Props, State> {
         src={LogoIcon}
         style={{ float: 'left', marginRight: 10, width: 120, height: 120 }}
       />
-      <Typography variant="subtitle1" title={'Build on: ' + versionMeta.buildTime}>Version: {versionMeta.version} / BuildID: {buildID}</Typography>
-      <br />
       <Typography
-        id="aboutContent"
-        variant="body1"
+        variant="subtitle1"
+        title={'Build on: ' + versionMeta.buildTime}
       >
-        <strong>{productName}</strong> is made possible by the TagSpaces(github.com/tagspaces) open source project
-        and other <Button onClick={this.props.toggleThirdPartyLibsDialog}>open source software</Button>.
+        Version: {versionMeta.version} / BuildID: {buildID}
+      </Typography>
+      <br />
+      <Typography id="aboutContent" variant="body1">
+        <strong>{productName}</strong> is made possible by the
+        TagSpaces(github.com/tagspaces) open source project and other{' '}
+        <Button onClick={this.props.toggleThirdPartyLibsDialog}>
+          open source software
+        </Button>
+        .
         <br />
-        {!Pro && (<span>This program is free software: you can redistribute it and/or modify
-        it under the terms of the GNU Affero General Public License (version 3) as
-        published by the Free Software Foundation.</span>)}
+        {!Pro && (
+          <span>
+            This program is free software: you can redistribute it and/or modify
+            it under the terms of the GNU Affero General Public License (version
+            3) as published by the Free Software Foundation.
+          </span>
+        )}
         <br />
-        This program is distributed in the hope that it will be useful,
-        but WITHOUT ANY WARRANTY; without even the implied warranty of
-        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-        License for more details.
-        <br /><br />
+        This program is distributed in the hope that it will be useful, but
+        WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the License for
+        more details.
+        <br />
+        <br />
         <Button
-          onClick={() => { PlatformIO.openUrl('https://www.tagspaces.org/about/imprint/'); }}
+          onClick={() => {
+            PlatformIO.openUrl('https://www.tagspaces.org/about/imprint/');
+          }}
         >
           Imprint
         </Button>
         <Button
-          onClick={() => { PlatformIO.openUrl('https://www.tagspaces.org/about/privacy/'); }}
+          onClick={() => {
+            PlatformIO.openUrl('https://www.tagspaces.org/about/privacy/');
+          }}
         >
           Privacy Policy
         </Button>
         <Button
-          onClick={() => { PlatformIO.openUrl('https://www.tagspaces.org/whatsnew/'); }}
+          onClick={() => {
+            PlatformIO.openUrl('https://www.tagspaces.org/whatsnew/');
+          }}
         >
           Changelog
         </Button>
@@ -141,7 +162,9 @@ class AboutDialog extends React.Component<Props, State> {
     let versionInfo = 'Check for updates';
     if (this.state.newVersion.length > 1) {
       if (this.state.updateAvailable) {
-        versionInfo = i18n.t('getNewVersion', { newVersion: this.state.newVersion });
+        versionInfo = i18n.t('getNewVersion', {
+          newVersion: this.state.newVersion
+        });
       } else {
         versionInfo = i18n.t('latestVersion', { productName });
       }
@@ -149,6 +172,18 @@ class AboutDialog extends React.Component<Props, State> {
 
     return (
       <DialogActions>
+        {!Pro && (
+          <Button
+            data-tid="checkForUpdates"
+            title={i18n.t('core:checkForNewVersion')}
+            onClick={() => {
+              PlatformIO.openUrl('https://www.tagspaces.org/products/');
+            }}
+            color="primary"
+          >
+            Upgrade to PRO
+          </Button>
+        )}
         <Button
           data-tid="checkForUpdates"
           title={i18n.t('core:checkForNewVersion')}
@@ -157,7 +192,7 @@ class AboutDialog extends React.Component<Props, State> {
         >
           {versionInfo}
         </Button>
-        { /* <Button
+        {/* <Button
           data-tid="openLicenseDialog"
           onClick={this.props.toggleLicenseDialog}
         >
@@ -168,7 +203,7 @@ class AboutDialog extends React.Component<Props, State> {
           onClick={this.props.toggleThirdPartyLibsDialog}
         >
           {i18n.t('core:thirdPartyLibs')}
-        </Button> */ }
+        </Button> */}
         <Button
           data-tid="closeAboutDialog"
           onClick={this.props.onClose}
@@ -181,11 +216,7 @@ class AboutDialog extends React.Component<Props, State> {
   };
 
   render() {
-    const {
-      fullScreen,
-      open,
-      onClose
-    } = this.props;
+    const { fullScreen, open, onClose } = this.props;
     return (
       <GenericDialog
         fullScreen={fullScreen}
