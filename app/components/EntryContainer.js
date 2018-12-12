@@ -364,8 +364,7 @@ class EntryContainer extends React.Component<Props, State> {
       // }
       PlatformIO.loadTextFilePromise(
         textFilePath,
-        data.preview ? data.preview : false,
-        this.state.currentEntry.isFile
+        data.preview ? data.preview : false
       )
         .then(content => {
           let fileDirectory = extractContainingDirectoryPath(

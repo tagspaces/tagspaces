@@ -178,11 +178,10 @@ export default class PlatformIO {
 
   static loadTextFilePromise = (
     filePath: string,
-    isPreview?: boolean,
-    isFile?: boolean
+    isPreview?: boolean
   ): Promise<any> => {
     if (objectStoreAPI) {
-      return objectStoreAPI.loadTextFilePromise(filePath, isPreview, isFile);
+      return objectStoreAPI.loadTextFilePromise(filePath, isPreview);
     }
     return nativeAPI.loadTextFilePromise(filePath, isPreview);
   };
