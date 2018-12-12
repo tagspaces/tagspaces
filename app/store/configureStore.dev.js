@@ -18,11 +18,10 @@
  */
 
 import { createStore, applyMiddleware, compose } from 'redux';
-import { persistStore, persistReducer } from 'redux-persist';
-import storage from 'redux-persist/lib/storage';
+import { persistStore } from 'redux-persist';
 import thunk from 'redux-thunk';
 import { createHashHistory } from 'history';
-import { routerMiddleware, routerActions, push } from 'react-router-redux';
+import { routerMiddleware, routerActions } from 'react-router-redux';
 import { createLogger } from 'redux-logger';
 import rootReducer from '../reducers';
 import onlineListener from '../services/onlineListener';
@@ -67,16 +66,8 @@ const configureStore = (initialState) => {
   // enhancers.push(autoRehydrate()); removed in v5
   const enhancer = composeEnhancers(...enhancers);
 
-  const persistConfig = {
-    key: 'dev',
-    storage,
-    blacklist: ['app', 'locationIndex']
-  };
-
-  const persistedReducer = persistReducer(persistConfig, rootReducer);
-
   // Create Store
-  const store = createStore(persistedReducer, initialState, enhancer);
+  const store = createStore(rootReducer, initialState, enhancer);
 
   onlineListener(store.dispatch);
 

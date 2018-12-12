@@ -18,8 +18,7 @@
  */
 
 import { compose, createStore, applyMiddleware } from 'redux';
-import { persistStore, persistReducer } from 'redux-persist';
-import storage from 'redux-persist/lib/storage';
+import { persistStore } from 'redux-persist';
 import thunk from 'redux-thunk';
 import { createBrowserHistory } from 'history';
 import { routerMiddleware } from 'react-router-redux';
@@ -34,14 +33,7 @@ const enhancer = compose(
 );
 
 function configureStore(initialState) {
-  const persistConfig = {
-    key: 'root',
-    storage,
-    blacklist: ['app', 'locationIndex']
-  };
-
-  const persistedReducer = persistReducer(persistConfig, rootReducer);
-  const store = createStore(persistedReducer, initialState, enhancer);
+  const store = createStore(rootReducer, initialState, enhancer);
   onlineListener(store.dispatch);
   const persistor = persistStore(store); /* , null, () => {
     document.dispatchEvent(new Event('storeLoaded'));
