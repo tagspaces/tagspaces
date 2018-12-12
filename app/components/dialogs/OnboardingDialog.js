@@ -39,6 +39,7 @@ import withMobileDialog from '@material-ui/core/withMobileDialog';
 import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
 import MobileStepper from '@material-ui/core/MobileStepper';
 import WelcomeImage from '../../assets/images/onboarding.jpg';
+import NavigationV3 from '../../assets/images/navigation-v3.png';
 import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import SwipeableViews from 'react-swipeable-views';
@@ -101,7 +102,9 @@ class OnboardingDialog extends React.Component<Props, State> {
     const { activeStep } = this.state;
 
     return (
-      <DialogContent style={{ height: 520, overflow: 'hidden' }}>
+      <DialogContent
+        style={{ height: 620, overflow: 'hidden', paddingBottom: 0 }}
+      >
         <SwipeableViews
           index={activeStep}
           onChangeIndex={this.handleStepChange}
@@ -109,7 +112,7 @@ class OnboardingDialog extends React.Component<Props, State> {
         >
           <div
             style={{
-              height: 450,
+              height: 550,
               padding: 5,
               overflow: 'hidden',
               textAlign: 'center'
@@ -118,22 +121,22 @@ class OnboardingDialog extends React.Component<Props, State> {
             <Typography variant="h4">Welcome to TagSpaces</Typography>
             <div
               style={{
-                backgroundImage:
-                  'linear-gradient(to right, #ffe000, #799f0c)',
+                backgroundImage: 'linear-gradient(to right, #ffe000, #799f0c)',
                 height: 100,
                 width: 550,
                 marginTop: 15,
                 position: 'relative'
               }}
             >
-              <span style={{
-                textAlign: 'left',
-                bottom: 0,
-                position: 'absolute',
-                fontSize: 25,
-                left: 5,
-                color: 'white'
-              }}
+              <span
+                style={{
+                  textAlign: 'left',
+                  bottom: 0,
+                  position: 'absolute',
+                  fontSize: 25,
+                  left: 5,
+                  color: 'white'
+                }}
               >
                 Your favorite file organizer has a fresh new look
               </span>
@@ -141,7 +144,7 @@ class OnboardingDialog extends React.Component<Props, State> {
           </div>
           <div
             style={{
-              height: 450,
+              height: 550,
               padding: 5,
               overflow: 'hidden',
               textAlign: 'center'
@@ -158,14 +161,15 @@ class OnboardingDialog extends React.Component<Props, State> {
                 position: 'relative'
               }}
             >
-              <span style={{
-                textAlign: 'left',
-                bottom: 0,
-                position: 'absolute',
-                fontSize: 25,
-                left: 5,
-                color: 'white'
-              }}
+              <span
+                style={{
+                  textAlign: 'left',
+                  bottom: 0,
+                  position: 'absolute',
+                  fontSize: 25,
+                  left: 5,
+                  color: 'white'
+                }}
               >
                 Choose your the default tagging method for files
               </span>
@@ -182,48 +186,57 @@ class OnboardingDialog extends React.Component<Props, State> {
                   control={
                     <Radio checked={!this.props.isPersistTagsInSidecar} />
                   }
-                  label="Use the name of file for saving the tags"
+                  label={
+                    <Typography variant="body2" style={{ textAlign: 'left' }}>
+                      Use the name of file for saving the tags - Tagging the
+                      file <strong>image.jpg</strong> with a tag{' '}
+                      <strong>sunset</strong> will rename it to{' '}
+                      <strong>image[sunset].jpg</strong>
+                    </Typography>
+                  }
                 />
-                <Typography variant="body2" style={{ textAlign: 'left' }}>
-                  Tagging the file <strong>image.jpg</strong> with a tag{' '}
-                  <strong>sunset</strong> will rename it to{' '}
-                  <strong>image[sunset].jpg</strong>
-                </Typography>
+
                 <FormControlLabel
                   style={{ marginTop: 20 }}
                   value="true"
                   control={
                     <Radio checked={this.props.isPersistTagsInSidecar} />
                   }
-                  label="Use sidecar file for saving the tags"
+                  label={
+                    <Typography variant="body2" style={{ textAlign: 'left' }}>
+                      Use sidecar file for saving the tags - Tagging the file{' '}
+                      <strong>image.jpg</strong> with a tag{' '}
+                      <strong>sunset</strong> will save this tag in an
+                      additional file called <strong>image.jpg.json</strong>{' '}
+                      located in a sub folder with the name <strong>.ts</strong>
+                    </Typography>
+                  }
                 />
-                <Typography variant="body2" style={{ textAlign: 'left' }}>
-                  Tagging the file <strong>image.jpg</strong> with a tag{' '}
-                  <strong>sunset</strong> will save this tag in an additional{' '}
-                  file called <strong>image.jpg.json</strong> located in a sub{' '}
-                  folder with the name <strong>.ts</strong>
-                </Typography>
               </RadioGroup>
             </FormControl>
           </div>
           <div
             style={{
-              height: 450,
+              height: 550,
               padding: 5,
               overflow: 'hidden',
               textAlign: 'center'
             }}
           >
             <Typography variant="h4">Meet our new navigation</Typography>
+            <img
+              style={{ maxHeight: 500, marginTop: 15 }}
+              src={NavigationV3}
+              alt=""
+            />
           </div>
           <div
             style={{
-              height: 450,
+              height: 550,
               padding: 5,
               overflow: 'hidden',
-              textAlign: 'center',
-              backgroundImage:
-                'linear-gradient( 109.6deg,  rgba(252,255,26,1) 34.9%, rgba(66,240,233,1) 82.5% )'
+              textAlign: 'center'
+              // backgroundImage: 'linear-gradient( 109.6deg,  rgba(252,255,26,1) 34.9%, rgba(66,240,233,1) 82.5% )'
             }}
           >
             <Typography variant="h4">And... you&apos;re done</Typography>
