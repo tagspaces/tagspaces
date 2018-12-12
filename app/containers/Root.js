@@ -24,9 +24,14 @@ import { ConnectedRouter } from 'react-router-redux';
 import Routes from '../routes';
 import LoadingScreen from '../components/LoadingScreen';
 import { actions as AppActions } from '../reducers/app';
-import { actions as SettingsActions, getCheckForUpdateOnStartup, isGlobalKeyBindingEnabled } from '../reducers/settings';
+import {
+  actions as SettingsActions,
+  getCheckForUpdateOnStartup,
+  isGlobalKeyBindingEnabled
+} from '../reducers/settings';
 import { getDefaultLocationId } from '../reducers/locations';
 import PlatformIO from '../services/platform-io';
+// import MainPage from './MainPage';
 import { getURLParameter } from '../utils/misc';
 
 type RootType = {
@@ -34,6 +39,28 @@ type RootType = {
   persistor: {},
   history: {}
 };
+
+function onBeforeLift(store) {
+  store.dispatch(SettingsActions.setZoomRestoreApp());
+  store.dispatch(SettingsActions.upgradeSettings()); // TODO call this only on app version update
+  const state = store.getState();
+  const defaultLocationId = getDefaultLocationId(state);
+  if (defaultLocationId && defaultLocationId.length > 0) {
+    store.dispatch(AppActions.openLocation(defaultLocationId));
+  }
+  if (getCheckForUpdateOnStartup(state)) {
+    store.dispatch(SettingsActions.checkForUpdate());
+  }
+  PlatformIO.setGlobalShortcuts(isGlobalKeyBindingEnabled(state));
+  const langURLParam = getURLParameter('locale');
+  if (
+    langURLParam &&
+    langURLParam.length > 1 &&
+    /^[a-zA-Z\-_]+$/.test('langURLParam')
+  ) {
+    store.dispatch(SettingsActions.setLanguage(langURLParam));
+  }
+}
 
 export default function Root({ store, persistor, history }: RootType) {
   return (
@@ -46,37 +73,13 @@ export default function Root({ store, persistor, history }: RootType) {
        * @see https://github.com/rt2zz/redux-persist/blob/master/docs/PersistGate.md
        */}
       <PersistGate
-        loading={null}
+        loading={<LoadingScreen />}
+        onBeforeLift={() => onBeforeLift(store)}
         persistor={persistor}
       >
-        {(bootstrapped) => {
-          if (bootstrapped) { // storeLoaded
-            // checkIsFirstRun();
-            store.dispatch(SettingsActions.setZoomRestoreApp());
-            store.dispatch(SettingsActions.upgradeSettings()); // TODO call this only on app version update
-            const state = store.getState();
-            const defaultLocationId = getDefaultLocationId(state);
-            if (defaultLocationId && defaultLocationId.length > 0) {
-              store.dispatch(AppActions.openLocation(defaultLocationId));
-            }
-            if (getCheckForUpdateOnStartup(state)) {
-              store.dispatch(SettingsActions.checkForUpdate());
-            }
-            PlatformIO.setGlobalShortcuts(isGlobalKeyBindingEnabled(state));
-
-            const langURLParam = getURLParameter('locale');
-            if (langURLParam && langURLParam.length > 1 && /^[a-zA-Z\-_]+$/.test('langURLParam')) {
-              store.dispatch(SettingsActions.setLanguage(langURLParam));
-            }
-            return (
-              <ConnectedRouter history={history}>
-                <Routes />
-              </ConnectedRouter>
-            );
-          }
-
-          return (<LoadingScreen />);
-        }}
+        <ConnectedRouter history={history}>
+          <Routes />
+        </ConnectedRouter>
       </PersistGate>
     </Provider>
   );
