@@ -94,7 +94,8 @@ const styles = theme => ({
   entryProperties: {
     display: 'inline',
     flex: '1 1 100%',
-    padding: '0 0 60px 0'
+    padding: '0 0 60px 0',
+    height: '50%'
   },
   fileOpener: {
     width: '100%',
@@ -1065,34 +1066,32 @@ class EntryContainer extends React.Component<Props, State> {
                 { currentEntry.isFile ?
                   this.renderFileToolbar(classes) : this.renderFolderToolbar()
                 }
-                <div style={{ overflowY: AppConfig.isFirefox ? 'auto' : 'overlay', maxHeight: '100%' }}>
-                  <EntryProperties
-                    key={this.state.EntryPropertiesKey}
-                    resetState={this.resetState}
-                    entryPath={currentEntry.path}
-                    shouldReload={currentEntry.shouldReload}
-                    addTags={this.props.addTags}
-                    renameFile={this.props.renameFile}
-                    renameDirectory={this.props.renameDirectory}
-                    removeTags={this.props.removeTags}
-                    editTagForEntry={this.props.editTagForEntry}
-                    settings={this.props.settings}
-                    deleteFile={this.props.deleteFile}
-                    showNotification={this.props.showNotification}
-                    shouldCopyFile={this.state.shouldCopyFile}
-                    normalizeShouldCopyFile={() => this.setState({ shouldCopyFile: false })}
-                    onEditTags={() => {
-                      const tags = extractTagsAsObjects(currentEntry.path, this.props.settings.tagDelimiter);
-                      this.setState({
-                        selectedItem: {
-                          ...currentEntry,
-                          tags
-                        },
-                        isEditTagsModalOpened: true
-                      });
-                    }}
-                  />
-                </div>
+                <EntryProperties
+                  key={this.state.EntryPropertiesKey}
+                  resetState={this.resetState}
+                  entryPath={currentEntry.path}
+                  shouldReload={currentEntry.shouldReload}
+                  addTags={this.props.addTags}
+                  renameFile={this.props.renameFile}
+                  renameDirectory={this.props.renameDirectory}
+                  removeTags={this.props.removeTags}
+                  editTagForEntry={this.props.editTagForEntry}
+                  settings={this.props.settings}
+                  deleteFile={this.props.deleteFile}
+                  showNotification={this.props.showNotification}
+                  shouldCopyFile={this.state.shouldCopyFile}
+                  normalizeShouldCopyFile={() => this.setState({ shouldCopyFile: false })}
+                  onEditTags={() => {
+                    const tags = extractTagsAsObjects(currentEntry.path, this.props.settings.tagDelimiter);
+                    this.setState({
+                      selectedItem: {
+                        ...currentEntry,
+                        tags
+                      },
+                      isEditTagsModalOpened: true
+                    });
+                  }}
+                />
               </div>
             </div>
           ) : <div>{i18n.t('core:noEntrySelected')}</div> }
