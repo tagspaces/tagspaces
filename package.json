@@ -228,7 +228,7 @@
     "react-split-pane": "^0.1.84",
     "react-swipeable-views": "^0.13.0",
     "redux": "^3.7.2",
-    "redux-persist": "^4.8.2",
+    "redux-persist": "^5.10.0",
     "redux-thunk": "^2.2.0",
     "remove-markdown": "^0.2.2",
     "semver": "^5.5.0",

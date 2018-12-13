@@ -65,7 +65,8 @@ export const types = {
   SET_LAST_PUBLISHED_VERSION: 'SETTINGS/SET_LAST_PUBLISHED_VERSION',
   SET_ENTRY_PROPERTIES_SPLIT_SIZE: 'SETTINGS/SET_ENTRY_PROPERTIES_SPLIT_SIZE',
   SET_MAIN_VSPLIT_SIZE: 'SETTINGS/SET_MAIN_VSPLIT_SIZE',
-  SET_LEFT_VSPLIT_SIZE: 'SETTINGS/SET_LEFT_VSPLIT_SIZE'
+  SET_LEFT_VSPLIT_SIZE: 'SETTINGS/SET_LEFT_VSPLIT_SIZE',
+  SET_FIRST_RUN: 'SETTINGS/SET_FIRST_RUN'
 };
 
 export default (state = defaultSettings, action) => {
@@ -118,6 +119,9 @@ export default (state = defaultSettings, action) => {
   }
   case types.SET_WATCHCURRENTDIRECTORY: {
     return { ...state, watchCurrentDirectory: action.watchCurrentDirectory };
+  }
+  case types.SET_FIRST_RUN: {
+    return { ...state, firstRun: action.firstRun };
   }
   case types.SET_LANGUAGE: {
     i18n.changeLanguage(action.language);
@@ -337,6 +341,10 @@ export const actions = {
     type: types.SET_LEFT_VSPLIT_SIZE,
     leftVerticalSplitSize
   }),
+  setFirstRun: (firstRun: boolean) => ({
+    type: types.SET_FIRST_RUN,
+    firstRun
+  }),
   upgradeSettings: () => ({
     type: types.UPGRADE_SETTINGS
   }),
@@ -425,6 +433,7 @@ export const getLeftVerticalSplitSize = (state: Object) => state.settings.leftVe
 export const getMainVerticalSplitSize = (state: Object) => state.settings.mainVerticalSplitSize;
 export const getTagDelimiter = (state: Object) => state.settings.tagDelimiter;
 export const getMaxSearchResults = (state: Object) => state.settings.maxSearchResult;
+export const isFirstRun = (state: Object) => state.settings.firstRun;
 
 function generateKeyBindingObject(keyBindings: Array<Object>) {
   const kbObject = {};

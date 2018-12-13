@@ -91,7 +91,7 @@ class GenericDialog extends React.Component<Props> {
         onClose={this.props.onClose}
         onKeyDown={onEnterKey || ((event) => onEnterKeyHandler(event, onClose))}
       >
-        {renderTitle ? renderTitle() : this.renderTitle()}
+        {renderTitle && renderTitle()}
         {renderContent ? renderContent() : this.renderContent()}
         {renderActions ? renderActions() : this.renderActions()}
       </Dialog>

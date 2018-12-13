@@ -1019,7 +1019,7 @@ class EntryContainer extends React.Component<Props, State> {
                 )}
                 {(this.state.editingSupported && !currentEntry.editMode) && (
                   <div>
-                    <IconButton
+                    {/* <IconButton
                       disabled={false}
                       onClick={this.editFile}
                       title={i18n.t('core:editFile')}
@@ -1027,7 +1027,19 @@ class EntryContainer extends React.Component<Props, State> {
                       data-tid="fileContainerEditFile"
                     >
                       <EditIcon />
-                    </IconButton>
+                    </IconButton> */}
+                    <Button
+                      disabled={false}
+                      size="small"
+                      variant="outlined"
+                      color="primary"
+                      onClick={this.editFile}
+                      title={i18n.t('core:editFile')}
+                      aria-label={i18n.t('core:editFile')}
+                      data-tid="fileContainerEditFile"
+                    >
+                      {i18n.t('core:edit')}
+                    </Button>
                     <IconButton
                       onClick={this.startClosingFile}
                       title={i18n.t('core:closeEntry')}

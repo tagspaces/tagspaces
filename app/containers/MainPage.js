@@ -31,14 +31,16 @@ import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import { HotKeys } from 'react-hotkeys';
 import HTML5Backend, { NativeTypes } from 'react-dnd-html5-backend';
-import LinearProgress from '@material-ui/core/LinearProgress';
+// import LinearProgress from '@material-ui/core/LinearProgress';
 import { DragDropContext } from 'react-dnd';
 import VerticalNavigation, {
   AppVerticalPanels
 } from '../components/VerticalNavigation';
+import OnboardingDialog from '../components/dialogs/OnboardingDialog';
 import FolderContainer from '../components/FolderContainer';
 import EntryContainer from '../components/EntryContainer';
 import {
+  isFirstRun,
   getDesktopMode,
   getKeyBindingObject,
   getLeftVerticalSplitSize,
@@ -114,6 +116,8 @@ type Props = {
   notificationStatus: Object,
   lastPublishedVersion: string,
   isUpdateAvailable: boolean,
+  isFirstRun: boolean,
+  setFirstRun: (isFirstRun: boolean) => void,
   hideNotifications: () => void,
   cancelDirectoryIndexing: () => void,
   setUpdateAvailable: (isUpdateAvailable: boolean) => void,
@@ -224,6 +228,10 @@ class MainPage extends Component<Props, State> {
   toggleSearch = () => {
     this.setState({ shouldTogglePanel: AppVerticalPanels.search });
   };
+
+  toggleOnboarding = () => {
+    this.props.setFirstRun(!this.props.isFirstRun);
+  }
 
   updateDimensions = () => {
     const width =
@@ -530,6 +538,10 @@ class MainPage extends Component<Props, State> {
               </Button>,
             ]}
           />
+          <OnboardingDialog
+            open={this.props.isFirstRun}
+            onClose={this.toggleOnboarding}
+          />
         </TargetFileBox>
       </HotKeys>
     );
@@ -539,6 +551,7 @@ class MainPage extends Component<Props, State> {
 function mapStateToProps(state) {
   return {
     isIndexing: isIndexing(state),
+    isFirstRun: isFirstRun(state),
     isGeneratingThumbs: isGeneratingThumbs(state),
     isFileOpened: isFileOpened(state),
     // isFileDragged: isFileDragged(state),
@@ -580,7 +593,8 @@ function mapDispatchToProps(dispatch) {
     setLeftVerticalSplitSize: SettingsActions.setLeftVerticalSplitSize,
     setMainVerticalSplitSize: SettingsActions.setMainVerticalSplitSize,
     showNotification: AppActions.showNotification,
-    reflectCreateEntry: AppActions.reflectCreateEntry
+    reflectCreateEntry: AppActions.reflectCreateEntry,
+    setFirstRun: SettingsActions.setFirstRun,
   }, dispatch);
 }
 
