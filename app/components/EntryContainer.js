@@ -935,14 +935,14 @@ class EntryContainer extends React.Component<Props, State> {
         <SplitPane
           split="horizontal"
           resizerStyle={{ backgroundColor: this.props.theme.palette.divider }}
-          size={this.state.entryPropertiesSplitSize}
-          minSize={defaultSplitSize}
-          maxSize={fullSplitSize}
-          defaultSize={this.state.entryPropertiesSplitSize}
-          // size={(currentEntry && currentEntry.isFile) ? this.state.entryPropertiesSplitSize : '100%'}
-          // minSize={(currentEntry && currentEntry.isFile) ? defaultSplitSize : '100%'}
-          // maxSize={(currentEntry && currentEntry.isFile) ? fullSplitSize : '100%'}
-          // defaultSize={(currentEntry && currentEntry.isFile) ? this.state.entryPropertiesSplitSize : '100%'}
+          // size={this.state.entryPropertiesSplitSize}
+          // minSize={defaultSplitSize}
+          // maxSize={fullSplitSize}
+          // defaultSize={this.state.entryPropertiesSplitSize}
+          size={(currentEntry && currentEntry.isFile) ? this.state.entryPropertiesSplitSize : '100%'}
+          minSize={(currentEntry && currentEntry.isFile) ? defaultSplitSize : '100%'}
+          maxSize={(currentEntry && currentEntry.isFile) ? fullSplitSize : '100%'}
+          defaultSize={(currentEntry && currentEntry.isFile) ? this.state.entryPropertiesSplitSize : '100%'}
           onChange={size => {
             this.setState({
               isPropertiesPanelVisible: size > defaultSplitSize,

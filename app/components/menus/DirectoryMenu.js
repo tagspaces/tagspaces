@@ -325,7 +325,7 @@ class DirectoryMenu extends React.Component<Props, State> {
               <ListItemText inset primary={i18n.t('core:showAddFileDialog')} />
             </MenuItem>
           )}
-          {!this.props.perspectiveMode && (
+          {/* {!this.props.perspectiveMode && (
             <Divider />
           )}
           <MenuItem data-tid="showProperties" onClick={this.showProperties}>
@@ -336,7 +336,7 @@ class DirectoryMenu extends React.Component<Props, State> {
               inset
               primary={i18n.t('core:directoryPropertiesTitle')}
             />
-          </MenuItem>
+          </MenuItem> */}
         </Menu>
         <input
           style={{ display: 'none' }}
