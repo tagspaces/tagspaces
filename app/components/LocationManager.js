@@ -503,7 +503,7 @@ class LocationManager extends React.Component<Props, State> {
   onRowClick = (subDir) => {
     this.loadSubDirectories(subDir, 1);
     this.props.loadDirectoryContent(subDir.path);
-    this.props.openFile(subDir.path);
+    // this.props.openFile(subDir.path);
   };
 
   /**
