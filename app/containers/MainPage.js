@@ -180,6 +180,7 @@ class MainPage extends Component<Props, State> {
     // this.setupDesktopMenu();
     buildDesktopMenu({
       ...this.props,
+      toggleOnboarding: this.toggleOnboarding,
       toggleTagLibrary: this.toggleTagLibrary,
       toggleLocationManager: this.toggleLocationManager,
       toggleSearch: this.toggleSearch,

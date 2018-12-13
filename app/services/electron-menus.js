@@ -266,15 +266,15 @@ export default function buildDesktopMenu(mainPageProps: Object) {
           }
         },
         {
-          label: '&' + i18n.t('core:startingHints'),
-          click: () => {
-            // mainPageProps.startGettingStartedTour();
-          }
-        },
-        {
           label: '&' + i18n.t('core:shortcutKeys'),
           click: () => {
             mainPageProps.toggleKeysDialog();
+          }
+        },
+        {
+          label: 'Welcome Wizzard',
+          click: () => {
+            mainPageProps.toggleOnboarding();
           }
         },
         {
