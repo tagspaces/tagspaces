@@ -323,6 +323,21 @@ export default function buildDesktopMenu(mainPageProps: Object) {
           type: 'separator'
         },
         {
+          label: 'Web clipper extension for Chrome',
+          click: () => {
+            mainPageProps.openFileNatively('https://chrome.google.com/webstore/detail/tagspaces-web-clipper/ldalmgifdlgpiiadeccbcjojljeanhjk');
+          }
+        },
+        {
+          label: 'Web clipper extension for Firefox',
+          click: () => {
+            mainPageProps.openFileNatively('https://addons.mozilla.org/en-US/firefox/addon/tagspaces/');
+          }
+        },
+        {
+          type: 'separator'
+        },
+        {
           label: '&' + i18n.t('core:license'),
           click: () => {
             mainPageProps.toggleLicenseDialog();
