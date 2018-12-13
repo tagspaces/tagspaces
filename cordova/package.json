@@ -10,15 +10,17 @@
   "author": "Apache Cordova Team",
   "license": "Apache-2.0",
   "dependencies": {
-    "cordova-android": "^7.1.2",
+    "cordova-android": "^7.1.4",
     "cordova-plugin-file": "^6.0.1",
-    "cordova-plugin-whitelist": "^1.3.2"
+    "cordova-plugin-whitelist": "^1.3.3"
   },
   "cordova": {
     "plugins": {
       "cordova-plugin-whitelist": {},
       "cordova-plugin-file": {}
     },
-    "platforms": []
+    "platforms": [
+      "android"
+    ]
   }
 }
