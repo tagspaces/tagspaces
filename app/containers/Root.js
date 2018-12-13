@@ -46,7 +46,7 @@ function onBeforeLift(store) {
   const state = store.getState();
   const defaultLocationId = getDefaultLocationId(state);
   if (defaultLocationId && defaultLocationId.length > 0) {
-    store.dispatch(AppActions.openLocation(defaultLocationId));
+    store.dispatch(AppActions.openLocationById(defaultLocationId));
   }
   if (getCheckForUpdateOnStartup(state)) {
     store.dispatch(SettingsActions.checkForUpdate());
