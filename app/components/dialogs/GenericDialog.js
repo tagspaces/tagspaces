@@ -93,7 +93,7 @@ class GenericDialog extends React.Component<Props> {
       >
         {renderTitle && renderTitle()}
         {renderContent ? renderContent() : this.renderContent()}
-        {renderActions ? renderActions() : this.renderActions()}
+        {renderActions && renderActions()}
       </Dialog>
     );
   }

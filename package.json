@@ -182,6 +182,7 @@
   "dependencies": {
     "@material-ui/core": "^3.5.1",
     "@material-ui/icons": "^3.0.1",
+    "@material-ui/lab": "^3.0.0-alpha.25",
     "aws-sdk": "^2.263.1",
     "chokidar": "^2.0.4",
     "classnames": "^2.2.5",

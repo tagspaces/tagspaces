@@ -9,7 +9,7 @@
 **TagSpaces** is a open source application for managing of your local files. You can find more information about it on its website [tagspaces.org](https://tagspaces.org/). For a quick TagSpaces introduction please see this [Youtube video](https://www.youtube.com/embed/CJ2hYU6U-C8).
 
 - [TagSpaces Blog](https://www.tagspaces.org/blog/) for any news about TagSpaces
-- [TagSpaces Documentation](https://docs.tagspaces.org/) for latest generated documentation of the project
+- [TagSpaces Documentation](https://docs.tagspaces.org/) for our latest generated documentation
 - [Issues Tracker](https://github.com/tagspaces/tagspaces/issues) for developer support requests
 
 To get updates you can:
@@ -32,11 +32,11 @@ To get updates you can:
 ## Downloads
 You can find the latest release of TagSpace in the Github [release section](https://github.com/tagspaces/tagspaces/releases/) of TagSpaces
 
-A full list of the changes is available in our [changelog](CHANGELOG.md)
+A full list of the changes is available on our [changelog](CHANGELOG.md)
 
 ## Main Features
 
-* **File managing & tagging:** TagSpaces provides a convenient interface for browsing, viewing and tagging of your local files and folders.
+* **File managing & tagging:** TagSpaces provides a convenient interface for browsing, viewing and tagging your local files and folders.
 * **No-Cloud:** TagSpaces is running completely offline and serverless on your laptop, desktop or tablet and does not require an internet connection and any kind of online registration or service provider.
 * **Note Taking:** You can create and edit notes in plain text, markdown and html file formats
 * **Cross-platform:** TagSpaces runs on Windows, Linux, Mac, Android and as extension for the Firefox and Chrome browsers.
@@ -47,7 +47,7 @@ A full list of the changes is available in our [changelog](CHANGELOG.md)
 
 ## Infos for developers
 
-The core of TagSpaces starting from version 3 is build with [react.js](https://reactjs.org/) and the great [material-ui](https://material-ui.com/) framework.
+The core of TagSpaces starting from version 3 is built with [react.js](https://reactjs.org/) and the great [material-ui](https://material-ui.com/) framework.
 
 The native Windows, Linux and Mac OS versions of TagSpaces are built with [Electron](https://electron.atom.io/). Electron is an app runtime based on Chromium and node.js. In order to combine it with react we have used the [electron-react-boilerplate](https://github.com/chentsulin/electron-react-boilerplate).
 
@@ -61,7 +61,7 @@ Get the TagSpaces source code by cloning its repository:
 
     $ git clone https://github.com/tagspaces/tagspaces.git
 
-Go to the folder where the code was cloned and select the branch you want to test. Use the the **master** branch for the last officially released version or the branch **develop** for a kind of a nightly build, containing the changed we are preparing for the next release of the application.
+Go to the folder where the code was cloned and select the branch you want to test. Use the the **master** branch for the last officially released version or the branch **develop** for a kind of a nightly build, containing the changes we are preparing for the next release of the application.
 
 Switch to folder where you have cloned the repository:
 
@@ -120,7 +120,7 @@ You will be prompted for user credentials, which are username: `demo` and passwo
 
 #### Apache server with WedDAV module
 
-In order to install TagSpaces on a Apache webserver you to enable the **mod_dav** module, which comes with the Apache Server. More information about the installation and configuration can be found on [apache.org](https://httpd.apache.org/docs/current/mod/mod_dav.html). Please make sure that you have read and understood the potential security issues by running a WebDAV server on internet.
+In order to install TagSpaces on a Apache webserver you have to enable the **mod_dav** module, which comes with the Apache Server. More information about the installation and configuration can be found on [apache.org](https://httpd.apache.org/docs/current/mod/mod_dav.html). Please make sure that you have read and understood the potential security issues by running a WebDAV server on internet.
 
 Here is a sample config file for Apache on Linux:
 
@@ -150,7 +150,7 @@ Here is a sample config file for Apache on Linux:
 		Require valid-user
 	</Location>
 
-With some modification it can be used also for Apache on Windows, for a detailed manual refer to this article: [How to enable WebDAV in Apache Server 2.2.x – Windows](http://www.mkyong.com/apache/how-to-enable-webdav-in-apache-server-2-2-x-windows/)
+With some modification it can be also used for Apache on Windows, for a detailed manual refer to this article: [How to enable WebDAV in Apache Server 2.2.x – Windows](http://www.mkyong.com/apache/how-to-enable-webdav-in-apache-server-2-2-x-windows/)
 
 You can find more details about the Nextcloud integration here: [Self-hosted TagSpaces with WebDAV](https://docs.tagspaces.org/selfhosting.html).
 
@@ -158,7 +158,7 @@ You can find more details about the Nextcloud integration here: [Self-hosted Tag
 TagSpaces's source code is licensed under the AGPL (GNU Affero General Public License) Version 3, for the license text see [LICENSE](LICENSE) file.
 
 ## Contribute
-TagSpaces is an open source software and as such, the code is publicly available on GitHub, and forking is particularly recommended! Still, contribution must be done following some guidelines.
+TagSpaces is an open source software, and as such, the code is publicly available on GitHub, and forking is particularly recommended! Still, contribution must be done following some guidelines.
 Contributor License Agreement
 
 The CLA is an agreement commonly used in major open source project, which aims at protecting all parties implied by a contribution: the contributor, the main code author, and above all, the community. The CLA model we have chosen basically tells the following: the contribution’s copyright is shared between the contributor and the main author. This means each party can do whatever she want in term of relicensing with this contributed piece of code. This is important, because, if in the future, the author wants to change the license in something more in favor of the community, a singular contributor cannot block the process.
@@ -166,10 +166,10 @@ The CLA is an agreement commonly used in major open source project, which aims a
 The Contributor License Agreement can be signed online on the following [CLA form](http://tagspaces.org/contribute/).
 
 ## Translations
-You can help the translation of this application in your favorite languages by joining the translations teams on [Transifex](https://www.transifex.com/tagspaces/tagspaces/).
+You can help the translation of this application in your languages by joining the translations teams on [Transifex](https://www.transifex.com/tagspaces/tagspaces/).
 
 ## Ideas and Suggestion
-If you ideas or suggestion on how we can improve our application, you can check the following [Trello board](https://trello.com/b/TGeG5bi9/tagspaces-ideas). Here you will find numerous ideas already proposed by other users. If you want to post something new, please follow [this link](https://trello.com/c/mG97iOqo/19-how-to-use-this-board-and-add-new-ideas)
+If you have ideas or suggestions on how we can improve our application, you can check the following [Trello board](https://trello.com/b/TGeG5bi9/tagspaces-ideas). Here you will find numerous ideas already proposed by other users. If you want to post something new, please follow [this link](https://trello.com/c/mG97iOqo/19-how-to-use-this-board-and-add-new-ideas)
 
 ## Support and Bugs
 If you are having trouble using TagSpaces or have found a bug or you have some ideas how TagSpaces could be improved: [open a ticket](https://github.com/tagspaces/tagspaces/issues) on GitHub.
