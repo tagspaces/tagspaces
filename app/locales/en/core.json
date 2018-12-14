@@ -354,5 +354,8 @@
   "loading": "Loading...",
   "cancelEditing": "Cancel editing",
   "upgradeToPro": "See what's in the PRO version",
+  "locationType": "Type",
+  "firstOpenaFolder": "Please first open a folder!",
+  "errorLoadingFolder": "Error loading directory",
   "-": "-"
 }

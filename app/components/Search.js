@@ -200,7 +200,7 @@ class Search extends React.Component<Props, State> {
               {i18n.t('core:tagSearchType')}
             </FormHelperText>
             <RadioGroup
-              aria-label="Tag Search Type"
+              aria-label={i18n.t('core:tagSearchType')}
               name="tagConjunction"
               value={this.state.tagConjunction}
               onChange={this.handleInputChange}

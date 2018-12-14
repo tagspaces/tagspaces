@@ -476,7 +476,7 @@ export const actions = {
     const { app } = getState();
     if (!app.currentDirectoryPath) {
       dispatch(
-        actions.showNotification('Please first open a folder!', 'warning', true)
+        actions.showNotification(i18n.t('core:firstOpenaFolder'), 'warning', true)
       );
     } else {
       dispatch(actions.toggleCreateDirectoryDialog());
@@ -489,7 +489,7 @@ export const actions = {
     const { app } = getState();
     if (!app.currentDirectoryPath) {
       dispatch(
-        actions.showNotification('Please first open a folder!', 'warning', true)
+        actions.showNotification(i18n.t('core:firstOpenaFolder'), 'warning', true)
       );
     } else {
       dispatch(actions.toggleCreateFileDialog());
@@ -502,7 +502,7 @@ export const actions = {
     const { app } = getState();
     // if (!app.currentDirectoryPath) {
     //   dispatch(
-    //     actions.showNotification('Please first open a folder!', 'warning', true)
+    //     actions.showNotification(i18n.t('core:firstOpenaFolder'), 'warning', true)
     //   );
     // } else {
     dispatch(actions.toggleSelectDirectoryDialog());
@@ -525,7 +525,7 @@ export const actions = {
       const parentDirectory = extractParentDirectoryPath(app.currentDirectoryPath);
       dispatch(actions.loadDirectoryContent(parentDirectory));
     } else {
-      dispatch(actions.showNotification('Please first open a folder!', 'warning', true));
+      dispatch(actions.showNotification(i18n.t('core:firstOpenaFolder'), 'warning', true));
     }
   },
   loadDirectoryContent: (directoryPath: string) => (
@@ -643,7 +643,7 @@ export const actions = {
     console.warn('Error loading directory: ' + error);
     dispatch(actions.hideNotifications());
     dispatch(
-      actions.showNotification('Error loading directory', 'warning', true)
+      actions.showNotification(i18n.t('core:errorLoadingFolder'), 'warning', true)
     );
     dispatch(actions.loadDirectorySuccess(directoryPath, []));
   },
@@ -774,7 +774,7 @@ export const actions = {
         dispatch(actions.showNotification('Error creating file', 'warning', true));
       });
     } else {
-      dispatch(actions.showNotification('Please first open a folder!', 'warning', true));
+      dispatch(actions.showNotification(i18n.t('core:firstOpenaFolder'), 'warning', true));
     }
   },
   createFileAdvanced: (targetPath: string, fileName: string, content: string, fileType: 'md' | 'txt' | 'html') => (
