@@ -15,6 +15,10 @@
             {
               "xml": "<allow-navigation href=\"cdvfile:*\" />",
               "count": 1
+            },
+            {
+              "xml": "<feature name=\"Device\"><param name=\"android-package\" value=\"org.apache.cordova.device.Device\" /></feature>",
+              "count": 1
             }
           ]
         }
@@ -33,6 +37,9 @@
   },
   "installed_plugins": {
     "cordova-plugin-file": {
+      "PACKAGE_NAME": "org.tagspaces.mobile"
+    },
+    "cordova-plugin-device": {
       "PACKAGE_NAME": "org.tagspaces.mobile"
     }
   },
@@ -210,9 +217,18 @@
         "cordova"
       ],
       "runs": true
+    },
+    {
+      "id": "cordova-plugin-device.device",
+      "file": "plugins/cordova-plugin-device/www/device.js",
+      "pluginId": "cordova-plugin-device",
+      "clobbers": [
+        "device"
+      ]
     }
   ],
   "plugin_metadata": {
-    "cordova-plugin-file": "6.0.1"
+    "cordova-plugin-file": "6.0.1",
+    "cordova-plugin-device": "2.0.2"
   }
 }

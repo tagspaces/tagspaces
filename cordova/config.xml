@@ -26,5 +26,6 @@
     <plugin name="cordova-plugin-whitelist" spec="^1.3.3" />
     <plugin name="cordova-plugin-file" spec="^6.0.1" />
     <preference name="AndroidPersistentFileLocation" value="Compatibility" />
+    <plugin name="cordova-plugin-device" spec="^2.0.2" />
     <engine name="android" spec="^7.1.4" />
 </widget>
