@@ -353,7 +353,7 @@ export default class CordovaIO {
     const paths = {
       Photos: 'sdcard/DCIM/',
       Pictures: 'sdcard/Pictures/',
-      Downloads: 'sdcard/Downloads/',
+      Download: 'sdcard/Download/',
       Music: 'sdcard/Music/',
       Movies: 'sdcard/Movies/',
       SDCard: 'sdcard/'
