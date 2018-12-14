@@ -9,7 +9,8 @@ import merge from 'webpack-merge';
 import baseConfig from './webpack.config.base';
 
 export default merge.smart(baseConfig, {
-  devtool: 'source-map',
+  // devtool: 'source-map',
+  devtool: 'inline-source-map',
 
   target: 'web',
 
@@ -23,7 +24,7 @@ export default merge.smart(baseConfig, {
 
   optimization: {
     // We no not want to minimize our code. TODO remove this for production
-    minimize: true
+    minimize: false
   },
 
   node: {
