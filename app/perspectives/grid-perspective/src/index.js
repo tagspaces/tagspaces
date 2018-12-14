@@ -582,9 +582,9 @@ class GridPerspective extends React.Component<Props, State> {
         this.computeFileOperationsEnabled
       );
       this.props.setLastSelectedEntry(fsEntry.path);
-      // if (fsEntry.isFile) {
-      this.props.openFile(fsEntry.path, fsEntry.isFile);
-      // }
+      if (fsEntry.isFile) {
+        this.props.openFile(fsEntry.path, fsEntry.isFile);
+      }
     }
   };
 
