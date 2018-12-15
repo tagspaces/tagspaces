@@ -765,13 +765,13 @@ export const actions = {
       const filePath = app.currentDirectoryPath + AppConfig.dirSeparator + 'textfile' + AppConfig.beginTagContainer + formatDateTime4Tag(new Date(), true) + AppConfig.endTagContainer + '.txt';
       PlatformIO.saveFilePromise(filePath, '', true).then(() => {
         dispatch(actions.reflectCreateEntry(filePath, true));
-        dispatch(actions.showNotification('File create successfully', 'info', true));
+        dispatch(actions.showNotification(i18n.t('core:fileCreateSuccessfully'), 'info', true));
         dispatch(actions.openFile(filePath));
         // TODO select file // dispatch(actions.setLastSelectedEntry(filePath));
         return true;
       }).catch((err) => {
         console.warn('File creation failed with ' + err);
-        dispatch(actions.showNotification('Error creating file', 'warning', true));
+        dispatch(actions.showNotification(i18n.t('core:errorCreatingFile'), 'warning', true));
       });
     } else {
       dispatch(actions.showNotification(i18n.t('core:firstOpenaFolder'), 'warning', true));
@@ -841,7 +841,7 @@ export const actions = {
     const currentLocationId = getState().app;
     if (location.type === locationType.TYPE_CLOUD) {
       PlatformIO.enableObjectStoreSupport(location).then(() => {
-        dispatch(actions.showNotification('Connected to object store', 'default', true));
+        dispatch(actions.showNotification(i18n.t('core:connectedtoObjectStore'), 'default', true));
         dispatch(actions.setReadOnlyMode(location.isReadOnly || false));
         dispatch(actions.setCurrentLocationId(location.uuid));
         dispatch(actions.loadDirectoryContent(location.paths[0]));
@@ -854,7 +854,7 @@ export const actions = {
         }
         return true;
       }).catch(() => {
-        dispatch(actions.showNotification('Connection to object store failed!', 'warning', true));
+        dispatch(actions.showNotification(i18n.t('core:connectedtoObjectStoreFailed'), 'warning', true));
         PlatformIO.disableObjectStoreSupport();
       });
     } else { // if (location.type === locationType.TYPE_LOCAL) {
@@ -1111,7 +1111,7 @@ export const actions = {
         // UI notification
         dispatch(
           actions.showNotification(
-            'Renaming successfully.',
+            i18n.t('core:renamingSuccessfully'),
             'default',
             true
           )
@@ -1146,12 +1146,12 @@ export const actions = {
     dispatch: (actions: Object) => void,
     getState: () => Object
   ) => {
-    actions.showNotification('Not implemented yet, please use the save button.', 'warning', true);
+    actions.showNotification(i18n.t('core:notImplementedYet'), 'warning', true);
     // const { app } = getState();
     /* PlatformIO.saveFilePromise(filePath, content, true).then((isNewFile) => {
       console.log(isNewFile);
       dispatch(
-        actions.showNotification('File created successfully.', 'successfully', true)
+        actions.showNotification(i18n.t('core:fileCreatedSuccessfully.'), 'successfully', true)
       );
       return true;
     }).catch((error) => {
@@ -1220,12 +1220,12 @@ function prepareDirectoryContent(
   function handleTmbGenerationFailed(error) {
     console.warn('Thumb generation failed: ' + error);
     dispatch(actions.setGeneratingThumbnails(false));
-    dispatch(actions.showNotification('Generating thumbnails failed', 'warning', true));
+    dispatch(actions.showNotification(i18n.t('core:generatingThumbnailsFailed'), 'warning', true));
   }
 
   if (tmbGenerationPromises.length > 0) {
     dispatch(actions.setGeneratingThumbnails(true));
-    // dispatch(actions.showNotification('Checking thumbnails', 'info', false));
+    // dispatch(actions.showNotification(i18n.t('core:checkingThumbnails'), 'info', false));
     Promise.all(tmbGenerationPromises)
       .then(handleTmbGenerationResults)
       .catch(handleTmbGenerationFailed);
@@ -1233,7 +1233,7 @@ function prepareDirectoryContent(
 
   if (tmbGenerationList.length > 0) {
     dispatch(actions.setGeneratingThumbnails(true));
-    // dispatch(actions.showNotification('Loading or generating thumbnails...', 'info', false));
+    // dispatch(actions.showNotification(i18n.t('core:loadingOrGeneratingThumbnails'), 'info', false));
     PlatformIO.createThumbnailsInWorker(tmbGenerationList)
       .then(handleTmbGenerationResults)
       .catch(handleTmbGenerationFailed);

@@ -30,6 +30,7 @@ import type { SearchQuery } from '../services/search';
 import Search from '../services/search';
 import { actions as AppActions } from './app';
 import AppConfig from '../config';
+import i18n from '../services/i18n';
 
 export const types = {
   INDEX_DIRECTORY: 'INDEX_DIRECTORY',
@@ -218,14 +219,14 @@ export const actions = {
     const state = getState();
     const currentLocation: Location = getLocation(state, state.app.currentLocationId);
     dispatch(actions.startDirectoryIndexing());
-    dispatch(AppActions.showNotification('Loading index ...', 'default', true));
+    dispatch(AppActions.showNotification(i18n.t('core:loadingIndex'), 'default', true));
     if (Pro && Pro.Indexer.loadIndex) {
       Pro.Indexer.loadIndex(directoryPath, (currentLocation.type === locationType.TYPE_CLOUD) ? '/' : AppConfig.dirSeparator).then((directoryIndex) => {
         dispatch(actions.indexDirectorySuccess(directoryIndex));
         return true;
       }).catch(err => {
         dispatch(actions.indexDirectoryFailure(err));
-        dispatch(AppActions.showNotification('Loading index failed', 'warning', true));
+        dispatch(AppActions.showNotification(i18n.t('core:loadingIndexFailed'), 'warning', true));
       });
     }
   },
@@ -236,7 +237,7 @@ export const actions = {
     dispatch: (actions: Object) => void,
     getState: () => Object
   ) => {
-    dispatch(AppActions.showNotification('Searching...', 'default', false));
+    dispatch(AppActions.showNotification(i18n.t('core:searching'), 'default', false));
     setTimeout(() => { // Workarround used to show the start search notication
       Search.searchLocationIndex(
         getState().locationIndex.currentDirectoryIndex,
@@ -248,7 +249,7 @@ export const actions = {
       }).catch(() => {
         dispatch(AppActions.updateSearchResults([]));
         dispatch(AppActions.hideNotifications());
-        dispatch(AppActions.showNotification('Search failed.', 'warning', true));
+        dispatch(AppActions.showNotification(i18n.t('core:searchingFailed'), 'warning', true));
       });
     }, 50);
   },
