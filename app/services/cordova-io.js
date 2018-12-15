@@ -45,6 +45,10 @@ export default class CordovaIO {
 
   onDeviceReady = () => {
     console.log('Device Ready: ' + window['device'].platform + ' - ' + window['device'].version);
+
+    // attachFastClick(document.body);
+    this.getFileSystem();
+
     // iOS specific initialization
     if (AppConfig.isCordovaiOS) {
       window.plugins = window.plugins || {};
@@ -73,9 +77,6 @@ export default class CordovaIO {
         this.widgetActionHandler();
       });
     }
-
-    // attachFastClick(document.body);
-    this.getFileSystem();
 
     if (AppConfig.isCordovaiOS) {
       setTimeout(() => {
@@ -352,7 +353,7 @@ export default class CordovaIO {
     const paths = {
       Photos: 'sdcard/DCIM/',
       Pictures: 'sdcard/Pictures/',
-      Downloads: 'sdcard/Downloads/',
+      Download: 'sdcard/Download/',
       Music: 'sdcard/Music/',
       Movies: 'sdcard/Movies/',
       SDCard: 'sdcard/'
