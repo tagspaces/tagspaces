@@ -11,6 +11,7 @@
     "build": "yarn version-meta && concurrently \"yarn build-main\" \"yarn build-renderer\" \"yarn build-worker\"",
     "build-dll": "cross-env NODE_ENV=development node --trace-warnings -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.renderer.dev.dll.js --progress --profile --colors",
     "build-cordova": "cross-env NODE_ENV=production node --trace-warnings -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.renderer.cordova.js --progress --profile --colors",
+    "build-cordova-dev": "cross-env NODE_ENV=development node --trace-warnings -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.renderer.cordova.js --progress --profile --colors",
     "build-web": "cross-env NODE_ENV=production node --trace-warnings -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.renderer.web.js --progress --profile --colors",
     "build-main": "cross-env NODE_ENV=production node --trace-warnings -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.main.prod.js --progress --profile --colors",
     "build-renderer": "cross-env NODE_ENV=production node --trace-warnings -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.renderer.prod.js --progress --profile --colors",
@@ -51,6 +52,7 @@
     "cordova-android": "cd cordova && cordova platform add android && cd ..",
     "cordova-create": "cordova create ./cordova org.tagspaces.mobile TagSpaces",
     "start-android": "yarn build-cordova && yarn run-android",
+    "start-android-dev": "yarn build-cordova-dev && yarn run-android",
     "update-changelog": "git log v3.0.0-rc.6..HEAD --no-merges --format=%B > CHANGELOG.TXT",
     "clean": "rimraf app/dist && rimraf node_modules && rimraf app/node_modules"
   },

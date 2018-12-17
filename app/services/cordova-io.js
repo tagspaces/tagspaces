@@ -21,7 +21,7 @@
 
 import AppConfig from '../config';
 import { b64toBlob } from '../utils/misc';
-import { extractParentDirectoryPath } from '../utils/paths';
+import { extractParentDirectoryPath, cleanTrailingDirSeparator } from '../utils/paths';
 
 const appSettingFile = 'settings.json';
 const appSettingTagsFile = 'settingsTags.json';
@@ -44,7 +44,7 @@ export default class CordovaIO {
   loadedSettingsTags: any;
 
   onDeviceReady = () => {
-    console.log('Device Ready: ' + window['device'].platform + ' - ' + window['device'].version);
+    console.log('Device Ready: ' + window.device.platform + ' - ' + window.device.version);
 
     // attachFastClick(document.body);
     this.getFileSystem();
@@ -313,9 +313,7 @@ export default class CordovaIO {
     this.saveSettingsFile(appSettingFile, settings);
   };
 
-  loadSettings = () => {
-    return this.loadedSettings;
-  };
+  loadSettings = () => this.loadedSettings;
 
   saveSettingsTags = (tagGroups: Object) => {
     // TODO use js objects
@@ -334,9 +332,7 @@ export default class CordovaIO {
     this.saveSettingsFile(appSettingTagsFile, jsonFormat);
   };
 
-  loadSettingsTags = () => {
-    return this.loadedSettingsTags;
-  };
+  loadSettingsTags = () => this.loadedSettingsTags;
 
   sendFile = (filePath: string) => {
     console.log('Sending file: ' + filePath);
@@ -361,9 +357,7 @@ export default class CordovaIO {
     return paths;
   };
 
-  getUserHomePath = (): string => {
-    return '/';
-  };
+  getUserHomePath = (): string => '/';
 
   getAppDataPath = () => {
     // const appDataPath = ipcRenderer.sendSync('app-data-path-request', 'notNeededArgument');
@@ -385,112 +379,218 @@ export default class CordovaIO {
     console.warn('Creating directory tree is not supported in Cordova yet.');
   };
 
-  /**
-   * Creates a list with containing the files and the sub directories of a given directory
-   */
-  listDirectoryPromise = (path: string, lite: boolean): Promise<*> => {
-    console.time('listDirectoryPromise');
-    return new Promise((resolve, reject) => {
-      const anotatedDirList = [];
-      const fileWorkers = [];
-      this.getFileSystemPromise(path).then(
+  listMetaDirectoryPromise = async (path: string): Promise<Array<Object>> => {
+    const promise = new Promise((resolve) => {
+      const entries = [];
+      const metaDirPath = cleanTrailingDirSeparator(path) + AppConfig.dirSeparator + AppConfig.metaFolder + AppConfig.dirSeparator;
+
+      this.getFileSystemPromise(metaDirPath).then(
         fileSystem => {
           const reader = fileSystem.createReader();
           reader.readEntries(
-            entries => {
-              entries.forEach(entry => {
-                if (entry.isDirectory) {
+            entr => {
+              entr.forEach(entry => {
+                const entryPath = entry.fullPath;
+                if (entryPath.toLowerCase() === metaDirPath.toLowerCase()) {
+                  console.log('Skipping current folder');
+                } else {
+                  const ee = {};
+                  ee.name = entry.name;
+                  ee.path = decodeURI(entryPath);
+                  ee.isFile = true;
+                  entries.push(ee);
+                }
+              });
+              resolve(entries);
+            });
+          return true;
+        })
+        .catch((err) => {
+          console.error('Error getting listMetaDirectoryPromise:', err);
+          resolve([]); // returning results even if any promise fails
+        });
+    });
+    const result = await promise; // this.listDirectoryPromise(normalizePath(path) + AppConfig.dirSeparator + AppConfig.metaFolder + AppConfig.dirSeparator, true);
+    return result;
+  };
+
+  /**
+   * Creates a list with containing the files and the sub directories of a given directory
+   */
+  listDirectoryPromise = (path: string, lite: boolean): Promise<*> => new Promise(async (resolve, reject) => {
+    console.time('listDirectoryPromise');
+    const metaContent = !lite ? await this.listMetaDirectoryPromise(path) : [];
+
+    const enhancedEntries = [];
+    const metaPromises = [];
+    this.getFileSystemPromise(path).then(
+      fileSystem => {
+        const reader = fileSystem.createReader();
+        reader.readEntries(
+          entries => {
+            entries.forEach(entry => {
+              const eentry = {};
+              eentry.name = entry.name;
+              eentry.path = entry.fullPath;
+              eentry.tags = [];
+              eentry.thumbPath = '';
+              // eentry.meta = {};
+              eentry.isFile = entry.isFile;
+              if (entry.isFile) {
+                entry.file(
+                  fileEntry => {
+                    eentry.size = fileEntry.size;
+                    eentry.lmdt = fileEntry.lastModifiedDate;
+                  });
+              }
+
+              if (!lite) {
+                if (entry.isDirectory) { // Read tsm.json from subfolders
+                  const metaDirAvailable = metaContent.find(obj => obj.name === AppConfig.metaFolder);
+                  if (metaDirAvailable) {
+                    metaPromises.push(this.getEntryMeta(eentry, metaDirAvailable.path));
+                  }
+                } else {
+                  const metaFileAvailable = metaContent.find(obj => obj.name === entry.name + AppConfig.metaFileExt);
+                  if (metaFileAvailable) {
+                    metaPromises.push(this.getEntryMeta(eentry, metaFileAvailable.path));
+                  }
+
+                  // Finding if thumbnail available
+                  const metaThumbAvailable = metaContent.find(obj => obj.name === entry.name + AppConfig.thumbFileExt);
+                  if (metaThumbAvailable) {
+                    eentry.thumbPath = metaThumbAvailable.path;
+                  }
+                }
+              }
+
+              enhancedEntries.push(eentry);
+
+              /* if (entry.isDirectory) {
+                anotatedDirList.push({
+                  name: entry.name,
+                  path: entry.fullPath,
+                  isFile: false,
+                  size: '',
+                  lmdt: ''
+                });
+              } else if (entry.isFile) {
+                if (lite) {
                   anotatedDirList.push({
                     name: entry.name,
                     path: entry.fullPath,
-                    isFile: false,
+                    isFile: true,
                     size: '',
                     lmdt: ''
                   });
-                } else if (entry.isFile) {
-                  if (lite) {
-                    anotatedDirList.push({
-                      name: entry.name,
-                      path: entry.fullPath,
-                      isFile: true,
-                      size: '',
-                      lmdt: ''
-                    });
-                  } else {
-                    const filePromise = Promise.resolve({
-                      then: (onFulfill, onReject) => {
-                        entry.file(
-                          fileEntry => {
-                            if (!fileEntry.fullPath) {
-                              fileEntry.fullPath = this.resolveFullPath(
-                                fileEntry.localURL
-                              );
-                            }
-                            anotatedDirList.push();
-                            onFulfill({
-                              name: fileEntry.name,
-                              isFile: true,
-                              size: fileEntry.size,
-                              lmdt: fileEntry.lastModifiedDate,
-                              path: fileEntry.fullPath
-                            });
-                          },
-                          err => {
-                            onReject('Error reading entry ' + path);
+                } else {
+                  const filePromise = Promise.resolve({
+                    then: (onFulfill, onReject) => {
+                      entry.file(
+                        fileEntry => {
+                          if (!fileEntry.fullPath) {
+                            fileEntry.fullPath = this.resolveFullPath(
+                              fileEntry.localURL
+                            );
                           }
-                        );
-                      }
-                    }); // jshint ignore:line
-                    fileWorkers.push(filePromise);
-                  }
+                          anotatedDirList.push();
+                          onFulfill({
+                            name: fileEntry.name,
+                            isFile: true,
+                            size: fileEntry.size,
+                            lmdt: fileEntry.lastModifiedDate,
+                            path: fileEntry.fullPath
+                          });
+                        },
+                        err => {
+                          onReject('Error reading entry ' + path);
+                        }
+                      );
+                    }
+                  }); // jshint ignore:line
+                  fileWorkers.push(filePromise);
                 }
-              });
+              } */
+            });
 
-              Promise.all(fileWorkers).then(
-                entries => {
-                  entries.forEach(entry => {
-                    anotatedDirList.push(entry);
-                  });
-                  console.timeEnd('listDirectoryPromise');
-                  resolve(anotatedDirList);
-                },
-                err => {
-                  console.warn(
-                    'At least one file worker failed for ' +
+            Promise.all(metaPromises).then(() => {
+              resolve(enhancedEntries);
+              return true;
+            }).catch(() => {
+              resolve(enhancedEntries);
+            });
+            /* Promise.all(fileWorkers).then(
+              entries => {
+                entries.forEach(entry => {
+                  anotatedDirList.push(entry);
+                });
+                console.timeEnd('listDirectoryPromise');
+                resolve(anotatedDirList);
+              },
+              err => {
+                console.warn(
+                  'At least one file worker failed for ' +
                       path +
                       'err ' +
                       JSON.stringify(err)
-                  );
-                  console.timeEnd('listDirectoryPromise');
-                  resolve(anotatedDirList); // returning results even if any promise fails
-                }
-              );
-            },
-            err => {
-              console.warn(
-                'Error reading entries promise from ' +
+                );
+                console.timeEnd('listDirectoryPromise');
+                resolve(anotatedDirList); // returning results even if any promise fails
+              }
+            ); */
+          },
+          err => {
+            console.warn(
+              'Error reading entries promise from ' +
                   path +
                   'err ' +
                   JSON.stringify(err)
-              );
-              resolve(anotatedDirList); // returning results even if any promise fails
-            }
-          );
-        },
-        () => {
-          console.warn('Error getting file system promise');
-          resolve(anotatedDirList); // returning results even if any promise fails
-        }
-      );
+            );
+            resolve(enhancedEntries); // returning results even if any promise fails
+          }
+        );
+        return true;
+      },
+      () => {
+        console.warn('Error getting file system promise');
+        resolve(enhancedEntries); // returning results even if any promise fails
+      }
+    )
+      .catch((err) => {
+        console.error('Error getting listDirectoryPromise:', err);
+        resolve(enhancedEntries); // returning results even if any promise fails
+      });
+  });
+
+  getEntryMeta = (eentry: Object, metaPath: string): Promise<Object> => {
+    if (eentry.isFile) {
+      // const metaFilePath = getMetaFileLocationForFile(eentry.path);
+      return this.loadTextFilePromise(metaPath).then(result => {
+        // eslint-disable-next-line no-param-reassign
+        eentry.meta = JSON.parse(result.trim());
+        return eentry;
+      });
+    }
+    // const folderMetaPath = normalizePath(eentry.path) + AppConfig.dirSeparator + AppConfig.metaFolderFile; // getMetaFileLocationForDir(eentry.path);
+    if (!eentry.path.endsWith(AppConfig.metaFolder + '/')) { // Skip the /.ts folder
+      return this.loadTextFilePromise(metaPath).then(result => {
+        // eslint-disable-next-line no-param-reassign
+        eentry.meta = JSON.parse(result.trim());
+        return eentry;
+      });
+    }
+
+    return new Promise((resolve) => {
+      resolve(eentry);
     });
   };
 
   /**
    * Finds out the properties of a file or directory such last modification date or file size
    */
-  getPropertiesPromise = (path: string): Promise<*> => {
-    return new Promise((resolve, reject) => {
-      let entryPath = this.normalizePath(path);
+  getPropertiesPromise = (path: string): Promise<*> =>
+    new Promise((resolve, reject) => {
+      const entryPath = this.normalizePath(path);
       // getFileSystemPromise(dir).then(function(fileSystem) {
       const fileProperties = {};
       this.fsRoot.getFile(
@@ -507,6 +607,8 @@ export default class CordovaIO {
                 fileProperties.size = file.size;
                 fileProperties.lmdt = file.lastModifiedDate;
                 fileProperties.mimetype = file.type;
+                fileProperties.isFile = entry.isFile;
+                fileProperties.name = file.name;
                 resolve(fileProperties);
               },
               () => {
@@ -526,21 +628,19 @@ export default class CordovaIO {
             resolve(false);
           }
         },
-        () => {
-          console.log('getPropertiesPromise: Error getting file ' + entryPath);
+        (err) => {
+          console.log('getPropertiesPromise: Error getting file ' + entryPath, err);
           resolve(false);
         }
       );
-    });
+    })
     // });
-  };
+  ;
 
   /**
    * Load the content of a text file
    */
-  loadTextFilePromise = (filePath: string): Promise<*> => {
-    return this.getFileContentPromise(filePath, 'text');
-  };
+  loadTextFilePromise = (filePath: string): Promise<*> => this.getFileContentPromise(filePath, 'text');
 
   /**
    * Gets the content of file, useful for binary files
@@ -590,10 +690,10 @@ export default class CordovaIO {
     return new Promise((resolve, reject) => {
       getFilePromise(filePath, resolvePath).then(file => {
         const reader = new FileReader();
-        reader.onerror = function() {
+        reader.onerror = function () {
           reject(reader.error);
         };
-        reader.onload = function() {
+        reader.onload = function () {
           resolve(reader.result);
         };
         if (type === 'text') {
@@ -642,7 +742,7 @@ export default class CordovaIO {
           entry => {
             entry.createWriter(
               writer => {
-                writer.onwriteend = function(evt) {
+                writer.onwriteend = function (evt) {
                   // resolve(this.fsRoot.fullPath + "/" + filePath);
                   resolve(isFileNew);
                 };
@@ -868,98 +968,94 @@ export default class CordovaIO {
   renameDirectoryPromise = (
     dirPath: string,
     newDirName: string
-  ): Promise<*> => {
-    return new Promise((resolve, reject) => {
-      let newDirPath =
+  ): Promise<*> => new Promise((resolve, reject) => {
+    let newDirPath =
         extractParentDirectoryPath(dirPath) +
         AppConfig.dirSeparator +
         newDirName;
 
-      dirPath = this.normalizePath(dirPath);
-      const newDirParentPath = this.normalizePath(
-        newDirPath.substring(0, newDirPath.lastIndexOf('/'))
-      );
-      newDirPath = this.normalizePath(newDirPath);
-      console.log('renameDirectoryPromise: ' + dirPath + ' to: ' + newDirPath);
-      // TODO check if the newFilePath exist or cause issues by renaming
-      this.fsRoot.getDirectory(
-        newDirParentPath,
-        {
-          create: false,
-          exclusive: false
-        },
-        parentDirEntry => {
-          this.fsRoot.getDirectory(
-            dirPath,
-            {
-              create: false,
-              exclusive: false
-            },
-            entry => {
-              entry.moveTo(
-                parentDirEntry,
-                newDirName,
-                () => {
-                  console.log(
-                    'Directory renamed to: ' +
+    dirPath = this.normalizePath(dirPath);
+    const newDirParentPath = this.normalizePath(
+      newDirPath.substring(0, newDirPath.lastIndexOf('/'))
+    );
+    newDirPath = this.normalizePath(newDirPath);
+    console.log('renameDirectoryPromise: ' + dirPath + ' to: ' + newDirPath);
+    // TODO check if the newFilePath exist or cause issues by renaming
+    this.fsRoot.getDirectory(
+      newDirParentPath,
+      {
+        create: false,
+        exclusive: false
+      },
+      parentDirEntry => {
+        this.fsRoot.getDirectory(
+          dirPath,
+          {
+            create: false,
+            exclusive: false
+          },
+          entry => {
+            entry.moveTo(
+              parentDirEntry,
+              newDirName,
+              () => {
+                console.log(
+                  'Directory renamed to: ' +
                       newDirPath +
                       ' from: ' +
                       entry.fullPath
-                  );
-                  resolve('/' + newDirPath);
-                },
-                err => {
-                  reject('error renaming directory: ' + dirPath + ' ' + err);
-                }
-              );
-            },
-            error => {
-              reject('Error getting directory: ' + dirPath + ' ' + error);
-            }
-          );
-        },
-        error => {
-          console.error(
-            'Getting dir: ' +
+                );
+                resolve('/' + newDirPath);
+              },
+              err => {
+                reject('error renaming directory: ' + dirPath + ' ' + err);
+              }
+            );
+          },
+          error => {
+            reject('Error getting directory: ' + dirPath + ' ' + error);
+          }
+        );
+      },
+      error => {
+        console.error(
+          'Getting dir: ' +
               newDirParentPath +
               ' failed with error code: ' +
               error.code
-          );
-          reject(error);
-        }
-      );
-    });
-  };
+        );
+        reject(error);
+      }
+    );
+  });
 
   /**
    * Delete a specified file
    */
-  deleteFilePromise = (filePath: string): Promise<*> => {
-    return new Promise((resolve, reject) => {
-      const path = this.normalizePath(filePath);
-      this.fsRoot.getFile(
-        path,
-        {
-          create: false,
-          exclusive: false
-        },
-        entry => {
-          entry.remove(
-            () => {
-              console.log('file deleted: ' + path);
-              resolve(filePath);
-            },
-            err => {
-              reject('error deleting: ' + filePath + ' ' + err);
-            }
-          );
-        },
-        error => {
-          reject('error getting file' + path + ' ' + error);
-        }
-      );
-    });
-  };
+  deleteFilePromise = (filePath: string): Promise<*> => new Promise((resolve, reject) => {
+    const path = this.normalizePath(filePath);
+    this.fsRoot.getFile(
+      path,
+      {
+        create: false,
+        exclusive: false
+      },
+      entry => {
+        entry.remove(
+          () => {
+            console.log('file deleted: ' + path);
+            resolve(filePath);
+          },
+          err => {
+            reject('error deleting: ' + filePath + ' ' + err);
+          }
+        );
+      },
+      error => {
+        reject('error getting file' + path + ' ' + error);
+      }
+    );
+  });
 
   /**
    * Delete a specified directory, the directory should be empty, if the trash can functionality is not enabled

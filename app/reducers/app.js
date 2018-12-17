@@ -1223,7 +1223,9 @@ function prepareDirectoryContent(
     dispatch(actions.showNotification('Generating thumbnails failed', 'warning', true));
   }
 
+  let genPromices = false;
   if (tmbGenerationPromises.length > 0) {
+    genPromices = true;
     dispatch(actions.setGeneratingThumbnails(true));
     // dispatch(actions.showNotification('Checking thumbnails', 'info', false));
     Promise.all(tmbGenerationPromises)
@@ -1232,11 +1234,18 @@ function prepareDirectoryContent(
   }
 
   if (tmbGenerationList.length > 0) {
-    dispatch(actions.setGeneratingThumbnails(true));
+    if (!genPromices) {
+      dispatch(actions.setGeneratingThumbnails(true));
+    }
     // dispatch(actions.showNotification('Loading or generating thumbnails...', 'info', false));
     PlatformIO.createThumbnailsInWorker(tmbGenerationList)
       .then(handleTmbGenerationResults)
       .catch(handleTmbGenerationFailed);
+  } else if (!genPromices) { // no dirEntries
+    console.log('Dir ' + directoryPath + ' contains ' + directoryContent.length);
+    dispatch(actions.setGeneratingThumbnails(false));
+    dispatch(actions.loadDirectorySuccess(directoryPath, directoryContent));
+    return;
   }
 
   // directoryContent.sort((a, b) => (a.name < b.name ? -1 : 1));
