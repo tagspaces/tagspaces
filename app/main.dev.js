@@ -92,6 +92,7 @@ app.on('window-all-closed', () => {
 
 app.on('ready', async () => {
   let workerDevMode = false;
+  let mainHTML = `file://${__dirname}/app.html`;
 
   if (process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true') {
     await installExtensions();
@@ -99,6 +100,7 @@ app.on('ready', async () => {
 
   if (process.env.NODE_ENV === 'development') {
     workerDevMode = true;
+    mainHTML = `file://${__dirname}/appd.html`;
   }
 
   const mainWindowState = windowStateKeeper({
@@ -122,7 +124,7 @@ app.on('ready', async () => {
   createSplashWorker();
 
   mainWindow = new BrowserWindow({
-    show: false,
+    show: true,
     x: mainWindowState.x,
     y: mainWindowState.y,
     width: mainWindowState.width,
@@ -130,8 +132,7 @@ app.on('ready', async () => {
     icon: path.join(__dirname, 'assets/icons/128x128.png')
   });
 
-  const indexPath = `file://${__dirname}/app.html`;
-  mainWindow.loadURL(indexPath);
+  mainWindow.loadURL(mainHTML);
   mainWindow.setAutoHideMenuBar(true);
   mainWindow.setMenuBarVisibility(false);
 

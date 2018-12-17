@@ -26,9 +26,12 @@ export default function buildTrayIconMenu(mainPageProps: Object) {
   if (!AppConfig.isElectron) {
     return;
   }
+
+  let cKey = AppConfig.isMacLike ? '  -  Cmd' : ' Ctrl';
+
   const trayMenuTemplate = [
     {
-      label: i18n.t('core:showTagSpaces'),
+      label: i18n.t('core:showTagSpaces') + cKey + '+Shift+W',
       click: () => {
         PlatformIO.showMainWindow();
       }
@@ -37,7 +40,7 @@ export default function buildTrayIconMenu(mainPageProps: Object) {
       type: 'separator'
     },
     {
-      label: i18n.t('core:newFileNote'), //  (' + ctrlName + '+Alt+N)',
+      label: i18n.t('core:newFileNote') + cKey + '+Shift+N',
       click: () => {
         mainPageProps.toggleCreateFileDialog();
       }
@@ -46,7 +49,7 @@ export default function buildTrayIconMenu(mainPageProps: Object) {
       type: 'separator'
     },
     {
-      label: i18n.t('core:openNextFileTooltip'),
+      label: i18n.t('core:openNextFileTooltip') + cKey + '+Shift+D',
       click: () => {
         const path = mainPageProps.getNextFile();
         mainPageProps.openFile(path);
@@ -54,7 +57,7 @@ export default function buildTrayIconMenu(mainPageProps: Object) {
       }
     },
     {
-      label: i18n.t('core:openPrevFileTooltip'),
+      label: i18n.t('core:openPrevFileTooltip') + cKey + '+Shift+A',
       click: () => {
         const path = mainPageProps.getPrevFile();
         mainPageProps.openFile(path);
@@ -65,7 +68,7 @@ export default function buildTrayIconMenu(mainPageProps: Object) {
       type: 'separator'
     },
     {
-      label: i18n.t('core:pauseResumePlayback'),
+      label: i18n.t('core:pauseResumePlayback') + cKey + '+Shift+P',
       click: () => {
         const audioEvent = new CustomEvent('toggle-resume', { detail: '' });
         window.dispatchEvent(audioEvent);
