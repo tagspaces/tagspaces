@@ -24,11 +24,11 @@
     </platform>
     <allow-navigation href="http://*/*" />
     <allow-navigation href="https://*/*" />
-    <plugin name="cordova-plugin-whitelist" spec="^1.3.3" />
     <plugin name="cordova-plugin-file" spec="^6.0.1" />
     <preference name="AndroidPersistentFileLocation" value="Compatibility" />
     <preference name="iosExtraFilesystems" value="library,library-nosync,documents,documents-nosync,cache,bundle,root" />
     <preference name="AndroidExtraFilesystems" value="files,files-external,documents,sdcard,cache,cache-external,assets,root" />
     <plugin name="cordova-plugin-device" spec="^2.0.2" />
+    <plugin name="cordova-plugin-whitelist" spec="^1.3.3" />
     <engine name="android" spec="^7.1.4" />
 </widget>
