@@ -407,7 +407,7 @@ export default class CordovaIO {
         })
         .catch((err) => {
           console.error('Error getting listMetaDirectoryPromise:', err);
-          resolve([]); // returning results even if any promise fails
+          resolve(entries); // returning results even if any promise fails
         });
     });
     const result = await promise; // this.listDirectoryPromise(normalizePath(path) + AppConfig.dirSeparator + AppConfig.metaFolder + AppConfig.dirSeparator, true);
