@@ -160,6 +160,7 @@
     "less-loader": "^4.0.5",
     "minimist": "^1.2.0",
     "node-sass": "^4.5.3",
+    "raw-loader": "^1.0.0",
     "react-addons-test-utils": "^15.5.1",
     "react-test-renderer": "^15.5.4",
     "redux-logger": "^3.0.6",
