@@ -18,6 +18,7 @@
  */
 
 import uuidv1 from 'uuid';
+import winattr from 'winattr';
 import { type Location, locationType } from './locations';
 import PlatformIO from '../services/platform-io';
 import AppConfig from '../config';
@@ -571,6 +572,16 @@ export const actions = {
                     settings,
                     dispatch
                   );
+                  // Make .ts a hidden folder under Windows
+                  if (AppConfig.isWin && !PlatformIO.haveObjectStoreSupport()) {
+                    winattr.set(metaDirectory, { hidden: true }, (err) => {
+                      if (err) {
+                        console.warn('Error setting hidden attr. to dir: ' + metaDirectory);
+                      } else {
+                        console.log('Success setting hidden attr. to dir: ' + metaDirectory);
+                      }
+                    });
+                  }
                   return true;
                 })
                 .catch(() => {
