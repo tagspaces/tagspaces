@@ -115,7 +115,6 @@ app.on('ready', async () => {
       width: workerDevMode ? 800 : 1,
       height: workerDevMode ? 600 : 1,
       frame: false,
-      // transparent: true,
     });
 
     global.splashWorkerWindow.loadURL(`file://${__dirname}/splash.html`);
@@ -136,25 +135,11 @@ app.on('ready', async () => {
   mainWindow.setAutoHideMenuBar(true);
   mainWindow.setMenuBarVisibility(false);
 
-  ipcMain.on('worker', (event, arg) => {
-    // console.log('worker event in main.' + arg.result.length);
-    if (mainWindow) {
-      mainWindow.webContents.send(arg.id, arg);
-    }
-  });
-
-  ipcMain.on('setSplashVisibility', (event, arg) => { // worker window needed to be visible for the PDF tmb generation
-    // console.log('worker event in main.' + arg.result.length);
-    if (global.splashWorkerWindow) {
-      arg.visibility ? global.splashWorkerWindow.show() : global.splashWorkerWindow.hide();
-    }
-  });
-
   mainWindow.webContents.on('did-finish-load', () => {
     if (!mainWindow) {
       throw new Error('"mainWindow" is not defined');
     }
-    mainWindow.show();
+    // mainWindow.show();
     global.splashWorkerWindow.hide(); // Comment for easy debugging of the worker
     mainWindow.focus();
   });
@@ -201,6 +186,20 @@ app.on('ready', async () => {
     createSplashWorker();
   });
 
+  ipcMain.on('worker', (event, arg) => {
+    // console.log('worker event in main.' + arg.result.length);
+    if (mainWindow) {
+      mainWindow.webContents.send(arg.id, arg);
+    }
+  });
+
+  ipcMain.on('setSplashVisibility', (event, arg) => { // worker window needed to be visible for the PDF tmb generation
+    // console.log('worker event in main.' + arg.result.length);
+    if (global.splashWorkerWindow) {
+      arg.visibility ? global.splashWorkerWindow.show() : global.splashWorkerWindow.hide();
+    }
+  });
+
   ipcMain.on('app-data-path-request', (event) => {
     event.returnValue = app.getPath('appData');
   });
@@ -233,6 +232,14 @@ app.on('ready', async () => {
   ipcMain.on('quit-application', () => {
     globalShortcut.unregisterAll();
     app.quit();
+  });
+
+  process.on('uncaughtException', (error) => {
+    if (error.stack) {
+      console.error('error:', error.stack);
+      throw new Error('error:', error.stack);
+    }
+    reloadApp();
   });
 
   mainWindowState.manage(mainWindow);
@@ -277,13 +284,5 @@ app.on('ready', async () => {
       mainWindow.loadURL(indexPath);
     }
   }
-
-  process.on('uncaughtException', (error) => {
-    if (error.stack) {
-      console.error('error:', error.stack);
-      throw new Error('error:', error.stack);
-    }
-    reloadApp();
-  });
 });
 
