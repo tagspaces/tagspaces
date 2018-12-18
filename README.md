@@ -1,5 +1,5 @@
 
-![tagspaces logo](https://raw.github.com/tagspaces/tagspaces/master/data/assets/icon96.png)
+![tagspaces logo](https://raw.github.com/tagspaces/tagspaces/master/app/assets/icons/96x96.png)
 
 <!-- ![tagspaces@travis](https://travis-ci.org/tagspaces/tagspaces.svg?branch=master) -->
 [![Join the chat at https://gitter.im/tagspaces/tagspaces](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/tagspaces/tagspaces?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![Github All Releases](https://img.shields.io/github/downloads/tagspaces/tagspaces/total.svg)]()
@@ -8,7 +8,7 @@
 
 **TagSpaces** is a open source application for managing of your local files. You can find more information about it on its website [tagspaces.org](https://tagspaces.org/). For a quick TagSpaces introduction please see this [Youtube video](https://www.youtube.com/embed/CJ2hYU6U-C8).
 
-- [TagSpaces Blog](https://www.tagspaces.org/blog/) for any news about TagSpaces
+- [TagSpaces Blog](https://www.tagspaces.org/blog/) for news about TagSpaces
 - [TagSpaces Documentation](https://docs.tagspaces.org/) for our latest generated documentation
 - [Issues Tracker](https://github.com/tagspaces/tagspaces/issues) for developer support requests
 
@@ -22,7 +22,7 @@ To get updates you can:
     ./app/locales........ contains the language files needed for the application internationalization
     ./app/node_modules... contains the TagSpaces extension modules
     ./cordova............ contains the code needed for running the Android version
-    ./dll................ contains the file needed for live reload in development mode
+    ./dll................ contains the files needed for live reload in development mode
     ./flow-typed......... contains for the Flow static type checker
     ./internals.......... contains files needed for supporting Flow and Eslint
 	./node_modules....... after yarn install, you will find here the external dependencies of the application
@@ -30,7 +30,7 @@ To get updates you can:
     ./scripts............ contains js script needed for the yarn/npm tasks
 
 ## Downloads
-You can find the latest release of TagSpace in the Github [release section](https://github.com/tagspaces/tagspaces/releases/) of TagSpaces
+You can find the latest release of TagSpaces in the Github [release section](https://github.com/tagspaces/tagspaces/releases/) of TagSpaces
 
 A full list of the changes is available on our [changelog](CHANGELOG.md)
 
