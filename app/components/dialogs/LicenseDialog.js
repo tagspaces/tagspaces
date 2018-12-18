@@ -28,12 +28,6 @@ import i18n from '../../services/i18n';
 import { Pro } from '../../pro';
 import LicenseContent from '../../LICENSE.txt';
 
-let EULAContent;
-
-if (Pro) {
-  EULAContent = require('../../node_modules/@tagspaces/pro/EULA.txt');
-}
-
 type Props = {
   open: boolean,
   fullScreen: boolean,
@@ -70,7 +64,7 @@ class LicenseDialog extends React.Component<Props> {
         }}
         style={{ whiteSpace: 'pre-wrap' }}
       >
-        {Pro ? EULAContent : LicenseContent}
+        {Pro ? Pro.EULAContent : LicenseContent}
       </pre>
     </DialogContent>
   );
