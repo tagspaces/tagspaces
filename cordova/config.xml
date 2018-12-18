@@ -22,8 +22,6 @@
         <allow-intent href="itms:*" />
         <allow-intent href="itms-apps:*" />
     </platform>
-    <allow-navigation href="http://*/*" />
-    <allow-navigation href="https://*/*" />
     <plugin name="cordova-plugin-file" spec="^6.0.1" />
     <preference name="AndroidPersistentFileLocation" value="Compatibility" />
     <preference name="iosExtraFilesystems" value="library,library-nosync,documents,documents-nosync,cache,bundle,root" />
