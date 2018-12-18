@@ -573,7 +573,7 @@ export const actions = {
                     dispatch
                   );
                   // Make .ts a hidden folder under Windows
-                  if (AppConfig.isWin && !PlatformIO.haveObjectStoreSupport()) {
+                  if (AppConfig.isElectron && AppConfig.isWin && !PlatformIO.haveObjectStoreSupport()) {
                     winattr.set(metaDirectory, { hidden: true }, (err) => {
                       if (err) {
                         console.warn('Error setting hidden attr. to dir: ' + metaDirectory);
