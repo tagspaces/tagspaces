@@ -348,7 +348,7 @@ class CreateLocationDialog extends React.Component<Props, State> {
                 row
               >
                 <FormControlLabel value={locationType.TYPE_LOCAL} control={<Radio />} label="Local" />
-                <FormControlLabel value={locationType.TYPE_CLOUD} control={<Radio />} label="Cloud (S3 AWS)" />
+                <FormControlLabel value={locationType.TYPE_CLOUD} control={<Radio />} label="S3-Comp. Object Storage (BETA)" />
               </RadioGroup>
             </FormControl>
           </Grid>
