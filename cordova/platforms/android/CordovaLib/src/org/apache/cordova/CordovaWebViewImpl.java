@@ -216,8 +216,10 @@ public class CordovaWebViewImpl implements CordovaWebView {
                 // TODO: What about params?
                 // Load new URL
                 loadUrlIntoView(url, true);
+                return;
             } else {
                 LOG.w(TAG, "showWebPage: Refusing to load URL into webview since it is not in the <allow-navigation> whitelist. URL=" + url);
+                return;
             }
         }
         if (!pluginManager.shouldOpenExternalUrl(url)) {

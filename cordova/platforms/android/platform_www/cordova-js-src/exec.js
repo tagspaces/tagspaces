@@ -109,17 +109,6 @@ function androidExec(success, fail, service, action, args) {
 }
 
 androidExec.init = function() {
-    //CB-11828
-    //This failsafe checks the version of Android and if it's Jellybean, it switches it to
-    //using the Online Event bridge for communicating from Native to JS
-    //
-    //It's ugly, but it's necessary.
-    var check = navigator.userAgent.toLowerCase().match(/android\s[0-9].[0-9]/);
-    var version_code = check && check[0].match(/4.[0-3].*/);
-    if (version_code != null && nativeToJsBridgeMode == nativeToJsModes.EVAL_BRIDGE) {
-      nativeToJsBridgeMode = nativeToJsModes.ONLINE_EVENT;
-    }
-
     bridgeSecret = +prompt('', 'gap_init:' + nativeToJsBridgeMode);
     channel.onNativeReady.fire();
 };

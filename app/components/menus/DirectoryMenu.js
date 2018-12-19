@@ -37,8 +37,9 @@ import CreateDirectoryDialog from '../dialogs/CreateDirectoryDialog';
 import RenameDirectoryDialog from '../dialogs/RenameDirectoryDialog';
 import AppConfig from '../../config';
 import i18n from '../../services/i18n';
-import { extractFileName, extractParentDirectoryPath } from '../../utils/paths'; // extractFileExtension
+import { extractFileName, extractParentDirectoryPath, normalizePath } from '../../utils/paths'; // extractFileExtension
 import PlatformIO from '../../services/platform-io';
+import { formatDateTime4Tag } from '../../utils/misc';
 
 type Props = {
   open?: boolean,
@@ -139,16 +140,105 @@ class DirectoryMenu extends React.Component<Props, State> {
 
   addExistingFile = () => {
     this.props.onClose();
-    if (this.fileInput) {
-      this.fileInput.click();
-    }
+    this.fileInput.click();
+  };
+
+  onFail = (message) => {
+    console.log('Camera Failed: ' + message);
+  };
+
+  onCameraSuccess = (imageURL) => {
+    window.resolveLocalFileSystemURL(imageURL, (fp) => {
+      this.moveFile(fp.nativeURL);
+    }, () => { console.log('Failed to get filesystem url'); });
+    // this.saveFile(imageURL); // 'data:image/jpeg;base64,' + imageData);
+  };
+
+  moveFile = (filePath) => {
+    const fileName = 'IMG_TS' + AppConfig.beginTagContainer + formatDateTime4Tag(new Date(), true) + AppConfig.endTagContainer + '.jpg';
+    const newFilePath =
+      normalizePath(this.props.directoryPath) +
+      AppConfig.dirSeparator +
+      fileName;
+
+    PlatformIO.renameFilePromise(filePath, newFilePath)
+      .then(() => {
+        this.props.showNotification(
+          'File ' + newFilePath + ' successfully imported.',
+          'default',
+          true
+        );
+        this.props.reflectCreateEntry(newFilePath, true);
+        return true;
+      })
+      .catch(error => {
+        // TODO showAlertDialog("Saving " + filePath + " failed.");
+        console.error('Save to file ' + newFilePath + ' failed ' + error);
+        this.props.showNotification(
+          'Importing file ' + newFilePath + ' failed.',
+          'error',
+          true
+        );
+        return true;
+      });
+  };
+
+  /* saveFile = (data) => {
+    const fileName = 'IMG' + AppConfig.beginTagContainer + formatDateTime4Tag(new Date(), true) + AppConfig.endTagContainer + '.jpg';
+    const filePath =
+      normalizePath(this.props.directoryPath) +
+      AppConfig.dirSeparator +
+      fileName;
+
+    PlatformIO.saveBinaryFilePromise(
+      filePath,
+      data,
+      true
+    )
+      .then(() => {
+        this.props.showNotification(
+          'File ' + filePath + ' successfully imported.',
+          'default',
+          true
+        );
+        this.props.reflectCreateEntry(filePath, true);
+        return true;
+      })
+      .catch(error => {
+        // TODO showAlertDialog("Saving " + filePath + " failed.");
+        console.error('Save to file ' + filePath + ' failed ' + error);
+        this.props.showNotification(
+          'Importing file ' + filePath + ' failed.',
+          'error',
+          true
+        );
+        return true;
+      });
+  }; */
+
+  loadImageLocal = () => {
+    this.props.onClose();
+    navigator.camera.getPicture(this.onCameraSuccess, this.onFail, {
+      destinationType: Camera.DestinationType.FILE_URI,
+      sourceType: Camera.PictureSourceType.PHOTOLIBRARY
+    });
+  };
+
+  cameraTakePicture = () => {
+    this.props.onClose();
+    navigator.camera.getPicture(this.onCameraSuccess, this.onFail, {
+      // quality: 50,
+      destinationType: Camera.DestinationType.FILE_URI, // DATA_URL, // Return base64 encoded string
+      // encodingType: Camera.EncodingType.JPEG,
+      mediaType: Camera.MediaType.PICTURE // ALLMEDIA
+    });
   };
 
   handleFileInputChange = (selection: Object) => {
     // console.log("Selected File: "+JSON.stringify(selection.currentTarget.files[0]));
     const file = selection.currentTarget.files[0];
     const filePath =
-      this.props.directoryPath +
+      normalizePath(this.props.directoryPath) +
       AppConfig.dirSeparator +
       decodeURIComponent(file.name);
 
@@ -323,6 +413,14 @@ class DirectoryMenu extends React.Component<Props, State> {
                 <AddExistingFileIcon />
               </ListItemIcon>
               <ListItemText inset primary={i18n.t('core:showAddFileDialog')} />
+            </MenuItem>
+          )}
+          {AppConfig.isCordova && (
+            <MenuItem data-tid="takePicture" onClick={this.cameraTakePicture}>
+              <ListItemIcon>
+                <AddExistingFileIcon />
+              </ListItemIcon>
+              <ListItemText inset primary={i18n.t('core:cameraTakePicture')} />
             </MenuItem>
           )}
           {!this.props.perspectiveMode && (

@@ -19,8 +19,6 @@
        under the License.
 */
 
-/* jshint sub:true */
-
 var android_versions = require('android-versions');
 var retry = require('./retry');
 var build = require('./build');
@@ -34,7 +32,6 @@ var shelljs = require('shelljs');
 var android_sdk = require('./android_sdk');
 var check_reqs = require('./check_reqs');
 
-var Q = require('q');
 var os = require('os');
 var fs = require('fs');
 var child_process = require('child_process');
@@ -170,15 +167,13 @@ module.exports.list_images_using_android = function () {
    }
  */
 module.exports.list_images = function () {
-    return Q.fcall(function () {
+    return Promise.resolve().then(function () {
         if (forgivingWhichSync('avdmanager')) {
             return module.exports.list_images_using_avdmanager();
         } else if (forgivingWhichSync('android')) {
             return module.exports.list_images_using_android();
         } else {
-            return Q().then(function () {
-                throw new CordovaError('Could not find either `android` or `avdmanager` on your $PATH! Are you sure the Android SDK is installed and available?');
-            });
+            return Promise.reject(new CordovaError('Could not find either `android` or `avdmanager` on your $PATH! Are you sure the Android SDK is installed and available?'));
         }
     }).then(function (avds) {
         // In case we're missing the Android OS version string from the target description, add it.
@@ -277,8 +272,8 @@ module.exports.get_available_port = function () {
 module.exports.start = function (emulator_ID, boot_timeout) {
     var self = this;
 
-    return Q().then(function () {
-        if (emulator_ID) return Q(emulator_ID);
+    return Promise.resolve().then(function () {
+        if (emulator_ID) return Promise.resolve(emulator_ID);
 
         return self.best_image().then(function (best) {
             if (best && best.name) {
@@ -287,7 +282,7 @@ module.exports.start = function (emulator_ID, boot_timeout) {
             }
 
             var androidCmd = check_reqs.getAbsoluteAndroidCmd();
-            return Q.reject(new CordovaError('No emulator images (avds) found.\n' +
+            return Promise.reject(new CordovaError('No emulator images (avds) found.\n' +
                 '1. Download desired System Image by running: ' + androidCmd + ' sdk\n' +
                 '2. Create an AVD by running: ' + androidCmd + ' avd\n' +
                 'HINT: For a faster emulator, use an Intel System Image and install the HAXM device driver\n'));
@@ -308,7 +303,7 @@ module.exports.start = function (emulator_ID, boot_timeout) {
             return self.wait_for_emulator(port);
         });
     }).then(function (emulatorId) {
-        if (!emulatorId) { return Q.reject(new CordovaError('Failed to start emulator')); }
+        if (!emulatorId) { return Promise.reject(new CordovaError('Failed to start emulator')); }
 
         // wait for emulator to boot up
         process.stdout.write('Waiting for emulator to boot (this may take a while)...');
@@ -334,7 +329,7 @@ module.exports.start = function (emulator_ID, boot_timeout) {
  */
 module.exports.wait_for_emulator = function (port) {
     var self = this;
-    return Q().then(function () {
+    return Promise.resolve().then(function () {
         var emulator_id = 'emulator-' + port;
         return Adb.shell(emulator_id, 'getprop dev.bootcomplete').then(function (output) {
             if (output.indexOf('1') >= 0) {
@@ -371,10 +366,13 @@ module.exports.wait_for_boot = function (emulator_id, time_remaining) {
         } else {
             process.stdout.write('.');
 
-            // Check at regular intervals
-            return Q.delay(time_remaining < CHECK_BOOTED_INTERVAL ? time_remaining : CHECK_BOOTED_INTERVAL).then(function () {
-                var updated_time = time_remaining >= 0 ? Math.max(time_remaining - CHECK_BOOTED_INTERVAL, 0) : time_remaining;
-                return self.wait_for_boot(emulator_id, updated_time);
+            return new Promise(resolve => {
+                const delay = time_remaining < CHECK_BOOTED_INTERVAL ? time_remaining : CHECK_BOOTED_INTERVAL;
+
+                setTimeout(() => {
+                    const updated_time = time_remaining >= 0 ? Math.max(time_remaining - CHECK_BOOTED_INTERVAL, 0) : time_remaining;
+                    resolve(self.wait_for_boot(emulator_id, updated_time));
+                }, delay);
             });
         }
     });
@@ -400,7 +398,7 @@ module.exports.create_image = function (name, target) {
             // TODO: This seems like another error case, even though it always happens.
             console.error('ERROR : Unable to create an avd emulator, no targets found.');
             console.error('Ensure you have targets available by running the "android" command');
-            return Q.reject();
+            return Promise.reject(new CordovaError());
         }, function (error) {
             console.error('ERROR : Failed to create emulator image : ');
             console.error(error);
@@ -411,13 +409,13 @@ module.exports.create_image = function (name, target) {
 module.exports.resolveTarget = function (target) {
     return this.list_started().then(function (emulator_list) {
         if (emulator_list.length < 1) {
-            return Q.reject('No running Android emulators found, please start an emulator before deploying your project.');
+            return Promise.reject(new CordovaError('No running Android emulators found, please start an emulator before deploying your project.'));
         }
 
         // default emulator
         target = target || emulator_list[0];
         if (emulator_list.indexOf(target) < 0) {
-            return Q.reject('Unable to find target \'' + target + '\'. Failed to deploy to emulator.');
+            return Promise.reject(new CordovaError('Unable to find target \'' + target + '\'. Failed to deploy to emulator.'));
         }
 
         return build.detectArchitecture(target).then(function (arch) {
@@ -436,15 +434,12 @@ module.exports.install = function (givenTarget, buildResults) {
 
     var target;
     // We need to find the proper path to the Android Manifest
-    var manifestPath = path.join(__dirname, '..', '..', 'app', 'src', 'main', 'AndroidManifest.xml');
-    if (buildResults.buildMethod === 'gradle') {
-        manifestPath = path.join(__dirname, '../../AndroidManifest.xml');
-    }
-    var manifest = new AndroidManifest(manifestPath);
-    var pkgName = manifest.getPackageId();
+    const manifestPath = path.join(__dirname, '..', '..', 'app', 'src', 'main', 'AndroidManifest.xml');
+    const manifest = new AndroidManifest(manifestPath);
+    const pkgName = manifest.getPackageId();
 
     // resolve the target emulator
-    return Q().then(function () {
+    return Promise.resolve().then(function () {
         if (givenTarget && typeof givenTarget === 'object') {
             return givenTarget;
         } else {
@@ -459,7 +454,7 @@ module.exports.install = function (givenTarget, buildResults) {
     }).then(function () {
         // This promise is always resolved, even if 'adb uninstall' fails to uninstall app
         // or the app doesn't installed at all, so no error catching needed.
-        return Q.when().then(function () {
+        return Promise.resolve().then(function () {
 
             var apk_path = build.findBestApkForArchitecture(buildResults, target.arch);
             var execOptions = {
@@ -479,7 +474,7 @@ module.exports.install = function (givenTarget, buildResults) {
                 events.emit('verbose', 'Installing apk ' + apk + ' on ' + target + '...');
 
                 var command = 'adb -s ' + target + ' install -r "' + apk + '"';
-                return Q.promise(function (resolve, reject) {
+                return new Promise(function (resolve, reject) {
                     child_process.exec(command, opts, function (err, stdout, stderr) {
                         if (err) reject(new CordovaError('Error executing "' + command + '": ' + stderr));
                         // adb does not return an error code even if installation fails. Instead it puts a specific

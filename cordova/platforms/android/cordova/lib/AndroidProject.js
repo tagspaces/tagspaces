@@ -21,7 +21,6 @@ var fs = require('fs');
 var path = require('path');
 var properties_parser = require('properties-parser');
 var AndroidManifest = require('./AndroidManifest');
-var AndroidStudio = require('./AndroidStudio');
 var pluginHandlers = require('./pluginHandlers');
 
 var projectFileCache = {};
@@ -62,10 +61,7 @@ function AndroidProject (projectDir) {
     this._dirty = false;
     this.projectDir = projectDir;
     this.platformWww = path.join(this.projectDir, 'platform_www');
-    this.www = path.join(this.projectDir, 'assets/www');
-    if (AndroidStudio.isAndroidStudioProject(projectDir) === true) {
-        this.www = path.join(this.projectDir, 'app/src/main/assets/www');
-    }
+    this.www = path.join(this.projectDir, 'app/src/main/assets/www');
 }
 
 AndroidProject.getProjectFile = function (projectDir) {
@@ -92,10 +88,7 @@ AndroidProject.purgeCache = function (projectDir) {
  * @return  {String}              The name of the package
  */
 AndroidProject.prototype.getPackageName = function () {
-    var manifestPath = path.join(this.projectDir, 'AndroidManifest.xml');
-    if (AndroidStudio.isAndroidStudioProject(this.projectDir) === true) {
-        manifestPath = path.join(this.projectDir, 'app/src/main/AndroidManifest.xml');
-    }
+    var manifestPath = path.join(this.projectDir, 'app/src/main/AndroidManifest.xml');
     return new AndroidManifest(manifestPath).getPackageId();
 };
 

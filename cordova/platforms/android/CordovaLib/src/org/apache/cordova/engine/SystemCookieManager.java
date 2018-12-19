@@ -58,7 +58,11 @@ class SystemCookieManager implements ICordovaCookieManager {
     }
 
     public void clearCookies() {
-        cookieManager.removeAllCookie();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            cookieManager.removeAllCookies(null);
+        } else {
+            cookieManager.removeAllCookie();
+        }
     }
 
     public void flush() {

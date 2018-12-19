@@ -16,6 +16,8 @@
  *
  * @flow
  */
+const isCordovaiOS = /^file:\/{3}[^\/]/i.test(window.location.href) && /ios|iphone|ipod|ipad/i.test(navigator.userAgent);
+const isCordovaAndroid = document.URL.indexOf('file:///android_asset') === 0;
 
 export default {
   checkNewVersionURL: 'https://www.tagspaces.org/releases/tagspaces.json',
@@ -43,7 +45,8 @@ export default {
   isWin: navigator.appVersion.includes('Win'),
   isMacLike: navigator.platform.match(/(Mac|iPhone|iPod|iPad)/i),
   isWeb: (document.URL.startsWith('http') && !document.URL.startsWith('http://localhost:1212/')),
-  isCordovaiOS: /^file:\/{3}[^\/]/i.test(window.location.href) && /ios|iphone|ipod|ipad/i.test(navigator.userAgent),
-  isCordovaAndroid: (document.URL.indexOf('file:///android_asset') === 0),
+  isCordovaiOS,
+  isCordovaAndroid,
+  isCordova: isCordovaiOS || isCordovaAndroid,
   dirSeparator: (navigator.appVersion.includes('Win') && !document.URL.startsWith('http')) ? '\\' : '/',
 };

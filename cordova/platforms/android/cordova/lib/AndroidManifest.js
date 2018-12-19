@@ -51,15 +51,11 @@ AndroidManifest.prototype.setVersionCode = function (versionCode) {
 };
 
 AndroidManifest.prototype.getPackageId = function () {
-    /* jshint -W069 */
     return this.doc.getroot().attrib['package'];
-    /* jshint +W069 */
 };
 
 AndroidManifest.prototype.setPackageId = function (pkgId) {
-    /* jshint -W069 */
     this.doc.getroot().attrib['package'] = pkgId;
-    /* jshint +W069 */
     return this;
 };
 

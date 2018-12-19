@@ -24,15 +24,15 @@ ext {
 
 buildscript {
     repositories {
-        maven {
-            url "https://maven.google.com"
-        }
+        google()
         jcenter()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.1'
-        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.5'
+        // The gradle plugin and the maven plugin have to be updated after each version of Android
+        // studio comes out
+        classpath 'com.android.tools.build:gradle:3.2.0'
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
     }
 }
@@ -42,12 +42,11 @@ apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
 
 group = 'org.apache.cordova'
-version = '7.1.2'
+version = '8.0.0-dev'
 
 android {
     compileSdkVersion cdvCompileSdkVersion
     buildToolsVersion cdvBuildToolsVersion
-    publishNonDefault true
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -94,9 +93,9 @@ install {
                     }
                 }
                 scm {
-                    connection 'https://git-wip-us.apache.org/repos/asf?p=cordova-android.git'
-                    developerConnection 'https://git-wip-us.apache.org/repos/asf?p=cordova-android.git'
-                    url 'https://git-wip-us.apache.org/repos/asf?p=cordova-android'
+                    connection 'scm:git:https://github.com/apache/cordova-android.git'
+                    developerConnection 'scm:git:git@github.com:apache/cordova-android.git'
+                    url 'https://github.com/apache/cordova-android'
 
                 }
             }
@@ -122,16 +121,16 @@ bintray {
         name = 'cordova-android'
         userOrg = 'cordova'
         licenses = ['Apache-2.0']
-        vcsUrl = 'https://git-wip-us.apache.org/repos/asf?p=cordova-android.git'
+        vcsUrl = 'https://github.com/apache/cordova-android'
         websiteUrl = 'https://cordova.apache.org'
-        issueTrackerUrl = 'https://issues.apache.org/jira/browse/CB'
+        issueTrackerUrl = 'https://github.com/apache/cordova-android/issues'
         publicDownloadNumbers = true
         licenses = ['Apache-2.0']
         labels = ['android', 'cordova', 'phonegap']
         version {
-            name = '7.1.2'
+            name = '8.0.0-dev'
             released  = new Date()
-            vcsTag = '7.1.2'
+            vcsTag = '8.0.0-dev'
         }
     }
 }

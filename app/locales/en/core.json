@@ -254,6 +254,7 @@
   "fileName": "File Name",
   "createTXTFile": "New Plain Text File",
   "showAddFileDialog": "Add Existing File",
+  "cameraTakePicture": "Take Picture",
   "deleteConfirmationTitle": "Confirm Delete",
   "deleteConfirmationContent": "The selected entries will be permanently deleted. Are you sure?",
   "changeBackgroundColor": "Change Background Color",

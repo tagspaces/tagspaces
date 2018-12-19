@@ -43,6 +43,7 @@ public class CoreAndroid extends CordovaPlugin {
     private BroadcastReceiver telephonyReceiver;
     private CallbackContext messageChannel;
     private PluginResult pendingResume;
+    private PluginResult pendingPause;
     private final Object messageChannelLock = new Object();
 
     /**
@@ -113,6 +114,10 @@ public class CoreAndroid extends CordovaPlugin {
 			else if (action.equals("messageChannel")) {
                 synchronized(messageChannelLock) {
                     messageChannel = callbackContext;
+                    if (pendingPause != null) {
+                        sendEventMessage(pendingPause);
+                        pendingPause = null;
+                    }
                     if (pendingResume != null) {
                         sendEventMessage(pendingResume);
                         pendingResume = null;
@@ -139,7 +144,7 @@ public class CoreAndroid extends CordovaPlugin {
     public void clearCache() {
         cordova.getActivity().runOnUiThread(new Runnable() {
             public void run() {
-                webView.clearCache(true);
+                webView.clearCache();
             }
         });
     }
@@ -321,7 +326,19 @@ public class CoreAndroid extends CordovaPlugin {
         } catch (JSONException e) {
             LOG.e(TAG, "Failed to create event message", e);
         }
-        sendEventMessage(new PluginResult(PluginResult.Status.OK, obj));
+        PluginResult result = new PluginResult(PluginResult.Status.OK, obj);
+
+        if (messageChannel == null) {
+            LOG.i(TAG, "Request to send event before messageChannel initialised: " + action);
+            if ("pause".equals(action)) {
+                pendingPause = result;
+            } else if ("resume".equals(action)) {
+                // When starting normally onPause then onResume is called
+                pendingPause = null;
+            }
+        } else {
+            sendEventMessage(result);
+        }
     }
 
     private void sendEventMessage(PluginResult payload) {

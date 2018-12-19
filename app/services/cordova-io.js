@@ -714,10 +714,11 @@ export default class CordovaIO {
     overWrite: boolean,
     isRaw?: boolean
   ): Promise<*> => {
+    // eslint-disable-next-line no-param-reassign
+    filePath = this.normalizePath(filePath);
     console.log('Saving file: ' + filePath);
     return new Promise((resolve, reject) => {
       let isFileNew = true;
-      filePath = this.normalizePath(filePath);
       // Checks if the file already exists
       this.fsRoot.getFile(
         filePath,
@@ -748,7 +749,7 @@ export default class CordovaIO {
                 };
                 if (isRaw) {
                   writer.write(content);
-                } else if (content.indexOf(';base64,') > 0) {
+                } else if (typeof content === 'string' && content.indexOf(';base64,') > 0) {
                   const contentArray = content.split(';base64,');
                   const type =
                     contentArray.length > 1
@@ -845,7 +846,8 @@ export default class CordovaIO {
    */
   copyFilePromise = (filePath: string, newFilePath: string): Promise<*> =>
     new Promise((resolve, reject) => {
-      const filePath = this.normalizePath(filePath);
+      // eslint-disable-next-line no-param-reassign
+      filePath = this.normalizePath(filePath);
       const newFileName = newFilePath.substring(
         newFilePath.lastIndexOf('/') + 1
       );
@@ -905,6 +907,7 @@ export default class CordovaIO {
    */
   renameFilePromise = (filePath: string, newFilePath: string): Promise<*> =>
     new Promise((resolve, reject) => {
+      // eslint-disable-next-line no-param-reassign
       filePath = this.normalizePath(filePath);
       const newFileName = newFilePath.substring(newFilePath.lastIndexOf('/') + 1);
       const newFileParentPath = this.normalizePath(
@@ -973,7 +976,7 @@ export default class CordovaIO {
         extractParentDirectoryPath(dirPath) +
         AppConfig.dirSeparator +
         newDirName;
-
+    // eslint-disable-next-line no-param-reassign
     dirPath = this.normalizePath(dirPath);
     const newDirParentPath = this.normalizePath(
       newDirPath.substring(0, newDirPath.lastIndexOf('/'))
