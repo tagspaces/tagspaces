@@ -19,7 +19,7 @@
   "win": {
     "target": [
       "nsis",
-      "portable",
+      // "portable",
       "zip"
     ],
     "icon": "resources/icon.ico"

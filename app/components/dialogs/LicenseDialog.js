@@ -25,19 +25,13 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
 import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
 import i18n from '../../services/i18n';
-import { loadFileContentPromise } from '../../services/utils-io';
 import { Pro } from '../../pro';
-
-const licenseUrl = Pro ? './node_modules/@tagspaces/pro/EULA.txt' : './LICENSE.txt';
+import LicenseContent from '../../LICENSE.txt';
 
 type Props = {
   open: boolean,
   fullScreen: boolean,
   onClose: () => void
-};
-
-type State = {
-  license?: string
 };
 
 function printElem(elem) {
@@ -53,39 +47,24 @@ function printElem(elem) {
   return true;
 }
 
-class LicenseDialog extends React.Component<Props, State> {
-  state = {
-    license: ''
-  };
-
-  componentWillMount() {
-    loadFileContentPromise(licenseUrl, 'text').then(
-      (result) => {
-        this.setState({
-          license: result
-        });
-        return true;
-      }
-    ).catch((err) => {
-      console.log('Error loading license file ' + err);
-    });
-  }
-
+class LicenseDialog extends React.Component<Props> {
   licenseElement;
 
   printLicense = () => {
     printElem(this.licenseElement);
-  }
+  };
 
   renderTitle = () => <DialogTitle>{i18n.t('core:license')}</DialogTitle>;
 
   renderContent = () => (
     <DialogContent style={{ overflowY: 'visible', overflowX: 'auto' }}>
       <pre
-        inputRef={(ref) => { this.licenseElement = ref; }}
+        inputRef={ref => {
+          this.licenseElement = ref;
+        }}
         style={{ whiteSpace: 'pre-wrap' }}
       >
-        { this.state.license }
+        {Pro ? Pro.EULAContent : LicenseContent}
       </pre>
     </DialogContent>
   );
@@ -109,11 +88,7 @@ class LicenseDialog extends React.Component<Props, State> {
   );
 
   render() {
-    const {
-      fullScreen,
-      open,
-      onClose
-    } = this.props;
+    const { fullScreen, open, onClose } = this.props;
     return (
       <GenericDialog
         open={open}

@@ -54,7 +54,7 @@
     "cordova-create": "cordova create ./cordova org.tagspaces.mobile TagSpaces",
     "start-android": "yarn build-cordova && yarn run-android",
     "start-android-dev": "yarn prepare-cordova && yarn build-cordova-dev && yarn run-android",
-    "update-changelog": "git log v3.0.0-rc.6..HEAD --no-merges --format=%B > CHANGELOG.TXT",
+    "update-changelog": "git log v3.0.0-rc.7..HEAD --no-merges --format=%B > CHANGELOG.TXT",
     "clean": "rimraf app/dist && rimraf node_modules && rimraf app/node_modules"
   },
   "browserslist": "electron 2.0",
@@ -163,6 +163,7 @@
     "less-loader": "^4.0.5",
     "minimist": "^1.2.0",
     "node-sass": "^4.5.3",
+    "raw-loader": "^1.0.0",
     "react-addons-test-utils": "^15.5.1",
     "react-test-renderer": "^15.5.4",
     "redux-logger": "^3.0.6",
@@ -236,7 +237,8 @@
     "redux-thunk": "^2.2.0",
     "remove-markdown": "^0.2.2",
     "semver": "^5.5.0",
-    "source-map-support": "^0.5.6"
+    "source-map-support": "^0.5.6",
+    "winattr": "^2.0.0"
   },
   "devEngines": {
     "node": ">=8.x",

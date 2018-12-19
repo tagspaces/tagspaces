@@ -27,7 +27,8 @@ export default merge.smart(baseConfig, {
   },
 
   node: {
-    fs: 'empty'
+    fs: 'empty',
+    child_process: 'empty'
   },
 
   module: {
@@ -108,6 +109,11 @@ export default merge.smart(baseConfig, {
             publicPath: '../dist/',
           }
         }]
+      },
+      // Text files
+      {
+        test: /\.(txt)$/,
+        use: 'raw-loader'
       },
       // Common Image Formats
       {
