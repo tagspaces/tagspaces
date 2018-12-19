@@ -92,6 +92,7 @@ app.on('window-all-closed', () => {
 
 app.on('ready', async () => {
   let workerDevMode = false;
+  let mainHTML = `file://${__dirname}/app.html`;
 
   if (process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true') {
     await installExtensions();
@@ -99,6 +100,7 @@ app.on('ready', async () => {
 
   if (process.env.NODE_ENV === 'development') {
     workerDevMode = true;
+    mainHTML = `file://${__dirname}/appd.html`;
   }
 
   const mainWindowState = windowStateKeeper({
@@ -113,7 +115,6 @@ app.on('ready', async () => {
       width: workerDevMode ? 800 : 1,
       height: workerDevMode ? 600 : 1,
       frame: false,
-      // transparent: true,
     });
 
     global.splashWorkerWindow.loadURL(`file://${__dirname}/splash.html`);
@@ -122,7 +123,7 @@ app.on('ready', async () => {
   createSplashWorker();
 
   mainWindow = new BrowserWindow({
-    show: false,
+    show: true,
     x: mainWindowState.x,
     y: mainWindowState.y,
     width: mainWindowState.width,
@@ -130,30 +131,15 @@ app.on('ready', async () => {
     icon: path.join(__dirname, 'assets/icons/128x128.png')
   });
 
-  const indexPath = `file://${__dirname}/app.html`;
-  mainWindow.loadURL(indexPath);
+  mainWindow.loadURL(mainHTML);
   mainWindow.setAutoHideMenuBar(true);
   mainWindow.setMenuBarVisibility(false);
-
-  ipcMain.on('worker', (event, arg) => {
-    // console.log('worker event in main.' + arg.result.length);
-    if (mainWindow) {
-      mainWindow.webContents.send(arg.id, arg);
-    }
-  });
-
-  ipcMain.on('setSplashVisibility', (event, arg) => { // worker window needed to be visible for the PDF tmb generation
-    // console.log('worker event in main.' + arg.result.length);
-    if (global.splashWorkerWindow) {
-      arg.visibility ? global.splashWorkerWindow.show() : global.splashWorkerWindow.hide();
-    }
-  });
 
   mainWindow.webContents.on('did-finish-load', () => {
     if (!mainWindow) {
       throw new Error('"mainWindow" is not defined');
     }
-    mainWindow.show();
+    // mainWindow.show();
     global.splashWorkerWindow.hide(); // Comment for easy debugging of the worker
     mainWindow.focus();
   });
@@ -200,6 +186,20 @@ app.on('ready', async () => {
     createSplashWorker();
   });
 
+  ipcMain.on('worker', (event, arg) => {
+    // console.log('worker event in main.' + arg.result.length);
+    if (mainWindow) {
+      mainWindow.webContents.send(arg.id, arg);
+    }
+  });
+
+  ipcMain.on('setSplashVisibility', (event, arg) => { // worker window needed to be visible for the PDF tmb generation
+    // console.log('worker event in main.' + arg.result.length);
+    if (global.splashWorkerWindow) {
+      arg.visibility ? global.splashWorkerWindow.show() : global.splashWorkerWindow.hide();
+    }
+  });
+
   ipcMain.on('app-data-path-request', (event) => {
     event.returnValue = app.getPath('appData');
   });
@@ -232,6 +232,14 @@ app.on('ready', async () => {
   ipcMain.on('quit-application', () => {
     globalShortcut.unregisterAll();
     app.quit();
+  });
+
+  process.on('uncaughtException', (error) => {
+    if (error.stack) {
+      console.error('error:', error.stack);
+      throw new Error('error:', error.stack);
+    }
+    reloadApp();
   });
 
   mainWindowState.manage(mainWindow);
@@ -276,13 +284,5 @@ app.on('ready', async () => {
       mainWindow.loadURL(indexPath);
     }
   }
-
-  process.on('uncaughtException', (error) => {
-    if (error.stack) {
-      console.error('error:', error.stack);
-      throw new Error('error:', error.stack);
-    }
-    reloadApp();
-  });
 });
 

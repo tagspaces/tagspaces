@@ -348,7 +348,7 @@ class CreateLocationDialog extends React.Component<Props, State> {
                 row
               >
                 <FormControlLabel value={locationType.TYPE_LOCAL} control={<Radio />} label="Local" />
-                <FormControlLabel value={locationType.TYPE_CLOUD} control={<Radio />} label="Cloud (S3 AWS)" />
+                <FormControlLabel value={locationType.TYPE_CLOUD} control={<Radio />} label="S3-Comp. Object Storage (BETA)" />
               </RadioGroup>
             </FormControl>
           </Grid>
@@ -366,7 +366,7 @@ class CreateLocationDialog extends React.Component<Props, State> {
             }
             label={i18n.t('core:startupLocation')}
           />
-          <FormControlLabel
+          {/* <FormControlLabel
             control={
               <Switch
                 disabled={!Pro}
@@ -377,7 +377,7 @@ class CreateLocationDialog extends React.Component<Props, State> {
               />
             }
             label={i18n.t('core:readonlyModeSwitch') + (Pro ? '' : ' - ' + i18n.t('core:proFeature'))}
-          />
+          /> */}
           <FormControlLabel
             control={
               <Switch

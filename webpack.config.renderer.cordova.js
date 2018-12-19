@@ -9,7 +9,8 @@ import merge from 'webpack-merge';
 import baseConfig from './webpack.config.base';
 
 export default merge.smart(baseConfig, {
-  devtool: 'source-map',
+  // devtool: 'source-map',
+  devtool: 'inline-source-map',
 
   target: 'web',
 
@@ -19,6 +20,16 @@ export default merge.smart(baseConfig, {
     libraryTarget: 'window', // 'commonjs2',
     path: path.join(__dirname, 'cordova/www/dist'),
     publicPath: './dist/'
+  },
+
+  optimization: {
+    // We no not want to minimize our code. TODO remove this for production
+    minimize: false
+  },
+
+  node: {
+    fs: 'empty',
+    child_process: 'empty'
   },
 
   module: {
@@ -99,6 +110,11 @@ export default merge.smart(baseConfig, {
             publicPath: '../dist/',
           }
         }]
+      },
+      // Text files
+      {
+        test: /\.(txt)$/,
+        use: 'raw-loader'
       },
       // Common Image Formats
       {

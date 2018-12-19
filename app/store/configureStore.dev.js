@@ -18,10 +18,10 @@
  */
 
 import { createStore, applyMiddleware, compose } from 'redux';
-import { persistStore, autoRehydrate } from 'redux-persist';
+import { persistStore } from 'redux-persist';
 import thunk from 'redux-thunk';
 import { createHashHistory } from 'history';
-import { routerMiddleware, routerActions, push } from 'react-router-redux';
+import { routerMiddleware, routerActions } from 'react-router-redux';
 import { createLogger } from 'redux-logger';
 import rootReducer from '../reducers';
 import onlineListener from '../services/onlineListener';
@@ -63,7 +63,7 @@ const configureStore = (initialState) => {
 
   // Apply Middleware & Compose Enhancers
   enhancers.push(applyMiddleware(...middleware));
-  enhancers.push(autoRehydrate());
+  // enhancers.push(autoRehydrate()); removed in v5
   const enhancer = composeEnhancers(...enhancers);
 
   // Create Store
@@ -71,11 +71,11 @@ const configureStore = (initialState) => {
 
   onlineListener(store.dispatch);
 
-  persistStore(store, { blacklist: ['app', 'locationIndex'] }, () => {
+  const persistor = persistStore(store);/* , null, () => {
     document.dispatchEvent(new Event('storeLoaded'));
     // store.dispatch(push('/main'));
     console.log('Store rehydrated.');
-  });
+  }); */
 
   if (module.hot) {
     module.hot.accept('../reducers', () =>
@@ -83,7 +83,7 @@ const configureStore = (initialState) => {
     );
   }
 
-  return store;
+  return { store, persistor };
 };
 
 export default { configureStore, history };

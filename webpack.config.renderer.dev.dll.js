@@ -102,6 +102,11 @@ export default merge.smart(baseConfig, {
           loader: 'file-loader'
         }]
       },
+      // Text files
+      {
+        test: /\.(txt)$/,
+        use: 'raw-loader'
+      },
       // Common Image Formats
       {
         test: /\.(?:ico|gif|png|jpg|jpeg|webp|svg)$/,

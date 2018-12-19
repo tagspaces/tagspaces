@@ -43,8 +43,8 @@ type Props = {
 };
 
 type State = {
-  updateAvailable?: boolean,
-  newVersion?: string
+  updateAvailable: boolean,
+  newVersion: string
 };
 
 let buildID = versionMeta.commitId;
@@ -79,8 +79,11 @@ class AboutDialog extends React.Component<Props, State> {
               updateAvailable: true,
               newVersion: cleanedLastVersion.version
             });
+          } else {
+            this.setState({
+              newVersion: versionMeta.version
+            });
           }
-          // this.setState({ newVersion: '3.0.1' });
           return true;
         })
         .catch(error => {
@@ -160,7 +163,7 @@ class AboutDialog extends React.Component<Props, State> {
 
   renderActions = () => {
     let versionInfo = 'Check for updates';
-    if (this.state.newVersion.length > 1) {
+    if (this.state.newVersion && this.state.newVersion.length > 1) {
       if (this.state.updateAvailable) {
         versionInfo = i18n.t('getNewVersion', {
           newVersion: this.state.newVersion

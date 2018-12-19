@@ -94,7 +94,8 @@ const styles = theme => ({
   entryProperties: {
     display: 'inline',
     flex: '1 1 100%',
-    padding: '0 0 60px 0'
+    padding: '0 0 60px 0',
+    height: '50%'
   },
   fileOpener: {
     width: '100%',
@@ -935,14 +936,14 @@ class EntryContainer extends React.Component<Props, State> {
         <SplitPane
           split="horizontal"
           resizerStyle={{ backgroundColor: this.props.theme.palette.divider }}
-          size={this.state.entryPropertiesSplitSize}
-          minSize={defaultSplitSize}
-          maxSize={fullSplitSize}
-          defaultSize={this.state.entryPropertiesSplitSize}
-          // size={(currentEntry && currentEntry.isFile) ? this.state.entryPropertiesSplitSize : '100%'}
-          // minSize={(currentEntry && currentEntry.isFile) ? defaultSplitSize : '100%'}
-          // maxSize={(currentEntry && currentEntry.isFile) ? fullSplitSize : '100%'}
-          // defaultSize={(currentEntry && currentEntry.isFile) ? this.state.entryPropertiesSplitSize : '100%'}
+          // size={this.state.entryPropertiesSplitSize}
+          // minSize={defaultSplitSize}
+          // maxSize={fullSplitSize}
+          // defaultSize={this.state.entryPropertiesSplitSize}
+          size={(currentEntry && currentEntry.isFile) ? this.state.entryPropertiesSplitSize : '100%'}
+          minSize={(currentEntry && currentEntry.isFile) ? defaultSplitSize : '100%'}
+          maxSize={(currentEntry && currentEntry.isFile) ? fullSplitSize : '100%'}
+          defaultSize={(currentEntry && currentEntry.isFile) ? this.state.entryPropertiesSplitSize : '100%'}
           onChange={size => {
             this.setState({
               isPropertiesPanelVisible: size > defaultSplitSize,
@@ -1019,7 +1020,7 @@ class EntryContainer extends React.Component<Props, State> {
                 )}
                 {(this.state.editingSupported && !currentEntry.editMode) && (
                   <div>
-                    <IconButton
+                    {/* <IconButton
                       disabled={false}
                       onClick={this.editFile}
                       title={i18n.t('core:editFile')}
@@ -1027,7 +1028,19 @@ class EntryContainer extends React.Component<Props, State> {
                       data-tid="fileContainerEditFile"
                     >
                       <EditIcon />
-                    </IconButton>
+                    </IconButton> */}
+                    <Button
+                      disabled={false}
+                      size="small"
+                      variant="outlined"
+                      color="primary"
+                      onClick={this.editFile}
+                      title={i18n.t('core:editFile')}
+                      aria-label={i18n.t('core:editFile')}
+                      data-tid="fileContainerEditFile"
+                    >
+                      {i18n.t('core:edit')}
+                    </Button>
                     <IconButton
                       onClick={this.startClosingFile}
                       title={i18n.t('core:closeEntry')}
@@ -1053,34 +1066,32 @@ class EntryContainer extends React.Component<Props, State> {
                 { currentEntry.isFile ?
                   this.renderFileToolbar(classes) : this.renderFolderToolbar()
                 }
-                <div style={{ overflowY: AppConfig.isFirefox ? 'auto' : 'overlay', maxHeight: '100%' }}>
-                  <EntryProperties
-                    key={this.state.EntryPropertiesKey}
-                    resetState={this.resetState}
-                    entryPath={currentEntry.path}
-                    shouldReload={currentEntry.shouldReload}
-                    addTags={this.props.addTags}
-                    renameFile={this.props.renameFile}
-                    renameDirectory={this.props.renameDirectory}
-                    removeTags={this.props.removeTags}
-                    editTagForEntry={this.props.editTagForEntry}
-                    settings={this.props.settings}
-                    deleteFile={this.props.deleteFile}
-                    showNotification={this.props.showNotification}
-                    shouldCopyFile={this.state.shouldCopyFile}
-                    normalizeShouldCopyFile={() => this.setState({ shouldCopyFile: false })}
-                    onEditTags={() => {
-                      const tags = extractTagsAsObjects(currentEntry.path, this.props.settings.tagDelimiter);
-                      this.setState({
-                        selectedItem: {
-                          ...currentEntry,
-                          tags
-                        },
-                        isEditTagsModalOpened: true
-                      });
-                    }}
-                  />
-                </div>
+                <EntryProperties
+                  key={this.state.EntryPropertiesKey}
+                  resetState={this.resetState}
+                  entryPath={currentEntry.path}
+                  shouldReload={currentEntry.shouldReload}
+                  addTags={this.props.addTags}
+                  renameFile={this.props.renameFile}
+                  renameDirectory={this.props.renameDirectory}
+                  removeTags={this.props.removeTags}
+                  editTagForEntry={this.props.editTagForEntry}
+                  settings={this.props.settings}
+                  deleteFile={this.props.deleteFile}
+                  showNotification={this.props.showNotification}
+                  shouldCopyFile={this.state.shouldCopyFile}
+                  normalizeShouldCopyFile={() => this.setState({ shouldCopyFile: false })}
+                  onEditTags={() => {
+                    const tags = extractTagsAsObjects(currentEntry.path, this.props.settings.tagDelimiter);
+                    this.setState({
+                      selectedItem: {
+                        ...currentEntry,
+                        tags
+                      },
+                      isEditTagsModalOpened: true
+                    });
+                  }}
+                />
               </div>
             </div>
           ) : <div>{i18n.t('core:noEntrySelected')}</div> }

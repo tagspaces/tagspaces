@@ -238,6 +238,15 @@
     "@babel/runtime" "7.0.0"
     recompose "^0.29.0"
 
+"@material-ui/lab@^3.0.0-alpha.25":
+  version "3.0.0-alpha.25"
+  resolved "https://registry.yarnpkg.com/@material-ui/lab/-/lab-3.0.0-alpha.25.tgz#36593e2610a4eeb8fcdea6ab453d1b895e44b42e"
+  integrity sha512-3GEGdoU6FnicAM+tbOLyn95YG1Yk8bF71DGaYyqjL8YU7JAsyAlfbYhMxD7m1BBJw3CH6t4Yc2tAPqldv08xoA==
+  dependencies:
+    "@babel/runtime" "7.1.2"
+    classnames "^2.2.5"
+    keycode "^2.1.9"
+
 "@material-ui/utils@^3.0.0-alpha.0":
   version "3.0.0-alpha.0"
   resolved "https://registry.yarnpkg.com/@material-ui/utils/-/utils-3.0.0-alpha.0.tgz#506fcaf531a9a8f58a73ff2d3dfaa36c0f238506"
@@ -5551,6 +5560,11 @@ fstream@^1.0.0, fstream@^1.0.2, fstream@~1.0.10:
     mkdirp ">=0.5 0"
     rimraf "2"
 
+fswin@^2.16.1102:
+  version "2.17.1227"
+  resolved "https://registry.yarnpkg.com/fswin/-/fswin-2.17.1227.tgz#c598061e1ac1e7110e2e6ce884296efa27dc2507"
+  integrity sha512-xNDktvwzSsXT8Xqnpz59VbuFwGHhtn1w+dS7QQ+wAu5cbH0p3WMGKU9Duf7cPna+nubhR+5ZG1MTl6/V6xgRgw==
+
 function-bind@^1.1.0, function-bind@^1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/function-bind/-/function-bind-1.1.1.tgz#a56899d3ea3c9bab874bb9773b7c5ede92f4895d"
@@ -7472,7 +7486,7 @@ json-stable-stringify@^1.0.1:
   dependencies:
     jsonify "~0.0.0"
 
-json-stringify-safe@^5.0.1, json-stringify-safe@~5.0.1:
+json-stringify-safe@~5.0.1:
   version "5.0.1"
   resolved "https://registry.yarnpkg.com/json-stringify-safe/-/json-stringify-safe-5.0.1.tgz#1296a2d58fd45f19a0f6ce01d65701e2c735b6eb"
   integrity sha1-Epai1Y/UXxmg9s4B1lcB4sc1tus=
@@ -7831,7 +7845,7 @@ locate-path@^3.0.0:
     p-locate "^3.0.0"
     path-exists "^3.0.0"
 
-lodash-es@^4.17.4, lodash-es@^4.2.1:
+lodash-es@^4.2.1:
   version "4.17.11"
   resolved "https://registry.yarnpkg.com/lodash-es/-/lodash-es-4.17.11.tgz#145ab4a7ac5c5e52a3531fb4f310255a152b4be0"
   integrity sha512-DHb1ub+rMjjrxqlB3H56/6MXtm1lSksDp2rA2cNWjG8mlDUYFhUj3Di2Zn5IwSU87xLv8tNIQ7sSwE/YOX/D/Q==
@@ -10245,6 +10259,14 @@ raw-body@2.3.3:
     iconv-lite "0.4.23"
     unpipe "1.0.0"
 
+raw-loader@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/raw-loader/-/raw-loader-1.0.0.tgz#3f9889e73dadbda9a424bce79809b4133ad46405"
+  integrity sha512-Uqy5AqELpytJTRxYT4fhltcKPj0TyaEpzJDcGz7DFJi+pQOOi3GjR/DOdxTkTsF+NzhnldIoG6TORaBlInUuqA==
+  dependencies:
+    loader-utils "^1.1.0"
+    schema-utils "^1.0.0"
+
 rc-animate@^3.0.0-rc.5:
   version "3.0.0-rc.6"
   resolved "https://registry.yarnpkg.com/rc-animate/-/rc-animate-3.0.0-rc.6.tgz#04288eefa118e0cae214536c8a903ffaac1bc3fb"
@@ -10964,14 +10986,10 @@ redux-logger@^3.0.6:
   dependencies:
     deep-diff "^0.3.5"
 
-redux-persist@^4.8.2:
-  version "4.10.2"
-  resolved "https://registry.yarnpkg.com/redux-persist/-/redux-persist-4.10.2.tgz#8efdb16cfe882c521a78a6d0bfdfef2437f49f96"
-  integrity sha512-U+e0ieMGC69Zr72929iJW40dEld7Mflh6mu0eJtVMLGfMq/aJqjxUM1hzyUWMR1VUyAEEdPHuQmeq5ti9krIgg==
-  dependencies:
-    json-stringify-safe "^5.0.1"
-    lodash "^4.17.4"
-    lodash-es "^4.17.4"
+redux-persist@^5.10.0:
+  version "5.10.0"
+  resolved "https://registry.yarnpkg.com/redux-persist/-/redux-persist-5.10.0.tgz#5d8d802c5571e55924efc1c3a9b23575283be62b"
+  integrity sha512-sSJAzNq7zka3qVHKce1hbvqf0Vf5DuTVm7dr4GtsqQVOexnrvbV47RWFiPxQ8fscnyiuWyD2O92DOxPl0tGCRg==
 
 redux-thunk@^2.2.0:
   version "2.3.0"
@@ -13408,6 +13426,13 @@ widest-line@^2.0.0:
   integrity sha512-Ba5m9/Fa4Xt9eb2ELXt77JxVDV8w7qQrH0zS/TWSJdLyAwQjWoOzpzj5lwVftDz6n/EOu3tNACS84v509qwnJA==
   dependencies:
     string-width "^2.1.1"
+
+winattr@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/winattr/-/winattr-2.0.0.tgz#553d4e347c8c598551a8d7032eefe36526bd5026"
+  integrity sha1-VT1ONHyMWYVRqNcDLu/jZSa9UCY=
+  dependencies:
+    fswin "^2.16.1102"
 
 window-size@^0.1.4:
   version "0.1.4"

@@ -5,6 +5,9 @@
         <param name="onload" value="true" />
     </feature>
     <allow-navigation href="cdvfile:*" />
+    <feature name="Device">
+        <param name="android-package" value="org.apache.cordova.device.Device" />
+    </feature>
     <name>TagSpaces</name>
     <description>
         A sample Apache Cordova application that responds to the deviceready event.
@@ -23,4 +26,6 @@
     <allow-intent href="market:*" />
     <preference name="loglevel" value="DEBUG" />
     <preference name="AndroidPersistentFileLocation" value="Compatibility" />
+    <preference name="iosExtraFilesystems" value="library,library-nosync,documents,documents-nosync,cache,bundle,root" />
+    <preference name="AndroidExtraFilesystems" value="files,files-external,documents,sdcard,cache,cache-external,assets,root" />
 </widget>

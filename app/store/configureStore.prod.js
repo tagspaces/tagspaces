@@ -18,7 +18,7 @@
  */
 
 import { compose, createStore, applyMiddleware } from 'redux';
-import { persistStore, autoRehydrate } from 'redux-persist';
+import { persistStore } from 'redux-persist';
 import thunk from 'redux-thunk';
 import { createBrowserHistory } from 'history';
 import { routerMiddleware } from 'react-router-redux';
@@ -28,17 +28,17 @@ import onlineListener from '../services/onlineListener';
 const history = createBrowserHistory();
 const router = routerMiddleware(history);
 const enhancer = compose(
-  applyMiddleware(thunk, router),
-  autoRehydrate()
+  applyMiddleware(thunk, router)
+  // autoRehydrate()
 );
 
 function configureStore(initialState) {
   const store = createStore(rootReducer, initialState, enhancer);
   onlineListener(store.dispatch);
-  persistStore(store, { blacklist: ['app', 'locationIndex'] }, () => {
+  const persistor = persistStore(store); /* , null, () => {
     document.dispatchEvent(new Event('storeLoaded'));
-  });
-  return store;
+  }); */
+  return { store, persistor };
 }
 
 export default { configureStore, history };

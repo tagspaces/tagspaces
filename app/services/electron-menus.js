@@ -266,15 +266,15 @@ export default function buildDesktopMenu(mainPageProps: Object) {
           }
         },
         {
-          label: '&' + i18n.t('core:startingHints'),
-          click: () => {
-            // mainPageProps.startGettingStartedTour();
-          }
-        },
-        {
           label: '&' + i18n.t('core:shortcutKeys'),
           click: () => {
             mainPageProps.toggleKeysDialog();
+          }
+        },
+        {
+          label: 'Welcome Wizzard',
+          click: () => {
+            mainPageProps.toggleOnboarding();
           }
         },
         {
@@ -317,6 +317,21 @@ export default function buildDesktopMenu(mainPageProps: Object) {
           label: '&' + i18n.t('core:reportIssues'),
           click: () => {
             mainPageProps.openFileNatively('https://github.com/tagspaces/tagspaces/issues/');
+          }
+        },
+        {
+          type: 'separator'
+        },
+        {
+          label: 'Web clipper extension for Chrome',
+          click: () => {
+            mainPageProps.openFileNatively('https://chrome.google.com/webstore/detail/tagspaces-web-clipper/ldalmgifdlgpiiadeccbcjojljeanhjk');
+          }
+        },
+        {
+          label: 'Web clipper extension for Firefox',
+          click: () => {
+            mainPageProps.openFileNatively('https://addons.mozilla.org/en-US/firefox/addon/tagspaces/');
           }
         },
         {

@@ -20,26 +20,22 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { withStyles } from '@material-ui/core/styles';
 import WelcomeLogo from '../assets/images/welcome-logo.png';
 import WelcomeBackground from '../assets/images/background.png';
-// import AppBar from '@material-ui/AppBar';
-// import Toolbar from '@material-ui/Toolbar';
-// import Typography from '@material-ui/Typography';
-// import Button from '@material-ui/Button';
-// import IconButton from '@material-ui/IconButton';
-// import ArrowDropDownIcon from '@material-ui-icons/ArrowDropDown';
-// import FolderIcon from '@material-ui-icons/Folder';
-// import MoreVertIcon from '@material-ui-icons/MoreVert';
-import { withStyles } from '@material-ui/core/styles';
 // import Menu from '@material-ui/core/Menu';
 // import MenuItem from '@material-ui/core/MenuItem';
 // import ListItemIcon from '@material-ui/core/ListItemCore';
 // import ListItemText  from '@material-ui/core/ListItemtext';
 // import ListSubheader from '@material-ui/core/ListSubheader';
-import OnboardingDialog from './dialogs/OnboardingDialog'
+
 
 // import i18n from '../services/i18n';
 import { getLocations, type Location } from '../reducers/locations';
+import {
+  isFirstRun,
+  actions as SettingsActions
+} from '../reducers/settings'
 // import { extractDirectoryName } from '../utils/paths';
 
 const styles = theme => ({
@@ -68,19 +64,15 @@ type Props = {
 
 type State = {
   currentLocation?: Location,
-  isOboardingDialogVisible: boolean
 };
 
 class WelcomePanel extends React.Component<Props, State> {
   state = {
     currentLocation: null,
-    isOboardingDialogVisible: false
   };
 
   toggleOnboarding = () => {
-    this.setState({
-      isOboardingDialogVisible: !this.state.isOboardingDialogVisible
-    });
+    this.props.setFirstRun(!this.props.isFirstRun);
   }
 
   render() {
@@ -88,10 +80,11 @@ class WelcomePanel extends React.Component<Props, State> {
     return (
       <div className={classes.mainPanel}>
         <div className={classes.slogan}>
-          <img src={WelcomeLogo} alt="Organize your files" onClick={this.toggleOnboarding} />
-          <OnboardingDialog
-            open={this.state.isOboardingDialogVisible}
-            onClose={this.toggleOnboarding}
+          <img
+            src={WelcomeLogo}
+            alt="Organize your files"
+            onClick={this.toggleOnboarding}
+            // style={{ pointerEvents: 'none' }}
           />
         </div>
       </div>
@@ -101,10 +94,20 @@ class WelcomePanel extends React.Component<Props, State> {
 
 function mapStateToProps(state) {
   return {
+    isFirstRun: isFirstRun(state),
     locations: getLocations(state),
   };
 }
 
-export default connect(mapStateToProps)(
+function mapActionCreatorsToProps(dispatch) {
+  return bindActionCreators(
+    {
+      setFirstRun: SettingsActions.setFirstRun,
+    },
+    dispatch
+  );
+}
+
+export default connect(mapStateToProps, mapActionCreatorsToProps)(
   withStyles(styles)(WelcomePanel)
 );

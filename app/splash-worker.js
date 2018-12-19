@@ -83,10 +83,17 @@ function init() {
       }
       isGeneratingThumbs = true;
       const tmbGenerationPromises = [];
-      arg.tmbGenerationList.map(entry => tmbGenerationPromises.push(getThumbnailURLPromise(entry)));
-      ipcRenderer.send('setSplashVisibility', {
-        visibility: true,
+      let showSplash = false;
+      arg.tmbGenerationList.map(entry => {
+        showSplash = entry.endsWith('pdf');
+        tmbGenerationPromises.push(getThumbnailURLPromise(entry));
+        return true;
       });
+      if (showSplash) {
+        ipcRenderer.send('setSplashVisibility', {
+          visibility: true,
+        });
+      }
       Promise.all(tmbGenerationPromises).then(tmbResult => {
         console.log('tmb results' + JSON.stringify(tmbResult));
         ipcRenderer.send('setSplashVisibility', {
