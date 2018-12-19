@@ -573,6 +573,7 @@ export const actions = {
                     dispatch
                   );
                   // Make .ts a hidden folder under Windows
+                  // TODO move functionality to electron-io.js
                   if (AppConfig.isElectron && AppConfig.isWin && !PlatformIO.haveObjectStoreSupport()) {
                     winattr.set(metaDirectory, { hidden: true }, (err) => {
                       if (err) {
