@@ -43,7 +43,7 @@ A full list of the changes is available on our [changelog](CHANGELOG.md)
 
 ## Screenshots
 
-![TagSpaces Start Screen](https://www.tagspaces.org/content/v3-x/tagspaces-next-theming.png)
+![TagSpaces Start Screen](https://raw.githubusercontent.com/tagspaces/documentation/master/media/v3/tagspaces-v3-themes.jpg)
 
 ## Infos for developers
 
