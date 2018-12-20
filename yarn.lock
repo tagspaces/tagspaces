@@ -12590,6 +12590,11 @@ thunky@^1.0.2:
   resolved "https://registry.yarnpkg.com/thunky/-/thunky-1.0.3.tgz#f5df732453407b09191dae73e2a8cc73f381a826"
   integrity sha512-YwT8pjmNcAXBZqrubu22P4FYsh2D4dxRmnWBOL8Jk8bUcRUtc5326kx32tuTmFDAZtLOGEVNl8POAR8j896Iow==
 
+tiff.js@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/tiff.js/-/tiff.js-1.0.0.tgz#31696dd884d911ed9a4191e78bd90fb33af948bb"
+  integrity sha512-P+ZWp1hcpEIx/Pzuc+REh0+isGXk5kfnFEJKRPq1trMbZW49eD/QGDT8Y4KamIK2ZXU+DcYr47auaO93akVP3A==
+
 time-stamp@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/time-stamp/-/time-stamp-1.1.0.tgz#764a5a11af50561921b133f3b44e618687e0f5c3"
