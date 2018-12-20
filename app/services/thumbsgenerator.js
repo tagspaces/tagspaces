@@ -111,9 +111,7 @@ export function getThumbnailURLPromise(filePath) {
       PlatformIO.getPropertiesPromise(thumbFilePath).then((stats) => {
         if (stats) { // Thumbnail exists
           if (origStats.lmdt > stats.lmdt) { // Checking if is up to date
-            createThumbnailPromise(filePath, origStats.size, thumbFilePath).then((tmbPath) => {
-              return resolve({ filePath, tmbPath });
-            }).catch((err) => {
+            createThumbnailPromise(filePath, origStats.size, thumbFilePath).then((tmbPath) => resolve({ filePath, tmbPath })).catch((err) => {
               console.warn('Thumb generation failed ' + err);
               resolve({ filePath, tmbPath: thumbFilePath });
             });
@@ -122,9 +120,7 @@ export function getThumbnailURLPromise(filePath) {
           }
         } else {
           // Thumbnail does not exists
-          createThumbnailPromise(filePath, origStats.size, thumbFilePath).then((tmbPath) => {
-            return resolve({ filePath, tmbPath });
-          }).catch(err => {
+          createThumbnailPromise(filePath, origStats.size, thumbFilePath).then((tmbPath) => resolve({ filePath, tmbPath })).catch(err => {
             console.warn('Thumb generation failed ' + err);
             resolve({ filePath });
           });
@@ -180,6 +176,8 @@ export function generateThumbnailPromise(
     return Pro.ThumbsGenerator.generateHtmlThumbnail(fileURL, maxSize);
   } else if (Pro && ext === 'url') {
     return Pro.ThumbsGenerator.generateUrlThumbnail(fileURL, maxSize);
+  } else if (Pro && ext === 'tiff') {
+    return Pro.ThumbsGenerator.generateTiffThumbnail(fileURL, maxSize);
   } else if (Pro && ext === 'mp3') {
     if (fileSize && fileSize < maxFileSize) {
       // return Pro.ThumbsGenerator.generateMp3Thumbnail(fileURL, maxSize);
@@ -233,19 +231,19 @@ function generateImageThumbnail(fileURL) {
         */
         let angleInRadians;
         switch (orientation) {
-          case 8:
-            angleInRadians = 270 * (Math.PI / 180);
-            break;
-          case 3:
-            angleInRadians = 180 * (Math.PI / 180);
-            break;
-          case 6:
-            angleInRadians = 90 * (Math.PI / 180);
-            break;
-          case 1:
-            // ctx.rotate(0);
-            break;
-          default:
+        case 8:
+          angleInRadians = 270 * (Math.PI / 180);
+          break;
+        case 3:
+          angleInRadians = 180 * (Math.PI / 180);
+          break;
+        case 6:
+          angleInRadians = 90 * (Math.PI / 180);
+          break;
+        case 1:
+          // ctx.rotate(0);
+          break;
+        default:
           // ctx.rotate(0);
         }
         if (img.width >= img.height) {
