@@ -67,6 +67,7 @@ import AppConfig from '../config';
 // import i18n from '../services/i18n';
 import buildDesktopMenu from '../services/electron-menus';
 import buildTrayIconMenu from '../services/electron-tray-menu';
+import { Pro } from '../pro';
 
 const initialSplitSize = 44;
 const drawerWidth = 300;
@@ -118,6 +119,8 @@ type Props = {
   isUpdateAvailable: boolean,
   isFirstRun: boolean,
   setFirstRun: (isFirstRun: boolean) => void,
+  isGeo: boolean,
+  setGeo: (isGeo: boolean) => void,
   hideNotifications: () => void,
   cancelDirectoryIndexing: () => void,
   setUpdateAvailable: (isUpdateAvailable: boolean) => void,
@@ -232,7 +235,11 @@ class MainPage extends Component<Props, State> {
 
   toggleOnboarding = () => {
     this.props.setFirstRun(!this.props.isFirstRun);
-  }
+  };
+
+  toggleGeo = () => {
+    this.props.setGeo(!this.props.isGeo);
+  };
 
   updateDimensions = () => {
     const width =
@@ -539,6 +546,11 @@ class MainPage extends Component<Props, State> {
               </Button>,
             ]}
           />
+
+          <Pro.AddEditGeoTagsDialog
+            open={this.props.isGeo}
+            onClose={this.toggleGeo}
+          />
           <OnboardingDialog
             open={this.props.isFirstRun}
             onClose={this.toggleOnboarding}
@@ -553,6 +565,7 @@ function mapStateToProps(state) {
   return {
     isIndexing: isIndexing(state),
     isFirstRun: isFirstRun(state),
+    isGeo: state.settings.isGeo,
     isGeneratingThumbs: isGeneratingThumbs(state),
     isFileOpened: isFileOpened(state),
     // isFileDragged: isFileDragged(state),
@@ -596,6 +609,7 @@ function mapDispatchToProps(dispatch) {
     showNotification: AppActions.showNotification,
     reflectCreateEntry: AppActions.reflectCreateEntry,
     setFirstRun: SettingsActions.setFirstRun,
+    setGeo: SettingsActions.setGeo,
   }, dispatch);
 }
 

@@ -18,7 +18,7 @@
  */
 
 import fsextra from 'fs-extra';
-import winattr from 'winattr';
+import winattr from '@akryum/winattr';
 import { extractParentDirectoryPath, getMetaDirectoryPath } from '../utils/paths';
 import { arrayBufferToBuffer } from '../utils/misc';
 import AppConfig from '../config';

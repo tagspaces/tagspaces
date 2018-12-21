@@ -17,10 +17,12 @@
  * @flow
  */
 
+
+import uuidv1 from 'uuid';
 import i18n from '../services/i18n';
 import { actions as AppActions } from './app';
+import { actions as SettingsActions } from './settings';
 import { actions as TagLibraryActions, type Tag } from './taglibrary';
-import uuidv1 from 'uuid';
 import {
   extractFileExtension,
   extractFileName,
@@ -36,6 +38,8 @@ import {
 import { formatDateTime4Tag } from '../utils/misc';
 import AppConfig from '../config';
 import PlatformIO from '../services/platform-io';
+import { Pro } from '../pro';
+
 
 const actions = {
   addTags: (paths: Array<string>, tags: Array<Tag>) => (
@@ -48,8 +52,13 @@ const actions = {
     tags.map((pTag) => {
       const tag = { ...pTag };
       if (tag.functionality && tag.functionality.length > 0) {
-        tag.title = generateTagValue(tag.functionality);
+        tag.title = generateTagValue(tag);
         tag.id = uuidv1();
+        if (tag.functionality === 'geoTagging') {
+          if (Pro) {
+            dispatch(SettingsActions.setGeo(true));
+          }
+        }
       }
       tag.type = 'sidecar';
       processedTags.push(tag);
@@ -417,19 +426,20 @@ function handleSmartTag(smarttagFunction: string) {
   }
 }
 
-function generateTagValue(smarttagFunction: string) {
-  let tagTitle = smarttagFunction;
-  switch (smarttagFunction) {
-  /* case 'geoTagging': {
-      $('#viewContainers').on('drop dragend', function(event) {
+function generateTagValue(tag) {
+  let tagTitle = tag.functionality;
+  switch (tag.functionality) {
+  case 'geoTagging': {
+    tagTitle = tag.name;
+    /* $('#viewContainers').on('drop dragend', function(event) {
         if (TSCORE.PRO && TSCORE.selectedTag === 'geo-tag') {
           TSCORE.UI.showTagEditDialog(true); // true start the dialog in add mode
         } else if (!TSCORE.PRO && TSCORE.selectedTag === 'geo-tag') {
           TSCORE.showAlertDialog($.i18n.t("ns.common:needProVersion"), $.i18n.t("ns.common:geoTaggingNotPossible"));
         }
-      });
-      break;
-    } */
+      }); */
+    break;
+  }
   case 'today': {
     tagTitle = formatDateTime4Tag(new Date(), false);
     break;
