@@ -1,5 +1,20 @@
 #Changelog
 
+## Version 3.0.0 / 2018.12.21
+
+### Community
+- New user interface based on React.js with resizable panels
+- Location indexing for faster search
+- Tree folder navigation
+- Dark theme
+- Preview for PSD, TIFF, DOCX files
+- Playing modes for audio and video files
+
+### Pro
+- Connecting of AWS S3 compatible storage locations
+- Watching for changes in a location
+- New advance search functionalities
+
 ## Version 2.9.0 / 2017.07.15
 
 ### Community
