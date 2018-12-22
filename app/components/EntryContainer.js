@@ -309,8 +309,8 @@ class EntryContainer extends React.Component<Props, State> {
   componentWillUnmount() {
     if (AppConfig.isElectron) {
       if (this.fileViewer) {
-        this.fileViewer.removeEventListener('console-message');
-        this.fileViewer.removeEventListener('ipc-message');
+          this.fileViewer.removeEventListener('console-message'); // , this.handleMessage); // todo error after crash two arguments required
+          this.fileViewer.removeEventListener('ipc-message'); // , this.handleMessage);
       }
     } else {
       window.removeEventListener('message', this.handleMessage);

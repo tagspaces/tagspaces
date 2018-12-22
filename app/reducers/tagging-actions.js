@@ -430,7 +430,7 @@ function generateTagValue(tag) {
   let tagTitle = tag.functionality;
   switch (tag.functionality) {
   case 'geoTagging': {
-    tagTitle = tag.name;
+    tagTitle = tag.title;
     /* $('#viewContainers').on('drop dragend', function(event) {
         if (TSCORE.PRO && TSCORE.selectedTag === 'geo-tag') {
           TSCORE.UI.showTagEditDialog(true); // true start the dialog in add mode

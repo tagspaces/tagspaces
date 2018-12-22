@@ -74,7 +74,7 @@ class TagContainer extends React.Component<Props> {
     if (tagMode === 'remove') {
       mode = deleteIcon || (
         <RemoveTagIcon
-          data-tid={'tagRemoveButton_' + tag.title.replace(/ /g, '_')}
+          data-tid={'tagRemoveButton_' + (tag.title ? tag.title.replace(/ /g, '_') : '')}
           style={{
             color: 'white'
           }}
@@ -86,7 +86,7 @@ class TagContainer extends React.Component<Props> {
     } else {
       mode = (
         <MoreVertIcon
-          data-tid={'tagMoreButton_' + tag.title.replace(/ /g, '_')}
+          data-tid={'tagMoreButton_' + (tag.title ? tag.title.replace(/ /g, '_') : '')}
           style={{
             color: 'white'
           }}
@@ -96,7 +96,7 @@ class TagContainer extends React.Component<Props> {
 
     return (
       <div
-        data-tid={'tagContainer_' + tag.title.replace(/ /g, '_')}
+        data-tid={'tagContainer_' + (tag.title ? tag.title.replace(/ /g, '_') : '')}
         key={key || tag.id || uuidv1()}
         onClick={event => { if (this.props.handleTagMenu) { this.props.handleTagMenu(event, tag, entryPath || tagGroup); } }}
         onContextMenu={event => { if (this.props.handleTagMenu) { this.props.handleTagMenu(event, tag, entryPath || tagGroup); } }}
