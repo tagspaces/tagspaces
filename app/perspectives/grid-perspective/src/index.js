@@ -139,6 +139,7 @@ const styles = theme => ({
     padding: 0,
     paddingTop: 5,
     zIndex: 100,
+    maxHeight: 100,
     overflowY: 'auto',
     overflowX: 'hidden',
     opacity: 0.6
