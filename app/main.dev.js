@@ -194,10 +194,11 @@ app.on('ready', async () => {
   });
 
   ipcMain.on('setSplashVisibility', (event, arg) => { // worker window needed to be visible for the PDF tmb generation
-    // console.log('worker event in main.' + arg.result.length);
-    if (global.splashWorkerWindow) {
-      arg.visibility ? global.splashWorkerWindow.show() : global.splashWorkerWindow.hide();
-    }
+    console.log('worker event in main: ' + arg.visibility);
+    global.splashWorkerWindow.show(); // TODO tmp fix for PDF thumb generation
+    // if (global.splashWorkerWindow) {
+    //   arg.visibility ? global.splashWorkerWindow.show() : global.splashWorkerWindow.hide();
+    // }
   });
 
   ipcMain.on('app-data-path-request', (event) => {
