@@ -20,6 +20,7 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import ListItem from '@material-ui/core/ListItem';
+import MenuItem from '@material-ui/core/MenuItem';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
@@ -172,16 +173,15 @@ class SettingsFileTypes extends Component<Props, State> {
             <FormControl className={classes.fileOpener} error={isValidationInProgress && item.viewer === ''}>
               <InputLabel htmlFor="">{i18n.t('core:fileOpener')}</InputLabel>
               <Select
-                native
                 error={isValidationInProgress && item.viewer === ''}
                 value={item.viewer}
                 input={<Input id="" />}
                 onChange={event => updateItems('id', item.id, 'viewer', event.target.value)}
               >
-                <option value="" />
+                <MenuItem value="" />
                 {availableExtensions.map(extension => (
                   (extension.extensionType === 'viewer' || extension.extensionType === 'editor') && (
-                    <option key={extension.extensionName} value={extension.extensionId}>{extension.extensionName}</option>
+                    <MenuItem key={extension.extensionName} value={extension.extensionId}>{extension.extensionName}</MenuItem>
                   )
                 ))}
               </Select>
@@ -190,16 +190,15 @@ class SettingsFileTypes extends Component<Props, State> {
             <FormControl className={classes.fileOpener}>
               <InputLabel htmlFor="">{i18n.t('core:fileEditor')}</InputLabel>
               <Select
-                native
                 value={item.editor}
                 input={<Input id="" />}
                 onChange={event => updateItems('id', item.id, 'editor', event.target.value)}
               >
-                <option value="" />
+                <MenuItem value="" />
                 {availableExtensions
                   .filter(extension => extension.extensionType === 'editor')
                   .map(extension => (
-                    <option key={extension.extensionName} value={extension.extensionId}>{extension.extensionName}</option>
+                    <MenuItem key={extension.extensionName} value={extension.extensionId}>{extension.extensionName}</MenuItem>
                   )
                   )}
               </Select>
