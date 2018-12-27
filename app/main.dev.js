@@ -112,6 +112,8 @@ app.on('ready', async () => {
     // console.log('Dev ' + process.env.NODE_ENV + ' worker ' + showWorkerWindow);
     global.splashWorkerWindow = new BrowserWindow({
       show: workerDevMode,
+      x: workerDevMode ? 0 : -9999,
+      y: workerDevMode ? 0 : -9999,
       width: workerDevMode ? 800 : 1,
       height: workerDevMode ? 600 : 1,
       frame: false,
