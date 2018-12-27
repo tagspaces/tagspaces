@@ -56,23 +56,20 @@ class LocationMenu extends React.Component { //  <Props, State>
     locationChooserMenuAnchorEl: null,
   }
 
-  componentWillReceiveProps = (nextProps: Props) => {
-    if (nextProps.currentLocationId != null) {
-      this.props.locations.map((location: Location) => {
+  static getDerivedStateFromProps(nextProps, prevState) {
+    let currentLocation;
+    if (nextProps.currentLocationId && nextProps.locations) {
+      nextProps.locations.map((location: Location) => {
         if (location.uuid === nextProps.currentLocationId) {
-          this.setState({
-            currentLocation: location,
-          });
+          currentLocation = location;
         }
-        return true;
-      });
-    } else {
-      // closing the perspective
-      this.setState({
-        currentLocation: undefined,
       });
     }
-  };
+    return {
+      ...prevState,
+      currentLocation,
+    };
+  }
 
   openLocation = location => {
     this.props.openLocation(location);
