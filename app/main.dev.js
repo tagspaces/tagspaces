@@ -112,8 +112,8 @@ app.on('ready', async () => {
     // console.log('Dev ' + process.env.NODE_ENV + ' worker ' + showWorkerWindow);
     global.splashWorkerWindow = new BrowserWindow({
       show: workerDevMode,
-      x: workerDevMode ? 0 : -9999,
-      y: workerDevMode ? 0 : -9999,
+      x: 0,
+      y: 0,
       width: workerDevMode ? 800 : 1,
       height: workerDevMode ? 600 : 1,
       frame: false,
@@ -198,9 +198,10 @@ app.on('ready', async () => {
   ipcMain.on('setSplashVisibility', (event, arg) => { // worker window needed to be visible for the PDF tmb generation
     console.log('worker event in main: ' + arg.visibility);
     global.splashWorkerWindow.show(); // TODO tmp fix for PDF thumb generation
-    // if (global.splashWorkerWindow) {
-    //   arg.visibility ? global.splashWorkerWindow.show() : global.splashWorkerWindow.hide();
-    // }
+    if (global.splashWorkerWindow && arg.visibility) {
+      global.splashWorkerWindow.show();
+      // arg.visibility ? global.splashWorkerWindow.show() : global.splashWorkerWindow.hide();
+    }
   });
 
   ipcMain.on('app-data-path-request', (event) => {
