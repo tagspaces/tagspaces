@@ -19,20 +19,17 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
-import CancelIcon from '@material-ui/icons/Cancel';
 import CloseIcon from '@material-ui/icons/Close';
 import MenuItem from '@material-ui/core/MenuItem';
-import Chip from '@material-ui/core/Chip';
 import CreatableSelect from 'react-select/lib/Creatable';
 import NoSsr from '@material-ui/core/NoSsr';
 import TextField from '@material-ui/core/TextField';
-import { emphasize } from '@material-ui/core/styles/colorManipulator';
 import i18n from '../services/i18n';
 import { type Tag, getAllTags } from '../reducers/taglibrary';
+import { getTagColor, getTagTextColor } from '../reducers/settings';
 import TagContainer from './TagContainer';
 
 const styles = theme => ({
@@ -54,15 +51,6 @@ const styles = theme => ({
     alignItems: 'center',
     overflow: 'hidden',
   },
-  chip: {
-    margin: `${theme.spacing.unit / 2}px ${theme.spacing.unit / 4}px`,
-  },
-  chipFocused: {
-    backgroundColor: emphasize(
-      theme.palette.type === 'light' ? theme.palette.grey[300] : theme.palette.grey[700],
-      0.08,
-    ),
-  },
   noOptionsMessage: {
     padding: `${theme.spacing.unit}px ${theme.spacing.unit * 2}px`,
   },
@@ -81,17 +69,6 @@ const styles = theme => ({
     left: 0,
     right: 0,
   },
-  /* paper: {
-    position: 'fixed', // 'absolute',
-    marginTop: theme.spacing.unit,
-    left: 45,
-    right: 0,
-    maxWidth: 350,
-    zIndex: 1
-  }, */
-  /* divider: {
-    height: theme.spacing.unit * 2,
-  }, */
 });
 
 function NoOptionsMessage(props) {
@@ -172,26 +149,10 @@ function MultiValue(props) {
   return (
     <TagContainer
       key={props.data.id || props.data.title}
-      defaultTextColor={props.data.textcolor}
-      defaultBackgroundColor={props.data.color}
       tag={props.data}
       tagMode={'remove'}
-      // tagGroup={tagGroup}
-      // handleTagMenu={this.handleTagMenu}
-      // addTags={this.props.addTags}
       deleteIcon={<CloseIcon {...props.removeProps} />}
     />
-    /* <Chip
-      tabIndex={-1}
-      label={props.children}
-      style={{ fontSize: 16 }}
-      className={classNames(props.selectProps.classes.chip, {
-        [props.selectProps.classes.chipFocused]: props.isFocused
-      })}
-      onDelete={props.removeProps.onClick}
-      // deleteIcon={<CloseIcon style={{ fill: '#fff' }} {...props.removeProps} />}
-      deleteIcon={<CancelIcon {...props.removeProps} />}
-    /> */
   );
 }
 
@@ -224,10 +185,10 @@ type Props = {
 
 class TagsSelect extends React.Component<Props> {
   handleChange = (newValue: any, actionMeta: any) => {
-    /* console.group('Value Changed');
-    console.log(newValue);
-    console.log(`action: ${actionMeta.action}`);
-    console.groupEnd(); */
+    // console.group('Value Changed');
+    // console.log(JSON.stringify(newValue));
+    // console.log(`action: ${actionMeta.action}`);
+    // console.groupEnd();
 
     if (actionMeta.action === 'select-option') {
       this.props.handleChange('tagQuery', newValue, actionMeta.action);
@@ -248,7 +209,14 @@ class TagsSelect extends React.Component<Props> {
       selectOptions.find(option => option.name === inputValue));
 
   render() {
-    const { classes, theme, allTags, tagQuery } = this.props;
+    const {
+      classes,
+      theme,
+      allTags,
+      tagQuery,
+      defaultBackgroundColor,
+      defaultTextColor
+    } = this.props;
 
     const selectStyles = {
       input: base => ({
@@ -273,6 +241,8 @@ class TagsSelect extends React.Component<Props> {
             getNewOptionData={(inputValue, optionLabel) => ({
               id: inputValue,
               title: optionLabel,
+              color: defaultBackgroundColor,
+              textcolor: defaultTextColor
             })}
             styles={selectStyles}
             fullWidth={true}
@@ -300,6 +270,8 @@ class TagsSelect extends React.Component<Props> {
 
 const mapStateToProps = state => ({
   allTags: getAllTags(state),
+  defaultBackgroundColor: getTagColor(state),
+  defaultTextColor: getTagTextColor(state)
 });
 
 

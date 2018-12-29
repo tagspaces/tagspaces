@@ -52,8 +52,6 @@ import {
 } from '../../../services/utils-io';
 import { type Tag } from '../../../reducers/taglibrary';
 import {
-  getTagTextColor,
-  getTagColor,
   getSupportedFileTypes
 } from '../../../reducers/settings';
 import { extractTitle } from '../../../utils/paths';
@@ -826,8 +824,6 @@ class GridPerspective extends React.Component<Props, State> {
 
   renderTag = (tag: Object, fsEntry) => (
     <TagContainer
-      defaultTextColor={this.props.tagTextColor}
-      defaultBackgroundColor={this.props.tagBackgroundColor}
       tag={tag}
       key={tag.id}
       entryPath={fsEntry.path}
@@ -1279,8 +1275,6 @@ function mapActionCreatorsToProps(dispatch) {
 
 function mapStateToProps(state) {
   return {
-    tagTextColor: getTagTextColor(state),
-    tagBackgroundColor: getTagColor(state),
     supportedFileTypes: getSupportedFileTypes(state)
   };
 }

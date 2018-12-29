@@ -257,8 +257,6 @@ class TagLibrary extends React.Component<Props, State> {
           {tagGroup.children && tagGroup.children.map((tag: Tag) => (
             <TagContainerDnd
               key={tag.id}
-              defaultTextColor={this.props.tagTextColor}
-              defaultBackgroundColor={this.props.tagBackgroundColor}
               tag={tag}
               tagGroup={tagGroup}
               handleTagMenu={this.handleTagMenu}
