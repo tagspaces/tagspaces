@@ -109,7 +109,7 @@ class CreateTagsDialog extends React.Component<Props, State> {
           data-tid="addTagsInput"
           fullWidth={true}
         />
-        {this.state.inputError && <FormHelperText>{i18n.t('core:taggroupTitleHelper')}</FormHelperText>}
+        {this.state.inputError && <FormHelperText>{i18n.t('core:tagTitleHelper')}</FormHelperText>}
       </FormControl>
 
     </DialogContent>
