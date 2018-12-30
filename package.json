@@ -8,7 +8,7 @@
     "lint-fix": "yarn lint -- --fix",
     "lint-styles": "stylelint app/*.css app/components/*.css --syntax scss",
     "lint-styles-fix": "stylefmt -r app/*.css app/components/*.css",
-    "build": "yarn version-meta && yarn build-main yarn build-renderer yarn build-worker",
+    "build": "yarn version-meta && yarn build-main && yarn build-renderer && yarn build-worker",
     "build-c": "yarn version-meta && concurrently \"yarn build-main\" \"yarn build-renderer\" \"yarn build-worker\"",
     "build-dll": "cross-env NODE_ENV=development node --trace-warnings -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.renderer.dev.dll.js --progress --profile --colors",
     "build-cordova": "cross-env NODE_ENV=production node --trace-warnings -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.renderer.cordova.js --progress --profile --colors",
