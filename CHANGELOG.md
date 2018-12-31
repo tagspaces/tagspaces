@@ -1,5 +1,19 @@
 # Changelog
 
+## Version 3.0.1 / 2018.12.31
+
+### Community
+- fixing tag color issues [#799](https://github.com/tagspaces/tagspaces/issues/799)
+- fix tag name validation
+- fixing dark theme issue in settings
+- fix showing location initially by existing default location
+- disable spaces and other symbols in the tag names
+- fixing max height of the tag area in the grid view [#801](https://github.com/tagspaces/tagspaces/issues/801)
+- fixing importing tag library in web edition [#804](https://github.com/tagspaces/tagspaces/issues/804)
+
+### Pro
+- fixing pdf thumb generation
+
 ## Version 3.0.0 / 2018.12.21
 
 ### Community
