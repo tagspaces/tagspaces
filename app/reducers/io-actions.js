@@ -46,7 +46,7 @@ const actions = {
       return true;
     });
     Promise.all(renameJobs).then(() => {
-      dispatch(AppActions.showNotification(i18n.t('core:allFilesMoveSuccessfully')));
+      dispatch(AppActions.showNotification(i18n.t('core:filesMovedSuccessful')));
       return true;
     }).catch((err) => {
       console.warn('Moving files failed with ' + err)
@@ -58,7 +58,7 @@ const actions = {
       return true;
     });
     renameFilesPromise(moveJobs).then(() => {
-      dispatch(AppActions.showNotification(i18n.t('core:filesMovedSuccessfull')));
+      dispatch(AppActions.showNotification(i18n.t('core:filesMovedSuccessful')));
       const moveMetaJobs = [];
       moveJobs.map((job) => {
         dispatch(AppActions.reflectDeleteEntry(job[0])); // TODO moved files should be added to the index, if the target dir in index
@@ -87,7 +87,7 @@ const actions = {
       return true;
     });
     copyFilesPromise(copyJobs).then(() => {
-      dispatch(AppActions.showNotification(i18n.t('core:filesCopiedSuccessfull')));
+      dispatch(AppActions.showNotification(i18n.t('core:filesCopiedSuccessful')));
       const copyMetaJobs = [];
       copyJobs.map((job) => {
         // dispatch(AppActions.reflectCopyEntry(job[0])); // TODO need only for the index if the target dir is indexed
