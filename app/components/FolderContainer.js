@@ -386,13 +386,13 @@ class FolderContainer extends React.Component<Props, State> {
               <LocationMenu />
               <div className={classes.flexMiddle} data-tid="entriesFound">
                 { this.props.searchResultCount > 0 && (
-                  <Typography className={classes.entriesFound}>
+                  <Typography style={{ whiteSpace: 'nowrap' }} className={classes.entriesFound}>
                     {this.props.searchResultCount} {i18n.t('entries')}
                   </Typography>
                 ) }
               </div>
               {this.props.currentDirectoryPath && (
-                <div>
+                <div style={{ whiteSpace: 'nowrap' }}>
                   { this.state.pathParts && this.state.pathParts.map((pathPart) => (
                     <span key={pathPart}>
                       <Button
