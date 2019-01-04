@@ -34,6 +34,7 @@ import {
   renameFilesPromise
 } from '../services/utils-io';
 import AppConfig from '../config';
+import i18n from '../services/i18n';
 
 const actions = {
   moveFiles: (paths: Array<string>, targetPath: string) => (
@@ -45,11 +46,11 @@ const actions = {
       return true;
     });
     Promise.all(renameJobs).then(() => {
-      dispatch(AppActions.showNotification('All files move successfully'));
+      dispatch(AppActions.showNotification(i18n.t('core:allFilesMoveSuccessfully')));
       return true;
     }).catch((err) => {
       console.warn('Moving files failed with ' + err)
-      dispatch(AppActions.showNotification('Moving files failed'));
+      dispatch(AppActions.showNotification(i18n.t('core:movingFilesFailed')));
     }); */
     const moveJobs = [];
     paths.map((path) => {
@@ -57,7 +58,7 @@ const actions = {
       return true;
     });
     renameFilesPromise(moveJobs).then(() => {
-      dispatch(AppActions.showNotification('Files moved successful'));
+      dispatch(AppActions.showNotification(i18n.t('core:filesMovedSuccessfull')));
       const moveMetaJobs = [];
       moveJobs.map((job) => {
         dispatch(AppActions.reflectDeleteEntry(job[0])); // TODO moved files should be added to the index, if the target dir in index
@@ -74,7 +75,7 @@ const actions = {
       return true;
     }).catch((err) => {
       console.warn('Moving files failed with ' + err);
-      dispatch(AppActions.showNotification('Copying files failed'));
+      dispatch(AppActions.showNotification(i18n.t('core:copyingFilesFailed')));
     });
   },
   copyFiles: (paths: Array<string>, targetPath: string) => (
@@ -86,7 +87,7 @@ const actions = {
       return true;
     });
     copyFilesPromise(copyJobs).then(() => {
-      dispatch(AppActions.showNotification('Files copied successful'));
+      dispatch(AppActions.showNotification(i18n.t('core:filesCopiedSuccessfull')));
       const copyMetaJobs = [];
       copyJobs.map((job) => {
         // dispatch(AppActions.reflectCopyEntry(job[0])); // TODO need only for the index if the target dir is indexed
@@ -103,7 +104,7 @@ const actions = {
       return true;
     }).catch((err) => {
       console.warn('Moving files failed with ' + err);
-      dispatch(AppActions.showNotification('Copying files failed'));
+      dispatch(AppActions.showNotification(i18n.t('core:copyingFilesFailed')));
     });
   },
 };

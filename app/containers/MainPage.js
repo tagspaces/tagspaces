@@ -67,6 +67,7 @@ import AppConfig from '../config';
 // import i18n from '../services/i18n';
 import buildDesktopMenu from '../services/electron-menus';
 import buildTrayIconMenu from '../services/electron-tray-menu';
+import i18n from '../services/i18n';
 
 const initialSplitSize = 44;
 const drawerWidth = 300;
@@ -472,7 +473,7 @@ class MainPage extends Component<Props, State> {
             action={[
               <IconButton
                 key="close"
-                aria-label="Close"
+                aria-label={i18n.t('core:closeButton')}
                 color="inherit"
                 onClick={this.props.hideNotifications}
               >
