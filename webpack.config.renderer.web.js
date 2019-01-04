@@ -4,7 +4,7 @@
 
 import path from 'path';
 import webpack from 'webpack';
-import ExtractTextPlugin from 'extract-text-webpack-plugin';
+import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import merge from 'webpack-merge';
 import baseConfig from './webpack.config.base';
 
@@ -27,7 +27,8 @@ export default merge.smart(baseConfig, {
   },
 
   node: {
-    fs: 'empty'
+    fs: 'empty',
+    child_process: 'empty'
   },
 
   module: {
@@ -35,69 +36,83 @@ export default merge.smart(baseConfig, {
       // Extract all .global.css to style.css as is
       {
         test: /\.global\.css$/,
-        use: ExtractTextPlugin.extract({
-          use: 'css-loader',
-          fallback: 'style-loader',
-        })
+        use: [
+          {
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+              publicPath: './'
+            }
+          },
+          {
+            loader: 'css-loader',
+            options: {
+              sourceMap: true
+            }
+          }
+        ]
       },
       // Pipe other styles through css modules and append to style.css
       {
         test: /^((?!\.global).)*\.css$/,
-        use: ExtractTextPlugin.extract({
-          use: {
+        use: [
+          {
+            loader: MiniCssExtractPlugin.loader
+          },
+          {
             loader: 'css-loader',
             options: {
               modules: true,
-              importLoaders: 1,
               localIdentName: '[name]__[local]__[hash:base64:5]',
+              sourceMap: true
             }
           }
-        }),
+        ]
       },
       // Add SASS support  - compile all .global.scss files and pipe it to style.css
       {
-        test: /\.global\.scss$/,
-        use: ExtractTextPlugin.extract({
-          use: [
-            {
-              loader: 'css-loader'
-            },
-            {
-              loader: 'sass-loader'
+        test: /\.global\.(scss|sass)$/,
+        use: [
+          {
+            loader: MiniCssExtractPlugin.loader
+          },
+          {
+            loader: 'css-loader',
+            options: {
+              sourceMap: true,
+              importLoaders: 1
             }
-          ],
-          fallback: 'style-loader',
-        })
+          },
+          {
+            loader: 'sass-loader',
+            options: {
+              sourceMap: true
+            }
+          }
+        ]
       },
       // Add SASS support  - compile all other .scss files and pipe it to style.css
       {
-        test: /^((?!\.global).)*\.scss$/,
-        use: ExtractTextPlugin.extract({
-          use: [{
+        test: /^((?!\.global).)*\.(scss|sass)$/,
+        use: [
+          {
+            loader: MiniCssExtractPlugin.loader
+          },
+          {
             loader: 'css-loader',
             options: {
               modules: true,
               importLoaders: 1,
               localIdentName: '[name]__[local]__[hash:base64:5]',
+              sourceMap: true
             }
           },
           {
-            loader: 'sass-loader'
-          }]
-        }),
-      },
-      // Add LESS support  - compile all other .less files and pipe it to style.css
-      {
-        test: /\.less$/,
-        use: ExtractTextPlugin.extract({
-          use: [{
-            loader: 'css-loader'
-          }, {
-            loader: 'less-loader'
-          }],
-          // use style-loader in development
-          fallback: 'style-loader'
-        })
+            loader: 'sass-loader',
+            options: {
+              sourceMap: true
+            }
+          }
+        ]
       },
       // Fonts
       {
@@ -108,6 +123,11 @@ export default merge.smart(baseConfig, {
             publicPath: '../dist/',
           }
         }]
+      },
+      // Text files
+      {
+        test: /\.(txt)$/,
+        use: 'raw-loader'
       },
       // Common Image Formats
       {
@@ -133,7 +153,9 @@ export default merge.smart(baseConfig, {
 
     new webpack.IgnorePlugin(/electron-io/),
 
-    new ExtractTextPlugin('style.css'),
+    new MiniCssExtractPlugin({
+      filename: 'style.css'
+    }),
 
   ],
 });

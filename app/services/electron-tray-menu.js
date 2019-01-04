@@ -26,60 +26,63 @@ export default function buildTrayIconMenu(mainPageProps: Object) {
   if (!AppConfig.isElectron) {
     return;
   }
+
+  const cKey = AppConfig.isMacLike ? '  -  Cmd' : ' - Ctrl';
+
+  function openNextFile() {
+    const path = mainPageProps.getNextFile();
+    mainPageProps.openFile(path);
+    mainPageProps.setLastSelectedEntry(path);
+  }
+
+  function openPrevFile() {
+    const path = mainPageProps.getPrevFile();
+    mainPageProps.openFile(path);
+    mainPageProps.setLastSelectedEntry(path);
+  }
+
+  function playResumePlayback() {
+    const audioEvent = new CustomEvent('toggle-resume', { detail: '' });
+    window.dispatchEvent(audioEvent);
+  }
+
   const trayMenuTemplate = [
     {
-      label: i18n.t('core:showTagSpaces'),
-      click: () => {
-        PlatformIO.showMainWindow();
-      }
+      label: i18n.t('core:showTagSpaces') + cKey + '+Shift+W',
+      click: PlatformIO.showMainWindow
     },
     {
       type: 'separator'
     },
     {
-      label: i18n.t('core:newFileNote'), //  (' + ctrlName + '+Alt+N)',
-      click: () => {
-        mainPageProps.toggleCreateFileDialog();
-      }
+      label: i18n.t('core:newFileNote') + cKey + '+Shift+N',
+      click: mainPageProps.toggleCreateFileDialog
     },
     {
       type: 'separator'
     },
     {
-      label: i18n.t('core:openNextFileTooltip'),
-      click: () => {
-        const path = mainPageProps.getNextFile();
-        mainPageProps.openFile(path);
-        mainPageProps.setLastSelectedEntry(path);
-      }
+      label: i18n.t('core:openNextFileTooltip') + cKey + '+Shift+D',
+      click: openNextFile
     },
     {
-      label: i18n.t('core:openPrevFileTooltip'),
-      click: () => {
-        const path = mainPageProps.getPrevFile();
-        mainPageProps.openFile(path);
-        mainPageProps.setLastSelectedEntry(path);
-      }
+      label: i18n.t('core:openPrevFileTooltip') + cKey + '+Shift+A',
+      click: openPrevFile
     },
     {
       type: 'separator'
     },
     {
-      label: i18n.t('core:pauseResumePlayback'),
-      click: () => {
-        const audioEvent = new CustomEvent('toggle-resume', { detail: '' });
-        window.dispatchEvent(audioEvent);
-      }
+      label: i18n.t('core:pauseResumePlayback') + cKey + '+Shift+P',
+      click: playResumePlayback
     },
     {
       type: 'separator'
     },
     {
-      label: i18n.t('core:quitTagSpaces'),
+      label: i18n.t('core:quitTagSpaces') + cKey + '+Q',
       // role: 'quit',
-      click: () => {
-        PlatformIO.quitApp();
-      }
+      click: PlatformIO.quitApp
     }
   ];
   PlatformIO.initTrayMenu(trayMenuTemplate);

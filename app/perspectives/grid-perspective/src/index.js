@@ -52,8 +52,6 @@ import {
 } from '../../../services/utils-io';
 import { type Tag } from '../../../reducers/taglibrary';
 import {
-  getTagTextColor,
-  getTagColor,
   getSupportedFileTypes
 } from '../../../reducers/settings';
 import { extractTitle } from '../../../utils/paths';
@@ -139,6 +137,7 @@ const styles = theme => ({
     padding: 0,
     paddingTop: 5,
     zIndex: 100,
+    maxHeight: 100,
     overflowY: 'auto',
     overflowX: 'hidden',
     opacity: 0.6
@@ -582,9 +581,9 @@ class GridPerspective extends React.Component<Props, State> {
         this.computeFileOperationsEnabled
       );
       this.props.setLastSelectedEntry(fsEntry.path);
-      // if (fsEntry.isFile) {
-      this.props.openFile(fsEntry.path, fsEntry.isFile);
-      // }
+      if (fsEntry.isFile) {
+        this.props.openFile(fsEntry.path, fsEntry.isFile);
+      }
     }
   };
 
@@ -825,8 +824,6 @@ class GridPerspective extends React.Component<Props, State> {
 
   renderTag = (tag: Object, fsEntry) => (
     <TagContainer
-      defaultTextColor={this.props.tagTextColor}
-      defaultBackgroundColor={this.props.tagBackgroundColor}
       tag={tag}
       key={tag.id}
       entryPath={fsEntry.path}
@@ -1278,8 +1275,6 @@ function mapActionCreatorsToProps(dispatch) {
 
 function mapStateToProps(state) {
   return {
-    tagTextColor: getTagTextColor(state),
-    tagBackgroundColor: getTagColor(state),
     supportedFileTypes: getSupportedFileTypes(state)
   };
 }

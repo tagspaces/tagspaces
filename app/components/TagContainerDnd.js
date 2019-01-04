@@ -28,8 +28,6 @@ import { type TagGroup, type Tag } from '../reducers/taglibrary';
 type Props = {
   tag: Tag,
   key: string,
-  defaultTextColor: string,
-  defaultBackgroundColor: string,
   tagGroup: TagGroup,
   handleTagMenu: (event: Object, tag: Tag, tagGroup: TagGroup) => void, // TODO refactor
   handleTagMenu: (event: Object, tag: Tag, entryPath: string) => void,
@@ -86,8 +84,6 @@ class TagContainerDnd extends React.Component<Props> {
     const {
       key,
       tag,
-      defaultTextColor,
-      defaultBackgroundColor,
       tagGroup,
       entryPath,
       handleTagMenu,
@@ -100,8 +96,6 @@ class TagContainerDnd extends React.Component<Props> {
       <span>
         <TagContainer
           key={key}
-          defaultTextColor={defaultTextColor}
-          defaultBackgroundColor={defaultBackgroundColor}
           tag={tag}
           tagGroup={tagGroup}
           handleTagMenu={handleTagMenu}

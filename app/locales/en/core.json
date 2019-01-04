@@ -16,7 +16,6 @@
   "selectDialogTitle": "Select Directory",
   "selectDialogCurrentPath": "Current Path",
   "editTagTitle": "Edit tag",
-  "editTagNamesRestrictionsHelp": "Tags should have a minimum length of 2 characters and should not contain special characters such as spaces, #, / ,\\ and other.",
   "tagOperationTitle": "Tag operation on multiple files",
   "tagOperationTag": "Tags",
   "tagOperationTagsPlaceholder": "Tag",
@@ -379,5 +378,6 @@
   "removingSidecarTagsFailed": "Removing sidecar tags failed",
   "removingTagsInSidecarFileFailed": "Removing tags in sidecar file failed",
   "fileCreatedSuccessfully": "File created successfully",
+  "tagTitleHelper": "Tags should be at least 1 character long and should not contain: spaces, \\, / #",
   "-": "-"
 }

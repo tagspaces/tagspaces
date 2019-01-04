@@ -40,12 +40,17 @@ import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
 import MobileStepper from '@material-ui/core/MobileStepper';
 import WelcomeImage from '../../assets/images/onboarding.jpg';
 import NavigationV3 from '../../assets/images/navigation-v3.png';
+import BrowserExtension from '../../assets/images/browser-extensions.png';
+import NewLook from '../../assets/images/new-look.png';
 import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import SwipeableViews from 'react-swipeable-views';
+import ToggleButton from '@material-ui/lab/ToggleButton';
+import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import i18n from '../../services/i18n';
 import {
   isFirstRun,
+  getCurrentTheme,
   getPersistTagsInSidecarFile,
   actions as SettingsActions
 } from '../../reducers/settings';
@@ -55,8 +60,10 @@ type Props = {
   isFirstRun: boolean,
   isPersistTagsInSidecar: boolean,
   fullScreen: boolean,
-  setFirstRun: (isFirstRun: boolean) => void,
+  currentTheme: string,
+  // setFirstRun: (isFirstRun: boolean) => void,
   setPersistTagsInSidecarFile: (isPersistTagsInSidecar: boolean) => void,
+  setCurrentTheme: () => void,
   onClose: () => void
 };
 
@@ -70,7 +77,7 @@ class OnboardingDialog extends React.Component<Props, State> {
     isPersistTagsInSidecar: false
   };
 
-  maxSteps = 4;
+  maxSteps = 5;
 
   handleNext = () => {
     this.setState(prevState => ({
@@ -119,101 +126,27 @@ class OnboardingDialog extends React.Component<Props, State> {
             }}
           >
             <Typography variant="h4">Welcome to TagSpaces</Typography>
-            <div
-              style={{
-                backgroundImage: 'linear-gradient(to right, #ffe000, #799f0c)',
-                height: 100,
-                width: 550,
-                marginTop: 15,
-                position: 'relative'
-              }}
+            <Typography variant="h6">&nbsp;</Typography>
+            <Typography variant="h6">Your favorite file organizer has a fresh new looks</Typography>
+            <img
+              style={{ maxHeight: 340, marginTop: 15 }}
+              src={NewLook}
+              alt=""
+            />
+            <Typography variant="h6">Try out our new themes</Typography>
+            <ToggleButtonGroup
+              value={this.props.currentTheme}
+              exclusive
+              onChange={(event, theme) => { this.props.setCurrentTheme(theme); }}
+              style={{ boxShadow: 'none' }}
             >
-              <span
-                style={{
-                  textAlign: 'left',
-                  bottom: 0,
-                  position: 'absolute',
-                  fontSize: 25,
-                  left: 5,
-                  color: 'white'
-                }}
-              >
-                Your favorite file organizer has a fresh new look
-              </span>
-            </div>
-          </div>
-          <div
-            style={{
-              height: 550,
-              padding: 5,
-              overflow: 'hidden',
-              textAlign: 'center'
-            }}
-          >
-            <Typography variant="h4">Organize your files with tags</Typography>
-            <div
-              style={{
-                backgroundImage:
-                  'linear-gradient(to right top, #ff5f6d, #ffc371)',
-                height: 100,
-                width: 550,
-                marginTop: 15,
-                position: 'relative'
-              }}
-            >
-              <span
-                style={{
-                  textAlign: 'left',
-                  bottom: 0,
-                  position: 'absolute',
-                  fontSize: 25,
-                  left: 5,
-                  color: 'white'
-                }}
-              >
-                Choose your the default tagging method for files
-              </span>
-            </div>
-            <FormControl style={{ marginTop: 20 }} component="fieldset">
-              <RadioGroup
-                aria-label="Gender"
-                name="isPersistTagsInSidecar"
-                // value={this.props.isPersistTagsInSidecar}
-                onChange={this.toggleTaggingType}
-              >
-                <FormControlLabel
-                  value="false"
-                  control={
-                    <Radio checked={!this.props.isPersistTagsInSidecar} />
-                  }
-                  label={
-                    <Typography variant="body2" style={{ textAlign: 'left' }}>
-                      Use the name of file for saving the tags - Tagging the
-                      file <strong>image.jpg</strong> with a tag{' '}
-                      <strong>sunset</strong> will rename it to{' '}
-                      <strong>image[sunset].jpg</strong>
-                    </Typography>
-                  }
-                />
-
-                <FormControlLabel
-                  style={{ marginTop: 20 }}
-                  value="true"
-                  control={
-                    <Radio checked={this.props.isPersistTagsInSidecar} />
-                  }
-                  label={
-                    <Typography variant="body2" style={{ textAlign: 'left' }}>
-                      Use sidecar file for saving the tags - Tagging the file{' '}
-                      <strong>image.jpg</strong> with a tag{' '}
-                      <strong>sunset</strong> will save this tag in an
-                      additional file called <strong>image.jpg.json</strong>{' '}
-                      located in a sub folder with the name <strong>.ts</strong>
-                    </Typography>
-                  }
-                />
-              </RadioGroup>
-            </FormControl>
+              <ToggleButton value="light">
+                Light
+              </ToggleButton>
+              <ToggleButton value="dark">
+                Dark
+              </ToggleButton>
+            </ToggleButtonGroup>
           </div>
           <div
             style={{
@@ -236,7 +169,75 @@ class OnboardingDialog extends React.Component<Props, State> {
               padding: 5,
               overflow: 'hidden',
               textAlign: 'center'
-              // backgroundImage: 'linear-gradient( 109.6deg,  rgba(252,255,26,1) 34.9%, rgba(66,240,233,1) 82.5% )'
+            }}
+          >
+            <Typography variant="h4">Tag your files and folder with ease!</Typography>
+            <Typography variant="h6">&nbsp;</Typography>
+            <Typography variant="h6">Choose your the default tagging method for files</Typography>
+            <FormControl style={{ marginTop: 20 }} component="fieldset">
+              <RadioGroup
+                aria-label="Gender"
+                name="isPersistTagsInSidecar"
+                // value={this.props.isPersistTagsInSidecar}
+                onChange={this.toggleTaggingType}
+              >
+                <FormControlLabel
+                  value="false"
+                  control={
+                    <Radio checked={!this.props.isPersistTagsInSidecar} />
+                  }
+                  label={
+                    <Typography variant="subtitle1" style={{ textAlign: 'left' }}>
+                      Use the name of file for saving the tags - Tagging the
+                      file <strong>image.jpg</strong> with a tag{' '}
+                      <strong>sunset</strong> will rename it to{' '}
+                      <strong>image[sunset].jpg</strong>
+                    </Typography>
+                  }
+                />
+
+                <FormControlLabel
+                  style={{ marginTop: 20 }}
+                  value="true"
+                  control={
+                    <Radio checked={this.props.isPersistTagsInSidecar} />
+                  }
+                  label={
+                    <Typography variant="subtitle1" style={{ textAlign: 'left' }}>
+                      Use sidecar file for saving the tags - Tagging the file{' '}
+                      <strong>image.jpg</strong> with a tag{' '}
+                      <strong>sunset</strong> will save this tag in an
+                      additional file called <strong>image.jpg.json</strong>{' '}
+                      located in a sub folder with the name <strong>.ts</strong>
+                    </Typography>
+                  }
+                />
+              </RadioGroup>
+            </FormControl>
+          </div>
+          <div
+            style={{
+              height: 550,
+              padding: 5,
+              overflow: 'hidden',
+              textAlign: 'center'
+            }}
+          >
+            <Typography variant="h4">Collect web content in Chrome and Firefox</Typography>
+            <Typography variant="h6">We have a web clipper browser extension</Typography>
+            <img
+              style={{ maxHeight: 400, marginTop: 15 }}
+              src={BrowserExtension}
+              alt=""
+            />
+            <Typography variant="h6">It is freely available on the official browser stores</Typography>
+          </div>
+          <div
+            style={{
+              height: 550,
+              padding: 5,
+              overflow: 'hidden',
+              textAlign: 'center'
             }}
           >
             <Typography variant="h4">And... you&apos;re done</Typography>
@@ -251,17 +252,29 @@ class OnboardingDialog extends React.Component<Props, State> {
           </div>
         </SwipeableViews>
         <MobileStepper
+          style={{ marginTop: 10, backgroundColor: 'transparent' }}
           steps={this.maxSteps}
           position="static"
           activeStep={activeStep}
           nextButton={
-            <Button
-              size="small"
-              onClick={this.handleNext}
-              disabled={activeStep === this.maxSteps - 1}
-            >
-              Next
-            </Button>
+            (activeStep === this.maxSteps - 1) ? (
+              <Button
+                size="small"
+                onClick={this.props.onClose}
+                variant="contained"
+                color="primary"
+              >
+                Start using TagSpaces
+              </Button>
+
+            ) : (
+              <Button
+                size="small"
+                onClick={this.handleNext}
+              >
+                Next
+              </Button>
+            )
           }
           backButton={
             <Button
@@ -303,7 +316,7 @@ class OnboardingDialog extends React.Component<Props, State> {
         // onEnterKey={(event) => onEnterKeyHandler(event, this.onConfirm)}
         // renderTitle={this.renderTitle}
         renderContent={this.renderContent}
-        renderActions={this.renderActions}
+        // renderActions={this.renderActions}
       />
     );
   }
@@ -312,7 +325,8 @@ class OnboardingDialog extends React.Component<Props, State> {
 function mapStateToProps(state) {
   return {
     isFirstRun: isFirstRun(state),
-    isPersistTagsInSidecar: getPersistTagsInSidecarFile(state)
+    isPersistTagsInSidecar: getPersistTagsInSidecarFile(state),
+    currentTheme: getCurrentTheme(state)
   };
 }
 
@@ -320,7 +334,8 @@ function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators(
     {
       setFirstRun: SettingsActions.setFirstRun,
-      setPersistTagsInSidecarFile: SettingsActions.setPersistTagsInSidecarFile
+      setPersistTagsInSidecarFile: SettingsActions.setPersistTagsInSidecarFile,
+      setCurrentTheme: SettingsActions.setCurrentTheme
     },
     dispatch
   );
