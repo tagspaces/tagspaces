@@ -708,9 +708,9 @@ export const actions = {
         dispatch(actions.reflectRenameEntry(directoryPath, newDirPath));
         dispatch(
           actions.showNotification(
-            `Renaming directory ${extractDirectoryName(
-              directoryPath
-            )} successful.`,
+            i18n.t('renamingDirectorySuccessfull', {
+              dirPath: extractDirectoryName(directoryPath)
+            }),
             'default',
             true
           )
@@ -721,7 +721,9 @@ export const actions = {
         console.warn('Error while renaming directory: ' + error);
         dispatch(
           actions.showNotification(
-            `Error renaming directory '${extractDirectoryName(directoryPath)}'`,
+            i18n.t('errorRenamingDirectory', {
+              dirPath: extractDirectoryName(directoryPath)
+            }),
             'error',
             true
           )
@@ -737,9 +739,11 @@ export const actions = {
         dispatch(actions.reflectCreateEntry(directoryPath, false));
         dispatch(
           actions.showNotification(
-            `Creating directory ${extractDirectoryName(
-              directoryPath
-            )} successful.`, 'default', true
+            i18n.t('creatingDirectorySuccessful', {
+              dirPath: extractDirectoryName(directoryPath)
+            }),
+            'default',
+            true
           )
         );
         return true;
@@ -748,7 +752,9 @@ export const actions = {
         console.warn('Error creating directory: ' + error);
         dispatch(
           actions.showNotification(
-            `Error creating directory '${extractDirectoryName(directoryPath)}'`,
+            i18n.t('errorCreatingDirectory', {
+              dirPath: extractDirectoryName(directoryPath)
+            }),
             'error',
             true
           )
