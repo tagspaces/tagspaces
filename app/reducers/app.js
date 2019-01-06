@@ -794,9 +794,7 @@ export const actions = {
         dispatch(actions.openFile(filePath));
         dispatch(actions.setLastSelectedEntry(filePath));
         dispatch(
-          actions.showNotification(
-            `File '${fileNameAndExt}' created.`, 'default', true
-          )
+          actions.showNotification(i18n.t('core:fileCreated', { fileNameAndExt }), 'default', true)
         );
         return true;
       })
@@ -1072,11 +1070,7 @@ export const actions = {
         // TODO close file opener if this file is opened
         dispatch(actions.reflectDeleteEntry(filePath));
         dispatch(
-          actions.showNotification(
-            `Deleting file ${filePath} successful.`,
-            'default',
-            true
-          )
+          actions.showNotification(i18n.t('core:deletingFileSuccessfull', { filePath }), 'default', true)
         );
         // Delete sidecar file and thumb
         deleteFilesPromise([
@@ -1093,11 +1087,7 @@ export const actions = {
       .catch(error => {
         console.warn('Error while deleting file: ' + error);
         dispatch(
-          actions.showNotification(
-            `Error while deleting file ${filePath}`,
-            'error',
-            true
-          )
+          actions.showNotification(i18n.t('core:errorWhileDeletingFile', { filePath }), 'error', true)
         );
       });
   },
@@ -1131,11 +1121,7 @@ export const actions = {
       .catch(error => {
         console.warn('Error while renaming file: ' + error);
         dispatch(
-          actions.showNotification(
-            `Error while renaming file ${filePath}`,
-            'error',
-            true
-          )
+          actions.showNotification(i18n.t('core:errorWhileRenamingFile', { filePath }), 'error', true)
         );
       });
   },

@@ -379,5 +379,10 @@
   "removingTagsInSidecarFileFailed": "Removing tags in sidecar file failed",
   "fileCreatedSuccessfully": "File created successfully",
   "tagTitleHelper": "Tags should be at least 1 character long and should not contain: spaces, \\, / #",
+  "deletingFileSuccessfull": "Deleting file '{{filePath}}' successfull",
+  "errorWhileDeletingFile": "Error while deleting file '{{filePath}}'",
+  "errorWhileRenamingFile": "Error while renaming file '{{filePath}}'",
+  "fileCreated": "File '{{fileNameAndExt}}' created.",
+  "errorCreatingDirectory": "Error creating directory",
   "-": "-"
 }
