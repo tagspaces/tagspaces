@@ -233,13 +233,21 @@ class TagLibrary extends React.Component<Props, State> {
       <ListItem
         data-tid="tagLibraryTagGroupTitleClick"
         button
+        style={{ maxWidth: 250 }}
         className={this.props.classes.listItem}
         onClick={event => this.handleTagGroupTitleClick(event, tagGroup)}
       >
         <ListItemIcon style={{ marginRight: 0 }}>
           {tagGroup.expanded ? <ArrowDownIcon /> : <ArrowRightIcon />}
         </ListItemIcon>
-        <ListItemText style={{ paddingLeft: 0 }} inset primary={tagGroup.title} />
+        <Typography
+          variant="inherit"
+          style={{ paddingLeft: 0 }}
+          data-tid="locationTitleElement"
+          noWrap
+        >
+          {tagGroup.title}
+        </Typography>
         <ListItemSecondaryAction>
           <IconButton
             aria-label={i18n.t('core:options')}
@@ -252,7 +260,7 @@ class TagLibrary extends React.Component<Props, State> {
           </IconButton>
         </ListItemSecondaryAction>
       </ListItem>
-      <Collapse in={tagGroup.expanded} unmountOnExit>
+      <Collapse in={tagGroup.expanded} unmountOnExit style={{ maxWidth: 250 }}>
         <TagGroupContainer taggroup={tagGroup} data-tid={'tagGroupContainer_' + tagGroup.title}>
           {tagGroup.children && tagGroup.children.map((tag: Tag) => (
             <TagContainerDnd
