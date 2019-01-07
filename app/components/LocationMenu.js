@@ -50,7 +50,7 @@ type State = {
   locationChooserMenuAnchorEl: null | Object
 };
 
-class LocationMenu extends React.Component { //  <Props, State>
+class LocationMenu extends React.Component<Props, State> {
   state = {
     locationChooserMenuOpened: false,
     locationChooserMenuAnchorEl: null,
@@ -87,12 +87,19 @@ class LocationMenu extends React.Component { //  <Props, State>
     const { theme } = this.props;
     const { currentLocation } = this.state;
     return (
-      <div>
+      <div style={{
+        position: 'absolute',
+        left: 0,
+        paddingLeft: 1,
+        backgroundColor: theme.palette.background.default,
+        zIndex: 1
+      }}
+      >
         <Button
           data-tid="folderContainerLocationChooser"
           onClick={this.toggleLocationChooser}
           title={this.state.currentLocation && this.state.currentLocation.name}
-          style={{ marginLeft: -4 }}
+          style={{ paddingRight: 0 }}
         >
           {this.state.currentLocation
             ? <LocationIcon /> // this.state.currentLocation.name
