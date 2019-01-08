@@ -236,6 +236,7 @@ class TagLibrary extends React.Component<Props, State> {
         style={{ maxWidth: 250 }}
         className={this.props.classes.listItem}
         onClick={event => this.handleTagGroupTitleClick(event, tagGroup)}
+        onContextMenu={event => this.handleTagGroupMenu(event, tagGroup)}
       >
         <ListItemIcon style={{ marginRight: 0 }}>
           {tagGroup.expanded ? <ArrowDownIcon /> : <ArrowRightIcon />}
@@ -255,6 +256,7 @@ class TagLibrary extends React.Component<Props, State> {
             data-tid={'tagLibraryMoreButton_' + tagGroup.title.replace(/ /g,'_')}
             style={{ marginRight: -4 }}
             onClick={event => this.handleTagGroupMenu(event, tagGroup)}
+            onContextMenu={event => this.handleTagGroupMenu(event, tagGroup)}
           >
             <MoreVertIcon />
           </IconButton>

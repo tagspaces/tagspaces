@@ -424,6 +424,7 @@ class FolderContainer extends React.Component<Props, State> {
                     }
                     className={classes.folderButton}
                     onClick={this.openDirectoryMenu}
+                    onContextMenu={this.openDirectoryMenu}
                   >
                     {extractShortDirectoryName(
                       normalizePath(currentDirectoryPath)

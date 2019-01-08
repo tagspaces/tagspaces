@@ -591,6 +591,7 @@ class LocationManager extends React.Component<Props, State> {
           title={location.isDefault ? i18n.t('core: thisIsStartupLocation') + ' : ' + location.paths[0] : location.paths[0]}
           button
           onClick={() => this.handleLocationClick(location)}
+          onContextMenu={event => this.handleLocationContextMenuClick(event, location)}
         >
           <ListItemIcon style={{ marginRight: 0 }}>
             { location.type === locationType.TYPE_CLOUD ?
@@ -614,6 +615,7 @@ class LocationManager extends React.Component<Props, State> {
               aria-haspopup="true"
               data-tid={'locationMoreButton_' + location.name}
               onClick={event => this.handleLocationContextMenuClick(event, location)}
+              onContextMenu={event => this.handleLocationContextMenuClick(event, location)}
             >
               {location.isDefault && (
                 <DefaultLocationIcon data-tid="startupIndication" />
