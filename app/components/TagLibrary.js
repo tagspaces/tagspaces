@@ -231,7 +231,7 @@ class TagLibrary extends React.Component<Props, State> {
   renderTagGroup = tagGroup => (
     <div key={tagGroup.uuid}>
       <ListItem
-        data-tid="tagLibraryTagGroupTitleClick"
+        data-tid={'tagLibraryTagGroupTitle_' + tagGroup.title}
         button
         className={this.props.classes.listItem}
         onClick={event => this.handleTagGroupTitleClick(event, tagGroup)}
