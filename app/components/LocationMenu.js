@@ -90,7 +90,7 @@ class LocationMenu extends React.Component<Props, State> {
       <div style={{
         position: 'absolute',
         left: 0,
-        paddingLeft: 1,
+        marginLeft: 5,
         backgroundColor: theme.palette.background.default,
         zIndex: 1
       }}
@@ -99,7 +99,7 @@ class LocationMenu extends React.Component<Props, State> {
           data-tid="folderContainerLocationChooser"
           onClick={this.toggleLocationChooser}
           title={this.state.currentLocation && this.state.currentLocation.name}
-          style={{ paddingRight: 0 }}
+          style={{ paddingRight: 0, paddingLeft: 11 }}
         >
           {this.state.currentLocation
             ? <LocationIcon /> // this.state.currentLocation.name
