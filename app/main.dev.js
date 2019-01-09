@@ -85,9 +85,10 @@ app.commandLine.appendSwitch('autoplay-policy', 'no-user-gesture-required'); // 
 app.on('window-all-closed', () => {
   // Respect the OSX convention of having the application in memory even
   // after all windows have been closed
-  // if (process.platform !== 'darwin') {
-  app.quit();
-  // }
+  if (process.platform !== 'darwin') {
+    globalShortcut.unregisterAll();
+    app.quit();
+  }
 });
 
 app.on('ready', async () => {
@@ -156,7 +157,7 @@ app.on('ready', async () => {
       global.splashWorkerWindow.close();
       global.splashWorkerWindow = null;
     } catch (err) {
-      console.warn('Error closing the splash window. ' + err);
+      // console.warn('Error closing the splash window. ' + err);
     }
   });
 
