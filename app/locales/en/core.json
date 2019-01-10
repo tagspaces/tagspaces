@@ -221,6 +221,8 @@
   "searchAudio": "Audio",
   "searchVideoFiles": "Videos",
   "searchArchives": "Archives",
+  "searchBookmarks": "Bookmarks",
+  "searchEbooks": "eBooks",
   "searchFolders": "Folders",
   "searchFiles": "Files",
   "searchUntaggedEntries": "Untagged files or folders",
