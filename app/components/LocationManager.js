@@ -603,6 +603,7 @@ class LocationManager extends React.Component<Props, State> {
             <Typography
               variant="inherit"
               style={{ paddingLeft: 5, paddingRight: 5 }}
+              className={this.props.classes.header}
               data-tid="locationTitleElement"
               noWrap
             >

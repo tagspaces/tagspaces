@@ -243,6 +243,7 @@ class TagLibrary extends React.Component<Props, State> {
         </ListItemIcon>
         <Typography
           variant="inherit"
+          className={this.props.classes.header}
           style={{ paddingLeft: 0 }}
           data-tid="locationTitleElement"
           noWrap
