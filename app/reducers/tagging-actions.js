@@ -21,7 +21,6 @@
 import uuidv1 from 'uuid';
 import i18n from '../services/i18n';
 import { actions as AppActions } from './app';
-import { actions as SettingsActions } from './settings';
 import { actions as TagLibraryActions, type Tag } from './taglibrary';
 import {
   extractFileExtension,
@@ -40,8 +39,26 @@ import AppConfig from '../config';
 import PlatformIO from '../services/platform-io';
 import { Pro } from '../pro';
 
+export const types = {
+  SET_GEO: 'TAGGING/SET_GEO'
+};
 
-const actions = {
+export default (state = {}, action) => {
+  switch (action.type) {
+  case types.SET_GEO: {
+    return { ...state, geoTag: action.geoTag };
+  }
+  default: {
+    return state;
+  }
+  }
+};
+
+export const actions = {
+  setGeo: (geoTag: Object) => ({
+    type: types.SET_GEO,
+    geoTag
+  }),
   addTags: (paths: Array<string>, tags: Array<Tag>) => (
     dispatch: (actions: Object) => void,
     getState: () => Object
@@ -51,46 +68,52 @@ const actions = {
     const processedTags = [];
     tags.map((pTag) => {
       const tag = { ...pTag };
-      if (tag.functionality && tag.functionality.length > 0) {
-        tag.title = generateTagValue(tag);
-        tag.id = uuidv1();
-        if (tag.functionality === 'geoTagging') {
-          if (Pro) {
-            dispatch(SettingsActions.setGeo(true));
-          }
-        }
-      }
       tag.type = 'sidecar';
-      processedTags.push(tag);
-      return true;
-    });
-
-    paths.map((path) => {
-      dispatch(actions.addTagsToEntry(path, processedTags));
-      return true;
-    });
-
-    if (settings.addTagsToLibrary) { // collecting tags
-      // filter existed in tagLibrary
-      const uniqueTags = [];
-      processedTags.map((tag) => {
-        if (taglibrary.findIndex(tagGroup => tagGroup.children.findIndex(obj => obj.id === tag.id) !== -1) === -1 && !/^(?:\d+~\d+|\d+)$/.test(tag.title)) {
-          uniqueTags.push(tag);
+      if (tag.functionality && tag.functionality.length > 0) {
+        if (tag.functionality === 'geoTagging' && Pro) {
+          if (!isGeo(getState())) { // tag will be added later just open the Geo Dialog now
+            tag.path = paths[0]; // todo rethink this!
+            dispatch(actions.setGeo(tag));
+          }
+        } else {
+          tag.title = generateTagValue(tag);
+          tag.id = uuidv1();
+          processedTags.push(tag);
         }
+      } else {
+        processedTags.push(tag);
+      }
+      return true;
+    });
+
+    if (processedTags.length > 0) {
+      paths.map((path) => {
+        dispatch(actions.addTagsToEntry(path, processedTags));
         return true;
       });
-      if (uniqueTags.length > 0) {
-        const tagGroup = {
-          uuid: 'collected_tag_group_id', // uuid needs to be constant here (see mergeTagGroup)
-          title: i18n.t('core:collectedTags'),
-          expanded: true,
-          color: settings.tagBackgroundColor,
-          textcolor: settings.tagTextColor,
-          children: uniqueTags,
-          created_date: new Date(),
-          modified_date: new Date()
-        };
-        dispatch(TagLibraryActions.mergeTagGroup(tagGroup));
+
+      if (settings.addTagsToLibrary) { // collecting tags
+        // filter existed in tagLibrary
+        const uniqueTags = [];
+        processedTags.map((tag) => {
+          if (taglibrary.findIndex(tagGroup => tagGroup.children.findIndex(obj => obj.id === tag.id) !== -1) === -1 && !/^(?:\d+~\d+|\d+)$/.test(tag.title)) {
+            uniqueTags.push(tag);
+          }
+          return true;
+        });
+        if (uniqueTags.length > 0) {
+          const tagGroup = {
+            uuid: 'collected_tag_group_id', // uuid needs to be constant here (see mergeTagGroup)
+            title: i18n.t('core:collectedTags'),
+            expanded: true,
+            color: settings.tagBackgroundColor,
+            textcolor: settings.tagTextColor,
+            children: uniqueTags,
+            created_date: new Date(),
+            modified_date: new Date()
+          };
+          dispatch(TagLibraryActions.mergeTagGroup(tagGroup));
+        }
       }
     }
   },
@@ -399,10 +422,15 @@ const actions = {
   ) => {
     // dispatch(actions.createLocation(location));
   },
-  addGeoTag: (paths: Array<string>) => (
-    // dispatch: (actions: Object) => void
+  addGeoTag: (title: string) => (
+    dispatch: (actions: Object) => void,
+    getState: () => Object
   ) => {
-    // dispatch(actions.createLocation(location));
+    const geoTag = getState().taggingActions.geoTag;
+    if (geoTag) {
+      geoTag.title = title;
+      dispatch(actions.addTagsToEntry(geoTag.path, [geoTag]));
+    }
   },
   editGeoTag: (path: string) => (
     // dispatch: (actions: Object) => void
@@ -479,4 +507,5 @@ function generateTagValue(tag) {
   return tagTitle;
 }
 
-export default actions;
+// Selectors
+export const isGeo = (state: Object) => state.taggingActions.geoTag !== undefined;

@@ -58,6 +58,7 @@ import {
   isUpdateAvailable,
   getDirectoryPath
 } from '../reducers/app';
+import { actions as TaggingActions, isGeo } from '../reducers/tagging-actions';
 import { actions as LocationIndexActions, isIndexing } from '../reducers/location-index';
 import { buffer } from '../utils/misc';
 import { normalizePath } from '../utils/paths';
@@ -121,7 +122,7 @@ type Props = {
   isFirstRun: boolean,
   setFirstRun: (isFirstRun: boolean) => void,
   isGeo: boolean,
-  setGeo: (isGeo: boolean) => void,
+  setGeo: (geoTag: Object) => void,
   hideNotifications: () => void,
   cancelDirectoryIndexing: () => void,
   setUpdateAvailable: (isUpdateAvailable: boolean) => void,
@@ -238,8 +239,8 @@ class MainPage extends Component<Props, State> {
     this.props.setFirstRun(!this.props.isFirstRun);
   };
 
-  toggleGeo = () => {
-    this.props.setGeo(!this.props.isGeo);
+  closeGeo = () => {
+    this.props.setGeo(undefined);
   };
 
   updateDimensions = () => {
@@ -550,7 +551,7 @@ class MainPage extends Component<Props, State> {
 
           <Pro.AddEditGeoTagsDialog
             open={this.props.isGeo}
-            onClose={this.toggleGeo}
+            onClose={this.closeGeo}
           />
           <OnboardingDialog
             open={this.props.isFirstRun}
@@ -566,7 +567,7 @@ function mapStateToProps(state) {
   return {
     isIndexing: isIndexing(state),
     isFirstRun: isFirstRun(state),
-    isGeo: state.settings.isGeo,
+    isGeo: isGeo(state),
     isGeneratingThumbs: isGeneratingThumbs(state),
     isFileOpened: isFileOpened(state),
     // isFileDragged: isFileDragged(state),
@@ -610,7 +611,7 @@ function mapDispatchToProps(dispatch) {
     showNotification: AppActions.showNotification,
     reflectCreateEntry: AppActions.reflectCreateEntry,
     setFirstRun: SettingsActions.setFirstRun,
-    setGeo: SettingsActions.setGeo,
+    setGeo: TaggingActions.setGeo,
   }, dispatch);
 }
 

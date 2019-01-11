@@ -40,7 +40,7 @@ import {
   getSearchResultCount,
   isReadOnlyMode
 } from '../reducers/app';
-import TaggingActions from '../reducers/tagging-actions';
+import { actions as TaggingActions } from '../reducers/tagging-actions';
 import {
   extractDirectoryName,
   normalizePath,

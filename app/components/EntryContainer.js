@@ -62,7 +62,7 @@ import {
 } from '../utils/paths';
 import { buffer } from '../utils/misc';
 import { actions as SettingsActions } from '../reducers/settings';
-import TaggingActions from '../reducers/tagging-actions';
+import { actions as TaggingActions } from '../reducers/tagging-actions';
 import {
   type OpenedEntry,
   NotificationTypes,

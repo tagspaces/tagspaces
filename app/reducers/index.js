@@ -27,14 +27,15 @@ import app from './app';
 import locations from './locations';
 import taglibrary from './taglibrary';
 import locationIndex from './location-index';
+import taggingActions from './tagging-actions';
 
 
 const rootPersistConfig = {
   key: 'root',
-  getStoredState: getStoredStateMigrateV4({ blacklist: ['app', 'locationIndex'] }),
+  getStoredState: getStoredStateMigrateV4({ blacklist: ['app', 'locationIndex', 'taggingActions'] }),
   storage,
   version: 1,
-  blacklist: ['app', 'locationIndex'],
+  blacklist: ['app', 'locationIndex', 'taggingActions'],
   debug: true,
   // https://github.com/rt2zz/redux-persist/blob/b6a60bd653d59c4fe462e2e0ea827fd76eb190e1/README.md#state-reconciler
   // stateReconciler: autoMergeLevel2,
@@ -54,7 +55,8 @@ const rootReducer = persistCombineReducers(rootPersistConfig, {
   locations,
   taglibrary,
   router,
-  locationIndex
+  locationIndex,
+  taggingActions
 });
 
 export default rootReducer;

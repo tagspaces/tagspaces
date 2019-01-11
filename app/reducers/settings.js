@@ -66,8 +66,7 @@ export const types = {
   SET_ENTRY_PROPERTIES_SPLIT_SIZE: 'SETTINGS/SET_ENTRY_PROPERTIES_SPLIT_SIZE',
   SET_MAIN_VSPLIT_SIZE: 'SETTINGS/SET_MAIN_VSPLIT_SIZE',
   SET_LEFT_VSPLIT_SIZE: 'SETTINGS/SET_LEFT_VSPLIT_SIZE',
-  SET_FIRST_RUN: 'SETTINGS/SET_FIRST_RUN',
-  SET_GEO: 'SETTINGS/SET_GEO'
+  SET_FIRST_RUN: 'SETTINGS/SET_FIRST_RUN'
 };
 
 export default (state = defaultSettings, action) => {
@@ -123,9 +122,6 @@ export default (state = defaultSettings, action) => {
   }
   case types.SET_FIRST_RUN: {
     return { ...state, firstRun: action.firstRun };
-  }
-  case types.SET_GEO: {
-    return { ...state, isGeo: action.isGeo };
   }
   case types.SET_LANGUAGE: {
     i18n.changeLanguage(action.language);
@@ -348,10 +344,6 @@ export const actions = {
   setFirstRun: (firstRun: boolean) => ({
     type: types.SET_FIRST_RUN,
     firstRun
-  }),
-  setGeo: (isGeo: boolean) => ({
-    type: types.SET_GEO,
-    isGeo
   }),
   upgradeSettings: () => ({
     type: types.UPGRADE_SETTINGS

@@ -40,7 +40,7 @@ import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
 import i18n from '../../services/i18n';
 import { formatDateTime4Tag } from '../../utils/misc';
 import AppConfig from '../../config';
-import TaggingActions from '../../reducers/tagging-actions';
+import { actions as TaggingActions } from '../../reducers/tagging-actions';
 import { actions as AppActions } from '../../reducers/app';
 import PlatformIO from '../../services/platform-io';
 

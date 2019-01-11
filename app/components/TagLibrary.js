@@ -59,7 +59,7 @@ import {
   actions as TagLibraryActions,
   getTagGroups
 } from '../reducers/taglibrary';
-import TaggingActions from '../reducers/tagging-actions';
+import { actions as TaggingActions } from '../reducers/tagging-actions';
 import i18n from '../services/i18n';
 import { getTagColor, getTagTextColor } from '../reducers/settings';
 

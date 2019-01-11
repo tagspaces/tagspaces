@@ -41,7 +41,7 @@ import AppConfig from '../config';
 import { Pro } from '../pro';
 import PlatformIO from '../services/platform-io';
 import TagsSelect from './TagsSelect';
-import TaggingActions from '../reducers/tagging-actions';
+import { actions as TaggingActions } from '../reducers/tagging-actions';
 
 const styles = theme => ({
   entryProperties: {
