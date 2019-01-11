@@ -124,7 +124,8 @@ export default class ElectronIO {
   };
 
   quitApp = (): void => {
-    this.win.destroy();
+    // this.win.destroy();
+    this.ipcRenderer.send('quit-application', 'Bye, bye...');
   };
 
   // Experimental functionality

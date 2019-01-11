@@ -30,6 +30,9 @@ export default (theme) => ({
   fontIcon: {
     color: theme.palette.text.primary
   },
+  header: {
+    color: theme.palette.text.primary
+  },
   icon: {
     margin: theme.spacing.unit
   },

@@ -74,9 +74,8 @@ class CreateTagsDialog extends React.Component<Props, State> {
   };
 
   handleValidation() {
-    // const regEx = '^[^#/\\ \[\]]{1,}$';
-    const tagTitle = this.state.tagTitle.match(/[^,(?! )]+/g);
-    if (tagTitle && tagTitle.length > 0) {
+    const tagCheck = RegExp(/^[^\#\/\\ \[\]]{1,}$/);
+    if (this.state.tagTitle && tagCheck.test(this.state.tagTitle)) {
       this.setState({ inputError: false, disableConfirmButton: false });
     } else {
       this.setState({ inputError: true, disableConfirmButton: true });
@@ -110,7 +109,7 @@ class CreateTagsDialog extends React.Component<Props, State> {
           data-tid="addTagsInput"
           fullWidth={true}
         />
-        {this.state.inputError && <FormHelperText>{i18n.t('core:taggroupTitleHelper')}</FormHelperText>}
+        {this.state.inputError && <FormHelperText>{i18n.t('core:tagTitleHelper')}</FormHelperText>}
       </FormControl>
 
     </DialogContent>

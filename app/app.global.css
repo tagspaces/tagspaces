@@ -1,9 +1,9 @@
-@import "~font-awesome/css/font-awesome.css";
-@import "./assets/loading.css";
-@import "./assets/scrollbars.css";
-@import "./assets/splitpane.css";
-@import "./assets/minireset.css";
-@import "./assets/rc-datetime.css";
+/* @import "~font-awesome/css/font-awesome.css"; */
+@import "assets/loading.css";
+@import "assets/scrollbars.css";
+@import "assets/splitpane.css";
+@import "assets/minireset.css";
+@import "assets/rc-datetime.css";
 @import "~rc-table/assets/index.css";
 @import "~leaflet/dist/leaflet.css";
 

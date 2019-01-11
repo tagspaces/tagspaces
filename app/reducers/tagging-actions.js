@@ -125,7 +125,7 @@ const actions = {
             return true;
           }).catch((err) => {
             console.warn('Error adding tags for ' + path + ' with ' + err);
-            dispatch(AppActions.showNotification('Adding tags failed', 'error', true));
+            dispatch(AppActions.showNotification(i18n.t('core:addingTagsFailed'), 'error', true));
           });
         }
       } else {
@@ -135,7 +135,7 @@ const actions = {
           return true;
         }).catch(error => {
           console.warn('Error adding tags for ' + path + ' with ' + error);
-          dispatch(AppActions.showNotification('Adding tags failed', 'error', true));
+          dispatch(AppActions.showNotification(i18n.t('core:addingTagsFailed'), 'error', true));
         });
       }
     } else if (fsEntryMeta) { // Handling tags in filename by existing sidecar
@@ -221,12 +221,12 @@ const actions = {
           return true;
         }).catch((err) => {
           console.warn('Error adding tags for ' + path + ' with ' + err);
-          dispatch(AppActions.showNotification('Adding tags failed', 'error', true));
+          dispatch(AppActions.showNotification(i18n.t('core:addingTagsFailed'), 'error', true));
         });
         return true;
       }).catch((error) => {
         console.warn('Error adding tags for ' + path + ' with ' + error);
-        dispatch(AppActions.showNotification('Adding tags failed', 'error', true));
+        dispatch(AppActions.showNotification(i18n.t('core:addingTagsFailed'), 'error', true));
       });
     }
   },
@@ -271,13 +271,13 @@ const actions = {
         return true;
       }).catch((err) => {
         console.warn('Removing sidecar tags failed ' + path + ' with ' + err);
-        dispatch(AppActions.showNotification('Removing sidecar tags failed', 'error', true));
+        dispatch(AppActions.showNotification(i18n.t('core:removingSidecarTagsFailed'), 'error', true));
         removeTagsFromFilename();
       });
       return true;
     }).catch((error) => {
       console.warn('Error adding tags for ' + path + ' with ' + error);
-      // dispatch(AppActions.showNotification('Removing sidecar tags failed', 'error', true));
+      // dispatch(AppActions.showNotification(i18n.t('core:removingSidecarTagsFailed'), 'error', true));
       removeTagsFromFilename();
     });
 
@@ -326,7 +326,7 @@ const actions = {
         return true;
       }).catch((err) => {
         console.warn('Removing sidecar tags failed for ' + path + ' with ' + err);
-        dispatch(AppActions.showNotification('Removing tags in sidecar file failed', 'error', true));
+        dispatch(AppActions.showNotification(i18n.t('core:removingTagsInSidecarFileFailed'), 'error', true));
         removeAllTagsFromFilename();
       });
       return true;

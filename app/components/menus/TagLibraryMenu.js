@@ -90,11 +90,11 @@ class TagLibraryMenu extends React.Component<Props, State> {
     this.props.onClose();
     this.setState({ dialogModeImport: true });
 
-    if (AppConfig.isElectron) {
-      this.fileInput.click();
-    } else {
+    if (AppConfig.isCordovaAndroid && AppConfig.isCordovaiOS) {
       // TODO Select directory or file from dialog
       this.showSelectDirectoryDialog();
+    } else {
+      this.fileInput.click();
     }
   };
 

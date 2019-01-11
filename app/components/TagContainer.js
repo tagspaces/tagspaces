@@ -23,38 +23,27 @@ import { connect } from 'react-redux';
 import Button from '@material-ui/core/Button';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import RemoveTagIcon from '@material-ui/icons/Close';
-import { type TagGroup, type Tag } from '../reducers/taglibrary';
+import { type TagGroup, type Tag, getAllTags } from '../reducers/taglibrary';
 import { getTagColor, getTagTextColor } from '../reducers/settings';
 
 type Props = {
   tag: Tag,
-  key?: string,
-  defaultTextColor?: string,
-  tagTextColor: string,
-  defaultBackgroundColor?: string,
-  tagBackgroundColor: string,
-  tagGroup?: TagGroup,
+  allTags: Array<Tag>,
+  key: string,
+  defaultTextColor: string,
+  defaultBackgroundColor: string,
+  tagGroup: TagGroup,
   handleTagMenu: (event: Object, tag: Tag, tagGroup: TagGroup) => void, // TODO refactor
   handleTagMenu: (event: Object, tag: Tag, entryPath: string) => void,
   handleRemoveTag: (event: Object, tag: Tag) => void,
-  isDragging?: boolean,
-  tagMode?: 'default' | 'display' | 'remove',
-  entryPath?: string,
-  deleteIcon?: Object
+  isDragging: boolean,
+  tagMode: 'default' | 'display' | 'remove',
+  entryPath: string,
+  deleteIcon: Object
 };
 
-class TagContainer extends React.Component<Props> {
-  static defaultProps = {
-    isDragging: false,
-    tagMode: 'default',
-    key: undefined,
-    tagGroup: undefined,
-    entryPath: undefined,
-    deleteIcon: undefined,
-    defaultTextColor: undefined,
-    defaultBackgroundColor: undefined
-  };
 
+class TagContainer extends React.Component<Props> {
   render() {
     const {
       key,
@@ -62,14 +51,25 @@ class TagContainer extends React.Component<Props> {
       deleteIcon,
       isDragging,
       defaultTextColor,
-      tagTextColor,
       defaultBackgroundColor,
-      tagBackgroundColor,
       tagGroup,
-      entryPath
+      entryPath,
+      allTags
     } = this.props;
     const { tagMode } = this.props;
     let mode = '';
+
+    let textColor = tag.textcolor || defaultTextColor;
+    let backgroundColor = tag.color || defaultBackgroundColor;
+
+    allTags.some((currentTag: Tag) => {
+      if (currentTag.title === tag.title) {
+        textColor = currentTag.textcolor;
+        backgroundColor = currentTag.color;
+        return true;
+      }
+      return false;
+    });
 
     if (tagMode === 'remove') {
       mode = deleteIcon || (
@@ -96,6 +96,7 @@ class TagContainer extends React.Component<Props> {
 
     return (
       <div
+        role="presentation"
         data-tid={'tagContainer_' + (tag.title ? tag.title.replace(/ /g, '_') : '')}
         key={key || tag.id || uuidv1()}
         onClick={event => { if (this.props.handleTagMenu) { this.props.handleTagMenu(event, tag, entryPath || tagGroup); } }}
@@ -115,8 +116,8 @@ class TagContainer extends React.Component<Props> {
             opacity: isDragging ? 0.5 : 1,
             fontSize: 13,
             textTransform: 'none',
-            color: tag.textcolor || defaultTextColor || tagTextColor,
-            backgroundColor: tag.color || defaultBackgroundColor || tagBackgroundColor,
+            color: textColor,
+            backgroundColor,
             minHeight: 25,
             margin: 0,
             paddingTop: 0,
@@ -137,8 +138,9 @@ class TagContainer extends React.Component<Props> {
 
 function mapStateToProps(state) {
   return {
-    tagBackgroundColor: getTagColor(state),
-    tagTextColor: getTagTextColor(state)
+    allTags: getAllTags(state),
+    defaultBackgroundColor: getTagColor(state),
+    defaultTextColor: getTagTextColor(state)
   };
 }
 export default connect(mapStateToProps)(TagContainer);

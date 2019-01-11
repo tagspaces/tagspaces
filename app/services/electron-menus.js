@@ -130,9 +130,7 @@ export default function buildDesktopMenu(mainPageProps: Object) {
         {
           label: i18n.t('core:exitApp'),
           accelerator: 'CmdOrCtrl+Q',
-          click: () => {
-            ipcRenderer.send('quit-application', 'Bye, bye...');
-          }
+          click: PlatformIO.quitApp
         }
       ]
     },

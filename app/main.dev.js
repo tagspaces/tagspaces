@@ -85,9 +85,10 @@ app.commandLine.appendSwitch('autoplay-policy', 'no-user-gesture-required'); // 
 app.on('window-all-closed', () => {
   // Respect the OSX convention of having the application in memory even
   // after all windows have been closed
-  // if (process.platform !== 'darwin') {
-  app.quit();
-  // }
+  if (process.platform !== 'darwin') {
+    globalShortcut.unregisterAll();
+    app.quit();
+  }
 });
 
 app.on('ready', async () => {
@@ -112,6 +113,8 @@ app.on('ready', async () => {
     // console.log('Dev ' + process.env.NODE_ENV + ' worker ' + showWorkerWindow);
     global.splashWorkerWindow = new BrowserWindow({
       show: workerDevMode,
+      x: 0,
+      y: 0,
       width: workerDevMode ? 800 : 1,
       height: workerDevMode ? 600 : 1,
       frame: false,
@@ -154,7 +157,7 @@ app.on('ready', async () => {
       global.splashWorkerWindow.close();
       global.splashWorkerWindow = null;
     } catch (err) {
-      console.warn('Error closing the splash window. ' + err);
+      // console.warn('Error closing the splash window. ' + err);
     }
   });
 
@@ -194,9 +197,10 @@ app.on('ready', async () => {
   });
 
   ipcMain.on('setSplashVisibility', (event, arg) => { // worker window needed to be visible for the PDF tmb generation
-    // console.log('worker event in main.' + arg.result.length);
-    if (global.splashWorkerWindow) {
-      arg.visibility ? global.splashWorkerWindow.show() : global.splashWorkerWindow.hide();
+    // console.log('worker event in main: ' + arg.visibility);
+    if (global.splashWorkerWindow && arg.visibility) {
+      global.splashWorkerWindow.show();
+      // arg.visibility ? global.splashWorkerWindow.show() : global.splashWorkerWindow.hide();
     }
   });
 
