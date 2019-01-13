@@ -142,8 +142,7 @@ type Props = {
   getNextFile: () => string,
   getPrevFile: () => string,
   openDirectory: () => void,
-  sortByCriteria: () => void,
-  openFile: (path: string) => void,
+    openFile: (path: string) => void,
   deleteDirectory: (path: string) => void,
   reflectCreateEntry: (path: string, isFile: boolean) => void,
   loadDirectoryContent: (path: string) => void,
@@ -340,7 +339,6 @@ class FolderContainer extends React.Component<Props, State> {
           deleteFile={this.props.deleteFile}
           renameFile={this.props.renameFile}
           openDirectory={this.props.openDirectory}
-          sortByCriteria={this.props.sortByCriteria}
           currentDirectoryPath={this.props.currentDirectoryPath}
           setLastSelectedEntry={this.props.setLastSelectedEntry}
           perspectiveCommand={this.state.perspectiveCommand}
@@ -363,7 +361,6 @@ class FolderContainer extends React.Component<Props, State> {
           deleteFile={this.props.deleteFile}
           renameFile={this.props.renameFile}
           openDirectory={this.props.openDirectory}
-          sortByCriteria={this.props.sortByCriteria}
           currentDirectoryPath={this.props.currentDirectoryPath}
           setLastSelectedEntry={this.props.setLastSelectedEntry}
           perspectiveCommand={this.state.perspectiveCommand}
@@ -487,7 +484,6 @@ function mapActionCreatorsToProps(dispatch) {
       getNextFile: AppActions.getNextFile,
       getPrevFile: AppActions.getPrevFile,
       openDirectory: AppActions.openDirectory,
-      sortByCriteria: AppActions.sortByCriteria,
       openFile: AppActions.openFile,
       deleteDirectory: AppActions.deleteDirectory,
       reflectCreateEntry: AppActions.reflectCreateEntry,

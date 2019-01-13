@@ -77,8 +77,13 @@ import FileSourceDnd from '../../../components/FileSourceDnd';
 import AppConfig from '../../../config';
 import DragItemTypes from '../../../components/DragItemTypes';
 import IOActions from '../../../reducers/io-actions';
+import {
+  actions as AppActions,
+} from '../../../reducers/app';
 
 const maxDescriptionPreviewLength = 90;
+
+const settings = JSON.parse(localStorage.getItem('tsPerspectiveGrid')); // loading settings
 
 type Props = {
   classes: Object,
@@ -111,12 +116,8 @@ type State = {
   layoutType?: string,
   sortingContextMenuAnchorEl?: Object | null,
   sortingContextMenuOpened?: boolean | null,
+  sortBy?: string,
   orderBy?: null | boolean,
-  orderByDate?: null | boolean,
-  orderByExt?: null | boolean,
-  orderByName?: null | boolean,
-  orderBySize?: null | boolean,
-  orderByTags?: null | boolean,
   fileOperationsEnabled?: boolean,
   allFilesSelected?: boolean,
   showDirectories?: boolean,
@@ -130,43 +131,33 @@ type State = {
 };
 
 class GridPerspective extends React.Component<Props, State> {
-  state = {
-    fileContextMenuOpened: false,
-    fileContextMenuAnchorEl: null,
-    dirContextMenuOpened: false,
-    dirContextMenuAnchorEl: null,
-    tagContextMenuOpened: false,
-    tagContextMenuAnchorEl: null,
-    sortingContextMenuOpened: false,
-    sortingContextMenuAnchorEl: null,
-    selectedEntryPath: '',
-    orderBy: false,
-    orderByName: true,
-    orderBySize: null,
-    orderByDate: null,
-    orderByTags: null,
-    orderByExt: null,
-    layoutType: 'grid',
-    fileOperationsEnabled: false,
-    allFilesSelected: false,
-    showDirectories: true,
-    isDeleteMultipleFilesDialogOpened: false,
-    isMoveCopyFilesDialogOpened: false,
-    isAddRemoveTagsDialogOpened: false,
-    isFileRenameDialogOpened: false,
-    selectedTag: null,
-    selectedEntries: []
-  };
-
-  componentDidMount() {
-    const settings = this.loadSettings();
-    if (settings) {
-      this.setState({
-        showDirectories: settings.showDirectories,
-        layoutType: settings.layoutType ? settings.layoutType : 'grid'
-        // orderBy: settings.orderBy ? settings.orderBy : '',
-      });
-    }
+  constructor(props) {
+    super(props);
+    console.log('-->' + JSON.stringify(settings));
+    this.state = {
+      fileContextMenuOpened: false,
+      fileContextMenuAnchorEl: null,
+      dirContextMenuOpened: false,
+      dirContextMenuAnchorEl: null,
+      tagContextMenuOpened: false,
+      tagContextMenuAnchorEl: null,
+      sortingContextMenuOpened: false,
+      sortingContextMenuAnchorEl: null,
+      selectedEntryPath: '',
+      sortBy: settings && settings.sortBy ? settings.sortBy : 'byName',
+      orderBy: settings && settings.orderBy ? settings.orderBy : false,
+      layoutType: settings && settings.layoutType ? settings.layoutType : 'grid',
+      fileOperationsEnabled: false,
+      allFilesSelected: false,
+      showDirectories: settings && settings.showDirectories ? settings.showDirectories : true,
+      isDeleteMultipleFilesDialogOpened: false,
+      isMoveCopyFilesDialogOpened: false,
+      isAddRemoveTagsDialogOpened: false,
+      isFileRenameDialogOpened: false,
+      selectedTag: null,
+      selectedEntries: []
+    };
+    // console.log('Sort by -->' + this.state.sortBy);
   }
 
   componentWillReceiveProps = (nextProps: Props) => {
@@ -229,6 +220,8 @@ class GridPerspective extends React.Component<Props, State> {
       // Clear selection on directory change
       this.clearSelection();
 
+      this.props.sortByCriteria(this.state.sortBy, this.state.orderBy);
+
       const grid = document.querySelector(
         '[data-tid="perspectiveGridFileTable"]'
       );
@@ -255,18 +248,14 @@ class GridPerspective extends React.Component<Props, State> {
     }
   };
 
-  loadSettings = () => {
-    const extSettings = JSON.parse(localStorage.getItem('tsPerspectiveGrid'));
-    return extSettings;
-  };
-
   saveSettings() {
-    const settings = {
+    const settingsObj = {
       showDirectories: this.state.showDirectories,
       layoutType: this.state.layoutType,
-      orderBy: this.state.orderBy
+      orderBy: this.state.orderBy,
+      sortBy: this.state.sortBy
     };
-    localStorage.setItem('tsPerspectiveGrid', JSON.stringify(settings));
+    localStorage.setItem('tsPerspectiveGrid', JSON.stringify(settingsObj));
   }
 
   scrollToBottom = () => {
@@ -282,9 +271,11 @@ class GridPerspective extends React.Component<Props, State> {
 
   handleSortBy = sortBy => {
     this.closeSortingMenu();
-    this.handleSortMenuIconClick(sortBy, this.state.orderBy);
-    this.setState({ orderBy: !this.state.orderBy });
-    this.props.sortByCriteria(sortBy, this.state.orderBy);
+    this.props.sortByCriteria(sortBy, !this.state.orderBy);
+    this.setState({
+      orderBy: !this.state.orderBy,
+      sortBy
+    }, this.saveSettings);
   };
 
   handleSortingMenu = event => {
@@ -292,108 +283,6 @@ class GridPerspective extends React.Component<Props, State> {
       sortingContextMenuOpened: !this.state.sortingContextMenuOpened,
       sortingContextMenuAnchorEl: event ? event.currentTarget : null
     });
-  };
-
-  handleSortMenuIconClick = sort => {
-    switch (sort) {
-    case 'byName':
-      if (this.state.orderByName === null) {
-        this.setState({
-          orderBySize: null,
-          orderByTags: null,
-          orderByExt: null,
-          orderByDate: null,
-          orderByName: true
-        });
-      } else {
-        this.setState({
-          orderBySize: null,
-          orderByTags: null,
-          orderByExt: null,
-          orderByDate: null,
-          orderByName: false
-        });
-      }
-      break;
-    case 'byFileSize':
-      if (this.state.orderBySize === null) {
-        this.setState({
-          orderByName: null,
-          orderByTags: null,
-          orderByExt: null,
-          orderByDate: null,
-          orderBySize: true
-        });
-      } else {
-        this.setState({
-          orderByName: null,
-          orderByTags: null,
-          orderByExt: null,
-          orderByDate: null,
-          orderBySize: false
-        });
-      }
-      break;
-    case 'byTags':
-      if (this.state.orderByTags === null) {
-        this.setState({
-          orderByName: null,
-          orderBySize: null,
-          orderByExt: null,
-          orderByDate: null,
-          orderByTags: true
-        });
-      } else {
-        this.setState({
-          orderByName: null,
-          orderBySize: null,
-          orderByExt: null,
-          orderByDate: null,
-          orderByTags: false
-        });
-      }
-      break;
-    case 'byExtension':
-      if (this.state.orderByExt === null) {
-        this.setState({
-          orderByName: null,
-          orderBySize: null,
-          orderByTags: null,
-          orderByDate: null,
-          orderByExt: true
-        });
-      } else {
-        this.setState({
-          orderByName: null,
-          orderBySize: null,
-          orderByTags: null,
-          orderByDate: null,
-          orderByExt: false
-        });
-      }
-      break;
-    case 'byDateModified':
-      if (this.state.orderByDate === null) {
-        this.setState({
-          orderByName: null,
-          orderBySize: null,
-          orderByTags: null,
-          orderByExt: null,
-          orderByDate: true
-        });
-      } else {
-        this.setState({
-          orderByName: null,
-          orderBySize: null,
-          orderByTags: null,
-          orderByExt: null,
-          orderByDate: false
-        });
-      }
-      break;
-    default:
-      break;
-    }
   };
 
   getLayoutClass = () => {
@@ -613,15 +502,6 @@ class GridPerspective extends React.Component<Props, State> {
     } else {
       this.setState({ fileOperationsEnabled: false });
     }
-  };
-
-  renderSortMenuIcon = order => {
-    if (order === null) {
-      return <div>{null}</div>;
-    } else if (order) {
-      return <ArrowUpIcon />;
-    }
-    return <ArrowDownIcon />;
   };
 
   handleFileMoveDrop = (item, monitor) => {
@@ -869,7 +749,7 @@ class GridPerspective extends React.Component<Props, State> {
     const classes = this.props.classes;
     const { selectedEntries = [] } = this.state;
     const selectedFilePaths = selectedEntries.filter(fsEntry => fsEntry.isFile).map(fsentry => fsentry.path);
-
+    // console.log('Render grid');
     return (
       <div style={{ height: '100%' }}>
         <style>
@@ -1067,59 +947,48 @@ class GridPerspective extends React.Component<Props, State> {
         >
           <MenuItem
             data-tid="gridPerspectiveSortByName"
-            onClick={() => {
-              this.handleSortBy('byName');
-            }}
+            onClick={() => { this.handleSortBy('byName'); }}
           >
-            <ListItemIcon>
-              {this.renderSortMenuIcon(this.state.orderByName)}
+            <ListItemIcon style={{ minWidth: 25 }}>
+              {(this.state.sortBy === 'byName') && (
+                this.state.orderBy ? <ArrowUpIcon /> : <ArrowDownIcon />
+              )}
             </ListItemIcon>
             <ListItemText inset primary={i18n.t('core:fileTitle')} />
           </MenuItem>
           <MenuItem
             data-tid="gridPerspectiveSortBySize"
-            onClick={() => {
-              this.handleSortBy('byFileSize');
-            }}
+            onClick={() => { this.handleSortBy('byFileSize'); }}
           >
-            <ListItemIcon>
-              {this.renderSortMenuIcon(this.state.orderBySize)}
+            <ListItemIcon style={{ minWidth: 25 }}>
+              {(this.state.sortBy === 'byFileSize') && (
+                this.state.orderBy ? <ArrowUpIcon /> : <ArrowDownIcon />
+              )}
             </ListItemIcon>
             <ListItemText inset primary={i18n.t('core:fileSize')} />
           </MenuItem>
           <MenuItem
             data-tid="gridPerspectiveSortByDate"
-            onClick={() => {
-              this.handleSortBy('byDateModified');
-            }}
+            onClick={() => { this.handleSortBy('byDateModified'); }}
           >
-            <ListItemIcon>
-              {this.renderSortMenuIcon(this.state.orderByDate)}
+            <ListItemIcon style={{ minWidth: 25 }}>
+              {(this.state.sortBy === 'byDateModified') && (
+                this.state.orderBy ? <ArrowUpIcon /> : <ArrowDownIcon />
+              )}
             </ListItemIcon>
             <ListItemText inset primary={i18n.t('core:fileLDTM')} />
           </MenuItem>
           <MenuItem
             data-tid="gridPerspectiveSortByExt"
-            onClick={() => {
-              this.handleSortBy('byExtension');
-            }}
+            onClick={() => { this.handleSortBy('byExtension'); }}
           >
-            <ListItemIcon>
-              {this.renderSortMenuIcon(this.state.orderByExt)}
+            <ListItemIcon style={{ minWidth: 25 }}>
+              {(this.state.sortBy === 'byExtension') && (
+                this.state.orderBy ? <ArrowUpIcon /> : <ArrowDownIcon />
+              )}
             </ListItemIcon>
             <ListItemText inset primary={i18n.t('core:fileExtension')} />
           </MenuItem>
-          {/* <MenuItem
-              data-tid="gridPerspectiveSortByTags"
-              onClick={() => {
-                this.handleSortBy('byTags');
-              }}
-            >
-              <ListItemIcon>
-                {this.renderSortMenuIcon(this.state.orderByTags)}
-              </ListItemIcon>
-              <ListItemText inset primary={i18n.t('core:fileTags')} />
-            </MenuItem> */}
         </Menu>
       </div>
     );
@@ -1128,7 +997,8 @@ class GridPerspective extends React.Component<Props, State> {
 
 function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators({
-    moveFiles: IOActions.moveFiles
+    moveFiles: IOActions.moveFiles,
+    sortByCriteria: AppActions.sortByCriteria
   }, dispatch);
 }
 

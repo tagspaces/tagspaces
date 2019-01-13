@@ -368,50 +368,38 @@ export function sortByTags(a, b) {
 
 export function sortByCriteria(criteria, data, order) {
   switch (criteria) {
-    case 'byName':
-      if (order) {
-        return data.sort(sortByName);
-      } else {
-        return data.sort((a, b) => -1 * sortByName(a, b));
-      }
-      break;
-    case 'byFileSize':
-      if (order) {
-        return data.sort(sortBySize);
-      } else {
-        return data.sort((a, b) => -1 * sortBySize(a, b));
-      }
-      break;
-    case 'byDateModified':
-      if (order) {
-        return data.sort(sortByDateModified);
-      } else {
-        return data.sort((a, b) => -1 * sortByDateModified(a, b));
-      }
-      break;
-    case 'byExtension':
-      if (order) {
-        return data.sort(sortByExtension);
-      } else {
-        return data.sort((a, b) => -1 * sortByExtension(a, b));
-      }
-      break;
-    case 'byTags':
-      if (order) {
-        return data.sort(sortByTags);
-      } else {
-        return data.sort((a, b) => -1 * sortByTags(a, b));
-      }
-      break;
-    case 'byDirectory':
-      if (order) {
-        return data.sort(sortByIsDirectory);
-      } else {
-        return data.sort((a, b) => -1 * sortByIsDirectory(a, b));
-      }
-      break;
-    default:
+  case 'byName':
+    if (order) {
       return data.sort(sortByName);
+    }
+    return data.sort((a, b) => -1 * sortByName(a, b));
+  case 'byFileSize':
+    if (order) {
+      return data.sort(sortBySize);
+    }
+    return data.sort((a, b) => -1 * sortBySize(a, b));
+  case 'byDateModified':
+    if (order) {
+      return data.sort(sortByDateModified);
+    }
+    return data.sort((a, b) => -1 * sortByDateModified(a, b));
+  case 'byExtension':
+    if (order) {
+      return data.sort(sortByExtension);
+    }
+    return data.sort((a, b) => -1 * sortByExtension(a, b));
+  case 'byTags':
+    if (order) {
+      return data.sort(sortByTags);
+    }
+    return data.sort((a, b) => -1 * sortByTags(a, b));
+  case 'byDirectory':
+    if (order) {
+      return data.sort(sortByIsDirectory);
+    }
+    return data.sort((a, b) => -1 * sortByIsDirectory(a, b));
+  default:
+    return data.sort(sortByName);
   }
 }
 
