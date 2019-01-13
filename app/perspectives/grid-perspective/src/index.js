@@ -28,6 +28,8 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Toolbar from '@material-ui/core/Toolbar';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
+import RadioCheckedIcon from '@material-ui/icons/RadioButtonChecked';
+import RadioUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Grid from '@material-ui/core/Grid';
@@ -40,6 +42,7 @@ import ArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import IconButton from '@material-ui/core/IconButton';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
+import Divider from '@material-ui/core/Divider';
 import ThumbnailCoverIcon from '@material-ui/icons/PhotoSizeSelectActual';
 import ThumbnailContainIcon from '@material-ui/icons/PhotoSizeSelectLarge';
 import FolderIcon from '@material-ui/icons/FolderOpen';
@@ -310,17 +313,6 @@ class GridPerspective extends React.Component<Props, State> {
     });
   };
 
-  getLayoutClass = () => {
-    switch (this.state.layoutType) {
-    case 'grid':
-      return this.props.classes.gridContainer;
-    case 'row':
-      return this.props.classes.rowContainer;
-    default:
-      return this.props.classes.gridContainer;
-    }
-  };
-
   handleGridCellClick = (event, fsEntry: FileSystemEntry) => {
     const { selectedEntries } = this.state;
     if (event.ctrlKey) {
@@ -411,6 +403,13 @@ class GridPerspective extends React.Component<Props, State> {
       {
         thumbnailMode: this.state.thumbnailMode === 'cover' ? 'contain' : 'cover'
       },
+      this.saveSettings
+    );
+  };
+
+  changeEntrySize = (entrySize) => {
+    this.closeOptionsMenu();
+    this.setState({ entrySize },
       this.saveSettings
     );
   };
@@ -556,6 +555,7 @@ class GridPerspective extends React.Component<Props, State> {
   };
 
   renderCell = (fsEntry: FileSystemEntry) => {
+    const { entrySize } = this.state;
     if (!fsEntry.isFile && !this.state.showDirectories) {
       return;
     }
@@ -568,7 +568,14 @@ class GridPerspective extends React.Component<Props, State> {
       selected = true;
     }
     const { layoutType } = this.state;
-    //  key={fsEntry.uuid}
+    let entryHeight = 200;
+    if (entrySize === 'small') {
+      entryHeight = 50;
+    } else if (entrySize === 'normal') {
+      entryHeight = 100;
+    } else if (entrySize === 'big') {
+      entryHeight = 150;
+    }
     const cellContent = (
       <TagDropContainer entryPath={fsEntry.path}>
         <Paper
@@ -579,6 +586,9 @@ class GridPerspective extends React.Component<Props, State> {
             selected && layoutType === 'grid' && classes.selectedGridCell,
             selected && layoutType === 'row' && classes.selectedRowCell
           )}
+          style={layoutType === 'row' ? {
+            minHeight: entryHeight
+          } : {}}
           onContextMenu={event => this.handleGridContextMenu(event, fsEntry)}
           onDoubleClick={event => this.handleGridCellDblClick(event, fsEntry)}
           onClick={event => this.handleGridCellClick(event, fsEntry)}
@@ -792,8 +802,16 @@ class GridPerspective extends React.Component<Props, State> {
 
   render() {
     const classes = this.props.classes;
-    const { selectedEntries = [] } = this.state;
+    const { selectedEntries = [], layoutType, entrySize } = this.state;
     const selectedFilePaths = selectedEntries.filter(fsEntry => fsEntry.isFile).map(fsentry => fsentry.path);
+    let entryWidth = 200;
+    if (entrySize === 'small') {
+      entryWidth = 150;
+    } else if (entrySize === 'normal') {
+      entryWidth = 200;
+    } else if (entrySize === 'big') {
+      entryWidth = 300;
+    }
     // console.log('Render grid');
     return (
       <div style={{ height: '100%' }}>
@@ -899,7 +917,10 @@ class GridPerspective extends React.Component<Props, State> {
         </Toolbar>
         <div style={{ height: '100%', overflowY: AppConfig.isFirefox ? 'auto' : 'overlay' }}>
           <div
-            className={this.getLayoutClass()}
+            className={layoutType === 'grid' ? classes.gridContainer : classes.rowContainer}
+            style={layoutType === 'grid' ? {
+              gridTemplateColumns: 'repeat(auto-fit,minmax(' + entryWidth + 'px,1fr))'
+            } : {}}
             ref={ref => {
               this.mainGrid = ref;
             }}
@@ -1062,6 +1083,40 @@ class GridPerspective extends React.Component<Props, State> {
               {this.state.thumbnailMode === 'cover' ? <ThumbnailCoverIcon /> : <ThumbnailContainIcon />}
             </ListItemIcon>
             <ListItemText inset primary={i18n.t('core:toggleThumbnailMode')} />
+          </MenuItem>
+          <Divider />
+          <MenuItem
+            data-tid="gridPerspectiveEntrySizeSmall"
+            title={i18n.t('core:entrySizeSmall')}
+            aria-label={i18n.t('core:entrySizeSmall')}
+            onClick={() => this.changeEntrySize('small')}
+          >
+            <ListItemIcon>
+              {this.state.entrySize === 'small' ? <RadioCheckedIcon /> : <RadioUncheckedIcon />}
+            </ListItemIcon>
+            <ListItemText inset primary={i18n.t('core:entrySizeSmall')} />
+          </MenuItem>
+          <MenuItem
+            data-tid="gridPerspectiveEntrySizeNormal"
+            title={i18n.t('core:entrySizeNormal')}
+            aria-label={i18n.t('core:entrySizeNormal')}
+            onClick={() => this.changeEntrySize('normal')}
+          >
+            <ListItemIcon>
+              {this.state.entrySize === 'normal' ? <RadioCheckedIcon /> : <RadioUncheckedIcon />}
+            </ListItemIcon>
+            <ListItemText inset primary={i18n.t('core:entrySizeNormal')} />
+          </MenuItem>
+          <MenuItem
+            data-tid="gridPerspectiveEntrySizeBig"
+            title={i18n.t('core:entrySizeBig')}
+            aria-label={i18n.t('core:entrySizeBig')}
+            onClick={() => this.changeEntrySize('big')}
+          >
+            <ListItemIcon>
+              {this.state.entrySize === 'big' ? <RadioCheckedIcon /> : <RadioUncheckedIcon />}
+            </ListItemIcon>
+            <ListItemText inset primary={i18n.t('core:entrySizeBig')} />
           </MenuItem>
         </Menu>
       </div>

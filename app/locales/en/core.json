@@ -382,5 +382,8 @@
   "tagTitleHelper": "Tags should be at least 1 character long and should not contain: spaces, \\, / #",
   "toggleThumbnailMode": "Toggle thumbnail modes",
   "toggleThumbnailModeTitle": "Switch between cover and contain thumbnail modes",
+  "entrySizeSmall": "Compact mode",
+  "entrySizeNormal": "Default mode",
+  "entrySizeBig": "Large mode",
   "-": "-"
 }
