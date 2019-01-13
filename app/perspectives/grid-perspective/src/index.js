@@ -347,7 +347,13 @@ class GridPerspective extends React.Component<Props, State> {
       );
       this.props.setLastSelectedEntry(fsEntry.path);
       if (fsEntry.isFile) {
-        this.props.openFile(fsEntry.path, fsEntry.isFile);
+        if (this.state.singleClickAction === 'openInternal') {
+          this.props.openFile(fsEntry.path, fsEntry.isFile);
+        } else if (this.state.singleClickAction === 'openExternal') {
+          this.props.openFileNatively(fsEntry.path);
+        } else {
+          this.props.openFile(fsEntry.path, fsEntry.isFile);
+        }
       }
     }
   };
@@ -410,6 +416,13 @@ class GridPerspective extends React.Component<Props, State> {
   changeEntrySize = (entrySize) => {
     this.closeOptionsMenu();
     this.setState({ entrySize },
+      this.saveSettings
+    );
+  };
+
+  changeSingleClickAction = (singleClickAction) => {
+    this.closeOptionsMenu();
+    this.setState({ singleClickAction },
       this.saveSettings
     );
   };
@@ -1117,6 +1130,29 @@ class GridPerspective extends React.Component<Props, State> {
               {this.state.entrySize === 'big' ? <RadioCheckedIcon /> : <RadioUncheckedIcon />}
             </ListItemIcon>
             <ListItemText inset primary={i18n.t('core:entrySizeBig')} />
+          </MenuItem>
+          <Divider />
+          <MenuItem
+            data-tid="gridPerspectiveSingleClickOpenInternally"
+            title={i18n.t('core:singleClickOpenInternally')}
+            aria-label={i18n.t('core:singleClickOpenInternally')}
+            onClick={() => this.changeSingleClickAction('openInternal')}
+          >
+            <ListItemIcon>
+              {this.state.singleClickAction === 'openInternal' ? <RadioCheckedIcon /> : <RadioUncheckedIcon />}
+            </ListItemIcon>
+            <ListItemText inset primary={i18n.t('core:singleClickOpenInternally')} />
+          </MenuItem>
+          <MenuItem
+            data-tid="gridPerspectiveSingleClickOpenExternally"
+            title={i18n.t('core:singleClickOpenExternally')}
+            aria-label={i18n.t('core:singleClickOpenExternally')}
+            onClick={() => this.changeSingleClickAction('openExternal')}
+          >
+            <ListItemIcon>
+              {this.state.singleClickAction === 'openExternal' ? <RadioCheckedIcon /> : <RadioUncheckedIcon />}
+            </ListItemIcon>
+            <ListItemText inset primary={i18n.t('core:singleClickOpenExternally')} />
           </MenuItem>
         </Menu>
       </div>

@@ -385,5 +385,7 @@
   "entrySizeSmall": "Compact mode",
   "entrySizeNormal": "Default mode",
   "entrySizeBig": "Large mode",
+  "singleClickOpenInternally": "Single click opens file internally",
+  "singleClickOpenExternally": "Single click opens file externally",
   "-": "-"
 }
