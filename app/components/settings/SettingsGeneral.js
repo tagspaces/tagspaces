@@ -18,19 +18,16 @@
  */
 
 import React from 'react';
-// import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
-// import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListItemText from '@material-ui/core/ListItemText';
 import MenuItem from '@material-ui/core/MenuItem';
 import Switch from '@material-ui/core/Switch';
 import Input from '@material-ui/core/Input';
-// import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import Button from '@material-ui/core/Button';
 import i18n from '../../services/i18n';
@@ -64,13 +61,7 @@ type Props = {
   setLanguage: () => void,
   setDesktopMode: () => void,
   setCheckForUpdates: () => void,
-  setUseDefaultLocation: () => void,
-  setColoredFileExtension: () => void,
-  setShowTagAreaOnStartup: () => void,
-  setLoadsLocationMetaData: () => void,
-  setSearchInSubfolders: () => void,
-  setWatchCurrentDirectory: () => void,
-  setCalculateTags: () => void,
+  // setColoredFileExtension: () => void,
   setUseTrashCan: () => void,
   setPersistTagsInSidecarFile: () => void,
   setAddTagsToLibrary: () => void,
@@ -365,62 +356,6 @@ class SettingsGeneral extends React.Component<Props, State> {
                 this.props.setCalculateTags(!this.props.settings.calculateTags)
               }
               checked={this.props.settings.calculateTags}
-            />
-          </ListItemSecondaryAction>
-        </ListItem>
-        <ListItem>
-          <ListItemText primary={i18n.t('core:watchCurrentDirectory')} />
-          <ListItemSecondaryAction>
-            <Switch
-              data-tid="settingsSetWatchCurrentDirectory"
-              onClick={() =>
-                this.props.setWatchCurrentDirectory(
-                  !this.props.settings.watchCurrentDirectory
-                )
-              }
-              checked={this.props.settings.watchCurrentDirectory}
-            />
-          </ListItemSecondaryAction>
-        </ListItem>
-        <ListItem>
-          <ListItemText primary={i18n.t('core:useSearchInSubfolders')} />
-          <ListItemSecondaryAction>
-            <Switch
-              data-tid="settingsSetSearchInSubfolders"
-              onClick={() =>
-                this.props.setSearchInSubfolders(
-                  !this.props.settings.searchInSubfolders
-                )
-              }
-              checked={this.props.settings.searchInSubfolders}
-            />
-          </ListItemSecondaryAction>
-        </ListItem
-        <ListItem>
-          <ListItemText primary={i18n.t('core:showTagAreaOnStartup')} />
-          <ListItemSecondaryAction>
-            <Switch
-              data-tid="settingsSetShowTagAreaOnStartup"
-              onClick={() =>
-                this.props.setShowTagAreaOnStartup(
-                  !this.props.settings.showTagAreaOnStartup
-                )
-              }
-              checked={this.props.settings.showTagAreaOnStartup}
-            />
-          </ListItemSecondaryAction>
-        </ListItem>
-        <ListItem>
-          <ListItemText primary={i18n.t('core:useDefaultLocation')} />
-          <ListItemSecondaryAction>
-            <Switch
-              data-tid="settingsSetUseDefaultLocation"
-              onClick={() =>
-                this.props.setUseDefaultLocation(
-                  !this.props.settings.useDefaultLocation
-                )
-              }
-              checked={this.props.settings.useDefaultLocation}
             />
           </ListItemSecondaryAction>
         </ListItem>
