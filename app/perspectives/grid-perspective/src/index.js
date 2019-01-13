@@ -27,6 +27,7 @@ import moment from 'moment';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Toolbar from '@material-ui/core/Toolbar';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Grid from '@material-ui/core/Grid';
@@ -39,6 +40,8 @@ import ArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import IconButton from '@material-ui/core/IconButton';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
+import ThumbnailCoverIcon from '@material-ui/icons/PhotoSizeSelectActual';
+import ThumbnailContainIcon from '@material-ui/icons/PhotoSizeSelectLarge';
 import FolderIcon from '@material-ui/icons/FolderOpen';
 import FolderHiddenIcon from '@material-ui/icons/Folder';
 import TagIcon from '@material-ui/icons/LocalOffer';
@@ -114,8 +117,14 @@ type State = {
   tagContextMenuAnchorEl?: Object | null,
   tagContextMenuOpened?: boolean,
   layoutType?: string,
+  singleClickAction?: string,
+  doubleClickAction?: string,
+  entrySize?: string,
+  thumbnailMode?: string,
   sortingContextMenuAnchorEl?: Object | null,
   sortingContextMenuOpened?: boolean | null,
+  optionsContextMenuAnchorEl?: Object | null,
+  optionsContextMenuOpened?: boolean | null,
   sortBy?: string,
   orderBy?: null | boolean,
   fileOperationsEnabled?: boolean,
@@ -142,10 +151,16 @@ class GridPerspective extends React.Component<Props, State> {
       tagContextMenuAnchorEl: null,
       sortingContextMenuOpened: false,
       sortingContextMenuAnchorEl: null,
+      optionsContextMenuOpened: false,
+      optionsContextMenuAnchorEl: null,
       selectedEntryPath: '',
       sortBy: settings && settings.sortBy ? settings.sortBy : 'byName',
       orderBy: settings && settings.orderBy ? settings.orderBy : false,
       layoutType: settings && settings.layoutType ? settings.layoutType : 'grid',
+      singleClickAction: settings && settings.singleClickAction ? settings.singleClickAction : 'openInternal', // openExternal
+      doubleClickAction: settings && settings.doubleClickAction ? settings.doubleClickAction : 'openInternal', // openExternal
+      entrySize: settings && settings.entrySize ? settings.entrySize : 'normal', // small, big
+      thumbnailMode: settings && settings.thumbnailMode ? settings.thumbnailMode : 'cover', // contain
       fileOperationsEnabled: false,
       allFilesSelected: false,
       showDirectories: settings && settings.showDirectories ? settings.showDirectories : true,
@@ -252,7 +267,11 @@ class GridPerspective extends React.Component<Props, State> {
       showDirectories: this.state.showDirectories,
       layoutType: this.state.layoutType,
       orderBy: this.state.orderBy,
-      sortBy: this.state.sortBy
+      sortBy: this.state.sortBy,
+      singleClickAction: this.state.singleClickAction,
+      doubleClickAction: this.state.doubleClickAction,
+      entrySize: this.state.entrySize,
+      thumbnailMode: this.state.thumbnailMode
     };
     localStorage.setItem('tsPerspectiveGrid', JSON.stringify(settingsObj));
   }
@@ -281,6 +300,13 @@ class GridPerspective extends React.Component<Props, State> {
     this.setState({
       sortingContextMenuOpened: !this.state.sortingContextMenuOpened,
       sortingContextMenuAnchorEl: event ? event.currentTarget : null
+    });
+  };
+
+  handleOptionsMenu = event => {
+    this.setState({
+      optionsContextMenuOpened: !this.state.optionsContextMenuOpened,
+      optionsContextMenuAnchorEl: event ? event.currentTarget : null
     });
   };
 
@@ -370,9 +396,20 @@ class GridPerspective extends React.Component<Props, State> {
   };
 
   toggleShowDirectories = () => {
+    this.closeOptionsMenu();
     this.setState(
       {
         showDirectories: !this.state.showDirectories
+      },
+      this.saveSettings
+    );
+  };
+
+  toggleThumbnailsMode = () => {
+    this.closeOptionsMenu();
+    this.setState(
+      {
+        thumbnailMode: this.state.thumbnailMode === 'cover' ? 'contain' : 'cover'
       },
       this.saveSettings
     );
@@ -458,6 +495,13 @@ class GridPerspective extends React.Component<Props, State> {
     this.setState({
       sortingContextMenuOpened: false,
       sortingContextMenuAnchorEl: null
+    });
+  };
+
+  closeOptionsMenu = () => {
+    this.setState({
+      optionsContextMenuOpened: false,
+      optionsContextMenuAnchorEl: null
     });
   };
 
@@ -592,6 +636,7 @@ class GridPerspective extends React.Component<Props, State> {
           <div
             className={classes.gridCellThumb}
             style={{
+              backgroundSize: this.state.thumbnailMode,
               backgroundImage: thumbPathUrl,
               height: 150 // fsEntry.isFile ? 150 : 70
             }}
@@ -731,6 +776,7 @@ class GridPerspective extends React.Component<Props, State> {
               <div
                 className={classes.gridCellThumb}
                 style={{
+                  backgroundSize: this.state.thumbnailMode,
                   backgroundImage: thumbPathUrl,
                   margin: 5,
                   height: 85,
@@ -832,14 +878,6 @@ class GridPerspective extends React.Component<Props, State> {
             <DeleteIcon />
           </IconButton>
           <IconButton
-            title={i18n.t('core:showHideDirectories')}
-            aria-label={i18n.t('core:showHideDirectories')}
-            data-tid="gridPerspectiveToggleShowDirectories"
-            onClick={this.toggleShowDirectories}
-          >
-            {this.state.showDirectories ? <FolderIcon /> : <FolderHiddenIcon />}
-          </IconButton>
-          <IconButton
             title={i18n.t('core:sort')}
             aria-label={i18n.t('core:sort')}
             data-tid="gridPerspectiveSortMenu"
@@ -848,6 +886,15 @@ class GridPerspective extends React.Component<Props, State> {
             }}
           >
             <SwapVertIcon />
+          </IconButton>
+          <IconButton
+            title={i18n.t('core:options')}
+            data-tid="gridPerspectiveOptionsMenu"
+            onClick={e => {
+              this.handleOptionsMenu(e);
+            }}
+          >
+            <MoreVertIcon />
           </IconButton>
         </Toolbar>
         <div style={{ height: '100%', overflowY: AppConfig.isFirefox ? 'auto' : 'overlay' }}>
@@ -987,6 +1034,34 @@ class GridPerspective extends React.Component<Props, State> {
               )}
             </ListItemIcon>
             <ListItemText inset primary={i18n.t('core:fileExtension')} />
+          </MenuItem>
+        </Menu>
+        <Menu
+          open={this.state.optionsContextMenuOpened}
+          onClose={this.closeOptionsMenu}
+          anchorEl={this.state.optionsContextMenuAnchorEl}
+        >
+          <MenuItem
+            data-tid="gridPerspectiveToggleShowDirectories"
+            title={i18n.t('core:showHideDirectories')}
+            aria-label={i18n.t('core:showHideDirectories')}
+            onClick={this.toggleShowDirectories}
+          >
+            <ListItemIcon style={{ minWidth: 25 }}>
+              {this.state.showDirectories ? <FolderIcon /> : <FolderHiddenIcon />}
+            </ListItemIcon>
+            <ListItemText inset primary={i18n.t('core:showHideDirectories')} />
+          </MenuItem>
+          <MenuItem
+            data-tid="gridPerspectiveToggleThumbnailsMode"
+            title={i18n.t('core:toggleThumbnailMode')}
+            aria-label={i18n.t('core:toggleThumbnailMode')}
+            onClick={this.toggleThumbnailsMode}
+          >
+            <ListItemIcon>
+              {this.state.thumbnailMode === 'cover' ? <ThumbnailCoverIcon /> : <ThumbnailContainIcon />}
+            </ListItemIcon>
+            <ListItemText inset primary={i18n.t('core:toggleThumbnailMode')} />
           </MenuItem>
         </Menu>
       </div>

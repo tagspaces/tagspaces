@@ -40,6 +40,7 @@ export default (theme) => ({
   },
   gridCell: {
     backgroundColor: theme.palette.background.paper,
+    border: '2px solid transparent',
     margin: 2,
     marginBottom: 5,
     marginRight: 5,
@@ -48,6 +49,8 @@ export default (theme) => ({
   rowCell: {
     backgroundColor: theme.palette.background.paper,
     boxShadow: 'none',
+    borderLeft: '2px solid transparent',
+    borderRight: '2px solid transparent',
     borderTop: '1px solid transparent',
     borderBottom: '1px solid ' + theme.palette.divider,
     minHeight: 100,
@@ -57,15 +60,17 @@ export default (theme) => ({
     borderRadius: 0
   },
   selectedGridCell: {
+    border: '2px solid' + theme.palette.primary.main,
     backgroundColor: theme.palette.primary.light,
-    boxShadow: '0 0 1pt 1pt ' + theme.palette.primary.light
+    // boxShadow: '0 0 1pt 1pt ' + theme.palette.primary.light
   },
   selectedRowCell: {
+    border: '2px solid' + theme.palette.primary.main,
     backgroundColor: theme.palette.primary.light
   },
   gridCellThumb: {
     backgroundRepeat: 'no-repeat',
-    backgroundSize: 'cover',
+    // backgroundSize: 'cover',
     backgroundPosition: 'center'
   },
   gridCellTitle: {
