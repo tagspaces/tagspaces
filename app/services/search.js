@@ -168,6 +168,10 @@ export default class Search {
       console.log('jmespath results: ' + results.length);
     }
 
+    // if (Pro && Pro.Search.filterIndex) {
+    //   results = Pro.Search.filterIndex(results || locationContent, searchQuery);
+    // }
+
     if (searchQuery.textQuery && searchQuery.textQuery.length > 1) {
       const fuseQuery = constructFuseQuery(searchQuery);
       console.log('fuse query: ' + fuseQuery);
