@@ -1178,7 +1178,7 @@ function prepareDirectoryContent(
   dirEntries.map(entry => {
     if (
       !settings.showUnixHiddenEntries &&
-      entry.name === AppConfig.metaFolder
+      entry.name.startsWith('.')
     ) {
       return true;
     }
