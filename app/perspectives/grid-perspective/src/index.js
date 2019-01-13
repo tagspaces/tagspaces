@@ -133,7 +133,6 @@ type State = {
 class GridPerspective extends React.Component<Props, State> {
   constructor(props) {
     super(props);
-    console.log('-->' + JSON.stringify(settings));
     this.state = {
       fileContextMenuOpened: false,
       fileContextMenuAnchorEl: null,
