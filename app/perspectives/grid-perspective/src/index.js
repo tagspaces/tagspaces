@@ -1054,7 +1054,7 @@ class GridPerspective extends React.Component<Props, State> {
           </MenuItem>
           <MenuItem
             data-tid="gridPerspectiveToggleThumbnailsMode"
-            title={i18n.t('core:toggleThumbnailMode')}
+            title={i18n.t('core:toggleThumbnailModeTitle')}
             aria-label={i18n.t('core:toggleThumbnailMode')}
             onClick={this.toggleThumbnailsMode}
           >
