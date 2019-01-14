@@ -65,7 +65,10 @@ const actions = {
       // filter existed in tagLibrary
       const uniqueTags = [];
       processedTags.map((tag) => {
-        if (taglibrary.findIndex(tagGroup => tagGroup.children.findIndex(obj => obj.id === tag.id) !== -1) === -1 && !/^(?:\d+~\d+|\d+)$/.test(tag.title)) {
+        if (
+          taglibrary.findIndex(tagGroup => tagGroup.children.findIndex(obj => obj.id === tag.id) !== -1) === -1 &&
+          !/^(?:\d+~\d+|\d+)$/.test(tag.title) // skip adding of tag containing only digits or geo tags
+        ) {
           uniqueTags.push(tag);
         }
         return true;
@@ -177,7 +180,7 @@ const actions = {
     dispatch: (actions: Object) => void,
     getState: () => Object
   ) => {
-    const { settings } = getState();
+    const { settings, taglibrary } = getState();
     // TODO: Handle adding already added tags
     if (tag.type === 'plain') {
       const fileName = extractFileName(path);
@@ -219,6 +222,36 @@ const actions = {
         console.warn('Error adding tags for ' + path + ' with ' + error);
         dispatch(AppActions.showNotification(i18n.t('core:addingTagsFailed'), 'error', true));
       });
+    }
+
+    if (settings.addTagsToLibrary) { // collecting tags
+      // filter existed in tagLibrary
+      const uniqueTags = [];
+      if (
+        taglibrary.findIndex(tagGroup => tagGroup.children.findIndex(obj => obj.title === newTagTitle) !== -1) === -1 &&
+        !/^(?:\d+~\d+|\d+)$/.test(newTagTitle) // skip adding of tag containing only digits or geo tags
+      ) {
+        uniqueTags.push({
+          ...tag,
+          title: newTagTitle,
+          color: settings.tagBackgroundColor,
+          textcolor: settings.tagTextColor,
+          id: uuidv1()
+        });
+      }
+      if (uniqueTags.length > 0) {
+        const tagGroup = {
+          uuid: 'collected_tag_group_id', // uuid needs to be constant here (see mergeTagGroup)
+          title: i18n.t('core:collectedTags'),
+          expanded: true,
+          color: settings.tagBackgroundColor,
+          textcolor: settings.tagTextColor,
+          children: uniqueTags,
+          created_date: new Date(),
+          modified_date: new Date()
+        };
+        dispatch(TagLibraryActions.mergeTagGroup(tagGroup));
+      }
     }
   },
   removeTags: (paths: Array<string>, tags: Array<Tag>) => (
