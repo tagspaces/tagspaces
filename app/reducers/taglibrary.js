@@ -336,22 +336,22 @@ export default (state: Array<TagGroup> = defaultTagLibrary, action: Object) => {
       if (tagGroup.uuid === action.toTagGroupId) {
         indexToGroup = index;
       }
-      if (tagGroup.children) {
-        tagGroup.children.forEach((tag, tagIndex) => {
-          if (tag.id === action.tagID) {
-            tagIndexForRemoving = tagIndex;
-          }
-          return true;
-        });
-      }
     });
+    if (indexFromGroup >= 0 && state[indexFromGroup].children) {
+      state[indexFromGroup].children.forEach((tag, tagIndex) => {
+        if (tag.id === action.tagID) {
+          tagIndexForRemoving = tagIndex;
+        }
+        return true;
+      });
+    }
     if (indexToGroup >= 0 && indexToGroup >= 0 && tagIndexForRemoving >= 0) {
       const newTagLibrary = [...state];
       const tag = { ...state[indexFromGroup].children[tagIndexForRemoving] };
       newTagLibrary[indexToGroup].children.push(tag);
       newTagLibrary[indexFromGroup].children = [
-        ...newTagLibrary[indexFromGroup].children.splice(0, tagIndexForRemoving),
-        ...newTagLibrary[indexFromGroup].children.splice(tagIndexForRemoving + 1)
+        ...newTagLibrary[indexFromGroup].children.slice(0, tagIndexForRemoving),
+        ...newTagLibrary[indexFromGroup].children.slice(tagIndexForRemoving + 1)
       ];
       return newTagLibrary;
     }
