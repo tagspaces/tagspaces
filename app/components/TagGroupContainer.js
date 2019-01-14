@@ -53,6 +53,7 @@ class TagGroupContainer extends Component<Props> {
           padding: 0,
           paddingTop: 3,
           borderRadius: 5,
+          minHeight: 20,
           backgroundColor
         }}
       >
