@@ -1,5 +1,30 @@
 # Changelog
 
+## Version 3.0.4 / 2019.01.14
+
+### Community
+- add collecting tag after rename #832(https://github.com/tagspaces/tagspaces/issues/832)
+- fix tag moving bug in tag library
+- fix the check for new version
+- setting minimum height for an empty tag group in tag library
+- making single file click configurable in default perspective
+- added different view modes in default perspective
+- added thumbnail mode switch (css cover vs contain) in default perspective
+- fixing sort order #820(https://github.com/tagspaces/tagspaces/issues/820)
+- fixing broken hiding hidden files and folders #836(https://github.com/tagspaces/tagspaces/issues/836)
+- fixing header text color in dark mode #835(https://github.com/tagspaces/tagspaces/issues/835)
+- updating electron to 3.1.0
+- fixing crash on quit by mac os #816(https://github.com/tagspaces/tagspaces/issues/816)
+- accessing the context menu for locations, tag groups and folders with a right mouse click
+- setting max width to location and tag group names
+- making the location switcher always visible
+- fixing the icons in the location menu
+- fixing braking the path history #821(https://github.com/tagspaces/tagspaces/issues/821)
+- updating translations
+
+### Pro
+- added search filters for bookmarks and ebooks
+
 ## Version 3.0.1 / 2018.12.31
 
 ### Community
