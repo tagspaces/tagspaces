@@ -755,7 +755,6 @@ class GridPerspective extends React.Component<Props, State> {
           </Grid>
           <Grid item xs zeroMinWidth>
             <Typography
-              noWrap
               style={{
                 padding: 5
               }}
