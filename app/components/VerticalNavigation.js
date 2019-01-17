@@ -28,8 +28,8 @@ import TagLibraryIcon from '@material-ui/icons/LocalOfferOutlined';
 import SearchIcon from '@material-ui/icons/SearchOutlined';
 import PerspectivesIcon from '@material-ui/icons/MapOutlined';
 import SettingsIcon from '@material-ui/icons/Settings';
-import ThemingIcon from '@material-ui/icons/InvertColors'; // Palette
-import UpgradeIcon from '@material-ui/icons/FlightTakeoff'; // Palette
+import ThemingIcon from '@material-ui/icons/InvertColors';
+import UpgradeIcon from '@material-ui/icons/FlightTakeoff';
 import { withTheme } from '@material-ui/core/styles';
 import SplitPane from 'react-split-pane';
 import LogoIcon from '../assets/images/icon100x100.svg';
