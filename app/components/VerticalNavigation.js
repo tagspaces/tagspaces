@@ -41,6 +41,7 @@ import SettingsDialog from './dialogs/SettingsDialog';
 import CreateDirectoryDialog from './dialogs/CreateDirectoryDialog';
 import CreateFileDialog from './dialogs/CreateFileDialog';
 import SelectDirectoryDialog from './dialogs/SelectDirectoryDialog';
+import ProTeaserDialog from './dialogs/ProTeaserDialog';
 import TagLibrary from '../components/TagLibrary';
 import Search from '../components/Search';
 import PerspectiveManager from '../components/PerspectiveManager';
@@ -100,7 +101,8 @@ type State = {
   isSearchVisible?: boolean,
   isPerspectiveManagerVisible?: boolean,
   isManagementPanelVisible?: boolean, // evtl. redux migration
-  CreateFileDialogKey: string
+  CreateFileDialogKey: string,
+  isProTeaserVisible: boolean
 };
 
 class VerticalNavigation extends React.Component<Props, State> {
@@ -110,7 +112,8 @@ class VerticalNavigation extends React.Component<Props, State> {
     isSearchVisible: false,
     isPerspectiveManagerVisible: false,
     isManagementPanelVisible: true,
-    CreateFileDialogKey: uuidv1()
+    CreateFileDialogKey: uuidv1(),
+    isProTeaserVisible: false
   };
 
   componentWillReceiveProps(nextProps: Props) {
@@ -226,6 +229,10 @@ class VerticalNavigation extends React.Component<Props, State> {
     }
   };
 
+  toggleProTeaser = () => {
+    this.setState({ isProTeaserVisible: !this.state.isProTeaserVisible });
+  }
+
   chooseDirectoryPath = (currentPath: string) => {
     this.setState({
       selectedDirectoryPath: currentPath
@@ -293,6 +300,11 @@ class VerticalNavigation extends React.Component<Props, State> {
           selectedDirectoryPath={
             this.state.selectedDirectoryPath || this.props.currentDirectory
           }
+        />
+        <ProTeaserDialog
+          open={this.state.isProTeaserVisible}
+          onClose={this.toggleProTeaser}
+          key={uuidv1()}
         />
         <SplitPane
           split="vertical"
@@ -392,7 +404,8 @@ class VerticalNavigation extends React.Component<Props, State> {
                 title={i18n.t('core:upgradeToPro')}
                 data-tid="upgradeToPro"
                 onClick={() => {
-                  PlatformIO.openUrl('https://www.tagspaces.org/products/');
+                  this.toggleProTeaser();
+                  // PlatformIO.openUrl('https://www.tagspaces.org/products/');
                 }}
                 style={{ ...this.styles.button, ...this.styles.upgradeButton }}
               >

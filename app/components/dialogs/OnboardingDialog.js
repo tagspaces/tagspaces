@@ -20,33 +20,25 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import SwipeableViews from 'react-swipeable-views';
 import Button from '@material-ui/core/Button';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
-import Card from '@material-ui/core/Card';
-import CardActions from '@material-ui/core/CardActions';
-import CardContent from '@material-ui/core/CardContent';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
-import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
-import FormLabel from '@material-ui/core/FormLabel';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
 import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
+import ToggleButton from '@material-ui/lab/ToggleButton';
+import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import MobileStepper from '@material-ui/core/MobileStepper';
 import WelcomeImage from '../../assets/images/onboarding.jpg';
 import NavigationV3 from '../../assets/images/navigation-v3.png';
 import BrowserExtension from '../../assets/images/browser-extensions.png';
 import NewLook from '../../assets/images/new-look.png';
-import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
-import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
-import SwipeableViews from 'react-swipeable-views';
-import ToggleButton from '@material-ui/lab/ToggleButton';
-import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import i18n from '../../services/i18n';
 import {
   isFirstRun,
