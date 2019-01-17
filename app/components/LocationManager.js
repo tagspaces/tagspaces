@@ -769,7 +769,7 @@ class LocationManager extends React.Component<Props, State> {
             className={classes.locationListArea}
             data-tid="locationList"
             style={{
-              maxHeight: 'calc(100vh - 80px)',
+              maxHeight: 'calc(100vh - 150px)',
               overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
             }}
           >

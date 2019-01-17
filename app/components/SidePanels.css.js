@@ -40,15 +40,13 @@ export default (theme) => ({
     // paddingRight: 10, // place for scroll
     paddingTop: 0,
     marginTop: 0,
-    height: 'calc(100% - 180px)',
-    maxHeight: 'calc(100% - 180px)',
     overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
   },
   taggroupsArea: {
     paddingTop: 0,
     marginTop: 0,
-    height: 'calc(100% - 80px)',
-    maxHeight: 'calc(100% - 80px)',
+    height: 'calc(100% - 105px)',
+    maxHeight: 'calc(100% - 105px)',
     overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
   },
   searchArea: {
