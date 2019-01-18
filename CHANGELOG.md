@@ -1,9 +1,9 @@
 # Changelog
 
-## Version 3.0.4 / 2019.01.14
+## Version 3.0.5 / 2019.01.18
 
 ### Community
-- add collecting tag after rename #832(https://github.com/tagspaces/tagspaces/issues/832)
+- add collecting tags after tag rename #832(https://github.com/tagspaces/tagspaces/issues/832)
 - fix tag moving bug in tag library
 - fix the check for new version
 - setting minimum height for an empty tag group in tag library
@@ -18,12 +18,15 @@
 - accessing the context menu for locations, tag groups and folders with a right mouse click
 - setting max width to location and tag group names
 - making the location switcher always visible
-- fixing the icons in the location menu
-- fixing braking the path history #821(https://github.com/tagspaces/tagspaces/issues/821)
+- fixed the icons in the location menu
+- fixed the braking of the path history #821(https://github.com/tagspaces/tagspaces/issues/821)
+- fixed the scrolling issues in the location manager and tag library
+- fixed the hiding of the thumbs in row view by long texts
 - updating translations
 
 ### Pro
 - added search filters for bookmarks and ebooks
+
 
 ## Version 3.0.1 / 2018.12.31
 
