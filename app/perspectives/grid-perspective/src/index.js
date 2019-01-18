@@ -782,7 +782,7 @@ class GridPerspective extends React.Component<Props, State> {
                 {fsEntry.isFile && fsEntry.lmdt && '️ ' + moment(fsEntry.lmdt).fromNow() /* ⏲ */}
               </span>
               <span title={i18n.t('core:entryDescription')}>
-                {description && ' - ' + description}
+                {description && description + ''}
               </span>
             </Typography>
           </Grid>
