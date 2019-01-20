@@ -315,7 +315,19 @@ class GridPerspective extends React.Component<Props, State> {
 
   handleGridCellClick = (event, fsEntry: FileSystemEntry) => {
     const { selectedEntries } = this.state;
-    if (event.ctrlKey) {
+    if (event.ctrlKey && event.shiftKey) {
+      const lastSelectedIndex = this.props.directoryContent.findIndex(entry => entry.path === selectedEntries[selectedEntries.length - 1].path);
+      const currentSelectedIndex = this.props.directoryContent.findIndex(entry => entry.path === fsEntry.path);
+      const entriesToSelect = this.props.directoryContent.slice(lastSelectedIndex + 0, currentSelectedIndex + 1);
+
+      this.setState(
+        {
+          selectedEntries: selectedEntries.concat(entriesToSelect)
+        },
+        this.computeFileOperationsEnabled
+      );
+      this.props.setLastSelectedEntry(fsEntry.path);
+    } else if (event.ctrlKey) {
       if (
         selectedEntries &&
         selectedEntries.some(entry => entry.path === fsEntry.path)
@@ -338,6 +350,17 @@ class GridPerspective extends React.Component<Props, State> {
         );
         this.props.setLastSelectedEntry(fsEntry.path);
       }
+    } else if (event.shiftKey) {
+      const lastSelectedIndex = this.props.directoryContent.findIndex(entry => entry.path === selectedEntries[0].path);
+      const currentSelectedIndex = this.props.directoryContent.findIndex(entry => entry.path === fsEntry.path);
+      const entriesToSelect = this.props.directoryContent.slice(lastSelectedIndex, currentSelectedIndex + 1);
+
+      this.setState(
+        {
+          selectedEntries: (entriesToSelect)
+        },
+        this.computeFileOperationsEnabled
+      );
     } else {
       this.setState(
         {
