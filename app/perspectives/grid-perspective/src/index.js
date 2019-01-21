@@ -21,6 +21,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import removeMd from 'remove-markdown';
+import memoize from "memoize-one";
 import { withStyles } from '@material-ui/core/styles';
 import classNames from 'classnames';
 import moment from 'moment';
@@ -30,6 +31,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import RadioCheckedIcon from '@material-ui/icons/RadioButtonChecked';
 import RadioUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
+import ListSubHeader from '@material-ui/core/ListSubheader';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Grid from '@material-ui/core/Grid';
@@ -64,6 +66,7 @@ import { extractTitle } from '../../../utils/paths';
 import {
   formatFileSize,
   formatDateTime,
+  sortByCriteria,
   isObj,
   isVisibleOnScreen
 } from '../../../utils/misc';
@@ -94,7 +97,6 @@ const settings = JSON.parse(localStorage.getItem('tsPerspectiveGrid')); // loadi
 type Props = {
   classes: Object,
   currentDirectoryPath?: string,
-  sortByCriteria: () => void,
   openFile: (path: string, isFile?: boolean) => void,
   deleteFile: (path: string) => void,
   deleteDirectory: (path: string) => void,
@@ -237,8 +239,6 @@ class GridPerspective extends React.Component<Props, State> {
       // Clear selection on directory change
       this.clearSelection();
 
-      this.props.sortByCriteria(this.state.sortBy, this.state.orderBy);
-
       const grid = document.querySelector(
         '[data-tid="perspectiveGridFileTable"]'
       );
@@ -249,6 +249,10 @@ class GridPerspective extends React.Component<Props, State> {
       }
     }
   };
+
+  sort = memoize(
+    (data, criteria, order) => sortByCriteria(data, criteria, order)
+  );
 
   makeFirstSelectedEntryVisible = () => {
     const { selectedEntries } = this.state;
@@ -292,7 +296,6 @@ class GridPerspective extends React.Component<Props, State> {
 
   handleSortBy = sortBy => {
     this.closeSortingMenu();
-    this.props.sortByCriteria(sortBy, !this.state.orderBy);
     this.setState({
       orderBy: !this.state.orderBy,
       sortBy
@@ -814,8 +817,12 @@ class GridPerspective extends React.Component<Props, State> {
 
   render() {
     const classes = this.props.classes;
-    const { selectedEntries = [], layoutType, entrySize } = this.state;
+    const { selectedEntries = [], layoutType, entrySize, sortBy, orderBy } = this.state;
     const selectedFilePaths = selectedEntries.filter(fsEntry => fsEntry.isFile).map(fsentry => fsentry.path);
+
+    const sortedContent = this.sort(this.props.directoryContent, sortBy, orderBy);
+    const sortedDirectories = sortedContent.filter(entry => !entry.isFile);
+    const sortedFiles = sortedContent.filter(entry => entry.isFile);
     let entryWidth = 200;
     if (entrySize === 'small') {
       entryWidth = 150;
@@ -938,9 +945,9 @@ class GridPerspective extends React.Component<Props, State> {
             }}
             data-tid="perspectiveGridFileTable"
           >
-            {this.props.directoryContent.length > 0 ? (
-              this.props.directoryContent.map(entry => this.renderCell(entry))
-            ) : (
+            {(sortedDirectories.map(entry => this.renderCell(entry)))}
+            {(sortedFiles.map(entry => this.renderCell(entry)))}
+            {(sortedFiles.length < 1 && sortedDirectories.length < 1) && (
               <Typography style={{ padding: 15 }}>
                 {i18n.t('core:noFileFolderFound')}
               </Typography>
@@ -1024,6 +1031,7 @@ class GridPerspective extends React.Component<Props, State> {
           onClose={this.closeSortingMenu}
           anchorEl={this.state.sortingContextMenuAnchorEl}
         >
+          {/* <ListSubHeader>Sort by</ListSubHeader> */}
           <MenuItem
             data-tid="gridPerspectiveSortByName"
             onClick={() => { this.handleSortBy('byName'); }}
@@ -1056,6 +1064,17 @@ class GridPerspective extends React.Component<Props, State> {
               )}
             </ListItemIcon>
             <ListItemText inset primary={i18n.t('core:fileLDTM')} />
+          </MenuItem>
+          <MenuItem
+            data-tid="gridPerspectiveSortByFirstTag"
+            onClick={() => { this.handleSortBy('byFirstTag'); }}
+          >
+            <ListItemIcon style={{ minWidth: 25 }}>
+              {(this.state.sortBy === 'byFirstTag') && (
+                this.state.orderBy ? <ArrowUpIcon /> : <ArrowDownIcon />
+              )}
+            </ListItemIcon>
+            <ListItemText inset primary={i18n.t('core:fileFirstTag')} />
           </MenuItem>
           <MenuItem
             data-tid="gridPerspectiveSortByExt"
@@ -1162,7 +1181,6 @@ class GridPerspective extends React.Component<Props, State> {
 function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators({
     moveFiles: IOActions.moveFiles,
-    sortByCriteria: AppActions.sortByCriteria
   }, dispatch);
 }
 

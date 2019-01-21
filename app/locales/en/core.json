@@ -251,6 +251,7 @@
   "fileSize": "Size",
   "fileLDTM": "Date Modified",
   "fileDirectory": "Directory",
+  "fileFirstTag": "First Tag",
   "filePath": "Path",
   "fileName": "File Name",
   "createTXTFile": "New Plain Text File",

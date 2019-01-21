@@ -36,7 +36,7 @@ import {
   extractParentDirectoryPath,
   extractTagsAsObjects, normalizePath
 } from '../utils/paths';
-import { sortByCriteria, formatDateTime4Tag } from '../utils/misc';
+import { formatDateTime4Tag } from '../utils/misc';
 import i18n from '../services/i18n';
 import { Pro } from '../pro';
 import { getThumbnailURLPromise } from '../services/thumbsgenerator';
@@ -66,7 +66,6 @@ export const types = {
   SET_FILEDRAGGED: 'APP/SET_FILEDRAGGED',
   SET_READONLYMODE: 'APP/SET_READONLYMODE',
   RENAME_FILE: 'APP/RENAME_FILE',
-  SORT_BY: 'APP/SORT_BY',
   TOGGLE_ABOUT_DIALOG: 'APP/TOGGLE_ABOUT_DIALOG',
   TOGGLE_KEYBOARD_DIALOG: 'APP/TOGGLE_KEYBOARD_DIALOG',
   TOGGLE_LICENSE_DIALOG: 'APP/TOGGLE_LICENSE_DIALOG',
@@ -158,7 +157,8 @@ export default (state: Object = initialState, action: Object) => {
     return {
       ...state,
       currentDirectoryEntries: action.directoryContent,
-      currentDirectoryPath: action.directoryPath
+      currentDirectoryPath: action.directoryPath,
+      isLoading: false
     };
   }
   case types.CLEAR_DIRECTORY_CONTENT: {
@@ -205,21 +205,6 @@ export default (state: Object = initialState, action: Object) => {
   case types.TOGGLE_SELECT_DIRECTORY_DIALOG: {
     return { ...state, selectDirectoryDialogOpened: !state.selectDirectoryDialogOpened };
   }
-  case types.SORT_BY: {
-    const data = sortByCriteria(
-      action.sort,
-      state.currentDirectoryEntries,
-      action.order
-    );
-    return {
-      ...state,
-      currentDirectoryEntries: data,
-      isLoading: false
-    };
-  }
-  /* case types.SET_FILEDRAGGED: {
-    return { ...state, isFileDragged: action.isFileDragged };
-  } */
   case types.INDEX_DIRECTORY_SEARCH: {
     return {
       ...state,
@@ -1003,11 +988,6 @@ export const actions = {
     });
     return prevFilePath;
   },
-  sortByCriteria: (sort: string, order: boolean) => ({
-    type: types.SORT_BY,
-    sort,
-    order
-  }),
   closeAllFiles: () => ({ type: types.CLOSE_ALL_FILES }),
   reflectDeleteEntryInt: (path: string) => ({
     type: types.REFLECT_DELETE_ENTRY,
@@ -1239,9 +1219,6 @@ function prepareDirectoryContent(
       .catch(handleTmbGenerationFailed);
   }
 
-  // directoryContent.sort((a, b) => (a.name < b.name ? -1 : 1));
-  // TODO check if here the right place for sorting
-  sortByCriteria('byName', directoryContent, true); // ability to sort by metadata criteria
   console.log('Dir ' + directoryPath + ' contains ' + directoryContent.length);
   console.timeEnd('listDirectoryPromise');
   dispatch(actions.loadDirectorySuccess(directoryPath, directoryContent));
