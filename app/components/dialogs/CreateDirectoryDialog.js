@@ -45,6 +45,7 @@ type State = {
   name?: string
 };
 
+
 class CreateDirectoryDialog extends React.Component<Props, State> {
   state = {
     inputError: false,
@@ -105,9 +106,10 @@ class CreateDirectoryDialog extends React.Component<Props, State> {
         error={this.state.inputError}
       >
         <TextField
-          fullWidth={true}
+          fullWidth
           error={this.state.inputError}
           margin="dense"
+          autoFocus
           name="name"
           label={i18n.t('core:createNewDirectoryTitleName')}
           onChange={this.handleInputChange}
