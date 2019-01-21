@@ -91,7 +91,8 @@ const styles = theme => ({
   folderButton: {
     minWidth: 30,
     whiteSpace: 'nowrap',
-    paddingLeft: 0,
+    paddingLeft: 3,
+    paddingRight: 3,
     margin: '0 auto'
   },
   locationSelectorButton: {
@@ -401,16 +402,15 @@ class FolderContainer extends React.Component<Props, State> {
                 <div style={{ whiteSpace: 'nowrap' }}>
                   {this.state.pathParts &&
                     this.state.pathParts.map(pathPart => (
-                      <span key={pathPart}>
-                        <Button
-                          onClick={() => loadDirectoryContent(pathPart)}
-                          title={'Navigate to: ' + pathPart}
-                          style={{ paddingLeft: 0, paddingRight: 0 }}
-                        >
-                          {extractShortDirectoryName(pathPart, '/')}
-                          <FolderSeparatorIcon />
-                        </Button>
-                      </span>
+                      <Button
+                        key={pathPart}
+                        onClick={() => loadDirectoryContent(pathPart)}
+                        title={'Navigate to: ' + pathPart}
+                        style={{ paddingLeft: 3, paddingRight: 0, minWidth: 10 }}
+                      >
+                        {extractShortDirectoryName(pathPart, '/')}
+                        <FolderSeparatorIcon />
+                      </Button>
                     ))}
                   <Button
                     data-tid="folderContainerOpenDirMenu"
