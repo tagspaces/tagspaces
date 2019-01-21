@@ -18,6 +18,7 @@
  */
 
 import React from 'react';
+import uuidv1 from 'uuid';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
@@ -318,6 +319,7 @@ class TagLibrary extends React.Component<Props, State> {
           confirmDialogTID={'confirmDeleteTagGroupDialog'}
         />
         <CreateTagGroupDialog
+          key={uuidv1()}
           open={this.state.isCreateTagGroupDialogOpened}
           onClose={this.handleCloseDialogs}
           createTagGroup={this.props.createTagGroup}
@@ -325,6 +327,7 @@ class TagLibrary extends React.Component<Props, State> {
           textcolor={this.props.tagTextColor}
         />
         <CreateTagsDialog
+          key={uuidv1()}
           open={this.state.isCreateTagDialogOpened}
           onClose={this.handleCloseDialogs}
           addTag={this.props.addTag}

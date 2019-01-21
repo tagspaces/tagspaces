@@ -40,8 +40,7 @@ type State = {
   inputError?: boolean,
   disableConfirmButton?: boolean,
   open?: boolean,
-  tagTitle?: string,
-  uuid?: string
+  tagTitle?: string
 };
 
 class CreateTagsDialog extends React.Component<Props, State> {
@@ -50,17 +49,6 @@ class CreateTagsDialog extends React.Component<Props, State> {
     disableConfirmButton: true,
     open: false,
     tagTitle: '',
-    uuid: ''
-  };
-
-  componentWillReceiveProps = (nextProps: any) => {
-    if (nextProps.open === true) {
-      this.setState({
-        tagTitle: '',
-        open: true,
-        uuid: nextProps.selectedTagGroupEntry.uuid,
-      });
-    }
   };
 
   handleInputChange = (event: Object) => {
@@ -85,7 +73,7 @@ class CreateTagsDialog extends React.Component<Props, State> {
   onConfirm = () => {
     if (!this.state.disableConfirmButton) {
       this.setState({ open: false, disableConfirmButton: true });
-      this.props.addTag(this.state.tagTitle, this.state.uuid);
+      this.props.addTag(this.state.tagTitle, this.props.selectedTagGroupEntry.uuid);
       this.props.onClose();
     }
   };
@@ -103,6 +91,7 @@ class CreateTagsDialog extends React.Component<Props, State> {
         <TextField
           error={this.state.inputError}
           name="tagTitle"
+          autoFocus
           label={i18n.t('core:addTagsToGroupTagsPlaceholder')}
           onChange={this.handleInputChange}
           value={this.state.tagTitle}
