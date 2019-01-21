@@ -779,13 +779,13 @@ class GridPerspective extends React.Component<Props, State> {
                 title={
                   i18n.t('core:modifiedDate') +
                   ': ' +
-                  formatDateTime(fsEntry.lmdt, true)
+                  formatDateTime(fsEntry.lmdt, true) + ' '
                 }
               >
                 {fsEntry.isFile && fsEntry.lmdt && '️ ' + moment(fsEntry.lmdt).fromNow() /* ⏲ */}
               </span>
               <span title={i18n.t('core:entryDescription')}>
-                {description && description + ''}
+                {description && description }
               </span>
             </Typography>
           </Grid>
