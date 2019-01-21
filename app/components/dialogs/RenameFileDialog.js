@@ -45,9 +45,7 @@ type Props = {
 type State = {
   inputError?: boolean,
   disableConfirmButton?: boolean,
-  open?: boolean,
-  fileName?: string,
-  filePath?: string
+  fileName?: string
 };
 
 const styles = theme => ({
@@ -63,20 +61,14 @@ class RenameFileDialog extends React.Component<Props, State> {
   state = {
     inputError: false,
     disableConfirmButton: true,
-    open: false,
     fileName: '',
-    filePath: ''
   };
 
   componentWillReceiveProps = (nextProps: any) => {
-    if (nextProps.open === true) {
-      this.setState({
-        open: true,
-        fileName: extractFileName(nextProps.selectedFilePath),
-        filePath: nextProps.selectedFilePath
-      }, () => {
+    if (nextProps.open) {
+      const fileName = extractFileName(nextProps.selectedFilePath);
+      this.setState({ fileName }, () => {
         this.fileName.focus();
-        const { fileName } = this.state;
         if (fileName) {
           const indexOfBracket = fileName.indexOf(AppConfig.beginTagContainer);
           const indexOfDot = fileName.indexOf('.');
@@ -88,6 +80,9 @@ class RenameFileDialog extends React.Component<Props, State> {
           }
           this.fileName.setSelectionRange(0, endRange);
         }
+        return {
+          fileName,
+        };
       });
     }
   };
@@ -114,11 +109,11 @@ class RenameFileDialog extends React.Component<Props, State> {
 
   onConfirm = () => {
     if (!this.state.disableConfirmButton) {
-      const fileDirectory = extractContainingDirectoryPath(this.state.filePath);
+      const fileDirectory = extractContainingDirectoryPath(this.props.selectedFilePath);
       const newFilePath = fileDirectory + AppConfig.dirSeparator + this.state.fileName;
-      this.props.renameFile(this.state.filePath, newFilePath);
+      this.props.renameFile(this.props.selectedFilePath, newFilePath);
       this.props.onClose();
-      this.setState({ open: false, inputError: false, disableConfirmButton: true });
+      this.setState({ inputError: false, disableConfirmButton: true });
     } else {
       this.handleValidation();
     }
@@ -139,6 +134,7 @@ class RenameFileDialog extends React.Component<Props, State> {
             error={this.state.inputError}
             margin="dense"
             name="fileName"
+            // autoFocus
             inputRef={(ref) => { this.fileName = ref; }}
             label={i18n.t('core:renameNewFileName')}
             onChange={this.handleInputChange}
