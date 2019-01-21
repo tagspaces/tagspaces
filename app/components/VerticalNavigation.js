@@ -284,7 +284,7 @@ class VerticalNavigation extends React.Component<Props, State> {
           onClose={this.props.toggleSettingsDialog}
         />
         <CreateFileDialog
-          key={this.state.CreateFileDialogKey}
+          key={uuidv1()}
           resetState={this.resetState}
           open={this.props.isCreateFileDialogOpened}
           selectedDirectoryPath={
