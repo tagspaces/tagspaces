@@ -24,7 +24,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { withStyles } from '@material-ui/core/styles';
 import { SketchPicker } from 'react-color';
-import GenericDialog, { onEnterKeyHandler } from './GenericDialog';
+import GenericDialog from './GenericDialog';
 import i18n from '../../services/i18n';
 
 const presetColors = ['#ffffff', '#000000', '#ac725e', '#d06b64', '#f83a22', '#fa573c',
